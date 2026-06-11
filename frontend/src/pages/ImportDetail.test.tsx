@@ -5,7 +5,7 @@
 import "fake-indexeddb/auto";
 
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {fireEvent, render, screen, waitFor, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 
@@ -206,7 +206,10 @@ describe("ImportDetail page", () => {
         await waitFor(() => {
             expect(screen.getByTestId("analysis-results")).toBeTruthy();
         });
-        expect(screen.getByText("Test Topic")).toBeTruthy();
+        // #234 — the topic now also renders in the page <h1>; scope to the
+        // analysis-results region so this asserts the Topic card specifically.
+        const results = screen.getByTestId("analysis-results");
+        expect(within(results).getByText("Test Topic")).toBeTruthy();
         expect(screen.getByText("Clear question")).toBeTruthy();
         expect(screen.getByText("Lacks detail")).toBeTruthy();
         expect(screen.getByTestId("create-curriculum-button")).toBeTruthy();
