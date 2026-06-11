@@ -70,6 +70,7 @@ export const FEATURES = {
   LEARNING_QUESTIONS: "learning-questions",
   LEARNING_GUIDE: "learning-guide",
   AI_LESSON_GENERATE: "ai-lesson-generate",
+  PRONUNCIATION_GENERATE: "pronunciation-generate",
 
   SYNC: "sync",
   GIT_PERSIST: "git-persist",
@@ -94,6 +95,7 @@ const NEEDS_AI_KEY: readonly FeatureId[] = [
   FEATURES.LEARNING_QUESTIONS,
   FEATURES.LEARNING_GUIDE,
   FEATURES.AI_LESSON_GENERATE,
+  FEATURES.PRONUNCIATION_GENERATE,
 ];
 
 /** Desktop-only features: hidden in Dexie mode (no backend / git binary). */
