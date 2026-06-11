@@ -9,8 +9,25 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.72.0** (patch — **dark-theme contrast &
-  spacing sweep + a Session-Detail export fix**). Frontend + one
+- **Current state:** **v1.72.1** (patch — **dark-theme button-background
+  fix + a11y fixes, both surfaced once the v1.72.0 visual + axe suites
+  actually ran**). Frontend + test-infra only; no schema/API/data change.
+  **Raw `<button>` background (#271):** with Tailwind preflight off a raw
+  `<button>` with no `bg-*` inherited the UA `buttonface` (~#efefef) — a
+  theme-independent near-white box with invisible text on all 6 dark themes
+  (LearningPath SetRow, NotDownloaded, Dashboard project cards); the
+  unfinished half of v1.71.0's `#185` (`color:inherit`) — the base-layer
+  rule now also sets `background-color:transparent`, guard-pinned in
+  `contrast.test.ts`. **a11y (#273):** 5 serious axe violations fixed
+  (`aria-progressbar-name` on mission + XP bars, `nested-interactive` on the
+  ProfileRadar `role="img"` wrapper, `listitem` on Content knowledge groups,
+  `color-contrast` via #271) — 0 violations across all 7 audited routes.
+  **Test infra:** the visual `lesson-matching` view never baselined because
+  the helper waited for the absent (controlled-mode) `matching-submit` — now
+  drives `lesson-check` (#270), first committed baseline (5 views × 12
+  themes); the axe suite never ran because it used `browser.newPage()` —
+  now `browser.newContext()` (#272). v1.72.0 = patch — **dark-theme contrast &
+  spacing sweep + a Session-Detail export fix**. Frontend + one
   tracking/storage fix; no schema/API/data change. **Session export
   (#209):** the export dropdown's `recent_sessions` id is the
   ProgressCommit id, but the export builder loads by `LearningSession`
