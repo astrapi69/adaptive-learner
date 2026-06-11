@@ -51,6 +51,37 @@ export type ViewName = (typeof VIEW_NAMES)[number];
 /** A bundled set guaranteed present in the GH-Pages build. */
 const SET_ID = "fr-a1-from-en";
 
+/** Frozen wall-clock for every visual run (follows #244). Relative times
+ *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise
+ *  drift day-to-day and make the screenshots flaky. */
+const FIXED_NOW_ISO = "2026-06-10T14:00:00Z";
+
+/**
+ * Freeze ``Date`` to a fixed instant before any page script runs, so every
+ * relative-time / timestamp render is deterministic. Added before the first
+ * navigation (``addInitScript`` re-applies on each navigation in the context).
+ */
+export async function freezeClock(page: Page): Promise<void> {
+    await page.addInitScript((iso) => {
+        const fixedMs = new Date(iso).getTime();
+        const OriginalDate = Date;
+        class FrozenDate extends OriginalDate {
+            constructor(...args: ConstructorParameters<typeof Date>) {
+                if (args.length === 0) {
+                    super(fixedMs);
+                } else {
+                    // @ts-expect-error — forward the original Date overloads.
+                    super(...args);
+                }
+            }
+            static now() {
+                return fixedMs;
+            }
+        }
+        globalThis.Date = FrozenDate as DateConstructor;
+    }, FIXED_NOW_ISO);
+}
+
 /**
  * Pin the theme before any navigation. ``addInitScript`` runs before page
  * scripts on EVERY navigation in this context, so the pre-paint script
@@ -64,6 +95,22 @@ export async function setTheme(page: Page, theme: ThemeId): Promise<void> {
             /* localStorage blocked — the default theme still renders. */
         }
     }, theme);
+}
+
+/**
+ * Settle the page for a deterministic screenshot: wait for web fonts, kill
+ * any animation/transition durations, and allow one reflow after the
+ * font-swap (the gap between fallback and loaded font is a flake source).
+ */
+export async function settleForScreenshot(page: Page): Promise<void> {
+    await page.addStyleTag({
+        content:
+            "*, *::before, *::after { animation-duration: 0s !important;" +
+            " animation-delay: 0s !important; transition-duration: 0s !important;" +
+            " transition-delay: 0s !important; caret-color: transparent !important; }",
+    });
+    await page.evaluate(() => document.fonts.ready);
+    await page.waitForTimeout(100);
 }
 
 /** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard. */
@@ -211,7 +258,9 @@ export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
             await seedLearner(page);
             await playBundledLesson(page, "summary");
             await page.goto("/learning-path");
-            await expect(page.getByTestId("learning-path-page")).toBeVisible({
+            // Wait for the set rows (content loaded), not just the page shell
+            // (which also renders during loading/empty) — a stable ready signal.
+            await expect(page.getByTestId("learning-path-sets")).toBeVisible({
                 timeout: 20_000,
             });
             return true;

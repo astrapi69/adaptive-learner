@@ -45,6 +45,10 @@ export default defineConfig({
         actionTimeout: 15_000,
         viewport: {width: 1440, height: 900},
         trace: "on-first-retry",
+        // Determinism hardening (follows #244): pin locale + timezone so
+        // i18n text and local timestamps render identically on every machine.
+        locale: "de-DE",
+        timezoneId: "Europe/Berlin",
     },
     webServer: [
         {
