@@ -982,7 +982,7 @@ export default function LessonPage() {
                 <div className="mb-2">
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     className="min-h-11 gap-1.5"
                     onClick={returnToExercise}
