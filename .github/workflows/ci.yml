@@ -122,6 +122,14 @@ jobs:
         working-directory: frontend
         run: npx eslint src/ --max-warnings 436
 
+      # Circular-dependency guard (#251). Fails only when import cycles
+      # EXCEED the documented baseline, so a NEW cycle is a hard error while
+      # the pre-existing debt (#252) doesn't block CI. Uses npx-pinned madge
+      # (peer-incompatible with TS 6 as a devDependency; CI-only tool).
+      - name: Circular dependency check
+        working-directory: frontend
+        run: npm run check:circular
+
       - name: Run Vitest
         working-directory: frontend
         run: npx vitest run
