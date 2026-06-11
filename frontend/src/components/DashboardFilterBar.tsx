@@ -395,7 +395,12 @@ export default function DashboardFilterBar({
                             return (
                                 <li
                                     key={project.id}
-                                    className={`dashboard-project-item${isActive ? " dashboard-project-item-active" : ""}`}
+                                    /* #232 — .dashboard-project-item-active had
+                                       no CSS, so the active project had no
+                                       highlight. Add a token-based accent tint
+                                       (theme-correct in all 12 themes; the ghost
+                                       button text stays fg-primary on top). */
+                                    className={`dashboard-project-item rounded-app${isActive ? " dashboard-project-item-active bg-[color-mix(in_srgb,var(--accent)_14%,transparent)]" : ""}`}
                                     data-testid={`dashboard-project-item-${project.id}`}
                                 >
                                     <Button
