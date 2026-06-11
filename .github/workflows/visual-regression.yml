@@ -31,7 +31,8 @@ jobs:
 
       - name: Install frontend deps
         working-directory: frontend
-        run: npm ci
+        # --legacy-peer-deps: #266 eslint@10 vs eslint-plugin-react ^9.7 peer cap.
+        run: npm ci --legacy-peer-deps
 
       - name: Build dexie frontend
         working-directory: frontend
