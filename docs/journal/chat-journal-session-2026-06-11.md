@@ -70,3 +70,35 @@ in that CI job — it's a per-commit incremental hook, not an all-files gate.
 - Issues opened/closed: #234, #236, #238, #240, #242, #248 (bugs); #244,
   #246, #251, #252, #253, #254, #255, #257 (infra).
 - v1.71.1 → **v1.72.0** (minor).
+
+## v1.72.1 — visual + a11y suites surface real bugs (post-v1.72.0)
+
+The v1.72.0 visual-regression (#244) and axe (#246) suites, run for the
+first time end-to-end, caught real defects:
+
+- **#270 (visual helper, stale):** `make test-visual-update` failed 12/12
+  on `lesson-matching` — the helper waited for `matching-submit`, which a
+  lesson-context `MatchingExercise` (controlled) never renders; submit is
+  the shared `lesson-check`. Fixed the helper. First baseline generated.
+- **#271 (dark theme, real app bug):** the regenerated baselines showed the
+  LearningPath SetRow / NotDownloaded / Dashboard project cards as a
+  near-white `#efefef` box on all 6 dark themes (invisible light text).
+  Root-caused via pixel sampling + a DOM `getComputedStyle` probe to the UA
+  `buttonface` system colour leaking onto raw `<button>`s with preflight
+  off — the unfinished half of v1.71.0's #185. Fix: `background-color:
+  transparent` in the same base-layer rule, guard-pinned in
+  `contrast.test.ts`.
+- **#272 (a11y harness, never ran):** `e2e/smoke/a11y-audit.spec.ts` failed
+  on `browser.newPage()` (axe-core requires `browser.newContext()`); serial
+  mode aborted the whole suite. Fixed → axe runs all 7 routes.
+- **#273 (a11y, 5 serious violations):** `aria-progressbar-name` (mission +
+  XP bars), `nested-interactive` (ProfileRadar `role="img"` wrapper held the
+  focusable ChartSummary), `listitem` (Content knowledge groups),
+  `color-contrast` (via #271). 0 violations across all 7 routes after fixes.
+
+Process: each bug got an issue before its fix; fixes committed per concern;
+clean baselines regenerated after #271 and committed (60 shots); visual
+suite verified 3× (60/60 — one intermediate 33-fail was a self-inflicted
+overlap of two `--strictPort` preview servers, not a flake); all release
+gates green; **v1.72.0 → v1.72.1 (patch)** via PR #274. See
+changelog/releases/v1.72.1.md.
