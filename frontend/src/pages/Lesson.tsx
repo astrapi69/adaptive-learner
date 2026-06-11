@@ -1868,10 +1868,13 @@ function LessonSummary({
         {/* Fallback Next link — only when the smart card is
                     not surfacing a successor (hook still loading or a
                     storage read failed) but one exists. */}
+        {/* #230 — outline, not ghost: ghost has no border/background so on
+            the dark summary surface these read as faint text rather than
+            buttons. Outline gives a visible border + keeps readable text. */}
         {!suggestions.nextLesson.available && nextLessonFilename && (
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={onNextLesson}
             data-testid="lesson-summary-next"
@@ -1882,7 +1885,7 @@ function LessonSummary({
         )}
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={onRepeat}
           data-testid="lesson-summary-repeat"
@@ -1892,7 +1895,7 @@ function LessonSummary({
         </Button>
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={onExit}
           data-testid="lesson-summary-exit"
