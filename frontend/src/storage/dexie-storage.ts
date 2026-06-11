@@ -55,7 +55,6 @@ import {
   type ImportedMessageRow,
   type LearningProfileRow,
   type LearningProjectRow,
-  type LearningSessionRow,
   type LearningTopicRow,
   type LessonRow,
   type MethodSwitchRow,
@@ -431,13 +430,6 @@ function writeGitHubToken(token: string): void {
   } catch {
     /* storage unavailable — best effort */
   }
-}
-
-function notImplemented(label: string): never {
-  throw new ApiError(
-    501,
-    `DexieStorage: ${label} not implemented in this build`,
-  );
 }
 
 export const dexieStorage: IStorageService = {

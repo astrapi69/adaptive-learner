@@ -117,7 +117,6 @@ import {
 import { getStorage } from "../storage";
 import type {
   ContentLessonExercise,
-  ContentLessonStep,
   ElementError,
   LessonStepResultStored,
   RawAnswer,

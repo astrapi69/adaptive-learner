@@ -19,7 +19,7 @@
  * tracking / tools).
  */
 
-import { API_BASE, type AIProvider, type LearningMethod, type MessageRole } from "../lib/constants";
+import { API_BASE, type AIProvider, type LearningMethod } from "../lib/constants";
 import type {
   AssessmentEvaluatePayload,
   AssessmentQuestion,

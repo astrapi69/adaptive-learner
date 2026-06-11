@@ -38,7 +38,6 @@ import {masteryCounts, type MasteryCounts} from "../../lib/srs/mastery";
 import type {PrioritizedElement} from "../../lib/adaptive/types";
 import {useI18n} from "../../hooks/useI18n";
 import {getStorage} from "../../storage";
-import type {ElementError} from "../../storage/types";
 
 const TAG_I18N_KEYS: Record<ErrorTag, [string, string]> = {
     article_gender: [

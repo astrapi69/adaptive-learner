@@ -12,7 +12,7 @@
  *  - cleanup removes every listener
  */
 
-import {act, renderHook} from "@testing-library/react";
+import {renderHook} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {hapticSwipe, useSwipe} from "./useSwipe";
@@ -50,26 +50,6 @@ function simulateSwipe(node: HTMLElement, opts: SimulateOptions): void {
         makeTouchEvent("touchmove", [{clientX: opts.toX, clientY: opts.toY}]),
     );
     node.dispatchEvent(makeTouchEvent("touchend", []));
-}
-
-function attachHook(
-    options: Parameters<typeof useSwipe>[0],
-): {node: HTMLDivElement; unmount: () => void} {
-    const node = document.createElement("div");
-    document.body.appendChild(node);
-    const {result, unmount} = renderHook(() => useSwipe<HTMLDivElement>(options));
-    // Attach the ref to our node and re-render the hook so the
-    // effect picks the node up.
-    act(() => {
-        (result.current.ref as unknown as {current: HTMLElement}).current = node;
-    });
-    // Force a re-render so the useEffect re-runs against the new ref.
-    // The hook deps don't include the ref, so we trigger by toggling
-    // enabled via re-render isn't trivial here. Instead, we
-    // re-attach by re-rendering the hook with same options:
-    // The simpler path: render the hook AFTER node is set. So
-    // skip the manual attach and use the alt path below.
-    return {node, unmount};
 }
 
 describe("useSwipe", () => {

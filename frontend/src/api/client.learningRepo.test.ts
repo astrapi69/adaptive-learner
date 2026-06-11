@@ -8,7 +8,7 @@ describe("api.learningRepo", () => {
     let fetchSpy: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
-        fetchSpy = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        fetchSpy = vi.fn(async (input: RequestInfo | URL, _init?: RequestInit) => {
             const url = typeof input === "string" ? input : input.toString();
             if (url.includes("/render/")) {
                 return new Response(
