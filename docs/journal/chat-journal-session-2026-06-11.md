@@ -102,3 +102,35 @@ suite verified 3× (60/60 — one intermediate 33-fail was a self-inflicted
 overlap of two `--strictPort` preview servers, not a flake); all release
 gates green; **v1.72.0 → v1.72.1 (patch)** via PR #274. See
 changelog/releases/v1.72.1.md.
+
+## v1.72.2 — three P3 code-hygiene items
+
+Worked the three P3 items as a queue (issue per item, fix, commit, release):
+
+- **#275 — Import-Detail + Import inline styles → Tailwind.** ~52 inline
+  `style={{…}}` replaced with token-backed Tailwind utilities (`px-6`,
+  `bg-card`, `text-fg-muted`, `border-success/-destructive/-warning`,
+  `text-accent-foreground`, …); the quick-paste textarea now inherits the
+  shared global input chrome. No functional change; the only inline style
+  left is the dynamic progress-fill width. Import.tsx also got reformatted
+  2-space by the Prettier format-on-touch hook.
+- **#276 — Anki empty state.** `/anki` showed only a one-line muted `<p>`;
+  now a Layers icon + title + body + "Import a conversation" CTA + (no-key)
+  ApiKeyRequiredNotice → Settings>Integrations. New `anki.empty_*` in 8
+  langs (`ui.api_key.feature_anki` already existed).
+- **#252 — 3 import cycles → 0.** All three madge cycles were type-only
+  back-edges from `storage/types.ts` (the IStorageService contract) into
+  implementation modules. Fixed by extracting the shared type shapes into
+  pure modules — `lib/content/content-validation-types.ts`
+  (`AiValidationResult`), `storage/export-types.ts` (the export-report
+  shapes), `api/request-types.ts` (the 19 request-body DTOs) — each origin
+  re-exporting for compat. Moving `AiValidationResult` alone cut two cycles
+  (it was the back-edge for both the storage/types and api/client paths);
+  the api/client↔storage/types 2-cycle surfaced once the longer chains were
+  cut and was closed by the request-types move. madge 0, `check-circular`
+  baseline ratcheted 3→0.
+
+All gates green (3945 vitest, 81 dexie-smoke, tsc, build, mypy, ruff,
+docs-discipline, madge 0). One dexie-smoke run flaked under load (6 passed)
+— a clean isolated re-run was 81/81, same environment-overlap pattern as
+the v1.72.1 visual suite. **v1.72.1 → v1.72.2 (patch)** via PR #277.
