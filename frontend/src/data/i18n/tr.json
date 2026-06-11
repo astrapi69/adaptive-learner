@@ -1271,6 +1271,7 @@
       "feature_session": "bir oturum başlatmak için",
       "feature_anki": "to extract Anki cards",
       "feature_study_guide": "to generate a study guide",
+      "feature_study_questions": "to generate study questions",
       "feature_pronunciation": "for pronunciation practice"
     },
     "common": {
