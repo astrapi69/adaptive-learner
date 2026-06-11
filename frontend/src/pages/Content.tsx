@@ -65,11 +65,7 @@ import {
 import { useI18n } from "../hooks/useI18n";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { useSourceLanguages } from "../hooks/useSourceLanguages";
-import {
-  buildContentTree,
-  type SourceGroup,
-  type TargetGroup,
-} from "../lib/content/content-tree";
+import { buildContentTree, type SourceGroup, type TargetGroup } from "../lib/content/content-tree";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
   validateSetForSharing,
@@ -96,20 +92,9 @@ import {
 } from "../lib/content/lesson-export";
 import { getStorage } from "../storage";
 import { USER_GENERATED_SOURCE } from "../storage/types";
-import {
-  isOfficialSource,
-  readUserRepos,
-  userRepoSource,
-} from "../lib/content/content-repos";
-import {
-  fetchRecommendedRepos,
-  recommendedSource,
-} from "../lib/content/recommended-repos";
-import type {
-  ContentLesson,
-  ContentSetEntry,
-  ContentSetSource,
-} from "../storage/types";
+import { isOfficialSource, readUserRepos, userRepoSource } from "../lib/content/content-repos";
+import { fetchRecommendedRepos, recommendedSource } from "../lib/content/recommended-repos";
+import type { ContentLesson, ContentSetEntry, ContentSetSource } from "../storage/types";
 import { notify } from "../utils/notify";
 
 /** Community contribution target repo (manual maintainer review). */
@@ -137,13 +122,9 @@ export default function ContentPage() {
   const [bookRecs, setBookRecs] = useState<BookRecommendations>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [perSetState, setPerSetState] = useState<Record<string, DownloadState>>(
-    {},
-  );
+  const [perSetState, setPerSetState] = useState<Record<string, DownloadState>>({});
   // Phase 59C — My Lessons delete-confirm modal target.
-  const [deleteTarget, setDeleteTarget] = useState<ContentSetEntry | null>(
-    null,
-  );
+  const [deleteTarget, setDeleteTarget] = useState<ContentSetEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
   // Phase 59E — import-lesson modal.
   const [showImport, setShowImport] = useState(false);
@@ -160,12 +141,8 @@ export default function ContentPage() {
   const [otherExpanded, setOtherExpanded] = useState(false);
   // EXP-023 Phase A — source filter over the content tree.
   // EXP-023 Phase B — per-repo trust/coach lookup for source badges.
-  const [repoMeta, setRepoMeta] = useState<
-    Record<string, { trust: number; coach: boolean }>
-  >({});
-  const [recommendedSources, setRecommendedSources] = useState<Set<string>>(
-    new Set(),
-  );
+  const [repoMeta, setRepoMeta] = useState<Record<string, { trust: number; coach: boolean }>>({});
+  const [recommendedSources, setRecommendedSources] = useState<Set<string>>(new Set());
   useEffect(() => {
     let cancelled = false;
     void readUserRepos().then((repos) => {
@@ -216,9 +193,7 @@ export default function ContentPage() {
   const [aiResult, setAiResult] = useState<AiValidationResult | null>(null);
   // Phase 64C — filenames already in the matching published set, for the
   // wizard's placement auto-numbering (empty => brand-new set).
-  const [shareExistingFilenames, setShareExistingFilenames] = useState<
-    string[]
-  >([]);
+  const [shareExistingFilenames, setShareExistingFilenames] = useState<string[]>([]);
   // Phase 64D — local contribution history (localStorage; no server).
   const [contributions, setContributions] = useState<SharedContribution[]>([]);
   useEffect(() => {
@@ -270,9 +245,7 @@ export default function ContentPage() {
   useEffect(() => {
     let cancelled = false;
     if (!searchActivated) return;
-    const downloaded = sets.filter(
-      (entry) => entry.source !== USER_GENERATED_SOURCE,
-    );
+    const downloaded = sets.filter((entry) => entry.source !== USER_GENERATED_SOURCE);
     if (downloaded.length === 0) {
       setSearchIndex([]);
       return;
@@ -299,10 +272,7 @@ export default function ContentPage() {
         // don't fire doomed listLessons calls.
         if (entry.cached_version) {
           try {
-            const listing = await getStorage().contentLoader.listLessons(
-              entry.source,
-              entry.id,
-            );
+            const listing = await getStorage().contentLoader.listLessons(entry.source, entry.id);
             const lessons = await Promise.all(
               listing.lessons.map(async (filename) => {
                 try {
@@ -314,19 +284,14 @@ export default function ContentPage() {
                   return {
                     filename,
                     title: lesson.title,
-                    haystack: buildLessonHaystack(
-                      lesson.title,
-                      lesson.cards ?? [],
-                    ),
+                    haystack: buildLessonHaystack(lesson.title, lesson.cards ?? []),
                   } satisfies IndexedLesson;
                 } catch {
                   return null;
                 }
               }),
             );
-            indexed.lessons = lessons.filter(
-              (lesson): lesson is IndexedLesson => lesson !== null,
-            );
+            indexed.lessons = lessons.filter((lesson): lesson is IndexedLesson => lesson !== null);
           } catch {
             /* set not cached / unreadable -> set-level index only */
           }
@@ -364,10 +329,9 @@ export default function ContentPage() {
       setSets(data.sets);
       setSources(data.sources);
     } catch (err) {
-      notify.error(
-        t("content.error.list_failed", "Could not load content sets."),
-        { apiError: err instanceof Error ? undefined : undefined },
-      );
+      notify.error(t("content.error.list_failed", "Could not load content sets."), {
+        apiError: err instanceof Error ? undefined : undefined,
+      });
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -383,8 +347,7 @@ export default function ContentPage() {
     void loadSets();
   };
 
-  const setKey = (entry: ContentSetEntry): string =>
-    `${entry.source}#${entry.id}`;
+  const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
 
   /** Navigate to a specific lesson file (used by search results). */
   const openLessonFile = (source: string, id: string, filename: string) => {
@@ -399,18 +362,10 @@ export default function ContentPage() {
     // cached lesson. Future enhancements can swap this for
     // a dedicated per-set lesson list page.
     try {
-      const listing = await getStorage().contentLoader.listLessons(
-        entry.source,
-        entry.id,
-      );
+      const listing = await getStorage().contentLoader.listLessons(entry.source, entry.id);
       const first = listing.lessons[0];
       if (!first) {
-        notify.warning(
-          t(
-            "content.warning.no_lessons_in_set",
-            "This set has no lessons yet.",
-          ),
-        );
+        notify.warning(t("content.warning.no_lessons_in_set", "This set has no lessons yet."));
         return;
       }
       const slug = entry.source.replace(/\//g, "--");
@@ -418,12 +373,9 @@ export default function ContentPage() {
         `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(entry.id)}/${encodeURIComponent(first)}`,
       );
     } catch (err) {
-      notify.error(
-        t("content.error.open_failed", "Could not open the lesson."),
-        {
-          apiError: err instanceof Error ? undefined : undefined,
-        },
-      );
+      notify.error(t("content.error.open_failed", "Could not open the lesson."), {
+        apiError: err instanceof Error ? undefined : undefined,
+      });
     }
   };
 
@@ -440,15 +392,9 @@ export default function ContentPage() {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      await getStorage().contentLoader.deleteSet(
-        deleteTarget.source,
-        deleteTarget.id,
-      );
+      await getStorage().contentLoader.deleteSet(deleteTarget.source, deleteTarget.id);
       setSets((prev) =>
-        prev.filter(
-          (row) =>
-            !(row.source === deleteTarget.source && row.id === deleteTarget.id),
-        ),
+        prev.filter((row) => !(row.source === deleteTarget.source && row.id === deleteTarget.id)),
       );
       notify.success(t("content.my_lessons.deleted", "Lesson deleted."));
       setDeleteTarget(null);
@@ -471,17 +417,10 @@ export default function ContentPage() {
     description: entry.description,
   });
 
-  const fetchSetLessons = async (
-    entry: ContentSetEntry,
-  ): Promise<ContentLesson[]> => {
-    const listing = await getStorage().contentLoader.listLessons(
-      entry.source,
-      entry.id,
-    );
+  const fetchSetLessons = async (entry: ContentSetEntry): Promise<ContentLesson[]> => {
+    const listing = await getStorage().contentLoader.listLessons(entry.source, entry.id);
     return Promise.all(
-      listing.lessons.map((f) =>
-        getStorage().contentLoader.getLesson(entry.source, entry.id, f),
-      ),
+      listing.lessons.map((f) => getStorage().contentLoader.getLesson(entry.source, entry.id, f)),
     );
   };
 
@@ -503,9 +442,7 @@ export default function ContentPage() {
   // Load every lesson of the published sets that share the entry's pair
   // + level — the candidate pool for the wizard's lesson-level
   // duplicate scan. Best-effort: a set that fails to load is skipped.
-  const loadSimilarLessonsFor = async (
-    entry: ContentSetEntry,
-  ): Promise<ContentLesson[]> => {
+  const loadSimilarLessonsFor = async (entry: ContentSetEntry): Promise<ContentLesson[]> => {
     const pool: ContentLesson[] = [];
     for (const candidate of samePairLevelSets(entry)) {
       try {
@@ -529,9 +466,7 @@ export default function ContentPage() {
       notify.success(t("content.my_lessons.exported", "Lesson exported."));
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
-      notify.error(
-        `${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`,
-      );
+      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
     }
   };
 
@@ -543,9 +478,7 @@ export default function ContentPage() {
       notify.success(t("content.my_lessons.exported", "Lesson exported."));
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
-      notify.error(
-        `${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`,
-      );
+      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
     }
   };
 
@@ -579,15 +512,11 @@ export default function ContentPage() {
       ...lesson,
       cards:
         kind === "card"
-          ? lesson.cards.map((c) =>
-              c.id === targetId ? { ...c, back: text } : c,
-            )
+          ? lesson.cards.map((c) => (c.id === targetId ? { ...c, back: text } : c))
           : lesson.cards,
       steps:
         kind === "step"
-          ? lesson.steps.map((s) =>
-              s.id === targetId ? { ...s, body: text } : s,
-            )
+          ? lesson.steps.map((s) => (s.id === targetId ? { ...s, body: text } : s))
           : lesson.steps,
     }));
     try {
@@ -604,9 +533,7 @@ export default function ContentPage() {
       });
       setShareLessons(next);
       setAppliedFixes((prev) => new Set(prev).add(fixKey));
-      notify.success(
-        t("content.ai_validation.fix_applied", "Suggestion applied."),
-      );
+      notify.success(t("content.ai_validation.fix_applied", "Suggestion applied."));
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       notify.error(
@@ -654,9 +581,7 @@ export default function ContentPage() {
       setShareResult(result);
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
-      notify.error(
-        `${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`,
-      );
+      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
       setShareTarget(null);
     } finally {
       setShareChecking(false);
@@ -708,12 +633,7 @@ export default function ContentPage() {
   // advisory only.
   const renderAiIssues = () => {
     if (!aiResult) return null;
-    const fixBtn = (
-      fixKey: string,
-      kind: "card" | "step",
-      targetId: string,
-      text: string,
-    ) =>
+    const fixBtn = (fixKey: string, kind: "card" | "step", targetId: string, text: string) =>
       text ? (
         appliedFixes.has(fixKey) ? (
           <span className="content-ai-applied">
@@ -735,10 +655,7 @@ export default function ContentPage() {
     return (
       <ul className="content-ai-issues" data-testid="content-ai-issues">
         {aiResult.translation_issues.map((it, i) => (
-          <li
-            key={`tr-${i}`}
-            className="content-ai-issue content-ai-issue-warn"
-          >
+          <li key={`tr-${i}`} className="content-ai-issue content-ai-issue-warn">
             <span>
               {it.card_id}: {it.issue}
               {it.suggestion && ` → ${it.suggestion}`}
@@ -747,10 +664,7 @@ export default function ContentPage() {
           </li>
         ))}
         {aiResult.grammar_issues.map((it, i) => (
-          <li
-            key={`gr-${i}`}
-            className="content-ai-issue content-ai-issue-warn"
-          >
+          <li key={`gr-${i}`} className="content-ai-issue content-ai-issue-warn">
             <span>
               {it.step_id}: {it.issue}
               {it.correction && ` → ${it.correction}`}
@@ -771,10 +685,7 @@ export default function ContentPage() {
           </li>
         ))}
         {aiResult.cultural_flags.map((flag, i) => (
-          <li
-            key={`cf-${i}`}
-            className="content-ai-issue content-ai-issue-flag"
-          >
+          <li key={`cf-${i}`} className="content-ai-issue content-ai-issue-flag">
             {flag}
           </li>
         ))}
@@ -786,37 +697,23 @@ export default function ContentPage() {
     const key = setKey(entry);
     setPerSetState((prev) => ({ ...prev, [key]: "downloading" }));
     try {
-      const updated = await getStorage().contentLoader.downloadSet(
-        entry.source,
-        entry.id,
-      );
+      const updated = await getStorage().contentLoader.downloadSet(entry.source, entry.id);
       setSets((prev) =>
-        prev.map((row) =>
-          row.source === entry.source && row.id === entry.id ? updated : row,
-        ),
+        prev.map((row) => (row.source === entry.source && row.id === entry.id ? updated : row)),
       );
       setPerSetState((prev) => ({ ...prev, [key]: "done" }));
-      notify.success(
-        t("content.toast.downloaded", "Set downloaded and ready to use."),
-      );
+      notify.success(t("content.toast.downloaded", "Set downloaded and ready to use."));
     } catch (err) {
       setPerSetState((prev) => ({ ...prev, [key]: "error" }));
-      notify.error(
-        t("content.error.download_failed", "Could not download the set."),
-        {
-          apiError: err instanceof Error ? undefined : undefined,
-        },
-      );
+      notify.error(t("content.error.download_failed", "Could not download the set."), {
+        apiError: err instanceof Error ? undefined : undefined,
+      });
     }
   };
 
   if (loading) {
     return (
-      <main
-        id="main"
-        className="page content-page"
-        data-testid="content-loading"
-      >
+      <main id="main" className="page content-page" data-testid="content-loading">
         <p>{t("content.loading", "Loading content sets…")}</p>
       </main>
     );
@@ -829,8 +726,7 @@ export default function ContentPage() {
   const originLabel = (entry: ContentSetEntry): string => {
     if (entry.domain === "adaptive")
       return t("content.my_lessons.from_adaptive", "from adaptive lesson");
-    if (entry.domain === "imported")
-      return t("content.my_lessons.from_imported", "imported");
+    if (entry.domain === "imported") return t("content.my_lessons.from_imported", "imported");
     return t("content.my_lessons.from_analysis", "from analysis");
   };
 
@@ -839,11 +735,7 @@ export default function ContentPage() {
   // EXP-023 Phase A — when a user repo is connected, offer a source
   // filter (Alle / Offiziell / Eigenes Repo) over the tree.
   const userRepoSources = [
-    ...new Set(
-      downloadedSets
-        .filter((s) => !isOfficialSource(s.source))
-        .map((s) => s.source),
-    ),
+    ...new Set(downloadedSets.filter((s) => !isOfficialSource(s.source)).map((s) => s.source)),
   ];
   const hasUserRepoSets = userRepoSources.length > 0;
   const visibleSets = downloadedSets.filter((s) => {
@@ -858,24 +750,14 @@ export default function ContentPage() {
     const downloadState = perSetState[key] ?? "idle";
     const isCached = entry.cached_version !== null;
     return (
-      <li
-        key={key}
-        className="content-set-row"
-        data-testid={`content-set-${entry.id}`}
-      >
+      <li key={key} className="content-set-row" data-testid={`content-set-${entry.id}`}>
         <div className="content-set-meta">
           <h4>
             {entry.title}
             {entry.title_native && entry.title_native !== entry.title && (
-              <span className="content-set-native">
-                {" "}
-                · {entry.title_native}
-              </span>
+              <span className="content-set-native"> · {entry.title_native}</span>
             )}
-            <span
-              className="content-set-source"
-              data-testid={`content-set-${entry.id}-source`}
-            >
+            <span className="content-set-source" data-testid={`content-set-${entry.id}-source`}>
               {entry.source.startsWith("bundled:")
                 ? t("content.source.bundled", "Bundled")
                 : t("content.source.github", "GitHub")}
@@ -924,25 +806,17 @@ export default function ContentPage() {
               {entry.lesson_count} {t("content.lessons", "lessons")}
             </span>
             {isCached && (
-              <span
-                className="content-set-cached"
-                data-testid={`content-set-${entry.id}-cached`}
-              >
+              <span className="content-set-cached" data-testid={`content-set-${entry.id}-cached`}>
                 {t("content.status.ready", "Ready")} ({entry.cached_version})
               </span>
             )}
             {entry.update_available && (
-              <span
-                className="content-set-update"
-                data-testid={`content-set-${entry.id}-update`}
-              >
+              <span className="content-set-update" data-testid={`content-set-${entry.id}-update`}>
                 {t("content.status.update_available", "Update available")}
               </span>
             )}
           </p>
-          {entry.description && (
-            <p className="content-set-desc">{entry.description}</p>
-          )}
+          {entry.description && <p className="content-set-desc">{entry.description}</p>}
         </div>
         <div className="content-set-action">
           <span
@@ -976,15 +850,9 @@ export default function ContentPage() {
             className="content-set-download-btn"
             onClick={() => handleDownload(entry)}
             disabled={
-              downloadState === "downloading" ||
-              (isCached && !entry.update_available) ||
-              !online
+              downloadState === "downloading" || (isCached && !entry.update_available) || !online
             }
-            title={
-              !online
-                ? t("pwa.action_unavailable", "Not available offline")
-                : undefined
-            }
+            title={!online ? t("pwa.action_unavailable", "Not available offline") : undefined}
             data-testid={`content-set-${entry.id}-action`}
           >
             {downloadState === "downloading" ? (
@@ -1021,11 +889,7 @@ export default function ContentPage() {
     const isCollapsed = collapsed[nodeId] === true;
     const targetName = languageDisplayName(group.targetLanguage, lang);
     return (
-      <div
-        key={nodeId}
-        className="content-target-group"
-        data-testid={`content-target-${nodeId}`}
-      >
+      <div key={nodeId} className="content-target-group" data-testid={`content-target-${nodeId}`}>
         <button
           type="button"
           className="content-tree-toggle"
@@ -1039,11 +903,8 @@ export default function ContentPage() {
             <ChevronDown size={16} aria-hidden="true" />
           )}
           <span className="content-tree-label">
-            {t("content.tree.learn", "Learn {lang}").replace(
-              "{lang}",
-              targetName,
-            )}{" "}
-            ({group.targetLanguage.toUpperCase()})
+            {t("content.tree.learn", "Learn {lang}").replace("{lang}", targetName)} (
+            {group.targetLanguage.toUpperCase()})
           </span>
           <span className="content-tree-count">
             {group.setCount} {t("content.tree.sets", "sets")}
@@ -1058,8 +919,7 @@ export default function ContentPage() {
                 data-testid={`content-level-${nodeId}-${levelGroup.level}`}
               >
                 <h3 className="content-level-title">
-                  {levelGroup.level} · {levelGroup.sets.length}{" "}
-                  {t("content.lessons", "lessons")}
+                  {levelGroup.level} · {levelGroup.sets.length} {t("content.lessons", "lessons")}
                 </h3>
                 <ul className="content-set-list">
                   {levelGroup.sets.map((entry) => renderSetRow(entry))}
@@ -1073,9 +933,7 @@ export default function ContentPage() {
   };
 
   const renderSourceTargets = (group: SourceGroup) =>
-    group.targets.map((target) =>
-      renderTargetGroup(group.sourceLanguage, target),
-    );
+    group.targets.map((target) => renderTargetGroup(group.sourceLanguage, target));
 
   // Domain icon for the knowledge ("Wissen") section. Unknown domains
   // fall back to a graduation-cap glyph.
@@ -1087,10 +945,7 @@ export default function ContentPage() {
   };
 
   const domainLabel = (domain: string) =>
-    t(
-      `content.tree.domain_${domain}`,
-      domain.charAt(0).toUpperCase() + domain.slice(1),
-    );
+    t(`content.tree.domain_${domain}`, domain.charAt(0).toUpperCase() + domain.slice(1));
 
   return (
     <main id="main" className="page content-page" data-testid="content-page">
@@ -1126,10 +981,7 @@ export default function ContentPage() {
 
       {/* UX overhaul C1 — compact toolbar: search FIRST (full width),
           then icon-only action buttons (icon + label from md up). */}
-      <div
-        className="mb-4 flex flex-wrap items-center gap-2"
-        data-testid="content-toolbar"
-      >
+      <div className="mb-4 flex flex-wrap items-center gap-2" data-testid="content-toolbar">
         <div
           className="relative flex min-w-[200px] flex-1 items-center"
           data-testid="content-search-bar"
@@ -1206,9 +1058,7 @@ export default function ContentPage() {
             data-testid="content-learning-path"
           >
             <MapIcon className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("nav.learning_path", "Learning Path")}
-            </span>
+            <span className="hidden md:inline">{t("nav.learning_path", "Learning Path")}</span>
           </Button>
           <Button
             type="button"
@@ -1233,21 +1083,14 @@ export default function ContentPage() {
           discovery). */}
       {!searchResult.active && userId && (
         <div className="mb-4">
-          <ContinueLearning
-            userId={userId}
-            maxItems={5}
-            showWhenEmpty={false}
-          />
+          <ContinueLearning userId={userId} maxItems={5} showWhenEmpty={false} />
         </div>
       )}
 
       {/* Phase 59C — My Lessons (user-generated sets). Hidden while a
           search is active (results replace the browse view). */}
       {!searchResult.active && (
-        <section
-          className="content-section content-my-lessons"
-          data-testid="content-my-lessons"
-        >
+        <section className="content-section content-my-lessons" data-testid="content-my-lessons">
           <div className="content-section-head">
             <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
           </div>
@@ -1259,10 +1102,7 @@ export default function ContentPage() {
               )}
             </p>
           ) : (
-            <ul
-              className="content-set-list"
-              data-testid="content-my-lessons-list"
-            >
+            <ul className="content-set-list" data-testid="content-my-lessons-list">
               {userSets.map((entry) => (
                 <li
                   key={setKey(entry)}
@@ -1366,34 +1206,22 @@ export default function ContentPage() {
             ).replace("{n}", String(contributions.length))}
           </p>
           {contributions.length >= CONTRIBUTOR_THRESHOLD && (
-            <p
-              className="content-contributor-badge"
-              data-testid="content-contributor-badge"
-            >
+            <p className="content-contributor-badge" data-testid="content-contributor-badge">
               {t(
                 "content.contributions.contributor",
                 "Community Contributor — {n} lessons shared!",
               ).replace("{n}", String(contributions.length))}
             </p>
           )}
-          <ul
-            className="content-contributions-list"
-            data-testid="content-contributions-list"
-          >
+          <ul className="content-contributions-list" data-testid="content-contributions-list">
             {contributions.map((c) => (
               <li key={c.github_url} className="content-contribution-row">
                 <span className="content-contribution-title">{c.title}</span>
-                <span className="content-contribution-date">
-                  {c.shared_at.slice(0, 10)}
-                </span>
+                <span className="content-contribution-date">{c.shared_at.slice(0, 10)}</span>
                 <span className="content-contribution-status">
                   {t(`content.contributions.status_${c.status}`, c.status)}
                 </span>
-                <a
-                  href={c.github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href={c.github_url} target="_blank" rel="noopener noreferrer">
                   {t("content.contributions.view", "View")}
                 </a>
               </li>
@@ -1403,28 +1231,20 @@ export default function ContentPage() {
       )}
 
       {searchResult.active ? (
-        <section
-          className="content-search-results space-y-4"
-          data-testid="content-search-results"
-        >
+        <section className="content-search-results space-y-4" data-testid="content-search-results">
           {searchResult.matches.length === 0 ? (
             <div className="content-empty" data-testid="content-search-empty">
               <p>
-                {t(
-                  "content.search.no_results",
-                  "No results for '{query}'",
-                ).replace("{query}", searchResult.query.trim())}
+                {t("content.search.no_results", "No results for '{query}'").replace(
+                  "{query}",
+                  searchResult.query.trim(),
+                )}
               </p>
-              <p className="muted">
-                {t("content.search.hint", "Try a different search term")}
-              </p>
+              <p className="muted">{t("content.search.hint", "Try a different search term")}</p>
             </div>
           ) : (
             <>
-              <p
-                className="text-sm text-muted-foreground"
-                data-testid="content-search-count"
-              >
+              <p className="text-sm text-muted-foreground" data-testid="content-search-count">
                 {t("content.search.results", "{count} results").replace(
                   "{count}",
                   String(searchResult.lessonCount),
@@ -1457,18 +1277,11 @@ export default function ContentPage() {
                             type="button"
                             className="text-left text-accent hover:underline"
                             onClick={() =>
-                              openLessonFile(
-                                match.source,
-                                match.setId,
-                                lessonRef.filename,
-                              )
+                              openLessonFile(match.source, match.setId, lessonRef.filename)
                             }
                             data-testid={`content-search-lesson-${match.setId}-${lessonRef.filename}`}
                           >
-                            {highlightNodes(
-                              lessonRef.title,
-                              searchResult.query,
-                            )}
+                            {highlightNodes(lessonRef.title, searchResult.query)}
                           </button>
                         </li>
                       ))}
@@ -1486,10 +1299,7 @@ export default function ContentPage() {
             const gaps = detectGaps(downloadedSets).slice(0, 5);
             if (gaps.length === 0) return null;
             return (
-              <section
-                className="content-section content-gaps"
-                data-testid="content-gaps"
-              >
+              <section className="content-section content-gaps" data-testid="content-gaps">
                 <h2>{t("content.gaps.title", "Missing Lessons")}</h2>
                 <p className="content-gaps-intro">
                   {t(
@@ -1497,10 +1307,7 @@ export default function ContentPage() {
                     "The community library has a few gaps. Can you help fill one?",
                   )}
                 </p>
-                <ul
-                  className="content-gaps-list"
-                  data-testid="content-gaps-list"
-                >
+                <ul className="content-gaps-list" data-testid="content-gaps-list">
                   {gaps.map((gap, i) => (
                     <li
                       key={`${gap.kind}-${gap.source}-${gap.target}-${gap.level}-${i}`}
@@ -1517,14 +1324,8 @@ export default function ContentPage() {
                               "{target} {level} for {source} speakers doesn't exist yet.",
                             )
                         )
-                          .replace(
-                            "{target}",
-                            languageDisplayName(gap.target, lang),
-                          )
-                          .replace(
-                            "{source}",
-                            languageDisplayName(gap.source, lang),
-                          )
+                          .replace("{target}", languageDisplayName(gap.target, lang))
+                          .replace("{source}", languageDisplayName(gap.source, lang))
                           .replace("{level}", gap.level)}
                       </span>{" "}
                       <a
@@ -1554,10 +1355,7 @@ export default function ContentPage() {
             >
               {[
                 ["all", t("content.filter.all", "All")] as [string, string],
-                ["official", t("content.filter.official", "Official")] as [
-                  string,
-                  string,
-                ],
+                ["official", t("content.filter.official", "Official")] as [string, string],
                 ...userRepoSources.map((src) => [src, src] as [string, string]),
               ].map(([value, label]) => (
                 <Button
@@ -1586,10 +1384,7 @@ export default function ContentPage() {
             <div className="content-tree" data-testid="content-tree">
               {/* Primary: the source language(s) the learner speaks. */}
               {tree.primary.length > 0 && (
-                <section
-                  className="content-source-primary"
-                  data-testid="content-source-primary"
-                >
+                <section className="content-source-primary" data-testid="content-source-primary">
                   <h2 className="content-source-heading">
                     {t("content.tree.i_speak", "I speak")}:{" "}
                     {tree.primary
@@ -1623,10 +1418,7 @@ export default function ContentPage() {
 
               {/* Other source languages — collapsed by default. */}
               {tree.other.length > 0 && (
-                <section
-                  className="content-source-other"
-                  data-testid="content-source-other"
-                >
+                <section className="content-source-other" data-testid="content-source-other">
                   <button
                     type="button"
                     className="content-tree-toggle content-other-toggle"
@@ -1640,14 +1432,9 @@ export default function ContentPage() {
                       <ChevronRight size={16} aria-hidden="true" />
                     )}
                     <span className="content-tree-label">
-                      {t(
-                        "content.tree.other_sources",
-                        "Other source languages",
-                      )}
+                      {t("content.tree.other_sources", "Other source languages")}
                     </span>
-                    <span className="content-tree-count">
-                      {tree.other.length}
-                    </span>
+                    <span className="content-tree-count">{tree.other.length}</span>
                   </button>
                   {otherExpanded && (
                     <div className="content-other-body">
@@ -1657,10 +1444,7 @@ export default function ContentPage() {
                           data-testid={`content-source-${group.sourceLanguage}`}
                         >
                           <h3 className="content-source-sub">
-                            {t(
-                              "content.tree.for_speakers",
-                              "For {lang} speakers",
-                            ).replace(
+                            {t("content.tree.for_speakers", "For {lang} speakers").replace(
                               "{lang}",
                               languageDisplayName(group.sourceLanguage, lang),
                             )}
@@ -1676,22 +1460,22 @@ export default function ContentPage() {
               {/* v1.3 — Knowledge ("Wissen"): non-language domain sets,
               grouped by domain with a domain-specific icon. */}
               {tree.knowledge.length > 0 && (
-                <section
-                  className="content-source-knowledge"
-                  data-testid="content-knowledge"
-                >
+                <section className="content-source-knowledge" data-testid="content-knowledge">
                   <h2 className="content-source-heading">
                     {t("content.tree.knowledge", "Knowledge")}
                   </h2>
                   {tree.knowledge.map((group) => (
-                    <div
-                      key={group.domain}
-                      data-testid={`content-domain-${group.domain}`}
-                    >
+                    <div key={group.domain} data-testid={`content-domain-${group.domain}`}>
                       <h3 className="content-source-sub content-domain-sub">
                         {domainIcon(group.domain)} {domainLabel(group.domain)}
                       </h3>
-                      {group.sets.map((entry) => renderSetRow(entry))}
+                      {/* renderSetRow returns a <li>; the knowledge groups
+                          must wrap them in a list like the language sets do
+                          (#273, axe listitem — a listitem must be contained
+                          in a <ul>/<ol>). */}
+                      <ul className="content-set-list">
+                        {group.sets.map((entry) => renderSetRow(entry))}
+                      </ul>
                       <BookRecommendationsSection
                         domain={group.domain}
                         books={booksForDomain(bookRecs, group.domain)}
@@ -1748,10 +1532,7 @@ export default function ContentPage() {
           onClose={closeShareModal}
           aiSection={
             shareResult && hasKey ? (
-              <section
-                className="content-ai-validation"
-                data-testid="content-ai-validation"
-              >
+              <section className="content-ai-validation" data-testid="content-ai-validation">
                 {!aiResult && !aiRunning && (
                   <>
                     <p className="content-ai-intro">
@@ -1764,17 +1545,11 @@ export default function ContentPage() {
                       {t(
                         "content.ai_validation.privacy",
                         "Your lesson content will be sent to {provider}. No personal data is transmitted.",
-                      ).replace(
-                        "{provider}",
-                        activeProvider ?? "the AI provider",
-                      )}
+                      ).replace("{provider}", activeProvider ?? "the AI provider")}
                     </p>
                     <label className="form-row form-row-toggle">
                       <span className="form-label">
-                        {t(
-                          "content.ai_validation.consent",
-                          "Run AI validation",
-                        )}
+                        {t("content.ai_validation.consent", "Run AI validation")}
                       </span>
                       <input
                         type="checkbox"
@@ -1796,10 +1571,7 @@ export default function ContentPage() {
                 )}
                 {aiRunning && (
                   <p data-testid="content-ai-running">
-                    {t(
-                      "content.ai_validation.running",
-                      "AI is reviewing your lesson…",
-                    )}
+                    {t("content.ai_validation.running", "AI is reviewing your lesson…")}
                   </p>
                 )}
                 {aiResult && (
@@ -1812,10 +1584,7 @@ export default function ContentPage() {
                       }
                     >
                       {aiResult.overall === "pass"
-                        ? t(
-                            "content.ai_validation.ai_passed",
-                            "AI review: looks good.",
-                          )
+                        ? t("content.ai_validation.ai_passed", "AI review: looks good.")
                         : t(
                             "content.ai_validation.ai_review",
                             "AI review: suggestions below.",
@@ -1844,10 +1613,7 @@ export default function ContentPage() {
               {deleteTarget.title}
             </h2>
             <p>
-              {t(
-                "content.my_lessons.delete_confirm",
-                "Delete this lesson? This cannot be undone.",
-              )}
+              {t("content.my_lessons.delete_confirm", "Delete this lesson? This cannot be undone.")}
             </p>
             <div className="form-actions">
               <Button

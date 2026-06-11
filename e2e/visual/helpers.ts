@@ -207,6 +207,12 @@ async function answerCurrentStep(page: Page): Promise<void> {
  * Pair a matching exercise so that at least one pair is WRONG and one is
  * correct, then check — leaving the post-submit feedback (green + red) on
  * screen. Returns false when the grid is too small to make a mixed result.
+ *
+ * Inside a lesson the MatchingExercise is rendered ``controlled`` (see
+ * ``Lesson.tsx``), so its internal ``matching-submit`` button is NOT
+ * rendered — submission is driven by the shared external ``lesson-check``
+ * button (``exerciseRef.submit()`` -> ``setSubmitted(true)``), which then
+ * renders ``matching-result``. Issue #270.
  */
 async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
     const lefts = page.getByTestId(/^matching-left-\d+$/);
@@ -222,7 +228,7 @@ async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
         await page.getByTestId(`matching-left-${j}`).click();
         await page.getByTestId(`matching-right-${j}`).click();
     }
-    const submit = page.getByTestId("matching-submit");
+    const submit = page.getByTestId("lesson-check");
     await expect(submit).toBeEnabled({timeout: 5_000});
     await submit.click();
     await expect(page.getByTestId("matching-result")).toBeVisible({

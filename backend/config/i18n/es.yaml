@@ -1044,6 +1044,9 @@ anki:
   export_success: '{n} tarjetas exportadas a {filename}.'
   export_failed: Exportación fallida.
   empty: Aún no hay tarjetas. Extrae desde una sesión o conversación importada, o crea manualmente.
+  empty_title: "Aún no hay tarjetas de Anki."
+  empty_body: "Importa una conversación y haz clic en 'Extraer tarjetas de Anki' para crear fichas."
+  empty_cta: "Importar una conversación"
   load_failed: No se pudieron cargar las tarjetas.
   delete_confirm: ¿Eliminar esta tarjeta?
   front: Anverso

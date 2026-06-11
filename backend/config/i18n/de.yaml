@@ -1044,6 +1044,9 @@ anki:
   export_success: '{n} Karten in {filename} exportiert.'
   export_failed: Export fehlgeschlagen.
   empty: Noch keine Karten. Lass Karten aus einer Sitzung oder einer importierten Konversation extrahieren oder erstelle sie manuell.
+  empty_title: "Noch keine Anki-Karten vorhanden."
+  empty_body: "Importiere eine Konversation und klicke auf 'Anki-Karten extrahieren', um Karteikarten zu erstellen."
+  empty_cta: "Konversation importieren"
   load_failed: Karten konnten nicht geladen werden.
   delete_confirm: Diese Karte löschen?
   front: Vorderseite

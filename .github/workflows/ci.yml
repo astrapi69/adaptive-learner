@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-python@v6
         with:
@@ -73,7 +73,7 @@ jobs:
   #       plugin:
   #         - adaptive-learner-plugin-<your-plugin-name>
   #   steps:
-  #     - uses: actions/checkout@v5
+  #     - uses: actions/checkout@v6
   #     - uses: actions/setup-python@v6
   #       with:
   #         python-version: "3.12"
@@ -98,9 +98,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: "24"
           cache: "npm"
@@ -167,13 +167,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run hooks on all files
+        # SKIP the format-on-touch Prettier hook (#254): it --writes whatever
+        # files it's given, and --all-files passes the whole tree — which
+        # (step 1, ~90% unformatted) would reformat everything and fail. It's
+        # a per-commit incremental hook, not an all-files gate; the
+        # non-blocking `format:check` step in frontend-tests reports drift.
+        # `eslint` is skipped too (#268): the hook runs `npx eslint src/`,
+        # which needs frontend/node_modules — this job never runs `npm ci`,
+        # so it would fail with `Cannot find package '@eslint/js'`. The
+        # Frontend Tests job already runs ESLint with deps installed.
+        env:
+          SKIP: prettier-frontend,eslint
         run: pre-commit run --all-files --show-diff-on-failure
 
   lint-and-type-check:
@@ -181,7 +192,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -210,16 +221,25 @@ jobs:
       # dep; --skip-editable skips the local path-dep plugins (no PyPI
       # advisories). Audits the third-party dependency tree; a known
       # advisory fails CI for triage.
+      #
+      # #268 — pip-audit audits the whole venv, including the build
+      # toolchain (pip/setuptools/wheel). Those get advisories on their own
+      # cadence (e.g. pip 26.1.1 PYSEC-2026-196), which are not OUR deps and
+      # are fixable by keeping the toolchain current — so upgrade it first.
+      # A toolchain advisory with no fix yet can be parked with
+      # `--ignore-vuln <ID>` (document the ID), never by dropping the gate.
       - name: pip-audit (backend deps)
         working-directory: backend
-        run: poetry run pip-audit --skip-editable
+        run: |
+          poetry run pip install --quiet --upgrade pip setuptools wheel
+          poetry run pip-audit --skip-editable
 
   docs-verification:
     name: Docs drift verifier
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -242,9 +262,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Check out content repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: astrapi69/adaptive-learner-content
           path: adaptive-learner-content

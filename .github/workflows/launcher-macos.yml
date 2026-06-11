@@ -57,7 +57,7 @@ jobs:
       run:
         working-directory: launcher
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -117,7 +117,7 @@ jobs:
 
       - name: Upload smoke artifact (push / PR / dispatch)
         if: github.event_name != 'release'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: adaptive-learner-launcher-macos
           path: |

@@ -19,12 +19,7 @@
  * tracking / tools).
  */
 
-import {
-  API_BASE,
-  type AIProvider,
-  type LearningMethod,
-  type MessageRole,
-} from "../lib/constants";
+import { API_BASE, type AIProvider, type LearningMethod, type MessageRole } from "../lib/constants";
 import type {
   AssessmentEvaluatePayload,
   AssessmentQuestion,
@@ -182,14 +177,7 @@ async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<T> {
     } catch {
       /* non-JSON error body — keep generic detail */
     }
-    throw new ApiError(
-      response.status,
-      detail,
-      path,
-      method,
-      stacktrace,
-      extra,
-    );
+    throw new ApiError(response.status, detail, path, method, stacktrace, extra);
   }
   if (response.status === 204) {
     return undefined as T;
@@ -197,17 +185,12 @@ async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<T> {
   return (await response.json()) as T;
 }
 
-function buildUrl(
-  path: string,
-  query?: Record<string, string | number | undefined>,
-): string {
+function buildUrl(path: string, query?: Record<string, string | number | undefined>): string {
   const base = `${API_BASE}${path}`;
   if (!query) return base;
   const qs = Object.entries(query)
     .filter(([, v]) => v !== undefined && v !== null)
-    .map(
-      ([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`,
-    )
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
     .join("&");
   return qs ? `${base}?${qs}` : base;
 }
@@ -242,52 +225,54 @@ export interface IdentityStatusPayload {
 
 // --- Request payload shapes --------------------------------------------
 
-export interface UserCreateBody {
-  name: string;
-  email?: string | null;
-  language?: string;
-}
-
-export interface UserUpdateBody {
-  name?: string;
-  email?: string | null;
-  language?: string;
-}
-
-export interface LearningProjectCreateBody {
-  topic: string;
-  goal: string;
-  timeframe: string;
-  daily_minutes: number;
-  current_problem?: string | null;
-  active?: boolean;
-}
-
-export interface LearningProjectUpdateBody {
-  topic?: string;
-  goal?: string;
-  timeframe?: string;
-  daily_minutes?: number;
-  current_problem?: string | null;
-  active?: boolean;
-}
-
-export interface SettingsPatchBody {
-  active_provider?: AIProvider;
-  language?: string;
-  // v0.4.0 — per-provider model override. ``""`` (empty string)
-  // clears the override; a non-empty string sets it; field
-  // omitted leaves the existing column alone.
-  model_override_anthropic?: string;
-  model_override_openai?: string;
-  model_override_gemini?: string;
-}
-
-export interface ApiKeySetBody {
-  provider: AIProvider;
-  key: string;
-}
-
+// #252 — request-body DTOs moved to ./request-types (a pure module that
+// imports only lib/constants) so the IStorageService contract in
+// storage/types.ts can name them WITHOUT importing this client module —
+// breaking the api/client <-> storage/types import cycle. Imported for local
+// use in the namespace signatures + re-exported so existing
+// `from "../api/client"` imports keep working.
+import type {
+  UserCreateBody,
+  UserUpdateBody,
+  LearningProjectCreateBody,
+  LearningProjectUpdateBody,
+  SettingsPatchBody,
+  ApiKeySetBody,
+  SessionStartBody,
+  SessionMessageBody,
+  SessionRatingBody,
+  CurriculumCreateBody,
+  CurriculumUpdateBody,
+  TopicCreateBody,
+  TopicUpdateBody,
+  LessonCreateBody,
+  LessonUpdateBody,
+  SubjectCreateBody,
+  SubjectUpdateBody,
+  TagCreateBody,
+  TagUpdateBody,
+} from "./request-types";
+export type {
+  UserCreateBody,
+  UserUpdateBody,
+  LearningProjectCreateBody,
+  LearningProjectUpdateBody,
+  SettingsPatchBody,
+  ApiKeySetBody,
+  SessionStartBody,
+  SessionMessageBody,
+  SessionRatingBody,
+  CurriculumCreateBody,
+  CurriculumUpdateBody,
+  TopicCreateBody,
+  TopicUpdateBody,
+  LessonCreateBody,
+  LessonUpdateBody,
+  SubjectCreateBody,
+  SubjectUpdateBody,
+  TagCreateBody,
+  TagUpdateBody,
+} from "./request-types";
 export interface AvailableModelResponse {
   id: string;
   name: string;
@@ -317,114 +302,17 @@ export interface PluginInspection {
   };
 }
 
-export interface SessionStartBody {
-  project_id: string;
-  method?: LearningMethod;
-  cycle_step?: number;
-  lang?: string;
-  /**
-   * Phase 36 Bug 4 — optional FK back to the imported
-   * conversation that started this session. The backend resumes
-   * an existing active session for the same conversation
-   * instead of creating a new one when this is set.
-   */
-  imported_conversation_id?: string | null;
-}
-
-export interface SessionMessageBody {
-  role: MessageRole;
-  content: string;
-}
-
-export interface SessionRatingBody {
-  understanding: number;
-  stress: number;
-  method_fit: number;
-  notes?: string | null;
-}
-
 // --- Curriculum bodies -------------------------------------------------
 
-export interface CurriculumCreateBody {
-  title: string;
-  description?: string | null;
-  language?: string;
-  /**
-   * Phase 36 Bug 3 — optional FK back to the imported conversation
-   * this curriculum was generated from. Lets ImportDetail flip
-   * the "Create curriculum" CTA into a "Go to curriculum"
-   * navigation so users do not generate duplicates.
-   */
-  imported_conversation_id?: string | null;
-}
-
-export interface CurriculumUpdateBody {
-  title?: string;
-  description?: string | null;
-  language?: string;
-}
-
-export interface TopicCreateBody {
-  title: string;
-  description?: string | null;
-  parent_id?: string | null;
-  order_index?: number;
-}
-
-export interface TopicUpdateBody {
-  title?: string;
-  description?: string | null;
-  parent_id?: string | null;
-  order_index?: number;
-}
-
-export interface LessonCreateBody {
-  title: string;
-  content?: string;
-  order_index?: number;
-}
-
-export interface LessonUpdateBody {
-  title?: string;
-  content?: string;
-  order_index?: number;
-}
-
 // --- Taxonomy (Phase 22) -----------------------------------------------
-
-export interface SubjectCreateBody {
-  name: string;
-  parent_id?: string | null;
-  description?: string | null;
-  icon?: string | null;
-}
-
-export interface SubjectUpdateBody {
-  name?: string;
-  parent_id?: string | null;
-  description?: string | null;
-  icon?: string | null;
-}
-
-export interface TagCreateBody {
-  name: string;
-  color?: string | null;
-}
-
-export interface TagUpdateBody {
-  name?: string;
-  color?: string | null;
-}
 
 // --- Public namespaces --------------------------------------------------
 
 export const api = {
-  health: () =>
-    apiCall<{ status: string; version: string; debug: boolean }>("/health"),
+  health: () => apiCall<{ status: string; version: string; debug: boolean }>("/health"),
 
   i18n: {
-    get: (lang: string) =>
-      apiCall<Record<string, unknown>>(`/i18n/${encodeURIComponent(lang)}`),
+    get: (lang: string) => apiCall<Record<string, unknown>>(`/i18n/${encodeURIComponent(lang)}`),
   },
 
   // --- Identity (Phase 41A) -------------------------------------------
@@ -463,10 +351,8 @@ export const api = {
   // --- Users -----------------------------------------------------------
 
   users: {
-    create: (body: UserCreateBody) =>
-      apiCall<User>("/users", { method: "POST", body }),
-    get: (userId: string) =>
-      apiCall<User>(`/users/${encodeURIComponent(userId)}`),
+    create: (body: UserCreateBody) => apiCall<User>("/users", { method: "POST", body }),
+    get: (userId: string) => apiCall<User>(`/users/${encodeURIComponent(userId)}`),
     update: (userId: string, body: UserUpdateBody) =>
       apiCall<User>(`/users/${encodeURIComponent(userId)}`, {
         method: "PATCH",
@@ -476,14 +362,12 @@ export const api = {
     // User-scoped projects -- nested under the user prefix.
     projects: {
       list: (userId: string) =>
-        apiCall<LearningProject[]>(
-          `/users/${encodeURIComponent(userId)}/projects`,
-        ),
+        apiCall<LearningProject[]>(`/users/${encodeURIComponent(userId)}/projects`),
       create: (userId: string, body: LearningProjectCreateBody) =>
-        apiCall<LearningProject>(
-          `/users/${encodeURIComponent(userId)}/projects`,
-          { method: "POST", body },
-        ),
+        apiCall<LearningProject>(`/users/${encodeURIComponent(userId)}/projects`, {
+          method: "POST",
+          body,
+        }),
     },
   },
 
@@ -508,8 +392,7 @@ export const api = {
      * ``setApiKey`` / ``deleteApiKey`` (the encrypted-write
      * path is intentionally separate).
      */
-    get: (userId: string) =>
-      apiCall<UserSettings>(`/settings/${encodeURIComponent(userId)}`),
+    get: (userId: string) => apiCall<UserSettings>(`/settings/${encodeURIComponent(userId)}`),
     update: (userId: string, body: SettingsPatchBody) =>
       apiCall<UserSettings>(`/settings/${encodeURIComponent(userId)}`, {
         method: "PATCH",
@@ -533,10 +416,7 @@ export const api = {
      * ``key`` is omitted the backend tests the configured key.
      * Does NOT save anything.
      */
-    testApiKey: (
-      userId: string,
-      body: { provider: AIProvider; key?: string },
-    ) =>
+    testApiKey: (userId: string, body: { provider: AIProvider; key?: string }) =>
       apiCall<{ success: boolean; kind: string }>(
         `/settings/${encodeURIComponent(userId)}/test-api-key`,
         { method: "POST", body },
@@ -544,14 +424,11 @@ export const api = {
 
     /** Phase 65 — rollback cache: store a tested-good key as the
      *  last-known-good backup. */
-    backupApiKey: (
-      userId: string,
-      body: { provider: AIProvider; key: string },
-    ) =>
-      apiCall<UserSettings>(
-        `/settings/${encodeURIComponent(userId)}/api-key-backup`,
-        { method: "POST", body },
-      ),
+    backupApiKey: (userId: string, body: { provider: AIProvider; key: string }) =>
+      apiCall<UserSettings>(`/settings/${encodeURIComponent(userId)}/api-key-backup`, {
+        method: "POST",
+        body,
+      }),
     getApiKeyBackup: (userId: string, provider: AIProvider) =>
       apiCall<{ has: boolean; tested_at: string | null }>(
         `/settings/${encodeURIComponent(userId)}/api-key-backup/${encodeURIComponent(provider)}`,
@@ -591,8 +468,7 @@ export const api = {
   github: {
     /** Token status: configured + source (env / secrets.yaml / none).
      *  The token itself is never returned. */
-    getStatus: () =>
-      apiCall<{ configured: boolean; source: string }>(`/github/token`),
+    getStatus: () => apiCall<{ configured: boolean; source: string }>(`/github/token`),
     /** Store a GitHub PAT (Fernet-encrypted in secrets.yaml). */
     setToken: (token: string) =>
       apiCall<{ configured: boolean; source: string }>(`/github/token`, {
@@ -605,10 +481,10 @@ export const api = {
       }),
     /** Verify a token (or the configured one when omitted). */
     verifyToken: (token?: string) =>
-      apiCall<{ valid: boolean; username: string | null; kind: string }>(
-        `/github/verify-token`,
-        { method: "POST", body: { token: token ?? null } },
-      ),
+      apiCall<{ valid: boolean; username: string | null; kind: string }>(`/github/verify-token`, {
+        method: "POST",
+        body: { token: token ?? null },
+      }),
     /** Run the fork -> branch -> commit -> PR flow server-side. */
     createPr: (body: {
       upstream: string;
@@ -621,10 +497,10 @@ export const api = {
       pr_body: string;
       manifest_update?: { set_path: string; lesson_filename: string } | null;
     }) =>
-      apiCall<{ url: string; number: number; manifest_updated: boolean }>(
-        `/github/create-pr`,
-        { method: "POST", body },
-      ),
+      apiCall<{ url: string; number: number; manifest_updated: boolean }>(`/github/create-pr`, {
+        method: "POST",
+        body,
+      }),
   },
 
   // --- Assessment plugin ----------------------------------------------
@@ -640,9 +516,7 @@ export const api = {
         body,
       }),
     profile: (projectId: string) =>
-      apiCall<LearningProfile>(
-        `/plugins/assessment/profile/${encodeURIComponent(projectId)}`,
-      ),
+      apiCall<LearningProfile>(`/plugins/assessment/profile/${encodeURIComponent(projectId)}`),
   },
 
   // --- Session plugin --------------------------------------------------
@@ -687,9 +561,7 @@ export const api = {
           signal: handlers.signal,
           onEvent: (event) => {
             if (event.event === "start" && handlers.onStart) {
-              handlers.onStart(
-                (event.data as { user_message: SessionMessage }).user_message,
-              );
+              handlers.onStart((event.data as { user_message: SessionMessage }).user_message);
             } else if (event.event === "chunk") {
               handlers.onChunk((event.data as { delta: string }).delta);
             } else if (event.event === "done") {
@@ -699,15 +571,14 @@ export const api = {
         }),
       ),
     rate: (sessionId: string, body: SessionRatingBody) =>
-      apiCall<SessionRating>(
-        `/plugins/session/${encodeURIComponent(sessionId)}/rate`,
-        { method: "POST", body },
-      ),
+      apiCall<SessionRating>(`/plugins/session/${encodeURIComponent(sessionId)}/rate`, {
+        method: "POST",
+        body,
+      }),
     end: (sessionId: string) =>
-      apiCall<SessionEndResult>(
-        `/plugins/session/${encodeURIComponent(sessionId)}/end`,
-        { method: "POST" },
-      ),
+      apiCall<SessionEndResult>(`/plugins/session/${encodeURIComponent(sessionId)}/end`, {
+        method: "POST",
+      }),
     /**
      * v0.2.0: GET the current ``recommend_method_switch`` hook
      * output. Returns ``{recommended:false}`` when no
@@ -723,10 +594,7 @@ export const api = {
      * audit row and flips the active session's method in
      * place. Returns the updated LearningSession.
      */
-    acceptSwitch: (
-      sessionId: string,
-      body: { to_method: LearningMethod; reason: string },
-    ) =>
+    acceptSwitch: (sessionId: string, body: { to_method: LearningMethod; reason: string }) =>
       apiCall<import("../types/domain").LearningSession>(
         `/plugins/session/${encodeURIComponent(sessionId)}/switch`,
         { method: "POST", body },
@@ -745,22 +613,16 @@ export const api = {
      * appears as the first entry.
      */
     getMessages: (sessionId: string) =>
-      apiCall<SessionMessage[]>(
-        `/plugins/session/${encodeURIComponent(sessionId)}/messages`,
-      ),
+      apiCall<SessionMessage[]>(`/plugins/session/${encodeURIComponent(sessionId)}/messages`),
   },
 
   // --- Tracking plugin -------------------------------------------------
 
   tracking: {
     progress: (projectId: string) =>
-      apiCall<ProgressSummary>(
-        `/plugins/tracking/progress/${encodeURIComponent(projectId)}`,
-      ),
+      apiCall<ProgressSummary>(`/plugins/tracking/progress/${encodeURIComponent(projectId)}`),
     commits: (projectId: string) =>
-      apiCall<ProgressCommit[]>(
-        `/plugins/tracking/commits/${encodeURIComponent(projectId)}`,
-      ),
+      apiCall<ProgressCommit[]>(`/plugins/tracking/commits/${encodeURIComponent(projectId)}`),
   },
 
   // --- Tools plugin ----------------------------------------------------
@@ -827,14 +689,12 @@ export const api = {
 
   topics: {
     get: (topicId: string) =>
-      apiCall<import("../types/domain").LearningTopic>(
-        `/topics/${encodeURIComponent(topicId)}`,
-      ),
+      apiCall<import("../types/domain").LearningTopic>(`/topics/${encodeURIComponent(topicId)}`),
     update: (topicId: string, body: TopicUpdateBody) =>
-      apiCall<import("../types/domain").LearningTopic>(
-        `/topics/${encodeURIComponent(topicId)}`,
-        { method: "PATCH", body },
-      ),
+      apiCall<import("../types/domain").LearningTopic>(`/topics/${encodeURIComponent(topicId)}`, {
+        method: "PATCH",
+        body,
+      }),
     remove: (topicId: string) =>
       apiCall<void>(`/topics/${encodeURIComponent(topicId)}`, {
         method: "DELETE",
@@ -843,14 +703,12 @@ export const api = {
 
   lessons: {
     get: (lessonId: string) =>
-      apiCall<import("../types/domain").Lesson>(
-        `/lessons/${encodeURIComponent(lessonId)}`,
-      ),
+      apiCall<import("../types/domain").Lesson>(`/lessons/${encodeURIComponent(lessonId)}`),
     update: (lessonId: string, body: LessonUpdateBody) =>
-      apiCall<import("../types/domain").Lesson>(
-        `/lessons/${encodeURIComponent(lessonId)}`,
-        { method: "PATCH", body },
-      ),
+      apiCall<import("../types/domain").Lesson>(`/lessons/${encodeURIComponent(lessonId)}`, {
+        method: "PATCH",
+        body,
+      }),
     remove: (lessonId: string) =>
       apiCall<void>(`/lessons/${encodeURIComponent(lessonId)}`, {
         method: "DELETE",
@@ -862,19 +720,17 @@ export const api = {
   subjects: {
     list: () => apiCall<import("../types/domain").Subject[]>("/subjects"),
     get: (subjectId: string) =>
-      apiCall<import("../types/domain").Subject>(
-        `/subjects/${encodeURIComponent(subjectId)}`,
-      ),
+      apiCall<import("../types/domain").Subject>(`/subjects/${encodeURIComponent(subjectId)}`),
     create: (body: SubjectCreateBody) =>
       apiCall<import("../types/domain").Subject>("/subjects", {
         method: "POST",
         body,
       }),
     update: (subjectId: string, body: SubjectUpdateBody) =>
-      apiCall<import("../types/domain").Subject>(
-        `/subjects/${encodeURIComponent(subjectId)}`,
-        { method: "PATCH", body },
-      ),
+      apiCall<import("../types/domain").Subject>(`/subjects/${encodeURIComponent(subjectId)}`, {
+        method: "PATCH",
+        body,
+      }),
     remove: (subjectId: string) =>
       apiCall<void>(`/subjects/${encodeURIComponent(subjectId)}`, {
         method: "DELETE",
@@ -883,19 +739,17 @@ export const api = {
 
   tags: {
     list: (userId: string) =>
-      apiCall<import("../types/domain").Tag[]>(
-        `/users/${encodeURIComponent(userId)}/tags`,
-      ),
+      apiCall<import("../types/domain").Tag[]>(`/users/${encodeURIComponent(userId)}/tags`),
     create: (userId: string, body: TagCreateBody) =>
-      apiCall<import("../types/domain").Tag>(
-        `/users/${encodeURIComponent(userId)}/tags`,
-        { method: "POST", body },
-      ),
+      apiCall<import("../types/domain").Tag>(`/users/${encodeURIComponent(userId)}/tags`, {
+        method: "POST",
+        body,
+      }),
     update: (tagId: string, body: TagUpdateBody) =>
-      apiCall<import("../types/domain").Tag>(
-        `/tags/${encodeURIComponent(tagId)}`,
-        { method: "PATCH", body },
-      ),
+      apiCall<import("../types/domain").Tag>(`/tags/${encodeURIComponent(tagId)}`, {
+        method: "PATCH",
+        body,
+      }),
     remove: (tagId: string) =>
       apiCall<void>(`/tags/${encodeURIComponent(tagId)}`, {
         method: "DELETE",
@@ -914,23 +768,19 @@ export const api = {
       ),
     unassignSubject: (projectId: string, subjectId: string) =>
       apiCall<void>(
-        `/projects/${encodeURIComponent(projectId)}/subjects/` +
-          encodeURIComponent(subjectId),
+        `/projects/${encodeURIComponent(projectId)}/subjects/` + encodeURIComponent(subjectId),
         { method: "DELETE" },
       ),
     listTags: (projectId: string) =>
-      apiCall<import("../types/domain").Tag[]>(
-        `/projects/${encodeURIComponent(projectId)}/tags`,
-      ),
+      apiCall<import("../types/domain").Tag[]>(`/projects/${encodeURIComponent(projectId)}/tags`),
     assignTag: (projectId: string, tagId: string) =>
-      apiCall<import("../types/domain").Tag>(
-        `/projects/${encodeURIComponent(projectId)}/tags`,
-        { method: "POST", body: { tag_id: tagId } },
-      ),
+      apiCall<import("../types/domain").Tag>(`/projects/${encodeURIComponent(projectId)}/tags`, {
+        method: "POST",
+        body: { tag_id: tagId },
+      }),
     unassignTag: (projectId: string, tagId: string) =>
       apiCall<void>(
-        `/projects/${encodeURIComponent(projectId)}/tags/` +
-          encodeURIComponent(tagId),
+        `/projects/${encodeURIComponent(projectId)}/tags/` + encodeURIComponent(tagId),
         { method: "DELETE" },
       ),
   },
@@ -963,17 +813,16 @@ export const api = {
      * structured payload ready for Markdown / PDF rendering.
      */
     progress: (userId: string, lang: string) =>
-      apiCall<import("../storage/export-builder").ProgressReport>(
+      apiCall<import("../storage/export-types").ProgressReport>(
         `/export/progress?user_id=${encodeURIComponent(userId)}` +
           `&lang=${encodeURIComponent(lang)}`,
       ),
     session: (sessionId: string, lang: string) =>
-      apiCall<import("../storage/export-builder").SessionDetail>(
-        `/export/session/${encodeURIComponent(sessionId)}` +
-          `?lang=${encodeURIComponent(lang)}`,
+      apiCall<import("../storage/export-types").SessionDetail>(
+        `/export/session/${encodeURIComponent(sessionId)}` + `?lang=${encodeURIComponent(lang)}`,
       ),
     curriculum: (curriculumId: string, lang: string) =>
-      apiCall<import("../storage/export-builder").CurriculumOverview>(
+      apiCall<import("../storage/export-types").CurriculumOverview>(
         `/export/curriculum/${encodeURIComponent(curriculumId)}` +
           `?lang=${encodeURIComponent(lang)}`,
       ),
@@ -997,10 +846,7 @@ export const api = {
       apiCall<import("../types/domain").BackupStats & { user_id: string }>(
         `/backup/stats?user_id=${encodeURIComponent(userId)}`,
       ),
-    import: (
-      userId: string,
-      payload: import("../types/domain").BackupPayload,
-    ) =>
+    import: (userId: string, payload: import("../types/domain").BackupPayload) =>
       apiCall<import("../types/domain").RestoreSummary>(
         `/backup/import?user_id=${encodeURIComponent(userId)}`,
         { method: "POST", body: payload },
@@ -1023,10 +869,7 @@ export const api = {
         Object.keys(query).length > 0 ? { query } : undefined,
       );
     },
-    createQuestion: (
-      userId: string,
-      body: import("../storage/types").StudyQuestionCreateBody,
-    ) =>
+    createQuestion: (userId: string, body: import("../storage/types").StudyQuestionCreateBody) =>
       apiCall<import("../storage/types").StudyQuestion>(
         `/plugins/notebooklm/questions?user_id=${encodeURIComponent(userId)}`,
         { method: "POST", body },
@@ -1063,10 +906,7 @@ export const api = {
       );
       if (!res.ok) {
         const body = await res.json().catch(() => ({ detail: "" }));
-        throw new ApiError(
-          res.status,
-          body.detail || `Study guide failed (HTTP ${res.status})`,
-        );
+        throw new ApiError(res.status, body.detail || `Study guide failed (HTTP ${res.status})`);
       }
       return await res.text();
     },
@@ -1116,10 +956,7 @@ export const api = {
       );
       if (!res.ok) {
         const body = await res.json().catch(() => ({ detail: "" }));
-        throw new ApiError(
-          res.status,
-          body.detail || `Export-zip failed (HTTP ${res.status})`,
-        );
+        throw new ApiError(res.status, body.detail || `Export-zip failed (HTTP ${res.status})`);
       }
       return await res.blob();
     },
@@ -1134,10 +971,9 @@ export const api = {
         repo_path: string;
         commit_sha: string;
         tag: string | null;
-      }>(
-        `/plugins/learning-repo/persist/${encodeURIComponent(projectId)}${qs}`,
-        { method: "POST" },
-      );
+      }>(`/plugins/learning-repo/persist/${encodeURIComponent(projectId)}${qs}`, {
+        method: "POST",
+      });
     },
   },
 
@@ -1172,10 +1008,7 @@ export const api = {
       }
     },
     /** POST /api/users/{user_id}/lesson-progress */
-    upsert: (
-      userId: string,
-      body: import("../storage/types").LessonProgressUpsertBody,
-    ) =>
+    upsert: (userId: string, body: import("../storage/types").LessonProgressUpsertBody) =>
       apiCall<import("../storage/types").LessonProgress>(
         `/users/${encodeURIComponent(userId)}/lesson-progress`,
         { method: "POST", body },
@@ -1186,10 +1019,7 @@ export const api = {
 
   elementErrors: {
     /** GET /api/users/{user_id}/element-errors */
-    list: (
-      userId: string,
-      opts: { setId?: string; includeMastered?: boolean } = {},
-    ) => {
+    list: (userId: string, opts: { setId?: string; includeMastered?: boolean } = {}) => {
       const params = new URLSearchParams();
       if (opts.setId !== undefined) params.set("set_id", opts.setId);
       if (opts.includeMastered === false) {
@@ -1202,10 +1032,7 @@ export const api = {
       return apiCall<import("../storage/types").ElementError[]>(path);
     },
     /** POST /api/users/{user_id}/element-errors */
-    recordBulk: (
-      userId: string,
-      attempts: readonly import("../storage/types").ElementAttempt[],
-    ) =>
+    recordBulk: (userId: string, attempts: readonly import("../storage/types").ElementAttempt[]) =>
       apiCall<import("../storage/types").ElementError[]>(
         `/users/${encodeURIComponent(userId)}/element-errors`,
         { method: "POST", body: { attempts } },
@@ -1225,10 +1052,7 @@ export const api = {
   // --- Missions plugin (EXP-010 / Phase 56) ---------------------------
 
   missions: {
-    getDaily: (
-      userId: string,
-      opts: import("../storage/types").MissionDailyOptions = {},
-    ) => {
+    getDaily: (userId: string, opts: import("../storage/types").MissionDailyOptions = {}) => {
       const params = new URLSearchParams();
       if (opts.count !== undefined) params.set("count", String(opts.count));
       if (opts.difficultyMix !== undefined) {
@@ -1241,10 +1065,7 @@ export const api = {
         : `/plugins/missions/today/${encodeURIComponent(userId)}`;
       return apiCall<import("../storage/types").MissionDailyResultWire>(path);
     },
-    regenerate: (
-      userId: string,
-      opts: import("../storage/types").MissionDailyOptions = {},
-    ) => {
+    regenerate: (userId: string, opts: import("../storage/types").MissionDailyOptions = {}) => {
       const params = new URLSearchParams();
       if (opts.count !== undefined) params.set("count", String(opts.count));
       if (opts.difficultyMix !== undefined) {
@@ -1266,9 +1087,7 @@ export const api = {
   contentLoader: {
     /** GET /api/plugins/content-loader/sets */
     listSets: () =>
-      apiCall<import("../storage/types").ContentSetsList>(
-        "/plugins/content-loader/sets",
-      ),
+      apiCall<import("../storage/types").ContentSetsList>("/plugins/content-loader/sets"),
     /** POST /api/plugins/content-loader/sets/{src}/{id}/download */
     downloadSet: (source: string, setId: string) => {
       const slug = source.replace(/\//g, "--");
@@ -1297,27 +1116,18 @@ export const api = {
      *  Blob, OR ``null`` on 404 so the caller can fall back
      *  to a placeholder. The endpoint is added in Phase 54F;
      *  ApiStorage.contentLoader.getAsset delegates here. */
-    getAsset: async (
-      source: string,
-      setId: string,
-      assetPath: string,
-    ): Promise<Blob | null> => {
+    getAsset: async (source: string, setId: string, assetPath: string): Promise<Blob | null> => {
       const slug = source.replace(/\//g, "--");
       // assetPath contains forward slashes (e.g. "img/x.png")
       // and we want them preserved in the URL — encode each
       // segment individually so a literal "/" stays as "/".
-      const encodedAssetPath = assetPath
-        .split("/")
-        .map(encodeURIComponent)
-        .join("/");
+      const encodedAssetPath = assetPath.split("/").map(encodeURIComponent).join("/");
       const url = `/api/plugins/content-loader/sets/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/assets/${encodedAssetPath}`;
       try {
         const response = await fetch(url);
         if (response.status === 404) return null;
         if (!response.ok) {
-          throw new Error(
-            `Asset fetch failed: ${response.status} ${response.statusText}`,
-          );
+          throw new Error(`Asset fetch failed: ${response.status} ${response.statusText}`);
         }
         return await response.blob();
       } catch (err) {
@@ -1352,12 +1162,13 @@ export const api = {
      *  Opt-in AI content review; the backend resolves the AI key
      *  server-side and returns the structured result. */
     aiValidate: (input: import("../storage/types").AiValidateInput) =>
-      apiCall<
-        import("../lib/content/ai-content-validator").AiValidationResult
-      >("/content/validate-lesson", {
-        method: "POST",
-        body: input,
-      }),
+      apiCall<import("../lib/content/content-validation-types").AiValidationResult>(
+        "/content/validate-lesson",
+        {
+          method: "POST",
+          body: input,
+        },
+      ),
   },
 
   // --- Sync pairing (server-only) -------------------------------------
@@ -1368,10 +1179,10 @@ export const api = {
      *  (Phase 61 C2) so failures surface as ``ApiError``, not a bare
      *  ``Error``. */
     generatePairToken: (userId: string) =>
-      apiCall<{ token: string; user_id: string; expires_at: string }>(
-        "/sync/pair/generate",
-        { method: "POST", body: { user_id: userId } },
-      ),
+      apiCall<{ token: string; user_id: string; expires_at: string }>("/sync/pair/generate", {
+        method: "POST",
+        body: { user_id: userId },
+      }),
   },
 
   // --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------
@@ -1388,16 +1199,11 @@ export const api = {
       focus?: string;
       previous?: string[];
     }) =>
-      apiCall<{ phrase: string; language: string }>(
-        `/plugins/session/pronunciation/phrase`,
-        { method: "POST", body },
-      ),
-    judge: (body: {
-      project_id: string;
-      target: string;
-      actual: string;
-      language: string;
-    }) =>
+      apiCall<{ phrase: string; language: string }>(`/plugins/session/pronunciation/phrase`, {
+        method: "POST",
+        body,
+      }),
+    judge: (body: { project_id: string; target: string; actual: string; language: string }) =>
       apiCall<{
         matches: boolean;
         score: number;
@@ -1463,10 +1269,7 @@ export const api = {
   // --- Anki plugin (v1.17.0 / Phase 30) -------------------------------
 
   anki: {
-    list: (
-      userId: string,
-      filters?: import("../storage/types").AnkiCardListFilters,
-    ) => {
+    list: (userId: string, filters?: import("../storage/types").AnkiCardListFilters) => {
       const query: Record<string, string> = {};
       if (filters?.projectId) query.project_id = filters.projectId;
       if (filters?.acceptedOnly) query.accepted_only = "true";
@@ -1476,27 +1279,20 @@ export const api = {
         Object.keys(query).length > 0 ? { query } : undefined,
       );
     },
-    create: (
-      userId: string,
-      body: import("../storage/types").AnkiCardCreateBody,
-    ) =>
+    create: (userId: string, body: import("../storage/types").AnkiCardCreateBody) =>
       apiCall<import("../storage/types").AnkiCardSuggestion>(
         `/plugins/anki/cards?user_id=${encodeURIComponent(userId)}`,
         { method: "POST", body },
       ),
-    update: (
-      cardId: string,
-      body: import("../storage/types").AnkiCardUpdateBody,
-    ) =>
+    update: (cardId: string, body: import("../storage/types").AnkiCardUpdateBody) =>
       apiCall<import("../storage/types").AnkiCardSuggestion>(
         `/plugins/anki/cards/${encodeURIComponent(cardId)}`,
         { method: "PATCH", body },
       ),
     remove: (cardId: string) =>
-      apiCall<{ deleted: string }>(
-        `/plugins/anki/cards/${encodeURIComponent(cardId)}`,
-        { method: "DELETE" },
-      ),
+      apiCall<{ deleted: string }>(`/plugins/anki/cards/${encodeURIComponent(cardId)}`, {
+        method: "DELETE",
+      }),
     extractFromSession: (sessionId: string) =>
       apiCall<import("../storage/types").AnkiCardSuggestion[]>(
         `/plugins/anki/cards/extract/session/${encodeURIComponent(sessionId)}`,
@@ -1521,10 +1317,7 @@ export const api = {
       apiCall<import("../types/domain").ImportedConversation[]>(
         `/users/${encodeURIComponent(userId)}/imports`,
       ),
-    create: (
-      userId: string,
-      body: import("../types/domain").ImportedConversationCreateBody,
-    ) =>
+    create: (userId: string, body: import("../types/domain").ImportedConversationCreateBody) =>
       apiCall<import("../types/domain").ImportedConversation>(
         `/users/${encodeURIComponent(userId)}/imports`,
         { method: "POST", body },

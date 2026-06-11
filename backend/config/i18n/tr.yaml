@@ -1044,6 +1044,9 @@ anki:
   export_success: '{n} kart {filename} dosyasına aktarıldı.'
   export_failed: Dışa aktarma başarısız.
   empty: Henüz kart yok. Bir oturum ya da içe aktarılmış konuşmadan çıkarsa veya elle ekle.
+  empty_title: "Henüz Anki kartı yok."
+  empty_body: "Bir konuşmayı içe aktarın ve kart oluşturmak için 'Anki kartlarını çıkar'a tıklayın."
+  empty_cta: "Konuşma içe aktar"
   load_failed: Kartlar yüklenemedi.
   delete_confirm: Bu kart silinsin mi?
   front: Ön
