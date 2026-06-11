@@ -35,7 +35,7 @@ jobs:
           vars.ENABLE_NIGHTLY_MUTATION == 'true' }}
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
         with:

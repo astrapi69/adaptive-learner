@@ -49,7 +49,7 @@ jobs:
       run:
         working-directory: launcher
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Install system dependencies
         # tkinter is not bundled with the manylinux Python wheels used
