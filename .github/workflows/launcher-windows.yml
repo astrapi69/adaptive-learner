@@ -92,7 +92,7 @@ jobs:
 
       - name: Upload smoke artifact (push / PR / dispatch)
         if: github.event_name != 'release'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: adaptive-learner-launcher-windows
           path: |
