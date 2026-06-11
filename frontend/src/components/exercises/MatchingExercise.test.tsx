@@ -203,6 +203,31 @@ describe("MatchingExercise: scoring + completion", () => {
         expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 3}));
     });
 
+    it("stacks wrong-pair feedback inside a flex-column <li> so it can't overlap the next tile (#242)", () => {
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        // 0→1 (wrong) so left tile 0 renders the feedback block.
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        // The button and the feedback must share ONE <li> that is a flex
+        // column. Pre-#242 the button was ``h-full`` in a ``grid-auto-rows:1fr``
+        // row, so the sibling feedback overflowed into the next tile at 375px.
+        const button = screen.getByTestId("matching-left-0");
+        const feedback = screen.getByTestId("matching-feedback-0");
+        const li = button.closest("li");
+        expect(li).not.toBeNull();
+        expect(li).toBe(feedback.closest("li"));
+        expect(li!.className).toContain("flex-col");
+        expect(button.className).toContain("flex-1");
+        expect(button.className).not.toContain("h-full");
+    });
+
     it("keeps pair badges visible and marks correct pairs green on BOTH sides after checking (#183)", () => {
         render(
             <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
