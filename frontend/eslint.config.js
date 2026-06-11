@@ -70,11 +70,13 @@ export default tseslint.config(
             "prefer-const": "warn",
             "no-useless-escape": "warn",
             "react-hooks/exhaustive-deps": "warn",
-            // NOTE: security/detect-object-injection is very noisy (flags
-            // every obj[key] access, ~99% false positives) — it dominates
-            // the warning count and is the first candidate for disabling
-            // in the ratchet follow-up.
-            "security/detect-object-injection": "warn",
+            // security/detect-object-injection flags every obj[key] access
+            // (~99% false positives for an app that does no user-controlled
+            // property access into sensitive objects). It dominated the
+            // warning count (381 of 438); disabled per the ratchet plan
+            // (#220). detect-non-literal-regexp stays on — dynamic regex is
+            // a real ReDoS surface and is reviewed case by case.
+            "security/detect-object-injection": "off",
             "security/detect-non-literal-regexp": "warn",
         },
     },
