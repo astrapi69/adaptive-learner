@@ -1007,8 +1007,10 @@ select:focus {
 }
 
 /* v0.4.0: 5-cell metric tile (streak + total / minutes /
- * understanding / stress). Collapses to 2 columns on narrow
- * viewports so the labels stay readable. */
+ * understanding / stress). #238 — steps 5 -> 3 -> 2 columns so a
+ * cell is never too narrow for its label between the desktop and
+ * mobile widths (the old 5->2 jump left the 5-col layout cramped on
+ * tablets). */
 .metric-grid-5 {
   width: 100%;
   display: grid;
@@ -1016,7 +1018,13 @@ select:focus {
   gap: var(--space-3);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
+  .metric-grid-5 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
   .metric-grid-5 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1033,6 +1041,9 @@ select:focus {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--fg-muted);
+  /* #238 — a long label wraps within its cell instead of widening
+     it; break a too-long single word rather than overflow. */
+  overflow-wrap: anywhere;
 }
 
 .metric-value {

@@ -267,8 +267,8 @@ dashboard:
       word_order: "Ordem das palavras"
     mastery_split: 'Receptivo: {receptive} · Produtivo: {productive}'
   create_lesson: "Criar uma lição"
-  metric_mean_stress: "Estresse médio"
-  metric_mean_understanding: "Compreensão média"
+  metric_mean_stress: "Ø Estresse"
+  metric_mean_understanding: "Ø Compreensão"
   metric_streak: "Sequência de dias"
   metric_total_minutes: "Minutos totais"
   metric_total_sessions: "Sessões totais"
