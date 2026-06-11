@@ -440,6 +440,7 @@ export default function BackupSection() {
             // #126 — surface the full result in the browser console so a
             // real Export -> Import round-trip is debuggable without a
             // backend log. Errors are logged separately as a list.
+            // eslint-disable-next-line no-console -- #126: intentional round-trip trace for backend-less debugging
             console.log("[Backup] Import result:", summary);
             if (summary.errors.length > 0) {
                 console.error("[Backup] Import errors:", summary.errors);
