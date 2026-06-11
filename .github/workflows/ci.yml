@@ -139,6 +139,14 @@ jobs:
         run: npm run format:check
         continue-on-error: true
 
+      # Stylelint (#257). Focused config: color-no-invalid-hex is a hard
+      # error (clean baseline blocks new invalid hex); no-duplicate-selectors
+      # / no-descending-specificity / declaration-no-important are warnings
+      # (36 pre-existing, reported not blocked — drive to zero then promote).
+      - name: Stylelint
+        working-directory: frontend
+        run: npm run lint:css
+
       - name: Run Vitest
         working-directory: frontend
         run: npx vitest run

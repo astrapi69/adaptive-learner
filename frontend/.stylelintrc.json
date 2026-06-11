@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "color-no-invalid-hex": true,
+    "no-duplicate-selectors": [true, { "severity": "warning" }],
+    "no-descending-specificity": [true, { "severity": "warning" }],
+    "declaration-no-important": [true, { "severity": "warning" }]
+  }
+}
