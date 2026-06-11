@@ -42,6 +42,7 @@ import { getStorage } from "../storage";
 import { getDb } from "../storage/db";
 import { analyzeConversation } from "../chat_import/analysis";
 import { LANGUAGE_OPTIONS } from "../lib/content/language-options";
+import { importHeadingTitle } from "../lib/content/import-title";
 import { detectLearningLanguage } from "../lib/content/detect-chat-language";
 import { notify } from "../utils/notify";
 import type { AIProvider } from "../lib/constants";
@@ -511,7 +512,9 @@ export default function ImportDetail({
         >
           ← {t("import.back_to_list", "Back to imports")}
         </Button>
-        <h1 style={{ margin: 0 }}>{detail.title}</h1>
+        <h1 style={{ margin: 0 }} data-testid="import-detail-title">
+          {importHeadingTitle(detail.title, analysis?.topic)}
+        </h1>
         <p style={{ margin: "0.5rem 0 0", opacity: 0.7, fontSize: "0.9rem" }}>
           {detail.source} · {detail.message_count}{" "}
           {t("import.messages", "messages")}
