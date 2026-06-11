@@ -108,7 +108,9 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci
+        # --legacy-peer-deps: #266 eslint@10 vs eslint-plugin-react ^9.7 peer
+        # cap (matches local dev); remove once the plugin supports eslint 10.
+        run: npm ci --legacy-peer-deps
 
       - name: TypeScript type check
         working-directory: frontend
