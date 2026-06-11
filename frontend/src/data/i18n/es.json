@@ -1198,6 +1198,9 @@
     "guide_ready": "Guía de estudio descargada.",
     "guide_failed": "No se pudo generar la guía de estudio."
   },
+  "feature": {
+    "api_key_required": "API key required. Configure a provider in Settings."
+  },
   "ui": {
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",

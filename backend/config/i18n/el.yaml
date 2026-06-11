@@ -1105,6 +1105,8 @@ notebooklm:
   guide_ready: Ο οδηγός μελέτης λήφθηκε.
   guide_failed: Δεν δημιουργήθηκε ο οδηγός μελέτης.
 
+feature:
+  api_key_required: "API key required. Configure a provider in Settings."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"

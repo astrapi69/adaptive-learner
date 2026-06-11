@@ -1105,6 +1105,8 @@ notebooklm:
   guide_ready: 学習ガイドをダウンロードしました。
   guide_failed: 学習ガイドを生成できませんでした。
 
+feature:
+  api_key_required: "API key required. Configure a provider in Settings."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"

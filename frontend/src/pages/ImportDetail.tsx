@@ -33,10 +33,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useFeature } from "@astrapi69/feature-strategy-react";
+
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import HelpLink from "../components/help/HelpLink";
 import SaveOfflineLessonModal from "../components/content/SaveOfflineLessonModal";
-import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
+import { FEATURES } from "../features/featureConfig";
 import { useI18n } from "../hooks/useI18n";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { readLearnerState } from "../lib/learnerState";
@@ -100,7 +102,9 @@ export default function ImportDetail({
   // having a key. ``ready=false`` means we don't yet know,
   // so buttons stay disabled until the settings fetch
   // resolves.
-  const apiKey = useApiKeyStatus();
+  const analyzeFeature = useFeature(FEATURES.CONVERSATION_ANALYZE);
+  const sessionFeature = useFeature(FEATURES.SESSION_START);
+  const ankiFeature = useFeature(FEATURES.ANKI_EXTRACT);
 
   const [detail, setDetail] = useState<ImportedConversationDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -497,7 +501,7 @@ export default function ImportDetail({
           {detail.source} · {detail.message_count} {t("import.messages", "messages")}
           {detail.model ? ` · ${detail.model}` : ""}
         </p>
-        {apiKey.ready && !apiKey.hasKey && (
+        {analyzeFeature.isDisabled && (
           <ApiKeyRequiredNotice
             feature={t("ui.api_key.feature_analyze", "to analyze conversations")}
           />
@@ -558,12 +562,12 @@ export default function ImportDetail({
           <Button
             type="button"
             onClick={runAnalysis}
-            disabled={analyzing || !apiKey.ready || !apiKey.hasKey || !online}
+            disabled={analyzing || !analyzeFeature.isActive || !online}
             title={
               !online
                 ? t("pwa.action_unavailable", "Not available offline")
-                : apiKey.ready && !apiKey.hasKey
-                  ? t("ui.api_key.required", "API key required.")
+                : analyzeFeature.isDisabled
+                  ? t(`feature.${analyzeFeature.reason}`, "API key required.")
                   : undefined
             }
             data-testid="analyze-button"
@@ -630,10 +634,10 @@ export default function ImportDetail({
               // not, so the gate only fires when
               // ``activeSession`` is null).
               onClick={startOrResumeSession}
-              disabled={startingSession || (!activeSession && apiKey.ready && !apiKey.hasKey)}
+              disabled={startingSession || (!activeSession && sessionFeature.isDisabled)}
               title={
-                !activeSession && apiKey.ready && !apiKey.hasKey
-                  ? t("ui.api_key.required", "API key required.")
+                !activeSession && sessionFeature.isDisabled
+                  ? t(`feature.${sessionFeature.reason}`, "API key required.")
                   : undefined
               }
               data-testid={activeSession ? "continue-session-button" : "start-session-button"}
@@ -649,10 +653,10 @@ export default function ImportDetail({
             <Button
               type="button"
               variant="secondary"
-              disabled={extractingAnki || !apiKey.ready || !apiKey.hasKey}
+              disabled={extractingAnki || ankiFeature.isDisabled}
               title={
-                apiKey.ready && !apiKey.hasKey
-                  ? t("ui.api_key.required", "API key required.")
+                ankiFeature.isDisabled
+                  ? t(`feature.${ankiFeature.reason}`, "API key required.")
                   : undefined
               }
               data-testid="extract-anki-button"

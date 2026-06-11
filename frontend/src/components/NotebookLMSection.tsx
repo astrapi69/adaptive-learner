@@ -15,10 +15,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { useFeature } from "@astrapi69/feature-strategy-react";
+
 import { ApiError } from "../api/client";
 import ApiKeyRequiredNotice from "./ApiKeyRequiredNotice";
 import { Button } from "@/components/ui/button";
-import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
+import { FEATURES } from "../features/featureConfig";
 import { useI18n } from "../hooks/useI18n";
 import { buildNotebookLMPackage } from "../lib/export/notebooklm-package";
 import { readLearnerState } from "../lib/learnerState";
@@ -40,8 +42,8 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
   const [exportingZip, setExportingZip] = useState(false);
   const [generatingGuide, setGeneratingGuide] = useState(false);
   const userId = readLearnerState().userId;
-  const apiKey = useApiKeyStatus();
-  const aiUnavailable = apiKey.ready && !apiKey.hasKey;
+  const questionsFeature = useFeature(FEATURES.LEARNING_QUESTIONS);
+  const guideFeature = useFeature(FEATURES.LEARNING_GUIDE);
 
   const refresh = useCallback(async () => {
     if (!userId) return;
@@ -165,7 +167,7 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
         {t("notebooklm.section_title", "Study materials (NotebookLM-ready)")}
       </h2>
 
-      {aiUnavailable && (
+      {questionsFeature.isDisabled && (
         <ApiKeyRequiredNotice
           feature={t("ui.api_key.feature_study_questions", "to generate study questions")}
           settingsHref="/settings?tab=integrations"
@@ -175,8 +177,12 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
       <div className="notebooklm-actions">
         <Button
           type="button"
-          disabled={generating || aiUnavailable}
-          title={aiUnavailable ? t("ui.api_key.required", "API key required.") : undefined}
+          disabled={generating || !questionsFeature.isActive}
+          title={
+            questionsFeature.isDisabled
+              ? t(`feature.${questionsFeature.reason}`, "API key required.")
+              : undefined
+          }
           onClick={generateQuestions}
           data-testid="notebooklm-generate-questions"
         >
@@ -198,8 +204,12 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
         <Button
           type="button"
           variant="secondary"
-          disabled={generatingGuide || aiUnavailable}
-          title={aiUnavailable ? t("ui.api_key.required", "API key required.") : undefined}
+          disabled={generatingGuide || !guideFeature.isActive}
+          title={
+            guideFeature.isDisabled
+              ? t(`feature.${guideFeature.reason}`, "API key required.")
+              : undefined
+          }
           onClick={downloadStudyGuide}
           data-testid="notebooklm-study-guide"
         >

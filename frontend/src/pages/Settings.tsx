@@ -3,8 +3,8 @@ import { FlaskConical, Save, Trash2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import AboutTab from "../components/about/AboutTab";
 import IdentitySection from "../components/about/IdentitySection";
 import BackupSection from "../components/BackupSection";
@@ -25,11 +25,11 @@ import SourceLanguagesControl from "../components/SourceLanguagesControl";
 import ModeIndicator from "../components/ModeIndicator";
 import SoundSettingsControl from "../components/SoundSettingsControl";
 import HelpBrowser from "../components/help/HelpBrowser";
-import {
-  setButtonTooltipsEnabled,
-  useButtonTooltips,
-} from "../hooks/useButtonTooltips";
+import { setButtonTooltipsEnabled, useButtonTooltips } from "../hooks/useButtonTooltips";
 import { setDevModeEnabled, useDevMode } from "../hooks/useDevMode";
+import { refreshApiKeyStatus } from "../hooks/useApiKeyStatus";
+import { Feature } from "@astrapi69/feature-strategy-react";
+import { FEATURES } from "../features/featureConfig";
 import VoiceSettingsSection from "../components/VoiceSettingsSection";
 import { ModelPicker } from "../components/ModelPicker";
 import SyncSection from "../components/SyncSection";
@@ -100,10 +100,7 @@ function isSettingsTab(value: string | null): value is SettingsTab {
   return value !== null && (SETTINGS_TABS as readonly string[]).includes(value);
 }
 
-const SETTINGS_TAB_LABELS: Record<
-  SettingsTab,
-  { key: string; fallback: string }
-> = {
+const SETTINGS_TAB_LABELS: Record<SettingsTab, { key: string; fallback: string }> = {
   general: { key: "settings.tab_general", fallback: "General" },
   ai: { key: "settings.tab_ai", fallback: "AI" },
   learning: { key: "settings.tab_learning", fallback: "Learning" },
@@ -142,9 +139,7 @@ export default function Settings() {
   // v1.10.0 / Phase 23E — swipe-gesture toggle. Persisted in
   // localStorage via ``gesturePref`` so the consumer hooks
   // (Assessment, Curriculum, Session) read the same flag.
-  const [gesturesOn, setGesturesOn] = useState<boolean>(() =>
-    readGesturePref(),
-  );
+  const [gesturesOn, setGesturesOn] = useState<boolean>(() => readGesturePref());
 
   const handleGesturesToggle = (next: boolean) => {
     setGesturesOn(next);
@@ -196,9 +191,11 @@ export default function Settings() {
   const [busy, setBusy] = useState<string | null>(null);
   // C2 — last live-test outcome per provider (null = not tested this
   // session). Drives the inline result line under the key row.
-  const [testResults, setTestResults] = useState<
-    Record<AIProvider, ApiKeyTestResult | null>
-  >({ anthropic: null, openai: null, gemini: null });
+  const [testResults, setTestResults] = useState<Record<AIProvider, ApiKeyTestResult | null>>({
+    anthropic: null,
+    openai: null,
+    gemini: null,
+  });
   // C4 — when an auto-test on save fails, this holds the provider +
   // failure kind so the inline rollback panel (keep old / save anyway
   // / cancel) renders for that provider.
@@ -208,9 +205,11 @@ export default function Settings() {
   } | null>(null);
   // C4 — whether a last-known-good backup exists per provider (drives
   // the "restore last working key" affordance). Loaded after settings.
-  const [backupAvailable, setBackupAvailable] = useState<
-    Record<AIProvider, boolean>
-  >({ anthropic: false, openai: false, gemini: false });
+  const [backupAvailable, setBackupAvailable] = useState<Record<AIProvider, boolean>>({
+    anthropic: false,
+    openai: false,
+    gemini: false,
+  });
 
   // Phase 10F: storage-mode toggle. ``currentMode`` reflects
   // what's active *right now* (snapshot at mount). ``pendingMode``
@@ -218,9 +217,7 @@ export default function Settings() {
   // committed; switching is "persist + reload required" since
   // live-swap would orphan in-memory state.
   const [currentMode] = useState<StorageMode>(() => resolveStorageMode());
-  const [rowCounts, setRowCounts] = useState<Record<string, number> | null>(
-    null,
-  );
+  const [rowCounts, setRowCounts] = useState<Record<string, number> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -300,6 +297,7 @@ export default function Settings() {
         active_provider: provider,
       });
       setSettings(updated);
+      await refreshApiKeyStatus();
       notify.success(t("settings.saved", "Saved."));
     } catch (err) {
       const detail = err instanceof ApiError ? err.detail : t("common.error");
@@ -311,11 +309,7 @@ export default function Settings() {
 
   // C4 — persist a key (no test). Backs up the key as last-known-good
   // only when ``backup`` is true (i.e. it passed its test).
-  const persistKey = async (
-    provider: AIProvider,
-    key: string,
-    backup: boolean,
-  ) => {
+  const persistKey = async (provider: AIProvider, key: string, backup: boolean) => {
     const updated = await getStorage().settings.setApiKey(settings!.user_id, {
       provider,
       key,
@@ -329,6 +323,7 @@ export default function Settings() {
     }
     setSettings(updated);
     setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
+    await refreshApiKeyStatus();
     notify.success(t("toast.api_key_saved", "API key saved."));
   };
 
@@ -398,12 +393,10 @@ export default function Settings() {
     setBusy(`restore-${provider}`);
     setRollbackPrompt(null);
     try {
-      const updated = await getStorage().settings.restoreApiKeyBackup(
-        settings.user_id,
-        provider,
-      );
+      const updated = await getStorage().settings.restoreApiKeyBackup(settings.user_id, provider);
       setSettings(updated);
       setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
+      await refreshApiKeyStatus();
       // Confirm the restored key still works.
       const test = await getStorage().settings.testApiKey(settings.user_id, {
         provider,
@@ -486,17 +479,13 @@ export default function Settings() {
 
   const handleDeleteKey = async (provider: AIProvider) => {
     if (!settings || busy) return;
-    const ok = window.confirm(
-      t("settings.api_key_confirm_delete", "Really remove this API key?"),
-    );
+    const ok = window.confirm(t("settings.api_key_confirm_delete", "Really remove this API key?"));
     if (!ok) return;
     setBusy(`delete-${provider}`);
     try {
-      const updated = await getStorage().settings.deleteApiKey(
-        settings.user_id,
-        provider,
-      );
+      const updated = await getStorage().settings.deleteApiKey(settings.user_id, provider);
       setSettings(updated);
+      await refreshApiKeyStatus();
       notify.success(t("toast.api_key_deleted", "API key removed."));
     } catch (err) {
       const detail = err instanceof ApiError ? err.detail : t("common.error");
@@ -557,20 +546,14 @@ export default function Settings() {
         data-testid="settings-section-appearance"
         hidden={activeTab !== "general"}
       >
-        <h2 className="settings-section-title">
-          {t("settings.section_appearance", "Appearance")}
-        </h2>
+        <h2 className="settings-section-title">{t("settings.section_appearance", "Appearance")}</h2>
         <ThemePicker />
       </section>
 
       <section className="settings-section" hidden={activeTab !== "general"}>
-        <h2 className="settings-section-title">
-          {t("settings.section_language", "Language")}
-        </h2>
+        <h2 className="settings-section-title">{t("settings.section_language", "Language")}</h2>
         <label className="form-row">
-          <span className="form-label">
-            {t("settings.language_label", "Display language")}
-          </span>
+          <span className="form-label">{t("settings.language_label", "Display language")}</span>
           <select
             data-testid="settings-language"
             value={lang}
@@ -591,9 +574,7 @@ export default function Settings() {
         data-testid="settings-section-ui"
         hidden={activeTab !== "general"}
       >
-        <h2 className="settings-section-title">
-          {t("settings.section_ui", "Interface")}
-        </h2>
+        <h2 className="settings-section-title">{t("settings.section_ui", "Interface")}</h2>
         <label className="form-row form-row-toggle">
           <span className="form-label-stack">
             <span className="form-label">
@@ -615,9 +596,7 @@ export default function Settings() {
         </label>
         <label className="form-row form-row-toggle">
           <span className="form-label-stack">
-            <span className="form-label">
-              {t("settings.developer_mode", "Developer Mode")}
-            </span>
+            <span className="form-label">{t("settings.developer_mode", "Developer Mode")}</span>
             <span className="form-hint">
               {t(
                 "settings.developer_mode_description",
@@ -635,13 +614,9 @@ export default function Settings() {
       </section>
 
       <section className="settings-section" hidden={activeTab !== "ai"}>
-        <h2 className="settings-section-title">
-          {t("settings.section_provider", "AI provider")}
-        </h2>
+        <h2 className="settings-section-title">{t("settings.section_provider", "AI provider")}</h2>
         <label className="form-row">
-          <span className="form-label">
-            {t("settings.provider_label", "Active provider")}
-          </span>
+          <span className="form-label">{t("settings.provider_label", "Active provider")}</span>
           <select
             data-testid="settings-provider"
             value={settings.active_provider}
@@ -716,9 +691,7 @@ export default function Settings() {
                   defaultModel={DEFAULT_MODELS[provider]}
                   staticSuggestions={MODEL_SUGGESTIONS[provider]}
                   disabled={busy === `save-model-${provider}`}
-                  hasApiKey={
-                    (settings[`has_${provider}_key`] as boolean) ?? false
-                  }
+                  hasApiKey={(settings[`has_${provider}_key`] as boolean) ?? false}
                 />
                 <Button
                   type="button"
@@ -746,9 +719,7 @@ export default function Settings() {
       </section>
 
       <section className="settings-section" hidden={activeTab !== "ai"}>
-        <h2 className="settings-section-title">
-          {t("settings.section_api_keys", "API keys")}
-        </h2>
+        <h2 className="settings-section-title">{t("settings.section_api_keys", "API keys")}</h2>
         {AI_PROVIDERS.map((provider) => {
           const has = settings[`has_${provider}_key`] as boolean;
           const isActive = settings.active_provider === provider;
@@ -782,10 +753,7 @@ export default function Settings() {
               <div className="api-key-row-head">
                 <strong>{t(`settings.provider_${provider}`, provider)}</strong>
                 {isActive && (
-                  <span
-                    className="api-key-active-badge"
-                    data-testid={`api-key-active-${provider}`}
-                  >
+                  <span className="api-key-active-badge" data-testid={`api-key-active-${provider}`}>
                     {t("settings.provider_active", "Active")}
                   </span>
                 )}
@@ -802,31 +770,16 @@ export default function Settings() {
                   data-testid={`api-key-source-${provider}`}
                 >
                   {source === "secrets_yaml"
-                    ? t(
-                        "settings.api_key_source_file",
-                        "Key from: secrets.yaml",
-                      )
+                    ? t("settings.api_key_source_file", "Key from: secrets.yaml")
                     : source === "env"
-                      ? t(
-                          "settings.api_key_source_env",
-                          "Key from: environment",
-                        )
+                      ? t("settings.api_key_source_env", "Key from: environment")
                       : source === "settings"
-                        ? t(
-                            "settings.api_key_source_settings",
-                            "Key from: Settings",
-                          )
-                        : t(
-                            "settings.api_key_source_none",
-                            "No key configured",
-                          )}
+                        ? t("settings.api_key_source_settings", "Key from: Settings")
+                        : t("settings.api_key_source_none", "No key configured")}
                 </span>
               </div>
               {externallyManaged && (
-                <p
-                  className="api-key-external-hint"
-                  data-testid={`api-key-external-${provider}`}
-                >
+                <p className="api-key-external-hint" data-testid={`api-key-external-${provider}`}>
                   {t(
                     "settings.api_key_external_hint_env",
                     "This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.",
@@ -834,10 +787,7 @@ export default function Settings() {
                 </p>
               )}
               {fromSecretsFile && (
-                <p
-                  className="api-key-source-file-hint"
-                  data-testid={`api-key-info-${provider}`}
-                >
+                <p className="api-key-source-file-hint" data-testid={`api-key-info-${provider}`}>
                   {t(
                     "settings.api_key_external_hint_file",
                     "Stored in ~/.config/adaptive_learner/secrets.yaml. Saving here overwrites it.",
@@ -845,10 +795,7 @@ export default function Settings() {
                 </p>
               )}
               {isActive && !has && !externallyManaged && (
-                <p
-                  className="api-key-warning"
-                  data-testid={`api-key-warning-${provider}`}
-                >
+                <p className="api-key-warning" data-testid={`api-key-warning-${provider}`}>
                   {t(
                     "settings.active_provider_missing_key",
                     "This is your active provider but no API key is stored. AI replies will be skipped until a key is saved.",
@@ -856,9 +803,7 @@ export default function Settings() {
                 </p>
               )}
               <div className="api-key-row-input">
-                <span
-                  className={`api-key-input-wrap api-key-format-${formatState}`}
-                >
+                <span className={`api-key-input-wrap api-key-format-${formatState}`}>
                   <Input
                     data-testid={`api-key-input-${provider}`}
                     type="password"
@@ -897,17 +842,13 @@ export default function Settings() {
                   data-testid={`api-key-save-${provider}`}
                   onClick={() => handleSaveKey(provider)}
                   disabled={
-                    busy === `save-${provider}` ||
-                    formatState !== "valid" ||
-                    externallyManaged
+                    busy === `save-${provider}` || formatState !== "valid" || externallyManaged
                   }
                   aria-label={t("settings.api_key_set", "Save key")}
                   title={t("settings.api_key_set", "Save key")}
                 >
                   <Save className="h-5 w-5" aria-hidden="true" />
-                  <span className="hidden md:inline">
-                    {t("settings.api_key_set", "Save key")}
-                  </span>
+                  <span className="hidden md:inline">{t("settings.api_key_set", "Save key")}</span>
                 </Button>
                 {(has || formatState === "valid") && (
                   <Button
@@ -1040,10 +981,7 @@ export default function Settings() {
                         onClick={() => handleRestoreBackup(provider)}
                         disabled={busy === `restore-${provider}`}
                       >
-                        {t(
-                          "settings.api_key.rollback_restore",
-                          "Restore last working key",
-                        )}
+                        {t("settings.api_key.rollback_restore", "Restore last working key")}
                       </Button>
                     )}
                   </div>
@@ -1061,10 +999,7 @@ export default function Settings() {
                     onClick={() => handleRestoreBackup(provider)}
                     disabled={busy === `restore-${provider}`}
                   >
-                    {t(
-                      "settings.api_key.rollback_restore",
-                      "Restore last working key",
-                    )}
+                    {t("settings.api_key.rollback_restore", "Restore last working key")}
                   </Button>
                 )}
             </form>
@@ -1099,10 +1034,7 @@ export default function Settings() {
             <span>
               <strong>{t("settings.storage_mode_api", "Server")}</strong>
               <span className="muted">
-                {t(
-                  "settings.storage_mode_api_hint",
-                  "Requires a running AdaptiveLearner backend.",
-                )}
+                {t("settings.storage_mode_api_hint", "Requires a running AdaptiveLearner backend.")}
               </span>
             </span>
           </label>
@@ -1116,9 +1048,7 @@ export default function Settings() {
               onChange={() => handleStorageModeChange("dexie")}
             />
             <span>
-              <strong>
-                {t("settings.storage_mode_dexie", "Local (Browser)")}
-              </strong>
+              <strong>{t("settings.storage_mode_dexie", "Local (Browser)")}</strong>
               <span className="muted">
                 {t(
                   "settings.storage_mode_dexie_hint",
@@ -1159,13 +1089,8 @@ export default function Settings() {
       >
         <SourceLanguagesControl />
         <LearningProfileControl />
-        <section
-          className="settings-section"
-          data-testid="settings-section-feedback"
-        >
-          <h2 className="settings-section-title">
-            {t("settings.section_feedback", "Feedback")}
-          </h2>
+        <section className="settings-section" data-testid="settings-section-feedback">
+          <h2 className="settings-section-title">{t("settings.section_feedback", "Feedback")}</h2>
           <FeedbackIntensityControl />
           <SoundSettingsControl />
         </section>
@@ -1180,9 +1105,7 @@ export default function Settings() {
           </h2>
           <label className="form-row form-row-toggle">
             <span className="form-label-stack">
-              <span className="form-label">
-                {t("settings.gestures", "Swipe Gestures")}
-              </span>
+              <span className="form-label">{t("settings.gestures", "Swipe Gestures")}</span>
               <span className="form-hint">
                 {t(
                   "settings.gestures_description",
@@ -1241,7 +1164,9 @@ export default function Settings() {
             endpoints). In Dexie mode (GitHub Pages / PWA-only) there
             is none, so the section is not offered at all — no QR, no
             dead "Sync Now". See issue #51. */}
-        {resolveStorageMode() === "api" && <SyncSection />}
+        <Feature id={FEATURES.SYNC}>
+          <SyncSection />
+        </Feature>
         <BackupSection />
         <ExportSection />
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
