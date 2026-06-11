@@ -21,7 +21,7 @@
  */
 
 import type { AIProvider, LearningMethod } from "../lib/constants";
-import type { AiValidationResult } from "../lib/content/ai-content-validator";
+import type { AiValidationResult } from "../lib/content/content-validation-types";
 import type {
   ApiKeySetBody,
   CurriculumCreateBody,
@@ -42,7 +42,7 @@ import type {
   TopicUpdateBody,
   UserCreateBody,
   UserUpdateBody,
-} from "../api/client";
+} from "../api/request-types";
 import type {
   AssessmentEvaluatePayload,
   AssessmentQuestion,
@@ -74,10 +74,7 @@ export interface IUsersNamespace {
   update(userId: string, body: UserUpdateBody): Promise<User>;
   projects: {
     list(userId: string): Promise<LearningProject[]>;
-    create(
-      userId: string,
-      body: LearningProjectCreateBody,
-    ): Promise<LearningProject>;
+    create(userId: string, body: LearningProjectCreateBody): Promise<LearningProject>;
   };
   /**
    * Recover the most recent locally-known user identity, or null
@@ -111,10 +108,7 @@ export interface RecoveryHint {
 
 export interface IProjectsNamespace {
   get(projectId: string): Promise<LearningProject>;
-  update(
-    projectId: string,
-    body: LearningProjectUpdateBody,
-  ): Promise<LearningProject>;
+  update(projectId: string, body: LearningProjectUpdateBody): Promise<LearningProject>;
 }
 
 export interface AvailableModel {
@@ -126,13 +120,7 @@ export interface AvailableModel {
 
 /** Outcome of a live API-key test (Phase 65). ``kind`` is a stable
  *  machine code the UI maps to a localized message. */
-export type ApiKeyTestKind =
-  | "ok"
-  | "invalid"
-  | "rate_limit"
-  | "network"
-  | "error"
-  | "no_key";
+export type ApiKeyTestKind = "ok" | "invalid" | "rate_limit" | "network" | "error" | "no_key";
 
 export interface ApiKeyTestResult {
   success: boolean;
@@ -171,18 +159,9 @@ export interface ISettingsNamespace {
    * Both modes: ApiStorage hits the backend (Fernet-encrypted DB row),
    * DexieStorage uses an IndexedDB table.
    */
-  backupApiKey(
-    userId: string,
-    body: { provider: AIProvider; key: string },
-  ): Promise<UserSettings>;
-  getApiKeyBackup(
-    userId: string,
-    provider: AIProvider,
-  ): Promise<ApiKeyBackupInfo>;
-  restoreApiKeyBackup(
-    userId: string,
-    provider: AIProvider,
-  ): Promise<UserSettings>;
+  backupApiKey(userId: string, body: { provider: AIProvider; key: string }): Promise<UserSettings>;
+  getApiKeyBackup(userId: string, provider: AIProvider): Promise<ApiKeyBackupInfo>;
+  restoreApiKeyBackup(userId: string, provider: AIProvider): Promise<UserSettings>;
   /**
    * v1.11.0 / Phase 24 — provider model discovery. Returns
    * the chat-capable models the user has access to from the
@@ -190,10 +169,7 @@ export interface ISettingsNamespace {
    * no API key for the provider is configured. Throws
    * ``ApiError`` on auth / network failure.
    */
-  getAvailableModels(
-    userId: string,
-    provider: AIProvider,
-  ): Promise<AvailableModel[]>;
+  getAvailableModels(userId: string, provider: AIProvider): Promise<AvailableModel[]>;
 }
 
 /** Whether a GitHub token is configured and where it lives. ``source``
@@ -204,13 +180,7 @@ export interface GitHubTokenStatus {
   source: string;
 }
 
-export type GitHubVerifyKind =
-  | "ok"
-  | "invalid"
-  | "rate_limit"
-  | "network"
-  | "error"
-  | "no_token";
+export type GitHubVerifyKind = "ok" | "invalid" | "rate_limit" | "network" | "error" | "no_token";
 
 /** Result of verifying a GitHub token (``GET /user``). */
 export interface GitHubVerifyResult {
@@ -284,10 +254,7 @@ export interface StreamMessageHandlers {
 
 export interface ISessionNamespace {
   start(body: SessionStartBody): Promise<SessionStartResult>;
-  message(
-    sessionId: string,
-    body: SessionMessageBody,
-  ): Promise<SessionMessageExchangeResult>;
+  message(sessionId: string, body: SessionMessageBody): Promise<SessionMessageExchangeResult>;
   /**
    * v1.6.0 / Phase 19 — streaming variant of ``message``. Same
    * input + same exchange result, but the assistant text streams
@@ -313,9 +280,7 @@ export interface ISessionNamespace {
    * none. ImportDetail uses this to flip "Start session" into
    * "Continue session" before the user clicks.
    */
-  getActiveForConversation(
-    conversationId: string,
-  ): Promise<LearningSession | null>;
+  getActiveForConversation(conversationId: string): Promise<LearningSession | null>;
   /**
    * Phase 38 Bug 7 — return a session record by ID. Used by the
    * Session route's resume path (``?session=<id>``): the page
@@ -427,11 +392,7 @@ export interface ContentLessonClozeBlank {
  *  ``source_to_target`` is productive (show source, produce
  *  target). ``both`` / ``random`` defer the choice to the
  *  renderer / adaptive generator. */
-export type ContentExerciseDirection =
-  | "source_to_target"
-  | "target_to_source"
-  | "both"
-  | "random";
+export type ContentExerciseDirection = "source_to_target" | "target_to_source" | "both" | "random";
 
 export interface ContentLessonExercise {
   id: string;
@@ -561,11 +522,7 @@ export interface IContentLoaderNamespace {
   listSets(): Promise<ContentSetsList>;
   downloadSet(source: string, setId: string): Promise<ContentSetEntry>;
   listLessons(source: string, setId: string): Promise<ContentLessonList>;
-  getLesson(
-    source: string,
-    setId: string,
-    filename: string,
-  ): Promise<ContentLesson>;
+  getLesson(source: string, setId: string, filename: string): Promise<ContentLesson>;
   /** Phase 54 / v1.37.0 — fetch one cached asset by relative
    *  path (e.g. ``img/sunrise.png``). Returns ``null`` when
    *  the asset isn't cached so the asset resolver hook can
@@ -581,11 +538,7 @@ export interface IContentLoaderNamespace {
    *  on the returned Blob and the matching
    *  ``URL.revokeObjectURL`` on component unmount. The
    *  ``useAsset`` hook in Phase 54B handles that contract. */
-  getAsset(
-    source: string,
-    setId: string,
-    assetPath: string,
-  ): Promise<Blob | null>;
+  getAsset(source: string, setId: string, assetPath: string): Promise<Blob | null>;
   /** Phase 59B / v1.42.0 — persist a user-generated set (from a
    *  chat analysis, an adaptive lesson, or an imported file) into
    *  the SAME cache as downloaded sets, marked ``source:
@@ -778,10 +731,7 @@ export interface ILessonProgressNamespace {
     setId: string,
     lessonFilename: string,
   ): Promise<LessonProgress | null>;
-  upsert(
-    userId: string,
-    body: LessonProgressUpsertBody,
-  ): Promise<LessonProgress>;
+  upsert(userId: string, body: LessonProgressUpsertBody): Promise<LessonProgress>;
 }
 
 /**
@@ -877,18 +827,12 @@ export interface IElementErrorsNamespace {
     userId: string,
     opts?: { setId?: string; includeMastered?: boolean },
   ): Promise<ElementError[]>;
-  recordBulk(
-    userId: string,
-    attempts: readonly ElementAttempt[],
-  ): Promise<ElementError[]>;
+  recordBulk(userId: string, attempts: readonly ElementAttempt[]): Promise<ElementError[]>;
   /** Projected review queue: active (non-mastered)
    *  elements with computed suggested_review_at + overdue
    *  flag, sorted by urgency (overdue → error_count desc →
    *  last_error_at desc). */
-  reviewQueue(
-    userId: string,
-    opts?: { setId?: string },
-  ): Promise<ReviewQueueItem[]>;
+  reviewQueue(userId: string, opts?: { setId?: string }): Promise<ReviewQueueItem[]>;
 }
 
 // EXP-010 / Phase 56 — daily missions. ``getDaily`` assigns the
@@ -896,14 +840,8 @@ export interface IElementErrorsNamespace {
 // live progress on every call; ``regenerate`` reshuffles today's
 // set (Settings reset). Both work in API + Dexie mode.
 export interface IMissionsNamespace {
-  getDaily(
-    userId: string,
-    options?: MissionDailyOptions,
-  ): Promise<MissionDailyResult>;
-  regenerate(
-    userId: string,
-    options?: MissionDailyOptions,
-  ): Promise<MissionDailyResult>;
+  getDaily(userId: string, options?: MissionDailyOptions): Promise<MissionDailyResult>;
+  regenerate(userId: string, options?: MissionDailyOptions): Promise<MissionDailyResult>;
 }
 
 export interface MissionDailyOptions {
@@ -925,10 +863,7 @@ export interface MissionDailyResultWire {
 }
 
 export interface IToolsNamespace {
-  recommendations(
-    projectId: string,
-    lang: string,
-  ): Promise<ToolRecommendation[]>;
+  recommendations(projectId: string, lang: string): Promise<ToolRecommendation[]>;
   spaced(projectId: string, lang: string): Promise<SpacedRecommendation[]>;
 }
 
@@ -946,10 +881,7 @@ export interface ICurriculaNamespace {
    */
   getForConversation(conversationId: string): Promise<Curriculum | null>;
   listTopics(curriculumId: string): Promise<LearningTopic[]>;
-  createTopic(
-    curriculumId: string,
-    body: TopicCreateBody,
-  ): Promise<LearningTopic>;
+  createTopic(curriculumId: string, body: TopicCreateBody): Promise<LearningTopic>;
   listLessons(curriculumId: string): Promise<Lesson[]>;
   createLesson(curriculumId: string, body: LessonCreateBody): Promise<Lesson>;
 }
@@ -1076,18 +1008,12 @@ export interface IBackupNamespace {
  * renderer consume. Same shape in both storage modes.
  */
 export interface IExportNamespace {
-  progress(
-    userId: string,
-    lang: string,
-  ): Promise<import("./export-builder").ProgressReport>;
-  session(
-    sessionId: string,
-    lang: string,
-  ): Promise<import("./export-builder").SessionDetail>;
+  progress(userId: string, lang: string): Promise<import("./export-types").ProgressReport>;
+  session(sessionId: string, lang: string): Promise<import("./export-types").SessionDetail>;
   curriculum(
     curriculumId: string,
     lang: string,
-  ): Promise<import("./export-builder").CurriculumOverview>;
+  ): Promise<import("./export-types").CurriculumOverview>;
 }
 
 // --- Taxonomy: Subjects + Tags (v1.9.0 / Phase 22) ---------------------
@@ -1213,18 +1139,9 @@ export interface StudyQuestionListFilters {
 }
 
 export interface INotebookLMNamespace {
-  listQuestions(
-    userId: string,
-    filters?: StudyQuestionListFilters,
-  ): Promise<StudyQuestion[]>;
-  createQuestion(
-    userId: string,
-    body: StudyQuestionCreateBody,
-  ): Promise<StudyQuestion>;
-  updateQuestion(
-    questionId: string,
-    body: StudyQuestionUpdateBody,
-  ): Promise<StudyQuestion>;
+  listQuestions(userId: string, filters?: StudyQuestionListFilters): Promise<StudyQuestion[]>;
+  createQuestion(userId: string, body: StudyQuestionCreateBody): Promise<StudyQuestion>;
+  updateQuestion(questionId: string, body: StudyQuestionUpdateBody): Promise<StudyQuestion>;
   deleteQuestion(questionId: string): Promise<void>;
   generateFromSession(sessionId: string): Promise<StudyQuestion[]>;
   generateFromProject(projectId: string): Promise<StudyQuestion[]>;
@@ -1271,17 +1188,12 @@ export interface IPronunciationNamespace {
 }
 
 export interface IAnkiNamespace {
-  list(
-    userId: string,
-    filters?: AnkiCardListFilters,
-  ): Promise<AnkiCardSuggestion[]>;
+  list(userId: string, filters?: AnkiCardListFilters): Promise<AnkiCardSuggestion[]>;
   create(userId: string, body: AnkiCardCreateBody): Promise<AnkiCardSuggestion>;
   update(cardId: string, body: AnkiCardUpdateBody): Promise<AnkiCardSuggestion>;
   remove(cardId: string): Promise<void>;
   extractFromSession(sessionId: string): Promise<AnkiCardSuggestion[]>;
-  extractFromConversation(
-    conversationId: string,
-  ): Promise<AnkiCardSuggestion[]>;
+  extractFromConversation(conversationId: string): Promise<AnkiCardSuggestion[]>;
   markExported(cardIds: string[]): Promise<{ updated: number }>;
 }
 
@@ -1337,10 +1249,7 @@ export interface BadgeWithProgress {
   // drives the next-tier progress bar for DYNAMIC badges.
   base_tier: string;
   tier: string;
-  tier_thresholds: Record<
-    string,
-    { threshold: number; xp_bonus: number }
-  > | null;
+  tier_thresholds: Record<string, { threshold: number; xp_bonus: number }> | null;
   earned: boolean;
   earned_at: string | null;
   progress: string | null;
@@ -1396,10 +1305,7 @@ export interface IGamificationNamespace {
 
 export interface IImportsNamespace {
   list(userId: string): Promise<ImportedConversation[]>;
-  create(
-    userId: string,
-    body: ImportedConversationCreateBody,
-  ): Promise<ImportedConversation>;
+  create(userId: string, body: ImportedConversationCreateBody): Promise<ImportedConversation>;
   get(conversationId: string): Promise<ImportedConversationDetail>;
   update(
     conversationId: string,

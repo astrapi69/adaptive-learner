@@ -18,36 +18,24 @@ import type { ContentLesson } from "../../storage/types";
 import { extractJsonObject } from "../extract-json";
 import type { ValidationMeta } from "./content-validator";
 
-export interface AiTranslationIssue {
-  card_id: string;
-  issue: string;
-  suggestion: string;
-}
-export interface AiDistractorIssue {
-  exercise_id: string;
-  issue: string;
-  suggestion: string;
-}
-export interface AiGrammarIssue {
-  step_id: string;
-  issue: string;
-  correction: string;
-}
-export interface AiLevelIssue {
-  item: string;
-  issue: string;
-  suggestion: string;
-}
-
-export interface AiValidationResult {
-  overall: "pass" | "review_needed";
-  translation_issues: AiTranslationIssue[];
-  distractor_issues: AiDistractorIssue[];
-  grammar_issues: AiGrammarIssue[];
-  level_issues: AiLevelIssue[];
-  cultural_flags: string[];
-  quality_score: number;
-}
+// #252 — the type shapes moved to a pure module so type-only consumers
+// (storage/types, api/client) can reference them without importing this
+// implementation module (which closed two import cycles). Re-exported
+// here so existing `from "./ai-content-validator"` imports keep working.
+export type {
+  AiTranslationIssue,
+  AiDistractorIssue,
+  AiGrammarIssue,
+  AiLevelIssue,
+  AiValidationResult,
+} from "./content-validation-types";
+import type {
+  AiTranslationIssue,
+  AiDistractorIssue,
+  AiGrammarIssue,
+  AiLevelIssue,
+  AiValidationResult,
+} from "./content-validation-types";
 
 /** Build the (system, user) messages for an AI content review. */
 export function buildAiValidationMessages(
@@ -151,11 +139,7 @@ export function parseAiValidationResult(raw: string): AiValidationResult | null 
     "issue",
     "correction",
   ]);
-  const level = asIssueArray<AiLevelIssue>(obj.level_issues, [
-    "item",
-    "issue",
-    "suggestion",
-  ]);
+  const level = asIssueArray<AiLevelIssue>(obj.level_issues, ["item", "issue", "suggestion"]);
   const cultural = Array.isArray(obj.cultural_flags)
     ? obj.cultural_flags.filter((x): x is string => typeof x === "string")
     : [];
