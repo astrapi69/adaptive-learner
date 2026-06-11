@@ -15,9 +15,11 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
+import { useFeature } from "@astrapi69/feature-strategy-react";
+
 import { ApiError } from "../api/client";
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
-import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
+import { FEATURES } from "../features/featureConfig";
 import { useI18n } from "../hooks/useI18n";
 import { filterStandardProjects } from "../lib/learning-project";
 import { readLearnerState } from "../lib/learnerState";
@@ -42,7 +44,7 @@ export default function AnkiPage() {
     card_type: "basic" | "cloze";
   } | null>(null);
   const userId = readLearnerState().userId;
-  const apiKey = useApiKeyStatus();
+  const ankiFeature = useFeature(FEATURES.ANKI_EXTRACT);
 
   const refresh = useCallback(async () => {
     if (!userId) return;
@@ -276,7 +278,7 @@ export default function AnkiPage() {
               "Import a conversation and click 'Extract Anki cards' to create flashcards.",
             )}
           </p>
-          {apiKey.ready && !apiKey.hasKey && (
+          {ankiFeature.isDisabled && (
             <ApiKeyRequiredNotice
               feature={t("ui.api_key.feature_anki", "to extract Anki cards")}
               settingsHref="/settings?tab=integrations"

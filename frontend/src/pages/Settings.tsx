@@ -28,6 +28,8 @@ import HelpBrowser from "../components/help/HelpBrowser";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../hooks/useButtonTooltips";
 import { setDevModeEnabled, useDevMode } from "../hooks/useDevMode";
 import { refreshApiKeyStatus } from "../hooks/useApiKeyStatus";
+import { Feature } from "@astrapi69/feature-strategy-react";
+import { FEATURES } from "../features/featureConfig";
 import VoiceSettingsSection from "../components/VoiceSettingsSection";
 import { ModelPicker } from "../components/ModelPicker";
 import SyncSection from "../components/SyncSection";
@@ -1162,7 +1164,9 @@ export default function Settings() {
             endpoints). In Dexie mode (GitHub Pages / PWA-only) there
             is none, so the section is not offered at all — no QR, no
             dead "Sync Now". See issue #51. */}
-        {resolveStorageMode() === "api" && <SyncSection />}
+        <Feature id={FEATURES.SYNC}>
+          <SyncSection />
+        </Feature>
         <BackupSection />
         <ExportSection />
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}

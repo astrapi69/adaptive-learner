@@ -3,25 +3,17 @@
 // in-memory implementation so it resolves instead of throwing.
 import "fake-indexeddb/auto";
 
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import Settings from "./Settings";
+import { TestFeatureProvider } from "../features/testFeatureProvider";
 import type { UserSettings } from "../types";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
-  const actual =
-    await vi.importActual<typeof import("react-router-dom")>(
-      "react-router-dom",
-    );
+  const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
@@ -34,8 +26,7 @@ const apiBackupKey = vi.fn();
 const apiGetBackup = vi.fn();
 const apiRestoreBackup = vi.fn();
 vi.mock("../api/client", async () => {
-  const actual =
-    await vi.importActual<typeof import("../api/client")>("../api/client");
+  const actual = await vi.importActual<typeof import("../api/client")>("../api/client");
   return {
     ...actual,
     api: {
@@ -61,8 +52,7 @@ vi.mock("../api/client", async () => {
 // unaffected.
 const storageState = vi.hoisted(() => ({ mode: "api" as "api" | "dexie" }));
 vi.mock("../storage", async () => {
-  const actual =
-    await vi.importActual<typeof import("../storage")>("../storage");
+  const actual = await vi.importActual<typeof import("../storage")>("../storage");
   return { ...actual, resolveStorageMode: () => storageState.mode };
 });
 
@@ -101,9 +91,11 @@ const VALID_ANTHROPIC_KEY = "sk-ant-" + "a".repeat(95);
 
 function renderSettings(initialEntry = "/settings") {
   return render(
-    <MemoryRouter initialEntries={[initialEntry]}>
-      <Settings />
-    </MemoryRouter>,
+    <TestFeatureProvider context={{ mode: storageState.mode }}>
+      <MemoryRouter initialEntries={[initialEntry]}>
+        <Settings />
+      </MemoryRouter>
+    </TestFeatureProvider>,
   );
 }
 
@@ -182,10 +174,7 @@ describe("Settings page", () => {
     renderSettings();
     await screen.findByTestId("settings");
     expect(screen.getByTestId("settings-tabs")).toBeInTheDocument();
-    expect(screen.getByTestId("settings-tab-general")).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
+    expect(screen.getByTestId("settings-tab-general")).toHaveAttribute("aria-selected", "true");
     // General panel sections are visible; AI panel is hidden.
     expect(screen.getByTestId("settings-section-ui")).toBeVisible();
     expect(screen.getByTestId("settings-model-overrides")).not.toBeVisible();
@@ -196,10 +185,7 @@ describe("Settings page", () => {
     renderSettings();
     await screen.findByTestId("settings");
     fireEvent.click(screen.getByTestId("settings-tab-ai"));
-    expect(screen.getByTestId("settings-tab-ai")).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
+    expect(screen.getByTestId("settings-tab-ai")).toHaveAttribute("aria-selected", "true");
     expect(screen.getByTestId("settings-model-overrides")).toBeVisible();
     // The General Interface section is now hidden.
     expect(screen.getByTestId("settings-section-ui")).not.toBeVisible();
@@ -251,10 +237,7 @@ describe("Settings page", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=data");
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("settings-tab-data")).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
+    expect(screen.getByTestId("settings-tab-data")).toHaveAttribute("aria-selected", "true");
     expect(screen.getByTestId("settings-panel-data")).toBeVisible();
     // General sections are hidden when a deep link opens another tab.
     expect(screen.getByTestId("settings-section-ui")).not.toBeVisible();
@@ -264,10 +247,7 @@ describe("Settings page", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=bogus");
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("settings-tab-general")).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
+    expect(screen.getByTestId("settings-tab-general")).toHaveAttribute("aria-selected", "true");
   });
 
   it("changing the language calls update + flips i18n provider", async () => {
@@ -318,24 +298,18 @@ describe("Settings page", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
-    const save = screen.getByTestId(
-      "api-key-save-anthropic",
-    ) as HTMLButtonElement;
+    const save = screen.getByTestId("api-key-save-anthropic") as HTMLButtonElement;
     const input = screen.getByTestId("api-key-input-anthropic");
     // Empty -> disabled.
     expect(save.disabled).toBe(true);
     // Wrong format -> still disabled + a format error is shown.
     fireEvent.change(input, { target: { value: "sk-xxx" } });
     expect(save.disabled).toBe(true);
-    expect(
-      screen.getByTestId("api-key-format-error-anthropic"),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("api-key-format-error-anthropic")).toBeInTheDocument();
     // Valid format -> enabled + checkmark.
     fireEvent.change(input, { target: { value: VALID_ANTHROPIC_KEY } });
     expect(save.disabled).toBe(false);
-    expect(
-      screen.getByTestId("api-key-format-ok-anthropic"),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("api-key-format-ok-anthropic")).toBeInTheDocument();
   });
 
   it("Save key posts the encrypted-write body and clears the draft", async () => {
@@ -358,9 +332,7 @@ describe("Settings page", () => {
     // After success the status flips to "set" and a Delete
     // button is rendered.
     await screen.findByTestId("api-key-delete-anthropic");
-    expect(
-      (screen.getByTestId("api-key-input-anthropic") as HTMLInputElement).value,
-    ).toBe("");
+    expect((screen.getByTestId("api-key-input-anthropic") as HTMLInputElement).value).toBe("");
     expect(toastSuccess).toHaveBeenCalled();
   });
 
@@ -371,8 +343,7 @@ describe("Settings page", () => {
     // before vi.spyOn would otherwise reject for "function
     // undefined".
     const confirmStub = vi.fn().mockReturnValue(true);
-    (window as unknown as { confirm: typeof confirmStub }).confirm =
-      confirmStub;
+    (window as unknown as { confirm: typeof confirmStub }).confirm = confirmStub;
     renderSettings();
     await screen.findByTestId("settings");
     await act(async () => {
@@ -387,8 +358,7 @@ describe("Settings page", () => {
   it("Delete key cancellation does NOT call the API", async () => {
     apiGet.mockResolvedValue({ ...BASE, has_anthropic_key: true });
     const confirmStub = vi.fn().mockReturnValue(false);
-    (window as unknown as { confirm: typeof confirmStub }).confirm =
-      confirmStub;
+    (window as unknown as { confirm: typeof confirmStub }).confirm = confirmStub;
     renderSettings();
     await screen.findByTestId("settings");
     fireEvent.click(screen.getByTestId("api-key-delete-anthropic"));
@@ -401,9 +371,7 @@ describe("Settings page", () => {
     apiGet.mockRejectedValue(new ApiError(500, "DB down"));
     renderSettings();
     await screen.findByTestId("settings-error");
-    expect(screen.getByTestId("settings-error").textContent).toContain(
-      "DB down",
-    );
+    expect(screen.getByTestId("settings-error").textContent).toContain("DB down");
   });
 
   // --- v0.2.0: Active-provider visual feedback ---------------------
@@ -415,12 +383,8 @@ describe("Settings page", () => {
     // Active badge appears on the openai row.
     expect(screen.getByTestId("api-key-active-openai")).toBeInTheDocument();
     // NOT on the anthropic / gemini rows.
-    expect(
-      screen.queryByTestId("api-key-active-anthropic"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId("api-key-active-gemini"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("api-key-active-anthropic")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("api-key-active-gemini")).not.toBeInTheDocument();
   });
 
   it("renders the missing-key warning when the active provider has no key", async () => {
@@ -442,9 +406,7 @@ describe("Settings page", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    expect(
-      screen.queryByTestId("api-key-warning-openai"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("api-key-warning-openai")).not.toBeInTheDocument();
   });
 
   it("non-active providers without keys do NOT get the warning", async () => {
@@ -456,9 +418,7 @@ describe("Settings page", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    expect(
-      screen.queryByTestId("api-key-warning-openai"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("api-key-warning-openai")).not.toBeInTheDocument();
     // The Active badge is on anthropic, not openai.
     expect(screen.getByTestId("api-key-active-anthropic")).toBeInTheDocument();
   });
@@ -471,12 +431,8 @@ describe("Settings page", () => {
     await screen.findByTestId("settings");
     expect(screen.getByTestId("settings-model-overrides")).toBeInTheDocument();
     for (const provider of ["anthropic", "openai", "gemini"]) {
-      expect(
-        screen.getByTestId(`model-override-row-${provider}`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`model-picker-input-${provider}`),
-      ).toBeInTheDocument();
+      expect(screen.getByTestId(`model-override-row-${provider}`)).toBeInTheDocument();
+      expect(screen.getByTestId(`model-picker-input-${provider}`)).toBeInTheDocument();
     }
   });
 
@@ -487,14 +443,10 @@ describe("Settings page", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    const input = screen.getByTestId(
-      "model-picker-input-anthropic",
-    ) as HTMLInputElement;
+    const input = screen.getByTestId("model-picker-input-anthropic") as HTMLInputElement;
     expect(input.value).toBe("claude-sonnet-4-20250514");
     // Status badge reads as "override active".
-    expect(
-      screen.getByTestId("model-override-status-anthropic").textContent,
-    ).toBeTruthy();
+    expect(screen.getByTestId("model-override-status-anthropic").textContent).toBeTruthy();
   });
 
   it("Save model PATCH only fires for the dirty provider", async () => {
@@ -525,9 +477,7 @@ describe("Settings page", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    const save = screen.getByTestId(
-      "model-override-save-anthropic",
-    ) as HTMLButtonElement;
+    const save = screen.getByTestId("model-override-save-anthropic") as HTMLButtonElement;
     expect(save.disabled).toBe(true);
   });
 
@@ -556,9 +506,7 @@ describe("Settings page", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
-    expect(
-      screen.queryByTestId("model-override-clear-anthropic"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("model-override-clear-anthropic")).not.toBeInTheDocument();
   });
 
   it("renders the Phase 10F storage-mode section with both radios", async () => {
@@ -577,9 +525,7 @@ describe("Settings page", () => {
     renderSettings();
     await screen.findByTestId("settings");
     const apiRadio = screen.getByTestId("storage-mode-api") as HTMLInputElement;
-    const dexieRadio = screen.getByTestId(
-      "storage-mode-dexie",
-    ) as HTMLInputElement;
+    const dexieRadio = screen.getByTestId("storage-mode-dexie") as HTMLInputElement;
     expect(apiRadio.checked).toBe(true);
     expect(dexieRadio.checked).toBe(false);
   });
@@ -588,9 +534,7 @@ describe("Settings page", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
-    const dexieRadio = screen.getByTestId(
-      "storage-mode-dexie",
-    ) as HTMLInputElement;
+    const dexieRadio = screen.getByTestId("storage-mode-dexie") as HTMLInputElement;
     fireEvent.click(dexieRadio);
     expect(localStorage.getItem("adaptive-learner.storage_mode")).toBe("dexie");
     expect(toastSuccess).toHaveBeenCalledWith(expect.stringMatching(/Reload/i));
@@ -625,15 +569,11 @@ describe("Settings — gesture toggle (Phase 23E)", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
-    const toggle = screen.getByTestId(
-      "settings-gestures-toggle",
-    ) as HTMLInputElement;
+    const toggle = screen.getByTestId("settings-gestures-toggle") as HTMLInputElement;
     const initial = toggle.checked;
     fireEvent.click(toggle);
     expect(toggle.checked).toBe(!initial);
-    expect(localStorage.getItem("adaptive-learner.gestures_enabled")).toBe(
-      String(!initial),
-    );
+    expect(localStorage.getItem("adaptive-learner.gestures_enabled")).toBe(String(!initial));
   });
 
   it("initialises from the persisted value (true)", async () => {
@@ -641,9 +581,7 @@ describe("Settings — gesture toggle (Phase 23E)", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
-    const toggle = screen.getByTestId(
-      "settings-gestures-toggle",
-    ) as HTMLInputElement;
+    const toggle = screen.getByTestId("settings-gestures-toggle") as HTMLInputElement;
     expect(toggle.checked).toBe(true);
   });
 
@@ -652,9 +590,7 @@ describe("Settings — gesture toggle (Phase 23E)", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
-    const toggle = screen.getByTestId(
-      "settings-gestures-toggle",
-    ) as HTMLInputElement;
+    const toggle = screen.getByTestId("settings-gestures-toggle") as HTMLInputElement;
     expect(toggle.checked).toBe(false);
   });
 });
@@ -677,13 +613,9 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
-      /Settings/,
-    );
+    expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(/Settings/);
     // No externally-managed banner.
-    expect(
-      screen.queryByTestId("api-key-external-anthropic"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("api-key-external-anthropic")).not.toBeInTheDocument();
     // Save + input are enabled.
     expect(screen.getByTestId("api-key-input-anthropic")).not.toBeDisabled();
   });
@@ -696,22 +628,14 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
-      /secrets\.yaml/,
-    );
+    expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(/secrets\.yaml/);
     // Informational note (not the read-only "externally managed" env hint).
-    expect(
-      screen.queryByTestId("api-key-external-anthropic"),
-    ).not.toBeInTheDocument();
-    expect(screen.getByTestId("api-key-info-anthropic")).toHaveTextContent(
-      /secrets\.yaml/,
-    );
+    expect(screen.queryByTestId("api-key-external-anthropic")).not.toBeInTheDocument();
+    expect(screen.getByTestId("api-key-info-anthropic")).toHaveTextContent(/secrets\.yaml/);
     // Field stays editable so the user can overwrite the stored key.
     expect(screen.getByTestId("api-key-input-anthropic")).not.toBeDisabled();
     // Save enables once the draft is non-empty.
-    const input = screen.getByTestId(
-      "api-key-input-anthropic",
-    ) as HTMLInputElement;
+    const input = screen.getByTestId("api-key-input-anthropic") as HTMLInputElement;
     fireEvent.change(input, { target: { value: VALID_ANTHROPIC_KEY } });
     expect(screen.getByTestId("api-key-save-anthropic")).not.toBeDisabled();
   });
@@ -724,9 +648,7 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    expect(
-      screen.getByTestId("api-key-delete-anthropic"),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("api-key-delete-anthropic")).toBeInTheDocument();
   });
 
   it("renders 'Key from: environment' badge + env-var hint when externally managed", async () => {
@@ -737,13 +659,9 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("api-key-source-openai")).toHaveTextContent(
-      /environment/,
-    );
+    expect(screen.getByTestId("api-key-source-openai")).toHaveTextContent(/environment/);
     // Env hint substitutes the OPENAI provider name.
-    expect(screen.getByTestId("api-key-external-openai")).toHaveTextContent(
-      /OPENAI/,
-    );
+    expect(screen.getByTestId("api-key-external-openai")).toHaveTextContent(/OPENAI/);
     expect(screen.getByTestId("api-key-save-openai")).toBeDisabled();
   });
 
@@ -760,12 +678,8 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    expect(
-      screen.queryByTestId("api-key-warning-anthropic"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getByTestId("api-key-external-anthropic"),
-    ).toBeInTheDocument();
+    expect(screen.queryByTestId("api-key-warning-anthropic")).not.toBeInTheDocument();
+    expect(screen.getByTestId("api-key-external-anthropic")).toBeInTheDocument();
   });
 
   it("hides the Remove button when externally managed via env var (even if has_*_key is true)", async () => {
@@ -779,18 +693,14 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     });
     renderSettings();
     await screen.findByTestId("settings");
-    expect(
-      screen.queryByTestId("api-key-delete-anthropic"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("api-key-delete-anthropic")).not.toBeInTheDocument();
   });
 
   it("renders 'No key configured' when source is none and no key stored", async () => {
     apiGet.mockResolvedValue({ ...BASE }); // all sources default "none"
     renderSettings();
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
-      /No key/,
-    );
+    expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(/No key/);
   });
 });
 
@@ -822,9 +732,7 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
       fireEvent.click(screen.getByTestId("api-key-test-anthropic"));
     });
     await waitFor(() => {
-      expect(
-        screen.getByTestId("api-key-test-result-anthropic"),
-      ).toHaveTextContent(/works/i);
+      expect(screen.getByTestId("api-key-test-result-anthropic")).toHaveTextContent(/works/i);
     });
   });
 
@@ -840,9 +748,7 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
       fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
     });
     await waitFor(() => {
-      expect(
-        screen.getByTestId("api-key-rollback-anthropic"),
-      ).toBeInTheDocument();
+      expect(screen.getByTestId("api-key-rollback-anthropic")).toBeInTheDocument();
     });
     // Failing key was NOT saved (we tested before overwriting).
     expect(apiSetKey).not.toHaveBeenCalled();
@@ -884,9 +790,7 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
     });
     await screen.findByTestId("api-key-rollback-anthropic");
     await act(async () => {
-      fireEvent.click(
-        screen.getByTestId("api-key-rollback-save-anyway-anthropic"),
-      );
+      fireEvent.click(screen.getByTestId("api-key-rollback-save-anyway-anthropic"));
     });
     await waitFor(() => {
       expect(apiSetKey).toHaveBeenCalled();

@@ -16,139 +16,124 @@
 
 import "fake-indexeddb/auto";
 
-import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import {I18nProvider} from "../hooks/useI18n";
-import {_resetDbForTests, getDb} from "../storage/db";
-import {_resetStorageCacheForTests, getStorage} from "../storage";
+import { TestFeatureProvider } from "../features/testFeatureProvider";
+import { I18nProvider } from "../hooks/useI18n";
+import { _resetDbForTests, getDb } from "../storage/db";
+import { _resetStorageCacheForTests, getStorage } from "../storage";
+import type { StorageMode } from "../storage/types";
 
 import LearningRepoSettingsSection from "./LearningRepoSettingsSection";
 
 vi.mock("../utils/notify", () => ({
-    notify: {
-        error: vi.fn(),
-        success: vi.fn(),
-        info: vi.fn(),
-        warning: vi.fn(),
-    },
+  notify: {
+    error: vi.fn(),
+    success: vi.fn(),
+    info: vi.fn(),
+    warning: vi.fn(),
+  },
 }));
 
 beforeEach(async () => {
-    localStorage.setItem("adaptive-learner.storage_mode", "dexie");
-    _resetStorageCacheForTests();
-    await _resetDbForTests();
-    const {IDBFactory} = await import("fake-indexeddb");
-    (globalThis as unknown as {indexedDB: IDBFactory}).indexedDB =
-        new IDBFactory();
+  localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+  _resetStorageCacheForTests();
+  await _resetDbForTests();
+  const { IDBFactory } = await import("fake-indexeddb");
+  (globalThis as unknown as { indexedDB: IDBFactory }).indexedDB = new IDBFactory();
 });
 
 afterEach(async () => {
-    await _resetDbForTests();
-    localStorage.clear();
-    vi.restoreAllMocks();
+  await _resetDbForTests();
+  localStorage.clear();
+  vi.restoreAllMocks();
 });
 
-function renderSection() {
-    return render(
-        <I18nProvider>
-            <LearningRepoSettingsSection />
-        </I18nProvider>,
-    );
+function renderSection(mode: StorageMode = "dexie") {
+  return render(
+    <TestFeatureProvider context={{ mode }}>
+      <I18nProvider>
+        <LearningRepoSettingsSection />
+      </I18nProvider>
+    </TestFeatureProvider>,
+  );
 }
 
 describe("LearningRepoSettingsSection — Dexie mode", () => {
-    it("renders the full settings panel (not the unavailable message)", async () => {
-        renderSection();
-        // The Dexie-unavailable panel is gone — it used to
-        // mount with testid "learning-repo-settings-dexie-
-        // unavailable". The full settings UI must mount
-        // instead, with the toggle + text + save controls.
-        await waitFor(() => {
-            expect(
-                screen.getByTestId("learning-repo-settings"),
-            ).toBeInTheDocument();
-        });
-        expect(
-            screen.queryByTestId(
-                "learning-repo-settings-dexie-unavailable",
-            ),
-        ).toBeNull();
-        expect(
-            screen.getByTestId("learning-repo-settings-enable-git"),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByTestId("learning-repo-settings-repos-dir"),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByTestId("learning-repo-settings-save"),
-        ).toBeInTheDocument();
+  it("renders the panel (repos dir + save) but hides the git toggle", async () => {
+    renderSection();
+    // The Dexie-unavailable panel is gone — it used to mount with
+    // testid "learning-repo-settings-dexie-unavailable". The full
+    // settings UI mounts instead, EXCEPT the git toggle: git
+    // persistence needs a server-side filesystem + git binary, so
+    // the LEARNING_REPO_GIT feature is hidden in Dexie mode.
+    await waitFor(() => {
+      expect(screen.getByTestId("learning-repo-settings")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("learning-repo-settings-dexie-unavailable")).toBeNull();
+    expect(screen.queryByTestId("learning-repo-settings-enable-git")).toBeNull();
+    expect(screen.getByTestId("learning-repo-settings-repos-dir")).toBeInTheDocument();
+    expect(screen.getByTestId("learning-repo-settings-save")).toBeInTheDocument();
+  });
+
+  it("loads the bundled repos-dir default and persists an edit to Dexie", async () => {
+    renderSection();
+    await waitFor(() => {
+      expect(screen.getByTestId("learning-repo-settings")).toBeInTheDocument();
+    });
+    const reposDir = screen.getByTestId("learning-repo-settings-repos-dir") as HTMLInputElement;
+    // The drift-pin in plugin-config-sync.test.ts proves the bundled
+    // default repos_dir=~/.local/share/adaptive_learner/repos.
+    expect(reposDir.value).toBe("~/.local/share/adaptive_learner/repos");
+
+    await act(async () => {
+      fireEvent.change(reposDir, { target: { value: "/my/custom/dir" } });
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("learning-repo-settings-save"));
     });
 
-    it("loads initial values from the bundled YAML defaults", async () => {
-        renderSection();
-        await waitFor(() => {
-            expect(
-                screen.getByTestId("learning-repo-settings"),
-            ).toBeInTheDocument();
-        });
-        const checkbox = screen.getByTestId(
-            "learning-repo-settings-enable-git",
-        ) as HTMLInputElement;
-        const reposDir = screen.getByTestId(
-            "learning-repo-settings-repos-dir",
-        ) as HTMLInputElement;
-        // The drift-pin in plugin-config-sync.test.ts proves
-        // the bundled defaults are enable_git=false +
-        // repos_dir=~/.local/share/adaptive_learner/repos.
-        expect(checkbox.checked).toBe(false);
-        expect(reposDir.value).toBe(
-            "~/.local/share/adaptive_learner/repos",
-        );
+    // Read back through the storage abstraction + Dexie directly.
+    const fresh = await getStorage().pluginSettings.get("learning-repo");
+    expect(fresh.settings.repos_dir).toBe("/my/custom/dir");
+    const row = await getDb().pluginSettings.get("learning-repo");
+    expect(row).toBeTruthy();
+    expect(row?.settings).toMatchObject({ repos_dir: "/my/custom/dir" });
+  });
+});
+
+describe("LearningRepoSettingsSection — git toggle (API mode)", () => {
+  // The feature context is independent of the storage backing: here
+  // the GIT_PERSIST/LEARNING_REPO_GIT gate is active (API mode) so the
+  // toggle renders, while persistence still runs through the Dexie
+  // storage seeded in beforeEach.
+  it("loads the bundled enable_git=false default", async () => {
+    renderSection("api");
+    await waitFor(() => {
+      expect(screen.getByTestId("learning-repo-settings")).toBeInTheDocument();
+    });
+    const checkbox = screen.getByTestId("learning-repo-settings-enable-git") as HTMLInputElement;
+    expect(checkbox.checked).toBe(false);
+  });
+
+  it("saves the toggled enable_git into the pluginSettings row", async () => {
+    renderSection("api");
+    await waitFor(() => {
+      expect(screen.getByTestId("learning-repo-settings")).toBeInTheDocument();
+    });
+    const checkbox = screen.getByTestId("learning-repo-settings-enable-git") as HTMLInputElement;
+
+    await act(async () => {
+      fireEvent.click(checkbox);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("learning-repo-settings-save"));
     });
 
-    it("saves user-edited values into the Dexie pluginSettings row", async () => {
-        renderSection();
-        await waitFor(() => {
-            expect(
-                screen.getByTestId("learning-repo-settings"),
-            ).toBeInTheDocument();
-        });
-        const checkbox = screen.getByTestId(
-            "learning-repo-settings-enable-git",
-        ) as HTMLInputElement;
-        const reposDir = screen.getByTestId(
-            "learning-repo-settings-repos-dir",
-        ) as HTMLInputElement;
-
-        await act(async () => {
-            fireEvent.click(checkbox);
-            fireEvent.change(reposDir, {target: {value: "/my/custom/dir"}});
-        });
-
-        await act(async () => {
-            fireEvent.click(
-                screen.getByTestId("learning-repo-settings-save"),
-            );
-        });
-
-        // Read back through the storage abstraction. Should
-        // reflect the user's edits — the bundled defaults
-        // are no longer used because the row exists.
-        const fresh = await getStorage().pluginSettings.get(
-            "learning-repo",
-        );
-        expect(fresh.settings.enable_git).toBe(true);
-        expect(fresh.settings.repos_dir).toBe("/my/custom/dir");
-
-        // Verify the row is in Dexie directly too (defensive
-        // — ensures the save actually wrote to IndexedDB,
-        // not just to in-memory state).
-        const row = await getDb().pluginSettings.get("learning-repo");
-        expect(row).toBeTruthy();
-        expect(row?.settings).toMatchObject({
-            enable_git: true,
-            repos_dir: "/my/custom/dir",
-        });
-    });
+    const fresh = await getStorage().pluginSettings.get("learning-repo");
+    expect(fresh.settings.enable_git).toBe(true);
+    const row = await getDb().pluginSettings.get("learning-repo");
+    expect(row?.settings).toMatchObject({ enable_git: true });
+  });
 });
