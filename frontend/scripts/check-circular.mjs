@@ -11,18 +11,21 @@
  * declares ``peerOptional typescript@^5`` which conflicts with the repo's
  * TS 6, and it's a CI-only tool never imported by the app.
  *
- * Current baseline (3), all routed through ``storage/types.ts``:
- *   1) api/client.ts > lib/content/ai-content-validator.ts >
- *      lib/content/content-validator.ts > storage/types.ts
- *   2) lib/content/ai-content-validator.ts >
- *      lib/content/content-validator.ts > storage/types.ts
- *   3) storage/types.ts > storage/export-builder.ts > storage/db.ts
+ * Baseline 0 (#252): the three cycles that were all routed through
+ * ``storage/types.ts`` are resolved. Each was a type-only edge from
+ * ``storage/types.ts`` (the IStorageService contract) into an
+ * implementation module; the shared TYPE shapes were extracted into pure
+ * modules so the contract can name them without importing the code:
+ *   - ``AiValidationResult`` -> ``lib/content/content-validation-types.ts``
+ *   - the export-report shapes -> ``storage/export-types.ts``
+ *   - the request-body DTOs -> ``api/request-types.ts``
+ * The baseline only ratchets DOWN; any new cycle is now a hard error.
  */
 
 import {execFileSync} from "node:child_process";
 
 const MADGE_VERSION = "8.0.0";
-const BASELINE = 3;
+const BASELINE = 0;
 
 function runMadge() {
     try {
