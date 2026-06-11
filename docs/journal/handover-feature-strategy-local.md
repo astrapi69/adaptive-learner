@@ -1,5 +1,25 @@
 # Handover — @astrapi69/feature-strategy integration (#286 / PR #287)
 
+> **STATUS 2026-06-11 (for CCW): `main` is GREEN at `3c9b9470`.**
+> The two blockers this handover flagged are fixed and merged to `main`:
+> - **#267** TipTap v3↔core v2 build break → **PR #288 merged** (pinned
+>   `@tiptap/extension-highlight` / `-table-cell` / `-task-item` back to `2.27.2`).
+>   `npm run build` succeeds; the 9 editor test files load again.
+> - **#289** `Progress.test.tsx` `useFeature`-outside-provider (a #287 follow-up
+>   miss) → **PR #290 merged** (wrapped the render in `TestFeatureProvider`).
+>
+> Verified on `main` after both merges: `npm run build` ✅, full Vitest
+> **3953 passed / 0 failed** ✅.
+>
+> **Next for CCW:** rebase `feature/feature-strategy-integration` onto current
+> `main` (`3c9b9470`) and run the **dexie-smoke gate** — it is unblocked now
+> (build is green). Install with `--legacy-peer-deps` (still required: a
+> separate pre-existing `eslint-plugin-react` vs eslint 10 peer conflict, #266).
+>
+> **#220** (ESLint 438 warnings → 0; the `--max-warnings=0` gate that keeps the
+> `Frontend Tests` CI job red and forces admin-merges) is a **separate task** —
+> NOT part of the feature-strategy integration, not now.
+
 For a fresh **local Claude Code** session picking up this work. Self-contained:
 you should not need any other doc to continue.
 
