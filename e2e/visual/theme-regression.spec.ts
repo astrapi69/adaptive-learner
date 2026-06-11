@@ -19,16 +19,26 @@
 
 import {expect, test} from "@playwright/test";
 
-import {THEME_IDS, VIEW_NAMES, gotoView, setTheme} from "./helpers";
+import {
+    THEME_IDS,
+    VIEW_NAMES,
+    freezeClock,
+    gotoView,
+    setTheme,
+    settleForScreenshot,
+} from "./helpers";
 
 for (const theme of THEME_IDS) {
     for (const view of VIEW_NAMES) {
         test(`${view} renders correctly in ${theme}`, async ({page}) => {
+            // Determinism (follows #244): freeze the clock + pin the theme
+            // before the first navigation, then seed/await the view's own
+            // ready signal (gotoView), then settle fonts + kill animations.
+            await freezeClock(page);
             await setTheme(page, theme);
             const ready = await gotoView(page, view);
             test.skip(!ready, `Could not reach ${view} deterministically`);
-            // Let fonts + lazy chunks settle; animations are disabled by config.
-            await page.waitForLoadState("networkidle");
+            await settleForScreenshot(page);
             await expect(page).toHaveScreenshot(`${view}-${theme}.png`, {
                 fullPage: true,
             });
