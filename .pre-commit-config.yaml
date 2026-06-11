@@ -57,6 +57,19 @@ repos:
         pass_filenames: false
         stages: [pre-commit]
 
+      # Prettier (#254, step 1 — format-on-touch). Formats ONLY the staged
+      # frontend/src files (the incremental adoption, same "migrate when
+      # touched" philosophy as the Tailwind rollout — no repo-wide reformat).
+      # cd's into frontend so prettier resolves .prettierrc/.prettierignore;
+      # ${@#frontend/} strips the repo-relative prefix off the staged paths.
+      - id: prettier-frontend
+        name: Prettier (format changed frontend/src files)
+        entry: bash -c 'cd frontend && npx prettier --write "${@#frontend/}"' --
+        language: system
+        files: ^frontend/src/.*\.(ts|tsx|css)$
+        pass_filenames: true
+        stages: [pre-commit]
+
       - id: plugin-lock-paired-with-pyproject
         name: plugin pyproject.toml must be staged with its poetry.lock
         entry: python3 scripts/check_plugin_lock_paired.py

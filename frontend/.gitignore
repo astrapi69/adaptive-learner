@@ -2,3 +2,6 @@
 # Stryker mutation testing
 reports/
 .stryker-tmp/
+
+# Bundle analyzer output (#255, ANALYZE=true npm run build)
+stats.html

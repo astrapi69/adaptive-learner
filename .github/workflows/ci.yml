@@ -122,6 +122,31 @@ jobs:
         working-directory: frontend
         run: npx eslint src/ --max-warnings 436
 
+      # Circular-dependency guard (#251). Fails only when import cycles
+      # EXCEED the documented baseline, so a NEW cycle is a hard error while
+      # the pre-existing debt (#252) doesn't block CI. Uses npx-pinned madge
+      # (peer-incompatible with TS 6 as a devDependency; CI-only tool).
+      - name: Circular dependency check
+        working-directory: frontend
+        run: npm run check:circular
+
+      # Prettier (#254, step 1 — non-blocking). Reports formatting drift in
+      # the log without failing the build; the repo-wide reformat is a
+      # separate step-2 PR. Remove continue-on-error once the codebase is
+      # formatted and the format-on-touch hook has caught up.
+      - name: Prettier check (non-blocking)
+        working-directory: frontend
+        run: npm run format:check
+        continue-on-error: true
+
+      # Stylelint (#257). Focused config: color-no-invalid-hex is a hard
+      # error (clean baseline blocks new invalid hex); no-duplicate-selectors
+      # / no-descending-specificity / declaration-no-important are warnings
+      # (36 pre-existing, reported not blocked — drive to zero then promote).
+      - name: Stylelint
+        working-directory: frontend
+        run: npm run lint:css
+
       - name: Run Vitest
         working-directory: frontend
         run: npx vitest run
@@ -129,6 +154,13 @@ jobs:
       - name: Build
         working-directory: frontend
         run: npx vite build
+
+      # Dependency vulnerability scan (#224). --audit-level=high so
+      # moderate/low advisories surface in the log without blocking the
+      # build; a high/critical advisory fails CI for immediate triage.
+      - name: npm audit (high+)
+        working-directory: frontend
+        run: npm audit --audit-level=high
 
   pre-commit:
     name: Pre-commit hooks
@@ -174,6 +206,13 @@ jobs:
       - name: mypy
         working-directory: backend
         run: poetry run mypy app/
+      # Dependency vulnerability scan (#224). pip-audit is a backend dev
+      # dep; --skip-editable skips the local path-dep plugins (no PyPI
+      # advisories). Audits the third-party dependency tree; a known
+      # advisory fails CI for triage.
+      - name: pip-audit (backend deps)
+        working-directory: backend
+        run: poetry run pip-audit --skip-editable
 
   docs-verification:
     name: Docs drift verifier
