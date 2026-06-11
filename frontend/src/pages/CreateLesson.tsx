@@ -122,7 +122,6 @@ export default function CreateLesson() {
     useEffect(() => {
         const draft = loadLessonDraft();
         if (draftHasContent(draft)) setPendingDraft(draft);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Phase 65B — autosave the draft every 10s while editing. Skipped

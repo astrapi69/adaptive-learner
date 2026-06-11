@@ -210,7 +210,6 @@ export default function Assessment() {
                     await getStorage().gamification.awardAssessment(userId);
                 }
             } catch (xpErr) {
-                // eslint-disable-next-line no-console
                 console.warn("XP awardAssessment failed", xpErr);
             }
         } catch (err) {

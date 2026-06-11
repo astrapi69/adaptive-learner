@@ -219,7 +219,6 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
           await getStorage().gamification.awardImport(learner.userId);
         }
       } catch (xpErr) {
-        // eslint-disable-next-line no-console
         console.warn("XP awardImport failed", xpErr);
       }
       return true;

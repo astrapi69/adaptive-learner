@@ -98,7 +98,6 @@ export default function DailyMissionsCard({ userId }: DailyMissionsCardProps) {
       cancelled = true;
       window.removeEventListener(MISSION_PREF_CHANGE_EVENT, load);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, lang]);
 
   if (!enabled) return null;

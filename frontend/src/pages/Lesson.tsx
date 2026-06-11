@@ -1072,7 +1072,6 @@ export default function LessonPage() {
                       scored.attempts,
                     );
                   } catch (err) {
-                    // eslint-disable-next-line no-console
                     console.warn("elementErrors.recordBulk failed:", err);
                   }
                 }

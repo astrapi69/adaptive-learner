@@ -90,7 +90,6 @@ export async function clearAllAutoBackups(): Promise<void> {
         const db = getBackupDb();
         await db.backups.clear();
     } catch (err) {
-        // eslint-disable-next-line no-console
         console.warn("auto-backup clear failed:", err);
     }
 }
@@ -314,7 +313,6 @@ export async function maybeRunAutoBackup(
     try {
         return await runAutoBackupNow(userId, appVersion, trigger);
     } catch (err) {
-        // eslint-disable-next-line no-console
         console.warn("Auto-backup skipped:", err);
         return null;
     }
