@@ -19,11 +19,12 @@
  *   - Suggested curriculum lessons (with priority)
  */
 
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -133,6 +134,9 @@ export default function ImportDetail({
   const [startingSession, setStartingSession] = useState(false);
   // Phase 59B — "Save as Offline Lesson" preview modal.
   const [showSaveLesson, setShowSaveLesson] = useState(false);
+  // #240 — the raw transcript is collapsed by default so the analysis
+  // results stay front-and-center; long chats no longer bury them.
+  const [transcriptOpen, setTranscriptOpen] = useState(false);
 
   // v1.54.0 — language pair captured at IMPORT time. Source = the chat
   // language (what the learner speaks) defaults to the app language;
@@ -867,44 +871,68 @@ export default function ImportDetail({
       )}
 
       <section data-testid="conversation-transcript">
-        <h2>{t("import.transcript", "Transcript")}</h2>
-        <ol
-          style={{
-            listStyle: "none",
-            padding: 0,
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.75rem",
-          }}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="min-h-11 gap-1.5"
+          aria-expanded={transcriptOpen}
+          aria-controls="conversation-transcript-list"
+          onClick={() => setTranscriptOpen((v) => !v)}
+          data-testid="transcript-toggle"
         >
-          {detail.messages.map((m) => (
-            <li
-              key={m.id}
-              data-testid={`msg-${m.order_index}`}
-              style={{
-                background: m.role === "user" ? "var(--surface)" : "var(--bg)",
-                border: "1px solid var(--border)",
-                borderRadius: 6,
-                padding: "0.75rem 1rem",
-              }}
-            >
-              <div
+          {transcriptOpen ? (
+            <ChevronDown aria-hidden="true" />
+          ) : (
+            <ChevronRight aria-hidden="true" />
+          )}
+          {t("import.show_transcript", "Show raw transcript")}
+          <span className="text-muted-foreground">
+            ({detail.message_count})
+          </span>
+        </Button>
+        {transcriptOpen && (
+          <ol
+            id="conversation-transcript-list"
+            style={{
+              listStyle: "none",
+              padding: 0,
+              margin: "0.75rem 0 0",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.75rem",
+            }}
+          >
+            {detail.messages.map((m) => (
+              <li
+                key={m.id}
+                data-testid={`msg-${m.order_index}`}
                 style={{
-                  fontWeight: 600,
-                  marginBottom: "0.25rem",
-                  color: m.role === "user" ? "var(--accent)" : "var(--text)",
+                  background:
+                    m.role === "user" ? "var(--surface)" : "var(--bg)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 6,
+                  padding: "0.75rem 1rem",
                 }}
               >
-                {m.role === "user"
-                  ? t("import.role_user", "You")
-                  : m.role === "assistant"
-                    ? t("import.role_assistant", "AI")
-                    : t("import.role_system", "System")}
-              </div>
-              <div style={{ whiteSpace: "pre-wrap" }}>{m.content}</div>
-            </li>
-          ))}
-        </ol>
+                <div
+                  style={{
+                    fontWeight: 600,
+                    marginBottom: "0.25rem",
+                    color: m.role === "user" ? "var(--accent)" : "var(--text)",
+                  }}
+                >
+                  {m.role === "user"
+                    ? t("import.role_user", "You")
+                    : m.role === "assistant"
+                      ? t("import.role_assistant", "AI")
+                      : t("import.role_system", "System")}
+                </div>
+                <div style={{ whiteSpace: "pre-wrap" }}>{m.content}</div>
+              </li>
+            ))}
+          </ol>
+        )}
       </section>
       {analysis && (
         <SaveOfflineLessonModal

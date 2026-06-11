@@ -112,6 +112,7 @@ import:
   continue_session: セッションを再開
   session_start_error: セッションを開始できませんでした。
   transcript: トランスクリプト
+  show_transcript: 元データを表示
   anki_extract: Ankiカードを抽出
   anki_extracting: カードを抽出中…
   anki_extracted: Ankiカードを{n}枚抽出しました。Ankiページで確認してください。

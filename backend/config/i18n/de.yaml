@@ -112,6 +112,7 @@ import:
   continue_session: Sitzung fortsetzen
   session_start_error: Sitzung konnte nicht gestartet werden.
   transcript: Transkript
+  show_transcript: Roh-Daten anzeigen
   anki_extract: Anki-Karten extrahieren
   anki_extracting: Karten werden extrahiert…
   anki_extracted: '{n} Anki-Karten extrahiert. Bewerte sie auf der Anki-Seite.'

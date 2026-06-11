@@ -117,12 +117,16 @@ function renderDetail(conversationId: string) {
 }
 
 describe("ImportDetail page", () => {
-    it("renders the conversation transcript", async () => {
+    it("renders the conversation transcript (collapsed until toggled, #240)", async () => {
         const conv = await setup();
         renderDetail(conv.id);
         await waitFor(() => {
             expect(screen.getByTestId("conversation-transcript")).toBeTruthy();
         });
+        // #240 — the raw transcript is collapsed by default; messages
+        // appear only after the toggle is opened.
+        expect(screen.queryByTestId("msg-0")).toBeNull();
+        fireEvent.click(screen.getByTestId("transcript-toggle"));
         expect(screen.getByTestId("msg-0").textContent).toContain(
             "Question one",
         );

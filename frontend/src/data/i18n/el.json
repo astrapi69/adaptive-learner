@@ -119,6 +119,7 @@
     "continue_session": "Συνέχιση συνεδρίας",
     "session_start_error": "Δεν ήταν δυνατή η έναρξη της συνεδρίας.",
     "transcript": "Καταγραφή",
+    "show_transcript": "Εμφάνιση ακατέργαστων δεδομένων",
     "anki_extract": "Εξαγωγή καρτών Anki",
     "anki_extracting": "Εξάγονται κάρτες…",
     "anki_extracted": "Εξήχθησαν {n} κάρτες Anki. Έλεγξέ τες στη σελίδα Anki.",
