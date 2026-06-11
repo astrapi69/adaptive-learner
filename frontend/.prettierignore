@@ -1,0 +1,16 @@
+# Build output + vendored
+dist
+node_modules
+coverage
+.vite
+stats.html
+
+# Generated artifacts (owned by their generators, not hand-edited)
+src/data/i18n
+src/data/praise
+src/data/plugin-config
+public/content
+
+# Non-source formats Prettier shouldn't touch here
+*.md
+*.snap

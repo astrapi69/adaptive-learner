@@ -14,6 +14,8 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
     "check:circular": "node scripts/check-circular.mjs",
     "stryker": "stryker run"
   },
@@ -98,6 +100,7 @@
     "eslint-plugin-security": "^4.0.0",
     "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.9.0",
+    "prettier": "^3.8.4",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",

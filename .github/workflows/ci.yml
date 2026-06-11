@@ -130,6 +130,15 @@ jobs:
         working-directory: frontend
         run: npm run check:circular
 
+      # Prettier (#254, step 1 — non-blocking). Reports formatting drift in
+      # the log without failing the build; the repo-wide reformat is a
+      # separate step-2 PR. Remove continue-on-error once the codebase is
+      # formatted and the format-on-touch hook has caught up.
+      - name: Prettier check (non-blocking)
+        working-directory: frontend
+        run: npm run format:check
+        continue-on-error: true
+
       - name: Run Vitest
         working-directory: frontend
         run: npx vitest run
