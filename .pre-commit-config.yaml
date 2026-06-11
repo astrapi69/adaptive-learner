@@ -44,6 +44,19 @@ repos:
 
   - repo: local
     hooks:
+      # ESLint (#222). Runs the whole frontend/src from the frontend dir
+      # (flat config resolves from cwd, not per-file). No --max-warnings
+      # here so the existing warning backlog doesn't block commits — it
+      # fails only on the blocking ERROR rules (rules-of-hooks, jsx-key,
+      # parse errors). The warning ratchet ceiling is enforced in CI.
+      - id: eslint
+        name: ESLint (frontend)
+        entry: bash -c 'cd frontend && npx eslint src/'
+        language: system
+        files: ^frontend/src/.*\.(ts|tsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
       - id: plugin-lock-paired-with-pyproject
         name: plugin pyproject.toml must be staged with its poetry.lock
         entry: python3 scripts/check_plugin_lock_paired.py
