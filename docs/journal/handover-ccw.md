@@ -6,6 +6,45 @@ Date handed over: 2026-06-11.
 
 ---
 
+## UPDATE — Step 6 done (session 2, 2026-06-11, commit 132feb0)
+
+Step 6 (migrate gates) is **implemented, committed, pushed**. Also folds in
+Step 7 (no new reason strings needed), Step 8 (notices are now feature-driven),
+and Step 9 (legacy in-scope `useApiKeyStatus`-gating removed).
+
+- **Hidden gates** (`<Feature>`, hidden in Dexie): Settings Sync (SYNC),
+  LearningRepo persist button (GIT_PERSIST, disabled→hidden),
+  LearningRepoSettingsSection git toggle (LEARNING_REPO_GIT).
+- **Disabled gates** (`useFeature`): ImportDetail Analyze/Start-session/
+  Extract-Anki (+notice), Anki empty-state notice, NotebookLM
+  Generate-questions/Study-guide (+notice), Dashboard QuickStart/banner/notice.
+- **Skipped:** Session.tsx (#9) — no existing key gate; adding one would block
+  read-only resume (deviation #3). SESSION_START gating lives at the entry-point
+  buttons (Dashboard, ImportDetail).
+- **Test infra:** `src/features/testFeatureProvider.tsx` exports
+  `TestFeatureProvider` (explicit context, default active) +
+  `DerivedFeatureProvider` (derives from the real hooks, for the dexie page
+  tests). Affected tests wrapped; Dashboard "no-key" + LearningRepoSettings
+  git-toggle tests moved to Dexie/API contexts to match the maintainer table.
+
+**Verification:** `tsc --noEmit` clean; full Vitest **3851 passed, 0 failed**;
+eslint 0 errors on touched files.
+
+**BLOCKER for Step 10's dexie-smoke gate (pre-existing, NOT this work):**
+`npm run build` fails with 3 MISSING_EXPORT errors from the #267/#264/#265
+dependabot TipTap bumps (`@tiptap/extension-highlight@3`,
+`extension-table-cell@3`, `extension-task-item@3` against `@tiptap/core@2` —
+`getStyleProperty` / `TableCell` not exported). Same root cause fails 9 TipTap
+editor test *files* at load. Fix = pin those three extensions back to 2.27.2
+(lessons-learned "Community extensions can silently upgrade to @tiptap/core
+v3"). Needs its own issue; do NOT fold into the #286 PR.
+
+**Not run this session:** backend i18n parity (venv not provisioned; Step 6
+added no i18n keys) and the manual reactivity check (requirement C — needs a
+running app; build is blocked anyway).
+
+---
+
 ## 0. TL;DR for the next worker
 
 The **foundation is built, committed, pushed, and green** (tsc clean, the
