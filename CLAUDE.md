@@ -9,7 +9,24 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.72.2** (patch — **3 P3 code-hygiene items:
+- **Current state:** **v1.73.0** (minor - **feature-strategy
+  integration**: a central registry + strategy from
+  `@astrapi69/feature-strategy` replaces the ad-hoc per-button API-key
+  checks + Dexie-mode section hiding with three states
+  (active/disabled/hidden) resolved from one memoised, reactive
+  `{mode, hasAiKey}` context, so AI gates flip without a reload; migrated
+  Import-Detail, Anki, NotebookLM, Dashboard, Pronunciation, the Settings
+  Sync section, and the Learning-Repo git controls; descriptors carry the
+  `active` default, the strategy holds only the deviation rules and fails
+  closed on an unknown id (#287). Plus E2E feature tests for the no-key
+  surfaces (content-repo import #278, Anki #279, NotebookLM #280), the
+  NotebookLM AI buttons key-gated (#281), the TipTap
+  extension-highlight/-table-cell/-task-item pinned back to 2.27.2 to fix
+  the v3-vs-core-v2 MISSING_EXPORT build break (#267/#288), Progress.test
+  wrapped in TestFeatureProvider (#289/#290), and dependency bumps
+  ESLint 10 / mypy 2.1 / minor-patch groups / GH actions (#258-#266).
+  Frontend + test-infra + dependency hygiene; no schema/API/data change.
+  v1.72.2 = patch — **3 P3 code-hygiene items:
   inline-styles→Tailwind, an Anki empty state, and all frontend import
   cycles removed**). Frontend only; no schema/API/data change.
   **Import-Detail + Import (#275):** ~52 inline `style={{…}}` migrated to
