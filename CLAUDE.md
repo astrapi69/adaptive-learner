@@ -1393,6 +1393,18 @@ adaptive-learner/
 └── Makefile, docker-compose.yml, install.sh, install.ps1
 ```
 
+## Branching model (gitflow, #334)
+
+- `main` — **releases only** (tags vX.Y.Z). Written solely by a `release/*`
+  merge (or a `hotfix/*` for emergencies). Never develop here.
+- `develop` — active development; the **default branch**. All `feature/*` /
+  `fix/*` / `chore/*` branches start here and PR back here.
+- `release/vX.Y.Z` — cut from `develop`; version bump + changelog +
+  `make release-test`, then merge to `main` (tag) and back to `develop`
+  (`make release-prepare` / `make release-finish`).
+- `hotfix/vX.Y.Z` — the only branch cut from `main`; merges to `main` +
+  `develop`.
+
 ## Core conventions
 
 - i18n catalogs: `backend/config/i18n/{lang}.yaml` for 8 langs
