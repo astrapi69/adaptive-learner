@@ -9,6 +9,8 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/frontend"
+    # Gitflow (#334): open update PRs against develop, not main.
+    target-branch: "develop"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
@@ -22,6 +24,7 @@ updates:
 
   - package-ecosystem: "pip"
     directory: "/backend"
+    target-branch: "develop"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
@@ -35,6 +38,7 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "develop"
     schedule:
       interval: "monthly"
     open-pull-requests-limit: 5
