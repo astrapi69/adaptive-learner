@@ -56,6 +56,16 @@ class TestContentSetValidators:
         assert s.id == "language-fr-a1"
         assert s.domain == "language"  # default
         assert s.tags == []
+        assert s.domain_label is None  # optional, defaults to None
+
+    def test_accepts_optional_domain_label(self) -> None:
+        # The content repo ships a human-readable domain_label
+        # (e.g. domain=psychology -> domain_label="Psychologie"); the
+        # model must accept it. Before this field existed, extra="forbid"
+        # rejected the whole manifest and the set download 400'd.
+        s = _valid_set(domain="psychology", domain_label="Psychologie")
+        assert s.domain == "psychology"
+        assert s.domain_label == "Psychologie"
 
     def test_id_must_be_slug(self) -> None:
         with pytest.raises(ValidationError):

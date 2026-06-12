@@ -300,6 +300,16 @@ class ContentSet(BaseModel):
         min_length=1,
         max_length=60,
     )
+    domain_label: str | None = Field(
+        default=None,
+        description=(
+            "Optional human-readable label for the domain shown in the "
+            "Set Browser (e.g. 'Psychologie' for domain='psychology'). "
+            "Additive, authored in the content repo; the loader treats it "
+            "as opaque display metadata."
+        ),
+        max_length=120,
+    )
     description: str | None = Field(
         default=None,
         description="Optional long-form description.",
