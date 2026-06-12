@@ -59,7 +59,7 @@ import {
     useSortable,
 } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
-import {Check, ChevronLeft, ChevronRight, RotateCcw, X} from "lucide-react";
+import {Check, ChevronLeft, ChevronRight, X} from "lucide-react";
 import type {Ref} from "react";
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 
@@ -75,6 +75,7 @@ import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
 import DirectionInstruction from "./DirectionInstruction";
+import ExerciseFooter from "./ExerciseFooter";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -661,19 +662,6 @@ function WordTilesExercise(
             )}
 
             <div className="flex flex-wrap items-center gap-3">
-                {!submitted && !controlled && (
-                    <Button
-                        type="button"
-                        disabled={!allPlaced}
-                        onClick={submit}
-                        data-testid="word-tiles-submit"
-                    >
-                        {t(
-                            "lesson.exercise.word_tiles.submit",
-                            "Check answer",
-                        )}
-                    </Button>
-                )}
                 {submitted && (
                     <>
                         <p
@@ -719,23 +707,24 @@ function WordTilesExercise(
                             </div>
                         )}
                         <AnswerCelebration isCorrect={isCorrect} />
-                        {!controlled && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                type="button"
-                                onClick={reset}
-                                data-testid="word-tiles-retry"
-                            >
-                                <RotateCcw size={14} aria-hidden="true" />
-                                {t(
-                                    "lesson.exercise.word_tiles.retry",
-                                    "Try again",
-                                )}
-                            </Button>
-                        )}
                     </>
                 )}
+                <ExerciseFooter
+                    testidPrefix="word-tiles"
+                    controlled={controlled}
+                    submitted={submitted}
+                    canCheck={allPlaced}
+                    onCheck={submit}
+                    onRetry={reset}
+                    checkLabel={t(
+                        "lesson.exercise.word_tiles.submit",
+                        "Check answer",
+                    )}
+                    retryLabel={t(
+                        "lesson.exercise.word_tiles.retry",
+                        "Try again",
+                    )}
+                />
             </div>
         </section>
     );
