@@ -24,13 +24,30 @@ jobs:
   dexie-smoke:
     name: Dexie-mode E2E smoke
     runs-on: ubuntu-latest
-    # 30 (was 20): headroom for a cold Playwright-browser cache. The smoke
-    # run itself is ~6 min; the prior 20-min cap was blown by a slow browser
-    # download in "Install Playwright browsers" before any test ran (#317).
-    timeout-minutes: 30
+    # Run inside the official Playwright image so Chromium + the headless shell
+    # are PRE-BAKED -- no cdn.playwright.dev download. #317 was not a
+    # browser-SIZE problem (the --only-shell + cache + retry route could never
+    # work: the cache only fills after one successful download, and the very
+    # first download hung -- zero bytes, killed at the 8-min timeout on all 3
+    # retries across every run). The CDN itself was unreachable from the
+    # runner. The image is pulled from mcr.microsoft.com, which the Azure-hosted
+    # runner reaches fine (the apt steps from packages.microsoft.com always
+    # succeeded). Pin the tag to the @playwright/test version in
+    # e2e/package-lock.json (1.59.1); bump both together.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      # --user 1001 = the runner user, so checkout-owned files stay writable
+      # and actions/upload-artifact can read the report (Playwright CI docs).
+      options: --user 1001
+    # Pre-baked browsers mean no download phase: build (~2-3 min) + smoke
+    # (~6 min) fits comfortably; the old 30-min cap was only there to survive a
+    # cold browser download that no longer happens.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
 
+      # The image ships Node 22; install 24 to match the repo's engines
+      # (frontend + e2e both require >=24) so CI runs the same runtime as local.
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
@@ -44,51 +61,18 @@ jobs:
         working-directory: e2e
         run: npm ci
 
-      # Cache the downloaded browser binaries so a slow Playwright CDN can't
-      # time the job out (#317). Keyed on e2e/package-lock.json so the cache
-      # invalidates when the @playwright/test version changes; on a miss the
-      # install below downloads + the cache is saved for next time.
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('e2e/package-lock.json') }}
+      # NO `playwright install` step: the browsers are baked into the container.
+      # These two commands mirror the `make test-dexie-smoke` target verbatim;
+      # inlined here because the Playwright noble image has no `make` and the
+      # --user 1001 (non-root) container cannot apt-get install it. Keep the two
+      # in lock-step with the Makefile target if it ever changes.
+      - name: Build dexie frontend
+        working-directory: frontend
+        run: VITE_STORAGE_MODE=dexie npm run build
 
-      # Cache MISS: download the browser (+ OS deps). The hang in #317 was the
-      # ~150 MB Chrome-for-Testing zip from the Playwright CDN; ``--only-shell``
-      # installs just the much smaller chromium-headless-shell, which is all
-      # the headless dexie smoke run needs. Still kill a stuck attempt at 8 min
-      # and retry up to 3x (inside the 30-min job budget); the first success
-      # populates the cache so every later run takes the cache-hit path below.
-      - name: Install Playwright browsers (cache miss)
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        working-directory: e2e
-        run: |
-          for attempt in 1 2 3; do
-            echo "::group::Playwright install (attempt $attempt)"
-            if timeout 480 npx playwright install --with-deps --only-shell chromium; then
-              echo "::endgroup::"
-              exit 0
-            fi
-            echo "attempt $attempt failed or timed out; retrying"
-            echo "::endgroup::"
-          done
-          echo "Playwright browser install failed after 3 attempts"
-          exit 1
-
-      # Cache HIT: the browser binary is restored from cache, so NO CDN
-      # download happens (no hang). Only the fast, no-download OS deps remain.
-      - name: Install Playwright OS deps (cache hit)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        working-directory: e2e
-        run: npx playwright install-deps chromium
-
-      # Builds the dexie frontend (VITE_STORAGE_MODE=dexie) and runs the
-      # Playwright dexie config; both halves live in the make target so CI
-      # and local stay in lock-step.
       - name: Dexie smoke
-        run: make test-dexie-smoke
+        working-directory: e2e
+        run: npx playwright test --config=playwright.dexie.config.ts
 
       - name: Upload Playwright report
         if: always()
