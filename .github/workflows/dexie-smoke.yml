@@ -24,7 +24,10 @@ jobs:
   dexie-smoke:
     name: Dexie-mode E2E smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # 30 (was 20): headroom for a cold Playwright-browser cache. The smoke
+    # run itself is ~6 min; the prior 20-min cap was blown by a slow browser
+    # download in "Install Playwright browsers" before any test ran (#317).
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
 
@@ -41,8 +44,20 @@ jobs:
         working-directory: e2e
         run: npm ci
 
+      # Cache the downloaded browser binaries so a slow Playwright CDN can't
+      # time the job out (#317). Keyed on e2e/package-lock.json so the cache
+      # invalidates when the @playwright/test version changes; on a miss the
+      # install below downloads + the cache is saved for next time.
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('e2e/package-lock.json') }}
+
       - name: Install Playwright browsers
         working-directory: e2e
+        # Idempotent: skips the download when the cache restored the binary,
+        # still installs the (fast) OS deps via --with-deps.
         run: npx playwright install --with-deps chromium
 
       # Builds the dexie frontend (VITE_STORAGE_MODE=dexie) and runs the
