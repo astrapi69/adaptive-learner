@@ -25,7 +25,7 @@
  */
 
 import {ArrowRight, Check, RotateCcw, X} from "lucide-react";
-import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
+import {forwardRef, useEffect, useMemo, useState} from "react";
 import type {CSSProperties, Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
@@ -33,6 +33,7 @@ import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
+import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {
     instructionKey,
     resolveConcreteDirection,
@@ -316,16 +317,6 @@ function MatchingExercise(
     const [slotByLeft, setSlotByLeft] = useState<Map<number, number>>(
         () => new Map(),
     );
-    const [submitted, setSubmitted] = useState(reviewedMatching != null);
-    const [result, setResult] = useState<{correct: number; total: number} | null>(
-        () =>
-            reviewedMatching
-                ? _scoreMatches(
-                      new Map(reviewedMatching.matches),
-                      pairs.length,
-                  )
-                : null,
-    );
     /** Wrong-flash trigger for visual feedback. */
     const [wrongFlash, setWrongFlash] = useState<{
         left: number;
@@ -342,6 +333,45 @@ function MatchingExercise(
         () => new Set(matches.values()),
         [matches],
     );
+
+    const allPaired = matches.size === pairs.length;
+
+    const reviewedResult = reviewedMatching
+        ? _scoreMatches(new Map(reviewedMatching.matches), pairs.length)
+        : null;
+
+    const {submitted, result, submit, reset} = useControlledExercise({
+        ref,
+        controlled,
+        isAnswerable: allPaired,
+        onInteraction,
+        onComplete,
+        reviewedResult,
+        score: (): ExerciseScored => {
+            const {correct} = _scoreMatches(matches, pairs.length);
+            return {
+                correct,
+                total: pairs.length,
+                attempts: deriveMatchingAttempts(
+                    exercise,
+                    {setId, lessonId},
+                    matches,
+                ),
+                raw_answer: {
+                    kind: "matching",
+                    matches: [...matches.entries()],
+                },
+            };
+        },
+        resetAnswer: () => {
+            setMatches(new Map());
+            setSlotByLeft(new Map());
+            setSelectedLeft(null);
+        },
+    });
+
+    const matchingAllCorrect =
+        result !== null && result.total > 0 && result.correct === result.total;
 
     const releaseSlot = (leftIdx: number) => {
         setSlotByLeft((prev) => {
@@ -389,51 +419,6 @@ function MatchingExercise(
             return nextSlots;
         });
         setSelectedLeft(null);
-    };
-
-    const allPaired = matches.size === pairs.length;
-    const matchingAllCorrect =
-        result !== null && result.total > 0 && result.correct === result.total;
-
-    const handleSubmit = () => {
-        if (submitted || !allPaired) return;
-        const {correct} = _scoreMatches(matches, pairs.length);
-        const attempts = deriveMatchingAttempts(
-            exercise,
-            {setId, lessonId},
-            matches,
-        );
-        const scored: ExerciseScored = {
-            correct,
-            total: pairs.length,
-            attempts,
-            raw_answer: {
-                kind: "matching",
-                matches: [...matches.entries()],
-            },
-        };
-        setResult({correct, total: pairs.length});
-        setSubmitted(true);
-        onComplete(scored);
-    };
-
-    // Controlled (Lesson) mode: the parent drives ``submit`` via
-    // this ref + enables its shared "Prüfen" button off the
-    // ``onInteraction`` signal below.
-    useImperativeHandle(ref, () => ({submit: handleSubmit}));
-
-    useEffect(() => {
-        if (!controlled || reviewedMatching || submitted) return;
-        onInteraction?.(allPaired);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [controlled, allPaired, submitted, reviewedMatching]);
-
-    const handleReset = () => {
-        setMatches(new Map());
-        setSlotByLeft(new Map());
-        setSelectedLeft(null);
-        setSubmitted(false);
-        setResult(null);
     };
 
     if (pairs.length === 0) {
@@ -827,7 +812,7 @@ function MatchingExercise(
                     <Button
                         type="button"
                         disabled={!allPaired}
-                        onClick={handleSubmit}
+                        onClick={submit}
                         data-testid="matching-submit"
                     >
                         {t("lesson.exercise.matching.submit", "Check answers")}
@@ -866,7 +851,7 @@ function MatchingExercise(
                                 variant="outline"
                                 size="sm"
                                 type="button"
-                                onClick={handleReset}
+                                onClick={reset}
                                 data-testid="matching-retry"
                             >
                                 <RotateCcw size={14} aria-hidden="true" />
