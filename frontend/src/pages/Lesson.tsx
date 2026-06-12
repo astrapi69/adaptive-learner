@@ -82,6 +82,7 @@ import { useFeedbackIntensity } from "../hooks/useFeedbackIntensity";
 import { useI18n } from "../hooks/useI18n";
 import { useLesson } from "../hooks/useLesson";
 import { useLessonFlowControl } from "../hooks/useLessonFlowControl";
+import { useLessonNavigation } from "../hooks/useLessonNavigation";
 import {
   useLessonEnterKey,
   type LessonEnterNav,
@@ -101,7 +102,6 @@ import {
   lessonResultFilename,
   type LessonResultLabels,
 } from "../lib/lesson/result-export";
-import { findPrecedingTheoryIndex } from "../lib/lesson/theory-link";
 import { localTodayIso } from "../lib/missions/schedule";
 import {
   celebrateMissions,
@@ -242,17 +242,14 @@ export default function LessonPage() {
     enterLockRef.current = false;
   }
 
-  // B2 (Tailwind migration) — scroll the viewport to the top on every
-  // step change so a long step doesn't leave the learner mid-page.
-  // Guarded for the headless test env (scrollTo may be a stub).
-  useEffect(() => {
-    try {
-      document.getElementById("root")?.scrollTo({ top: 0 });
-      window.scrollTo({ top: 0 });
-    } catch {
-      /* no-op in environments without a real scroll. */
-    }
-  }, [currentStepIndex]);
+  // Scroll-to-top on step change + the #140 theory back-link
+  // round-trip live in the extracted hook (#354).
+  const {
+    precedingTheoryIndex,
+    theoryReturnIndex,
+    openTheoryFromExercise,
+    returnToExercise,
+  } = useLessonNavigation({ lesson, currentStepIndex, goToStep });
 
   // TTS feature C3 — auto-read mode. The lesson-level engine reads
   // each new step aloud on display (theory body / exercise prompt);
@@ -437,42 +434,6 @@ export default function LessonPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tts.boundaryIndex, isContinuous, theoryRun]);
-
-  // #140 — let an exercise step link back to the theory it
-  // practices. The target is the nearest preceding theory step in
-  // the same lesson (runtime-derived, no schema field). When the
-  // learner follows the link we remember the origin exercise so a
-  // "back to exercise" affordance on the theory step returns them
-  // exactly where they were.
-  const [theoryReturnIndex, setTheoryReturnIndex] = useState<number | null>(
-    null,
-  );
-  const precedingTheoryIndex = useMemo(
-    () =>
-      lesson ? findPrecedingTheoryIndex(lesson.steps, currentStepIndex) : null,
-    [lesson, currentStepIndex],
-  );
-  const openTheoryFromExercise = useCallback(() => {
-    if (precedingTheoryIndex === null) return;
-    setTheoryReturnIndex(currentStepIndex);
-    goToStep(precedingTheoryIndex);
-  }, [precedingTheoryIndex, currentStepIndex, goToStep]);
-  const returnToExercise = useCallback(() => {
-    if (theoryReturnIndex === null) return;
-    const target = theoryReturnIndex;
-    setTheoryReturnIndex(null);
-    goToStep(target);
-  }, [theoryReturnIndex, goToStep]);
-  // Drop the pending return target once the learner is on a
-  // non-theory step again (they returned, or moved on via the
-  // lesson's own prev/next) so the back affordance never lingers.
-  useEffect(() => {
-    if (!lesson) return;
-    const cur = lesson.steps[currentStepIndex];
-    if (cur && cur.type !== "theory" && theoryReturnIndex !== null) {
-      setTheoryReturnIndex(null);
-    }
-  }, [lesson, currentStepIndex, theoryReturnIndex]);
 
   // Phase 46A — fetch the set's lesson list so the summary
   // screen's "Next lesson" button knows whether there's a
