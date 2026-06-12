@@ -617,8 +617,10 @@ class MessageContext:
 
     db: Session
     session: LearningSession
-    payload: _MessageBody
     request_start_ts: float
+    # None on the streaming finalisation path, which reuses the phase
+    # functions but has no inbound _MessageBody to persist.
+    payload: _MessageBody | None = None
     user_msg: SessionMessage | None = None
     project: LearningProject | None = None
     provider_key: str | None = None
@@ -650,6 +652,7 @@ def persist_user_message(ctx: MessageContext) -> SessionMessage:
     Returns:
         The persisted, refreshed ``SessionMessage`` row.
     """
+    assert ctx.payload is not None  # only the /message path persists a turn
     user_msg = SessionMessage(
         session_id=ctx.session.id,
         role=ctx.payload.role.value,
@@ -822,7 +825,7 @@ def _maybe_parallel_precompute(
     return precomputed_eval
 
 
-def run_step_evaluation(ctx: MessageContext) -> None:
+def run_step_evaluation(ctx: MessageContext, *, allow_parallel: bool = True) -> None:
     """Phase 8B — dual-prompt step evaluation + cycle-step advance.
 
     When step evaluation is enabled, fires a second AI call returning a
@@ -833,6 +836,11 @@ def run_step_evaluation(ctx: MessageContext) -> None:
     deterministic +1 advance. At the step 6 -> 7 boundary the async path
     also precomputes the topic transition onto ``ctx`` for
     :func:`run_auto_loop`.
+
+    ``allow_parallel`` is ``False`` on the streaming finalisation path,
+    where the reply is already complete (so the Phase 18C precompute is
+    pointless) and ``asyncio.run`` cannot be called inside the live event
+    loop.
     """
     from app.main import manager
 
@@ -843,13 +851,17 @@ def run_step_evaluation(ctx: MessageContext) -> None:
     auto_loop_enabled, _max_cycles, tt_max_tokens = _read_auto_loop_config()
     async_eval_enabled = _read_async_evaluation_enabled()
 
-    precomputed_eval = _maybe_parallel_precompute(
-        ctx,
-        async_eval_enabled=async_eval_enabled,
-        step_eval_enabled=step_eval_enabled,
-        auto_loop_enabled=auto_loop_enabled,
-        eval_max_tokens=eval_max_tokens,
-        tt_max_tokens=tt_max_tokens,
+    precomputed_eval = (
+        _maybe_parallel_precompute(
+            ctx,
+            async_eval_enabled=async_eval_enabled,
+            step_eval_enabled=step_eval_enabled,
+            auto_loop_enabled=auto_loop_enabled,
+            eval_max_tokens=eval_max_tokens,
+            tt_max_tokens=tt_max_tokens,
+        )
+        if allow_parallel
+        else None
     )
 
     if not step_eval_enabled:
@@ -1502,16 +1514,20 @@ def _finalize_stream_exchange(
 ) -> _StreamExchangeResult:
     """Persist the assistant message + run step-eval + topic-transition.
 
-    Mirrors the second half of :func:`append_message` from the
-    point ``assistant_text`` is known. Kept inline here rather than
-    extracted as a shared helper because the parallel-evaluation
-    path at the step 6 -> 7 boundary is intrinsically tied to the
-    non-streaming route's flow (evaluators run BEFORE the AI reply
-    in the parallel path, which doesn't make sense for streaming —
-    by the time we get here, the stream is finished and we have
-    the full text).
+    Reuses the shared /message phase functions (:func:`run_step_evaluation`
+    + :func:`run_auto_loop`) in their SEQUENTIAL mode: the streaming reply
+    is already complete here, so the Phase 18C parallel precompute is
+    disabled (``allow_parallel=False``) - it would fire a pointless extra
+    concurrent call and call ``asyncio.run`` inside the live event loop.
+    The eval / transition latencies land on the context and are bridged
+    back to the caller's holders.
     """
-    from app.main import manager  # noqa: F401  — kept for symmetry with /message
+    ctx = MessageContext(db=db, session=sess, request_start_ts=time.monotonic())
+    ctx.project = project
+    ctx.model = model
+    ctx.api_key = api_key
+    ctx.history = history
+    ctx.assistant_text = assistant_text
 
     assistant_msg = SessionMessage(
         session_id=sess.id,
@@ -1520,128 +1536,20 @@ def _finalize_stream_exchange(
     )
     db.add(assistant_msg)
     db.flush()
+    ctx.assistant_msg = assistant_msg
 
-    from_step = int(sess.cycle_step)
-    step_eval_enabled, threshold, eval_max_tokens = _read_step_evaluation_config()
-    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
-    step_eval_out: _StepEvaluationOut | None = None
-
-    if step_eval_enabled:
-        owner = db.get(User, project.user_id)
-        eval_lang = owner.language if owner else "en"
-        full_history = history + [{"role": "assistant", "content": assistant_text}]
-        eval_start = time.monotonic()
-        evaluation = evaluate_step(
-            pm=manager._pm,
-            method=sess.method,
-            current_step=from_step,
-            history=full_history,
-            model=model,
-            api_key=api_key,
-            output_language=eval_lang,
-            max_tokens=eval_max_tokens,
-        )
-        eval_ms_holder["value"] = int((time.monotonic() - eval_start) * 1000)
-        if evaluation.fallback_used:
-            applied = evaluation.advance
-        else:
-            applied = evaluation.advance and (evaluation.confidence >= threshold)
-        if applied:
-            sess.cycle_step = evaluation.suggested_step
-        to_step = evaluation.suggested_step if applied else from_step
-        db.add(
-            StepEvaluationRow(
-                session_id=sess.id,
-                from_step=from_step,
-                to_step=to_step,
-                advance=evaluation.advance,
-                confidence=evaluation.confidence,
-                applied=applied,
-                fallback_used=evaluation.fallback_used,
-                reason=evaluation.reason,
-            )
-        )
-        step_eval_out = _StepEvaluationOut(
-            advance=evaluation.advance,
-            confidence=evaluation.confidence,
-            reason=evaluation.reason,
-            suggested_step=evaluation.suggested_step,
-            fallback_used=evaluation.fallback_used,
-            applied=applied,
-            from_step=from_step,
-        )
-    else:
-        if sess.cycle_step < MAX_STEP:
-            sess.cycle_step += 1
-
-    topic_transition_out: _TopicTransitionOut | None = None
-    just_hit_step_7 = (
-        step_eval_out is not None
-        and step_eval_out.applied
-        and step_eval_out.suggested_step == MAX_STEP
-        and step_eval_out.advance
-    )
-    if auto_loop_enabled and just_hit_step_7:
-        owner = db.get(User, project.user_id)
-        loop_lang = owner.language if owner else "en"
-        full_history = history + [{"role": "assistant", "content": assistant_text}]
-        transition_start = time.monotonic()
-        transition = evaluate_topic_transition(
-            pm=manager._pm,
-            goal=project.goal,
-            topic=project.topic,
-            method=sess.method,
-            history=full_history,
-            model=model,
-            api_key=api_key,
-            output_language=loop_lang,
-            max_tokens=tt_max_tokens,
-        )
-        transition_ms_holder["value"] = int((time.monotonic() - transition_start) * 1000)
-        looped = (
-            not transition.fallback_used
-            and transition.cycle_complete
-            and transition.continue_recommended
-            and transition.next_topic is not None
-            and sess.cycle_count < max_cycles
-        )
-        if looped:
-            try:
-                topics_list = json.loads(sess.cycle_topics or "[]")
-                if not isinstance(topics_list, list):
-                    topics_list = []
-            except json.JSONDecodeError:
-                topics_list = []
-            topics_list.append(
-                {
-                    "cycle": sess.cycle_count,
-                    "topic": project.topic,
-                    "summary": transition.summary,
-                    "next_topic": transition.next_topic or "",
-                }
-            )
-            sess.cycle_topics = json.dumps(topics_list, ensure_ascii=False)
-            sess.cycle_count += 1
-            sess.cycle_step = MIN_STEP
-        topic_transition_out = _TopicTransitionOut(
-            cycle_complete=transition.cycle_complete,
-            summary=transition.summary,
-            next_topic=transition.next_topic,
-            next_topic_rationale=transition.next_topic_rationale,
-            difficulty_adjustment=transition.difficulty_adjustment,
-            continue_recommended=transition.continue_recommended,
-            fallback_used=transition.fallback_used,
-            looped=looped,
-            new_cycle_count=sess.cycle_count,
-        )
+    run_step_evaluation(ctx, allow_parallel=False)
+    run_auto_loop(ctx)
 
     db.commit()
     db.refresh(assistant_msg)
     db.refresh(sess)
+    eval_ms_holder["value"] = ctx.evaluation_ms
+    transition_ms_holder["value"] = ctx.topic_transition_ms
     return _StreamExchangeResult(
         message=assistant_msg,
-        step_evaluation=step_eval_out,
-        topic_transition=topic_transition_out,
+        step_evaluation=ctx.step_eval_out,
+        topic_transition=ctx.topic_transition_out,
     )
 
 
