@@ -629,6 +629,7 @@ class MessageContext:
     assistant_msg: SessionMessage | None = None
     precomputed_transition: TopicTransition | None = None
     step_eval_out: _StepEvaluationOut | None = None
+    topic_transition_out: _TopicTransitionOut | None = None
     learning_ms: int | None = None
     evaluation_ms: int | None = None
     topic_transition_ms: int | None = None
@@ -913,6 +914,99 @@ def run_step_evaluation(ctx: MessageContext) -> None:
     )
 
 
+def _append_cycle_summary(ctx: MessageContext, transition: TopicTransition) -> None:
+    """Append the just-completed cycle to ``session.cycle_topics`` before
+    the step-1 reset, so a later export tells the full multi-cycle story.
+    """
+    sess = ctx.session
+    assert ctx.project is not None
+    try:
+        topics_list = json.loads(sess.cycle_topics or "[]")
+        if not isinstance(topics_list, list):
+            topics_list = []
+    except json.JSONDecodeError:
+        topics_list = []
+    topics_list.append(
+        {
+            "cycle": sess.cycle_count,
+            "topic": ctx.project.topic,
+            "summary": transition.summary,
+            "next_topic": transition.next_topic or "",
+        }
+    )
+    sess.cycle_topics = json.dumps(topics_list, ensure_ascii=False)
+
+
+def run_auto_loop(ctx: MessageContext) -> None:
+    """v1.4.0 — auto-loop after step 7.
+
+    When the evaluator just ADVANCED the session INTO step 7 with
+    ``advance=true``, ask the AI whether the topic was integrated and what
+    to learn next. When ``cycle_complete`` ∧ ``continue_recommended`` ∧ a
+    ``next_topic`` exists ∧ ``cycle_count < max_cycles``, persist the
+    completed cycle's summary, reset to step 1, and bump ``cycle_count``.
+    Sets ``ctx.topic_transition_out``; reuses ``ctx.precomputed_transition``
+    when the Phase 18C parallel path already ran the transition call.
+    """
+    from app.main import manager
+
+    sess = ctx.session
+    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
+    step_eval_out = ctx.step_eval_out
+    just_hit_step_7 = (
+        step_eval_out is not None
+        and step_eval_out.applied
+        and step_eval_out.suggested_step == MAX_STEP
+        and step_eval_out.advance
+    )
+    if not (auto_loop_enabled and just_hit_step_7):
+        return
+
+    assert ctx.project is not None and ctx.model is not None and ctx.api_key is not None
+    project, model, api_key = ctx.project, ctx.model, ctx.api_key
+    if ctx.precomputed_transition is not None:
+        transition = ctx.precomputed_transition
+    else:
+        owner = ctx.db.get(User, project.user_id)
+        loop_lang = owner.language if owner else "en"
+        full_history = ctx.history + [{"role": "assistant", "content": ctx.assistant_text}]
+        transition_start = time.monotonic()
+        transition = evaluate_topic_transition(
+            pm=manager._pm,
+            goal=project.goal,
+            topic=project.topic,
+            method=sess.method,
+            history=full_history,
+            model=model,
+            api_key=api_key,
+            output_language=loop_lang,
+            max_tokens=tt_max_tokens,
+        )
+        ctx.topic_transition_ms = int((time.monotonic() - transition_start) * 1000)
+    looped = (
+        not transition.fallback_used
+        and transition.cycle_complete
+        and transition.continue_recommended
+        and transition.next_topic is not None
+        and sess.cycle_count < max_cycles
+    )
+    if looped:
+        _append_cycle_summary(ctx, transition)
+        sess.cycle_count += 1
+        sess.cycle_step = MIN_STEP
+    ctx.topic_transition_out = _TopicTransitionOut(
+        cycle_complete=transition.cycle_complete,
+        summary=transition.summary,
+        next_topic=transition.next_topic,
+        next_topic_rationale=transition.next_topic_rationale,
+        difficulty_adjustment=transition.difficulty_adjustment,
+        continue_recommended=transition.continue_recommended,
+        fallback_used=transition.fallback_used,
+        looped=looped,
+        new_cycle_count=sess.cycle_count,
+    )
+
+
 @router.post(
     "/{session_id}/message",
     response_model=_SessionMessageExchangeOut,
@@ -1007,12 +1101,11 @@ def append_message(
     ai_error = resolve_ai_context(ctx)
     if ai_error is not None:
         return _build_response(ai_error=ai_error)
-    # resolve_ai_context guarantees all four are set when it returns None.
-    assert ctx.project is not None
+    # resolve_ai_context guarantees these are set when it returns None;
+    # the downstream phase functions read ctx.project directly.
     assert ctx.provider_key is not None
     assert ctx.api_key is not None
     assert ctx.model is not None
-    project = ctx.project
     provider_key = ctx.provider_key
     api_key = ctx.api_key
     model = ctx.model
@@ -1067,83 +1160,7 @@ def append_message(
     ctx.assistant_msg = assistant_msg
 
     run_step_evaluation(ctx)
-    step_eval_out = ctx.step_eval_out
-    precomputed_transition = ctx.precomputed_transition
-    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
-
-    # v1.4.0 — auto-loop after step 7. When the step evaluator just
-    # ADVANCED the session INTO step 7 with advance=true, ask the
-    # AI whether the topic was integrated + what to learn next. If
-    # cycle_complete AND continue_recommended AND cycle_count <
-    # max_cycles, reset to step 1 and increment cycle_count.
-    topic_transition_out: _TopicTransitionOut | None = None
-    just_hit_step_7 = (
-        step_eval_out is not None
-        and step_eval_out.applied
-        and step_eval_out.suggested_step == MAX_STEP
-        and step_eval_out.advance
-    )
-    if auto_loop_enabled and just_hit_step_7:
-        transition: TopicTransition
-        if precomputed_transition is not None:
-            # 18C parallel path already ran the transition call.
-            transition = precomputed_transition
-        else:
-            owner = db.get(User, project.user_id)
-            loop_lang = owner.language if owner else "en"
-            full_history = history + [{"role": "assistant", "content": assistant_text}]
-            transition_start = time.monotonic()
-            transition = evaluate_topic_transition(
-                pm=manager._pm,
-                goal=project.goal,
-                topic=project.topic,
-                method=sess.method,
-                history=full_history,
-                model=model,
-                api_key=api_key,
-                output_language=loop_lang,
-                max_tokens=tt_max_tokens,
-            )
-            ctx.topic_transition_ms = int((time.monotonic() - transition_start) * 1000)
-        looped = (
-            not transition.fallback_used
-            and transition.cycle_complete
-            and transition.continue_recommended
-            and transition.next_topic is not None
-            and sess.cycle_count < max_cycles
-        )
-        if looped:
-            # Persist the completed cycle's summary BEFORE
-            # resetting so the export tells the full multi-cycle
-            # story.
-            try:
-                topics_list = json.loads(sess.cycle_topics or "[]")
-                if not isinstance(topics_list, list):
-                    topics_list = []
-            except json.JSONDecodeError:
-                topics_list = []
-            topics_list.append(
-                {
-                    "cycle": sess.cycle_count,
-                    "topic": project.topic,
-                    "summary": transition.summary,
-                    "next_topic": transition.next_topic or "",
-                }
-            )
-            sess.cycle_topics = json.dumps(topics_list, ensure_ascii=False)
-            sess.cycle_count += 1
-            sess.cycle_step = MIN_STEP
-        topic_transition_out = _TopicTransitionOut(
-            cycle_complete=transition.cycle_complete,
-            summary=transition.summary,
-            next_topic=transition.next_topic,
-            next_topic_rationale=transition.next_topic_rationale,
-            difficulty_adjustment=transition.difficulty_adjustment,
-            continue_recommended=transition.continue_recommended,
-            fallback_used=transition.fallback_used,
-            looped=looped,
-            new_cycle_count=sess.cycle_count,
-        )
+    run_auto_loop(ctx)
 
     db.commit()
     db.refresh(assistant_msg)
@@ -1151,8 +1168,8 @@ def append_message(
 
     return _build_response(
         assistant=assistant_msg,
-        step_evaluation=step_eval_out,
-        topic_transition=topic_transition_out,
+        step_evaluation=ctx.step_eval_out,
+        topic_transition=ctx.topic_transition_out,
     )
 
 
