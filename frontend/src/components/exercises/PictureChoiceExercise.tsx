@@ -31,7 +31,7 @@
  * source through the review/adaptive routes too.
  */
 
-import {Check, RotateCcw, X} from "lucide-react";
+import {Check, X} from "lucide-react";
 import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
@@ -39,7 +39,6 @@ import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
 import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
-import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
@@ -47,6 +46,7 @@ import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DirectionInstruction from "./DirectionInstruction";
+import ExerciseFooter from "./ExerciseFooter";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -224,19 +224,6 @@ function PictureChoiceExercise(
             </ul>
 
             <div className="flex flex-wrap items-center gap-3">
-                {!submitted && !controlled && (
-                    <Button
-                        type="button"
-                        disabled={selected === null}
-                        onClick={submit}
-                        data-testid="picture-submit"
-                    >
-                        {t(
-                            "lesson.exercise.picture.submit",
-                            "Check answer",
-                        )}
-                    </Button>
-                )}
                 {submitted && (
                     <>
                         <p
@@ -266,23 +253,24 @@ function PictureChoiceExercise(
                         <AnswerCelebration
                             isCorrect={!!result && result.correct > 0}
                         />
-                        {!controlled && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                type="button"
-                                onClick={reset}
-                                data-testid="picture-retry"
-                            >
-                                <RotateCcw size={14} aria-hidden="true" />
-                                {t(
-                                    "lesson.exercise.picture.retry",
-                                    "Try again",
-                                )}
-                            </Button>
-                        )}
                     </>
                 )}
+                <ExerciseFooter
+                    testidPrefix="picture"
+                    controlled={controlled}
+                    submitted={submitted}
+                    canCheck={selected !== null}
+                    onCheck={submit}
+                    onRetry={reset}
+                    checkLabel={t(
+                        "lesson.exercise.picture.submit",
+                        "Check answer",
+                    )}
+                    retryLabel={t(
+                        "lesson.exercise.picture.retry",
+                        "Try again",
+                    )}
+                />
             </div>
         </section>
     );
