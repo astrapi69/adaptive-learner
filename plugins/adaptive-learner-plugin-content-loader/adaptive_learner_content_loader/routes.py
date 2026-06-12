@@ -51,10 +51,11 @@ from .schema import Lesson
 from .service import (
     ContentLoaderService,
     SetEntry,
+)
+from .sources import (
     parse_source_refs_from_settings,
     user_sources_from_settings,
 )
-
 
 # Phase 54F — MIME types for the asset proxy. The whitelist
 # matches the ContentSetAsset path validator's extension

@@ -26,6 +26,8 @@ from adaptive_learner_content_loader.exceptions import (
 )
 from adaptive_learner_content_loader.service import (
     ContentLoaderService,
+)
+from adaptive_learner_content_loader.sources import (
     SourceRef,
     parse_source_refs_from_settings,
     user_source_from_settings,
