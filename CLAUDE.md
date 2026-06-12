@@ -9,7 +9,25 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.75.0** (minor - **TipTap editor stack migrated
+- **Current state:** **v1.76.0** (maintenance -
+  **exercise-renderer dedup + ownership-check consolidation + backup-button
+  unification**: a `useControlledExercise` hook + a shared `ExerciseFooter`
+  remove ~300 lines of lifecycle duplication across all 5 exercise renderers,
+  zero behaviour/test change (#322, PRs #323-#328); the per-user backup/sync
+  ownership check is consolidated into one canonical pair in `sync_service`
+  (`row_belongs_to_user` + `record_belongs_to_user`; backup imports them),
+  closing a security-directional drift, behaviour-preserving on all reachable
+  data since every mapped `user_id` column is non-nullable (#329/#330); the
+  Danger-Zone backup button now uses the same `saveBackupToDisk` helper as the
+  Settings export, pinned by a cross-component parity test (#331/#332); TTS no
+  longer reads raw Markdown aloud (#320/#321); the Dexie-mode CI gate runs
+  inside the `mcr.microsoft.com/playwright` container instead of the hanging
+  `cdn.playwright.dev` download (#317/#319); the misconfigured
+  `prettier-frontend` pre-commit hook removed (#316/#318); and content-set
+  download now accepts the content repo's optional `domain_label` field,
+  fixing a 400 on sets carrying it (e.g. the psychology set) (#333); no
+  schema/API/data change.)
+  v1.75.0 = (minor - **TipTap editor stack migrated
   v2 -> v3**: the whole `@tiptap/*` stack (23 packages) bumped 2.27.2 ->
   3.26.1 in one atomic change (#311/#314) - a mixed v2/v3 tree does not
   compile (v3 extensions need v3 core), the failure mode that defeated the
