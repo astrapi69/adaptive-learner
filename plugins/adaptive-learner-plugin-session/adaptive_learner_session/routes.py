@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import json
 import time
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
@@ -599,6 +600,33 @@ def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | No
     return provider_key, api_key, override
 
 
+@dataclass
+class MessageContext:
+    """Mutable carrier threaded through the ``/{id}/message`` handler.
+
+    Holds the request inputs, the persisted learner turn, and the
+    running latency budget so the phase functions the handler is being
+    decomposed into (persist_user_message, resolve_ai_context,
+    run_step_evaluation, run_auto_loop, assemble_exchange) read and
+    update one typed object instead of a fan of positional args and
+    single-key ``dict`` holders.
+
+    The ``*_ms`` fields stay ``None`` until their phase runs; the
+    response builder reads them verbatim into the ``timings`` payload.
+    """
+
+    db: Session
+    session: LearningSession
+    payload: _MessageBody
+    request_start_ts: float
+    user_msg: SessionMessage | None = None
+    learning_ms: int | None = None
+    evaluation_ms: int | None = None
+    topic_transition_ms: int | None = None
+    parallel_saved_ms: int | None = None
+    model_warning: str | None = None
+
+
 @router.post(
     "/{session_id}/message",
     response_model=_SessionMessageExchangeOut,
@@ -643,11 +671,12 @@ def append_message(
     # topic_transition_ms) accumulate below. The response carries
     # the breakdown as ``timings`` so the frontend / monitoring can
     # surface latency without an extra introspection roundtrip.
-    request_start_ts = time.monotonic()
-    learning_ms_holder: dict[str, int | None] = {"value": None}
-    eval_ms_holder: dict[str, int | None] = {"value": None}
-    transition_ms_holder: dict[str, int | None] = {"value": None}
-    parallel_saved_ms_holder: dict[str, int | None] = {"value": None}
+    ctx = MessageContext(
+        db=db,
+        session=sess,
+        payload=payload,
+        request_start_ts=time.monotonic(),
+    )
 
     user_msg = SessionMessage(
         session_id=sess.id,
@@ -657,30 +686,29 @@ def append_message(
     db.add(user_msg)
     db.commit()
     db.refresh(user_msg)
+    ctx.user_msg = user_msg
 
     # Helper closure: every exit point of this handler returns
     # the same composite shape, so the frontend's typed contract
     # stays consistent. v0.4.0: the response now also carries the
     # full LearningSession row so the frontend can read the
     # current cycle_step without a separate fetch.
-    model_warning_holder: dict[str, str | None] = {"value": None}
-
     def _build_response(
         assistant: SessionMessage | None = None,
         ai_error: str | None = None,
         step_evaluation: _StepEvaluationOut | None = None,
         topic_transition: _TopicTransitionOut | None = None,
     ) -> _SessionMessageExchangeOut:
-        total_ms = int((time.monotonic() - request_start_ts) * 1000)
+        total_ms = int((time.monotonic() - ctx.request_start_ts) * 1000)
         timings = _TimingsOut(
-            learning_ms=learning_ms_holder["value"],
-            evaluation_ms=eval_ms_holder["value"],
-            topic_transition_ms=transition_ms_holder["value"],
+            learning_ms=ctx.learning_ms,
+            evaluation_ms=ctx.evaluation_ms,
+            topic_transition_ms=ctx.topic_transition_ms,
             total_ms=total_ms,
-            parallel_saved_ms=parallel_saved_ms_holder["value"],
+            parallel_saved_ms=ctx.parallel_saved_ms,
         )
         return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(user_msg),
+            user_message=SessionMessageOut.model_validate(ctx.user_msg),
             assistant_message=(
                 SessionMessageOut.model_validate(assistant) if assistant is not None else None
             ),
@@ -689,7 +717,7 @@ def append_message(
             step_evaluation=step_evaluation,
             topic_transition=topic_transition,
             timings=timings,
-            model_warning=model_warning_holder["value"],
+            model_warning=ctx.model_warning,
         )
 
     if payload.role != MessageRole.USER:
@@ -730,13 +758,13 @@ def append_message(
         if cached is not None and not any(m.id == model for m in cached):
             default_model = ai_orchestration.DEFAULT_MODELS.get(provider_key)
             if default_model and default_model != model:
-                model_warning_holder["value"] = (
+                ctx.model_warning = (
                     f"Model {model!r} is not in the available models for "
                     f"provider {provider_key!r}. Falling back to {default_model!r}."
                 )
                 model = default_model
             else:
-                model_warning_holder["value"] = (
+                ctx.model_warning = (
                     f"Model {model!r} may not be available for provider "
                     f"{provider_key!r}; trying anyway."
                 )
@@ -775,7 +803,7 @@ def append_message(
             model=model,
             api_key=api_key,
         )
-        learning_ms_holder["value"] = int((time.monotonic() - learning_start) * 1000)
+        ctx.learning_ms = int((time.monotonic() - learning_start) * 1000)
     except Exception as exc:  # noqa: BLE001
         return _build_response(ai_error=f"AI provider error: {exc}")
 
@@ -868,9 +896,9 @@ def append_message(
             # attribute the elapsed time symmetrically and estimate
             # the sequential cost as roughly 2x for the
             # parallel_saved_ms display.
-            eval_ms_holder["value"] = parallel_ms
-            transition_ms_holder["value"] = parallel_ms
-            parallel_saved_ms_holder["value"] = parallel_ms
+            ctx.evaluation_ms = parallel_ms
+            ctx.topic_transition_ms = parallel_ms
+            ctx.parallel_saved_ms = parallel_ms
 
     if step_eval_enabled:
         # Look up the learner's UI language so the evaluator's
@@ -903,7 +931,7 @@ def append_message(
                 output_language=eval_lang,
                 max_tokens=eval_max_tokens,
             )
-            eval_ms_holder["value"] = int((time.monotonic() - eval_start) * 1000)
+            ctx.evaluation_ms = int((time.monotonic() - eval_start) * 1000)
         if evaluation.fallback_used:
             # Fallback IS the deterministic advance: apply per
             # evaluation.advance (which is +1 below step 7, False
@@ -982,7 +1010,7 @@ def append_message(
                 output_language=loop_lang,
                 max_tokens=tt_max_tokens,
             )
-            transition_ms_holder["value"] = int((time.monotonic() - transition_start) * 1000)
+            ctx.topic_transition_ms = int((time.monotonic() - transition_start) * 1000)
         looped = (
             not transition.fallback_used
             and transition.cycle_complete
