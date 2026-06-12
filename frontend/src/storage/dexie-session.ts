@@ -78,7 +78,7 @@ export const dexieAssessment: IStorageService["assessment"] = {
       }
       return rowToProfile(row);
     },
-  
+
 };
 
 export const dexieSession: IStorageService["session"] = {
@@ -361,7 +361,7 @@ export const dexieSession: IStorageService["session"] = {
         created_at: r.created_at,
       }));
     },
-  
+
 };
 
 export const dexieTracking: IStorageService["tracking"] = {
@@ -399,7 +399,7 @@ export const dexieTracking: IStorageService["tracking"] = {
         rowToCommit(row, notesBySession.get(row.session_id) ?? null),
       );
     },
-  
+
 };
 
 export const dexieTools: IStorageService["tools"] = {
@@ -450,5 +450,5 @@ export const dexieTools: IStorageService["tools"] = {
       };
       return buildSpacedRecommendations(weights, recency, lang);
     },
-  
+
 };

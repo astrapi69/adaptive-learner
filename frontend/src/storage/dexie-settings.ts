@@ -205,5 +205,5 @@ export const dexieSettings: IStorageService["settings"] = {
       await db.userSettings.put(updated);
       return rowToSettings(updated);
     },
-  
+
 };

@@ -122,7 +122,7 @@ export const dexieUsers: IStorageService["users"] = {
         language: user.language,
       };
     },
-  
+
 };
 
 export const dexieProjects: IStorageService["projects"] = {
@@ -154,5 +154,5 @@ export const dexieProjects: IStorageService["projects"] = {
       await db.learningProjects.put(updated);
       return rowToProject(updated);
     },
-  
+
 };

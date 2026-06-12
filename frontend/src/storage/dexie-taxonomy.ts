@@ -124,7 +124,7 @@ export const dexieSubjects: IStorageService["subjects"] = {
         },
       );
     },
-  
+
 };
 
 export const dexieTags: IStorageService["tags"] = {
@@ -200,7 +200,7 @@ export const dexieTags: IStorageService["tags"] = {
         await db.tags.delete(tagId);
       });
     },
-  
+
 };
 
 export const dexieProjectTaxonomy: IStorageService["projectTaxonomy"] = {
@@ -343,5 +343,5 @@ export const dexieProjectTaxonomy: IStorageService["projectTaxonomy"] = {
       }
       await db.projectTags.delete(existing.id);
     },
-  
+
 };

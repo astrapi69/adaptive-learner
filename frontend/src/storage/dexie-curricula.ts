@@ -157,7 +157,7 @@ export const dexieCurricula: IStorageService["curricula"] = {
       await db.lessons.add(row);
       return rowToLesson(row);
     },
-  
+
 };
 
 export const dexieTopics: IStorageService["topics"] = {
@@ -191,7 +191,7 @@ export const dexieTopics: IStorageService["topics"] = {
       const db = getDb();
       await db.learningTopics.delete(topicId);
     },
-  
+
 };
 
 export const dexieLessons: IStorageService["lessons"] = {
@@ -219,5 +219,5 @@ export const dexieLessons: IStorageService["lessons"] = {
       const db = getDb();
       await db.lessons.delete(lessonId);
     },
-  
+
 };
