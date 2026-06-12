@@ -163,15 +163,31 @@ export default function LearningRepoPage() {
               {t("repo.action.download_zip", "Download ZIP")}
             </span>
           </Button>
-          <Feature id={FEATURES.GIT_PERSIST}>
+          {/* Persist needs a server-side filesystem + git binary, so
+              GIT_PERSIST is disabled in Dexie mode with a tooltip
+              naming the desktop app (#335) instead of hidden. */}
+          <Feature
+            id={FEATURES.GIT_PERSIST}
+            whenDisabled={
+              <Button
+                type="button"
+                variant="secondary"
+                disabled
+                aria-label={t("repo.action.persist", "Persist to git")}
+                title={t("feature.desktop_only", "Only available with the desktop app.")}
+                data-testid="repo-persist-btn-desktop-only"
+              >
+                <GitCommit size={16} />
+                <span className="hidden md:inline">
+                  {t("repo.action.persist", "Persist to git")}
+                </span>
+              </Button>
+            }
+          >
             <Button
               type="button"
               variant="secondary"
               onClick={handlePersist}
-              // Phase 49G / feature-strategy: persist needs a
-              // server-side filesystem + git binary, so the
-              // GIT_PERSIST feature is hidden in Dexie mode
-              // (no dead control) instead of disabled.
               disabled={persisting}
               aria-label={t("repo.action.persist", "Persist to git")}
               title={t("repo.action.persist", "Persist to git")}
