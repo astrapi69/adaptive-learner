@@ -47,7 +47,7 @@ from __future__ import annotations
 
 import json
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
@@ -624,6 +624,11 @@ class MessageContext:
     provider_key: str | None = None
     api_key: str | None = None
     model: str | None = None
+    history: list[dict[str, Any]] = field(default_factory=list)
+    assistant_text: str | None = None
+    assistant_msg: SessionMessage | None = None
+    precomputed_transition: TopicTransition | None = None
+    step_eval_out: _StepEvaluationOut | None = None
     learning_ms: int | None = None
     evaluation_ms: int | None = None
     topic_transition_ms: int | None = None
@@ -735,6 +740,177 @@ def resolve_ai_context(ctx: MessageContext) -> str | None:
     ctx.model = model
     _validate_model_against_cache(ctx)
     return None
+
+
+def _maybe_parallel_precompute(
+    ctx: MessageContext,
+    *,
+    async_eval_enabled: bool,
+    step_eval_enabled: bool,
+    auto_loop_enabled: bool,
+    eval_max_tokens: int,
+    tt_max_tokens: int,
+) -> StepEvaluation | None:
+    """Phase 18C — run step-eval + topic-transition concurrently at the
+    step 6 -> 7 boundary (saves ~one AI call of latency at the cycle edge).
+
+    Fires only when async evaluation + step-eval + auto-loop are all on
+    AND ``from_step == MAX_STEP - 1``. Stores the transition on
+    ``ctx.precomputed_transition`` for :func:`run_auto_loop` and records
+    the symmetric timing split. Returns the precomputed step evaluation,
+    or ``None`` when the path does not run or the gather fails (the caller
+    then falls back to the sequential evaluator).
+    """
+    sess = ctx.session
+    from_step = int(sess.cycle_step)
+    if not (
+        async_eval_enabled and step_eval_enabled and auto_loop_enabled and from_step == MAX_STEP - 1
+    ):
+        return None
+
+    import asyncio
+
+    from app.main import manager
+
+    from .step_evaluator import evaluate_step_async
+    from .topic_transition import evaluate_topic_transition_async
+
+    assert ctx.project is not None and ctx.model is not None and ctx.api_key is not None
+    project, model, api_key = ctx.project, ctx.model, ctx.api_key
+    owner = ctx.db.get(User, project.user_id)
+    parallel_lang = owner.language if owner else "en"
+    parallel_history = ctx.history + [{"role": "assistant", "content": ctx.assistant_text}]
+
+    async def _run_both() -> tuple[StepEvaluation, TopicTransition]:
+        return await asyncio.gather(
+            evaluate_step_async(
+                pm=manager._pm,
+                method=sess.method,
+                current_step=from_step,
+                history=parallel_history,
+                model=model,
+                api_key=api_key,
+                output_language=parallel_lang,
+                max_tokens=eval_max_tokens,
+            ),
+            evaluate_topic_transition_async(
+                pm=manager._pm,
+                goal=project.goal,
+                topic=project.topic,
+                method=sess.method,
+                history=parallel_history,
+                model=model,
+                api_key=api_key,
+                output_language=parallel_lang,
+                max_tokens=tt_max_tokens,
+            ),
+        )
+
+    parallel_start = time.monotonic()
+    try:
+        precomputed_eval, precomputed_transition = asyncio.run(_run_both())
+    except Exception:  # noqa: BLE001 — fall back to sequential
+        return None
+    # Both calls ran concurrently inside that ms budget; attribute the
+    # elapsed time symmetrically for the parallel_saved_ms display.
+    parallel_ms = int((time.monotonic() - parallel_start) * 1000)
+    ctx.evaluation_ms = parallel_ms
+    ctx.topic_transition_ms = parallel_ms
+    ctx.parallel_saved_ms = parallel_ms
+    ctx.precomputed_transition = precomputed_transition
+    return precomputed_eval
+
+
+def run_step_evaluation(ctx: MessageContext) -> None:
+    """Phase 8B — dual-prompt step evaluation + cycle-step advance.
+
+    When step evaluation is enabled, fires a second AI call returning a
+    JSON verdict and applies the suggested step iff ``advance`` and
+    ``confidence >= threshold`` (or simply ``advance`` on the
+    deterministic fallback path). Persists a ``StepEvaluationRow`` and
+    sets ``ctx.step_eval_out``. When disabled, keeps the v0.4.x
+    deterministic +1 advance. At the step 6 -> 7 boundary the async path
+    also precomputes the topic transition onto ``ctx`` for
+    :func:`run_auto_loop`.
+    """
+    from app.main import manager
+
+    sess = ctx.session
+    db = ctx.db
+    from_step = int(sess.cycle_step)
+    step_eval_enabled, threshold, eval_max_tokens = _read_step_evaluation_config()
+    auto_loop_enabled, _max_cycles, tt_max_tokens = _read_auto_loop_config()
+    async_eval_enabled = _read_async_evaluation_enabled()
+
+    precomputed_eval = _maybe_parallel_precompute(
+        ctx,
+        async_eval_enabled=async_eval_enabled,
+        step_eval_enabled=step_eval_enabled,
+        auto_loop_enabled=auto_loop_enabled,
+        eval_max_tokens=eval_max_tokens,
+        tt_max_tokens=tt_max_tokens,
+    )
+
+    if not step_eval_enabled:
+        # v0.4.x compat: deterministic +1 advance, capped at 7.
+        if sess.cycle_step < MAX_STEP:
+            sess.cycle_step += 1
+        return
+
+    assert ctx.project is not None and ctx.model is not None and ctx.api_key is not None
+    # The evaluator judges the FULL exchange including the AI's
+    # just-produced answer, so append it to the loaded history.
+    full_history = ctx.history + [{"role": "assistant", "content": ctx.assistant_text}]
+    if precomputed_eval is not None:
+        evaluation = precomputed_eval
+    else:
+        owner = db.get(User, ctx.project.user_id)
+        eval_lang = owner.language if owner else "en"
+        eval_start = time.monotonic()
+        evaluation = evaluate_step(
+            pm=manager._pm,
+            method=sess.method,
+            current_step=from_step,
+            history=full_history,
+            model=ctx.model,
+            api_key=ctx.api_key,
+            output_language=eval_lang,
+            max_tokens=eval_max_tokens,
+        )
+        ctx.evaluation_ms = int((time.monotonic() - eval_start) * 1000)
+
+    if evaluation.fallback_used:
+        # Fallback IS the deterministic advance: apply per advance
+        # (+1 below step 7, False at step 7 to cap the cycle).
+        applied = evaluation.advance
+    else:
+        applied = evaluation.advance and (evaluation.confidence >= threshold)
+    if applied:
+        sess.cycle_step = evaluation.suggested_step
+    # ``to_step`` records where the session ACTUALLY went; ``reason`` is
+    # stored verbatim regardless of fallback_used for later audit.
+    to_step = evaluation.suggested_step if applied else from_step
+    db.add(
+        StepEvaluationRow(
+            session_id=sess.id,
+            from_step=from_step,
+            to_step=to_step,
+            advance=evaluation.advance,
+            confidence=evaluation.confidence,
+            applied=applied,
+            fallback_used=evaluation.fallback_used,
+            reason=evaluation.reason,
+        )
+    )
+    ctx.step_eval_out = _StepEvaluationOut(
+        advance=evaluation.advance,
+        confidence=evaluation.confidence,
+        reason=evaluation.reason,
+        suggested_step=evaluation.suggested_step,
+        fallback_used=evaluation.fallback_used,
+        applied=applied,
+        from_step=from_step,
+    )
 
 
 @router.post(
@@ -886,160 +1062,14 @@ def append_message(
     )
     db.add(assistant_msg)
     db.flush()  # assign assistant_msg.id without committing the txn yet
+    ctx.history = history
+    ctx.assistant_text = assistant_text
+    ctx.assistant_msg = assistant_msg
 
-    # --- v0.5.0 (Phase 8B): dual-prompt cycle-step transition --------------
-    #
-    # The v0.4.x deterministic +1 advance is now config-gated. When
-    # step_evaluation is enabled (the default), the route fires a
-    # SECOND ai_complete call against the same provider with a short
-    # max_tokens cap; the AI returns a JSON verdict
-    # (advance/confidence/reason/suggested_step) and the route
-    # applies the suggestion iff:
-    #   - real evaluation: advance ∧ confidence >= threshold, OR
-    #   - fallback path:   advance (the deterministic-+1 fallback
-    #                       IS the v0.4.x compat path; threshold
-    #                       does not gate it).
-    # When step_evaluation is disabled, the route keeps the v0.4.x
-    # deterministic +1 behaviour verbatim.
-    from_step = int(sess.cycle_step)
-    step_eval_enabled, threshold, eval_max_tokens = _read_step_evaluation_config()
+    run_step_evaluation(ctx)
+    step_eval_out = ctx.step_eval_out
+    precomputed_transition = ctx.precomputed_transition
     auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
-    async_eval_enabled = _read_async_evaluation_enabled()
-    step_eval_out: _StepEvaluationOut | None = None
-
-    # v1.5.0 / Phase 18C — at the step 6 -> 7 transition, fire
-    # step_evaluation and topic_transition concurrently via
-    # asyncio.gather. Saves ~T2 worth of latency at the cycle
-    # boundary. When async_evaluation is off / preconditions are
-    # not met, fall back to the v1.4.0 sequential path below.
-    precomputed_eval: StepEvaluation | None = None
-    precomputed_transition: TopicTransition | None = None
-    if async_eval_enabled and step_eval_enabled and auto_loop_enabled and from_step == MAX_STEP - 1:
-        import asyncio
-
-        from .step_evaluator import evaluate_step_async
-        from .topic_transition import evaluate_topic_transition_async
-
-        owner = db.get(User, project.user_id)
-        parallel_lang = owner.language if owner else "en"
-        parallel_history = history + [{"role": "assistant", "content": assistant_text}]
-
-        async def _run_both() -> tuple[StepEvaluation, TopicTransition]:
-            return await asyncio.gather(
-                evaluate_step_async(
-                    pm=manager._pm,
-                    method=sess.method,
-                    current_step=from_step,
-                    history=parallel_history,
-                    model=model,
-                    api_key=api_key,
-                    output_language=parallel_lang,
-                    max_tokens=eval_max_tokens,
-                ),
-                evaluate_topic_transition_async(
-                    pm=manager._pm,
-                    goal=project.goal,
-                    topic=project.topic,
-                    method=sess.method,
-                    history=parallel_history,
-                    model=model,
-                    api_key=api_key,
-                    output_language=parallel_lang,
-                    max_tokens=tt_max_tokens,
-                ),
-            )
-
-        parallel_start = time.monotonic()
-        try:
-            precomputed_eval, precomputed_transition = asyncio.run(_run_both())
-        except Exception:  # noqa: BLE001 — fall back to sequential
-            precomputed_eval, precomputed_transition = None, None
-        if precomputed_eval is not None and precomputed_transition is not None:
-            parallel_ms = int((time.monotonic() - parallel_start) * 1000)
-            # Both calls ran concurrently inside that ms budget;
-            # attribute the elapsed time symmetrically and estimate
-            # the sequential cost as roughly 2x for the
-            # parallel_saved_ms display.
-            ctx.evaluation_ms = parallel_ms
-            ctx.topic_transition_ms = parallel_ms
-            ctx.parallel_saved_ms = parallel_ms
-
-    if step_eval_enabled:
-        # Look up the learner's UI language so the evaluator's
-        # ``reason`` field renders naturally if the frontend surfaces
-        # it as a tooltip. Phase 8 Q3 — English prompt + localised
-        # reason via output_language steer.
-        owner = db.get(User, project.user_id)
-        eval_lang = owner.language if owner else "en"
-
-        # The evaluator judges the FULL exchange including the AI's
-        # just-produced answer — that's the signal-rich payload.
-        # ``history`` at this point already contains the user message
-        # we just saved (loaded via _load_prior_messages above) but
-        # not the assistant reply we haven't committed yet, so append
-        # it explicitly.
-        full_history = history + [{"role": "assistant", "content": assistant_text}]
-        evaluation: StepEvaluation
-        if precomputed_eval is not None:
-            # 18C parallel path already ran the evaluator.
-            evaluation = precomputed_eval
-        else:
-            eval_start = time.monotonic()
-            evaluation = evaluate_step(
-                pm=manager._pm,
-                method=sess.method,
-                current_step=from_step,
-                history=full_history,
-                model=model,
-                api_key=api_key,
-                output_language=eval_lang,
-                max_tokens=eval_max_tokens,
-            )
-            ctx.evaluation_ms = int((time.monotonic() - eval_start) * 1000)
-        if evaluation.fallback_used:
-            # Fallback IS the deterministic advance: apply per
-            # evaluation.advance (which is +1 below step 7, False
-            # at step 7 to cap the cycle).
-            applied = evaluation.advance
-        else:
-            applied = evaluation.advance and (evaluation.confidence >= threshold)
-        if applied:
-            sess.cycle_step = evaluation.suggested_step
-        # v0.5.0 / 8D — persist the evaluation row for the
-        # tracking plugin's aggregates (avg confidence, repeat
-        # count, time-per-step). ``to_step`` records where the
-        # session ACTUALLY went (= from_step if not applied,
-        # = suggested_step if applied), not just what the AI
-        # suggested. ``reason`` is stored verbatim regardless of
-        # fallback_used so a future audit can see whether the AI
-        # was outputting useful text or producing parse-fail
-        # garbage.
-        to_step = evaluation.suggested_step if applied else from_step
-        db.add(
-            StepEvaluationRow(
-                session_id=sess.id,
-                from_step=from_step,
-                to_step=to_step,
-                advance=evaluation.advance,
-                confidence=evaluation.confidence,
-                applied=applied,
-                fallback_used=evaluation.fallback_used,
-                reason=evaluation.reason,
-            )
-        )
-        step_eval_out = _StepEvaluationOut(
-            advance=evaluation.advance,
-            confidence=evaluation.confidence,
-            reason=evaluation.reason,
-            suggested_step=evaluation.suggested_step,
-            fallback_used=evaluation.fallback_used,
-            applied=applied,
-            from_step=from_step,
-        )
-    else:
-        # v0.4.x compat: deterministic +1 advance, capped at 7.
-        if sess.cycle_step < MAX_STEP:
-            sess.cycle_step += 1
 
     # v1.4.0 — auto-loop after step 7. When the step evaluator just
     # ADVANCED the session INTO step 7 with advance=true, ask the
