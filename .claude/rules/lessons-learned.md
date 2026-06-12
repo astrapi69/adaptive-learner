@@ -1783,3 +1783,59 @@ Rules:
   user insists post-refresh, the gap is in the rendered runtime you can't
   see — ask for the screenshot / DevTools computed `background-color` +
   `color` + active `data-theme` rather than guess-fixing.
+
+## The `prettier-frontend` pre-commit hook reformats whole files (no config + 4-space code)
+
+Surfaced 2026-06-12 during the TipTap v2->v3 migration (#311 / #315).
+
+`frontend/` has **no prettier config** (no `.prettierrc`, no `prettier`
+key in `package.json`), but the entire `frontend/src` tree is authored in
+**4-space indent + `{x}` (no inner brace spaces)**. The `prettier-frontend`
+pre-commit hook (`.pre-commit-config.yaml`, `entry: cd frontend && npx
+prettier --write`) therefore runs prettier with its **defaults** (2-space,
+`{ x }`, 80-col) and rewrites *every staged `frontend/src` file in full* to
+a style nothing else in the repo uses. Touch one line, the hook reformats
+the whole file.
+
+**CI already skips this hook**: `.github/workflows/ci.yml` sets
+`SKIP: prettier-frontend,eslint` for the pre-commit job. So prettier is
+enforced *nowhere* except this misconfigured local hook. Committing its
+output is wrong — it produces hundreds of lines of churn inconsistent with
+the codebase.
+
+Rules until the config is fixed (a 4-space `.prettierrc` or dropping the
+hook — filed as a follow-up):
+
+1. **Commit `frontend/src` changes with `SKIP=prettier-frontend git commit`.**
+   The ESLint hook still runs (and is the real gate); only the spurious
+   reformatter is skipped. This mirrors CI exactly.
+2. **Never commit the hook's reformatting.** If a commit aborted *after*
+   the prettier hook ran, the 2-space rewrite is sitting in your worktree —
+   see the stash trap below.
+
+### Corollary: `git stash` captures pre-commit-hook worktree edits
+
+The same session lost time to this. Sequence that bites:
+
+1. `git add` a `frontend/src` file (clean 4-space edit), `git commit`.
+2. The `prettier-frontend` hook rewrites the file to 2-space **in the
+   worktree**, then the commit aborts (e.g. the ESLint hook failed on an
+   unrelated pre-existing error). pre-commit restores *unstaged* changes
+   but leaves the prettier rewrite in the worktree (the file shows `MM`).
+3. `git stash push -- <file>` now captures the **2-space rewrite**, not
+   your clean edit.
+4. Later `git stash pop` + commit (with prettier skipped) silently commits
+   the whole-file reformat. (This actually happened in #314 and needed the
+   follow-up #315 to undo.)
+
+Tells + fix:
+- After an aborted commit, check `git diff --stat`: a ~20-line change
+  showing as 200+ changed lines means the hook reformatted the file.
+- Recover the clean edit with `git restore <file>` **before stashing** —
+  `git restore` pulls from the index (your staged clean edit), discarding
+  the worktree reformat. Verify with `git diff --cached` (should be only
+  your real change) before committing.
+- General rule: a pre-commit hook that mutates files (`prettier --write`,
+  `ruff format`, `--fix`) leaves those mutations in the worktree when the
+  commit fails. Treat the worktree as dirty-with-hook-output after any
+  aborted commit; don't stash or re-commit blind.
