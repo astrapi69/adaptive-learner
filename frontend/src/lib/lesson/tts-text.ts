@@ -44,13 +44,25 @@ export function markdownToSpeech(markdown: string): string {
     // (-, *, +) and ordered-list numbers, and table pipes.
     text = text
         .split("\n")
-        .map((line) =>
-            line
+        .map((line) => {
+            // GFM table delimiter rows (``|---|:--:|``) carry no spoken
+            // content; drop them outright. Without this they survive the
+            // pipe-strip below as ``--- ---`` (the horizontal-rule collapse
+            // only matches a single dash run) and read as "dash dash dash".
+            const trimmed = line.trim();
+            if (
+                trimmed.includes("|") &&
+                trimmed.includes("-") &&
+                /^[\s|:-]+$/.test(trimmed)
+            ) {
+                return "";
+            }
+            return line
                 .replace(/^\s{0,3}#{1,6}\s+/, "")
                 .replace(/^\s{0,3}>\s?/, "")
                 .replace(/^\s*([-*+]|\d+\.)\s+/, "")
-                .replace(/\|/g, " "),
-        )
+                .replace(/\|/g, " ");
+        })
         .join("\n");
 
     // Collapse horizontal rules + leftover heading/setext underlines.

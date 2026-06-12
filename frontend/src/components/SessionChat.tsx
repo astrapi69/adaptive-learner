@@ -7,6 +7,7 @@ import {useI18n} from "../hooks/useI18n";
 import type {MessageRole} from "../lib/constants";
 import MicButton from "./MicButton";
 import SpeechButton from "./SpeechButton";
+import {markdownToSpeech} from "../lib/lesson/tts-text";
 
 export interface ChatMessage {
     /** Unique id for React key purposes. Backend-issued where available;
@@ -223,7 +224,7 @@ export default function SessionChat({
                             {msg.role === "assistant" && !msg.streaming && (
                                 <div className="chat-message-actions">
                                     <SpeechButton
-                                        text={msg.content}
+                                        text={markdownToSpeech(msg.content)}
                                         testId={`assistant-${msg.id}`}
                                     />
                                 </div>
