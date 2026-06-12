@@ -95,13 +95,14 @@ import {
 import { allowsConfetti } from "../lib/feedback/feedbackPref";
 import { tokenDiff } from "../lib/exercises/token-diff";
 import {
-  buildLessonResultJson,
-  buildLessonResultMarkdown,
-  collectWeakAreas,
   formatUserAnswer,
-  lessonResultFilename,
   type LessonResultLabels,
 } from "../lib/lesson/result-export";
+import {
+  buildLessonJsonExport,
+  buildLessonMarkdownExport,
+  downloadBlob,
+} from "../lib/lesson/result-download";
 import { localTodayIso } from "../lib/missions/schedule";
 import {
   celebrateMissions,
@@ -1250,20 +1251,6 @@ function ReviewedFallbackPanel({
   );
 }
 
-/** Trigger a client-side file download for an in-memory string
- *  (lesson-result Markdown / JSON export). */
-function downloadBlob(content: string, filename: string, mime: string): void {
-  const blob = new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-  URL.revokeObjectURL(url);
-}
-
 interface LessonSummaryProps {
   lesson: import("../storage/types").ContentLesson;
   progress: import("../storage/types").LessonProgress | null;
@@ -1367,13 +1354,10 @@ function LessonSummary({
   // #138 — export the result (score + mistakes + weak areas) as
   // Markdown so the learner can paste it into an AI assistant to
   // drill the weak spots. Both actions reuse the breakdown already
-  // computed for the on-screen list; no new storage read.
+  // computed for the on-screen list; no new storage read. The
+  // builders live in lib/lesson/result-download (#354); only the
+  // i18n label resolution stays here.
   const buildResultMarkdown = useCallback(() => {
-    const now = new Date();
-    // #167 bug 5 — ISO 8601 in the export artifact (filename + body),
-    // consistent with lessonResultFilename. Locale formatting is for
-    // live UI display only, never the exported document.
-    const dateStr = now.toISOString().slice(0, 10);
     const labels: LessonResultLabels = {
       title: t("lesson.summary.export.title", "Lesson result"),
       date: t("lesson.summary.export.date", "Date"),
@@ -1390,22 +1374,18 @@ function LessonSummary({
       correctAnswer: t("lesson.summary.export.correct_answer", "Correct"),
       weakAreasHeading: t("lesson.summary.export.weak_areas", "Weak areas"),
     };
-    return {
-      markdown: buildLessonResultMarkdown({
-        lessonTitle: lesson.title,
-        dateStr,
-        correct,
-        total,
-        pct: scorePct,
-        breakdown,
-        weakAreas: collectWeakAreas(sessionErrors),
-        labels,
-      }),
-      filename: lessonResultFilename(lesson.title, now),
-    };
+    return buildLessonMarkdownExport({
+      lesson,
+      correct,
+      total,
+      pct: scorePct,
+      sessionErrors,
+      breakdown,
+      labels,
+    });
   }, [
     t,
-    lesson.title,
+    lesson,
     correct,
     total,
     scorePct,
@@ -1432,25 +1412,17 @@ function LessonSummary({
     downloadBlob(markdown, filename, "text/markdown");
   }, [buildResultMarkdown]);
 
-  // #167 bug 3 — structured JSON twin of the Markdown export. Carries
-  // the prompt, the learner's answer + verbatim raw answer (#167 bug 4),
-  // the correct answer, pass/fail, and concept tags per exercise.
+  // #167 bug 3 — structured JSON twin of the Markdown export.
   const handleDownloadJson = useCallback(() => {
-    const now = new Date();
-    const result = buildLessonResultJson({
+    const { json, filename } = buildLessonJsonExport({
       lesson,
       progress,
-      dateStr: now.toISOString().slice(0, 10),
       correct,
       total,
       pct: scorePct,
-      weakAreas: collectWeakAreas(sessionErrors),
+      sessionErrors,
     });
-    downloadBlob(
-      JSON.stringify(result, null, 2),
-      lessonResultFilename(lesson.title, now, "json"),
-      "application/json",
-    );
+    downloadBlob(json, filename, "application/json");
   }, [lesson, progress, correct, total, scorePct, sessionErrors]);
 
   // Count the score percentage up from 0 (instant under
