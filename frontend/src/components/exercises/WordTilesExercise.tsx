@@ -61,7 +61,9 @@ import {
 import {CSS} from "@dnd-kit/utilities";
 import {Check, ChevronLeft, ChevronRight, RotateCcw, X} from "lucide-react";
 import type {Ref} from "react";
-import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+
+import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
 import {useI18n} from "../../hooks/useI18n";
 import {Button} from "@/components/ui/button";
@@ -337,24 +339,6 @@ function WordTilesExercise(
     const [placed, setPlaced] = useState<number[]>(
         reviewedWordTiles ? [...reviewedWordTiles.placed] : [],
     );
-    const [submitted, setSubmitted] = useState(reviewedWordTiles != null);
-    const [result, setResult] = useState<{
-        correct: number;
-        total: number;
-    } | null>(() =>
-        reviewedWordTiles
-            ? {
-                  correct: isWordTilesCorrect(
-                      reviewedWordTiles.placed,
-                      tiles.length,
-                      acceptOrderings,
-                  )
-                      ? 1
-                      : 0,
-                  total: 1,
-              }
-            : null,
-    );
     const [showHint, setShowHint] = useState(false);
     // The tile index currently being pointer-dragged (drives the
     // floating DragOverlay copy). null when no drag is active.
@@ -386,6 +370,49 @@ function WordTilesExercise(
     const placedSet = new Set(placed);
     const scrambledIndices = displayOrder.filter((i) => !placedSet.has(i));
     const allPlaced = placed.length === tiles.length;
+
+    const reviewedResult = reviewedWordTiles
+        ? {
+              correct: isWordTilesCorrect(
+                  reviewedWordTiles.placed,
+                  tiles.length,
+                  acceptOrderings,
+              )
+                  ? 1
+                  : 0,
+              total: 1,
+          }
+        : null;
+
+    const {submitted, result, submit, reset} = useControlledExercise({
+        ref,
+        controlled,
+        isAnswerable: allPlaced,
+        onInteraction,
+        onComplete,
+        reviewedResult,
+        score: (): ExerciseScored => {
+            const isCorrect = isWordTilesCorrect(
+                placed,
+                tiles.length,
+                acceptOrderings,
+            );
+            return {
+                correct: isCorrect ? 1 : 0,
+                total: 1,
+                attempts: [
+                    deriveWordTilesAttempt(
+                        exercise,
+                        {setId, lessonId},
+                        placed,
+                        isCorrect,
+                    ),
+                ],
+                raw_answer: {kind: "word_tiles", placed: [...placed]},
+            };
+        },
+        resetAnswer: () => setPlaced([]),
+    });
 
     const handlePlace = (index: number) => {
         if (submitted) return;
@@ -439,45 +466,6 @@ function WordTilesExercise(
             applyDragReorder(prev, String(active.id), String(over.id)),
         );
     };
-
-    const handleSubmit = () => {
-        if (submitted || !allPlaced) return;
-        const isCorrect = isWordTilesCorrect(
-            placed,
-            tiles.length,
-            acceptOrderings,
-        );
-        const correct = isCorrect ? 1 : 0;
-        const attempt = deriveWordTilesAttempt(
-            exercise,
-            {setId, lessonId},
-            placed,
-            isCorrect,
-        );
-        const scored: ExerciseScored = {
-            correct,
-            total: 1,
-            attempts: [attempt],
-            raw_answer: {kind: "word_tiles", placed: [...placed]},
-        };
-        setResult({correct, total: 1});
-        setSubmitted(true);
-        onComplete(scored);
-    };
-
-    const handleReset = () => {
-        setPlaced([]);
-        setSubmitted(false);
-        setResult(null);
-    };
-
-    useImperativeHandle(ref, () => ({submit: handleSubmit}));
-
-    useEffect(() => {
-        if (!controlled || reviewedWordTiles || submitted) return;
-        onInteraction?.(allPlaced);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [controlled, allPlaced, submitted, reviewedWordTiles]);
 
     if (tiles.length === 0) {
         return (
@@ -677,7 +665,7 @@ function WordTilesExercise(
                     <Button
                         type="button"
                         disabled={!allPlaced}
-                        onClick={handleSubmit}
+                        onClick={submit}
                         data-testid="word-tiles-submit"
                     >
                         {t(
@@ -736,7 +724,7 @@ function WordTilesExercise(
                                 variant="outline"
                                 size="sm"
                                 type="button"
-                                onClick={handleReset}
+                                onClick={reset}
                                 data-testid="word-tiles-retry"
                             >
                                 <RotateCcw size={14} aria-hidden="true" />
