@@ -220,7 +220,7 @@ function MatchingExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t, lang} = useI18n();
-    const pairs = exercise.pairs ?? [];
+    const pairs = useMemo(() => exercise.pairs ?? [], [exercise.pairs]);
     const reviewedMatching =
         reviewed?.kind === "matching" ? reviewed : null;
     // EXP-018 / Phase 62: a productive drill shows the source-language

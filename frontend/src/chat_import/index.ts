@@ -33,7 +33,6 @@ import {parseMarkdownConversation} from "./markdown_parser";
 import {
     type BulkImportResult,
     ChatImportParseError,
-    type NormalizedConversation,
 } from "./types";
 
 export interface ParseChatImportOptions {

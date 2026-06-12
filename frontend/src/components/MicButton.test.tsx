@@ -5,7 +5,7 @@
  * nothing renders) + the click-toggle path.
  */
 
-import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {act, fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import {I18nProvider} from "../hooks/useI18n";

@@ -55,7 +55,6 @@ import {
   type ImportedMessageRow,
   type LearningProfileRow,
   type LearningProjectRow,
-  type LearningSessionRow,
   type LearningTopicRow,
   type LessonRow,
   type MethodSwitchRow,
@@ -431,13 +430,6 @@ function writeGitHubToken(token: string): void {
   } catch {
     /* storage unavailable — best effort */
   }
-}
-
-function notImplemented(label: string): never {
-  throw new ApiError(
-    501,
-    `DexieStorage: ${label} not implemented in this build`,
-  );
 }
 
 export const dexieStorage: IStorageService = {
@@ -1008,7 +1000,6 @@ export const dexieStorage: IStorageService = {
           // fire.
           await evaluateBadgesForUser(projectForXP.user_id);
         } catch (err) {
-          // eslint-disable-next-line no-console
           console.warn("gamification (session-end) failed", err);
         }
       }
@@ -1022,7 +1013,6 @@ export const dexieStorage: IStorageService = {
         if (session !== undefined) {
           const project = await db.learningProjects.get(session.project_id);
           if (project !== undefined) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             maybeRunAutoBackup(project.user_id, __APP_VERSION__, trigger);
           }
         }
@@ -2070,7 +2060,6 @@ export const dexieStorage: IStorageService = {
       try {
         await evaluateBadgesForUser(userId);
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.warn("badge evaluate (assessment) failed", err);
       }
       return award;
@@ -2080,7 +2069,6 @@ export const dexieStorage: IStorageService = {
       try {
         await evaluateBadgesForUser(userId);
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.warn("badge evaluate (import) failed", err);
       }
       return award;
@@ -2209,7 +2197,6 @@ export const dexieStorage: IStorageService = {
           // any other earned badges.
           await evaluateBadgesForUser(userId);
         } catch (err) {
-          // eslint-disable-next-line no-console
           console.warn("gamification (lesson-complete) failed", err);
         }
       }
@@ -2450,7 +2437,6 @@ export const dexieStorage: IStorageService = {
           await (table as { clear(): Promise<void> }).clear();
           cleared += 1;
         } catch (err) {
-          // eslint-disable-next-line no-console
           console.warn(`Dexie reset: clear(${name}) failed:`, err);
         }
       }

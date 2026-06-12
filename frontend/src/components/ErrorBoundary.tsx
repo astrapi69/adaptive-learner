@@ -41,7 +41,6 @@ export default class ErrorBoundary extends Component<
         // is the one place we don't go through the toast helper
         // because the toast container is INSIDE the boundary's
         // children and may itself have failed.
-        // eslint-disable-next-line no-console
         console.error("ErrorBoundary caught:", error, info.componentStack);
     }
 

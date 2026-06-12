@@ -16,7 +16,7 @@ import {useI18n} from "../hooks/useI18n";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
-import {DEFAULT_MODELS, resolveModel} from "../storage/ai-providers";
+import {resolveModel} from "../storage/ai-providers";
 import type {AvailableModel} from "../storage/types";
 import {notify} from "../utils/notify";
 import type {LearningMethod} from "../lib/constants";

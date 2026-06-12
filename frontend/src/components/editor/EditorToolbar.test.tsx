@@ -320,7 +320,6 @@ beforeEach(() => {
     // the implementation falls through to undefined, which
     // crashes the link button. Ensure a default no-op.
     if (typeof window.prompt !== "function") {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).prompt = () => null;
     }
 });

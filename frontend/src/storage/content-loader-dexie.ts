@@ -496,7 +496,6 @@ export async function listSetsDexie(
       // the diagnostic in Developer Mode so production users don't
       // see repeated warnings for a graceful, by-design fallback.
       if (isDevMode()) {
-        // eslint-disable-next-line no-console
         console.warn(
           `content-loader: upstream ${src.source}@${src.branch} unreachable, surfacing cached only`,
           err,

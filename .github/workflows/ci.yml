@@ -116,13 +116,12 @@ jobs:
         working-directory: frontend
         run: npx tsc --noEmit
 
-      # ESLint (#222). --max-warnings is a ratchet ceiling set at the
-      # current count; it can only go DOWN. New warnings fail CI; the
-      # blocking errors (react-hooks/rules-of-hooks, react/jsx-key) have
-      # zero current violations.
+      # ESLint (#222, #220). The ratchet reached zero: the suite is clean,
+      # so the ceiling is 0 — any new warning fails CI. Blocking errors
+      # (react-hooks/rules-of-hooks, react/jsx-key) also have zero violations.
       - name: ESLint
         working-directory: frontend
-        run: npx eslint src/ --max-warnings 436
+        run: npx eslint src/ --max-warnings 0
 
       # Circular-dependency guard (#251). Fails only when import cycles
       # EXCEED the documented baseline, so a NEW cycle is a hard error while

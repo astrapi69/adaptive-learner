@@ -31,7 +31,6 @@ vi.mock("../utils/eventRecorder", () => ({
 }));
 
 import ErrorReportDialog from "../components/ErrorReportDialog";
-import {notify} from "./notify";
 
 /** Mirror of the App.tsx wiring — listens for the custom event
  *  and mounts the dialog. Implemented here so the test exercises

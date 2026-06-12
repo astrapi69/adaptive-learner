@@ -320,19 +320,6 @@ function deepEqual(a: unknown, b: unknown): boolean {
 
 // ---- Previews per table ------------------------------------------------
 
-const DATE_FIELDS_BY_TABLE: Record<string, string> = {
-    learning_sessions: "started_at",
-    session_messages: "created_at",
-    session_ratings: "created_at",
-    session_notes: "created_at",
-    progress_commits: "committed_at",
-    method_switches: "switched_at",
-    step_evaluations: "evaluated_at",
-    imported_conversations: "imported_at",
-    imported_messages: "timestamp",
-    learning_profiles: "assessed_at",
-};
-
 /**
  * One-liner preview per row. Used by the Compare UI and the
  * Markdown export to identify a record without dumping its full

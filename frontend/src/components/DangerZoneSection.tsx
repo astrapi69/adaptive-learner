@@ -117,7 +117,6 @@ export default function DangerZoneSection() {
                 // Some environments (sandboxed iframes) deny
                 // sessionStorage; the rest of the reset already
                 // succeeded, so just log.
-                // eslint-disable-next-line no-console
                 console.warn("sessionStorage.clear() failed");
             }
             notify.success(

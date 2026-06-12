@@ -78,7 +78,6 @@ export default function EditorToolbar({
 
     const promptForLink = () => {
         const previous = (editor.getAttributes("link").href as string | undefined) ?? "";
-        // eslint-disable-next-line no-alert
         const url = window.prompt(
             t("editor.link_prompt", "URL (leave empty to remove the link)"),
             previous,

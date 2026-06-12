@@ -201,6 +201,7 @@ function cardsFromVocabulary(
         let front: string;
         let card_type: "basic" | "cloze";
         if (example && example.toLowerCase().includes(word.toLowerCase())) {
+            // eslint-disable-next-line security/detect-non-literal-regexp -- input is regex-escaped on the next line
             const re = new RegExp(
                 word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
                 "i",

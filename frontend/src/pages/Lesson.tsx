@@ -117,7 +117,6 @@ import {
 import { getStorage } from "../storage";
 import type {
   ContentLessonExercise,
-  ContentLessonStep,
   ElementError,
   LessonStepResultStored,
   RawAnswer,
@@ -1072,7 +1071,6 @@ export default function LessonPage() {
                       scored.attempts,
                     );
                   } catch (err) {
-                    // eslint-disable-next-line no-console
                     console.warn("elementErrors.recordBulk failed:", err);
                   }
                 }
@@ -1505,7 +1503,6 @@ function LessonSummary({
     };
   }, [
     t,
-    lang,
     lesson.title,
     correct,
     total,

@@ -90,30 +90,30 @@ export function readVoicePrefs(): VoicePrefs {
 }
 
 export function writeTtsEnabled(v: boolean): void {
-    try { localStorage.setItem(K.ttsEnabled, v ? "true" : "false"); } catch {}
+    try { localStorage.setItem(K.ttsEnabled, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
 }
 export function writeSttEnabled(v: boolean): void {
-    try { localStorage.setItem(K.sttEnabled, v ? "true" : "false"); } catch {}
+    try { localStorage.setItem(K.sttEnabled, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
 }
 export function writeAutoPlayAi(v: boolean): void {
-    try { localStorage.setItem(K.autoPlay, v ? "true" : "false"); } catch {}
+    try { localStorage.setItem(K.autoPlay, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
 }
 export function writeTtsRate(v: number): void {
     const clamped = Math.max(0.5, Math.min(2.0, v));
-    try { localStorage.setItem(K.rate, String(clamped)); } catch {}
+    try { localStorage.setItem(K.rate, String(clamped)); } catch { /* localStorage unavailable — best effort */ }
 }
 export function writeTtsPitch(v: number): void {
     const clamped = Math.max(0.5, Math.min(2.0, v));
-    try { localStorage.setItem(K.pitch, String(clamped)); } catch {}
+    try { localStorage.setItem(K.pitch, String(clamped)); } catch { /* localStorage unavailable — best effort */ }
 }
 export function writeTtsVoiceName(v: string): void {
-    try { localStorage.setItem(K.voiceName, v); } catch {}
+    try { localStorage.setItem(K.voiceName, v); } catch { /* localStorage unavailable — best effort */ }
 }
 export function writeSttLangOverride(v: string): void {
-    try { localStorage.setItem(K.sttLang, v); } catch {}
+    try { localStorage.setItem(K.sttLang, v); } catch { /* localStorage unavailable — best effort */ }
 }
 export function writePronunciationEnabled(v: boolean): void {
-    try { localStorage.setItem(K.pronunciation, v ? "true" : "false"); } catch {}
+    try { localStorage.setItem(K.pronunciation, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
 }
 
 export const VOICE_PREF_KEYS = K;

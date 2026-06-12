@@ -282,6 +282,7 @@ export default function Onboarding() {
             );
             // #126 parity — surface the round-trip in the console so a
             // real restore is debuggable without a backend log.
+            // eslint-disable-next-line no-console -- #126: intentional round-trip trace for backend-less debugging
             console.log("[Backup] First-run restore result:", summary);
             if (summary.errors.length > 0) {
                 console.error("[Backup] First-run restore errors:", summary.errors);

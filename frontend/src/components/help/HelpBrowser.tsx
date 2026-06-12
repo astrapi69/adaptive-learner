@@ -50,6 +50,9 @@ export default function HelpBrowser() {
     // Lazily load the active language's glossary chunk (English is eager);
     // `loaded` flips when the localized entries land so the list recomputes.
     const loaded = useGlossary(lang);
+    // `loaded` is a deliberate trigger dep: the memo body doesn't read it, but
+    // flipping it forces a recompute once the lazy glossary chunk has landed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const allEntries = useMemo(() => listGlossaryEntries(lang), [lang, loaded]);
 
     const filtered = useMemo(() => {

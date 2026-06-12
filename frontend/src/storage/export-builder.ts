@@ -60,7 +60,6 @@ import type {
   ProgressProfile,
   ProgressProject,
   MethodDistributionEntry,
-  MethodSwitchSummary,
   ProgressRecentSession,
   SessionRatingSummary,
   StepEvaluationInsight,
