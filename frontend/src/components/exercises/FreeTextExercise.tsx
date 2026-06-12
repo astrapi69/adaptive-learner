@@ -29,13 +29,14 @@
 
 import {Check, RotateCcw, X} from "lucide-react";
 import type {KeyboardEvent, Ref} from "react";
-import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
+import {forwardRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveFreeTextAttempt} from "../../lib/element-attempt";
+import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
@@ -149,55 +150,49 @@ function FreeTextExercise(
         reviewed?.kind === "free_text" ? reviewed : null;
 
     const [input, setInput] = useState(reviewedFreeText?.input ?? "");
-    const [submitted, setSubmitted] = useState(reviewedFreeText != null);
-    const [result, setResult] = useState<{
-        correct: number;
-        total: number;
-    } | null>(() =>
-        reviewedFreeText
-            ? {
-                  correct: isFreeTextCorrect(
-                      reviewedFreeText.input,
-                      accept,
-                      codeMode,
-                  )
-                      ? 1
-                      : 0,
-                  total: 1,
-              }
-            : null,
-    );
     const [showHint, setShowHint] = useState(false);
 
     const trimmed = input.trim();
     const isInputEmpty = trimmed === "";
 
-    const handleSubmit = () => {
-        if (submitted || isInputEmpty) return;
-        const isCorrect = isFreeTextCorrect(input, accept, codeMode);
-        const correct = isCorrect ? 1 : 0;
-        const attempt = deriveFreeTextAttempt(
-            exercise,
-            {setId, lessonId},
-            input,
-            isCorrect,
-        );
-        const scored: ExerciseScored = {
-            correct,
-            total: 1,
-            attempts: [attempt],
-            raw_answer: {kind: "free_text", input},
-        };
-        setResult({correct, total: 1});
-        setSubmitted(true);
-        onComplete(scored);
-    };
+    const reviewedResult = reviewedFreeText
+        ? {
+              correct: isFreeTextCorrect(
+                  reviewedFreeText.input,
+                  accept,
+                  codeMode,
+              )
+                  ? 1
+                  : 0,
+              total: 1,
+          }
+        : null;
 
-    const handleReset = () => {
-        setInput("");
-        setSubmitted(false);
-        setResult(null);
-    };
+    const {submitted, result, submit, reset} = useControlledExercise({
+        ref,
+        controlled,
+        isAnswerable: !isInputEmpty,
+        onInteraction,
+        onComplete,
+        reviewedResult,
+        score: (): ExerciseScored => {
+            const isCorrect = isFreeTextCorrect(input, accept, codeMode);
+            return {
+                correct: isCorrect ? 1 : 0,
+                total: 1,
+                attempts: [
+                    deriveFreeTextAttempt(
+                        exercise,
+                        {setId, lessonId},
+                        input,
+                        isCorrect,
+                    ),
+                ],
+                raw_answer: {kind: "free_text", input},
+            };
+        },
+        resetAnswer: () => setInput(""),
+    });
 
     const handleKeyDown = (
         e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -207,17 +202,9 @@ function FreeTextExercise(
         if (codeMode) return;
         if (e.key === "Enter" && !submitted && !isInputEmpty) {
             e.preventDefault();
-            handleSubmit();
+            submit();
         }
     };
-
-    useImperativeHandle(ref, () => ({submit: handleSubmit}));
-
-    useEffect(() => {
-        if (!controlled || reviewedFreeText || submitted) return;
-        onInteraction?.(!isInputEmpty);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [controlled, isInputEmpty, submitted, reviewedFreeText]);
 
     if (accept.length === 0) {
         return (
@@ -350,7 +337,7 @@ function FreeTextExercise(
                     <Button
                         type="button"
                         disabled={isInputEmpty}
-                        onClick={handleSubmit}
+                        onClick={submit}
                         data-testid="free-text-submit"
                     >
                         {t(
@@ -406,7 +393,7 @@ function FreeTextExercise(
                                 variant="outline"
                                 size="sm"
                                 type="button"
-                                onClick={handleReset}
+                                onClick={reset}
                                 data-testid="free-text-retry"
                             >
                                 <RotateCcw size={14} aria-hidden="true" />
