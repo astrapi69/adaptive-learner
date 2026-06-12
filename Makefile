@@ -597,6 +597,44 @@ endif
 		--title "Adaptive Learner v$(VERSION)" \
 		--notes-file changelog/releases/v$(VERSION).md
 
+# --- Gitflow release branch flow (#334) ---
+
+release-prepare: ## Gitflow: cut release/$(VERSION) from develop. Usage: make release-prepare VERSION=X.Y.Z
+ifndef VERSION
+	$(error VERSION is required, e.g. make release-prepare VERSION=1.77.0)
+endif
+	@echo "=== Checkout develop + create release/$(VERSION) ==="
+	git checkout develop
+	git pull origin develop
+	git checkout -b release/$(VERSION)
+	@echo ""
+	@echo "On release/$(VERSION). Now: bump backend/pyproject.toml, make sync-versions,"
+	@echo "draft changelog/releases/v$(VERSION).md, run make release-test, commit."
+	@echo "Then: make release-finish VERSION=$(VERSION)"
+
+release-finish: ## Gitflow: merge release/$(VERSION) to main (tag) + back to develop. Usage: make release-finish VERSION=X.Y.Z
+ifndef VERSION
+	$(error VERSION is required, e.g. make release-finish VERSION=1.77.0)
+endif
+	@echo "=== Pre-tag verification (verify_version_pins.sh) ==="
+	@bash scripts/verify_version_pins.sh $(VERSION)
+	@echo "=== Merge release/$(VERSION) into main (no-ff) + tag ==="
+	git checkout main
+	git pull origin main
+	git merge --no-ff release/$(VERSION) -m "Release v$(VERSION)"
+	git tag -a v$(VERSION) -m "Release v$(VERSION)"
+	git push origin main --tags
+	@echo "=== Merge release/$(VERSION) back into develop (no-ff) ==="
+	git checkout develop
+	git pull origin develop
+	git merge --no-ff release/$(VERSION) -m "Merge release/$(VERSION) back into develop"
+	git push origin develop
+	@echo "=== Delete release/$(VERSION) ==="
+	git branch -d release/$(VERSION)
+	git push origin --delete release/$(VERSION)
+	@echo ""
+	@echo "Tagged + merged. Next: make release-publish VERSION=$(VERSION)"
+
 # --- Clean ---
 
 clean: ## Remove build artifacts and caches
