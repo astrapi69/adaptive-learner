@@ -78,6 +78,7 @@ from app.schemas import (
     SessionMessageOut,
     SessionRatingOut,
 )
+from app.services.ai_caller import build_ai_caller
 
 from . import ai_orchestration
 from .prompts import (
@@ -1829,60 +1830,6 @@ def _is_language_project(db: Session, project_id: str) -> bool:
     return False
 
 
-def _build_pronunciation_ai_caller(db: Session, user_id: str):
-    """Resolve the user's active provider / api_key / model and
-    return a ``messages -> str | None`` callable suitable for
-    the pronunciation prompt-fns. Mirrors the pattern in
-    ``routers.imports._build_ai_caller`` +
-    ``plugins/anki/routes._build_ai_caller``.
-
-    Raises ``ValidationError`` when the user has no configured
-    provider; the global handler maps to 400.
-    """
-    from app.main import manager  # lazy: cycle + test isolation
-    from app.services import settings as settings_service
-    from app.repositories.settings_repo import SqlAlchemySettingsRepository
-
-    settings = settings_service.get_or_create_settings(SqlAlchemySettingsRepository(db), user_id)
-    provider_key = settings.active_provider
-    try:
-        provider_enum = AIProvider(provider_key)
-    except ValueError as exc:
-        raise ValidationError(
-            f"User {user_id!r} has no valid active AI provider."
-        ) from exc
-    # Phase 34 — env > secrets.yaml > DB resolution.
-    api_key, _source = settings_service.resolve_api_key(SqlAlchemySettingsRepository(db), user_id, provider_enum
-    )
-    if not api_key:
-        raise ValidationError(
-            f"User {user_id!r} has no stored API key for {provider_key!r}."
-        )
-    override_attr = f"model_override_{provider_key}"
-    override = getattr(settings, override_attr, None)
-    default_models = {
-        "anthropic": "claude-haiku-4-5-20251001",
-        "openai": "gpt-4o-mini",
-        "gemini": "gemini-2.0-flash",
-    }
-    if isinstance(override, str) and override.strip():
-        model = override.strip()
-    else:
-        model = default_models.get(provider_key) or ""
-    if not model:
-        raise ValidationError(
-            f"Provider {provider_key!r} has no default model registered."
-        )
-
-    def _call(messages: list[dict[str, str]]) -> str | None:
-        result = manager._pm.hook.ai_complete(
-            messages=messages, model=model, api_key=api_key, max_tokens=256
-        )
-        return result if isinstance(result, str) else None
-
-    return _call
-
-
 class _PronunciationPhraseBody(BaseModel):
     project_id: str
     language: str = "en"
@@ -1915,7 +1862,7 @@ def get_pronunciation_phrase(
         raise NotFoundError(
             f"LearningProject {body.project_id!r} not found."
         )
-    ai_call = _build_pronunciation_ai_caller(db, project.user_id)
+    ai_call = build_ai_caller(db, project.user_id, max_tokens=256)
     phrase = _pronunciation.generate_phrase(
         ai_call,
         language=body.language,
@@ -1959,7 +1906,7 @@ def judge_pronunciation(
         )
     if not body.target.strip() or not body.actual.strip():
         raise ValidationError("target and actual must both be non-empty.")
-    ai_call = _build_pronunciation_ai_caller(db, project.user_id)
+    ai_call = build_ai_caller(db, project.user_id, max_tokens=256)
     verdict = _pronunciation.judge_attempt(
         ai_call,
         target=body.target,

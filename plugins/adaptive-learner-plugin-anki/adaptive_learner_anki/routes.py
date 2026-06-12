@@ -23,13 +23,11 @@ from app.database import get_db
 from app.exceptions import NotFoundError, ValidationError
 from app.models import AnkiCardSuggestion, User
 from app.schemas import (
-    AIProvider,
     AnkiCardSuggestionCreate,
     AnkiCardSuggestionOut,
     AnkiCardSuggestionUpdate,
 )
-from app.services import settings as settings_service
-from app.repositories.settings_repo import SqlAlchemySettingsRepository
+from app.services.ai_caller import build_ai_caller
 
 from . import card_extraction
 
@@ -71,58 +69,6 @@ def _get_card(db: Session, card_id: str) -> AnkiCardSuggestion:
     if row is None:
         raise NotFoundError(f"AnkiCardSuggestion {card_id!r} not found.")
     return row
-
-
-def _build_ai_caller(db: Session, user_id: str):
-    """Mirror of ``routers/imports._build_ai_caller`` — resolves
-    the user's active provider, decrypts the api_key, picks the
-    model (override or default), returns a ``messages → str``
-    callable suitable for ``card_extraction.extract_*``.
-
-    Raises ``ValidationError`` if the user has no configured
-    provider / key — the route translates that to 400.
-    """
-    from app.main import manager  # lazy: cycle-avoidance + tests
-
-    settings = settings_service.get_or_create_settings(SqlAlchemySettingsRepository(db), user_id)
-    provider_key = settings.active_provider
-    try:
-        provider_enum = AIProvider(provider_key)
-    except ValueError as exc:
-        raise ValidationError(
-            f"User {user_id!r} has no valid active AI provider configured."
-        ) from exc
-    # Phase 34 — env > secrets.yaml > DB resolution.
-    api_key, _source = settings_service.resolve_api_key(SqlAlchemySettingsRepository(db), user_id, provider_enum
-    )
-    if not api_key:
-        raise ValidationError(
-            f"User {user_id!r} has no stored API key for provider "
-            f"{provider_key!r}."
-        )
-    override_attr = f"model_override_{provider_key}"
-    override = getattr(settings, override_attr, None)
-    default_models = {
-        "anthropic": "claude-haiku-4-5-20251001",
-        "openai": "gpt-4o-mini",
-        "gemini": "gemini-2.0-flash",
-    }
-    if isinstance(override, str) and override.strip():
-        model = override.strip()
-    else:
-        model = default_models.get(provider_key) or ""
-    if not model:
-        raise ValidationError(
-            f"Provider {provider_key!r} has no default model registered."
-        )
-
-    def _call(messages: list[dict[str, str]]) -> str | None:
-        result = manager._pm.hook.ai_complete(
-            messages=messages, model=model, api_key=api_key, max_tokens=512
-        )
-        return result if isinstance(result, str) else None
-
-    return _call
 
 
 # ---------------------------------------------------------------------------
@@ -268,7 +214,7 @@ def extract_session_cards(
     if not transcript.strip():
         # No messages → nothing to extract; non-error path.
         return []
-    ai_call = _build_ai_caller(db, user_id)
+    ai_call = build_ai_caller(db, user_id, max_tokens=512)
     rows = card_extraction.extract_from_session(db, session_id, ai_call)
     return [_to_out(r) for r in rows]
 
@@ -304,7 +250,7 @@ def extract_conversation_cards(
 
     def _ai(messages: list[dict[str, str]]) -> str | None:
         needs_ai_box[0] = True
-        caller = _build_ai_caller(db, user_id)
+        caller = build_ai_caller(db, user_id, max_tokens=512)
         return caller(messages)
 
     rows = card_extraction.extract_from_conversation(
