@@ -41,7 +41,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -54,14 +54,8 @@ import {
   booksForDomain,
   fetchBookRecommendations,
 } from "../lib/content/book-recommendations";
-import {
-  buildLessonHaystack,
-  buildSetHaystack,
-  searchContentIndex,
-  splitHighlight,
-  type IndexedLesson,
-  type IndexedSet,
-} from "../lib/content/content-search";
+import { splitHighlight } from "../lib/content/content-search";
+import { useContentSearch } from "../hooks/useContentSearch";
 import { useI18n } from "../hooks/useI18n";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { useSourceLanguages } from "../hooks/useSourceLanguages";
@@ -205,111 +199,14 @@ export default function ContentPage() {
   const { hasKey, activeProvider } = useApiKeyStatus();
   const userId = readLearnerState().userId;
 
-  // --- Content Browser search -----------------------------------------
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [searchIndex, setSearchIndex] = useState<IndexedSet[]>([]);
-  // The index loads every cached lesson, so build it LAZILY — only once
-  // the learner actually engages the search (focus or first keystroke).
-  // This keeps the /content mount cheap for the (common) browse case.
-  const [searchActivated, setSearchActivated] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  // Debounce the query (300ms) so the index isn't re-scanned on every
-  // keystroke.
-  useEffect(() => {
-    const id = setTimeout(() => setDebouncedQuery(searchQuery), 300);
-    return () => clearTimeout(id);
-  }, [searchQuery]);
-
-  // Cmd/Ctrl+K focuses the search input from anywhere on the page.
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  // Build the search index once the downloaded sets are known. Loads
-  // every CACHED lesson (title + cards) so card-content search works;
-  // not-yet-downloaded sets are indexed at set level only. Keyed on a
-  // signature of the downloaded sets so it rebuilds after a download.
-  const downloadedSig = sets
-    .filter((entry) => entry.source !== USER_GENERATED_SOURCE)
-    .map((entry) => `${entry.source}#${entry.id}@${entry.cached_version ?? ""}`)
-    .join(",");
-  useEffect(() => {
-    let cancelled = false;
-    if (!searchActivated) return;
-    const downloaded = sets.filter((entry) => entry.source !== USER_GENERATED_SOURCE);
-    if (downloaded.length === 0) {
-      setSearchIndex([]);
-      return;
-    }
-    void (async () => {
-      const built: IndexedSet[] = [];
-      for (const entry of downloaded) {
-        const domainLbl = t(
-          `content.tree.domain_${entry.domain ?? "language"}`,
-          entry.domain ?? "",
-        );
-        const indexed: IndexedSet = {
-          setId: entry.id,
-          source: entry.source,
-          setHaystack: buildSetHaystack(
-            entry.title,
-            entry.description,
-            domainLbl,
-            entry.tags ?? [],
-          ),
-          lessons: [],
-        };
-        // Only cached sets have readable lessons; skip the rest so we
-        // don't fire doomed listLessons calls.
-        if (entry.cached_version) {
-          try {
-            const listing = await getStorage().contentLoader.listLessons(entry.source, entry.id);
-            const lessons = await Promise.all(
-              listing.lessons.map(async (filename) => {
-                try {
-                  const lesson = await getStorage().contentLoader.getLesson(
-                    entry.source,
-                    entry.id,
-                    filename,
-                  );
-                  return {
-                    filename,
-                    title: lesson.title,
-                    haystack: buildLessonHaystack(lesson.title, lesson.cards ?? []),
-                  } satisfies IndexedLesson;
-                } catch {
-                  return null;
-                }
-              }),
-            );
-            indexed.lessons = lessons.filter((lesson): lesson is IndexedLesson => lesson !== null);
-          } catch {
-            /* set not cached / unreadable -> set-level index only */
-          }
-        }
-        built.push(indexed);
-      }
-      if (!cancelled) setSearchIndex(built);
-    })();
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [downloadedSig, searchActivated]);
-
-  const searchResult = useMemo(
-    () => searchContentIndex(searchIndex, debouncedQuery),
-    [searchIndex, debouncedQuery],
-  );
+  // --- Content Browser search (#354 — extracted to useContentSearch) ---
+  const {
+    searchQuery,
+    setSearchQuery,
+    activateSearch,
+    searchInputRef,
+    searchResult,
+  } = useContentSearch(sets);
 
   /** Highlight raw query occurrences inside a label. */
   const highlightNodes = (text: string, query: string) =>
@@ -997,9 +894,9 @@ export default function ContentPage() {
             ref={searchInputRef}
             type="search"
             value={searchQuery}
-            onFocus={() => setSearchActivated(true)}
+            onFocus={activateSearch}
             onChange={(e) => {
-              setSearchActivated(true);
+              activateSearch();
               setSearchQuery(e.target.value);
             }}
             placeholder={t("content.search.placeholder", "Search lessons...")}
