@@ -1,0 +1,62 @@
+name: Dexie smoke
+
+# The primary integration gate for the GitHub-Pages-shape build (#301):
+# every nav-reachable route against a VITE_STORAGE_MODE=dexie build with no
+# backend. Runs on PRs that touch the frontend / e2e surface, plus manual
+# dispatch. The make target builds the dexie frontend and runs the
+# Playwright dexie config (preview-mode, no backend).
+
+on:
+  pull_request:
+    paths:
+      - "frontend/src/**"
+      - "frontend/package.json"
+      - "frontend/package-lock.json"
+      - "e2e/**"
+      - "Makefile"
+      - ".github/workflows/dexie-smoke.yml"
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  dexie-smoke:
+    name: Dexie-mode E2E smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install frontend deps
+        working-directory: frontend
+        # --legacy-peer-deps: #266 eslint@10 vs eslint-plugin-react ^9.7 peer cap.
+        run: npm ci --legacy-peer-deps
+
+      - name: Install e2e deps
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      # Builds the dexie frontend (VITE_STORAGE_MODE=dexie) and runs the
+      # Playwright dexie config; both halves live in the make target so CI
+      # and local stay in lock-step.
+      - name: Dexie smoke
+        run: make test-dexie-smoke
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dexie-smoke-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+          retention-days: 14
