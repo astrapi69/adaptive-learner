@@ -34,13 +34,15 @@ from app.repositories.sync_repo import SyncRepository
 from app.schemas import UserOut
 from app.services import pairing as pairing_service
 from app.services import sync_service
-from app.services.sync_service import (
-    ALL_SYNC_TABLES,
+from app.services.sync_push import (
     Resolution,
     apply_resolutions,
+    push_records,
+)
+from app.services.sync_service import (
+    ALL_SYNC_TABLES,
     compute_status,
     pull_records,
-    push_records,
 )
 
 router = APIRouter(prefix="/sync", tags=["sync"])
