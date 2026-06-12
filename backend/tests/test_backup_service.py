@@ -916,7 +916,7 @@ def test_datetime_fields_cover_non_at_datetime_columns():
     name heuristic. DateTime/Date columns whose name does not end in
     ``_at`` were silently passed to the INSERT as ISO strings.
     """
-    from app.services import backup_service as bs
+    from app.services import backup_restore as bs
 
     assert "timestamp" in bs._datetime_fields("imported_messages")
     assert "created_at" in bs._datetime_fields("imported_messages")
@@ -928,7 +928,7 @@ def test_datetime_fields_cover_non_at_datetime_columns():
 
 
 def test_coerce_record_converts_string_timestamp_to_datetime():
-    from app.services import backup_service as bs
+    from app.services import backup_restore as bs
 
     coerced = bs._coerce_record(
         "imported_messages",
@@ -1038,7 +1038,7 @@ def test_restore_skips_orphan_imported_message_instead_of_aborting(db_session):
 
 
 def test_missing_fk_parent_detects_orphan_and_passes_valid(db_session):
-    from app.services import backup_service as bs
+    from app.services import backup_restore as bs
 
     _seed_all_tables(db_session)
     conversation = db_session.query(ImportedConversation).first()
