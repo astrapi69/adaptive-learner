@@ -27,7 +27,7 @@
  * narrow viewports, 44px min touch targets.
  */
 
-import {Check, RotateCcw, X} from "lucide-react";
+import {Check, X} from "lucide-react";
 import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useState} from "react";
 
@@ -42,6 +42,7 @@ import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
 import DirectionInstruction from "./DirectionInstruction";
+import ExerciseFooter from "./ExerciseFooter";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -333,19 +334,6 @@ function FreeTextExercise(
             )}
 
             <div className="flex flex-wrap items-center gap-3">
-                {!submitted && !controlled && (
-                    <Button
-                        type="button"
-                        disabled={isInputEmpty}
-                        onClick={submit}
-                        data-testid="free-text-submit"
-                    >
-                        {t(
-                            "lesson.exercise.free_text.submit",
-                            "Check answer",
-                        )}
-                    </Button>
-                )}
                 {submitted && (
                     <>
                         <p
@@ -388,23 +376,24 @@ function FreeTextExercise(
                             </div>
                         )}
                         <AnswerCelebration isCorrect={isCorrect} />
-                        {!controlled && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                type="button"
-                                onClick={reset}
-                                data-testid="free-text-retry"
-                            >
-                                <RotateCcw size={14} aria-hidden="true" />
-                                {t(
-                                    "lesson.exercise.free_text.retry",
-                                    "Try again",
-                                )}
-                            </Button>
-                        )}
                     </>
                 )}
+                <ExerciseFooter
+                    testidPrefix="free-text"
+                    controlled={controlled}
+                    submitted={submitted}
+                    canCheck={!isInputEmpty}
+                    onCheck={submit}
+                    onRetry={reset}
+                    checkLabel={t(
+                        "lesson.exercise.free_text.submit",
+                        "Check answer",
+                    )}
+                    retryLabel={t(
+                        "lesson.exercise.free_text.retry",
+                        "Try again",
+                    )}
+                />
             </div>
         </section>
     );
