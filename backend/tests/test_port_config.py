@@ -1,10 +1,10 @@
-"""Phase 1C-A.5 tests for the port + CORS resolvers in app.main."""
+"""Phase 1C-A.5 tests for the port + CORS resolvers in app.config."""
 
 from __future__ import annotations
 
 import pytest
 
-from app.main import (
+from app.config import (
     DEFAULT_BACKEND_PORT,
     DEFAULT_FRONTEND_PORT,
     _load_app_config,
@@ -151,9 +151,9 @@ def test_load_app_config_malformed_logs_and_degrades(tmp_path, monkeypatch, capl
     """
     bad = tmp_path / "app.yaml"
     bad.write_text("server:\n  port: [unbalanced\n", encoding="utf-8")
-    monkeypatch.setattr("app.main.CONFIG_PATH", bad)
+    monkeypatch.setattr("app.config.CONFIG_PATH", bad)
 
-    with caplog.at_level("WARNING", logger="app.main"):
+    with caplog.at_level("WARNING", logger="app.config"):
         config = _load_app_config()
 
     assert isinstance(config, dict)
@@ -168,9 +168,9 @@ def test_load_app_config_missing_file_logs_and_degrades(tmp_path, monkeypatch, c
     config file (the realistic deployment case) and degrade with a log.
     """
     missing = tmp_path / "does-not-exist" / "app.yaml"
-    monkeypatch.setattr("app.main.CONFIG_PATH", missing)
+    monkeypatch.setattr("app.config.CONFIG_PATH", missing)
 
-    with caplog.at_level("WARNING", logger="app.main"):
+    with caplog.at_level("WARNING", logger="app.config"):
         config = _load_app_config()
 
     assert isinstance(config, dict)

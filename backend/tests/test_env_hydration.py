@@ -1,4 +1,4 @@
-"""Tests for ``app.main._hydrate_env_from_config`` (1C-A.7).
+"""Tests for ``app.config._hydrate_env_from_config`` (1C-A.7).
 
 The function lets a secret stored in
 ``~/.config/adaptive_learner/secrets.yaml`` surface as
@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import pytest
 
-from app.main import _ENV_CONFIG_SOURCES, _hydrate_env_from_config
+from app.config import _ENV_CONFIG_SOURCES, _hydrate_env_from_config
 
 
 @pytest.fixture()

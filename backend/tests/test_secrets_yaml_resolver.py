@@ -25,7 +25,7 @@ import pytest
 import yaml
 
 from app.database import SessionLocal
-from app.main import _load_override_file
+from app.config import _load_override_file
 from app.models import User, UserSettings
 from app.repositories.settings_repo import SqlAlchemySettingsRepository
 from app.schemas import AIProvider, ApiKeySource
