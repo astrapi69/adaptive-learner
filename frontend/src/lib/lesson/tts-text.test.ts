@@ -61,6 +61,36 @@ describe("markdownToSpeech", () => {
         expect(out).toBe(out.trim());
         expect(out.split(". ")).not.toContain("");
     });
+
+    it("reads table cell content but drops the delimiter row (#320)", () => {
+        const out = markdownToSpeech(
+            "| Pronomen | Form |\n|---|---|\n| ich | bin |\n| du | bist |",
+        );
+        // No dash leaks from the |---|---| row.
+        expect(out).not.toContain("-");
+        // Header + body cells are still spoken, pipes gone.
+        expect(out).toBe("Pronomen Form. ich bin. du bist");
+    });
+
+    it("drops table delimiter rows in every GFM alignment form", () => {
+        for (const delim of [
+            "|---|---|",
+            "---|---",
+            "| :--- | ---: |",
+            "| :---: | :---: |",
+            "|:-|-:|",
+        ]) {
+            const out = markdownToSpeech(`| a | b |\n${delim}\n| c | d |`);
+            expect(out).toBe("a b. c d");
+        }
+    });
+
+    it("still collapses a real horizontal rule (not a table delimiter)", () => {
+        const out = markdownToSpeech("Before.\n\n---\n\nAfter.");
+        expect(out).not.toContain("-");
+        expect(out).toContain("Before");
+        expect(out).toContain("After");
+    });
 });
 
 describe("collectTheoryRun", () => {
