@@ -24,12 +24,11 @@
  * ``recordStepResult`` keyed by step id.
  */
 
-import {ArrowRight, Check, RotateCcw, X} from "lucide-react";
+import {ArrowRight, Check, X} from "lucide-react";
 import {forwardRef, useEffect, useMemo, useState} from "react";
 import type {CSSProperties, Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
-import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
@@ -40,6 +39,7 @@ import {
 } from "../../lib/exercises/direction";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
+import ExerciseFooter from "./ExerciseFooter";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -808,16 +808,6 @@ function MatchingExercise(
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-                {!submitted && !controlled && (
-                    <Button
-                        type="button"
-                        disabled={!allPaired}
-                        onClick={submit}
-                        data-testid="matching-submit"
-                    >
-                        {t("lesson.exercise.matching.submit", "Check answers")}
-                    </Button>
-                )}
                 {submitted && (
                     <>
                         <p
@@ -846,23 +836,24 @@ function MatchingExercise(
                                 )}
                         </p>
                         <AnswerCelebration isCorrect={matchingAllCorrect} />
-                        {!controlled && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                type="button"
-                                onClick={reset}
-                                data-testid="matching-retry"
-                            >
-                                <RotateCcw size={14} aria-hidden="true" />
-                                {t(
-                                    "lesson.exercise.matching.retry",
-                                    "Try again",
-                                )}
-                            </Button>
-                        )}
                     </>
                 )}
+                <ExerciseFooter
+                    testidPrefix="matching"
+                    controlled={controlled}
+                    submitted={submitted}
+                    canCheck={allPaired}
+                    onCheck={submit}
+                    onRetry={reset}
+                    checkLabel={t(
+                        "lesson.exercise.matching.submit",
+                        "Check answers",
+                    )}
+                    retryLabel={t(
+                        "lesson.exercise.matching.retry",
+                        "Try again",
+                    )}
+                />
             </div>
         </section>
     );
