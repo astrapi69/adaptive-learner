@@ -9,7 +9,26 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.74.0** (maintenance/infrastructure on top of
+- **Current state:** **v1.75.0** (minor - **TipTap editor stack migrated
+  v2 -> v3**: the whole `@tiptap/*` stack (23 packages) bumped 2.27.2 ->
+  3.26.1 in one atomic change (#311/#314) - a mixed v2/v3 tree does not
+  compile (v3 extensions need v3 core), the failure mode that defeated the
+  prior piecemeal Dependabot bumps and prompted the major-hold. The only
+  code deltas are the v3 breaking-API changes, verified against the
+  installed 3.26.1 packages rather than guessed: `TextStyle` + `Table`
+  lost their default export (-> named imports), StarterKit v3 now bundles
+  `Link` + `Underline` (disabled so the custom standalone ones do not
+  collide), `setContent`'s second arg is an options object
+  (`{emitUpdate: false}`), and `NodeViewContent` is generic with a
+  NoInfer'd `as` prop (`NodeViewContent<"code">`); `Editor`/`JSONContent`/
+  `NodeViewProps` type imports unchanged (still re-exported from core).
+  3953 vitest + 88 dexie-smoke green with zero test changes; the
+  Dependabot `@tiptap` major-hold (#305) removed so minor/patch flow via
+  the group again. Also: a pre-existing `@eslint/js` 10 (#310)
+  `no-useless-assignment` break fixed in 5 files (#312/#313), and the two
+  migrated editor files restored to the repo's 4-space style after an
+  inadvertent prettier reformat (#315). No schema/API/data change.
+  v1.74.0 = maintenance/infrastructure on top of
   v1.73.0's feature-strategy work: the 438 pre-existing ESLint warnings
   cleared and the gate tightened to `--max-warnings 0` so the Frontend
   Tests CI job is green again (#220/#292); a dexie-smoke E2E CI workflow
