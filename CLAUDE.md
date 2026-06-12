@@ -9,7 +9,18 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.73.0** (minor - **feature-strategy
+- **Current state:** **v1.74.0** (maintenance/infrastructure on top of
+  v1.73.0's feature-strategy work: the 438 pre-existing ESLint warnings
+  cleared and the gate tightened to `--max-warnings 0` so the Frontend
+  Tests CI job is green again (#220/#292); a dexie-smoke E2E CI workflow
+  (#301/#302); the whole `@tiptap/*` stack reconciled to a consistent v2
+  tree (2.27.2) (#304) + Dependabot configured to hold `@tiptap` major
+  bumps (#306); CI installs frontend deps with `--legacy-peer-deps`
+  (#293/#294); and Dependabot bumps - `@astrapi69/feature-strategy` 0.1.1,
+  `@types/node` 25, `@vitejs/plugin-react` 6, `@eslint/js` 10, ruff, and
+  the minor-patch groups (#295-#300, #307-#310). Visual baselines
+  unchanged. Frontend tooling + CI + deps; no schema/API/data change.
+  v1.73.0 = minor - **feature-strategy
   integration**: a central registry + strategy from
   `@astrapi69/feature-strategy` replaces the ad-hoc per-button API-key
   checks + Dexie-mode section hiding with three states
