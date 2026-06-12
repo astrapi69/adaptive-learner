@@ -33,7 +33,9 @@
 
 import {Check, RotateCcw, X} from "lucide-react";
 import type {Ref} from "react";
-import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
+import {forwardRef, useMemo, useState} from "react";
+
+import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
 import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
@@ -125,56 +127,44 @@ function PictureChoiceExercise(
     const [selected, setSelected] = useState<number | null>(
         reviewedPicture?.selected ?? null,
     );
-    const [submitted, setSubmitted] = useState(reviewedPicture != null);
-    const [result, setResult] = useState<{correct: number; total: number} | null>(
-        () =>
-            reviewedPicture
-                ? {
-                      correct: choices[reviewedPicture.selected]?.isCorrect
-                          ? 1
-                          : 0,
-                      total: 1,
-                  }
-                : null,
-    );
+
+    const reviewedResult = reviewedPicture
+        ? {
+              correct: choices[reviewedPicture.selected]?.isCorrect ? 1 : 0,
+              total: 1,
+          }
+        : null;
+
+    const {submitted, result, submit, reset} = useControlledExercise({
+        ref,
+        controlled,
+        isAnswerable: selected !== null,
+        onInteraction,
+        onComplete,
+        reviewedResult,
+        score: (): ExerciseScored => {
+            // The hook only calls score() when isAnswerable (selected !== null).
+            const index = selected ?? 0;
+            return {
+                correct: choices[index].isCorrect ? 1 : 0,
+                total: 1,
+                attempts: [
+                    derivePictureChoiceAttempt(
+                        exercise,
+                        {setId, lessonId},
+                        index,
+                    ),
+                ],
+                raw_answer: {kind: "picture_choice", selected: index},
+            };
+        },
+        resetAnswer: () => setSelected(null),
+    });
 
     const handleSelect = (index: number) => {
         if (submitted) return;
         setSelected(index);
     };
-
-    const handleSubmit = () => {
-        if (selected === null || submitted) return;
-        const correct = choices[selected].isCorrect ? 1 : 0;
-        const attempt = derivePictureChoiceAttempt(
-            exercise,
-            {setId, lessonId},
-            selected,
-        );
-        const scored: ExerciseScored = {
-            correct,
-            total: 1,
-            attempts: [attempt],
-            raw_answer: {kind: "picture_choice", selected},
-        };
-        setResult({correct, total: 1});
-        setSubmitted(true);
-        onComplete(scored);
-    };
-
-    const handleReset = () => {
-        setSelected(null);
-        setSubmitted(false);
-        setResult(null);
-    };
-
-    useImperativeHandle(ref, () => ({submit: handleSubmit}));
-
-    useEffect(() => {
-        if (!controlled || reviewedPicture || submitted) return;
-        onInteraction?.(selected !== null);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [controlled, selected, submitted, reviewedPicture]);
 
     if (choices.length === 0) {
         return (
@@ -238,7 +228,7 @@ function PictureChoiceExercise(
                     <Button
                         type="button"
                         disabled={selected === null}
-                        onClick={handleSubmit}
+                        onClick={submit}
                         data-testid="picture-submit"
                     >
                         {t(
@@ -281,7 +271,7 @@ function PictureChoiceExercise(
                                 variant="outline"
                                 size="sm"
                                 type="button"
-                                onClick={handleReset}
+                                onClick={reset}
                                 data-testid="picture-retry"
                             >
                                 <RotateCcw size={14} aria-hidden="true" />
