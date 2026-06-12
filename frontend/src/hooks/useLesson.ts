@@ -118,7 +118,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
     const fetchInitial = useCallback(async () => {
         setStatus("loading");
         setError(null);
-        let loadedLesson: ContentLesson | null = null;
+        let loadedLesson: ContentLesson | null;
         try {
             loadedLesson = await getStorage().contentLoader.getLesson(
                 source,

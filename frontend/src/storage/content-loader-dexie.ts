@@ -472,7 +472,7 @@ export async function listSetsDexie(
   const entries: ContentSetEntry[] = [];
   for (const src of sources) {
     const token = tokenForSource(src.source);
-    let manifest: ParsedManifest | null = null;
+    let manifest: ParsedManifest | null;
     try {
       const text = await fetchText(
         rawUrl(src.source, src.branch, "manifest.yaml"),
