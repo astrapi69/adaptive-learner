@@ -55,18 +55,19 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('e2e/package-lock.json') }}
 
-      # Cache MISS: download the browser (+ OS deps). The CDN download is the
-      # #317 hang cause, so kill a stuck attempt at 8 min and retry up to 3x
-      # (inside the 30-min job budget); the first success populates the cache
-      # so every later run takes the cache-hit path below and skips the
-      # download entirely.
+      # Cache MISS: download the browser (+ OS deps). The hang in #317 was the
+      # ~150 MB Chrome-for-Testing zip from the Playwright CDN; ``--only-shell``
+      # installs just the much smaller chromium-headless-shell, which is all
+      # the headless dexie smoke run needs. Still kill a stuck attempt at 8 min
+      # and retry up to 3x (inside the 30-min job budget); the first success
+      # populates the cache so every later run takes the cache-hit path below.
       - name: Install Playwright browsers (cache miss)
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         working-directory: e2e
         run: |
           for attempt in 1 2 3; do
             echo "::group::Playwright install (attempt $attempt)"
-            if timeout 480 npx playwright install --with-deps chromium; then
+            if timeout 480 npx playwright install --with-deps --only-shell chromium; then
               echo "::endgroup::"
               exit 0
             fi
