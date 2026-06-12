@@ -56,9 +56,22 @@ jobs:
 
       - name: Install Playwright browsers
         working-directory: e2e
-        # Idempotent: skips the download when the cache restored the binary,
-        # still installs the (fast) OS deps via --with-deps.
-        run: npx playwright install --with-deps chromium
+        # A hung Playwright CDN download (the #317 timeout cause) is killed
+        # at 8 min and retried fresh, rather than blocking the whole job for
+        # 30 min. On a warm cache the install is near-instant; the first
+        # successful run populates ~/.cache/ms-playwright for the next.
+        run: |
+          for attempt in 1 2 3; do
+            echo "::group::Playwright install (attempt $attempt)"
+            if timeout 480 npx playwright install --with-deps chromium; then
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "attempt $attempt failed or timed out; retrying"
+            echo "::endgroup::"
+          done
+          echo "Playwright browser install failed after 3 attempts"
+          exit 1
 
       # Builds the dexie frontend (VITE_STORAGE_MODE=dexie) and runs the
       # Playwright dexie config; both halves live in the make target so CI
