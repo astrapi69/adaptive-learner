@@ -183,3 +183,35 @@ plugins + vitest 3953 + build + dexie-smoke 88 + docs 0 FAIL + version pins).
 The pre-existing `Frontend Tests` CI red (#220, eslint 438 warnings) stays a
 separate task slated for v1.74.0; PRs were admin-merged past it all session.
 Release: tag `v1.73.0`, GitHub release published, main fast-forwarded.
+
+## Release v1.74.0 (maintenance/infrastructure) — 2026-06-11
+
+Cut right after v1.73.0 once the CI/dependency follow-ups landed. All content
+is the 16 commits between the `v1.73.0` tag and `main` — no feature work.
+
+- **ESLint debt cleared, gate to zero (#220/#292).** The 438 pre-existing
+  warnings resolved and `--max-warnings 0` enforced, so the `Frontend Tests`
+  CI job is green again — ending the admin-merge-past-red workaround that ran
+  all through the v1.73.0 cycle.
+- **Dexie-smoke E2E CI workflow (#301/#302).** The release-gate Dexie suite now
+  runs in CI, not only locally.
+- **TipTap reconciled (#304) + held (#306).** v1.73.0 pinned three extensions;
+  this realigns the *entire* `@tiptap/*` stack (starter-kit + every sibling
+  Dependabot had pushed toward v3) on 2.27.2, and configures Dependabot to hold
+  `@tiptap` majors so the v2/v3 `MISSING_EXPORT` skew cannot recur.
+- **CI install fix (#293/#294).** `npm ci` now uses `--legacy-peer-deps`,
+  matching the lockfile mode (the `eslint-plugin-react` vs ESLint 10 peer
+  conflict).
+- **Dependabot bumps (#295–#300, #307–#310).** feature-strategy 0.1.1,
+  @types/node 25, @vitejs/plugin-react 6, @eslint/js 10, ruff, minor-patch
+  groups.
+
+**Process.** Caught that the user's prompt said "v1.73.0" but that tag was
+already published and `main` was 16 commits ahead — confirmed v1.74.0 (the
+ESLint cleanup was earmarked for it) rather than force-moving a published tag.
+`make test-visual-update` regenerated the 60-shot baseline matrix with **zero
+pixel changes** (the dep bumps render identically) — nothing to commit.
+`make release-test` green end-to-end (backend + plugins + vitest 3953 + build +
+dexie-smoke 88 + docs 0 FAIL + version pins). Release commit skipped the
+plugin-lock hook (version-only bump). Tag `v1.74.0`, GitHub release published,
+main fast-forwarded.
