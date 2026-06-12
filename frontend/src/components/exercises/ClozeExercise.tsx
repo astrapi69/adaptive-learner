@@ -28,13 +28,14 @@
 
 import {Check, RotateCcw, X} from "lucide-react";
 import type {Ref} from "react";
-import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
+import {forwardRef, useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveClozeAttempts} from "../../lib/element-attempt";
+import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
@@ -107,17 +108,6 @@ function ClozeExercise(
             ? blanks.map((_, i) => reviewedCloze.inputs[i] ?? "")
             : blanks.map(() => ""),
     );
-    const [submitted, setSubmitted] = useState(reviewedCloze != null);
-    const [perBlankCorrect, setPerBlankCorrect] = useState<boolean[]>(() =>
-        reviewedCloze
-            ? blanks.map((blank, i) =>
-                  isFreeTextCorrect(
-                      reviewedCloze.inputs[i] ?? "",
-                      blank.accept,
-                  ),
-              )
-            : blanks.map(() => false),
-    );
     const [showHint, setShowHint] = useState(false);
 
     /** For ``select`` mode, build the per-blank option list once
@@ -140,49 +130,56 @@ function ClozeExercise(
     const allFilled =
         inputs.length > 0 && inputs.every((s) => s.trim() !== "");
 
+    const reviewedResult = reviewedCloze
+        ? {
+              correct: blanks.filter((blank, i) =>
+                  isFreeTextCorrect(
+                      reviewedCloze.inputs[i] ?? "",
+                      blank.accept,
+                  ),
+              ).length,
+              total: blanks.length,
+          }
+        : null;
+
+    const {submitted, submit, reset} = useControlledExercise({
+        ref,
+        controlled,
+        isAnswerable: allFilled,
+        onInteraction,
+        onComplete,
+        reviewedResult,
+        score: (): ExerciseScored => {
+            const perCorrect = blanks.map((blank, i) =>
+                isFreeTextCorrect(inputs[i], blank.accept),
+            );
+            return {
+                correct: perCorrect.filter(Boolean).length,
+                total: blanks.length,
+                attempts: deriveClozeAttempts(
+                    exercise,
+                    {setId, lessonId},
+                    inputs,
+                    perCorrect,
+                ),
+                raw_answer: {kind: "cloze", inputs: [...inputs]},
+            };
+        },
+        resetAnswer: () => setInputs(blanks.map(() => "")),
+    });
+
+    // Per-blank correctness for the post-check display. Derived (not
+    // stored): inputs are frozen once submitted, so this stays stable.
+    const perBlankCorrect = submitted
+        ? blanks.map((blank, i) => isFreeTextCorrect(inputs[i], blank.accept))
+        : blanks.map(() => false);
+
     const handleChange = (idx: number, value: string) => {
         if (submitted) return;
         const next = [...inputs];
         next[idx] = value;
         setInputs(next);
     };
-
-    const handleSubmit = () => {
-        if (submitted || !allFilled) return;
-        const perCorrect = blanks.map((blank, i) =>
-            isFreeTextCorrect(inputs[i], blank.accept),
-        );
-        const correctCount = perCorrect.filter(Boolean).length;
-        const attempts = deriveClozeAttempts(
-            exercise,
-            {setId, lessonId},
-            inputs,
-            perCorrect,
-        );
-        setPerBlankCorrect(perCorrect);
-        setSubmitted(true);
-        const scored: ExerciseScored = {
-            correct: correctCount,
-            total: blanks.length,
-            attempts,
-            raw_answer: {kind: "cloze", inputs: [...inputs]},
-        };
-        onComplete(scored);
-    };
-
-    const handleReset = () => {
-        setInputs(blanks.map(() => ""));
-        setPerBlankCorrect(blanks.map(() => false));
-        setSubmitted(false);
-    };
-
-    useImperativeHandle(ref, () => ({submit: handleSubmit}));
-
-    useEffect(() => {
-        if (!controlled || reviewedCloze || submitted) return;
-        onInteraction?.(allFilled);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [controlled, allFilled, submitted, reviewedCloze]);
 
     if (sentence === "" || blanks.length === 0) {
         return (
@@ -385,7 +382,7 @@ function ClozeExercise(
                     <Button
                         type="button"
                         disabled={!allFilled}
-                        onClick={handleSubmit}
+                        onClick={submit}
                         data-testid="cloze-submit"
                     >
                         {t(
@@ -459,7 +456,7 @@ function ClozeExercise(
                                 variant="outline"
                                 size="sm"
                                 type="button"
-                                onClick={handleReset}
+                                onClick={reset}
                                 data-testid="cloze-retry"
                             >
                                 <RotateCcw size={14} aria-hidden="true" />
