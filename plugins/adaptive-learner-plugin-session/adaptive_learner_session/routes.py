@@ -620,6 +620,10 @@ class MessageContext:
     payload: _MessageBody
     request_start_ts: float
     user_msg: SessionMessage | None = None
+    project: LearningProject | None = None
+    provider_key: str | None = None
+    api_key: str | None = None
+    model: str | None = None
     learning_ms: int | None = None
     evaluation_ms: int | None = None
     topic_transition_ms: int | None = None
@@ -650,6 +654,87 @@ def persist_user_message(ctx: MessageContext) -> SessionMessage:
     ctx.db.refresh(user_msg)
     ctx.user_msg = user_msg
     return user_msg
+
+
+def _validate_model_against_cache(ctx: MessageContext) -> None:
+    """Phase 24D — sanity-check the chosen model against the provider's
+    cached available-models list.
+
+    When the cache holds a list (the Settings picker fetched it earlier
+    in this process) AND the requested model is not in it, downgrade
+    ``ctx.model`` to the provider default and set ``ctx.model_warning``.
+    When no cache exists, validation is skipped — the spec is to try
+    anyway, not to block the route on a fresh fetch. Any glitch in the
+    lookup must never break the chat path, so it is swallowed (logged
+    at debug) and the chosen model is kept.
+    """
+    if ctx.provider_key is None or ctx.api_key is None or ctx.model is None:
+        return
+    try:
+        from app.schemas import AIProvider as _AIProvider
+        from app.services import model_discovery as _model_discovery
+
+        provider_enum = _AIProvider(ctx.provider_key)
+        cached = _model_discovery.get_cached_models(provider_enum, ctx.api_key)
+        if cached is not None and not any(m.id == ctx.model for m in cached):
+            default_model = ai_orchestration.DEFAULT_MODELS.get(ctx.provider_key)
+            if default_model and default_model != ctx.model:
+                ctx.model_warning = (
+                    f"Model {ctx.model!r} is not in the available models for "
+                    f"provider {ctx.provider_key!r}. Falling back to {default_model!r}."
+                )
+                ctx.model = default_model
+            else:
+                ctx.model_warning = (
+                    f"Model {ctx.model!r} may not be available for provider "
+                    f"{ctx.provider_key!r}; trying anyway."
+                )
+    except Exception as err:  # noqa: BLE001
+        import logging
+
+        logging.getLogger(__name__).debug(
+            "Model validation skipped for provider %r: %s", ctx.provider_key, err
+        )
+
+
+def resolve_ai_context(ctx: MessageContext) -> str | None:
+    """Resolve project -> active provider -> API key -> model.
+
+    Populates ``ctx.project`` / ``provider_key`` / ``api_key`` / ``model``
+    and runs the Phase 24D model-availability validation (which may
+    downgrade ``ctx.model`` and set ``ctx.model_warning``).
+
+    The handler needs the resolved triple exposed (the model + key feed
+    the learning call AND the step-evaluation / topic-transition calls),
+    so this keeps the explicit resolution rather than wrapping the
+    closure-shaped ``build_ai_caller``.
+
+    Returns:
+        ``None`` on success, or a non-fatal ``ai_error`` string the
+        handler echoes via ``_build_response`` when the context can't be
+        resolved (no project / provider / key / model).
+    """
+    db = ctx.db
+    project = db.get(LearningProject, ctx.session.project_id)
+    if project is None:
+        return "session has no project; AI reply skipped."
+    ctx.project = project
+
+    provider_key, api_key, model_override = _resolve_active_key(db, project.user_id)
+    if provider_key is None:
+        return "No active AI provider configured."
+    if not api_key:
+        return f"No API key stored for provider {provider_key!r}."
+
+    model = ai_orchestration.resolve_model(provider_key, override=model_override)
+    if model is None:
+        return f"Provider {provider_key!r} has no default model registered."
+
+    ctx.provider_key = provider_key
+    ctx.api_key = api_key
+    ctx.model = model
+    _validate_model_against_cache(ctx)
+    return None
 
 
 @router.post(
@@ -743,56 +828,18 @@ def append_message(
         # learner-AI round-trip).
         return _build_response()
 
-    # Look up the project owner -> active provider -> API key.
-    project = db.get(LearningProject, sess.project_id)
-    if project is None:
-        return _build_response(ai_error="session has no project; AI reply skipped.")
-    provider_key, api_key, model_override = _resolve_active_key(db, project.user_id)
-    if provider_key is None:
-        return _build_response(ai_error="No active AI provider configured.")
-    if not api_key:
-        return _build_response(ai_error=f"No API key stored for provider {provider_key!r}.")
-
-    model = ai_orchestration.resolve_model(provider_key, override=model_override)
-    if model is None:
-        return _build_response(
-            ai_error=f"Provider {provider_key!r} has no default model registered."
-        )
-
-    # v1.11.0 / Phase 24D — validate the chosen model against the
-    # provider's cached available-models list. If the cache holds a
-    # list (the Settings picker fetched it earlier in this process)
-    # AND the requested model is not in it, fall back to the
-    # default and surface a non-fatal warning. When no cache exists
-    # we skip validation entirely — the spec is to try anyway, NOT
-    # to block the route on a fresh fetch.
-    try:
-        from app.schemas import AIProvider as _AIProvider
-        from app.services import model_discovery as _model_discovery
-
-        provider_enum = _AIProvider(provider_key)
-        cached = _model_discovery.get_cached_models(provider_enum, api_key)
-        if cached is not None and not any(m.id == model for m in cached):
-            default_model = ai_orchestration.DEFAULT_MODELS.get(provider_key)
-            if default_model and default_model != model:
-                ctx.model_warning = (
-                    f"Model {model!r} is not in the available models for "
-                    f"provider {provider_key!r}. Falling back to {default_model!r}."
-                )
-                model = default_model
-            else:
-                ctx.model_warning = (
-                    f"Model {model!r} may not be available for provider "
-                    f"{provider_key!r}; trying anyway."
-                )
-    except Exception as err:  # noqa: BLE001
-        # Validation must never break the chat path. If anything in
-        # the cache lookup misbehaves we proceed with the chosen model.
-        import logging
-
-        logging.getLogger(__name__).debug(
-            "Model validation skipped for provider %r: %s", provider_key, err
-        )
+    ai_error = resolve_ai_context(ctx)
+    if ai_error is not None:
+        return _build_response(ai_error=ai_error)
+    # resolve_ai_context guarantees all four are set when it returns None.
+    assert ctx.project is not None
+    assert ctx.provider_key is not None
+    assert ctx.api_key is not None
+    assert ctx.model is not None
+    project = ctx.project
+    provider_key = ctx.provider_key
+    api_key = ctx.api_key
+    model = ctx.model
 
     # Load EVERY prior message INCLUDING the user message we just
     # saved (chronological order; the AI sees the freshest user
