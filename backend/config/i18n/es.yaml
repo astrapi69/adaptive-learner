@@ -1106,7 +1106,8 @@ notebooklm:
   guide_failed: No se pudo generar la guía de estudio.
 
 feature:
-  api_key_required: "API key required. Configure a provider in Settings."
+  api_key_required: "Se requiere una clave de API. Configura un proveedor en los ajustes."
+  desktop_only: "Solo disponible con la aplicación de escritorio."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"

@@ -1199,7 +1199,8 @@
     "guide_failed": "Não foi possível gerar o guia de estudo."
   },
   "feature": {
-    "api_key_required": "API key required. Configure a provider in Settings."
+    "api_key_required": "Chave de API necessária. Configure um provedor nas configurações.",
+    "desktop_only": "Disponível apenas com o aplicativo para desktop."
   },
   "ui": {
     "themes": {
