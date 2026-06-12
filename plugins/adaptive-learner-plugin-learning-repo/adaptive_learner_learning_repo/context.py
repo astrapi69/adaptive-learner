@@ -11,9 +11,12 @@ context.
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     # Type-only imports — keeping ``app.models`` out of the
@@ -123,7 +126,12 @@ def derive_topics(sessions: tuple[LearningSession, ...]) -> tuple[TopicSlice, ..
     for session in sorted(sessions, key=lambda s: s.started_at):
         try:
             cycles = json.loads(session.cycle_topics or "[]")
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as err:
+            logger.warning(
+                "Skipping session %s with unparseable cycle_topics: %s",
+                getattr(session, "id", "?"),
+                err,
+            )
             continue
         if not isinstance(cycles, list):
             continue

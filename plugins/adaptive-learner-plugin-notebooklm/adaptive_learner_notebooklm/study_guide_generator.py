@@ -216,7 +216,12 @@ def assemble_project_context(db, project_id: str) -> dict[str, Any] | None:
             continue
         try:
             analysis = json.loads(conv.analysis_result)
-        except (TypeError, json.JSONDecodeError):
+        except (TypeError, json.JSONDecodeError) as err:
+            logger.warning(
+                "Skipping conversation %s with unparseable analysis_result: %s",
+                conv.id,
+                err,
+            )
             continue
         entries = (analysis or {}).get("vocabulary") if isinstance(analysis, dict) else None
         if not isinstance(entries, list):

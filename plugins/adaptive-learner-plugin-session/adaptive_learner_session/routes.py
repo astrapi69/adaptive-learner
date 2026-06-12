@@ -740,10 +740,14 @@ def append_message(
                     f"Model {model!r} may not be available for provider "
                     f"{provider_key!r}; trying anyway."
                 )
-    except Exception:  # noqa: BLE001
+    except Exception as err:  # noqa: BLE001
         # Validation must never break the chat path. If anything in
-        # the cache lookup misbehaves we silently proceed.
-        pass
+        # the cache lookup misbehaves we proceed with the chosen model.
+        import logging
+
+        logging.getLogger(__name__).debug(
+            "Model validation skipped for provider %r: %s", provider_key, err
+        )
 
     # Load EVERY prior message INCLUDING the user message we just
     # saved (chronological order; the AI sees the freshest user
