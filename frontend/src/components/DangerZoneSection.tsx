@@ -41,7 +41,7 @@ import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {clearLearnerState, readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
-import {backupFilename, triggerBackupDownload} from "../utils/backup-download";
+import {backupFilename, saveBackupToDisk} from "../utils/backup-download";
 import {notify} from "../utils/notify";
 
 type Step = "idle" | "confirm" | "typed";
@@ -76,16 +76,27 @@ export default function DangerZoneSection() {
         }
         setBusy("backup");
         try {
+            // Same export path as Settings > Daten > "Sicherung erstellen"
+            // (BackupSection.handleExport): one endpoint, one save helper, so
+            // the two buttons can never produce different files (#331).
             const payload = await getStorage().backup.export(userId);
-            triggerBackupDownload(payload, backupFilename(userId));
+            const outcome = await saveBackupToDisk(payload, backupFilename(userId));
+            if (outcome.method === "cancelled") {
+                // User dismissed the OS save dialog; nothing was written.
+                return;
+            }
+            const key =
+                outcome.method === "picker"
+                    ? "backup.saved_as"
+                    : "backup.downloaded";
+            const fallback =
+                outcome.method === "picker"
+                    ? "Backup saved: {{filename}}"
+                    : "Backup downloaded: {{filename}} ({{count}} records).";
             notify.success(
-                t(
-                    "backup.export_success",
-                    "Backup downloaded ({{count}} records).",
-                ).replace(
-                    "{{count}}",
-                    String(payload.stats.total_records),
-                ),
+                t(key, fallback)
+                    .replace("{{filename}}", outcome.filename)
+                    .replace("{{count}}", String(payload.stats.total_records)),
             );
         } catch (err) {
             const detail = err instanceof Error ? err.message : String(err);

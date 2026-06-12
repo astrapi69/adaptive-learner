@@ -51,11 +51,16 @@ vi.mock("../utils/notify", () => ({
     },
 }));
 
-// Mock the download helper so the jsdom test environment doesn't
-// try to create blobs / object URLs the backup flow needs.
-const triggerBackupDownloadMock = vi.fn();
+// Mock the save helper so the jsdom test environment doesn't try to
+// create blobs / object URLs / open the OS save dialog. The Danger-Zone
+// button now uses the SAME saveBackupToDisk helper as the Settings export
+// (#331); the default resolves to a plain "download" outcome.
+const saveBackupToDiskMock = vi.fn(async (..._a: unknown[]) => ({
+    method: "download" as const,
+    filename: "backup-u-backup.json",
+}));
 vi.mock("../utils/backup-download", () => ({
-    triggerBackupDownload: (...a: unknown[]) => triggerBackupDownloadMock(...a),
+    saveBackupToDisk: (...a: unknown[]) => saveBackupToDiskMock(...a),
     backupFilename: (userId: string) => `backup-${userId}.json`,
 }));
 
@@ -73,7 +78,7 @@ beforeEach(() => {
     storageBackupExport.mockReset();
     notifySuccess.mockClear();
     notifyError.mockClear();
-    triggerBackupDownloadMock.mockClear();
+    saveBackupToDiskMock.mockClear();
     localStorage.clear();
     sessionStorage.clear();
 });
@@ -207,7 +212,7 @@ describe("DangerZoneSection", () => {
         expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it("backup offer button triggers a download via storage.backup.export", async () => {
+    it("backup offer button saves via storage.backup.export + saveBackupToDisk", async () => {
         localStorage.setItem("adaptive-learner.user_id", "u-backup");
         storageBackupExport.mockResolvedValue({
             stats: {total_records: 42},
@@ -217,7 +222,7 @@ describe("DangerZoneSection", () => {
         await waitFor(() => {
             expect(storageBackupExport).toHaveBeenCalledWith("u-backup");
         });
-        expect(triggerBackupDownloadMock).toHaveBeenCalled();
+        expect(saveBackupToDiskMock).toHaveBeenCalled();
         expect(notifySuccess).toHaveBeenCalled();
     });
 
