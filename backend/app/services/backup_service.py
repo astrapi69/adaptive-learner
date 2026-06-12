@@ -57,6 +57,8 @@ from app.services.sync_service import (
     TableSpec,
     _from_iso,
     _to_iso,
+    record_belongs_to_user,
+    row_belongs_to_user,
     serialize_row,
 )
 
@@ -580,7 +582,7 @@ def _restore_table(
             if existing is None:
                 # Defensive user-scope check: never insert a row
                 # claiming to belong to a different user.
-                if not _record_belongs_to_user(table, record, user_id):
+                if not record_belongs_to_user(table, record, user_id):
                     skipped += 1
                     continue
                 missing_parent = _missing_fk_parent(repo, table, record)
@@ -596,7 +598,7 @@ def _restore_table(
                 inserted += 1
                 continue
             # Existing row. Defensive scope check on the row itself.
-            if not _row_belongs_to_user(table, existing, user_id):
+            if not row_belongs_to_user(table, existing, user_id):
                 skipped += 1
                 continue
             if spec.append_only:
@@ -642,28 +644,6 @@ def _restore_table(
         "skipped": skipped,
         "errors": errors,
     }
-
-
-def _row_belongs_to_user(table: str, row: Any, user_id: str) -> bool:
-    """Defensive user-scoping check used during restore."""
-    spec = _spec(table)
-    if spec.scope == "self":
-        return bool(row.id == user_id)
-    if hasattr(row, "user_id") and row.user_id is not None:
-        return bool(row.user_id == user_id)
-    # via_curriculum / via_project / via_session / via_conversation:
-    # the parent FK already pins the user. Trust it.
-    return True
-
-
-def _record_belongs_to_user(table: str, record: dict[str, Any], user_id: str) -> bool:
-    """Defensive user-scoping check on raw backup payload before insert."""
-    spec = _spec(table)
-    if spec.scope == "self":
-        return record.get("id") == user_id
-    if "user_id" in record and record["user_id"] is not None:
-        return bool(record["user_id"] == user_id)
-    return True
 
 
 # Restore order: parents before children. Derived from SQLAlchemy's
