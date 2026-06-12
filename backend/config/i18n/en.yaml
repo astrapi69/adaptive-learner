@@ -1107,6 +1107,7 @@ notebooklm:
 
 feature:
   api_key_required: "API key required. Configure a provider in Settings."
+  desktop_only: "Only available with the desktop app."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"

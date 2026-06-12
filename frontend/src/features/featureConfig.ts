@@ -5,11 +5,16 @@
  * Design (per the library's descriptor + abstention model):
  *   - Every feature is a descriptor with ``defaultState: "active"``.
  *   - The strategy carries ONLY deviation rules — AI features that need a key
- *     and desktop-only features hidden in Dexie mode. It abstains (returns
+ *     and desktop-only features disabled in Dexie mode. It abstains (returns
  *     ``undefined``) for everything else, so the descriptor default governs.
  *   - There is no always-active set and no active fallback in the strategy:
  *     a feature's gating class is defined in exactly one place (its presence
- *     in {@link NEEDS_AI_KEY} / {@link HIDDEN_IN_DEXIE}, or absence from both).
+ *     in {@link NEEDS_AI_KEY} / {@link DESKTOP_ONLY}, or absence from both).
+ *
+ * State policy (#335): product features are never ``hidden`` — everything
+ * the user owns is visible, either active or disabled with a reason the UI
+ * localizes. ``hidden`` is reserved for the registry's fail-closed handling
+ * of unknown ids (and future dev-only flags), not for deployment gating.
  *
  * The registry is a module constant (stateless config). Only the
  * {@link FeatureContext} changes at runtime, supplied — memoised — by the
@@ -86,6 +91,12 @@ export type FeatureId = (typeof FEATURES)[keyof typeof FEATURES];
  */
 export const REASON_API_KEY_REQUIRED = "api_key_required";
 
+/**
+ * Reason code reported for a desktop-only feature that is disabled in Dexie
+ * mode. Components localize it via ``feature.${reason}`` (``feature.desktop_only``).
+ */
+export const REASON_DESKTOP_ONLY = "desktop_only";
+
 /** AI-backed features: disabled in Dexie mode without a configured key. */
 const NEEDS_AI_KEY: readonly FeatureId[] = [
   FEATURES.CONVERSATION_ANALYZE,
@@ -98,8 +109,11 @@ const NEEDS_AI_KEY: readonly FeatureId[] = [
   FEATURES.PRONUNCIATION_GENERATE,
 ];
 
-/** Desktop-only features: hidden in Dexie mode (no backend / git binary). */
-const HIDDEN_IN_DEXIE: readonly FeatureId[] = [
+/**
+ * Desktop-only features: disabled in Dexie mode (no backend / git binary).
+ * Disabled, not hidden, so the UI can tell the user the desktop app exists.
+ */
+const DESKTOP_ONLY: readonly FeatureId[] = [
   FEATURES.SYNC,
   FEATURES.GIT_PERSIST,
   FEATURES.LEARNING_REPO_GIT,
@@ -115,12 +129,13 @@ function needsAiKeyRule(): FeatureCondition<FeatureContext> {
   };
 }
 
-function hiddenInDexieRule(): FeatureCondition<FeatureContext> {
+function desktopOnlyRule(): FeatureCondition<FeatureContext> {
   return {
     evaluate: (context): FeatureState | undefined => {
       if (context === undefined) return undefined;
-      return context.mode === "dexie" ? "hidden" : "active";
+      return context.mode === "dexie" ? "disabled" : "active";
     },
+    reason: REASON_DESKTOP_ONLY,
   };
 }
 
@@ -132,7 +147,7 @@ function buildRegistry(): FeatureRegistry<FeatureContext> {
 
   const rules: Record<string, FeatureCondition<FeatureContext>> = Object.fromEntries([
     ...NEEDS_AI_KEY.map((id) => [id, needsAiKeyRule()] as const),
-    ...HIDDEN_IN_DEXIE.map((id) => [id, hiddenInDexieRule()] as const),
+    ...DESKTOP_ONLY.map((id) => [id, desktopOnlyRule()] as const),
   ]);
 
   return new FeatureRegistry<FeatureContext>()

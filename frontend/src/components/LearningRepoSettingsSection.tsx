@@ -117,8 +117,29 @@ export default function LearningRepoSettingsSection() {
       </p>
 
       {/* Git persistence needs a server-side filesystem + git binary,
-                so the toggle is hidden in Dexie mode (no dead control). */}
-      <Feature id={FEATURES.LEARNING_REPO_GIT}>
+          so the toggle is disabled in Dexie mode with an explanation
+          naming the desktop app (#335) instead of hidden. */}
+      <Feature
+        id={FEATURES.LEARNING_REPO_GIT}
+        whenDisabled={
+          <div className="flex flex-col gap-1" data-testid="learning-repo-git-desktop-only">
+            <label className="flex items-center gap-2 text-fg-muted">
+              <input
+                type="checkbox"
+                className="h-4 w-4 shrink-0"
+                checked={false}
+                disabled
+                readOnly
+                data-testid="learning-repo-settings-enable-git"
+              />
+              <span>{t("repo.settings.enable_git", "Enable git persistence")}</span>
+            </label>
+            <p className="m-0 text-sm text-fg-muted">
+              {t("feature.desktop_only", "Only available with the desktop app.")}
+            </p>
+          </div>
+        }
+      >
         <label className="flex items-center gap-2 text-[var(--fg-primary)]">
           <input
             type="checkbox"

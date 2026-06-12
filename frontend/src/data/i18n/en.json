@@ -1199,7 +1199,8 @@
     "guide_failed": "Could not generate the study guide."
   },
   "feature": {
-    "api_key_required": "API key required. Configure a provider in Settings."
+    "api_key_required": "API key required. Configure a provider in Settings.",
+    "desktop_only": "Only available with the desktop app."
   },
   "ui": {
     "themes": {

@@ -1106,7 +1106,8 @@ notebooklm:
   guide_failed: Δεν δημιουργήθηκε ο οδηγός μελέτης.
 
 feature:
-  api_key_required: "API key required. Configure a provider in Settings."
+  api_key_required: "Απαιτείται κλειδί API. Ρυθμίστε έναν πάροχο στις Ρυθμίσεις."
+  desktop_only: "Διαθέσιμο μόνο με την εφαρμογή για υπολογιστή."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"

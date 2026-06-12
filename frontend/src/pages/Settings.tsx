@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlaskConical, Save, Trash2 } from "lucide-react";
+import { FlaskConical, Monitor, Save, Trash2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
@@ -1162,9 +1162,26 @@ export default function Settings() {
       >
         {/* Sync needs a reachable backend (pairing token + sync
             endpoints). In Dexie mode (GitHub Pages / PWA-only) there
-            is none, so the section is not offered at all — no QR, no
-            dead "Sync Now". See issue #51. */}
-        <Feature id={FEATURES.SYNC}>
+            is none, so the controls are replaced by a notice that the
+            desktop app carries the feature — visible, not hidden, per
+            the feature-state policy (#335, supersedes #51). */}
+        <Feature
+          id={FEATURES.SYNC}
+          whenDisabled={
+            <section
+              className="settings-section mt-6"
+              data-testid="settings-sync-desktop-only"
+            >
+              <h2 className="settings-section-title">{t("settings.section_sync", "Sync")}</h2>
+              <div className="flex items-start gap-2 rounded-app border border-border bg-card px-3 py-2 text-sm text-fg-secondary">
+                <Monitor size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
+                <span>
+                  {t("feature.desktop_only", "Only available with the desktop app.")}
+                </span>
+              </div>
+            </section>
+          }
+        >
           <SyncSection />
         </Feature>
         <BackupSection />

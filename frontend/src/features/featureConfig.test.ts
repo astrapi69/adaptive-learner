@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import {
   FEATURES,
   REASON_API_KEY_REQUIRED,
+  REASON_DESKTOP_ONLY,
   type FeatureContext,
   featureRegistry,
 } from "./featureConfig";
@@ -37,7 +38,7 @@ const NEEDS_KEY = [
   FEATURES.PRONUNCIATION_GENERATE,
 ];
 
-const HIDDEN_DEXIE = [FEATURES.SYNC, FEATURES.GIT_PERSIST, FEATURES.LEARNING_REPO_GIT];
+const DESKTOP_ONLY = [FEATURES.SYNC, FEATURES.GIT_PERSIST, FEATURES.LEARNING_REPO_GIT];
 
 describe("featureRegistry", () => {
   it("keeps always-active features active in every context", () => {
@@ -57,11 +58,13 @@ describe("featureRegistry", () => {
     }
   });
 
-  it("hides desktop-only features in Dexie mode, active in API mode", () => {
-    for (const id of HIDDEN_DEXIE) {
+  it("disables desktop-only features in Dexie mode (never hidden), active in API mode", () => {
+    for (const id of DESKTOP_ONLY) {
       expect(featureRegistry.getState(id, API)).toBe("active");
-      expect(featureRegistry.getState(id, DEXIE_NO_KEY)).toBe("hidden");
-      expect(featureRegistry.getState(id, DEXIE_KEY)).toBe("hidden");
+      expect(featureRegistry.getState(id, DEXIE_NO_KEY)).toBe("disabled");
+      expect(featureRegistry.getState(id, DEXIE_KEY)).toBe("disabled");
+      expect(featureRegistry.getReason(id, DEXIE_NO_KEY)).toBe(REASON_DESKTOP_ONLY);
+      expect(featureRegistry.getReason(id, DEXIE_KEY)).toBe(REASON_DESKTOP_ONLY);
     }
   });
 

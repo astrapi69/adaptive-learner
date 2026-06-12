@@ -61,18 +61,21 @@ function renderSection(mode: StorageMode = "dexie") {
 }
 
 describe("LearningRepoSettingsSection — Dexie mode", () => {
-  it("renders the panel (repos dir + save) but hides the git toggle", async () => {
+  it("renders the panel with the git toggle disabled + a desktop-only notice", async () => {
     renderSection();
     // The Dexie-unavailable panel is gone — it used to mount with
     // testid "learning-repo-settings-dexie-unavailable". The full
-    // settings UI mounts instead, EXCEPT the git toggle: git
-    // persistence needs a server-side filesystem + git binary, so
-    // the LEARNING_REPO_GIT feature is hidden in Dexie mode.
+    // settings UI mounts; the git toggle stays VISIBLE but disabled:
+    // git persistence needs a server-side filesystem + git binary,
+    // so LEARNING_REPO_GIT is disabled in Dexie mode with an
+    // explanation naming the desktop app (#335: never hidden).
     await waitFor(() => {
       expect(screen.getByTestId("learning-repo-settings")).toBeInTheDocument();
     });
     expect(screen.queryByTestId("learning-repo-settings-dexie-unavailable")).toBeNull();
-    expect(screen.queryByTestId("learning-repo-settings-enable-git")).toBeNull();
+    const toggle = screen.getByTestId("learning-repo-settings-enable-git") as HTMLInputElement;
+    expect(toggle.disabled).toBe(true);
+    expect(screen.getByTestId("learning-repo-git-desktop-only")).toBeInTheDocument();
     expect(screen.getByTestId("learning-repo-settings-repos-dir")).toBeInTheDocument();
     expect(screen.getByTestId("learning-repo-settings-save")).toBeInTheDocument();
   });
@@ -115,6 +118,8 @@ describe("LearningRepoSettingsSection — git toggle (API mode)", () => {
     });
     const checkbox = screen.getByTestId("learning-repo-settings-enable-git") as HTMLInputElement;
     expect(checkbox.checked).toBe(false);
+    expect(checkbox.disabled).toBe(false);
+    expect(screen.queryByTestId("learning-repo-git-desktop-only")).toBeNull();
   });
 
   it("saves the toggled enable_git into the pluginSettings row", async () => {

@@ -1106,7 +1106,8 @@ notebooklm:
   guide_failed: Çalışma kılavuzu oluşturulamadı.
 
 feature:
-  api_key_required: "API key required. Configure a provider in Settings."
+  api_key_required: "API anahtarı gerekli. Ayarlardan bir sağlayıcı yapılandırın."
+  desktop_only: "Yalnızca masaüstü uygulamasıyla kullanılabilir."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"
