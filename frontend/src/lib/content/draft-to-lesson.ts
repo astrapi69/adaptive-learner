@@ -126,7 +126,7 @@ export const MIN_TYPES_FOR_SAVE = 2;
 export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     const {meta, cards, exercises} = input;
     const types = new Set(exercises.map((e) => e.type));
-    let schemaValid = false;
+    let schemaValid: boolean;
     try {
         buildLessonFromDraft(input);
         schemaValid = true;

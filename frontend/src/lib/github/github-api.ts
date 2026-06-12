@@ -163,7 +163,7 @@ export class GitHubApi {
     };
     if (body !== undefined) init.body = JSON.stringify(body);
     const resp = await this.fetchImpl(`${GITHUB_API_BASE}${path}`, init);
-    let parsed: unknown = null;
+    let parsed: unknown;
     try {
       parsed = await resp.json();
     } catch {
