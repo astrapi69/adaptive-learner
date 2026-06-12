@@ -627,6 +627,31 @@ class MessageContext:
     model_warning: str | None = None
 
 
+def persist_user_message(ctx: MessageContext) -> SessionMessage:
+    """Persist the inbound learner turn and record it on the context.
+
+    Commits immediately so the learner's message survives even when
+    the downstream AI round-trip later fails; ``ctx.user_msg`` is set
+    so the response builder can echo it on every exit path.
+
+    Args:
+        ctx: The in-flight message context (db + session + payload).
+
+    Returns:
+        The persisted, refreshed ``SessionMessage`` row.
+    """
+    user_msg = SessionMessage(
+        session_id=ctx.session.id,
+        role=ctx.payload.role.value,
+        content=ctx.payload.content,
+    )
+    ctx.db.add(user_msg)
+    ctx.db.commit()
+    ctx.db.refresh(user_msg)
+    ctx.user_msg = user_msg
+    return user_msg
+
+
 @router.post(
     "/{session_id}/message",
     response_model=_SessionMessageExchangeOut,
@@ -678,15 +703,7 @@ def append_message(
         request_start_ts=time.monotonic(),
     )
 
-    user_msg = SessionMessage(
-        session_id=sess.id,
-        role=payload.role.value,
-        content=payload.content,
-    )
-    db.add(user_msg)
-    db.commit()
-    db.refresh(user_msg)
-    ctx.user_msg = user_msg
+    persist_user_message(ctx)
 
     # Helper closure: every exit point of this handler returns
     # the same composite shape, so the frontend's typed contract
