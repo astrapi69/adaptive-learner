@@ -26,7 +26,7 @@
  * and wraps gracefully at narrow viewports.
  */
 
-import {Check, RotateCcw, X} from "lucide-react";
+import {Check, X} from "lucide-react";
 import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
@@ -40,6 +40,7 @@ import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
+import ExerciseFooter from "./ExerciseFooter";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -378,19 +379,6 @@ function ClozeExercise(
             )}
 
             <div className="flex flex-wrap items-center gap-2">
-                {!submitted && !controlled && (
-                    <Button
-                        type="button"
-                        disabled={!allFilled}
-                        onClick={submit}
-                        data-testid="cloze-submit"
-                    >
-                        {t(
-                            "lesson.exercise.cloze.submit",
-                            "Check answers",
-                        )}
-                    </Button>
-                )}
                 {submitted && (
                     <>
                         <p
@@ -451,23 +439,24 @@ function ClozeExercise(
                             </div>
                         )}
                         <AnswerCelebration isCorrect={isAllCorrect} />
-                        {!controlled && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                type="button"
-                                onClick={reset}
-                                data-testid="cloze-retry"
-                            >
-                                <RotateCcw size={14} aria-hidden="true" />
-                                {t(
-                                    "lesson.exercise.cloze.retry",
-                                    "Try again",
-                                )}
-                            </Button>
-                        )}
                     </>
                 )}
+                <ExerciseFooter
+                    testidPrefix="cloze"
+                    controlled={controlled}
+                    submitted={submitted}
+                    canCheck={allFilled}
+                    onCheck={submit}
+                    onRetry={reset}
+                    checkLabel={t(
+                        "lesson.exercise.cloze.submit",
+                        "Check answers",
+                    )}
+                    retryLabel={t(
+                        "lesson.exercise.cloze.retry",
+                        "Try again",
+                    )}
+                />
             </div>
         </section>
     );
