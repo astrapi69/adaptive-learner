@@ -19,6 +19,14 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      # TipTap is deliberately held at v2 (#267 / #288 / #303 / #305).
+      # Individual major bumps drift the tree into a broken v2/v3 mix
+      # (v3 extensions against v2 @tiptap/core/react) that breaks the
+      # frontend build + tsc. Hold majors until a deliberate v2->v3
+      # migration sprint; minor/patch still flow via the group above.
+      - dependency-name: "@tiptap/*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "pip"
     directory: "/backend"
