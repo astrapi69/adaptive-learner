@@ -13,12 +13,12 @@ name: Launcher (Linux)
 
 on:
   push:
-    branches: [main]
+    branches: [develop, main]
     paths:
       - "launcher/**"
       - ".github/workflows/launcher-linux.yml"
   pull_request:
-    branches: [main]
+    branches: [develop, main]
     paths:
       - "launcher/**"
       - ".github/workflows/launcher-linux.yml"

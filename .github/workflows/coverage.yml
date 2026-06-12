@@ -2,9 +2,9 @@ name: Coverage
 
 on:
   push:
-    branches: [main]
+    branches: [develop, main]
   pull_request:
-    branches: [main]
+    branches: [develop, main]
   workflow_dispatch:
 
 # Defensive opt-in: any JavaScript-runtime action still declaring
