@@ -1061,6 +1061,56 @@ def assemble_exchange(ctx: MessageContext) -> _SessionMessageExchangeOut:
     )
 
 
+def run_learning_call(ctx: MessageContext) -> str | None:
+    """Fire the ai_complete hook for the learner turn and persist the
+    assistant reply.
+
+    Loads the full prior history, fires the firstresult ``ai_complete``
+    hook (a provider exception is wrapped as an inline ``ai_error`` rather
+    than a 5xx so the learner turn is never lost), flushes the assistant
+    message, and records ``history`` / ``assistant_text`` / ``assistant_msg``
+    on the context. Returns ``None`` on success, or a non-fatal
+    ``ai_error`` string (provider error / no reply).
+    """
+    from app.main import manager  # lazy: app.* not on sys.path in plugin's own test dir
+
+    assert ctx.model is not None and ctx.api_key is not None and ctx.provider_key is not None
+    db = ctx.db
+    sess = ctx.session
+    # Load EVERY prior message INCLUDING the user turn just saved, so the
+    # AI sees exactly what is persisted (chronological order).
+    history = _load_prior_messages(db, sess.id)
+    try:
+        learning_start = time.monotonic()
+        assistant_text = ai_orchestration.call_ai_complete(
+            pm=manager._pm,
+            messages=history,
+            model=ctx.model,
+            api_key=ctx.api_key,
+        )
+        ctx.learning_ms = int((time.monotonic() - learning_start) * 1000)
+    except Exception as exc:  # noqa: BLE001
+        return f"AI provider error: {exc}"
+
+    if not assistant_text:
+        return (
+            f"No registered provider returned a reply for model {ctx.model!r}. "
+            f"Is the {ctx.provider_key!r} provider plugin enabled?"
+        )
+
+    assistant_msg = SessionMessage(
+        session_id=sess.id,
+        role="assistant",
+        content=assistant_text,
+    )
+    db.add(assistant_msg)
+    db.flush()  # assign assistant_msg.id without committing the txn yet
+    ctx.history = history
+    ctx.assistant_text = assistant_text
+    ctx.assistant_msg = assistant_msg
+    return None
+
+
 @router.post(
     "/{session_id}/message",
     response_model=_SessionMessageExchangeOut,
@@ -1123,64 +1173,10 @@ def append_message(
     ai_error = resolve_ai_context(ctx)
     if ai_error is not None:
         return build_exchange_response(ctx, ai_error=ai_error)
-    # resolve_ai_context guarantees these are set when it returns None;
-    # the downstream phase functions read ctx.project directly.
-    assert ctx.provider_key is not None
-    assert ctx.api_key is not None
-    assert ctx.model is not None
-    provider_key = ctx.provider_key
-    api_key = ctx.api_key
-    model = ctx.model
 
-    # Load EVERY prior message INCLUDING the user message we just
-    # saved (chronological order; the AI sees the freshest user
-    # turn at the end naturally). Loading from the DB rather than
-    # re-using build_messages_history's split keeps the route
-    # consistent with what's actually persisted — anyone who
-    # manually edits the DB sees the same conversation the AI
-    # sees on the next turn.
-    history = _load_prior_messages(db, sess.id)
-
-    # Fire the ai_complete hook. firstresult=True: the matching
-    # provider plugin returns text; the others return None. Any
-    # plugin exception is wrapped server-side as
-    # ExternalServiceError, which the global handler turns into
-    # HTTP 502 — but we catch it here so the user message is
-    # still returned + the error surfaces inline rather than
-    # losing the user turn to a 5xx.
-    try:
-        from app.main import manager  # lazy: app.* not on sys.path in plugin's own test dir
-
-        learning_start = time.monotonic()
-        assistant_text = ai_orchestration.call_ai_complete(
-            pm=manager._pm,
-            messages=history,
-            model=model,
-            api_key=api_key,
-        )
-        ctx.learning_ms = int((time.monotonic() - learning_start) * 1000)
-    except Exception as exc:  # noqa: BLE001
-        return build_exchange_response(ctx, ai_error=f"AI provider error: {exc}")
-
-    if not assistant_text:
-        return build_exchange_response(
-            ctx,
-            ai_error=(
-                f"No registered provider returned a reply for model {model!r}. "
-                f"Is the {provider_key!r} provider plugin enabled?"
-            ),
-        )
-
-    assistant_msg = SessionMessage(
-        session_id=sess.id,
-        role="assistant",
-        content=assistant_text,
-    )
-    db.add(assistant_msg)
-    db.flush()  # assign assistant_msg.id without committing the txn yet
-    ctx.history = history
-    ctx.assistant_text = assistant_text
-    ctx.assistant_msg = assistant_msg
+    ai_error = run_learning_call(ctx)
+    if ai_error is not None:
+        return build_exchange_response(ctx, ai_error=ai_error)
 
     run_step_evaluation(ctx)
     run_auto_loop(ctx)
