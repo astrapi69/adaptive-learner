@@ -81,6 +81,7 @@ import { useCountUp } from "../hooks/useCountUp";
 import { useFeedbackIntensity } from "../hooks/useFeedbackIntensity";
 import { useI18n } from "../hooks/useI18n";
 import { useLesson } from "../hooks/useLesson";
+import { useLessonFlowControl } from "../hooks/useLessonFlowControl";
 import {
   useLessonEnterKey,
   type LessonEnterNav,
@@ -160,87 +161,27 @@ export default function LessonPage() {
     autosave,
   } = useLesson({ source, setId, lessonFilename: filename });
 
-  // Phase 63B — back-button intercept + browser-close
-  // auto-pause. The dialog gives the user explicit pause /
-  // abandon / continue paths; the lifecycle handlers below
-  // also auto-pause when the tab is hidden or the window
-  // unloads while the lesson is still in progress.
-  const [exitOpen, setExitOpen] = useState(false);
-  // ``status === "in_progress"`` is the only state where an
-  // auto-pause makes sense. ``progress`` is null until the
-  // first upsert lands; we still allow an explicit pause from
-  // the dialog because it will create the row on the way.
-  const isInProgress = progress === null || progress.status === "in_progress";
-
-  // Phase 63C — resume prompt. Shown once when the lesson is
-  // loaded and the stored progress is in the ``paused`` state.
-  // The user must choose before interacting with the step view.
-  const [resumeChoiceMade, setResumeChoiceMade] = useState(false);
-  const showResumePrompt =
-    status === "ready" && progress?.status === "paused" && !resumeChoiceMade;
-
-  const handleResume = async () => {
-    await markResumed();
-    setResumeChoiceMade(true);
-    // currentStepIndex is already at the right position
-    // (fetchInitial computed it from step_results on load).
-  };
-
-  const handleStartOver = async () => {
-    await markRestarted();
-    setResumeChoiceMade(true);
-    goToStep(0);
-  };
-
-  // Phase 63B + 63E — auto-pause on hide, auto-resume on return.
-  // ``autoSuspendedRef`` tracks whether THIS effect fired a pause
-  // so the return-visible handler can reverse it without showing
-  // the resume dialog (brief tab-switch case).
-  const autoSuspendedRef = useRef(false);
-  useEffect(() => {
-    if (!isInProgress) return;
-    const onVisibility = () => {
-      if (document.visibilityState === "hidden") {
-        autoSuspendedRef.current = true;
-        void markPaused();
-      } else if (autoSuspendedRef.current) {
-        autoSuspendedRef.current = false;
-        void markResumed();
-      }
-    };
-    const onUnload = () => void markPaused();
-    document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("beforeunload", onUnload);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("beforeunload", onUnload);
-    };
-  }, [isInProgress, markPaused, markResumed]);
-
-  // Phase 63E — 30-second autosave interval. Flushes accumulated
-  // time to storage without changing lesson status so the
-  // summary shows accurate time even on long theory steps.
-  useEffect(() => {
-    if (status !== "ready" || !isInProgress) return;
-    const id = setInterval(() => void autosave(), 30_000);
-    return () => clearInterval(id);
-  }, [status, isInProgress, autosave]);
-
-  const handlePauseFromDialog = async () => {
-    await markPaused();
-    setExitOpen(false);
-    notify.info(
-      t("lesson.exit.paused_toast", "Lesson paused. You can resume anytime."),
-    );
-    navigate("/content");
-  };
-
-  const handleAbandonFromDialog = async () => {
-    await markAbandoned();
-    setExitOpen(false);
-    notify.info(t("lesson.exit.abandoned_toast", "Lesson abandoned."));
-    navigate("/content");
-  };
+  // Phase 63 B/C/E lifecycle (exit dialog, resume prompt, auto-pause,
+  // 30s autosave) lives in the extracted hook (#354).
+  const {
+    exitOpen,
+    setExitOpen,
+    isInProgress,
+    showResumePrompt,
+    handleResume,
+    handleStartOver,
+    handlePauseFromDialog,
+    handleAbandonFromDialog,
+  } = useLessonFlowControl({
+    status,
+    progress,
+    markPaused,
+    markAbandoned,
+    markResumed,
+    markRestarted,
+    autosave,
+    goToStep,
+  });
 
   // Phase 46B — userId for the elementErrors.recordBulk
   // call inside ExerciseDispatcher's onComplete. Read once
