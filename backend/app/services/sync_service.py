@@ -764,26 +764,64 @@ class PushResult:
     skipped: list[str] = field(default_factory=list)
 
 
-def _row_belongs_to_user(table: str, row: Any, user_id: str) -> bool:
-    """Defensive check: does ``row`` belong to ``user_id``?
+def row_belongs_to_user(table: str, row: Any, user_id: str) -> bool:
+    """Canonical defensive check: does ORM ``row`` belong to ``user_id``?
 
-    For directly-scoped rows we inspect ``user_id``. For
-    via_curriculum / via_project / via_session rows we trust the
-    parent FK (the per-table pull/push query already JOINed
-    through to the right user). UUIDs make cross-user collision
-    a 1-in-2**128 event, so trusting the parent FK at this layer
-    is safe.
+    This is the single source of truth for per-user ownership, shared by
+    sync (push acceptance) and backup (restore). Both surfaces MUST agree,
+    because a drift can leak a row across users (wrong ``True``) or drop a
+    legitimately-owned row (wrong ``False``); issue #329 consolidated two
+    copies that had diverged.
+
+    Resolution per ``TableSpec.scope``:
+
+    - ``self``: the row IS the user (``users`` table) -> ``row.id == user_id``.
+    - ``global``: shared, not user-tied (Subjects taxonomy, Badge catalog)
+      -> every device/user owns every row.
+    - everything else (``direct`` + ``via_*``): trust the ``user_id`` column
+      when present and set; otherwise trust the parent FK. The per-table
+      pull/push/export query already JOINed through to the right user, so an
+      absent or NULL direct column means "ownership is via the parent", not
+      "foreign". UUID ids make cross-user collision a 1-in-2**128 event.
+
+    The NULL-``user_id`` case is latent today: every model that maps a
+    ``user_id`` column types it non-nullable (``Mapped[str]``), and the two
+    ``global`` models map none at all, so ``getattr(row, "user_id", None)``
+    only yields ``None`` for ``via_*`` rows that carry no such column. The
+    explicit ``None -> True`` branch resolves the prior divergence toward
+    "trust the parent FK" (the safe direction for restore: no silent data
+    loss) and documents the intended behaviour should a nullable ``user_id``
+    column ever be added.
     """
     spec = TABLES[table]
     if spec.scope == "self":
         return bool(row.id == user_id)
     if spec.scope == "global":
-        # Globally-shared rows (e.g. Subjects taxonomy) are not
-        # tied to a user; every device accepts every row.
         return True
-    if hasattr(row, "user_id"):
-        return bool(row.user_id == user_id)
-    return True
+    owner = getattr(row, "user_id", None)
+    if owner is None:
+        return True
+    return bool(owner == user_id)
+
+
+def record_belongs_to_user(table: str, record: dict[str, Any], user_id: str) -> bool:
+    """Canonical ownership check on a raw record dict (pre-insert).
+
+    Dict-shaped mirror of :func:`row_belongs_to_user`, used by the backup
+    restore before the ORM object exists. A missing ``user_id`` key and an
+    explicit ``None`` value are treated identically (both -> trust the parent
+    FK), exactly as ``getattr(row, "user_id", None)`` collapses them on the
+    ORM side, so the two checks cannot disagree on the same logical row.
+    """
+    spec = TABLES[table]
+    if spec.scope == "self":
+        return record.get("id") == user_id
+    if spec.scope == "global":
+        return True
+    owner = record.get("user_id")
+    if owner is None:
+        return True
+    return bool(owner == user_id)
 
 
 def push_records(
@@ -817,7 +855,7 @@ def push_records(
                 result.skipped.append(record_id)
                 continue
             row = _apply_record(table, record, None)
-            if not _row_belongs_to_user(table, row, user_id):
+            if not row_belongs_to_user(table, row, user_id):
                 # Skip rows that don't scope to this user, defensively.
                 result.skipped.append(record_id)
                 continue
@@ -829,13 +867,13 @@ def push_records(
         remote_ts = _from_iso(record.get(spec.timestamp_field))
         if existing is None:
             row = _apply_record(table, record, None)
-            if not _row_belongs_to_user(table, row, user_id):
+            if not row_belongs_to_user(table, row, user_id):
                 result.skipped.append(record_id)
                 continue
             repo.add(row)
             result.accepted.append(record_id)
             continue
-        if not _row_belongs_to_user(table, existing, user_id):
+        if not row_belongs_to_user(table, existing, user_id):
             # Same id but wrong user — defensive skip. Should
             # never happen in practice because UUIDs collide
             # at 1 in 2**128.
@@ -1034,5 +1072,7 @@ __all__ = [
     "compute_status",
     "pull_records",
     "push_records",
+    "record_belongs_to_user",
+    "row_belongs_to_user",
     "serialize_row",
 ]
