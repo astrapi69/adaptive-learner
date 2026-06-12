@@ -1007,6 +1007,60 @@ def run_auto_loop(ctx: MessageContext) -> None:
     )
 
 
+def build_exchange_response(
+    ctx: MessageContext,
+    *,
+    assistant: SessionMessage | None = None,
+    ai_error: str | None = None,
+    step_evaluation: _StepEvaluationOut | None = None,
+    topic_transition: _TopicTransitionOut | None = None,
+) -> _SessionMessageExchangeOut:
+    """Build the composite exchange response shared by every exit point.
+
+    Returning one shape from all exits keeps the frontend's typed
+    contract consistent; it carries the full LearningSession row (so the
+    frontend reads ``cycle_step`` without a refetch) and the accumulated
+    timing budget.
+    """
+    total_ms = int((time.monotonic() - ctx.request_start_ts) * 1000)
+    timings = _TimingsOut(
+        learning_ms=ctx.learning_ms,
+        evaluation_ms=ctx.evaluation_ms,
+        topic_transition_ms=ctx.topic_transition_ms,
+        total_ms=total_ms,
+        parallel_saved_ms=ctx.parallel_saved_ms,
+    )
+    return _SessionMessageExchangeOut(
+        user_message=SessionMessageOut.model_validate(ctx.user_msg),
+        assistant_message=(
+            SessionMessageOut.model_validate(assistant) if assistant is not None else None
+        ),
+        ai_error=ai_error,
+        session=LearningSessionOut.model_validate(ctx.session),
+        step_evaluation=step_evaluation,
+        topic_transition=topic_transition,
+        timings=timings,
+        model_warning=ctx.model_warning,
+    )
+
+
+def assemble_exchange(ctx: MessageContext) -> _SessionMessageExchangeOut:
+    """Commit the turn + refresh the rows, then build the success response
+    from the assistant message + step-evaluation + topic-transition stored
+    on the context.
+    """
+    ctx.db.commit()
+    assert ctx.assistant_msg is not None
+    ctx.db.refresh(ctx.assistant_msg)
+    ctx.db.refresh(ctx.session)
+    return build_exchange_response(
+        ctx,
+        assistant=ctx.assistant_msg,
+        step_evaluation=ctx.step_eval_out,
+        topic_transition=ctx.topic_transition_out,
+    )
+
+
 @router.post(
     "/{session_id}/message",
     response_model=_SessionMessageExchangeOut,
@@ -1060,47 +1114,15 @@ def append_message(
 
     persist_user_message(ctx)
 
-    # Helper closure: every exit point of this handler returns
-    # the same composite shape, so the frontend's typed contract
-    # stays consistent. v0.4.0: the response now also carries the
-    # full LearningSession row so the frontend can read the
-    # current cycle_step without a separate fetch.
-    def _build_response(
-        assistant: SessionMessage | None = None,
-        ai_error: str | None = None,
-        step_evaluation: _StepEvaluationOut | None = None,
-        topic_transition: _TopicTransitionOut | None = None,
-    ) -> _SessionMessageExchangeOut:
-        total_ms = int((time.monotonic() - ctx.request_start_ts) * 1000)
-        timings = _TimingsOut(
-            learning_ms=ctx.learning_ms,
-            evaluation_ms=ctx.evaluation_ms,
-            topic_transition_ms=ctx.topic_transition_ms,
-            total_ms=total_ms,
-            parallel_saved_ms=ctx.parallel_saved_ms,
-        )
-        return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(ctx.user_msg),
-            assistant_message=(
-                SessionMessageOut.model_validate(assistant) if assistant is not None else None
-            ),
-            ai_error=ai_error,
-            session=LearningSessionOut.model_validate(sess),
-            step_evaluation=step_evaluation,
-            topic_transition=topic_transition,
-            timings=timings,
-            model_warning=ctx.model_warning,
-        )
-
     if payload.role != MessageRole.USER:
         # No AI step for assistant / system writes; no cycle-step
         # advance either (the advance only fires on a real
         # learner-AI round-trip).
-        return _build_response()
+        return build_exchange_response(ctx)
 
     ai_error = resolve_ai_context(ctx)
     if ai_error is not None:
-        return _build_response(ai_error=ai_error)
+        return build_exchange_response(ctx, ai_error=ai_error)
     # resolve_ai_context guarantees these are set when it returns None;
     # the downstream phase functions read ctx.project directly.
     assert ctx.provider_key is not None
@@ -1138,14 +1160,15 @@ def append_message(
         )
         ctx.learning_ms = int((time.monotonic() - learning_start) * 1000)
     except Exception as exc:  # noqa: BLE001
-        return _build_response(ai_error=f"AI provider error: {exc}")
+        return build_exchange_response(ctx, ai_error=f"AI provider error: {exc}")
 
     if not assistant_text:
-        return _build_response(
+        return build_exchange_response(
+            ctx,
             ai_error=(
                 f"No registered provider returned a reply for model {model!r}. "
                 f"Is the {provider_key!r} provider plugin enabled?"
-            )
+            ),
         )
 
     assistant_msg = SessionMessage(
@@ -1162,15 +1185,7 @@ def append_message(
     run_step_evaluation(ctx)
     run_auto_loop(ctx)
 
-    db.commit()
-    db.refresh(assistant_msg)
-    db.refresh(sess)
-
-    return _build_response(
-        assistant=assistant_msg,
-        step_evaluation=ctx.step_eval_out,
-        topic_transition=ctx.topic_transition_out,
-    )
+    return assemble_exchange(ctx)
 
 
 # --- POST /{id}/message/stream (v1.6.0 / Phase 19) -------------------------
