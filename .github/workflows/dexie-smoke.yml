@@ -49,17 +49,20 @@ jobs:
       # invalidates when the @playwright/test version changes; on a miss the
       # install below downloads + the cache is saved for next time.
       - name: Cache Playwright browsers
+        id: playwright-cache
         uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('e2e/package-lock.json') }}
 
-      - name: Install Playwright browsers
+      # Cache MISS: download the browser (+ OS deps). The CDN download is the
+      # #317 hang cause, so kill a stuck attempt at 8 min and retry up to 3x
+      # (inside the 30-min job budget); the first success populates the cache
+      # so every later run takes the cache-hit path below and skips the
+      # download entirely.
+      - name: Install Playwright browsers (cache miss)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         working-directory: e2e
-        # A hung Playwright CDN download (the #317 timeout cause) is killed
-        # at 8 min and retried fresh, rather than blocking the whole job for
-        # 30 min. On a warm cache the install is near-instant; the first
-        # successful run populates ~/.cache/ms-playwright for the next.
         run: |
           for attempt in 1 2 3; do
             echo "::group::Playwright install (attempt $attempt)"
@@ -72,6 +75,13 @@ jobs:
           done
           echo "Playwright browser install failed after 3 attempts"
           exit 1
+
+      # Cache HIT: the browser binary is restored from cache, so NO CDN
+      # download happens (no hang). Only the fast, no-download OS deps remain.
+      - name: Install Playwright OS deps (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        working-directory: e2e
+        run: npx playwright install-deps chromium
 
       # Builds the dexie frontend (VITE_STORAGE_MODE=dexie) and runs the
       # Playwright dexie config; both halves live in the make target so CI
