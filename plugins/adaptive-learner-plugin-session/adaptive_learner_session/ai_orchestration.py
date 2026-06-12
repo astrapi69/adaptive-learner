@@ -18,8 +18,11 @@ The orchestration is intentionally a separate module so:
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 # Provider-key -> default model. Single source of truth for the
 # v0.2.0 ai_complete dispatch. Each provider plugin's ai_complete
@@ -177,8 +180,8 @@ async def call_ai_complete_async(
                 result = await result
             if isinstance(result, str):
                 return result
-    except Exception:  # noqa: BLE001 — fallback to sync below
-        pass
+    except Exception as err:  # noqa: BLE001 — fallback to sync below
+        logger.debug("Async ai_complete hook unavailable, falling back to sync: %s", err)
 
     # Fallback: run the sync hook on a thread so the caller can
     # await it and still benefit from asyncio.gather parallelism.

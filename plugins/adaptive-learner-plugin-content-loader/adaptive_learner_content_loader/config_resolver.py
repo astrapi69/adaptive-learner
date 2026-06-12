@@ -126,7 +126,8 @@ def _read_secrets_yaml() -> dict[str, Any]:
             raw = yaml.safe_load(candidate.read_text(encoding="utf-8"))
             if isinstance(raw, dict):
                 return raw
-        except yaml.YAMLError:  # pragma: no cover - defensive
+        except yaml.YAMLError as err:  # pragma: no cover - defensive
+            logger.warning("Ignoring malformed secrets file %s: %s", candidate, err)
             continue
     return {}
 

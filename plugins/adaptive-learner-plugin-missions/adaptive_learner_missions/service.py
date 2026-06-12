@@ -8,6 +8,7 @@ client-side path. Idempotent per day via the UNIQUE constraint on
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
@@ -18,6 +19,8 @@ from app.models import ElementError, LessonProgress, UserMission, UserStreak, Us
 
 from .catalog import get_template
 from .generator import assign_daily_missions
+
+logger = logging.getLogger(__name__)
 
 # Parity with frontend/src/lib/missions/progress.ts.
 
@@ -243,8 +246,13 @@ def get_daily(
                     reason=f"mission:{template.id}",
                 )
                 row.xp_awarded = True
-            except Exception:  # noqa: BLE001 - XP is supplementary
-                pass
+            except Exception as err:  # noqa: BLE001 - XP is supplementary
+                logger.warning(
+                    "Failed to award mission XP for user %s template %s: %s",
+                    user_id,
+                    template.id,
+                    err,
+                )
     db.commit()
 
     missions = [dm for r in rows if (dm := _to_daily(r)) is not None]
