@@ -21,7 +21,6 @@
  *     either).
  */
 
-import type { EntityTable } from "dexie";
 
 import { calculateProfile, questionsForLang } from "./assessment";
 import {
@@ -49,10 +48,7 @@ import {
   getDb,
   newId,
   nowIso,
-  type AdaptiveLearnerDB,
   type CurriculumRow,
-  type ImportedConversationRow,
-  type ImportedMessageRow,
   type LearningProfileRow,
   type LearningProjectRow,
   type LearningTopicRow,
@@ -100,7 +96,6 @@ import {
   recencyFromCommits,
 } from "./tools";
 import { ApiError } from "../api/client";
-import { computeContentHash } from "../chat_import/content-hash";
 import {
   aiValidateDexie,
   deleteSetDexie,
@@ -148,15 +143,7 @@ import type {
 import type {
   AssessmentEvaluatePayload,
   AssessmentQuestion,
-  ConversationAnalysisResult,
   Curriculum,
-  ImportedConversation,
-  ImportedConversationAnalysis,
-  ImportedConversationCreateBody,
-  ImportedConversationDetail,
-  ImportedConversationSource,
-  ImportedConversationUpdateBody,
-  ImportedMessage,
   LearningProfile,
   LearningProject,
   LearningSession,
@@ -184,228 +171,21 @@ import type {
   IStorageService,
 } from "./types";
 import { aiComplete, resolveModel } from "./ai-providers";
+import { dexieImports } from "./dexie-imports";
+import {
+  ensureSettings,
+  requireRow,
+  rowToCurriculum,
+  rowToLesson,
+  rowToProfile,
+  rowToProject,
+  rowToSettings,
+  rowToTopic,
+  rowToUser,
+} from "./dexie-rows";
 
-// ---- Row <-> wire mappers --------------------------------------------
-
-function rowToUser(row: UserRow): User {
-  return {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    language: row.language,
-    created_at: row.created_at,
-    updated_at: row.updated_at,
-  };
-}
-
-function rowToProject(row: LearningProjectRow): LearningProject {
-  // v1.31.0 / Phase 46F: back-fill kind for pre-migration
-  // rows. Dexie-mode users never create a "content"
-  // pseudo-project (the unification path runs server-side
-  // only), so every row in Dexie storage is "standard" by
-  // construction — but the type contract requires the
-  // field, so we default.
-  const kind = (row.kind ?? "standard") as LearningProject["kind"];
-  return {
-    id: row.id,
-    user_id: row.user_id,
-    topic: row.topic,
-    goal: row.goal,
-    timeframe: row.timeframe,
-    daily_minutes: row.daily_minutes,
-    current_problem: row.current_problem,
-    active: row.active,
-    kind,
-    created_at: row.created_at,
-    updated_at: row.updated_at,
-  };
-}
-
-function rowToSettings(row: UserSettingsRow): UserSettings {
-  // Phase 34 (v1.20.0) — Dexie mode is desktop-only via PWA;
-  // there is no filesystem access from the browser sandbox, so
-  // ``secrets.yaml`` never applies here. Every key source
-  // collapses to either "settings" (when present in IndexedDB)
-  // or "none" (when absent). The UI renders identical
-  // affordances in both modes; in Dexie mode the user never
-  // sees the externally-managed warning because they can't
-  // hit that state.
-  return {
-    id: row.id,
-    user_id: row.user_id,
-    language: row.language,
-    active_provider: row.active_provider,
-    has_anthropic_key: !!row.api_key_anthropic,
-    has_openai_key: !!row.api_key_openai,
-    has_gemini_key: !!row.api_key_gemini,
-    model_override_anthropic: row.model_override_anthropic,
-    model_override_openai: row.model_override_openai,
-    model_override_gemini: row.model_override_gemini,
-    key_source_anthropic: row.api_key_anthropic ? "settings" : "none",
-    key_source_openai: row.api_key_openai ? "settings" : "none",
-    key_source_gemini: row.api_key_gemini ? "settings" : "none",
-    created_at: row.created_at,
-    updated_at: row.updated_at,
-  };
-}
-
-function rowToCurriculum(row: CurriculumRow): Curriculum {
-  return {
-    id: row.id,
-    user_id: row.user_id,
-    title: row.title,
-    description: row.description,
-    language: row.language,
-    created_at: row.created_at,
-    updated_at: row.updated_at,
-    imported_conversation_id: row.imported_conversation_id ?? null,
-  };
-}
-
-function rowToTopic(row: LearningTopicRow): LearningTopic {
-  return {
-    id: row.id,
-    curriculum_id: row.curriculum_id,
-    parent_id: row.parent_id,
-    title: row.title,
-    description: row.description,
-    order_index: row.order_index,
-    created_at: row.created_at,
-    updated_at: row.updated_at,
-  };
-}
-
-function rowToProfile(row: LearningProfileRow): LearningProfile {
-  const weights = {
-    deductive: row.deductive,
-    inductive: row.inductive,
-    error_based: row.error_based,
-    dialogic: row.dialogic,
-    contextual: row.contextual,
-    ai_adaptive: row.ai_adaptive,
-  };
-  // Alphabetical tie-break, matches LearningProfile.dominant_method on backend.
-  const sortedKeys = (Object.keys(weights) as (keyof typeof weights)[]).sort();
-  let dominant = sortedKeys[0];
-  let bestVal = -Infinity;
-  for (const k of sortedKeys) {
-    if (weights[k] > bestVal) {
-      dominant = k;
-      bestVal = weights[k];
-    }
-  }
-  return {
-    id: row.id,
-    user_id: row.user_id,
-    project_id: row.project_id,
-    deductive: row.deductive,
-    inductive: row.inductive,
-    error_based: row.error_based,
-    dialogic: row.dialogic,
-    contextual: row.contextual,
-    ai_adaptive: row.ai_adaptive,
-    assessed_at: row.assessed_at,
-    version: row.version,
-    dominant_method: dominant,
-  };
-}
-
-function rowToLesson(row: LessonRow): Lesson {
-  return {
-    id: row.id,
-    curriculum_id: row.curriculum_id,
-    title: row.title,
-    content: row.content,
-    order_index: row.order_index,
-    created_at: row.created_at,
-    updated_at: row.updated_at,
-  };
-}
-
-function rowToImportedConversation(
-  row: ImportedConversationRow,
-): ImportedConversation {
-  return {
-    id: row.id,
-    user_id: row.user_id,
-    project_id: row.project_id,
-    source: row.source as ImportedConversationSource,
-    title: row.title,
-    message_count: row.message_count,
-    imported_at: row.imported_at,
-    analyzed: row.analyzed,
-    topic_tag: row.topic_tag,
-    model: row.model,
-    source_created_at: row.source_created_at,
-    analysis_result: row.analysis_result as ConversationAnalysisResult | null,
-    content_hash: row.content_hash ?? null,
-    source_language: row.source_language ?? null,
-    target_language: row.target_language ?? null,
-  };
-}
-
-function rowToImportedMessage(row: ImportedMessageRow): ImportedMessage {
-  return {
-    id: row.id,
-    conversation_id: row.conversation_id,
-    role: row.role,
-    content: row.content,
-    timestamp: row.timestamp,
-    order_index: row.order_index,
-  };
-}
-
-// ---- Helpers ----------------------------------------------------------
-
-async function requireRow<T extends { id: string }>(
-  table: EntityTable<T, "id">,
-  id: string,
-  label: string,
-): Promise<T> {
-  // Dexie's IDType<T, "id"> is a conditional type that doesn't
-  // reduce to ``string`` even when the row's id field IS a
-  // string. Cast at this single boundary so the call sites
-  // stay legible.
-  const row = await table.get(id as unknown as Parameters<typeof table.get>[0]);
-  if (!row) {
-    throw new ApiError(404, `${label} ${id} not found`);
-  }
-  return row;
-}
-
-/**
- * Ensure a UserSettings row exists for ``userId``. Used by every
- * settings.* method so a fresh-install browser doesn't 404 on the
- * first read.
- */
-async function ensureSettings(
-  db: AdaptiveLearnerDB,
-  userId: string,
-  language: string,
-): Promise<UserSettingsRow> {
-  const existing = await db.userSettings
-    .where("user_id")
-    .equals(userId)
-    .first();
-  if (existing) return existing;
-  const ts = nowIso();
-  const row: UserSettingsRow = {
-    id: newId(),
-    user_id: userId,
-    language,
-    active_provider: "anthropic",
-    api_key_anthropic: null,
-    api_key_openai: null,
-    api_key_gemini: null,
-    model_override_anthropic: null,
-    model_override_openai: null,
-    model_override_gemini: null,
-    created_at: ts,
-    updated_at: ts,
-  };
-  await db.userSettings.add(row);
-  return row;
-}
+// Row <-> wire mappers + requireRow/ensureSettings live in
+// ./dexie-rows (#354), shared with the per-domain namespace modules.
 
 // ---- Storage object ---------------------------------------------------
 
@@ -1418,246 +1198,7 @@ export const dexieStorage: IStorageService = {
 
   // ---- Imported conversations (v0.9.0 / Phase 12C) ------------------
 
-  imports: {
-    async list(userId: string): Promise<ImportedConversation[]> {
-      const db = getDb();
-      const rows = await db.importedConversations
-        .where("user_id")
-        .equals(userId)
-        .toArray();
-      rows.sort((a, b) =>
-        a.imported_at < b.imported_at
-          ? 1
-          : a.imported_at > b.imported_at
-            ? -1
-            : 0,
-      );
-      return rows.map(rowToImportedConversation);
-    },
-    async create(
-      userId: string,
-      body: ImportedConversationCreateBody,
-    ): Promise<ImportedConversation> {
-      if (!body.messages || body.messages.length === 0) {
-        throw new ApiError(
-          422,
-          "ImportedConversation requires at least one message",
-          "/users/.../imports",
-          "POST",
-        );
-      }
-      const db = getDb();
-      const user = await db.users.get(userId);
-      if (!user) {
-        throw new ApiError(
-          404,
-          `User ${userId} not found.`,
-          "/users/.../imports",
-          "POST",
-        );
-      }
-      if (body.project_id) {
-        const project = await db.learningProjects.get(body.project_id);
-        if (!project) {
-          throw new ApiError(
-            404,
-            `LearningProject ${body.project_id} not found.`,
-            "/users/.../imports",
-            "POST",
-          );
-        }
-        if (project.user_id !== userId) {
-          throw new ApiError(
-            400,
-            `Project ${body.project_id} does not belong to user ${userId}.`,
-            "/users/.../imports",
-            "POST",
-          );
-        }
-      }
-      // Phase 36 Bug 1 — compute the same SHA-256 the
-      // backend computes (see content-hash.ts) so the per-
-      // user duplicate check matches the API path's 409.
-      const contentHash = await computeContentHash(body.messages);
-      const existing = await db.importedConversations
-        .where("content_hash")
-        .equals(contentHash)
-        .filter((row) => row.user_id === userId)
-        .first();
-      if (existing) {
-        const err = new ApiError(
-          409,
-          "Conversation already imported with the same content.",
-          "/users/.../imports",
-          "POST",
-          undefined,
-          { existing_id: existing.id },
-        );
-        throw err;
-      }
-      const conversationId = newId();
-      const now = nowIso();
-      const conv: ImportedConversationRow = {
-        id: conversationId,
-        user_id: userId,
-        project_id: body.project_id ?? null,
-        source: body.source,
-        title: body.title,
-        message_count: body.messages.length,
-        imported_at: now,
-        analyzed: false,
-        analysis_result: null,
-        topic_tag: body.topic_tag ?? null,
-        model: body.model ?? null,
-        source_created_at: body.source_created_at ?? null,
-        content_hash: contentHash,
-        source_language: body.source_language ?? null,
-        target_language: body.target_language ?? null,
-      };
-      await db.importedConversations.put(conv);
-      // v1.8.0 / Phase 21D — every imported message now
-      // carries ``created_at`` for sync timestamp filtering.
-      // We use the parent's ``imported_at`` so every
-      // message of a single import shares the same wall-
-      // clock moment (matches the backend's Alembic 0007
-      // back-fill).
-      const messageRows: ImportedMessageRow[] = body.messages.map(
-        (msg, idx) => ({
-          id: newId(),
-          conversation_id: conversationId,
-          role: msg.role,
-          content: msg.content,
-          timestamp: msg.timestamp ?? null,
-          order_index: idx,
-          created_at: conv.imported_at,
-        }),
-      );
-      await db.importedMessages.bulkPut(messageRows);
-      return rowToImportedConversation(conv);
-    },
-    async get(conversationId: string): Promise<ImportedConversationDetail> {
-      const db = getDb();
-      const conv = await db.importedConversations.get(conversationId);
-      if (!conv) {
-        throw new ApiError(
-          404,
-          `ImportedConversation ${conversationId} not found.`,
-          `/imports/${conversationId}`,
-          "GET",
-        );
-      }
-      const messages = await db.importedMessages
-        .where("conversation_id")
-        .equals(conversationId)
-        .sortBy("order_index");
-      return {
-        ...rowToImportedConversation(conv),
-        messages: messages.map(rowToImportedMessage),
-      };
-    },
-    async update(
-      conversationId: string,
-      body: ImportedConversationUpdateBody,
-    ): Promise<ImportedConversation> {
-      const db = getDb();
-      const conv = await db.importedConversations.get(conversationId);
-      if (!conv) {
-        throw new ApiError(
-          404,
-          `ImportedConversation ${conversationId} not found.`,
-          `/imports/${conversationId}`,
-          "PATCH",
-        );
-      }
-      if (body.project_id !== undefined && body.project_id !== null) {
-        const project = await db.learningProjects.get(body.project_id);
-        if (!project) {
-          throw new ApiError(
-            404,
-            `LearningProject ${body.project_id} not found.`,
-            `/imports/${conversationId}`,
-            "PATCH",
-          );
-        }
-        if (project.user_id !== conv.user_id) {
-          throw new ApiError(
-            400,
-            `Project ${body.project_id} does not belong to user ${conv.user_id}.`,
-            `/imports/${conversationId}`,
-            "PATCH",
-          );
-        }
-      }
-      const updated: ImportedConversationRow = {
-        ...conv,
-        project_id:
-          body.project_id !== undefined ? body.project_id : conv.project_id,
-        topic_tag:
-          body.topic_tag !== undefined ? body.topic_tag : conv.topic_tag,
-        title: body.title ?? conv.title,
-        source_language:
-          body.source_language !== undefined
-            ? body.source_language
-            : conv.source_language,
-        target_language:
-          body.target_language !== undefined
-            ? body.target_language
-            : conv.target_language,
-      };
-      await db.importedConversations.put(updated);
-      return rowToImportedConversation(updated);
-    },
-    async remove(conversationId: string): Promise<void> {
-      const db = getDb();
-      await db.importedMessages
-        .where("conversation_id")
-        .equals(conversationId)
-        .delete();
-      await db.importedConversations.delete(conversationId);
-    },
-    async saveAnalysis(
-      conversationId: string,
-      analysis: ImportedConversationAnalysis,
-    ): Promise<ImportedConversationDetail> {
-      const db = getDb();
-      const conv = await db.importedConversations.get(conversationId);
-      if (!conv) {
-        throw new ApiError(
-          404,
-          `ImportedConversation ${conversationId} not found.`,
-          `/imports/${conversationId}/analysis`,
-          "POST",
-        );
-      }
-      const updated: ImportedConversationRow = {
-        ...conv,
-        analyzed: true,
-        analysis_result: analysis.analysis_result as Record<string, unknown>,
-      };
-      await db.importedConversations.put(updated);
-      const messages = await db.importedMessages
-        .where("conversation_id")
-        .equals(conversationId)
-        .sortBy("order_index");
-      return {
-        ...rowToImportedConversation(updated),
-        messages: messages.map(rowToImportedMessage),
-      };
-    },
-    async analyze(conversationId: string): Promise<ImportedConversationDetail> {
-      // Dexie mode runs the analysis browser-side because the
-      // cleartext API key lives in the local Dexie row. The
-      // caller (Import.tsx) branches on storage.mode and uses
-      // ``analyzeConversation`` + ``saveAnalysis`` instead;
-      // calling this method in Dexie mode is a wiring bug.
-      throw new ApiError(
-        501,
-        "Server-side analyze is API-mode only. Use the browser-direct path in Dexie mode.",
-        `/imports/${conversationId}/analyze`,
-        "POST",
-      );
-    },
-  },
+  imports: dexieImports,
 
   // ---- System info (v1.1.0 / Phase 14B) -----------------------------
 
