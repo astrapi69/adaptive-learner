@@ -24,10 +24,30 @@ jobs:
   dexie-smoke:
     name: Dexie-mode E2E smoke
     runs-on: ubuntu-latest
+    # Run inside the official Playwright image so Chromium + the headless shell
+    # are PRE-BAKED -- no cdn.playwright.dev download. #317 was not a
+    # browser-SIZE problem (the --only-shell + cache + retry route could never
+    # work: the cache only fills after one successful download, and the very
+    # first download hung -- zero bytes, killed at the 8-min timeout on all 3
+    # retries across every run). The CDN itself was unreachable from the
+    # runner. The image is pulled from mcr.microsoft.com, which the Azure-hosted
+    # runner reaches fine (the apt steps from packages.microsoft.com always
+    # succeeded). Pin the tag to the @playwright/test version in
+    # e2e/package-lock.json (1.59.1); bump both together.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      # --user 1001 = the runner user, so checkout-owned files stay writable
+      # and actions/upload-artifact can read the report (Playwright CI docs).
+      options: --user 1001
+    # Pre-baked browsers mean no download phase: build (~2-3 min) + smoke
+    # (~6 min) fits comfortably; the old 30-min cap was only there to survive a
+    # cold browser download that no longer happens.
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
 
+      # The image ships Node 22; install 24 to match the repo's engines
+      # (frontend + e2e both require >=24) so CI runs the same runtime as local.
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
@@ -41,15 +61,18 @@ jobs:
         working-directory: e2e
         run: npm ci
 
-      - name: Install Playwright browsers
-        working-directory: e2e
-        run: npx playwright install --with-deps chromium
+      # NO `playwright install` step: the browsers are baked into the container.
+      # These two commands mirror the `make test-dexie-smoke` target verbatim;
+      # inlined here because the Playwright noble image has no `make` and the
+      # --user 1001 (non-root) container cannot apt-get install it. Keep the two
+      # in lock-step with the Makefile target if it ever changes.
+      - name: Build dexie frontend
+        working-directory: frontend
+        run: VITE_STORAGE_MODE=dexie npm run build
 
-      # Builds the dexie frontend (VITE_STORAGE_MODE=dexie) and runs the
-      # Playwright dexie config; both halves live in the make target so CI
-      # and local stay in lock-step.
       - name: Dexie smoke
-        run: make test-dexie-smoke
+        working-directory: e2e
+        run: npx playwright test --config=playwright.dexie.config.ts
 
       - name: Upload Playwright report
         if: always()
