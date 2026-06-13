@@ -1599,6 +1599,7 @@ content:
     completed: "Το σετ ολοκληρώθηκε"
     empty: "Ξεκινήστε το πρώτο σας μάθημα!"
     progress: "Βήμα {n}/{total}"
+    imported_analysis: "Εισαγόμενη ανάλυση"
   import_chat:
     button: "Εισαγωγή συνομιλίας"
   search:

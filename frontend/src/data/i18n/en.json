@@ -1733,7 +1733,8 @@
       "next": "Next Lesson",
       "completed": "Set completed",
       "empty": "Start your first lesson!",
-      "progress": "Step {n}/{total}"
+      "progress": "Step {n}/{total}",
+      "imported_analysis": "Imported analysis"
     },
     "import_chat": {
       "button": "Import Chat"

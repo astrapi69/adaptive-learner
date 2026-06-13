@@ -1597,6 +1597,7 @@ content:
     completed: "Conjunto concluído"
     empty: "Comece a sua primeira lição!"
     progress: "Passo {n}/{total}"
+    imported_analysis: "Análise importada"
   import_chat:
     button: "Importar conversa"
   search:

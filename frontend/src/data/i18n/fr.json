@@ -1733,7 +1733,8 @@
       "next": "Leçon suivante",
       "completed": "Ensemble terminé",
       "empty": "Commencez votre première leçon !",
-      "progress": "Étape {n}/{total}"
+      "progress": "Étape {n}/{total}",
+      "imported_analysis": "Analyse importée"
     },
     "import_chat": {
       "button": "Importer un chat"
