@@ -9,7 +9,28 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.76.0** (maintenance -
+- **Current state:** **v1.77.0** (architecture release -
+  **R-M-W data-integrity (3 phases) + god-file decomposition complete + 3 CI
+  watchers + Vibe Coding Policy**: the three-phase Dexie read-modify-write
+  remediation closes the lost-update class across the storage layer - Phase 1
+  atomic increments via `table.modify()` / `db.transaction` with an idempotent
+  `session.end` status-guard (#395), Phase 2 the create-race ensure helpers +
+  unique indexes (`&user_id`, `&key`, compound `&[user_id+badge_id]`) with the
+  v25->v27 dedup migration (#398), Phase 3 the 13 full-replace `update` methods
+  wrapped in `db.transaction` (#402), all under #390; the god-file decomposition
+  is complete across backend (session `append_message` -> `session_runner`
+  #352, `backup_service` split #353, startup/config/sync_push/sources
+  extractions #353, AI-caller consolidation #340) and frontend (api `client.ts`
+  split #396, storage types/db-rows/dexie namespaces #364/#392/#360/#365/#366,
+  and the Settings/Backup/ShareWizard/Content/Lesson page splits
+  #387/#385/#389/#403/#356/#358/#406); three warn-only CI watchers ship -
+  cohesion #371, security-scan #378, complexity #405 (radon + eslint,
+  `make check-complexity`); plus the Vibe Coding Policy #383, backend
+  parameter-dataclasses (`ProgressUpdate` #376, context dataclasses #382), a
+  feature-state policy (visible-but-disabled, never hidden) #336, and the
+  gitflow branching model #334; an npm-audit `qs` override #379; no schema/API/
+  data change.)
+  v1.76.0 = (maintenance -
   **exercise-renderer dedup + ownership-check consolidation + backup-button
   unification**: a `useControlledExercise` hook + a shared `ExerciseFooter`
   remove ~300 lines of lifecycle duplication across all 5 exercise renderers,
