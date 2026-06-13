@@ -24,7 +24,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke \
        test-coverage test-coverage-backend test-coverage-frontend \
        stryker stryker-quick \
-       check-types check-types-backend check-types-frontend check-file-sizes check-complexity \
+       check-types check-types-backend check-types-frontend check-file-sizes check-complexity check-complexity-gate check-complexity-gate-update \
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
@@ -334,6 +334,12 @@ check-file-sizes: ## Cohesion watcher: warn >500, error >1000 lines (ratchet via
 
 check-complexity: ## Complexity watcher (warn-only): radon (Python) + eslint complexity (TS)
 	bash scripts/check-complexity.sh
+
+check-complexity-gate: ## Complexity ratchet gate (#407): fail on new/regressed offenders vs .complexity-baseline
+	bash scripts/check-complexity.sh --gate
+
+check-complexity-gate-update: ## Regenerate .complexity-baseline from current offenders (ratchet may only shrink)
+	bash scripts/check-complexity.sh --update-baseline
 
 check-types: check-types-backend check-types-frontend ## Run all type checks
 
