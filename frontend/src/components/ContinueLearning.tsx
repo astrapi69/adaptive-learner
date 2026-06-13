@@ -113,6 +113,14 @@ export default function ContinueLearning({
 }: ContinueLearningProps) {
     const {t} = useI18n();
     const [items, setItems] = useState<DisplayItem[] | null>(null);
+    // Derived once so the effect depends on a stable primitive string, not the
+    // t function identity (which is fresh per render under the i18n test mock
+    // and would re-run the effect spuriously). The label still re-localizes on
+    // a real language change because its string value changes.
+    const importedAnalysisLabel = t(
+        "content.continue_learning.imported_analysis",
+        "Imported analysis",
+    );
 
     useEffect(() => {
         if (!userId) {
@@ -180,7 +188,7 @@ export default function ContinueLearning({
                             sets,
                             group.source,
                             group.setId,
-                            t("content.continue_learning.imported_analysis", "Imported analysis"),
+                            importedAnalysisLabel,
                         ),
                         mode: action.mode,
                         targetRoute: lessonRoute(
@@ -210,7 +218,7 @@ export default function ContinueLearning({
         return () => {
             cancelled = true;
         };
-    }, [userId, maxItems]);
+    }, [userId, maxItems, importedAnalysisLabel]);
 
     // Loading — render nothing to avoid layout shift.
     if (items === null) return null;
