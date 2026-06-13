@@ -1,0 +1,19 @@
+# .filesize-baseline - Ratchet fuer bestehende God-Files
+#
+# Diese Dateien lagen beim Einbau des Watchers bereits ueber der
+# 1000-Zeilen-Error-Schwelle. Sie sind mixed-concern God-Files und gehoeren
+# damit NICHT auf die .filesize-whitelist (die ist nur fuer bewusst grosse,
+# kohäsive Dateien). Stattdessen werden sie hier bei ihrem damaligen Stand
+# eingefroren: der Ist-Stand wird toleriert, aber die Datei darf NICHT
+# wachsen. Wird eine Baseline-Datei groesser als ihr Wert, blockiert der
+# Check (exit 1).
+#
+# Ratchet: Nach jedem Split die Zeilenzahl hier SENKEN (oder den Eintrag
+# loeschen, sobald die Datei unter 1000 liegt). Ist die Datei leer, steht
+# die 1000er-Hard-Gate ohne Ausnahmen.
+#
+# Splitting wird in #372 verfolgt (Cohesion Phase 2).
+#
+# Format: <relativer Pfad>  <max-Zeilen>   (# = Kommentar)
+
+plugins/adaptive-learner-plugin-session/adaptive_learner_session/routes.py  1156

@@ -186,7 +186,7 @@ only.
   Frontend coverage requires Node 20+; lower versions fail with a
   `node:inspector/promises` ImportError. CI uses Node 24 so this
   is only a local concern.
-- `.github/workflows/coverage.yml` - runs on every push to main
+- `.github/workflows/coverage.yml` - runs on every push to develop or main
   and every PR. Uploads HTML reports + coverage.xml as
   GitHub Actions artifacts (14 day retention).
 
@@ -493,7 +493,8 @@ live in `docs/roadmap-archive/YYYY-MM.md`.
 
 A task is done when ALL of:
 
-- Code is implemented and merged to `main`.
+- Code is implemented and merged to `develop` (gitflow #334; `main` holds
+  releases only).
 - Tests for the change are green (`make test`).
 - Documentation is updated (CLAUDE.md, API docs, help articles).
 - CHANGELOG entry exists if the change is user-facing.

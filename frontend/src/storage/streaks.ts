@@ -41,21 +41,34 @@ function daysBetween(a: string, b: string): number {
 
 async function getOrCreateRow(userId: string): Promise<UserStreakRow> {
     const db = getDb();
-    const existing = await db.userStreaks.where({user_id: userId}).first();
-    if (existing) return existing;
-    const row: UserStreakRow = {
-        id: newId(),
-        user_id: userId,
-        freezes_available: 0,
-        last_freeze_earned_on: null,
-        last_freeze_used_on: null,
-        weekend_mode: false,
-        current_streak_days: 0,
-        longest_streak_days: 0,
-        updated_at: nowIso(),
-    };
-    await db.userStreaks.put(row);
-    return row;
+    // #390 Phase 2: first-or-create inside one rw transaction so two
+    // concurrent callers (the streak is written on the read path too)
+    // converge to a single row. The &user_id unique index (Dexie v27)
+    // is the DB-level backstop.
+    let result: UserStreakRow | null = null;
+    await db.transaction("rw", db.userStreaks, async () => {
+        const existing = await db.userStreaks
+            .where({user_id: userId})
+            .first();
+        if (existing) {
+            result = existing;
+            return;
+        }
+        const row: UserStreakRow = {
+            id: newId(),
+            user_id: userId,
+            freezes_available: 0,
+            last_freeze_earned_on: null,
+            last_freeze_used_on: null,
+            weekend_mode: false,
+            current_streak_days: 0,
+            longest_streak_days: 0,
+            updated_at: nowIso(),
+        };
+        await db.userStreaks.put(row);
+        result = row;
+    });
+    return result as unknown as UserStreakRow;
 }
 
 async function userActivityDates(userId: string): Promise<Set<string>> {
@@ -114,48 +127,68 @@ export function computeCurrentStreakWithState(
 }
 
 export async function updateStreakState(userId: string): Promise<StreakState> {
-    const row = await getOrCreateRow(userId);
+    await getOrCreateRow(userId);
     const activity = await userActivityDates(userId);
     const today = nowIso().slice(0, 10);
-    const {streak, freezesConsumed} = computeCurrentStreakWithState(
-        activity,
-        today,
-        row.weekend_mode,
-        row.freezes_available,
-    );
-    let newFreezes = Math.max(0, row.freezes_available - freezesConsumed);
-    let lastUsed = row.last_freeze_used_on;
-    if (freezesConsumed > 0) {
-        lastUsed = nowIso();
-    }
-    let lastEarned = row.last_freeze_earned_on;
-    if (streak > 0 && streak % FREEZE_GRANT_INTERVAL_DAYS === 0) {
-        const tooSoon =
-            lastEarned !== null && daysBetween(lastEarned.slice(0, 10), today) < 6;
-        if (!tooSoon && newFreezes < FREEZE_STOCK_CAP) {
-            newFreezes += 1;
-            lastEarned = nowIso();
-        }
-    }
-    const longest = Math.max(row.longest_streak_days, streak);
-    const updated: UserStreakRow = {
-        ...row,
-        freezes_available: newFreezes,
-        last_freeze_used_on: lastUsed,
-        last_freeze_earned_on: lastEarned,
-        current_streak_days: streak,
-        longest_streak_days: longest,
-        updated_at: nowIso(),
-    };
-    await getDb().userStreaks.put(updated);
+    // ``modify`` reads the streak row AND writes it back inside one
+    // IndexedDB readwrite transaction, so a concurrent
+    // ``setWeekendMode`` (or another ``updateStreakState`` on the
+    // read path) can't clobber the row with a stale snapshot (#390
+    // Class A). ``weekend_mode`` is read from the row INSIDE the
+    // modify, so a just-committed toggle is honoured.
+    let captured: StreakState | null = null;
+    await getDb()
+        .userStreaks.where({user_id: userId})
+        .modify((row) => {
+            const {streak, freezesConsumed} = computeCurrentStreakWithState(
+                activity,
+                today,
+                row.weekend_mode,
+                row.freezes_available,
+            );
+            let newFreezes = Math.max(0, row.freezes_available - freezesConsumed);
+            let lastUsed = row.last_freeze_used_on;
+            if (freezesConsumed > 0) {
+                lastUsed = nowIso();
+            }
+            let lastEarned = row.last_freeze_earned_on;
+            if (streak > 0 && streak % FREEZE_GRANT_INTERVAL_DAYS === 0) {
+                const tooSoon =
+                    lastEarned !== null &&
+                    daysBetween(lastEarned.slice(0, 10), today) < 6;
+                if (!tooSoon && newFreezes < FREEZE_STOCK_CAP) {
+                    newFreezes += 1;
+                    lastEarned = nowIso();
+                }
+            }
+            const longest = Math.max(row.longest_streak_days, streak);
+            row.freezes_available = newFreezes;
+            row.last_freeze_used_on = lastUsed;
+            row.last_freeze_earned_on = lastEarned;
+            row.current_streak_days = streak;
+            row.longest_streak_days = longest;
+            row.updated_at = nowIso();
+            captured = {
+                user_id: userId,
+                current_streak_days: streak,
+                longest_streak_days: longest,
+                freezes_available: newFreezes,
+                weekend_mode: row.weekend_mode,
+                last_freeze_earned_on: lastEarned,
+                last_freeze_used_on: lastUsed,
+            };
+        });
+    if (captured !== null) return captured;
+    // Defensive: row vanished between ensure and modify.
+    const fallback = await getOrCreateRow(userId);
     return {
         user_id: userId,
-        current_streak_days: streak,
-        longest_streak_days: longest,
-        freezes_available: newFreezes,
-        weekend_mode: updated.weekend_mode,
-        last_freeze_earned_on: lastEarned,
-        last_freeze_used_on: lastUsed,
+        current_streak_days: fallback.current_streak_days,
+        longest_streak_days: fallback.longest_streak_days,
+        freezes_available: fallback.freezes_available,
+        weekend_mode: fallback.weekend_mode,
+        last_freeze_earned_on: fallback.last_freeze_earned_on,
+        last_freeze_used_on: fallback.last_freeze_used_on,
     };
 }
 
@@ -167,10 +200,16 @@ export async function setWeekendMode(
     userId: string,
     enabled: boolean,
 ): Promise<StreakState> {
-    const row = await getOrCreateRow(userId);
-    row.weekend_mode = enabled;
-    row.updated_at = nowIso();
-    await getDb().userStreaks.put(row);
+    await getOrCreateRow(userId);
+    // Atomic single-field write so a concurrent ``updateStreakState``
+    // (which preserves whatever ``weekend_mode`` it reads) cannot
+    // clobber the toggle with a stale snapshot (#390 Class A).
+    await getDb()
+        .userStreaks.where({user_id: userId})
+        .modify((row) => {
+            row.weekend_mode = enabled;
+            row.updated_at = nowIso();
+        });
     return await updateStreakState(userId);
 }
 

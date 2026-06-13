@@ -126,17 +126,19 @@ describe("Settings page", () => {
     vi.restoreAllMocks();
   });
 
-  // Issue #51 — Sync needs a reachable backend; it must not be
-  // offered in Dexie mode (GitHub Pages / PWA-only, no backend).
+  // #335 (supersedes #51) — Sync needs a reachable backend; in Dexie
+  // mode (GitHub Pages / PWA-only, no backend) the controls are
+  // replaced by a visible desktop-only notice, never hidden.
   it("renders the Sync section in the Data tab when a backend is available (API mode)", async () => {
     storageState.mode = "api";
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=data");
     await screen.findByTestId("settings");
     expect(screen.getByTestId("settings-sync")).toBeInTheDocument();
+    expect(screen.queryByTestId("settings-sync-desktop-only")).not.toBeInTheDocument();
   });
 
-  it("hides the Sync section in Dexie mode (no backend)", async () => {
+  it("replaces the Sync controls with a desktop-only notice in Dexie mode", async () => {
     storageState.mode = "dexie";
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=data");
@@ -144,8 +146,12 @@ describe("Settings page", () => {
     // The Data panel still renders (Backup stays available)...
     expect(screen.getByTestId("settings-panel-data")).toBeVisible();
     expect(screen.getByTestId("settings-backup")).toBeInTheDocument();
-    // ...but the Sync section is not in the DOM at all.
+    // ...the Sync controls are gone, but the section header stays
+    // visible with the desktop-only notice (#335: disabled, not hidden).
     expect(screen.queryByTestId("settings-sync")).not.toBeInTheDocument();
+    const notice = screen.getByTestId("settings-sync-desktop-only");
+    expect(notice).toBeVisible();
+    expect(notice).toHaveTextContent("Sync");
   });
 
   it("redirects to /onboarding when user_id is missing", async () => {

@@ -227,8 +227,12 @@ def _conversation_transcript(
             parsed = json.loads(conv.analysis_result)
             if isinstance(parsed, dict):
                 analysis = parsed
-        except (TypeError, json.JSONDecodeError):
-            pass
+        except (TypeError, json.JSONDecodeError) as err:
+            logger.warning(
+                "Ignoring unparseable analysis_result for conversation %s: %s",
+                conversation_id,
+                err,
+            )
     return transcript, conv.user_id, conv.project_id, analysis
 
 

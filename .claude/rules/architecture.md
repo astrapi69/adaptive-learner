@@ -250,23 +250,32 @@ different slice of the UI (or none):
 | Mobile (client) | Dexie | scan QR / paste link, sync status after pairing |
 | PWA-only | Dexie | none |
 
-- **Current (Phase 1 LAN Mode not implemented):** the Sync section
-  is gated API-only — `resolveStorageMode() === "api" && <SyncSection />`
-  in `Settings.tsx`. Correct, because without a working pairing flow the
-  Mobile-client UI would run into nothing.
+- **Current (Phase 1 LAN Mode not implemented):** the Sync controls are
+  gated via the feature registry — `<Feature id={FEATURES.SYNC}>` in
+  `Settings.tsx` resolves to `disabled` (reason `desktop_only`) in Dexie
+  mode, and the `whenDisabled` fallback renders the section header plus
+  a notice card ("Only available with the desktop app"). Correct,
+  because without a working pairing flow the Mobile-client UI would run
+  into nothing — but the user still learns the feature exists.
 - **Later (when Phase 1 LAN Mode lands):** rebuild the binary gate
-  (API vs Dexie) into the three-way gate above. `resolveStorageMode()`
-  is binary and cannot distinguish Mobile-client from PWA-only — that
-  distinction (device detection vs an explicit "I am a mobile client"
-  flow) is an open architecture decision; do NOT reintroduce the
-  pairing UI in Dexie mode until it is made, or it becomes a dead
+  (API vs Dexie) into the three-way gate above. The current context
+  (`{mode, hasAiKey}`) cannot distinguish Mobile-client from PWA-only —
+  that distinction (device detection vs an explicit "I am a mobile
+  client" flow) is an open architecture decision; do NOT reintroduce
+  the pairing UI in Dexie mode until it is made, or it becomes a dead
   control on the PWA-only deployment.
-- **General rule:** a function that is not available is not offered —
-  no dead buttons, no greyed-out placeholders, no "not available"
-  hints. If it does not work for this role, the UI does not exist.
+- **General rule (feature-state policy, #335 — supersedes the #51
+  "UI does not exist" rule):** a product feature is never `hidden`.
+  Everything the user owns is visible — either `active`, or `disabled`
+  with a localized reason (`feature.api_key_required` /
+  `feature.desktop_only`). A disabled SECTION is not a greyed-out dead
+  panel: the header stays, the controls are replaced by a notice card
+  explaining the reason. A disabled BUTTON carries the reason as its
+  tooltip. `hidden` is reserved for dev-only feature flags and the
+  registry's fail-closed handling of unknown ids.
 
 Full reference: [docs/SYNC-ARCHITECTURE.md](../../docs/SYNC-ARCHITECTURE.md).
-Origin: issue #51.
+Origin: issue #51; state policy revised in #335.
 
 ## Data flow
 

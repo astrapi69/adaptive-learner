@@ -58,7 +58,14 @@
 - Conventional Commits: feat:, fix:, refactor:, docs:, test:, chore:
 - Provide a scope when it's clear: feat(export): ..., fix(editor): ...
 - One commit per logical change, not everything in one.
-- Branch naming: feature/{name}, fix/{name}, chore/{name}
+- **Gitflow (#334):** `develop` is the active development branch; `main`
+  holds releases only (tags vX.Y.Z). Branch `feature/*` / `fix/*` / `chore/*`
+  FROM `develop` and open PRs AGAINST `develop`, never `main`. `main` is
+  written only by a `release/*` merge (or a `hotfix/*` for emergencies — the
+  one case that branches from `main`). Do NOT develop on `main`.
+- Branch naming: feature/{name}, fix/{name}, chore/{name} (from develop);
+  release/vX.Y.Z (from develop, merges to main + back to develop);
+  hotfix/vX.Y.Z (from main, merges to main + develop).
 - Do not add `Co-Authored-By` trailers attributing non-human
   collaborators (AI tools, automation bots, MCP agents). Human
   co-authors are attributed via the standard GitHub mechanism.

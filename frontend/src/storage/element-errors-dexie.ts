@@ -137,18 +137,25 @@ export async function recordElementAttemptsDexie(
     if (attempts.length === 0) return [];
     const db = getDb();
     const result: ElementErrorRow[] = [];
-    // Sequential await loop so intra-call compounding works:
-    // 3 corrects on the same key in one bulk call still
-    // flip mastered, because each iteration reads the
-    // post-state of the previous put().
-    for (const attempt of attempts) {
-        const key = rowKey(userId, attempt);
-        const existing = await db.elementErrors.get(key);
-        const nowIso = new Date().toISOString();
-        const next = applyTransition(existing, userId, attempt, nowIso);
-        await db.elementErrors.put(next);
-        result.push(next);
-    }
+    // #390 Class A: wrap the whole bulk call in one rw transaction so
+    // the get -> transition -> put for each key is atomic against a
+    // concurrent ``recordElementAttemptsDexie`` touching the same
+    // element (e.g. an error-replay overlapping the main lesson). A
+    // ``table.modify`` would not suffice here: the first-sighting path
+    // INSERTS a new row, which modify can't do. The transaction also
+    // preserves the intra-call compounding (3 corrects on one key in a
+    // single call still flip ``mastered``), because each iteration
+    // reads the post-state of the previous put within the same tx.
+    await db.transaction("rw", db.elementErrors, async () => {
+        for (const attempt of attempts) {
+            const key = rowKey(userId, attempt);
+            const existing = await db.elementErrors.get(key);
+            const nowIso = new Date().toISOString();
+            const next = applyTransition(existing, userId, attempt, nowIso);
+            await db.elementErrors.put(next);
+            result.push(next);
+        }
+    });
     return result.map(rowToWire);
 }
 

@@ -1199,7 +1199,8 @@
     "guide_failed": "学習ガイドを生成できませんでした。"
   },
   "feature": {
-    "api_key_required": "API key required. Configure a provider in Settings."
+    "api_key_required": "APIキーが必要です。設定でプロバイダーを設定してください。",
+    "desktop_only": "デスクトップアプリでのみ利用できます。"
   },
   "ui": {
     "themes": {
@@ -1732,7 +1733,8 @@
       "next": "次のレッスン",
       "completed": "セット完了",
       "empty": "最初のレッスンを始めましょう！",
-      "progress": "ステップ {n}/{total}"
+      "progress": "ステップ {n}/{total}",
+      "imported_analysis": "インポートされた分析"
     },
     "import_chat": {
       "button": "チャットをインポート"

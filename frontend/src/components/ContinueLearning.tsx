@@ -71,13 +71,21 @@ interface DisplayItem {
     updatedAt: string;
 }
 
+/** A chat-import analysis set whose title was never set falls back to its
+ *  raw ``analysis-<uuid>`` id (legacy data, pre-#134). Detect that shape so
+ *  the dashboard shows a friendly label instead of the bare id (#368). */
+const LEGACY_ANALYSIS_SET_ID =
+    /^analysis-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
 function setTitleOf(
     sets: ContentSetEntry[],
     source: string,
     setId: string,
+    legacyFallback: string,
 ): string {
     const entry = sets.find((s) => s.source === source && s.id === setId);
-    return entry?.title ?? setId;
+    const resolved = entry?.title ?? setId;
+    return LEGACY_ANALYSIS_SET_ID.test(resolved) ? legacyFallback : resolved;
 }
 
 /** Total exercise/theory steps in a lesson (best-effort; used for
@@ -105,6 +113,14 @@ export default function ContinueLearning({
 }: ContinueLearningProps) {
     const {t} = useI18n();
     const [items, setItems] = useState<DisplayItem[] | null>(null);
+    // Derived once so the effect depends on a stable primitive string, not the
+    // t function identity (which is fresh per render under the i18n test mock
+    // and would re-run the effect spuriously). The label still re-localizes on
+    // a real language change because its string value changes.
+    const importedAnalysisLabel = t(
+        "content.continue_learning.imported_analysis",
+        "Imported analysis",
+    );
 
     useEffect(() => {
         if (!userId) {
@@ -168,7 +184,12 @@ export default function ContinueLearning({
                     const item: DisplayItem = {
                         source: group.source,
                         setId: group.setId,
-                        setTitle: setTitleOf(sets, group.source, group.setId),
+                        setTitle: setTitleOf(
+                            sets,
+                            group.source,
+                            group.setId,
+                            importedAnalysisLabel,
+                        ),
                         mode: action.mode,
                         targetRoute: lessonRoute(
                             group.source,
@@ -197,7 +218,7 @@ export default function ContinueLearning({
         return () => {
             cancelled = true;
         };
-    }, [userId, maxItems]);
+    }, [userId, maxItems, importedAnalysisLabel]);
 
     // Loading — render nothing to avoid layout shift.
     if (items === null) return null;

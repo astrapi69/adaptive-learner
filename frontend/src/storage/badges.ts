@@ -27,31 +27,41 @@ export {BUNDLED_BADGES};
 async function ensureCatalogSeeded(): Promise<Map<string, BadgeRow>> {
     const db = getDb();
     const existing = await db.badges.toArray();
-    if (existing.length === BUNDLED_BADGES.length) {
+    if (existing.length >= BUNDLED_BADGES.length) {
         return new Map(existing.map((b) => [b.key, b]));
     }
-    const now = nowIso();
-    const existingByKey = new Map(existing.map((b) => [b.key, b]));
-    for (const spec of BUNDLED_BADGES) {
-        if (existingByKey.has(spec.key)) {
-            continue;
+    // #390 Phase 2: seed inside one rw transaction so two concurrent
+    // first-evals don't each insert the full catalog (duplicate key
+    // rows). The seen-set is re-read INSIDE the tx, so the serialized
+    // second caller observes the first's inserts. The ``&key`` unique
+    // index (Dexie v27) is the DB-level backstop.
+    await db.transaction("rw", db.badges, async () => {
+        const now = nowIso();
+        const seen = new Map(
+            (await db.badges.toArray()).map((b) => [b.key, b]),
+        );
+        for (const spec of BUNDLED_BADGES) {
+            if (seen.has(spec.key)) {
+                continue;
+            }
+            const row: BadgeRow = {
+                id: newId(),
+                key: spec.key,
+                name_key: spec.name_key,
+                description_key: spec.description_key,
+                icon: spec.icon,
+                category: spec.category,
+                base_tier: spec.base_tier ?? "bronze",
+                tier_thresholds: spec.tier_thresholds ?? null,
+                created_at: now,
+                updated_at: now,
+            };
+            await db.badges.put(row);
+            seen.set(spec.key, row);
         }
-        const row: BadgeRow = {
-            id: newId(),
-            key: spec.key,
-            name_key: spec.name_key,
-            description_key: spec.description_key,
-            icon: spec.icon,
-            category: spec.category,
-            base_tier: spec.base_tier ?? "bronze",
-            tier_thresholds: spec.tier_thresholds ?? null,
-            created_at: now,
-            updated_at: now,
-        };
-        await db.badges.put(row);
-        existingByKey.set(spec.key, row);
-    }
-    return existingByKey;
+    });
+    const seeded = await db.badges.toArray();
+    return new Map(seeded.map((b) => [b.key, b]));
 }
 
 async function completedSessionCount(userId: string): Promise<number> {
@@ -291,6 +301,18 @@ export const TIER_ORDER = ["bronze", "silver", "gold"] as const;
 
 type TierThresholds = Record<string, {threshold: number; xp_bonus: number}>;
 
+/** A pending badge award resolved in Phase A (outside any transaction)
+ *  and applied atomically in Phase B of ``evaluateBadgesForUser``. */
+type BadgeDecision =
+    | {
+          kind: "dynamic";
+          key: string;
+          badgeId: string;
+          target: string;
+          thresholds: TierThresholds;
+      }
+    | {kind: "static"; key: string; badgeId: string; baseTier: string};
+
 /** DYNAMIC badge metrics — key -> count. MUST match the Python
  *  ``_TIER_METRICS`` and the keys carrying ``tier_thresholds`` in
  *  BUNDLED_BADGES. */
@@ -343,14 +365,17 @@ export async function evaluateBadgesForUser(
 ): Promise<BadgeEvaluationResult> {
     const catalog = await ensureCatalogSeeded();
     const db = getDb();
-    const earnedRows = await db.userBadges.where({user_id: userId}).toArray();
-    const rowByBadgeId = new Map(earnedRows.map((r) => [r.badge_id, r]));
-    const earned: string[] = [];
-    const upgrades: BadgeTierUpgrade[] = [];
+
+    // Phase A (no transaction): compute every evaluator's decision.
+    // The metric reads, the metric helpers' dynamic ``import()``s, and
+    // the defensive per-evaluator try/catch all happen HERE, outside any
+    // transaction. A Dexie ``rw`` transaction must never await a
+    // non-Dexie promise (it commits the zone early), so the dynamic
+    // imports cannot live inside the critical section below.
+    const decisions: BadgeDecision[] = [];
     for (const [key, predicate] of Object.entries(EVALUATORS)) {
         const badge = catalog.get(key);
         if (!badge) continue;
-        const existing = rowByBadgeId.get(badge.id);
         const metricFn = DYNAMIC_TIER_METRICS[key];
         const thresholds = badge.tier_thresholds ?? null;
         try {
@@ -358,61 +383,101 @@ export async function evaluateBadgesForUser(
                 const value = await metricFn(userId);
                 const target = evaluateBadgeTier(value, thresholds);
                 if (target === null) continue;
-                if (!existing) {
-                    const now = nowIso();
-                    const row: UserBadgeRow = {
-                        id: newId(),
-                        user_id: userId,
-                        badge_id: badge.id,
-                        tier: target,
-                        earned_at: now,
-                        updated_at: now,
-                    };
-                    await db.userBadges.put(row);
-                    const xp = tierUpgradeXp(null, target, thresholds);
-                    earned.push(key);
-                    upgrades.push({
-                        key,
-                        old_tier: null,
-                        new_tier: target,
-                        xp_awarded: xp,
-                    });
-                    if (xp > 0) await persistXP(userId, xp);
-                } else if (tierIndex(target) > tierIndex(existing.tier)) {
-                    const old = existing.tier ?? "bronze";
-                    await db.userBadges.update(existing.id, {
-                        tier: target,
-                        updated_at: nowIso(),
-                    });
-                    const xp = tierUpgradeXp(old, target, thresholds);
-                    upgrades.push({
-                        key,
-                        old_tier: old,
-                        new_tier: target,
-                        xp_awarded: xp,
-                    });
-                    if (xp > 0) await persistXP(userId, xp);
-                }
-            } else {
-                if (existing) continue;
-                if (await predicate(userId)) {
-                    const now = nowIso();
-                    const row: UserBadgeRow = {
-                        id: newId(),
-                        user_id: userId,
-                        badge_id: badge.id,
-                        tier: badge.base_tier ?? "bronze",
-                        earned_at: now,
-                        updated_at: now,
-                    };
-                    await db.userBadges.put(row);
-                    earned.push(key);
-                }
+                decisions.push({
+                    kind: "dynamic",
+                    key,
+                    badgeId: badge.id,
+                    target,
+                    thresholds,
+                });
+            } else if (await predicate(userId)) {
+                decisions.push({
+                    kind: "static",
+                    key,
+                    badgeId: badge.id,
+                    baseTier: badge.base_tier ?? "bronze",
+                });
             }
         } catch (err) {
             console.warn(`Badge evaluator ${key} threw`, err);
         }
     }
+
+    // Phase B (atomic): re-read the earned state INSIDE one rw
+    // transaction over [userBadges, userXp] and apply the inserts /
+    // tier upgrades there, so two concurrent evaluations (e.g. a lesson
+    // completion overlapping a session end) can't double-insert the
+    // same badge row or double-award the tier XP (#390 Class A). The XP
+    // deltas are accumulated and persisted once via ``persistXP`` (which
+    // joins this transaction because ``userXp`` is in scope).
+    const earned: string[] = [];
+    const upgrades: BadgeTierUpgrade[] = [];
+    let pendingXp = 0;
+    await db.transaction("rw", [db.userBadges, db.userXp], async () => {
+        const earnedRows = await db.userBadges
+            .where({user_id: userId})
+            .toArray();
+        const rowByBadgeId = new Map(earnedRows.map((r) => [r.badge_id, r]));
+        for (const decision of decisions) {
+            const existing = rowByBadgeId.get(decision.badgeId);
+            if (decision.kind === "dynamic") {
+                if (!existing) {
+                    const now = nowIso();
+                    const row: UserBadgeRow = {
+                        id: newId(),
+                        user_id: userId,
+                        badge_id: decision.badgeId,
+                        tier: decision.target,
+                        earned_at: now,
+                        updated_at: now,
+                    };
+                    await db.userBadges.put(row);
+                    rowByBadgeId.set(decision.badgeId, row);
+                    const xp = tierUpgradeXp(null, decision.target, decision.thresholds);
+                    earned.push(decision.key);
+                    upgrades.push({
+                        key: decision.key,
+                        old_tier: null,
+                        new_tier: decision.target,
+                        xp_awarded: xp,
+                    });
+                    pendingXp += xp;
+                } else if (tierIndex(decision.target) > tierIndex(existing.tier)) {
+                    const old = existing.tier ?? "bronze";
+                    await db.userBadges.update(existing.id, {
+                        tier: decision.target,
+                        updated_at: nowIso(),
+                    });
+                    existing.tier = decision.target;
+                    const xp = tierUpgradeXp(old, decision.target, decision.thresholds);
+                    upgrades.push({
+                        key: decision.key,
+                        old_tier: old,
+                        new_tier: decision.target,
+                        xp_awarded: xp,
+                    });
+                    pendingXp += xp;
+                }
+            } else {
+                if (existing) continue;
+                const now = nowIso();
+                const row: UserBadgeRow = {
+                    id: newId(),
+                    user_id: userId,
+                    badge_id: decision.badgeId,
+                    tier: decision.baseTier,
+                    earned_at: now,
+                    updated_at: now,
+                };
+                await db.userBadges.put(row);
+                rowByBadgeId.set(decision.badgeId, row);
+                earned.push(decision.key);
+            }
+        }
+        if (pendingXp > 0) {
+            await persistXP(userId, pendingXp);
+        }
+    });
     return {earned, upgrades};
 }
 

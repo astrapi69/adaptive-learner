@@ -1,0 +1,40 @@
+/**
+ * Storage abstraction layer (Phase 10A).
+ *
+ * ``IStorageService`` is the implementation-agnostic contract that
+ * pages and components consume. Two implementations satisfy it:
+ *
+ *   - ``ApiStorage`` (10A): delegates to the FastAPI backend via
+ *     ``api/client.ts``. Existing behaviour, unchanged.
+ *   - ``DexieStorage`` (10B-10E): stores everything in IndexedDB
+ *     via Dexie.js, calls AI providers directly from the browser.
+ *
+ * Pages MUST import from the storage layer (`getStorage()`), not
+ * from ``api/client.ts`` directly. The factory in
+ * ``storage/index.ts`` picks the right backend based on build-time
+ * configuration and runtime preference.
+ *
+ * The method names mirror the ``api.*`` namespaces 1:1 so that
+ * ApiStorage can be a thin pass-through. The argument lists are
+ * the same as the existing api/client; the return shapes are the
+ * same domain types from ``types/domain.ts``.
+ */
+
+
+export * from "./users";
+export * from "./settings";
+export * from "./github";
+export * from "./session";
+export * from "./content";
+export * from "./lesson-progress";
+export * from "./element-errors";
+export * from "./missions";
+export * from "./curricula";
+export * from "./learning-repo";
+export * from "./system";
+export * from "./anki";
+export * from "./notebooklm";
+export * from "./pronunciation";
+export * from "./gamification";
+export * from "./imports";
+export * from "./service";

@@ -15,6 +15,28 @@ reference.
 
 ---
 
+## Gitflow (#334): cut the release on a release branch, not on main
+
+`main` holds releases only; `develop` is the active branch (the GitHub
+default). A release is prepared on a `release/*` branch cut from `develop`,
+then merged to `main` (where it is tagged) and back to `develop`:
+
+```
+make release-prepare VERSION=X.Y.Z     # checkout develop, create release/X.Y.Z
+# on release/X.Y.Z: bump backend/pyproject.toml, make sync-versions,
+# draft changelog/releases/vX.Y.Z.md, make release-test, commit
+make release-finish VERSION=X.Y.Z      # merge --no-ff to main + tag, merge back to develop, delete branch
+make release-publish VERSION=X.Y.Z     # GitHub Release from the changelog file
+```
+
+The Step 1-11 detail below is the per-step substance (version bump,
+changelog, gates, GitHub release, post-release docs) — it now runs ON the
+`release/*` branch, and the tag lands on `main` via the `release-finish`
+merge instead of a direct push to `main`. Hotfixes are the only exception:
+branch `hotfix/vX.Y.Z` from `main`, fix, tag, merge back to `develop`.
+
+---
+
 ## Ground rules
 
 - Do not skip manual steps: the checklist at the end is mandatory
@@ -22,6 +44,8 @@ reference.
 - Tests must be green: red tests block the release, no exceptions
 - The CHANGELOG is for humans: do not paste raw commit messages, summarize meaningfully
 - Version bump follows SemVer, even in the 0.x phase
+- Gitflow: the release is cut on `release/*` from `develop` and merged to
+  `main`; never develop or hand-tag directly on `main` (#334)
 
 ---
 

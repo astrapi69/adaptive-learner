@@ -1199,7 +1199,8 @@
     "guide_failed": "Δεν δημιουργήθηκε ο οδηγός μελέτης."
   },
   "feature": {
-    "api_key_required": "API key required. Configure a provider in Settings."
+    "api_key_required": "Απαιτείται κλειδί API. Ρυθμίστε έναν πάροχο στις Ρυθμίσεις.",
+    "desktop_only": "Διαθέσιμο μόνο με την εφαρμογή για υπολογιστή."
   },
   "ui": {
     "themes": {
@@ -1732,7 +1733,8 @@
       "next": "Επόμενο μάθημα",
       "completed": "Το σετ ολοκληρώθηκε",
       "empty": "Ξεκινήστε το πρώτο σας μάθημα!",
-      "progress": "Βήμα {n}/{total}"
+      "progress": "Βήμα {n}/{total}",
+      "imported_analysis": "Εισαγόμενη ανάλυση"
     },
     "import_chat": {
       "button": "Εισαγωγή συνομιλίας"

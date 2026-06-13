@@ -88,10 +88,7 @@ def upsert_lesson_progress(
     ),
 ) -> LessonProgressOut:
     step_result = payload.step_result.model_dump() if payload.step_result is not None else None
-    row = lesson_progress_service.upsert_progress(
-        repo,
-        unification_repo,
-        user_id,
+    update = lesson_progress_service.ProgressUpdate(
         source=payload.source,
         set_id=payload.set_id,
         lesson_filename=payload.lesson_filename,
@@ -103,5 +100,11 @@ def upsert_lesson_progress(
         mark_abandoned=payload.mark_abandoned,
         mark_resumed=payload.mark_resumed,
         mark_restarted=payload.mark_restarted,
+    )
+    row = lesson_progress_service.upsert_progress(
+        repo,
+        unification_repo,
+        user_id,
+        update,
     )
     return LessonProgressOut.model_validate(row)

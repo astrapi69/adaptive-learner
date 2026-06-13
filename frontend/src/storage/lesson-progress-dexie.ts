@@ -126,6 +126,13 @@ export async function upsertLessonProgressDexie(
         );
     }
 
+    // #390 Class A: the autosave timer (30s), step-navigation clicks
+    // and pause/abandon all call this method on the SAME lesson key.
+    // Wrapping get -> merge -> put in one rw transaction makes the
+    // read-modify-write atomic, so a concurrent autosave can't
+    // overwrite a just-checked step_result with a stale snapshot.
+    let wire: LessonProgress | null = null;
+    await db.transaction("rw", db.lessonProgress, async () => {
     const existing = await db.lessonProgress.get(key);
     const row: LessonProgressRow = existing
         ? {...existing}
@@ -233,5 +240,12 @@ export async function upsertLessonProgressDexie(
 
     row.updated_at = now;
     await db.lessonProgress.put(row);
-    return rowToWire(row);
+    wire = rowToWire(row);
+    });
+    if (wire === null) {
+        throw new Error(
+            `lessonProgress upsert produced no row for ${key}`,
+        );
+    }
+    return wire;
 }

@@ -15,6 +15,13 @@ describe("helpKeyForPath", () => {
     expect(helpKeyForPath("/assessment")).toBe("assessment");
   });
 
+  it("maps the import flow to the conversation-analysis help", () => {
+    expect(helpKeyForPath("/import")).toBe("feature_conversation_analysis");
+    expect(helpKeyForPath("/import/some-conversation-id")).toBe(
+      "feature_conversation_analysis",
+    );
+  });
+
   it("matches parameterized lesson-family routes", () => {
     expect(helpKeyForPath("/lesson/de/es-a1/01.json")).toBe("view_lesson");
     expect(helpKeyForPath("/review/some-set")).toBe("view_lesson");

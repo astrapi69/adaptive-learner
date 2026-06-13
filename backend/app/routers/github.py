@@ -76,15 +76,17 @@ def create_pr(payload: GitHubCreatePrBody) -> GitHubCreatePrOut:
         )
     result = github_service.create_lesson_pr(
         token or "",
-        upstream=payload.upstream,
-        base_branch=payload.base_branch,
-        branch_name=payload.branch_name,
-        file_path=payload.file_path,
-        file_content=payload.file_content,
-        commit_message=payload.commit_message,
-        pr_title=payload.pr_title,
-        pr_body=payload.pr_body,
-        manifest_update=manifest_update,
+        github_service.LessonPrRequest(
+            upstream=payload.upstream,
+            base_branch=payload.base_branch,
+            branch_name=payload.branch_name,
+            file_path=payload.file_path,
+            file_content=payload.file_content,
+            commit_message=payload.commit_message,
+            pr_title=payload.pr_title,
+            pr_body=payload.pr_body,
+            manifest_update=manifest_update,
+        ),
     )
     return GitHubCreatePrOut(
         url=result.url,

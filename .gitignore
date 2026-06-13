@@ -112,3 +112,6 @@ frontend/public/content/
 
 # Coverage reports are generated locally (make test-coverage), never committed.
 docs/audits/coverage/
+
+# Complexity watcher (#400) local radon venv
+.radon-venv/

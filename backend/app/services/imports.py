@@ -14,7 +14,7 @@ from collections.abc import Iterable
 
 from app.exceptions import ConflictError, NotFoundError, ValidationError
 from app.models import ImportedConversation, LearningSession
-from app.repositories.imports_repo import ImportsRepository
+from app.repositories.imports_repo import ImportsRepository, NewConversation
 from app.schemas import (
     ImportedConversationAnalysis,
     ImportedConversationCreate,
@@ -154,18 +154,20 @@ def create_conversation(
         for msg in payload.messages
     ]
     return repo.create_conversation(
-        user_id=user_id,
-        project_id=payload.project_id,
-        source=payload.source.value,
-        title=payload.title,
-        message_count=len(payload.messages),
-        topic_tag=payload.topic_tag,
-        model=payload.model,
-        source_created_at=payload.source_created_at,
-        content_hash=content_hash,
-        source_language=payload.source_language,
-        target_language=payload.target_language,
-        messages=messages,
+        NewConversation(
+            user_id=user_id,
+            project_id=payload.project_id,
+            source=payload.source.value,
+            title=payload.title,
+            message_count=len(payload.messages),
+            topic_tag=payload.topic_tag,
+            model=payload.model,
+            source_created_at=payload.source_created_at,
+            content_hash=content_hash,
+            source_language=payload.source_language,
+            target_language=payload.target_language,
+            messages=messages,
+        )
     )
 
 

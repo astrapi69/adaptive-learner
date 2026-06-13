@@ -65,19 +65,15 @@ from app.models import (
     MethodSwitch,
     SessionMessage,
     SessionRating,
-    User,
-)
-from app.models import (
-    StepEvaluation as StepEvaluationRow,
 )
 from app.schemas import (
-    AIProvider,
     LearningMethod,
     LearningSessionOut,
     MessageRole,
     SessionMessageOut,
     SessionRatingOut,
 )
+from app.services.ai_caller import build_ai_caller
 
 from . import ai_orchestration
 from .prompts import (
@@ -87,115 +83,21 @@ from .prompts import (
     build_analysis_context,
     build_prompt,
 )
-from .step_evaluator import (
-    EVALUATION_DEFAULT_MAX_TOKENS,
-    StepEvaluation,
-    evaluate_step,
+from .session_runner import (
+    MessageContext,
+    _finalize_stream_exchange,
+    _load_prior_messages,
+    _MessageBody,
+    _resolve_active_key,
+    _SessionMessageExchangeOut,
+    assemble_exchange,
+    build_exchange_response,
+    persist_user_message,
+    resolve_ai_context,
+    run_auto_loop,
+    run_learning_call,
+    run_step_evaluation,
 )
-from .topic_transition import (
-    TopicTransition,
-    evaluate_topic_transition,
-)
-
-
-def _read_step_evaluation_config() -> tuple[bool, float, int]:
-    """Return ``(enabled, confidence_threshold, max_tokens)`` for the
-    Phase-8 step-evaluator from ``config/plugins/session.yaml`` with
-    sensible defaults.
-
-    Defaults (Phase 8B spec):
-      enabled: True
-      confidence_threshold: 0.7
-      max_tokens: 256
-
-    A missing config file (or a missing ``step_evaluation`` block)
-    yields the defaults. Reading inside the route on every call is
-    cheap (small YAML file, OS file cache) AND avoids the
-    module-level lru_cache test-isolation pitfall called out in
-    lessons-learned.md.
-    """
-    # Lazy import: keep app.* out of the module load path so this
-    # file stays importable from the standalone plugin test dir.
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001 — config glitch must never block /message
-        cfg = {}
-    block = cfg.get("step_evaluation") if isinstance(cfg, dict) else None
-    if not isinstance(block, dict):
-        block = {}
-    enabled = bool(block.get("enabled", True))
-    try:
-        threshold = float(block.get("confidence_threshold", 0.7))
-    except (TypeError, ValueError):
-        threshold = 0.7
-    if threshold < 0.0:
-        threshold = 0.0
-    elif threshold > 1.0:
-        threshold = 1.0
-    try:
-        max_tokens = int(block.get("max_tokens", EVALUATION_DEFAULT_MAX_TOKENS))
-    except (TypeError, ValueError):
-        max_tokens = EVALUATION_DEFAULT_MAX_TOKENS
-    if max_tokens <= 0:
-        max_tokens = EVALUATION_DEFAULT_MAX_TOKENS
-    return enabled, threshold, max_tokens
-
-
-def _read_async_evaluation_enabled() -> bool:
-    """Read ``session.async_evaluation`` config flag (v1.5.0 / 18C).
-
-    Default ``True``: at the step 6 -> 7 transition the route fires
-    step_evaluation and topic_transition concurrently via
-    ``asyncio.gather`` instead of sequentially. Set to ``False``
-    to fall back to the v1.4.0 sequential behaviour.
-    """
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001
-        cfg = {}
-    if not isinstance(cfg, dict):
-        return True
-    raw = cfg.get("async_evaluation")
-    if raw is None:
-        return True
-    return bool(raw)
-
-
-def _read_auto_loop_config() -> tuple[bool, int, int]:
-    """Return ``(enabled, max_cycles, transition_max_tokens)`` for the
-    v1.4.0 auto-loop feature from ``config/plugins/session.yaml``.
-
-    Defaults match the spec: enabled, max_cycles=5,
-    transition_max_tokens=256. A missing block yields the defaults.
-    """
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001 — never block /message
-        cfg = {}
-    block = cfg.get("auto_loop") if isinstance(cfg, dict) else None
-    if not isinstance(block, dict):
-        block = {}
-    enabled = bool(block.get("enabled", True))
-    try:
-        max_cycles = int(block.get("max_cycles", 5))
-    except (TypeError, ValueError):
-        max_cycles = 5
-    if max_cycles < 1:
-        max_cycles = 1
-    try:
-        tt_max = int(block.get("topic_transition_max_tokens", 256))
-    except (TypeError, ValueError):
-        tt_max = 256
-    if tt_max <= 0:
-        tt_max = 256
-    return enabled, max_cycles, tt_max
-
 
 router = APIRouter(prefix="/plugins/session", tags=["session"])
 
@@ -222,118 +124,6 @@ class _SessionStartOut(BaseModel):
     system_prompt: str
 
 
-class _MessageBody(BaseModel):
-    role: MessageRole
-    content: str = Field(min_length=1)
-
-
-class _StepEvaluationOut(BaseModel):
-    """v0.5.0 — AI step-evaluation result for the dual-prompt
-    architecture (Phase 8).
-
-    ``advance`` / ``confidence`` / ``reason`` / ``suggested_step``
-    are the evaluator's raw verdict. ``applied`` is the route's
-    DERIVED decision (advance ∧ confidence ≥ threshold; or
-    fallback ∧ advance) — true iff the suggestion was actually
-    written to ``session.cycle_step``. ``from_step`` is the
-    cycle_step BEFORE the suggestion, useful for the 8C
-    front-end transition animation and the 8D analytics layer.
-
-    When the route's step_evaluation config is ``enabled: false``
-    the route writes ``step_evaluation: null`` and falls back to
-    the v0.4.x deterministic +1 advance — Phase 8B's compat
-    contract for installs that opt out of AI-based transitions.
-    """
-
-    model_config = ConfigDict(from_attributes=True)
-
-    advance: bool
-    confidence: float
-    reason: str
-    suggested_step: int
-    fallback_used: bool
-    applied: bool
-    from_step: int
-
-
-class _TimingsOut(BaseModel):
-    """v1.5.0 / Phase 18E — per-message latency breakdown.
-
-    All values in milliseconds (integer). ``None`` for calls that
-    were skipped (e.g. ``topic_transition_ms`` when the route never
-    reached the auto-loop branch). ``parallel_saved_ms`` is the
-    estimate of how much wall-time the asyncio.gather block saved
-    vs. running the two evaluators sequentially.
-    """
-
-    model_config = ConfigDict(from_attributes=True)
-
-    learning_ms: int | None = None
-    evaluation_ms: int | None = None
-    topic_transition_ms: int | None = None
-    total_ms: int | None = None
-    parallel_saved_ms: int | None = None
-
-
-class _TopicTransitionOut(BaseModel):
-    """v1.4.0 — auto-loop topic-transition result.
-
-    ``cycle_complete`` / ``continue_recommended`` are the AI's
-    raw verdict; ``looped`` is the route's DERIVED decision:
-    true iff a new cycle was actually started (``cycle_step``
-    reset to 1, ``cycle_count`` incremented). The frontend reads
-    ``looped`` to decide whether to render the cycle-transition
-    card.
-    """
-
-    model_config = ConfigDict(from_attributes=True)
-
-    cycle_complete: bool
-    summary: str
-    next_topic: str | None
-    next_topic_rationale: str
-    difficulty_adjustment: str
-    continue_recommended: bool
-    fallback_used: bool
-    looped: bool
-    new_cycle_count: int
-
-
-class _SessionMessageExchangeOut(BaseModel):
-    """Composite return for POST /{id}/message.
-
-    ``assistant_message`` is ``None`` when AI couldn't reply (no
-    API key configured, no provider matched the model, provider
-    raised). ``ai_error`` carries a one-line explanation in that
-    case so the frontend can render a toast / inline notice
-    without parsing a stack trace.
-
-    v0.4.0: ``session`` carries the LearningSession AFTER the
-    cycle-step advance has been applied (if any). The frontend
-    reads ``session.cycle_step`` to drive CycleProgress without
-    a separate fetch. Pure read-only: the route never mutates
-    the session row outside of cycle-step advances.
-
-    v0.5.0: ``step_evaluation`` carries the second AI call's
-    verdict (Phase 8). ``None`` when step-evaluation is disabled
-    in config OR when the route short-circuited before reaching
-    the evaluation step (no API key, no provider, role!=user, etc.).
-    """
-
-    model_config = ConfigDict(from_attributes=True)
-
-    user_message: SessionMessageOut
-    assistant_message: SessionMessageOut | None = None
-    ai_error: str | None = None
-    session: LearningSessionOut
-    step_evaluation: _StepEvaluationOut | None = None
-    topic_transition: _TopicTransitionOut | None = None
-    timings: _TimingsOut | None = None
-    # v1.11.0 / Phase 24D — non-fatal warning when the requested
-    # model is not in the provider's cached available-models list.
-    # The route falls back to the provider's default model and
-    # surfaces this string so the frontend can toast.
-    model_warning: str | None = None
 
 
 class _SwitchRecommendationOut(BaseModel):
@@ -555,47 +345,6 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
 # --- POST /{id}/message ----------------------------------------------------
 
 
-def _load_prior_messages(db: Session, session_id: str) -> list[dict[str, Any]]:
-    """Return every SessionMessage for the session in chronological
-    order as plain dicts. Stable column subset (role + content) so
-    the AI provider sees only what it needs.
-    """
-    rows = (
-        db.query(SessionMessage)
-        .filter(SessionMessage.session_id == session_id)
-        .order_by(SessionMessage.created_at.asc(), SessionMessage.id.asc())
-        .all()
-    )
-    return [{"role": r.role, "content": r.content} for r in rows]
-
-
-def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | None, str | None]:
-    """Return (active_provider, decrypted_api_key, model_override) for the user.
-
-    Any of the three can be ``None``:
-      - active_provider is None if the UserSettings row never got
-        seeded (shouldn't happen — settings_service auto-creates
-        it on first GET).
-      - api_key is None when the user hasn't entered one for the
-        active provider yet.
-      - model_override (v0.4.0) is None when the user hasn't
-        overridden ai_orchestration.DEFAULT_MODELS for the active
-        provider.
-    """
-    from app.services import settings as settings_service
-    from app.repositories.settings_repo import SqlAlchemySettingsRepository
-
-    settings = settings_service.get_or_create_settings(SqlAlchemySettingsRepository(db), user_id)
-    provider_key = settings.active_provider
-    try:
-        provider_enum = AIProvider(provider_key)
-    except ValueError:
-        return None, None, None
-    # Phase 34 — env > secrets.yaml > DB resolution.
-    api_key, _source = settings_service.resolve_api_key(SqlAlchemySettingsRepository(db), user_id, provider_enum)
-    override_attr = f"model_override_{provider_key}"
-    override = getattr(settings, override_attr, None)
-    return provider_key, api_key, override
 
 
 @router.post(
@@ -642,391 +391,33 @@ def append_message(
     # topic_transition_ms) accumulate below. The response carries
     # the breakdown as ``timings`` so the frontend / monitoring can
     # surface latency without an extra introspection roundtrip.
-    request_start_ts = time.monotonic()
-    learning_ms_holder: dict[str, int | None] = {"value": None}
-    eval_ms_holder: dict[str, int | None] = {"value": None}
-    transition_ms_holder: dict[str, int | None] = {"value": None}
-    parallel_saved_ms_holder: dict[str, int | None] = {"value": None}
-
-    user_msg = SessionMessage(
-        session_id=sess.id,
-        role=payload.role.value,
-        content=payload.content,
+    ctx = MessageContext(
+        db=db,
+        session=sess,
+        payload=payload,
+        request_start_ts=time.monotonic(),
     )
-    db.add(user_msg)
-    db.commit()
-    db.refresh(user_msg)
 
-    # Helper closure: every exit point of this handler returns
-    # the same composite shape, so the frontend's typed contract
-    # stays consistent. v0.4.0: the response now also carries the
-    # full LearningSession row so the frontend can read the
-    # current cycle_step without a separate fetch.
-    model_warning_holder: dict[str, str | None] = {"value": None}
-
-    def _build_response(
-        assistant: SessionMessage | None = None,
-        ai_error: str | None = None,
-        step_evaluation: _StepEvaluationOut | None = None,
-        topic_transition: _TopicTransitionOut | None = None,
-    ) -> _SessionMessageExchangeOut:
-        total_ms = int((time.monotonic() - request_start_ts) * 1000)
-        timings = _TimingsOut(
-            learning_ms=learning_ms_holder["value"],
-            evaluation_ms=eval_ms_holder["value"],
-            topic_transition_ms=transition_ms_holder["value"],
-            total_ms=total_ms,
-            parallel_saved_ms=parallel_saved_ms_holder["value"],
-        )
-        return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(user_msg),
-            assistant_message=(
-                SessionMessageOut.model_validate(assistant) if assistant is not None else None
-            ),
-            ai_error=ai_error,
-            session=LearningSessionOut.model_validate(sess),
-            step_evaluation=step_evaluation,
-            topic_transition=topic_transition,
-            timings=timings,
-            model_warning=model_warning_holder["value"],
-        )
+    persist_user_message(ctx)
 
     if payload.role != MessageRole.USER:
         # No AI step for assistant / system writes; no cycle-step
         # advance either (the advance only fires on a real
         # learner-AI round-trip).
-        return _build_response()
+        return build_exchange_response(ctx)
 
-    # Look up the project owner -> active provider -> API key.
-    project = db.get(LearningProject, sess.project_id)
-    if project is None:
-        return _build_response(ai_error="session has no project; AI reply skipped.")
-    provider_key, api_key, model_override = _resolve_active_key(db, project.user_id)
-    if provider_key is None:
-        return _build_response(ai_error="No active AI provider configured.")
-    if not api_key:
-        return _build_response(ai_error=f"No API key stored for provider {provider_key!r}.")
+    ai_error = resolve_ai_context(ctx)
+    if ai_error is not None:
+        return build_exchange_response(ctx, ai_error=ai_error)
 
-    model = ai_orchestration.resolve_model(provider_key, override=model_override)
-    if model is None:
-        return _build_response(
-            ai_error=f"Provider {provider_key!r} has no default model registered."
-        )
+    ai_error = run_learning_call(ctx)
+    if ai_error is not None:
+        return build_exchange_response(ctx, ai_error=ai_error)
 
-    # v1.11.0 / Phase 24D — validate the chosen model against the
-    # provider's cached available-models list. If the cache holds a
-    # list (the Settings picker fetched it earlier in this process)
-    # AND the requested model is not in it, fall back to the
-    # default and surface a non-fatal warning. When no cache exists
-    # we skip validation entirely — the spec is to try anyway, NOT
-    # to block the route on a fresh fetch.
-    try:
-        from app.schemas import AIProvider as _AIProvider
-        from app.services import model_discovery as _model_discovery
+    run_step_evaluation(ctx)
+    run_auto_loop(ctx)
 
-        provider_enum = _AIProvider(provider_key)
-        cached = _model_discovery.get_cached_models(provider_enum, api_key)
-        if cached is not None and not any(m.id == model for m in cached):
-            default_model = ai_orchestration.DEFAULT_MODELS.get(provider_key)
-            if default_model and default_model != model:
-                model_warning_holder["value"] = (
-                    f"Model {model!r} is not in the available models for "
-                    f"provider {provider_key!r}. Falling back to {default_model!r}."
-                )
-                model = default_model
-            else:
-                model_warning_holder["value"] = (
-                    f"Model {model!r} may not be available for provider "
-                    f"{provider_key!r}; trying anyway."
-                )
-    except Exception:  # noqa: BLE001
-        # Validation must never break the chat path. If anything in
-        # the cache lookup misbehaves we silently proceed.
-        pass
-
-    # Load EVERY prior message INCLUDING the user message we just
-    # saved (chronological order; the AI sees the freshest user
-    # turn at the end naturally). Loading from the DB rather than
-    # re-using build_messages_history's split keeps the route
-    # consistent with what's actually persisted — anyone who
-    # manually edits the DB sees the same conversation the AI
-    # sees on the next turn.
-    history = _load_prior_messages(db, sess.id)
-
-    # Fire the ai_complete hook. firstresult=True: the matching
-    # provider plugin returns text; the others return None. Any
-    # plugin exception is wrapped server-side as
-    # ExternalServiceError, which the global handler turns into
-    # HTTP 502 — but we catch it here so the user message is
-    # still returned + the error surfaces inline rather than
-    # losing the user turn to a 5xx.
-    try:
-        from app.main import manager  # lazy: app.* not on sys.path in plugin's own test dir
-
-        learning_start = time.monotonic()
-        assistant_text = ai_orchestration.call_ai_complete(
-            pm=manager._pm,
-            messages=history,
-            model=model,
-            api_key=api_key,
-        )
-        learning_ms_holder["value"] = int((time.monotonic() - learning_start) * 1000)
-    except Exception as exc:  # noqa: BLE001
-        return _build_response(ai_error=f"AI provider error: {exc}")
-
-    if not assistant_text:
-        return _build_response(
-            ai_error=(
-                f"No registered provider returned a reply for model {model!r}. "
-                f"Is the {provider_key!r} provider plugin enabled?"
-            )
-        )
-
-    assistant_msg = SessionMessage(
-        session_id=sess.id,
-        role="assistant",
-        content=assistant_text,
-    )
-    db.add(assistant_msg)
-    db.flush()  # assign assistant_msg.id without committing the txn yet
-
-    # --- v0.5.0 (Phase 8B): dual-prompt cycle-step transition --------------
-    #
-    # The v0.4.x deterministic +1 advance is now config-gated. When
-    # step_evaluation is enabled (the default), the route fires a
-    # SECOND ai_complete call against the same provider with a short
-    # max_tokens cap; the AI returns a JSON verdict
-    # (advance/confidence/reason/suggested_step) and the route
-    # applies the suggestion iff:
-    #   - real evaluation: advance ∧ confidence >= threshold, OR
-    #   - fallback path:   advance (the deterministic-+1 fallback
-    #                       IS the v0.4.x compat path; threshold
-    #                       does not gate it).
-    # When step_evaluation is disabled, the route keeps the v0.4.x
-    # deterministic +1 behaviour verbatim.
-    from_step = int(sess.cycle_step)
-    step_eval_enabled, threshold, eval_max_tokens = _read_step_evaluation_config()
-    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
-    async_eval_enabled = _read_async_evaluation_enabled()
-    step_eval_out: _StepEvaluationOut | None = None
-
-    # v1.5.0 / Phase 18C — at the step 6 -> 7 transition, fire
-    # step_evaluation and topic_transition concurrently via
-    # asyncio.gather. Saves ~T2 worth of latency at the cycle
-    # boundary. When async_evaluation is off / preconditions are
-    # not met, fall back to the v1.4.0 sequential path below.
-    precomputed_eval: StepEvaluation | None = None
-    precomputed_transition: TopicTransition | None = None
-    if async_eval_enabled and step_eval_enabled and auto_loop_enabled and from_step == MAX_STEP - 1:
-        import asyncio
-
-        from .step_evaluator import evaluate_step_async
-        from .topic_transition import evaluate_topic_transition_async
-
-        owner = db.get(User, project.user_id)
-        parallel_lang = owner.language if owner else "en"
-        parallel_history = history + [{"role": "assistant", "content": assistant_text}]
-
-        async def _run_both() -> tuple[StepEvaluation, TopicTransition]:
-            return await asyncio.gather(
-                evaluate_step_async(
-                    pm=manager._pm,
-                    method=sess.method,
-                    current_step=from_step,
-                    history=parallel_history,
-                    model=model,
-                    api_key=api_key,
-                    output_language=parallel_lang,
-                    max_tokens=eval_max_tokens,
-                ),
-                evaluate_topic_transition_async(
-                    pm=manager._pm,
-                    goal=project.goal,
-                    topic=project.topic,
-                    method=sess.method,
-                    history=parallel_history,
-                    model=model,
-                    api_key=api_key,
-                    output_language=parallel_lang,
-                    max_tokens=tt_max_tokens,
-                ),
-            )
-
-        parallel_start = time.monotonic()
-        try:
-            precomputed_eval, precomputed_transition = asyncio.run(_run_both())
-        except Exception:  # noqa: BLE001 — fall back to sequential
-            precomputed_eval, precomputed_transition = None, None
-        if precomputed_eval is not None and precomputed_transition is not None:
-            parallel_ms = int((time.monotonic() - parallel_start) * 1000)
-            # Both calls ran concurrently inside that ms budget;
-            # attribute the elapsed time symmetrically and estimate
-            # the sequential cost as roughly 2x for the
-            # parallel_saved_ms display.
-            eval_ms_holder["value"] = parallel_ms
-            transition_ms_holder["value"] = parallel_ms
-            parallel_saved_ms_holder["value"] = parallel_ms
-
-    if step_eval_enabled:
-        # Look up the learner's UI language so the evaluator's
-        # ``reason`` field renders naturally if the frontend surfaces
-        # it as a tooltip. Phase 8 Q3 — English prompt + localised
-        # reason via output_language steer.
-        owner = db.get(User, project.user_id)
-        eval_lang = owner.language if owner else "en"
-
-        # The evaluator judges the FULL exchange including the AI's
-        # just-produced answer — that's the signal-rich payload.
-        # ``history`` at this point already contains the user message
-        # we just saved (loaded via _load_prior_messages above) but
-        # not the assistant reply we haven't committed yet, so append
-        # it explicitly.
-        full_history = history + [{"role": "assistant", "content": assistant_text}]
-        evaluation: StepEvaluation
-        if precomputed_eval is not None:
-            # 18C parallel path already ran the evaluator.
-            evaluation = precomputed_eval
-        else:
-            eval_start = time.monotonic()
-            evaluation = evaluate_step(
-                pm=manager._pm,
-                method=sess.method,
-                current_step=from_step,
-                history=full_history,
-                model=model,
-                api_key=api_key,
-                output_language=eval_lang,
-                max_tokens=eval_max_tokens,
-            )
-            eval_ms_holder["value"] = int((time.monotonic() - eval_start) * 1000)
-        if evaluation.fallback_used:
-            # Fallback IS the deterministic advance: apply per
-            # evaluation.advance (which is +1 below step 7, False
-            # at step 7 to cap the cycle).
-            applied = evaluation.advance
-        else:
-            applied = evaluation.advance and (evaluation.confidence >= threshold)
-        if applied:
-            sess.cycle_step = evaluation.suggested_step
-        # v0.5.0 / 8D — persist the evaluation row for the
-        # tracking plugin's aggregates (avg confidence, repeat
-        # count, time-per-step). ``to_step`` records where the
-        # session ACTUALLY went (= from_step if not applied,
-        # = suggested_step if applied), not just what the AI
-        # suggested. ``reason`` is stored verbatim regardless of
-        # fallback_used so a future audit can see whether the AI
-        # was outputting useful text or producing parse-fail
-        # garbage.
-        to_step = evaluation.suggested_step if applied else from_step
-        db.add(
-            StepEvaluationRow(
-                session_id=sess.id,
-                from_step=from_step,
-                to_step=to_step,
-                advance=evaluation.advance,
-                confidence=evaluation.confidence,
-                applied=applied,
-                fallback_used=evaluation.fallback_used,
-                reason=evaluation.reason,
-            )
-        )
-        step_eval_out = _StepEvaluationOut(
-            advance=evaluation.advance,
-            confidence=evaluation.confidence,
-            reason=evaluation.reason,
-            suggested_step=evaluation.suggested_step,
-            fallback_used=evaluation.fallback_used,
-            applied=applied,
-            from_step=from_step,
-        )
-    else:
-        # v0.4.x compat: deterministic +1 advance, capped at 7.
-        if sess.cycle_step < MAX_STEP:
-            sess.cycle_step += 1
-
-    # v1.4.0 — auto-loop after step 7. When the step evaluator just
-    # ADVANCED the session INTO step 7 with advance=true, ask the
-    # AI whether the topic was integrated + what to learn next. If
-    # cycle_complete AND continue_recommended AND cycle_count <
-    # max_cycles, reset to step 1 and increment cycle_count.
-    topic_transition_out: _TopicTransitionOut | None = None
-    just_hit_step_7 = (
-        step_eval_out is not None
-        and step_eval_out.applied
-        and step_eval_out.suggested_step == MAX_STEP
-        and step_eval_out.advance
-    )
-    if auto_loop_enabled and just_hit_step_7:
-        transition: TopicTransition
-        if precomputed_transition is not None:
-            # 18C parallel path already ran the transition call.
-            transition = precomputed_transition
-        else:
-            owner = db.get(User, project.user_id)
-            loop_lang = owner.language if owner else "en"
-            full_history = history + [{"role": "assistant", "content": assistant_text}]
-            transition_start = time.monotonic()
-            transition = evaluate_topic_transition(
-                pm=manager._pm,
-                goal=project.goal,
-                topic=project.topic,
-                method=sess.method,
-                history=full_history,
-                model=model,
-                api_key=api_key,
-                output_language=loop_lang,
-                max_tokens=tt_max_tokens,
-            )
-            transition_ms_holder["value"] = int((time.monotonic() - transition_start) * 1000)
-        looped = (
-            not transition.fallback_used
-            and transition.cycle_complete
-            and transition.continue_recommended
-            and transition.next_topic is not None
-            and sess.cycle_count < max_cycles
-        )
-        if looped:
-            # Persist the completed cycle's summary BEFORE
-            # resetting so the export tells the full multi-cycle
-            # story.
-            try:
-                topics_list = json.loads(sess.cycle_topics or "[]")
-                if not isinstance(topics_list, list):
-                    topics_list = []
-            except json.JSONDecodeError:
-                topics_list = []
-            topics_list.append(
-                {
-                    "cycle": sess.cycle_count,
-                    "topic": project.topic,
-                    "summary": transition.summary,
-                    "next_topic": transition.next_topic or "",
-                }
-            )
-            sess.cycle_topics = json.dumps(topics_list, ensure_ascii=False)
-            sess.cycle_count += 1
-            sess.cycle_step = MIN_STEP
-        topic_transition_out = _TopicTransitionOut(
-            cycle_complete=transition.cycle_complete,
-            summary=transition.summary,
-            next_topic=transition.next_topic,
-            next_topic_rationale=transition.next_topic_rationale,
-            difficulty_adjustment=transition.difficulty_adjustment,
-            continue_recommended=transition.continue_recommended,
-            fallback_used=transition.fallback_used,
-            looped=looped,
-            new_cycle_count=sess.cycle_count,
-        )
-
-    db.commit()
-    db.refresh(assistant_msg)
-    db.refresh(sess)
-
-    return _build_response(
-        assistant=assistant_msg,
-        step_evaluation=step_eval_out,
-        topic_transition=topic_transition_out,
-    )
+    return assemble_exchange(ctx)
 
 
 # --- POST /{id}/message/stream (v1.6.0 / Phase 19) -------------------------
@@ -1319,175 +710,6 @@ def _setup_error_stream(
     return StreamingResponse(_gen(), media_type="text/event-stream")
 
 
-class _StreamExchangeResult:
-    """Container for the post-stream finalisation output."""
-
-    def __init__(
-        self,
-        message: SessionMessage,
-        step_evaluation: _StepEvaluationOut | None,
-        topic_transition: _TopicTransitionOut | None,
-    ) -> None:
-        self.message = message
-        self.step_evaluation = step_evaluation
-        self.topic_transition = topic_transition
-
-
-def _finalize_stream_exchange(
-    *,
-    db: Session,
-    sess: LearningSession,
-    project: LearningProject,
-    history: list[dict[str, Any]],
-    assistant_text: str,
-    model: str,
-    api_key: str,
-    eval_ms_holder: dict[str, int | None],
-    transition_ms_holder: dict[str, int | None],
-) -> _StreamExchangeResult:
-    """Persist the assistant message + run step-eval + topic-transition.
-
-    Mirrors the second half of :func:`append_message` from the
-    point ``assistant_text`` is known. Kept inline here rather than
-    extracted as a shared helper because the parallel-evaluation
-    path at the step 6 -> 7 boundary is intrinsically tied to the
-    non-streaming route's flow (evaluators run BEFORE the AI reply
-    in the parallel path, which doesn't make sense for streaming —
-    by the time we get here, the stream is finished and we have
-    the full text).
-    """
-    from app.main import manager  # noqa: F401  — kept for symmetry with /message
-
-    assistant_msg = SessionMessage(
-        session_id=sess.id,
-        role="assistant",
-        content=assistant_text,
-    )
-    db.add(assistant_msg)
-    db.flush()
-
-    from_step = int(sess.cycle_step)
-    step_eval_enabled, threshold, eval_max_tokens = _read_step_evaluation_config()
-    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
-    step_eval_out: _StepEvaluationOut | None = None
-
-    if step_eval_enabled:
-        owner = db.get(User, project.user_id)
-        eval_lang = owner.language if owner else "en"
-        full_history = history + [{"role": "assistant", "content": assistant_text}]
-        eval_start = time.monotonic()
-        evaluation = evaluate_step(
-            pm=manager._pm,
-            method=sess.method,
-            current_step=from_step,
-            history=full_history,
-            model=model,
-            api_key=api_key,
-            output_language=eval_lang,
-            max_tokens=eval_max_tokens,
-        )
-        eval_ms_holder["value"] = int((time.monotonic() - eval_start) * 1000)
-        if evaluation.fallback_used:
-            applied = evaluation.advance
-        else:
-            applied = evaluation.advance and (evaluation.confidence >= threshold)
-        if applied:
-            sess.cycle_step = evaluation.suggested_step
-        to_step = evaluation.suggested_step if applied else from_step
-        db.add(
-            StepEvaluationRow(
-                session_id=sess.id,
-                from_step=from_step,
-                to_step=to_step,
-                advance=evaluation.advance,
-                confidence=evaluation.confidence,
-                applied=applied,
-                fallback_used=evaluation.fallback_used,
-                reason=evaluation.reason,
-            )
-        )
-        step_eval_out = _StepEvaluationOut(
-            advance=evaluation.advance,
-            confidence=evaluation.confidence,
-            reason=evaluation.reason,
-            suggested_step=evaluation.suggested_step,
-            fallback_used=evaluation.fallback_used,
-            applied=applied,
-            from_step=from_step,
-        )
-    else:
-        if sess.cycle_step < MAX_STEP:
-            sess.cycle_step += 1
-
-    topic_transition_out: _TopicTransitionOut | None = None
-    just_hit_step_7 = (
-        step_eval_out is not None
-        and step_eval_out.applied
-        and step_eval_out.suggested_step == MAX_STEP
-        and step_eval_out.advance
-    )
-    if auto_loop_enabled and just_hit_step_7:
-        owner = db.get(User, project.user_id)
-        loop_lang = owner.language if owner else "en"
-        full_history = history + [{"role": "assistant", "content": assistant_text}]
-        transition_start = time.monotonic()
-        transition = evaluate_topic_transition(
-            pm=manager._pm,
-            goal=project.goal,
-            topic=project.topic,
-            method=sess.method,
-            history=full_history,
-            model=model,
-            api_key=api_key,
-            output_language=loop_lang,
-            max_tokens=tt_max_tokens,
-        )
-        transition_ms_holder["value"] = int((time.monotonic() - transition_start) * 1000)
-        looped = (
-            not transition.fallback_used
-            and transition.cycle_complete
-            and transition.continue_recommended
-            and transition.next_topic is not None
-            and sess.cycle_count < max_cycles
-        )
-        if looped:
-            try:
-                topics_list = json.loads(sess.cycle_topics or "[]")
-                if not isinstance(topics_list, list):
-                    topics_list = []
-            except json.JSONDecodeError:
-                topics_list = []
-            topics_list.append(
-                {
-                    "cycle": sess.cycle_count,
-                    "topic": project.topic,
-                    "summary": transition.summary,
-                    "next_topic": transition.next_topic or "",
-                }
-            )
-            sess.cycle_topics = json.dumps(topics_list, ensure_ascii=False)
-            sess.cycle_count += 1
-            sess.cycle_step = MIN_STEP
-        topic_transition_out = _TopicTransitionOut(
-            cycle_complete=transition.cycle_complete,
-            summary=transition.summary,
-            next_topic=transition.next_topic,
-            next_topic_rationale=transition.next_topic_rationale,
-            difficulty_adjustment=transition.difficulty_adjustment,
-            continue_recommended=transition.continue_recommended,
-            fallback_used=transition.fallback_used,
-            looped=looped,
-            new_cycle_count=sess.cycle_count,
-        )
-
-    db.commit()
-    db.refresh(assistant_msg)
-    db.refresh(sess)
-    return _StreamExchangeResult(
-        message=assistant_msg,
-        step_evaluation=step_eval_out,
-        topic_transition=topic_transition_out,
-    )
 
 
 # --- POST /{id}/rate -------------------------------------------------------
@@ -1829,60 +1051,6 @@ def _is_language_project(db: Session, project_id: str) -> bool:
     return False
 
 
-def _build_pronunciation_ai_caller(db: Session, user_id: str):
-    """Resolve the user's active provider / api_key / model and
-    return a ``messages -> str | None`` callable suitable for
-    the pronunciation prompt-fns. Mirrors the pattern in
-    ``routers.imports._build_ai_caller`` +
-    ``plugins/anki/routes._build_ai_caller``.
-
-    Raises ``ValidationError`` when the user has no configured
-    provider; the global handler maps to 400.
-    """
-    from app.main import manager  # lazy: cycle + test isolation
-    from app.services import settings as settings_service
-    from app.repositories.settings_repo import SqlAlchemySettingsRepository
-
-    settings = settings_service.get_or_create_settings(SqlAlchemySettingsRepository(db), user_id)
-    provider_key = settings.active_provider
-    try:
-        provider_enum = AIProvider(provider_key)
-    except ValueError as exc:
-        raise ValidationError(
-            f"User {user_id!r} has no valid active AI provider."
-        ) from exc
-    # Phase 34 — env > secrets.yaml > DB resolution.
-    api_key, _source = settings_service.resolve_api_key(SqlAlchemySettingsRepository(db), user_id, provider_enum
-    )
-    if not api_key:
-        raise ValidationError(
-            f"User {user_id!r} has no stored API key for {provider_key!r}."
-        )
-    override_attr = f"model_override_{provider_key}"
-    override = getattr(settings, override_attr, None)
-    default_models = {
-        "anthropic": "claude-haiku-4-5-20251001",
-        "openai": "gpt-4o-mini",
-        "gemini": "gemini-2.0-flash",
-    }
-    if isinstance(override, str) and override.strip():
-        model = override.strip()
-    else:
-        model = default_models.get(provider_key) or ""
-    if not model:
-        raise ValidationError(
-            f"Provider {provider_key!r} has no default model registered."
-        )
-
-    def _call(messages: list[dict[str, str]]) -> str | None:
-        result = manager._pm.hook.ai_complete(
-            messages=messages, model=model, api_key=api_key, max_tokens=256
-        )
-        return result if isinstance(result, str) else None
-
-    return _call
-
-
 class _PronunciationPhraseBody(BaseModel):
     project_id: str
     language: str = "en"
@@ -1915,7 +1083,7 @@ def get_pronunciation_phrase(
         raise NotFoundError(
             f"LearningProject {body.project_id!r} not found."
         )
-    ai_call = _build_pronunciation_ai_caller(db, project.user_id)
+    ai_call = build_ai_caller(db, project.user_id, max_tokens=256)
     phrase = _pronunciation.generate_phrase(
         ai_call,
         language=body.language,
@@ -1959,7 +1127,7 @@ def judge_pronunciation(
         )
     if not body.target.strip() or not body.actual.strip():
         raise ValidationError("target and actual must both be non-empty.")
-    ai_call = _build_pronunciation_ai_caller(db, project.user_id)
+    ai_call = build_ai_caller(db, project.user_id, max_tokens=256)
     verdict = _pronunciation.judge_attempt(
         ai_call,
         target=body.target,

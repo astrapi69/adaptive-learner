@@ -1,7 +1,7 @@
 {
   "name": "adaptive-learner-frontend",
   "private": true,
-  "version": "1.76.0",
+  "version": "1.77.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -119,5 +119,8 @@
   },
   "engines": {
     "node": ">=24.0.0"
+  },
+  "overrides": {
+    "qs": "^6.15.2"
   }
 }

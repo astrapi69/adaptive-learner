@@ -135,19 +135,29 @@ function bankersRound(value: number): number {
 
 async function getOrCreateUserXP(userId: string): Promise<UserXPRow> {
     const db = getDb();
-    const existing = await db.userXp.where({user_id: userId}).first();
-    if (existing) {
-        return existing;
-    }
-    const row: UserXPRow = {
-        id: newId(),
-        user_id: userId,
-        total_xp: 0,
-        level: 1,
-        updated_at: nowIso(),
-    };
-    await db.userXp.put(row);
-    return row;
+    // #390 Phase 2: first-or-create inside one rw transaction so two
+    // concurrent first-awards converge to a single row (the &user_id
+    // unique index added in Dexie v27 is the DB-level backstop). When
+    // called from inside an existing userXp-scoped transaction (e.g.
+    // persistXP within evaluateBadgesForUser) Dexie reuses the parent.
+    let result: UserXPRow | null = null;
+    await db.transaction("rw", db.userXp, async () => {
+        const existing = await db.userXp.where({user_id: userId}).first();
+        if (existing) {
+            result = existing;
+            return;
+        }
+        const row: UserXPRow = {
+            id: newId(),
+            user_id: userId,
+            total_xp: 0,
+            level: 1,
+            updated_at: nowIso(),
+        };
+        await db.userXp.put(row);
+        result = row;
+    });
+    return result as unknown as UserXPRow;
 }
 
 export async function persistXP(
@@ -155,16 +165,32 @@ export async function persistXP(
     deltaXP: number,
 ): Promise<{row: UserXPRow; levelUp: boolean}> {
     const db = getDb();
-    const existing = await getOrCreateUserXP(userId);
-    const previousLevel = existing.level;
-    const updated: UserXPRow = {
-        ...existing,
-        total_xp: existing.total_xp + deltaXP,
-        level: computeLevel(existing.total_xp + deltaXP),
-        updated_at: nowIso(),
-    };
-    await db.userXp.put(updated);
-    return {row: updated, levelUp: updated.level > previousLevel};
+    // Ensure the singleton row exists; the create-race on this
+    // (two concurrent first-awards) is handled in #390 Phase 2 via
+    // a unique index on user_id. Phase 1 closes the increment race.
+    await getOrCreateUserXP(userId);
+    // ``modify`` runs the read AND the write inside one IndexedDB
+    // readwrite transaction. Concurrent ``modify`` calls on the
+    // same store are serialized by IndexedDB, so ``total_xp +=
+    // deltaXP`` is atomic — no lost update when a lesson-complete
+    // and a session-end award overlap (#390 Class A).
+    let captured: {row: UserXPRow; levelUp: boolean} | null = null;
+    await db.userXp
+        .where({user_id: userId})
+        .modify((row) => {
+            const previousLevel = row.level;
+            row.total_xp += deltaXP;
+            row.level = computeLevel(row.total_xp);
+            row.updated_at = nowIso();
+            captured = {row: {...row}, levelUp: row.level > previousLevel};
+        });
+    if (captured === null) {
+        // Defensive: the ensure-step above guarantees a row, so this
+        // only fires if the row vanished between ensure and modify.
+        const fallback = await getOrCreateUserXP(userId);
+        return {row: fallback, levelUp: false};
+    }
+    return captured;
 }
 
 export async function userActivityDates(userId: string): Promise<Set<string>> {

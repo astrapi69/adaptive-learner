@@ -1,0 +1,36 @@
+# .filesize-whitelist
+# Dateien, die bewusst gross aber kohäsiv sind.
+# Jeder Eintrag braucht eine Begründung.
+#
+# Format: relativer Pfad ab Repo-Root, ein Eintrag pro Zeile.
+# Kommentare mit # am Zeilenanfang.
+#
+# Kriterien (ALLE muessen zutreffen):
+#   - Ein einziger Concern (Datenstruktur, Konfiguration, Prompt-Templates)
+#   - Kein gemischtes Verhalten (keine Business-Logik + IO + Rendering)
+#   - Splitting wuerde die Kohäsion verschlechtern, nicht verbessern
+# God-Files mit gemischten Concerns gehoeren NICHT hierher, sondern
+# entweder gesplittet oder befristet in .filesize-baseline.
+
+# --- Backend: Statische Datenmodelle (Single-File Domain Model) ---
+# Alle Entities in einer Datei = bewusste Designentscheidung,
+# kein God-File (kein gemischter Concern, nur Datenstruktur).
+backend/app/models/__init__.py
+backend/app/schemas/__init__.py
+
+# --- Statische Fragendaten (Assessment-Plugin) ---
+# Reine Datendatei, kein Verhalten. Splitting wuerde die
+# Auffindbarkeit verschlechtern ohne Kohäsionsgewinn.
+plugins/adaptive-learner-plugin-assessment/adaptive_learner_assessment/questions.py
+
+# --- AI-Prompt-Templates (Session-Plugin) ---
+# Prompt-Strings, kein Code. Kohäsiv nach Domain.
+plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py
+
+# --- Frontend: Dexie-Row-Shapes (Single-File Datenmodell) ---
+# Die 33 Row-Interfaces spiegeln die SQLAlchemy-Modelle 1:1; reine
+# Datenstruktur (keine Logik/IO/Rendering), das Frontend-Pendant zu
+# backend/app/models. Aus db.ts ausgelagert (#391), damit db.ts nur
+# noch Schema + Migrationen + Init traegt. Weiter splitten wuerde das
+# Datenmodell zerstreuen, nicht die Kohaesion verbessern.
+frontend/src/storage/db-rows.ts

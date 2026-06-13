@@ -219,7 +219,7 @@ def _read_secrets_yaml_block(provider: AIProvider) -> dict[str, Any]:
     Returns ``{}`` when the file is missing / malformed / the block
     is absent. Never raises.
     """
-    from app.main import _get_user_override_path, _load_override_file
+    from app.config import _get_user_override_path, _load_override_file
 
     try:
         data = _load_override_file(_get_user_override_path())

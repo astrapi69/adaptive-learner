@@ -42,6 +42,7 @@ const ROUTE_HELP_KEYS: ReadonlyArray<readonly [string, string]> = [
   ["/session", "learning_session"],
   ["/curriculum", "curriculum"],
   ["/progress", "view_dashboard"],
+  ["/import", "feature_conversation_analysis"],
 ];
 
 /**

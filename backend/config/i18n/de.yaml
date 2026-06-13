@@ -1107,6 +1107,7 @@ notebooklm:
 
 feature:
   api_key_required: "API-Schlüssel erforderlich. Konfiguriere einen Provider in den Einstellungen."
+  desktop_only: "Nur mit der Desktop-App verfügbar."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"
@@ -1601,6 +1602,7 @@ content:
     completed: "Set abgeschlossen"
     empty: "Starte deine erste Lektion!"
     progress: "Aufgabe {n}/{total}"
+    imported_analysis: "Importierte Analyse"
   import_chat:
     button: "Chat importieren"
   search:
