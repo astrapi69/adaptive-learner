@@ -22,21 +22,26 @@
  * viewports so the touch target stays above 44px.
  */
 
-import { Download, Pause } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { Button } from "@/components/ui/button";
-import LessonExitDialog from "../components/lesson/LessonExitDialog";
 import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
 import LessonSummary from "../components/lesson/LessonSummary";
+import LessonHeader from "../components/lesson/LessonHeader";
+import LessonProgressBar from "../components/lesson/LessonProgressBar";
 import LessonTtsControls from "../components/lesson/LessonTtsControls";
 import LessonStepView from "../components/lesson/LessonStepView";
 import LessonFooterNav from "../components/lesson/LessonFooterNav";
+import LessonTtsMiniPlayerSlot from "../components/lesson/LessonTtsMiniPlayerSlot";
+import LessonStatusView, {
+  resolveLessonStatusKind,
+} from "../components/lesson/LessonStatusView";
 import { useLessonAutoRead } from "../hooks/useLessonAutoRead";
-import { SUPPORTED_EXERCISE_TYPES } from "../components/exercises/ExerciseDispatcher";
 import type { ExerciseHandle } from "../components/exercises/exercise-control";
-import LessonTtsMiniPlayer from "../components/lesson/LessonTtsMiniPlayer";
+import {
+  isPlayableExerciseStep,
+  storedStepResult,
+} from "../lib/lesson/lesson-step-state";
 import { useI18n } from "../hooks/useI18n";
 import { useLesson } from "../hooks/useLesson";
 import { useLessonFlowControl } from "../hooks/useLessonFlowControl";
@@ -163,11 +168,7 @@ export default function LessonPage() {
   const prevStepIndexRef = useRef(-1);
   if (prevStepIndexRef.current !== currentStepIndex) {
     prevStepIndexRef.current = currentStepIndex;
-    const steps = lesson?.steps;
-    const stored =
-      steps && currentStepIndex < steps.length
-        ? progress?.step_results?.[steps[currentStepIndex].id]
-        : undefined;
+    const stored = storedStepResult(lesson, currentStepIndex, progress);
     setAnswerable(false);
     setChecked(false);
     setEnteredReviewed(stored != null);
@@ -273,88 +274,17 @@ export default function LessonPage() {
     };
   }, [setId]);
 
-  if (!source || !setId || !filename) {
-    return (
-      <main
-        id="main"
-        className="page lesson-page flex flex-col min-h-full"
-        data-testid="lesson-missing-params"
-      >
-        <h1>{t("lesson.page_title", "Lesson")}</h1>
-        <p>
-          {t(
-            "lesson.error.missing_params",
-            "No lesson selected. Browse content sets to pick one.",
-          )}
-        </p>
-        <Button asChild variant="default">
-          <Link to="/content">
-            {t("lesson.action.open_browser", "Open content browser")}
-          </Link>
-        </Button>
-      </main>
-    );
-  }
-
-  if (status === "loading") {
-    return (
-      <main
-        id="main"
-        className="page lesson-page flex flex-col min-h-full"
-        data-testid="lesson-loading"
-      >
-        <p>{t("lesson.loading", "Loading lesson…")}</p>
-      </main>
-    );
-  }
-
-  if (status === "not-cached") {
-    return (
-      <main
-        id="main"
-        className="page lesson-page flex flex-col min-h-full"
-        data-testid="lesson-not-cached"
-      >
-        <header className="lesson-header">
-          <h1>{t("lesson.page_title", "Lesson")}</h1>
-        </header>
-        <p className="lesson-not-cached-body">
-          {t(
-            "lesson.not_cached_body",
-            "This lesson isn't downloaded yet. Open the content browser and download the set first.",
-          )}
-        </p>
-        <p>
-          <Button
-            type="button"
-            onClick={() => navigate("/content")}
-            data-testid="lesson-goto-content"
-          >
-            <Download size={14} aria-hidden="true" />
-            {t("lesson.action.open_browser", "Open content browser")}
-          </Button>
-        </p>
-      </main>
-    );
-  }
-
-  if (status === "error" || lesson === null) {
-    return (
-      <main
-        id="main"
-        className="page lesson-page flex flex-col min-h-full"
-        data-testid="lesson-error"
-      >
-        <p>
-          {t("lesson.error.load_failed", "Could not load lesson.")}
-          {error ? ` (${error})` : ""}
-        </p>
-        <Button type="button" onClick={() => navigate("/content")}>
-          {t("lesson.action.open_browser", "Open content browser")}
-        </Button>
-      </main>
-    );
-  }
+  const statusKind = resolveLessonStatusKind(
+    source,
+    setId,
+    filename,
+    status,
+    lesson,
+  );
+  if (statusKind) return <LessonStatusView kind={statusKind} error={error} />;
+  // ``resolveLessonStatusKind`` already returns "error" when the lesson
+  // is null, so this only narrows the type for the code below.
+  if (lesson === null) return null;
 
   const totalSteps = lesson.steps.length;
   const isSummary = currentStepIndex >= totalSteps;
@@ -363,11 +293,7 @@ export default function LessonPage() {
   // (and any unsupported/placeholder exercise type) keep the
   // plain always-enabled "Next" button so the user is never
   // stuck on a step they can't "check".
-  const isExerciseStep =
-    step !== null &&
-    step.type !== "theory" &&
-    step.exercise != null &&
-    SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
+  const isExerciseStep = isPlayableExerciseStep(step);
   const isLastStep = currentStepIndex + 1 === totalSteps;
   // Keep the Enter-shortcut listener (#103) reading the latest step
   // state without re-subscribing on every render.
@@ -379,8 +305,6 @@ export default function LessonPage() {
     answerable,
     goNext,
   };
-  const progressPct =
-    totalSteps === 0 ? 100 : Math.round((currentStepIndex / totalSteps) * 100);
 
   return (
     <main
@@ -388,92 +312,33 @@ export default function LessonPage() {
       className="page lesson-page flex flex-col min-h-full"
       data-testid="lesson-page"
     >
-      <header className="lesson-header">
-        <Button
-          type="button"
-          variant="ghost"
-          className="lesson-back-btn"
-          onClick={() => {
-            // Phase 63B — only intercept while the
-            // lesson is in progress. Completed /
-            // abandoned rows behave like before and
-            // navigate straight away. Semantically this is
-            // PAUSING the lesson (the dialog offers
-            // pause/abandon/continue), not just "going back".
-            if (isInProgress) {
-              setExitOpen(true);
-            } else {
-              navigate("/content");
-            }
-          }}
-          data-testid="lesson-back-btn"
-          aria-label={t("lesson.action.pause", "Pause lesson")}
-          title={t("lesson.action.pause", "Pause lesson")}
-        >
-          <Pause size={16} aria-hidden="true" />
-          <span className="hidden md:inline">
-            {t("lesson.action.pause", "Pause lesson")}
-          </span>
-        </Button>
-        <LessonExitDialog
-          open={exitOpen}
-          onContinue={() => setExitOpen(false)}
-          onPause={() => void handlePauseFromDialog()}
-          onAbandon={() => void handleAbandonFromDialog()}
-        />
-        {setTitle && (
-          <p className="lesson-header-set" data-testid="lesson-header-set">
-            <span className="lesson-header-set-label">
-              {t("lesson.set_label", "Set")}:
-            </span>
-            {setTitle}
-          </p>
-        )}
-        <h1>{lesson.title}</h1>
-        {lesson.contributed_by && (
-          <p className="lesson-credit" data-testid="lesson-credit">
-            {t("lesson.contributed_by", "Contributed by {name}").replace(
-              "{name}",
-              lesson.contributed_by,
-            )}
-          </p>
-        )}
-        {lesson.description && (
-          <p className="lesson-description">{lesson.description}</p>
-        )}
-      </header>
+      <LessonHeader
+        lesson={lesson}
+        setTitle={setTitle}
+        isInProgress={isInProgress}
+        exitOpen={exitOpen}
+        onPauseClick={() => setExitOpen(true)}
+        onExit={() => navigate("/content")}
+        onExitContinue={() => setExitOpen(false)}
+        onExitPause={() => void handlePauseFromDialog()}
+        onExitAbandon={() => void handleAbandonFromDialog()}
+      />
 
       {/* Phase 63C — resume prompt overlays the step view.
                 The user must choose before they can interact with
                 the lesson content. */}
       <LessonResumeDialog
         open={showResumePrompt}
-        lessonTitle={lesson?.title ?? ""}
+        lessonTitle={lesson.title}
         onResume={() => void handleResume()}
         onStartOver={() => void handleStartOver()}
       />
 
-      <div
-        className="lesson-progress-bar"
-        role="progressbar"
-        aria-valuenow={progressPct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={t("lesson.progress.aria_label", "Lesson progress")}
-        data-testid="lesson-progress-bar"
-      >
-        <div
-          className="lesson-progress-fill"
-          style={{ width: `${progressPct}%` }}
-        />
-        <span className="lesson-progress-label">
-          {isSummary
-            ? t("lesson.progress.summary", "Summary")
-            : t("lesson.progress.step_of", "Step {current} of {total}")
-                .replace("{current}", String(currentStepIndex + 1))
-                .replace("{total}", String(totalSteps))}
-        </span>
-      </div>
+      <LessonProgressBar
+        isSummary={isSummary}
+        currentStepIndex={currentStepIndex}
+        totalSteps={totalSteps}
+      />
 
       <LessonTtsControls
         isSummary={isSummary}
@@ -585,19 +450,12 @@ export default function LessonPage() {
       {/* Floating read-aloud mini-player (C8) — visible while the
                 engine is active; step-based skip through the theory
                 block + play/pause + stop. */}
-      {tts.speaking && (
-        <LessonTtsMiniPlayer
-          paused={tts.paused}
-          position={theoryBlock?.position ?? 0}
-          total={theoryBlock?.total ?? 0}
-          hasPrev={theoryBlock !== null && currentStepIndex > theoryBlock.start}
-          hasNext={theoryBlock !== null && currentStepIndex < theoryBlock.end}
-          onPrev={() => readTheoryStepAt(currentStepIndex - 1)}
-          onPlayPause={() => (tts.paused ? tts.resume() : tts.pause())}
-          onNext={() => readTheoryStepAt(currentStepIndex + 1)}
-          onStop={() => tts.stop()}
-        />
-      )}
+      <LessonTtsMiniPlayerSlot
+        tts={tts}
+        theoryBlock={theoryBlock}
+        currentStepIndex={currentStepIndex}
+        onReadStepAt={readTheoryStepAt}
+      />
     </main>
   );
 }
