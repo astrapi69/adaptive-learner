@@ -40,16 +40,20 @@ export const dexieUsers: IStorageService["users"] = {
     },
     async update(userId: string, body: UserUpdateBody): Promise<User> {
       const db = getDb();
-      const row = await requireRow(db.users, userId, "User");
-      const updated: UserRow = {
-        ...row,
-        ...(body.name !== undefined ? { name: body.name } : {}),
-        ...(body.email !== undefined ? { email: body.email } : {}),
-        ...(body.language !== undefined ? { language: body.language } : {}),
-        updated_at: nowIso(),
-      };
-      await db.users.put(updated);
-      return rowToUser(updated);
+      // #390 Phase 3: atomic get+spread+put (no lost concurrent edit).
+      let updated: UserRow | null = null;
+      await db.transaction("rw", db.users, async () => {
+        const row = await requireRow(db.users, userId, "User");
+        updated = {
+          ...row,
+          ...(body.name !== undefined ? { name: body.name } : {}),
+          ...(body.email !== undefined ? { email: body.email } : {}),
+          ...(body.language !== undefined ? { language: body.language } : {}),
+          updated_at: nowIso(),
+        };
+        await db.users.put(updated);
+      });
+      return rowToUser(updated as unknown as UserRow);
     },
     projects: {
       async list(userId: string): Promise<LearningProject[]> {
@@ -136,23 +140,29 @@ export const dexieProjects: IStorageService["projects"] = {
       body: LearningProjectUpdateBody,
     ): Promise<LearningProject> {
       const db = getDb();
-      const row = await requireRow(db.learningProjects, projectId, "Project");
-      const updated: LearningProjectRow = {
-        ...row,
-        ...(body.topic !== undefined ? { topic: body.topic } : {}),
-        ...(body.goal !== undefined ? { goal: body.goal } : {}),
-        ...(body.timeframe !== undefined ? { timeframe: body.timeframe } : {}),
-        ...(body.daily_minutes !== undefined
-          ? { daily_minutes: body.daily_minutes }
-          : {}),
-        ...(body.current_problem !== undefined
-          ? { current_problem: body.current_problem }
-          : {}),
-        ...(body.active !== undefined ? { active: body.active } : {}),
-        updated_at: nowIso(),
-      };
-      await db.learningProjects.put(updated);
-      return rowToProject(updated);
+      // #390 Phase 3: atomic get+spread+put (no lost concurrent edit).
+      let updated: LearningProjectRow | null = null;
+      await db.transaction("rw", db.learningProjects, async () => {
+        const row = await requireRow(db.learningProjects, projectId, "Project");
+        updated = {
+          ...row,
+          ...(body.topic !== undefined ? { topic: body.topic } : {}),
+          ...(body.goal !== undefined ? { goal: body.goal } : {}),
+          ...(body.timeframe !== undefined
+            ? { timeframe: body.timeframe }
+            : {}),
+          ...(body.daily_minutes !== undefined
+            ? { daily_minutes: body.daily_minutes }
+            : {}),
+          ...(body.current_problem !== undefined
+            ? { current_problem: body.current_problem }
+            : {}),
+          ...(body.active !== undefined ? { active: body.active } : {}),
+          updated_at: nowIso(),
+        };
+        await db.learningProjects.put(updated);
+      });
+      return rowToProject(updated as unknown as LearningProjectRow);
     },
 
 };

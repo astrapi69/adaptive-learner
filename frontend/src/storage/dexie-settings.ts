@@ -28,74 +28,91 @@ export const dexieSettings: IStorageService["settings"] = {
       body: SettingsPatchBody,
     ): Promise<UserSettings> {
       const db = getDb();
-      const user = await requireRow(db.users, userId, "User");
-      const row = await ensureSettings(db, userId, user.language);
-      const updated: UserSettingsRow = {
-        ...row,
-        ...(body.active_provider !== undefined
-          ? { active_provider: body.active_provider }
-          : {}),
-        ...(body.language !== undefined ? { language: body.language } : {}),
-        ...(body.model_override_anthropic !== undefined
-          ? {
-              model_override_anthropic:
-                body.model_override_anthropic === ""
-                  ? null
-                  : body.model_override_anthropic,
-            }
-          : {}),
-        ...(body.model_override_openai !== undefined
-          ? {
-              model_override_openai:
-                body.model_override_openai === ""
-                  ? null
-                  : body.model_override_openai,
-            }
-          : {}),
-        ...(body.model_override_gemini !== undefined
-          ? {
-              model_override_gemini:
-                body.model_override_gemini === ""
-                  ? null
-                  : body.model_override_gemini,
-            }
-          : {}),
-        updated_at: nowIso(),
-      };
-      await db.userSettings.put(updated);
-      return rowToSettings(updated);
+      // #390 Phase 3: the user read, the settings ensure, and the put run
+      // in one rw transaction so a concurrent setApiKey / settings edit on
+      // the same userSettings row isn't lost. ensureSettings opens a
+      // userSettings-scoped sub-transaction, which Dexie reuses here.
+      let updated: UserSettingsRow | null = null;
+      await db.transaction("rw", [db.users, db.userSettings], async () => {
+        const user = await requireRow(db.users, userId, "User");
+        const row = await ensureSettings(db, userId, user.language);
+        updated = {
+          ...row,
+          ...(body.active_provider !== undefined
+            ? { active_provider: body.active_provider }
+            : {}),
+          ...(body.language !== undefined ? { language: body.language } : {}),
+          ...(body.model_override_anthropic !== undefined
+            ? {
+                model_override_anthropic:
+                  body.model_override_anthropic === ""
+                    ? null
+                    : body.model_override_anthropic,
+              }
+            : {}),
+          ...(body.model_override_openai !== undefined
+            ? {
+                model_override_openai:
+                  body.model_override_openai === ""
+                    ? null
+                    : body.model_override_openai,
+              }
+            : {}),
+          ...(body.model_override_gemini !== undefined
+            ? {
+                model_override_gemini:
+                  body.model_override_gemini === ""
+                    ? null
+                    : body.model_override_gemini,
+              }
+            : {}),
+          updated_at: nowIso(),
+        };
+        await db.userSettings.put(updated);
+      });
+      return rowToSettings(updated as unknown as UserSettingsRow);
     },
     async setApiKey(
       userId: string,
       body: ApiKeySetBody,
     ): Promise<UserSettings> {
       const db = getDb();
-      const user = await requireRow(db.users, userId, "User");
-      const row = await ensureSettings(db, userId, user.language);
+      // #390 Phase 3: atomic ensure + put so a concurrent settings edit on
+      // the same userSettings row isn't lost.
       const field = `api_key_${body.provider}` as const;
-      const updated: UserSettingsRow = {
-        ...row,
-        [field]: body.key,
-        updated_at: nowIso(),
-      };
-      await db.userSettings.put(updated);
-      return rowToSettings(updated);
+      let updated: UserSettingsRow | null = null;
+      await db.transaction("rw", [db.users, db.userSettings], async () => {
+        const user = await requireRow(db.users, userId, "User");
+        const row = await ensureSettings(db, userId, user.language);
+        updated = {
+          ...row,
+          [field]: body.key,
+          updated_at: nowIso(),
+        };
+        await db.userSettings.put(updated);
+      });
+      return rowToSettings(updated as unknown as UserSettingsRow);
     },
     async deleteApiKey(
       userId: string,
       provider: AIProvider,
     ): Promise<UserSettings> {
       const db = getDb();
-      const user = await requireRow(db.users, userId, "User");
-      const row = await ensureSettings(db, userId, user.language);
+      // #390 Phase 3: atomic ensure + put so a concurrent settings edit on
+      // the same userSettings row isn't lost.
       const field = `api_key_${provider}` as const;
-      const updated: UserSettingsRow = {
-        ...row,
-        [field]: null,
-        updated_at: nowIso(),
-      };
-      await db.userSettings.put(updated);
-      return rowToSettings(updated);
+      let updated: UserSettingsRow | null = null;
+      await db.transaction("rw", [db.users, db.userSettings], async () => {
+        const user = await requireRow(db.users, userId, "User");
+        const row = await ensureSettings(db, userId, user.language);
+        updated = {
+          ...row,
+          [field]: null,
+          updated_at: nowIso(),
+        };
+        await db.userSettings.put(updated);
+      });
+      return rowToSettings(updated as unknown as UserSettingsRow);
     },
     getApp: async () => ({}),
     async getAvailableModels(
@@ -190,20 +207,29 @@ export const dexieSettings: IStorageService["settings"] = {
       provider: AIProvider,
     ): Promise<UserSettings> {
       const db = getDb();
-      const backup = await db.apiKeyBackups.get(`${userId}#${provider}`);
-      if (!backup) {
-        throw new ApiError(404, "No API-key backup for this provider");
-      }
-      const user = await requireRow(db.users, userId, "User");
-      const row = await ensureSettings(db, userId, user.language);
+      // #390 Phase 3: backup read + ensure + put in one rw transaction so
+      // a concurrent settings edit isn't lost.
       const field = `api_key_${provider}` as const;
-      const updated: UserSettingsRow = {
-        ...row,
-        [field]: backup.key,
-        updated_at: nowIso(),
-      };
-      await db.userSettings.put(updated);
-      return rowToSettings(updated);
+      let updated: UserSettingsRow | null = null;
+      await db.transaction(
+        "rw",
+        [db.users, db.userSettings, db.apiKeyBackups],
+        async () => {
+          const backup = await db.apiKeyBackups.get(`${userId}#${provider}`);
+          if (!backup) {
+            throw new ApiError(404, "No API-key backup for this provider");
+          }
+          const user = await requireRow(db.users, userId, "User");
+          const row = await ensureSettings(db, userId, user.language);
+          updated = {
+            ...row,
+            [field]: backup.key,
+            updated_at: nowIso(),
+          };
+          await db.userSettings.put(updated);
+        },
+      );
+      return rowToSettings(updated as unknown as UserSettingsRow);
     },
 
 };

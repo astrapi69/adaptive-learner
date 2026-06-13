@@ -64,15 +64,6 @@ export const dexieSubjects: IStorageService["subjects"] = {
     },
     async update(subjectId: string, body: SubjectUpdateBody): Promise<Subject> {
       const db = getDb();
-      const existing = await db.subjects.get(subjectId);
-      if (!existing) {
-        throw new ApiError(
-          404,
-          `Subject ${subjectId} not found`,
-          `/subjects/${subjectId}`,
-          "PATCH",
-        );
-      }
       if (body.parent_id !== undefined && body.parent_id === subjectId) {
         throw new ApiError(
           400,
@@ -81,29 +72,43 @@ export const dexieSubjects: IStorageService["subjects"] = {
           "PATCH",
         );
       }
-      if (body.parent_id) {
-        const parent = await db.subjects.get(body.parent_id);
-        if (!parent) {
+      // #390 Phase 3: the existence/parent reads and the put run in one
+      // rw transaction so a concurrent edit isn't lost.
+      let next: Subject | null = null;
+      await db.transaction("rw", db.subjects, async () => {
+        const existing = await db.subjects.get(subjectId);
+        if (!existing) {
           throw new ApiError(
             404,
-            `Parent subject ${body.parent_id} not found`,
+            `Subject ${subjectId} not found`,
             `/subjects/${subjectId}`,
             "PATCH",
           );
         }
-      }
-      const next: Subject = {
-        ...existing,
-        ...(body.name !== undefined && { name: body.name }),
-        ...(body.parent_id !== undefined && { parent_id: body.parent_id }),
-        ...(body.description !== undefined && {
-          description: body.description,
-        }),
-        ...(body.icon !== undefined && { icon: body.icon }),
-        updated_at: nowIso(),
-      };
-      await db.subjects.put(next);
-      return next;
+        if (body.parent_id) {
+          const parent = await db.subjects.get(body.parent_id);
+          if (!parent) {
+            throw new ApiError(
+              404,
+              `Parent subject ${body.parent_id} not found`,
+              `/subjects/${subjectId}`,
+              "PATCH",
+            );
+          }
+        }
+        next = {
+          ...existing,
+          ...(body.name !== undefined && { name: body.name }),
+          ...(body.parent_id !== undefined && { parent_id: body.parent_id }),
+          ...(body.description !== undefined && {
+            description: body.description,
+          }),
+          ...(body.icon !== undefined && { icon: body.icon }),
+          updated_at: nowIso(),
+        };
+        await db.subjects.put(next);
+      });
+      return next as unknown as Subject;
     },
     async remove(subjectId: string): Promise<void> {
       const db = getDb();
@@ -161,37 +166,42 @@ export const dexieTags: IStorageService["tags"] = {
     },
     async update(tagId: string, body: TagUpdateBody): Promise<Tag> {
       const db = getDb();
-      const existing = await db.tags.get(tagId);
-      if (!existing) {
-        throw new ApiError(
-          404,
-          `Tag ${tagId} not found`,
-          `/tags/${tagId}`,
-          "PATCH",
-        );
-      }
-      if (body.name !== undefined && body.name !== existing.name) {
-        const clash = await db.tags
-          .where("user_id")
-          .equals(existing.user_id)
-          .and((row) => row.name === body.name && row.id !== tagId)
-          .first();
-        if (clash) {
+      // #390 Phase 3: existence + name-clash reads and the put in one rw
+      // transaction so a concurrent edit isn't lost.
+      let next: Tag | null = null;
+      await db.transaction("rw", db.tags, async () => {
+        const existing = await db.tags.get(tagId);
+        if (!existing) {
           throw new ApiError(
-            409,
-            `Tag '${body.name}' already exists for this user.`,
+            404,
+            `Tag ${tagId} not found`,
             `/tags/${tagId}`,
             "PATCH",
           );
         }
-      }
-      const next: Tag = {
-        ...existing,
-        ...(body.name !== undefined && { name: body.name }),
-        ...(body.color !== undefined && { color: body.color }),
-      };
-      await db.tags.put(next);
-      return next;
+        if (body.name !== undefined && body.name !== existing.name) {
+          const clash = await db.tags
+            .where("user_id")
+            .equals(existing.user_id)
+            .and((row) => row.name === body.name && row.id !== tagId)
+            .first();
+          if (clash) {
+            throw new ApiError(
+              409,
+              `Tag '${body.name}' already exists for this user.`,
+              `/tags/${tagId}`,
+              "PATCH",
+            );
+          }
+        }
+        next = {
+          ...existing,
+          ...(body.name !== undefined && { name: body.name }),
+          ...(body.color !== undefined && { color: body.color }),
+        };
+        await db.tags.put(next);
+      });
+      return next as unknown as Tag;
     },
     async remove(tagId: string): Promise<void> {
       const db = getDb();
