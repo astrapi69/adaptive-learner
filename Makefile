@@ -329,6 +329,9 @@ install-hooks: ## Install scripts/git-hooks/* into .git/hooks
 
 # --- Type Checking ---
 
+check-file-sizes: ## Warn on source files over 500 lines (god-file watcher; warn-only)
+	python3 scripts/check_file_sizes.py
+
 check-types: check-types-backend check-types-frontend ## Run all type checks
 
 check-types-backend: ## Run mypy on backend

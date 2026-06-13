@@ -1,0 +1,28 @@
+name: File-size watcher
+
+# Warn (never fail) when a source file grows past the line threshold, so
+# new god-files don't creep back after the #353 cleanup. The script emits
+# GitHub ``::warning::`` annotations (visible in the PR) and always exits 0.
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  file-size:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Warn on oversized source files
+        run: python3 scripts/check_file_sizes.py
