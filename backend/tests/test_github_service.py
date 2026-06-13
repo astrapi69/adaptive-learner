@@ -255,16 +255,18 @@ def test_create_lesson_pr_full_flow(monkeypatch):
     _install_fake(monkeypatch, handlers)
     result = github_service.create_lesson_pr(
         "ghp_token",
-        upstream="up/content",
-        base_branch="main",
-        branch_name="add-intro-2026-06-03",
-        file_path="sets/de/es-a1/lessons/16-intro.json",
-        file_content='{"id":"x"}',
-        commit_message="content: Intro",
-        pr_title="content: Intro",
-        pr_body="body",
-        manifest_update=github_service.ManifestUpdate(
-            set_path="sets/de/es-a1", lesson_filename="16-intro.json"
+        github_service.LessonPrRequest(
+            upstream="up/content",
+            base_branch="main",
+            branch_name="add-intro-2026-06-03",
+            file_path="sets/de/es-a1/lessons/16-intro.json",
+            file_content='{"id":"x"}',
+            commit_message="content: Intro",
+            pr_title="content: Intro",
+            pr_body="body",
+            manifest_update=github_service.ManifestUpdate(
+                set_path="sets/de/es-a1", lesson_filename="16-intro.json"
+            ),
         ),
     )
     assert result.url == "https://github.com/up/content/pull/7"
@@ -279,15 +281,17 @@ def test_create_lesson_pr_without_manifest_update(monkeypatch):
     _install_fake(monkeypatch, handlers)
     result = github_service.create_lesson_pr(
         "ghp_token",
-        upstream="up/content",
-        base_branch="main",
-        branch_name="add-intro-2026-06-03",
-        file_path="sets/de/es-a1/lessons/16-intro.json",
-        file_content='{"id":"x"}',
-        commit_message="content: Intro",
-        pr_title="content: Intro",
-        pr_body="body",
-        manifest_update=None,
+        github_service.LessonPrRequest(
+            upstream="up/content",
+            base_branch="main",
+            branch_name="add-intro-2026-06-03",
+            file_path="sets/de/es-a1/lessons/16-intro.json",
+            file_content='{"id":"x"}',
+            commit_message="content: Intro",
+            pr_title="content: Intro",
+            pr_body="body",
+            manifest_update=None,
+        ),
     )
     assert result.manifest_updated is False
     assert state["manifest_commits"] == 0
@@ -300,16 +304,18 @@ def test_create_lesson_pr_manifest_failure_is_non_fatal(monkeypatch):
     _install_fake(monkeypatch, handlers)
     result = github_service.create_lesson_pr(
         "ghp_token",
-        upstream="up/content",
-        base_branch="main",
-        branch_name="add-intro-2026-06-03",
-        file_path="sets/de/es-a1/lessons/16-intro.json",
-        file_content='{"id":"x"}',
-        commit_message="content: Intro",
-        pr_title="content: Intro",
-        pr_body="body",
-        manifest_update=github_service.ManifestUpdate(
-            set_path="sets/de/es-a1", lesson_filename="16-intro.json"
+        github_service.LessonPrRequest(
+            upstream="up/content",
+            base_branch="main",
+            branch_name="add-intro-2026-06-03",
+            file_path="sets/de/es-a1/lessons/16-intro.json",
+            file_content='{"id":"x"}',
+            commit_message="content: Intro",
+            pr_title="content: Intro",
+            pr_body="body",
+            manifest_update=github_service.ManifestUpdate(
+                set_path="sets/de/es-a1", lesson_filename="16-intro.json"
+            ),
         ),
     )
     assert result.number == 7
@@ -322,14 +328,16 @@ def test_create_lesson_pr_rejects_empty_token():
     with pytest.raises(ValidationError):
         github_service.create_lesson_pr(
             "",
-            upstream="up/content",
-            base_branch="main",
-            branch_name="b",
-            file_path="p.json",
-            file_content="{}",
-            commit_message="m",
-            pr_title="t",
-            pr_body="b",
+            github_service.LessonPrRequest(
+                upstream="up/content",
+                base_branch="main",
+                branch_name="b",
+                file_path="p.json",
+                file_content="{}",
+                commit_message="m",
+                pr_title="t",
+                pr_body="b",
+            ),
         )
 
 
@@ -342,14 +350,16 @@ def test_create_lesson_pr_github_error_maps_to_502(monkeypatch):
     with pytest.raises(ExternalServiceError):
         github_service.create_lesson_pr(
             "ghp_token",
-            upstream="up/content",
-            base_branch="main",
-            branch_name="b",
-            file_path="p.json",
-            file_content="{}",
-            commit_message="m",
-            pr_title="t",
-            pr_body="b",
+            github_service.LessonPrRequest(
+                upstream="up/content",
+                base_branch="main",
+                branch_name="b",
+                file_path="p.json",
+                file_content="{}",
+                commit_message="m",
+                pr_title="t",
+                pr_body="b",
+            ),
         )
 
 

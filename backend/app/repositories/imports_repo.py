@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from datetime import datetime
 
 from sqlalchemy.orm import Session, selectinload
@@ -26,6 +27,31 @@ from app.models import (
     User,
 )
 from app.repositories.base import Repository
+
+
+@dataclass(frozen=True)
+class NewConversation:
+    """The conversation-header fields plus ordered messages for
+    :meth:`ImportsRepository.create_conversation`. Bundles what was a
+    12-argument call into one cohesive payload (coding-standards.md
+    "Data between functions").
+
+    ``messages`` items expose ``role``, ``content`` and (optional)
+    ``timestamp`` keys; ``order_index`` is assigned by position.
+    """
+
+    user_id: str
+    project_id: str | None
+    source: str
+    title: str
+    message_count: int
+    topic_tag: str | None
+    model: str | None
+    source_created_at: datetime | None
+    content_hash: str
+    source_language: str | None
+    target_language: str | None
+    messages: Sequence[Mapping[str, object]]
 
 
 class ImportsRepository(Repository):
@@ -44,27 +70,8 @@ class ImportsRepository(Repository):
         """Return this user's conversation with the given hash, if any."""
 
     @abstractmethod
-    def create_conversation(
-        self,
-        *,
-        user_id: str,
-        project_id: str | None,
-        source: str,
-        title: str,
-        message_count: int,
-        topic_tag: str | None,
-        model: str | None,
-        source_created_at: datetime | None,
-        content_hash: str,
-        source_language: str | None,
-        target_language: str | None,
-        messages: Sequence[Mapping[str, object]],
-    ) -> ImportedConversation:
-        """Insert a conversation and its ordered messages, then return it.
-
-        ``messages`` items expose ``role``, ``content`` and (optional)
-        ``timestamp`` keys; ``order_index`` is assigned by position.
-        """
+    def create_conversation(self, new: NewConversation) -> ImportedConversation:
+        """Insert a conversation and its ordered messages, then return it."""
 
     @abstractmethod
     def list_by_user(self, user_id: str) -> list[ImportedConversation]:
@@ -119,38 +126,23 @@ class SqlAlchemyImportsRepository(ImportsRepository):
             .first()
         )
 
-    def create_conversation(
-        self,
-        *,
-        user_id: str,
-        project_id: str | None,
-        source: str,
-        title: str,
-        message_count: int,
-        topic_tag: str | None,
-        model: str | None,
-        source_created_at: datetime | None,
-        content_hash: str,
-        source_language: str | None,
-        target_language: str | None,
-        messages: Sequence[Mapping[str, object]],
-    ) -> ImportedConversation:
+    def create_conversation(self, new: NewConversation) -> ImportedConversation:
         conv = ImportedConversation(
-            user_id=user_id,
-            project_id=project_id,
-            source=source,
-            title=title,
-            message_count=message_count,
-            topic_tag=topic_tag,
-            model=model,
-            source_created_at=source_created_at,
-            content_hash=content_hash,
-            source_language=source_language,
-            target_language=target_language,
+            user_id=new.user_id,
+            project_id=new.project_id,
+            source=new.source,
+            title=new.title,
+            message_count=new.message_count,
+            topic_tag=new.topic_tag,
+            model=new.model,
+            source_created_at=new.source_created_at,
+            content_hash=new.content_hash,
+            source_language=new.source_language,
+            target_language=new.target_language,
         )
         self._db.add(conv)
         self._db.flush()  # so conv.id is populated for message FKs
-        for idx, msg in enumerate(messages):
+        for idx, msg in enumerate(new.messages):
             self._db.add(
                 ImportedMessage(
                     conversation_id=conv.id,
