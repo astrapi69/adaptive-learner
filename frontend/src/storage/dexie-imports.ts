@@ -168,52 +168,61 @@ export const dexieImports: IStorageService["imports"] = {
     body: ImportedConversationUpdateBody,
   ): Promise<ImportedConversation> {
     const db = getDb();
-    const conv = await db.importedConversations.get(conversationId);
-    if (!conv) {
-      throw new ApiError(
-        404,
-        `ImportedConversation ${conversationId} not found.`,
-        `/imports/${conversationId}`,
-        "PATCH",
-      );
-    }
-    if (body.project_id !== undefined && body.project_id !== null) {
-      const project = await db.learningProjects.get(body.project_id);
-      if (!project) {
-        throw new ApiError(
-          404,
-          `LearningProject ${body.project_id} not found.`,
-          `/imports/${conversationId}`,
-          "PATCH",
-        );
-      }
-      if (project.user_id !== conv.user_id) {
-        throw new ApiError(
-          400,
-          `Project ${body.project_id} does not belong to user ${conv.user_id}.`,
-          `/imports/${conversationId}`,
-          "PATCH",
-        );
-      }
-    }
-    const updated: ImportedConversationRow = {
-      ...conv,
-      project_id:
-        body.project_id !== undefined ? body.project_id : conv.project_id,
-      topic_tag:
-        body.topic_tag !== undefined ? body.topic_tag : conv.topic_tag,
-      title: body.title ?? conv.title,
-      source_language:
-        body.source_language !== undefined
-          ? body.source_language
-          : conv.source_language,
-      target_language:
-        body.target_language !== undefined
-          ? body.target_language
-          : conv.target_language,
-    };
-    await db.importedConversations.put(updated);
-    return rowToImportedConversation(updated);
+    // #390 Phase 3: existence + project-ownership reads and the put run
+    // in one rw transaction so a concurrent edit isn't lost.
+    let updated: ImportedConversationRow | null = null;
+    await db.transaction(
+      "rw",
+      [db.importedConversations, db.learningProjects],
+      async () => {
+        const conv = await db.importedConversations.get(conversationId);
+        if (!conv) {
+          throw new ApiError(
+            404,
+            `ImportedConversation ${conversationId} not found.`,
+            `/imports/${conversationId}`,
+            "PATCH",
+          );
+        }
+        if (body.project_id !== undefined && body.project_id !== null) {
+          const project = await db.learningProjects.get(body.project_id);
+          if (!project) {
+            throw new ApiError(
+              404,
+              `LearningProject ${body.project_id} not found.`,
+              `/imports/${conversationId}`,
+              "PATCH",
+            );
+          }
+          if (project.user_id !== conv.user_id) {
+            throw new ApiError(
+              400,
+              `Project ${body.project_id} does not belong to user ${conv.user_id}.`,
+              `/imports/${conversationId}`,
+              "PATCH",
+            );
+          }
+        }
+        updated = {
+          ...conv,
+          project_id:
+            body.project_id !== undefined ? body.project_id : conv.project_id,
+          topic_tag:
+            body.topic_tag !== undefined ? body.topic_tag : conv.topic_tag,
+          title: body.title ?? conv.title,
+          source_language:
+            body.source_language !== undefined
+              ? body.source_language
+              : conv.source_language,
+          target_language:
+            body.target_language !== undefined
+              ? body.target_language
+              : conv.target_language,
+        };
+        await db.importedConversations.put(updated);
+      },
+    );
+    return rowToImportedConversation(updated as unknown as ImportedConversationRow);
   },
   async remove(conversationId: string): Promise<void> {
     const db = getDb();
@@ -228,27 +237,31 @@ export const dexieImports: IStorageService["imports"] = {
     analysis: ImportedConversationAnalysis,
   ): Promise<ImportedConversationDetail> {
     const db = getDb();
-    const conv = await db.importedConversations.get(conversationId);
-    if (!conv) {
-      throw new ApiError(
-        404,
-        `ImportedConversation ${conversationId} not found.`,
-        `/imports/${conversationId}/analysis`,
-        "POST",
-      );
-    }
-    const updated: ImportedConversationRow = {
-      ...conv,
-      analyzed: true,
-      analysis_result: analysis.analysis_result as Record<string, unknown>,
-    };
-    await db.importedConversations.put(updated);
+    // #390 Phase 3: atomic get+spread+put for the analysis stamp.
+    let updated: ImportedConversationRow | null = null;
+    await db.transaction("rw", db.importedConversations, async () => {
+      const conv = await db.importedConversations.get(conversationId);
+      if (!conv) {
+        throw new ApiError(
+          404,
+          `ImportedConversation ${conversationId} not found.`,
+          `/imports/${conversationId}/analysis`,
+          "POST",
+        );
+      }
+      updated = {
+        ...conv,
+        analyzed: true,
+        analysis_result: analysis.analysis_result as Record<string, unknown>,
+      };
+      await db.importedConversations.put(updated);
+    });
     const messages = await db.importedMessages
       .where("conversation_id")
       .equals(conversationId)
       .sortBy("order_index");
     return {
-      ...rowToImportedConversation(updated),
+      ...rowToImportedConversation(updated as unknown as ImportedConversationRow),
       messages: messages.map(rowToImportedMessage),
     };
   },

@@ -72,18 +72,23 @@ export const dexieCurricula: IStorageService["curricula"] = {
       body: CurriculumUpdateBody,
     ): Promise<Curriculum> {
       const db = getDb();
-      const row = await requireRow(db.curricula, curriculumId, "Curriculum");
-      const updated: CurriculumRow = {
-        ...row,
-        ...(body.title !== undefined ? { title: body.title } : {}),
-        ...(body.description !== undefined
-          ? { description: body.description }
-          : {}),
-        ...(body.language !== undefined ? { language: body.language } : {}),
-        updated_at: nowIso(),
-      };
-      await db.curricula.put(updated);
-      return rowToCurriculum(updated);
+      // #390 Phase 3: get+spread+put in one rw transaction so a
+      // concurrent edit to another field of the same row isn't lost.
+      let updated: CurriculumRow | null = null;
+      await db.transaction("rw", db.curricula, async () => {
+        const row = await requireRow(db.curricula, curriculumId, "Curriculum");
+        updated = {
+          ...row,
+          ...(body.title !== undefined ? { title: body.title } : {}),
+          ...(body.description !== undefined
+            ? { description: body.description }
+            : {}),
+          ...(body.language !== undefined ? { language: body.language } : {}),
+          updated_at: nowIso(),
+        };
+        await db.curricula.put(updated);
+      });
+      return rowToCurriculum(updated as unknown as CurriculumRow);
     },
     async remove(curriculumId: string): Promise<void> {
       const db = getDb();
@@ -171,21 +176,27 @@ export const dexieTopics: IStorageService["topics"] = {
       body: TopicUpdateBody,
     ): Promise<LearningTopic> {
       const db = getDb();
-      const row = await requireRow(db.learningTopics, topicId, "Topic");
-      const updated: LearningTopicRow = {
-        ...row,
-        ...(body.title !== undefined ? { title: body.title } : {}),
-        ...(body.description !== undefined
-          ? { description: body.description }
-          : {}),
-        ...(body.parent_id !== undefined ? { parent_id: body.parent_id } : {}),
-        ...(body.order_index !== undefined
-          ? { order_index: body.order_index }
-          : {}),
-        updated_at: nowIso(),
-      };
-      await db.learningTopics.put(updated);
-      return rowToTopic(updated);
+      // #390 Phase 3: atomic get+spread+put (no lost concurrent edit).
+      let updated: LearningTopicRow | null = null;
+      await db.transaction("rw", db.learningTopics, async () => {
+        const row = await requireRow(db.learningTopics, topicId, "Topic");
+        updated = {
+          ...row,
+          ...(body.title !== undefined ? { title: body.title } : {}),
+          ...(body.description !== undefined
+            ? { description: body.description }
+            : {}),
+          ...(body.parent_id !== undefined
+            ? { parent_id: body.parent_id }
+            : {}),
+          ...(body.order_index !== undefined
+            ? { order_index: body.order_index }
+            : {}),
+          updated_at: nowIso(),
+        };
+        await db.learningTopics.put(updated);
+      });
+      return rowToTopic(updated as unknown as LearningTopicRow);
     },
     async remove(topicId: string): Promise<void> {
       const db = getDb();
@@ -202,18 +213,25 @@ export const dexieLessons: IStorageService["lessons"] = {
     },
     async update(lessonId: string, body: LessonUpdateBody): Promise<Lesson> {
       const db = getDb();
-      const row = await requireRow(db.lessons, lessonId, "Lesson");
-      const updated: LessonRow = {
-        ...row,
-        ...(body.title !== undefined ? { title: body.title } : {}),
-        ...(body.content !== undefined ? { content: body.content } : {}),
-        ...(body.order_index !== undefined
-          ? { order_index: body.order_index }
-          : {}),
-        updated_at: nowIso(),
-      };
-      await db.lessons.put(updated);
-      return rowToLesson(updated);
+      // #390 Phase 3: get+spread+put in one rw transaction. The realistic
+      // race is the TipTap debounced autosave overlapping a manual save on
+      // the same lesson — without the tx the slower writer drops the
+      // other's field.
+      let updated: LessonRow | null = null;
+      await db.transaction("rw", db.lessons, async () => {
+        const row = await requireRow(db.lessons, lessonId, "Lesson");
+        updated = {
+          ...row,
+          ...(body.title !== undefined ? { title: body.title } : {}),
+          ...(body.content !== undefined ? { content: body.content } : {}),
+          ...(body.order_index !== undefined
+            ? { order_index: body.order_index }
+            : {}),
+          updated_at: nowIso(),
+        };
+        await db.lessons.put(updated);
+      });
+      return rowToLesson(updated as unknown as LessonRow);
     },
     async remove(lessonId: string): Promise<void> {
       const db = getDb();
