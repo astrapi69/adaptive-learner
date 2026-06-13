@@ -1,71 +1,114 @@
 #!/usr/bin/env bash
 #
-# Complexity watcher (warn-only, Phase 1) - #400.
+# Complexity watcher - #400 (Phase 1 warn-only) + #407 (Phase 2 ratchet gate).
 #
-# Python: radon cyclomatic complexity (average + rank B-and-worse), with
-# functions ranked E or F surfaced as warnings. TypeScript: eslint's
-# ``complexity`` rule at threshold 20. Defense-in-depth like the cohesion
-# (#371) and security-scan watchers: visibility first, hard gate later.
+#   (default)           warn-only: radon average + E/F + eslint complexity, the
+#                       visibility view; never exits non-zero.
+#   --gate              hard ratchet gate: compares the current offenders to
+#                       .complexity-baseline and exits non-zero on a NEW
+#                       over-threshold function or a regression above its frozen
+#                       complexity (mirrors the .filesize-baseline ratchet #372).
+#   --update-baseline   regenerate .complexity-baseline from the current
+#                       offenders (the file may only shrink).
 #
-# Never exits non-zero in Phase 1 - a complex function is reported but
-# never blocks a commit or a merge. If a tool is unavailable (e.g. no
-# python3-venv locally) that section is skipped, not failed.
-#
-# radon is run from an isolated venv (``.radon-venv``, auto-created on
-# first run) so it never pollutes the system or backend Poetry env. Set
-# RADON_VENV to override the location.
+# Python: radon cyclomatic complexity (rank E/F = cc >= 31). TypeScript: eslint's
+# complexity rule (> 20). radon runs from an isolated, gitignored .radon-venv (or
+# `python3 -m radon` when it is importable, e.g. via PYTHONPATH); the watcher
+# degrades gracefully (skips, never crashes) when radon/eslint are unavailable.
 
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-TARGETS=(backend/app plugins)
+MODE="warn"
+case "${1:-}" in
+    --gate) MODE="gate" ;;
+    --update-baseline) MODE="update" ;;
+    "") MODE="warn" ;;
+    *) echo "Unknown argument: $1" >&2; exit 2 ;;
+esac
 
-# --- Python: radon -------------------------------------------------------
+TARGETS=(backend/app plugins)
+BASELINE=".complexity-baseline"
+TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$TMPDIR"' EXIT
+RADON_JSON="$TMPDIR/radon.json"
+ESLINT_JSON="$TMPDIR/eslint.json"
+
+# --- radon resolution ----------------------------------------------------
 RADON_VENV="${RADON_VENV:-$ROOT/.radon-venv}"
-RADON_OK=0
+RADON=()
 if command -v radon >/dev/null 2>&1; then
     RADON=(radon)
-    RADON_PY=(python3)
-    RADON_OK=1
 elif [ -x "$RADON_VENV/bin/radon" ]; then
     RADON=("$RADON_VENV/bin/radon")
-    RADON_PY=("$RADON_VENV/bin/python")
-    RADON_OK=1
+elif python3 -c "import radon" >/dev/null 2>&1; then
+    RADON=(python3 -m radon)
 else
     echo "Bootstrapping radon into $RADON_VENV ..."
     if python3 -m venv "$RADON_VENV" 2>/dev/null \
         && "$RADON_VENV/bin/pip" install --quiet --upgrade pip radon 2>/dev/null; then
         RADON=("$RADON_VENV/bin/radon")
-        RADON_PY=("$RADON_VENV/bin/python")
-        RADON_OK=1
-    else
-        echo "Could not bootstrap radon (python venv unavailable)."
-        echo "Install 'python3-venv' or 'pipx install radon' to enable the Python check."
     fi
 fi
 
-if [ "$RADON_OK" -eq 1 ]; then
-    echo "== Radon: average + cyclomatic complexity (rank B and worse) =="
-    "${RADON[@]}" cc "${TARGETS[@]}" -a -nb || true
-
-    echo
-    echo "== Radon: functions ranked E or F (warn-only) =="
-    "${RADON[@]}" cc "${TARGETS[@]}" --min E -j 2>/dev/null \
-        | "${RADON_PY[@]}" "$ROOT/scripts/radon_warn.py"
-fi
-
-# --- TypeScript: eslint complexity --------------------------------------
-echo
-echo "== ESLint: frontend complexity (threshold 20, warn-only) =="
-if [ -d frontend/node_modules ]; then
-    (
-        cd frontend
-        npx --no-install eslint src --rule 'complexity: ["warn", 20]'
-    ) || true
+# Produce the radon JSON (rank E and worse) once; empty object on failure.
+echo "{}" > "$RADON_JSON"
+if [ "${#RADON[@]}" -gt 0 ]; then
+    "${RADON[@]}" cc "${TARGETS[@]}" --min E -j > "$RADON_JSON" 2>/dev/null \
+        || echo "{}" > "$RADON_JSON"
 else
-    echo "frontend/node_modules missing - run 'npm ci' in frontend/ to include the TS check."
+    echo "radon unavailable - Python complexity is skipped this run." >&2
 fi
 
-exit 0
+# --- eslint JSON (only needed for gate / update) -------------------------
+produce_eslint_json() {
+    echo "[]" > "$ESLINT_JSON"
+    if [ -d frontend/node_modules ]; then
+        (
+            cd frontend
+            npx --no-install eslint src --rule 'complexity: ["warn", 20]' \
+                --format json
+        ) > "$ESLINT_JSON" 2>/dev/null || true
+        [ -s "$ESLINT_JSON" ] || echo "[]" > "$ESLINT_JSON"
+    else
+        echo "frontend/node_modules missing - TypeScript complexity is skipped." >&2
+    fi
+}
+
+case "$MODE" in
+    warn)
+        if [ "${#RADON[@]}" -gt 0 ]; then
+            echo "== Radon: average + cyclomatic complexity (rank B and worse) =="
+            "${RADON[@]}" cc "${TARGETS[@]}" -a -nb || true
+            echo
+            echo "== Radon: functions ranked E or F (warn-only) =="
+            "${RADON[@]}" cc "${TARGETS[@]}" --min E -j 2>/dev/null \
+                | python3 "$ROOT/scripts/radon_warn.py"
+        fi
+        echo
+        echo "== ESLint: frontend complexity (threshold 20, warn-only) =="
+        if [ -d frontend/node_modules ]; then
+            ( cd frontend && npx --no-install eslint src \
+                --rule 'complexity: ["warn", 20]' ) || true
+        else
+            echo "frontend/node_modules missing - run 'npm ci' in frontend/."
+        fi
+        exit 0
+        ;;
+    update)
+        produce_eslint_json
+        python3 "$ROOT/scripts/complexity_gate.py" \
+            --radon-json "$RADON_JSON" --eslint-json "$ESLINT_JSON" \
+            --baseline "$BASELINE" --update-baseline
+        exit $?
+        ;;
+    gate)
+        produce_eslint_json
+        python3 "$ROOT/scripts/complexity_gate.py" \
+            --radon-json "$RADON_JSON" --eslint-json "$ESLINT_JSON" \
+            --baseline "$BASELINE"
+        exit $?
+        ;;
+esac

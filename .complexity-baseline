@@ -1,0 +1,46 @@
+# .complexity-baseline - ratchet for existing complexity offenders (#407)
+#
+# Worst cyclomatic complexity per file at the moment the hard gate landed.
+# Format: <repo-relative-file> <worst-cyclomatic-complexity>
+# A file is tolerated at or below its frozen value; the gate FAILS on a
+# new over-threshold file or a regression above the frozen value. This
+# file may only SHRINK - refactor a file's worst function below the value
+# (or below threshold), then run `make check-complexity-gate-update`.
+#
+# Thresholds: Python radon rank E/F (cc >= 31); TypeScript eslint
+# complexity > 20. File-level granularity matches .filesize-baseline.
+
+frontend/src/api/client-core.ts 22
+frontend/src/chat_import/chatgpt_parser.ts 26
+frontend/src/chat_import/index.ts 30
+frontend/src/components/AiSettingsPanel.tsx 45
+frontend/src/components/BackupSection.tsx 25
+frontend/src/components/Navigation.tsx 30
+frontend/src/components/content/ContentSetRow.tsx 28
+frontend/src/components/exercises/ClozeExercise.tsx 29
+frontend/src/components/exercises/FreeTextExercise.tsx 31
+frontend/src/components/exercises/MatchingExercise.tsx 45
+frontend/src/components/exercises/PictureChoiceExercise.tsx 31
+frontend/src/components/exercises/WordTilesExercise.tsx 30
+frontend/src/components/lesson/LessonSummary.tsx 21
+frontend/src/components/lesson/NextStepSuggestions.tsx 36
+frontend/src/hooks/useLessonEnterKey.ts 22
+frontend/src/hooks/useNextStepSuggestions.ts 29
+frontend/src/hooks/useShareWizard.ts 21
+frontend/src/lib/backup-diff.ts 54
+frontend/src/lib/content/analysis-to-lesson.ts 21
+frontend/src/lib/content/content-validator.ts 30
+frontend/src/lib/export/notebooklm-package.ts 24
+frontend/src/lib/tiptap-to-markdown.ts 27
+frontend/src/pages/AdaptiveLesson.tsx 27
+frontend/src/pages/Assessment.tsx 22
+frontend/src/pages/CreateLesson.tsx 24
+frontend/src/pages/ErrorReplayLesson.tsx 22
+frontend/src/pages/ImportDetail.tsx 58
+frontend/src/pages/Lesson.tsx 67
+frontend/src/pages/Review.tsx 23
+frontend/src/pages/Session.tsx 22
+frontend/src/storage/backup.ts 49
+frontend/src/storage/prompts.ts 33
+frontend/src/utils/eventRecorder.ts 40
+plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py 33
