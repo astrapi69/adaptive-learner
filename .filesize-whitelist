@@ -26,3 +26,11 @@ plugins/adaptive-learner-plugin-assessment/adaptive_learner_assessment/questions
 # --- AI-Prompt-Templates (Session-Plugin) ---
 # Prompt-Strings, kein Code. Kohäsiv nach Domain.
 plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py
+
+# --- Frontend: Dexie-Row-Shapes (Single-File Datenmodell) ---
+# Die 33 Row-Interfaces spiegeln die SQLAlchemy-Modelle 1:1; reine
+# Datenstruktur (keine Logik/IO/Rendering), das Frontend-Pendant zu
+# backend/app/models. Aus db.ts ausgelagert (#391), damit db.ts nur
+# noch Schema + Migrationen + Init traegt. Weiter splitten wuerde das
+# Datenmodell zerstreuen, nicht die Kohaesion verbessern.
+frontend/src/storage/db-rows.ts
