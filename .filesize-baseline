@@ -16,5 +16,4 @@
 #
 # Format: <relativer Pfad>  <max-Zeilen>   (# = Kommentar)
 
-frontend/src/pages/Lesson.tsx                                               1779
 plugins/adaptive-learner-plugin-session/adaptive_learner_session/routes.py  1156
