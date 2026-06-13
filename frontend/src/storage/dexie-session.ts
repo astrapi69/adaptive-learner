@@ -16,7 +16,7 @@ import { evaluateBadgesForUser } from "./badges";
 import { updateStreakState } from "./streaks";
 import { maybeRunAutoBackup, recordCompletedSession } from "./auto-backup";
 import { ApiError } from "../api/client";
-import type { LearningProfileRow, MethodSwitchRow, SessionRatingRow } from "./db";
+import type { LearningProfileRow, LearningSessionRow, MethodSwitchRow, SessionRatingRow } from "./db";
 import type { LearningMethod } from "../lib/constants";
 import type { SessionMessageBody, SessionRatingBody, SessionStartBody } from "../api/client";
 import type {
@@ -189,72 +189,86 @@ export const dexieSession: IStorageService["session"] = {
     },
     async end(sessionId: string): Promise<SessionEndResult> {
       const db = getDb();
-      const sess = await db.learningSessions.get(sessionId);
-      if (!sess) {
-        throw new ApiError(404, `Session ${sessionId} not found`);
-      }
       const ts = nowIso();
-      await db.learningSessions.update(sessionId, {
-        status: "completed",
-        ended_at: ts,
-      });
-      const fresh = await db.learningSessions.get(sessionId);
+      // #390 Class A: a double-click (or the auto-loop) fires two
+      // concurrent end() calls. Atomically flip the session to
+      // "completed" and capture whether THIS call performed the
+      // transition; only the winner writes the ProgressCommit and
+      // runs the gamification fan-out, so XP / streak / badges /
+      // commits / the auto-backup counter can't double-count. The
+      // gamification engines (persistXP / updateStreakState /
+      // evaluateBadges) are each atomic now, so they stay OUTSIDE
+      // this transaction — keeping the tx scope to the three tables
+      // it actually touches.
+      let didComplete = false;
+      let fresh: LearningSessionRow | undefined;
+      await db.transaction(
+        "rw",
+        [db.learningSessions, db.sessionRatings, db.progressCommits],
+        async () => {
+          const sess = await db.learningSessions.get(sessionId);
+          if (!sess) {
+            throw new ApiError(404, `Session ${sessionId} not found`);
+          }
+          if (sess.status !== "completed") {
+            await db.learningSessions.update(sessionId, {
+              status: "completed",
+              ended_at: ts,
+            });
+            didComplete = true;
+          }
+          fresh = await db.learningSessions.get(sessionId);
+          // Mirror the backend's ``on_session_complete`` fan-out:
+          // pull the latest SessionRating and write a ProgressCommit
+          // so tracking aggregates pick it up. Only on the real
+          // transition, and no-op when the user ended without rating.
+          if (didComplete && fresh) {
+            const ratings = await db.sessionRatings
+              .where("session_id")
+              .equals(sessionId)
+              .toArray();
+            ratings.sort((a, b) => a.created_at.localeCompare(b.created_at));
+            const latestRating =
+              ratings.length > 0 ? ratings[ratings.length - 1] : null;
+            const commit = buildCommitFromSession(fresh, latestRating);
+            if (commit) {
+              await db.progressCommits.add(commit);
+            }
+          }
+        },
+      );
       if (!fresh) {
         throw new ApiError(500, "Session disappeared after end");
       }
-      // Mirror the backend's ``on_session_complete`` fan-out:
-      // pull the latest SessionRating for this session and
-      // write a ProgressCommit so tracking aggregates pick
-      // it up. No-op when the user ended without rating.
-      const ratings = await db.sessionRatings
-        .where("session_id")
-        .equals(sessionId)
-        .toArray();
-      ratings.sort((a, b) => a.created_at.localeCompare(b.created_at));
-      const latestRating =
-        ratings.length > 0 ? ratings[ratings.length - 1] : null;
-      const commit = buildCommitFromSession(fresh, latestRating);
-      if (commit) {
-        await db.progressCommits.add(commit);
-      }
-      // v1.16.0 / Phase 29A — mirror the backend's
-      // gamification ``on_session_complete``: award XP for
-      // the closed session. Errors MUST NOT break session
-      // end — log and continue.
-      const projectForXP = await db.learningProjects.get(fresh.project_id);
-      if (projectForXP) {
-        try {
-          await awardXPForSession({
-            userId: projectForXP.user_id,
-            sessionId: fresh.id,
-            method: fresh.method,
-            cycleStep: fresh.cycle_step,
-            cycleCount: 1,
-          });
-          // 29C — refresh persisted streak state so the
-          // dashboard widget + the streak-milestone
-          // badges see the new ``current_streak_days``.
-          await updateStreakState(projectForXP.user_id);
-          // 29B — evaluate badges after the XP + streak
-          // update so level-/streak-/method-gated badges
-          // fire.
-          await evaluateBadgesForUser(projectForXP.user_id);
-        } catch (err) {
-          console.warn("gamification (session-end) failed", err);
-        }
-      }
-      // Auto-backup: bump the session counter and, if the
-      // threshold is crossed, fire-and-forget a backup into
-      // the auto-backup ring. Failures here MUST NOT break
-      // session end — ``maybeRunAutoBackup`` swallows errors.
-      const trigger = recordCompletedSession();
-      if (trigger !== null) {
-        const session = await db.learningSessions.get(sessionId);
-        if (session !== undefined) {
-          const project = await db.learningProjects.get(session.project_id);
-          if (project !== undefined) {
-            maybeRunAutoBackup(project.user_id, __APP_VERSION__, trigger);
+      if (didComplete) {
+        // v1.16.0 / Phase 29A — gamification ``on_session_complete``
+        // fan-out. Errors MUST NOT break session end — log + continue.
+        const projectForXP = await db.learningProjects.get(fresh.project_id);
+        if (projectForXP) {
+          try {
+            await awardXPForSession({
+              userId: projectForXP.user_id,
+              sessionId: fresh.id,
+              method: fresh.method,
+              cycleStep: fresh.cycle_step,
+              cycleCount: 1,
+            });
+            // 29C — refresh persisted streak state so the dashboard
+            // widget + the streak-milestone badges see the new value.
+            await updateStreakState(projectForXP.user_id);
+            // 29B — evaluate badges after the XP + streak update so
+            // level-/streak-/method-gated badges fire.
+            await evaluateBadgesForUser(projectForXP.user_id);
+          } catch (err) {
+            console.warn("gamification (session-end) failed", err);
           }
+        }
+        // Auto-backup: bump the session counter and, if the threshold
+        // is crossed, fire-and-forget a backup into the auto-backup
+        // ring. Failures MUST NOT break session end.
+        const trigger = recordCompletedSession();
+        if (trigger !== null && projectForXP !== undefined) {
+          maybeRunAutoBackup(projectForXP.user_id, __APP_VERSION__, trigger);
         }
       }
       return {
