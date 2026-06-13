@@ -1,0 +1,131 @@
+name: Security Scan
+
+# Defense-in-depth dependency + static security scanning. Warn-only, like the
+# cohesion watcher Phase 1 (#371): findings go to the job summary, the workflow
+# never blocks a merge. Tightening to a hard gate is a later decision (#377).
+
+on:
+  pull_request:
+    paths:
+      - "backend/pyproject.toml"
+      - "backend/poetry.lock"
+      - "plugins/**/pyproject.toml"
+      - "plugins/**/poetry.lock"
+      - "backend/app/**.py"
+      - "plugins/**/*.py"
+      - "frontend/package.json"
+      - "frontend/package-lock.json"
+      - ".github/workflows/security-scan.yml"
+  schedule:
+    # Weekly (Monday 06:00 UTC): catches newly-disclosed CVEs against
+    # unchanged dependencies, which a paths-filtered PR trigger never sees.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  python-deps:
+    name: pip-audit (Python dependencies)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Cache Poetry virtualenv (backend)
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            poetry-backend-${{ runner.os }}-py3.12-
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install backend dependencies
+        working-directory: backend
+        # The backend combined lock resolves every plugin path-dep
+        # transitively, so auditing this one venv covers backend + all plugins.
+        run: poetry install --no-interaction --no-ansi
+
+      - name: pip-audit (warn-only)
+        working-directory: backend
+        run: |
+          poetry run pip install pip-audit
+          echo "## pip-audit (backend venv, incl. plugin path-deps)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          # --skip-editable: the local path-dep plugins + the app itself are
+          # installed editable and have no PyPI release to audit against.
+          if poetry run pip-audit --skip-editable --progress-spinner=off \
+              2>&1 | tee /tmp/pip-audit.txt; then
+            echo "(no known vulnerabilities)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            cat /tmp/pip-audit.txt >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning title=pip-audit::Python dependency vulnerabilities found (warn-only; see job summary)."
+          fi
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  frontend-deps:
+    name: npm audit (frontend dependencies)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: npm audit (warn-only)
+        working-directory: frontend
+        run: |
+          echo "## npm audit (frontend)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          # --package-lock-only: audit straight from the lockfile, no install.
+          if npm audit --package-lock-only 2>&1 | tee /tmp/npm-audit.txt; then
+            echo "(no known vulnerabilities)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            cat /tmp/npm-audit.txt >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning title=npm audit::Frontend dependency vulnerabilities found (warn-only; see job summary)."
+          fi
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  python-static:
+    name: bandit (Python static analysis)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: bandit (warn-only)
+        run: |
+          # CI's setup-python interpreter is not externally managed, so a plain
+          # pip install has no PEP 668 conflict (unlike the local Debian python).
+          pip install bandit
+          echo "## bandit (backend/app + plugins)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          # -ll: report MEDIUM+ severity only (skip low-severity noise like
+          # asserts in non-test code); -ii: MEDIUM+ confidence. Tests excluded.
+          if bandit -r backend/app plugins -ll -ii \
+              -x '*/tests/*,*/test_*.py' 2>&1 | tee /tmp/bandit.txt; then
+            echo "(no medium+ findings)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            cat /tmp/bandit.txt >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning title=bandit::Static security findings (warn-only; see job summary)."
+          fi
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
