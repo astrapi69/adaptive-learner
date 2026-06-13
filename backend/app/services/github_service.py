@@ -81,6 +81,23 @@ class CreatePrResult:
     manifest_updated: bool
 
 
+@dataclass(frozen=True)
+class LessonPrRequest:
+    """The PR spec for :func:`create_lesson_pr` (the credential ``token``
+    stays a separate argument). Bundles what was a 10-argument call into one
+    cohesive payload (coding-standards.md "Data between functions")."""
+
+    upstream: str
+    base_branch: str
+    branch_name: str
+    file_path: str
+    file_content: str
+    commit_message: str
+    pr_title: str
+    pr_body: str
+    manifest_update: ManifestUpdate | None = None
+
+
 def resolve_token() -> str | None:
     """Resolve the GitHub token: env override first, then secrets.yaml."""
     env_token = os.environ.get(_TOKEN_ENV)
@@ -349,24 +366,22 @@ def _create_pull_request(
     return CreatePrResult(url=pr["html_url"], number=pr["number"], manifest_updated=False)
 
 
-def create_lesson_pr(
-    token: str,
-    *,
-    upstream: str,
-    base_branch: str,
-    branch_name: str,
-    file_path: str,
-    file_content: str,
-    commit_message: str,
-    pr_title: str,
-    pr_body: str,
-    manifest_update: ManifestUpdate | None = None,
-) -> CreatePrResult:
+def create_lesson_pr(token: str, request: LessonPrRequest) -> CreatePrResult:
     """Run the full fork -> branch -> commit -> (manifest) -> PR flow.
 
     Raises :class:`ValidationError` on a malformed token / repo and
     :class:`ExternalServiceError` (HTTP 502) on any GitHub failure.
     """
+    upstream = request.upstream
+    base_branch = request.base_branch
+    branch_name = request.branch_name
+    file_path = request.file_path
+    file_content = request.file_content
+    commit_message = request.commit_message
+    pr_title = request.pr_title
+    pr_body = request.pr_body
+    manifest_update = request.manifest_update
+
     if not token or not token.strip():
         raise ValidationError("A GitHub token is required to create a pull request.")
     token = token.strip()
@@ -406,6 +421,7 @@ def create_lesson_pr(
 __all__ = [
     "CreatePrResult",
     "GitHubVerifyResult",
+    "LessonPrRequest",
     "ManifestUpdate",
     "create_lesson_pr",
     "resolve_token",
