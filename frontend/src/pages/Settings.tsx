@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { FlaskConical, Monitor, Save, Trash2 } from "lucide-react";
+import { Monitor } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import AboutTab from "../components/about/AboutTab";
 import IdentitySection from "../components/about/IdentitySection";
 import BackupSection from "../components/BackupSection";
@@ -27,23 +25,14 @@ import SoundSettingsControl from "../components/SoundSettingsControl";
 import HelpBrowser from "../components/help/HelpBrowser";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../hooks/useButtonTooltips";
 import { setDevModeEnabled, useDevMode } from "../hooks/useDevMode";
-import { refreshApiKeyStatus } from "../hooks/useApiKeyStatus";
 import { Feature } from "@astrapi69/feature-strategy-react";
 import { FEATURES } from "../features/featureConfig";
 import VoiceSettingsSection from "../components/VoiceSettingsSection";
-import { ModelPicker } from "../components/ModelPicker";
+import AiSettingsPanel from "../components/AiSettingsPanel";
 import SyncSection from "../components/SyncSection";
 import ThemePicker from "../components/ThemePicker";
-import { DEFAULT_MODELS } from "../storage/ai-providers";
 import { useI18n } from "../hooks/useI18n";
-import {
-  AI_PROVIDERS,
-  MODEL_SUGGESTIONS,
-  SUPPORTED_LANGUAGES,
-  type AIProvider,
-} from "../lib/constants";
-import { API_KEY_PREFIX, isValidApiKeyFormat } from "../lib/apiKeyFormat";
-import type { ApiKeyTestResult } from "../storage/types";
+import { SUPPORTED_LANGUAGES } from "../lib/constants";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
 import {
   readLessonShortcutsEnabled,
@@ -63,17 +52,14 @@ import type { UserSettings } from "../types";
 /**
  * Settings page (project-reference §8 row ``/settings``).
  *
- * Three sections:
- *
- *   1. Language: writes through PATCH /api/settings/{user_id}
- *      (updates both User.language and UserSettings.language in
- *      one transaction) and to the live i18n provider.
- *   2. AI provider: PATCH the active_provider on
- *      UserSettings. Live-switch.
- *   3. API keys: per-provider Save / Delete via the dedicated
- *      encrypted endpoints. The page never sees the actual key
- *      ciphertext — UserSettingsOut only exposes boolean
- *      ``has_<provider>_key`` flags.
+ * The page shell loads ``UserSettings`` and owns the general-tab
+ * controls (appearance, display language, interface toggles, storage
+ * mode) plus the language switch (PATCH /api/settings/{user_id}). The
+ * other tabs compose dedicated section components; the AI tab (active
+ * provider, model overrides, API keys) lives in {@link AiSettingsPanel}
+ * backed by {@link useAiKeySettings}. The page never sees raw key
+ * ciphertext — ``UserSettingsOut`` only exposes ``has_<provider>_key``
+ * flags.
  *
  * Pre-condition: user_id in localStorage; missing redirects to
  * /onboarding.
@@ -175,41 +161,9 @@ export default function Settings() {
   const handleDevModeToggle = (next: boolean) => {
     setDevModeEnabled(next);
   };
-  const [keyDrafts, setKeyDrafts] = useState<Record<AIProvider, string>>({
-    anthropic: "",
-    openai: "",
-    gemini: "",
-  });
-  // v0.4.0 — local drafts for the model-override inputs. The
-  // committed value lives on ``settings.model_override_<provider>``;
-  // the draft is the user's in-flight edit before they hit Save.
-  const [modelDrafts, setModelDrafts] = useState<Record<AIProvider, string>>({
-    anthropic: "",
-    openai: "",
-    gemini: "",
-  });
+  // Per-operation busy marker for the language switch. The AI tab owns
+  // its own busy state inside ``useAiKeySettings``.
   const [busy, setBusy] = useState<string | null>(null);
-  // C2 — last live-test outcome per provider (null = not tested this
-  // session). Drives the inline result line under the key row.
-  const [testResults, setTestResults] = useState<Record<AIProvider, ApiKeyTestResult | null>>({
-    anthropic: null,
-    openai: null,
-    gemini: null,
-  });
-  // C4 — when an auto-test on save fails, this holds the provider +
-  // failure kind so the inline rollback panel (keep old / save anyway
-  // / cancel) renders for that provider.
-  const [rollbackPrompt, setRollbackPrompt] = useState<{
-    provider: AIProvider;
-    kind: ApiKeyTestResult["kind"];
-  } | null>(null);
-  // C4 — whether a last-known-good backup exists per provider (drives
-  // the "restore last working key" affordance). Loaded after settings.
-  const [backupAvailable, setBackupAvailable] = useState<Record<AIProvider, boolean>>({
-    anthropic: false,
-    openai: false,
-    gemini: false,
-  });
 
   // Phase 10F: storage-mode toggle. ``currentMode`` reflects
   // what's active *right now* (snapshot at mount). ``pendingMode``
@@ -253,11 +207,6 @@ export default function Settings() {
       .then((s) => {
         if (cancelled) return;
         setSettings(s);
-        setModelDrafts({
-          anthropic: s.model_override_anthropic ?? "",
-          openai: s.model_override_openai ?? "",
-          gemini: s.model_override_gemini ?? "",
-        });
       })
       .catch((err) => {
         if (cancelled) return;
@@ -281,212 +230,6 @@ export default function Settings() {
       setLang(newLang);
       setLanguage(newLang);
       notify.success(t("settings.saved", "Saved."));
-    } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleProviderChange = async (provider: AIProvider) => {
-    if (!settings || busy) return;
-    setBusy("provider");
-    try {
-      const updated = await getStorage().settings.update(settings.user_id, {
-        active_provider: provider,
-      });
-      setSettings(updated);
-      await refreshApiKeyStatus();
-      notify.success(t("settings.saved", "Saved."));
-    } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  // C4 — persist a key (no test). Backs up the key as last-known-good
-  // only when ``backup`` is true (i.e. it passed its test).
-  const persistKey = async (provider: AIProvider, key: string, backup: boolean) => {
-    const updated = await getStorage().settings.setApiKey(settings!.user_id, {
-      provider,
-      key,
-    });
-    if (backup) {
-      await getStorage().settings.backupApiKey(settings!.user_id, {
-        provider,
-        key,
-      });
-      setBackupAvailable((prev) => ({ ...prev, [provider]: true }));
-    }
-    setSettings(updated);
-    setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
-    await refreshApiKeyStatus();
-    notify.success(t("toast.api_key_saved", "API key saved."));
-  };
-
-  // C4 — revised save flow: auto-test the new key BEFORE overwriting.
-  // Passes -> save + back up. Fails -> rollback panel (the old key is
-  // untouched because we tested without saving).
-  const handleSaveKey = async (provider: AIProvider) => {
-    if (!settings || busy) return;
-    const key = keyDrafts[provider].trim();
-    if (key.length === 0) return;
-    setBusy(`save-${provider}`);
-    setRollbackPrompt(null);
-    try {
-      const test = await getStorage().settings.testApiKey(settings.user_id, {
-        provider,
-        key,
-      });
-      setTestResults((prev) => ({ ...prev, [provider]: test }));
-      if (test.success) {
-        await persistKey(provider, key, true);
-      } else {
-        // Surface keep-old / save-anyway / cancel. If a backup
-        // exists, the panel also offers restore.
-        const info = await getStorage()
-          .settings.getApiKeyBackup(settings.user_id, provider)
-          .catch(() => ({ has: false, tested_at: null }));
-        setBackupAvailable((prev) => ({ ...prev, [provider]: info.has }));
-        setRollbackPrompt({ provider, kind: test.kind });
-      }
-    } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleSaveAnyway = async (provider: AIProvider) => {
-    if (!settings || busy) return;
-    const key = keyDrafts[provider].trim();
-    if (key.length === 0) return;
-    setBusy(`save-${provider}`);
-    try {
-      // No backup — the key failed its test, so it must not become
-      // the last-known-good.
-      await persistKey(provider, key, false);
-      setRollbackPrompt(null);
-    } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  // Discard the draft, keep the currently-active key.
-  const handleKeepOldKey = (provider: AIProvider) => {
-    setRollbackPrompt(null);
-    setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
-  };
-
-  // Dismiss the panel but keep the draft so the user can fix a typo.
-  const handleDismissRollback = () => setRollbackPrompt(null);
-
-  const handleRestoreBackup = async (provider: AIProvider) => {
-    if (!settings || busy) return;
-    setBusy(`restore-${provider}`);
-    setRollbackPrompt(null);
-    try {
-      const updated = await getStorage().settings.restoreApiKeyBackup(settings.user_id, provider);
-      setSettings(updated);
-      setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
-      await refreshApiKeyStatus();
-      // Confirm the restored key still works.
-      const test = await getStorage().settings.testApiKey(settings.user_id, {
-        provider,
-      });
-      setTestResults((prev) => ({ ...prev, [provider]: test }));
-      notify.success(t("toast.api_key_restored", "Last working key restored."));
-    } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  // C2 — live-test a key. Tests the in-progress draft when present,
-  // otherwise the currently-stored key. Does not save.
-  const handleTestKey = async (provider: AIProvider) => {
-    if (!settings || busy) return;
-    const draft = keyDrafts[provider].trim();
-    setBusy(`test-${provider}`);
-    setTestResults((prev) => ({ ...prev, [provider]: null }));
-    try {
-      const result = await getStorage().settings.testApiKey(settings.user_id, {
-        provider,
-        key: draft.length > 0 ? draft : undefined,
-      });
-      setTestResults((prev) => ({ ...prev, [provider]: result }));
-    } catch {
-      // A thrown call (rather than a classified result) is itself a
-      // connectivity problem — surface it as the network outcome.
-      setTestResults((prev) => ({
-        ...prev,
-        [provider]: { success: false, kind: "network" },
-      }));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleSaveModel = async (provider: AIProvider) => {
-    if (!settings || busy) return;
-    const draft = modelDrafts[provider].trim();
-    const current = settings[`model_override_${provider}`] ?? "";
-    if (draft === current) return;
-    setBusy(`save-model-${provider}`);
-    try {
-      const updated = await getStorage().settings.update(settings.user_id, {
-        [`model_override_${provider}`]: draft,
-      });
-      setSettings(updated);
-      // Snap the draft back to the canonical persisted value.
-      const fresh = updated[`model_override_${provider}`] ?? "";
-      setModelDrafts((prev) => ({ ...prev, [provider]: fresh }));
-      notify.success(t("settings.saved", "Saved."));
-    } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleClearModel = async (provider: AIProvider) => {
-    if (!settings || busy) return;
-    setBusy(`clear-model-${provider}`);
-    try {
-      const updated = await getStorage().settings.update(settings.user_id, {
-        [`model_override_${provider}`]: "",
-      });
-      setSettings(updated);
-      setModelDrafts((prev) => ({ ...prev, [provider]: "" }));
-      notify.success(t("settings.saved", "Saved."));
-    } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleDeleteKey = async (provider: AIProvider) => {
-    if (!settings || busy) return;
-    const ok = window.confirm(t("settings.api_key_confirm_delete", "Really remove this API key?"));
-    if (!ok) return;
-    setBusy(`delete-${provider}`);
-    try {
-      const updated = await getStorage().settings.deleteApiKey(settings.user_id, provider);
-      setSettings(updated);
-      await refreshApiKeyStatus();
-      notify.success(t("toast.api_key_deleted", "API key removed."));
     } catch (err) {
       const detail = err instanceof ApiError ? err.detail : t("common.error");
       notify.error(detail);
@@ -613,399 +356,11 @@ export default function Settings() {
         </label>
       </section>
 
-      <section className="settings-section" hidden={activeTab !== "ai"}>
-        <h2 className="settings-section-title">{t("settings.section_provider", "AI provider")}</h2>
-        <label className="form-row">
-          <span className="form-label">{t("settings.provider_label", "Active provider")}</span>
-          <select
-            data-testid="settings-provider"
-            value={settings.active_provider}
-            disabled={busy === "provider"}
-            onChange={(e) => handleProviderChange(e.target.value as AIProvider)}
-          >
-            {AI_PROVIDERS.map((p) => (
-              <option key={p} value={p}>
-                {t(`settings.provider_${p}`, p)}
-              </option>
-            ))}
-          </select>
-        </label>
-      </section>
-
-      <section
-        className="settings-section"
-        data-testid="settings-model-overrides"
-        hidden={activeTab !== "ai"}
-      >
-        <h2 className="settings-section-title">
-          {t("settings.section_model_overrides", "Model overrides")}
-        </h2>
-        <p className="muted">
-          {t(
-            "settings.model_overrides_hint",
-            "Leave blank to use the default model for each provider. A non-empty value replaces the default at chat time.",
-          )}
-        </p>
-        {AI_PROVIDERS.map((provider) => {
-          const draft = modelDrafts[provider];
-          const current = settings[`model_override_${provider}`] ?? "";
-          const dirty = draft.trim() !== current;
-          const isActive = settings.active_provider === provider;
-          return (
-            <div
-              key={provider}
-              className={`model-override-row${isActive ? " is-active-provider" : ""}`}
-              data-testid={`model-override-row-${provider}`}
-            >
-              <div className="model-override-row-head">
-                <strong>{t(`settings.provider_${provider}`, provider)}</strong>
-                {isActive && (
-                  <span
-                    className="api-key-active-badge"
-                    data-testid={`model-override-active-${provider}`}
-                  >
-                    {t("settings.provider_active", "Active")}
-                  </span>
-                )}
-                <span
-                  className={`api-key-status ${current ? "is-set" : "is-missing"}`}
-                  data-testid={`model-override-status-${provider}`}
-                >
-                  {current
-                    ? t("settings.model_override_set", "Override active")
-                    : t("settings.model_override_default", "Default model")}
-                </span>
-              </div>
-              <div className="model-override-row-input">
-                <ModelPicker
-                  userId={settings.user_id}
-                  provider={provider}
-                  value={current}
-                  draft={draft}
-                  onDraftChange={(next) =>
-                    setModelDrafts((prev) => ({
-                      ...prev,
-                      [provider]: next,
-                    }))
-                  }
-                  defaultModel={DEFAULT_MODELS[provider]}
-                  staticSuggestions={MODEL_SUGGESTIONS[provider]}
-                  disabled={busy === `save-model-${provider}`}
-                  hasApiKey={(settings[`has_${provider}_key`] as boolean) ?? false}
-                />
-                <Button
-                  type="button"
-                  data-testid={`model-override-save-${provider}`}
-                  onClick={() => handleSaveModel(provider)}
-                  disabled={busy === `save-model-${provider}` || !dirty}
-                >
-                  {t("settings.model_override_save", "Save model")}
-                </Button>
-                {current && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    data-testid={`model-override-clear-${provider}`}
-                    onClick={() => handleClearModel(provider)}
-                    disabled={busy === `clear-model-${provider}`}
-                  >
-                    {t("settings.model_override_clear", "Use default")}
-                  </Button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </section>
-
-      <section className="settings-section" hidden={activeTab !== "ai"}>
-        <h2 className="settings-section-title">{t("settings.section_api_keys", "API keys")}</h2>
-        {AI_PROVIDERS.map((provider) => {
-          const has = settings[`has_${provider}_key`] as boolean;
-          const isActive = settings.active_provider === provider;
-          // Only an env-var-sourced key is truly read-only from
-          // the UI: the user must change the environment, not the
-          // app. A ``secrets.yaml`` key IS editable now that the
-          // app writes to that file — saving overwrites it,
-          // removing clears it. ``settings`` (DB) and ``none``
-          // were always editable.
-          const source = settings[`key_source_${provider}`];
-          const externallyManaged = source === "env";
-          const fromSecretsFile = source === "secrets_yaml";
-          // C1 — instant format validation. ``empty`` = nothing typed
-          // yet (no feedback); ``valid`` / ``invalid`` drive the border
-          // colour, the inline hint, and the Save gate.
-          const draft = keyDrafts[provider];
-          const draftTrimmed = draft.trim();
-          const formatState: "empty" | "valid" | "invalid" =
-            draftTrimmed.length === 0
-              ? "empty"
-              : isValidApiKeyFormat(provider, draft)
-                ? "valid"
-                : "invalid";
-          return (
-            <form
-              key={provider}
-              className={`api-key-row${isActive ? " is-active-provider" : ""}`}
-              data-testid={`api-key-row-${provider}`}
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <div className="api-key-row-head">
-                <strong>{t(`settings.provider_${provider}`, provider)}</strong>
-                {isActive && (
-                  <span className="api-key-active-badge" data-testid={`api-key-active-${provider}`}>
-                    {t("settings.provider_active", "Active")}
-                  </span>
-                )}
-                <span
-                  className={`api-key-status ${has ? "is-set" : "is-missing"}`}
-                  data-testid={`api-key-status-${provider}`}
-                >
-                  {has
-                    ? t("settings.api_key_saved", "Key stored")
-                    : t("settings.api_key_missing", "Not set")}
-                </span>
-                <span
-                  className={`api-key-source api-key-source-${source}`}
-                  data-testid={`api-key-source-${provider}`}
-                >
-                  {source === "secrets_yaml"
-                    ? t("settings.api_key_source_file", "Key from: secrets.yaml")
-                    : source === "env"
-                      ? t("settings.api_key_source_env", "Key from: environment")
-                      : source === "settings"
-                        ? t("settings.api_key_source_settings", "Key from: Settings")
-                        : t("settings.api_key_source_none", "No key configured")}
-                </span>
-              </div>
-              {externallyManaged && (
-                <p className="api-key-external-hint" data-testid={`api-key-external-${provider}`}>
-                  {t(
-                    "settings.api_key_external_hint_env",
-                    "This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.",
-                  ).replace("{PROVIDER}", provider.toUpperCase())}
-                </p>
-              )}
-              {fromSecretsFile && (
-                <p className="api-key-source-file-hint" data-testid={`api-key-info-${provider}`}>
-                  {t(
-                    "settings.api_key_external_hint_file",
-                    "Stored in ~/.config/adaptive_learner/secrets.yaml. Saving here overwrites it.",
-                  )}
-                </p>
-              )}
-              {isActive && !has && !externallyManaged && (
-                <p className="api-key-warning" data-testid={`api-key-warning-${provider}`}>
-                  {t(
-                    "settings.active_provider_missing_key",
-                    "This is your active provider but no API key is stored. AI replies will be skipped until a key is saved.",
-                  )}
-                </p>
-              )}
-              <div className="api-key-row-input">
-                <span className={`api-key-input-wrap api-key-format-${formatState}`}>
-                  <Input
-                    data-testid={`api-key-input-${provider}`}
-                    type="password"
-                    placeholder={
-                      has && !externallyManaged
-                        ? t(
-                            "settings.api_key_placeholder_replace",
-                            "Paste a new key to replace the stored one…",
-                          )
-                        : t("settings.api_key_placeholder", "Paste here…")
-                    }
-                    aria-label={`${t("settings.api_key_label", "API key")} (${provider})`}
-                    aria-invalid={formatState === "invalid"}
-                    autoComplete="off"
-                    value={keyDrafts[provider]}
-                    onChange={(e) =>
-                      setKeyDrafts((prev) => ({
-                        ...prev,
-                        [provider]: e.target.value,
-                      }))
-                    }
-                    disabled={busy === `save-${provider}` || externallyManaged}
-                  />
-                  {formatState === "valid" && (
-                    <span
-                      className="api-key-format-check"
-                      data-testid={`api-key-format-ok-${provider}`}
-                      aria-hidden="true"
-                    >
-                      ✓
-                    </span>
-                  )}
-                </span>
-                <Button
-                  type="button"
-                  data-testid={`api-key-save-${provider}`}
-                  onClick={() => handleSaveKey(provider)}
-                  disabled={
-                    busy === `save-${provider}` || formatState !== "valid" || externallyManaged
-                  }
-                  aria-label={t("settings.api_key_set", "Save key")}
-                  title={t("settings.api_key_set", "Save key")}
-                >
-                  <Save className="h-5 w-5" aria-hidden="true" />
-                  <span className="hidden md:inline">{t("settings.api_key_set", "Save key")}</span>
-                </Button>
-                {(has || formatState === "valid") && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    data-testid={`api-key-test-${provider}`}
-                    onClick={() => handleTestKey(provider)}
-                    disabled={busy === `test-${provider}`}
-                    aria-label={
-                      busy === `test-${provider}`
-                        ? t("settings.api_key.testing", "Testing…")
-                        : t("settings.api_key.test", "Test")
-                    }
-                    title={
-                      busy === `test-${provider}`
-                        ? t("settings.api_key.testing", "Testing…")
-                        : t("settings.api_key.test", "Test")
-                    }
-                  >
-                    {busy === `test-${provider}` ? (
-                      <span className="btn-spinner" aria-hidden="true" />
-                    ) : (
-                      <FlaskConical className="h-5 w-5" aria-hidden="true" />
-                    )}
-                    <span className="hidden md:inline">
-                      {busy === `test-${provider}`
-                        ? t("settings.api_key.testing", "Testing…")
-                        : t("settings.api_key.test", "Test")}
-                    </span>
-                  </Button>
-                )}
-                {has && !externallyManaged && (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    data-testid={`api-key-delete-${provider}`}
-                    onClick={() => handleDeleteKey(provider)}
-                    disabled={busy === `delete-${provider}`}
-                    aria-label={t("settings.api_key_delete", "Remove key")}
-                    title={t("settings.api_key_delete", "Remove key")}
-                  >
-                    <Trash2 className="h-5 w-5" aria-hidden="true" />
-                    <span className="hidden md:inline">
-                      {t("settings.api_key_delete", "Remove key")}
-                    </span>
-                  </Button>
-                )}
-              </div>
-              {testResults[provider] && (
-                <p
-                  className={`api-key-test-result ${
-                    testResults[provider]!.kind === "ok"
-                      ? "is-ok"
-                      : testResults[provider]!.kind === "invalid"
-                        ? "is-invalid"
-                        : "is-warning"
-                  }`}
-                  data-testid={`api-key-test-result-${provider}`}
-                  role="status"
-                >
-                  {testResults[provider]!.kind === "ok"
-                    ? `✓ ${t("settings.api_key.test_success", "Key works!")}`
-                    : testResults[provider]!.kind === "invalid"
-                      ? `✗ ${t("settings.api_key.test_invalid", "Key invalid or expired.")}`
-                      : testResults[provider]!.kind === "rate_limit"
-                        ? `⚠ ${t("settings.api_key.test_rate_limit", "Rate limit hit. Try later.")}`
-                        : testResults[provider]!.kind === "no_key"
-                          ? `⚠ ${t("settings.api_key.test_no_key", "No key to test.")}`
-                          : `⚠ ${t("settings.api_key.test_network", "Connection failed. Check your internet connection.")}`}
-                </p>
-              )}
-              {formatState === "invalid" && (
-                <p
-                  className="api-key-format-error"
-                  data-testid={`api-key-format-error-${provider}`}
-                >
-                  {t("settings.api_key.format_invalid", "Invalid format.")}{" "}
-                  {t(
-                    `settings.api_key.format_hint.${provider}`,
-                    `Starts with ${API_KEY_PREFIX[provider]}`,
-                  )}
-                </p>
-              )}
-              {rollbackPrompt?.provider === provider && (
-                <div
-                  className="api-key-rollback"
-                  data-testid={`api-key-rollback-${provider}`}
-                  role="alertdialog"
-                  aria-label={t(
-                    "settings.api_key.rollback_warning",
-                    "The new key doesn't work. Keep the old key?",
-                  )}
-                >
-                  <p className="api-key-rollback-message">
-                    {t(
-                      "settings.api_key.rollback_warning",
-                      "The new key doesn't work. Keep the old key?",
-                    )}
-                  </p>
-                  <div className="api-key-rollback-actions">
-                    <Button
-                      type="button"
-                      data-testid={`api-key-rollback-keep-${provider}`}
-                      onClick={() => handleKeepOldKey(provider)}
-                    >
-                      {t("settings.api_key.rollback_keep_old", "Keep old key")}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      data-testid={`api-key-rollback-save-anyway-${provider}`}
-                      onClick={() => handleSaveAnyway(provider)}
-                      disabled={busy === `save-${provider}`}
-                    >
-                      {t("settings.api_key.rollback_save_anyway", "Save anyway")}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="link"
-                      data-testid={`api-key-rollback-cancel-${provider}`}
-                      onClick={handleDismissRollback}
-                    >
-                      {t("settings.api_key.rollback_cancel", "Cancel")}
-                    </Button>
-                    {backupAvailable[provider] && (
-                      <Button
-                        type="button"
-                        variant="link"
-                        data-testid={`api-key-restore-${provider}`}
-                        onClick={() => handleRestoreBackup(provider)}
-                        disabled={busy === `restore-${provider}`}
-                      >
-                        {t("settings.api_key.rollback_restore", "Restore last working key")}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              )}
-              {backupAvailable[provider] &&
-                rollbackPrompt?.provider !== provider &&
-                testResults[provider] &&
-                !testResults[provider]!.success && (
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="api-key-restore-link"
-                    data-testid={`api-key-restore-link-${provider}`}
-                    onClick={() => handleRestoreBackup(provider)}
-                    disabled={busy === `restore-${provider}`}
-                  >
-                    {t("settings.api_key.rollback_restore", "Restore last working key")}
-                  </Button>
-                )}
-            </form>
-          );
-        })}
-      </section>
+      <AiSettingsPanel
+        settings={settings}
+        onSettingsChange={setSettings}
+        active={activeTab === "ai"}
+      />
 
       <section
         className="settings-section"
