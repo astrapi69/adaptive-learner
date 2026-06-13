@@ -16,4 +16,3 @@
 #
 # Format: <relativer Pfad>  <max-Zeilen>   (# = Kommentar)
 
-plugins/adaptive-learner-plugin-session/adaptive_learner_session/routes.py  1156
