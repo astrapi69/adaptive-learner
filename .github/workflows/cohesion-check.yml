@@ -1,0 +1,23 @@
+name: Kohäsions-Check
+
+on:
+  pull_request:
+    paths:
+      - "**.py"
+      - "**.ts"
+      - "**.tsx"
+      - "**.js"
+      - "**.jsx"
+      - ".filesize-whitelist"
+      - ".filesize-baseline"
+
+jobs:
+  file-size-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Dateigrößen prüfen
+        run: |
+          chmod +x scripts/check-file-sizes.sh
+          scripts/check-file-sizes.sh

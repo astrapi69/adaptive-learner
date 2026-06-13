@@ -24,7 +24,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke \
        test-coverage test-coverage-backend test-coverage-frontend \
        stryker stryker-quick \
-       check-types check-types-backend check-types-frontend \
+       check-types check-types-backend check-types-frontend check-file-sizes \
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
@@ -328,6 +328,9 @@ install-hooks: ## Install scripts/git-hooks/* into .git/hooks
 	done
 
 # --- Type Checking ---
+
+check-file-sizes: ## Cohesion watcher: warn >500, error >1000 lines (ratchet via .filesize-baseline)
+	bash scripts/check-file-sizes.sh
 
 check-types: check-types-backend check-types-frontend ## Run all type checks
 
