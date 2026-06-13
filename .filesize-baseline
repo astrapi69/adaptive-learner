@@ -21,6 +21,5 @@ frontend/src/pages/Content.tsx                                              1542
 frontend/src/api/client.ts                                                  1397
 frontend/src/components/content/ShareWizard.tsx                             1281
 frontend/src/pages/Settings.tsx                                             1226
-frontend/src/components/BackupSection.tsx                                   1170
 plugins/adaptive-learner-plugin-session/adaptive_learner_session/routes.py  1156
 frontend/src/storage/db.ts                                                  1153
