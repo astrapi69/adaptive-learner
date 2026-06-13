@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
@@ -112,22 +113,36 @@ def list_progress(
     return [_row_to_wire(row) for row in rows]
 
 
+@dataclass(frozen=True)
+class ProgressUpdate:
+    """The 'what to write' for :func:`upsert_progress`.
+
+    Bundles the lesson-row identity (``source`` / ``set_id`` /
+    ``lesson_filename``) with the mutation intent: an optional
+    ``step_result``, a time delta, the live ``current_step``, and at
+    most one lifecycle flag. Replaces a 14-argument call site with a
+    single cohesive context object (coding-standards.md "Data between
+    functions").
+    """
+
+    source: str
+    set_id: str
+    lesson_filename: str
+    step_result: dict[str, Any] | None = None
+    time_spent_seconds_delta: int = 0
+    current_step: int | None = None
+    mark_completed: bool = False
+    mark_paused: bool = False
+    mark_abandoned: bool = False
+    mark_resumed: bool = False
+    mark_restarted: bool = False
+
+
 def upsert_progress(
     repo: LessonProgressRepository,
     unification_repo: LessonSessionUnificationRepository,
     user_id: str,
-    *,
-    source: str,
-    set_id: str,
-    lesson_filename: str,
-    step_result: dict[str, Any] | None = None,
-    time_spent_seconds_delta: int = 0,
-    current_step: int | None = None,
-    mark_completed: bool = False,
-    mark_paused: bool = False,
-    mark_abandoned: bool = False,
-    mark_resumed: bool = False,
-    mark_restarted: bool = False,
+    update: ProgressUpdate,
 ) -> dict[str, Any]:
     """Merge a step result + optional lifecycle flag into the
     user's progress row. Creates the row on first call.
@@ -149,6 +164,18 @@ def upsert_progress(
     At most one of the five ``mark_*`` flags may be true per
     call; a ``ValidationError`` is raised otherwise.
     """
+    source = update.source
+    set_id = update.set_id
+    lesson_filename = update.lesson_filename
+    step_result = update.step_result
+    time_spent_seconds_delta = update.time_spent_seconds_delta
+    current_step = update.current_step
+    mark_completed = update.mark_completed
+    mark_paused = update.mark_paused
+    mark_abandoned = update.mark_abandoned
+    mark_resumed = update.mark_resumed
+    mark_restarted = update.mark_restarted
+
     flag_count = sum(
         1
         for f in (
