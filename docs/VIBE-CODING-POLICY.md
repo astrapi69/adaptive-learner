@@ -161,6 +161,20 @@ Cross-cutting principle: **Foundation before features.** Audit before guard.
 Measure before enforce. Design document before implementation. No feature on
 shaky ground.
 
+### Release Freeze
+
+Once a release branch (`release/X.Y.Z`) is cut, the following holds until the
+release is tagged AND published:
+
+- No new PRs opened against `develop`.
+- No merges into `develop`.
+- No new code — only the release workflow (`release-test`, `release-finish`,
+  `release-publish`, journal).
+- Exception: a P0 hotfix that blocks the release itself.
+
+Tag first, then resume. This prevents a moving base (and parallel-session
+worktree races) from corrupting an in-flight release.
+
 ## Agent Roles
 
 | Agent | Scope | Lane |
