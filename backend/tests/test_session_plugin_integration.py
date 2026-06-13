@@ -1009,14 +1009,12 @@ def _patch_call_ai_complete(monkeypatch, captured: dict[str, object]):
     monkeypatch reaches the live import.
     """
     from adaptive_learner_session import ai_orchestration as _aio
-    from adaptive_learner_session import routes as _routes
 
     def _capture(*, pm, messages, model, api_key, max_tokens=None):  # noqa: ARG001
         captured["model"] = model
         return "captured-reply"
 
     monkeypatch.setattr(_aio, "call_ai_complete", _capture)
-    monkeypatch.setattr(_routes.ai_orchestration, "call_ai_complete", _capture)
 
 
 def test_message_uses_model_override_when_set(client: TestClient, monkeypatch):
@@ -1111,7 +1109,6 @@ def _dual_call_patch(monkeypatch, *, learning: str, evaluation: str):
     """Replace ``call_ai_complete`` so the learning + evaluation
     calls return different canned strings."""
     from adaptive_learner_session import ai_orchestration as _aio
-    from adaptive_learner_session import routes as _routes
 
     def _capture(*, pm, messages, model, api_key, max_tokens=None):  # noqa: ARG001
         sys_msg = messages[0]["content"] if messages else ""
@@ -1120,7 +1117,6 @@ def _dual_call_patch(monkeypatch, *, learning: str, evaluation: str):
         return learning
 
     monkeypatch.setattr(_aio, "call_ai_complete", _capture)
-    monkeypatch.setattr(_routes.ai_orchestration, "call_ai_complete", _capture)
     # The evaluator imports call_ai_complete by name from
     # ai_orchestration — also monkeypatch the step_evaluator's local
     # ref.
@@ -1412,7 +1408,6 @@ def test_evaluator_max_tokens_caps_at_256_by_default(client: TestClient, monkeyp
     seen: list[tuple[str, int | None]] = []
 
     from adaptive_learner_session import ai_orchestration as _aio
-    from adaptive_learner_session import routes as _routes
     from adaptive_learner_session import step_evaluator as _se
 
     def _capture(*, pm, messages, model, api_key, max_tokens=None):  # noqa: ARG001
@@ -1431,7 +1426,6 @@ def test_evaluator_max_tokens_caps_at_256_by_default(client: TestClient, monkeyp
         return "ok"
 
     monkeypatch.setattr(_aio, "call_ai_complete", _capture)
-    monkeypatch.setattr(_routes.ai_orchestration, "call_ai_complete", _capture)
     monkeypatch.setattr(_se, "call_ai_complete", _capture)
 
     sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
@@ -1480,9 +1474,7 @@ def test_message_no_warning_when_cache_empty(client: TestClient, monkeypatch):
     assert captured["model"] == "claude-deprecated-xyz"
 
 
-def test_message_warns_and_falls_back_when_model_not_in_cache(
-    client: TestClient, monkeypatch
-):
+def test_message_warns_and_falls_back_when_model_not_in_cache(client: TestClient, monkeypatch):
     """When a list IS cached AND the requested override is NOT in it,
     the route falls back to ai_orchestration.DEFAULT_MODELS and
     sets model_warning."""
@@ -1522,10 +1514,7 @@ def test_message_warns_and_falls_back_when_model_not_in_cache(
     # router's only contract with the cache is that get_cached_models
     # returns a list. Force-populate via the internal helper.
     model_discovery._cache_put(AIProvider.ANTHROPIC, "sk-fake-test-key", valid_models)
-    assert (
-        model_discovery.get_cached_models(AIProvider.ANTHROPIC, "sk-fake-test-key")
-        is not None
-    )
+    assert model_discovery.get_cached_models(AIProvider.ANTHROPIC, "sk-fake-test-key") is not None
 
     captured: dict[str, object] = {}
     _patch_call_ai_complete(monkeypatch, captured)
