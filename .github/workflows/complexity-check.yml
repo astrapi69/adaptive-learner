@@ -1,0 +1,76 @@
+name: Complexity Check
+
+# Defense-in-depth complexity visibility (#400). Warn-only, like the
+# cohesion watcher (#371) and the security scan: findings go to the job
+# summary + inline PR annotations, the workflow never blocks a merge.
+# Tightening to a hard gate (burn down the E/F + >20 offenders, then
+# ratchet) is a later decision.
+
+on:
+  pull_request:
+    paths:
+      - "backend/app/**.py"
+      - "plugins/**/*.py"
+      - "frontend/src/**.ts"
+      - "frontend/src/**.tsx"
+      - "scripts/check-complexity.sh"
+      - "scripts/radon_warn.py"
+      - ".github/workflows/complexity-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  python-complexity:
+    name: Radon (Python complexity)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install radon (isolated venv)
+        run: |
+          python -m venv .radon-venv
+          .radon-venv/bin/pip install --quiet --upgrade pip radon
+
+      - name: Radon - average + rank B and worse
+        run: .radon-venv/bin/radon cc backend/app plugins -a -nb || true
+
+      - name: Radon - rank E/F (warn-only annotations)
+        run: |
+          .radon-venv/bin/radon cc backend/app plugins --min E -j \
+            | .radon-venv/bin/python scripts/radon_warn.py
+
+  frontend-complexity:
+    name: ESLint (TypeScript complexity)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: ESLint complexity (threshold 20, warn-only)
+        working-directory: frontend
+        # The ``complexity`` rule is injected at "warn", so eslint exits 0
+        # even when over threshold; ``|| true`` guards any unrelated error.
+        # Block scalar: the inline ``complexity: [...]`` would otherwise be
+        # parsed as a YAML mapping value.
+        run: |
+          npx eslint src --rule 'complexity: ["warn", 20]' || true
