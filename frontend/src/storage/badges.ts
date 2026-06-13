@@ -27,31 +27,41 @@ export {BUNDLED_BADGES};
 async function ensureCatalogSeeded(): Promise<Map<string, BadgeRow>> {
     const db = getDb();
     const existing = await db.badges.toArray();
-    if (existing.length === BUNDLED_BADGES.length) {
+    if (existing.length >= BUNDLED_BADGES.length) {
         return new Map(existing.map((b) => [b.key, b]));
     }
-    const now = nowIso();
-    const existingByKey = new Map(existing.map((b) => [b.key, b]));
-    for (const spec of BUNDLED_BADGES) {
-        if (existingByKey.has(spec.key)) {
-            continue;
+    // #390 Phase 2: seed inside one rw transaction so two concurrent
+    // first-evals don't each insert the full catalog (duplicate key
+    // rows). The seen-set is re-read INSIDE the tx, so the serialized
+    // second caller observes the first's inserts. The ``&key`` unique
+    // index (Dexie v27) is the DB-level backstop.
+    await db.transaction("rw", db.badges, async () => {
+        const now = nowIso();
+        const seen = new Map(
+            (await db.badges.toArray()).map((b) => [b.key, b]),
+        );
+        for (const spec of BUNDLED_BADGES) {
+            if (seen.has(spec.key)) {
+                continue;
+            }
+            const row: BadgeRow = {
+                id: newId(),
+                key: spec.key,
+                name_key: spec.name_key,
+                description_key: spec.description_key,
+                icon: spec.icon,
+                category: spec.category,
+                base_tier: spec.base_tier ?? "bronze",
+                tier_thresholds: spec.tier_thresholds ?? null,
+                created_at: now,
+                updated_at: now,
+            };
+            await db.badges.put(row);
+            seen.set(spec.key, row);
         }
-        const row: BadgeRow = {
-            id: newId(),
-            key: spec.key,
-            name_key: spec.name_key,
-            description_key: spec.description_key,
-            icon: spec.icon,
-            category: spec.category,
-            base_tier: spec.base_tier ?? "bronze",
-            tier_thresholds: spec.tier_thresholds ?? null,
-            created_at: now,
-            updated_at: now,
-        };
-        await db.badges.put(row);
-        existingByKey.set(spec.key, row);
-    }
-    return existingByKey;
+    });
+    const seeded = await db.badges.toArray();
+    return new Map(seeded.map((b) => [b.key, b]));
 }
 
 async function completedSessionCount(userId: string): Promise<number> {

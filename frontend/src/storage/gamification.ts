@@ -135,19 +135,29 @@ function bankersRound(value: number): number {
 
 async function getOrCreateUserXP(userId: string): Promise<UserXPRow> {
     const db = getDb();
-    const existing = await db.userXp.where({user_id: userId}).first();
-    if (existing) {
-        return existing;
-    }
-    const row: UserXPRow = {
-        id: newId(),
-        user_id: userId,
-        total_xp: 0,
-        level: 1,
-        updated_at: nowIso(),
-    };
-    await db.userXp.put(row);
-    return row;
+    // #390 Phase 2: first-or-create inside one rw transaction so two
+    // concurrent first-awards converge to a single row (the &user_id
+    // unique index added in Dexie v27 is the DB-level backstop). When
+    // called from inside an existing userXp-scoped transaction (e.g.
+    // persistXP within evaluateBadgesForUser) Dexie reuses the parent.
+    let result: UserXPRow | null = null;
+    await db.transaction("rw", db.userXp, async () => {
+        const existing = await db.userXp.where({user_id: userId}).first();
+        if (existing) {
+            result = existing;
+            return;
+        }
+        const row: UserXPRow = {
+            id: newId(),
+            user_id: userId,
+            total_xp: 0,
+            level: 1,
+            updated_at: nowIso(),
+        };
+        await db.userXp.put(row);
+        result = row;
+    });
+    return result as unknown as UserXPRow;
 }
 
 export async function persistXP(

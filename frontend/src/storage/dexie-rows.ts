@@ -232,26 +232,37 @@ export async function ensureSettings(
   userId: string,
   language: string,
 ): Promise<UserSettingsRow> {
-  const existing = await db.userSettings
-    .where("user_id")
-    .equals(userId)
-    .first();
-  if (existing) return existing;
-  const ts = nowIso();
-  const row: UserSettingsRow = {
-    id: newId(),
-    user_id: userId,
-    language,
-    active_provider: "anthropic",
-    api_key_anthropic: null,
-    api_key_openai: null,
-    api_key_gemini: null,
-    model_override_anthropic: null,
-    model_override_openai: null,
-    model_override_gemini: null,
-    created_at: ts,
-    updated_at: ts,
-  };
-  await db.userSettings.add(row);
-  return row;
+  // #390 Phase 2: wrap the first-or-create in one rw transaction so two
+  // concurrent first-time callers (e.g. two settings.* reads on a fresh
+  // install) converge to a single row instead of each inserting one. The
+  // ``&user_id`` unique index (Dexie v27) is the DB-level backstop.
+  let result: UserSettingsRow | null = null;
+  await db.transaction("rw", db.userSettings, async () => {
+    const existing = await db.userSettings
+      .where("user_id")
+      .equals(userId)
+      .first();
+    if (existing) {
+      result = existing;
+      return;
+    }
+    const ts = nowIso();
+    const row: UserSettingsRow = {
+      id: newId(),
+      user_id: userId,
+      language,
+      active_provider: "anthropic",
+      api_key_anthropic: null,
+      api_key_openai: null,
+      api_key_gemini: null,
+      model_override_anthropic: null,
+      model_override_openai: null,
+      model_override_gemini: null,
+      created_at: ts,
+      updated_at: ts,
+    };
+    await db.userSettings.add(row);
+    result = row;
+  });
+  return result as unknown as UserSettingsRow;
 }

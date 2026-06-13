@@ -41,21 +41,34 @@ function daysBetween(a: string, b: string): number {
 
 async function getOrCreateRow(userId: string): Promise<UserStreakRow> {
     const db = getDb();
-    const existing = await db.userStreaks.where({user_id: userId}).first();
-    if (existing) return existing;
-    const row: UserStreakRow = {
-        id: newId(),
-        user_id: userId,
-        freezes_available: 0,
-        last_freeze_earned_on: null,
-        last_freeze_used_on: null,
-        weekend_mode: false,
-        current_streak_days: 0,
-        longest_streak_days: 0,
-        updated_at: nowIso(),
-    };
-    await db.userStreaks.put(row);
-    return row;
+    // #390 Phase 2: first-or-create inside one rw transaction so two
+    // concurrent callers (the streak is written on the read path too)
+    // converge to a single row. The &user_id unique index (Dexie v27)
+    // is the DB-level backstop.
+    let result: UserStreakRow | null = null;
+    await db.transaction("rw", db.userStreaks, async () => {
+        const existing = await db.userStreaks
+            .where({user_id: userId})
+            .first();
+        if (existing) {
+            result = existing;
+            return;
+        }
+        const row: UserStreakRow = {
+            id: newId(),
+            user_id: userId,
+            freezes_available: 0,
+            last_freeze_earned_on: null,
+            last_freeze_used_on: null,
+            weekend_mode: false,
+            current_streak_days: 0,
+            longest_streak_days: 0,
+            updated_at: nowIso(),
+        };
+        await db.userStreaks.put(row);
+        result = row;
+    });
+    return result as unknown as UserStreakRow;
 }
 
 async function userActivityDates(userId: string): Promise<Set<string>> {

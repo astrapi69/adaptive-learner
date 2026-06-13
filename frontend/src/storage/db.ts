@@ -12,7 +12,7 @@
  * the upgrade transparently for already-populated browsers.
  */
 
-import Dexie, {type EntityTable} from "dexie";
+import Dexie, {type EntityTable, type Table} from "dexie";
 
 import {BUNDLED_BADGES} from "./badges-data";
 
@@ -514,7 +514,159 @@ export class AdaptiveLearnerDB extends Dexie {
                         if (!("target_language" in row)) row.target_language = null;
                     });
             });
+        // Schema v26 — #390 Phase 2 (Class C create-race). DEDUP existing
+        // duplicate rows so the unique indexes added in v27 can be created
+        // without a ConstraintError on db.open. Adding a unique index on a
+        // store that already holds duplicates aborts the open (white
+        // screen), so the dedup MUST land in an earlier version: Dexie
+        // runs every intermediate version's upgrade in one versionchange
+        // transaction, so v26's deletes are visible when v27's
+        // ``createIndex`` builds the index. No dynamic import here (the
+        // v21 DatabaseClosedError trap).
+        this.version(26)
+            .stores({})
+            .upgrade(async (tx) => {
+                // Singletons: keep one row per user.
+                await dedupeSingletonByUser(
+                    tx.table("userSettings"),
+                    (a, b) =>
+                        String(b.updated_at ?? "").localeCompare(
+                            String(a.updated_at ?? ""),
+                        ) < 0,
+                );
+                await dedupeSingletonByUser(
+                    tx.table("userXp"),
+                    (a, b) => Number(a.total_xp ?? 0) >= Number(b.total_xp ?? 0),
+                );
+                await dedupeSingletonByUser(
+                    tx.table("userStreaks"),
+                    (a, b) =>
+                        Number(a.longest_streak_days ?? 0) >=
+                        Number(b.longest_streak_days ?? 0),
+                );
+                // Catalog: dedup badges by key, remapping userBadges.badge_id
+                // to the survivor BEFORE deleting the duplicate badge rows.
+                await dedupeBadgesByKey(
+                    tx.table("badges"),
+                    tx.table("userBadges"),
+                );
+                // userBadges: keep one row per (user_id, badge_id). Runs
+                // AFTER the badge remap, which can collapse two rows onto
+                // the same pair.
+                await dedupeUserBadgesByPair(tx.table("userBadges"));
+            });
+        // Schema v27 — #390 Phase 2: the unique indexes themselves, on the
+        // now-deduplicated data. ``&`` marks an index unique; the compound
+        // ``&[user_id+badge_id]`` is the correct key for userBadges (one
+        // row per user PER badge, not per user). These are the DB-level
+        // backstop behind the transaction-wrapped ensure helpers.
+        this.version(27).stores({
+            userSettings: "id, &user_id",
+            userXp: "id, &user_id, updated_at",
+            userStreaks: "id, &user_id, updated_at",
+            userBadges: "id, user_id, badge_id, earned_at, &[user_id+badge_id]",
+            badges: "id, &key, category, updated_at",
+        });
     }
+}
+
+type MigrationRow = Record<string, unknown> & {id: string};
+
+/**
+ * Delete duplicate singleton rows so a store keeps exactly one row per
+ * ``user_id``. ``aWins(a, b)`` returns true when ``a`` should survive
+ * over the currently-held ``b`` (the loser is deleted).
+ */
+async function dedupeSingletonByUser(
+    table: Table<MigrationRow, string>,
+    aWins: (a: MigrationRow, b: MigrationRow) => boolean,
+): Promise<void> {
+    const rows = await table.toArray();
+    const winnerByUser = new Map<string, MigrationRow>();
+    const toDelete: string[] = [];
+    for (const row of rows) {
+        const userId = String(row.user_id ?? "");
+        const current = winnerByUser.get(userId);
+        if (!current) {
+            winnerByUser.set(userId, row);
+            continue;
+        }
+        if (aWins(row, current)) {
+            toDelete.push(current.id);
+            winnerByUser.set(userId, row);
+        } else {
+            toDelete.push(row.id);
+        }
+    }
+    for (const id of toDelete) await table.delete(id);
+}
+
+/**
+ * Dedup the badge catalog by ``key``: pick the first row per key as the
+ * survivor, remap every ``userBadges.badge_id`` that points at a
+ * duplicate onto the survivor's id, then delete the duplicate badge rows.
+ */
+async function dedupeBadgesByKey(
+    badges: Table<MigrationRow, string>,
+    userBadges: Table<MigrationRow, string>,
+): Promise<void> {
+    const survivorByKey = new Map<string, MigrationRow>();
+    const remap = new Map<string, string>();
+    const toDelete: string[] = [];
+    for (const badge of await badges.toArray()) {
+        const key = String(badge.key ?? "");
+        const survivor = survivorByKey.get(key);
+        if (!survivor) {
+            survivorByKey.set(key, badge);
+            continue;
+        }
+        remap.set(badge.id, survivor.id);
+        toDelete.push(badge.id);
+    }
+    if (remap.size > 0) {
+        for (const userBadge of await userBadges.toArray()) {
+            const target = remap.get(String(userBadge.badge_id ?? ""));
+            if (target) {
+                userBadge.badge_id = target;
+                await userBadges.put(userBadge);
+            }
+        }
+    }
+    for (const id of toDelete) await badges.delete(id);
+}
+
+const TIER_RANK: Record<string, number> = {bronze: 0, silver: 1, gold: 2};
+
+/** Keep one userBadges row per (user_id, badge_id); on a clash keep the
+ *  higher tier, else the earlier ``earned_at``. */
+async function dedupeUserBadgesByPair(
+    table: Table<MigrationRow, string>,
+): Promise<void> {
+    const winnerByPair = new Map<string, MigrationRow>();
+    const toDelete: string[] = [];
+    for (const row of await table.toArray()) {
+        const pair = `${String(row.user_id ?? "")}#${String(row.badge_id ?? "")}`;
+        const current = winnerByPair.get(pair);
+        if (!current) {
+            winnerByPair.set(pair, row);
+            continue;
+        }
+        const rowRank = TIER_RANK[String(row.tier ?? "bronze")] ?? 0;
+        const curRank = TIER_RANK[String(current.tier ?? "bronze")] ?? 0;
+        const rowWins =
+            rowRank > curRank ||
+            (rowRank === curRank &&
+                String(row.earned_at ?? "").localeCompare(
+                    String(current.earned_at ?? ""),
+                ) < 0);
+        if (rowWins) {
+            toDelete.push(current.id);
+            winnerByPair.set(pair, row);
+        } else {
+            toDelete.push(row.id);
+        }
+    }
+    for (const id of toDelete) await table.delete(id);
 }
 
 /**
