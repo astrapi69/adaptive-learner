@@ -35,3 +35,16 @@ Vollstaendige Policy: docs/VIBE-CODING-POLICY.md
 7. Release
 
 Fundament vor Features. Erst messen, dann absichern.
+
+## Release-Sperre
+
+Wenn ein Release-Branch geschnitten ist (release/X.XX.0 existiert),
+gilt bis der Release getaggt und gepublisht ist:
+
+- Keine neuen PRs gegen develop oeffnen
+- Keine Merges nach develop
+- Kein neuer Code, nur Release-Workflow
+  (release-test, release-finish, release-publish, Journal)
+- Ausnahme: ein P0-Hotfix der den Release selbst blockiert
+
+Erst taggen, dann weiterarbeiten.
