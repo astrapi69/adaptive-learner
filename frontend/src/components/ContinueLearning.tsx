@@ -71,13 +71,21 @@ interface DisplayItem {
     updatedAt: string;
 }
 
+/** A chat-import analysis set whose title was never set falls back to its
+ *  raw ``analysis-<uuid>`` id (legacy data, pre-#134). Detect that shape so
+ *  the dashboard shows a friendly label instead of the bare id (#368). */
+const LEGACY_ANALYSIS_SET_ID =
+    /^analysis-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
 function setTitleOf(
     sets: ContentSetEntry[],
     source: string,
     setId: string,
+    legacyFallback: string,
 ): string {
     const entry = sets.find((s) => s.source === source && s.id === setId);
-    return entry?.title ?? setId;
+    const resolved = entry?.title ?? setId;
+    return LEGACY_ANALYSIS_SET_ID.test(resolved) ? legacyFallback : resolved;
 }
 
 /** Total exercise/theory steps in a lesson (best-effort; used for
@@ -168,7 +176,12 @@ export default function ContinueLearning({
                     const item: DisplayItem = {
                         source: group.source,
                         setId: group.setId,
-                        setTitle: setTitleOf(sets, group.source, group.setId),
+                        setTitle: setTitleOf(
+                            sets,
+                            group.source,
+                            group.setId,
+                            t("content.continue_learning.imported_analysis", "Imported analysis"),
+                        ),
                         mode: action.mode,
                         targetRoute: lessonRoute(
                             group.source,

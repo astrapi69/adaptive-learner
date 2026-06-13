@@ -1733,7 +1733,8 @@
       "next": "次のレッスン",
       "completed": "セット完了",
       "empty": "最初のレッスンを始めましょう！",
-      "progress": "ステップ {n}/{total}"
+      "progress": "ステップ {n}/{total}",
+      "imported_analysis": "インポートされた分析"
     },
     "import_chat": {
       "button": "チャットをインポート"

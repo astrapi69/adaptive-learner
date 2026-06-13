@@ -1733,7 +1733,8 @@
       "next": "Sonraki ders",
       "completed": "Set tamamlandı",
       "empty": "İlk dersine başla!",
-      "progress": "Adım {n}/{total}"
+      "progress": "Adım {n}/{total}",
+      "imported_analysis": "İçe aktarılan analiz"
     },
     "import_chat": {
       "button": "Sohbeti içe aktar"

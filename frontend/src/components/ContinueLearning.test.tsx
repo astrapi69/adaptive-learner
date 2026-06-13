@@ -153,6 +153,27 @@ describe("ContinueLearning", () => {
         expect(screen.getByTestId("continue-learning-next-fr-a1")).toBeInTheDocument();
     });
 
+    it("shows a friendly label for a legacy analysis-<uuid> set, not the raw id", async () => {
+        // Legacy data (pre-#134): a chat-import analysis set's title was
+        // stored as its raw ``analysis-<uuid>`` id. #368 — show a friendly
+        // label instead of the bare id on the dashboard.
+        const legacyId = "analysis-ed08d0f5-12f3-46ac-a524-381f42aab115";
+        listProgressMock.mockResolvedValue([
+            progress({set_id: legacyId, lesson_filename: "01.json", updated_at: "2026-06-03T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: legacyId, title: legacyId}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json"]});
+        getLessonMock.mockResolvedValue({id: "01", title: "Deutsche Grammatik", steps: [{}], cards: []});
+
+        renderSection({});
+        const link = await screen.findByTestId(`continue-learning-link-${legacyId}`);
+        expect(link.textContent).toContain("Imported analysis");
+        expect(link.textContent).not.toContain(legacyId);
+    });
+
     it("lists one row per set, newest-first, capped at maxItems", async () => {
         listProgressMock.mockResolvedValue([
             progress({set_id: "a", lesson_filename: "01.json", updated_at: "2026-06-01T10:00:00Z"}),
