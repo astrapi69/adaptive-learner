@@ -36,10 +36,8 @@ frontend/src/pages/AdaptiveLesson.tsx 27
 frontend/src/pages/Assessment.tsx 22
 frontend/src/pages/CreateLesson.tsx 24
 frontend/src/pages/ErrorReplayLesson.tsx 22
-frontend/src/pages/Lesson.tsx 67
 frontend/src/pages/Review.tsx 23
 frontend/src/pages/Session.tsx 22
 frontend/src/storage/backup.ts 49
 frontend/src/storage/prompts.ts 33
 frontend/src/utils/eventRecorder.ts 40
-plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py 33
