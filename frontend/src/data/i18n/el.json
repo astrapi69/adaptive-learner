@@ -1856,6 +1856,8 @@
       "other_sources": "Άλλες γλώσσες προέλευσης",
       "for_speakers": "Για ομιλητές {lang}",
       "knowledge": "Γνώση",
+      "own_lesson": "Το μάθημά σου",
+      "own_edit": "Η επεξεργασία σου",
       "domain_psychology": "Ψυχολογία",
       "domain_programming": "Προγραμματισμός",
       "domain_math": "Μαθηματικά",

@@ -1856,6 +1856,8 @@
       "other_sources": "他の出発言語",
       "for_speakers": "{lang}話者向け",
       "knowledge": "知識",
+      "own_lesson": "あなたのレッスン",
+      "own_edit": "あなたの編集",
       "domain_psychology": "心理学",
       "domain_programming": "プログラミング",
       "domain_math": "数学",

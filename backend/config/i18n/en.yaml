@@ -1715,6 +1715,8 @@ content:
     other_sources: Other source languages
     for_speakers: For {lang} speakers
     knowledge: Knowledge
+    own_lesson: "Your lesson"
+    own_edit: "Your edit"
     domain_psychology: Psychology
     domain_programming: Programming
     domain_math: Mathematics

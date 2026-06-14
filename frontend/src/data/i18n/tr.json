@@ -1856,6 +1856,8 @@
       "other_sources": "Diğer kaynak diller",
       "for_speakers": "{lang} konuşanlar için",
       "knowledge": "Bilgi",
+      "own_lesson": "Kendi dersin",
+      "own_edit": "Kendi düzenlemen",
       "domain_psychology": "Psikoloji",
       "domain_programming": "Programlama",
       "domain_math": "Matematik",
