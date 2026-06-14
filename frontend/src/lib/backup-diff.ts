@@ -321,6 +321,58 @@ function deepEqual(a: unknown, b: unknown): boolean {
 // ---- Previews per table ------------------------------------------------
 
 /**
+ * Per-table preview builders. Each returns a compact, human-meaningful
+ * one-line label for a row; tables without an entry fall through to the
+ * id-only default in {@link previewRow}.
+ */
+const ROW_PREVIEWS: Record<string, (row: Row) => string> = {
+    users: (row) => `${row.name ?? row.id}`,
+    learning_projects: (row) =>
+        `${row.topic ?? row.id} (${row.daily_minutes ?? "?"} min/day)`,
+    learning_profiles: (row) => `Profile ${asDate(row.assessed_at)}`,
+    user_settings: (row) => `Settings (${row.active_provider ?? "?"})`,
+    curriculums: (row) => `${row.title ?? row.id}`,
+    learning_topics: (row) => `${row.title ?? row.id}`,
+    lessons: (row) => `${row.title ?? row.id}`,
+    learning_sessions: (row) =>
+        `${asDate(row.started_at)} ${row.method ?? "?"} (step ${
+            row.cycle_step ?? "?"
+        })`,
+    session_messages: (row) => {
+        const content = String(row.content ?? "").slice(0, 60);
+        return `[${row.role ?? "?"}] ${content}${
+            String(row.content ?? "").length > 60 ? "…" : ""
+        }`;
+    },
+    session_ratings: (row) =>
+        `Rating u${row.understanding ?? "?"}/s${row.stress ?? "?"}/m${row.method_fit ?? "?"}`,
+    session_notes: (row) => {
+        const note = String(row.content ?? "").slice(0, 60);
+        return `Note: ${note}${String(row.content ?? "").length > 60 ? "…" : ""}`;
+    },
+    progress_commits: (row) =>
+        `Commit ${asDate(row.committed_at)} (${row.duration_minutes ?? "?"} min)`,
+    method_switches: (row) => `${row.from_method ?? "?"} → ${row.to_method ?? "?"}`,
+    step_evaluations: (row) =>
+        `Eval step ${row.from_step ?? "?"} → ${row.to_step ?? "?"} (${
+            row.confidence ?? "?"
+        })`,
+    imported_conversations: (row) => `${row.title ?? row.id}`,
+    imported_messages: (row) => {
+        const content = String(row.content ?? "").slice(0, 60);
+        return `[${row.role ?? "?"}] ${content}${
+            String(row.content ?? "").length > 60 ? "…" : ""
+        }`;
+    },
+    subjects: (row) => `${row.name ?? row.id}`,
+    tags: (row) => `${row.name ?? row.id}`,
+    project_subjects: (row) =>
+        `proj ${shortId(row.project_id)} ↔ subj ${shortId(row.subject_id)}`,
+    project_tags: (row) =>
+        `proj ${shortId(row.project_id)} ↔ tag ${shortId(row.tag_id)}`,
+};
+
+/**
  * One-liner preview per row. Used by the Compare UI and the
  * Markdown export to identify a record without dumping its full
  * column set. Each table picks the two or three most
@@ -328,64 +380,8 @@ function deepEqual(a: unknown, b: unknown): boolean {
  * id-only default.
  */
 export function previewRow(table: string, row: Row): string {
-    switch (table) {
-        case "users":
-            return `${row.name ?? row.id}` as string;
-        case "learning_projects":
-            return `${row.topic ?? row.id} (${row.daily_minutes ?? "?"} min/day)`;
-        case "learning_profiles":
-            return `Profile ${asDate(row.assessed_at)}`;
-        case "user_settings":
-            return `Settings (${row.active_provider ?? "?"})`;
-        case "curriculums":
-            return `${row.title ?? row.id}`;
-        case "learning_topics":
-            return `${row.title ?? row.id}`;
-        case "lessons":
-            return `${row.title ?? row.id}`;
-        case "learning_sessions":
-            return `${asDate(row.started_at)} ${row.method ?? "?"} (step ${
-                row.cycle_step ?? "?"
-            })`;
-        case "session_messages": {
-            const content = String(row.content ?? "").slice(0, 60);
-            return `[${row.role ?? "?"}] ${content}${
-                String(row.content ?? "").length > 60 ? "…" : ""
-            }`;
-        }
-        case "session_ratings":
-            return `Rating u${row.understanding ?? "?"}/s${row.stress ?? "?"}/m${row.method_fit ?? "?"}`;
-        case "session_notes": {
-            const note = String(row.content ?? "").slice(0, 60);
-            return `Note: ${note}${String(row.content ?? "").length > 60 ? "…" : ""}`;
-        }
-        case "progress_commits":
-            return `Commit ${asDate(row.committed_at)} (${row.duration_minutes ?? "?"} min)`;
-        case "method_switches":
-            return `${row.from_method ?? "?"} → ${row.to_method ?? "?"}`;
-        case "step_evaluations":
-            return `Eval step ${row.from_step ?? "?"} → ${row.to_step ?? "?"} (${
-                row.confidence ?? "?"
-            })`;
-        case "imported_conversations":
-            return `${row.title ?? row.id}`;
-        case "imported_messages": {
-            const content = String(row.content ?? "").slice(0, 60);
-            return `[${row.role ?? "?"}] ${content}${
-                String(row.content ?? "").length > 60 ? "…" : ""
-            }`;
-        }
-        case "subjects":
-            return `${row.name ?? row.id}`;
-        case "tags":
-            return `${row.name ?? row.id}`;
-        case "project_subjects":
-            return `proj ${shortId(row.project_id)} ↔ subj ${shortId(row.subject_id)}`;
-        case "project_tags":
-            return `proj ${shortId(row.project_id)} ↔ tag ${shortId(row.tag_id)}`;
-        default:
-            return String(row.id ?? "(no id)");
-    }
+    const builder = ROW_PREVIEWS[table];
+    return builder ? builder(row) : String(row.id ?? "(no id)");
 }
 
 function asDate(value: unknown): string {

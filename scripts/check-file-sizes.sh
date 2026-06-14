@@ -82,9 +82,17 @@ errors=0
 baselined=0
 total_checked=0
 
+# ``${#ARR[@]}`` on an EMPTY associative array errors under ``set -u`` (even on
+# bash 5), so count via the ``-v`` guard. An empty baseline is the success state
+# of the ratchet: every god-file has been split (#411 emptied the backend side).
+whitelist_count=0
+[[ -v WHITELISTED[@] ]] && whitelist_count=${#WHITELISTED[@]}
+baseline_count=0
+[[ -v BASELINE[@] ]] && baseline_count=${#BASELINE[@]}
+
 printf "\n=== Kohäsions-Check: Dateigrößen ===\n"
 printf "Warn-Schwelle: %d Zeilen | Error-Schwelle: %d Zeilen\n" "$WARN_THRESHOLD" "$ERROR_THRESHOLD"
-printf "Whitelist: %d Eintraege | Baseline: %d Eintraege\n\n" "${#WHITELISTED[@]}" "${#BASELINE[@]}"
+printf "Whitelist: %d Eintraege | Baseline: %d Eintraege\n\n" "$whitelist_count" "$baseline_count"
 
 for relpath in $FILES; do
     [[ -f "$relpath" ]] || continue

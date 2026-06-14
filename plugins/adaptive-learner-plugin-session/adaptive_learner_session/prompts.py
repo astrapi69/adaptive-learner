@@ -30,6 +30,7 @@ cell easier to maintain.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
 METHODS: tuple[str, ...] = (
@@ -644,6 +645,151 @@ def _str_list(value: Any) -> list[str]:
     return [str(item).strip() for item in value if str(item).strip()]
 
 
+@dataclass(frozen=True)
+class _AnalysisFields:
+    """Parsed, cleaned fields of an imported-chat analysis dict.
+
+    Each field is already stripped of empties; list fields are empty
+    (never ``None``) when the source carried nothing useful.
+    """
+
+    topic: str
+    summary: str
+    level: str
+    strengths: list[str]
+    weaknesses: list[str]
+    errors: list[str]
+    vocab: list[str]
+    curriculum: list[str]
+
+    def has_content(self) -> bool:
+        """True when at least one field carries renderable content."""
+        return any(
+            [
+                self.topic,
+                self.summary,
+                self.level,
+                self.strengths,
+                self.weaknesses,
+                self.errors,
+                self.vocab,
+                self.curriculum,
+            ]
+        )
+
+
+@dataclass(frozen=True)
+class _AnalysisLabels:
+    """Localized label table for one analysis-context render.
+
+    ``intro`` carries a ``{topic}`` placeholder; the seven middle entries
+    are line prefixes; ``closing`` is the trailing continue-instruction.
+    """
+
+    intro: str
+    summary: str
+    level: str
+    strengths: str
+    weaknesses: str
+    errors: str
+    vocab: str
+    curriculum: str
+    closing: str
+
+
+_ANALYSIS_LABELS_DE = _AnalysisLabels(
+    intro='Der Benutzer hat einen Chat zum Thema "{topic}" importiert und analysiert.',
+    summary="Zusammenfassung: ",
+    level="Niveau: ",
+    strengths="Stärken: ",
+    weaknesses="Schwächen: ",
+    errors="Fehlermuster: ",
+    vocab="Bereits gelernte Vokabeln: ",
+    curriculum="Empfohlene Themen: ",
+    closing=(
+        "Setze die Lernsitzung fort. Fokussiere auf die Schwächen und "
+        "Fehlermuster, beziehe dich auf die bereits gelernten Vokabeln und "
+        "eröffne deine erste Antwort, indem du dich ausdrücklich auf diese "
+        "Analyse beziehst."
+    ),
+)
+
+_ANALYSIS_LABELS_EN = _AnalysisLabels(
+    intro='The user imported and analysed a chat about "{topic}".',
+    summary="Summary: ",
+    level="Level: ",
+    strengths="Strengths: ",
+    weaknesses="Weaknesses: ",
+    errors="Error patterns: ",
+    vocab="Vocabulary already learned: ",
+    curriculum="Suggested topics: ",
+    closing=(
+        "Continue the learning session. Focus on the weaknesses and error "
+        "patterns, reference the vocabulary already learned, and open your "
+        "first reply by explicitly referring to this analysis."
+    ),
+)
+
+
+def _dict_field_values(entries: Any, key: str) -> list[str]:
+    """Stripped, non-empty ``key`` strings from a list of dict entries.
+
+    Non-dict entries and entries whose ``key`` is missing or blank are
+    skipped. Used for the ``vocabulary`` (``word``) and
+    ``suggested_curriculum`` (``title``) lists.
+    """
+    return [
+        str(entry.get(key)).strip()
+        for entry in (entries or [])
+        if isinstance(entry, dict) and str(entry.get(key) or "").strip()
+    ]
+
+
+def _extract_analysis_fields(analysis: Any) -> _AnalysisFields | None:
+    """Parse a raw analysis dict into cleaned :class:`_AnalysisFields`.
+
+    Returns ``None`` when the input is not a dict or carries no
+    renderable content, so the caller can short-circuit to an empty
+    context.
+    """
+    if not isinstance(analysis, dict):
+        return None
+    fields = _AnalysisFields(
+        topic=str(analysis.get("topic") or "").strip(),
+        summary=str(analysis.get("summary") or "").strip(),
+        level=str(analysis.get("user_level") or "").strip(),
+        strengths=_str_list(analysis.get("strengths")),
+        weaknesses=_str_list(analysis.get("weaknesses")),
+        errors=_str_list(analysis.get("error_patterns")),
+        vocab=_dict_field_values(analysis.get("vocabulary"), "word"),
+        curriculum=_dict_field_values(analysis.get("suggested_curriculum"), "title"),
+    )
+    return fields if fields.has_content() else None
+
+
+def _render_analysis_lines(fields: _AnalysisFields, labels: _AnalysisLabels) -> list[str]:
+    """Render analysis fields into prompt lines via a label table.
+
+    The intro (with the topic) and the closing instruction always frame
+    the block; the seven middle lines are emitted only when their field
+    carries content, preserving the source field order.
+    """
+    lines = [labels.intro.format(topic=fields.topic or "?")]
+    for prefix, value in (
+        (labels.summary, fields.summary),
+        (labels.level, fields.level),
+        (labels.strengths, ", ".join(fields.strengths)),
+        (labels.weaknesses, ", ".join(fields.weaknesses)),
+        (labels.errors, ", ".join(fields.errors)),
+        (labels.vocab, ", ".join(fields.vocab)),
+        (labels.curriculum, ", ".join(fields.curriculum)),
+    ):
+        if value:
+            lines.append(f"{prefix}{value}")
+    lines.append(labels.closing)
+    return lines
+
+
 def build_analysis_context(analysis: dict[str, Any] | None, lang: str) -> str:
     """Render an imported-chat analysis into a system-prompt addendum.
 
@@ -654,75 +800,8 @@ def build_analysis_context(analysis: dict[str, Any] | None, lang: str) -> str:
     suggested curriculum). Returns ``""`` when the analysis is missing
     or carries nothing useful, so the caller can append unconditionally.
     """
-    if not isinstance(analysis, dict):
+    fields = _extract_analysis_fields(analysis)
+    if fields is None:
         return ""
-
-    topic = str(analysis.get("topic") or "").strip()
-    summary = str(analysis.get("summary") or "").strip()
-    level = str(analysis.get("user_level") or "").strip()
-    strengths = _str_list(analysis.get("strengths"))
-    weaknesses = _str_list(analysis.get("weaknesses"))
-    errors = _str_list(analysis.get("error_patterns"))
-    vocab = [
-        str(entry.get("word")).strip()
-        for entry in (analysis.get("vocabulary") or [])
-        if isinstance(entry, dict) and str(entry.get("word") or "").strip()
-    ]
-    curriculum = [
-        str(lesson.get("title")).strip()
-        for lesson in (analysis.get("suggested_curriculum") or [])
-        if isinstance(lesson, dict) and str(lesson.get("title") or "").strip()
-    ]
-
-    if not any([topic, summary, level, strengths, weaknesses, errors, vocab, curriculum]):
-        return ""
-
-    de = _lang_key(lang) == "de"
-    lines: list[str] = []
-    if de:
-        lines.append(
-            f'Der Benutzer hat einen Chat zum Thema "{topic or "?"}" importiert und analysiert.'
-        )
-        if summary:
-            lines.append(f"Zusammenfassung: {summary}")
-        if level:
-            lines.append(f"Niveau: {level}")
-        if strengths:
-            lines.append(f"Stärken: {', '.join(strengths)}")
-        if weaknesses:
-            lines.append(f"Schwächen: {', '.join(weaknesses)}")
-        if errors:
-            lines.append(f"Fehlermuster: {', '.join(errors)}")
-        if vocab:
-            lines.append(f"Bereits gelernte Vokabeln: {', '.join(vocab)}")
-        if curriculum:
-            lines.append(f"Empfohlene Themen: {', '.join(curriculum)}")
-        lines.append(
-            "Setze die Lernsitzung fort. Fokussiere auf die Schwächen und "
-            "Fehlermuster, beziehe dich auf die bereits gelernten Vokabeln und "
-            "eröffne deine erste Antwort, indem du dich ausdrücklich auf diese "
-            "Analyse beziehst."
-        )
-    else:
-        lines.append(f'The user imported and analysed a chat about "{topic or "?"}".')
-        if summary:
-            lines.append(f"Summary: {summary}")
-        if level:
-            lines.append(f"Level: {level}")
-        if strengths:
-            lines.append(f"Strengths: {', '.join(strengths)}")
-        if weaknesses:
-            lines.append(f"Weaknesses: {', '.join(weaknesses)}")
-        if errors:
-            lines.append(f"Error patterns: {', '.join(errors)}")
-        if vocab:
-            lines.append(f"Vocabulary already learned: {', '.join(vocab)}")
-        if curriculum:
-            lines.append(f"Suggested topics: {', '.join(curriculum)}")
-        lines.append(
-            "Continue the learning session. Focus on the weaknesses and error "
-            "patterns, reference the vocabulary already learned, and open your "
-            "first reply by explicitly referring to this analysis."
-        )
-
-    return "\n".join(lines)
+    labels = _ANALYSIS_LABELS_DE if _lang_key(lang) == "de" else _ANALYSIS_LABELS_EN
+    return "\n".join(_render_analysis_lines(fields, labels))

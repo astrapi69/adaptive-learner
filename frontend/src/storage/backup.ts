@@ -802,48 +802,78 @@ function parseManifestSetMeta(
     }
 }
 
+/** Language fields for a restored ``ContentSetRow``, resolved from the
+ *  carried Dexie ``meta`` first, then the parsed manifest, then a
+ *  minimal default. ``language`` and ``target_language`` cross-fill so
+ *  a row missing one but carrying the other stays usable. */
+function resolveContentSetLanguages(
+    meta: Partial<ContentSetRow>,
+    fromManifest: ManifestSetMeta,
+): Pick<ContentSetRow, "language" | "target_language" | "source_language"> {
+    return {
+        language:
+            meta.language ??
+            meta.target_language ??
+            fromManifest.target_language ??
+            fromManifest.language ??
+            "",
+        target_language:
+            meta.target_language ??
+            meta.language ??
+            fromManifest.target_language ??
+            fromManifest.language ??
+            "",
+        source_language:
+            meta.source_language ?? fromManifest.source_language ?? "en",
+    };
+}
+
+/** Descriptive text fields for a restored ``ContentSetRow``, resolved
+ *  from the carried ``meta`` first, then the parsed manifest, then a
+ *  minimal default. */
+function resolveContentSetText(
+    entry: ContentSetBackupEntry,
+    meta: Partial<ContentSetRow>,
+    fromManifest: ManifestSetMeta,
+): Pick<
+    ContentSetRow,
+    "branch" | "title" | "title_native" | "level" | "domain" | "description" | "cover_image"
+> {
+    return {
+        branch: entry.branch ?? meta.branch ?? "main",
+        title: meta.title ?? fromManifest.title ?? entry.set_id,
+        title_native: meta.title_native ?? fromManifest.title_native ?? null,
+        level: meta.level ?? fromManifest.level ?? "",
+        domain: meta.domain ?? fromManifest.domain ?? "language",
+        description: meta.description ?? fromManifest.description ?? null,
+        cover_image: meta.cover_image ?? fromManifest.cover_image ?? null,
+    };
+}
+
 /** Build a ``ContentSetRow`` for restore: prefer the carried Dexie
  *  ``meta``, else recover the metadata from the manifest, else fall
  *  back to minimal defaults (lessons still open since the viewer reads
  *  the files, not the row). */
 function buildContentSetRow(setPk: string, entry: ContentSetBackupEntry): ContentSetRow {
     const manifest = entry.files.find((file) => file.filename === "manifest.yaml");
-    const fromManifest = parseManifestSetMeta(manifest?.body, entry.set_id);
+    const fromManifest: ManifestSetMeta =
+        parseManifestSetMeta(manifest?.body, entry.set_id) ?? {};
     const meta = (entry.meta ?? {}) as Partial<ContentSetRow>;
     const lessonCount = entry.files.filter((file) =>
         file.filename.startsWith("lessons/"),
     ).length;
-    const manifestTags = Array.isArray(fromManifest?.tags)
+    const manifestTags = Array.isArray(fromManifest.tags)
         ? JSON.stringify(fromManifest.tags)
         : undefined;
     return {
         id: setPk,
         source: entry.source,
-        branch: entry.branch ?? meta.branch ?? "main",
         set_id: entry.set_id,
         version: entry.version,
-        title: meta.title ?? fromManifest?.title ?? entry.set_id,
-        title_native: meta.title_native ?? fromManifest?.title_native ?? null,
-        language:
-            meta.language ??
-            meta.target_language ??
-            fromManifest?.target_language ??
-            fromManifest?.language ??
-            "",
-        target_language:
-            meta.target_language ??
-            meta.language ??
-            fromManifest?.target_language ??
-            fromManifest?.language ??
-            "",
-        source_language:
-            meta.source_language ?? fromManifest?.source_language ?? "en",
-        level: meta.level ?? fromManifest?.level ?? "",
-        domain: meta.domain ?? fromManifest?.domain ?? "language",
-        lesson_count: meta.lesson_count ?? fromManifest?.lesson_count ?? lessonCount,
-        description: meta.description ?? fromManifest?.description ?? null,
+        ...resolveContentSetText(entry, meta, fromManifest),
+        ...resolveContentSetLanguages(meta, fromManifest),
+        lesson_count: meta.lesson_count ?? fromManifest.lesson_count ?? lessonCount,
         tags: meta.tags ?? manifestTags ?? "[]",
-        cover_image: meta.cover_image ?? fromManifest?.cover_image ?? null,
         downloaded_at: meta.downloaded_at ?? nowIso(),
         manifest_yaml: meta.manifest_yaml ?? manifest?.body ?? "",
     };

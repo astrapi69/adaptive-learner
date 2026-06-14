@@ -254,42 +254,45 @@ function validateLanguageHeuristics(
   checkSide(frontText, meta.target_language, "target_language_heuristic", true);
 }
 
-function validateLesson(
+type LessonExercise = NonNullable<ContentLesson["steps"][number]["exercise"]>;
+
+/** Warn when the cards' average words-per-side exceeds the level's CEFR cap.
+ *  Averaged PER side (front vs back) so a short target-language front does
+ *  not mask a wordy source-language back. */
+function checkLevelComplexity(
   lesson: ContentLesson,
   meta: ValidationMeta,
-  issues: ValidationIssue[],
+  id: string,
   warnings: ValidationIssue[],
 ): void {
-  const id = lesson.id;
-  const exercises = lesson.steps
-    .filter((s) => s.type === "exercise" && s.exercise)
-    .map((s) => s.exercise!);
-  const theoryCount = lesson.steps.filter((s) => s.type === "theory").length;
-  const types = new Set(exercises.map((e) => e.type));
-
-  // Word-count proxy for level fit: average words per card side.
   const level = (meta.level || "").trim().toLowerCase();
   const cap = MAX_AVG_WORDS_PER_SIDE[level];
-  if (cap !== undefined && lesson.cards.length > 0) {
-    // Average words per side, computed PER side (front vs back)
-    // because the target-language front is naturally short and
-    // would otherwise mask a wordy source-language back.
-    const wordsOf = (s: string | null | undefined) =>
-      s && s.trim() ? s.trim().split(/\s+/).length : 0;
-    const frontAvg =
-      lesson.cards.reduce((n, c) => n + wordsOf(c.front), 0) /
-      lesson.cards.length;
-    const backAvg =
-      lesson.cards.reduce((n, c) => n + wordsOf(c.back), 0) /
-      lesson.cards.length;
-    const avg = Math.max(frontAvg, backAvg);
-    if (avg > cap)
-      warnings.push({
-        code: "level_too_complex",
-        params: { lesson: id, level: meta.level, avg: avg.toFixed(1), cap },
-      });
-  }
+  if (cap === undefined || lesson.cards.length === 0) return;
+  const wordsOf = (s: string | null | undefined) =>
+    s && s.trim() ? s.trim().split(/\s+/).length : 0;
+  const frontAvg =
+    lesson.cards.reduce((n, c) => n + wordsOf(c.front), 0) /
+    lesson.cards.length;
+  const backAvg =
+    lesson.cards.reduce((n, c) => n + wordsOf(c.back), 0) /
+    lesson.cards.length;
+  const avg = Math.max(frontAvg, backAvg);
+  if (avg > cap)
+    warnings.push({
+      code: "level_too_complex",
+      params: { lesson: id, level: meta.level, avg: avg.toFixed(1), cap },
+    });
+}
 
+/** Issue when a lesson has too few exercises, too few exercise types, or no
+ *  theory step. */
+function checkLessonCounts(
+  exercises: LessonExercise[],
+  types: Set<string>,
+  theoryCount: number,
+  id: string,
+  issues: ValidationIssue[],
+): void {
   if (exercises.length < QUALITY.minExercisesPerLesson)
     issues.push({
       code: "lesson_too_few_exercises",
@@ -308,9 +311,15 @@ function validateLesson(
 
   if (theoryCount < QUALITY.minTheorySteps)
     issues.push({ code: "lesson_no_theory", params: { lesson: id } });
+}
 
-  // #139 — an optional theory example link (schema v1.4) must be an
-  // http(s) URL when present.
+/** #139 — a theory example link (schema v1.4) must be an http(s) URL when
+ *  present. */
+function checkExampleUrls(
+  lesson: ContentLesson,
+  id: string,
+  issues: ValidationIssue[],
+): void {
   for (const step of lesson.steps) {
     const url = step.example_url?.trim();
     if (url && !/^https?:\/\//i.test(url))
@@ -319,7 +328,16 @@ function validateLesson(
         params: { lesson: id, step: step.id },
       });
   }
+}
 
+/** Issue on an empty card (blank front or back) or a back-side that does not
+ *  read like the set's source language. */
+function checkCards(
+  lesson: ContentLesson,
+  meta: ValidationMeta,
+  id: string,
+  issues: ValidationIssue[],
+): void {
   for (const card of lesson.cards) {
     if (!card.front || !card.front.trim() || !card.back || !card.back.trim()) {
       issues.push({
@@ -337,7 +355,15 @@ function validateLesson(
       });
     }
   }
+}
 
+/** Issue on per-exercise-type quality minimums (free-text accepts +
+ *  distractors, matching pairs, picture-choice distractors). */
+function checkLessonExercises(
+  exercises: LessonExercise[],
+  id: string,
+  issues: ValidationIssue[],
+): void {
   for (const ex of exercises) {
     if (ex.type === "free_text") {
       if ((ex.accept?.length ?? 0) < QUALITY.minFreeTextAccepts)
@@ -374,6 +400,26 @@ function validateLesson(
         });
     }
   }
+}
+
+function validateLesson(
+  lesson: ContentLesson,
+  meta: ValidationMeta,
+  issues: ValidationIssue[],
+  warnings: ValidationIssue[],
+): void {
+  const id = lesson.id;
+  const exercises = lesson.steps
+    .filter((s) => s.type === "exercise" && s.exercise)
+    .map((s) => s.exercise!);
+  const theoryCount = lesson.steps.filter((s) => s.type === "theory").length;
+  const types = new Set(exercises.map((e) => e.type));
+
+  checkLevelComplexity(lesson, meta, id, warnings);
+  checkLessonCounts(exercises, types, theoryCount, id, issues);
+  checkExampleUrls(lesson, id, issues);
+  checkCards(lesson, meta, id, issues);
+  checkLessonExercises(exercises, id, issues);
 }
 
 /**

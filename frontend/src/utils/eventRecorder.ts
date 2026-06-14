@@ -166,40 +166,47 @@ function formatTime(ms: number): string {
     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
+/** Per-event-type line formatters, keyed by ``EventType``. Each owns its
+ *  own ``||`` / ``?:`` fallbacks in its own scope, so ``formatEvent`` stays
+ *  a thin lookup. ``time`` is the pre-formatted ``HH:MM:SS`` prefix. */
+const EVENT_FORMATTERS: Record<
+    EventType,
+    (ev: RecordedEvent, time: string) => string
+> = {
+    click: (ev, time) =>
+        `${time}  Click: "${ev.text || "?"}"${ev.testId ? ` [${ev.testId}]` : ""}`,
+    navigation: (ev, time) =>
+        `${time}  Navigation: ${ev.from || "?"} -> ${ev.to || "?"}`,
+    dialog_open: (ev, time) => `${time}  Dialog opened: "${ev.text || "?"}"`,
+    dialog_close: (ev, time) => `${time}  Dialog closed: "${ev.text || "?"}"`,
+    dropdown_change: (ev, time) =>
+        `${time}  Dropdown: ${ev.field || "?"} = "${ev.value || "?"}"`,
+    checkbox_change: (ev, time) =>
+        `${time}  Checkbox: ${ev.field || "?"} = ${ev.value || "?"}`,
+    file_upload: (ev, time) =>
+        `${time}  Upload: ${ev.text || "File"} (${ev.value || "?"})`,
+    api_call: (ev, time) =>
+        `${time}  API: ${ev.method || "?"} ${ev.endpoint || "?"} -> ${ev.status || "?"} (${ev.durationMs || 0}ms)`,
+    api_error: (ev, time) =>
+        `${time}  API Error: ${ev.method || "?"} ${ev.endpoint || "?"} -> ${ev.message || "?"}`,
+    toast: (ev, time) => `${time}  Toast: ${ev.level || "?"} "${ev.message || "?"}"`,
+    uncaught_error: (ev, time) =>
+        `${time}  Uncaught Error: ${ev.message || "?"} (${ev.source || "?"}:${ev.line || "?"})`,
+    unhandled_rejection: (ev, time) =>
+        `${time}  Unhandled Rejection: ${ev.message || "?"}`,
+};
+
+/** Format one recorded event into its log line. */
+function formatEvent(ev: RecordedEvent): string {
+    const time = formatTime(ev.timestamp);
+    const formatter = EVENT_FORMATTERS[ev.type];
+    return formatter
+        ? formatter(ev, time)
+        : `${time}  ${ev.type}: ${ev.text || ev.message || ""}`;
+}
+
 /** Render the event buffer as a human-readable multi-line string. */
 export function formatEventLog(events?: RecordedEvent[]): string {
     const items = events || eventRecorder.getAll();
-    return items
-        .map((ev) => {
-            const time = formatTime(ev.timestamp);
-            switch (ev.type) {
-                case "click":
-                    return `${time}  Click: "${ev.text || "?"}"${ev.testId ? ` [${ev.testId}]` : ""}`;
-                case "navigation":
-                    return `${time}  Navigation: ${ev.from || "?"} -> ${ev.to || "?"}`;
-                case "dialog_open":
-                    return `${time}  Dialog opened: "${ev.text || "?"}"`;
-                case "dialog_close":
-                    return `${time}  Dialog closed: "${ev.text || "?"}"`;
-                case "dropdown_change":
-                    return `${time}  Dropdown: ${ev.field || "?"} = "${ev.value || "?"}"`;
-                case "checkbox_change":
-                    return `${time}  Checkbox: ${ev.field || "?"} = ${ev.value || "?"}`;
-                case "file_upload":
-                    return `${time}  Upload: ${ev.text || "File"} (${ev.value || "?"})`;
-                case "api_call":
-                    return `${time}  API: ${ev.method || "?"} ${ev.endpoint || "?"} -> ${ev.status || "?"} (${ev.durationMs || 0}ms)`;
-                case "api_error":
-                    return `${time}  API Error: ${ev.method || "?"} ${ev.endpoint || "?"} -> ${ev.message || "?"}`;
-                case "toast":
-                    return `${time}  Toast: ${ev.level || "?"} "${ev.message || "?"}"`;
-                case "uncaught_error":
-                    return `${time}  Uncaught Error: ${ev.message || "?"} (${ev.source || "?"}:${ev.line || "?"})`;
-                case "unhandled_rejection":
-                    return `${time}  Unhandled Rejection: ${ev.message || "?"}`;
-                default:
-                    return `${time}  ${ev.type}: ${ev.text || ev.message || ""}`;
-            }
-        })
-        .join("\n");
+    return items.map(formatEvent).join("\n");
 }

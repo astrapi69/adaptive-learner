@@ -9,7 +9,26 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.77.0** (architecture release -
+- **Current state:** **v1.78.0** (maintenance/code-hygiene release -
+  **complexity burn-down + governance + flaky-test fixes**: the grandfathered
+  `.complexity-baseline` offenders decomposed one at a time under the Phase 2
+  hard ratchet CI gate (#408) - the 1156-line session `routes.py` split (#412,
+  the last backend cohesion-baseline entry; `.filesize-baseline` is now empty)
+  plus the burn-down batch across backend + frontend, each behaviour-preserving
+  (LessonPage 67->12 #418, ImportDetail 58->18 #420, backup-diff previewRow
+  54->3 #422, buildContentSetRow 49->13 #424, AiSettingsPanel/ApiKeyRow 45->9
+  #428, MatchingExercise 45->17 #433, build_analysis_context 33->3 #416,
+  buildAnalysisContext 33->3 #448, formatEventLog 40->4 #436,
+  NextStepSuggestions 36->14 #438, plus the CCW frontend batch -
+  FreeText/PictureChoice/WordTiles/Cloze/ContentSetRow/Navigation/
+  parseChatImport/validateLesson, #442-#460); two governance rules added to the
+  Vibe Coding Policy - Release-Freeze (#410) and No-Amend-on-open-PR (#412/#414
+  origin); two flaky-test fixes - the lesson-tts stale-assertion realignment
+  (#165/#425) and pytest-randomly reactivated to catch ordering leaks
+  (#426/#429); and the EXP-025 (author-provided lesson sets, Refs #142) +
+  EXP-026 (user lessons in the content tree, Refs #97) design explorations.
+  29 commits, no schema/API/data change.)
+  v1.77.0 = (architecture release -
   **R-M-W data-integrity (3 phases) + god-file decomposition complete + 3 CI
   watchers + Vibe Coding Policy**: the three-phase Dexie read-modify-write
   remediation closes the lost-update class across the storage layer - Phase 1

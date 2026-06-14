@@ -1,10 +1,12 @@
 name: Complexity Check
 
-# Defense-in-depth complexity visibility (#400). Warn-only, like the
-# cohesion watcher (#371) and the security scan: findings go to the job
-# summary + inline PR annotations, the workflow never blocks a merge.
-# Tightening to a hard gate (burn down the E/F + >20 offenders, then
-# ratchet) is a later decision.
+# Complexity ratchet gate (#400 Phase 1 warn-only -> #407 Phase 2 hard gate).
+# Compares the current offenders (Python radon rank E/F; TypeScript eslint
+# complexity > 20) to .complexity-baseline and FAILS the job on a new
+# over-threshold file or a regression above a file's frozen worst-complexity.
+# The baseline may only shrink - same ratchet contract as .filesize-baseline
+# (#372). Refactor a file below its frozen value, then run
+# `make check-complexity-gate-update`.
 
 on:
   pull_request:
@@ -13,8 +15,9 @@ on:
       - "plugins/**/*.py"
       - "frontend/src/**.ts"
       - "frontend/src/**.tsx"
+      - ".complexity-baseline"
       - "scripts/check-complexity.sh"
-      - "scripts/radon_warn.py"
+      - "scripts/complexity_gate.py"
       - ".github/workflows/complexity-check.yml"
   workflow_dispatch:
 
@@ -25,36 +28,16 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
-  python-complexity:
-    name: Radon (Python complexity)
+  complexity-gate:
+    name: Complexity ratchet gate
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
 
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
-      - name: Install radon (isolated venv)
-        run: |
-          python -m venv .radon-venv
-          .radon-venv/bin/pip install --quiet --upgrade pip radon
-
-      - name: Radon - average + rank B and worse
-        run: .radon-venv/bin/radon cc backend/app plugins -a -nb || true
-
-      - name: Radon - rank E/F (warn-only annotations)
-        run: |
-          .radon-venv/bin/radon cc backend/app plugins --min E -j \
-            | .radon-venv/bin/python scripts/radon_warn.py
-
-  frontend-complexity:
-    name: ESLint (TypeScript complexity)
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v5
         with:
@@ -66,11 +49,8 @@ jobs:
         working-directory: frontend
         run: npm ci --legacy-peer-deps
 
-      - name: ESLint complexity (threshold 20, warn-only)
-        working-directory: frontend
-        # The ``complexity`` rule is injected at "warn", so eslint exits 0
-        # even when over threshold; ``|| true`` guards any unrelated error.
-        # Block scalar: the inline ``complexity: [...]`` would otherwise be
-        # parsed as a YAML mapping value.
-        run: |
-          npx eslint src --rule 'complexity: ["warn", 20]' || true
+      - name: Complexity ratchet gate
+        # check-complexity.sh --gate bootstraps radon into an isolated venv,
+        # runs eslint's complexity rule, and exits non-zero on a new/regressed
+        # offender vs .complexity-baseline. No `|| true`: this is the hard gate.
+        run: bash scripts/check-complexity.sh --gate

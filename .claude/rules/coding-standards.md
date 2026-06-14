@@ -71,6 +71,13 @@
   co-authors are attributed via the standard GitHub mechanism.
   Exceptions require an explicit note in the commit body
   stating who authorized the attribution.
+- **No `--amend` + force-push on an open PR.** Never amend and force-push a
+  PR that could be merged concurrently (by another session or a maintainer).
+  The force-push can desync GitHub's PR head, and the PR may then merge the
+  PRE-amend commit — silently dropping the amended change. Always add a NEW
+  commit instead of amending; the squash-merge still produces a single clean
+  commit. (Origin: the #412 routes split force-pushed an eof fix that #412
+  then merged without, breaking the pre-commit gate on develop until #414.)
 
 ## Function design and cohesion
 

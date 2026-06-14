@@ -62,6 +62,25 @@ export function parseChatImport(
         typeof input === "string" ? tryParseJson(input) : input;
     const isJson = parsed !== undefined && parsed !== null;
 
+    if (format !== "auto") {
+        return parseExplicitFormat(format, input, parsed, isJson, options);
+    }
+    return parseAutoDetect(input, parsed, isJson, options);
+}
+
+type ExplicitFormat = Exclude<
+    NonNullable<ParseChatImportOptions["format"]>,
+    "auto"
+>;
+
+/** Parse with a caller-forced format; the input must match or it throws. */
+function parseExplicitFormat(
+    format: ExplicitFormat,
+    input: string | unknown,
+    parsed: unknown,
+    isJson: boolean,
+    options: ParseChatImportOptions,
+): BulkImportResult {
     if (format === "chatgpt") {
         if (!isJson) {
             throw new ChatImportParseError("ChatGPT format requires JSON input", "chatgpt");
@@ -95,21 +114,32 @@ export function parseChatImport(
         }
         return {conversations: [parseGenericJson(parsed)], warnings: []};
     }
-    if (format === "markdown") {
-        if (typeof input !== "string") {
-            throw new ChatImportParseError(
-                "Markdown format requires a string input",
-                "manual",
-            );
-        }
-        return {
-            conversations: [parseMarkdownConversation(input, {title: options.title})],
-            warnings: [],
-        };
+    // format === "markdown"
+    if (typeof input !== "string") {
+        throw new ChatImportParseError(
+            "Markdown format requires a string input",
+            "manual",
+        );
     }
+    return {
+        conversations: [parseMarkdownConversation(input, {title: options.title})],
+        warnings: [],
+    };
+}
 
-    // Auto-detect. String-input Claude .md export wins before
-    // the markdown fallback would otherwise swallow it.
+/** Sniff the source shape and delegate to the matching parser. The Claude
+ *  .md export and the markdown fallback are string-input paths; the JSON
+ *  paths cover the ChatGPT / Claude / generic exports + their single-
+ *  conversation object variants. Never throws on non-empty string input
+ *  (markdown fallback); throws only on shapeless non-string input. */
+function parseAutoDetect(
+    input: string | unknown,
+    parsed: unknown,
+    isJson: boolean,
+    options: ParseChatImportOptions,
+): BulkImportResult {
+    // String-input Claude .md export wins before the markdown fallback
+    // would otherwise swallow it.
     if (typeof input === "string" && isClaudeMarkdownExport(input)) {
         return {
             conversations: [parseClaudeMarkdownExport(input)],

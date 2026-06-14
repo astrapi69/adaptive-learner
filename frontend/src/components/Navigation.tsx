@@ -1,16 +1,15 @@
-import {
-  ArrowLeftRight,
-  Circle,
-  HelpCircle,
-  Menu,
-  Moon,
-  Sun,
-  X,
-} from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import MenuToggleButton from "../shared/MenuToggleButton";
+import {
+  NavModeBadge,
+  NavOnlineIndicator,
+  NavSyncIndicator,
+  NavThemeToggle,
+} from "./NavIndicators";
 
 import { useHelp } from "../contexts/HelpContext";
 import { helpKeyForPath } from "../lib/help-routes";
@@ -106,24 +105,15 @@ export default function Navigation() {
                 makes the Tailwind utility win). The show/hide across
                 mobile / lesson-compact / landscape stays driven by the
                 existing global.css media rules. */}
-      <Button
-        variant="ghost"
-        size="icon"
-        type="button"
+      <MenuToggleButton
+        open={menuOpen}
+        onToggle={() => setMenuOpen((v) => !v)}
+        label={t("nav.menu", "Menu")}
+        tooltip={tooltipsOn}
+        controlsId="app-nav-links"
         className="nav-hamburger ml-0!"
-        data-testid="nav-hamburger"
-        aria-label={t("nav.menu", "Menu")}
-        title={tooltipsOn ? t("nav.menu", "Menu") : undefined}
-        aria-expanded={menuOpen}
-        aria-controls="app-nav-links"
-        onClick={() => setMenuOpen((v) => !v)}
-      >
-        {menuOpen ? (
-          <X size={20} aria-hidden="true" />
-        ) : (
-          <Menu size={20} aria-hidden="true" />
-        )}
-      </Button>
+        testId="nav-hamburger"
+      />
       {/* Brand grows + centres on mobile (between the hamburger and
                 the right-hand cluster), reverts to left-aligned and
                 natural width from md up. */}
@@ -159,34 +149,7 @@ export default function Navigation() {
           {t("nav.dev_badge", "DEV")}
         </NavLink>
       )}
-      {modeReady && (
-        <NavLink
-          to="/content"
-          className={`nav-mode-badge nav-mode-badge-${mode}`}
-          data-testid="nav-mode-badge"
-          data-mode={mode}
-          title={
-            mode === "ai-augmented"
-              ? t(
-                  "nav.mode_badge_tooltip_ai",
-                  "AI provider configured — exercises use AI for distractors + hints. Tap to browse content sets.",
-                )
-              : t(
-                  "nav.mode_badge_tooltip_content",
-                  "No API key configured — using pre-built content only. Add a key in Settings to enable AI features.",
-                )
-          }
-          aria-label={
-            mode === "ai-augmented"
-              ? t("nav.mode_badge_label_ai", "Mode: AI + Content")
-              : t("nav.mode_badge_label_content", "Mode: Content only")
-          }
-        >
-          {mode === "ai-augmented"
-            ? t("nav.mode_badge_ai", "AI+Content")
-            : t("nav.mode_badge_content", "Content")}
-        </NavLink>
-      )}
+      {modeReady && <NavModeBadge mode={mode} />}
       <div
         id="app-nav-links"
         className={`nav-links${menuOpen ? " is-open" : ""}`}
@@ -268,65 +231,9 @@ export default function Navigation() {
           {t("nav.help", "Help")}
         </Button>
       </div>
-      <NavLink
-        to="/settings"
-        className={`nav-sync-indicator${syncPaired ? " is-paired" : " is-unpaired"}`}
-        data-testid="nav-sync-indicator"
-        data-sync-paired={syncPaired ? "true" : "false"}
-        title={
-          syncPaired
-            ? t("nav.sync_paired", "Sync: paired (Settings > Sync)")
-            : t("nav.sync_unpaired", "Sync: not paired (Settings > Sync)")
-        }
-        aria-label={
-          syncPaired
-            ? t("nav.sync_paired", "Sync: paired")
-            : t("nav.sync_unpaired", "Sync: not paired")
-        }
-      >
-        {syncPaired ? (
-          <ArrowLeftRight size={16} aria-hidden="true" />
-        ) : (
-          <Circle size={16} aria-hidden="true" />
-        )}
-      </NavLink>
-      <span
-        className={`nav-online-indicator${online ? " is-online" : " is-offline"}`}
-        data-testid="nav-online-indicator"
-        data-online={online ? "true" : "false"}
-        role="status"
-        aria-live="polite"
-        title={
-          online
-            ? t("nav.online", "Online")
-            : t("nav.offline", "Offline — past sessions stay readable")
-        }
-      >
-        <span className="nav-online-dot" aria-hidden="true" />
-        <span className="nav-online-label">
-          {online ? t("nav.online", "Online") : t("nav.offline", "Offline")}
-        </span>
-      </span>
-      <Button
-        variant="ghost"
-        size="icon"
-        type="button"
-        className="nav-theme-toggle"
-        data-testid="nav-theme-toggle"
-        onClick={toggle}
-        aria-label={`Toggle ${theme === "dark" ? "light" : "dark"} theme`}
-        title={
-          tooltipsOn
-            ? `Toggle ${theme === "dark" ? "light" : "dark"} theme`
-            : undefined
-        }
-      >
-        {theme === "dark" ? (
-          <Sun size={18} aria-hidden="true" />
-        ) : (
-          <Moon size={18} aria-hidden="true" />
-        )}
-      </Button>
+      <NavSyncIndicator paired={syncPaired} />
+      <NavOnlineIndicator online={online} />
+      <NavThemeToggle theme={theme} tooltipsOn={tooltipsOn} onToggle={toggle} />
     </nav>
   );
 }
