@@ -103,6 +103,126 @@ function _normalizeAssetPath(raw: string): string {
     return raw;
 }
 
+type Translate = (key: string, fallback?: string) => string;
+
+/** The reviewed-revisit score for a persisted picture choice, or null
+ *  when there is no reviewed answer. */
+function pictureReviewedResult(
+    reviewedSelected: number | null | undefined,
+    choices: Choice[],
+): {correct: number; total: number} | null {
+    if (reviewedSelected == null) return null;
+    return {
+        correct: choices[reviewedSelected]?.isCorrect ? 1 : 0,
+        total: 1,
+    };
+}
+
+/** Correct/wrong feedback + celebration + the shared exercise footer. */
+function PictureResult({
+    submitted,
+    isCorrect,
+    controlled,
+    canCheck,
+    onCheck,
+    onRetry,
+    t,
+}: {
+    submitted: boolean;
+    isCorrect: boolean;
+    controlled: boolean;
+    canCheck: boolean;
+    onCheck: () => void;
+    onRetry: () => void;
+    t: Translate;
+}) {
+    return (
+        <div className="flex flex-wrap items-center gap-3">
+            {submitted && (
+                <>
+                    <p
+                        className={cn(
+                            "answer-feedback m-0 font-semibold",
+                            isCorrect
+                                ? "is-correct text-[var(--exercise-correct)]"
+                                : "is-wrong text-[var(--exercise-wrong)]",
+                        )}
+                        data-testid="picture-result"
+                        data-result={isCorrect ? "correct" : "wrong"}
+                    >
+                        {isCorrect
+                            ? t("lesson.exercise.picture.result_correct", "Correct!")
+                            : t(
+                                  "lesson.exercise.picture.result_wrong",
+                                  "Not quite — the highlighted tile is the right answer.",
+                              )}
+                    </p>
+                    <AnswerCelebration isCorrect={isCorrect} />
+                </>
+            )}
+            <ExerciseFooter
+                testidPrefix="picture"
+                controlled={controlled}
+                submitted={submitted}
+                canCheck={canCheck}
+                onCheck={onCheck}
+                onRetry={onRetry}
+                checkLabel={t("lesson.exercise.picture.submit", "Check answer")}
+                retryLabel={t("lesson.exercise.picture.retry", "Try again")}
+            />
+        </div>
+    );
+}
+
+/** Resolve a tile's image source through the Phase-54D chain: authored
+ *  asset bytes → legacy resolver callback → placeholder SVG → text-only
+ *  (``imgSrc === null``). ``isPlaceholder`` flags the SVG case. */
+function resolvePictureSrc(
+    asset: {url: string | null; loading: boolean},
+    imgFailed: boolean,
+    legacyResolveSrc: ((rawSrc: string) => string) | undefined,
+    choice: Choice,
+): {imgSrc: string | null; isPlaceholder: boolean} {
+    let imgSrc: string | null = null;
+    if (asset.url && !imgFailed) {
+        imgSrc = asset.url;
+    } else if (legacyResolveSrc && !imgFailed) {
+        const resolved = legacyResolveSrc(choice.src);
+        if (resolved && resolved !== choice.src) imgSrc = resolved;
+    }
+    // Last-mile placeholder: only when both branches missed AND the asset
+    // resolver isn't loading (don't flash a placeholder over a still-
+    // loading real image).
+    if (imgSrc === null && !asset.loading && !imgFailed) {
+        return {imgSrc: generatePlaceholderSvg(choice.label), isPlaceholder: true};
+    }
+    return {imgSrc, isPlaceholder: false};
+}
+
+/** Class list for an image-choice tile, by selection + grading + render
+ *  state. */
+function pictureTileClassName(states: {
+    isSelected: boolean;
+    showAsCorrect: boolean;
+    showAsWrong: boolean;
+    useTextFallback: boolean;
+    isLoading: boolean;
+    isPlaceholder: boolean;
+}): string {
+    return cn(
+        "relative flex min-h-[88px] w-full cursor-pointer flex-col items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] p-2 text-center text-sm text-[var(--fg)] enabled:hover:bg-[var(--surface-2)]",
+        states.isSelected &&
+            "is-selected border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_12%,var(--surface))]",
+        states.showAsCorrect &&
+            "is-correct border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]",
+        states.showAsWrong &&
+            "is-wrong border-[var(--exercise-wrong)] bg-[color-mix(in_srgb,var(--exercise-wrong)_12%,var(--surface))]",
+        states.useTextFallback && "is-text-fallback justify-center",
+        states.isLoading && "is-loading",
+        states.isPlaceholder && "is-placeholder",
+    );
+}
+
 function PictureChoiceExercise(
     {
         exercise,
@@ -128,12 +248,10 @@ function PictureChoiceExercise(
         reviewedPicture?.selected ?? null,
     );
 
-    const reviewedResult = reviewedPicture
-        ? {
-              correct: choices[reviewedPicture.selected]?.isCorrect ? 1 : 0,
-              total: 1,
-          }
-        : null;
+    const reviewedResult = pictureReviewedResult(
+        reviewedPicture?.selected,
+        choices,
+    );
 
     const {submitted, result, submit, reset} = useControlledExercise({
         ref,
@@ -176,6 +294,8 @@ function PictureChoiceExercise(
             </div>
         );
     }
+
+    const isCorrect = !!result && result.correct > 0;
 
     return (
         <section
@@ -223,55 +343,15 @@ function PictureChoiceExercise(
                 ))}
             </ul>
 
-            <div className="flex flex-wrap items-center gap-3">
-                {submitted && (
-                    <>
-                        <p
-                            className={cn(
-                                "answer-feedback m-0 font-semibold",
-                                result && result.correct > 0
-                                    ? "is-correct text-[var(--exercise-correct)]"
-                                    : "is-wrong text-[var(--exercise-wrong)]",
-                            )}
-                            data-testid="picture-result"
-                            data-result={
-                                result && result.correct > 0
-                                    ? "correct"
-                                    : "wrong"
-                            }
-                        >
-                            {result && result.correct > 0
-                                ? t(
-                                      "lesson.exercise.picture.result_correct",
-                                      "Correct!",
-                                  )
-                                : t(
-                                      "lesson.exercise.picture.result_wrong",
-                                      "Not quite — the highlighted tile is the right answer.",
-                                  )}
-                        </p>
-                        <AnswerCelebration
-                            isCorrect={!!result && result.correct > 0}
-                        />
-                    </>
-                )}
-                <ExerciseFooter
-                    testidPrefix="picture"
-                    controlled={controlled}
-                    submitted={submitted}
-                    canCheck={selected !== null}
-                    onCheck={submit}
-                    onRetry={reset}
-                    checkLabel={t(
-                        "lesson.exercise.picture.submit",
-                        "Check answer",
-                    )}
-                    retryLabel={t(
-                        "lesson.exercise.picture.retry",
-                        "Try again",
-                    )}
-                />
-            </div>
+            <PictureResult
+                submitted={submitted}
+                isCorrect={isCorrect}
+                controlled={controlled}
+                canCheck={selected !== null}
+                onCheck={submit}
+                onRetry={reset}
+                t={t}
+            />
         </section>
     );
 }
@@ -314,27 +394,12 @@ function PictureChoiceTile({
     // corrupt / unsupported. Same flag as v1.28.0.
     const [imgFailed, setImgFailed] = useState(false);
 
-    // Resolution chain (Phase 54D):
-    //   1. authored asset bytes (asset cache → blob URL)
-    //   2. legacy resolveImageSrc callback (parent-provided)
-    //   3. placeholder SVG keyed off the label
-    //   4. text-only (no <img>) — final fallback
-    let imgSrc: string | null = null;
-    let isPlaceholder = false;
-    if (asset.url && !imgFailed) {
-        imgSrc = asset.url;
-    } else if (legacyResolveSrc && !imgFailed) {
-        const resolved = legacyResolveSrc(choice.src);
-        if (resolved && resolved !== choice.src) imgSrc = resolved;
-    }
-    // Last-mile placeholder: only kicks in when both above
-    // branches missed AND the asset resolver isn't loading
-    // (we don't want to flash a placeholder over a still-
-    // loading real image).
-    if (imgSrc === null && !asset.loading && !imgFailed) {
-        imgSrc = generatePlaceholderSvg(choice.label);
-        isPlaceholder = true;
-    }
+    const {imgSrc, isPlaceholder} = resolvePictureSrc(
+        asset,
+        imgFailed,
+        legacyResolveSrc,
+        choice,
+    );
 
     const showAsCorrect = submitted && choice.isCorrect;
     const showAsWrong = submitted && isSelected && !choice.isCorrect;
@@ -344,18 +409,14 @@ function PictureChoiceTile({
     return (
         <button
             type="button"
-            className={cn(
-                "relative flex min-h-[88px] w-full cursor-pointer flex-col items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] p-2 text-center text-sm text-[var(--fg)] enabled:hover:bg-[var(--surface-2)]",
-                isSelected &&
-                    "is-selected border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_12%,var(--surface))]",
-                showAsCorrect &&
-                    "is-correct border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]",
-                showAsWrong &&
-                    "is-wrong border-[var(--exercise-wrong)] bg-[color-mix(in_srgb,var(--exercise-wrong)_12%,var(--surface))]",
-                useTextFallback && "is-text-fallback justify-center",
-                isLoading && "is-loading",
-                isPlaceholder && "is-placeholder",
-            )}
+            className={pictureTileClassName({
+                isSelected,
+                showAsCorrect,
+                showAsWrong,
+                useTextFallback,
+                isLoading,
+                isPlaceholder,
+            })}
             onClick={onSelect}
             aria-pressed={isSelected}
             disabled={submitted}
