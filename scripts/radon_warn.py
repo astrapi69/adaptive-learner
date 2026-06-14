@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Emit warn-only complexity findings from ``radon cc --json`` (#400).
 
-Reads radon's JSON cyclomatic-complexity report (already filtered to a
-minimum rank, e.g. ``--min E``) from stdin and prints each block ranked
-E or F. Under GitHub Actions it also emits ``::warning::`` annotations
-(inline PR comments) and appends a Markdown summary to the step summary.
+Reads radon's JSON cyclomatic-complexity report (e.g. ``--min C``) from
+stdin and prints each block with cc > 15 (the warn-only visibility band
+introduced with the Phase 2 hard gate; the gate itself errors at cc > 20).
+Under GitHub Actions it also emits ``::warning::`` annotations (inline PR
+comments) and appends a Markdown summary to the step summary.
 
-Phase 1 is warn-only: this script never exits non-zero, so a complex
-function is visible but never blocks a merge.
+Warn-only: this script never exits non-zero, so a complex function is
+visible but never blocks a merge.
 """
 
 from __future__ import annotations
@@ -16,7 +17,10 @@ import json
 import os
 import sys
 
-WARN_RANKS = {"E", "F"}
+# Ranks C-F cover cc >= 11; the explicit cc > 15 filter below trims rank C
+# down to the warn band (cc 16-20) plus everything the gate errors on.
+WARN_RANKS = {"C", "D", "E", "F"}
+WARN_MIN_CC = 16
 
 
 def _display_name(block: dict) -> str:
@@ -42,6 +46,8 @@ def main() -> int:
         for block in blocks:
             rank = block.get("rank")
             if rank not in WARN_RANKS:
+                continue
+            if int(block.get("complexity", 0)) < WARN_MIN_CC:
                 continue
             findings.append(
                 (
