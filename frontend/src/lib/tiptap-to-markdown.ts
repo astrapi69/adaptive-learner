@@ -77,12 +77,8 @@ function renderBlock(node: JSONContent, depth: number): string {
     switch (node.type) {
         case "paragraph":
             return renderInline(node.content ?? []);
-        case "heading": {
-            const level = clampHeadingLevel(
-                (node.attrs?.level as number | undefined) ?? 1,
-            );
-            return `${"#".repeat(level)} ${renderInline(node.content ?? [])}`;
-        }
+        case "heading":
+            return renderHeading(node);
         case "bulletList":
             return renderList(node.content ?? [], depth, false);
         case "orderedList":
@@ -91,25 +87,40 @@ function renderBlock(node: JSONContent, depth: number): string {
             return renderTaskList(node.content ?? [], depth);
         case "blockquote":
             return renderBlockquote(node.content ?? []);
-        case "codeBlock": {
-            const language =
-                (node.attrs?.language as string | null | undefined) ?? "";
-            const text = innerText(node);
-            return `\`\`\`${language}\n${text}\n\`\`\``;
-        }
+        case "codeBlock":
+            return renderCodeBlock(node);
         case "horizontalRule":
             return "---";
-        case "image": {
-            const src = (node.attrs?.src as string | undefined) ?? "";
-            const alt = (node.attrs?.alt as string | undefined) ?? "";
-            const title = node.attrs?.title as string | undefined;
-            return `![${alt}](${src}${title ? ` "${title}"` : ""})`;
-        }
+        case "image":
+            return renderImageBlock(node);
         case "table":
             return renderTable(node);
         default:
             return "";
     }
+}
+
+/** ATX heading (``#`` × clamped level + the inline content). */
+function renderHeading(node: JSONContent): string {
+    const level = clampHeadingLevel(
+        (node.attrs?.level as number | undefined) ?? 1,
+    );
+    return `${"#".repeat(level)} ${renderInline(node.content ?? [])}`;
+}
+
+/** Fenced code block with the optional language info-string. */
+function renderCodeBlock(node: JSONContent): string {
+    const language = (node.attrs?.language as string | null | undefined) ?? "";
+    const text = innerText(node);
+    return `\`\`\`${language}\n${text}\n\`\`\``;
+}
+
+/** Block-level image (``![alt](src "title")``). */
+function renderImageBlock(node: JSONContent): string {
+    const src = (node.attrs?.src as string | undefined) ?? "";
+    const alt = (node.attrs?.alt as string | undefined) ?? "";
+    const title = node.attrs?.title as string | undefined;
+    return `![${alt}](${src}${title ? ` "${title}"` : ""})`;
 }
 
 function clampHeadingLevel(level: number): number {
