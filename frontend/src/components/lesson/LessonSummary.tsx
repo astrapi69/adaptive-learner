@@ -74,6 +74,26 @@ interface LessonSummaryProps {
   onExit: () => void;
 }
 
+/** Derive the display stats from the (possibly absent) progress row:
+ *  the score, the rounded minutes (floored at 1), the completed flag and
+ *  the score percentage. Missing values default to 0 so the summary
+ *  still renders for an in-progress / unscored run. */
+function deriveSummaryStats(progress: LessonProgress | null): {
+  correct: number;
+  total: number;
+  minutes: number;
+  isCompleted: boolean;
+  scorePct: number;
+} {
+  const correct = progress?.score_correct ?? 0;
+  const total = progress?.score_total ?? 0;
+  const seconds = progress?.time_spent_seconds ?? 0;
+  const minutes = Math.max(1, Math.round(seconds / 60));
+  const isCompleted = progress?.status === "completed";
+  const scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  return { correct, total, minutes, isCompleted, scorePct };
+}
+
 export default function LessonSummary({
   lesson,
   progress,
@@ -90,14 +110,10 @@ export default function LessonSummary({
 }: LessonSummaryProps) {
   const { t, lang } = useI18n();
   const intensity = useFeedbackIntensity();
-  const correct = progress?.score_correct ?? 0;
-  const total = progress?.score_total ?? 0;
-  const seconds = progress?.time_spent_seconds ?? 0;
-  const minutes = Math.max(1, Math.round(seconds / 60));
-  const isCompleted = progress?.status === "completed";
+  const { correct, total, minutes, isCompleted, scorePct } =
+    deriveSummaryStats(progress);
 
   const stars: StarRating = computeStars(correct, total);
-  const scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;
   const breakdown = useMemo(
     () => buildExerciseBreakdown(lesson, progress),
     [lesson, progress],
