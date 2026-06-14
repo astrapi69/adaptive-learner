@@ -16,4 +16,3 @@ frontend/src/hooks/useLessonEnterKey.ts 22
 frontend/src/hooks/useShareWizard.ts 21
 frontend/src/lib/content/analysis-to-lesson.ts 21
 frontend/src/pages/Assessment.tsx 22
-frontend/src/pages/Session.tsx 22
