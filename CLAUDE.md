@@ -9,7 +9,26 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.78.0** (maintenance/code-hygiene release -
+- **Current state:** **v1.79.0** (minor release -
+  **XP visibility + bidirectional matching + complexity burn-down complete**:
+  two user-facing features land on the maintenance thread. **XP visibility**
+  (#505/#510) surfaces points where the learner sees them - a persistent header
+  badge (`NavXpBadge`, both storage modes via `gamification.getState`, live on
+  route change / focus / XP-affecting celebrations) + a `+N XP` lesson-summary
+  reward pill computed with the same parity-tested formula the award path uses;
+  built on a new generic props-driven `shared/XpBadge`. **Bidirectional matching
+  selection** (#507/#509) lets the learner start a pair from the B (right)
+  column, not only A->B. The **complexity burn-down is complete** - the
+  `validateGeneratedLesson` split was the final offender (#497) and the last
+  baseline entries dropped (#498-#504); `.complexity-baseline` is empty. The
+  **radon hard gate is Phase 2** (#494/#495: blocks cc > 20, warns > 15), a
+  **plugin-tests CI job** runs the full 1018-test plugin suite (#471), and a
+  **reusability policy** (#474/#477 + `.claude/rules/reusability.md`) governs the
+  first extracted `shared/` primitives (ListRow #460, ProgressBar #462,
+  LessonStepNav #476, XpBadge #510). Plus a **P1 matching fix** - score by
+  matched value, not index, for duplicate pairs (#480/#481). 31 commits, no
+  schema/API/data change.)
+  v1.78.0 = (maintenance/code-hygiene release -
   **complexity burn-down + governance + flaky-test fixes**: the grandfathered
   `.complexity-baseline` offenders decomposed one at a time under the Phase 2
   hard ratchet CI gate (#408) - the 1156-line session `routes.py` split (#412,
