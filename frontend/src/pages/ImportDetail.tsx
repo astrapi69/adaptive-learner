@@ -19,25 +19,24 @@
  *   - Suggested curriculum lessons (with priority)
  */
 
-import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
-import HelpLink from "../components/help/HelpLink";
 import SaveOfflineLessonModal from "../components/content/SaveOfflineLessonModal";
+import ImportActionBar from "../components/import/ImportActionBar";
+import ImportLanguagePickers from "../components/import/ImportLanguagePickers";
+import AnalysisLoadingSection from "../components/import/AnalysisLoadingSection";
+import AnalysisResultsSection from "../components/import/AnalysisResultsSection";
+import ImportTranscript from "../components/import/ImportTranscript";
+import {
+  ANALYSIS_PHASES,
+  ANALYSIS_PHASE_INTERVAL_MS,
+} from "../lib/content/analysis-phases";
 import { FEATURES } from "../features/featureConfig";
 import { useI18n } from "../hooks/useI18n";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
@@ -45,13 +44,11 @@ import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
 import { getDb } from "../storage/db";
 import { analyzeConversation } from "../chat_import/analysis";
-import { LANGUAGE_OPTIONS } from "../lib/content/language-options";
 import { importHeadingTitle } from "../lib/content/import-title";
 import { detectLearningLanguage } from "../lib/content/detect-chat-language";
 import { notify } from "../utils/notify";
 import type { AIProvider } from "../lib/constants";
 import type {
-  ConversationAnalysisResult,
   Curriculum,
   ImportedConversationDetail,
   LearningSession,
@@ -63,28 +60,6 @@ interface ImportDetailProps {
   onNavigate?: (path: string) => void;
 }
 
-/**
- * Fake-progress phase model for the analysis loading panel. The
- * provider call is a single opaque request (no streaming
- * progress), so we cycle through three labelled steps on a timer
- * to make the wait feel intentional rather than frozen. The phase
- * advances every ``ANALYSIS_PHASE_INTERVAL_MS`` and caps at the
- * last step until the real call resolves.
- */
-const ANALYSIS_PHASES = [
-  "analysis_phase_reading",
-  "analysis_phase_analyzing",
-  "analysis_phase_preparing",
-] as const;
-/** English fallbacks, parallel to ANALYSIS_PHASES (for the t() default). */
-const ANALYSIS_PHASE_FALLBACKS = [
-  "Step 1/3: Reading chat…",
-  "Step 2/3: Analyzing content…",
-  "Step 3/3: Preparing results…",
-];
-const ANALYSIS_PHASE_INTERVAL_MS = 4000;
-/** Phase-driven progress-bar fill (percent), indexed by phase. */
-const ANALYSIS_PHASE_PROGRESS = [20, 60, 90];
 /** How long the "Done!" flash lingers before results fade in. */
 const ANALYSIS_DONE_FLASH_MS = 500;
 
@@ -457,6 +432,32 @@ export default function ImportDetail({
     }
   }
 
+  async function extractAnkiCards() {
+    if (!detail) return;
+    setExtractingAnki(true);
+    try {
+      const cards = await getStorage().anki.extractFromConversation(detail.id);
+      if (cards.length === 0) {
+        notify.info(t("import.anki_no_cards", "No Anki cards extracted."));
+      } else {
+        notify.success(
+          t(
+            "import.anki_extracted",
+            "Extracted {n} Anki card(s). Review them on the Anki page.",
+          ).replace("{n}", String(cards.length)),
+        );
+      }
+    } catch (err) {
+      const msg =
+        err instanceof ApiError
+          ? err.detail
+          : t("import.anki_extract_failed", "Could not extract Anki cards.");
+      notify.error(msg);
+    } finally {
+      setExtractingAnki(false);
+    }
+  }
+
   if (loading) {
     return (
       <main id="main" className="p-8">
@@ -509,237 +510,47 @@ export default function ImportDetail({
         {/* v1.54.0 — set the language pair BEFORE analysis so it flows
             through the whole pipeline. Source = chat language (app
             default); target = detected learning language. Both editable. */}
-        <div
-          className="import-language-pickers flex flex-wrap gap-4 mt-4"
-          data-testid="import-language-pickers"
-        >
-          <div className="form-row">
-            <span className="form-label">
-              {t("import.chat_language", "Chat language (you speak)")}
-            </span>
-            <Select
-              value={sourceLang || undefined}
-              onValueChange={(v) => {
-                setSourceLang(v);
-                void persistLanguages({ source: v });
-              }}
-            >
-              <SelectTrigger data-testid="import-source-language">
-                <SelectValue placeholder={t("import.select_language", "Select a language…")} />
-              </SelectTrigger>
-              <SelectContent>
-                {LANGUAGE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.code} value={opt.code}>
-                    {opt.name} ({opt.code})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="form-row">
-            <span className="form-label">{t("import.learning_language", "Learning language")}</span>
-            <Select
-              value={targetLang || undefined}
-              onValueChange={(v) => {
-                setTargetLang(v);
-                void persistLanguages({ target: v });
-              }}
-            >
-              <SelectTrigger data-testid="import-target-language">
-                <SelectValue placeholder={t("import.select_language", "Select a language…")} />
-              </SelectTrigger>
-              <SelectContent>
-                {LANGUAGE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.code} value={opt.code}>
-                    {opt.name} ({opt.code})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Button
-            type="button"
-            onClick={runAnalysis}
-            disabled={analyzing || !analyzeFeature.isActive || !online}
-            title={
-              !online
-                ? t("pwa.action_unavailable", "Not available offline")
-                : analyzeFeature.isDisabled
-                  ? t(`feature.${analyzeFeature.reason}`, "API key required.")
-                  : undefined
-            }
-            data-testid="analyze-button"
-          >
-            {analyzing && (
-              <span className="btn-spinner" data-testid="analyze-spinner" aria-hidden="true" />
-            )}
-            {analyzing
-              ? t("import.analyzing", "Analyzing…")
-              : analysis
-                ? t("import.reanalyze", "Re-analyze")
-                : t("import.analyze", "Analyze")}
-          </Button>
-          {analysis && (analysis.suggested_curriculum?.length ?? 0) > 0 && (
-            <Button
-              type="button"
-              variant="secondary"
-              // Phase 36 Bug 3 — when a curriculum
-              // already exists for this
-              // conversation, the click navigates
-              // to it (handled inside
-              // ``createCurriculumFromAnalysis``).
-              // Otherwise the handler generates a
-              // new curriculum linked back via the
-              // ``imported_conversation_id`` FK.
-              onClick={createCurriculumFromAnalysis}
-              disabled={creatingCurriculum}
-              data-testid={
-                existingCurriculum ? "goto-curriculum-button" : "create-curriculum-button"
-              }
-            >
-              {creatingCurriculum
-                ? t("common.loading", "Loading…")
-                : existingCurriculum
-                  ? t("import.go_to_curriculum", "Go to curriculum")
-                  : t("import.create_curriculum", "Create curriculum")}
-            </Button>
-          )}
-          {analysis && (
-            <Button
-              type="button"
-              variant="secondary"
-              data-testid="save-offline-lesson-button"
-              onClick={() => setShowSaveLesson(true)}
-            >
-              {t("content.save_lesson.button", "Save as Offline Lesson")}
-            </Button>
-          )}
-          {analysis && (
-            <Button
-              type="button"
-              variant="secondary"
-              // Phase 36 Bug 4 — when an active
-              // session for this conversation
-              // already exists, the click navigates
-              // back to it. Otherwise we start a
-              // new session linked back via the
-              // ``imported_conversation_id`` FK so a
-              // future return-visit resumes cleanly.
-              //
-              // Issue 4 — disable when no API key is
-              // configured (NEW sessions need AI;
-              // resuming an EXISTING session does
-              // not, so the gate only fires when
-              // ``activeSession`` is null).
-              onClick={startOrResumeSession}
-              disabled={startingSession || (!activeSession && sessionFeature.isDisabled)}
-              title={
-                !activeSession && sessionFeature.isDisabled
-                  ? t(`feature.${sessionFeature.reason}`, "API key required.")
-                  : undefined
-              }
-              data-testid={activeSession ? "continue-session-button" : "start-session-button"}
-            >
-              {startingSession
-                ? t("common.loading", "Loading…")
-                : activeSession
-                  ? t("import.continue_session", "Continue session")
-                  : t("import.start_session", "Start session")}
-            </Button>
-          )}
-          {analysis && (
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={extractingAnki || ankiFeature.isDisabled}
-              title={
-                ankiFeature.isDisabled
-                  ? t(`feature.${ankiFeature.reason}`, "API key required.")
-                  : undefined
-              }
-              data-testid="extract-anki-button"
-              onClick={async () => {
-                if (!detail) return;
-                setExtractingAnki(true);
-                try {
-                  const cards = await getStorage().anki.extractFromConversation(detail.id);
-                  if (cards.length === 0) {
-                    notify.info(t("import.anki_no_cards", "No Anki cards extracted."));
-                  } else {
-                    notify.success(
-                      t(
-                        "import.anki_extracted",
-                        "Extracted {n} Anki card(s). Review them on the Anki page.",
-                      ).replace("{n}", String(cards.length)),
-                    );
-                  }
-                } catch (err) {
-                  const msg =
-                    err instanceof ApiError
-                      ? err.detail
-                      : t("import.anki_extract_failed", "Could not extract Anki cards.");
-                  notify.error(msg);
-                } finally {
-                  setExtractingAnki(false);
-                }
-              }}
-            >
-              {extractingAnki
-                ? t("import.anki_extracting", "Extracting cards…")
-                : t("import.anki_extract", "Extract Anki cards")}
-            </Button>
-          )}
-        </div>
+        <ImportLanguagePickers
+          sourceLang={sourceLang}
+          targetLang={targetLang}
+          onSourceChange={(v) => {
+            setSourceLang(v);
+            void persistLanguages({ source: v });
+          }}
+          onTargetChange={(v) => {
+            setTargetLang(v);
+            void persistLanguages({ target: v });
+          }}
+          t={t}
+        />
+        <ImportActionBar
+          t={t}
+          online={online}
+          analysis={analysis}
+          analyzing={analyzing}
+          analyzeFeature={analyzeFeature}
+          onAnalyze={runAnalysis}
+          creatingCurriculum={creatingCurriculum}
+          existingCurriculum={existingCurriculum}
+          onCurriculum={createCurriculumFromAnalysis}
+          onSaveLesson={() => setShowSaveLesson(true)}
+          sessionFeature={sessionFeature}
+          startingSession={startingSession}
+          activeSession={activeSession}
+          onSession={startOrResumeSession}
+          ankiFeature={ankiFeature}
+          extractingAnki={extractingAnki}
+          onExtractAnki={extractAnkiCards}
+        />
       </header>
 
-      {analyzing && (
-        <section
-          className="analysis-loading"
-          data-testid="analysis-loading"
-          aria-live="polite"
-          aria-busy="true"
-        >
-          <p className="analysis-loading-phase" data-testid="analysis-phase">
-            {analysisDone
-              ? t("import.analysis_done", "Done!")
-              : t(
-                  `import.${ANALYSIS_PHASES[analysisPhase]}`,
-                  ANALYSIS_PHASE_FALLBACKS[analysisPhase],
-                )}
-          </p>
-          <div
-            className="analysis-progress-track"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={analysisDone ? 100 : ANALYSIS_PHASE_PROGRESS[analysisPhase]}
-          >
-            <div
-              className="analysis-progress-fill"
-              style={{
-                width: `${analysisDone ? 100 : ANALYSIS_PHASE_PROGRESS[analysisPhase]}%`,
-              }}
-            />
-          </div>
-          {!analysisDone && (
-            <p className="analysis-loading-estimate">
-              {t("import.analysis_estimate", "Analysis takes approximately 15-30 seconds…")}
-            </p>
-          )}
-          {!analysisDone && (
-            <Button
-              variant="link"
-              data-testid="cancel-analysis-button"
-              onClick={cancelAnalysis}
-              type="button"
-            >
-              {t("import.analysis_cancel", "Cancel")}
-            </Button>
-          )}
-        </section>
-      )}
+      <AnalysisLoadingSection
+        analyzing={analyzing}
+        analysisPhase={analysisPhase}
+        analysisDone={analysisDone}
+        onCancel={cancelAnalysis}
+        t={t}
+      />
 
       {!analyzing && analysisError && (
         <section
@@ -751,83 +562,15 @@ export default function ImportDetail({
         </section>
       )}
 
-      {analysis && (
-        <section className="analysis-results-fade-in mb-8" data-testid="analysis-results">
-          <h2>
-            {t("import.analysis_title", "Analysis")}
-            <HelpLink glossaryKey="feature_conversation_analysis" />
-          </h2>
-          {analysis.fallback_used && (
-            <p
-              className="bg-[var(--warning-bg)] text-warning px-3 py-2 rounded"
-              data-testid="analysis-fallback-notice"
-            >
-              {t(
-                "import.analysis_fallback_long",
-                "The AI response was not parseable as structured JSON. The summary below is a fallback.",
-              )}
-            </p>
-          )}
-          {analysis.summary && (
-            <p data-testid="analysis-summary" className="italic text-fg-secondary">
-              {analysis.summary}
-            </p>
-          )}
-          <AnalysisGrid result={analysis} t={t} />
-        </section>
-      )}
+      <AnalysisResultsSection analysis={analysis} t={t} />
 
-      <section data-testid="conversation-transcript">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="min-h-11 gap-1.5"
-          aria-expanded={transcriptOpen}
-          aria-controls="conversation-transcript-list"
-          onClick={() => setTranscriptOpen((v) => !v)}
-          data-testid="transcript-toggle"
-        >
-          {transcriptOpen ? (
-            <ChevronDown aria-hidden="true" />
-          ) : (
-            <ChevronRight aria-hidden="true" />
-          )}
-          {t("import.show_transcript", "Show raw transcript")}
-          <span className="text-muted-foreground">({detail.message_count})</span>
-        </Button>
-        {transcriptOpen && (
-          <ol
-            id="conversation-transcript-list"
-            className="list-none p-0 mt-3 mb-0 flex flex-col gap-3"
-          >
-            {detail.messages.map((m) => (
-              <li
-                key={m.id}
-                data-testid={`msg-${m.order_index}`}
-                className={cn(
-                  "border border-border rounded-app px-4 py-3",
-                  m.role === "user" ? "bg-card" : "bg-background",
-                )}
-              >
-                <div
-                  className={cn(
-                    "font-semibold mb-1",
-                    m.role === "user" ? "text-accent" : "text-foreground",
-                  )}
-                >
-                  {m.role === "user"
-                    ? t("import.role_user", "You")
-                    : m.role === "assistant"
-                      ? t("import.role_assistant", "AI")
-                      : t("import.role_system", "System")}
-                </div>
-                <div className="whitespace-pre-wrap">{m.content}</div>
-              </li>
-            ))}
-          </ol>
-        )}
-      </section>
+      <ImportTranscript
+        messages={detail.messages}
+        messageCount={detail.message_count}
+        open={transcriptOpen}
+        onToggle={() => setTranscriptOpen((v) => !v)}
+        t={t}
+      />
       {analysis && (
         <SaveOfflineLessonModal
           open={showSaveLesson}
@@ -847,115 +590,6 @@ export default function ImportDetail({
         />
       )}
     </main>
-  );
-}
-
-function AnalysisGrid({
-  result,
-  t,
-}: {
-  result: ConversationAnalysisResult;
-  t: (k: string, fb?: string) => string;
-}) {
-  return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3 mt-4">
-      {result.topic && (
-        <Card title={t("import.field_topic", "Topic")} tone="default">
-          {result.topic}
-          {result.user_level && (
-            <span className="ml-2 px-2 py-0.5 rounded-sm bg-accent text-accent-foreground text-xs uppercase">
-              {result.user_level}
-            </span>
-          )}
-        </Card>
-      )}
-      {result.recommended_method && (
-        <Card title={t("import.field_method", "Recommended method")} tone="default">
-          {result.recommended_method}
-          {result.recommended_focus && (
-            <p className="mt-1 mb-0 text-sm text-fg-muted">{result.recommended_focus}</p>
-          )}
-        </Card>
-      )}
-      {result.strengths && result.strengths.length > 0 && (
-        <Card title={t("import.field_strengths", "Strengths")} tone="ok">
-          <ul className="m-0 pl-5">
-            {result.strengths.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ul>
-        </Card>
-      )}
-      {result.weaknesses && result.weaknesses.length > 0 && (
-        <Card title={t("import.field_weaknesses", "Weaknesses")} tone="bad">
-          <ul className="m-0 pl-5">
-            {result.weaknesses.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ul>
-        </Card>
-      )}
-      {result.error_patterns && result.error_patterns.length > 0 && (
-        <Card title={t("import.field_errors", "Error patterns")} tone="warn">
-          <ul className="m-0 pl-5">
-            {result.error_patterns.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ul>
-        </Card>
-      )}
-      {result.subtopics && result.subtopics.length > 0 && (
-        <Card title={t("import.field_subtopics", "Subtopics")} tone="default">
-          {result.subtopics.join(" · ")}
-        </Card>
-      )}
-      {result.suggested_curriculum && result.suggested_curriculum.length > 0 && (
-        <Card title={t("import.field_curriculum", "Suggested curriculum")} tone="default" wide>
-          <ol className="m-0 pl-5">
-            {result.suggested_curriculum.map((l, i) => (
-              <li key={i} data-testid={`lesson-${i}`} className="mb-2">
-                <strong>{l.title}</strong>{" "}
-                <small className="text-fg-muted">
-                  ({t("import.priority", "priority")} {l.priority})
-                </small>
-                {l.description && <p className="mt-0.5 mb-0 text-fg-muted">{l.description}</p>}
-              </li>
-            ))}
-          </ol>
-        </Card>
-      )}
-    </div>
-  );
-}
-
-function Card({
-  title,
-  tone,
-  wide,
-  children,
-}: {
-  title: string;
-  tone: "ok" | "bad" | "warn" | "default";
-  wide?: boolean;
-  children: React.ReactNode;
-}) {
-  const toneBorder: Record<typeof tone, string> = {
-    ok: "border-success",
-    bad: "border-destructive",
-    warn: "border-warning",
-    default: "border-border",
-  };
-  return (
-    <div
-      className={cn(
-        "border rounded-app px-4 py-3 bg-card",
-        toneBorder[tone],
-        wide && "col-span-full",
-      )}
-    >
-      <h3 className="mt-0 mb-2 text-base">{title}</h3>
-      {children}
-    </div>
   );
 }
 
