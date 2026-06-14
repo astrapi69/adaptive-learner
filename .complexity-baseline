@@ -13,7 +13,6 @@
 frontend/src/api/client-core.ts 22
 frontend/src/chat_import/chatgpt_parser.ts 26
 frontend/src/components/BackupSection.tsx 25
-frontend/src/components/content/ContentSetRow.tsx 28
 frontend/src/components/lesson/LessonSummary.tsx 21
 frontend/src/hooks/useLessonEnterKey.ts 22
 frontend/src/hooks/useShareWizard.ts 21
