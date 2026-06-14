@@ -300,6 +300,196 @@ function PlacedTile({
     );
 }
 
+type Translate = (key: string, fallback?: string) => string;
+
+/** Reviewed-revisit score for a persisted word-tiles answer, or null
+ *  when there is no reviewed answer. */
+function wordTilesReviewedResult(
+    reviewedPlaced: readonly number[] | null | undefined,
+    tileCount: number,
+    acceptOrderings: readonly (readonly number[])[] | null | undefined,
+): {correct: number; total: number} | null {
+    if (reviewedPlaced == null) return null;
+    return {
+        correct: isWordTilesCorrect(reviewedPlaced, tileCount, acceptOrderings)
+            ? 1
+            : 0,
+        total: 1,
+    };
+}
+
+/** The "Need a hint?" disclosure; null until shown or once submitted. */
+function WordTilesHint({
+    hint,
+    submitted,
+    showHint,
+    onShowHint,
+}: {
+    hint: string | null | undefined;
+    submitted: boolean;
+    showHint: boolean;
+    onShowHint: () => void;
+}) {
+    const {t} = useI18n();
+    if (!hint || submitted) return null;
+    return (
+        <div className="flex items-center gap-2">
+            {!showHint ? (
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    type="button"
+                    className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
+                    onClick={onShowHint}
+                    data-testid="word-tiles-hint-show"
+                >
+                    {t("lesson.exercise.word_tiles.hint_show", "Need a hint?")}
+                </Button>
+            ) : (
+                <p
+                    className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
+                    data-testid="word-tiles-hint"
+                >
+                    {hint}
+                </p>
+            )}
+        </div>
+    );
+}
+
+/** Correct/wrong feedback (with a token diff on a miss) + celebration +
+ *  the shared exercise footer. */
+function WordTilesResult({
+    submitted,
+    isCorrect,
+    userDisplay,
+    canonicalDisplay,
+    controlled,
+    canCheck,
+    onCheck,
+    onRetry,
+    t,
+}: {
+    submitted: boolean;
+    isCorrect: boolean;
+    userDisplay: string;
+    canonicalDisplay: string;
+    controlled: boolean;
+    canCheck: boolean;
+    onCheck: () => void;
+    onRetry: () => void;
+    t: Translate;
+}) {
+    return (
+        <div className="flex flex-wrap items-center gap-3">
+            {submitted && (
+                <>
+                    <p
+                        className={cn(
+                            "answer-feedback m-0 inline-flex items-center gap-1.5 font-semibold",
+                            isCorrect
+                                ? "is-correct text-[var(--exercise-correct)]"
+                                : "is-wrong text-[var(--danger)]",
+                        )}
+                        data-testid="word-tiles-result"
+                        data-result={isCorrect ? "correct" : "wrong"}
+                    >
+                        {isCorrect ? (
+                            <>
+                                <Check size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.word_tiles.result_correct",
+                                    "Correct!",
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <X size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.word_tiles.result_wrong",
+                                    "Not quite.",
+                                )}
+                            </>
+                        )}
+                    </p>
+                    {!isCorrect && (
+                        <div
+                            className="word-tiles-diff-row"
+                            data-testid="word-tiles-diff-row"
+                        >
+                            <DiffHighlight
+                                tokens={tokenDiff(userDisplay, canonicalDisplay)}
+                                className="word-tiles-diff"
+                            />
+                        </div>
+                    )}
+                    <AnswerCelebration isCorrect={isCorrect} />
+                </>
+            )}
+            <ExerciseFooter
+                testidPrefix="word-tiles"
+                controlled={controlled}
+                submitted={submitted}
+                canCheck={canCheck}
+                onCheck={onCheck}
+                onRetry={onRetry}
+                checkLabel={t("lesson.exercise.word_tiles.submit", "Check answer")}
+                retryLabel={t("lesson.exercise.word_tiles.retry", "Try again")}
+            />
+        </div>
+    );
+}
+
+/** The "Available tiles" bar — the not-yet-placed tiles, tap to place. */
+function WordTilesScrambledRow({
+    scrambledIndices,
+    tiles,
+    submitted,
+    onPlace,
+}: {
+    scrambledIndices: number[];
+    tiles: string[];
+    submitted: boolean;
+    onPlace: (index: number) => void;
+}) {
+    const {t} = useI18n();
+    return (
+        <div
+            className="rounded-sm border border-border bg-[var(--surface)] p-2"
+            data-testid="word-tiles-scrambled-row"
+            aria-label={t(
+                "lesson.exercise.word_tiles.scrambled_label",
+                "Available tiles",
+            )}
+        >
+            {scrambledIndices.length === 0 ? (
+                <p
+                    className="m-0 p-2 text-center text-sm text-[var(--fg-muted)]"
+                    data-testid="word-tiles-scrambled-empty"
+                >
+                    {t("lesson.exercise.word_tiles.scrambled_done", "All tiles placed.")}
+                </p>
+            ) : (
+                <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+                    {scrambledIndices.map((tileIndex) => (
+                        <li key={tileIndex}>
+                            <button
+                                type="button"
+                                className={cn(WORD_TILE_BASE, "h-full")}
+                                onClick={() => onPlace(tileIndex)}
+                                disabled={submitted}
+                                data-testid={`word-tile-scrambled-${tileIndex}`}
+                            >
+                                {tiles[tileIndex]}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
+
 function WordTilesExercise(
     {
         exercise,
@@ -372,18 +562,11 @@ function WordTilesExercise(
     const scrambledIndices = displayOrder.filter((i) => !placedSet.has(i));
     const allPlaced = placed.length === tiles.length;
 
-    const reviewedResult = reviewedWordTiles
-        ? {
-              correct: isWordTilesCorrect(
-                  reviewedWordTiles.placed,
-                  tiles.length,
-                  acceptOrderings,
-              )
-                  ? 1
-                  : 0,
-              total: 1,
-          }
-        : null;
+    const reviewedResult = wordTilesReviewedResult(
+        reviewedWordTiles?.placed,
+        tiles.length,
+        acceptOrderings,
+    );
 
     const {submitted, result, submit, reset} = useControlledExercise({
         ref,
@@ -485,6 +668,7 @@ function WordTilesExercise(
      *  ``tiles`` joined by spaces — the schema guarantees
      *  the canonical order is always accepted. */
     const canonicalDisplay = tiles.join(" ");
+    const userDisplay = placed.map((idx) => tiles[idx]).join(" ");
 
     return (
         <section
@@ -597,135 +781,31 @@ function WordTilesExercise(
                 </DragOverlay>
             </DndContext>
 
-            <div
-                className="rounded-sm border border-border bg-[var(--surface)] p-2"
-                data-testid="word-tiles-scrambled-row"
-                aria-label={t(
-                    "lesson.exercise.word_tiles.scrambled_label",
-                    "Available tiles",
-                )}
-            >
-                {scrambledIndices.length === 0 ? (
-                    <p
-                        className="m-0 p-2 text-center text-sm text-[var(--fg-muted)]"
-                        data-testid="word-tiles-scrambled-empty"
-                    >
-                        {t(
-                            "lesson.exercise.word_tiles.scrambled_done",
-                            "All tiles placed.",
-                        )}
-                    </p>
-                ) : (
-                    <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
-                        {scrambledIndices.map((tileIndex) => (
-                            <li key={tileIndex}>
-                                <button
-                                    type="button"
-                                    className={cn(WORD_TILE_BASE, "h-full")}
-                                    onClick={() => handlePlace(tileIndex)}
-                                    disabled={submitted}
-                                    data-testid={`word-tile-scrambled-${tileIndex}`}
-                                >
-                                    {tiles[tileIndex]}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+            <WordTilesScrambledRow
+                scrambledIndices={scrambledIndices}
+                tiles={tiles}
+                submitted={submitted}
+                onPlace={handlePlace}
+            />
 
-            {exercise.hint && !submitted && (
-                <div className="flex items-center gap-2">
-                    {!showHint ? (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            type="button"
-                            className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
-                            onClick={() => setShowHint(true)}
-                            data-testid="word-tiles-hint-show"
-                        >
-                            {t(
-                                "lesson.exercise.word_tiles.hint_show",
-                                "Need a hint?",
-                            )}
-                        </Button>
-                    ) : (
-                        <p
-                            className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
-                            data-testid="word-tiles-hint"
-                        >
-                            {exercise.hint}
-                        </p>
-                    )}
-                </div>
-            )}
+            <WordTilesHint
+                hint={exercise.hint}
+                submitted={submitted}
+                showHint={showHint}
+                onShowHint={() => setShowHint(true)}
+            />
 
-            <div className="flex flex-wrap items-center gap-3">
-                {submitted && (
-                    <>
-                        <p
-                            className={cn(
-                                "answer-feedback m-0 inline-flex items-center gap-1.5 font-semibold",
-                                isCorrect
-                                    ? "is-correct text-[var(--exercise-correct)]"
-                                    : "is-wrong text-[var(--danger)]",
-                            )}
-                            data-testid="word-tiles-result"
-                            data-result={isCorrect ? "correct" : "wrong"}
-                        >
-                            {isCorrect ? (
-                                <>
-                                    <Check size={14} aria-hidden="true" />
-                                    {t(
-                                        "lesson.exercise.word_tiles.result_correct",
-                                        "Correct!",
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    <X size={14} aria-hidden="true" />
-                                    {t(
-                                        "lesson.exercise.word_tiles.result_wrong",
-                                        "Not quite.",
-                                    )}
-                                </>
-                            )}
-                        </p>
-                        {!isCorrect && (
-                            <div
-                                className="word-tiles-diff-row"
-                                data-testid="word-tiles-diff-row"
-                            >
-                                <DiffHighlight
-                                    tokens={tokenDiff(
-                                        placed.map((idx) => tiles[idx]).join(" "),
-                                        canonicalDisplay,
-                                    )}
-                                    className="word-tiles-diff"
-                                />
-                            </div>
-                        )}
-                        <AnswerCelebration isCorrect={isCorrect} />
-                    </>
-                )}
-                <ExerciseFooter
-                    testidPrefix="word-tiles"
-                    controlled={controlled}
-                    submitted={submitted}
-                    canCheck={allPlaced}
-                    onCheck={submit}
-                    onRetry={reset}
-                    checkLabel={t(
-                        "lesson.exercise.word_tiles.submit",
-                        "Check answer",
-                    )}
-                    retryLabel={t(
-                        "lesson.exercise.word_tiles.retry",
-                        "Try again",
-                    )}
-                />
-            </div>
+            <WordTilesResult
+                submitted={submitted}
+                isCorrect={isCorrect}
+                userDisplay={userDisplay}
+                canonicalDisplay={canonicalDisplay}
+                controlled={controlled}
+                canCheck={allPlaced}
+                onCheck={submit}
+                onRetry={reset}
+                t={t}
+            />
         </section>
     );
 }
