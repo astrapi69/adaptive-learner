@@ -19,23 +19,13 @@
 
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Download, Share2} from "lucide-react";
 
 import {useI18n} from "../hooks/useI18n";
-import {
-    CEFR_LEVELS,
-    LANGUAGE_OPTIONS,
-} from "../lib/content/language-options";
+import {LANGUAGE_OPTIONS} from "../lib/content/language-options";
 import {readContributorName} from "../lib/content/contribution-history";
 import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import MetadataStep from "../components/create-lesson/MetadataStep";
+import ReviewStep from "../components/create-lesson/ReviewStep";
 import CardEditor, {MIN_CARDS} from "../components/create-lesson/CardEditor";
 import ExerciseGenerator, {
     MIN_EXERCISES,
@@ -57,7 +47,6 @@ import {
     type LessonMeta,
 } from "../lib/content/lesson-draft";
 import {
-    allChecksPass,
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
@@ -67,7 +56,6 @@ import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
 import {
     applyTemplate,
-    LESSON_TEMPLATE_KEYS,
     type LessonTemplateKey,
 } from "../lib/content/lesson-templates";
 import type {ContentLessonExercise, ContentSetEntry} from "../storage/types";
@@ -151,7 +139,7 @@ export default function CreateLesson() {
         [meta.title, meta.titleNative, meta.description],
     );
 
-    function update<K extends keyof LessonMeta>(key: K, value: LessonMeta[K]) {
+    function update(key: keyof LessonMeta, value: string) {
         setMeta((prev) => ({...prev, [key]: value}));
     }
 
@@ -321,210 +309,15 @@ export default function CreateLesson() {
             </header>
 
             {step === 1 && (
-                <section
-                    className="create-lesson-step"
-                    data-testid="create-lesson-step-1"
-                    aria-label={t("create_lesson.meta.heading", "Lesson details")}
-                >
-                    <h2>{t("create_lesson.meta.heading", "Lesson details")}</h2>
-
-                    <div
-                        className="create-lesson-templates"
-                        data-testid="create-lesson-templates"
-                    >
-                        <p className="form-label">
-                            {t(
-                                "create_lesson.templates.heading",
-                                "Start from a template",
-                            )}
-                        </p>
-                        <div className="template-cards">
-                            {LESSON_TEMPLATE_KEYS.map((key) => (
-                                <button
-                                    type="button"
-                                    key={key}
-                                    className="template-card"
-                                    data-testid={`template-${key}`}
-                                    onClick={() => applyLessonTemplate(key)}
-                                >
-                                    <span className="template-card-title">
-                                        {t(
-                                            `create_lesson.templates.${key}.title`,
-                                            key,
-                                        )}
-                                    </span>
-                                    <span className="template-card-desc muted">
-                                        {t(
-                                            `create_lesson.templates.${key}.desc`,
-                                            "",
-                                        )}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <label className="form-row">
-                        <span className="form-label">
-                            {t("create_lesson.meta.title_label", "Title")} *
-                        </span>
-                        <Input
-                            type="text"
-                            data-testid="create-lesson-title"
-                            value={meta.title}
-                            placeholder={t(
-                                "create_lesson.meta.title_placeholder",
-                                "My Lesson",
-                            )}
-                            onChange={(e) => update("title", e.target.value)}
-                            autoFocus
-                        />
-                    </label>
-                    {showError && titleMissing && (
-                        <p
-                            className="form-hint form-hint-warning"
-                            data-testid="create-lesson-title-error"
-                            role="alert"
-                        >
-                            {t(
-                                "create_lesson.meta.title_required",
-                                "A title is required.",
-                            )}
-                        </p>
-                    )}
-
-                    <label className="form-row">
-                        <span className="form-label">
-                            {t(
-                                "create_lesson.meta.title_native_label",
-                                "Title in target language",
-                            )}
-                        </span>
-                        <Input
-                            type="text"
-                            data-testid="create-lesson-title-native"
-                            value={meta.titleNative}
-                            onChange={(e) =>
-                                update("titleNative", e.target.value)
-                            }
-                        />
-                    </label>
-
-                    <div className="form-row form-row-inline">
-                        <div className="form-field">
-                            <span className="form-label">
-                                {t(
-                                    "create_lesson.meta.target_lang_label",
-                                    "Language learned",
-                                )}{" "}
-                                *
-                            </span>
-                            <Select
-                                value={meta.targetLanguage}
-                                onValueChange={(v) =>
-                                    update("targetLanguage", v)
-                                }
-                            >
-                                <SelectTrigger data-testid="create-lesson-target-lang">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {LANGUAGE_OPTIONS.map((o) => (
-                                        <SelectItem key={o.code} value={o.code}>
-                                            {o.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="form-field">
-                            <span className="form-label">
-                                {t(
-                                    "create_lesson.meta.source_lang_label",
-                                    "Your language",
-                                )}
-                            </span>
-                            <Select
-                                value={meta.sourceLanguage}
-                                onValueChange={(v) =>
-                                    update("sourceLanguage", v)
-                                }
-                            >
-                                <SelectTrigger data-testid="create-lesson-source-lang">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {LANGUAGE_OPTIONS.map((o) => (
-                                        <SelectItem key={o.code} value={o.code}>
-                                            {o.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="form-field">
-                            <span className="form-label">
-                                {t("create_lesson.meta.level_label", "Level")}
-                            </span>
-                            <Select
-                                value={meta.level}
-                                onValueChange={(v) => update("level", v)}
-                            >
-                                <SelectTrigger data-testid="create-lesson-level">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {CEFR_LEVELS.map((lvl) => (
-                                        <SelectItem key={lvl} value={lvl}>
-                                            {lvl}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                    {showError && sameLanguage && (
-                        <p
-                            className="form-hint form-hint-warning"
-                            data-testid="create-lesson-same-language-error"
-                            role="alert"
-                        >
-                            {t(
-                                "create_lesson.meta.same_language",
-                                "The language learned must differ from your language.",
-                            )}
-                        </p>
-                    )}
-
-                    <label className="form-row">
-                        <span className="form-label">
-                            {t(
-                                "create_lesson.meta.description_label",
-                                "Topic / description",
-                            )}
-                        </span>
-                        <textarea
-                            data-testid="create-lesson-description"
-                            value={meta.description}
-                            rows={3}
-                            onChange={(e) =>
-                                update("description", e.target.value)
-                            }
-                        />
-                    </label>
-
-                    <label className="form-row">
-                        <span className="form-label">
-                            {t("create_lesson.meta.author_label", "Author name")}
-                        </span>
-                        <Input
-                            type="text"
-                            data-testid="create-lesson-author"
-                            value={meta.author}
-                            onChange={(e) => update("author", e.target.value)}
-                        />
-                    </label>
-                </section>
+                <MetadataStep
+                    meta={meta}
+                    showError={showError}
+                    titleMissing={titleMissing}
+                    sameLanguage={sameLanguage}
+                    onUpdate={update}
+                    onApplyTemplate={applyLessonTemplate}
+                    t={t}
+                />
             )}
 
             {step === 2 && (
@@ -583,88 +376,16 @@ export default function CreateLesson() {
             )}
 
             {step === 4 && !savedEntry && (
-                <section
-                    className="create-lesson-step"
-                    data-testid="create-lesson-step-4"
-                    aria-label={t("create_lesson.review.heading", "Review and save")}
-                >
-                    <h2>{t("create_lesson.review.heading", "Review and save")}</h2>
-                    <ul
-                        className="create-lesson-summary"
-                        data-testid="create-lesson-summary"
-                    >
-                        <li>
-                            {t("create_lesson.review.title", "Title")}:{" "}
-                            <strong>{meta.title}</strong>
-                        </li>
-                        <li>
-                            {t("create_lesson.review.pair", "Languages")}:{" "}
-                            {meta.sourceLanguage} → {meta.targetLanguage} ·{" "}
-                            {meta.level}
-                        </li>
-                        <li>
-                            {t("create_lesson.review.cards", "Cards")}:{" "}
-                            {cards.length}
-                        </li>
-                        <li>
-                            {t("create_lesson.review.exercises", "Exercises")}:{" "}
-                            {exercises.length}
-                        </li>
-                    </ul>
-                    <ul
-                        className="create-lesson-checklist"
-                        data-testid="create-lesson-checklist"
-                    >
-                        {(
-                            [
-                                ["hasTitle", "Has a title"],
-                                ["languagePair", "Language pair is valid"],
-                                ["enoughCards", "At least 4 cards"],
-                                ["enoughExercises", "At least 5 exercises"],
-                                ["enoughTypes", "At least 2 exercise types"],
-                                ["schemaValid", "Valid lesson structure"],
-                            ] as Array<[keyof DraftValidationChecks, string]>
-                        ).map(([key, fallback]) => {
-                            const pass = draftChecks[key];
-                            return (
-                                <li
-                                    key={key}
-                                    data-testid={`check-${key}`}
-                                    data-pass={pass ? "true" : "false"}
-                                    className={
-                                        pass ? "check-pass" : "check-fail"
-                                    }
-                                >
-                                    {pass ? "✓" : "✗"}{" "}
-                                    {t(`create_lesson.review.check_${key}`, fallback)}
-                                </li>
-                            );
-                        })}
-                    </ul>
-                    <div className="form-actions">
-                        <Button
-                            type="button"
-                            data-testid="create-lesson-save-local"
-                            disabled={!allChecksPass(draftChecks) || saving}
-                            onClick={() => void saveLocally()}
-                        >
-                            <Download className="h-5 w-5" aria-hidden="true" />
-                            {saving
-                                ? t("common.loading", "Loading…")
-                                : t("create_lesson.save.save_local", "Save locally")}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            data-testid="create-lesson-save-share"
-                            disabled={!allChecksPass(draftChecks) || saving}
-                            onClick={() => void saveAndShare()}
-                        >
-                            <Share2 className="h-5 w-5" aria-hidden="true" />
-                            {t("create_lesson.save.save_share", "Save and share")}
-                        </Button>
-                    </div>
-                </section>
+                <ReviewStep
+                    meta={meta}
+                    cards={cards}
+                    exercises={exercises}
+                    draftChecks={draftChecks}
+                    saving={saving}
+                    onSaveLocal={() => void saveLocally()}
+                    onSaveShare={() => void saveAndShare()}
+                    t={t}
+                />
             )}
 
             {savedEntry && (
