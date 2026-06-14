@@ -108,6 +108,35 @@ function linearizeMapping(
 }
 
 /**
+ * Walk a linearised node path and build the canonical message list,
+ * skipping nodes with no message, an unrecognised role, or empty
+ * content. Also returns the first model_slug seen (the conversation's
+ * model). Pure — no throwing; an empty result is the caller's signal.
+ */
+function collectChatGptMessages(
+    path: ChatGptNode[],
+): {messages: NormalizedMessage[]; model: string | undefined} {
+    const messages: NormalizedMessage[] = [];
+    let model: string | undefined;
+    for (const node of path) {
+        const msg = node.message;
+        if (!msg) continue;
+        const role = normaliseRole(msg.author?.role);
+        if (role === null) continue;
+        const text = joinParts(msg.content?.parts);
+        if (!text) continue;
+        const timestamp = isoFromUnix(msg.create_time ?? null);
+        const entry: NormalizedMessage = {role, content: text};
+        if (timestamp) entry.timestamp = timestamp;
+        messages.push(entry);
+        if (!model && msg.metadata?.model_slug) {
+            model = msg.metadata.model_slug;
+        }
+    }
+    return {messages, model};
+}
+
+/**
  * Parse a single ChatGPT conversation object.
  *
  * @throws {ChatImportParseError} when the input has no recoverable
@@ -140,23 +169,7 @@ export function parseChatGptConversation(
         );
     }
     const path = linearizeMapping(convo.mapping, leaf);
-    const messages: NormalizedMessage[] = [];
-    let model: string | undefined;
-    for (const node of path) {
-        const msg = node.message;
-        if (!msg) continue;
-        const role = normaliseRole(msg.author?.role);
-        if (role === null) continue;
-        const text = joinParts(msg.content?.parts);
-        if (!text) continue;
-        const timestamp = isoFromUnix(msg.create_time ?? null);
-        const entry: NormalizedMessage = {role, content: text};
-        if (timestamp) entry.timestamp = timestamp;
-        messages.push(entry);
-        if (!model && msg.metadata?.model_slug) {
-            model = msg.metadata.model_slug;
-        }
-    }
+    const {messages, model} = collectChatGptMessages(path);
     if (messages.length === 0) {
         throw new ChatImportParseError(
             "ChatGPT conversation has no parseable messages",
