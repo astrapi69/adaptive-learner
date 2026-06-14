@@ -13,7 +13,6 @@
 frontend/src/api/client-core.ts 22
 frontend/src/chat_import/chatgpt_parser.ts 26
 frontend/src/chat_import/index.ts 30
-frontend/src/components/AiSettingsPanel.tsx 45
 frontend/src/components/BackupSection.tsx 25
 frontend/src/components/Navigation.tsx 30
 frontend/src/components/content/ContentSetRow.tsx 28
