@@ -83,6 +83,41 @@ def _gather_stats(db: Session, user_id: str, today: str) -> dict[str, int]:
     errors = list(db.scalars(select(ElementError).where(ElementError.user_id == user_id)))
     streak = db.scalar(select(UserStreak).where(UserStreak.user_id == user_id))
 
+    lesson_stats = _lesson_day_stats(lessons, today)
+    error_stats = _error_day_stats(errors, today)
+    active_today = 1 if lesson_stats["lessons_completed_today"] > 0 else 0
+
+    return {
+        "lessons_completed_today": lesson_stats["lessons_completed_today"],
+        "lessons_min_2_stars_today": lesson_stats["lessons_min_2_stars_today"],
+        "lessons_min_3_stars_today": lesson_stats["lessons_min_3_stars_today"],
+        "new_sets_started_today": lesson_stats["new_sets_started_today"],
+        "elements_reviewed_today": error_stats["elements_reviewed_today"],
+        "review_sessions_completed_today": 0,
+        "overdue_cleared_today": 0,
+        "elements_mastered_today": error_stats["elements_mastered_today"],
+        "perfect_lessons_today": lesson_stats["perfect_lessons_today"],
+        "adaptive_lessons_started_today": 0,
+        "cloze_exercises_today": 0,
+        "exercise_types_used_today": 0,
+        "minutes_learned_today": lesson_stats["minutes_learned_today"],
+        "streak_kept_today": active_today,
+        "current_streak_days": streak.current_streak_days if streak else 0,
+        "weekend_learning_today": 1 if _is_weekend(today) and active_today else 0,
+    }
+
+
+def _min_stars(completed_today: list[LessonProgress], min_value: int) -> int:
+    """Count today's completed lessons scoring at least ``min_value`` stars."""
+    return sum(
+        1
+        for r in completed_today
+        if _compute_stars(r.score_correct, r.score_total) >= min_value
+    )
+
+
+def _lesson_day_stats(lessons: list[LessonProgress], today: str) -> dict[str, int]:
+    """Lesson-derived daily mission counters for ``today``."""
     completed_today = [
         r for r in lessons if r.status == "completed" and _same_day(r.completed_at, today)
     ]
@@ -90,37 +125,27 @@ def _gather_stats(db: Session, user_id: str, today: str) -> dict[str, int]:
     minutes = (
         sum(r.time_spent_seconds or 0 for r in lessons if _same_day(r.updated_at, today)) // 60
     )
-    reviewed = sum(1 for r in errors if _same_day(r.last_attempt_at, today))
-    mastered = sum(1 for r in errors if r.mastered and _same_day(r.mastered_at, today))
-    lessons_completed_today = len(completed_today)
-    active_today = 1 if lessons_completed_today > 0 else 0
-
-    def min_stars(min_value: int) -> int:
-        return sum(
-            1
-            for r in completed_today
-            if _compute_stars(r.score_correct, r.score_total) >= min_value
-        )
-
     return {
-        "lessons_completed_today": lessons_completed_today,
-        "lessons_min_2_stars_today": min_stars(2),
-        "lessons_min_3_stars_today": min_stars(3),
+        "lessons_completed_today": len(completed_today),
+        "lessons_min_2_stars_today": _min_stars(completed_today, 2),
+        "lessons_min_3_stars_today": _min_stars(completed_today, 3),
         "new_sets_started_today": len(started_sets),
-        "elements_reviewed_today": reviewed,
-        "review_sessions_completed_today": 0,
-        "overdue_cleared_today": 0,
-        "elements_mastered_today": mastered,
         "perfect_lessons_today": sum(
             1 for r in completed_today if r.score_total > 0 and r.score_correct == r.score_total
         ),
-        "adaptive_lessons_started_today": 0,
-        "cloze_exercises_today": 0,
-        "exercise_types_used_today": 0,
         "minutes_learned_today": minutes,
-        "streak_kept_today": active_today,
-        "current_streak_days": streak.current_streak_days if streak else 0,
-        "weekend_learning_today": 1 if _is_weekend(today) and active_today else 0,
+    }
+
+
+def _error_day_stats(errors: list[ElementError], today: str) -> dict[str, int]:
+    """Element-error daily mission counters for ``today``."""
+    return {
+        "elements_reviewed_today": sum(
+            1 for r in errors if _same_day(r.last_attempt_at, today)
+        ),
+        "elements_mastered_today": sum(
+            1 for r in errors if r.mastered and _same_day(r.mastered_at, today)
+        ),
     }
 
 
