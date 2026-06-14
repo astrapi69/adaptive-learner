@@ -37,4 +37,3 @@ frontend/src/pages/ErrorReplayLesson.tsx 22
 frontend/src/pages/Review.tsx 23
 frontend/src/pages/Session.tsx 22
 frontend/src/storage/prompts.ts 33
-frontend/src/utils/eventRecorder.ts 40
