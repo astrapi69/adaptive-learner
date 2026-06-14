@@ -229,6 +229,51 @@ Daten-Themen; AUTH-07+ = Discovery/Doku/Vertrauen.
 
 ---
 
+## Entscheidungen
+
+Die acht offenen Fragen aus §5 sind entschieden (EXP-025 freigegeben). Die
+Entscheidungen sind für die AUTH-Tasks bindend; sie können revidiert werden,
+wenn die Implementierung Gegenargumente liefert.
+
+- **E1 (zu Q1) — Ort der Buch-Metadaten:** ein `book`-Block im **Repo-Root-
+  Manifest**, ein Buch pro Repo. Keine eigene `book.yaml`, keine Pro-Set-
+  Duplizierung. Treibt AUTH-01.
+- **E2 (zu Q2) — Repo-Granularität:** **ein Repo pro Buch**; mehrere Sets pro
+  Repo erlaubt (z. B. pro Buchteil/Kapitelblock). Klare Versionierung und
+  klare Trust-Zuordnung pro Werk.
+- **E3 (zu Q3) — Edition-Handling:** neue Auflage = neue **Set-Version**
+  (Fortschritt bleibt erhalten), **solange Lektions- und Card-IDs stabil
+  bleiben**. Müssen IDs sich ändern, ist es eine **neue Set-ID** (sauberer
+  Schnitt, Fortschritt startet neu). Verzahnt mit AUTH-05.
+- **E4 (zu Q4) — Lizenz-Politik:** ein Begleit-Repo **muss** `metadata.license`
+  deklarieren. **Offene Lizenzen** (CC-BY / CC-BY-SA / …) erhalten den vollen
+  Funktionsumfang (konsumieren + lokal cachen + teilen/exportieren/PR).
+  **Proprietär / „all rights reserved"** ist erlaubt, aber nur
+  **konsumieren + lokal cachen**; die App **deaktiviert Re-Share / PR /
+  Export** solchen Inhalts (sichtbar-aber-deaktiviert mit Begründung, nie
+  versteckt — Feature-State-Policy). Fehlt das Lizenzfeld, gilt der
+  konservative Default „all rights reserved" (keine Weiterverbreitung).
+- **E5 (zu Q5) — Monetarisierungs-Optik:** ein **dezenter** „Zum Buch"-Link am
+  Set-/Repo-Header und auf der Buchkarte. **Nur direkte (Nicht-Affiliate-)
+  URLs** (Hauskonvention #141), `rel="noopener noreferrer"`, **kein**
+  Vollbild-CTA, **kein** Auto-Redirect, kein Kauf-Flow in der App. Die App
+  bleibt Lern-, kein Verkaufskanal.
+- **E6 (zu Q6) — Konflikt-UX / Schnittstelle zu #97:** EXP-025 konsumiert
+  Author-Sets **read-only**. Ein lokales Edit eines Author-Sets **mutiert es
+  nie in-place**, sondern erzeugt eine **abgespaltene user-generierte Kopie**
+  mit eigener ID (`source: "user-generated"`). Die vollständige Merge-UX
+  („Meine / Autor / Beide") gehört **#97 / EXP-026**, nicht EXP-025. AUTH-06
+  liefert nur die Fork-Grenze; den Merge spezifiziert EXP-026.
+- **E7 (zu Q7) — Schema-Ziel:** Autoren-Tooling zielt **jetzt auf v1.3**
+  (einziges ladbares Format). AUTH-01 wählt die `book`-Felder so, dass sie
+  sich beim v1.4-Loader **verlustfrei auf das v1.4-Bündel abbilden** lassen.
+- **E8 (zu Q8) — Trust-3-Kanal:** die statische `recommended-repos.json` im
+  offiziellen Repo ist **der alleinige** „offiziell empfohlen"-Kanal (kein
+  Backend), bis EXP-023 Phase C ein geteiltes Backend liefert. Eine echte
+  „verifizierter Verlag"-Stufe bleibt deferred (AUTH-09).
+
+---
+
 ## Bewertung
 
 #142 hat recht: das ist **kein neues Kernfeature**, sondern ein Anwendungsfall
