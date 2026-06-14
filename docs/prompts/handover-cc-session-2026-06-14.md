@@ -8,8 +8,11 @@ branch**, `main` holds releases only.
 
 ## 1. State of `develop` (all commits since v1.77.0)
 
-v1.77.0 (architecture release) is tagged on `main`. `develop` is ahead by the
-following work, all merged via squash PRs (commit → PR in parens):
+**v1.78.0 is shipped** (tagged on `main`, GitHub Release published 2026-06-14;
+`changelog/releases/v1.78.0.md`) — maintenance / code-hygiene only, no
+schema/API/data change. It bundled the work that had accumulated on `develop`
+since v1.77.0 (commit → PR in parens); `develop` has since continued past it
+with further CCW burn-down PRs:
 
 | Commit | What |
 |---|---|
@@ -40,7 +43,10 @@ Plus `a6407ef4` (post-v1.77.0 chat journal).
 - pytest-randomly is back in the backend dev deps, so `make test` runs backend +
   plugins under a random order. The suite is robust (verified across seeds).
 
-`develop` is green and release-ready whenever v1.78.0 is to be cut.
+- **Release freeze is LIFTED** (v1.78.0 tagged + published) — normal develop
+  flow resumed; CCW is merging burn-down PRs again.
+
+`develop` is green. Next release is **v1.79.0** whenever cut.
 
 ---
 
@@ -48,15 +54,18 @@ Plus `a6407ef4` (post-v1.77.0 chat journal).
 
 | # | Title | Prio | Next step |
 |---|---|---|---|
-| **#430** | Extend pytest-randomly to the per-plugin CI locks | **Low (P3)** | Add `pytest-randomly` to each `plugins/*/pyproject.toml` dev group, `make lock-all-plugins`, run each plugin suite under a few seeds; harden if any breaks (none expected). Next cleanup cycle. |
-| **#142** | Author-provided lesson sets for published books | **Feature (P2/P4)** | Product feature; needs a design pass before code. Not started. |
-| **#97** | Merge user-generated lessons into content tree with badge | **Feature (P2/P4)** | Product feature; not started. |
+| **#434** | Re-enable the per-plugin CI test matrix (13 plugins) | **P3 infra** | Feasibility analysed (comment on #434, 2026-06-14): all 13 plugins have standalone tests (52 files / 808 funcs) but run **only locally** via `make test-plugins`; only `content-loader` declares `pytest`. Two-goal split — a cheap single CI job running `make test-plugins` (behaviour coverage, ~no setup) vs the full isolated 13-job matrix (the lock-drift gate, needs a pytest dev-group added to 12 plugins + `make lock-all-plugins`). Decide which goal(s) to pursue. |
+| **#431** | Complexity burn-down: MatchingExercise | CCW lane | Owned by the parallel CCW frontend session — do not grab. |
+| **#142** | Author-provided lesson sets for published books | Feature (vision) | **Design done** — EXP-025 (`docs/explorations/EXP-025-author-provided-lesson-sets.md`, decisions E1–E8). Implementation = AUTH-01..09; needs product go-ahead. |
+| **#97** | Merge user-generated lessons into content tree with badge | Feature | **Design done** — EXP-026 (`docs/explorations/EXP-026-user-lessons-in-content-tree.md`), with the explicit AUTH-06 interface contract. Implementation = UGC-01..07. |
 
-No P0/P1 bugs open. No open PRs.
+No P0/P1 bugs open. No open PRs (CCW opens/merges its own burn-down PRs).
 
-**Closed this session:** #372 (baseline god-files <1000), #353 (backend god-file
-split) — both faktisch done; #164/#165 (flaky tests) fixed; #407/#409/#411/#413/#426
-shipped.
+**Closed since the original handover:** #430 (won't-fix — no per-plugin CI
+matrix exists; pytest-randomly already runs via the backend venv; spun off
+#434). PRs merged: #432 (this handover), #439 (EXP-025), #440 (EXP-026), and
+the v1.78.0 release. Earlier this session: #372 / #353 (god-files), #164/#165
+(flaky tests).
 
 ---
 
