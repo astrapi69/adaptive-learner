@@ -90,6 +90,301 @@ function buildComparison(
         }));
 }
 
+type Translate = (key: string, fallback?: string) => string;
+type RestoreDiffCounts = {added: number; removed: number; changed: number};
+
+/** The two primary backup actions (Create / Restore) + the hidden
+ *  file input. The busy state drives the per-button label / spinner
+ *  copy. */
+function BackupActionToolbar({
+    busy,
+    onExport,
+    onImport,
+    fileInputRef,
+    onFileChange,
+    t,
+}: {
+    busy: "export" | "import" | null;
+    onExport: () => void;
+    onImport: () => void;
+    fileInputRef: React.RefObject<HTMLInputElement | null>;
+    onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    t: Translate;
+}) {
+    const exportLabel =
+        busy === "export"
+            ? t("backup.exporting", "Exporting…")
+            : t("backup.export", "Create Backup");
+    const importLabel =
+        busy === "import"
+            ? t("backup.importing", "Restoring…")
+            : t("backup.import", "Restore from Backup");
+    return (
+        <div className="backup-actions flex flex-col gap-2 md:flex-row">
+            <Button
+                type="button"
+                variant="default"
+                onClick={onExport}
+                disabled={busy !== null}
+                data-testid="backup-export"
+                className="w-full md:w-auto"
+                aria-label={exportLabel}
+                title={exportLabel}
+            >
+                <Download className="h-5 w-5" aria-hidden="true" />
+                <span className="hidden md:inline">{exportLabel}</span>
+            </Button>
+            <Button
+                type="button"
+                variant="outline"
+                onClick={onImport}
+                disabled={busy !== null}
+                data-testid="backup-import"
+                className="w-full md:w-auto"
+                aria-label={importLabel}
+                title={importLabel}
+            >
+                <Upload className="h-5 w-5" aria-hidden="true" />
+                <span className="hidden md:inline">{importLabel}</span>
+            </Button>
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json,.json"
+                onChange={onFileChange}
+                style={{display: "none"}}
+                data-testid="backup-file-input"
+            />
+        </div>
+    );
+}
+
+/** The pre-restore confirmation panel: the current-vs-backup row-count
+ *  table, the optional per-table diff preview, and the Confirm / Cancel
+ *  actions. */
+function RestoreConfirmPanel({
+    comparison,
+    currentSnapshot,
+    pendingPayload,
+    busy,
+    restoreDiffCounts,
+    onConfirm,
+    onCancel,
+    onCounts,
+    t,
+}: {
+    comparison: ComparisonRow[];
+    currentSnapshot: BackupPayload | null;
+    pendingPayload: BackupPayload;
+    busy: "export" | "import" | null;
+    restoreDiffCounts: RestoreDiffCounts | null;
+    onConfirm: () => void;
+    onCancel: () => void;
+    onCounts: (counts: RestoreDiffCounts) => void;
+    t: Translate;
+}) {
+    return (
+        <div className="backup-comparison" data-testid="backup-comparison">
+            <h3>{t("backup.comparison_title", "Confirm restore")}</h3>
+            <p className="muted">
+                {t(
+                    "backup.comparison_help",
+                    "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
+                )}
+            </p>
+            <table className="backup-comparison-table">
+                <thead>
+                    <tr>
+                        <th scope="col">{t("backup.table_header", "Table")}</th>
+                        <th scope="col">{t("backup.current_header", "Current")}</th>
+                        <th scope="col">{t("backup.incoming_header", "Backup")}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {comparison.map((row) => (
+                        <tr key={row.table}>
+                            <td>{row.table}</td>
+                            <td>{row.current}</td>
+                            <td>{row.incoming}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {/* v1.12.0 / Phase 25C — pre-restore diff preview */}
+            {currentSnapshot !== null && (
+                <BackupCompare
+                    backupA={currentSnapshot}
+                    backupB={pendingPayload}
+                    labelA={t("backup.compare_current_label", "Current state")}
+                    labelB={t("backup.incoming_header", "Backup")}
+                    hideExport
+                    onDiffReady={(diff) =>
+                        onCounts({
+                            added: diff.totals.added,
+                            removed: diff.totals.removed,
+                            changed: diff.totals.changed,
+                        })
+                    }
+                />
+            )}
+
+            <div className="backup-actions flex flex-wrap gap-2">
+                <Button
+                    type="button"
+                    variant="default"
+                    onClick={onConfirm}
+                    disabled={busy !== null}
+                    data-testid="backup-confirm"
+                >
+                    {busy === "import"
+                        ? t("backup.importing", "Restoring…")
+                        : restoreDiffCounts !== null
+                          ? t(
+                                "backup.confirm_with_counts",
+                                "Restore ({{added}} added, {{updated}} updated)",
+                            )
+                                .replace(
+                                    "{{added}}",
+                                    String(restoreDiffCounts.added),
+                                )
+                                .replace(
+                                    "{{updated}}",
+                                    String(restoreDiffCounts.changed),
+                                )
+                          : t("backup.confirm", "Confirm restore")}
+                </Button>
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={onCancel}
+                    disabled={busy !== null}
+                    data-testid="backup-cancel"
+                >
+                    {t("common.cancel", "Cancel")}
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+/** The post-restore result panel: the headline counts, the per-table
+ *  breakdown, and the error-detail list. */
+function RestoreSummaryPanel({
+    summary,
+    t,
+}: {
+    summary: RestoreSummary;
+    t: Translate;
+}) {
+    return (
+        <div className="backup-summary" data-testid="backup-summary">
+            <p>{t("backup.restored_summary", "Restore complete.")}</p>
+            <ul>
+                <li>
+                    {t("backup.restored_inserted", "Inserted: {{n}}").replace(
+                        "{{n}}",
+                        String(summary.inserted),
+                    )}
+                </li>
+                <li>
+                    {t("backup.restored_updated", "Updated: {{n}}").replace(
+                        "{{n}}",
+                        String(summary.updated),
+                    )}
+                </li>
+                <li>
+                    {t("backup.restored_skipped", "Skipped: {{n}}").replace(
+                        "{{n}}",
+                        String(summary.skipped),
+                    )}
+                </li>
+                {summary.errors.length > 0 && (
+                    <li>
+                        {t("backup.restored_errors", "Errors: {{n}}").replace(
+                            "{{n}}",
+                            String(summary.errors.length),
+                        )}
+                    </li>
+                )}
+            </ul>
+
+            {/* Per-table breakdown (#126). Scrollable so all 30
+                tables stay reachable without pushing the page. */}
+            <div
+                className="backup-summary-tables max-h-72 overflow-y-auto"
+                data-testid="backup-summary-tables"
+            >
+                <table className="w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th className="text-left">
+                                {t("backup.table_header", "Table")}
+                            </th>
+                            <th className="text-right">
+                                {t("backup.col_inserted", "Ins.")}
+                            </th>
+                            <th className="text-right">
+                                {t("backup.col_updated", "Upd.")}
+                            </th>
+                            <th className="text-right">
+                                {t("backup.col_skipped", "Skip")}
+                            </th>
+                            <th className="text-right">
+                                {t("backup.col_errors", "Err.")}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Object.entries(summary.tables)
+                            .sort(([a], [b]) => a.localeCompare(b))
+                            .map(([table, counts]) => (
+                                <tr
+                                    key={table}
+                                    data-testid={`backup-summary-row-${table}`}
+                                    className={
+                                        counts.errors.length > 0
+                                            ? "text-[var(--error)]"
+                                            : undefined
+                                    }
+                                >
+                                    <td className="text-left">{table}</td>
+                                    <td className="text-right">{counts.inserted}</td>
+                                    <td className="text-right">{counts.updated}</td>
+                                    <td className="text-right">{counts.skipped}</td>
+                                    <td className="text-right">
+                                        {counts.errors.length}
+                                    </td>
+                                </tr>
+                            ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {summary.errors.length > 0 && (
+                <div
+                    className="backup-summary-errors max-h-48 overflow-y-auto"
+                    data-testid="backup-summary-errors"
+                >
+                    <p className="font-semibold text-[var(--error)]">
+                        {t("backup.error_details", "Error details")}
+                    </p>
+                    <ul>
+                        {summary.errors.map((err, idx) => (
+                            <li
+                                key={idx}
+                                className="text-[var(--error)] break-words"
+                            >
+                                {err}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function BackupSection() {
     const {t} = useI18n();
     const storage = getStorage();
@@ -366,66 +661,14 @@ export default function BackupSection() {
                 )}
             </p>
 
-            <div className="backup-actions flex flex-col gap-2 md:flex-row">
-                <Button
-                    type="button"
-                    variant="default"
-                    onClick={handleExport}
-                    disabled={busy !== null}
-                    data-testid="backup-export"
-                    className="w-full md:w-auto"
-                    aria-label={
-                        busy === "export"
-                            ? t("backup.exporting", "Exporting…")
-                            : t("backup.export", "Create Backup")
-                    }
-                    title={
-                        busy === "export"
-                            ? t("backup.exporting", "Exporting…")
-                            : t("backup.export", "Create Backup")
-                    }
-                >
-                    <Download className="h-5 w-5" aria-hidden="true" />
-                    <span className="hidden md:inline">
-                        {busy === "export"
-                            ? t("backup.exporting", "Exporting…")
-                            : t("backup.export", "Create Backup")}
-                    </span>
-                </Button>
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handlePickFile}
-                    disabled={busy !== null}
-                    data-testid="backup-import"
-                    className="w-full md:w-auto"
-                    aria-label={
-                        busy === "import"
-                            ? t("backup.importing", "Restoring…")
-                            : t("backup.import", "Restore from Backup")
-                    }
-                    title={
-                        busy === "import"
-                            ? t("backup.importing", "Restoring…")
-                            : t("backup.import", "Restore from Backup")
-                    }
-                >
-                    <Upload className="h-5 w-5" aria-hidden="true" />
-                    <span className="hidden md:inline">
-                        {busy === "import"
-                            ? t("backup.importing", "Restoring…")
-                            : t("backup.import", "Restore from Backup")}
-                    </span>
-                </Button>
-                <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="application/json,.json"
-                    onChange={handleFileChange}
-                    style={{display: "none"}}
-                    data-testid="backup-file-input"
-                />
-            </div>
+            <BackupActionToolbar
+                busy={busy}
+                onExport={handleExport}
+                onImport={handlePickFile}
+                fileInputRef={fileInputRef}
+                onFileChange={handleFileChange}
+                t={t}
+            />
 
             {lastBackup !== null && (
                 <p
@@ -488,213 +731,21 @@ export default function BackupSection() {
             )}
 
             {pendingPayload !== null && comparison !== null && (
-                <div
-                    className="backup-comparison"
-                    data-testid="backup-comparison"
-                >
-                    <h3>
-                        {t("backup.comparison_title", "Confirm restore")}
-                    </h3>
-                    <p className="muted">
-                        {t(
-                            "backup.comparison_help",
-                            "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
-                        )}
-                    </p>
-                    <table className="backup-comparison-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    {t("backup.table_header", "Table")}
-                                </th>
-                                <th scope="col">
-                                    {t("backup.current_header", "Current")}
-                                </th>
-                                <th scope="col">
-                                    {t("backup.incoming_header", "Backup")}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {comparison.map((row) => (
-                                <tr key={row.table}>
-                                    <td>{row.table}</td>
-                                    <td>{row.current}</td>
-                                    <td>{row.incoming}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-
-                    {/* v1.12.0 / Phase 25C — pre-restore diff preview */}
-                    {currentSnapshot !== null && (
-                        <BackupCompare
-                            backupA={currentSnapshot}
-                            backupB={pendingPayload}
-                            labelA={t(
-                                "backup.compare_current_label",
-                                "Current state",
-                            )}
-                            labelB={t("backup.incoming_header", "Backup")}
-                            hideExport
-                            onDiffReady={(diff) =>
-                                setRestoreDiffCounts({
-                                    added: diff.totals.added,
-                                    removed: diff.totals.removed,
-                                    changed: diff.totals.changed,
-                                })
-                            }
-                        />
-                    )}
-
-                    <div className="backup-actions flex flex-wrap gap-2">
-                        <Button
-                            type="button"
-                            variant="default"
-                            onClick={handleConfirmRestore}
-                            disabled={busy !== null}
-                            data-testid="backup-confirm"
-                        >
-                            {busy === "import"
-                                ? t("backup.importing", "Restoring…")
-                                : restoreDiffCounts !== null
-                                  ? t(
-                                        "backup.confirm_with_counts",
-                                        "Restore ({{added}} added, {{updated}} updated)",
-                                    )
-                                        .replace(
-                                            "{{added}}",
-                                            String(restoreDiffCounts.added),
-                                        )
-                                        .replace(
-                                            "{{updated}}",
-                                            String(restoreDiffCounts.changed),
-                                        )
-                                  : t("backup.confirm", "Confirm restore")}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={handleCancelRestore}
-                            disabled={busy !== null}
-                            data-testid="backup-cancel"
-                        >
-                            {t("common.cancel", "Cancel")}
-                        </Button>
-                    </div>
-                </div>
+                <RestoreConfirmPanel
+                    comparison={comparison}
+                    currentSnapshot={currentSnapshot}
+                    pendingPayload={pendingPayload}
+                    busy={busy}
+                    restoreDiffCounts={restoreDiffCounts}
+                    onConfirm={handleConfirmRestore}
+                    onCancel={handleCancelRestore}
+                    onCounts={setRestoreDiffCounts}
+                    t={t}
+                />
             )}
 
             {restoreSummary !== null && (
-                <div
-                    className="backup-summary"
-                    data-testid="backup-summary"
-                >
-                    <p>
-                        {t("backup.restored_summary", "Restore complete.")}
-                    </p>
-                    <ul>
-                        <li>
-                            {t("backup.restored_inserted", "Inserted: {{n}}").replace(
-                                "{{n}}",
-                                String(restoreSummary.inserted),
-                            )}
-                        </li>
-                        <li>
-                            {t("backup.restored_updated", "Updated: {{n}}").replace(
-                                "{{n}}",
-                                String(restoreSummary.updated),
-                            )}
-                        </li>
-                        <li>
-                            {t("backup.restored_skipped", "Skipped: {{n}}").replace(
-                                "{{n}}",
-                                String(restoreSummary.skipped),
-                            )}
-                        </li>
-                        {restoreSummary.errors.length > 0 && (
-                            <li>
-                                {t("backup.restored_errors", "Errors: {{n}}").replace(
-                                    "{{n}}",
-                                    String(restoreSummary.errors.length),
-                                )}
-                            </li>
-                        )}
-                    </ul>
-
-                    {/* Per-table breakdown (#126). Scrollable so all 30
-                        tables stay reachable without pushing the page. */}
-                    <div
-                        className="backup-summary-tables max-h-72 overflow-y-auto"
-                        data-testid="backup-summary-tables"
-                    >
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr>
-                                    <th className="text-left">
-                                        {t("backup.table_header", "Table")}
-                                    </th>
-                                    <th className="text-right">
-                                        {t("backup.col_inserted", "Ins.")}
-                                    </th>
-                                    <th className="text-right">
-                                        {t("backup.col_updated", "Upd.")}
-                                    </th>
-                                    <th className="text-right">
-                                        {t("backup.col_skipped", "Skip")}
-                                    </th>
-                                    <th className="text-right">
-                                        {t("backup.col_errors", "Err.")}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {Object.entries(restoreSummary.tables)
-                                    .sort(([a], [b]) => a.localeCompare(b))
-                                    .map(([table, counts]) => (
-                                        <tr
-                                            key={table}
-                                            data-testid={`backup-summary-row-${table}`}
-                                            className={
-                                                counts.errors.length > 0
-                                                    ? "text-[var(--error)]"
-                                                    : undefined
-                                            }
-                                        >
-                                            <td className="text-left">{table}</td>
-                                            <td className="text-right">{counts.inserted}</td>
-                                            <td className="text-right">{counts.updated}</td>
-                                            <td className="text-right">{counts.skipped}</td>
-                                            <td className="text-right">
-                                                {counts.errors.length}
-                                            </td>
-                                        </tr>
-                                    ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {restoreSummary.errors.length > 0 && (
-                        <div
-                            className="backup-summary-errors max-h-48 overflow-y-auto"
-                            data-testid="backup-summary-errors"
-                        >
-                            <p className="font-semibold text-[var(--error)]">
-                                {t("backup.error_details", "Error details")}
-                            </p>
-                            <ul>
-                                {restoreSummary.errors.map((err, idx) => (
-                                    <li
-                                        key={idx}
-                                        className="text-[var(--error)] break-words"
-                                    >
-                                        {err}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                </div>
+                <RestoreSummaryPanel summary={restoreSummary} t={t} />
             )}
 
             {storageMode === "dexie" && (
