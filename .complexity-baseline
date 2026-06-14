@@ -22,7 +22,6 @@ frontend/src/components/exercises/MatchingExercise.tsx 45
 frontend/src/components/exercises/PictureChoiceExercise.tsx 31
 frontend/src/components/exercises/WordTilesExercise.tsx 30
 frontend/src/components/lesson/LessonSummary.tsx 21
-frontend/src/components/lesson/NextStepSuggestions.tsx 36
 frontend/src/hooks/useLessonEnterKey.ts 22
 frontend/src/hooks/useNextStepSuggestions.ts 29
 frontend/src/hooks/useShareWizard.ts 21
