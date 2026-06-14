@@ -383,7 +383,6 @@ def _restore_table(
     redirects child FKs (e.g. ``user_badges.badge_id``) to the local id.
     """
     spec = _spec(table)
-    model = spec.model
     fk_remap = _FK_PARENTS.get(table, {})
     self_ref_cols = _SELF_REF_COLUMNS.get(table, ())
     # A self-referential table must process parents before children so a
@@ -391,115 +390,152 @@ def _restore_table(
     # when its child is redirected (#127 subjects).
     if self_ref_cols:
         records = _order_parent_before_child(records, self_ref_cols)
-    inserted = 0
-    updated = 0
-    skipped = 0
-    errors: list[str] = []
+    tally: dict[str, Any] = {"inserted": 0, "updated": 0, "skipped": 0, "errors": []}
     for record in records:
-        record_id = record.get("id")
-        if not isinstance(record_id, str) or not record_id:
-            skipped += 1
-            errors.append(f"{table}: record missing 'id'")
+        outcome, error = _restore_one_record(
+            repo, spec, table, record, user_id, id_remap, fk_remap, self_ref_cols
+        )
+        tally[outcome] += 1
+        if error is not None:
+            tally["errors"].append(error)
+    return tally
+
+
+def _restore_one_record(
+    repo: BackupRepository,
+    spec: TableSpec,
+    table: str,
+    record: dict[str, Any],
+    user_id: str,
+    id_remap: dict[str, dict[str, str]],
+    fk_remap: dict[str, str],
+    self_ref_cols: tuple[str, ...],
+) -> tuple[str, str | None]:
+    """Restore one record. Returns ``(outcome, error)`` where outcome is one of
+    ``"inserted"`` / ``"updated"`` / ``"skipped"`` and error is an optional
+    per-record message for the table summary."""
+    record_id = record.get("id")
+    if not isinstance(record_id, str) or not record_id:
+        return "skipped", f"{table}: record missing 'id'"
+    record = _redirect_record_fks(record, table, fk_remap, self_ref_cols, id_remap)
+    try:
+        return _apply_record(repo, spec, table, record, record_id, user_id, id_remap)
+    except Exception as exc:  # pragma: no cover — defensive
+        repo.rollback()
+        logger.error(
+            "Failed to restore row in %r (id=%s): %s",
+            table,
+            record_id,
+            exc,
+            exc_info=True,
+        )
+        return "skipped", f"{table}: {record_id}: {exc}"
+
+
+def _redirect_record_fks(
+    record: dict[str, Any],
+    table: str,
+    fk_remap: dict[str, str],
+    self_ref_cols: tuple[str, ...],
+    id_remap: dict[str, dict[str, str]],
+) -> dict[str, Any]:
+    """Redirect cross-table and self-referential FK columns through ``id_remap``.
+
+    A parent matched by natural key under a different local id (issue #49)
+    redirects its children's FKs; self-referential columns (e.g.
+    ``subjects.parent_id``, #127) redirect through this table's own remap.
+    """
+    for fk_col, parent_table in fk_remap.items():
+        fk_value = record.get(fk_col)
+        if not isinstance(fk_value, str):
             continue
-        # Redirect any FK columns whose parent was matched by natural
-        # key under a different local id (issue #49).
-        for fk_col, parent_table in fk_remap.items():
-            fk_value = record.get(fk_col)
-            if not isinstance(fk_value, str):
-                continue
-            mapped = id_remap.get(parent_table, {}).get(fk_value)
-            if mapped is not None and mapped != fk_value:
-                record = {**record, fk_col: mapped}
-        # Redirect self-referential FK columns (e.g. subjects.parent_id)
-        # through this table's own accumulated id remap (#127).
-        for self_col in self_ref_cols:
-            fk_value = record.get(self_col)
-            if not isinstance(fk_value, str):
-                continue
-            mapped = id_remap.get(table, {}).get(fk_value)
-            if mapped is not None and mapped != fk_value:
-                record = {**record, self_col: mapped}
-        try:
-            existing = repo.get_by_pk(model, record_id)
-            # Unique-key fallback (#115, generalises the #49 badges fix):
-            # the backup id missed, but a row with the same UNIQUE key
-            # exists locally under a different id — an older backup, a
-            # clean install that auto-seeded a user_settings/xp/streak
-            # singleton, or a re-seeded catalog. Match it, update in
-            # place, and remember the id mapping so child FKs redirect to
-            # the local id.
-            matched_by_unique = False
-            if existing is None:
-                existing = _find_existing_by_unique(repo, model, record)
-                if existing is not None:
-                    matched_by_unique = True
-                    if existing.id != record_id:
-                        id_remap.setdefault(table, {})[record_id] = existing.id
-            if existing is None:
-                # Defensive user-scope check: never insert a row
-                # claiming to belong to a different user.
-                if not record_belongs_to_user(table, record, user_id):
-                    skipped += 1
-                    continue
-                missing_parent = _missing_fk_parent(repo, table, record)
-                if missing_parent is not None:
-                    skipped += 1
-                    errors.append(
-                        f"{table}: {record_id} skipped — references a missing {missing_parent} row"
-                    )
-                    continue
-                fresh = model()
-                _apply_columns(table, record, fresh, allow_pk=True)
-                repo.add(fresh)
-                inserted += 1
-                continue
-            # Existing row. Defensive scope check on the row itself.
-            if not row_belongs_to_user(table, existing, user_id):
-                skipped += 1
-                continue
-            if spec.append_only:
-                # History is immutable; an append-only row already
-                # present (by id OR by its unique key) is left untouched.
-                skipped += 1
-                continue
-            if matched_by_unique:
-                # The row exists only under a DIFFERENT id — a placeholder
-                # the install auto-seeded (e.g. an empty user_settings /
-                # user_xp) occupying the unique slot. A restore reclaims
-                # it: the backup is the source of truth, so overwrite
-                # regardless of timestamp (#115). Without this, a fresh
-                # install's newer-but-empty placeholder would beat the
-                # backup under merge's newer-wins rule and silently drop
-                # the restored data.
-                _apply_columns(table, record, existing, allow_pk=False)
-                updated += 1
-                continue
-            remote_ts = _record_timestamp(spec, record)
-            local_ts = _row_timestamp(spec, existing)
-            if remote_ts is None or local_ts is None or remote_ts > local_ts:
-                _apply_columns(table, record, existing, allow_pk=False)
-                updated += 1
-            else:
-                # Same row by id, local is newer (or equal). Merge keeps
-                # the newer side.
-                skipped += 1
-        except Exception as exc:  # pragma: no cover — defensive
-            repo.rollback()
-            errors.append(f"{table}: {record_id}: {exc}")
-            logger.error(
-                "Failed to restore row in %r (id=%s): %s",
-                table,
-                record_id,
-                exc,
-                exc_info=True,
-            )
-            skipped += 1
-    return {
-        "inserted": inserted,
-        "updated": updated,
-        "skipped": skipped,
-        "errors": errors,
-    }
+        mapped = id_remap.get(parent_table, {}).get(fk_value)
+        if mapped is not None and mapped != fk_value:
+            record = {**record, fk_col: mapped}
+    for self_col in self_ref_cols:
+        fk_value = record.get(self_col)
+        if not isinstance(fk_value, str):
+            continue
+        mapped = id_remap.get(table, {}).get(fk_value)
+        if mapped is not None and mapped != fk_value:
+            record = {**record, self_col: mapped}
+    return record
+
+
+def _apply_record(
+    repo: BackupRepository,
+    spec: TableSpec,
+    table: str,
+    record: dict[str, Any],
+    record_id: str,
+    user_id: str,
+    id_remap: dict[str, dict[str, str]],
+) -> tuple[str, str | None]:
+    """Insert or merge one already-FK-redirected record. Returns ``(outcome, error)``."""
+    model = spec.model
+    existing = repo.get_by_pk(model, record_id)
+    # Unique-key fallback (#115, generalises the #49 badges fix): the backup
+    # id missed, but a row with the same UNIQUE key exists locally under a
+    # different id — an older backup, a clean install that auto-seeded a
+    # user_settings/xp/streak singleton, or a re-seeded catalog. Match it,
+    # update in place, and remember the id mapping so child FKs redirect.
+    matched_by_unique = False
+    if existing is None:
+        existing = _find_existing_by_unique(repo, model, record)
+        if existing is not None:
+            matched_by_unique = True
+            if existing.id != record_id:
+                id_remap.setdefault(table, {})[record_id] = existing.id
+    if existing is None:
+        return _insert_new_record(repo, spec, table, record, record_id, user_id)
+    # Existing row. Defensive scope check on the row itself.
+    if not row_belongs_to_user(table, existing, user_id):
+        return "skipped", None
+    if spec.append_only:
+        # History is immutable; an append-only row already present (by id OR
+        # by its unique key) is left untouched.
+        return "skipped", None
+    if matched_by_unique:
+        # The row exists only under a DIFFERENT id — a placeholder the install
+        # auto-seeded (e.g. an empty user_settings / user_xp) occupying the
+        # unique slot. A restore reclaims it: the backup is the source of
+        # truth, so overwrite regardless of timestamp (#115). Without this, a
+        # fresh install's newer-but-empty placeholder would beat the backup
+        # under merge's newer-wins rule and silently drop the restored data.
+        _apply_columns(table, record, existing, allow_pk=False)
+        return "updated", None
+    remote_ts = _record_timestamp(spec, record)
+    local_ts = _row_timestamp(spec, existing)
+    if remote_ts is None or local_ts is None or remote_ts > local_ts:
+        _apply_columns(table, record, existing, allow_pk=False)
+        return "updated", None
+    # Same row by id, local is newer (or equal). Merge keeps the newer side.
+    return "skipped", None
+
+
+def _insert_new_record(
+    repo: BackupRepository,
+    spec: TableSpec,
+    table: str,
+    record: dict[str, Any],
+    record_id: str,
+    user_id: str,
+) -> tuple[str, str | None]:
+    """Insert a record with no existing match. Returns ``(outcome, error)``."""
+    # Defensive user-scope check: never insert a row claiming to belong to a
+    # different user.
+    if not record_belongs_to_user(table, record, user_id):
+        return "skipped", None
+    missing_parent = _missing_fk_parent(repo, table, record)
+    if missing_parent is not None:
+        return (
+            "skipped",
+            f"{table}: {record_id} skipped — references a missing {missing_parent} row",
+        )
+    fresh = spec.model()
+    _apply_columns(table, record, fresh, allow_pk=True)
+    repo.add(fresh)
+    return "inserted", None
 
 
 # Restore order: parents before children. Derived from SQLAlchemy's
