@@ -49,7 +49,13 @@ import { useContentSharing } from "../hooks/useContentSharing";
 import { useI18n } from "../hooks/useI18n";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { useSourceLanguages } from "../hooks/useSourceLanguages";
-import { buildContentTree } from "../lib/content/content-tree";
+import {
+  baseLanguage,
+  buildContentTree,
+  type FoldedUserLesson,
+  type UserFoldInput,
+} from "../lib/content/content-tree";
+import { resolveTreePlacement } from "../lib/content/tree-placement";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
   CONTRIBUTOR_THRESHOLD,
@@ -98,6 +104,11 @@ export default function ContentPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [perSetState, setPerSetState] = useState<Record<string, DownloadState>>({});
+  // EXP-026 / UGC-04 — the loaded lessons of each user-generated set,
+  // keyed ``${source}#${id}``, used to fold them into the tree.
+  const [userLessonsBySet, setUserLessonsBySet] = useState<
+    Record<string, UserFoldInput["lessons"]>
+  >({});
   // Phase 59C — My Lessons delete-confirm modal target.
   const [deleteTarget, setDeleteTarget] = useState<ContentSetEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -315,6 +326,48 @@ export default function ContentPage() {
     }
   };
 
+  // EXP-026 / UGC-04 — load each user-generated set's lessons so they
+  // can be folded into the matching published tree node. Keyed off
+  // ``sets`` (state, stable between renders) so it doesn't loop.
+  useEffect(() => {
+    let cancelled = false;
+    const userGen = sets.filter((s) => s.source === USER_GENERATED_SOURCE);
+    if (userGen.length === 0) {
+      setUserLessonsBySet({});
+      return;
+    }
+    void (async () => {
+      const byKey: Record<string, UserFoldInput["lessons"]> = {};
+      for (const set of userGen) {
+        try {
+          const listing = await getStorage().contentLoader.listLessons(set.source, set.id);
+          const lessons = await Promise.all(
+            listing.lessons.map(async (filename) => {
+              const lesson = await getStorage().contentLoader.getLesson(
+                set.source,
+                set.id,
+                filename,
+              );
+              return {
+                id: lesson.id,
+                filename,
+                title: lesson.title,
+                variation_of: lesson.variation_of,
+              };
+            }),
+          );
+          byKey[`${set.source}#${set.id}`] = lessons;
+        } catch {
+          /* a set that fails to load just stays in the My Lessons fallback */
+        }
+      }
+      if (!cancelled) setUserLessonsBySet(byKey);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [sets]);
+
   // Phase 60 — community-share + opt-in AI validation (extracted to
   // useContentSharing). The page keeps the contribution history.
   const share = useContentSharing({ sets, fetchSetLessons });
@@ -375,7 +428,52 @@ export default function ContentPage() {
     if (sourceFilter === "official") return isOfficialSource(s.source);
     return s.source === sourceFilter;
   });
-  const tree = buildContentTree(visibleSets, activeSources);
+
+  // EXP-026 / UGC-04 — fold each user-generated set's lessons into the
+  // matching published node. The stored ``domain`` field is overloaded
+  // with the set's ORIGIN ("analysis"/"adaptive"/"imported"), so we
+  // derive the real content domain for placement: a language pair when
+  // source != target, otherwise knowledge. A set is only folded once
+  // its lessons have loaded (so it never flickers out of My Lessons
+  // mid-load); matched sets leave the My Lessons fallback (decision E4),
+  // unmatched ones stay.
+  const userSetsByKey: Record<string, ContentSetEntry> = Object.fromEntries(
+    userSets.map((s) => [`${s.source}#${s.id}`, s]),
+  );
+  const userPlacements = userSets.map((set) => {
+    const lessons = userLessonsBySet[`${set.source}#${set.id}`];
+    const contentDomain =
+      baseLanguage(set.source_language) !== baseLanguage(set.target_language)
+        ? "language"
+        : "knowledge";
+    const variationOf = lessons?.find((l) => l.variation_of)?.variation_of ?? null;
+    const matched =
+      lessons !== undefined &&
+      resolveTreePlacement(
+        {
+          source_language: set.source_language,
+          target_language: set.target_language,
+          level: set.level,
+          domain: contentDomain,
+          title: set.title,
+          variationOf,
+        },
+        visibleSets,
+      ).matched;
+    return {
+      set,
+      foldInput: { set: { ...set, domain: contentDomain }, lessons: lessons ?? [] },
+      matched,
+    };
+  });
+  const matchedFold: UserFoldInput[] = userPlacements
+    .filter((p) => p.matched)
+    .map((p) => p.foldInput);
+  const unmatchedUserSets = userPlacements.filter((p) => !p.matched).map((p) => p.set);
+  const tree = buildContentTree(visibleSets, activeSources, matchedFold);
+
+  const handlePlayFolded = (lesson: FoldedUserLesson) =>
+    openLessonFile(lesson.setSource, lesson.setId, lesson.filename);
 
   return (
     <main id="main" className="page content-page" data-testid="content-page">
@@ -518,10 +616,12 @@ export default function ContentPage() {
       )}
 
       {/* Phase 59C — My Lessons (user-generated sets). Hidden while a
-          search is active (results replace the browse view). */}
-      {!searchResult.active && (
+          search is active (results replace the browse view). EXP-026 /
+          UGC-04: only the sets that did NOT fold into the tree remain
+          here, and the section hides entirely when none do (E4). */}
+      {!searchResult.active && unmatchedUserSets.length > 0 && (
         <MyLessonsSection
-          userSets={userSets}
+          userSets={unmatchedUserSets}
           communitySharingEnabled={COMMUNITY_SHARING_ENABLED}
           onOpen={(e) => void handleOpenLesson(e)}
           onEdit={handleEditUserSet}
@@ -736,6 +836,16 @@ export default function ContentPage() {
                 recommendedSources,
                 onOpen: (e) => void handleOpenLesson(e),
                 onDownload: (e) => void handleDownload(e),
+              }}
+              folded={{
+                setsByKey: userSetsByKey,
+                communitySharingEnabled: COMMUNITY_SHARING_ENABLED,
+                onPlayLesson: handlePlayFolded,
+                onEdit: handleEditUserSet,
+                onExportJson: (e) => void handleExportJson(e),
+                onExportSet: (e) => void handleExportSet(e),
+                onShare: (e) => void share.handleShare(e),
+                onDelete: setDeleteTarget,
               }}
             />
           )}

@@ -6,12 +6,9 @@
  * set / Share / Delete); all are delivered as callbacks from the page.
  */
 
-import { Download, FolderOpen, Pencil, Play, Share2, Trash2 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-
 import { useI18n } from "../../hooks/useI18n";
 import type { ContentSetEntry } from "../../storage/types";
+import UserSetActions from "./UserSetActions";
 
 interface MyLessonsSectionProps {
   userSets: ContentSetEntry[];
@@ -76,70 +73,20 @@ export default function MyLessonsSection({
                   </span>
                 </p>
               </div>
-              {/* #226 — My Lessons rows carry up to 6 actions. The
-                  shared .content-set-action is flex-shrink:0, so its
-                  flex-wrap never activates beside the meta and the row
-                  overflowed the card. w-full drops it onto its own
-                  full-width line so the buttons wrap to the next row. */}
-              <div className="content-set-action w-full">
-                <Button
-                  type="button"
-                  onClick={() => onOpen(entry)}
-                  data-testid={`my-lesson-${entry.id}-play`}
-                >
-                  <Play size={14} aria-hidden="true" />
-                  {t("content.my_lessons.play", "Play")}
-                </Button>
-                {entry.domain === "analysis" && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => onEdit(entry)}
-                    data-testid={`my-lesson-${entry.id}-edit`}
-                  >
-                    <Pencil size={14} aria-hidden="true" />
-                    {t("content.my_lessons.edit", "Edit")}
-                  </Button>
-                )}
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => onExportJson(entry)}
-                  data-testid={`my-lesson-${entry.id}-export`}
-                >
-                  <Download size={14} aria-hidden="true" />
-                  {t("content.my_lessons.export", "Export")}
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => onExportSet(entry)}
-                  data-testid={`my-lesson-${entry.id}-export-set`}
-                >
-                  <FolderOpen size={14} aria-hidden="true" />
-                  {t("content.my_lessons.export_set", "Export as set")}
-                </Button>
-                {communitySharingEnabled && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => onShare(entry)}
-                    data-testid={`my-lesson-${entry.id}-share`}
-                  >
-                    <Share2 className="h-5 w-5" aria-hidden="true" />
-                    {t("content.my_lessons.share", "Share with Community")}
-                  </Button>
-                )}
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => onDelete(entry)}
-                  data-testid={`my-lesson-${entry.id}-delete`}
-                >
-                  <Trash2 size={14} aria-hidden="true" />
-                  {t("content.my_lessons.delete", "Delete")}
-                </Button>
-              </div>
+              {/* #226 — the shared action set drops onto its own
+                  full-width line so the up-to-6 buttons wrap below the
+                  meta instead of overflowing the card. */}
+              <UserSetActions
+                entry={entry}
+                communitySharingEnabled={communitySharingEnabled}
+                testIdPrefix={`my-lesson-${entry.id}`}
+                onPlay={onOpen}
+                onEdit={onEdit}
+                onExportJson={onExportJson}
+                onExportSet={onExportSet}
+                onShare={onShare}
+                onDelete={onDelete}
+              />
             </li>
           ))}
         </ul>

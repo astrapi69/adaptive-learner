@@ -390,7 +390,7 @@ describe("Content — My Lessons (Phase 59C)", () => {
     getLessonMock.mockReset();
   });
 
-  it("shows the My Lessons empty state when there are no user sets", async () => {
+  it("hides the My Lessons section when there are no user sets (EXP-026 E4)", async () => {
     listSetsMock.mockResolvedValue({
       sets: [
         { ...SAMPLE_ENTRY, cached_version: "1.0.0", update_available: false },
@@ -399,7 +399,8 @@ describe("Content — My Lessons (Phase 59C)", () => {
     });
     renderPage();
     await screen.findByTestId("content-page");
-    expect(screen.getByTestId("content-my-lessons-empty")).toBeInTheDocument();
+    // The fallback section is only visible with unplaced drafts (E4).
+    expect(screen.queryByTestId("content-my-lessons")).not.toBeInTheDocument();
   });
 
   it("lists a user lesson (play/edit/delete), separate from downloaded sets", async () => {

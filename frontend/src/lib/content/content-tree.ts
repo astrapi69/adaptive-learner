@@ -29,8 +29,10 @@ import { resolveTreePlacement } from "./tree-placement";
  * the shared set-level actions, without changing any IDs.
  */
 export interface FoldedUserLesson {
-  /** Lesson id (used for navigation / play). */
+  /** Lesson id (stable internal id). */
   lessonId: string;
+  /** Cached lesson filename for navigation (e.g. ``mine-l1.json``). */
+  filename: string;
   title: string;
   /** Source marker of the owning user-generated set ("user-generated"). */
   setSource: string;
@@ -46,6 +48,8 @@ export interface UserFoldInput {
   set: ContentSetEntry;
   lessons: {
     id: string;
+    /** Cached filename (from ``listLessons``) used to open the lesson. */
+    filename: string;
     title: string;
     variation_of?: string | null;
   }[];
@@ -275,6 +279,7 @@ function foldUserLessons(
 
     const folded: FoldedUserLesson[] = lessons.map((lesson) => ({
       lessonId: lesson.id,
+      filename: lesson.filename,
       title: lesson.title,
       setSource: set.source,
       setId: set.id,
