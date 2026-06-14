@@ -3,11 +3,8 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 
 import {LEARNING_METHODS} from "../lib/constants";
 
-import CycleProgress from "../components/CycleProgress";
-import HelpLink from "../components/help/HelpLink";
-import HelpTooltip from "../components/help/HelpTooltip";
-import MethodBadge from "../components/MethodBadge";
 import MethodSwitchBanner from "../components/MethodSwitchBanner";
+import SessionHeader from "../components/session/SessionHeader";
 import RatingDialog, {type RatingValues} from "../components/RatingDialog";
 import SessionChat, {type ChatMessage} from "../components/SessionChat";
 import {Button} from "@/components/ui/button";
@@ -29,15 +26,6 @@ import type {
     UserSettings,
 } from "../types";
 import {CYCLE_STEPS} from "../lib/constants";
-
-function formatContextWindowLabel(tokens: number): string {
-    if (tokens >= 1_000_000) {
-        const text = (tokens / 1_000_000).toFixed(1);
-        return `${text.endsWith(".0") ? text.slice(0, -2) : text}M tokens`;
-    }
-    if (tokens >= 1000) return `${Math.round(tokens / 1000)}K tokens`;
-    return `${tokens} tokens`;
-}
 
 /**
  * Session page (project-reference §8 row ``/session``).
@@ -591,91 +579,14 @@ export default function Session() {
 
     return (
         <main id="main" data-testid="session" className="session-page">
-            <header className="session-header">
-                <div className="session-header-row">
-                    <h1>
-                        <HelpTooltip glossaryKey="learning_session">
-                            {t("session.title", "Learning session")}
-                        </HelpTooltip>
-                        <HelpLink glossaryKey="learning_session" size={18} />
-                    </h1>
-                    <div className="session-header-chips">
-                        {session.cycle_count && session.cycle_count > 1 && (
-                            <span
-                                className="cycle-counter-badge"
-                                data-testid="session-cycle-counter"
-                            >
-                                {t(
-                                    "session.cycle_label",
-                                    "Cycle {n}",
-                                ).replace(
-                                    "{n}",
-                                    String(session.cycle_count),
-                                )}
-                            </span>
-                        )}
-                        <MethodBadge method={session.method} />
-                        <HelpLink
-                            glossaryKey={`method_${session.method}`}
-                        />
-                        {userSettings && (
-                            <span
-                                className="provider-chip"
-                                data-testid="session-active-provider"
-                                title={
-                                    activeModelInfo
-                                        ? `${activeModelInfo.id}${
-                                              activeModelInfo.contextWindow
-                                                  ? ` · ${formatContextWindowLabel(
-                                                        activeModelInfo.contextWindow,
-                                                    )}`
-                                                  : ""
-                                          }`
-                                        : t(
-                                              `settings.provider_${userSettings.active_provider}`,
-                                              userSettings.active_provider,
-                                          )
-                                }
-                            >
-                                {t(
-                                    `settings.provider_${userSettings.active_provider}`,
-                                    userSettings.active_provider,
-                                )}
-                                {activeModelInfo && (
-                                    <>
-                                        :{" "}
-                                        <span
-                                            className="provider-chip-model"
-                                            data-testid="session-active-model"
-                                        >
-                                            {activeModelInfo.name}
-                                        </span>
-                                    </>
-                                )}
-                            </span>
-                        )}
-                    </div>
-                </div>
-                {project?.topic && (
-                    <p
-                        className="session-header-topic"
-                        data-testid="session-header-topic"
-                    >
-                        <span className="session-header-topic-label">
-                            {t("session.topic_label", "Topic")}:
-                        </span>
-                        {project.topic}
-                    </p>
-                )}
-                <CycleProgress
-                    currentStep={session.cycle_step}
-                    evaluationReason={
-                        stepEvaluation && !stepEvaluation.fallback_used
-                            ? stepEvaluation.reason
-                            : null
-                    }
-                />
-            </header>
+            <SessionHeader
+                session={session}
+                project={project}
+                userSettings={userSettings}
+                activeModelInfo={activeModelInfo}
+                stepEvaluation={stepEvaluation}
+                t={t}
+            />
 
             {switchRec?.recommended &&
                 switchRec.to_method &&
