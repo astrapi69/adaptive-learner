@@ -17,8 +17,10 @@ baseline from the current offenders so it can only shrink as files are
 refactored.
 
 Baseline line format: ``<repo-relative-file> <worst-cyclomatic-complexity>``.
-Python rank E/F means cc >= 31; the TypeScript threshold is eslint's
-``complexity`` option (> 20).
+Python rank D/E/F means cc > 20 (cc >= 21); the TypeScript threshold is
+eslint's ``complexity`` option (> 20). The Phase 2 hard gate tightened the
+Python detection from rank E/F (cc >= 31) to rank D (cc > 20) so both
+languages share one cc > 20 threshold.
 """
 
 from __future__ import annotations
@@ -30,7 +32,9 @@ import re
 import sys
 
 # radon ranks: A 1-5, B 6-10, C 11-20, D 21-30, E 31-40, F 41+.
-PY_WARN_RANKS = {"E", "F"}
+# Phase 2 hard gate: rank D and worse (cc > 20) are gate offenders, matching
+# the TypeScript eslint complexity > 20 threshold.
+PY_WARN_RANKS = {"D", "E", "F"}
 _CC_RE = re.compile(r"complexity of (\d+)")
 
 
@@ -104,8 +108,10 @@ def write_baseline(path: str, worst: dict[str, int]) -> None:
         "# file may only SHRINK - refactor a file's worst function below the value",
         "# (or below threshold), then run `make check-complexity-gate-update`.",
         "#",
-        "# Thresholds: Python radon rank E/F (cc >= 31); TypeScript eslint",
-        "# complexity > 20. File-level granularity matches .filesize-baseline.",
+        "# Thresholds (Phase 2 hard gate): Python radon rank D/E/F (cc > 20);",
+        "# TypeScript eslint complexity > 20. New over-threshold functions block",
+        "# immediately; existing offenders below are grandfathered (ratchet may",
+        "# only shrink). File-level granularity matches .filesize-baseline.",
         "",
     ]
     body = [f"{path_} {worst[path_]}" for path_ in sorted(worst)]
