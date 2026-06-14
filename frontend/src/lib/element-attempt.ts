@@ -56,22 +56,29 @@ function _baseAttempt(
 /** MATCHING: fan-out one attempt per pair. ``matches`` maps
  *  the user's left-tile index → the right-tile's
  *  originalIndex from the authored ``pairs`` list. A pair is
- *  correct iff the user paired ``leftIdx`` with the
- *  same-index right (the MatchingExercise component already
- *  computes ``correct = leftIdx === rightOriginal``). */
+ *  correct when the matched right tile's VALUE equals the value the
+ *  left pair expects (``.left`` in a productive drill, ``.right``
+ *  otherwise), so duplicate right-column values (e.g. "el" for both
+ *  ``libro`` and ``coche``) are interchangeable rather than
+ *  index-bound. */
 export function deriveMatchingAttempts(
     exercise: ContentLessonExercise,
     ctx: AttemptContext,
     matches: ReadonlyMap<number, number>,
+    productive = false,
 ): ElementAttempt[] {
     const pairs = exercise.pairs ?? [];
+    const rightValue = (i: number): string =>
+        (productive ? pairs[i]?.left : pairs[i]?.right) ?? "";
     return pairs.map((pair, leftIdx) => {
         const userRightOriginalIdx = matches.get(leftIdx);
         const userPairingText =
             userRightOriginalIdx !== undefined
                 ? (pairs[userRightOriginalIdx]?.right ?? "")
                 : "";
-        const correct = userRightOriginalIdx === leftIdx;
+        const correct =
+            userRightOriginalIdx !== undefined &&
+            rightValue(userRightOriginalIdx) === rightValue(leftIdx);
         return {
             ..._baseAttempt(exercise, ctx),
             element_key: pair.left,

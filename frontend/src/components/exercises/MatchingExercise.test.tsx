@@ -203,6 +203,47 @@ describe("MatchingExercise: scoring + completion", () => {
         expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 3}));
     });
 
+    it("accepts duplicate right-column values regardless of which identical tile is matched (#480)", () => {
+        const onComplete = vi.fn();
+        // libro + coche both take "el" — the two "el" right tiles are
+        // interchangeable. The right column is shuffled, so a learner
+        // pairing libro with coche's "el" tile (and vice versa) is still
+        // correct: both display "el".
+        const dupExercise: ContentLessonExercise = {
+            id: "ex-dup-value",
+            type: "matching",
+            prompt: "Match each noun with its article.",
+            card_ids: [],
+            pairs: [
+                {left: "libro", right: "el"},
+                {left: "coche", right: "el"},
+                {left: "casa", right: "la"},
+            ],
+            distractors: [],
+        };
+        render(
+            <MatchingExercise exercise={dupExercise} onComplete={onComplete} />,
+        );
+        // Cross-match the two identical "el" tiles: libro→pair-1's "el"
+        // tile, coche→pair-0's "el" tile. Pre-#480 this scored 1/3 (the
+        // index check 0!==1 / 1!==0 failed); both must now count.
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 3, total: 3}),
+        );
+        // The per-element SRS attempts must all be correct too.
+        const scored = onComplete.mock.calls[0][0];
+        expect(scored.attempts.every((a: {correct: boolean}) => a.correct)).toBe(
+            true,
+        );
+    });
+
     it("stacks wrong-pair feedback inside a flex-column <li> so it can't overlap the next tile (#242)", () => {
         render(
             <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
