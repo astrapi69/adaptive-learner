@@ -96,6 +96,38 @@ export interface ShareWizardProps {
   downloadLesson?: (lesson: ContentLesson, filename: string) => void;
 }
 
+/** Step-1 metadata gate: collect the localized blocking reasons (no
+ *  title, missing source/target language, no CEFR level, empty lesson).
+ *  source == target is intentionally allowed (knowledge content). */
+function computeStep1Errors(
+  fields: {
+    editTitle: string;
+    editSource: string;
+    editTarget: string;
+    editLevel: string;
+    isEmptyLesson: boolean;
+  },
+  t: (key: string, fallback?: string) => string,
+): string[] {
+  const errors: string[] = [];
+  if (!fields.editTitle.trim())
+    errors.push(t("content.wizard.err_title", "Add a title."));
+  if (!isIsoLang(fields.editSource))
+    errors.push(t("content.wizard.err_source", "Choose the source language."));
+  if (!isIsoLang(fields.editTarget))
+    errors.push(t("content.wizard.err_target", "Choose the target language."));
+  if (!isCefr(fields.editLevel))
+    errors.push(t("content.wizard.err_level", "Choose a CEFR level (A1-C2)."));
+  if (fields.isEmptyLesson)
+    errors.push(
+      t(
+        "content.wizard.err_empty",
+        "This lesson has no exercises. Please recreate the lesson.",
+      ),
+    );
+  return errors;
+}
+
 /**
  * Build the Share Wizard view-model from its props. The returned object
  * carries the editable metadata, the per-step UI state, the derived
@@ -287,30 +319,13 @@ export function useShareWizard({
   const isEmptyLesson = !checking && (exerciseCount === 0 || cardCount === 0);
 
   // Step-1 gate: block "Continue" until the metadata is shareable.
-  const step1Errors: string[] = [];
-  if (!editTitle.trim())
-    step1Errors.push(t("content.wizard.err_title", "Add a title."));
-  if (!isIsoLang(editSource))
-    step1Errors.push(
-      t("content.wizard.err_source", "Choose the source language."),
-    );
-  if (!isIsoLang(editTarget))
-    step1Errors.push(
-      t("content.wizard.err_target", "Choose the target language."),
-    );
-  // No same-language block: source == target is allowed and ships as
-  // non-language (knowledge) domain content (see resolvedDomain).
-  if (!isCefr(editLevel))
-    step1Errors.push(
-      t("content.wizard.err_level", "Choose a CEFR level (A1-C2)."),
-    );
-  if (isEmptyLesson)
-    step1Errors.push(
-      t(
-        "content.wizard.err_empty",
-        "This lesson has no exercises. Please recreate the lesson.",
-      ),
-    );
+  // (source == target is allowed — it ships as non-language / knowledge
+  // domain content; see resolvedDomain — so there is no same-language
+  // block.)
+  const step1Errors = computeStep1Errors(
+    { editTitle, editSource, editTarget, editLevel, isEmptyLesson },
+    t,
+  );
   const step1Blocked = step1Errors.length > 0;
 
   // Step 2: scan once on entry. Single-lesson sets only — a

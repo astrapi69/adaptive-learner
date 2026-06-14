@@ -33,8 +33,14 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ReactElement,
+  type Ref,
+} from "react";
+import { useNavigate, useParams, type NavigateFunction } from "react-router-dom";
 
 import SaveAdaptiveLessonButton from "../components/content/SaveAdaptiveLessonButton";
 import {
@@ -43,10 +49,19 @@ import {
 } from "../components/exercises/ExerciseDispatcher";
 import type { ExerciseHandle } from "../components/exercises/exercise-control";
 import { Button } from "@/components/ui/button";
+import ProgressBar from "../shared/ProgressBar";
 import { useI18n } from "../hooks/useI18n";
 import { useAdaptiveLesson } from "../hooks/useAdaptiveLesson";
 import type { ErrorTag } from "../lib/adaptive/error-classifier";
 import type { AdaptiveTransparency } from "../hooks/useAdaptiveLesson";
+import type {
+  ContentLesson,
+  ContentLessonStep,
+  ElementAttempt,
+} from "../storage/types";
+import type { ExerciseScored } from "../components/exercises/exercise-control";
+
+type Translate = (key: string, fallback?: string) => string;
 
 interface UrlParams {
   setId: string;
@@ -119,91 +134,8 @@ export default function AdaptiveLessonPage() {
     }
   }, [isSummary, finalised, finalize]);
 
-  if (!setId) {
-    return (
-      <main
-        id="main"
-        className="page lesson-page"
-        data-testid="adaptive-lesson-missing-params"
-      >
-        <h1>{t("adaptive.page_title", "Adaptive Lesson")}</h1>
-        <p>{t("adaptive.error.missing_params", "No content set selected.")}</p>
-      </main>
-    );
-  }
-
-  if (status === "loading") {
-    return (
-      <main
-        id="main"
-        className="page lesson-page"
-        data-testid="adaptive-lesson-loading"
-      >
-        <p>{t("adaptive.loading", "Analyzing your errors…")}</p>
-      </main>
-    );
-  }
-
-  if (status === "empty") {
-    return (
-      <main
-        id="main"
-        className="page lesson-page"
-        data-testid="adaptive-lesson-empty"
-      >
-        <header className="lesson-header">
-          <h1>{t("adaptive.page_title", "Adaptive Lesson")}</h1>
-        </header>
-        <p className="lesson-not-cached-body">
-          {t(
-            "adaptive.empty_body",
-            "Nothing to adapt yet — practice a lesson to build up data.",
-          )}
-        </p>
-        <p>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate("/dashboard")}
-            data-testid="adaptive-lesson-back-to-dashboard"
-          >
-            <ArrowLeft size={14} aria-hidden="true" />
-            {t("adaptive.back_to_dashboard", "Back to Dashboard")}
-          </Button>
-        </p>
-      </main>
-    );
-  }
-
-  if (status === "not-cached") {
-    return (
-      <main
-        id="main"
-        className="page lesson-page"
-        data-testid="adaptive-lesson-not-cached"
-      >
-        <header className="lesson-header">
-          <h1>{t("adaptive.page_title", "Adaptive Lesson")}</h1>
-        </header>
-        <p className="lesson-not-cached-body">
-          {t(
-            "adaptive.not_cached_body",
-            "This set isn't downloaded yet. Open the content browser to download it first.",
-          )}
-        </p>
-        <p>
-          <Button
-            type="button"
-            onClick={() => navigate("/content")}
-            data-testid="adaptive-lesson-goto-content"
-          >
-            <Download size={14} aria-hidden="true" />
-            {t("lesson.action.open_browser", "Open content browser")}
-          </Button>
-        </p>
-      </main>
-    );
-  }
+  const statusScreen = renderAdaptiveLessonStatus(setId, status, navigate, t);
+  if (statusScreen) return statusScreen;
 
   if (status === "error" || lesson === null) {
     return (
@@ -267,27 +199,20 @@ export default function AdaptiveLessonPage() {
         )}
       </header>
 
-      <div
+      <ProgressBar
+        valueNow={progressPct}
+        ariaLabel={t("lesson.progress.aria_label", "Lesson progress")}
         className="lesson-progress-bar"
-        role="progressbar"
-        aria-valuenow={progressPct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={t("lesson.progress.aria_label", "Lesson progress")}
-        data-testid="adaptive-lesson-progress-bar"
+        fillClassName="lesson-progress-fill"
+        labelClassName="lesson-progress-label"
+        testId="adaptive-lesson-progress-bar"
       >
-        <div
-          className="lesson-progress-fill"
-          style={{ width: `${progressPct}%` }}
-        />
-        <span className="lesson-progress-label">
-          {isSummary
-            ? t("lesson.progress.summary", "Summary")
-            : t("lesson.progress.step_of", "Step {current} of {total}")
-                .replace("{current}", String(currentStepIndex + 1))
-                .replace("{total}", String(totalSteps))}
-        </span>
-      </div>
+        {isSummary
+          ? t("lesson.progress.summary", "Summary")
+          : t("lesson.progress.step_of", "Step {current} of {total}")
+              .replace("{current}", String(currentStepIndex + 1))
+              .replace("{total}", String(totalSteps))}
+      </ProgressBar>
 
       {isSummary ? (
         <>
@@ -303,79 +228,253 @@ export default function AdaptiveLessonPage() {
           </div>
         </>
       ) : (
-        <article
-          className="lesson-step"
-          data-testid={`adaptive-step-${step!.id}`}
-          data-step-type={step!.type}
-        >
-          <ExerciseDispatcher
-            key={step!.id}
-            ref={exerciseRef}
-            controlled
-            onInteraction={setAnswerable}
-            step={step!}
-            setId={setId}
-            lessonId={_extractLessonIdFromStep(step!.id)}
-            cards={lesson?.cards ?? []}
-            onComplete={async (scored) => {
-              // Flip to the "Weiter" phase the moment the answer is
-              // graded, then record the per-element attempts.
-              setChecked(true);
-              await recordStepAttempts(scored.attempts);
-            }}
-          />
-        </article>
+        <AdaptiveLessonExercise
+          step={step!}
+          setId={setId}
+          cards={lesson.cards}
+          exerciseRef={exerciseRef}
+          onInteraction={setAnswerable}
+          onChecked={() => setChecked(true)}
+          recordStepAttempts={recordStepAttempts}
+        />
       )}
 
-      <nav
-        className="lesson-nav"
-        aria-label={t("lesson.nav.aria_label", "Step navigation")}
-      >
-        <Button
-          type="button"
-          variant="outline"
-          className="lesson-nav-prev"
-          onClick={goPrev}
-          disabled={currentStepIndex === 0}
-          data-testid="adaptive-lesson-prev"
-        >
-          <ArrowLeft size={14} aria-hidden="true" />
-          {t("lesson.action.prev", "Previous")}
-        </Button>
-        {!isSummary &&
-          (isExerciseStep && !checked ? (
-            <Button
-              type="button"
-              className="lesson-nav-check"
-              onClick={() => exerciseRef.current?.submit()}
-              disabled={!answerable}
-              title={
-                !answerable
-                  ? t(
-                      "lesson.button.check_disabled_hint",
-                      "Answer the exercise first",
-                    )
-                  : undefined
-              }
-              data-testid="adaptive-lesson-check"
-            >
-              {t("lesson.button.check", "Check")}
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              className="lesson-nav-next"
-              onClick={goNext}
-              data-testid="adaptive-lesson-next"
-            >
-              {currentStepIndex + 1 === totalSteps
-                ? t("lesson.action.finish", "Finish lesson")
-                : t("lesson.action.next", "Next")}
-              <ArrowRight size={14} aria-hidden="true" />
-            </Button>
-          ))}
-      </nav>
+      <AdaptiveLessonNav
+        isSummary={isSummary}
+        isExerciseStep={isExerciseStep}
+        checked={checked}
+        answerable={answerable}
+        isFirstStep={currentStepIndex === 0}
+        isLastStep={currentStepIndex + 1 === totalSteps}
+        onPrev={goPrev}
+        onNext={goNext}
+        onCheck={() => exerciseRef.current?.submit()}
+        t={t}
+      />
     </main>
+  );
+}
+
+/** Render the non-playing status screen for an adaptive lesson
+ *  (missing param / loading / empty / not-cached), or ``null`` once a
+ *  playable lesson is ready. The ``error`` / ``lesson === null`` case
+ *  stays inline in the page so TypeScript narrows ``lesson`` for the
+ *  main render. */
+function renderAdaptiveLessonStatus(
+  setId: string,
+  status: string,
+  navigate: NavigateFunction,
+  t: Translate,
+): ReactElement | null {
+  if (!setId) {
+    return (
+      <main
+        id="main"
+        className="page lesson-page"
+        data-testid="adaptive-lesson-missing-params"
+      >
+        <h1>{t("adaptive.page_title", "Adaptive Lesson")}</h1>
+        <p>{t("adaptive.error.missing_params", "No content set selected.")}</p>
+      </main>
+    );
+  }
+  if (status === "loading") {
+    return (
+      <main
+        id="main"
+        className="page lesson-page"
+        data-testid="adaptive-lesson-loading"
+      >
+        <p>{t("adaptive.loading", "Analyzing your errors…")}</p>
+      </main>
+    );
+  }
+  if (status === "empty") {
+    return (
+      <main
+        id="main"
+        className="page lesson-page"
+        data-testid="adaptive-lesson-empty"
+      >
+        <header className="lesson-header">
+          <h1>{t("adaptive.page_title", "Adaptive Lesson")}</h1>
+        </header>
+        <p className="lesson-not-cached-body">
+          {t(
+            "adaptive.empty_body",
+            "Nothing to adapt yet — practice a lesson to build up data.",
+          )}
+        </p>
+        <p>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate("/dashboard")}
+            data-testid="adaptive-lesson-back-to-dashboard"
+          >
+            <ArrowLeft size={14} aria-hidden="true" />
+            {t("adaptive.back_to_dashboard", "Back to Dashboard")}
+          </Button>
+        </p>
+      </main>
+    );
+  }
+  if (status === "not-cached") {
+    return (
+      <main
+        id="main"
+        className="page lesson-page"
+        data-testid="adaptive-lesson-not-cached"
+      >
+        <header className="lesson-header">
+          <h1>{t("adaptive.page_title", "Adaptive Lesson")}</h1>
+        </header>
+        <p className="lesson-not-cached-body">
+          {t(
+            "adaptive.not_cached_body",
+            "This set isn't downloaded yet. Open the content browser to download it first.",
+          )}
+        </p>
+        <p>
+          <Button
+            type="button"
+            onClick={() => navigate("/content")}
+            data-testid="adaptive-lesson-goto-content"
+          >
+            <Download size={14} aria-hidden="true" />
+            {t("lesson.action.open_browser", "Open content browser")}
+          </Button>
+        </p>
+      </main>
+    );
+  }
+  return null;
+}
+
+interface AdaptiveLessonExerciseProps {
+  step: ContentLessonStep;
+  setId: string;
+  cards: ContentLesson["cards"];
+  exerciseRef: Ref<ExerciseHandle>;
+  onInteraction: (answerable: boolean) => void;
+  onChecked: () => void;
+  recordStepAttempts: (attempts: readonly ElementAttempt[]) => Promise<void>;
+}
+
+/** The active exercise step: the controlled ExerciseDispatcher wrapped
+ *  in the lesson-step article. Flips to the "Weiter" phase + records
+ *  the per-element attempts on completion. */
+function AdaptiveLessonExercise({
+  step,
+  setId,
+  cards,
+  exerciseRef,
+  onInteraction,
+  onChecked,
+  recordStepAttempts,
+}: AdaptiveLessonExerciseProps) {
+  return (
+    <article
+      className="lesson-step"
+      data-testid={`adaptive-step-${step.id}`}
+      data-step-type={step.type}
+    >
+      <ExerciseDispatcher
+        key={step.id}
+        ref={exerciseRef}
+        controlled
+        onInteraction={onInteraction}
+        step={step}
+        setId={setId}
+        lessonId={_extractLessonIdFromStep(step.id)}
+        cards={cards}
+        onComplete={async (scored: ExerciseScored) => {
+          // Flip to the "Weiter" phase the moment the answer is
+          // graded, then record the per-element attempts.
+          onChecked();
+          await recordStepAttempts(scored.attempts);
+        }}
+      />
+    </article>
+  );
+}
+
+interface AdaptiveLessonNavProps {
+  isSummary: boolean;
+  isExerciseStep: boolean;
+  checked: boolean;
+  answerable: boolean;
+  isFirstStep: boolean;
+  isLastStep: boolean;
+  onPrev: () => void;
+  onNext: () => void;
+  onCheck: () => void;
+  t: Translate;
+}
+
+/** Step navigation footer: Previous + the single two-phase
+ *  Check/Next button (hidden on the summary screen). */
+function AdaptiveLessonNav({
+  isSummary,
+  isExerciseStep,
+  checked,
+  answerable,
+  isFirstStep,
+  isLastStep,
+  onPrev,
+  onNext,
+  onCheck,
+  t,
+}: AdaptiveLessonNavProps) {
+  return (
+    <nav
+      className="lesson-nav"
+      aria-label={t("lesson.nav.aria_label", "Step navigation")}
+    >
+      <Button
+        type="button"
+        variant="outline"
+        className="lesson-nav-prev"
+        onClick={onPrev}
+        disabled={isFirstStep}
+        data-testid="adaptive-lesson-prev"
+      >
+        <ArrowLeft size={14} aria-hidden="true" />
+        {t("lesson.action.prev", "Previous")}
+      </Button>
+      {!isSummary &&
+        (isExerciseStep && !checked ? (
+          <Button
+            type="button"
+            className="lesson-nav-check"
+            onClick={onCheck}
+            disabled={!answerable}
+            title={
+              !answerable
+                ? t(
+                    "lesson.button.check_disabled_hint",
+                    "Answer the exercise first",
+                  )
+                : undefined
+            }
+            data-testid="adaptive-lesson-check"
+          >
+            {t("lesson.button.check", "Check")}
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            className="lesson-nav-next"
+            onClick={onNext}
+            data-testid="adaptive-lesson-next"
+          >
+            {isLastStep
+              ? t("lesson.action.finish", "Finish lesson")
+              : t("lesson.action.next", "Next")}
+            <ArrowRight size={14} aria-hidden="true" />
+          </Button>
+        ))}
+    </nav>
   );
 }
 

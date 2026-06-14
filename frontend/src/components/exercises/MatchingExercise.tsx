@@ -44,8 +44,10 @@ import {
     MatchingRightTile,
     MatchingPrompt,
     MatchingResultFooter,
+    matchingPairIsCorrect,
     type LeftTile,
     type RightTile,
+    type MatchingPairs,
 } from "./matching-parts";
 
 export {MATCHING_PAIR_COLORS, matchingPairColorVar} from "./matching-parts";
@@ -82,16 +84,22 @@ export interface MatchingExerciseProps extends ControlledExerciseProps {
 }
 
 
-/** Count pairs whose left index matches its right originalIndex. */
+/** Count correctly-matched pairs. A pair is correct when the matched
+ *  right tile's VALUE equals the value its left pair expects, so
+ *  duplicate right-column values (e.g. "el" for both libro + coche) are
+ *  interchangeable rather than index-bound. */
 function _scoreMatches(
     matches: ReadonlyMap<number, number>,
-    total: number,
+    pairs: MatchingPairs,
+    productive: boolean,
 ): {correct: number; total: number} {
     let correct = 0;
     for (const [leftIdx, rightOriginal] of matches) {
-        if (leftIdx === rightOriginal) correct += 1;
+        if (matchingPairIsCorrect(pairs, productive, leftIdx, rightOriginal)) {
+            correct += 1;
+        }
     }
-    return {correct, total};
+    return {correct, total: pairs.length};
 }
 
 
@@ -189,6 +197,14 @@ function MatchingExercise(
      *  click to complete the pair). null when nothing is
      *  selected. */
     const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
+    /** Currently-selected right originalIndex — the symmetric
+     *  counterpart so a pair can be started from the B column too
+     *  (#507, bidirectional selection). At most one of selectedLeft /
+     *  selectedRight is set at a time; forming or undoing a pair clears
+     *  both. The pairing direction does not change the ``matches`` map
+     *  (always left → right originalIndex), so scoring + the #481
+     *  value-based validation are untouched. */
+    const [selectedRight, setSelectedRight] = useState<number | null>(null);
     /** Map from left index → right's originalIndex. */
     const [matches, setMatches] = useState<Map<number, number>>(
         () =>
@@ -223,7 +239,7 @@ function MatchingExercise(
     const allPaired = matches.size === pairs.length;
 
     const reviewedResult = reviewedMatching
-        ? _scoreMatches(new Map(reviewedMatching.matches), pairs.length)
+        ? _scoreMatches(new Map(reviewedMatching.matches), pairs, productive)
         : null;
 
     const {submitted, result, submit, reset} = useControlledExercise({
@@ -234,7 +250,7 @@ function MatchingExercise(
         onComplete,
         reviewedResult,
         score: (): ExerciseScored => {
-            const {correct} = _scoreMatches(matches, pairs.length);
+            const {correct} = _scoreMatches(matches, pairs, productive);
             return {
                 correct,
                 total: pairs.length,
@@ -242,6 +258,7 @@ function MatchingExercise(
                     exercise,
                     {setId, lessonId},
                     matches,
+                    productive,
                 ),
                 raw_answer: {
                     kind: "matching",
@@ -253,6 +270,7 @@ function MatchingExercise(
             setMatches(new Map());
             setSlotByLeft(new Map());
             setSelectedLeft(null);
+            setSelectedRight(null);
         },
     });
 
@@ -265,6 +283,21 @@ function MatchingExercise(
         });
     };
 
+    /** Commit a left↔right pair (regardless of which side was tapped
+     *  first), assign it a color slot, and clear both selections. */
+    const formPair = (leftIdx: number, rightOriginal: number) => {
+        const next = new Map(matches);
+        next.set(leftIdx, rightOriginal);
+        setMatches(next);
+        setSlotByLeft((prev) => {
+            const nextSlots = new Map(prev);
+            nextSlots.set(leftIdx, _nextFreeSlot(prev));
+            return nextSlots;
+        });
+        setSelectedLeft(null);
+        setSelectedRight(null);
+    };
+
     const handleLeftClick = (idx: number) => {
         if (submitted) return;
         // Tapping a paired left undoes the pair.
@@ -274,6 +307,12 @@ function MatchingExercise(
             setMatches(next);
             releaseSlot(idx);
             setSelectedLeft(null);
+            setSelectedRight(null);
+            return;
+        }
+        // A right tile is already selected → complete the pair (B → A).
+        if (selectedRight !== null) {
+            formPair(idx, selectedRight);
             return;
         }
         setSelectedLeft(idx === selectedLeft ? null : idx);
@@ -290,18 +329,16 @@ function MatchingExercise(
             next.delete(pairedLeft[0]);
             setMatches(next);
             releaseSlot(pairedLeft[0]);
+            setSelectedLeft(null);
+            setSelectedRight(null);
             return;
         }
-        if (selectedLeft === null) return;
-        const next = new Map(matches);
-        next.set(selectedLeft, originalIndex);
-        setMatches(next);
-        setSlotByLeft((prev) => {
-            const nextSlots = new Map(prev);
-            nextSlots.set(selectedLeft, _nextFreeSlot(prev));
-            return nextSlots;
-        });
-        setSelectedLeft(null);
+        // A left tile is already selected → complete the pair (A → B).
+        if (selectedLeft !== null) {
+            formPair(selectedLeft, originalIndex);
+            return;
+        }
+        setSelectedRight(originalIndex === selectedRight ? null : originalIndex);
     };
 
     if (pairs.length === 0) {
@@ -399,6 +436,9 @@ function MatchingExercise(
                                     slotByLeft,
                                     submitted,
                                     wrongFlash,
+                                    pairs,
+                                    productive,
+                                    selectedRight,
                                 })}
                                 submitted={submitted}
                                 onClick={() => handleRightClick(tile.originalIndex)}

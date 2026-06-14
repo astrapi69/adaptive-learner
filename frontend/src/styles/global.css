@@ -2409,6 +2409,51 @@ select:focus {
   filter: brightness(1.05);
 }
 
+/* #505 — persistent XP / level badge in the nav bar. Token-backed
+   so it recolors across all themes; 44px min touch target. */
+.nav-xp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  margin-left: var(--space-2);
+  padding: 2px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
+  border: 1px solid color-mix(in srgb, var(--star) 35%, var(--border));
+  background: color-mix(in srgb, var(--star) 12%, var(--surface));
+  color: var(--fg);
+}
+
+.nav-xp-badge__icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--star);
+}
+
+.nav-xp-badge__level {
+  opacity: 0.85;
+}
+
+.nav-xp-badge__total {
+  font-weight: 700;
+}
+
+.nav-xp-badge:hover {
+  filter: brightness(1.05);
+}
+
+/* Keep the nav badge compact on small screens: the icon + total
+   stay, the "Level N" segment drops (still in the aria-label). */
+@media (max-width: 600px) {
+  .nav-xp-badge__level {
+    display: none;
+  }
+}
+
 /* Phase 43 / EXP-002 — Set Browser page. Mobile-first, the
    action button stays full-width below 600px so touch
    targets stay above 44px. */
@@ -3314,6 +3359,67 @@ select:focus {
 
 .lesson-summary-message[data-stars="3"] {
   color: var(--accent);
+}
+
+/* #505 — XP earned this run. A centered "+N XP" pill so the
+   gamification reward is unmissable at lesson end. Token-backed
+   (the gold ``--star`` accent) for theme parity. */
+.lesson-summary-xp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.lesson-summary-xp-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--fg-muted, var(--fg));
+}
+
+.lesson-summary-xp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg, var(--radius-md));
+  border: 1px solid color-mix(in srgb, var(--star) 40%, var(--border));
+  background: color-mix(in srgb, var(--star) 14%, var(--surface));
+}
+
+.lesson-summary-xp-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--star);
+}
+
+.lesson-summary-xp-gain {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--star);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lesson-summary-xp-badge {
+    animation: lesson-summary-xp-pop 420ms ease-out both;
+  }
+}
+
+@keyframes lesson-summary-xp-pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .confetti {
@@ -4415,6 +4521,7 @@ select:focus {
    theme toggle stay. */
 .app-nav.is-lesson-compact .nav-dev-badge,
 .app-nav.is-lesson-compact .nav-mode-badge,
+.app-nav.is-lesson-compact .nav-xp-badge,
 .app-nav.is-lesson-compact .nav-sync-indicator,
 .app-nav.is-lesson-compact .nav-online-indicator,
 .app-nav.is-lesson-compact .nav-brand-name {

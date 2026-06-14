@@ -1,8 +1,8 @@
 name: Complexity Check
 
 # Complexity ratchet gate (#400 Phase 1 warn-only -> #407 Phase 2 hard gate).
-# Compares the current offenders (Python radon rank E/F; TypeScript eslint
-# complexity > 20) to .complexity-baseline and FAILS the job on a new
+# Compares the current offenders (Python radon rank D/E/F = cc > 20; TypeScript
+# eslint complexity > 20) to .complexity-baseline and FAILS the job on a new
 # over-threshold file or a regression above a file's frozen worst-complexity.
 # The baseline may only shrink - same ratchet contract as .filesize-baseline
 # (#372). Refactor a file below its frozen value, then run

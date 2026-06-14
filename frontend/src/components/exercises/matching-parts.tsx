@@ -110,8 +110,38 @@ export interface RightTile {
     label: string;
 }
 
-type MatchingPairs = NonNullable<ContentLessonExercise["pairs"]>;
+export type MatchingPairs = NonNullable<ContentLessonExercise["pairs"]>;
 type Translate = (key: string, fallback?: string) => string;
+
+/** The value displayed in the right column for pair ``index`` — the
+ *  side the learner matches against (``.left`` in a productive drill,
+ *  ``.right`` otherwise). */
+export function matchingRightValue(
+    pairs: MatchingPairs,
+    productive: boolean,
+    index: number,
+): string {
+    return (productive ? pairs[index]?.left : pairs[index]?.right) ?? "";
+}
+
+/** True when pairing left pair ``leftIdx`` with the right tile that
+ *  originally belonged to pair ``rightOriginal`` is correct. Compares
+ *  the displayed VALUES, not the indices, so duplicate right-column
+ *  values (e.g. "el" for both ``libro`` and ``coche``) are
+ *  interchangeable: any tile carrying the right value is accepted, as
+ *  long as the overall assignment is a bijection (enforced because each
+ *  right tile can be paired only once). */
+export function matchingPairIsCorrect(
+    pairs: MatchingPairs,
+    productive: boolean,
+    leftIdx: number,
+    rightOriginal: number,
+): boolean {
+    return (
+        matchingRightValue(pairs, productive, leftIdx) ===
+        matchingRightValue(pairs, productive, rightOriginal)
+    );
+}
 
 interface MatchingLabels {
     direction: string;
@@ -201,9 +231,14 @@ export function computeLeftTileState(
 ): LeftTileViewState {
     const {selectedLeft, matches, submitted, slotByLeft, pairs, productive} = ctx;
     const isPaired = matches.has(tile.index);
-    const isCorrect = submitted && matches.get(tile.index) === tile.index;
-    const isWrong =
-        submitted && isPaired && matches.get(tile.index) !== tile.index;
+    const chosenRight = matches.get(tile.index);
+    // Correct by VALUE, not index — duplicate right-column values are
+    // interchangeable (e.g. "el" for both libro and coche).
+    const isPairCorrect =
+        chosenRight !== undefined &&
+        matchingPairIsCorrect(pairs, productive, tile.index, chosenRight);
+    const isCorrect = submitted && isPairCorrect;
+    const isWrong = submitted && isPaired && !isPairCorrect;
     const slot = slotByLeft.get(tile.index);
     const showPair = isPaired && !submitted && slot !== undefined;
     const badgeTone = isCorrect ? "correct" : isWrong ? "wrong" : "pair";
@@ -214,7 +249,6 @@ export function computeLeftTileState(
         : pairs[tile.index]?.right;
     // #191 — the partner the learner actually picked (their wrong answer),
     // in the same right-column label form as ``correctPartner``.
-    const chosenRight = matches.get(tile.index);
     const chosenPartner =
         chosenRight !== undefined
             ? productive
@@ -369,6 +403,7 @@ export function MatchingLeftTile({
 }
 
 interface RightTileViewState {
+    isSelected: boolean;
     isPaired: boolean;
     slot: number | undefined;
     showPair: boolean;
@@ -385,6 +420,10 @@ interface RightTileContext {
     slotByLeft: ReadonlyMap<number, number>;
     submitted: boolean;
     wrongFlash: {left: number; right: number} | null;
+    pairs: MatchingPairs;
+    productive: boolean;
+    /** #507 — the right tile selected first in a B → A pairing. */
+    selectedRight: number | null;
 }
 
 /** Derived render state for one right tile (mirrors the result of the
@@ -393,7 +432,17 @@ export function computeRightTileState(
     tile: RightTile,
     ctx: RightTileContext,
 ): RightTileViewState {
-    const {pairedRightIndices, matches, slotByLeft, submitted, wrongFlash} = ctx;
+    const {
+        pairedRightIndices,
+        matches,
+        slotByLeft,
+        submitted,
+        wrongFlash,
+        pairs,
+        productive,
+        selectedRight,
+    } = ctx;
+    const isSelected = selectedRight === tile.originalIndex;
     const isPaired = pairedRightIndices.has(tile.originalIndex);
     const pairedLeftIdx = [...matches.entries()].find(
         ([, ri]) => ri === tile.originalIndex,
@@ -401,11 +450,14 @@ export function computeRightTileState(
     const slot =
         pairedLeftIdx !== undefined ? slotByLeft.get(pairedLeftIdx) : undefined;
     const showPair = isPaired && !submitted && slot !== undefined;
-    const isCorrect = submitted && pairedLeftIdx === tile.originalIndex;
-    const isWrong =
-        submitted &&
+    // Correct by VALUE, not index — the tile a learner paired is right
+    // when its value equals the value its matched left pair expects, so
+    // duplicate right-column values are interchangeable.
+    const pairCorrect =
         pairedLeftIdx !== undefined &&
-        pairedLeftIdx !== tile.originalIndex;
+        matchingPairIsCorrect(pairs, productive, pairedLeftIdx, tile.originalIndex);
+    const isCorrect = submitted && pairCorrect;
+    const isWrong = submitted && pairedLeftIdx !== undefined && !pairCorrect;
     const badgeTone = isCorrect ? "correct" : isWrong ? "wrong" : "pair";
     const pairStyle: CSSProperties | undefined =
         slot !== undefined && showPair
@@ -415,7 +467,17 @@ export function computeRightTileState(
             : undefined;
     const flashing =
         wrongFlash !== null && wrongFlash.right === tile.originalIndex;
-    return {isPaired, slot, showPair, isCorrect, isWrong, badgeTone, pairStyle, flashing};
+    return {
+        isSelected,
+        isPaired,
+        slot,
+        showPair,
+        isCorrect,
+        isWrong,
+        badgeTone,
+        pairStyle,
+        flashing,
+    };
 }
 
 /** One right-column tile (definition/term). */
@@ -430,8 +492,17 @@ export function MatchingRightTile({
     submitted: boolean;
     onClick: () => void;
 }) {
-    const {isPaired, slot, showPair, isCorrect, isWrong, badgeTone, pairStyle, flashing} =
-        state;
+    const {
+        isSelected,
+        isPaired,
+        slot,
+        showPair,
+        isCorrect,
+        isWrong,
+        badgeTone,
+        pairStyle,
+        flashing,
+    } = state;
     return (
         <li key={tile.originalIndex} className="flex flex-col">
             <button
@@ -439,6 +510,10 @@ export function MatchingRightTile({
                 style={pairStyle}
                 className={cn(
                     "inline-flex min-h-11 w-full flex-1 cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-b-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-b-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
+                    // #507 — selected first in a B → A pairing (mirrors the
+                    // left tile's selected affordance).
+                    isSelected &&
+                        "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
                     showPair &&
                         "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
                     // Unmatched after checking stays neutral.
@@ -452,6 +527,7 @@ export function MatchingRightTile({
                         "is-flash motion-safe:animate-[matching-flash_600ms_ease]",
                 )}
                 onClick={onClick}
+                aria-pressed={isSelected}
                 disabled={submitted}
                 data-testid={`matching-right-${tile.originalIndex}`}
             >

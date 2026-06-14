@@ -11,8 +11,9 @@
 #   --update-baseline   regenerate .complexity-baseline from the current
 #                       offenders (the file may only shrink).
 #
-# Python: radon cyclomatic complexity (rank E/F = cc >= 31). TypeScript: eslint's
-# complexity rule (> 20). radon runs from an isolated, gitignored .radon-venv (or
+# Gate (Phase 2): Python radon rank D/E/F (cc > 20); TypeScript eslint
+# complexity > 20. Warn-only view surfaces the cc > 15 band for visibility.
+# radon runs from an isolated, gitignored .radon-venv (or
 # `python3 -m radon` when it is importable, e.g. via PYTHONPATH); the watcher
 # degrades gracefully (skips, never crashes) when radon/eslint are unavailable.
 
@@ -56,7 +57,7 @@ fi
 # Produce the radon JSON (rank E and worse) once; empty object on failure.
 echo "{}" > "$RADON_JSON"
 if [ "${#RADON[@]}" -gt 0 ]; then
-    "${RADON[@]}" cc "${TARGETS[@]}" --min E -j > "$RADON_JSON" 2>/dev/null \
+    "${RADON[@]}" cc "${TARGETS[@]}" --min D -j > "$RADON_JSON" 2>/dev/null \
         || echo "{}" > "$RADON_JSON"
 else
     echo "radon unavailable - Python complexity is skipped this run." >&2
@@ -83,15 +84,15 @@ case "$MODE" in
             echo "== Radon: average + cyclomatic complexity (rank B and worse) =="
             "${RADON[@]}" cc "${TARGETS[@]}" -a -nb || true
             echo
-            echo "== Radon: functions ranked E or F (warn-only) =="
-            "${RADON[@]}" cc "${TARGETS[@]}" --min E -j 2>/dev/null \
+            echo "== Radon: functions with cc > 15 (warn-only) =="
+            "${RADON[@]}" cc "${TARGETS[@]}" --min C -j 2>/dev/null \
                 | python3 "$ROOT/scripts/radon_warn.py"
         fi
         echo
-        echo "== ESLint: frontend complexity (threshold 20, warn-only) =="
+        echo "== ESLint: frontend complexity (threshold 15, warn-only) =="
         if [ -d frontend/node_modules ]; then
             ( cd frontend && npx --no-install eslint src \
-                --rule 'complexity: ["warn", 20]' ) || true
+                --rule 'complexity: ["warn", 15]' ) || true
         else
             echo "frontend/node_modules missing - run 'npm ci' in frontend/."
         fi

@@ -58,6 +58,51 @@ jobs:
         # ``-q`` only quietens the per-test pass logs.
         run: poetry run pytest tests/ -q
 
+  # Plugin tests (#434 Goal A): run every plugin's own suite in CI via
+  # `make test-plugins`, which executes each `plugins/*/tests/` through the
+  # BACKEND venv (PLUGIN_PYTHON). The backend `poetry install` path-installs
+  # every plugin (develop = true) and carries pytest, so no per-plugin
+  # dev-group or lockfile is needed. This closes the gap where the ~808
+  # plugin test functions ran only locally (`make test-plugins`) with zero CI
+  # coverage. Goal B (the isolated per-plugin matrix as a lock-drift gate)
+  # stays deferred — see issue #434.
+  #
+  # Trigger note: GitHub Actions has no native per-job `paths` filter, and a
+  # path-detector job / separate workflow would breach the "one job only"
+  # scope of #434, so this runs on the standard CI triggers (push / PR to
+  # develop + main), which already cover plugins/** and backend/** changes.
+  # It is cheap — seconds over the cached backend venv, free public minutes.
+  plugin-tests:
+    name: Plugin Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      # Same cache key as backend-tests: make test-plugins reuses the backend
+      # venv, so the two jobs share the warmed virtualenv cache.
+      - name: Cache Poetry virtualenv (backend)
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            poetry-backend-${{ runner.os }}-py3.12-
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install backend dependencies (path-installs every plugin)
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Run plugin tests (make test-plugins via the backend venv)
+        run: make test-plugins
+
   # Plugin matrix job: skeleton ships zero plugins, so this job is
   # disabled. When the user adds their first plugin, re-enable by
   # populating the `matrix.plugin` list with the plugin directory
