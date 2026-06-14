@@ -27,7 +27,6 @@ frontend/src/components/lesson/NextStepSuggestions.tsx 36
 frontend/src/hooks/useLessonEnterKey.ts 22
 frontend/src/hooks/useNextStepSuggestions.ts 29
 frontend/src/hooks/useShareWizard.ts 21
-frontend/src/lib/backup-diff.ts 54
 frontend/src/lib/content/analysis-to-lesson.ts 21
 frontend/src/lib/content/content-validator.ts 30
 frontend/src/lib/export/notebooklm-package.ts 24
