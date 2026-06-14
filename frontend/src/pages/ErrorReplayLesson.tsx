@@ -20,18 +20,24 @@
  */
 
 import {ArrowRight, BookOpen, PartyPopper, RotateCcw} from "lucide-react";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState, type Ref} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
 
 import Confetti from "../components/feedback/Confetti";
+import ProgressBar from "../shared/ProgressBar";
 import {
     ExerciseDispatcher,
     SUPPORTED_EXERCISE_TYPES,
 } from "../components/exercises/ExerciseDispatcher";
-import type {ExerciseHandle} from "../components/exercises/exercise-control";
+import type {
+    ExerciseHandle,
+    ExerciseScored,
+} from "../components/exercises/exercise-control";
 import {useI18n} from "../hooks/useI18n";
+
+type Translate = (key: string, fallback?: string) => string;
 import {
     useLessonEnterKey,
     type LessonEnterNav,
@@ -195,27 +201,20 @@ export default function ErrorReplayLesson() {
                 </h1>
             </header>
 
-            <div
+            <ProgressBar
+                valueNow={progressPct}
+                ariaLabel={t("lesson.progress.aria_label", "Lesson progress")}
                 className="lesson-progress-bar"
-                role="progressbar"
-                aria-valuenow={progressPct}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label={t("lesson.progress.aria_label", "Lesson progress")}
-                data-testid="error-replay-progress-bar"
+                fillClassName="lesson-progress-fill"
+                labelClassName="lesson-progress-label"
+                testId="error-replay-progress-bar"
             >
-                <div
-                    className="lesson-progress-fill"
-                    style={{width: `${progressPct}%`}}
-                />
-                <span className="lesson-progress-label">
-                    {isSummary
-                        ? t("lesson.progress.summary", "Summary")
-                        : t("lesson.progress.step_of", "Step {current} of {total}")
-                              .replace("{current}", String(index + 1))
-                              .replace("{total}", String(total))}
-                </span>
-            </div>
+                {isSummary
+                    ? t("lesson.progress.summary", "Summary")
+                    : t("lesson.progress.step_of", "Step {current} of {total}")
+                          .replace("{current}", String(index + 1))
+                          .replace("{total}", String(total))}
+            </ProgressBar>
 
             {isSummary ? (
                 <ErrorReplaySummary
@@ -226,71 +225,144 @@ export default function ErrorReplayLesson() {
                     onDone={backToLesson}
                 />
             ) : (
-                <article
-                    className="lesson-step"
-                    data-testid={`error-replay-step-${step!.id}`}
-                    data-step-type="exercise"
-                >
-                    <ExerciseDispatcher
-                        key={step!.id}
-                        ref={exerciseRef}
-                        controlled
-                        onInteraction={setAnswerable}
-                        step={step!}
-                        setId={setId}
-                        lessonId={filename}
-                        cards={cards}
-                        onComplete={async (scored) => {
-                            setChecked(true);
-                            setResults((prev) => ({
-                                ...prev,
-                                [step!.exercise!.id]:
-                                    scored.correct === scored.total,
-                            }));
-                        }}
-                    />
-                </article>
+                <ErrorReplayExercise
+                    step={step!}
+                    setId={setId}
+                    filename={filename}
+                    cards={cards}
+                    exerciseRef={exerciseRef}
+                    onInteraction={setAnswerable}
+                    onChecked={() => setChecked(true)}
+                    onResult={(exerciseId, correct) =>
+                        setResults((prev) => ({...prev, [exerciseId]: correct}))
+                    }
+                />
             )}
 
-            {!isSummary && (
-                <nav
-                    className="lesson-nav"
-                    aria-label={t("lesson.nav.aria_label", "Step navigation")}
-                >
-                    {isExerciseStep && !checked ? (
-                        <Button
-                            type="button"
-                            className="lesson-nav-check"
-                            onClick={() => exerciseRef.current?.submit()}
-                            disabled={!answerable}
-                            title={
-                                !answerable
-                                    ? t(
-                                          "lesson.button.check_disabled_hint",
-                                          "Answer the exercise first",
-                                      )
-                                    : undefined
-                            }
-                            data-testid="error-replay-check"
-                        >
-                            {t("lesson.button.check", "Check")}
-                        </Button>
-                    ) : (
-                        <Button
-                            type="button"
-                            className="lesson-nav-next"
-                            onClick={() => setIndex((i) => i + 1)}
-                            data-testid="error-replay-next"
-                        >
-                            {index + 1 === total
-                                ? t("lesson.action.finish", "Finish lesson")
-                                : t("lesson.action.next", "Next")}
-                            <ArrowRight size={14} aria-hidden="true" />
-                        </Button>
-                    )}
-                </nav>
-            )}
+            <ErrorReplayNav
+                isSummary={isSummary}
+                isExerciseStep={isExerciseStep}
+                checked={checked}
+                answerable={answerable}
+                isLast={index + 1 === total}
+                onCheck={() => exerciseRef.current?.submit()}
+                onNext={() => setIndex((i) => i + 1)}
+                t={t}
+            />
         </main>
+    );
+}
+
+interface ErrorReplayExerciseProps {
+    step: ContentLessonStep;
+    setId: string;
+    filename: string;
+    cards: ContentLessonCard[];
+    exerciseRef: Ref<ExerciseHandle>;
+    onInteraction: (answerable: boolean) => void;
+    onChecked: () => void;
+    onResult: (exerciseId: string, correct: boolean) => void;
+}
+
+/** The active replay exercise step: the controlled ExerciseDispatcher
+ *  wrapped in the lesson-step article. On completion it flips to the
+ *  "Weiter" phase and records whether the exercise was fully correct
+ *  this round. */
+function ErrorReplayExercise({
+    step,
+    setId,
+    filename,
+    cards,
+    exerciseRef,
+    onInteraction,
+    onChecked,
+    onResult,
+}: ErrorReplayExerciseProps) {
+    return (
+        <article
+            className="lesson-step"
+            data-testid={`error-replay-step-${step.id}`}
+            data-step-type="exercise"
+        >
+            <ExerciseDispatcher
+                key={step.id}
+                ref={exerciseRef}
+                controlled
+                onInteraction={onInteraction}
+                step={step}
+                setId={setId}
+                lessonId={filename}
+                cards={cards}
+                onComplete={async (scored: ExerciseScored) => {
+                    onChecked();
+                    onResult(step.exercise!.id, scored.correct === scored.total);
+                }}
+            />
+        </article>
+    );
+}
+
+interface ErrorReplayNavProps {
+    isSummary: boolean;
+    isExerciseStep: boolean;
+    checked: boolean;
+    answerable: boolean;
+    isLast: boolean;
+    onCheck: () => void;
+    onNext: () => void;
+    t: Translate;
+}
+
+/** Step navigation footer for the replay: the single two-phase
+ *  Check/Next button (no "Previous"; hidden entirely on the summary). */
+function ErrorReplayNav({
+    isSummary,
+    isExerciseStep,
+    checked,
+    answerable,
+    isLast,
+    onCheck,
+    onNext,
+    t,
+}: ErrorReplayNavProps) {
+    if (isSummary) return null;
+    return (
+        <nav
+            className="lesson-nav"
+            aria-label={t("lesson.nav.aria_label", "Step navigation")}
+        >
+            {isExerciseStep && !checked ? (
+                <Button
+                    type="button"
+                    className="lesson-nav-check"
+                    onClick={onCheck}
+                    disabled={!answerable}
+                    title={
+                        !answerable
+                            ? t(
+                                  "lesson.button.check_disabled_hint",
+                                  "Answer the exercise first",
+                              )
+                            : undefined
+                    }
+                    data-testid="error-replay-check"
+                >
+                    {t("lesson.button.check", "Check")}
+                </Button>
+            ) : (
+                <Button
+                    type="button"
+                    className="lesson-nav-next"
+                    onClick={onNext}
+                    data-testid="error-replay-next"
+                >
+                    {isLast
+                        ? t("lesson.action.finish", "Finish lesson")
+                        : t("lesson.action.next", "Next")}
+                    <ArrowRight size={14} aria-hidden="true" />
+                </Button>
+            )}
+        </nav>
     );
 }
 
