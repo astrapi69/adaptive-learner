@@ -21,11 +21,43 @@
  */
 
 import type { ContentSetEntry } from "../../storage/types";
+import { resolveTreePlacement } from "./tree-placement";
+
+/**
+ * A user-generated lesson folded into a published tree node
+ * (EXP-026 / UGC-02). Carries just enough to render a row + badge +
+ * the shared set-level actions, without changing any IDs.
+ */
+export interface FoldedUserLesson {
+  /** Lesson id (used for navigation / play). */
+  lessonId: string;
+  title: string;
+  /** Source marker of the owning user-generated set ("user-generated"). */
+  setSource: string;
+  /** Id of the owning user-generated set. */
+  setId: string;
+  /** Badge state: an original ``own`` lesson, or an ``edit`` (a fork of
+   *  an official/community lesson, i.e. it carries ``variation_of``). */
+  origin: "own" | "edit";
+}
+
+/** One user-generated set plus its lessons, to fold into the tree. */
+export interface UserFoldInput {
+  set: ContentSetEntry;
+  lessons: {
+    id: string;
+    title: string;
+    variation_of?: string | null;
+  }[];
+}
 
 export interface LevelGroup {
   /** CEFR-ish level marker as authored ("A1", "beginner", ...). */
   level: string;
   sets: ContentSetEntry[];
+  /** User-generated lessons folded into this level (EXP-026); empty
+   *  unless ``buildContentTree`` was given matching ``userFold`` input. */
+  userLessons: FoldedUserLesson[];
 }
 
 export interface TargetGroup {
@@ -52,6 +84,8 @@ export interface DomainGroup {
   /** Sets in this domain, sorted by title. */
   sets: ContentSetEntry[];
   setCount: number;
+  /** User-generated lessons folded into this domain (EXP-026). */
+  userLessons: FoldedUserLesson[];
 }
 
 export interface ContentTree {
@@ -104,6 +138,7 @@ function groupLevels(sets: ContentSetEntry[]): LevelGroup[] {
     .map(([level, levelSets]) => ({
       level,
       sets: [...levelSets].sort((x, y) => x.title.localeCompare(y.title)),
+      userLessons: [] as FoldedUserLesson[],
     }));
 }
 
@@ -133,10 +168,15 @@ function groupTargets(sets: ContentSetEntry[]): TargetGroup[] {
  *   primary first (app language, then opted-in extras). Sets whose
  *   `source_language` base matches one of these land in `primary`
  *   (ordered by this list); everything else lands in `other`.
+ * @param userFold optional user-generated sets (+ their lessons) to
+ *   fold into matching published nodes (EXP-026 / UGC-02). Defaults to
+ *   none, so existing callers are unaffected. Unmatched sets are
+ *   skipped (the page shows them in the "My Lessons" fallback).
  */
 export function buildContentTree(
   sets: ContentSetEntry[],
   activeSources: string[],
+  userFold: UserFoldInput[] = [],
 ): ContentTree {
   const active = activeSources.map(baseLanguage);
   const activeSet = new Set(active);
@@ -197,7 +237,78 @@ export function buildContentTree(
       domain,
       sets: [...domainSets].sort((x, y) => x.title.localeCompare(y.title)),
       setCount: domainSets.length,
+      userLessons: [] as FoldedUserLesson[],
     }));
 
+  foldUserLessons({ primary, other, knowledge }, sets, userFold);
+
   return { primary, other, knowledge };
+}
+
+/**
+ * Fold each user-generated set's lessons into the matching published
+ * node (EXP-026 / UGC-02). Pure mutation of the freshly-built tree;
+ * sets with no/ambiguous placement are skipped (the page keeps them in
+ * the "My Lessons" fallback). ``setCount`` is untouched, so folded
+ * lessons never inflate the published-set counts.
+ */
+function foldUserLessons(
+  tree: ContentTree,
+  publishedSets: ContentSetEntry[],
+  userFold: UserFoldInput[],
+): void {
+  for (const { set, lessons } of userFold) {
+    const representativeVariation =
+      lessons.find((l) => l.variation_of)?.variation_of ?? null;
+    const placement = resolveTreePlacement(
+      {
+        source_language: set.source_language,
+        target_language: set.target_language,
+        level: set.level,
+        domain: set.domain,
+        title: set.title,
+        variationOf: representativeVariation,
+      },
+      publishedSets,
+    );
+    if (!placement.matched) continue;
+
+    const folded: FoldedUserLesson[] = lessons.map((lesson) => ({
+      lessonId: lesson.id,
+      title: lesson.title,
+      setSource: set.source,
+      setId: set.id,
+      origin: lesson.variation_of ? "edit" : "own",
+    }));
+
+    const target = placement.set;
+    if (domainOf(target) === "language") {
+      const level = findLevelGroup(tree, target);
+      if (level) level.userLessons.push(...folded);
+    } else {
+      const domain = [...tree.knowledge].find(
+        (g) => g.domain === domainOf(target),
+      );
+      if (domain) domain.userLessons.push(...folded);
+    }
+  }
+}
+
+/** Locate the LevelGroup that holds ``target`` (a matched published
+ *  language set) across the primary + other source groups. */
+function findLevelGroup(
+  tree: ContentTree,
+  target: ContentSetEntry,
+): LevelGroup | undefined {
+  const source = baseLanguage(target.source_language);
+  const targetLang = baseLanguage(target.target_language);
+  for (const group of [...tree.primary, ...tree.other]) {
+    if (group.sourceLanguage !== source) continue;
+    const targetGroup = group.targets.find(
+      (tg) => tg.targetLanguage === targetLang,
+    );
+    if (!targetGroup) continue;
+    return targetGroup.levels.find((lg) => lg.level === target.level);
+  }
+  return undefined;
 }
