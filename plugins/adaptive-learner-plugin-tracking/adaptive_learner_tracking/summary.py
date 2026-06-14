@@ -306,6 +306,45 @@ def aggregate_step_evaluations(rows: list[dict[str, Any]]) -> dict[str, Any]:
     if not rows:
         return _empty_step_eval_aggregate()
 
+    agg = _collect_row_aggregates(rows)
+    time_seconds_per_step = _time_seconds_per_step(agg["by_session"])
+
+    return {
+        "total_evaluations": len(rows),
+        "average_confidence": _mean(agg["confidences"]),
+        "advance_count": agg["advance_count"],
+        "repeat_count": agg["repeat_count"],
+        "backward_count": agg["backward_count"],
+        "fallback_count": agg["fallback_count"],
+        "evaluations_per_step": agg["evaluations_per_step"],
+        "time_seconds_per_step": {
+            step: round(secs, 2) for step, secs in time_seconds_per_step.items()
+        },
+    }
+
+
+def _classify_transition(row: dict[str, Any]) -> str | None:
+    """``'advance'`` / ``'backward'`` for an applied step move, else ``None``.
+
+    Only applied rows with integer from/to steps count; ``to_step ==
+    from_step`` (repeat-applied) returns ``None`` so it folds into
+    repeat_count and the dashboard categories stay mutually exclusive.
+    """
+    if not bool(row.get("applied")):
+        return None
+    from_step = row.get("from_step")
+    to_step = row.get("to_step")
+    if not (isinstance(from_step, int) and isinstance(to_step, int)):
+        return None
+    if to_step > from_step:
+        return "advance"
+    if to_step < from_step:
+        return "backward"
+    return None
+
+
+def _collect_row_aggregates(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Single pass over the rows producing the count/list/grouping aggregates."""
     confidences: list[float] = []
     advance_count = 0
     repeat_count = 0
@@ -320,36 +359,44 @@ def aggregate_step_evaluations(rows: list[dict[str, Any]]) -> dict[str, Any]:
         if isinstance(c, (int, float)):
             confidences.append(float(c))
 
-        applied = bool(r.get("applied"))
-        from_step = r.get("from_step")
-        to_step = r.get("to_step")
-        if applied and isinstance(from_step, int) and isinstance(to_step, int):
-            if to_step > from_step:
-                advance_count += 1
-            elif to_step < from_step:
-                backward_count += 1
-            # to_step == from_step (repeat-applied) folded into
-            # repeat_count to keep the dashboard categories
-            # mutually exclusive.
-        if not applied:
+        transition = _classify_transition(r)
+        if transition == "advance":
+            advance_count += 1
+        elif transition == "backward":
+            backward_count += 1
+        if not bool(r.get("applied")):
             repeat_count += 1
         if r.get("fallback_used"):
             fallback_count += 1
 
+        from_step = r.get("from_step")
         if isinstance(from_step, int):
-            evaluations_per_step[from_step] = (
-                evaluations_per_step.get(from_step, 0) + 1
-            )
+            evaluations_per_step[from_step] = evaluations_per_step.get(from_step, 0) + 1
 
         sid = r.get("session_id")
         if isinstance(sid, str):
             by_session.setdefault(sid, []).append(r)
 
-    # Time per step: walk each session's rows in evaluated_at
-    # order, attribute the gap between consecutive evaluations to
-    # the FROM step of the earlier evaluation. This means a
-    # session that sits on step 2 for three messages credits all
-    # the elapsed-time gaps to step 2.
+    return {
+        "confidences": confidences,
+        "advance_count": advance_count,
+        "repeat_count": repeat_count,
+        "backward_count": backward_count,
+        "fallback_count": fallback_count,
+        "evaluations_per_step": evaluations_per_step,
+        "by_session": by_session,
+    }
+
+
+def _time_seconds_per_step(by_session: dict[str, list[dict[str, Any]]]) -> dict[int, float]:
+    """Total seconds spent per FROM-step, summed across sessions.
+
+    Walks each session's rows in evaluated_at order and attributes the gap
+    between consecutive evaluations to the FROM step of the earlier one, so a
+    session that sits on step 2 for three messages credits all the elapsed
+    gaps to step 2. Non-positive gaps and pauses > ``_MAX_STEP_GAP_SECONDS``
+    are excluded.
+    """
     time_seconds_per_step: dict[int, float] = {}
     for session_rows in by_session.values():
         ordered = sorted(
@@ -369,19 +416,5 @@ def aggregate_step_evaluations(rows: list[dict[str, Any]]) -> dict[str, Any]:
                 continue
             step = prev.get("from_step")
             if isinstance(step, int):
-                time_seconds_per_step[step] = (
-                    time_seconds_per_step.get(step, 0.0) + delta
-                )
-
-    return {
-        "total_evaluations": len(rows),
-        "average_confidence": _mean(confidences),
-        "advance_count": advance_count,
-        "repeat_count": repeat_count,
-        "backward_count": backward_count,
-        "fallback_count": fallback_count,
-        "evaluations_per_step": evaluations_per_step,
-        "time_seconds_per_step": {
-            step: round(secs, 2) for step, secs in time_seconds_per_step.items()
-        },
-    }
+                time_seconds_per_step[step] = time_seconds_per_step.get(step, 0.0) + delta
+    return time_seconds_per_step
