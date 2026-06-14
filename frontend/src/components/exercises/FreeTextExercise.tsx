@@ -129,6 +129,223 @@ export interface FreeTextExerciseProps extends ControlledExerciseProps {
     onComplete: (result: ExerciseScored) => void;
 }
 
+type Translate = (key: string, fallback?: string) => string;
+
+/** The reviewed-revisit score for a persisted free-text answer, or null
+ *  when there is no reviewed answer. */
+function freeTextReviewedResult(
+    reviewedInput: string | null | undefined,
+    accept: readonly string[],
+    codeMode: boolean,
+): {correct: number; total: number} | null {
+    if (reviewedInput == null) return null;
+    return {
+        correct: isFreeTextCorrect(reviewedInput, accept, codeMode) ? 1 : 0,
+        total: 1,
+    };
+}
+
+/** The answer field — a monospace textarea in code mode (Enter inserts a
+ *  newline), a plain single-line input otherwise. */
+function FreeTextInput({
+    codeMode,
+    codeLanguage,
+    input,
+    onInput,
+    onKeyDown,
+    submitted,
+    inputBase,
+}: {
+    codeMode: boolean;
+    codeLanguage: string | null;
+    input: string;
+    onInput: (value: string) => void;
+    onKeyDown: (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    submitted: boolean;
+    inputBase: string;
+}) {
+    const {t} = useI18n();
+    if (codeMode) {
+        return (
+            <div className="relative">
+                {codeLanguage && (
+                    <span
+                        className="pointer-events-none absolute right-2 top-1 text-[0.7rem] uppercase tracking-[0.04em] text-[var(--text-muted)]"
+                        data-testid="free-text-code-lang"
+                    >
+                        {codeLanguage}
+                    </span>
+                )}
+                <textarea
+                    className={cn(
+                        inputBase,
+                        "free-text-input-code resize-y overflow-x-auto whitespace-pre font-mono [overflow-wrap:normal] [tab-size:2]",
+                    )}
+                    value={input}
+                    onChange={(e) => onInput(e.target.value)}
+                    onKeyDown={onKeyDown}
+                    disabled={submitted}
+                    rows={4}
+                    placeholder={t(
+                        "lesson.exercise.free_text.code_placeholder",
+                        "Type the code…",
+                    )}
+                    aria-label={t(
+                        "lesson.exercise.free_text.input_label",
+                        "Your answer",
+                    )}
+                    autoComplete="off"
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    data-testid="free-text-input"
+                />
+            </div>
+        );
+    }
+    return (
+        <input
+            type="text"
+            className={inputBase}
+            value={input}
+            onChange={(e) => onInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            disabled={submitted}
+            placeholder={t(
+                "lesson.exercise.free_text.placeholder",
+                "Type your answer…",
+            )}
+            aria-label={t("lesson.exercise.free_text.input_label", "Your answer")}
+            autoComplete="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            data-testid="free-text-input"
+        />
+    );
+}
+
+/** The "Need a hint?" disclosure; null until shown or once submitted. */
+function FreeTextHint({
+    hint,
+    submitted,
+    showHint,
+    onShowHint,
+}: {
+    hint: string | null | undefined;
+    submitted: boolean;
+    showHint: boolean;
+    onShowHint: () => void;
+}) {
+    const {t} = useI18n();
+    if (!hint || submitted) return null;
+    return (
+        <div className="flex items-center gap-2">
+            {!showHint ? (
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    type="button"
+                    className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
+                    onClick={onShowHint}
+                    data-testid="free-text-hint-show"
+                >
+                    {t("lesson.exercise.free_text.hint_show", "Need a hint?")}
+                </Button>
+            ) : (
+                <p
+                    className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
+                    data-testid="free-text-hint"
+                >
+                    {hint}
+                </p>
+            )}
+        </div>
+    );
+}
+
+/** Correct/wrong feedback (with a token diff on a miss) + the shared
+ *  exercise footer. */
+function FreeTextResult({
+    submitted,
+    isCorrect,
+    input,
+    canonical,
+    controlled,
+    canCheck,
+    onCheck,
+    onRetry,
+    t,
+}: {
+    submitted: boolean;
+    isCorrect: boolean;
+    input: string;
+    canonical: string;
+    controlled: boolean;
+    canCheck: boolean;
+    onCheck: () => void;
+    onRetry: () => void;
+    t: Translate;
+}) {
+    return (
+        <div className="flex flex-wrap items-center gap-3">
+            {submitted && (
+                <>
+                    <p
+                        className={cn(
+                            "answer-feedback m-0 inline-flex items-center gap-1.5 font-semibold",
+                            isCorrect
+                                ? "is-correct text-[var(--exercise-correct)]"
+                                : "is-wrong text-[var(--exercise-wrong)]",
+                        )}
+                        data-testid="free-text-result"
+                        data-result={isCorrect ? "correct" : "wrong"}
+                    >
+                        {isCorrect ? (
+                            <>
+                                <Check size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.free_text.result_correct",
+                                    "Correct!",
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <X size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.free_text.result_wrong",
+                                    "Not quite.",
+                                )}
+                            </>
+                        )}
+                    </p>
+                    {!isCorrect && (
+                        <div
+                            className="free-text-diff-row"
+                            data-testid="free-text-diff-row"
+                        >
+                            <DiffHighlight
+                                tokens={tokenDiff(input, canonical)}
+                                className="free-text-diff"
+                            />
+                        </div>
+                    )}
+                    <AnswerCelebration isCorrect={isCorrect} />
+                </>
+            )}
+            <ExerciseFooter
+                testidPrefix="free-text"
+                controlled={controlled}
+                submitted={submitted}
+                canCheck={canCheck}
+                onCheck={onCheck}
+                onRetry={onRetry}
+                checkLabel={t("lesson.exercise.free_text.submit", "Check answer")}
+                retryLabel={t("lesson.exercise.free_text.retry", "Try again")}
+            />
+        </div>
+    );
+}
+
 function FreeTextExercise(
     {
         exercise,
@@ -156,18 +373,11 @@ function FreeTextExercise(
     const trimmed = input.trim();
     const isInputEmpty = trimmed === "";
 
-    const reviewedResult = reviewedFreeText
-        ? {
-              correct: isFreeTextCorrect(
-                  reviewedFreeText.input,
-                  accept,
-                  codeMode,
-              )
-                  ? 1
-                  : 0,
-              total: 1,
-          }
-        : null;
+    const reviewedResult = freeTextReviewedResult(
+        reviewedFreeText?.input,
+        accept,
+        codeMode,
+    );
 
     const {submitted, result, submit, reset} = useControlledExercise({
         ref,
@@ -248,153 +458,34 @@ function FreeTextExercise(
 
             <DirectionInstruction exercise={exercise} />
 
-            {codeMode ? (
-                <div className="relative">
-                    {codeLanguage && (
-                        <span
-                            className="pointer-events-none absolute right-2 top-1 text-[0.7rem] uppercase tracking-[0.04em] text-[var(--text-muted)]"
-                            data-testid="free-text-code-lang"
-                        >
-                            {codeLanguage}
-                        </span>
-                    )}
-                    <textarea
-                        className={cn(
-                            inputBase,
-                            "free-text-input-code resize-y overflow-x-auto whitespace-pre font-mono [overflow-wrap:normal] [tab-size:2]",
-                        )}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        disabled={submitted}
-                        rows={4}
-                        placeholder={t(
-                            "lesson.exercise.free_text.code_placeholder",
-                            "Type the code…",
-                        )}
-                        aria-label={t(
-                            "lesson.exercise.free_text.input_label",
-                            "Your answer",
-                        )}
-                        autoComplete="off"
-                        autoCapitalize="off"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        data-testid="free-text-input"
-                    />
-                </div>
-            ) : (
-                <input
-                    type="text"
-                    className={inputBase}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    disabled={submitted}
-                    placeholder={t(
-                        "lesson.exercise.free_text.placeholder",
-                        "Type your answer…",
-                    )}
-                    aria-label={t(
-                        "lesson.exercise.free_text.input_label",
-                        "Your answer",
-                    )}
-                    autoComplete="off"
-                    autoCapitalize="off"
-                    spellCheck={false}
-                    data-testid="free-text-input"
-                />
-            )}
+            <FreeTextInput
+                codeMode={codeMode}
+                codeLanguage={codeLanguage}
+                input={input}
+                onInput={setInput}
+                onKeyDown={handleKeyDown}
+                submitted={submitted}
+                inputBase={inputBase}
+            />
 
-            {exercise.hint && !submitted && (
-                <div className="flex items-center gap-2">
-                    {!showHint ? (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            type="button"
-                            className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
-                            onClick={() => setShowHint(true)}
-                            data-testid="free-text-hint-show"
-                        >
-                            {t(
-                                "lesson.exercise.free_text.hint_show",
-                                "Need a hint?",
-                            )}
-                        </Button>
-                    ) : (
-                        <p
-                            className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
-                            data-testid="free-text-hint"
-                        >
-                            {exercise.hint}
-                        </p>
-                    )}
-                </div>
-            )}
+            <FreeTextHint
+                hint={exercise.hint}
+                submitted={submitted}
+                showHint={showHint}
+                onShowHint={() => setShowHint(true)}
+            />
 
-            <div className="flex flex-wrap items-center gap-3">
-                {submitted && (
-                    <>
-                        <p
-                            className={cn(
-                                "answer-feedback m-0 inline-flex items-center gap-1.5 font-semibold",
-                                isCorrect
-                                    ? "is-correct text-[var(--exercise-correct)]"
-                                    : "is-wrong text-[var(--exercise-wrong)]",
-                            )}
-                            data-testid="free-text-result"
-                            data-result={isCorrect ? "correct" : "wrong"}
-                        >
-                            {isCorrect ? (
-                                <>
-                                    <Check size={14} aria-hidden="true" />
-                                    {t(
-                                        "lesson.exercise.free_text.result_correct",
-                                        "Correct!",
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    <X size={14} aria-hidden="true" />
-                                    {t(
-                                        "lesson.exercise.free_text.result_wrong",
-                                        "Not quite.",
-                                    )}
-                                </>
-                            )}
-                        </p>
-                        {!isCorrect && (
-                            <div
-                                className="free-text-diff-row"
-                                data-testid="free-text-diff-row"
-                            >
-                                <DiffHighlight
-                                    tokens={tokenDiff(input, canonical)}
-                                    className="free-text-diff"
-                                />
-                            </div>
-                        )}
-                        <AnswerCelebration isCorrect={isCorrect} />
-                    </>
-                )}
-                <ExerciseFooter
-                    testidPrefix="free-text"
-                    controlled={controlled}
-                    submitted={submitted}
-                    canCheck={!isInputEmpty}
-                    onCheck={submit}
-                    onRetry={reset}
-                    checkLabel={t(
-                        "lesson.exercise.free_text.submit",
-                        "Check answer",
-                    )}
-                    retryLabel={t(
-                        "lesson.exercise.free_text.retry",
-                        "Try again",
-                    )}
-                />
-            </div>
+            <FreeTextResult
+                submitted={submitted}
+                isCorrect={isCorrect}
+                input={input}
+                canonical={canonical}
+                controlled={controlled}
+                canCheck={!isInputEmpty}
+                onCheck={submit}
+                onRetry={reset}
+                t={t}
+            />
         </section>
     );
 }
