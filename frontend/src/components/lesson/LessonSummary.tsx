@@ -17,10 +17,12 @@ import {
   FileJson,
   RotateCcw,
   Star,
+  Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import XpBadge from "../../shared/XpBadge";
 import CorrectionBlock from "../exercises/CorrectionBlock";
 import DiffHighlight from "../exercises/DiffHighlight";
 import Confetti from "../feedback/Confetti";
@@ -43,6 +45,8 @@ import {
   buildLessonMarkdownExport,
   downloadBlob,
 } from "../../lib/lesson/result-download";
+import { isFirstAttempt } from "../../lib/gamification/first-attempt";
+import { calculateLessonSessionXp } from "../../lib/gamification/lesson-xp";
 import { emitCelebration } from "../../lib/praise/celebration-bus";
 import { nextPraise } from "../../lib/praise/phrase-picker";
 import { getStorage } from "../../storage";
@@ -126,6 +130,45 @@ export default function LessonSummary({
   // summary still renders if storage is unreachable; the
   // demoted action links below remain a working exit.
   const [sessionErrors, setSessionErrors] = useState<ElementError[]>([]);
+
+  // #505 — the XP this run is worth. Computed with the same pure,
+  // parity-tested gamification calculator the award path uses
+  // (stars + first-attempt + streak multiplier), so the "+N XP"
+  // shown here matches what was credited. The streak is the one
+  // async input; it defaults to 0 (no multiplier) for an anonymous
+  // run or an unreachable read, and refines once fetched.
+  const [streakDays, setStreakDays] = useState(0);
+  useEffect(() => {
+    if (!userId) {
+      setStreakDays(0);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const streak = await getStorage().gamification.getStreak(userId);
+        if (!cancelled) setStreakDays(streak?.current_streak_days ?? 0);
+      } catch {
+        if (!cancelled) setStreakDays(0);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  const xpGain = useMemo(() => {
+    if (total <= 0) return 0;
+    const firstAttempt = isFirstAttempt(
+      JSON.stringify(progress?.step_results ?? null),
+    );
+    return calculateLessonSessionXp({
+      stars,
+      first_attempt: firstAttempt,
+      streak_days: streakDays,
+    }).xp_earned;
+  }, [total, progress, stars, streakDays]);
+
   useEffect(() => {
     if (!userId) {
       setSessionErrors([]);
@@ -352,6 +395,31 @@ export default function LessonSummary({
           %)
         </span>
       </div>
+
+      {xpGain > 0 && (
+        <div
+          className="lesson-summary-xp"
+          data-testid="lesson-summary-xp"
+          role="status"
+          aria-label={t(
+            "gamification.xp_gain_aria",
+            "You earned {n} XP for this lesson",
+          ).replace("{n}", String(xpGain))}
+        >
+          <span className="lesson-summary-xp-label">
+            {t("gamification.xp_earned", "XP earned")}
+          </span>
+          <XpBadge
+            gain={xpGain}
+            icon={<Zap size={18} aria-hidden="true" />}
+            xpLabel={t("gamification.xp", "XP")}
+            className="lesson-summary-xp-badge"
+            iconClassName="lesson-summary-xp-icon"
+            gainClassName="lesson-summary-xp-gain"
+            gainTestId="lesson-summary-xp-gain"
+          />
+        </div>
+      )}
 
       <ul className="lesson-summary-stats">
         <li>

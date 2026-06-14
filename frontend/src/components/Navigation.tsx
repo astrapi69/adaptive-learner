@@ -4,6 +4,7 @@ import { NavLink, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import MenuToggleButton from "../shared/MenuToggleButton";
+import NavXpBadge from "./NavXpBadge";
 import {
   NavModeBadge,
   NavOnlineIndicator,
@@ -231,6 +232,7 @@ export default function Navigation() {
           {t("nav.help", "Help")}
         </Button>
       </div>
+      <NavXpBadge />
       <NavSyncIndicator paired={syncPaired} />
       <NavOnlineIndicator online={online} />
       <NavThemeToggle theme={theme} tooltipsOn={tooltipsOn} onToggle={toggle} />
