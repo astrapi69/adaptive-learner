@@ -203,6 +203,534 @@ function _shuffle<T>(items: readonly T[], seed: string): T[] {
     return out;
 }
 
+type MatchingPairs = NonNullable<ContentLessonExercise["pairs"]>;
+type Translate = (key: string, fallback?: string) => string;
+
+interface MatchingLabels {
+    direction: string;
+    productive: boolean;
+    isKnowledge: boolean;
+    leftLabel: string;
+    rightLabel: string;
+    instruction: string;
+}
+
+/** Resolve the column labels + instruction for one matching exercise.
+ *  Productive flips the displayed orientation; a knowledge domain drops
+ *  the translation-specific wording. Pure (no hooks). */
+function computeMatchingLabels(
+    exercise: ContentLessonExercise,
+    opts: {
+        uiLang: string;
+        targetLanguage: string | null;
+        sourceLanguage: string | null;
+        domain: string | null;
+        t: Translate;
+    },
+): MatchingLabels {
+    const {uiLang, targetLanguage, sourceLanguage, domain, t} = opts;
+    const direction = resolveConcreteDirection(exercise.direction, exercise.id);
+    const productive = direction === "source_to_target";
+    const isKnowledge =
+        (domain != null && domain !== "language") ||
+        (!!targetLanguage && targetLanguage === sourceLanguage);
+    const targetName = _languageName(targetLanguage, uiLang);
+    const sourceName = _languageName(sourceLanguage, uiLang);
+    const leftLangName = productive ? sourceName : targetName;
+    const rightLangName = productive ? targetName : sourceName;
+    const leftLabel = isKnowledge
+        ? t("lesson.exercise.matching.left_label_knowledge", "Term")
+        : (leftLangName ??
+          (productive
+              ? t("lesson.exercise.matching.left_label_productive", "Meaning")
+              : t("lesson.exercise.matching.left_label", "Term")));
+    const rightLabel = isKnowledge
+        ? t("lesson.exercise.matching.right_label_knowledge", "Definition")
+        : (rightLangName ??
+          (productive
+              ? t("lesson.exercise.matching.right_label_productive", "Term")
+              : t("lesson.exercise.matching.right_label", "Translation")));
+    const instruction = isKnowledge
+        ? t(
+              "lesson.exercise.matching.instruction_knowledge",
+              "Match each term with its definition.",
+          )
+        : t(
+              instructionKey("matching", direction),
+              productive
+                  ? "Match the pairs (Translation)"
+                  : "Match the pairs (Recognition)",
+          );
+    return {direction, productive, isKnowledge, leftLabel, rightLabel, instruction};
+}
+
+interface LeftTileViewState {
+    isSelected: boolean;
+    isPaired: boolean;
+    isCorrect: boolean;
+    isWrong: boolean;
+    slot: number | undefined;
+    showPair: boolean;
+    badgeTone: "pair" | "correct" | "wrong";
+    correctPartner: string | undefined;
+    chosenPartner: string | undefined;
+    pairStyle: CSSProperties | undefined;
+}
+
+interface LeftTileContext {
+    selectedLeft: number | null;
+    matches: ReadonlyMap<number, number>;
+    submitted: boolean;
+    slotByLeft: ReadonlyMap<number, number>;
+    pairs: MatchingPairs;
+    productive: boolean;
+}
+
+/** Derived render state for one left tile (selection / pairing / grading
+ *  / per-pair color / wrong-vs-correct partner labels). Pure. */
+function computeLeftTileState(
+    tile: LeftTile,
+    ctx: LeftTileContext,
+): LeftTileViewState {
+    const {selectedLeft, matches, submitted, slotByLeft, pairs, productive} = ctx;
+    const isPaired = matches.has(tile.index);
+    const isCorrect = submitted && matches.get(tile.index) === tile.index;
+    const isWrong =
+        submitted && isPaired && matches.get(tile.index) !== tile.index;
+    const slot = slotByLeft.get(tile.index);
+    const showPair = isPaired && !submitted && slot !== undefined;
+    const badgeTone = isCorrect ? "correct" : isWrong ? "wrong" : "pair";
+    // The authored correct partner for this row, shown as a hint under a
+    // wrong pair (#183).
+    const correctPartner = productive
+        ? pairs[tile.index]?.left
+        : pairs[tile.index]?.right;
+    // #191 — the partner the learner actually picked (their wrong answer),
+    // in the same right-column label form as ``correctPartner``.
+    const chosenRight = matches.get(tile.index);
+    const chosenPartner =
+        chosenRight !== undefined
+            ? productive
+                ? pairs[chosenRight]?.left
+                : pairs[chosenRight]?.right
+            : undefined;
+    const pairStyle: CSSProperties | undefined =
+        slot !== undefined && showPair
+            ? ({
+                  "--matching-pair-color": matchingPairColorVar(slot),
+              } as CSSProperties)
+            : undefined;
+    return {
+        isSelected: selectedLeft === tile.index,
+        isPaired,
+        isCorrect,
+        isWrong,
+        slot,
+        showPair,
+        badgeTone,
+        correctPartner,
+        chosenPartner,
+        pairStyle,
+    };
+}
+
+/** #191 — after checking, a WRONG pair spells out both sides, not color
+ *  alone: the learner's pick ("Your answer", red + X) and the correct one
+ *  ("Correct answer", green + Check, bold); a CORRECT pair confirms the
+ *  link as one "A -> B" line. */
+function MatchingTileFeedback({
+    tile,
+    state,
+}: {
+    tile: LeftTile;
+    state: LeftTileViewState;
+}) {
+    const {t} = useI18n();
+    const {isWrong, isCorrect, chosenPartner, correctPartner} = state;
+    return (
+        <>
+            {isWrong && (
+                <div
+                    className="mt-1 flex flex-col gap-1"
+                    data-testid={`matching-feedback-${tile.index}`}
+                >
+                    {chosenPartner && (
+                        <p
+                            className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] px-2 py-1 text-[0.8125rem] text-[var(--matching-error-fg)]"
+                            data-testid={`matching-your-answer-${tile.index}`}
+                        >
+                            <X
+                                size={13}
+                                aria-hidden="true"
+                                className="shrink-0 text-[var(--exercise-wrong)]"
+                            />
+                            {t(
+                                "lesson.exercise.matching.your_answer",
+                                "Your answer: {label}",
+                            ).replace("{label}", chosenPartner)}
+                        </p>
+                    )}
+                    {correctPartner && (
+                        <p
+                            className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-dashed border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] px-2 py-1 text-[0.8125rem] font-semibold text-[var(--matching-correct-fg)]"
+                            data-testid={`matching-correct-hint-${tile.index}`}
+                        >
+                            <Check
+                                size={13}
+                                aria-hidden="true"
+                                className="shrink-0 text-[var(--exercise-correct)]"
+                            />
+                            {t(
+                                "lesson.exercise.matching.correct_hint",
+                                "Correct answer: {label}",
+                            ).replace("{label}", correctPartner)}
+                        </p>
+                    )}
+                </div>
+            )}
+            {isCorrect && correctPartner && (
+                <p
+                    className="m-0 mt-1 flex items-center gap-1 px-1 text-[0.75rem] text-[var(--fg-muted)]"
+                    data-testid={`matching-pair-correct-${tile.index}`}
+                >
+                    <Check
+                        size={12}
+                        aria-hidden="true"
+                        className="shrink-0 text-[var(--exercise-correct)]"
+                    />
+                    <span className="min-w-0 truncate">{tile.label}</span>
+                    <ArrowRight size={12} aria-hidden="true" className="shrink-0" />
+                    <span className="min-w-0 truncate">{correctPartner}</span>
+                </p>
+            )}
+        </>
+    );
+}
+
+/** One left-column tile (term/meaning) plus its post-check feedback. */
+function MatchingLeftTile({
+    tile,
+    state,
+    onClick,
+}: {
+    tile: LeftTile;
+    state: LeftTileViewState;
+    onClick: () => void;
+}) {
+    const {
+        isSelected,
+        isPaired,
+        isCorrect,
+        isWrong,
+        slot,
+        showPair,
+        badgeTone,
+        pairStyle,
+    } = state;
+    return (
+        <li key={tile.index} className="flex flex-col">
+            <button
+                type="button"
+                style={pairStyle}
+                className={cn(
+                    "inline-flex min-h-11 w-full flex-1 cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-a-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-a-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
+                    isSelected &&
+                        "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
+                    isPaired && "is-paired",
+                    showPair &&
+                        "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
+                    isCorrect &&
+                        "is-correct border-2 border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] text-[var(--matching-correct-fg)]",
+                    isWrong &&
+                        "is-wrong border-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] text-[var(--matching-error-fg)] motion-safe:animate-[matching-shake_0.2s_ease-in-out]",
+                )}
+                onClick={onClick}
+                aria-pressed={isSelected}
+                disabled={isCorrect}
+                data-testid={`matching-left-${tile.index}`}
+            >
+                {isPaired && slot !== undefined && (
+                    <PairBadge slot={slot} tone={badgeTone} />
+                )}
+                <span className="min-w-0 flex-1">{tile.label}</span>
+                {isCorrect && <Check size={14} aria-hidden="true" />}
+                {isWrong && <X size={14} aria-hidden="true" />}
+            </button>
+            <MatchingTileFeedback tile={tile} state={state} />
+        </li>
+    );
+}
+
+interface RightTileViewState {
+    isPaired: boolean;
+    slot: number | undefined;
+    showPair: boolean;
+    isCorrect: boolean;
+    isWrong: boolean;
+    badgeTone: "pair" | "correct" | "wrong";
+    pairStyle: CSSProperties | undefined;
+    flashing: boolean;
+}
+
+interface RightTileContext {
+    pairedRightIndices: ReadonlySet<number>;
+    matches: ReadonlyMap<number, number>;
+    slotByLeft: ReadonlyMap<number, number>;
+    submitted: boolean;
+    wrongFlash: {left: number; right: number} | null;
+}
+
+/** Derived render state for one right tile (mirrors the result of the
+ *  pair the learner made onto both tiles). Pure. */
+function computeRightTileState(
+    tile: RightTile,
+    ctx: RightTileContext,
+): RightTileViewState {
+    const {pairedRightIndices, matches, slotByLeft, submitted, wrongFlash} = ctx;
+    const isPaired = pairedRightIndices.has(tile.originalIndex);
+    const pairedLeftIdx = [...matches.entries()].find(
+        ([, ri]) => ri === tile.originalIndex,
+    )?.[0];
+    const slot =
+        pairedLeftIdx !== undefined ? slotByLeft.get(pairedLeftIdx) : undefined;
+    const showPair = isPaired && !submitted && slot !== undefined;
+    const isCorrect = submitted && pairedLeftIdx === tile.originalIndex;
+    const isWrong =
+        submitted &&
+        pairedLeftIdx !== undefined &&
+        pairedLeftIdx !== tile.originalIndex;
+    const badgeTone = isCorrect ? "correct" : isWrong ? "wrong" : "pair";
+    const pairStyle: CSSProperties | undefined =
+        slot !== undefined && showPair
+            ? ({
+                  "--matching-pair-color": matchingPairColorVar(slot),
+              } as CSSProperties)
+            : undefined;
+    const flashing =
+        wrongFlash !== null && wrongFlash.right === tile.originalIndex;
+    return {isPaired, slot, showPair, isCorrect, isWrong, badgeTone, pairStyle, flashing};
+}
+
+/** One right-column tile (definition/term). */
+function MatchingRightTile({
+    tile,
+    state,
+    submitted,
+    onClick,
+}: {
+    tile: RightTile;
+    state: RightTileViewState;
+    submitted: boolean;
+    onClick: () => void;
+}) {
+    const {isPaired, slot, showPair, isCorrect, isWrong, badgeTone, pairStyle, flashing} =
+        state;
+    return (
+        <li key={tile.originalIndex} className="flex flex-col">
+            <button
+                type="button"
+                style={pairStyle}
+                className={cn(
+                    "inline-flex min-h-11 w-full flex-1 cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-b-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-b-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
+                    showPair &&
+                        "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
+                    // Unmatched after checking stays neutral.
+                    submitted && !isPaired && "opacity-60",
+                    isCorrect &&
+                        "is-correct border-2 border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] text-[var(--matching-correct-fg)]",
+                    isWrong &&
+                        "is-wrong border-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] text-[var(--matching-error-fg)]",
+                    isPaired && "is-paired",
+                    flashing &&
+                        "is-flash motion-safe:animate-[matching-flash_600ms_ease]",
+                )}
+                onClick={onClick}
+                disabled={submitted}
+                data-testid={`matching-right-${tile.originalIndex}`}
+            >
+                {isPaired && slot !== undefined && (
+                    <PairBadge slot={slot} tone={badgeTone} />
+                )}
+                <span className="min-w-0 flex-1">{tile.label}</span>
+                {isCorrect && <Check size={14} aria-hidden="true" />}
+                {isWrong && <X size={14} aria-hidden="true" />}
+            </button>
+        </li>
+    );
+}
+
+/** The score line + celebration + the shared exercise footer. */
+function MatchingResultFooter({
+    submitted,
+    result,
+    controlled,
+    canCheck,
+    onCheck,
+    onRetry,
+}: {
+    submitted: boolean;
+    result: {correct: number; total: number} | null;
+    controlled: boolean;
+    canCheck: boolean;
+    onCheck: () => void;
+    onRetry: () => void;
+}) {
+    const {t} = useI18n();
+    const allCorrect =
+        result !== null && result.total > 0 && result.correct === result.total;
+    const correct = result?.correct ?? 0;
+    const total = result?.total ?? 0;
+    return (
+        <div className="flex flex-wrap items-center gap-3">
+            {submitted && (
+                <>
+                    <p
+                        className={cn(
+                            "answer-feedback m-0 font-semibold",
+                            allCorrect
+                                ? "is-correct text-[var(--exercise-correct)]"
+                                : "is-wrong text-[var(--exercise-wrong)]",
+                        )}
+                        data-testid="matching-result"
+                        data-result={allCorrect ? "correct" : "wrong"}
+                    >
+                        {t(
+                            "lesson.exercise.matching.result",
+                            "Score: {correct} / {total}",
+                        )
+                            .replace("{correct}", String(correct))
+                            .replace("{total}", String(total))}
+                    </p>
+                    <AnswerCelebration isCorrect={allCorrect} />
+                </>
+            )}
+            <ExerciseFooter
+                testidPrefix="matching"
+                controlled={controlled}
+                submitted={submitted}
+                canCheck={canCheck}
+                onCheck={onCheck}
+                onRetry={onRetry}
+                checkLabel={t("lesson.exercise.matching.submit", "Check answers")}
+                retryLabel={t("lesson.exercise.matching.retry", "Try again")}
+            />
+        </div>
+    );
+}
+
+/** Prompt + instruction + running counter + sr-only selection status +
+ *  the first-pair flow hint, above the two tile columns. */
+function MatchingPrompt({
+    prompt,
+    ttsLang,
+    codeMode,
+    instruction,
+    matchedCount,
+    totalPairs,
+    selectedLeft,
+    leftTiles,
+    isKnowledge,
+    submitted,
+    leftLabel,
+    rightLabel,
+}: {
+    prompt: string | undefined;
+    ttsLang: string | null;
+    codeMode: boolean;
+    instruction: string;
+    matchedCount: number;
+    totalPairs: number;
+    selectedLeft: number | null;
+    leftTiles: LeftTile[];
+    isKnowledge: boolean;
+    submitted: boolean;
+    leftLabel: string;
+    rightLabel: string;
+}) {
+    const {t} = useI18n();
+    return (
+        <>
+            <div className="exercise-prompt-row">
+                <p className="m-0 font-medium" data-testid="matching-prompt">
+                    {prompt}
+                </p>
+                {ttsLang && !codeMode && (
+                    <ReadAloudButton
+                        text={prompt ?? ""}
+                        lang={ttsLang}
+                        testId="matching-prompt"
+                    />
+                )}
+            </div>
+
+            <p
+                className="exercise-direction-instruction"
+                data-testid="direction-instruction-matching"
+            >
+                {instruction}
+            </p>
+
+            <p
+                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
+                aria-live="polite"
+                data-testid="matching-counter"
+            >
+                {t("lesson.exercise.matching.counter", "{matched} / {total} paired")
+                    .replace("{matched}", String(matchedCount))
+                    .replace("{total}", String(totalPairs))}
+            </p>
+
+            {/* UX bugfix — announce the current selection to screen
+                readers (the visual highlight is not conveyed otherwise). */}
+            <span
+                className="sr-only"
+                aria-live="polite"
+                data-testid="matching-sr-status"
+            >
+                {selectedLeft !== null
+                    ? t(
+                          "lesson.exercise.matching.selected_sr",
+                          "Selected: {label}",
+                      ).replace("{label}", leftTiles[selectedLeft]?.label ?? "")
+                    : ""}
+            </span>
+
+            <p
+                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
+                data-testid="matching-instructions"
+            >
+                {isKnowledge
+                    ? t(
+                          "lesson.exercise.matching.instructions_knowledge",
+                          "Select an item on the left, then its match on the right.",
+                      )
+                    : t(
+                          "lesson.exercise.matching.instructions",
+                          "Select an item on the left, then its matching translation on the right.",
+                      )}
+            </p>
+
+            {/* First-pair flow hint: disappears once the learner has
+                made their first pair (they understand the mechanic). */}
+            {matchedCount === 0 && !submitted && (
+                <p
+                    className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
+                    data-testid="matching-flow-hint"
+                >
+                    <span>{leftLabel}</span>
+                    <span
+                        className="font-bold text-[var(--accent-text)]"
+                        aria-hidden="true"
+                    >
+                        &rarr;
+                    </span>
+                    <span>{rightLabel}</span>
+                </p>
+            )}
+        </>
+    );
+}
+
 function MatchingExercise(
     {
         exercise,
@@ -229,52 +757,16 @@ function MatchingExercise(
     // keeps the authored orientation (target left, source right). Only
     // the DISPLAYED label flips — pair indices (and thus scoring) are
     // unchanged, so pair i still matches right i.
-    const direction = resolveConcreteDirection(exercise.direction, exercise.id);
-    const productive = direction === "source_to_target";
-    // #149 — a knowledge lesson (non-language domain, or a
-    // source==target set) is not a translation exercise, so the
-    // translation-specific wording (language names, "translation",
-    // receptive/productive framing) does not apply. The explicit
-    // domain wins; source==target is the fallback signal when both
-    // codes are present (Review / Adaptive pass neither and keep the
-    // language behaviour).
-    const isKnowledge =
-        (domain != null && domain !== "language") ||
-        (!!targetLanguage && targetLanguage === sourceLanguage);
-    // Each column header names the LANGUAGE of the words shown in
-    // it, when the lesson's language pair is known. Receptive keeps
-    // the authored orientation (target words left, source right);
-    // productive flips it. Falls back to the generic Term /
-    // Translation labels when no language info is available. In
-    // knowledge mode it uses neutral Term / Definition labels and
-    // never the language names.
-    const targetName = _languageName(targetLanguage, lang);
-    const sourceName = _languageName(sourceLanguage, lang);
-    const leftLangName = productive ? sourceName : targetName;
-    const rightLangName = productive ? targetName : sourceName;
-    const leftLabel = isKnowledge
-        ? t("lesson.exercise.matching.left_label_knowledge", "Term")
-        : (leftLangName ??
-          (productive
-              ? t("lesson.exercise.matching.left_label_productive", "Meaning")
-              : t("lesson.exercise.matching.left_label", "Term")));
-    const rightLabel = isKnowledge
-        ? t("lesson.exercise.matching.right_label_knowledge", "Definition")
-        : (rightLangName ??
-          (productive
-              ? t("lesson.exercise.matching.right_label_productive", "Term")
-              : t("lesson.exercise.matching.right_label", "Translation")));
-    const instruction = isKnowledge
-        ? t(
-              "lesson.exercise.matching.instruction_knowledge",
-              "Match each term with its definition.",
-          )
-        : t(
-              instructionKey("matching", direction),
-              productive
-                  ? "Match the pairs (Translation)"
-                  : "Match the pairs (Recognition)",
-          );
+    // #149 / EXP-018 — column labels + instruction (knowledge vs language,
+    // receptive vs productive) resolved in one pure helper.
+    const {productive, isKnowledge, leftLabel, rightLabel, instruction} =
+        computeMatchingLabels(exercise, {
+            uiLang: lang,
+            targetLanguage,
+            sourceLanguage,
+            domain,
+            t,
+        });
 
     // Stable seed per-mount so reshuffling on every render
     // doesn't move the right column under the user.
@@ -370,9 +862,6 @@ function MatchingExercise(
         },
     });
 
-    const matchingAllCorrect =
-        result !== null && result.total > 0 && result.correct === result.total;
-
     const releaseSlot = (leftIdx: number) => {
         setSlotByLeft((prev) => {
             if (!prev.has(leftIdx)) return prev;
@@ -437,92 +926,20 @@ function MatchingExercise(
             className="flex flex-col gap-3"
             data-testid="matching-exercise"
         >
-            <div className="exercise-prompt-row">
-                <p
-                    className="m-0 font-medium"
-                    data-testid="matching-prompt"
-                >
-                    {exercise.prompt}
-                </p>
-                {ttsLang && !codeMode && (
-                    <ReadAloudButton
-                        text={exercise.prompt ?? ""}
-                        lang={ttsLang}
-                        testId="matching-prompt"
-                    />
-                )}
-            </div>
-
-            <p
-                className="exercise-direction-instruction"
-                data-testid="direction-instruction-matching"
-            >
-                {instruction}
-            </p>
-
-            <p
-                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
-                aria-live="polite"
-                data-testid="matching-counter"
-            >
-                {t(
-                    "lesson.exercise.matching.counter",
-                    "{matched} / {total} paired",
-                )
-                    .replace("{matched}", String(matches.size))
-                    .replace("{total}", String(pairs.length))}
-            </p>
-
-            {/* UX bugfix — announce the current selection to screen
-                readers (the visual highlight is not conveyed otherwise). */}
-            <span
-                className="sr-only"
-                aria-live="polite"
-                data-testid="matching-sr-status"
-            >
-                {selectedLeft !== null
-                    ? t(
-                          "lesson.exercise.matching.selected_sr",
-                          "Selected: {label}",
-                      ).replace(
-                          "{label}",
-                          leftTiles[selectedLeft]?.label ?? "",
-                      )
-                    : ""}
-            </span>
-
-            <p
-                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
-                data-testid="matching-instructions"
-            >
-                {isKnowledge
-                    ? t(
-                          "lesson.exercise.matching.instructions_knowledge",
-                          "Select an item on the left, then its match on the right.",
-                      )
-                    : t(
-                          "lesson.exercise.matching.instructions",
-                          "Select an item on the left, then its matching translation on the right.",
-                      )}
-            </p>
-
-            {/* First-pair flow hint: disappears once the learner has
-                made their first pair (they understand the mechanic). */}
-            {matches.size === 0 && !submitted && (
-                <p
-                    className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
-                    data-testid="matching-flow-hint"
-                >
-                    <span>{leftLabel}</span>
-                    <span
-                        className="font-bold text-[var(--accent-text)]"
-                        aria-hidden="true"
-                    >
-                        &rarr;
-                    </span>
-                    <span>{rightLabel}</span>
-                </p>
-            )}
+            <MatchingPrompt
+                prompt={exercise.prompt}
+                ttsLang={ttsLang}
+                codeMode={codeMode}
+                instruction={instruction}
+                matchedCount={matches.size}
+                totalPairs={pairs.length}
+                selectedLeft={selectedLeft}
+                leftTiles={leftTiles}
+                isKnowledge={isKnowledge}
+                submitted={submitted}
+                leftLabel={leftLabel}
+                rightLabel={rightLabel}
+            />
 
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
@@ -543,162 +960,21 @@ function MatchingExercise(
                         data-testid="matching-left"
                         aria-label={leftLabel}
                     >
-                        {leftTiles.map((tile) => {
-                        const isSelected = selectedLeft === tile.index;
-                        const isPaired = matches.has(tile.index);
-                        const isCorrect =
-                            submitted &&
-                            matches.get(tile.index) === tile.index;
-                        const isWrong =
-                            submitted &&
-                            isPaired &&
-                            matches.get(tile.index) !== tile.index;
-                        const slot = slotByLeft.get(tile.index);
-                        const showPair =
-                            isPaired && !submitted && slot !== undefined;
-                        // #183 — the number badge stays after checking; only
-                        // the per-pair COLOR is pre-submit (post-submit the
-                        // ring goes green/red via the badge tone).
-                        const badgeTone = isCorrect
-                            ? "correct"
-                            : isWrong
-                              ? "wrong"
-                              : "pair";
-                        // The authored correct partner for this row, shown
-                        // as a hint under a wrong pair (#183).
-                        const correctPartner = productive
-                            ? pairs[tile.index]?.left
-                            : pairs[tile.index]?.right;
-                        // #191 — the partner the learner actually picked
-                        // (their wrong answer), in the same right-column
-                        // label form as ``correctPartner``.
-                        const chosenRight = matches.get(tile.index);
-                        const chosenPartner =
-                            chosenRight !== undefined
-                                ? productive
-                                    ? pairs[chosenRight]?.left
-                                    : pairs[chosenRight]?.right
-                                : undefined;
-                        const pairStyle: CSSProperties | undefined =
-                            slot !== undefined && showPair
-                                ? ({
-                                      "--matching-pair-color":
-                                          matchingPairColorVar(slot),
-                                  } as CSSProperties)
-                                : undefined;
-                        return (
-                            <li key={tile.index} className="flex flex-col">
-                                <button
-                                    type="button"
-                                    style={pairStyle}
-                                    className={cn(
-                                        "inline-flex min-h-11 w-full flex-1 cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-a-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-a-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
-                                        isSelected &&
-                                            "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
-                                        isPaired && "is-paired",
-                                        showPair &&
-                                            "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
-                                        isCorrect &&
-                                            "is-correct border-2 border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] text-[var(--matching-correct-fg)]",
-                                        isWrong &&
-                                            "is-wrong border-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] text-[var(--matching-error-fg)] motion-safe:animate-[matching-shake_0.2s_ease-in-out]",
-                                    )}
-                                    onClick={() =>
-                                        handleLeftClick(tile.index)
-                                    }
-                                    aria-pressed={isSelected}
-                                    disabled={submitted && isCorrect}
-                                    data-testid={`matching-left-${tile.index}`}
-                                >
-                                    {isPaired && slot !== undefined && (
-                                        <PairBadge slot={slot} tone={badgeTone} />
-                                    )}
-                                    <span className="min-w-0 flex-1">
-                                        {tile.label}
-                                    </span>
-                                    {isCorrect && (
-                                        <Check size={14} aria-hidden="true" />
-                                    )}
-                                    {isWrong && (
-                                        <X size={14} aria-hidden="true" />
-                                    )}
-                                </button>
-                                {/* #191 — after checking, a WRONG pair spells
-                                    out both sides, not color alone: the
-                                    learner's pick ("Deine Antwort", red + X)
-                                    and the correct one ("Richtige Antwort",
-                                    green + Check, bold). Reuses the AA-pinned
-                                    matching-error/-correct tile tokens, so the
-                                    chips stay readable across all 12 themes. */}
-                                {isWrong && (
-                                    <div
-                                        className="mt-1 flex flex-col gap-1"
-                                        data-testid={`matching-feedback-${tile.index}`}
-                                    >
-                                        {chosenPartner && (
-                                            <p
-                                                className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] px-2 py-1 text-[0.8125rem] text-[var(--matching-error-fg)]"
-                                                data-testid={`matching-your-answer-${tile.index}`}
-                                            >
-                                                <X
-                                                    size={13}
-                                                    aria-hidden="true"
-                                                    className="shrink-0 text-[var(--exercise-wrong)]"
-                                                />
-                                                {t(
-                                                    "lesson.exercise.matching.your_answer",
-                                                    "Your answer: {label}",
-                                                ).replace("{label}", chosenPartner)}
-                                            </p>
-                                        )}
-                                        {correctPartner && (
-                                            <p
-                                                className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-dashed border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] px-2 py-1 text-[0.8125rem] font-semibold text-[var(--matching-correct-fg)]"
-                                                data-testid={`matching-correct-hint-${tile.index}`}
-                                            >
-                                                <Check
-                                                    size={13}
-                                                    aria-hidden="true"
-                                                    className="shrink-0 text-[var(--exercise-correct)]"
-                                                />
-                                                {t(
-                                                    "lesson.exercise.matching.correct_hint",
-                                                    "Correct answer: {label}",
-                                                ).replace("{label}", correctPartner)}
-                                            </p>
-                                        )}
-                                    </div>
-                                )}
-                                {/* #191 — a CORRECT pair confirms the link as
-                                    one line "A -> B" (Lucide ArrowRight, not a
-                                    Unicode glyph); fg-muted text is AA-pinned,
-                                    the Check is the green cue. */}
-                                {isCorrect && correctPartner && (
-                                    <p
-                                        className="m-0 mt-1 flex items-center gap-1 px-1 text-[0.75rem] text-[var(--fg-muted)]"
-                                        data-testid={`matching-pair-correct-${tile.index}`}
-                                    >
-                                        <Check
-                                            size={12}
-                                            aria-hidden="true"
-                                            className="shrink-0 text-[var(--exercise-correct)]"
-                                        />
-                                        <span className="min-w-0 truncate">
-                                            {tile.label}
-                                        </span>
-                                        <ArrowRight
-                                            size={12}
-                                            aria-hidden="true"
-                                            className="shrink-0"
-                                        />
-                                        <span className="min-w-0 truncate">
-                                            {correctPartner}
-                                        </span>
-                                    </p>
-                                )}
-                            </li>
-                        );
-                    })}
+                        {leftTiles.map((tile) => (
+                            <MatchingLeftTile
+                                key={tile.index}
+                                tile={tile}
+                                state={computeLeftTileState(tile, {
+                                    selectedLeft,
+                                    matches,
+                                    submitted,
+                                    slotByLeft,
+                                    pairs,
+                                    productive,
+                                })}
+                                onClick={() => handleLeftClick(tile.index)}
+                            />
+                        ))}
                     </ul>
                 </div>
                 <div className="flex min-w-0 flex-col gap-2">
@@ -719,142 +995,33 @@ function MatchingExercise(
                         data-testid="matching-right"
                         aria-label={rightLabel}
                     >
-                        {rightTiles.map((tile) => {
-                        const isPaired = pairedRightIndices.has(
-                            tile.originalIndex,
-                        );
-                        const pairedLeftIdx = [...matches.entries()].find(
-                            ([, ri]) => ri === tile.originalIndex,
-                        )?.[0];
-                        const slot =
-                            pairedLeftIdx !== undefined
-                                ? slotByLeft.get(pairedLeftIdx)
-                                : undefined;
-                        const showPair =
-                            isPaired && !submitted && slot !== undefined;
-                        // #183 — after checking, the right tile mirrors the
-                        // result of the pair the learner made: correct when
-                        // the left that chose it is its own partner, wrong
-                        // otherwise. So BOTH tiles of a pair read green/red.
-                        const isCorrect =
-                            submitted &&
-                            pairedLeftIdx === tile.originalIndex;
-                        const isWrong =
-                            submitted &&
-                            pairedLeftIdx !== undefined &&
-                            pairedLeftIdx !== tile.originalIndex;
-                        const badgeTone = isCorrect
-                            ? "correct"
-                            : isWrong
-                              ? "wrong"
-                              : "pair";
-                        const pairStyle: CSSProperties | undefined =
-                            slot !== undefined && showPair
-                                ? ({
-                                      "--matching-pair-color":
-                                          matchingPairColorVar(slot),
-                                  } as CSSProperties)
-                                : undefined;
-                        const flashing =
-                            wrongFlash !== null &&
-                            wrongFlash.right === tile.originalIndex;
-                        return (
-                            <li key={tile.originalIndex} className="flex flex-col">
-                                <button
-                                    type="button"
-                                    style={pairStyle}
-                                    className={cn(
-                                        "inline-flex min-h-11 w-full flex-1 cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-b-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-b-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
-                                        showPair &&
-                                            "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
-                                        // Unmatched after checking stays neutral.
-                                        submitted &&
-                                            !isPaired &&
-                                            "opacity-60",
-                                        isCorrect &&
-                                            "is-correct border-2 border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] text-[var(--matching-correct-fg)]",
-                                        isWrong &&
-                                            "is-wrong border-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] text-[var(--matching-error-fg)]",
-                                        isPaired && "is-paired",
-                                        flashing &&
-                                            "is-flash motion-safe:animate-[matching-flash_600ms_ease]",
-                                    )}
-                                    onClick={() =>
-                                        handleRightClick(
-                                            tile.originalIndex,
-                                        )
-                                    }
-                                    disabled={submitted}
-                                    data-testid={`matching-right-${tile.originalIndex}`}
-                                >
-                                    {isPaired && slot !== undefined && (
-                                        <PairBadge slot={slot} tone={badgeTone} />
-                                    )}
-                                    <span className="min-w-0 flex-1">
-                                        {tile.label}
-                                    </span>
-                                    {isCorrect && (
-                                        <Check size={14} aria-hidden="true" />
-                                    )}
-                                    {isWrong && (
-                                        <X size={14} aria-hidden="true" />
-                                    )}
-                                </button>
-                            </li>
-                        );
-                    })}
+                        {rightTiles.map((tile) => (
+                            <MatchingRightTile
+                                key={tile.originalIndex}
+                                tile={tile}
+                                state={computeRightTileState(tile, {
+                                    pairedRightIndices,
+                                    matches,
+                                    slotByLeft,
+                                    submitted,
+                                    wrongFlash,
+                                })}
+                                submitted={submitted}
+                                onClick={() => handleRightClick(tile.originalIndex)}
+                            />
+                        ))}
                     </ul>
                 </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-                {submitted && (
-                    <>
-                        <p
-                            className={cn(
-                                "answer-feedback m-0 font-semibold",
-                                matchingAllCorrect
-                                    ? "is-correct text-[var(--exercise-correct)]"
-                                    : "is-wrong text-[var(--exercise-wrong)]",
-                            )}
-                            data-testid="matching-result"
-                            data-result={
-                                matchingAllCorrect ? "correct" : "wrong"
-                            }
-                        >
-                            {t(
-                                "lesson.exercise.matching.result",
-                                "Score: {correct} / {total}",
-                            )
-                                .replace(
-                                    "{correct}",
-                                    String(result?.correct ?? 0),
-                                )
-                                .replace(
-                                    "{total}",
-                                    String(result?.total ?? 0),
-                                )}
-                        </p>
-                        <AnswerCelebration isCorrect={matchingAllCorrect} />
-                    </>
-                )}
-                <ExerciseFooter
-                    testidPrefix="matching"
-                    controlled={controlled}
-                    submitted={submitted}
-                    canCheck={allPaired}
-                    onCheck={submit}
-                    onRetry={reset}
-                    checkLabel={t(
-                        "lesson.exercise.matching.submit",
-                        "Check answers",
-                    )}
-                    retryLabel={t(
-                        "lesson.exercise.matching.retry",
-                        "Try again",
-                    )}
-                />
-            </div>
+            <MatchingResultFooter
+                submitted={submitted}
+                result={result}
+                controlled={controlled}
+                canCheck={allPaired}
+                onCheck={submit}
+                onRetry={reset}
+            />
         </section>
     );
 }
