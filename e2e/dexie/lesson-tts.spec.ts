@@ -1,25 +1,32 @@
 /**
  * Lesson read-aloud (TTS) smoke — Dexie build, no backend.
  *
- * Downloads the bundled French-A1-for-English set and opens its
- * first lesson (01-greetings), which starts on a theory step, then
- * exercises the read-aloud surface end to end:
+ * Opens the bundled French-A1-for-English set's first lesson
+ * (01-greetings, a theory step) and exercises the read-aloud surface:
  *
  *   - the auto-read toggle + the theory "Read aloud" control render;
- *   - clicking the theory control speaks the body, swaps in the
- *     follow-along view, and surfaces the floating mini-player;
- *   - the mini-player's Stop ends playback (player + follow-along
- *     disappear);
- *   - pressing "R" toggles read-aloud from the keyboard.
+ *   - clicking the theory control speaks the body and surfaces the
+ *     floating mini-player;
+ *   - the mini-player's Stop ends playback;
+ *   - pressing "R" toggles read-aloud from the keyboard;
+ *   - auto-read speaks each step on display.
  *
- * speechSynthesis is INJECTED before the app loads so the run does
- * not depend on voices being installed in headless chromium (which
- * would otherwise end utterances immediately and make the UI state
- * non-deterministic). The fake keeps an utterance "speaking" until
- * cancelled and records spoken text on ``window.__ttsSpoken``.
+ * speechSynthesis is INJECTED before the app loads so the run does not
+ * depend on voices being installed in headless chromium.
+ *
+ * #165 — flake fix: the set is downloaded ONCE in ``beforeAll`` (a shared
+ * serial context), out of the per-test critical path; each test
+ * re-navigates to the already-cached lesson, which is fast and
+ * deterministic. The previous spec re-ran the full UI download (content
+ * tree -> download -> lesson render) in EVERY test, and on a loaded
+ * headless runner those serial waits intermittently approached the
+ * per-test timeout. That was masked with ``retries: 2`` + a 60s timeout
+ * (a retry hides the latency cliff). One download with generous setup
+ * headroom + no retries makes a real regression fail on every attempt,
+ * while removing the per-test download that caused the flake.
  */
 
-import {expect, test, type Page} from "@playwright/test";
+import {expect, test, type BrowserContext, type Page} from "@playwright/test";
 
 const SET_ID = "fr-a1-from-en";
 
@@ -82,7 +89,9 @@ async function injectFakeSpeech(page: Page): Promise<void> {
     });
 }
 
-async function openFirstLesson(page: Page): Promise<void> {
+/** UI-download the set once and land on the first lesson; returns the
+ *  resolved lesson URL so later navigations skip the download. */
+async function downloadAndOpenFirstLesson(page: Page): Promise<string> {
     await page.goto("/content");
     await expect(page.getByTestId("content-tree")).toBeVisible({
         timeout: 15000,
@@ -97,27 +106,39 @@ async function openFirstLesson(page: Page): Promise<void> {
     await expect(page.getByTestId("lesson-page")).toBeVisible({
         timeout: 15000,
     });
+    return page.url();
 }
 
 test.describe("Lesson read-aloud (TTS)", () => {
-    // #165 — this spec's setup (openFirstLesson) downloads the bundled
-    // fr-a1-from-en set into Dexie and renders the lesson before any TTS
-    // assertion runs. On a loaded headless CI runner those serial waits
-    // (content tree + download + lesson page) can approach the 30s default
-    // per-test cap, surfacing as an intermittent timeout — NOT a TTS bug
-    // (the speech engine is faked deterministically below; production TTS
-    // code is unchanged). Give the spec headroom + an extra retry so a
-    // transient slow load doesn't fail the gate, while a real regression
-    // still fails every attempt.
-    test.describe.configure({timeout: 60_000, retries: 2});
+    test.describe.configure({mode: "serial"});
 
-    test("theory read-aloud: controls, mini-player, stop", async ({
-        page,
-    }) => {
+    let context: BrowserContext;
+    let page: Page;
+    let lessonUrl: string;
+
+    test.beforeAll(async ({browser}) => {
+        // One-time setup: the only place the set is downloaded. Give it
+        // headroom — it is paid once for the whole spec, not per test.
+        test.setTimeout(90_000);
+        context = await browser.newContext();
+        page = await context.newPage();
+        await injectFakeSpeech(page); // applies to every later navigation
+        lessonUrl = await downloadAndOpenFirstLesson(page);
+    });
+
+    test.afterAll(async () => {
+        await context.close();
+    });
+
+    /** Reset to a fresh lesson render from the cached set — no download. */
+    test.beforeEach(async () => {
+        await page.goto(lessonUrl);
+        await expect(page.getByTestId("lesson-page")).toBeVisible();
+    });
+
+    test("theory read-aloud: controls, mini-player, stop", async () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
-        await injectFakeSpeech(page);
-        await openFirstLesson(page);
 
         // First step is theory -> the auto-read toggle + theory control
         // are present.
@@ -147,11 +168,9 @@ test.describe("Lesson read-aloud (TTS)", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
-    test("keyboard shortcut R starts + stops read-aloud", async ({page}) => {
+    test("keyboard shortcut R starts + stops read-aloud", async () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
-        await injectFakeSpeech(page);
-        await openFirstLesson(page);
 
         await expect(page.getByTestId("read-aloud-theory")).toBeVisible();
         // R reads the current step.
@@ -168,11 +187,9 @@ test.describe("Lesson read-aloud (TTS)", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
-    test("auto-read mode reads each step on display", async ({page}) => {
+    test("auto-read mode reads each step on display", async () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
-        await injectFakeSpeech(page);
-        await openFirstLesson(page);
 
         // Turn auto-read on, then move to the next step: it should be
         // spoken automatically.
