@@ -535,76 +535,91 @@ class Exercise(BaseModel):
         Wrong-field-for-type combos (e.g. a MATCHING exercise
         without ``pairs``) are rejected at schema validation
         time so the viewer can trust the data shape later.
+        Dispatches to a per-type validator; types with no extra
+        constraints fall through unchecked.
         """
-        type_ = self.type
-
-        if type_ is ExerciseType.MATCHING:
-            if not self.pairs:
-                raise ValueError("MATCHING exercise requires non-empty 'pairs'")
-            for pair in self.pairs:
-                if set(pair.keys()) != {"left", "right"}:
-                    raise ValueError("MATCHING pair must have exactly 'left' and 'right' keys")
-
-        elif type_ is ExerciseType.PICTURE_CHOICE:
-            if not self.images or len(self.images) < 2:
-                raise ValueError("PICTURE_CHOICE requires at least 2 'images'")
-            correct_count = sum(1 for img in self.images if img.get("is_correct") == "true")
-            if correct_count != 1:
-                raise ValueError(
-                    "PICTURE_CHOICE must have exactly one image marked 'is_correct': 'true'"
-                )
-            for img in self.images:
-                allowed = {"src", "label", "is_correct"}
-                if not set(img.keys()) <= allowed:
-                    raise ValueError(
-                        "PICTURE_CHOICE image keys must be a subset of {src, label, is_correct}"
-                    )
-                if "src" not in img or "label" not in img:
-                    raise ValueError("PICTURE_CHOICE image requires 'src' and 'label'")
-
-        elif type_ is ExerciseType.FREE_TEXT:
-            if not self.accept:
-                raise ValueError("FREE_TEXT exercise requires non-empty 'accept'")
-
-        elif type_ is ExerciseType.WORD_TILES:
-            if not self.tiles or len(self.tiles) < 2:
-                raise ValueError("WORD_TILES requires at least 2 'tiles'")
-            # accept_orderings (when present) must permute
-            # the tile index range.
-            if self.accept_orderings:
-                tile_count = len(self.tiles)
-                valid_indices = set(range(tile_count))
-                for ordering in self.accept_orderings:
-                    if sorted(ordering) != list(range(tile_count)):
-                        raise ValueError(
-                            f"accept_orderings entry "
-                            f"{ordering} must be a "
-                            f"permutation of [0..{tile_count - 1}]"
-                        )
-                    if set(ordering) != valid_indices:
-                        raise ValueError(
-                            "accept_orderings entries must use every tile index exactly once"
-                        )
-
-        elif type_ is ExerciseType.CLOZE:
-            # Phase 52D / v1.35.0 / P-127 — marker-based blanks.
-            if not self.sentence:
-                raise ValueError("CLOZE exercise requires non-empty 'sentence'")
-            if not self.blanks:
-                raise ValueError("CLOZE exercise requires non-empty 'blanks'")
-            marker_count = self.sentence.count("___")
-            if marker_count != len(self.blanks):
-                raise ValueError(
-                    f"CLOZE marker count mismatch: sentence has "
-                    f"{marker_count} '___' markers but blanks has "
-                    f"{len(self.blanks)} entries"
-                )
-            # ``select`` mode requires a non-empty distractor pool
-            # to populate the per-blank ``<select>`` options.
-            if self.cloze_mode == "select" and not self.distractors:
-                raise ValueError("CLOZE with cloze_mode='select' requires non-empty 'distractors'")
-
+        validators = {
+            ExerciseType.MATCHING: self._validate_matching_fields,
+            ExerciseType.PICTURE_CHOICE: self._validate_picture_choice_fields,
+            ExerciseType.FREE_TEXT: self._validate_free_text_fields,
+            ExerciseType.WORD_TILES: self._validate_word_tiles_fields,
+            ExerciseType.CLOZE: self._validate_cloze_fields,
+        }
+        validate = validators.get(self.type)
+        if validate is not None:
+            validate()
         return self
+
+    def _validate_matching_fields(self) -> None:
+        """MATCHING requires non-empty 'pairs', each with exactly left+right keys."""
+        if not self.pairs:
+            raise ValueError("MATCHING exercise requires non-empty 'pairs'")
+        for pair in self.pairs:
+            if set(pair.keys()) != {"left", "right"}:
+                raise ValueError("MATCHING pair must have exactly 'left' and 'right' keys")
+
+    def _validate_picture_choice_fields(self) -> None:
+        """PICTURE_CHOICE requires >= 2 images, exactly one correct, allowed keys only."""
+        if not self.images or len(self.images) < 2:
+            raise ValueError("PICTURE_CHOICE requires at least 2 'images'")
+        correct_count = sum(1 for img in self.images if img.get("is_correct") == "true")
+        if correct_count != 1:
+            raise ValueError(
+                "PICTURE_CHOICE must have exactly one image marked 'is_correct': 'true'"
+            )
+        for img in self.images:
+            allowed = {"src", "label", "is_correct"}
+            if not set(img.keys()) <= allowed:
+                raise ValueError(
+                    "PICTURE_CHOICE image keys must be a subset of {src, label, is_correct}"
+                )
+            if "src" not in img or "label" not in img:
+                raise ValueError("PICTURE_CHOICE image requires 'src' and 'label'")
+
+    def _validate_free_text_fields(self) -> None:
+        """FREE_TEXT requires a non-empty 'accept' list."""
+        if not self.accept:
+            raise ValueError("FREE_TEXT exercise requires non-empty 'accept'")
+
+    def _validate_word_tiles_fields(self) -> None:
+        """WORD_TILES requires >= 2 tiles; accept_orderings must permute the tiles."""
+        if not self.tiles or len(self.tiles) < 2:
+            raise ValueError("WORD_TILES requires at least 2 'tiles'")
+        # accept_orderings (when present) must permute the tile index range.
+        if not self.accept_orderings:
+            return
+        tile_count = len(self.tiles)
+        valid_indices = set(range(tile_count))
+        for ordering in self.accept_orderings:
+            if sorted(ordering) != list(range(tile_count)):
+                raise ValueError(
+                    f"accept_orderings entry "
+                    f"{ordering} must be a "
+                    f"permutation of [0..{tile_count - 1}]"
+                )
+            if set(ordering) != valid_indices:
+                raise ValueError(
+                    "accept_orderings entries must use every tile index exactly once"
+                )
+
+    def _validate_cloze_fields(self) -> None:
+        """CLOZE (Phase 52D / P-127) requires sentence+blanks with matching '___'
+        marker count; 'select' mode also needs a non-empty distractor pool."""
+        if not self.sentence:
+            raise ValueError("CLOZE exercise requires non-empty 'sentence'")
+        if not self.blanks:
+            raise ValueError("CLOZE exercise requires non-empty 'blanks'")
+        marker_count = self.sentence.count("___")
+        if marker_count != len(self.blanks):
+            raise ValueError(
+                f"CLOZE marker count mismatch: sentence has "
+                f"{marker_count} '___' markers but blanks has "
+                f"{len(self.blanks)} entries"
+            )
+        # ``select`` mode requires a non-empty distractor pool to populate the
+        # per-blank ``<select>`` options.
+        if self.cloze_mode == "select" and not self.distractors:
+            raise ValueError("CLOZE with cloze_mode='select' requires non-empty 'distractors'")
 
 
 class LessonStep(BaseModel):
