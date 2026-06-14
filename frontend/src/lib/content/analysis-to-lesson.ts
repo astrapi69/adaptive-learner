@@ -508,8 +508,19 @@ export function validateGeneratedLesson(lesson: ContentLesson): void {
   if (lesson.estimated_minutes < 1) fail("estimated_minutes < 1");
   if (lesson.steps.length < 1) fail("lesson needs at least one step");
 
+  const cardIds = validateCards(lesson.cards, fail);
+  validateSteps(lesson.steps, cardIds, fail);
+}
+
+/** Validate every card (slug-safe + unique id, front + back present,
+ *  slug-safe tags) and return the set of card ids for cross-reference
+ *  checks in the step validation. */
+function validateCards(
+  cards: ContentLesson["cards"],
+  fail: (msg: string) => never,
+): Set<string> {
   const cardIds = new Set<string>();
-  for (const card of lesson.cards) {
+  for (const card of cards) {
     if (!SLUG_RE.test(card.id)) fail(`card id '${card.id}' not slug-safe`);
     if (cardIds.has(card.id)) fail(`duplicate card id '${card.id}'`);
     cardIds.add(card.id);
@@ -519,9 +530,19 @@ export function validateGeneratedLesson(lesson: ContentLesson): void {
         fail(`card '${card.id}' tag '${tag}' not slug-safe`);
     }
   }
+  return cardIds;
+}
 
+/** Validate every step: slug-safe + unique id, theory steps carry a
+ *  body and no exercise, exercise steps carry an exercise (validated
+ *  against ``cardIds``) and no body. */
+function validateSteps(
+  steps: ContentLesson["steps"],
+  cardIds: Set<string>,
+  fail: (msg: string) => never,
+): void {
   const stepIds = new Set<string>();
-  for (const step of lesson.steps) {
+  for (const step of steps) {
     if (!SLUG_RE.test(step.id)) fail(`step id '${step.id}' not slug-safe`);
     if (stepIds.has(step.id)) fail(`duplicate step id '${step.id}'`);
     stepIds.add(step.id);

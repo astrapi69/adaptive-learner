@@ -11,5 +11,3 @@
 # TypeScript eslint complexity > 20. New over-threshold functions block
 # immediately; existing offenders below are grandfathered (ratchet may
 # only shrink). File-level granularity matches .filesize-baseline.
-
-frontend/src/lib/content/analysis-to-lesson.ts 21
