@@ -21,18 +21,34 @@
  * without a backend roundtrip.
  */
 
-import {ArrowLeft, ArrowRight, BookOpen, Download} from "lucide-react";
-import {useEffect, useRef, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {ArrowLeft, BookOpen, Download} from "lucide-react";
+import {useEffect, useRef, useState, type ReactElement, type Ref} from "react";
+import {
+    useNavigate,
+    useParams,
+    type NavigateFunction,
+} from "react-router-dom";
 
 import {
     ExerciseDispatcher,
     SUPPORTED_EXERCISE_TYPES,
 } from "../components/exercises/ExerciseDispatcher";
-import type {ExerciseHandle} from "../components/exercises/exercise-control";
+import type {
+    ExerciseHandle,
+    ExerciseScored,
+} from "../components/exercises/exercise-control";
 import {Button} from "@/components/ui/button";
+import ProgressBar from "../shared/ProgressBar";
+import LessonStepNav from "../shared/LessonStepNav";
 import {useI18n} from "../hooks/useI18n";
 import {useReviewLesson} from "../hooks/useReviewLesson";
+import type {
+    ContentLesson,
+    ContentLessonStep,
+    ElementAttempt,
+} from "../storage/types";
+
+type Translate = (key: string, fallback?: string) => string;
 
 interface UrlParams {
     setId: string;
@@ -74,102 +90,8 @@ export default function ReviewPage() {
         setAnswerable(false);
     }, [currentStepIndex]);
 
-    if (!setId) {
-        return (
-            <main
-                id="main"
-                className="page lesson-page"
-                data-testid="review-missing-params"
-            >
-                <h1>{t("review.page_title", "Review")}</h1>
-                <p>
-                    {t(
-                        "review.error.missing_params",
-                        "No content set selected.",
-                    )}
-                </p>
-            </main>
-        );
-    }
-
-    if (status === "loading") {
-        return (
-            <main
-                id="main"
-                className="page lesson-page"
-                data-testid="review-loading"
-            >
-                <p>{t("review.loading", "Loading review session…")}</p>
-            </main>
-        );
-    }
-
-    if (status === "empty") {
-        return (
-            <main
-                id="main"
-                className="page lesson-page"
-                data-testid="review-empty"
-            >
-                <header className="lesson-header">
-                    <h1>{t("review.page_title", "Review")}</h1>
-                </header>
-                <p className="lesson-not-cached-body">
-                    {t(
-                        "review.empty_body",
-                        "All caught up! No elements due for review in this set.",
-                    )}
-                </p>
-                <p>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => navigate("/dashboard")}
-                        data-testid="review-back-to-dashboard"
-                    >
-                        <ArrowLeft size={14} aria-hidden="true" />
-                        {t(
-                            "review.back_to_dashboard",
-                            "Back to Dashboard",
-                        )}
-                    </Button>
-                </p>
-            </main>
-        );
-    }
-
-    if (status === "not-cached") {
-        return (
-            <main
-                id="main"
-                className="page lesson-page"
-                data-testid="review-not-cached"
-            >
-                <header className="lesson-header">
-                    <h1>{t("review.page_title", "Review")}</h1>
-                </header>
-                <p className="lesson-not-cached-body">
-                    {t(
-                        "review.not_cached_body",
-                        "This set isn't downloaded yet. Open the content browser to download it first.",
-                    )}
-                </p>
-                <p>
-                    <Button
-                        type="button"
-                        onClick={() => navigate("/content")}
-                        data-testid="review-goto-content"
-                    >
-                        <Download size={14} aria-hidden="true" />
-                        {t(
-                            "lesson.action.open_browser",
-                            "Open content browser",
-                        )}
-                    </Button>
-                </p>
-            </main>
-        );
-    }
+    const statusScreen = renderReviewStatus(setId, status, navigate, t);
+    if (statusScreen) return statusScreen;
 
     if (status === "error" || lesson === null) {
         return (
@@ -236,36 +158,20 @@ export default function ReviewPage() {
                 </p>
             </header>
 
-            <div
+            <ProgressBar
+                valueNow={progressPct}
+                ariaLabel={t("lesson.progress.aria_label", "Lesson progress")}
                 className="lesson-progress-bar"
-                role="progressbar"
-                aria-valuenow={progressPct}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label={t(
-                    "lesson.progress.aria_label",
-                    "Lesson progress",
-                )}
-                data-testid="review-progress-bar"
+                fillClassName="lesson-progress-fill"
+                labelClassName="lesson-progress-label"
+                testId="review-progress-bar"
             >
-                <div
-                    className="lesson-progress-fill"
-                    style={{width: `${progressPct}%`}}
-                />
-                <span className="lesson-progress-label">
-                    {isSummary
-                        ? t("lesson.progress.summary", "Summary")
-                        : t(
-                              "lesson.progress.step_of",
-                              "Step {current} of {total}",
-                          )
-                              .replace(
-                                  "{current}",
-                                  String(currentStepIndex + 1),
-                              )
-                              .replace("{total}", String(totalSteps))}
-                </span>
-            </div>
+                {isSummary
+                    ? t("lesson.progress.summary", "Summary")
+                    : t("lesson.progress.step_of", "Step {current} of {total}")
+                          .replace("{current}", String(currentStepIndex + 1))
+                          .replace("{total}", String(totalSteps))}
+            </ProgressBar>
 
             {isSummary ? (
                 <ReviewSummary
@@ -274,95 +180,191 @@ export default function ReviewPage() {
                     onExit={() => navigate("/dashboard")}
                 />
             ) : (
-                <article
-                    className="lesson-step"
-                    data-testid={`review-step-${step!.id}`}
-                    data-step-type={step!.type}
-                >
-                    <ExerciseDispatcher
-                        key={step!.id}
-                        ref={exerciseRef}
-                        controlled
-                        onInteraction={setAnswerable}
-                        step={step!}
-                        setId={setId}
-                        cards={lesson?.cards ?? []}
-                        lessonId={
-                            // The synthesized step embeds the
-                            // source lesson_id in its id —
-                            // "review-{lesson_id}-{exercise_id}
-                            // -{element_key}". Parse it back
-                            // out so the element-attempt
-                            // deriver stamps the right
-                            // lesson_id on every produced
-                            // ElementAttempt.
-                            _extractLessonId(step!.id)
-                        }
-                        onComplete={async (scored) => {
-                            // Flip to the "Weiter" phase the moment the
-                            // answer is graded, then record attempts.
-                            setChecked(true);
-                            await recordStepAttempts(scored.attempts);
-                        }}
-                    />
-                </article>
+                <ReviewExercise
+                    step={step!}
+                    setId={setId}
+                    cards={lesson.cards ?? []}
+                    exerciseRef={exerciseRef}
+                    onInteraction={setAnswerable}
+                    onChecked={() => setChecked(true)}
+                    recordStepAttempts={recordStepAttempts}
+                />
             )}
 
-            <nav
-                className="lesson-nav"
-                aria-label={t(
-                    "lesson.nav.aria_label",
-                    "Step navigation",
-                )}
-            >
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="lesson-nav-prev"
-                    onClick={goPrev}
-                    disabled={currentStepIndex === 0}
-                    data-testid="review-prev"
-                >
-                    <ArrowLeft size={14} aria-hidden="true" />
-                    {t("lesson.action.prev", "Previous")}
-                </Button>
-                {!isSummary &&
-                    (isExerciseStep && !checked ? (
-                        <Button
-                            type="button"
-                            className="lesson-nav-check"
-                            onClick={() => exerciseRef.current?.submit()}
-                            disabled={!answerable}
-                            title={
-                                !answerable
-                                    ? t(
-                                          "lesson.button.check_disabled_hint",
-                                          "Answer the exercise first",
-                                      )
-                                    : undefined
-                            }
-                            data-testid="review-check"
-                        >
-                            {t("lesson.button.check", "Check")}
-                        </Button>
-                    ) : (
-                        <Button
-                            type="button"
-                            className="lesson-nav-next"
-                            onClick={goNext}
-                            data-testid="review-next"
-                        >
-                            {currentStepIndex + 1 === totalSteps
-                                ? t(
-                                      "lesson.action.finish",
-                                      "Finish lesson",
-                                  )
-                                : t("lesson.action.next", "Next")}
-                            <ArrowRight size={14} aria-hidden="true" />
-                        </Button>
-                    ))}
-            </nav>
+            <LessonStepNav
+                testIdPrefix="review"
+                isSummary={isSummary}
+                isExerciseStep={isExerciseStep}
+                checked={checked}
+                answerable={answerable}
+                isFirstStep={currentStepIndex === 0}
+                isLastStep={currentStepIndex + 1 === totalSteps}
+                onPrev={goPrev}
+                onNext={goNext}
+                onCheck={() => exerciseRef.current?.submit()}
+                labels={{
+                    navAria: t("lesson.nav.aria_label", "Step navigation"),
+                    prev: t("lesson.action.prev", "Previous"),
+                    check: t("lesson.button.check", "Check"),
+                    checkDisabledHint: t(
+                        "lesson.button.check_disabled_hint",
+                        "Answer the exercise first",
+                    ),
+                    next: t("lesson.action.next", "Next"),
+                    finish: t("lesson.action.finish", "Finish lesson"),
+                }}
+            />
         </main>
+    );
+}
+
+/** Render the non-playing status screen for a review session
+ *  (missing param / loading / empty / not-cached), or ``null`` once a
+ *  playable session is ready. The ``error`` / ``lesson === null`` case
+ *  stays inline in the page so TypeScript narrows ``lesson``. */
+function renderReviewStatus(
+    setId: string,
+    status: string,
+    navigate: NavigateFunction,
+    t: Translate,
+): ReactElement | null {
+    if (!setId) {
+        return (
+            <main
+                id="main"
+                className="page lesson-page"
+                data-testid="review-missing-params"
+            >
+                <h1>{t("review.page_title", "Review")}</h1>
+                <p>
+                    {t(
+                        "review.error.missing_params",
+                        "No content set selected.",
+                    )}
+                </p>
+            </main>
+        );
+    }
+    if (status === "loading") {
+        return (
+            <main
+                id="main"
+                className="page lesson-page"
+                data-testid="review-loading"
+            >
+                <p>{t("review.loading", "Loading review session…")}</p>
+            </main>
+        );
+    }
+    if (status === "empty") {
+        return (
+            <main
+                id="main"
+                className="page lesson-page"
+                data-testid="review-empty"
+            >
+                <header className="lesson-header">
+                    <h1>{t("review.page_title", "Review")}</h1>
+                </header>
+                <p className="lesson-not-cached-body">
+                    {t(
+                        "review.empty_body",
+                        "All caught up! No elements due for review in this set.",
+                    )}
+                </p>
+                <p>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => navigate("/dashboard")}
+                        data-testid="review-back-to-dashboard"
+                    >
+                        <ArrowLeft size={14} aria-hidden="true" />
+                        {t("review.back_to_dashboard", "Back to Dashboard")}
+                    </Button>
+                </p>
+            </main>
+        );
+    }
+    if (status === "not-cached") {
+        return (
+            <main
+                id="main"
+                className="page lesson-page"
+                data-testid="review-not-cached"
+            >
+                <header className="lesson-header">
+                    <h1>{t("review.page_title", "Review")}</h1>
+                </header>
+                <p className="lesson-not-cached-body">
+                    {t(
+                        "review.not_cached_body",
+                        "This set isn't downloaded yet. Open the content browser to download it first.",
+                    )}
+                </p>
+                <p>
+                    <Button
+                        type="button"
+                        onClick={() => navigate("/content")}
+                        data-testid="review-goto-content"
+                    >
+                        <Download size={14} aria-hidden="true" />
+                        {t("lesson.action.open_browser", "Open content browser")}
+                    </Button>
+                </p>
+            </main>
+        );
+    }
+    return null;
+}
+
+interface ReviewExerciseProps {
+    step: ContentLessonStep;
+    setId: string;
+    cards: ContentLesson["cards"];
+    exerciseRef: Ref<ExerciseHandle>;
+    onInteraction: (answerable: boolean) => void;
+    onChecked: () => void;
+    recordStepAttempts: (attempts: readonly ElementAttempt[]) => Promise<void>;
+}
+
+/** The active review exercise step: the controlled ExerciseDispatcher
+ *  wrapped in the lesson-step article. The synthesized step id embeds
+ *  the source lesson_id ("review-{lesson_id}-{exercise_id}-
+ *  {element_key}"); ``_extractLessonId`` parses it back out so the
+ *  element-attempt deriver stamps the right lesson_id. */
+function ReviewExercise({
+    step,
+    setId,
+    cards,
+    exerciseRef,
+    onInteraction,
+    onChecked,
+    recordStepAttempts,
+}: ReviewExerciseProps) {
+    return (
+        <article
+            className="lesson-step"
+            data-testid={`review-step-${step.id}`}
+            data-step-type={step.type}
+        >
+            <ExerciseDispatcher
+                key={step.id}
+                ref={exerciseRef}
+                controlled
+                onInteraction={onInteraction}
+                step={step}
+                setId={setId}
+                cards={cards}
+                lessonId={_extractLessonId(step.id)}
+                onComplete={async (scored: ExerciseScored) => {
+                    // Flip to the "Weiter" phase the moment the answer
+                    // is graded, then record attempts.
+                    onChecked();
+                    await recordStepAttempts(scored.attempts);
+                }}
+            />
+        </article>
     );
 }
 
