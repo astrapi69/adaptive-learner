@@ -15,6 +15,7 @@ import { Brain, Calculator, ChevronDown, ChevronRight, Code, GraduationCap } fro
 import { useI18n } from "../../hooks/useI18n";
 import {
   buildContentTree,
+  type FoldedUserLesson,
   type SourceGroup,
   type TargetGroup,
 } from "../../lib/content/content-tree";
@@ -23,6 +24,7 @@ import { booksForDomain, type BookRecommendations } from "../../lib/content/book
 import type { ContentSetEntry } from "../../storage/types";
 import BookRecommendationsSection from "./BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
+import FoldedUserLessons from "./FoldedUserLessons";
 
 /** Per-row state + actions forwarded down to {@link ContentSetRow}. */
 export interface ContentSetRowActions {
@@ -34,6 +36,19 @@ export interface ContentSetRowActions {
   onDownload: (entry: ContentSetEntry) => void;
 }
 
+/** Actions + lookup for the user lessons folded into tree nodes
+ *  (EXP-026 / UGC-04). Omit to render the tree without folding. */
+export interface FoldedLessonActions {
+  setsByKey: Record<string, ContentSetEntry>;
+  communitySharingEnabled: boolean;
+  onPlayLesson: (lesson: FoldedUserLesson) => void;
+  onEdit: (entry: ContentSetEntry) => void;
+  onExportJson: (entry: ContentSetEntry) => void;
+  onExportSet: (entry: ContentSetEntry) => void;
+  onShare: (entry: ContentSetEntry) => void;
+  onDelete: (entry: ContentSetEntry) => void;
+}
+
 interface ContentTreeProps {
   tree: ReturnType<typeof buildContentTree>;
   lang: string;
@@ -43,6 +58,8 @@ interface ContentTreeProps {
   setOtherExpanded: (next: boolean | ((prev: boolean) => boolean)) => void;
   bookRecs: BookRecommendations;
   setRow: ContentSetRowActions;
+  /** User-lesson folding (EXP-026); omit to render without folding. */
+  folded?: FoldedLessonActions;
 }
 
 export default function ContentTree({
@@ -54,8 +71,24 @@ export default function ContentTree({
   setOtherExpanded,
   bookRecs,
   setRow,
+  folded,
 }: ContentTreeProps) {
   const { t } = useI18n();
+
+  const renderFolded = (lessons: FoldedUserLesson[]) =>
+    folded && lessons.length > 0 ? (
+      <FoldedUserLessons
+        lessons={lessons}
+        setsByKey={folded.setsByKey}
+        communitySharingEnabled={folded.communitySharingEnabled}
+        onPlayLesson={folded.onPlayLesson}
+        onEdit={folded.onEdit}
+        onExportJson={folded.onExportJson}
+        onExportSet={folded.onExportSet}
+        onShare={folded.onShare}
+        onDelete={folded.onDelete}
+      />
+    ) : null;
 
   const renderSetRow = (entry: ContentSetEntry) => (
     <ContentSetRow
@@ -112,6 +145,7 @@ export default function ContentTree({
                 <ul className="content-set-list">
                   {levelGroup.sets.map((entry) => renderSetRow(entry))}
                 </ul>
+                {renderFolded(levelGroup.userLessons)}
               </div>
             ))}
           </div>
@@ -222,6 +256,7 @@ export default function ContentTree({
                   (#273, axe listitem — a listitem must be contained
                   in a <ul>/<ol>). */}
               <ul className="content-set-list">{group.sets.map((entry) => renderSetRow(entry))}</ul>
+              {renderFolded(group.userLessons)}
               <BookRecommendationsSection
                 domain={group.domain}
                 books={booksForDomain(bookRecs, group.domain)}

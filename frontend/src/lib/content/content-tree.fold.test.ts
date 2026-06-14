@@ -60,12 +60,13 @@ describe("buildContentTree user-lesson folding", () => {
 
     it("folds a matching user set's lessons into the level node", () => {
         const fold = userFold({target_language: "es", source_language: "de", level: "A1"}, [
-            {id: "mine-l1", title: "Meine Lektion"},
+            {id: "mine-l1", filename: "mine-l1.json", title: "Meine Lektion"},
         ]);
         const tree = buildContentTree(published, ["de"], [fold]);
         expect(esA1Level(tree)?.userLessons).toEqual([
             {
                 lessonId: "mine-l1",
+                filename: "mine-l1.json",
                 title: "Meine Lektion",
                 setSource: "user-generated",
                 setId: "mine",
@@ -76,8 +77,13 @@ describe("buildContentTree user-lesson folding", () => {
 
     it("marks lessons with variation_of as edits", () => {
         const fold = userFold({level: "A1"}, [
-            {id: "mine-l1", title: "Original-Fork", variation_of: "es-a1-from-de-lesson-1"},
-            {id: "mine-l2", title: "Eigene"},
+            {
+                id: "mine-l1",
+                filename: "mine-l1.json",
+                title: "Original-Fork",
+                variation_of: "es-a1-from-de-lesson-1",
+            },
+            {id: "mine-l2", filename: "mine-l2.json", title: "Eigene"},
         ]);
         const tree = buildContentTree(published, ["de"], [fold]);
         expect(esA1Level(tree)?.userLessons.map((l) => [l.lessonId, l.origin])).toEqual([
@@ -87,7 +93,7 @@ describe("buildContentTree user-lesson folding", () => {
     });
 
     it("does not inflate setCount with folded lessons", () => {
-        const fold = userFold({level: "A1"}, [{id: "mine-l1", title: "Meine"}]);
+        const fold = userFold({level: "A1"}, [{id: "mine-l1", filename: "mine-l1.json", title: "Meine"}]);
         const tree = buildContentTree(published, ["de"], [fold]);
         const src = tree.primary.find((g) => g.sourceLanguage === "de");
         const target = src?.targets.find((t) => t.targetLanguage === "es");
@@ -96,7 +102,7 @@ describe("buildContentTree user-lesson folding", () => {
     });
 
     it("skips a user set with no matching published node", () => {
-        const fold = userFold({level: "C1"}, [{id: "mine-l1", title: "Zu schwer"}]);
+        const fold = userFold({level: "C1"}, [{id: "mine-l1", filename: "mine-l1.json", title: "Zu schwer"}]);
         const tree = buildContentTree(published, ["de"], [fold]);
         expect(esA1Level(tree)?.userLessons).toEqual([]);
     });
@@ -111,7 +117,7 @@ describe("buildContentTree user-lesson folding", () => {
         });
         const fold = userFold(
             {domain: "psychology", title: "Psychologie", source_language: "de", target_language: "de"},
-            [{id: "mine-p1", title: "Meine Notiz"}],
+            [{id: "mine-p1", filename: "mine-p1.json", title: "Meine Notiz"}],
         );
         const tree = buildContentTree([...published, psych], ["de"], [fold]);
         const domain = tree.knowledge.find((g) => g.domain === "psychology");
