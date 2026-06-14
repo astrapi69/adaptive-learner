@@ -19,7 +19,6 @@ frontend/src/hooks/useShareWizard.ts 21
 frontend/src/lib/content/analysis-to-lesson.ts 21
 frontend/src/lib/export/notebooklm-package.ts 24
 frontend/src/lib/tiptap-to-markdown.ts 27
-frontend/src/pages/AdaptiveLesson.tsx 27
 frontend/src/pages/Assessment.tsx 22
 frontend/src/pages/CreateLesson.tsx 24
 frontend/src/pages/ErrorReplayLesson.tsx 22
