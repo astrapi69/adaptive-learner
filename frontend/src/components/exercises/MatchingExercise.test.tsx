@@ -572,3 +572,85 @@ describe("MatchingExercise: per-pair color + label (#145)", () => {
         expect(screen.getAllByTestId("matching-pair-badge-1")).toHaveLength(2);
     });
 });
+
+describe("MatchingExercise: bidirectional selection (#507)", () => {
+    it("forms a pair when started from the B (right) column, then A", () => {
+        const onComplete = vi.fn();
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={onComplete} />,
+        );
+        // Tap the right tile FIRST, then its matching left tile.
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        expect(screen.getByTestId("matching-counter")).toHaveTextContent(
+            /1\s*\/\s*3/,
+        );
+        // Finish the remaining pairs B -> A too, then submit.
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({ correct: 3, total: 3 }),
+        );
+    });
+
+    it("marks a B tile as selected (aria-pressed) when tapped first, and toggles off", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        const rightTile = screen.getByTestId("matching-right-0");
+        expect(rightTile).toHaveAttribute("aria-pressed", "false");
+        fireEvent.click(rightTile);
+        expect(rightTile).toHaveAttribute("aria-pressed", "true");
+        // Tapping the same B tile again clears the selection.
+        fireEvent.click(rightTile);
+        expect(rightTile).toHaveAttribute("aria-pressed", "false");
+    });
+
+    it("undoes a pair regardless of the side that started it", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        // Pair B -> A, then undo by tapping the right tile.
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        expect(screen.getByTestId("matching-counter")).toHaveTextContent(
+            /1\s*\/\s*3/,
+        );
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        expect(screen.getByTestId("matching-counter")).toHaveTextContent(
+            /0\s*\/\s*3/,
+        );
+    });
+
+    it("accepts duplicate B values when paired B -> A (#507 + #481)", () => {
+        const onComplete = vi.fn();
+        // libro + coche both take "el"; the two "el" right tiles are
+        // interchangeable, and starting from the B side must still score
+        // by VALUE, not index.
+        const dupExercise: ContentLessonExercise = {
+            id: "ex-dup-bidir",
+            type: "matching",
+            prompt: "Match each noun with its article.",
+            card_ids: [],
+            pairs: [
+                { left: "libro", right: "el" },
+                { left: "coche", right: "el" },
+                { left: "casa", right: "la" },
+            ],
+            distractors: [],
+        };
+        render(
+            <MatchingExercise exercise={dupExercise} onComplete={onComplete} />,
+        );
+        // Start from the "el" tiles (B side), cross-match to the nouns.
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({ correct: 3, total: 3 }),
+        );
+    });
+});

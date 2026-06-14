@@ -403,6 +403,7 @@ export function MatchingLeftTile({
 }
 
 interface RightTileViewState {
+    isSelected: boolean;
     isPaired: boolean;
     slot: number | undefined;
     showPair: boolean;
@@ -421,6 +422,8 @@ interface RightTileContext {
     wrongFlash: {left: number; right: number} | null;
     pairs: MatchingPairs;
     productive: boolean;
+    /** #507 — the right tile selected first in a B → A pairing. */
+    selectedRight: number | null;
 }
 
 /** Derived render state for one right tile (mirrors the result of the
@@ -437,7 +440,9 @@ export function computeRightTileState(
         wrongFlash,
         pairs,
         productive,
+        selectedRight,
     } = ctx;
+    const isSelected = selectedRight === tile.originalIndex;
     const isPaired = pairedRightIndices.has(tile.originalIndex);
     const pairedLeftIdx = [...matches.entries()].find(
         ([, ri]) => ri === tile.originalIndex,
@@ -462,7 +467,17 @@ export function computeRightTileState(
             : undefined;
     const flashing =
         wrongFlash !== null && wrongFlash.right === tile.originalIndex;
-    return {isPaired, slot, showPair, isCorrect, isWrong, badgeTone, pairStyle, flashing};
+    return {
+        isSelected,
+        isPaired,
+        slot,
+        showPair,
+        isCorrect,
+        isWrong,
+        badgeTone,
+        pairStyle,
+        flashing,
+    };
 }
 
 /** One right-column tile (definition/term). */
@@ -477,8 +492,17 @@ export function MatchingRightTile({
     submitted: boolean;
     onClick: () => void;
 }) {
-    const {isPaired, slot, showPair, isCorrect, isWrong, badgeTone, pairStyle, flashing} =
-        state;
+    const {
+        isSelected,
+        isPaired,
+        slot,
+        showPair,
+        isCorrect,
+        isWrong,
+        badgeTone,
+        pairStyle,
+        flashing,
+    } = state;
     return (
         <li key={tile.originalIndex} className="flex flex-col">
             <button
@@ -486,6 +510,10 @@ export function MatchingRightTile({
                 style={pairStyle}
                 className={cn(
                     "inline-flex min-h-11 w-full flex-1 cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-b-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-b-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
+                    // #507 — selected first in a B → A pairing (mirrors the
+                    // left tile's selected affordance).
+                    isSelected &&
+                        "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
                     showPair &&
                         "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
                     // Unmatched after checking stays neutral.
@@ -499,6 +527,7 @@ export function MatchingRightTile({
                         "is-flash motion-safe:animate-[matching-flash_600ms_ease]",
                 )}
                 onClick={onClick}
+                aria-pressed={isSelected}
                 disabled={submitted}
                 data-testid={`matching-right-${tile.originalIndex}`}
             >
