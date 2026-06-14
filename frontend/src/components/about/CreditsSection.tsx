@@ -84,7 +84,7 @@ const sectionStyle: React.CSSProperties = {
 
 const dlStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "max-content 1fr",
+  gridTemplateColumns: "minmax(0, max-content) minmax(0, 1fr)",
   gap: "4px 16px",
   fontSize: "0.9rem",
   margin: 0,
@@ -94,5 +94,10 @@ const dlStyle: React.CSSProperties = {
 // AI-credit values wrap (and break long tokens only when needed) so
 // they don't overflow the viewport at 320px. The other About sections
 // use ``wordBreak: break-all`` for path/hash values; word-based credit
-// text reads better with overflow-wrap.
-const ddStyle: React.CSSProperties = { margin: 0, overflowWrap: "anywhere" };
+// text reads better with overflow-wrap. ``minWidth: 0`` lets the grid's
+// 1fr value track shrink below the content's intrinsic width.
+const ddStyle: React.CSSProperties = {
+  margin: 0,
+  minWidth: 0,
+  overflowWrap: "anywhere",
+};
