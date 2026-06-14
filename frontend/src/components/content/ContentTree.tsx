@@ -141,6 +141,16 @@ export default function ContentTree({
               >
                 <h3 className="content-level-title">
                   {levelGroup.level} · {levelGroup.sets.length} {t("content.lessons", "lessons")}
+                  {levelGroup.userLessons.length > 0 && (
+                    <span className="content-level-own-count" data-testid={`content-level-${nodeId}-${levelGroup.level}-own-count`}>
+                      {" ("}
+                      {t("content.tree.plus_own", "+{n} own").replace(
+                        "{n}",
+                        String(levelGroup.userLessons.length),
+                      )}
+                      {")"}
+                    </span>
+                  )}
                 </h3>
                 <ul className="content-set-list">
                   {levelGroup.sets.map((entry) => renderSetRow(entry))}
@@ -250,6 +260,19 @@ export default function ContentTree({
             <div key={group.domain} data-testid={`content-domain-${group.domain}`}>
               <h3 className="content-source-sub content-domain-sub">
                 {domainIcon(group.domain)} {domainLabel(group.domain)}
+                {group.userLessons.length > 0 && (
+                  <span
+                    className="content-level-own-count"
+                    data-testid={`content-domain-${group.domain}-own-count`}
+                  >
+                    {" ("}
+                    {t("content.tree.plus_own", "+{n} own").replace(
+                      "{n}",
+                      String(group.userLessons.length),
+                    )}
+                    {")"}
+                  </span>
+                )}
               </h3>
               {/* renderSetRow returns a <li>; the knowledge groups
                   must wrap them in a list like the language sets do

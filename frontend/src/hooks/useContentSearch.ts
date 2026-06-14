@@ -11,7 +11,7 @@ import {
     type IndexedSet,
 } from "../lib/content/content-search";
 import {getStorage} from "../storage";
-import {USER_GENERATED_SOURCE, type ContentSetEntry} from "../storage/types";
+import type {ContentSetEntry} from "../storage/types";
 
 /**
  * Result of {@link useContentSearch}: the controlled input state, the
@@ -72,10 +72,11 @@ export function useContentSearch(
         return () => window.removeEventListener("keydown", onKey);
     }, []);
 
-    // Build the search index once the downloaded sets are known.
-    // Not-yet-downloaded sets are indexed at set level only.
+    // Build the search index once the sets are known. Not-yet-cached
+    // sets are indexed at set level only. EXP-026 / UGC-05: index
+    // user-generated sets too, so lessons folded into the tree (and
+    // unplaced "My Lessons" drafts) stay findable.
     const downloadedSig = sets
-        .filter((entry) => entry.source !== USER_GENERATED_SOURCE)
         .map(
             (entry) =>
                 `${entry.source}#${entry.id}@${entry.cached_version ?? ""}`,
@@ -84,9 +85,7 @@ export function useContentSearch(
     useEffect(() => {
         let cancelled = false;
         if (!searchActivated) return;
-        const downloaded = sets.filter(
-            (entry) => entry.source !== USER_GENERATED_SOURCE,
-        );
+        const downloaded = sets;
         if (downloaded.length === 0) {
             setSearchIndex([]);
             return;

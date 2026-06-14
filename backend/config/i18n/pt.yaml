@@ -1707,6 +1707,7 @@ content:
     own_lesson: "Sua lição"
     own_edit: "Sua edição"
     your_lessons: "Suas lições"
+    plus_own: "+{n} suas"
     domain_psychology: Psicologia
     domain_programming: Programação
     domain_math: Matemática
