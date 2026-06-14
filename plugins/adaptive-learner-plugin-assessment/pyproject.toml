@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-assessment"
-version = "1.78.0"
+version = "1.79.0"
 description = "Adaptive Learner: 12-question learner-profile assessment + 6-method-weight calculation."
 authors = ["Asterios Raptis"]
 license = "MIT"
