@@ -116,47 +116,55 @@ export async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<
     /* recorder not available */
   }
   if (!response.ok) {
-    let detail = `HTTP ${response.status}`;
-    let stacktrace: string | undefined;
-    const extra: Record<string, unknown> = {};
-    try {
-      const errBody = await response.json();
-      if (typeof errBody?.detail === "string") {
-        detail = errBody.detail;
-      } else if (Array.isArray(errBody?.detail)) {
-        // Pydantic validation errors come as a list of
-        // {loc, msg, type} dicts; flatten them so toasts
-        // surface something legible.
-        detail = errBody.detail
-          .map((e: { loc?: unknown[]; msg?: string }) => {
-            const where = (e.loc ?? []).slice(1).join(".");
-            return where ? `${where}: ${e.msg ?? ""}` : (e.msg ?? "");
-          })
-          .filter(Boolean)
-          .join("; ");
-      }
-      if (typeof errBody?.stacktrace === "string") {
-        stacktrace = errBody.stacktrace;
-      }
-      // Phase 36 — carry any extra fields the backend
-      // attached via ``AdaptiveLearnerError.extra``. Strips
-      // the keys handled above so the caller doesn't see
-      // them twice.
-      if (errBody && typeof errBody === "object") {
-        for (const [key, value] of Object.entries(errBody)) {
-          if (key === "detail" || key === "stacktrace") continue;
-          extra[key] = value;
-        }
-      }
-    } catch {
-      /* non-JSON error body — keep generic detail */
-    }
-    throw new ApiError(response.status, detail, path, method, stacktrace, extra);
+    throw await buildApiError(response, path, method);
   }
   if (response.status === 204) {
     return undefined as T;
   }
   return (await response.json()) as T;
+}
+
+/**
+ * Build an ApiError from a failed response: flattens Pydantic
+ * validation lists into a legible detail string, pulls the optional
+ * stacktrace, and carries any extra backend fields
+ * (``AdaptiveLearnerError.extra``) minus the keys handled above. A
+ * non-JSON error body falls back to a generic ``HTTP {status}`` detail.
+ */
+async function buildApiError(
+  response: Response,
+  path: string,
+  method: string,
+): Promise<ApiError> {
+  let detail = `HTTP ${response.status}`;
+  let stacktrace: string | undefined;
+  const extra: Record<string, unknown> = {};
+  try {
+    const errBody = await response.json();
+    if (typeof errBody?.detail === "string") {
+      detail = errBody.detail;
+    } else if (Array.isArray(errBody?.detail)) {
+      detail = errBody.detail
+        .map((e: { loc?: unknown[]; msg?: string }) => {
+          const where = (e.loc ?? []).slice(1).join(".");
+          return where ? `${where}: ${e.msg ?? ""}` : (e.msg ?? "");
+        })
+        .filter(Boolean)
+        .join("; ");
+    }
+    if (typeof errBody?.stacktrace === "string") {
+      stacktrace = errBody.stacktrace;
+    }
+    if (errBody && typeof errBody === "object") {
+      for (const [key, value] of Object.entries(errBody)) {
+        if (key === "detail" || key === "stacktrace") continue;
+        extra[key] = value;
+      }
+    }
+  } catch {
+    /* non-JSON error body — keep generic detail */
+  }
+  return new ApiError(response.status, detail, path, method, stacktrace, extra);
 }
 
 function buildUrl(path: string, query?: Record<string, string | number | undefined>): string {
