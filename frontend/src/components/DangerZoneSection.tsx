@@ -33,11 +33,12 @@
  * flow without first being offered an escape hatch.
  */
 
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
+import {useDialogFocus} from "../hooks/useDialogFocus";
 import {useI18n} from "../hooks/useI18n";
 import {clearLearnerState, readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
@@ -54,6 +55,11 @@ export default function DangerZoneSection() {
     const [step, setStep] = useState<Step>("idle");
     const [typed, setTyped] = useState<string>("");
     const [busy, setBusy] = useState<"backup" | "reset" | null>(null);
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    // WCAG 2.1.2 / 2.4.3: initial focus, focus trap, focus return for
+    // the destructive-confirm modal (open while step != "idle").
+    useDialogFocus(dialogRef, {open: step !== "idle"});
 
     const canSubmit = typed === CONFIRMATION_TOKEN && busy !== "reset";
 
@@ -211,6 +217,7 @@ export default function DangerZoneSection() {
             {step !== "idle" && (
                 <div className="modal-overlay" data-testid="danger-zone-modal">
                     <div
+                        ref={dialogRef}
                         className="modal-card"
                         role="dialog"
                         aria-modal="true"

@@ -1,6 +1,7 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
+import {useDialogFocus} from "../hooks/useDialogFocus";
 import {useI18n} from "../hooks/useI18n";
 
 interface AddTopicDialogProps {
@@ -30,6 +31,11 @@ export default function AddTopicDialog({
 }: AddTopicDialogProps) {
     const {t} = useI18n();
     const [title, setTitle] = useState(initialTitle);
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    // WCAG 2.1.2 / 2.4.3: initial focus (the input, via
+    // data-autofocus), focus trap, and focus return to the trigger.
+    useDialogFocus(dialogRef, {open});
 
     // Reset the local input whenever the dialog (re-)opens; a
     // single component instance is reused for both "add" and
@@ -58,6 +64,7 @@ export default function AddTopicDialog({
     return (
         <div className="modal-overlay" data-testid="add-topic-dialog">
             <div
+                ref={dialogRef}
                 className="modal-card"
                 role="dialog"
                 aria-modal="true"
@@ -85,7 +92,7 @@ export default function AddTopicDialog({
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             disabled={submitting}
-                            autoFocus
+                            data-autofocus
                             required
                         />
                     </label>
