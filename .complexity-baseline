@@ -10,6 +10,5 @@
 # Thresholds: Python radon rank E/F (cc >= 31); TypeScript eslint
 # complexity > 20. File-level granularity matches .filesize-baseline.
 
-frontend/src/components/lesson/LessonSummary.tsx 21
 frontend/src/hooks/useShareWizard.ts 21
 frontend/src/lib/content/analysis-to-lesson.ts 21
