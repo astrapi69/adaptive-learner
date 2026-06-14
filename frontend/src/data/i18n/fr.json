@@ -1856,6 +1856,8 @@
       "other_sources": "Autres langues source",
       "for_speakers": "Pour les locuteurs de {lang}",
       "knowledge": "Savoir",
+      "own_lesson": "Votre leçon",
+      "own_edit": "Votre version",
       "domain_psychology": "Psychologie",
       "domain_programming": "Programmation",
       "domain_math": "Mathématiques",

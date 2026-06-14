@@ -1706,6 +1706,8 @@ content:
     other_sources: Otros idiomas de origen
     for_speakers: Para hablantes de {lang}
     knowledge: Conocimiento
+    own_lesson: "Tu lección"
+    own_edit: "Tu edición"
     domain_psychology: Psicología
     domain_programming: Programación
     domain_math: Matemáticas
