@@ -17,7 +17,6 @@ frontend/src/components/BackupSection.tsx 25
 frontend/src/components/Navigation.tsx 30
 frontend/src/components/content/ContentSetRow.tsx 28
 frontend/src/components/exercises/ClozeExercise.tsx 29
-frontend/src/components/exercises/FreeTextExercise.tsx 31
 frontend/src/components/exercises/PictureChoiceExercise.tsx 31
 frontend/src/components/exercises/WordTilesExercise.tsx 30
 frontend/src/components/lesson/LessonSummary.tsx 21
