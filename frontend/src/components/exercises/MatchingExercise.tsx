@@ -44,8 +44,10 @@ import {
     MatchingRightTile,
     MatchingPrompt,
     MatchingResultFooter,
+    matchingPairIsCorrect,
     type LeftTile,
     type RightTile,
+    type MatchingPairs,
 } from "./matching-parts";
 
 export {MATCHING_PAIR_COLORS, matchingPairColorVar} from "./matching-parts";
@@ -82,16 +84,22 @@ export interface MatchingExerciseProps extends ControlledExerciseProps {
 }
 
 
-/** Count pairs whose left index matches its right originalIndex. */
+/** Count correctly-matched pairs. A pair is correct when the matched
+ *  right tile's VALUE equals the value its left pair expects, so
+ *  duplicate right-column values (e.g. "el" for both libro + coche) are
+ *  interchangeable rather than index-bound. */
 function _scoreMatches(
     matches: ReadonlyMap<number, number>,
-    total: number,
+    pairs: MatchingPairs,
+    productive: boolean,
 ): {correct: number; total: number} {
     let correct = 0;
     for (const [leftIdx, rightOriginal] of matches) {
-        if (leftIdx === rightOriginal) correct += 1;
+        if (matchingPairIsCorrect(pairs, productive, leftIdx, rightOriginal)) {
+            correct += 1;
+        }
     }
-    return {correct, total};
+    return {correct, total: pairs.length};
 }
 
 
@@ -223,7 +231,7 @@ function MatchingExercise(
     const allPaired = matches.size === pairs.length;
 
     const reviewedResult = reviewedMatching
-        ? _scoreMatches(new Map(reviewedMatching.matches), pairs.length)
+        ? _scoreMatches(new Map(reviewedMatching.matches), pairs, productive)
         : null;
 
     const {submitted, result, submit, reset} = useControlledExercise({
@@ -234,7 +242,7 @@ function MatchingExercise(
         onComplete,
         reviewedResult,
         score: (): ExerciseScored => {
-            const {correct} = _scoreMatches(matches, pairs.length);
+            const {correct} = _scoreMatches(matches, pairs, productive);
             return {
                 correct,
                 total: pairs.length,
@@ -242,6 +250,7 @@ function MatchingExercise(
                     exercise,
                     {setId, lessonId},
                     matches,
+                    productive,
                 ),
                 raw_answer: {
                     kind: "matching",
@@ -399,6 +408,8 @@ function MatchingExercise(
                                     slotByLeft,
                                     submitted,
                                     wrongFlash,
+                                    pairs,
+                                    productive,
                                 })}
                                 submitted={submitted}
                                 onClick={() => handleRightClick(tile.originalIndex)}
