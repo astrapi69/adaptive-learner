@@ -22,7 +22,6 @@ frontend/src/hooks/useLessonEnterKey.ts 22
 frontend/src/hooks/useNextStepSuggestions.ts 29
 frontend/src/hooks/useShareWizard.ts 21
 frontend/src/lib/content/analysis-to-lesson.ts 21
-frontend/src/lib/content/content-validator.ts 30
 frontend/src/lib/export/notebooklm-package.ts 24
 frontend/src/lib/tiptap-to-markdown.ts 27
 frontend/src/pages/AdaptiveLesson.tsx 27
