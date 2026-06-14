@@ -28,9 +28,25 @@ import type {ContentLesson, ContentLessonCard, ContentLessonStep} from "../../st
 
 export interface SplitOptions {
     maxStepsPerPart?: number;
+    /** Build a part's title from the base title, the 1-indexed part
+     *  number, and the total part count. Defaults to the parity-pinned
+     *  English ``"{title} — Part {n} of {m}"`` (kept byte-identical with
+     *  the Python mirror + the parity goldens). The frontend passes a
+     *  localized variant (e.g. ``"… - Teil {n}"``). */
+    partTitle?: (baseTitle: string, partNum: number, total: number) => string;
 }
 
 const DEFAULT_MAX_STEPS = 10;
+
+/** The parity-pinned default part-title format. Do not change without
+ *  updating the Python mirror + the shared golden fixtures. */
+export function defaultPartTitle(
+    baseTitle: string,
+    partNum: number,
+    total: number,
+): string {
+    return `${baseTitle} — Part ${partNum} of ${total}`;
+}
 
 /**
  * Split ``lesson`` into parts of at most ``maxStepsPerPart`` steps.
@@ -51,6 +67,7 @@ export function splitLesson(
 
     const chunks = chunkSteps(lesson.steps, maxSteps);
     const total = chunks.length;
+    const formatTitle = options.partTitle ?? defaultPartTitle;
     const cardById = new Map<string, ContentLessonCard>(
         lesson.cards.map((c) => [c.id, c]),
     );
@@ -71,7 +88,7 @@ export function splitLesson(
         return {
             ...lesson,
             id: `${lesson.id}-part-${partNum}`,
-            title: `${lesson.title} — Part ${partNum} of ${total}`,
+            title: formatTitle(lesson.title, partNum, total),
             cards: partCards,
             steps,
             estimated_minutes: estimatedMinutes,

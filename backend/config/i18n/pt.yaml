@@ -1657,6 +1657,7 @@ content:
     same_language: O idioma aprendido e o seu idioma devem ser diferentes.
     same_language_hint: "O idioma aprendido e seu idioma são os mesmos — ótimo para uma aula de gramática ou no idioma nativo. Ao compartilhar, aparece no ramo do mesmo idioma da árvore de conteúdo."
     split_notice: "Esta aula tem {steps} etapas e será salva em {parts} partes (máx. {max} etapas cada)."
+    part_title: "{title} - Parte {n} de {m}"
   lesson_gen:
     fallback_title: "Lição importada"
     focus: "Foco"

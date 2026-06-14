@@ -1800,7 +1800,8 @@
       "not_enough_data": "Not enough vocabulary for a full lesson (need at least {min} exercises). Import a longer chat for more practice material.",
       "same_language": "The language learned and your language must be different.",
       "same_language_hint": "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
-      "split_notice": "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each)."
+      "split_notice": "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each).",
+      "part_title": "{title} - Part {n} of {m}"
     },
     "lesson_gen": {
       "fallback_title": "Imported lesson",

@@ -1800,7 +1800,8 @@
       "not_enough_data": "Nicht genug Vokabeln für eine vollständige Lektion (mindestens {min} Übungen nötig). Importiere einen längeren Chat für mehr Übungsmaterial.",
       "same_language": "Die gelernte Sprache und deine Sprache müssen unterschiedlich sein.",
       "same_language_hint": "Die Lernsprache und deine Sprache sind identisch — das ist in Ordnung für eine Grammatik- oder Muttersprachen-Lektion. Beim Teilen landet sie im gleichsprachigen Zweig des Inhaltsbaums.",
-      "split_notice": "Diese Lektion hat {steps} Schritte und wird als {parts} Teile gespeichert (max. {max} Schritte pro Teil)."
+      "split_notice": "Diese Lektion hat {steps} Schritte und wird als {parts} Teile gespeichert (max. {max} Schritte pro Teil).",
+      "part_title": "{title} - Teil {n} von {m}"
     },
     "lesson_gen": {
       "fallback_title": "Importierte Lektion",

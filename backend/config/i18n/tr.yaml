@@ -1657,6 +1657,7 @@ content:
     same_language: Öğrenilen dil ile sizin diliniz farklı olmalıdır.
     same_language_hint: "Öğrenilen dil ve diliniz aynı — dilbilgisi veya anadil dersi için uygundur. Paylaşıldığında içerik ağacının aynı dil dalına yerleşir."
     split_notice: "Bu dersin {steps} adımı var ve {parts} parça olarak kaydedilecektir (bölüm başına en fazla {max} adım)."
+    part_title: "{title} - Bölüm {n}/{m}"
   lesson_gen:
     fallback_title: "İçe aktarılan ders"
     focus: "Odak"

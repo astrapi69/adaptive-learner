@@ -133,7 +133,14 @@ export default function SaveOfflineLessonModal({
   // Phase 63H/I: read the user's max-lesson-size pref and compute
   // parts so the modal can preview the split before saving.
   const maxStepsPerPart = readMaxLessonSize();
-  const lessonParts = splitLesson(baseLesson, {maxStepsPerPart});
+  // #512 — localize the per-part title ("… - Teil 2") instead of the
+  // splitter's parity-pinned English default ("… — Part 2 of 4").
+  const partTitle = (base: string, n: number, m: number) =>
+    t("content.save_lesson.part_title", "{title} - Part {n} of {m}")
+      .replace("{title}", base)
+      .replace("{n}", String(n))
+      .replace("{m}", String(m));
+  const lessonParts = splitLesson(baseLesson, {maxStepsPerPart, partTitle});
 
   if (!open) return null;
 
@@ -151,7 +158,7 @@ export default function SaveOfflineLessonModal({
       const contentDomain = sourceLang === targetLang ? "knowledge" : undefined;
       const parts = splitLesson(
         {...baseLesson, title: finalTitle},
-        {maxStepsPerPart},
+        {maxStepsPerPart, partTitle},
       ).map((part) => (contentDomain ? {...part, domain: contentDomain} : part));
       const entry = await getStorage().contentLoader.saveUserSet({
         set_id: setId,
