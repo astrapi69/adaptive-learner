@@ -7,7 +7,7 @@
  * array; this component is presentational + emits intent callbacks.
  */
 
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {GripVertical, Pencil, Plus, Trash2} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
@@ -30,6 +30,7 @@ import {
 } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
 
+import {useDialogFocus} from "../../hooks/useDialogFocus";
 import {useI18n} from "../../hooks/useI18n";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson-draft";
@@ -63,6 +64,11 @@ export default function CardEditor({
     const [showCsv, setShowCsv] = useState(false);
     const [csvText, setCsvText] = useState("");
     const [confirmClear, setConfirmClear] = useState(false);
+    const confirmClearRef = useRef<HTMLDivElement>(null);
+
+    // WCAG 2.1.2 / 2.4.3: initial focus, focus trap, focus return for
+    // the "remove all cards" confirm dialog.
+    useDialogFocus(confirmClearRef, {open: confirmClear});
 
     const sensors = useSensors(
         useSensor(PointerSensor, {activationConstraint: {distance: 5}}),
@@ -334,8 +340,14 @@ export default function CardEditor({
                     className="modal-overlay"
                     data-testid="card-clear-confirm"
                 >
-                    <div className="modal-card" role="dialog" aria-modal="true">
-                        <h2 className="modal-title">
+                    <div
+                        ref={confirmClearRef}
+                        className="modal-card"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="card-clear-confirm-title"
+                    >
+                        <h2 id="card-clear-confirm-title" className="modal-title">
                             {t(
                                 "create_lesson.cards.clear_confirm_title",
                                 "Remove all cards?",
