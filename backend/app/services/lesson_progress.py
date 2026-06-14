@@ -164,26 +164,45 @@ def upsert_progress(
     At most one of the five ``mark_*`` flags may be true per
     call; a ``ValidationError`` is raised otherwise.
     """
-    source = update.source
-    set_id = update.set_id
-    lesson_filename = update.lesson_filename
-    step_result = update.step_result
-    time_spent_seconds_delta = update.time_spent_seconds_delta
-    current_step = update.current_step
-    mark_completed = update.mark_completed
-    mark_paused = update.mark_paused
-    mark_abandoned = update.mark_abandoned
-    mark_resumed = update.mark_resumed
-    mark_restarted = update.mark_restarted
+    _validate_single_lifecycle_flag(update)
+    _ensure_user(repo, user_id)
+    now = _utcnow()
+    row = _get_or_create_row(repo, user_id, update, now)
 
+    if update.step_result is not None:
+        _apply_step_result(row, update.step_result, now)
+
+    if update.time_spent_seconds_delta > 0:
+        row.time_spent_seconds = row.time_spent_seconds + update.time_spent_seconds_delta
+
+    # BUG #41 — track the live navigation position so a paused lesson resumes
+    # where the user left off. Persisted on every autosave / step / pause;
+    # clamped to >= 0.
+    if update.current_step is not None:
+        row.current_step = max(0, update.current_step)
+
+    just_completed = _apply_lifecycle_flags(row, update, now)
+
+    row.updated_at = now
+    repo.commit()
+    repo.refresh(row)
+
+    if just_completed:
+        _record_completion_unification(unification_repo, user_id, row)
+
+    return _row_to_wire(row)
+
+
+def _validate_single_lifecycle_flag(update: ProgressUpdate) -> None:
+    """Reject more than one ``mark_*`` lifecycle flag set per call."""
     flag_count = sum(
         1
         for f in (
-            mark_completed,
-            mark_paused,
-            mark_abandoned,
-            mark_resumed,
-            mark_restarted,
+            update.mark_completed,
+            update.mark_paused,
+            update.mark_abandoned,
+            update.mark_resumed,
+            update.mark_restarted,
         )
         if f
     )
@@ -193,95 +212,96 @@ def upsert_progress(
             "mark_abandoned / mark_resumed / mark_restarted "
             "may be true per call."
         )
-    _ensure_user(repo, user_id)
-    row = _find_row(repo, user_id, source, set_id, lesson_filename)
-    now = _utcnow()
-    if row is None:
-        row = LessonProgress(
-            user_id=user_id,
-            source=source,
-            set_id=set_id,
-            lesson_filename=lesson_filename,
-            status="in_progress",
-            step_results="{}",
-            score_correct=0,
-            score_total=0,
-            time_spent_seconds=0,
-            started_at=now,
-            updated_at=now,
-        )
-        repo.add(row)
-        # Flush so the new id is visible if the caller looks it
-        # up immediately after.
-        repo.flush()
 
+
+def _get_or_create_row(
+    repo: LessonProgressRepository,
+    user_id: str,
+    update: ProgressUpdate,
+    now: datetime,
+) -> LessonProgress:
+    """Find the user's progress row for this lesson, creating it on first call."""
+    row = _find_row(repo, user_id, update.source, update.set_id, update.lesson_filename)
+    if row is not None:
+        return row
+    row = LessonProgress(
+        user_id=user_id,
+        source=update.source,
+        set_id=update.set_id,
+        lesson_filename=update.lesson_filename,
+        status="in_progress",
+        step_results="{}",
+        score_correct=0,
+        score_total=0,
+        time_spent_seconds=0,
+        started_at=now,
+        updated_at=now,
+    )
+    repo.add(row)
+    # Flush so the new id is visible if the caller looks it up immediately after.
+    repo.flush()
+    return row
+
+
+def _apply_step_result(row: LessonProgress, step_result: dict[str, Any], now: datetime) -> None:
+    """Merge one graded step result into the row's step_results + recompute score."""
+    merged: dict[str, Any] = {
+        "correct": int(step_result.get("correct", 0)),
+        "total": int(step_result.get("total", 0)),
+        "attempts": int(step_result.get("attempts", 1)),
+        "completed_at": now.isoformat(),
+    }
+    # Phase 52C / v1.35.0: optional user_answer field that the lesson-summary
+    # diff display reads. Persisted only when the client sent one (free-text +
+    # word-tiles) — matching + picture-choice leave it absent.
+    user_answer = step_result.get("user_answer")
+    if user_answer is not None:
+        merged["user_answer"] = str(user_answer)
+    # BUG P1 / Problem 2: the raw answer (a type-discriminated dict) persisted
+    # verbatim so a revisited step re-renders its exact locked visual. Stored
+    # only when the client sent one (every freshly-graded step does).
+    raw_answer = step_result.get("raw_answer")
+    if isinstance(raw_answer, dict):
+        merged["raw_answer"] = raw_answer
     results = _decode_results(row)
-    if step_result is not None:
-        step_id = step_result["step_id"]
-        merged: dict[str, Any] = {
-            "correct": int(step_result.get("correct", 0)),
-            "total": int(step_result.get("total", 0)),
-            "attempts": int(step_result.get("attempts", 1)),
-            "completed_at": now.isoformat(),
-        }
-        # Phase 52C / v1.35.0: optional user_answer field that the
-        # lesson-summary diff display reads. Persisted only when the
-        # client sent one (free-text + word-tiles) — matching +
-        # picture-choice leave it absent.
-        user_answer = step_result.get("user_answer")
-        if user_answer is not None:
-            merged["user_answer"] = str(user_answer)
-        # BUG P1 / Problem 2: the raw answer (a type-discriminated
-        # dict) persisted verbatim so a revisited step re-renders
-        # its exact locked visual. Stored only when the client
-        # sent one (every freshly-graded step does).
-        raw_answer = step_result.get("raw_answer")
-        if isinstance(raw_answer, dict):
-            merged["raw_answer"] = raw_answer
-        results[step_id] = merged
-        row.step_results = json.dumps(results, sort_keys=True)
-        row.score_correct, row.score_total = _recompute_score(results)
+    results[step_result["step_id"]] = merged
+    row.step_results = json.dumps(results, sort_keys=True)
+    row.score_correct, row.score_total = _recompute_score(results)
 
-    if time_spent_seconds_delta > 0:
-        row.time_spent_seconds = row.time_spent_seconds + time_spent_seconds_delta
 
-    # BUG #41 — track the live navigation position so a paused
-    # lesson resumes where the user left off. Persisted on every
-    # autosave / step / pause; clamped to >= 0.
-    if current_step is not None:
-        row.current_step = max(0, current_step)
-
+def _apply_lifecycle_flags(row: LessonProgress, update: ProgressUpdate, now: datetime) -> bool:
+    """Apply the at-most-one ``mark_*`` transition. Returns whether the row just
+    completed (so the caller fires the session-unification hook)."""
     just_completed = False
-    if mark_completed and row.status != "completed":
+    if update.mark_completed and row.status != "completed":
         row.status = "completed"
         row.completed_at = now
-        # A completion clears any pending pause/abandon stamps so
-        # the row's terminal state is unambiguous.
+        # A completion clears any pending pause/abandon stamps so the row's
+        # terminal state is unambiguous.
         row.paused_at = None
         row.abandoned_at = None
         just_completed = True
 
     # Phase 63A — pause / abandon / resume transitions.
-    if mark_paused and row.status not in ("paused", "completed", "abandoned"):
+    if update.mark_paused and row.status not in ("paused", "completed", "abandoned"):
         row.status = "paused"
         row.paused_at = now
-    elif mark_abandoned and row.status != "abandoned":
+    elif update.mark_abandoned and row.status != "abandoned":
         row.status = "abandoned"
         row.abandoned_at = now
         row.paused_at = None
-        # Discard the in-flight attempt. ElementErrors are kept
-        # because they live in a separate table — what was learned
-        # stays learned.
+        # Discard the in-flight attempt. ElementErrors are kept because they
+        # live in a separate table — what was learned stays learned.
         row.step_results = "{}"
         row.score_correct = 0
         row.score_total = 0
         row.current_step = 0
-    elif mark_resumed and row.status == "paused":
+    elif update.mark_resumed and row.status == "paused":
         row.status = "in_progress"
         row.paused_at = None
-    elif mark_restarted:
-        # Phase 63C — "Start Over" from the resume dialog.
-        # Unconditional reset regardless of prior status.
+    elif update.mark_restarted:
+        # Phase 63C — "Start Over" from the resume dialog. Unconditional reset
+        # regardless of prior status.
         row.status = "in_progress"
         row.step_results = "{}"
         row.score_correct = 0
@@ -289,39 +309,40 @@ def upsert_progress(
         row.current_step = 0
         row.paused_at = None
         row.abandoned_at = None
+    return just_completed
 
-    row.updated_at = now
-    repo.commit()
-    repo.refresh(row)
 
-    if just_completed:
-        # v1.31.0 / Phase 46F: write a LearningSession row +
-        # fire on_session_complete so the gamification +
-        # tracking plugins pick up the lesson the same way
-        # they pick up chat sessions. Wrapped so a
-        # unification failure cannot mask the lesson-
-        # completion success the user already saw.
-        try:
-            from app.services.lesson_session_unification import (
-                record_lesson_completion_session,
-            )
+def _record_completion_unification(
+    unification_repo: LessonSessionUnificationRepository,
+    user_id: str,
+    row: LessonProgress,
+) -> None:
+    """Fire the lesson -> LearningSession unification hook (v1.31.0 / Phase 46F).
 
-            record_lesson_completion_session(
-                unification_repo,
-                user_id=user_id,
-                lesson_progress_id=row.id,
-                score_correct=row.score_correct,
-                score_total=row.score_total,
-            )
-        except Exception:  # noqa: BLE001
-            logger.exception(
-                "lesson_session_unification failed for user=%s "
-                "lesson_progress=%s; lesson completion stands",
-                user_id,
-                row.id,
-            )
+    Writes a LearningSession row + fires on_session_complete so the
+    gamification + tracking plugins pick up the lesson the same way they pick
+    up chat sessions. Wrapped so a unification failure cannot mask the
+    lesson-completion success the user already saw.
+    """
+    try:
+        from app.services.lesson_session_unification import (
+            record_lesson_completion_session,
+        )
 
-    return _row_to_wire(row)
+        record_lesson_completion_session(
+            unification_repo,
+            user_id=user_id,
+            lesson_progress_id=row.id,
+            score_correct=row.score_correct,
+            score_total=row.score_total,
+        )
+    except Exception:  # noqa: BLE001
+        logger.exception(
+            "lesson_session_unification failed for user=%s "
+            "lesson_progress=%s; lesson completion stands",
+            user_id,
+            row.id,
+        )
 
 
 def _row_to_wire(row: LessonProgress) -> dict[str, Any]:
