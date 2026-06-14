@@ -2,6 +2,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
+import AssessmentNav from "../components/AssessmentNav";
 import AssessmentProgress from "../components/AssessmentProgress";
 import ProfileRadar from "../components/ProfileRadar";
 import QuestionCard from "../components/QuestionCard";
@@ -429,72 +430,30 @@ export default function Assessment() {
                 </p>
             )}
 
-            <div className="form-actions">
-                {currentIndex === 0 ? (
-                    // First question: no previous step to go back to.
-                    // Offer a non-dead-end exit instead of a disabled
-                    // button — the assessment is resumable, so leaving
-                    // keeps the saved progress (#171).
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        data-testid="assessment-exit"
-                        onClick={() => {
-                            dismissHint();
-                            navigate(backTo);
-                        }}
-                        disabled={submitting}
-                    >
-                        {t("assessment.continue_later", "Continue later")}
-                    </Button>
-                ) : (
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        data-testid="assessment-prev"
-                        onClick={() => {
-                            dismissHint();
-                            goPrev();
-                        }}
-                        disabled={submitting}
-                    >
-                        {t("assessment.prev_question", "Previous question")}
-                    </Button>
-                )}
-
-                {currentIndex < total - 1 ? (
-                    <Button
-                        type="button"
-                        variant="default"
-                        data-testid="assessment-next"
-                        onClick={() => {
-                            dismissHint();
-                            goNext();
-                        }}
-                        disabled={
-                            (answers[current.id]?.length ?? 0) === 0 ||
-                            submitting
-                        }
-                    >
-                        {t("assessment.next_question", "Next question")}
-                    </Button>
-                ) : (
-                    <Button
-                        type="button"
-                        variant="default"
-                        data-testid="assessment-submit"
-                        onClick={() => {
-                            dismissHint();
-                            void handleSubmit();
-                        }}
-                        disabled={!allAnswered || submitting}
-                    >
-                        {submitting
-                            ? t("assessment.evaluating", "Evaluating…")
-                            : t("assessment.submit", "Evaluate")}
-                    </Button>
-                )}
-            </div>
+            <AssessmentNav
+                isFirst={currentIndex === 0}
+                isLast={currentIndex === total - 1}
+                currentAnswered={(answers[current.id]?.length ?? 0) > 0}
+                allAnswered={allAnswered}
+                submitting={submitting}
+                onExit={() => {
+                    dismissHint();
+                    navigate(backTo);
+                }}
+                onPrev={() => {
+                    dismissHint();
+                    goPrev();
+                }}
+                onNext={() => {
+                    dismissHint();
+                    goNext();
+                }}
+                onSubmit={() => {
+                    dismissHint();
+                    void handleSubmit();
+                }}
+                t={t}
+            />
         </main>
     );
 }
