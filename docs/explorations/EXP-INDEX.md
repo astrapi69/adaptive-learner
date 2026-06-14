@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
 **Stand:** 2026-06-14
-**Anzahl EXPs:** 24
+**Anzahl EXPs:** 25
 
 ## Kategorisierung
 
@@ -39,6 +39,7 @@
 | 023 | Multi-Content-Repository Architektur        | Vision       | A/B/C | Sehr hoch | 002, 003, 021      |
 | 024 | Strikte Schichtentrennung (Layer-Audit)     | Querschnitt  | laufend | Hoch    | -                  |
 | 025 | Author-provided Lesson Sets (Buch-Begleiter)| Vision       | B/C   | Niedrig   | 023, 003           |
+| 026 | User-Lektionen im Content-Baum (Badge)      | Feature      | 2     | Niedrig   | 023, 025           |
 
 ## Phasen-Definition
 
