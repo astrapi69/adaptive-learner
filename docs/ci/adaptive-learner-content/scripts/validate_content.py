@@ -190,6 +190,63 @@ def validate_set_dir(content_set: dict, errors: list[str]) -> None:
         validate_lesson(lesson, source, f"{sid}/{filename}", errors)
 
 
+# --- Author-provided book metadata (EXP-025 / AUTH-01) ---------------------
+
+# Known affiliate signals; a companion "Zum Buch" link must be a DIRECT
+# (non-affiliate) URL (house convention #141, decision E5).
+_AFFILIATE_RE = re.compile(
+    r"(?:[?&]tag=|[?&]aff(?:iliate)?(?:_id)?=|amzn\.to/|/exec/obidos/|linksynergy|"
+    r"[?&]ref=as_|[?&]ascsubtag=)",
+    re.IGNORECASE,
+)
+_BOOK_OPTIONAL_FIELDS = {
+    "subtitle",
+    "isbn",
+    "asin",
+    "language",
+    "pages",
+    "year",
+    "description",
+    "cover",
+    "edition",
+}
+
+
+def validate_book(manifest: dict, errors: list[str]) -> None:
+    """Validate the optional ``book`` block in the repo-root manifest.
+
+    Additive: a manifest WITHOUT a ``book`` block is valid (older repos
+    load unchanged). When present it must declare ``title`` / ``author``
+    / ``url`` (the url an http(s), non-affiliate direct link); the other
+    fields are optional metadata the Content Browser surfaces.
+    """
+    book = manifest.get("book")
+    if book is None:
+        return
+    if not isinstance(book, dict):
+        errors.append("book: must be a mapping")
+        return
+    for field in ("title", "author", "url"):
+        value = book.get(field)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"book: missing required '{field}'")
+    url = book.get("url")
+    if isinstance(url, str) and url.strip():
+        if not re.match(r"^https?://", url.strip()):
+            errors.append("book: url must be an http(s) URL")
+        elif _AFFILIATE_RE.search(url):
+            errors.append("book: url must be a direct (non-affiliate) link")
+    pages = book.get("pages")
+    if pages is not None and not isinstance(pages, int):
+        errors.append("book: 'pages' must be an integer")
+    year = book.get("year")
+    if year is not None and not isinstance(year, int):
+        errors.append("book: 'year' must be an integer")
+    unknown = set(book) - {"title", "author", "url"} - _BOOK_OPTIONAL_FIELDS
+    if unknown:
+        errors.append(f"book: unknown field(s): {', '.join(sorted(unknown))}")
+
+
 def main() -> int:
     root_manifest = REPO_ROOT / "manifest.yaml"
     if not root_manifest.is_file():
@@ -202,6 +259,13 @@ def main() -> int:
         return 1
 
     all_errors: list[str] = []
+    book_errors: list[str] = []
+    validate_book(manifest, book_errors)
+    if book_errors:
+        print("FAIL book:")
+        for e in book_errors:
+            print(f"  - {e}")
+        all_errors.extend(book_errors)
     for content_set in sets:
         errors: list[str] = []
         validate_set_meta(content_set, errors)
