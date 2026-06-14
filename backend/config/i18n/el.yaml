@@ -1709,6 +1709,7 @@ content:
     own_lesson: "Το μάθημά σου"
     own_edit: "Η επεξεργασία σου"
     your_lessons: "Τα μαθήματά σου"
+    plus_own: "+{n} δικά σου"
     domain_psychology: Ψυχολογία
     domain_programming: Προγραμματισμός
     domain_math: Μαθηματικά

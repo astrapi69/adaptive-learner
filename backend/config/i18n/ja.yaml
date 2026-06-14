@@ -1707,6 +1707,7 @@ content:
     own_lesson: "あなたのレッスン"
     own_edit: "あなたの編集"
     your_lessons: "あなたのレッスン"
+    plus_own: "+{n} 自作"
     domain_psychology: 心理学
     domain_programming: プログラミング
     domain_math: 数学
