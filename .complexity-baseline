@@ -37,7 +37,6 @@ frontend/src/pages/Assessment.tsx 22
 frontend/src/pages/CreateLesson.tsx 24
 frontend/src/pages/ErrorReplayLesson.tsx 22
 frontend/src/pages/ImportDetail.tsx 58
-frontend/src/pages/Lesson.tsx 67
 frontend/src/pages/Review.tsx 23
 frontend/src/pages/Session.tsx 22
 frontend/src/storage/backup.ts 49
