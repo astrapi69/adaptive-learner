@@ -1800,7 +1800,8 @@
       "not_enough_data": "Pas assez de vocabulaire pour une leçon complète (au moins {min} exercices nécessaires). Importez une conversation plus longue pour plus de matériel.",
       "same_language": "La langue apprise et votre langue doivent être différentes.",
       "same_language_hint": "La langue apprise et votre langue sont identiques — parfait pour une leçon de grammaire ou en langue maternelle. Lors du partage, elle apparaît dans la branche de même langue de l'arbre de contenu.",
-      "split_notice": "Cette leçon contient {steps} étapes et sera enregistrée en {parts} parties (max. {max} étapes chacune)."
+      "split_notice": "Cette leçon contient {steps} étapes et sera enregistrée en {parts} parties (max. {max} étapes chacune).",
+      "part_title": "{title} - Partie {n}"
     },
     "lesson_gen": {
       "fallback_title": "Leçon importée",
