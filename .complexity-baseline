@@ -11,7 +11,6 @@
 # complexity > 20. File-level granularity matches .filesize-baseline.
 
 frontend/src/api/client-core.ts 22
-frontend/src/chat_import/chatgpt_parser.ts 26
 frontend/src/components/BackupSection.tsx 25
 frontend/src/components/lesson/LessonSummary.tsx 21
 frontend/src/hooks/useLessonEnterKey.ts 22
