@@ -190,6 +190,129 @@ export function computePrimaryAction(
     return "next";
 }
 
+/** The storage facade type, derived so the helpers stay decoupled
+ *  from the concrete ApiStorage / DexieStorage implementations. */
+type NextStepStorage = ReturnType<typeof getStorage>;
+type LessonListResult = Awaited<
+    ReturnType<NextStepStorage["contentLoader"]["listLessons"]>
+> | null;
+type SetsListResult = Awaited<
+    ReturnType<NextStepStorage["contentLoader"]["listSets"]>
+> | null;
+type ProgressListResult = Awaited<
+    ReturnType<NextStepStorage["lessonProgress"]["list"]>
+> | null;
+
+/** Resolve the sequential successor lesson (Phase 46A index lookup)
+ *  from an already-fetched lesson list: its title, step count and
+ *  paused status, plus whether THIS lesson was the last in the set.
+ *  Every read is guarded, so an unreachable source degrades to an
+ *  unavailable next-lesson card rather than throwing. */
+async function resolveNextLesson(
+    storage: NextStepStorage,
+    source: string,
+    setId: string,
+    lessonFilename: string,
+    userId: string,
+    lessonList: LessonListResult,
+): Promise<{
+    nextLesson: NextStepSuggestions["nextLesson"];
+    setComplete: boolean;
+}> {
+    let nextFilename: string | undefined;
+    let setComplete = false;
+    if (lessonList) {
+        const idx = lessonList.lessons.indexOf(lessonFilename);
+        if (idx >= 0) {
+            if (idx < lessonList.lessons.length - 1) {
+                nextFilename = lessonList.lessons[idx + 1];
+            } else {
+                setComplete = true;
+            }
+        }
+    }
+
+    if (!nextFilename) {
+        return {nextLesson: {available: false, isPaused: false}, setComplete};
+    }
+
+    const [detail, nextProgress] = await Promise.all([
+        safe(() =>
+            storage.contentLoader.getLesson(
+                source,
+                setId,
+                nextFilename as string,
+            ),
+        ),
+        userId
+            ? safe(() =>
+                  storage.lessonProgress.get(
+                      userId,
+                      source,
+                      setId,
+                      nextFilename as string,
+                  ),
+              )
+            : Promise.resolve(null),
+    ]);
+    const isPaused = nextProgress?.status === "paused";
+    return {
+        nextLesson: {
+            available: true,
+            lessonFilename: nextFilename,
+            title: detail?.title ?? deriveTitle(nextFilename),
+            totalSteps: detail?.steps.length,
+            isPaused,
+            pausedStep:
+                isPaused && nextProgress
+                    ? Object.keys(nextProgress.step_results).length
+                    : undefined,
+        },
+        setComplete,
+    };
+}
+
+/** Derive the set-complete card's title + lesson count and, when the
+ *  set is finished, a suggested next set (same source language, not
+ *  yet 100% completed) from the user's full progress list. */
+function resolveSuggestedSet(
+    setsList: SetsListResult,
+    setId: string,
+    allProgress: ProgressListResult,
+    setComplete: boolean,
+): {
+    setTitle?: string;
+    lessonCount?: number;
+    suggestedSet?: NextStepSuggestions["suggestedSet"];
+} {
+    if (!setsList) return {};
+    const current = setsList.sets.find((s) => s.id === setId);
+    const setTitle = current?.title;
+    const lessonCount = current?.lesson_count;
+    let suggestedSet: NextStepSuggestions["suggestedSet"];
+    if (setComplete && current) {
+        // Count completed lessons per set so we never suggest a set
+        // the learner already finished 100%.
+        const completedBySet = new Map<string, Set<string>>();
+        for (const p of allProgress ?? []) {
+            if (p.status !== "completed") continue;
+            const bucket = completedBySet.get(p.set_id) ?? new Set<string>();
+            bucket.add(p.lesson_filename);
+            completedBySet.set(p.set_id, bucket);
+        }
+        const candidate = setsList.sets.find(
+            (s) =>
+                s.id !== setId &&
+                s.source_language === current.source_language &&
+                (completedBySet.get(s.id)?.size ?? 0) < s.lesson_count,
+        );
+        if (candidate) {
+            suggestedSet = {setId: candidate.id, title: candidate.title};
+        }
+    }
+    return {setTitle, lessonCount, suggestedSet};
+}
+
 export function useNextStepSuggestions(
     args: UseNextStepArgs,
 ): NextStepSuggestions {
@@ -235,99 +358,24 @@ export function useNextStepSuggestions(
                 ]);
             if (cancelled) return;
 
-            // Next-lesson lookup (Phase 46A index pattern).
-            let nextFilename: string | undefined;
-            let setComplete = false;
-            if (lessonList) {
-                const idx = lessonList.lessons.indexOf(lessonFilename);
-                if (idx >= 0) {
-                    if (idx < lessonList.lessons.length - 1) {
-                        nextFilename = lessonList.lessons[idx + 1];
-                    } else {
-                        setComplete = true;
-                    }
-                }
-            }
-
-            // Fetch the successor's title + step count + paused status.
-            let nextLesson: NextStepSuggestions["nextLesson"] = {
-                available: false,
-                isPaused: false,
-            };
-            if (nextFilename) {
-                const [detail, nextProgress] = await Promise.all([
-                    safe(() =>
-                        storage.contentLoader.getLesson(
-                            source,
-                            setId,
-                            nextFilename as string,
-                        ),
-                    ),
-                    userId
-                        ? safe(() =>
-                              storage.lessonProgress.get(
-                                  userId,
-                                  source,
-                                  setId,
-                                  nextFilename as string,
-                              ),
-                          )
-                        : Promise.resolve(null),
-                ]);
-                if (cancelled) return;
-                const isPaused = nextProgress?.status === "paused";
-                nextLesson = {
-                    available: true,
-                    lessonFilename: nextFilename,
-                    title: detail?.title ?? deriveTitle(nextFilename),
-                    totalSteps: detail?.steps.length,
-                    isPaused,
-                    pausedStep:
-                        isPaused && nextProgress
-                            ? Object.keys(nextProgress.step_results).length
-                            : undefined,
-                };
-            }
-
-            // Review queue scoped to this set.
-            const dueCount = reviewQueue?.length ?? 0;
-
-            // Set-complete card + suggested next set.
-            let setTitle: string | undefined;
-            let lessonCount: number | undefined;
-            let suggestedSet: NextStepSuggestions["suggestedSet"];
-            if (setsList) {
-                const current = setsList.sets.find((s) => s.id === setId);
-                setTitle = current?.title;
-                lessonCount = current?.lesson_count;
-                if (setComplete && current) {
-                    // Count completed lessons per set so we never
-                    // suggest a set the learner already finished 100%.
-                    const completedBySet = new Map<string, Set<string>>();
-                    for (const p of allProgress ?? []) {
-                        if (p.status !== "completed") continue;
-                        const bucket =
-                            completedBySet.get(p.set_id) ?? new Set<string>();
-                        bucket.add(p.lesson_filename);
-                        completedBySet.set(p.set_id, bucket);
-                    }
-                    const candidate = setsList.sets.find(
-                        (s) =>
-                            s.id !== setId &&
-                            s.source_language === current.source_language &&
-                            (completedBySet.get(s.id)?.size ?? 0) <
-                                s.lesson_count,
-                    );
-                    if (candidate) {
-                        suggestedSet = {
-                            setId: candidate.id,
-                            title: candidate.title,
-                        };
-                    }
-                }
-            }
-
+            const {nextLesson, setComplete} = await resolveNextLesson(
+                storage,
+                source,
+                setId,
+                lessonFilename,
+                userId,
+                lessonList,
+            );
             if (cancelled) return;
+
+            const dueCount = reviewQueue?.length ?? 0;
+            const {setTitle, lessonCount, suggestedSet} = resolveSuggestedSet(
+                setsList,
+                setId,
+                allProgress,
+                setComplete,
+            );
+
             setFetched({
                 loading: false,
                 nextLesson,
