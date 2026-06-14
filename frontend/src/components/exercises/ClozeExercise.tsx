@@ -84,6 +84,346 @@ function _shuffle<T>(items: readonly T[], seed: string): T[] {
     return out;
 }
 
+/** One blank's authored metadata (accept list, hint, placeholder). */
+type ClozeBlank = NonNullable<ContentLessonExercise["blanks"]>[number];
+
+/** Score a reviewed (read-only) cloze attempt: how many of the frozen
+ *  inputs match their blank's accept list. Returns null when there is
+ *  no reviewed answer to score. */
+function clozeReviewedResult(
+    reviewedInputs: readonly string[] | null,
+    blanks: readonly ClozeBlank[],
+): {correct: number; total: number} | null {
+    if (!reviewedInputs) return null;
+    return {
+        correct: blanks.filter((blank, i) =>
+            isFreeTextCorrect(reviewedInputs[i] ?? "", blank.accept),
+        ).length,
+        total: blanks.length,
+    };
+}
+
+/** The prompt line + (non-code lessons only) the read-aloud control. */
+function ClozePromptRow({
+    prompt,
+    ttsLang,
+    codeMode,
+}: {
+    prompt: string | undefined;
+    ttsLang: string | null;
+    codeMode: boolean;
+}) {
+    return (
+        <div className="exercise-prompt-row">
+            <p className="m-0 font-medium" data-testid="cloze-prompt">
+                {prompt}
+            </p>
+            {ttsLang && !codeMode && (
+                <ReadAloudButton
+                    text={prompt ?? ""}
+                    lang={ttsLang}
+                    testId="cloze-prompt"
+                />
+            )}
+        </div>
+    );
+}
+
+/** A single blank control: an ``<input>`` (type mode) or ``<select>``
+ *  (select mode) plus the optional inline per-blank hint, wrapped in a
+ *  span that reflects the post-check correct/wrong state. */
+function ClozeBlankControl({
+    idx,
+    blank,
+    mode,
+    submitted,
+    isCorrect,
+    value,
+    options,
+    onChange,
+    blankBase,
+    blankState,
+}: {
+    idx: number;
+    blank: ClozeBlank;
+    mode: "type" | "select";
+    submitted: boolean;
+    isCorrect: boolean;
+    value: string;
+    options: string[] | undefined;
+    onChange: (idx: number, value: string) => void;
+    blankBase: string;
+    blankState: (idx: number) => string | false;
+}) {
+    const {t} = useI18n();
+    const blankLabel =
+        blank.hint ??
+        t("lesson.exercise.cloze.blank_label", "Blank {n}").replace(
+            "{n}",
+            String(idx + 1),
+        );
+    return (
+        <span
+            className={cn(
+                "mx-1 inline-flex flex-col items-stretch gap-0.5 align-baseline",
+                submitted && (isCorrect ? "is-correct" : "is-wrong"),
+            )}
+            data-testid={`cloze-blank-${idx}`}
+            data-result={
+                submitted ? (isCorrect ? "correct" : "wrong") : "pending"
+            }
+        >
+            {mode === "type" ? (
+                <input
+                    type="text"
+                    className={cn(blankBase, blankState(idx))}
+                    value={value}
+                    onChange={(e) => onChange(idx, e.target.value)}
+                    disabled={submitted}
+                    placeholder={blank.placeholder ?? "?"}
+                    aria-label={blankLabel}
+                    autoComplete="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    data-testid={`cloze-input-${idx}`}
+                />
+            ) : (
+                <select
+                    className={cn(blankBase, blankState(idx))}
+                    value={value}
+                    onChange={(e) => onChange(idx, e.target.value)}
+                    disabled={submitted}
+                    aria-label={blankLabel}
+                    data-testid={`cloze-select-${idx}`}
+                >
+                    <option value="">
+                        {t(
+                            "lesson.exercise.cloze.select_placeholder",
+                            "Choose…",
+                        )}
+                    </option>
+                    {options?.map((opt) => (
+                        <option key={opt} value={opt}>
+                            {opt}
+                        </option>
+                    ))}
+                </select>
+            )}
+            {blank.hint && !submitted && (
+                <span
+                    className="text-xs italic text-[var(--fg-muted)]"
+                    data-testid={`cloze-blank-hint-${idx}`}
+                >
+                    {blank.hint}
+                </span>
+            )}
+        </span>
+    );
+}
+
+/** The cloze sentence: the marker-split segments interleaved with one
+ *  blank control per blank. Each blank reflects its post-check
+ *  correct/wrong state once ``submitted``. */
+function ClozeSentence({
+    segments,
+    blanks,
+    mode,
+    submitted,
+    perBlankCorrect,
+    inputs,
+    selectOptions,
+    onChange,
+    blankBase,
+    blankState,
+    codeMode,
+}: {
+    segments: string[];
+    blanks: readonly ClozeBlank[];
+    mode: "type" | "select";
+    submitted: boolean;
+    perBlankCorrect: boolean[];
+    inputs: string[];
+    selectOptions: string[][];
+    onChange: (idx: number, value: string) => void;
+    blankBase: string;
+    blankState: (idx: number) => string | false;
+    codeMode: boolean;
+}) {
+    const {t} = useI18n();
+    return (
+        <p
+            className={cn(
+                "m-0 rounded-sm bg-[var(--surface-2)] p-3 text-[1.0625rem] leading-[1.8]",
+                codeMode && "cloze-sentence-code",
+            )}
+            data-testid="cloze-sentence"
+            aria-label={t(
+                "lesson.exercise.cloze.sentence_label",
+                "Cloze sentence",
+            )}
+        >
+            {segments.map((segment, segIdx) => (
+                <span key={`seg-${segIdx}`} className="inline">
+                    {segment}
+                    {segIdx < blanks.length && (
+                        <ClozeBlankControl
+                            idx={segIdx}
+                            blank={blanks[segIdx]}
+                            mode={mode}
+                            submitted={submitted}
+                            isCorrect={perBlankCorrect[segIdx]}
+                            value={inputs[segIdx]}
+                            options={selectOptions[segIdx]}
+                            onChange={onChange}
+                            blankBase={blankBase}
+                            blankState={blankState}
+                        />
+                    )}
+                </span>
+            ))}
+        </p>
+    );
+}
+
+/** Exercise-level "Need a hint?" toggle (distinct from the per-blank
+ *  inline hints). Renders nothing once submitted or when the exercise
+ *  carries no hint. */
+function ClozeHint({
+    hint,
+    submitted,
+    showHint,
+    onShowHint,
+}: {
+    hint: string | null | undefined;
+    submitted: boolean;
+    showHint: boolean;
+    onShowHint: () => void;
+}) {
+    const {t} = useI18n();
+    if (!hint || submitted) return null;
+    return (
+        <div className="flex items-center gap-2">
+            {!showHint ? (
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    type="button"
+                    className="text-[var(--accent-text)] hover:underline"
+                    onClick={onShowHint}
+                    data-testid="cloze-hint-show"
+                >
+                    {t("lesson.exercise.cloze.hint_show", "Need a hint?")}
+                </Button>
+            ) : (
+                <p
+                    className="m-0 rounded-sm bg-[var(--surface-2)] p-2 text-sm text-[var(--fg-muted)]"
+                    data-testid="cloze-hint"
+                >
+                    {hint}
+                </p>
+            )}
+        </div>
+    );
+}
+
+/** Post-check feedback (all-correct vs N-of-M), the per-blank token
+ *  diff on a miss, the celebration, and the shared exercise footer. */
+function ClozeResult({
+    submitted,
+    isAllCorrect,
+    correctCount,
+    total,
+    blanks,
+    perBlankCorrect,
+    inputs,
+    controlled,
+    canCheck,
+    onCheck,
+    onRetry,
+}: {
+    submitted: boolean;
+    isAllCorrect: boolean;
+    correctCount: number;
+    total: number;
+    blanks: readonly ClozeBlank[];
+    perBlankCorrect: boolean[];
+    inputs: string[];
+    controlled: boolean;
+    canCheck: boolean;
+    onCheck: () => void;
+    onRetry: () => void;
+}) {
+    const {t} = useI18n();
+    return (
+        <div className="flex flex-wrap items-center gap-2">
+            {submitted && (
+                <>
+                    <p
+                        className={cn(
+                            "answer-feedback m-0 inline-flex items-center gap-1 font-medium",
+                            isAllCorrect
+                                ? "is-correct text-[var(--success)]"
+                                : "is-wrong text-[var(--danger)]",
+                        )}
+                        data-testid="cloze-result"
+                        data-result={isAllCorrect ? "correct" : "wrong"}
+                    >
+                        {isAllCorrect ? (
+                            <>
+                                <Check size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.cloze.result_correct",
+                                    "All correct!",
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <X size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.cloze.result_partial",
+                                    "{correct} of {total} correct.",
+                                )
+                                    .replace("{correct}", String(correctCount))
+                                    .replace("{total}", String(total))}
+                            </>
+                        )}
+                    </p>
+                    {!isAllCorrect && (
+                        <div
+                            className="flex basis-full flex-col gap-1"
+                            data-testid="cloze-diff-row"
+                        >
+                            {blanks.map((blank, idx) =>
+                                perBlankCorrect[idx] ? null : (
+                                    <DiffHighlight
+                                        key={idx}
+                                        tokens={tokenDiff(
+                                            inputs[idx],
+                                            blank.accept[0] ?? "",
+                                        )}
+                                        className="cloze-blank-diff"
+                                    />
+                                ),
+                            )}
+                        </div>
+                    )}
+                    <AnswerCelebration isCorrect={isAllCorrect} />
+                </>
+            )}
+            <ExerciseFooter
+                testidPrefix="cloze"
+                controlled={controlled}
+                submitted={submitted}
+                canCheck={canCheck}
+                onCheck={onCheck}
+                onRetry={onRetry}
+                checkLabel={t("lesson.exercise.cloze.submit", "Check answers")}
+                retryLabel={t("lesson.exercise.cloze.retry", "Try again")}
+            />
+        </div>
+    );
+}
+
 function ClozeExercise(
     {
         exercise,
@@ -131,17 +471,10 @@ function ClozeExercise(
     const allFilled =
         inputs.length > 0 && inputs.every((s) => s.trim() !== "");
 
-    const reviewedResult = reviewedCloze
-        ? {
-              correct: blanks.filter((blank, i) =>
-                  isFreeTextCorrect(
-                      reviewedCloze.inputs[i] ?? "",
-                      blank.accept,
-                  ),
-              ).length,
-              total: blanks.length,
-          }
-        : null;
+    const reviewedResult = clozeReviewedResult(
+        reviewedCloze ? reviewedCloze.inputs : null,
+        blanks,
+    );
 
     const {submitted, submit, reset} = useControlledExercise({
         ref,
@@ -214,250 +547,46 @@ function ClozeExercise(
             data-testid="cloze-exercise"
             data-cloze-mode={mode}
         >
-            <div className="exercise-prompt-row">
-                <p className="m-0 font-medium" data-testid="cloze-prompt">
-                    {exercise.prompt}
-                </p>
-                {ttsLang && !codeMode && (
-                    <ReadAloudButton
-                        text={exercise.prompt ?? ""}
-                        lang={ttsLang}
-                        testId="cloze-prompt"
-                    />
-                )}
-            </div>
+            <ClozePromptRow
+                prompt={exercise.prompt}
+                ttsLang={ttsLang}
+                codeMode={codeMode}
+            />
 
-            <p
-                className={cn(
-                    "m-0 rounded-sm bg-[var(--surface-2)] p-3 text-[1.0625rem] leading-[1.8]",
-                    codeMode && "cloze-sentence-code",
-                )}
-                data-testid="cloze-sentence"
-                aria-label={t(
-                    "lesson.exercise.cloze.sentence_label",
-                    "Cloze sentence",
-                )}
-            >
-                {segments.map((segment, segIdx) => (
-                    <span key={`seg-${segIdx}`} className="inline">
-                        {segment}
-                        {segIdx < blanks.length && (
-                            <span
-                                className={cn(
-                                    "mx-1 inline-flex flex-col items-stretch gap-0.5 align-baseline",
-                                    submitted &&
-                                        (perBlankCorrect[segIdx]
-                                            ? "is-correct"
-                                            : "is-wrong"),
-                                )}
-                                data-testid={`cloze-blank-${segIdx}`}
-                                data-result={
-                                    submitted
-                                        ? perBlankCorrect[segIdx]
-                                            ? "correct"
-                                            : "wrong"
-                                        : "pending"
-                                }
-                            >
-                                {mode === "type" ? (
-                                    <input
-                                        type="text"
-                                        className={cn(
-                                            blankBase,
-                                            blankState(segIdx),
-                                        )}
-                                        value={inputs[segIdx]}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                segIdx,
-                                                e.target.value,
-                                            )
-                                        }
-                                        disabled={submitted}
-                                        placeholder={
-                                            blanks[segIdx].placeholder ??
-                                            "?"
-                                        }
-                                        aria-label={
-                                            blanks[segIdx].hint ??
-                                            t(
-                                                "lesson.exercise.cloze.blank_label",
-                                                "Blank {n}",
-                                            ).replace(
-                                                "{n}",
-                                                String(segIdx + 1),
-                                            )
-                                        }
-                                        autoComplete="off"
-                                        autoCapitalize="off"
-                                        spellCheck={false}
-                                        data-testid={`cloze-input-${segIdx}`}
-                                    />
-                                ) : (
-                                    <select
-                                        className={cn(
-                                            blankBase,
-                                            blankState(segIdx),
-                                        )}
-                                        value={inputs[segIdx]}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                segIdx,
-                                                e.target.value,
-                                            )
-                                        }
-                                        disabled={submitted}
-                                        aria-label={
-                                            blanks[segIdx].hint ??
-                                            t(
-                                                "lesson.exercise.cloze.blank_label",
-                                                "Blank {n}",
-                                            ).replace(
-                                                "{n}",
-                                                String(segIdx + 1),
-                                            )
-                                        }
-                                        data-testid={`cloze-select-${segIdx}`}
-                                    >
-                                        <option value="">
-                                            {t(
-                                                "lesson.exercise.cloze.select_placeholder",
-                                                "Choose…",
-                                            )}
-                                        </option>
-                                        {selectOptions[segIdx]?.map(
-                                            (opt) => (
-                                                <option
-                                                    key={opt}
-                                                    value={opt}
-                                                >
-                                                    {opt}
-                                                </option>
-                                            ),
-                                        )}
-                                    </select>
-                                )}
-                                {blanks[segIdx].hint && !submitted && (
-                                    <span
-                                        className="text-xs italic text-[var(--fg-muted)]"
-                                        data-testid={`cloze-blank-hint-${segIdx}`}
-                                    >
-                                        {blanks[segIdx].hint}
-                                    </span>
-                                )}
-                            </span>
-                        )}
-                    </span>
-                ))}
-            </p>
+            <ClozeSentence
+                segments={segments}
+                blanks={blanks}
+                mode={mode}
+                submitted={submitted}
+                perBlankCorrect={perBlankCorrect}
+                inputs={inputs}
+                selectOptions={selectOptions}
+                onChange={handleChange}
+                blankBase={blankBase}
+                blankState={blankState}
+                codeMode={codeMode}
+            />
 
-            {exercise.hint && !submitted && (
-                <div className="flex items-center gap-2">
-                    {!showHint ? (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            type="button"
-                            className="text-[var(--accent-text)] hover:underline"
-                            onClick={() => setShowHint(true)}
-                            data-testid="cloze-hint-show"
-                        >
-                            {t(
-                                "lesson.exercise.cloze.hint_show",
-                                "Need a hint?",
-                            )}
-                        </Button>
-                    ) : (
-                        <p
-                            className="m-0 rounded-sm bg-[var(--surface-2)] p-2 text-sm text-[var(--fg-muted)]"
-                            data-testid="cloze-hint"
-                        >
-                            {exercise.hint}
-                        </p>
-                    )}
-                </div>
-            )}
+            <ClozeHint
+                hint={exercise.hint}
+                submitted={submitted}
+                showHint={showHint}
+                onShowHint={() => setShowHint(true)}
+            />
 
-            <div className="flex flex-wrap items-center gap-2">
-                {submitted && (
-                    <>
-                        <p
-                            className={cn(
-                                "answer-feedback m-0 inline-flex items-center gap-1 font-medium",
-                                isAllCorrect
-                                    ? "is-correct text-[var(--success)]"
-                                    : "is-wrong text-[var(--danger)]",
-                            )}
-                            data-testid="cloze-result"
-                            data-result={
-                                isAllCorrect ? "correct" : "wrong"
-                            }
-                        >
-                            {isAllCorrect ? (
-                                <>
-                                    <Check size={14} aria-hidden="true" />
-                                    {t(
-                                        "lesson.exercise.cloze.result_correct",
-                                        "All correct!",
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    <X size={14} aria-hidden="true" />
-                                    {t(
-                                        "lesson.exercise.cloze.result_partial",
-                                        "{correct} of {total} correct.",
-                                    )
-                                        .replace(
-                                            "{correct}",
-                                            String(correctCount),
-                                        )
-                                        .replace(
-                                            "{total}",
-                                            String(blanks.length),
-                                        )}
-                                </>
-                            )}
-                        </p>
-                        {!isAllCorrect && (
-                            <div
-                                className="flex basis-full flex-col gap-1"
-                                data-testid="cloze-diff-row"
-                            >
-                                {blanks.map((blank, idx) =>
-                                    perBlankCorrect[idx] ? null : (
-                                        <DiffHighlight
-                                            key={idx}
-                                            tokens={tokenDiff(
-                                                inputs[idx],
-                                                blank.accept[0] ?? "",
-                                            )}
-                                            className="cloze-blank-diff"
-                                        />
-                                    ),
-                                )}
-                            </div>
-                        )}
-                        <AnswerCelebration isCorrect={isAllCorrect} />
-                    </>
-                )}
-                <ExerciseFooter
-                    testidPrefix="cloze"
-                    controlled={controlled}
-                    submitted={submitted}
-                    canCheck={allFilled}
-                    onCheck={submit}
-                    onRetry={reset}
-                    checkLabel={t(
-                        "lesson.exercise.cloze.submit",
-                        "Check answers",
-                    )}
-                    retryLabel={t(
-                        "lesson.exercise.cloze.retry",
-                        "Try again",
-                    )}
-                />
-            </div>
+            <ClozeResult
+                submitted={submitted}
+                isAllCorrect={isAllCorrect}
+                correctCount={correctCount}
+                total={blanks.length}
+                blanks={blanks}
+                perBlankCorrect={perBlankCorrect}
+                inputs={inputs}
+                controlled={controlled}
+                canCheck={allFilled}
+                onCheck={submit}
+                onRetry={reset}
+            />
         </section>
     );
 }

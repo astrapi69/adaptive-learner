@@ -15,7 +15,6 @@ frontend/src/chat_import/chatgpt_parser.ts 26
 frontend/src/chat_import/index.ts 30
 frontend/src/components/BackupSection.tsx 25
 frontend/src/components/content/ContentSetRow.tsx 28
-frontend/src/components/exercises/ClozeExercise.tsx 29
 frontend/src/components/lesson/LessonSummary.tsx 21
 frontend/src/hooks/useLessonEnterKey.ts 22
 frontend/src/hooks/useNextStepSuggestions.ts 29
