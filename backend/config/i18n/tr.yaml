@@ -887,6 +887,10 @@ gamification:
   level: Seviye
   xp: XP
   xp_no_data: XP kazanmak için bir oturumu tamamla.
+  xp_earned: Kazanılan XP
+  xp_gain_aria: Bu ders için {n} XP kazandınız
+  xp_header_aria: Seviye {level}, toplam {xp} XP
+  xp_header_tooltip: Deneyim puanlarınız
   xp_to_next_level: Bir sonraki seviye için {n} XP
   max_level: Maksimum seviyeye ulaşıldı
   level_up: Seviye atladın!

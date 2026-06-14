@@ -887,6 +887,10 @@ gamification:
   level: レベル
   xp: XP
   xp_no_data: セッションを完了してXPを獲得しましょう。
+  xp_earned: 獲得XP
+  xp_gain_aria: このレッスンで{n} XPを獲得しました
+  xp_header_aria: レベル{level}、合計{xp} XP
+  xp_header_tooltip: あなたの経験値
   xp_to_next_level: 次のレベルまで {n} XP
   max_level: 最大レベルに到達しました
   level_up: レベルアップ！
