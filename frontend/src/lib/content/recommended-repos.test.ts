@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   fetchRecommendedRepos,
   isRecommendedSource,
+  parseRecommendedRepos,
   recommendedSource,
 } from "./recommended-repos";
 
@@ -24,38 +25,36 @@ describe("recommendedSource", () => {
   });
 });
 
-describe("fetchRecommendedRepos", () => {
-  it("parses the repos array and defaults the branch", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => ({
-        ok: true,
-        json: async () => ({
-          repos: [
-            { url: "jane/x", title: "X" },
-            { url: "bob/y", branch: "dev" },
-            { nope: true },
-          ],
-        }),
-      })),
-    );
-    const list = await fetchRecommendedRepos();
+describe("parseRecommendedRepos", () => {
+  it("parses the repos array and defaults the branch", () => {
+    const list = parseRecommendedRepos({
+      repos: [
+        { url: "jane/x", title: "X" },
+        { url: "bob/y", branch: "dev" },
+        { nope: true },
+      ],
+    });
     expect(list).toEqual([
       { url: "jane/x", title: "X", branch: "main" },
       { url: "bob/y", branch: "dev" },
     ]);
   });
 
-  it("returns [] on a non-ok response / network error / bad JSON", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false })));
+  it("returns [] for a missing / non-array / malformed payload", () => {
+    expect(parseRecommendedRepos(null)).toEqual([]);
+    expect(parseRecommendedRepos({})).toEqual([]);
+    expect(parseRecommendedRepos({ repos: "nope" })).toEqual([]);
+  });
+});
+
+describe("fetchRecommendedRepos", () => {
+  it("returns [] WITHOUT a network request while the catalogue is unpublished", async () => {
+    // The catalogue ships later with AUTH-03 (EXP-025); until then the
+    // fetch is skipped so the not-yet-existing file never logs a 404.
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
     expect(await fetchRecommendedRepos()).toEqual([]);
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => {
-        throw new Error("offline");
-      }),
-    );
-    expect(await fetchRecommendedRepos()).toEqual([]);
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
 
