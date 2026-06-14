@@ -271,6 +271,85 @@ function buildSessionExcerpt(
     return lines.join("\n");
 }
 
+type RecentSession = NonNullable<
+    NonNullable<ProgressSummary["tracking"]>["recent_sessions"]
+>[number];
+
+/**
+ * Collect every vocabulary entry from the user's analyzed
+ * conversations. Per Phase 30D, vocabulary lives at
+ * ``analysis_result.vocabulary``; malformed entries are skipped.
+ */
+function collectVocabulary(
+    conversations: ImportedConversation[],
+): VocabularyEntry[] {
+    const vocabulary: VocabularyEntry[] = [];
+    for (const conv of conversations) {
+        if (!conv.analyzed || !conv.analysis_result) continue;
+        const v = (
+            conv.analysis_result as unknown as {vocabulary?: VocabularyEntry[]}
+        ).vocabulary;
+        if (Array.isArray(v)) {
+            for (const entry of v) {
+                if (entry && entry.word && entry.translation) {
+                    vocabulary.push(entry);
+                }
+            }
+        }
+    }
+    return vocabulary;
+}
+
+/**
+ * Pull per-session data for the recent sessions: the first-assistant
+ * message (the rule/concept), the rating note, and a per-session
+ * excerpt file. Best-effort — a session that fails to load is skipped.
+ */
+async function collectSessionData(
+    storage: ReturnType<typeof getStorage>,
+    recentSessions: RecentSession[],
+): Promise<{
+    firstAssistantMsgs: string[];
+    excerptFiles: Array<{name: string; body: string}>;
+    noteSnippets: string[];
+}> {
+    const firstAssistantMsgs: string[] = [];
+    const excerptFiles: Array<{name: string; body: string}> = [];
+    const noteSnippets: string[] = [];
+    for (const sess of recentSessions) {
+        try {
+            const detail = await storage.export.session(sess.id, "en");
+            const msgs = (detail.messages ?? []) as SessionMessage[];
+            const firstAssistant = msgs.find((m) => m.role === "assistant");
+            if (firstAssistant?.content) {
+                firstAssistantMsgs.push(firstAssistant.content);
+            }
+            const note = (detail.rating?.notes ?? "").trim();
+            if (note) {
+                noteSnippets.push(note);
+            }
+            excerptFiles.push({
+                name: `sessions/${sess.id.slice(0, 8)}.md`,
+                body: buildSessionExcerpt(
+                    {
+                        id: sess.id,
+                        method: sess.method,
+                        // ``RecentSessionEntry`` carries
+                        // ``committed_at`` (the progress-commit
+                        // timestamp), not ``started_at``. Same
+                        // calendar day in practice.
+                        started_at: sess.committed_at ?? null,
+                    },
+                    msgs,
+                ),
+            });
+        } catch {
+            /* skip — best-effort */
+        }
+    }
+    return {firstAssistantMsgs, excerptFiles, noteSnippets};
+}
+
 // ---- Public API ----
 
 /**
@@ -310,21 +389,8 @@ export async function buildNotebookLMPackage(
     ]);
 
     // Collect vocabulary from every analyzed conversation
-    // belonging to the user. Per Phase 30D, vocabulary lives at
-    // ``analysis_result.vocabulary``.
-    const vocabulary: VocabularyEntry[] = [];
-    for (const conv of conversations) {
-        if (!conv.analyzed || !conv.analysis_result) continue;
-        const v = (conv.analysis_result as unknown as {vocabulary?: VocabularyEntry[]})
-            .vocabulary;
-        if (Array.isArray(v)) {
-            for (const entry of v) {
-                if (entry && entry.word && entry.translation) {
-                    vocabulary.push(entry);
-                }
-            }
-        }
-    }
+    // belonging to the user.
+    const vocabulary = collectVocabulary(conversations);
 
     // Sessions (up to the 10 most recent). ``recent_sessions``
     // lives under the ``tracking`` namespace in the progress
@@ -333,41 +399,11 @@ export async function buildNotebookLMPackage(
         0,
         10,
     );
-    const sessionFirstAssistantMsgs: string[] = [];
-    const sessionExcerptFiles: Array<{name: string; body: string}> = [];
-    const noteSnippets: string[] = [];
-
-    for (const sess of recentSessions) {
-        try {
-            const detail = await storage.export.session(sess.id, "en");
-            const msgs = (detail.messages ?? []) as SessionMessage[];
-            const firstAssistant = msgs.find((m) => m.role === "assistant");
-            if (firstAssistant?.content) {
-                sessionFirstAssistantMsgs.push(firstAssistant.content);
-            }
-            const note = (detail.rating?.notes ?? "").trim();
-            if (note) {
-                noteSnippets.push(note);
-            }
-            sessionExcerptFiles.push({
-                name: `sessions/${sess.id.slice(0, 8)}.md`,
-                body: buildSessionExcerpt(
-                    {
-                        id: sess.id,
-                        method: sess.method,
-                        // ``RecentSessionEntry`` carries
-                        // ``committed_at`` (the progress-commit
-                        // timestamp), not ``started_at``. Same
-                        // calendar day in practice.
-                        started_at: sess.committed_at ?? null,
-                    },
-                    msgs,
-                ),
-            });
-        } catch {
-            /* skip — best-effort */
-        }
-    }
+    const {
+        firstAssistantMsgs: sessionFirstAssistantMsgs,
+        excerptFiles: sessionExcerptFiles,
+        noteSnippets,
+    } = await collectSessionData(storage, recentSessions);
 
     const JSZipMod = (await import("jszip")).default;
     const zip = new JSZipMod();
