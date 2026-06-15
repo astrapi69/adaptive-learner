@@ -25,7 +25,15 @@
     "minutes": "dakika",
     "close": "Kapat"
   },
+  "avatar": {
+    "error": {
+      "unsupported_type": "Desteklenmeyen resim türü (JPEG, PNG veya WebP kullan).",
+      "too_large": "Resim küçültmeden sonra bile çok büyük. Başka bir tane dene.",
+      "decode_failed": "Resim okunamadı."
+    }
+  },
   "nav": {
+    "profile": "Profilin",
     "learning_path": "Öğrenme yolu",
     "dashboard": "Pano",
     "session": "Oturum",
@@ -440,6 +448,9 @@
     "section_danger": "Hesap",
     "section_ui": "Arayüz",
     "section_appearance": "Gorunum",
+    "section_profile": "Profil",
+    "avatar_upload": "Resim yükle",
+    "avatar_remove": "Kaldır",
     "theme": "Tema",
     "theme_description": "Uygulamanin nasil gorunecegini secin. Otomatik, sisteminizin acik/koyu ayarini izler.",
     "theme_group_recommended": "Önerilen",

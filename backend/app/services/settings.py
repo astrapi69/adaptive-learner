@@ -95,6 +95,11 @@ def update_settings(
         if column in fields and fields[column] is not None:
             stripped = fields[column].strip()
             setattr(settings, column, stripped or None)
+    # #508 — profile picture. Empty string clears it (column → NULL,
+    # "use the initials avatar"); a non-empty data URL sets it; ``None``
+    # (field omitted) leaves it untouched.
+    if "avatar" in fields and fields["avatar"] is not None:
+        settings.avatar = fields["avatar"].strip() or None
     repo.persist(settings)
     return settings
 

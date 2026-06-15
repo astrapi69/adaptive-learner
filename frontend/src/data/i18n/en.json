@@ -25,7 +25,15 @@
     "minutes": "minutes",
     "close": "Close"
   },
+  "avatar": {
+    "error": {
+      "unsupported_type": "Unsupported image type (use JPEG, PNG or WebP).",
+      "too_large": "The image is too large even after resizing. Try another one.",
+      "decode_failed": "Could not read that image."
+    }
+  },
   "nav": {
+    "profile": "Your profile",
     "learning_path": "Learning Path",
     "dashboard": "Dashboard",
     "session": "Session",
@@ -440,6 +448,9 @@
     "section_danger": "Account",
     "section_ui": "Interface",
     "section_appearance": "Appearance",
+    "section_profile": "Profile",
+    "avatar_upload": "Upload picture",
+    "avatar_remove": "Remove",
     "theme": "Theme",
     "theme_description": "Choose how the app looks. Auto follows your system light/dark setting.",
     "theme_group_recommended": "Recommended",

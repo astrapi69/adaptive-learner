@@ -39,6 +39,9 @@ export interface UserSettingsRow {
     model_override_anthropic: string | null;
     model_override_openai: string | null;
     model_override_gemini: string | null;
+    /** #508 — base64 data URL of the profile picture, or null (use the
+     *  generated initials avatar). */
+    avatar: string | null;
     created_at: string;
     updated_at: string;
 }

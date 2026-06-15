@@ -78,6 +78,7 @@ const BASE: UserSettings = {
   model_override_anthropic: null,
   model_override_openai: null,
   model_override_gemini: null,
+          avatar: null,
   key_source_anthropic: "none",
   key_source_openai: "none",
   key_source_gemini: "none",
