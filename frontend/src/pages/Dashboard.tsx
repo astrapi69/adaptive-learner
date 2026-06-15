@@ -24,6 +24,7 @@ import DashboardBadgeWidget from "../components/badges/DashboardBadgeWidget";
 import DailyMissionsCard from "../components/DailyMissionsCard";
 import StreakCalendar from "../components/StreakCalendar";
 import StreakWidget from "../components/StreakWidget";
+import ActivityTrend from "../components/dashboard/ActivityTrend";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../api/client";
@@ -347,6 +348,7 @@ export default function Dashboard() {
         <article className="dashboard-card dashboard-card-wide">
           <h2 className="dashboard-card-title">{t("gamification.card_streak", "Streak")}</h2>
           <StreakWidget state={streakState} />
+          <ActivityTrend entries={heatmap} />
           <StreakCalendar entries={heatmap} />
         </article>
 

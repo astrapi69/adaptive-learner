@@ -1003,6 +1003,11 @@
     "upload_qr_hint": "No camera? Take a screenshot of the desktop's QR and upload it:"
   },
   "gamification": {
+    "trend_up": "Περισσότερα από την περασμένη εβδομάδα",
+    "trend_down": "Λιγότερα από την περασμένη εβδομάδα",
+    "trend_flat": "Ίδια με την περασμένη εβδομάδα",
+    "activity_7d": "Δραστηριότητα (τελευταίες 7 ημέρες)",
+    "activity_cell": "{count} στις {date}",
     "card_xp": "XP & Επίπεδο",
     "level": "Επίπεδο",
     "xp": "XP",

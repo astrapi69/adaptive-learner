@@ -942,6 +942,11 @@ sync:
   upload_qr: QR 画像をアップロード
   upload_qr_hint: 'カメラがありませんか? デスクトップの QR のスクリーンショットを撮ってアップロードしてください:'
 gamification:
+  trend_up: "先週より多い"
+  trend_down: "先週より少ない"
+  trend_flat: "先週と同じ"
+  activity_7d: "アクティビティ（過去7日間）"
+  activity_cell: "{date}：{count}"
   card_xp: XPとレベル
   level: レベル
   xp: XP

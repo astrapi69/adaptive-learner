@@ -1003,6 +1003,11 @@
     "upload_qr_hint": "Kamera yok mu? Masaüstündeki QR'ın ekran görüntüsünü çek ve yükle:"
   },
   "gamification": {
+    "trend_up": "Geçen haftadan fazla",
+    "trend_down": "Geçen haftadan az",
+    "trend_flat": "Geçen haftayla aynı",
+    "activity_7d": "Etkinlik (son 7 gün)",
+    "activity_cell": "{date}: {count}",
     "card_xp": "XP & Seviye",
     "level": "Seviye",
     "xp": "XP",
