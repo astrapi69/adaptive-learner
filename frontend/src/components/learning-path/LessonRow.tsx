@@ -17,10 +17,27 @@ import {useI18n} from "../../hooks/useI18n";
 import {cn} from "../../lib/utils";
 import {lessonRoute} from "../../lib/content/continue-learning";
 import {relativeTime} from "../../lib/utils/relative-time";
+import ElementProgressBar from "../../shared/ElementProgressBar";
+import SrsStatusBadge, {type SrsBadgeTone} from "../../shared/SrsStatusBadge";
+import type {SrsLessonStatus} from "../../lib/srs/status";
 import type {
     MasteryState,
     PersonalPathLesson,
 } from "../../lib/learning-path/personal-path";
+
+const SRS_TONE: Record<SrsLessonStatus, SrsBadgeTone> = {
+    new: "neutral",
+    learning: "info",
+    due: "warning",
+    mastered: "success",
+};
+
+const SRS_LABEL: Record<SrsLessonStatus, [string, string]> = {
+    new: ["srs.status_new", "New"],
+    learning: ["srs.status_learning", "Learning"],
+    due: ["srs.status_due", "Due"],
+    mastered: ["srs.status_mastered", "Mastered"],
+};
 
 /** Compact 0-3 star row. */
 function Stars({stars}: {stars: number}) {
@@ -103,6 +120,27 @@ export default function LessonRow({lesson}: LessonRowProps) {
             <span className="min-w-0 flex-1 truncate text-sm text-foreground">
                 {lesson.title}
             </span>
+            {lesson.srs && lesson.srs.total > 0 && (
+                <SrsStatusBadge
+                    label={t(...SRS_LABEL[lesson.srs.status])}
+                    tone={SRS_TONE[lesson.srs.status]}
+                    testId={`lesson-row-srs-${lesson.filename}`}
+                />
+            )}
+            {lesson.srs && lesson.srs.total > 0 && (
+                <span className="hidden shrink-0 md:inline">
+                    <ElementProgressBar
+                        mastered={lesson.srs.mastered}
+                        total={lesson.srs.total}
+                        ariaLabel={t(
+                            "srs.elements_mastered_aria",
+                            "{mastered} of {total} elements mastered",
+                        )
+                            .replace("{mastered}", String(lesson.srs.mastered))
+                            .replace("{total}", String(lesson.srs.total))}
+                    />
+                </span>
+            )}
             {attempted ? (
                 <Stars stars={lesson.stars} />
             ) : (
