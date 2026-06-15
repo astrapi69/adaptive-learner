@@ -45,19 +45,22 @@ export default function SettingsMobileMenu({ groups, activeTab, onChange }: Sett
     return () => cancelAnimationFrame(id);
   }, [open]);
 
-  // Close on outside click + Escape while open.
+  // Close on outside click + Escape while open. Uses ``pointerdown``
+  // (not ``mousedown``): iOS Safari fires pointer events reliably for
+  // touch, so a tap on the header closes the menu on the FIRST touch
+  // instead of the tap being swallowed (#593).
   useEffect(() => {
     if (!open) return;
-    function onPointerDown(e: MouseEvent) {
+    function onPointerDown(e: Event) {
       if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
     }
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
-    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);

@@ -81,7 +81,12 @@ export function useDialogFocus(
         if (initial === dialog && !dialog.hasAttribute("tabindex")) {
             dialog.setAttribute("tabindex", "-1");
         }
-        initial.focus();
+        // ``preventScroll`` is load-bearing on iOS Safari (#593): a
+        // programmatic ``.focus()`` scrolls the target into view, and
+        // with a sticky app header that scroll jank can leave the
+        // header visually wedged / unresponsive. We never want focus
+        // management to move the viewport.
+        initial.focus({preventScroll: true});
 
         function handleKeyDown(event: KeyboardEvent): void {
             const node = ref.current;
@@ -89,7 +94,7 @@ export function useDialogFocus(
             const focusables = focusableWithin(node);
             if (focusables.length === 0) {
                 event.preventDefault();
-                node.focus();
+                node.focus({preventScroll: true});
                 return;
             }
             const first = focusables[0];
@@ -98,11 +103,11 @@ export function useDialogFocus(
             if (event.shiftKey) {
                 if (current === first || !node.contains(current)) {
                     event.preventDefault();
-                    last.focus();
+                    last.focus({preventScroll: true});
                 }
             } else if (current === last || !node.contains(current)) {
                 event.preventDefault();
-                first.focus();
+                first.focus({preventScroll: true});
             }
         }
 
@@ -111,7 +116,7 @@ export function useDialogFocus(
             dialog.removeEventListener("keydown", handleKeyDown);
             const trigger = triggerRef.current;
             if (trigger && document.contains(trigger)) {
-                trigger.focus();
+                trigger.focus({preventScroll: true});
             }
         };
     }, [open, ref]);
