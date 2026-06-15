@@ -4,6 +4,7 @@ import type {JSONContent} from "@tiptap/core";
 
 import {Button} from "@/components/ui/button";
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
+import {useDialogFocus} from "../hooks/useDialogFocus";
 import {useI18n} from "../hooks/useI18n";
 import RichTextEditor from "./editor/RichTextEditor";
 import EditorToolbar from "./editor/EditorToolbar";
@@ -80,6 +81,10 @@ export default function RatingDialog({
     const [notesDoc, setNotesDoc] = useState<JSONContent | null>(null);
     const [notesEditor, setNotesEditor] = useState<Editor | null>(null);
     const [charCount, setCharCount] = useState(0);
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    // WCAG 2.1.2 / 2.4.3: initial focus, focus trap, focus return.
+    useDialogFocus(dialogRef, {open});
 
     // WCAG SC 2.1.2 (No Keyboard Trap): close on Escape.
     useEffect(() => {
@@ -111,6 +116,7 @@ export default function RatingDialog({
     return (
         <div className="modal-overlay" data-testid="rating-dialog">
             <div
+                ref={dialogRef}
                 className="modal-card"
                 role="dialog"
                 aria-modal="true"

@@ -26,11 +26,39 @@
 
 import type {ContentLesson, ContentLessonCard, ContentLessonStep} from "../../storage/types";
 
+/** Context handed to a {@link SplitOptions.partTitle} formatter. */
+export interface PartTitleContext {
+    /** The base lesson title (before any part suffix). */
+    title: string;
+    /** 1-indexed part number. */
+    part: number;
+    /** Total number of parts the lesson was split into. */
+    total: number;
+}
+
 export interface SplitOptions {
     maxStepsPerPart?: number;
+    /**
+     * Optional formatter for each part's title. Receives the base
+     * lesson title plus the 1-indexed part number and the total part
+     * count, and returns the full part title.
+     *
+     * Defaults to the language-neutral English
+     * ``"{title} — Part {n} of {total}"``. The default is intentional:
+     * the persisted lesson data + the Python parity goldens stay
+     * byte-identical when no formatter is supplied, so only the
+     * user-facing caller (``SaveOfflineLessonModal``) opts into a
+     * localized title.
+     */
+    partTitle?: (ctx: PartTitleContext) => string;
 }
 
 const DEFAULT_MAX_STEPS = 10;
+
+/** Language-neutral default part title (pinned by the parity goldens). */
+function defaultPartTitle({title, part, total}: PartTitleContext): string {
+    return `${title} — Part ${part} of ${total}`;
+}
 
 /**
  * Split ``lesson`` into parts of at most ``maxStepsPerPart`` steps.
@@ -55,6 +83,7 @@ export function splitLesson(
         lesson.cards.map((c) => [c.id, c]),
     );
     const totalSteps = lesson.steps.length;
+    const formatPartTitle = options.partTitle ?? defaultPartTitle;
 
     return chunks.map((steps, idx) => {
         const partNum = idx + 1;
@@ -71,7 +100,11 @@ export function splitLesson(
         return {
             ...lesson,
             id: `${lesson.id}-part-${partNum}`,
-            title: `${lesson.title} — Part ${partNum} of ${total}`,
+            title: formatPartTitle({
+                title: lesson.title,
+                part: partNum,
+                total,
+            }),
             cards: partCards,
             steps,
             estimated_minutes: estimatedMinutes,

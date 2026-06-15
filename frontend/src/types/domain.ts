@@ -56,6 +56,8 @@ export interface UserSettings {
     model_override_anthropic: string | null;
     model_override_openai: string | null;
     model_override_gemini: string | null;
+    // #508 — base64 data URL of the profile picture, or null.
+    avatar: string | null;
     // Phase 34 — per-provider key-source attribution.
     key_source_anthropic: ApiKeySource;
     key_source_openai: ApiKeySource;

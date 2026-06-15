@@ -25,7 +25,44 @@
     "minutes": "minutes",
     "close": "Fermer"
   },
+  "avatar": {
+    "error": {
+      "unsupported_type": "Type d'image non pris en charge (JPEG, PNG ou WebP).",
+      "too_large": "L'image est trop grande même après redimensionnement. Essayez-en une autre.",
+      "decode_failed": "Impossible de lire cette image."
+    }
+  },
+  "data_export": {
+    "title": "Export de données",
+    "full_intro": "Exportez tout dans un seul fichier de sauvegarde importable.",
+    "full_button": "Créer une sauvegarde complète",
+    "full_done": "Sauvegarde complète créée.",
+    "exporting": "Export…",
+    "selective_intro": "Ou choisissez précisément quoi inclure. Le fichier s'importe de la même façon.",
+    "select_all": "Tout sélectionner / désélectionner",
+    "selective_button": "Exporter les données sélectionnées",
+    "selective_done": "{n} enregistrements exportés.",
+    "includes_hint": "exporté automatiquement avec cette catégorie",
+    "failed": "Échec de l'export : {detail}",
+    "group_content": "Contenus",
+    "group_master": "Données de base",
+    "group_extra": "Données supplémentaires",
+    "group_gamification": "Gamification",
+    "group_config": "Configuration",
+    "cat_projects": "Projets d'apprentissage (avec sessions, évaluations, notes)",
+    "cat_curricula": "Cursus (avec thèmes et leçons)",
+    "cat_progress": "Progression des leçons (avec erreurs / SRS)",
+    "cat_subjects": "Matières",
+    "cat_tags": "Étiquettes",
+    "cat_imports": "Imports de chat (avec messages)",
+    "cat_anki": "Cartes Anki",
+    "cat_questions": "Questions d'étude",
+    "cat_gamification": "XP, badges, série, missions",
+    "cat_settings": "Paramètres",
+    "cat_ai_config": "Sauvegarde de clé IA"
+  },
   "nav": {
+    "profile": "Votre profil",
     "learning_path": "Parcours d'apprentissage",
     "dashboard": "Tableau de bord",
     "session": "Session",
@@ -440,6 +477,9 @@
     "section_danger": "Compte",
     "section_ui": "Interface",
     "section_appearance": "Apparence",
+    "section_profile": "Profil",
+    "avatar_upload": "Importer une image",
+    "avatar_remove": "Retirer",
     "theme": "Theme",
     "theme_description": "Choisissez l'apparence de l'application. Auto suit le reglage clair/sombre du systeme.",
     "theme_group_recommended": "Recommandés",
@@ -1727,6 +1767,11 @@
     }
   },
   "content": {
+    "book": {
+      "companion": "Complément du livre",
+      "by_author": "par {author}",
+      "view": "Voir le livre"
+    },
     "books": {
       "title": "Livres recommandés",
       "view_on_amazon": "Voir sur Amazon"
@@ -1800,7 +1845,8 @@
       "not_enough_data": "Pas assez de vocabulaire pour une leçon complète (au moins {min} exercices nécessaires). Importez une conversation plus longue pour plus de matériel.",
       "same_language": "La langue apprise et votre langue doivent être différentes.",
       "same_language_hint": "La langue apprise et votre langue sont identiques — parfait pour une leçon de grammaire ou en langue maternelle. Lors du partage, elle apparaît dans la branche de même langue de l'arbre de contenu.",
-      "split_notice": "Cette leçon contient {steps} étapes et sera enregistrée en {parts} parties (max. {max} étapes chacune)."
+      "split_notice": "Cette leçon contient {steps} étapes et sera enregistrée en {parts} parties (max. {max} étapes chacune).",
+      "part_title": "{title} - Partie {n}"
     },
     "lesson_gen": {
       "fallback_title": "Leçon importée",
@@ -1855,6 +1901,10 @@
       "other_sources": "Autres langues source",
       "for_speakers": "Pour les locuteurs de {lang}",
       "knowledge": "Savoir",
+      "own_lesson": "Votre leçon",
+      "own_edit": "Votre version",
+      "your_lessons": "Vos leçons",
+      "plus_own": "+{n} à vous",
       "domain_psychology": "Psychologie",
       "domain_programming": "Programmation",
       "domain_math": "Mathématiques",

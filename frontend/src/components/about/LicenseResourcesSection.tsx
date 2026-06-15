@@ -92,10 +92,14 @@ const sectionStyle: React.CSSProperties = {
 
 const dlStyle: React.CSSProperties = {
     display: "grid",
-    gridTemplateColumns: "max-content 1fr",
+    gridTemplateColumns: "minmax(0, max-content) minmax(0, 1fr)",
     gap: "4px 16px",
     fontSize: "0.9rem",
     margin: 0,
 };
 
-const ddStyle: React.CSSProperties = {margin: 0, wordBreak: "break-all"};
+const ddStyle: React.CSSProperties = {
+    margin: 0,
+    minWidth: 0,
+    wordBreak: "break-all",
+};

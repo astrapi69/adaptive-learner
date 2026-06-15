@@ -22,7 +22,41 @@ common:
   required: zorunlu
   minutes: dakika
   close: "Kapat"
+avatar:
+  error:
+    unsupported_type: "Desteklenmeyen resim türü (JPEG, PNG veya WebP kullan)."
+    too_large: "Resim küçültmeden sonra bile çok büyük. Başka bir tane dene."
+    decode_failed: "Resim okunamadı."
+data_export:
+  title: "Veri dışa aktarımı"
+  full_intro: "Her şeyi tek bir içe aktarılabilir yedek dosyasında dışa aktar."
+  full_button: "Tam yedek oluştur"
+  full_done: "Tam yedek oluşturuldu."
+  exporting: "Dışa aktarılıyor…"
+  selective_intro: "Ya da tam olarak neyin dahil edileceğini seç. Dosya aynı şekilde içe aktarılır."
+  select_all: "Tümünü seç / kaldır"
+  selective_button: "Seçili verileri dışa aktar"
+  selective_done: "{n} kayıt dışa aktarıldı."
+  includes_hint: "bu kategoriyle otomatik olarak dışa aktarılır"
+  failed: "Dışa aktarma başarısız: {detail}"
+  group_content: "İçerik"
+  group_master: "Ana veriler"
+  group_extra: "Ek veriler"
+  group_gamification: "Oyunlaştırma"
+  group_config: "Yapılandırma"
+  cat_projects: "Öğrenme projeleri (oturumlar, değerlendirmeler, notlar ile)"
+  cat_curricula: "Müfredatlar (konular ve dersler ile)"
+  cat_progress: "Ders ilerlemesi (hatalar / SRS ile)"
+  cat_subjects: "Konular"
+  cat_tags: "Etiketler"
+  cat_imports: "Sohbet içe aktarımları (mesajlarla)"
+  cat_anki: "Anki kartları"
+  cat_questions: "Çalışma soruları"
+  cat_gamification: "XP, rozetler, seri, görevler"
+  cat_settings: "Ayarlar"
+  cat_ai_config: "AI anahtar yedeği"
 nav:
+  profile: "Profilin"
   learning_path: "Öğrenme yolu"
   dashboard: Pano
   session: Oturum
@@ -413,6 +447,9 @@ settings:
   section_danger: Hesap
   section_ui: Arayüz
   section_appearance: "Gorunum"
+  section_profile: "Profil"
+  avatar_upload: "Resim yükle"
+  avatar_remove: "Kaldır"
   theme: "Tema"
   theme_description: "Uygulamanin nasil gorunecegini secin. Otomatik, sisteminizin acik/koyu ayarini izler."
   theme_group_recommended: "Önerilen"
@@ -1591,6 +1628,10 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  book:
+    companion: "Kitap eki"
+    by_author: "{author}"
+    view: "Kitaba git"
   books:
     title: "Önerilen kitaplar"
     view_on_amazon: "Amazon'da görüntüle"
@@ -1657,6 +1698,7 @@ content:
     same_language: Öğrenilen dil ile sizin diliniz farklı olmalıdır.
     same_language_hint: "Öğrenilen dil ve diliniz aynı — dilbilgisi veya anadil dersi için uygundur. Paylaşıldığında içerik ağacının aynı dil dalına yerleşir."
     split_notice: "Bu dersin {steps} adımı var ve {parts} parça olarak kaydedilecektir (bölüm başına en fazla {max} adım)."
+    part_title: "{title} - Bölüm {n}"
   lesson_gen:
     fallback_title: "İçe aktarılan ders"
     focus: "Odak"
@@ -1703,6 +1745,10 @@ content:
     other_sources: Diğer kaynak diller
     for_speakers: '{lang} konuşanlar için'
     knowledge: Bilgi
+    own_lesson: "Kendi dersin"
+    own_edit: "Kendi düzenlemen"
+    your_lessons: "Kendi derslerin"
+    plus_own: "+{n} kendi"
     domain_psychology: Psikoloji
     domain_programming: Programlama
     domain_math: Matematik

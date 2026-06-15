@@ -128,6 +128,11 @@ class UserSettings(Base):
     model_override_anthropic: Mapped[str | None] = mapped_column(String(200), nullable=True)
     model_override_openai: Mapped[str | None] = mapped_column(String(200), nullable=True)
     model_override_gemini: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    # #508 — optional profile picture as a small base64 data URL (a
+    # client-resized, <=100 KB square JPEG/PNG). Stored here so it rides
+    # the existing user_settings sync + backup surface; NULL = use the
+    # generated initials avatar.
+    avatar: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow

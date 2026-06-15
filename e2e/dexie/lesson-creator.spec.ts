@@ -85,18 +85,17 @@ test.describe("Lesson Creator — build + save a lesson", () => {
             timeout: 15000,
         });
 
-        // Jump to the Content Browser and confirm the lesson landed in
-        // "My Lessons".
+        // Jump to the Content Browser and confirm the lesson is accessible.
+        // #543 — it lands in "My Lessons" or, if it matches a published set,
+        // folds into that tree node (EXP-026); accept either location.
         await page.getByTestId("create-lesson-to-browser").click();
-        await expect(page.getByTestId("content-my-lessons")).toBeVisible({
-            timeout: 15000,
-        });
         await expect(
-            page.getByTestId("content-my-lessons-list"),
-        ).toBeVisible();
-        await expect(
-            page.locator('[data-testid^="my-lesson-"]').first(),
-        ).toBeVisible();
+            page
+                .locator(
+                    '[data-testid^="my-lesson-"], [data-testid^="folded-lesson-"]',
+                )
+                .first(),
+        ).toBeVisible({timeout: 15000});
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });

@@ -16,6 +16,18 @@ import { parseGitHubRepoUrl, userRepoSource } from "./content-repos";
 const OFFICIAL_OWNER_REPO = "astrapi69/adaptive-learner-content";
 const RECOMMENDED_URL = `https://raw.githubusercontent.com/${OFFICIAL_OWNER_REPO}/main/recommended-repos.json`;
 
+/**
+ * Whether the curated catalogue is published yet. The file does NOT exist in
+ * the content repo on purpose — it ships later with AUTH-03 (EXP-025). Until
+ * then we must NOT request it: a `fetch` to the missing file makes the browser
+ * log a 404 to the console on every Content/Settings visit (the browser logs
+ * failed network requests itself, regardless of how the JS handles the
+ * response — our code already returns `[]` silently). Skipping the request is
+ * the only way to keep the console quiet. Flip to `true` in the same change
+ * that publishes `recommended-repos.json`.
+ */
+const CATALOGUE_PUBLISHED = false;
+
 /** One entry in the curated recommended-repos catalogue. */
 export interface RecommendedRepo {
   /** ``owner/repo`` or a full GitHub URL. */
@@ -34,22 +46,35 @@ export function recommendedSource(rec: RecommendedRepo): string | null {
 }
 
 /**
+ * Parse the catalogue payload into validated entries. Pure + never throws:
+ * a non-array / malformed ``repos`` field resolves to ``[]``, and each entry
+ * is required to carry a string ``url`` (branch defaults to ``main``).
+ */
+export function parseRecommendedRepos(data: unknown): RecommendedRepo[] {
+  const repos = (data as { repos?: unknown } | null | undefined)?.repos;
+  if (!Array.isArray(repos)) return [];
+  return repos
+    .filter(
+      (r): r is RecommendedRepo =>
+        !!r && typeof r === "object" && typeof (r as RecommendedRepo).url === "string",
+    )
+    .map((r) => ({ ...r, branch: r.branch || "main" }));
+}
+
+/**
  * Fetch the curated recommended-repos list. Never throws — a missing or
  * malformed catalogue resolves to ``[]``.
+ *
+ * While {@link CATALOGUE_PUBLISHED} is false the request is skipped entirely
+ * (returns ``[]`` without touching the network), so the not-yet-published
+ * file does not produce a console 404 on every Content/Settings load.
  */
 export async function fetchRecommendedRepos(): Promise<RecommendedRepo[]> {
+  if (!CATALOGUE_PUBLISHED) return [];
   try {
     const response = await fetch(RECOMMENDED_URL);
     if (!response.ok) return [];
-    const data = (await response.json()) as { repos?: unknown };
-    const repos = data?.repos;
-    if (!Array.isArray(repos)) return [];
-    return repos
-      .filter(
-        (r): r is RecommendedRepo =>
-          !!r && typeof r === "object" && typeof (r as RecommendedRepo).url === "string",
-      )
-      .map((r) => ({ ...r, branch: r.branch || "main" }));
+    return parseRecommendedRepos(await response.json());
   } catch {
     return [];
   }

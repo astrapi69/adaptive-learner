@@ -25,7 +25,44 @@
     "minutes": "分",
     "close": "閉じる"
   },
+  "avatar": {
+    "error": {
+      "unsupported_type": "対応していない画像形式です（JPEG・PNG・WebP）。",
+      "too_large": "縮小しても画像が大きすぎます。別の画像を試してください。",
+      "decode_failed": "画像を読み込めませんでした。"
+    }
+  },
+  "data_export": {
+    "title": "データエクスポート",
+    "full_intro": "インポート可能な1つのバックアップファイルにすべてを書き出します。",
+    "full_button": "完全バックアップを作成",
+    "full_done": "完全バックアップを作成しました。",
+    "exporting": "エクスポート中…",
+    "selective_intro": "または含める内容を正確に選びます。ファイルは同じ方法でインポートされます。",
+    "select_all": "すべて選択 / 解除",
+    "selective_button": "選択したデータをエクスポート",
+    "selective_done": "{n} 件をエクスポートしました。",
+    "includes_hint": "このカテゴリと一緒に自動的にエクスポートされます",
+    "failed": "エクスポートに失敗しました: {detail}",
+    "group_content": "コンテンツ",
+    "group_master": "マスターデータ",
+    "group_extra": "追加データ",
+    "group_gamification": "ゲーミフィケーション",
+    "group_config": "設定",
+    "cat_projects": "学習プロジェクト（セッション・評価・メモを含む）",
+    "cat_curricula": "カリキュラム（トピックとレッスンを含む）",
+    "cat_progress": "レッスンの進捗（間違い / SRS を含む）",
+    "cat_subjects": "科目",
+    "cat_tags": "タグ",
+    "cat_imports": "チャットのインポート（メッセージを含む）",
+    "cat_anki": "Anki カード",
+    "cat_questions": "学習問題",
+    "cat_gamification": "XP・バッジ・連続記録・ミッション",
+    "cat_settings": "設定",
+    "cat_ai_config": "AI キーのバックアップ"
+  },
   "nav": {
+    "profile": "あなたのプロフィール",
     "learning_path": "学習パス",
     "dashboard": "ダッシュボード",
     "session": "セッション",
@@ -440,6 +477,9 @@
     "section_danger": "アカウント",
     "section_ui": "インターフェース",
     "section_appearance": "外観",
+    "section_profile": "プロフィール",
+    "avatar_upload": "画像をアップロード",
+    "avatar_remove": "削除",
     "theme": "テーマ",
     "theme_description": "アプリの見た目を選びます。自動はシステムのライト/ダーク設定に従います。",
     "theme_group_recommended": "おすすめ",
@@ -1727,6 +1767,11 @@
     }
   },
   "content": {
+    "book": {
+      "companion": "書籍ガイド",
+      "by_author": "{author} 著",
+      "view": "本を見る"
+    },
     "books": {
       "title": "おすすめの書籍",
       "view_on_amazon": "Amazonで見る"
@@ -1800,7 +1845,8 @@
       "not_enough_data": "完全なレッスンには語彙が足りません（少なくとも{min}個の演習が必要）。より多くの練習素材のため、長いチャットをインポートしてください。",
       "same_language": "学習する言語とあなたの言語は異なる必要があります。",
       "same_language_hint": "学習言語とあなたの言語が同じです — 文法や母語のレッスンには問題ありません。共有する場合、コンテンツツリーの同言語ブランチに表示されます。",
-      "split_notice": "このレッスンには {steps} ステップがあり、{parts} パートとして保存されます（各パート最大 {max} ステップ）。"
+      "split_notice": "このレッスンには {steps} ステップがあり、{parts} パートとして保存されます（各パート最大 {max} ステップ）。",
+      "part_title": "{title} - パート{n}"
     },
     "lesson_gen": {
       "fallback_title": "インポートしたレッスン",
@@ -1855,6 +1901,10 @@
       "other_sources": "他の出発言語",
       "for_speakers": "{lang}話者向け",
       "knowledge": "知識",
+      "own_lesson": "あなたのレッスン",
+      "own_edit": "あなたの編集",
+      "your_lessons": "あなたのレッスン",
+      "plus_own": "+{n} 自作",
       "domain_psychology": "心理学",
       "domain_programming": "プログラミング",
       "domain_math": "数学",

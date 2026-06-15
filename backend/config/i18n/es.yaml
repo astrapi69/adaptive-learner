@@ -22,7 +22,41 @@ common:
   required: obligatorio
   minutes: minutos
   close: "Cerrar"
+avatar:
+  error:
+    unsupported_type: "Tipo de imagen no admitido (usa JPEG, PNG o WebP)."
+    too_large: "La imagen es demasiado grande incluso tras redimensionar. Prueba con otra."
+    decode_failed: "No se pudo leer la imagen."
+data_export:
+  title: "Exportación de datos"
+  full_intro: "Exporta todo en un único archivo de copia de seguridad importable."
+  full_button: "Crear copia completa"
+  full_done: "Copia completa creada."
+  exporting: "Exportando…"
+  selective_intro: "O elige exactamente qué incluir. El archivo se importa igual."
+  select_all: "Seleccionar todo / nada"
+  selective_button: "Exportar datos seleccionados"
+  selective_done: "{n} registros exportados."
+  includes_hint: "se exporta automáticamente con esta categoría"
+  failed: "Error de exportación: {detail}"
+  group_content: "Contenido"
+  group_master: "Datos maestros"
+  group_extra: "Datos adicionales"
+  group_gamification: "Gamificación"
+  group_config: "Configuración"
+  cat_projects: "Proyectos de aprendizaje (con sesiones, valoraciones, notas)"
+  cat_curricula: "Currículos (con temas y lecciones)"
+  cat_progress: "Progreso de lecciones (con errores / SRS)"
+  cat_subjects: "Materias"
+  cat_tags: "Etiquetas"
+  cat_imports: "Importaciones de chat (con mensajes)"
+  cat_anki: "Tarjetas Anki"
+  cat_questions: "Preguntas de estudio"
+  cat_gamification: "XP, insignias, racha, misiones"
+  cat_settings: "Ajustes"
+  cat_ai_config: "Copia de clave de IA"
 nav:
+  profile: "Tu perfil"
   learning_path: "Ruta de aprendizaje"
   dashboard: Panel
   session: Sesion
@@ -413,6 +447,9 @@ settings:
   section_danger: Cuenta
   section_ui: Interface
   section_appearance: "Apariencia"
+  section_profile: "Perfil"
+  avatar_upload: "Subir imagen"
+  avatar_remove: "Quitar"
   theme: "Tema"
   theme_description: "Elige el aspecto de la aplicacion. Automatico sigue la configuracion clara/oscura del sistema."
   theme_group_recommended: "Recomendados"
@@ -1593,6 +1630,10 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  book:
+    companion: "Complemento del libro"
+    by_author: "por {author}"
+    view: "Ir al libro"
   books:
     title: "Libros recomendados"
     view_on_amazon: "Ver en Amazon"
@@ -1659,6 +1700,7 @@ content:
     same_language: El idioma aprendido y tu idioma deben ser diferentes.
     same_language_hint: "El idioma aprendido y tu idioma son iguales — válido para una lección de gramática o en lengua materna. Al compartirla, aparecerá en la rama del mismo idioma del árbol de contenido."
     split_notice: "Esta lección tiene {steps} pasos y se guardará en {parts} partes (máx. {max} pasos cada una)."
+    part_title: "{title} - Parte {n}"
   lesson_gen:
     fallback_title: "Lección importada"
     focus: "Enfoque"
@@ -1705,6 +1747,10 @@ content:
     other_sources: Otros idiomas de origen
     for_speakers: Para hablantes de {lang}
     knowledge: Conocimiento
+    own_lesson: "Tu lección"
+    own_edit: "Tu edición"
+    your_lessons: "Tus lecciones"
+    plus_own: "+{n} propias"
     domain_psychology: Psicología
     domain_programming: Programación
     domain_math: Matemáticas

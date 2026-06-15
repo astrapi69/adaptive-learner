@@ -43,16 +43,27 @@ import {
   type BookRecommendations,
   fetchBookRecommendations,
 } from "../lib/content/book-recommendations";
+import {
+  type BookMetadata,
+  fetchBookCompanion,
+  isFetchableSource,
+} from "../lib/content/book-companion";
+import ContentBookCompanions from "../components/content/ContentBookCompanions";
+import ContentContributionsSection from "../components/content/ContentContributionsSection";
 import { splitHighlight } from "../lib/content/content-search";
 import { useContentSearch } from "../hooks/useContentSearch";
 import { useContentSharing } from "../hooks/useContentSharing";
 import { useI18n } from "../hooks/useI18n";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { useSourceLanguages } from "../hooks/useSourceLanguages";
-import { buildContentTree } from "../lib/content/content-tree";
+import {
+  buildContentTree,
+  type FoldedUserLesson,
+  type UserFoldInput,
+} from "../lib/content/content-tree";
+import { computeUserFold } from "../lib/content/user-fold";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
-  CONTRIBUTOR_THRESHOLD,
   listContributions,
   recordContribution,
   type SharedContribution,
@@ -95,9 +106,16 @@ export default function ContentPage() {
   // #141 — per-domain book recommendations, fetched once from the
   // official content repo (graceful empty on failure / offline).
   const [bookRecs, setBookRecs] = useState<BookRecommendations>({});
+  // EXP-025 / AUTH-02 — book a connected repo accompanies, keyed by source.
+  const [bookCompanions, setBookCompanions] = useState<Record<string, BookMetadata>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [perSetState, setPerSetState] = useState<Record<string, DownloadState>>({});
+  // EXP-026 / UGC-04 — the loaded lessons of each user-generated set,
+  // keyed ``${source}#${id}``, used to fold them into the tree.
+  const [userLessonsBySet, setUserLessonsBySet] = useState<
+    Record<string, UserFoldInput["lessons"]>
+  >({});
   // Phase 59C — My Lessons delete-confirm modal target.
   const [deleteTarget, setDeleteTarget] = useState<ContentSetEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -154,6 +172,25 @@ export default function ContentPage() {
       cancelled = true;
     };
   }, []);
+  // EXP-025 / AUTH-02 — load the book a connected repo accompanies, if
+  // any. Keyed off the configured sources; bundled sources are skipped.
+  const sourcesSig = sources.map((s) => `${s.source}@${s.branch}`).join(",");
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const bySource: Record<string, BookMetadata> = {};
+      for (const src of sources) {
+        if (!isFetchableSource(src.source)) continue;
+        const book = await fetchBookCompanion(src.source, src.branch);
+        if (book) bySource[src.source] = book;
+      }
+      if (!cancelled) setBookCompanions(bySource);
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sourcesSig]);
   // EXP-023 Phase B — source filter: "all" / "official" / a specific
   // user-repo source ("owner/repo").
   const [sourceFilter, setSourceFilter] = useState<string>("all");
@@ -315,6 +352,48 @@ export default function ContentPage() {
     }
   };
 
+  // EXP-026 / UGC-04 — load each user-generated set's lessons so they
+  // can be folded into the matching published tree node. Keyed off
+  // ``sets`` (state, stable between renders) so it doesn't loop.
+  useEffect(() => {
+    let cancelled = false;
+    const userGen = sets.filter((s) => s.source === USER_GENERATED_SOURCE);
+    if (userGen.length === 0) {
+      setUserLessonsBySet({});
+      return;
+    }
+    void (async () => {
+      const byKey: Record<string, UserFoldInput["lessons"]> = {};
+      for (const set of userGen) {
+        try {
+          const listing = await getStorage().contentLoader.listLessons(set.source, set.id);
+          const lessons = await Promise.all(
+            listing.lessons.map(async (filename) => {
+              const lesson = await getStorage().contentLoader.getLesson(
+                set.source,
+                set.id,
+                filename,
+              );
+              return {
+                id: lesson.id,
+                filename,
+                title: lesson.title,
+                variation_of: lesson.variation_of,
+              };
+            }),
+          );
+          byKey[`${set.source}#${set.id}`] = lessons;
+        } catch {
+          /* a set that fails to load just stays in the My Lessons fallback */
+        }
+      }
+      if (!cancelled) setUserLessonsBySet(byKey);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [sets]);
+
   // Phase 60 — community-share + opt-in AI validation (extracted to
   // useContentSharing). The page keeps the contribution history.
   const share = useContentSharing({ sets, fetchSetLessons });
@@ -375,7 +454,20 @@ export default function ContentPage() {
     if (sourceFilter === "official") return isOfficialSource(s.source);
     return s.source === sourceFilter;
   });
-  const tree = buildContentTree(visibleSets, activeSources);
+
+  // EXP-026 / UGC-04 — fold user-generated sets into the matching
+  // published node (pure helper extracted in #541 to keep this component
+  // under the complexity gate). Matched sets leave the My Lessons
+  // fallback (decision E4); unmatched ones stay.
+  const { matchedFold, unmatchedUserSets, userSetsByKey } = computeUserFold(
+    userSets,
+    visibleSets,
+    userLessonsBySet,
+  );
+  const tree = buildContentTree(visibleSets, activeSources, matchedFold);
+
+  const handlePlayFolded = (lesson: FoldedUserLesson) =>
+    openLessonFile(lesson.setSource, lesson.setId, lesson.filename);
 
   return (
     <main id="main" className="page content-page" data-testid="content-page">
@@ -408,6 +500,10 @@ export default function ContentPage() {
           {sources.map((src) => `${src.source} @ ${src.branch}`).join(", ")}
         </p>
       )}
+
+      {/* EXP-025 / AUTH-02 — book-companion headers for connected repos
+          that accompany a published book. Hidden while searching. */}
+      {!searchResult.active && <ContentBookCompanions companions={bookCompanions} />}
 
       {/* UX overhaul C1 — compact toolbar: search FIRST (full width),
           then icon-only action buttons (icon + label from md up). */}
@@ -518,10 +614,12 @@ export default function ContentPage() {
       )}
 
       {/* Phase 59C — My Lessons (user-generated sets). Hidden while a
-          search is active (results replace the browse view). */}
-      {!searchResult.active && (
+          search is active (results replace the browse view). EXP-026 /
+          UGC-04: only the sets that did NOT fold into the tree remain
+          here, and the section hides entirely when none do (E4). */}
+      {!searchResult.active && unmatchedUserSets.length > 0 && (
         <MyLessonsSection
-          userSets={userSets}
+          userSets={unmatchedUserSets}
           communitySharingEnabled={COMMUNITY_SHARING_ENABLED}
           onOpen={(e) => void handleOpenLesson(e)}
           onEdit={handleEditUserSet}
@@ -533,41 +631,8 @@ export default function ContentPage() {
       )}
 
       {/* Phase 64D — My Contributions (local sharing history). */}
-      {!searchResult.active && contributions.length > 0 && (
-        <section
-          className="content-section content-my-contributions"
-          data-testid="content-my-contributions"
-        >
-          <h2>{t("content.contributions.title", "My Contributions")}</h2>
-          <p data-testid="content-contributions-count">
-            {t(
-              "content.contributions.count",
-              "You've contributed {n} lesson(s) to the community.",
-            ).replace("{n}", String(contributions.length))}
-          </p>
-          {contributions.length >= CONTRIBUTOR_THRESHOLD && (
-            <p className="content-contributor-badge" data-testid="content-contributor-badge">
-              {t(
-                "content.contributions.contributor",
-                "Community Contributor — {n} lessons shared!",
-              ).replace("{n}", String(contributions.length))}
-            </p>
-          )}
-          <ul className="content-contributions-list" data-testid="content-contributions-list">
-            {contributions.map((c) => (
-              <li key={c.github_url} className="content-contribution-row">
-                <span className="content-contribution-title">{c.title}</span>
-                <span className="content-contribution-date">{c.shared_at.slice(0, 10)}</span>
-                <span className="content-contribution-status">
-                  {t(`content.contributions.status_${c.status}`, c.status)}
-                </span>
-                <a href={c.github_url} target="_blank" rel="noopener noreferrer">
-                  {t("content.contributions.view", "View")}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
+      {!searchResult.active && (
+        <ContentContributionsSection contributions={contributions} />
       )}
 
       {searchResult.active ? (
@@ -736,6 +801,16 @@ export default function ContentPage() {
                 recommendedSources,
                 onOpen: (e) => void handleOpenLesson(e),
                 onDownload: (e) => void handleDownload(e),
+              }}
+              folded={{
+                setsByKey: userSetsByKey,
+                communitySharingEnabled: COMMUNITY_SHARING_ENABLED,
+                onPlayLesson: handlePlayFolded,
+                onEdit: handleEditUserSet,
+                onExportJson: (e) => void handleExportJson(e),
+                onExportSet: (e) => void handleExportSet(e),
+                onShare: (e) => void share.handleShare(e),
+                onDelete: setDeleteTarget,
               }}
             />
           )}

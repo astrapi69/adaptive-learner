@@ -14,9 +14,12 @@
  * advance to the step view.
  */
 
+import {useRef} from "react";
+
 import {PlayCircle, RotateCcw} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
+import {useDialogFocus} from "../../hooks/useDialogFocus";
 import {useI18n} from "../../hooks/useI18n";
 
 export interface LessonResumeDialogProps {
@@ -33,11 +36,17 @@ export default function LessonResumeDialog({
     onStartOver,
 }: LessonResumeDialogProps) {
     const {t} = useI18n();
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    // WCAG 2.4.3: this forced-choice dialog (no Escape by design) must
+    // still move focus onto its primary action on open and trap Tab.
+    useDialogFocus(dialogRef, {open});
 
     if (!open) return null;
 
     return (
         <div
+            ref={dialogRef}
             className="modal-overlay"
             role="dialog"
             aria-modal="true"
@@ -59,6 +68,7 @@ export default function LessonResumeDialog({
                         type="button"
                         onClick={onResume}
                         data-testid="lesson-resume-continue"
+                        data-autofocus
                     >
                         <PlayCircle size={16} aria-hidden="true" />
                         {t("lesson.resume.action_resume", "Continue")}

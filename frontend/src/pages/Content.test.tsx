@@ -390,7 +390,58 @@ describe("Content — My Lessons (Phase 59C)", () => {
     getLessonMock.mockReset();
   });
 
-  it("shows the My Lessons empty state when there are no user sets", async () => {
+  it("folds a matching user lesson into the tree, out of My Lessons (EXP-026)", async () => {
+    const downloaded = {
+      ...SAMPLE_ENTRY,
+      id: "es-a1-from-de",
+      title: "Spanish A1",
+      target_language: "es",
+      language: "es",
+      source_language: "de",
+      level: "A1",
+      cached_version: "1.0.0",
+      update_available: false,
+    };
+    const mine = {
+      ...USER_ENTRY,
+      id: "analysis-mine",
+      title: "My folded set",
+      target_language: "es",
+      language: "es",
+      source_language: "de",
+      level: "A1",
+    };
+    listSetsMock.mockResolvedValue({ sets: [downloaded, mine], sources: [] });
+    // The load effect reads the user set's lessons to fold them.
+    listLessonsMock.mockResolvedValue({ lessons: ["ul1.json"] });
+    getLessonMock.mockResolvedValue({
+      id: "ul1",
+      title: "Subjuntivo",
+      cards: [],
+      steps: [],
+      estimated_minutes: 5,
+      variation_of: null,
+    });
+
+    renderPage();
+    await screen.findByTestId("content-page");
+
+    // The lesson folds into the es/A1 node...
+    await screen.findByTestId("folded-lesson-ul1");
+    expect(screen.getByTestId("folded-lesson-ul1")).toHaveTextContent("Subjuntivo");
+    expect(screen.getByTestId("folded-lesson-ul1-badge")).toHaveTextContent("Your lesson");
+    // ...carries the shared actions...
+    expect(screen.getByTestId("folded-lesson-ul1-play")).toBeInTheDocument();
+    expect(screen.getByTestId("folded-lesson-ul1-delete")).toBeInTheDocument();
+    // ...shows the "+1 own" count...
+    expect(
+      screen.getByTestId("content-level-de/es-A1-own-count"),
+    ).toHaveTextContent("+1 own");
+    // ...and is NOT left in the My Lessons fallback.
+    expect(screen.queryByTestId("my-lesson-analysis-mine")).not.toBeInTheDocument();
+  });
+
+  it("hides the My Lessons section when there are no user sets (EXP-026 E4)", async () => {
     listSetsMock.mockResolvedValue({
       sets: [
         { ...SAMPLE_ENTRY, cached_version: "1.0.0", update_available: false },
@@ -399,7 +450,8 @@ describe("Content — My Lessons (Phase 59C)", () => {
     });
     renderPage();
     await screen.findByTestId("content-page");
-    expect(screen.getByTestId("content-my-lessons-empty")).toBeInTheDocument();
+    // The fallback section is only visible with unplaced drafts (E4).
+    expect(screen.queryByTestId("content-my-lessons")).not.toBeInTheDocument();
   });
 
   it("lists a user lesson (play/edit/delete), separate from downloaded sets", async () => {
@@ -659,8 +711,18 @@ describe("Content — My Lessons (Phase 59C)", () => {
     );
     renderPage();
     await screen.findByTestId("content-page");
+    // #537 — this user set shares the de->es / beginner pair with the
+    // published set above, so EXP-026 folds it INTO the tree node (out of
+    // "My Lessons") once its lessons load asynchronously. The previous
+    // version clicked the "My Lessons" share button, which races that
+    // async fold (the button is removed when the set folds away). Instead
+    // wait for the folded row to settle and share from there — it carries
+    // the identical UserSetActions/onShare, so the wizard + duplicate scan
+    // are exactly the same, but the target is now stable. The folded
+    // lesson's id is the shareableLesson() id ("01-lektion").
+    await screen.findByTestId("folded-lesson-01-lektion-share");
     await act(async () => {
-      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
+      fireEvent.click(screen.getByTestId("folded-lesson-01-lektion-share"));
     });
     await screen.findByTestId("share-wizard-step-1");
     fireEvent.click(screen.getByTestId("share-wizard-next"));

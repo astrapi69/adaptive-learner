@@ -25,7 +25,44 @@
     "minutes": "minutos",
     "close": "Fechar"
   },
+  "avatar": {
+    "error": {
+      "unsupported_type": "Tipo de imagem não suportado (use JPEG, PNG ou WebP).",
+      "too_large": "A imagem é muito grande mesmo após redimensionar. Tente outra.",
+      "decode_failed": "Não foi possível ler a imagem."
+    }
+  },
+  "data_export": {
+    "title": "Exportação de dados",
+    "full_intro": "Exporte tudo num único arquivo de backup importável.",
+    "full_button": "Criar backup completo",
+    "full_done": "Backup completo criado.",
+    "exporting": "Exportando…",
+    "selective_intro": "Ou escolha exatamente o que incluir. O arquivo é importado da mesma forma.",
+    "select_all": "Selecionar tudo / nada",
+    "selective_button": "Exportar dados selecionados",
+    "selective_done": "{n} registros exportados.",
+    "includes_hint": "exportado automaticamente com esta categoria",
+    "failed": "Falha na exportação: {detail}",
+    "group_content": "Conteúdo",
+    "group_master": "Dados mestres",
+    "group_extra": "Dados adicionais",
+    "group_gamification": "Gamificação",
+    "group_config": "Configuração",
+    "cat_projects": "Projetos de aprendizagem (com sessões, avaliações, notas)",
+    "cat_curricula": "Currículos (com tópicos e lições)",
+    "cat_progress": "Progresso das lições (com erros / SRS)",
+    "cat_subjects": "Disciplinas",
+    "cat_tags": "Tags",
+    "cat_imports": "Importações de chat (com mensagens)",
+    "cat_anki": "Cartões Anki",
+    "cat_questions": "Perguntas de estudo",
+    "cat_gamification": "XP, distintivos, sequência, missões",
+    "cat_settings": "Configurações",
+    "cat_ai_config": "Backup de chave de IA"
+  },
   "nav": {
+    "profile": "Seu perfil",
     "learning_path": "Percurso de aprendizagem",
     "dashboard": "Painel",
     "session": "Sessão",
@@ -440,6 +477,9 @@
     "section_danger": "Conta",
     "section_ui": "Interface",
     "section_appearance": "Aparencia",
+    "section_profile": "Perfil",
+    "avatar_upload": "Carregar imagem",
+    "avatar_remove": "Remover",
     "theme": "Tema",
     "theme_description": "Escolha a aparencia do aplicativo. Automatico segue a configuracao clara/escura do sistema.",
     "theme_group_recommended": "Recomendados",
@@ -1727,6 +1767,11 @@
     }
   },
   "content": {
+    "book": {
+      "companion": "Companhia do livro",
+      "by_author": "por {author}",
+      "view": "Ver o livro"
+    },
     "books": {
       "title": "Livros recomendados",
       "view_on_amazon": "Ver na Amazon"
@@ -1800,7 +1845,8 @@
       "not_enough_data": "Vocabulário insuficiente para uma lição completa (são necessários pelo menos {min} exercícios). Importe uma conversa mais longa para mais material.",
       "same_language": "O idioma aprendido e o seu idioma devem ser diferentes.",
       "same_language_hint": "O idioma aprendido e seu idioma são os mesmos — ótimo para uma aula de gramática ou no idioma nativo. Ao compartilhar, aparece no ramo do mesmo idioma da árvore de conteúdo.",
-      "split_notice": "Esta aula tem {steps} etapas e será salva em {parts} partes (máx. {max} etapas cada)."
+      "split_notice": "Esta aula tem {steps} etapas e será salva em {parts} partes (máx. {max} etapas cada).",
+      "part_title": "{title} - Parte {n}"
     },
     "lesson_gen": {
       "fallback_title": "Lição importada",
@@ -1855,6 +1901,10 @@
       "other_sources": "Outros idiomas de origem",
       "for_speakers": "Para falantes de {lang}",
       "knowledge": "Conhecimento",
+      "own_lesson": "Sua lição",
+      "own_edit": "Sua edição",
+      "your_lessons": "Suas lições",
+      "plus_own": "+{n} suas",
       "domain_psychology": "Psicologia",
       "domain_programming": "Programação",
       "domain_math": "Matemática",

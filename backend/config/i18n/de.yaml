@@ -22,7 +22,41 @@ common:
   required: Pflichtfeld
   minutes: Minuten
   close: "Schließen"
+avatar:
+  error:
+    unsupported_type: "Bildformat nicht unterstützt (JPEG, PNG oder WebP)."
+    too_large: "Bild ist zu groß, auch nach Verkleinerung. Probiere ein anderes."
+    decode_failed: "Bild konnte nicht gelesen werden."
+data_export:
+  title: "Daten-Export"
+  full_intro: "Exportiere alles in einer importierbaren Sicherungsdatei."
+  full_button: "Vollständiges Backup erstellen"
+  full_done: "Vollständiges Backup erstellt."
+  exporting: "Exportiere…"
+  selective_intro: "Oder wähle gezielt aus, was enthalten sein soll. Die Datei wird genauso importiert."
+  select_all: "Alle auswählen / abwählen"
+  selective_button: "Ausgewählte Daten exportieren"
+  selective_done: "{n} Datensätze exportiert."
+  includes_hint: "wird automatisch mit dieser Kategorie exportiert"
+  failed: "Export fehlgeschlagen: {detail}"
+  group_content: "Inhalte"
+  group_master: "Stammdaten"
+  group_extra: "Zusatzdaten"
+  group_gamification: "Gamification"
+  group_config: "Konfiguration"
+  cat_projects: "Lernprojekte (mit Sitzungen, Bewertungen, Notizen)"
+  cat_curricula: "Curricula (mit Themen und Lektionen)"
+  cat_progress: "Lernfortschritt (mit Fehlern / SRS)"
+  cat_subjects: "Fächer"
+  cat_tags: "Tags"
+  cat_imports: "Chat-Importe (mit Nachrichten)"
+  cat_anki: "Anki-Karten"
+  cat_questions: "Lernfragen"
+  cat_gamification: "XP, Abzeichen, Streak, Missionen"
+  cat_settings: "Einstellungen"
+  cat_ai_config: "KI-Schlüssel-Sicherung"
 nav:
+  profile: "Dein Profil"
   learning_path: "Lernpfad"
   dashboard: Dashboard
   session: Session
@@ -413,6 +447,9 @@ settings:
   section_danger: Konto
   section_ui: Oberfläche
   section_appearance: "Darstellung"
+  section_profile: "Profil"
+  avatar_upload: "Bild hochladen"
+  avatar_remove: "Entfernen"
   theme: "Farbschema"
   theme_description: "Lege fest, wie die App aussieht. Automatisch folgt der Hell-/Dunkel-Einstellung deines Systems."
   theme_group_recommended: "Empfohlen"
@@ -1596,6 +1633,10 @@ lesson:
     action_restart: "Neu starten"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  book:
+    companion: "Buch-Begleiter"
+    by_author: "von {author}"
+    view: "Zum Buch"
   books:
     title: "Empfohlene Bücher"
     view_on_amazon: "Auf Amazon ansehen"
@@ -1662,6 +1703,7 @@ content:
     same_language: Die gelernte Sprache und deine Sprache müssen unterschiedlich sein.
     same_language_hint: "Die Lernsprache und deine Sprache sind identisch — das ist in Ordnung für eine Grammatik- oder Muttersprachen-Lektion. Beim Teilen landet sie im gleichsprachigen Zweig des Inhaltsbaums."
     split_notice: "Diese Lektion hat {steps} Schritte und wird als {parts} Teile gespeichert (max. {max} Schritte pro Teil)."
+    part_title: "{title} - Teil {n}"
   lesson_gen:
     fallback_title: "Importierte Lektion"
     focus: "Schwerpunkt"
@@ -1708,6 +1750,10 @@ content:
     other_sources: Andere Ausgangssprachen
     for_speakers: Für {lang}sprachige
     knowledge: Wissen
+    own_lesson: "Eigene Lektion"
+    own_edit: "Eigene Bearbeitung"
+    your_lessons: "Eigene Lektionen"
+    plus_own: "+{n} eigene"
     domain_psychology: Psychologie
     domain_programming: Programmierung
     domain_math: Mathematik

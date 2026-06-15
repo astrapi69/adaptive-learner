@@ -86,7 +86,21 @@ Die aktuelle Struktur (`pages/`, `components/`, `hooks/`, `storage/`,
 
 Wiederverwendbare Teile werden in bestehende Verzeichnisse einsortiert.
 Das real etablierte Verzeichnis fuer generische, app-unabhaengige Teile
-ist `frontend/src/shared/` (z. B. `ListRow`, `MenuToggleButton`):
+ist `frontend/src/shared/`. Aktuell ausgelieferte Primitives (Stand
+v1.79.0):
+
+| Primitive | Eingefuehrt | Zweck |
+|-----------|-------------|-------|
+| `ListRow` | #460 | generische Listenzeile (Icon + Label + Aktion) |
+| `ProgressBar` | #462 | props-getriebener Fortschrittsbalken |
+| `LessonStepNav` | #476 | Schritt-Navigation (Prev/Next/Index) |
+| `XpBadge` | #510 | generisches XP-/Punkte-Badge |
+| `IconBadge` | #522 | Icon-+-Label-Badge (a11y, token-backed) |
+| `MenuToggleButton` | — | generischer Toggle-Button fuer Menues |
+
+Alle sind props-getrieben, ohne app-spezifische Imports, mit TSDoc +
+Verwendungsbeispiel + Unit-Test (Reusability-Policy). Weitere generische
+Teile landen ebenfalls hier:
 
 | Typ | Ort | Beispiel |
 |-----|-----|---------|

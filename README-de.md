@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.79.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-5562%20grün-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v1.80.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-6372%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -124,13 +124,51 @@ Englisch unter `/docs/en/`):
   Sitzungsdetail, Curriculum-Übersicht. Identische
   Wire-Shape in beiden Speichermodi.
 
+### Inhalts-Browser + interaktive Lektionen
+
+- **Herunterladbare Lektions-Sets** aus öffentlichen GitHub-Repos,
+  lokal gecacht (Dateisystem im Server-Modus, IndexedDB im
+  Lokal-Modus); Quell-/Trust-Badge pro Set; eigene Repos
+  verbindbar + ein Bereich für empfohlene Repos.
+- **Fünf Übungstypen** — Matching, Picture-Choice, Freitext,
+  Cloze (Lückentext), Word-Tiles — mit Token-Diff-Feedback.
+  **Matching ist bidirektional** (Paar von beiden Spalten aus
+  startbar, nicht nur A → B).
+- **Auto-Splitting** zu großer importierter Lektionen in Teile,
+  mit lokalisierten Teil-Titeln ("… - Teil 2" / "… - Part 2").
+- **Adaptive Lektionen** (regelbasiert, clientseitig) aus der
+  fehlergranularen Historie + **SRS-Wiederholung** (1d/3d/7d),
+  0-3 Sterne und eine Fehler-Wiederholungsrunde.
+- **Lektions-Creator** — ein eigenständiger Assistent ohne
+  API-Key, um eine vollständige Lektion zu bauen und zu teilen.
+- **Buch-Begleiter** — ein Autoren-Repo kann einen `book`-Block
+  deklarieren; der Inhalts-Browser zeigt eine dezente Karte
+  (Cover / Autor / Edition) mit Link zum Buch.
+- **Eigene Lektionen im Baum** — selbst erstellte Lektionen werden
+  in den passenden Baum-Knoten eingefaltet, mit Badge ("Eigene
+  Lektion" / "Eigene Bearbeitung") + "(+N eigene)"-Zähler, in der
+  Suche indiziert.
+
+### Barrierefreiheit
+
+- **WCAG 2.1 AA** über alle 12 Theme-Varianten (rechnerisch
+  gepinnter Kontrast); Skip-to-Content-Link, der den Tastaturfokus
+  auf den Hauptinhalt setzt; Fokus-Management + Fokus-Fallen in
+  modalen Dialogen; farbenblind-sicheres Übungs-Feedback (nie
+  Farbe allein).
+
 ### Gamification
 
 - **XP + Level** mit Exponentialkurve, Streak-Multiplikatoren
   pro abgeschlossener Sitzung, First-Method-Boni.
+- **Sichtbares XP** — ein persistentes XP-/Level-Badge im
+  Nav-Header (aktualisiert bei Routenwechsel / Fokus / XP-relevanten
+  Celebrations) plus eine "+N XP"-Belohnung im Lektions-Abschluss.
 - **28 abgestufte Abzeichen** in 5 Kategorien (Einstieg, Konsistenz,
-  Methoden-Entdecker, Tiefe, Polyglott), beim ersten Start
-  aus YAML geseedet.
+  Methoden-Entdecker, Tiefe, Polyglott) mit Bronze/Silber/Gold-Stufen
+  + einer Abzeichen-Galerie, beim ersten Start aus YAML geseedet.
+- **Tägliche Missionen** — bis zu 3 deterministische, adaptive Ziele
+  pro Tag auf dem Dashboard, gegen vorhandene Daten ausgewertet.
 - **Streak-Heatmap** (GitHub-Stil, letzte 365 Tage) mit
   Wochenend-Modus-Toggle + Freeze-Vorrat (1 Freeze pro 7
   Streak-Tage, max. 3).
@@ -251,7 +289,7 @@ Voraussetzungen: Python 3.11+, Node ≥24, Poetry, npm, Make.
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + npm + alle 10 Plugins als Path-Deps
+make install   # Poetry + npm + alle 13 Plugins als Path-Deps
 make dev       # Backend :18001 + Frontend :15174 (Vite-Dev-Server)
 ```
 
@@ -296,7 +334,7 @@ Vollständige Setup-Anleitung unter
 
 ```bash
 make dev               # Backend (18001) + Frontend (15174)
-make test              # Backend + Plugins + Vitest (5283 Tests)
+make test              # Backend + Plugins + Vitest (6372 Tests)
 make test-coverage     # Opt-In-Coverage (CI nachts)
 make sync-versions     # Version über 18 Dateien propagieren
 make sync-i18n         # Backend-YAML → Frontend-JSON-Bundles
@@ -305,22 +343,26 @@ make prod / prod-down  # docker-compose-Stack
 ```
 
 E2E-Smoke: `cd e2e && npx playwright test --project=smoke`
-(16 Spec-Dateien bei v1.20.0).
+(17 Spec-Dateien).
 
 ## Tests
 
+Verifiziert am 2026-06-15 (v1.79.0):
+
 | Suite | Anzahl |
 |---|---|
-| Backend (pytest) | 786 |
-| Plugins (10 × pytest) | 615 |
-| Frontend (Vitest 4) | 1233 |
-| **Gesamt** | **2634** |
+| Backend (pytest) | 1215 |
+| Plugins (13 × pytest) | 1018 |
+| Frontend (Vitest 4) | 4139 |
+| **Gesamt** | **6372** |
 
-Plus 16 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
+Plus 17 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
 Onboarding+Assessment, Sitzung (3-Chunk-SSE), Curriculum,
 Einstellungen, Mobile-Viewports, Sync-Pairing, Backup-Roundtrip,
 Multi-Cycle-Auto-Loop, Import + Analyse, MD-Export, Subjects/
-Tags-Filter, Rich-Text-Notizen, Modellauswahl.
+Tags-Filter, Rich-Text-Notizen, Modellauswahl — plus ein separates
+Dexie-Modus-Release-Gate (`make test-dexie-smoke`), das jede
+navigierbare Route gegen den GitHub-Pages-Build durchläuft.
 
 ## Lokale Projekt-Referenzen
 
@@ -340,10 +382,12 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. **v1.20.0 wurde am 2026-05-22
-veröffentlicht** mit dateibasierter Schlüsselkonfiguration
-über `secrets.yaml`. 34 Entwicklungsphasen ausgeliefert; per-
-Release-Notes in [`changelog/releases/`](changelog/releases/).
+Aktive Entwicklung. **v1.79.0 wurde am 2026-06-14
+veröffentlicht** mit sichtbarem XP, bidirektionalem Matching und
+einem abgeschlossenen Architektur-Strang (God-File-Zerlegung,
+R-M-W-Datenintegritäts-Sanierung und Komplexitäts-Burn-down alle
+erledigt; beide Ratchet-Baselines leer). Per-Release-Notes in
+[`changelog/releases/`](changelog/releases/).
 
 ## Herkunft
 

@@ -59,6 +59,10 @@ Gesamtgefühl des Lernflusses.
 - [ ] Übung Matching: Nummern-/Buchstaben-Badge für Farbenblinde
 - [ ] Übung Matching: bei Wissens-Lektionen "Begriff/Definition"
       statt Sprachnamen
+- [ ] Übung Matching: Paar lässt sich auch von der rechten (B-)
+      Spalte aus starten, nicht nur A -> B (bidirektional)
+- [ ] Übung Matching: bei doppelten Paaren wird nach Wert gewertet,
+      nicht nach Position (kein falsch-negatives Ergebnis)
 - [ ] Übung FreeText: Eingabe + Prüfen funktioniert
 - [ ] Übung Cloze: Lücke ausfüllen + Prüfen
 - [ ] Übung WordTiles: Kacheln ziehen/tippen + Prüfen
@@ -76,6 +80,9 @@ Gesamtgefühl des Lernflusses.
       Zwischenablage)
 - [ ] Ergebnis: "Als Datei speichern"-Button (.md-Download)
 - [ ] Korrektur-Runde: Enter-Shortcut funktioniert
+- [ ] XP-Sichtbarkeit: persistentes XP-/Level-Badge im Header sichtbar
+      (aktualisiert sich nach XP-relevanten Aktionen ohne Reload)
+- [ ] XP-Sichtbarkeit: Ergebnis-Screen zeigt eine "+N XP"-Belohnung
 
 ---
 
@@ -94,6 +101,14 @@ Gesamtgefühl des Lernflusses.
 - [ ] Repo entfernen: Lektionen verschwinden
 - [ ] Mehrere Repos: Reihenfolge ändern
 - [ ] Empfohlene Repos: sichtbar + hinzufügbar
+- [ ] Buch-Begleiter: bei einem Repo mit `book`-Block erscheint oben
+      eine dezente Karte (Cover / Autor / Edition) mit "Zum Buch"-Link
+      (neuer Tab, kein In-App-Kauf)
+- [ ] User-Lektionen: eigene Lektionen werden in den passenden
+      Baum-Knoten eingefaltet, mit Badge ("Eigene Lektion" /
+      "Eigene Bearbeitung")
+- [ ] User-Lektionen: Zähler zeigt "(+N eigene)" am Level-/Domänen-Knoten;
+      eingefaltete Lektionen sind auch über die Suche auffindbar
 
 ---
 

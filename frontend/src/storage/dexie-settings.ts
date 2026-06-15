@@ -66,6 +66,9 @@ export const dexieSettings: IStorageService["settings"] = {
                     : body.model_override_gemini,
               }
             : {}),
+          ...(body.avatar !== undefined
+            ? { avatar: body.avatar === "" ? null : body.avatar }
+            : {}),
           updated_at: nowIso(),
         };
         await db.userSettings.put(updated);

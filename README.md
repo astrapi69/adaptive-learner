@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.79.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-5562%20green-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v1.80.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
@@ -119,13 +119,51 @@ Full documentation (German default at `/docs/`, English at
   Detail, Curriculum Overview, identical wire shape across
   storage modes.
 
+### Content Browser + interactive lessons
+
+- **Downloadable lesson sets** from public GitHub content repos,
+  cached locally (filesystem in server mode, IndexedDB in local
+  mode); a source/trust badge per set; connect your own repos,
+  plus a recommended-repos discovery section.
+- **Five exercise types** — Matching, Picture-Choice, Free-Text,
+  Cloze (fill-in-the-blank), Word-Tiles — with token-level diff
+  feedback. **Matching is bidirectional** (start a pair from
+  either column, not only A → B).
+- **Auto-splitting** of oversized imported lessons into parts,
+  with localized part titles ("… - Teil 2" / "… - Part 2").
+- **Adaptive lessons** (rule-based, client-side) synthesised from
+  your per-element error history + **SRS review** queue
+  (1d/3d/7d), with 0-3 star ratings and an error-replay round.
+- **Lesson Creator** — a standalone, no-API-key wizard to build
+  and share a complete lesson (card editor + auto-generated
+  exercises + CSV import).
+- **Book companion** — an author-provided content repo can
+  declare a `book` block; the Content Browser renders a discreet
+  card (cover / author / edition) linking to the published book.
+- **Your lessons in the tree** — user-generated lessons fold into
+  the matching published tree node with a "Your lesson" / "Your
+  edit" badge and a "(+N own)" count, indexed in search.
+
+### Accessibility
+
+- **WCAG 2.1 AA** across all 12 theme variants (computationally
+  pinned contrast); skip-to-content link that moves keyboard
+  focus to main; focus management + focus traps on modal dialogs;
+  colour-blind-safe exercise feedback (never colour alone).
+
 ### Gamification
 
 - **XP + levels** with an exponential curve, streak multipliers
   on session completion, first-method bonuses.
+- **Visible XP** — a persistent XP/level badge in the nav header
+  (live on route change / focus / XP-affecting celebrations) plus
+  a "+N XP" reward pill on the lesson-summary screen, so progress
+  is shown where the learner sees it.
 - **28 tiered badges** across 5 categories (getting started,
-  consistency, method explorer, depth, polyglot), seeded from
-  YAML on first start.
+  consistency, method explorer, depth, polyglot) with
+  bronze/silver/gold tiers + a badge gallery, seeded from YAML.
+- **Daily missions** — up to 3 deterministic, adaptive goals per
+  day on the Dashboard, evaluated against existing data.
 - **Streak heatmap** (GitHub-style, last 365 days) with
   weekend-mode toggle + freeze stockpile (1 freeze per 7
   streak days, max 3).
@@ -266,7 +304,7 @@ Python 3.11+, Node ≥24, Poetry, npm, Make.
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + npm + all 10 plugins as path-deps
+make install   # Poetry + npm + all 13 plugins as path-deps
 make dev       # backend :18001 + frontend :15174 (Vite dev server)
 ```
 
@@ -311,7 +349,7 @@ Full setup walkthrough lives at
 
 ```bash
 make dev               # backend (18001) + frontend (15174)
-make test              # backend + plugins + Vitest (5283 tests)
+make test              # backend + plugins + Vitest (6372 tests)
 make test-coverage     # opt-in coverage (CI runs it nightly)
 make sync-versions     # propagate version across 18 files
 make sync-i18n         # backend YAML → frontend JSON bundles
@@ -320,22 +358,26 @@ make prod / prod-down  # docker compose stack
 ```
 
 E2E smoke: `cd e2e && npx playwright test --project=smoke`
-(16 spec files at v1.20.0).
+(17 spec files).
 
 ## Tests
 
+Verified 2026-06-15 (v1.79.0):
+
 | Suite | Count |
 |---|---|
-| Backend (pytest) | 786 |
-| Plugins (10 × pytest) | 615 |
-| Frontend (Vitest 4) | 1233 |
-| **Total** | **2634** |
+| Backend (pytest) | 1215 |
+| Plugins (13 × pytest) | 1018 |
+| Frontend (Vitest 4) | 4139 |
+| **Total** | **6372** |
 
-Plus 16 Playwright smoke spec files covering: landing,
+Plus 17 Playwright smoke spec files covering: landing,
 onboarding+assessment, session (3-chunk SSE), curriculum,
 settings, mobile viewports, sync pairing, backup roundtrip,
 multi-cycle auto-loop, import + analysis, MD export,
-subjects/tags filter, rich-text notes, model picker.
+subjects/tags filter, rich-text notes, model picker — and a
+separate Dexie-mode release gate (`make test-dexie-smoke`)
+walking every nav-reachable route against the GH-Pages build.
 
 ## Local project references
 
@@ -354,9 +396,11 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. **v1.20.0 was released 2026-05-22** with
-secrets.yaml file-based key configuration. 34 development
-phases shipped; per-release notes in
+Active development. **v1.79.0 was released 2026-06-14** with
+visible XP, bidirectional matching, and a completed
+architecture thread (god-file decomposition, R-M-W
+data-integrity remediation, and complexity burn-down all done;
+both ratchet baselines empty). Per-release notes in
 [`changelog/releases/`](changelog/releases/).
 
 ## Origin

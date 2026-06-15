@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.79.0** (minor release -
+- **Current state:** **v1.80.0** (minor release -
   **XP visibility + bidirectional matching + complexity burn-down complete**:
   two user-facing features land on the maintenance thread. **XP visibility**
   (#505/#510) surfaces points where the learner sees them - a persistent header
@@ -1368,7 +1368,7 @@ make dev              # backend (18001) + frontend (15174)
 make dev-bg / dev-down
 make test             # backend + plugins + Vitest (no coverage)
 make test-backend     # pytest backend only
-make test-plugins     # all 11 plugin test suites
+make test-plugins     # all 13 plugin test suites
 make test-frontend    # Vitest only
 make test-coverage    # opt-in coverage (CI runs the equivalent)
 make prod / prod-down # Docker Compose
@@ -1439,7 +1439,7 @@ adaptive-learner/
 ├── backend/app/           FastAPI app, routers, services, models, hookspecs
 ├── backend/config/        app.yaml + i18n/ (8 catalogs)
 ├── backend/tests/         pytest backend suite
-├── plugins/               11 plugin packages
+├── plugins/               13 plugin packages
 ├── frontend/src/          api/, chat_import/, components/, hooks/, lib/,
 │                          pages/ (13 routes), storage/ (IStorageService +
 │                          ApiStorage + DexieStorage, 22 namespaces),
@@ -1489,8 +1489,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.60.0 baseline:** backend 1158 (+1 skipped) + plugins
-  1009 + Vitest 3395 = **5562 tests**. E2E
+- **v1.79.0 baseline (verified 2026-06-15):** backend 1215 + plugins
+  1018 + Vitest 4139 = **6372 tests**. E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (73 specs incl. the Phase 61 interactive journeys —
