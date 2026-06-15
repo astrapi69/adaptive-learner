@@ -113,6 +113,19 @@ class GamificationPlugin(BasePlugin):
             db.close()
 
     def get_routes(self) -> list:
+        """Single parent router (PluginForge single-router convention).
+
+        Nests the existing ``/plugins/gamification`` routes and the new
+        ``/gamification`` dashboard routes (#572) under one prefix-less
+        parent, so each keeps its own mount path while the plugin still
+        returns exactly one top-level router.
+        """
+        from fastapi import APIRouter
+
+        from .dashboard_routes import router as dashboard_router
         from .routes import router
 
-        return [router]
+        parent = APIRouter()
+        parent.include_router(router)
+        parent.include_router(dashboard_router)
+        return [parent]
