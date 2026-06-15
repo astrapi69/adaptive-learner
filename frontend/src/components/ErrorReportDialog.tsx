@@ -1,12 +1,24 @@
 import {useEffect, useRef, useState} from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import {Bug, Check, ChevronDown, ChevronUp, Copy} from "lucide-react";
+import {Bug, Check, ChevronDown, ChevronUp, Copy, Download} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {copyToClipboard} from "../utils/clipboard";
-import {eventRecorder, formatEventLog} from "../utils/eventRecorder";
+import {downloadBlob} from "../lib/lesson/result-download";
+import {
+    eventRecorder,
+    formatEventLog,
+    type EventCategory,
+} from "../utils/eventRecorder";
+import {
+    buildEventReportJson,
+    eventReportFilename,
+    filterByCategory,
+    latestAppState,
+    presentCategories,
+} from "../utils/event-report";
 
 const ISSUES_URL = "https://github.com/astrapi69/adaptive-learner/issues/new";
 // GitHub rejects URLs over ~8192 chars. After encoding, special
@@ -19,6 +31,12 @@ interface Props {
     onClose: () => void;
     errorMessage: string;
     apiError?: ApiError;
+    /**
+     * Opened from the proactive Settings entry (EVT-04) rather than
+     * an error toast — adjusts the intro copy from "we caught an
+     * error" to "send us what happened".
+     */
+    proactive?: boolean;
 }
 
 /**
@@ -27,19 +45,25 @@ interface Props {
  * sent before clicking the submit button. Three opt-in toggles:
  * environment info (version + browser + OS + route), action
  * history (the in-memory ring buffer formatted as text), and the
- * full preview itself.
+ * full preview itself. The action history can be filtered by
+ * coarse category (EVT-01) and exported as JSON (EVT-05).
  */
 export default function ErrorReportDialog({
     open,
     onClose,
     errorMessage,
     apiError,
+    proactive = false,
 }: Props) {
     const {t} = useI18n();
     const [includeEnv, setIncludeEnv] = useState(true);
     const [includeHistory, setIncludeHistory] = useState(true);
     const [showHistory, setShowHistory] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
+    const [description, setDescription] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState<EventCategory | null>(
+        null,
+    );
     const [copyState, setCopyState] = useState<"idle" | "ok" | "fail">(
         "idle",
     );
@@ -55,15 +79,31 @@ export default function ErrorReportDialog({
     );
 
     const events = eventRecorder.getAll();
-    const historyLog = formatEventLog(events);
+    const filteredEvents = filterByCategory(events, categoryFilter);
+    const historyLog = formatEventLog(filteredEvents);
+    const snapshot = latestAppState(events);
+    const categories = presentCategories(events);
 
     const issueBody = buildIssueBody(
         errorMessage,
         apiError,
         includeEnv,
         includeHistory ? historyLog : null,
+        description,
     );
-    const issueTitle = `Bug: ${errorMessage.substring(0, 80)}`;
+    const issueTitle = proactive
+        ? `Report: ${(description || errorMessage).substring(0, 80)}`
+        : `Bug: ${errorMessage.substring(0, 80)}`;
+
+    const handleDownloadJson = () => {
+        const json = buildEventReportJson({
+            events: includeHistory ? filteredEvents : [],
+            description,
+            errorMessage: proactive ? undefined : errorMessage,
+            appVersion: __APP_VERSION__,
+        });
+        downloadBlob(json, eventReportFilename(), "application/json");
+    };
 
     const handleCopyPreview = async () => {
         const ok = await copyToClipboard(issueBody);
@@ -181,11 +221,34 @@ export default function ErrorReportDialog({
                             margin: 0,
                         }}
                     >
-                        {t(
-                            "ui.error_report.intro",
-                            "Adaptive Learner caught an error and can prepare a bug report for the developer.",
-                        )}
+                        {proactive
+                            ? t(
+                                  "ui.error_report.intro_proactive",
+                                  "Prepare a report of your recent actions to send to the developer. You see exactly what it contains before anything leaves your browser.",
+                              )
+                            : t(
+                                  "ui.error_report.intro",
+                                  "Adaptive Learner caught an error and can prepare a bug report for the developer.",
+                              )}
                     </p>
+
+                    {snapshot && (
+                        <p
+                            data-testid="error-report-snapshot"
+                            style={{
+                                fontSize: "0.75rem",
+                                color: "var(--fg-muted)",
+                                margin: 0,
+                                fontFamily: "var(--font-mono)",
+                            }}
+                        >
+                            {t("ui.error_report.app_state", "App state")}:{" "}
+                            {snapshot.storageMode} · {snapshot.language} ·{" "}
+                            {snapshot.online
+                                ? t("ui.error_report.online", "online")
+                                : t("ui.error_report.offline", "offline")}
+                        </p>
+                    )}
 
                     <label
                         htmlFor="error-report-description"
@@ -204,6 +267,8 @@ export default function ErrorReportDialog({
                         id="error-report-description"
                         data-testid="error-report-description"
                         rows={3}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
                         placeholder={t(
                             "ui.error_report.description_placeholder",
                             "Briefly describe what you were doing when the error appeared. Leave blank to skip.",
@@ -314,13 +379,48 @@ export default function ErrorReportDialog({
                         </label>
                     </div>
 
+                    {/* Category filter (EVT-01) */}
+                    {showHistory && categories.length > 1 && (
+                        <div
+                            data-testid="error-report-category-filter"
+                            style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 4,
+                            }}
+                        >
+                            <CategoryChip
+                                active={categoryFilter === null}
+                                onClick={() => setCategoryFilter(null)}
+                                label={t("ui.error_report.category_all", "All")}
+                                testId="error-report-category-all"
+                            />
+                            {categories.map((cat) => (
+                                <CategoryChip
+                                    key={cat}
+                                    active={categoryFilter === cat}
+                                    onClick={() => setCategoryFilter(cat)}
+                                    label={t(
+                                        `ui.error_report.category.${cat}`,
+                                        cat,
+                                    )}
+                                    testId={`error-report-category-${cat}`}
+                                />
+                            ))}
+                        </div>
+                    )}
+
                     {/* Action history preview */}
                     {showHistory && events.length > 0 && (
                         <div
                             style={previewBoxStyle}
                             data-testid="error-report-history-preview"
                         >
-                            {historyLog}
+                            {historyLog ||
+                                t(
+                                    "ui.error_report.no_events_in_category",
+                                    "No events in this category.",
+                                )}
                         </div>
                     )}
 
@@ -397,6 +497,19 @@ export default function ErrorReportDialog({
                                         "Copy preview",
                                     )}
                         </Button>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={handleDownloadJson}
+                            data-testid="error-report-download-json"
+                            style={{gap: 4}}
+                        >
+                            <Download size={14} />
+                            {t(
+                                "ui.error_report.download_json",
+                                "Download JSON",
+                            )}
+                        </Button>
                         <div style={{flexGrow: 1}} />
                         <Button
                             type="button"
@@ -434,6 +547,7 @@ function buildIssueBody(
     apiError: ApiError | undefined,
     includeEnv: boolean,
     historyLog: string | null,
+    description?: string,
 ): string {
     const sections: string[] = [];
 
@@ -467,11 +581,45 @@ function buildIssueBody(
         sections.push(`## Action history\n\`\`\`\n${historyLog}\n\`\`\``);
     }
 
-    sections.push("## Reproduction\n1.\n2.\n3.");
+    const steps = description?.trim();
+    sections.push(steps ? `## Reproduction\n${steps}` : "## Reproduction\n1.\n2.\n3.");
 
     sections.push(
         "---\n*This report was prepared automatically by Adaptive Learner. No sensitive data has been included.*",
     );
 
     return sections.join("\n\n");
+}
+
+/** One toggle chip in the category filter row (EVT-01). */
+function CategoryChip({
+    active,
+    onClick,
+    label,
+    testId,
+}: {
+    active: boolean;
+    onClick: () => void;
+    label: string;
+    testId: string;
+}) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            data-testid={testId}
+            aria-pressed={active}
+            style={{
+                padding: "2px 8px",
+                fontSize: "0.6875rem",
+                borderRadius: "var(--radius-sm)",
+                border: "1px solid var(--border)",
+                cursor: "pointer",
+                background: active ? "var(--accent)" : "var(--surface-2)",
+                color: active ? "var(--accent-fg)" : "var(--fg-primary)",
+            }}
+        >
+            {label}
+        </button>
+    );
 }
