@@ -6,7 +6,7 @@ kein MVP-Blocker) · **Abhängig von:** bestehende i18n-Infrastruktur
 **Issue:** —
 
 > Design-Dokument. Kein Code. Vision-Dokument für nach v1.80.0. Es legt eine
-> priorisierte Reihenfolge für Sprach-Expansion fest (UI + Content) und
+> priorisierte Reihenfolge für Sprach-Expansion fest (UI **und** Content) und
 > benennt die technischen Voraussetzungen je Sprache — damit künftige
 > Expansion eine Entscheidung gegen eine Strategie ist, nicht ad hoc.
 
@@ -38,6 +38,31 @@ Aktuelle Abdeckung (verifizierte Sprecherzahlen, Stand 2026):
 | Türkisch | 90 Mio. | Türkei + Diaspora |
 | Griechisch | 13 Mio. | Nische / Diaspora |
 
+### Die zwei Sprach-Achsen — explizit getrennt
+
+Die Kern-Entscheidung dieses Dokuments: **UI-Sprache und Content-Sprache sind
+zwei unabhängige Achsen** und werden getrennt priorisiert.
+
+| Achse | Frage | Hängt an | Aufwand |
+|-------|-------|----------|---------|
+| **UI-Sprache** | In welcher Sprache **bedient** der Lerner die App? | 1 YAML-Katalog (`backend/config/i18n/{lang}.yaml`) | gering, sofort machbar |
+| **Content-Sprache** | Welche **Sprachpaare** stehen zum Lernen bereit? | Content-Autoren + Repos (EXP-023) | hoch, communitygetrieben |
+
+**Beide Achsen müssen für eine echte Markt-Erschließung zusammenkommen.**
+Beispiel: Ein Hindi-Sprecher will
+
+1. die **UI auf Hindi** (Navigation, Buttons, Hilfe — sofort über den
+   YAML-Katalog machbar), **und**
+2. **Hindi-basierte Lektionen** (Hindi→Englisch, Hindi→Deutsch — eigene
+   Content-Sets, die heute nicht existieren).
+
+Eine Hindi-UI **ohne** Hindi-Content ist eine **leere App**: der Lerner kann die
+App bedienen, findet aber kein Lernmaterial in seiner Ausgangssprache (§3.6).
+Deshalb gilt: **UI-Sprache zuerst** (geringer Aufwand, macht die App sofort
+bedienbar — auch mit bestehenden Paaren wie en→es), aber für einen **Tier-1-
+Markt UI + Content zusammen** planen, nicht UI allein ausliefern und auf Autoren
+hoffen.
+
 ### Strategischer Kontext
 
 - **Griechisch** und **Türkisch** sind global Nischen-Picks, aber relevant für
@@ -47,20 +72,27 @@ Aktuelle Abdeckung (verifizierte Sprecherzahlen, Stand 2026):
 
 ### Was sich ändert — und was nicht
 
-- **UI-Sprache ≠ Lerninhalt-Sprache.** Eine neue UI-Sprache macht die App
-  bedienbar; sie erzeugt noch keinen Lerninhalt in dieser Sprache. Die beiden
-  Achsen werden getrennt priorisiert (§3.2).
-- Keine Architektur-Änderung: die bestehende YAML-Katalog-Pipeline
-  (`backend/config/i18n/{lang}.yaml` → `make sync-i18n` → Frontend-Bundle)
-  skaliert auf weitere Sprachen; offene Punkte sind Schrift-/RTL-Support und
-  die Skalierung der Sprachauswahl-UI (§3).
+- **UI-Sprache ≠ Lerninhalt-Sprache** (siehe oben). Keine Architektur-Änderung:
+  die bestehende YAML-Katalog-Pipeline (`backend/config/i18n/{lang}.yaml` →
+  `make sync-i18n` → Frontend-Bundle) skaliert auf weitere Sprachen; offene
+  Punkte sind Schrift-/RTL-Support und die Skalierung der Sprachauswahl-UI (§3).
 
 ---
 
 ## 2. Expansions-Optionen
 
 Priorisierung nach: **Sprecherzahl × Bildungsmarkt-Relevanz ×
-Implementierungsaufwand × strategische Passung**.
+Implementierungsaufwand × strategische Passung**. Adaptive Learner ist eine
+**Lern-App** — die relevante Markt-Achse ist der **Bildungsmarkt pro Region**
+und die **Smartphone-Penetration** (lokal-first, mobil), nicht ein
+Autoren-/Publishing-Markt.
+
+| Region | Bildungsmarkt | Smartphone-Penetration | Tier-Kandidat |
+|--------|---------------|------------------------|---------------|
+| Indien | explosiv | hoch | Hindi (Tier 1) |
+| MENA | wachsend | hoch | Arabisch (Tier 1) |
+| Südkorea | stark, tech-affin | sehr hoch | Koreanisch (Tier 2) |
+| Südostasien | wachsend | mittel-hoch | Indonesisch (Tier 2) |
 
 ### Tier 1 — höchste Priorität, größter ROI
 
@@ -97,7 +129,7 @@ Je Sprache zu analysieren:
 - Aufwand pro Sprache: 1 neuer YAML-Katalog (`backend/config/i18n/{lang}.yaml`),
   ~500 Keys, plus die seed-Kataloge (`subjects.*`) und die Help-/Glossar-Inhalte.
 - Qualitätssicherung: maschinelle Übersetzung als Draft + Native-Speaker-Review
-  (§5.3).
+  (§5).
 - `make sync-i18n` muss die neue Sprache abdecken (Mirror nach
   `frontend/src/data/i18n/*.json`); der i18n-Audit-Test
   (`test_i18n_translation_audit.py`) pinnt No-Passthrough + Divergenz von EN.
@@ -106,27 +138,52 @@ Je Sprache zu analysieren:
 
 ### 3.2 Content-Sprachen vs. UI-Sprachen
 
+Konkretisierung der zwei Achsen aus §1:
+
 - UI-Sprache ≠ Lerninhalt-Sprache: eine Hindi-UI ist sofort mit den
   bestehenden Sprachpaaren nutzbar (z. B. en→es); Hindi **als Lerninhalt**
-  (z. B. hi→en oder en→hi) braucht eigene Content-Sets.
-- Bestehende Content-Repos liefern v. a. de/en-Quellsprachen → Ziel es/fr/en
-  plus Wissens-Domänen. Neue Quellsprachen (Hindi, Arabisch als
-  Ausgangssprache) brauchen eine **Autoren-Community** (EXP-023-Repos, I18N-09).
-- Empfehlung: UI-Sprache zuerst (geringer Aufwand, sofort nutzbar),
-  Content-Paare nachgelagert und communitygetrieben.
+  (z. B. hi→en oder hi→de) braucht eigene Content-Sets.
+- Bestehende Content-Repos liefern v. a. **de/en-Quellsprachen** → Ziel
+  es/fr/en plus Wissens-Domänen. Neue Quellsprachen (Hindi, Arabisch als
+  **Ausgangssprache**) brauchen eine **Autoren-Community** (EXP-023-Repos,
+  I18N-09; siehe §3.6).
+- **Empfehlung:** UI-Sprache zuerst (geringer Aufwand, sofort nutzbar),
+  Content-Paare nachgelagert und communitygetrieben — **aber** für einen
+  Tier-1-Markt ein Starter-Content-Set zusammen mit der UI ausliefern (I18N-11/
+  I18N-12), damit der Markt nicht auf eine leere App trifft.
 
 ### 3.3 RTL-Support (Arabisch, später Hebräisch/Persisch)
+
+RTL betrifft **zwei** Ebenen: das **App-Chrome** (Navigation, Layout) und die
+**Exercises** (der eigentliche Lerninhalt). Die zweite ist der schwierige Teil
+und wird oft unterschätzt.
+
+**App-Chrome / Layout:**
 
 - CSS **logical properties** (`margin-inline` statt `margin-left`,
   `padding-inline`, `inset-inline`) statt physischer Richtungen.
 - Tailwind-RTL: prüfen, ob die bestehenden Utilities RTL-tauglich sind bzw. ein
-  RTL-Plugin/`dir="rtl"`-Strategie nötig ist.
-- **Icon-Spiegelung** (Pfeile, Navigation, „Weiter"/„Zurück", Lektions-Footer).
-- **Matching-Exercise:** die A→B-Richtung muss bei RTL korrekt spiegeln
-  (visuelle Spalten-Reihenfolge); die bidirektionale Auswahl (#509) bleibt
-  logisch gleich, nur das Layout spiegelt.
+  RTL-Plugin / `dir="rtl"`-Strategie nötig ist.
+- **Icon-Spiegelung** in der Lesson-Navigation: „Weiter"/„Zurück"-Pfeile, der
+  Lektions-Footer, Breadcrumb-Chevrons spiegeln bei RTL.
+
+**Exercises — je Typ einzeln zu klären (Audit I18N-10):**
+
+| Exercise-Typ | RTL-Frage | Tendenz |
+|--------------|-----------|---------|
+| **Matching** | Spiegelt die A→B-Richtung bei RTL (visuelle Spalten-Reihenfolge), oder bleibt die Lese-Richtung exercise-intern LTR? Die bidirektionale Auswahl (#509) bleibt logisch gleich, nur das Layout spiegelt. | Layout spiegeln, Logik gleich — **zu verifizieren** |
+| **Fill-in-the-blank / Cloze** | Input-Felder brauchen `dir="rtl"`; der Lückentext fließt RTL, die Marker (`___`) müssen korrekt positioniert bleiben. | `dir="rtl"` pro Feld |
+| **Multiple-Choice / Picture-Choice** | Optionen RTL-aligned (rechtsbündig), Auswahl-Indikator auf der korrekten Seite. | RTL-align |
+| **Word-Tiles** | Drag-Richtung bei RTL: Kacheln von rechts nach links anordnen; `@dnd-kit`-Sensor-Achse + visuelle Reihenfolge prüfen. | Reihenfolge spiegeln |
+| **Ordering** | Sequenz-Richtung bei RTL (erstes Element rechts). | spiegeln |
+
+- **Mixed-Direction** ist der härteste Fall: eine **arabische Frage** mit einer
+  **englischen Antwort** (oder umgekehrt) im selben Exercise — der Container ist
+  RTL, einzelne Felder LTR (`dir`-Wechsel pro Element). Das ist die zentrale
+  offene Produktfrage (§5, Frage 7).
 - Aufwand: **deutlich höher** als Latin-Script-Sprachen → eigene
-  Infrastruktur-Vorarbeit (I18N-01), Voraussetzung für Arabisch.
+  Infrastruktur-Vorarbeit (I18N-01) + ein Exercise-Typ-Audit (I18N-10),
+  Voraussetzung für Arabisch.
 
 ### 3.4 CJK-Besonderheiten (teilweise gelöst: Japanisch)
 
@@ -147,6 +204,56 @@ Je Sprache zu analysieren:
 | Hangul | Koreanisch | Font-Stack prüfen |
 | Bengali | Bengalisch | Font-Stack prüfen |
 
+#### Font-Loading-Strategie
+
+Konsequent **lazy pro Sprache** — keine globale Bündelung aller Schrift-System-
+Fonts (das würde das Bundle für alle Nutzer aufblähen, obwohl jeder nur ein
+Schrift-System braucht). Konsistent mit der bestehenden lazy
+i18n-Katalog-/Glossar-Strategie (v1.56.0-Linie).
+
+- **System-Fonts bevorzugen, wo verfügbar.** Viele Plattformen liefern die
+  Noto-Familie bereits mit; dann reicht ein `font-family`-Eintrag ohne
+  Web-Font-Download.
+- **Web-Font nur als Fallback lazy nachladen**, gebunden an die aktive UI-/
+  Content-Sprache (nicht eager). Pro Schrift-System genau eine Noto-Variante:
+  - Devanagari → `Noto Sans Devanagari`
+  - Arabisch → `Noto Sans Arabic`
+  - Hangul → `Noto Sans KR`
+  - Bengali → `Noto Sans Bengali`
+- **Fallback-Kette** (Beispiel Devanagari):
+  `'Noto Sans Devanagari', 'Nirmala UI', system-ui, sans-serif` — erst System-
+  Noto, dann plattform-spezifischer Fallback (Windows `Nirmala UI`), dann
+  `system-ui`, dann generisch. Analog je Schrift-System eine eigene Kette.
+- `font-display: swap`, damit der Text sofort (im Fallback) sichtbar ist und
+  nicht auf den Web-Font wartet.
+
+---
+
+## 3.6 Content-Repo Sprach-Expansion
+
+Die Content-Achse (§1, §3.2) im Detail — der Teil, der **nicht** durch einen
+YAML-Katalog gelöst wird.
+
+- **Bestehende Sprachpaare:** die Content-Repos (offiziell:
+  `astrapi69/adaptive-learner-content`) liefern heute v. a.
+  **de→es / de→fr / de→en** (A1→A2→B1), **en→es / en→fr**, plus
+  Wissens-Domänen (Python, Psychologie). Die **Quellsprachen sind de/en** —
+  es gibt keine asiatischen oder RTL-Ausgangssprachen.
+- **Neue Paare brauchen Content-Autoren.** Ein Hindi→Englisch-Set entsteht
+  nicht aus der UI-Übersetzung; es braucht jemanden, der die Lektionen
+  schreibt. Das ist ein **Community-/Autoren-Thema**, kein i18n-Thema.
+- **EXP-023 (Multi-Content-Repository-Architektur) trägt das bereits:**
+  zusätzliche User-/Community-Repos können angebunden, validiert, gecacht und
+  mit Quell-Badge gebrowst werden. Die Infrastruktur für „neue Sprachpaare aus
+  einer Autoren-Community" existiert also — was fehlt, ist der **Inhalt**.
+- **Das Leere-App-Problem:** ein Hindi-Sprecher mit UI=Hindi, aber ohne
+  Hindi-Content, hat eine bedienbare, aber **leere** App. **UI allein reicht
+  nicht.**
+- **Priorisierung:** für **Tier 1 UI + Content zusammen** — also ein
+  Hindi-Starter-Set (I18N-11) parallel zur Hindi-UI (I18N-03), nicht
+  nacheinander. Für Tier 2/3 kann die UI vorausgehen, weil diese Märkte oft mit
+  englischem Zielcontent + lokaler UI schon Wert haben.
+
 ---
 
 ## 4. Roadmap-Tasks
@@ -155,7 +262,7 @@ Prefix `I18N-`. Aufgeteilt nach Tier / Voraussetzung. Aufwand: S/M/L.
 
 | ID | Task | Tier / Rolle | Aufwand |
 |----|------|--------------|---------|
-| I18N-01 | RTL-Infrastruktur (CSS logical properties, Tailwind-RTL-Strategie, Icon-Spiegelung, Matching-Layout-Spiegelung) | Voraussetzung für Tier-1 Arabisch | M |
+| I18N-01 | RTL-Infrastruktur (CSS logical properties, Tailwind-RTL-Strategie, Icon-Spiegelung, Layout-Spiegelung) | Voraussetzung für Tier-1 Arabisch | M |
 | I18N-02 | Sprachauswahl-UI skalieren (> 8 Sprachen: Suchfeld oder Gruppierung nach Region/Schrift) | Voraussetzung für alle | S |
 | I18N-03 | Hindi UI-Übersetzung + Devanagari-Font-Stack | Tier 1 | S |
 | I18N-04 | Arabisch UI-Übersetzung (hängt an I18N-01) | Tier 1 | M |
@@ -163,7 +270,10 @@ Prefix `I18N-`. Aufgeteilt nach Tier / Voraussetzung. Aufwand: S/M/L.
 | I18N-06 | Indonesisch UI-Übersetzung | Tier 2 | S |
 | I18N-07 | Italienisch UI-Übersetzung | Tier 2 | S |
 | I18N-08 | Übersetzungs-QA-Pipeline (maschinell + Native-Review + Community-PR-Korrektur) | Infrastruktur | M |
-| I18N-09 | Content-Repo Sprachpaar-Expansion (eigenes Thema, hängt an Content-Autoren) | parallel / Community | L |
+| I18N-09 | Content-Repo Sprachpaar-Expansion (allgemein, hängt an Content-Autoren) | parallel / Community | L |
+| I18N-10 | **Exercise-Typen RTL-Audit:** Matching, FillInBlank/Cloze, MultipleChoice/PictureChoice, WordTiles, Ordering — jeder Typ einzeln auf RTL-Korrektheit prüfen (Layout-Spiegelung, `dir`, Drag-Richtung) | Voraussetzung für Arabisch-Content | M |
+| I18N-11 | **Content-Repo Hindi-Sprachpaare:** Hindi→English Starter-Set (mind. 3 Lektionen), zusammen mit I18N-03 | Tier 1 (Content) | M |
+| I18N-12 | **Content-Repo Arabisch-Sprachpaare** (hängt an I18N-01 + I18N-10) | Tier 1 (Content) | M |
 
 ---
 
@@ -175,18 +285,28 @@ Prefix `I18N-`. Aufgeteilt nach Tier / Voraussetzung. Aufwand: S/M/L.
    Lerner?** Bestimmt, ob Polnisch/Arabisch (Diaspora) oder Hindi/Indonesisch
    (global) zuerst kommen. *Offen — Produktentscheidung.*
 2. **UI-Übersetzung vs. Content — was zuerst?** *Empfehlung: UI zuerst*
-   (geringerer Aufwand, sofort nutzbar mit bestehendem Content).
+   (geringerer Aufwand, sofort nutzbar mit bestehendem Content), **aber für
+   Tier 1 UI + Content zusammen** (§3.6), sonst trifft der Markt auf eine leere
+   App.
 3. **Maschinelle Übersetzung (LLM-gestützt) als Startpunkt akzeptabel?**
    *Empfehlung: LLM als Draft, Native-Speaker-Review, Community-Korrektur über
    PR* — wie bei der bestehenden PT/TR/JA-Linie (AI-generiert, Review-pending).
 4. **RTL-Investment jetzt oder später?** *Empfehlung: Tier-1 Hindi (LTR) zuerst,
-   RTL-Infra (I18N-01) parallel vorbereiten, Arabisch danach.*
+   RTL-Infra (I18N-01) + Exercise-Audit (I18N-10) parallel vorbereiten,
+   Arabisch danach.*
 5. **Monetarisierungs-Implikation:** mehr Sprachen = mehr potenzielle Nutzer.
    Ab welcher Reichweite lohnt sich Übersetzungs-Investment? *Offen — koppeln an
    die SaaS-Entscheidung (ROADMAP P4).*
 6. **Font-Loading-Strategie:** alle Schrift-System-Fonts bundlen (größeres
-   Bundle) oder lazy-laden? *Empfehlung: Lazy-Load pro Sprache* (konsistent mit
-   der bestehenden lazy i18n-Katalog-/Glossar-Strategie).
+   Bundle) oder lazy-laden? *Empfehlung: Lazy-Load pro Sprache, System-Fonts
+   bevorzugen, Web-Font nur als Fallback* (§3.5), konsistent mit der
+   bestehenden lazy i18n-Katalog-/Glossar-Strategie.
+7. **RTL nur in der UI — oder auch innerhalb der Exercises?** Soll die App RTL
+   nur im App-Chrome unterstützen (Navigation/Layout), oder auch **innerhalb
+   der Exercises**? **Mixed-Direction** (arabische Frage, englische Antwort im
+   selben Exercise) ist der **härteste Fall** — Container RTL, einzelne Felder
+   LTR. *Empfehlung: App-Chrome-RTL zuerst (I18N-01), Exercise-interne RTL +
+   Mixed-Direction als eigener Audit (I18N-10) vor dem ersten Arabisch-Content.*
 
 ---
 
@@ -195,14 +315,21 @@ Prefix `I18N-`. Aufgeteilt nach Tier / Voraussetzung. Aufwand: S/M/L.
 Die 8 aktuellen Sprachen decken den europäischen + lateinamerikanischen +
 japanischen Markt solide ab. Die größten Reichweiten-Sprünge kommen von
 **Hindi** (+609 Mio.) und **Arabisch** (+335 Mio.), wobei Arabisch technisch
-deutlich aufwändiger ist (RTL).
+deutlich aufwändiger ist (RTL — App-Chrome **und** Exercises).
+
+Der entscheidende Punkt: **UI-Sprache und Content-Sprache sind zwei Achsen.**
+Eine UI-Übersetzung ist billig und schnell; sie macht die App bedienbar, aber
+noch nicht **wertvoll** für einen neuen Markt — dafür braucht es Content in der
+Ausgangssprache (§3.6). Für Tier-1-Märkte gehören beide zusammen.
 
 Empfohlener Schnitt:
 
 1. **Hindi** als nächste Sprache — größte Reichweite, geringstes technisches
-   Risiko (LTR, nur Font-Stack).
-2. **RTL-Infrastruktur (I18N-01) parallel** vorbereiten.
-3. **Arabisch** danach.
+   Risiko (LTR, nur Font-Stack) — **UI (I18N-03) + Starter-Content (I18N-11)
+   zusammen**.
+2. **RTL-Infrastruktur (I18N-01) + Exercise-RTL-Audit (I18N-10) parallel**
+   vorbereiten.
+3. **Arabisch** danach (UI I18N-04 + Content I18N-12).
 4. **Tier-2-Sprachen** nach Bedarf / Community-Nachfrage.
 
 **Kein MVP-Blocker.** Vision-Dokument für nach v1.80.0.
