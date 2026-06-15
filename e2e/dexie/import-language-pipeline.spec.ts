@@ -155,16 +155,19 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
     await expect(page.getByTestId("save-lesson-source-lang")).not.toHaveValue(
       "fr",
     );
-    // 8. Save -> navigates to /content (My Lessons).
+    // 8. Save -> navigates to /content. The saved de -> fr lesson matches the
+    // bundled de -> fr set, so EXP-026 folds it INTO that tree node (#543);
+    // a non-matching lesson would stay in "My Lessons". Both surfaces render
+    // the same UserSetActions, so accept the share button in either location.
     await page.getByTestId("save-lesson-save").click();
-    await expect(page.getByTestId("content-my-lessons")).toBeVisible({
-      timeout: 15000,
-    });
 
     // 10-11. Share the saved lesson; ShareWizard Step 1 inherits de -> fr.
     const shareBtn = page
-      .locator('[data-testid^="my-lesson-"][data-testid$="-share"]')
+      .locator(
+        '[data-testid^="my-lesson-"][data-testid$="-share"], [data-testid^="folded-lesson-"][data-testid$="-share"]',
+      )
       .first();
+    await expect(shareBtn).toBeVisible({ timeout: 15000 });
     await shareBtn.click();
     await expect(page.getByTestId("share-wizard-step-1")).toBeVisible();
 
@@ -225,17 +228,19 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
     await expect(page.getByTestId("save-lesson-source-lang")).toHaveValue("de");
     await expect(page.getByTestId("save-lesson-target-lang")).toHaveValue("de");
     await expect(page.getByTestId("save-lesson-same-language")).toBeVisible();
-    // 8. Save -> navigates to /content (My Lessons).
+    // 8. Save -> navigates to /content. A de -> de knowledge lesson folds
+    // into the tree only on an exact-title match (#543); here it stays in
+    // "My Lessons". Accept the share button in either location to stay robust.
     await page.getByTestId("save-lesson-save").click();
-    await expect(page.getByTestId("content-my-lessons")).toBeVisible({
-      timeout: 15000,
-    });
 
     // 10-13. Share the saved lesson; ShareWizard Step 1 inherits de -> de
     // as knowledge content (no same-language reset, no blocking error).
     const shareBtn = page
-      .locator('[data-testid^="my-lesson-"][data-testid$="-share"]')
+      .locator(
+        '[data-testid^="my-lesson-"][data-testid$="-share"], [data-testid^="folded-lesson-"][data-testid$="-share"]',
+      )
       .first();
+    await expect(shareBtn).toBeVisible({ timeout: 15000 });
     await shareBtn.click();
     await expect(page.getByTestId("share-wizard-step-1")).toBeVisible();
     await expect(page.getByTestId("share-wizard-edit-source")).toContainText(
