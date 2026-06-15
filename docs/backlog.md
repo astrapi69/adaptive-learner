@@ -6,24 +6,28 @@ this file for granular items + status.
 
 ## Strategic Expansion: Content-Repository MVP
 
-> **EXP-023 Phase A merged (#118) + Phase B implemented (#122, on branch
-> — pending release).** Phase A: one user content repository (connect /
-> validate / sync / cache / browse, both modes). Phase B: **multiple**
-> repos (list / add / remove / reorder = precedence, legacy single-repo
-> migrated), share via `/add-repo` deep link + QR, automatic technical
-> validation (Trust 0→1, re-checked each sync), per-repo source filter,
-> and private/coach repos via a per-repo token. Official repo stays the
-> default + non-removable. **Phase C slice implemented (#124, on branch):**
-> a curated `recommended-repos.json` drives a discovery section + one-click
-> add + an "Officially recommended" (Trust 3) badge, plus local-only
-> per-repo star ratings. Still deferred (need a shared backend): community
-> ratings, Trust 2 (community-verified), central index server, coach
-> progress aggregation, one-time invite tokens, Share-Wizard direct-push.
+> **EXP-023 Phases A + B + C slice SHIPPED (v1.67.0; #118 / #122 / #124).**
+> Phase A: one user content repository (connect / validate / sync / cache /
+> browse, both modes). Phase B: **multiple** repos (list / add / remove /
+> reorder = precedence, legacy single-repo migrated), share via `/add-repo`
+> deep link + QR, automatic technical validation (Trust 0→1, re-checked each
+> sync), per-repo source filter, and private/coach repos via a per-repo
+> token. Official repo stays the default + non-removable. Phase C slice: a
+> curated `recommended-repos.json` drives a discovery section + one-click add
+> + an "Officially recommended" (Trust 3) badge, plus local-only per-repo
+> star ratings (the discovery fetch is gated until the catalogue is
+> published — see commit 70108061). **EXP-025 (author-provided lesson sets):
+> AUTH-01 (book-metadata schema + validator, #529) + AUTH-02 (book-companion
+> rendering, #531) SHIPPED.** **EXP-026 (fold user lessons into the content
+> tree): UGC-01..07 SHIPPED (#97).** Still deferred (need a shared backend):
+> community ratings, Trust 2 (community-verified), central index server,
+> coach progress aggregation, one-time invite tokens, Share-Wizard
+> direct-push, and AUTH-03+ (cross-repo author publishing flow).
 > See [EXP-023](explorations/EXP-023-multi-content-repository.md).
 
 See [docs/explorations/](explorations/) for the full strategic plan:
 
-- [EXP-INDEX.md](explorations/EXP-INDEX.md): 17 explorations overview
+- [EXP-INDEX.md](explorations/EXP-INDEX.md): 25 explorations overview
 - [BACKLOG.md](explorations/BACKLOG.md): 223 tasks across 5 phases
 - [ROADMAP-PHASE-1-VORSCHLAG.md](explorations/ROADMAP-PHASE-1-VORSCHLAG.md): Sprint plan for Phase 1
 
@@ -63,10 +67,10 @@ Word Tiles @dnd-kit reorder, mobile overflow fixes, backend CSP
 pass).**
 Phase history through Phase 64 +
 per-release notes live in
-[changelog/releases/](../changelog/releases/). 29 tables on
-the sync surface. 13 plugins, 29 SQLAlchemy models,
-1047 (+1 skipped) + 1031 + 2624 = 4702 tests green
-(+1 skipped). Closed in this release line: BL-04 (QR scan,
+[changelog/releases/](../changelog/releases/). 30 tables on
+the sync surface. 13 plugins, 30 SQLAlchemy models,
+1215 + 1018 + 4139 = 6372 tests green
+(backend + plugins + Vitest; verified 2026-06-15). Closed in this release line: BL-04 (QR scan,
 v1.7.0), BL-05/06 (sync gaps, v1.8.0), BL-07 (subjects/tags,
 v1.9.0), BL-08 (gestures, v1.10.0), BL-09 (model picker,
 v1.11.0), BL-10 (backup compare, v1.12.0), BL-11 (PT/TR/JA
@@ -99,6 +103,15 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [ ] **#508 — User profile picture**: let the learner pick/upload an
+  avatar shown in the nav + About + Dashboard. Both storage modes (Dexie
+  blob + API filesystem, like content assets); no backend account system.
+  Only open user-facing feature after the v1.79.0 line. Filed 2026-06.
+- [ ] **BACKEND-RADON-REMAINDER-01**: opportunistic backend complexity
+  burn-down for any module still above the radon warn band (cc > 15) now
+  that the Phase 2 hard gate (#494/#495: blocks cc > 20, warns > 15) is
+  live and `.complexity-baseline` is empty. No grandfathered offenders
+  remain; this is for new warn-tier functions as they surface. Opportunistic.
 - [ ] **BADGE-EVAL-NPLUS1-01**: Badge evaluation fires one query per
   badge. `evaluateBadgesForUser` (`frontend/src/storage/badges.ts`) and
   `badge_service.evaluate_user` (gamification plugin) both load the
@@ -187,4 +200,9 @@ These activate when a specific condition is met:
 
 ## Blocked / Upstream Wait
 
-*(none)*
+- **AUTH-03+ — cross-repo author publishing flow** (EXP-025): the
+  remaining author-companion scope beyond AUTH-01/02 (#529/#531, shipped) —
+  publishing/maintaining a book companion repo across repositories. Needs
+  shared-backend / cross-repo infrastructure (same dependency as the EXP-023
+  deferred set: community ratings, Trust 2, central index, coach
+  aggregation). Deferred until that infrastructure lands.
