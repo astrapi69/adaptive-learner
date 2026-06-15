@@ -2567,5 +2567,22 @@
     "pairs_title": "भाषा युग्म के अनुसार प्रगति",
     "pairs_empty": "प्रगति ट्रैक करने के लिए एक पाठ सेट डाउनलोड करें।",
     "pair_level_aria": "{level}: {percent}% पूर्ण"
+  },
+  "shortcuts": {
+    "title": "कीबोर्ड शॉर्टकट",
+    "group_global": "सामान्य",
+    "group_navigation": "नेविगेशन",
+    "group_lesson": "पाठ के दौरान",
+    "show_help": "कीबोर्ड शॉर्टकट दिखाएँ",
+    "open_settings": "सेटिंग्स खोलें",
+    "search_content": "सामग्री खोजें",
+    "close_dialog": "संवाद बंद करें",
+    "go_dashboard": "डैशबोर्ड पर जाएँ",
+    "go_settings": "सेटिंग्स पर जाएँ",
+    "go_content": "सामग्री पर जाएँ",
+    "go_statistics": "आँकड़ों पर जाएँ",
+    "lesson_enter": "उत्तर जाँचें, फिर आगे बढ़ें",
+    "lesson_choice": "उत्तर विकल्प चुनें",
+    "lesson_undo_match": "अंतिम मिलान पूर्ववत करें"
   }
 }

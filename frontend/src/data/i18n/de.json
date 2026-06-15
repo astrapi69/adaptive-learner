@@ -2567,5 +2567,22 @@
     "pairs_title": "Fortschritt pro Sprachpaar",
     "pairs_empty": "Lade ein Lektionsset herunter, um den Fortschritt zu verfolgen.",
     "pair_level_aria": "{level}: {percent}% abgeschlossen"
+  },
+  "shortcuts": {
+    "title": "Tastenkürzel",
+    "group_global": "Allgemein",
+    "group_navigation": "Navigation",
+    "group_lesson": "Während einer Lektion",
+    "show_help": "Tastenkürzel anzeigen",
+    "open_settings": "Einstellungen öffnen",
+    "search_content": "Inhalte durchsuchen",
+    "close_dialog": "Dialog schließen",
+    "go_dashboard": "Zum Dashboard",
+    "go_settings": "Zu den Einstellungen",
+    "go_content": "Zu den Inhalten",
+    "go_statistics": "Zur Statistik",
+    "lesson_enter": "Antwort prüfen, dann weiter",
+    "lesson_choice": "Antwortoption auswählen",
+    "lesson_undo_match": "Letzte Zuordnung rückgängig machen"
   }
 }

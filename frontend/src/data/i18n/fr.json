@@ -2567,5 +2567,22 @@
     "pairs_title": "Progression par paire de langues",
     "pairs_empty": "Téléchargez un ensemble de leçons pour suivre la progression.",
     "pair_level_aria": "{level} : {percent}% terminé"
+  },
+  "shortcuts": {
+    "title": "Raccourcis clavier",
+    "group_global": "Général",
+    "group_navigation": "Navigation",
+    "group_lesson": "Pendant une leçon",
+    "show_help": "Afficher les raccourcis clavier",
+    "open_settings": "Ouvrir les paramètres",
+    "search_content": "Rechercher du contenu",
+    "close_dialog": "Fermer la boîte de dialogue",
+    "go_dashboard": "Aller au tableau de bord",
+    "go_settings": "Aller aux paramètres",
+    "go_content": "Aller au contenu",
+    "go_statistics": "Aller aux statistiques",
+    "lesson_enter": "Vérifier la réponse, puis continuer",
+    "lesson_choice": "Sélectionner une option de réponse",
+    "lesson_undo_match": "Annuler la dernière association"
   }
 }
