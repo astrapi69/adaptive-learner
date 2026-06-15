@@ -14,6 +14,7 @@ import GitHubIntegrationSection from "../components/GitHubIntegrationSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import DirectionStrategyControl from "../components/DirectionStrategyControl";
+import SrsTransparencySection from "../components/SrsTransparencySection";
 import LearningProfileControl from "../components/LearningProfileControl";
 import MaxLessonSizeControl from "../components/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../components/PausedLessonsRetentionControl";
@@ -626,6 +627,7 @@ export default function Settings() {
         </section>
         <MissionSettingsControl />
         <DirectionStrategyControl />
+        <SrsTransparencySection />
         <PausedLessonsRetentionControl />
         <MaxLessonSizeControl />
         <VoiceSettingsSection />
