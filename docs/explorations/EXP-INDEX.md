@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
 **Stand:** 2026-06-14
-**Anzahl EXPs:** 25
+**Anzahl EXPs:** 26
 
 ## Kategorisierung
 
@@ -40,6 +40,7 @@
 | 024 | Strikte Schichtentrennung (Layer-Audit)     | Querschnitt  | laufend | Hoch    | -                  |
 | 025 | Author-provided Lesson Sets (Buch-Begleiter)| Vision       | B/C   | Niedrig   | 023, 003           |
 | 026 | User-Lektionen im Content-Baum (Badge)      | Feature      | 2     | Niedrig   | 023, 025           |
+| 027 | Internationalisierungs-Strategie (Sprach-Expansion) | Querschnitt | Zukunft | Mittel | 002, 023           |
 
 ## Umsetzungsstand (Stand v1.79.0)
 
@@ -60,7 +61,8 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
 - **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests).
 - **Zurückgestellt / Zukunft:** 004 (GitHub-Org), 009/011/012 (soziale Features —
   brauchen Cloud-Backend + Nutzerbasis), 014 (Community-Feedback — teilweise via
-  Community-Sharing), 015 (Kinder-Variante).
+  Community-Sharing), 015 (Kinder-Variante), 027 (Internationalisierungs-Strategie —
+  Sprach-Expansion, Vision-Dokument für nach v1.80.0).
 
 ## Phasen-Definition
 
