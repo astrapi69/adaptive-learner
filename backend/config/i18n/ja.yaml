@@ -414,6 +414,11 @@ progress:
   commit_notes_aria: "セッションのメモ"
   session_count: "セッション"
 settings:
+  section_hints: "ヒント"
+  hints_enabled: "練習中にヒントを表示"
+  hints_enabled_desc: "各練習で段階的なヒントボタンを表示します。"
+  hint_xp_cost: "ヒント1回あたりのXPコスト"
+  hint_xp_cost_desc: "ヒントボタンに表示されます。0で無料。"
   support:
     heading: "サポート"
     description: "想定どおりに動作しませんか？最近の操作のレポートを作成すると、開発者が問題を再現しやすくなります。ブラウザから送信される前にすべてを確認できます。"
@@ -2399,3 +2404,12 @@ srs:
   schedule_days: "{d}日後に復習"
   settings_mastery: "項目は連続{n}回正解で習得済みになります。間違えるとリセットされます。"
   settings_learn_more: "学習法について詳しく"
+
+hints:
+  reveal: "ヒントを見る"
+  cost: "−{n} XP"
+  length: "答えは{n}文字です"
+  first_letters: "「{prefix}」で始まります（{n}文字）"
+  not: "「{label}」ではありません"
+  item: "「{label}」から始めましょう"
+  reveal_pair: "「{left}」は「{right}」と対応します"

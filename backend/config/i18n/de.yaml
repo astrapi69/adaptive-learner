@@ -414,6 +414,11 @@ progress:
   commit_notes_aria: "Sitzungsnotizen"
   session_count: "Sitzungen"
 settings:
+  section_hints: "Tipps"
+  hints_enabled: "Tipps in Übungen anzeigen"
+  hints_enabled_desc: "Bietet bei jeder Übung einen gestuften Tipp-Button."
+  hint_xp_cost: "XP-Kosten pro Tipp"
+  hint_xp_cost_desc: "Wird auf dem Tipp-Button angezeigt. 0 = kostenlos."
   support:
     heading: "Support"
     description: "Etwas funktioniert nicht wie erwartet? Erstelle einen Bericht deiner letzten Aktionen, damit die Entwicklung das Problem nachvollziehen kann. Du prüfst alles, bevor es deinen Browser verlässt."
@@ -2403,3 +2408,12 @@ srs:
   schedule_days: "Wiederholung in {d} Tag(en)"
   settings_mastery: "Ein Element gilt nach {n} richtigen Antworten in Folge als gemeistert; eine falsche Antwort setzt es zurück."
   settings_learn_more: "Mehr über die Methode erfahren"
+
+hints:
+  reveal: "Tipp anzeigen"
+  cost: "−{n} XP"
+  length: "Die Antwort hat {n} Buchstaben"
+  first_letters: "Beginnt mit „{prefix}“ ({n} Buchstaben)"
+  not: "Es ist nicht „{label}“"
+  item: "Beginne mit „{label}“"
+  reveal_pair: "„{left}“ gehört zu „{right}“"

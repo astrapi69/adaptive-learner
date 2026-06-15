@@ -414,6 +414,11 @@ progress:
   commit_notes_aria: "Notas da sessão"
   session_count: "Sessões"
 settings:
+  section_hints: "Dicas"
+  hints_enabled: "Mostrar dicas nos exercícios"
+  hints_enabled_desc: "Oferece um botão de dica por níveis em cada exercício."
+  hint_xp_cost: "Custo de XP por dica"
+  hint_xp_cost_desc: "Mostrado no botão de dica. 0 = grátis."
   support:
     heading: "Suporte"
     description: "Algo não está funcionando como esperado? Crie um relatório das suas ações recentes para ajudar o desenvolvedor a reproduzir o problema. Você revisa tudo antes de sair do seu navegador."
@@ -2399,3 +2404,12 @@ srs:
   schedule_days: "revisão em {d} dia(s)"
   settings_mastery: "Um elemento é dominado após {n} acertos seguidos; uma resposta errada reinicia-o."
   settings_learn_more: "Saber mais sobre o método"
+
+hints:
+  reveal: "Mostrar uma dica"
+  cost: "−{n} XP"
+  length: "A resposta tem {n} letras"
+  first_letters: "Começa por «{prefix}» ({n} letras)"
+  not: "Não é «{label}»"
+  item: "Comece com «{label}»"
+  reveal_pair: "«{left}» combina com «{right}»"

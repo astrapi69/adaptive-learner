@@ -414,6 +414,11 @@ progress:
   commit_notes_aria: "Notes de session"
   session_count: "Sessions"
 settings:
+  section_hints: "Indices"
+  hints_enabled: "Afficher des indices pendant les exercices"
+  hints_enabled_desc: "Propose un bouton d'indice par paliers sur chaque exercice."
+  hint_xp_cost: "Coût en XP par indice"
+  hint_xp_cost_desc: "Affiché sur le bouton d'indice. 0 = gratuit."
   support:
     heading: "Assistance"
     description: "Quelque chose ne fonctionne pas comme prévu ? Créez un rapport de vos actions récentes pour aider le développeur à le reproduire. Vous vérifiez tout avant que cela ne quitte votre navigateur."
@@ -2401,3 +2406,12 @@ srs:
   schedule_days: "révision dans {d} jour(s)"
   settings_mastery: "Un élément est maîtrisé après {n} bonnes réponses d'affilée ; une mauvaise réponse le réinitialise."
   settings_learn_more: "En savoir plus sur la méthode"
+
+hints:
+  reveal: "Afficher un indice"
+  cost: "−{n} XP"
+  length: "La réponse compte {n} lettres"
+  first_letters: "Commence par « {prefix} » ({n} lettres)"
+  not: "Ce n'est pas « {label} »"
+  item: "Commence par « {label} »"
+  reveal_pair: "« {left} » va avec « {right} »"

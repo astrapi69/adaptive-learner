@@ -45,6 +45,7 @@ import {
 } from "../../shared/useKeyboardShortcuts";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
+import ExerciseHint from "./ExerciseHint";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -340,6 +341,12 @@ function PictureChoiceExercise(
                     />
                 )}
             </div>
+
+            <ExerciseHint
+                exercise={exercise}
+                submitted={submitted}
+                testId="picture-hint-button"
+            />
 
             <DirectionInstruction exercise={exercise} />
 
