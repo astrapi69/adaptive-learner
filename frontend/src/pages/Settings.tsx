@@ -32,6 +32,7 @@ import AiSettingsPanel from "../components/AiSettingsPanel";
 import SyncSection from "../components/SyncSection";
 import ThemePicker from "../components/ThemePicker";
 import AvatarUpload from "../shared/AvatarUpload";
+import SelectiveExportSection from "../components/SelectiveExportSection";
 import { useI18n } from "../hooks/useI18n";
 import { SUPPORTED_LANGUAGES } from "../lib/constants";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
@@ -591,6 +592,9 @@ export default function Settings() {
           <SyncSection />
         </Feature>
         <BackupSection />
+        <Feature id={FEATURES.SELECTIVE_EXPORT}>
+          <SelectiveExportSection />
+        </Feature>
         <ExportSection />
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
         <ContentRepoSettingsSection />
