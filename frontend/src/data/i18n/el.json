@@ -62,6 +62,7 @@
     "cat_ai_config": "Αντίγραφο κλειδιού AI"
   },
   "nav": {
+    "statistics": "Στατιστικά",
     "profile": "Το προφίλ σου",
     "learning_path": "Διαδρομή μάθησης",
     "dashboard": "Πίνακας",
@@ -2539,5 +2540,27 @@
       "cjk": "CJK",
       "hangul": "Χάνγκουλ"
     }
+  },
+  "statistics": {
+    "title": "Στατιστικά μάθησης",
+    "total_time": "Χρόνος μάθησης",
+    "completed_lessons": "Ολοκληρωμένα μαθήματα",
+    "avg_accuracy": "Μέση ακρίβεια",
+    "current_streak": "Τρέχον σερί",
+    "streak_days": "{n} ημέρες",
+    "time_hm": "{h} ω {m} λ",
+    "time_m": "{m} λ",
+    "weak_areas_title": "Τομείς προς βελτίωση",
+    "weak_areas_empty": "Δεν έχουν καταγραφεί λάθη ακόμα — συνέχισε!",
+    "practice": "Εξάσκηση",
+    "errors": "λάθη",
+    "last_answer": "Η τελευταία σου απάντηση:",
+    "activity_title": "Δραστηριότητα (τελευταίες 90 ημέρες)",
+    "activity_aria": "Ολοκληρωμένα μαθήματα ανά ημέρα τις τελευταίες 90 ημέρες",
+    "activity_cell": "{count} μαθήματα στις {date}",
+    "activity_empty": "Καμία δραστηριότητα ακόμα.",
+    "pairs_title": "Πρόοδος ανά ζεύγος γλωσσών",
+    "pairs_empty": "Κατέβασε ένα σετ μαθημάτων για να ξεκινήσει η παρακολούθηση της προόδου.",
+    "pair_level_aria": "{level}: {percent}% ολοκληρώθηκε"
   }
 }

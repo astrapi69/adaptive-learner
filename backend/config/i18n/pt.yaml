@@ -56,6 +56,7 @@ data_export:
   cat_settings: "Configurações"
   cat_ai_config: "Backup de chave de IA"
 nav:
+  statistics: "Estatísticas"
   profile: "Seu perfil"
   learning_path: "Percurso de aprendizagem"
   dashboard: Painel
@@ -2325,3 +2326,25 @@ languages:
     bengali: "Bengali"
     cjk: "CJK"
     hangul: "Hangul"
+
+statistics:
+  title: "Estatísticas de aprendizagem"
+  total_time: "Tempo de aprendizagem"
+  completed_lessons: "Lições concluídas"
+  avg_accuracy: "Precisão média"
+  current_streak: "Sequência atual"
+  streak_days: "{n} dias"
+  time_hm: "{h} h {m} min"
+  time_m: "{m} min"
+  weak_areas_title: "Áreas para melhorar"
+  weak_areas_empty: "Ainda não há erros registados — continue!"
+  practice: "Praticar"
+  errors: "erros"
+  last_answer: "A sua última resposta:"
+  activity_title: "Atividade (últimos 90 dias)"
+  activity_aria: "Lições concluídas por dia nos últimos 90 dias"
+  activity_cell: "{count} lições em {date}"
+  activity_empty: "Ainda não há atividade."
+  pairs_title: "Progresso por par de idiomas"
+  pairs_empty: "Descarregue um conjunto de lições para começar a acompanhar o progresso."
+  pair_level_aria: "{level}: {percent}% concluído"

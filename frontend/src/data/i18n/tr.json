@@ -62,6 +62,7 @@
     "cat_ai_config": "AI anahtar yedeği"
   },
   "nav": {
+    "statistics": "İstatistikler",
     "profile": "Profilin",
     "learning_path": "Öğrenme yolu",
     "dashboard": "Pano",
@@ -2539,5 +2540,27 @@
       "cjk": "CJK",
       "hangul": "Hangul"
     }
+  },
+  "statistics": {
+    "title": "Öğrenme istatistikleri",
+    "total_time": "Öğrenme süresi",
+    "completed_lessons": "Tamamlanan dersler",
+    "avg_accuracy": "Ortalama doğruluk",
+    "current_streak": "Güncel seri",
+    "streak_days": "{n} gün",
+    "time_hm": "{h} sa {m} dk",
+    "time_m": "{m} dk",
+    "weak_areas_title": "Geliştirilecek alanlar",
+    "weak_areas_empty": "Henüz hata kaydı yok — devam et!",
+    "practice": "Alıştırma yap",
+    "errors": "hata",
+    "last_answer": "Son cevabın:",
+    "activity_title": "Etkinlik (son 90 gün)",
+    "activity_aria": "Son 90 günde günlük tamamlanan dersler",
+    "activity_cell": "{date} tarihinde {count} ders",
+    "activity_empty": "Henüz etkinlik yok.",
+    "pairs_title": "Dil çiftine göre ilerleme",
+    "pairs_empty": "İlerlemeyi takip etmek için bir ders seti indir.",
+    "pair_level_aria": "{level}: %{percent} tamamlandı"
   }
 }

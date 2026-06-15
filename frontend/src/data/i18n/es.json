@@ -62,6 +62,7 @@
     "cat_ai_config": "Copia de clave de IA"
   },
   "nav": {
+    "statistics": "Estadísticas",
     "profile": "Tu perfil",
     "learning_path": "Ruta de aprendizaje",
     "dashboard": "Panel",
@@ -2539,5 +2540,27 @@
       "cjk": "CJK",
       "hangul": "Hangul"
     }
+  },
+  "statistics": {
+    "title": "Estadísticas de aprendizaje",
+    "total_time": "Tiempo de aprendizaje",
+    "completed_lessons": "Lecciones completadas",
+    "avg_accuracy": "Precisión media",
+    "current_streak": "Racha actual",
+    "streak_days": "{n} días",
+    "time_hm": "{h} h {m} min",
+    "time_m": "{m} min",
+    "weak_areas_title": "Áreas para mejorar",
+    "weak_areas_empty": "Aún no hay errores registrados, ¡sigue así!",
+    "practice": "Practicar",
+    "errors": "errores",
+    "last_answer": "Tu última respuesta:",
+    "activity_title": "Actividad (últimos 90 días)",
+    "activity_aria": "Lecciones completadas por día en los últimos 90 días",
+    "activity_cell": "{count} lecciones el {date}",
+    "activity_empty": "Aún no hay actividad.",
+    "pairs_title": "Progreso por par de idiomas",
+    "pairs_empty": "Descarga un conjunto de lecciones para empezar a registrar el progreso.",
+    "pair_level_aria": "{level}: {percent}% completado"
   }
 }

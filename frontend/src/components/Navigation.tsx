@@ -188,6 +188,13 @@ export default function Navigation() {
         >
           {t("nav.progress", "Progress")}
         </NavLink>
+        <NavLink
+          to="/statistics"
+          className={linkClass}
+          data-testid="nav-statistics"
+        >
+          {t("nav.statistics", "Statistics")}
+        </NavLink>
         <NavLink to="/import" className={linkClass} data-testid="nav-import">
           {t("nav.import", "Import")}
         </NavLink>

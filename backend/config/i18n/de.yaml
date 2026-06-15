@@ -56,6 +56,7 @@ data_export:
   cat_settings: "Einstellungen"
   cat_ai_config: "KI-Schlüssel-Sicherung"
 nav:
+  statistics: "Statistik"
   profile: "Dein Profil"
   learning_path: "Lernpfad"
   dashboard: Dashboard
@@ -2329,3 +2330,25 @@ languages:
     bengali: "Bengalisch"
     cjk: "CJK"
     hangul: "Hangul"
+
+statistics:
+  title: "Lernstatistik"
+  total_time: "Lernzeit"
+  completed_lessons: "Abgeschlossene Lektionen"
+  avg_accuracy: "Durchschnittliche Genauigkeit"
+  current_streak: "Aktuelle Serie"
+  streak_days: "{n} Tage"
+  time_hm: "{h} Std. {m} Min."
+  time_m: "{m} Min."
+  weak_areas_title: "Bereiche zum Verbessern"
+  weak_areas_empty: "Noch keine Fehler erfasst — weiter so!"
+  practice: "Üben"
+  errors: "Fehler"
+  last_answer: "Deine letzte Antwort:"
+  activity_title: "Aktivität (letzte 90 Tage)"
+  activity_aria: "Abgeschlossene Lektionen pro Tag in den letzten 90 Tagen"
+  activity_cell: "{count} Lektionen am {date}"
+  activity_empty: "Noch keine Aktivität."
+  pairs_title: "Fortschritt pro Sprachpaar"
+  pairs_empty: "Lade ein Lektionsset herunter, um den Fortschritt zu verfolgen."
+  pair_level_aria: "{level}: {percent}% abgeschlossen"
