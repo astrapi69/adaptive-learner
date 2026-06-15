@@ -181,7 +181,7 @@ describe("Settings page", () => {
     renderSettings();
     await screen.findByTestId("settings");
     expect(screen.getByTestId("settings-tabs")).toBeInTheDocument();
-    expect(screen.getByTestId("settings-tab-general")).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("settings-tab-general")).toHaveAttribute("aria-current", "page");
     // General panel sections are visible; AI panel is hidden.
     expect(screen.getByTestId("settings-section-ui")).toBeVisible();
     expect(screen.getByTestId("settings-model-overrides")).not.toBeVisible();
@@ -192,7 +192,7 @@ describe("Settings page", () => {
     renderSettings();
     await screen.findByTestId("settings");
     fireEvent.click(screen.getByTestId("settings-tab-ai"));
-    expect(screen.getByTestId("settings-tab-ai")).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("settings-tab-ai")).toHaveAttribute("aria-current", "page");
     expect(screen.getByTestId("settings-model-overrides")).toBeVisible();
     // The General Interface section is now hidden.
     expect(screen.getByTestId("settings-section-ui")).not.toBeVisible();
@@ -244,7 +244,7 @@ describe("Settings page", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=data");
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("settings-tab-data")).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("settings-tab-data")).toHaveAttribute("aria-current", "page");
     expect(screen.getByTestId("settings-panel-data")).toBeVisible();
     // General sections are hidden when a deep link opens another tab.
     expect(screen.getByTestId("settings-section-ui")).not.toBeVisible();
@@ -254,7 +254,7 @@ describe("Settings page", () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=bogus");
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("settings-tab-general")).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("settings-tab-general")).toHaveAttribute("aria-current", "page");
   });
 
   it("changing the language calls update + flips i18n provider", async () => {

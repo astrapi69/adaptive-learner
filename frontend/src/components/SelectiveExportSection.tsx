@@ -111,6 +111,7 @@ export default function SelectiveExportSection() {
         </p>
         <Button
           type="button"
+          className="h-auto w-full whitespace-normal py-2 sm:w-auto"
           disabled={busy !== null || !userId}
           onClick={() => void runExport("full")}
           data-testid="data-export-full"
@@ -180,7 +181,7 @@ export default function SelectiveExportSection() {
         <Button
           type="button"
           variant="secondary"
-          className="mt-4"
+          className="mt-4 h-auto w-full whitespace-normal py-2 sm:w-auto"
           disabled={busy !== null || !userId || selected.size === 0}
           onClick={() => void runExport("selective")}
           data-testid="data-export-selective"
