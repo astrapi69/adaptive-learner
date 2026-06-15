@@ -453,6 +453,10 @@ settings:
   section_ui: インターフェース
   section_appearance: "外観"
   section_profile: "プロフィール"
+  username_label: "表示名"
+  username_placeholder: "あなたの名前"
+  username_save: "保存"
+  username_empty: "名前を空にできません。"
   avatar_upload: "画像をアップロード"
   avatar_remove: "削除"
   avatar_crop_title: "画像を調整"

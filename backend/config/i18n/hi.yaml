@@ -455,6 +455,10 @@ settings:
   section_ui: इंटरफ़ेस
   section_appearance: रूप-रंग
   section_profile: प्रोफ़ाइल
+  username_label: "प्रदर्शित नाम"
+  username_placeholder: "आपका नाम"
+  username_save: "सहेजें"
+  username_empty: "नाम खाली नहीं हो सकता।"
   avatar_upload: चित्र अपलोड करें
   avatar_remove: निकालें
   avatar_crop_title: अपना चित्र समायोजित करें

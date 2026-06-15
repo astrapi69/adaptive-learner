@@ -20,6 +20,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import InitialsAvatar from "../shared/InitialsAvatar";
 import { useI18n } from "../hooks/useI18n";
 import { readLearnerState } from "../lib/learnerState";
+import { PROFILE_UPDATED_EVENT } from "../lib/profileSignal";
 import { getStorage } from "../storage";
 
 const SIZE = 28;
@@ -53,9 +54,12 @@ export default function NavAvatar() {
     void refresh();
     const onFocus = () => void refresh();
     window.addEventListener("focus", onFocus);
+    // Live update when Settings saves a new name / picture (#579).
+    window.addEventListener(PROFILE_UPDATED_EVENT, onFocus);
     return () => {
       cancelled = true;
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener(PROFILE_UPDATED_EVENT, onFocus);
     };
   }, [pathname]);
 

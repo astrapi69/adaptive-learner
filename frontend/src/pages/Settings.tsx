@@ -45,6 +45,9 @@ import {
   setLessonShortcutsEnabled,
 } from "../lib/lesson/lessonShortcutsPref";
 import { readLearnerState, setLanguage } from "../lib/learnerState";
+import { notifyProfileUpdated } from "../lib/profileSignal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   getStorage,
   getStorageRowCounts,
@@ -161,6 +164,9 @@ export default function Settings() {
   const [settings, setSettings] = useState<UserSettings | null>(null);
   // #508 — the learner's display name for the initials-avatar fallback.
   const [userName, setUserName] = useState<string>("");
+  // #579 — editable display-name draft + validation message.
+  const [nameDraft, setNameDraft] = useState<string>("");
+  const [nameError, setNameError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   // v1.10.0 / Phase 23E — swipe-gesture toggle. Persisted in
   // localStorage via ``gesturePref`` so the consumer hooks
@@ -245,7 +251,9 @@ export default function Settings() {
     void getStorage()
       .users.get(userId)
       .then((u) => {
-        if (!cancelled) setUserName(u.name);
+        if (cancelled) return;
+        setUserName(u.name);
+        setNameDraft(u.name);
       })
       .catch(() => {
         /* name is only the avatar fallback — non-fatal */
@@ -295,6 +303,36 @@ export default function Settings() {
         avatar: dataUrl ?? "",
       });
       setSettings(updated);
+      // #579 — refresh the header NavAvatar live.
+      notifyProfileUpdated();
+      notify.success(t("settings.saved", "Saved."));
+    } catch (err) {
+      const detail = err instanceof ApiError ? err.detail : t("common.error");
+      notify.error(detail);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // #579 — persist the edited display name on the user object (the
+  // existing store; both storage modes handle ``name``). Updates the
+  // InitialsAvatar (via ``userName``) and the header NavAvatar (event) live.
+  const handleSaveName = async () => {
+    const userId = readLearnerState().userId;
+    if (!userId || busy) return;
+    const trimmed = nameDraft.trim();
+    if (!trimmed) {
+      setNameError(t("settings.username_empty", "Name cannot be empty."));
+      return;
+    }
+    const name = trimmed.slice(0, 50);
+    setNameError(null);
+    setBusy("name");
+    try {
+      await getStorage().users.update(userId, { name });
+      setUserName(name);
+      setNameDraft(name);
+      notifyProfileUpdated();
       notify.success(t("settings.saved", "Saved."));
     } catch (err) {
       const detail = err instanceof ApiError ? err.detail : t("common.error");
@@ -349,6 +387,46 @@ export default function Settings() {
         hidden={activeTab !== "general"}
       >
         <h2 className="settings-section-title">{t("settings.section_profile", "Profile")}</h2>
+        <div className="form-row" data-testid="settings-username-row">
+          <label className="form-label" htmlFor="settings-username-input">
+            {t("settings.username_label", "Display name")}
+          </label>
+          <div className="flex flex-wrap items-center gap-2">
+            <Input
+              id="settings-username-input"
+              data-testid="settings-username-input"
+              value={nameDraft}
+              maxLength={50}
+              placeholder={t("settings.username_placeholder", "Your name")}
+              disabled={busy === "name"}
+              aria-invalid={nameError ? true : undefined}
+              onChange={(e) => {
+                setNameDraft(e.target.value);
+                if (nameError) setNameError(null);
+              }}
+              className="max-w-xs"
+            />
+            <Button
+              type="button"
+              size="sm"
+              className="min-h-11"
+              onClick={() => void handleSaveName()}
+              disabled={busy === "name" || nameDraft.trim() === userName}
+              data-testid="settings-username-save"
+            >
+              {t("settings.username_save", "Save")}
+            </Button>
+          </div>
+          {nameError && (
+            <p
+              role="alert"
+              className="m-0 text-sm font-medium text-[var(--error)]"
+              data-testid="settings-username-error"
+            >
+              {nameError}
+            </p>
+          )}
+        </div>
         {settings && (
           <AvatarUpload
             name={userName}
