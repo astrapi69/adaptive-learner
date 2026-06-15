@@ -216,7 +216,7 @@ def test_create_project_and_start_session():
 - Curriculum: edit lesson rich-text content (TipTap).
 - Settings: provider switch, key entry, language, theme, plugins.
 - Navigation: every of the 13 routes reachable, links work.
-- Dexie-mode release gate (`make test-dexie-smoke`): every nav-reachable route renders in the GH-Pages-shape build with NO backend.
+- Dexie-mode release gate (`make test-dexie-smoke`): every nav-reachable route renders in the GH-Pages-shape build with NO backend. **Cadence (#552):** runs **daily** (scheduled, 04:00 UTC), **before every release** (gate in `make release-test`), and on `release/*` branches — **NOT on every PR** (expensive ~6 min, rarely PR-relevant; same rationale as the mutation-testing workflows). Trigger ad hoc via `workflow_dispatch` or locally with `make test-dexie-smoke`.
 
 **When to write new E2E tests:**
 - New plugin with UI: at least one flow (enable plugin -> use feature).
