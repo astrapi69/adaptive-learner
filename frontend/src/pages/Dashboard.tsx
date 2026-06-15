@@ -11,6 +11,7 @@ import FocusAreasCard from "../components/dashboard/FocusAreasCard";
 import PausedLessonsCard from "../components/dashboard/PausedLessonsCard";
 import LearningRepoWidget from "../components/dashboard/LearningRepoWidget";
 import ReviewQueueCard from "../components/dashboard/ReviewQueueCard";
+import FavoritesCard from "../components/dashboard/FavoritesCard";
 import MethodDistribution from "../components/MethodDistribution";
 import ProfileRadar from "../components/ProfileRadar";
 import ProgressTimeline from "../components/ProgressTimeline";
@@ -334,6 +335,7 @@ export default function Dashboard() {
 
         {userId && <FocusAreasCard userId={userId} />}
         {userId && <ReviewQueueCard userId={userId} />}
+        {userId && <FavoritesCard userId={userId} />}
 
         <article className="dashboard-card">
           <h2 className="dashboard-card-title">

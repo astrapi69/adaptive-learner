@@ -443,6 +443,11 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "section_hints": "संकेत",
+    "hints_enabled": "अभ्यास के दौरान संकेत दिखाएँ",
+    "hints_enabled_desc": "हर अभ्यास पर एक क्रमिक संकेत बटन देता है।",
+    "hint_xp_cost": "प्रति संकेत XP लागत",
+    "hint_xp_cost_desc": "संकेत बटन पर दिखाया जाता है। 0 = निःशुल्क।",
     "support": {
       "heading": "सहायता",
       "description": "Something not working as expected? Create a report of your recent actions to help the developer reproduce it. You review everything before it leaves your browser.",
@@ -2617,5 +2622,21 @@
     "schedule_days": "{d} दिन में समीक्षा",
     "settings_mastery": "किसी तत्व को लगातार {n} सही उत्तरों के बाद महारत माना जाता है; गलत उत्तर इसे रीसेट कर देता है।",
     "settings_learn_more": "विधि के बारे में और जानें"
+  },
+  "hints": {
+    "reveal": "संकेत दिखाएँ",
+    "cost": "−{n} XP",
+    "length": "उत्तर में {n} अक्षर हैं",
+    "first_letters": "“{prefix}” से शुरू होता है ({n} अक्षर)",
+    "not": "यह “{label}” नहीं है",
+    "item": "“{label}” से शुरू करें",
+    "reveal_pair": "“{left}” का मेल “{right}” से है"
+  },
+  "favorites": {
+    "card_title": "आपके पसंदीदा",
+    "add": "पसंदीदा में जोड़ें",
+    "remove": "पसंदीदा से हटाएँ",
+    "empty": "अभी तक कोई पसंदीदा नहीं — किसी पाठ के स्टार पर टैप करें।",
+    "save_prompt": "इस पाठ को अपने पसंदीदा में सहेजें"
   }
 }

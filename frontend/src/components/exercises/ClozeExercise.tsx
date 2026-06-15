@@ -31,6 +31,7 @@ import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
@@ -551,6 +552,12 @@ function ClozeExercise(
                 prompt={exercise.prompt}
                 ttsLang={ttsLang}
                 codeMode={codeMode}
+            />
+
+            <ExerciseHint
+                exercise={exercise}
+                submitted={submitted}
+                testId="cloze-hint-button"
             />
 
             <ClozeSentence

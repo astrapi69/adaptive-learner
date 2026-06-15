@@ -66,6 +66,7 @@ import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
 import {useI18n} from "../../hooks/useI18n";
+import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
@@ -690,6 +691,12 @@ function WordTilesExercise(
                     />
                 )}
             </div>
+
+            <ExerciseHint
+                exercise={exercise}
+                submitted={submitted}
+                testId="word-tiles-hint-button"
+            />
 
             <DirectionInstruction exercise={exercise} />
 

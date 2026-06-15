@@ -28,6 +28,7 @@ import {forwardRef, useEffect, useMemo, useState} from "react";
 import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import ExerciseHint from "./ExerciseHint";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {
@@ -407,6 +408,12 @@ function MatchingExercise(
                 submitted={submitted}
                 leftLabel={leftLabel}
                 rightLabel={rightLabel}
+            />
+
+            <ExerciseHint
+                exercise={exercise}
+                submitted={submitted}
+                testId="matching-hint-button"
             />
 
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">

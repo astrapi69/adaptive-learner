@@ -414,6 +414,11 @@ progress:
   commit_notes_aria: "Notas de la sesión"
   session_count: "Sesiones"
 settings:
+  section_hints: "Pistas"
+  hints_enabled: "Mostrar pistas en los ejercicios"
+  hints_enabled_desc: "Ofrece un botón de pista por niveles en cada ejercicio."
+  hint_xp_cost: "Coste de XP por pista"
+  hint_xp_cost_desc: "Se muestra en el botón de pista. 0 = gratis."
   support:
     heading: "Soporte"
     description: "¿Algo no funciona como esperabas? Crea un informe de tus acciones recientes para ayudar al desarrollador a reproducirlo. Revisas todo antes de que salga de tu navegador."
@@ -2404,3 +2409,19 @@ srs:
   schedule_days: "repaso en {d} día(s)"
   settings_mastery: "Un elemento se considera dominado tras {n} aciertos seguidos; una respuesta incorrecta lo reinicia."
   settings_learn_more: "Más información sobre el método"
+
+hints:
+  reveal: "Mostrar una pista"
+  cost: "−{n} XP"
+  length: "La respuesta tiene {n} letras"
+  first_letters: "Empieza por «{prefix}» ({n} letras)"
+  not: "No es «{label}»"
+  item: "Empieza con «{label}»"
+  reveal_pair: "«{left}» va con «{right}»"
+
+favorites:
+  card_title: "Tus favoritos"
+  add: "Añadir a favoritos"
+  remove: "Quitar de favoritos"
+  empty: "Aún no hay favoritos: toca la estrella de una lección."
+  save_prompt: "Guardar esta lección en tus favoritos"

@@ -443,6 +443,11 @@
     "session_count": "Oturumlar"
   },
   "settings": {
+    "section_hints": "İpuçları",
+    "hints_enabled": "Alıştırmalarda ipucu göster",
+    "hints_enabled_desc": "Her alıştırmada kademeli bir ipucu düğmesi sunar.",
+    "hint_xp_cost": "İpucu başına XP maliyeti",
+    "hint_xp_cost_desc": "İpucu düğmesinde gösterilir. 0 = ücretsiz.",
     "support": {
       "heading": "Destek",
       "description": "Bir şey beklediğiniz gibi çalışmıyor mu? Geliştiricinin sorunu yeniden oluşturmasına yardımcı olmak için son işlemlerinizin bir raporunu oluşturun. Tarayıcınızdan çıkmadan önce her şeyi gözden geçirirsiniz.",
@@ -2617,5 +2622,21 @@
     "schedule_days": "{d} gün sonra tekrar",
     "settings_mastery": "Bir öge üst üste {n} doğru cevaptan sonra pekiştirilmiş sayılır; yanlış cevap onu sıfırlar.",
     "settings_learn_more": "Yöntem hakkında daha fazla bilgi"
+  },
+  "hints": {
+    "reveal": "İpucu göster",
+    "cost": "−{n} XP",
+    "length": "Cevap {n} harften oluşuyor",
+    "first_letters": "“{prefix}” ile başlıyor ({n} harf)",
+    "not": "“{label}” değil",
+    "item": "“{label}” ile başla",
+    "reveal_pair": "“{left}” → “{right}”"
+  },
+  "favorites": {
+    "card_title": "Favorilerin",
+    "add": "Favorilere ekle",
+    "remove": "Favorilerden çıkar",
+    "empty": "Henüz favori yok — bir dersteki yıldıza dokun.",
+    "save_prompt": "Bu dersi favorilerine kaydet"
   }
 }

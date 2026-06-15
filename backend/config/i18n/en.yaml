@@ -414,6 +414,11 @@ progress:
   commit_notes_aria: "Session notes"
   session_count: "Sessions"
 settings:
+  section_hints: "Hints"
+  hints_enabled: "Show hints during exercises"
+  hints_enabled_desc: "Offer a staged hint button on each exercise."
+  hint_xp_cost: "XP cost per hint"
+  hint_xp_cost_desc: "Shown on the hint button. Set to 0 for free hints."
   support:
     heading: "Support"
     description: "Something not working as expected? Create a report of your recent actions to help the developer reproduce it. You review everything before it leaves your browser."
@@ -2412,3 +2417,19 @@ srs:
   schedule_days: "review in {d} day(s)"
   settings_mastery: "An item counts as mastered after {n} correct answers in a row; a wrong answer resets it."
   settings_learn_more: "Learn more about the method"
+
+hints:
+  reveal: "Show a hint"
+  cost: "−{n} XP"
+  length: "The answer has {n} letters"
+  first_letters: "It starts with “{prefix}” ({n} letters)"
+  not: "It's not “{label}”"
+  item: "Start with “{label}”"
+  reveal_pair: "“{left}” goes with “{right}”"
+
+favorites:
+  card_title: "Your favorites"
+  add: "Add to favorites"
+  remove: "Remove from favorites"
+  empty: "No favorites yet — tap the star on a lesson to save it."
+  save_prompt: "Save this lesson to your favorites"
