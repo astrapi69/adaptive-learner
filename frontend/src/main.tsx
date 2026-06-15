@@ -24,6 +24,7 @@ import "./styles/themes/theme-catppuccin-mocha.css";
 import "./styles/themes/theme-soft-pop.css";
 import "./styles/themes/theme-amethyst-haze.css";
 import "./styles/global.css";
+import "./styles/fonts-devanagari.css";
 
 /**
  * Phase 11+: when deployed to a sub-path (e.g. GitHub Pages at

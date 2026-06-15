@@ -2315,6 +2315,7 @@ languages:
   tr: "Türkisch"
   ja: "Japanisch"
   el: "Griechisch"
+  hi: "Hindi"
   script:
     latin: "Lateinisch"
     greek: "Griechisch"

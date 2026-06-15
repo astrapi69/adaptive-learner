@@ -2321,6 +2321,7 @@ languages:
   tr: "Turkish"
   ja: "Japanese"
   el: "Greek"
+  hi: "Hindi"
   script:
     latin: "Latin"
     greek: "Greek"
