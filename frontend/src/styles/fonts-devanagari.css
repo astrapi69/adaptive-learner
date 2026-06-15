@@ -1,0 +1,28 @@
+/*
+ * Devanagari (Hindi) font stack — EXP-027 I18N-03 / §3.5.
+ *
+ * Strategy: prefer system fonts, no web-font download, no bundle bloat
+ * (consistent with the app's offline-first / lazy-i18n posture). Modern
+ * OSes ship Devanagari coverage (Android/macOS/most Linux via the Noto
+ * family; Windows via "Nirmala UI"), so a dedicated stack renders Hindi
+ * correctly without fetching anything. ``font-display`` is irrelevant
+ * for local fonts; a lazy ``@font-face`` web fallback (``local()`` first,
+ * ``unicode-range``-scoped) can be layered in later if a target platform
+ * lacks coverage — kept out for now to avoid a CDN dependency.
+ *
+ * Scoped to the active UI language: the app mirrors the language onto
+ * ``<html lang="…">`` (see useI18n), so ``:lang(hi)`` activates this only
+ * when Hindi is selected. ``body:lang(hi)`` beats the base
+ * ``body { font-family: var(--font-sans) }`` rule; monospace surfaces
+ * keep their own family.
+ */
+
+:root {
+    --font-devanagari: "Noto Sans Devanagari", "Nirmala UI", system-ui,
+        sans-serif;
+}
+
+body:lang(hi),
+[lang="hi"] {
+    font-family: var(--font-devanagari);
+}
