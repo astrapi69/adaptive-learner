@@ -5,6 +5,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import MenuToggleButton from "../shared/MenuToggleButton";
 import NavXpBadge from "./NavXpBadge";
+import NavReviewsBadge from "./NavReviewsBadge";
 import NavAvatar from "./NavAvatar";
 import {
   NavModeBadge,
@@ -240,6 +241,7 @@ export default function Navigation() {
           {t("nav.help", "Help")}
         </Button>
       </div>
+      <NavReviewsBadge />
       <NavXpBadge />
       <NavAvatar />
       <NavSyncIndicator paired={syncPaired} />

@@ -12,8 +12,8 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen, waitFor} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {MemoryRouter, useLocation} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const reviewQueueMock = vi.fn();
@@ -52,10 +52,16 @@ function item(overrides: Partial<ReviewQueueItem> = {}): ReviewQueueItem {
     };
 }
 
+function LocationProbe() {
+    const {pathname} = useLocation();
+    return <span data-testid="location-probe">{pathname}</span>;
+}
+
 function renderCard(userId: string) {
     return render(
         <MemoryRouter>
             <ReviewQueueCard userId={userId} />
+            <LocationProbe />
         </MemoryRouter>,
     );
 }
@@ -132,15 +138,15 @@ describe("ReviewQueueCard: populated queue", () => {
         ).not.toBeInTheDocument();
     });
 
-    it("CTA links to /review/{first-set-id}", async () => {
+    it("CTA navigates to /review/{first-set-id}", async () => {
         reviewQueueMock.mockResolvedValue([
             item({set_id: "language-fr-a1"}),
             item({id: "row-2", set_id: "other-set"}),
         ]);
         renderCard("user-1");
-        const cta = await screen.findByTestId("review-queue-cta");
-        expect(cta).toHaveAttribute(
-            "href",
+        const cta = await screen.findByTestId("review-queue-start");
+        fireEvent.click(cta);
+        expect(screen.getByTestId("location-probe")).toHaveTextContent(
             "/review/language-fr-a1",
         );
     });
