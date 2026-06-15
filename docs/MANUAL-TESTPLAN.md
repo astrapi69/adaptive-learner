@@ -7,6 +7,15 @@ die nur ein Mensch im echten Browser zuverlässig beurteilt:
 Layout, Lesbarkeit, Touch-Bedienung, Theme-Kontraste und das
 Gesamtgefühl des Lernflusses.
 
+> **Dexie-Smoke-Cadence (#552):** Der Dexie-Mode-E2E-Smoke
+> (`make test-dexie-smoke`) läuft **täglich** (Scheduled Run, 04:00 UTC),
+> **vor jedem Release** (Gate in `make release-test`) und auf
+> `release/*`-Branches — **nicht auf jedem PR**. Er ist teuer (~6 Min) und im
+> PR-Kontext selten relevant; der Regressions-Schutz bleibt über den täglichen
+> Lauf + das Release-Gate erhalten (gleiche Logik wie die Mutationstests). Bei
+> Bedarf jederzeit manuell via `workflow_dispatch` oder lokal mit
+> `make test-dexie-smoke` auslösbar.
+
 ## So wird getestet
 
 - Jeder Testfall hat eine Checkbox. Arbeite eine Session nach der

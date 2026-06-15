@@ -2,22 +2,22 @@ name: Dexie smoke
 
 # The primary integration gate for the GitHub-Pages-shape build (#301):
 # every nav-reachable route against a VITE_STORAGE_MODE=dexie build with no
-# backend. Runs on PRs that touch the frontend / e2e surface, plus manual
-# dispatch. The make target builds the dexie frontend and runs the
-# Playwright dexie config (preview-mode, no backend).
+# backend. The make target builds the dexie frontend and runs the Playwright
+# dexie config (preview-mode, no backend).
+#
+# #552 — this is expensive (~6 min: full dexie build + Playwright) and rarely
+# PR-relevant, so it runs OUT of the per-PR feedback loop (same rationale as
+# the mutation-testing workflows): a daily schedule + release branches + manual
+# dispatch. The regression protection stays — it is ALSO a mandatory gate in
+# `make release-test` (DEXIE-MODE-RELEASE-GATE-01), so no release ships without
+# it passing.
 
 on:
+  schedule:
+    # Daily at 04:00 UTC.
+    - cron: "0 4 * * *"
   push:
-    branches: [develop, main]
-  pull_request:
-    branches: [develop]
-    paths:
-      - "frontend/src/**"
-      - "frontend/package.json"
-      - "frontend/package-lock.json"
-      - "e2e/**"
-      - "Makefile"
-      - ".github/workflows/dexie-smoke.yml"
+    branches: ["release/**"]
   workflow_dispatch:
 
 env:
