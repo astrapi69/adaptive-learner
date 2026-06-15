@@ -30,6 +30,7 @@ import NextStepSuggestions from "./NextStepSuggestions";
 import { useCountUp } from "../../hooks/useCountUp";
 import { useFeedbackIntensity } from "../../hooks/useFeedbackIntensity";
 import { useI18n } from "../../hooks/useI18n";
+import LessonFavoriteToggle from "./LessonFavoriteToggle";
 import { useNextStepSuggestions } from "../../hooks/useNextStepSuggestions";
 import { collectFailedExercises } from "../../lib/lesson/error-replay";
 import { tokenDiff } from "../../lib/exercises/token-diff";
@@ -336,6 +337,26 @@ export default function LessonSummary({
         {isCompleted ? <CheckCircle2 size={20} aria-hidden="true" /> : null}
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
       </h2>
+
+      {userId && (
+        <div
+          className="flex items-center gap-1"
+          data-testid="lesson-summary-favorite"
+        >
+          <LessonFavoriteToggle
+            userId={userId}
+            source={source}
+            setId={setId}
+            filename={lessonFilename}
+            title={lesson.title}
+            setTitle=""
+            size={16}
+          />
+          <span className="text-sm text-fg-muted">
+            {t("favorites.save_prompt", "Save this lesson to your favorites")}
+          </span>
+        </div>
+      )}
 
       <div
         className="lesson-summary-stars"

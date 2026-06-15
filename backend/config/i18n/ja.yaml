@@ -2416,3 +2416,10 @@ hints:
   not: "「{label}」ではありません"
   item: "「{label}」から始めましょう"
   reveal_pair: "「{left}」は「{right}」と対応します"
+
+favorites:
+  card_title: "お気に入り"
+  add: "お気に入りに追加"
+  remove: "お気に入りから削除"
+  empty: "お気に入りはまだありません。レッスンの星をタップして保存しましょう。"
+  save_prompt: "このレッスンをお気に入りに保存"

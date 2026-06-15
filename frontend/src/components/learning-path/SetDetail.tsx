@@ -14,9 +14,12 @@ import {useState} from "react";
 import {Link} from "react-router-dom";
 
 import {useI18n} from "../../hooks/useI18n";
+import {useFavorites} from "../../hooks/useFavorites";
+import {readLearnerState} from "../../lib/learnerState";
 import ElementDetailList, {
     type ElementDetailItem,
 } from "../../shared/ElementDetailList";
+import FavoriteToggle from "../../shared/FavoriteToggle";
 import type {SrsBadgeTone} from "../../shared/SrsStatusBadge";
 import LessonRow from "./LessonRow";
 import type {PersonalPathSet} from "../../lib/learning-path/personal-path";
@@ -69,6 +72,8 @@ function toElementItems(
 
 export default function SetDetail({set}: SetDetailProps) {
     const {t} = useI18n();
+    const userId = readLearnerState().userId;
+    const {isFavorite, toggle} = useFavorites(userId);
     const [showOnlyDue, setShowOnlyDue] = useState(false);
     const [openLesson, setOpenLesson] = useState<string | null>(null);
 
@@ -110,7 +115,36 @@ export default function SetDetail({set}: SetDetailProps) {
                     const isOpen = openLesson === lesson.filename;
                     return (
                         <li key={lesson.filename}>
-                            <LessonRow lesson={lesson} />
+                            <div className="flex items-center gap-1">
+                                <div className="min-w-0 flex-1">
+                                    <LessonRow lesson={lesson} />
+                                </div>
+                                <FavoriteToggle
+                                    isFavorite={isFavorite(
+                                        lesson.setId,
+                                        lesson.filename,
+                                    )}
+                                    onToggle={() =>
+                                        toggle({
+                                            source: lesson.source,
+                                            setId: lesson.setId,
+                                            filename: lesson.filename,
+                                            title: lesson.title,
+                                            setTitle: set.title,
+                                        })
+                                    }
+                                    addLabel={t(
+                                        "favorites.add",
+                                        "Add to favorites",
+                                    )}
+                                    removeLabel={t(
+                                        "favorites.remove",
+                                        "Remove from favorites",
+                                    )}
+                                    size={16}
+                                    testId={`favorite-toggle-${lesson.filename}`}
+                                />
+                            </div>
                             {details.length > 0 && (
                                 <button
                                     type="button"
