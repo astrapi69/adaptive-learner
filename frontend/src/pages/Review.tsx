@@ -42,6 +42,7 @@ import ProgressBar from "../shared/ProgressBar";
 import LessonStepNav from "../shared/LessonStepNav";
 import {useI18n} from "../hooks/useI18n";
 import {useReviewLesson} from "../hooks/useReviewLesson";
+import ReviewSummaryView from "../shared/ReviewSummary";
 import type {
     ContentLesson,
     ContentLessonStep,
@@ -394,39 +395,39 @@ interface ReviewSummaryProps {
 
 function ReviewSummary({correct, total, onExit}: ReviewSummaryProps) {
     const {t} = useI18n();
-    const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
     return (
-        <section
-            className="lesson-summary"
-            data-testid="review-summary"
-            aria-label={t("review.summary.aria_label", "Review summary")}
+        <ReviewSummaryView
+            heading={t("review.summary.heading", "Review complete")}
+            corrected={correct}
+            total={total}
+            correctedLabel={t(
+                "review.summary_corrected",
+                "{corrected} of {total} corrected",
+            )
+                .replace("{corrected}", String(correct))
+                .replace("{total}", String(total))}
+            trendLabel={
+                correct > 0
+                    ? t(
+                          "review.summary_trend",
+                          "Nice — your weak spots are getting stronger.",
+                      )
+                    : undefined
+            }
+            nextReviewLabel={t(
+                "review.summary_next",
+                "Mastered items drop out; the rest return for review soon.",
+            )}
+            exitLabel={t("review.back_to_dashboard", "Back to Dashboard")}
+            onExit={onExit}
+            testId="review-summary"
         >
-            <h2>{t("review.summary.heading", "Review complete")}</h2>
-            <ul className="lesson-summary-stats">
-                <li>
-                    <strong>
-                        {t("review.summary.score", "Score")}:
-                    </strong>{" "}
-                    <span data-testid="review-summary-score">
-                        {correct} / {total} ({pct}%)
-                    </span>
-                </li>
-            </ul>
             <p className="review-summary-note">
                 {t(
                     "review.summary.note",
                     "Element scores have been updated. Mastered elements will not appear in the next session.",
                 )}
             </p>
-            <div className="lesson-summary-actions">
-                <Button
-                    type="button"
-                    onClick={onExit}
-                    data-testid="review-summary-exit"
-                >
-                    {t("review.back_to_dashboard", "Back to Dashboard")}
-                </Button>
-            </div>
-        </section>
+        </ReviewSummaryView>
     );
 }

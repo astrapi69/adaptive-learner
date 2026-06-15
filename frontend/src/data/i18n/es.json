@@ -358,6 +358,16 @@
     }
   },
   "review": {
+    "your_answer": "Tu respuesta:",
+    "correct_answer": "Correcto:",
+    "summary_corrected": "{corrected} de {total} corregidos",
+    "summary_trend": "Bien: tus puntos débiles van mejorando.",
+    "summary_next": "Los elementos dominados desaparecen; el resto vuelve pronto para repaso.",
+    "explain_heading": "Por qué fallaste estas",
+    "explain_article_gender": "Fíjate en el género: los sustantivos terminados en -o suelen ser masculinos (el/un), en -a femeninos (la/una). El artículo sigue la terminación.",
+    "explain_spelling_accent": "Comprueba la ortografía exacta y los acentos: una pequeña diferencia cambia la palabra.",
+    "explain_verb_conjugation": "Concuerda el verbo con su sujeto y tiempo antes de responder.",
+    "explain_word_order": "Cuida el orden de las palabras de esta estructura.",
     "page_title": "Repaso",
     "session_title": "Sesión de repaso",
     "subtitle": "{n} elemento(s) para repasar",
@@ -443,6 +453,9 @@
     "session_count": "Sesiones"
   },
   "settings": {
+    "section_review": "Repaso",
+    "explanations_enabled": "Mostrar explicaciones de errores",
+    "explanations_enabled_desc": "Tras una lección, muestra un breve consejo de regla por cada error.",
     "section_hints": "Pistas",
     "hints_enabled": "Mostrar pistas en los ejercicios",
     "hints_enabled_desc": "Ofrece un botón de pista por niveles en cada ejercicio.",

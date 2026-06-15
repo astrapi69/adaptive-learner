@@ -16,6 +16,7 @@ import GamificationSettingsSection from "../components/GamificationSettingsSecti
 import DirectionStrategyControl from "../components/DirectionStrategyControl";
 import SrsTransparencySection from "../components/SrsTransparencySection";
 import HintSettingsControl from "../components/HintSettingsControl";
+import ReviewSettingsControl from "../components/ReviewSettingsControl";
 import LearningProfileControl from "../components/LearningProfileControl";
 import MaxLessonSizeControl from "../components/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../components/PausedLessonsRetentionControl";
@@ -629,6 +630,7 @@ export default function Settings() {
         <MissionSettingsControl />
         <DirectionStrategyControl />
         <HintSettingsControl />
+        <ReviewSettingsControl />
         <SrsTransparencySection />
         <PausedLessonsRetentionControl />
         <MaxLessonSizeControl />
