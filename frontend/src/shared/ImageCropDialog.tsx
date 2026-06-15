@@ -288,6 +288,15 @@ export default function ImageCropDialog({
                 style={{
                   width: displayWidth,
                   height: displayHeight,
+                  // Inline max-width/height:none are load-bearing, not
+                  // cosmetic: global.css has an UNLAYERED
+                  // `img { max-width: 100%; height: auto }`, and unlayered
+                  // CSS beats the layered Tailwind `max-w-none` utility. Without
+                  // the inline override the crop image is capped at the viewport
+                  // width, collapses below the circle, and leaves empty bands
+                  // (#577). Inline style wins over the stylesheet rule.
+                  maxWidth: "none",
+                  maxHeight: "none",
                   transform: `translate(${view.offset.x}px, ${view.offset.y}px)`,
                   transformOrigin: "top left",
                 }}
