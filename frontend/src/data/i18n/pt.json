@@ -560,6 +560,9 @@
     "storage_mode_warning": "Os dados NÃO são sincronizados entre os modos. A sincronização está planejada para uma versão futura.",
     "storage_mode_switch_notice": "Modo de armazenamento salvo. Recarregue a página para trocar para o novo backend.",
     "language_label": "Idioma de exibição",
+    "language_search_placeholder": "Pesquisar idiomas…",
+    "language_no_results": "Nenhum idioma encontrado",
+    "language_search_label": "Pesquisar idiomas",
     "provider_label": "Provedor ativo",
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
@@ -2511,5 +2514,25 @@
     "toolbar_label": "Formatação de texto",
     "underline": "Sublinhado (Ctrl+U)",
     "undo": "Desfazer (Ctrl+Z)"
+  },
+  "languages": {
+    "en": "Inglês",
+    "es": "Espanhol",
+    "fr": "Francês",
+    "pt": "Português",
+    "de": "Alemão",
+    "tr": "Turco",
+    "ja": "Japonês",
+    "el": "Grego",
+    "script": {
+      "latin": "Latino",
+      "greek": "Grego",
+      "cyrillic": "Cirílico",
+      "arabic": "Árabe",
+      "devanagari": "Devanagari",
+      "bengali": "Bengali",
+      "cjk": "CJK",
+      "hangul": "Hangul"
+    }
   }
 }

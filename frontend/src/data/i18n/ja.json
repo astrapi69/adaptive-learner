@@ -560,6 +560,9 @@
     "storage_mode_warning": "データはモード間で同期されません。同期は将来のバージョンで予定されて います。",
     "storage_mode_switch_notice": "ストレージモードを保存しました。新しいバックエンドに切り替えるには ページを再読み込みしてください。",
     "language_label": "表示言語",
+    "language_search_placeholder": "言語を検索…",
+    "language_no_results": "言語が見つかりません",
+    "language_search_label": "言語を検索",
     "provider_label": "アクティブなプロバイダー",
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
@@ -2511,5 +2514,25 @@
     "toolbar_label": "テキストの書式設定",
     "underline": "下線 (Ctrl+U)",
     "undo": "元に戻す (Ctrl+Z)"
+  },
+  "languages": {
+    "en": "英語",
+    "es": "スペイン語",
+    "fr": "フランス語",
+    "pt": "ポルトガル語",
+    "de": "ドイツ語",
+    "tr": "トルコ語",
+    "ja": "日本語",
+    "el": "ギリシャ語",
+    "script": {
+      "latin": "ラテン",
+      "greek": "ギリシャ",
+      "cyrillic": "キリル",
+      "arabic": "アラビア",
+      "devanagari": "デーヴァナーガリー",
+      "bengali": "ベンガル",
+      "cjk": "CJK",
+      "hangul": "ハングル"
+    }
   }
 }
