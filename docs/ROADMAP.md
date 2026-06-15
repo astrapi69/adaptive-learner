@@ -114,9 +114,9 @@ finished:
 The architecture thread is done; the next minor returns to user-facing
 features and opportunistic hygiene:
 
-- **#508 — User profile picture (P3, OPEN).** Avatar in nav + About +
-  Dashboard, both storage modes (Dexie blob + API filesystem). The only
-  open user-facing feature after the v1.79.0 line.
+- **#508 — User profile picture — SHIPPED on `develop` (#535).** Avatar in
+  nav + About + Dashboard (`InitialsAvatar` + `AvatarUpload` shared
+  primitives), both storage modes. Lands in the v1.80.0 release.
 - **BACKEND-RADON-REMAINDER-01 (P3, opportunistic).** Burn down any new
   backend module above the radon warn band (cc > 15) as it surfaces; the
   baseline is empty, so this is steady-state hygiene under the live gate.

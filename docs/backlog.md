@@ -103,10 +103,10 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
-- [ ] **#508 — User profile picture**: let the learner pick/upload an
-  avatar shown in the nav + About + Dashboard. Both storage modes (Dexie
-  blob + API filesystem, like content assets); no backend account system.
-  Only open user-facing feature after the v1.79.0 line. Filed 2026-06.
+- [x] **#508 — User profile picture** — SHIPPED on `develop` (#535), pending
+  the v1.80.0 release. Avatar in nav + About + Dashboard (`InitialsAvatar` +
+  `AvatarUpload` shared primitives), both storage modes; no backend account
+  system. Closed 2026-06-15.
 - [ ] **BACKEND-RADON-REMAINDER-01**: opportunistic backend complexity
   burn-down for any module still above the radon warn band (cc > 15) now
   that the Phase 2 hard gate (#494/#495: blocks cc > 20, warns > 15) is
