@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.79.0** (minor release -
+- **Current state:** **v1.80.0** (minor release -
   **XP visibility + bidirectional matching + complexity burn-down complete**:
   two user-facing features land on the maintenance thread. **XP visibility**
   (#505/#510) surfaces points where the learner sees them - a persistent header
