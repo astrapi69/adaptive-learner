@@ -529,6 +529,9 @@ settings:
   storage_mode_warning: Daten werden zwischen den Modi NICHT synchronisiert. Synchronisation ist fuer eine spaetere Version geplant.
   storage_mode_switch_notice: Speicher-Modus gespeichert. Seite neu laden, um den neuen Modus zu aktivieren.
   language_label: Anzeigesprache
+  language_search_placeholder: "Sprachen suchen…"
+  language_no_results: "Keine Sprachen gefunden"
+  language_search_label: "Sprachen suchen"
   provider_label: Aktiver Anbieter
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
@@ -2303,3 +2306,21 @@ editor:
   toolbar_label: "Textformatierung"
   underline: "Unterstrichen (Strg+U)"
   undo: "Rückgängig (Strg+Z)"
+languages:
+  en: "Englisch"
+  es: "Spanisch"
+  fr: "Französisch"
+  pt: "Portugiesisch"
+  de: "Deutsch"
+  tr: "Türkisch"
+  ja: "Japanisch"
+  el: "Griechisch"
+  script:
+    latin: "Lateinisch"
+    greek: "Griechisch"
+    cyrillic: "Kyrillisch"
+    arabic: "Arabisch"
+    devanagari: "Devanagari"
+    bengali: "Bengalisch"
+    cjk: "CJK"
+    hangul: "Hangul"

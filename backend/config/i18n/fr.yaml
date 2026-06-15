@@ -529,6 +529,9 @@ settings:
   storage_mode_warning: Les donnees ne sont PAS synchronisees entre les modes. La synchronisation est prevue pour une future version.
   storage_mode_switch_notice: Mode de stockage enregistre. Recharge la page pour activer le nouveau backend.
   language_label: Langue d'affichage
+  language_search_placeholder: "Rechercher des langues…"
+  language_no_results: "Aucune langue trouvée"
+  language_search_label: "Rechercher des langues"
   provider_label: Fournisseur actif
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
@@ -2301,3 +2304,21 @@ editor:
   toolbar_label: "Mise en forme du texte"
   underline: "Souligné (Ctrl+U)"
   undo: "Annuler (Ctrl+Z)"
+languages:
+  en: "Anglais"
+  es: "Espagnol"
+  fr: "Français"
+  pt: "Portugais"
+  de: "Allemand"
+  tr: "Turc"
+  ja: "Japonais"
+  el: "Grec"
+  script:
+    latin: "Latin"
+    greek: "Grec"
+    cyrillic: "Cyrillique"
+    arabic: "Arabe"
+    devanagari: "Devanagari"
+    bengali: "Bengali"
+    cjk: "CJK"
+    hangul: "Hangûl"

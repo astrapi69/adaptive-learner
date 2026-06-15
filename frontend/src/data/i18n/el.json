@@ -560,6 +560,9 @@
     "storage_mode_warning": "Τα δεδομένα ΔΕΝ συγχρονίζονται μεταξύ των λειτουργιών. Ο συγχρονισμός σχεδιάζεται για μελλοντική έκδοση.",
     "storage_mode_switch_notice": "Η λειτουργία αποθήκευσης αποθηκεύτηκε. Φόρτωσε ξανά τη σελίδα για να ενεργοποιήσεις τη νέα.",
     "language_label": "Γλώσσα εμφάνισης",
+    "language_search_placeholder": "Αναζήτηση γλωσσών…",
+    "language_no_results": "Δεν βρέθηκαν γλώσσες",
+    "language_search_label": "Αναζήτηση γλωσσών",
     "provider_label": "Ενεργός πάροχος",
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
@@ -2511,5 +2514,25 @@
     "toolbar_label": "Μορφοποίηση κειμένου",
     "underline": "Υπογράμμιση (Ctrl+U)",
     "undo": "Αναίρεση (Ctrl+Z)"
+  },
+  "languages": {
+    "en": "Αγγλικά",
+    "es": "Ισπανικά",
+    "fr": "Γαλλικά",
+    "pt": "Πορτογαλικά",
+    "de": "Γερμανικά",
+    "tr": "Τουρκικά",
+    "ja": "Ιαπωνικά",
+    "el": "Ελληνικά",
+    "script": {
+      "latin": "Λατινικό",
+      "greek": "Ελληνικό",
+      "cyrillic": "Κυριλλικό",
+      "arabic": "Αραβικό",
+      "devanagari": "Ντεβαναγκάρι",
+      "bengali": "Μπενγκάλι",
+      "cjk": "CJK",
+      "hangul": "Χάνγκουλ"
+    }
   }
 }

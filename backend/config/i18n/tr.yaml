@@ -529,6 +529,9 @@ settings:
   storage_mode_warning: Veriler modlar arasında SENKRONİZE EDİLMEZ. Senkronizasyon gelecek bir sürüm için planlanıyor.
   storage_mode_switch_notice: Depolama modu kaydedildi. Yeni arka uca geçmek için sayfayı yeniden yükle.
   language_label: Görüntüleme dili
+  language_search_placeholder: "Dil ara…"
+  language_no_results: "Dil bulunamadı"
+  language_search_label: "Dil ara"
   provider_label: Aktif sağlayıcı
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
@@ -2299,3 +2302,21 @@ editor:
   toolbar_label: "Metin biçimlendirme"
   underline: "Altı çizili (Ctrl+U)"
   undo: "Geri al (Ctrl+Z)"
+languages:
+  en: "İngilizce"
+  es: "İspanyolca"
+  fr: "Fransızca"
+  pt: "Portekizce"
+  de: "Almanca"
+  tr: "Türkçe"
+  ja: "Japonca"
+  el: "Yunanca"
+  script:
+    latin: "Latin"
+    greek: "Yunan"
+    cyrillic: "Kiril"
+    arabic: "Arap"
+    devanagari: "Devanagari"
+    bengali: "Bengal"
+    cjk: "CJK"
+    hangul: "Hangul"

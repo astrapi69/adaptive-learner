@@ -529,6 +529,9 @@ settings:
   storage_mode_warning: Data is NOT synced between modes. Sync is planned for a future version.
   storage_mode_switch_notice: Storage mode saved. Reload the page to switch to the new backend.
   language_label: Display language
+  language_search_placeholder: "Search languages…"
+  language_no_results: "No languages found"
+  language_search_label: "Search languages"
   provider_label: Active provider
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
@@ -2309,3 +2312,21 @@ editor:
   toolbar_label: "Text formatting"
   underline: "Underline (Ctrl+U)"
   undo: "Undo (Ctrl+Z)"
+languages:
+  en: "English"
+  es: "Spanish"
+  fr: "French"
+  pt: "Portuguese"
+  de: "German"
+  tr: "Turkish"
+  ja: "Japanese"
+  el: "Greek"
+  script:
+    latin: "Latin"
+    greek: "Greek"
+    cyrillic: "Cyrillic"
+    arabic: "Arabic"
+    devanagari: "Devanagari"
+    bengali: "Bengali"
+    cjk: "CJK"
+    hangul: "Hangul"

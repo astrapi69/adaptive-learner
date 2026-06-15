@@ -37,7 +37,8 @@ import SettingsSidebar from "../components/settings/SettingsSidebar";
 import SettingsMobileMenu from "../components/settings/SettingsMobileMenu";
 import type { SidebarGroup } from "../lib/settings/sidebar-model";
 import { useI18n } from "../hooks/useI18n";
-import { SUPPORTED_LANGUAGES } from "../lib/constants";
+import { buildLanguageOptions } from "../lib/languages";
+import LanguagePicker from "../shared/LanguagePicker";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
 import {
   readLessonShortcutsEnabled,
@@ -385,21 +386,27 @@ export default function Settings() {
 
       <section className="settings-section" hidden={activeTab !== "general"}>
         <h2 className="settings-section-title">{t("settings.section_language", "Language")}</h2>
-        <label className="form-row">
-          <span className="form-label">{t("settings.language_label", "Display language")}</span>
-          <select
-            data-testid="settings-language"
-            value={lang}
-            disabled={busy === "lang"}
-            onChange={(e) => handleLangChange(e.target.value)}
-          >
-            {SUPPORTED_LANGUAGES.map((code) => (
-              <option key={code} value={code}>
-                {code.toUpperCase()}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="form-row">
+          <span className="form-label" id="settings-language-label">
+            {t("settings.language_label", "Display language")}
+          </span>
+          <div style={{ minWidth: "16rem", flex: 1 }}>
+            <LanguagePicker
+              testId="settings-language"
+              languages={buildLanguageOptions(t)}
+              selectedValue={lang}
+              disabled={busy === "lang"}
+              onChange={handleLangChange}
+              ariaLabel={t("settings.language_label", "Display language")}
+              searchPlaceholder={t(
+                "settings.language_search_placeholder",
+                "Search languages…",
+              )}
+              searchAriaLabel={t("settings.language_search_label", "Search languages")}
+              noResultsLabel={t("settings.language_no_results", "No languages found")}
+            />
+          </div>
+        </div>
       </section>
 
       <section
