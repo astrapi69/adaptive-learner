@@ -20,7 +20,7 @@ import yaml
 
 I18N_DIR = Path(__file__).resolve().parent.parent / "config" / "i18n"
 REFERENCE_LANG = "en"
-TARGET_LANGS = ["de", "es", "fr", "el", "pt", "tr", "ja"]
+TARGET_LANGS = ["de", "es", "fr", "el", "pt", "tr", "ja", "hi"]
 PLACEHOLDER_RE = re.compile(r"\{[a-z_][a-z0-9_]*\}")
 
 

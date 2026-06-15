@@ -2311,6 +2311,7 @@ languages:
   tr: "トルコ語"
   ja: "日本語"
   el: "ギリシャ語"
+  hi: "ヒンディー語"
   script:
     latin: "ラテン"
     greek: "ギリシャ"

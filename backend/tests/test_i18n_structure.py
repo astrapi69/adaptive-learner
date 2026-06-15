@@ -20,7 +20,7 @@ import yaml
 
 I18N_DIR = Path(__file__).resolve().parent.parent / "config" / "i18n"
 REFERENCE = "en"
-TRANSLATIONS = ["de", "es", "fr", "el", "pt", "tr", "ja"]
+TRANSLATIONS = ["de", "es", "fr", "el", "pt", "tr", "ja", "hi"]
 
 
 def _load(lang: str) -> dict:

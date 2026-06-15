@@ -2311,6 +2311,7 @@ languages:
   tr: "Türkçe"
   ja: "Japonca"
   el: "Yunanca"
+  hi: "Hintçe"
   script:
     latin: "Latin"
     greek: "Yunan"
