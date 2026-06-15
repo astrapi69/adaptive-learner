@@ -39,6 +39,10 @@ import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
 import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
+import {
+    useKeyboardShortcuts,
+    type ShortcutDefinition,
+} from "../../shared/useKeyboardShortcuts";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
@@ -283,6 +287,25 @@ function PictureChoiceExercise(
         if (submitted) return;
         setSelected(index);
     };
+
+    // Lesson shortcut: number keys 1..9 pick the Nth displayed choice
+    // (disabled once the answer is submitted). See the shortcut help
+    // overlay (``?``) for the full catalogue.
+    const numberShortcuts = useMemo<ShortcutDefinition[]>(
+        () =>
+            choices.slice(0, 9).map((choice, position) => ({
+                id: `picture-choice-${choice.index}`,
+                key: String(position + 1),
+                context: "lesson",
+                description: "Select an answer option",
+                action: () => handleSelect(choice.index),
+            })),
+        // handleSelect closes over `submitted`; it early-returns after
+        // submit, and the hook is also disabled below.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [choices],
+    );
+    useKeyboardShortcuts(numberShortcuts, {enabled: !submitted});
 
     if (choices.length === 0) {
         return (

@@ -202,6 +202,36 @@ Alle Tests aus Session 1-4 noch einmal, plus:
 
 ---
 
+## Session 8: Tastenkürzel (optional)
+
+Das globale Tastenkürzel-System (#585). Alle Kürzel sind in der
+Hilfe-Übersicht dokumentiert (Taste `?`).
+
+**Global**
+
+- [ ] `?` öffnet die Tastenkürzel-Übersicht; erneut `?` oder `Esc`
+      schließt sie wieder.
+- [ ] `Ctrl`/`⌘` + `,` öffnet die Einstellungen.
+- [ ] `Ctrl`/`⌘` + `K` fokussiert die Inhaltssuche (im Content-Browser).
+- [ ] In einem Textfeld feuern die Kürzel NICHT (Tippen von `?`
+      oder `d` schreibt das Zeichen, statt zu navigieren).
+
+**Navigation**
+
+- [ ] `Alt` + `D` → Dashboard, `Alt` + `S` → Einstellungen,
+      `Alt` + `C` → Inhalte, `Alt` + `P` → Statistik.
+
+**In einer Lektion**
+
+- [ ] `Enter` prüft die Antwort und springt dann weiter.
+- [ ] Bei einer Bild-/Auswahlübung wählen die Tasten `1`–`4` (bis
+      `9`) die jeweilige Option; nach dem Prüfen reagieren sie nicht
+      mehr.
+- [ ] In einer Zuordnungsübung macht `Ctrl`/`⌘` + `Z` die zuletzt
+      gebildete Zuordnung rückgängig.
+
+---
+
 ## Ergebnis-Format
 
 Sammle pro Session die gefundenen Fehler als Liste. Pro Fehler:

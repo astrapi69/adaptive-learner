@@ -2567,5 +2567,22 @@
     "pairs_title": "Progress by language pair",
     "pairs_empty": "Download a lesson set to start tracking progress.",
     "pair_level_aria": "{level}: {percent}% complete"
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "group_global": "Global",
+    "group_navigation": "Navigation",
+    "group_lesson": "During a lesson",
+    "show_help": "Show keyboard shortcuts",
+    "open_settings": "Open settings",
+    "search_content": "Search content",
+    "close_dialog": "Close dialog",
+    "go_dashboard": "Go to dashboard",
+    "go_settings": "Go to settings",
+    "go_content": "Go to content",
+    "go_statistics": "Go to statistics",
+    "lesson_enter": "Check answer, then continue",
+    "lesson_choice": "Select an answer option",
+    "lesson_undo_match": "Undo the last match"
   }
 }
