@@ -16,6 +16,17 @@ Gesamtgefühl des Lernflusses.
 > Bedarf jederzeit manuell via `workflow_dispatch` oder lokal mit
 > `make test-dexie-smoke` auslösbar.
 
+> **CI-Nachtschicht (#575):** PRs laufen **nur Korrektheits-Gates** (Backend-/
+> Plugin-/Frontend-Tests, ruff + mypy, Pre-commit, Docs-Drift, der
+> Complexity-Baseline-Gate). Alles Nicht-Merge-Kritische läuft auf der
+> **Nachtschicht** (Schedule + `workflow_dispatch`): **Security-Scan**
+> (pip-audit / npm audit / bandit — wöchentlich + `push: release/**`),
+> **Coverage** (täglich), **Content-Stats** (täglich; prüft die README gegen
+> ein frisches Content-Repo-Checkout) und der **Complexity-Report**
+> (voller Warn-View, täglich). Faustregel: Schlägt ein Job nicht
+> merge-kritisch fehl, gehört er in die Nachtschicht, nicht auf den
+> `pull_request`-Trigger.
+
 ## So wird getestet
 
 - Jeder Testfall hat eine Checkbox. Arbeite eine Session nach der
