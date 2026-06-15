@@ -1727,6 +1727,11 @@
     }
   },
   "content": {
+    "book": {
+      "companion": "Συνοδευτικό βιβλίου",
+      "by_author": "από {author}",
+      "view": "Στο βιβλίο"
+    },
     "books": {
       "title": "Προτεινόμενα βιβλία",
       "view_on_amazon": "Δείτε στο Amazon"

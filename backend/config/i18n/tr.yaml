@@ -1591,6 +1591,10 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  book:
+    companion: "Kitap eki"
+    by_author: "{author}"
+    view: "Kitaba git"
   books:
     title: "Önerilen kitaplar"
     view_on_amazon: "Amazon'da görüntüle"

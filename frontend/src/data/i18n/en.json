@@ -1727,6 +1727,11 @@
     }
   },
   "content": {
+    "book": {
+      "companion": "Book companion",
+      "by_author": "by {author}",
+      "view": "To the book"
+    },
     "books": {
       "title": "Recommended books",
       "view_on_amazon": "View on Amazon"

@@ -1593,6 +1593,10 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  book:
+    companion: "Complément du livre"
+    by_author: "par {author}"
+    view: "Voir le livre"
   books:
     title: "Livres recommandés"
     view_on_amazon: "Voir sur Amazon"

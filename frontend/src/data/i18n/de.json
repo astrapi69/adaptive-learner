@@ -1727,6 +1727,11 @@
     }
   },
   "content": {
+    "book": {
+      "companion": "Buch-Begleiter",
+      "by_author": "von {author}",
+      "view": "Zum Buch"
+    },
     "books": {
       "title": "Empfohlene Bücher",
       "view_on_amazon": "Auf Amazon ansehen"

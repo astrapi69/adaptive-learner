@@ -1591,6 +1591,10 @@ lesson:
     action_restart: "最初からやり直す"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  book:
+    companion: "書籍ガイド"
+    by_author: "{author} 著"
+    view: "本を見る"
   books:
     title: "おすすめの書籍"
     view_on_amazon: "Amazonで見る"
