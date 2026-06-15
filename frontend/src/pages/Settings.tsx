@@ -7,6 +7,7 @@ import AboutTab from "../components/about/AboutTab";
 import IdentitySection from "../components/about/IdentitySection";
 import BackupSection from "../components/BackupSection";
 import CacheManagementSection from "../components/CacheManagementSection";
+import InstallAppSection from "../components/InstallAppSection";
 import ContentRepoSettingsSection from "../components/ContentRepoSettingsSection";
 import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
@@ -728,6 +729,7 @@ export default function Settings() {
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
         <ContentRepoSettingsSection />
         <CacheManagementSection />
+        <InstallAppSection />
         <DangerZoneSection />
       </div>
 

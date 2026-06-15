@@ -46,11 +46,22 @@ function readQueue(): SyncQueueItem[] {
   }
 }
 
+/** Event name fired whenever the queue size changes (#604). */
+export const SYNC_QUEUE_CHANGED_EVENT = "adaptive-learner:sync-queue-changed";
+
 function writeQueue(items: SyncQueueItem[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   } catch {
     // Quota / disabled storage — nothing actionable; drop silently.
+  }
+  // Let reactive consumers (the nav pending badge) update without polling.
+  try {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent(SYNC_QUEUE_CHANGED_EVENT));
+    }
+  } catch {
+    /* ignore */
   }
 }
 

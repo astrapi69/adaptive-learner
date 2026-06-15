@@ -56,6 +56,8 @@ data_export:
   cat_settings: "Ajustes"
   cat_ai_config: "Copia de clave de IA"
 nav:
+  offline_long: "Sin conexión — las sesiones anteriores siguen disponibles"
+  sync_pending: "{n} cambio(s) pendientes de sincronizar"
   statistics: "Estadísticas"
   profile: "Tu perfil"
   learning_path: "Ruta de aprendizaje"
@@ -424,6 +426,13 @@ progress:
   commit_notes_aria: "Notas de la sesión"
   session_count: "Sesiones"
 settings:
+  install:
+    heading: "Instalar aplicación"
+    description: "Instala Adaptive Learner como app para acceso sin conexión y pantalla completa."
+    button: "Instalar aplicación"
+    already: "Ya instalada"
+    unavailable: "Tu navegador aún no ha ofrecido la instalación."
+    installed: "Aplicación instalada."
   section_review: "Repaso"
   explanations_enabled: "Mostrar explicaciones de errores"
   explanations_enabled_desc: "Tras una lección, muestra un breve consejo de regla por cada error."

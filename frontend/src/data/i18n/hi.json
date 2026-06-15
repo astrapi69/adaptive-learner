@@ -62,6 +62,8 @@
     "cat_ai_config": "AI key backup"
   },
   "nav": {
+    "offline_long": "ऑफ़लाइन — पिछले सत्र पढ़ने योग्य रहते हैं",
+    "sync_pending": "{n} परिवर्तन सिंक होने की प्रतीक्षा में",
     "statistics": "आँकड़े",
     "profile": "आपकी प्रोफ़ाइल",
     "learning_path": "अधिगम पथ",
@@ -453,6 +455,14 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "install": {
+      "heading": "ऐप इंस्टॉल करें",
+      "description": "ऑफ़लाइन उपयोग और फ़ुल-स्क्रीन अनुभव के लिए Adaptive Learner को ऐप के रूप में इंस्टॉल करें।",
+      "button": "ऐप इंस्टॉल करें",
+      "already": "पहले से इंस्टॉल है",
+      "unavailable": "आपके ब्राउज़र ने अभी तक इंस्टॉल का विकल्प नहीं दिया है।",
+      "installed": "ऐप इंस्टॉल हो गया।"
+    },
     "section_review": "समीक्षा",
     "explanations_enabled": "त्रुटि स्पष्टीकरण दिखाएँ",
     "explanations_enabled_desc": "पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।",
