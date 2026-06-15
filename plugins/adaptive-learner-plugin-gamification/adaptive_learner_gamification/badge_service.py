@@ -350,6 +350,86 @@ def dynamic_tier_keys() -> set[str]:
     return set(_TIER_METRICS.keys())
 
 
+# Progress metric per catalog badge: ``key -> (metric_fn, required)``.
+# ``metric_fn`` returns the user's current value toward the badge; the
+# boolean-achievement badges expose a 0/1 metric with ``required = 1``,
+# the count/level/streak badges reuse the same helper + threshold the
+# evaluator uses. Dynamic-tier badges (lessons_10, review_master) are
+# NOT listed here — their ``required`` is the next unearned tier
+# threshold, computed in :func:`badge_progress_map`.
+_PROGRESS_SPECS: dict[str, tuple[Callable[[Any, str], int], int]] = {
+    "first_session": (_completed_session_count, 1),
+    "first_assessment": (lambda db, uid: 1 if _has_assessment(db, uid) else 0, 1),
+    "first_import": (_import_count, 1),
+    "streak_3_days": (_current_streak, 3),
+    "streak_7_days": (_current_streak, 7),
+    "streak_30_days": (_current_streak, 30),
+    "streak_100_days": (_current_streak, 100),
+    "all_six_methods": (lambda db, uid: len(_distinct_methods_used(db, uid)), 6),
+    "deductive_10": (lambda db, uid: _session_count_for_method(db, uid, "deductive"), 10),
+    "inductive_10": (lambda db, uid: _session_count_for_method(db, uid, "inductive"), 10),
+    "error_based_10": (lambda db, uid: _session_count_for_method(db, uid, "error_based"), 10),
+    "dialogic_10": (lambda db, uid: _session_count_for_method(db, uid, "dialogic"), 10),
+    "contextual_10": (lambda db, uid: _session_count_for_method(db, uid, "contextual"), 10),
+    "ai_adaptive_10": (lambda db, uid: _session_count_for_method(db, uid, "ai_adaptive"), 10),
+    "five_cycles_one_session": (_max_cycle_count_in_one_session, 5),
+    "sessions_10": (_completed_session_count, 10),
+    "sessions_50": (_completed_session_count, 50),
+    "sessions_100": (_completed_session_count, 100),
+    "level_5": (_user_level, 5),
+    "level_10": (_user_level, 10),
+    "level_25": (_user_level, 25),
+    "two_languages": (_languages_used, 2),
+    "three_providers": (_provider_count, 3),
+    "import_10_conversations": (_import_count, 10),
+    "first_lesson": (_completed_lesson_count, 1),
+    "three_star_streak": (
+        lambda db, uid: 1 if _last_n_lessons_all_three_star(db, uid, n=3) else 0,
+        1,
+    ),
+}
+
+
+def _next_tier_threshold(value: int, thresholds: dict[str, dict[str, int]] | None) -> int:
+    """The smallest tier threshold ``value`` has not yet reached.
+
+    Used as the ``required`` for a dynamic-tier badge's progress bar:
+    progress toward the next tier, or the top (gold) threshold once the
+    metric is maxed out so the bar reads full.
+    """
+    if not thresholds:
+        return max(1, value)
+    targets = sorted(spec["threshold"] for spec in thresholds.values())
+    for target in targets:
+        if value < target:
+            return target
+    return targets[-1]
+
+
+def badge_progress_map(db: Session, user_id: str) -> dict[str, dict[str, int]]:
+    """Per-badge ``{current, required}`` progress for every catalog key.
+
+    ``current`` is clamped to ``required`` so a consumer can render a
+    bar as ``current / required`` without overflow. Dynamic-tier badges
+    report progress toward their next unearned tier.
+    """
+    from app.models import Badge
+
+    out: dict[str, dict[str, int]] = {}
+    for key, (metric_fn, required) in _PROGRESS_SPECS.items():
+        current = int(metric_fn(db, user_id))
+        out[key] = {"current": min(current, required), "required": required}
+    for key, metric_fn in _TIER_METRICS.items():
+        badge = db.query(Badge).filter(Badge.key == key).first()
+        thresholds = (
+            json.loads(badge.tier_thresholds) if badge and badge.tier_thresholds else None
+        )
+        value = int(metric_fn(db, user_id))
+        required = _next_tier_threshold(value, thresholds)
+        out[key] = {"current": min(value, required), "required": required}
+    return out
+
+
 def _tier_index(tier: str | None) -> int:
     """Ordinal of a tier (bronze=0 < silver=1 < gold=2); -1 if None."""
     return _TIER_ORDER.index(tier) if tier in _TIER_ORDER else -1
