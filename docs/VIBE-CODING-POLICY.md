@@ -49,10 +49,16 @@ must be verified against the layer architecture.
 
 - `.claude/rules/architecture.md` — agents read this before every task.
 - Cohesion Audit (`docs/COHESION-AUDIT.md`) — periodic measurement.
-- Cohesion Watcher (`scripts/check-file-sizes.sh`) — CI gate, WARN >500
+- Cohesion Watcher (`scripts/check-file-sizes.sh`, #371) — CI gate, WARN >500
   lines, ERROR >1000 lines (blocks merge).
-- Ratchet Baseline (`.filesize-baseline`) — existing god-files frozen at
-  current size, may not grow.
+- Ratchet Baseline (`.filesize-baseline`) — now **EMPTY**: the god-file
+  decomposition campaign (#372) is complete, so the >1000-line hard gate
+  stands with no exceptions.
+- Complexity Watcher (#400) — radon (Python) + eslint (TS); the Phase 2 radon
+  hard gate (#494/#495) **blocks cc > 20, warns > 15**. `.complexity-baseline`
+  is also **EMPTY** (burn-down complete).
+- Security-scan watcher (#378) — pip-audit + npm audit + bandit (warn-only).
+- plugin-tests CI job (#471) — runs the full plugin suite per PR.
 - `madge` — zero circular dependency guarantee (verified per PR in #354).
 
 **Open gap:** No automated CI check for layer boundary violations (e.g. a
@@ -67,8 +73,10 @@ test suite before merge.
 **Rules:**
 
 - Every PR must pass: `tsc --noEmit` (strict), `ESLint --max-warnings 0`,
-  `ruff check + format`, `mypy`, the full pytest suite (1200+ tests), the
-  full Vitest suite (3960+ tests), and the Dexie Smoke Gate (73 specs).
+  `ruff check + format`, `mypy`, the full pytest suite (1215 backend + 1018
+  plugin tests), the full Vitest suite (4139 tests), and the Dexie Smoke Gate
+  (73 specs). (Test counts verified 2026-06-15; see `docs/audits/` for the
+  canonical coverage figures.)
 - Behaviour-changing code requires accompanying tests. Code without test
   coverage is not merged.
 - Backup-touching changes require a manual round-trip test (export -> import
@@ -120,9 +128,12 @@ naming. Refactoring is not optional, it is scheduled.
 **Enforcement:**
 
 - God-File Initiative (#353 backend, #354 frontend) — completed.
-- Cohesion Watcher (#370) — prevents new god-files from forming.
-- Ratchet Baseline — #372 tracks the 8 remaining files >1000 lines.
-- Kohäsions-Audit — periodic measurement, score tracked over time.
+- Cohesion Watcher (#371) — prevents new god-files from forming.
+- Ratchet Baseline (#372) — **complete**: all baselined god-files split,
+  `.filesize-baseline` empty, the >1000-line hard gate stands with no
+  exceptions. The complexity burn-down (#498–#504) is likewise complete,
+  `.complexity-baseline` empty.
+- Kohäsions-Audit — periodic measurement, score re-rated 7/10 → 9/10 (2026-06-15).
 
 ## 6. Git Hygiene and Code Review
 
