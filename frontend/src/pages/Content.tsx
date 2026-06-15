@@ -48,7 +48,8 @@ import {
   fetchBookCompanion,
   isFetchableSource,
 } from "../lib/content/book-companion";
-import BookCompanion from "../components/content/BookCompanion";
+import ContentBookCompanions from "../components/content/ContentBookCompanions";
+import ContentContributionsSection from "../components/content/ContentContributionsSection";
 import { splitHighlight } from "../lib/content/content-search";
 import { useContentSearch } from "../hooks/useContentSearch";
 import { useContentSharing } from "../hooks/useContentSharing";
@@ -56,15 +57,13 @@ import { useI18n } from "../hooks/useI18n";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { useSourceLanguages } from "../hooks/useSourceLanguages";
 import {
-  baseLanguage,
   buildContentTree,
   type FoldedUserLesson,
   type UserFoldInput,
 } from "../lib/content/content-tree";
-import { resolveTreePlacement } from "../lib/content/tree-placement";
+import { computeUserFold } from "../lib/content/user-fold";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
-  CONTRIBUTOR_THRESHOLD,
   listContributions,
   recordContribution,
   type SharedContribution,
@@ -456,47 +455,15 @@ export default function ContentPage() {
     return s.source === sourceFilter;
   });
 
-  // EXP-026 / UGC-04 — fold each user-generated set's lessons into the
-  // matching published node. The stored ``domain`` field is overloaded
-  // with the set's ORIGIN ("analysis"/"adaptive"/"imported"), so we
-  // derive the real content domain for placement: a language pair when
-  // source != target, otherwise knowledge. A set is only folded once
-  // its lessons have loaded (so it never flickers out of My Lessons
-  // mid-load); matched sets leave the My Lessons fallback (decision E4),
-  // unmatched ones stay.
-  const userSetsByKey: Record<string, ContentSetEntry> = Object.fromEntries(
-    userSets.map((s) => [`${s.source}#${s.id}`, s]),
+  // EXP-026 / UGC-04 — fold user-generated sets into the matching
+  // published node (pure helper extracted in #541 to keep this component
+  // under the complexity gate). Matched sets leave the My Lessons
+  // fallback (decision E4); unmatched ones stay.
+  const { matchedFold, unmatchedUserSets, userSetsByKey } = computeUserFold(
+    userSets,
+    visibleSets,
+    userLessonsBySet,
   );
-  const userPlacements = userSets.map((set) => {
-    const lessons = userLessonsBySet[`${set.source}#${set.id}`];
-    const contentDomain =
-      baseLanguage(set.source_language) !== baseLanguage(set.target_language)
-        ? "language"
-        : "knowledge";
-    const variationOf = lessons?.find((l) => l.variation_of)?.variation_of ?? null;
-    const matched =
-      lessons !== undefined &&
-      resolveTreePlacement(
-        {
-          source_language: set.source_language,
-          target_language: set.target_language,
-          level: set.level,
-          domain: contentDomain,
-          title: set.title,
-          variationOf,
-        },
-        visibleSets,
-      ).matched;
-    return {
-      set,
-      foldInput: { set: { ...set, domain: contentDomain }, lessons: lessons ?? [] },
-      matched,
-    };
-  });
-  const matchedFold: UserFoldInput[] = userPlacements
-    .filter((p) => p.matched)
-    .map((p) => p.foldInput);
-  const unmatchedUserSets = userPlacements.filter((p) => !p.matched).map((p) => p.set);
   const tree = buildContentTree(visibleSets, activeSources, matchedFold);
 
   const handlePlayFolded = (lesson: FoldedUserLesson) =>
@@ -536,16 +503,7 @@ export default function ContentPage() {
 
       {/* EXP-025 / AUTH-02 — book-companion headers for connected repos
           that accompany a published book. Hidden while searching. */}
-      {!searchResult.active && Object.keys(bookCompanions).length > 0 && (
-        <section
-          className="mb-4 flex flex-col gap-2"
-          data-testid="content-book-companions"
-        >
-          {Object.entries(bookCompanions).map(([source, book]) => (
-            <BookCompanion key={source} book={book} source={source} />
-          ))}
-        </section>
-      )}
+      {!searchResult.active && <ContentBookCompanions companions={bookCompanions} />}
 
       {/* UX overhaul C1 — compact toolbar: search FIRST (full width),
           then icon-only action buttons (icon + label from md up). */}
@@ -673,41 +631,8 @@ export default function ContentPage() {
       )}
 
       {/* Phase 64D — My Contributions (local sharing history). */}
-      {!searchResult.active && contributions.length > 0 && (
-        <section
-          className="content-section content-my-contributions"
-          data-testid="content-my-contributions"
-        >
-          <h2>{t("content.contributions.title", "My Contributions")}</h2>
-          <p data-testid="content-contributions-count">
-            {t(
-              "content.contributions.count",
-              "You've contributed {n} lesson(s) to the community.",
-            ).replace("{n}", String(contributions.length))}
-          </p>
-          {contributions.length >= CONTRIBUTOR_THRESHOLD && (
-            <p className="content-contributor-badge" data-testid="content-contributor-badge">
-              {t(
-                "content.contributions.contributor",
-                "Community Contributor — {n} lessons shared!",
-              ).replace("{n}", String(contributions.length))}
-            </p>
-          )}
-          <ul className="content-contributions-list" data-testid="content-contributions-list">
-            {contributions.map((c) => (
-              <li key={c.github_url} className="content-contribution-row">
-                <span className="content-contribution-title">{c.title}</span>
-                <span className="content-contribution-date">{c.shared_at.slice(0, 10)}</span>
-                <span className="content-contribution-status">
-                  {t(`content.contributions.status_${c.status}`, c.status)}
-                </span>
-                <a href={c.github_url} target="_blank" rel="noopener noreferrer">
-                  {t("content.contributions.view", "View")}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
+      {!searchResult.active && (
+        <ContentContributionsSection contributions={contributions} />
       )}
 
       {searchResult.active ? (
