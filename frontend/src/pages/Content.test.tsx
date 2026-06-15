@@ -711,8 +711,18 @@ describe("Content — My Lessons (Phase 59C)", () => {
     );
     renderPage();
     await screen.findByTestId("content-page");
+    // #537 — this user set shares the de->es / beginner pair with the
+    // published set above, so EXP-026 folds it INTO the tree node (out of
+    // "My Lessons") once its lessons load asynchronously. The previous
+    // version clicked the "My Lessons" share button, which races that
+    // async fold (the button is removed when the set folds away). Instead
+    // wait for the folded row to settle and share from there — it carries
+    // the identical UserSetActions/onShare, so the wizard + duplicate scan
+    // are exactly the same, but the target is now stable. The folded
+    // lesson's id is the shareableLesson() id ("01-lektion").
+    await screen.findByTestId("folded-lesson-01-lektion-share");
     await act(async () => {
-      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
+      fireEvent.click(screen.getByTestId("folded-lesson-01-lektion-share"));
     });
     await screen.findByTestId("share-wizard-step-1");
     fireEvent.click(screen.getByTestId("share-wizard-next"));
