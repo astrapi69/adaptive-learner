@@ -43,6 +43,12 @@ import {
   type BookRecommendations,
   fetchBookRecommendations,
 } from "../lib/content/book-recommendations";
+import {
+  type BookMetadata,
+  fetchBookCompanion,
+  isFetchableSource,
+} from "../lib/content/book-companion";
+import BookCompanion from "../components/content/BookCompanion";
 import { splitHighlight } from "../lib/content/content-search";
 import { useContentSearch } from "../hooks/useContentSearch";
 import { useContentSharing } from "../hooks/useContentSharing";
@@ -101,6 +107,8 @@ export default function ContentPage() {
   // #141 — per-domain book recommendations, fetched once from the
   // official content repo (graceful empty on failure / offline).
   const [bookRecs, setBookRecs] = useState<BookRecommendations>({});
+  // EXP-025 / AUTH-02 — book a connected repo accompanies, keyed by source.
+  const [bookCompanions, setBookCompanions] = useState<Record<string, BookMetadata>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [perSetState, setPerSetState] = useState<Record<string, DownloadState>>({});
@@ -165,6 +173,25 @@ export default function ContentPage() {
       cancelled = true;
     };
   }, []);
+  // EXP-025 / AUTH-02 — load the book a connected repo accompanies, if
+  // any. Keyed off the configured sources; bundled sources are skipped.
+  const sourcesSig = sources.map((s) => `${s.source}@${s.branch}`).join(",");
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const bySource: Record<string, BookMetadata> = {};
+      for (const src of sources) {
+        if (!isFetchableSource(src.source)) continue;
+        const book = await fetchBookCompanion(src.source, src.branch);
+        if (book) bySource[src.source] = book;
+      }
+      if (!cancelled) setBookCompanions(bySource);
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sourcesSig]);
   // EXP-023 Phase B — source filter: "all" / "official" / a specific
   // user-repo source ("owner/repo").
   const [sourceFilter, setSourceFilter] = useState<string>("all");
@@ -505,6 +532,19 @@ export default function ContentPage() {
           {t("content.sources", "Sources")}:{" "}
           {sources.map((src) => `${src.source} @ ${src.branch}`).join(", ")}
         </p>
+      )}
+
+      {/* EXP-025 / AUTH-02 — book-companion headers for connected repos
+          that accompany a published book. Hidden while searching. */}
+      {!searchResult.active && Object.keys(bookCompanions).length > 0 && (
+        <section
+          className="mb-4 flex flex-col gap-2"
+          data-testid="content-book-companions"
+        >
+          {Object.entries(bookCompanions).map(([source, book]) => (
+            <BookCompanion key={source} book={book} source={source} />
+          ))}
+        </section>
       )}
 
       {/* UX overhaul C1 — compact toolbar: search FIRST (full width),

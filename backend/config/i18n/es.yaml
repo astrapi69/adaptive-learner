@@ -1593,6 +1593,10 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  book:
+    companion: "Complemento del libro"
+    by_author: "por {author}"
+    view: "Ir al libro"
   books:
     title: "Libros recomendados"
     view_on_amazon: "Ver en Amazon"

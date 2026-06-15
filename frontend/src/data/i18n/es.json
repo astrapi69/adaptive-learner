@@ -1727,6 +1727,11 @@
     }
   },
   "content": {
+    "book": {
+      "companion": "Complemento del libro",
+      "by_author": "por {author}",
+      "view": "Ir al libro"
+    },
     "books": {
       "title": "Libros recomendados",
       "view_on_amazon": "Ver en Amazon"

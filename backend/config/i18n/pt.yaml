@@ -1591,6 +1591,10 @@ lesson:
     action_restart: "Recomeçar"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  book:
+    companion: "Companhia do livro"
+    by_author: "por {author}"
+    view: "Ver o livro"
   books:
     title: "Livros recomendados"
     view_on_amazon: "Ver na Amazon"
