@@ -56,6 +56,8 @@ data_export:
   cat_settings: "設定"
   cat_ai_config: "AI キーのバックアップ"
 nav:
+  offline_long: "オフライン — 過去のセッションは引き続き閲覧できます"
+  sync_pending: "{n} 件の変更が同期待ちです"
   statistics: "統計"
   profile: "あなたのプロフィール"
   learning_path: "学習パス"
@@ -424,6 +426,13 @@ progress:
   commit_notes_aria: "セッションのメモ"
   session_count: "セッション"
 settings:
+  install:
+    heading: "アプリをインストール"
+    description: "オフラインアクセスと全画面表示のために Adaptive Learner をアプリとしてインストールします。"
+    button: "アプリをインストール"
+    already: "インストール済み"
+    unavailable: "ブラウザがまだインストールを提案していません。"
+    installed: "アプリをインストールしました。"
   section_review: "復習"
   explanations_enabled: "エラーの説明を表示"
   explanations_enabled_desc: "レッスン後に各間違いへ短いルールのヒントを表示します。"

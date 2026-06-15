@@ -62,6 +62,8 @@
     "cat_ai_config": "Sauvegarde de clé IA"
   },
   "nav": {
+    "offline_long": "Hors ligne — les sessions passées restent lisibles",
+    "sync_pending": "{n} modification(s) en attente de synchronisation",
     "statistics": "Statistiques",
     "profile": "Votre profil",
     "learning_path": "Parcours d'apprentissage",
@@ -453,6 +455,14 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "install": {
+      "heading": "Installer l'application",
+      "description": "Installez Adaptive Learner comme application pour un accès hors ligne et un mode plein écran.",
+      "button": "Installer l'application",
+      "already": "Déjà installée",
+      "unavailable": "Votre navigateur n'a pas encore proposé l'installation.",
+      "installed": "Application installée."
+    },
     "section_review": "Révision",
     "explanations_enabled": "Afficher les explications d'erreur",
     "explanations_enabled_desc": "Après une leçon, affiche un court conseil de règle pour chaque erreur.",

@@ -56,6 +56,8 @@ data_export:
   cat_settings: "Ayarlar"
   cat_ai_config: "AI anahtar yedeği"
 nav:
+  offline_long: "Çevrimdışı — önceki oturumlar okunabilir kalır"
+  sync_pending: "{n} değişiklik eşitlenmeyi bekliyor"
   statistics: "İstatistikler"
   profile: "Profilin"
   learning_path: "Öğrenme yolu"
@@ -424,6 +426,13 @@ progress:
   commit_notes_aria: "Oturum notları"
   session_count: "Oturumlar"
 settings:
+  install:
+    heading: "Uygulamayı yükle"
+    description: "Çevrimdışı erişim ve tam ekran deneyimi için Adaptive Learner'ı uygulama olarak yükleyin."
+    button: "Uygulamayı yükle"
+    already: "Zaten yüklü"
+    unavailable: "Tarayıcınız henüz kurulum sunmadı."
+    installed: "Uygulama yüklendi."
   section_review: "Tekrar"
   explanations_enabled: "Hata açıklamalarını göster"
   explanations_enabled_desc: "Bir dersten sonra her hata için kısa bir kural ipucu gösterir."

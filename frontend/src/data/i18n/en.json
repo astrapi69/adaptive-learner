@@ -62,6 +62,8 @@
     "cat_ai_config": "AI key backup"
   },
   "nav": {
+    "offline_long": "Offline — past sessions stay readable",
+    "sync_pending": "{n} change(s) waiting to sync",
     "statistics": "Statistics",
     "profile": "Your profile",
     "learning_path": "Learning Path",
@@ -453,6 +455,14 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "install": {
+      "heading": "Install app",
+      "description": "Install Adaptive Learner as an app for offline access and a full-screen experience.",
+      "button": "Install app",
+      "already": "Already installed",
+      "unavailable": "Your browser hasn't offered installation yet.",
+      "installed": "App installed."
+    },
     "section_review": "Review",
     "explanations_enabled": "Show error explanations",
     "explanations_enabled_desc": "After a lesson, show a short rule tip for each mistake.",

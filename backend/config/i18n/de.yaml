@@ -56,6 +56,8 @@ data_export:
   cat_settings: "Einstellungen"
   cat_ai_config: "KI-Schlüssel-Sicherung"
 nav:
+  offline_long: "Offline — frühere Sitzungen bleiben lesbar"
+  sync_pending: "{n} Änderung(en) warten auf Sync"
   statistics: "Statistik"
   profile: "Dein Profil"
   learning_path: "Lernpfad"
@@ -424,6 +426,13 @@ progress:
   commit_notes_aria: "Sitzungsnotizen"
   session_count: "Sitzungen"
 settings:
+  install:
+    heading: "App installieren"
+    description: "Installiere Adaptive Learner als App für Offline-Zugriff und eine Vollbild-Erfahrung."
+    button: "App installieren"
+    already: "Bereits installiert"
+    unavailable: "Dein Browser hat die Installation noch nicht angeboten."
+    installed: "App installiert."
   section_review: "Wiederholung"
   explanations_enabled: "Fehlererklärungen anzeigen"
   explanations_enabled_desc: "Zeigt nach einer Lektion zu jedem Fehler einen kurzen Regeltipp."
