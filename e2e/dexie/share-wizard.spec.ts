@@ -51,9 +51,16 @@ async function createAndSaveLesson(page: Page): Promise<void> {
         timeout: 15000,
     });
     await page.getByTestId("create-lesson-to-browser").click();
-    await expect(page.getByTestId("content-my-lessons")).toBeVisible({
-        timeout: 15000,
-    });
+    // #543 — the saved lesson lands in "My Lessons" or, if it matches a
+    // published set, folds into that tree node (EXP-026); both surfaces render
+    // the same UserSetActions share button, so wait for it in either location.
+    await expect(
+        page
+            .locator(
+                '[data-testid^="my-lesson-"][data-testid$="-share"], [data-testid^="folded-lesson-"][data-testid$="-share"]',
+            )
+            .first(),
+    ).toBeVisible({timeout: 15000});
 }
 
 test.describe("Share Wizard — 4-step community share", () => {
@@ -78,9 +85,11 @@ test.describe("Share Wizard — 4-step community share", () => {
 
         await createAndSaveLesson(page);
 
-        // Open the share wizard from the saved lesson.
+        // Open the share wizard from the saved lesson (My Lessons or folded).
         await page
-            .locator('[data-testid^="my-lesson-"][data-testid$="-share"]')
+            .locator(
+                '[data-testid^="my-lesson-"][data-testid$="-share"], [data-testid^="folded-lesson-"][data-testid$="-share"]',
+            )
             .first()
             .click();
         await expect(page.getByTestId("share-wizard-step-1")).toBeVisible({

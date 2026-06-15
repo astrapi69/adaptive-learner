@@ -83,7 +83,12 @@ async function mockRoutes(page: Page) {
 }
 
 test.describe("EXP-023 Phase C — recommended repos + local ratings", () => {
-  test("discover, one-click add, rate, browse badge", async ({ page }) => {
+  // #547 — the recommended-repos discovery section is gated off until the
+  // curated catalogue is published (CATALOGUE_PUBLISHED = false in
+  // lib/content/recommended-repos.ts, commit 70108061): fetchRecommendedRepos
+  // short-circuits to [] before any fetch, so `content-repo-recommended`
+  // never renders and this flow cannot run. Un-fixme when the flag flips.
+  test.fixme("discover, one-click add, rate, browse badge", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await mockRoutes(page);
