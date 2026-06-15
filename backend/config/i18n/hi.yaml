@@ -336,6 +336,16 @@ adaptive:
     missing_params: No content set selected.
     load_failed: Could not generate adaptive lesson.
 review:
+  your_answer: "आपका उत्तर:"
+  correct_answer: "सही:"
+  summary_corrected: "{total} में से {corrected} सुधारे गए"
+  summary_trend: "बढ़िया — आपके कमज़ोर बिंदु मज़बूत हो रहे हैं।"
+  summary_next: "महारत प्राप्त तत्व हट जाते हैं; बाकी जल्द ही समीक्षा के लिए लौटते हैं।"
+  explain_heading: "आपने ये क्यों गलत किए"
+  explain_article_gender: "लिंग पर ध्यान दें: -o में अंत होने वाले संज्ञा प्रायः पुल्लिंग (el/un), -a स्त्रीलिंग (la/una)। आर्टिकल अंत के अनुसार होता है।"
+  explain_spelling_accent: "सटीक वर्तनी और उच्चारण चिह्न जाँचें — छोटा सा अंतर शब्द बदल देता है।"
+  explain_verb_conjugation: "उत्तर देने से पहले क्रिया को उसके कर्ता और काल से मिलाएँ।"
+  explain_word_order: "इस संरचना के शब्द-क्रम का ध्यान रखें।"
   page_title: पुनरावलोकन
   session_title: पुनरावलोकन सत्र
   subtitle: Reviewing {n} element(s) due for SRS
@@ -416,6 +426,9 @@ progress:
   commit_notes_aria: Session notes
   session_count: Sessions
 settings:
+  section_review: "समीक्षा"
+  explanations_enabled: "त्रुटि स्पष्टीकरण दिखाएँ"
+  explanations_enabled_desc: "पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।"
   section_hints: "संकेत"
   hints_enabled: "अभ्यास के दौरान संकेत दिखाएँ"
   hints_enabled_desc: "हर अभ्यास पर एक क्रमिक संकेत बटन देता है।"

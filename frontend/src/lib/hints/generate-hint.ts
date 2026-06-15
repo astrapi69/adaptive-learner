@@ -56,6 +56,54 @@ function correctImageLabel(
     return {correct: correct.label, wrong: wrong?.label ?? null};
 }
 
+/** Picture-choice hints: rule out a wrong label, then reveal the
+ *  correct label's first letter + length. */
+function pictureChoiceHints(exercise: ContentLessonExercise): ExerciseHint[] {
+    const labels = correctImageLabel(exercise);
+    if (!labels) return [];
+    const hints: ExerciseHint[] = [];
+    if (labels.wrong) {
+        hints.push({level: 1, data: {kind: "not", label: labels.wrong}});
+    }
+    const letters = chars(labels.correct.trim());
+    if (letters.length > 0) {
+        hints.push({
+            level: 2,
+            data: {kind: "first_letters", prefix: letters[0], n: letters.length},
+        });
+    }
+    return hints;
+}
+
+/** Matching hints: name the first item, then reveal its pair. */
+function matchingHints(exercise: ContentLessonExercise): ExerciseHint[] {
+    const pair = exercise.pairs?.[0];
+    if (!pair || !pair.left || !pair.right) return [];
+    return [
+        {level: 1, data: {kind: "item", label: pair.left}},
+        {
+            level: 2,
+            data: {kind: "reveal_pair", left: pair.left, right: pair.right},
+        },
+    ];
+}
+
+/** Word-tiles hints: the first tile, then the first two. */
+function wordTilesHints(exercise: ContentLessonExercise): ExerciseHint[] {
+    const tiles = (exercise.tiles ?? []).filter((tt) => tt.trim() !== "");
+    if (tiles.length === 0) return [];
+    const hints: ExerciseHint[] = [
+        {level: 1, data: {kind: "item", label: tiles[0]}},
+    ];
+    if (tiles.length > 1) {
+        hints.push({
+            level: 2,
+            data: {kind: "item", label: tiles.slice(0, 2).join(" ")},
+        });
+    }
+    return hints;
+}
+
 /**
  * Build the staged hints for an exercise. Up to two hints, ordered
  * light → strong. Empty when the answer can't be derived.
@@ -72,51 +120,12 @@ export function generateHints(
             const answer = exercise.blanks?.[0]?.accept?.[0];
             return answer ? textHints(answer) : [];
         }
-        case "picture_choice": {
-            const labels = correctImageLabel(exercise);
-            if (!labels) return [];
-            const hints: ExerciseHint[] = [];
-            if (labels.wrong) {
-                hints.push({level: 1, data: {kind: "not", label: labels.wrong}});
-            }
-            const letters = chars(labels.correct.trim());
-            if (letters.length > 0) {
-                hints.push({
-                    level: 2,
-                    data: {
-                        kind: "first_letters",
-                        prefix: letters[0],
-                        n: letters.length,
-                    },
-                });
-            }
-            return hints;
-        }
-        case "matching": {
-            const pair = exercise.pairs?.[0];
-            if (!pair || !pair.left || !pair.right) return [];
-            return [
-                {level: 1, data: {kind: "item", label: pair.left}},
-                {
-                    level: 2,
-                    data: {kind: "reveal_pair", left: pair.left, right: pair.right},
-                },
-            ];
-        }
-        case "word_tiles": {
-            const tiles = (exercise.tiles ?? []).filter((tt) => tt.trim() !== "");
-            if (tiles.length === 0) return [];
-            const hints: ExerciseHint[] = [
-                {level: 1, data: {kind: "item", label: tiles[0]}},
-            ];
-            if (tiles.length > 1) {
-                hints.push({
-                    level: 2,
-                    data: {kind: "item", label: tiles.slice(0, 2).join(" ")},
-                });
-            }
-            return hints;
-        }
+        case "picture_choice":
+            return pictureChoiceHints(exercise);
+        case "matching":
+            return matchingHints(exercise);
+        case "word_tiles":
+            return wordTilesHints(exercise);
         default:
             return [];
     }
