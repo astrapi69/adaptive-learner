@@ -442,6 +442,12 @@
     "session_count": "Συνεδρίες"
   },
   "settings": {
+    "support": {
+      "heading": "Υποστήριξη",
+      "description": "Κάτι δεν λειτουργεί όπως περιμένατε; Δημιουργήστε μια αναφορά των πρόσφατων ενεργειών σας για να βοηθήσετε τον προγραμματιστή να την αναπαράγει. Ελέγχετε τα πάντα πριν φύγουν από το πρόγραμμα περιήγησής σας.",
+      "create_report": "Δημιουργία αναφοράς σφάλματος",
+      "report_default_message": "Αναφορά με πρωτοβουλία χρήστη"
+    },
     "tab_integrations": "Ενσωματώσεις",
     "github": {
       "title": "Ενσωμάτωση GitHub",
@@ -1302,7 +1308,22 @@
       "copy_failed": "Copy failed",
       "open_github": "Open on GitHub",
       "close": "Close",
-      "truncated": "Report truncated to fit GitHub's URL length limit."
+      "truncated": "Report truncated to fit GitHub's URL length limit.",
+      "intro_proactive": "Ετοιμάστε μια αναφορά των πρόσφατων ενεργειών σας για αποστολή στον προγραμματιστή. Βλέπετε ακριβώς τι περιέχει πριν φύγει οτιδήποτε από το πρόγραμμα περιήγησής σας.",
+      "app_state": "Κατάσταση εφαρμογής",
+      "online": "συνδεδεμένος",
+      "offline": "εκτός σύνδεσης",
+      "download_json": "Λήψη JSON",
+      "category_all": "Όλα",
+      "no_events_in_category": "Δεν υπάρχουν συμβάντα σε αυτήν την κατηγορία.",
+      "category": {
+        "navigation": "Πλοήγηση",
+        "ui": "Διεπαφή",
+        "network": "Δίκτυο",
+        "storage": "Αποθήκευση",
+        "exercise": "Άσκηση",
+        "error": "Σφάλματα"
+      }
     },
     "help": {
       "learn_more": "Learn more",
