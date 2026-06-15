@@ -1,10 +1,12 @@
 name: Coverage
 
 on:
-  push:
-    branches: [develop, main]
-  pull_request:
-    branches: [develop, main]
+  # Night-shift only (#575): coverage is a report, not a merge gate, so it no
+  # longer runs on every push/PR. It runs daily and on demand; the artifacts
+  # are pulled with `gh run download` when needed.
+  schedule:
+    # Daily at 03:00 UTC.
+    - cron: "0 3 * * *"
   workflow_dispatch:
 
 # Defensive opt-in: any JavaScript-runtime action still declaring
