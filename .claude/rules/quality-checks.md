@@ -40,7 +40,7 @@ make test
 
 # Individually when targeted:
 make test-backend                  # pytest backend
-make test-plugins                  # all 12 plugin test suites
+make test-plugins                  # all 13 plugin test suites
 make test-plugin-assessment        # assessment only
 make test-plugin-session           # session (largest plugin) only
 make test-plugin-gamification      # XP / badges / streak

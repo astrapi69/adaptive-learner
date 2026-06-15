@@ -38,6 +38,25 @@ Every GitHub issue is closed by the fix, not by hand:
 - No open issue may remain after its fix is merged. After merging, the
   referenced issues must be in the `closed` state.
 
+### SUB-ISSUE-CLOSES: a sub-issue PR cites the sub-issue, not the umbrella
+
+When a PR implements ONE sub-issue of an umbrella/epic, its commit/PR body
+MUST cite the sub-issue with a closing keyword — `Closes #<sub-issue>` — NOT
+only `Refs #<umbrella>`. `Refs` does not auto-close; `Closes`/`Fixes` does.
+
+- Cite BOTH when useful: `Closes #<sub-issue>` (auto-close) on its own line,
+  plus `Refs #<umbrella>` (traceability) — the closing keyword first.
+- The umbrella stays open until ALL its sub-issues are closed; close the
+  umbrella explicitly when the last concrete slice merges (or when the rest
+  is deferred — say so in the closing comment).
+
+Origin (hygiene finding, 2026-06-15): eight CCW sub-issues
+(#518/#520/#522/#525/#527/#529/#531) stayed open after merge because every PR
+cited the umbrella (`Refs #97` / `Refs #142`) instead of the sub-issue; one
+PR even cited `Closes #97` and closed the umbrella while leaving itself open.
+They needed a manual verify-and-close sweep. Cite the sub-issue and this does
+not happen.
+
 ## Session start
 
 On the first message of a session:
@@ -125,7 +144,7 @@ See architecture.md for architectural details. Additionally note:
 - Current version: see ``backend/pyproject.toml`` (canonical) — every other version-bearing file derives via ``make sync-versions``.
 - Tests: see `docs/audits/current-coverage.md` for current counts. `make test` covers backend+plugins+Vitest, E2E is separate.
 - 28 SQLAlchemy models in `backend/app/models/__init__.py` (single-file domain model).
-- 12 plugins shipped (assessment, session, tracking, tools, gamification, anki, notebooklm, learning-repo, content-loader, ai-anthropic, ai-openai, ai-gemini).
+- 13 plugins shipped (assessment, session, tracking, tools, gamification, anki, notebooklm, learning-repo, content-loader, missions, ai-anthropic, ai-openai, ai-gemini).
 - 15 official TipTap extensions + 1 community (@pentestpad/tiptap-extension-figure) — used for rich-text in session notes, curriculum descriptions, and lesson content.
 - Deployment: Docker Compose, port 18001 (backend) + 15174 (frontend dev), install.sh one-liner. GitHub-Pages-shape build runs Dexie-mode at `https://astrapi69.github.io/adaptive-learner/`.
 - IMPORTANT: Before writing custom code, ALWAYS check whether a TipTap extension or library already exists.

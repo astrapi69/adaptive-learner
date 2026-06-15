@@ -164,7 +164,7 @@ This single command updates:
 - `launcher/adaptive_learner_launcher/__init__.py` (`__version__` literal)
 - `launcher/adaptive-learner-launcher.spec` (CFBundleVersion +
   CFBundleShortVersionString, both same value)
-- All 10 `plugins/*/pyproject.toml`
+- All 13 `plugins/*/pyproject.toml`
 - `install.sh` (regenerated from `install.sh.template` via
   `scripts/generate_install_sh.sh`)
 
