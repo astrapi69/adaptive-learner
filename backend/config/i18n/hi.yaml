@@ -944,6 +944,11 @@ sync:
   upload_qr: Upload QR image
   upload_qr_hint: 'No camera? Take a screenshot of the desktop''s QR and upload it:'
 gamification:
+  trend_up: "पिछले सप्ताह से अधिक"
+  trend_down: "पिछले सप्ताह से कम"
+  trend_flat: "पिछले सप्ताह जैसा"
+  activity_7d: "गतिविधि (पिछले 7 दिन)"
+  activity_cell: "{date} को {count}"
   card_xp: XP & Level
   level: स्तर
   xp: एक्सपी

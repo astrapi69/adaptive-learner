@@ -13,6 +13,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { useI18n } from "../hooks/useI18n";
+import ProgressRing from "../shared/ProgressRing";
 import type { XPState } from "../storage/types";
 
 interface XPWidgetProps {
@@ -32,13 +33,27 @@ export default function XPWidget({ state }: XPWidgetProps) {
   const pct = denom > 0 ? Math.min(100, Math.round((state.xp_into_level / denom) * 100)) : 100;
   return (
     <div className="xp-widget" data-testid="xp-widget">
-      <div className="xp-widget__header">
-        <span className="xp-widget__level" data-testid="xp-widget-level">
-          {t("gamification.level", "Level")} {state.level}
-        </span>
-        <span className="xp-widget__total" data-testid="xp-widget-total">
-          {state.total_xp} {t("gamification.xp", "XP")}
-        </span>
+      <div
+        className="xp-widget__header"
+        style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+      >
+        <ProgressRing
+          value={state.xp_into_level}
+          max={denom}
+          size={56}
+          ariaLabel={`${t("gamification.level", "Level")} ${state.level} — ${pct}%`}
+          testId="xp-widget-ring"
+        >
+          {state.level}
+        </ProgressRing>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span className="xp-widget__level" data-testid="xp-widget-level">
+            {t("gamification.level", "Level")} {state.level}
+          </span>
+          <span className="xp-widget__total" data-testid="xp-widget-total">
+            {state.total_xp} {t("gamification.xp", "XP")}
+          </span>
+        </div>
       </div>
       <Progress
         value={pct}

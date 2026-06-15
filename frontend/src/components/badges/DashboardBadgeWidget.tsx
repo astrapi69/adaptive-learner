@@ -14,6 +14,7 @@ import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/useI18n";
 import {generateBadgeSvg, type BadgeTier} from "../../lib/badges/badge-svg";
+import BadgeGrid, {type BadgeGridItem} from "../../shared/BadgeGrid";
 import type {BadgeWithProgress} from "../../storage/types";
 import BadgeGallery from "./BadgeGallery";
 
@@ -46,6 +47,26 @@ export default function DashboardBadgeWidget({
         setCategory(cat);
         setOpen(true);
     };
+
+    const newestKey = recent[0]?.key;
+    const gridItems: BadgeGridItem[] = badges.map((b) => ({
+        id: b.key,
+        label: t(b.name_key, b.key),
+        earned: b.earned,
+        highlight: b.key === newestKey,
+        hint: b.earned ? undefined : t(b.description_key, ""),
+        icon: (
+            <img
+                src={generateBadgeSvg(
+                    b.key,
+                    b.earned ? ((b.tier as BadgeTier) ?? "bronze") : "locked",
+                )}
+                alt=""
+                width={28}
+                height={28}
+            />
+        ),
+    }));
 
     return (
         <div className="badge-widget" data-testid="dashboard-badge-widget">
@@ -112,6 +133,20 @@ export default function DashboardBadgeWidget({
                     </span>
                 </button>
             )}
+
+            <BadgeGrid
+                className="badge-widget-grid"
+                testId="dashboard-badge-grid"
+                items={gridItems}
+                onSelect={(id) =>
+                    openGallery(badges.find((b) => b.key === id)?.category)
+                }
+                ariaLabel={t("gamification.card_badges", "Badges")}
+                emptyLabel={t(
+                    "gamification.badges_empty",
+                    "No badges available yet.",
+                )}
+            />
 
             <Button
                 type="button"

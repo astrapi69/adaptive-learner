@@ -943,6 +943,11 @@ sync:
   upload_qr: Upload QR image
   upload_qr_hint: 'No camera? Take a screenshot of the desktop''s QR and upload it:'
 gamification:
+  trend_up: "More than last week"
+  trend_down: "Less than last week"
+  trend_flat: "Same as last week"
+  activity_7d: "Activity (last 7 days)"
+  activity_cell: "{count} on {date}"
   card_xp: XP & Level
   level: Level
   xp: XP

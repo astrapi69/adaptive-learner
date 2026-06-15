@@ -943,6 +943,11 @@ sync:
   upload_qr: QR-Bild hochladen
   upload_qr_hint: 'Keine Kamera? Erstelle einen Screenshot vom QR-Code am Desktop und lade ihn hoch:'
 gamification:
+  trend_up: "Mehr als letzte Woche"
+  trend_down: "Weniger als letzte Woche"
+  trend_flat: "Wie letzte Woche"
+  activity_7d: "Aktivität (letzte 7 Tage)"
+  activity_cell: "{count} am {date}"
   card_xp: XP & Level
   level: Level
   xp: XP

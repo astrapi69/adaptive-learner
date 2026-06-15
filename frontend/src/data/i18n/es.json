@@ -1004,6 +1004,11 @@
     "upload_qr_hint": "No camera? Take a screenshot of the desktop's QR and upload it:"
   },
   "gamification": {
+    "trend_up": "Más que la semana pasada",
+    "trend_down": "Menos que la semana pasada",
+    "trend_flat": "Igual que la semana pasada",
+    "activity_7d": "Actividad (últimos 7 días)",
+    "activity_cell": "{count} el {date}",
     "card_xp": "XP y Nivel",
     "level": "Nivel",
     "xp": "XP",
