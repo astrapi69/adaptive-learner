@@ -48,6 +48,20 @@ describe("ImageCropDialog", () => {
     expect(translateX(screen.getByTestId("crop-image"))).toBeLessThan(0);
   });
 
+  it("escapes the global img max-width cap so the image covers the viewport (#577)", async () => {
+    // global.css has an UNLAYERED `img { max-width: 100% }` that beats the
+    // layered `max-w-none` utility; the inline max-width:none is what keeps
+    // the crop image from collapsing below the circle (empty bands).
+    await renderDialog();
+    const img = screen.getByTestId("crop-image");
+    expect(img.style.maxWidth).toBe("none");
+    expect(img.style.maxHeight).toBe("none");
+    // A 400x300 image at min-zoom is rendered WIDER than the 224px viewport
+    // (it covers); the cap would have collapsed it to 224.
+    expect(parseFloat(img.style.width)).toBeGreaterThan(224);
+    expect(parseFloat(img.style.height)).toBeGreaterThanOrEqual(224);
+  });
+
   it("drag pans the image (pointer events)", async () => {
     await renderDialog();
     const viewport = screen.getByTestId("crop-viewport");

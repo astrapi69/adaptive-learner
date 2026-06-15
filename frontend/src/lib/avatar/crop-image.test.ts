@@ -71,6 +71,53 @@ describe("crop-image geometry", () => {
     expect(rect.sy + rect.sh).toBeLessThanOrEqual(300 + 1e-6);
   });
 
+  it("cover image dragged hard over every edge still covers (#577 scenario 1)", () => {
+    const w = 400;
+    const h = 300;
+    const scale = coverScale(w, h, VIEWPORT);
+    const dw = w * scale;
+    const dh = h * scale;
+    for (const raw of [
+      { x: 9999, y: 9999 },
+      { x: -9999, y: -9999 },
+      { x: 500, y: -500 },
+    ]) {
+      const off = clampOffset(raw, w, h, scale, VIEWPORT);
+      expect(off.x).toBeLessThanOrEqual(0);
+      expect(off.x + dw).toBeGreaterThanOrEqual(VIEWPORT - 1e-9);
+      expect(off.y).toBeLessThanOrEqual(0);
+      expect(off.y + dh).toBeGreaterThanOrEqual(VIEWPORT - 1e-9);
+    }
+  });
+
+  it("zooming out re-pulls a now-out-of-range offset into cover (#577 scenario 2)", () => {
+    const w = 400;
+    const h = 300;
+    const hi = coverScale(w, h, VIEWPORT) * 2.5;
+    const hiOffset = clampOffset({ x: -9999, y: -9999 }, w, h, hi, VIEWPORT);
+    const lo = coverScale(w, h, VIEWPORT);
+    const reclamped = clampOffset(hiOffset, w, h, lo, VIEWPORT);
+    expect(reclamped.x).toBeLessThanOrEqual(0);
+    expect(reclamped.x + w * lo).toBeGreaterThanOrEqual(VIEWPORT - 1e-9);
+    expect(reclamped.y + h * lo).toBeGreaterThanOrEqual(VIEWPORT - 1e-9);
+    // It actually moved (the high-zoom offset was out of the low-zoom range).
+    expect(reclamped.x).toBeGreaterThan(hiOffset.x);
+  });
+
+  it("coverScale fills the viewport on BOTH axes for any aspect ratio (#577 scenario 3)", () => {
+    for (const [w, h] of [
+      [400, 300],
+      [300, 400],
+      [100, 80],
+      [1000, 1000],
+      [1920, 1080],
+    ]) {
+      const s = coverScale(w, h, VIEWPORT);
+      expect(w * s).toBeGreaterThanOrEqual(VIEWPORT - 1e-9);
+      expect(h * s).toBeGreaterThanOrEqual(VIEWPORT - 1e-9);
+    }
+  });
+
   it("sourceRect maps viewport corners back to image space", () => {
     const rect = sourceRect({ x: -50, y: -20 }, 2, VIEWPORT);
     expect(rect.sx).toBeCloseTo(25, 6); // 50 / 2
