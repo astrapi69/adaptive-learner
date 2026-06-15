@@ -31,6 +31,9 @@ import { useCountUp } from "../../hooks/useCountUp";
 import { useFeedbackIntensity } from "../../hooks/useFeedbackIntensity";
 import { useI18n } from "../../hooks/useI18n";
 import LessonFavoriteToggle from "./LessonFavoriteToggle";
+import AnswerDiff from "../../shared/AnswerDiff";
+import { explainError } from "../../lib/review/explain-error";
+import { readExplanationsEnabled } from "../../lib/review/reviewPref";
 import { useNextStepSuggestions } from "../../hooks/useNextStepSuggestions";
 import { collectFailedExercises } from "../../lib/lesson/error-replay";
 import { tokenDiff } from "../../lib/exercises/token-diff";
@@ -536,6 +539,54 @@ export default function LessonSummary({
           </ul>
         </section>
       )}
+
+      {/* #599 — auto-generated explanations + your-vs-correct diff for
+                the run's still-weak text mistakes, gated by the
+                Settings toggle. */}
+      {readExplanationsEnabled() &&
+        (() => {
+          const mistakes = sessionErrors
+            .filter(
+              (e) =>
+                !e.mastered && (e.user_answer ?? "").trim() !== "",
+            )
+            .slice(0, 5);
+          if (mistakes.length === 0) return null;
+          return (
+            <section
+              className="lesson-summary-explanations"
+              data-testid="lesson-summary-explanations"
+            >
+              <h3>
+                {t("review.explain_heading", "Why you missed these")}
+              </h3>
+              <ul className="flex flex-col gap-3">
+                {mistakes.map((err) => {
+                  const expl = explainError(err);
+                  return (
+                    <li
+                      key={err.id}
+                      className="flex flex-col gap-1"
+                      data-testid={`lesson-summary-explain-${err.id}`}
+                    >
+                      <AnswerDiff
+                        userAnswer={err.user_answer}
+                        correctAnswer={err.correct_answer}
+                        yourLabel={t("review.your_answer", "Your answer:")}
+                        correctLabel={t("review.correct_answer", "Correct:")}
+                      />
+                      {expl && (
+                        <p className="text-sm text-fg-muted">
+                          {t(expl.key, expl.fallback)}
+                        </p>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })()}
 
       {/* #138 — export the result for AI-assisted practice.
                 Copy to clipboard or download as a .md file. Sits

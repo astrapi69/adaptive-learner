@@ -358,6 +358,16 @@
     }
   },
   "review": {
+    "your_answer": "あなたの回答:",
+    "correct_answer": "正解:",
+    "summary_corrected": "{total}問中{corrected}問を修正",
+    "summary_trend": "いいですね — 弱点が強くなっています。",
+    "summary_next": "習得した項目は外れ、残りはまもなく復習に戻ります。",
+    "explain_heading": "間違えた理由",
+    "explain_article_gender": "性に注意：-o で終わる名詞はたいてい男性（el/un）、-a は女性（la/una）。冠詞は語尾に従います。",
+    "explain_spelling_accent": "正確なつづりとアクセント記号を確認しましょう。わずかな違いで語が変わります。",
+    "explain_verb_conjugation": "答える前に動詞を主語と時制に合わせましょう。",
+    "explain_word_order": "この構文の語順に注意しましょう。",
     "page_title": "復習",
     "session_title": "復習セッション",
     "subtitle": "復習する要素: {n} 件",
@@ -443,6 +453,9 @@
     "session_count": "セッション"
   },
   "settings": {
+    "section_review": "復習",
+    "explanations_enabled": "エラーの説明を表示",
+    "explanations_enabled_desc": "レッスン後に各間違いへ短いルールのヒントを表示します。",
     "section_hints": "ヒント",
     "hints_enabled": "練習中にヒントを表示",
     "hints_enabled_desc": "各練習で段階的なヒントボタンを表示します。",

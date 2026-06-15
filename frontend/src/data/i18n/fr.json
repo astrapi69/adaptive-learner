@@ -358,6 +358,16 @@
     }
   },
   "review": {
+    "your_answer": "Votre réponse :",
+    "correct_answer": "Correct :",
+    "summary_corrected": "{corrected} sur {total} corrigés",
+    "summary_trend": "Bien — vos points faibles se renforcent.",
+    "summary_next": "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision.",
+    "explain_heading": "Pourquoi vous les avez ratés",
+    "explain_article_gender": "Attention au genre : les noms en -o sont souvent masculins (el/un), en -a féminins (la/una). L'article suit la terminaison.",
+    "explain_spelling_accent": "Vérifiez l'orthographe exacte et les accents — une petite différence change le mot.",
+    "explain_verb_conjugation": "Accordez le verbe avec son sujet et son temps avant de répondre.",
+    "explain_word_order": "Soignez l'ordre des mots de cette structure.",
     "page_title": "Révision",
     "session_title": "Session de révision",
     "subtitle": "{n} élément(s) à réviser",
@@ -443,6 +453,9 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "section_review": "Révision",
+    "explanations_enabled": "Afficher les explications d'erreur",
+    "explanations_enabled_desc": "Après une leçon, affiche un court conseil de règle pour chaque erreur.",
     "section_hints": "Indices",
     "hints_enabled": "Afficher des indices pendant les exercices",
     "hints_enabled_desc": "Propose un bouton d'indice par paliers sur chaque exercice.",
