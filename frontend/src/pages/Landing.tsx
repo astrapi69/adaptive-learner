@@ -5,7 +5,7 @@ import {toast} from "react-toastify";
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
-import {SUPPORTED_LANGUAGES, type SupportedLanguage} from "../lib/constants";
+import {UI_LANGUAGES} from "../lib/languages";
 import {
     clearLearnerState,
     readLearnerState,
@@ -144,7 +144,7 @@ export default function Landing() {
         };
     }, [navigate, t]);
 
-    const handleLangChange = (newLang: SupportedLanguage) => {
+    const handleLangChange = (newLang: string) => {
         setLang(newLang);
         setLanguage(newLang);
     };
@@ -189,7 +189,7 @@ export default function Landing() {
                     {t("landing.choose_language", "Choose your language")}
                 </p>
                 <div role="radiogroup" aria-labelledby="lang-label" className="landing-lang-options">
-                    {SUPPORTED_LANGUAGES.map((code) => (
+                    {UI_LANGUAGES.map(({code, nativeName}) => (
                         <button
                             type="button"
                             key={code}
@@ -199,7 +199,7 @@ export default function Landing() {
                             className={`landing-lang-btn${lang === code ? " is-active" : ""}`}
                             onClick={() => handleLangChange(code)}
                         >
-                            {code.toUpperCase()}
+                            {nativeName}
                         </button>
                     ))}
                 </div>

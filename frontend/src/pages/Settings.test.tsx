@@ -263,9 +263,10 @@ describe("Settings page", () => {
     renderSettings();
     await screen.findByTestId("settings");
     await act(async () => {
-      fireEvent.change(screen.getByTestId("settings-language"), {
-        target: { value: "en" },
-      });
+      fireEvent.click(screen.getByTestId("settings-language-trigger"));
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("settings-language-option-en"));
     });
     await waitFor(() => {
       expect(apiUpdate).toHaveBeenCalledWith("u-1", { language: "en" });
