@@ -1567,6 +1567,10 @@
     }
   },
   "lesson": {
+    "motivation": {
+      "halftime": "Yarısı bitti — devam et!",
+      "last": "Sonuncu — güçlü bitir!"
+    },
     "theory": {
       "view_example": "Örneği görüntüle"
     },

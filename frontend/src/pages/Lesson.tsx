@@ -56,6 +56,8 @@ import {
   celebrateProgressSince,
 } from "../lib/feedback/celebration-stats";
 import { localTodayIso } from "../lib/missions/schedule";
+import { lessonMotivation } from "../lib/lesson/motivation";
+import { notify } from "../utils/notify";
 import { celebrateMissions } from "../lib/praise/celebration-bus";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
@@ -198,6 +200,24 @@ export default function LessonPage() {
     readTheoryStepAt,
     continuousAvailable,
   } = useLessonAutoRead({ lesson, currentStepIndex, showResumePrompt, goToStep });
+
+  // Mid-lesson motivation (#586): a subtle toast at the halfway step and
+  // on the last step. The ref guards against StrictMode double-effect +
+  // re-renders so each step fires at most once.
+  const motivationStepRef = useRef<number>(-1);
+  useEffect(() => {
+    if (!lesson) return;
+    const total = lesson.steps.length;
+    if (currentStepIndex >= total) return; // summary screen
+    if (motivationStepRef.current === currentStepIndex) return;
+    motivationStepRef.current = currentStepIndex;
+    const kind = lessonMotivation(currentStepIndex, total);
+    if (kind === "halftime") {
+      notify.info(t("lesson.motivation.halftime", "Halfway there — keep going!"));
+    } else if (kind === "last") {
+      notify.info(t("lesson.motivation.last", "Last one — finish strong!"));
+    }
+  }, [lesson, currentStepIndex, t]);
 
   // Keyboard shortcut (#103): Enter drives the two-phase Check / Next
   // button. The listener (shared with the Error-Replay runner via

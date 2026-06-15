@@ -1567,6 +1567,10 @@
     }
   },
   "lesson": {
+    "motivation": {
+      "halftime": "折り返し地点です — その調子！",
+      "last": "最後の問題です — 力強くフィニッシュ！"
+    },
     "theory": {
       "view_example": "例を見る"
     },

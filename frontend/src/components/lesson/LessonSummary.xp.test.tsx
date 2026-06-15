@@ -15,7 +15,21 @@
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// The "+N XP" gain now counts up via shared/AnimatedCounter; under
+// reduced motion it renders the final value synchronously, which is
+// exactly what these XP-math assertions want.
+beforeEach(() => {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn(() => ({
+      matches: true,
+      addEventListener() {},
+      removeEventListener() {},
+    })),
+  );
+});
 
 vi.mock("../../hooks/useNextStepSuggestions", () => ({
   useNextStepSuggestions: () => ({

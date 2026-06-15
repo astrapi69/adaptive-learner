@@ -22,7 +22,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import XpBadge from "../../shared/XpBadge";
+import AnimatedCounter from "../../shared/AnimatedCounter";
 import CorrectionBlock from "../exercises/CorrectionBlock";
 import DiffHighlight from "../exercises/DiffHighlight";
 import Confetti from "../feedback/Confetti";
@@ -409,15 +409,19 @@ export default function LessonSummary({
           <span className="lesson-summary-xp-label">
             {t("gamification.xp_earned", "XP earned")}
           </span>
-          <XpBadge
-            gain={xpGain}
-            icon={<Zap size={18} aria-hidden="true" />}
-            xpLabel={t("gamification.xp", "XP")}
-            className="lesson-summary-xp-badge"
-            iconClassName="lesson-summary-xp-icon"
-            gainClassName="lesson-summary-xp-gain"
-            gainTestId="lesson-summary-xp-gain"
-          />
+          <span className="lesson-summary-xp-badge">
+            <span className="lesson-summary-xp-icon">
+              <Zap size={18} aria-hidden="true" />
+            </span>
+            <AnimatedCounter
+              value={xpGain}
+              durationMs={1000}
+              enabled={intensity !== "subtle"}
+              className="lesson-summary-xp-gain"
+              testId="lesson-summary-xp-gain"
+              format={(n) => `+${n} ${t("gamification.xp", "XP")}`}
+            />
+          </span>
         </div>
       )}
 

@@ -1455,6 +1455,9 @@ repo:
     description: "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git."
     enable_git: "Activar persistencia git"
 lesson:
+  motivation:
+    halftime: "¡A mitad de camino, sigue así!"
+    last: "¡La última, termina fuerte!"
   theory:
     view_example: "Ver ejemplo"
   tts:

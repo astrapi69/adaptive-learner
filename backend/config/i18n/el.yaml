@@ -1455,6 +1455,9 @@ repo:
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
     enable_git: "Ενεργοποίηση εμμονής git"
 lesson:
+  motivation:
+    halftime: "Στα μισά — συνέχισε!"
+    last: "Η τελευταία — τελείωσέ το δυνατά!"
   theory:
     view_example: "Δείτε παράδειγμα"
   tts:
