@@ -355,6 +355,16 @@ export default function Settings() {
             size={96}
             uploadLabel={t("settings.avatar_upload", "Upload picture")}
             removeLabel={t("settings.avatar_remove", "Remove")}
+            cropLabels={{
+              title: t("settings.avatar_crop_title", "Adjust your picture"),
+              instructions: t(
+                "settings.avatar_crop_instructions",
+                "Drag to reposition, scroll or pinch to zoom.",
+              ),
+              confirm: t("settings.avatar_crop_apply", "Apply"),
+              cancel: t("settings.avatar_crop_cancel", "Cancel"),
+              zoom: t("settings.avatar_crop_zoom", "Zoom"),
+            }}
             onChange={(dataUrl) => void handleAvatarChange(dataUrl)}
             onError={(key) =>
               notify.error(t(key, "Could not use that image. Try another file."))

@@ -12,7 +12,13 @@
 
 export const AVATAR_MAX_DIMENSION = 256;
 export const AVATAR_MAX_BYTES = 100 * 1024;
-const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+export const ACCEPTED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ACCEPTED_TYPES = ACCEPTED_AVATAR_TYPES;
+
+/** Whether a MIME type is an accepted avatar image format. */
+export function isAcceptedImageType(type: string): boolean {
+  return ACCEPTED_AVATAR_TYPES.includes(type);
+}
 
 /** Approximate byte length of a base64 data URL's payload. */
 export function dataUrlByteLength(dataUrl: string): number {
