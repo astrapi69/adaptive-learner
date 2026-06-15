@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Monitor } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -33,6 +33,9 @@ import SyncSection from "../components/SyncSection";
 import ThemePicker from "../components/ThemePicker";
 import AvatarUpload from "../shared/AvatarUpload";
 import SelectiveExportSection from "../components/SelectiveExportSection";
+import SettingsSidebar from "../components/settings/SettingsSidebar";
+import SettingsMobileMenu from "../components/settings/SettingsMobileMenu";
+import type { SidebarGroup } from "../lib/settings/sidebar-model";
 import { useI18n } from "../hooks/useI18n";
 import { SUPPORTED_LANGUAGES } from "../lib/constants";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
@@ -112,7 +115,7 @@ export default function Settings() {
   const activeTab: SettingsTab = isSettingsTab(searchParams.get("tab"))
     ? (searchParams.get("tab") as SettingsTab)
     : "general";
-  const setActiveTab = (tab: SettingsTab) => {
+  const setActiveTab = (tab: string) => {
     setSearchParams(
       (prev) => {
         prev.set("tab", tab);
@@ -121,6 +124,38 @@ export default function Settings() {
       { replace: true },
     );
   };
+
+  // Shared nav model for both the desktop sidebar and the mobile menu
+  // (#546). The 8 existing tabs are grouped; tabs are never removed.
+  const sidebarGroups: SidebarGroup[] = useMemo(() => {
+    const item = (tab: SettingsTab) => ({
+      value: tab,
+      label: t(SETTINGS_TAB_LABELS[tab].key, SETTINGS_TAB_LABELS[tab].fallback),
+      testId: `settings-tab-${tab}`,
+    });
+    return [
+      {
+        key: "general",
+        label: t("settings.group_general", "General"),
+        items: [item("general")],
+      },
+      {
+        key: "learning",
+        label: t("settings.group_learning", "Learning & AI"),
+        items: [item("learning"), item("ai"), item("plugins")],
+      },
+      {
+        key: "data",
+        label: t("settings.group_data", "Data & integrations"),
+        items: [item("data"), item("integrations")],
+      },
+      {
+        key: "info",
+        label: t("settings.group_info", "Info"),
+        items: [item("help"), item("about")],
+      },
+    ];
+  }, [t]);
 
   const [settings, setSettings] = useState<UserSettings | null>(null);
   // #508 — the learner's display name for the initials-avatar fallback.
@@ -293,26 +328,19 @@ export default function Settings() {
         <h1>{t("settings.title", "Settings")}</h1>
       </header>
 
-      <nav
-        className="settings-tabs"
-        role="tablist"
-        aria-label={t("settings.tabs_aria", "Settings sections")}
-        data-testid="settings-tabs"
-      >
-        {SETTINGS_TABS.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab}
-            className={`settings-tab${activeTab === tab ? " is-active" : ""}`}
-            data-testid={`settings-tab-${tab}`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {t(SETTINGS_TAB_LABELS[tab].key, SETTINGS_TAB_LABELS[tab].fallback)}
-          </button>
-        ))}
-      </nav>
+      <SettingsMobileMenu
+        groups={sidebarGroups}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+      />
+
+      <div className="mx-auto grid w-full max-w-[1180px] gap-0 md:grid-cols-[220px_1fr] md:gap-8">
+        <SettingsSidebar
+          groups={sidebarGroups}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        />
+        <div className="min-w-0">
 
       <section
         className="settings-section"
@@ -630,6 +658,8 @@ export default function Settings() {
         data-testid="settings-panel-about"
       >
         <AboutTab />
+      </div>
+        </div>
       </div>
     </main>
   );
