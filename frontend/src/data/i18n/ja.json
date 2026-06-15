@@ -62,6 +62,7 @@
     "cat_ai_config": "AI キーのバックアップ"
   },
   "nav": {
+    "statistics": "統計",
     "profile": "あなたのプロフィール",
     "learning_path": "学習パス",
     "dashboard": "ダッシュボード",
@@ -2539,5 +2540,27 @@
       "cjk": "CJK",
       "hangul": "ハングル"
     }
+  },
+  "statistics": {
+    "title": "学習統計",
+    "total_time": "学習時間",
+    "completed_lessons": "完了したレッスン",
+    "avg_accuracy": "平均正答率",
+    "current_streak": "現在の連続記録",
+    "streak_days": "{n}日",
+    "time_hm": "{h}時間{m}分",
+    "time_m": "{m}分",
+    "weak_areas_title": "改善すべき分野",
+    "weak_areas_empty": "まだ間違いの記録はありません。この調子で続けましょう！",
+    "practice": "練習する",
+    "errors": "回の間違い",
+    "last_answer": "前回の回答:",
+    "activity_title": "アクティビティ（過去90日間）",
+    "activity_aria": "過去90日間の1日あたりの完了レッスン数",
+    "activity_cell": "{date}に{count}レッスン",
+    "activity_empty": "まだアクティビティはありません。",
+    "pairs_title": "言語ペアごとの進捗",
+    "pairs_empty": "進捗を記録するにはレッスンセットをダウンロードしてください。",
+    "pair_level_aria": "{level}：{percent}% 完了"
   }
 }

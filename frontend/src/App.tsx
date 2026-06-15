@@ -45,6 +45,7 @@ const LearningRepoPage = lazyWithReload(() => import("./pages/LearningRepo"));
 const NotFound = lazyWithReload(() => import("./pages/NotFound"));
 const Onboarding = lazyWithReload(() => import("./pages/Onboarding"));
 const Progress = lazyWithReload(() => import("./pages/Progress"));
+const LearningStatistics = lazyWithReload(() => import("./pages/LearningStatistics"));
 const Pronunciation = lazyWithReload(() => import("./pages/Pronunciation"));
 const Session = lazyWithReload(() => import("./pages/Session"));
 const Settings = lazyWithReload(() => import("./pages/Settings"));
@@ -145,6 +146,7 @@ export default function App() {
                 <Route path="/session" element={<Session />} />
                 <Route path="/curriculum" element={<Curriculum />} />
                 <Route path="/progress" element={<Progress />} />
+                <Route path="/statistics" element={<LearningStatistics />} />
                 <Route path="/import" element={<Import />} />
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />

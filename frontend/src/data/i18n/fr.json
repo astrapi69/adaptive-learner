@@ -62,6 +62,7 @@
     "cat_ai_config": "Sauvegarde de clé IA"
   },
   "nav": {
+    "statistics": "Statistiques",
     "profile": "Votre profil",
     "learning_path": "Parcours d'apprentissage",
     "dashboard": "Tableau de bord",
@@ -2539,5 +2540,27 @@
       "cjk": "CJK",
       "hangul": "Hangûl"
     }
+  },
+  "statistics": {
+    "title": "Statistiques d'apprentissage",
+    "total_time": "Temps d'apprentissage",
+    "completed_lessons": "Leçons terminées",
+    "avg_accuracy": "Précision moyenne",
+    "current_streak": "Série actuelle",
+    "streak_days": "{n} jours",
+    "time_hm": "{h} h {m} min",
+    "time_m": "{m} min",
+    "weak_areas_title": "Points à améliorer",
+    "weak_areas_empty": "Aucune erreur enregistrée pour l'instant — continuez !",
+    "practice": "S'entraîner",
+    "errors": "erreurs",
+    "last_answer": "Votre dernière réponse :",
+    "activity_title": "Activité (90 derniers jours)",
+    "activity_aria": "Leçons terminées par jour au cours des 90 derniers jours",
+    "activity_cell": "{count} leçons le {date}",
+    "activity_empty": "Aucune activité pour l'instant.",
+    "pairs_title": "Progression par paire de langues",
+    "pairs_empty": "Téléchargez un ensemble de leçons pour suivre la progression.",
+    "pair_level_aria": "{level} : {percent}% terminé"
   }
 }

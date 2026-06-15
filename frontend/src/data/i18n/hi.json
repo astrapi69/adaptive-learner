@@ -62,6 +62,7 @@
     "cat_ai_config": "AI key backup"
   },
   "nav": {
+    "statistics": "आँकड़े",
     "profile": "आपकी प्रोफ़ाइल",
     "learning_path": "अधिगम पथ",
     "dashboard": "डैशबोर्ड",
@@ -2539,5 +2540,27 @@
       "cjk": "CJK",
       "hangul": "हंगुल"
     }
+  },
+  "statistics": {
+    "title": "सीखने के आँकड़े",
+    "total_time": "सीखने का समय",
+    "completed_lessons": "पूर्ण पाठ",
+    "avg_accuracy": "औसत सटीकता",
+    "current_streak": "वर्तमान श्रृंखला",
+    "streak_days": "{n} दिन",
+    "time_hm": "{h} घं {m} मि",
+    "time_m": "{m} मि",
+    "weak_areas_title": "सुधार के क्षेत्र",
+    "weak_areas_empty": "अभी तक कोई गलती दर्ज नहीं — लगे रहो!",
+    "practice": "अभ्यास करें",
+    "errors": "गलतियाँ",
+    "last_answer": "आपका पिछला उत्तर:",
+    "activity_title": "गतिविधि (पिछले 90 दिन)",
+    "activity_aria": "पिछले 90 दिनों में प्रतिदिन पूर्ण किए गए पाठ",
+    "activity_cell": "{date} को {count} पाठ",
+    "activity_empty": "अभी तक कोई गतिविधि नहीं।",
+    "pairs_title": "भाषा युग्म के अनुसार प्रगति",
+    "pairs_empty": "प्रगति ट्रैक करने के लिए एक पाठ सेट डाउनलोड करें।",
+    "pair_level_aria": "{level}: {percent}% पूर्ण"
   }
 }
