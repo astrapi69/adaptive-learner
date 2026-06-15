@@ -19,6 +19,7 @@ import type { SystemInfo } from "../../types/domain";
 import CreditsSection from "./CreditsSection";
 import DonationSection from "./DonationSection";
 import LicenseResourcesSection from "./LicenseResourcesSection";
+import SupportSection from "./SupportSection";
 import SystemInfoSection from "./SystemInfoSection";
 import VersionSection from "./VersionSection";
 
@@ -88,6 +89,7 @@ export default function AboutTab() {
           <LicenseResourcesSection info={info} t={t} />
         </div>
       )}
+      <SupportSection />
     </section>
   );
 }
