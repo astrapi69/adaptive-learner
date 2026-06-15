@@ -13,6 +13,7 @@ import "./styles/toast-theme.css";
 import type { ApiError } from "./api/client";
 import ErrorBoundary from "./components/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
+import GlobalShortcuts from "./components/GlobalShortcuts";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
@@ -173,6 +174,7 @@ export default function App() {
               <EventRecorderSetup />
             </Suspense>
             <HelpDrawer />
+            <GlobalShortcuts />
             {errorReport.open && (
               <Suspense fallback={null}>
                 <ErrorReportDialog

@@ -30,6 +30,10 @@ import type {Ref} from "react";
 import {useI18n} from "../../hooks/useI18n";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
+import {
+    useKeyboardShortcuts,
+    type ShortcutDefinition,
+} from "../../shared/useKeyboardShortcuts";
 import type {ContentLessonExercise} from "../../storage/types";
 import type {
     ControlledExerciseProps,
@@ -340,6 +344,39 @@ function MatchingExercise(
         }
         setSelectedRight(originalIndex === selectedRight ? null : originalIndex);
     };
+
+    // Lesson shortcut: Ctrl/⌘+Z undoes the most recently formed pair.
+    // ``matches`` is insertion-ordered, so the last key is the last
+    // pair the learner made. Disabled while submitted or empty so it
+    // never steals the browser's native undo when there is nothing to
+    // revert.
+    const undoShortcut = useMemo<ShortcutDefinition[]>(
+        () => [
+            {
+                id: "matching-undo",
+                key: "z",
+                modifiers: {ctrlOrMeta: true},
+                context: "lesson",
+                description: "Undo the last match",
+                action: () => {
+                    const lastLeft = [...matches.keys()].at(-1);
+                    if (lastLeft === undefined) return;
+                    setMatches((prev) => {
+                        const next = new Map(prev);
+                        next.delete(lastLeft);
+                        return next;
+                    });
+                    releaseSlot(lastLeft);
+                    setSelectedLeft(null);
+                    setSelectedRight(null);
+                },
+            },
+        ],
+        [matches],
+    );
+    useKeyboardShortcuts(undoShortcut, {
+        enabled: !submitted && matches.size > 0,
+    });
 
     if (pairs.length === 0) {
         return (
