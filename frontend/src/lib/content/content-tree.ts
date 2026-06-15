@@ -21,7 +21,13 @@
  */
 
 import type { ContentSetEntry } from "../../storage/types";
+import { baseLanguage, domainOf } from "./language-utils";
 import { resolveTreePlacement } from "./tree-placement";
+
+// Re-exported for existing consumers that import these from
+// content-tree; the definitions live in language-utils (#540, to break
+// the content-tree <-> tree-placement import cycle).
+export { baseLanguage, domainOf };
 
 /**
  * A user-generated lesson folded into a published tree node
@@ -102,17 +108,6 @@ export interface ContentTree {
   /** Non-language (domain) sets, grouped by domain, alphabetical.
    *  Empty when the library is language-only. */
   knowledge: DomainGroup[];
-}
-
-/** Base subtag of a BCP-47 code: "de-AT" -> "de", "FR" -> "fr". */
-export function baseLanguage(code: string): string {
-  return (code || "").split("-")[0].toLowerCase();
-}
-
-/** Normalised content domain; "language" when unset. Mirrors the
- *  content-validator + the content repo's validate_content.py. */
-export function domainOf(entry: ContentSetEntry): string {
-  return (entry.domain || "language").trim().toLowerCase();
 }
 
 /** CEFR ordering for level sort; unknown levels sort last,

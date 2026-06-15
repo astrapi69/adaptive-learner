@@ -23,7 +23,7 @@
  */
 
 import type {ContentSetEntry} from "../../storage/types";
-import {baseLanguage, domainOf} from "./content-tree";
+import {baseLanguage, domainOf} from "./language-utils";
 
 /** Why a user-generated set could not be placed in the tree. */
 export type PlacementFallbackReason =
