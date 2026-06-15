@@ -325,17 +325,20 @@ export default function Dashboard() {
                 then motivational (XP / streak / badges), then the
                 analytical panels. */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {userId && <PausedLessonsCard userId={userId} />}
-
+        {/* All user-scoped cards share one guard (fragment children
+            flatten into the grid, so layout is unchanged) — keeps the
+            Dashboard component under the complexity gate. */}
         {userId && (
-          <article className="dashboard-card dashboard-card-wide">
-            <DailyMissionsCard userId={userId} />
-          </article>
+          <>
+            <PausedLessonsCard userId={userId} />
+            <article className="dashboard-card dashboard-card-wide">
+              <DailyMissionsCard userId={userId} />
+            </article>
+            <FocusAreasCard userId={userId} />
+            <ReviewQueueCard userId={userId} />
+            <FavoritesCard userId={userId} />
+          </>
         )}
-
-        {userId && <FocusAreasCard userId={userId} />}
-        {userId && <ReviewQueueCard userId={userId} />}
-        {userId && <FavoritesCard userId={userId} />}
 
         <article className="dashboard-card">
           <h2 className="dashboard-card-title">
