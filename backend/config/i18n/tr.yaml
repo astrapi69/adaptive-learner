@@ -413,6 +413,11 @@ progress:
   commit_notes_aria: "Oturum notları"
   session_count: "Oturumlar"
 settings:
+  support:
+    heading: "Destek"
+    description: "Bir şey beklediğiniz gibi çalışmıyor mu? Geliştiricinin sorunu yeniden oluşturmasına yardımcı olmak için son işlemlerinizin bir raporunu oluşturun. Tarayıcınızdan çıkmadan önce her şeyi gözden geçirirsiniz."
+    create_report: "Hata raporu oluştur"
+    report_default_message: "Kullanıcı tarafından başlatılan rapor"
   tab_integrations: "Entegrasyonlar"
   github:
     title: "GitHub Entegrasyonu"
@@ -1204,6 +1209,20 @@ ui:
     open_github: "GitHub'da aç"
     close: "Kapat"
     truncated: "Rapor, GitHub URL sınırına uyacak şekilde kısaltıldı."
+    intro_proactive: "Geliştiriciye göndermek için son işlemlerinizin bir raporunu hazırlayın. Tarayıcınızdan herhangi bir şey çıkmadan önce tam olarak ne içerdiğini görürsünüz."
+    app_state: "Uygulama durumu"
+    online: "çevrimiçi"
+    offline: "çevrimdışı"
+    download_json: "JSON indir"
+    category_all: "Tümü"
+    no_events_in_category: "Bu kategoride olay yok."
+    category:
+      navigation: "Gezinme"
+      ui: "Arayüz"
+      network: "Ağ"
+      storage: "Depolama"
+      exercise: "Alıştırma"
+      error: "Hatalar"
   help:
     learn_more: "Daha fazla bilgi"
     open_help: "Yardımı aç"

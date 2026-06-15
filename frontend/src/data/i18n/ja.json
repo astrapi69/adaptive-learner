@@ -442,6 +442,12 @@
     "session_count": "セッション"
   },
   "settings": {
+    "support": {
+      "heading": "サポート",
+      "description": "想定どおりに動作しませんか？最近の操作のレポートを作成すると、開発者が問題を再現しやすくなります。ブラウザから送信される前にすべてを確認できます。",
+      "create_report": "エラーレポートを作成",
+      "report_default_message": "ユーザーが開始したレポート"
+    },
     "tab_integrations": "連携",
     "github": {
       "title": "GitHub 連携",
@@ -1302,7 +1308,22 @@
       "copy_failed": "コピーに失敗しました",
       "open_github": "GitHub で開く",
       "close": "閉じる",
-      "truncated": "GitHub の URL 長制限に合わせてレポートを切り詰めました。"
+      "truncated": "GitHub の URL 長制限に合わせてレポートを切り詰めました。",
+      "intro_proactive": "最近の操作のレポートを作成して開発者に送信できます。ブラウザから何かが送信される前に、その内容を正確に確認できます。",
+      "app_state": "アプリの状態",
+      "online": "オンライン",
+      "offline": "オフライン",
+      "download_json": "JSON をダウンロード",
+      "category_all": "すべて",
+      "no_events_in_category": "このカテゴリにはイベントがありません。",
+      "category": {
+        "navigation": "ナビゲーション",
+        "ui": "インターフェース",
+        "network": "ネットワーク",
+        "storage": "ストレージ",
+        "exercise": "演習",
+        "error": "エラー"
+      }
     },
     "help": {
       "learn_more": "詳しく見る",

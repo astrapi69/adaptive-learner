@@ -413,6 +413,11 @@ progress:
   commit_notes_aria: "Session notes"
   session_count: "Sessions"
 settings:
+  support:
+    heading: "Support"
+    description: "Something not working as expected? Create a report of your recent actions to help the developer reproduce it. You review everything before it leaves your browser."
+    create_report: "Create error report"
+    report_default_message: "User-initiated report"
   tab_integrations: "Integrations"
   github:
     title: "GitHub Integration"
@@ -1208,6 +1213,20 @@ ui:
     open_github: "Open on GitHub"
     close: "Close"
     truncated: "Report truncated to fit GitHub's URL length limit."
+    intro_proactive: "Prepare a report of your recent actions to send to the developer. You see exactly what it contains before anything leaves your browser."
+    app_state: "App state"
+    online: "online"
+    offline: "offline"
+    download_json: "Download JSON"
+    category_all: "All"
+    no_events_in_category: "No events in this category."
+    category:
+      navigation: "Navigation"
+      ui: "Interface"
+      network: "Network"
+      storage: "Storage"
+      exercise: "Exercise"
+      error: "Errors"
   help:
     learn_more: "Learn more"
     open_help: "Open help"

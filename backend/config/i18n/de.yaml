@@ -413,6 +413,11 @@ progress:
   commit_notes_aria: "Sitzungsnotizen"
   session_count: "Sitzungen"
 settings:
+  support:
+    heading: "Support"
+    description: "Etwas funktioniert nicht wie erwartet? Erstelle einen Bericht deiner letzten Aktionen, damit die Entwicklung das Problem nachvollziehen kann. Du prüfst alles, bevor es deinen Browser verlässt."
+    create_report: "Fehlerbericht erstellen"
+    report_default_message: "Vom Nutzer ausgelöster Bericht"
   tab_integrations: "Integrationen"
   github:
     title: "GitHub-Integration"
@@ -1204,6 +1209,20 @@ ui:
     open_github: "Auf GitHub öffnen"
     close: "Schließen"
     truncated: "Bericht gekürzt wegen GitHub-URL-Längenbegrenzung."
+    intro_proactive: "Erstelle einen Bericht deiner letzten Aktionen für die Entwicklung. Du siehst genau, was er enthält, bevor irgendetwas deinen Browser verlässt."
+    app_state: "App-Zustand"
+    online: "online"
+    offline: "offline"
+    download_json: "JSON herunterladen"
+    category_all: "Alle"
+    no_events_in_category: "Keine Ereignisse in dieser Kategorie."
+    category:
+      navigation: "Navigation"
+      ui: "Oberfläche"
+      network: "Netzwerk"
+      storage: "Speicher"
+      exercise: "Übung"
+      error: "Fehler"
   help:
     learn_more: "Mehr erfahren"
     open_help: "Hilfe oeffnen"

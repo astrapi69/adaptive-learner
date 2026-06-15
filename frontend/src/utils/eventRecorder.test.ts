@@ -7,12 +7,15 @@
  * a relaxed regex, etc.) fails loudly.
  */
 
-import {describe, it, expect, beforeEach} from "vitest";
+import {describe, it, expect, beforeEach, afterEach} from "vitest";
 
 import {
+    EventRingBuffer,
+    categoryFor,
     eventRecorder,
     formatEventLog,
     sanitizeEvent,
+    setAppStateProvider,
     type RecordedEvent,
 } from "./eventRecorder";
 
@@ -247,5 +250,151 @@ describe("formatEventLog", () => {
         expect(formatEventLog(events)).toContain(
             "API Error: POST /api/projects -> Network down",
         );
+    });
+});
+
+// --- Category taxonomy (EVT-01) ---
+
+describe("categoryFor", () => {
+    it("maps navigation to navigation", () => {
+        expect(categoryFor({type: "navigation", timestamp: 0})).toBe(
+            "navigation",
+        );
+    });
+
+    it("maps api_call / api_error to network", () => {
+        expect(categoryFor({type: "api_call", timestamp: 0})).toBe("network");
+        expect(categoryFor({type: "api_error", timestamp: 0})).toBe("network");
+    });
+
+    it("maps uncaught_error / unhandled_rejection to error", () => {
+        expect(categoryFor({type: "uncaught_error", timestamp: 0})).toBe(
+            "error",
+        );
+        expect(categoryFor({type: "unhandled_rejection", timestamp: 0})).toBe(
+            "error",
+        );
+    });
+
+    it("maps clicks / dialogs to ui", () => {
+        expect(categoryFor({type: "click", timestamp: 0})).toBe("ui");
+        expect(categoryFor({type: "dialog_open", timestamp: 0})).toBe("ui");
+    });
+
+    it("classifies an error-level toast as error, others as ui", () => {
+        expect(
+            categoryFor({type: "toast", timestamp: 0, level: "error"}),
+        ).toBe("error");
+        expect(
+            categoryFor({type: "toast", timestamp: 0, level: "info"}),
+        ).toBe("ui");
+    });
+
+    it("honours an explicit category override", () => {
+        expect(
+            categoryFor({
+                type: "click",
+                timestamp: 0,
+                category: "exercise",
+            }),
+        ).toBe("exercise");
+    });
+
+    it("add() fills category from the lookup", () => {
+        eventRecorder.add({type: "navigation", timestamp: 1, to: "/x"});
+        expect(eventRecorder.getAll()[0].category).toBe("navigation");
+    });
+});
+
+// --- App-state snapshot (EVT-02) ---
+
+describe("app-state snapshot", () => {
+    afterEach(() => setAppStateProvider(null));
+
+    it("attaches a snapshot to error-category events", () => {
+        setAppStateProvider(() => ({
+            storageMode: "dexie",
+            language: "fr",
+            online: false,
+        }));
+        eventRecorder.add({
+            type: "uncaught_error",
+            timestamp: 1,
+            message: "boom",
+        });
+        const ev = eventRecorder.getAll()[0];
+        expect(ev.appState).toEqual({
+            storageMode: "dexie",
+            language: "fr",
+            online: false,
+        });
+    });
+
+    it("does not attach a snapshot to non-error events", () => {
+        setAppStateProvider(() => ({
+            storageMode: "api",
+            language: "de",
+            online: true,
+        }));
+        eventRecorder.add({type: "click", timestamp: 1, text: "Save"});
+        expect(eventRecorder.getAll()[0].appState).toBeUndefined();
+    });
+
+    it("survives a throwing provider without losing the event", () => {
+        setAppStateProvider(() => {
+            throw new Error("nope");
+        });
+        eventRecorder.add({
+            type: "uncaught_error",
+            timestamp: 1,
+            message: "boom",
+        });
+        expect(eventRecorder.size()).toBe(1);
+        expect(eventRecorder.getAll()[0].appState).toBeUndefined();
+    });
+});
+
+// --- Persistence (EVT-03) ---
+
+describe("sessionStorage persistence", () => {
+    beforeEach(() => sessionStorage.clear());
+    afterEach(() => sessionStorage.clear());
+
+    it("reloads the buffer from sessionStorage on construction", () => {
+        const a = new EventRingBuffer();
+        a.clear();
+        a.add({type: "uncaught_error", timestamp: 1, message: "crash"});
+        // A fresh instance (simulating a reload) loads the persisted state.
+        const b = new EventRingBuffer();
+        expect(b.size()).toBe(1);
+        expect(b.getAll()[0].message).toBe("crash");
+    });
+
+    it("clear() empties the persisted store too", () => {
+        const a = new EventRingBuffer();
+        a.add({type: "uncaught_error", timestamp: 1, message: "crash"});
+        a.clear();
+        const b = new EventRingBuffer();
+        expect(b.size()).toBe(0);
+    });
+
+    it("caps the reloaded buffer at the max size", () => {
+        const seed: RecordedEvent[] = [];
+        for (let i = 0; i < 150; i++) {
+            seed.push({type: "click", timestamp: i, text: `b${i}`});
+        }
+        sessionStorage.setItem(
+            "adaptive-learner.event-buffer",
+            JSON.stringify(seed),
+        );
+        const b = new EventRingBuffer();
+        expect(b.size()).toBe(100);
+        expect(b.getAll()[0].text).toBe("b50");
+    });
+
+    it("ignores a corrupt persisted payload", () => {
+        sessionStorage.setItem("adaptive-learner.event-buffer", "not json{");
+        const b = new EventRingBuffer();
+        expect(b.size()).toBe(0);
     });
 });

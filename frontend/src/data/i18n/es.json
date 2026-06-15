@@ -442,6 +442,12 @@
     "session_count": "Sesiones"
   },
   "settings": {
+    "support": {
+      "heading": "Soporte",
+      "description": "¿Algo no funciona como esperabas? Crea un informe de tus acciones recientes para ayudar al desarrollador a reproducirlo. Revisas todo antes de que salga de tu navegador.",
+      "create_report": "Crear informe de error",
+      "report_default_message": "Informe iniciado por el usuario"
+    },
     "tab_integrations": "Integraciones",
     "github": {
       "title": "Integración con GitHub",
@@ -1302,7 +1308,22 @@
       "copy_failed": "Copy failed",
       "open_github": "Open on GitHub",
       "close": "Close",
-      "truncated": "Report truncated to fit GitHub's URL length limit."
+      "truncated": "Report truncated to fit GitHub's URL length limit.",
+      "intro_proactive": "Prepara un informe de tus acciones recientes para enviarlo al desarrollador. Ves exactamente lo que contiene antes de que nada salga de tu navegador.",
+      "app_state": "Estado de la app",
+      "online": "en línea",
+      "offline": "sin conexión",
+      "download_json": "Descargar JSON",
+      "category_all": "Todos",
+      "no_events_in_category": "No hay eventos en esta categoría.",
+      "category": {
+        "navigation": "Navegación",
+        "ui": "Interfaz",
+        "network": "Red",
+        "storage": "Almacenamiento",
+        "exercise": "Ejercicio",
+        "error": "Errores"
+      }
     },
     "help": {
       "learn_more": "Learn more",

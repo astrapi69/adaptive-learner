@@ -106,17 +106,20 @@ export default function App() {
     open: boolean;
     message: string;
     apiError?: ApiError;
+    proactive?: boolean;
   }>({ open: false, message: "" });
 
   const handleOpenReport = useCallback((e: Event) => {
     const detail = (e as CustomEvent).detail as {
       message: string;
       apiError?: ApiError;
+      proactive?: boolean;
     };
     setErrorReport({
       open: true,
       message: detail.message,
       apiError: detail.apiError,
+      proactive: detail.proactive,
     });
   }, []);
 
@@ -175,6 +178,7 @@ export default function App() {
                   onClose={() => setErrorReport({ open: false, message: "" })}
                   errorMessage={errorReport.message}
                   apiError={errorReport.apiError}
+                  proactive={errorReport.proactive}
                 />
               </Suspense>
             )}
