@@ -56,6 +56,7 @@ export const FEATURES = {
   CONTENT_REPO_SHARE: "content-repo-share",
   BACKUP_EXPORT: "backup-export",
   BACKUP_IMPORT: "backup-import",
+  SELECTIVE_EXPORT: "selective-export",
   FIRST_RUN_RESTORE: "first-run-restore",
   REVIEW_SESSION: "review-session",
   ASSESSMENT: "assessment",
