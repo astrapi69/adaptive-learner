@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
 **Stand:** 2026-06-15
-**Anzahl EXPs:** 27
+**Anzahl EXPs:** 28
 
 ## Kategorisierung
 
@@ -42,6 +42,7 @@
 | 026 | User-Lektionen im Content-Baum (Badge)      | Feature      | 2     | Niedrig   | 023, 025           |
 | 027 | Internationalisierungs-Strategie (Sprach-Expansion) | Querschnitt | Zukunft | Mittel | 002, 023           |
 | 028 | User-Event-Recording (Fehlerbericht)        | Querschnitt  | laufend | Mittel | eventRecorder      |
+| 029 | Medien-Ressourcen mit Gegenseitigkeits-Prinzip | Vision    | B/C   | Mittel    | 023, 025, #141     |
 
 ## Umsetzungsstand (Stand v1.79.0)
 
@@ -66,7 +67,9 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
 - **Zurückgestellt / Zukunft:** 004 (GitHub-Org), 009/011/012 (soziale Features —
   brauchen Cloud-Backend + Nutzerbasis), 014 (Community-Feedback — teilweise via
   Community-Sharing), 015 (Kinder-Variante), 027 (Internationalisierungs-Strategie —
-  Sprach-Expansion, Vision-Dokument für nach v1.80.0).
+  Sprach-Expansion, Vision-Dokument für nach v1.80.0), 029 (Medien-Ressourcen mit
+  Gegenseitigkeits-Prinzip — `media.yaml` analog `books.yaml` + Ökosystem-Partner;
+  Code additiv, Engpass ist die Partnergewinnung, MED-01..06 + MED-10).
 
 ## Phasen-Definition
 

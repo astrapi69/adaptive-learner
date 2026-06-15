@@ -185,6 +185,33 @@ ecosystem triple is validated.
   English): "Die Kartenrueckseiten sind auf Deutsch, aber die
   Ausgangssprache ist Englisch. Stimmt das?" Advisory only, never a
   hard block.
+- **EXP-029 — Media resources with reciprocity principle.** Companion
+  media (YouTube / podcast / article / book / course / website) per domain
+  via a ``media.yaml`` analogous to ``books.yaml`` (#141), both storage
+  modes, no server. The curation filter is **reciprocity, not price**:
+  free media + books are always allowed; courses + websites only with
+  proven reciprocity (backlink / connected content-repo / cooperation);
+  pure advertising is out regardless of price. See
+  [docs/explorations/EXP-029-media-reciprocity.md](explorations/EXP-029-media-reciprocity.md).
+  Tasks (all additive, both storage modes):
+  - **MED-01** — ``media.yaml`` schema + ``MediaResource`` type + loader
+    (``media-resources.ts`` analogous to ``book-recommendations.ts``).
+  - **MED-02** — parser validation with the **reciprocity gate**:
+    ``course`` / ``website`` with ``partnership !== true`` are dropped
+    (fail closed); ``url`` http(s)-validated.
+  - **MED-03** — Content Browser rendering: per-domain media section,
+    type icon per ``MediaType``, empty section hidden.
+  - **MED-04** — free/paid badge (``free`` field → discreet token-coloured
+    "Gratis" / "Kurs" badge) so the learner knows before clicking.
+  - **MED-05** — optional ``resources[]`` at set/lesson level (additive
+    content-schema bump, like ``example_url``).
+  - **MED-06** — i18n: media-type labels + badges + section titles in 8
+    languages (``media.*``).
+  - **MED-10** — **Partner onboarding documentation** (the actual lever):
+    a guide for language teachers / schools — how to create a content repo
+    (EXP-023/025), how to link a course (``media.yaml`` / ``resources[]``),
+    how to evidence reciprocity. Business-development artefact, no code,
+    parallelisable with MED-01..06.
 
 ---
 
