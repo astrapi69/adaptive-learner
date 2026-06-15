@@ -1567,6 +1567,10 @@
     }
   },
   "lesson": {
+    "motivation": {
+      "halftime": "¡A mitad de camino, sigue así!",
+      "last": "¡La última, termina fuerte!"
+    },
     "theory": {
       "view_example": "Ver ejemplo"
     },

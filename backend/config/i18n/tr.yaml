@@ -1453,6 +1453,9 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  motivation:
+    halftime: "Yarısı bitti — devam et!"
+    last: "Sonuncu — güçlü bitir!"
   theory:
     view_example: "Örneği görüntüle"
   tts:

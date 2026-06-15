@@ -1567,6 +1567,10 @@
     }
   },
   "lesson": {
+    "motivation": {
+      "halftime": "À mi-chemin — continue !",
+      "last": "La dernière — termine en beauté !"
+    },
     "theory": {
       "view_example": "Voir l'exemple"
     },

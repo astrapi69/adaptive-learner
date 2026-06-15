@@ -1449,6 +1449,9 @@ repo:
     description: Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client.
     enable_git: Enable git persistence
 lesson:
+  motivation:
+    halftime: "आधा हो गया — लगे रहो!"
+    last: "आखिरी — दमदार अंत करो!"
   theory:
     view_example: View example
   tts:
