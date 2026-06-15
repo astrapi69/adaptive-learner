@@ -1,23 +1,29 @@
 /**
- * AvatarUpload — pick, square-crop, downscale and preview a profile
- * picture, entirely client-side (#508).
+ * AvatarUpload — pick, interactively crop, downscale and preview a
+ * profile picture, entirely client-side (#508, crop #558).
  *
  * Presentational + props-driven so it stays app-agnostic (reusability
  * policy): it renders the current avatar (the supplied image, else an
  * {@link InitialsAvatar} from ``name``), an upload button and — when a
- * picture is set — a remove button. On selection it processes the file
- * with {@link processAvatarFile} and reports the resulting base64 data
- * URL via ``onChange`` (or ``null`` on remove). Every label is supplied
- * by the caller, and a processing failure is reported via ``onError``
- * with a stable reason key the caller can translate + surface.
+ * picture is set — a remove button. On selection it opens an
+ * {@link ImageCropDialog} so the user can position + zoom the image; on
+ * confirm the cropped square Blob is converted to a base64 data URL and
+ * reported via ``onChange`` (or ``null`` on remove). Every label is
+ * supplied by the caller, and a processing failure is reported via
+ * ``onError`` with a stable reason key the caller can translate.
  *
  * @example
  * <AvatarUpload
  *   name={user.name}
  *   value={settings.avatar}
  *   size={96}
- *   uploadLabel={t("settings.avatar.upload", "Upload picture")}
- *   removeLabel={t("settings.avatar.remove", "Remove")}
+ *   uploadLabel={t("settings.avatar_upload", "Upload picture")}
+ *   removeLabel={t("settings.avatar_remove", "Remove")}
+ *   cropLabels={{
+ *     title: t("settings.avatar_crop_title", "Adjust your picture"),
+ *     confirm: t("settings.avatar_crop_apply", "Apply"),
+ *     cancel: t("settings.avatar_crop_cancel", "Cancel"),
+ *   }}
  *   onChange={(dataUrl) => saveAvatar(dataUrl)}
  *   onError={(key) => notify.error(t(key, "Could not use that image."))}
  * />
@@ -29,7 +35,22 @@ import { ImagePlus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import InitialsAvatar from "./InitialsAvatar";
-import { processAvatarFile } from "../lib/avatar/resize-image";
+import ImageCropDialog from "./ImageCropDialog";
+import {
+  AVATAR_MAX_BYTES,
+  AVATAR_MAX_DIMENSION,
+  dataUrlByteLength,
+  isAcceptedImageType,
+} from "../lib/avatar/resize-image";
+import { blobToDataUrl } from "../lib/avatar/crop-image";
+
+export interface AvatarCropLabels {
+  title?: string;
+  instructions?: string;
+  confirm?: string;
+  cancel?: string;
+  zoom?: string;
+}
 
 export interface AvatarUploadProps {
   /** Display name for the initials fallback. */
@@ -40,6 +61,8 @@ export interface AvatarUploadProps {
   size?: number;
   uploadLabel: string;
   removeLabel: string;
+  /** Translatable labels for the crop dialog (English defaults apply). */
+  cropLabels?: AvatarCropLabels;
   /** Receives the new data URL, or null when removed. */
   onChange: (dataUrl: string | null) => void;
   /** Receives a stable, translatable reason key on a processing failure. */
@@ -53,26 +76,50 @@ export default function AvatarUpload({
   size = 96,
   uploadLabel,
   removeLabel,
+  cropLabels,
   onChange,
   onError,
   testId,
 }: AvatarUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState<File | null>(null);
 
-  async function handleFile(file: File | undefined) {
+  function resetInput(): void {
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  function handleFile(file: File | undefined): void {
     if (!file) return;
+    if (!isAcceptedImageType(file.type)) {
+      onError?.("avatar.error.unsupported_type");
+      resetInput();
+      return;
+    }
+    setPending(file);
+  }
+
+  async function handleCropConfirm(blob: Blob): Promise<void> {
     setBusy(true);
     try {
-      const dataUrl = await processAvatarFile(file);
+      const dataUrl = await blobToDataUrl(blob);
+      if (dataUrlByteLength(dataUrl) > AVATAR_MAX_BYTES) {
+        onError?.("avatar.error.too_large");
+        return;
+      }
       onChange(dataUrl);
-    } catch (err) {
-      const key = err instanceof Error ? err.message : "avatar.error.decode_failed";
-      onError?.(key);
+    } catch {
+      onError?.("avatar.error.decode_failed");
     } finally {
       setBusy(false);
-      if (inputRef.current) inputRef.current.value = "";
+      setPending(null);
+      resetInput();
     }
+  }
+
+  function handleCropCancel(): void {
+    setPending(null);
+    resetInput();
   }
 
   return (
@@ -96,7 +143,7 @@ export default function AvatarUpload({
           accept="image/jpeg,image/png,image/webp"
           className="hidden"
           data-testid="avatar-file-input"
-          onChange={(e) => void handleFile(e.target.files?.[0])}
+          onChange={(e) => handleFile(e.target.files?.[0])}
         />
         <Button
           type="button"
@@ -125,6 +172,20 @@ export default function AvatarUpload({
           </Button>
         ) : null}
       </div>
+      {pending ? (
+        <ImageCropDialog
+          image={pending}
+          outputSize={AVATAR_MAX_DIMENSION}
+          shape="circle"
+          title={cropLabels?.title}
+          instructions={cropLabels?.instructions}
+          confirmLabel={cropLabels?.confirm}
+          cancelLabel={cropLabels?.cancel}
+          zoomLabel={cropLabels?.zoom}
+          onConfirm={(blob) => void handleCropConfirm(blob)}
+          onCancel={handleCropCancel}
+        />
+      ) : null}
     </div>
   );
 }
