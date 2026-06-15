@@ -19,6 +19,8 @@ vi.mock("react-router-dom", async () => {
 
 const apiGet = vi.fn();
 const apiUpdate = vi.fn();
+const apiUsersGet = vi.fn();
+const apiUsersUpdate = vi.fn();
 const apiSetKey = vi.fn();
 const apiDeleteKey = vi.fn();
 const apiTestKey = vi.fn();
@@ -31,6 +33,11 @@ vi.mock("../api/client", async () => {
     ...actual,
     api: {
       ...actual.api,
+      users: {
+        ...actual.api.users,
+        get: (...args: unknown[]) => apiUsersGet(...args),
+        update: (...args: unknown[]) => apiUsersUpdate(...args),
+      },
       settings: {
         ...actual.api.settings,
         get: (...args: unknown[]) => apiGet(...args),
@@ -105,6 +112,13 @@ describe("Settings page", () => {
     mockNavigate.mockClear();
     apiGet.mockReset();
     apiUpdate.mockReset();
+    apiUsersGet.mockReset();
+    apiUsersUpdate.mockReset();
+    // #579 — the active learner the profile section edits.
+    apiUsersGet.mockResolvedValue({ id: "u-1", name: "Ada Lovelace", language: "de" });
+    apiUsersUpdate.mockImplementation((_id: string, body: { name?: string }) =>
+      Promise.resolve({ id: "u-1", name: body.name ?? "Ada Lovelace", language: "de" }),
+    );
     apiSetKey.mockReset();
     apiDeleteKey.mockReset();
     apiTestKey.mockReset();
@@ -546,6 +560,88 @@ describe("Settings page", () => {
     fireEvent.click(dexieRadio);
     expect(localStorage.getItem("adaptive-learner.storage_mode")).toBe("dexie");
     expect(toastSuccess).toHaveBeenCalledWith(expect.stringMatching(/Reload/i));
+  });
+
+  // --- #579: editable display name in Settings > Profile ----------------
+  // Dexie-mode persistence of users.update({name}) is covered by
+  // dexie-storage.test.ts; the Settings component uses the same
+  // mode-agnostic getStorage().users.update path in both modes.
+  it("shows the current display name in the username field", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    const input = (await screen.findByTestId(
+      "settings-username-input",
+    )) as HTMLInputElement;
+    await waitFor(() => expect(input.value).toBe("Ada Lovelace"));
+  });
+
+  it("edits + saves the name via users.update and updates the avatar initials", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    const input = (await screen.findByTestId(
+      "settings-username-input",
+    )) as HTMLInputElement;
+    await waitFor(() => expect(input.value).toBe("Ada Lovelace"));
+    fireEvent.change(input, { target: { value: "Grace Hopper" } });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("settings-username-save"));
+    });
+    await waitFor(() =>
+      expect(apiUsersUpdate).toHaveBeenCalledWith("u-1", { name: "Grace Hopper" }),
+    );
+    // No avatar set -> the InitialsAvatar fallback reflects the new name live.
+    await waitFor(() =>
+      expect(screen.getByTestId("avatar-preview-initials")).toHaveTextContent("GH"),
+    );
+    expect(toastSuccess).toHaveBeenCalled();
+  });
+
+  it("trims whitespace and caps the saved name at 50 chars", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    const input = (await screen.findByTestId(
+      "settings-username-input",
+    )) as HTMLInputElement;
+    await waitFor(() => expect(input.value).toBe("Ada Lovelace"));
+    fireEvent.change(input, { target: { value: "   " + "x".repeat(60) + "   " } });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("settings-username-save"));
+    });
+    await waitFor(() =>
+      expect(apiUsersUpdate).toHaveBeenCalledWith("u-1", { name: "x".repeat(50) }),
+    );
+  });
+
+  it("rejects an empty name: no save, shows an error", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    const input = (await screen.findByTestId(
+      "settings-username-input",
+    )) as HTMLInputElement;
+    await waitFor(() => expect(input.value).toBe("Ada Lovelace"));
+    fireEvent.change(input, { target: { value: "   " } });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("settings-username-save"));
+    });
+    expect(screen.getByTestId("settings-username-error")).toBeInTheDocument();
+    expect(apiUsersUpdate).not.toHaveBeenCalled();
+  });
+
+  it("fires the profile-updated signal on save (live NavAvatar refresh)", async () => {
+    apiGet.mockResolvedValue(BASE);
+    const onSignal = vi.fn();
+    window.addEventListener("adaptive-learner:profile-updated", onSignal);
+    renderSettings();
+    const input = (await screen.findByTestId(
+      "settings-username-input",
+    )) as HTMLInputElement;
+    await waitFor(() => expect(input.value).toBe("Ada Lovelace"));
+    fireEvent.change(input, { target: { value: "Linus" } });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("settings-username-save"));
+    });
+    await waitFor(() => expect(onSignal).toHaveBeenCalled());
+    window.removeEventListener("adaptive-learner:profile-updated", onSignal);
   });
 });
 

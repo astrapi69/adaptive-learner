@@ -453,6 +453,10 @@ settings:
   section_ui: Arayüz
   section_appearance: "Gorunum"
   section_profile: "Profil"
+  username_label: "Görünen ad"
+  username_placeholder: "Adınız"
+  username_save: "Kaydet"
+  username_empty: "Ad boş olamaz."
   avatar_upload: "Resim yükle"
   avatar_remove: "Kaldır"
   avatar_crop_title: "Resmini ayarla"

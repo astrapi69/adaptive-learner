@@ -453,6 +453,10 @@ settings:
   section_ui: Interface
   section_appearance: "Apariencia"
   section_profile: "Perfil"
+  username_label: "Nombre visible"
+  username_placeholder: "Tu nombre"
+  username_save: "Guardar"
+  username_empty: "El nombre no puede estar vacío."
   avatar_upload: "Subir imagen"
   avatar_remove: "Quitar"
   avatar_crop_title: "Ajusta tu imagen"
