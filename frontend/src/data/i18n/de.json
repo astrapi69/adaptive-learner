@@ -2631,5 +2631,12 @@
     "not": "Es ist nicht „{label}“",
     "item": "Beginne mit „{label}“",
     "reveal_pair": "„{left}“ gehört zu „{right}“"
+  },
+  "favorites": {
+    "card_title": "Deine Favoriten",
+    "add": "Zu Favoriten hinzufügen",
+    "remove": "Aus Favoriten entfernen",
+    "empty": "Noch keine Favoriten — tippe auf den Stern einer Lektion.",
+    "save_prompt": "Diese Lektion zu deinen Favoriten hinzufügen"
   }
 }

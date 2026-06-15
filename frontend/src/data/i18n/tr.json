@@ -2631,5 +2631,12 @@
     "not": "“{label}” değil",
     "item": "“{label}” ile başla",
     "reveal_pair": "“{left}” → “{right}”"
+  },
+  "favorites": {
+    "card_title": "Favorilerin",
+    "add": "Favorilere ekle",
+    "remove": "Favorilerden çıkar",
+    "empty": "Henüz favori yok — bir dersteki yıldıza dokun.",
+    "save_prompt": "Bu dersi favorilerine kaydet"
   }
 }

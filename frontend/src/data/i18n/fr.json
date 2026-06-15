@@ -2631,5 +2631,12 @@
     "not": "Ce n'est pas « {label} »",
     "item": "Commence par « {label} »",
     "reveal_pair": "« {left} » va avec « {right} »"
+  },
+  "favorites": {
+    "card_title": "Vos favoris",
+    "add": "Ajouter aux favoris",
+    "remove": "Retirer des favoris",
+    "empty": "Aucun favori pour l'instant — touchez l'étoile d'une leçon.",
+    "save_prompt": "Enregistrer cette leçon dans vos favoris"
   }
 }

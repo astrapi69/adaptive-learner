@@ -2416,3 +2416,10 @@ hints:
   not: "Não é «{label}»"
   item: "Comece com «{label}»"
   reveal_pair: "«{left}» combina com «{right}»"
+
+favorites:
+  card_title: "Os seus favoritos"
+  add: "Adicionar aos favoritos"
+  remove: "Remover dos favoritos"
+  empty: "Ainda não há favoritos — toque na estrela de uma lição."
+  save_prompt: "Guardar esta lição nos seus favoritos"

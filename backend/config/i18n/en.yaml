@@ -2426,3 +2426,10 @@ hints:
   not: "It's not “{label}”"
   item: "Start with “{label}”"
   reveal_pair: "“{left}” goes with “{right}”"
+
+favorites:
+  card_title: "Your favorites"
+  add: "Add to favorites"
+  remove: "Remove from favorites"
+  empty: "No favorites yet — tap the star on a lesson to save it."
+  save_prompt: "Save this lesson to your favorites"

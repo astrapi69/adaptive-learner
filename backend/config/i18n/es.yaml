@@ -2418,3 +2418,10 @@ hints:
   not: "No es «{label}»"
   item: "Empieza con «{label}»"
   reveal_pair: "«{left}» va con «{right}»"
+
+favorites:
+  card_title: "Tus favoritos"
+  add: "Añadir a favoritos"
+  remove: "Quitar de favoritos"
+  empty: "Aún no hay favoritos: toca la estrella de una lección."
+  save_prompt: "Guardar esta lección en tus favoritos"

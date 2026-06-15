@@ -27,6 +27,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
 import LessonSummary from "../components/lesson/LessonSummary";
+import LessonFavoriteToggle from "../components/lesson/LessonFavoriteToggle";
 import LessonHeader from "../components/lesson/LessonHeader";
 import LessonProgressBar from "../components/lesson/LessonProgressBar";
 import LessonTtsControls from "../components/lesson/LessonTtsControls";
@@ -343,6 +344,17 @@ export default function LessonPage() {
         onExitPause={() => void handlePauseFromDialog()}
         onExitAbandon={() => void handleAbandonFromDialog()}
       />
+
+      <div className="flex justify-end px-2">
+        <LessonFavoriteToggle
+          userId={learnerUserId ?? ""}
+          source={source}
+          setId={setId}
+          filename={filename}
+          title={lesson.title}
+          setTitle={setTitle ?? ""}
+        />
+      </div>
 
       {/* Phase 63C — resume prompt overlays the step view.
                 The user must choose before they can interact with
