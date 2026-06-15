@@ -48,13 +48,23 @@ describe("parseRecommendedRepos", () => {
 });
 
 describe("fetchRecommendedRepos", () => {
-  it("returns [] WITHOUT a network request while the catalogue is unpublished", async () => {
-    // The catalogue ships later with AUTH-03 (EXP-025); until then the
-    // fetch is skipped so the not-yet-existing file never logs a 404.
-    const fetchSpy = vi.fn();
+  it("fetches + parses the published catalogue (#547)", async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ repos: [{ url: "jane/x", title: "X" }] }),
+    });
     vi.stubGlobal("fetch", fetchSpy);
+    expect(await fetchRecommendedRepos()).toEqual([
+      { url: "jane/x", title: "X", branch: "main" },
+    ]);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("resolves to [] on a network/HTTP failure", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false }));
     expect(await fetchRecommendedRepos()).toEqual([]);
-    expect(fetchSpy).not.toHaveBeenCalled();
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
+    expect(await fetchRecommendedRepos()).toEqual([]);
   });
 });
 

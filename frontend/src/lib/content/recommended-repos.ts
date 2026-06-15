@@ -17,16 +17,14 @@ const OFFICIAL_OWNER_REPO = "astrapi69/adaptive-learner-content";
 const RECOMMENDED_URL = `https://raw.githubusercontent.com/${OFFICIAL_OWNER_REPO}/main/recommended-repos.json`;
 
 /**
- * Whether the curated catalogue is published yet. The file does NOT exist in
- * the content repo on purpose — it ships later with AUTH-03 (EXP-025). Until
- * then we must NOT request it: a `fetch` to the missing file makes the browser
- * log a 404 to the console on every Content/Settings visit (the browser logs
- * failed network requests itself, regardless of how the JS handles the
- * response — our code already returns `[]` silently). Skipping the request is
- * the only way to keep the console quiet. Flip to `true` in the same change
- * that publishes `recommended-repos.json`.
+ * Whether the curated catalogue is published yet. `recommended-repos.json`
+ * now exists at the content-repo root (#547), so the fetch is enabled: a
+ * missing/malformed file still resolves to `[]` silently, but the happy path
+ * surfaces the officially-recommended repos in the discovery UI. The flag is
+ * kept as a single switch so the request can be disabled again without
+ * touching {@link fetchRecommendedRepos}.
  */
-const CATALOGUE_PUBLISHED = false;
+const CATALOGUE_PUBLISHED = true;
 
 /** One entry in the curated recommended-repos catalogue. */
 export interface RecommendedRepo {
