@@ -41,6 +41,27 @@
 | 025 | Author-provided Lesson Sets (Buch-Begleiter)| Vision       | B/C   | Niedrig   | 023, 003           |
 | 026 | User-Lektionen im Content-Baum (Badge)      | Feature      | 2     | Niedrig   | 023, 025           |
 
+## Umsetzungsstand (Stand v1.79.0)
+
+Die Tabelle oben ist ein **Planungs**-Index (Kategorie / Phase / Priorität /
+Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
+(Release-Detail je EXP siehe Phase-History in [ROADMAP.md](../ROADMAP.md) +
+[changelog/releases/](../../changelog/releases/)):
+
+- **Ausgeliefert:** 001 (Matching/Picture-Choice), 002 + 005 (Content-Loader),
+  003 (Lektionsformat), 006 (Freitext/Word-Tiles), 007 (Fehler-Retry + Cloze),
+  008 (Lob/Celebration), 010 (Missionen), 013 (adaptive Lektionen, regelbasiert),
+  018 (Übungsrichtung), 020 (Flusssteuerung), 021 (Lektions-Creator),
+  022 (visueller Lernpfad), 023 (Multi-Content-Repository A/B/C),
+  024 (Layer-Audit Phase 1), **025 teilweise** (Buch-Begleiter: AUTH-01
+  Schema/Validator + AUTH-02 Rendering ausgeliefert; AUTH-03+ Cross-Repo
+  zurückgestellt), **026 vollständig** (User-Lektionen im Content-Baum,
+  UGC-01..07).
+- **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests).
+- **Zurückgestellt / Zukunft:** 004 (GitHub-Org), 009/011/012 (soziale Features —
+  brauchen Cloud-Backend + Nutzerbasis), 014 (Community-Feedback — teilweise via
+  Community-Sharing), 015 (Kinder-Variante).
+
 ## Phasen-Definition
 
 | Phase | Fokus                                              | Voraussetzung                          |

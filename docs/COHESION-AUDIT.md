@@ -15,6 +15,21 @@ This is a one-time report. It grounds the Phase-2 split strategy (#372) and
 documents the steady state enforced by the file-size watcher (#371,
 `scripts/check-file-sizes.sh`). No refactoring happens here.
 
+> **Post-burn-down update (2026-06-15, v1.79.0).** The campaign this report
+> grounded is **complete**. Both `.filesize-baseline` and `.complexity-baseline`
+> are now **empty** — every god-file in §2 was split (#372; the 1156-line
+> session `routes.py` #412 was the last) and every complexity offender was
+> burned down (#498–#504; `validateGeneratedLesson` #497 was the last). All
+> four "Recommended next actions" in §8 are done: `upsert_progress` decomposed
+> behind a `ProgressUpdate` dataclass (#375) then to cc ≤ 10 (#502);
+> `backup-diff` previewRow 54→3 (#422); `eventRecorder`/`formatEventLog` 40→4
+> (#436); parameter-object refactors landed via #376/#382. A live watcher run
+> on develop reports **5 whitelisted, 0 baselined, 45 WARN (> 500), 0 ERROR**
+> — the gate is green with no exceptions. The Phase 2 radon hard gate
+> (#494/#495: blocks cc > 20, warns > 15) + the complexity watcher (#400) are
+> live. The figures in §3–§8 below are the pre-burn-down snapshot, retained for
+> history. **Score re-rated 7/10 → 9/10** (see §8).
+
 ---
 
 ## 1. How the watcher classifies large files
@@ -261,17 +276,32 @@ so they are independent cleanup candidates.
 | TS complexity > 15 | 69 | worst: `ShareWizard` (80) |
 | Watcher errors on this commit | 0 | gate is green |
 
-### Cohesion score: 7 / 10
+### Cohesion score: 9 / 10 (re-rated 2026-06-15; was 7/10 on 2026-06-13)
 
-The architecture is sound and trending positive: the backend god-files were
-split (#353), the frontend hooks/namespaces were extracted (#354), and a
-regression gate is now in place (#371). What keeps the score from being higher
-is a real, bounded tail of debt: 8 mixed-concern files still over 1000 lines and
-a handful of high-parameter / high-complexity functions. All of it is now
-visible, frozen against growth, and tracked - which is the difference between
-managed debt and drift.
+**Original 7/10 rationale (2026-06-13):** the architecture is sound and trending
+positive: the backend god-files were split (#353), the frontend hooks/namespaces
+were extracted (#354), and a regression gate is now in place (#371). What kept
+the score from being higher was a real, bounded tail of debt: 8 mixed-concern
+files still over 1000 lines and a handful of high-parameter / high-complexity
+functions. All of it was visible, frozen against growth, and tracked - the
+difference between managed debt and drift.
+
+**Re-rated 9/10 (2026-06-15, v1.79.0):** that bounded tail is gone. The #372
+split campaign is complete and `.filesize-baseline` is empty (0 baselined, 0
+ERROR); the complexity burn-down is complete and `.complexity-baseline` is empty
+(#498–#504); all four next-actions below landed (#375/#502, #422, #436,
+#376/#382); and the gate is now backed by three live CI watchers (file-size
+#371, complexity #400, security-scan #378) plus the Phase 2 radon hard gate
+(#494/#495). The remaining −1 is the steady-state advisory tail: 45 files in the
+500–1000 WARN band (page-component bodies, never blocking) — cohesive enough to
+not warrant forced splitting, but the reason the score is not a perfect 10.
 
 ### Recommended next actions (input to #372 and standalone)
+
+> **Status (2026-06-15): all four complete.** #1 `upsert_progress` → #375 +
+> #502; #2 per-file splits → #372 (`.filesize-baseline` empty); #3 `backup-diff`
+> #422 + `eventRecorder` #436; #4 parameter-objects → #376/#382. Retained below
+> for history.
 
 1. **Standalone, backend (CC), highest value:** refactor
    `lesson_progress.upsert_progress` (183 lines, 14 params) behind a context

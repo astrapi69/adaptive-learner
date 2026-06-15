@@ -79,20 +79,49 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phases (planned)
 
-**Phase 63 candidate — remaining UX polish from manual testing.**
-(Phase 62 shipped EXP-018 Exercise Direction instead; these two
-viewer UX items remain.) Two UX items surfaced in manual testing
-of the lesson viewer:
+### Completed campaigns (v1.77.0 – v1.79.0)
 
-- **Matching-exercise visibility bug.** The selected/paired state
-  in the Matching exercise is hard to read in some themes. (v1.38.0
-  already shipped a Matching UX pass — selected state, instructions,
-  column headers, wrong-pair shake — so this is the residual
-  visibility follow-up, not the whole exercise.)
-- **Word-Tiles drag-to-reorder.** Word-Tiles currently builds the
-  answer by tap-to-append; drag-to-reorder is the requested
-  interaction upgrade. @dnd-kit is the sanctioned DnD library
-  (see coding-standards.md).
+The architecture / hygiene thread that ran across v1.77.0–v1.79.0 is
+finished:
+
+- **God-file decomposition — COMPLETE.** Backend + frontend god-files
+  split one at a time under the Phase 2 hard ratchet; both
+  `.complexity-baseline` and `.filesize-baseline` are now EMPTY (the
+  1156-line session `routes.py` split #412 was the last cohesion-baseline
+  entry; `validateGeneratedLesson` #497 was the last complexity offender).
+- **Dexie read-modify-write data-integrity remediation — COMPLETE.**
+  Three phases (#390 → #395/#398/#402): atomic increments, create-race
+  ensure-helpers + unique indexes, full-replace updates wrapped in
+  transactions.
+- **Complexity burn-down — COMPLETE.** Frontend offenders 34→0 (#498–#504);
+  radon hard gate Phase 2 live (#494/#495: blocks cc > 20, warns > 15).
+- **3 CI watchers — LIVE.** Cohesion file-size guard (#371, hard gate at
+  1000 lines), security-scan (#378, pip-audit + npm audit + bandit),
+  complexity (#400, radon + eslint).
+- **plugin-tests CI job — LIVE** (#471): runs the full 1018-test plugin
+  suite per PR.
+- **Reusability policy + first `shared/` primitives** (#474/#477):
+  ListRow, ProgressBar, LessonStepNav, XpBadge, IconBadge.
+- **EXP-025 (author-provided lesson sets) — PARTIAL.** AUTH-01
+  (book-metadata schema + validator, #529) + AUTH-02 (book-companion
+  rendering, #531) SHIPPED; AUTH-03+ (cross-repo author publishing) is
+  deferred — needs shared-backend / cross-repo infrastructure.
+- **EXP-026 (fold user lessons into the content tree) — COMPLETE.**
+  UGC-01..07 all SHIPPED (#97).
+
+### v1.80.0 — next up
+
+The architecture thread is done; the next minor returns to user-facing
+features and opportunistic hygiene:
+
+- **#508 — User profile picture (P3, OPEN).** Avatar in nav + About +
+  Dashboard, both storage modes (Dexie blob + API filesystem). The only
+  open user-facing feature after the v1.79.0 line.
+- **BACKEND-RADON-REMAINDER-01 (P3, opportunistic).** Burn down any new
+  backend module above the radon warn band (cc > 15) as it surfaces; the
+  baseline is empty, so this is steady-state hygiene under the live gate.
+- **AUTH-03+ (DEFERRED).** Cross-repo author publishing — blocked on
+  shared-backend infrastructure (see backlog Blocked / Upstream Wait).
 
 Known longer-horizon follow-ups (no committed phase):
 
