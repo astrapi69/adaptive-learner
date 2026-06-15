@@ -22,7 +22,13 @@ common:
   required: 必須
   minutes: 分
   close: "閉じる"
+avatar:
+  error:
+    unsupported_type: "対応していない画像形式です（JPEG・PNG・WebP）。"
+    too_large: "縮小しても画像が大きすぎます。別の画像を試してください。"
+    decode_failed: "画像を読み込めませんでした。"
 nav:
+  profile: "あなたのプロフィール"
   learning_path: "学習パス"
   dashboard: ダッシュボード
   session: セッション
@@ -413,6 +419,9 @@ settings:
   section_danger: アカウント
   section_ui: インターフェース
   section_appearance: "外観"
+  section_profile: "プロフィール"
+  avatar_upload: "画像をアップロード"
+  avatar_remove: "削除"
   theme: "テーマ"
   theme_description: "アプリの見た目を選びます。自動はシステムのライト/ダーク設定に従います。"
   theme_group_recommended: "おすすめ"

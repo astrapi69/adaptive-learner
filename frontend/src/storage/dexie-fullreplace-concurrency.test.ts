@@ -197,6 +197,7 @@ describe("#390 Class B — concurrent full-replace edits keep both fields", () =
             model_override_anthropic: null,
             model_override_openai: null,
             model_override_gemini: null,
+          avatar: null,
             created_at: ts(),
             updated_at: ts(),
         });

@@ -22,7 +22,13 @@ common:
   required: υποχρεωτικό
   minutes: λεπτά
   close: "Κλείσιμο"
+avatar:
+  error:
+    unsupported_type: "Μη υποστηριζόμενος τύπος εικόνας (JPEG, PNG ή WebP)."
+    too_large: "Η εικόνα είναι πολύ μεγάλη ακόμη και μετά τη σμίκρυνση. Δοκίμασε άλλη."
+    decode_failed: "Δεν ήταν δυνατή η ανάγνωση της εικόνας."
 nav:
+  profile: "Το προφίλ σου"
   learning_path: "Διαδρομή μάθησης"
   dashboard: Πίνακας
   session: Συνεδρία
@@ -413,6 +419,9 @@ settings:
   section_danger: Λογαριασμός
   section_ui: Interface
   section_appearance: "Εμφάνιση"
+  section_profile: "Προφίλ"
+  avatar_upload: "Μεταφόρτωση εικόνας"
+  avatar_remove: "Αφαίρεση"
   theme: "Θέμα"
   theme_description: "Επίλεξε πώς φαίνεται η εφαρμογή. Το αυτόματο ακολουθεί τη ρύθμιση φωτεινό/σκούρο του συστήματος."
   theme_group_recommended: "Προτεινόμενα"

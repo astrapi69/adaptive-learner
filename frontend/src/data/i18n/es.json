@@ -25,7 +25,15 @@
     "minutes": "minutos",
     "close": "Cerrar"
   },
+  "avatar": {
+    "error": {
+      "unsupported_type": "Tipo de imagen no admitido (usa JPEG, PNG o WebP).",
+      "too_large": "La imagen es demasiado grande incluso tras redimensionar. Prueba con otra.",
+      "decode_failed": "No se pudo leer la imagen."
+    }
+  },
   "nav": {
+    "profile": "Tu perfil",
     "learning_path": "Ruta de aprendizaje",
     "dashboard": "Panel",
     "session": "Sesion",
@@ -440,6 +448,9 @@
     "section_danger": "Cuenta",
     "section_ui": "Interface",
     "section_appearance": "Apariencia",
+    "section_profile": "Perfil",
+    "avatar_upload": "Subir imagen",
+    "avatar_remove": "Quitar",
     "theme": "Tema",
     "theme_description": "Elige el aspecto de la aplicacion. Automatico sigue la configuracion clara/oscura del sistema.",
     "theme_group_recommended": "Recomendados",

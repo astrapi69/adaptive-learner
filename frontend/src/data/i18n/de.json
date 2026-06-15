@@ -25,7 +25,15 @@
     "minutes": "Minuten",
     "close": "Schließen"
   },
+  "avatar": {
+    "error": {
+      "unsupported_type": "Bildformat nicht unterstützt (JPEG, PNG oder WebP).",
+      "too_large": "Bild ist zu groß, auch nach Verkleinerung. Probiere ein anderes.",
+      "decode_failed": "Bild konnte nicht gelesen werden."
+    }
+  },
   "nav": {
+    "profile": "Dein Profil",
     "learning_path": "Lernpfad",
     "dashboard": "Dashboard",
     "session": "Session",
@@ -440,6 +448,9 @@
     "section_danger": "Konto",
     "section_ui": "Oberfläche",
     "section_appearance": "Darstellung",
+    "section_profile": "Profil",
+    "avatar_upload": "Bild hochladen",
+    "avatar_remove": "Entfernen",
     "theme": "Farbschema",
     "theme_description": "Lege fest, wie die App aussieht. Automatisch folgt der Hell-/Dunkel-Einstellung deines Systems.",
     "theme_group_recommended": "Empfohlen",

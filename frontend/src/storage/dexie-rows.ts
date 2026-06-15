@@ -92,6 +92,7 @@ export function rowToSettings(row: UserSettingsRow): UserSettings {
     model_override_anthropic: row.model_override_anthropic,
     model_override_openai: row.model_override_openai,
     model_override_gemini: row.model_override_gemini,
+    avatar: row.avatar ?? null,
     key_source_anthropic: row.api_key_anthropic ? "settings" : "none",
     key_source_openai: row.api_key_openai ? "settings" : "none",
     key_source_gemini: row.api_key_gemini ? "settings" : "none",
@@ -258,6 +259,7 @@ export async function ensureSettings(
       model_override_anthropic: null,
       model_override_openai: null,
       model_override_gemini: null,
+      avatar: null,
       created_at: ts,
       updated_at: ts,
     };

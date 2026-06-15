@@ -147,6 +147,7 @@ TABLES: dict[str, TableSpec] = {
             "model_override_anthropic",
             "model_override_openai",
             "model_override_gemini",
+            "avatar",
             "created_at",
             "updated_at",
         ),

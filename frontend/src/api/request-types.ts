@@ -50,6 +50,9 @@ export interface SettingsPatchBody {
   model_override_anthropic?: string;
   model_override_openai?: string;
   model_override_gemini?: string;
+  // #508 — base64 data URL of the profile picture. ``""`` clears it;
+  // a non-empty value sets it; field omitted leaves it alone.
+  avatar?: string;
 }
 
 export interface ApiKeySetBody {

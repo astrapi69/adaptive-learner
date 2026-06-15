@@ -31,6 +31,7 @@ import VoiceSettingsSection from "../components/VoiceSettingsSection";
 import AiSettingsPanel from "../components/AiSettingsPanel";
 import SyncSection from "../components/SyncSection";
 import ThemePicker from "../components/ThemePicker";
+import AvatarUpload from "../shared/AvatarUpload";
 import { useI18n } from "../hooks/useI18n";
 import { SUPPORTED_LANGUAGES } from "../lib/constants";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
@@ -121,6 +122,8 @@ export default function Settings() {
   };
 
   const [settings, setSettings] = useState<UserSettings | null>(null);
+  // #508 — the learner's display name for the initials-avatar fallback.
+  const [userName, setUserName] = useState<string>("");
   const [loadError, setLoadError] = useState<string | null>(null);
   // v1.10.0 / Phase 23E — swipe-gesture toggle. Persisted in
   // localStorage via ``gesturePref`` so the consumer hooks
@@ -202,6 +205,14 @@ export default function Settings() {
       return;
     }
     let cancelled = false;
+    void getStorage()
+      .users.get(userId)
+      .then((u) => {
+        if (!cancelled) setUserName(u.name);
+      })
+      .catch(() => {
+        /* name is only the avatar fallback — non-fatal */
+      });
     getStorage()
       .settings.get(userId)
       .then((s) => {
@@ -229,6 +240,24 @@ export default function Settings() {
       setSettings(updated);
       setLang(newLang);
       setLanguage(newLang);
+      notify.success(t("settings.saved", "Saved."));
+    } catch (err) {
+      const detail = err instanceof ApiError ? err.detail : t("common.error");
+      notify.error(detail);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // #508 — set / clear the profile picture. An empty string clears it.
+  const handleAvatarChange = async (dataUrl: string | null) => {
+    if (!settings || busy) return;
+    setBusy("avatar");
+    try {
+      const updated = await getStorage().settings.update(settings.user_id, {
+        avatar: dataUrl ?? "",
+      });
+      setSettings(updated);
       notify.success(t("settings.saved", "Saved."));
     } catch (err) {
       const detail = err instanceof ApiError ? err.detail : t("common.error");
@@ -283,6 +312,28 @@ export default function Settings() {
           </button>
         ))}
       </nav>
+
+      <section
+        className="settings-section"
+        data-testid="settings-section-profile"
+        hidden={activeTab !== "general"}
+      >
+        <h2 className="settings-section-title">{t("settings.section_profile", "Profile")}</h2>
+        {settings && (
+          <AvatarUpload
+            name={userName}
+            value={settings.avatar}
+            size={96}
+            uploadLabel={t("settings.avatar_upload", "Upload picture")}
+            removeLabel={t("settings.avatar_remove", "Remove")}
+            onChange={(dataUrl) => void handleAvatarChange(dataUrl)}
+            onError={(key) =>
+              notify.error(t(key, "Could not use that image. Try another file."))
+            }
+            testId="settings-avatar-upload"
+          />
+        )}
+      </section>
 
       <section
         className="settings-section"

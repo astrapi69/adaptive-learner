@@ -177,6 +177,8 @@ class UserSettingsOut(BaseModel):
     model_override_anthropic: str | None = None
     model_override_openai: str | None = None
     model_override_gemini: str | None = None
+    # #508 — base64 data URL of the profile picture, or None.
+    avatar: str | None = None
     # Phase 34 (v1.20.0) — per-provider key-source enum. The router
     # populates these by consulting env vars + secrets.yaml + the
     # encrypted DB column. Default ``NONE`` so callers that build
@@ -213,6 +215,10 @@ class SettingsPatchBody(BaseModel):
     model_override_anthropic: str | None = Field(default=None, max_length=200)
     model_override_openai: str | None = Field(default=None, max_length=200)
     model_override_gemini: str | None = Field(default=None, max_length=200)
+    # #508 — base64 data URL of a profile picture. ``""`` clears it,
+    # a non-empty value sets it, ``None`` (omitted) means "no change".
+    # The cap (~200 KB) backstops the client's <=100 KB resize.
+    avatar: str | None = Field(default=None, max_length=200_000)
 
 
 class ApiKeySetBody(BaseModel):
