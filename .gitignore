@@ -95,6 +95,7 @@ frontend/dev-dist/
 # Playwright results
 /e2e/test-results/
 /e2e/playwright-report/
+/e2e/playwright-report-manual/
 tmp/
 
 # Claude Code runtime artifacts (per-session lock + scheduled-task state).

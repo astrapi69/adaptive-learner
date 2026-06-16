@@ -27,6 +27,18 @@ Gesamtgefühl des Lernflusses.
 > merge-kritisch fehl, gehört er in die Nachtschicht, nicht auf den
 > `pull_request`-Trigger.
 
+> **Automatisierung (#616):** Der Großteil dieses Plans ist als
+> Playwright-Suite unter `e2e/manual-automation/` automatisiert (Page-Object-
+> Pattern, gegen den GitHub-Pages-Shape-Dexie-Build, deterministisch über einen
+> gemockten Content-Fixture). Sie deckt Session 1 (Onboarding), 2 (Lernflow),
+> 3 (Content/Repos), 4 (Settings/Backup inkl. Backup-Round-Trip), 5 (Mobile),
+> 7 (a11y/axe) und 8 (Tastenkürzel) ab. Lauf: `make test-manual-automation`
+> (täglich + `workflow_dispatch` + `release/**`, aggregiert in
+> `make release-test`). **Manuell bleibt** (nicht zuverlässig automatisierbar):
+> iOS-Safari-Zoom, das „Gesamtgefühl" des Lernflusses, die visuelle
+> Theme-Bewertung, die Farbenblind-Prüfung, der strikte Tab-Fokus-Trap im
+> Dialog (Headless-Fokus-Timing) und exploratives Testen.
+
 ## So wird getestet
 
 - Jeder Testfall hat eine Checkbox. Arbeite eine Session nach der
