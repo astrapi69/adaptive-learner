@@ -14,7 +14,7 @@
  * Dashboard.
  */
 
-import {RefreshCw} from "lucide-react";
+import {RefreshCw, Zap} from "lucide-react";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -104,6 +104,16 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
                     navigate(`/review/${encodeURIComponent(firstSetId)}`)
                 }
                 icon={<RefreshCw size={14} aria-hidden="true" />}
+                secondaryLabel={t(
+                    "dashboard.review_queue.quick",
+                    "Quick review",
+                )}
+                onSecondary={() =>
+                    navigate(
+                        `/review/${encodeURIComponent(firstSetId)}?quick=1`,
+                    )
+                }
+                secondaryIcon={<Zap size={14} aria-hidden="true" />}
                 testId="review-queue"
             />
         </article>

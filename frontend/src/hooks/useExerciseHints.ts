@@ -21,6 +21,13 @@ export interface ExerciseHintsResult {
     hints: string[];
     /** Configured XP cost per hint. */
     xpCost: number;
+    /** Whether hints are enabled in settings. When false the caller shows
+     *  the disabled "feature unavailable" affordance instead of hiding it
+     *  (feature-state policy #335 / #624). */
+    available: boolean;
+    /** Whether this exercise *would* yield hints if enabled — lets the
+     *  caller surface the disabled affordance only where it is relevant. */
+    hasHints: boolean;
 }
 
 export function useExerciseHints(
@@ -28,9 +35,13 @@ export function useExerciseHints(
 ): ExerciseHintsResult {
     const {t, lang} = useI18n();
     return useMemo(() => {
-        if (!readHintsEnabled()) return {hints: [], xpCost: 0};
-        const hints = generateHints(exercise).map((h) => formatHint(h, t));
-        return {hints, xpCost: readHintXpCost()};
+        const generated = generateHints(exercise);
+        const hasHints = generated.length > 0;
+        if (!readHintsEnabled()) {
+            return {hints: [], xpCost: 0, available: false, hasHints};
+        }
+        const hints = generated.map((h) => formatHint(h, t));
+        return {hints, xpCost: readHintXpCost(), available: true, hasHints};
         // lang is in deps so hints re-format on a language switch.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [exercise, lang]);

@@ -292,6 +292,7 @@ dashboard:
     elements: "tekrar için öğe(ler)"
     overdue: "gecikmiş — buradan başla"
     open: "Tekrar oturumu aç"
+    quick: "Hızlı tekrar"
   focus_areas:
     loading: "Hataların inceleniyor…"
     subtitle: "Zorluk alanların:"
@@ -342,6 +343,7 @@ review:
   summary_corrected: "{total} hatadan {corrected} tanesi düzeltildi"
   summary_trend: "Güzel — zayıf noktaların güçleniyor."
   summary_next: "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner."
+  summary_repeat: "Taze kalması için yaklaşık 2 gün sonra geri dön."
   explain_heading: "Bunları neden kaçırdın"
   explain_article_gender: "Cinsiyete dikkat: -o ile biten adlar genelde eril (el/un), -a ile bitenler dişildir (la/una). Artikel sona göre belirlenir."
   explain_spelling_accent: "Tam yazımı ve aksan işaretlerini kontrol et — küçük bir fark kelimeyi değiştirir."
@@ -1566,6 +1568,7 @@ lesson:
       hint_show: "İpucu ister misin?"
       result_correct: "Doğru!"
       result_wrong: "Pek değil."
+      result_almost: "Neredeyse! Şuna dikkat et:"
       empty: "Bu serbest metin alıştırmasının kabul edilen cevabı yok."
     word_tiles:
       instructions: "Kutucukları doğru sıraya diz. Yerleştirmek için dokun; yeniden sıralamak için okları kullan veya sürükle."
@@ -2441,6 +2444,7 @@ srs:
 
 hints:
   reveal: "İpucu göster"
+  disabled: "İpuçları kapalı. Ayarlar'dan açabilirsin."
   cost: "−{n} XP"
   length: "Cevap {n} harften oluşuyor"
   first_letters: "“{prefix}” ile başlıyor ({n} harf)"
@@ -2450,6 +2454,7 @@ hints:
 
 favorites:
   card_title: "Favorilerin"
+  card_more: "+{n} daha"
   add: "Favorilere ekle"
   remove: "Favorilerden çıkar"
   empty: "Henüz favori yok — bir dersteki yıldıza dokun."

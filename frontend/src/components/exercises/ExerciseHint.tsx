@@ -11,8 +11,10 @@
  * the hint. A non-blocking ``XP_SPENT_EVENT`` flashes the header badge red.
  *
  * Renders nothing once the answer is submitted (hints are a pre-answer
- * aid) or when no hint can be derived / hints are disabled. Drop it into
- * any renderer's prompt area.
+ * aid) or when no hint can be derived. When hints are *disabled* in
+ * settings but this exercise would have one, it renders a disabled
+ * "Hints are off" affordance with a reason rather than hiding (feature-
+ * state policy #335 / #624). Drop it into any renderer's prompt area.
  */
 
 import HintButton from "../../shared/HintButton";
@@ -37,8 +39,28 @@ export default function ExerciseHint({
     testId,
 }: ExerciseHintProps) {
     const {t} = useI18n();
-    const {hints, xpCost} = useExerciseHints(exercise);
-    if (submitted || hints.length === 0) return null;
+    const {hints, xpCost, available, hasHints} = useExerciseHints(exercise);
+    if (submitted) return null;
+
+    // Hints turned off in settings: show the disabled affordance with a
+    // reason (only where a hint would otherwise be offered), never hide it.
+    if (!available) {
+        if (!hasHints) return null;
+        return (
+            <HintButton
+                hints={[]}
+                revealLabel={t("hints.reveal", "Show a hint")}
+                disabled
+                disabledLabel={t(
+                    "hints.disabled",
+                    "Hints are off. Enable them in Settings.",
+                )}
+                testId={testId ?? "exercise-hint"}
+            />
+        );
+    }
+
+    if (hints.length === 0) return null;
 
     const handleReveal = () => {
         // Record usage for this exercise so the lesson's recordBulk +

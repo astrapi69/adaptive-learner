@@ -113,6 +113,26 @@ export function isFreeTextCorrect(
     return false;
 }
 
+/** True iff a WRONG answer is a *near miss* — a small typo within 2 edits
+ *  of the closest accepted answer (but not already accepted, which the ≤1
+ *  matcher handles). Drives the encouraging "Almost! Watch out for:"
+ *  feedback instead of a flat "Not quite." (#627). Empty input is never a
+ *  near miss. */
+export function isFreeTextNearMiss(
+    input: string,
+    accept: readonly string[],
+    codeMode = false,
+): boolean {
+    if (isFreeTextCorrect(input, accept, codeMode)) return false;
+    const norm = codeMode ? _normalizeCode : _normalize;
+    const normInput = norm(input);
+    if (normInput === "") return false;
+    return accept.some((cand) => {
+        const distance = _levenshtein(normInput, norm(cand));
+        return distance > 0 && distance <= 2;
+    });
+}
+
 export interface FreeTextExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
     /** Phase 46B context for the element-attempt deriver.
@@ -270,7 +290,9 @@ function FreeTextResult({
     submitted,
     isCorrect,
     input,
+    accept,
     canonical,
+    codeMode,
     controlled,
     canCheck,
     onCheck,
@@ -280,13 +302,19 @@ function FreeTextResult({
     submitted: boolean;
     isCorrect: boolean;
     input: string;
+    accept: readonly string[];
     canonical: string;
+    codeMode: boolean;
     controlled: boolean;
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
     t: Translate;
 }) {
+    // #627 — a wrong-but-close answer (within 2 edits) gets encouraging
+    // feedback. Computed here so the component stays under the complexity
+    // gate; the ternary below only consults it on the wrong branch.
+    const nearMiss = isFreeTextNearMiss(input, accept, codeMode);
     return (
         <div className="flex flex-wrap items-center gap-3">
             {submitted && (
@@ -312,10 +340,15 @@ function FreeTextResult({
                         ) : (
                             <>
                                 <X size={14} aria-hidden="true" />
-                                {t(
-                                    "lesson.exercise.free_text.result_wrong",
-                                    "Not quite.",
-                                )}
+                                {nearMiss
+                                    ? t(
+                                          "lesson.exercise.free_text.result_almost",
+                                          "Almost! Watch out for:",
+                                      )
+                                    : t(
+                                          "lesson.exercise.free_text.result_wrong",
+                                          "Not quite.",
+                                      )}
                             </>
                         )}
                     </p>
@@ -486,7 +519,9 @@ function FreeTextExercise(
                 submitted={submitted}
                 isCorrect={isCorrect}
                 input={input}
+                accept={accept}
                 canonical={canonical}
+                codeMode={codeMode}
                 controlled={controlled}
                 canCheck={!isInputEmpty}
                 onCheck={submit}

@@ -42,4 +42,22 @@ describe("HintButton", () => {
         render(<HintButton hints={["x"]} revealLabel="Hint" testId="h2" />);
         expect(screen.getByTestId("h2-reveal")).not.toHaveTextContent("XP");
     });
+
+    it("renders a disabled affordance with a reason when disabled (#624)", () => {
+        render(
+            <HintButton
+                hints={[]}
+                revealLabel="Hint"
+                disabled
+                disabledLabel="Hints are off"
+                testId="h3"
+            />,
+        );
+        const btn = screen.getByTestId("h3-disabled");
+        expect(btn).toBeDisabled();
+        expect(btn).toHaveTextContent("Hints are off");
+        expect(btn).toHaveAttribute("title", "Hints are off");
+        // no reveal control in the disabled state
+        expect(screen.queryByTestId("h3-reveal")).not.toBeInTheDocument();
+    });
 });

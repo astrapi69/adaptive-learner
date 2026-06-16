@@ -51,4 +51,37 @@ describe("DueReviewCard", () => {
         );
         expect(screen.queryByTestId("due2-overdue")).not.toBeInTheDocument();
     });
+
+    it("renders the secondary action and fires onSecondary (#628)", () => {
+        const onSecondary = vi.fn();
+        render(
+            <DueReviewCard
+                total={4}
+                overdue={0}
+                onStart={() => {}}
+                secondaryLabel="Quick review"
+                onSecondary={onSecondary}
+                testId="due3"
+                {...labels}
+            />,
+        );
+        const secondary = screen.getByTestId("due3-secondary");
+        expect(secondary).toHaveTextContent("Quick review");
+        fireEvent.click(secondary);
+        expect(onSecondary).toHaveBeenCalledOnce();
+    });
+
+    it("omits the secondary action when no handler is provided", () => {
+        render(
+            <DueReviewCard
+                total={4}
+                overdue={0}
+                onStart={() => {}}
+                secondaryLabel="Quick review"
+                testId="due4"
+                {...labels}
+            />,
+        );
+        expect(screen.queryByTestId("due4-secondary")).not.toBeInTheDocument();
+    });
 });

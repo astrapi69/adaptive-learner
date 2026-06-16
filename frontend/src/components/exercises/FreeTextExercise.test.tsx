@@ -23,7 +23,10 @@ import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
-import FreeTextExercise, {isFreeTextCorrect} from "./FreeTextExercise";
+import FreeTextExercise, {
+    isFreeTextCorrect,
+    isFreeTextNearMiss,
+} from "./FreeTextExercise";
 import type {ContentLessonExercise} from "../../storage/types";
 
 const EXERCISE: ContentLessonExercise = {
@@ -445,5 +448,51 @@ describe("FreeTextExercise: edge cases", () => {
             />,
         );
         expect(screen.getByTestId("free-text-empty")).toBeInTheDocument();
+    });
+});
+
+describe("isFreeTextNearMiss (#627)", () => {
+    const accept = ["Merci"] as const;
+
+    it("is true for a wrong answer within 2 edits", () => {
+        expect(isFreeTextNearMiss("Mercxy", accept)).toBe(true);
+    });
+
+    it("is false for an accepted answer (already correct)", () => {
+        expect(isFreeTextNearMiss("Merci", accept)).toBe(false);
+        // ≤1-edit typo is accepted, so not a "near miss".
+        expect(isFreeTextNearMiss("Merc", accept)).toBe(false);
+    });
+
+    it("is false for a far miss", () => {
+        expect(isFreeTextNearMiss("banana", accept)).toBe(false);
+    });
+
+    it("is false for empty input", () => {
+        expect(isFreeTextNearMiss("", accept)).toBe(false);
+    });
+});
+
+describe("FreeTextExercise: near-miss feedback (#627)", () => {
+    it("shows 'Almost!' on a near-miss wrong answer", () => {
+        render(<FreeTextExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "Mercxy"},
+        });
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+        const result = screen.getByTestId("free-text-result");
+        expect(result).toHaveAttribute("data-result", "wrong");
+        expect(result).toHaveTextContent("Almost!");
+    });
+
+    it("shows 'Not quite.' on a far-miss wrong answer", () => {
+        render(<FreeTextExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "banana"},
+        });
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+        const result = screen.getByTestId("free-text-result");
+        expect(result).toHaveAttribute("data-result", "wrong");
+        expect(result).toHaveTextContent("Not quite.");
     });
 });

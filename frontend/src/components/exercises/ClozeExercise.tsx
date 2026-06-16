@@ -27,8 +27,8 @@
  */
 
 import {Check, X} from "lucide-react";
-import type {Ref} from "react";
-import {forwardRef, useMemo, useState} from "react";
+import type {KeyboardEvent, Ref} from "react";
+import {forwardRef, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import ExerciseHint from "./ExerciseHint";
@@ -142,6 +142,7 @@ function ClozeBlankControl({
     value,
     options,
     onChange,
+    onKeyDown,
     blankBase,
     blankState,
 }: {
@@ -153,6 +154,7 @@ function ClozeBlankControl({
     value: string;
     options: string[] | undefined;
     onChange: (idx: number, value: string) => void;
+    onKeyDown: (idx: number, event: KeyboardEvent) => void;
     blankBase: string;
     blankState: (idx: number) => string | false;
 }) {
@@ -180,6 +182,7 @@ function ClozeBlankControl({
                     className={cn(blankBase, blankState(idx))}
                     value={value}
                     onChange={(e) => onChange(idx, e.target.value)}
+                    onKeyDown={(e) => onKeyDown(idx, e)}
                     disabled={submitted}
                     placeholder={blank.placeholder ?? "?"}
                     aria-label={blankLabel}
@@ -193,6 +196,7 @@ function ClozeBlankControl({
                     className={cn(blankBase, blankState(idx))}
                     value={value}
                     onChange={(e) => onChange(idx, e.target.value)}
+                    onKeyDown={(e) => onKeyDown(idx, e)}
                     disabled={submitted}
                     aria-label={blankLabel}
                     data-testid={`cloze-select-${idx}`}
@@ -234,6 +238,7 @@ function ClozeSentence({
     inputs,
     selectOptions,
     onChange,
+    onKeyDown,
     blankBase,
     blankState,
     codeMode,
@@ -246,6 +251,7 @@ function ClozeSentence({
     inputs: string[];
     selectOptions: string[][];
     onChange: (idx: number, value: string) => void;
+    onKeyDown: (idx: number, event: KeyboardEvent) => void;
     blankBase: string;
     blankState: (idx: number) => string | false;
     codeMode: boolean;
@@ -276,6 +282,7 @@ function ClozeSentence({
                             value={inputs[segIdx]}
                             options={selectOptions[segIdx]}
                             onChange={onChange}
+                            onKeyDown={onKeyDown}
                             blankBase={blankBase}
                             blankState={blankState}
                         />
@@ -451,6 +458,7 @@ function ClozeExercise(
             : blanks.map(() => ""),
     );
     const [showHint, setShowHint] = useState(false);
+    const sectionRef = useRef<HTMLElement>(null);
 
     /** For ``select`` mode, build the per-blank option list once
      *  per mount: canonical accept + all distractors, shuffled
@@ -516,6 +524,24 @@ function ClozeExercise(
         setInputs(next);
     };
 
+    // #623 — Tab advances directly to the next blank's control. The
+    // blanks render in DOM order, but the section's leading affordances
+    // (read-aloud, the hint button) sit before them; making Tab explicit
+    // keeps focus moving blank -> blank and is regression-pinnable. The
+    // last blank falls through to native flow (Tab reaches the footer);
+    // shift-Tab and modified Tab are never intercepted.
+    const handleBlankKeyDown = (idx: number, event: KeyboardEvent) => {
+        if (event.key !== "Tab" || event.shiftKey) return;
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        if (idx >= blanks.length - 1) return;
+        const next = sectionRef.current?.querySelector<HTMLElement>(
+            `[data-testid="cloze-input-${idx + 1}"], [data-testid="cloze-select-${idx + 1}"]`,
+        );
+        if (!next) return;
+        event.preventDefault();
+        next.focus();
+    };
+
     if (sentence === "" || blanks.length === 0) {
         return (
             <div data-testid="cloze-empty">
@@ -544,6 +570,7 @@ function ClozeExercise(
 
     return (
         <section
+            ref={sectionRef}
             className="flex flex-col gap-3"
             data-testid="cloze-exercise"
             data-cloze-mode={mode}
@@ -569,6 +596,7 @@ function ClozeExercise(
                 inputs={inputs}
                 selectOptions={selectOptions}
                 onChange={handleChange}
+                onKeyDown={handleBlankKeyDown}
                 blankBase={blankBase}
                 blankState={blankState}
                 codeMode={codeMode}
