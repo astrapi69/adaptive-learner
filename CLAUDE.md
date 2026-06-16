@@ -9,28 +9,31 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.82.0** (minor release -
-  **hint economy + smart review queue + PWA update prompt + Test Impact
-  Analysis**: three learner-facing features plus a CI-speed change. The **hint
-  economy** (#611, Alembic 0030) makes hints cost XP, feed back into the SRS, and
-  show up in statistics. The **smart review queue** (#612, Alembic 0031) is
-  rebuilt around weakness tiers + per-element attempt history + a cross-lesson
-  mix capped at 20 items per session. A discreet **PWA update prompt** (#614 -
-  polled `version.json` + service-worker prompt mode) catches stale
-  GitHub-Pages/PWA builds. On the engineering side, **Test Impact Analysis**
-  (#617) runs only impacted tests on PR CI - frontend
-  `vitest run --changed origin/<base>`, backend `pytest --testmon` with
-  `.testmondata` cached - while push to develop/main, nightly, and
-  `make release-test` always run the full suite (the false-negative safety net);
-  fallback to full is automatic, never a silent skip. An **architecture-doc
-  audit** (#620) captures the Dexie data-integrity (R-M-W, unique indexes,
-  additive migrations), Dexie namespace split, and Settings sidebar/hamburger
-  patterns as rules in `.claude/rules/architecture.md`. Plus the recommended-repos
-  discovery E2E reactivated (#610) and the **manual test plan automated** - 52
-  Playwright specs across 7 sessions under `e2e/manual-automation/` + a nightly
-  workflow (#621). Additive Alembic 0030+0031 on
-  `element_errors`; Dexie schema unchanged (new fields are schemaless). 6
-  substantive commits, 81 files.)
+- **Current state:** **v1.83.0** (maintenance + gap-hardening release -
+  **3 fixes + a 6-item gap-hardening audit**: a **P1** review-session fix (#631)
+  - Enter shortcut, element de-duplication in the queue, and live XP-badge
+  recompute after a review; two **P2** theory-rendering fixes - markdown tables
+  in theory content get proper token-backed styling (#633) and the "re-read
+  theory" back-link resolves by topic instead of the nearest preceding step
+  (#635). The **gap-hardening audit** (#630) closes six spec gaps: cloze Tab
+  navigation between blanks (#623), hints follow the FUNKTION-NICHT-VERFUEGBAR
+  visible-but-disabled policy (#624), the Dashboard favorites widget caps at
+  Top-5 (#625), the review next-step surface offers a "repeat in 2 days"
+  suggestion (#626), free-text near-misses show a "Fast! Achte auf:" typo hint
+  (#627), and a Dashboard Quick-Review button (#628). No schema/API/data change.
+  4 substantive commits.)
+  v1.82.0 = (minor - **hint economy + smart review queue + PWA update prompt +
+  Test Impact Analysis**: hints cost XP + feed the SRS + show in statistics
+  (#611, Alembic 0030); the review queue rebuilt around weakness tiers +
+  attempt history + a cross-lesson mix capped at 20 (#612, Alembic 0031); a PWA
+  update prompt via polled `version.json` + SW prompt mode (#614); Test Impact
+  Analysis runs only impacted tests on PR CI - `vitest --changed` +
+  `pytest --testmon`, full suite nightly + release (#617); an architecture-doc
+  audit captures the Dexie data-integrity + namespace split + Settings-nav
+  patterns (#620); recommended-repos discovery E2E reactivated (#610); the manual
+  test plan automated as 52 Playwright specs across 7 sessions + a nightly
+  workflow (#621). Additive Alembic 0030+0031 on `element_errors`; Dexie schema
+  unchanged.)
   v1.81.0 = (minor - **XP visibility + bidirectional matching + complexity
   burn-down complete**: a header `NavXpBadge` + `+N XP` lesson-summary reward
   pill on `shared/XpBadge` (#505/#510); matching start from the B column
