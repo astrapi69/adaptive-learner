@@ -21,7 +21,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
-       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke \
+       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
        stryker stryker-quick \
        check-types check-types-backend check-types-frontend check-file-sizes check-complexity check-complexity-gate check-complexity-gate-update \
@@ -376,6 +376,13 @@ test-dexie-smoke: ## Dexie-mode release gate (build + Playwright preview-mode sm
 	@echo "=== Running Dexie-mode Playwright smoke ==="
 	cd e2e && npx playwright test --config=playwright.dexie.config.ts
 
+test-manual-automation: ## Automated manual-test-plan suite (#616; build dexie + Playwright)
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	@echo ""
+	@echo "=== Running manual-test-plan automation (#616) ==="
+	cd e2e && npx playwright test --config=playwright.manual.config.ts
+
 test-visual: ## Visual regression (build dexie + Playwright screenshot matrix)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
 	cd frontend && VITE_STORAGE_MODE=dexie npm run build
@@ -549,6 +556,9 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo ""
 	@echo "=== Dexie-mode release gate (DEXIE-MODE-RELEASE-GATE-01) ==="
 	@$(MAKE) test-dexie-smoke
+	@echo ""
+	@echo "=== Manual-test-plan automation (#616) ==="
+	@$(MAKE) test-manual-automation
 	@echo ""
 	@echo "Release test gate green. Run full Playwright smoke separately: cd e2e && npx playwright test --project=smoke"
 

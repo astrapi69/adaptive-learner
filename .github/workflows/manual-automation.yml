@@ -1,0 +1,69 @@
+name: Manual-plan automation
+
+# Automated manual-test-plan suite (#616): the manual QA sessions
+# (onboarding, learning flow, content/repos, settings/backup, mobile, a11y,
+# shortcuts) as Playwright specs against the GitHub-Pages-shape dexie build.
+#
+# Like the Dexie-smoke gate (#552), this is expensive and rarely PR-relevant,
+# so it runs OUT of the per-PR loop: a daily schedule + release branches +
+# manual dispatch. It is ALSO aggregated into `make release-test`, so no
+# release ships without it passing.
+
+on:
+  schedule:
+    # Daily at 04:00 UTC (after the dexie-smoke cron, sharing the off-peak slot).
+    - cron: "0 4 * * *"
+  push:
+    branches: ["release/**"]
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  manual-automation:
+    name: Manual-plan E2E automation
+    runs-on: ubuntu-latest
+    # Official Playwright image so Chromium + the headless shell are pre-baked
+    # (no cdn.playwright.dev download). Pin the tag to the @playwright/test
+    # version in e2e/package-lock.json (1.59.1); bump both together.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      options: --user 1001
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+
+      # The image ships Node 22; install 24 to match the repo's engines.
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Install e2e deps
+        working-directory: e2e
+        run: npm ci
+
+      # NO `playwright install`: the browsers are baked into the container.
+      # These two commands mirror `make test-manual-automation` verbatim
+      # (the noble image has no `make`); keep them in lock-step with the target.
+      - name: Build dexie frontend
+        working-directory: frontend
+        run: VITE_STORAGE_MODE=dexie npm run build
+
+      - name: Manual-plan automation
+        working-directory: e2e
+        run: npx playwright test --config=playwright.manual.config.ts
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: manual-automation-report
+          path: |
+            e2e/playwright-report-manual
+            e2e/test-results
+          retention-days: 14
