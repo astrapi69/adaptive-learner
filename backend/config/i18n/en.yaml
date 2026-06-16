@@ -292,6 +292,7 @@ dashboard:
     elements: "element(s) due for review"
     overdue: "overdue — start here"
     open: "Open review session"
+    quick: "Quick review"
   focus_areas:
     loading: "Analyzing your errors…"
     subtitle: "Your challenge areas:"
@@ -342,6 +343,7 @@ review:
   summary_corrected: "{corrected} of {total} corrected"
   summary_trend: "Nice — your weak spots are getting stronger."
   summary_next: "Mastered items drop out; the rest return for review soon."
+  summary_repeat: "Come back in about 2 days to keep these fresh."
   explain_heading: "Why you missed these"
   explain_article_gender: "Watch the gender: nouns ending in -o are usually masculine (el/un), -a feminine (la/una). The article follows the ending."
   explain_spelling_accent: "Check the exact spelling and accent marks — a small difference changes the word."
@@ -1577,6 +1579,7 @@ lesson:
       hint_show: "Need a hint?"
       result_correct: "Correct!"
       result_wrong: "Not quite."
+      result_almost: "Almost! Watch out for:"
       empty: "This free-text exercise has no accepted answers."
     word_tiles:
       instructions: "Arrange the tiles in order. Tap to place; use the arrows or drag to reorder."
@@ -2451,6 +2454,7 @@ srs:
 
 hints:
   reveal: "Show a hint"
+  disabled: "Hints are off. Enable them in Settings."
   cost: "−{n} XP"
   length: "The answer has {n} letters"
   first_letters: "It starts with “{prefix}” ({n} letters)"
@@ -2460,6 +2464,7 @@ hints:
 
 favorites:
   card_title: "Your favorites"
+  card_more: "+{n} more"
   add: "Add to favorites"
   remove: "Remove from favorites"
   empty: "No favorites yet — tap the star on a lesson to save it."

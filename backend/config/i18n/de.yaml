@@ -292,6 +292,7 @@ dashboard:
     elements: "Element(e) zur Wiederholung"
     overdue: "überfällig — hier starten"
     open: "Wiederholungssitzung öffnen"
+    quick: "Schnell-Review"
   focus_areas:
     loading: "Deine Fehler werden analysiert…"
     subtitle: "Deine Herausforderungen:"
@@ -342,6 +343,7 @@ review:
   summary_corrected: "{corrected} von {total} korrigiert"
   summary_trend: "Stark — deine Schwachstellen werden besser."
   summary_next: "Gemeisterte Elemente fallen weg; der Rest kommt bald zur Wiederholung."
+  summary_repeat: "Komm in etwa 2 Tagen wieder, um das frisch zu halten."
   explain_heading: "Warum du diese verpasst hast"
   explain_article_gender: "Achte auf das Geschlecht: Nomen auf -o sind meist maskulin (el/un), auf -a feminin (la/una). Der Artikel richtet sich nach der Endung."
   explain_spelling_accent: "Prüfe die genaue Schreibweise und die Akzente — ein kleiner Unterschied ändert das Wort."
@@ -1571,6 +1573,7 @@ lesson:
       hint_show: "Tipp anzeigen?"
       result_correct: "Richtig!"
       result_wrong: "Nicht ganz."
+      result_almost: "Fast! Achte auf:"
       empty: "Diese Freitext-Übung hat keine akzeptierten Antworten."
     word_tiles:
       instructions: "Bring die Kacheln in die richtige Reihenfolge. Tippe zum Platzieren; nutze die Pfeile oder ziehe zum Umordnen."
@@ -2445,6 +2448,7 @@ srs:
 
 hints:
   reveal: "Tipp anzeigen"
+  disabled: "Tipps sind aus. Aktiviere sie in den Einstellungen."
   cost: "−{n} XP"
   length: "Die Antwort hat {n} Buchstaben"
   first_letters: "Beginnt mit „{prefix}“ ({n} Buchstaben)"
@@ -2454,6 +2458,7 @@ hints:
 
 favorites:
   card_title: "Deine Favoriten"
+  card_more: "+{n} weitere"
   add: "Zu Favoriten hinzufügen"
   remove: "Aus Favoriten entfernen"
   empty: "Noch keine Favoriten — tippe auf den Stern einer Lektion."

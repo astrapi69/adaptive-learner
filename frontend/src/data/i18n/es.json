@@ -307,7 +307,8 @@
       "loading": "Cargando…",
       "elements": "elemento(s) para repasar",
       "overdue": "atrasados — empieza aquí",
-      "open": "Abrir sesión de repaso"
+      "open": "Abrir sesión de repaso",
+      "quick": "Repaso rápido"
     },
     "focus_areas": {
       "loading": "Analizando tus errores…",
@@ -366,6 +367,7 @@
     "summary_corrected": "{corrected} de {total} corregidos",
     "summary_trend": "Bien: tus puntos débiles van mejorando.",
     "summary_next": "Los elementos dominados desaparecen; el resto vuelve pronto para repaso.",
+    "summary_repeat": "Vuelve en unos 2 días para mantenerlo fresco.",
     "explain_heading": "Por qué fallaste estas",
     "explain_article_gender": "Fíjate en el género: los sustantivos terminados en -o suelen ser masculinos (el/un), en -a femeninos (la/una). El artículo sigue la terminación.",
     "explain_spelling_accent": "Comprueba la ortografía exacta y los acentos: una pequeña diferencia cambia la palabra.",
@@ -1691,6 +1693,7 @@
         "hint_show": "¿Necesitas una pista?",
         "result_correct": "¡Correcto!",
         "result_wrong": "Casi.",
+        "result_almost": "¡Casi! Fíjate en:",
         "empty": "Este ejercicio no tiene respuestas aceptadas."
       },
       "word_tiles": {
@@ -2658,6 +2661,7 @@
   },
   "hints": {
     "reveal": "Mostrar una pista",
+    "disabled": "Las pistas están desactivadas. Actívalas en Ajustes.",
     "cost": "−{n} XP",
     "length": "La respuesta tiene {n} letras",
     "first_letters": "Empieza por «{prefix}» ({n} letras)",
@@ -2667,6 +2671,7 @@
   },
   "favorites": {
     "card_title": "Tus favoritos",
+    "card_more": "+{n} más",
     "add": "Añadir a favoritos",
     "remove": "Quitar de favoritos",
     "empty": "Aún no hay favoritos: toca la estrella de una lección.",

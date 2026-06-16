@@ -307,7 +307,8 @@
       "loading": "लोड हो रहा है…",
       "elements": "element(s) due for review",
       "overdue": "overdue — start here",
-      "open": "Open review session"
+      "open": "Open review session",
+      "quick": "त्वरित समीक्षा"
     },
     "focus_areas": {
       "loading": "Analyzing your errors…",
@@ -366,6 +367,7 @@
     "summary_corrected": "{total} में से {corrected} सुधारे गए",
     "summary_trend": "बढ़िया — आपके कमज़ोर बिंदु मज़बूत हो रहे हैं।",
     "summary_next": "महारत प्राप्त तत्व हट जाते हैं; बाकी जल्द ही समीक्षा के लिए लौटते हैं।",
+    "summary_repeat": "इन्हें ताज़ा रखने के लिए लगभग 2 दिन बाद वापस आएं।",
     "explain_heading": "आपने ये क्यों गलत किए",
     "explain_article_gender": "लिंग पर ध्यान दें: -o में अंत होने वाले संज्ञा प्रायः पुल्लिंग (el/un), -a स्त्रीलिंग (la/una)। आर्टिकल अंत के अनुसार होता है।",
     "explain_spelling_accent": "सटीक वर्तनी और उच्चारण चिह्न जाँचें — छोटा सा अंतर शब्द बदल देता है।",
@@ -1691,6 +1693,7 @@
         "hint_show": "Need a hint?",
         "result_correct": "सही!",
         "result_wrong": "Not quite.",
+        "result_almost": "लगभग! इस पर ध्यान दें:",
         "empty": "This free-text exercise has no accepted answers."
       },
       "word_tiles": {
@@ -2658,6 +2661,7 @@
   },
   "hints": {
     "reveal": "संकेत दिखाएँ",
+    "disabled": "संकेत बंद हैं। उन्हें सेटिंग्स में चालू करें।",
     "cost": "−{n} XP",
     "length": "उत्तर में {n} अक्षर हैं",
     "first_letters": "“{prefix}” से शुरू होता है ({n} अक्षर)",
@@ -2667,6 +2671,7 @@
   },
   "favorites": {
     "card_title": "आपके पसंदीदा",
+    "card_more": "+{n} और",
     "add": "पसंदीदा में जोड़ें",
     "remove": "पसंदीदा से हटाएँ",
     "empty": "अभी तक कोई पसंदीदा नहीं — किसी पाठ के स्टार पर टैप करें।",
