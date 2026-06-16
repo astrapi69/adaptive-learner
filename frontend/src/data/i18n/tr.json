@@ -871,6 +871,8 @@
     "importing": "Geri yükleniyor…",
     "confirm": "Geri yüklemeyi onayla",
     "invalid_format": "Bu dosya geçerli bir Adaptive Learner yedeği değil.",
+    "not_a_backup_file": "Bu dosya geçerli bir yedek dosyası değil. Lütfen 'Yedek oluştur' ile dışa aktarılmış bir dosya seçin.",
+    "too_large": "Bu yedek dosyası çok büyük (100 MB'tan fazla).",
     "export_success": "Yedek indirildi ({{count}} kayıt).",
     "export_error": "Yedekleme başarısız oldu: {{detail}}",
     "import_parse_error": "Yedek okunamadı: {{detail}}",

@@ -871,6 +871,8 @@
     "importing": "復元中…",
     "confirm": "復元を確認",
     "invalid_format": "このファイルは有効な Adaptive Learner バックアップではありません。",
+    "not_a_backup_file": "このファイルは有効なバックアップファイルではありません。「バックアップを作成」でエクスポートしたファイルを選択してください。",
+    "too_large": "このバックアップファイルは大きすぎます（100 MB 超）。",
     "export_success": "バックアップをダウンロードしました ({{count}} 件)。",
     "export_error": "バックアップに失敗しました: {{detail}}",
     "import_parse_error": "バックアップを読み込めませんでした: {{detail}}",

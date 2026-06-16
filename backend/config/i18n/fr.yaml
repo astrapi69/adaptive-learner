@@ -812,6 +812,8 @@ backup:
   importing: Restoring…
   confirm: Confirm restore
   invalid_format: This file is not a valid Adaptive Learner backup.
+  not_a_backup_file: 'Ce fichier n''est pas une sauvegarde valide. Choisissez un fichier exporté avec « Créer une sauvegarde ».'
+  too_large: 'Ce fichier de sauvegarde est trop volumineux (plus de 100 Mo).'
   export_success: Backup downloaded ({{count}} records).
   export_error: 'Backup failed: {{detail}}'
   import_parse_error: 'Could not read backup: {{detail}}'
