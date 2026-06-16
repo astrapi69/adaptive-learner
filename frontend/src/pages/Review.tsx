@@ -41,6 +41,11 @@ import {Button} from "@/components/ui/button";
 import ProgressBar from "../shared/ProgressBar";
 import LessonStepNav from "../shared/LessonStepNav";
 import {useI18n} from "../hooks/useI18n";
+import {useLessonShortcuts} from "../hooks/useLessonShortcuts";
+import {
+    useLessonEnterKey,
+    type LessonEnterNav,
+} from "../hooks/useLessonEnterKey";
 import {useReviewLesson} from "../hooks/useReviewLesson";
 import ReviewSummaryView from "../shared/ReviewSummary";
 import type {
@@ -88,10 +93,25 @@ export default function ReviewPage() {
     const exerciseRef = useRef<ExerciseHandle>(null);
     const [checked, setChecked] = useState(false);
     const [answerable, setAnswerable] = useState(false);
+    // #629 BUG 1 — Enter drives the two-phase Check/Next button here too.
+    // Review sessions are built largely from CLOZE exercises (the
+    // free_text/word_tiles → cloze conversion), and ClozeExercise does
+    // NOT self-handle Enter — so without this the FillInBlank field
+    // ignored Enter entirely. Mirrors the Lesson player's wiring (#103).
+    const lessonShortcutsEnabled = useLessonShortcuts();
+    const enterStateRef = useRef<LessonEnterNav | null>(null);
+    const enterLockRef = useRef(false);
+    useLessonEnterKey({
+        enabled: lessonShortcutsEnabled,
+        exerciseRef,
+        enterStateRef,
+        enterLockRef,
+    });
     // Reset the two-phase button whenever the step changes.
     useEffect(() => {
         setChecked(false);
         setAnswerable(false);
+        enterLockRef.current = false;
     }, [currentStepIndex]);
 
     const statusScreen = renderReviewStatus(setId, status, navigate, t);
@@ -132,6 +152,19 @@ export default function ReviewPage() {
         totalSteps === 0
             ? 100
             : Math.round((currentStepIndex / totalSteps) * 100);
+
+    // Keep the Enter-shortcut listener reading the latest step state
+    // without re-subscribing every render. Review has no "reviewed"
+    // lock (sessions are ephemeral), so ``enteredReviewed`` is always
+    // false.
+    enterStateRef.current = {
+        isSummary,
+        isExerciseStep,
+        checked,
+        enteredReviewed: false,
+        answerable,
+        goNext,
+    };
 
     return (
         <main
