@@ -2439,7 +2439,12 @@
     "cache_clear": "Clear cache",
     "cache_clear_confirm": "Clear the offline cache?",
     "cache_clear_action": "Yes, clear",
-    "cache_cleared": "Offline cache cleared."
+    "cache_cleared": "Offline cache cleared.",
+    "update": {
+      "message": "एक नया संस्करण उपलब्ध है।",
+      "action": "अपडेट करें",
+      "later": "बाद में"
+    }
   },
   "share": {
     "pr": {

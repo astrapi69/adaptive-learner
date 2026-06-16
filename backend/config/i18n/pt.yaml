@@ -2225,6 +2225,10 @@ pwa:
   cache_clear_confirm: "Limpar o cache off-line?"
   cache_clear_action: "Sim, limpar"
   cache_cleared: "Cache off-line limpo."
+  update:
+    message: "Há uma nova versão disponível."
+    action: "Atualizar"
+    later: "Mais tarde"
 share:
   pr:
     preparing: "A preparar o repositório..."

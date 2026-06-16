@@ -2439,7 +2439,12 @@
     "cache_clear": "Cache leeren",
     "cache_clear_confirm": "Offline-Cache wirklich leeren?",
     "cache_clear_action": "Ja, leeren",
-    "cache_cleared": "Offline-Cache geleert."
+    "cache_cleared": "Offline-Cache geleert.",
+    "update": {
+      "message": "Eine neue Version ist verfügbar.",
+      "action": "Aktualisieren",
+      "later": "Später"
+    }
   },
   "share": {
     "pr": {

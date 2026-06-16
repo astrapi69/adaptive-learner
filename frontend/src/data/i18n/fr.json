@@ -2439,7 +2439,12 @@
     "cache_clear": "Vider le cache",
     "cache_clear_confirm": "Vider le cache hors ligne ?",
     "cache_clear_action": "Oui, vider",
-    "cache_cleared": "Cache hors ligne vidé."
+    "cache_cleared": "Cache hors ligne vidé.",
+    "update": {
+      "message": "Une nouvelle version est disponible.",
+      "action": "Mettre à jour",
+      "later": "Plus tard"
+    }
   },
   "share": {
     "pr": {

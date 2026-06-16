@@ -14,6 +14,7 @@ import type { ApiError } from "./api/client";
 import ErrorBoundary from "./components/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
 import GlobalShortcuts from "./components/GlobalShortcuts";
+import UpdatePromptHost from "./components/UpdatePromptHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
@@ -136,6 +137,7 @@ export default function App() {
         <FeatureProvider registry={featureRegistry} context={featureContext}>
           <HelpProvider>
             <SkipToContent />
+            <UpdatePromptHost />
             <Navigation />
             <OfflineIndicator />
             <Suspense fallback={null}>
