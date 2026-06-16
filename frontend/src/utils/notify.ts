@@ -49,6 +49,17 @@ interface ErrorOptions {
     apiError?: ApiError;
 }
 
+interface InfoOptions {
+    /** Override the default 8s auto-dismiss. */
+    autoClose?: number | false;
+    /**
+     * Render the toast click-through (``pointer-events: none``) so it
+     * never blocks a control beneath it. For passive, auto-dismissing
+     * messages only (no action / no close button).
+     */
+    passThrough?: boolean;
+}
+
 function truncateForDisplay(message: string): string {
     if (message.length <= MAX_DISPLAY_LENGTH) return message;
     return message.slice(0, MAX_DISPLAY_LENGTH) + "...";
@@ -208,9 +219,24 @@ export const notify = {
         recordToast("warning", message);
         return toast.warning(message, {autoClose: 10000});
     },
-    info: (message: string) => {
+    info: (message: string, opts?: InfoOptions) => {
         recordToast("info", message);
-        return toast.info(message, {autoClose: 8000});
+        return toast.info(message, {
+            autoClose: opts?.autoClose ?? 8000,
+            // ``passThrough`` makes a purely-informational toast
+            // click-through (pointer-events: none) so it never
+            // intercepts a button beneath it — e.g. the mid-lesson
+            // motivation toast that overlaps the sticky lesson footer
+            // (it blocked the Check/Next buttons; #589 regression).
+            ...(opts?.passThrough
+                ? {
+                      style: {pointerEvents: "none"},
+                      closeOnClick: false,
+                      closeButton: false,
+                      draggable: false,
+                  }
+                : {}),
+        });
     },
     success: (message: string) => {
         recordToast("success", message);
