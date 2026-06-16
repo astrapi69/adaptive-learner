@@ -187,6 +187,17 @@ describe("notify.warning / info / success", () => {
         expect(toast.info).toHaveBeenCalledWith("fyi", {autoClose: 8000});
     });
 
+    it("info passThrough makes the toast click-through (pointer-events: none) (#589)", () => {
+        notify.info("keep going", {autoClose: 3000, passThrough: true});
+        expect(toast.info).toHaveBeenCalledWith("keep going", {
+            autoClose: 3000,
+            style: {pointerEvents: "none"},
+            closeOnClick: false,
+            closeButton: false,
+            draggable: false,
+        });
+    });
+
     it("success forwards the message and sets autoClose to 5s", () => {
         notify.success("done");
         expect(toast.success).toHaveBeenCalledWith("done", {autoClose: 5000});

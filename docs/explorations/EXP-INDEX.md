@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-14
-**Anzahl EXPs:** 25
+**Stand:** 2026-06-16
+**Anzahl EXPs:** 29
 
 ## Kategorisierung
 
@@ -40,6 +40,10 @@
 | 024 | Strikte Schichtentrennung (Layer-Audit)     | Querschnitt  | laufend | Hoch    | -                  |
 | 025 | Author-provided Lesson Sets (Buch-Begleiter)| Vision       | B/C   | Niedrig   | 023, 003           |
 | 026 | User-Lektionen im Content-Baum (Badge)      | Feature      | 2     | Niedrig   | 023, 025           |
+| 027 | Internationalisierungs-Strategie (Sprach-Expansion) | Querschnitt | Zukunft | Mittel | 002, 023           |
+| 028 | User-Event-Recording (Fehlerbericht)        | Querschnitt  | laufend | Mittel | eventRecorder      |
+| 029 | Medien-Ressourcen mit Gegenseitigkeits-Prinzip | Vision    | B/C   | Mittel    | 023, 025, #141     |
+| 030 | Multi-User-Strategie (lokale Profile → Cloud)  | Querschnitt | gestuft | Mittel  | EXP-009, Sync      |
 
 ## Umsetzungsstand (Stand v1.79.0)
 
@@ -57,10 +61,19 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
   Schema/Validator + AUTH-02 Rendering ausgeliefert; AUTH-03+ Cross-Repo
   zurückgestellt), **026 vollständig** (User-Lektionen im Content-Baum,
   UGC-01..07).
-- **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests).
+- **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests),
+  **028 teilweise** (User-Event-Recording: Ring Buffer + Sanitizer +
+  Fehler-Toast-Report ausgeliefert; Kategorie-Schicht + Persistenz +
+  proaktiver Settings-Einstieg EVT-01..05 zurückgestellt).
 - **Zurückgestellt / Zukunft:** 004 (GitHub-Org), 009/011/012 (soziale Features —
   brauchen Cloud-Backend + Nutzerbasis), 014 (Community-Feedback — teilweise via
-  Community-Sharing), 015 (Kinder-Variante).
+  Community-Sharing), 015 (Kinder-Variante), 027 (Internationalisierungs-Strategie —
+  Sprach-Expansion, Vision-Dokument für nach v1.80.0), 029 (Medien-Ressourcen mit
+  Gegenseitigkeits-Prinzip — `media.yaml` analog `books.yaml` + Ökosystem-Partner;
+  Code additiv, Engpass ist die Partnergewinnung, MED-01..06 + MED-10),
+  030 (Multi-User-Strategie — gestuft: Stufe 1 lokale Profile additiv ab Phase 2,
+  Stufe 2 Geräte-Kopplung = Sync, Stufe 3 Cloud-Konten = EXP-009/Phase 4;
+  MU-01..05 lokal, MU-20 Cloud).
 
 ## Phasen-Definition
 

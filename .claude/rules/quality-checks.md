@@ -216,7 +216,7 @@ def test_create_project_and_start_session():
 - Curriculum: edit lesson rich-text content (TipTap).
 - Settings: provider switch, key entry, language, theme, plugins.
 - Navigation: every of the 13 routes reachable, links work.
-- Dexie-mode release gate (`make test-dexie-smoke`): every nav-reachable route renders in the GH-Pages-shape build with NO backend.
+- Dexie-mode release gate (`make test-dexie-smoke`): every nav-reachable route renders in the GH-Pages-shape build with NO backend. **Cadence (#552):** runs **daily** (scheduled, 04:00 UTC), **before every release** (gate in `make release-test`), and on `release/*` branches — **NOT on every PR** (expensive ~6 min, rarely PR-relevant; same rationale as the mutation-testing workflows). Trigger ad hoc via `workflow_dispatch` or locally with `make test-dexie-smoke`.
 
 **When to write new E2E tests:**
 - New plugin with UI: at least one flow (enable plugin -> use feature).
@@ -488,6 +488,26 @@ Nightly (separate, slower):
 9. make mutmut-export      # mutation testing export plugin (Python)
 10. make stryker           # mutation testing frontend (TypeScript)
 ```
+
+### CI cadence: PR gates vs the night shift (#575)
+
+PRs run **correctness gates only** — the checks whose failure must block a
+merge. Everything informational, warn-only, or driven by external state runs
+on the **night shift** (a daily/weekly schedule + `workflow_dispatch`), so a
+PR is not slowed by work that can never block it.
+
+| Runs on every PR (correctness gates) | Night shift (schedule + `workflow_dispatch`) |
+|---|---|
+| `ci.yml`: backend / plugin / frontend tests, ruff + mypy, pre-commit, docs-drift verifier | **Security Scan** (pip-audit / npm audit / bandit) — weekly + `push: release/**`; warn-only, never merge-critical |
+| `complexity-check.yml` → **complexity-gate** (baseline ratchet, hard exit 1) | **Coverage** (`coverage.yml`, backend + frontend) — daily; a report, not a gate |
+| | **Content stats drift** (`content-stats.yml`) — daily; validates the README against a FRESH content-repo checkout (drift is driven by the *separate* content repo, so a PR can't predict it) |
+| | **complexity-report** (full radon/eslint warn-view) — daily |
+| | **dexie-smoke** (daily, #552) + mutation testing (`mutmut`, `stryker`) |
+
+Rule of thumb when adding a CI job: if its failure should NOT block a merge,
+it belongs on the night shift, not on the `pull_request` trigger. The local
+pre-commit hooks (e.g. "Validate content repo stats in README") still catch
+the app-side half of the moved checks before commit.
 
 ---
 

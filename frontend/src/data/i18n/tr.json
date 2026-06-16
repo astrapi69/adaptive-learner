@@ -62,6 +62,9 @@
     "cat_ai_config": "AI anahtar yedeği"
   },
   "nav": {
+    "offline_long": "Çevrimdışı — önceki oturumlar okunabilir kalır",
+    "sync_pending": "{n} değişiklik eşitlenmeyi bekliyor",
+    "statistics": "İstatistikler",
     "profile": "Profilin",
     "learning_path": "Öğrenme yolu",
     "dashboard": "Pano",
@@ -357,6 +360,16 @@
     }
   },
   "review": {
+    "your_answer": "Cevabın:",
+    "correct_answer": "Doğru:",
+    "summary_corrected": "{total} hatadan {corrected} tanesi düzeltildi",
+    "summary_trend": "Güzel — zayıf noktaların güçleniyor.",
+    "summary_next": "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner.",
+    "explain_heading": "Bunları neden kaçırdın",
+    "explain_article_gender": "Cinsiyete dikkat: -o ile biten adlar genelde eril (el/un), -a ile bitenler dişildir (la/una). Artikel sona göre belirlenir.",
+    "explain_spelling_accent": "Tam yazımı ve aksan işaretlerini kontrol et — küçük bir fark kelimeyi değiştirir.",
+    "explain_verb_conjugation": "Cevaplamadan önce fiili özne ve zamanla uyumlu hale getir.",
+    "explain_word_order": "Bu yapının kelime sırasına dikkat et.",
     "page_title": "Tekrar",
     "session_title": "Tekrar oturumu",
     "subtitle": "Tekrar için {n} öğe",
@@ -442,6 +455,28 @@
     "session_count": "Oturumlar"
   },
   "settings": {
+    "install": {
+      "heading": "Uygulamayı yükle",
+      "description": "Çevrimdışı erişim ve tam ekran deneyimi için Adaptive Learner'ı uygulama olarak yükleyin.",
+      "button": "Uygulamayı yükle",
+      "already": "Zaten yüklü",
+      "unavailable": "Tarayıcınız henüz kurulum sunmadı.",
+      "installed": "Uygulama yüklendi."
+    },
+    "section_review": "Tekrar",
+    "explanations_enabled": "Hata açıklamalarını göster",
+    "explanations_enabled_desc": "Bir dersten sonra her hata için kısa bir kural ipucu gösterir.",
+    "section_hints": "İpuçları",
+    "hints_enabled": "Alıştırmalarda ipucu göster",
+    "hints_enabled_desc": "Her alıştırmada kademeli bir ipucu düğmesi sunar.",
+    "hint_xp_cost": "İpucu başına XP maliyeti",
+    "hint_xp_cost_desc": "İpucu düğmesinde gösterilir. 0 = ücretsiz.",
+    "support": {
+      "heading": "Destek",
+      "description": "Bir şey beklediğiniz gibi çalışmıyor mu? Geliştiricinin sorunu yeniden oluşturmasına yardımcı olmak için son işlemlerinizin bir raporunu oluşturun. Tarayıcınızdan çıkmadan önce her şeyi gözden geçirirsiniz.",
+      "create_report": "Hata raporu oluştur",
+      "report_default_message": "Kullanıcı tarafından başlatılan rapor"
+    },
     "tab_integrations": "Entegrasyonlar",
     "github": {
       "title": "GitHub Entegrasyonu",
@@ -478,14 +513,28 @@
     "section_ui": "Arayüz",
     "section_appearance": "Gorunum",
     "section_profile": "Profil",
+    "username_label": "Görünen ad",
+    "username_placeholder": "Adınız",
+    "username_save": "Kaydet",
+    "username_empty": "Ad boş olamaz.",
     "avatar_upload": "Resim yükle",
     "avatar_remove": "Kaldır",
+    "avatar_crop_title": "Resmini ayarla",
+    "avatar_crop_instructions": "Konumlandırmak için sürükle, yakınlaştırmak için kaydır veya parmaklarını kıstır.",
+    "avatar_crop_apply": "Uygula",
+    "avatar_crop_cancel": "İptal",
+    "avatar_crop_zoom": "Yakınlaştır",
     "theme": "Tema",
     "theme_description": "Uygulamanin nasil gorunecegini secin. Otomatik, sisteminizin acik/koyu ayarini izler.",
     "theme_group_recommended": "Önerilen",
     "theme_group_classic": "Klasik",
     "theme_groups": "Tema grupları",
     "tab_general": "Genel",
+    "group_general": "Genel",
+    "group_learning": "Öğrenme ve Yapay Zekâ",
+    "group_data": "Veri ve entegrasyonlar",
+    "group_info": "Bilgi",
+    "nav_aria": "Ayarlar gezinmesi",
     "tab_ai": "Yapay zeka",
     "tab_learning": "Öğrenme",
     "tab_plugins": "Eklentiler",
@@ -544,6 +593,9 @@
     "storage_mode_warning": "Veriler modlar arasında SENKRONİZE EDİLMEZ. Senkronizasyon gelecek bir sürüm için planlanıyor.",
     "storage_mode_switch_notice": "Depolama modu kaydedildi. Yeni arka uca geçmek için sayfayı yeniden yükle.",
     "language_label": "Görüntüleme dili",
+    "language_search_placeholder": "Dil ara…",
+    "language_no_results": "Dil bulunamadı",
+    "language_search_label": "Dil ara",
     "provider_label": "Aktif sağlayıcı",
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
@@ -980,6 +1032,11 @@
     "upload_qr_hint": "Kamera yok mu? Masaüstündeki QR'ın ekran görüntüsünü çek ve yükle:"
   },
   "gamification": {
+    "trend_up": "Geçen haftadan fazla",
+    "trend_down": "Geçen haftadan az",
+    "trend_flat": "Geçen haftayla aynı",
+    "activity_7d": "Etkinlik (son 7 gün)",
+    "activity_cell": "{date}: {count}",
     "card_xp": "XP & Seviye",
     "level": "Seviye",
     "xp": "XP",
@@ -1292,7 +1349,22 @@
       "copy_failed": "Kopyalama başarısız",
       "open_github": "GitHub'da aç",
       "close": "Kapat",
-      "truncated": "Rapor, GitHub URL sınırına uyacak şekilde kısaltıldı."
+      "truncated": "Rapor, GitHub URL sınırına uyacak şekilde kısaltıldı.",
+      "intro_proactive": "Geliştiriciye göndermek için son işlemlerinizin bir raporunu hazırlayın. Tarayıcınızdan herhangi bir şey çıkmadan önce tam olarak ne içerdiğini görürsünüz.",
+      "app_state": "Uygulama durumu",
+      "online": "çevrimiçi",
+      "offline": "çevrimdışı",
+      "download_json": "JSON indir",
+      "category_all": "Tümü",
+      "no_events_in_category": "Bu kategoride olay yok.",
+      "category": {
+        "navigation": "Gezinme",
+        "ui": "Arayüz",
+        "network": "Ağ",
+        "storage": "Depolama",
+        "exercise": "Alıştırma",
+        "error": "Hatalar"
+      }
     },
     "help": {
       "learn_more": "Daha fazla bilgi",
@@ -1523,6 +1595,10 @@
     }
   },
   "lesson": {
+    "motivation": {
+      "halftime": "Yarısı bitti — devam et!",
+      "last": "Sonuncu — güçlü bitir!"
+    },
     "theory": {
       "view_example": "Örneği görüntüle"
     },
@@ -2480,5 +2556,110 @@
     "toolbar_label": "Metin biçimlendirme",
     "underline": "Altı çizili (Ctrl+U)",
     "undo": "Geri al (Ctrl+Z)"
+  },
+  "languages": {
+    "en": "İngilizce",
+    "es": "İspanyolca",
+    "fr": "Fransızca",
+    "pt": "Portekizce",
+    "de": "Almanca",
+    "tr": "Türkçe",
+    "ja": "Japonca",
+    "el": "Yunanca",
+    "hi": "Hintçe",
+    "script": {
+      "latin": "Latin",
+      "greek": "Yunan",
+      "cyrillic": "Kiril",
+      "arabic": "Arap",
+      "devanagari": "Devanagari",
+      "bengali": "Bengal",
+      "cjk": "CJK",
+      "hangul": "Hangul"
+    }
+  },
+  "statistics": {
+    "title": "Öğrenme istatistikleri",
+    "total_time": "Öğrenme süresi",
+    "completed_lessons": "Tamamlanan dersler",
+    "avg_accuracy": "Ortalama doğruluk",
+    "current_streak": "Güncel seri",
+    "streak_days": "{n} gün",
+    "time_hm": "{h} sa {m} dk",
+    "time_m": "{m} dk",
+    "weak_areas_title": "Geliştirilecek alanlar",
+    "weak_areas_empty": "Henüz hata kaydı yok — devam et!",
+    "practice": "Alıştırma yap",
+    "errors": "hata",
+    "last_answer": "Son cevabın:",
+    "activity_title": "Etkinlik (son 90 gün)",
+    "activity_aria": "Son 90 günde günlük tamamlanan dersler",
+    "activity_cell": "{date} tarihinde {count} ders",
+    "activity_empty": "Henüz etkinlik yok.",
+    "pairs_title": "Dil çiftine göre ilerleme",
+    "pairs_empty": "İlerlemeyi takip etmek için bir ders seti indir.",
+    "pair_level_aria": "{level}: %{percent} tamamlandı"
+  },
+  "shortcuts": {
+    "title": "Klavye kısayolları",
+    "group_global": "Genel",
+    "group_navigation": "Gezinme",
+    "group_lesson": "Ders sırasında",
+    "show_help": "Klavye kısayollarını göster",
+    "open_settings": "Ayarları aç",
+    "search_content": "İçerik ara",
+    "close_dialog": "İletişim kutusunu kapat",
+    "go_dashboard": "Panoya git",
+    "go_settings": "Ayarlara git",
+    "go_content": "İçeriğe git",
+    "go_statistics": "İstatistiklere git",
+    "lesson_enter": "Cevabı kontrol et, sonra devam et",
+    "lesson_choice": "Bir cevap seçeneği seç",
+    "lesson_undo_match": "Son eşleştirmeyi geri al"
+  },
+  "srs": {
+    "due_badge": "{n} bekliyor",
+    "due_badge_tooltip": "Tekrarlar bekliyor",
+    "due_badge_aria": "{n} tekrar bekliyor",
+    "status_new": "Yeni",
+    "status_learning": "Öğreniliyor",
+    "status_due": "Zamanı geldi",
+    "status_mastered": "Pekiştirildi",
+    "elements_mastered_aria": "{total} ögeden {mastered} tanesi pekiştirildi",
+    "show_only_due": "Yalnızca bekleyenleri göster",
+    "show_all": "Tümünü göster",
+    "details": "Öge ayrıntıları",
+    "hide_details": "Ayrıntıları gizle",
+    "element_mastered": "Pekiştirildi",
+    "element_due": "Şimdi zamanı",
+    "element_scheduled": "Planlandı",
+    "element_meta": "Seri {streak} · {errors} hata",
+    "element_meta_review": "Seri {streak} · {errors} hata · {days} gün sonra tekrar",
+    "last_answer": "Cevabın:",
+    "correct": "Doğru:",
+    "no_elements": "Henüz izlenen öge yok.",
+    "settings_title": "Aralıklı tekrar",
+    "settings_intro": "Yanlış yaptıkların, doğru yaptıkça uzayan bir takvimle tekrara döner; böylece zayıf noktalarını bildiklerinden daha sık çalışırsın.",
+    "schedule_streak": "Üst üste {n} doğru",
+    "schedule_streak_plus": "Üst üste {n}+ doğru",
+    "schedule_days": "{d} gün sonra tekrar",
+    "settings_mastery": "Bir öge üst üste {n} doğru cevaptan sonra pekiştirilmiş sayılır; yanlış cevap onu sıfırlar.",
+    "settings_learn_more": "Yöntem hakkında daha fazla bilgi"
+  },
+  "hints": {
+    "reveal": "İpucu göster",
+    "cost": "−{n} XP",
+    "length": "Cevap {n} harften oluşuyor",
+    "first_letters": "“{prefix}” ile başlıyor ({n} harf)",
+    "not": "“{label}” değil",
+    "item": "“{label}” ile başla",
+    "reveal_pair": "“{left}” → “{right}”"
+  },
+  "favorites": {
+    "card_title": "Favorilerin",
+    "add": "Favorilere ekle",
+    "remove": "Favorilerden çıkar",
+    "empty": "Henüz favori yok — bir dersteki yıldıza dokun.",
+    "save_prompt": "Bu dersi favorilerine kaydet"
   }
 }

@@ -22,7 +22,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import XpBadge from "../../shared/XpBadge";
+import AnimatedCounter from "../../shared/AnimatedCounter";
 import CorrectionBlock from "../exercises/CorrectionBlock";
 import DiffHighlight from "../exercises/DiffHighlight";
 import Confetti from "../feedback/Confetti";
@@ -30,6 +30,10 @@ import NextStepSuggestions from "./NextStepSuggestions";
 import { useCountUp } from "../../hooks/useCountUp";
 import { useFeedbackIntensity } from "../../hooks/useFeedbackIntensity";
 import { useI18n } from "../../hooks/useI18n";
+import LessonFavoriteToggle from "./LessonFavoriteToggle";
+import AnswerDiff from "../../shared/AnswerDiff";
+import { explainError } from "../../lib/review/explain-error";
+import { readExplanationsEnabled } from "../../lib/review/reviewPref";
 import { useNextStepSuggestions } from "../../hooks/useNextStepSuggestions";
 import { collectFailedExercises } from "../../lib/lesson/error-replay";
 import { tokenDiff } from "../../lib/exercises/token-diff";
@@ -337,6 +341,26 @@ export default function LessonSummary({
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
       </h2>
 
+      {userId && (
+        <div
+          className="flex items-center gap-1"
+          data-testid="lesson-summary-favorite"
+        >
+          <LessonFavoriteToggle
+            userId={userId}
+            source={source}
+            setId={setId}
+            filename={lessonFilename}
+            title={lesson.title}
+            setTitle=""
+            size={16}
+          />
+          <span className="text-sm text-fg-muted">
+            {t("favorites.save_prompt", "Save this lesson to your favorites")}
+          </span>
+        </div>
+      )}
+
       <div
         className="lesson-summary-stars"
         data-testid="lesson-summary-stars"
@@ -409,15 +433,19 @@ export default function LessonSummary({
           <span className="lesson-summary-xp-label">
             {t("gamification.xp_earned", "XP earned")}
           </span>
-          <XpBadge
-            gain={xpGain}
-            icon={<Zap size={18} aria-hidden="true" />}
-            xpLabel={t("gamification.xp", "XP")}
-            className="lesson-summary-xp-badge"
-            iconClassName="lesson-summary-xp-icon"
-            gainClassName="lesson-summary-xp-gain"
-            gainTestId="lesson-summary-xp-gain"
-          />
+          <span className="lesson-summary-xp-badge">
+            <span className="lesson-summary-xp-icon">
+              <Zap size={18} aria-hidden="true" />
+            </span>
+            <AnimatedCounter
+              value={xpGain}
+              durationMs={1000}
+              enabled={intensity !== "subtle"}
+              className="lesson-summary-xp-gain"
+              testId="lesson-summary-xp-gain"
+              format={(n) => `+${n} ${t("gamification.xp", "XP")}`}
+            />
+          </span>
         </div>
       )}
 
@@ -511,6 +539,54 @@ export default function LessonSummary({
           </ul>
         </section>
       )}
+
+      {/* #599 — auto-generated explanations + your-vs-correct diff for
+                the run's still-weak text mistakes, gated by the
+                Settings toggle. */}
+      {readExplanationsEnabled() &&
+        (() => {
+          const mistakes = sessionErrors
+            .filter(
+              (e) =>
+                !e.mastered && (e.user_answer ?? "").trim() !== "",
+            )
+            .slice(0, 5);
+          if (mistakes.length === 0) return null;
+          return (
+            <section
+              className="lesson-summary-explanations"
+              data-testid="lesson-summary-explanations"
+            >
+              <h3>
+                {t("review.explain_heading", "Why you missed these")}
+              </h3>
+              <ul className="flex flex-col gap-3">
+                {mistakes.map((err) => {
+                  const expl = explainError(err);
+                  return (
+                    <li
+                      key={err.id}
+                      className="flex flex-col gap-1"
+                      data-testid={`lesson-summary-explain-${err.id}`}
+                    >
+                      <AnswerDiff
+                        userAnswer={err.user_answer}
+                        correctAnswer={err.correct_answer}
+                        yourLabel={t("review.your_answer", "Your answer:")}
+                        correctLabel={t("review.correct_answer", "Correct:")}
+                      />
+                      {expl && (
+                        <p className="text-sm text-fg-muted">
+                          {t(expl.key, expl.fallback)}
+                        </p>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })()}
 
       {/* #138 — export the result for AI-assisted practice.
                 Copy to clipboard or download as a .md file. Sits

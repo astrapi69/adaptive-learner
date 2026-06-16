@@ -160,13 +160,20 @@ test.describe("No horizontal scroll — authenticated pages (onboard first)", ()
       }
 
       // Settings: every tab panel (inactive panels are `hidden`, so
-      // each must be activated to be measured).
+      // each must be activated to be measured). These widths are all
+      // mobile (<= 768px), where the sidebar is hidden and the
+      // hamburger menu drives the tabs.
       await page.goto("/settings");
-      await page.getByTestId("settings-tabs").waitFor({ timeout: 12000 });
+      await page.getByTestId("settings-mobile-trigger").waitFor({ timeout: 12000 });
+      const pickTab = async (tab: string): Promise<boolean> => {
+        await page.getByTestId("settings-mobile-trigger").click();
+        const item = page.getByTestId(`settings-mobile-tab-${tab}`);
+        if (!(await item.count())) return false;
+        await item.click();
+        return true;
+      };
       for (const tab of SETTINGS_TABS) {
-        const btn = page.getByTestId(`settings-tab-${tab}`);
-        if (await btn.count()) {
-          await btn.click();
+        if (await pickTab(tab)) {
           await settleLayout(page);
           await assertNoOverflow(page, `Settings:${tab}`, width);
         }
@@ -175,9 +182,7 @@ test.describe("No horizontal scroll — authenticated pages (onboard first)", ()
       // Badge gallery drawer (opened from the gamification settings
       // under the plugins tab). Best-effort — skip if the trigger
       // isn't present, but measure it when it is.
-      const plugins = page.getByTestId("settings-tab-plugins");
-      if (await plugins.count()) {
-        await plugins.click();
+      if (await pickTab("plugins")) {
         await settleLayout(page);
         const viewAll = page.getByTestId("settings-view-all-badges");
         if (await viewAll.count()) {

@@ -7,6 +7,26 @@ die nur ein Mensch im echten Browser zuverlässig beurteilt:
 Layout, Lesbarkeit, Touch-Bedienung, Theme-Kontraste und das
 Gesamtgefühl des Lernflusses.
 
+> **Dexie-Smoke-Cadence (#552):** Der Dexie-Mode-E2E-Smoke
+> (`make test-dexie-smoke`) läuft **täglich** (Scheduled Run, 04:00 UTC),
+> **vor jedem Release** (Gate in `make release-test`) und auf
+> `release/*`-Branches — **nicht auf jedem PR**. Er ist teuer (~6 Min) und im
+> PR-Kontext selten relevant; der Regressions-Schutz bleibt über den täglichen
+> Lauf + das Release-Gate erhalten (gleiche Logik wie die Mutationstests). Bei
+> Bedarf jederzeit manuell via `workflow_dispatch` oder lokal mit
+> `make test-dexie-smoke` auslösbar.
+
+> **CI-Nachtschicht (#575):** PRs laufen **nur Korrektheits-Gates** (Backend-/
+> Plugin-/Frontend-Tests, ruff + mypy, Pre-commit, Docs-Drift, der
+> Complexity-Baseline-Gate). Alles Nicht-Merge-Kritische läuft auf der
+> **Nachtschicht** (Schedule + `workflow_dispatch`): **Security-Scan**
+> (pip-audit / npm audit / bandit — wöchentlich + `push: release/**`),
+> **Coverage** (täglich), **Content-Stats** (täglich; prüft die README gegen
+> ein frisches Content-Repo-Checkout) und der **Complexity-Report**
+> (voller Warn-View, täglich). Faustregel: Schlägt ein Job nicht
+> merge-kritisch fehl, gehört er in die Nachtschicht, nicht auf den
+> `pull_request`-Trigger.
+
 ## So wird getestet
 
 - Jeder Testfall hat eine Checkbox. Arbeite eine Session nach der
@@ -179,6 +199,36 @@ Alle Tests aus Session 1-4 noch einmal, plus:
 - [ ] Kontrast: WCAG AA in allen Themes (Text lesbar)
 - [ ] Farbenblind: Matching-Paare durch Nummern/Buchstaben
       erkennbar
+
+---
+
+## Session 8: Tastenkürzel (optional)
+
+Das globale Tastenkürzel-System (#585). Alle Kürzel sind in der
+Hilfe-Übersicht dokumentiert (Taste `?`).
+
+**Global**
+
+- [ ] `?` öffnet die Tastenkürzel-Übersicht; erneut `?` oder `Esc`
+      schließt sie wieder.
+- [ ] `Ctrl`/`⌘` + `,` öffnet die Einstellungen.
+- [ ] `Ctrl`/`⌘` + `K` fokussiert die Inhaltssuche (im Content-Browser).
+- [ ] In einem Textfeld feuern die Kürzel NICHT (Tippen von `?`
+      oder `d` schreibt das Zeichen, statt zu navigieren).
+
+**Navigation**
+
+- [ ] `Alt` + `D` → Dashboard, `Alt` + `S` → Einstellungen,
+      `Alt` + `C` → Inhalte, `Alt` + `P` → Statistik.
+
+**In einer Lektion**
+
+- [ ] `Enter` prüft die Antwort und springt dann weiter.
+- [ ] Bei einer Bild-/Auswahlübung wählen die Tasten `1`–`4` (bis
+      `9`) die jeweilige Option; nach dem Prüfen reagieren sie nicht
+      mehr.
+- [ ] In einer Zuordnungsübung macht `Ctrl`/`⌘` + `Z` die zuletzt
+      gebildete Zuordnung rückgängig.
 
 ---
 

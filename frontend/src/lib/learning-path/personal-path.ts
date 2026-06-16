@@ -22,6 +22,12 @@
  */
 
 import {computeStars, type StarRating} from "../lesson-summary";
+import {
+    elementSrsDetails,
+    srsLessonSummary,
+    type SrsElementDetail,
+    type SrsLessonSummary,
+} from "../srs/status";
 import type {ContentSetEntry} from "../../storage/types";
 import type {ElementError, LessonProgress} from "../../storage/types";
 import {lessonKey, masteryForLesson} from "./graph-builder";
@@ -54,6 +60,12 @@ export interface PersonalPathLesson {
     lastActivity: string | null;
     /** The set's current/next lesson — gets the ▶ marker + action. */
     isCurrent: boolean;
+    /** Spaced-repetition roll-up for the lesson's tracked elements
+     *  (#588). Absent only on objects built outside buildPersonalPath. */
+    srs?: SrsLessonSummary;
+    /** Per-element SRS detail, weakest-first, for the element-detail
+     *  surface (#588). */
+    elementDetails?: SrsElementDetail[];
 }
 
 export interface PersonalPathSet {
@@ -229,6 +241,8 @@ function buildSet(
             productive: directionMastery(rows, "source_to_target"),
             lastActivity: row?.updated_at ?? null,
             isCurrent: false,
+            srs: srsLessonSummary(rows),
+            elementDetails: elementSrsDetails(rows),
         };
     });
 

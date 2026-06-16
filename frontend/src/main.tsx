@@ -24,6 +24,10 @@ import "./styles/themes/theme-catppuccin-mocha.css";
 import "./styles/themes/theme-soft-pop.css";
 import "./styles/themes/theme-amethyst-haze.css";
 import "./styles/global.css";
+import "./styles/fonts-devanagari.css";
+// Side-effect: capture ``beforeinstallprompt`` at startup (#604) so the
+// Settings "Install app" button can offer a manual install later.
+import "./lib/pwa/install";
 
 /**
  * Phase 11+: when deployed to a sub-path (e.g. GitHub Pages at

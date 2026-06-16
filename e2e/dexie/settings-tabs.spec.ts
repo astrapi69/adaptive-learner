@@ -1,16 +1,17 @@
 /**
- * Settings tabs — tabbed navigation + deep-link (E2E hardening).
+ * Settings tabs — sidebar/hamburger navigation + deep-link (E2E hardening).
  *
  * Dexie build, NO backend. Covers the 7-tab Settings page
  * (general / ai / learning / plugins / data / help / about):
- *   - clicking each tab activates it (aria-selected) and reveals its
- *     panel,
- *   - a ``?tab=ai`` deep link opens the AI tab directly.
+ *   - on desktop, the sidebar activates each tab (``aria-current="page"``)
+ *     and reveals its panel,
+ *   - a ``?tab=ai`` deep link opens the AI tab directly,
+ *   - on mobile (≤768px) the hamburger menu drives the same tabs.
  *
- * STABLE SELECTORS ONLY (survives the Phase B Tailwind/shadcn
- * migration): role="tab" buttons via ``settings-tab-{tab}`` testids,
- * per-panel ``data-testid`` anchors, ``aria-selected``, and the URL
- * query string. No CSS-class or DOM-structure assertions.
+ * STABLE SELECTORS ONLY (survives restyles): ``settings-tab-{tab}``
+ * (desktop sidebar) / ``settings-mobile-tab-{tab}`` (mobile menu)
+ * testids, per-panel ``data-testid`` anchors, ``aria-current``, and the
+ * URL query string. No CSS-class or DOM-structure assertions.
  */
 
 import {expect, test} from "@playwright/test";
@@ -38,6 +39,7 @@ test.describe("Settings — tabbed navigation", () => {
 
         await createTestUser(page);
         await page.goto("/settings");
+        // Desktop default viewport -> the sidebar nav is visible.
         await expect(page.getByTestId("settings-tabs")).toBeVisible({
             timeout: 15000,
         });
@@ -45,9 +47,9 @@ test.describe("Settings — tabbed navigation", () => {
         for (const {tab, panel} of TABS) {
             const trigger = page.getByTestId(`settings-tab-${tab}`);
             await trigger.click();
-            // The clicked tab reports itself selected (accessibility
-            // contract, restyle-proof).
-            await expect(trigger).toHaveAttribute("aria-selected", "true");
+            // The active item marks itself (accessibility contract,
+            // restyle-proof).
+            await expect(trigger).toHaveAttribute("aria-current", "page");
             // Its panel is now the visible one.
             await expect(page.getByTestId(panel)).toBeVisible({
                 timeout: 10000,
@@ -62,29 +64,34 @@ test.describe("Settings — tabbed navigation", () => {
         await page.goto("/settings?tab=ai");
 
         await expect(page.getByTestId("settings-tab-ai")).toHaveAttribute(
-            "aria-selected",
-            "true",
+            "aria-current",
+            "page",
             {timeout: 15000},
         );
         await expect(page.getByTestId("settings-provider")).toBeVisible();
-        // A different tab is NOT selected.
+        // A different tab is NOT the current one.
         await expect(
             page.getByTestId("settings-tab-general"),
-        ).toHaveAttribute("aria-selected", "false");
+        ).not.toHaveAttribute("aria-current", "page");
     });
 
-    test("tabs work at 375px (mobile)", async ({page}) => {
+    test("tabs work at 375px via the hamburger menu (mobile)", async ({page}) => {
         await page.setViewportSize({width: 375, height: 720});
         await createTestUser(page);
         await page.goto("/settings");
-        await expect(page.getByTestId("settings-tabs")).toBeVisible({
+        // The sidebar is hidden at mobile; the hamburger trigger drives
+        // the same tabs.
+        await expect(page.getByTestId("settings-mobile-trigger")).toBeVisible({
             timeout: 15000,
         });
 
         // Spot-check two tabs at mobile width: data (backup) + about.
-        await page.getByTestId("settings-tab-data").click();
+        await page.getByTestId("settings-mobile-trigger").click();
+        await page.getByTestId("settings-mobile-tab-data").click();
         await expect(page.getByTestId("settings-panel-data")).toBeVisible();
-        await page.getByTestId("settings-tab-about").click();
+
+        await page.getByTestId("settings-mobile-trigger").click();
+        await page.getByTestId("settings-mobile-tab-about").click();
         await expect(page.getByTestId("settings-panel-about")).toBeVisible();
     });
 });

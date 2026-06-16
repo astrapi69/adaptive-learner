@@ -24,7 +24,7 @@ import {join} from "node:path";
 import {describe, expect, it} from "vitest";
 
 const JSON_DIR = join(__dirname);
-const LANGS = ["de", "el", "en", "es", "fr", "ja", "pt", "tr"];
+const LANGS = ["de", "el", "en", "es", "fr", "hi", "ja", "pt", "tr"];
 
 type Catalog = Record<string, Record<string, unknown>>;
 

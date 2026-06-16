@@ -24,27 +24,32 @@ vi.mock("../hooks/useI18n", () => ({
     }),
 }));
 
-vi.mock("../utils/eventRecorder", () => ({
-    eventRecorder: {
-        getAll: () => [
-            {
-                type: "click" as const,
-                timestamp: 1000,
-                text: "Open something",
-            },
-            {
-                type: "api_call" as const,
-                timestamp: 1500,
-                method: "POST",
-                endpoint: "/api/projects",
-                status: 500,
-                durationMs: 12,
-            },
-        ],
-    },
-    formatEventLog: () =>
-        "00:00:01  Click: \"Open something\"\n00:00:01  API: POST /api/projects -> 500 (12ms)",
-}));
+vi.mock("../utils/eventRecorder", async (importOriginal) => {
+    const actual =
+        await importOriginal<typeof import("../utils/eventRecorder")>();
+    return {
+        ...actual,
+        eventRecorder: {
+            getAll: () => [
+                {
+                    type: "click" as const,
+                    timestamp: 1000,
+                    text: "Open something",
+                },
+                {
+                    type: "api_call" as const,
+                    timestamp: 1500,
+                    method: "POST",
+                    endpoint: "/api/projects",
+                    status: 500,
+                    durationMs: 12,
+                },
+            ],
+        },
+        formatEventLog: () =>
+            "00:00:01  Click: \"Open something\"\n00:00:01  API: POST /api/projects -> 500 (12ms)",
+    };
+});
 
 import ErrorReportDialog from "./ErrorReportDialog";
 

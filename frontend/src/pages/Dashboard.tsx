@@ -11,6 +11,7 @@ import FocusAreasCard from "../components/dashboard/FocusAreasCard";
 import PausedLessonsCard from "../components/dashboard/PausedLessonsCard";
 import LearningRepoWidget from "../components/dashboard/LearningRepoWidget";
 import ReviewQueueCard from "../components/dashboard/ReviewQueueCard";
+import FavoritesCard from "../components/dashboard/FavoritesCard";
 import MethodDistribution from "../components/MethodDistribution";
 import ProfileRadar from "../components/ProfileRadar";
 import ProgressTimeline from "../components/ProgressTimeline";
@@ -24,6 +25,7 @@ import DashboardBadgeWidget from "../components/badges/DashboardBadgeWidget";
 import DailyMissionsCard from "../components/DailyMissionsCard";
 import StreakCalendar from "../components/StreakCalendar";
 import StreakWidget from "../components/StreakWidget";
+import ActivityTrend from "../components/dashboard/ActivityTrend";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../api/client";
@@ -323,16 +325,20 @@ export default function Dashboard() {
                 then motivational (XP / streak / badges), then the
                 analytical panels. */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {userId && <PausedLessonsCard userId={userId} />}
-
+        {/* All user-scoped cards share one guard (fragment children
+            flatten into the grid, so layout is unchanged) — keeps the
+            Dashboard component under the complexity gate. */}
         {userId && (
-          <article className="dashboard-card dashboard-card-wide">
-            <DailyMissionsCard userId={userId} />
-          </article>
+          <>
+            <PausedLessonsCard userId={userId} />
+            <article className="dashboard-card dashboard-card-wide">
+              <DailyMissionsCard userId={userId} />
+            </article>
+            <FocusAreasCard userId={userId} />
+            <ReviewQueueCard userId={userId} />
+            <FavoritesCard userId={userId} />
+          </>
         )}
-
-        {userId && <FocusAreasCard userId={userId} />}
-        {userId && <ReviewQueueCard userId={userId} />}
 
         <article className="dashboard-card">
           <h2 className="dashboard-card-title">
@@ -347,6 +353,7 @@ export default function Dashboard() {
         <article className="dashboard-card dashboard-card-wide">
           <h2 className="dashboard-card-title">{t("gamification.card_streak", "Streak")}</h2>
           <StreakWidget state={streakState} />
+          <ActivityTrend entries={heatmap} />
           <StreakCalendar entries={heatmap} />
         </article>
 

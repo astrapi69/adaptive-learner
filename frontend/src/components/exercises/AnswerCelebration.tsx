@@ -22,8 +22,11 @@
 
 import {useEffect, useRef, useState} from "react";
 
+import {Check, X} from "lucide-react";
+
 import {useFeedbackIntensity} from "../../hooks/useFeedbackIntensity";
 import {useI18n} from "../../hooks/useI18n";
+import FeedbackPulse from "../../shared/FeedbackPulse";
 import {
     nextCorrectAnswerIndex,
     shouldPraiseCorrect,
@@ -62,15 +65,45 @@ export default function AnswerCelebration({
         }
     }, [isCorrect, intensity, lang]);
 
-    if (!isCorrect || phrase === null) return null;
+    // A green pulse on a correct answer / a red shake on a wrong one,
+    // reusing the shared FeedbackPulse (no-op under reduced motion).
+    // Gated on intensity so "subtle" stays silent (parity with praise).
+    const showPulse = intensity !== "subtle";
+
+    if (!showPulse && (!isCorrect || phrase === null)) return null;
 
     return (
-        <p
-            className="answer-feedback-praise"
-            data-testid="answer-praise"
-            role="status"
-        >
-            {phrase}
-        </p>
+        <>
+            {showPulse && (
+                <FeedbackPulse
+                    variant={isCorrect ? "success" : "error"}
+                    testId="answer-pulse"
+                    className="answer-feedback-pulse"
+                >
+                    {isCorrect ? (
+                        <Check
+                            size={18}
+                            aria-hidden="true"
+                            style={{color: "var(--exercise-correct)"}}
+                        />
+                    ) : (
+                        <X
+                            size={18}
+                            aria-hidden="true"
+                            style={{color: "var(--exercise-wrong)"}}
+                        />
+                    )}
+                </FeedbackPulse>
+            )}
+            {isCorrect && phrase !== null && (
+                <p
+                    className="answer-feedback-praise"
+                    data-testid="answer-praise"
+                    role="status"
+                >
+                    {phrase}
+                </p>
+            )}
+        </>
     );
 }

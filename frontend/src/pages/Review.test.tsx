@@ -195,8 +195,8 @@ describe("ReviewPage: ready state", () => {
         renderAtPath(VALID_PATH);
         expect(screen.getByTestId("review-summary")).toBeInTheDocument();
         expect(
-            screen.getByTestId("review-summary-score"),
-        ).toHaveTextContent("1 / 1");
+            screen.getByTestId("review-summary-corrected"),
+        ).toHaveTextContent("1 of 1");
     });
 
     it("Previous disabled on step 0", () => {

@@ -5,21 +5,15 @@ name: Security Scan
 # never blocks a merge. Tightening to a hard gate is a later decision (#377).
 
 on:
-  pull_request:
-    paths:
-      - "backend/pyproject.toml"
-      - "backend/poetry.lock"
-      - "plugins/**/pyproject.toml"
-      - "plugins/**/poetry.lock"
-      - "backend/app/**.py"
-      - "plugins/**/*.py"
-      - "frontend/package.json"
-      - "frontend/package-lock.json"
-      - ".github/workflows/security-scan.yml"
+  # Night-shift only (#575): the scan is warn-only and was never
+  # merge-critical, so it no longer runs on every PR. It runs weekly, on
+  # release branches (a pre-release safety net), and on demand.
   schedule:
     # Weekly (Monday 06:00 UTC): catches newly-disclosed CVEs against
-    # unchanged dependencies, which a paths-filtered PR trigger never sees.
+    # unchanged dependencies, which a paths-filtered PR trigger never saw.
     - cron: "0 6 * * 1"
+  push:
+    branches: ["release/**"]
   workflow_dispatch:
 
 permissions:

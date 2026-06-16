@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Monitor } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -7,6 +7,7 @@ import AboutTab from "../components/about/AboutTab";
 import IdentitySection from "../components/about/IdentitySection";
 import BackupSection from "../components/BackupSection";
 import CacheManagementSection from "../components/CacheManagementSection";
+import InstallAppSection from "../components/InstallAppSection";
 import ContentRepoSettingsSection from "../components/ContentRepoSettingsSection";
 import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
@@ -14,6 +15,9 @@ import GitHubIntegrationSection from "../components/GitHubIntegrationSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import DirectionStrategyControl from "../components/DirectionStrategyControl";
+import SrsTransparencySection from "../components/SrsTransparencySection";
+import HintSettingsControl from "../components/HintSettingsControl";
+import ReviewSettingsControl from "../components/ReviewSettingsControl";
 import LearningProfileControl from "../components/LearningProfileControl";
 import MaxLessonSizeControl from "../components/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../components/PausedLessonsRetentionControl";
@@ -33,14 +37,21 @@ import SyncSection from "../components/SyncSection";
 import ThemePicker from "../components/ThemePicker";
 import AvatarUpload from "../shared/AvatarUpload";
 import SelectiveExportSection from "../components/SelectiveExportSection";
+import SettingsSidebar from "../components/settings/SettingsSidebar";
+import SettingsMobileMenu from "../components/settings/SettingsMobileMenu";
+import type { SidebarGroup } from "../lib/settings/sidebar-model";
 import { useI18n } from "../hooks/useI18n";
-import { SUPPORTED_LANGUAGES } from "../lib/constants";
+import { buildLanguageOptions } from "../lib/languages";
+import LanguagePicker from "../shared/LanguagePicker";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
 import {
   readLessonShortcutsEnabled,
   setLessonShortcutsEnabled,
 } from "../lib/lesson/lessonShortcutsPref";
 import { readLearnerState, setLanguage } from "../lib/learnerState";
+import { notifyProfileUpdated } from "../lib/profileSignal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   getStorage,
   getStorageRowCounts,
@@ -112,7 +123,7 @@ export default function Settings() {
   const activeTab: SettingsTab = isSettingsTab(searchParams.get("tab"))
     ? (searchParams.get("tab") as SettingsTab)
     : "general";
-  const setActiveTab = (tab: SettingsTab) => {
+  const setActiveTab = (tab: string) => {
     setSearchParams(
       (prev) => {
         prev.set("tab", tab);
@@ -122,9 +133,44 @@ export default function Settings() {
     );
   };
 
+  // Shared nav model for both the desktop sidebar and the mobile menu
+  // (#546). The 8 existing tabs are grouped; tabs are never removed.
+  const sidebarGroups: SidebarGroup[] = useMemo(() => {
+    const item = (tab: SettingsTab) => ({
+      value: tab,
+      label: t(SETTINGS_TAB_LABELS[tab].key, SETTINGS_TAB_LABELS[tab].fallback),
+      testId: `settings-tab-${tab}`,
+    });
+    return [
+      {
+        key: "general",
+        label: t("settings.group_general", "General"),
+        items: [item("general")],
+      },
+      {
+        key: "learning",
+        label: t("settings.group_learning", "Learning & AI"),
+        items: [item("learning"), item("ai"), item("plugins")],
+      },
+      {
+        key: "data",
+        label: t("settings.group_data", "Data & integrations"),
+        items: [item("data"), item("integrations")],
+      },
+      {
+        key: "info",
+        label: t("settings.group_info", "Info"),
+        items: [item("help"), item("about")],
+      },
+    ];
+  }, [t]);
+
   const [settings, setSettings] = useState<UserSettings | null>(null);
   // #508 — the learner's display name for the initials-avatar fallback.
   const [userName, setUserName] = useState<string>("");
+  // #579 — editable display-name draft + validation message.
+  const [nameDraft, setNameDraft] = useState<string>("");
+  const [nameError, setNameError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   // v1.10.0 / Phase 23E — swipe-gesture toggle. Persisted in
   // localStorage via ``gesturePref`` so the consumer hooks
@@ -209,7 +255,9 @@ export default function Settings() {
     void getStorage()
       .users.get(userId)
       .then((u) => {
-        if (!cancelled) setUserName(u.name);
+        if (cancelled) return;
+        setUserName(u.name);
+        setNameDraft(u.name);
       })
       .catch(() => {
         /* name is only the avatar fallback — non-fatal */
@@ -259,6 +307,36 @@ export default function Settings() {
         avatar: dataUrl ?? "",
       });
       setSettings(updated);
+      // #579 — refresh the header NavAvatar live.
+      notifyProfileUpdated();
+      notify.success(t("settings.saved", "Saved."));
+    } catch (err) {
+      const detail = err instanceof ApiError ? err.detail : t("common.error");
+      notify.error(detail);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // #579 — persist the edited display name on the user object (the
+  // existing store; both storage modes handle ``name``). Updates the
+  // InitialsAvatar (via ``userName``) and the header NavAvatar (event) live.
+  const handleSaveName = async () => {
+    const userId = readLearnerState().userId;
+    if (!userId || busy) return;
+    const trimmed = nameDraft.trim();
+    if (!trimmed) {
+      setNameError(t("settings.username_empty", "Name cannot be empty."));
+      return;
+    }
+    const name = trimmed.slice(0, 50);
+    setNameError(null);
+    setBusy("name");
+    try {
+      await getStorage().users.update(userId, { name });
+      setUserName(name);
+      setNameDraft(name);
+      notifyProfileUpdated();
       notify.success(t("settings.saved", "Saved."));
     } catch (err) {
       const detail = err instanceof ApiError ? err.detail : t("common.error");
@@ -293,26 +371,19 @@ export default function Settings() {
         <h1>{t("settings.title", "Settings")}</h1>
       </header>
 
-      <nav
-        className="settings-tabs"
-        role="tablist"
-        aria-label={t("settings.tabs_aria", "Settings sections")}
-        data-testid="settings-tabs"
-      >
-        {SETTINGS_TABS.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab}
-            className={`settings-tab${activeTab === tab ? " is-active" : ""}`}
-            data-testid={`settings-tab-${tab}`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {t(SETTINGS_TAB_LABELS[tab].key, SETTINGS_TAB_LABELS[tab].fallback)}
-          </button>
-        ))}
-      </nav>
+      <SettingsMobileMenu
+        groups={sidebarGroups}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+      />
+
+      <div className="mx-auto grid w-full max-w-[1180px] gap-0 md:grid-cols-[220px_1fr] md:gap-8">
+        <SettingsSidebar
+          groups={sidebarGroups}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        />
+        <div className="min-w-0">
 
       <section
         className="settings-section"
@@ -320,6 +391,46 @@ export default function Settings() {
         hidden={activeTab !== "general"}
       >
         <h2 className="settings-section-title">{t("settings.section_profile", "Profile")}</h2>
+        <div className="form-row" data-testid="settings-username-row">
+          <label className="form-label" htmlFor="settings-username-input">
+            {t("settings.username_label", "Display name")}
+          </label>
+          <div className="flex flex-wrap items-center gap-2">
+            <Input
+              id="settings-username-input"
+              data-testid="settings-username-input"
+              value={nameDraft}
+              maxLength={50}
+              placeholder={t("settings.username_placeholder", "Your name")}
+              disabled={busy === "name"}
+              aria-invalid={nameError ? true : undefined}
+              onChange={(e) => {
+                setNameDraft(e.target.value);
+                if (nameError) setNameError(null);
+              }}
+              className="max-w-xs"
+            />
+            <Button
+              type="button"
+              size="sm"
+              className="min-h-11"
+              onClick={() => void handleSaveName()}
+              disabled={busy === "name" || nameDraft.trim() === userName}
+              data-testid="settings-username-save"
+            >
+              {t("settings.username_save", "Save")}
+            </Button>
+          </div>
+          {nameError && (
+            <p
+              role="alert"
+              className="m-0 text-sm font-medium text-[var(--error)]"
+              data-testid="settings-username-error"
+            >
+              {nameError}
+            </p>
+          )}
+        </div>
         {settings && (
           <AvatarUpload
             name={userName}
@@ -327,6 +438,16 @@ export default function Settings() {
             size={96}
             uploadLabel={t("settings.avatar_upload", "Upload picture")}
             removeLabel={t("settings.avatar_remove", "Remove")}
+            cropLabels={{
+              title: t("settings.avatar_crop_title", "Adjust your picture"),
+              instructions: t(
+                "settings.avatar_crop_instructions",
+                "Drag to reposition, scroll or pinch to zoom.",
+              ),
+              confirm: t("settings.avatar_crop_apply", "Apply"),
+              cancel: t("settings.avatar_crop_cancel", "Cancel"),
+              zoom: t("settings.avatar_crop_zoom", "Zoom"),
+            }}
             onChange={(dataUrl) => void handleAvatarChange(dataUrl)}
             onError={(key) =>
               notify.error(t(key, "Could not use that image. Try another file."))
@@ -347,21 +468,27 @@ export default function Settings() {
 
       <section className="settings-section" hidden={activeTab !== "general"}>
         <h2 className="settings-section-title">{t("settings.section_language", "Language")}</h2>
-        <label className="form-row">
-          <span className="form-label">{t("settings.language_label", "Display language")}</span>
-          <select
-            data-testid="settings-language"
-            value={lang}
-            disabled={busy === "lang"}
-            onChange={(e) => handleLangChange(e.target.value)}
-          >
-            {SUPPORTED_LANGUAGES.map((code) => (
-              <option key={code} value={code}>
-                {code.toUpperCase()}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="form-row">
+          <span className="form-label" id="settings-language-label">
+            {t("settings.language_label", "Display language")}
+          </span>
+          <div style={{ minWidth: "16rem", flex: 1 }}>
+            <LanguagePicker
+              testId="settings-language"
+              languages={buildLanguageOptions(t)}
+              selectedValue={lang}
+              disabled={busy === "lang"}
+              onChange={handleLangChange}
+              ariaLabel={t("settings.language_label", "Display language")}
+              searchPlaceholder={t(
+                "settings.language_search_placeholder",
+                "Search languages…",
+              )}
+              searchAriaLabel={t("settings.language_search_label", "Search languages")}
+              noResultsLabel={t("settings.language_no_results", "No languages found")}
+            />
+          </div>
+        </div>
       </section>
 
       <section
@@ -503,6 +630,9 @@ export default function Settings() {
         </section>
         <MissionSettingsControl />
         <DirectionStrategyControl />
+        <HintSettingsControl />
+        <ReviewSettingsControl />
+        <SrsTransparencySection />
         <PausedLessonsRetentionControl />
         <MaxLessonSizeControl />
         <VoiceSettingsSection />
@@ -599,6 +729,7 @@ export default function Settings() {
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
         <ContentRepoSettingsSection />
         <CacheManagementSection />
+        <InstallAppSection />
         <DangerZoneSection />
       </div>
 
@@ -630,6 +761,8 @@ export default function Settings() {
         data-testid="settings-panel-about"
       >
         <AboutTab />
+      </div>
+        </div>
       </div>
     </main>
   );

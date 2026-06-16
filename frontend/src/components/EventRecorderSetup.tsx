@@ -1,7 +1,8 @@
 import {useEffect, useRef} from "react";
 import {useLocation} from "react-router-dom";
 
-import {eventRecorder} from "../utils/eventRecorder";
+import {captureAppState} from "../utils/appState";
+import {eventRecorder, setAppStateProvider} from "../utils/eventRecorder";
 
 /**
  * Invisible component that installs global event recorders.
@@ -17,6 +18,14 @@ import {eventRecorder} from "../utils/eventRecorder";
 export default function EventRecorderSetup() {
     const location = useLocation();
     const prevPath = useRef(location.pathname);
+
+    // --- App-state snapshot provider (EVT-02) ---
+    // Inject from a leaf component so the recorder stays free of a
+    // storage-barrel import cycle.
+    useEffect(() => {
+        setAppStateProvider(captureAppState);
+        return () => setAppStateProvider(null);
+    }, []);
 
     // --- Click listener ---
     useEffect(() => {

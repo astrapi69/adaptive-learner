@@ -297,29 +297,3 @@ jobs:
         run: python3 scripts/verify_docs.py
       - name: Verify mkdocs nav is in sync with _meta.yaml
         run: python3 scripts/generate_mkdocs_nav.py --check
-
-  content-validation:
-    # Issue #47 — the authoritative gate against stale-content drift
-    # (Bug #44). Checks out the content repo FRESH so the README
-    # CONTENT-STATS block is validated against the true current
-    # content, not the gitignored bundle. Red pipeline if the README
-    # counts drifted from the content repo.
-    name: Content stats drift
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v6
-      - name: Check out content repo
-        uses: actions/checkout@v6
-        with:
-          repository: astrapi69/adaptive-learner-content
-          path: adaptive-learner-content
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-      - name: Install PyYAML
-        run: pip install pyyaml
-      - name: Validate README content stats against the content repo
-        env:
-          ADAPTIVE_LEARNER_CONTENT_DIR: ${{ github.workspace }}/adaptive-learner-content
-        run: python3 scripts/validate_bundled_content.py --check-readme

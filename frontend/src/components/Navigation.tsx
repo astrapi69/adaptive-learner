@@ -5,6 +5,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import MenuToggleButton from "../shared/MenuToggleButton";
 import NavXpBadge from "./NavXpBadge";
+import NavReviewsBadge from "./NavReviewsBadge";
 import NavAvatar from "./NavAvatar";
 import {
   NavModeBadge,
@@ -21,6 +22,7 @@ import { useDevMode } from "../hooks/useDevMode";
 import { useI18n } from "../hooks/useI18n";
 import { useIsLessonActive } from "../hooks/useIsLessonActive";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
+import { useSyncQueueSize } from "../hooks/useSyncQueueSize";
 import { useScrollDirection } from "../hooks/useScrollDirection";
 import { useTheme } from "../hooks/useTheme";
 import { readSyncConfig } from "../storage/sync-engine";
@@ -46,6 +48,7 @@ export default function Navigation() {
   const { theme, toggle } = useTheme();
   const { openHelp } = useHelp();
   const online = useOnlineStatus();
+  const syncPending = useSyncQueueSize();
   const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
   const { pathname } = useLocation();
   // During an active lesson the nav collapses to a minimal
@@ -188,6 +191,13 @@ export default function Navigation() {
         >
           {t("nav.progress", "Progress")}
         </NavLink>
+        <NavLink
+          to="/statistics"
+          className={linkClass}
+          data-testid="nav-statistics"
+        >
+          {t("nav.statistics", "Statistics")}
+        </NavLink>
         <NavLink to="/import" className={linkClass} data-testid="nav-import">
           {t("nav.import", "Import")}
         </NavLink>
@@ -233,9 +243,10 @@ export default function Navigation() {
           {t("nav.help", "Help")}
         </Button>
       </div>
+      <NavReviewsBadge />
       <NavXpBadge />
       <NavAvatar />
-      <NavSyncIndicator paired={syncPaired} />
+      <NavSyncIndicator paired={syncPaired} pendingCount={syncPending} />
       <NavOnlineIndicator online={online} />
       <NavThemeToggle theme={theme} tooltipsOn={tooltipsOn} onToggle={toggle} />
     </nav>

@@ -1,8 +1,8 @@
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {beforeEach, describe, expect, it, vi} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import AvatarUpload from "./AvatarUpload";
-import * as resize from "../lib/avatar/resize-image";
+import * as cropImage from "../lib/avatar/crop-image";
 
 function renderUpload(value: string | null, over: Partial<React.ComponentProps<typeof AvatarUpload>> = {}) {
     const onChange = vi.fn();
@@ -22,8 +22,21 @@ function renderUpload(value: string | null, over: Partial<React.ComponentProps<t
     return {onChange, onError};
 }
 
+function selectFile(type = "image/png") {
+    const file = new File(["x"], "a.png", {type});
+    fireEvent.change(screen.getByTestId("avatar-file-input"), {target: {files: [file]}});
+    return file;
+}
+
 describe("AvatarUpload", () => {
-    beforeEach(() => vi.restoreAllMocks());
+    beforeEach(() => {
+        vi.spyOn(cropImage, "loadImageFromBlob").mockResolvedValue({
+            naturalWidth: 400,
+            naturalHeight: 300,
+            src: "blob:fake",
+        } as unknown as HTMLImageElement);
+    });
+    afterEach(() => vi.restoreAllMocks());
 
     it("shows the initials fallback and no remove button without a value", () => {
         renderUpload(null);
@@ -40,22 +53,62 @@ describe("AvatarUpload", () => {
         expect(screen.getByTestId("avatar-remove-button")).toBeInTheDocument();
     });
 
-    it("processes a selected file and reports the data URL", async () => {
-        vi.spyOn(resize, "processAvatarFile").mockResolvedValue("data:image/jpeg;base64,ZZ");
-        const {onChange} = renderUpload(null);
-        const file = new File(["x"], "a.png", {type: "image/png"});
-        fireEvent.change(screen.getByTestId("avatar-file-input"), {target: {files: [file]}});
-        await waitFor(() => expect(onChange).toHaveBeenCalledWith("data:image/jpeg;base64,ZZ"));
+    it("opens the crop dialog after a file is selected", async () => {
+        renderUpload(null);
+        expect(screen.queryByTestId("image-crop-dialog")).not.toBeInTheDocument();
+        selectFile();
+        await waitFor(() =>
+            expect(screen.getByTestId("image-crop-dialog")).toBeInTheDocument(),
+        );
     });
 
-    it("reports the error key when processing fails", async () => {
-        vi.spyOn(resize, "processAvatarFile").mockRejectedValue(
-            new Error("avatar.error.too_large"),
+    it("confirming the crop reports the cropped data URL", async () => {
+        vi.spyOn(cropImage, "cropToBlob").mockResolvedValue(
+            new Blob(["jpeg"], {type: "image/jpeg"}),
         );
+        vi.spyOn(cropImage, "blobToDataUrl").mockResolvedValue(
+            "data:image/jpeg;base64,ZZ",
+        );
+        const {onChange} = renderUpload(null);
+        selectFile();
+        await screen.findByTestId("crop-confirm");
+        fireEvent.click(screen.getByTestId("crop-confirm"));
+        await waitFor(() => expect(onChange).toHaveBeenCalledWith("data:image/jpeg;base64,ZZ"));
+        // Dialog closes after applying.
+        expect(screen.queryByTestId("image-crop-dialog")).not.toBeInTheDocument();
+    });
+
+    it("cancelling the crop changes nothing and closes the dialog", async () => {
+        const {onChange} = renderUpload(null);
+        selectFile();
+        await screen.findByTestId("crop-cancel");
+        fireEvent.click(screen.getByTestId("crop-cancel"));
+        await waitFor(() =>
+            expect(screen.queryByTestId("image-crop-dialog")).not.toBeInTheDocument(),
+        );
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it("rejects an unsupported file type without opening the dialog", () => {
         const {onError} = renderUpload(null);
-        const file = new File(["x"], "a.png", {type: "image/png"});
-        fireEvent.change(screen.getByTestId("avatar-file-input"), {target: {files: [file]}});
+        selectFile("image/gif");
+        expect(onError).toHaveBeenCalledWith("avatar.error.unsupported_type");
+        expect(screen.queryByTestId("image-crop-dialog")).not.toBeInTheDocument();
+    });
+
+    it("reports too_large when the cropped blob exceeds the cap", async () => {
+        vi.spyOn(cropImage, "cropToBlob").mockResolvedValue(
+            new Blob(["jpeg"], {type: "image/jpeg"}),
+        );
+        // A data URL whose payload exceeds AVATAR_MAX_BYTES (100 KiB).
+        const huge = "data:image/jpeg;base64," + "A".repeat(200 * 1024);
+        vi.spyOn(cropImage, "blobToDataUrl").mockResolvedValue(huge);
+        const {onChange, onError} = renderUpload(null);
+        selectFile();
+        await screen.findByTestId("crop-confirm");
+        fireEvent.click(screen.getByTestId("crop-confirm"));
         await waitFor(() => expect(onError).toHaveBeenCalledWith("avatar.error.too_large"));
+        expect(onChange).not.toHaveBeenCalled();
     });
 
     it("removes the picture via onChange(null)", () => {

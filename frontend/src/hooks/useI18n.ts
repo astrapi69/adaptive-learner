@@ -2,6 +2,7 @@ import {createContext, useContext, useEffect, useState, useCallback, type ReactN
 import {fallbackString} from "../i18n/fallbacks";
 import {SUPPORTED_LANGUAGES, type SupportedLanguage} from "../lib/constants";
 import {getStorage} from "../storage";
+import {setCurrentLanguage} from "../utils/appState";
 import React from "react";
 
 type I18nStrings = Record<string, unknown>;
@@ -86,6 +87,9 @@ export function I18nProvider({children}: {children: ReactNode}) {
     // correct pronunciation rules.
     useEffect(() => {
         document.documentElement.lang = lang;
+        // Keep the event-recorder app-state snapshot (EVT-02) in sync
+        // with the active UI language.
+        setCurrentLanguage(lang);
     }, [lang]);
 
     const setLang = useCallback((newLang: string) => {

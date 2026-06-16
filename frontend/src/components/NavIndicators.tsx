@@ -11,6 +11,8 @@ import { NavLink } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../hooks/useI18n";
+import OfflineBadge from "../shared/OfflineBadge";
+import SyncStatusBadge from "../shared/SyncStatusBadge";
 
 /** "AI+Content" vs "Content"-only mode badge (links to the content browser). */
 export function NavModeBadge({ mode }: { mode: string }) {
@@ -45,8 +47,16 @@ export function NavModeBadge({ mode }: { mode: string }) {
   );
 }
 
-/** Sync paired / not-paired indicator (links to Settings > Sync). */
-export function NavSyncIndicator({ paired }: { paired: boolean }) {
+/** Sync paired / not-paired indicator (links to Settings > Sync), with
+ *  an optional pending-changes count badge (SYNC-UI-GATE: the caller
+ *  passes a non-zero count only in API mode where a sync queue exists). */
+export function NavSyncIndicator({
+  paired,
+  pendingCount = 0,
+}: {
+  paired: boolean;
+  pendingCount?: number;
+}) {
   const { t } = useI18n();
   return (
     <NavLink
@@ -54,10 +64,16 @@ export function NavSyncIndicator({ paired }: { paired: boolean }) {
       className={`nav-sync-indicator${paired ? " is-paired" : " is-unpaired"}`}
       data-testid="nav-sync-indicator"
       data-sync-paired={paired ? "true" : "false"}
+      style={{ position: "relative" }}
       title={
-        paired
-          ? t("nav.sync_paired", "Sync: paired (Settings > Sync)")
-          : t("nav.sync_unpaired", "Sync: not paired (Settings > Sync)")
+        pendingCount > 0
+          ? t("nav.sync_pending", "{n} change(s) waiting to sync").replace(
+              "{n}",
+              String(pendingCount),
+            )
+          : paired
+            ? t("nav.sync_paired", "Sync: paired (Settings > Sync)")
+            : t("nav.sync_unpaired", "Sync: not paired (Settings > Sync)")
       }
       aria-label={
         paired
@@ -70,31 +86,37 @@ export function NavSyncIndicator({ paired }: { paired: boolean }) {
       ) : (
         <Circle size={16} aria-hidden="true" />
       )}
+      <SyncStatusBadge
+        pendingCount={pendingCount}
+        className="nav-sync-pending"
+        ariaLabel={t("nav.sync_pending", "{n} change(s) waiting to sync").replace(
+          "{n}",
+          String(pendingCount),
+        )}
+      />
     </NavLink>
   );
 }
 
-/** Online / offline live-status indicator. */
+/** Online / offline live-status indicator (delegates to the reusable
+ *  ``shared/OfflineBadge``, keeping the nav's themed classes). */
 export function NavOnlineIndicator({ online }: { online: boolean }) {
   const { t } = useI18n();
   return (
-    <span
-      className={`nav-online-indicator${online ? " is-online" : " is-offline"}`}
-      data-testid="nav-online-indicator"
-      data-online={online ? "true" : "false"}
-      role="status"
-      aria-live="polite"
+    <OfflineBadge
+      online={online}
+      onlineLabel={t("nav.online", "Online")}
+      offlineLabel={t("nav.offline", "Offline")}
       title={
         online
           ? t("nav.online", "Online")
-          : t("nav.offline", "Offline — past sessions stay readable")
+          : t("nav.offline_long", "Offline — past sessions stay readable")
       }
-    >
-      <span className="nav-online-dot" aria-hidden="true" />
-      <span className="nav-online-label">
-        {online ? t("nav.online", "Online") : t("nav.offline", "Offline")}
-      </span>
-    </span>
+      className={`nav-online-indicator${online ? " is-online" : " is-offline"}`}
+      dotClassName="nav-online-dot"
+      labelClassName="nav-online-label"
+      testId="nav-online-indicator"
+    />
   );
 }
 

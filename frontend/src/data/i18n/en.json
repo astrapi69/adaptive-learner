@@ -62,6 +62,9 @@
     "cat_ai_config": "AI key backup"
   },
   "nav": {
+    "offline_long": "Offline — past sessions stay readable",
+    "sync_pending": "{n} change(s) waiting to sync",
+    "statistics": "Statistics",
     "profile": "Your profile",
     "learning_path": "Learning Path",
     "dashboard": "Dashboard",
@@ -357,6 +360,16 @@
     }
   },
   "review": {
+    "your_answer": "Your answer:",
+    "correct_answer": "Correct:",
+    "summary_corrected": "{corrected} of {total} corrected",
+    "summary_trend": "Nice — your weak spots are getting stronger.",
+    "summary_next": "Mastered items drop out; the rest return for review soon.",
+    "explain_heading": "Why you missed these",
+    "explain_article_gender": "Watch the gender: nouns ending in -o are usually masculine (el/un), -a feminine (la/una). The article follows the ending.",
+    "explain_spelling_accent": "Check the exact spelling and accent marks — a small difference changes the word.",
+    "explain_verb_conjugation": "Match the verb to its subject and tense before answering.",
+    "explain_word_order": "Mind the word order for this structure.",
     "page_title": "Review",
     "session_title": "Review session",
     "subtitle": "Reviewing {n} element(s) due for SRS",
@@ -442,6 +455,28 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "install": {
+      "heading": "Install app",
+      "description": "Install Adaptive Learner as an app for offline access and a full-screen experience.",
+      "button": "Install app",
+      "already": "Already installed",
+      "unavailable": "Your browser hasn't offered installation yet.",
+      "installed": "App installed."
+    },
+    "section_review": "Review",
+    "explanations_enabled": "Show error explanations",
+    "explanations_enabled_desc": "After a lesson, show a short rule tip for each mistake.",
+    "section_hints": "Hints",
+    "hints_enabled": "Show hints during exercises",
+    "hints_enabled_desc": "Offer a staged hint button on each exercise.",
+    "hint_xp_cost": "XP cost per hint",
+    "hint_xp_cost_desc": "Shown on the hint button. Set to 0 for free hints.",
+    "support": {
+      "heading": "Support",
+      "description": "Something not working as expected? Create a report of your recent actions to help the developer reproduce it. You review everything before it leaves your browser.",
+      "create_report": "Create error report",
+      "report_default_message": "User-initiated report"
+    },
     "tab_integrations": "Integrations",
     "github": {
       "title": "GitHub Integration",
@@ -478,14 +513,28 @@
     "section_ui": "Interface",
     "section_appearance": "Appearance",
     "section_profile": "Profile",
+    "username_label": "Display name",
+    "username_placeholder": "Your name",
+    "username_save": "Save",
+    "username_empty": "Name cannot be empty.",
     "avatar_upload": "Upload picture",
     "avatar_remove": "Remove",
+    "avatar_crop_title": "Adjust your picture",
+    "avatar_crop_instructions": "Drag to reposition, scroll or pinch to zoom.",
+    "avatar_crop_apply": "Apply",
+    "avatar_crop_cancel": "Cancel",
+    "avatar_crop_zoom": "Zoom",
     "theme": "Theme",
     "theme_description": "Choose how the app looks. Auto follows your system light/dark setting.",
     "theme_group_recommended": "Recommended",
     "theme_group_classic": "Classic",
     "theme_groups": "Theme groups",
     "tab_general": "General",
+    "group_general": "General",
+    "group_learning": "Learning & AI",
+    "group_data": "Data & integrations",
+    "group_info": "Info",
+    "nav_aria": "Settings navigation",
     "tab_ai": "AI",
     "tab_learning": "Learning",
     "tab_plugins": "Plugins",
@@ -544,6 +593,9 @@
     "storage_mode_warning": "Data is NOT synced between modes. Sync is planned for a future version.",
     "storage_mode_switch_notice": "Storage mode saved. Reload the page to switch to the new backend.",
     "language_label": "Display language",
+    "language_search_placeholder": "Search languages…",
+    "language_no_results": "No languages found",
+    "language_search_label": "Search languages",
     "provider_label": "Active provider",
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
@@ -980,6 +1032,11 @@
     "upload_qr_hint": "No camera? Take a screenshot of the desktop's QR and upload it:"
   },
   "gamification": {
+    "trend_up": "More than last week",
+    "trend_down": "Less than last week",
+    "trend_flat": "Same as last week",
+    "activity_7d": "Activity (last 7 days)",
+    "activity_cell": "{count} on {date}",
     "card_xp": "XP & Level",
     "level": "Level",
     "xp": "XP",
@@ -1292,7 +1349,22 @@
       "copy_failed": "Copy failed",
       "open_github": "Open on GitHub",
       "close": "Close",
-      "truncated": "Report truncated to fit GitHub's URL length limit."
+      "truncated": "Report truncated to fit GitHub's URL length limit.",
+      "intro_proactive": "Prepare a report of your recent actions to send to the developer. You see exactly what it contains before anything leaves your browser.",
+      "app_state": "App state",
+      "online": "online",
+      "offline": "offline",
+      "download_json": "Download JSON",
+      "category_all": "All",
+      "no_events_in_category": "No events in this category.",
+      "category": {
+        "navigation": "Navigation",
+        "ui": "Interface",
+        "network": "Network",
+        "storage": "Storage",
+        "exercise": "Exercise",
+        "error": "Errors"
+      }
     },
     "help": {
       "learn_more": "Learn more",
@@ -1523,6 +1595,10 @@
     }
   },
   "lesson": {
+    "motivation": {
+      "halftime": "Halfway there — keep going!",
+      "last": "Last one — finish strong!"
+    },
     "theory": {
       "view_example": "View example"
     },
@@ -2480,5 +2556,110 @@
     "toolbar_label": "Text formatting",
     "underline": "Underline (Ctrl+U)",
     "undo": "Undo (Ctrl+Z)"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "pt": "Portuguese",
+    "de": "German",
+    "tr": "Turkish",
+    "ja": "Japanese",
+    "el": "Greek",
+    "hi": "Hindi",
+    "script": {
+      "latin": "Latin",
+      "greek": "Greek",
+      "cyrillic": "Cyrillic",
+      "arabic": "Arabic",
+      "devanagari": "Devanagari",
+      "bengali": "Bengali",
+      "cjk": "CJK",
+      "hangul": "Hangul"
+    }
+  },
+  "statistics": {
+    "title": "Learning statistics",
+    "total_time": "Learning time",
+    "completed_lessons": "Completed lessons",
+    "avg_accuracy": "Average accuracy",
+    "current_streak": "Current streak",
+    "streak_days": "{n} days",
+    "time_hm": "{h}h {m}m",
+    "time_m": "{m}m",
+    "weak_areas_title": "Areas to improve",
+    "weak_areas_empty": "No mistakes tracked yet — keep going!",
+    "practice": "Practice",
+    "errors": "errors",
+    "last_answer": "Your last answer:",
+    "activity_title": "Activity (last 90 days)",
+    "activity_aria": "Lessons completed per day over the last 90 days",
+    "activity_cell": "{count} lessons on {date}",
+    "activity_empty": "No activity yet.",
+    "pairs_title": "Progress by language pair",
+    "pairs_empty": "Download a lesson set to start tracking progress.",
+    "pair_level_aria": "{level}: {percent}% complete"
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "group_global": "Global",
+    "group_navigation": "Navigation",
+    "group_lesson": "During a lesson",
+    "show_help": "Show keyboard shortcuts",
+    "open_settings": "Open settings",
+    "search_content": "Search content",
+    "close_dialog": "Close dialog",
+    "go_dashboard": "Go to dashboard",
+    "go_settings": "Go to settings",
+    "go_content": "Go to content",
+    "go_statistics": "Go to statistics",
+    "lesson_enter": "Check answer, then continue",
+    "lesson_choice": "Select an answer option",
+    "lesson_undo_match": "Undo the last match"
+  },
+  "srs": {
+    "due_badge": "{n} due",
+    "due_badge_tooltip": "Reviews due",
+    "due_badge_aria": "{n} reviews due",
+    "status_new": "New",
+    "status_learning": "Learning",
+    "status_due": "Due",
+    "status_mastered": "Mastered",
+    "elements_mastered_aria": "{mastered} of {total} elements mastered",
+    "show_only_due": "Show only due",
+    "show_all": "Show all",
+    "details": "Element details",
+    "hide_details": "Hide details",
+    "element_mastered": "Mastered",
+    "element_due": "Due now",
+    "element_scheduled": "Scheduled",
+    "element_meta": "Streak {streak} · {errors} errors",
+    "element_meta_review": "Streak {streak} · {errors} errors · review in {days}d",
+    "last_answer": "Your answer:",
+    "correct": "Correct:",
+    "no_elements": "No tracked elements yet.",
+    "settings_title": "Spaced repetition",
+    "settings_intro": "Items you miss come back for review on a schedule that stretches as you get them right, so you practise weak spots more often than ones you know.",
+    "schedule_streak": "{n} correct in a row",
+    "schedule_streak_plus": "{n}+ correct in a row",
+    "schedule_days": "review in {d} day(s)",
+    "settings_mastery": "An item counts as mastered after {n} correct answers in a row; a wrong answer resets it.",
+    "settings_learn_more": "Learn more about the method"
+  },
+  "hints": {
+    "reveal": "Show a hint",
+    "cost": "−{n} XP",
+    "length": "The answer has {n} letters",
+    "first_letters": "It starts with “{prefix}” ({n} letters)",
+    "not": "It's not “{label}”",
+    "item": "Start with “{label}”",
+    "reveal_pair": "“{left}” goes with “{right}”"
+  },
+  "favorites": {
+    "card_title": "Your favorites",
+    "add": "Add to favorites",
+    "remove": "Remove from favorites",
+    "empty": "No favorites yet — tap the star on a lesson to save it.",
+    "save_prompt": "Save this lesson to your favorites"
   }
 }

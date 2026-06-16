@@ -1,0 +1,45 @@
+name: Content Stats Drift
+
+# Night-shift only (#575): the README CONTENT-STATS block is validated
+# against a FRESH checkout of the SEPARATE content repo. Drift is driven by
+# the content repo, not by an app PR, so this is not a PR-blocking gate — it
+# runs nightly and on demand. The local pre-commit hook
+# ("Validate content repo stats in README") still catches drift introduced by
+# an app-side change before commit.
+#
+# Origin: Issue #47 — the authoritative gate against stale-content drift
+# (Bug #44). Extracted from ci.yml in #575.
+
+on:
+  schedule:
+    # Daily at 03:30 UTC.
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  content-validation:
+    name: Content stats drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check out content repo
+        uses: actions/checkout@v6
+        with:
+          repository: astrapi69/adaptive-learner-content
+          path: adaptive-learner-content
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Validate README content stats against the content repo
+        env:
+          ADAPTIVE_LEARNER_CONTENT_DIR: ${{ github.workspace }}/adaptive-learner-content
+        run: python3 scripts/validate_bundled_content.py --check-readme

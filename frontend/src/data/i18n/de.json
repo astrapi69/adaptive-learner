@@ -62,6 +62,9 @@
     "cat_ai_config": "KI-Schlüssel-Sicherung"
   },
   "nav": {
+    "offline_long": "Offline — frühere Sitzungen bleiben lesbar",
+    "sync_pending": "{n} Änderung(en) warten auf Sync",
+    "statistics": "Statistik",
     "profile": "Dein Profil",
     "learning_path": "Lernpfad",
     "dashboard": "Dashboard",
@@ -357,6 +360,16 @@
     }
   },
   "review": {
+    "your_answer": "Deine Antwort:",
+    "correct_answer": "Richtig:",
+    "summary_corrected": "{corrected} von {total} korrigiert",
+    "summary_trend": "Stark — deine Schwachstellen werden besser.",
+    "summary_next": "Gemeisterte Elemente fallen weg; der Rest kommt bald zur Wiederholung.",
+    "explain_heading": "Warum du diese verpasst hast",
+    "explain_article_gender": "Achte auf das Geschlecht: Nomen auf -o sind meist maskulin (el/un), auf -a feminin (la/una). Der Artikel richtet sich nach der Endung.",
+    "explain_spelling_accent": "Prüfe die genaue Schreibweise und die Akzente — ein kleiner Unterschied ändert das Wort.",
+    "explain_verb_conjugation": "Stimme das Verb auf Subjekt und Zeitform ab, bevor du antwortest.",
+    "explain_word_order": "Achte auf die Wortstellung dieser Struktur.",
     "page_title": "Wiederholung",
     "session_title": "Wiederholungssitzung",
     "subtitle": "{n} Element(e) zur Wiederholung",
@@ -442,6 +455,28 @@
     "session_count": "Sitzungen"
   },
   "settings": {
+    "install": {
+      "heading": "App installieren",
+      "description": "Installiere Adaptive Learner als App für Offline-Zugriff und eine Vollbild-Erfahrung.",
+      "button": "App installieren",
+      "already": "Bereits installiert",
+      "unavailable": "Dein Browser hat die Installation noch nicht angeboten.",
+      "installed": "App installiert."
+    },
+    "section_review": "Wiederholung",
+    "explanations_enabled": "Fehlererklärungen anzeigen",
+    "explanations_enabled_desc": "Zeigt nach einer Lektion zu jedem Fehler einen kurzen Regeltipp.",
+    "section_hints": "Tipps",
+    "hints_enabled": "Tipps in Übungen anzeigen",
+    "hints_enabled_desc": "Bietet bei jeder Übung einen gestuften Tipp-Button.",
+    "hint_xp_cost": "XP-Kosten pro Tipp",
+    "hint_xp_cost_desc": "Wird auf dem Tipp-Button angezeigt. 0 = kostenlos.",
+    "support": {
+      "heading": "Support",
+      "description": "Etwas funktioniert nicht wie erwartet? Erstelle einen Bericht deiner letzten Aktionen, damit die Entwicklung das Problem nachvollziehen kann. Du prüfst alles, bevor es deinen Browser verlässt.",
+      "create_report": "Fehlerbericht erstellen",
+      "report_default_message": "Vom Nutzer ausgelöster Bericht"
+    },
     "tab_integrations": "Integrationen",
     "github": {
       "title": "GitHub-Integration",
@@ -478,14 +513,28 @@
     "section_ui": "Oberfläche",
     "section_appearance": "Darstellung",
     "section_profile": "Profil",
+    "username_label": "Anzeigename",
+    "username_placeholder": "Dein Name",
+    "username_save": "Speichern",
+    "username_empty": "Der Name darf nicht leer sein.",
     "avatar_upload": "Bild hochladen",
     "avatar_remove": "Entfernen",
+    "avatar_crop_title": "Bild anpassen",
+    "avatar_crop_instructions": "Zum Verschieben ziehen, mit Scrollrad oder Fingern zoomen.",
+    "avatar_crop_apply": "Übernehmen",
+    "avatar_crop_cancel": "Abbrechen",
+    "avatar_crop_zoom": "Zoom",
     "theme": "Farbschema",
     "theme_description": "Lege fest, wie die App aussieht. Automatisch folgt der Hell-/Dunkel-Einstellung deines Systems.",
     "theme_group_recommended": "Empfohlen",
     "theme_group_classic": "Klassisch",
     "theme_groups": "Theme-Gruppen",
     "tab_general": "Allgemein",
+    "group_general": "Allgemein",
+    "group_learning": "Lernen & KI",
+    "group_data": "Daten & Integrationen",
+    "group_info": "Info",
+    "nav_aria": "Einstellungs-Navigation",
     "tab_ai": "KI",
     "tab_learning": "Lernen",
     "tab_plugins": "Plugins",
@@ -544,6 +593,9 @@
     "storage_mode_warning": "Daten werden zwischen den Modi NICHT synchronisiert. Synchronisation ist fuer eine spaetere Version geplant.",
     "storage_mode_switch_notice": "Speicher-Modus gespeichert. Seite neu laden, um den neuen Modus zu aktivieren.",
     "language_label": "Anzeigesprache",
+    "language_search_placeholder": "Sprachen suchen…",
+    "language_no_results": "Keine Sprachen gefunden",
+    "language_search_label": "Sprachen suchen",
     "provider_label": "Aktiver Anbieter",
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
@@ -980,6 +1032,11 @@
     "upload_qr_hint": "Keine Kamera? Erstelle einen Screenshot vom QR-Code am Desktop und lade ihn hoch:"
   },
   "gamification": {
+    "trend_up": "Mehr als letzte Woche",
+    "trend_down": "Weniger als letzte Woche",
+    "trend_flat": "Wie letzte Woche",
+    "activity_7d": "Aktivität (letzte 7 Tage)",
+    "activity_cell": "{count} am {date}",
     "card_xp": "XP & Level",
     "level": "Level",
     "xp": "XP",
@@ -1292,7 +1349,22 @@
       "copy_failed": "Kopieren fehlgeschlagen",
       "open_github": "Auf GitHub öffnen",
       "close": "Schließen",
-      "truncated": "Bericht gekürzt wegen GitHub-URL-Längenbegrenzung."
+      "truncated": "Bericht gekürzt wegen GitHub-URL-Längenbegrenzung.",
+      "intro_proactive": "Erstelle einen Bericht deiner letzten Aktionen für die Entwicklung. Du siehst genau, was er enthält, bevor irgendetwas deinen Browser verlässt.",
+      "app_state": "App-Zustand",
+      "online": "online",
+      "offline": "offline",
+      "download_json": "JSON herunterladen",
+      "category_all": "Alle",
+      "no_events_in_category": "Keine Ereignisse in dieser Kategorie.",
+      "category": {
+        "navigation": "Navigation",
+        "ui": "Oberfläche",
+        "network": "Netzwerk",
+        "storage": "Speicher",
+        "exercise": "Übung",
+        "error": "Fehler"
+      }
     },
     "help": {
       "learn_more": "Mehr erfahren",
@@ -1523,6 +1595,10 @@
     }
   },
   "lesson": {
+    "motivation": {
+      "halftime": "Halbzeit — weiter so!",
+      "last": "Letzte — bring es zu Ende!"
+    },
     "theory": {
       "view_example": "Beispiel ansehen"
     },
@@ -2480,5 +2556,110 @@
     "toolbar_label": "Textformatierung",
     "underline": "Unterstrichen (Strg+U)",
     "undo": "Rückgängig (Strg+Z)"
+  },
+  "languages": {
+    "en": "Englisch",
+    "es": "Spanisch",
+    "fr": "Französisch",
+    "pt": "Portugiesisch",
+    "de": "Deutsch",
+    "tr": "Türkisch",
+    "ja": "Japanisch",
+    "el": "Griechisch",
+    "hi": "Hindi",
+    "script": {
+      "latin": "Lateinisch",
+      "greek": "Griechisch",
+      "cyrillic": "Kyrillisch",
+      "arabic": "Arabisch",
+      "devanagari": "Devanagari",
+      "bengali": "Bengalisch",
+      "cjk": "CJK",
+      "hangul": "Hangul"
+    }
+  },
+  "statistics": {
+    "title": "Lernstatistik",
+    "total_time": "Lernzeit",
+    "completed_lessons": "Abgeschlossene Lektionen",
+    "avg_accuracy": "Durchschnittliche Genauigkeit",
+    "current_streak": "Aktuelle Serie",
+    "streak_days": "{n} Tage",
+    "time_hm": "{h} Std. {m} Min.",
+    "time_m": "{m} Min.",
+    "weak_areas_title": "Bereiche zum Verbessern",
+    "weak_areas_empty": "Noch keine Fehler erfasst — weiter so!",
+    "practice": "Üben",
+    "errors": "Fehler",
+    "last_answer": "Deine letzte Antwort:",
+    "activity_title": "Aktivität (letzte 90 Tage)",
+    "activity_aria": "Abgeschlossene Lektionen pro Tag in den letzten 90 Tagen",
+    "activity_cell": "{count} Lektionen am {date}",
+    "activity_empty": "Noch keine Aktivität.",
+    "pairs_title": "Fortschritt pro Sprachpaar",
+    "pairs_empty": "Lade ein Lektionsset herunter, um den Fortschritt zu verfolgen.",
+    "pair_level_aria": "{level}: {percent}% abgeschlossen"
+  },
+  "shortcuts": {
+    "title": "Tastenkürzel",
+    "group_global": "Allgemein",
+    "group_navigation": "Navigation",
+    "group_lesson": "Während einer Lektion",
+    "show_help": "Tastenkürzel anzeigen",
+    "open_settings": "Einstellungen öffnen",
+    "search_content": "Inhalte durchsuchen",
+    "close_dialog": "Dialog schließen",
+    "go_dashboard": "Zum Dashboard",
+    "go_settings": "Zu den Einstellungen",
+    "go_content": "Zu den Inhalten",
+    "go_statistics": "Zur Statistik",
+    "lesson_enter": "Antwort prüfen, dann weiter",
+    "lesson_choice": "Antwortoption auswählen",
+    "lesson_undo_match": "Letzte Zuordnung rückgängig machen"
+  },
+  "srs": {
+    "due_badge": "{n} fällig",
+    "due_badge_tooltip": "Wiederholungen fällig",
+    "due_badge_aria": "{n} Wiederholungen fällig",
+    "status_new": "Neu",
+    "status_learning": "Am Lernen",
+    "status_due": "Fällig",
+    "status_mastered": "Gemeistert",
+    "elements_mastered_aria": "{mastered} von {total} Elementen gemeistert",
+    "show_only_due": "Nur fällige anzeigen",
+    "show_all": "Alle anzeigen",
+    "details": "Element-Details",
+    "hide_details": "Details ausblenden",
+    "element_mastered": "Gemeistert",
+    "element_due": "Jetzt fällig",
+    "element_scheduled": "Geplant",
+    "element_meta": "Serie {streak} · {errors} Fehler",
+    "element_meta_review": "Serie {streak} · {errors} Fehler · Wiederholung in {days} T",
+    "last_answer": "Deine Antwort:",
+    "correct": "Richtig:",
+    "no_elements": "Noch keine erfassten Elemente.",
+    "settings_title": "Verteilte Wiederholung",
+    "settings_intro": "Was du falsch beantwortest, kommt nach einem Zeitplan zurück, der sich verlängert, je öfter du richtig liegst — so übst du Schwächen häufiger als bereits Bekanntes.",
+    "schedule_streak": "{n}-mal in Folge richtig",
+    "schedule_streak_plus": "{n}+-mal in Folge richtig",
+    "schedule_days": "Wiederholung in {d} Tag(en)",
+    "settings_mastery": "Ein Element gilt nach {n} richtigen Antworten in Folge als gemeistert; eine falsche Antwort setzt es zurück.",
+    "settings_learn_more": "Mehr über die Methode erfahren"
+  },
+  "hints": {
+    "reveal": "Tipp anzeigen",
+    "cost": "−{n} XP",
+    "length": "Die Antwort hat {n} Buchstaben",
+    "first_letters": "Beginnt mit „{prefix}“ ({n} Buchstaben)",
+    "not": "Es ist nicht „{label}“",
+    "item": "Beginne mit „{label}“",
+    "reveal_pair": "„{left}“ gehört zu „{right}“"
+  },
+  "favorites": {
+    "card_title": "Deine Favoriten",
+    "add": "Zu Favoriten hinzufügen",
+    "remove": "Aus Favoriten entfernen",
+    "empty": "Noch keine Favoriten — tippe auf den Stern einer Lektion.",
+    "save_prompt": "Diese Lektion zu deinen Favoriten hinzufügen"
   }
 }

@@ -13,6 +13,7 @@ import "./styles/toast-theme.css";
 import type { ApiError } from "./api/client";
 import ErrorBoundary from "./components/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
+import GlobalShortcuts from "./components/GlobalShortcuts";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
@@ -45,6 +46,7 @@ const LearningRepoPage = lazyWithReload(() => import("./pages/LearningRepo"));
 const NotFound = lazyWithReload(() => import("./pages/NotFound"));
 const Onboarding = lazyWithReload(() => import("./pages/Onboarding"));
 const Progress = lazyWithReload(() => import("./pages/Progress"));
+const LearningStatistics = lazyWithReload(() => import("./pages/LearningStatistics"));
 const Pronunciation = lazyWithReload(() => import("./pages/Pronunciation"));
 const Session = lazyWithReload(() => import("./pages/Session"));
 const Settings = lazyWithReload(() => import("./pages/Settings"));
@@ -106,17 +108,20 @@ export default function App() {
     open: boolean;
     message: string;
     apiError?: ApiError;
+    proactive?: boolean;
   }>({ open: false, message: "" });
 
   const handleOpenReport = useCallback((e: Event) => {
     const detail = (e as CustomEvent).detail as {
       message: string;
       apiError?: ApiError;
+      proactive?: boolean;
     };
     setErrorReport({
       open: true,
       message: detail.message,
       apiError: detail.apiError,
+      proactive: detail.proactive,
     });
   }, []);
 
@@ -142,6 +147,7 @@ export default function App() {
                 <Route path="/session" element={<Session />} />
                 <Route path="/curriculum" element={<Curriculum />} />
                 <Route path="/progress" element={<Progress />} />
+                <Route path="/statistics" element={<LearningStatistics />} />
                 <Route path="/import" element={<Import />} />
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />
@@ -168,6 +174,7 @@ export default function App() {
               <EventRecorderSetup />
             </Suspense>
             <HelpDrawer />
+            <GlobalShortcuts />
             {errorReport.open && (
               <Suspense fallback={null}>
                 <ErrorReportDialog
@@ -175,6 +182,7 @@ export default function App() {
                   onClose={() => setErrorReport({ open: false, message: "" })}
                   errorMessage={errorReport.message}
                   apiError={errorReport.apiError}
+                  proactive={errorReport.proactive}
                 />
               </Suspense>
             )}

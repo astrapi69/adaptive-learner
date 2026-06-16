@@ -35,6 +35,7 @@ import {useI18n} from "../../hooks/useI18n";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
+import ExerciseHint from "./ExerciseHint";
 import {deriveFreeTextAttempt} from "../../lib/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../lib/exercises/token-diff";
@@ -455,6 +456,12 @@ function FreeTextExercise(
                     />
                 )}
             </div>
+
+            <ExerciseHint
+                exercise={exercise}
+                submitted={submitted}
+                testId="free-text-hint-button"
+            />
 
             <DirectionInstruction exercise={exercise} />
 

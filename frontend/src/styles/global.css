@@ -1883,7 +1883,11 @@ select:focus {
 /* --- Settings page -------------------------------------------- */
 
 .settings-page {
-  max-width: 48rem;
+  /* Holds the #549 sidebar grid (max-w-[1180px], 220px + 1fr). The page
+     cap must clear 1180px + horizontal padding so the content column can
+     use the available desktop width; the old 48rem clamp squeezed the
+     grid down to ~500px of content regardless of viewport (#555). */
+  max-width: 76rem;
   margin: 0 auto;
   padding: var(--space-6) var(--space-5);
   display: flex;
@@ -2108,6 +2112,17 @@ select:focus {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  /* Safety net (#555): let the card shrink inside the sidebar grid and
+     keep wide children (selects, long tokens) from overflowing it. */
+  min-width: 0;
+}
+
+/* No form control inside a settings card may exceed the card width
+   (selects use an undefined .form-input class, so browser-default
+   intrinsic min-width could push past a narrow card edge — #555). */
+.settings-section :is(select, input, textarea) {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .settings-section-title {
@@ -3885,6 +3900,23 @@ select:focus {
   color: var(--danger);
 }
 
+/* Pending-sync count badge overlaid on the sync indicator (#604). */
+.nav-sync-pending {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+}
+
 .nav-theme-toggle {
   background: transparent;
   border: 1px solid var(--border-strong);
@@ -4855,12 +4887,21 @@ select:focus {
 }
 .export-row-label {
   flex: 1 1 200px;
+  min-width: 0;
   font-weight: 600;
+}
+/* The session/curriculum picker is the middle child of the wrapping
+   export row; let it grow to fill a wrapped line yet shrink to the
+   card width instead of forcing a horizontal overflow (#555). */
+.export-row > select {
+  flex: 1 1 200px;
+  min-width: 0;
 }
 .export-row-actions {
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
+  min-width: 0;
 }
 .export-preview {
   margin-top: var(--space-4);

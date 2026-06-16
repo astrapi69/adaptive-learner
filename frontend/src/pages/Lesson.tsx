@@ -27,6 +27,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
 import LessonSummary from "../components/lesson/LessonSummary";
+import LessonFavoriteToggle from "../components/lesson/LessonFavoriteToggle";
 import LessonHeader from "../components/lesson/LessonHeader";
 import LessonProgressBar from "../components/lesson/LessonProgressBar";
 import LessonTtsControls from "../components/lesson/LessonTtsControls";
@@ -56,6 +57,8 @@ import {
   celebrateProgressSince,
 } from "../lib/feedback/celebration-stats";
 import { localTodayIso } from "../lib/missions/schedule";
+import { lessonMotivation } from "../lib/lesson/motivation";
+import { notify } from "../utils/notify";
 import { celebrateMissions } from "../lib/praise/celebration-bus";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
@@ -199,6 +202,33 @@ export default function LessonPage() {
     continuousAvailable,
   } = useLessonAutoRead({ lesson, currentStepIndex, showResumePrompt, goToStep });
 
+  // Mid-lesson motivation (#586): a subtle toast at the halfway step and
+  // on the last step. The ref guards against StrictMode double-effect +
+  // re-renders so each step fires at most once.
+  const motivationStepRef = useRef<number>(-1);
+  useEffect(() => {
+    if (!lesson) return;
+    const total = lesson.steps.length;
+    if (currentStepIndex >= total) return; // summary screen
+    if (motivationStepRef.current === currentStepIndex) return;
+    motivationStepRef.current = currentStepIndex;
+    const kind = lessonMotivation(currentStepIndex, total);
+    // Pass-through + short so the bottom-right motivation toast never
+    // blocks the sticky lesson footer's Check/Next buttons (#589 fix).
+    const motivationToast = {autoClose: 3000, passThrough: true} as const;
+    if (kind === "halftime") {
+      notify.info(
+        t("lesson.motivation.halftime", "Halfway there — keep going!"),
+        motivationToast,
+      );
+    } else if (kind === "last") {
+      notify.info(
+        t("lesson.motivation.last", "Last one — finish strong!"),
+        motivationToast,
+      );
+    }
+  }, [lesson, currentStepIndex, t]);
+
   // Keyboard shortcut (#103): Enter drives the two-phase Check / Next
   // button. The listener (shared with the Error-Replay runner via
   // ``useLessonEnterKey``) reads the latest step state through
@@ -323,6 +353,17 @@ export default function LessonPage() {
         onExitPause={() => void handlePauseFromDialog()}
         onExitAbandon={() => void handleAbandonFromDialog()}
       />
+
+      <div className="flex justify-end px-2">
+        <LessonFavoriteToggle
+          userId={learnerUserId ?? ""}
+          source={source}
+          setId={setId}
+          filename={filename}
+          title={lesson.title}
+          setTitle={setTitle ?? ""}
+        />
+      </div>
 
       {/* Phase 63C — resume prompt overlays the step view.
                 The user must choose before they can interact with

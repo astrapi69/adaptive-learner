@@ -21,8 +21,18 @@ import PictureChoiceExercise from "./PictureChoiceExercise";
 import WordTilesExercise from "./WordTilesExercise";
 
 function setMockSynth(): void {
+    const orig = (globalThis as unknown as {window: typeof window}).window;
     (globalThis as unknown as {window: typeof window}).window = {
-        ...((globalThis as unknown as {window: typeof window}).window || {}),
+        ...(orig || {}),
+        // The spread above copies only own-enumerable props, dropping
+        // the prototype event methods. Re-bind them so listeners (e.g.
+        // useKeyboardShortcuts' window keydown) keep working (#590).
+        addEventListener: orig?.addEventListener
+            ? orig.addEventListener.bind(orig)
+            : () => {},
+        removeEventListener: orig?.removeEventListener
+            ? orig.removeEventListener.bind(orig)
+            : () => {},
         speechSynthesis: {
             getVoices: () => [],
             speak: vi.fn(),
