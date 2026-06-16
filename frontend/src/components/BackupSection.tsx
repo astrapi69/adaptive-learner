@@ -524,18 +524,38 @@ export default function BackupSection() {
         setBusy("import");
         setRestoreSummary(null);
         try {
-            const text = await file.text();
-            const parsed = JSON.parse(text) as BackupPayload;
-            if (
-                parsed.format !== "adaptive-learner-backup" ||
-                typeof parsed.version !== "string"
-            ) {
-                throw new Error(
+            // Validate the file as an Adaptive Learner backup BEFORE the
+            // restore preview. A wrong or foreign file (not JSON, or a
+            // missing/different ``format`` marker) is a user mistake, not
+            // an app fault — show a gentle ``warning`` (no "Report Issue")
+            // and stop, instead of an error toast that reads like a bug.
+            // ``format === "adaptive-learner-backup"`` is the single
+            // source of truth for "is this ours?". (#640)
+            let parsed: BackupPayload;
+            try {
+                parsed = JSON.parse(await file.text()) as BackupPayload;
+            } catch {
+                notify.warning(
                     t(
                         "backup.invalid_format",
                         "This file is not a valid Adaptive Learner backup.",
                     ),
                 );
+                return;
+            }
+            if (
+                typeof parsed !== "object" ||
+                parsed === null ||
+                parsed.format !== "adaptive-learner-backup" ||
+                typeof parsed.version !== "string"
+            ) {
+                notify.warning(
+                    t(
+                        "backup.invalid_format",
+                        "This file is not a valid Adaptive Learner backup.",
+                    ),
+                );
+                return;
             }
             const currentStats = await storage.backup.stats(userId);
             setComparison(buildComparison(currentStats, parsed));

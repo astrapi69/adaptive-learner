@@ -250,26 +250,51 @@ export default function Onboarding() {
         if (!file || restoring) return;
         setRestoring(true);
         try {
-            const payload = JSON.parse(await file.text()) as BackupPayload;
+            // Parse + validate the file as an Adaptive Learner backup
+            // BEFORE attempting the import. A wrong or foreign file (not
+            // JSON, or missing/different ``format`` marker, or no
+            // resolvable identity) is a user mistake — they picked the
+            // wrong file — not an app fault. Surface it as a gentle,
+            // auto-dismissing ``warning`` (no "Report Issue" button)
+            // instead of an error toast that reads like a bug. The
+            // ``format`` marker is the single source of truth for "is
+            // this ours?": it is "adaptive-learner-backup" in every
+            // backup the app writes (API export + Dexie export). (#640)
+            let payload: BackupPayload;
+            try {
+                payload = JSON.parse(await file.text()) as BackupPayload;
+            } catch {
+                notify.warning(
+                    t(
+                        "backup.invalid_format",
+                        "This file is not a valid Adaptive Learner backup.",
+                    ),
+                );
+                return;
+            }
             if (
+                typeof payload !== "object" ||
+                payload === null ||
                 payload.format !== BACKUP_FORMAT ||
                 typeof payload.version !== "string"
             ) {
-                throw new Error(
+                notify.warning(
                     t(
                         "backup.invalid_format",
                         "This file is not a valid Adaptive Learner backup.",
                     ),
                 );
+                return;
             }
             const identity = pickAdoptedIdentity(payload);
             if (identity.userId === "") {
-                throw new Error(
+                notify.warning(
                     t(
                         "backup.invalid_format",
                         "This file is not a valid Adaptive Learner backup.",
                     ),
                 );
+                return;
             }
             // Adopt the backup's identity BEFORE importing so the
             // user-scoped restore matches every row.
@@ -292,6 +317,9 @@ export default function Onboarding() {
             );
             navigate("/dashboard", {replace: true});
         } catch (err) {
+            // Reached only when a VALID Adaptive Learner backup failed to
+            // import — a genuine, unexpected failure worth reporting, so
+            // the error toast (with "Report Issue") is the right surface.
             const detail = err instanceof Error ? err.message : String(err);
             notify.error(
                 t(
