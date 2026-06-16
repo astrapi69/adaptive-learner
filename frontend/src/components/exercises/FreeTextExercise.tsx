@@ -289,9 +289,10 @@ function FreeTextHint({
 function FreeTextResult({
     submitted,
     isCorrect,
-    nearMiss,
     input,
+    accept,
     canonical,
+    codeMode,
     controlled,
     canCheck,
     onCheck,
@@ -300,15 +301,20 @@ function FreeTextResult({
 }: {
     submitted: boolean;
     isCorrect: boolean;
-    nearMiss: boolean;
     input: string;
+    accept: readonly string[];
     canonical: string;
+    codeMode: boolean;
     controlled: boolean;
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
     t: Translate;
 }) {
+    // #627 — a wrong-but-close answer (within 2 edits) gets encouraging
+    // feedback. Computed here so the component stays under the complexity
+    // gate; the ternary below only consults it on the wrong branch.
+    const nearMiss = isFreeTextNearMiss(input, accept, codeMode);
     return (
         <div className="flex flex-wrap items-center gap-3">
             {submitted && (
@@ -457,9 +463,6 @@ function FreeTextExercise(
     }
 
     const isCorrect = result !== null && result.correct > 0;
-    // #627 — a wrong-but-close answer gets encouraging "Almost!" feedback.
-    const nearMiss =
-        submitted && !isCorrect && isFreeTextNearMiss(input, accept, codeMode);
 
     // Shared input/textarea styling (was .free-text-input). 44px min
     // height; accent focus ring; muted disabled state.
@@ -515,9 +518,10 @@ function FreeTextExercise(
             <FreeTextResult
                 submitted={submitted}
                 isCorrect={isCorrect}
-                nearMiss={nearMiss}
                 input={input}
+                accept={accept}
                 canonical={canonical}
+                codeMode={codeMode}
                 controlled={controlled}
                 canCheck={!isInputEmpty}
                 onCheck={submit}

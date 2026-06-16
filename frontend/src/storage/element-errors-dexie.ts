@@ -93,43 +93,72 @@ function appendAttemptHistory(
     return next.slice(-MAX_ATTEMPT_HISTORY);
 }
 
-function applyTransition(
-    existing: ElementErrorRow | undefined,
+/** First sighting of an element: seed a fresh SRS row from one attempt. */
+function createElementRow(
     userId: string,
     attempt: ElementAttempt,
     nowIso: string,
 ): ElementErrorRow {
-    if (!existing) {
-        // First sighting of this element.
-        return {
-            id: rowKey(userId, attempt),
-            user_id: userId,
-            set_id: attempt.set_id,
-            lesson_id: attempt.lesson_id,
-            exercise_id: attempt.exercise_id,
-            element_key: attempt.element_key,
-            direction: directionOf(attempt),
-            element_type: attempt.element_type ?? "vocabulary",
-            user_answer: attempt.user_answer ?? "",
-            correct_answer: attempt.correct_answer ?? "",
-            error_count: attempt.correct ? 0 : 1,
-            correct_streak: attempt.correct ? 1 : 0,
-            last_error_at: attempt.correct ? null : nowIso,
-            last_attempt_at: nowIso,
-            mastered: false,
-            mastered_at: null,
-            // #594 Hint Economy — latest hint flag + lifetime count.
-            hint_used: attempt.hint_used ?? false,
-            hint_used_count: attempt.hint_used ? 1 : 0,
-            // #603 Smart Review Queue — first attempt + history seed.
-            attempt_count: 1,
-            attempt_history: appendAttemptHistory(undefined, attempt, nowIso),
-            created_at: nowIso,
-            updated_at: nowIso,
-        };
-    }
+    return {
+        id: rowKey(userId, attempt),
+        user_id: userId,
+        set_id: attempt.set_id,
+        lesson_id: attempt.lesson_id,
+        exercise_id: attempt.exercise_id,
+        element_key: attempt.element_key,
+        direction: directionOf(attempt),
+        element_type: attempt.element_type ?? "vocabulary",
+        user_answer: attempt.user_answer ?? "",
+        correct_answer: attempt.correct_answer ?? "",
+        error_count: attempt.correct ? 0 : 1,
+        correct_streak: attempt.correct ? 1 : 0,
+        last_error_at: attempt.correct ? null : nowIso,
+        last_attempt_at: nowIso,
+        mastered: false,
+        mastered_at: null,
+        // #594 Hint Economy — latest hint flag + lifetime count.
+        hint_used: attempt.hint_used ?? false,
+        hint_used_count: attempt.hint_used ? 1 : 0,
+        // #603 Smart Review Queue — first attempt + history seed.
+        attempt_count: 1,
+        attempt_history: appendAttemptHistory(undefined, attempt, nowIso),
+        created_at: nowIso,
+        updated_at: nowIso,
+    };
+}
 
-    // Mutate a shallow copy so callers see the post-state.
+/** Fold one correct/wrong attempt into the SRS streak + mastery state. */
+function applyScoreOutcome(
+    next: ElementErrorRow,
+    attempt: ElementAttempt,
+    nowIso: string,
+): void {
+    if (attempt.correct) {
+        next.correct_streak += 1;
+        if (next.correct_streak >= MASTERY_THRESHOLD && !next.mastered) {
+            next.mastered = true;
+            next.mastered_at = nowIso;
+        }
+        return;
+    }
+    // Pedagogical demotion: a wrong answer on a mastered element flips it
+    // back so SRS re-schedules. Mirrors the backend service's contract.
+    if (next.mastered) {
+        next.mastered = false;
+        next.mastered_at = null;
+    }
+    next.correct_streak = 0;
+    next.error_count += 1;
+    next.last_error_at = nowIso;
+}
+
+/** Advance an existing element's SRS row by one attempt (shallow copy so
+ *  callers see the post-state). */
+function advanceElementRow(
+    existing: ElementErrorRow,
+    attempt: ElementAttempt,
+    nowIso: string,
+): ElementErrorRow {
     const next: ElementErrorRow = {...existing};
     if (attempt.element_type) next.element_type = attempt.element_type;
     next.user_answer = attempt.user_answer ?? "";
@@ -149,26 +178,19 @@ function applyTransition(
         attempt,
         nowIso,
     );
-
-    if (attempt.correct) {
-        next.correct_streak += 1;
-        if (next.correct_streak >= MASTERY_THRESHOLD && !next.mastered) {
-            next.mastered = true;
-            next.mastered_at = nowIso;
-        }
-    } else {
-        // Pedagogical demotion: a wrong answer on a mastered
-        // element flips it back so SRS re-schedules. Mirrors
-        // the backend service's contract.
-        if (next.mastered) {
-            next.mastered = false;
-            next.mastered_at = null;
-        }
-        next.correct_streak = 0;
-        next.error_count += 1;
-        next.last_error_at = nowIso;
-    }
+    applyScoreOutcome(next, attempt, nowIso);
     return next;
+}
+
+function applyTransition(
+    existing: ElementErrorRow | undefined,
+    userId: string,
+    attempt: ElementAttempt,
+    nowIso: string,
+): ElementErrorRow {
+    return existing
+        ? advanceElementRow(existing, attempt, nowIso)
+        : createElementRow(userId, attempt, nowIso);
 }
 
 export async function recordElementAttemptsDexie(
