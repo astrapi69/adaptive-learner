@@ -2225,6 +2225,10 @@ pwa:
   cache_clear_confirm: "Çevrimdışı önbellek temizlensin mi?"
   cache_clear_action: "Evet, temizle"
   cache_cleared: "Çevrimdışı önbellek temizlendi."
+  update:
+    message: "Yeni bir sürüm mevcut."
+    action: "Güncelle"
+    later: "Sonra"
 share:
   pr:
     preparing: "Depo hazırlanıyor..."
