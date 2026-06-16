@@ -313,6 +313,7 @@
       "loading": "Ανάλυση των λαθών σου…",
       "subtitle": "Οι προκλήσεις σου:",
       "errors": "λάθη",
+      "hint_answers": "{n} απαντήσεις με υπόδειξη",
       "mastery_progress": "Πρόοδος κατάκτησης",
       "cta": "Έναρξη προσαρμοστικού μαθήματος",
       "tag": {
@@ -1788,6 +1789,7 @@
       "stars_aria": "{n} από 3 αστέρια",
       "time": "Χρόνος",
       "minutes": "{n} λεπτά",
+      "hints_used": "Υποδείξεις που χρησιμοποιήθηκαν",
       "breakdown_heading": "Ανάλυση ασκήσεων",
       "breakdown_correct_answer": "Σωστή απάντηση: {answer}",
       "breakdown_unattempted": "Δεν επιχειρήθηκε",

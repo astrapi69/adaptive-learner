@@ -20,6 +20,11 @@ export interface ElementAttempt {
   user_answer?: string;
   correct_answer?: string;
   correct: boolean;
+  /** #594 Hint Economy — true when the learner revealed a hint before
+   *  answering this element. Shortens the SRS review interval (a
+   *  hint-assisted answer is weaker) and feeds the "answers with hint"
+   *  statistic. Omitted = no hint used (the default). */
+  hint_used?: boolean;
 }
 
 /**
@@ -48,6 +53,13 @@ export interface ElementError {
   last_attempt_at: string;
   mastered: boolean;
   mastered_at: string | null;
+  /** #594 Hint Economy — whether the MOST RECENT attempt on this element
+   *  used a hint. Drives the shortened SRS interval. */
+  hint_used?: boolean;
+  /** #594 Hint Economy — lifetime count of attempts on this element that
+   *  were answered with a hint revealed. Feeds the "answers with hint"
+   *  statistic. Monotonic. */
+  hint_used_count?: number;
   created_at: string;
   updated_at: string;
 }

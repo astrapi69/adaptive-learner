@@ -122,6 +122,15 @@ export default function LessonSummary({
     deriveSummaryStats(progress);
 
   const stars: StarRating = computeStars(correct, total);
+
+  // #594 Hint Economy — how many steps this run was answered with a hint
+  // revealed. Read from the persisted step results.
+  const hintsUsed = useMemo(
+    () =>
+      Object.values(progress?.step_results ?? {}).filter((r) => r.hint_used)
+        .length,
+    [progress],
+  );
   const breakdown = useMemo(
     () => buildExerciseBreakdown(lesson, progress),
     [lesson, progress],
@@ -459,6 +468,14 @@ export default function LessonSummary({
             )}
           </span>
         </li>
+        {hintsUsed > 0 && (
+          <li>
+            <strong>{t("lesson.summary.hints_used", "Hints used")}:</strong>{" "}
+            <span data-testid="lesson-summary-hints-used">
+              {String(hintsUsed)}
+            </span>
+          </li>
+        )}
       </ul>
 
       {breakdown.length > 0 && (

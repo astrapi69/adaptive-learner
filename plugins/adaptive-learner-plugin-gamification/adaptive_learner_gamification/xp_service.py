@@ -383,9 +383,7 @@ def award_xp_for_session(
 
     activity = _activity_dates_for_user(db, user_id)
     streak = current_streak_days(activity)
-    first_time = _is_first_session_for_method(
-        db, user_id, method, session.get("id")
-    )
+    first_time = _is_first_session_for_method(db, user_id, method, session.get("id"))
 
     award = calculate_session_xp(
         cycle_step=int(session.get("cycle_step", 1) or 1),
@@ -544,6 +542,29 @@ def award_xp_flat(
         breakdown={"flat": int(amount)},
         reason=reason,
     )
+
+
+def spend_xp(
+    db: Session,
+    *,
+    user_id: str,
+    amount: int,
+    reason: str,
+) -> dict[str, Any]:
+    """#594 Hint Economy — deduct XP for a spent hint.
+
+    ``amount`` is a non-negative number of points to remove; the total is
+    clamped at 0 so a learner can never go negative. Returns the new XP
+    state (same shape as :func:`get_user_xp_state`).
+    """
+    spend = max(0, int(amount))
+    if spend == 0:
+        return get_user_xp_state(db, user_id)
+    row = _get_or_create_user_xp(db, user_id)
+    row.total_xp = max(0, int(row.total_xp) - spend)
+    row.level = compute_level(row.total_xp)
+    db.commit()
+    return get_user_xp_state(db, user_id)
 
 
 def get_user_xp_state(db: Session, user_id: str) -> dict[str, Any]:

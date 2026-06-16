@@ -65,6 +65,12 @@ _INTERVAL_DAYS_BY_STREAK: dict[int, int] = {
     2: 7,
 }
 
+# #594 Hint Economy — a hint-assisted answer is weaker, so the next
+# review comes sooner. The base interval is multiplied by this factor
+# when the element's last attempt used a hint. Mirrored in the Dexie
+# scheduler (``element-errors-dexie.ts``).
+HINT_INTERVAL_FACTOR: float = 0.5
+
 
 def interval_days_for_streak(correct_streak: int) -> int:
     """Map a correct-streak count to the next-review
@@ -109,8 +115,12 @@ class ReviewQueueItem:
 
 def _project(row: ElementError, now: datetime) -> ReviewQueueItem:
     interval = interval_days_for_streak(row.correct_streak)
+    # #594 Hint Economy — shorten the interval for a hint-assisted answer.
+    effective_interval = interval * (
+        HINT_INTERVAL_FACTOR if getattr(row, "hint_used", False) else 1.0
+    )
     last = _ensure_utc(row.last_attempt_at)
-    suggested = last + timedelta(days=interval)
+    suggested = last + timedelta(days=effective_interval)
     return ReviewQueueItem(
         id=row.id,
         user_id=row.user_id,

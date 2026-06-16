@@ -362,6 +362,8 @@ describe("LessonPage: ready state rendering", () => {
         // BUG P1 / Problem 2 — the raw answer is persisted
         // so a revisit can re-render the locked visual.
         raw_answer: { kind: "matching", matches: [[0, 0]] },
+        // #594 Hint Economy — no hint revealed in this run.
+        hint_used: false,
       });
     });
     // After grading, the button advances (Problem 1 phase 2).

@@ -66,6 +66,8 @@ function rowToWire(row: ElementErrorRow): ElementError {
         last_attempt_at: row.last_attempt_at,
         mastered: row.mastered,
         mastered_at: row.mastered_at,
+        hint_used: row.hint_used ?? false,
+        hint_used_count: row.hint_used_count ?? 0,
         created_at: row.created_at,
         updated_at: row.updated_at,
     };
@@ -96,6 +98,9 @@ function applyTransition(
             last_attempt_at: nowIso,
             mastered: false,
             mastered_at: null,
+            // #594 Hint Economy — latest hint flag + lifetime count.
+            hint_used: attempt.hint_used ?? false,
+            hint_used_count: attempt.hint_used ? 1 : 0,
             created_at: nowIso,
             updated_at: nowIso,
         };
@@ -108,6 +113,12 @@ function applyTransition(
     next.correct_answer = attempt.correct_answer ?? "";
     next.last_attempt_at = nowIso;
     next.updated_at = nowIso;
+    // #594 Hint Economy — latest attempt's hint flag drives the SRS
+    // interval; the count accumulates for the statistic.
+    next.hint_used = attempt.hint_used ?? false;
+    if (attempt.hint_used) {
+        next.hint_used_count = (next.hint_used_count ?? 0) + 1;
+    }
 
     if (attempt.correct) {
         next.correct_streak += 1;
@@ -202,9 +213,16 @@ export function intervalDaysForStreak(correctStreak: number): number {
     return 7;
 }
 
+/** #594 Hint Economy — a hint-assisted answer is weaker, so the next
+ *  review comes sooner. The base interval is multiplied by this factor
+ *  when the element's last attempt used a hint. Mirrors the backend
+ *  ``element_srs.HINT_INTERVAL_FACTOR``. */
+export const HINT_INTERVAL_FACTOR = 0.5;
+
 function _addDays(iso: string, days: number): string {
-    const d = new Date(iso);
-    d.setUTCDate(d.getUTCDate() + days);
+    // Millisecond arithmetic so fractional days (the #594 hint factor
+    // shortens an interval to e.g. 0.5d) are honoured exactly.
+    const d = new Date(new Date(iso).getTime() + days * 86_400_000);
     return d.toISOString();
 }
 
@@ -212,7 +230,9 @@ function _projectReviewItem(
     row: ElementErrorRow,
     nowIso: string,
 ): ReviewQueueItem {
-    const interval = intervalDaysForStreak(row.correct_streak);
+    const interval =
+        intervalDaysForStreak(row.correct_streak) *
+        (row.hint_used ? HINT_INTERVAL_FACTOR : 1.0);
     const suggested = _addDays(row.last_attempt_at, interval);
     return {
         id: row.id,

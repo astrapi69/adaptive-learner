@@ -313,6 +313,7 @@
       "loading": "ミスを分析中…",
       "subtitle": "あなたの課題:",
       "errors": "個のミス",
+      "hint_answers": "ヒントを使った回答 {n} 件",
       "mastery_progress": "習得の進捗",
       "cta": "アダプティブレッスンを開始",
       "tag": {
@@ -1788,6 +1789,7 @@
       "stars_aria": "3 つ星のうち {n} つ",
       "time": "時間",
       "minutes": "{n} 分",
+      "hints_used": "使用したヒント",
       "breakdown_heading": "演習の内訳",
       "breakdown_correct_answer": "正解: {answer}",
       "breakdown_unattempted": "未挑戦",

@@ -57,6 +57,7 @@ import {
   celebrateProgressSince,
 } from "../lib/feedback/celebration-stats";
 import { localTodayIso } from "../lib/missions/schedule";
+import { clearHintUsage } from "../lib/hints/hint-usage";
 import { lessonMotivation } from "../lib/lesson/motivation";
 import { notify } from "../utils/notify";
 import { celebrateMissions } from "../lib/praise/celebration-bus";
@@ -129,6 +130,12 @@ export default function LessonPage() {
   // on mount; useLesson already reads it for the progress
   // path but doesn't expose it.
   const learnerUserId = useMemo(() => readLearnerState().userId, []);
+
+  // #594 Hint Economy — start each lesson with a clean hint-usage slate
+  // so a hint on a reused exercise id from a prior lesson never bleeds.
+  useEffect(() => {
+    clearHintUsage();
+  }, [source, setId, filename]);
 
   // BUG P1 / Problem 1 — two-phase "Prüfen" → "Weiter" button.
   // The active exercise reports whether its answer is checkable

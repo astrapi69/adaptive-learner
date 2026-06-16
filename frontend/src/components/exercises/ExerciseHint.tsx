@@ -1,7 +1,14 @@
 /**
- * ExerciseHint — the per-exercise hint affordance (#590). Wires the
- * pure hint generator + user prefs (via useExerciseHints) to the
+ * ExerciseHint — the per-exercise hint affordance (#590, economy #594).
+ * Wires the pure hint generator + user prefs (via useExerciseHints) to the
  * presentational shared/HintButton, with the i18n labels.
+ *
+ * On each reveal it charges the configured XP cost (#594 Hint Economy):
+ * the spend is self-contained here, so every surface that renders the hint
+ * (main lesson, review, adaptive, error-replay) deducts XP without extra
+ * wiring. The reveal also records hint usage for the active exercise so the
+ * lesson's recordBulk / step-result can shorten the SRS interval and count
+ * the hint. A non-blocking ``XP_SPENT_EVENT`` flashes the header badge red.
  *
  * Renders nothing once the answer is submitted (hints are a pre-answer
  * aid) or when no hint can be derived / hints are disabled. Drop it into
@@ -9,9 +16,13 @@
  */
 
 import HintButton from "../../shared/HintButton";
-import {useExerciseHints} from "../../hooks/useExerciseHints";
-import {useI18n} from "../../hooks/useI18n";
-import type {ContentLessonExercise} from "../../storage/types";
+import { useExerciseHints } from "../../hooks/useExerciseHints";
+import { useI18n } from "../../hooks/useI18n";
+import { emitXpSpent } from "../../lib/gamification/xp-spent-event";
+import { markHintUsed } from "../../lib/hints/hint-usage";
+import { readLearnerState } from "../../lib/learnerState";
+import { getStorage } from "../../storage";
+import type { ContentLessonExercise } from "../../storage/types";
 
 export interface ExerciseHintProps {
     exercise: ContentLessonExercise;
@@ -28,6 +39,24 @@ export default function ExerciseHint({
     const {t} = useI18n();
     const {hints, xpCost} = useExerciseHints(exercise);
     if (submitted || hints.length === 0) return null;
+
+    const handleReveal = () => {
+        // Record usage for this exercise so the lesson's recordBulk +
+        // step-result can mark the SRS row + count the hint (#594).
+        markHintUsed(exercise.id);
+        if (xpCost <= 0) return;
+        const userId = readLearnerState().userId;
+        if (!userId) return;
+        // Deduct + flash. Best-effort: a spend failure never blocks the
+        // learner from reading the hint they asked for.
+        void getStorage()
+            .gamification.spendXp(userId, xpCost, "hint_revealed")
+            .then(() => emitXpSpent(xpCost, "hint_revealed"))
+            .catch(() => {
+                /* XP is supplementary; the hint still shows */
+            });
+    };
+
     return (
         <HintButton
             hints={hints}
@@ -37,6 +66,7 @@ export default function ExerciseHint({
                     ? t("hints.cost", "−{n} XP").replace("{n}", String(xpCost))
                     : undefined
             }
+            onReveal={handleReveal}
             testId={testId ?? "exercise-hint"}
         />
     );

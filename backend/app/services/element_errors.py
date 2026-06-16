@@ -100,6 +100,9 @@ def record_attempt(
             last_error_at=None if attempt.correct else now,
             mastered=False,
             mastered_at=None,
+            # #594 Hint Economy — latest hint flag + lifetime count.
+            hint_used=attempt.hint_used,
+            hint_used_count=1 if attempt.hint_used else 0,
             created_at=now,
             updated_at=now,
         )
@@ -112,6 +115,11 @@ def record_attempt(
     row.user_answer = attempt.user_answer
     row.correct_answer = attempt.correct_answer
     row.last_attempt_at = now
+    # #594 Hint Economy — the latest attempt's hint flag drives the SRS
+    # interval; the count accumulates for the statistic.
+    row.hint_used = attempt.hint_used
+    if attempt.hint_used:
+        row.hint_used_count = int(row.hint_used_count) + 1
 
     if attempt.correct:
         row.correct_streak += 1

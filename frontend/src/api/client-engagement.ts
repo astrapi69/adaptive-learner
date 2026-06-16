@@ -69,6 +69,11 @@ export const engagementApi = {
         `/plugins/gamification/xp/${encodeURIComponent(userId)}/award-import`,
         { method: "POST", body: {} },
       ),
+    spendXp: (userId: string, amount: number, reason: string) =>
+      apiCall<import("../storage/types").XPState>(
+        `/plugins/gamification/xp/${encodeURIComponent(userId)}/spend`,
+        { method: "POST", body: { amount, reason } },
+      ),
     listBadges: (userId: string) =>
       apiCall<import("../storage/types").BadgeWithProgress[]>(
         `/plugins/gamification/badges/${encodeURIComponent(userId)}`,

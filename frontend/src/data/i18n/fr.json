@@ -313,6 +313,7 @@
       "loading": "Analyse de tes erreurs…",
       "subtitle": "Tes défis :",
       "errors": "erreurs",
+      "hint_answers": "{n} réponses avec indice",
       "mastery_progress": "Progression de maîtrise",
       "cta": "Démarrer une leçon adaptative",
       "tag": {
@@ -1788,6 +1789,7 @@
       "stars_aria": "{n} étoiles sur 3",
       "time": "Temps",
       "minutes": "{n} min",
+      "hints_used": "Indices utilisés",
       "breakdown_heading": "Détail des exercices",
       "breakdown_correct_answer": "Bonne réponse : {answer}",
       "breakdown_unattempted": "Non tentée",

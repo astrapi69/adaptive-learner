@@ -22,6 +22,7 @@ import type {
 } from "../exercises/exercise-control";
 import type { ReadAloudController } from "../../hooks/useReadAloud";
 import { useI18n } from "../../hooks/useI18n";
+import { stampHintUsage, wasHintUsed } from "../../lib/hints/hint-usage";
 import { formatUserAnswer } from "../../lib/lesson/result-export";
 import { rewriteAnchors } from "../../lib/lesson-anchors";
 import { getStorage } from "../../storage";
@@ -95,6 +96,10 @@ export default function LessonStepView({
       exerciseType === "free_text" || exerciseType === "word_tiles"
         ? (scored.attempts[0]?.user_answer ?? null)
         : formatUserAnswer(step.exercise, scored.raw_answer ?? null);
+    // #594 Hint Economy — whether the learner revealed a hint on this
+    // exercise (the ExerciseHint reveal marked it). Persisted on the
+    // step result so the summary can count it.
+    const hintUsed = wasHintUsed(step.exercise.id);
     await recordStepResult({
       step_id: step.id,
       correct: scored.correct,
@@ -103,15 +108,17 @@ export default function LessonStepView({
       // BUG P1 / Problem 2 — persist the raw answer so a revisit
       // re-renders the exact locked visual.
       raw_answer: scored.raw_answer ?? null,
+      hint_used: hintUsed,
     });
     // Phase 46B — persist per-element attempts alongside the per-step
     // score. Failures here MUST NOT block the step from advancing (the
-    // per-step score is the user's primary feedback).
+    // per-step score is the user's primary feedback). #594 — stamp the
+    // hint flag so the SRS layer shortens this element's interval.
     if (scored.attempts.length > 0 && learnerUserId) {
       try {
         await getStorage().elementErrors.recordBulk(
           learnerUserId,
-          scored.attempts,
+          stampHintUsage(scored.attempts),
         );
       } catch (err) {
         console.warn("elementErrors.recordBulk failed:", err);

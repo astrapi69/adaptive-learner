@@ -313,6 +313,7 @@
       "loading": "A analisar os teus erros…",
       "subtitle": "Os teus desafios:",
       "errors": "erros",
+      "hint_answers": "{n} respostas com dica",
       "mastery_progress": "Progresso de domínio",
       "cta": "Iniciar lição adaptativa",
       "tag": {
@@ -1788,6 +1789,7 @@
       "stars_aria": "{n} de 3 estrelas",
       "time": "Tempo",
       "minutes": "{n} min",
+      "hints_used": "Dicas usadas",
       "breakdown_heading": "Detalhe dos exercícios",
       "breakdown_correct_answer": "Resposta certa: {answer}",
       "breakdown_unattempted": "Não tentado",

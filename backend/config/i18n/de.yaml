@@ -296,6 +296,7 @@ dashboard:
     loading: "Deine Fehler werden analysiert…"
     subtitle: "Deine Herausforderungen:"
     errors: "Fehler"
+    hint_answers: "{n} Antworten mit Tipp"
     mastery_progress: "Beherrschungs-Fortschritt"
     cta: "Adaptive Lektion starten"
     tag:
@@ -1655,6 +1656,7 @@ lesson:
     stars_aria: "{n} von 3 Sternen"
     time: "Zeit"
     minutes: "{n} Min"
+    hints_used: "Tipps verwendet"
     breakdown_heading: "Übungs-Übersicht"
     breakdown_correct_answer: "Richtige Antwort: {answer}"
     breakdown_unattempted: "Nicht versucht"

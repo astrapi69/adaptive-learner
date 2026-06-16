@@ -82,6 +82,10 @@ export interface IGamificationNamespace {
   getState(userId: string): Promise<XPState>;
   awardAssessment(userId: string): Promise<XPAwardResult>;
   awardImport(userId: string): Promise<XPAwardResult>;
+  /** #594 Hint Economy — deduct XP (a non-negative ``amount``) for a
+   *  spent hint. The total never goes below zero. Returns the new XP
+   *  state so the caller can surface the updated total. */
+  spendXp(userId: string, amount: number, reason: string): Promise<XPState>;
   listBadges(userId: string): Promise<BadgeWithProgress[]>;
   evaluateBadges(userId: string): Promise<BadgeEvaluationResult>;
   getStreak(userId: string): Promise<StreakStateOut>;

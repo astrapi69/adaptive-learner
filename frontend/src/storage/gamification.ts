@@ -293,6 +293,30 @@ export async function awardXPFlat(
     };
 }
 
+/**
+ * #594 Hint Economy — deduct XP for a spent hint. ``amount`` is a
+ * non-negative number of points to remove; the total is clamped at 0 so a
+ * fresh learner can never go negative. Atomic via ``table.modify`` (same
+ * R-M-W discipline as ``persistXP``). Returns the new XP state.
+ */
+export async function spendXP(
+    userId: string,
+    amount: number,
+): Promise<XPState> {
+    const spend = Math.max(0, Math.round(amount));
+    if (spend === 0) return getXPState(userId);
+    const db = getDb();
+    await getOrCreateUserXP(userId);
+    await db.userXp
+        .where({user_id: userId})
+        .modify((row) => {
+            row.total_xp = Math.max(0, row.total_xp - spend);
+            row.level = computeLevel(row.total_xp);
+            row.updated_at = nowIso();
+        });
+    return getXPState(userId);
+}
+
 /** Read-only state for the dashboard XP widget. */
 export async function getXPState(userId: string): Promise<XPState> {
     const db = getDb();

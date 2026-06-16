@@ -2461,6 +2461,30 @@ select:focus {
   filter: brightness(1.05);
 }
 
+/* #594 Hint Economy — brief red flash when XP is spent on a hint. */
+@keyframes nav-xp-badge-spend-flash {
+  0% {
+    border-color: var(--danger);
+    background: color-mix(in srgb, var(--danger) 22%, var(--surface));
+    color: var(--danger);
+  }
+  100% {
+    border-color: color-mix(in srgb, var(--star) 35%, var(--border));
+    background: color-mix(in srgb, var(--star) 12%, var(--surface));
+    color: var(--fg);
+  }
+}
+
+.nav-xp-badge--spent {
+  animation: nav-xp-badge-spend-flash 0.7s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-xp-badge--spent {
+    animation: none;
+  }
+}
+
 /* Keep the nav badge compact on small screens: the icon + total
    stay, the "Level N" segment drops (still in the aria-label). */
 @media (max-width: 600px) {

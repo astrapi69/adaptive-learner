@@ -19,6 +19,7 @@ import {
     currentStreakDays,
     getXPState,
     levelThreshold,
+    spendXP,
 } from "./gamification";
 
 beforeEach(async () => {
@@ -255,5 +256,30 @@ describe("Dexie awardXPForSession", () => {
         expect(state.total_xp).toBe(0);
         expect(state.level).toBe(1);
         expect(state.next_level_threshold).toBe(100);
+    });
+});
+
+describe("spendXP (#594 hint economy)", () => {
+    it("deducts XP and recomputes the level", async () => {
+        const userId = "spend-user";
+        await awardXPFlat(userId, 150, "seed");
+        const state = await spendXP(userId, 60);
+        expect(state.total_xp).toBe(90);
+        expect(state.level).toBe(1);
+    });
+
+    it("never drops the total below zero", async () => {
+        const userId = "spend-user-2";
+        await awardXPFlat(userId, 20, "seed");
+        const state = await spendXP(userId, 999);
+        expect(state.total_xp).toBe(0);
+        expect(state.level).toBe(1);
+    });
+
+    it("a zero spend is a no-op read", async () => {
+        const userId = "spend-user-3";
+        await awardXPFlat(userId, 40, "seed");
+        const state = await spendXP(userId, 0);
+        expect(state.total_xp).toBe(40);
     });
 });

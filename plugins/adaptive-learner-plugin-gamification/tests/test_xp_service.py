@@ -21,7 +21,6 @@ from adaptive_learner_gamification.xp_service import (
     level_threshold,
 )
 
-
 # --- Level curve -----------------------------------------------------------
 
 

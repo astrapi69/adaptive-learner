@@ -169,6 +169,31 @@ def test_suggested_review_is_last_attempt_plus_interval(
         db.close()
 
 
+def test_hint_used_halves_the_review_interval(user_id: str) -> None:
+    """#594 Hint Economy — a hint-assisted wrong answer (streak 0 → 1d
+    band) schedules its review at half the interval (0.5d)."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        attempt = _attempt(correct=False)
+        attempt.hint_used = True
+        row = element_errors_service.record_attempt(repo, user_id, attempt)
+        db.commit()
+        assert row.hint_used is True
+        assert row.hint_used_count == 1
+        queue = compute_review_queue(repo, user_id)
+        item = queue[0]
+        last = item.last_attempt_at
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=UTC)
+        # streak=0 → 1 day band, halved by the hint factor → 0.5 days.
+        expected = last + timedelta(days=0.5)
+        delta = abs((item.suggested_review_at - expected).total_seconds())
+        assert delta < 1
+    finally:
+        db.close()
+
+
 def test_overdue_flag_against_injected_clock(user_id: str) -> None:
     db = SessionLocal()
     repo = SqlAlchemyElementErrorsRepository(db)

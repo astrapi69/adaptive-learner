@@ -40,6 +40,7 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
+import {stampHintUsage} from "../lib/hints/hint-usage";
 import {analyzeErrors} from "../lib/adaptive/error-analyzer";
 import {buildExercisePool} from "../lib/adaptive/exercise-pool";
 import {focusAreaTags} from "../lib/adaptive/error-classifier";
@@ -277,7 +278,7 @@ export function useAdaptiveLesson(
             try {
                 await getStorage().elementErrors.recordBulk(
                     userId,
-                    attempts,
+                    stampHintUsage(attempts),
                 );
             } catch {
                 // Same failure-tolerance as the review session.
