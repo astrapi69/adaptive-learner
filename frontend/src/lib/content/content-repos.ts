@@ -248,6 +248,39 @@ export interface SyncResult {
   trust: TrustLevel;
 }
 
+/** Phase of a {@link syncUserRepo} run, for a progress indicator (#645). */
+export type SyncPhase = "manifest" | "sets" | "lessons" | "validate";
+
+/** Progress event emitted during a {@link syncUserRepo} run. ``total`` is 0
+ *  until the set list is known; ``current`` counts sets cached so far. */
+export interface SyncProgress {
+  phase: SyncPhase;
+  current: number;
+  total: number;
+}
+
+/**
+ * i18n key + English fallback for a sync {@link SyncPhase}, so every surface
+ * that renders sync progress (Settings, the ``/add-repo`` deep link) labels
+ * the phases identically (#645). UI-framework-free: the caller passes the
+ * result through its own ``t()``.
+ */
+export function syncPhaseI18n(phase: SyncPhase): {
+  key: string;
+  fallback: string;
+} {
+  switch (phase) {
+    case "manifest":
+      return { key: "content_repo.progress.manifest", fallback: "Loading manifest…" };
+    case "sets":
+      return { key: "content_repo.progress.sets", fallback: "Loading sets…" };
+    case "lessons":
+      return { key: "content_repo.progress.lessons", fallback: "Caching lessons…" };
+    case "validate":
+      return { key: "content_repo.progress.validate", fallback: "Verifying content…" };
+  }
+}
+
 /**
  * Download + cache every set ONE user repo advertises, re-validate it, and
  * persist refreshed counts + ``last_synced`` + ``trust``. Storage-agnostic
@@ -255,8 +288,18 @@ export interface SyncResult {
  * in their active sources. Re-validation runs on every sync — a repo that
  * stops passing drops to trust 0 (the caller can warn). Throws when the
  * source is not in the list.
+ *
+ * @param source The ``owner/repo`` source to sync.
+ * @param onProgress Optional callback fired as the sync advances through its
+ *   phases, so the UI can render a progress indicator (#645).
  */
-export async function syncUserRepo(source: string): Promise<SyncResult> {
+export async function syncUserRepo(
+  source: string,
+  onProgress?: (progress: SyncProgress) => void,
+): Promise<SyncResult> {
+  const report = (phase: SyncPhase, current: number, total: number): void => {
+    onProgress?.({ phase, current, total });
+  };
   const repos = await readUserRepos();
   const index = repos.findIndex(
     (r) => userRepoSource(r.owner, r.repo) === source,
@@ -266,13 +309,19 @@ export async function syncUserRepo(source: string): Promise<SyncResult> {
   }
   const target = repos[index];
   const storage = getStorage();
+  report("manifest", 0, 0);
   const { sets } = await storage.contentLoader.listSets();
   const repoSets = sets.filter((entry) => entry.source === source);
+  report("sets", 0, repoSets.length);
   let lessonCount = 0;
+  let done = 0;
   for (const entry of repoSets) {
     await storage.contentLoader.downloadSet(entry.source, entry.id);
     lessonCount += entry.lesson_count ?? 0;
+    done += 1;
+    report("lessons", done, repoSets.length);
   }
+  report("validate", repoSets.length, repoSets.length);
   const validation = await validateUserRepo(
     { owner: target.owner, repo: target.repo, branch: target.branch },
     resolveRepoToken(source),

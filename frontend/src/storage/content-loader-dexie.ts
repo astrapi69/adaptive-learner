@@ -45,6 +45,11 @@ import {
 } from "../lib/content/ai-content-validator";
 import type { ContentSetRow, ContentSetFileRow } from "./db";
 import { resolveRepoToken } from "../lib/content/repo-token";
+import {
+  fetchGitHubFileBytesOptional,
+  fetchGitHubFileText,
+  fetchWithRetry,
+} from "../lib/content/github-fetch";
 
 const RAW_BASE = "https://raw.githubusercontent.com";
 const BUNDLED_PREFIX = "bundled:";
@@ -166,46 +171,60 @@ function fileKey(setPk: string, filename: string): string {
   return `${setPk}#${filename}`;
 }
 
-/** Build fetch init with an optional Bearer token (private user repos). */
-function authInit(token: string): RequestInit | undefined {
-  return token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
-}
-
 /** Per-source token: per-repo / shared for GitHub sources, none for the
  *  bundled (same-origin static) source. EXP-023 Phase B. */
 function tokenForSource(source: string): string {
   return source.startsWith(BUNDLED_PREFIX) ? "" : resolveRepoToken(source);
 }
 
-async function fetchText(url: string, token = ""): Promise<string> {
-  const response = await fetch(url, authInit(token));
-  if (!response.ok) {
-    const err: Error & { status?: number } = new Error(
-      `Upstream HTTP ${response.status} for ${url}`,
-    );
-    err.status = response.status;
-    throw err;
+/**
+ * Fetch a content file's text. Bundled sources are same-origin static assets
+ * (no token, no CORS concern); GitHub sources go through the CORS-safe
+ * ``github-fetch`` helper (#645) which picks raw-vs-API by auth and retries
+ * only transient 5xx failures.
+ */
+async function fetchText(
+  source: string,
+  branch: string,
+  path: string,
+  token = "",
+): Promise<string> {
+  if (source.startsWith(BUNDLED_PREFIX)) {
+    const response = await fetchWithRetry(rawUrl(source, branch, path));
+    if (!response.ok) {
+      const err: Error & { status?: number } = new Error(
+        `Upstream HTTP ${response.status} for ${path}`,
+      );
+      err.status = response.status;
+      throw err;
+    }
+    return response.text();
   }
-  return response.text();
+  return fetchGitHubFileText(source, branch, path, token);
 }
 
 /** Phase 54 / v1.37.0 — fetch raw bytes for an asset.
  *  Returns null on 404 so the download orchestrator can skip
  *  missing assets instead of failing the whole set download. */
 async function fetchBytesOptional(
-  url: string,
+  source: string,
+  branch: string,
+  path: string,
   token = "",
 ): Promise<ArrayBuffer | null> {
-  const response = await fetch(url, authInit(token));
-  if (response.status === 404) return null;
-  if (!response.ok) {
-    const err: Error & { status?: number } = new Error(
-      `Upstream HTTP ${response.status} for ${url}`,
-    );
-    err.status = response.status;
-    throw err;
+  if (source.startsWith(BUNDLED_PREFIX)) {
+    const response = await fetchWithRetry(rawUrl(source, branch, path));
+    if (response.status === 404) return null;
+    if (!response.ok) {
+      const err: Error & { status?: number } = new Error(
+        `Upstream HTTP ${response.status} for ${path}`,
+      );
+      err.status = response.status;
+      throw err;
+    }
+    return response.arrayBuffer();
   }
-  return response.arrayBuffer();
+  return fetchGitHubFileBytesOptional(source, branch, path, token);
 }
 
 /** Convert ArrayBuffer → base64 in chunks to avoid the call-stack
@@ -475,7 +494,9 @@ export async function listSetsDexie(
     let manifest: ParsedManifest | null;
     try {
       const text = await fetchText(
-        rawUrl(src.source, src.branch, "manifest.yaml"),
+        src.source,
+        src.branch,
+        "manifest.yaml",
         token,
       );
       manifest = (parseYaml(text) ?? null) as ParsedManifest | null;
@@ -541,7 +562,9 @@ export async function downloadSetDexie(
 
   // Repo manifest → find the target set entry.
   const repoText = await fetchText(
-    rawUrl(src.source, src.branch, "manifest.yaml"),
+    src.source,
+    src.branch,
+    "manifest.yaml",
     token,
   );
   const repoManifest = parseYaml(repoText) as ParsedManifest;
@@ -564,7 +587,9 @@ export async function downloadSetDexie(
   // source-language tree via the set's ``path`` field.
   const basePath = setBasePath(target);
   const setManifestText = await fetchText(
-    rawUrl(src.source, src.branch, `${basePath}/manifest.yaml`),
+    src.source,
+    src.branch,
+    `${basePath}/manifest.yaml`,
     token,
   );
   const setManifest = parseYaml(setManifestText) as ParsedManifest;
@@ -587,7 +612,9 @@ export async function downloadSetDexie(
   const lessonBodies: Record<string, string> = {};
   for (const filename of lessonFilenames) {
     lessonBodies[filename] = await fetchText(
-      rawUrl(src.source, src.branch, `${basePath}/lessons/${filename}`),
+      src.source,
+      src.branch,
+      `${basePath}/lessons/${filename}`,
       token,
     );
   }
@@ -603,7 +630,9 @@ export async function downloadSetDexie(
   const assetBodies: Record<string, string> = {};
   for (const asset of target.assets ?? []) {
     const buf = await fetchBytesOptional(
-      rawUrl(src.source, src.branch, `${basePath}/assets/${asset.path}`),
+      src.source,
+      src.branch,
+      `${basePath}/assets/${asset.path}`,
       token,
     );
     if (buf === null) continue;
