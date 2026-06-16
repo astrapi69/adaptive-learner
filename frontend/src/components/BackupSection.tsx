@@ -24,6 +24,7 @@ import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage, resolveStorageMode} from "../storage";
 import {notify} from "../utils/notify";
+import {readBackupFile} from "../lib/backup/validateBackupFile";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
@@ -524,39 +525,31 @@ export default function BackupSection() {
         setBusy("import");
         setRestoreSummary(null);
         try {
-            // Validate the file as an Adaptive Learner backup BEFORE the
-            // restore preview. A wrong or foreign file (not JSON, or a
-            // missing/different ``format`` marker) is a user mistake, not
-            // an app fault — show a gentle ``warning`` (no "Report Issue")
-            // and stop, instead of an error toast that reads like a bug.
-            // ``format === "adaptive-learner-backup"`` is the single
-            // source of truth for "is this ours?". (#640)
-            let parsed: BackupPayload;
-            try {
-                parsed = JSON.parse(await file.text()) as BackupPayload;
-            } catch {
+            // Validate the picked file as an Adaptive Learner backup
+            // BEFORE the restore preview (#640/#642). Any non-backup file
+            // (wrong/missing ``format`` marker, not JSON, a non-object,
+            // a truncated download, an over-large file) is a user mistake,
+            // not an app fault — ``readBackupFile`` returns a typed result
+            // and never throws, so show a gentle ``warning`` (no "Report
+            // Issue") and stop, instead of an error toast that reads like
+            // a bug. The ``format`` marker is the single source of truth
+            // for "is this ours?".
+            const result = await readBackupFile(file);
+            if (!result.ok) {
                 notify.warning(
-                    t(
-                        "backup.invalid_format",
-                        "This file is not a valid Adaptive Learner backup.",
-                    ),
+                    result.error === "too_large"
+                        ? t(
+                              "backup.too_large",
+                              "This backup file is too large (over 100 MB).",
+                          )
+                        : t(
+                              "backup.not_a_backup_file",
+                              "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
+                          ),
                 );
                 return;
             }
-            if (
-                typeof parsed !== "object" ||
-                parsed === null ||
-                parsed.format !== "adaptive-learner-backup" ||
-                typeof parsed.version !== "string"
-            ) {
-                notify.warning(
-                    t(
-                        "backup.invalid_format",
-                        "This file is not a valid Adaptive Learner backup.",
-                    ),
-                );
-                return;
-            }
+            const parsed = result.payload;
             const currentStats = await storage.backup.stats(userId);
             setComparison(buildComparison(currentStats, parsed));
             setPendingPayload(parsed);

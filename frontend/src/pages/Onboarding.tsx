@@ -17,6 +17,7 @@ import OnboardingWizard, {
 } from "../components/onboarding/OnboardingWizard";
 import {useI18n} from "../hooks/useI18n";
 import {isEmptyInstall, pickAdoptedIdentity} from "../lib/firstRunRestore";
+import {readBackupFile} from "../lib/backup/validateBackupFile";
 import {
     readLearnerState,
     setLanguage,
@@ -26,11 +27,8 @@ import {
 import {translateSubjectPath} from "../lib/subjectI18n";
 import {suggestSubjects, type SubjectSuggestion} from "../lib/subjectSuggest";
 import {getStorage} from "../storage";
-import type {BackupPayload, LearningProject, Subject} from "../types/domain";
+import type {LearningProject, Subject} from "../types/domain";
 import {notify} from "../utils/notify";
-
-/** Backup wire-format marker (mirrors ``BackupSection`` validation). */
-const BACKUP_FORMAT = "adaptive-learner-backup";
 
 /** Default daily-practice minutes when the learner doesn't set one. */
 const DEFAULT_DAILY_MINUTES = 15;
@@ -250,48 +248,39 @@ export default function Onboarding() {
         if (!file || restoring) return;
         setRestoring(true);
         try {
-            // Parse + validate the file as an Adaptive Learner backup
-            // BEFORE attempting the import. A wrong or foreign file (not
-            // JSON, or missing/different ``format`` marker, or no
-            // resolvable identity) is a user mistake — they picked the
-            // wrong file — not an app fault. Surface it as a gentle,
-            // auto-dismissing ``warning`` (no "Report Issue" button)
-            // instead of an error toast that reads like a bug. The
-            // ``format`` marker is the single source of truth for "is
-            // this ours?": it is "adaptive-learner-backup" in every
-            // backup the app writes (API export + Dexie export). (#640)
-            let payload: BackupPayload;
-            try {
-                payload = JSON.parse(await file.text()) as BackupPayload;
-            } catch {
+            // Validate the picked file as an Adaptive Learner backup
+            // BEFORE attempting the import (#640/#642). Any non-backup
+            // file (wrong/missing ``format`` marker, not JSON, a non-object
+            // like 42/"x"/[]/null, a truncated download, an over-large
+            // file) is a user mistake — they picked the wrong file — not an
+            // app fault. ``readBackupFile`` returns a typed result and
+            // never throws; surface a gentle, auto-dismissing ``warning``
+            // (no "Report Issue" button) instead of an error toast that
+            // reads like a bug.
+            const result = await readBackupFile(file);
+            if (!result.ok) {
                 notify.warning(
-                    t(
-                        "backup.invalid_format",
-                        "This file is not a valid Adaptive Learner backup.",
-                    ),
+                    result.error === "too_large"
+                        ? t(
+                              "backup.too_large",
+                              "This backup file is too large (over 100 MB).",
+                          )
+                        : t(
+                              "backup.not_a_backup_file",
+                              "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
+                          ),
                 );
                 return;
             }
-            if (
-                typeof payload !== "object" ||
-                payload === null ||
-                payload.format !== BACKUP_FORMAT ||
-                typeof payload.version !== "string"
-            ) {
-                notify.warning(
-                    t(
-                        "backup.invalid_format",
-                        "This file is not a valid Adaptive Learner backup.",
-                    ),
-                );
-                return;
-            }
+            const payload = result.payload;
+            // A well-formed backup always carries a resolvable owning user;
+            // a payload without one cannot be restored onto a fresh install.
             const identity = pickAdoptedIdentity(payload);
             if (identity.userId === "") {
                 notify.warning(
                     t(
-                        "backup.invalid_format",
-                        "This file is not a valid Adaptive Learner backup.",
+                        "backup.not_a_backup_file",
+                        "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
                     ),
                 );
                 return;

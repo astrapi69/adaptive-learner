@@ -871,6 +871,8 @@
     "importing": "Restoring…",
     "confirm": "Confirm restore",
     "invalid_format": "This file is not a valid Adaptive Learner backup.",
+    "not_a_backup_file": "Αυτό το αρχείο δεν είναι έγκυρο αρχείο αντιγράφου ασφαλείας. Επιλέξτε ένα αρχείο που εξήχθη με «Δημιουργία αντιγράφου ασφαλείας».",
+    "too_large": "Αυτό το αρχείο αντιγράφου ασφαλείας είναι πολύ μεγάλο (πάνω από 100 MB).",
     "export_success": "Backup downloaded ({{count}} records).",
     "export_error": "Backup failed: {{detail}}",
     "import_parse_error": "Could not read backup: {{detail}}",
