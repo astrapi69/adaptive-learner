@@ -17,6 +17,7 @@ import {NavLink, useLocation} from "react-router-dom";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {subscribeCelebration} from "../lib/praise/celebration-bus";
+import {REVIEWS_CHANGED_EVENT} from "../lib/review/reviewsChanged";
 import {getStorage} from "../storage";
 import type {CelebrationType} from "../lib/praise/celebration-bus";
 
@@ -58,12 +59,18 @@ export default function NavReviewsBadge() {
         void refresh();
         const onFocus = () => void refresh();
         window.addEventListener("focus", onFocus);
+        // #629 BUG 3c — a review session moved an element's next-review
+        // time; recompute the due count live (the user is still on the
+        // review page, so the route-change refresh hasn't fired yet).
+        const onReviewsChanged = () => void refresh();
+        window.addEventListener(REVIEWS_CHANGED_EVENT, onReviewsChanged);
         const unsubscribe = subscribeCelebration((event) => {
             if (REVIEW_AFFECTING.has(event.type)) void refresh();
         });
         return () => {
             cancelled = true;
             window.removeEventListener("focus", onFocus);
+            window.removeEventListener(REVIEWS_CHANGED_EVENT, onReviewsChanged);
             unsubscribe();
         };
     }, [pathname]);
