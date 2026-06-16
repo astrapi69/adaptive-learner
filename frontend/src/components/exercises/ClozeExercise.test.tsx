@@ -361,3 +361,31 @@ describe("ClozeExercise: retry resets state", () => {
         expect(input.value).toBe("");
     });
 });
+
+describe("ClozeExercise: Tab advances to the next blank (#623)", () => {
+    it("focuses the next blank input on Tab", () => {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        const first = screen.getByTestId("cloze-input-0");
+        const second = screen.getByTestId("cloze-input-1");
+        first.focus();
+        fireEvent.keyDown(first, {key: "Tab"});
+        expect(document.activeElement).toBe(second);
+    });
+
+    it("does not intercept Tab on the last blank (native flow)", () => {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        const second = screen.getByTestId("cloze-input-1");
+        second.focus();
+        const ev = fireEvent.keyDown(second, {key: "Tab"});
+        // Not prevented -> the browser's native tab order takes over.
+        expect(ev).toBe(true);
+    });
+
+    it("ignores shift-Tab (lets focus move backward natively)", () => {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        const second = screen.getByTestId("cloze-input-1");
+        second.focus();
+        fireEvent.keyDown(second, {key: "Tab", shiftKey: true});
+        expect(document.activeElement).toBe(second);
+    });
+});

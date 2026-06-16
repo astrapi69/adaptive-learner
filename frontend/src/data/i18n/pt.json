@@ -307,7 +307,8 @@
       "loading": "A carregar…",
       "elements": "elemento(s) para rever",
       "overdue": "em atraso — começa aqui",
-      "open": "Abrir sessão de revisão"
+      "open": "Abrir sessão de revisão",
+      "quick": "Revisão rápida"
     },
     "focus_areas": {
       "loading": "A analisar os teus erros…",
@@ -366,6 +367,7 @@
     "summary_corrected": "{corrected} de {total} corrigidos",
     "summary_trend": "Boa — os seus pontos fracos estão a melhorar.",
     "summary_next": "Os elementos dominados saem; os restantes voltam em breve para revisão.",
+    "summary_repeat": "Volte daqui a cerca de 2 dias para manter isto fresco.",
     "explain_heading": "Porque errou estes",
     "explain_article_gender": "Atenção ao género: substantivos terminados em -o são normalmente masculinos (el/un), em -a femininos (la/una). O artigo segue a terminação.",
     "explain_spelling_accent": "Verifique a ortografia exata e os acentos — uma pequena diferença muda a palavra.",
@@ -1691,6 +1693,7 @@
         "hint_show": "Precisas de uma dica?",
         "result_correct": "Correto!",
         "result_wrong": "Quase.",
+        "result_almost": "Quase! Atenção a:",
         "empty": "Este exercício não tem respostas aceitas."
       },
       "word_tiles": {
@@ -2658,6 +2661,7 @@
   },
   "hints": {
     "reveal": "Mostrar uma dica",
+    "disabled": "As dicas estão desativadas. Ative-as nas Definições.",
     "cost": "−{n} XP",
     "length": "A resposta tem {n} letras",
     "first_letters": "Começa por «{prefix}» ({n} letras)",
@@ -2667,6 +2671,7 @@
   },
   "favorites": {
     "card_title": "Os seus favoritos",
+    "card_more": "+{n} mais",
     "add": "Adicionar aos favoritos",
     "remove": "Remover dos favoritos",
     "empty": "Ainda não há favoritos — toque na estrela de uma lição.",

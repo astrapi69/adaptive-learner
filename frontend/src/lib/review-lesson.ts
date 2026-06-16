@@ -60,6 +60,25 @@ import type {
 
 export const DEFAULT_REVIEW_LIMIT = 10;
 
+/** #629 BUG 2 — keep at most one queue item per ``element_key`` so the
+ *  same word never appears twice in one review session. The queue is
+ *  pre-sorted by priority (overdue → weakness → frequency), so the first
+ *  occurrence is the most urgent direction/exercise; later duplicates
+ *  (a second exercise drilling the same word, or the other EXP-018
+ *  direction) are dropped. Pure + order-preserving. */
+export function dedupeReviewQueueByElement<T extends {element_key: string}>(
+    queue: readonly T[],
+): T[] {
+    const seen = new Set<string>();
+    const unique: T[] = [];
+    for (const item of queue) {
+        if (seen.has(item.element_key)) continue;
+        seen.add(item.element_key);
+        unique.push(item);
+    }
+    return unique;
+}
+
 export interface SynthesizeOpts {
     /** Cap on the number of elements pulled from the queue.
      *  Default 10. Cap stays small so the review session
@@ -210,7 +229,10 @@ export function synthesizeReviewLesson(
     opts: SynthesizeOpts,
 ): ContentLesson {
     const limit = opts.limit ?? DEFAULT_REVIEW_LIMIT;
-    const top = queue.slice(0, limit);
+    // #629 BUG 2 — de-dup by element BEFORE slicing so a session fills up
+    // to ``limit`` UNIQUE elements (a naive slice-then-build could spend
+    // the whole cap on repeats of one word).
+    const top = dedupeReviewQueueByElement(queue).slice(0, limit);
     const steps: ContentLessonStep[] = [];
     for (const item of top) {
         // Per-item branch is delegated to ``_buildReviewStep`` so the

@@ -237,6 +237,86 @@ describe("synthesizeReviewLesson: degraded cases", () => {
     });
 });
 
+// --- #629 BUG 2: no element appears twice in one session -------------------
+
+describe("synthesizeReviewLesson: de-duplication (#629)", () => {
+    it("collapses the same element_key from several exercises into one step", () => {
+        // Same word ("merci") queued from two different exercises (and,
+        // per EXP-018, it could also be queued under two directions). The
+        // learner must see it at most once per session.
+        const queue = [
+            makeQueueItem({
+                id: "q1",
+                lesson_id: "L1",
+                exercise_id: "ex-a",
+                element_key: "merci",
+                error_count: 5,
+            }),
+            makeQueueItem({
+                id: "q2",
+                lesson_id: "L1",
+                exercise_id: "ex-b",
+                element_key: "merci",
+                error_count: 1,
+            }),
+            makeQueueItem({
+                id: "q3",
+                lesson_id: "L1",
+                exercise_id: "ex-c",
+                element_key: "bonjour",
+            }),
+        ];
+        const cache = new Map([
+            ["L1", makeLesson("L1", ["ex-a", "ex-b", "ex-c"])],
+        ]);
+        const out = synthesizeReviewLesson(queue, cache, {title: "Review"});
+        const keys = out.steps.map((s) => s.id);
+        // "merci" once (the higher-priority ex-a occurrence), "bonjour" once.
+        expect(out.steps).toHaveLength(2);
+        expect(keys).toContain("review-L1-ex-a-merci");
+        expect(keys).not.toContain("review-L1-ex-b-merci");
+        expect(keys).toContain("review-L1-ex-c-bonjour");
+    });
+
+    it("de-dups BEFORE applying the limit so a session fills up to N unique", () => {
+        // 4 duplicates of "dup" followed by 3 unique words. With limit 3,
+        // a naive slice-then-build would yield a single unique element;
+        // de-dup-first must yield three distinct elements.
+        const queue = [
+            makeQueueItem({id: "d1", lesson_id: "L1", exercise_id: "ex-0", element_key: "dup"}),
+            makeQueueItem({id: "d2", lesson_id: "L1", exercise_id: "ex-1", element_key: "dup"}),
+            makeQueueItem({id: "d3", lesson_id: "L1", exercise_id: "ex-2", element_key: "dup"}),
+            makeQueueItem({id: "d4", lesson_id: "L1", exercise_id: "ex-3", element_key: "dup"}),
+            makeQueueItem({id: "u1", lesson_id: "L1", exercise_id: "ex-4", element_key: "alpha"}),
+            makeQueueItem({id: "u2", lesson_id: "L1", exercise_id: "ex-5", element_key: "beta"}),
+            makeQueueItem({id: "u3", lesson_id: "L1", exercise_id: "ex-6", element_key: "gamma"}),
+        ];
+        const cache = new Map([
+            [
+                "L1",
+                makeLesson("L1", [
+                    "ex-0",
+                    "ex-1",
+                    "ex-2",
+                    "ex-3",
+                    "ex-4",
+                    "ex-5",
+                    "ex-6",
+                ]),
+            ],
+        ]);
+        const out = synthesizeReviewLesson(queue, cache, {
+            title: "Review",
+            limit: 3,
+        });
+        const uniqueKeys = new Set(
+            out.steps.map((s) => s.exercise?.id ?? ""),
+        );
+        expect(out.steps).toHaveLength(3);
+        expect(uniqueKeys.size).toBe(3);
+    });
+});
+
 // --- Phase 52G: cloze in review sessions ----------------------------------
 
 function _lessonWithFreeText(

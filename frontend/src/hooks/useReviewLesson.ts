@@ -36,7 +36,11 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {readLearnerState} from "../lib/learnerState";
-import {synthesizeReviewLesson} from "../lib/review-lesson";
+import {
+    dedupeReviewQueueByElement,
+    synthesizeReviewLesson,
+} from "../lib/review-lesson";
+import {notifyReviewsChanged} from "../lib/review/reviewsChanged";
 import {stampHintUsage} from "../lib/hints/hint-usage";
 import {getStorage} from "../storage";
 import type {
@@ -117,14 +121,21 @@ export function useReviewLesson(
         void (async () => {
             try {
                 const storage = getStorage();
+                // #629 BUG 2 — fetch the FULL due list (no storage-level
+                // limit), de-dup by element, THEN cap. Capping at the
+                // storage layer first could fill the cap with repeats of
+                // one word, leaving the session short on unique elements.
                 const fetchedQueue = await storage.elementErrors.reviewQueue(
                     userId,
-                    {setId, limit},
+                    {setId},
                 );
                 if (cancelled) return;
-                setQueue(fetchedQueue);
+                const cappedQueue = dedupeReviewQueueByElement(
+                    fetchedQueue,
+                ).slice(0, limit ?? undefined);
+                setQueue(cappedQueue);
 
-                if (fetchedQueue.length === 0) {
+                if (cappedQueue.length === 0) {
                     setStatus("empty");
                     return;
                 }
@@ -143,7 +154,7 @@ export function useReviewLesson(
                 // references. Sequential to keep the fetch
                 // pattern predictable + cache-friendly.
                 const uniqueLessons = Array.from(
-                    new Set(fetchedQueue.map((q) => q.lesson_id)),
+                    new Set(cappedQueue.map((q) => q.lesson_id)),
                 );
                 const lessonMap = new Map<string, ContentLesson>();
                 for (const lessonId of uniqueLessons) {
@@ -164,7 +175,7 @@ export function useReviewLesson(
                 }
                 if (cancelled) return;
                 const synthesised = synthesizeReviewLesson(
-                    fetchedQueue,
+                    cappedQueue,
                     lessonMap,
                     {title, description, limit},
                 );
@@ -220,6 +231,10 @@ export function useReviewLesson(
                     userId,
                     stampHintUsage(attempts),
                 );
+                // #629 BUG 3c — the element's suggested-review time just
+                // moved; tell the header badge to recompute the due count
+                // live instead of staying stale until a route change.
+                notifyReviewsChanged();
             } catch {
                 // Same failure-tolerance as the main viewer —
                 // a recording failure must not crash the

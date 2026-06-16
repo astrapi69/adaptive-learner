@@ -53,8 +53,8 @@ function item(overrides: Partial<ReviewQueueItem> = {}): ReviewQueueItem {
 }
 
 function LocationProbe() {
-    const {pathname} = useLocation();
-    return <span data-testid="location-probe">{pathname}</span>;
+    const {pathname, search} = useLocation();
+    return <span data-testid="location-probe">{pathname + search}</span>;
 }
 
 function renderCard(userId: string) {
@@ -148,6 +148,18 @@ describe("ReviewQueueCard: populated queue", () => {
         fireEvent.click(cta);
         expect(screen.getByTestId("location-probe")).toHaveTextContent(
             "/review/language-fr-a1",
+        );
+    });
+
+    it("Quick review navigates to /review/{set}?quick=1 (#628)", async () => {
+        reviewQueueMock.mockResolvedValue([
+            item({set_id: "language-fr-a1"}),
+        ]);
+        renderCard("user-1");
+        const quick = await screen.findByTestId("review-queue-secondary");
+        fireEvent.click(quick);
+        expect(screen.getByTestId("location-probe")).toHaveTextContent(
+            "/review/language-fr-a1?quick=1",
         );
     });
 });

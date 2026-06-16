@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {findPrecedingTheoryIndex} from "../lib/lesson/theory-link";
+import {findRelatedTheoryIndex} from "../lib/lesson/theory-link";
 import type {ContentLesson} from "../storage/types";
 
 /**
@@ -65,10 +65,18 @@ export function useLessonNavigation({
     const [theoryReturnIndex, setTheoryReturnIndex] = useState<number | null>(
         null,
     );
+    // #634 — resolve the THEMATICALLY related preceding theory step (by
+    // term overlap with the exercise's prompt + referenced cards), not
+    // merely the nearest one, so an unrelated theory block between the
+    // matching theory and the exercise no longer hijacks the back-link.
     const precedingTheoryIndex = useMemo(
         () =>
             lesson
-                ? findPrecedingTheoryIndex(lesson.steps, currentStepIndex)
+                ? findRelatedTheoryIndex(
+                      lesson.steps,
+                      lesson.cards ?? [],
+                      currentStepIndex,
+                  )
                 : null,
         [lesson, currentStepIndex],
     );

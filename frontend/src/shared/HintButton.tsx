@@ -9,6 +9,10 @@
  * used). No i18n/storage imports. Renders nothing when there are no
  * hints. Token-backed Tailwind, 44px button.
  *
+ * When ``disabled`` is set it renders a single non-interactive button
+ * showing ``disabledLabel`` — the "feature off" affordance (visible but
+ * unavailable, per the host's feature-state policy) instead of hiding.
+ *
  * @example
  * <HintButton
  *   hints={["The answer has 5 letters", "It starts with “m” (5 letters)"]}
@@ -30,6 +34,12 @@ export interface HintButtonProps {
     costLabel?: string;
     /** Fired with the zero-based index each time a hint is revealed. */
     onReveal?: (index: number) => void;
+    /** When true, render a single disabled button (no reveals) showing
+     *  ``disabledLabel`` — the "hints are off" affordance. */
+    disabled?: boolean;
+    /** Label/tooltip for the disabled affordance (required when
+     *  ``disabled``). */
+    disabledLabel?: string;
     testId?: string;
 }
 
@@ -39,9 +49,32 @@ export default function HintButton({
     revealLabel,
     costLabel,
     onReveal,
+    disabled = false,
+    disabledLabel,
     testId,
 }: HintButtonProps) {
     const [revealed, setRevealed] = useState(0);
+
+    if (disabled) {
+        return (
+            <div
+                className="flex flex-col items-start gap-1"
+                data-testid={testId}
+            >
+                <button
+                    type="button"
+                    disabled
+                    title={disabledLabel}
+                    aria-label={disabledLabel}
+                    className="inline-flex min-h-[44px] cursor-not-allowed items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-fg-muted opacity-70"
+                    data-testid={testId ? `${testId}-disabled` : undefined}
+                >
+                    <Lightbulb size={14} aria-hidden="true" />
+                    {disabledLabel}
+                </button>
+            </div>
+        );
+    }
 
     if (hints.length === 0) return null;
 

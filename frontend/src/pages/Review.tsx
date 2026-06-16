@@ -26,6 +26,7 @@ import {useEffect, useRef, useState, type ReactElement, type Ref} from "react";
 import {
     useNavigate,
     useParams,
+    useSearchParams,
     type NavigateFunction,
 } from "react-router-dom";
 
@@ -41,6 +42,11 @@ import {Button} from "@/components/ui/button";
 import ProgressBar from "../shared/ProgressBar";
 import LessonStepNav from "../shared/LessonStepNav";
 import {useI18n} from "../hooks/useI18n";
+import {useLessonShortcuts} from "../hooks/useLessonShortcuts";
+import {
+    useLessonEnterKey,
+    type LessonEnterNav,
+} from "../hooks/useLessonEnterKey";
 import {useReviewLesson} from "../hooks/useReviewLesson";
 import ReviewSummaryView from "../shared/ReviewSummary";
 import type {
@@ -58,9 +64,12 @@ interface UrlParams {
 
 export default function ReviewPage() {
     const params = useParams<UrlParams>();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const {t} = useI18n();
     const setId = params.setId ?? "";
+    // #628 — a "quick review" is a shorter, finishable session.
+    const quick = searchParams.get("quick") === "1";
 
     const {
         status,
@@ -78,7 +87,8 @@ export default function ReviewPage() {
         title: t("review.session_title", "Review session"),
         // #603 — a focused, finishable session: at most 20 elements,
         // the weakest + oldest first (the queue already prioritises).
-        limit: 20,
+        // #628 — a quick review trims that to 5 for a fast pass.
+        limit: quick ? 5 : 20,
     });
 
     // BUG P1 — single two-phase button (Check -> Weiter). The exercise
@@ -88,10 +98,25 @@ export default function ReviewPage() {
     const exerciseRef = useRef<ExerciseHandle>(null);
     const [checked, setChecked] = useState(false);
     const [answerable, setAnswerable] = useState(false);
+    // #629 BUG 1 — Enter drives the two-phase Check/Next button here too.
+    // Review sessions are built largely from CLOZE exercises (the
+    // free_text/word_tiles → cloze conversion), and ClozeExercise does
+    // NOT self-handle Enter — so without this the FillInBlank field
+    // ignored Enter entirely. Mirrors the Lesson player's wiring (#103).
+    const lessonShortcutsEnabled = useLessonShortcuts();
+    const enterStateRef = useRef<LessonEnterNav | null>(null);
+    const enterLockRef = useRef(false);
+    useLessonEnterKey({
+        enabled: lessonShortcutsEnabled,
+        exerciseRef,
+        enterStateRef,
+        enterLockRef,
+    });
     // Reset the two-phase button whenever the step changes.
     useEffect(() => {
         setChecked(false);
         setAnswerable(false);
+        enterLockRef.current = false;
     }, [currentStepIndex]);
 
     const statusScreen = renderReviewStatus(setId, status, navigate, t);
@@ -132,6 +157,19 @@ export default function ReviewPage() {
         totalSteps === 0
             ? 100
             : Math.round((currentStepIndex / totalSteps) * 100);
+
+    // Keep the Enter-shortcut listener reading the latest step state
+    // without re-subscribing every render. Review has no "reviewed"
+    // lock (sessions are ephemeral), so ``enteredReviewed`` is always
+    // false.
+    enterStateRef.current = {
+        isSummary,
+        isExerciseStep,
+        checked,
+        enteredReviewed: false,
+        answerable,
+        goNext,
+    };
 
     return (
         <main
@@ -429,6 +467,15 @@ function ReviewSummary({correct, total, onExit}: ReviewSummaryProps) {
                 {t(
                     "review.summary.note",
                     "Element scores have been updated. Mastered elements will not appear in the next session.",
+                )}
+            </p>
+            <p
+                className="review-summary-note"
+                data-testid="review-summary-repeat"
+            >
+                {t(
+                    "review.summary_repeat",
+                    "Come back in about 2 days to keep these fresh.",
                 )}
             </p>
         </ReviewSummaryView>

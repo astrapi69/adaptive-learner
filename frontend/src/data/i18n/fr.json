@@ -307,7 +307,8 @@
       "loading": "Chargement…",
       "elements": "élément(s) à réviser",
       "overdue": "en retard — commence ici",
-      "open": "Ouvrir la session de révision"
+      "open": "Ouvrir la session de révision",
+      "quick": "Révision rapide"
     },
     "focus_areas": {
       "loading": "Analyse de tes erreurs…",
@@ -366,6 +367,7 @@
     "summary_corrected": "{corrected} sur {total} corrigés",
     "summary_trend": "Bien — vos points faibles se renforcent.",
     "summary_next": "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision.",
+    "summary_repeat": "Revenez dans environ 2 jours pour garder cela en mémoire.",
     "explain_heading": "Pourquoi vous les avez ratés",
     "explain_article_gender": "Attention au genre : les noms en -o sont souvent masculins (el/un), en -a féminins (la/una). L'article suit la terminaison.",
     "explain_spelling_accent": "Vérifiez l'orthographe exacte et les accents — une petite différence change le mot.",
@@ -1691,6 +1693,7 @@
         "hint_show": "Besoin d'un indice ?",
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait.",
+        "result_almost": "Presque ! Attention à :",
         "empty": "Cet exercice n'a pas de réponses acceptées."
       },
       "word_tiles": {
@@ -2658,6 +2661,7 @@
   },
   "hints": {
     "reveal": "Afficher un indice",
+    "disabled": "Les indices sont désactivés. Activez-les dans les Réglages.",
     "cost": "−{n} XP",
     "length": "La réponse compte {n} lettres",
     "first_letters": "Commence par « {prefix} » ({n} lettres)",
@@ -2667,6 +2671,7 @@
   },
   "favorites": {
     "card_title": "Vos favoris",
+    "card_more": "+{n} de plus",
     "add": "Ajouter aux favoris",
     "remove": "Retirer des favoris",
     "empty": "Aucun favori pour l'instant — touchez l'étoile d'une leçon.",

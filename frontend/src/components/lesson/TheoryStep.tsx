@@ -119,6 +119,14 @@ export default function TheoryStep({
             }
             return <code className={className}>{children}</code>;
           },
+          // #632 — wrap markdown tables in a horizontal-scroll container
+          // so a wide comparison table scrolls instead of overflowing at
+          // narrow viewports. Styling lives in `.lesson-theory table`.
+          table: ({ node: _node, ...tableProps }) => (
+            <div className="lesson-theory-table-wrapper">
+              <table {...tableProps} />
+            </div>
+          ),
           a: ({ href, children, ...rest }) => {
             const stepId = href !== undefined ? parseStepAnchor(href) : null;
             if (stepId !== null) {
