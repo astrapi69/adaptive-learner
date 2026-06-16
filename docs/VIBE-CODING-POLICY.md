@@ -89,6 +89,26 @@ test suite before merge.
 - Pre-commit hooks: ruff, ESLint, formatting.
 - Human verification for backup round-trips.
 
+### Test Impact Analysis (CI-Strategie)
+
+Drei Stufen, abhaengig vom Trigger:
+
+| Trigger | Frontend | Backend | E2E (Dexie) |
+|---------|----------|---------|-------------|
+| PR | vitest --changed | pytest --testmon | Nicht (naechtlich) |
+| develop push | Volle Suite | Volle Suite | Nicht (naechtlich) |
+| Nightly (04:00 UTC) | Volle Suite | Volle Suite | Volle Suite |
+| Release (make release-test) | Volle Suite | Volle Suite | Volle Suite |
+
+Prinzip: selektiv auf PRs (Geschwindigkeit), voll nachts + vor Release
+(Sicherheit). Kein False Negative tolerieren. Wenn der Nightly einen Bug
+findet den der PR-Lauf durchliess, den selektiven Mechanismus debuggen --
+nie den Nightly abschalten.
+
+Fallback: wenn `--changed` (Base-Ref nicht auflösbar) oder `--testmon`
+(Cache-Miss) nicht greift, laeuft automatisch die volle Suite -- kein
+stiller Skip. Implementiert in `ci.yml` (#615).
+
 ## 4. Security and Dependency Hygiene
 
 AI sometimes suggests outdated, insecure, or nonexistent libraries.

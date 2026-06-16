@@ -42,6 +42,15 @@ Gesamtgefühl des Lernflusses.
   (`https://astrapi69.github.io/adaptive-learner/`) im
   Dexie-/Browser-Modus, sofern nicht anders angegeben.
 
+> **Warum manuell, trotz CI?** Auf Pull Requests läuft die CI mit
+> Test Impact Analysis — nur die von der Änderung betroffenen Tests
+> (Frontend `vitest --changed`, Backend `pytest --testmon`, #615). Die
+> **volle** automatisierte Suite läuft nachts (04:00 UTC) und vor jedem
+> Release (`make release-test`, inkl. Dexie-Smoke). Dieser manuelle
+> Testplan ist das menschliche Sicherheitsnetz für Dinge, die kein
+> automatischer Lauf abdeckt (Layout, Haptik, echte Geräte). Vor dem
+> Release gilt: volle Suite grün **und** Session 1-4 grün.
+
 ---
 
 ## Session 1: Onboarding (frischer User)

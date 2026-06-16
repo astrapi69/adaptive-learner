@@ -21,6 +21,11 @@ htmlcov/
 coverage.xml
 frontend/coverage/
 
+# Test Impact Analysis — pytest-testmon dependency DB (#615).
+# Local artifact + CI cache only; never committed.
+.testmondata
+.testmondata-*
+
 # Environment
 .env
 

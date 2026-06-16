@@ -48,6 +48,7 @@ ruff = "^0.15.11"
 pre-commit = "^4.5.1"
 pip-audit = "^2.10.0"
 pytest-randomly = "^4.1.0"
+pytest-testmon = "^2.2.0"
 
 [tool.ruff]
 line-length = 100
