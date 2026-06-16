@@ -298,6 +298,7 @@ dashboard:
     loading: Analyzing your errors…
     subtitle: 'Your challenge areas:'
     errors: errors
+    hint_answers: "{n} उत्तर संकेत के साथ"
     mastery_progress: Mastery progress
     cta: Start adaptive lesson
     tag:
@@ -1611,6 +1612,7 @@ lesson:
     stars_aria: '{n} of 3 stars'
     time: Time
     minutes: '{n} min'
+    hints_used: "उपयोग किए गए संकेत"
     breakdown_heading: Exercise breakdown
     breakdown_correct_answer: 'Correct answer: {answer}'
     breakdown_unattempted: Not attempted
@@ -2215,6 +2217,10 @@ pwa:
   cache_clear_confirm: Clear the offline cache?
   cache_clear_action: Yes, clear
   cache_cleared: Offline cache cleared.
+  update:
+    message: "एक नया संस्करण उपलब्ध है।"
+    action: "अपडेट करें"
+    later: "बाद में"
 share:
   pr:
     preparing: Preparing repository...
@@ -2401,6 +2407,9 @@ srs:
   details: "तत्व विवरण"
   hide_details: "विवरण छिपाएँ"
   element_mastered: "महारत"
+  attempt_correct: "सही"
+  attempt_wrong: "गलत"
+  attempt_trajectory: "प्रयास {n}: {outcome}"
   element_due: "अभी बाकी"
   element_scheduled: "निर्धारित"
   element_meta: "श्रृंखला {streak} · {errors} गलतियाँ"

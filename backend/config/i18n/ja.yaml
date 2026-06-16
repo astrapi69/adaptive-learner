@@ -296,6 +296,7 @@ dashboard:
     loading: "ミスを分析中…"
     subtitle: "あなたの課題:"
     errors: "個のミス"
+    hint_answers: "ヒントを使った回答 {n} 件"
     mastery_progress: "習得の進捗"
     cta: "アダプティブレッスンを開始"
     tag:
@@ -1650,6 +1651,7 @@ lesson:
     stars_aria: "3 つ星のうち {n} つ"
     time: "時間"
     minutes: "{n} 分"
+    hints_used: "使用したヒント"
     breakdown_heading: "演習の内訳"
     breakdown_correct_answer: "正解: {answer}"
     breakdown_unattempted: "未挑戦"
@@ -2223,6 +2225,10 @@ pwa:
   cache_clear_confirm: "オフラインキャッシュを消去しますか？"
   cache_clear_action: "はい、消去"
   cache_cleared: "オフラインキャッシュを消去しました。"
+  update:
+    message: "新しいバージョンが利用可能です。"
+    action: "更新"
+    later: "後で"
 share:
   pr:
     preparing: "リポジトリを準備しています..."
@@ -2415,6 +2421,9 @@ srs:
   details: "要素の詳細"
   hide_details: "詳細を隠す"
   element_mastered: "習得済み"
+  attempt_correct: "正解"
+  attempt_wrong: "不正解"
+  attempt_trajectory: "{n} 回目: {outcome}"
   element_due: "今が期限"
   element_scheduled: "予定"
   element_meta: "連続{streak} · {errors}回ミス"

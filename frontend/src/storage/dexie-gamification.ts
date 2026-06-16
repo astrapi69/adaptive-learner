@@ -11,7 +11,7 @@
 
 import { evaluateBadgesForUser, listBadgesWithProgress } from "./badges";
 import { getDb } from "./db";
-import { awardXPFlat, getXPState } from "./gamification";
+import { awardXPFlat, getXPState, spendXP } from "./gamification";
 import {
   calendarHeatmap,
   getStreakState,
@@ -21,6 +21,7 @@ import type { IStorageService } from "./types";
 
 export const dexieGamification: IStorageService["gamification"] = {
   getState: (userId) => getXPState(userId),
+  spendXp: (userId, amount) => spendXP(userId, amount),
   awardAssessment: async (userId) => {
     const award = await awardXPFlat(userId, 100, "assessment_complete");
     try {

@@ -193,6 +193,24 @@ For complex plugin UIs: Web Components as custom elements (compiled JS bundle in
 - **Conditional fields:** checkbox toggle for optional groups. Values are reset when deactivated.
 - **No dedicated page** for simple creation workflows. A modal is enough up to ~8 fields.
 
+### Settings navigation: one model, two renderers
+
+The Settings page is tab-grouped via a single shared model, rendered
+two ways so desktop and mobile never drift:
+
+- **`frontend/src/lib/settings/sidebar-model.ts`** defines the
+  `SidebarGroup[]` (the canonical tab list). It is pure data —
+  no JSX, no DOM.
+- **`SettingsSidebar.tsx`** renders that model as the desktop
+  left rail; **`SettingsMobileMenu.tsx`** renders the SAME model as
+  the mobile hamburger drawer. Both are presentational and take the
+  groups as props — add a tab once in the model, both surfaces get it.
+- **Deep links:** `?tab=<id>` opens the matching tab directly
+  (e.g. `/settings?tab=data`); the active tab reflects the URL param.
+- All panels stay mounted (inactive ones `hidden`), so deep links and
+  `data-testid` selectors keep working. The active tab carries
+  `aria-current="page"`.
+
 ### State management
 
 - Current: React state + props + a few cross-cutting contexts (`I18nProvider`, theme, auto-backup signal). No global state management library.
@@ -231,6 +249,41 @@ so the same code runs against either backing.
 - Some features stay server-only (Learning Repository `git
   persist` needs filesystem + git binary; the button is disabled
   with a friendly tooltip in Dexie mode).
+
+### Dexie namespace module split
+
+`DexieStorage` is NOT one god-file. It is split into per-domain
+namespace modules under `frontend/src/storage/`, each owning one
+slice of the `IStorageService` surface: `dexie-imports`,
+`dexie-gamification`, `dexie-users`, `dexie-settings`,
+`dexie-session`, `dexie-curricula`, `dexie-taxonomy`, plus
+`lesson-progress-dexie`, `lesson-xp-dexie`, `element-errors-dexie`,
+`missions-dexie`, and `content-loader-dexie`. Shared row types live
+in `dexie-rows.ts`; the schema + db handle in `db.ts` /
+`dexie-storage.ts`. A new Dexie namespace is a new module, not
+another method pile in one file.
+
+### Dexie data integrity (R-M-W discipline)
+
+IndexedDB is multi-tab + async, so naive `get` -> spread -> `put`
+loses concurrent updates. Rules (each pinned by a concurrency test —
+`dexie-rmw-concurrency`, `dexie-create-race`,
+`dexie-fullreplace-concurrency`):
+
+- **Atomic mutation, never unguarded read-modify-write.** Use
+  `table.modify(...)` for in-place field updates and
+  `db.transaction("rw", ...)` to wrap a full-replace `update`. No
+  `const r = await get(); put({...r, x})` outside a transaction.
+- **Unique indexes are the DB-level backstop**, not just app logic:
+  `&user_id` on the `userXp` / `userStreaks` / `userSettings`
+  singletons, `&key` on badges, and the compound `&[user_id+badge_id]`
+  on `userBadges`. The create-race ensure-helpers rely on these.
+- **Schema bumps are additive forward migrations.** A new index or
+  table raises the Dexie schema version (e.g. the v25 -> v27 dedup +
+  unique-index migration); the upgrade backfills/dedupes existing
+  rows. Never mutate an existing version's stores in place — add a new
+  `version(n)`. (Backend half of the same discipline: the repository
+  pattern + `UniqueViolationError`, see the Repository-pattern section.)
 
 ### Rule: every new feature MUST work in both modes
 

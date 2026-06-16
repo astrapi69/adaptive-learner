@@ -296,6 +296,7 @@ dashboard:
     loading: "Analyzing your errors…"
     subtitle: "Your challenge areas:"
     errors: "errors"
+    hint_answers: "{n} answers with a hint"
     mastery_progress: "Mastery progress"
     cta: "Start adaptive lesson"
     tag:
@@ -1626,6 +1627,7 @@ lesson:
     stars_aria: "{n} of 3 stars"
     time: "Time"
     minutes: "{n} min"
+    hints_used: "Hints used"
     breakdown_heading: "Exercise breakdown"
     breakdown_correct_answer: "Correct answer: {answer}"
     breakdown_unattempted: "Not attempted"
@@ -2233,6 +2235,10 @@ pwa:
   cache_clear_confirm: "Clear the offline cache?"
   cache_clear_action: "Yes, clear"
   cache_cleared: "Offline cache cleared."
+  update:
+    message: "A new version is available."
+    action: "Update"
+    later: "Later"
 share:
   pr:
     preparing: "Preparing repository..."
@@ -2425,6 +2431,9 @@ srs:
   details: "Element details"
   hide_details: "Hide details"
   element_mastered: "Mastered"
+  attempt_correct: "correct"
+  attempt_wrong: "wrong"
+  attempt_trajectory: "Attempt {n}: {outcome}"
   element_due: "Due now"
   element_scheduled: "Scheduled"
   element_meta: "Streak {streak} · {errors} errors"

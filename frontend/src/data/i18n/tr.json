@@ -313,6 +313,7 @@
       "loading": "Hataların inceleniyor…",
       "subtitle": "Zorluk alanların:",
       "errors": "hata",
+      "hint_answers": "{n} yanıt ipucuyla",
       "mastery_progress": "Ustalık ilerlemesi",
       "cta": "Uyarlanabilir derse başla",
       "tag": {
@@ -1788,6 +1789,7 @@
       "stars_aria": "3 yıldızdan {n}",
       "time": "Süre",
       "minutes": "{n} dk",
+      "hints_used": "Kullanılan ipuçları",
       "breakdown_heading": "Alıştırma dökümü",
       "breakdown_correct_answer": "Doğru cevap: {answer}",
       "breakdown_unattempted": "Denenmedi",
@@ -2437,7 +2439,12 @@
     "cache_clear": "Önbelleği temizle",
     "cache_clear_confirm": "Çevrimdışı önbellek temizlensin mi?",
     "cache_clear_action": "Evet, temizle",
-    "cache_cleared": "Çevrimdışı önbellek temizlendi."
+    "cache_cleared": "Çevrimdışı önbellek temizlendi.",
+    "update": {
+      "message": "Yeni bir sürüm mevcut.",
+      "action": "Güncelle",
+      "later": "Sonra"
+    }
   },
   "share": {
     "pr": {
@@ -2631,6 +2638,9 @@
     "details": "Öge ayrıntıları",
     "hide_details": "Ayrıntıları gizle",
     "element_mastered": "Pekiştirildi",
+    "attempt_correct": "doğru",
+    "attempt_wrong": "yanlış",
+    "attempt_trajectory": "{n}. deneme: {outcome}",
     "element_due": "Şimdi zamanı",
     "element_scheduled": "Planlandı",
     "element_meta": "Seri {streak} · {errors} hata",

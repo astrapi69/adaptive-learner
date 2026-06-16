@@ -296,6 +296,7 @@ dashboard:
     loading: "Ανάλυση των λαθών σου…"
     subtitle: "Οι προκλήσεις σου:"
     errors: "λάθη"
+    hint_answers: "{n} απαντήσεις με υπόδειξη"
     mastery_progress: "Πρόοδος κατάκτησης"
     cta: "Έναρξη προσαρμοστικού μαθήματος"
     tag:
@@ -1652,6 +1653,7 @@ lesson:
     stars_aria: "{n} από 3 αστέρια"
     time: "Χρόνος"
     minutes: "{n} λεπτά"
+    hints_used: "Υποδείξεις που χρησιμοποιήθηκαν"
     breakdown_heading: "Ανάλυση ασκήσεων"
     breakdown_correct_answer: "Σωστή απάντηση: {answer}"
     breakdown_unattempted: "Δεν επιχειρήθηκε"
@@ -2225,6 +2227,10 @@ pwa:
   cache_clear_confirm: "Εκκαθάριση της προσωρινής μνήμης;"
   cache_clear_action: "Ναι, εκκαθάριση"
   cache_cleared: "Η προσωρινή μνήμη εκκαθαρίστηκε."
+  update:
+    message: "Διαθέσιμη νέα έκδοση."
+    action: "Ενημέρωση"
+    later: "Αργότερα"
 share:
   pr:
     preparing: "Προετοιμασία αποθετηρίου..."
@@ -2417,6 +2423,9 @@ srs:
   details: "Λεπτομέρειες στοιχείου"
   hide_details: "Απόκρυψη λεπτομερειών"
   element_mastered: "Κατακτημένο"
+  attempt_correct: "σωστό"
+  attempt_wrong: "λάθος"
+  attempt_trajectory: "Προσπάθεια {n}: {outcome}"
   element_due: "Εκκρεμεί τώρα"
   element_scheduled: "Προγραμματισμένο"
   element_meta: "Σερί {streak} · {errors} λάθη"

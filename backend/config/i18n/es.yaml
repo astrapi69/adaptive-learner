@@ -296,6 +296,7 @@ dashboard:
     loading: "Analizando tus errores…"
     subtitle: "Tus áreas de desafío:"
     errors: "errores"
+    hint_answers: "{n} respuestas con pista"
     mastery_progress: "Progreso de dominio"
     cta: "Iniciar lección adaptativa"
     tag:
@@ -1652,6 +1653,7 @@ lesson:
     stars_aria: "{n} de 3 estrellas"
     time: "Tiempo"
     minutes: "{n} min"
+    hints_used: "Pistas usadas"
     breakdown_heading: "Detalle de ejercicios"
     breakdown_correct_answer: "Respuesta correcta: {answer}"
     breakdown_unattempted: "Sin intentar"
@@ -2225,6 +2227,10 @@ pwa:
   cache_clear_confirm: "¿Vaciar la caché sin conexión?"
   cache_clear_action: "Sí, vaciar"
   cache_cleared: "Caché sin conexión vaciada."
+  update:
+    message: "Hay una nueva versión disponible."
+    action: "Actualizar"
+    later: "Más tarde"
 share:
   pr:
     preparing: "Preparando el repositorio..."
@@ -2417,6 +2423,9 @@ srs:
   details: "Detalles del elemento"
   hide_details: "Ocultar detalles"
   element_mastered: "Dominado"
+  attempt_correct: "correcto"
+  attempt_wrong: "incorrecto"
+  attempt_trajectory: "Intento {n}: {outcome}"
   element_due: "Pendiente ahora"
   element_scheduled: "Programado"
   element_meta: "Racha {streak} · {errors} errores"

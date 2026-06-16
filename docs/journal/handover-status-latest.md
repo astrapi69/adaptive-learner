@@ -1,58 +1,72 @@
 # Handover / Status Report
 
-_Last updated: 2026-06-14. Overwritten on each status pass — this file is always the latest snapshot._
+_Last updated: 2026-06-16. Overwritten on each status pass — this file is always the latest snapshot._
 
 ## 1. HEAD + version
 
-- **Release:** **v1.79.0 SHIPPED** (minor — canonical `backend/pyproject.toml` = `1.79.0`).
-  Tag `v1.79.0` on `main`, GitHub Release published, merged back to `develop`.
+- **Release:** **v1.81.0 SHIPPED** (minor — the biggest feature release of the
+  project; canonical `backend/pyproject.toml` = `1.81.0`). Tag `v1.81.0` on
+  `main` (`1a7816a7 Release v1.81.0`), GitHub Release published, merged back to
+  `develop` (`804f7a85`). Release branch deleted (local + remote).
 - **Branch:** `develop` is the active branch (gitflow #334); `main` holds the
-  v1.79.0 release tag. Release branch deleted.
-- **Previous release:** v1.78.0 (maintenance / code-hygiene — complexity
-  burn-down + governance + flaky-test fixes).
+  v1.81.0 release tag.
+- **Previous release:** v1.80.0 (EXP-026 user-lesson folding into the content
+  tree + EXP-025 book companion + user profile picture).
 - **Async CI on the tag/push:** launcher builds (Linux/macOS/Windows) on the
-  `v1.79.0` tag + GH-Pages deploy on develop were triggered at release time;
+  `v1.81.0` tag + GH-Pages deploy on develop were triggered at release time;
   these complete on their own and do not gate the release.
 
-## 2. Test counts (re-collected 2026-06-14)
+## 2. Test counts (v1.79.0 baseline — re-collect for v1.81.0)
 
-| Suite | Count | How collected |
+| Suite | Count (v1.79.0 baseline) | How collected |
 |---|---|---|
-| Backend (pytest) | **1215** | `cd backend && poetry run pytest --collect-only -q` |
-| Plugins (13 suites, pytest) | **1018** | per-plugin `pytest --collect-only` from the backend env |
-| Frontend (Vitest) | **4080 passed** | `cd frontend && npx vitest run` (353 files, all green) |
-| **Total** | **6313** | — |
+| Backend (pytest) | **1215+** | `cd backend && poetry run pytest --collect-only -q` |
+| Plugins (13 suites, pytest) | **1018+** | per-plugin `pytest --collect-only` from the backend env |
+| Frontend (Vitest) | **4285+ passed** | `cd frontend && npx vitest run` |
 
-Per-plugin: ai-anthropic 35, ai-gemini 34, ai-openai 32, anki 20, assessment 110,
-content-loader 270, gamification 55, learning-repo 53, missions 41, notebooklm 27,
-session 219, tools 58, tracking 64.
+The table is the last precisely-collected baseline (v1.79.0). v1.81.0 added many
+feature + component tests on top — the gamification dashboard-API tests
+(`test_gamification_dashboard_api.py`), the statistics / SRS / hints / favorites /
+review / offline / shortcuts / username feature tests, the avatar-crop tests, and
+a large new `shared/` component suite. The full **`make release-test` gate is
+green** (incl. **dexie-smoke 87 passed**, the gate that caught and verified the
+mid-lesson-motivation-toast fix below). Re-collect exact counts via the commands
+above. TypeScript `tsc --noEmit` clean; ESLint clean; full Playwright smoke runs
+separately (Aster runs E2E).
 
-TypeScript `tsc --noEmit` clean; ESLint clean; Dexie-mode Playwright gate 88 passed.
-Full Playwright smoke runs separately (Aster runs E2E).
+## 3. v1.81.0 contents (commits since v1.80.0, 31 + release commits)
 
-## 3. v1.79.0 contents (commits since v1.78.0, 31 total)
+The biggest feature release of the project. Full detail in
+`changelog/releases/v1.81.0.md`.
 
-- **Features:**
-  - **XP visibility (#505 / PR #510)** — persistent header badge (`NavXpBadge`,
-    both storage modes, live on route/focus/celebration) + `+N XP`
-    lesson-summary reward pill (same parity-tested formula as the award path) +
-    a new generic props-driven `shared/XpBadge`. i18n in 8 languages.
-  - **Bidirectional matching selection (#507 / PR #509)** — a pair can be
-    started from the B (right) column, not only A → B.
-- **Fixed:** **P1** — matching scored by tile index, not value, breaking
-  duplicate-pair exercises (#480 / PR #481).
-- **Changed:**
-  - **Complexity burn-down complete** — `validateGeneratedLesson` the final
-    offender (#497); last baseline entries dropped (#498–#504);
-    `.complexity-baseline` empty.
-  - **Radon hard gate Phase 2** — blocks cc > 20, warns > 15 (#494 / PR #495).
-  - **Plugin-tests CI job** — runs `make test-plugins` (the 1018-test suite),
-    Goal A of #434 (#471).
-  - **Reusability policy + shared primitives** — `.claude/rules/reusability.md`
-    (#474 / PR #477); extracted `ListRow` (#460), `ProgressBar` (#462),
-    `LessonStepNav` (#476), `XpBadge` (#510).
+- **Features:** Learning Statistics page + activity heatmap (#584); SRS
+  due-reviews visualization (#592); staged auto-hint system (#595); lesson
+  favorites (#598); richer error/review UX — answer diff + explanations +
+  summary (#602); Dashboard gamification — XP/streaks/badges with reusable
+  `ProgressRing`/`StreakCalendar`/`BadgeGrid` (#583); lesson-play UX —
+  `AnimatedCounter`/`FeedbackPulse`/mid-lesson motivation (#589); offline UX —
+  offline + sync-status badges, download progress, pending-sync, install (#605);
+  global keyboard-shortcuts + help overlay (#587); **Hindi as the 9th UI
+  language** + Devanagari font stack (#571); searchable LanguagePicker (#568);
+  event-recording / error-report system EXP-028 (#566); interactive avatar crop
+  dialog (#560); Settings sidebar/hamburger navigation (#549); editable display
+  name in Settings>Profile (#579); gamification dashboard API `/api/gamification/*`
+  (#573); recommended-repos.json live (#574); 20+ reusable `shared/` components.
+- **Fixed:** P1 iPhone Settings menu blocked header navigation (#597); crop image
+  collapsed below the circle — global `img{max-width}` vs layered `max-w-none`
+  (#578); Settings content width + Data-card overflow (#556); develop unblockers
+  (#591, #601); **mid-lesson motivation toast blocked the lesson footer buttons**
+  — found by the release-gate's dexie-smoke (it had slipped past PR CI now that
+  dexie-smoke is nightly), fixed with a `notify.info` pass-through option
+  (pointer-events:none) on the release branch.
+- **Changed / CI:** CI night-shift — security/coverage/content-stats/complexity-
+  report moved off PRs to a daily/weekly schedule (#552/#576).
+- **Security:** starlette → 1.3.1 (CVE-2026-54282/54283, #607).
+- **Docs:** EXP-027 i18n strategy (reworked), EXP-028 event recording, EXP-029
+  media reciprocity (#608), **EXP-030 multi-user strategy (#609)**.
 
-No schema / API / data-model change.
+No schema / API / data-model change beyond the additive gamification
+read-endpoints.
 
 ## 4. Reusable `shared/` primitives (reusability policy, #477)
 

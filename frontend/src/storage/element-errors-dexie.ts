@@ -17,6 +17,7 @@
 import {getDb} from "./db";
 import type {ElementErrorRow} from "./db";
 import type {
+    AttemptRecord,
     ElementAttempt,
     ElementError,
     ReviewQueueItem,
@@ -66,9 +67,30 @@ function rowToWire(row: ElementErrorRow): ElementError {
         last_attempt_at: row.last_attempt_at,
         mastered: row.mastered,
         mastered_at: row.mastered_at,
+        hint_used: row.hint_used ?? false,
+        hint_used_count: row.hint_used_count ?? 0,
+        attempt_count: row.attempt_count ?? 0,
+        attempt_history: row.attempt_history ?? [],
         created_at: row.created_at,
         updated_at: row.updated_at,
     };
+}
+
+/** #603 Smart Review Queue — keep the last N attempts per element. */
+export const MAX_ATTEMPT_HISTORY = 10;
+
+function appendAttemptHistory(
+    existing: AttemptRecord[] | undefined,
+    attempt: ElementAttempt,
+    nowIso: string,
+): AttemptRecord[] {
+    const next = [...(existing ?? [])];
+    next.push({
+        correct: attempt.correct,
+        hint_used: attempt.hint_used ?? false,
+        at: nowIso,
+    });
+    return next.slice(-MAX_ATTEMPT_HISTORY);
 }
 
 function applyTransition(
@@ -96,6 +118,12 @@ function applyTransition(
             last_attempt_at: nowIso,
             mastered: false,
             mastered_at: null,
+            // #594 Hint Economy — latest hint flag + lifetime count.
+            hint_used: attempt.hint_used ?? false,
+            hint_used_count: attempt.hint_used ? 1 : 0,
+            // #603 Smart Review Queue — first attempt + history seed.
+            attempt_count: 1,
+            attempt_history: appendAttemptHistory(undefined, attempt, nowIso),
             created_at: nowIso,
             updated_at: nowIso,
         };
@@ -108,6 +136,19 @@ function applyTransition(
     next.correct_answer = attempt.correct_answer ?? "";
     next.last_attempt_at = nowIso;
     next.updated_at = nowIso;
+    // #594 Hint Economy — latest attempt's hint flag drives the SRS
+    // interval; the count accumulates for the statistic.
+    next.hint_used = attempt.hint_used ?? false;
+    if (attempt.hint_used) {
+        next.hint_used_count = (next.hint_used_count ?? 0) + 1;
+    }
+    // #603 Smart Review Queue — bump the attempt count + ring buffer.
+    next.attempt_count = (next.attempt_count ?? 0) + 1;
+    next.attempt_history = appendAttemptHistory(
+        next.attempt_history,
+        attempt,
+        nowIso,
+    );
 
     if (attempt.correct) {
         next.correct_streak += 1;
@@ -202,9 +243,16 @@ export function intervalDaysForStreak(correctStreak: number): number {
     return 7;
 }
 
+/** #594 Hint Economy — a hint-assisted answer is weaker, so the next
+ *  review comes sooner. The base interval is multiplied by this factor
+ *  when the element's last attempt used a hint. Mirrors the backend
+ *  ``element_srs.HINT_INTERVAL_FACTOR``. */
+export const HINT_INTERVAL_FACTOR = 0.5;
+
 function _addDays(iso: string, days: number): string {
-    const d = new Date(iso);
-    d.setUTCDate(d.getUTCDate() + days);
+    // Millisecond arithmetic so fractional days (the #594 hint factor
+    // shortens an interval to e.g. 0.5d) are honoured exactly.
+    const d = new Date(new Date(iso).getTime() + days * 86_400_000);
     return d.toISOString();
 }
 
@@ -212,7 +260,9 @@ function _projectReviewItem(
     row: ElementErrorRow,
     nowIso: string,
 ): ReviewQueueItem {
-    const interval = intervalDaysForStreak(row.correct_streak);
+    const interval =
+        intervalDaysForStreak(row.correct_streak) *
+        (row.hint_used ? HINT_INTERVAL_FACTOR : 1.0);
     const suggested = _addDays(row.last_attempt_at, interval);
     return {
         id: row.id,
@@ -231,6 +281,8 @@ function _projectReviewItem(
         last_attempt_at: row.last_attempt_at,
         suggested_review_at: suggested,
         overdue: suggested <= nowIso,
+        attempt_count: row.attempt_count ?? 0,
+        attempt_history: row.attempt_history ?? [],
     };
 }
 
@@ -239,6 +291,8 @@ export interface ComputeReviewQueueOpts {
     /** Injectable clock for deterministic tests. Defaults
      *  to ``new Date().toISOString()``. */
     nowIso?: string;
+    /** #603 — cap the returned list (a review session passes 20). */
+    limit?: number;
 }
 
 export async function computeReviewQueueDexie(
@@ -261,20 +315,27 @@ export async function computeReviewQueueDexie(
     }
     rows = rows.filter((r) => !r.mastered);
     const items = rows.map((r) => _projectReviewItem(r, nowIso));
-    // Sort: overdue first → weighted priority desc → last_error_at
-    // desc. EXP-018 / Phase 62: productive errors are weighted 1.2x
-    // (harder, needs more practice). Mirrors the backend
-    // ``element_srs._sort_key``.
+    // Sort (mirrors the backend ``element_srs._sort_key``, #603):
+    // overdue first → weakness tier (wrong > almost-right > correct) →
+    // weighted error frequency desc → OLDEST error first. EXP-018:
+    // productive errors are weighted 1.2x (harder, needs more practice).
     items.sort((a, b) => {
         if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
+        const ta = weaknessTier(a);
+        const tb = weaknessTier(b);
+        if (ta !== tb) return tb - ta;
         const pa = _priorityScore(a);
         const pb = _priorityScore(b);
         if (pa !== pb) return pb - pa;
-        const lhs = a.last_error_at ?? "";
-        const rhs = b.last_error_at ?? "";
+        // Oldest error first: ascending last_error_at (no error → last).
+        const lhs = a.last_error_at ?? "￿";
+        const rhs = b.last_error_at ?? "￿";
         if (lhs === rhs) return 0;
-        return lhs < rhs ? 1 : -1;
+        return lhs < rhs ? -1 : 1;
     });
+    if (opts.limit !== undefined && opts.limit >= 0) {
+        return items.slice(0, opts.limit);
+    }
     return items;
 }
 
@@ -287,4 +348,15 @@ function _priorityScore(item: ReviewQueueItem): number {
     const weight =
         item.direction === "source_to_target" ? PRODUCTIVE_WEIGHT : 1.0;
     return item.error_count * weight;
+}
+
+/** #603 Smart Review Queue — weakness tier so the queue orders
+ *  ``wrong > almost-right > correct``. Mirrors the backend
+ *  ``element_srs.weakness_tier``:
+ *  2 = wrong (streak 0), 1 = almost-right (recovered after errors),
+ *  0 = clean. */
+export function weaknessTier(item: ReviewQueueItem): number {
+    if (item.correct_streak === 0) return 2;
+    if (item.error_count > 0) return 1;
+    return 0;
 }

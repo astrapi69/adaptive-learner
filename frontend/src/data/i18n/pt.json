@@ -313,6 +313,7 @@
       "loading": "A analisar os teus erros…",
       "subtitle": "Os teus desafios:",
       "errors": "erros",
+      "hint_answers": "{n} respostas com dica",
       "mastery_progress": "Progresso de domínio",
       "cta": "Iniciar lição adaptativa",
       "tag": {
@@ -1788,6 +1789,7 @@
       "stars_aria": "{n} de 3 estrelas",
       "time": "Tempo",
       "minutes": "{n} min",
+      "hints_used": "Dicas usadas",
       "breakdown_heading": "Detalhe dos exercícios",
       "breakdown_correct_answer": "Resposta certa: {answer}",
       "breakdown_unattempted": "Não tentado",
@@ -2437,7 +2439,12 @@
     "cache_clear": "Limpar cache",
     "cache_clear_confirm": "Limpar o cache off-line?",
     "cache_clear_action": "Sim, limpar",
-    "cache_cleared": "Cache off-line limpo."
+    "cache_cleared": "Cache off-line limpo.",
+    "update": {
+      "message": "Há uma nova versão disponível.",
+      "action": "Atualizar",
+      "later": "Mais tarde"
+    }
   },
   "share": {
     "pr": {
@@ -2631,6 +2638,9 @@
     "details": "Detalhes do elemento",
     "hide_details": "Ocultar detalhes",
     "element_mastered": "Dominado",
+    "attempt_correct": "correto",
+    "attempt_wrong": "errado",
+    "attempt_trajectory": "Tentativa {n}: {outcome}",
     "element_due": "Pendente agora",
     "element_scheduled": "Agendado",
     "element_meta": "Sequência {streak} · {errors} erros",

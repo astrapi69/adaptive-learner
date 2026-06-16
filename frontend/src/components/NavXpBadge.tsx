@@ -26,6 +26,7 @@ import XpBadge from "../shared/XpBadge";
 import { useI18n } from "../hooks/useI18n";
 import { readLearnerState } from "../lib/learnerState";
 import { subscribeCelebration } from "../lib/praise/celebration-bus";
+import { XP_SPENT_EVENT } from "../lib/gamification/xp-spent-event";
 import { getStorage } from "../storage";
 import type { CelebrationType } from "../lib/praise/celebration-bus";
 import type { XPState } from "../storage/types";
@@ -45,6 +46,8 @@ export default function NavXpBadge() {
   const { t } = useI18n();
   const { pathname } = useLocation();
   const [state, setState] = useState<XPState | null>(null);
+  // #594 Hint Economy — briefly flash the badge red when XP is spent.
+  const [spent, setSpent] = useState(false);
 
   useEffect(() => {
     const userId = readLearnerState().userId;
@@ -53,6 +56,7 @@ export default function NavXpBadge() {
       return;
     }
     let cancelled = false;
+    let flashTimer: ReturnType<typeof setTimeout> | undefined;
     async function refresh() {
       try {
         const next = await getStorage().gamification.getState(userId!);
@@ -67,12 +71,24 @@ export default function NavXpBadge() {
     // another tab) and whenever an XP-affecting celebration fires.
     const onFocus = () => void refresh();
     window.addEventListener("focus", onFocus);
+    const onSpent = () => {
+      void refresh();
+      if (cancelled) return;
+      setSpent(true);
+      if (flashTimer) clearTimeout(flashTimer);
+      flashTimer = setTimeout(() => {
+        if (!cancelled) setSpent(false);
+      }, 700);
+    };
+    window.addEventListener(XP_SPENT_EVENT, onSpent);
     const unsubscribe = subscribeCelebration((event) => {
       if (XP_AFFECTING.has(event.type)) void refresh();
     });
     return () => {
       cancelled = true;
+      if (flashTimer) clearTimeout(flashTimer);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener(XP_SPENT_EVENT, onSpent);
       unsubscribe();
     };
   }, [pathname]);
@@ -84,8 +100,9 @@ export default function NavXpBadge() {
   return (
     <NavLink
       to="/dashboard"
-      className="nav-xp-badge"
+      className={`nav-xp-badge${spent ? " nav-xp-badge--spent" : ""}`}
       data-testid="nav-xp-badge"
+      data-spent={spent ? "true" : undefined}
       title={t("gamification.xp_header_tooltip", "Your experience points")}
       aria-label={t(
         "gamification.xp_header_aria",

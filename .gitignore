@@ -21,6 +21,11 @@ htmlcov/
 coverage.xml
 frontend/coverage/
 
+# Test Impact Analysis — pytest-testmon dependency DB (#615).
+# Local artifact + CI cache only; never committed.
+.testmondata
+.testmondata-*
+
 # Environment
 .env
 
@@ -95,6 +100,7 @@ frontend/dev-dist/
 # Playwright results
 /e2e/test-results/
 /e2e/playwright-report/
+/e2e/playwright-report-manual/
 tmp/
 
 # Claude Code runtime artifacts (per-session lock + scheduled-task state).

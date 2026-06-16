@@ -313,6 +313,7 @@
       "loading": "Analyse de tes erreurs…",
       "subtitle": "Tes défis :",
       "errors": "erreurs",
+      "hint_answers": "{n} réponses avec indice",
       "mastery_progress": "Progression de maîtrise",
       "cta": "Démarrer une leçon adaptative",
       "tag": {
@@ -1788,6 +1789,7 @@
       "stars_aria": "{n} étoiles sur 3",
       "time": "Temps",
       "minutes": "{n} min",
+      "hints_used": "Indices utilisés",
       "breakdown_heading": "Détail des exercices",
       "breakdown_correct_answer": "Bonne réponse : {answer}",
       "breakdown_unattempted": "Non tentée",
@@ -2437,7 +2439,12 @@
     "cache_clear": "Vider le cache",
     "cache_clear_confirm": "Vider le cache hors ligne ?",
     "cache_clear_action": "Oui, vider",
-    "cache_cleared": "Cache hors ligne vidé."
+    "cache_cleared": "Cache hors ligne vidé.",
+    "update": {
+      "message": "Une nouvelle version est disponible.",
+      "action": "Mettre à jour",
+      "later": "Plus tard"
+    }
   },
   "share": {
     "pr": {
@@ -2631,6 +2638,9 @@
     "details": "Détails de l'élément",
     "hide_details": "Masquer les détails",
     "element_mastered": "Maîtrisé",
+    "attempt_correct": "correct",
+    "attempt_wrong": "incorrect",
+    "attempt_trajectory": "Tentative {n} : {outcome}",
     "element_due": "À revoir maintenant",
     "element_scheduled": "Planifié",
     "element_meta": "Série {streak} · {errors} erreurs",

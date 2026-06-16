@@ -27,6 +27,18 @@ Gesamtgefühl des Lernflusses.
 > merge-kritisch fehl, gehört er in die Nachtschicht, nicht auf den
 > `pull_request`-Trigger.
 
+> **Automatisierung (#616):** Der Großteil dieses Plans ist als
+> Playwright-Suite unter `e2e/manual-automation/` automatisiert (Page-Object-
+> Pattern, gegen den GitHub-Pages-Shape-Dexie-Build, deterministisch über einen
+> gemockten Content-Fixture). Sie deckt Session 1 (Onboarding), 2 (Lernflow),
+> 3 (Content/Repos), 4 (Settings/Backup inkl. Backup-Round-Trip), 5 (Mobile),
+> 7 (a11y/axe) und 8 (Tastenkürzel) ab. Lauf: `make test-manual-automation`
+> (täglich + `workflow_dispatch` + `release/**`, aggregiert in
+> `make release-test`). **Manuell bleibt** (nicht zuverlässig automatisierbar):
+> iOS-Safari-Zoom, das „Gesamtgefühl" des Lernflusses, die visuelle
+> Theme-Bewertung, die Farbenblind-Prüfung, der strikte Tab-Fokus-Trap im
+> Dialog (Headless-Fokus-Timing) und exploratives Testen.
+
 ## So wird getestet
 
 - Jeder Testfall hat eine Checkbox. Arbeite eine Session nach der
@@ -41,6 +53,15 @@ Gesamtgefühl des Lernflusses.
 - Teste die öffentliche GitHub-Pages-Version
   (`https://astrapi69.github.io/adaptive-learner/`) im
   Dexie-/Browser-Modus, sofern nicht anders angegeben.
+
+> **Warum manuell, trotz CI?** Auf Pull Requests läuft die CI mit
+> Test Impact Analysis — nur die von der Änderung betroffenen Tests
+> (Frontend `vitest --changed`, Backend `pytest --testmon`, #615). Die
+> **volle** automatisierte Suite läuft nachts (04:00 UTC) und vor jedem
+> Release (`make release-test`, inkl. Dexie-Smoke). Dieser manuelle
+> Testplan ist das menschliche Sicherheitsnetz für Dinge, die kein
+> automatischer Lauf abdeckt (Layout, Haptik, echte Geräte). Vor dem
+> Release gilt: volle Suite grün **und** Session 1-4 grün.
 
 ---
 

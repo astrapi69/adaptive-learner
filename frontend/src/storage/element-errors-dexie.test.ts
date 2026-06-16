@@ -18,6 +18,7 @@ import {beforeEach, describe, expect, it} from "vitest";
 
 import {_resetDbForTests, getDb} from "./db";
 import {
+    HINT_INTERVAL_FACTOR,
     MASTERY_THRESHOLD,
     computeReviewQueueDexie,
     intervalDaysForStreak,
@@ -55,6 +56,101 @@ beforeEach(async () => {
 describe("Dexie elementErrors: MASTERY_THRESHOLD contract", () => {
     it("exports the same threshold the backend uses (3)", () => {
         expect(MASTERY_THRESHOLD).toBe(3);
+    });
+});
+
+describe("Dexie elementErrors: #594 hint economy", () => {
+    it("tracks hint_used + accumulates hint_used_count", async () => {
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: false, hint_used: false}),
+        ]);
+        let rows = await listElementErrorsDexie(USER);
+        expect(rows[0].hint_used).toBe(false);
+        expect(rows[0].hint_used_count).toBe(0);
+
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: false, hint_used: true}),
+        ]);
+        rows = await listElementErrorsDexie(USER);
+        expect(rows[0].hint_used).toBe(true);
+        expect(rows[0].hint_used_count).toBe(1);
+
+        // A hint-free attempt clears the flag but holds the count.
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: true, hint_used: false}),
+        ]);
+        rows = await listElementErrorsDexie(USER);
+        expect(rows[0].hint_used).toBe(false);
+        expect(rows[0].hint_used_count).toBe(1);
+    });
+
+    it("halves the review interval for a hint-assisted answer", async () => {
+        expect(HINT_INTERVAL_FACTOR).toBe(0.5);
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: false, hint_used: true}),
+        ]);
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue).toHaveLength(1);
+        const last = new Date(queue[0].last_attempt_at).getTime();
+        const suggested = new Date(queue[0].suggested_review_at).getTime();
+        // streak 0 → 1d band, halved → 0.5d = 12h.
+        expect(suggested - last).toBeCloseTo(0.5 * 86_400_000, -3);
+    });
+});
+
+describe("Dexie elementErrors: #603 smart review queue", () => {
+    it("tracks attempt_count + a 10-entry history ring buffer", async () => {
+        for (let n = 0; n < 12; n++) {
+            await recordElementAttemptsDexie(USER, [
+                attempt({correct: n % 2 === 0}),
+            ]);
+        }
+        const rows = await listElementErrorsDexie(USER);
+        expect(rows[0].attempt_count).toBe(12);
+        expect(rows[0].attempt_history).toHaveLength(10);
+        // Last recorded attempt was n=11 → odd → wrong.
+        expect(rows[0].attempt_history?.at(-1)?.correct).toBe(false);
+    });
+
+    it("orders wrong before almost-right (weakness tier)", async () => {
+        // 'almost' recovered after 2 errors (streak 1, errors 2).
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "almost", correct: false}),
+        ]);
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "almost", correct: false}),
+        ]);
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "almost", correct: true}),
+        ]);
+        // 'wrong' — a single wrong (streak 0, errors 1).
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "wrong", correct: false}),
+        ]);
+        // Force both overdue.
+        const past = new Date(Date.now() - 10 * 86_400_000).toISOString();
+        const db = getDb();
+        await db.elementErrors.toCollection().modify((r) => {
+            r.last_attempt_at = past;
+        });
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue[0].element_key).toBe("wrong");
+        expect(queue[1].element_key).toBe("almost");
+    });
+
+    it("caps the queue at the requested limit", async () => {
+        for (let i = 0; i < 5; i++) {
+            await recordElementAttemptsDexie(USER, [
+                attempt({element_key: `el-${i}`, correct: false}),
+            ]);
+        }
+        expect(await computeReviewQueueDexie(USER)).toHaveLength(5);
+        expect(
+            await computeReviewQueueDexie(USER, {limit: 3}),
+        ).toHaveLength(3);
+        expect(
+            await computeReviewQueueDexie(USER, {limit: 0}),
+        ).toHaveLength(0);
     });
 });
 

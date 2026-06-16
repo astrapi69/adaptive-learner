@@ -22,11 +22,12 @@ interval than a never-mastered element. v1 doesn't track
 relapse history; mastered → wrong → streak=0 → 1-day band,
 same as a brand-new error.
 
-Priority order within the queue:
+Priority order within the queue (#603):
 
     1. overdue first (suggested_review_at <= now)
-    2. then error_count desc (more errors = more urgent)
-    3. then last_error_at desc (recent failures first)
+    2. then weakness tier desc (wrong > almost-right > correct)
+    3. then weighted error_count desc (more errors = more urgent)
+    4. then last_error_at ASC (oldest neglected mistakes first)
 
 Mastered elements are excluded via the service's
 ``list_for_user(..., include_mastered=False)`` filter; this
@@ -35,7 +36,8 @@ module just maps the active rows.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
 from app.models import ElementError
@@ -64,6 +66,12 @@ _INTERVAL_DAYS_BY_STREAK: dict[int, int] = {
     1: 3,
     2: 7,
 }
+
+# #594 Hint Economy — a hint-assisted answer is weaker, so the next
+# review comes sooner. The base interval is multiplied by this factor
+# when the element's last attempt used a hint. Mirrored in the Dexie
+# scheduler (``element-errors-dexie.ts``).
+HINT_INTERVAL_FACTOR: float = 0.5
 
 
 def interval_days_for_streak(correct_streak: int) -> int:
@@ -105,12 +113,31 @@ class ReviewQueueItem:
     last_attempt_at: datetime
     suggested_review_at: datetime
     overdue: bool
+    # #603 Smart Review Queue — surfaced for the trajectory display +
+    # weakness tiering. Defaulted so pre-#603 construction sites still work.
+    attempt_count: int = 0
+    attempt_history: list[dict] = field(default_factory=list)
+
+
+def _parse_attempt_history(raw: str | None) -> list[dict]:
+    """Parse the JSON ring-buffer column into a list (never raises)."""
+    if not raw:
+        return []
+    try:
+        parsed = json.loads(raw)
+    except (ValueError, TypeError):
+        return []
+    return parsed if isinstance(parsed, list) else []
 
 
 def _project(row: ElementError, now: datetime) -> ReviewQueueItem:
     interval = interval_days_for_streak(row.correct_streak)
+    # #594 Hint Economy — shorten the interval for a hint-assisted answer.
+    effective_interval = interval * (
+        HINT_INTERVAL_FACTOR if getattr(row, "hint_used", False) else 1.0
+    )
     last = _ensure_utc(row.last_attempt_at)
-    suggested = last + timedelta(days=interval)
+    suggested = last + timedelta(days=effective_interval)
     return ReviewQueueItem(
         id=row.id,
         user_id=row.user_id,
@@ -128,6 +155,8 @@ def _project(row: ElementError, now: datetime) -> ReviewQueueItem:
         last_attempt_at=row.last_attempt_at,
         suggested_review_at=suggested,
         overdue=suggested <= now,
+        attempt_count=int(getattr(row, "attempt_count", 0) or 0),
+        attempt_history=_parse_attempt_history(getattr(row, "attempt_history", None)),
     )
 
 
@@ -143,21 +172,47 @@ def _priority_score(item: ReviewQueueItem) -> float:
     return item.error_count * weight
 
 
-def _sort_key(item: ReviewQueueItem) -> tuple[int, float, int]:
-    """Sort: overdue first (0 beats 1), then weighted priority
-    desc (negated), then last_error_at desc (negated via
-    min-datetime fallback). Stable tie-break by id at the
-    caller if needed."""
+def weakness_tier(item: ReviewQueueItem) -> int:
+    """#603 Smart Review Queue — rank an element's weakness so the queue
+    orders ``wrong > almost-right > correct``:
+
+    - 2 (wrong): the last answer was wrong (``correct_streak == 0``).
+    - 1 (almost right): recovered but had prior errors — e.g. the second
+      attempt was correct (``correct_streak > 0 and error_count > 0``).
+    - 0 (correct): clean so far (``error_count == 0``).
+    """
+    if item.correct_streak == 0:
+        return 2
+    if item.error_count > 0:
+        return 1
+    return 0
+
+
+def _sort_key(item: ReviewQueueItem) -> tuple[int, int, float, int]:
+    """Sort: overdue first (0 beats 1), then weakness tier desc
+    (wrong > almost-right > correct), then weighted error frequency
+    desc, then OLDEST error first (#603 — surface long-neglected
+    mistakes ahead of fresh ones)."""
     overdue_bucket = 0 if item.overdue else 1
-    last_err_for_sort = item.last_error_at or datetime.min.replace(
+    last_err_for_sort = item.last_error_at or datetime.max.replace(
         tzinfo=UTC,
     )
-    # tuples sort lexicographically — desc by negating values,
-    # desc by negating timestamp via microseconds since epoch.
+    # Oldest error first → ascending timestamp (no negation). Rows with
+    # no error sort last within their tier via the max-datetime fallback.
     last_err_us = int(
         _ensure_utc(last_err_for_sort).timestamp() * 1_000_000,
     )
-    return (overdue_bucket, -_priority_score(item), -last_err_us)
+    return (
+        overdue_bucket,
+        -weakness_tier(item),
+        -_priority_score(item),
+        last_err_us,
+    )
+
+
+# #603 Smart Review Queue — a single review session pulls at most this
+# many elements (across all lessons), so it stays focused + finishable.
+MAX_REVIEW_SESSION: int = 20
 
 
 def compute_review_queue(
@@ -166,11 +221,16 @@ def compute_review_queue(
     *,
     set_id: str | None = None,
     now: datetime | None = None,
+    limit: int | None = None,
 ) -> list[ReviewQueueItem]:
     """Project active element-error rows into a prioritised
-    review queue. Mastered elements are excluded.
+    review queue. Mastered elements are excluded; each element
+    appears once (the row identity guarantees no duplicates).
 
-    ``now`` is injectable for deterministic tests.
+    ``now`` is injectable for deterministic tests. ``limit`` caps the
+    returned list (the review SESSION uses ``MAX_REVIEW_SESSION``); the
+    unbounded queue is still available for the "N due" count by passing
+    ``limit=None``.
     """
     clock = now if now is not None else _utcnow()
     rows = element_errors_service.list_for_user(
@@ -181,4 +241,6 @@ def compute_review_queue(
     )
     items = [_project(row, clock) for row in rows]
     items.sort(key=_sort_key)
+    if limit is not None and limit >= 0:
+        items = items[:limit]
     return items

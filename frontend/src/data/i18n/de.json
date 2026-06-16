@@ -313,6 +313,7 @@
       "loading": "Deine Fehler werden analysiert…",
       "subtitle": "Deine Herausforderungen:",
       "errors": "Fehler",
+      "hint_answers": "{n} Antworten mit Tipp",
       "mastery_progress": "Beherrschungs-Fortschritt",
       "cta": "Adaptive Lektion starten",
       "tag": {
@@ -1788,6 +1789,7 @@
       "stars_aria": "{n} von 3 Sternen",
       "time": "Zeit",
       "minutes": "{n} Min",
+      "hints_used": "Tipps verwendet",
       "breakdown_heading": "Übungs-Übersicht",
       "breakdown_correct_answer": "Richtige Antwort: {answer}",
       "breakdown_unattempted": "Nicht versucht",
@@ -2437,7 +2439,12 @@
     "cache_clear": "Cache leeren",
     "cache_clear_confirm": "Offline-Cache wirklich leeren?",
     "cache_clear_action": "Ja, leeren",
-    "cache_cleared": "Offline-Cache geleert."
+    "cache_cleared": "Offline-Cache geleert.",
+    "update": {
+      "message": "Eine neue Version ist verfügbar.",
+      "action": "Aktualisieren",
+      "later": "Später"
+    }
   },
   "share": {
     "pr": {
@@ -2631,6 +2638,9 @@
     "details": "Element-Details",
     "hide_details": "Details ausblenden",
     "element_mastered": "Gemeistert",
+    "attempt_correct": "richtig",
+    "attempt_wrong": "falsch",
+    "attempt_trajectory": "Versuch {n}: {outcome}",
     "element_due": "Jetzt fällig",
     "element_scheduled": "Geplant",
     "element_meta": "Serie {streak} · {errors} Fehler",

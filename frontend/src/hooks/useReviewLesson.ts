@@ -37,6 +37,7 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {readLearnerState} from "../lib/learnerState";
 import {synthesizeReviewLesson} from "../lib/review-lesson";
+import {stampHintUsage} from "../lib/hints/hint-usage";
 import {getStorage} from "../storage";
 import type {
     ContentLesson,
@@ -118,7 +119,7 @@ export function useReviewLesson(
                 const storage = getStorage();
                 const fetchedQueue = await storage.elementErrors.reviewQueue(
                     userId,
-                    {setId},
+                    {setId, limit},
                 );
                 if (cancelled) return;
                 setQueue(fetchedQueue);
@@ -217,7 +218,7 @@ export function useReviewLesson(
             try {
                 await getStorage().elementErrors.recordBulk(
                     userId,
-                    attempts,
+                    stampHintUsage(attempts),
                 );
             } catch {
                 // Same failure-tolerance as the main viewer —

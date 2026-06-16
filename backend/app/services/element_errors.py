@@ -32,6 +32,7 @@ no plugin setting yet because nobody asked.
 
 from __future__ import annotations
 
+import json
 from collections.abc import Iterable
 from datetime import UTC, datetime
 
@@ -46,9 +47,34 @@ from app.schemas import ElementAttemptIn
 # different SRS algorithm, not a configuration tweak.
 MASTERY_THRESHOLD: int = 3
 
+# #603 Smart Review Queue — keep the last N attempts per element so the
+# UI can show the trajectory without unbounded row growth.
+MAX_ATTEMPT_HISTORY: int = 10
+
 
 def _utcnow() -> datetime:
     return datetime.now(UTC)
+
+
+def _append_attempt_history(
+    existing_json: str | None,
+    *,
+    correct: bool,
+    hint_used: bool,
+    now: datetime,
+) -> str:
+    """Append one attempt to the JSON ring buffer, capped at the last
+    ``MAX_ATTEMPT_HISTORY`` entries. Returns the new JSON string."""
+    history: list[dict[str, object]] = []
+    if existing_json:
+        try:
+            parsed = json.loads(existing_json)
+            if isinstance(parsed, list):
+                history = parsed
+        except (ValueError, TypeError):
+            history = []
+    history.append({"correct": correct, "hint_used": hint_used, "at": now.isoformat()})
+    return json.dumps(history[-MAX_ATTEMPT_HISTORY:])
 
 
 def _find_row(
@@ -100,6 +126,17 @@ def record_attempt(
             last_error_at=None if attempt.correct else now,
             mastered=False,
             mastered_at=None,
+            # #594 Hint Economy — latest hint flag + lifetime count.
+            hint_used=attempt.hint_used,
+            hint_used_count=1 if attempt.hint_used else 0,
+            # #603 Smart Review Queue — first attempt + history seed.
+            attempt_count=1,
+            attempt_history=_append_attempt_history(
+                None,
+                correct=attempt.correct,
+                hint_used=attempt.hint_used,
+                now=now,
+            ),
             created_at=now,
             updated_at=now,
         )
@@ -112,6 +149,19 @@ def record_attempt(
     row.user_answer = attempt.user_answer
     row.correct_answer = attempt.correct_answer
     row.last_attempt_at = now
+    # #594 Hint Economy — the latest attempt's hint flag drives the SRS
+    # interval; the count accumulates for the statistic.
+    row.hint_used = attempt.hint_used
+    if attempt.hint_used:
+        row.hint_used_count = int(row.hint_used_count) + 1
+    # #603 Smart Review Queue — bump the attempt count + ring buffer.
+    row.attempt_count = int(row.attempt_count) + 1
+    row.attempt_history = _append_attempt_history(
+        row.attempt_history,
+        correct=attempt.correct,
+        hint_used=attempt.hint_used,
+        now=now,
+    )
 
     if attempt.correct:
         row.correct_streak += 1

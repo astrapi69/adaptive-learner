@@ -9,25 +9,35 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.81.0** (minor release -
-  **XP visibility + bidirectional matching + complexity burn-down complete**:
-  two user-facing features land on the maintenance thread. **XP visibility**
-  (#505/#510) surfaces points where the learner sees them - a persistent header
-  badge (`NavXpBadge`, both storage modes via `gamification.getState`, live on
-  route change / focus / XP-affecting celebrations) + a `+N XP` lesson-summary
-  reward pill computed with the same parity-tested formula the award path uses;
-  built on a new generic props-driven `shared/XpBadge`. **Bidirectional matching
-  selection** (#507/#509) lets the learner start a pair from the B (right)
-  column, not only A->B. The **complexity burn-down is complete** - the
-  `validateGeneratedLesson` split was the final offender (#497) and the last
-  baseline entries dropped (#498-#504); `.complexity-baseline` is empty. The
-  **radon hard gate is Phase 2** (#494/#495: blocks cc > 20, warns > 15), a
-  **plugin-tests CI job** runs the full 1018-test plugin suite (#471), and a
-  **reusability policy** (#474/#477 + `.claude/rules/reusability.md`) governs the
-  first extracted `shared/` primitives (ListRow #460, ProgressBar #462,
-  LessonStepNav #476, XpBadge #510). Plus a **P1 matching fix** - score by
-  matched value, not index, for duplicate pairs (#480/#481). 31 commits, no
-  schema/API/data change.)
+- **Current state:** **v1.82.0** (minor release -
+  **hint economy + smart review queue + PWA update prompt + Test Impact
+  Analysis**: three learner-facing features plus a CI-speed change. The **hint
+  economy** (#611, Alembic 0030) makes hints cost XP, feed back into the SRS, and
+  show up in statistics. The **smart review queue** (#612, Alembic 0031) is
+  rebuilt around weakness tiers + per-element attempt history + a cross-lesson
+  mix capped at 20 items per session. A discreet **PWA update prompt** (#614 -
+  polled `version.json` + service-worker prompt mode) catches stale
+  GitHub-Pages/PWA builds. On the engineering side, **Test Impact Analysis**
+  (#617) runs only impacted tests on PR CI - frontend
+  `vitest run --changed origin/<base>`, backend `pytest --testmon` with
+  `.testmondata` cached - while push to develop/main, nightly, and
+  `make release-test` always run the full suite (the false-negative safety net);
+  fallback to full is automatic, never a silent skip. An **architecture-doc
+  audit** (#620) captures the Dexie data-integrity (R-M-W, unique indexes,
+  additive migrations), Dexie namespace split, and Settings sidebar/hamburger
+  patterns as rules in `.claude/rules/architecture.md`. Plus the recommended-repos
+  discovery E2E reactivated (#610) and the **manual test plan automated** - 52
+  Playwright specs across 7 sessions under `e2e/manual-automation/` + a nightly
+  workflow (#621). Additive Alembic 0030+0031 on
+  `element_errors`; Dexie schema unchanged (new fields are schemaless). 6
+  substantive commits, 81 files.)
+  v1.81.0 = (minor - **XP visibility + bidirectional matching + complexity
+  burn-down complete**: a header `NavXpBadge` + `+N XP` lesson-summary reward
+  pill on `shared/XpBadge` (#505/#510); matching start from the B column
+  (#507/#509); the last `.complexity-baseline` offenders dropped (#497-#504,
+  baseline empty); radon hard gate Phase 2 (#494/#495); a plugin-tests CI job
+  (1018 tests, #471); a reusability policy (#474/#477); and a P1 matching
+  duplicate-pair score fix (#480/#481). 31 commits, no schema/API/data change.)
   v1.78.0 = (maintenance/code-hygiene release -
   **complexity burn-down + governance + flaky-test fixes**: the grandfathered
   `.complexity-baseline` offenders decomposed one at a time under the Phase 2

@@ -120,6 +120,10 @@ export interface SrsElementDetail {
     lastAnswer: string;
     correctAnswer: string;
     lastAttemptAt: string;
+    /** #603 Smart Review Queue — total attempts on this element. */
+    attemptCount: number;
+    /** #603 — outcome of the most recent attempt (null = no history). */
+    lastAttemptCorrect: boolean | null;
 }
 
 /**
@@ -147,6 +151,13 @@ export function elementSrsDetails(
                 lastAnswer: row.user_answer ?? "",
                 correctAnswer: row.correct_answer ?? "",
                 lastAttemptAt: row.last_attempt_at,
+                attemptCount:
+                    row.attempt_count ?? row.attempt_history?.length ?? 0,
+                lastAttemptCorrect:
+                    row.attempt_history && row.attempt_history.length > 0
+                        ? row.attempt_history[row.attempt_history.length - 1]
+                              .correct
+                        : null,
             };
         })
         .sort((a, b) => {

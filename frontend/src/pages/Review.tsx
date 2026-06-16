@@ -76,6 +76,9 @@ export default function ReviewPage() {
     } = useReviewLesson({
         setId,
         title: t("review.session_title", "Review session"),
+        // #603 — a focused, finishable session: at most 20 elements,
+        // the weakest + oldest first (the queue already prioritises).
+        limit: 20,
     });
 
     // BUG P1 — single two-phase button (Check -> Weiter). The exercise

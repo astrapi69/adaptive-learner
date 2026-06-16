@@ -71,6 +71,8 @@ interface ResolvedState {
     targetSetId: string;
     /** EXP-018 / Phase 62 — receptive vs productive mastery split. */
     mastery: MasteryCounts;
+    /** #594 Hint Economy — lifetime count of answers given with a hint. */
+    hintAnswers: number;
 }
 
 export default function FocusAreasCard({userId}: FocusAreasCardProps) {
@@ -104,6 +106,10 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
                     totalErrors: analysis.total_errors,
                     targetSetId,
                     mastery: masteryCounts(errors),
+                    hintAnswers: errors.reduce(
+                        (sum, e) => sum + (e.hint_used_count ?? 0),
+                        0,
+                    ),
                 });
             } catch {
                 if (!cancelled) setState("empty");
@@ -158,6 +164,17 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
                             "{productive}",
                             String(state.mastery.productive),
                         )}
+                </p>
+            )}
+            {state.hintAnswers > 0 && (
+                <p
+                    className="muted focus-areas-hint-answers"
+                    data-testid="focus-areas-hint-answers"
+                >
+                    {t(
+                        "dashboard.focus_areas.hint_answers",
+                        "{n} answers with a hint",
+                    ).replace("{n}", String(state.hintAnswers))}
                 </p>
             )}
             {state.tags.length > 0 && (

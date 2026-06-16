@@ -23,6 +23,31 @@ import pkg from "./package.json" with {type: "json"};
  */
 const base = (process.env.VITE_BASE as string) || "/";
 
+/**
+ * #613 — emit a static ``version.json`` (``{version, buildHash}``) into
+ * the build root so the running app can fetch it (``cache: "no-store"``)
+ * and detect when a newer build is deployed. JSON is intentionally NOT in
+ * the Workbox precache globs (which only match js/css/html/svg/png/ico/
+ * woff2), so it is always fetched fresh rather than served from a stale
+ * precache.
+ */
+function emitVersionJson() {
+    return {
+        name: "adaptive-learner:emit-version-json",
+        generateBundle() {
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            (this as {emitFile: (f: unknown) => void}).emitFile({
+                type: "asset",
+                fileName: "version.json",
+                source: JSON.stringify({
+                    version: pkg.version,
+                    buildHash: process.env.VITE_BUILD_HASH || "unknown",
+                }),
+            });
+        },
+    };
+}
+
 export default defineConfig({
     base,
     resolve: {
@@ -50,8 +75,14 @@ export default defineConfig({
         // docs/development/tailwind-migration.md.
         tailwindcss(),
         react(),
+        emitVersionJson(),
         VitePWA({
-            registerType: "autoUpdate",
+            // #613 — user-driven updates: the SW installs but WAITS instead
+            // of auto-reloading the tab. ``useAppUpdate`` detects the
+            // waiting worker (+ the version.json mismatch) and the
+            // UpdatePromptHost asks the user before applying. The generated
+            // SW handles a ``{type: "SKIP_WAITING"}`` message to activate.
+            registerType: "prompt",
             devOptions: {
                 enabled: true,
             },
