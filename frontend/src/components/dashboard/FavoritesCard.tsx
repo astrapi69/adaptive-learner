@@ -1,10 +1,11 @@
 /**
- * FavoritesCard — Dashboard "Your favorites" widget (#596).
+ * FavoritesCard — Dashboard "Top 5 favorites" widget (#596, #625).
  *
- * Lists the learner's bookmarked lessons (newest first) via the
+ * Lists the learner's 5 most recently bookmarked lessons via the
  * reusable shared/FavoritesList: clicking opens the lesson, the X
- * removes the bookmark. Always rendered (it carries the empty state) so
- * it doubles as the favorites view. Local-only + mode-agnostic via
+ * removes the bookmark. When more than 5 are saved a muted "+N more"
+ * line acknowledges the rest (managed via the per-lesson stars). Always
+ * rendered (it carries the empty state). Local-only + mode-agnostic via
  * useFavorites.
  */
 
@@ -20,16 +21,20 @@ export interface FavoritesCardProps {
     userId: string;
 }
 
+/** How many favorites the Dashboard card surfaces (#625 — Top 5). */
+const TOP_N = 5;
+
 export default function FavoritesCard({userId}: FavoritesCardProps) {
     const {t} = useI18n();
     const navigate = useNavigate();
     const {favorites, remove} = useFavorites(userId);
 
-    const items = favorites.map((f) => ({
+    const items = favorites.slice(0, TOP_N).map((f) => ({
         id: favoriteId(f.setId, f.filename),
         title: f.title,
         subtitle: f.setTitle || undefined,
     }));
+    const overflow = Math.max(0, favorites.length - TOP_N);
 
     const find = (id: string) =>
         favorites.find((f) => favoriteId(f.setId, f.filename) === id);
@@ -56,6 +61,17 @@ export default function FavoritesCard({userId}: FavoritesCardProps) {
                 )}
                 testId="favorites-list"
             />
+            {overflow > 0 && (
+                <p
+                    className="mt-2 text-sm text-fg-muted"
+                    data-testid="favorites-card-more"
+                >
+                    {t("favorites.card_more", "+{n} more").replace(
+                        "{n}",
+                        String(overflow),
+                    )}
+                </p>
+            )}
         </article>
     );
 }
