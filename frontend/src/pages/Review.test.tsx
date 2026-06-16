@@ -22,7 +22,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 const useReviewLessonMock = vi.fn();
 
 vi.mock("../hooks/useReviewLesson", () => ({
-    useReviewLesson: () => useReviewLessonMock(),
+    useReviewLesson: (opts: unknown) => useReviewLessonMock(opts),
 }));
 
 import ReviewPage from "./Review";
@@ -197,6 +197,50 @@ describe("ReviewPage: ready state", () => {
         expect(
             screen.getByTestId("review-summary-corrected"),
         ).toHaveTextContent("1 of 1");
+    });
+
+    it("summary suggests coming back in 2 days (#626)", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE,
+            currentStepIndex: 1,
+            sessionScoreCorrect: 1,
+            sessionScoreTotal: 1,
+        });
+        renderAtPath(VALID_PATH);
+        expect(
+            screen.getByTestId("review-summary-repeat"),
+        ).toHaveTextContent("2 days");
+    });
+
+    it("requests a full session (limit 20) by default (#628)", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE,
+            currentStepIndex: 0,
+        });
+        renderAtPath(VALID_PATH);
+        expect(useReviewLessonMock).toHaveBeenCalledWith(
+            expect.objectContaining({limit: 20}),
+        );
+    });
+
+    it("requests a quick session (limit 5) with ?quick=1 (#628)", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE,
+            currentStepIndex: 0,
+        });
+        renderAtPath(`${VALID_PATH}?quick=1`);
+        expect(useReviewLessonMock).toHaveBeenCalledWith(
+            expect.objectContaining({limit: 5}),
+        );
     });
 
     it("Previous disabled on step 0", () => {

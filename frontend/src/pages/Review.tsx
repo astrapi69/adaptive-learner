@@ -26,6 +26,7 @@ import {useEffect, useRef, useState, type ReactElement, type Ref} from "react";
 import {
     useNavigate,
     useParams,
+    useSearchParams,
     type NavigateFunction,
 } from "react-router-dom";
 
@@ -58,9 +59,12 @@ interface UrlParams {
 
 export default function ReviewPage() {
     const params = useParams<UrlParams>();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const {t} = useI18n();
     const setId = params.setId ?? "";
+    // #628 — a "quick review" is a shorter, finishable session.
+    const quick = searchParams.get("quick") === "1";
 
     const {
         status,
@@ -78,7 +82,8 @@ export default function ReviewPage() {
         title: t("review.session_title", "Review session"),
         // #603 — a focused, finishable session: at most 20 elements,
         // the weakest + oldest first (the queue already prioritises).
-        limit: 20,
+        // #628 — a quick review trims that to 5 for a fast pass.
+        limit: quick ? 5 : 20,
     });
 
     // BUG P1 — single two-phase button (Check -> Weiter). The exercise
@@ -429,6 +434,15 @@ function ReviewSummary({correct, total, onExit}: ReviewSummaryProps) {
                 {t(
                     "review.summary.note",
                     "Element scores have been updated. Mastered elements will not appear in the next session.",
+                )}
+            </p>
+            <p
+                className="review-summary-note"
+                data-testid="review-summary-repeat"
+            >
+                {t(
+                    "review.summary_repeat",
+                    "Come back in about 2 days to keep these fresh.",
                 )}
             </p>
         </ReviewSummaryView>
