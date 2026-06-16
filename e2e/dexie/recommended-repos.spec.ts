@@ -83,12 +83,13 @@ async function mockRoutes(page: Page) {
 }
 
 test.describe("EXP-023 Phase C — recommended repos + local ratings", () => {
-  // #547 — the recommended-repos discovery section is gated off until the
-  // curated catalogue is published (CATALOGUE_PUBLISHED = false in
-  // lib/content/recommended-repos.ts, commit 70108061): fetchRecommendedRepos
-  // short-circuits to [] before any fetch, so `content-repo-recommended`
-  // never renders and this flow cannot run. Un-fixme when the flag flips.
-  test.fixme("discover, one-click add, rate, browse badge", async ({ page }) => {
+  // #547 — the recommended-repos discovery section went live once the curated
+  // catalogue was published (CATALOGUE_PUBLISHED = true in
+  // lib/content/recommended-repos.ts, #574): fetchRecommendedRepos now performs
+  // the real fetch, so `content-repo-recommended` renders. The spec mocks the
+  // recommended-repos.json route deterministically (no real network), so it is
+  // independent of the live catalogue's content.
+  test("discover, one-click add, rate, browse badge", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await mockRoutes(page);
