@@ -448,6 +448,15 @@ export default function Settings() {
               cancel: t("settings.avatar_crop_cancel", "Cancel"),
               zoom: t("settings.avatar_crop_zoom", "Zoom"),
             }}
+            previewLabels={{
+              title: t("settings.avatar_preview_title", "Profile picture"),
+              change: t("settings.avatar_change", "Change picture"),
+              close: t("common.close", "Close"),
+            }}
+            avatarButtonLabel={t(
+              "settings.avatar_button_label",
+              "View or change profile picture",
+            )}
             onChange={(dataUrl) => void handleAvatarChange(dataUrl)}
             onError={(key) =>
               notify.error(t(key, "Could not use that image. Try another file."))

@@ -497,6 +497,9 @@ settings:
   avatar_crop_apply: लागू करें
   avatar_crop_cancel: रद्द करें
   avatar_crop_zoom: ज़ूम
+  avatar_preview_title: प्रोफ़ाइल चित्र
+  avatar_change: चित्र बदलें
+  avatar_button_label: प्रोफ़ाइल चित्र देखें या बदलें
   theme: थीम
   theme_description: Choose how the app looks. Auto follows your system light/dark setting.
   theme_group_recommended: अनुशंसित

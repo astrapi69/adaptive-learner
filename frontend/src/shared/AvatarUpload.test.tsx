@@ -116,4 +116,40 @@ describe("AvatarUpload", () => {
         fireEvent.click(screen.getByTestId("avatar-remove-button"));
         expect(onChange).toHaveBeenCalledWith(null);
     });
+
+    it("clicking the avatar with a picture opens the preview dialog (#638)", () => {
+        renderUpload("data:image/jpeg;base64,AAAA");
+        expect(screen.queryByTestId("avatar-preview-dialog")).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("avatar-trigger"));
+        expect(screen.getByTestId("avatar-preview-dialog")).toBeInTheDocument();
+        expect(screen.getByTestId("avatar-preview-large")).toHaveAttribute(
+            "src",
+            "data:image/jpeg;base64,AAAA",
+        );
+    });
+
+    it("clicking the avatar without a picture opens the file picker directly (#638)", () => {
+        const clickSpy = vi.spyOn(HTMLInputElement.prototype, "click");
+        renderUpload(null);
+        fireEvent.click(screen.getByTestId("avatar-trigger"));
+        expect(screen.queryByTestId("avatar-preview-dialog")).not.toBeInTheDocument();
+        expect(clickSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("Change in the preview opens the file picker and closes the preview (#638)", () => {
+        const clickSpy = vi.spyOn(HTMLInputElement.prototype, "click");
+        renderUpload("data:image/jpeg;base64,AAAA");
+        fireEvent.click(screen.getByTestId("avatar-trigger"));
+        fireEvent.click(screen.getByTestId("avatar-preview-change"));
+        expect(clickSpy).toHaveBeenCalledTimes(1);
+        expect(screen.queryByTestId("avatar-preview-dialog")).not.toBeInTheDocument();
+    });
+
+    it("Escape closes the preview dialog (#638)", () => {
+        renderUpload("data:image/jpeg;base64,AAAA");
+        fireEvent.click(screen.getByTestId("avatar-trigger"));
+        expect(screen.getByTestId("avatar-preview-dialog")).toBeInTheDocument();
+        fireEvent.keyDown(window, {key: "Escape"});
+        expect(screen.queryByTestId("avatar-preview-dialog")).not.toBeInTheDocument();
+    });
 });
