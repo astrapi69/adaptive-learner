@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-15
-**Anzahl EXPs:** 28
+**Stand:** 2026-06-16
+**Anzahl EXPs:** 29
 
 ## Kategorisierung
 
@@ -43,6 +43,7 @@
 | 027 | Internationalisierungs-Strategie (Sprach-Expansion) | Querschnitt | Zukunft | Mittel | 002, 023           |
 | 028 | User-Event-Recording (Fehlerbericht)        | Querschnitt  | laufend | Mittel | eventRecorder      |
 | 029 | Medien-Ressourcen mit Gegenseitigkeits-Prinzip | Vision    | B/C   | Mittel    | 023, 025, #141     |
+| 030 | Multi-User-Strategie (lokale Profile → Cloud)  | Querschnitt | gestuft | Mittel  | EXP-009, Sync      |
 
 ## Umsetzungsstand (Stand v1.79.0)
 
@@ -69,7 +70,10 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
   Community-Sharing), 015 (Kinder-Variante), 027 (Internationalisierungs-Strategie —
   Sprach-Expansion, Vision-Dokument für nach v1.80.0), 029 (Medien-Ressourcen mit
   Gegenseitigkeits-Prinzip — `media.yaml` analog `books.yaml` + Ökosystem-Partner;
-  Code additiv, Engpass ist die Partnergewinnung, MED-01..06 + MED-10).
+  Code additiv, Engpass ist die Partnergewinnung, MED-01..06 + MED-10),
+  030 (Multi-User-Strategie — gestuft: Stufe 1 lokale Profile additiv ab Phase 2,
+  Stufe 2 Geräte-Kopplung = Sync, Stufe 3 Cloud-Konten = EXP-009/Phase 4;
+  MU-01..05 lokal, MU-20 Cloud).
 
 ## Phasen-Definition
 
