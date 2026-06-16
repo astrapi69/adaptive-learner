@@ -50,13 +50,49 @@ jobs:
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
 
-      - name: Run backend tests
+      # Test Impact Analysis (#615): on a PR we run only the tests whose
+      # covered source changed, via pytest-testmon. The .testmondata DB is
+      # cached so successive PR runs reuse it. The key carries the run id so
+      # each run writes a FRESH cache entry; restore-keys falls back to the
+      # most recent matching prefix, keeping the DB warm + current. A
+      # cache-miss leaves no .testmondata, so testmon runs the FULL suite and
+      # builds the DB — the natural fallback (no silent skip). Push to
+      # develop/main + nightly + release always run the full suite (below).
+      - name: Restore testmon data (PR only)
+        if: github.event_name == 'pull_request'
+        uses: actions/cache@v5
+        with:
+          path: backend/.testmondata
+          key: testmon-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}-${{ github.run_id }}
+          restore-keys: |
+            testmon-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}-
+
+      - name: Run backend tests (selective on PR, full on push)
         working-directory: backend
-        # ``-q`` instead of ``-v``: 1601 tests printed verbose is
-        # noise on a green run. Test-infrastructure audit
-        # finding 0.5.4. Failures still print full traceback;
-        # ``-q`` only quietens the per-test pass logs.
-        run: poetry run pytest tests/ -q
+        # On PR: pytest --testmon runs only impacted tests (Test Impact
+        # Analysis, #615). On push to develop/main: the FULL suite, the merge
+        # gate. ``-q`` keeps the green-run log quiet (failures still print full
+        # tracebacks). testmon is order-independent, so pytest-randomly is left
+        # on. Exit code 5 ("no tests collected") is only reachable via testmon
+        # deselecting everything (nothing impacted) — treated as success, not a
+        # silent skip; the nightly full suite is the safety net for false
+        # negatives.
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "::notice::PR detected — Test Impact Analysis (pytest --testmon)"
+            set +e
+            poetry run pytest tests/ -q --testmon
+            code=$?
+            set -e
+            if [ "$code" = "5" ]; then
+              echo "::notice::testmon selected no impacted tests — OK"
+              exit 0
+            fi
+            exit $code
+          else
+            echo "::notice::Push to ${{ github.ref_name }} — FULL backend suite"
+            poetry run pytest tests/ -q
+          fi
 
   # Plugin tests (#434 Goal A): run every plugin's own suite in CI via
   # `make test-plugins`, which executes each `plugins/*/tests/` through the
@@ -72,6 +108,11 @@ jobs:
   # scope of #434, so this runs on the standard CI triggers (push / PR to
   # develop + main), which already cover plugins/** and backend/** changes.
   # It is cheap — seconds over the cached backend venv, free public minutes.
+  #
+  # Test Impact Analysis (#615) deliberately does NOT apply here: the plugin
+  # suite (~37s) is too cheap to optimise, and `make test-plugins` runs each
+  # plugin's pytest in its own dir (per-dir .testmondata = no shared gain).
+  # Plugins always run the full suite on every trigger.
   plugin-tests:
     name: Plugin Tests
     runs-on: ubuntu-latest
@@ -143,7 +184,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      # fetch-depth: 0 — full history so `vitest run --changed origin/<base>`
+      # (#615 Test Impact Analysis) can diff the PR against its base branch.
+      # Shallow (depth 1) would leave origin/<base> unresolvable.
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v6
         with:
@@ -193,9 +239,29 @@ jobs:
         working-directory: frontend
         run: npm run lint:css
 
-      - name: Run Vitest
+      # Test Impact Analysis (#615): on a PR run only the Vitest files related
+      # to files changed since the base branch (`--changed origin/<base>`).
+      # Real test failures propagate (no masking). The ONLY fallback to the
+      # full suite is an unresolvable base ref — a hard guard against a silent
+      # skip. Push to develop/main always runs the full suite (the merge gate);
+      # nightly + release run full too.
+      - name: Run Vitest (selective on PR, full on push)
         working-directory: frontend
-        run: npx vitest run
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="origin/${{ github.base_ref }}"
+            git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
+            if git rev-parse --verify "$BASE" >/dev/null 2>&1; then
+              echo "::notice::PR detected — Vitest --changed against $BASE"
+              npx vitest run --changed "$BASE"
+            else
+              echo "::warning::base ref $BASE unresolved — running FULL Vitest suite"
+              npx vitest run
+            fi
+          else
+            echo "::notice::Push to ${{ github.ref_name }} — FULL Vitest suite"
+            npx vitest run
+          fi
 
       - name: Build
         working-directory: frontend
