@@ -23,6 +23,7 @@ import {I18nProvider} from "../hooks/useI18n";
 import {_resetStorageCacheForTests, getStorage} from "../storage";
 import {setUserId} from "../lib/learnerState";
 import type {BackupPayload} from "../types/domain";
+import {notify} from "../utils/notify";
 
 vi.mock("../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
@@ -448,5 +449,30 @@ describe("BackupSection", () => {
             expect(confirm.textContent).toMatch(/1 added/);
             expect(confirm.textContent).toMatch(/1 updated/);
         });
+    });
+
+    it("declines a non-Adaptive-Learner file with a gentle warning, not an error (#640)", async () => {
+        vi.mocked(notify.warning).mockClear();
+        vi.mocked(notify.error).mockClear();
+        renderSection();
+        const input = screen.getByTestId(
+            "backup-file-input",
+        ) as HTMLInputElement;
+        // Valid JSON, but the ``format`` marker is not ours (e.g. a
+        // backup from another app).
+        const foreign = new File(
+            [JSON.stringify({format: "something-else", version: "1.0.0", data: {}})],
+            "foreign.json",
+            {type: "application/json"},
+        );
+        await act(async () => {
+            fireEvent.change(input, {target: {files: [foreign]}});
+        });
+
+        // Gentle warning (no "Report Issue"), NOT an error toast, and no
+        // restore preview opens.
+        await waitFor(() => expect(vi.mocked(notify.warning)).toHaveBeenCalled());
+        expect(vi.mocked(notify.error)).not.toHaveBeenCalled();
+        expect(screen.queryByTestId("backup-compare")).not.toBeInTheDocument();
     });
 });
