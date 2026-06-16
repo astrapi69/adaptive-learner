@@ -213,10 +213,19 @@ export default function LessonPage() {
     if (motivationStepRef.current === currentStepIndex) return;
     motivationStepRef.current = currentStepIndex;
     const kind = lessonMotivation(currentStepIndex, total);
+    // Pass-through + short so the bottom-right motivation toast never
+    // blocks the sticky lesson footer's Check/Next buttons (#589 fix).
+    const motivationToast = {autoClose: 3000, passThrough: true} as const;
     if (kind === "halftime") {
-      notify.info(t("lesson.motivation.halftime", "Halfway there — keep going!"));
+      notify.info(
+        t("lesson.motivation.halftime", "Halfway there — keep going!"),
+        motivationToast,
+      );
     } else if (kind === "last") {
-      notify.info(t("lesson.motivation.last", "Last one — finish strong!"));
+      notify.info(
+        t("lesson.motivation.last", "Last one — finish strong!"),
+        motivationToast,
+      );
     }
   }, [lesson, currentStepIndex, t]);
 
