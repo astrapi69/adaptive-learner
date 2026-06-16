@@ -4,27 +4,40 @@ _Last updated: 2026-06-16. Overwritten on each status pass — this file is alwa
 
 ## 1. HEAD + version
 
-- **Release:** **v1.81.0 SHIPPED** (minor — the biggest feature release of the
-  project; canonical `backend/pyproject.toml` = `1.81.0`). Tag `v1.81.0` on
-  `main` (`1a7816a7 Release v1.81.0`), GitHub Release published, merged back to
-  `develop` (`804f7a85`). Release branch deleted (local + remote).
+- **Release:** **v1.82.0 SHIPPED** (minor — hint economy + smart review queue +
+  PWA update prompt + Test Impact Analysis + architecture-doc audit + manual-test
+  automation; canonical `backend/pyproject.toml` = `1.82.0`). Tag `v1.82.0` on
+  `main` (`f22dd801 Release v1.82.0`), GitHub Release published, merged back to
+  `develop` (`36226811`). Local release branch deleted (the remote one never
+  existed — created local-only via `release-prepare`, so the final
+  remote-delete step no-op'd; harmless).
 - **Branch:** `develop` is the active branch (gitflow #334); `main` holds the
-  v1.81.0 release tag.
-- **Previous release:** v1.80.0 (EXP-026 user-lesson folding into the content
-  tree + EXP-025 book companion + user profile picture).
+  v1.82.0 release tag.
+- **Previous release:** v1.81.0 (the biggest feature release of the project — XP
+  visibility, statistics, SRS viz, hints, favorites, offline UX, shortcuts,
+  Hindi UI, EXP-028 event recording).
+- **Schema:** v1.82.0 adds additive Alembic **0030** (element_errors hint
+  columns) + **0031** (attempt history). Dexie schema unchanged (v27; new fields
+  are schemaless). Delete `~/.local/share/adaptive_learner/adaptive_learner.db`
+  before the next `make test` if you pull these migrations (see lessons-learned
+  "Alembic migration + fresh test DB").
 - **Async CI on the tag/push:** launcher builds (Linux/macOS/Windows) on the
-  `v1.81.0` tag + GH-Pages deploy on develop were triggered at release time;
+  `v1.82.0` tag + GH-Pages deploy on develop/main were triggered at release time;
   these complete on their own and do not gate the release.
 
-## 2. Test counts (v1.79.0 baseline — re-collect for v1.81.0)
+## 2. Test counts (v1.79.0 baseline — re-collect for v1.82.0)
 
-| Suite | Count (v1.79.0 baseline) | How collected |
+| Suite | Count | How collected |
 |---|---|---|
-| Backend (pytest) | **1215+** | `cd backend && poetry run pytest --collect-only -q` |
+| Backend (pytest) | **~1237** (v1.82.0 CI) | `cd backend && poetry run pytest --collect-only -q` |
 | Plugins (13 suites, pytest) | **1018+** | per-plugin `pytest --collect-only` from the backend env |
-| Frontend (Vitest) | **4285+ passed** | `cd frontend && npx vitest run` |
+| Frontend (Vitest) | **4505 passed** (v1.82.0 gate) | `cd frontend && npx vitest run` |
+| E2E dexie-smoke | **88 passed** | `make test-dexie-smoke` |
+| E2E manual-automation (#621) | **49 automated** (+15 skip = manual-only) | `make test-manual-automation` (nightly + release) |
 
-The table is the last precisely-collected baseline (v1.79.0). v1.81.0 added many
+The `make release-test` gate is green for v1.82.0 (Vitest 4505, docs 0 FAIL,
+dexie-smoke 88, manual-automation 49). The backend/plugin counts are
+last-precise at the v1.79.0 baseline; v1.81.0 added many
 feature + component tests on top — the gamification dashboard-API tests
 (`test_gamification_dashboard_api.py`), the statistics / SRS / hints / favorites /
 review / offline / shortcuts / username feature tests, the avatar-crop tests, and
@@ -34,7 +47,19 @@ mid-lesson-motivation-toast fix below). Re-collect exact counts via the commands
 above. TypeScript `tsc --noEmit` clean; ESLint clean; full Playwright smoke runs
 separately (Aster runs E2E).
 
-## 3. v1.81.0 contents (commits since v1.80.0, 31 + release commits)
+## 3. v1.82.0 contents (commits since v1.81.0)
+
+Full detail in `changelog/releases/v1.82.0.md`. Six PRs + the cherry-picked #621:
+
+- **#611** Hint economy — hints cost XP, feed the SRS, show in statistics (Alembic 0030).
+- **#612** Smart review queue — weakness tiers + per-element attempt history + cross-lesson mix capped at 20 (Alembic 0031).
+- **#614** PWA update prompt — polled `version.json` + service-worker prompt mode.
+- **#617** Test Impact Analysis — PR CI runs only impacted tests (vitest `--changed`, `pytest --testmon`); full suite on push/nightly/release.
+- **#620** Architecture-doc audit — Dexie data-integrity + namespace split + Settings-nav patterns added to `.claude/rules/architecture.md`.
+- **#610** recommended-repos discovery E2E reactivated.
+- **#621** Manual test plan automated — 7 Playwright session suites under `e2e/manual-automation/` (50 automated + 15 manual-only scenarios), `playwright.manual.config.ts`, a `test-manual-automation` Makefile target wired into `release-test`, and a nightly `manual-automation.yml` workflow. Cherry-picked onto the release branch pre-finish.
+
+### Earlier: v1.81.0 contents (commits since v1.80.0, 31 + release commits)
 
 The biggest feature release of the project. Full detail in
 `changelog/releases/v1.81.0.md`.

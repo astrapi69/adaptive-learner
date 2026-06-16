@@ -125,3 +125,72 @@ gate.
   - **stale parallel release branch:** handled by preferring the complete local
     branch + letting `release-finish` clean up the remote, rather than a risky
     force-push.
+
+---
+
+# Session B (later 2026-06-16) — Test Impact Analysis, architecture audit, v1.82.0
+
+## 10. Test Impact Analysis on PR CI (#615 / PR #617)
+
+- Goal: PR CI runs only the tests an actual change can break; full suite stays on
+  push/nightly/release.
+- Frontend: `vitest run --changed origin/<base>` (checkout `fetch-depth: 0`).
+  Backend: `pytest --testmon` (added `pytest-testmon ^2.2.0`; `.testmondata`
+  cached with a run-id key + prefix restore-key; gitignored). Plugins stay full.
+- Fallback to full suite is automatic (unresolvable base ref / testmon
+  cache-miss) — never a silent skip. Docs in VIBE-CODING-POLICY.md,
+  quality-checks.md, vibe-coding.md, MANUAL-TESTPLAN.md.
+- Verified live on the PR: a docs/CI-only change ran **0** frontend tests
+  ("No test files found"); backend cold-cache fell back to the full suite
+  (1237 passed). Local: a 1-file change → 35 tests in ~10s vs 1229 in ~62s.
+
+## 11. Architecture documentation audit (#619 / PR #620)
+
+- Audited ~50 architectural decisions against the doc set. Most already
+  documented. 4 genuine gaps filled in `.claude/rules/architecture.md`: Dexie
+  namespace module split; Dexie data-integrity (R-M-W, unique indexes, additive
+  migrations); Settings sidebar/hamburger one-model-two-renderers pattern.
+- An automated first pass false-flagged G4 (release freeze) + G6 (priority
+  hierarchy) as missing; manual `grep` showed both already in vibe-coding.md +
+  VIBE-CODING-POLICY.md. Lesson: verify an audit's "missing" claims before
+  acting.
+
+## 12. Release v1.82.0 (Phase 0-3)
+
+- **Phase 0:** corrected the dictated changelog — #605/#607/#608/#609/#580 were
+  already in v1.81.0 (verified via `git log` + `gh pr view`), NOT v1.82.0.
+  Built the changelog from the real `v1.81.0..develop` range instead.
+- **Real content:** hint economy (#611, Alembic 0030), smart review queue (#612,
+  Alembic 0031), PWA update prompt (#614), Test Impact Analysis (#617),
+  architecture-doc audit (#620), recommended-repos E2E (#610), and — added
+  pre-finish — the manual test plan automated (#621, cherry-picked onto the
+  release branch). Additive Alembic 0030+0031 on `element_errors`; Dexie v27
+  unchanged.
+- **#621 cherry-pick:** `git cherry-pick 0cc5c03b` (the squash commit) onto
+  `release/1.82.0` — NOT a develop merge. Clean (identical add/add with develop;
+  the release→develop back-merge auto-resolved). #621 wired its
+  `manual-automation` suite into `make release-test`, so the gate also ran 49
+  Playwright scenarios green.
+- **Gates:** `make release-test` green twice (before + after #621) — Vitest 4505,
+  docs 0 FAIL, dexie-smoke 88, manual-automation 49.
+- **Ship:** `make release-finish` merged to main + tag `v1.82.0` + back-merge to
+  develop (all pushed). The final remote-branch-delete step failed harmlessly
+  (the release branch was local-only, never pushed to origin). GitHub Release
+  published from `changelog/releases/v1.82.0.md`.
+
+## Session B summary
+
+- **Releases:** **v1.82.0 SHIPPED** (minor — hint economy + smart review queue +
+  PWA update prompt + Test Impact Analysis + architecture-doc audit + manual-test
+  automation; additive Alembic 0030+0031).
+- **App-repo PRs merged:** #617 (TIA), #620 (architecture audit); #621 (manual
+  automation) cherry-picked into the release.
+- **Issues closed:** #615, #619 (and #616 via #621).
+- **Notable decisions:**
+  - **verify before echoing:** the dictated changelog over-included 5 PRs already
+    shipped in v1.81.0; rebuilt from the real commit range.
+  - **numeric verification:** PR #621 / the dictated text say "52 specs"; my count
+    is 7 sessions / 50 automated `test()` + 15 `skip` (manual-only) = 65.
+  - **cherry-pick + back-merge duplication:** anticipated the add/add overlap of
+    #621 on both develop and the release branch; it auto-resolved because the
+    content was identical. No rebase, no develop-merge into the release branch.
