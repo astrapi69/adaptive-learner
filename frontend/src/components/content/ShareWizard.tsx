@@ -27,6 +27,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -59,19 +60,20 @@ export default function ShareWizard(props: ShareWizardProps) {
     >
       <DialogContent
         data-testid="content-share-wizard"
-        aria-describedby={undefined}
+        aria-describedby="share-wizard-description"
         className="max-h-[90vh] overflow-y-auto"
       >
         <header className="share-wizard-header">
           <DialogTitle id="share-wizard-title" className="modal-title">
             {t("content.wizard.title", "Share with the community")}
           </DialogTitle>
-          <p
+          <DialogDescription
+            id="share-wizard-description"
             className="share-wizard-progress"
             data-testid="share-wizard-progress"
           >
             {stepLabel}
-          </p>
+          </DialogDescription>
         </header>
 
         {/* Step 1 — Preview + placement */}

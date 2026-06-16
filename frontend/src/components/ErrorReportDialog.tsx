@@ -199,6 +199,7 @@ export default function ErrorReportDialog({
                         ...cardStyle,
                     }}
                     data-testid="error-report-dialog"
+                    aria-describedby="error-report-description"
                 >
                     <Dialog.Title
                         style={{
@@ -214,7 +215,8 @@ export default function ErrorReportDialog({
                         {t("ui.error_report.dialog_title", "Report an issue")}
                     </Dialog.Title>
 
-                    <p
+                    <Dialog.Description
+                        id="error-report-description"
                         style={{
                             fontSize: "0.875rem",
                             color: "var(--fg-muted)",
@@ -230,7 +232,7 @@ export default function ErrorReportDialog({
                                   "ui.error_report.intro",
                                   "Adaptive Learner caught an error and can prepare a bug report for the developer.",
                               )}
-                    </p>
+                    </Dialog.Description>
 
                     {snapshot && (
                         <p
