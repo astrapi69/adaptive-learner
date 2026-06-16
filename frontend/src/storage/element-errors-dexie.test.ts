@@ -98,6 +98,62 @@ describe("Dexie elementErrors: #594 hint economy", () => {
     });
 });
 
+describe("Dexie elementErrors: #603 smart review queue", () => {
+    it("tracks attempt_count + a 10-entry history ring buffer", async () => {
+        for (let n = 0; n < 12; n++) {
+            await recordElementAttemptsDexie(USER, [
+                attempt({correct: n % 2 === 0}),
+            ]);
+        }
+        const rows = await listElementErrorsDexie(USER);
+        expect(rows[0].attempt_count).toBe(12);
+        expect(rows[0].attempt_history).toHaveLength(10);
+        // Last recorded attempt was n=11 → odd → wrong.
+        expect(rows[0].attempt_history?.at(-1)?.correct).toBe(false);
+    });
+
+    it("orders wrong before almost-right (weakness tier)", async () => {
+        // 'almost' recovered after 2 errors (streak 1, errors 2).
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "almost", correct: false}),
+        ]);
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "almost", correct: false}),
+        ]);
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "almost", correct: true}),
+        ]);
+        // 'wrong' — a single wrong (streak 0, errors 1).
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "wrong", correct: false}),
+        ]);
+        // Force both overdue.
+        const past = new Date(Date.now() - 10 * 86_400_000).toISOString();
+        const db = getDb();
+        await db.elementErrors.toCollection().modify((r) => {
+            r.last_attempt_at = past;
+        });
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue[0].element_key).toBe("wrong");
+        expect(queue[1].element_key).toBe("almost");
+    });
+
+    it("caps the queue at the requested limit", async () => {
+        for (let i = 0; i < 5; i++) {
+            await recordElementAttemptsDexie(USER, [
+                attempt({element_key: `el-${i}`, correct: false}),
+            ]);
+        }
+        expect(await computeReviewQueueDexie(USER)).toHaveLength(5);
+        expect(
+            await computeReviewQueueDexie(USER, {limit: 3}),
+        ).toHaveLength(3);
+        expect(
+            await computeReviewQueueDexie(USER, {limit: 0}),
+        ).toHaveLength(0);
+    });
+});
+
 describe("Dexie elementErrors: no-row branches", () => {
     it("first correct creates a row with streak=1, error_count=0", async () => {
         const rows = await recordElementAttemptsDexie(USER, [

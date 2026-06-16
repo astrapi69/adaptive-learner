@@ -33,6 +33,9 @@ export interface ElementDetailItem {
     /** Learner's last wrong answer (omit to hide the answer line). */
     lastAnswer?: string;
     correctAnswer?: string;
+    /** #603 — the learning trajectory, e.g. "Attempt 5: correct" (omit
+     *  to hide). */
+    trajectoryLabel?: string;
 }
 
 export interface ElementDetailListProps {
@@ -80,6 +83,14 @@ export default function ElementDetailList({
                     <p className="mt-0.5 text-xs text-fg-muted">
                         {item.metaLabel}
                     </p>
+                    {item.trajectoryLabel && (
+                        <p
+                            className="mt-0.5 text-xs text-fg-muted"
+                            data-testid={`element-detail-trajectory-${item.id}`}
+                        >
+                            {item.trajectoryLabel}
+                        </p>
+                    )}
                     {item.lastAnswer && (
                         <p className="mt-0.5 truncate text-xs text-fg-muted">
                             {lastAnswerLabel}{" "}

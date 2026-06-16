@@ -69,9 +69,13 @@ export const contentApi = {
         { method: "POST", body: { attempts } },
       ),
     /** GET /api/users/{user_id}/element-errors/review-queue */
-    reviewQueue: (userId: string, opts: { setId?: string } = {}) => {
+    reviewQueue: (
+      userId: string,
+      opts: { setId?: string; limit?: number } = {},
+    ) => {
       const params = new URLSearchParams();
       if (opts.setId !== undefined) params.set("set_id", opts.setId);
+      if (opts.limit !== undefined) params.set("limit", String(opts.limit));
       const qs = params.toString();
       const path = qs
         ? `/users/${encodeURIComponent(userId)}/element-errors/review-queue?${qs}`

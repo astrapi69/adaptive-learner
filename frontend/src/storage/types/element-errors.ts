@@ -5,6 +5,14 @@
  */
 
 
+/** #603 Smart Review Queue — one recorded attempt in the per-element
+ *  history ring buffer (last 10 kept). */
+export interface AttemptRecord {
+  correct: boolean;
+  hint_used?: boolean;
+  at: string;
+}
+
 export interface ElementAttempt {
   set_id: string;
   lesson_id: string;
@@ -60,6 +68,10 @@ export interface ElementError {
    *  were answered with a hint revealed. Feeds the "answers with hint"
    *  statistic. Monotonic. */
   hint_used_count?: number;
+  /** #603 Smart Review Queue — total attempts (correct or wrong). */
+  attempt_count?: number;
+  /** #603 Smart Review Queue — the last 10 attempts (ring buffer). */
+  attempt_history?: AttemptRecord[];
   created_at: string;
   updated_at: string;
 }
@@ -88,6 +100,10 @@ export interface ReviewQueueItem {
   last_attempt_at: string;
   suggested_review_at: string;
   overdue: boolean;
+  /** #603 Smart Review Queue — total attempts + the last-10 ring buffer,
+   *  so the review UI can show the element's trajectory. */
+  attempt_count?: number;
+  attempt_history?: AttemptRecord[];
 }
 
 /**
@@ -102,11 +118,15 @@ export interface IElementErrorsNamespace {
     opts?: { setId?: string; includeMastered?: boolean },
   ): Promise<ElementError[]>;
   recordBulk(userId: string, attempts: readonly ElementAttempt[]): Promise<ElementError[]>;
-  /** Projected review queue: active (non-mastered)
-   *  elements with computed suggested_review_at + overdue
-   *  flag, sorted by urgency (overdue → error_count desc →
-   *  last_error_at desc). */
-  reviewQueue(userId: string, opts?: { setId?: string }): Promise<ReviewQueueItem[]>;
+  /** Projected review queue: active (non-mastered) elements with
+   *  computed suggested_review_at + overdue flag, sorted by urgency
+   *  (overdue → weakness tier → error frequency → oldest error first,
+   *  #603). ``limit`` caps the list (a review session passes 20); omit
+   *  for the full queue (the "N due" count). */
+  reviewQueue(
+    userId: string,
+    opts?: { setId?: string; limit?: number },
+  ): Promise<ReviewQueueItem[]>;
 }
 
 // EXP-010 / Phase 56 — daily missions. ``getDaily`` assigns the

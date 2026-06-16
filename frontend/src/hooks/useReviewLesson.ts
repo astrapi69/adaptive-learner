@@ -119,7 +119,7 @@ export function useReviewLesson(
                 const storage = getStorage();
                 const fetchedQueue = await storage.elementErrors.reviewQueue(
                     userId,
-                    {setId},
+                    {setId, limit},
                 );
                 if (cancelled) return;
                 setQueue(fetchedQueue);

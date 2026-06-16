@@ -87,6 +87,31 @@ def _attempt(
     )
 
 
+def test_attempt_count_and_history_ring_buffer(user_id: str) -> None:
+    """#603 Smart Review Queue — attempt_count is monotonic and
+    attempt_history keeps only the last 10 entries."""
+    import json
+
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        row = None
+        for n in range(12):
+            row = record_attempt(repo, user_id, _attempt(correct=(n % 2 == 0)))
+        db.commit()
+        assert row is not None
+        assert row.attempt_count == 12
+        history = json.loads(row.attempt_history)
+        # Ring buffer caps at 10 — the two oldest dropped.
+        assert len(history) == 10
+        # Each record carries the outcome + hint flag + timestamp.
+        assert set(history[0].keys()) == {"correct", "hint_used", "at"}
+        # The last recorded attempt was n=11 → odd → wrong.
+        assert history[-1]["correct"] is False
+    finally:
+        db.close()
+
+
 def test_hint_used_tracks_flag_and_accumulates_count(user_id: str) -> None:
     """#594 Hint Economy — hint_used reflects the latest attempt; the
     count accumulates only on hint-assisted attempts."""
@@ -94,27 +119,19 @@ def test_hint_used_tracks_flag_and_accumulates_count(user_id: str) -> None:
     repo = SqlAlchemyElementErrorsRepository(db)
     try:
         # First attempt: no hint.
-        row = record_attempt(
-            repo, user_id, _attempt(correct=False, hint_used=False)
-        )
+        row = record_attempt(repo, user_id, _attempt(correct=False, hint_used=False))
         assert row.hint_used is False
         assert row.hint_used_count == 0
         # Second: with a hint → flag flips, count = 1.
-        row = record_attempt(
-            repo, user_id, _attempt(correct=False, hint_used=True)
-        )
+        row = record_attempt(repo, user_id, _attempt(correct=False, hint_used=True))
         assert row.hint_used is True
         assert row.hint_used_count == 1
         # Third: with a hint again → count = 2.
-        row = record_attempt(
-            repo, user_id, _attempt(correct=True, hint_used=True)
-        )
+        row = record_attempt(repo, user_id, _attempt(correct=True, hint_used=True))
         assert row.hint_used is True
         assert row.hint_used_count == 2
         # Fourth: no hint → flag clears, count holds (monotonic).
-        row = record_attempt(
-            repo, user_id, _attempt(correct=True, hint_used=False)
-        )
+        row = record_attempt(repo, user_id, _attempt(correct=True, hint_used=False))
         assert row.hint_used is False
         assert row.hint_used_count == 2
         db.commit()
@@ -142,7 +159,8 @@ def test_no_row_then_correct_creates_fresh_row_with_streak_1(
     db = SessionLocal()
     repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        row = record_attempt(repo,
+        row = record_attempt(
+            repo,
             user_id,
             _attempt(correct=True, user_answer="merci"),
         )
@@ -163,7 +181,8 @@ def test_no_row_then_wrong_creates_fresh_row_with_error_1(
     db = SessionLocal()
     repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        row = record_attempt(repo,
+        row = record_attempt(
+            repo,
             user_id,
             _attempt(correct=False, user_answer="bonjour"),
         )
@@ -289,11 +308,13 @@ def test_user_answer_and_correct_answer_track_latest_attempt(
     db = SessionLocal()
     repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(repo,
+        record_attempt(
+            repo,
             user_id,
             _attempt(correct=False, user_answer="bonjour"),
         )
-        row = record_attempt(repo,
+        row = record_attempt(
+            repo,
             user_id,
             _attempt(correct=False, user_answer="salut"),
         )
@@ -312,7 +333,8 @@ def test_different_element_keys_get_separate_rows(user_id: str) -> None:
     repo = SqlAlchemyElementErrorsRepository(db)
     try:
         record_attempt(repo, user_id, _attempt(element_key="merci", correct=False))
-        record_attempt(repo,
+        record_attempt(
+            repo,
             user_id,
             _attempt(element_key="bonjour", correct=False),
         )
@@ -332,11 +354,13 @@ def test_same_element_different_lesson_gets_separate_rows(
     db = SessionLocal()
     repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(repo,
+        record_attempt(
+            repo,
             user_id,
             _attempt(lesson_id="01-greetings.json", correct=False),
         )
-        record_attempt(repo,
+        record_attempt(
+            repo,
             user_id,
             _attempt(lesson_id="02-numbers.json", correct=False),
         )
@@ -450,7 +474,8 @@ def test_list_for_user_can_exclude_mastered(user_id: str) -> None:
         for _ in range(MASTERY_THRESHOLD):
             record_attempt(repo, user_id, _attempt(correct=True))
         # Unmastered element (different key).
-        record_attempt(repo,
+        record_attempt(
+            repo,
             user_id,
             _attempt(element_key="bonjour", correct=False),
         )
@@ -473,9 +498,11 @@ def test_two_directions_are_independent_rows(user_id: str) -> None:
     db = SessionLocal()
     repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        receptive = record_attempt(repo, user_id, _attempt(direction="target_to_source", correct=True)
+        receptive = record_attempt(
+            repo, user_id, _attempt(direction="target_to_source", correct=True)
         )
-        productive = record_attempt(repo, user_id, _attempt(direction="source_to_target", correct=False)
+        productive = record_attempt(
+            repo, user_id, _attempt(direction="source_to_target", correct=False)
         )
         db.commit()
         assert receptive.id != productive.id
