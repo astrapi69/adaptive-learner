@@ -58,7 +58,7 @@ describe("AddRepo", () => {
     await waitFor(() => expect(screen.getByTestId("content-page")).toBeInTheDocument());
     expect(validateUserRepo).toHaveBeenCalled();
     expect(addUserRepo).toHaveBeenCalled();
-    expect(syncUserRepo).toHaveBeenCalledWith("jane/deck");
+    expect(syncUserRepo).toHaveBeenCalledWith("jane/deck", expect.any(Function));
   });
 
   it("shows the reason and does not add on failed validation", async () => {
