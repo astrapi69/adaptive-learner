@@ -1,0 +1,281 @@
+{
+  "id": "106-inception-effekt-und-beeinflussung",
+  "title": "Der Inception-Effekt — Wie Ideen unbemerkt entstehen",
+  "description": "Eine fortgeschrittene Lektion der Kommunikationspsychologie: der sogenannte Inception-Effekt (fachlich: induzierte Eigendynamik), bei dem eine fremde Idee als eigener Gedanke wahrgenommen wird. Erklärt die drei zusammenwirkenden Mechanismen — sokratische Gesprächsführung, Priming/Framing und Fehlattribuierung der Quelle — sachlich und mit Beispielen, auf Deutsch.",
+  "target_language": "de",
+  "source_language": "de",
+  "domain": "psychology",
+  "estimated_minutes": 12,
+  "cards": [
+    {
+      "id": "card-01",
+      "front": "Inception-Effekt",
+      "back": "Phänomen, bei dem eine fremde Idee als eigener Gedanke wahrgenommen wird",
+      "notes": "Nach einem Gespräch glaubt man, selbst auf eine Idee gekommen zu sein. Der Name ist an den gleichnamigen Spielfilm angelehnt.",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": ["kommunikation", "beeinflussung", "hauptbegriff"]
+    },
+    {
+      "id": "card-02",
+      "front": "Induzierte Eigendynamik",
+      "back": "Fachbegriff für den Inception-Effekt",
+      "notes": "Fachlich präziser als der populäre Begriff *Inception*.",
+      "media_type": "text",
+      "difficulty": 3,
+      "tags": ["kommunikation", "fachbegriff"]
+    },
+    {
+      "id": "card-03",
+      "front": "Sokratische Ironie",
+      "back": "Durch gezieltes Fragen das Gegenüber zur Schlussfolgerung führen",
+      "notes": "Statt zu behaupten, stellt man eine Frage, deren Antwort die gewünschte Erkenntnis ist. Die Person zieht den letzten Schritt selbst.",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": ["mechanismus", "gespraechsfuehrung"]
+    },
+    {
+      "id": "card-04",
+      "front": "Priming",
+      "back": "Vorgeschaltete Reize, die bestimmte Denkmuster aktivieren",
+      "notes": "Wer vorher Wörter zum Thema *alt* gelesen hat, geht danach unbewusst langsamer (klassischer Priming-Befund).",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": ["mechanismus", "kognition"]
+    },
+    {
+      "id": "card-05",
+      "front": "Framing",
+      "back": "Gezielte Formulierung, die die Wahrnehmung beeinflusst",
+      "notes": "*95% fettfrei* wirkt anders als *5% Fett enthalten* — gleicher Inhalt, andere Wirkung.",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": ["mechanismus", "kognition"]
+    },
+    {
+      "id": "card-06",
+      "front": "Fehlattribuierung",
+      "back": "Falsche Zuordnung der Quelle einer Information",
+      "notes": "Das Gehirn vergisst, woher die Idee kam, behält aber den Inhalt.",
+      "media_type": "text",
+      "difficulty": 3,
+      "tags": ["mechanismus", "gedaechtnis"]
+    },
+    {
+      "id": "card-07",
+      "front": "Misattribution of Source",
+      "back": "Englische Fachbezeichnung für Fehlattribuierung",
+      "notes": "In der Gedächtnisforschung als *source monitoring error* untersucht.",
+      "media_type": "text",
+      "difficulty": 3,
+      "tags": ["fachbegriff", "gedaechtnis"]
+    },
+    {
+      "id": "card-08",
+      "front": "Was macht das Gehirn bei Fehlattribuierung?",
+      "back": "Es vergisst die Quelle, erinnert sich aber an den Inhalt",
+      "notes": "Beim Wiederabrufen wirkt die gesäte Idee dann wie ein eigener, spontaner Einfall.",
+      "media_type": "text",
+      "difficulty": 3,
+      "tags": ["konzept", "gedaechtnis"]
+    },
+    {
+      "id": "card-09",
+      "front": "Warum wirkt die sokratische Methode so stark?",
+      "back": "Die Person zieht den letzten logischen Schritt selbst und verbucht die Idee als Eigenkreation",
+      "notes": "Selbst gezogene Schlüsse werden stärker als eigene Überzeugung erlebt.",
+      "media_type": "text",
+      "difficulty": 3,
+      "tags": ["konzept", "gespraechsfuehrung"]
+    },
+    {
+      "id": "card-10",
+      "front": "Wie unterscheiden sich Framing und Priming?",
+      "back": "Framing ist die Art der Formulierung, Priming sind vorgeschaltete Reize",
+      "notes": "Beide bahnen Denkmuster, setzen aber an unterschiedlichen Stellen an.",
+      "media_type": "text",
+      "difficulty": 3,
+      "tags": ["abgrenzung", "kognition"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Einleitung",
+      "body": "# Der Inception-Effekt\n\nHast du schon einmal nach einem Gespräch das Gefühl gehabt, eine Idee sei *aus dir selbst* gekommen, obwohl sie eigentlich von jemand anderem subtil platziert wurde?\n\nGenau dieses Phänomen wird im psychologischen und alltäglichen Sprachgebrauch als **Inception-Effekt** bezeichnet, in Anlehnung an den gleichnamigen Spielfilm. Fachlich präziser spricht man von **induzierter Eigendynamik**.\n\nIn der Psychologie und Kommunikation gibt es dafür kein einzelnes, isoliertes Fachwort. Stattdessen handelt es sich um eine Kombination aus drei etablierten Methoden, die zusammenwirken."
+    },
+    {
+      "id": "ex-match-begriffe",
+      "type": "exercise",
+      "title": "Begriffe und Definitionen",
+      "exercise": {
+        "id": "ex-match-begriffe",
+        "type": "matching",
+        "prompt": "Ordne jedem Begriff die passende Definition zu.",
+        "card_ids": ["card-01", "card-02", "card-07", "card-04", "card-05"],
+        "pairs": [
+          {"left": "Inception-Effekt", "right": "fremde Idee, die als eigener Gedanke wahrgenommen wird"},
+          {"left": "Induzierte Eigendynamik", "right": "Fachbegriff für den Inception-Effekt"},
+          {"left": "Misattribution of Source", "right": "englische Bezeichnung für Fehlattribuierung"},
+          {"left": "Priming", "right": "vorgeschaltete Reize, die Denkmuster aktivieren"},
+          {"left": "Framing", "right": "Formulierung, die die Wahrnehmung beeinflusst"}
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-pick-inception",
+      "type": "exercise",
+      "title": "Was beschreibt der Inception-Effekt?",
+      "exercise": {
+        "id": "ex-pick-inception",
+        "type": "picture_choice",
+        "prompt": "Welche Aussage beschreibt den Inception-Effekt am besten?",
+        "card_ids": ["card-01"],
+        "images": [
+          {"src": "assets/img/inception-effekt.png", "label": "Eine fremde Idee wird als eigener Gedanke wahrgenommen.", "is_correct": "true"},
+          {"src": "assets/img/inception-konditionierung.png", "label": "Eine Reaktion wird durch ständige Wiederholung antrainiert."},
+          {"src": "assets/img/inception-hypnose.png", "label": "Ein direkter Befehl wird unter Hypnose befolgt."},
+          {"src": "assets/img/inception-konfabulation.png", "label": "Eine Erinnerung wird mit erfundenen Details ergänzt."}
+        ],
+        "hint": "Entscheidend ist, dass die Quelle der Idee in Vergessenheit gerät.",
+        "distractors": [
+          "Eine Reaktion wird durch ständige Wiederholung antrainiert.",
+          "Ein direkter Befehl wird unter Hypnose befolgt.",
+          "Eine Erinnerung wird mit erfundenen Details ergänzt."
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "mechanismen",
+      "type": "theory",
+      "title": "Die drei Mechanismen",
+      "body": "## Die drei Mechanismen\n\n### 1. Sokratische Ironie\n\nDurch gezieltes Fragen wird das Gegenüber so durch eine Argumentation geführt, dass es die Schlussfolgerung selbst zieht. Da die Person den letzten logischen Schritt selbst macht, verbucht ihr Gehirn die Idee als Eigenkreation.\n\nBeispiel: Statt zu sagen *Du solltest aufhören zu rauchen*, fragt man *Was wäre dir wichtiger — kurzfristiger Genuss oder langfristige Gesundheit?* und lässt die Person selbst zur Antwort kommen.\n\n### 2. Subliminale Beeinflussung (Framing und Priming)\n\nVorab werden subtile Reize, Begriffe oder Szenarien im Umfeld platziert. Diese aktivieren bestimmte Denkmuster, sodass das Gegenüber bei einer späteren Entscheidung *von selbst* auf die gewünschte Idee kommt.\n\n- **Framing:** Wie etwas formuliert wird, beeinflusst die Wahrnehmung. *95% fettfrei* wirkt anders als *5% Fett enthalten*.\n- **Priming:** Vorgeschaltete Reize bahnen bestimmte Reaktionen. Wer vorher Wörter zum Thema *alt* gelesen hat, geht danach unbewusst langsamer.\n\n### 3. Fehlattribuierung (Misattribution of Source)\n\nDas menschliche Gedächtnis ist fehlerhaft. Wird eine Idee subtil gesät, etwa beiläufig in einem Gespräch am Vortag, vergisst das Gehirn oft die Quelle. Erinnert wird aber der Inhalt. Beim Wiederabrufen wird die Idee dann fälschlicherweise als eigener, spontaner Einfall abgespeichert."
+    },
+    {
+      "id": "ex-match-mechanismen",
+      "type": "exercise",
+      "title": "Mechanismen und ihre Funktion",
+      "exercise": {
+        "id": "ex-match-mechanismen",
+        "type": "matching",
+        "prompt": "Ordne jedem Mechanismus seine Funktion zu.",
+        "card_ids": ["card-03", "card-04", "card-05", "card-06"],
+        "pairs": [
+          {"left": "Sokratische Ironie", "right": "durch gezieltes Fragen zur eigenen Schlussfolgerung führen"},
+          {"left": "Priming", "right": "vorgeschaltete Reize aktivieren Denkmuster"},
+          {"left": "Framing", "right": "die Formulierung lenkt die Wahrnehmung"},
+          {"left": "Fehlattribuierung", "right": "die Quelle einer Information wird falsch zugeordnet"}
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-free-sokratik",
+      "type": "exercise",
+      "title": "Welcher Mechanismus wird hier beschrieben?",
+      "exercise": {
+        "id": "ex-free-sokratik",
+        "type": "free_text",
+        "prompt": "Eine Person stellt gezielt Fragen, sodass das Gegenüber selbst zur gewünschten Schlussfolgerung kommt. Wie heißt dieser Mechanismus?",
+        "card_ids": ["card-03"],
+        "accept": [
+          "Sokratische Ironie",
+          "Sokratische Methode",
+          "Sokratisches Gespräch",
+          "Sokratische Gesprächsführung",
+          "Sokratik"
+        ],
+        "hint": "Fragen statt behaupten — die Antwort enthält das Wort *sokratisch*.",
+        "distractors": ["Priming", "Framing", "Fehlattribuierung"],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tiles-fehlattribuierung",
+      "type": "exercise",
+      "title": "Setze den Kernsatz zusammen",
+      "exercise": {
+        "id": "ex-tiles-fehlattribuierung",
+        "type": "word_tiles",
+        "prompt": "Setze den Kernsatz zur Fehlattribuierung zusammen.",
+        "card_ids": ["card-08"],
+        "tiles": ["Das", "Gehirn", "vergisst", "die", "Quelle", "aber", "erinnert", "sich", "an", "den", "Inhalt"],
+        "hint": "Beginnt mit *Das Gehirn vergisst…*.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "zusammenfassung",
+      "type": "theory",
+      "title": "Zusammenfassung",
+      "body": "## Zusammenfassung\n\nDer Begriff **Inception** beschreibt das Phänomen im modernen Sprachgebrauch am treffendsten. Methodisch wird es durch drei zusammenwirkende Mechanismen erreicht:\n\n1. **Priming** — vorbereitende Reize platzieren\n2. **Framing** — Formulierungen gezielt wählen\n3. **Sokratische Gesprächsführung** — durch Fragen zum Eigenschluss leiten\n\nDas Ergebnis ist die **Fehlattribuierung der Quelle**: Das Gegenüber hält die gesäte Idee für seinen eigenen Gedanken.\n\nWer diese Mechanismen kennt, kann sie sowohl bewusst einsetzen als auch erkennen, wenn andere sie bei einem selbst anwenden."
+    },
+    {
+      "id": "ex-pick-priming",
+      "type": "exercise",
+      "title": "Welches Beispiel zeigt Priming?",
+      "exercise": {
+        "id": "ex-pick-priming",
+        "type": "picture_choice",
+        "prompt": "In welcher Situation wird Priming angewendet?",
+        "card_ids": ["card-04", "card-05"],
+        "images": [
+          {"src": "assets/img/priming-musik.png", "label": "Vor einem Bewerbungsgespräch hört der Kandidat Musik mit kraftvollen Rhythmen, um selbstbewusster aufzutreten.", "is_correct": "true"},
+          {"src": "assets/img/priming-werbung.png", "label": "Eine Werbung verspricht '95% fettfrei' statt '5% Fett'."},
+          {"src": "assets/img/priming-frage.png", "label": "Ein Vorgesetzter fragt 'Was wäre dir wichtiger?' statt eine Anweisung zu geben."},
+          {"src": "assets/img/priming-quelle.png", "label": "Jemand vergisst, wer eine Idee vorgeschlagen hat."}
+        ],
+        "hint": "Priming sind vorgeschaltete Reize, die die spätere Reaktion bahnen — die anderen Optionen zeigen Framing, sokratische Ironie und Fehlattribuierung.",
+        "distractors": [
+          "Eine Werbung verspricht '95% fettfrei' statt '5% Fett'.",
+          "Ein Vorgesetzter fragt 'Was wäre dir wichtiger?' statt eine Anweisung zu geben.",
+          "Jemand vergisst, wer eine Idee vorgeschlagen hat."
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-free-fehlattribuierung",
+      "type": "exercise",
+      "title": "Fasse den Mechanismus in einem Satz zusammen",
+      "exercise": {
+        "id": "ex-free-fehlattribuierung",
+        "type": "free_text",
+        "prompt": "Wie funktioniert Fehlattribuierung in einfachen Worten?",
+        "card_ids": ["card-06", "card-08"],
+        "accept": [
+          "Das Gehirn vergisst die Quelle einer Idee, erinnert sich aber an den Inhalt und hält die Idee dann für einen eigenen Gedanken",
+          "Man vergisst, wer etwas gesagt hat, erinnert sich aber an den Inhalt",
+          "Die Quelle wird vergessen, der Inhalt bleibt, und die Idee wirkt wie ein eigener Gedanke"
+        ],
+        "hint": "Stichwörter: Quelle, vergessen, Inhalt.",
+        "distractors": [
+          "Durch ständige Wiederholung wird eine Reaktion antrainiert.",
+          "Die Formulierung verändert gezielt die Wahrnehmung.",
+          "Durch Fragen wird man zur eigenen Schlussfolgerung geführt."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-match-konzepte",
+      "type": "exercise",
+      "title": "Konzepte und Erklärungen",
+      "exercise": {
+        "id": "ex-match-konzepte",
+        "type": "matching",
+        "prompt": "Ordne jeder Frage die richtige Erklärung zu.",
+        "card_ids": ["card-08", "card-09", "card-10"],
+        "pairs": [
+          {"left": "Was macht das Gehirn bei Fehlattribuierung?", "right": "Es vergisst die Quelle, erinnert sich aber an den Inhalt."},
+          {"left": "Warum wirkt die sokratische Methode so stark?", "right": "Die Person zieht den letzten Schritt selbst und verbucht die Idee als eigene."},
+          {"left": "Wie unterscheiden sich Framing und Priming?", "right": "Framing ist die Formulierung, Priming sind vorgeschaltete Reize."}
+        ],
+        "direction": "target_to_source"
+      }
+    }
+  ]
+}

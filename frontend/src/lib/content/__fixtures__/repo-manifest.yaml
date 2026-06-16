@@ -1,0 +1,37 @@
+# Wurzel-Manifest des Test-/Starter-Repos.
+#
+# Dies ist ein Starter-Kit: ein einziges Beispiel-Set zeigt auf die
+# mitgelieferte Inception-Effekt-Lektion. Forke das Repo, ersetze die
+# Lektion unter sets/de/inception-example/lessons/ durch deine eigene
+# (oder lege neue Sets unter sets/<quellsprache>/<ziel-level>/ an) und
+# registriere sie hier. Validieren mit:
+#
+#     python3 scripts/validate_content.py
+#
+# Anleitung: docs/GETTING-STARTED.md
+schema_version: '1.2'
+name: Adaptive Learner — Test- und Starter-Inhalte
+description: >-
+  Starter-Kit-Inhalte für eigene Adaptive-Learner-Lektionen.
+  Enthält ein lauffähiges Beispiel-Set (Inception-Effekt) als
+  Vorlage; forke das Repo und erstelle deine eigenen Inhalte.
+sets:
+  - id: inception-example-from-de
+    title: Inception-Effekt (Beispiel)
+    title_native: Inception-Effekt (Beispiel)
+    target_language: de
+    source_language: de
+    domain: psychology
+    level: A1
+    path: sets/de/inception-example
+    version: '1.0.0'
+    lesson_count: 1
+    domain_label: Psychologie
+    description: >-
+      Beispiel-Set: eine vollständige Sachthema-Lektion zur
+      Kommunikationspsychologie (10 Karten, 3 Theorieschritte,
+      8 Übungen) als Vorlage für eigene Inhalte.
+    tags:
+      - beispiel
+      - psychology
+      - starter

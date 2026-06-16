@@ -1,0 +1,37 @@
+# Beispiel-Set für das Test-/Starter-Repo.
+#
+# Ein einziges, vollständiges Sachthema-Set (domain: psychology),
+# das die Inception-Effekt-Lektion enthält. Es dient als lauffähiges
+# Beispiel: forke das Repo, ersetze diese Lektion durch deine eigene
+# (oder füge weitere hinzu) und passe das Wurzel-manifest.yaml an.
+# Der Content-Loader liest die Dateiliste aus metadata.lessons.
+schema_version: '1.3'
+name: Inception-Effekt (Beispiel)
+description: >-
+  Beispiel-Set des Starter-Kits: eine vollständige
+  Sachthema-Lektion zur Kommunikationspsychologie (der
+  Inception-Effekt) als Vorlage für eigene Inhalte.
+sets:
+  - id: inception-example-from-de
+    title: Inception-Effekt (Beispiel)
+    title_native: Inception-Effekt (Beispiel)
+    target_language: de
+    source_language: de
+    domain: psychology
+    level: A1
+    path: sets/de/inception-example
+    version: '1.0.0'
+    lesson_count: 1
+    domain_label: Psychologie
+    description: >-
+      Eine einzelne, vollständige Sachthema-Lektion (10 Karten,
+      3 Theorieschritte, 8 Übungen) als lauffähige Vorlage.
+    tags:
+      - beispiel
+      - psychology
+      - starter
+metadata:
+  author: Asterios Raptis
+  license: CC-BY-SA-4.0
+  lessons:
+    - 106-inception-effekt-und-beeinflussung.json
