@@ -4,38 +4,38 @@ _Last updated: 2026-06-16. Overwritten on each status pass — this file is alwa
 
 ## 1. HEAD + version
 
-- **Release:** **v1.82.0 SHIPPED** (minor — hint economy + smart review queue +
-  PWA update prompt + Test Impact Analysis + architecture-doc audit + manual-test
-  automation; canonical `backend/pyproject.toml` = `1.82.0`). Tag `v1.82.0` on
-  `main` (`f22dd801 Release v1.82.0`), GitHub Release published, merged back to
-  `develop` (`36226811`). Local release branch deleted (the remote one never
-  existed — created local-only via `release-prepare`, so the final
-  remote-delete step no-op'd; harmless).
+- **Release:** **v1.83.0 SHIPPED** (maintenance + gap-hardening — a P1
+  review-session fix, two P2 theory-rendering fixes, and a six-item gap-hardening
+  audit; canonical `backend/pyproject.toml` = `1.83.0`). Tag `v1.83.0` on `main`
+  (`e725da7f Release v1.83.0`), GitHub Release published, merged back to
+  `develop` (`a57fb9ac`). Local release branch deleted (the remote one never
+  existed — created local-only via `release-prepare`, so the final remote-delete
+  step no-op'd; harmless — same pattern as v1.82.0).
 - **Branch:** `develop` is the active branch (gitflow #334); `main` holds the
-  v1.82.0 release tag.
-- **Previous release:** v1.81.0 (the biggest feature release of the project — XP
-  visibility, statistics, SRS viz, hints, favorites, offline UX, shortcuts,
-  Hindi UI, EXP-028 event recording).
-- **Schema:** v1.82.0 adds additive Alembic **0030** (element_errors hint
-  columns) + **0031** (attempt history). Dexie schema unchanged (v27; new fields
-  are schemaless). Delete `~/.local/share/adaptive_learner/adaptive_learner.db`
-  before the next `make test` if you pull these migrations (see lessons-learned
-  "Alembic migration + fresh test DB").
+  v1.83.0 release tag.
+- **Previous release:** v1.82.0 (hint economy + smart review queue + PWA update
+  prompt + Test Impact Analysis + architecture-doc audit + manual-test
+  automation; Alembic 0030+0031).
+- **Schema:** **v1.83.0 has NO schema/API/data change** (no new Alembic, no Dexie
+  bump). The last migrations are still **0030** + **0031** from v1.82.0
+  (element_errors hint columns + attempt history); if you pull from before
+  v1.82.0, delete `~/.local/share/adaptive_learner/adaptive_learner.db` before the
+  next `make test` (see lessons-learned "Alembic migration + fresh test DB").
 - **Async CI on the tag/push:** launcher builds (Linux/macOS/Windows) on the
-  `v1.82.0` tag + GH-Pages deploy on develop/main were triggered at release time;
+  `v1.83.0` tag + GH-Pages deploy on develop/main were triggered at release time;
   these complete on their own and do not gate the release.
 
-## 2. Test counts (v1.79.0 baseline — re-collect for v1.82.0)
+## 2. Test counts (v1.79.0 baseline — re-collect for v1.83.0)
 
 | Suite | Count | How collected |
 |---|---|---|
 | Backend (pytest) | **~1237** (v1.82.0 CI) | `cd backend && poetry run pytest --collect-only -q` |
 | Plugins (13 suites, pytest) | **1018+** | per-plugin `pytest --collect-only` from the backend env |
-| Frontend (Vitest) | **4505 passed** (v1.82.0 gate) | `cd frontend && npx vitest run` |
+| Frontend (Vitest) | **4538 passed** (v1.83.0 gate) | `cd frontend && npx vitest run` |
 | E2E dexie-smoke | **88 passed** | `make test-dexie-smoke` |
 | E2E manual-automation (#621) | **49 automated** (+15 skip = manual-only) | `make test-manual-automation` (nightly + release) |
 
-The `make release-test` gate is green for v1.82.0 (Vitest 4505, docs 0 FAIL,
+The `make release-test` gate is green for v1.83.0 (Vitest 4538, docs 0 FAIL,
 dexie-smoke 88, manual-automation 49). The backend/plugin counts are
 last-precise at the v1.79.0 baseline; v1.81.0 added many
 feature + component tests on top — the gamification dashboard-API tests
@@ -47,7 +47,16 @@ mid-lesson-motivation-toast fix below). Re-collect exact counts via the commands
 above. TypeScript `tsc --noEmit` clean; ESLint clean; full Playwright smoke runs
 separately (Aster runs E2E).
 
-## 3. v1.82.0 contents (commits since v1.81.0)
+## 3. v1.83.0 contents (commits since v1.82.0)
+
+Full detail in `changelog/releases/v1.83.0.md`. 4 PRs, no schema/API/data change:
+
+- **#631 (P1)** review session — Enter shortcut + element de-dup in the queue + live XP-badge recompute (Refs #629).
+- **#633 (P2)** theory markdown-table styling (Refs #632).
+- **#635 (P2)** theory back-link resolves by topic, not nearest step (Refs #634).
+- **#630** gap-hardening audit — six gaps closed: cloze Tab nav (#623), hints honour the feature-not-available policy (#624), Dashboard favorites Top-5 cap (#625), review "repeat in 2 days" suggestion (#626), free-text "Fast! Achte auf:" typo hint (#627), Dashboard Quick-Review button (#628).
+
+### Earlier: v1.82.0 contents (commits since v1.81.0)
 
 Full detail in `changelog/releases/v1.82.0.md`. Six PRs + the cherry-picked #621:
 

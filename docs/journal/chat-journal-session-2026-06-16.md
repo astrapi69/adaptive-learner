@@ -194,3 +194,39 @@ gate.
   - **cherry-pick + back-merge duplication:** anticipated the add/add overlap of
     #621 on both develop and the release branch; it auto-resolved because the
     content was identical. No rebase, no develop-merge into the release branch.
+
+---
+
+# Session C (later 2026-06-16) — Release v1.83.0
+
+## 13. Release v1.83.0 (maintenance + gap-hardening)
+
+- **Phase 0:** range `v1.82.0..develop` = 4 substantive PRs (#621 + the
+  v1.82.0 post-release docs commit are carry-over, not new content).
+- **Content (no schema/API/data change):**
+  - **#631 (P1)** review session — Enter shortcut, element de-dup in the queue,
+    live XP-badge recompute (#629).
+  - **#633 (P2)** theory markdown-table styling (#632).
+  - **#635 (P2)** theory back-link resolves by topic, not nearest step (#634).
+  - **#630 gap-hardening audit** — six gaps: cloze Tab nav (#623), hints
+    feature-not-available policy (#624), Dashboard favorites Top-5 cap (#625),
+    review "repeat in 2 days" (#626), free-text "Fast! Achte auf:" typo hint
+    (#627), Dashboard Quick-Review button (#628).
+- **Gates:** `make release-test` green — Vitest 4538, docs 0 FAIL, dexie-smoke
+  88, manual-automation 49. README badges + i18n auto-fixed via
+  `verify_docs.py --fix` before the gate; ROADMAP/backlog "dated prose" headers
+  fixed by hand.
+- **Ship:** `make release-finish` → main merge + tag `v1.83.0` + back-merge to
+  develop (clean, no cherry-pick duplication this time); the remote-branch-delete
+  step no-op'd harmlessly (release branch was local-only). GitHub Release
+  published from `changelog/releases/v1.83.0.md`.
+
+## Session C summary
+
+- **Releases:** **v1.83.0 SHIPPED** (maintenance + gap-hardening; no schema change).
+- **PRs merged (in the release):** #631, #633, #635, #630 (the gap-hardening
+  bundle of #623-#628).
+- **Issues closed:** #623-#629, #632, #634 (+ the merged PRs).
+- **Note:** continued the "verify before echoing" habit — confirmed the range,
+  the absence of any Alembic/Dexie schema bump, and that #621 was already in
+  v1.82.0 (not double-counted).
