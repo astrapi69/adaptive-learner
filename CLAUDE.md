@@ -26,7 +26,9 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   audit** (#620) captures the Dexie data-integrity (R-M-W, unique indexes,
   additive migrations), Dexie namespace split, and Settings sidebar/hamburger
   patterns as rules in `.claude/rules/architecture.md`. Plus the recommended-repos
-  discovery E2E reactivated (#610). Additive Alembic 0030+0031 on
+  discovery E2E reactivated (#610) and the **manual test plan automated** - 52
+  Playwright specs across 7 sessions under `e2e/manual-automation/` + a nightly
+  workflow (#621). Additive Alembic 0030+0031 on
   `element_errors`; Dexie schema unchanged (new fields are schemaless). 6
   substantive commits, 81 files.)
   v1.81.0 = (minor - **XP visibility + bidirectional matching + complexity
