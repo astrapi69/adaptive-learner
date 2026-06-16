@@ -2943,6 +2943,44 @@ select:focus {
   line-height: 1.6;
 }
 
+/* #632 — readable markdown tables in theory content. Scoped to
+   .lesson-theory so it never touches the app's other tables (commit /
+   backup / storage-mode). Token-backed, so every theme adapts. The
+   wrapper (added by the TheoryStep `table` component override) makes a
+   wide table scroll horizontally instead of overflowing at 320px. */
+.lesson-theory-table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  margin: var(--space-3) 0;
+}
+
+.lesson-theory table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: max-content;
+  font-size: 0.95em;
+  color: var(--fg-primary);
+}
+
+.lesson-theory th,
+.lesson-theory td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.lesson-theory th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+}
+
+/* Subtle zebra striping (~half-strength elevated surface) to keep wide
+   rows readable; transparent base so it composites over any theme. */
+.lesson-theory tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--bg-elevated) 50%, transparent);
+}
+
 .lesson-exercise-placeholder {
   padding: var(--space-3);
   border: 1px dashed var(--border-strong);
