@@ -14,6 +14,8 @@ Vollstaendige Policy: docs/VIBE-CODING-POLICY.md
 
 3. TESTS: Jede Verhaltensaenderung braucht Tests. Backup-Aenderungen
    brauchen zusaetzlich den manuellen Round-Trip (BACKUP-AKZEPTANZTEST).
+   PR-CI: selektive Tests (vitest --changed, pytest --testmon).
+   Nightly + Release: volle Suite.
 
 4. DEPENDENCIES: Keine neuen Dependencies ohne manuelle Pruefung auf
    Wartungsstatus und Sicherheit. Bestehende Dependencies bevorzugen.

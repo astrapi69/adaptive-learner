@@ -509,6 +509,29 @@ it belongs on the night shift, not on the `pull_request` trigger. The local
 pre-commit hooks (e.g. "Validate content repo stats in README") still catch
 the app-side half of the moved checks before commit.
 
+### Test Impact Analysis (#615): selective on PRs, full nightly + release
+
+On a PR, run only the tests whose covered code changed; on develop/main push,
+nightly, and release, run the full suite. The full suite is the safety net
+against false negatives — never weaken the nightly to make a selective PR run
+green; debug the selective mechanism instead.
+
+| Trigger | Frontend | Backend | E2E (Dexie) |
+|---------|----------|---------|-------------|
+| PR | `vitest --changed origin/<base>` | `pytest --testmon` | Nightly only |
+| develop push | Full suite | Full suite | Nightly only |
+| Nightly (04:00 UTC) | Full suite | Full suite | Full suite |
+| Release (`make release-test`) | Full suite | Full suite | Full suite |
+
+Mechanics: frontend uses `vitest run --changed origin/<base>` (#615); backend
+uses `pytest-testmon` (`.testmondata` cached in CI, run-id key + prefix
+restore-key to stay warm + current). Plugin tests (`make test-plugins`, ~37s)
+stay full — too cheap to optimise. **Fallback to the full suite is automatic**:
+an unresolvable base ref (frontend) or a testmon cache-miss (backend, which
+makes testmon run + rebuild the DB) — never a silent skip. `make test`,
+`make release-test`, and the nightly/release workflows are unaffected (they
+call the full Makefile targets directly).
+
 ---
 
 ## Priority for the next improvements
