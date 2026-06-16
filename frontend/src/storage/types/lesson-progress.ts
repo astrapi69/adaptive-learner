@@ -26,6 +26,10 @@ export interface LessonStepResult {
    *  revisited (locked) step re-renders the exact post-check
    *  visual instead of a fresh re-answerable exercise. */
   raw_answer?: RawAnswer | null;
+  /** #594 Hint Economy — true when the learner revealed a hint on this
+   *  step before answering. Counted in the lesson summary's "hints
+   *  used" line. */
+  hint_used?: boolean;
 }
 
 export interface LessonProgressUpsertBody {
@@ -74,6 +78,8 @@ export interface LessonStepResultStored {
    *  viewer falls back to a compact "completed" panel for those
    *  on revisit instead of an exact reconstruction. */
   raw_answer?: RawAnswer | null;
+  /** #594 Hint Economy — see ``LessonStepResult.hint_used``. */
+  hint_used?: boolean;
 }
 
 export interface LessonProgress {

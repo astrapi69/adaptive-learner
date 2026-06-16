@@ -71,6 +71,7 @@ def _attempt(
     user_answer: str = "",
     correct_answer: str = "Merci",
     correct: bool,
+    hint_used: bool = False,
 ) -> ElementAttemptIn:
     return ElementAttemptIn(
         set_id=set_id,
@@ -82,7 +83,43 @@ def _attempt(
         user_answer=user_answer,
         correct_answer=correct_answer,
         correct=correct,
+        hint_used=hint_used,
     )
+
+
+def test_hint_used_tracks_flag_and_accumulates_count(user_id: str) -> None:
+    """#594 Hint Economy — hint_used reflects the latest attempt; the
+    count accumulates only on hint-assisted attempts."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        # First attempt: no hint.
+        row = record_attempt(
+            repo, user_id, _attempt(correct=False, hint_used=False)
+        )
+        assert row.hint_used is False
+        assert row.hint_used_count == 0
+        # Second: with a hint → flag flips, count = 1.
+        row = record_attempt(
+            repo, user_id, _attempt(correct=False, hint_used=True)
+        )
+        assert row.hint_used is True
+        assert row.hint_used_count == 1
+        # Third: with a hint again → count = 2.
+        row = record_attempt(
+            repo, user_id, _attempt(correct=True, hint_used=True)
+        )
+        assert row.hint_used is True
+        assert row.hint_used_count == 2
+        # Fourth: no hint → flag clears, count holds (monotonic).
+        row = record_attempt(
+            repo, user_id, _attempt(correct=True, hint_used=False)
+        )
+        assert row.hint_used is False
+        assert row.hint_used_count == 2
+        db.commit()
+    finally:
+        db.close()
 
 
 # --- Threshold constant pin -------------------------------------------------

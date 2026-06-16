@@ -1526,6 +1526,14 @@ class ElementAttemptIn(BaseModel):
             "resets to 0 and bumps error_count on false."
         ),
     )
+    hint_used: bool = Field(
+        default=False,
+        description=(
+            "#594 Hint Economy: true when the learner revealed a hint "
+            "before answering. Shortens the SRS review interval and "
+            "feeds the 'answers with hint' statistic."
+        ),
+    )
 
 
 class ElementAttemptsIn(BaseModel):
@@ -1562,6 +1570,8 @@ class ElementErrorOut(BaseModel):
     last_attempt_at: datetime
     mastered: bool
     mastered_at: datetime | None = None
+    hint_used: bool = False
+    hint_used_count: int = 0
     created_at: datetime
     updated_at: datetime
 

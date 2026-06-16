@@ -313,6 +313,7 @@
       "loading": "Analyzing your errors…",
       "subtitle": "Your challenge areas:",
       "errors": "errors",
+      "hint_answers": "{n} उत्तर संकेत के साथ",
       "mastery_progress": "Mastery progress",
       "cta": "Start adaptive lesson",
       "tag": {
@@ -1750,6 +1751,7 @@
       "stars_aria": "{n} of 3 stars",
       "time": "Time",
       "minutes": "{n} min",
+      "hints_used": "उपयोग किए गए संकेत",
       "breakdown_heading": "Exercise breakdown",
       "breakdown_correct_answer": "Correct answer: {answer}",
       "breakdown_unattempted": "Not attempted",

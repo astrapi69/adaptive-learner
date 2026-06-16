@@ -171,6 +171,36 @@ def test_manual_award_supports_negative_for_reset(client: TestClient) -> None:
     assert state_after["level"] == 1
 
 
+def test_spend_xp_deducts_and_clamps_at_zero(client: TestClient) -> None:
+    """#594 Hint Economy — spend deducts XP and never goes below zero."""
+    user_id, _ = _make_user_and_project(client)
+    client.post(f"/api/plugins/gamification/xp/{user_id}/award-assessment")
+    # Spend 30 of 100 → 70.
+    r = client.post(
+        f"/api/plugins/gamification/xp/{user_id}/spend",
+        json={"amount": 30, "reason": "hint_revealed"},
+    )
+    assert r.status_code == 200
+    assert r.json()["total_xp"] == 70
+    # Spend more than the balance → clamps at 0, level back to 1.
+    r = client.post(
+        f"/api/plugins/gamification/xp/{user_id}/spend",
+        json={"amount": 999, "reason": "hint_revealed"},
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["total_xp"] == 0
+    assert body["level"] == 1
+
+
+def test_spend_xp_rejects_unknown_user(client: TestClient) -> None:
+    r = client.post(
+        "/api/plugins/gamification/xp/nope/spend",
+        json={"amount": 5, "reason": "hint_revealed"},
+    )
+    assert r.status_code == 404
+
+
 def test_award_endpoints_reject_unknown_user(client: TestClient) -> None:
     r = client.post("/api/plugins/gamification/xp/nope/award-assessment")
     assert r.status_code == 404

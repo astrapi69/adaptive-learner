@@ -69,6 +69,24 @@ def award_import(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     return award.to_dict()
 
 
+@router.post("/xp/{user_id}/spend")
+def spend_xp(
+    user_id: str,
+    body: dict[str, Any],
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    """#594 Hint Economy — deduct XP for a spent hint.
+
+    ``body.amount`` is a non-negative number of points to remove; the
+    total is clamped at 0. Returns the new XP state. No badge re-eval —
+    a spend never unlocks a badge.
+    """
+    _ensure_user(db, user_id)
+    amount = int(body.get("amount", 0))
+    reason = str(body.get("reason", "spend"))
+    return xp_service.spend_xp(db, user_id=user_id, amount=amount, reason=reason)
+
+
 # --- Badges (Phase 29B) ----------------------------------------------------
 
 

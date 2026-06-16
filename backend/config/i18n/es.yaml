@@ -296,6 +296,7 @@ dashboard:
     loading: "Analizando tus errores…"
     subtitle: "Tus áreas de desafío:"
     errors: "errores"
+    hint_answers: "{n} respuestas con pista"
     mastery_progress: "Progreso de dominio"
     cta: "Iniciar lección adaptativa"
     tag:
@@ -1652,6 +1653,7 @@ lesson:
     stars_aria: "{n} de 3 estrellas"
     time: "Tiempo"
     minutes: "{n} min"
+    hints_used: "Pistas usadas"
     breakdown_heading: "Detalle de ejercicios"
     breakdown_correct_answer: "Respuesta correcta: {answer}"
     breakdown_unattempted: "Sin intentar"

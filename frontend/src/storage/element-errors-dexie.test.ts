@@ -18,6 +18,7 @@ import {beforeEach, describe, expect, it} from "vitest";
 
 import {_resetDbForTests, getDb} from "./db";
 import {
+    HINT_INTERVAL_FACTOR,
     MASTERY_THRESHOLD,
     computeReviewQueueDexie,
     intervalDaysForStreak,
@@ -55,6 +56,45 @@ beforeEach(async () => {
 describe("Dexie elementErrors: MASTERY_THRESHOLD contract", () => {
     it("exports the same threshold the backend uses (3)", () => {
         expect(MASTERY_THRESHOLD).toBe(3);
+    });
+});
+
+describe("Dexie elementErrors: #594 hint economy", () => {
+    it("tracks hint_used + accumulates hint_used_count", async () => {
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: false, hint_used: false}),
+        ]);
+        let rows = await listElementErrorsDexie(USER);
+        expect(rows[0].hint_used).toBe(false);
+        expect(rows[0].hint_used_count).toBe(0);
+
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: false, hint_used: true}),
+        ]);
+        rows = await listElementErrorsDexie(USER);
+        expect(rows[0].hint_used).toBe(true);
+        expect(rows[0].hint_used_count).toBe(1);
+
+        // A hint-free attempt clears the flag but holds the count.
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: true, hint_used: false}),
+        ]);
+        rows = await listElementErrorsDexie(USER);
+        expect(rows[0].hint_used).toBe(false);
+        expect(rows[0].hint_used_count).toBe(1);
+    });
+
+    it("halves the review interval for a hint-assisted answer", async () => {
+        expect(HINT_INTERVAL_FACTOR).toBe(0.5);
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: false, hint_used: true}),
+        ]);
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue).toHaveLength(1);
+        const last = new Date(queue[0].last_attempt_at).getTime();
+        const suggested = new Date(queue[0].suggested_review_at).getTime();
+        // streak 0 → 1d band, halved → 0.5d = 12h.
+        expect(suggested - last).toBeCloseTo(0.5 * 86_400_000, -3);
     });
 });
 

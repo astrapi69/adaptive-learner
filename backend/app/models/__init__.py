@@ -43,6 +43,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -1557,6 +1558,21 @@ class ElementError(Base):
     mastered_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
+    )
+    # #594 Hint Economy — whether the MOST RECENT attempt used a hint
+    # (drives the shortened SRS interval), and the lifetime count of
+    # hint-assisted attempts (feeds the "answers with hint" statistic).
+    hint_used: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default=text("0"),
+    )
+    hint_used_count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default=text("0"),
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
