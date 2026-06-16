@@ -1547,6 +1547,14 @@ class ElementAttemptsIn(BaseModel):
     )
 
 
+class AttemptRecordOut(BaseModel):
+    """#603 — one recorded attempt in the per-element history ring buffer."""
+
+    correct: bool
+    hint_used: bool = False
+    at: str
+
+
 class ElementErrorOut(BaseModel):
     """Server-side element-error payload. Identical shape on
     both ApiStorage and DexieStorage so the review-queue UI
@@ -1572,8 +1580,25 @@ class ElementErrorOut(BaseModel):
     mastered_at: datetime | None = None
     hint_used: bool = False
     hint_used_count: int = 0
+    # #603 Smart Review Queue — total attempts + the last-10 ring buffer.
+    attempt_count: int = 0
+    attempt_history: list[AttemptRecordOut] = Field(default_factory=list)
     created_at: datetime
     updated_at: datetime
+
+    @field_validator("attempt_history", mode="before")
+    @classmethod
+    def _parse_attempt_history(cls, value: object) -> object:
+        """Accept the DB's JSON-string column or an already-parsed list."""
+        if value is None:
+            return []
+        if isinstance(value, str):
+            try:
+                parsed = json.loads(value)
+            except (ValueError, TypeError):
+                return []
+            return parsed if isinstance(parsed, list) else []
+        return value
 
 
 class ReviewQueueItemOut(BaseModel):
@@ -1600,3 +1625,7 @@ class ReviewQueueItemOut(BaseModel):
     last_attempt_at: datetime
     suggested_review_at: datetime
     overdue: bool
+    # #603 Smart Review Queue — surfaced so the review UI can show the
+    # element's trajectory ("attempt 5: correct") + weakness tier.
+    attempt_count: int = 0
+    attempt_history: list[AttemptRecordOut] = Field(default_factory=list)

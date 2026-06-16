@@ -11,6 +11,7 @@
  */
 
 import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../lib/constants";
+import type {AttemptRecord} from "./types/element-errors";
 
 // ---- Row shapes (mirror backend Pydantic Out-schemas) -----------------
 
@@ -537,6 +538,11 @@ export interface ElementErrorRow {
     /** #594 Hint Economy — lifetime count of hint-assisted attempts on
      *  this element (feeds the "answers with hint" statistic). */
     hint_used_count?: number;
+    /** #603 Smart Review Queue — total attempts (correct or wrong). */
+    attempt_count?: number;
+    /** #603 Smart Review Queue — the last 10 attempts (ring buffer).
+     *  Stored inline (non-indexed) so no Dexie version bump is needed. */
+    attempt_history?: AttemptRecord[];
     created_at: string;
     updated_at: string;
 }

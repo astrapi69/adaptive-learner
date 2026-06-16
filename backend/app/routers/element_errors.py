@@ -81,22 +81,31 @@ def review_queue(
             "review queue across all sets the user has touched."
         ),
     ),
+    limit: int | None = Query(
+        default=None,
+        ge=0,
+        description=(
+            "#603 — cap the returned items (a review session uses "
+            "MAX_REVIEW_SESSION=20). Omit for the full queue (the "
+            "'N due' count)."
+        ),
+    ),
     repo: ElementErrorsRepository = Depends(get_element_errors_repo),
 ) -> list[ReviewQueueItemOut]:
-    """SRS review queue for the user (Phase 46C / P-129).
+    """SRS review queue for the user (Phase 46C / P-129; #603).
 
-    Returns active (non-mastered) element-error rows
-    projected into review items with computed
-    ``suggested_review_at`` + ``overdue`` fields. Sorted by
-    overdue → error_count desc → last_error_at desc so the
-    Dashboard widget (C13) renders the most urgent items
-    first.
+    Returns active (non-mastered) element-error rows projected into
+    review items with computed ``suggested_review_at`` + ``overdue``
+    fields. Sorted by overdue → weakness tier (wrong > almost-right >
+    correct) → error frequency → oldest error first, capped at
+    ``limit`` when given, so the review session stays focused.
     """
     _require_user(repo, user_id)
     items = element_srs_service.compute_review_queue(
         repo,
         user_id,
         set_id=set_id,
+        limit=limit,
     )
     return [ReviewQueueItemOut.model_validate(item) for item in items]
 

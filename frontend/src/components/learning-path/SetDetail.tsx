@@ -58,12 +58,23 @@ function toElementItems(
             .replace("{streak}", String(d.correctStreak))
             .replace("{errors}", String(d.errorCount))
             .replace("{days}", String(d.intervalDays));
+        // #603 — the learning trajectory: "Attempt N: correct/wrong".
+        let trajectoryLabel: string | undefined;
+        if (d.attemptCount > 0 && d.lastAttemptCorrect !== null) {
+            const outcome = d.lastAttemptCorrect
+                ? t("srs.attempt_correct", "correct")
+                : t("srs.attempt_wrong", "wrong");
+            trajectoryLabel = t("srs.attempt_trajectory", "Attempt {n}: {outcome}")
+                .replace("{n}", String(d.attemptCount))
+                .replace("{outcome}", outcome);
+        }
         return {
             id: `${d.elementKey}-${d.direction}-${i}`,
             element: d.elementKey,
             tone,
             statusLabel,
             metaLabel,
+            trajectoryLabel,
             lastAnswer: d.mastered ? undefined : d.lastAnswer || undefined,
             correctAnswer: d.correctAnswer || undefined,
         };

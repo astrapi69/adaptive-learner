@@ -1574,6 +1574,21 @@ class ElementError(Base):
         default=0,
         server_default=text("0"),
     )
+    # #603 Smart Review Queue — total attempts on this element (every
+    # submit, correct or wrong; monotonic) and a JSON ring buffer of the
+    # last 10 attempts (``[{"correct": bool, "hint_used": bool, "at":
+    # iso}, ...]``) so the UI can show the learning trajectory
+    # ("5th attempt: correct").
+    attempt_count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default=text("0"),
+    )
+    attempt_history: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
