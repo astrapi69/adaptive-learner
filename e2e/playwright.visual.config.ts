@@ -1,7 +1,10 @@
 /**
- * Playwright config for the visual-regression suite (#244, infra block 8).
+ * Playwright config for the visual-regression suite (#244 + #705).
  *
- * Runs the theme × view screenshot matrix under ``e2e/visual/`` against
+ * Runs both screenshot matrices under ``e2e/visual/`` —
+ * ``theme-regression.spec.ts`` (5 views × 12 themes, desktop) and
+ * ``critical-surfaces.spec.ts`` (14 surfaces × 3 viewports, default
+ * theme) — against
  * the built frontend with NO backend process — the same GH-Pages shape
  * the dexie smoke gate uses, so every theme resolves client-side and the
  * baseline matches what real users see.
@@ -37,6 +40,8 @@ export default defineConfig({
     expect: {
         toHaveScreenshot: {
             maxDiffPixelRatio: 0.01,
+            // Per-pixel colour-distance tolerance for anti-aliasing (#705).
+            threshold: 0.2,
             animations: "disabled",
         },
     },

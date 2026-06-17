@@ -278,6 +278,27 @@ Vorlage zum Kopieren:
 
 ---
 
+## Visual-Regression Baseline aktualisieren (#244 / #705)
+
+Die Visual-Regression-Suite (`e2e/visual/`) vergleicht Screenshots
+kritischer Oberflächen gegen committete Baseline-PNGs. Wenn ein UI-PR
+das Layout **absichtlich** ändert, müssen die Baselines neu erzeugt und
+**geprüft** werden — auf einer konsistenten Maschine (Font-Antialiasing
+unterscheidet sich zwischen Maschinen):
+
+1. `make test-visual-update` — baut das Dexie-Frontend und erzeugt die
+   Baselines neu (`--update-snapshots`).
+2. Jedes geänderte PNG prüfen — bestätigen, dass der Diff die
+   beabsichtigte Änderung ist, **kein** Regressionsfehler.
+3. `git add e2e/visual/screenshots/`
+4. Commit: `test(visual): update baseline after <was geändert wurde>`
+
+**Niemals** `--update-snapshots` benutzen, um einen Diff zu
+übertünchen, der einen echten Bug zeigt — den Bug fixen, dann neu
+baselinen. Vollständige Anleitung: `e2e/visual/README.md`.
+
+---
+
 ## Verwandte Dokumente
 
 - [Testen (Entwickler-Dokumentation)](help/de/developer/testing.md)
