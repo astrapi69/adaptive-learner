@@ -24,6 +24,7 @@ const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
 
 vi.mock("../storage", () => ({
+  resolveStorageMode: () => "api",
   getStorage: () => ({
     contentLoader: {
       listSets: listSetsMock,
@@ -32,6 +33,7 @@ vi.mock("../storage", () => ({
       getLesson: getLessonMock,
       deleteSet: vi.fn(),
       aiValidate: vi.fn(),
+      aiValidateCards: vi.fn(),
     },
   }),
   USER_GENERATED_SOURCE: "user-generated",

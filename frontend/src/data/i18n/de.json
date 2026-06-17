@@ -2055,6 +2055,34 @@
       "fix_applied": "Vorschlag übernommen.",
       "fix_failed": "Vorschlag konnte nicht übernommen werden."
     },
+    "ai_check": {
+      "last_checked": "Letzte Pruefung: {when}",
+      "recheck": "Erneut pruefen",
+      "export": {
+        "button": "Bericht als Markdown exportieren",
+        "lesson": "Lektion",
+        "card": "Karte",
+        "field": "Feld"
+      },
+      "button": "Mit KI pruefen",
+      "title": "KI-Inhaltspruefung",
+      "loading": "Karten werden vorbereitet...",
+      "cost_estimate": "~{cards} Karten, ~{tokens} Tokens, ~{usd}.",
+      "privacy": "Deine Lernkarten werden zur Pruefung an deinen konfigurierten KI-Anbieter gesendet. Es werden keine personenbezogenen Daten uebertragen.",
+      "confirm": "Pruefen",
+      "progress": "Pruefe Batch {current} von {total}...",
+      "rate_limited": "Bitte warte einen Moment, bevor du erneut pruefst.",
+      "failed": "KI-Pruefung nicht verfuegbar.",
+      "unavailable_mode": "Nur im Browser-Speichermodus verfuegbar.",
+      "report": {
+        "summary": "{cards} Karten in {lessons} Lektionen geprueft",
+        "ok": "{count} Karten OK",
+        "issues": "{count} Karten mit Problemen",
+        "all_ok": "Alle Karten bestanden. Keine Probleme gefunden.",
+        "problem": "Problem",
+        "suggestion": "Vorschlag"
+      }
+    },
     "placement": {
       "lands_under": "Deine Lektion wird eingeordnet unter",
       "duplicate": "Eine ähnliche Lektion existiert bereits: {title}. Trotzdem teilen?"

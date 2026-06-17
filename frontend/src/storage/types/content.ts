@@ -290,6 +290,76 @@ export interface IContentLoaderNamespace {
    *  to the rule-based gate — callers treat a thrown error as
    *  non-fatal. */
   aiValidate(input: AiValidateInput): Promise<AiValidationResult>;
+  /** EXP-033 / AIV-02 — set-wide, batched, PER-CARD AI content check.
+   *  Distinct from {@link aiValidate} (per-lesson, aggregate shape): this
+   *  flattens the set's cards, sends them in batches of 10 to the user's
+   *  configured provider, and returns a card-keyed result + the provider
+   *  response ids (for the AIV-09 signature).
+   *
+   *  Dexie mode runs the batches browser-direct (resolving the key from
+   *  IndexedDB) and reports per-batch progress via ``onProgress``. API mode
+   *  has no client-side key and EXP-033 ships no server route, so the API
+   *  implementation throws — callers gate the trigger to Dexie mode + a
+   *  configured key. */
+  aiValidateCards(input: AiValidateCardsInput): Promise<AiValidateCardsResult>;
+  /** EXP-033 / AIV-04 — read the cached AI content-check report for a set,
+   *  or null when none exists. Dexie reads IndexedDB; API mode returns
+   *  null (the check runs client-side only). */
+  getAiValidationCache(
+    source: string,
+    setId: string,
+  ): Promise<AiValidationCacheRecord | null>;
+  /** EXP-033 / AIV-04 — persist a report so it can be re-shown without a
+   *  new API call. Dexie writes IndexedDB; API mode is a no-op. */
+  saveAiValidationCache(record: AiValidationCacheRecord): Promise<void>;
+}
+
+/** A cached set-wide AI content-check report (EXP-033 / AIV-04). */
+export interface AiValidationCacheRecord {
+  source: string;
+  set_id: string;
+  /** The set's ``cached_version`` when the check ran (invalidation). */
+  set_version: string | null;
+  /** AIV-09 content hash of the checked cards (null until AIV-08/09). */
+  content_hash: string | null;
+  results: import("../../lib/ai/content-validator").ValidationResult[];
+  response_ids: string[];
+  provider: string;
+  model: string;
+  card_count: number;
+  issue_count: number;
+  /** ISO timestamp the check completed. */
+  checked_at: string;
+}
+
+/** Input for the EXP-033 set-wide per-card AI check (AIV-02). */
+export interface AiValidateCardsInput {
+  /** Resolves the AI provider + key (IndexedDB settings, Dexie only). */
+  user_id: string;
+  source_language: string;
+  target_language: string;
+  level: string;
+  /** Flattened cards to check (caller flattens across the set's lessons
+   *  and applies the 500-card cap). Each item needs at least
+   *  ``{id, front, back}``; ``notes`` is optional. */
+  cards: import("../../lib/ai/content-validator").ValidationCard[];
+  /** Per-batch progress callback (Dexie, client-side). */
+  onProgress?: (progress: { current: number; total: number }) => void;
+  /** Abort the run mid-batch. */
+  signal?: AbortSignal;
+}
+
+/** Result of the EXP-033 set-wide per-card AI check (AIV-02). */
+export interface AiValidateCardsResult {
+  results: import("../../lib/ai/content-validator").ValidationResult[];
+  /** Provider response ids, gathered across batches (AIV-09 signature). */
+  response_ids: string[];
+  /** Provider slug ("openai" | "anthropic" | "gemini"). */
+  provider: string;
+  /** Effective model used. */
+  model: string;
+  checked_cards: number;
+  issue_count: number;
 }
 
 /** Input for the opt-in AI content validation (Phase 60). */

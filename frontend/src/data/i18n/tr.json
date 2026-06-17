@@ -2055,6 +2055,34 @@
       "fix_applied": "Öneri uygulandı.",
       "fix_failed": "Öneri uygulanamadı."
     },
+    "ai_check": {
+      "last_checked": "Son denetim: {when}",
+      "recheck": "Yeniden denetle",
+      "export": {
+        "button": "Raporu Markdown olarak disa aktar",
+        "lesson": "Ders",
+        "card": "Kart",
+        "field": "Alan"
+      },
+      "button": "Yapay zeka ile denetle",
+      "title": "Yapay zeka icerik denetimi",
+      "loading": "Kartlar hazirlaniyor...",
+      "cost_estimate": "~{cards} kart, ~{tokens} token, ~{usd}.",
+      "privacy": "Kartlariniz denetim icin yapilandirilmis yapay zeka saglayiciniza gonderilir. Kisisel veri aktarilmaz.",
+      "confirm": "Denetle",
+      "progress": "{total} gruptan {current}. grup denetleniyor...",
+      "rate_limited": "Yeni bir denetim calistirmadan once lutfen biraz bekleyin.",
+      "failed": "Yapay zeka denetimi kullanilamiyor.",
+      "unavailable_mode": "Yalnizca tarayici depolama modunda kullanilabilir.",
+      "report": {
+        "summary": "{lessons} derste {cards} kart denetlendi",
+        "ok": "{count} kart sorunsuz",
+        "issues": "{count} kartta sorun var",
+        "all_ok": "Tum kartlar gecti. Sorun bulunamadi.",
+        "problem": "Sorun",
+        "suggestion": "Oneri"
+      }
+    },
     "placement": {
       "lands_under": "Dersiniz şuraya yerleşecek",
       "duplicate": "Benzer bir ders zaten var: {title}. Yine de paylaşılsın mı?"

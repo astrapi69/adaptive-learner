@@ -10,7 +10,7 @@
  * tag, status and action blocks live in the sub-components below.
  */
 
-import { BookOpen, Download, FolderOpen } from "lucide-react";
+import { BookOpen, Download, FolderOpen, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -40,6 +40,12 @@ interface ContentSetRowProps {
   /** Open the set's first lesson focused on its media section
    *  (badge click). Defaults to {@link onOpen}. */
   onOpenMedia?: (entry: ContentSetEntry) => void;
+  /** EXP-033 / AIV-02 — open the AI content-check dialog. Omit to hide
+   *  the "Check with AI" button. */
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  /** When set, the AI-check button is rendered VISIBLE but DISABLED with
+   *  this reason as its tooltip (feature-state policy, #335). */
+  aiCheckDisabledReason?: string;
 }
 
 /** Origin / trust / recommended badges for a non-official source. */
@@ -228,6 +234,8 @@ function ContentSetActions({
   isCached,
   onOpen,
   onDownload,
+  onAiCheck,
+  aiCheckDisabledReason,
 }: {
   entry: ContentSetEntry;
   downloadState: DownloadState;
@@ -235,6 +243,8 @@ function ContentSetActions({
   isCached: boolean;
   onOpen: (entry: ContentSetEntry) => void;
   onDownload: (entry: ContentSetEntry) => void;
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  aiCheckDisabledReason?: string;
 }) {
   const { t } = useI18n();
   return (
@@ -248,6 +258,20 @@ function ContentSetActions({
         >
           <BookOpen size={14} aria-hidden="true" />
           {t("content.action.open", "Open")}
+        </Button>
+      )}
+      {isCached && onAiCheck && (
+        <Button
+          type="button"
+          variant="outline"
+          className="content-set-aicheck-btn"
+          onClick={() => onAiCheck(entry)}
+          disabled={!!aiCheckDisabledReason}
+          title={aiCheckDisabledReason || undefined}
+          data-testid={`content-set-${entry.id}-ai-check`}
+        >
+          <Sparkles size={14} aria-hidden="true" />
+          {t("content.ai_check.button", "Check with AI")}
         </Button>
       )}
       <Button
@@ -277,6 +301,8 @@ export default function ContentSetRow({
   onDownload,
   mediaResources = [],
   onOpenMedia,
+  onAiCheck,
+  aiCheckDisabledReason,
 }: ContentSetRowProps) {
   const isCached = entry.cached_version !== null;
   return (
@@ -316,6 +342,8 @@ export default function ContentSetRow({
           isCached={isCached}
           onOpen={onOpen}
           onDownload={onDownload}
+          onAiCheck={onAiCheck}
+          aiCheckDisabledReason={aiCheckDisabledReason}
         />
       }
     />

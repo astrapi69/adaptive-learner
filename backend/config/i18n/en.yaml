@@ -1903,6 +1903,31 @@ content:
     applied: applied
     fix_applied: Suggestion applied.
     fix_failed: Could not apply the suggestion.
+  ai_check:
+    last_checked: "Last check: {when}"
+    recheck: "Re-check"
+    export:
+      button: "Export report as Markdown"
+      lesson: "Lesson"
+      card: "Card"
+      field: "Field"
+    button: "Check with AI"
+    title: "AI content check"
+    loading: "Preparing cards..."
+    cost_estimate: "~{cards} cards, ~{tokens} tokens, ~{usd}."
+    privacy: "Your lesson cards will be sent to your configured AI provider for review. No personal data is transmitted."
+    confirm: "Check"
+    progress: "Checking batch {current} of {total}..."
+    rate_limited: "Please wait a moment before running another check."
+    failed: "AI check unavailable."
+    unavailable_mode: "Available in browser-storage mode only."
+    report:
+      summary: "Checked {cards} cards in {lessons} lessons"
+      ok: "{count} cards OK"
+      issues: "{count} cards with issues"
+      all_ok: "All cards passed. No issues found."
+      problem: "Problem"
+      suggestion: "Suggestion"
   placement:
     lands_under: Your lesson lands under
     duplicate: 'A similar lesson already exists: {title}. Share anyway?'

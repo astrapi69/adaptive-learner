@@ -61,7 +61,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
         await db.open();
         // verno tracks the latest declared schema version; bump
         // this when a new this.version(N) is added to db.ts.
-        expect(db.verno).toBe(27);
+        expect(db.verno).toBe(28);
 
         const badge = (await db.table("badges").get("b1")) as Record<string, unknown>;
         expect(badge.base_tier).toBeTruthy();
@@ -105,7 +105,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
         const db = new AdaptiveLearnerDB(PAIR_NAME);
         await db.open();
-        expect(db.verno).toBe(27);
+        expect(db.verno).toBe(28);
         const row = (await db
             .table("contentSets")
             .get("src/language-fr-a1/1.0.0")) as Record<string, unknown>;
@@ -149,7 +149,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
         const db = new AdaptiveLearnerDB(DIR_NAME);
         await db.open();
-        expect(db.verno).toBe(27);
+        expect(db.verno).toBe(28);
         // Old id is gone; the row was re-keyed under the new id.
         const oldRow = await db
             .table("elementErrors")

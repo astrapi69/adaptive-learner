@@ -41,6 +41,12 @@ export interface ContentSetRowActions {
   /** Open the set's first lesson focused on its media section
    *  (badge click); defaults to {@link onOpen}. */
   onOpenMedia?: (entry: ContentSetEntry) => void;
+  /** EXP-033 / AIV-02 — open the AI content-check dialog for a cached
+   *  set. Omit to hide the "Check with AI" button entirely. */
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  /** When set, the AI-check button is visible but disabled with this
+   *  tooltip reason (no key / browser-mode only). */
+  aiCheckDisabledReason?: string;
 }
 
 /** Actions + lookup for the user lessons folded into tree nodes
@@ -109,6 +115,8 @@ export default function ContentTree({
       onDownload={setRow.onDownload}
       mediaResources={mediaForDomain(setRow.media ?? [], entry.domain)}
       onOpenMedia={setRow.onOpenMedia}
+      onAiCheck={setRow.onAiCheck}
+      aiCheckDisabledReason={setRow.aiCheckDisabledReason}
     />
   );
 

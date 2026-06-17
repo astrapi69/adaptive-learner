@@ -2055,6 +2055,34 @@
       "fix_applied": "Suggestion appliquée.",
       "fix_failed": "Impossible d'appliquer la suggestion."
     },
+    "ai_check": {
+      "last_checked": "Derniere verification : {when}",
+      "recheck": "Reverifier",
+      "export": {
+        "button": "Exporter le rapport en Markdown",
+        "lesson": "Lecon",
+        "card": "Carte",
+        "field": "Champ"
+      },
+      "button": "Verifier avec l'IA",
+      "title": "Verification du contenu par l'IA",
+      "loading": "Preparation des cartes...",
+      "cost_estimate": "~{cards} cartes, ~{tokens} tokens, ~{usd}.",
+      "privacy": "Vos cartes seront envoyees a votre fournisseur d'IA configure pour verification. Aucune donnee personnelle n'est transmise.",
+      "confirm": "Verifier",
+      "progress": "Verification du lot {current} sur {total}...",
+      "rate_limited": "Veuillez patienter avant de lancer une autre verification.",
+      "failed": "Verification par l'IA indisponible.",
+      "unavailable_mode": "Disponible uniquement en mode stockage navigateur.",
+      "report": {
+        "summary": "{cards} cartes verifiees dans {lessons} lecons",
+        "ok": "{count} cartes correctes",
+        "issues": "{count} cartes avec problemes",
+        "all_ok": "Toutes les cartes sont valides. Aucun probleme trouve.",
+        "problem": "Probleme",
+        "suggestion": "Suggestion"
+      }
+    },
     "placement": {
       "lands_under": "Votre leçon sera classée sous",
       "duplicate": "Une leçon similaire existe déjà : {title}. Partager quand même ?"
