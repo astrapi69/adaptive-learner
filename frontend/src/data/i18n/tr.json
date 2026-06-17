@@ -2054,6 +2054,14 @@
       "fix_failed": "Öneri uygulanamadı."
     },
     "ai_check": {
+      "last_checked": "Son denetim: {when}",
+      "recheck": "Yeniden denetle",
+      "export": {
+        "button": "Raporu Markdown olarak disa aktar",
+        "lesson": "Ders",
+        "card": "Kart",
+        "field": "Alan"
+      },
       "button": "Yapay zeka ile denetle",
       "title": "Yapay zeka icerik denetimi",
       "loading": "Kartlar hazirlaniyor...",

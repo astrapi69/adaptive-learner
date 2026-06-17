@@ -1893,6 +1893,13 @@ content:
     fix_applied: Suggestion appliquée.
     fix_failed: Impossible d'appliquer la suggestion.
   ai_check:
+    last_checked: "Derniere verification : {when}"
+    recheck: "Reverifier"
+    export:
+      button: "Exporter le rapport en Markdown"
+      lesson: "Lecon"
+      card: "Carte"
+      field: "Champ"
     button: "Verifier avec l'IA"
     title: "Verification du contenu par l'IA"
     loading: "Preparation des cartes..."

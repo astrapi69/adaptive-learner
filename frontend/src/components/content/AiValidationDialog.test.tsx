@@ -8,6 +8,8 @@ import type { ContentSetEntry } from "../../storage/types";
 const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
 const aiValidateCardsMock = vi.fn();
+const getCacheMock = vi.fn();
+const saveCacheMock = vi.fn();
 
 vi.mock("../../storage", () => ({
   getStorage: () => ({
@@ -15,6 +17,8 @@ vi.mock("../../storage", () => ({
       listLessons: listLessonsMock,
       getLesson: getLessonMock,
       aiValidateCards: aiValidateCardsMock,
+      getAiValidationCache: getCacheMock,
+      saveAiValidationCache: saveCacheMock,
     },
   }),
 }));
@@ -51,6 +55,10 @@ beforeEach(() => {
   listLessonsMock.mockReset();
   getLessonMock.mockReset();
   aiValidateCardsMock.mockReset();
+  getCacheMock.mockReset();
+  saveCacheMock.mockReset();
+  getCacheMock.mockResolvedValue(null);
+  saveCacheMock.mockResolvedValue(undefined);
   listLessonsMock.mockResolvedValue({
     set_id: "es-a1",
     source: "bundled:x",
@@ -115,6 +123,62 @@ describe("AiValidationDialog", () => {
     expect(call.cards).toHaveLength(2);
     expect(call.target_language).toBe("es");
     expect(call.source_language).toBe("de");
+  });
+
+  it("persists the report to the cache after a run", async () => {
+    aiValidateCardsMock.mockResolvedValue({
+      results: [{ card_id: "c1", ok: true, issues: [] }],
+      response_ids: ["chatcmpl-abc"],
+      provider: "openai",
+      model: "gpt-4o-mini",
+      checked_cards: 2,
+      issue_count: 0,
+    });
+    render(
+      <AiValidationDialog entry={ENTRY} activeProvider="openai" onClose={() => {}} />,
+    );
+    fireEvent.click(await screen.findByTestId("ai-validation-confirm-run"));
+    await waitFor(() => expect(saveCacheMock).toHaveBeenCalledTimes(1));
+    const saved = saveCacheMock.mock.calls[0][0];
+    expect(saved.set_id).toBe("es-a1");
+    expect(saved.set_version).toBe("1");
+    expect(saved.response_ids).toEqual(["chatcmpl-abc"]);
+  });
+
+  it("shows a cached report (no API call) and offers re-check", async () => {
+    getCacheMock.mockResolvedValue({
+      source: "bundled:x",
+      set_id: "es-a1",
+      set_version: "1",
+      content_hash: null,
+      results: [
+        {
+          card_id: "c2",
+          ok: false,
+          issues: [{ field: "front", problem: "x", suggestion: "la casa" }],
+        },
+      ],
+      response_ids: [],
+      provider: "openai",
+      model: "gpt-4o-mini",
+      card_count: 2,
+      issue_count: 1,
+      checked_at: "2026-06-17T12:00:00.000Z",
+    });
+    render(
+      <AiValidationDialog entry={ENTRY} activeProvider="openai" onClose={() => {}} />,
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId("ai-validation-report")).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("ai-validation-last-checked")).toBeInTheDocument();
+    expect(screen.getByTestId("ai-validation-recheck")).toBeInTheDocument();
+    expect(screen.getByTestId("ai-validation-export-md")).toBeInTheDocument();
+    // Cached path never calls the provider.
+    expect(aiValidateCardsMock).not.toHaveBeenCalled();
+    // Re-check moves back to the confirm step.
+    fireEvent.click(screen.getByTestId("ai-validation-recheck"));
+    expect(screen.getByTestId("ai-validation-confirm-run")).toBeInTheDocument();
   });
 
   it("surfaces an error when the run fails", async () => {

@@ -1896,6 +1896,13 @@ content:
     fix_applied: Vorschlag übernommen.
     fix_failed: Vorschlag konnte nicht übernommen werden.
   ai_check:
+    last_checked: "Letzte Pruefung: {when}"
+    recheck: "Erneut pruefen"
+    export:
+      button: "Bericht als Markdown exportieren"
+      lesson: "Lektion"
+      card: "Karte"
+      field: "Feld"
     button: "Mit KI pruefen"
     title: "KI-Inhaltspruefung"
     loading: "Karten werden vorbereitet..."

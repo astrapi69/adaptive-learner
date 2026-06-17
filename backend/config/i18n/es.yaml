@@ -1893,6 +1893,13 @@ content:
     fix_applied: Sugerencia aplicada.
     fix_failed: No se pudo aplicar la sugerencia.
   ai_check:
+    last_checked: "Ultima revision: {when}"
+    recheck: "Revisar de nuevo"
+    export:
+      button: "Exportar informe como Markdown"
+      lesson: "Leccion"
+      card: "Tarjeta"
+      field: "Campo"
     button: "Revisar con IA"
     title: "Revision de contenido con IA"
     loading: "Preparando tarjetas..."

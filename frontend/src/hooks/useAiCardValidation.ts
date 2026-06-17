@@ -56,6 +56,10 @@ export interface AiCheckState {
   responseIds: string[];
   provider: string;
   model: string;
+  /** True when the displayed report was loaded from the cache (AIV-04). */
+  cached: boolean;
+  /** ISO timestamp of the displayed report (cached or just-run). */
+  checkedAt: string | null;
   error: string | null;
 }
 
@@ -80,8 +84,25 @@ const INITIAL: AiCheckState = {
   responseIds: [],
   provider: "",
   model: "",
+  cached: false,
+  checkedAt: null,
   error: null,
 };
+
+/** Build report rows (cards with issues) from results + the card lookup. */
+function buildIssueRows(
+  results: ValidationResult[],
+  meta: Map<string, { front: string; lessonTitle: string }>,
+): AiCheckReportRow[] {
+  return results
+    .filter((r) => !r.ok)
+    .map((r) => ({
+      cardId: r.card_id,
+      front: meta.get(r.card_id)?.front ?? r.card_id,
+      lessonTitle: meta.get(r.card_id)?.lessonTitle ?? "",
+      result: r,
+    }));
+}
 
 interface FlattenResult {
   cards: ValidationCard[];
@@ -122,8 +143,11 @@ export interface UseAiCardValidation {
   state: AiCheckState;
   /** Whether the last attempt was blocked by the rate limit. */
   rateLimited: boolean;
-  /** Load the set, estimate cost, and move to the confirm step. */
+  /** Load the set, estimate cost, and move to the confirm step (or show a
+   *  still-valid cached report). */
   begin: (entry: ContentSetEntry, activeProvider: AIProvider | null) => Promise<void>;
+  /** Discard the cached report and move to the confirm step for a fresh run. */
+  recheck: () => void;
   /** Run the check (after the user confirms). */
   run: () => Promise<void>;
   /** Abort an in-flight run. */
@@ -159,13 +183,31 @@ export function useAiCardValidation(): UseAiCardValidation {
         const provider = activeProvider ?? "openai";
         const model = resolveModel(provider, null);
         const estimate = estimateValidationCost(cards.length, provider, model);
-        setState({
-          ...INITIAL,
-          phase: "confirm",
-          entry,
-          estimate,
-          lessonCount,
-        });
+        // AIV-04 — show the cached report (no API call) when it's still
+        // valid for the current download (same cached_version).
+        const cache = await getStorage().contentLoader.getAiValidationCache(
+          entry.source,
+          entry.id,
+        );
+        if (cache && cache.set_version === entry.cached_version) {
+          setState({
+            ...INITIAL,
+            phase: "done",
+            entry,
+            estimate,
+            lessonCount,
+            issueRows: buildIssueRows(cache.results, meta),
+            checkedCards: cache.card_count,
+            okCount: Math.max(0, cache.card_count - cache.issue_count),
+            responseIds: cache.response_ids,
+            provider: cache.provider,
+            model: cache.model,
+            cached: true,
+            checkedAt: cache.checked_at,
+          });
+          return;
+        }
+        setState({ ...INITIAL, phase: "confirm", entry, estimate, lessonCount });
       } catch (err) {
         setState({
           ...INITIAL,
@@ -177,6 +219,12 @@ export function useAiCardValidation(): UseAiCardValidation {
     },
     [],
   );
+
+  /** Force a fresh check, bypassing the cached report. */
+  const recheck = useCallback(() => {
+    setRateLimited(false);
+    setState((prev) => ({ ...prev, phase: "confirm", cached: false }));
+  }, []);
 
   const run = useCallback(async () => {
     setState((prev) => {
@@ -211,14 +259,26 @@ export function useAiCardValidation(): UseAiCardValidation {
           setState((prev) => ({ ...prev, progress })),
       });
       const meta = metaRef.current;
-      const issueRows: AiCheckReportRow[] = result.results
-        .filter((r) => !r.ok)
-        .map((r) => ({
-          cardId: r.card_id,
-          front: meta.get(r.card_id)?.front ?? r.card_id,
-          lessonTitle: meta.get(r.card_id)?.lessonTitle ?? "",
-          result: r,
-        }));
+      const issueRows = buildIssueRows(result.results, meta);
+      const checkedAt = new Date().toISOString();
+      // AIV-04 — persist so the report re-shows without another API call.
+      try {
+        await getStorage().contentLoader.saveAiValidationCache({
+          source: entry.source,
+          set_id: entry.id,
+          set_version: entry.cached_version,
+          content_hash: null,
+          results: result.results,
+          response_ids: result.response_ids,
+          provider: result.provider,
+          model: result.model,
+          card_count: result.checked_cards,
+          issue_count: result.issue_count,
+          checked_at: checkedAt,
+        });
+      } catch {
+        /* cache write is best-effort; the report still displays */
+      }
       setState((prev) => ({
         ...prev,
         phase: "done",
@@ -229,6 +289,8 @@ export function useAiCardValidation(): UseAiCardValidation {
         responseIds: result.response_ids,
         provider: result.provider,
         model: result.model,
+        cached: false,
+        checkedAt,
       }));
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
@@ -250,5 +312,5 @@ export function useAiCardValidation(): UseAiCardValidation {
     abortRef.current?.abort();
   }, []);
 
-  return { state, rateLimited, begin, run, abort, reset };
+  return { state, rateLimited, begin, recheck, run, abort, reset };
 }

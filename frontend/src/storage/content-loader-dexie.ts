@@ -28,6 +28,7 @@ import type {
   AiValidateInput,
   AiValidateCardsInput,
   AiValidateCardsResult,
+  AiValidationCacheRecord,
   ContentLesson,
   ContentLessonList,
   ContentSetEntry,
@@ -996,6 +997,58 @@ export async function aiValidateCardsDexie(
     checked_cards: run.checkedCards,
     issue_count: run.issueCount,
   };
+}
+
+// ---------------------------------------------------------------------------
+// EXP-033 / AIV-04 — cached AI content-check reports (IndexedDB)
+// ---------------------------------------------------------------------------
+
+function aiCacheId(source: string, setId: string): string {
+  return `${slugifySource(source)}#${setId}`;
+}
+
+/** Read the cached report for a set, or null. */
+export async function getAiValidationCacheDexie(
+  source: string,
+  setId: string,
+): Promise<AiValidationCacheRecord | null> {
+  const db = getDb();
+  const row = await db.aiValidationResults.get(aiCacheId(source, setId));
+  if (!row) return null;
+  return {
+    source: row.source,
+    set_id: row.set_id,
+    set_version: row.set_version,
+    content_hash: row.content_hash,
+    results: row.results,
+    response_ids: row.response_ids,
+    provider: row.provider,
+    model: row.model,
+    card_count: row.card_count,
+    issue_count: row.issue_count,
+    checked_at: row.checked_at,
+  };
+}
+
+/** Persist (overwrite) the cached report for a set. */
+export async function saveAiValidationCacheDexie(
+  record: AiValidationCacheRecord,
+): Promise<void> {
+  const db = getDb();
+  await db.aiValidationResults.put({
+    id: aiCacheId(record.source, record.set_id),
+    source: record.source,
+    set_id: record.set_id,
+    set_version: record.set_version,
+    content_hash: record.content_hash,
+    results: record.results,
+    response_ids: record.response_ids,
+    provider: record.provider,
+    model: record.model,
+    card_count: record.card_count,
+    issue_count: record.issue_count,
+    checked_at: record.checked_at,
+  });
 }
 
 /** Internal: remove the set rows + their files. Must run inside an

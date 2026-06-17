@@ -2054,6 +2054,14 @@
       "fix_failed": "Δεν ήταν δυνατή η εφαρμογή της πρότασης."
     },
     "ai_check": {
+      "last_checked": "Teleutaios elegxos: {when}",
+      "recheck": "Epanelegxos",
+      "export": {
+        "button": "Exagwgi anaforas se Markdown",
+        "lesson": "Ma8Ima",
+        "card": "Karta",
+        "field": "Pedio"
+      },
       "button": "Elegxos me TN",
       "title": "Elegxos periexomenou me TN",
       "loading": "Proetoimasia kartwn...",

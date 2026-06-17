@@ -2054,6 +2054,14 @@
       "fix_failed": "Não foi possível aplicar a sugestão."
     },
     "ai_check": {
+      "last_checked": "Ultima verificacao: {when}",
+      "recheck": "Verificar novamente",
+      "export": {
+        "button": "Exportar relatorio como Markdown",
+        "lesson": "Licao",
+        "card": "Cartao",
+        "field": "Campo"
+      },
       "button": "Verificar com IA",
       "title": "Verificacao de conteudo com IA",
       "loading": "Preparando cartoes...",
