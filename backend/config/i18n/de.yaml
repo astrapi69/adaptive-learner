@@ -2475,6 +2475,9 @@ content_repo:
   added: "Repository hinzugefügt."
   synced: "Synchronisiert: {sets} Sets, {lessons} Lektionen."
   token_hint: "Private Repositories benötigen ein Token — füge unten eines ein oder hinterlege ein gemeinsames Token unter Einstellungen → Integrationen."
+  trust_official: "Offiziell: Vom Projektteam kuratierter, qualitätsgesicherter Inhalt."
+  trust_verified: "Verifiziert: Von der Community beigetragen und vom Team geprüft."
+  trust_validated: "Validiert: Technisch korrekt, Inhalt nicht einzeln geprüft."
   official:
     title: "Offizielle Inhalte"
     counts: "{sets} Sets · {lessons} Lektionen"
