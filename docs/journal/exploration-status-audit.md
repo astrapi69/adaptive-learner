@@ -49,13 +49,20 @@ aufwaerts haben Einzeldokumente und wurden Task-fuer-Task geprueft.
 | 026 | User-Lektionen im Content-Baum | 7 (UGC-01..07) | 7 | 0 | DONE |
 | 027 | Internationalisierungs-Strategie | 12 (I18N-01..12) | 4 | 8 | PARTIAL |
 | 028 | User-Event-Recording | 5 (EVT-01..05) | 5 | 0 | DONE |
-| 029 | Medien-Ressourcen (Gegenseitigkeit) | 7 (MED-01..06, MED-10) | 0 | 7 | DEFERRED |
+| 029 | Medien-Ressourcen (Gegenseitigkeit) | 8 (MED-01..07, MED-10) | 7 | 1 | DONE |
 | 030 | Multi-User-Strategie | 7 (MU-01..05, MU-10, MU-20) | 0 | 7 | DEFERRED |
 | 031 | ZIP-Backup-Format (.alb) | 6 (BAK-01..06) | 0 | 6 | OPEN |
 | 032 | Inhaltliche Content-Validierung | 5 (CQV-01..05) | 0 | 5 | OPEN |
-| 033 | KI-gestuetzte Content-Validierung | 12 (AIV-01..12) | 0 | 12 | OPEN |
+| 033 | KI-gestuetzte Content-Validierung | 12 (AIV-01..12) | 9 | 3 | PARTIAL |
 
-**Verteilung:** DONE 14 · PARTIAL 8 · OPEN 3 · DEFERRED 7 · SUPERSEDED 0 (= 32).
+**Verteilung:** DONE 15 · PARTIAL 9 · OPEN 2 · DEFERRED 6 · SUPERSEDED 0 (= 32).
+
+> **Aktualisiert 2026-06-17 (nach den EXP-029/033-Feature-Merges).** Der
+> erste Audit-Durchlauf fand EXP-029 und EXP-033 als reine Design-Dokumente
+> (0 % umgesetzt). Parallel/danach landeten die Feature-PRs #674/#676/#678/
+> #680/#684/#685/#686/#687/#688/#690/#691 auf `develop` — EXP-029 ist nun
+> DONE (MED-10 offen), EXP-033 PARTIAL (AIV-06/07/12 offen). Tabelle + Detail
+> unten entsprechend nachgezogen.
 
 ---
 
@@ -148,15 +155,15 @@ Umgesetzt: **I18N-02** (Sprachauswahl-Skalierung, `SCRIPT_ORDER` in
 > Doc ist I18N-03 = Hindi; der Catalog-Header nutzt I18N-05 als Commit-Label.
 > Inhaltlich umgesetzt ist Hindi-UI (= I18N-03 im Doc).
 
-### EXP-029 — DEFERRED (0 von 7, Vision/partner-gated)
-Eine `media.yaml` existiert im gebundelten Content (`free media only`-
-Vorlaeufer aus der `books.yaml`-Aera), aber **nicht** das EXP-029-Schema
-(kein `course`/`website`/`partnership`-Reziprozitaetsmodell) und ohne
-Frontend-Konsument. Offen: **MED-01** (`MediaResource`-Typ + Loader),
-**MED-02** (Reziprozitaets-Gate fail-closed), **MED-03** (Content-Browser-
-Medien-Sektion), **MED-04** (Gratis/Kurs-Badge), **MED-05** (`resources[]`
-additiv im Schema), **MED-06** (i18n `media.*`), **MED-10** (Partner-
-Onboarding-Doku). Engpass ist die Partnergewinnung, nicht der Code.
+### EXP-029 — DONE (7 von 8; MED-10 offen)
+Nach dem ersten Audit-Durchlauf implementiert: `media.yaml`-Parser + Loader
+mit Reziprozitaets-Gate (**MED-01/02**, #678), Lektions-Medien-Sektion
+("Vertiefe das Thema") + `ResourceCard` (**MED-03/05**, #680), Medien-
+Verfuegbarkeits-Badges auf Set-Zeilen + Gratis/Kurs-Badge (**MED-04**, #684),
+offline-faehige YouTube-Thumbnails + i18n-Medien-Labels (**MED-06/07**,
+#685/#688). Offen: **MED-10** (Partner-Onboarding-Doku — Business-
+Development-Artefakt, kein Code; der eigentliche Engpass ist die
+Partnergewinnung).
 
 ### EXP-030 — DEFERRED (0 von 7, gestuft)
 Nichts ueber den Single-User-Baseline hinaus (`learnerState.ts`,
@@ -182,13 +189,15 @@ ist rein strukturell. Offen: **CQV-01** (Encoding-/Antwortlaengen-Checks),
 Confidence-Report), **CQV-05** (Fehler-Melden-Button → Content-Repo-Issue).
 Doc committed heute (#658).
 
-### EXP-033 — OPEN (0 von 12, Design-Dokument)
-Der per-Lektion-KI-Validator aus v1.44.0 (`ai-content-validator.ts` +
-`POST /api/content/validate-lesson`) ist Share-Flow-spezifisch, nicht das
-set-weite EXP-033-Vorhaben. Offen: **AIV-01..AIV-12** komplett (set-weite
-Batch-Pruefung, Report-UI, Caching, Kosten-Schaetzung, `ai_review.py`-CI,
-Auto-Fix, Content-Hash, Signatur-Objekt, Verifikation, Badge,
-Invalidierung). Doc committed heute (#671).
+### EXP-033 — PARTIAL (9 von 12; AIV-06/07/12 offen)
+Nach dem ersten Audit-Durchlauf implementiert: set-weiter Batch-Prompt +
+JSON-Parser (**AIV-01**, #674/#676), Report-UI + "Mit KI pruefen"-Button +
+Kosten-Bestaetigung (**AIV-02/03/05**), Ergebnis-Caching in Dexie +
+Markdown-Export (**AIV-04**, #686/#687), Content-Hash + Signatur-Objekt +
+Client-Verifikation + "AI-Checked"-Badge (**AIV-08/09/10/11**, #690/#691).
+Offen: **AIV-06** (CI-Action `ai_review.py` im Content-Repo), **AIV-07**
+(Auto-Fix, nur User-Content), **AIV-12** (Signatur bei Content-Aenderung
+invalidieren).
 
 ---
 
@@ -203,10 +212,18 @@ Invalidierung). Doc committed heute (#671).
   MED-/MU-/BAK-/CQV-/AIV-/AUTH-IDs liefern nichts; der Status ruht auf
   Code-/Git-Evidenz. Sub-Issues nutzen App-Issue-Nummern (#118, #519, ...),
   nicht die EXP-internen IDs.
-- **Drei neue Design-Dokumente** (EXP-031/032/033) sind heute gelandet und
-  erwartungsgemaess 0% umgesetzt — sie sind Vorhaben, kein Code.
-- **PARTIAL-Schwerpunkt:** die "Vision/Backend-gated"-EXPs (023 Phase-C,
-  024 Phase-2/3, 014, 029, 030) warten alle auf dieselben Voraussetzungen:
+- **Drei neue Design-Dokumente heute gelandet (EXP-031/032/033).** EXP-031
+  (.alb-Backup) und EXP-032 (deterministische Validierung) sind weiter reine
+  Vorhaben (0 %). EXP-033 dagegen wurde unmittelbar umgesetzt: 9 von 12 AIV
+  shipped (#674/#676/#686/#687/#690/#691), nur AIV-06/07/12 offen — vom
+  Design-Dokument zur PARTIAL-Implementierung am selben Tag.
+- **Audit-Momentaufnahme vs. parallele Feature-Arbeit.** EXP-029 und EXP-033
+  kippten WAEHREND dieser Audit-Runde von OPEN/DEFERRED auf DONE/PARTIAL,
+  weil die Feature-PRs (#678..#691) parallel mergten. Lehre: ein Status-Audit
+  ist eine Momentaufnahme; bei gleichzeitig laufender Feature-Arbeit muss er
+  am Ende gegen den frischen `develop`-Stand gegengeprueft werden.
+- **PARTIAL-Schwerpunkt:** die verbleibenden "Backend-gated"-EXPs (023
+  Phase-C, 024 Phase-2/3, 014, 030) warten alle auf dieselben Voraussetzungen:
   ein geteiltes Backend bzw. Multi-User (EXP-030) bzw. Plugin-Migration. Das
   sind keine vergessenen Tasks, sondern bewusst gestufte Abhaengigkeiten.
 
@@ -216,8 +233,8 @@ Invalidierung). Doc committed heute (#671).
   eine Luecke in der Nummernfolge.
 - **EXP-001..017** ohne Einzeldokument auf Feature-Granularitaet bewertet;
   "Tasks gesamt" = "—", Status aus Index-Umsetzungsstand + Code-Stichprobe.
-- **EXP-029** als DEFERRED (nicht OPEN) gefuehrt, da Vision/Phase-B/C und
-  partner-gated; 0 Tasks umgesetzt. Die vorhandene `media.yaml` ist ein
-  Vorlaeufer, kein EXP-029-Deliverable.
+- **EXP-029** beim ersten Durchlauf als DEFERRED (0 Tasks) eingestuft; nach
+  den Feature-Merges #678..#688 auf DONE korrigiert (MED-01..07 umgesetzt,
+  MED-10 offen). Siehe die Aktualisierungs-Notiz unter §1.
 - **EXP-016/017** (laufende Querschnitts-Strategien) als DONE gefuehrt im
   Sinne von "kontinuierlich erfuellt", nicht "abgeschlossen".
