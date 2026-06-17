@@ -27,7 +27,9 @@ env:
   VITE_API_BASE: ""
 
 permissions:
-  contents: read
+  # contents: write so the build job can auto-heal a stale README
+  # CONTENT-STATS block and push the fix back (issue #651).
+  contents: write
   pages: write
   id-token: write
 
@@ -67,16 +69,39 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Issue #47 — double-safety drift gate on the deploy path
-      # (the PR gate lives in ci.yml). Fails the deploy if the README
-      # CONTENT-STATS block drifted from the content repo we are about
-      # to bundle.
-      - name: Validate README content stats against the content repo
+      # Issue #47 + #651 — self-healing drift handling on the deploy path
+      # (the PR gate lives in ci.yml). The content repo is an independent
+      # moving target, so a content-repo growth would otherwise break the
+      # next deploy until someone manually regenerates the README block.
+      # Instead: if the README CONTENT-STATS block drifted, regenerate it,
+      # commit it as github-actions[bot] with [skip ci] (so the push does
+      # NOT trigger another deploy run -> no loop), push it back, and let
+      # the build continue with the corrected README.
+      - name: Auto-heal README content stats against the content repo
         env:
           ADAPTIVE_LEARNER_CONTENT_DIR: ${{ github.workspace }}/adaptive-learner-content
         run: |
           pip install pyyaml
-          python3 scripts/validate_bundled_content.py --check-readme
+          if python3 scripts/validate_bundled_content.py --check-readme; then
+            echo "README CONTENT-STATS block already current."
+          else
+            echo "README CONTENT-STATS block is stale -> auto-healing."
+            python3 scripts/validate_bundled_content.py --write-readme
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add README.md
+            if git diff --cached --quiet; then
+              echo "Nothing staged after --write-readme; skipping commit."
+            else
+              git commit -m "docs: auto-update content stats [skip ci]"
+              # Non-fatal push: a corrected README is already in the working
+              # tree for THIS build, so the deploy never breaks even if the
+              # push is rejected (e.g. a concurrent push race). [skip ci]
+              # keeps the push from triggering another deploy run.
+              git push origin "HEAD:${{ github.ref_name }}" \
+                || echo "push rejected (non-fatal); README fixed locally for this build."
+            fi
+          fi
 
       - name: Install Poetry
         run: pipx install poetry
