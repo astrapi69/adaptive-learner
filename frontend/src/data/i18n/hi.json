@@ -376,6 +376,7 @@
     "page_title": "पुनरावलोकन",
     "session_title": "पुनरावलोकन सत्र",
     "subtitle": "Reviewing {n} element(s) due for SRS",
+    "subtitle_capped": "{due} में से {shown} तत्व दोहराने के लिए",
     "loading": "Loading review session…",
     "empty_body": "All caught up! No elements due for review in this set.",
     "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",

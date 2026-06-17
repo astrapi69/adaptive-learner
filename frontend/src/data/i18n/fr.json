@@ -376,6 +376,7 @@
     "page_title": "Révision",
     "session_title": "Session de révision",
     "subtitle": "{n} élément(s) à réviser",
+    "subtitle_capped": "{shown} sur {due} élément(s) à réviser",
     "loading": "Chargement de la session de révision…",
     "empty_body": "Tout est à jour ! Aucun élément à réviser dans cet ensemble.",
     "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre l'explorateur de contenu d'abord.",

@@ -352,6 +352,7 @@ review:
   page_title: "Revisão"
   session_title: "Sessão de revisão"
   subtitle: "{n} elemento(s) para rever"
+  subtitle_capped: "{shown} de {due} elemento(s) para rever"
   loading: "A carregar sessão de revisão…"
   empty_body: "Tudo em dia! Sem elementos para rever neste conjunto."
   not_cached_body: "Este conjunto ainda não foi descarregado. Abre o explorador de conteúdo primeiro."

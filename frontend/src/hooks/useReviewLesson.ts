@@ -79,6 +79,11 @@ export interface UseReviewLessonResult {
      *  per-step scoring; the mastered-this-session count is
      *  reserved for the C16 review-mode summary. */
     currentStepIndex: number;
+    /** #664 — total UNIQUE elements due for review in this set (deduped by
+     *  ``element_key``, uncapped). The session presents at most ``limit`` of
+     *  these; the page shows "{presented} of {dueCount}" so the cap is
+     *  transparent. ``lesson.steps.length`` is the presented count. */
+    dueCount: number;
     error: string | null;
     goNext: () => void;
     goPrev: () => void;
@@ -105,6 +110,7 @@ export function useReviewLesson(
     const [queue, setQueue] = useState<ReviewQueueItem[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
+    const [dueCount, setDueCount] = useState(0);
     const [sessionScoreCorrect, setSessionScoreCorrect] = useState(0);
     const [sessionScoreTotal, setSessionScoreTotal] = useState(0);
 
@@ -130,12 +136,16 @@ export function useReviewLesson(
                     {setId},
                 );
                 if (cancelled) return;
-                const cappedQueue = dedupeReviewQueueByElement(
-                    fetchedQueue,
-                ).slice(0, limit ?? undefined);
-                setQueue(cappedQueue);
+                // #664 — de-dup by element_key but do NOT cap here. The cap is
+                // applied AFTER the synthesizer collapses duplicate questions
+                // (a matching/picture_choice exercise covering several due
+                // cards is one question, not N), so capping the queue first
+                // would leave the session short on unique questions.
+                const dedupedQueue = dedupeReviewQueueByElement(fetchedQueue);
+                setQueue(dedupedQueue);
+                setDueCount(dedupedQueue.length);
 
-                if (cappedQueue.length === 0) {
+                if (dedupedQueue.length === 0) {
                     setStatus("empty");
                     return;
                 }
@@ -154,7 +164,7 @@ export function useReviewLesson(
                 // references. Sequential to keep the fetch
                 // pattern predictable + cache-friendly.
                 const uniqueLessons = Array.from(
-                    new Set(cappedQueue.map((q) => q.lesson_id)),
+                    new Set(dedupedQueue.map((q) => q.lesson_id)),
                 );
                 const lessonMap = new Map<string, ContentLesson>();
                 for (const lessonId of uniqueLessons) {
@@ -175,7 +185,7 @@ export function useReviewLesson(
                 }
                 if (cancelled) return;
                 const synthesised = synthesizeReviewLesson(
-                    cappedQueue,
+                    dedupedQueue,
                     lessonMap,
                     {title, description, limit},
                 );
@@ -250,6 +260,7 @@ export function useReviewLesson(
         lesson,
         queue,
         currentStepIndex,
+        dueCount,
         error,
         goNext,
         goPrev,

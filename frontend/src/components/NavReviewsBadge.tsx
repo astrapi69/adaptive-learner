@@ -16,6 +16,7 @@ import {NavLink, useLocation} from "react-router-dom";
 
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
+import {dedupeReviewQueueByElement} from "../lib/review-lesson";
 import {subscribeCelebration} from "../lib/praise/celebration-bus";
 import {REVIEWS_CHANGED_EVENT} from "../lib/review/reviewsChanged";
 import {getStorage} from "../storage";
@@ -47,7 +48,14 @@ export default function NavReviewsBadge() {
                 const queue =
                     await getStorage().elementErrors.reviewQueue(userId!);
                 if (cancelled) return;
-                const overdueItems = queue.filter((q) => q.overdue);
+                // #664 — dedup by element_key so the badge counts UNIQUE due
+                // elements, consistent with the session. Without this, the
+                // per-direction EXP-018 rows (receptive + productive of one
+                // card = 2 rows, same element_key) double-count and inflate
+                // the badge far past what a session can ever present.
+                const overdueItems = dedupeReviewQueueByElement(
+                    queue.filter((q) => q.overdue),
+                );
                 setState({
                     overdue: overdueItems.length,
                     firstSetId: overdueItems[0]?.set_id ?? null,

@@ -376,6 +376,7 @@
     "page_title": "Review",
     "session_title": "Review session",
     "subtitle": "Reviewing {n} element(s) due for SRS",
+    "subtitle_capped": "Reviewing {shown} of {due} elements due for SRS",
     "loading": "Loading review session…",
     "empty_body": "All caught up! No elements due for review in this set.",
     "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",

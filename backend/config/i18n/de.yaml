@@ -352,6 +352,7 @@ review:
   page_title: "Wiederholung"
   session_title: "Wiederholungssitzung"
   subtitle: "{n} Element(e) zur Wiederholung"
+  subtitle_capped: "{shown} von {due} Element(en) zur Wiederholung"
   loading: "Wiederholungssitzung wird geladen…"
   empty_body: "Alles erledigt! Keine Elemente für dieses Set zu wiederholen."
   not_cached_body: "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhalts-Browser zuerst."

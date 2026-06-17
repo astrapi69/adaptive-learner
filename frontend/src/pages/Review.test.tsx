@@ -51,6 +51,7 @@ const BASE = {
     lesson: null,
     queue: [],
     currentStepIndex: 0,
+    dueCount: 0,
     error: null,
     goNext: vi.fn(),
     goPrev: vi.fn(),
@@ -168,18 +169,55 @@ describe("ReviewPage: ready state", () => {
         ).toBeInTheDocument();
     });
 
-    it("subtitle surfaces the queue count", () => {
+    it("#664: subtitle shows the presented step count (not the raw queue)", () => {
+        // dueCount == steps → un-capped form, shows the step count.
         useReviewLessonMock.mockReturnValue({
             ...BASE,
             status: "ready",
-            lesson: LESSON,
-            queue: [...QUEUE, {...QUEUE[0], id: "row-2"}],
+            lesson: LESSON, // 1 step
+            queue: QUEUE,
+            dueCount: 1,
             currentStepIndex: 0,
         });
         renderAtPath(VALID_PATH);
-        const page = screen.getByTestId("review-page");
-        // Subtitle interpolates "{n}" with the queue length.
-        expect(page.textContent).toContain("2");
+        const subtitle = screen.getByTestId("review-subtitle");
+        expect(subtitle.textContent).toContain("1");
+    });
+
+    it("#664: subtitle shows '{shown} of {due}' when the pool is capped", () => {
+        // 5 due, only 1 presented (cap/unresolvable) → both numbers shown so
+        // the gap is transparent and the header agrees with the progress bar.
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON, // 1 step
+            queue: QUEUE,
+            dueCount: 5,
+            currentStepIndex: 0,
+        });
+        renderAtPath(VALID_PATH);
+        const subtitle = screen.getByTestId("review-subtitle");
+        // Presented count (1) matches the progress bar; due (5) gives context.
+        expect(subtitle.textContent).toContain("1");
+        expect(subtitle.textContent).toContain("5");
+    });
+
+    it("#664: header count equals the progress-bar 'of {total}' count", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON, // 1 step
+            queue: QUEUE,
+            dueCount: 5,
+            currentStepIndex: 0,
+        });
+        renderAtPath(VALID_PATH);
+        const subtitle = screen.getByTestId("review-subtitle");
+        const progress = screen.getByTestId("review-progress-bar");
+        // The progress bar reads "Step 1 of 1"; the subtitle's presented
+        // count is also 1 — they can never diverge again.
+        expect(progress.textContent).toContain("1 of 1");
+        expect(subtitle.textContent).toContain("1");
     });
 
     it("renders the summary at index past last step", () => {
