@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
 **Stand:** 2026-06-17
-**Anzahl EXPs:** 31
+**Anzahl EXPs:** 32
 
 ## Kategorisierung
 
@@ -46,6 +46,7 @@
 | 030 | Multi-User-Strategie (lokale Profile → Cloud)  | Querschnitt | gestuft | Mittel  | EXP-009, Sync      |
 | 031 | ZIP-Backup-Format (.alb) + Container/Manifest | Feature      | Zukunft | Mittel  | Backup, #642, 005  |
 | 032 | Inhaltliche Content-Validierung (Quality)    | Querschnitt  | gestuft | Hoch    | 013, 028, 030, 002 |
+| 033 | KI-gestützte Content-Validierung (AI Review) | Querschnitt  | gestuft | Mittel  | 032, 023, 028, 030 |
 
 ## Umsetzungsstand (Stand v1.79.0)
 
