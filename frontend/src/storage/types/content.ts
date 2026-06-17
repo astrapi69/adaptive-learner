@@ -178,6 +178,25 @@ export interface ContentLessonCard {
 /** Card content kind (schema v1.3). Null/absent is treated as "text". */
 export type ContentCardMediaType = "text" | "code" | "formula" | "diagram";
 
+/** EXP-029 / MED-05 — one lesson-level supplementary-media entry (the raw
+ *  shape stored in the content JSON). Mirrors a ``media.yaml`` resource minus
+ *  ``domain`` (inherited from the parent set). Optional + additive, so
+ *  pre-EXP-029 lessons load unchanged. Validated by ``parseLessonResources``
+ *  before display. */
+export interface ContentLessonResource {
+  type: string;
+  title: string;
+  url: string;
+  language?: string | null;
+  level?: string | null;
+  duration?: string | null;
+  description?: string | null;
+  author?: string | null;
+  free?: boolean | null;
+  partnership?: boolean | null;
+  tags?: string[] | null;
+}
+
 export interface ContentLesson {
   id: string;
   title: string;
@@ -211,6 +230,12 @@ export interface ContentLesson {
   contributed_by?: string | null;
   /** ISO-8601 timestamp the lesson was contributed. */
   contributed_at?: string | null;
+  /** EXP-029 / MED-05 (additive) — optional lesson-specific supplementary
+   *  media (videos / podcasts / articles / …). Surfaced in the
+   *  "Vertiefe das Thema" section after the lesson summary, above the
+   *  broader domain-level media from ``media.yaml``. Validated by
+   *  ``parseLessonResources``. */
+  resources?: ContentLessonResource[] | null;
 }
 
 /**
