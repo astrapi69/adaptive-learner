@@ -1912,7 +1912,7 @@ content:
     cost_estimate: "~{cards} kartes, ~{tokens} tokens, ~{usd}."
     privacy: "Oi kartes sas tha staloun ston ru8mismeno paroxo TN gia elegxo. Den metaferontai proswpika dedomena."
     confirm: "Elegxos"
-    progress: "Elegxos parti{das} {current} apo {total}..."
+    progress: "Elegxos partidas {current} apo {total}..."
     rate_limited: "Parakalw perimenete ligo prin ekteleste neo elegxo."
     failed: "O elegxos me TN den einai diatesimos."
     unavailable_mode: "Diatesimo mono se leitourgia apo8ikeusis programmatos periIgIsIs."
