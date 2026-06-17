@@ -16,12 +16,9 @@ import { expect, type Page } from "@playwright/test";
  * with an issue reference. Example: ``"/anki": ["color-contrast"], // #NNN``.
  */
 export const A11Y_KNOWN_ISSUES: Record<string, string[]> = {
-  // #616 — the lesson viewer has a pre-existing serious "link-name"
-  // violation (a link without discernible text on the lesson chrome).
-  // Documented here, not silently disabled; the smoke a11y-audit never
-  // scanned /lesson, so this is newly surfaced. Tracked for a fix; the
-  // allowlist only ever shrinks.
-  "/lesson": ["link-name"],
+  // Empty by design. The former "/lesson": ["link-name"] entry (#616)
+  // was fixed in #622 — the brand link is `display:none`'d to its icon in
+  // the lesson-compact nav, so it now carries a constant aria-label.
 };
 
 /** Run axe on the current page + assert no unexpected violations. */

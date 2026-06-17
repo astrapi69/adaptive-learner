@@ -162,6 +162,12 @@ export default function Navigation() {
       <NavLink
         to="/dashboard"
         className="nav-brand flex-1 justify-center md:flex-none md:justify-start"
+        // #622 — the brand word (`.nav-brand-name`) is `display:none` in
+        // the lesson-compact nav, which left the brand link with only the
+        // decorative (aria-hidden, empty-alt) logo and no accessible name
+        // (axe `link-name` on /lesson). A constant aria-label keeps the
+        // link named in every nav state.
+        aria-label={t("app.name", "Adaptive Learner")}
       >
         <img
           src={`${import.meta.env.BASE_URL}icon-192.svg`}
