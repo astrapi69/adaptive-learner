@@ -1,29 +1,36 @@
 # Handover / Status Report
 
-_Last updated: 2026-06-16. Overwritten on each status pass — this file is always the latest snapshot._
+_Last updated: 2026-06-17. Overwritten on each status pass — this file is always the latest snapshot._
 
 ## 1. HEAD + version
 
-- **Release:** **v1.83.0 SHIPPED** (maintenance + gap-hardening — a P1
-  review-session fix, two P2 theory-rendering fixes, and a six-item gap-hardening
-  audit; canonical `backend/pyproject.toml` = `1.83.0`). Tag `v1.83.0` on `main`
-  (`e725da7f Release v1.83.0`), GitHub Release published, merged back to
-  `develop` (`a57fb9ac`). Local release branch deleted (the remote one never
-  existed — created local-only via `release-prepare`, so the final remote-delete
-  step no-op'd; harmless — same pattern as v1.82.0).
+- **Release:** **v1.84.0 SHIPPED** (maintenance — a P1 content-repo import
+  hardening, three P2 fixes, a user-repo E2E test, and the EXP-031 backup-format
+  exploration; canonical `backend/pyproject.toml` = `1.84.0`). Tag `v1.84.0` on
+  `main` (`8cd73eb8 Release v1.84.0`, annotated tag object `e3df3fce`), GitHub
+  Release published, merged back to `develop` (`4b28765b`). Local release branch
+  deleted (the remote one never existed — created local-only via
+  `release-prepare`, so the final remote-delete step no-op'd; harmless — same
+  pattern as v1.82.0 / v1.83.0).
 - **Branch:** `develop` is the active branch (gitflow #334); `main` holds the
-  v1.83.0 release tag.
-- **Previous release:** v1.82.0 (hint economy + smart review queue + PWA update
-  prompt + Test Impact Analysis + architecture-doc audit + manual-test
-  automation; Alembic 0030+0031).
-- **Schema:** **v1.83.0 has NO schema/API/data change** (no new Alembic, no Dexie
+  v1.84.0 release tag.
+- **Previous release:** v1.83.0 (maintenance + gap-hardening — a P1 review-session
+  fix, two P2 theory-rendering fixes, and a six-item gap-hardening audit).
+- **Schema:** **v1.84.0 has NO schema/API/data change** (no new Alembic, no Dexie
   bump). The last migrations are still **0030** + **0031** from v1.82.0
   (element_errors hint columns + attempt history); if you pull from before
   v1.82.0, delete `~/.local/share/adaptive_learner/adaptive_learner.db` before the
   next `make test` (see lessons-learned "Alembic migration + fresh test DB").
+- **Release note (false-positive hook):** the version-only bump of the 13 plugin
+  pyprojects trips `plugin-lock-paired-with-pyproject`, which is a false positive
+  for release bumps (a version field change does not alter poetry's
+  dependency-based lock hash, so per-plugin CI stays green; v1.83.0 likewise
+  bumped plugin pyprojects with zero lock changes). The release commit skipped
+  only that one hook (`SKIP=plugin-lock-paired-with-pyproject`).
 - **Async CI on the tag/push:** launcher builds (Linux/macOS/Windows) on the
-  `v1.83.0` tag + GH-Pages deploy on develop/main were triggered at release time;
-  these complete on their own and do not gate the release.
+  `v1.84.0` tag + GH-Pages deploy on develop/main were triggered at release time;
+  these complete on their own and do not gate the release. **Verify the GH-Pages
+  deploy went live** (the v1.71.x cycle saw a silent `actions/deploy-pages` 401).
 
 ## 2. Test counts (v1.79.0 baseline — re-collect for v1.83.0)
 
@@ -31,7 +38,7 @@ _Last updated: 2026-06-16. Overwritten on each status pass — this file is alwa
 |---|---|---|
 | Backend (pytest) | **~1237** (v1.82.0 CI) | `cd backend && poetry run pytest --collect-only -q` |
 | Plugins (13 suites, pytest) | **1018+** | per-plugin `pytest --collect-only` from the backend env |
-| Frontend (Vitest) | **4538 passed** (v1.83.0 gate) | `cd frontend && npx vitest run` |
+| Frontend (Vitest) | **4603 passed** (v1.84.0 gate, 427 files) | `cd frontend && npx vitest run` |
 | E2E dexie-smoke | **88 passed** | `make test-dexie-smoke` |
 | E2E manual-automation (#621) | **49 automated** (+15 skip = manual-only) | `make test-manual-automation` (nightly + release) |
 
@@ -47,7 +54,21 @@ mid-lesson-motivation-toast fix below). Re-collect exact counts via the commands
 above. TypeScript `tsc --noEmit` clean; ESLint clean; full Playwright smoke runs
 separately (Aster runs E2E).
 
-## 3. v1.83.0 contents (commits since v1.82.0)
+## 3. v1.84.0 contents (commits since v1.83.0)
+
+Full detail in `changelog/releases/v1.84.0.md`. 4 substantive PRs + an E2E test
++ a docs exploration, no schema/API/data change:
+
+- **#645 (P1)** content-repo import — CORS-safe import + retry policy + progress
+  indicator + dialog accessibility (Refs #646).
+- **#647 (P2)** inline Markdown rendered in exercise prompts + labels (Refs #648).
+- **#639 (P2)** clickable Settings profile picture with a preview/change dialog.
+- **#643 / #641 (P2)** backup import declines a non-Adaptive-Learner JSON file
+  gracefully with a friendly message (Refs #642, #640).
+- **#637** user-repo import E2E test (against `adaptive-learner-content-test`).
+- **#644** EXP-031 — ZIP-based backup format (`.alb`) design exploration.
+
+### Earlier: v1.83.0 contents (commits since v1.82.0)
 
 Full detail in `changelog/releases/v1.83.0.md`. 4 PRs, no schema/API/data change:
 
