@@ -108,7 +108,7 @@ test.describe("EXP-023 Phase A — user content repository", () => {
     await page.getByTestId("content-repo-connect").click();
     const result = page.getByTestId("content-repo-result");
     await expect(result).toBeVisible();
-    await expect(result).toContainText(/passed/i);
+    await expect(result).toContainText(/passed|erfolgreich/i);
 
     // --- Connecting adds the repo to the list AND caches its content
     // in one step (#132 — Phase B reworked the old single-repo "Sync"

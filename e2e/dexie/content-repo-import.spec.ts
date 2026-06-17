@@ -152,14 +152,14 @@ test.describe("EXP-023 — external repo import: errors + playthrough", () => {
     await connect(page, "https://github.com/ghost/missing");
     const result = page.getByTestId("content-repo-result");
     await expect(result).toBeVisible();
-    await expect(result).toContainText(/failed/i);
+    await expect(result).toContainText(/failed|fehlgeschlagen/i);
     await expect(
       page.getByTestId("content-repo-item-ghost-missing"),
     ).toHaveCount(0);
 
     // Unsupported schema major -> validation failed, no repo row.
     await connect(page, "https://github.com/old/schema2");
-    await expect(result).toContainText(/failed/i);
+    await expect(result).toContainText(/failed|fehlgeschlagen/i);
     await expect(
       page.getByTestId("content-repo-item-old-schema2"),
     ).toHaveCount(0);
@@ -182,11 +182,11 @@ test.describe("EXP-023 — external repo import: errors + playthrough", () => {
 
     await connect(page, `https://github.com/${OWNER_REPO}`);
     await expect(page.getByTestId("content-repo-result")).toContainText(
-      /passed/i,
+      /passed|erfolgreich/i,
     );
     await connect(page, `https://github.com/${OWNER_REPO}`);
     await expect(page.getByTestId("content-repo-result")).toContainText(
-      /passed/i,
+      /passed|erfolgreich/i,
     );
 
     // Dedup by owner/repo source: the second connect replaces, not appends.
@@ -212,7 +212,7 @@ test.describe("EXP-023 — external repo import: errors + playthrough", () => {
     });
     await connect(page, `https://github.com/${OWNER_REPO}`);
     await expect(page.getByTestId("content-repo-result")).toContainText(
-      /passed/i,
+      /passed|erfolgreich/i,
     );
 
     // Open the cached external set's first lesson.
