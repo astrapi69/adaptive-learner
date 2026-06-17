@@ -27,6 +27,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
 import LessonSummary from "../components/lesson/LessonSummary";
+import LessonResources from "../components/lesson/LessonResources";
 import LessonFavoriteToggle from "../components/lesson/LessonFavoriteToggle";
 import LessonHeader from "../components/lesson/LessonHeader";
 import LessonProgressBar from "../components/lesson/LessonProgressBar";
@@ -290,9 +291,14 @@ export default function LessonPage() {
   // via listSets + filter; degrades silently if the set isn't
   // in the discovered list (header just omits the line).
   const [setTitle, setSetTitle] = useState<string | null>(null);
+  // EXP-029 — the set's domain, used to surface domain-level media.yaml
+  // resources in the "Vertiefe das Thema" section. Falls back to the
+  // lesson's own domain when the set lookup misses.
+  const [setDomain, setSetDomain] = useState<string | null>(null);
   useEffect(() => {
     if (!setId) {
       setSetTitle(null);
+      setSetDomain(null);
       return;
     }
     let cancelled = false;
@@ -302,8 +308,12 @@ export default function LessonPage() {
         if (cancelled) return;
         const match = list.sets.find((s) => s.id === setId);
         setSetTitle(match?.title ?? null);
+        setSetDomain(match?.domain ?? null);
       } catch {
-        if (!cancelled) setSetTitle(null);
+        if (!cancelled) {
+          setSetTitle(null);
+          setSetDomain(null);
+        }
       }
     })();
     return () => {
@@ -400,6 +410,7 @@ export default function LessonPage() {
       />
 
       {isSummary ? (
+        <>
         <LessonSummary
           lesson={lesson}
           progress={progress}
@@ -458,6 +469,8 @@ export default function LessonPage() {
           onRepeat={() => goToStep(0)}
           onExit={() => navigate("/content")}
         />
+        <LessonResources lesson={lesson} setDomain={setDomain} />
+        </>
       ) : (
         <LessonStepView
           step={step!}

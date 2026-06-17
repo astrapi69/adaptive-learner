@@ -1612,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Explore further",
+    "resources_domain": "More on {domain}",
     "motivation": {
       "halftime": "Halfway there — keep going!",
       "last": "Last one — finish strong!"
@@ -2777,5 +2779,15 @@
       "failed": "Validation failed: {reason}",
       "passed": "Validation passed: {sets} sets, {lessons} lessons."
     }
+  },
+  "resource": {
+    "type_youtube": "Videos",
+    "type_podcast": "Podcasts",
+    "type_article": "Articles",
+    "type_book": "Books",
+    "type_course": "Courses",
+    "type_website": "Websites",
+    "free": "Free",
+    "paid": "Course"
   }
 }

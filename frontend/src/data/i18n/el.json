@@ -1612,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Εμβάθυνε στο θέμα",
+    "resources_domain": "Περισσότερα για {domain}",
     "motivation": {
       "halftime": "Στα μισά — συνέχισε!",
       "last": "Η τελευταία — τελείωσέ το δυνατά!"
@@ -2777,5 +2779,15 @@
       "failed": "Η επικύρωση απέτυχε: {reason}",
       "passed": "Η επικύρωση πέτυχε: {sets} σύνολα, {lessons} μαθήματα."
     }
+  },
+  "resource": {
+    "type_youtube": "Βίντεο",
+    "type_podcast": "Podcast",
+    "type_article": "Άρθρα",
+    "type_book": "Βιβλία",
+    "type_course": "Μαθήματα",
+    "type_website": "Ιστότοποι",
+    "free": "Δωρεάν",
+    "paid": "Μάθημα"
   }
 }

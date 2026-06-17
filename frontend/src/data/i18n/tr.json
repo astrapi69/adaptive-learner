@@ -1612,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Konuyu derinleştir",
+    "resources_domain": "{domain} hakkında daha fazlası",
     "motivation": {
       "halftime": "Yarısı bitti — devam et!",
       "last": "Sonuncu — güçlü bitir!"
@@ -2777,5 +2779,15 @@
       "failed": "Doğrulama başarısız oldu: {reason}",
       "passed": "Doğrulama başarılı: {sets} set, {lessons} ders."
     }
+  },
+  "resource": {
+    "type_youtube": "Videolar",
+    "type_podcast": "Podcast'ler",
+    "type_article": "Makaleler",
+    "type_book": "Kitaplar",
+    "type_course": "Kurslar",
+    "type_website": "Web siteleri",
+    "free": "Ücretsiz",
+    "paid": "Kurs"
   }
 }

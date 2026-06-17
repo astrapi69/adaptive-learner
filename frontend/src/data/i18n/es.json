@@ -1612,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Profundiza en el tema",
+    "resources_domain": "Más sobre {domain}",
     "motivation": {
       "halftime": "¡A mitad de camino, sigue así!",
       "last": "¡La última, termina fuerte!"
@@ -2777,5 +2779,15 @@
       "failed": "La validación falló: {reason}",
       "passed": "Validación correcta: {sets} conjuntos, {lessons} lecciones."
     }
+  },
+  "resource": {
+    "type_youtube": "Vídeos",
+    "type_podcast": "Pódcasts",
+    "type_article": "Artículos",
+    "type_book": "Libros",
+    "type_course": "Cursos",
+    "type_website": "Sitios web",
+    "free": "Gratis",
+    "paid": "Curso"
   }
 }
