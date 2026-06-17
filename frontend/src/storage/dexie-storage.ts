@@ -69,6 +69,8 @@ import {
   aiValidateCardsDexie,
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
+} from "./content-loader-dexie-ai";
+import {
   deleteSetDexie,
   activeSourcesDexie,
   downloadSetDexie,

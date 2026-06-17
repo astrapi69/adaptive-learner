@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
-} from "./content-loader-dexie";
+} from "./content-loader-dexie-ai";
 import { _resetDbForTests, getDb } from "./db";
 import type { AiValidationCacheRecord } from "./types";
 
