@@ -13,6 +13,8 @@
 
 import type {SystemInfo} from "../../types/domain";
 
+import UpdateCheckControl from "./UpdateCheckControl";
+
 interface Props {
     info: SystemInfo;
     t: (key: string, fallback?: string) => string;
@@ -69,6 +71,7 @@ export default function VersionSection({info, t}: Props) {
                         : new Date(info.app.build_date).toLocaleString()}
                 </dd>
             </dl>
+            <UpdateCheckControl />
         </article>
     );
 }

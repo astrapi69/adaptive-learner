@@ -767,6 +767,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: ビルド
   build_date_label: ビルド日
+  check_update: "更新を確認"
+  checking: "確認中…"
+  update_available: "バージョン {version} が利用可能です！"
+  up_to_date: "最新バージョンを使用しています。"
+  check_failed: "確認に失敗しました。オンラインですか？"
+  last_checked: "前回の確認: {when}"
+  never_checked: "未確認"
+  update_now: "今すぐ更新"
   system_heading: システム
   storage_label: ストレージ
   storage_api: サーバー (FastAPI + SQLite)

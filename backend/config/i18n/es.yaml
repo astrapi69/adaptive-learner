@@ -767,6 +767,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Build
   build_date_label: Fecha de build
+  check_update: "Buscar actualizaciones"
+  checking: "Comprobando…"
+  update_available: "¡La versión {version} está disponible!"
+  up_to_date: "Estás usando la última versión."
+  check_failed: "La comprobación falló. ¿Estás conectado?"
+  last_checked: "Última comprobación: {when}"
+  never_checked: "Nunca comprobado"
+  update_now: "Actualizar ahora"
   system_heading: Sistema
   storage_label: Almacenamiento
   storage_api: Servidor (FastAPI + SQLite)
