@@ -73,6 +73,15 @@ export interface ContentLessonStep {
   /** Display text for {@link example_url}; the viewer falls back to a
    *  localized "View example" label when empty. */
   example_label?: string | null;
+  /** #673 — set ONLY on synthesised SRS review steps
+   *  ({@link synthesizeReviewLesson}). Carries the source lesson_id the
+   *  reviewed element belongs to, so the review recorder can address the
+   *  exact stored ``ElementError`` row. Without it the lesson_id had to be
+   *  parsed back out of the hyphen-joined step id, which mangled it for any
+   *  exercise_id / element_key containing a hyphen or space (almost all of
+   *  them) — producing a phantom row instead of rescheduling the real one,
+   *  so the "N due" badge never dropped. Absent on real content lessons. */
+  review_lesson_id?: string | null;
 }
 
 /** Phase 52D / v1.35.0 / P-127 — one blank inside a CLOZE

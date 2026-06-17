@@ -251,6 +251,10 @@ export function _buildReviewStep(
                 id: `review-cloze-${item.lesson_id}-${item.exercise_id}-${item.element_key}`,
                 type: "exercise",
                 title: null,
+                // #673 — carry the source lesson_id explicitly so the
+                // recorder addresses the right SRS row (the step id is NOT
+                // parseable back into lesson_id when ids contain hyphens).
+                review_lesson_id: item.lesson_id,
                 exercise: {...generated, direction: dir},
             };
         }
@@ -261,6 +265,8 @@ export function _buildReviewStep(
         id: `review-${item.lesson_id}-${item.exercise_id}-${item.element_key}`,
         type: "exercise",
         title: null,
+        // #673 — see above; explicit lesson_id beats parsing the step id.
+        review_lesson_id: item.lesson_id,
         exercise: {...exercise, direction: dir},
     };
 }
