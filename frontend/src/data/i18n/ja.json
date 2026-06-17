@@ -2681,5 +2681,89 @@
     "remove": "お気に入りから削除",
     "empty": "お気に入りはまだありません。レッスンの星をタップして保存しましょう。",
     "save_prompt": "このレッスンをお気に入りに保存"
+  },
+  "content_repo": {
+    "title": "コンテンツリポジトリ",
+    "last_sync": "最終同期: {when}",
+    "added": "リポジトリを追加しました。",
+    "synced": "同期しました: {sets} セット、{lessons} レッスン。",
+    "token_hint": "プライベートリポジトリにはトークンが必要です。下に貼り付けるか、設定 → 連携で共有トークンを設定してください。",
+    "official": {
+      "title": "公式コンテンツ",
+      "counts": "{sets} セット · {lessons} レッスン"
+    },
+    "user": {
+      "list_title": "あなたのコンテンツリポジトリ",
+      "empty": "接続されたリポジトリはありません。下から追加してください。",
+      "counts": "{sets} セット · {lessons} レッスン"
+    },
+    "recommended": {
+      "title": "おすすめのリポジトリ"
+    },
+    "add": {
+      "title": "リポジトリを追加"
+    },
+    "add_link": {
+      "title": "このコンテンツリポジトリを追加しますか？",
+      "body": "Adaptive Learner にコンテンツリポジトリを追加するよう招待されました。",
+      "invalid": "この招待リンクには有効なリポジトリが含まれていません。"
+    },
+    "field": {
+      "url": "GitHub リポジトリ URL",
+      "branch": "ブランチ",
+      "token": "トークン（プライベートリポジトリ、任意）"
+    },
+    "action": {
+      "add": "リポジトリを追加",
+      "cancel": "キャンセル",
+      "confirm_remove": "削除を確認",
+      "connect": "リポジトリを接続",
+      "move_down": "下へ移動",
+      "move_up": "上へ移動",
+      "remove": "削除",
+      "share": "共有",
+      "sync": "今すぐ同期"
+    },
+    "badge": {
+      "coach": "コーチ",
+      "official": "公式"
+    },
+    "trust": {
+      "dropped": "同期しましたが検証に失敗しました。このリポジトリは未検証としてマークされました。",
+      "recommended": "公式におすすめ",
+      "unknown": "未検証",
+      "validated": "検証済み"
+    },
+    "status": {
+      "never_synced": "まだ同期されていません"
+    },
+    "rating": {
+      "aria": "あなたの評価",
+      "label": "あなたの評価",
+      "star": "5 段階中 {n} を評価"
+    },
+    "share": {
+      "copied": "リンクをコピーしました。",
+      "copy": "コピー",
+      "copy_failed": "コピーできませんでした。",
+      "hint": "このリンクを共有すると、他の人がこの公開リポジトリを追加できます。プライベートリポジトリの場合は、URL と読み取り専用トークンを別々に送ってください。",
+      "qr_alt": "共有リンクの QR コード"
+    },
+    "progress": {
+      "validating": "リポジトリを検証中…",
+      "manifest": "マニフェストを読み込み中…",
+      "sets": "セットを読み込み中…",
+      "lessons": "レッスンをキャッシュ中…",
+      "validate": "コンテンツを確認中…"
+    },
+    "error": {
+      "invalid_url": "有効な GitHub リポジトリ URL を入力してください（例: owner/repo）。",
+      "save_failed": "リポジトリを追加できませんでした。",
+      "sync_failed": "同期に失敗しました。もう一度お試しください。"
+    },
+    "validation": {
+      "failed": "検証に失敗しました: {reason}",
+      "passed": "検証に成功しました: {sets} セット、{lessons} レッスン。"
+    }
   }
 }

@@ -2681,5 +2681,89 @@
     "remove": "Retirer des favoris",
     "empty": "Aucun favori pour l'instant — touchez l'étoile d'une leçon.",
     "save_prompt": "Enregistrer cette leçon dans vos favoris"
+  },
+  "content_repo": {
+    "title": "Dépôts de contenu",
+    "last_sync": "Dernière synchronisation : {when}",
+    "added": "Dépôt ajouté.",
+    "synced": "Synchronisé : {sets} ensembles, {lessons} leçons.",
+    "token_hint": "Les dépôts privés nécessitent un jeton — collez-en un ci-dessous ou définissez un jeton partagé dans Réglages → Intégrations.",
+    "official": {
+      "title": "Contenu officiel",
+      "counts": "{sets} ensembles · {lessons} leçons"
+    },
+    "user": {
+      "list_title": "Vos dépôts de contenu",
+      "empty": "Aucun dépôt connecté. Ajoutez-en un ci-dessous.",
+      "counts": "{sets} ensembles · {lessons} leçons"
+    },
+    "recommended": {
+      "title": "Dépôts recommandés"
+    },
+    "add": {
+      "title": "Ajouter un dépôt"
+    },
+    "add_link": {
+      "title": "Ajouter ce dépôt de contenu ?",
+      "body": "Vous avez été invité à ajouter un dépôt de contenu à Adaptive Learner.",
+      "invalid": "Ce lien d'invitation ne contient pas de dépôt valide."
+    },
+    "field": {
+      "url": "URL du dépôt GitHub",
+      "branch": "Branche",
+      "token": "Jeton (dépôts privés, facultatif)"
+    },
+    "action": {
+      "add": "Ajouter le dépôt",
+      "cancel": "Annuler",
+      "confirm_remove": "Confirmer la suppression",
+      "connect": "Connecter le dépôt",
+      "move_down": "Descendre",
+      "move_up": "Monter",
+      "remove": "Supprimer",
+      "share": "Partager",
+      "sync": "Synchroniser maintenant"
+    },
+    "badge": {
+      "coach": "Coach",
+      "official": "Officiel"
+    },
+    "trust": {
+      "dropped": "Synchronisé, mais la validation a échoué — ce dépôt est désormais marqué comme non vérifié.",
+      "recommended": "Recommandé officiellement",
+      "unknown": "Non vérifié",
+      "validated": "Validé"
+    },
+    "status": {
+      "never_synced": "Pas encore synchronisé"
+    },
+    "rating": {
+      "aria": "Votre évaluation",
+      "label": "Votre évaluation",
+      "star": "Noter {n} sur 5"
+    },
+    "share": {
+      "copied": "Lien copié.",
+      "copy": "Copier",
+      "copy_failed": "Copie impossible.",
+      "hint": "Partagez ce lien pour que d'autres puissent ajouter ce dépôt PUBLIC. Pour un dépôt privé, envoyez l'URL et un jeton en lecture seule séparément.",
+      "qr_alt": "QR code du lien de partage"
+    },
+    "progress": {
+      "validating": "Validation du dépôt…",
+      "manifest": "Chargement du manifeste…",
+      "sets": "Chargement des ensembles…",
+      "lessons": "Mise en cache des leçons…",
+      "validate": "Vérification du contenu…"
+    },
+    "error": {
+      "invalid_url": "Saisissez une URL de dépôt GitHub valide (p. ex. owner/repo).",
+      "save_failed": "Impossible d'ajouter le dépôt.",
+      "sync_failed": "La synchronisation a échoué. Réessayez."
+    },
+    "validation": {
+      "failed": "La validation a échoué : {reason}",
+      "passed": "Validation réussie : {sets} ensembles, {lessons} leçons."
+    }
   }
 }

@@ -2474,3 +2474,71 @@ favorites:
   remove: "Remove from favorites"
   empty: "No favorites yet — tap the star on a lesson to save it."
   save_prompt: "Save this lesson to your favorites"
+content_repo:
+  title: "Content repositories"
+  last_sync: "Last sync: {when}"
+  added: "Repository added."
+  synced: "Synced: {sets} sets, {lessons} lessons."
+  token_hint: "Private repositories need a token — paste one below, or set a shared token in Settings → Integrations."
+  official:
+    title: "Official content"
+    counts: "{sets} sets · {lessons} lessons"
+  user:
+    list_title: "Your content repositories"
+    empty: "No repositories connected. Add one below."
+    counts: "{sets} sets · {lessons} lessons"
+  recommended:
+    title: "Recommended repositories"
+  add:
+    title: "Add a repository"
+  add_link:
+    title: "Add this content repository?"
+    body: "You were invited to add a content repository to Adaptive Learner."
+    invalid: "This invite link does not contain a valid repository."
+  field:
+    url: "GitHub repository URL"
+    branch: "Branch"
+    token: "Token (private repos, optional)"
+  action:
+    add: "Add repository"
+    cancel: "Cancel"
+    confirm_remove: "Confirm remove"
+    connect: "Connect repository"
+    move_down: "Move down"
+    move_up: "Move up"
+    remove: "Remove"
+    share: "Share"
+    sync: "Sync now"
+  badge:
+    coach: "Coach"
+    official: "Official"
+  trust:
+    dropped: "Synced, but validation failed — this repository is now marked Unverified."
+    recommended: "Officially recommended"
+    unknown: "Unverified"
+    validated: "Validated"
+  status:
+    never_synced: "Not synced yet"
+  rating:
+    aria: "Your rating"
+    label: "Your rating"
+    star: "Rate {n} of 5"
+  share:
+    copied: "Link copied."
+    copy: "Copy"
+    copy_failed: "Could not copy."
+    hint: "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately."
+    qr_alt: "QR code for the share link"
+  progress:
+    validating: "Validating repository…"
+    manifest: "Loading manifest…"
+    sets: "Loading sets…"
+    lessons: "Caching lessons…"
+    validate: "Verifying content…"
+  error:
+    invalid_url: "Enter a valid GitHub repository URL (e.g. owner/repo)."
+    save_failed: "Could not add the repository."
+    sync_failed: "Sync failed. Try again."
+  validation:
+    failed: "Validation failed: {reason}"
+    passed: "Validation passed: {sets} sets, {lessons} lessons."
