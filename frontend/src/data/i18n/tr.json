@@ -2681,5 +2681,89 @@
     "remove": "Favorilerden çıkar",
     "empty": "Henüz favori yok — bir dersteki yıldıza dokun.",
     "save_prompt": "Bu dersi favorilerine kaydet"
+  },
+  "content_repo": {
+    "title": "İçerik depoları",
+    "last_sync": "Son eşitleme: {when}",
+    "added": "Depo eklendi.",
+    "synced": "Eşitlendi: {sets} set, {lessons} ders.",
+    "token_hint": "Özel depolar bir belirteç gerektirir — aşağıya birini yapıştır ya da Ayarlar → Entegrasyonlar bölümünde paylaşılan bir belirteç tanımla.",
+    "official": {
+      "title": "Resmî içerik",
+      "counts": "{sets} set · {lessons} ders"
+    },
+    "user": {
+      "list_title": "İçerik depoların",
+      "empty": "Bağlı depo yok. Aşağıdan bir tane ekle.",
+      "counts": "{sets} set · {lessons} ders"
+    },
+    "recommended": {
+      "title": "Önerilen depolar"
+    },
+    "add": {
+      "title": "Depo ekle"
+    },
+    "add_link": {
+      "title": "Bu içerik deposu eklensin mi?",
+      "body": "Adaptive Learner'a bir içerik deposu eklemeye davet edildin.",
+      "invalid": "Bu davet bağlantısı geçerli bir depo içermiyor."
+    },
+    "field": {
+      "url": "GitHub depo URL'si",
+      "branch": "Dal",
+      "token": "Belirteç (özel depolar, isteğe bağlı)"
+    },
+    "action": {
+      "add": "Depo ekle",
+      "cancel": "İptal",
+      "confirm_remove": "Kaldırmayı onayla",
+      "connect": "Depoyu bağla",
+      "move_down": "Aşağı taşı",
+      "move_up": "Yukarı taşı",
+      "remove": "Kaldır",
+      "share": "Paylaş",
+      "sync": "Şimdi eşitle"
+    },
+    "badge": {
+      "coach": "Koç",
+      "official": "Resmî"
+    },
+    "trust": {
+      "dropped": "Eşitlendi, ancak doğrulama başarısız oldu — bu depo artık doğrulanmamış olarak işaretlendi.",
+      "recommended": "Resmî olarak önerilen",
+      "unknown": "Doğrulanmamış",
+      "validated": "Doğrulandı"
+    },
+    "status": {
+      "never_synced": "Henüz eşitlenmedi"
+    },
+    "rating": {
+      "aria": "Değerlendirmen",
+      "label": "Değerlendirmen",
+      "star": "5 üzerinden {n} ver"
+    },
+    "share": {
+      "copied": "Bağlantı kopyalandı.",
+      "copy": "Kopyala",
+      "copy_failed": "Kopyalanamadı.",
+      "hint": "Başkalarının bu HERKESE AÇIK depoyu ekleyebilmesi için bu bağlantıyı paylaş. Özel bir depo için URL'yi ve salt okunur bir belirteci ayrı ayrı gönder.",
+      "qr_alt": "Paylaşım bağlantısı için QR kodu"
+    },
+    "progress": {
+      "validating": "Depo doğrulanıyor…",
+      "manifest": "Manifest yükleniyor…",
+      "sets": "Setler yükleniyor…",
+      "lessons": "Dersler önbelleğe alınıyor…",
+      "validate": "İçerik doğrulanıyor…"
+    },
+    "error": {
+      "invalid_url": "Geçerli bir GitHub depo URL'si gir (örn. owner/repo).",
+      "save_failed": "Depo eklenemedi.",
+      "sync_failed": "Eşitleme başarısız oldu. Yeniden dene."
+    },
+    "validation": {
+      "failed": "Doğrulama başarısız oldu: {reason}",
+      "passed": "Doğrulama başarılı: {sets} set, {lessons} ders."
+    }
   }
 }

@@ -2681,5 +2681,89 @@
     "remove": "Aus Favoriten entfernen",
     "empty": "Noch keine Favoriten — tippe auf den Stern einer Lektion.",
     "save_prompt": "Diese Lektion zu deinen Favoriten hinzufügen"
+  },
+  "content_repo": {
+    "title": "Inhalts-Repositories",
+    "last_sync": "Letzte Synchronisierung: {when}",
+    "added": "Repository hinzugefügt.",
+    "synced": "Synchronisiert: {sets} Sets, {lessons} Lektionen.",
+    "token_hint": "Private Repositories benötigen ein Token — füge unten eines ein oder hinterlege ein gemeinsames Token unter Einstellungen → Integrationen.",
+    "official": {
+      "title": "Offizielle Inhalte",
+      "counts": "{sets} Sets · {lessons} Lektionen"
+    },
+    "user": {
+      "list_title": "Deine Inhalts-Repositories",
+      "empty": "Keine Repositories verbunden. Füge unten eines hinzu.",
+      "counts": "{sets} Sets · {lessons} Lektionen"
+    },
+    "recommended": {
+      "title": "Empfohlene Repositories"
+    },
+    "add": {
+      "title": "Repository hinzufügen"
+    },
+    "add_link": {
+      "title": "Dieses Inhalts-Repository hinzufügen?",
+      "body": "Du wurdest eingeladen, ein Inhalts-Repository zu Adaptive Learner hinzuzufügen.",
+      "invalid": "Dieser Einladungslink enthält kein gültiges Repository."
+    },
+    "field": {
+      "url": "GitHub-Repository-URL",
+      "branch": "Branch",
+      "token": "Token (private Repos, optional)"
+    },
+    "action": {
+      "add": "Repository hinzufügen",
+      "cancel": "Abbrechen",
+      "confirm_remove": "Entfernen bestätigen",
+      "connect": "Repository verbinden",
+      "move_down": "Nach unten",
+      "move_up": "Nach oben",
+      "remove": "Entfernen",
+      "share": "Teilen",
+      "sync": "Jetzt synchronisieren"
+    },
+    "badge": {
+      "coach": "Coach",
+      "official": "Offiziell"
+    },
+    "trust": {
+      "dropped": "Synchronisiert, aber die Validierung schlug fehl — dieses Repository ist jetzt als nicht verifiziert markiert.",
+      "recommended": "Offiziell empfohlen",
+      "unknown": "Nicht verifiziert",
+      "validated": "Validiert"
+    },
+    "status": {
+      "never_synced": "Noch nicht synchronisiert"
+    },
+    "rating": {
+      "aria": "Deine Bewertung",
+      "label": "Deine Bewertung",
+      "star": "{n} von 5 bewerten"
+    },
+    "share": {
+      "copied": "Link kopiert.",
+      "copy": "Kopieren",
+      "copy_failed": "Kopieren nicht möglich.",
+      "hint": "Teile diesen Link, damit andere dieses ÖFFENTLICHE Repository hinzufügen können. Für ein privates Repository sende die URL und ein schreibgeschütztes Token separat.",
+      "qr_alt": "QR-Code für den Teilen-Link"
+    },
+    "progress": {
+      "validating": "Repository wird validiert…",
+      "manifest": "Manifest wird geladen…",
+      "sets": "Sets werden geladen…",
+      "lessons": "Lektionen werden zwischengespeichert…",
+      "validate": "Inhalt wird überprüft…"
+    },
+    "error": {
+      "invalid_url": "Gib eine gültige GitHub-Repository-URL ein (z. B. owner/repo).",
+      "save_failed": "Repository konnte nicht hinzugefügt werden.",
+      "sync_failed": "Synchronisierung fehlgeschlagen. Bitte erneut versuchen."
+    },
+    "validation": {
+      "failed": "Validierung fehlgeschlagen: {reason}",
+      "passed": "Validierung erfolgreich: {sets} Sets, {lessons} Lektionen."
+    }
   }
 }
