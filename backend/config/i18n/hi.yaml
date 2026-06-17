@@ -769,6 +769,14 @@ about:
   app_label: अडैप्टिव लर्नर
   build_hash_label: बिल्ड
   build_date_label: बिल्ड दिनांक
+  check_update: "अपडेट जांचें"
+  checking: "जांच हो रही है…"
+  update_available: "संस्करण {version} उपलब्ध है!"
+  up_to_date: "आप नवीनतम संस्करण का उपयोग कर रहे हैं।"
+  check_failed: "जांच विफल। क्या आप ऑनलाइन हैं?"
+  last_checked: "पिछली जांच: {when}"
+  never_checked: "कभी जांच नहीं की गई"
+  update_now: "अभी अपडेट करें"
   system_heading: सिस्टम
   storage_label: भंडारण
   storage_api: Server (FastAPI + SQLite)

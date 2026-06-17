@@ -96,4 +96,126 @@ describe("UpdatePrompt", () => {
     expect(dismiss.className).toContain("min-h-[44px]");
     expect(dismiss.className).toContain("min-w-[44px]");
   });
+
+  // --- Edge cases (empty / falsy-ish copy) ------------------------------
+  // The component is presentational: every string is caller-supplied, so it
+  // must not crash on empty copy, and the actions must still be wired.
+  describe("edge cases", () => {
+    it("renders + stays interactive with empty message and labels", () => {
+      const onUpdate = vi.fn();
+      const onDismiss = vi.fn();
+      render(
+        <UpdatePrompt
+          message=""
+          updateLabel=""
+          dismissLabel=""
+          onUpdate={onUpdate}
+          onDismiss={onDismiss}
+        />,
+      );
+      const bar = screen.getByTestId("update-prompt");
+      expect(bar).toBeInTheDocument();
+      // An empty dismiss label means no accessible name — the attribute is
+      // present but empty; the button must still exist and fire its handler.
+      const dismiss = screen.getByTestId("update-prompt-dismiss");
+      expect(dismiss).toHaveAttribute("aria-label", "");
+      fireEvent.click(screen.getByTestId("update-prompt-apply"));
+      fireEvent.click(dismiss);
+      expect(onUpdate).toHaveBeenCalledOnce();
+      expect(onDismiss).toHaveBeenCalledOnce();
+      // The position contract holds regardless of copy.
+      expect(bar.className).toContain("bottom-0");
+      expect(bar.className).not.toContain("top-0");
+    });
+
+    it("renders a whitespace-only message without collapsing the bar", () => {
+      render(
+        <UpdatePrompt
+          message="   "
+          updateLabel="Update"
+          dismissLabel="Later"
+          onUpdate={vi.fn()}
+          onDismiss={vi.fn()}
+        />,
+      );
+      expect(screen.getByTestId("update-prompt")).toBeInTheDocument();
+    });
+
+    it("falls back to the default testId when none is supplied", () => {
+      render(
+        <UpdatePrompt
+          message="A new version is available."
+          updateLabel="Update"
+          dismissLabel="Later"
+          onUpdate={vi.fn()}
+          onDismiss={vi.fn()}
+        />,
+      );
+      expect(screen.getByTestId("update-prompt")).toBeInTheDocument();
+    });
+
+    it("honours a custom testId", () => {
+      render(
+        <UpdatePrompt
+          message="A new version is available."
+          updateLabel="Update"
+          dismissLabel="Later"
+          onUpdate={vi.fn()}
+          onDismiss={vi.fn()}
+          testId="custom-update-banner"
+        />,
+      );
+      expect(screen.getByTestId("custom-update-banner")).toBeInTheDocument();
+    });
+  });
+
+  // --- Boundary values (long strings, unicode, special characters) ------
+  describe("boundary values", () => {
+    it("keeps the message a single truncating node for very long copy", () => {
+      const longMessage = "A new version is available. ".repeat(50).trim();
+      render(
+        <UpdatePrompt
+          message={longMessage}
+          updateLabel="Update"
+          dismissLabel="Later"
+          onUpdate={vi.fn()}
+          onDismiss={vi.fn()}
+        />,
+      );
+      const message = screen.getByText(longMessage);
+      // The copy is rendered verbatim (no truncation in the DOM) and the
+      // ``truncate`` utility keeps a long string on one clipped line rather
+      // than overflowing the fixed bar.
+      expect(message.textContent).toBe(longMessage);
+      expect(message.className).toContain("truncate");
+    });
+
+    it("renders unicode, emoji, and special characters verbatim", () => {
+      const message = "Neue Version verfuegbar — äöüß 🚀 <script> & 100%";
+      const updateLabel = "Aktualisieren →";
+      const dismissLabel = "Später ×";
+      const onUpdate = vi.fn();
+      const onDismiss = vi.fn();
+      render(
+        <UpdatePrompt
+          message={message}
+          updateLabel={updateLabel}
+          dismissLabel={dismissLabel}
+          onUpdate={onUpdate}
+          onDismiss={onDismiss}
+        />,
+      );
+      expect(screen.getByText(message)).toBeInTheDocument();
+      expect(screen.getByTestId("update-prompt-apply")).toHaveTextContent(
+        updateLabel,
+      );
+      // The special characters survive into the accessible name unescaped.
+      expect(screen.getByTestId("update-prompt-dismiss")).toHaveAttribute(
+        "aria-label",
+        dismissLabel,
+      );
+      fireEvent.click(screen.getByTestId("update-prompt-apply"));
+      expect(onUpdate).toHaveBeenCalledOnce();
+    });
+  });
 });

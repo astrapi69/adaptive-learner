@@ -22,11 +22,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useOnlineStatus } from "./useOnlineStatus";
+import { fetchLatestVersion, isUpdateAvailable } from "../lib/pwa/version-check";
 import {
-  fetchLatestVersion,
-  isUpdateAvailable,
-  type VersionManifest,
-} from "../lib/pwa/version-check";
+  activateAndReload,
+  CURRENT_BUILD,
+  versionJsonUrl,
+} from "../lib/pwa/sw-update";
 
 export interface AppUpdateState {
   /** True when a newer build is available and not yet dismissed. */
@@ -39,57 +40,6 @@ export interface AppUpdateState {
   applyUpdate: () => void;
   /** Hide the prompt until the next full app start (in-memory). */
   dismiss: () => void;
-}
-
-const CURRENT: VersionManifest = {
-  version: typeof __APP_VERSION__ === "string" ? __APP_VERSION__ : "unknown",
-  buildHash: typeof __BUILD_HASH__ === "string" ? __BUILD_HASH__ : "unknown",
-};
-
-function versionUrl(): string {
-  const base =
-    typeof import.meta !== "undefined" && import.meta.env?.BASE_URL
-      ? import.meta.env.BASE_URL
-      : "/";
-  return `${base}version.json`;
-}
-
-/** Ask a waiting service worker to activate, then reload on takeover. */
-async function activateAndReload(): Promise<void> {
-  const reload = () => window.location.reload();
-  try {
-    if (
-      typeof navigator === "undefined" ||
-      !("serviceWorker" in navigator)
-    ) {
-      reload();
-      return;
-    }
-    const reg = await navigator.serviceWorker.getRegistration();
-    const waiting = reg?.waiting;
-    if (!waiting) {
-      reload();
-      return;
-    }
-    // Reload once the new SW takes control (clients.claim) so the page
-    // is served by the fresh build, not the old precache.
-    let reloaded = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (reloaded) return;
-      reloaded = true;
-      reload();
-    });
-    waiting.postMessage({ type: "SKIP_WAITING" });
-    // Safety net: if controllerchange never fires, reload anyway.
-    setTimeout(() => {
-      if (!reloaded) {
-        reloaded = true;
-        reload();
-      }
-    }, 1500);
-  } catch {
-    reload();
-  }
 }
 
 export function useAppUpdate(): AppUpdateState {
@@ -109,10 +59,10 @@ export function useAppUpdate(): AppUpdateState {
     let cancelled = false;
 
     void (async () => {
-      const latest = await fetchLatestVersion(versionUrl());
+      const latest = await fetchLatestVersion(versionJsonUrl());
       if (cancelled) return;
       if (latest) setLatestVersion(latest.version);
-      if (isUpdateAvailable(CURRENT, latest)) setHasUpdate(true);
+      if (isUpdateAvailable(CURRENT_BUILD, latest)) setHasUpdate(true);
     })();
 
     // Service-worker waiting-worker detection (complements version.json).
@@ -160,7 +110,7 @@ export function useAppUpdate(): AppUpdateState {
 
   return {
     updateAvailable: hasUpdate && !dismissed,
-    currentVersion: CURRENT.version,
+    currentVersion: CURRENT_BUILD.version,
     latestVersion,
     applyUpdate,
     dismiss,

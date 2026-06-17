@@ -768,6 +768,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Yapı
   build_date_label: Yapı tarihi
+  check_update: "Güncellemeleri denetle"
+  checking: "Denetleniyor…"
+  update_available: "{version} sürümü mevcut!"
+  up_to_date: "En son sürümü kullanıyorsunuz."
+  check_failed: "Denetleme başarısız. Çevrimiçi misiniz?"
+  last_checked: "Son denetleme: {when}"
+  never_checked: "Hiç denetlenmedi"
+  update_now: "Şimdi güncelle"
   system_heading: Sistem
   storage_label: Depolama
   storage_api: Sunucu (FastAPI + SQLite)
