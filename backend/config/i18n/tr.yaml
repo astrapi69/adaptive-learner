@@ -352,6 +352,7 @@ review:
   page_title: "Tekrar"
   session_title: "Tekrar oturumu"
   subtitle: "Tekrar için {n} öğe"
+  subtitle_capped: "Tekrar için {due} öğeden {shown} tanesi"
   loading: "Tekrar oturumu yükleniyor…"
   empty_body: "Hepsi tamam! Bu sette tekrar edilecek öğe yok."
   not_cached_body: "Bu set henüz indirilmedi. Önce içerik tarayıcısını aç."

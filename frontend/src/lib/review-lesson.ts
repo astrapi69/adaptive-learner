@@ -79,6 +79,57 @@ export function dedupeReviewQueueByElement<T extends {element_key: string}>(
     return unique;
 }
 
+/** #664 — fingerprint a synthesised step by the QUESTION the learner
+ *  actually sees, so two steps that render identically collapse to one.
+ *
+ *  Element-key dedup (above) is not enough: a REPLAY exercise
+ *  (``matching`` / ``picture_choice``) covers several cards, so when N of
+ *  those cards are due the queue holds N items with N *distinct*
+ *  ``element_key``s that all resolve to the SAME exercise — element-key
+ *  dedup keeps all N and the user answers the identical grid N times.
+ *
+ *  The fingerprint is content-based (type + prompt + the per-type render
+ *  payload + direction), so:
+ *   - a replayed exercise collapses regardless of which element pulled it
+ *     in (identical content → identical signature);
+ *   - element-specific clozes stay distinct (different ``sentence`` /
+ *     ``blanks`` per blanked token → different signature), which is
+ *     correct: those are genuinely different questions. */
+function _stepQuestionSignature(step: ContentLessonStep): string {
+    const ex = step.exercise;
+    if (!ex) return `s:${step.id}`;
+    return JSON.stringify([
+        ex.type,
+        ex.direction ?? "",
+        ex.prompt ?? "",
+        ex.sentence ?? "",
+        ex.blanks ?? null,
+        ex.pairs ?? null,
+        ex.images ?? null,
+        ex.tiles ?? null,
+        ex.accept ?? null,
+        ex.card_ids ?? null,
+    ]);
+}
+
+/** #664 — keep at most one step per rendered question. Order-preserving
+ *  keep-first: the queue is pre-sorted by priority (overdue → weakness →
+ *  error frequency), so the first occurrence of a shared exercise is the
+ *  highest-priority (weakest) one — exactly the one to drill. Pure. */
+export function dedupeReviewSteps(
+    steps: readonly ContentLessonStep[],
+): ContentLessonStep[] {
+    const seen = new Set<string>();
+    const unique: ContentLessonStep[] = [];
+    for (const step of steps) {
+        const sig = _stepQuestionSignature(step);
+        if (seen.has(sig)) continue;
+        seen.add(sig);
+        unique.push(step);
+    }
+    return unique;
+}
+
 export interface SynthesizeOpts {
     /** Cap on the number of elements pulled from the queue.
      *  Default 10. Cap stays small so the review session
@@ -229,26 +280,32 @@ export function synthesizeReviewLesson(
     opts: SynthesizeOpts,
 ): ContentLesson {
     const limit = opts.limit ?? DEFAULT_REVIEW_LIMIT;
-    // #629 BUG 2 — de-dup by element BEFORE slicing so a session fills up
-    // to ``limit`` UNIQUE elements (a naive slice-then-build could spend
-    // the whole cap on repeats of one word).
-    const top = dedupeReviewQueueByElement(queue).slice(0, limit);
-    const steps: ContentLessonStep[] = [];
-    for (const item of top) {
-        // Per-item branch is delegated to ``_buildReviewStep`` so the
-        // free_text/word_tiles → cloze logic (Phase 52G) stays out
-        // of the queue-walking loop. Returns null only when the
-        // source exercise can't be resolved (lesson evicted from
-        // cache); that case is silently dropped — same as the
-        // pre-52G behaviour.
+    // #629 BUG 2 — de-dup by element first (one queue item per element_key).
+    const byElement = dedupeReviewQueueByElement(queue);
+    // Build a step for EVERY element (no cap yet). ``_buildReviewStep``
+    // returns null only when the source exercise can't be resolved (lesson
+    // evicted from cache) — that item is silently dropped, same as the
+    // pre-52G behaviour. Delegating keeps the free_text/word_tiles → cloze
+    // logic (Phase 52G) out of this loop.
+    const built: ContentLessonStep[] = [];
+    for (const item of byElement) {
         const step = _buildReviewStep(
             item,
             cachedLessons.get(item.lesson_id),
         );
         if (step === null) continue;
-        steps.push(step);
+        built.push(step);
     }
-    const setId = top[0]?.set_id ?? "";
+    // #664 — de-dup on the RENDERED QUESTION (after synthesis), so a replay
+    // exercise (matching / picture_choice) covering several due cards
+    // appears once instead of once-per-card. Element-key dedup alone can't
+    // catch this because those cards have distinct element_keys.
+    const uniqueSteps = dedupeReviewSteps(built);
+    // #664 — cap AFTER question-dedup so the session fills to ``limit``
+    // UNIQUE QUESTIONS, not ``limit`` queue items that then collapse to
+    // fewer questions (which left the session short).
+    const steps = uniqueSteps.slice(0, limit);
+    const setId = byElement[0]?.set_id ?? "";
     return {
         id: `review-${setId}-${new Date().toISOString()}`,
         title: opts.title,

@@ -376,6 +376,7 @@
     "page_title": "復習",
     "session_title": "復習セッション",
     "subtitle": "復習する要素: {n} 件",
+    "subtitle_capped": "復習する要素: {due} 件中 {shown} 件",
     "loading": "復習セッションを読み込み中…",
     "empty_body": "すべて完了！このセットに復習する要素はありません。",
     "not_cached_body": "このセットはまだダウンロードされていません。コンテンツブラウザを開いてください。",

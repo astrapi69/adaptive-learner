@@ -74,8 +74,8 @@ export default function ReviewPage() {
     const {
         status,
         lesson,
-        queue,
         currentStepIndex,
+        dueCount,
         error,
         goNext,
         goPrev,
@@ -192,11 +192,23 @@ export default function ReviewPage() {
                     {t("review.back_to_dashboard", "Back to Dashboard")}
                 </button>
                 <h1>{lesson.title}</h1>
-                <p className="lesson-description">
-                    {t(
-                        "review.subtitle",
-                        "Reviewing {n} element(s) due for SRS",
-                    ).replace("{n}", String(queue.length))}
+                <p className="lesson-description" data-testid="review-subtitle">
+                    {/* #664 — the header MUST match the progress bar: both
+                        read the actually-presented step count, never the raw
+                        (pre-synthesis) queue length. When the cap or an
+                        unresolvable element trims the pool, show
+                        "{shown} of {due}" so the gap is transparent. */}
+                    {totalSteps < dueCount
+                        ? t(
+                              "review.subtitle_capped",
+                              "Reviewing {shown} of {due} elements due for SRS",
+                          )
+                              .replace("{shown}", String(totalSteps))
+                              .replace("{due}", String(dueCount))
+                        : t(
+                              "review.subtitle",
+                              "Reviewing {n} element(s) due for SRS",
+                          ).replace("{n}", String(totalSteps))}
                 </p>
             </header>
 
