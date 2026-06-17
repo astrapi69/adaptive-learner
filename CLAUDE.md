@@ -9,7 +9,17 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.83.0** (maintenance + gap-hardening release -
+- **Current state:** **v1.84.0** (maintenance release -
+  **4 substantive commits**: a **P1** content-repo import hardening (#645) -
+  CORS-safe import, a retry policy, a progress indicator, and dialog
+  accessibility; a **P2** fix so inline Markdown in exercise prompts and labels
+  renders instead of leaking raw `**asterisks**`/backticks (#647); a **P2**
+  clickable Settings profile picture with a preview/change dialog (#639); and a
+  **P2** backup-import fix so a foreign JSON file is declined gracefully with a
+  friendly message instead of failing obscurely (#643, #641). Plus a user-repo
+  import E2E test (#637) and the EXP-031 ZIP-based backup-format (`.alb`) design
+  exploration (#644). No schema/API/data change.)
+  v1.83.0 = (maintenance + gap-hardening release -
   **3 fixes + a 6-item gap-hardening audit**: a **P1** review-session fix (#631)
   - Enter shortcut, element de-duplication in the queue, and live XP-badge
   recompute after a review; two **P2** theory-rendering fixes - markdown tables
