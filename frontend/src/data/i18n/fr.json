@@ -2054,6 +2054,11 @@
       "fix_failed": "Impossible d'appliquer la suggestion."
     },
     "ai_check": {
+      "badge": {
+        "verified": "Verifie par IA",
+        "stale": "Verification IA obsolete",
+        "invalid": "Verification IA invalide"
+      },
       "last_checked": "Derniere verification : {when}",
       "recheck": "Reverifier",
       "export": {

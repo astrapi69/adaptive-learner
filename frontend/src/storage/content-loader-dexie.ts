@@ -39,7 +39,7 @@ import type {
 import { USER_GENERATED_SOURCE } from "./types";
 import { isDevMode } from "../hooks/useDevMode";
 import { getDb } from "./db";
-import { aiComplete, resolveModel } from "./ai-providers";
+import { aiComplete, aiCompleteWithMeta, resolveModel } from "./ai-providers";
 import type { AIProvider } from "../lib/constants";
 import {
   buildAiValidationMessages,
@@ -978,7 +978,7 @@ export async function aiValidateCardsDexie(
     onProgress: input.onProgress,
     signal: input.signal,
     complete: async (prompt, signal) => {
-      const text = await aiComplete({
+      const completion = await aiCompleteWithMeta({
         provider,
         model,
         apiKey,
@@ -986,7 +986,7 @@ export async function aiValidateCardsDexie(
         maxTokens: 1500,
         signal,
       });
-      return { text };
+      return { text: completion.text, responseId: completion.responseId };
     },
   });
   return {
@@ -1027,6 +1027,7 @@ export async function getAiValidationCacheDexie(
     card_count: row.card_count,
     issue_count: row.issue_count,
     checked_at: row.checked_at,
+    signature: row.signature ?? null,
   };
 }
 
@@ -1048,6 +1049,7 @@ export async function saveAiValidationCacheDexie(
     card_count: record.card_count,
     issue_count: record.issue_count,
     checked_at: record.checked_at,
+    signature: record.signature ?? null,
   });
 }
 

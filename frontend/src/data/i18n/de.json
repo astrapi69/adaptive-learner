@@ -2054,6 +2054,11 @@
       "fix_failed": "Vorschlag konnte nicht übernommen werden."
     },
     "ai_check": {
+      "badge": {
+        "verified": "KI-geprueft",
+        "stale": "KI-Pruefung veraltet",
+        "invalid": "KI-Pruefung ungueltig"
+      },
       "last_checked": "Letzte Pruefung: {when}",
       "recheck": "Erneut pruefen",
       "export": {

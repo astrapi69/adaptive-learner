@@ -15,6 +15,7 @@ import { BookOpen, Download, FolderOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import ListRow from "../../shared/ListRow";
+import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../shared/AiCheckedBadge";
 import { useI18n } from "../../hooks/useI18n";
 import { isOfficialSource } from "../../lib/content/content-repos";
 import type { ContentSetEntry } from "../../storage/types";
@@ -37,6 +38,9 @@ interface ContentSetRowProps {
   /** When set, the AI-check button is rendered VISIBLE but DISABLED with
    *  this reason as its tooltip (feature-state policy, #335). */
   aiCheckDisabledReason?: string;
+  /** EXP-033 / AIV-11 — "AI-checked" signature badge status for this set.
+   *  Defaults to "none" (no badge). */
+  aiBadgeStatus?: AiCheckBadgeStatus;
 }
 
 /** Origin / trust / recommended badges for a non-official source. */
@@ -292,7 +296,9 @@ export default function ContentSetRow({
   onDownload,
   onAiCheck,
   aiCheckDisabledReason,
+  aiBadgeStatus = "none",
 }: ContentSetRowProps) {
+  const { t } = useI18n();
   const isCached = entry.cached_version !== null;
   return (
     <ListRow
@@ -312,7 +318,16 @@ export default function ContentSetRow({
         entry.description ? <p className="content-set-desc">{entry.description}</p> : undefined
       }
       status={
-        <ContentSetStatus entry={entry} downloadState={downloadState} isCached={isCached} />
+        <>
+          <ContentSetStatus entry={entry} downloadState={downloadState} isCached={isCached} />
+          <AiCheckedBadge
+            status={aiBadgeStatus}
+            verifiedLabel={t("content.ai_check.badge.verified", "AI-checked")}
+            staleLabel={t("content.ai_check.badge.stale", "AI-check outdated")}
+            invalidLabel={t("content.ai_check.badge.invalid", "AI-check invalid")}
+            testId={`content-set-${entry.id}-ai-badge`}
+          />
+        </>
       }
       actions={
         <ContentSetActions

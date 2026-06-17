@@ -34,6 +34,8 @@ vi.mock("../storage", () => ({
       deleteSet: vi.fn(),
       aiValidate: vi.fn(),
       aiValidateCards: vi.fn(),
+      getAiValidationCache: vi.fn(async () => null),
+      saveAiValidationCache: vi.fn(async () => undefined),
     },
   }),
   USER_GENERATED_SOURCE: "user-generated",

@@ -2054,6 +2054,11 @@
       "fix_failed": "Δεν ήταν δυνατή η εφαρμογή της πρότασης."
     },
     "ai_check": {
+      "badge": {
+        "verified": "Elegmeno me TN",
+        "stale": "Elegxos TN xronismenos",
+        "invalid": "MI egkuros elegxos TN"
+      },
       "last_checked": "Teleutaios elegxos: {when}",
       "recheck": "Epanelegxos",
       "export": {

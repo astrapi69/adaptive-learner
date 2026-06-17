@@ -2054,6 +2054,11 @@
       "fix_failed": "提案を適用できませんでした。"
     },
     "ai_check": {
+      "badge": {
+        "verified": "AI確認済み",
+        "stale": "AI確認が古い",
+        "invalid": "AI確認が無効"
+      },
       "last_checked": "最終確認: {when}",
       "recheck": "再確認",
       "export": {

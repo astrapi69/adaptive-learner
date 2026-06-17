@@ -1902,6 +1902,10 @@ content:
     fix_applied: Suggestion applied.
     fix_failed: Could not apply the suggestion.
   ai_check:
+    badge:
+      verified: "AI-checked"
+      stale: "AI-check outdated"
+      invalid: "AI-check invalid"
     last_checked: "Last check: {when}"
     recheck: "Re-check"
     export:

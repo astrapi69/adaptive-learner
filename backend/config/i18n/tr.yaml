@@ -1891,6 +1891,10 @@ content:
     fix_applied: Öneri uygulandı.
     fix_failed: Öneri uygulanamadı.
   ai_check:
+    badge:
+      verified: "Yapay zeka denetimli"
+      stale: "Yapay zeka denetimi eskimis"
+      invalid: "Yapay zeka denetimi gecersiz"
     last_checked: "Son denetim: {when}"
     recheck: "Yeniden denetle"
     export:
