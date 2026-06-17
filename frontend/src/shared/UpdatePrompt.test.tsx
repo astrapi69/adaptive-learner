@@ -49,20 +49,36 @@ describe("UpdatePrompt", () => {
     expect(onDismiss).toHaveBeenCalledOnce();
   });
 
-  it("paints the bar with the AA-pinned accent pair (#649)", () => {
-    // Regression pin: the banner must use --accent / --accent-fg, the one
-    // token pair whose contrast is enforced >= WCAG AA across all 12 themes
-    // (contrast.test.ts). A drift back to a theme-dependent pair (e.g.
-    // bg-bg-elevated + text-fg-primary) would re-open the invisible-text bug.
+  it("anchors to the bottom with safe-area padding, below the modal layer (#653)", () => {
+    // Regression pin: a top anchor collided with the app nav (desktop) and
+    // the iOS-Safari address bar (mobile). The banner must sit at the bottom,
+    // pad the iPhone home indicator, and stay below the z-50 modal layer.
     setup();
     const bar = screen.getByTestId("update-prompt");
-    expect(bar.className).toContain("bg-accent");
-    expect(bar.className).toContain("text-accent-foreground");
+    expect(bar.className).toContain("bottom-0");
+    expect(bar.className).not.toContain("top-0");
+    expect(bar.className).toContain("z-40");
+    expect(bar.className).toContain("pb-[env(safe-area-inset-bottom)]");
+  });
 
-    // The update action is the inverse chip (accent-fg surface, accent text),
-    // so it reads clearly as a button on the accent bar.
+  it("uses AA-pinned token pairs: neutral surface + accent CTA (#649, #653)", () => {
+    // Regression pin: bar = --bg-card surface + --fg-primary text, update
+    // action = --accent / --accent-fg. All three pairings are enforced
+    // >= WCAG AA across all 12 themes by contrast.test.ts, so a drift back to
+    // a theme-dependent / same-colour pair re-opens the invisible-text bug.
+    setup();
+    const bar = screen.getByTestId("update-prompt");
+    expect(bar.className).toContain("bg-card");
+    expect(bar.className).toContain("text-fg-primary");
+
     const apply = screen.getByTestId("update-prompt-apply");
-    expect(apply.className).toContain("bg-accent-foreground");
-    expect(apply.className).toContain("text-accent");
+    expect(apply.className).toContain("bg-accent");
+    expect(apply.className).toContain("text-accent-foreground");
+
+    // Touch target >= 44px on both actions.
+    expect(apply.className).toContain("min-h-[44px]");
+    const dismiss = screen.getByTestId("update-prompt-dismiss");
+    expect(dismiss.className).toContain("min-h-[44px]");
+    expect(dismiss.className).toContain("min-w-[44px]");
   });
 });
