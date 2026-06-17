@@ -1,5 +1,5 @@
 import { HelpCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -81,11 +81,47 @@ export default function Navigation() {
     return () => window.removeEventListener("focus", refresh);
   }, [pathname]);
 
-  // Collapse the drawer whenever the route changes — a fresh
-  // page should never inherit the previous page's drawer state.
+  // Collapse the drawer whenever the route changes — the back-button
+  // backstop. A fresh page should never inherit the previous page's
+  // drawer state. NOTE: this alone is NOT enough (#666) — a tap on a
+  // link to the route the user is ALREADY on doesn't change ``pathname``,
+  // so the drawer would stay open. The per-link onClick below covers it.
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
+
+  // #666 — close the drawer on Escape + outside click while it is open.
+  // Uses ``pointerdown`` (not ``mousedown``): iOS Safari fires pointer
+  // events reliably for touch, so a tap outside closes the drawer on the
+  // FIRST touch instead of being swallowed (same fix as #593 for the
+  // Settings mobile menu). Tapping the hamburger or a link is INSIDE the
+  // ``<nav>`` so the outside-click handler ignores it — the toggle and the
+  // per-link onClick own those.
+  const navRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onPointerDown(e: Event) {
+      if (!navRef.current?.contains(e.target as Node)) setMenuOpen(false);
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [menuOpen]);
+
+  // #666 — close the drawer on ANY menu link/button tap, BEFORE navigation.
+  // Delegated so every current + future link inherits it without a
+  // per-link handler. Covers the same-route case the ``pathname`` effect
+  // misses, and makes iOS Safari close the drawer reliably on the tap that
+  // navigates. The navigation itself still happens (we don't preventDefault).
+  function closeMenuOnLinkTap(e: React.MouseEvent<HTMLDivElement>) {
+    if ((e.target as HTMLElement).closest("a, button")) setMenuOpen(false);
+  }
 
   if (HIDE_ON.includes(pathname)) return null;
 
@@ -94,6 +130,7 @@ export default function Navigation() {
 
   return (
     <nav
+      ref={navRef}
       className={`app-nav transition-transform duration-300 motion-reduce:transition-none${
         menuOpen ? " is-menu-open" : ""
       }${lessonActive ? " is-lesson-compact" : ""}${
@@ -159,6 +196,7 @@ export default function Navigation() {
         id="app-nav-links"
         className={`nav-links${menuOpen ? " is-open" : ""}`}
         data-testid="nav-links"
+        onClick={closeMenuOnLinkTap}
       >
         <NavLink
           to="/dashboard"
