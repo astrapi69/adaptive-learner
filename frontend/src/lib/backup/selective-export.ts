@@ -241,7 +241,7 @@ export function filterBackupPayload(
   };
 }
 
-/** Filename for a selective export, e.g. ``adaptive-learner-export-2026-06-15.json``. */
+/** Filename for a selective export, e.g. ``adaptive-learner-export-2026-06-15.alb``. */
 export function selectiveExportFilename(now: Date = new Date()): string {
-  return `adaptive-learner-export-${now.toISOString().slice(0, 10)}.json`;
+  return `adaptive-learner-export-${now.toISOString().slice(0, 10)}.alb`;
 }

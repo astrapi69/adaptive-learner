@@ -881,6 +881,7 @@
     "confirm": "Confirm restore",
     "invalid_format": "This file is not a valid Adaptive Learner backup.",
     "not_a_backup_file": "Este archivo no es un archivo de copia de seguridad válido. Elige un archivo exportado con 'Crear copia de seguridad'.",
+    "version_mismatch": "Esta copia es de la versión {{from}}; esta app es la {{to}}. Revisa los cambios abajo y confirma la importación.",
     "too_large": "Este archivo de copia de seguridad es demasiado grande (más de 100 MB).",
     "export_success": "Backup downloaded ({{count}} records).",
     "export_error": "Backup failed: {{detail}}",

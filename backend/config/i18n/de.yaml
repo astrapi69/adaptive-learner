@@ -822,6 +822,7 @@ backup:
   confirm: Wiederherstellung bestätigen
   invalid_format: Diese Datei ist keine gültige Adaptive-Learner-Sicherung.
   not_a_backup_file: 'Diese Datei ist keine gültige Backup-Datei. Bitte wähle eine Datei, die mit „Sicherung erstellen“ exportiert wurde.'
+  version_mismatch: "Dieses Backup stammt aus Version {{from}}; diese App ist {{to}}. Prüfe die Änderungen unten und bestätige den Import."
   too_large: 'Diese Backup-Datei ist zu groß (über 100 MB).'
   export_success: Sicherung heruntergeladen ({{count}} Datensätze).
   export_error: 'Sicherung fehlgeschlagen: {{detail}}'

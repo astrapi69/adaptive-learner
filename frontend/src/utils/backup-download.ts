@@ -13,13 +13,15 @@
  */
 
 import type {BackupPayload} from "../types/domain";
+import {buildAlbBytes, type BackupType} from "../lib/backup/albContainer";
 
 export function triggerBackupDownload(
     payload: BackupPayload,
     filename: string,
+    backupType: BackupType = "full",
 ): void {
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {
-        type: "application/json",
+    const blob = new Blob([buildAlbBytes(payload, backupType)], {
+        type: "application/zip",
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -50,7 +52,7 @@ interface SaveFilePickerOptions {
 }
 
 interface FileSystemWritableLike {
-    write: (data: string) => Promise<void>;
+    write: (data: BufferSource | string) => Promise<void>;
     close: () => Promise<void>;
 }
 
@@ -95,6 +97,7 @@ export type BackupSaveResult =
 export async function saveBackupToDisk(
     payload: BackupPayload,
     filename: string,
+    backupType: BackupType = "full",
 ): Promise<BackupSaveResult> {
     const picker = (window as unknown as {showSaveFilePicker?: ShowSaveFilePicker})
         .showSaveFilePicker;
@@ -104,13 +107,13 @@ export async function saveBackupToDisk(
                 suggestedName: filename,
                 types: [
                     {
-                        description: "JSON Backup",
-                        accept: {"application/json": [".json"]},
+                        description: "Adaptive Learner Backup",
+                        accept: {"application/zip": [".alb"]},
                     },
                 ],
             });
             const writable = await handle.createWritable();
-            await writable.write(JSON.stringify(payload, null, 2));
+            await writable.write(buildAlbBytes(payload, backupType));
             await writable.close();
             return {method: "picker", filename: handle.name || filename};
         } catch (err) {
@@ -120,16 +123,16 @@ export async function saveBackupToDisk(
             // A real write failure (permission revoked mid-write,
             // disk full): fall back to the download path so the user
             // still gets their file rather than nothing.
-            triggerBackupDownload(payload, filename);
+            triggerBackupDownload(payload, filename, backupType);
             return {method: "download", filename};
         }
     }
-    triggerBackupDownload(payload, filename);
+    triggerBackupDownload(payload, filename, backupType);
     return {method: "download", filename};
 }
 
 export function backupFilename(userId: string): string {
     const date = new Date().toISOString().slice(0, 10);
     const short = userId.slice(0, 8);
-    return `adaptive-learner-backup-${date}-${short}.json`;
+    return `adaptive-learner-backup-${date}-${short}.alb`;
 }

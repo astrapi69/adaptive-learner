@@ -881,6 +881,7 @@
     "confirm": "Geri yüklemeyi onayla",
     "invalid_format": "Bu dosya geçerli bir Adaptive Learner yedeği değil.",
     "not_a_backup_file": "Bu dosya geçerli bir yedek dosyası değil. Lütfen 'Yedek oluştur' ile dışa aktarılmış bir dosya seçin.",
+    "version_mismatch": "Bu yedek {{from}} sürümünden; bu uygulama {{to}}. Aşağıdaki değişiklikleri inceleyip içe aktarmayı onaylayın.",
     "too_large": "Bu yedek dosyası çok büyük (100 MB'tan fazla).",
     "export_success": "Yedek indirildi ({{count}} kayıt).",
     "export_error": "Yedekleme başarısız oldu: {{detail}}",

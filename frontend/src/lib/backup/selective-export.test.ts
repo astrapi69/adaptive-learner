@@ -139,7 +139,7 @@ describe("filterBackupPayload", () => {
 describe("selectiveExportFilename", () => {
   it("formats the date", () => {
     expect(selectiveExportFilename(new Date("2026-06-15T12:00:00Z"))).toBe(
-      "adaptive-learner-export-2026-06-15.json",
+      "adaptive-learner-export-2026-06-15.alb",
     );
   });
 });
