@@ -73,6 +73,12 @@ export interface ContentLessonStep {
   /** Display text for {@link example_url}; the viewer falls back to a
    *  localized "View example" label when empty. */
   example_label?: string | null;
+  /** #709 — EXERCISE steps only: an explicit reference to the theory step
+   *  this exercise practices, by the theory step's id (preferred) or
+   *  title. The "Re-read theory" backlink resolves it exactly, falling
+   *  back to the term-overlap heuristic (#634/#635) when absent or
+   *  unresolvable. Additive; old lessons omit it. */
+  theory_ref?: string | null;
   /** #673 — set ONLY on synthesised SRS review steps
    *  ({@link synthesizeReviewLesson}). Carries the source lesson_id the
    *  reviewed element belongs to, so the review recorder can address the

@@ -134,22 +134,63 @@ function theoryOverlap(
 }
 
 /**
- * Find the theory step an exercise practices: the preceding theory step
- * whose text best overlaps the exercise's own terms (prompt + referenced
- * cards). Ties are broken toward the NEAREST matching theory. When no
- * preceding theory shares any term (no topical signal), this falls back
- * to {@link findPrecedingTheoryIndex} so lessons with generic theory
- * keep the original nearest-preceding behaviour.
+ * Resolve an exercise step's explicit ``theory_ref`` (#709) to the index
+ * of the theory step it points at. The content repo annotates exercises
+ * with the theory step's id (preferred) or title; this matches EXACTLY,
+ * id first then title, against any theory step in the lesson.
  *
- * Returns ``null`` under the same conditions as
- * {@link findPrecedingTheoryIndex} (current step is theory, out of
- * range, or no preceding theory exists).
+ * Returns ``null`` when the current step carries no ``theory_ref``, when
+ * the ref is blank, or when it resolves to no theory step (a stale /
+ * mistyped ref), so the caller can fall back to the heuristic instead of
+ * offering a dead link.
+ */
+export function findTheoryIndexByRef(
+    steps: ContentLessonStep[],
+    currentIndex: number,
+): number | null {
+    const current = steps[currentIndex];
+    const ref = current?.theory_ref?.trim();
+    if (!ref) return null;
+    let titleMatch = -1;
+    for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        if (step.type !== "theory") continue;
+        if (step.id === ref) return i; // id wins outright
+        if (titleMatch === -1 && (step.title ?? "").trim() === ref) {
+            titleMatch = i; // remember the first title match as fallback
+        }
+    }
+    return titleMatch === -1 ? null : titleMatch;
+}
+
+/**
+ * Find the theory step an exercise practices.
+ *
+ * Resolution order:
+ *   1. The exercise's explicit ``theory_ref`` (#709), when it resolves to
+ *      a real theory step — the author's annotation always wins.
+ *   2. Otherwise the preceding theory step whose text best overlaps the
+ *      exercise's own terms (prompt + referenced cards), ties broken
+ *      toward the NEAREST matching theory (#634/#635).
+ *   3. Otherwise {@link findPrecedingTheoryIndex} (nearest preceding),
+ *      so lessons with generic theory keep the original behaviour.
+ *
+ * Returns ``null`` when the current step is itself a theory step, the
+ * index is out of range, or no theory step is available to link to.
  */
 export function findRelatedTheoryIndex(
     steps: ContentLessonStep[],
     cards: ContentLessonCard[],
     currentIndex: number,
 ): number | null {
+    const current = steps[currentIndex];
+    if (!current || current.type === "theory") return null;
+
+    // #709 — an explicit, author-provided theory_ref takes precedence over
+    // the heuristic. Falls through to the heuristic when absent/unresolvable.
+    const byRef = findTheoryIndexByRef(steps, currentIndex);
+    if (byRef !== null) return byRef;
+
     const nearest = findPrecedingTheoryIndex(steps, currentIndex);
     if (nearest === null) return nearest;
 
