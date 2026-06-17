@@ -29,7 +29,7 @@
 
 import {Check, X} from "lucide-react";
 import type {KeyboardEvent, Ref} from "react";
-import {forwardRef, useState} from "react";
+import {forwardRef, useEffect, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {Button} from "@/components/ui/button";
@@ -187,6 +187,21 @@ function FreeTextInput({
     inputBase: string;
 }) {
     const {t} = useI18n();
+    // #692 — auto-focus the answer field on mount so the learner can type
+    // immediately without a click. The dispatcher keys each step by id, so
+    // the renderer remounts per step and this fires on every step change
+    // (regular lesson, review, error-replay). Skipped for a reviewed
+    // (read-only, submitted) revisit; focusing a disabled field is a no-op
+    // anyway. On mobile this opens the keyboard, which is the desired
+    // behaviour (the learner wants to type).
+    const inputRef = useRef<HTMLInputElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    useEffect(() => {
+        if (submitted) return;
+        (inputRef.current ?? textareaRef.current)?.focus();
+        // Mount-only: the component remounts per step (keyed by step id).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     if (codeMode) {
         return (
             <div className="relative">
@@ -199,6 +214,7 @@ function FreeTextInput({
                     </span>
                 )}
                 <textarea
+                    ref={textareaRef}
                     className={cn(
                         inputBase,
                         "free-text-input-code resize-y overflow-x-auto whitespace-pre font-mono [overflow-wrap:normal] [tab-size:2]",
@@ -227,6 +243,7 @@ function FreeTextInput({
     }
     return (
         <input
+            ref={inputRef}
             type="text"
             className={inputBase}
             value={input}
