@@ -84,6 +84,7 @@ import {
 } from "../lib/content/lesson-export";
 import { getStorage, resolveStorageMode } from "../storage";
 import AiValidationDialog from "../components/content/AiValidationDialog";
+import QualityCheckDialog from "../components/content/QualityCheckDialog";
 import { badgeStatusForCachedSet } from "../lib/ai/validation-signature";
 import type { AiCheckBadgeStatus } from "../shared/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../storage/types";
@@ -252,6 +253,9 @@ export default function ContentPage() {
   // Dexie mode (browser-direct provider call; no server route) + a
   // configured key; the button stays visible-but-disabled otherwise.
   const [aiCheckTarget, setAiCheckTarget] = useState<ContentSetEntry | null>(null);
+  // EXP-032 — deterministic, offline content-quality check (no key/mode gate).
+  const [qualityCheckTarget, setQualityCheckTarget] =
+    useState<ContentSetEntry | null>(null);
   // AIV-11 — per-set "AI-checked" badge status, keyed "{source}#{id}".
   const [aiBadgeBySet, setAiBadgeBySet] = useState<Record<string, AiCheckBadgeStatus>>({});
   const aiCheckIsDexie = resolveStorageMode() === "dexie";
@@ -872,6 +876,7 @@ export default function ContentPage() {
                   void handleOpenLesson(e, { focusResources: true }),
                 onAiCheck: (e) => setAiCheckTarget(e),
                 aiCheckDisabledReason,
+                onQualityCheck: (e) => setQualityCheckTarget(e),
                 aiBadgeStatusFor: (e) =>
                   aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
               }}
@@ -894,6 +899,11 @@ export default function ContentPage() {
         entry={aiCheckTarget}
         activeProvider={activeProvider ?? null}
         onClose={() => setAiCheckTarget(null)}
+      />
+
+      <QualityCheckDialog
+        entry={qualityCheckTarget}
+        onClose={() => setQualityCheckTarget(null)}
       />
 
       <ImportLessonModal

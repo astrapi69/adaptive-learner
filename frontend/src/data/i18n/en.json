@@ -2088,6 +2088,30 @@
         "suggestion": "Suggestion"
       }
     },
+    "quality": {
+      "button": "Quality check",
+      "title": "Quality check",
+      "loading": "Checking cards...",
+      "offline_note": "Runs offline - accents, articles, and duplicate cards. No API key needed.",
+      "failed": "Quality check unavailable.",
+      "accent": {
+        "problem": "Missing accent: {word}"
+      },
+      "article": {
+        "problem": "Wrong article: {actual} {noun}"
+      },
+      "duplicate": {
+        "problem": "Duplicate of: {other}"
+      },
+      "report": {
+        "summary": "Checked {cards} cards in {lessons} lessons",
+        "ok": "{count} cards OK",
+        "issues": "{count} cards with issues",
+        "all_ok": "No issues found - accents, articles, and duplicates all clean.",
+        "problem": "Problem",
+        "suggestion": "Suggestion"
+      }
+    },
     "placement": {
       "lands_under": "Your lesson lands under",
       "duplicate": "A similar lesson already exists: {title}. Share anyway?"

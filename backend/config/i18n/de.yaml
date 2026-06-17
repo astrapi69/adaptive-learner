@@ -1926,6 +1926,25 @@ content:
       all_ok: "Alle Karten bestanden. Keine Probleme gefunden."
       problem: "Problem"
       suggestion: "Vorschlag"
+  quality:
+    button: "Qualitätsprüfung"
+    title: "Qualitätsprüfung"
+    loading: "Karten werden geprüft..."
+    offline_note: "Läuft offline - Akzente, Artikel und doppelte Karten. Kein API-Schlüssel nötig."
+    failed: "Qualitätsprüfung nicht verfügbar."
+    accent:
+      problem: "Fehlender Akzent: {word}"
+    article:
+      problem: "Falscher Artikel: {actual} {noun}"
+    duplicate:
+      problem: "Duplikat von: {other}"
+    report:
+      summary: "{cards} Karten in {lessons} Lektionen geprüft"
+      ok: "{count} Karten OK"
+      issues: "{count} Karten mit Problemen"
+      all_ok: "Keine Probleme gefunden - Akzente, Artikel und Duplikate sind sauber."
+      problem: "Problem"
+      suggestion: "Vorschlag"
   placement:
     lands_under: Deine Lektion wird eingeordnet unter
     duplicate: 'Eine ähnliche Lektion existiert bereits: {title}. Trotzdem teilen?'

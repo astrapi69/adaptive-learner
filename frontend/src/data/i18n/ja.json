@@ -2088,6 +2088,30 @@
         "suggestion": "提案"
       }
     },
+    "quality": {
+      "button": "品質チェック",
+      "title": "品質チェック",
+      "loading": "カードを確認しています...",
+      "offline_note": "オフラインで動作します - アクセント、冠詞、重複カード。APIキーは不要です。",
+      "failed": "品質チェックを利用できません。",
+      "accent": {
+        "problem": "アクセント抜け: {word}"
+      },
+      "article": {
+        "problem": "冠詞の誤り: {actual} {noun}"
+      },
+      "duplicate": {
+        "problem": "次の重複: {other}"
+      },
+      "report": {
+        "summary": "{lessons} レッスンの {cards} 枚のカードを確認しました",
+        "ok": "{count} 枚のカードはOK",
+        "issues": "問題のあるカード {count} 枚",
+        "all_ok": "問題は見つかりませんでした - アクセント、冠詞、重複はすべて良好です。",
+        "problem": "問題",
+        "suggestion": "提案"
+      }
+    },
     "placement": {
       "lands_under": "あなたのレッスンの配置先",
       "duplicate": "類似のレッスンが既に存在します: {title}。それでも共有しますか？"

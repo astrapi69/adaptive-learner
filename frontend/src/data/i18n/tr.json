@@ -2088,6 +2088,30 @@
         "suggestion": "Oneri"
       }
     },
+    "quality": {
+      "button": "Kalite kontrolü",
+      "title": "Kalite kontrolü",
+      "loading": "Kartlar denetleniyor...",
+      "offline_note": "Çevrimdışı çalışır - aksanlar, artikeller ve yinelenen kartlar. API anahtarı gerekmez.",
+      "failed": "Kalite kontrolü kullanılamıyor.",
+      "accent": {
+        "problem": "Eksik aksan: {word}"
+      },
+      "article": {
+        "problem": "Yanlış artikel: {actual} {noun}"
+      },
+      "duplicate": {
+        "problem": "Şunun kopyası: {other}"
+      },
+      "report": {
+        "summary": "{lessons} derste {cards} kart denetlendi",
+        "ok": "{count} kart tamam",
+        "issues": "Sorunlu {count} kart",
+        "all_ok": "Sorun bulunamadı - aksanlar, artikeller ve yinelemeler temiz.",
+        "problem": "Sorun",
+        "suggestion": "Öneri"
+      }
+    },
     "placement": {
       "lands_under": "Dersiniz şuraya yerleşecek",
       "duplicate": "Benzer bir ders zaten var: {title}. Yine de paylaşılsın mı?"

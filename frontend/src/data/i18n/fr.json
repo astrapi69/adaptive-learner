@@ -2088,6 +2088,30 @@
         "suggestion": "Suggestion"
       }
     },
+    "quality": {
+      "button": "Contrôle qualité",
+      "title": "Contrôle qualité",
+      "loading": "Vérification des cartes...",
+      "offline_note": "Fonctionne hors ligne : accents, articles et cartes en double. Aucune clé API requise.",
+      "failed": "Contrôle qualité indisponible.",
+      "accent": {
+        "problem": "Accent manquant : {word}"
+      },
+      "article": {
+        "problem": "Article incorrect : {actual} {noun}"
+      },
+      "duplicate": {
+        "problem": "Doublon de : {other}"
+      },
+      "report": {
+        "summary": "{cards} cartes vérifiées dans {lessons} leçons",
+        "ok": "{count} cartes correctes",
+        "issues": "{count} cartes avec des problèmes",
+        "all_ok": "Aucun problème trouvé : accents, articles et doublons corrects.",
+        "problem": "Problème",
+        "suggestion": "Suggestion"
+      }
+    },
     "placement": {
       "lands_under": "Votre leçon sera classée sous",
       "duplicate": "Une leçon similaire existe déjà : {title}. Partager quand même ?"
