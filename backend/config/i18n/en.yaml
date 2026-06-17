@@ -2489,6 +2489,9 @@ content_repo:
   added: "Repository added."
   synced: "Synced: {sets} sets, {lessons} lessons."
   token_hint: "Private repositories need a token — paste one below, or set a shared token in Settings → Integrations."
+  trust_official: "Official: Curated and quality-assured by the project team."
+  trust_verified: "Verified: Contributed by the community and reviewed by the team."
+  trust_validated: "Validated: Technically correct; content not individually reviewed."
   official:
     title: "Official content"
     counts: "{sets} sets · {lessons} lessons"

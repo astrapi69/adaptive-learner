@@ -457,6 +457,16 @@ navigation:
           ja: 概要
         slug: content-creation/overview
       - title:
+          de: Content-Repos
+          en: Content repos
+          es: Repositorios de contenido
+          fr: Dépôts de contenu
+          el: Αποθετήρια περιεχομένου
+          pt: Repositórios de conteúdo
+          tr: İçerik depoları
+          ja: コンテンツリポジトリ
+        slug: content-creation/content-repos
+      - title:
           de: Buchempfehlungen
           en: Book recommendations
           es: Recomendaciones de libros

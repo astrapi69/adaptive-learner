@@ -2697,6 +2697,9 @@
     "added": "Depo eklendi.",
     "synced": "Eşitlendi: {sets} set, {lessons} ders.",
     "token_hint": "Özel depolar bir belirteç gerektirir — aşağıya birini yapıştır ya da Ayarlar → Entegrasyonlar bölümünde paylaşılan bir belirteç tanımla.",
+    "trust_official": "Resmî: proje ekibi tarafından derlenen ve kalitesi güvence altına alınan içerik.",
+    "trust_verified": "Doğrulanmış: topluluk tarafından katkıda bulunulan ve ekip tarafından incelenen içerik.",
+    "trust_validated": "Geçerli: teknik olarak doğru; içerik tek tek incelenmedi.",
     "official": {
       "title": "Resmî içerik",
       "counts": "{sets} set · {lessons} ders"

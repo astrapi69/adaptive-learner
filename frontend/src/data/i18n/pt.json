@@ -2697,6 +2697,9 @@
     "added": "Repositório adicionado.",
     "synced": "Sincronizado: {sets} conjuntos, {lessons} lições.",
     "token_hint": "Os repositórios privados precisam de um token — cole um abaixo ou defina um token partilhado em Definições → Integrações.",
+    "trust_official": "Oficial: conteúdo curado e com qualidade garantida pela equipe do projeto.",
+    "trust_verified": "Verificado: contribuído pela comunidade e revisado pela equipe.",
+    "trust_validated": "Validado: tecnicamente correto; conteúdo não revisado individualmente.",
     "official": {
       "title": "Conteúdo oficial",
       "counts": "{sets} conjuntos · {lessons} lições"

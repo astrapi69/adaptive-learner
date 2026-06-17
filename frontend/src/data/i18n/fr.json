@@ -2697,6 +2697,9 @@
     "added": "Dépôt ajouté.",
     "synced": "Synchronisé : {sets} ensembles, {lessons} leçons.",
     "token_hint": "Les dépôts privés nécessitent un jeton — collez-en un ci-dessous ou définissez un jeton partagé dans Réglages → Intégrations.",
+    "trust_official": "Officiel : contenu sélectionné et dont la qualité est garantie par l'équipe du projet.",
+    "trust_verified": "Vérifié : proposé par la communauté et relu par l'équipe.",
+    "trust_validated": "Validé : techniquement correct ; contenu non vérifié individuellement.",
     "official": {
       "title": "Contenu officiel",
       "counts": "{sets} ensembles · {lessons} leçons"
