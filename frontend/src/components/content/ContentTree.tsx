@@ -34,6 +34,12 @@ export interface ContentSetRowActions {
   recommendedSources: Set<string>;
   onOpen: (entry: ContentSetEntry) => void;
   onDownload: (entry: ContentSetEntry) => void;
+  /** EXP-033 / AIV-02 — open the AI content-check dialog for a cached
+   *  set. Omit to hide the "Check with AI" button entirely. */
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  /** When set, the AI-check button is visible but disabled with this
+   *  tooltip reason (no key / browser-mode only). */
+  aiCheckDisabledReason?: string;
 }
 
 /** Actions + lookup for the user lessons folded into tree nodes
@@ -100,6 +106,8 @@ export default function ContentTree({
       recommendedSources={setRow.recommendedSources}
       onOpen={setRow.onOpen}
       onDownload={setRow.onDownload}
+      onAiCheck={setRow.onAiCheck}
+      aiCheckDisabledReason={setRow.aiCheckDisabledReason}
     />
   );
 

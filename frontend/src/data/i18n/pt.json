@@ -2053,6 +2053,26 @@
       "fix_applied": "Sugestão aplicada.",
       "fix_failed": "Não foi possível aplicar a sugestão."
     },
+    "ai_check": {
+      "button": "Verificar com IA",
+      "title": "Verificacao de conteudo com IA",
+      "loading": "Preparando cartoes...",
+      "cost_estimate": "~{cards} cartoes, ~{tokens} tokens, ~{usd}.",
+      "privacy": "Seus cartoes serao enviados ao provedor de IA configurado para revisao. Nenhum dado pessoal e transmitido.",
+      "confirm": "Verificar",
+      "progress": "Verificando lote {current} de {total}...",
+      "rate_limited": "Aguarde um momento antes de executar outra verificacao.",
+      "failed": "Verificacao com IA indisponivel.",
+      "unavailable_mode": "Disponivel apenas no modo de armazenamento do navegador.",
+      "report": {
+        "summary": "{cards} cartoes verificados em {lessons} licoes",
+        "ok": "{count} cartoes OK",
+        "issues": "{count} cartoes com problemas",
+        "all_ok": "Todos os cartoes passaram. Nenhum problema encontrado.",
+        "problem": "Problema",
+        "suggestion": "Sugestao"
+      }
+    },
     "placement": {
       "lands_under": "A sua lição será colocada em",
       "duplicate": "Já existe uma lição semelhante: {title}. Partilhar mesmo assim?"

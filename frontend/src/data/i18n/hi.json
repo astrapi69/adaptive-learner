@@ -2053,6 +2053,26 @@
       "fix_applied": "Suggestion applied.",
       "fix_failed": "Could not apply the suggestion."
     },
+    "ai_check": {
+      "button": "AI se janchein",
+      "title": "AI samagri jaanch",
+      "loading": "card taiyaar kiye ja rahe hain...",
+      "cost_estimate": "~{cards} card, ~{tokens} token, ~{usd}.",
+      "privacy": "aapke card jaanch ke liye aapke configure kiye gaye AI provider ko bheje jaayenge. koi vyaktigat data nahin bheja jaata.",
+      "confirm": "janchein",
+      "progress": "{total} mein se batch {current} ki jaanch ho rahi hai...",
+      "rate_limited": "doosri jaanch chalaane se pehle kripya thoda intezaar karein.",
+      "failed": "AI jaanch uplabdh nahin hai.",
+      "unavailable_mode": "keval browser-storage mode mein uplabdh.",
+      "report": {
+        "summary": "{lessons} paathon mein {cards} card janche gaye",
+        "ok": "{count} card theek",
+        "issues": "{count} card mein samasyaayein",
+        "all_ok": "sabhi card paas. koi samasya nahin mili.",
+        "problem": "samasya",
+        "suggestion": "sujhaav"
+      }
+    },
     "placement": {
       "lands_under": "Your lesson lands under",
       "duplicate": "A similar lesson already exists: {title}. Share anyway?"

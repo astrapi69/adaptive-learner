@@ -2053,6 +2053,26 @@
       "fix_applied": "Sugerencia aplicada.",
       "fix_failed": "No se pudo aplicar la sugerencia."
     },
+    "ai_check": {
+      "button": "Revisar con IA",
+      "title": "Revision de contenido con IA",
+      "loading": "Preparando tarjetas...",
+      "cost_estimate": "~{cards} tarjetas, ~{tokens} tokens, ~{usd}.",
+      "privacy": "Tus tarjetas se enviaran a tu proveedor de IA configurado para su revision. No se transmiten datos personales.",
+      "confirm": "Revisar",
+      "progress": "Revisando lote {current} de {total}...",
+      "rate_limited": "Espera un momento antes de ejecutar otra revision.",
+      "failed": "Revision con IA no disponible.",
+      "unavailable_mode": "Solo disponible en modo de almacenamiento del navegador.",
+      "report": {
+        "summary": "{cards} tarjetas revisadas en {lessons} lecciones",
+        "ok": "{count} tarjetas correctas",
+        "issues": "{count} tarjetas con problemas",
+        "all_ok": "Todas las tarjetas pasaron. No se encontraron problemas.",
+        "problem": "Problema",
+        "suggestion": "Sugerencia"
+      }
+    },
     "placement": {
       "lands_under": "Tu lección se ubicará en",
       "duplicate": "Ya existe una lección similar: {title}. ¿Compartir de todos modos?"

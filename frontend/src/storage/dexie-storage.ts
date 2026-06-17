@@ -66,6 +66,7 @@ import {
 import { ApiError } from "../api/client";
 import {
   aiValidateDexie,
+  aiValidateCardsDexie,
   deleteSetDexie,
   activeSourcesDexie,
   downloadSetDexie,
@@ -405,6 +406,7 @@ export const dexieStorage: IStorageService = {
     saveUserSet: (input) => saveUserSetDexie(input, new Date().toISOString()),
     deleteSet: (source, setId) => deleteSetDexie(source, setId),
     aiValidate: (input) => aiValidateDexie(input),
+    aiValidateCards: (input) => aiValidateCardsDexie(input),
   },
 
   // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —

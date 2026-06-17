@@ -26,6 +26,8 @@ import { parse as parseYaml } from "yaml";
 
 import type {
   AiValidateInput,
+  AiValidateCardsInput,
+  AiValidateCardsResult,
   ContentLesson,
   ContentLessonList,
   ContentSetEntry,
@@ -45,6 +47,7 @@ import {
 } from "../lib/content/ai-content-validator";
 import type { ContentSetRow, ContentSetFileRow } from "./db";
 import { resolveRepoToken } from "../lib/content/repo-token";
+import { runCardValidation } from "../lib/ai/validation-runner";
 import {
   fetchGitHubFileBytesOptional,
   fetchGitHubFileText,
@@ -939,6 +942,60 @@ export async function aiValidateDexie(
   const parsed = parseAiValidationResult(raw);
   if (!parsed) throw new Error("AI validation response was not valid JSON");
   return parsed;
+}
+
+/** Resolve the user's active provider + key + model from IndexedDB. Throws
+ *  with a clear message on any missing piece (the caller gates the UI on a
+ *  configured key, so a throw here is exceptional). */
+async function resolveDexieAiConfig(
+  userId: string,
+): Promise<{ provider: AIProvider; model: string; apiKey: string }> {
+  const db = getDb();
+  const settings = await db.userSettings.where("user_id").equals(userId).first();
+  if (!settings) throw new Error("No settings for user");
+  const bag = settings as unknown as Record<string, unknown>;
+  const provider = bag.active_provider as AIProvider | undefined;
+  if (!provider) throw new Error("No active AI provider");
+  const apiKey = bag[`api_key_${provider}`] as string | null;
+  if (!apiKey) throw new Error(`No API key for ${provider}`);
+  const override = bag[`model_override_${provider}`] as string | null;
+  return { provider, model: resolveModel(provider, override), apiKey };
+}
+
+/** EXP-033 / AIV-02 — Dexie-mode set-wide per-card validation. Resolves the
+ *  key from IndexedDB and runs the cards through the provider in batches of
+ *  10, reporting per-batch progress. Browser-direct — no backend. */
+export async function aiValidateCardsDexie(
+  input: AiValidateCardsInput,
+): Promise<AiValidateCardsResult> {
+  const { provider, model, apiKey } = await resolveDexieAiConfig(input.user_id);
+  const run = await runCardValidation({
+    cards: input.cards,
+    sourceLanguage: input.source_language,
+    targetLanguage: input.target_language,
+    level: input.level,
+    onProgress: input.onProgress,
+    signal: input.signal,
+    complete: async (prompt, signal) => {
+      const text = await aiComplete({
+        provider,
+        model,
+        apiKey,
+        messages: [{ role: "user", content: prompt }],
+        maxTokens: 1500,
+        signal,
+      });
+      return { text };
+    },
+  });
+  return {
+    results: run.results,
+    response_ids: run.responseIds,
+    provider,
+    model,
+    checked_cards: run.checkedCards,
+    issue_count: run.issueCount,
+  };
 }
 
 /** Internal: remove the set rows + their files. Must run inside an
