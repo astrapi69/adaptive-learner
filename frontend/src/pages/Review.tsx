@@ -410,7 +410,10 @@ function ReviewExercise({
                 step={step}
                 setId={setId}
                 cards={cards}
-                lessonId={_extractLessonId(step.id)}
+                // #673 — prefer the explicit lesson_id the synthesizer stamps
+                // on the step; only fall back to the (lossy) step-id parser
+                // for steps produced before that field existed.
+                lessonId={step.review_lesson_id ?? _extractLessonId(step.id)}
                 onComplete={async (scored: ExerciseScored) => {
                     // Flip to the "Weiter" phase the moment the answer
                     // is graded, then record attempts.
@@ -422,12 +425,12 @@ function ReviewExercise({
     );
 }
 
-/** Parse the lesson_id back out of a synthesised step id
- *  produced by ``synthesizeReviewLesson`` —
- *  ``"review-{lesson_id}-{exercise_id}-{element_key}"``.
- *  The exercise_id + element_key are both slug-safe so the
- *  last two hyphen-separated tokens are unambiguous; the
- *  middle is the lesson_id. */
+/** LEGACY fallback (#673): recover the lesson_id from a synthesised step id
+ *  ``"review-{lesson_id}-{exercise_id}-{element_key}"`` by stripping the last
+ *  two hyphen tokens. This is LOSSY — real exercise_ids/element_keys contain
+ *  hyphens, so the result is wrong for almost all content. Prefer
+ *  ``step.review_lesson_id`` (stamped by ``synthesizeReviewLesson``); this is
+ *  only used for steps that predate that field. */
 function _extractLessonId(stepId: string): string {
     // Strip the "review-" prefix.
     if (!stepId.startsWith("review-")) return "";
