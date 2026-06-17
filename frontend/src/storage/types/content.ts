@@ -277,6 +277,34 @@ export interface IContentLoaderNamespace {
    *  implementation throws — callers gate the trigger to Dexie mode + a
    *  configured key. */
   aiValidateCards(input: AiValidateCardsInput): Promise<AiValidateCardsResult>;
+  /** EXP-033 / AIV-04 — read the cached AI content-check report for a set,
+   *  or null when none exists. Dexie reads IndexedDB; API mode returns
+   *  null (the check runs client-side only). */
+  getAiValidationCache(
+    source: string,
+    setId: string,
+  ): Promise<AiValidationCacheRecord | null>;
+  /** EXP-033 / AIV-04 — persist a report so it can be re-shown without a
+   *  new API call. Dexie writes IndexedDB; API mode is a no-op. */
+  saveAiValidationCache(record: AiValidationCacheRecord): Promise<void>;
+}
+
+/** A cached set-wide AI content-check report (EXP-033 / AIV-04). */
+export interface AiValidationCacheRecord {
+  source: string;
+  set_id: string;
+  /** The set's ``cached_version`` when the check ran (invalidation). */
+  set_version: string | null;
+  /** AIV-09 content hash of the checked cards (null until AIV-08/09). */
+  content_hash: string | null;
+  results: import("../../lib/ai/content-validator").ValidationResult[];
+  response_ids: string[];
+  provider: string;
+  model: string;
+  card_count: number;
+  issue_count: number;
+  /** ISO timestamp the check completed. */
+  checked_at: string;
 }
 
 /** Input for the EXP-033 set-wide per-card AI check (AIV-02). */

@@ -1891,6 +1891,13 @@ content:
     fix_applied: 提案を適用しました。
     fix_failed: 提案を適用できませんでした。
   ai_check:
+    last_checked: "最終確認: {when}"
+    recheck: "再確認"
+    export:
+      button: "レポートをMarkdownで書き出す"
+      lesson: "レッスン"
+      card: "カード"
+      field: "フィールド"
     button: "AIで確認"
     title: "AIコンテンツ確認"
     loading: "カードを準備しています..."

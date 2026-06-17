@@ -2054,6 +2054,14 @@
       "fix_failed": "Could not apply the suggestion."
     },
     "ai_check": {
+      "last_checked": "antim jaanch: {when}",
+      "recheck": "phir se janchein",
+      "export": {
+        "button": "report ko Markdown ke roop mein export karein",
+        "lesson": "paath",
+        "card": "card",
+        "field": "field"
+      },
       "button": "AI se janchein",
       "title": "AI samagri jaanch",
       "loading": "card taiyaar kiye ja rahe hain...",

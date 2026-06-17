@@ -2054,6 +2054,14 @@
       "fix_failed": "Could not apply the suggestion."
     },
     "ai_check": {
+      "last_checked": "Last check: {when}",
+      "recheck": "Re-check",
+      "export": {
+        "button": "Export report as Markdown",
+        "lesson": "Lesson",
+        "card": "Card",
+        "field": "Field"
+      },
       "button": "Check with AI",
       "title": "AI content check",
       "loading": "Preparing cards...",

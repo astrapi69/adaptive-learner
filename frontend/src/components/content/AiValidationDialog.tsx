@@ -19,6 +19,11 @@ import ValidationReport, {
 } from "../../shared/ValidationReport";
 import { useI18n } from "../../hooks/useI18n";
 import { useAiCardValidation } from "../../hooks/useAiCardValidation";
+import {
+  buildValidationMarkdown,
+  type ValidationMarkdownRow,
+} from "../../lib/ai/validation-markdown";
+import { downloadBlob } from "../../lib/lesson/result-download";
 import type { AIProvider } from "../../lib/constants";
 import type { ContentSetEntry } from "../../storage/types";
 
@@ -35,7 +40,8 @@ export default function AiValidationDialog({
   onClose,
 }: AiValidationDialogProps) {
   const { t } = useI18n();
-  const { state, rateLimited, begin, run, abort, reset } = useAiCardValidation();
+  const { state, rateLimited, begin, recheck, run, abort, reset } =
+    useAiCardValidation();
 
   // Open: load lessons + estimate when a target arrives.
   useEffect(() => {
@@ -62,6 +68,41 @@ export default function AiValidationDialog({
     state.progress && state.progress.total > 0
       ? Math.round((state.progress.current / state.progress.total) * 100)
       : 0;
+
+  const handleExportMarkdown = () => {
+    const rows: ValidationMarkdownRow[] = state.issueRows.flatMap((row) =>
+      row.result.issues.map((issue) => ({
+        lessonTitle: row.lessonTitle,
+        cardLabel: row.front,
+        field: issue.field,
+        problem: issue.problem,
+        suggestion: issue.suggestion,
+      })),
+    );
+    const markdown = buildValidationMarkdown({
+      setName: entry.title,
+      summaryLine: t("content.ai_check.report.summary", "Checked {cards} cards in {lessons} lessons")
+        .replace("{cards}", String(state.checkedCards))
+        .replace("{lessons}", String(state.lessonCount)),
+      headers: {
+        lesson: t("content.ai_check.export.lesson", "Lesson"),
+        card: t("content.ai_check.export.card", "Card"),
+        field: t("content.ai_check.export.field", "Field"),
+        problem: t("content.ai_check.report.problem", "Problem"),
+        suggestion: t("content.ai_check.report.suggestion", "Suggestion"),
+      },
+      allOkLine: t("content.ai_check.report.all_ok", "All cards passed. No issues found."),
+      rows,
+    });
+    const slug = entry.id.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+    downloadBlob(markdown, `ai-check-${slug}.md`, "text/markdown");
+  };
+
+  const formatCheckedAt = (iso: string | null): string => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
+  };
 
   return (
     <div className="modal-overlay" data-testid="ai-validation-modal">
@@ -161,6 +202,17 @@ export default function AiValidationDialog({
         {/* Final report. */}
         {state.phase === "done" && (
           <div className="mt-4 flex flex-col gap-4">
+            {state.cached && state.checkedAt && (
+              <p
+                className="text-xs text-fg-muted"
+                data-testid="ai-validation-last-checked"
+              >
+                {t("content.ai_check.last_checked", "Last check: {when}").replace(
+                  "{when}",
+                  formatCheckedAt(state.checkedAt),
+                )}
+              </p>
+            )}
             <ValidationReport
               setName={entry.title}
               summaryText={t(
@@ -191,6 +243,24 @@ export default function AiValidationDialog({
               testId="ai-validation-report"
             />
             <div className="form-actions">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleExportMarkdown}
+                data-testid="ai-validation-export-md"
+              >
+                {t("content.ai_check.export.button", "Export report as Markdown")}
+              </Button>
+              {state.cached && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={recheck}
+                  data-testid="ai-validation-recheck"
+                >
+                  {t("content.ai_check.recheck", "Re-check")}
+                </Button>
+              )}
               <Button type="button" onClick={close} data-testid="ai-validation-close">
                 {t("common.close", "Close")}
               </Button>

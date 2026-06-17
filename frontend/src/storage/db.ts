@@ -50,6 +50,7 @@ import type {
     StepEvaluationRow,
     PluginSettingsRow,
     UserMissionRow,
+    AiValidationResultRow,
 } from "./db-rows";
 
 // Re-export the row shapes so existing ``from "./db"`` imports keep
@@ -112,6 +113,9 @@ export class AdaptiveLearnerDB extends Dexie {
     // {user_id, template_id, assigned_date}; indexes support the
     // per-user "today" query + the assigned_date scan.
     userMissions!: EntityTable<UserMissionRow, "id">;
+    // EXP-033 / Phase AIV — cached set-wide AI content-check reports.
+    // One row per "{source-slug}#{set_id}"; overwritten on re-check.
+    aiValidationResults!: EntityTable<AiValidationResultRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -566,6 +570,12 @@ export class AdaptiveLearnerDB extends Dexie {
             userStreaks: "id, &user_id, updated_at",
             userBadges: "id, user_id, badge_id, earned_at, &[user_id+badge_id]",
             badges: "id, &key, category, updated_at",
+        });
+        // Schema v28 — EXP-033 / AIV-04: cached AI content-check reports.
+        // Clean add; primary key ``id`` = "{source-slug}#{set_id}", plus a
+        // ``set_id`` index for lookups. No data migration.
+        this.version(28).stores({
+            aiValidationResults: "id, set_id, checked_at",
         });
     }
 }

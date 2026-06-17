@@ -353,6 +353,10 @@ export const apiStorage: IStorageService = {
           "AI content check is only available in browser-storage (Dexie) mode.",
         ),
       ),
+    /** EXP-033 / AIV-04 — the report cache is client-side (IndexedDB);
+     *  API mode has no cached reports (the check never runs there). */
+    getAiValidationCache: () => Promise.resolve(null),
+    saveAiValidationCache: () => Promise.resolve(),
   },
 
   // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
