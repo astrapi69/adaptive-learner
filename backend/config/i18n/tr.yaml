@@ -1497,6 +1497,8 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  resources_title: "Konuyu derinleştir"
+  resources_domain: "{domain} hakkında daha fazlası"
   motivation:
     halftime: "Yarısı bitti — devam et!"
     last: "Sonuncu — güçlü bitir!"
@@ -2573,3 +2575,12 @@ content_repo:
   validation:
     failed: "Doğrulama başarısız oldu: {reason}"
     passed: "Doğrulama başarılı: {sets} set, {lessons} ders."
+resource:
+  type_youtube: "Videolar"
+  type_podcast: "Podcast'ler"
+  type_article: "Makaleler"
+  type_book: "Kitaplar"
+  type_course: "Kurslar"
+  type_website: "Web siteleri"
+  free: "Ücretsiz"
+  paid: "Kurs"

@@ -1502,6 +1502,8 @@ repo:
     description: "Erzeugt automatisch Markdown-Artefakte (README, STATS, CHEATSHEET, ROADMAP) pro Projekt aus deinen Sitzungsdaten. Die optionale Git-Integration committet jede Erzeugung, sodass du den Verlauf mit jedem Git-Client durchsehen kannst."
     enable_git: "Git-Persistenz aktivieren"
 lesson:
+  resources_title: "Vertiefe das Thema"
+  resources_domain: "Mehr zum Thema {domain}"
   motivation:
     halftime: "Halbzeit — weiter so!"
     last: "Letzte — bring es zu Ende!"
@@ -2577,3 +2579,12 @@ content_repo:
   validation:
     failed: "Validierung fehlgeschlagen: {reason}"
     passed: "Validierung erfolgreich: {sets} Sets, {lessons} Lektionen."
+resource:
+  type_youtube: "Videos"
+  type_podcast: "Podcasts"
+  type_article: "Artikel"
+  type_book: "Bücher"
+  type_course: "Kurse"
+  type_website: "Webseiten"
+  free: "Gratis"
+  paid: "Kurs"

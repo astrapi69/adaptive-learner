@@ -1612,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Vertiefe das Thema",
+    "resources_domain": "Mehr zum Thema {domain}",
     "motivation": {
       "halftime": "Halbzeit — weiter so!",
       "last": "Letzte — bring es zu Ende!"
@@ -2810,5 +2812,15 @@
       "failed": "Validierung fehlgeschlagen: {reason}",
       "passed": "Validierung erfolgreich: {sets} Sets, {lessons} Lektionen."
     }
+  },
+  "resource": {
+    "type_youtube": "Videos",
+    "type_podcast": "Podcasts",
+    "type_article": "Artikel",
+    "type_book": "Bücher",
+    "type_course": "Kurse",
+    "type_website": "Webseiten",
+    "free": "Gratis",
+    "paid": "Kurs"
   }
 }

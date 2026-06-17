@@ -1508,6 +1508,8 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  resources_title: "Explore further"
+  resources_domain: "More on {domain}"
   motivation:
     halftime: "Halfway there — keep going!"
     last: "Last one — finish strong!"
@@ -2583,3 +2585,12 @@ content_repo:
   validation:
     failed: "Validation failed: {reason}"
     passed: "Validation passed: {sets} sets, {lessons} lessons."
+resource:
+  type_youtube: "Videos"
+  type_podcast: "Podcasts"
+  type_article: "Articles"
+  type_book: "Books"
+  type_course: "Courses"
+  type_website: "Websites"
+  free: "Free"
+  paid: "Course"

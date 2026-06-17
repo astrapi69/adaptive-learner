@@ -1612,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Approfondir le sujet",
+    "resources_domain": "Plus sur {domain}",
     "motivation": {
       "halftime": "À mi-chemin — continue !",
       "last": "La dernière — termine en beauté !"
@@ -2810,5 +2812,15 @@
       "failed": "La validation a échoué : {reason}",
       "passed": "Validation réussie : {sets} ensembles, {lessons} leçons."
     }
+  },
+  "resource": {
+    "type_youtube": "Vidéos",
+    "type_podcast": "Podcasts",
+    "type_article": "Articles",
+    "type_book": "Livres",
+    "type_course": "Cours",
+    "type_website": "Sites web",
+    "free": "Gratuit",
+    "paid": "Cours"
   }
 }

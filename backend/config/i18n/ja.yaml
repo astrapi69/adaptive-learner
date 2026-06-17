@@ -1497,6 +1497,8 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする"
 lesson:
+  resources_title: "さらに学ぶ"
+  resources_domain: "{domain} についてもっと見る"
   motivation:
     halftime: "折り返し地点です — その調子！"
     last: "最後の問題です — 力強くフィニッシュ！"
@@ -2573,3 +2575,12 @@ content_repo:
   validation:
     failed: "検証に失敗しました: {reason}"
     passed: "検証に成功しました: {sets} セット、{lessons} レッスン。"
+resource:
+  type_youtube: "動画"
+  type_podcast: "ポッドキャスト"
+  type_article: "記事"
+  type_book: "書籍"
+  type_course: "コース"
+  type_website: "ウェブサイト"
+  free: "無料"
+  paid: "コース"

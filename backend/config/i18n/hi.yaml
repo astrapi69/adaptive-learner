@@ -1493,6 +1493,8 @@ repo:
     description: Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client.
     enable_git: Enable git persistence
 lesson:
+  resources_title: "विषय को गहराई से जानें"
+  resources_domain: "{domain} के बारे में और जानें"
   motivation:
     halftime: "आधा हो गया — लगे रहो!"
     last: "आखिरी — दमदार अंत करो!"
@@ -2559,3 +2561,12 @@ content_repo:
   validation:
     failed: "सत्यापन विफल रहा: {reason}"
     passed: "सत्यापन सफल: {sets} सेट, {lessons} पाठ।"
+resource:
+  type_youtube: "वीडियो"
+  type_podcast: "पॉडकास्ट"
+  type_article: "लेख"
+  type_book: "पुस्तकें"
+  type_course: "कोर्स"
+  type_website: "वेबसाइटें"
+  free: "मुफ़्त"
+  paid: "कोर्स"

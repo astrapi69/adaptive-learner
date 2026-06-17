@@ -1612,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "विषय को गहराई से जानें",
+    "resources_domain": "{domain} के बारे में और जानें",
     "motivation": {
       "halftime": "आधा हो गया — लगे रहो!",
       "last": "आखिरी — दमदार अंत करो!"
@@ -2810,5 +2812,15 @@
       "failed": "सत्यापन विफल रहा: {reason}",
       "passed": "सत्यापन सफल: {sets} सेट, {lessons} पाठ।"
     }
+  },
+  "resource": {
+    "type_youtube": "वीडियो",
+    "type_podcast": "पॉडकास्ट",
+    "type_article": "लेख",
+    "type_book": "पुस्तकें",
+    "type_course": "कोर्स",
+    "type_website": "वेबसाइटें",
+    "free": "मुफ़्त",
+    "paid": "कोर्स"
   }
 }

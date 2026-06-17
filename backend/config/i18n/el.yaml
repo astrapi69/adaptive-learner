@@ -1499,6 +1499,8 @@ repo:
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
     enable_git: "Ενεργοποίηση εμμονής git"
 lesson:
+  resources_title: "Εμβάθυνε στο θέμα"
+  resources_domain: "Περισσότερα για {domain}"
   motivation:
     halftime: "Στα μισά — συνέχισε!"
     last: "Η τελευταία — τελείωσέ το δυνατά!"
@@ -2575,3 +2577,12 @@ content_repo:
   validation:
     failed: "Η επικύρωση απέτυχε: {reason}"
     passed: "Η επικύρωση πέτυχε: {sets} σύνολα, {lessons} μαθήματα."
+resource:
+  type_youtube: "Βίντεο"
+  type_podcast: "Podcast"
+  type_article: "Άρθρα"
+  type_book: "Βιβλία"
+  type_course: "Μαθήματα"
+  type_website: "Ιστότοποι"
+  free: "Δωρεάν"
+  paid: "Μάθημα"
