@@ -75,3 +75,60 @@ gate (the user pre-authorized "Wenn gruen: Freigabe erteilt").
 - **Note for next session:** the GH-Pages deploy + launcher artifact builds run
   off the tag — verify the deploy went live (the v1.71.x cycle saw a silent
   `actions/deploy-pages` 401). No schema/API/data migration in this release.
+
+---
+
+# Session (later 2026-06-17): docs pass + #689 gate-fix + v1.86.0 release
+
+## 6. Documentation ecosystem (PRs #670/#671/#677/#681/#703)
+
+- **Content-Repo Guide** (`docs/CONTENT-REPO-GUIDE.md`) + a MkDocs help page
+  (de + en) + `content_repo.trust_*` i18n in all 9 langs (#670).
+- **EXP-033** design doc (#671), the **exploration-status audit** across all 32
+  EXPs (#677), the **roadmap/backlog restructure** (#681), and a
+  **status-reconciliation** pass after EXP-029/033 feature work landed (#703 —
+  EXP-029 -> DONE, EXP-033 -> PARTIAL).
+
+## 7. #689 CI-gate fix (PR #704)
+
+- `content-loader-dexie.ts` had grown to 1069 lines (>1000 file-size gate) via
+  the EXP-033 AI additions. Extracted the AI-validation concern into
+  `content-loader-dexie-ai.ts` (one-directional import of `slugifySource`,
+  madge 0 circular); parent dropped to 902 lines.
+- `Content.tsx` `ContentPage` hit cc 22 (>20 complexity gate) via the
+  EXP-029/033 badges; baselined at 22 (behaviour-preserving), same ratchet as
+  the #647->#656 FreeText/WordTiles entries. Both gates green; #689 closed.
+
+## 8. v1.86.0 release (Phase 1)
+
+- Gitflow: `make release-prepare` -> bump `backend/pyproject.toml` 1.85.0 ->
+  1.86.0 -> `make sync-versions` (19 files) -> changelog verified against
+  `git log v1.85.0..develop` (20 commits; **#652 excluded** — out of range,
+  **#658 EXP-032 doc added**) -> release doc updates (README/README-de badges,
+  CLAUDE current-state with real v1.86.0 + v1.85.0 summaries, ROADMAP/backlog
+  headers) -> `make release-test`.
+- **release-test caught a real red:** 5 EXP-023 dexie-smoke specs failed —
+  stale `/passed/` + `/failed/` assertions. Root cause: #662 (repository-UI
+  i18n) added the German `content_repo.validation.passed/failed` strings, so
+  the app default (German) renders "Validierung erfolgreich/fehlgeschlagen"
+  instead of the English fallback the specs relied on. The dexie-smoke gate
+  runs nightly/release-only, so the drift never surfaced on the #662 PR. Fixed
+  the assertions to be locale-robust (`/passed|erfolgreich/i`,
+  `/failed|fehlgeschlagen/i`); dexie-smoke went 83 -> 88 passed.
+- `make release-finish` (merge to main + tag `v1.86.0` + push, merge back to
+  develop, delete branch) + `make release-publish` (GitHub Release).
+
+## Summary / statistics (v1.86.0)
+
+- **Released:** v1.86.0 (feature: EXP-033 AI Content Validation + EXP-029 Media
+  Integration). Tag `v1.86.0` = `baaab267` on remote.
+- **GitHub Release:** https://github.com/astrapi69/adaptive-learner/releases/tag/v1.86.0
+- **release-test:** green after the E2E locale fix — `make test` + frontend
+  build + Vitest + verify-docs-discipline + sync-versions-check +
+  verify-plugin-locks all green (run 1); Dexie-mode gate **88 passed** (run 2,
+  post-fix).
+- **PRs this session:** #670, #671, #677, #681, #703 (docs), #704 (#689 gate),
+  + the v1.86.0 release.
+- **Note for next session:** verify the GH-Pages deploy + launcher artifact
+  builds went live off the `v1.86.0` tag (the v1.71.x cycle saw a silent
+  `actions/deploy-pages` 401). No schema/API/data migration.
