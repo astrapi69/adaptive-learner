@@ -27,7 +27,7 @@ this file for granular items + status.
 
 See [docs/explorations/](explorations/) for the full strategic plan:
 
-- [EXP-INDEX.md](explorations/EXP-INDEX.md): 25 explorations overview
+- [EXP-INDEX.md](explorations/EXP-INDEX.md): 32 explorations overview
 - [BACKLOG.md](explorations/BACKLOG.md): 223 tasks across 5 phases
 - [ROADMAP-PHASE-1-VORSCHLAG.md](explorations/ROADMAP-PHASE-1-VORSCHLAG.md): Sprint plan for Phase 1
 
@@ -95,11 +95,54 @@ tiebreaker.
 
 ---
 
-## P0 — Next Releases (Prompts ready)
+> **Audit-getriebene Priorisierung** (aus
+> [journal/exploration-status-audit.md](journal/exploration-status-audit.md),
+> 2026-06-17). Jetzt / Naechste Phase / Deferred fuehren die Task-IDs; die
+> ausfuehrlichen Beschreibungen stehen in den jeweiligen
+> Explorations-Dokumenten + in den P3-P5-Detailabschnitten unten. Kuratierte
+> Sicht: [ROADMAP.md](ROADMAP.md).
 
-## P1 — Architecture / Hygiene Debt
+## Jetzt (v1.86.0+)
 
-## P2 — Medium Value, Medium Effort
+- **EXP-033 — KI-Content-Validierung**: AIV-01..AIV-12.
+- **EXP-029 — Medien-Integration**: MED-01..MED-06, MED-10.
+- **EXP-031 — .alb ZIP-Backup**: BAK-01..BAK-06.
+- **EXP-032 — deterministische Content-Validierung**: CQV-01..CQV-03
+  (CQV-04/05 spaeter).
+- **Bug #622** — A11y link-name Lesson-Viewer (offen, P3/a11y).
+- **Bug #656** — Complexity-Gate FreeText/WordTiles — **DONE** (v1.85.0).
+
+## Naechste Phase
+
+- **EXP-025 — Content-Repo-Oekosystem**: AUTH-03..AUTH-09 (AUTH-01/02
+  ausgeliefert #529/#531; Teil braucht geteiltes Backend → Deferred).
+- **EXP-027 — weitere Sprachen**: I18N-06 (Indonesisch), I18N-07
+  (Italienisch), I18N-08 (QA-Pipeline), I18N-09 (Content-Sprachpaare),
+  I18N-10 (Exercise-RTL-Audit), I18N-12 (Arabisch-Content).
+- **EXP-022 — Lernpfad-Ausbau**: UC2 (Content-Browser als Graph), UC4
+  (Beziehungs-Editor).
+- **EXP-021 — Lektions-Creator-Ausbau**: manueller Uebungs-Editor,
+  CSV-Datei-Upload, Token-Rollen-UI.
+- **EXP-024 — Schichtentrennung**: Phase 2 (Plugin-Service-Module), Phase 3
+  (Frontend-U1).
+
+## Deferred (Phase 2 / community-finanziert)
+
+- **EXP-030 — Multi-User**: MU-01..MU-05, MU-10, MU-20.
+- **EXP-023 — Server-Features (Phase C)**: Community-Ratings, Trust 2,
+  zentraler Index, Coach-Aggregation, Einmal-Invite-Tokens.
+- **EXP-027 — RTL-Infrastruktur**: I18N-01 (RTL-Basis), I18N-04 (Arabisch-UI),
+  I18N-05 (Koreanisch/Hangul).
+- **EXP-013 Stufe 3** — KI-augmentierte adaptive Generierung (P-150..P-152).
+- Weitere Einzel-Posten: in **[ROADMAP.md](ROADMAP.md) > Detail**
+  (ANALYSIS-TARGET-DETECT-01, ANALYSIS-DOMAIN-SUGGEST-01,
+  PLACEMENT-LANG-WARN-01, PT/TR/JA-Native-Review, SW-Cache-Knobs,
+  iOS-Safari-Meta-Tags, Push-Notifications, native Wrapper) sowie in den
+  P3-P5-Abschnitten unten (BADGE-EVAL-NPLUS1-01, PERF-EAGER-GLOBS-01,
+  DEP-MYPY-2-01, DEP-ANTHROPIC-105-01, PLUGINFORGE-LIFECYCLE-UI-01,
+  BACKEND-RADON-REMAINDER-01, BL-14..17, BL-19).
+
+---
 
 ## P3 — Lower Value or Large Effort
 
