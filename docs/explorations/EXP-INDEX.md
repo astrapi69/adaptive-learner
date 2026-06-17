@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-16
-**Anzahl EXPs:** 30
+**Stand:** 2026-06-17
+**Anzahl EXPs:** 31
 
 ## Kategorisierung
 
@@ -45,6 +45,7 @@
 | 029 | Medien-Ressourcen mit Gegenseitigkeits-Prinzip | Vision    | B/C   | Mittel    | 023, 025, #141     |
 | 030 | Multi-User-Strategie (lokale Profile → Cloud)  | Querschnitt | gestuft | Mittel  | EXP-009, Sync      |
 | 031 | ZIP-Backup-Format (.alb) + Container/Manifest | Feature      | Zukunft | Mittel  | Backup, #642, 005  |
+| 032 | Inhaltliche Content-Validierung (Quality)    | Querschnitt  | gestuft | Hoch    | 013, 028, 030, 002 |
 
 ## Umsetzungsstand (Stand v1.79.0)
 
