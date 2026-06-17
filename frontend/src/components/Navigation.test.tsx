@@ -101,6 +101,24 @@ describe("Navigation", () => {
         }
     });
 
+    it("keeps the brand link accessibly named in compact mode (#622)", () => {
+        // The brand WORD (`.nav-brand-name`) is `display:none` in the
+        // lesson-compact nav, leaving only the decorative aria-hidden logo.
+        // The link must still expose an accessible name (aria-label), or axe
+        // flags a `link-name` violation on /lesson.
+        const {container} = renderAt(
+            "/lesson/astrapi69--adaptive-learner-content/es-a1/01.json",
+        );
+        const brand = container.querySelector(".nav-brand");
+        expect(brand).not.toBeNull();
+        expect(brand?.getAttribute("aria-label")).toBe("Adaptive Learner");
+        // The link is reachable by its accessible name regardless of the
+        // visually-hidden text node.
+        expect(
+            screen.getByRole("link", {name: "Adaptive Learner"}),
+        ).toBeInTheDocument();
+    });
+
     it("keeps the nav links in the DOM (behind the hamburger) in compact mode", () => {
         // CSS hides them; the markup stays so keyboard users and the
         // drawer toggle still reach every destination during a lesson.
