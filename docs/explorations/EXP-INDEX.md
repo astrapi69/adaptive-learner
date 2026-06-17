@@ -3,6 +3,10 @@
 **Stand:** 2026-06-17
 **Anzahl EXPs:** 32
 
+> Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
+> [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
+> (Stand 2026-06-17).
+
 ## Kategorisierung
 
 | Kategorie    | Beschreibung                                       |
@@ -48,7 +52,7 @@
 | 032 | Inhaltliche Content-Validierung (Quality)    | Querschnitt  | gestuft | Hoch    | 013, 028, 030, 002 |
 | 033 | KI-gestützte Content-Validierung (AI Review) | Querschnitt  | gestuft | Mittel  | 032, 023, 028, 030 |
 
-## Umsetzungsstand (Stand v1.79.0)
+## Umsetzungsstand (Stand v1.85.0)
 
 Die Tabelle oben ist ein **Planungs**-Index (Kategorie / Phase / Priorität /
 Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
@@ -61,17 +65,19 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
   018 (Übungsrichtung), 020 (Flusssteuerung), 021 (Lektions-Creator),
   022 (visueller Lernpfad), 023 (Multi-Content-Repository A/B/C),
   024 (Layer-Audit Phase 1), **025 teilweise** (Buch-Begleiter: AUTH-01
-  Schema/Validator + AUTH-02 Rendering ausgeliefert; AUTH-03+ Cross-Repo
+  Schema/Validator + AUTH-02 Rendering ausgeliefert; AUTH-03..09 Cross-Repo
   zurückgestellt), **026 vollständig** (User-Lektionen im Content-Baum,
-  UGC-01..07).
-- **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests),
-  **028 teilweise** (User-Event-Recording: Ring Buffer + Sanitizer +
-  Fehler-Toast-Report ausgeliefert; Kategorie-Schicht + Persistenz +
-  proaktiver Settings-Einstieg EVT-01..05 zurückgestellt).
+  UGC-01..07), **027 teilweise** (Internationalisierung: I18N-02
+  Picker-Skalierung + I18N-03 Hindi-UI + I18N-11 Hindi-Content ausgeliefert;
+  RTL/weitere Sprachen I18N-01/04/05/06/07/09/10/12 offen),
+  **028 vollständig** (User-Event-Recording EVT-01..05, #566).
+- **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests).
+- **Design-Dokumente (noch kein Code):** 031 (.alb-ZIP-Backup, BAK-01..06),
+  032 (deterministische Content-Validierung, CQV-01..05), 033 (KI-gestützte
+  Content-Validierung, AIV-01..12) — alle drei sind Vorhaben, 0% umgesetzt.
 - **Zurückgestellt / Zukunft:** 004 (GitHub-Org), 009/011/012 (soziale Features —
   brauchen Cloud-Backend + Nutzerbasis), 014 (Community-Feedback — teilweise via
-  Community-Sharing), 015 (Kinder-Variante), 027 (Internationalisierungs-Strategie —
-  Sprach-Expansion, Vision-Dokument für nach v1.80.0), 029 (Medien-Ressourcen mit
+  Community-Sharing), 015 (Kinder-Variante), 029 (Medien-Ressourcen mit
   Gegenseitigkeits-Prinzip — `media.yaml` analog `books.yaml` + Ökosystem-Partner;
   Code additiv, Engpass ist die Partnergewinnung, MED-01..06 + MED-10),
   030 (Multi-User-Strategie — gestuft: Stufe 1 lokale Profile additiv ab Phase 2,
