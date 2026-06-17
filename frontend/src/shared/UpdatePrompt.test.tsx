@@ -48,4 +48,21 @@ describe("UpdatePrompt", () => {
     fireEvent.click(screen.getByTestId("update-prompt-dismiss"));
     expect(onDismiss).toHaveBeenCalledOnce();
   });
+
+  it("paints the bar with the AA-pinned accent pair (#649)", () => {
+    // Regression pin: the banner must use --accent / --accent-fg, the one
+    // token pair whose contrast is enforced >= WCAG AA across all 12 themes
+    // (contrast.test.ts). A drift back to a theme-dependent pair (e.g.
+    // bg-bg-elevated + text-fg-primary) would re-open the invisible-text bug.
+    setup();
+    const bar = screen.getByTestId("update-prompt");
+    expect(bar.className).toContain("bg-accent");
+    expect(bar.className).toContain("text-accent-foreground");
+
+    // The update action is the inverse chip (accent-fg surface, accent text),
+    // so it reads clearly as a button on the accent bar.
+    const apply = screen.getByTestId("update-prompt-apply");
+    expect(apply.className).toContain("bg-accent-foreground");
+    expect(apply.className).toContain("text-accent");
+  });
 });
