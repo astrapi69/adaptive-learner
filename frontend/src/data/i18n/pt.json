@@ -2088,6 +2088,30 @@
         "suggestion": "Sugestao"
       }
     },
+    "quality": {
+      "button": "Verificação de qualidade",
+      "title": "Verificação de qualidade",
+      "loading": "A verificar cartões...",
+      "offline_note": "Funciona offline - acentos, artigos e cartões duplicados. Não precisa de chave de API.",
+      "failed": "Verificação de qualidade indisponível.",
+      "accent": {
+        "problem": "Acento em falta: {word}"
+      },
+      "article": {
+        "problem": "Artigo incorreto: {actual} {noun}"
+      },
+      "duplicate": {
+        "problem": "Duplicado de: {other}"
+      },
+      "report": {
+        "summary": "{cards} cartões verificados em {lessons} lições",
+        "ok": "{count} cartões OK",
+        "issues": "{count} cartões com problemas",
+        "all_ok": "Nenhum problema encontrado - acentos, artigos e duplicados corretos.",
+        "problem": "Problema",
+        "suggestion": "Sugestão"
+      }
+    },
     "placement": {
       "lands_under": "A sua lição será colocada em",
       "duplicate": "Já existe uma lição semelhante: {title}. Partilhar mesmo assim?"

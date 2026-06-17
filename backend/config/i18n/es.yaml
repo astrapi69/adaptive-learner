@@ -1923,6 +1923,25 @@ content:
       all_ok: "Todas las tarjetas pasaron. No se encontraron problemas."
       problem: "Problema"
       suggestion: "Sugerencia"
+  quality:
+    button: "Comprobación de calidad"
+    title: "Comprobación de calidad"
+    loading: "Comprobando tarjetas..."
+    offline_note: "Funciona sin conexión: acentos, artículos y tarjetas duplicadas. No requiere clave de API."
+    failed: "Comprobación de calidad no disponible."
+    accent:
+      problem: "Acento faltante: {word}"
+    article:
+      problem: "Artículo incorrecto: {actual} {noun}"
+    duplicate:
+      problem: "Duplicado de: {other}"
+    report:
+      summary: "{cards} tarjetas comprobadas en {lessons} lecciones"
+      ok: "{count} tarjetas correctas"
+      issues: "{count} tarjetas con problemas"
+      all_ok: "No se encontraron problemas: acentos, artículos y duplicados correctos."
+      problem: "Problema"
+      suggestion: "Sugerencia"
   placement:
     lands_under: Tu lección se ubicará en
     duplicate: 'Ya existe una lección similar: {title}. ¿Compartir de todos modos?'

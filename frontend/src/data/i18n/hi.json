@@ -2088,6 +2088,30 @@
         "suggestion": "sujhaav"
       }
     },
+    "quality": {
+      "button": "गुणवत्ता जाँच",
+      "title": "गुणवत्ता जाँच",
+      "loading": "कार्ड जाँचे जा रहे हैं...",
+      "offline_note": "ऑफ़लाइन चलता है - एक्सेंट, आर्टिकल और डुप्लिकेट कार्ड। API कुंजी की आवश्यकता नहीं।",
+      "failed": "गुणवत्ता जाँच उपलब्ध नहीं है।",
+      "accent": {
+        "problem": "एक्सेंट गायब: {word}"
+      },
+      "article": {
+        "problem": "गलत आर्टिकल: {actual} {noun}"
+      },
+      "duplicate": {
+        "problem": "इसकी डुप्लिकेट: {other}"
+      },
+      "report": {
+        "summary": "{lessons} पाठों में {cards} कार्ड जाँचे गए",
+        "ok": "{count} कार्ड ठीक",
+        "issues": "{count} कार्ड में समस्याएँ",
+        "all_ok": "कोई समस्या नहीं मिली - एक्सेंट, आर्टिकल और डुप्लिकेट सब ठीक।",
+        "problem": "समस्या",
+        "suggestion": "सुझाव"
+      }
+    },
     "placement": {
       "lands_under": "Your lesson lands under",
       "duplicate": "A similar lesson already exists: {title}. Share anyway?"

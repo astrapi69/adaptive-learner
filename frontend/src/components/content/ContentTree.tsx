@@ -48,6 +48,9 @@ export interface ContentSetRowActions {
   /** When set, the AI-check button is visible but disabled with this
    *  tooltip reason (no key / browser-mode only). */
   aiCheckDisabledReason?: string;
+  /** EXP-032 / CQV — open the offline content-quality dialog for a cached
+   *  set. Omit to hide the "Quality check" button. */
+  onQualityCheck?: (entry: ContentSetEntry) => void;
   /** EXP-033 / AIV-11 — resolve the "AI-checked" badge status per set. */
   aiBadgeStatusFor?: (entry: ContentSetEntry) => AiCheckBadgeStatus;
 }
@@ -120,6 +123,7 @@ export default function ContentTree({
       onOpenMedia={setRow.onOpenMedia}
       onAiCheck={setRow.onAiCheck}
       aiCheckDisabledReason={setRow.aiCheckDisabledReason}
+      onQualityCheck={setRow.onQualityCheck}
       aiBadgeStatus={setRow.aiBadgeStatusFor?.(entry) ?? "none"}
     />
   );
