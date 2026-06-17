@@ -48,6 +48,10 @@ import {
   fetchBookCompanion,
   isFetchableSource,
 } from "../lib/content/book-companion";
+import {
+  type MediaResource,
+  fetchMediaResources,
+} from "../lib/content/media-loader";
 import ContentBookCompanions from "../components/content/ContentBookCompanions";
 import ContentContributionsSection from "../components/content/ContentContributionsSection";
 import { splitHighlight } from "../lib/content/content-search";
@@ -78,7 +82,10 @@ import {
   triggerDownload,
   type ExportSetMeta,
 } from "../lib/content/lesson-export";
-import { getStorage } from "../storage";
+import { getStorage, resolveStorageMode } from "../storage";
+import AiValidationDialog from "../components/content/AiValidationDialog";
+import { badgeStatusForCachedSet } from "../lib/ai/validation-signature";
+import type { AiCheckBadgeStatus } from "../shared/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../storage/types";
 import { isOfficialSource, readUserRepos, userRepoSource } from "../lib/content/content-repos";
 import { fetchRecommendedRepos, recommendedSource } from "../lib/content/recommended-repos";
@@ -106,6 +113,10 @@ export default function ContentPage() {
   // #141 — per-domain book recommendations, fetched once from the
   // official content repo (graceful empty on failure / offline).
   const [bookRecs, setBookRecs] = useState<BookRecommendations>({});
+  // EXP-029 / MED-06 — per-domain supplementary media (media.yaml),
+  // fetched once from the official content repo (graceful empty on
+  // failure / offline). Drives the set-row media-availability badges.
+  const [media, setMedia] = useState<MediaResource[]>([]);
   // EXP-025 / AUTH-02 — book a connected repo accompanies, keyed by source.
   const [bookCompanions, setBookCompanions] = useState<Record<string, BookMetadata>>({});
   const [loading, setLoading] = useState(true);
@@ -168,6 +179,9 @@ export default function ContentPage() {
     void fetchBookRecommendations().then((recs) => {
       if (!cancelled) setBookRecs(recs);
     });
+    void fetchMediaResources().then((list) => {
+      if (!cancelled) setMedia(list);
+    });
     return () => {
       cancelled = true;
     };
@@ -199,8 +213,53 @@ export default function ContentPage() {
   useEffect(() => {
     setContributions(listContributions());
   }, []);
+  // AIV-11 — load the cached AI-validation signatures for downloaded sets
+  // and derive the badge status (cheap: version-based, no hash recompute).
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const storage = getStorage();
+      const downloaded = sets.filter(
+        (s) => s.source !== USER_GENERATED_SOURCE && s.cached_version !== null,
+      );
+      const map: Record<string, AiCheckBadgeStatus> = {};
+      for (const entry of downloaded) {
+        try {
+          const cache = await storage.contentLoader.getAiValidationCache(
+            entry.source,
+            entry.id,
+          );
+          const status = badgeStatusForCachedSet(
+            cache?.signature ?? null,
+            cache?.set_version ?? null,
+            entry.cached_version,
+          );
+          if (status !== "none") map[`${entry.source}#${entry.id}`] = status;
+        } catch {
+          /* a cache read failure just means no badge for that set */
+        }
+      }
+      if (!cancelled) setAiBadgeBySet(map);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [sets]);
   const { hasKey, activeProvider } = useApiKeyStatus();
   const userId = readLearnerState().userId;
+
+  // EXP-033 / AIV-02 — set-wide AI content check. The trigger is gated to
+  // Dexie mode (browser-direct provider call; no server route) + a
+  // configured key; the button stays visible-but-disabled otherwise.
+  const [aiCheckTarget, setAiCheckTarget] = useState<ContentSetEntry | null>(null);
+  // AIV-11 — per-set "AI-checked" badge status, keyed "{source}#{id}".
+  const [aiBadgeBySet, setAiBadgeBySet] = useState<Record<string, AiCheckBadgeStatus>>({});
+  const aiCheckIsDexie = resolveStorageMode() === "dexie";
+  const aiCheckDisabledReason = !aiCheckIsDexie
+    ? t("content.ai_check.unavailable_mode", "Available in browser-storage mode only.")
+    : !hasKey
+      ? t("feature.api_key_required", "API key required. Configure a provider in Settings.")
+      : undefined;
 
   // --- Content Browser search (#354 — extracted to useContentSearch) ---
   const {
@@ -257,7 +316,10 @@ export default function ContentPage() {
     );
   };
 
-  const handleOpenLesson = async (entry: ContentSetEntry) => {
+  const handleOpenLesson = async (
+    entry: ContentSetEntry,
+    opts?: { focusResources?: boolean },
+  ) => {
     // Phase 44 / EXP-002 / 3B: jump to the set's first
     // cached lesson. Future enhancements can swap this for
     // a dedicated per-set lesson list page.
@@ -269,8 +331,12 @@ export default function ContentPage() {
         return;
       }
       const slug = entry.source.replace(/\//g, "--");
+      // EXP-029 / MED-06 — a media-badge click deep-links to the
+      // "Vertiefe das Thema" section (LessonResources scrolls to its
+      // anchor when present).
+      const hash = opts?.focusResources ? "#lesson-resources" : "";
       navigate(
-        `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(entry.id)}/${encodeURIComponent(first)}`,
+        `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(entry.id)}/${encodeURIComponent(first)}${hash}`,
       );
     } catch (err) {
       notify.error(t("content.error.open_failed", "Could not open the lesson."), {
@@ -801,6 +867,13 @@ export default function ContentPage() {
                 recommendedSources,
                 onOpen: (e) => void handleOpenLesson(e),
                 onDownload: (e) => void handleDownload(e),
+                media,
+                onOpenMedia: (e) =>
+                  void handleOpenLesson(e, { focusResources: true }),
+                onAiCheck: (e) => setAiCheckTarget(e),
+                aiCheckDisabledReason,
+                aiBadgeStatusFor: (e) =>
+                  aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
               }}
               folded={{
                 setsByKey: userSetsByKey,
@@ -816,6 +889,12 @@ export default function ContentPage() {
           )}
         </>
       )}
+
+      <AiValidationDialog
+        entry={aiCheckTarget}
+        activeProvider={activeProvider ?? null}
+        onClose={() => setAiCheckTarget(null)}
+      />
 
       <ImportLessonModal
         open={showImport}

@@ -83,7 +83,9 @@ async function mockRepo(page: Page, ownerRepo: string, setId: string) {
 async function addRepo(page: Page, url: string) {
   await page.getByTestId("content-repo-url").fill(url);
   await page.getByTestId("content-repo-connect").click();
-  await expect(page.getByTestId("content-repo-result")).toContainText(/passed/i);
+  await expect(page.getByTestId("content-repo-result")).toContainText(
+    /passed|erfolgreich/i,
+  );
 }
 
 test.describe("EXP-023 Phase B — multi content repository", () => {

@@ -83,6 +83,7 @@ plugins:
             Release-Prozess: Release workflow
             Für Content-Ersteller: For content creators
             Überblick: Overview
+            Content-Repos: Content repos
             Buchempfehlungen: Book recommendations
             Design-Tokens: Design tokens
             API-Referenz: API reference
@@ -134,6 +135,7 @@ plugins:
             Release-Prozess: Flujo de publicación
             Für Content-Ersteller: Para creadores de contenido
             Überblick: Visión general
+            Content-Repos: Repositorios de contenido
             Buchempfehlungen: Recomendaciones de libros
             Design-Tokens: Tokens de diseño
             Sync: Sincronización
@@ -183,6 +185,7 @@ plugins:
             Release-Prozess: Processus de publication
             Für Content-Ersteller: Pour les créateurs de contenu
             Überblick: Vue d'ensemble
+            Content-Repos: Dépôts de contenu
             Buchempfehlungen: Recommandations de livres
             Design-Tokens: Jetons de design
             Sync: Synchronisation
@@ -235,6 +238,7 @@ plugins:
             Release-Prozess: Ροή έκδοσης
             Für Content-Ersteller: Για δημιουργούς περιεχομένου
             Überblick: Επισκόπηση
+            Content-Repos: Αποθετήρια περιεχομένου
             Buchempfehlungen: Προτάσεις βιβλίων
             Design-Tokens: Design tokens
             Sync: Συγχρονισμός
@@ -287,6 +291,7 @@ plugins:
             Release-Prozess: Fluxo de lançamento
             Für Content-Ersteller: Para criadores de conteúdo
             Überblick: Visão geral
+            Content-Repos: Repositórios de conteúdo
             Buchempfehlungen: Recomendações de livros
             Design-Tokens: Tokens de design
             Sync: Sincronização
@@ -339,6 +344,7 @@ plugins:
             Release-Prozess: Yayın süreci
             Für Content-Ersteller: İçerik oluşturanlar için
             Überblick: Genel bakış
+            Content-Repos: İçerik depoları
             Buchempfehlungen: Kitap önerileri
             Design-Tokens: Tasarım token'ları
             Sync: Senkronizasyon
@@ -391,6 +397,7 @@ plugins:
             Release-Prozess: リリースワークフロー
             Für Content-Ersteller: コンテンツ作成者向け
             Überblick: 概要
+            Content-Repos: コンテンツリポジトリ
             Buchempfehlungen: 書籍の推薦
             Design-Tokens: デザイントークン
             Sync: 同期
@@ -465,6 +472,7 @@ nav:
   - Release-Prozess: de/developer/release.md
 - Für Content-Ersteller:
   - Überblick: de/content-creation/overview.md
+  - Content-Repos: de/content-creation/content-repos.md
   - Buchempfehlungen: de/content-creation/books.md
 - Architektur:
   - Design-Tokens: de/architecture/design-tokens.md

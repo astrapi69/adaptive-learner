@@ -376,6 +376,7 @@
     "page_title": "Wiederholung",
     "session_title": "Wiederholungssitzung",
     "subtitle": "{n} Element(e) zur Wiederholung",
+    "subtitle_capped": "{shown} von {due} Element(en) zur Wiederholung",
     "loading": "Wiederholungssitzung wird geladen…",
     "empty_body": "Alles erledigt! Keine Elemente für dieses Set zu wiederholen.",
     "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhalts-Browser zuerst.",
@@ -824,6 +825,14 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "Build",
     "build_date_label": "Build-Datum",
+    "check_update": "Auf Updates prüfen",
+    "checking": "Prüfe…",
+    "update_available": "Version {version} ist verfügbar!",
+    "up_to_date": "Du hast die neueste Version.",
+    "check_failed": "Prüfung fehlgeschlagen. Bist du online?",
+    "last_checked": "Letzte Prüfung: {when}",
+    "never_checked": "Noch nie geprüft",
+    "update_now": "Jetzt aktualisieren",
     "system_heading": "System",
     "storage_label": "Speicher",
     "storage_api": "Server (FastAPI + SQLite)",
@@ -1603,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Vertiefe das Thema",
+    "resources_domain": "Mehr zum Thema {domain}",
     "motivation": {
       "halftime": "Halbzeit — weiter so!",
       "last": "Letzte — bring es zu Ende!"
@@ -2043,6 +2054,39 @@
       "applied": "übernommen",
       "fix_applied": "Vorschlag übernommen.",
       "fix_failed": "Vorschlag konnte nicht übernommen werden."
+    },
+    "ai_check": {
+      "badge": {
+        "verified": "KI-geprueft",
+        "stale": "KI-Pruefung veraltet",
+        "invalid": "KI-Pruefung ungueltig"
+      },
+      "last_checked": "Letzte Pruefung: {when}",
+      "recheck": "Erneut pruefen",
+      "export": {
+        "button": "Bericht als Markdown exportieren",
+        "lesson": "Lektion",
+        "card": "Karte",
+        "field": "Feld"
+      },
+      "button": "Mit KI pruefen",
+      "title": "KI-Inhaltspruefung",
+      "loading": "Karten werden vorbereitet...",
+      "cost_estimate": "~{cards} Karten, ~{tokens} Tokens, ~{usd}.",
+      "privacy": "Deine Lernkarten werden zur Pruefung an deinen konfigurierten KI-Anbieter gesendet. Es werden keine personenbezogenen Daten uebertragen.",
+      "confirm": "Pruefen",
+      "progress": "Pruefe Batch {current} von {total}...",
+      "rate_limited": "Bitte warte einen Moment, bevor du erneut pruefst.",
+      "failed": "KI-Pruefung nicht verfuegbar.",
+      "unavailable_mode": "Nur im Browser-Speichermodus verfuegbar.",
+      "report": {
+        "summary": "{cards} Karten in {lessons} Lektionen geprueft",
+        "ok": "{count} Karten OK",
+        "issues": "{count} Karten mit Problemen",
+        "all_ok": "Alle Karten bestanden. Keine Probleme gefunden.",
+        "problem": "Problem",
+        "suggestion": "Vorschlag"
+      }
     },
     "placement": {
       "lands_under": "Deine Lektion wird eingeordnet unter",
@@ -2681,5 +2725,102 @@
     "remove": "Aus Favoriten entfernen",
     "empty": "Noch keine Favoriten — tippe auf den Stern einer Lektion.",
     "save_prompt": "Diese Lektion zu deinen Favoriten hinzufügen"
+  },
+  "content_repo": {
+    "title": "Inhalts-Repositories",
+    "last_sync": "Letzte Synchronisierung: {when}",
+    "added": "Repository hinzugefügt.",
+    "synced": "Synchronisiert: {sets} Sets, {lessons} Lektionen.",
+    "token_hint": "Private Repositories benötigen ein Token — füge unten eines ein oder hinterlege ein gemeinsames Token unter Einstellungen → Integrationen.",
+    "trust_official": "Offiziell: Vom Projektteam kuratierter, qualitätsgesicherter Inhalt.",
+    "trust_verified": "Verifiziert: Von der Community beigetragen und vom Team geprüft.",
+    "trust_validated": "Validiert: Technisch korrekt, Inhalt nicht einzeln geprüft.",
+    "official": {
+      "title": "Offizielle Inhalte",
+      "counts": "{sets} Sets · {lessons} Lektionen"
+    },
+    "user": {
+      "list_title": "Deine Inhalts-Repositories",
+      "empty": "Keine Repositories verbunden. Füge unten eines hinzu.",
+      "counts": "{sets} Sets · {lessons} Lektionen"
+    },
+    "recommended": {
+      "title": "Empfohlene Repositories"
+    },
+    "add": {
+      "title": "Repository hinzufügen"
+    },
+    "add_link": {
+      "title": "Dieses Inhalts-Repository hinzufügen?",
+      "body": "Du wurdest eingeladen, ein Inhalts-Repository zu Adaptive Learner hinzuzufügen.",
+      "invalid": "Dieser Einladungslink enthält kein gültiges Repository."
+    },
+    "field": {
+      "url": "GitHub-Repository-URL",
+      "branch": "Branch",
+      "token": "Token (private Repos, optional)"
+    },
+    "action": {
+      "add": "Repository hinzufügen",
+      "cancel": "Abbrechen",
+      "confirm_remove": "Entfernen bestätigen",
+      "connect": "Repository verbinden",
+      "move_down": "Nach unten",
+      "move_up": "Nach oben",
+      "remove": "Entfernen",
+      "share": "Teilen",
+      "sync": "Jetzt synchronisieren"
+    },
+    "badge": {
+      "coach": "Coach",
+      "official": "Offiziell"
+    },
+    "trust": {
+      "dropped": "Synchronisiert, aber die Validierung schlug fehl — dieses Repository ist jetzt als nicht verifiziert markiert.",
+      "recommended": "Offiziell empfohlen",
+      "unknown": "Nicht verifiziert",
+      "validated": "Validiert"
+    },
+    "status": {
+      "never_synced": "Noch nicht synchronisiert"
+    },
+    "rating": {
+      "aria": "Deine Bewertung",
+      "label": "Deine Bewertung",
+      "star": "{n} von 5 bewerten"
+    },
+    "share": {
+      "copied": "Link kopiert.",
+      "copy": "Kopieren",
+      "copy_failed": "Kopieren nicht möglich.",
+      "hint": "Teile diesen Link, damit andere dieses ÖFFENTLICHE Repository hinzufügen können. Für ein privates Repository sende die URL und ein schreibgeschütztes Token separat.",
+      "qr_alt": "QR-Code für den Teilen-Link"
+    },
+    "progress": {
+      "validating": "Repository wird validiert…",
+      "manifest": "Manifest wird geladen…",
+      "sets": "Sets werden geladen…",
+      "lessons": "Lektionen werden zwischengespeichert…",
+      "validate": "Inhalt wird überprüft…"
+    },
+    "error": {
+      "invalid_url": "Gib eine gültige GitHub-Repository-URL ein (z. B. owner/repo).",
+      "save_failed": "Repository konnte nicht hinzugefügt werden.",
+      "sync_failed": "Synchronisierung fehlgeschlagen. Bitte erneut versuchen."
+    },
+    "validation": {
+      "failed": "Validierung fehlgeschlagen: {reason}",
+      "passed": "Validierung erfolgreich: {sets} Sets, {lessons} Lektionen."
+    }
+  },
+  "resource": {
+    "type_youtube": "Videos",
+    "type_podcast": "Podcasts",
+    "type_article": "Artikel",
+    "type_book": "Bücher",
+    "type_course": "Kurse",
+    "type_website": "Webseiten",
+    "free": "Gratis",
+    "paid": "Kurs"
   }
 }

@@ -25,7 +25,6 @@
 import { parse as parseYaml } from "yaml";
 
 import type {
-  AiValidateInput,
   ContentLesson,
   ContentLessonList,
   ContentSetEntry,
@@ -36,13 +35,6 @@ import type {
 import { USER_GENERATED_SOURCE } from "./types";
 import { isDevMode } from "../hooks/useDevMode";
 import { getDb } from "./db";
-import { aiComplete, resolveModel } from "./ai-providers";
-import type { AIProvider } from "../lib/constants";
-import {
-  buildAiValidationMessages,
-  parseAiValidationResult,
-  type AiValidationResult,
-} from "../lib/content/ai-content-validator";
 import type { ContentSetRow, ContentSetFileRow } from "./db";
 import { resolveRepoToken } from "../lib/content/repo-token";
 import {
@@ -85,7 +77,7 @@ const DEFAULT_SOURCES: ContentSetSource[] = [
   { source: "astrapi69/adaptive-learner-content", branch: "main" },
 ];
 
-function slugifySource(source: string): string {
+export function slugifySource(source: string): string {
   return source.replace(/[/:]/g, "--");
 }
 
@@ -892,53 +884,6 @@ export async function deleteSetDexie(
   await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
     await _purgeSetRows(source, setId);
   });
-}
-
-// ---------------------------------------------------------------------------
-// Phase 60 / v1.44.0 — opt-in AI content validation (browser-direct)
-// ---------------------------------------------------------------------------
-
-/** Dexie-mode AI validation: resolve the user's provider + key from
- *  IndexedDB settings, call the provider browser-direct, parse the
- *  structured review. Throws on missing key / unparseable response —
- *  the caller treats any throw as a non-fatal "AI unavailable". */
-export async function aiValidateDexie(
-  input: AiValidateInput,
-): Promise<AiValidationResult> {
-  const db = getDb();
-  const settings = await db.userSettings
-    .where("user_id")
-    .equals(input.user_id)
-    .first();
-  if (!settings) throw new Error("No settings for user");
-  const bag = settings as unknown as Record<string, unknown>;
-  const provider = bag.active_provider as AIProvider | undefined;
-  if (!provider) throw new Error("No active AI provider");
-  const apiKey = bag[`api_key_${provider}`] as string | null;
-  if (!apiKey) throw new Error(`No API key for ${provider}`);
-  const override = bag[`model_override_${provider}`] as string | null;
-  const model = resolveModel(provider, override);
-
-  const messages = buildAiValidationMessages(
-    {
-      title: input.title,
-      title_native: input.title_native,
-      target_language: input.target_language,
-      source_language: input.source_language,
-      level: input.level,
-    },
-    input.lessons,
-  );
-  const raw = await aiComplete({
-    provider,
-    model,
-    apiKey,
-    messages,
-    maxTokens: 1500,
-  });
-  const parsed = parseAiValidationResult(raw);
-  if (!parsed) throw new Error("AI validation response was not valid JSON");
-  return parsed;
 }
 
 /** Internal: remove the set rows + their files. Must run inside an

@@ -73,6 +73,15 @@ export interface ContentLessonStep {
   /** Display text for {@link example_url}; the viewer falls back to a
    *  localized "View example" label when empty. */
   example_label?: string | null;
+  /** #673 — set ONLY on synthesised SRS review steps
+   *  ({@link synthesizeReviewLesson}). Carries the source lesson_id the
+   *  reviewed element belongs to, so the review recorder can address the
+   *  exact stored ``ElementError`` row. Without it the lesson_id had to be
+   *  parsed back out of the hyphen-joined step id, which mangled it for any
+   *  exercise_id / element_key containing a hyphen or space (almost all of
+   *  them) — producing a phantom row instead of rescheduling the real one,
+   *  so the "N due" badge never dropped. Absent on real content lessons. */
+  review_lesson_id?: string | null;
 }
 
 /** Phase 52D / v1.35.0 / P-127 — one blank inside a CLOZE
@@ -169,6 +178,25 @@ export interface ContentLessonCard {
 /** Card content kind (schema v1.3). Null/absent is treated as "text". */
 export type ContentCardMediaType = "text" | "code" | "formula" | "diagram";
 
+/** EXP-029 / MED-05 — one lesson-level supplementary-media entry (the raw
+ *  shape stored in the content JSON). Mirrors a ``media.yaml`` resource minus
+ *  ``domain`` (inherited from the parent set). Optional + additive, so
+ *  pre-EXP-029 lessons load unchanged. Validated by ``parseLessonResources``
+ *  before display. */
+export interface ContentLessonResource {
+  type: string;
+  title: string;
+  url: string;
+  language?: string | null;
+  level?: string | null;
+  duration?: string | null;
+  description?: string | null;
+  author?: string | null;
+  free?: boolean | null;
+  partnership?: boolean | null;
+  tags?: string[] | null;
+}
+
 export interface ContentLesson {
   id: string;
   title: string;
@@ -202,6 +230,12 @@ export interface ContentLesson {
   contributed_by?: string | null;
   /** ISO-8601 timestamp the lesson was contributed. */
   contributed_at?: string | null;
+  /** EXP-029 / MED-05 (additive) — optional lesson-specific supplementary
+   *  media (videos / podcasts / articles / …). Surfaced in the
+   *  "Vertiefe das Thema" section after the lesson summary, above the
+   *  broader domain-level media from ``media.yaml``. Validated by
+   *  ``parseLessonResources``. */
+  resources?: ContentLessonResource[] | null;
 }
 
 /**
@@ -256,6 +290,78 @@ export interface IContentLoaderNamespace {
    *  to the rule-based gate — callers treat a thrown error as
    *  non-fatal. */
   aiValidate(input: AiValidateInput): Promise<AiValidationResult>;
+  /** EXP-033 / AIV-02 — set-wide, batched, PER-CARD AI content check.
+   *  Distinct from {@link aiValidate} (per-lesson, aggregate shape): this
+   *  flattens the set's cards, sends them in batches of 10 to the user's
+   *  configured provider, and returns a card-keyed result + the provider
+   *  response ids (for the AIV-09 signature).
+   *
+   *  Dexie mode runs the batches browser-direct (resolving the key from
+   *  IndexedDB) and reports per-batch progress via ``onProgress``. API mode
+   *  has no client-side key and EXP-033 ships no server route, so the API
+   *  implementation throws — callers gate the trigger to Dexie mode + a
+   *  configured key. */
+  aiValidateCards(input: AiValidateCardsInput): Promise<AiValidateCardsResult>;
+  /** EXP-033 / AIV-04 — read the cached AI content-check report for a set,
+   *  or null when none exists. Dexie reads IndexedDB; API mode returns
+   *  null (the check runs client-side only). */
+  getAiValidationCache(
+    source: string,
+    setId: string,
+  ): Promise<AiValidationCacheRecord | null>;
+  /** EXP-033 / AIV-04 — persist a report so it can be re-shown without a
+   *  new API call. Dexie writes IndexedDB; API mode is a no-op. */
+  saveAiValidationCache(record: AiValidationCacheRecord): Promise<void>;
+}
+
+/** A cached set-wide AI content-check report (EXP-033 / AIV-04). */
+export interface AiValidationCacheRecord {
+  source: string;
+  set_id: string;
+  /** The set's ``cached_version`` when the check ran (invalidation). */
+  set_version: string | null;
+  /** AIV-09 content hash of the checked cards (null until AIV-08/09). */
+  content_hash: string | null;
+  results: import("../../lib/ai/content-validator").ValidationResult[];
+  response_ids: string[];
+  provider: string;
+  model: string;
+  card_count: number;
+  issue_count: number;
+  /** ISO timestamp the check completed. */
+  checked_at: string;
+  /** EXP-033 / AIV-09 signature, or null for pre-signature caches. */
+  signature?: import("../../lib/ai/validation-signature").AiValidationSignature | null;
+}
+
+/** Input for the EXP-033 set-wide per-card AI check (AIV-02). */
+export interface AiValidateCardsInput {
+  /** Resolves the AI provider + key (IndexedDB settings, Dexie only). */
+  user_id: string;
+  source_language: string;
+  target_language: string;
+  level: string;
+  /** Flattened cards to check (caller flattens across the set's lessons
+   *  and applies the 500-card cap). Each item needs at least
+   *  ``{id, front, back}``; ``notes`` is optional. */
+  cards: import("../../lib/ai/content-validator").ValidationCard[];
+  /** Per-batch progress callback (Dexie, client-side). */
+  onProgress?: (progress: { current: number; total: number }) => void;
+  /** Abort the run mid-batch. */
+  signal?: AbortSignal;
+}
+
+/** Result of the EXP-033 set-wide per-card AI check (AIV-02). */
+export interface AiValidateCardsResult {
+  results: import("../../lib/ai/content-validator").ValidationResult[];
+  /** Provider response ids, gathered across batches (AIV-09 signature). */
+  response_ids: string[];
+  /** Provider slug ("openai" | "anthropic" | "gemini"). */
+  provider: string;
+  /** Effective model used. */
+  model: string;
+  checked_cards: number;
+  issue_count: number;
 }
 
 /** Input for the opt-in AI content validation (Phase 60). */

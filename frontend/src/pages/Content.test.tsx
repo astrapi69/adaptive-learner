@@ -39,6 +39,7 @@ vi.mock("../lib/content/recommended-repos", async (orig) => ({
 }));
 
 vi.mock("../storage", () => ({
+  resolveStorageMode: () => "api",
   getStorage: () => ({
     contentLoader: {
       listSets: listSetsMock,
@@ -47,6 +48,9 @@ vi.mock("../storage", () => ({
       getLesson: getLessonMock,
       deleteSet: deleteSetMock,
       aiValidate: aiValidateMock,
+      aiValidateCards: vi.fn(),
+      getAiValidationCache: vi.fn(async () => null),
+      saveAiValidationCache: vi.fn(async () => undefined),
     },
     // ShareWizard reads the GitHub token status on mount to pick the
     // automated-PR vs URL-fallback path. No token here, so these tests

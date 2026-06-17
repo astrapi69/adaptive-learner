@@ -352,6 +352,7 @@ review:
   page_title: "復習"
   session_title: "復習セッション"
   subtitle: "復習する要素: {n} 件"
+  subtitle_capped: "復習する要素: {due} 件中 {shown} 件"
   loading: "復習セッションを読み込み中…"
   empty_body: "すべて完了！このセットに復習する要素はありません。"
   not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いてください。"
@@ -767,6 +768,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: ビルド
   build_date_label: ビルド日
+  check_update: "更新を確認"
+  checking: "確認中…"
+  update_available: "バージョン {version} が利用可能です！"
+  up_to_date: "最新バージョンを使用しています。"
+  check_failed: "確認に失敗しました。オンラインですか？"
+  last_checked: "前回の確認: {when}"
+  never_checked: "未確認"
+  update_now: "今すぐ更新"
   system_heading: システム
   storage_label: ストレージ
   storage_api: サーバー (FastAPI + SQLite)
@@ -1488,6 +1497,8 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする"
 lesson:
+  resources_title: "さらに学ぶ"
+  resources_domain: "{domain} についてもっと見る"
   motivation:
     halftime: "折り返し地点です — その調子！"
     last: "最後の問題です — 力強くフィニッシュ！"
@@ -1881,6 +1892,35 @@ content:
     applied: 適用済み
     fix_applied: 提案を適用しました。
     fix_failed: 提案を適用できませんでした。
+  ai_check:
+    badge:
+      verified: "AI確認済み"
+      stale: "AI確認が古い"
+      invalid: "AI確認が無効"
+    last_checked: "最終確認: {when}"
+    recheck: "再確認"
+    export:
+      button: "レポートをMarkdownで書き出す"
+      lesson: "レッスン"
+      card: "カード"
+      field: "フィールド"
+    button: "AIで確認"
+    title: "AIコンテンツ確認"
+    loading: "カードを準備しています..."
+    cost_estimate: "約{cards}枚のカード、約{tokens}トークン、約{usd}。"
+    privacy: "学習カードは確認のため設定済みのAIプロバイダーに送信されます。個人情報は送信されません。"
+    confirm: "確認する"
+    progress: "{total}件中{current}件目のバッチを確認中..."
+    rate_limited: "次の確認を実行する前に少しお待ちください。"
+    failed: "AI確認は利用できません。"
+    unavailable_mode: "ブラウザ保存モードでのみ利用できます。"
+    report:
+      summary: "{lessons}レッスンで{cards}枚のカードを確認しました"
+      ok: "{count}枚のカードはOK"
+      issues: "{count}枚のカードに問題あり"
+      all_ok: "すべてのカードが合格しました。問題は見つかりませんでした。"
+      problem: "問題"
+      suggestion: "提案"
   placement:
     lands_under: あなたのレッスンの配置先
     duplicate: '類似のレッスンが既に存在します: {title}。それでも共有しますか？'
@@ -2464,3 +2504,83 @@ favorites:
   remove: "お気に入りから削除"
   empty: "お気に入りはまだありません。レッスンの星をタップして保存しましょう。"
   save_prompt: "このレッスンをお気に入りに保存"
+content_repo:
+  title: "コンテンツリポジトリ"
+  last_sync: "最終同期: {when}"
+  added: "リポジトリを追加しました。"
+  synced: "同期しました: {sets} セット、{lessons} レッスン。"
+  token_hint: "プライベートリポジトリにはトークンが必要です。下に貼り付けるか、設定 → 連携で共有トークンを設定してください。"
+  trust_official: "公式: プロジェクトチームが厳選し、品質を保証したコンテンツ。"
+  trust_verified: "検証済み: コミュニティから提供され、チームが確認したコンテンツ。"
+  trust_validated: "検証通過: 技術的に正しい。内容は個別には確認されていません。"
+  official:
+    title: "公式コンテンツ"
+    counts: "{sets} セット · {lessons} レッスン"
+  user:
+    list_title: "あなたのコンテンツリポジトリ"
+    empty: "接続されたリポジトリはありません。下から追加してください。"
+    counts: "{sets} セット · {lessons} レッスン"
+  recommended:
+    title: "おすすめのリポジトリ"
+  add:
+    title: "リポジトリを追加"
+  add_link:
+    title: "このコンテンツリポジトリを追加しますか？"
+    body: "Adaptive Learner にコンテンツリポジトリを追加するよう招待されました。"
+    invalid: "この招待リンクには有効なリポジトリが含まれていません。"
+  field:
+    url: "GitHub リポジトリ URL"
+    branch: "ブランチ"
+    token: "トークン（プライベートリポジトリ、任意）"
+  action:
+    add: "リポジトリを追加"
+    cancel: "キャンセル"
+    confirm_remove: "削除を確認"
+    connect: "リポジトリを接続"
+    move_down: "下へ移動"
+    move_up: "上へ移動"
+    remove: "削除"
+    share: "共有"
+    sync: "今すぐ同期"
+  badge:
+    coach: "コーチ"
+    official: "公式"
+  trust:
+    dropped: "同期しましたが検証に失敗しました。このリポジトリは未検証としてマークされました。"
+    recommended: "公式におすすめ"
+    unknown: "未検証"
+    validated: "検証済み"
+  status:
+    never_synced: "まだ同期されていません"
+  rating:
+    aria: "あなたの評価"
+    label: "あなたの評価"
+    star: "5 段階中 {n} を評価"
+  share:
+    copied: "リンクをコピーしました。"
+    copy: "コピー"
+    copy_failed: "コピーできませんでした。"
+    hint: "このリンクを共有すると、他の人がこの公開リポジトリを追加できます。プライベートリポジトリの場合は、URL と読み取り専用トークンを別々に送ってください。"
+    qr_alt: "共有リンクの QR コード"
+  progress:
+    validating: "リポジトリを検証中…"
+    manifest: "マニフェストを読み込み中…"
+    sets: "セットを読み込み中…"
+    lessons: "レッスンをキャッシュ中…"
+    validate: "コンテンツを確認中…"
+  error:
+    invalid_url: "有効な GitHub リポジトリ URL を入力してください（例: owner/repo）。"
+    save_failed: "リポジトリを追加できませんでした。"
+    sync_failed: "同期に失敗しました。もう一度お試しください。"
+  validation:
+    failed: "検証に失敗しました: {reason}"
+    passed: "検証に成功しました: {sets} セット、{lessons} レッスン。"
+resource:
+  type_youtube: "動画"
+  type_podcast: "ポッドキャスト"
+  type_article: "記事"
+  type_book: "書籍"
+  type_course: "コース"
+  type_website: "ウェブサイト"
+  free: "無料"
+  paid: "コース"

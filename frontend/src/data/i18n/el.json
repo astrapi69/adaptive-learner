@@ -376,6 +376,7 @@
     "page_title": "Επανάληψη",
     "session_title": "Συνεδρία επανάληψης",
     "subtitle": "{n} στοιχείο(α) προς επανάληψη",
+    "subtitle_capped": "{shown} από {due} στοιχείο(α) προς επανάληψη",
     "loading": "Φόρτωση συνεδρίας επανάληψης…",
     "empty_body": "Όλα έτοιμα! Δεν υπάρχουν στοιχεία προς επανάληψη σε αυτό το σύνολο.",
     "not_cached_body": "Αυτό το σύνολο δεν έχει ληφθεί ακόμα. Άνοιξε πρώτα τον περιηγητή περιεχομένου.",
@@ -824,6 +825,14 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "Build",
     "build_date_label": "Ημερομηνία build",
+    "check_update": "Έλεγχος για ενημερώσεις",
+    "checking": "Έλεγχος…",
+    "update_available": "Η έκδοση {version} είναι διαθέσιμη!",
+    "up_to_date": "Χρησιμοποιείτε την πιο πρόσφατη έκδοση.",
+    "check_failed": "Ο έλεγχος απέτυχε. Είστε συνδεδεμένοι;",
+    "last_checked": "Τελευταίος έλεγχος: {when}",
+    "never_checked": "Δεν έχει ελεγχθεί ποτέ",
+    "update_now": "Ενημέρωση τώρα",
     "system_heading": "Σύστημα",
     "storage_label": "Αποθήκευση",
     "storage_api": "Διακομιστής (FastAPI + SQLite)",
@@ -1603,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Εμβάθυνε στο θέμα",
+    "resources_domain": "Περισσότερα για {domain}",
     "motivation": {
       "halftime": "Στα μισά — συνέχισε!",
       "last": "Η τελευταία — τελείωσέ το δυνατά!"
@@ -2043,6 +2054,39 @@
       "applied": "εφαρμόστηκε",
       "fix_applied": "Η πρόταση εφαρμόστηκε.",
       "fix_failed": "Δεν ήταν δυνατή η εφαρμογή της πρότασης."
+    },
+    "ai_check": {
+      "badge": {
+        "verified": "Elegmeno me TN",
+        "stale": "Elegxos TN xronismenos",
+        "invalid": "MI egkuros elegxos TN"
+      },
+      "last_checked": "Teleutaios elegxos: {when}",
+      "recheck": "Epanelegxos",
+      "export": {
+        "button": "Exagwgi anaforas se Markdown",
+        "lesson": "Ma8Ima",
+        "card": "Karta",
+        "field": "Pedio"
+      },
+      "button": "Elegxos me TN",
+      "title": "Elegxos periexomenou me TN",
+      "loading": "Proetoimasia kartwn...",
+      "cost_estimate": "~{cards} kartes, ~{tokens} tokens, ~{usd}.",
+      "privacy": "Oi kartes sas tha staloun ston ru8mismeno paroxo TN gia elegxo. Den metaferontai proswpika dedomena.",
+      "confirm": "Elegxos",
+      "progress": "Elegxos partidas {current} apo {total}...",
+      "rate_limited": "Parakalw perimenete ligo prin ekteleste neo elegxo.",
+      "failed": "O elegxos me TN den einai diatesimos.",
+      "unavailable_mode": "Diatesimo mono se leitourgia apo8ikeusis programmatos periIgIsIs.",
+      "report": {
+        "summary": "Elegx8Ikan {cards} kartes se {lessons} ma8Imata",
+        "ok": "{count} kartes entaxei",
+        "issues": "{count} kartes me provlImata",
+        "all_ok": "Oles oi kartes pernoun. Den vre8Ikan provlImata.",
+        "problem": "ProvlIma",
+        "suggestion": "Protasi"
+      }
     },
     "placement": {
       "lands_under": "Το μάθημά σου θα μπει στο",
@@ -2681,5 +2725,102 @@
     "remove": "Αφαίρεση από τα αγαπημένα",
     "empty": "Δεν υπάρχουν αγαπημένα ακόμα — πάτησε το αστέρι σε ένα μάθημα.",
     "save_prompt": "Αποθήκευση αυτού του μαθήματος στα αγαπημένα"
+  },
+  "content_repo": {
+    "title": "Αποθετήρια περιεχομένου",
+    "last_sync": "Τελευταίος συγχρονισμός: {when}",
+    "added": "Το αποθετήριο προστέθηκε.",
+    "synced": "Συγχρονίστηκε: {sets} σύνολα, {lessons} μαθήματα.",
+    "token_hint": "Τα ιδιωτικά αποθετήρια χρειάζονται διακριτικό — επικόλλησε ένα παρακάτω ή όρισε ένα κοινό διακριτικό στις Ρυθμίσεις → Ενσωματώσεις.",
+    "trust_official": "Επίσημο: περιεχόμενο επιμελημένο και ποιοτικά ελεγμένο από την ομάδα του έργου.",
+    "trust_verified": "Επαληθευμένο: συνεισφορά της κοινότητας, ελεγμένο από την ομάδα.",
+    "trust_validated": "Επικυρωμένο: τεχνικά σωστό· το περιεχόμενο δεν έχει ελεγχθεί μεμονωμένα.",
+    "official": {
+      "title": "Επίσημο περιεχόμενο",
+      "counts": "{sets} σύνολα · {lessons} μαθήματα"
+    },
+    "user": {
+      "list_title": "Τα αποθετήρια περιεχομένου σου",
+      "empty": "Δεν υπάρχουν συνδεδεμένα αποθετήρια. Πρόσθεσε ένα παρακάτω.",
+      "counts": "{sets} σύνολα · {lessons} μαθήματα"
+    },
+    "recommended": {
+      "title": "Προτεινόμενα αποθετήρια"
+    },
+    "add": {
+      "title": "Προσθήκη αποθετηρίου"
+    },
+    "add_link": {
+      "title": "Προσθήκη αυτού του αποθετηρίου περιεχομένου;",
+      "body": "Προσκλήθηκες να προσθέσεις ένα αποθετήριο περιεχομένου στο Adaptive Learner.",
+      "invalid": "Αυτός ο σύνδεσμος πρόσκλησης δεν περιέχει έγκυρο αποθετήριο."
+    },
+    "field": {
+      "url": "URL αποθετηρίου GitHub",
+      "branch": "Κλάδος",
+      "token": "Διακριτικό (ιδιωτικά αποθετήρια, προαιρετικό)"
+    },
+    "action": {
+      "add": "Προσθήκη αποθετηρίου",
+      "cancel": "Άκυρο",
+      "confirm_remove": "Επιβεβαίωση αφαίρεσης",
+      "connect": "Σύνδεση αποθετηρίου",
+      "move_down": "Μετακίνηση κάτω",
+      "move_up": "Μετακίνηση πάνω",
+      "remove": "Αφαίρεση",
+      "share": "Κοινοποίηση",
+      "sync": "Συγχρονισμός τώρα"
+    },
+    "badge": {
+      "coach": "Προπονητής",
+      "official": "Επίσημο"
+    },
+    "trust": {
+      "dropped": "Συγχρονίστηκε, αλλά η επικύρωση απέτυχε — αυτό το αποθετήριο επισημαίνεται πλέον ως μη επαληθευμένο.",
+      "recommended": "Επίσημα προτεινόμενο",
+      "unknown": "Μη επαληθευμένο",
+      "validated": "Επαληθευμένο"
+    },
+    "status": {
+      "never_synced": "Δεν έχει συγχρονιστεί ακόμα"
+    },
+    "rating": {
+      "aria": "Η βαθμολογία σου",
+      "label": "Η βαθμολογία σου",
+      "star": "Βαθμολόγηση {n} από 5"
+    },
+    "share": {
+      "copied": "Ο σύνδεσμος αντιγράφηκε.",
+      "copy": "Αντιγραφή",
+      "copy_failed": "Δεν ήταν δυνατή η αντιγραφή.",
+      "hint": "Κοινοποίησε αυτόν τον σύνδεσμο ώστε άλλοι να προσθέσουν αυτό το ΔΗΜΟΣΙΟ αποθετήριο. Για ιδιωτικό αποθετήριο, στείλε το URL και ένα διακριτικό μόνο για ανάγνωση ξεχωριστά.",
+      "qr_alt": "Κωδικός QR για τον σύνδεσμο κοινοποίησης"
+    },
+    "progress": {
+      "validating": "Επικύρωση αποθετηρίου…",
+      "manifest": "Φόρτωση μανιφέστου…",
+      "sets": "Φόρτωση συνόλων…",
+      "lessons": "Προσωρινή αποθήκευση μαθημάτων…",
+      "validate": "Επαλήθευση περιεχομένου…"
+    },
+    "error": {
+      "invalid_url": "Εισήγαγε ένα έγκυρο URL αποθετηρίου GitHub (π.χ. owner/repo).",
+      "save_failed": "Δεν ήταν δυνατή η προσθήκη του αποθετηρίου.",
+      "sync_failed": "Ο συγχρονισμός απέτυχε. Δοκίμασε ξανά."
+    },
+    "validation": {
+      "failed": "Η επικύρωση απέτυχε: {reason}",
+      "passed": "Η επικύρωση πέτυχε: {sets} σύνολα, {lessons} μαθήματα."
+    }
+  },
+  "resource": {
+    "type_youtube": "Βίντεο",
+    "type_podcast": "Podcast",
+    "type_article": "Άρθρα",
+    "type_book": "Βιβλία",
+    "type_course": "Μαθήματα",
+    "type_website": "Ιστότοποι",
+    "free": "Δωρεάν",
+    "paid": "Μάθημα"
   }
 }

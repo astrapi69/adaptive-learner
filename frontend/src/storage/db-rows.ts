@@ -644,6 +644,33 @@ export interface PluginSettingsRow {
     updated_at: string;
 }
 
+/** EXP-033 / AIV-04 — a cached set-wide AI content-check report.
+ *  One row per ``{source-slug}#{set_id}``; overwritten on each re-check.
+ *  ``set_version`` is the set's ``cached_version`` at check time — the
+ *  cache is treated as stale when the current download differs. */
+export interface AiValidationResultRow {
+    /** ``{source-slug}#{set_id}``. Primary key. */
+    id: string;
+    source: string;
+    set_id: string;
+    /** The set's ``cached_version`` when the check ran (invalidation). */
+    set_version: string | null;
+    /** AIV-09 content hash of the checked cards (set in AIV-08/09). */
+    content_hash: string | null;
+    /** Per-card results (only cards the model returned). */
+    results: import("../lib/ai/content-validator").ValidationResult[];
+    /** Provider response ids (AIV-09 signature). */
+    response_ids: string[];
+    provider: string;
+    model: string;
+    card_count: number;
+    issue_count: number;
+    /** ISO timestamp the check completed. */
+    checked_at: string;
+    /** AIV-09 signature, or null for pre-signature caches. */
+    signature: import("../lib/ai/validation-signature").AiValidationSignature | null;
+}
+
 /** EXP-010 / Phase 56 — a daily mission assigned to a user.
  *  Mirrors the backend ``UserMission`` model + the sync surface.
  *  ``assigned_date`` is a ``YYYY-MM-DD`` string. */

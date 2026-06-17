@@ -352,6 +352,7 @@ review:
   page_title: "Review"
   session_title: "Review session"
   subtitle: "Reviewing {n} element(s) due for SRS"
+  subtitle_capped: "Reviewing {shown} of {due} elements due for SRS"
   loading: "Loading review session…"
   empty_body: "All caught up! No elements due for review in this set."
   not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
@@ -767,6 +768,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Build
   build_date_label: Build date
+  check_update: "Check for updates"
+  checking: "Checking…"
+  update_available: "Version {version} is available!"
+  up_to_date: "You're using the latest version."
+  check_failed: "Check failed. Are you online?"
+  last_checked: "Last checked: {when}"
+  never_checked: "Never checked"
+  update_now: "Update now"
   system_heading: System
   storage_label: Storage
   storage_api: Server (FastAPI + SQLite)
@@ -1499,6 +1508,8 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  resources_title: "Explore further"
+  resources_domain: "More on {domain}"
   motivation:
     halftime: "Halfway there — keep going!"
     last: "Last one — finish strong!"
@@ -1892,6 +1903,35 @@ content:
     applied: applied
     fix_applied: Suggestion applied.
     fix_failed: Could not apply the suggestion.
+  ai_check:
+    badge:
+      verified: "AI-checked"
+      stale: "AI-check outdated"
+      invalid: "AI-check invalid"
+    last_checked: "Last check: {when}"
+    recheck: "Re-check"
+    export:
+      button: "Export report as Markdown"
+      lesson: "Lesson"
+      card: "Card"
+      field: "Field"
+    button: "Check with AI"
+    title: "AI content check"
+    loading: "Preparing cards..."
+    cost_estimate: "~{cards} cards, ~{tokens} tokens, ~{usd}."
+    privacy: "Your lesson cards will be sent to your configured AI provider for review. No personal data is transmitted."
+    confirm: "Check"
+    progress: "Checking batch {current} of {total}..."
+    rate_limited: "Please wait a moment before running another check."
+    failed: "AI check unavailable."
+    unavailable_mode: "Available in browser-storage mode only."
+    report:
+      summary: "Checked {cards} cards in {lessons} lessons"
+      ok: "{count} cards OK"
+      issues: "{count} cards with issues"
+      all_ok: "All cards passed. No issues found."
+      problem: "Problem"
+      suggestion: "Suggestion"
   placement:
     lands_under: Your lesson lands under
     duplicate: 'A similar lesson already exists: {title}. Share anyway?'
@@ -2474,3 +2514,83 @@ favorites:
   remove: "Remove from favorites"
   empty: "No favorites yet — tap the star on a lesson to save it."
   save_prompt: "Save this lesson to your favorites"
+content_repo:
+  title: "Content repositories"
+  last_sync: "Last sync: {when}"
+  added: "Repository added."
+  synced: "Synced: {sets} sets, {lessons} lessons."
+  token_hint: "Private repositories need a token — paste one below, or set a shared token in Settings → Integrations."
+  trust_official: "Official: Curated and quality-assured by the project team."
+  trust_verified: "Verified: Contributed by the community and reviewed by the team."
+  trust_validated: "Validated: Technically correct; content not individually reviewed."
+  official:
+    title: "Official content"
+    counts: "{sets} sets · {lessons} lessons"
+  user:
+    list_title: "Your content repositories"
+    empty: "No repositories connected. Add one below."
+    counts: "{sets} sets · {lessons} lessons"
+  recommended:
+    title: "Recommended repositories"
+  add:
+    title: "Add a repository"
+  add_link:
+    title: "Add this content repository?"
+    body: "You were invited to add a content repository to Adaptive Learner."
+    invalid: "This invite link does not contain a valid repository."
+  field:
+    url: "GitHub repository URL"
+    branch: "Branch"
+    token: "Token (private repos, optional)"
+  action:
+    add: "Add repository"
+    cancel: "Cancel"
+    confirm_remove: "Confirm remove"
+    connect: "Connect repository"
+    move_down: "Move down"
+    move_up: "Move up"
+    remove: "Remove"
+    share: "Share"
+    sync: "Sync now"
+  badge:
+    coach: "Coach"
+    official: "Official"
+  trust:
+    dropped: "Synced, but validation failed — this repository is now marked Unverified."
+    recommended: "Officially recommended"
+    unknown: "Unverified"
+    validated: "Validated"
+  status:
+    never_synced: "Not synced yet"
+  rating:
+    aria: "Your rating"
+    label: "Your rating"
+    star: "Rate {n} of 5"
+  share:
+    copied: "Link copied."
+    copy: "Copy"
+    copy_failed: "Could not copy."
+    hint: "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately."
+    qr_alt: "QR code for the share link"
+  progress:
+    validating: "Validating repository…"
+    manifest: "Loading manifest…"
+    sets: "Loading sets…"
+    lessons: "Caching lessons…"
+    validate: "Verifying content…"
+  error:
+    invalid_url: "Enter a valid GitHub repository URL (e.g. owner/repo)."
+    save_failed: "Could not add the repository."
+    sync_failed: "Sync failed. Try again."
+  validation:
+    failed: "Validation failed: {reason}"
+    passed: "Validation passed: {sets} sets, {lessons} lessons."
+resource:
+  type_youtube: "Videos"
+  type_podcast: "Podcasts"
+  type_article: "Articles"
+  type_book: "Books"
+  type_course: "Courses"
+  type_website: "Websites"
+  free: "Free"
+  paid: "Course"

@@ -84,6 +84,17 @@ describe("ClozeExercise: render (type mode default)", () => {
         expect(screen.getByTestId("cloze-input-1")).toBeInTheDocument();
     });
 
+    it("#692 auto-focuses the FIRST blank on mount", () => {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        expect(screen.getByTestId("cloze-input-0")).toHaveFocus();
+        expect(screen.getByTestId("cloze-input-1")).not.toHaveFocus();
+    });
+
+    it("#692 does not auto-focus a select-mode blank", () => {
+        render(<ClozeExercise exercise={SELECT_MODE} onComplete={vi.fn()} />);
+        expect(screen.getByTestId("cloze-select-0")).not.toHaveFocus();
+    });
+
     it("applies the monospace code class in code mode (schema v1.3)", () => {
         render(
             <ClozeExercise

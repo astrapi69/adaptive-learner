@@ -28,7 +28,7 @@
 
 import {Check, X} from "lucide-react";
 import type {KeyboardEvent, Ref} from "react";
-import {forwardRef, useMemo, useRef, useState} from "react";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import ExerciseHint from "./ExerciseHint";
@@ -542,6 +542,21 @@ function ClozeExercise(
         event.preventDefault();
         next.focus();
     };
+
+    // #692 — auto-focus the FIRST blank on mount (type mode only) so the
+    // learner can type immediately without a click. The dispatcher keys
+    // each step by id, so the renderer remounts per step and this fires on
+    // every step change (regular lesson, review, error-replay). Skipped
+    // for a reviewed (read-only) revisit and for select mode (a dropdown,
+    // not a text field). Mobile keyboard opening is the desired behaviour.
+    useEffect(() => {
+        if (submitted || mode !== "type") return;
+        sectionRef.current
+            ?.querySelector<HTMLElement>('[data-testid="cloze-input-0"]')
+            ?.focus();
+        // Mount-only: the component remounts per step (keyed by step id).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     if (sentence === "" || blanks.length === 0) {
         return (

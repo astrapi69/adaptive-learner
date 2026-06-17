@@ -376,6 +376,7 @@
     "page_title": "Révision",
     "session_title": "Session de révision",
     "subtitle": "{n} élément(s) à réviser",
+    "subtitle_capped": "{shown} sur {due} élément(s) à réviser",
     "loading": "Chargement de la session de révision…",
     "empty_body": "Tout est à jour ! Aucun élément à réviser dans cet ensemble.",
     "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre l'explorateur de contenu d'abord.",
@@ -824,6 +825,14 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "Build",
     "build_date_label": "Date de build",
+    "check_update": "Rechercher des mises à jour",
+    "checking": "Vérification…",
+    "update_available": "La version {version} est disponible !",
+    "up_to_date": "Vous utilisez la dernière version.",
+    "check_failed": "Échec de la vérification. Êtes-vous en ligne ?",
+    "last_checked": "Dernière vérification : {when}",
+    "never_checked": "Jamais vérifié",
+    "update_now": "Mettre à jour maintenant",
     "system_heading": "Système",
     "storage_label": "Stockage",
     "storage_api": "Serveur (FastAPI + SQLite)",
@@ -1603,6 +1612,8 @@
     }
   },
   "lesson": {
+    "resources_title": "Approfondir le sujet",
+    "resources_domain": "Plus sur {domain}",
     "motivation": {
       "halftime": "À mi-chemin — continue !",
       "last": "La dernière — termine en beauté !"
@@ -2043,6 +2054,39 @@
       "applied": "appliqué",
       "fix_applied": "Suggestion appliquée.",
       "fix_failed": "Impossible d'appliquer la suggestion."
+    },
+    "ai_check": {
+      "badge": {
+        "verified": "Verifie par IA",
+        "stale": "Verification IA obsolete",
+        "invalid": "Verification IA invalide"
+      },
+      "last_checked": "Derniere verification : {when}",
+      "recheck": "Reverifier",
+      "export": {
+        "button": "Exporter le rapport en Markdown",
+        "lesson": "Lecon",
+        "card": "Carte",
+        "field": "Champ"
+      },
+      "button": "Verifier avec l'IA",
+      "title": "Verification du contenu par l'IA",
+      "loading": "Preparation des cartes...",
+      "cost_estimate": "~{cards} cartes, ~{tokens} tokens, ~{usd}.",
+      "privacy": "Vos cartes seront envoyees a votre fournisseur d'IA configure pour verification. Aucune donnee personnelle n'est transmise.",
+      "confirm": "Verifier",
+      "progress": "Verification du lot {current} sur {total}...",
+      "rate_limited": "Veuillez patienter avant de lancer une autre verification.",
+      "failed": "Verification par l'IA indisponible.",
+      "unavailable_mode": "Disponible uniquement en mode stockage navigateur.",
+      "report": {
+        "summary": "{cards} cartes verifiees dans {lessons} lecons",
+        "ok": "{count} cartes correctes",
+        "issues": "{count} cartes avec problemes",
+        "all_ok": "Toutes les cartes sont valides. Aucun probleme trouve.",
+        "problem": "Probleme",
+        "suggestion": "Suggestion"
+      }
     },
     "placement": {
       "lands_under": "Votre leçon sera classée sous",
@@ -2681,5 +2725,102 @@
     "remove": "Retirer des favoris",
     "empty": "Aucun favori pour l'instant — touchez l'étoile d'une leçon.",
     "save_prompt": "Enregistrer cette leçon dans vos favoris"
+  },
+  "content_repo": {
+    "title": "Dépôts de contenu",
+    "last_sync": "Dernière synchronisation : {when}",
+    "added": "Dépôt ajouté.",
+    "synced": "Synchronisé : {sets} ensembles, {lessons} leçons.",
+    "token_hint": "Les dépôts privés nécessitent un jeton — collez-en un ci-dessous ou définissez un jeton partagé dans Réglages → Intégrations.",
+    "trust_official": "Officiel : contenu sélectionné et dont la qualité est garantie par l'équipe du projet.",
+    "trust_verified": "Vérifié : proposé par la communauté et relu par l'équipe.",
+    "trust_validated": "Validé : techniquement correct ; contenu non vérifié individuellement.",
+    "official": {
+      "title": "Contenu officiel",
+      "counts": "{sets} ensembles · {lessons} leçons"
+    },
+    "user": {
+      "list_title": "Vos dépôts de contenu",
+      "empty": "Aucun dépôt connecté. Ajoutez-en un ci-dessous.",
+      "counts": "{sets} ensembles · {lessons} leçons"
+    },
+    "recommended": {
+      "title": "Dépôts recommandés"
+    },
+    "add": {
+      "title": "Ajouter un dépôt"
+    },
+    "add_link": {
+      "title": "Ajouter ce dépôt de contenu ?",
+      "body": "Vous avez été invité à ajouter un dépôt de contenu à Adaptive Learner.",
+      "invalid": "Ce lien d'invitation ne contient pas de dépôt valide."
+    },
+    "field": {
+      "url": "URL du dépôt GitHub",
+      "branch": "Branche",
+      "token": "Jeton (dépôts privés, facultatif)"
+    },
+    "action": {
+      "add": "Ajouter le dépôt",
+      "cancel": "Annuler",
+      "confirm_remove": "Confirmer la suppression",
+      "connect": "Connecter le dépôt",
+      "move_down": "Descendre",
+      "move_up": "Monter",
+      "remove": "Supprimer",
+      "share": "Partager",
+      "sync": "Synchroniser maintenant"
+    },
+    "badge": {
+      "coach": "Coach",
+      "official": "Officiel"
+    },
+    "trust": {
+      "dropped": "Synchronisé, mais la validation a échoué — ce dépôt est désormais marqué comme non vérifié.",
+      "recommended": "Recommandé officiellement",
+      "unknown": "Non vérifié",
+      "validated": "Validé"
+    },
+    "status": {
+      "never_synced": "Pas encore synchronisé"
+    },
+    "rating": {
+      "aria": "Votre évaluation",
+      "label": "Votre évaluation",
+      "star": "Noter {n} sur 5"
+    },
+    "share": {
+      "copied": "Lien copié.",
+      "copy": "Copier",
+      "copy_failed": "Copie impossible.",
+      "hint": "Partagez ce lien pour que d'autres puissent ajouter ce dépôt PUBLIC. Pour un dépôt privé, envoyez l'URL et un jeton en lecture seule séparément.",
+      "qr_alt": "QR code du lien de partage"
+    },
+    "progress": {
+      "validating": "Validation du dépôt…",
+      "manifest": "Chargement du manifeste…",
+      "sets": "Chargement des ensembles…",
+      "lessons": "Mise en cache des leçons…",
+      "validate": "Vérification du contenu…"
+    },
+    "error": {
+      "invalid_url": "Saisissez une URL de dépôt GitHub valide (p. ex. owner/repo).",
+      "save_failed": "Impossible d'ajouter le dépôt.",
+      "sync_failed": "La synchronisation a échoué. Réessayez."
+    },
+    "validation": {
+      "failed": "La validation a échoué : {reason}",
+      "passed": "Validation réussie : {sets} ensembles, {lessons} leçons."
+    }
+  },
+  "resource": {
+    "type_youtube": "Vidéos",
+    "type_podcast": "Podcasts",
+    "type_article": "Articles",
+    "type_book": "Livres",
+    "type_course": "Cours",
+    "type_website": "Sites web",
+    "free": "Gratuit",
+    "paid": "Cours"
   }
 }

@@ -74,8 +74,8 @@ export default function ReviewPage() {
     const {
         status,
         lesson,
-        queue,
         currentStepIndex,
+        dueCount,
         error,
         goNext,
         goPrev,
@@ -192,11 +192,23 @@ export default function ReviewPage() {
                     {t("review.back_to_dashboard", "Back to Dashboard")}
                 </button>
                 <h1>{lesson.title}</h1>
-                <p className="lesson-description">
-                    {t(
-                        "review.subtitle",
-                        "Reviewing {n} element(s) due for SRS",
-                    ).replace("{n}", String(queue.length))}
+                <p className="lesson-description" data-testid="review-subtitle">
+                    {/* #664 — the header MUST match the progress bar: both
+                        read the actually-presented step count, never the raw
+                        (pre-synthesis) queue length. When the cap or an
+                        unresolvable element trims the pool, show
+                        "{shown} of {due}" so the gap is transparent. */}
+                    {totalSteps < dueCount
+                        ? t(
+                              "review.subtitle_capped",
+                              "Reviewing {shown} of {due} elements due for SRS",
+                          )
+                              .replace("{shown}", String(totalSteps))
+                              .replace("{due}", String(dueCount))
+                        : t(
+                              "review.subtitle",
+                              "Reviewing {n} element(s) due for SRS",
+                          ).replace("{n}", String(totalSteps))}
                 </p>
             </header>
 
@@ -398,7 +410,10 @@ function ReviewExercise({
                 step={step}
                 setId={setId}
                 cards={cards}
-                lessonId={_extractLessonId(step.id)}
+                // #673 — prefer the explicit lesson_id the synthesizer stamps
+                // on the step; only fall back to the (lossy) step-id parser
+                // for steps produced before that field existed.
+                lessonId={step.review_lesson_id ?? _extractLessonId(step.id)}
                 onComplete={async (scored: ExerciseScored) => {
                     // Flip to the "Weiter" phase the moment the answer
                     // is graded, then record attempts.
@@ -410,12 +425,12 @@ function ReviewExercise({
     );
 }
 
-/** Parse the lesson_id back out of a synthesised step id
- *  produced by ``synthesizeReviewLesson`` —
- *  ``"review-{lesson_id}-{exercise_id}-{element_key}"``.
- *  The exercise_id + element_key are both slug-safe so the
- *  last two hyphen-separated tokens are unambiguous; the
- *  middle is the lesson_id. */
+/** LEGACY fallback (#673): recover the lesson_id from a synthesised step id
+ *  ``"review-{lesson_id}-{exercise_id}-{element_key}"`` by stripping the last
+ *  two hyphen tokens. This is LOSSY — real exercise_ids/element_keys contain
+ *  hyphens, so the result is wrong for almost all content. Prefer
+ *  ``step.review_lesson_id`` (stamped by ``synthesizeReviewLesson``); this is
+ *  only used for steps that predate that field. */
 function _extractLessonId(stepId: string): string {
     // Strip the "review-" prefix.
     if (!stepId.startsWith("review-")) return "";

@@ -21,9 +21,11 @@ import {
 } from "../../lib/content/content-tree";
 import { languageDisplayName } from "../../lib/content/language-names";
 import { booksForDomain, type BookRecommendations } from "../../lib/content/book-recommendations";
+import { mediaForDomain, type MediaResource } from "../../lib/content/media-loader";
 import type { ContentSetEntry } from "../../storage/types";
 import BookRecommendationsSection from "./BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
+import type { AiCheckBadgeStatus } from "../../shared/AiCheckedBadge";
 import FoldedUserLessons from "./FoldedUserLessons";
 
 /** Per-row state + actions forwarded down to {@link ContentSetRow}. */
@@ -34,6 +36,20 @@ export interface ContentSetRowActions {
   recommendedSources: Set<string>;
   onOpen: (entry: ContentSetEntry) => void;
   onDownload: (entry: ContentSetEntry) => void;
+  /** EXP-029 / MED-06 — all media resources (per-domain) for the
+   *  media-availability badges; defaults to none. */
+  media?: MediaResource[];
+  /** Open the set's first lesson focused on its media section
+   *  (badge click); defaults to {@link onOpen}. */
+  onOpenMedia?: (entry: ContentSetEntry) => void;
+  /** EXP-033 / AIV-02 — open the AI content-check dialog for a cached
+   *  set. Omit to hide the "Check with AI" button entirely. */
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  /** When set, the AI-check button is visible but disabled with this
+   *  tooltip reason (no key / browser-mode only). */
+  aiCheckDisabledReason?: string;
+  /** EXP-033 / AIV-11 — resolve the "AI-checked" badge status per set. */
+  aiBadgeStatusFor?: (entry: ContentSetEntry) => AiCheckBadgeStatus;
 }
 
 /** Actions + lookup for the user lessons folded into tree nodes
@@ -100,6 +116,11 @@ export default function ContentTree({
       recommendedSources={setRow.recommendedSources}
       onOpen={setRow.onOpen}
       onDownload={setRow.onDownload}
+      mediaResources={mediaForDomain(setRow.media ?? [], entry.domain)}
+      onOpenMedia={setRow.onOpenMedia}
+      onAiCheck={setRow.onAiCheck}
+      aiCheckDisabledReason={setRow.aiCheckDisabledReason}
+      aiBadgeStatus={setRow.aiBadgeStatusFor?.(entry) ?? "none"}
     />
   );
 

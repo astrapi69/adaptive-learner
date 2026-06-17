@@ -9,7 +9,30 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.85.0** (maintenance release -
+- **Current state:** **v1.86.0** (feature release -
+  **20 substantive commits**: **EXP-033 AI Content Validation** - set-wide AI
+  quality checks with a batched prompt + JSON parser (#676), a "Check with AI"
+  report UI (#683), an IndexedDB-cached report + Markdown export (#687), and a
+  content-hash + signature + "AI-Checked" badge (#691); **EXP-029 Media
+  Integration** - `media.yaml` parser with a reciprocity gate, a "Vertiefe das
+  Thema" lesson section, set media-availability badges, offline YouTube
+  thumbnails (#688); a Settings "Check for updates" button (#669); auto-focus in
+  Cloze + Free-Text inputs (#693). Fixes: P1 review-badge decrements after a
+  session (#675), P1 SRS review de-duplication (#665), P1 mobile hamburger
+  closes on iPhone (#667), repository-UI i18n in all 9 langs (#662), a Greek
+  i18n placeholder (#702), and the #689 CI-gate split (content-loader-dexie AI
+  concern extracted into `content-loader-dexie-ai.ts`, ContentPage cc
+  baselined, #704). Docs: Library-First audit (#695), Content-Repo Guide + trust
+  i18n (#670), the 32-EXP status audit (#677), roadmap/backlog restructure
+  (#681), EXP-032/033 design docs (#658/#671). No schema/API/data change.)
+  v1.85.0 = (P0 hotfix - the PWA "new version available" banner rebuilt:
+  bottom-anchored + AA-pinned `--bg-surface`/`--fg-primary` (desktop text was
+  invisible), `env(safe-area-inset-bottom)` padding + `z-[9999]` (the iPhone
+  Safari banner was unreachable), an accent update button, 44px touch targets,
+  regression-pinned (#653); complexity ratchet gate unblocked by baselining the
+  pre-existing FreeText/WordTiles cc-21 offenders (#656); no schema/API/data
+  change.)
+  v1.84.0 = (maintenance release -
   **4 substantive commits**: a **P1** content-repo import hardening (#645) -
   CORS-safe import, a retry policy, a progress indicator, and dialog
   accessibility; a **P2** fix so inline Markdown in exercise prompts and labels

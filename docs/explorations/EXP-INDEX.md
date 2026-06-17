@@ -1,7 +1,11 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-16
-**Anzahl EXPs:** 30
+**Stand:** 2026-06-17
+**Anzahl EXPs:** 32
+
+> Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
+> [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
+> (Stand 2026-06-17).
 
 ## Kategorisierung
 
@@ -45,8 +49,10 @@
 | 029 | Medien-Ressourcen mit Gegenseitigkeits-Prinzip | Vision    | B/C   | Mittel    | 023, 025, #141     |
 | 030 | Multi-User-Strategie (lokale Profile → Cloud)  | Querschnitt | gestuft | Mittel  | EXP-009, Sync      |
 | 031 | ZIP-Backup-Format (.alb) + Container/Manifest | Feature      | Zukunft | Mittel  | Backup, #642, 005  |
+| 032 | Inhaltliche Content-Validierung (Quality)    | Querschnitt  | gestuft | Hoch    | 013, 028, 030, 002 |
+| 033 | KI-gestützte Content-Validierung (AI Review) | Querschnitt  | gestuft | Mittel  | 032, 023, 028, 030 |
 
-## Umsetzungsstand (Stand v1.79.0)
+## Umsetzungsstand (Stand v1.85.0)
 
 Die Tabelle oben ist ein **Planungs**-Index (Kategorie / Phase / Priorität /
 Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
@@ -59,19 +65,29 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
   018 (Übungsrichtung), 020 (Flusssteuerung), 021 (Lektions-Creator),
   022 (visueller Lernpfad), 023 (Multi-Content-Repository A/B/C),
   024 (Layer-Audit Phase 1), **025 teilweise** (Buch-Begleiter: AUTH-01
-  Schema/Validator + AUTH-02 Rendering ausgeliefert; AUTH-03+ Cross-Repo
+  Schema/Validator + AUTH-02 Rendering ausgeliefert; AUTH-03..09 Cross-Repo
   zurückgestellt), **026 vollständig** (User-Lektionen im Content-Baum,
-  UGC-01..07).
-- **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests),
-  **028 teilweise** (User-Event-Recording: Ring Buffer + Sanitizer +
-  Fehler-Toast-Report ausgeliefert; Kategorie-Schicht + Persistenz +
-  proaktiver Settings-Einstieg EVT-01..05 zurückgestellt).
+  UGC-01..07), **027 teilweise** (Internationalisierung: I18N-02
+  Picker-Skalierung + I18N-03 Hindi-UI + I18N-11 Hindi-Content ausgeliefert;
+  RTL/weitere Sprachen I18N-01/04/05/06/07/09/10/12 offen),
+  **028 vollständig** (User-Event-Recording EVT-01..05, #566),
+  **029 vollständig** (Medien-Integration mit Gegenseitigkeits-Prinzip:
+  MED-01..07 ausgeliefert — `media.yaml`-Parser + Reziprozitäts-Gate,
+  Lektions-Medien-Sektion + `ResourceCard`, Set-Verfügbarkeits-Badges,
+  offline-fähige YouTube-Thumbnails, #678/#680/#684/#685/#688; MED-10
+  Partner-Onboarding-Doku offen).
+- **Teilweise (Code begonnen):** **033** (KI-gestützte Content-Validierung:
+  AIV-01..05 set-weite Batch-Prüfung + Report-UI + Kosten-Bestätigung,
+  AIV-08..11 Content-Hash + Signatur + "AI-Checked"-Badge ausgeliefert,
+  #674/#676/#686/#687/#690/#691; offen AIV-06 CI-Action `ai_review.py`,
+  AIV-07 Auto-Fix, AIV-12 Signatur-Invalidierung).
+- **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests).
+- **Design-Dokumente (noch kein Code):** 031 (.alb-ZIP-Backup, BAK-01..06),
+  032 (deterministische Content-Validierung, CQV-01..05) — beide Vorhaben,
+  0% umgesetzt.
 - **Zurückgestellt / Zukunft:** 004 (GitHub-Org), 009/011/012 (soziale Features —
   brauchen Cloud-Backend + Nutzerbasis), 014 (Community-Feedback — teilweise via
-  Community-Sharing), 015 (Kinder-Variante), 027 (Internationalisierungs-Strategie —
-  Sprach-Expansion, Vision-Dokument für nach v1.80.0), 029 (Medien-Ressourcen mit
-  Gegenseitigkeits-Prinzip — `media.yaml` analog `books.yaml` + Ökosystem-Partner;
-  Code additiv, Engpass ist die Partnergewinnung, MED-01..06 + MED-10),
+  Community-Sharing), 015 (Kinder-Variante),
   030 (Multi-User-Strategie — gestuft: Stufe 1 lokale Profile additiv ab Phase 2,
   Stufe 2 Geräte-Kopplung = Sync, Stufe 3 Cloud-Konten = EXP-009/Phase 4;
   MU-01..05 lokal, MU-20 Cloud).

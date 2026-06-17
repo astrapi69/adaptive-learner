@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.85.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.86.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -226,6 +226,20 @@ Full documentation (German default at `/docs/`, English at
 | Psychologie — Grundlagen | de | de | A1 | 106 |
 | Python — Grundlagen | de | de | A1 | 15 |
 <!-- CONTENT-STATS:END -->
+
+### Content repos
+
+The content system is open: beyond the bundled library, anyone can host
+their own **content repository** on GitHub, connect it in
+**Settings > Data > Content repositories**, and have it browsed (and
+optionally recommended) in the app. The official library and user repos
+share the exact same format, so a validating repo is a first-class
+content source.
+
+Want to create your own lessons? See the
+[Content-Repo Guide](docs/CONTENT-REPO-GUIDE.md) — what a content repo
+is, the directory layout, local validation, trust levels, and the
+ready-made [starter kit](https://github.com/astrapi69/adaptive-learner-content-test).
 
 ## Install
 

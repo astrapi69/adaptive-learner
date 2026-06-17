@@ -354,6 +354,7 @@ review:
   page_title: पुनरावलोकन
   session_title: पुनरावलोकन सत्र
   subtitle: Reviewing {n} element(s) due for SRS
+  subtitle_capped: "{due} में से {shown} तत्व दोहराने के लिए"
   loading: Loading review session…
   empty_body: All caught up! No elements due for review in this set.
   not_cached_body: This set isn't downloaded yet. Open the content browser to download it first.
@@ -768,6 +769,14 @@ about:
   app_label: अडैप्टिव लर्नर
   build_hash_label: बिल्ड
   build_date_label: बिल्ड दिनांक
+  check_update: "अपडेट जांचें"
+  checking: "जांच हो रही है…"
+  update_available: "संस्करण {version} उपलब्ध है!"
+  up_to_date: "आप नवीनतम संस्करण का उपयोग कर रहे हैं।"
+  check_failed: "जांच विफल। क्या आप ऑनलाइन हैं?"
+  last_checked: "पिछली जांच: {when}"
+  never_checked: "कभी जांच नहीं की गई"
+  update_now: "अभी अपडेट करें"
   system_heading: सिस्टम
   storage_label: भंडारण
   storage_api: Server (FastAPI + SQLite)
@@ -1484,6 +1493,8 @@ repo:
     description: Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client.
     enable_git: Enable git persistence
 lesson:
+  resources_title: "विषय को गहराई से जानें"
+  resources_domain: "{domain} के बारे में और जानें"
   motivation:
     halftime: "आधा हो गया — लगे रहो!"
     last: "आखिरी — दमदार अंत करो!"
@@ -1876,6 +1887,35 @@ content:
     applied: applied
     fix_applied: Suggestion applied.
     fix_failed: Could not apply the suggestion.
+  ai_check:
+    badge:
+      verified: "AI-janchaa gaya"
+      stale: "AI-jaanch puraani"
+      invalid: "AI-jaanch amaanya"
+    last_checked: "antim jaanch: {when}"
+    recheck: "phir se janchein"
+    export:
+      button: "report ko Markdown ke roop mein export karein"
+      lesson: "paath"
+      card: "card"
+      field: "field"
+    button: "AI se janchein"
+    title: "AI samagri jaanch"
+    loading: "card taiyaar kiye ja rahe hain..."
+    cost_estimate: "~{cards} card, ~{tokens} token, ~{usd}."
+    privacy: "aapke card jaanch ke liye aapke configure kiye gaye AI provider ko bheje jaayenge. koi vyaktigat data nahin bheja jaata."
+    confirm: "janchein"
+    progress: "{total} mein se batch {current} ki jaanch ho rahi hai..."
+    rate_limited: "doosri jaanch chalaane se pehle kripya thoda intezaar karein."
+    failed: "AI jaanch uplabdh nahin hai."
+    unavailable_mode: "keval browser-storage mode mein uplabdh."
+    report:
+      summary: "{lessons} paathon mein {cards} card janche gaye"
+      ok: "{count} card theek"
+      issues: "{count} card mein samasyaayein"
+      all_ok: "sabhi card paas. koi samasya nahin mili."
+      problem: "samasya"
+      suggestion: "sujhaav"
   placement:
     lands_under: Your lesson lands under
     duplicate: 'A similar lesson already exists: {title}. Share anyway?'
@@ -2450,3 +2490,83 @@ favorites:
   remove: "पसंदीदा से हटाएँ"
   empty: "अभी तक कोई पसंदीदा नहीं — किसी पाठ के स्टार पर टैप करें।"
   save_prompt: "इस पाठ को अपने पसंदीदा में सहेजें"
+content_repo:
+  title: "सामग्री रिपॉज़िटरी"
+  last_sync: "अंतिम समन्वयन: {when}"
+  added: "रिपॉज़िटरी जोड़ी गई।"
+  synced: "समन्वयित: {sets} सेट, {lessons} पाठ।"
+  token_hint: "निजी रिपॉज़िटरी के लिए टोकन ज़रूरी है — नीचे एक चिपकाएँ, या सेटिंग्स → इंटीग्रेशन में साझा टोकन सेट करें।"
+  trust_official: "आधिकारिक: प्रोजेक्ट टीम द्वारा क्यूरेट और गुणवत्ता-सुनिश्चित सामग्री।"
+  trust_verified: "सत्यापित: समुदाय द्वारा योगदान और टीम द्वारा समीक्षित।"
+  trust_validated: "मान्य: तकनीकी रूप से सही; सामग्री की अलग से समीक्षा नहीं की गई।"
+  official:
+    title: "आधिकारिक सामग्री"
+    counts: "{sets} सेट · {lessons} पाठ"
+  user:
+    list_title: "आपकी सामग्री रिपॉज़िटरी"
+    empty: "कोई रिपॉज़िटरी जुड़ी नहीं है। नीचे एक जोड़ें।"
+    counts: "{sets} सेट · {lessons} पाठ"
+  recommended:
+    title: "अनुशंसित रिपॉज़िटरी"
+  add:
+    title: "रिपॉज़िटरी जोड़ें"
+  add_link:
+    title: "यह सामग्री रिपॉज़िटरी जोड़ें?"
+    body: "आपको Adaptive Learner में एक सामग्री रिपॉज़िटरी जोड़ने के लिए आमंत्रित किया गया है।"
+    invalid: "इस आमंत्रण लिंक में कोई मान्य रिपॉज़िटरी नहीं है।"
+  field:
+    url: "GitHub रिपॉज़िटरी URL"
+    branch: "ब्रांच"
+    token: "टोकन (निजी रिपॉज़, वैकल्पिक)"
+  action:
+    add: "रिपॉज़िटरी जोड़ें"
+    cancel: "रद्द करें"
+    confirm_remove: "हटाने की पुष्टि करें"
+    connect: "रिपॉज़िटरी कनेक्ट करें"
+    move_down: "नीचे ले जाएँ"
+    move_up: "ऊपर ले जाएँ"
+    remove: "हटाएँ"
+    share: "साझा करें"
+    sync: "अभी समन्वयित करें"
+  badge:
+    coach: "कोच"
+    official: "आधिकारिक"
+  trust:
+    dropped: "समन्वयित हुआ, लेकिन सत्यापन विफल रहा — यह रिपॉज़िटरी अब असत्यापित के रूप में चिह्नित है।"
+    recommended: "आधिकारिक रूप से अनुशंसित"
+    unknown: "असत्यापित"
+    validated: "सत्यापित"
+  status:
+    never_synced: "अभी तक समन्वयित नहीं"
+  rating:
+    aria: "आपकी रेटिंग"
+    label: "आपकी रेटिंग"
+    star: "5 में से {n} रेट करें"
+  share:
+    copied: "लिंक कॉपी किया गया।"
+    copy: "कॉपी करें"
+    copy_failed: "कॉपी नहीं हो सका।"
+    hint: "यह लिंक साझा करें ताकि अन्य लोग इस सार्वजनिक रिपॉज़िटरी को जोड़ सकें। निजी रिपॉज़िटरी के लिए, URL और एक केवल-पढ़ने वाला टोकन अलग से भेजें।"
+    qr_alt: "साझा लिंक के लिए QR कोड"
+  progress:
+    validating: "रिपॉज़िटरी सत्यापित की जा रही है…"
+    manifest: "मैनिफ़ेस्ट लोड हो रहा है…"
+    sets: "सेट लोड हो रहे हैं…"
+    lessons: "पाठ कैश किए जा रहे हैं…"
+    validate: "सामग्री सत्यापित की जा रही है…"
+  error:
+    invalid_url: "एक मान्य GitHub रिपॉज़िटरी URL दर्ज करें (जैसे owner/repo)।"
+    save_failed: "रिपॉज़िटरी जोड़ी नहीं जा सकी।"
+    sync_failed: "समन्वयन विफल रहा। फिर से प्रयास करें।"
+  validation:
+    failed: "सत्यापन विफल रहा: {reason}"
+    passed: "सत्यापन सफल: {sets} सेट, {lessons} पाठ।"
+resource:
+  type_youtube: "वीडियो"
+  type_podcast: "पॉडकास्ट"
+  type_article: "लेख"
+  type_book: "पुस्तकें"
+  type_course: "कोर्स"
+  type_website: "वेबसाइटें"
+  free: "मुफ़्त"
+  paid: "कोर्स"

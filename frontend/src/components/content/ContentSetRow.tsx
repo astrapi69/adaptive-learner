@@ -10,14 +10,17 @@
  * tag, status and action blocks live in the sub-components below.
  */
 
-import { BookOpen, Download, FolderOpen } from "lucide-react";
+import { BookOpen, Download, FolderOpen, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 import ListRow from "../../shared/ListRow";
+import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../shared/AiCheckedBadge";
 import { useI18n } from "../../hooks/useI18n";
 import { isOfficialSource } from "../../lib/content/content-repos";
+import type { MediaResource } from "../../lib/content/media-loader";
 import type { ContentSetEntry } from "../../storage/types";
+import SetMediaBadges from "./SetMediaBadges";
 
 export type DownloadState = "idle" | "downloading" | "done" | "error";
 
@@ -31,6 +34,22 @@ interface ContentSetRowProps {
   recommendedSources: Set<string>;
   onOpen: (entry: ContentSetEntry) => void;
   onDownload: (entry: ContentSetEntry) => void;
+  /** EXP-029 / MED-06 — supplementary media available for this set
+   *  (already filtered to its domain). Drives the media-availability
+   *  badges; empty -> no badges. */
+  mediaResources?: MediaResource[];
+  /** Open the set's first lesson focused on its media section
+   *  (badge click). Defaults to {@link onOpen}. */
+  onOpenMedia?: (entry: ContentSetEntry) => void;
+  /** EXP-033 / AIV-02 — open the AI content-check dialog. Omit to hide
+   *  the "Check with AI" button. */
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  /** When set, the AI-check button is rendered VISIBLE but DISABLED with
+   *  this reason as its tooltip (feature-state policy, #335). */
+  aiCheckDisabledReason?: string;
+  /** EXP-033 / AIV-11 — "AI-checked" signature badge status for this set.
+   *  Defaults to "none" (no badge). */
+  aiBadgeStatus?: AiCheckBadgeStatus;
 }
 
 /** Origin / trust / recommended badges for a non-official source. */
@@ -219,6 +238,8 @@ function ContentSetActions({
   isCached,
   onOpen,
   onDownload,
+  onAiCheck,
+  aiCheckDisabledReason,
 }: {
   entry: ContentSetEntry;
   downloadState: DownloadState;
@@ -226,6 +247,8 @@ function ContentSetActions({
   isCached: boolean;
   onOpen: (entry: ContentSetEntry) => void;
   onDownload: (entry: ContentSetEntry) => void;
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  aiCheckDisabledReason?: string;
 }) {
   const { t } = useI18n();
   return (
@@ -239,6 +262,20 @@ function ContentSetActions({
         >
           <BookOpen size={14} aria-hidden="true" />
           {t("content.action.open", "Open")}
+        </Button>
+      )}
+      {isCached && onAiCheck && (
+        <Button
+          type="button"
+          variant="outline"
+          className="content-set-aicheck-btn"
+          onClick={() => onAiCheck(entry)}
+          disabled={!!aiCheckDisabledReason}
+          title={aiCheckDisabledReason || undefined}
+          data-testid={`content-set-${entry.id}-ai-check`}
+        >
+          <Sparkles size={14} aria-hidden="true" />
+          {t("content.ai_check.button", "Check with AI")}
         </Button>
       )}
       <Button
@@ -266,7 +303,13 @@ export default function ContentSetRow({
   recommendedSources,
   onOpen,
   onDownload,
+  mediaResources = [],
+  onOpenMedia,
+  onAiCheck,
+  aiCheckDisabledReason,
+  aiBadgeStatus = "none",
 }: ContentSetRowProps) {
+  const { t } = useI18n();
   const isCached = entry.cached_version !== null;
   return (
     <ListRow
@@ -281,12 +324,30 @@ export default function ContentSetRow({
           recommendedSources={recommendedSources}
         />
       }
-      tags={<ContentSetTags entry={entry} isCached={isCached} />}
+      tags={
+        <span className="inline-flex flex-wrap items-center">
+          <ContentSetTags entry={entry} isCached={isCached} />
+          <SetMediaBadges
+            resources={mediaResources}
+            setId={entry.id}
+            onOpen={() => (onOpenMedia ?? onOpen)(entry)}
+          />
+        </span>
+      }
       description={
         entry.description ? <p className="content-set-desc">{entry.description}</p> : undefined
       }
       status={
-        <ContentSetStatus entry={entry} downloadState={downloadState} isCached={isCached} />
+        <>
+          <ContentSetStatus entry={entry} downloadState={downloadState} isCached={isCached} />
+          <AiCheckedBadge
+            status={aiBadgeStatus}
+            verifiedLabel={t("content.ai_check.badge.verified", "AI-checked")}
+            staleLabel={t("content.ai_check.badge.stale", "AI-check outdated")}
+            invalidLabel={t("content.ai_check.badge.invalid", "AI-check invalid")}
+            testId={`content-set-${entry.id}-ai-badge`}
+          />
+        </>
       }
       actions={
         <ContentSetActions
@@ -296,6 +357,8 @@ export default function ContentSetRow({
           isCached={isCached}
           onOpen={onOpen}
           onDownload={onDownload}
+          onAiCheck={onAiCheck}
+          aiCheckDisabledReason={aiCheckDisabledReason}
         />
       }
     />
