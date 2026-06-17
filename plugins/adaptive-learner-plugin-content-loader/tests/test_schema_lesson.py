@@ -670,6 +670,21 @@ class TestLessonStep:
         )
         assert s.body is None
 
+    def test_exercise_accepts_theory_ref(self) -> None:
+        # #709 — content annotates exercises with an explicit theory_ref;
+        # extra="forbid" must NOT reject it.
+        s = LessonStep(
+            id="ex-1",
+            type=StepType.EXERCISE,
+            theory_ref="intro",
+            exercise=_exercise_matching(),
+        )
+        assert s.theory_ref == "intro"
+
+    def test_theory_ref_defaults_to_none(self) -> None:
+        s = LessonStep(id="ex-1", type=StepType.EXERCISE, exercise=_exercise_matching())
+        assert s.theory_ref is None
+
 
 # --- Lesson ------------------------------------------------------------
 

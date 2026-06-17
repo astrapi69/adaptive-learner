@@ -679,6 +679,17 @@ class LessonStep(BaseModel):
         ),
         max_length=200,
     )
+    theory_ref: str | None = Field(
+        default=None,
+        description=(
+            "EXERCISE: optional explicit reference to the theory step this "
+            "exercise practices, by the theory step's id (preferred) or "
+            "title. The viewer's 'Re-read theory' backlink resolves it "
+            "exactly, falling back to the term-overlap heuristic when "
+            "absent or unresolvable (additive, #709)."
+        ),
+        max_length=200,
+    )
 
     @field_validator("example_url")
     @classmethod
