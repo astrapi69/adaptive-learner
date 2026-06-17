@@ -68,7 +68,7 @@ export default function NavAvatar() {
   const label = t("nav.profile", "Your profile");
   return (
     <NavLink
-      to="/settings"
+      to="/settings?tab=general"
       className="nav-avatar inline-flex items-center"
       data-testid="nav-avatar"
       title={label}

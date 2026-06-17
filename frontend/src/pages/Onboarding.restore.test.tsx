@@ -14,11 +14,12 @@ vi.mock("react-router-dom", async () => {
 
 const toastError = vi.fn();
 const toastSuccess = vi.fn();
+const toastWarning = vi.fn();
 vi.mock("../utils/notify", () => ({
     notify: {
         error: (msg: string) => toastError(msg),
         success: (msg: string) => toastSuccess(msg),
-        warning: vi.fn(),
+        warning: (msg: string) => toastWarning(msg),
         info: vi.fn(),
     },
 }));
@@ -79,6 +80,7 @@ describe("Onboarding — first-run restore (#150)", () => {
         mockNavigate.mockClear();
         toastError.mockReset();
         toastSuccess.mockReset();
+        toastWarning.mockReset();
         findMostRecent.mockReset();
         projectsList.mockReset();
         lessonProgressList.mockReset();
@@ -137,7 +139,7 @@ describe("Onboarding — first-run restore (#150)", () => {
         expect(toastSuccess).toHaveBeenCalled();
     });
 
-    it("rejects a non-backup file with an error and does not navigate", async () => {
+    it("declines a non-Adaptive-Learner file with a gentle warning, not an error (#640)", async () => {
         findMostRecent.mockResolvedValue(null);
         renderOnboarding();
         await screen.findByTestId("onboarding-restore-backup");
@@ -145,13 +147,36 @@ describe("Onboarding — first-run restore (#150)", () => {
         const input = screen.getByTestId(
             "onboarding-restore-input",
         ) as HTMLInputElement;
+        // A backup from another app: valid JSON, but the ``format`` marker
+        // is not "adaptive-learner-backup".
         fireEvent.change(input, {
             target: {files: [backupFile({format: "something-else"})]},
         });
 
-        await waitFor(() => expect(toastError).toHaveBeenCalled());
+        // Warning (no "Report Issue"), NOT an error toast.
+        await waitFor(() => expect(toastWarning).toHaveBeenCalled());
+        expect(toastError).not.toHaveBeenCalled();
         expect(backupImport).not.toHaveBeenCalled();
         expect(mockNavigate).not.toHaveBeenCalled();
         expect(localStorage.getItem("adaptive-learner.user_id")).toBeNull();
+    });
+
+    it("declines a non-JSON file with a gentle warning, not an error (#640)", async () => {
+        findMostRecent.mockResolvedValue(null);
+        renderOnboarding();
+        await screen.findByTestId("onboarding-restore-backup");
+
+        const input = screen.getByTestId(
+            "onboarding-restore-input",
+        ) as HTMLInputElement;
+        const notJson = new File(["this is not json {"], "notes.txt", {
+            type: "text/plain",
+        });
+        fireEvent.change(input, {target: {files: [notJson]}});
+
+        await waitFor(() => expect(toastWarning).toHaveBeenCalled());
+        expect(toastError).not.toHaveBeenCalled();
+        expect(backupImport).not.toHaveBeenCalled();
+        expect(mockNavigate).not.toHaveBeenCalled();
     });
 });

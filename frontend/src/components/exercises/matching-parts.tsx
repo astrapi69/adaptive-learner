@@ -13,6 +13,7 @@ import type {CSSProperties} from "react";
 import {useI18n} from "../../hooks/useI18n";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
+import InlineMarkdown from "../../shared/InlineMarkdown";
 import {
     instructionKey,
     resolveConcreteDirection,
@@ -339,9 +340,13 @@ function MatchingTileFeedback({
                         aria-hidden="true"
                         className="shrink-0 text-[var(--exercise-correct)]"
                     />
-                    <span className="min-w-0 truncate">{tile.label}</span>
+                    <span className="min-w-0 truncate">
+                        <InlineMarkdown>{tile.label}</InlineMarkdown>
+                    </span>
                     <ArrowRight size={12} aria-hidden="true" className="shrink-0" />
-                    <span className="min-w-0 truncate">{correctPartner}</span>
+                    <span className="min-w-0 truncate">
+                        <InlineMarkdown>{correctPartner}</InlineMarkdown>
+                    </span>
                 </p>
             )}
         </>
@@ -393,7 +398,9 @@ export function MatchingLeftTile({
                 {isPaired && slot !== undefined && (
                     <PairBadge slot={slot} tone={badgeTone} />
                 )}
-                <span className="min-w-0 flex-1">{tile.label}</span>
+                <span className="min-w-0 flex-1">
+                    <InlineMarkdown>{tile.label}</InlineMarkdown>
+                </span>
                 {isCorrect && <Check size={14} aria-hidden="true" />}
                 {isWrong && <X size={14} aria-hidden="true" />}
             </button>
@@ -534,7 +541,9 @@ export function MatchingRightTile({
                 {isPaired && slot !== undefined && (
                     <PairBadge slot={slot} tone={badgeTone} />
                 )}
-                <span className="min-w-0 flex-1">{tile.label}</span>
+                <span className="min-w-0 flex-1">
+                    <InlineMarkdown>{tile.label}</InlineMarkdown>
+                </span>
                 {isCorrect && <Check size={14} aria-hidden="true" />}
                 {isWrong && <X size={14} aria-hidden="true" />}
             </button>
@@ -635,7 +644,7 @@ export function MatchingPrompt({
         <>
             <div className="exercise-prompt-row">
                 <p className="m-0 font-medium" data-testid="matching-prompt">
-                    {prompt}
+                    <InlineMarkdown>{prompt ?? ""}</InlineMarkdown>
                 </p>
                 {ttsLang && !codeMode && (
                     <ReadAloudButton

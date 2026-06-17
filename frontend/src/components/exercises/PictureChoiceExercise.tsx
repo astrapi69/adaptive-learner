@@ -45,6 +45,7 @@ import {
 } from "../../shared/useKeyboardShortcuts";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
+import InlineMarkdown from "../../shared/InlineMarkdown";
 import ExerciseHint from "./ExerciseHint";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
@@ -331,7 +332,7 @@ function PictureChoiceExercise(
                     className="m-0 font-medium"
                     data-testid="picture-prompt"
                 >
-                    {exercise.prompt}
+                    <InlineMarkdown>{exercise.prompt ?? ""}</InlineMarkdown>
                 </p>
                 {ttsLang && !codeMode && (
                     <ReadAloudButton
@@ -460,7 +461,9 @@ function PictureChoiceTile({
                     aria-hidden="true"
                 />
             ) : useTextFallback ? (
-                <span className="text-base font-semibold">{choice.label}</span>
+                <span className="text-base font-semibold">
+                    <InlineMarkdown>{choice.label}</InlineMarkdown>
+                </span>
             ) : (
                 <img
                     className="aspect-square h-auto w-full rounded-sm object-cover"
@@ -479,7 +482,9 @@ function PictureChoiceTile({
                     height={100}
                 />
             )}
-            <span className="leading-[1.3]">{choice.label}</span>
+            <span className="leading-[1.3]">
+                <InlineMarkdown>{choice.label}</InlineMarkdown>
+            </span>
             {showAsCorrect && (
                 <span
                     className="absolute right-1.5 top-1.5 inline-flex h-[22px] w-[22px] items-center justify-center rounded-full border border-border bg-[var(--surface)] text-[var(--exercise-correct)]"

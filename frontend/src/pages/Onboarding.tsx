@@ -17,6 +17,7 @@ import OnboardingWizard, {
 } from "../components/onboarding/OnboardingWizard";
 import {useI18n} from "../hooks/useI18n";
 import {isEmptyInstall, pickAdoptedIdentity} from "../lib/firstRunRestore";
+import {readBackupFile} from "../lib/backup/validateBackupFile";
 import {
     readLearnerState,
     setLanguage,
@@ -26,11 +27,8 @@ import {
 import {translateSubjectPath} from "../lib/subjectI18n";
 import {suggestSubjects, type SubjectSuggestion} from "../lib/subjectSuggest";
 import {getStorage} from "../storage";
-import type {BackupPayload, LearningProject, Subject} from "../types/domain";
+import type {LearningProject, Subject} from "../types/domain";
 import {notify} from "../utils/notify";
-
-/** Backup wire-format marker (mirrors ``BackupSection`` validation). */
-const BACKUP_FORMAT = "adaptive-learner-backup";
 
 /** Default daily-practice minutes when the learner doesn't set one. */
 const DEFAULT_DAILY_MINUTES = 15;
@@ -250,26 +248,42 @@ export default function Onboarding() {
         if (!file || restoring) return;
         setRestoring(true);
         try {
-            const payload = JSON.parse(await file.text()) as BackupPayload;
-            if (
-                payload.format !== BACKUP_FORMAT ||
-                typeof payload.version !== "string"
-            ) {
-                throw new Error(
-                    t(
-                        "backup.invalid_format",
-                        "This file is not a valid Adaptive Learner backup.",
-                    ),
+            // Validate the picked file as an Adaptive Learner backup
+            // BEFORE attempting the import (#640/#642). Any non-backup
+            // file (wrong/missing ``format`` marker, not JSON, a non-object
+            // like 42/"x"/[]/null, a truncated download, an over-large
+            // file) is a user mistake — they picked the wrong file — not an
+            // app fault. ``readBackupFile`` returns a typed result and
+            // never throws; surface a gentle, auto-dismissing ``warning``
+            // (no "Report Issue" button) instead of an error toast that
+            // reads like a bug.
+            const result = await readBackupFile(file);
+            if (!result.ok) {
+                notify.warning(
+                    result.error === "too_large"
+                        ? t(
+                              "backup.too_large",
+                              "This backup file is too large (over 100 MB).",
+                          )
+                        : t(
+                              "backup.not_a_backup_file",
+                              "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
+                          ),
                 );
+                return;
             }
+            const payload = result.payload;
+            // A well-formed backup always carries a resolvable owning user;
+            // a payload without one cannot be restored onto a fresh install.
             const identity = pickAdoptedIdentity(payload);
             if (identity.userId === "") {
-                throw new Error(
+                notify.warning(
                     t(
-                        "backup.invalid_format",
-                        "This file is not a valid Adaptive Learner backup.",
+                        "backup.not_a_backup_file",
+                        "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
                     ),
                 );
+                return;
             }
             // Adopt the backup's identity BEFORE importing so the
             // user-scoped restore matches every row.
@@ -292,6 +306,9 @@ export default function Onboarding() {
             );
             navigate("/dashboard", {replace: true});
         } catch (err) {
+            // Reached only when a VALID Adaptive Learner backup failed to
+            // import — a genuine, unexpected failure worth reporting, so
+            // the error toast (with "Report Issue") is the right surface.
             const detail = err instanceof Error ? err.message : String(err);
             notify.error(
                 t(

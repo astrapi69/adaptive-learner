@@ -497,6 +497,9 @@ settings:
   avatar_crop_apply: लागू करें
   avatar_crop_cancel: रद्द करें
   avatar_crop_zoom: ज़ूम
+  avatar_preview_title: प्रोफ़ाइल चित्र
+  avatar_change: चित्र बदलें
+  avatar_button_label: प्रोफ़ाइल चित्र देखें या बदलें
   theme: थीम
   theme_description: Choose how the app looks. Auto follows your system light/dark setting.
   theme_group_recommended: अनुशंसित
@@ -810,6 +813,8 @@ backup:
   importing: Restoring…
   confirm: Confirm restore
   invalid_format: This file is not a valid Adaptive Learner backup.
+  not_a_backup_file: 'यह फ़ाइल मान्य बैकअप फ़ाइल नहीं है। कृपया ''बैकअप बनाएं'' से निर्यात की गई फ़ाइल चुनें।'
+  too_large: 'यह बैकअप फ़ाइल बहुत बड़ी है (100 MB से अधिक)।'
   export_success: Backup downloaded ({{count}} records).
   export_error: 'Backup failed: {{detail}}'
   import_parse_error: 'Could not read backup: {{detail}}'

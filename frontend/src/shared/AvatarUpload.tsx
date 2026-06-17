@@ -12,6 +12,11 @@
  * supplied by the caller, and a processing failure is reported via
  * ``onError`` with a stable reason key the caller can translate.
  *
+ * The avatar itself is clickable (#638): with a picture set it opens an
+ * {@link AvatarPreviewDialog} (large preview + "change"); without one it
+ * jumps straight to the file picker. A camera-icon overlay on hover /
+ * focus signals the affordance.
+ *
  * @example
  * <AvatarUpload
  *   name={user.name}
@@ -30,12 +35,13 @@
  */
 
 import { useRef, useState } from "react";
-import { ImagePlus, Trash2 } from "lucide-react";
+import { Camera, ImagePlus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 import InitialsAvatar from "./InitialsAvatar";
 import ImageCropDialog from "./ImageCropDialog";
+import AvatarPreviewDialog from "./AvatarPreviewDialog";
 import {
   AVATAR_MAX_BYTES,
   AVATAR_MAX_DIMENSION,
@@ -52,6 +58,12 @@ export interface AvatarCropLabels {
   zoom?: string;
 }
 
+export interface AvatarPreviewLabels {
+  title?: string;
+  change?: string;
+  close?: string;
+}
+
 export interface AvatarUploadProps {
   /** Display name for the initials fallback. */
   name: string;
@@ -63,6 +75,10 @@ export interface AvatarUploadProps {
   removeLabel: string;
   /** Translatable labels for the crop dialog (English defaults apply). */
   cropLabels?: AvatarCropLabels;
+  /** Translatable labels for the preview dialog (English defaults apply). */
+  previewLabels?: AvatarPreviewLabels;
+  /** Accessible name for the clickable avatar (English default applies). */
+  avatarButtonLabel?: string;
   /** Receives the new data URL, or null when removed. */
   onChange: (dataUrl: string | null) => void;
   /** Receives a stable, translatable reason key on a processing failure. */
@@ -77,6 +93,8 @@ export default function AvatarUpload({
   uploadLabel,
   removeLabel,
   cropLabels,
+  previewLabels,
+  avatarButtonLabel = "View or change profile picture",
   onChange,
   onError,
   testId,
@@ -84,6 +102,17 @@ export default function AvatarUpload({
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState<File | null>(null);
+  const [previewing, setPreviewing] = useState(false);
+
+  function openFilePicker(): void {
+    inputRef.current?.click();
+  }
+
+  /** With a picture, preview it; without one, jump straight to upload. */
+  function handleAvatarClick(): void {
+    if (value) setPreviewing(true);
+    else openFilePicker();
+  }
 
   function resetInput(): void {
     if (inputRef.current) inputRef.current.value = "";
@@ -124,18 +153,36 @@ export default function AvatarUpload({
 
   return (
     <div className="flex items-center gap-4" data-testid={testId}>
-      {value ? (
-        <img
-          src={value}
-          alt=""
+      <button
+        type="button"
+        onClick={handleAvatarClick}
+        disabled={busy}
+        aria-label={avatarButtonLabel}
+        title={avatarButtonLabel}
+        data-testid="avatar-trigger"
+        className="group relative inline-flex shrink-0 cursor-pointer rounded-full p-0 leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
+        style={{ minWidth: 44, minHeight: 44 }}
+      >
+        {value ? (
+          <img
+            src={value}
+            alt=""
+            aria-hidden="true"
+            className="shrink-0 rounded-full object-cover"
+            style={{ width: size, height: size }}
+            data-testid="avatar-preview-image"
+          />
+        ) : (
+          <InitialsAvatar name={name} size={size} testId="avatar-preview-initials" />
+        )}
+        <span
           aria-hidden="true"
-          className="shrink-0 rounded-full object-cover"
-          style={{ width: size, height: size }}
-          data-testid="avatar-preview-image"
-        />
-      ) : (
-        <InitialsAvatar name={name} size={size} testId="avatar-preview-initials" />
-      )}
+          className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-[var(--bg-overlay)] opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+          data-testid="avatar-trigger-overlay"
+        >
+          <Camera className="text-white" aria-hidden="true" />
+        </span>
+      </button>
       <div className="flex flex-col gap-2">
         <input
           ref={inputRef}
@@ -151,7 +198,7 @@ export default function AvatarUpload({
           size="sm"
           className="min-h-11 gap-1.5"
           disabled={busy}
-          onClick={() => inputRef.current?.click()}
+          onClick={openFilePicker}
           data-testid="avatar-upload-button"
         >
           <ImagePlus aria-hidden="true" />
@@ -184,6 +231,19 @@ export default function AvatarUpload({
           zoomLabel={cropLabels?.zoom}
           onConfirm={(blob) => void handleCropConfirm(blob)}
           onCancel={handleCropCancel}
+        />
+      ) : null}
+      {previewing && value ? (
+        <AvatarPreviewDialog
+          imageUrl={value}
+          title={previewLabels?.title}
+          changeLabel={previewLabels?.change}
+          closeLabel={previewLabels?.close}
+          onChange={() => {
+            setPreviewing(false);
+            openFilePicker();
+          }}
+          onClose={() => setPreviewing(false)}
         />
       ) : null}
     </div>

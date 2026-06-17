@@ -44,6 +44,17 @@ describe("NavAvatar", () => {
     );
   });
 
+  it("links to Settings > Profile (?tab=general) (#638)", async () => {
+    renderNav();
+    await waitFor(() =>
+      expect(screen.getByTestId("nav-avatar-initials")).toHaveTextContent("AL"),
+    );
+    expect(screen.getByTestId("nav-avatar")).toHaveAttribute(
+      "href",
+      "/settings?tab=general",
+    );
+  });
+
   it("refreshes live on the profile-updated event (#579)", async () => {
     renderNav();
     await waitFor(() =>

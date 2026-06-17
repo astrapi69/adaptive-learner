@@ -495,6 +495,9 @@ settings:
   avatar_crop_apply: "Aplicar"
   avatar_crop_cancel: "Cancelar"
   avatar_crop_zoom: "Zoom"
+  avatar_preview_title: "Foto de perfil"
+  avatar_change: "Alterar foto"
+  avatar_button_label: "Ver ou alterar a foto de perfil"
   theme: "Tema"
   theme_description: "Escolha a aparencia do aplicativo. Automatico segue a configuracao clara/escura do sistema."
   theme_group_recommended: "Recomendados"
@@ -809,6 +812,8 @@ backup:
   importing: Restaurando…
   confirm: Confirmar restauração
   invalid_format: Este arquivo não é um backup válido do Adaptive Learner.
+  not_a_backup_file: 'Este arquivo não é um arquivo de backup válido. Escolha um arquivo exportado com ''Criar backup''.'
+  too_large: 'Este arquivo de backup é muito grande (mais de 100 MB).'
   export_success: Backup baixado ({{count}} registros).
   export_error: 'Falha no backup: {{detail}}'
   import_parse_error: 'Não foi possível ler o backup: {{detail}}'

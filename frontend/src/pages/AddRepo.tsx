@@ -9,16 +9,20 @@
  * token).
  */
 
+import { Loader2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import DownloadProgress from "../shared/DownloadProgress";
 import { useI18n } from "../hooks/useI18n";
 import {
   addUserRepo,
   parseGitHubRepoUrl,
   syncUserRepo,
+  syncPhaseI18n,
   userRepoSource,
+  type SyncProgress,
 } from "../lib/content/content-repos";
 import { validateUserRepo } from "../lib/content/content-repo-validate";
 import { notify } from "../utils/notify";
@@ -29,6 +33,11 @@ export default function AddRepo() {
   const [params] = useSearchParams();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{
+    label: string;
+    current: number;
+    total: number;
+  } | null>(null);
 
   const url = params.get("url") ?? "";
   const branch = params.get("branch") || "main";
@@ -38,6 +47,11 @@ export default function AddRepo() {
     if (!parsed) return;
     setBusy(true);
     setError(null);
+    setProgress({
+      label: t("content_repo.progress.validating", "Validating repository…"),
+      current: 0,
+      total: 0,
+    });
     try {
       const source = userRepoSource(parsed.owner, parsed.repo);
       const validation = await validateUserRepo({
@@ -65,7 +79,10 @@ export default function AddRepo() {
         lesson_count: validation.lessonCount,
         trust: 1,
       });
-      await syncUserRepo(source);
+      await syncUserRepo(source, (p: SyncProgress) => {
+        const { key, fallback } = syncPhaseI18n(p.phase);
+        setProgress({ label: t(key, fallback), current: p.current, total: p.total });
+      });
       notify.success(
         t("content_repo.added", "Repository added."),
       );
@@ -76,6 +93,7 @@ export default function AddRepo() {
       );
     } finally {
       setBusy(false);
+      setProgress(null);
     }
   }, [parsed, branch, url, navigate, t]);
 
@@ -105,6 +123,29 @@ export default function AddRepo() {
               >
                 {error}
               </p>
+            )}
+            {progress && (
+              <div
+                className="mt-3 flex flex-col gap-2"
+                role="status"
+                aria-live="polite"
+                data-testid="add-repo-progress"
+              >
+                <span className="flex items-center gap-2 text-sm text-[var(--fg-muted)]">
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  {progress.total > 0
+                    ? `${progress.label} (${progress.current}/${progress.total})`
+                    : progress.label}
+                </span>
+                {progress.total > 0 && (
+                  <DownloadProgress
+                    current={progress.current}
+                    total={progress.total}
+                    ariaLabel={progress.label}
+                    testId="add-repo-progress-bar"
+                  />
+                )}
+              </div>
             )}
             <div className="mt-5 flex flex-wrap gap-2">
               <Button

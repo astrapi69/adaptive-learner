@@ -24,6 +24,7 @@ import {
   Copy,
   FolderGit2,
   Link2,
+  Loader2,
   RefreshCw,
   Share2,
   Shield,
@@ -34,6 +35,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import DownloadProgress from "../shared/DownloadProgress";
 import { buildAddRepoLink } from "../lib/content/share-link";
 import { useI18n } from "../hooks/useI18n";
 import { getStorage } from "../storage";
@@ -46,7 +48,9 @@ import {
   readUserRepos,
   removeUserRepo,
   syncUserRepo,
+  syncPhaseI18n,
   userRepoSource,
+  type SyncProgress,
   type UserContentRepo,
 } from "../lib/content/content-repos";
 import { validateUserRepo } from "../lib/content/content-repo-validate";
@@ -69,6 +73,13 @@ interface OfficialSummary {
   lessonCount: number;
 }
 
+/** Progress shown in the UI while a repo loads (#645). */
+interface RepoProgress {
+  label: string;
+  current: number;
+  total: number;
+}
+
 export default function ContentRepoSettingsSection() {
   const { t } = useI18n();
   const [official, setOfficial] = useState<OfficialSummary | null>(null);
@@ -81,6 +92,7 @@ export default function ContentRepoSettingsSection() {
   const [branch, setBranch] = useState("main");
   const [token, setToken] = useState("");
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<RepoProgress | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [result, setResult] = useState<
     { ok: boolean; message: string } | null
@@ -130,6 +142,14 @@ export default function ContentRepoSettingsSection() {
     void refresh();
   }, [refresh]);
 
+  const reportProgress = useCallback(
+    (p: SyncProgress) => {
+      const { key, fallback } = syncPhaseI18n(p.phase);
+      setProgress({ label: t(key, fallback), current: p.current, total: p.total });
+    },
+    [t],
+  );
+
   const handleAdd = useCallback(async () => {
     const parsed = parseGitHubRepoUrl(url);
     if (!parsed) {
@@ -143,6 +163,11 @@ export default function ContentRepoSettingsSection() {
     }
     setBusy(true);
     setResult(null);
+    setProgress({
+      label: t("content_repo.progress.validating", "Validating repository…"),
+      current: 0,
+      total: 0,
+    });
     try {
       const branchName = branch.trim() || "main";
       const source = userRepoSource(parsed.owner, parsed.repo);
@@ -173,7 +198,7 @@ export default function ContentRepoSettingsSection() {
         trust: 1,
         coach: token.trim().length > 0,
       });
-      await syncUserRepo(source);
+      await syncUserRepo(source, reportProgress);
       await refresh();
       setUrl("");
       setBranch("main");
@@ -193,14 +218,20 @@ export default function ContentRepoSettingsSection() {
       );
     } finally {
       setBusy(false);
+      setProgress(null);
     }
-  }, [url, branch, token, refresh, t]);
+  }, [url, branch, token, refresh, reportProgress, t]);
 
   const handleAddRecommended = useCallback(
     async (rec: RecommendedRepo) => {
       const parsed = parseGitHubRepoUrl(rec.url);
       if (!parsed) return;
       setBusy(true);
+      setProgress({
+        label: t("content_repo.progress.validating", "Validating repository…"),
+        current: 0,
+        total: 0,
+      });
       try {
         const source = userRepoSource(parsed.owner, parsed.repo);
         const validation = await validateUserRepo({
@@ -228,7 +259,7 @@ export default function ContentRepoSettingsSection() {
           lesson_count: validation.lessonCount,
           trust: 1,
         });
-        await syncUserRepo(source);
+        await syncUserRepo(source, reportProgress);
         await refresh();
         notify.success(t("content_repo.added", "Repository added."));
       } catch {
@@ -237,9 +268,10 @@ export default function ContentRepoSettingsSection() {
         );
       } finally {
         setBusy(false);
+        setProgress(null);
       }
     },
-    [refresh, t],
+    [refresh, reportProgress, t],
   );
 
   const handleRate = useCallback((source: string, rating: number) => {
@@ -255,7 +287,10 @@ export default function ContentRepoSettingsSection() {
     async (source: string) => {
       setBusy(true);
       try {
-        const { setCount, lessonCount, trust } = await syncUserRepo(source);
+        const { setCount, lessonCount, trust } = await syncUserRepo(
+          source,
+          reportProgress,
+        );
         await refresh();
         if (trust === 0) {
           notify.error(
@@ -277,9 +312,10 @@ export default function ContentRepoSettingsSection() {
         );
       } finally {
         setBusy(false);
+        setProgress(null);
       }
     },
-    [refresh, t],
+    [refresh, reportProgress, t],
   );
 
   const handleRemove = useCallback(
@@ -759,6 +795,29 @@ export default function ContentRepoSettingsSection() {
             {t("content_repo.action.add", "Add repository")}
           </Button>
         </div>
+        {progress && (
+          <div
+            className="mt-3 flex flex-col gap-2"
+            role="status"
+            aria-live="polite"
+            data-testid="content-repo-progress"
+          >
+            <span className="flex items-center gap-2 text-sm text-[var(--fg-muted)]">
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              {progress.total > 0
+                ? `${progress.label} (${progress.current}/${progress.total})`
+                : progress.label}
+            </span>
+            {progress.total > 0 && (
+              <DownloadProgress
+                current={progress.current}
+                total={progress.total}
+                ariaLabel={progress.label}
+                testId="content-repo-progress-bar"
+              />
+            )}
+          </div>
+        )}
         {result && (
           <p
             className={

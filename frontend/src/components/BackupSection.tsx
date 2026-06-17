@@ -24,6 +24,7 @@ import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage, resolveStorageMode} from "../storage";
 import {notify} from "../utils/notify";
+import {readBackupFile} from "../lib/backup/validateBackupFile";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
@@ -524,19 +525,31 @@ export default function BackupSection() {
         setBusy("import");
         setRestoreSummary(null);
         try {
-            const text = await file.text();
-            const parsed = JSON.parse(text) as BackupPayload;
-            if (
-                parsed.format !== "adaptive-learner-backup" ||
-                typeof parsed.version !== "string"
-            ) {
-                throw new Error(
-                    t(
-                        "backup.invalid_format",
-                        "This file is not a valid Adaptive Learner backup.",
-                    ),
+            // Validate the picked file as an Adaptive Learner backup
+            // BEFORE the restore preview (#640/#642). Any non-backup file
+            // (wrong/missing ``format`` marker, not JSON, a non-object,
+            // a truncated download, an over-large file) is a user mistake,
+            // not an app fault — ``readBackupFile`` returns a typed result
+            // and never throws, so show a gentle ``warning`` (no "Report
+            // Issue") and stop, instead of an error toast that reads like
+            // a bug. The ``format`` marker is the single source of truth
+            // for "is this ours?".
+            const result = await readBackupFile(file);
+            if (!result.ok) {
+                notify.warning(
+                    result.error === "too_large"
+                        ? t(
+                              "backup.too_large",
+                              "This backup file is too large (over 100 MB).",
+                          )
+                        : t(
+                              "backup.not_a_backup_file",
+                              "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
+                          ),
                 );
+                return;
             }
+            const parsed = result.payload;
             const currentStats = await storage.backup.stats(userId);
             setComparison(buildComparison(currentStats, parsed));
             setPendingPayload(parsed);

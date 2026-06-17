@@ -9,14 +9,18 @@
  * Settings UI renders as "Validation passed: X sets, Y lessons" or the
  * failure reason.
  *
- * Auth: a configured GitHub token (Dexie mode keeps it in localStorage) is
- * sent as a Bearer header so private repos resolve; public repos need none.
- * In API mode the token lives server-side and is not read here, so Phase A
- * validates public user repos client-side (private-repo support in API mode
- * is a Phase B concern).
+ * Auth + CORS: fetching is delegated to ``github-fetch`` (#645), which picks
+ * the host by auth — public repos hit ``raw.githubusercontent.com`` with NO
+ * custom headers (no CORS preflight), private/coach repos hit the
+ * ``api.github.com`` contents endpoint with the Bearer token. In API mode the
+ * token lives server-side and is not read here, so Phase A validates public
+ * user repos client-side (private-repo support in API mode is a Phase B
+ * concern).
  */
 
 import { parse as parseYaml } from "yaml";
+
+import { fetchGitHubFileText } from "./github-fetch";
 
 /** The exercise types the lesson schema (v1.3) knows about. */
 export const KNOWN_EXERCISE_TYPES = [
@@ -47,8 +51,6 @@ const SUSPICIOUS_PATTERNS: RegExp[] = [
 export function hasSuspiciousContent(text: string): boolean {
   return SUSPICIOUS_PATTERNS.some((pattern) => pattern.test(text));
 }
-
-const RAW_BASE = "https://raw.githubusercontent.com";
 
 /** localStorage key holding the GitHub PAT in Dexie (GH-Pages) mode. */
 const GITHUB_TOKEN_KEY = "adaptive-learner.github_token";
@@ -97,27 +99,18 @@ interface ParsedLesson {
   steps?: { exercises?: ParsedExercise[] }[];
 }
 
-function rawUrl(ref: RepoRef, path: string): string {
-  const safePath = path.replace(/^\/+/, "");
-  return `${RAW_BASE}/${ref.owner}/${ref.repo}/${ref.branch}/${safePath}`;
+/** The GitHub ``"{owner}/{repo}"`` source identifier for a repo ref. */
+function refSource(ref: RepoRef): string {
+  return `${ref.owner}/${ref.repo}`;
 }
 
-async function fetchRepoText(
+/** Fetch a repo text file via the CORS-safe shared helper. */
+function fetchRepoText(
   ref: RepoRef,
   path: string,
   token: string,
 ): Promise<string> {
-  const headers: Record<string, string> = {};
-  if (token.trim()) headers.Authorization = `Bearer ${token.trim()}`;
-  const response = await fetch(rawUrl(ref, path), { headers });
-  if (!response.ok) {
-    const err: Error & { status?: number } = new Error(
-      `HTTP ${response.status} for ${path}`,
-    );
-    err.status = response.status;
-    throw err;
-  }
-  return response.text();
+  return fetchGitHubFileText(refSource(ref), ref.branch, path, token);
 }
 
 /** Repo-relative base dir for a set (honours the optional ``path``). */

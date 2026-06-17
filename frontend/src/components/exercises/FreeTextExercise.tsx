@@ -35,6 +35,7 @@ import {useI18n} from "../../hooks/useI18n";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
+import InlineMarkdown from "../../shared/InlineMarkdown";
 import ExerciseHint from "./ExerciseHint";
 import {deriveFreeTextAttempt} from "../../lib/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
@@ -479,7 +480,7 @@ function FreeTextExercise(
                     className="m-0 font-medium"
                     data-testid="free-text-prompt"
                 >
-                    {exercise.prompt}
+                    <InlineMarkdown>{exercise.prompt ?? ""}</InlineMarkdown>
                 </p>
                 {ttsLang && !codeMode && (
                     <ReadAloudButton
