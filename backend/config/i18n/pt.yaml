@@ -2226,6 +2226,10 @@ pwa:
   online_message: "Online novamente!"
   offline_dismiss: "Fechar"
   action_unavailable: "Indisponível offline"
+  update:
+    message: "Uma nova versão está disponível."
+    action: "Atualizar"
+    later: "Mais tarde"
   cache_heading: "Cache off-line"
   cache_summary: "{size} MB · {count} lições em cache"
   cache_empty: "Nenhum conteúdo off-line em cache."

@@ -1,19 +1,33 @@
 /**
- * UpdatePrompt — a slim, discreet "new version available" banner (#613, #649).
+ * UpdatePrompt — a slim, discreet "new version available" banner (#613, #649,
+ * #653).
  *
  * Fully presentational and app-agnostic: all copy + the two callbacks are
- * caller-supplied, no i18n/storage imports. It is NOT a modal — it sits at
- * the top of the viewport, never blocks interaction, and offers exactly
- * two actions (update / dismiss). Token-backed Tailwind, 44px targets,
- * ``role="status"`` so screen readers announce it without stealing focus.
+ * caller-supplied, no i18n/storage imports. It is NOT a modal — it never
+ * blocks interaction, and offers exactly two actions (update / dismiss).
+ * Token-backed Tailwind, 44px targets, ``role="status"`` so screen readers
+ * announce it without stealing focus.
  *
- * Colour contract (#649): the bar is painted with ``--accent`` /
- * ``--accent-fg``, the one token pair whose contrast is enforced ≥ WCAG AA
- * across all 12 themes (``contrast.test.ts``). So the message + icon are
- * legible by construction in every theme; the update action is an inverse
- * chip (``accent-fg`` surface, ``accent`` text — the same pair flipped) so it
- * reads clearly as a button on the accent bar. No theme-dependent pairing,
- * no hardcoded colours.
+ * Position contract (#653): the bar is anchored to the BOTTOM of the
+ * viewport, not the top. A top-anchored banner lands under the iPhone Safari
+ * address bar and is hidden by pull-to-refresh — the update action then
+ * cannot be reached on mobile. Bottom-anchored with
+ * ``padding-bottom: env(safe-area-inset-bottom)`` clears the iOS home
+ * indicator and stays tappable on every browser. ``z-[9999]`` keeps it above
+ * app chrome.
+ *
+ * Colour contract (#653): the bar itself is the readable surface pair —
+ * ``--bg-surface`` background + ``--fg-primary`` text + a top ``--border``,
+ * the SAME pairing every card uses, pinned ≥ WCAG AA across all 12 themes by
+ * ``contrast.test.ts`` (fg-primary on bg-surface). The update action is the
+ * accent button (``--accent`` surface, ``--accent-fg`` text — also AA-pinned),
+ * so it stands out as the primary CTA. The dismiss X uses ``--fg-secondary``
+ * (AA-pinned on surface). Every colour is a theme token guaranteed to be
+ * defined (``themes.test.ts``) AND contrast-checked (``contrast.test.ts``) —
+ * a stronger guarantee than a hardcoded literal fallback, and compliant with
+ * the no-hardcoded-colors guard. The prior accent-on-accent fill (#649)
+ * regressed to invisible text on the live site; the surface/text pair is the
+ * robust fix.
  *
  * @example
  * <UpdatePrompt
@@ -39,7 +53,7 @@ export interface UpdatePromptProps {
   testId?: string;
 }
 
-/** Discreet top-anchored app-update banner (presentational). */
+/** Discreet bottom-anchored app-update banner (presentational). */
 export default function UpdatePrompt({
   message,
   updateLabel,
@@ -53,32 +67,36 @@ export default function UpdatePrompt({
       role="status"
       aria-live="polite"
       data-testid={testId ?? "update-prompt"}
-      className="fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-3 bg-accent px-3 py-2 text-sm text-accent-foreground shadow-md"
+      className="fixed inset-x-0 bottom-0 z-[9999] flex items-center justify-between gap-3 border-t border-border bg-bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-sm text-fg-primary shadow-md"
     >
-      <RefreshCw
-        size={16}
-        aria-hidden="true"
-        className="shrink-0 text-accent-foreground"
-      />
-      <span className="truncate">{message}</span>
-      <button
-        type="button"
-        onClick={onUpdate}
-        data-testid="update-prompt-apply"
-        className="inline-flex min-h-[44px] items-center rounded-md bg-accent-foreground px-3 font-semibold text-accent hover:opacity-90"
-      >
-        {updateLabel}
-      </button>
-      <button
-        type="button"
-        onClick={onDismiss}
-        aria-label={dismissLabel}
-        title={dismissLabel}
-        data-testid="update-prompt-dismiss"
-        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-accent-foreground hover:bg-accent-foreground/15"
-      >
-        <X size={16} aria-hidden="true" />
-      </button>
+      <div className="flex min-w-0 items-center gap-2">
+        <RefreshCw
+          size={16}
+          aria-hidden="true"
+          className="shrink-0 text-fg-secondary"
+        />
+        <span className="truncate text-fg-primary">{message}</span>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={onUpdate}
+          data-testid="update-prompt-apply"
+          className="inline-flex min-h-[44px] items-center rounded-app bg-accent px-4 font-semibold text-accent-foreground hover:bg-accent-hover"
+        >
+          {updateLabel}
+        </button>
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label={dismissLabel}
+          title={dismissLabel}
+          data-testid="update-prompt-dismiss"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-app text-fg-secondary hover:bg-bg-elevated"
+        >
+          <X size={16} aria-hidden="true" />
+        </button>
+      </div>
     </div>
   );
 }

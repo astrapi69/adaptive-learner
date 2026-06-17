@@ -2228,6 +2228,10 @@ pwa:
   online_message: "Ξανά συνδεδεμένοι!"
   offline_dismiss: "Κλείσιμο"
   action_unavailable: "Μη διαθέσιμο εκτός σύνδεσης"
+  update:
+    message: "Διαθέσιμη νέα έκδοση."
+    action: "Ενημέρωση"
+    later: "Αργότερα"
   cache_heading: "Προσωρινή μνήμη εκτός σύνδεσης"
   cache_summary: "{size} MB · {count} αποθηκευμένα μαθήματα"
   cache_empty: "Δεν υπάρχει αποθηκευμένο περιεχόμενο."

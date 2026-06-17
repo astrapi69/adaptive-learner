@@ -2441,18 +2441,18 @@
     "online_message": "Back online!",
     "offline_dismiss": "Dismiss",
     "action_unavailable": "Not available offline",
+    "update": {
+      "message": "A new version is available.",
+      "action": "Update",
+      "later": "Later"
+    },
     "cache_heading": "Offline cache",
     "cache_summary": "{size} MB · {count} lessons cached",
     "cache_empty": "No offline content cached yet.",
     "cache_clear": "Clear cache",
     "cache_clear_confirm": "Clear the offline cache?",
     "cache_clear_action": "Yes, clear",
-    "cache_cleared": "Offline cache cleared.",
-    "update": {
-      "message": "A new version is available.",
-      "action": "Update",
-      "later": "Later"
-    }
+    "cache_cleared": "Offline cache cleared."
   },
   "share": {
     "pr": {
