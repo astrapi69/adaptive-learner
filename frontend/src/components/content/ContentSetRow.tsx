@@ -17,7 +17,9 @@ import { Button } from "@/components/ui/button";
 import ListRow from "../../shared/ListRow";
 import { useI18n } from "../../hooks/useI18n";
 import { isOfficialSource } from "../../lib/content/content-repos";
+import type { MediaResource } from "../../lib/content/media-loader";
 import type { ContentSetEntry } from "../../storage/types";
+import SetMediaBadges from "./SetMediaBadges";
 
 export type DownloadState = "idle" | "downloading" | "done" | "error";
 
@@ -31,6 +33,13 @@ interface ContentSetRowProps {
   recommendedSources: Set<string>;
   onOpen: (entry: ContentSetEntry) => void;
   onDownload: (entry: ContentSetEntry) => void;
+  /** EXP-029 / MED-06 — supplementary media available for this set
+   *  (already filtered to its domain). Drives the media-availability
+   *  badges; empty -> no badges. */
+  mediaResources?: MediaResource[];
+  /** Open the set's first lesson focused on its media section
+   *  (badge click). Defaults to {@link onOpen}. */
+  onOpenMedia?: (entry: ContentSetEntry) => void;
 }
 
 /** Origin / trust / recommended badges for a non-official source. */
@@ -266,6 +275,8 @@ export default function ContentSetRow({
   recommendedSources,
   onOpen,
   onDownload,
+  mediaResources = [],
+  onOpenMedia,
 }: ContentSetRowProps) {
   const isCached = entry.cached_version !== null;
   return (
@@ -281,7 +292,16 @@ export default function ContentSetRow({
           recommendedSources={recommendedSources}
         />
       }
-      tags={<ContentSetTags entry={entry} isCached={isCached} />}
+      tags={
+        <span className="inline-flex flex-wrap items-center">
+          <ContentSetTags entry={entry} isCached={isCached} />
+          <SetMediaBadges
+            resources={mediaResources}
+            setId={entry.id}
+            onOpen={() => (onOpenMedia ?? onOpen)(entry)}
+          />
+        </span>
+      }
       description={
         entry.description ? <p className="content-set-desc">{entry.description}</p> : undefined
       }

@@ -21,6 +21,7 @@ import {
 } from "../../lib/content/content-tree";
 import { languageDisplayName } from "../../lib/content/language-names";
 import { booksForDomain, type BookRecommendations } from "../../lib/content/book-recommendations";
+import { mediaForDomain, type MediaResource } from "../../lib/content/media-loader";
 import type { ContentSetEntry } from "../../storage/types";
 import BookRecommendationsSection from "./BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
@@ -34,6 +35,12 @@ export interface ContentSetRowActions {
   recommendedSources: Set<string>;
   onOpen: (entry: ContentSetEntry) => void;
   onDownload: (entry: ContentSetEntry) => void;
+  /** EXP-029 / MED-06 — all media resources (per-domain) for the
+   *  media-availability badges; defaults to none. */
+  media?: MediaResource[];
+  /** Open the set's first lesson focused on its media section
+   *  (badge click); defaults to {@link onOpen}. */
+  onOpenMedia?: (entry: ContentSetEntry) => void;
 }
 
 /** Actions + lookup for the user lessons folded into tree nodes
@@ -100,6 +107,8 @@ export default function ContentTree({
       recommendedSources={setRow.recommendedSources}
       onOpen={setRow.onOpen}
       onDownload={setRow.onDownload}
+      mediaResources={mediaForDomain(setRow.media ?? [], entry.domain)}
+      onOpenMedia={setRow.onOpenMedia}
     />
   );
 

@@ -20,7 +20,7 @@
  * cards stack on mobile and form two columns from ``sm`` up.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useI18n } from "../../hooks/useI18n";
 import {
@@ -133,10 +133,24 @@ export default function LessonResources({
     ? domainMedia.filter((r) => !primaryUrls.has(r.url))
     : [];
 
-  if (primary.length === 0 && secondary.length === 0) return null;
+  const hasContent = primary.length > 0 || secondary.length > 0;
+
+  // EXP-029 / MED-06 — when opened from a content-browser media badge
+  // (deep link ``#lesson-resources``), scroll the section into view.
+  const sectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!hasContent) return;
+    if (window.location.hash === "#lesson-resources") {
+      sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [hasContent]);
+
+  if (!hasContent) return null;
 
   return (
     <section
+      ref={sectionRef}
+      id="lesson-resources"
       className="lesson-resources mt-4 flex flex-col gap-3"
       data-testid="lesson-resources"
       aria-label={t("lesson.resources_title", "Explore further")}
