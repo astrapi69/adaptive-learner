@@ -822,6 +822,7 @@ backup:
   confirm: Confirm restore
   invalid_format: This file is not a valid Adaptive Learner backup.
   not_a_backup_file: 'This file is not a valid backup file. Please choose a file exported with ''Create backup''.'
+  version_mismatch: "This backup is from version {{from}}; this app is {{to}}. Review the changes below and confirm to import."
   too_large: 'This backup file is too large (over 100 MB).'
   export_success: Backup downloaded ({{count}} records).
   export_error: 'Backup failed: {{detail}}'

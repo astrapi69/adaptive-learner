@@ -65,8 +65,9 @@ describe("SelectiveExportSection", () => {
     fireEvent.click(screen.getByTestId("data-export-cat-subjects"));
     fireEvent.click(screen.getByTestId("data-export-selective"));
     await waitFor(() => expect(saveBackupToDiskMock).toHaveBeenCalled());
-    const [payload, filename] = saveBackupToDiskMock.mock.calls[0];
-    expect(filename).toMatch(/^adaptive-learner-export-\d{4}-\d{2}-\d{2}\.json$/);
+    const [payload, filename, backupType] = saveBackupToDiskMock.mock.calls[0];
+    expect(filename).toMatch(/^adaptive-learner-export-\d{4}-\d{2}-\d{2}\.alb$/);
+    expect(backupType).toBe("selective");
     expect(Object.keys(payload.data).sort()).toEqual(["subjects", "users"]);
     expect(payload.format).toBe("adaptive-learner-backup");
   });

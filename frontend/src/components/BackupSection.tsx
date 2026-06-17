@@ -151,7 +151,7 @@ function BackupActionToolbar({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept="application/json,.json"
+                accept=".alb,application/zip,application/json,.json"
                 onChange={onFileChange}
                 style={{display: "none"}}
                 data-testid="backup-file-input"
@@ -550,6 +550,25 @@ export default function BackupSection() {
                 return;
             }
             const parsed = result.payload;
+            // EXP-031 / BAK-03 — surface an app-version gap from the .alb
+            // manifest (readable without unpacking) before the restore. The
+            // existing confirm panel is the "import anyway?" gate, so this
+            // is a non-blocking heads-up, not a second modal.
+            if (
+                result.container === "alb" &&
+                result.manifest &&
+                result.manifest.app_version &&
+                result.manifest.app_version !== __APP_VERSION__
+            ) {
+                notify.warning(
+                    t(
+                        "backup.version_mismatch",
+                        "This backup is from version {{from}}; this app is {{to}}. Review the changes below and confirm to import.",
+                    )
+                        .replace("{{from}}", result.manifest.app_version)
+                        .replace("{{to}}", __APP_VERSION__),
+                );
+            }
             const currentStats = await storage.backup.stats(userId);
             setComparison(buildComparison(currentStats, parsed));
             setPendingPayload(parsed);
