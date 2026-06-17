@@ -263,6 +263,18 @@ describe("ApiStorage — exhaustive delegation", () => {
     ]);
   });
 
+  it("contentLoader.aiValidateCards rejects in API mode (EXP-033 is client-only)", async () => {
+    await expect(
+      apiStorage.contentLoader.aiValidateCards({
+        user_id: "u1",
+        source_language: "de",
+        target_language: "es",
+        level: "A1",
+        cards: [],
+      }),
+    ).rejects.toThrow(/browser-storage/i);
+  });
+
   it("findMostRecent returns null when identity is absent", async () => {
     // Re-mock identity.get to return null for this case.
     const original = apiStorage.users.findMostRecent;

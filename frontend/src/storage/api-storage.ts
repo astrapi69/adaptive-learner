@@ -343,6 +343,16 @@ export const apiStorage: IStorageService = {
     /** Phase 60 / v1.44.0 — opt-in AI content review (backend
      *  resolves the AI key server-side). */
     aiValidate: (input) => api.contentLoader.aiValidate(input),
+    /** EXP-033 / AIV-02 — the set-wide per-card check runs client-side
+     *  (browser-direct provider call) and EXP-033 ships no server route,
+     *  so it is unavailable in API mode. The UI gates the trigger to
+     *  Dexie mode; this throw is the defensive backstop. */
+    aiValidateCards: () =>
+      Promise.reject(
+        new Error(
+          "AI content check is only available in browser-storage (Dexie) mode.",
+        ),
+      ),
   },
 
   // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —

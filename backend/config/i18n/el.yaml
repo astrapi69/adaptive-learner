@@ -1892,6 +1892,24 @@ content:
     applied: εφαρμόστηκε
     fix_applied: Η πρόταση εφαρμόστηκε.
     fix_failed: Δεν ήταν δυνατή η εφαρμογή της πρότασης.
+  ai_check:
+    button: "Elegxos me TN"
+    title: "Elegxos periexomenou me TN"
+    loading: "Proetoimasia kartwn..."
+    cost_estimate: "~{cards} kartes, ~{tokens} tokens, ~{usd}."
+    privacy: "Oi kartes sas tha staloun ston ru8mismeno paroxo TN gia elegxo. Den metaferontai proswpika dedomena."
+    confirm: "Elegxos"
+    progress: "Elegxos parti{das} {current} apo {total}..."
+    rate_limited: "Parakalw perimenete ligo prin ekteleste neo elegxo."
+    failed: "O elegxos me TN den einai diatesimos."
+    unavailable_mode: "Diatesimo mono se leitourgia apo8ikeusis programmatos periIgIsIs."
+    report:
+      summary: "Elegx8Ikan {cards} kartes se {lessons} ma8Imata"
+      ok: "{count} kartes entaxei"
+      issues: "{count} kartes me provlImata"
+      all_ok: "Oles oi kartes pernoun. Den vre8Ikan provlImata."
+      problem: "ProvlIma"
+      suggestion: "Protasi"
   placement:
     lands_under: Το μάθημά σου θα μπει στο
     duplicate: 'Υπάρχει ήδη παρόμοιο μάθημα: {title}. Να μοιραστεί ούτως ή άλλως;'

@@ -78,7 +78,8 @@ import {
   triggerDownload,
   type ExportSetMeta,
 } from "../lib/content/lesson-export";
-import { getStorage } from "../storage";
+import { getStorage, resolveStorageMode } from "../storage";
+import AiValidationDialog from "../components/content/AiValidationDialog";
 import { USER_GENERATED_SOURCE } from "../storage/types";
 import { isOfficialSource, readUserRepos, userRepoSource } from "../lib/content/content-repos";
 import { fetchRecommendedRepos, recommendedSource } from "../lib/content/recommended-repos";
@@ -201,6 +202,17 @@ export default function ContentPage() {
   }, []);
   const { hasKey, activeProvider } = useApiKeyStatus();
   const userId = readLearnerState().userId;
+
+  // EXP-033 / AIV-02 — set-wide AI content check. The trigger is gated to
+  // Dexie mode (browser-direct provider call; no server route) + a
+  // configured key; the button stays visible-but-disabled otherwise.
+  const [aiCheckTarget, setAiCheckTarget] = useState<ContentSetEntry | null>(null);
+  const aiCheckIsDexie = resolveStorageMode() === "dexie";
+  const aiCheckDisabledReason = !aiCheckIsDexie
+    ? t("content.ai_check.unavailable_mode", "Available in browser-storage mode only.")
+    : !hasKey
+      ? t("feature.api_key_required", "API key required. Configure a provider in Settings.")
+      : undefined;
 
   // --- Content Browser search (#354 — extracted to useContentSearch) ---
   const {
@@ -801,6 +813,8 @@ export default function ContentPage() {
                 recommendedSources,
                 onOpen: (e) => void handleOpenLesson(e),
                 onDownload: (e) => void handleDownload(e),
+                onAiCheck: (e) => setAiCheckTarget(e),
+                aiCheckDisabledReason,
               }}
               folded={{
                 setsByKey: userSetsByKey,
@@ -816,6 +830,12 @@ export default function ContentPage() {
           )}
         </>
       )}
+
+      <AiValidationDialog
+        entry={aiCheckTarget}
+        activeProvider={activeProvider ?? null}
+        onClose={() => setAiCheckTarget(null)}
+      />
 
       <ImportLessonModal
         open={showImport}
