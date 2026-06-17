@@ -2441,18 +2441,18 @@
     "online_message": "Tekrar çevrimiçi!",
     "offline_dismiss": "Kapat",
     "action_unavailable": "Çevrimdışı kullanılamaz",
-    "update": {
-      "message": "Yeni bir sürüm mevcut.",
-      "action": "Güncelle",
-      "later": "Sonra"
-    },
     "cache_heading": "Çevrimdışı önbellek",
     "cache_summary": "{size} MB · {count} ders önbellekte",
     "cache_empty": "Henüz çevrimdışı içerik yok.",
     "cache_clear": "Önbelleği temizle",
     "cache_clear_confirm": "Çevrimdışı önbellek temizlensin mi?",
     "cache_clear_action": "Evet, temizle",
-    "cache_cleared": "Çevrimdışı önbellek temizlendi."
+    "cache_cleared": "Çevrimdışı önbellek temizlendi.",
+    "update": {
+      "message": "Yeni bir sürüm mevcut.",
+      "action": "Güncelle",
+      "later": "Sonra"
+    }
   },
   "share": {
     "pr": {

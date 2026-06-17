@@ -2228,10 +2228,6 @@ pwa:
   online_message: "¡De nuevo en línea!"
   offline_dismiss: "Cerrar"
   action_unavailable: "No disponible sin conexión"
-  update:
-    message: "Hay una nueva versión disponible."
-    action: "Actualizar"
-    later: "Más tarde"
   cache_heading: "Caché sin conexión"
   cache_summary: "{size} MB · {count} lecciones guardadas"
   cache_empty: "Aún no hay contenido sin conexión."

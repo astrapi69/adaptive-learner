@@ -2226,10 +2226,6 @@ pwa:
   online_message: "再びオンラインになりました！"
   offline_dismiss: "閉じる"
   action_unavailable: "オフラインでは利用できません"
-  update:
-    message: "新しいバージョンが利用可能です。"
-    action: "更新"
-    later: "後で"
   cache_heading: "オフラインキャッシュ"
   cache_summary: "{size} MB · {count} レッスンをキャッシュ済み"
   cache_empty: "オフラインコンテンツはまだありません。"

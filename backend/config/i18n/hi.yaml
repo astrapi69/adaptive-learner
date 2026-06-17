@@ -2218,10 +2218,6 @@ pwa:
   online_message: Back online!
   offline_dismiss: खारिज करें
   action_unavailable: Not available offline
-  update:
-    message: एक नया संस्करण उपलब्ध है।
-    action: अपडेट करें
-    later: बाद में
   cache_heading: Offline cache
   cache_summary: '{size} MB · {count} lessons cached'
   cache_empty: No offline content cached yet.

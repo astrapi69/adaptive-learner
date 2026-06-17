@@ -2441,18 +2441,18 @@
     "online_message": "Wieder online!",
     "offline_dismiss": "Schließen",
     "action_unavailable": "Offline nicht verfügbar",
-    "update": {
-      "message": "Eine neue Version ist verfügbar.",
-      "action": "Aktualisieren",
-      "later": "Später"
-    },
     "cache_heading": "Offline-Cache",
     "cache_summary": "{size} MB · {count} Lektionen gespeichert",
     "cache_empty": "Noch keine Offline-Inhalte gespeichert.",
     "cache_clear": "Cache leeren",
     "cache_clear_confirm": "Offline-Cache wirklich leeren?",
     "cache_clear_action": "Ja, leeren",
-    "cache_cleared": "Offline-Cache geleert."
+    "cache_cleared": "Offline-Cache geleert.",
+    "update": {
+      "message": "Eine neue Version ist verfügbar.",
+      "action": "Aktualisieren",
+      "later": "Später"
+    }
   },
   "share": {
     "pr": {

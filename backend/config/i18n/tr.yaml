@@ -2226,10 +2226,6 @@ pwa:
   online_message: "Tekrar çevrimiçi!"
   offline_dismiss: "Kapat"
   action_unavailable: "Çevrimdışı kullanılamaz"
-  update:
-    message: "Yeni bir sürüm mevcut."
-    action: "Güncelle"
-    later: "Daha sonra"
   cache_heading: "Çevrimdışı önbellek"
   cache_summary: "{size} MB · {count} ders önbellekte"
   cache_empty: "Henüz çevrimdışı içerik yok."

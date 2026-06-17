@@ -2441,18 +2441,18 @@
     "online_message": "再びオンラインになりました！",
     "offline_dismiss": "閉じる",
     "action_unavailable": "オフラインでは利用できません",
-    "update": {
-      "message": "新しいバージョンが利用可能です。",
-      "action": "更新",
-      "later": "後で"
-    },
     "cache_heading": "オフラインキャッシュ",
     "cache_summary": "{size} MB · {count} レッスンをキャッシュ済み",
     "cache_empty": "オフラインコンテンツはまだありません。",
     "cache_clear": "キャッシュを消去",
     "cache_clear_confirm": "オフラインキャッシュを消去しますか？",
     "cache_clear_action": "はい、消去",
-    "cache_cleared": "オフラインキャッシュを消去しました。"
+    "cache_cleared": "オフラインキャッシュを消去しました。",
+    "update": {
+      "message": "新しいバージョンが利用可能です。",
+      "action": "更新",
+      "later": "後で"
+    }
   },
   "share": {
     "pr": {
