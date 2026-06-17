@@ -203,7 +203,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**346 lessons · 18 sets · 3 domain(s)** (language, programming, psychology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**999 lessons · 99 sets · 3 domain(s)** (language, programming, psychology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
