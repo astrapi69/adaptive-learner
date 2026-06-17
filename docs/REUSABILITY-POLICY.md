@@ -75,6 +75,54 @@ oder Google-Style Docstring (Backend) mit mindestens:
 - Props/Parameter-Beschreibung
 - Ein Verwendungsbeispiel
 
+### 1.7 Implementierungs-Hierarchie (Sprache -> Framework -> Library -> Selbst)
+
+Vor jeder neuen Utility/Komponente die Hierarchie **von oben nach
+unten** durchgehen und bei der ersten Stufe stoppen, die das Problem
+loest. Vollstaendige Fassung: `docs/VIBE-CODING-POLICY.md` §7.
+
+**Stufe 1 -- Sprache/Runtime zuerst (native APIs).** Keine
+Bundle-Kosten, keine Wartung.
+- JS/TS: `Intl`, `crypto.subtle`, `URL`, `fetch`, `structuredClone`,
+  `Array`/`Set`/`Map`-Methoden, `IntersectionObserver`,
+  `AbortController`.
+- Python: `pathlib`, `dataclasses`, `json`, `hashlib`, `functools`,
+  `itertools`, `datetime`, `re`, `unicodedata`.
+
+**Stufe 2 -- Framework (was schon verdrahtet ist).**
+- React: `useState`, `useEffect`, `useRef`, `useMemo`, `useCallback`,
+  Context.
+- Vite: `define`, `import.meta.env`, vorhandene Plugins.
+- FastAPI: `Depends`, `BackgroundTasks`, `HTTPException`, Pydantic-v2.
+
+**Stufe 3 -- Library (npm/PyPI, nur wenn 1+2 nicht reichen).** Eine
+bereits vorhandene Dependency (`react-markdown`, `dexie`, `recharts`,
+`yaml`, `lucide-react`, `tailwind`, ...) immer einer neuen vorziehen.
+Eine *neue* Dependency muss erfuellen: > 1000 weekly downloads,
+letztes Release < 6 Monate, < 100 kB wenn sie etwas ersetzt das wir
+in < 50 LOC selbst schreiben koennten, keine CVEs.
+
+**Stufe 4 -- Selbst schreiben (nur wenn 1-3 nicht passen).**
+Gerechtfertigt wenn keine Library passt ODER die Abhaengigkeit
+unverhaeltnismaessig waere (> 100 kB fuer < 50 LOC, unmaintained,
+provider-eng, oder kann einen harten Vertrag nicht halten:
+Cross-Language-Paritaet, invertierbarer Round-Trip, token-backed
+Theming). Dann **Library-Grade**:
+- keine app-spezifischen Imports (kein `getStorage()`, kein `api.*`,
+  kein app-globaler State) -- nur Props/Seams;
+- eigene exportierte TypeScript-Typen;
+- TSDoc/Docstring mit Verwendungsbeispiel;
+- Kohaesion: < 500 Zeilen, ein Concern; Complexity: cc < 20;
+- eigene Unit-Tests in eigener Testdatei;
+- PR dokumentiert WARUM selbst gebaut (welche Stufe, welcher Grund).
+
+Dies ist ein Vorwaerts-Gate, kein Auftrag, funktionierenden Code
+auszureissen. Die retroaktive Bestandsaufnahme steht in
+`docs/audits/2026-06-17-library-first-audit.md` (Ergebnis: die
+meisten Ersetzungen wuerden das Bundle vergroessern; mehrere
+vermeintliche Eigenentwicklungen sind bereits auf Stufe 1, z.B.
+`content-hash.ts` nutzt `crypto.subtle`).
+
 ---
 
 ## 2. Strukturregeln (angepasst an Adaptive Learner)
@@ -197,6 +245,10 @@ Bei jeder Extraktion oder neuen Komponente pruefen:
 7. **Doku-Check:** Hat die Komponente TSDoc/Docstring mit
    Verwendungsbeispiel?
 
+8. **Hierarchie-Check:** Wurde die Implementierungs-Hierarchie
+   (Sprache -> Framework -> Library -> Selbst, §1.7) top-down
+   durchgegangen? Ist die gewaehlte Stufe + Grund im PR begruendet?
+
 ---
 
 ## 4. Kompatibilitaet mit bestehenden Regeln
@@ -212,3 +264,4 @@ Diese Richtlinie ergaenzt und widerspricht nicht:
 | Kohaesions-Watcher | Kompatibel (Barrel = saubere Module) |
 | 44px Touch Targets | Kompatibel (Komponenten-intern) |
 | IStorageService Seam | Bestaetigt (DI, kein direkter Zugriff) |
+| Vibe-Coding-Policy §7 (Implementierungs-Hierarchie) | Bestaetigt (4-Stufen-Hierarchie + Library-Grade hier konkretisiert) |

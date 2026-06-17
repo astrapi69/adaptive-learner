@@ -176,6 +176,86 @@ Do not blindly commit AI-generated blocks.
 - Docstring rule (#61).
 - Human review (Sparring Partner reviews all agent output).
 
+## 7. Implementation Hierarchy (Language → Framework → Library → Build)
+
+Before implementing any utility, walk this hierarchy **top-down** and stop at
+the first tier that solves the problem. AI happily writes a parser, a diff, a
+slugifier, a date formatter from scratch when the language runtime, the
+framework, or a battle-tested package already does it — and that custom code
+then needs its own tests, bug fixes, and maintenance forever.
+
+### Tier 1 — Language / runtime first (native APIs)
+
+Reach for the platform before anything else. Zero bundle cost, zero
+maintenance, no supply-chain surface.
+
+- **JS/TS:** `Intl` (dates, numbers, collation, lists), `crypto.subtle` (Web
+  Crypto), `URL` / `URLSearchParams`, `fetch`, `structuredClone`, `Array` /
+  `Set` / `Map` methods, `IntersectionObserver`, `AbortController`.
+- **Python:** `pathlib`, `dataclasses`, `json`, `hashlib`, `functools`,
+  `itertools`, `datetime`, `re`, `unicodedata`.
+
+### Tier 2 — Framework (what is already wired)
+
+If the platform doesn't cover it, use the framework already in the project
+before adding anything.
+
+- **React:** `useState`, `useEffect`, `useRef`, `useMemo`, `useCallback`,
+  Context.
+- **Vite:** `define`, `import.meta.env`, the existing plugin pipeline.
+- **FastAPI:** `Depends`, `BackgroundTasks`, `HTTPException` (at the router
+  boundary), Pydantic v2 validators.
+
+### Tier 3 — Library (npm / PyPI, only when Tiers 1+2 don't suffice)
+
+Prefer a dependency **already in the tree** (`react-markdown`, `dexie`,
+`recharts`, `yaml`, `lucide-react`, `tailwind`, `jszip`, `ruamel-yaml`,
+`cryptography`, …) over a new one. A *new* dependency must clear all of:
+
+- **> 1000 weekly downloads** (npm) / an actively used package (PyPI),
+- **last release < 6 months ago** (maintained),
+- **< 100 kB** when it would replace something we could write in **< 50 LOC**,
+- no CVEs (`security-scan.yml` vets it once added, §4).
+
+### Tier 4 — Build it yourself (only when Tiers 1–3 don't fit)
+
+Justified when no library fits OR the dependency is disproportionate (> 100 kB
+for < 50 LOC, unmaintained, provider-narrow, or unable to keep a hard contract
+the code must hold — cross-language parity hash, invertible round-trip,
+token-backed theming). Then the custom code MUST be:
+
+- **Library-Grade:** no app imports (no `getStorage()` / `api.*` / app-global
+  state), own exported types, TSDoc/docstring with a usage example, usable in
+  isolation.
+- **Cohesive:** < 500 lines, one concern (cohesion watcher, §2).
+- **Bounded complexity:** cyclomatic complexity < 20 (complexity watcher, §2).
+- **Tested:** its own tests in its own test file.
+- **Documented in the PR:** state which tier was chosen and *why* the lower
+  tiers didn't fit.
+
+**Rules:**
+
+- Walk the hierarchy top-down; document the chosen tier + reason in the PR.
+- This is a **forward gate**, not a mandate to rip out working in-house code.
+  Retroactive replacement happens only when it clears a real bar (bundle size,
+  maintenance burden, correctness) — see
+  `docs/audits/2026-06-17-library-first-audit.md`, which found that most
+  retroactive replacements would *increase* the bundle and that several
+  suspected reinventions were already at Tier 1 (e.g. `content-hash.ts` uses
+  `crypto.subtle`; `version-check.ts` needs no `semver`).
+
+**Enforcement:**
+
+- `.claude/rules/reusability.md` — agents read the hierarchy before building.
+- Human review of the PR's "tier chosen + why" note.
+- `security-scan.yml` vets any new (Tier 3) dependency for CVEs (§4).
+- Cohesion + complexity watchers (§2) enforce the Tier-4 restrictions on any
+  in-house code that does land.
+
+**Open gap:** No automated check forces the top-down walk before a custom
+utility lands. This is a human-review responsibility, reinforced by the audit
+doc as the worked reference.
+
 ## Priority Hierarchy
 
 When multiple tasks compete, this ordering applies:
@@ -229,3 +309,4 @@ coordinates handoffs and resolves conflicts with reality.
 | Security/deps | `security-scan.yml` (pip-audit, npm audit, bandit) | Manual dependency review |
 | Refactoring | Cohesion watcher, ratchet baseline | Refactoring intervals, scope decisions |
 | Git hygiene | Pre-commit hooks, linting | Diff review, issue discipline |
+| Implementation hierarchy (§7) | `security-scan.yml` (vets new deps), cohesion + complexity watchers (Tier-4 limits) | Top-down walk before custom code; PR "tier chosen + why" note |
