@@ -7,7 +7,9 @@
  * neutral video-icon placeholder.
  *
  * The image is lazy-loaded (``loading="lazy"``) so off-screen cards don't
- * fetch until scrolled into view.
+ * fetch until scrolled into view. When the device is offline we render the
+ * placeholder immediately — no image request is attempted — and recover the
+ * thumbnail automatically once connectivity returns.
  *
  * @example
  * <YouTubeThumbnail url="https://youtu.be/aircAruvnKk" title="Neural nets" />
@@ -16,6 +18,7 @@
 import { Video } from "lucide-react";
 import { useState } from "react";
 
+import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { extractVideoId, getThumbnailUrl } from "../lib/media/youtube";
 
 interface YouTubeThumbnailProps {
@@ -47,8 +50,12 @@ export default function YouTubeThumbnail({
 }: YouTubeThumbnailProps) {
   const videoId = extractVideoId(url);
   const [failed, setFailed] = useState(false);
+  const online = useOnlineStatus();
 
-  if (!videoId || failed) return <Placeholder className={className} />;
+  // No id, a prior load error, or offline -> the neutral placeholder
+  // (offline skips the network request entirely; it recovers when the
+  // ``online`` event flips ``useOnlineStatus`` back to true).
+  if (!videoId || failed || !online) return <Placeholder className={className} />;
 
   return (
     <img
