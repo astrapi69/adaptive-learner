@@ -667,6 +667,8 @@ export interface AiValidationResultRow {
     issue_count: number;
     /** ISO timestamp the check completed. */
     checked_at: string;
+    /** AIV-09 signature, or null for pre-signature caches. */
+    signature: import("../lib/ai/validation-signature").AiValidationSignature | null;
 }
 
 /** EXP-010 / Phase 56 — a daily mission assigned to a user.

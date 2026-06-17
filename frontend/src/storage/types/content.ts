@@ -305,6 +305,8 @@ export interface AiValidationCacheRecord {
   issue_count: number;
   /** ISO timestamp the check completed. */
   checked_at: string;
+  /** EXP-033 / AIV-09 signature, or null for pre-signature caches. */
+  signature?: import("../../lib/ai/validation-signature").AiValidationSignature | null;
 }
 
 /** Input for the EXP-033 set-wide per-card AI check (AIV-02). */

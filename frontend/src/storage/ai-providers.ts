@@ -75,12 +75,31 @@ interface AiCompleteOptions {
     signal?: AbortSignal;
 }
 
+/** Assistant text plus the provider's response id, when available.
+ *  The id anchors the EXP-033 AI-validation signature (AIV-09). */
+export interface AiCompletion {
+    text: string;
+    /** Provider response id (OpenAI ``chatcmpl-…`` / Anthropic ``msg_…`` /
+     *  Gemini ``responseId``), or undefined if the provider omitted it. */
+    responseId?: string;
+}
+
 /**
  * Provider-agnostic entry point. Returns the assistant text on
  * success; throws ``ApiError`` on transport / auth / provider
  * failure so the caller renders a precise message in the toast.
  */
 export async function aiComplete(opts: AiCompleteOptions): Promise<string> {
+    return (await aiCompleteWithMeta(opts)).text;
+}
+
+/**
+ * Like {@link aiComplete} but also returns the provider response id
+ * (EXP-033 / AIV-09 signature). Same error semantics.
+ */
+export async function aiCompleteWithMeta(
+    opts: AiCompleteOptions,
+): Promise<AiCompletion> {
     const maxTokens = opts.maxTokens ?? 1024;
     switch (opts.provider) {
         case "anthropic":
@@ -113,6 +132,7 @@ export async function aiComplete(opts: AiCompleteOptions): Promise<string> {
 // ---- Anthropic --------------------------------------------------------
 
 interface AnthropicResponse {
+    id?: string;
     content?: Array<{type: string; text?: string}>;
     error?: {message?: string; type?: string};
 }
@@ -123,7 +143,7 @@ async function anthropicComplete(
     messages: ChatMessage[],
     maxTokens: number,
     signal?: AbortSignal,
-): Promise<string> {
+): Promise<AiCompletion> {
     // Anthropic separates ``system`` from ``messages``. Pull the
     // first system message out (the prompt orchestrator only
     // ever emits one) and pass it as a top-level field.
@@ -158,12 +178,13 @@ async function anthropicComplete(
     if (!first?.text) {
         throw new ApiError(502, "Anthropic returned no text content", "anthropic");
     }
-    return first.text;
+    return {text: first.text, responseId: json.id};
 }
 
 // ---- OpenAI -----------------------------------------------------------
 
 interface OpenAiResponse {
+    id?: string;
     choices?: Array<{message?: {content?: string}}>;
     error?: {message?: string; type?: string};
 }
@@ -174,7 +195,7 @@ async function openaiComplete(
     messages: ChatMessage[],
     maxTokens: number,
     signal?: AbortSignal,
-): Promise<string> {
+): Promise<AiCompletion> {
     const body = {
         model,
         max_tokens: maxTokens,
@@ -198,12 +219,13 @@ async function openaiComplete(
     if (typeof text !== "string" || text.length === 0) {
         throw new ApiError(502, "OpenAI returned no text content", "openai");
     }
-    return text;
+    return {text, responseId: json.id};
 }
 
 // ---- Gemini -----------------------------------------------------------
 
 interface GeminiResponse {
+    responseId?: string;
     candidates?: Array<{
         content?: {parts?: Array<{text?: string}>};
         finishReason?: string;
@@ -217,7 +239,7 @@ async function geminiComplete(
     messages: ChatMessage[],
     maxTokens: number,
     signal?: AbortSignal,
-): Promise<string> {
+): Promise<AiCompletion> {
     // Gemini doesn't have a separate system field; we fold any
     // ``system`` messages into the first ``user`` part. Roles map
     // user -> "user", assistant -> "model".
@@ -252,7 +274,7 @@ async function geminiComplete(
     if (typeof text !== "string" || text.length === 0) {
         throw new ApiError(502, "Gemini returned no text content", "gemini");
     }
-    return text;
+    return {text, responseId: json.responseId};
 }
 
 // ---- Streaming dispatch (v1.6.0 / Phase 19B-2) ----------------------------

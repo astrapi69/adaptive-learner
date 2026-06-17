@@ -21,6 +21,8 @@ import {
   type CostEstimate,
 } from "../lib/ai/validation-cost";
 import { MAX_CARDS_PER_RUN } from "../lib/ai/validation-runner";
+import { computeContentHash } from "../lib/ai/content-hash";
+import { buildSignature } from "../lib/ai/validation-signature";
 import { resolveModel } from "../storage/ai-providers";
 import { getStorage } from "../storage";
 import { readLearnerState } from "../lib/learnerState";
@@ -261,13 +263,29 @@ export function useAiCardValidation(): UseAiCardValidation {
       const meta = metaRef.current;
       const issueRows = buildIssueRows(result.results, meta);
       const checkedAt = new Date().toISOString();
+      // AIV-08/09 — anchor a signature to the checked cards. A signature
+      // needs a real provider response id; without one (provider omitted
+      // it) we still cache the report but leave the signature null.
+      const contentHash = await computeContentHash(cardsRef.current);
+      const responseId = result.response_ids[0] ?? "";
+      const signature = responseId
+        ? buildSignature({
+            contentHash,
+            checkedCards: result.checked_cards,
+            issuesFound: result.issue_count,
+            provider: result.provider,
+            model: result.model,
+            responseId,
+            timestamp: checkedAt,
+          })
+        : null;
       // AIV-04 — persist so the report re-shows without another API call.
       try {
         await getStorage().contentLoader.saveAiValidationCache({
           source: entry.source,
           set_id: entry.id,
           set_version: entry.cached_version,
-          content_hash: null,
+          content_hash: contentHash,
           results: result.results,
           response_ids: result.response_ids,
           provider: result.provider,
@@ -275,6 +293,7 @@ export function useAiCardValidation(): UseAiCardValidation {
           card_count: result.checked_cards,
           issue_count: result.issue_count,
           checked_at: checkedAt,
+          signature,
         });
       } catch {
         /* cache write is best-effort; the report still displays */

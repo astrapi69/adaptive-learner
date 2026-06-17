@@ -2054,6 +2054,11 @@
       "fix_failed": "Não foi possível aplicar a sugestão."
     },
     "ai_check": {
+      "badge": {
+        "verified": "Verificado por IA",
+        "stale": "Verificacao IA desatualizada",
+        "invalid": "Verificacao IA invalida"
+      },
       "last_checked": "Ultima verificacao: {when}",
       "recheck": "Verificar novamente",
       "export": {

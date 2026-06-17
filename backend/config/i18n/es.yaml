@@ -1893,6 +1893,10 @@ content:
     fix_applied: Sugerencia aplicada.
     fix_failed: No se pudo aplicar la sugerencia.
   ai_check:
+    badge:
+      verified: "Revisado por IA"
+      stale: "Revision IA desactualizada"
+      invalid: "Revision IA no valida"
     last_checked: "Ultima revision: {when}"
     recheck: "Revisar de nuevo"
     export:

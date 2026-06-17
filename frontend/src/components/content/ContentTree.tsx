@@ -24,6 +24,7 @@ import { booksForDomain, type BookRecommendations } from "../../lib/content/book
 import type { ContentSetEntry } from "../../storage/types";
 import BookRecommendationsSection from "./BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
+import type { AiCheckBadgeStatus } from "../../shared/AiCheckedBadge";
 import FoldedUserLessons from "./FoldedUserLessons";
 
 /** Per-row state + actions forwarded down to {@link ContentSetRow}. */
@@ -40,6 +41,8 @@ export interface ContentSetRowActions {
   /** When set, the AI-check button is visible but disabled with this
    *  tooltip reason (no key / browser-mode only). */
   aiCheckDisabledReason?: string;
+  /** EXP-033 / AIV-11 — resolve the "AI-checked" badge status per set. */
+  aiBadgeStatusFor?: (entry: ContentSetEntry) => AiCheckBadgeStatus;
 }
 
 /** Actions + lookup for the user lessons folded into tree nodes
@@ -108,6 +111,7 @@ export default function ContentTree({
       onDownload={setRow.onDownload}
       onAiCheck={setRow.onAiCheck}
       aiCheckDisabledReason={setRow.aiCheckDisabledReason}
+      aiBadgeStatus={setRow.aiBadgeStatusFor?.(entry) ?? "none"}
     />
   );
 

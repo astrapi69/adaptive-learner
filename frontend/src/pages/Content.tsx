@@ -80,6 +80,8 @@ import {
 } from "../lib/content/lesson-export";
 import { getStorage, resolveStorageMode } from "../storage";
 import AiValidationDialog from "../components/content/AiValidationDialog";
+import { badgeStatusForCachedSet } from "../lib/ai/validation-signature";
+import type { AiCheckBadgeStatus } from "../shared/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../storage/types";
 import { isOfficialSource, readUserRepos, userRepoSource } from "../lib/content/content-repos";
 import { fetchRecommendedRepos, recommendedSource } from "../lib/content/recommended-repos";
@@ -200,6 +202,38 @@ export default function ContentPage() {
   useEffect(() => {
     setContributions(listContributions());
   }, []);
+  // AIV-11 — load the cached AI-validation signatures for downloaded sets
+  // and derive the badge status (cheap: version-based, no hash recompute).
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const storage = getStorage();
+      const downloaded = sets.filter(
+        (s) => s.source !== USER_GENERATED_SOURCE && s.cached_version !== null,
+      );
+      const map: Record<string, AiCheckBadgeStatus> = {};
+      for (const entry of downloaded) {
+        try {
+          const cache = await storage.contentLoader.getAiValidationCache(
+            entry.source,
+            entry.id,
+          );
+          const status = badgeStatusForCachedSet(
+            cache?.signature ?? null,
+            cache?.set_version ?? null,
+            entry.cached_version,
+          );
+          if (status !== "none") map[`${entry.source}#${entry.id}`] = status;
+        } catch {
+          /* a cache read failure just means no badge for that set */
+        }
+      }
+      if (!cancelled) setAiBadgeBySet(map);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [sets]);
   const { hasKey, activeProvider } = useApiKeyStatus();
   const userId = readLearnerState().userId;
 
@@ -207,6 +241,8 @@ export default function ContentPage() {
   // Dexie mode (browser-direct provider call; no server route) + a
   // configured key; the button stays visible-but-disabled otherwise.
   const [aiCheckTarget, setAiCheckTarget] = useState<ContentSetEntry | null>(null);
+  // AIV-11 — per-set "AI-checked" badge status, keyed "{source}#{id}".
+  const [aiBadgeBySet, setAiBadgeBySet] = useState<Record<string, AiCheckBadgeStatus>>({});
   const aiCheckIsDexie = resolveStorageMode() === "dexie";
   const aiCheckDisabledReason = !aiCheckIsDexie
     ? t("content.ai_check.unavailable_mode", "Available in browser-storage mode only.")
@@ -815,6 +851,8 @@ export default function ContentPage() {
                 onDownload: (e) => void handleDownload(e),
                 onAiCheck: (e) => setAiCheckTarget(e),
                 aiCheckDisabledReason,
+                aiBadgeStatusFor: (e) =>
+                  aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
               }}
               folded={{
                 setsByKey: userSetsByKey,

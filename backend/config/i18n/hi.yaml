@@ -1886,6 +1886,10 @@ content:
     fix_applied: Suggestion applied.
     fix_failed: Could not apply the suggestion.
   ai_check:
+    badge:
+      verified: "AI-janchaa gaya"
+      stale: "AI-jaanch puraani"
+      invalid: "AI-jaanch amaanya"
     last_checked: "antim jaanch: {when}"
     recheck: "phir se janchein"
     export:

@@ -143,6 +143,11 @@ describe("AiValidationDialog", () => {
     expect(saved.set_id).toBe("es-a1");
     expect(saved.set_version).toBe("1");
     expect(saved.response_ids).toEqual(["chatcmpl-abc"]);
+    // AIV-09 — a signature is built from the content hash + response id.
+    expect(saved.content_hash).toMatch(/^sha256:/);
+    expect(saved.signature).not.toBeNull();
+    expect(saved.signature.result).toBe("passed");
+    expect(saved.signature.response_id).toBe("chatcmpl-abc");
   });
 
   it("shows a cached report (no API call) and offers re-check", async () => {
