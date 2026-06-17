@@ -183,6 +183,45 @@ describe("FreeTextExercise: render", () => {
         expect(screen.getByTestId("free-text-input").tagName).toBe("INPUT");
     });
 
+    it("#692 auto-focuses the input on mount (type immediately, no click)", () => {
+        render(<FreeTextExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(screen.getByTestId("free-text-input")).toHaveFocus();
+    });
+
+    it("#692 auto-focuses the code textarea on mount", () => {
+        render(
+            <FreeTextExercise exercise={EXERCISE} codeMode onComplete={vi.fn()} />,
+        );
+        const field = screen.getByTestId("free-text-input");
+        expect(field.tagName).toBe("TEXTAREA");
+        expect(field).toHaveFocus();
+    });
+
+    it("#692 focuses the new input on step change (keyed remount)", () => {
+        const second: ContentLessonExercise = {...EXERCISE, id: "ex-2"};
+        const {rerender} = render(
+            <FreeTextExercise key="ex-1" exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        expect(screen.getByTestId("free-text-input")).toHaveFocus();
+        // The dispatcher keys each step by id → a new step remounts the
+        // renderer, and the fresh input claims focus.
+        rerender(
+            <FreeTextExercise key="ex-2" exercise={second} onComplete={vi.fn()} />,
+        );
+        expect(screen.getByTestId("free-text-input")).toHaveFocus();
+    });
+
+    it("#692 does not focus a reviewed (read-only) field", () => {
+        render(
+            <FreeTextExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                reviewed={{kind: "free_text", input: "Merci"}}
+            />,
+        );
+        expect(screen.getByTestId("free-text-input")).not.toHaveFocus();
+    });
+
     it("enables submit once the user types non-whitespace", () => {
         render(
             <FreeTextExercise

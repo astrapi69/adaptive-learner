@@ -80,6 +80,15 @@ describe("MatchingExercise: pair lifecycle", () => {
         expect(screen.getByTestId("matching-right")).toBeInTheDocument();
     });
 
+    it("#692 takes no unwanted text-input focus (no field to auto-focus)", () => {
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        const active = document.activeElement;
+        expect(active?.tagName).not.toBe("INPUT");
+        expect(active?.tagName).not.toBe("TEXTAREA");
+    });
+
     it("shows instructions + visible column headers (UX bugfix)", () => {
         render(
             <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
