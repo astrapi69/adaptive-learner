@@ -30,6 +30,27 @@ Rules:
   wired infrastructure" in lessons-learned.md: a feature that works
   in a unit test is not the same as a feature that works.
 
+## Visueller Device-Check (vor Merge)
+
+Features die primaer visuell oder interaktiv sind (Banners, Dialoge,
+Toasts, Overlays, Touch-Interaktionen) muessen in der PR-Beschreibung
+einen Screenshot oder eine Beschreibung des manuellen Checks auf
+mindestens einem echten Geraet enthalten:
+
+- Desktop (Chrome/Firefox)
+- Mobile (iOS Safari ODER Android Chrome)
+
+Kein Screenshot = kein Merge fuer visuelle Features. Unit-Tests und
+Playwright pruefen Funktion, nicht ob der User es sehen und bedienen
+kann.
+
+Hintergrund: ein Element kann in jedem Unit-Test gruen sein und trotzdem
+fuer den User unsichtbar oder unbedienbar sein - Text-auf-gleichfarbigem-
+Hintergrund, ein Banner hinter der iOS-Safari-Adressleiste, ein
+Touch-Target unter dem Home-Indicator, ein Overlay das die Navigation
+verdeckt. Diese Klasse von Fehlern findet nur ein Blick auf ein echtes
+Geraet (oder eine ehrliche Beschreibung dessen, was dort geprueft wurde).
+
 ## Quick check after every change
 
 ### 1. Run the tests
