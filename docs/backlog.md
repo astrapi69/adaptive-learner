@@ -104,13 +104,24 @@ tiebreaker.
 
 ## Jetzt (v1.86.0+)
 
-- **EXP-033 — KI-Content-Validierung**: AIV-01..AIV-12.
-- **EXP-029 — Medien-Integration**: MED-01..MED-06, MED-10.
+> **v1.86.0-Release-Blocker (#689, offen):** CI rot auf `develop` —
+> `content-loader-dexie.ts` > 1000 Zeilen (File-Size-Gate) + `Content.tsx`
+> cc 22 (Complexity-Gate), aus #683/#687. Entschaerfen vor dem v1.86.0-Tag.
+
+- **EXP-033 — KI-Content-Validierung** (PARTIAL): **offen AIV-06**
+  (CI-Action `ai_review.py`), **AIV-07** (Auto-Fix nur User-Content),
+  **AIV-12** (Signatur-Invalidierung). Erledigt: AIV-01..05 + AIV-08..11
+  (#674/#676/#686/#687/#690/#691).
 - **EXP-031 — .alb ZIP-Backup**: BAK-01..BAK-06.
 - **EXP-032 — deterministische Content-Validierung**: CQV-01..CQV-03
   (CQV-04/05 spaeter).
+- **#696 — Library-First F-1**: PyYAML als expliziten Backend-Runtime-Dep
+  deklarieren (kleiner Hygiene-Fix).
 - **Bug #622** — A11y link-name Lesson-Viewer (offen, P3/a11y).
-- **Bug #656** — Complexity-Gate FreeText/WordTiles — **DONE** (v1.85.0).
+- **Erledigt diese Session**: **EXP-029** Medien-Integration MED-01..07
+  (#678/#680/#684/#685/#688; MED-10 offen → Deferred); **Bug #656**
+  Complexity-Gate FreeText/WordTiles (v1.85.0); **Bug #675** Review-Badge-
+  Abstieg nach Session (Closes #673, v1.86.0).
 
 ## Naechste Phase
 
@@ -125,9 +136,17 @@ tiebreaker.
   CSV-Datei-Upload, Token-Rollen-UI.
 - **EXP-024 — Schichtentrennung**: Phase 2 (Plugin-Service-Module), Phase 3
   (Frontend-U1).
+- **Library-First-Follow-ups** (aus dem Library-First-Audit): #697
+  react-easy-crop fuer `ImageCropDialog` spiken, #698 `jsonrepair` fuer den
+  LLM-Prosa-JSON-Extraktor evaluieren (TS + Python gepaart), #699 `zod` fuer
+  die content-validator-Schema-Schicht (vorlaeufig lean BEHALTEN), #700
+  `react-activity-calendar` fuer die `ActivityHeatmap` (vorlaeufig lean
+  BEHALTEN).
 
 ## Deferred (Phase 2 / community-finanziert)
 
+- **EXP-029 — MED-10** (Partner-Onboarding-Doku): Business-Development-
+  Artefakt, kein Code; Engpass ist die Partnergewinnung.
 - **EXP-030 — Multi-User**: MU-01..MU-05, MU-10, MU-20.
 - **EXP-023 — Server-Features (Phase C)**: Community-Ratings, Trust 2,
   zentraler Index, Coach-Aggregation, Einmal-Invite-Tokens.

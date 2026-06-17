@@ -10,13 +10,19 @@ Current state: **v1.85.0 (released 2026-06-17 — P0 hotfix: PWA update banner r
 
 ## Aktueller Fokus (v1.86.0+)
 
-- **EXP-033 — KI-gestuetzte Content-Validierung** (in Arbeit). Set-weite
-  KI-Pruefung + Signatur-Verfahren; Tasks AIV-01..12. Baut auf dem
-  per-Lektion-Validator aus v1.44.0 auf. Siehe
-  [EXP-033](explorations/EXP-033-ai-content-validation.md).
-- **EXP-029 — Medien-Integration mit Gegenseitigkeits-Prinzip** (in Arbeit).
-  `media.yaml` analog `books.yaml` + Reziprozitaets-Gate; Tasks MED-01..06 +
-  MED-10. Siehe [EXP-029](explorations/EXP-029-media-reciprocity.md).
+> **v1.86.0-Release-Blocker (#689, offen):** zwei CI-Gates sind auf `develop`
+> rot, eingeschleppt durch die EXP-029/033-Feature-Arbeit (#683/#687) —
+> `content-loader-dexie.ts` > 1000 Zeilen (File-Size-Gate) + `Content.tsx`
+> cc 22 (Complexity-Gate). Erst entschaerfen (Datei splitten / Funktion
+> dekomponieren), dann v1.86.0 taggen. Kein Feature-Blocker, ein Gate-Blocker.
+
+- **EXP-033 — KI-gestuetzte Content-Validierung** (PARTIAL, Rest fuer
+  v1.86.0+). Ausgeliefert: set-weite Batch-Pruefung + Report-UI + Kosten-
+  Bestaetigung (AIV-01..05) und Content-Hash + Signatur + "AI-Checked"-Badge
+  (AIV-08..11), #674/#676/#686/#687/#690/#691. **Offen: AIV-06**
+  (CI-Action `ai_review.py` im Content-Repo), **AIV-07** (Auto-Fix, nur
+  User-Content), **AIV-12** (Signatur bei Content-Aenderung invalidieren).
+  Siehe [EXP-033](explorations/EXP-033-ai-content-validation.md).
 - **EXP-031 — ZIP-Backup-Format (.alb)**. Container + Manifest, Magic-Byte-
   Erkennung, Legacy-JSON-Fallback; Tasks BAK-01..06. Siehe
   [EXP-031](explorations/EXP-031-zip-backup-format.md).
@@ -24,14 +30,13 @@ Current state: **v1.85.0 (released 2026-06-17 — P0 hotfix: PWA update banner r
   Sprachpaar-Konsistenz, Akzent-/Artikel-Woerterbuecher; Tasks CQV-01..03
   (CQV-04/05 spaeter). Siehe
   [EXP-032](explorations/EXP-032-content-quality-validation.md).
+- **#696 — Library-First-Follow-up F-1**: PyYAML als expliziten Backend-
+  Runtime-Dependency deklarieren (kleiner Hygiene-Fix).
 - **Offene Bugs**: **#622** — A11y link-name-Verstoss im Lesson-Viewer (P3,
-  offen). (#656 Complexity-Gate FreeText/WordTiles ist bereits in v1.85.0
-  geschlossen — siehe "Abgeschlossen".)
-
-> Hinweis Review-Badge: der Live-XP-Badge-Recompute nach einer Review wurde
-> in #631 (v1.83.0) gefixt. Falls eine Badge-Aktualisierung weiterhin
-> reproduzierbar fehlschlaegt, zuerst ein Issue anlegen (GITHUB-ISSUE-PFLICHT),
-> dann hier einsortieren.
+  offen). (#656 Complexity-Gate FreeText/WordTiles bereits in v1.85.0
+  geschlossen; das Review-Badge stieg nach einer Session nicht korrekt ab —
+  in **#675** behoben (Closes #673), released mit v1.86.0. Beide siehe
+  "Abgeschlossen".)
 
 ## Naechste Phase
 
@@ -48,6 +53,12 @@ Current state: **v1.85.0 (released 2026-06-17 — P0 hotfix: PWA update banner r
   Content-Browser-Baum als Graph (UC2) + Beziehungs-Editor (UC4) (EXP-022).
 - **EXP-027 — Weitere Sprachen** (I18N-06..12): Indonesisch-/Italienisch-UI,
   formale Uebersetzungs-QA, Content-Sprachpaar-Expansion, Exercise-RTL-Audit.
+- **Library-First-Follow-ups** (#697–#700, aus dem Library-First-Audit):
+  react-easy-crop fuer `ImageCropDialog` spiken (#697), `jsonrepair` fuer den
+  LLM-Prosa-JSON-Extraktor evaluieren (#698, TS + Python gepaart), `zod` fuer
+  die content-validator-Schema-Schicht evaluieren (#699, vorlaeufig lean
+  BEHALTEN), `react-activity-calendar` fuer die `ActivityHeatmap` evaluieren
+  (#700, vorlaeufig lean BEHALTEN).
 
 ## Zukunft (Phase 2, community-finanziert)
 
@@ -164,16 +175,20 @@ Auf EXP-Ebene erledigt (Release-Detail in der Phase-History-Tabelle oben +
 - **EXP-020** — Lektions-Flusssteuerung (v1.47.0).
 - **EXP-026** — User-Lektionen im Content-Baum, UGC-01..07 (#97, v1.80.0).
 - **EXP-028** — User-Event-Recording, EVT-01..05 (#566, v1.81.0).
+- **EXP-029** — Medien-Integration mit Gegenseitigkeits-Prinzip, MED-01..07
+  (#678/#680/#684/#685/#688, v1.86.0); MED-10 Partner-Onboarding-Doku offen.
 
 Teilweise erledigt (Rest in Aktueller Fokus / Naechste Phase): **EXP-013**
 (regelbasiert; Stufe 3 KI offen), **EXP-021** (MVP; Folge-Ausbau offen),
 **EXP-022** (UC1; UC2/UC4 offen), **EXP-023** (A/B/C-slice; Phase-C-Rest
 offen), **EXP-024** (Phase 1; Phase 2/3 offen), **EXP-025** (AUTH-01/02;
 AUTH-03..09 offen), **EXP-027** (Hindi-UI + Picker-Skalierung + Hindi-Content;
-weitere Sprachen + RTL offen).
+weitere Sprachen + RTL offen), **EXP-033** (AIV-01..05 + AIV-08..11
+ausgeliefert; AIV-06/07/12 offen).
 
 Kuerzlich geschlossene Bugs: **#656** (Complexity-Gate FreeText/WordTiles
-baselined, v1.85.0).
+baselined, v1.85.0); **#675** (Review-Badge stieg nach einer Session nicht ab
+— behoben, Closes #673, v1.86.0).
 
 ---
 
