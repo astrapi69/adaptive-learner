@@ -1839,3 +1839,36 @@ Tells + fix:
   `ruff format`, `--fix`) leaves those mutations in the worktree when the
   commit fails. Treat the worktree as dirty-with-hook-output after any
   aborted commit; don't stash or re-commit blind.
+
+## An i18n string change can break a nightly-only E2E gate invisibly
+
+Surfaced 2026-06-17 during the v1.86.0 release-test. Five EXP-023 dexie-smoke
+specs failed on `expect(content-repo-result).toContainText(/passed/i)` (and
+`/failed/i`). The app was correct — validation succeeded and rendered
+`"Validierung erfolgreich: 1 Sets, 1 Lektionen."`. The cause: PR #662
+("translate repository management UI in all 9 catalogs") ADDED the German
+`content_repo.validation.passed` / `.failed` strings. The app's default locale
+is German; before #662 those keys had no German translation and fell back to
+the ENGLISH "Validation passed/failed…", which the specs matched. Adding the
+correct German translation removed the fallback, so the assertions broke.
+
+Why it surfaced only at release: the **Dexie-mode E2E gate runs nightly +
+release-only, NOT on PRs** (#552 cadence). So #662's PR was green (it doesn't
+run dexie-smoke), and the drift sat latent until `make release-test` ran the
+gate. This is the same class as "wired != working" and the stale-assertion
+rule, with an i18n-specific trigger.
+
+Rules:
+- **E2E text assertions must not hardcode one locale's wording** when the app
+  renders in a different default locale (German here). Match a locale-robust
+  pattern (`/passed|erfolgreich/i`) or assert on a stable, non-translated
+  signal (a testid state, a count, a success CSS token), not the prose.
+- **Any i18n PR that adds/changes a translated string that an E2E spec asserts
+  on is a latent break** for the nightly/release gates. When translating a
+  string, grep the E2E specs for the old English wording
+  (`grep -rn "toContainText(/<word>/" e2e/`) and update the assertion in the
+  same PR — even though the PR's own CI won't run the affected gate.
+- **A previously-passing assertion that depended on an i18n FALLBACK is
+  fragile by construction.** If a test passes only because a translation is
+  missing, completing the translation breaks it. Prefer locale-agnostic
+  assertions from the start.
