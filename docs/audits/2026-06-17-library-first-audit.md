@@ -146,17 +146,19 @@ in-house utility when a proportionate library exists.
 
 Created as separate issues (no code in the audit PR):
 
-- **#-A** `content-validator.ts` — spike `zod` for the schema-shape layer only,
-  keeping the quality minimums + content-repo parity. (PRUEFEN, low priority.)
-- **#-B** `ImageCropDialog` — spike `react-easy-crop` (the strongest candidate).
-- **#-C** `ActivityHeatmap` — evaluate `react-activity-calendar` vs token
+- **#747** (#-A) `content-validator.ts` — spike `zod` for the schema-shape layer
+  only, keeping the quality minimums + content-repo parity. (PRUEFEN, low priority.)
+- **#748** (#-B) `ImageCropDialog` — spike `react-easy-crop` (the strongest candidate).
+- **#749** (#-C) `ActivityHeatmap` — evaluate `react-activity-calendar` vs token
   re-bridge cost (lean BEHALTEN).
-- **#-D** `extract-json.ts` + `extract_json.py` — paired TS+Python evaluation of
+- **#750** (#-D) `extract-json.ts` + `extract_json.py` — paired TS+Python evaluation of
   `jsonrepair`, preserving the cross-language behavioural contract.
-- **F-1** Declare PyYAML in `backend/pyproject.toml` runtime deps.
+- **#696** (F-1) Declare PyYAML in `backend/pyproject.toml` runtime deps.
 
-(Issue numbers are filled in once the follow-ups are filed; see the umbrella
-issue #694 for the live links.)
+All five follow-ups are filed. The umbrella audit (#694) is complete — its
+deliverables (this doc + the VIBE-CODING / REUSABILITY policies + the
+`.claude/rules/reusability.md` rule) shipped in #695; the candidates above are
+tracked independently at the priority noted.
 
 ---
 
