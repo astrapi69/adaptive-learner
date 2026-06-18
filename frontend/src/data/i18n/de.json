@@ -2951,13 +2951,17 @@
       "downloaded": "Bereits vorhanden",
       "lessons": "{n} Lektionen",
       "cards": "{n} Karten",
-      "ai_checked": "KI-geprüft"
+      "ai_checked": "KI-geprüft",
+      "remove": "Entfernen",
+      "progress": "Lektionen werden geladen"
     },
     "toast": {
-      "downloaded": "Set heruntergeladen und einsatzbereit."
+      "downloaded": "Set heruntergeladen und einsatzbereit.",
+      "removed": "Set entfernt. Du kannst es jederzeit erneut herunterladen."
     },
     "error": {
       "download_failed": "Set konnte nicht heruntergeladen werden.",
+      "remove_failed": "Set konnte nicht entfernt werden.",
       "load_failed": "Verfügbare Inhalte konnten nicht geladen werden."
     }
   }

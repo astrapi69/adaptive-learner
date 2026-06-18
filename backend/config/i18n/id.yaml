@@ -2708,8 +2708,12 @@ discover:
     lessons: "{n} pelajaran"
     cards: "{n} kartu"
     ai_checked: "Diperiksa AI"
+    remove: "Hapus"
+    progress: "Mengunduh pelajaran"
   toast:
     downloaded: "Set diunduh dan siap digunakan."
+    removed: "Set dihapus. Kamu bisa mengunduhnya lagi kapan saja."
   error:
     download_failed: "Tidak dapat mengunduh set."
+    remove_failed: "Tidak dapat menghapus set."
     load_failed: "Tidak dapat memuat konten yang tersedia."

@@ -2708,8 +2708,12 @@ discover:
     lessons: "{n}개 레슨"
     cards: "{n}개 카드"
     ai_checked: "AI 검증됨"
+    remove: "삭제"
+    progress: "레슨 다운로드 중"
   toast:
     downloaded: "세트를 다운로드했습니다."
+    removed: "세트를 삭제했습니다. 언제든지 다시 다운로드할 수 있습니다."
   error:
     download_failed: "세트를 다운로드할 수 없습니다."
+    remove_failed: "세트를 삭제할 수 없습니다."
     load_failed: "사용 가능한 콘텐츠를 불러올 수 없습니다."

@@ -2708,8 +2708,12 @@ discover:
     lessons: "{n} lessons"
     cards: "{n} cards"
     ai_checked: "AI-checked"
+    remove: "Remove"
+    progress: "Downloading lessons"
   toast:
     downloaded: "Set downloaded and ready to use."
+    removed: "Set removed. You can download it again anytime."
   error:
     download_failed: "Could not download the set."
+    remove_failed: "Could not remove the set."
     load_failed: "Could not load available content."

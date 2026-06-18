@@ -2684,8 +2684,12 @@ discover:
     lessons: "{n} पाठ"
     cards: "{n} कार्ड"
     ai_checked: "एआई-जाँचित"
+    remove: "हटाएँ"
+    progress: "पाठ डाउनलोड हो रहे हैं"
   toast:
     downloaded: "सेट डाउनलोड हो गया और उपयोग के लिए तैयार है।"
+    removed: "सेट हटा दिया गया। आप इसे कभी भी फिर से डाउनलोड कर सकते हैं।"
   error:
     download_failed: "सेट डाउनलोड नहीं हो सका।"
+    remove_failed: "सेट हटाया नहीं जा सका।"
     load_failed: "उपलब्ध सामग्री लोड नहीं हो सकी।"

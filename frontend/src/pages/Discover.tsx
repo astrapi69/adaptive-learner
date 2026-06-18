@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ApiError } from "../api/client";
 import { useI18n } from "../hooks/useI18n";
+import { isOfficialSource } from "../lib/content/content-repos";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
   availableDomains,
@@ -65,6 +66,9 @@ export default function Discover() {
   const [sort, setSort] = useState<DiscoverSort>("relevance");
   const [downloadState, setDownloadState] = useState<
     Record<string, SetDiscoveryDownloadState>
+  >({});
+  const [downloadProgress, setDownloadProgress] = useState<
+    Record<string, { current: number; total: number }>
   >({});
 
   // Debounce the search field into the active query filter.
@@ -189,8 +193,11 @@ export default function Discover() {
   async function handleDownload(set: SearchableSet) {
     const key = discoverSetKey(set);
     setDownloadState((prev) => ({ ...prev, [key]: "downloading" }));
+    setDownloadProgress((prev) => ({ ...prev, [key]: { current: 0, total: set.lesson_count } }));
     try {
-      await getStorage().contentLoader.downloadSet(set.repo_url, set.id);
+      await getStorage().contentLoader.downloadSet(set.repo_url, set.id, (progress) =>
+        setDownloadProgress((prev) => ({ ...prev, [key]: progress })),
+      );
       setDownloadState((prev) => ({ ...prev, [key]: "done" }));
       setDownloadedKeys((prev) => {
         const next = new Set(prev);
@@ -206,6 +213,24 @@ export default function Discover() {
     }
   }
 
+  async function handleRemove(set: SearchableSet) {
+    const key = discoverSetKey(set);
+    try {
+      await getStorage().contentLoader.deleteSet(set.repo_url, set.id);
+      setDownloadedKeys((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+      setDownloadState((prev) => ({ ...prev, [key]: "idle" }));
+      notify.success(t("discover.toast.removed", "Set removed. You can download it again anytime."));
+    } catch (err) {
+      notify.error(t("discover.error.remove_failed", "Could not remove the set."), {
+        apiError: err instanceof ApiError ? err : undefined,
+      });
+    }
+  }
+
   const cardLabels: SetDiscoveryCardLabels = {
     download: t("discover.card.download", "Download"),
     downloading: t("discover.card.downloading", "Downloading…"),
@@ -215,6 +240,8 @@ export default function Discover() {
     cards: "",
     aiChecked: t("discover.card.ai_checked", "AI-checked"),
     trust: "",
+    remove: t("discover.card.remove", "Remove"),
+    progress: t("discover.card.progress", "Downloading lessons"),
   };
 
   function trustLabel(level: number): string {
@@ -286,7 +313,9 @@ export default function Discover() {
                   set={set}
                   isDownloaded={downloadedKeys.has(key)}
                   state={downloadState[key] ?? "idle"}
+                  progress={downloadProgress[key]}
                   onDownload={handleDownload}
+                  onRemove={isOfficialSource(set.repo_url) ? undefined : handleRemove}
                   languageLabel={languageBadge(set)}
                   labels={{
                     ...cardLabels,

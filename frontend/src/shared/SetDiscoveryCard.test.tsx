@@ -14,6 +14,8 @@ const LABELS: SetDiscoveryCardLabels = {
   cards: "450 cards",
   aiChecked: "AI-checked",
   trust: "Official",
+  remove: "Remove",
+  progress: "Downloading lessons",
 };
 
 function makeSet(over: Partial<SearchableSet> = {}): SearchableSet {
@@ -116,6 +118,52 @@ describe("SetDiscoveryCard", () => {
       />,
     );
     expect(screen.getByTestId("set-discovery-card-download")).toHaveTextContent("Retry");
+  });
+
+  it("shows the per-lesson progress bar while downloading", () => {
+    render(
+      <SetDiscoveryCard
+        set={makeSet()}
+        isDownloaded={false}
+        state="downloading"
+        progress={{ current: 3, total: 15 }}
+        onDownload={() => {}}
+        languageLabel="DE → ES"
+        labels={LABELS}
+      />,
+    );
+    expect(screen.getByTestId("set-discovery-card-progress")).toBeInTheDocument();
+    expect(screen.getByTestId("set-discovery-card-progress-count")).toHaveTextContent("3 / 15");
+  });
+
+  it("shows a remove action on a downloaded set and fires onRemove", () => {
+    const onRemove = vi.fn();
+    const set = makeSet();
+    render(
+      <SetDiscoveryCard
+        set={set}
+        isDownloaded
+        onDownload={() => {}}
+        onRemove={onRemove}
+        languageLabel="DE → ES"
+        labels={LABELS}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("set-discovery-card-remove"));
+    expect(onRemove).toHaveBeenCalledWith(set);
+  });
+
+  it("hides the remove action when onRemove is omitted", () => {
+    render(
+      <SetDiscoveryCard
+        set={makeSet()}
+        isDownloaded
+        onDownload={() => {}}
+        languageLabel="DE → ES"
+        labels={LABELS}
+      />,
+    );
+    expect(screen.queryByTestId("set-discovery-card-remove")).toBeNull();
   });
 
   it("hides the trust + AI badges when not applicable", () => {
