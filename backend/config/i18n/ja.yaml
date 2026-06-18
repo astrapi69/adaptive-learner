@@ -2298,6 +2298,16 @@ pwa:
     action: "更新"
     later: "後で"
 share:
+  achievement:
+    button: 共有
+    title: 進捗を共有
+    copied: クリップボードにコピーしました
+    lesson_complete: Adaptive Learner でレッスンを完璧にこなしました！
+    streak: Adaptive Learner で{days}日連続の学習ストリーク中です！
+    level: Adaptive Learner でレベル{level}に到達しました！
+    badge: Adaptive Learner で「{badge}」バッジを獲得しました！
+    progress: Adaptive Learner で学習中です。レベル{level}、{days}日連続。
+    hashtag: '#AdaptiveLearner'
   pr:
     preparing: "リポジトリを準備しています..."
     uploading: "レッスンをアップロードしています..."
@@ -2417,6 +2427,8 @@ editor:
   underline: "下線 (Ctrl+U)"
   undo: "元に戻す (Ctrl+Z)"
 languages:
+  ko: "韓国語"
+  id: "インドネシア語"
   en: "英語"
   es: "スペイン語"
   fr: "フランス語"

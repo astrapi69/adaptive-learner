@@ -24,7 +24,7 @@ import {join} from "node:path";
 import {describe, expect, it} from "vitest";
 
 const JSON_DIR = join(__dirname);
-const LANGS = ["de", "el", "en", "es", "fr", "hi", "ja", "pt", "tr"];
+const LANGS = ["de", "el", "en", "es", "fr", "hi", "id", "ja", "ko", "pt", "tr"];
 
 type Catalog = Record<string, Record<string, unknown>>;
 
@@ -53,7 +53,7 @@ function flatten(obj: Record<string, unknown>, prefix = ""): Set<string> {
 }
 
 describe("i18n JSON catalogs — Dexie-mode bundled source of truth", () => {
-    it("ships all 8 expected languages", () => {
+    it("ships all expected languages", () => {
         const present = readdirSync(JSON_DIR)
             .filter((f) => f.endsWith(".json"))
             .map((f) => f.replace(/\.json$/, ""))

@@ -52,6 +52,8 @@ export const UI_LANGUAGES: LanguageMeta[] = [
     {code: "ja", nativeName: "日本語", englishName: "Japanese", script: "cjk"},
     {code: "el", nativeName: "Ελληνικά", englishName: "Greek", script: "greek"},
     {code: "hi", nativeName: "हिन्दी", englishName: "Hindi", script: "devanagari"},
+    {code: "ko", nativeName: "한국어", englishName: "Korean", script: "hangul"},
+    {code: "id", nativeName: "Bahasa Indonesia", englishName: "Indonesian", script: "latin"},
 ];
 
 /** Display order of the script groups in the grouped picker. */

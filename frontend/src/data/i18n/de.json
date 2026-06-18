@@ -2524,6 +2524,17 @@
     }
   },
   "share": {
+    "achievement": {
+      "button": "Teilen",
+      "title": "Fortschritt teilen",
+      "copied": "In die Zwischenablage kopiert",
+      "lesson_complete": "Ich habe gerade eine Lektion bei Adaptive Learner gemeistert!",
+      "streak": "Ich habe eine {days}-Tage-Lernsträhne bei Adaptive Learner!",
+      "level": "Ich habe gerade Level {level} bei Adaptive Learner erreicht!",
+      "badge": "Ich habe das Abzeichen „{badge}“ bei Adaptive Learner verdient!",
+      "progress": "Ich lerne mit Adaptive Learner, Level {level}, {days}-Tage-Strähne.",
+      "hashtag": "#AdaptiveLearner"
+    },
     "pr": {
       "preparing": "Repository wird vorbereitet...",
       "uploading": "Lektion wird hochgeladen...",
@@ -2642,6 +2653,8 @@
     "undo": "Rückgängig (Strg+Z)"
   },
   "languages": {
+    "ko": "Koreanisch",
+    "id": "Indonesisch",
     "en": "Englisch",
     "es": "Spanisch",
     "fr": "Französisch",

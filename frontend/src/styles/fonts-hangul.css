@@ -1,0 +1,29 @@
+/*
+ * Hangul (Korean) font stack — EXP-027 I18N-08 / §3.5.
+ *
+ * Strategy: prefer system fonts, no web-font download, no bundle bloat
+ * (consistent with the app's offline-first / lazy-i18n posture). Modern
+ * OSes ship Hangul coverage (Android/ChromeOS via the Noto family;
+ * Windows via "Malgun Gothic"; macOS/iOS via "Apple SD Gothic Neo"),
+ * so a dedicated stack renders Korean correctly without fetching
+ * anything. ``font-display`` is irrelevant for local fonts; a lazy
+ * ``@font-face`` web fallback (``local()`` first, ``unicode-range``-scoped)
+ * can be layered in later if a target platform lacks coverage — kept out
+ * for now to avoid a CDN dependency.
+ *
+ * Scoped to the active UI language: the app mirrors the language onto
+ * ``<html lang="…">`` (see useI18n), so ``:lang(ko)`` activates this only
+ * when Korean is selected. ``body:lang(ko)`` beats the base
+ * ``body { font-family: var(--font-sans) }`` rule; monospace surfaces
+ * keep their own family.
+ */
+
+:root {
+    --font-hangul: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic",
+        system-ui, sans-serif;
+}
+
+body:lang(ko),
+[lang="ko"] {
+    font-family: var(--font-hangul);
+}

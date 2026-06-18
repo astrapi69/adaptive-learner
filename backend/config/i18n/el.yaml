@@ -2300,6 +2300,16 @@ pwa:
     action: "Ενημέρωση"
     later: "Αργότερα"
 share:
+  achievement:
+    button: Κοινοποίηση
+    title: Μοιραστείτε την πρόοδό σας
+    copied: Αντιγράφηκε στο πρόχειρο
+    lesson_complete: Μόλις ολοκλήρωσα τέλεια ένα μάθημα στο Adaptive Learner!
+    streak: Έχω σερί μάθησης {days} ημερών στο Adaptive Learner!
+    level: Μόλις έφτασα στο επίπεδο {level} στο Adaptive Learner!
+    badge: Κέρδισα το σήμα «{badge}» στο Adaptive Learner!
+    progress: Μαθαίνω με το Adaptive Learner, επίπεδο {level}, σερί {days} ημερών.
+    hashtag: '#AdaptiveLearner'
   pr:
     preparing: "Προετοιμασία αποθετηρίου..."
     uploading: "Μεταφόρτωση μαθήματος..."
@@ -2419,6 +2429,8 @@ editor:
   underline: "Υπογράμμιση (Ctrl+U)"
   undo: "Αναίρεση (Ctrl+Z)"
 languages:
+  ko: "Κορεατικά"
+  id: "Ινδονησιακά"
   en: "Αγγλικά"
   es: "Ισπανικά"
   fr: "Γαλλικά"

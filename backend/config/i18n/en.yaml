@@ -2308,6 +2308,16 @@ pwa:
     action: "Update"
     later: "Later"
 share:
+  achievement:
+    button: Share
+    title: Share your progress
+    copied: Copied to clipboard
+    lesson_complete: I just aced a lesson on Adaptive Learner!
+    streak: I am on a {days}-day learning streak with Adaptive Learner!
+    level: I just reached level {level} on Adaptive Learner!
+    badge: I earned the "{badge}" badge on Adaptive Learner!
+    progress: I am learning with Adaptive Learner, level {level}, {days}-day streak.
+    hashtag: '#AdaptiveLearner'
   pr:
     preparing: "Preparing repository..."
     uploading: "Uploading lesson..."
@@ -2427,6 +2437,8 @@ editor:
   underline: "Underline (Ctrl+U)"
   undo: "Undo (Ctrl+Z)"
 languages:
+  ko: "Korean"
+  id: "Indonesian"
   en: "English"
   es: "Spanish"
   fr: "French"
