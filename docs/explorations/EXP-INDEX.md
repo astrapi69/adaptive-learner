@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
 **Stand:** 2026-06-17
-**Anzahl EXPs:** 32
+**Anzahl EXPs:** 33
 
 > Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
 > [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
@@ -51,6 +51,7 @@
 | 031 | ZIP-Backup-Format (.alb) + Container/Manifest | Feature      | Zukunft | Mittel  | Backup, #642, 005  |
 | 032 | Inhaltliche Content-Validierung (Quality)    | Querschnitt  | gestuft | Hoch    | 013, 028, 030, 002 |
 | 033 | KI-gestützte Content-Validierung (AI Review) | Querschnitt  | gestuft | Mittel  | 032, 023, 028, 030 |
+| 034 | Content Discovery + Suchindex               | Vision       | gestuft | Mittel  | 002, 003, 023, 032 |
 
 ## Umsetzungsstand (Stand v1.85.0)
 
@@ -83,8 +84,10 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
   AIV-07 Auto-Fix, AIV-12 Signatur-Invalidierung).
 - **Laufend (Querschnitt):** 016 (Auto-Tests), 017 (manuelle Tests).
 - **Design-Dokumente (noch kein Code):** 031 (.alb-ZIP-Backup, BAK-01..06),
-  032 (deterministische Content-Validierung, CQV-01..05) — beide Vorhaben,
-  0% umgesetzt.
+  032 (deterministische Content-Validierung, CQV-01..05),
+  034 (Content Discovery + Suchindex, DIS-01..09 — repo-seitiger
+  `search-index.json`, client-seitige Suche, Per-Set-Download statt
+  Repo-Sync) — alle Vorhaben, 0% umgesetzt.
 - **Zurückgestellt / Zukunft:** 004 (GitHub-Org), 009/011/012 (soziale Features —
   brauchen Cloud-Backend + Nutzerbasis), 014 (Community-Feedback — teilweise via
   Community-Sharing), 015 (Kinder-Variante),
