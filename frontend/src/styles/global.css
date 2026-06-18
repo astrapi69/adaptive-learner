@@ -2427,26 +2427,45 @@ select:focus {
 /* #505 — persistent XP / level badge in the nav bar. Token-backed
    so it recolors across all themes; 44px min touch target. */
 .nav-xp-badge {
-  display: inline-flex;
+  /* #730 — two-line layout: the icon spans both rows on the left, the
+     "Level N" sits on row 1 and the XP total on row 2. */
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  grid-auto-rows: auto;
   align-items: center;
-  gap: var(--space-1);
+  column-gap: var(--space-1);
+  row-gap: 0;
   min-height: 44px;
   margin-left: var(--space-2);
   padding: 2px 10px;
   border-radius: var(--radius-sm);
   font-size: 0.72rem;
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.2;
+  text-align: left;
   text-decoration: none;
   border: 1px solid color-mix(in srgb, var(--star) 35%, var(--border));
   background: color-mix(in srgb, var(--star) 12%, var(--surface));
   color: var(--fg);
+  cursor: pointer;
 }
 
 .nav-xp-badge__icon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
   display: inline-flex;
   align-items: center;
   color: var(--star);
+}
+
+.nav-xp-badge__level {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.nav-xp-badge__total {
+  grid-column: 2;
+  grid-row: 2;
 }
 
 .nav-xp-badge__level {
