@@ -5,16 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <!-- The .ico fallback is the FIRST tag on purpose: browsers
          that hit /favicon.ico directly (tab restore, bookmarks,
-         many crawlers) ignore the <link> tag below entirely. Modern
-         browsers prefer the SVG when both are declared. -->
+         many crawlers) ignore the <link> tag below entirely.
+         The PNG variants give crisp tab icons on modern browsers. -->
     <link rel="icon" href="/favicon.ico" sizes="any"/>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
-    <meta name="theme-color" content="#6366f1"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+    <meta name="theme-color" content="#0d9488"/>
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-    <link rel="apple-touch-icon" href="/icon-192.svg"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
     <title>Adaptive Learner</title>
+    <!-- Social preview (Open Graph + Twitter). Absolute URLs point at
+         the canonical public deployment, which is what crawlers fetch. -->
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Adaptive Learner"/>
+    <meta property="og:description" content="Adaptive learning system based on the six-method learning model."/>
+    <meta property="og:image" content="https://astrapi69.github.io/adaptive-learner/og-image.png"/>
+    <meta property="og:url" content="https://astrapi69.github.io/adaptive-learner/"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Adaptive Learner"/>
+    <meta name="twitter:description" content="Adaptive learning system based on the six-method learning model."/>
+    <meta name="twitter:image" content="https://astrapi69.github.io/adaptive-learner/og-image.png"/>
     <!-- Fonts are bundled locally in public/fonts/ (no CDN dependency) -->
     <!-- Phase 58E: apply the saved theme BEFORE first paint to avoid a
          flash of the wrong theme. Mirrors the resolution in

@@ -170,7 +170,7 @@ export default function Navigation() {
         aria-label={t("app.name", "Adaptive Learner")}
       >
         <img
-          src={`${import.meta.env.BASE_URL}icon-192.svg`}
+          src={`${import.meta.env.BASE_URL}icon-192.png`}
           alt=""
           aria-hidden="true"
           width={28}
