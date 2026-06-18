@@ -1071,6 +1071,17 @@
     "xp_header_tooltip": "Vos points d'expérience",
     "xp_to_next_level": "{n} XP jusqu'au niveau suivant",
     "max_level": "Niveau maximum atteint",
+    "level_detail": {
+      "activity": "Activité (7 derniers jours)",
+      "activity_unit": "sessions",
+      "activity_empty": "Aucune activité ces 7 derniers jours.",
+      "milestones": "Jalons",
+      "ms_level": "Niveau {level}",
+      "ms_xp": "{xp} XP",
+      "reached": "atteint",
+      "locked": "verrouillé",
+      "how": "Les niveaux suivent une courbe d'XP croissante : 0, 100, 300, 600, 1000 XP - chaque palier demande 100 XP de plus que le précédent."
+    },
     "level_detail_title": "Progression du niveau",
     "level_up": "Niveau supérieur !",
     "reason_session_complete": "Session terminée",

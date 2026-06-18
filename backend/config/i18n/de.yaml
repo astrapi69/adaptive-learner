@@ -1008,6 +1008,16 @@ gamification:
   xp_header_tooltip: Deine Erfahrungspunkte
   xp_to_next_level: '{n} XP bis zum nächsten Level'
   max_level: Höchstes Level erreicht
+  level_detail:
+    activity: "Aktivität (letzte 7 Tage)"
+    activity_unit: "Sitzungen"
+    activity_empty: "Keine Aktivität in den letzten 7 Tagen."
+    milestones: "Meilensteine"
+    ms_level: "Level {level}"
+    ms_xp: "{xp} XP"
+    reached: "erreicht"
+    locked: "gesperrt"
+    how: "Levels steigen auf einer wachsenden XP-Kurve: 0, 100, 300, 600, 1000 XP - jede Stufe braucht 100 XP mehr als die vorige."
   level_detail_title: "Level-Fortschritt"
   level_up: Level aufgestiegen!
   reason_session_complete: Sitzung abgeschlossen

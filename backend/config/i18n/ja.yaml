@@ -1008,6 +1008,16 @@ gamification:
   xp_header_tooltip: あなたの経験値
   xp_to_next_level: 次のレベルまで {n} XP
   max_level: 最大レベルに到達しました
+  level_detail:
+    activity: "アクティビティ（過去7日）"
+    activity_unit: "セッション"
+    activity_empty: "過去7日間のアクティビティはありません。"
+    milestones: "マイルストーン"
+    ms_level: "レベル {level}"
+    ms_xp: "{xp} XP"
+    reached: "達成"
+    locked: "未達成"
+    how: "レベルは増加するXPカーブで上がります：0、100、300、600、1000 XP - 各段階は前より100 XP多く必要です。"
   level_detail_title: "レベルの進捗"
   level_up: レベルアップ！
   reason_session_complete: セッション完了

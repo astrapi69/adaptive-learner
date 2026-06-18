@@ -1008,6 +1008,16 @@ gamification:
   xp_header_tooltip: Poin pengalaman Anda
   xp_to_next_level: '{n} XP menuju level berikutnya'
   max_level: Level maksimum tercapai
+  level_detail:
+    activity: "Aktivitas (7 hari terakhir)"
+    activity_unit: "sesi"
+    activity_empty: "Tidak ada aktivitas dalam 7 hari terakhir."
+    milestones: "Tonggak"
+    ms_level: "Level {level}"
+    ms_xp: "{xp} XP"
+    reached: "tercapai"
+    locked: "terkunci"
+    how: "Level naik mengikuti kurva XP yang bertambah: 0, 100, 300, 600, 1000 XP - setiap langkah butuh 100 XP lebih banyak dari sebelumnya."
   level_detail_title: "Kemajuan level"
   level_up: Naik level!
   reason_session_complete: Sesi selesai

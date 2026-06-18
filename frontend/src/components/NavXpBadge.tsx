@@ -24,15 +24,16 @@ import { Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import LevelDetail from "../shared/LevelDetail";
+import LevelProgressCard from "../shared/LevelProgressCard";
 import XpBadge from "../shared/XpBadge";
 import { useI18n } from "../hooks/useI18n";
 import { readLearnerState } from "../lib/learnerState";
+import { buildLevelMilestones } from "../lib/gamification/levelMilestones";
 import { subscribeCelebration } from "../lib/praise/celebration-bus";
 import { XP_SPENT_EVENT } from "../lib/gamification/xp-spent-event";
 import { getStorage } from "../storage";
 import type { CelebrationType } from "../lib/praise/celebration-bus";
-import type { XPState } from "../storage/types";
+import type { HeatmapEntryOut, XPState } from "../storage/types";
 
 /** Celebration events that can move the XP total — a refresh trigger. */
 const XP_AFFECTING: ReadonlySet<CelebrationType> = new Set<CelebrationType>([
@@ -53,6 +54,8 @@ export default function NavXpBadge() {
   const [spent, setSpent] = useState(false);
   // #730 — level-detail popover open state.
   const [open, setOpen] = useState(false);
+  // #727 — last 7 days of activity, loaded when the popover opens.
+  const [history, setHistory] = useState<HeatmapEntryOut[]>([]);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -123,6 +126,25 @@ export default function NavXpBadge() {
     };
   }, [open]);
 
+  // #727 — fetch the last 7 days of activity when the popover opens.
+  useEffect(() => {
+    if (!open) return;
+    const userId = readLearnerState().userId;
+    if (!userId) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const days = await getStorage().gamification.getStreakHeatmap(userId, 7);
+        if (!cancelled) setHistory(days.slice(-7));
+      } catch {
+        if (!cancelled) setHistory([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
+
   if (!state) return null;
 
   const levelLabel = t("gamification.level", "Level");
@@ -170,10 +192,10 @@ export default function NavXpBadge() {
         <div
           role="dialog"
           aria-label={t("gamification.level_detail_title", "Level progress")}
-          className="absolute right-0 z-50 mt-2 rounded-app border border-border bg-card p-3 shadow-elevated"
+          className="absolute right-0 z-50 mt-2 max-h-[80vh] w-64 overflow-y-auto rounded-app border border-border bg-card p-3 shadow-elevated"
           data-testid="nav-xp-badge-popover"
         >
-          <LevelDetail
+          <LevelProgressCard
             level={state.level}
             xpIntoLevel={state.xp_into_level}
             xpToNext={state.xp_to_next_level}
@@ -183,6 +205,37 @@ export default function NavXpBadge() {
               "gamification.level_detail_title",
               "Level progress",
             )}
+            history={history}
+            milestones={buildLevelMilestones(state.level, state.total_xp)}
+            labels={{
+              activityTitle: t(
+                "gamification.level_detail.activity",
+                "Activity (last 7 days)",
+              ),
+              activityUnit: t(
+                "gamification.level_detail.activity_unit",
+                "sessions",
+              ),
+              activityEmpty: t(
+                "gamification.level_detail.activity_empty",
+                "No activity in the last 7 days.",
+              ),
+              milestonesTitle: t(
+                "gamification.level_detail.milestones",
+                "Milestones",
+              ),
+              milestoneLevel: t(
+                "gamification.level_detail.ms_level",
+                "Level {level}",
+              ),
+              milestoneXp: t("gamification.level_detail.ms_xp", "{xp} XP"),
+              reached: t("gamification.level_detail.reached", "reached"),
+              locked: t("gamification.level_detail.locked", "locked"),
+              howItWorks: t(
+                "gamification.level_detail.how",
+                "Levels rise on a growing XP curve: 0, 100, 300, 600, 1000 XP — each step needs 100 XP more than the last.",
+              ),
+            }}
           />
           <NavLink
             to="/dashboard"
