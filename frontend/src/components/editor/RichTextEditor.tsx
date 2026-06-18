@@ -53,6 +53,7 @@ import type {JSONContent} from "@tiptap/core";
 import {useEffect, useRef, type CSSProperties} from "react";
 
 import {codeBlockExtension} from "./code-block-config";
+import EditorContextMenu from "./EditorContextMenu";
 
 interface Props {
     /** Current TipTap doc. ``null`` mounts an empty editor. */
@@ -74,6 +75,8 @@ interface Props {
     minHeight?: number;
     /** Optional aria-label for the editor region. */
     ariaLabel?: string;
+    /** Right-click context menu mirroring the toolbar (#672). Default on. */
+    contextMenu?: boolean;
 }
 
 export default function RichTextEditor({
@@ -86,6 +89,7 @@ export default function RichTextEditor({
     className,
     minHeight,
     ariaLabel,
+    contextMenu = true,
 }: Props) {
     const editor = useEditor({
         extensions: [
@@ -193,6 +197,12 @@ export default function RichTextEditor({
             style={rootStyle}
         >
             <EditorContent editor={editor} />
+            {contextMenu ? (
+                <EditorContextMenu
+                    editor={editor}
+                    testidNamespace={`${testidNamespace}-context-menu`}
+                />
+            ) : null}
         </div>
     );
 }
