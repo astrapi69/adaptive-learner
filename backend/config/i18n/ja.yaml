@@ -1764,6 +1764,10 @@ content:
     no_results: "'{query}' の結果がありません"
     hint: "別の検索語を試してください"
     clear: "検索をクリア"
+    available: "ダウンロード可能"
+    your_content: "あなたのコンテンツ"
+    download_prompt_title: "このセットをダウンロードしますか？"
+    download_prompt_body: "このセットはまだダウンロードされていません。今すぐダウンロードしますか？"
   save_adaptive:
     button: "このレッスンを保存しますか？"
   create_lesson:

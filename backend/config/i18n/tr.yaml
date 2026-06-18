@@ -1764,6 +1764,10 @@ content:
     no_results: "'{query}' için sonuç yok"
     hint: "Farklı bir arama terimi dene"
     clear: "Aramayı temizle"
+    available: "İndirilebilir"
+    your_content: "Senin içeriğin"
+    download_prompt_title: "Bu set indirilsin mi?"
+    download_prompt_body: "Bu set henüz indirilmedi. Şimdi indirilsin mi?"
   save_adaptive:
     button: "Bu dersi kaydet?"
   create_lesson:

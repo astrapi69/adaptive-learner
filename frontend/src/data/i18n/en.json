@@ -1912,7 +1912,11 @@
       "results": "{count} results",
       "no_results": "No results for '{query}'",
       "hint": "Try a different search term",
-      "clear": "Clear search"
+      "clear": "Clear search",
+      "available": "Available to download",
+      "your_content": "Your content",
+      "download_prompt_title": "Download this set?",
+      "download_prompt_body": "This set isn't downloaded yet. Download it now?"
     },
     "save_adaptive": {
       "button": "Save this lesson?"

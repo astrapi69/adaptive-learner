@@ -1775,6 +1775,10 @@ content:
     no_results: "Tidak ada hasil untuk '{query}'"
     hint: "Coba kata kunci pencarian lain"
     clear: "Hapus pencarian"
+    available: "Tersedia untuk diunduh"
+    your_content: "Konten kamu"
+    download_prompt_title: "Unduh set ini?"
+    download_prompt_body: "Set ini belum diunduh. Unduh sekarang?"
   save_adaptive:
     button: "Simpan pelajaran ini?"
   create_lesson:
