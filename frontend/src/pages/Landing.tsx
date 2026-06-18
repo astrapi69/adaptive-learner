@@ -167,7 +167,7 @@ export default function Landing() {
         <main id="main" data-testid="landing" className="landing-page">
             <header className="landing-brand">
                 <img
-                    src={`${import.meta.env.BASE_URL}icon-192.svg`}
+                    src={`${import.meta.env.BASE_URL}icon-512.png`}
                     alt=""
                     aria-hidden="true"
                     className="landing-logo"
