@@ -25,6 +25,7 @@ import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { useSyncQueueSize } from "../hooks/useSyncQueueSize";
 import { useScrollDirection } from "../hooks/useScrollDirection";
 import { useTheme } from "../hooks/useTheme";
+import { isDarkTheme } from "../lib/themes";
 import { readSyncConfig } from "../storage/sync-engine";
 
 /**
@@ -170,7 +171,9 @@ export default function Navigation() {
         aria-label={t("app.name", "Adaptive Learner")}
       >
         <img
-          src={`${import.meta.env.BASE_URL}icon-192.png`}
+          src={`${import.meta.env.BASE_URL}${
+            isDarkTheme(theme) ? "icon-192-dark.png" : "icon-192.png"
+          }`}
           alt=""
           aria-hidden="true"
           width={28}

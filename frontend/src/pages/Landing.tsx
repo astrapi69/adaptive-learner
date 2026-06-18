@@ -5,6 +5,8 @@ import {toast} from "react-toastify";
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {useTheme} from "../hooks/useTheme";
+import {isDarkTheme} from "../lib/themes";
 import {UI_LANGUAGES} from "../lib/languages";
 import {
     clearLearnerState,
@@ -51,6 +53,7 @@ import {getStorage, resolveStorageMode} from "../storage";
  */
 export default function Landing() {
     const {t, lang, setLang} = useI18n();
+    const {theme} = useTheme();
     const navigate = useNavigate();
     // v0.4.0 — returning-user check; v1.25.0 extends "checking"
     // to also cover the recovery-from-disk path so the spinner
@@ -167,7 +170,9 @@ export default function Landing() {
         <main id="main" data-testid="landing" className="landing-page">
             <header className="landing-brand">
                 <img
-                    src={`${import.meta.env.BASE_URL}icon-512.png`}
+                    src={`${import.meta.env.BASE_URL}${
+                        isDarkTheme(theme) ? "icon-512-dark.png" : "icon-512.png"
+                    }`}
                     alt=""
                     aria-hidden="true"
                     className="landing-logo"

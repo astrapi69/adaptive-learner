@@ -8,8 +8,13 @@
          many crawlers) ignore the <link> tag below entirely.
          The PNG variants give crisp tab icons on modern browsers. -->
     <link rel="icon" href="/favicon.ico" sizes="any"/>
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+    <!-- Light-mode favicons are declared first so browsers without
+         ``media`` support (older than Chrome 93 / Firefox 106 /
+         Safari 15.4) fall back to the brand-teal light variant. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" media="(prefers-color-scheme: light)"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" media="(prefers-color-scheme: light)"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32-dark.png" media="(prefers-color-scheme: dark)"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16-dark.png" media="(prefers-color-scheme: dark)"/>
     <meta name="theme-color" content="#0d9488"/>
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
