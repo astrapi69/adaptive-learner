@@ -181,9 +181,15 @@ export default function NavXpBadge() {
           icon={<Zap size={14} aria-hidden="true" />}
           xpLabel={xpLabel}
           levelLabel={levelLabel}
-          iconClassName="nav-xp-badge__icon"
-          levelClassName="nav-xp-badge__level"
-          xpClassName="nav-xp-badge__total"
+          // #756 — the LAYOUT grid lives HERE (the XpBadge root span, the
+          // direct parent of icon/level/total) so the row placement
+          // actually applies. The icon spans both rows on the left; "Level
+          // N" is row 1, the XP total row 2 → two lines. Tailwind only.
+          className="grid grid-cols-[auto_auto] items-center gap-x-1.5 text-left leading-tight"
+          iconClassName="col-start-1 row-start-1 row-span-2 inline-flex items-center text-[var(--star)]"
+          levelClassName="col-start-2 row-start-1 opacity-[0.85]"
+          xpClassName="col-start-2 row-start-2 font-bold"
+          testId="nav-xp-badge-content"
           xpTestId="nav-xp-badge-total"
           levelTestId="nav-xp-badge-level"
         />
