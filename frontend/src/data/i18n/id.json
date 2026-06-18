@@ -2585,6 +2585,16 @@
     }
   },
   "share": {
+    "app": {
+      "heading": "Bagikan aplikasi",
+      "qr_intro": "Bagikan aplikasi lewat kode QR agar orang lain bisa membukanya langsung.",
+      "show_qr": "Tampilkan kode QR",
+      "download_qr": "Unduh kode QR",
+      "copy_url": "Salin URL",
+      "copied": "Disalin",
+      "share": "Bagikan",
+      "qr_alt": "Kode QR yang menautkan ke aplikasi"
+    },
     "achievement": {
       "button": "Bagikan",
       "title": "Bagikan progres Anda",

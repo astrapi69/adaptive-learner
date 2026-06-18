@@ -2585,6 +2585,16 @@
     }
   },
   "share": {
+    "app": {
+      "heading": "Compartilhar o app",
+      "qr_intro": "Compartilhe o app por código QR para que outros possam abri-lo.",
+      "show_qr": "Mostrar código QR",
+      "download_qr": "Baixar código QR",
+      "copy_url": "Copiar URL",
+      "copied": "Copiado",
+      "share": "Compartilhar",
+      "qr_alt": "Código QR que leva ao app"
+    },
     "achievement": {
       "button": "Compartilhar",
       "title": "Compartilhe seu progresso",

@@ -2356,6 +2356,15 @@ pwa:
     action: "Güncelle"
     later: "Sonra"
 share:
+  app:
+    heading: "Uygulamayı paylaş"
+    qr_intro: "Başkalarının doğrudan açabilmesi için uygulamayı QR koduyla paylaş."
+    show_qr: "QR kodunu göster"
+    download_qr: "QR kodunu indir"
+    copy_url: "URL'yi kopyala"
+    copied: "Kopyalandı"
+    share: "Paylaş"
+    qr_alt: "Uygulamaya bağlanan QR kodu"
   achievement:
     button: Paylaş
     title: İlerlemeni paylaş

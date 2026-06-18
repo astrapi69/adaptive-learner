@@ -2356,6 +2356,15 @@ pwa:
     action: "更新"
     later: "後で"
 share:
+  app:
+    heading: "アプリを共有"
+    qr_intro: "QRコードでアプリを共有し、他の人がすぐに開けるようにします。"
+    show_qr: "QRコードを表示"
+    download_qr: "QRコードをダウンロード"
+    copy_url: "URLをコピー"
+    copied: "コピーしました"
+    share: "共有"
+    qr_alt: "アプリへのリンクのQRコード"
   achievement:
     button: 共有
     title: 進捗を共有
