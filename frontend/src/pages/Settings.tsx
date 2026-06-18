@@ -16,6 +16,7 @@ import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import DirectionStrategyControl from "../components/DirectionStrategyControl";
 import SrsTransparencySection from "../components/SrsTransparencySection";
+import DailyRemindersControl from "../components/DailyRemindersControl";
 import HintSettingsControl from "../components/HintSettingsControl";
 import ReviewSettingsControl from "../components/ReviewSettingsControl";
 import LearningProfileControl from "../components/LearningProfileControl";
@@ -642,6 +643,7 @@ export default function Settings() {
         <HintSettingsControl />
         <ReviewSettingsControl />
         <SrsTransparencySection />
+        <DailyRemindersControl />
         <PausedLessonsRetentionControl />
         <MaxLessonSizeControl />
         <VoiceSettingsSection />
