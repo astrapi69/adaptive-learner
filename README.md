@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.86.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.87.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -203,7 +203,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**358 lessons · 19 sets · 4 domain(s)** (ai, language, programming, psychology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**346 lessons · 18 sets · 3 domain(s)** (language, programming, psychology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -225,7 +225,6 @@ Full documentation (German default at `/docs/`, English at
 | Englisch B1 — Mittelstufe | de | en | B1 | 15 |
 | Psychologie — Grundlagen | de | de | A1 | 106 |
 | Python — Grundlagen | de | de | A1 | 15 |
-| KI für Einsteiger | de | de | A1 | 12 |
 <!-- CONTENT-STATS:END -->
 
 ### Content repos
