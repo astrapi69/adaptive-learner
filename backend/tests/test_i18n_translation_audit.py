@@ -23,6 +23,7 @@ The catalog-shape parity is already covered by
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -99,12 +100,25 @@ EN_ALLOWED_TOKENS = {
 }
 
 
+_PLACEHOLDER_RE = re.compile(r"\{[^}]*\}")
+
+
 def _strip_allowed_tokens(value: str) -> str:
-    """Remove brand / technical tokens before scanning for EN
-    markers, so "OpenAI GPT" doesn't trip "open" false positives.
-    Longest tokens replaced first so 'openai gpt' wins over
-    'openai' when both would match."""
-    lowered = value.lower()
+    """Remove placeholders and brand / technical tokens before
+    scanning for EN markers.
+
+    ``{...}`` placeholders are stripped wholesale first: their names
+    are not translatable text, and a marker can otherwise match a
+    substring inside one (e.g. the ``"the"`` marker inside
+    ``{other}``). This is the generic fix for the per-placeholder
+    allowlist entries that a new placeholder would otherwise have to
+    be added to one-by-one (#745).
+
+    Then brand / technical tokens are removed so "OpenAI GPT" doesn't
+    trip the "open" false positive. Longest tokens replaced first so
+    'openai gpt' wins over 'openai' when both would match.
+    """
+    lowered = _PLACEHOLDER_RE.sub(" ", value.lower())
     for token in sorted(EN_ALLOWED_TOKENS, key=len, reverse=True):
         lowered = lowered.replace(token, " ")
     return lowered
@@ -153,6 +167,17 @@ def test_no_en_passthrough_markers(lang: str):
         "name.\n"
         + "\n".join(f"  - {k}  (marker={m!r}): {v!r}" for k, m, v in hits[:20])
     )
+
+
+def test_placeholders_do_not_trip_en_markers():
+    """Regression (#745): a marker substring inside a ``{...}``
+    placeholder must NOT count as an EN passthrough. The ``"the"``
+    marker lived inside ``{other}`` (``content.quality.duplicate.
+    problem``), which failed ja/pt/tr until placeholders were
+    stripped before the scan."""
+    cleaned = " " + _strip_allowed_tokens("次の重複: {other}") + " "
+    assert "{other}" not in cleaned
+    assert "the" not in cleaned.replace(" ", "")
 
 
 @pytest.mark.parametrize("lang", PHASE26_LANGS)
