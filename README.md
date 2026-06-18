@@ -203,7 +203,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**346 lessons · 18 sets · 3 domain(s)** (language, programming, psychology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**358 lessons · 19 sets · 4 domain(s)** (ai, language, programming, psychology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -225,6 +225,7 @@ Full documentation (German default at `/docs/`, English at
 | Englisch B1 — Mittelstufe | de | en | B1 | 15 |
 | Psychologie — Grundlagen | de | de | A1 | 106 |
 | Python — Grundlagen | de | de | A1 | 15 |
+| KI für Einsteiger | de | de | A1 | 12 |
 <!-- CONTENT-STATS:END -->
 
 ### Content repos
