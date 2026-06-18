@@ -343,6 +343,8 @@ review:
   summary_corrected: "{corrected} von {total} korrigiert"
   summary_trend: "Stark — deine Schwachstellen werden besser."
   summary_next: "Gemeisterte Elemente fallen weg; der Rest kommt bald zur Wiederholung."
+  summary_remaining: "Noch {n} fällig. Weitermachen?"
+  another_round: "Weitere Runde"
   summary_repeat: "Komm in etwa 2 Tagen wieder, um das frisch zu halten."
   explain_heading: "Warum du diese verpasst hast"
   explain_article_gender: "Achte auf das Geschlecht: Nomen auf -o sind meist maskulin (el/un), auf -a feminin (la/una). Der Artikel richtet sich nach der Endung."
@@ -678,6 +680,9 @@ settings:
     30_days: "30 Tage"
     60_days: "60 Tage"
     never: Nie
+  review_limit:
+    label: "Fragen pro Wiederholung"
+    desc: "Wie viele Elemente eine Wiederholungssitzung zeigt, bevor sie endet. Weitere fällige Elemente kommen in die nächste Runde."
   max_lesson_size:
     title: Maximale Lektionsgröße
     hint: "Wenn eine lange Chat-Analyse als Offline-Lektion gespeichert wird, werden Lektionen mit mehr als dieser Anzahl an Schritten automatisch in mehrere Teile aufgeteilt."

@@ -367,6 +367,8 @@
     "summary_corrected": "{corrected} sur {total} corrigés",
     "summary_trend": "Bien — vos points faibles se renforcent.",
     "summary_next": "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision.",
+    "summary_remaining": "Encore {n} à revoir. On continue ?",
+    "another_round": "Encore un tour",
     "summary_repeat": "Revenez dans environ 2 jours pour garder cela en mémoire.",
     "explain_heading": "Pourquoi vous les avez ratés",
     "explain_article_gender": "Attention au genre : les noms en -o sont souvent masculins (el/un), en -a féminins (la/una). L'article suit la terminaison.",
@@ -714,6 +716,10 @@
       "30_days": "30 jours",
       "60_days": "60 jours",
       "never": "Jamais"
+    },
+    "review_limit": {
+      "label": "Questions par révision",
+      "desc": "Combien d'éléments une session de révision présente avant de se terminer. Les éléments restants passent au tour suivant."
     },
     "max_lesson_size": {
       "title": "Taille maximale de leçon",

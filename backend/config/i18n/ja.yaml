@@ -343,6 +343,8 @@ review:
   summary_corrected: "{total}問中{corrected}問を修正"
   summary_trend: "いいですね — 弱点が強くなっています。"
   summary_next: "習得した項目は外れ、残りはまもなく復習に戻ります。"
+  summary_remaining: "あと {n} 件。続けますか？"
+  another_round: "もう1ラウンド"
   summary_repeat: "約2日後にもう一度復習すると定着します。"
   explain_heading: "間違えた理由"
   explain_article_gender: "性に注意：-o で終わる名詞はたいてい男性（el/un）、-a は女性（la/una）。冠詞は語尾に従います。"
@@ -678,6 +680,9 @@ settings:
     30_days: "30日間"
     60_days: "60日間"
     never: "無期限"
+  review_limit:
+    label: "復習あたりの問題数"
+    desc: "1回の復習セッションで終了前に出題する要素数。残りの要素は次のラウンドに回ります。"
   max_lesson_size:
     title: "レッスンの最大サイズ"
     hint: "長いチャット分析をオフラインレッスンとして保存する場合、このステップ数を超えるレッスンは自動的に複数のパートに分割されます。"

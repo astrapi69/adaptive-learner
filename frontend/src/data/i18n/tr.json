@@ -367,6 +367,8 @@
     "summary_corrected": "{total} hatadan {corrected} tanesi düzeltildi",
     "summary_trend": "Güzel — zayıf noktaların güçleniyor.",
     "summary_next": "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner.",
+    "summary_remaining": "{n} tane daha var. Devam?",
+    "another_round": "Bir tur daha",
     "summary_repeat": "Taze kalması için yaklaşık 2 gün sonra geri dön.",
     "explain_heading": "Bunları neden kaçırdın",
     "explain_article_gender": "Cinsiyete dikkat: -o ile biten adlar genelde eril (el/un), -a ile bitenler dişildir (la/una). Artikel sona göre belirlenir.",
@@ -714,6 +716,10 @@
       "30_days": "30 gün",
       "60_days": "60 gün",
       "never": "Hiçbir zaman"
+    },
+    "review_limit": {
+      "label": "Tekrar başına soru",
+      "desc": "Bir tekrar oturumunun bitmeden önce kaç öğe gösterdiği. Kalan öğeler sonraki tura aktarılır."
     },
     "max_lesson_size": {
       "title": "Maksimum ders boyutu",
