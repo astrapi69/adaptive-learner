@@ -3,7 +3,7 @@
 app:
   name: अडैप्टिव लर्नर
   tagline: ऐसी शिक्षा जो आपके अनुसार ढलती है।
-  skeleton_notice: Skeleton state. Domain models, plugins and pages land in upcoming phases — see docs/adaptive-learner-project-reference.md.
+  skeleton_notice: स्केलेटन अवस्था। डोमेन मॉडल, प्लगइन और पेज आने वाले चरणों में जुड़ेंगे — देखें docs/adaptive-learner-project-reference.md।
 common:
   save: सहेजें
   cancel: रद्द करें
@@ -26,37 +26,37 @@ common:
   close: बंद करें
 avatar:
   error:
-    unsupported_type: Unsupported image type (use JPEG, PNG or WebP).
-    too_large: The image is too large even after resizing. Try another one.
-    decode_failed: Could not read that image.
+    unsupported_type: असमर्थित छवि प्रकार (JPEG, PNG या WebP का उपयोग करें)।
+    too_large: आकार घटाने के बाद भी छवि बहुत बड़ी है। कोई दूसरी आज़माएँ।
+    decode_failed: वह छवि पढ़ी नहीं जा सकी।
 data_export:
   title: डेटा निर्यात
-  full_intro: Export everything in one importable backup file.
+  full_intro: सब कुछ एक आयात-योग्य बैकअप फ़ाइल में निर्यात करें।
   full_button: पूर्ण बैकअप बनाएँ
-  full_done: Full backup created.
+  full_done: पूर्ण बैकअप बनाया गया।
   exporting: निर्यात हो रहा है…
-  selective_intro: Or pick exactly what to include. The file imports the same way.
-  select_all: Select all / none
+  selective_intro: या ठीक वही चुनें जो शामिल करना है। फ़ाइल उसी तरह आयात होती है।
+  select_all: सभी चुनें / कोई नहीं
   selective_button: चयनित डेटा निर्यात करें
-  selective_done: Exported {n} records.
-  includes_hint: exported automatically with this category
-  failed: 'Export failed: {detail}'
+  selective_done: '{n} रिकॉर्ड निर्यात किए गए।'
+  includes_hint: इस श्रेणी के साथ स्वचालित रूप से निर्यात किया गया
+  failed: 'निर्यात विफल रहा: {detail}'
   group_content: सामग्री
   group_master: मास्टर डेटा
   group_extra: अतिरिक्त डेटा
-  group_gamification: Gamification
+  group_gamification: गेमिफिकेशन
   group_config: कॉन्फ़िगरेशन
-  cat_projects: Learning projects (with sessions, ratings, notes)
-  cat_curricula: Curricula (with topics and lessons)
-  cat_progress: Lesson progress (with mistakes / SRS)
+  cat_projects: सीखने की परियोजनाएँ (सत्र, रेटिंग, नोट्स सहित)
+  cat_curricula: पाठ्यक्रम (विषयों और पाठों सहित)
+  cat_progress: पाठ प्रगति (गलतियों / SRS सहित)
   cat_subjects: विषय
   cat_tags: टैग
-  cat_imports: Chat imports (with messages)
+  cat_imports: चैट आयात (संदेशों सहित)
   cat_anki: Anki कार्ड
   cat_questions: अध्ययन प्रश्न
-  cat_gamification: XP, badges, streak, missions
+  cat_gamification: XP, बैज, स्ट्रीक, मिशन
   cat_settings: सेटिंग्स
-  cat_ai_config: AI key backup
+  cat_ai_config: AI कुंजी बैकअप
 nav:
   discover: "खोजें"
   offline_long: "ऑफ़लाइन — पिछले सत्र पढ़ने योग्य रहते हैं"
@@ -77,128 +77,128 @@ nav:
   offline: ऑफ़लाइन
   anki: Anki
   dev_badge: DEV
-  dev_badge_tooltip: Developer Mode is on — error toasts show full technical detail. Toggle in Settings.
+  dev_badge_tooltip: डेवलपर मोड चालू है — त्रुटि टोस्ट पूरी तकनीकी जानकारी दिखाते हैं। सेटिंग्स में टॉगल करें।
   content: सामग्री
   mode_badge_content: सामग्री
-  mode_badge_ai: AI+Content
-  mode_badge_tooltip_content: No API key configured — using pre-built content only. Add a key in Settings to enable AI features.
-  mode_badge_tooltip_ai: AI provider configured — exercises use AI for distractors + hints. Tap to browse content sets.
-  mode_badge_label_content: 'Mode: Content only'
-  mode_badge_label_ai: 'Mode: AI + Content'
-  sync_paired: 'Sync: paired (Settings > Sync)'
-  sync_unpaired: 'Sync: not paired (Settings > Sync)'
+  mode_badge_ai: AI+सामग्री
+  mode_badge_tooltip_content: कोई API कुंजी कॉन्फ़िगर नहीं — केवल पूर्व-निर्मित सामग्री का उपयोग। AI सुविधाएँ सक्षम करने के लिए सेटिंग्स में कुंजी जोड़ें।
+  mode_badge_tooltip_ai: AI प्रदाता कॉन्फ़िगर — अभ्यास डिस्ट्रैक्टर + संकेत के लिए AI का उपयोग करते हैं। सामग्री सेट देखने के लिए टैप करें।
+  mode_badge_label_content: 'मोड: केवल सामग्री'
+  mode_badge_label_ai: 'मोड: AI + सामग्री'
+  sync_paired: 'सिंक: युग्मित (सेटिंग्स > सिंक)'
+  sync_unpaired: 'सिंक: युग्मित नहीं (सेटिंग्स > सिंक)'
 import:
   title: बातचीत आयात करें
-  subtitle: Paste or upload a conversation with ChatGPT, Claude, or Gemini and get instant learning insights.
+  subtitle: ChatGPT, Claude या Gemini के साथ हुई बातचीत पेस्ट या अपलोड करें और तुरंत सीखने की अंतर्दृष्टि पाएँ।
   quick:
-    title: Quick Analysis
-    hint: Paste a conversation here. We will save it and analyze it in one step.
-    placeholder: Paste a ChatGPT, Claude, Gemini, or markdown conversation here…
+    title: त्वरित विश्लेषण
+    hint: यहाँ कोई बातचीत पेस्ट करें। हम उसे एक ही चरण में सहेजकर विश्लेषण करेंगे।
+    placeholder: यहाँ कोई ChatGPT, Claude, Gemini या markdown बातचीत पेस्ट करें…
   file:
-    title: Upload a file
-    hint: Drag a .json, .md, or .txt file here, or click to choose.
-    formats: ChatGPT conversations.json · Claude export · Markdown · Generic JSON
+    title: फ़ाइल अपलोड करें
+    hint: यहाँ कोई .json, .md या .txt फ़ाइल खींचें, या चुनने के लिए क्लिक करें।
+    formats: ChatGPT conversations.json · Claude निर्यात · Markdown · सामान्य JSON
   list:
-    title: Your imported conversations
-    empty: No conversations yet. Use Quick Analysis or upload a file.
-  detected_format: Detected format
+    title: आपकी आयातित बातचीतें
+    empty: अभी कोई बातचीत नहीं। त्वरित विश्लेषण का उपयोग करें या फ़ाइल अपलोड करें।
+  detected_format: पहचाना गया प्रारूप
   analyze: विश्लेषण करें
   reanalyze: पुनः विश्लेषण करें
   analyzing: विश्लेषण हो रहा है…
   analyzed: विश्लेषित
   analysis_title: विश्लेषण
-  analysis_ready: Analysis ready.
-  analysis_fallback: Analysis ran but the AI response could not be parsed cleanly.
-  analysis_fallback_long: The AI response was not parseable as structured JSON. The summary below is a fallback.
-  analysis_error: Could not analyze the conversation.
-  analysis_phase_reading: 'Step 1/3: Reading chat…'
-  analysis_phase_analyzing: 'Step 2/3: Analyzing content…'
-  analysis_phase_preparing: 'Step 3/3: Preparing results…'
-  analysis_estimate: Analysis takes approximately 15-30 seconds…
+  analysis_ready: विश्लेषण तैयार है।
+  analysis_fallback: विश्लेषण चला लेकिन AI प्रतिक्रिया साफ़-साफ़ पार्स नहीं हो सकी।
+  analysis_fallback_long: AI प्रतिक्रिया संरचित JSON के रूप में पार्स नहीं हो सकी। नीचे दिया गया सारांश एक फ़ॉलबैक है।
+  analysis_error: बातचीत का विश्लेषण नहीं किया जा सका।
+  analysis_phase_reading: 'चरण 1/3: चैट पढ़ी जा रही है…'
+  analysis_phase_analyzing: 'चरण 2/3: सामग्री का विश्लेषण किया जा रहा है…'
+  analysis_phase_preparing: 'चरण 3/3: परिणाम तैयार किए जा रहे हैं…'
+  analysis_estimate: विश्लेषण में लगभग 15-30 सेकंड लगते हैं…
   analysis_done: हो गया!
   analysis_cancel: रद्द करें
-  analysis_failed_inline: Analysis failed. Please try again.
-  analysis_save_error: Could not save the analysis result.
-  back_to_list: Back to imports
-  create_curriculum: Create curriculum
-  go_to_curriculum: Go to curriculum
-  curriculum_created: Curriculum created from the analysis.
-  curriculum_error: Could not create the curriculum.
-  curriculum_description: Generated from an imported conversation.
-  default_curriculum_title: Imported curriculum
+  analysis_failed_inline: विश्लेषण विफल रहा। कृपया पुनः प्रयास करें।
+  analysis_save_error: विश्लेषण परिणाम सहेजा नहीं जा सका।
+  back_to_list: आयात पर वापस
+  create_curriculum: पाठ्यक्रम बनाएँ
+  go_to_curriculum: पाठ्यक्रम पर जाएँ
+  curriculum_created: विश्लेषण से पाठ्यक्रम बनाया गया।
+  curriculum_error: पाठ्यक्रम नहीं बनाया जा सका।
+  curriculum_description: एक आयातित बातचीत से तैयार किया गया।
+  default_curriculum_title: आयातित पाठ्यक्रम
   field_topic: विषय
-  field_method: Recommended method
+  field_method: अनुशंसित विधि
   field_strengths: ताकत
   field_weaknesses: कमज़ोरियाँ
-  field_errors: Error patterns
+  field_errors: त्रुटि पैटर्न
   field_subtopics: उपविषय
-  field_curriculum: Suggested curriculum
-  file_imported_one: Conversation imported. Click Analyze on the detail page.
-  file_imported_many: Imported {count} conversations.
-  list_error: Could not load imported conversations.
-  load_error: Could not load the conversation.
+  field_curriculum: सुझाया गया पाठ्यक्रम
+  file_imported_one: बातचीत आयात की गई। विवरण पेज पर विश्लेषण पर क्लिक करें।
+  file_imported_many: '{count} बातचीतें आयात की गईं।'
+  list_error: आयातित बातचीतें लोड नहीं हो सकीं।
+  load_error: बातचीत लोड नहीं हो सकी।
   messages: संदेश
-  no_api_key: Set an API key for the active AI provider in Settings to enable analysis.
-  no_lessons: The analysis did not suggest any lessons.
-  no_user: Complete the onboarding before importing conversations.
-  parse_error: Could not recognise the input format.
+  no_api_key: विश्लेषण सक्षम करने के लिए सेटिंग्स में सक्रिय AI प्रदाता के लिए एक API कुंजी सेट करें।
+  no_lessons: विश्लेषण ने किसी पाठ का सुझाव नहीं दिया।
+  no_user: बातचीतें आयात करने से पहले ऑनबोर्डिंग पूरी करें।
+  parse_error: इनपुट प्रारूप पहचाना नहीं जा सका।
   priority: प्राथमिकता
   role_assistant: एआई
   role_system: सिस्टम
   role_user: आप
-  save_error: Could not save the conversation.
-  settings_error: Could not read AI settings.
+  save_error: बातचीत सहेजी नहीं जा सकी।
+  settings_error: AI सेटिंग्स पढ़ी नहीं जा सकीं।
   start_session: सत्र शुरू करें
   continue_session: सत्र जारी रखें
-  session_start_error: Could not start the session.
+  session_start_error: सत्र शुरू नहीं किया जा सका।
   transcript: प्रतिलेख
-  show_transcript: Show raw transcript
-  anki_extract: Extract Anki cards
-  anki_extracting: Extracting cards…
-  anki_extracted: Extracted {n} Anki card(s). Review them on the Anki page.
-  anki_no_cards: No Anki cards extracted.
-  anki_extract_failed: Could not extract Anki cards.
+  show_transcript: कच्चा ट्रांसक्रिप्ट दिखाएँ
+  anki_extract: Anki कार्ड निकालें
+  anki_extracting: कार्ड निकाले जा रहे हैं…
+  anki_extracted: '{n} Anki कार्ड निकाले गए। उन्हें Anki पेज पर देखें।'
+  anki_no_cards: कोई Anki कार्ड नहीं निकाला गया।
+  anki_extract_failed: Anki कार्ड नहीं निकाले जा सके।
   delete: हटाएँ
-  delete_aria: Delete this conversation
-  delete_confirm: Delete this imported conversation? This cannot be undone.
-  delete_success: Conversation deleted.
-  delete_error: Could not delete the conversation.
-  duplicate_detected: This conversation was already imported. Showing the existing entry.
-  chat_language: Chat language (you speak)
+  delete_aria: इस बातचीत को हटाएँ
+  delete_confirm: इस आयातित बातचीत को हटाएँ? इसे पूर्ववत नहीं किया जा सकता।
+  delete_success: बातचीत हटाई गई।
+  delete_error: बातचीत हटाई नहीं जा सकी।
+  duplicate_detected: यह बातचीत पहले ही आयात की जा चुकी है। मौजूदा प्रविष्टि दिखाई जा रही है।
+  chat_language: चैट भाषा (जो आप बोलते हैं)
   learning_language: अधिगम भाषा
   select_language: एक भाषा चुनें…
 curriculum:
   title: पाठ्यक्रम
   active: सक्रिय पाठ्यक्रम
-  new_placeholder: New curriculum title…
-  create: Create curriculum
-  created: Curriculum created.
+  new_placeholder: नए पाठ्यक्रम का शीर्षक…
+  create: पाठ्यक्रम बनाएँ
+  created: पाठ्यक्रम बनाया गया।
   saved: सहेजा गया।
-  deleted: Topic deleted.
+  deleted: विषय हटाया गया।
   add_topic: विषय जोड़ें
-  add_root_topic: Add root topic
+  add_root_topic: मूल विषय जोड़ें
   add_subtopic: उपविषय जोड़ें
   rename_topic: विषय का नाम बदलें
   topic_title: शीर्षक
-  no_topics: No topics yet — add your first to get started.
-  no_curriculum: Create a curriculum to start building a topic tree.
-  delete_confirm: Delete this topic? Its children stay as their own roots.
+  no_topics: अभी कोई विषय नहीं — शुरू करने के लिए अपना पहला विषय जोड़ें।
+  no_curriculum: विषय वृक्ष बनाना शुरू करने के लिए एक पाठ्यक्रम बनाएँ।
+  delete_confirm: इस विषय को हटाएँ? इसके उप-विषय अपने आप में मूल विषय बने रहेंगे।
   lessons_title: पाठ
   add_lesson: पाठ जोड़ें
-  new_lesson_placeholder: New lesson title…
-  no_lessons: No lessons yet.
-  lesson_created: Lesson created.
-  lesson_saved: Lesson saved.
-  lesson_deleted: Lesson deleted.
-  lesson_delete_confirm: Delete this lesson?
+  new_lesson_placeholder: नए पाठ का शीर्षक…
+  no_lessons: अभी कोई पाठ नहीं।
+  lesson_created: पाठ बनाया गया।
+  lesson_saved: पाठ सहेजा गया।
+  lesson_deleted: पाठ हटाया गया।
+  lesson_delete_confirm: इस पाठ को हटाएँ?
   add_description: विवरण जोड़ें
-  description_aria: Curriculum description
-  description_placeholder: Why this curriculum? What does it cover?
-  description_saved: Description saved.
+  description_aria: पाठ्यक्रम विवरण
+  description_placeholder: यह पाठ्यक्रम क्यों? यह क्या-क्या कवर करता है?
+  description_saved: विवरण सहेजा गया।
   edit_description: विवरण संपादित करें
-  lesson_content_aria: Lesson content
-  lesson_content_placeholder: Lesson content — supports headings, lists, code blocks, links.
-  no_description: No description yet.
+  lesson_content_aria: पाठ सामग्री
+  lesson_content_placeholder: पाठ सामग्री — शीर्षक, सूचियाँ, कोड ब्लॉक, लिंक का समर्थन करती है।
+  no_description: अभी कोई विवरण नहीं।
 landing:
   title: अडैप्टिव लर्नर
   subtitle: ऐसी शिक्षा जो आपके अनुसार ढलती है।
@@ -206,140 +206,140 @@ landing:
   start_button: अपनी अधिगम यात्रा शुरू करें
   docs_link: दस्तावेज़ पढ़ें
   checking_session: वापसी पर स्वागत है…
-  recovered_toast: Welcome back! Your learning data is still here.
-  intro: Adaptive Learner finds the method that fits you best from six research-backed learning approaches, and walks you through a seven-step cycle on every session.
+  recovered_toast: वापसी पर स्वागत है! आपका सीखने का डेटा अभी भी यहीं है।
+  intro: Adaptive Learner छह शोध-आधारित सीखने के तरीकों में से वह विधि ढूँढता है जो आपके लिए सबसे उपयुक्त हो, और हर सत्र में आपको सात-चरणीय चक्र के माध्यम से ले जाता है।
 onboarding:
-  title: Create a learning project
-  intro: Tell us about your learning goal. Adaptive Learner uses this to build your profile and recommend a starting method.
-  concepts_explainer_prefix: 'You''ll define a '
-  concepts_explainer_mid1: ', then complete a brief assessment to build your '
-  concepts_explainer_mid2: ' — which guides every '
-  concepts_explainer_suffix: ' ahead.'
-  term_learning_project: learning project
-  term_learning_profile: learning profile
-  term_learning_session: learning session
-  field_name: Your name
+  title: एक सीखने की परियोजना बनाएँ
+  intro: हमें अपने सीखने के लक्ष्य के बारे में बताएँ। Adaptive Learner इसका उपयोग आपकी प्रोफ़ाइल बनाने और एक शुरुआती विधि सुझाने के लिए करता है।
+  concepts_explainer_prefix: 'आप एक '
+  concepts_explainer_mid1: ' परिभाषित करेंगे, फिर अपनी '
+  concepts_explainer_mid2: ' बनाने के लिए एक संक्षिप्त मूल्यांकन पूरा करेंगे — जो आगे आने वाले हर '
+  concepts_explainer_suffix: ' का मार्गदर्शन करती है।'
+  term_learning_project: सीखने की परियोजना
+  term_learning_profile: सीखने की प्रोफ़ाइल
+  term_learning_session: सीखने का सत्र
+  field_name: आपका नाम
   field_topic: विषय
-  field_topic_hint: e.g. Spanish B1, linear algebra.
-  field_goal: Goal
-  field_goal_hint: What do you want to be able to do?
-  field_timeframe: Time frame
-  field_timeframe_hint: e.g. 4 weeks, one semester.
-  field_daily_minutes: Minutes per day
-  field_current_problem: Current problem
-  field_current_problem_hint: optional — what is blocking you right now?
-  submit: Create project and start assessment
-  creating: Creating project…
-  subject_suggestions: 'Suggested subjects (tap to assign):'
-  default_goal: Learn {topic}
-  invite_title: Want to set up your learning profile in more detail?
-  invite_subtitle: It takes a minute and tailors your sessions — you can also do it later.
-  invite_start_now: Jump right in
-  invite_setup_profile: Set up profile
-  restore_hint: Already learning with Adaptive Learner? Restore from a backup.
-  restore_backup: Restore from existing backup
-  restoring: Restoring…
-  restore_success: Backup restored. Welcome back!
+  field_topic_hint: जैसे स्पेनिश B1, रेखीय बीजगणित।
+  field_goal: लक्ष्य
+  field_goal_hint: आप क्या करने में सक्षम होना चाहते हैं?
+  field_timeframe: समय सीमा
+  field_timeframe_hint: जैसे 4 सप्ताह, एक सेमेस्टर।
+  field_daily_minutes: प्रति दिन मिनट
+  field_current_problem: वर्तमान समस्या
+  field_current_problem_hint: वैकल्पिक — अभी आपको क्या रोक रहा है?
+  submit: परियोजना बनाएँ और मूल्यांकन शुरू करें
+  creating: परियोजना बनाई जा रही है…
+  subject_suggestions: 'सुझाए गए विषय (असाइन करने के लिए टैप करें):'
+  default_goal: '{topic} सीखें'
+  invite_title: अपनी सीखने की प्रोफ़ाइल को अधिक विस्तार से सेट करना चाहते हैं?
+  invite_subtitle: इसमें एक मिनट लगता है और यह आपके सत्रों को अनुकूलित करता है — आप इसे बाद में भी कर सकते हैं।
+  invite_start_now: सीधे शुरू करें
+  invite_setup_profile: प्रोफ़ाइल सेट करें
+  restore_hint: पहले से Adaptive Learner के साथ सीख रहे हैं? बैकअप से पुनर्स्थापित करें।
+  restore_backup: मौजूदा बैकअप से पुनर्स्थापित करें
+  restoring: पुनर्स्थापित किया जा रहा है…
+  restore_success: बैकअप पुनर्स्थापित किया गया। वापसी पर स्वागत है!
   wizard:
-    step_label: Step {current} of {total}
+    step_label: चरण {current} / {total}
     next: आगे
     back: वापस
-    goal_title: What's your learning goal?
-    timeframe_title: How much time do you have?
-    timeframe_4w: 4 weeks
-    timeframe_3m: 3 months
-    timeframe_semester: 1 semester
-    timeframe_flexible: Flexible
-    minutes_title: How many minutes per day?
-    minutes_value: '{n} min/day'
-    problem_title: What's holding you back right now?
-    done_title: All set! Start the assessment?
-    done_subtitle: The 12-question assessment builds your learning profile.
-    start_assessment: Yes, start
-    later: Later
+    goal_title: आपका सीखने का लक्ष्य क्या है?
+    timeframe_title: आपके पास कितना समय है?
+    timeframe_4w: 4 सप्ताह
+    timeframe_3m: 3 महीने
+    timeframe_semester: 1 सेमेस्टर
+    timeframe_flexible: लचीला
+    minutes_title: प्रति दिन कितने मिनट?
+    minutes_value: '{n} मिनट/दिन'
+    problem_title: अभी आपको क्या रोक रहा है?
+    done_title: सब तैयार! मूल्यांकन शुरू करें?
+    done_subtitle: 12-प्रश्नों वाला मूल्यांकन आपकी सीखने की प्रोफ़ाइल बनाता है।
+    start_assessment: हाँ, शुरू करें
+    later: बाद में
 assessment:
-  title: Learning-type assessment
-  intro: Twelve short questions determine your learning profile. There is no right or wrong answer — go with your gut.
-  question_progress: Question {current} of {total}
-  next_question: Next question
-  prev_question: Previous question
-  continue_later: Continue later
-  submit: Evaluate
-  evaluating: Evaluating…
-  result_title: Your learning profile
-  dominant_method: Preferred method
-  continue_to_dashboard: Continue to dashboard
-  read_summary: Read summary
-  swipe_hint: Swipe left / right (or use arrow keys) to navigate.
+  title: सीखने के प्रकार का मूल्यांकन
+  intro: बारह छोटे प्रश्न आपकी सीखने की प्रोफ़ाइल निर्धारित करते हैं। कोई सही या गलत उत्तर नहीं है — अपने अंतर्मन के अनुसार चुनें।
+  question_progress: प्रश्न {current} / {total}
+  next_question: अगला प्रश्न
+  prev_question: पिछला प्रश्न
+  continue_later: बाद में जारी रखें
+  submit: मूल्यांकन करें
+  evaluating: मूल्यांकन हो रहा है…
+  result_title: आपकी लर्निंग प्रोफ़ाइल
+  dominant_method: पसंदीदा तरीका
+  continue_to_dashboard: डैशबोर्ड पर जाएँ
+  read_summary: सारांश पढ़ें
+  swipe_hint: नेविगेट करने के लिए बाएँ / दाएँ स्वाइप करें (या ऐरो कुंजियाँ इस्तेमाल करें)।
 dashboard:
   no_data: अभी कोई डेटा नहीं।
   title: डैशबोर्ड
   welcome: वापसी पर स्वागत है
-  quick_start: Start a new session
-  quick_start_subtitle: Method picked from your profile.
+  quick_start: नया सत्र शुरू करें
+  quick_start_subtitle: तरीका आपकी प्रोफ़ाइल से चुना गया।
   card_profile: अधिगम प्रोफ़ाइल
-  profile_incomplete: Learning profile incomplete.
+  profile_incomplete: लर्निंग प्रोफ़ाइल अधूरी है।
   profile_resume: अधिगम प्रोफ़ाइल जारी रखें
   profile_start: अधिगम प्रोफ़ाइल बनाएँ
   card_progress: प्रगति
-  card_distribution: Method distribution
-  card_counter: Sessions
-  card_tools: Tool recommendations
+  card_distribution: तरीकों का वितरण
+  card_counter: सत्र
+  card_tools: टूल अनुशंसाएँ
   card_recent_sessions: हाल के सत्र
-  card_spaced: Spaced practice
+  card_spaced: अंतराल अभ्यास
   card_review_queue: पुनरावलोकन हेतु बकाया
   card_focus_areas: फ़ोकस क्षेत्र
   card_paused_lessons: सीखना जारी रखें
   review_queue:
     loading: लोड हो रहा है…
-    elements: element(s) due for review
-    overdue: overdue — start here
-    open: Open review session
+    elements: तत्व समीक्षा के लिए बाकी
+    overdue: समय बीत चुका — यहाँ से शुरू करें
+    open: समीक्षा सत्र खोलें
     quick: "त्वरित समीक्षा"
   focus_areas:
-    loading: Analyzing your errors…
-    subtitle: 'Your challenge areas:'
-    errors: errors
+    loading: आपकी गलतियों का विश्लेषण हो रहा है…
+    subtitle: 'आपके चुनौतीपूर्ण क्षेत्र:'
+    errors: गलतियाँ
     hint_answers: "{n} उत्तर संकेत के साथ"
-    mastery_progress: Mastery progress
-    cta: Start adaptive lesson
+    mastery_progress: महारत की प्रगति
+    cta: अनुकूली पाठ शुरू करें
     tag:
-      article_gender: Article gender
-      spelling_accent: Spelling & accents
-      verb_conjugation: Verb conjugation
-      word_order: Word order
-    mastery_split: 'Receptive: {receptive} · Productive: {productive}'
+      article_gender: आर्टिकल लिंग
+      spelling_accent: वर्तनी और उच्चारण-चिह्न
+      verb_conjugation: क्रिया रूपांतरण
+      word_order: शब्द क्रम
+    mastery_split: 'ग्रहणशील: {receptive} · उत्पादक: {productive}'
   create_lesson: एक पाठ बनाएँ
-  metric_mean_stress: Ø Stress
-  metric_mean_understanding: Ø Understanding
+  metric_mean_stress: Ø तनाव
+  metric_mean_understanding: Ø समझ
   metric_streak: दिन की श्रृंखला
-  metric_total_minutes: Total minutes
-  metric_total_sessions: Total sessions
-  pronunciation_quick_start: Pronunciation Practice
+  metric_total_minutes: कुल मिनट
+  metric_total_sessions: कुल सत्र
+  pronunciation_quick_start: उच्चारण अभ्यास
   spaced_dismiss: खारिज करें
-  spaced_empty: Nothing to refresh right now. Great rhythm!
-  spaced_interval_label: Review in
+  spaced_empty: अभी कुछ दोहराने को नहीं है। बढ़िया लय!
+  spaced_interval_label: समीक्षा होगी
   spaced_start: शुरू करें
 adaptive:
-  page_title: Adaptive Lesson
-  session_title: Adaptive lesson
-  loading: Analyzing your errors…
-  empty_body: Nothing to adapt yet — practice a lesson to build up data.
-  not_cached_body: This set isn't downloaded yet. Open the content browser to download it first.
+  page_title: अनुकूली पाठ
+  session_title: अनुकूली पाठ
+  loading: आपकी गलतियों का विश्लेषण हो रहा है…
+  empty_body: अभी अनुकूलित करने को कुछ नहीं — डेटा बनाने के लिए कोई पाठ अभ्यास करें।
+  not_cached_body: यह सेट अभी डाउनलोड नहीं हुआ है। इसे पहले डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।
   back_to_dashboard: डैशबोर्ड पर वापस
   transparency:
-    focus_prefix: 'This lesson focuses on:'
-    tag_none: your weakest elements
-    errors_line: Based on {n} active error(s)
+    focus_prefix: 'यह पाठ इन पर केंद्रित है:'
+    tag_none: आपके सबसे कमज़ोर तत्व
+    errors_line: '{n} सक्रिय गलती(यों) पर आधारित'
   summary:
-    aria_label: Adaptive lesson summary
-    heading: Adaptive lesson complete
+    aria_label: अनुकूली पाठ सारांश
+    heading: अनुकूली पाठ पूरा हुआ
     score: स्कोर
-    mastered_delta: 'Improvement: +{n} element(s) mastered this session!'
-    note: Element scores have been updated. Your next adaptive lesson will target the elements that still need work.
+    mastered_delta: 'सुधार: इस सत्र में +{n} तत्व पर महारत हासिल हुई!'
+    note: तत्वों के स्कोर अपडेट हो गए हैं। आपका अगला अनुकूली पाठ उन तत्वों को लक्षित करेगा जिन पर अभी काम बाकी है।
   error:
-    missing_params: No content set selected.
-    load_failed: Could not generate adaptive lesson.
+    missing_params: कोई सामग्री सेट चयनित नहीं है।
+    load_failed: अनुकूली पाठ तैयार नहीं हो सका।
 review:
   your_answer: "आपका उत्तर:"
   correct_answer: "सही:"
@@ -356,84 +356,84 @@ review:
   explain_word_order: "इस संरचना के शब्द-क्रम का ध्यान रखें।"
   page_title: पुनरावलोकन
   session_title: पुनरावलोकन सत्र
-  subtitle: Reviewing {n} element(s) due for SRS
+  subtitle: SRS के लिए बाकी {n} तत्व(ओं) की समीक्षा
   subtitle_capped: "{due} में से {shown} तत्व दोहराने के लिए"
-  loading: Loading review session…
-  empty_body: All caught up! No elements due for review in this set.
-  not_cached_body: This set isn't downloaded yet. Open the content browser to download it first.
+  loading: समीक्षा सत्र लोड हो रहा है…
+  empty_body: सब हो गया! इस सेट में समीक्षा के लिए कोई तत्व बाकी नहीं है।
+  not_cached_body: यह सेट अभी डाउनलोड नहीं हुआ है। इसे पहले डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।
   back_to_dashboard: डैशबोर्ड पर वापस
   summary:
-    aria_label: Review summary
+    aria_label: समीक्षा सारांश
     heading: पुनरावलोकन पूर्ण
     score: स्कोर
-    note: Element scores have been updated. Mastered elements will not appear in the next session.
+    note: तत्वों के स्कोर अपडेट हो गए हैं। जिन तत्वों पर महारत हासिल है वे अगले सत्र में नहीं दिखेंगे।
   error:
-    missing_params: No content set selected.
-    load_failed: Could not load review session.
-  spaced_empty: Nothing to refresh right now. Great rhythm!
-  spaced_interval_label: Review in
+    missing_params: कोई सामग्री सेट चयनित नहीं है।
+    load_failed: समीक्षा सत्र लोड नहीं हो सका।
+  spaced_empty: अभी कुछ दोहराने को नहीं है। बढ़िया लय!
+  spaced_interval_label: समीक्षा होगी
   spaced_start: शुरू करें
   spaced_dismiss: खारिज करें
-  metric_total_sessions: Total sessions
-  metric_total_minutes: Total minutes
-  metric_mean_understanding: Mean understanding
-  metric_mean_stress: Mean stress
+  metric_total_sessions: कुल सत्र
+  metric_total_minutes: कुल मिनट
+  metric_mean_understanding: औसत समझ
+  metric_mean_stress: औसत तनाव
   metric_streak: दिन की श्रृंखला
-  no_data: No sessions yet — start your first one to see trends.
-  pronunciation_quick_start: Pronunciation Practice
+  no_data: अभी कोई सत्र नहीं — रुझान देखने के लिए अपना पहला सत्र शुरू करें।
+  pronunciation_quick_start: उच्चारण अभ्यास
 session:
   title: अधिगम सत्र
   topic_label: विषय
-  in_progress: Session in progress
+  in_progress: सत्र जारी है
   send_message: संदेश भेजें
-  message_placeholder: Write your reply…
+  message_placeholder: अपना उत्तर लिखें…
   ai_thinking: सोच रहा है…
-  ai_error: The AI provider could not reply.
-  no_api_key: No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.
-  welcome_empty: Ready to learn! Write your first message.
+  ai_error: AI प्रदाता उत्तर नहीं दे सका।
+  no_api_key: कोई AI कुंजी सेट नहीं है। ट्यूटर से चैट करने के लिए सेटिंग्स में अपने AI प्रदाता की कुंजी जोड़ें। पाठ और समीक्षाएँ बिना कुंजी के काम करती हैं।
+  welcome_empty: सीखने के लिए तैयार! अपना पहला संदेश लिखें।
   end_session: सत्र समाप्त करें
-  end_session_confirm: Sure? We will close the session and ask for a rating.
-  switch_recommended: Method switch recommended
-  switch_recommended_subtitle: Your recent ratings suggest a different method might fit you better.
+  end_session_confirm: पक्का? हम सत्र बंद कर देंगे और रेटिंग माँगेंगे।
+  switch_recommended: तरीका बदलने की अनुशंसा
+  switch_recommended_subtitle: आपकी हाल की रेटिंग बताती हैं कि कोई दूसरा तरीका आपके लिए बेहतर हो सकता है।
   switch_accept: विधि बदलें
-  switch_dismiss: Keep current method
-  rating_title: How did the session go?
-  rating_understanding: How well did you understand?
-  rating_stress: How stressful was it?
-  rating_method_fit: How well did the method fit?
+  switch_dismiss: मौजूदा तरीका रखें
+  rating_title: सत्र कैसा रहा?
+  rating_understanding: आपने कितनी अच्छी तरह समझा?
+  rating_stress: यह कितना तनावपूर्ण था?
+  rating_method_fit: तरीका कितना उपयुक्त रहा?
   rating_notes: नोट्स (वैकल्पिक)
   rating_submit: रेटिंग सबमिट करें
-  step_progress: Step {current} of {total}
-  step_advance_toast: 'Moving to: {step}'
-  cycle_label: Cycle {n}
-  cycle_advanced: Cycle {n} started
-  cycles_completed: Cycles completed
-  next_topic: 'Next topic:'
-  step_reason_tooltip: Why this step?
-  offline_start_blocked: You're offline. New sessions need a network connection — past sessions stay readable from the Dashboard.
-  peek_step_prefix: Step
-  rating_notes_aria: Session notes
-  rating_notes_placeholder: What worked, what didn't, what to try next time...
+  step_progress: '{total} में से चरण {current}'
+  step_advance_toast: 'आगे बढ़ रहे हैं: {step}'
+  cycle_label: चक्र {n}
+  cycle_advanced: चक्र {n} शुरू हुआ
+  cycles_completed: पूरे हुए चक्र
+  next_topic: 'अगला विषय:'
+  step_reason_tooltip: यह चरण क्यों?
+  offline_start_blocked: आप ऑफ़लाइन हैं। नए सत्रों के लिए नेटवर्क कनेक्शन चाहिए — पिछले सत्र डैशबोर्ड से पढ़े जा सकते हैं।
+  peek_step_prefix: चरण
+  rating_notes_aria: सत्र नोट्स
+  rating_notes_placeholder: क्या काम आया, क्या नहीं, अगली बार क्या आज़माएँ...
 progress:
   title: प्रगति
-  chart_timeline: Understanding and stress over time
-  chart_methods: Method distribution
-  commit_history: Session history
-  commit_method: Method
-  commit_understanding: Understanding
-  commit_stress: Stress
-  commit_duration: Duration
-  commit_date: Date
-  no_commits: No completed sessions yet.
-  step_eval_title: AI step-evaluation insights
-  step_eval_empty: No AI step-evaluation data yet — start a session to see insights here.
-  step_eval_avg_confidence: Avg AI confidence
-  step_eval_repeats: Times AI said 'not ready yet'
-  step_eval_advances: Step advances
-  step_eval_backward: Backward transitions
-  step_eval_stickiest_label: 'Most time on:'
-  commit_notes_aria: Session notes
-  session_count: Sessions
+  chart_timeline: समय के साथ समझ और तनाव
+  chart_methods: तरीकों का वितरण
+  commit_history: सत्र इतिहास
+  commit_method: तरीका
+  commit_understanding: समझ
+  commit_stress: तनाव
+  commit_duration: अवधि
+  commit_date: तारीख
+  no_commits: अभी तक कोई पूरा सत्र नहीं।
+  step_eval_title: AI चरण-मूल्यांकन अंतर्दृष्टि
+  step_eval_empty: अभी कोई AI चरण-मूल्यांकन डेटा नहीं — यहाँ अंतर्दृष्टि देखने के लिए सत्र शुरू करें।
+  step_eval_avg_confidence: औसत AI आत्मविश्वास
+  step_eval_repeats: AI ने 'अभी तैयार नहीं' कितनी बार कहा
+  step_eval_advances: चरण आगे बढ़े
+  step_eval_backward: पीछे के संक्रमण
+  step_eval_stickiest_label: 'सबसे ज़्यादा समय:'
+  commit_notes_aria: सत्र नोट्स
+  session_count: सत्र
 settings:
   install:
     heading: "ऐप इंस्टॉल करें"
@@ -464,37 +464,37 @@ settings:
   reminders_notification_body: "{n} समीक्षाएँ देय हैं। अपनी श्रृंखला बनाए रखें!"
   support:
     heading: सहायता
-    description: Something not working as expected? Create a report of your recent actions to help the developer reproduce it. You review everything before it leaves your browser.
+    description: कुछ उम्मीद के मुताबिक काम नहीं कर रहा? डेवलपर को समस्या दोहराने में मदद के लिए अपनी हाल की क्रियाओं की एक रिपोर्ट बनाएँ। आपके ब्राउज़र से बाहर जाने से पहले आप हर चीज़ की समीक्षा करते हैं।
     create_report: त्रुटि रिपोर्ट बनाएँ
-    report_default_message: User-initiated report
+    report_default_message: उपयोगकर्ता-आरंभित रिपोर्ट
   tab_integrations: एकीकरण
   github:
     title: GitHub एकीकरण
-    intro: Needed to share lessons as a pull request. Create a token with the 'repo' permission.
+    intro: पाठों को पुल रिक्वेस्ट के रूप में साझा करने के लिए ज़रूरी। 'repo' अनुमति के साथ एक टोकन बनाएँ।
     token: GitHub टोकन
-    format_invalid: A GitHub token starts with 'ghp_' or 'github_pat_'.
+    format_invalid: GitHub टोकन 'ghp_' या 'github_pat_' से शुरू होता है।
     test: परीक्षण
-    testing: Testing...
+    testing: परीक्षण हो रहा है...
     save: सहेजें
     remove: निकालें
-    saved: GitHub token saved.
-    removed: GitHub token removed.
-    test_success: Connected as {username}
-    test_invalid: Token invalid.
-    test_rate_limit: GitHub rate limit reached. Try again later.
-    test_network: Could not reach GitHub.
-    test_no_token: No token to test.
-    source_file: Stored in secrets.yaml
-    source_env: Managed via environment
-    source_browser: Stored in this browser
+    saved: GitHub टोकन सहेजा गया।
+    removed: GitHub टोकन हटाया गया।
+    test_success: '{username} के रूप में जुड़े'
+    test_invalid: टोकन अमान्य है।
+    test_rate_limit: GitHub दर सीमा पहुँच गई। बाद में फिर कोशिश करें।
+    test_network: GitHub तक नहीं पहुँच सके।
+    test_no_token: परीक्षण के लिए कोई टोकन नहीं।
+    source_file: secrets.yaml में संग्रहीत
+    source_env: एनवायरनमेंट के माध्यम से प्रबंधित
+    source_browser: इस ब्राउज़र में संग्रहीत
   title: सेटिंग्स
-  help_intro: Browse and search the in-app glossary. Click any entry for the full article.
+  help_intro: ऐप के अंदर मौजूद शब्दावली ब्राउज़ करें और खोजें। पूरा लेख देखने के लिए किसी भी प्रविष्टि पर क्लिक करें।
   section_language: भाषा
   mode_title: मोड
   mode_solo: एकल मोड
-  mode_solo_desc: Learn for yourself. All features available.
+  mode_solo_desc: अपने लिए सीखें। सभी सुविधाएँ उपलब्ध।
   mode_multiplayer: मल्टीप्लेयर मोड
-  mode_multiplayer_desc: Leaderboards, tournaments, friends. Coming in a future version.
+  mode_multiplayer_desc: लीडरबोर्ड, टूर्नामेंट, मित्र। किसी भविष्य के संस्करण में आ रहा है।
   mode_coming_soon: जल्द आ रहा है
   section_provider: एआई प्रदाता
   section_api_keys: एपीआई कुंजियाँ
@@ -509,7 +509,7 @@ settings:
   avatar_upload: चित्र अपलोड करें
   avatar_remove: निकालें
   avatar_crop_title: अपना चित्र समायोजित करें
-  avatar_crop_instructions: Drag to reposition, scroll or pinch to zoom.
+  avatar_crop_instructions: स्थान बदलने के लिए खींचें, ज़ूम के लिए स्क्रॉल या पिंच करें।
   avatar_crop_apply: लागू करें
   avatar_crop_cancel: रद्द करें
   avatar_crop_zoom: ज़ूम
@@ -517,7 +517,7 @@ settings:
   avatar_change: चित्र बदलें
   avatar_button_label: प्रोफ़ाइल चित्र देखें या बदलें
   theme: थीम
-  theme_description: Choose how the app looks. Auto follows your system light/dark setting.
+  theme_description: चुनें कि ऐप कैसा दिखे। ऑटो आपके सिस्टम की लाइट/डार्क सेटिंग का पालन करता है।
   theme_group_recommended: अनुशंसित
   theme_group_classic: क्लासिक
   theme_groups: थीम समूह
@@ -526,263 +526,263 @@ settings:
   group_learning: अधिगम और एआई
   group_data: डेटा और एकीकरण
   group_info: जानकारी
-  nav_aria: Settings navigation
+  nav_aria: सेटिंग्स नेविगेशन
   tab_ai: एआई
   tab_learning: अधिगम
   tab_plugins: प्लगइन्स
   tab_data: डेटा
   tab_help: सहायता
   tab_about: परिचय
-  tabs_aria: Settings sections
+  tabs_aria: सेटिंग्स अनुभाग
   section_feedback: प्रतिक्रिया
   section_interaction: अंतःक्रिया
   missions_title: दैनिक मिशन
   missions_enabled: दैनिक मिशन
-  missions_enabled_hint: Show a few achievable goals on the Dashboard each day. Optional - the app works the same without them.
+  missions_enabled_hint: हर दिन डैशबोर्ड पर कुछ हासिल करने योग्य लक्ष्य दिखाएँ। वैकल्पिक - इनके बिना भी ऐप वैसे ही काम करता है।
   missions_count: प्रति दिन मिशन
   missions_difficulty: कठिनाई मिश्रण
   missions_difficulty_balanced: संतुलित
   missions_difficulty_easy: आसान
   missions_difficulty_challenging: चुनौतीपूर्ण
-  missions_reset: Reset today's missions
-  missions_reset_confirm: Confirm reset
-  missions_reset_done: Today's missions reshuffled.
-  missions_reset_failed: Could not reset missions.
+  missions_reset: आज के मिशन रीसेट करें
+  missions_reset_confirm: रीसेट की पुष्टि करें
+  missions_reset_done: आज के मिशन फिर से बदल दिए गए।
+  missions_reset_failed: मिशन रीसेट नहीं हो सके।
   gestures: स्वाइप जेस्चर
-  gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
+  gestures_description: मूल्यांकन, सत्र और पाठ्यक्रम में नेविगेट करने के लिए स्वाइप करें।
   profile_title: अधिगम प्रोफ़ाइल
   profile_resume: अधिगम प्रोफ़ाइल जारी रखें
   profile_redo: अधिगम प्रोफ़ाइल फिर से लें
   profile_create: अधिगम प्रोफ़ाइल बनाएँ
-  profile_incomplete_hint: You have an unfinished assessment.
-  profile_redo_hint: Retake the assessment to update your learning profile.
-  profile_create_hint: Take a short assessment to get a personalised learning profile.
-  lesson_shortcuts: Lesson keyboard shortcuts
-  lesson_shortcuts_description: Press Enter to check your answer, then Enter again to go to the next step.
-  button_tooltips: Show button tooltips
-  button_tooltips_description: Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.
-  developer_mode: Developer Mode
-  developer_mode_description: Show full technical detail (status code, endpoint, stack trace) in error toasts. A 'DEV' badge appears in the navigation bar while this is on. Off by default; opt-in for debugging.
-  feedback_intensity: Feedback Intensity
-  feedback_intensity_description: How loudly the app celebrates your progress.
-  feedback_intensity_subtle: Subtle
-  feedback_intensity_subtle_desc: Only the correct/wrong colour. No phrases, confetti, or milestone overlays.
-  feedback_intensity_normal: Normal
-  feedback_intensity_normal_desc: Animations, praise phrases, and confetti on a perfect score.
-  feedback_intensity_enthusiastic: Enthusiastic
-  feedback_intensity_enthusiastic_desc: Everything, plus milestone overlays and praise on every correct answer.
-  feedback_intensity_reduced_motion_hint: Reduced-motion is on in your system, so feedback is kept subtle regardless of this setting.
-  sounds: Sounds
-  sounds_description: Play short synthesized chimes on correct answers, stars, and milestones. Off by default; sounds never carry information that isn't also shown.
-  sounds_volume: Volume
+  profile_incomplete_hint: आपके पास एक अधूरा मूल्यांकन है।
+  profile_redo_hint: अपनी लर्निंग प्रोफ़ाइल अपडेट करने के लिए मूल्यांकन फिर से दें।
+  profile_create_hint: वैयक्तिकृत लर्निंग प्रोफ़ाइल पाने के लिए एक छोटा मूल्यांकन दें।
+  lesson_shortcuts: पाठ कीबोर्ड शॉर्टकट
+  lesson_shortcuts_description: अपना उत्तर जाँचने के लिए Enter दबाएँ, फिर अगले चरण पर जाने के लिए दोबारा Enter दबाएँ।
+  button_tooltips: बटन टूलटिप दिखाएँ
+  button_tooltips_description: आइकन बटनों पर होवर टूलटिप दिखाएँ जो बताए कि वे क्या करते हैं। स्क्रीन-रीडर लेबल वैसे भी चालू रहते हैं।
+  developer_mode: डेवलपर मोड
+  developer_mode_description: एरर टोस्ट में पूरा तकनीकी विवरण (स्टेटस कोड, एंडपॉइंट, स्टैक ट्रेस) दिखाएँ। यह चालू रहने पर नेविगेशन बार में एक 'DEV' बैज दिखता है। डिफ़ॉल्ट रूप से बंद; डिबगिंग के लिए ऑप्ट-इन।
+  feedback_intensity: फ़ीडबैक तीव्रता
+  feedback_intensity_description: ऐप आपकी प्रगति का कितने ज़ोर से जश्न मनाता है।
+  feedback_intensity_subtle: सूक्ष्म
+  feedback_intensity_subtle_desc: केवल सही/गलत का रंग। कोई वाक्यांश, कन्फ़ेटी, या माइलस्टोन ओवरले नहीं।
+  feedback_intensity_normal: सामान्य
+  feedback_intensity_normal_desc: एनिमेशन, प्रशंसा वाक्य, और पूर्ण स्कोर पर कन्फ़ेटी।
+  feedback_intensity_enthusiastic: उत्साही
+  feedback_intensity_enthusiastic_desc: सब कुछ, साथ ही माइलस्टोन ओवरले और हर सही उत्तर पर प्रशंसा।
+  feedback_intensity_reduced_motion_hint: आपके सिस्टम में कम-गति (reduced-motion) चालू है, इसलिए इस सेटिंग के बावजूद फ़ीडबैक संयमित रखा जाता है।
+  sounds: ध्वनियाँ
+  sounds_description: सही उत्तरों, सितारों, और माइलस्टोन पर छोटी सिंथेसाइज़्ड घंटियाँ बजाएँ। डिफ़ॉल्ट रूप से बंद; ध्वनियाँ कभी ऐसी जानकारी नहीं देतीं जो दिखाई भी न देती हो।
+  sounds_volume: वॉल्यूम
   sounds_test: परीक्षण
-  section_storage_mode: Storage mode
-  storage_mode_help: Choose where your data lives. Local mode keeps everything in this browser; Server mode talks to the AdaptiveLearner backend.
-  storage_mode_api: Server
-  storage_mode_api_hint: Requires a running AdaptiveLearner backend.
-  storage_mode_dexie: Local (Browser)
-  storage_mode_dexie_hint: Data + API keys live in this browser; AI calls fire direct from the page.
-  storage_mode_warning: Data is NOT synced between modes. Sync is planned for a future version.
-  storage_mode_switch_notice: Storage mode saved. Reload the page to switch to the new backend.
+  section_storage_mode: संग्रहण मोड
+  storage_mode_help: चुनें कि आपका डेटा कहाँ रहेगा। लोकल मोड सब कुछ इसी ब्राउज़र में रखता है; सर्वर मोड AdaptiveLearner बैकएंड से संवाद करता है।
+  storage_mode_api: सर्वर
+  storage_mode_api_hint: एक चालू AdaptiveLearner बैकएंड की आवश्यकता है।
+  storage_mode_dexie: लोकल (ब्राउज़र)
+  storage_mode_dexie_hint: डेटा + API कुंजियाँ इसी ब्राउज़र में रहती हैं; AI कॉल सीधे पेज से होते हैं।
+  storage_mode_warning: मोड के बीच डेटा सिंक नहीं होता। सिंक भविष्य के संस्करण के लिए योजनाबद्ध है।
+  storage_mode_switch_notice: संग्रहण मोड सहेजा गया। नए बैकएंड पर स्विच करने के लिए पेज पुनः लोड करें।
   language_label: प्रदर्शन भाषा
   language_search_placeholder: भाषाएँ खोजें…
   language_no_results: कोई भाषा नहीं मिली
   language_search_label: भाषाएँ खोजें
-  provider_label: Active provider
+  provider_label: सक्रिय प्रदाता
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  api_key_label: API key
-  api_key_placeholder: Paste here…
-  api_key_placeholder_replace: Paste a new key to replace the stored one…
+  api_key_label: API कुंजी
+  api_key_placeholder: यहाँ पेस्ट करें…
+  api_key_placeholder_replace: सहेजी गई कुंजी को बदलने के लिए नई कुंजी पेस्ट करें…
   api_key:
     test: परीक्षण
-    testing: Testing…
-    test_success: Key works!
-    test_invalid: Key invalid or expired.
-    test_network: Connection failed. Check your internet connection.
-    test_rate_limit: Rate limit hit. Try later.
-    test_no_key: No key to test.
-    format_invalid: Invalid format.
-    rollback_warning: The new key doesn't work. Keep the old key?
-    rollback_keep_old: Keep old key
-    rollback_save_anyway: Save anyway
+    testing: परीक्षण हो रहा है…
+    test_success: कुंजी काम करती है!
+    test_invalid: कुंजी अमान्य या समाप्त।
+    test_network: कनेक्शन विफल। अपना इंटरनेट कनेक्शन जाँचें।
+    test_rate_limit: दर सीमा तक पहुँच गई। बाद में प्रयास करें।
+    test_no_key: परीक्षण के लिए कोई कुंजी नहीं।
+    format_invalid: अमान्य प्रारूप।
+    rollback_warning: नई कुंजी काम नहीं करती। पुरानी कुंजी रखें?
+    rollback_keep_old: पुरानी कुंजी रखें
+    rollback_save_anyway: फिर भी सहेजें
     rollback_cancel: रद्द करें
-    rollback_restore: Restore last working key
+    rollback_restore: अंतिम काम करने वाली कुंजी पुनर्स्थापित करें
     format_hint:
-      anthropic: Starts with sk-ant-
-      openai: Starts with sk-
-      gemini: Starts with AI
-  api_key_saved: Key stored
-  api_key_missing: Not set
-  api_key_set: Save key
-  api_key_delete: Remove key
-  api_key_confirm_delete: Really remove this API key?
+      anthropic: sk-ant- से शुरू होती है
+      openai: sk- से शुरू होती है
+      gemini: AI से शुरू होती है
+  api_key_saved: कुंजी संग्रहीत
+  api_key_missing: सेट नहीं
+  api_key_set: कुंजी सहेजें
+  api_key_delete: कुंजी हटाएँ
+  api_key_confirm_delete: क्या वाकई यह API कुंजी हटानी है?
   saved: सहेजा गया।
-  save_failed: Save failed.
-  provider_active: Active
-  active_provider_missing_key: This is your active provider but no API key is stored. AI replies will be skipped until a key is saved.
-  api_key_source_file: 'Key from: secrets.yaml'
-  api_key_source_env: 'Key from: environment'
-  api_key_source_settings: 'Key from: Settings'
-  api_key_source_none: No key configured
-  api_key_external_hint_file: Stored in ~/.config/adaptive_learner/secrets.yaml. Saving here overwrites it.
-  api_key_external_hint_env: This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.
-  section_model_overrides: Model overrides
-  model_overrides_hint: Leave blank to use the default model for each provider. A non-empty value replaces the default at chat time.
-  model_override_placeholder: Model identifier (e.g. claude-3-5-haiku-latest)
-  model_override_set: Override active
-  model_override_default: Default model
-  model_override_save: Save model
-  model_override_clear: Use default
-  model_picker_placeholder: Select or type a model id
-  model_picker_open: Open model list
-  model_picker_default_hint: 'Uses default:'
-  model_picker_loading: Loading models...
-  model_picker_error: Could not load models. Check your API key.
+  save_failed: सहेजना विफल।
+  provider_active: सक्रिय
+  active_provider_missing_key: यह आपका सक्रिय प्रदाता है पर कोई API कुंजी संग्रहीत नहीं है। कुंजी सहेजे जाने तक AI उत्तर छोड़ दिए जाएँगे।
+  api_key_source_file: 'कुंजी स्रोत: secrets.yaml'
+  api_key_source_env: 'कुंजी स्रोत: environment'
+  api_key_source_settings: 'कुंजी स्रोत: सेटिंग्स'
+  api_key_source_none: कोई कुंजी कॉन्फ़िगर नहीं
+  api_key_external_hint_file: ~/.config/adaptive_learner/secrets.yaml में संग्रहीत। यहाँ सहेजने से वह अधिलेखित हो जाएगी।
+  api_key_external_hint_env: यह कुंजी ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable के माध्यम से कॉन्फ़िगर है।
+  section_model_overrides: मॉडल ओवरराइड
+  model_overrides_hint: प्रत्येक प्रदाता के लिए डिफ़ॉल्ट मॉडल उपयोग करने हेतु खाली छोड़ें। गैर-खाली मान चैट के समय डिफ़ॉल्ट को बदल देता है।
+  model_override_placeholder: मॉडल पहचानकर्ता (जैसे claude-3-5-haiku-latest)
+  model_override_set: ओवरराइड सक्रिय
+  model_override_default: डिफ़ॉल्ट मॉडल
+  model_override_save: मॉडल सहेजें
+  model_override_clear: डिफ़ॉल्ट उपयोग करें
+  model_picker_placeholder: कोई मॉडल आईडी चुनें या टाइप करें
+  model_picker_open: मॉडल सूची खोलें
+  model_picker_default_hint: 'डिफ़ॉल्ट उपयोग करता है:'
+  model_picker_loading: मॉडल लोड हो रहे हैं...
+  model_picker_error: मॉडल लोड नहीं हो सके। अपनी API कुंजी जाँचें।
   model_picker_retry: पुनः प्रयास करें
-  model_picker_no_key: Save an API key for this provider to load the available models.
+  model_picker_no_key: उपलब्ध मॉडल लोड करने के लिए इस प्रदाता हेतु एक API कुंजी सहेजें।
   model_picker_recommended: अनुशंसित
-  model_picker_all: All models
-  model_picker_suggestions: Suggested (offline)
-  section_gamification: Gamification
-  xp_notifications: Show XP notifications
-  xp_notifications_help: Floating ‘+50 XP’ animation when you earn XP.
-  badge_notifications: Show badge notifications
-  badge_notifications_help: Toast when a new badge is earned.
-  daily_session_goal: Daily session goal
-  daily_session_goal_help: Sessions per day shown as a progress hint.
-  reset_progress: Reset progress
-  reset_progress_help: Permanently delete XP, badges, and streak. Cannot be undone.
-  reset_confirm_first: Click again to confirm
-  reset_confirm_second: Click once more to delete forever
-  section_voice: Voice
+  model_picker_all: सभी मॉडल
+  model_picker_suggestions: सुझाए गए (ऑफ़लाइन)
+  section_gamification: गेमिफ़िकेशन
+  xp_notifications: XP सूचनाएँ दिखाएँ
+  xp_notifications_help: XP कमाने पर तैरता हुआ ‘+50 XP’ एनिमेशन।
+  badge_notifications: बैज सूचनाएँ दिखाएँ
+  badge_notifications_help: नया बैज मिलने पर टोस्ट।
+  daily_session_goal: दैनिक सत्र लक्ष्य
+  daily_session_goal_help: प्रगति संकेत के रूप में दिखाए जाने वाले प्रति दिन सत्र।
+  reset_progress: प्रगति रीसेट करें
+  reset_progress_help: XP, बैज, और स्ट्रीक स्थायी रूप से हटाएँ। पूर्ववत नहीं किया जा सकता।
+  reset_confirm_first: पुष्टि के लिए फिर से क्लिक करें
+  reset_confirm_second: हमेशा के लिए हटाने हेतु एक बार और क्लिक करें
+  section_voice: आवाज़
   voice:
-    tts_enabled: Show speech buttons
-    tts_enabled_help: Reads AI responses aloud when you click the speaker icon.
-    auto_play: Auto-play AI responses
-    auto_play_help: Speak each AI response automatically (default off).
-    tts_voice: Voice
-    tts_voice_help: Default uses the closest match for your project language.
-    voice_default: Default (auto-pick)
-    tts_rate: Rate
-    tts_pitch: Pitch
-    stt_enabled: Show microphone button
-    stt_enabled_help: Dictate your replies via the browser's speech recognition.
-    stt_lang: Dictation language override
-    stt_lang_help: 'Leave empty to use the project / UI language. Format: BCP-47 (e.g. en-US, es-ES).'
-    pronunciation_enabled: Pronunciation Practice
-    pronunciation_enabled_help: Surfaces a 'Pronunciation Practice' button on language-learning project dashboards.
+    tts_enabled: वाणी बटन दिखाएँ
+    tts_enabled_help: स्पीकर आइकन पर क्लिक करने पर AI उत्तरों को ज़ोर से पढ़ता है।
+    auto_play: AI उत्तर स्वतः चलाएँ
+    auto_play_help: हर AI उत्तर को स्वचालित रूप से बोलें (डिफ़ॉल्ट रूप से बंद)।
+    tts_voice: आवाज़
+    tts_voice_help: डिफ़ॉल्ट आपकी प्रोजेक्ट भाषा के लिए सबसे निकट मेल उपयोग करता है।
+    voice_default: डिफ़ॉल्ट (स्वतः-चयन)
+    tts_rate: गति
+    tts_pitch: पिच
+    stt_enabled: माइक्रोफ़ोन बटन दिखाएँ
+    stt_enabled_help: ब्राउज़र की वाक् पहचान के माध्यम से अपने उत्तर बोलकर लिखें।
+    stt_lang: डिक्टेशन भाषा ओवरराइड
+    stt_lang_help: 'प्रोजेक्ट / UI भाषा उपयोग करने हेतु खाली छोड़ें। प्रारूप: BCP-47 (जैसे en-US, es-ES)।'
+    pronunciation_enabled: उच्चारण अभ्यास
+    pronunciation_enabled_help: भाषा-सीखने वाले प्रोजेक्ट डैशबोर्ड पर एक 'उच्चारण अभ्यास' बटन दिखाता है।
   source_languages:
-    title: Additional source languages
-    hint: Languages you also speak. Lessons written for these source languages appear in your main content list.
-    app_language: app language
+    title: अतिरिक्त स्रोत भाषाएँ
+    hint: वे भाषाएँ जो आप भी बोलते हैं। इन स्रोत भाषाओं के लिए लिखे पाठ आपकी मुख्य सामग्री सूची में दिखाई देते हैं।
+    app_language: ऐप भाषा
   direction:
-    title: Preferred exercise direction
-    hint: How adaptive lessons balance recognising (target -> your language) vs producing (your language -> target). Producing is harder; Automatic introduces it once recognition is solid.
-    label: Direction
-    auto: Automatic
-    receptive_first: Recognise first
-    productive_focus: Produce
+    title: पसंदीदा अभ्यास दिशा
+    hint: अनुकूली पाठ पहचानने (लक्ष्य -> आपकी भाषा) बनाम उत्पादन (आपकी भाषा -> लक्ष्य) को कैसे संतुलित करते हैं। उत्पादन कठिन है; पहचान मज़बूत होने पर स्वचालित इसे प्रस्तुत करता है।
+    label: दिशा
+    auto: स्वचालित
+    receptive_first: पहले पहचानें
+    productive_focus: उत्पादन करें
     balanced: संतुलित
   paused_retention:
-    title: Paused lesson retention
-    hint: Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age.
-    label: Keep paused lessons for
-    7_days: 7 days
-    14_days: 14 days
-    30_days: 30 days
-    60_days: 60 days
-    never: Never
+    title: रोके गए पाठ की अवधारण
+    hint: इससे पुराने रोके गए पाठ स्वचालित रूप से छोड़ दिए जाते हैं। आयु की परवाह किए बिना अधिकतम 10 रोके गए पाठ रखे जाते हैं।
+    label: रोके गए पाठ इतने समय तक रखें
+    7_days: 7 दिन
+    14_days: 14 दिन
+    30_days: 30 दिन
+    60_days: 60 दिन
+    never: कभी नहीं
   review_limit:
     label: "प्रति समीक्षा प्रश्न"
     desc: "एक समीक्षा सत्र समाप्त होने से पहले कितने तत्व दिखाता है। शेष तत्व अगले राउंड में चले जाते हैं।"
   max_lesson_size:
-    title: Maximum lesson size
-    hint: When saving a long chat analysis as an offline lesson, lessons with more than this many steps are automatically split into multiple parts.
-    label: Steps per part
-    range_hint: (default {default}, range {min}–{max})
-  danger_zone_backup_button: Create backup
-  danger_zone_backup_offer: Create a backup first?
+    title: अधिकतम पाठ आकार
+    hint: किसी लंबे चैट विश्लेषण को ऑफ़लाइन पाठ के रूप में सहेजते समय, इससे अधिक चरणों वाले पाठ स्वचालित रूप से कई भागों में विभाजित हो जाते हैं।
+    label: प्रति भाग चरण
+    range_hint: (डिफ़ॉल्ट {default}, श्रेणी {min}–{max})
+  danger_zone_backup_button: बैकअप बनाएँ
+  danger_zone_backup_offer: पहले बैकअप बनाएँ?
   danger_zone_cancel: रद्द करें
-  danger_zone_complete_toast: All data has been deleted.
-  danger_zone_confirm_prompt: Type RESET to confirm
+  danger_zone_complete_toast: सभी डेटा हटा दिया गया है।
+  danger_zone_confirm_prompt: पुष्टि के लिए RESET टाइप करें
   danger_zone_continue: जारी रखें
-  danger_zone_failed_toast: 'Reset failed:'
-  danger_zone_final_button: Delete permanently
-  danger_zone_heading: Danger Zone
+  danger_zone_failed_toast: 'रीसेट विफल:'
+  danger_zone_final_button: स्थायी रूप से हटाएँ
+  danger_zone_heading: ख़तरा क्षेत्र
   danger_zone_input_placeholder: RESET
-  danger_zone_intro: Permanently delete every piece of learner state on this device.
-  danger_zone_reset_button: Reset Everything
-  danger_zone_warning: This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.
-  section_sync: Sync
+  danger_zone_intro: इस डिवाइस पर शिक्षार्थी की हर स्थिति स्थायी रूप से हटाएँ।
+  danger_zone_reset_button: सब कुछ रीसेट करें
+  danger_zone_warning: यह आपका सभी सीखने का डेटा स्थायी रूप से हटा देता है — सत्र, प्रगति, प्रोफ़ाइल, पाठ्यक्रम, आयात, Anki कार्ड, सेटिंग्स और API कुंजियाँ। यह क्रिया पूर्ववत नहीं की जा सकती।
+  section_sync: सिंक
 methods:
   deductive:
-    label: Deductive
-    summary: General to specific — rules first, examples after.
+    label: निगमनात्मक
+    summary: सामान्य से विशिष्ट — पहले नियम, बाद में उदाहरण।
   inductive:
-    label: Inductive
-    summary: Specific to general — examples first, derive the rule.
+    label: आगमनात्मक
+    summary: विशिष्ट से सामान्य — पहले उदाहरण, फिर नियम निकालें।
   error_based:
-    label: Error-based
-    summary: Learn from mistakes — correction plus explanation.
+    label: त्रुटि-आधारित
+    summary: गलतियों से सीखें — सुधार के साथ व्याख्या।
   dialogic:
-    label: Dialogic
-    summary: Think in conversation — lower stress, build motivation.
+    label: संवादात्मक
+    summary: बातचीत में सोचें — कम तनाव, प्रेरणा बढ़ाएँ।
   contextual:
-    label: Contextual
-    summary: Apply in a real context — practice transfer.
+    label: प्रासंगिक
+    summary: वास्तविक संदर्भ में लागू करें — स्थानांतरण का अभ्यास।
   ai_adaptive:
-    label: AI-adaptive
-    summary: The AI picks the method that fits you best.
+    label: AI-अनुकूली
+    summary: AI वह विधि चुनता है जो आपके लिए सबसे उपयुक्त हो।
 cycle_steps:
   input:
-    label: Input
-    description: Information, example or task is presented.
+    label: इनपुट
+    description: जानकारी, उदाहरण या कार्य प्रस्तुत किया जाता है।
   attempt:
-    label: Attempt
-    description: First application without a safety net.
+    label: प्रयास
+    description: बिना किसी सुरक्षा जाल के पहला अनुप्रयोग।
   error:
     label: त्रुटि
-    description: Mismatch between expectation and result.
+    description: अपेक्षा और परिणाम के बीच बेमेल।
   feedback:
     label: प्रतिक्रिया
-    description: Correction with explanation.
+    description: व्याख्या के साथ सुधार।
   adapt:
-    label: Adapt
-    description: Adjust method, pace or focus.
+    label: अनुकूलित करें
+    description: विधि, गति या फ़ोकस समायोजित करें।
   repeat:
-    label: Repeat
-    description: Try again.
+    label: दोहराएँ
+    description: फिर से प्रयास करें।
   integrate:
-    label: Integrate
-    description: Knowledge sticks through experience.
+    label: एकीकृत करें
+    description: अनुभव के माध्यम से ज्ञान स्थायी होता है।
 errors:
-  network: Could not reach the server.
-  not_found: Not found.
-  validation: Invalid input.
-  conflict: Entry already exists.
-  server: Server error — please try again later.
+  network: सर्वर तक नहीं पहुँच सके।
+  not_found: नहीं मिला।
+  validation: अमान्य इनपुट।
+  conflict: प्रविष्टि पहले से मौजूद है।
+  server: सर्वर त्रुटि — कृपया बाद में पुनः प्रयास करें।
 toast:
-  project_created: Project created.
-  assessment_saved: Profile saved.
-  session_started: Session started.
-  session_ended: Session ended.
-  rating_saved: Rating saved.
-  api_key_saved: API key saved.
-  api_key_restored: Last working key restored.
-  api_key_deleted: API key removed.
-  method_switched: Method switched.
+  project_created: प्रोजेक्ट बनाया गया।
+  assessment_saved: प्रोफ़ाइल सहेजी गई।
+  session_started: सत्र शुरू हुआ।
+  session_ended: सत्र समाप्त हुआ।
+  rating_saved: रेटिंग सहेजी गई।
+  api_key_saved: API key सहेजी गई।
+  api_key_restored: अंतिम कार्यशील key पुनर्स्थापित की गई।
+  api_key_deleted: API key हटाई गई।
+  method_switched: विधि बदली गई।
 install:
-  title: Add to home screen
-  subtitle: Install Adaptive Learner as an app for better offline use.
-  install: Install
-  dismiss: Not now
-  aria_label: Install Adaptive Learner
+  title: होम स्क्रीन पर जोड़ें
+  subtitle: बेहतर ऑफ़लाइन उपयोग के लिए Adaptive Learner को ऐप के रूप में इंस्टॉल करें।
+  install: इंस्टॉल करें
+  dismiss: अभी नहीं
+  aria_label: Adaptive Learner इंस्टॉल करें
 about:
   section_heading: अडैप्टिव लर्नर के बारे में
-  loading: Loading information…
-  load_failed: 'Could not load system info:'
+  loading: जानकारी लोड हो रही है…
+  load_failed: 'सिस्टम जानकारी लोड नहीं हो सकी:'
   version_heading: संस्करण
   app_label: अडैप्टिव लर्नर
   build_hash_label: बिल्ड
@@ -797,231 +797,231 @@ about:
   update_now: "अभी अपडेट करें"
   system_heading: सिस्टम
   storage_label: भंडारण
-  storage_api: Server (FastAPI + SQLite)
-  storage_dexie: Local Browser Storage (IndexedDB)
-  data_dir_label: Data directory
-  db_path_label: Database path
-  platform_label: Platform
-  dep_unknown: unknown
-  identity_heading: Identity file
-  identity_loading: Loading identity status…
-  identity_error: 'Could not load identity status:'
-  identity_path_label: Path
-  identity_status_label: Status
-  identity_status_active: Active
-  identity_status_missing: Not found
-  identity_last_seen_label: Last updated
-  identity_explainer: This file is auto-managed by Adaptive Learner. It lets the app recover your user identity after a browser data wipe. Do not edit it manually.
-  credits_heading: Credits
-  author_label: Author
-  dependencies_label: Built with
-  ai_assistance_label: AI assistance
-  ai_assistance_value: Claude (Anthropic) - Architecture, Code, Content, Documentation
-  tagline: Built for self-directed learners.
-  donations_heading: Support development
-  donations_intro: Adaptive Learner is free and open-source. If it helps you, consider chipping in.
-  donations_primary: preferred
+  storage_api: सर्वर (FastAPI + SQLite)
+  storage_dexie: स्थानीय ब्राउज़र स्टोरेज (IndexedDB)
+  data_dir_label: डेटा निर्देशिका
+  db_path_label: डेटाबेस पथ
+  platform_label: प्लेटफ़ॉर्म
+  dep_unknown: अज्ञात
+  identity_heading: पहचान फ़ाइल
+  identity_loading: पहचान स्थिति लोड हो रही है…
+  identity_error: 'पहचान स्थिति लोड नहीं हो सकी:'
+  identity_path_label: पथ
+  identity_status_label: स्थिति
+  identity_status_active: सक्रिय
+  identity_status_missing: नहीं मिली
+  identity_last_seen_label: अंतिम बार अपडेट किया गया
+  identity_explainer: यह फ़ाइल Adaptive Learner द्वारा स्वतः प्रबंधित होती है। यह ब्राउज़र डेटा मिटने के बाद ऐप को आपकी उपयोगकर्ता पहचान पुनर्प्राप्त करने देती है। इसे मैन्युअल रूप से संपादित न करें।
+  credits_heading: श्रेय
+  author_label: लेखक
+  dependencies_label: इनसे बनाया गया
+  ai_assistance_label: एआई सहायता
+  ai_assistance_value: Claude (Anthropic) - आर्किटेक्चर, कोड, सामग्री, दस्तावेज़ीकरण
+  tagline: स्व-निर्देशित शिक्षार्थियों के लिए बनाया गया।
+  donations_heading: विकास का समर्थन करें
+  donations_intro: Adaptive Learner मुफ़्त और ओपन-सोर्स है। अगर यह आपके काम आता है, तो योगदान देने पर विचार करें।
+  donations_primary: पसंदीदा
   donations:
-    liberapay_desc: Recurring donations. Open-source, no fees taken by the platform.
-    github_desc: Sponsor via your existing GitHub account.
-    kofi_desc: One-time tips. No login required.
-  license_heading: License & resources
-  license_label: License
-  license_text_link: (text)
-  repo_label: Repository
-  docs_label: Documentation
-  issues_label: Issues
+    liberapay_desc: आवर्ती दान। ओपन-सोर्स, प्लेटफ़ॉर्म कोई शुल्क नहीं लेता।
+    github_desc: अपने मौजूदा GitHub खाते से प्रायोजित करें।
+    kofi_desc: एक बार की टिप। लॉगिन आवश्यक नहीं।
+  license_heading: लाइसेंस और संसाधन
+  license_label: लाइसेंस
+  license_text_link: (पाठ)
+  repo_label: रिपॉज़िटरी
+  docs_label: दस्तावेज़ीकरण
+  issues_label: समस्याएँ
 backup:
-  section_title: Backup
-  section_help: Export everything in your account as a JSON file. API keys are NOT included; you will need to re-enter them after a restore.
-  export: Create Backup
+  section_title: बैकअप
+  section_help: अपने खाते में मौजूद सब कुछ JSON फ़ाइल के रूप में निर्यात करें। API keys शामिल नहीं हैं; पुनर्स्थापना के बाद आपको उन्हें फिर से दर्ज करना होगा।
+  export: बैकअप बनाएँ
   exporting: निर्यात हो रहा है…
-  import: Restore from Backup
-  importing: Restoring…
-  confirm: Confirm restore
-  invalid_format: This file is not a valid Adaptive Learner backup.
+  import: बैकअप से पुनर्स्थापित करें
+  importing: पुनर्स्थापित हो रहा है…
+  confirm: पुनर्स्थापना की पुष्टि करें
+  invalid_format: यह फ़ाइल एक मान्य Adaptive Learner बैकअप नहीं है।
   not_a_backup_file: 'यह फ़ाइल मान्य बैकअप फ़ाइल नहीं है। कृपया ''बैकअप बनाएं'' से निर्यात की गई फ़ाइल चुनें।'
   version_mismatch: "यह बैकअप संस्करण {{from}} का है; यह ऐप {{to}} है। नीचे बदलाव देखें और इंपोर्ट की पुष्टि करें।"
   too_large: 'यह बैकअप फ़ाइल बहुत बड़ी है (100 MB से अधिक)।'
-  export_success: Backup downloaded ({{count}} records).
-  export_error: 'Backup failed: {{detail}}'
-  import_parse_error: 'Could not read backup: {{detail}}'
-  import_error: 'Restore failed: {{detail}}'
-  comparison_title: Confirm restore
-  comparison_help: 'Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.'
-  table_header: Table
-  current_header: Current
-  incoming_header: Backup
-  restored_summary: Restore complete.
-  restored_inserted: 'Inserted: {{n}}'
-  restored_updated: 'Updated: {{n}}'
-  restored_skipped: 'Skipped: {{n}}'
-  restored_errors: 'Errors: {{n}}'
-  col_inserted: Ins.
-  col_updated: Upd.
+  export_success: बैकअप डाउनलोड हुआ ({{count}} रिकॉर्ड)।
+  export_error: 'बैकअप विफल: {{detail}}'
+  import_parse_error: 'बैकअप पढ़ा नहीं जा सका: {{detail}}'
+  import_error: 'पुनर्स्थापना विफल: {{detail}}'
+  comparison_title: पुनर्स्थापना की पुष्टि करें
+  comparison_help: 'पुनर्स्थापना विलय करेगी: नए रिकॉर्ड डाले जाएँगे, परिवर्तनीय रिकॉर्ड केवल तभी अपडेट होंगे जब बैकअप नया हो, इतिहास पंक्तियाँ यथावत रखी जाएँगी। कुछ भी हटाया नहीं जाता। API keys अनदेखी की जाती हैं।'
+  table_header: तालिका
+  current_header: वर्तमान
+  incoming_header: बैकअप
+  restored_summary: पुनर्स्थापना पूर्ण।
+  restored_inserted: 'डाले गए: {{n}}'
+  restored_updated: 'अपडेट किए गए: {{n}}'
+  restored_skipped: 'छोड़े गए: {{n}}'
+  restored_errors: 'त्रुटियाँ: {{n}}'
+  col_inserted: डाले
+  col_updated: अपड.
   col_skipped: छोड़ें
-  col_errors: Err.
-  error_details: Error details
-  restored_with_errors: '{{n}} records could not be restored.'
-  last_backup: 'Last backup: {{when}}'
-  reminder_overdue: It has been more than {{days}} days since your last backup.
-  saved_as: 'Backup saved: {{filename}}'
-  downloaded: 'Backup downloaded: {{filename}} ({{count}} records).'
-  contains_title: 'Your backup contains:'
-  count_element_errors: '{{n}} error entries'
-  count_lesson_progress: '{{n}} lesson progress'
-  count_user_badges: '{{n}} badges'
-  count_sessions: '{{n}} sessions'
-  count_projects: '{{n}} projects'
-  count_imports: '{{n}} chat imports'
-  record_count: '{{count}} records total'
-  auto_title: Auto-backup
-  auto_help: Automatically back up after every 10 completed sessions or once a week.
-  auto_run: Back up now
-  auto_run_success: Auto-backup created.
-  auto_run_error: 'Auto-backup failed: {{detail}}'
-  auto_restored: Auto-backup restored.
-  auto_restore: Restore
-  auto_restore_error: 'Restore failed: {{detail}}'
-  auto_records: '{{n}} records'
-  auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
-  storage_pressure: Browser storage is almost full ({{pct}}% of quota). Export a manual backup now.
-  compare_title: Compare Backups
-  compare_help: Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified — comparison is read-only.
-  compare_slot_a: Backup A (older)
-  compare_slot_b: Backup B (newer)
-  compare_pick: Pick file…
-  compare_use_current: Use current state
-  compare_current_label: Current state
-  compare_clear: Clear
-  compare_label_a: Backup A
-  compare_label_b: Backup B
-  compare_records: records
-  compare_loading: Comparing backups…
-  compare_progress: Comparing…
-  compare_hide_unchanged: Hide unchanged tables
-  compare_sort_label: 'Sort:'
-  compare_sort_delta: Most changes first
-  compare_sort_alpha: Alphabetical
-  compare_no_changes: The two backups are identical — no differences detected.
-  compare_section_added: Added
-  compare_section_removed: Removed
-  compare_section_changed: Changed
-  compare_field: Field
-  compare_old: Old
-  compare_new: New
-  compare_field_changes: field changes
-  compare_high_volume_hint: High-volume table — record-level previews shown abbreviated.
-  compare_export_md: Export as Markdown
-  compare_markdown_downloaded: Diff exported.
-  confirm_with_counts: Restore ({{added}} added, {{updated}} updated)
-  auto_compare_as_a: Compare as A
-  auto_compare_as_b: Compare as B
-  compare_auto_label: Auto-backup {{date}}
-  auto_compare_missing: Auto-backup is no longer available — it was rotated out.
+  col_errors: त्रुटि
+  error_details: त्रुटि विवरण
+  restored_with_errors: '{{n}} रिकॉर्ड पुनर्स्थापित नहीं हो सके।'
+  last_backup: 'अंतिम बैकअप: {{when}}'
+  reminder_overdue: आपके अंतिम बैकअप को {{days}} दिनों से अधिक हो गए हैं।
+  saved_as: 'बैकअप सहेजा गया: {{filename}}'
+  downloaded: 'बैकअप डाउनलोड हुआ: {{filename}} ({{count}} रिकॉर्ड)।'
+  contains_title: 'आपके बैकअप में शामिल है:'
+  count_element_errors: '{{n}} त्रुटि प्रविष्टियाँ'
+  count_lesson_progress: '{{n}} पाठ प्रगति'
+  count_user_badges: '{{n}} बैज'
+  count_sessions: '{{n}} सत्र'
+  count_projects: '{{n}} प्रोजेक्ट'
+  count_imports: '{{n}} चैट आयात'
+  record_count: 'कुल {{count}} रिकॉर्ड'
+  auto_title: स्वतः-बैकअप
+  auto_help: हर 10 पूर्ण सत्रों के बाद या सप्ताह में एक बार स्वतः बैकअप लें।
+  auto_run: अभी बैकअप लें
+  auto_run_success: स्वतः-बैकअप बनाया गया।
+  auto_run_error: 'स्वतः-बैकअप विफल: {{detail}}'
+  auto_restored: स्वतः-बैकअप पुनर्स्थापित किया गया।
+  auto_restore: पुनर्स्थापित करें
+  auto_restore_error: 'पुनर्स्थापना विफल: {{detail}}'
+  auto_records: '{{n}} रिकॉर्ड'
+  auto_none: अभी तक कोई स्वतः-बैकअप नहीं। पहला बैकअप 10 सत्रों या 7 दिनों के बाद चलता है।
+  storage_pressure: ब्राउज़र स्टोरेज लगभग भर गया है (कोटा का {{pct}}%)। अभी एक मैन्युअल बैकअप निर्यात करें।
+  compare_title: बैकअप की तुलना करें
+  compare_help: दो बैकअप फ़ाइलें (या एक फ़ाइल और वर्तमान स्थिति) चुनें ताकि उनके बीच क्या बदला है यह देख सकें। कोई डेटा संशोधित नहीं होता — तुलना केवल-पढ़ने योग्य है।
+  compare_slot_a: बैकअप A (पुराना)
+  compare_slot_b: बैकअप B (नया)
+  compare_pick: फ़ाइल चुनें…
+  compare_use_current: वर्तमान स्थिति का उपयोग करें
+  compare_current_label: वर्तमान स्थिति
+  compare_clear: साफ़ करें
+  compare_label_a: बैकअप A
+  compare_label_b: बैकअप B
+  compare_records: रिकॉर्ड
+  compare_loading: बैकअप की तुलना हो रही है…
+  compare_progress: तुलना हो रही है…
+  compare_hide_unchanged: अपरिवर्तित तालिकाएँ छिपाएँ
+  compare_sort_label: 'क्रमबद्ध करें:'
+  compare_sort_delta: सबसे अधिक परिवर्तन पहले
+  compare_sort_alpha: वर्णानुक्रम
+  compare_no_changes: दोनों बैकअप समान हैं — कोई अंतर नहीं मिला।
+  compare_section_added: जोड़े गए
+  compare_section_removed: हटाए गए
+  compare_section_changed: बदले गए
+  compare_field: फ़ील्ड
+  compare_old: पुराना
+  compare_new: नया
+  compare_field_changes: फ़ील्ड परिवर्तन
+  compare_high_volume_hint: उच्च-मात्रा तालिका — रिकॉर्ड-स्तरीय पूर्वावलोकन संक्षिप्त दिखाए गए हैं।
+  compare_export_md: Markdown के रूप में निर्यात करें
+  compare_markdown_downloaded: अंतर निर्यात किया गया।
+  confirm_with_counts: पुनर्स्थापित करें ({{added}} जोड़े गए, {{updated}} अपडेट किए गए)
+  auto_compare_as_a: A के रूप में तुलना करें
+  auto_compare_as_b: B के रूप में तुलना करें
+  compare_auto_label: स्वतः-बैकअप {{date}}
+  auto_compare_missing: स्वतः-बैकअप अब उपलब्ध नहीं है — इसे हटा दिया गया था।
 export:
   title: निर्यात करें
-  intro: Download your learning journey as Markdown or PDF. Markdown is plain text you can edit and share; PDF opens your browser's print dialog so you can save a copy.
-  progress_label: Progress Report (full journey)
-  session_label: Session Detail
-  curriculum_label: Curriculum Overview
-  select_session: -- pick a session --
-  select_curriculum: -- pick a curriculum --
-  preview: Preview
-  preview_title: Preview
+  intro: अपनी सीखने की यात्रा को Markdown या PDF के रूप में डाउनलोड करें। Markdown सादा पाठ है जिसे आप संपादित और साझा कर सकते हैं; PDF आपके ब्राउज़र का प्रिंट संवाद खोलता है ताकि आप एक प्रति सहेज सकें।
+  progress_label: प्रगति रिपोर्ट (पूरी यात्रा)
+  session_label: सत्र विवरण
+  curriculum_label: पाठ्यक्रम अवलोकन
+  select_session: -- एक सत्र चुनें --
+  select_curriculum: -- एक पाठ्यक्रम चुनें --
+  preview: पूर्वावलोकन
+  preview_title: पूर्वावलोकन
   preview_close: बंद करें
   download_md: Markdown
   download_pdf: PDF
-  busy: Working...
-  download_success: Export downloaded.
-  print_opened: Print dialog opened. Pick "Save as PDF".
-  error: 'Export failed: {{detail}}'
-  preview_error: 'Preview failed: {{detail}}'
-  load_error: 'Could not load export data: {{detail}}'
-  pick_session: Pick a session first.
-  pick_curriculum: Pick a curriculum first.
-  title_progress: Learning Progress
-  title_session: Session Detail
+  busy: काम हो रहा है...
+  download_success: निर्यात डाउनलोड हुआ।
+  print_opened: प्रिंट संवाद खुल गया। "PDF के रूप में सहेजें" चुनें।
+  error: 'निर्यात विफल: {{detail}}'
+  preview_error: 'पूर्वावलोकन विफल: {{detail}}'
+  load_error: 'निर्यात डेटा लोड नहीं हो सका: {{detail}}'
+  pick_session: पहले एक सत्र चुनें।
+  pick_curriculum: पहले एक पाठ्यक्रम चुनें।
+  title_progress: सीखने की प्रगति
+  title_session: सत्र विवरण
   title_curriculum: पाठ्यक्रम
 sync:
-  api_mode_note: This device is running its own backend. The paired device should also see this connection in its sync panel.
-  camera_denied: Camera access denied
-  camera_denied_hint: Allow camera access in your browser settings, then re-open the scanner.
-  camera_error: Could not start the camera
-  camera_error_hint: Something went wrong starting the camera. Try again, or use paste-the-link.
-  conflict_apply: Apply choices
-  conflict_cancel: Cancel (keep all local)
-  conflicts_intro: Both devices changed the same record since the last sync. Pick which version to keep for each one.
-  conflicts_title: Resolve sync conflicts
-  connect: Connect
-  connected_to: Connected to
-  copy_error: Could not copy to clipboard.
-  copy_link: Copy link
-  desktop_hint: Generate a short-lived pairing link. Open this app on your phone, paste the link, and the two devices will share the same user account.
-  expires_at: Expires
-  generate: Generate pairing code
-  generating: Generating…
-  history: Recent syncs
-  host: Local IP / host
-  image_decode_failed: Could not read a QR code from this image. Re-take the screenshot.
-  image_decoding: Reading image…
-  intro: Pair a phone and a desktop on the same local network. Sync is always opt-in; you click Sync Now when you want to merge changes.
-  invalid_qr: Not a valid pairing code.
-  keep_local: Keep this device
-  keep_remote: Keep other device
-  last_sync: Last sync
-  link_copied: Pairing link copied.
-  local_version: This device
-  merge: Merge manually
-  merge_editor: Merged record (editable)
-  never: never
-  no_camera: No camera available
-  no_camera_hint: This device has no camera available. Use the paste-the-link option instead.
-  no_user: Complete the onboarding before generating a pairing code.
-  now: Sync Now
-  pair_error: Could not pair the device.
-  paired: Device paired.
-  paired_at: Paired
-  pairing: Pairing…
-  paste_link_fallback: Or paste the link manually
-  phone_hint_v17: Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically.
-  port: Port
-  qr_alt: Pairing QR code
-  remote_version: Other device
-  scan_again: Scan again
-  scan_hint: Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once.
-  scan_instruction: Point your camera at the QR code on your desktop.
-  scan_qr: Scan QR Code
-  scan_success: Connection found
-  scan_success_hint: Verifying with the desktop…
-  smart_merge: Smart Merge (AI)
-  smart_merge_error: Smart merge failed.
-  smart_merge_ready: AI merge ready — review and apply.
-  smart_merge_running: Merging with AI…
-  sync_error: Sync failed.
-  synced: Synced
-  syncing: Syncing…
-  unpair: Unpair device
-  unpair_confirm: Unpair this device? Local data is kept; future syncs are blocked until you pair again.
-  unpaired: Device unpaired.
-  upload_qr: Upload QR image
-  upload_qr_hint: 'No camera? Take a screenshot of the desktop''s QR and upload it:'
+  api_mode_note: यह डिवाइस अपना खुद का बैकएंड चला रहा है। युग्मित डिवाइस को भी इस कनेक्शन को अपने सिंक पैनल में दिखना चाहिए।
+  camera_denied: कैमरा एक्सेस अस्वीकृत
+  camera_denied_hint: अपनी ब्राउज़र सेटिंग्स में कैमरा एक्सेस की अनुमति दें, फिर स्कैनर को फिर से खोलें।
+  camera_error: कैमरा शुरू नहीं हो सका
+  camera_error_hint: कैमरा शुरू करने में कुछ गड़बड़ हो गई। फिर से प्रयास करें, या लिंक-पेस्ट करें विकल्प का उपयोग करें।
+  conflict_apply: विकल्प लागू करें
+  conflict_cancel: रद्द करें (सभी स्थानीय रखें)
+  conflicts_intro: पिछले सिंक के बाद दोनों डिवाइसों ने वही रिकॉर्ड बदला है। प्रत्येक के लिए चुनें कि कौन सा संस्करण रखना है।
+  conflicts_title: सिंक विरोध सुलझाएं
+  connect: कनेक्ट करें
+  connected_to: कनेक्ट किया गया
+  copy_error: क्लिपबोर्ड पर कॉपी नहीं हो सका।
+  copy_link: लिंक कॉपी करें
+  desktop_hint: एक अल्पकालिक युग्मन लिंक बनाएं। इस ऐप को अपने फ़ोन पर खोलें, लिंक पेस्ट करें, और दोनों डिवाइस एक ही उपयोगकर्ता खाता साझा करेंगे।
+  expires_at: समाप्ति
+  generate: युग्मन कोड बनाएं
+  generating: बनाया जा रहा है…
+  history: हाल के सिंक
+  host: स्थानीय IP / होस्ट
+  image_decode_failed: इस छवि से QR कोड नहीं पढ़ा जा सका। स्क्रीनशॉट फिर से लें।
+  image_decoding: छवि पढ़ी जा रही है…
+  intro: एक ही स्थानीय नेटवर्क पर एक फ़ोन और एक डेस्कटॉप युग्मित करें। सिंक हमेशा वैकल्पिक है; जब आप परिवर्तन मर्ज करना चाहें तब अभी सिंक करें पर क्लिक करें।
+  invalid_qr: मान्य युग्मन कोड नहीं है।
+  keep_local: यह डिवाइस रखें
+  keep_remote: अन्य डिवाइस रखें
+  last_sync: अंतिम सिंक
+  link_copied: युग्मन लिंक कॉपी किया गया।
+  local_version: यह डिवाइस
+  merge: मैन्युअल रूप से मर्ज करें
+  merge_editor: मर्ज किया गया रिकॉर्ड (संपादन योग्य)
+  never: कभी नहीं
+  no_camera: कोई कैमरा उपलब्ध नहीं
+  no_camera_hint: इस डिवाइस में कोई कैमरा उपलब्ध नहीं है। इसके बजाय लिंक-पेस्ट करें विकल्प का उपयोग करें।
+  no_user: युग्मन कोड बनाने से पहले ऑनबोर्डिंग पूरी करें।
+  now: अभी सिंक करें
+  pair_error: डिवाइस युग्मित नहीं हो सका।
+  paired: डिवाइस युग्मित हुआ।
+  paired_at: युग्मित
+  pairing: युग्मित किया जा रहा है…
+  paste_link_fallback: या लिंक मैन्युअल रूप से पेस्ट करें
+  phone_hint_v17: अपने डेस्कटॉप की सेटिंग्स > सिंक स्क्रीन पर QR कोड स्कैन करें। फ़ोन का पिछला कैमरा युग्मन लिंक स्वचालित रूप से पढ़ लेता है।
+  port: पोर्ट
+  qr_alt: युग्मन QR कोड
+  remote_version: अन्य डिवाइस
+  scan_again: फिर से स्कैन करें
+  scan_hint: फ़ोन की सेटिंग्स > सिंक खोलें, यह लिंक पेस्ट करें, और कनेक्ट करें पर टैप करें। लिंक 5 मिनट में समाप्त हो जाता है और एक बार उपयोग किया जा सकता है।
+  scan_instruction: अपने कैमरे को अपने डेस्कटॉप के QR कोड की ओर इंगित करें।
+  scan_qr: QR कोड स्कैन करें
+  scan_success: कनेक्शन मिला
+  scan_success_hint: डेस्कटॉप के साथ सत्यापित किया जा रहा है…
+  smart_merge: स्मार्ट मर्ज (एआई)
+  smart_merge_error: स्मार्ट मर्ज विफल।
+  smart_merge_ready: एआई मर्ज तैयार — समीक्षा करें और लागू करें।
+  smart_merge_running: एआई के साथ मर्ज किया जा रहा है…
+  sync_error: सिंक विफल।
+  synced: सिंक हुआ
+  syncing: सिंक हो रहा है…
+  unpair: डिवाइस अयुग्मित करें
+  unpair_confirm: इस डिवाइस को अयुग्मित करें? स्थानीय डेटा रखा जाता है; जब तक आप फिर से युग्मित नहीं करते तब तक भविष्य के सिंक अवरुद्ध रहेंगे।
+  unpaired: डिवाइस अयुग्मित हुआ।
+  upload_qr: QR छवि अपलोड करें
+  upload_qr_hint: 'कोई कैमरा नहीं? डेस्कटॉप के QR का स्क्रीनशॉट लें और उसे अपलोड करें:'
 gamification:
   trend_up: "पिछले सप्ताह से अधिक"
   trend_down: "पिछले सप्ताह से कम"
   trend_flat: "पिछले सप्ताह जैसा"
   activity_7d: "गतिविधि (पिछले 7 दिन)"
   activity_cell: "{date} को {count}"
-  card_xp: XP & Level
+  card_xp: XP और स्तर
   level: स्तर
   xp: एक्सपी
-  xp_no_data: Complete a session to earn XP.
-  xp_earned: XP earned
-  xp_gain_aria: You earned {n} XP for this lesson
-  xp_header_aria: Level {level}, {xp} total XP
-  xp_header_tooltip: Your experience points
-  xp_to_next_level: '{n} XP to next level'
-  max_level: Max level reached
+  xp_no_data: XP अर्जित करने के लिए एक सत्र पूरा करें।
+  xp_earned: अर्जित XP
+  xp_gain_aria: आपने इस पाठ के लिए {n} XP अर्जित किए
+  xp_header_aria: स्तर {level}, कुल {xp} XP
+  xp_header_tooltip: आपके अनुभव अंक
+  xp_to_next_level: 'अगले स्तर तक {n} XP'
+  max_level: अधिकतम स्तर तक पहुँच गए
   level_detail:
     activity: "गतिविधि (पिछले 7 दिन)"
     activity_unit: "सत्र"
@@ -1033,21 +1033,21 @@ gamification:
     locked: "लॉक"
     how: "लेवल बढ़ती XP वक्र पर ऊपर जाते हैं: 0, 100, 300, 600, 1000 XP - हर चरण को पिछले से 100 XP अधिक चाहिए।"
   level_detail_title: "स्तर प्रगति"
-  level_up: Level up!
-  reason_session_complete: Session completed
-  reason_assessment_complete: Assessment completed
-  reason_conversation_imported: Conversation imported
-  reason_flat: XP awarded
+  level_up: स्तर बढ़ा!
+  reason_session_complete: सत्र पूरा हुआ
+  reason_assessment_complete: मूल्यांकन पूरा हुआ
+  reason_conversation_imported: वार्तालाप आयात किया गया
+  reason_flat: XP प्रदान किया गया
   card_badges: बैज
-  badges_earned: earned
-  badges_empty: No badges available yet.
-  badge_earned_toast: 'Badge earned: {name}'
+  badges_earned: अर्जित
+  badges_empty: अभी तक कोई बैज उपलब्ध नहीं है।
+  badge_earned_toast: 'बैज अर्जित: {name}'
   badge_category:
-    getting_started: Getting Started
-    consistency: Consistency
-    method_explorer: Method Explorer
-    depth: Depth
-    polyglot: Polyglot
+    getting_started: शुरुआत करना
+    consistency: निरंतरता
+    method_explorer: विधि अन्वेषक
+    depth: गहराई
+    polyglot: बहुभाषी
   tier:
     bronze: कांस्य
     silver: रजत
@@ -1055,202 +1055,202 @@ gamification:
     locked: लॉक
   gallery:
     title: बैज
-    count: '{earned} / {total} earned'
+    count: '{earned} / {total} अर्जित'
     filter_all: सभी
-    sort_label: Sort by
-    sort_recent: Recently earned
-    sort_progress: Progress to next tier
-    sort_category: Category
-    locked_hint: Keep learning to unlock this badge.
-    next_tier: '{current} / {target} to {tier}'
-    tiers_heading: Tiers
-    view_all: View all badges
-    next_badge: Next badge
+    sort_label: इसके अनुसार क्रमबद्ध करें
+    sort_recent: हाल ही में अर्जित
+    sort_progress: अगले स्तर तक प्रगति
+    sort_category: श्रेणी
+    locked_hint: इस बैज को अनलॉक करने के लिए सीखते रहें।
+    next_tier: '{tier} तक {current} / {target}'
+    tiers_heading: स्तर
+    view_all: सभी बैज देखें
+    next_badge: अगला बैज
   badges:
     first_session:
-      name: First Session
-      description: Complete your first learning session.
+      name: पहला सत्र
+      description: अपना पहला सीखने का सत्र पूरा करें।
     first_assessment:
-      name: First Assessment
-      description: Complete the learning-type assessment.
+      name: पहला मूल्यांकन
+      description: सीखने-के-प्रकार का मूल्यांकन पूरा करें।
     first_import:
-      name: First Import
-      description: Import your first conversation.
+      name: पहला आयात
+      description: अपना पहला वार्तालाप आयात करें।
     streak_3_days:
-      name: 3-Day Streak
-      description: Practice 3 days in a row.
+      name: 3-दिन की स्ट्रीक
+      description: लगातार 3 दिन अभ्यास करें।
     streak_7_days:
-      name: 7-Day Streak
-      description: Practice 7 days in a row.
+      name: 7-दिन की स्ट्रीक
+      description: लगातार 7 दिन अभ्यास करें।
     streak_30_days:
-      name: 30-Day Streak
-      description: Practice 30 days in a row.
+      name: 30-दिन की स्ट्रीक
+      description: लगातार 30 दिन अभ्यास करें।
     streak_100_days:
-      name: 100-Day Streak
-      description: Practice 100 days in a row.
+      name: 100-दिन की स्ट्रीक
+      description: लगातार 100 दिन अभ्यास करें।
     all_six_methods:
-      name: Method Explorer
-      description: Complete a session in all six methods.
+      name: विधि अन्वेषक
+      description: सभी छह विधियों में एक सत्र पूरा करें।
     deductive_10:
-      name: Deductive 10
-      description: Complete 10 deductive sessions.
+      name: निगमनात्मक 10
+      description: 10 निगमनात्मक सत्र पूरे करें।
     inductive_10:
-      name: Inductive 10
-      description: Complete 10 inductive sessions.
+      name: आगमनात्मक 10
+      description: 10 आगमनात्मक सत्र पूरे करें।
     error_based_10:
-      name: Error-Based 10
-      description: Complete 10 error-based sessions.
+      name: त्रुटि-आधारित 10
+      description: 10 त्रुटि-आधारित सत्र पूरे करें।
     dialogic_10:
-      name: Dialogic 10
-      description: Complete 10 dialogic sessions.
+      name: संवादात्मक 10
+      description: 10 संवादात्मक सत्र पूरे करें।
     contextual_10:
-      name: Contextual 10
-      description: Complete 10 contextual sessions.
+      name: प्रासंगिक 10
+      description: 10 प्रासंगिक सत्र पूरे करें।
     ai_adaptive_10:
-      name: AI-Adaptive 10
-      description: Complete 10 AI-adaptive sessions.
+      name: एआई-अनुकूली 10
+      description: 10 एआई-अनुकूली सत्र पूरे करें।
     five_cycles_one_session:
-      name: Five Cycles
-      description: Complete five cycles in one session.
+      name: पाँच चक्र
+      description: एक सत्र में पाँच चक्र पूरे करें।
     sessions_10:
-      name: 10 Sessions
-      description: Complete 10 total sessions.
+      name: 10 सत्र
+      description: कुल 10 सत्र पूरे करें।
     sessions_50:
-      name: 50 Sessions
-      description: Complete 50 total sessions.
+      name: 50 सत्र
+      description: कुल 50 सत्र पूरे करें।
     sessions_100:
-      name: 100 Sessions
-      description: Complete 100 total sessions.
+      name: 100 सत्र
+      description: कुल 100 सत्र पूरे करें।
     level_5:
-      name: Level 5
-      description: Reach level 5.
+      name: स्तर 5
+      description: स्तर 5 तक पहुँचें।
     level_10:
-      name: Level 10
-      description: Reach level 10.
+      name: स्तर 10
+      description: स्तर 10 तक पहुँचें।
     level_25:
-      name: Level 25
-      description: Reach level 25.
+      name: स्तर 25
+      description: स्तर 25 तक पहुँचें।
     two_languages:
-      name: Polyglot
-      description: Learn in two languages.
+      name: बहुभाषी
+      description: दो भाषाओं में सीखें।
     three_providers:
-      name: Provider Trio
-      description: Configure three AI providers.
+      name: प्रदाता त्रयी
+      description: तीन एआई प्रदाता कॉन्फ़िगर करें।
     import_10_conversations:
-      name: Conversation Curator
-      description: Import 10 conversations.
+      name: वार्तालाप संग्राहक
+      description: 10 वार्तालाप आयात करें।
     first_lesson:
-      name: First Lesson
-      description: Complete your first content lesson.
+      name: पहला पाठ
+      description: अपना पहला सामग्री पाठ पूरा करें।
     lessons_10:
-      name: 10 Lessons Completed
-      description: Complete 10 content lessons.
+      name: 10 पाठ पूर्ण
+      description: 10 सामग्री पाठ पूर्ण करें।
     three_star_streak:
-      name: 3-Star Streak
-      description: Earn 3 stars on three lessons in a row.
+      name: 3-स्टार स्ट्रीक
+      description: लगातार तीन पाठों पर 3 स्टार अर्जित करें।
     review_master:
-      name: Review Master
-      description: Master 50 elements through spaced repetition.
+      name: समीक्षा मास्टर
+      description: स्पेस्ड रिपीटिशन के माध्यम से 50 तत्वों में महारत हासिल करें।
   card_streak: श्रृंखला
-  current_streak: Current streak
-  longest_streak: Longest streak
-  freezes_available: Freezes available
-  streak_no_data: Start a session to begin your streak.
-  streak_calendar: Activity heatmap
-  weekend_mode: Weekend mode
-  weekend_mode_help: Weekends don't count toward streak gaps.
-  reset_done: 'Progress reset: {xp} XP, {badges} badges, {streak} streaks.'
-  reset_failed: Could not reset progress.
-  weekend_mode_save_failed: Could not save the weekend-mode setting.
-  danger_zone_heading: Danger Zone
-  danger_zone_intro: Permanently delete every piece of learner state on this device.
-  danger_zone_reset_button: Reset Everything
-  danger_zone_warning: This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.
-  danger_zone_confirm_prompt: Type RESET to confirm
+  current_streak: वर्तमान स्ट्रीक
+  longest_streak: सबसे लंबी स्ट्रीक
+  freezes_available: उपलब्ध फ़्रीज़
+  streak_no_data: अपनी स्ट्रीक शुरू करने के लिए एक सत्र आरंभ करें।
+  streak_calendar: गतिविधि हीटमैप
+  weekend_mode: वीकेंड मोड
+  weekend_mode_help: वीकेंड स्ट्रीक अंतराल में नहीं गिने जाते।
+  reset_done: 'प्रगति रीसेट: {xp} XP, {badges} बैज, {streak} स्ट्रीक।'
+  reset_failed: प्रगति रीसेट नहीं की जा सकी।
+  weekend_mode_save_failed: वीकेंड-मोड सेटिंग सहेजी नहीं जा सकी।
+  danger_zone_heading: ख़तरनाक क्षेत्र
+  danger_zone_intro: इस डिवाइस पर शिक्षार्थी की सभी स्थिति स्थायी रूप से हटाएँ।
+  danger_zone_reset_button: सब कुछ रीसेट करें
+  danger_zone_warning: यह आपके सभी लर्निंग डेटा को स्थायी रूप से हटा देता है — सत्र, प्रगति, प्रोफ़ाइल, पाठ्यक्रम, आयात, Anki कार्ड, सेटिंग्स और API कुंजियाँ। इस कार्रवाई को पूर्ववत नहीं किया जा सकता।
+  danger_zone_confirm_prompt: पुष्टि करने के लिए RESET टाइप करें
   danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Delete permanently
-  danger_zone_backup_offer: Create a backup first?
-  danger_zone_backup_button: Create backup
-  danger_zone_complete_toast: All data has been deleted.
+  danger_zone_final_button: स्थायी रूप से हटाएँ
+  danger_zone_backup_offer: पहले एक बैकअप बनाएँ?
+  danger_zone_backup_button: बैकअप बनाएँ
+  danger_zone_complete_toast: सभी डेटा हटा दिया गया है।
   danger_zone_cancel: रद्द करें
   danger_zone_continue: जारी रखें
-  danger_zone_failed_toast: 'Reset failed:'
+  danger_zone_failed_toast: 'रीसेट विफल:'
 anki:
-  title: Anki Export
-  intro: Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.
-  filter_project: Project
-  filter_all_projects: All projects
-  filter_accepted: Accepted only
-  stats: '{accepted} of {total} accepted'
-  export_button: Export as .apkg
-  exporting: Generating .apkg…
-  export_no_accepted: Accept at least one card before exporting.
-  export_success: Exported {n} cards to {filename}.
-  export_failed: Export failed.
-  empty: No cards yet. Trigger extraction from a session or imported conversation, or add cards manually.
-  empty_title: No Anki cards yet.
-  empty_body: Import a conversation and click 'Extract Anki cards' to create flashcards.
+  title: Anki निर्यात
+  intro: एआई द्वारा सुझाए गए फ़्लैशकार्ड की समीक्षा करें, अपनी पसंद के कार्ड स्वीकार करें, फिर Anki के लिए .apkg फ़ाइल के रूप में निर्यात करें।
+  filter_project: प्रोजेक्ट
+  filter_all_projects: सभी प्रोजेक्ट
+  filter_accepted: केवल स्वीकृत
+  stats: '{total} में से {accepted} स्वीकृत'
+  export_button: .apkg के रूप में निर्यात करें
+  exporting: .apkg बना रहे हैं…
+  export_no_accepted: निर्यात से पहले कम से कम एक कार्ड स्वीकार करें।
+  export_success: '{filename} में {n} कार्ड निर्यात किए गए।'
+  export_failed: निर्यात विफल।
+  empty: अभी तक कोई कार्ड नहीं। किसी सत्र या आयातित बातचीत से निष्कर्षण आरंभ करें, या मैन्युअल रूप से कार्ड जोड़ें।
+  empty_title: अभी तक कोई Anki कार्ड नहीं।
+  empty_body: फ़्लैशकार्ड बनाने के लिए एक बातचीत आयात करें और 'Anki कार्ड निकालें' पर क्लिक करें।
   empty_cta: बातचीत आयात करें
-  load_failed: Could not load cards.
-  delete_confirm: Delete this card?
-  front: Front
+  load_failed: कार्ड लोड नहीं किए जा सके।
+  delete_confirm: इस कार्ड को हटाएँ?
+  front: आगे
   back: वापस
-  card_type: Type
-  accept: Accept
-  unaccept: Unaccept
-  reject: Reject
-  deck_description: Cards exported from Adaptive Learner.
+  card_type: प्रकार
+  accept: स्वीकार करें
+  unaccept: अस्वीकृत करें
+  reject: ख़ारिज करें
+  deck_description: Adaptive Learner से निर्यात किए गए कार्ड।
 voice:
-  speak: Read aloud
-  stop_speaking: Stop speaking
-  start_listening: Start dictation
-  stop_listening: Stop listening
-  mic_permission_denied: Microphone access denied.
-  mic_error: Speech recognition error.
-  mic_no_device: No microphone found. Connect one and try again.
-  mic_network: Speech recognition is offline. Check your internet connection.
+  speak: पढ़कर सुनाएँ
+  stop_speaking: बोलना बंद करें
+  start_listening: श्रुतलेखन आरंभ करें
+  stop_listening: सुनना बंद करें
+  mic_permission_denied: माइक्रोफ़ोन एक्सेस अस्वीकृत।
+  mic_error: वाक् पहचान त्रुटि।
+  mic_no_device: कोई माइक्रोफ़ोन नहीं मिला। एक कनेक्ट करें और पुनः प्रयास करें।
+  mic_network: वाक् पहचान ऑफ़लाइन है। अपना इंटरनेट कनेक्शन जाँचें।
 pronunciation:
-  title: Pronunciation Practice
-  intro: Generate a phrase, speak it aloud, and get instant feedback.
-  project_label: Project
-  target_label: Target phrase
-  no_phrase: Click Generate to start.
-  generate: Generate phrase
-  next_phrase: Next phrase
-  generating: Generating…
-  your_attempt: Your attempt
-  attempt_placeholder: Tap the mic to dictate, or type what you said.
-  submit: Submit attempt
-  judging: Scoring…
-  match: Match
-  miss: Keep practising
-  focus_on: 'Focus on:'
-  phrase_failed: Could not generate a phrase.
-  judge_failed: Could not score that attempt.
-  ineligible: Pronunciation practice is available for language-learning projects. Add a subject under 'Languages' to your project to enable it.
+  title: उच्चारण अभ्यास
+  intro: एक वाक्यांश तैयार करें, उसे ज़ोर से बोलें, और तुरंत प्रतिक्रिया पाएँ।
+  project_label: प्रोजेक्ट
+  target_label: लक्ष्य वाक्यांश
+  no_phrase: शुरू करने के लिए जनरेट पर क्लिक करें।
+  generate: वाक्यांश तैयार करें
+  next_phrase: अगला वाक्यांश
+  generating: तैयार किया जा रहा है…
+  your_attempt: आपका प्रयास
+  attempt_placeholder: श्रुतलेखन के लिए माइक पर टैप करें, या जो आपने कहा वह टाइप करें।
+  submit: प्रयास सबमिट करें
+  judging: स्कोरिंग…
+  match: मेल खाता है
+  miss: अभ्यास जारी रखें
+  focus_on: 'इस पर ध्यान दें:'
+  phrase_failed: वाक्यांश तैयार नहीं किया जा सका।
+  judge_failed: उस प्रयास को स्कोर नहीं किया जा सका।
+  ineligible: उच्चारण अभ्यास भाषा-शिक्षण प्रोजेक्ट के लिए उपलब्ध है। इसे सक्षम करने के लिए अपने प्रोजेक्ट में 'Languages' के अंतर्गत एक विषय जोड़ें।
 notebooklm:
-  section_title: Study materials (NotebookLM-ready)
-  generate_questions: Generate study questions
-  generating: Generating questions…
-  download_zip: Download NotebookLM package
-  exporting_zip: Building ZIP…
-  study_guide: Download study guide
-  generating_guide: Building study guide…
-  filter_difficulty: Filter by difficulty
+  section_title: अध्ययन सामग्री (NotebookLM-तैयार)
+  generate_questions: अध्ययन प्रश्न तैयार करें
+  generating: प्रश्न तैयार किए जा रहे हैं…
+  download_zip: NotebookLM पैकेज डाउनलोड करें
+  exporting_zip: ZIP बना रहे हैं…
+  study_guide: अध्ययन गाइड डाउनलोड करें
+  generating_guide: अध्ययन गाइड बना रहे हैं…
+  filter_difficulty: कठिनाई के अनुसार फ़िल्टर करें
   filter_all: सभी
-  empty: No study questions yet. Generate some from your recent sessions.
-  delete_confirm: Delete this study question?
-  questions_load_failed: Could not load study questions.
-  questions_generated: Generated {n} new study question(s).
-  no_questions_generated: No study questions extracted. Try after another session or two.
-  generate_failed: Could not generate study questions.
-  zip_exported: Exported {n} file(s) to {filename}.
-  zip_failed: ZIP export failed.
-  guide_ready: Study guide downloaded.
-  guide_failed: Could not generate the study guide.
+  empty: अभी तक कोई अध्ययन प्रश्न नहीं। अपने हाल के सत्रों से कुछ तैयार करें।
+  delete_confirm: इस अध्ययन प्रश्न को हटाएँ?
+  questions_load_failed: अध्ययन प्रश्न लोड नहीं किए जा सके।
+  questions_generated: '{n} नए अध्ययन प्रश्न तैयार किए गए।'
+  no_questions_generated: कोई अध्ययन प्रश्न नहीं निकाले गए। एक या दो और सत्रों के बाद प्रयास करें।
+  generate_failed: अध्ययन प्रश्न तैयार नहीं किए जा सके।
+  zip_exported: '{filename} में {n} फ़ाइल(ें) निर्यात की गईं।'
+  zip_failed: ZIP निर्यात विफल।
+  guide_ready: अध्ययन गाइड डाउनलोड हो गई।
+  guide_failed: अध्ययन गाइड तैयार नहीं की जा सकी।
 feature:
-  api_key_required: API key required. Configure a provider in Settings.
-  desktop_only: Only available with the desktop app.
+  api_key_required: API कुंजी आवश्यक। सेटिंग्स में एक प्रदाता कॉन्फ़िगर करें।
+  desktop_only: केवल डेस्कटॉप ऐप के साथ उपलब्ध।
 ui:
   themes:
     catppuccin-latte: Catppuccin Latte
@@ -1259,99 +1259,99 @@ ui:
     catppuccin-mocha: Catppuccin Mocha
     soft-pop: Soft Pop
     amethyst-haze: Amethyst Haze
-    light: Light
-    dark: Dark
-    ocean: Ocean
-    forest: Forest
-    high-contrast: High Contrast
-    sepia: Sepia
-    auto: Auto (System)
+    light: लाइट
+    dark: डार्क
+    ocean: ओशन
+    forest: फ़ॉरेस्ट
+    high-contrast: हाई कॉन्ट्रास्ट
+    sepia: सीपिया
+    auto: ऑटो (सिस्टम)
   errors:
-    bad_request: The request could not be processed.
-    forbidden: Access denied. Please check your settings.
-    not_found: This page or feature was not found.
-    conflict: This action conflicts with the current state.
-    rate_limited: Too many requests. Please wait a moment and try again.
-    upstream_unavailable: The AI service is currently unreachable.
-    server: An internal error occurred.
-    network: No connection to the server.
-    timeout: The request took too long.
-    generic: Something went wrong. Please try again later.
+    bad_request: अनुरोध संसाधित नहीं किया जा सका।
+    forbidden: पहुँच अस्वीकृत। कृपया अपनी सेटिंग्स जाँचें।
+    not_found: यह पेज या सुविधा नहीं मिली।
+    conflict: यह कार्रवाई वर्तमान स्थिति के साथ टकराती है।
+    rate_limited: बहुत अधिक अनुरोध। कृपया एक क्षण प्रतीक्षा करें और पुनः प्रयास करें।
+    upstream_unavailable: एआई सेवा वर्तमान में अनुपलब्ध है।
+    server: एक आंतरिक त्रुटि हुई।
+    network: सर्वर से कोई कनेक्शन नहीं।
+    timeout: अनुरोध में बहुत अधिक समय लगा।
+    generic: कुछ गड़बड़ हो गई। कृपया बाद में पुनः प्रयास करें।
     unexpected: कुछ गड़बड़ हो गई।
   error_report:
     dialog_title: समस्या की रिपोर्ट करें
-    intro: Adaptive Learner caught an error and can prepare a bug report for the developer.
-    description_label: Steps to reproduce (optional)
-    description_placeholder: Briefly describe what you were doing when the error appeared. Leave blank to skip.
-    include_error: Error message and stacktrace
-    include_environment: Environment info (version, browser, OS)
-    include_history: Action history
-    view: View
-    privacy_note: No project content, no passwords, no API keys are ever sent.
-    preview: Show preview
-    hide_preview: Hide preview
-    copy_preview: Copy preview
+    intro: Adaptive Learner ने एक त्रुटि पकड़ी है और डेवलपर के लिए एक बग रिपोर्ट तैयार कर सकता है।
+    description_label: पुनरुत्पादन के चरण (वैकल्पिक)
+    description_placeholder: संक्षेप में बताएँ कि त्रुटि दिखाई देने पर आप क्या कर रहे थे। छोड़ने के लिए खाली रखें।
+    include_error: त्रुटि संदेश और स्टैकट्रेस
+    include_environment: एनवायरनमेंट जानकारी (संस्करण, ब्राउज़र, OS)
+    include_history: कार्रवाई इतिहास
+    view: देखें
+    privacy_note: कोई प्रोजेक्ट सामग्री, कोई पासवर्ड, कोई API कुंजी कभी नहीं भेजी जाती।
+    preview: पूर्वावलोकन दिखाएँ
+    hide_preview: पूर्वावलोकन छिपाएँ
+    copy_preview: पूर्वावलोकन कॉपी करें
     copied: कॉपी हो गया!
-    copy_failed: Copy failed
-    open_github: Open on GitHub
+    copy_failed: कॉपी विफल
+    open_github: GitHub पर खोलें
     close: बंद करें
-    truncated: Report truncated to fit GitHub's URL length limit.
-    intro_proactive: Prepare a report of your recent actions to send to the developer. You see exactly what it contains before anything leaves your browser.
-    app_state: App state
+    truncated: GitHub की URL लंबाई सीमा में फ़िट होने के लिए रिपोर्ट छोटी की गई।
+    intro_proactive: डेवलपर को भेजने के लिए अपनी हाल की कार्रवाइयों की एक रिपोर्ट तैयार करें। कुछ भी आपके ब्राउज़र से बाहर जाने से पहले आप ठीक-ठीक देखते हैं कि उसमें क्या है।
+    app_state: ऐप स्थिति
     online: ऑनलाइन
     offline: ऑफ़लाइन
     download_json: JSON डाउनलोड करें
     category_all: सभी
-    no_events_in_category: No events in this category.
+    no_events_in_category: इस श्रेणी में कोई घटना नहीं।
     category:
-      navigation: Navigation
+      navigation: नेविगेशन
       ui: इंटरफ़ेस
-      network: Network
+      network: नेटवर्क
       storage: भंडारण
       exercise: अभ्यास
-      error: Errors
+      error: त्रुटियाँ
   help:
-    learn_more: Learn more
-    open_help: Open help
+    learn_more: और जानें
+    open_help: सहायता खोलें
     drawer_title: सहायता
-    related: Related concepts
-    search_placeholder: Search the glossary...
+    related: संबंधित अवधारणाएँ
+    search_placeholder: शब्दावली खोजें...
     categories:
-      concepts: Core concepts
-      methods: Learning methods
-      steps: Cycle steps
-      features: App features
-    no_results: No matching entries.
+      concepts: मुख्य अवधारणाएँ
+      methods: सीखने की विधियाँ
+      steps: चक्र चरण
+      features: ऐप सुविधाएँ
+    no_results: कोई मेल खाती प्रविष्टि नहीं।
   api_key:
-    required: API key required.
-    required_with_feature: API key required {feature}.
-    required_long: Configure a provider key in Settings to enable this action.
-    open_settings: Open Settings
-    skip_banner: Configure an API key in Settings to use AI features.
+    required: API कुंजी आवश्यक।
+    required_with_feature: API कुंजी आवश्यक {feature}।
+    required_long: इस कार्रवाई को सक्षम करने के लिए सेटिंग्स में एक प्रदाता कुंजी कॉन्फ़िगर करें।
+    open_settings: सेटिंग्स खोलें
+    skip_banner: AI सुविधाओं का उपयोग करने के लिए सेटिंग्स में एक API कुंजी कॉन्फ़िगर करें।
     skip_banner_dismiss: खारिज करें
-    feature_analyze: to analyze conversations
-    feature_session: to start a session
-    feature_anki: to extract Anki cards
-    feature_study_guide: to generate a study guide
-    feature_study_questions: to generate study questions
-    feature_pronunciation: for pronunciation practice
+    feature_analyze: बातचीत का विश्लेषण करने के लिए
+    feature_session: एक सत्र शुरू करने के लिए
+    feature_anki: Anki कार्ड निकालने के लिए
+    feature_study_guide: एक अध्ययन गाइड बनाने के लिए
+    feature_study_questions: अध्ययन प्रश्न बनाने के लिए
+    feature_pronunciation: उच्चारण अभ्यास के लिए
   common:
     close: बंद करें
     loading: लोड हो रहा है…
   a11y:
-    skip_to_content: Skip to main content
-    chart_show_as_table: Show data as table
-    chart_radar_label: Learning profile radar chart
-    chart_radar_summary: 'Your strongest learning method: {method} ({value})'
-    chart_timeline_label: Progress timeline of the last {n} sessions
-    chart_timeline_summary: '{n} sessions; understanding trending {trend}'
-    chart_timeline_trend_up: up
-    chart_timeline_trend_down: down
-    chart_timeline_trend_flat: flat
-    chart_distribution_label: Method distribution bar chart
-    chart_distribution_summary: 'Most-used method: {method} ({count} sessions, {pct}%)'
-    streak_cell_label: '{count} sessions on {date}'
-    streak_cell_label_zero: No sessions on {date}
+    skip_to_content: मुख्य सामग्री पर जाएँ
+    chart_show_as_table: डेटा को तालिका के रूप में दिखाएँ
+    chart_radar_label: लर्निंग प्रोफ़ाइल रडार चार्ट
+    chart_radar_summary: 'आपकी सबसे मजबूत सीखने की विधि: {method} ({value})'
+    chart_timeline_label: पिछले {n} सत्रों की प्रगति टाइमलाइन
+    chart_timeline_summary: '{n} सत्र; समझ {trend} की ओर अग्रसर'
+    chart_timeline_trend_up: ऊपर
+    chart_timeline_trend_down: नीचे
+    chart_timeline_trend_flat: स्थिर
+    chart_distribution_label: विधि वितरण बार चार्ट
+    chart_distribution_summary: 'सबसे अधिक उपयोग की गई विधि: {method} ({count} सत्र, {pct}%)'
+    streak_cell_label: '{date} को {count} सत्र'
+    streak_cell_label_zero: '{date} को कोई सत्र नहीं'
     chart_radar_value: स्कोर
   tooltips:
     delete: हटाएँ
@@ -1359,169 +1359,169 @@ ui:
     close: बंद करें
     save: सहेजें
     cancel: रद्द करें
-    send: Send
+    send: भेजें
     send_message: संदेश भेजें
     confirm: पुष्टि करें
     open: खोलें
-    expand: Expand
-    collapse: Collapse
+    expand: विस्तृत करें
+    collapse: संक्षिप्त करें
     copy: कॉपी करें
-    copy_text: Copy text
-    paste: Paste
+    copy_text: टेक्स्ट कॉपी करें
+    paste: पेस्ट करें
     download: डाउनलोड करें
     upload: अपलोड करें
     retry: पुनः प्रयास करें
     dismiss: खारिज करें
     refresh: ताज़ा करें
     settings: सेटिंग्स
-    help: Open help
+    help: सहायता खोलें
     menu: मेनू
     back: वापस
     next: आगे
-    previous: Previous
+    previous: पिछला
     search: खोजें
-    scan_qr: Scan QR code
-    mic: Voice input
-    play: Play
+    scan_qr: QR कोड स्कैन करें
+    mic: वॉइस इनपुट
+    play: चलाएँ
     pause: रोकें
-    stop: Stop
-    read_aloud: Read aloud
+    stop: रोकें
+    read_aloud: ज़ोर से पढ़ें
     add: जोड़ें
     add_topic: विषय जोड़ें
     add_subtopic: उपविषय जोड़ें
     add_lesson: पाठ जोड़ें
-    add_root_topic: Add root topic
-    rename: Rename
-    select: Select
-    select_all: Select all
-    deselect_all: Deselect all
-    show_more: Show more
-    show_less: Show less
-    show_preview: Show preview
-    hide_preview: Hide preview
-    accept: Accept
-    reject: Reject
+    add_root_topic: मूल विषय जोड़ें
+    rename: नाम बदलें
+    select: चुनें
+    select_all: सभी चुनें
+    deselect_all: सभी अचयनित करें
+    show_more: अधिक दिखाएँ
+    show_less: कम दिखाएँ
+    show_preview: पूर्वावलोकन दिखाएँ
+    hide_preview: पूर्वावलोकन छिपाएँ
+    accept: स्वीकार करें
+    reject: अस्वीकार करें
     end_session: सत्र समाप्त करें
     start_session: सत्र शुरू करें
     continue_session: सत्र जारी रखें
-    rate_session: Rate this session
+    rate_session: इस सत्र को रेट करें
     submit_rating: रेटिंग सबमिट करें
-    new_session: Start a new session
-    new_curriculum: Create curriculum
-    new_project: New project
-    analyze: Run analysis
-    chat_language: Chat language (you speak)
+    new_session: एक नया सत्र शुरू करें
+    new_curriculum: पाठ्यक्रम बनाएँ
+    new_project: नया प्रोजेक्ट
+    analyze: विश्लेषण चलाएँ
+    chat_language: चैट भाषा (जो आप बोलते हैं)
     learning_language: अधिगम भाषा
     select_language: एक भाषा चुनें…
-    reanalyze: Re-run analysis
-    method_switch_accept: Switch to suggested method
-    method_switch_dismiss: Keep current method
-    export_markdown: Export as Markdown
-    export_pdf: Export as PDF
-    extract_anki: Extract Anki cards
-    backup_export: Export backup
-    backup_import: Import backup
-    sync_pair: Pair sync
-    rating_low: '{n} - Low'
-    rating_medium: '{n} - Medium'
-    rating_high: '{n} - High'
+    reanalyze: विश्लेषण फिर से चलाएँ
+    method_switch_accept: सुझाई गई विधि पर स्विच करें
+    method_switch_dismiss: वर्तमान विधि रखें
+    export_markdown: Markdown के रूप में निर्यात करें
+    export_pdf: PDF के रूप में निर्यात करें
+    extract_anki: Anki कार्ड निकालें
+    backup_export: बैकअप निर्यात करें
+    backup_import: बैकअप आयात करें
+    sync_pair: सिंक पेयर करें
+    rating_low: '{n} - कम'
+    rating_medium: '{n} - मध्यम'
+    rating_high: '{n} - उच्च'
 repo:
-  readme_title: 'Learning Project: {topic}'
-  readme_goal_heading: Goal
-  readme_status_heading: Status
-  readme_active: active
-  readme_archived: archived
+  readme_title: 'लर्निंग प्रोजेक्ट: {topic}'
+  readme_goal_heading: लक्ष्य
+  readme_status_heading: स्थिति
+  readme_active: सक्रिय
+  readme_archived: संग्रहीत
   readme_progress_heading: प्रगति
-  readme_sessions_label: Sessions
-  readme_cycles_label: Cycles
-  readme_method_distribution_heading: Method distribution
-  readme_topics_heading: Topics
-  readme_no_topics: _No topics traversed yet._
-  readme_see_also_heading: See also
-  readme_see_stats: '[LEARNING_STATS.md](LEARNING_STATS.md) — error rates, understanding, transfer, intervention log.'
-  readme_see_cheatsheet: '[CHEATSHEET.md](CHEATSHEET.md) — distilled notes + Meta-Learning Insights.'
-  readme_see_roadmap: '[ROADMAP.md](ROADMAP.md) — next steps.'
-  stats_title: Learning Statistics
-  stats_intro: Per-session metrics derived automatically from session evaluations + ratings. Do not edit by hand.
-  stats_no_sessions: _No sessions yet._
-  stats_sessions_heading: Sessions
+  readme_sessions_label: सत्र
+  readme_cycles_label: चक्र
+  readme_method_distribution_heading: विधि वितरण
+  readme_topics_heading: विषय
+  readme_no_topics: _अभी तक कोई विषय नहीं देखा गया।_
+  readme_see_also_heading: यह भी देखें
+  readme_see_stats: '[LEARNING_STATS.md](LEARNING_STATS.md) — त्रुटि दरें, समझ, ट्रांसफर, हस्तक्षेप लॉग।'
+  readme_see_cheatsheet: '[CHEATSHEET.md](CHEATSHEET.md) — संक्षिप्त नोट्स + मेटा-लर्निंग अंतर्दृष्टि।'
+  readme_see_roadmap: '[ROADMAP.md](ROADMAP.md) — अगले चरण।'
+  stats_title: लर्निंग आँकड़े
+  stats_intro: सत्र मूल्यांकन + रेटिंग से स्वचालित रूप से प्राप्त प्रति-सत्र मेट्रिक्स। हाथ से संपादित न करें।
+  stats_no_sessions: _अभी तक कोई सत्र नहीं।_
+  stats_sessions_heading: सत्र
   stats_table_session: सत्र
-  stats_table_method: Method
-  stats_table_understanding: Understanding
-  stats_table_transfer: Transfer
-  stats_table_stress: Stress
-  stats_table_cycles: Cycles
-  stats_table_status: Status
-  stats_method_switches_heading: Method switches
-  stats_no_method_switches: _No method switches recorded._
-  stats_table_from: From
-  stats_table_to: To
-  stats_table_reason: Reason
-  stats_table_when: When
-  stats_exit_threshold_heading: Exit thresholds
-  stats_exit_threshold_body: A topic is considered mastered when Understanding ≥ 9/10 AND Transfer ≥ 8/10 stable over 2 consecutive cycles. Pinned rows mark sessions that satisfy this condition.
-  stats_exit_pin_marker: ✅ exit threshold met
-  cheatsheet_title: Cheatsheet
-  cheatsheet_intro: Distilled notes from your sessions. The Meta-Learning Insights section collects notes tagged meta_learning — observations about how you learn best.
-  cheatsheet_notes_heading: Notes
-  cheatsheet_meta_learning_heading: Meta-Learning Insights
-  cheatsheet_no_notes: _No notes yet._
-  cheatsheet_no_meta_learning: _No meta-learning insights yet. Add a session note tagged meta_learning to record an observation about your learning process._
-  roadmap_title: Roadmap
-  roadmap_intro: Open topics + recommended next steps.
-  roadmap_next_steps_heading: Next steps
-  roadmap_no_next_steps: _No active project. Begin a new session to populate this list._
-  roadmap_resume_active: 'Resume the active session (method: **{method}**, step {step}/7, cycle {cycle}).'
-  roadmap_start_first: Begin your first learning session. The assessment recommends method **{method}**.
-  roadmap_start_next: Begin the next session. Last completed session used method **{method}**.
-  roadmap_open_topics_heading: Open topics
-  roadmap_no_open_topics: _No topics defined yet._
-  topic_readme_title: 'Topic: {title}'
-  topic_readme_sessions_heading: Sessions on this topic
-  topic_readme_methods_heading: Methods used
-  topic_readme_parent_link: ← [Project root](../README.md)
-  topic_readme_no_sessions: _No sessions traversed this topic._
-  loading: Rendering repository…
-  widget_subtitle: Versioned snapshot of this project's progress, notes, and roadmap.
-  settings_description: Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client.
-  settings_enable_git: Enable git persistence
-  dexie_unavailable_body: This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories.
+  stats_table_method: विधि
+  stats_table_understanding: समझ
+  stats_table_transfer: ट्रांसफर
+  stats_table_stress: तनाव
+  stats_table_cycles: चक्र
+  stats_table_status: स्थिति
+  stats_method_switches_heading: विधि स्विच
+  stats_no_method_switches: _कोई विधि स्विच दर्ज नहीं।_
+  stats_table_from: से
+  stats_table_to: तक
+  stats_table_reason: कारण
+  stats_table_when: कब
+  stats_exit_threshold_heading: निकास सीमाएँ
+  stats_exit_threshold_body: किसी विषय को तब महारत हासिल माना जाता है जब समझ ≥ 9/10 और ट्रांसफर ≥ 8/10 लगातार 2 चक्रों तक स्थिर रहे। पिन की गई पंक्तियाँ उन सत्रों को चिह्नित करती हैं जो इस शर्त को पूरा करते हैं।
+  stats_exit_pin_marker: ✅ निकास सीमा पूरी हुई
+  cheatsheet_title: चीटशीट
+  cheatsheet_intro: आपके सत्रों से संक्षिप्त नोट्स। मेटा-लर्निंग अंतर्दृष्टि अनुभाग meta_learning टैग किए गए नोट्स एकत्र करता है — इस बारे में अवलोकन कि आप सबसे अच्छा कैसे सीखते हैं।
+  cheatsheet_notes_heading: नोट्स
+  cheatsheet_meta_learning_heading: मेटा-लर्निंग अंतर्दृष्टि
+  cheatsheet_no_notes: _अभी तक कोई नोट नहीं।_
+  cheatsheet_no_meta_learning: _अभी तक कोई मेटा-लर्निंग अंतर्दृष्टि नहीं। अपनी सीखने की प्रक्रिया के बारे में एक अवलोकन दर्ज करने के लिए meta_learning टैग किया हुआ एक सत्र नोट जोड़ें।_
+  roadmap_title: रोडमैप
+  roadmap_intro: खुले विषय + अनुशंसित अगले चरण।
+  roadmap_next_steps_heading: अगले चरण
+  roadmap_no_next_steps: _कोई सक्रिय प्रोजेक्ट नहीं। इस सूची को भरने के लिए एक नया सत्र शुरू करें।_
+  roadmap_resume_active: 'सक्रिय सत्र फिर से शुरू करें (विधि: **{method}**, चरण {step}/7, चक्र {cycle})।'
+  roadmap_start_first: अपना पहला लर्निंग सत्र शुरू करें। मूल्यांकन विधि **{method}** की अनुशंसा करता है।
+  roadmap_start_next: अगला सत्र शुरू करें। अंतिम पूर्ण सत्र में विधि **{method}** का उपयोग किया गया।
+  roadmap_open_topics_heading: खुले विषय
+  roadmap_no_open_topics: _अभी तक कोई विषय परिभाषित नहीं।_
+  topic_readme_title: 'विषय: {title}'
+  topic_readme_sessions_heading: इस विषय पर सत्र
+  topic_readme_methods_heading: उपयोग की गई विधियाँ
+  topic_readme_parent_link: ← [प्रोजेक्ट मूल](../README.md)
+  topic_readme_no_sessions: _किसी सत्र ने यह विषय नहीं देखा।_
+  loading: रिपॉज़िटरी रेंडर हो रही है…
+  widget_subtitle: इस प्रोजेक्ट की प्रगति, नोट्स और रोडमैप का संस्करणित स्नैपशॉट।
+  settings_description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
+  settings_enable_git: git दृढ़ता सक्षम करें
+  dexie_unavailable_body: यह सुविधा केवल सर्वर मोड में उपलब्ध है। git-समर्थित लर्निंग रिपॉज़िटरी सक्षम करने के लिए सेटिंग्स में सर्वर मोड पर स्विच करें।
   back_to_dashboard: डैशबोर्ड पर वापस
   page:
-    title: Learning Repository
-    rendered_at: Rendered at
+    title: लर्निंग रिपॉज़िटरी
+    rendered_at: रेंडर किया गया
     language: भाषा
   action:
-    rerender: Re-render
-    download_zip: Download ZIP
-    persist: Persist to git
-    persisting: Persisting…
-    persist_dexie_tooltip: Git versioning is only available in server mode.
+    rerender: फिर से रेंडर करें
+    download_zip: ZIP डाउनलोड करें
+    persist: git में सहेजें
+    persisting: सहेजा जा रहा है…
+    persist_dexie_tooltip: git संस्करणीकरण केवल सर्वर मोड में उपलब्ध है।
   toast:
-    zip_downloaded: ZIP downloaded
-    persisted: Persisted to git
+    zip_downloaded: ZIP डाउनलोड हो गया
+    persisted: git में सहेजा गया
   error:
-    render_failed: Could not render repository
-    zip_failed: Could not export ZIP
-    persist_failed: Could not persist to git
-    missing_project: No project selected.
+    render_failed: रिपॉज़िटरी रेंडर नहीं हो सकी
+    zip_failed: ZIP निर्यात नहीं हो सका
+    persist_failed: git में सहेजा नहीं जा सका
+    missing_project: कोई प्रोजेक्ट चयनित नहीं।
   widget:
-    title: Learning Repository
-    open: Open repository
-    subtitle: Versioned snapshot of this project's progress, notes, and roadmap.
+    title: लर्निंग रिपॉज़िटरी
+    open: रिपॉज़िटरी खोलें
+    subtitle: इस प्रोजेक्ट की प्रगति, नोट्स और रोडमैप का संस्करणित स्नैपशॉट।
   settings:
-    title: Learning Repository
+    title: लर्निंग रिपॉज़िटरी
     loading: लोड हो रहा है…
-    repos_dir: Repositories directory
-    save: Save settings
-    saving: Saving…
+    repos_dir: रिपॉज़िटरी निर्देशिका
+    save: सेटिंग्स सहेजें
+    saving: सहेजा जा रहा है…
     toast:
-      saved: Settings saved
+      saved: सेटिंग्स सहेजी गईं
     error:
-      load: Could not load settings
-      save: Could not save settings
-    description: Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client.
-    enable_git: Enable git persistence
+      load: सेटिंग्स लोड नहीं हो सकीं
+      save: सेटिंग्स सहेजी नहीं जा सकीं
+    description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
+    enable_git: git दृढ़ता सक्षम करें
 lesson:
   resources_title: "विषय को गहराई से जानें"
   resources_domain: "{domain} के बारे में और जानें"
@@ -1529,400 +1529,400 @@ lesson:
     halftime: "आधा हो गया — लगे रहो!"
     last: "आखिरी — दमदार अंत करो!"
   theory:
-    view_example: View example
+    view_example: उदाहरण देखें
   tts:
-    read_aloud: Read aloud
-    stop: Stop
-    auto_read: Auto read-aloud
-    speed: Speed
-    no_voice: No voice available for {language}
-    reading: Reading…
-    read_all: Read all
-    play: Play
+    read_aloud: ज़ोर से पढ़ें
+    stop: रोकें
+    auto_read: स्वतः ज़ोर से पढ़ें
+    speed: गति
+    no_voice: '{language} के लिए कोई आवाज़ उपलब्ध नहीं'
+    reading: पढ़ा जा रहा है…
+    read_all: सब पढ़ें
+    play: चलाएँ
     pause: रोकें
-    prev_step: Previous step
-    next_step: Next step
-    step_position: Step {current} of {total} theory steps
-  contributed_by: Contributed by {name}
+    prev_step: पिछला चरण
+    next_step: अगला चरण
+    step_position: '{total} सिद्धांत चरणों में से चरण {current}'
+  contributed_by: '{name} द्वारा योगदान'
   page_title: पाठ
-  set_label: Set
-  loading: Loading lesson…
-  not_cached_body: This lesson isn't downloaded yet. Open the content browser and download the set first.
+  set_label: सेट
+  loading: पाठ लोड हो रहा है…
+  not_cached_body: यह पाठ अभी डाउनलोड नहीं हुआ है। पहले सामग्री ब्राउज़र खोलें और सेट डाउनलोड करें।
   progress:
-    step_of: Step {current} of {total}
-    summary: Summary
-    aria_label: Lesson progress
+    step_of: '{total} में से चरण {current}'
+    summary: सारांश
+    aria_label: पाठ प्रगति
   nav:
-    aria_label: Step navigation
+    aria_label: चरण नेविगेशन
   action:
-    prev: Previous
+    prev: पिछला
     next: आगे
-    finish: Finish lesson
-    back_to_browser: Back to content browser
-    pause: Pause lesson
-    open_browser: Open content browser
-    back_to_lesson: Back to lesson
+    finish: पाठ समाप्त करें
+    back_to_browser: सामग्री ब्राउज़र पर वापस
+    pause: पाठ रोकें
+    open_browser: सामग्री ब्राउज़र खोलें
+    back_to_lesson: पाठ पर वापस
   button:
-    check: Check
+    check: जाँचें
     next: आगे
-    check_disabled_hint: Answer the exercise first
+    check_disabled_hint: पहले अभ्यास का उत्तर दें
   reviewed:
-    completed: Completed
+    completed: पूर्ण
   exercise:
-    reread_theory: Re-read theory
+    reread_theory: सिद्धांत फिर से पढ़ें
     back_to_exercise: अभ्यास पर वापस
-    loading: Exercise loading…
-    coming_soon: This exercise type ({type}) ships in a future version. Skip to the next step.
-    missing_type: This exercise is missing its type. Please update the content.
+    loading: अभ्यास लोड हो रहा है…
+    coming_soon: इस अभ्यास प्रकार ({type}) को भविष्य के संस्करण में जोड़ा जाएगा। अगले चरण पर जाएँ।
+    missing_type: इस अभ्यास का प्रकार गायब है। कृपया सामग्री अपडेट करें।
     matching:
-      submit: Check answers
-      retry: Try again
-      counter: '{matched} / {total} paired'
-      result: 'Score: {correct} / {total}'
-      instructions: Select an item on the left, then its matching translation on the right.
-      left_label: Term
-      right_label: Translation
-      empty: This matching exercise has no pairs.
-      left_label_productive: Meaning
-      right_label_productive: Term
-      left_label_knowledge: Term
-      correct_hint: 'Correct answer: {label}'
-      your_answer: 'Your answer: {label}'
-      right_label_knowledge: Definition
-      instruction_knowledge: Match each term with its definition.
-      instructions_knowledge: Select an item on the left, then its match on the right.
-      selected_sr: 'Selected: {label}'
+      submit: उत्तर जाँचें
+      retry: फिर से कोशिश करें
+      counter: '{matched} / {total} मिलान किए गए'
+      result: 'स्कोर: {correct} / {total}'
+      instructions: बाईं ओर एक आइटम चुनें, फिर दाईं ओर उसका मिलता-जुलता अनुवाद चुनें।
+      left_label: शब्द
+      right_label: अनुवाद
+      empty: इस मिलान अभ्यास में कोई जोड़े नहीं हैं।
+      left_label_productive: अर्थ
+      right_label_productive: शब्द
+      left_label_knowledge: शब्द
+      correct_hint: 'सही उत्तर: {label}'
+      your_answer: 'आपका उत्तर: {label}'
+      right_label_knowledge: परिभाषा
+      instruction_knowledge: प्रत्येक शब्द को उसकी परिभाषा से मिलाएँ।
+      instructions_knowledge: बाईं ओर एक आइटम चुनें, फिर दाईं ओर उसका मिलान चुनें।
+      selected_sr: 'चयनित: {label}'
     picture:
       submit: उत्तर जाँचें
-      retry: Try again
+      retry: फिर से कोशिश करें
       result_correct: सही!
-      result_wrong: Not quite — the highlighted tile is the right answer.
-      grid_label: Image choices
-      correct_label: Correct
-      wrong_label: Wrong
-      empty: This picture-choice exercise has no images.
+      result_wrong: बिल्कुल नहीं — हाइलाइट किया गया टाइल सही उत्तर है।
+      grid_label: छवि विकल्प
+      correct_label: सही
+      wrong_label: गलत
+      empty: इस चित्र-चयन अभ्यास में कोई छवियाँ नहीं हैं।
     free_text:
       submit: उत्तर जाँचें
-      retry: Try again
-      placeholder: Type your answer…
-      code_placeholder: Type the code…
+      retry: फिर से कोशिश करें
+      placeholder: अपना उत्तर लिखें…
+      code_placeholder: कोड लिखें…
       input_label: आपका उत्तर
-      hint_show: Need a hint?
+      hint_show: संकेत चाहिए?
       result_correct: सही!
-      result_wrong: Not quite.
+      result_wrong: बिल्कुल नहीं।
       result_almost: "लगभग! इस पर ध्यान दें:"
-      empty: This free-text exercise has no accepted answers.
+      empty: इस मुक्त-पाठ अभ्यास में कोई स्वीकृत उत्तर नहीं हैं।
     word_tiles:
-      instructions: Arrange the tiles in order. Tap to place; use the arrows or drag to reorder.
-      reorder_aria: Tile {tile}, position {n} of {total}. Arrow keys to reorder, Enter to remove.
-      move_left: Move left
-      move_right: Move right
+      instructions: टाइलों को क्रम में लगाएँ। रखने के लिए टैप करें; पुनर्व्यवस्थित करने के लिए तीरों का उपयोग करें या खींचें।
+      reorder_aria: टाइल {tile}, {total} में से स्थान {n}। पुनर्व्यवस्थित करने के लिए तीर कुंजियाँ, हटाने के लिए Enter।
+      move_left: बाएँ ले जाएँ
+      move_right: दाएँ ले जाएँ
       submit: उत्तर जाँचें
-      retry: Try again
+      retry: फिर से कोशिश करें
       answer_label: आपका उत्तर
-      answer_placeholder: Tap tiles below to build your answer
-      scrambled_label: Available tiles
-      scrambled_done: All tiles placed.
-      hint_show: Need a hint?
+      answer_placeholder: अपना उत्तर बनाने के लिए नीचे टाइलों पर टैप करें
+      scrambled_label: उपलब्ध टाइलें
+      scrambled_done: सभी टाइलें रखी गईं।
+      hint_show: संकेत चाहिए?
       result_correct: सही!
-      result_wrong: Not quite.
-      empty: This word-tiles exercise has no tiles.
+      result_wrong: बिल्कुल नहीं।
+      empty: इस शब्द-टाइल अभ्यास में कोई टाइलें नहीं हैं।
     cloze:
-      submit: Check answers
-      retry: Try again
-      hint_show: Need a hint?
-      sentence_label: Cloze sentence
-      blank_label: Blank {n}
-      select_placeholder: Choose…
-      result_correct: All correct!
-      result_partial: '{correct} of {total} correct.'
-      empty: This cloze exercise has no blanks.
+      submit: उत्तर जाँचें
+      retry: फिर से कोशिश करें
+      hint_show: संकेत चाहिए?
+      sentence_label: रिक्त-स्थान वाक्य
+      blank_label: रिक्त स्थान {n}
+      select_placeholder: चुनें…
+      result_correct: सभी सही!
+      result_partial: '{total} में से {correct} सही।'
+      empty: इस रिक्त-स्थान अभ्यास में कोई रिक्त स्थान नहीं हैं।
     instruction:
       matching:
-        receptive: Match the pairs (Recognition)
-        productive: Match the pairs (Translation)
+        receptive: जोड़े मिलाएँ (पहचान)
+        productive: जोड़े मिलाएँ (अनुवाद)
       free_text:
-        receptive: What does this mean?
-        productive: 'Translate:'
+        receptive: इसका क्या अर्थ है?
+        productive: 'अनुवाद करें:'
       word_tiles:
-        receptive: Build the translation
-        productive: Build the sentence
+        receptive: अनुवाद बनाएँ
+        productive: वाक्य बनाएँ
       picture_choice:
-        receptive: Pick the matching meaning
-        productive: Pick the matching picture
+        receptive: मिलता-जुलता अर्थ चुनें
+        productive: मिलता-जुलता चित्र चुनें
     direction:
-      receptive_hint: Recognise the meaning
-      productive_hint: Produce the answer
+      receptive_hint: अर्थ पहचानें
+      productive_hint: उत्तर बनाएँ
   summary:
-    heading: You finished
-    aria_label: Lesson summary
+    heading: आपने पूरा किया
+    aria_label: पाठ सारांश
     score: स्कोर
-    score_bar_aria: 'Score: {pct} percent'
-    stars_aria: '{n} of 3 stars'
-    time: Time
-    minutes: '{n} min'
+    score_bar_aria: 'स्कोर: {pct} प्रतिशत'
+    stars_aria: '3 में से {n} तारे'
+    time: समय
+    minutes: '{n} मिनट'
     hints_used: "उपयोग किए गए संकेत"
-    breakdown_heading: Exercise breakdown
-    breakdown_correct_answer: 'Correct answer: {answer}'
-    breakdown_unattempted: Not attempted
+    breakdown_heading: अभ्यास विवरण
+    breakdown_correct_answer: 'सही उत्तर: {answer}'
+    breakdown_unattempted: प्रयास नहीं किया
     export:
-      copy: Copy result
-      download: Save as file
-      download_json: Export as JSON
+      copy: परिणाम कॉपी करें
+      download: फ़ाइल के रूप में सहेजें
+      download_json: JSON के रूप में निर्यात करें
       anki: "कार्ड निर्यात करें (Anki)"
-      copied: Result copied to clipboard
-      copy_failed: Could not copy to clipboard
-      title: Lesson result
-      date: Date
-      correct: correct
-      mistakes: Mistakes
-      no_mistakes: No mistakes - perfect run!
-      question: Question
+      copied: परिणाम क्लिपबोर्ड पर कॉपी हो गया
+      copy_failed: क्लिपबोर्ड पर कॉपी नहीं हो सका
+      title: पाठ परिणाम
+      date: दिनांक
+      correct: सही
+      mistakes: गलतियाँ
+      no_mistakes: कोई गलती नहीं - बढ़िया प्रदर्शन!
+      question: प्रश्न
       your_answer: आपका उत्तर
-      no_answer: (none)
-      correct_answer: Correct
-      weak_areas: Weak areas
-    mark_complete: Mark as complete
+      no_answer: (कोई नहीं)
+      correct_answer: सही
+      weak_areas: कमज़ोर क्षेत्र
+    mark_complete: पूर्ण के रूप में चिह्नित करें
     next_lesson: अगला पाठ
-    repeat: Repeat lesson
-    restart: Start over
-    back_to_browser: Back to content browser
-    encourage_0: Practice makes perfect!
-    encourage_1: Good start - keep going!
-    encourage_2: Almost perfect!
-    encourage_3: Perfect score!
+    repeat: पाठ दोहराएँ
+    restart: फिर से शुरू करें
+    back_to_browser: सामग्री ब्राउज़र पर वापस
+    encourage_0: अभ्यास से ही पूर्णता आती है!
+    encourage_1: अच्छी शुरुआत - जारी रखें!
+    encourage_2: लगभग बढ़िया!
+    encourage_3: बढ़िया स्कोर!
   error_replay:
-    title: 'Retry errors: {lesson}'
-    heading: Retry complete
-    score: '{correct}/{total} correct now!'
-    done: Back to lesson
-    empty: Nothing to retry — open this from a lesson summary after making some mistakes.
-    summary_aria: Retry errors summary
+    title: 'गलतियाँ दोहराएँ: {lesson}'
+    heading: पुनः प्रयास पूर्ण
+    score: 'अब {correct}/{total} सही!'
+    done: पाठ पर वापस
+    empty: दोहराने के लिए कुछ नहीं — कुछ गलतियाँ करने के बाद इसे पाठ सारांश से खोलें।
+    summary_aria: गलतियाँ दोहराने का सारांश
   next_step:
-    title: What's next?
-    next_lesson: Next Lesson
+    title: आगे क्या?
+    next_lesson: अगला पाठ
     start: शुरू करें
     resume: फिर से शुरू करें
-    resume_detail: Step {step} of {total}
-    adaptive: Adaptive Lesson
-    adaptive_focus: 'Focus on: {topic}'
-    adaptive_errors: '{count} errors in this lesson'
-    error_replay: Retry Errors
-    error_replay_detail: '{count} exercises again'
-    errors_corrected: All errors corrected!
-    still_errors: Still {count} errors. Try again?
+    resume_detail: '{total} में से चरण {step}'
+    adaptive: अनुकूली पाठ
+    adaptive_focus: 'ध्यान दें: {topic}'
+    adaptive_errors: 'इस पाठ में {count} गलतियाँ'
+    error_replay: गलतियाँ दोहराएँ
+    error_replay_detail: '{count} अभ्यास फिर से'
+    errors_corrected: सभी गलतियाँ सुधार ली गईं!
+    still_errors: अभी भी {count} गलतियाँ। फिर से कोशिश करें?
     review: पुनरावलोकन
-    review_due: '{count} elements due'
-    set_complete: Set Complete!
-    set_complete_detail: All {count} lessons in {set} completed!
-    try_set: 'How about: {set}'
-    view_set: View Set
-    focus_vocabulary: Vocabulary
+    review_due: '{count} तत्व बाकी'
+    set_complete: सेट पूर्ण!
+    set_complete_detail: '{set} के सभी {count} पाठ पूर्ण हुए!'
+    try_set: 'कैसा रहेगा: {set}'
+    view_set: सेट देखें
+    focus_vocabulary: शब्दावली
   correction:
-    title: Correction round
-    subtitle: A few quick drills on the words you missed.
+    title: सुधार दौर
+    subtitle: आपसे छूटे शब्दों पर कुछ त्वरित अभ्यास।
     skip: छोड़ें
     next: आगे
-    complete_heading: Correction round complete
-    improvement: '{n} elements improved.'
-    improvement_singular: '{n} element improved.'
+    complete_heading: सुधार दौर पूर्ण
+    improvement: '{n} तत्वों में सुधार हुआ।'
+    improvement_singular: '{n} तत्व में सुधार हुआ।'
   error:
-    load_failed: Could not load lesson.
-    missing_params: No lesson selected. Browse content sets to pick one.
+    load_failed: पाठ लोड नहीं हो सका।
+    missing_params: कोई पाठ चयनित नहीं। चुनने के लिए सामग्री सेट ब्राउज़ करें।
   exit:
-    title: Leave the lesson?
-    body: 'Choose how to leave: pause to come back later, abandon to discard the attempt, or stay.'
-    continue: Keep learning
+    title: पाठ छोड़ें?
+    body: 'छोड़ने का तरीका चुनें: बाद में लौटने के लिए रोकें, प्रयास छोड़ने के लिए त्यागें, या बने रहें।'
+    continue: सीखते रहें
     pause: रोकें
-    abandon: Abandon
-    abandon_confirm_title: Discard previous answers?
-    abandon_confirm_body: Previous answers will be discarded. What you already learned (mastery progress) stays.
-    confirm_cancel: Back to options
-    abandon_confirm_ok: Yes, discard
-    paused_toast: Lesson paused. You can resume anytime.
-    abandoned_toast: Lesson abandoned.
+    abandon: छोड़ें
+    abandon_confirm_title: पिछले उत्तर हटाएँ?
+    abandon_confirm_body: पिछले उत्तर हटा दिए जाएँगे। आपने जो सीखा है (महारत प्रगति) वह बना रहेगा।
+    confirm_cancel: विकल्पों पर वापस
+    abandon_confirm_ok: हाँ, हटाएँ
+    paused_toast: पाठ रोका गया। आप कभी भी फिर से शुरू कर सकते हैं।
+    abandoned_toast: पाठ छोड़ दिया गया।
   resume:
-    heading: Resume lesson?
-    body: You paused "{title}". Would you like to continue where you left off or start over?
+    heading: पाठ फिर से शुरू करें?
+    body: आपने "{title}" को रोका था। क्या आप जहाँ छोड़ा था वहीं से जारी रखना चाहेंगे या फिर से शुरू करेंगे?
     action_resume: जारी रखें
-    action_restart: Start over
+    action_restart: फिर से शुरू करें
 content:
   book:
-    companion: Book companion
-    by_author: by {author}
-    view: To the book
+    companion: पुस्तक साथी
+    by_author: '{author} द्वारा'
+    view: पुस्तक देखें
   books:
-    title: Recommended books
-    view_on_amazon: View on Amazon
+    title: अनुशंसित पुस्तकें
+    view_on_amazon: Amazon पर देखें
   continue_learning:
     title: सीखना जारी रखें
     resume: फिर से शुरू करें
-    next: Next Lesson
-    completed: Set completed
-    empty: Start your first lesson!
-    progress: Step {n}/{total}
-    imported_analysis: Imported analysis
+    next: अगला पाठ
+    completed: सेट पूरा हुआ
+    empty: अपना पहला पाठ शुरू करें!
+    progress: चरण {n}/{total}
+    imported_analysis: आयातित विश्लेषण
     lesson_fallback: "पाठ"
   import_chat:
-    button: Import Chat
+    button: चैट आयात करें
   search:
-    placeholder: Search lessons...
-    results: '{count} results'
-    no_results: No results for '{query}'
-    hint: Try a different search term
-    clear: Clear search
+    placeholder: पाठ खोजें...
+    results: '{count} परिणाम'
+    no_results: "'{query}' के लिए कोई परिणाम नहीं"
+    hint: कोई अन्य खोज शब्द आज़माएँ
+    clear: खोज साफ़ करें
     available: "डाउनलोड के लिए उपलब्ध"
     your_content: "आपकी सामग्री"
     download_prompt_title: "यह सेट डाउनलोड करें?"
     download_prompt_body: "यह सेट अभी डाउनलोड नहीं हुआ है। अभी डाउनलोड करें?"
   save_adaptive:
-    button: Save this lesson?
+    button: यह पाठ सहेजें?
   create_lesson:
-    button: Create New Lesson
+    button: नया पाठ बनाएँ
   import_lesson:
-    button: Import Lesson
-    modal_title: Import a lesson
-    choose_file: Choose a .json or .zip file
-    invalid: Invalid file
-    preview: '{title} · {lang} · {lessons} lessons · {exercises} exercises'
+    button: पाठ आयात करें
+    modal_title: एक पाठ आयात करें
+    choose_file: एक .json या .zip फ़ाइल चुनें
+    invalid: अमान्य फ़ाइल
+    preview: '{title} · {lang} · {lessons} पाठ · {exercises} अभ्यास'
     import: आयात करें
-    imported: Lesson imported.
-    failed: Could not import the lesson.
+    imported: पाठ आयात किया गया।
+    failed: पाठ आयात नहीं किया जा सका।
   my_lessons:
-    export_set: Export as set
-    share: Share with Community
-    exported: Lesson exported.
-    title: My Lessons
-    downloaded_title: Downloaded sets
-    empty: Import a chat and analyze it to create your first lesson.
-    from_analysis: from analysis
-    from_adaptive: from adaptive lesson
-    from_imported: imported
-    play: Play
+    export_set: सेट के रूप में निर्यात करें
+    share: समुदाय के साथ साझा करें
+    exported: पाठ निर्यात किया गया।
+    title: मेरे पाठ
+    downloaded_title: डाउनलोड किए गए सेट
+    empty: अपना पहला पाठ बनाने के लिए एक चैट आयात करें और उसका विश्लेषण करें।
+    from_analysis: विश्लेषण से
+    from_adaptive: अनुकूली पाठ से
+    from_imported: आयातित
+    play: चलाएँ
     edit: संपादित करें
     delete: हटाएँ
     export: निर्यात करें
-    delete_confirm: Delete this lesson? This cannot be undone.
-    deleted: Lesson deleted.
-    delete_failed: Could not delete the lesson.
+    delete_confirm: यह पाठ हटाएँ? इसे पूर्ववत नहीं किया जा सकता।
+    deleted: पाठ हटा दिया गया।
+    delete_failed: पाठ हटाया नहीं जा सका।
   save_lesson:
-    button: Save as Offline Lesson
-    modal_title: Save as offline lesson
-    title_label: Lesson title
-    summary: '{exercises} exercises · {theory} theory steps · ~{minutes} min'
-    theory_only: Not enough vocabulary for exercises. Import a longer chat for more practice material.
+    button: ऑफ़लाइन पाठ के रूप में सहेजें
+    modal_title: ऑफ़लाइन पाठ के रूप में सहेजें
+    title_label: पाठ का शीर्षक
+    summary: '{exercises} अभ्यास · {theory} सिद्धांत चरण · ~{minutes} मिनट'
+    theory_only: अभ्यासों के लिए पर्याप्त शब्दावली नहीं है। अधिक अभ्यास सामग्री के लिए एक लंबी चैट आयात करें।
     save: सहेजें
-    saved: Saved to My Lessons.
-    failed: Could not save the lesson.
-    title_native_label: Title in target language
-    target_lang_label: Language learned
-    source_lang_label: Your language
+    saved: मेरे पाठ में सहेजा गया।
+    failed: पाठ सहेजा नहीं जा सका।
+    title_native_label: लक्ष्य भाषा में शीर्षक
+    target_lang_label: सीखी गई भाषा
+    source_lang_label: आपकी भाषा
     level_label: स्तर
-    not_enough_data: Not enough vocabulary for a full lesson (need at least {min} exercises). Import a longer chat for more practice material.
-    same_language: The language learned and your language must be different.
-    same_language_hint: Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.
-    split_notice: This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each).
-    part_title: '{title} - Part {n}'
+    not_enough_data: पूर्ण पाठ के लिए पर्याप्त शब्दावली नहीं है (कम से कम {min} अभ्यास आवश्यक हैं)। अधिक अभ्यास सामग्री के लिए एक लंबी चैट आयात करें।
+    same_language: सीखी गई भाषा और आपकी भाषा अलग होनी चाहिए।
+    same_language_hint: सीखी गई और आपकी भाषा एक समान है — व्याकरण या मातृभाषा पाठ के लिए ठीक है। साझा करने पर यह सामग्री ट्री की समान-भाषा शाखा में जाता है।
+    split_notice: इस पाठ में {steps} चरण हैं और इसे {parts} भागों में सहेजा जाएगा (प्रत्येक में अधिकतम {max} चरण)।
+    part_title: '{title} - भाग {n}'
   lesson_gen:
-    fallback_title: Imported lesson
-    focus: Focus
-    topics: Topics
-    strengths: What you already know
-    weaknesses: What we will work on
-    errors: Common mistakes
-    match_prompt: Match each word with its translation.
-    free_prompt: 'Translate: {word}'
-    cloze_prompt: Fill in the missing word.
-    tiles_prompt: Arrange the words into the sentence ({word}).
-  page_title: Content sets
-  intro: Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.
-  sources: Sources
-  lessons: lessons
-  loading: Loading content sets…
-  empty: No content sets available yet. Check your network connection and refresh, or configure a source in Settings.
+    fallback_title: आयातित पाठ
+    focus: केंद्र
+    topics: विषय
+    strengths: जो आप पहले से जानते हैं
+    weaknesses: जिस पर हम काम करेंगे
+    errors: सामान्य गलतियाँ
+    match_prompt: प्रत्येक शब्द को उसके अनुवाद के साथ मिलाएँ।
+    free_prompt: 'अनुवाद करें: {word}'
+    cloze_prompt: छूटा हुआ शब्द भरें।
+    tiles_prompt: शब्दों को वाक्य में क्रमबद्ध करें ({word})।
+  page_title: सामग्री सेट
+  intro: पहले से बने पाठ सेट जिन्हें आप API key के बिना उपयोग कर सकते हैं। डाउनलोड स्थानीय रूप से कैश होते हैं और पहली बार लाने के बाद ऑफ़लाइन काम करते हैं।
+  sources: स्रोत
+  lessons: पाठ
+  loading: सामग्री सेट लोड हो रहे हैं…
+  empty: अभी कोई सामग्री सेट उपलब्ध नहीं है। अपना नेटवर्क कनेक्शन जाँचें और रीफ़्रेश करें, या सेटिंग्स में कोई स्रोत कॉन्फ़िगर करें।
   source:
-    bundled: Bundled
+    bundled: बंडल किया गया
     github: GitHub
   status:
-    ready: Ready
-    update_available: Update available
-    downloading: Downloading…
+    ready: तैयार
+    update_available: अपडेट उपलब्ध
+    downloading: डाउनलोड हो रहा है…
   action:
     refresh: ताज़ा करें
-    refreshing: Refreshing…
+    refreshing: रीफ़्रेश हो रहा है…
     download: डाउनलोड करें
     update: अपडेट करें
-    installed: Installed
+    installed: इंस्टॉल किया गया
     open: खोलें
   toast:
-    downloaded: Set downloaded and ready to use.
+    downloaded: सेट डाउनलोड हो गया और उपयोग के लिए तैयार है।
   warning:
-    no_lessons_in_set: This set has no lessons yet.
+    no_lessons_in_set: इस सेट में अभी कोई पाठ नहीं है।
   error:
-    list_failed: Could not load content sets.
-    download_failed: Could not download the set.
-    open_failed: Could not open the lesson.
+    list_failed: सामग्री सेट लोड नहीं किए जा सके।
+    download_failed: सेट डाउनलोड नहीं किया जा सका।
+    open_failed: पाठ नहीं खोला जा सका।
   tree:
-    i_speak: I speak
-    learn: Learn {lang}
-    sets: sets
-    other_sources: Other source languages
-    for_speakers: For {lang} speakers
-    knowledge: Knowledge
-    own_lesson: Your lesson
-    own_edit: Your edit
-    your_lessons: Your lessons
-    plus_own: +{n} own
-    domain_psychology: Psychology
-    domain_programming: Programming
-    domain_math: Mathematics
-    code_copy: Copy code
-    code_output: 'Output:'
-    no_primary: No sets for your language yet. Browse other source languages below.
+    i_speak: मैं बोलता/बोलती हूँ
+    learn: '{lang} सीखें'
+    sets: सेट
+    other_sources: अन्य स्रोत भाषाएँ
+    for_speakers: '{lang} बोलने वालों के लिए'
+    knowledge: ज्ञान
+    own_lesson: आपका पाठ
+    own_edit: आपका संपादन
+    your_lessons: आपके पाठ
+    plus_own: +{n} अपने
+    domain_psychology: मनोविज्ञान
+    domain_programming: प्रोग्रामिंग
+    domain_math: गणित
+    code_copy: कोड कॉपी करें
+    code_output: 'आउटपुट:'
+    no_primary: आपकी भाषा के लिए अभी कोई सेट नहीं है। नीचे अन्य स्रोत भाषाएँ ब्राउज़ करें।
   validation:
-    title: Quality check
-    checking: Checking your lesson…
-    intro: Before sharing, your lesson is checked for completeness and a valid language pair.
-    passed: Quality check passed. Ready to share with the community.
-    failed: 'Fix these issues before sharing:'
-    continue: Continue to GitHub
+    title: गुणवत्ता जाँच
+    checking: आपका पाठ जाँचा जा रहा है…
+    intro: साझा करने से पहले, आपके पाठ की पूर्णता और एक वैध भाषा जोड़ी के लिए जाँच की जाती है।
+    passed: गुणवत्ता जाँच पास हुई। समुदाय के साथ साझा करने के लिए तैयार।
+    failed: 'साझा करने से पहले इन समस्याओं को ठीक करें:'
+    continue: GitHub पर जारी रखें
     cancel: बंद करें
-    no_lessons: The set has no lessons.
-    missing_target_language: Missing target language (the language being taught).
-    missing_source_language: Missing source language (the language of the explanations).
-    invalid_target_language: Target language '{code}' is not a 2-letter ISO code.
-    invalid_source_language: Source language '{code}' is not a 2-letter ISO code.
-    same_source_target: Source and target language are the same ('{code}').
-    missing_title: Missing title.
-    missing_title_native: Missing native title (the title in the target language).
-    lesson_too_few_exercises: Lesson '{lesson}' has {count} exercises; at least {min} are required.
-    lesson_too_few_types: Lesson '{lesson}' uses {count} exercise type(s); at least {min} are required.
-    lesson_no_theory: Lesson '{lesson}' has no theory step.
-    example_url_invalid: 'Lesson ''{lesson}'': step ''{step}'' has an invalid example URL (http/https only).'
-    empty_card: 'Lesson ''{lesson}'': card ''{card}'' has an empty front or back.'
-    back_language_mismatch: 'Lesson ''{lesson}'': card ''{card}'' back does not look like {source}.'
-    free_text_too_few_accepts: 'Lesson ''{lesson}'': free-text exercise ''{exercise}'' needs at least {min} accepted answers.'
-    matching_too_few_pairs: 'Lesson ''{lesson}'': matching exercise ''{exercise}'' needs at least {min} pairs.'
-    missing_distractors: 'Lesson ''{lesson}'': exercise ''{exercise}'' needs distractors (wrong options).'
-    non_cefr_level: Level '{level}' is not a CEFR band (A1-C2).
-    level_too_complex: 'Lesson ''{lesson}'': text averages {avg} words per side, high for level {level} (about {cap} expected).'
-    source_language_heuristic: Card backs contain {found}-specific characters but the source language is '{lang}'.
-    target_language_heuristic: Card fronts contain {found}-specific characters but the target language is '{lang}'.
-    failed_share_anyway: Quality check found issues. You can share anyway — reviewers will see the findings noted in the pull request.
+    no_lessons: सेट में कोई पाठ नहीं है।
+    missing_target_language: लक्ष्य भाषा गायब है (जो भाषा सिखाई जा रही है)।
+    missing_source_language: स्रोत भाषा गायब है (व्याख्याओं की भाषा)।
+    invalid_target_language: लक्ष्य भाषा '{code}' एक 2-अक्षर का ISO कोड नहीं है।
+    invalid_source_language: स्रोत भाषा '{code}' एक 2-अक्षर का ISO कोड नहीं है।
+    same_source_target: स्रोत और लक्ष्य भाषा एक समान हैं ('{code}')।
+    missing_title: शीर्षक गायब है।
+    missing_title_native: मूल शीर्षक गायब है (लक्ष्य भाषा में शीर्षक)।
+    lesson_too_few_exercises: पाठ '{lesson}' में {count} अभ्यास हैं; कम से कम {min} आवश्यक हैं।
+    lesson_too_few_types: पाठ '{lesson}' में {count} अभ्यास प्रकार उपयोग होते हैं; कम से कम {min} आवश्यक हैं।
+    lesson_no_theory: पाठ '{lesson}' में कोई सिद्धांत चरण नहीं है।
+    example_url_invalid: 'पाठ ''{lesson}'': चरण ''{step}'' में एक अमान्य उदाहरण URL है (केवल http/https)।'
+    empty_card: 'पाठ ''{lesson}'': कार्ड ''{card}'' का अगला या पिछला भाग खाली है।'
+    back_language_mismatch: 'पाठ ''{lesson}'': कार्ड ''{card}'' का पिछला भाग {source} जैसा नहीं लगता।'
+    free_text_too_few_accepts: 'पाठ ''{lesson}'': मुक्त-पाठ अभ्यास ''{exercise}'' को कम से कम {min} स्वीकृत उत्तर चाहिए।'
+    matching_too_few_pairs: 'पाठ ''{lesson}'': मिलान अभ्यास ''{exercise}'' को कम से कम {min} जोड़े चाहिए।'
+    missing_distractors: 'पाठ ''{lesson}'': अभ्यास ''{exercise}'' को विकर्षक (गलत विकल्प) चाहिए।'
+    non_cefr_level: स्तर '{level}' एक CEFR बैंड (A1-C2) नहीं है।
+    level_too_complex: 'पाठ ''{lesson}'': पाठ्य प्रति पक्ष औसतन {avg} शब्द है, जो स्तर {level} के लिए अधिक है (लगभग {cap} अपेक्षित)।'
+    source_language_heuristic: कार्ड के पिछले भागों में {found}-विशिष्ट अक्षर हैं लेकिन स्रोत भाषा '{lang}' है।
+    target_language_heuristic: कार्ड के अगले भागों में {found}-विशिष्ट अक्षर हैं लेकिन लक्ष्य भाषा '{lang}' है।
+    failed_share_anyway: गुणवत्ता जाँच में समस्याएँ मिलीं। आप फिर भी साझा कर सकते हैं — समीक्षक pull request में दर्ज निष्कर्ष देखेंगे।
   ai_validation:
-    intro: An AI can additionally check translation accuracy, grammar and level fit.
-    privacy: Your lesson content will be sent to {provider}. No personal data is transmitted.
-    consent: Run AI validation
-    run: Check with AI
-    running: AI is reviewing your lesson…
-    ai_passed: 'AI review: looks good.'
-    ai_review: 'AI review: suggestions below.'
-    score: score
-    failed: AI review unavailable. You can still share — the quality check passed.
+    intro: एक AI अतिरिक्त रूप से अनुवाद सटीकता, व्याकरण और स्तर अनुकूलता की जाँच कर सकता है।
+    privacy: आपकी पाठ सामग्री {provider} को भेजी जाएगी। कोई व्यक्तिगत डेटा प्रेषित नहीं किया जाता।
+    consent: AI सत्यापन चलाएँ
+    run: AI से जाँचें
+    running: AI आपके पाठ की समीक्षा कर रहा है…
+    ai_passed: 'AI समीक्षा: सब ठीक लगता है।'
+    ai_review: 'AI समीक्षा: नीचे सुझाव हैं।'
+    score: स्कोर
+    failed: AI समीक्षा उपलब्ध नहीं है। आप फिर भी साझा कर सकते हैं — गुणवत्ता जाँच पास हुई।
     auto_fix: लागू करें
-    applied: applied
-    fix_applied: Suggestion applied.
-    fix_failed: Could not apply the suggestion.
+    applied: लागू किया गया
+    fix_applied: सुझाव लागू किया गया।
+    fix_failed: सुझाव लागू नहीं किया जा सका।
   ai_check:
     badge:
       verified: "AI-janchaa gaya"
@@ -1947,7 +1947,7 @@ content:
     unavailable_mode: "keval browser-storage mode mein uplabdh."
     report:
       summary: "{lessons} paathon mein {cards} card janche gaye"
-      ok: "{count} card theek"
+      ok: "{count} कार्ड ठीक हैं"
       issues: "{count} card mein samasyaayein"
       all_ok: "sabhi card paas. koi samasya nahin mili."
       problem: "samasya"
@@ -1972,343 +1972,343 @@ content:
       problem: "समस्या"
       suggestion: "सुझाव"
   placement:
-    lands_under: Your lesson lands under
-    duplicate: 'A similar lesson already exists: {title}. Share anyway?'
+    lands_under: आपका पाठ यहाँ जाता है
+    duplicate: 'एक समान पाठ पहले से मौजूद है: {title}। फिर भी साझा करें?'
   wizard:
-    title: Share with the community
-    metadata_intro: Check and correct the lesson details before sharing.
+    title: समुदाय के साथ साझा करें
+    metadata_intro: साझा करने से पहले पाठ का विवरण जाँचें और सही करें।
     edit_title: शीर्षक
-    edit_source: Source language (you speak)
-    edit_target: Target language (you learn)
-    edit_level: Level (CEFR)
+    edit_source: स्रोत भाषा (जो आप बोलते हैं)
+    edit_target: लक्ष्य भाषा (जो आप सीखते हैं)
+    edit_level: स्तर (CEFR)
     select_language: एक भाषा चुनें…
-    select_level: Select a level…
-    exercises_label: Exercises
-    cards_label: Cards
-    err_title: Add a title.
-    err_source: Choose the source language.
-    err_target: Choose the target language.
-    err_same_language: Source and target language must differ.
-    err_level: Choose a CEFR level (A1-C2).
-    err_empty: This lesson has no exercises. Please recreate the lesson.
-    regenerate: Regenerate
-    same_language_domain_hint: Same source and target language - this will be shared as knowledge (non-language) content.
-    step_label: Step {n} of {total}
-    lands_under: Your lesson lands under
-    new_set: New set! You're the first to contribute here.
-    next_to_existing: Next to {count} existing lesson(s) in this set.
-    summary_counts: '{lessons} lesson(s), {exercises} exercises, {cards} cards, ~{minutes} min'
-    checking: Checking for similar lessons…
-    no_duplicates: No duplicates found. Your lesson is unique!
-    near_duplicate: 'This lesson already exists: "{title}".'
-    similar_found: 'Similar lesson found: "{title}".'
-    overlap: '{cards} of {total} cards in common, {ex} matching exercises.'
-    diff_cards: 'Cards: {m}/{t} shared'
-    diff_exercises: 'Exercises: {m}/{t} shared'
-    suggest_new_only: Suggest only the new exercises
-    share_as_variation: Share anyway - as a variation
-    share_full: Share the full lesson anyway
-    variation_note_placeholder: How does your version differ? (optional)
-    show_differences: Show differences
-    ready_to_share: Everything's ready. Share your lesson as a pull request?
-    share_button: Share
-    thanks: Thanks for sharing! Your contribution helps other learners.
-    submitted: A pull request was opened on GitHub with your lesson pre-filled. Review it and click "Create pull request" - the content-repo CI validates it automatically.
-    view_submission: Open the pull request on GitHub
-    view_upload: Open the GitHub upload page
-    popup_blocked: Your browser blocked the GitHub tab. Click the link below to open it manually.
-    upload_instructions: Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click "Propose changes" - GitHub creates the pull request for you.
-    paste_instructions: Your lesson file was downloaded and GitHub's new-file editor opened at the right path. Open the downloaded file, paste its contents into the editor, then click "Propose new file" - the title and description are already filled in.
-    copy_pr_body: Copy pull-request description
+    select_level: एक स्तर चुनें…
+    exercises_label: अभ्यास
+    cards_label: कार्ड
+    err_title: एक शीर्षक जोड़ें।
+    err_source: स्रोत भाषा चुनें।
+    err_target: लक्ष्य भाषा चुनें।
+    err_same_language: स्रोत और लक्ष्य भाषा भिन्न होनी चाहिए।
+    err_level: एक CEFR स्तर चुनें (A1-C2)।
+    err_empty: इस पाठ में कोई अभ्यास नहीं है। कृपया पाठ को फिर से बनाएँ।
+    regenerate: फिर से बनाएँ
+    same_language_domain_hint: स्रोत और लक्ष्य भाषा समान है - इसे ज्ञान (गैर-भाषा) सामग्री के रूप में साझा किया जाएगा।
+    step_label: चरण {n} / {total}
+    lands_under: आपका पाठ यहाँ रखा जाएगा
+    new_set: नया सेट! यहाँ योगदान देने वाले आप पहले हैं।
+    next_to_existing: इस सेट में {count} मौजूदा पाठ के साथ।
+    summary_counts: '{lessons} पाठ, {exercises} अभ्यास, {cards} कार्ड, ~{minutes} मिनट'
+    checking: समान पाठों की जाँच की जा रही है…
+    no_duplicates: कोई डुप्लिकेट नहीं मिला। आपका पाठ अनूठा है!
+    near_duplicate: 'यह पाठ पहले से मौजूद है: "{title}"।'
+    similar_found: 'समान पाठ मिला: "{title}"।'
+    overlap: '{total} में से {cards} कार्ड समान, {ex} मेल खाते अभ्यास।'
+    diff_cards: 'कार्ड: {m}/{t} साझा'
+    diff_exercises: 'अभ्यास: {m}/{t} साझा'
+    suggest_new_only: केवल नए अभ्यास सुझाएँ
+    share_as_variation: फिर भी साझा करें - एक भिन्नता के रूप में
+    share_full: फिर भी पूरा पाठ साझा करें
+    variation_note_placeholder: आपका संस्करण कैसे अलग है? (वैकल्पिक)
+    show_differences: अंतर दिखाएँ
+    ready_to_share: सब कुछ तैयार है। अपने पाठ को pull request के रूप में साझा करें?
+    share_button: साझा करें
+    thanks: साझा करने के लिए धन्यवाद! आपका योगदान अन्य शिक्षार्थियों की मदद करता है।
+    submitted: GitHub पर आपके पाठ के साथ एक pull request खोला गया। इसकी समीक्षा करें और "Create pull request" पर क्लिक करें - content-repo CI इसे स्वचालित रूप से सत्यापित करता है।
+    view_submission: GitHub पर pull request खोलें
+    view_upload: GitHub अपलोड पेज खोलें
+    popup_blocked: आपके ब्राउज़र ने GitHub टैब को रोक दिया। इसे मैन्युअल रूप से खोलने के लिए नीचे दिए गए लिंक पर क्लिक करें।
+    upload_instructions: आपकी पाठ फ़ाइल डाउनलोड हो गई। अभी-अभी खुले GitHub पेज पर, फ़ाइल को अपलोड क्षेत्र में खींचें और "Propose changes" पर क्लिक करें - GitHub आपके लिए pull request बना देता है।
+    paste_instructions: आपकी पाठ फ़ाइल डाउनलोड हो गई और GitHub का new-file एडिटर सही पथ पर खुल गया। डाउनलोड की गई फ़ाइल खोलें, उसकी सामग्री एडिटर में पेस्ट करें, फिर "Propose new file" पर क्लिक करें - शीर्षक और विवरण पहले से भरे हुए हैं।
+    copy_pr_body: pull-request विवरण कॉपी करें
     copy_pr_body_done: कॉपी हो गया!
     done: हो गया
     back: वापस
     next: जारी रखें
   contributions:
-    title: My Contributions
-    count: You've contributed {n} lesson(s) to the community.
-    contributor: Community Contributor - {n} lessons shared!
-    view: View
-    status_submitted: submitted
-    status_accepted: accepted
-    status_rejected: rejected
+    title: मेरे योगदान
+    count: आपने समुदाय को {n} पाठ का योगदान दिया है।
+    contributor: समुदाय योगदानकर्ता - {n} पाठ साझा किए!
+    view: देखें
+    status_submitted: प्रस्तुत किया गया
+    status_accepted: स्वीकृत
+    status_rejected: अस्वीकृत
   gaps:
-    title: Missing Lessons
-    intro: The community library has a few gaps. Can you help fill one?
-    next_level: '{target} for {source} speakers has lessons, but {level} doesn''t exist yet.'
-    missing_pair: '{target} {level} for {source} speakers doesn''t exist yet.'
-    help: Can you help?
+    title: अनुपलब्ध पाठ
+    intro: समुदाय लाइब्रेरी में कुछ कमियाँ हैं। क्या आप किसी एक को भरने में मदद कर सकते हैं?
+    next_level: '{source} बोलने वालों के लिए {target} के पाठ हैं, लेकिन {level} अभी मौजूद नहीं है।'
+    missing_pair: '{source} बोलने वालों के लिए {target} {level} अभी मौजूद नहीं है।'
+    help: क्या आप मदद कर सकते हैं?
   credit:
-    name_label: Your name (optional)
-    name_placeholder: e.g. Maria S.
-    show_name: Show name in lesson
-    privacy: Your name will be shown in the lesson and the pull request.
+    name_label: आपका नाम (वैकल्पिक)
+    name_placeholder: जैसे Maria S.
+    show_name: पाठ में नाम दिखाएँ
+    privacy: आपका नाम पाठ और pull request में दिखाया जाएगा।
 milestone:
-  streak: '{n}-Day Streak!'
-  level_up: Level {n} reached!
-  mastery: '{n} Elements Mastered!'
-  badge: Badge earned!
-  view_all_badges: Tap to view all badges
+  streak: '{n}-दिन की स्ट्रीक!'
+  level_up: स्तर {n} तक पहुँचे!
+  mastery: '{n} तत्वों में महारत!'
+  badge: बैज अर्जित किया!
+  view_all_badges: सभी बैज देखने के लिए टैप करें
 missions:
-  card_title: Today's missions
-  card_all_done: All missions done!
-  card_tomorrow: New missions tomorrow.
-  card_empty: No missions today.
+  card_title: आज के मिशन
+  card_all_done: सभी मिशन पूरे हुए!
+  card_tomorrow: नए मिशन कल।
+  card_empty: आज कोई मिशन नहीं।
   templates:
     complete-1-lesson:
-      title: Complete a lesson
-      description: Finish 1 lesson today.
+      title: एक पाठ पूरा करें
+      description: आज 1 पाठ पूरा करें।
     complete-2-lessons:
-      title: Complete two lessons
-      description: Finish 2 lessons today.
+      title: दो पाठ पूरे करें
+      description: आज 2 पाठ पूरे करें।
     complete-3-lessons:
-      title: Complete three lessons
-      description: Finish 3 lessons today.
+      title: तीन पाठ पूरे करें
+      description: आज 3 पाठ पूरे करें।
     score-2-stars:
-      title: Earn 2 stars
-      description: Score at least 2 stars in a lesson.
+      title: 2 सितारे अर्जित करें
+      description: किसी पाठ में कम से कम 2 सितारे प्राप्त करें।
     score-3-stars:
-      title: Earn 3 stars
-      description: Score a perfect 3 stars in a lesson.
+      title: 3 सितारे अर्जित करें
+      description: किसी पाठ में पूरे 3 सितारे प्राप्त करें।
     try-new-set:
-      title: Try a new set
-      description: Start a lesson in a set you haven't opened.
+      title: एक नया सेट आज़माएँ
+      description: ऐसे सेट में पाठ शुरू करें जिसे आपने नहीं खोला है।
     review-5-elements:
-      title: Review 5 elements
-      description: Review 5 elements today.
+      title: 5 तत्वों की समीक्षा करें
+      description: आज 5 तत्वों की समीक्षा करें।
     review-10-elements:
-      title: Review 10 elements
-      description: Review 10 elements today.
+      title: 10 तत्वों की समीक्षा करें
+      description: आज 10 तत्वों की समीक्षा करें।
     complete-review-session:
-      title: Finish a review
-      description: Complete a review session.
+      title: एक समीक्षा पूरी करें
+      description: एक समीक्षा सत्र पूरा करें।
     review-overdue:
-      title: Clear overdue reviews
-      description: Review every overdue element.
+      title: बकाया समीक्षाएँ निपटाएँ
+      description: हर बकाया तत्व की समीक्षा करें।
     master-1-element:
-      title: Master an element
-      description: Master 1 element today.
+      title: एक तत्व में महारत हासिल करें
+      description: आज 1 तत्व में महारत हासिल करें।
     master-3-elements:
-      title: Master three elements
-      description: Master 3 elements today.
+      title: तीन तत्वों में महारत हासिल करें
+      description: आज 3 तत्वों में महारत हासिल करें।
     master-5-elements:
-      title: Master five elements
-      description: Master 5 elements today.
+      title: पाँच तत्वों में महारत हासिल करें
+      description: आज 5 तत्वों में महारत हासिल करें।
     zero-errors-lesson:
-      title: Flawless lesson
-      description: Finish a lesson with no mistakes.
+      title: त्रुटिरहित पाठ
+      description: बिना किसी गलती के एक पाठ पूरा करें।
     try-adaptive-lesson:
-      title: Try an adaptive lesson
-      description: Start an adaptive lesson.
+      title: एक अनुकूली पाठ आज़माएँ
+      description: एक अनुकूली पाठ शुरू करें।
     use-cloze:
-      title: Solve 5 cloze exercises
-      description: Complete 5 fill-in-the-blank exercises.
+      title: 5 क्लोज़ अभ्यास हल करें
+      description: 5 रिक्त-स्थान-भरें अभ्यास पूरे करें।
     use-all-types:
-      title: Use every exercise type
-      description: Use all 5 exercise types today.
+      title: हर अभ्यास प्रकार का उपयोग करें
+      description: आज सभी 5 अभ्यास प्रकारों का उपयोग करें।
     learn-15-minutes:
-      title: Learn 15 minutes
-      description: Spend at least 15 minutes learning.
+      title: 15 मिनट सीखें
+      description: कम से कम 15 मिनट सीखने में बिताएँ।
     learn-30-minutes:
-      title: Learn 30 minutes
-      description: Spend at least 30 minutes learning.
+      title: 30 मिनट सीखें
+      description: कम से कम 30 मिनट सीखने में बिताएँ।
     keep-streak:
-      title: Keep your streak
-      description: Keep your streak alive today.
+      title: अपनी स्ट्रीक बनाए रखें
+      description: आज अपनी स्ट्रीक को जीवित रखें।
     extend-streak-7:
-      title: Reach a 7-day streak
-      description: Build a 7-day learning streak.
+      title: 7-दिन की स्ट्रीक तक पहुँचें
+      description: 7-दिन की सीखने की स्ट्रीक बनाएँ।
     weekend-learner:
-      title: Weekend learner
-      description: Learn on the weekend.
+      title: सप्ताहांत शिक्षार्थी
+      description: सप्ताहांत पर सीखें।
 create_lesson:
   title: एक पाठ बनाएँ
-  step_of: Step {current} of {total}
-  step_pending: This step is coming in the next update.
-  nav_label: Wizard navigation
+  step_of: चरण {current} / {total}
+  step_pending: यह चरण अगले अपडेट में आ रहा है।
+  nav_label: विज़ार्ड नेविगेशन
   cancel: रद्द करें
   back: वापस
   next: आगे
-  cancel_confirm_title: Discard this lesson?
-  cancel_confirm_body: Your unsaved lesson will be lost.
-  cancel_keep: Keep editing
-  cancel_discard: Discard
+  cancel_confirm_title: इस पाठ को छोड़ दें?
+  cancel_confirm_body: आपका असहेजा पाठ खो जाएगा।
+  cancel_keep: संपादन जारी रखें
+  cancel_discard: छोड़ दें
   meta:
-    heading: Lesson details
+    heading: पाठ का विवरण
     title_label: शीर्षक
-    title_placeholder: My Lesson
-    title_required: A title is required.
-    title_native_label: Title in target language
-    target_lang_label: Language learned
-    source_lang_label: Your language
+    title_placeholder: मेरा पाठ
+    title_required: एक शीर्षक आवश्यक है।
+    title_native_label: लक्ष्य भाषा में शीर्षक
+    target_lang_label: सीखी गई भाषा
+    source_lang_label: आपकी भाषा
     level_label: स्तर
-    same_language: The language learned must differ from your language.
-    description_label: Topic / description
-    author_label: Author name
+    same_language: सीखी गई भाषा आपकी भाषा से भिन्न होनी चाहिए।
+    description_label: विषय / विवरण
+    author_label: लेखक का नाम
   cards:
-    heading: Add vocabulary cards
-    front_label: Front (learned)
-    back_label: Back (your language)
+    heading: शब्दावली कार्ड जोड़ें
+    front_label: आगे (सीखी गई)
+    back_label: पीछे (आपकी भाषा)
     notes_label: नोट्स (वैकल्पिक)
-    image_label: Image reference (optional)
-    add: Add card
-    import_csv: Import CSV
-    csv_hint: 'Paste rows as front, back, notes (comma- or tab-separated). Example: Bonjour, Guten Tag, Formal greeting'
-    csv_preview: '{valid} of {total} rows ready'
-    csv_add: Add {n} cards
-    count: '{n} cards'
-    min_hint: '{n} cards needed for exercises'
-    min_to_advance: Add at least {n} cards to continue.
-    clear_all: Clear all
-    clear_confirm_title: Remove all cards?
-    edit: Edit card
-    delete: Delete card
-    drag: Drag to reorder
+    image_label: छवि संदर्भ (वैकल्पिक)
+    add: कार्ड जोड़ें
+    import_csv: CSV आयात करें
+    csv_hint: 'पंक्तियों को front, back, notes के रूप में पेस्ट करें (अल्पविराम- या टैब-पृथक)। उदाहरण: Bonjour, Guten Tag, Formal greeting'
+    csv_preview: '{total} में से {valid} पंक्तियाँ तैयार'
+    csv_add: '{n} कार्ड जोड़ें'
+    count: '{n} कार्ड'
+    min_hint: 'अभ्यास के लिए {n} कार्ड आवश्यक'
+    min_to_advance: जारी रखने के लिए कम से कम {n} कार्ड जोड़ें।
+    clear_all: सभी हटाएँ
+    clear_confirm_title: सभी कार्ड हटाएँ?
+    edit: कार्ड संपादित करें
+    delete: कार्ड हटाएँ
+    drag: पुनः क्रमित करने के लिए खींचें
     save_edit: सहेजें
   draft:
-    title: Draft found
-    body: You have an unfinished lesson. Continue where you left off or start fresh?
-    start_fresh: Start fresh
+    title: ड्राफ़्ट मिला
+    body: आपके पास एक अधूरा पाठ है। जहाँ छोड़ा था वहीं से जारी रखें या नए सिरे से शुरू करें?
+    start_fresh: नए सिरे से शुरू करें
     continue: जारी रखें
   exercises:
-    heading: Generate exercises
-    count_label: Number of exercises
-    types_label: Exercise types
-    direction_label: Direction
-    generate: Auto-generate exercises
-    regenerate: Regenerate
-    count: '{n} exercises'
-    min_hint: '{n} exercises needed'
-    min_to_advance: Generate at least {n} exercises to continue.
-    drag: Drag to reorder
-    delete: Delete exercise
+    heading: अभ्यास बनाएँ
+    count_label: अभ्यासों की संख्या
+    types_label: अभ्यास प्रकार
+    direction_label: दिशा
+    generate: अभ्यास स्वतः बनाएँ
+    regenerate: फिर से बनाएँ
+    count: '{n} अभ्यास'
+    min_hint: '{n} अभ्यास आवश्यक'
+    min_to_advance: जारी रखने के लिए कम से कम {n} अभ्यास बनाएँ।
+    drag: क्रम बदलने के लिए खींचें
+    delete: अभ्यास हटाएँ
     type:
-      matching: Matching
-      free_text: Free text
-      cloze: Cloze
-      word_tiles: Word tiles
-      picture_choice: Picture choice
+      matching: मिलान
+      free_text: मुक्त पाठ
+      cloze: रिक्त-स्थान भरें
+      word_tiles: शब्द-टाइलें
+      picture_choice: चित्र चयन
     dir:
-      auto: Auto
-      receptive: Receptive
-      productive: Productive
+      auto: स्वतः
+      receptive: ग्रहणशील
+      productive: उत्पादक
       balanced: संतुलित
   review:
-    heading: Review and save
+    heading: समीक्षा करें और सहेजें
     title: शीर्षक
-    pair: Languages
-    cards: Cards
-    exercises: Exercises
-    check_hasTitle: Has a title
-    check_languagePair: Language pair is valid
-    check_enoughCards: At least 4 cards
-    check_enoughExercises: At least 5 exercises
-    check_enoughTypes: At least 2 exercise types
-    check_schemaValid: Valid lesson structure
+    pair: भाषाएँ
+    cards: कार्ड
+    exercises: अभ्यास
+    check_hasTitle: शीर्षक है
+    check_languagePair: भाषा युग्म मान्य है
+    check_enoughCards: कम से कम 4 कार्ड
+    check_enoughExercises: कम से कम 5 अभ्यास
+    check_enoughTypes: कम से कम 2 अभ्यास प्रकार
+    check_schemaValid: मान्य पाठ संरचना
   save:
-    saved: Lesson saved!
-    failed: Could not save the lesson.
-    save_local: Save locally
-    save_share: Save and share
-    play: Play lesson
-    create_another: Create another lesson
-    to_browser: To Content Browser
+    saved: पाठ सहेजा गया!
+    failed: पाठ सहेजा नहीं जा सका।
+    save_local: स्थानीय रूप से सहेजें
+    save_share: सहेजें और साझा करें
+    play: पाठ चलाएँ
+    create_another: एक और पाठ बनाएँ
+    to_browser: सामग्री ब्राउज़र पर जाएँ
   templates:
-    heading: Start from a template
+    heading: टेम्पलेट से शुरू करें
     blank:
-      title: Blank Lesson
-      desc: Just metadata — add cards yourself.
+      title: खाली पाठ
+      desc: केवल मेटाडेटा — कार्ड स्वयं जोड़ें।
     vocabulary:
-      title: Vocabulary List
-      desc: 10 card slots, matching + free text.
+      title: शब्दावली सूची
+      desc: 10 कार्ड स्लॉट, मिलान + मुक्त पाठ।
     grammar:
-      title: Grammar Lesson
-      desc: 5 card slots, mixed exercises with cloze.
+      title: व्याकरण पाठ
+      desc: 5 कार्ड स्लॉट, रिक्त-स्थान सहित मिश्रित अभ्यास।
     conversation:
-      title: Conversation Practice
-      desc: 5 card slots, word tiles + cloze.
+      title: वार्तालाप अभ्यास
+      desc: 5 कार्ड स्लॉट, शब्द-टाइलें + रिक्त-स्थान।
 learning_path:
   continue: फिर से शुरू करें
   start: शुरू करें
-  completed: Completed
-  next_level: Next level available
-  not_started: Not started yet
-  not_downloaded: Not downloaded
+  completed: पूर्ण
+  next_level: अगला स्तर उपलब्ध
+  not_started: अभी शुरू नहीं हुआ
+  not_downloaded: डाउनलोड नहीं किया गया
   download: डाउनलोड करें
-  filter_mine: Only mine
-  filter_all: All sets
-  filter_label: Filter sets
-  adaptive: Start adaptive lesson
-  error_replay: Retry errors
+  filter_mine: केवल मेरे
+  filter_all: सभी सेट
+  filter_label: सेट फ़िल्टर करें
+  adaptive: अनुकूली पाठ शुरू करें
+  error_replay: त्रुटियाँ दोबारा करें
   personal:
-    title: Your Learning Path
-    empty: Download a lesson set to begin.
-    all_done: All {n} lessons completed!
-    downloaded: Downloaded
-    lesson_count: '{n} lessons'
-    track_aria: '{done} of {total} lessons done'
+    title: आपका सीखने का पथ
+    empty: शुरू करने के लिए एक पाठ सेट डाउनलोड करें।
+    all_done: सभी {n} पाठ पूर्ण!
+    downloaded: डाउनलोड किया गया
+    lesson_count: '{n} पाठ'
+    track_aria: '{total} में से {done} पाठ पूर्ण'
   view:
     paths: "मेरे पथ"
-    label: View
-    personal: Personal
-    graph: Graph
-    map: Map
+    label: दृश्य
+    personal: व्यक्तिगत
+    graph: ग्राफ़
+    map: मानचित्र
   map:
-    languages: Languages
-    knowledge: Knowledge
-    total: 'Total: {n}% complete'
+    languages: भाषाएँ
+    knowledge: ज्ञान
+    total: 'कुल: {n}% पूर्ण'
   mastery:
-    receptive: receptive
-    productive: productive
-    mastered: mastered
+    receptive: ग्रहणशील
+    productive: उत्पादक
+    mastered: महारत हासिल
   title: अधिगम पथ
-  subtitle: Where you are and what comes next.
-  aria_canvas: Learning path graph
-  reset_layout: Reset layout
-  loading: Building your learning path…
-  empty: Download a lesson set first to see your learning path.
-  empty_cta: Browse content
-  error: Could not load your learning path.
-  to_content: Content Browser
+  subtitle: आप कहाँ हैं और आगे क्या आता है।
+  aria_canvas: सीखने के पथ का ग्राफ़
+  reset_layout: लेआउट रीसेट करें
+  loading: आपका सीखने का पथ बन रहा है…
+  empty: अपना सीखने का पथ देखने के लिए पहले एक पाठ सेट डाउनलोड करें।
+  empty_cta: सामग्री ब्राउज़ करें
+  error: आपका सीखने का पथ लोड नहीं हो सका।
+  to_content: सामग्री ब्राउज़र
   node:
     lesson: पाठ
-    stars: stars
+    stars: तारे
     recommended: अनुशंसित
     locked: लॉक
-    receptive_short: R
-    productive_short: P
-    exercises: '{n} exercises'
+    receptive_short: ग्र
+    productive_short: उ
+    exercises: '{n} अभ्यास'
     xp: एक्सपी
   group:
-    mastery: '{r} receptive, {p} productive mastered'
-    progress_aria: '{completed} of {total} lessons completed'
-    toggle_aria: '{title} set — {completed} of {total} lessons completed'
-  search_placeholder: Search lessons…
+    mastery: '{r} ग्रहणशील, {p} उत्पादक में महारत'
+    progress_aria: '{total} में से {completed} पाठ पूर्ण'
+    toggle_aria: '{title} सेट — {total} में से {completed} पाठ पूर्ण'
+  search_placeholder: पाठ खोजें…
   filter:
-    status: Status filter
-    direction: Direction filter
+    status: स्थिति फ़िल्टर
+    direction: दिशा फ़िल्टर
     all: सभी
-    not_started: Not started
-    in_progress: In progress
-    mastered: Mastered
-    receptive: Receptive only
-    productive: Productive only
+    not_started: शुरू नहीं हुआ
+    in_progress: प्रगति में
+    mastered: महारत हासिल
+    receptive: केवल ग्रहणशील
+    productive: केवल उत्पादक
   stats:
-    title: Stats
+    title: आँकड़े
     lessons: पाठ
-    receptive: Receptive
-    productive: Productive
-    lessons_aria: '{done} of {total} lessons completed'
-    productive_aria: '{n} lessons productive mastered'
-    receptive_aria: '{n} lessons receptive mastered'
-    region_label: Learning path statistics
+    receptive: ग्रहणशील
+    productive: उत्पादक
+    lessons_aria: '{total} में से {done} पाठ पूर्ण'
+    productive_aria: '{n} पाठ उत्पादक में महारत हासिल'
+    receptive_aria: '{n} पाठ ग्रहणशील में महारत हासिल'
+    region_label: सीखने के पथ के आँकड़े
   clusters:
-    toggle: Show error clusters
-    empty: No shared error patterns yet — keep practising.
-    lessons: '{n} lessons'
-    start_adaptive: Start adaptive lesson
-    region_label: Error clusters panel
-  search_label: Search lessons — press Enter to navigate to the first match
+    toggle: त्रुटि समूह दिखाएँ
+    empty: अभी तक कोई साझा त्रुटि पैटर्न नहीं — अभ्यास करते रहें।
+    lessons: '{n} पाठ'
+    start_adaptive: अनुकूली पाठ शुरू करें
+    region_label: त्रुटि समूह पैनल
+  search_label: पाठ खोजें — पहले मिलान पर जाने के लिए Enter दबाएँ
   custom:
     title: "मेरे शिक्षण पथ"
     subtitle: "पाठों को अपने क्रमबद्ध पथ में जोड़ें।"
@@ -2329,17 +2329,17 @@ learning_path:
     move_down: "नीचे ले जाएं"
     remove_lesson: "पाठ हटाएं"
 pwa:
-  offline_message: You're offline. Saved content is available.
-  online_message: Back online!
+  offline_message: आप ऑफ़लाइन हैं। सहेजी गई सामग्री उपलब्ध है।
+  online_message: फिर से ऑनलाइन!
   offline_dismiss: खारिज करें
-  action_unavailable: Not available offline
-  cache_heading: Offline cache
-  cache_summary: '{size} MB · {count} lessons cached'
-  cache_empty: No offline content cached yet.
-  cache_clear: Clear cache
-  cache_clear_confirm: Clear the offline cache?
-  cache_clear_action: Yes, clear
-  cache_cleared: Offline cache cleared.
+  action_unavailable: ऑफ़लाइन उपलब्ध नहीं
+  cache_heading: ऑफ़लाइन कैश
+  cache_summary: '{size} MB · {count} पाठ कैश किए गए'
+  cache_empty: अभी तक कोई ऑफ़लाइन सामग्री कैश नहीं की गई।
+  cache_clear: कैश साफ़ करें
+  cache_clear_confirm: ऑफ़लाइन कैश साफ़ करें?
+  cache_clear_action: हाँ, साफ़ करें
+  cache_cleared: ऑफ़लाइन कैश साफ़ किया गया।
   update:
     message: "एक नया संस्करण उपलब्ध है।"
     action: "अपडेट करें"
@@ -2356,115 +2356,115 @@ share:
     progress: मैं Adaptive Learner के साथ सीख रहा हूँ, स्तर {level}, {days} दिनों की स्ट्रीक।
     hashtag: '#AdaptiveLearner'
   pr:
-    preparing: Preparing repository...
-    uploading: Uploading lesson...
-    creating: Creating pull request...
-    success: Pull request created! Your lesson was committed and a pull request opened on GitHub, the content-repo CI validates it automatically.
-    no_token: 'Tip: add a GitHub token in Settings > Integrations to create the pull request automatically.'
-    fallback: Share manually via GitHub instead
-    err_auth: Your GitHub token was rejected. Check it in Settings > Integrations.
-    err_rate: GitHub rate limit reached. Please try again later.
-    err_github: 'GitHub rejected the request: {detail}'
-    err_network: Could not reach GitHub. Check your connection and try again.
+    preparing: रिपॉज़िटरी तैयार की जा रही है...
+    uploading: पाठ अपलोड किया जा रहा है...
+    creating: pull request बनाया जा रहा है...
+    success: Pull request बना दिया गया! आपका पाठ कमिट कर दिया गया और GitHub पर एक pull request खोल दिया गया, content-repo CI इसे स्वचालित रूप से सत्यापित करता है।
+    no_token: 'सुझाव: pull request स्वचालित रूप से बनाने के लिए सेटिंग्स > Integrations में एक GitHub token जोड़ें।'
+    fallback: इसके बजाय GitHub के माध्यम से मैन्युअल रूप से साझा करें
+    err_auth: आपका GitHub token अस्वीकृत हो गया। इसे सेटिंग्स > Integrations में जाँचें।
+    err_rate: GitHub दर सीमा तक पहुँच गई। कृपया बाद में पुनः प्रयास करें।
+    err_github: 'GitHub ने अनुरोध अस्वीकार कर दिया: {detail}'
+    err_network: GitHub तक नहीं पहुँचा जा सका। अपना कनेक्शन जाँचें और पुनः प्रयास करें।
 taxonomy:
-  filter_title: Filter projects
-  loading: Loading filters…
-  filter_load_failed: Failed to load filter data.
-  subject: Subject
-  all_subjects: All subjects
-  all_projects: All projects ({count})
-  filtered_projects: Matching projects ({count})
-  clear_filters: Clear filters
+  filter_title: परियोजनाएँ फ़िल्टर करें
+  loading: फ़िल्टर लोड हो रहे हैं…
+  filter_load_failed: फ़िल्टर डेटा लोड करने में विफल।
+  subject: विषय
+  all_subjects: सभी विषय
+  all_projects: सभी परियोजनाएँ ({count})
+  filtered_projects: मेल खाती परियोजनाएँ ({count})
+  clear_filters: फ़िल्टर साफ़ करें
   tags: टैग
-  no_user_tags_short: No tags yet.
-  no_matching_projects: No projects match.
-  no_projects: No projects yet.
+  no_user_tags_short: अभी तक कोई टैग नहीं।
+  no_matching_projects: कोई परियोजना मेल नहीं खाती।
+  no_projects: अभी तक कोई परियोजना नहीं।
 subjects:
-  languages: Languages
-  mathematics: Mathematics
-  programming: Programming
-  sciences: Sciences
-  music: Music
-  humanities: Humanities
-  social_sciences: Social Sciences
-  skills: Skills
+  languages: भाषाएँ
+  mathematics: गणित
+  programming: प्रोग्रामिंग
+  sciences: विज्ञान
+  music: संगीत
+  humanities: मानविकी
+  social_sciences: सामाजिक विज्ञान
+  skills: कौशल
   english: अंग्रेज़ी
   spanish: स्पेनिश
   french: फ़्रेंच
   german: जर्मन
   greek: यूनानी
-  italian: Italian
+  italian: इतालवी
   portuguese: पुर्तगाली
   japanese: जापानी
-  chinese: Chinese
+  chinese: चीनी
   turkish: तुर्की
-  grammar: Grammar
-  vocabulary: Vocabulary
-  conversation: Conversation
-  arithmetic: Arithmetic
-  algebra: Algebra
-  geometry: Geometry
-  trigonometry: Trigonometry
-  calculus: Calculus
-  statistics: Statistics
-  linear_algebra: Linear Algebra
-  discrete_mathematics: Discrete Mathematics
-  basics: Basics
-  frameworks: Frameworks
-  data_science: Data Science
-  algorithms: Algorithms
-  data_structures: Data Structures
-  design_patterns: Design Patterns
-  databases: Databases
-  physics: Physics
-  chemistry: Chemistry
-  biology: Biology
-  astronomy: Astronomy
-  earth_sciences: Earth Sciences
+  grammar: व्याकरण
+  vocabulary: शब्दावली
+  conversation: वार्तालाप
+  arithmetic: अंकगणित
+  algebra: बीजगणित
+  geometry: ज्यामिति
+  trigonometry: त्रिकोणमिति
+  calculus: कलन
+  statistics: सांख्यिकी
+  linear_algebra: रैखिक बीजगणित
+  discrete_mathematics: असतत गणित
+  basics: मूल बातें
+  frameworks: फ्रेमवर्क
+  data_science: डेटा साइंस
+  algorithms: एल्गोरिदम
+  data_structures: डेटा संरचनाएँ
+  design_patterns: डिज़ाइन पैटर्न
+  databases: डेटाबेस
+  physics: भौतिकी
+  chemistry: रसायन विज्ञान
+  biology: जीव विज्ञान
+  astronomy: खगोल विज्ञान
+  earth_sciences: पृथ्वी विज्ञान
   theory: सिद्धांत
-  piano: Piano
-  guitar: Guitar
-  violin: Violin
-  singing: Singing
-  composition: Composition
-  history: History
-  philosophy: Philosophy
-  literature: Literature
-  art_history: Art History
-  economics: Economics
-  psychology: Psychology
-  sociology: Sociology
-  political_science: Political Science
-  writing: Writing
-  public_speaking: Public Speaking
-  photography: Photography
-  design: Design
-  cooking: Cooking
+  piano: पियानो
+  guitar: गिटार
+  violin: वायलिन
+  singing: गायन
+  composition: रचना
+  history: इतिहास
+  philosophy: दर्शनशास्त्र
+  literature: साहित्य
+  art_history: कला इतिहास
+  economics: अर्थशास्त्र
+  psychology: मनोविज्ञान
+  sociology: समाजशास्त्र
+  political_science: राजनीति विज्ञान
+  writing: लेखन
+  public_speaking: सार्वजनिक भाषण
+  photography: फ़ोटोग्राफ़ी
+  design: डिज़ाइन
+  cooking: खाना पकाना
 editor:
-  align_center: Align center
-  align_left: Align left
-  align_right: Align right
-  blockquote: Quote
-  bold: Bold (Ctrl+B)
+  align_center: मध्य में संरेखित करें
+  align_left: बाएँ संरेखित करें
+  align_right: दाएँ संरेखित करें
+  blockquote: उद्धरण
+  bold: बोल्ड (Ctrl+B)
   bullet_list: बुलेट सूची
-  character_count: '{count} characters'
-  code_block: Code block
-  code_block_copied: Copied
-  code_block_copy: Copy code
-  code_block_language: Code block language
-  h1: Heading 1
-  h2: Heading 2
-  h3: Heading 3
-  highlight: Highlight
-  inline_code: Inline code
-  italic: Italic (Ctrl+I)
-  link: Insert link
-  link_prompt: URL (leave empty to remove the link)
-  ordered_list: Ordered list
-  redo: Redo (Ctrl+Shift+Z)
-  strike: Strikethrough
-  task_list: Task list
-  toolbar_label: Text formatting
+  character_count: '{count} वर्ण'
+  code_block: कोड ब्लॉक
+  code_block_copied: कॉपी हो गया
+  code_block_copy: कोड कॉपी करें
+  code_block_language: कोड ब्लॉक भाषा
+  h1: शीर्षक 1
+  h2: शीर्षक 2
+  h3: शीर्षक 3
+  highlight: हाइलाइट करें
+  inline_code: इनलाइन कोड
+  italic: इटैलिक (Ctrl+I)
+  link: लिंक जोड़ें
+  link_prompt: URL (लिंक हटाने के लिए खाली छोड़ें)
+  ordered_list: क्रमबद्ध सूची
+  redo: फिर से करें (Ctrl+Shift+Z)
+  strike: स्ट्राइकथ्रू
+  task_list: कार्य सूची
+  toolbar_label: टेक्स्ट स्वरूपण
   ctx_history: "इतिहास"
   ctx_clipboard: "क्लिपबोर्ड"
   ctx_format: "स्वरूपण"
@@ -2484,8 +2484,8 @@ editor:
   superscript: "ऊर्ध्वलेख"
   paragraph: "सामान्य पाठ"
   align_justify: "समायोजित करें"
-  underline: Underline (Ctrl+U)
-  undo: Undo (Ctrl+Z)
+  underline: रेखांकित करें (Ctrl+U)
+  undo: पूर्ववत करें (Ctrl+Z)
 languages:
   ko: "कोरियाई"
   id: "इंडोनेशियाई"
