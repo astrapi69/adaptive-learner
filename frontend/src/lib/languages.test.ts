@@ -14,6 +14,20 @@ describe("UI_LANGUAGES", () => {
         expect(hi!.script).toBe("devanagari");
     });
 
+    it("registers Korean with the Hangul script", () => {
+        const ko = UI_LANGUAGES.find((l) => l.code === "ko");
+        expect(ko).toBeDefined();
+        expect(ko!.nativeName).toBe("한국어");
+        expect(ko!.script).toBe("hangul");
+    });
+
+    it("registers Indonesian with the Latin script", () => {
+        const id = UI_LANGUAGES.find((l) => l.code === "id");
+        expect(id).toBeDefined();
+        expect(id!.nativeName).toBe("Bahasa Indonesia");
+        expect(id!.script).toBe("latin");
+    });
+
     it("has unique codes and a native name for every entry", () => {
         const codes = UI_LANGUAGES.map((l) => l.code);
         expect(new Set(codes).size).toBe(codes.length);

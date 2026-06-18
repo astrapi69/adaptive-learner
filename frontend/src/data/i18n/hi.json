@@ -1785,6 +1785,7 @@
         "copy": "Copy result",
         "download": "Save as file",
         "download_json": "Export as JSON",
+        "anki": "कार्ड निर्यात करें (Anki)",
         "copied": "Result copied to clipboard",
         "copy_failed": "Could not copy to clipboard",
         "title": "Lesson result",
@@ -2530,6 +2531,17 @@
     }
   },
   "share": {
+    "achievement": {
+      "button": "साझा करें",
+      "title": "अपनी प्रगति साझा करें",
+      "copied": "क्लिपबोर्ड पर कॉपी किया गया",
+      "lesson_complete": "मैंने अभी Adaptive Learner पर एक पाठ बढ़िया तरीके से पूरा किया!",
+      "streak": "मैं Adaptive Learner पर {days} दिनों की लर्निंग स्ट्रीक पर हूँ!",
+      "level": "मैं अभी Adaptive Learner पर स्तर {level} पर पहुँचा!",
+      "badge": "मैंने Adaptive Learner पर \"{badge}\" बैज अर्जित किया!",
+      "progress": "मैं Adaptive Learner के साथ सीख रहा हूँ, स्तर {level}, {days} दिनों की स्ट्रीक।",
+      "hashtag": "#AdaptiveLearner"
+    },
     "pr": {
       "preparing": "Preparing repository...",
       "uploading": "Uploading lesson...",
@@ -2648,6 +2660,8 @@
     "undo": "Undo (Ctrl+Z)"
   },
   "languages": {
+    "ko": "कोरियाई",
+    "id": "इंडोनेशियाई",
     "en": "अंग्रेज़ी",
     "es": "स्पेनिश",
     "fr": "फ़्रेंच",

@@ -1686,6 +1686,7 @@ lesson:
       copy: "Copiar resultado"
       download: "Guardar como archivo"
       download_json: "Exportar como JSON"
+      anki: "Exportar tarjetas (Anki)"
       copied: "Resultado copiado al portapapeles"
       copy_failed: "No se pudo copiar al portapapeles"
       title: "Resultado de la lección"
@@ -2305,6 +2306,16 @@ pwa:
     action: "Actualizar"
     later: "Más tarde"
 share:
+  achievement:
+    button: Compartir
+    title: Comparte tu progreso
+    copied: Copiado al portapapeles
+    lesson_complete: ¡Acabo de superar una lección en Adaptive Learner!
+    streak: ¡Llevo una racha de aprendizaje de {days} días en Adaptive Learner!
+    level: ¡Acabo de alcanzar el nivel {level} en Adaptive Learner!
+    badge: ¡Conseguí la insignia "{badge}" en Adaptive Learner!
+    progress: Estoy aprendiendo con Adaptive Learner, nivel {level}, racha de {days} días.
+    hashtag: '#AdaptiveLearner'
   pr:
     preparing: "Preparando el repositorio..."
     uploading: "Subiendo la lección..."
@@ -2424,6 +2435,8 @@ editor:
   underline: "Subrayado (Ctrl+U)"
   undo: "Deshacer (Ctrl+Z)"
 languages:
+  ko: "Coreano"
+  id: "Indonesio"
   en: "Inglés"
   es: "Español"
   fr: "Francés"

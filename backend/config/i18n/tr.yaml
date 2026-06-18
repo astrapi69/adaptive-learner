@@ -1684,6 +1684,7 @@ lesson:
       copy: "Sonucu kopyala"
       download: "Dosya olarak kaydet"
       download_json: "JSON olarak dışa aktar"
+      anki: "Kartları dışa aktar (Anki)"
       copied: "Sonuç panoya kopyalandı"
       copy_failed: "Panoya kopyalanamadı"
       title: "Ders sonucu"
@@ -2303,6 +2304,16 @@ pwa:
     action: "Güncelle"
     later: "Sonra"
 share:
+  achievement:
+    button: Paylaş
+    title: İlerlemeni paylaş
+    copied: Panoya kopyalandı
+    lesson_complete: Adaptive Learner'da az önce bir dersi başarıyla tamamladım!
+    streak: Adaptive Learner'da {days} günlük öğrenme serisindeyim!
+    level: Adaptive Learner'da az önce seviye {level} seviyesine ulaştım!
+    badge: Adaptive Learner'da "{badge}" rozetini kazandım!
+    progress: 'Adaptive Learner ile öğreniyorum: seviye {level}, {days} günlük seri.'
+    hashtag: '#AdaptiveLearner'
   pr:
     preparing: "Depo hazırlanıyor..."
     uploading: "Ders yükleniyor..."
@@ -2422,6 +2433,8 @@ editor:
   underline: "Altı çizili (Ctrl+U)"
   undo: "Geri al (Ctrl+Z)"
 languages:
+  ko: "Korece"
+  id: "Endonezce"
   en: "İngilizce"
   es: "İspanyolca"
   fr: "Fransızca"
