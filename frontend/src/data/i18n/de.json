@@ -1071,6 +1071,7 @@
     "xp_header_tooltip": "Deine Erfahrungspunkte",
     "xp_to_next_level": "{n} XP bis zum nächsten Level",
     "max_level": "Höchstes Level erreicht",
+    "level_detail_title": "Level-Fortschritt",
     "level_up": "Level aufgestiegen!",
     "reason_session_complete": "Sitzung abgeschlossen",
     "reason_assessment_complete": "Selbsteinschätzung abgeschlossen",
@@ -1888,7 +1889,8 @@
       "completed": "Set abgeschlossen",
       "empty": "Starte deine erste Lektion!",
       "progress": "Aufgabe {n}/{total}",
-      "imported_analysis": "Importierte Analyse"
+      "imported_analysis": "Importierte Analyse",
+      "lesson_fallback": "Lektion"
     },
     "import_chat": {
       "button": "Chat importieren"

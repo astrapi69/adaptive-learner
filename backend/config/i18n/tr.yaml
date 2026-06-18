@@ -1008,6 +1008,7 @@ gamification:
   xp_header_tooltip: Deneyim puanlarınız
   xp_to_next_level: Bir sonraki seviye için {n} XP
   max_level: Maksimum seviyeye ulaşıldı
+  level_detail_title: "Seviye ilerlemesi"
   level_up: Seviye atladın!
   reason_session_complete: Oturum tamamlandı
   reason_assessment_complete: Değerlendirme tamamlandı
@@ -1743,6 +1744,7 @@ content:
     empty: "İlk dersine başla!"
     progress: "Adım {n}/{total}"
     imported_analysis: "İçe aktarılan analiz"
+    lesson_fallback: "Ders"
   import_chat:
     button: "Sohbeti içe aktar"
   search:

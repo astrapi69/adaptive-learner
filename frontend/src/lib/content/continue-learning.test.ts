@@ -16,6 +16,7 @@ import {
     groupRecentProgress,
     lessonLabelFromFilename,
     lessonRoute,
+    looksLikeOpaqueId,
     resolveContinueAction,
     rowStars,
 } from "./continue-learning";
@@ -150,6 +151,24 @@ describe("helpers", () => {
     it("lessonLabelFromFilename strips extension + separators", () => {
         expect(lessonLabelFromFilename("03-articles.json")).toBe("03 articles");
         expect(lessonLabelFromFilename("76_trauma_ptbs.json")).toBe("76 trauma ptbs");
+    });
+
+    it("looksLikeOpaqueId flags UUIDs, analysis ids, and long hashes (#729)", () => {
+        expect(
+            looksLikeOpaqueId("3b1f6e2a-9c4d-4f1a-bb2e-7d8e9f0a1b2c"),
+        ).toBe(true);
+        expect(
+            looksLikeOpaqueId("analysis-3b1f6e2a-9c4d-4f1a-bb2e-7d8e9f0a1b2c"),
+        ).toBe(true);
+        expect(looksLikeOpaqueId("a1b2c3d4e5f60718")).toBe(true);
+        expect(looksLikeOpaqueId("   ")).toBe(true);
+    });
+
+    it("looksLikeOpaqueId passes real human titles through", () => {
+        expect(looksLikeOpaqueId("Spanish A1")).toBe(false);
+        expect(looksLikeOpaqueId("03 articles")).toBe(false);
+        expect(looksLikeOpaqueId("Trauma und PTBS")).toBe(false);
+        expect(looksLikeOpaqueId("Français B1")).toBe(false);
     });
 
     it("lessonRoute builds the /lesson route with a slugged source", () => {

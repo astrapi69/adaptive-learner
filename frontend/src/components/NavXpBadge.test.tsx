@@ -8,7 +8,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -72,10 +72,35 @@ describe("NavXpBadge", () => {
     expect(screen.getByTestId("nav-xp-badge-total").textContent).toBe("1200 XP");
   });
 
-  it("links to the dashboard", async () => {
+  it("opens a level-detail popover with a dashboard link on click (#730)", async () => {
     renderBadge();
-    const link = await screen.findByTestId("nav-xp-badge");
-    expect(link).toHaveAttribute("href", "/dashboard");
+    const badge = await screen.findByTestId("nav-xp-badge");
+    // Closed by default.
+    expect(screen.queryByTestId("nav-xp-badge-popover")).toBeNull();
+    expect(badge).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(badge);
+
+    expect(screen.getByTestId("nav-xp-badge-popover")).toBeInTheDocument();
+    expect(badge).toHaveAttribute("aria-expanded", "true");
+    // 200 into level + 300 to next = 40% progress.
+    expect(screen.getByTestId("level-detail-bar")).toHaveAttribute(
+      "aria-valuenow",
+      "40",
+    );
+    expect(
+      screen.getByTestId("level-detail-tonext").textContent,
+    ).toContain("300");
+    expect(
+      screen.getByTestId("nav-xp-badge-dashboard-link"),
+    ).toHaveAttribute("href", "/dashboard");
+  });
+
+  it("renders the badge two-line (level above total)", async () => {
+    renderBadge();
+    await screen.findByTestId("nav-xp-badge");
+    expect(screen.getByTestId("nav-xp-badge-level").textContent).toBe("Level 4");
+    expect(screen.getByTestId("nav-xp-badge-total").textContent).toBe("1200 XP");
   });
 
   it("re-reads the XP state on an XP-affecting celebration", async () => {

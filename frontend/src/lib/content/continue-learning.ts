@@ -122,6 +122,32 @@ export function lessonLabelFromFilename(filename: string): string {
         .trim();
 }
 
+/**
+ * True when ``value`` looks like an opaque machine id rather than a
+ * human name — a bare UUID, an ``analysis-<uuid>`` set id, or a long
+ * hex/base-ish token with no word structure. Such values must never be
+ * shown to the learner (#729: "Continue Learning showed hashes instead
+ * of names" — a user-generated / analysis / snapshot set whose title or
+ * lesson filename fell back to its raw id).
+ */
+export function looksLikeOpaqueId(value: string): boolean {
+    const v = value.trim();
+    if (!v) return true;
+    // analysis-<uuid> (legacy chat-import sets, pre-#134).
+    if (/^analysis-[0-9a-f-]{8,}$/i.test(v)) return true;
+    // A bare UUID (optionally with a short prefix like "set-").
+    if (
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+            v,
+        )
+    ) {
+        return true;
+    }
+    // A long single token of hex / id chars with no spaces (a hash).
+    if (!/\s/.test(v) && /^[0-9a-f]{16,}$/i.test(v)) return true;
+    return false;
+}
+
 /** Build the /lesson/... route for a set source + lesson. */
 export function lessonRoute(
     source: string,

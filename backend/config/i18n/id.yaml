@@ -338,6 +338,8 @@ adaptive:
     missing_params: "Tidak ada set konten yang dipilih."
     load_failed: "Tidak dapat menghasilkan pelajaran adaptif."
 review:
+  summary_remaining: "Masih ada {n} yang jatuh tempo. Lanjutkan?"
+  another_round: "Putaran lagi"
   your_answer: "Jawaban Anda:"
   correct_answer: "Benar:"
   summary_corrected: "{corrected} dari {total} diperbaiki"
@@ -430,6 +432,9 @@ progress:
   commit_notes_aria: "Catatan sesi"
   session_count: "Sesi"
 settings:
+  review_limit:
+    label: "Pertanyaan per ulasan"
+    desc: "Berapa banyak elemen yang ditampilkan satu sesi ulasan sebelum berakhir. Item jatuh tempo lainnya dialihkan ke putaran berikutnya."
   install:
     heading: "Pasang aplikasi"
     description: "Pasang Adaptive Learner sebagai aplikasi untuk akses luring dan pengalaman layar penuh."
@@ -1003,6 +1008,7 @@ gamification:
   xp_header_tooltip: Poin pengalaman Anda
   xp_to_next_level: '{n} XP menuju level berikutnya'
   max_level: Level maksimum tercapai
+  level_detail_title: "Kemajuan level"
   level_up: Naik level!
   reason_session_complete: Sesi selesai
   reason_assessment_complete: Asesmen selesai
@@ -1749,6 +1755,7 @@ content:
     empty: "Mulai pelajaran pertamamu!"
     progress: "Langkah {n}/{total}"
     imported_analysis: "Analisis yang diimpor"
+    lesson_fallback: "Pelajaran"
   import_chat:
     button: "Impor Obrolan"
   search:

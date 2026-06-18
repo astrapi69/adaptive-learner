@@ -1,27 +1,30 @@
 /**
  * NavXpBadge — the persistent XP/level indicator in the top
- * Navigation bar (#505).
+ * Navigation bar (#505), now two-line with a level-detail popover
+ * (#730).
  *
  * App-specific glue around the generic, presentational
- * `shared/XpBadge`: it resolves the active learner, reads the XP
- * state from whichever storage backing is active (ApiStorage or
- * DexieStorage — both expose `gamification.getState`), supplies the
- * translated labels, and keeps the badge live. It refreshes on mount,
- * on route change, when the tab regains focus, and whenever an
- * XP-affecting celebration fires (lesson complete, level up, a
- * completed mission, a badge / tier award) so a freshly-earned point
- * total shows without a reload.
+ * `shared/XpBadge` + `shared/LevelDetail`: it resolves the active
+ * learner, reads the XP state from whichever storage backing is active
+ * (ApiStorage or DexieStorage — both expose `gamification.getState`),
+ * supplies the translated labels, and keeps the badge live. It refreshes
+ * on mount, on route change, when the tab regains focus, and whenever an
+ * XP-affecting celebration fires (lesson complete, level up, a completed
+ * mission, a badge / tier award) so a freshly-earned point total shows
+ * without a reload.
  *
- * Renders nothing until a learner + a loaded XP state exist, so the
- * badge never flashes a placeholder on a fresh / anonymous install.
- * The whole badge links to the Dashboard, where the full XP widget,
- * streak, and badge gallery live.
+ * Clicking the badge opens a small popover with the level-progress
+ * detail (progress bar + "{n} XP to next level") and a link to the
+ * Dashboard. Renders nothing until a learner + a loaded XP state exist,
+ * so the badge never flashes a placeholder on a fresh / anonymous
+ * install.
  */
 
 import { Zap } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
+import LevelDetail from "../shared/LevelDetail";
 import XpBadge from "../shared/XpBadge";
 import { useI18n } from "../hooks/useI18n";
 import { readLearnerState } from "../lib/learnerState";
@@ -41,13 +44,16 @@ const XP_AFFECTING: ReadonlySet<CelebrationType> = new Set<CelebrationType>([
   "badge_tier_upgrade",
 ]);
 
-/** Persistent header XP/level badge, linking to the Dashboard. */
+/** Persistent header XP/level badge with a level-detail popover. */
 export default function NavXpBadge() {
   const { t } = useI18n();
   const { pathname } = useLocation();
   const [state, setState] = useState<XPState | null>(null);
   // #594 Hint Economy — briefly flash the badge red when XP is spent.
   const [spent, setSpent] = useState(false);
+  // #730 — level-detail popover open state.
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const userId = readLearnerState().userId;
@@ -93,36 +99,101 @@ export default function NavXpBadge() {
     };
   }, [pathname]);
 
+  // Close the popover on route change.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Dismiss the popover on an outside click or Escape.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   if (!state) return null;
 
   const levelLabel = t("gamification.level", "Level");
   const xpLabel = t("gamification.xp", "XP");
+  const toNextLabel =
+    state.xp_to_next_level > 0
+      ? t("gamification.xp_to_next_level", "{n} XP to next level").replace(
+          "{n}",
+          String(state.xp_to_next_level),
+        )
+      : t("gamification.max_level", "Max level reached");
+
   return (
-    <NavLink
-      to="/dashboard"
-      className={`nav-xp-badge${spent ? " nav-xp-badge--spent" : ""}`}
-      data-testid="nav-xp-badge"
-      data-spent={spent ? "true" : undefined}
-      title={t("gamification.xp_header_tooltip", "Your experience points")}
-      aria-label={t(
-        "gamification.xp_header_aria",
-        "Level {level}, {xp} total XP",
-      )
-        .replace("{level}", String(state.level))
-        .replace("{xp}", String(state.total_xp))}
-    >
-      <XpBadge
-        xp={state.total_xp}
-        level={state.level}
-        icon={<Zap size={14} aria-hidden="true" />}
-        xpLabel={xpLabel}
-        levelLabel={levelLabel}
-        iconClassName="nav-xp-badge__icon"
-        levelClassName="nav-xp-badge__level"
-        xpClassName="nav-xp-badge__total"
-        xpTestId="nav-xp-badge-total"
-        levelTestId="nav-xp-badge-level"
-      />
-    </NavLink>
+    <div ref={wrapRef} className="relative">
+      <button
+        type="button"
+        className={`nav-xp-badge${spent ? " nav-xp-badge--spent" : ""}`}
+        data-testid="nav-xp-badge"
+        data-spent={spent ? "true" : undefined}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        title={t("gamification.xp_header_tooltip", "Your experience points")}
+        aria-label={t(
+          "gamification.xp_header_aria",
+          "Level {level}, {xp} total XP",
+        )
+          .replace("{level}", String(state.level))
+          .replace("{xp}", String(state.total_xp))}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <XpBadge
+          xp={state.total_xp}
+          level={state.level}
+          icon={<Zap size={14} aria-hidden="true" />}
+          xpLabel={xpLabel}
+          levelLabel={levelLabel}
+          iconClassName="nav-xp-badge__icon"
+          levelClassName="nav-xp-badge__level"
+          xpClassName="nav-xp-badge__total"
+          xpTestId="nav-xp-badge-total"
+          levelTestId="nav-xp-badge-level"
+        />
+      </button>
+      {open && (
+        <div
+          role="dialog"
+          aria-label={t("gamification.level_detail_title", "Level progress")}
+          className="absolute right-0 z-50 mt-2 rounded-app border border-border bg-card p-3 shadow-elevated"
+          data-testid="nav-xp-badge-popover"
+        >
+          <LevelDetail
+            level={state.level}
+            xpIntoLevel={state.xp_into_level}
+            xpToNext={state.xp_to_next_level}
+            levelLabel={levelLabel}
+            toNextLabel={toNextLabel}
+            progressAriaLabel={t(
+              "gamification.level_detail_title",
+              "Level progress",
+            )}
+          />
+          <NavLink
+            to="/dashboard"
+            className="mt-3 inline-block text-xs font-medium text-accent hover:underline"
+            data-testid="nav-xp-badge-dashboard-link"
+            onClick={() => setOpen(false)}
+          >
+            {t("nav.dashboard", "Dashboard")}
+          </NavLink>
+        </div>
+      )}
+    </div>
   );
 }
