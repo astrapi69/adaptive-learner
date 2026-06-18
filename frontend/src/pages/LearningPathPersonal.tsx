@@ -21,7 +21,7 @@
 
 import {lazy, Suspense, useMemo, useState} from "react";
 import {Link} from "react-router-dom";
-import {LayoutList, Map as MapIcon, Network} from "lucide-react";
+import {LayoutList, ListChecks, Map as MapIcon, Network} from "lucide-react";
 
 import {useI18n} from "../hooks/useI18n";
 import {usePersonalPath} from "../hooks/usePersonalPath";
@@ -29,13 +29,14 @@ import {readLearnerState} from "../lib/learnerState";
 import SetRow from "../components/learning-path/SetRow";
 import SetDetail from "../components/learning-path/SetDetail";
 import NotDownloadedSection from "../components/learning-path/NotDownloadedSection";
+import CustomPathsView from "../components/learning-path/CustomPathsView";
 import {Button} from "@/components/ui/button";
 import {cn} from "../lib/utils";
 
 const LearningPathGraph = lazy(() => import("./LearningPathGraph"));
 const LearningPathMap = lazy(() => import("./LearningPathMap"));
 
-type ViewMode = "personal" | "graph" | "map";
+type ViewMode = "personal" | "graph" | "map" | "paths";
 type FilterMode = "mine" | "all";
 const VIEW_KEY = "adaptive-learner.learning-path-view";
 const FILTER_KEY = "adaptive-learner.learning-path-filter";
@@ -45,6 +46,7 @@ function loadView(): ViewMode {
         const v = localStorage.getItem(VIEW_KEY);
         if (v === "graph") return "graph";
         if (v === "map") return "map";
+        if (v === "paths") return "paths";
         return "personal";
     } catch {
         return "personal";
@@ -138,6 +140,11 @@ function ViewSwitcher({
                 <LayoutList size={16} aria-hidden="true" />,
             )}
             {btn(
+                "paths",
+                t("learning_path.view.paths", "My paths"),
+                <ListChecks size={16} aria-hidden="true" />,
+            )}
+            {btn(
                 "map",
                 t("learning_path.view.map", "Map"),
                 <MapIcon size={16} aria-hidden="true" />,
@@ -200,6 +207,35 @@ export default function LearningPathPersonal() {
             <Suspense fallback={viewFallback}>
                 <LearningPathGraph headerExtra={switcher} />
             </Suspense>
+        );
+    }
+
+    if (view === "paths") {
+        return (
+            <main
+                id="main"
+                className="page learning-path-page"
+                data-testid="learning-path-page"
+            >
+                <header className="mb-4 flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h1 className="text-2xl font-bold text-foreground">
+                            {t(
+                                "learning_path.custom.title",
+                                "My Learning Paths",
+                            )}
+                        </h1>
+                        {switcher}
+                    </div>
+                    <p className="text-sm text-fg-muted">
+                        {t(
+                            "learning_path.custom.subtitle",
+                            "Assemble lessons into your own ordered path.",
+                        )}
+                    </p>
+                </header>
+                <CustomPathsView userId={userId} />
+            </main>
         );
     }
 

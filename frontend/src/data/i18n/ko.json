@@ -2445,6 +2445,7 @@
       "track_aria": "레슨 {total}개 중 {done}개 완료"
     },
     "view": {
+      "paths": "내 경로",
       "label": "보기",
       "personal": "개인",
       "graph": "그래프",
@@ -2512,7 +2513,27 @@
       "start_adaptive": "적응형 레슨 시작",
       "region_label": "오류 클러스터 패널"
     },
-    "search_label": "레슨 검색 — Enter를 눌러 첫 번째 일치 항목으로 이동"
+    "search_label": "레슨 검색 — Enter를 눌러 첫 번째 일치 항목으로 이동",
+    "custom": {
+      "title": "내 학습 경로",
+      "subtitle": "레슨을 나만의 순서있는 경로로 구성하세요.",
+      "create_title": "경로 만들기",
+      "name_placeholder": "경로 이름",
+      "description_placeholder": "설명 (선택 사항)",
+      "create": "경로 만들기",
+      "empty": "아직 사용자 경로가 없습니다. 위에서 하나 만들고 레슨을 추가하세요.",
+      "progress": "{total}개 중 {done}개 완료",
+      "continue": "계속하기",
+      "delete": "경로 삭제",
+      "next_hint": "다음: {lesson}",
+      "add_lesson": "레슨 추가",
+      "search_lessons": "레슨 검색…",
+      "no_lessons": "레슨을 찾을 수 없습니다.",
+      "done_adding": "완료",
+      "move_up": "위로 이동",
+      "move_down": "아래로 이동",
+      "remove_lesson": "레슨 제거"
+    }
   },
   "pwa": {
     "offline_message": "오프라인 상태입니다. 저장된 콘텐츠를 사용할 수 있습니다.",

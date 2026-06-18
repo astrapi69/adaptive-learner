@@ -2445,6 +2445,7 @@
       "track_aria": "{done} dari {total} pelajaran selesai"
     },
     "view": {
+      "paths": "Jalur saya",
       "label": "Tampilan",
       "personal": "Pribadi",
       "graph": "Grafik",
@@ -2512,7 +2513,27 @@
       "start_adaptive": "Mulai pelajaran adaptif",
       "region_label": "Panel klaster kesalahan"
     },
-    "search_label": "Cari pelajaran — tekan Enter untuk menuju hasil pertama"
+    "search_label": "Cari pelajaran — tekan Enter untuk menuju hasil pertama",
+    "custom": {
+      "title": "Jalur belajar saya",
+      "subtitle": "Susun pelajaran menjadi jalur Anda sendiri yang terurut.",
+      "create_title": "Buat jalur",
+      "name_placeholder": "Nama jalur",
+      "description_placeholder": "Deskripsi (opsional)",
+      "create": "Buat jalur",
+      "empty": "Belum ada jalur khusus. Buat satu di atas dan tambahkan pelajaran.",
+      "progress": "{done} dari {total} selesai",
+      "continue": "Lanjutkan",
+      "delete": "Hapus jalur",
+      "next_hint": "Berikutnya: {lesson}",
+      "add_lesson": "Tambah pelajaran",
+      "search_lessons": "Cari pelajaran…",
+      "no_lessons": "Tidak ada pelajaran ditemukan.",
+      "done_adding": "Selesai",
+      "move_up": "Pindah ke atas",
+      "move_down": "Pindah ke bawah",
+      "remove_lesson": "Hapus pelajaran"
+    }
   },
   "pwa": {
     "offline_message": "Kamu sedang luring. Konten yang tersimpan dapat diakses.",
