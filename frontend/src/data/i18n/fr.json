@@ -1817,6 +1817,7 @@
         "copy": "Copier le résultat",
         "download": "Enregistrer comme fichier",
         "download_json": "Exporter en JSON",
+        "anki": "Exporter les cartes (Anki)",
         "copied": "Résultat copié dans le presse-papiers",
         "copy_failed": "Impossible de copier dans le presse-papiers",
         "title": "Résultat de la leçon",

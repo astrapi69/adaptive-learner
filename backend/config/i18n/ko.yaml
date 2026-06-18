@@ -1655,6 +1655,7 @@ lesson:
       copy: "결과 복사"
       download: "파일로 저장"
       download_json: "JSON으로 내보내기"
+      anki: "카드 내보내기 (Anki)"
       copied: "결과가 클립보드에 복사되었습니다"
       copy_failed: "클립보드에 복사할 수 없었습니다"
       title: "레슨 결과"

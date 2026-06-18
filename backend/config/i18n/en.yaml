@@ -1655,6 +1655,7 @@ lesson:
       copy: "Copy result"
       download: "Save as file"
       download_json: "Export as JSON"
+      anki: "Export cards (Anki)"
       copied: "Result copied to clipboard"
       copy_failed: "Could not copy to clipboard"
       title: "Lesson result"

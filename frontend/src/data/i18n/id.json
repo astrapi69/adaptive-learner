@@ -1779,6 +1779,7 @@
         "copy": "Salin hasil",
         "download": "Simpan sebagai berkas",
         "download_json": "Ekspor sebagai JSON",
+        "anki": "Ekspor kartu (Anki)",
         "copied": "Hasil disalin ke papan klip",
         "copy_failed": "Tidak dapat menyalin ke papan klip",
         "title": "Hasil pelajaran",

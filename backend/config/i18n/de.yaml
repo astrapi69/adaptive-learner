@@ -1684,6 +1684,7 @@ lesson:
       copy: "Ergebnis kopieren"
       download: "Als Datei speichern"
       download_json: "Als JSON exportieren"
+      anki: "Karten exportieren (Anki)"
       copied: "Ergebnis in Zwischenablage kopiert"
       copy_failed: "Kopieren in die Zwischenablage fehlgeschlagen"
       title: "Lektionsergebnis"
