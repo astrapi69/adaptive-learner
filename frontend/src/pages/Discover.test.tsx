@@ -9,6 +9,7 @@
 
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import Discover from "./Discover";
@@ -81,9 +82,17 @@ beforeEach(() => {
   listSetsMock.mockResolvedValue({ sets: [], sources: [] });
 });
 
+function renderDiscover() {
+  return render(
+    <MemoryRouter>
+      <Discover />
+    </MemoryRouter>,
+  );
+}
+
 describe("Discover page", () => {
   it("loads indices and renders one card per set", async () => {
-    render(<Discover />);
+    renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     expect(screen.getByText("Spanish A1")).toBeInTheDocument();
     expect(screen.getByText("French A1")).toBeInTheDocument();
@@ -95,7 +104,7 @@ describe("Discover page", () => {
       sets: [{ source: "owner/repo", id: "es-a1", cached_version: "1.0.0" }],
       sources: [],
     });
-    render(<Discover />);
+    renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     expect(screen.getByTestId("discover-card-es-a1-downloaded")).toBeInTheDocument();
     // The other set is still downloadable.
@@ -104,7 +113,7 @@ describe("Discover page", () => {
 
   it("downloads a set via contentLoader.downloadSet(repo_url, id)", async () => {
     downloadSetMock.mockResolvedValue({});
-    render(<Discover />);
+    renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     fireEvent.click(screen.getByTestId("discover-card-fr-a1-download"));
     await waitFor(() =>
@@ -122,13 +131,29 @@ describe("Discover page", () => {
     expect(typeof downloadSetMock.mock.calls[0][2]).toBe("function");
   });
 
+  it("shows a 'Go to Content Browser' link only after a download (#772)", async () => {
+    downloadSetMock.mockResolvedValue({});
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // No back-link before any download.
+    expect(screen.queryByTestId("discover-to-content")).toBeNull();
+    fireEvent.click(screen.getByTestId("discover-card-fr-a1-download"));
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-to-content")).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("discover-to-content").querySelector("a")).toHaveAttribute(
+      "href",
+      "/content",
+    );
+  });
+
   it("removes a downloaded set via deleteSet, keeping it re-downloadable", async () => {
     deleteSetMock.mockResolvedValue(undefined);
     listSetsMock.mockResolvedValue({
       sets: [{ source: "owner/repo", id: "es-a1", cached_version: "1.0.0" }],
       sources: [],
     });
-    render(<Discover />);
+    renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     expect(screen.getByTestId("discover-card-es-a1-downloaded")).toBeInTheDocument();
     fireEvent.click(screen.getByTestId("discover-card-es-a1-remove"));
@@ -140,7 +165,7 @@ describe("Discover page", () => {
   });
 
   it("filters by the search field (debounced) and shows the no-results state", async () => {
-    render(<Discover />);
+    renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     fireEvent.change(screen.getByTestId("discover-search"), {
       target: { value: "zzzznomatch" },
@@ -152,7 +177,7 @@ describe("Discover page", () => {
   });
 
   it("filters down to a single set on a matching query", async () => {
-    render(<Discover />);
+    renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "French" } });
     await waitFor(
@@ -165,7 +190,7 @@ describe("Discover page", () => {
 
   it("shows the no-content empty state when no indices return sets", async () => {
     fetchAllIndicesMock.mockResolvedValue([]);
-    render(<Discover />);
+    renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-empty-none")).toBeInTheDocument());
   });
 });

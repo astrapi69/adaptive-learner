@@ -56,7 +56,7 @@ data_export:
   cat_settings: "Ajustes"
   cat_ai_config: "Copia de clave de IA"
 nav:
-  discover: "Descubrir"
+  discover: "Descubrir contenido"
   offline_long: "Sin conexión — las sesiones anteriores siguen disponibles"
   sync_pending: "{n} cambio(s) pendientes de sincronizar"
   statistics: "Estadísticas"
@@ -76,7 +76,7 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Modo Desarrollador activo — los avisos de error muestran detalles técnicos. Cámbialo en Ajustes."
-  content: Contenido
+  content: "Mi contenido"
   mode_badge_content: Contenido
   mode_badge_ai: "IA+Contenido"
   mode_badge_tooltip_content: "Sin clave API configurada — solo contenido predefinido. Añade una clave en Ajustes para activar funciones de IA."
@@ -1400,6 +1400,8 @@ ui:
     deselect_all: "Deselect all"
     show_more: "Show more"
     show_less: "Show less"
+    show_secret: "Mostrar valor"
+    hide_secret: "Ocultar valor"
     show_preview: "Show preview"
     hide_preview: "Hide preview"
     accept: "Accept"
@@ -1754,6 +1756,7 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  discover_more: "Descubrir más contenido"
   book:
     companion: "Complemento del libro"
     by_author: "por {author}"
@@ -2355,6 +2358,15 @@ pwa:
     action: "Actualizar"
     later: "Más tarde"
 share:
+  app:
+    heading: "Compartir la app"
+    qr_intro: "Comparte la app mediante un código QR para que otros puedan abrirla."
+    show_qr: "Mostrar código QR"
+    download_qr: "Descargar código QR"
+    copy_url: "Copiar URL"
+    copied: "Copiado"
+    share: "Compartir"
+    qr_alt: "Código QR que enlaza a la app"
   achievement:
     button: Compartir
     title: Comparte tu progreso
@@ -2693,6 +2705,7 @@ resource:
   free: "Gratis"
   paid: "Curso"
 discover:
+  to_content: "Ir al navegador de contenido"
   title: "Descubrir contenido"
   subtitle: "Encuentra material de aprendizaje antes de descargarlo."
   loading: "Cargando contenido disponible…"

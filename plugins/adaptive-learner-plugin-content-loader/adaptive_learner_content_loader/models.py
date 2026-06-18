@@ -199,6 +199,22 @@ class ContentSetAsset(BaseModel):
         return value
 
 
+class ContentSetBook(BaseModel):
+    """#769 — optional set-level book block (manifest ``sets[].book``).
+
+    Surfaced to the lesson's "Vertiefe das Thema" section as the first
+    media item. ``extra="ignore"`` tolerates future fields (e.g. ``isbn``,
+    ``year``) the media card doesn't consume.
+    """
+
+    model_config = ConfigDict(extra="ignore", frozen=True)
+
+    title: str = Field(min_length=1, max_length=300)
+    author: str | None = Field(default=None, max_length=300)
+    url: str | None = Field(default=None, max_length=2000)
+    asin: str | None = Field(default=None, max_length=20)
+
+
 class ContentSet(BaseModel):
     """One downloadable lesson set inside a ContentManifest.
 
@@ -359,6 +375,14 @@ class ContentSet(BaseModel):
             "per-file size limit (default 500 KiB)."
         ),
         max_length=500,
+    )
+    book: ContentSetBook | None = Field(
+        default=None,
+        description=(
+            "#769 — optional set-level book block (title/author/url/asin). "
+            "When present, the lesson's 'Vertiefe das Thema' section "
+            "auto-inserts it as the first media item."
+        ),
     )
 
     @model_validator(mode="before")

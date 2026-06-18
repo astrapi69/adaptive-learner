@@ -18,6 +18,7 @@ import type { SystemInfo } from "../../types/domain";
 
 import CreditsSection from "./CreditsSection";
 import DonationSection from "./DonationSection";
+import ShareAppSection from "./ShareAppSection";
 import LicenseResourcesSection from "./LicenseResourcesSection";
 import SupportSection from "./SupportSection";
 import SystemInfoSection from "./SystemInfoSection";
@@ -85,6 +86,7 @@ export default function AboutTab() {
           <VersionSection info={info} t={t} />
           <SystemInfoSection info={info} storageMode={storageMode} t={t} />
           <CreditsSection t={t} />
+          <ShareAppSection t={t} />
           <DonationSection t={t} />
           <LicenseResourcesSection info={info} t={t} />
         </div>

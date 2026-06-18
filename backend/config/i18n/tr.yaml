@@ -56,7 +56,7 @@ data_export:
   cat_settings: "Ayarlar"
   cat_ai_config: "AI anahtar yedeği"
 nav:
-  discover: "Keşfet"
+  discover: "İçerik keşfet"
   offline_long: "Çevrimdışı — önceki oturumlar okunabilir kalır"
   sync_pending: "{n} değişiklik eşitlenmeyi bekliyor"
   statistics: "İstatistikler"
@@ -76,7 +76,7 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın."
-  content: İçerik
+  content: "İçeriğim"
   mode_badge_content: İçerik
   mode_badge_ai: "Yapay Zeka+İçerik"
   mode_badge_tooltip_content: "Yapılandırılmış API anahtarı yok — yalnızca hazır içerik kullanılıyor. Yapay zeka özelliklerini etkinleştirmek için Ayarlar'dan anahtar ekleyin."
@@ -1398,6 +1398,8 @@ ui:
     deselect_all: "Seçimi kaldır"
     show_more: "Daha fazla göster"
     show_less: "Daha az göster"
+    show_secret: "Değeri göster"
+    hide_secret: "Değeri gizle"
     show_preview: "Önizlemeyi göster"
     hide_preview: "Önizlemeyi gizle"
     accept: "Kabul et"
@@ -1752,6 +1754,7 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  discover_more: "Daha fazla içerik bul"
   book:
     companion: "Kitap eki"
     by_author: "{author}"
@@ -2353,6 +2356,15 @@ pwa:
     action: "Güncelle"
     later: "Sonra"
 share:
+  app:
+    heading: "Uygulamayı paylaş"
+    qr_intro: "Başkalarının doğrudan açabilmesi için uygulamayı QR koduyla paylaş."
+    show_qr: "QR kodunu göster"
+    download_qr: "QR kodunu indir"
+    copy_url: "URL'yi kopyala"
+    copied: "Kopyalandı"
+    share: "Paylaş"
+    qr_alt: "Uygulamaya bağlanan QR kodu"
   achievement:
     button: Paylaş
     title: İlerlemeni paylaş
@@ -2691,6 +2703,7 @@ resource:
   free: "Ücretsiz"
   paid: "Kurs"
 discover:
+  to_content: "İçerik Tarayıcısına git"
   title: "İçerik keşfet"
   subtitle: "Öğrenme materyalini indirmeden önce bul."
   loading: "Kullanılabilir içerik yükleniyor…"

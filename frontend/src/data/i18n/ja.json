@@ -62,7 +62,7 @@
     "cat_ai_config": "AI キーのバックアップ"
   },
   "nav": {
-    "discover": "見つける",
+    "discover": "コンテンツを見つける",
     "offline_long": "オフライン — 過去のセッションは引き続き閲覧できます",
     "sync_pending": "{n} 件の変更が同期待ちです",
     "statistics": "統計",
@@ -82,7 +82,7 @@
     "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。",
-    "content": "コンテンツ",
+    "content": "マイコンテンツ",
     "mode_badge_content": "コンテンツ",
     "mode_badge_ai": "AI+コンテンツ",
     "mode_badge_tooltip_content": "API キーが設定されていません — 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。",
@@ -1507,6 +1507,8 @@
       "deselect_all": "選択を解除",
       "show_more": "もっと見る",
       "show_less": "折りたたむ",
+      "show_secret": "値を表示",
+      "hide_secret": "値を非表示",
       "show_preview": "プレビューを表示",
       "hide_preview": "プレビューを非表示",
       "accept": "承認",
@@ -1897,6 +1899,7 @@
     }
   },
   "content": {
+    "discover_more": "もっとコンテンツを見つける",
     "book": {
       "companion": "書籍ガイド",
       "by_author": "{author} 著",
@@ -2582,6 +2585,16 @@
     }
   },
   "share": {
+    "app": {
+      "heading": "アプリを共有",
+      "qr_intro": "QRコードでアプリを共有し、他の人がすぐに開けるようにします。",
+      "show_qr": "QRコードを表示",
+      "download_qr": "QRコードをダウンロード",
+      "copy_url": "URLをコピー",
+      "copied": "コピーしました",
+      "share": "共有",
+      "qr_alt": "アプリへのリンクのQRコード"
+    },
     "achievement": {
       "button": "共有",
       "title": "進捗を共有",
@@ -2939,6 +2952,7 @@
     "paid": "コース"
   },
   "discover": {
+    "to_content": "コンテンツブラウザへ",
     "title": "コンテンツを見つける",
     "subtitle": "ダウンロードする前に学習教材を見つけましょう。",
     "loading": "利用可能なコンテンツを読み込み中…",

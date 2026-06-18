@@ -27,6 +27,7 @@ import { parse as parseYaml } from "yaml";
 import type {
   ContentLesson,
   ContentLessonList,
+  ContentSetBook,
   ContentSetEntry,
   ContentSetSource,
   ContentSetsList,
@@ -299,6 +300,28 @@ interface ParsedSet {
    *  (source-language tree, e.g. ``sets/de/fr-a1``). Falls back
    *  to ``sets/{id}`` when omitted. */
   path?: string;
+  /** #769 — optional set-level book block (title/author/url/asin). */
+  book?: ParsedSetBook;
+}
+
+/** Manifest \`sets[].book\` block (#769). */
+interface ParsedSetBook {
+  title?: string;
+  author?: string | null;
+  url?: string | null;
+  asin?: string | null;
+}
+
+/** Project a raw manifest book block into a {@link ContentSetBook}, or
+ *  ``null`` when it has no title (#769). */
+function asContentSetBook(book: ParsedSetBook | undefined): ContentSetBook | null {
+  if (!book || typeof book.title !== "string" || !book.title.trim()) return null;
+  return {
+    title: book.title,
+    author: typeof book.author === "string" ? book.author : null,
+    url: typeof book.url === "string" ? book.url : null,
+    asin: typeof book.asin === "string" ? book.asin : null,
+  };
 }
 
 /** Repo-relative base dir for a set's manifest / lessons /
@@ -356,6 +379,7 @@ function asContentSetEntry(
     cover_image: parsed.cover_image ?? null,
     cached_version: cachedVersion,
     update_available: updateAvailable,
+    book: asContentSetBook(parsed.book),
   };
 }
 
@@ -459,6 +483,7 @@ async function rowToCachedEntry(row: ContentSetRow): Promise<ContentSetEntry> {
     cover_image: row.cover_image,
     cached_version: row.version,
     update_available: false,
+    book: row.book ?? null,
   };
 }
 
@@ -662,6 +687,7 @@ export async function downloadSetDexie(
       cover_image: target.cover_image ?? null,
       downloaded_at: new Date().toISOString(),
       manifest_yaml: setManifestText,
+      book: asContentSetBook(target.book),
     };
     await db.contentSets.put(row);
 

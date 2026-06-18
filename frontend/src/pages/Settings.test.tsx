@@ -305,14 +305,23 @@ describe("Settings page", () => {
     });
   });
 
-  it("wraps each provider's password input in a <form> (Chrome DOM warning #119)", async () => {
+  it("renders each API-key input as a non-password field that opts out of autofill (#767)", async () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
     for (const provider of ["anthropic", "openai", "gemini"]) {
       const input = screen.getByTestId(`api-key-input-${provider}`);
-      expect(input).toHaveAttribute("type", "password");
-      expect(input.closest("form")).not.toBeNull();
+      // type="text" (not "password") so the browser password manager
+      // does not offer to autofill an API key.
+      expect(input).toHaveAttribute("type", "text");
+      expect(input).not.toHaveAttribute("type", "password");
+      expect(input).toHaveAttribute("autocomplete", "off");
+      expect(input).toHaveAttribute("data-1p-ignore");
+      expect(input).toHaveAttribute("data-lpignore", "true");
+      expect(input).toHaveAttribute("data-bwignore", "true");
+      expect(input).toHaveAttribute("data-form-type", "other");
+      // No <form> wrapper (form tags add to autofill detection).
+      expect(input.closest("form")).toBeNull();
     }
   });
 

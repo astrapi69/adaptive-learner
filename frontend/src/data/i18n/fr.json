@@ -62,7 +62,7 @@
     "cat_ai_config": "Sauvegarde de clé IA"
   },
   "nav": {
-    "discover": "Découvrir",
+    "discover": "Découvrir du contenu",
     "offline_long": "Hors ligne — les sessions passées restent lisibles",
     "sync_pending": "{n} modification(s) en attente de synchronisation",
     "statistics": "Statistiques",
@@ -82,7 +82,7 @@
     "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactivez-le dans les Paramètres.",
-    "content": "Contenu",
+    "content": "Mon contenu",
     "mode_badge_content": "Contenu",
     "mode_badge_ai": "IA+Contenu",
     "mode_badge_tooltip_content": "Aucune clé API configurée — uniquement le contenu pré-construit. Ajoute une clé dans les Paramètres pour activer les fonctions IA.",
@@ -1507,6 +1507,8 @@
       "deselect_all": "Deselect all",
       "show_more": "Show more",
       "show_less": "Show less",
+      "show_secret": "Afficher la valeur",
+      "hide_secret": "Masquer la valeur",
       "show_preview": "Show preview",
       "hide_preview": "Hide preview",
       "accept": "Accept",
@@ -1897,6 +1899,7 @@
     }
   },
   "content": {
+    "discover_more": "Trouver plus de contenu",
     "book": {
       "companion": "Complément du livre",
       "by_author": "par {author}",
@@ -2582,6 +2585,16 @@
     }
   },
   "share": {
+    "app": {
+      "heading": "Partager l'application",
+      "qr_intro": "Partage l'application par code QR pour que d'autres puissent l'ouvrir.",
+      "show_qr": "Afficher le code QR",
+      "download_qr": "Télécharger le code QR",
+      "copy_url": "Copier l'URL",
+      "copied": "Copié",
+      "share": "Partager",
+      "qr_alt": "Code QR menant à l'application"
+    },
     "achievement": {
       "button": "Partager",
       "title": "Partagez votre progression",
@@ -2939,6 +2952,7 @@
     "paid": "Cours"
   },
   "discover": {
+    "to_content": "Aller au navigateur de contenu",
     "title": "Découvrir du contenu",
     "subtitle": "Trouvez du matériel d'apprentissage avant de le télécharger.",
     "loading": "Chargement du contenu disponible…",

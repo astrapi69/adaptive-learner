@@ -82,6 +82,68 @@ export interface MediaResource {
   /** ``true`` = reciprocity proven (required for ``course`` / ``website``). */
   partnership?: boolean;
   tags?: string[];
+  /** Optional sort weight (#769). Lower sorts first; ``null`` means "use the
+   *  default" ({@link DEFAULT_MEDIA_PRIORITY}). An auto-inserted set book is
+   *  given priority ``0`` so it leads the "Vertiefe das Thema" section. */
+  priority?: number | null;
+}
+
+/** Default sort weight for a media item without an explicit ``priority``
+ *  (#769). Videos/podcasts/articles land here; an auto-book uses ``0``. */
+export const DEFAULT_MEDIA_PRIORITY = 10;
+
+/** The effective sort weight of a resource: its ``priority`` when set,
+ *  else {@link DEFAULT_MEDIA_PRIORITY}. */
+export function effectiveMediaPriority(resource: MediaResource): number {
+  return typeof resource.priority === "number"
+    ? resource.priority
+    : DEFAULT_MEDIA_PRIORITY;
+}
+
+/** A set's manifest-level book block (#769). Only the fields the media card
+ *  needs; ``url`` OR ``asin`` must be present to yield a clickable link. */
+export interface SetBook {
+  title: string;
+  author?: string | null;
+  /** Direct (non-affiliate) http(s) link to the book, when given. */
+  url?: string | null;
+  /** Amazon ASIN; used to build a link when ``url`` is absent. */
+  asin?: string | null;
+}
+
+/** Build the Amazon product URL for an ASIN (locale-neutral .com; ASINs
+ *  resolve on every marketplace). */
+function amazonUrlForAsin(asin: string): string {
+  return `https://www.amazon.com/dp/${encodeURIComponent(asin)}`;
+}
+
+/**
+ * Project a set's manifest \`book\` block into a priority-0 ``book``
+ * {@link MediaResource} so it leads the lesson's media list (#769), or
+ * ``null`` when the book has neither a ``url`` nor an ``asin`` (no link to
+ * offer) or no title.
+ *
+ * @param book the set-level book block.
+ * @param domain the set's content domain (stamped on the resource).
+ */
+export function bookToMediaResource(
+  book: SetBook | null | undefined,
+  domain: string,
+): MediaResource | null {
+  if (!book) return null;
+  const title = asString(book.title);
+  if (!title) return null;
+  const url = asString(book.url) ?? (book.asin ? amazonUrlForAsin(book.asin) : null);
+  if (!url || !/^https?:\/\//i.test(url)) return null;
+  return {
+    type: "book",
+    title,
+    url,
+    domain,
+    author: asString(book.author),
+    free: false,
+    priority: 0,
+  };
 }
 
 function asString(value: unknown): string | null {
@@ -156,6 +218,7 @@ export function projectMediaResource(
     author: asString(entry.author),
     free: typeof entry.free === "boolean" ? entry.free : null,
     partnership,
+    priority: typeof entry.priority === "number" ? entry.priority : null,
     ...(tags && tags.length > 0 ? { tags } : {}),
   };
 }

@@ -58,7 +58,7 @@ data_export:
   cat_settings: सेटिंग्स
   cat_ai_config: AI कुंजी बैकअप
 nav:
-  discover: "खोजें"
+  discover: "सामग्री खोजें"
   offline_long: "ऑफ़लाइन — पिछले सत्र पढ़ने योग्य रहते हैं"
   sync_pending: "{n} परिवर्तन सिंक होने की प्रतीक्षा में"
   statistics: "आँकड़े"
@@ -78,7 +78,7 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: डेवलपर मोड चालू है — त्रुटि टोस्ट पूरी तकनीकी जानकारी दिखाते हैं। सेटिंग्स में टॉगल करें।
-  content: सामग्री
+  content: "मेरी सामग्री"
   mode_badge_content: सामग्री
   mode_badge_ai: AI+सामग्री
   mode_badge_tooltip_content: कोई API कुंजी कॉन्फ़िगर नहीं — केवल पूर्व-निर्मित सामग्री का उपयोग। AI सुविधाएँ सक्षम करने के लिए सेटिंग्स में कुंजी जोड़ें।
@@ -1397,6 +1397,8 @@ ui:
     deselect_all: सभी अचयनित करें
     show_more: अधिक दिखाएँ
     show_less: कम दिखाएँ
+    show_secret: "मान दिखाएँ"
+    hide_secret: "मान छिपाएँ"
     show_preview: पूर्वावलोकन दिखाएँ
     hide_preview: पूर्वावलोकन छिपाएँ
     accept: स्वीकार करें
@@ -1747,6 +1749,7 @@ lesson:
     action_resume: जारी रखें
     action_restart: फिर से शुरू करें
 content:
+  discover_more: "और सामग्री खोजें"
   book:
     companion: पुस्तक साथी
     by_author: '{author} द्वारा'
@@ -2345,6 +2348,15 @@ pwa:
     action: "अपडेट करें"
     later: "बाद में"
 share:
+  app:
+    heading: "ऐप साझा करें"
+    qr_intro: "ऐप को QR कोड के ज़रिए साझा करें ताकि दूसरे इसे सीधे खोल सकें।"
+    show_qr: "QR कोड दिखाएं"
+    download_qr: "QR कोड डाउनलोड करें"
+    copy_url: "URL कॉपी करें"
+    copied: "कॉपी किया गया"
+    share: "साझा करें"
+    qr_alt: "ऐप से जुड़ा QR कोड"
   achievement:
     button: साझा करें
     title: अपनी प्रगति साझा करें
@@ -2677,6 +2689,7 @@ resource:
   free: "मुफ़्त"
   paid: "कोर्स"
 discover:
+  to_content: "कॉन्टेंट ब्राउज़र पर जाएं"
   title: "सामग्री खोजें"
   subtitle: "डाउनलोड करने से पहले सीखने की सामग्री खोजें।"
   loading: "उपलब्ध सामग्री लोड हो रही है…"

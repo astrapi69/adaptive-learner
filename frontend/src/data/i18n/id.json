@@ -62,7 +62,7 @@
     "cat_ai_config": "Cadangan kunci AI"
   },
   "nav": {
-    "discover": "Jelajahi",
+    "discover": "Jelajahi konten",
     "offline_long": "Luring — sesi sebelumnya tetap dapat dibaca",
     "sync_pending": "{n} perubahan menunggu untuk disinkronkan",
     "statistics": "Statistik",
@@ -82,7 +82,7 @@
     "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode Pengembang aktif — pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan.",
-    "content": "Konten",
+    "content": "Konten saya",
     "mode_badge_content": "Konten",
     "mode_badge_ai": "AI+Konten",
     "mode_badge_tooltip_content": "Tidak ada kunci API yang dikonfigurasi — hanya menggunakan konten siap pakai. Tambahkan kunci di Pengaturan untuk mengaktifkan fitur AI.",
@@ -1507,6 +1507,8 @@
       "deselect_all": "Batalkan semua pilihan",
       "show_more": "Tampilkan lebih banyak",
       "show_less": "Tampilkan lebih sedikit",
+      "show_secret": "Tampilkan nilai",
+      "hide_secret": "Sembunyikan nilai",
       "show_preview": "Tampilkan pratinjau",
       "hide_preview": "Sembunyikan pratinjau",
       "accept": "Terima",
@@ -1897,6 +1899,7 @@
     }
   },
   "content": {
+    "discover_more": "Temukan konten lainnya",
     "book": {
       "companion": "Pendamping buku",
       "by_author": "oleh {author}",
@@ -2582,6 +2585,16 @@
     }
   },
   "share": {
+    "app": {
+      "heading": "Bagikan aplikasi",
+      "qr_intro": "Bagikan aplikasi lewat kode QR agar orang lain bisa membukanya langsung.",
+      "show_qr": "Tampilkan kode QR",
+      "download_qr": "Unduh kode QR",
+      "copy_url": "Salin URL",
+      "copied": "Disalin",
+      "share": "Bagikan",
+      "qr_alt": "Kode QR yang menautkan ke aplikasi"
+    },
     "achievement": {
       "button": "Bagikan",
       "title": "Bagikan progres Anda",
@@ -2939,6 +2952,7 @@
     "paid": "Kursus"
   },
   "discover": {
+    "to_content": "Buka Penjelajah Konten",
     "title": "Jelajahi konten",
     "subtitle": "Temukan materi belajar sebelum mengunduhnya.",
     "loading": "Memuat konten yang tersedia…",

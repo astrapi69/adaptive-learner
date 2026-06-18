@@ -62,7 +62,7 @@
     "cat_ai_config": "KI-Schlüssel-Sicherung"
   },
   "nav": {
-    "discover": "Entdecken",
+    "discover": "Inhalte entdecken",
     "offline_long": "Offline — frühere Sitzungen bleiben lesbar",
     "sync_pending": "{n} Änderung(en) warten auf Sync",
     "statistics": "Statistik",
@@ -82,7 +82,7 @@
     "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Entwicklermodus aktiv — Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar.",
-    "content": "Inhalte",
+    "content": "Meine Inhalte",
     "mode_badge_content": "Inhalte",
     "mode_badge_ai": "KI+Inhalte",
     "mode_badge_tooltip_content": "Kein API-Schlüssel konfiguriert — nur vorgefertigte Inhalte. Schlüssel in den Einstellungen hinterlegen, um KI-Funktionen zu aktivieren.",
@@ -1507,6 +1507,8 @@
       "deselect_all": "Auswahl aufheben",
       "show_more": "Mehr anzeigen",
       "show_less": "Weniger anzeigen",
+      "show_secret": "Wert anzeigen",
+      "hide_secret": "Wert verbergen",
       "show_preview": "Vorschau anzeigen",
       "hide_preview": "Vorschau ausblenden",
       "accept": "Annehmen",
@@ -1897,6 +1899,7 @@
     }
   },
   "content": {
+    "discover_more": "Mehr Inhalte entdecken",
     "book": {
       "companion": "Buch-Begleiter",
       "by_author": "von {author}",
@@ -2582,6 +2585,16 @@
     }
   },
   "share": {
+    "app": {
+      "heading": "Die App teilen",
+      "qr_intro": "Teile die App per QR-Code, damit andere sie direkt öffnen können.",
+      "show_qr": "QR-Code anzeigen",
+      "download_qr": "QR-Code herunterladen",
+      "copy_url": "URL kopieren",
+      "copied": "Kopiert",
+      "share": "Teilen",
+      "qr_alt": "QR-Code, der zur App führt"
+    },
     "achievement": {
       "button": "Teilen",
       "title": "Fortschritt teilen",
@@ -2939,6 +2952,7 @@
     "paid": "Kurs"
   },
   "discover": {
+    "to_content": "Zum Content Browser",
     "title": "Inhalte entdecken",
     "subtitle": "Finde Lernmaterial, bevor du es herunterlädst.",
     "loading": "Verfügbare Inhalte werden geladen…",

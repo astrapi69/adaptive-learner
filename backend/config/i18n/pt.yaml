@@ -56,7 +56,7 @@ data_export:
   cat_settings: "Configurações"
   cat_ai_config: "Backup de chave de IA"
 nav:
-  discover: "Descobrir"
+  discover: "Descobrir conteúdo"
   offline_long: "Offline — as sessões anteriores continuam acessíveis"
   sync_pending: "{n} alteração(ões) aguardando sincronização"
   statistics: "Estatísticas"
@@ -76,7 +76,7 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Modo desenvolvedor ativo — as notificações de erro mostram detalhes técnicos. Desative em Definições."
-  content: Conteúdo
+  content: "Meu conteúdo"
   mode_badge_content: Conteúdo
   mode_badge_ai: "IA+Conteúdo"
   mode_badge_tooltip_content: "Sem chave API configurada — apenas conteúdo pré-construído. Adiciona uma chave em Definições para ativar as funcionalidades IA."
@@ -1398,6 +1398,8 @@ ui:
     deselect_all: "Limpar seleção"
     show_more: "Mostrar mais"
     show_less: "Mostrar menos"
+    show_secret: "Mostrar valor"
+    hide_secret: "Ocultar valor"
     show_preview: "Mostrar pré-visualização"
     hide_preview: "Ocultar pré-visualização"
     accept: "Aceitar"
@@ -1752,6 +1754,7 @@ lesson:
     action_restart: "Recomeçar"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  discover_more: "Descobrir mais conteúdo"
   book:
     companion: "Companhia do livro"
     by_author: "por {author}"
@@ -2353,6 +2356,15 @@ pwa:
     action: "Atualizar"
     later: "Mais tarde"
 share:
+  app:
+    heading: "Compartilhar o app"
+    qr_intro: "Compartilhe o app por código QR para que outros possam abri-lo."
+    show_qr: "Mostrar código QR"
+    download_qr: "Baixar código QR"
+    copy_url: "Copiar URL"
+    copied: "Copiado"
+    share: "Compartilhar"
+    qr_alt: "Código QR que leva ao app"
   achievement:
     button: Compartilhar
     title: Compartilhe seu progresso
@@ -2691,6 +2703,7 @@ resource:
   free: "Grátis"
   paid: "Curso"
 discover:
+  to_content: "Ir para o navegador de conteúdo"
   title: "Descobrir conteúdo"
   subtitle: "Encontre material de aprendizagem antes de baixá-lo."
   loading: "Carregando conteúdo disponível…"
