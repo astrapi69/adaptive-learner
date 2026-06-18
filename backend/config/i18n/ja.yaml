@@ -56,6 +56,7 @@ data_export:
   cat_settings: "設定"
   cat_ai_config: "AI キーのバックアップ"
 nav:
+  discover: "見つける"
   offline_long: "オフライン — 過去のセッションは引き続き閲覧できます"
   sync_pending: "{n} 件の変更が同期待ちです"
   statistics: "統計"
@@ -2654,3 +2655,51 @@ resource:
   type_website: "ウェブサイト"
   free: "無料"
   paid: "コース"
+discover:
+  title: "コンテンツを見つける"
+  subtitle: "ダウンロードする前に学習教材を見つけましょう。"
+  loading: "利用可能なコンテンツを読み込み中…"
+  search_placeholder: "スペイン語、AI、心理学…"
+  search_aria: "利用可能なコンテンツを検索"
+  search_clear: "検索をクリア"
+  filter:
+    all: "すべて"
+    language: "言語"
+    level: "レベル"
+    domain: "分野"
+    trust: "信頼度"
+    ai_checked: "AIチェック済み"
+    "yes": "はい"
+    "no": "いいえ"
+  trust:
+    official: "公式推奨"
+    verified: "検証済み"
+    validated: "確認済み"
+  sort:
+    label: "並べ替え"
+    relevance: "関連度"
+    newest: "新しい順"
+    lessons: "レッスン数"
+  domain:
+    language: "言語"
+    ai: "AI"
+    psychology: "心理学"
+    programming: "プログラミング"
+  result:
+    count: "{n} セット"
+  empty:
+    no_sets: "まだ利用可能なコンテンツはありません。"
+    no_results: "「{query}」の結果はありません。"
+  card:
+    download: "ダウンロード"
+    downloading: "ダウンロード中…"
+    retry: "再試行"
+    downloaded: "ダウンロード済み"
+    lessons: "{n} レッスン"
+    cards: "{n} カード"
+    ai_checked: "AIチェック済み"
+  toast:
+    downloaded: "セットをダウンロードしました。"
+  error:
+    download_failed: "セットをダウンロードできませんでした。"
+    load_failed: "利用可能なコンテンツを読み込めませんでした。"

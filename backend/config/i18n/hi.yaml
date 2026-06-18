@@ -58,6 +58,7 @@ data_export:
   cat_settings: सेटिंग्स
   cat_ai_config: AI key backup
 nav:
+  discover: "खोजें"
   offline_long: "ऑफ़लाइन — पिछले सत्र पढ़ने योग्य रहते हैं"
   sync_pending: "{n} परिवर्तन सिंक होने की प्रतीक्षा में"
   statistics: "आँकड़े"
@@ -2640,3 +2641,51 @@ resource:
   type_website: "वेबसाइटें"
   free: "मुफ़्त"
   paid: "कोर्स"
+discover:
+  title: "सामग्री खोजें"
+  subtitle: "डाउनलोड करने से पहले सीखने की सामग्री खोजें।"
+  loading: "उपलब्ध सामग्री लोड हो रही है…"
+  search_placeholder: "स्पेनिश, एआई, मनोविज्ञान…"
+  search_aria: "उपलब्ध सामग्री खोजें"
+  search_clear: "खोज साफ़ करें"
+  filter:
+    all: "सभी"
+    language: "भाषा"
+    level: "स्तर"
+    domain: "क्षेत्र"
+    trust: "विश्वास"
+    ai_checked: "एआई-जाँचित"
+    "yes": "हाँ"
+    "no": "नहीं"
+  trust:
+    official: "आधिकारिक रूप से अनुशंसित"
+    verified: "सत्यापित"
+    validated: "मान्य"
+  sort:
+    label: "क्रमबद्ध करें"
+    relevance: "प्रासंगिकता"
+    newest: "नवीनतम"
+    lessons: "सर्वाधिक पाठ"
+  domain:
+    language: "भाषाएँ"
+    ai: "एआई"
+    psychology: "मनोविज्ञान"
+    programming: "प्रोग्रामिंग"
+  result:
+    count: "{n} सेट"
+  empty:
+    no_sets: "अभी कोई सामग्री उपलब्ध नहीं है।"
+    no_results: "“{query}” के लिए कोई परिणाम नहीं।"
+  card:
+    download: "डाउनलोड करें"
+    downloading: "डाउनलोड हो रहा है…"
+    retry: "पुनः प्रयास करें"
+    downloaded: "पहले से मौजूद"
+    lessons: "{n} पाठ"
+    cards: "{n} कार्ड"
+    ai_checked: "एआई-जाँचित"
+  toast:
+    downloaded: "सेट डाउनलोड हो गया और उपयोग के लिए तैयार है।"
+  error:
+    download_failed: "सेट डाउनलोड नहीं हो सका।"
+    load_failed: "उपलब्ध सामग्री लोड नहीं हो सकी।"

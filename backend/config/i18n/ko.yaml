@@ -56,6 +56,7 @@ data_export:
   cat_settings: "설정"
   cat_ai_config: "AI 키 백업"
 nav:
+  discover: "둘러보기"
   offline_long: "오프라인 — 지난 세션은 계속 읽을 수 있습니다"
   sync_pending: "동기화 대기 중인 변경 사항 {n}건"
   statistics: "통계"
@@ -2664,3 +2665,51 @@ resource:
   type_website: "웹사이트"
   free: "무료"
   paid: "강좌"
+discover:
+  title: "콘텐츠 둘러보기"
+  subtitle: "다운로드하기 전에 학습 자료를 찾아보세요."
+  loading: "사용 가능한 콘텐츠 불러오는 중…"
+  search_placeholder: "스페인어, AI, 심리학…"
+  search_aria: "사용 가능한 콘텐츠 검색"
+  search_clear: "검색 지우기"
+  filter:
+    all: "전체"
+    language: "언어"
+    level: "수준"
+    domain: "분야"
+    trust: "신뢰도"
+    ai_checked: "AI 검증됨"
+    "yes": "예"
+    "no": "아니요"
+  trust:
+    official: "공식 추천"
+    verified: "검증됨"
+    validated: "확인됨"
+  sort:
+    label: "정렬"
+    relevance: "관련성"
+    newest: "최신순"
+    lessons: "레슨 많은순"
+  domain:
+    language: "언어"
+    ai: "AI"
+    psychology: "심리학"
+    programming: "프로그래밍"
+  result:
+    count: "{n}개 세트"
+  empty:
+    no_sets: "아직 사용 가능한 콘텐츠가 없습니다."
+    no_results: "“{query}”에 대한 결과가 없습니다."
+  card:
+    download: "다운로드"
+    downloading: "다운로드 중…"
+    retry: "다시 시도"
+    downloaded: "이미 있음"
+    lessons: "{n}개 레슨"
+    cards: "{n}개 카드"
+    ai_checked: "AI 검증됨"
+  toast:
+    downloaded: "세트를 다운로드했습니다."
+  error:
+    download_failed: "세트를 다운로드할 수 없습니다."
+    load_failed: "사용 가능한 콘텐츠를 불러올 수 없습니다."

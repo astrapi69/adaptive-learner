@@ -56,6 +56,7 @@ data_export:
   cat_settings: "Ajustes"
   cat_ai_config: "Copia de clave de IA"
 nav:
+  discover: "Descubrir"
   offline_long: "Sin conexión — las sesiones anteriores siguen disponibles"
   sync_pending: "{n} cambio(s) pendientes de sincronizar"
   statistics: "Estadísticas"
@@ -2656,3 +2657,51 @@ resource:
   type_website: "Sitios web"
   free: "Gratis"
   paid: "Curso"
+discover:
+  title: "Descubrir contenido"
+  subtitle: "Encuentra material de aprendizaje antes de descargarlo."
+  loading: "Cargando contenido disponible…"
+  search_placeholder: "Español, IA, psicología…"
+  search_aria: "Buscar contenido disponible"
+  search_clear: "Borrar búsqueda"
+  filter:
+    all: "Todos"
+    language: "Idioma"
+    level: "Nivel"
+    domain: "Área"
+    trust: "Confianza"
+    ai_checked: "Verificado por IA"
+    "yes": "Sí"
+    "no": "No"
+  trust:
+    official: "Recomendado oficialmente"
+    verified: "Verificado"
+    validated: "Validado"
+  sort:
+    label: "Ordenar"
+    relevance: "Relevancia"
+    newest: "Más recientes"
+    lessons: "Más lecciones"
+  domain:
+    language: "Idiomas"
+    ai: "IA"
+    psychology: "Psicología"
+    programming: "Programación"
+  result:
+    count: "{n} sets"
+  empty:
+    no_sets: "Aún no hay contenido disponible."
+    no_results: "Sin resultados para «{query}»."
+  card:
+    download: "Descargar"
+    downloading: "Descargando…"
+    retry: "Reintentar"
+    downloaded: "Ya disponible"
+    lessons: "{n} lecciones"
+    cards: "{n} tarjetas"
+    ai_checked: "Verificado por IA"
+  toast:
+    downloaded: "Set descargado y listo para usar."
+  error:
+    download_failed: "No se pudo descargar el set."
+    load_failed: "No se pudo cargar el contenido disponible."
