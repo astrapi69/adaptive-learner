@@ -47,6 +47,7 @@ from .exceptions import (
     ContentNotFoundError,
     ContentSchemaError,
 )
+from .models import ContentSetBook
 from .schema import Lesson
 from .service import (
     ContentLoaderService,
@@ -128,6 +129,28 @@ def _wrap_loader_error(err: ContentLoaderError) -> Exception:
 # --- Response shapes --------------------------------------------------------
 
 
+class SetBookResponse(BaseModel):
+    """Wire shape for a set's optional book block (#769)."""
+
+    title: str
+    author: str | None
+    url: str | None
+    asin: str | None
+
+    @classmethod
+    def from_model(
+        cls, book: ContentSetBook | None
+    ) -> SetBookResponse | None:
+        if book is None:
+            return None
+        return cls(
+            title=book.title,
+            author=book.author,
+            url=book.url,
+            asin=book.asin,
+        )
+
+
 class SetEntryResponse(BaseModel):
     """Wire shape for one set in the Set Browser."""
 
@@ -151,9 +174,12 @@ class SetEntryResponse(BaseModel):
     cover_image: str | None
     cached_version: str | None
     update_available: bool
+    # #769 — optional set-level book; the lesson media section auto-inserts
+    # it as the first item. ``None`` when the set declares no book.
+    book: SetBookResponse | None = None
 
     @classmethod
-    def from_entry(cls, entry: SetEntry) -> "SetEntryResponse":
+    def from_entry(cls, entry: SetEntry) -> SetEntryResponse:
         return cls(
             source=entry.source,
             branch=entry.branch,
@@ -172,6 +198,7 @@ class SetEntryResponse(BaseModel):
             cover_image=entry.set.cover_image,
             cached_version=entry.cached_version,
             update_available=entry.update_available,
+            book=SetBookResponse.from_model(entry.set.book),
         )
 
 

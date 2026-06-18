@@ -64,7 +64,7 @@ import { notify } from "../utils/notify";
 import { celebrateMissions } from "../lib/praise/celebration-bus";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
-import type { RawAnswer } from "../storage/types";
+import type { ContentSetBook, RawAnswer } from "../storage/types";
 
 interface UrlParams {
   setSlug: string;
@@ -295,10 +295,14 @@ export default function LessonPage() {
   // resources in the "Vertiefe das Thema" section. Falls back to the
   // lesson's own domain when the set lookup misses.
   const [setDomain, setSetDomain] = useState<string | null>(null);
+  // #769 — the set's manifest book, surfaced as the first "Vertiefe das
+  // Thema" media item.
+  const [setBook, setSetBook] = useState<ContentSetBook | null>(null);
   useEffect(() => {
     if (!setId) {
       setSetTitle(null);
       setSetDomain(null);
+      setSetBook(null);
       return;
     }
     let cancelled = false;
@@ -309,10 +313,12 @@ export default function LessonPage() {
         const match = list.sets.find((s) => s.id === setId);
         setSetTitle(match?.title ?? null);
         setSetDomain(match?.domain ?? null);
+        setSetBook(match?.book ?? null);
       } catch {
         if (!cancelled) {
           setSetTitle(null);
           setSetDomain(null);
+          setSetBook(null);
         }
       }
     })();
@@ -469,7 +475,11 @@ export default function LessonPage() {
           onRepeat={() => goToStep(0)}
           onExit={() => navigate("/content")}
         />
-        <LessonResources lesson={lesson} setDomain={setDomain} />
+        <LessonResources
+          lesson={lesson}
+          setDomain={setDomain}
+          setBook={setBook}
+        />
         </>
       ) : (
         <LessonStepView

@@ -67,6 +67,28 @@ class TestContentSetValidators:
         assert s.domain == "psychology"
         assert s.domain_label == "Psychologie"
 
+    def test_book_defaults_to_none(self) -> None:
+        assert _valid_set().book is None
+
+    def test_accepts_set_level_book(self) -> None:
+        # #769 — a set declares a manifest-level book block (the lesson
+        # media section auto-inserts it). Before the field existed,
+        # extra="forbid" rejected the whole manifest (e.g. psych-intro).
+        # ``isbn``/``year`` are tolerated (extra="ignore") but not surfaced.
+        s = _valid_set(
+            book={
+                "title": "Psychologie",
+                "author": "Philip Zimbardo",
+                "isbn": "978-3868943238",
+                "url": "https://www.amazon.de/dp/3868943234/",
+            }
+        )
+        assert s.book is not None
+        assert s.book.title == "Psychologie"
+        assert s.book.author == "Philip Zimbardo"
+        assert s.book.url == "https://www.amazon.de/dp/3868943234/"
+        assert not hasattr(s.book, "isbn")
+
     def test_id_must_be_slug(self) -> None:
         with pytest.raises(ValidationError):
             _valid_set(id="French A1")
