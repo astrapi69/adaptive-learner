@@ -9,7 +9,29 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.87.0** (feature release -
+- **Current state:** **v1.88.0** (feature release -
+  **QR-code app sharing** - a "Share the app" entry in the About tab shows a
+  scannable QR code of the public app URL (copy / download-PNG / native
+  share), backed by a reusable `shared/QrCodeModal` that reuses the bundled
+  `qrcode` lib at error-correction level H (#775); **Content Browser / Discover
+  search separation** - the Content Browser ("Meine Inhalte") now shows only
+  locally downloaded content; the index search + per-set download moved to
+  `/discover` ("Inhalte entdecken"), cross-linked both ways (#773); **media
+  priority** + the set's companion book shown first in the "Vertiefe das Thema"
+  section (#770). Fix: Settings token/API-key inputs no longer trigger the
+  browser password manager (#768). Docs: release-time version-badge +
+  roadmap/backlog header refresh (#771). No schema/API/data change.)
+  v1.87.0 = (feature release - EXP-034 content discovery + search index
+  (#735/#738/#740/#742), Curriculum Builder (#737), daily learning reminders
+  (#744), EXP-031 `.alb` ZIP backup (#714), EXP-032 deterministic
+  content-quality checks (#712), Korean + Indonesian UI + social sharing +
+  Anki `.txt` export (#728), configurable review-session length (#724), editor
+  right-click context menu (#753), new teal brand mark + dark variant
+  (#719/#725), Hindi UI complete (#755/#758); late hardening - mobile nav
+  375px overflow (#759), dexie backup `.alb` assertion (#760), live
+  review-badge decrement (#761), equal-height choice tiles (#762); no
+  schema/API/data change.)
+  v1.86.0 = (feature release -
   **20 substantive commits**: **EXP-033 AI Content Validation** - set-wide AI
   quality checks with a batched prompt + JSON parser (#676), a "Check with AI"
   report UI (#683), an IndexedDB-cached report + Markdown export (#687), and a
