@@ -1410,6 +1410,8 @@ ui:
     deselect_all: "Deselect all"
     show_more: "Show more"
     show_less: "Show less"
+    show_secret: "Show value"
+    hide_secret: "Hide value"
     show_preview: "Show preview"
     hide_preview: "Hide preview"
     accept: "Accept"

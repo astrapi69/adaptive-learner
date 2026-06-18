@@ -36,6 +36,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DownloadProgress from "../shared/DownloadProgress";
+import { SecretInput } from "../shared/SecretInput";
 import { buildAddRepoLink } from "../lib/content/share-link";
 import { useI18n } from "../hooks/useI18n";
 import { getStorage } from "../storage";
@@ -730,14 +731,11 @@ export default function ContentRepoSettingsSection() {
             )}
           </p>
         )}
-        {/* #119 — the token field is type="password"; wrapping the field
-            group in a form stops Chrome's "Password field is not contained
-            in a form" warning (password managers / autofill detection). No
-            real submit — connect is a button below, outside the form. */}
-        <form
-          className="mt-3 flex flex-col gap-3"
-          onSubmit={(e) => e.preventDefault()}
-        >
+        {/* #767 — the token field is a SecretInput (type="text", autofill
+            suppressed), so no <form> wrapper is needed: connect is a button
+            below, and there is no real submit. A form would only add to
+            password-manager detection. */}
+        <div className="mt-3 flex flex-col gap-3">
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium">
               {t("content_repo.field.url", "GitHub repository URL")}
@@ -771,18 +769,19 @@ export default function ContentRepoSettingsSection() {
               <span className="font-medium">
                 {t("content_repo.field.token", "Token (private repos, optional)")}
               </span>
-              <Input
-                type="password"
+              <SecretInput
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 placeholder="ghp_…"
                 data-testid="content-repo-token"
-                autoComplete="off"
-                spellCheck={false}
+                aria-label={t(
+                  "content_repo.field.token",
+                  "Token (private repos, optional)",
+                )}
               />
             </label>
           </div>
-        </form>
+        </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button
             type="button"
