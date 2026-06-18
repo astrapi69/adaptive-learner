@@ -2700,8 +2700,12 @@ discover:
     lessons: "{n} leçons"
     cards: "{n} cartes"
     ai_checked: "Vérifié par IA"
+    remove: "Retirer"
+    progress: "Téléchargement des leçons"
   toast:
     downloaded: "Set téléchargé et prêt à l'emploi."
+    removed: "Set retiré. Vous pouvez le télécharger à nouveau quand vous voulez."
   error:
     download_failed: "Impossible de télécharger le set."
+    remove_failed: "Impossible de retirer le set."
     load_failed: "Impossible de charger le contenu disponible."

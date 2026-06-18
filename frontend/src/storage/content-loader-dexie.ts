@@ -545,6 +545,7 @@ export async function downloadSetDexie(
   source: string,
   setId: string,
   sources: ContentSetSource[] = DEFAULT_SOURCES,
+  onProgress?: (progress: { current: number; total: number }) => void,
 ): Promise<ContentSetEntry> {
   const src = sources.find((s) => s.source === source) ?? {
     source,
@@ -600,8 +601,12 @@ export async function downloadSetDexie(
     }
   }
 
-  // Fetch every lesson.
+  // Fetch every lesson, reporting per-lesson progress (DIS-06) so the UI
+  // can render "lesson N of M" while a single set downloads.
   const lessonBodies: Record<string, string> = {};
+  const lessonTotal = lessonFilenames.length;
+  onProgress?.({ current: 0, total: lessonTotal });
+  let lessonsDone = 0;
   for (const filename of lessonFilenames) {
     lessonBodies[filename] = await fetchText(
       src.source,
@@ -609,6 +614,8 @@ export async function downloadSetDexie(
       `${basePath}/lessons/${filename}`,
       token,
     );
+    lessonsDone += 1;
+    onProgress?.({ current: lessonsDone, total: lessonTotal });
   }
 
   // Phase 54 / v1.37.0 — fetch declared assets alongside

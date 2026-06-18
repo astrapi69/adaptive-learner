@@ -19,12 +19,13 @@
  * />
  */
 
-import { Check, Download, Loader2, ShieldCheck, Sparkles } from "lucide-react";
+import { Check, Download, Loader2, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { SearchableSet } from "../lib/content/search-index-loader";
+import DownloadProgress from "./DownloadProgress";
 
 export type SetDiscoveryDownloadState = "idle" | "downloading" | "done" | "error";
 
@@ -45,6 +46,10 @@ export interface SetDiscoveryCardLabels {
   aiChecked: string;
   /** Trust badge label (Official / Verified / Validated); empty = no badge. */
   trust: string;
+  /** Remove-set button label (rendered only when ``onRemove`` is given). */
+  remove: string;
+  /** Label above the per-lesson download progress bar. */
+  progress: string;
 }
 
 export interface SetDiscoveryCardProps {
@@ -52,7 +57,12 @@ export interface SetDiscoveryCardProps {
   isDownloaded: boolean;
   /** Download progress state for this card (defaults to "idle"). */
   state?: SetDiscoveryDownloadState;
+  /** Per-lesson download progress, shown while ``state === "downloading"``. */
+  progress?: { current: number; total: number };
   onDownload: (set: SearchableSet) => void;
+  /** Remove a downloaded set (deletes its lessons; keeps the index entry).
+   *  Omit to hide the remove action on downloaded sets. */
+  onRemove?: (set: SearchableSet) => void;
   /** Pre-formatted language badge text, e.g. "DE → ES". */
   languageLabel: string;
   labels: SetDiscoveryCardLabels;
@@ -63,7 +73,9 @@ export default function SetDiscoveryCard({
   set,
   isDownloaded,
   state = "idle",
+  progress,
   onDownload,
+  onRemove,
   languageLabel,
   labels,
   testId = "set-discovery-card",
@@ -117,16 +129,39 @@ export default function SetDiscoveryCard({
         ) : null}
       </div>
 
-      <div className="mt-1 flex items-center justify-end">
+      {downloading && progress && progress.total > 0 ? (
+        <DownloadProgress
+          current={progress.current}
+          total={progress.total}
+          label={labels.progress}
+          testId={`${testId}-progress`}
+        />
+      ) : null}
+
+      <div className="mt-1 flex items-center justify-end gap-2">
         {isDownloaded ? (
-          <Badge
-            variant="outline"
-            className="gap-1 text-success"
-            data-testid={`${testId}-downloaded`}
-          >
-            <Check className="size-3" aria-hidden="true" />
-            {labels.downloaded}
-          </Badge>
+          <>
+            <Badge
+              variant="outline"
+              className="gap-1 text-success"
+              data-testid={`${testId}-downloaded`}
+            >
+              <Check className="size-3" aria-hidden="true" />
+              {labels.downloaded}
+            </Badge>
+            {onRemove ? (
+              <Button
+                type="button"
+                variant="ghost"
+                className="min-h-11 text-error"
+                onClick={() => onRemove(set)}
+                data-testid={`${testId}-remove`}
+              >
+                <Trash2 className="mr-1 size-4" aria-hidden="true" />
+                {labels.remove}
+              </Button>
+            ) : null}
+          </>
         ) : (
           <Button
             type="button"

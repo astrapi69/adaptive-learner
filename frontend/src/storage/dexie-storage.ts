@@ -392,8 +392,8 @@ export const dexieStorage: IStorageService = {
   // the sources ships later — v1.27.0 is read-only).
   contentLoader: {
     listSets: async () => listSetsDexie(await activeSourcesDexie()),
-    downloadSet: async (source, setId) =>
-      downloadSetDexie(source, setId, await activeSourcesDexie()),
+    downloadSet: async (source, setId, onProgress) =>
+      downloadSetDexie(source, setId, await activeSourcesDexie(), onProgress),
     listLessons: (source, setId) => listLessonsDexie(source, setId),
     getLesson: (source, setId, filename) =>
       getLessonDexie(source, setId, filename),

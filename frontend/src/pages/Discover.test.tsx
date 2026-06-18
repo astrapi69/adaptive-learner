@@ -17,6 +17,7 @@ import type { SearchableSet } from "../lib/content/search-index-loader";
 const fetchAllIndicesMock = vi.fn();
 const listSetsMock = vi.fn();
 const downloadSetMock = vi.fn();
+const deleteSetMock = vi.fn();
 
 vi.mock("../hooks/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fallback: string) => fallback, lang: "en" }),
@@ -37,7 +38,11 @@ vi.mock("../lib/content/search-index-loader", async (orig) => ({
 
 vi.mock("../storage", () => ({
   getStorage: () => ({
-    contentLoader: { listSets: listSetsMock, downloadSet: downloadSetMock },
+    contentLoader: {
+      listSets: listSetsMock,
+      downloadSet: downloadSetMock,
+      deleteSet: deleteSetMock,
+    },
   }),
 }));
 
@@ -102,10 +107,35 @@ describe("Discover page", () => {
     render(<Discover />);
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     fireEvent.click(screen.getByTestId("discover-card-fr-a1-download"));
-    await waitFor(() => expect(downloadSetMock).toHaveBeenCalledWith("owner/repo", "fr-a1"));
+    await waitFor(() =>
+      expect(downloadSetMock).toHaveBeenCalledWith(
+        "owner/repo",
+        "fr-a1",
+        expect.any(Function),
+      ),
+    );
     // After success the card flips to the present badge.
     await waitFor(() =>
       expect(screen.getByTestId("discover-card-fr-a1-downloaded")).toBeInTheDocument(),
+    );
+    // A per-lesson progress callback was threaded into downloadSet (DIS-06).
+    expect(typeof downloadSetMock.mock.calls[0][2]).toBe("function");
+  });
+
+  it("removes a downloaded set via deleteSet, keeping it re-downloadable", async () => {
+    deleteSetMock.mockResolvedValue(undefined);
+    listSetsMock.mockResolvedValue({
+      sets: [{ source: "owner/repo", id: "es-a1", cached_version: "1.0.0" }],
+      sources: [],
+    });
+    render(<Discover />);
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    expect(screen.getByTestId("discover-card-es-a1-downloaded")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("discover-card-es-a1-remove"));
+    await waitFor(() => expect(deleteSetMock).toHaveBeenCalledWith("owner/repo", "es-a1"));
+    // The set returns to a downloadable state (index entry stays).
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-card-es-a1-download")).toBeInTheDocument(),
     );
   });
 

@@ -42,6 +42,13 @@ export interface ContentSetSource {
   branch: string;
 }
 
+/** Per-set download progress (EXP-034 / DIS-06): ``current`` lessons cached
+ *  of ``total``. ``total`` is known once the set manifest is read. */
+export interface ContentDownloadProgress {
+  current: number;
+  total: number;
+}
+
 export interface ContentSetsList {
   sets: ContentSetEntry[];
   sources: ContentSetSource[];
@@ -257,7 +264,15 @@ export interface ContentLesson {
  */
 export interface IContentLoaderNamespace {
   listSets(): Promise<ContentSetsList>;
-  downloadSet(source: string, setId: string): Promise<ContentSetEntry>;
+  /** Download + cache ONE set's lessons + assets (per-set download,
+   *  EXP-034 / DIS-06 — not a whole-repo sync). ``onProgress`` is fired as
+   *  each lesson is fetched so the UI can show "lesson N of M"; Dexie mode
+   *  emits it, API mode (atomic server-side) ignores it. */
+  downloadSet(
+    source: string,
+    setId: string,
+    onProgress?: (progress: ContentDownloadProgress) => void,
+  ): Promise<ContentSetEntry>;
   listLessons(source: string, setId: string): Promise<ContentLessonList>;
   getLesson(source: string, setId: string, filename: string): Promise<ContentLesson>;
   /** Phase 54 / v1.37.0 — fetch one cached asset by relative

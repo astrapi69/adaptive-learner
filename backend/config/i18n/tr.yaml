@@ -2698,8 +2698,12 @@ discover:
     lessons: "{n} ders"
     cards: "{n} kart"
     ai_checked: "Yapay zeka kontrollü"
+    remove: "Kaldır"
+    progress: "Dersler indiriliyor"
   toast:
     downloaded: "Set indirildi ve kullanıma hazır."
+    removed: "Set kaldırıldı. İstediğin zaman yeniden indirebilirsin."
   error:
     download_failed: "Set indirilemedi."
+    remove_failed: "Set kaldırılamadı."
     load_failed: "Kullanılabilir içerik yüklenemedi."

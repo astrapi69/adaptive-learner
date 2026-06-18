@@ -2951,13 +2951,17 @@
       "downloaded": "Ya disponible",
       "lessons": "{n} lecciones",
       "cards": "{n} tarjetas",
-      "ai_checked": "Verificado por IA"
+      "ai_checked": "Verificado por IA",
+      "remove": "Quitar",
+      "progress": "Descargando lecciones"
     },
     "toast": {
-      "downloaded": "Set descargado y listo para usar."
+      "downloaded": "Set descargado y listo para usar.",
+      "removed": "Set eliminado. Puedes descargarlo de nuevo cuando quieras."
     },
     "error": {
       "download_failed": "No se pudo descargar el set.",
+      "remove_failed": "No se pudo eliminar el set.",
       "load_failed": "No se pudo cargar el contenido disponible."
     }
   }
