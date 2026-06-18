@@ -56,6 +56,7 @@ data_export:
   cat_settings: "Paramètres"
   cat_ai_config: "Sauvegarde de clé IA"
 nav:
+  discover: "Découvrir"
   offline_long: "Hors ligne — les sessions passées restent lisibles"
   sync_pending: "{n} modification(s) en attente de synchronisation"
   statistics: "Statistiques"
@@ -2626,3 +2627,51 @@ resource:
   type_website: "Sites web"
   free: "Gratuit"
   paid: "Cours"
+discover:
+  title: "Découvrir du contenu"
+  subtitle: "Trouvez du matériel d'apprentissage avant de le télécharger."
+  loading: "Chargement du contenu disponible…"
+  search_placeholder: "Espagnol, IA, psychologie…"
+  search_aria: "Rechercher dans le contenu disponible"
+  search_clear: "Effacer la recherche"
+  filter:
+    all: "Tous"
+    language: "Langue"
+    level: "Niveau"
+    domain: "Domaine"
+    trust: "Confiance"
+    ai_checked: "Vérifié par IA"
+    "yes": "Oui"
+    "no": "Non"
+  trust:
+    official: "Officiellement recommandé"
+    verified: "Vérifié"
+    validated: "Validé"
+  sort:
+    label: "Trier"
+    relevance: "Pertinence"
+    newest: "Plus récents"
+    lessons: "Plus de leçons"
+  domain:
+    language: "Langues"
+    ai: "IA"
+    psychology: "Psychologie"
+    programming: "Programmation"
+  result:
+    count: "{n} sets"
+  empty:
+    no_sets: "Aucun contenu disponible pour l'instant."
+    no_results: "Aucun résultat pour « {query} »."
+  card:
+    download: "Télécharger"
+    downloading: "Téléchargement…"
+    retry: "Réessayer"
+    downloaded: "Déjà présent"
+    lessons: "{n} leçons"
+    cards: "{n} cartes"
+    ai_checked: "Vérifié par IA"
+  toast:
+    downloaded: "Set téléchargé et prêt à l'emploi."
+  error:
+    download_failed: "Impossible de télécharger le set."
+    load_failed: "Impossible de charger le contenu disponible."

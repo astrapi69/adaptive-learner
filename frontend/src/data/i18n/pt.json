@@ -62,6 +62,7 @@
     "cat_ai_config": "Backup de chave de IA"
   },
   "nav": {
+    "discover": "Descobrir",
     "offline_long": "Offline — as sessões anteriores continuam acessíveis",
     "sync_pending": "{n} alteração(ões) aguardando sincronização",
     "statistics": "Estatísticas",
@@ -2869,5 +2870,63 @@
     "type_website": "Sites",
     "free": "Grátis",
     "paid": "Curso"
+  },
+  "discover": {
+    "title": "Descobrir conteúdo",
+    "subtitle": "Encontre material de aprendizagem antes de baixá-lo.",
+    "loading": "Carregando conteúdo disponível…",
+    "search_placeholder": "Espanhol, IA, psicologia…",
+    "search_aria": "Pesquisar conteúdo disponível",
+    "search_clear": "Limpar pesquisa",
+    "filter": {
+      "all": "Todos",
+      "language": "Idioma",
+      "level": "Nível",
+      "domain": "Área",
+      "trust": "Confiança",
+      "ai_checked": "Verificado por IA",
+      "yes": "Sim",
+      "no": "Não"
+    },
+    "trust": {
+      "official": "Oficialmente recomendado",
+      "verified": "Verificado",
+      "validated": "Validado"
+    },
+    "sort": {
+      "label": "Ordenar",
+      "relevance": "Relevância",
+      "newest": "Mais recentes",
+      "lessons": "Mais lições"
+    },
+    "domain": {
+      "language": "Idiomas",
+      "ai": "IA",
+      "psychology": "Psicologia",
+      "programming": "Programação"
+    },
+    "result": {
+      "count": "{n} sets"
+    },
+    "empty": {
+      "no_sets": "Ainda não há conteúdo disponível.",
+      "no_results": "Nenhum resultado para “{query}”."
+    },
+    "card": {
+      "download": "Baixar",
+      "downloading": "Baixando…",
+      "retry": "Tentar novamente",
+      "downloaded": "Já disponível",
+      "lessons": "{n} lições",
+      "cards": "{n} cartões",
+      "ai_checked": "Verificado por IA"
+    },
+    "toast": {
+      "downloaded": "Set baixado e pronto para usar."
+    },
+    "error": {
+      "download_failed": "Não foi possível baixar o set.",
+      "load_failed": "Não foi possível carregar o conteúdo disponível."
+    }
   }
 }

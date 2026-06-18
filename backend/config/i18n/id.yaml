@@ -56,6 +56,7 @@ data_export:
   cat_settings: "Pengaturan"
   cat_ai_config: "Cadangan kunci AI"
 nav:
+  discover: "Jelajahi"
   offline_long: "Luring — sesi sebelumnya tetap dapat dibaca"
   sync_pending: "{n} perubahan menunggu untuk disinkronkan"
   statistics: "Statistik"
@@ -2634,3 +2635,51 @@ resource:
   type_website: "Situs web"
   free: "Gratis"
   paid: "Kursus"
+discover:
+  title: "Jelajahi konten"
+  subtitle: "Temukan materi belajar sebelum mengunduhnya."
+  loading: "Memuat konten yang tersedia…"
+  search_placeholder: "Spanyol, AI, psikologi…"
+  search_aria: "Cari konten yang tersedia"
+  search_clear: "Hapus pencarian"
+  filter:
+    all: "Semua"
+    language: "Bahasa"
+    level: "Tingkat"
+    domain: "Bidang"
+    trust: "Kepercayaan"
+    ai_checked: "Diperiksa AI"
+    "yes": "Ya"
+    "no": "Tidak"
+  trust:
+    official: "Direkomendasikan secara resmi"
+    verified: "Terverifikasi"
+    validated: "Tervalidasi"
+  sort:
+    label: "Urutkan"
+    relevance: "Relevansi"
+    newest: "Terbaru"
+    lessons: "Pelajaran terbanyak"
+  domain:
+    language: "Bahasa"
+    ai: "AI"
+    psychology: "Psikologi"
+    programming: "Pemrograman"
+  result:
+    count: "{n} set"
+  empty:
+    no_sets: "Belum ada konten tersedia."
+    no_results: "Tidak ada hasil untuk “{query}”."
+  card:
+    download: "Unduh"
+    downloading: "Mengunduh…"
+    retry: "Coba lagi"
+    downloaded: "Sudah tersedia"
+    lessons: "{n} pelajaran"
+    cards: "{n} kartu"
+    ai_checked: "Diperiksa AI"
+  toast:
+    downloaded: "Set diunduh dan siap digunakan."
+  error:
+    download_failed: "Tidak dapat mengunduh set."
+    load_failed: "Tidak dapat memuat konten yang tersedia."

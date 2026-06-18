@@ -62,6 +62,7 @@
     "cat_ai_config": "AI key backup"
   },
   "nav": {
+    "discover": "Discover",
     "offline_long": "Offline — past sessions stay readable",
     "sync_pending": "{n} change(s) waiting to sync",
     "statistics": "Statistics",
@@ -2869,5 +2870,63 @@
     "type_website": "Websites",
     "free": "Free",
     "paid": "Course"
+  },
+  "discover": {
+    "title": "Discover content",
+    "subtitle": "Find learning material before you download it.",
+    "loading": "Loading available content…",
+    "search_placeholder": "Spanish, AI, psychology…",
+    "search_aria": "Search available content",
+    "search_clear": "Clear search",
+    "filter": {
+      "all": "All",
+      "language": "Language",
+      "level": "Level",
+      "domain": "Domain",
+      "trust": "Trust",
+      "ai_checked": "AI-checked",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "trust": {
+      "official": "Officially recommended",
+      "verified": "Verified",
+      "validated": "Validated"
+    },
+    "sort": {
+      "label": "Sort",
+      "relevance": "Relevance",
+      "newest": "Newest",
+      "lessons": "Most lessons"
+    },
+    "domain": {
+      "language": "Languages",
+      "ai": "AI",
+      "psychology": "Psychology",
+      "programming": "Programming"
+    },
+    "result": {
+      "count": "{n} sets"
+    },
+    "empty": {
+      "no_sets": "No content available yet.",
+      "no_results": "No results for “{query}”."
+    },
+    "card": {
+      "download": "Download",
+      "downloading": "Downloading…",
+      "retry": "Retry",
+      "downloaded": "Already present",
+      "lessons": "{n} lessons",
+      "cards": "{n} cards",
+      "ai_checked": "AI-checked"
+    },
+    "toast": {
+      "downloaded": "Set downloaded and ready to use."
+    },
+    "error": {
+      "download_failed": "Could not download the set.",
+      "load_failed": "Could not load available content."
+    }
   }
 }

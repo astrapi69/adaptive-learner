@@ -62,6 +62,7 @@
     "cat_ai_config": "KI-Schlüssel-Sicherung"
   },
   "nav": {
+    "discover": "Entdecken",
     "offline_long": "Offline — frühere Sitzungen bleiben lesbar",
     "sync_pending": "{n} Änderung(en) warten auf Sync",
     "statistics": "Statistik",
@@ -2869,5 +2870,63 @@
     "type_website": "Webseiten",
     "free": "Gratis",
     "paid": "Kurs"
+  },
+  "discover": {
+    "title": "Inhalte entdecken",
+    "subtitle": "Finde Lernmaterial, bevor du es herunterlädst.",
+    "loading": "Verfügbare Inhalte werden geladen…",
+    "search_placeholder": "Spanisch, KI, Psychologie…",
+    "search_aria": "Verfügbare Inhalte durchsuchen",
+    "search_clear": "Suche zurücksetzen",
+    "filter": {
+      "all": "Alle",
+      "language": "Sprache",
+      "level": "Niveau",
+      "domain": "Bereich",
+      "trust": "Vertrauen",
+      "ai_checked": "KI-geprüft",
+      "yes": "Ja",
+      "no": "Nein"
+    },
+    "trust": {
+      "official": "Offiziell empfohlen",
+      "verified": "Verifiziert",
+      "validated": "Validiert"
+    },
+    "sort": {
+      "label": "Sortierung",
+      "relevance": "Relevanz",
+      "newest": "Neueste",
+      "lessons": "Meiste Lektionen"
+    },
+    "domain": {
+      "language": "Sprachen",
+      "ai": "KI",
+      "psychology": "Psychologie",
+      "programming": "Programmierung"
+    },
+    "result": {
+      "count": "{n} Sets"
+    },
+    "empty": {
+      "no_sets": "Noch keine Inhalte verfügbar.",
+      "no_results": "Keine Ergebnisse für „{query}“."
+    },
+    "card": {
+      "download": "Herunterladen",
+      "downloading": "Wird geladen…",
+      "retry": "Erneut versuchen",
+      "downloaded": "Bereits vorhanden",
+      "lessons": "{n} Lektionen",
+      "cards": "{n} Karten",
+      "ai_checked": "KI-geprüft"
+    },
+    "toast": {
+      "downloaded": "Set heruntergeladen und einsatzbereit."
+    },
+    "error": {
+      "download_failed": "Set konnte nicht heruntergeladen werden.",
+      "load_failed": "Verfügbare Inhalte konnten nicht geladen werden."
+    }
   }
 }

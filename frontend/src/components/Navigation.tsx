@@ -254,6 +254,9 @@ export default function Navigation() {
         <NavLink to="/content" className={linkClass} data-testid="nav-content">
           {t("nav.content", "Content")}
         </NavLink>
+        <NavLink to="/discover" className={linkClass} data-testid="nav-discover">
+          {t("nav.discover", "Discover")}
+        </NavLink>
         <NavLink
           to="/settings"
           className={linkClass}

@@ -56,6 +56,7 @@ data_export:
   cat_settings: "Ayarlar"
   cat_ai_config: "AI anahtar yedeği"
 nav:
+  discover: "Keşfet"
   offline_long: "Çevrimdışı — önceki oturumlar okunabilir kalır"
   sync_pending: "{n} değişiklik eşitlenmeyi bekliyor"
   statistics: "İstatistikler"
@@ -2624,3 +2625,51 @@ resource:
   type_website: "Web siteleri"
   free: "Ücretsiz"
   paid: "Kurs"
+discover:
+  title: "İçerik keşfet"
+  subtitle: "Öğrenme materyalini indirmeden önce bul."
+  loading: "Kullanılabilir içerik yükleniyor…"
+  search_placeholder: "İspanyolca, yapay zeka, psikoloji…"
+  search_aria: "Kullanılabilir içerikte ara"
+  search_clear: "Aramayı temizle"
+  filter:
+    all: "Tümü"
+    language: "Dil"
+    level: "Seviye"
+    domain: "Alan"
+    trust: "Güven"
+    ai_checked: "Yapay zeka kontrollü"
+    "yes": "Evet"
+    "no": "Hayır"
+  trust:
+    official: "Resmi olarak önerilen"
+    verified: "Doğrulanmış"
+    validated: "Onaylanmış"
+  sort:
+    label: "Sırala"
+    relevance: "İlgililik"
+    newest: "En yeni"
+    lessons: "En çok ders"
+  domain:
+    language: "Diller"
+    ai: "Yapay zeka"
+    psychology: "Psikoloji"
+    programming: "Programlama"
+  result:
+    count: "{n} set"
+  empty:
+    no_sets: "Henüz içerik yok."
+    no_results: "“{query}” için sonuç yok."
+  card:
+    download: "İndir"
+    downloading: "İndiriliyor…"
+    retry: "Yeniden dene"
+    downloaded: "Zaten mevcut"
+    lessons: "{n} ders"
+    cards: "{n} kart"
+    ai_checked: "Yapay zeka kontrollü"
+  toast:
+    downloaded: "Set indirildi ve kullanıma hazır."
+  error:
+    download_failed: "Set indirilemedi."
+    load_failed: "Kullanılabilir içerik yüklenemedi."
