@@ -1008,6 +1008,7 @@ gamification:
   xp_header_tooltip: Οι πόντοι εμπειρίας σας
   xp_to_next_level: '{n} XP για το επόμενο επίπεδο'
   max_level: Μέγιστο επίπεδο
+  level_detail_title: "Πρόοδος επιπέδου"
   level_up: Ανέβηκες επίπεδο!
   reason_session_complete: Η συνεδρία ολοκληρώθηκε
   reason_assessment_complete: Η αξιολόγηση ολοκληρώθηκε
@@ -1745,6 +1746,7 @@ content:
     empty: "Ξεκινήστε το πρώτο σας μάθημα!"
     progress: "Βήμα {n}/{total}"
     imported_analysis: "Εισαγόμενη ανάλυση"
+    lesson_fallback: "Μάθημα"
   import_chat:
     button: "Εισαγωγή συνομιλίας"
   search:

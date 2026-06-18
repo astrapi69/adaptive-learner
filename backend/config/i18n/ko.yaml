@@ -338,6 +338,8 @@ adaptive:
     missing_params: "선택된 콘텐츠 세트가 없습니다."
     load_failed: "적응형 레슨을 생성할 수 없었습니다."
 review:
+  summary_remaining: "아직 {n}개 남았어요. 계속할까요?"
+  another_round: "한 번 더"
   your_answer: "당신의 답변:"
   correct_answer: "정답:"
   summary_corrected: "{total}개 중 {corrected}개 교정됨"
@@ -430,6 +432,9 @@ progress:
   commit_notes_aria: "세션 메모"
   session_count: "세션"
 settings:
+  review_limit:
+    label: "복습당 문제 수"
+    desc: "복습 세션이 끝나기 전에 제시하는 요소 수입니다. 남은 항목은 다음 회차로 넘어갑니다."
   install:
     heading: "앱 설치"
     description: "Adaptive Learner를 앱으로 설치하여 오프라인 접근과 전체 화면 환경을 누리세요."
@@ -1003,6 +1008,7 @@ gamification:
   xp_header_tooltip: 당신의 경험치
   xp_to_next_level: '다음 레벨까지 {n} XP'
   max_level: 최고 레벨 도달
+  level_detail_title: "레벨 진행도"
   level_up: 레벨 업!
   reason_session_complete: 세션 완료
   reason_assessment_complete: 평가 완료
@@ -1749,6 +1755,7 @@ content:
     empty: "첫 레슨을 시작하세요!"
     progress: "단계 {n}/{total}"
     imported_analysis: "가져온 분석"
+    lesson_fallback: "레슨"
   import_chat:
     button: "채팅 가져오기"
   search:

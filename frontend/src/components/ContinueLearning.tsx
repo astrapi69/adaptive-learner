@@ -35,6 +35,7 @@ import {
     groupRecentProgress,
     lessonLabelFromFilename,
     lessonRoute,
+    looksLikeOpaqueId,
     resolveContinueAction,
     rowStars,
     type ContinueMode,
@@ -71,21 +72,31 @@ interface DisplayItem {
     updatedAt: string;
 }
 
-/** A chat-import analysis set whose title was never set falls back to its
- *  raw ``analysis-<uuid>`` id (legacy data, pre-#134). Detect that shape so
- *  the dashboard shows a friendly label instead of the bare id (#368). */
-const LEGACY_ANALYSIS_SET_ID =
-    /^analysis-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-
+/** Resolve a set's display title, never leaking a raw machine id. A set
+ *  absent from ``listSets`` (or carrying an empty / opaque title) would
+ *  otherwise show its bare ``set_id`` — a UUID/hash for user-generated /
+ *  analysis / snapshot sets (#729, generalizing the #368 analysis-id fix). */
 function setTitleOf(
     sets: ContentSetEntry[],
     source: string,
     setId: string,
-    legacyFallback: string,
+    opaqueFallback: string,
 ): string {
     const entry = sets.find((s) => s.source === source && s.id === setId);
     const resolved = entry?.title ?? setId;
-    return LEGACY_ANALYSIS_SET_ID.test(resolved) ? legacyFallback : resolved;
+    return looksLikeOpaqueId(resolved) ? opaqueFallback : resolved;
+}
+
+/** Resolve a lesson's display title, falling back from the cached
+ *  lesson title to a filename-derived label and finally to a generic
+ *  label when even that is opaque (#729). */
+function lessonTitleOf(
+    lesson: ContentLesson | null,
+    filename: string,
+    opaqueFallback: string,
+): string {
+    const label = lesson?.title ?? lessonLabelFromFilename(filename);
+    return looksLikeOpaqueId(label) ? opaqueFallback : label;
 }
 
 /** Total exercise/theory steps in a lesson (best-effort; used for
@@ -120,6 +131,10 @@ export default function ContinueLearning({
     const importedAnalysisLabel = t(
         "content.continue_learning.imported_analysis",
         "Imported analysis",
+    );
+    const lessonFallbackLabel = t(
+        "content.continue_learning.lesson_fallback",
+        "Lesson",
     );
 
     useEffect(() => {
@@ -176,11 +191,11 @@ export default function ContinueLearning({
                               )
                             : null;
 
-                    const lessonTitle =
-                        rowLesson?.title ??
-                        lessonLabelFromFilename(
-                            group.mostRecent.lesson_filename,
-                        );
+                    const lessonTitle = lessonTitleOf(
+                        rowLesson,
+                        group.mostRecent.lesson_filename,
+                        lessonFallbackLabel,
+                    );
                     const item: DisplayItem = {
                         source: group.source,
                         setId: group.setId,
@@ -205,9 +220,11 @@ export default function ContinueLearning({
                     } else {
                         item.stars = rowStars(group.mostRecent);
                         if (action.mode === "next") {
-                            item.nextTitle =
-                                nextLesson?.title ??
-                                lessonLabelFromFilename(action.targetFilename);
+                            item.nextTitle = lessonTitleOf(
+                                nextLesson,
+                                action.targetFilename,
+                                lessonFallbackLabel,
+                            );
                         }
                     }
                     return item;
@@ -218,7 +235,7 @@ export default function ContinueLearning({
         return () => {
             cancelled = true;
         };
-    }, [userId, maxItems, importedAnalysisLabel]);
+    }, [userId, maxItems, importedAnalysisLabel, lessonFallbackLabel]);
 
     // Loading — render nothing to avoid layout shift.
     if (items === null) return null;

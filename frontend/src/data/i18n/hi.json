@@ -1071,6 +1071,7 @@
     "xp_header_tooltip": "Your experience points",
     "xp_to_next_level": "{n} XP to next level",
     "max_level": "Max level reached",
+    "level_detail_title": "स्तर प्रगति",
     "level_up": "Level up!",
     "reason_session_complete": "Session completed",
     "reason_assessment_complete": "Assessment completed",
@@ -1888,7 +1889,8 @@
       "completed": "Set completed",
       "empty": "Start your first lesson!",
       "progress": "Step {n}/{total}",
-      "imported_analysis": "Imported analysis"
+      "imported_analysis": "Imported analysis",
+      "lesson_fallback": "पाठ"
     },
     "import_chat": {
       "button": "Import Chat"
