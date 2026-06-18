@@ -63,6 +63,26 @@ describe("PictureChoiceExercise: render", () => {
         }
     });
 
+    it("equal-height tiles: grid uses auto-rows 1fr + tiles are h-full (#762)", () => {
+        render(
+            <PictureChoiceExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+            />,
+        );
+        // The grid equalises row heights so a tile whose label wraps to two
+        // lines doesn't make its row-mates shorter (the equaliser is the
+        // grid, not a hardcoded min-height).
+        expect(screen.getByTestId("picture-grid").className).toContain(
+            "[grid-auto-rows:1fr]",
+        );
+        for (let i = 0; i < 4; i++) {
+            expect(
+                screen.getByTestId(`picture-choice-${i}`).className,
+            ).toContain("h-full");
+        }
+    });
+
     it("marks the correct tile via data-correct=true on exactly one", () => {
         render(
             <PictureChoiceExercise
