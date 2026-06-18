@@ -106,12 +106,20 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(counts).toHaveTextContent("10");
   });
 
-  it("keeps the password token input inside a <form> (#119)", async () => {
+  it("renders the token as a non-password field that opts out of autofill (#767)", async () => {
     render(<ContentRepoSettingsSection />);
     const token = await screen.findByTestId("content-repo-token");
-    expect(token).toHaveAttribute("type", "password");
-    // Chrome warns when a password field has no <form> ancestor.
-    expect(token.closest("form")).not.toBeNull();
+    // type="text" (not "password") so the browser password manager does
+    // not offer to autofill a repository access token.
+    expect(token).toHaveAttribute("type", "text");
+    expect(token).not.toHaveAttribute("type", "password");
+    expect(token).toHaveAttribute("autocomplete", "off");
+    expect(token).toHaveAttribute("data-1p-ignore");
+    expect(token).toHaveAttribute("data-lpignore", "true");
+    expect(token).toHaveAttribute("data-bwignore", "true");
+    expect(token).toHaveAttribute("data-form-type", "other");
+    // No <form> wrapper (form tags add to autofill detection).
+    expect(token.closest("form")).toBeNull();
   });
 
   it("lists connected repos with trust badge", async () => {

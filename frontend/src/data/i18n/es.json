@@ -1507,6 +1507,8 @@
       "deselect_all": "Deselect all",
       "show_more": "Show more",
       "show_less": "Show less",
+      "show_secret": "Mostrar valor",
+      "hide_secret": "Ocultar valor",
       "show_preview": "Show preview",
       "hide_preview": "Hide preview",
       "accept": "Accept",

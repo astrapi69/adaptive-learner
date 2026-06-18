@@ -1507,6 +1507,8 @@
       "deselect_all": "Batalkan semua pilihan",
       "show_more": "Tampilkan lebih banyak",
       "show_less": "Tampilkan lebih sedikit",
+      "show_secret": "Tampilkan nilai",
+      "hide_secret": "Sembunyikan nilai",
       "show_preview": "Tampilkan pratinjau",
       "hide_preview": "Sembunyikan pratinjau",
       "accept": "Terima",

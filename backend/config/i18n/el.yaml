@@ -1400,6 +1400,8 @@ ui:
     deselect_all: "Deselect all"
     show_more: "Show more"
     show_less: "Show less"
+    show_secret: "Εμφάνιση τιμής"
+    hide_secret: "Απόκρυψη τιμής"
     show_preview: "Show preview"
     hide_preview: "Hide preview"
     accept: "Accept"

@@ -25,6 +25,7 @@ import { FlaskConical, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "../api/client";
 import { useI18n } from "../hooks/useI18n";
+import { SecretInput } from "../shared/SecretInput";
 import { isValidGitHubTokenFormat } from "../lib/github/github-api";
 import { getStorage } from "../storage";
 import type { GitHubTokenStatus, GitHubVerifyKind } from "../storage/types";
@@ -185,17 +186,15 @@ export default function GitHubIntegrationSection() {
       )}
 
       {!envManaged && (
-        <form onSubmit={(e) => e.preventDefault()}>
+        <div>
           <label className="form-row">
             <span className="form-label">
               {t("settings.github.token", "GitHub token")}
             </span>
-            <input
-              type="password"
-              autoComplete="off"
-              spellCheck={false}
+            <SecretInput
               value={token}
               placeholder="ghp_… / github_pat_…"
+              aria-label={t("settings.github.token", "GitHub token")}
               onChange={(e) => {
                 setToken(e.target.value);
                 setTest({ kind: "idle" });
@@ -289,7 +288,7 @@ export default function GitHubIntegrationSection() {
               {testMessage(test)}
             </p>
           )}
-        </form>
+        </div>
       )}
     </section>
   );

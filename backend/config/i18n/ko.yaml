@@ -1410,6 +1410,8 @@ ui:
     deselect_all: "전체 선택 해제"
     show_more: "더 보기"
     show_less: "덜 보기"
+    show_secret: "값 표시"
+    hide_secret: "값 숨기기"
     show_preview: "미리보기 표시"
     hide_preview: "미리보기 숨기기"
     accept: "수락"

@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.86.0** (feature release -
+- **Current state:** **v1.87.0** (feature release -
   **20 substantive commits**: **EXP-033 AI Content Validation** - set-wide AI
   quality checks with a batched prompt + JSON parser (#676), a "Check with AI"
   report UI (#683), an IndexedDB-cached report + Markdown export (#687), and a

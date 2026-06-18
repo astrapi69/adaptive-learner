@@ -1398,6 +1398,8 @@ ui:
     deselect_all: "Limpar seleção"
     show_more: "Mostrar mais"
     show_less: "Mostrar menos"
+    show_secret: "Mostrar valor"
+    hide_secret: "Ocultar valor"
     show_preview: "Mostrar pré-visualização"
     hide_preview: "Ocultar pré-visualização"
     accept: "Aceitar"

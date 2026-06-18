@@ -1398,6 +1398,8 @@ ui:
     deselect_all: "選択を解除"
     show_more: "もっと見る"
     show_less: "折りたたむ"
+    show_secret: "値を表示"
+    hide_secret: "値を非表示"
     show_preview: "プレビューを表示"
     hide_preview: "プレビューを非表示"
     accept: "承認"
