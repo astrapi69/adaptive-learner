@@ -1397,6 +1397,8 @@ ui:
     deselect_all: सभी अचयनित करें
     show_more: अधिक दिखाएँ
     show_less: कम दिखाएँ
+    show_secret: "मान दिखाएँ"
+    hide_secret: "मान छिपाएँ"
     show_preview: पूर्वावलोकन दिखाएँ
     hide_preview: पूर्वावलोकन छिपाएँ
     accept: स्वीकार करें

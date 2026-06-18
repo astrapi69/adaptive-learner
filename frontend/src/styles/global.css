@@ -6928,7 +6928,8 @@ select:focus {
 
 .api-key-format-check {
   position: absolute;
-  right: 0.5rem;
+  /* Sits left of the SecretInput reveal toggle (right: 0.5rem, 1.75rem wide). */
+  right: 2.5rem;
   color: var(--success);
   font-weight: 700;
   pointer-events: none;

@@ -1507,6 +1507,8 @@
       "deselect_all": "Auswahl aufheben",
       "show_more": "Mehr anzeigen",
       "show_less": "Weniger anzeigen",
+      "show_secret": "Wert anzeigen",
+      "hide_secret": "Wert verbergen",
       "show_preview": "Vorschau anzeigen",
       "hide_preview": "Vorschau ausblenden",
       "accept": "Annehmen",

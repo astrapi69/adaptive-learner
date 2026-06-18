@@ -12,8 +12,8 @@
 import { FlaskConical, Save, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useI18n } from "../hooks/useI18n";
+import { SecretInput } from "../shared/SecretInput";
 import { API_KEY_PREFIX, isValidApiKeyFormat } from "../lib/apiKeyFormat";
 import type { AIProvider } from "../lib/constants";
 import type { ApiKeySource, UserSettings } from "../types/domain";
@@ -110,10 +110,9 @@ export default function ApiKeyRow({
   const formatState = formatStateFor(provider, draft);
 
   return (
-    <form
+    <div
       className={`api-key-row${isActive ? " is-active-provider" : ""}`}
       data-testid={`api-key-row-${provider}`}
-      onSubmit={(e) => e.preventDefault()}
     >
       <div className="api-key-row-head">
         <strong>{t(`settings.provider_${provider}`, provider)}</strong>
@@ -163,9 +162,8 @@ export default function ApiKeyRow({
       )}
       <div className="api-key-row-input">
         <span className={`api-key-input-wrap api-key-format-${formatState}`}>
-          <Input
+          <SecretInput
             data-testid={`api-key-input-${provider}`}
-            type="password"
             placeholder={
               has && !externallyManaged
                 ? t(
@@ -176,7 +174,6 @@ export default function ApiKeyRow({
             }
             aria-label={`${t("settings.api_key_label", "API key")} (${provider})`}
             aria-invalid={formatState === "invalid"}
-            autoComplete="off"
             value={draft}
             onChange={(e) => onDraftChange(e.target.value)}
             disabled={busy === `save-${provider}` || externallyManaged}
@@ -214,7 +211,7 @@ export default function ApiKeyRow({
         onDismissRollback={onDismissRollback}
         onRestoreBackup={onRestoreBackup}
       />
-    </form>
+    </div>
   );
 }
 

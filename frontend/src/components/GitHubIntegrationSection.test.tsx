@@ -69,11 +69,20 @@ describe("GitHubIntegrationSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("contains the password input inside a <form> (Chrome DOM warning #119)", async () => {
+  it("renders the token as a non-password field that opts out of autofill (#767)", async () => {
     renderSection();
     const input = await screen.findByTestId("settings-github-token-input");
-    expect(input).toHaveAttribute("type", "password");
-    expect(input.closest("form")).not.toBeNull();
+    // type="text" (not "password") so the browser password manager does
+    // not offer to autofill a GitHub token.
+    expect(input).toHaveAttribute("type", "text");
+    expect(input).not.toHaveAttribute("type", "password");
+    expect(input).toHaveAttribute("autocomplete", "off");
+    expect(input).toHaveAttribute("data-1p-ignore");
+    expect(input).toHaveAttribute("data-lpignore", "true");
+    expect(input).toHaveAttribute("data-bwignore", "true");
+    expect(input).toHaveAttribute("data-form-type", "other");
+    // No <form> wrapper (form tags add to autofill detection).
+    expect(input.closest("form")).toBeNull();
   });
 
   it("warns on a malformed token and gates Save", async () => {
