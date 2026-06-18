@@ -99,6 +99,10 @@ export interface UseReviewLessonResult {
      *  recordStepAttempts gets a non-empty payload. */
     sessionScoreCorrect: number;
     sessionScoreTotal: number;
+    /** #718 — re-fetch the (now smaller) due queue and start a fresh round
+     *  in place: resets the step index + session tallies and rebuilds the
+     *  synthesised lesson from whatever is still due. */
+    reload: () => void;
 }
 
 export function useReviewLesson(
@@ -113,6 +117,7 @@ export function useReviewLesson(
     const [dueCount, setDueCount] = useState(0);
     const [sessionScoreCorrect, setSessionScoreCorrect] = useState(0);
     const [sessionScoreTotal, setSessionScoreTotal] = useState(0);
+    const [reloadKey, setReloadKey] = useState(0);
 
     const userId = useMemo(() => readLearnerState().userId, []);
 
@@ -206,7 +211,16 @@ export function useReviewLesson(
         return () => {
             cancelled = true;
         };
-    }, [setId, userId, title, description, limit]);
+    }, [setId, userId, title, description, limit, reloadKey]);
+
+    const reload = useCallback(() => {
+        setCurrentStepIndex(0);
+        setSessionScoreCorrect(0);
+        setSessionScoreTotal(0);
+        setLesson(null);
+        setStatus("loading");
+        setReloadKey((k) => k + 1);
+    }, []);
 
     const totalSteps = lesson?.steps.length ?? 0;
 
@@ -268,5 +282,6 @@ export function useReviewLesson(
         recordStepAttempts,
         sessionScoreCorrect,
         sessionScoreTotal,
+        reload,
     };
 }

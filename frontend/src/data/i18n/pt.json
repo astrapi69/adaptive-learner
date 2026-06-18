@@ -367,6 +367,8 @@
     "summary_corrected": "{corrected} de {total} corrigidos",
     "summary_trend": "Boa — os seus pontos fracos estão a melhorar.",
     "summary_next": "Os elementos dominados saem; os restantes voltam em breve para revisão.",
+    "summary_remaining": "Ainda faltam {n}. Continuar?",
+    "another_round": "Outra ronda",
     "summary_repeat": "Volte daqui a cerca de 2 dias para manter isto fresco.",
     "explain_heading": "Porque errou estes",
     "explain_article_gender": "Atenção ao género: substantivos terminados em -o são normalmente masculinos (el/un), em -a femininos (la/una). O artigo segue a terminação.",
@@ -714,6 +716,10 @@
       "30_days": "30 dias",
       "60_days": "60 dias",
       "never": "Nunca"
+    },
+    "review_limit": {
+      "label": "Perguntas por revisão",
+      "desc": "Quantos elementos uma sessão de revisão apresenta antes de terminar. Os restantes passam para a ronda seguinte."
     },
     "max_lesson_size": {
       "title": "Tamanho máximo de aula",

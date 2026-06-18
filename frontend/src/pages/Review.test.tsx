@@ -15,7 +15,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -59,6 +59,7 @@ const BASE = {
     recordStepAttempts: vi.fn(),
     sessionScoreCorrect: 0,
     sessionScoreTotal: 0,
+    reload: vi.fn(),
 };
 
 beforeEach(() => {
@@ -253,7 +254,40 @@ describe("ReviewPage: ready state", () => {
         ).toHaveTextContent("2 days");
     });
 
-    it("requests a full session (limit 20) by default (#628)", () => {
+    it("offers another round when more are still due (#718)", () => {
+        const reload = vi.fn();
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON, // 1 presented step
+            queue: QUEUE,
+            currentStepIndex: 1, // summary
+            dueCount: 98, // 98 due, 1 shown → 97 remaining
+            reload,
+        });
+        renderAtPath(VALID_PATH);
+        const block = screen.getByTestId("review-summary-another");
+        expect(block).toHaveTextContent("97");
+        fireEvent.click(screen.getByTestId("review-another-round"));
+        expect(reload).toHaveBeenCalledOnce();
+    });
+
+    it("hides the another-round offer when nothing else is due (#718)", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE,
+            currentStepIndex: 1,
+            dueCount: 1, // all due items were shown
+        });
+        renderAtPath(VALID_PATH);
+        expect(
+            screen.queryByTestId("review-summary-another"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("requests the configured session length (default 10) (#718)", () => {
         useReviewLessonMock.mockReturnValue({
             ...BASE,
             status: "ready",
@@ -263,7 +297,7 @@ describe("ReviewPage: ready state", () => {
         });
         renderAtPath(VALID_PATH);
         expect(useReviewLessonMock).toHaveBeenCalledWith(
-            expect.objectContaining({limit: 20}),
+            expect.objectContaining({limit: 10}),
         );
     });
 

@@ -367,6 +367,8 @@
     "summary_corrected": "{corrected} of {total} corrected",
     "summary_trend": "Nice — your weak spots are getting stronger.",
     "summary_next": "Mastered items drop out; the rest return for review soon.",
+    "summary_remaining": "Still {n} due. Keep going?",
+    "another_round": "Another round",
     "summary_repeat": "Come back in about 2 days to keep these fresh.",
     "explain_heading": "Why you missed these",
     "explain_article_gender": "Watch the gender: nouns ending in -o are usually masculine (el/un), -a feminine (la/una). The article follows the ending.",
@@ -714,6 +716,10 @@
       "30_days": "30 days",
       "60_days": "60 days",
       "never": "Never"
+    },
+    "review_limit": {
+      "label": "Questions per review",
+      "desc": "How many elements one review session presents before it ends. More due items roll over to the next round."
     },
     "max_lesson_size": {
       "title": "Maximum lesson size",

@@ -367,6 +367,8 @@
     "summary_corrected": "{corrected} de {total} corregidos",
     "summary_trend": "Bien: tus puntos débiles van mejorando.",
     "summary_next": "Los elementos dominados desaparecen; el resto vuelve pronto para repaso.",
+    "summary_remaining": "Aún quedan {n}. ¿Seguimos?",
+    "another_round": "Otra ronda",
     "summary_repeat": "Vuelve en unos 2 días para mantenerlo fresco.",
     "explain_heading": "Por qué fallaste estas",
     "explain_article_gender": "Fíjate en el género: los sustantivos terminados en -o suelen ser masculinos (el/un), en -a femeninos (la/una). El artículo sigue la terminación.",
@@ -714,6 +716,10 @@
       "30_days": "30 días",
       "60_days": "60 días",
       "never": "Nunca"
+    },
+    "review_limit": {
+      "label": "Preguntas por repaso",
+      "desc": "Cuántos elementos muestra una sesión de repaso antes de terminar. Los elementos pendientes pasan a la siguiente ronda."
     },
     "max_lesson_size": {
       "title": "Tamaño máximo de lección",

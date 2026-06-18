@@ -21,8 +21,15 @@
  * without a backend roundtrip.
  */
 
-import {ArrowLeft, BookOpen, Download} from "lucide-react";
-import {useEffect, useRef, useState, type ReactElement, type Ref} from "react";
+import {ArrowLeft, BookOpen, Download, RotateCcw} from "lucide-react";
+import {
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type ReactElement,
+    type Ref,
+} from "react";
 import {
     useNavigate,
     useParams,
@@ -48,6 +55,7 @@ import {
     type LessonEnterNav,
 } from "../hooks/useLessonEnterKey";
 import {useReviewLesson} from "../hooks/useReviewLesson";
+import {readReviewLimit} from "../lib/learning/reviewLimitPref";
 import ReviewSummaryView from "../shared/ReviewSummary";
 import type {
     ContentLesson,
@@ -70,6 +78,13 @@ export default function ReviewPage() {
     const setId = params.setId ?? "";
     // #628 — a "quick review" is a shorter, finishable session.
     const quick = searchParams.get("quick") === "1";
+    // #718 — the session length is configurable (Settings > Learning,
+    // default 10); a quick review keeps its own fixed 5. Read once at mount
+    // so it stays stable across the session (and "another round").
+    const reviewLimit = useMemo(
+        () => (quick ? 5 : readReviewLimit()),
+        [quick],
+    );
 
     const {
         status,
@@ -82,13 +97,14 @@ export default function ReviewPage() {
         recordStepAttempts,
         sessionScoreCorrect,
         sessionScoreTotal,
+        reload,
     } = useReviewLesson({
         setId,
         title: t("review.session_title", "Review session"),
-        // #603 — a focused, finishable session: at most 20 elements,
-        // the weakest + oldest first (the queue already prioritises).
-        // #628 — a quick review trims that to 5 for a fast pass.
-        limit: quick ? 5 : 20,
+        // #603 — a focused, finishable session, the weakest + oldest first
+        // (the queue already prioritises). #718 — the cap is the learner's
+        // configured review length.
+        limit: reviewLimit,
     });
 
     // BUG P1 — single two-phase button (Check -> Weiter). The exercise
@@ -231,6 +247,11 @@ export default function ReviewPage() {
                 <ReviewSummary
                     correct={sessionScoreCorrect}
                     total={sessionScoreTotal}
+                    // #718 — elements that didn't fit this round are still
+                    // due; offer another round in place rather than only an
+                    // exit to the Dashboard.
+                    remaining={Math.max(0, dueCount - totalSteps)}
+                    onAnotherRound={reload}
                     onExit={() => navigate("/dashboard")}
                 />
             ) : (
@@ -446,10 +467,19 @@ function _extractLessonId(stepId: string): string {
 interface ReviewSummaryProps {
     correct: number;
     total: number;
+    /** #718 — elements still due that didn't fit this round. */
+    remaining: number;
+    onAnotherRound: () => void;
     onExit: () => void;
 }
 
-function ReviewSummary({correct, total, onExit}: ReviewSummaryProps) {
+function ReviewSummary({
+    correct,
+    total,
+    remaining,
+    onAnotherRound,
+    onExit,
+}: ReviewSummaryProps) {
     const {t} = useI18n();
     return (
         <ReviewSummaryView
@@ -484,6 +514,27 @@ function ReviewSummary({correct, total, onExit}: ReviewSummaryProps) {
                     "Element scores have been updated. Mastered elements will not appear in the next session.",
                 )}
             </p>
+            {remaining > 0 && (
+                <div
+                    className="mt-2 flex flex-col items-start gap-2"
+                    data-testid="review-summary-another"
+                >
+                    <p className="review-summary-note">
+                        {t(
+                            "review.summary_remaining",
+                            "Still {n} due. Keep going?",
+                        ).replace("{n}", String(remaining))}
+                    </p>
+                    <Button
+                        type="button"
+                        onClick={onAnotherRound}
+                        data-testid="review-another-round"
+                    >
+                        <RotateCcw size={14} aria-hidden="true" />
+                        {t("review.another_round", "Another round")}
+                    </Button>
+                </div>
+            )}
             <p
                 className="review-summary-note"
                 data-testid="review-summary-repeat"
