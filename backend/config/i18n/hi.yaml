@@ -1771,6 +1771,10 @@ content:
     no_results: No results for '{query}'
     hint: Try a different search term
     clear: Clear search
+    available: "डाउनलोड के लिए उपलब्ध"
+    your_content: "आपकी सामग्री"
+    download_prompt_title: "यह सेट डाउनलोड करें?"
+    download_prompt_body: "यह सेट अभी डाउनलोड नहीं हुआ है। अभी डाउनलोड करें?"
   save_adaptive:
     button: Save this lesson?
   create_lesson:

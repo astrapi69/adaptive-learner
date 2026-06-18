@@ -1778,6 +1778,10 @@ content:
     no_results: "Κανένα αποτέλεσμα για '{query}'"
     hint: "Δοκίμασε διαφορετικό όρο αναζήτησης"
     clear: "Καθαρισμός αναζήτησης"
+    available: "Διαθέσιμα για λήψη"
+    your_content: "Το περιεχόμενό σου"
+    download_prompt_title: "Λήψη αυτού του συνόλου;"
+    download_prompt_body: "Αυτό το σύνολο δεν έχει ληφθεί ακόμη. Λήψη τώρα;"
   save_adaptive:
     button: "Αποθήκευση αυτού του μαθήματος;"
   create_lesson:

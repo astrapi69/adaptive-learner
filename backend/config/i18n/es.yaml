@@ -1778,6 +1778,10 @@ content:
     no_results: "Sin resultados para '{query}'"
     hint: "Prueba otro término de búsqueda"
     clear: "Borrar búsqueda"
+    available: "Disponible para descargar"
+    your_content: "Tu contenido"
+    download_prompt_title: "¿Descargar este set?"
+    download_prompt_body: "Este set aún no está descargado. ¿Descargarlo ahora?"
   save_adaptive:
     button: "¿Guardar esta lección?"
   create_lesson:
