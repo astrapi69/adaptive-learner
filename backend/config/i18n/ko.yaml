@@ -2366,6 +2366,15 @@ pwa:
     action: "업데이트"
     later: "나중에"
 share:
+  app:
+    heading: "앱 공유"
+    qr_intro: "QR 코드로 앱을 공유해 다른 사람이 바로 열 수 있게 하세요."
+    show_qr: "QR 코드 표시"
+    download_qr: "QR 코드 다운로드"
+    copy_url: "URL 복사"
+    copied: "복사됨"
+    share: "공유"
+    qr_alt: "앱으로 연결되는 QR 코드"
   achievement:
     button: 공유
     title: 진행 상황 공유

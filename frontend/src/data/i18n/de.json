@@ -2585,6 +2585,16 @@
     }
   },
   "share": {
+    "app": {
+      "heading": "Die App teilen",
+      "qr_intro": "Teile die App per QR-Code, damit andere sie direkt öffnen können.",
+      "show_qr": "QR-Code anzeigen",
+      "download_qr": "QR-Code herunterladen",
+      "copy_url": "URL kopieren",
+      "copied": "Kopiert",
+      "share": "Teilen",
+      "qr_alt": "QR-Code, der zur App führt"
+    },
     "achievement": {
       "button": "Teilen",
       "title": "Fortschritt teilen",

@@ -2348,6 +2348,15 @@ pwa:
     action: "अपडेट करें"
     later: "बाद में"
 share:
+  app:
+    heading: "ऐप साझा करें"
+    qr_intro: "ऐप को QR कोड के ज़रिए साझा करें ताकि दूसरे इसे सीधे खोल सकें।"
+    show_qr: "QR कोड दिखाएं"
+    download_qr: "QR कोड डाउनलोड करें"
+    copy_url: "URL कॉपी करें"
+    copied: "कॉपी किया गया"
+    share: "साझा करें"
+    qr_alt: "ऐप से जुड़ा QR कोड"
   achievement:
     button: साझा करें
     title: अपनी प्रगति साझा करें

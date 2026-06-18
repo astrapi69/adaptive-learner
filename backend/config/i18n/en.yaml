@@ -2366,6 +2366,15 @@ pwa:
     action: "Update"
     later: "Later"
 share:
+  app:
+    heading: "Share the app"
+    qr_intro: "Share the app via QR code so others can open it."
+    show_qr: "Show QR code"
+    download_qr: "Download QR code"
+    copy_url: "Copy URL"
+    copied: "Copied"
+    share: "Share"
+    qr_alt: "QR code linking to the app"
   achievement:
     button: Share
     title: Share your progress
