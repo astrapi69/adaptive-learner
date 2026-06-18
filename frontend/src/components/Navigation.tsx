@@ -252,10 +252,10 @@ export default function Navigation() {
           {t("nav.anki", "Anki")}
         </NavLink>
         <NavLink to="/content" className={linkClass} data-testid="nav-content">
-          {t("nav.content", "Content")}
+          {t("nav.content", "My content")}
         </NavLink>
         <NavLink to="/discover" className={linkClass} data-testid="nav-discover">
-          {t("nav.discover", "Discover")}
+          {t("nav.discover", "Discover content")}
         </NavLink>
         <NavLink
           to="/settings"

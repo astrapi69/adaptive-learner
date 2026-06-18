@@ -56,7 +56,7 @@ data_export:
   cat_settings: "Paramètres"
   cat_ai_config: "Sauvegarde de clé IA"
 nav:
-  discover: "Découvrir"
+  discover: "Découvrir du contenu"
   offline_long: "Hors ligne — les sessions passées restent lisibles"
   sync_pending: "{n} modification(s) en attente de synchronisation"
   statistics: "Statistiques"
@@ -76,7 +76,7 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactivez-le dans les Paramètres."
-  content: Contenu
+  content: "Mon contenu"
   mode_badge_content: Contenu
   mode_badge_ai: "IA+Contenu"
   mode_badge_tooltip_content: "Aucune clé API configurée — uniquement le contenu pré-construit. Ajoute une clé dans les Paramètres pour activer les fonctions IA."
@@ -1756,6 +1756,7 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  discover_more: "Trouver plus de contenu"
   book:
     companion: "Complément du livre"
     by_author: "par {author}"
@@ -2695,6 +2696,7 @@ resource:
   free: "Gratuit"
   paid: "Cours"
 discover:
+  to_content: "Aller au navigateur de contenu"
   title: "Découvrir du contenu"
   subtitle: "Trouvez du matériel d'apprentissage avant de le télécharger."
   loading: "Chargement du contenu disponible…"

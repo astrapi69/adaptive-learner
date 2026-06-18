@@ -194,6 +194,27 @@ describe("Content Browser search", () => {
     expect(screen.queryByTestId("content-tree")).not.toBeInTheDocument();
   });
 
+  it("shows only local content and never surfaces index sets (#772)", async () => {
+    renderPage();
+    await ready();
+    // A persistent hint points at /discover while browsing.
+    expect(screen.getByTestId("content-discover-hint")).toBeInTheDocument();
+    fireEvent.change(screen.getByTestId("content-search-input"), {
+      target: { value: "python" },
+    });
+    await waitFor(
+      () =>
+        expect(screen.getByTestId("content-search-results")).toBeInTheDocument(),
+      { timeout: 2000 },
+    );
+    // The "Your content" heading is the only result group; no index half.
+    expect(screen.getByTestId("content-search-your")).toBeInTheDocument();
+    expect(screen.queryByTestId("content-available-results")).not.toBeInTheDocument();
+    // Discovery of not-downloaded sets is pointed to /discover instead.
+    const hint = screen.getByTestId("content-search-discover-hint");
+    expect(hint.querySelector("a")).toHaveAttribute("href", "/discover");
+  });
+
   it("matches card content and navigates on lesson click", async () => {
     renderPage();
     await ready();

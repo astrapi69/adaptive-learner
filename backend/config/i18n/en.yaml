@@ -56,7 +56,7 @@ data_export:
   cat_settings: "Settings"
   cat_ai_config: "AI key backup"
 nav:
-  discover: "Discover"
+  discover: "Discover content"
   offline_long: "Offline — past sessions stay readable"
   sync_pending: "{n} change(s) waiting to sync"
   statistics: "Statistics"
@@ -76,7 +76,7 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Developer Mode is on — error toasts show full technical detail. Toggle in Settings."
-  content: Content
+  content: "My content"
   mode_badge_content: Content
   mode_badge_ai: "AI+Content"
   mode_badge_tooltip_content: "No API key configured — using pre-built content only. Add a key in Settings to enable AI features."
@@ -1765,6 +1765,7 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  discover_more: "Find more content"
   book:
     companion: "Book companion"
     by_author: "by {author}"
@@ -2703,6 +2704,7 @@ resource:
   free: "Free"
   paid: "Course"
 discover:
+  to_content: "Go to Content Browser"
   title: "Discover content"
   subtitle: "Find learning material before you download it."
   loading: "Loading available content…"

@@ -62,7 +62,7 @@
     "cat_ai_config": "Backup de chave de IA"
   },
   "nav": {
-    "discover": "Descobrir",
+    "discover": "Descobrir conteúdo",
     "offline_long": "Offline — as sessões anteriores continuam acessíveis",
     "sync_pending": "{n} alteração(ões) aguardando sincronização",
     "statistics": "Estatísticas",
@@ -82,7 +82,7 @@
     "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Modo desenvolvedor ativo — as notificações de erro mostram detalhes técnicos. Desative em Definições.",
-    "content": "Conteúdo",
+    "content": "Meu conteúdo",
     "mode_badge_content": "Conteúdo",
     "mode_badge_ai": "IA+Conteúdo",
     "mode_badge_tooltip_content": "Sem chave API configurada — apenas conteúdo pré-construído. Adiciona uma chave em Definições para ativar as funcionalidades IA.",
@@ -1899,6 +1899,7 @@
     }
   },
   "content": {
+    "discover_more": "Descobrir mais conteúdo",
     "book": {
       "companion": "Companhia do livro",
       "by_author": "por {author}",
@@ -2941,6 +2942,7 @@
     "paid": "Curso"
   },
   "discover": {
+    "to_content": "Ir para o navegador de conteúdo",
     "title": "Descobrir conteúdo",
     "subtitle": "Encontre material de aprendizagem antes de baixá-lo.",
     "loading": "Carregando conteúdo disponível…",

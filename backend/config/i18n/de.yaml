@@ -56,7 +56,7 @@ data_export:
   cat_settings: "Einstellungen"
   cat_ai_config: "KI-Schlüssel-Sicherung"
 nav:
-  discover: "Entdecken"
+  discover: "Inhalte entdecken"
   offline_long: "Offline — frühere Sitzungen bleiben lesbar"
   sync_pending: "{n} Änderung(en) warten auf Sync"
   statistics: "Statistik"
@@ -76,7 +76,7 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Entwicklermodus aktiv — Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar."
-  content: Inhalte
+  content: "Meine Inhalte"
   mode_badge_content: Inhalte
   mode_badge_ai: "KI+Inhalte"
   mode_badge_tooltip_content: "Kein API-Schlüssel konfiguriert — nur vorgefertigte Inhalte. Schlüssel in den Einstellungen hinterlegen, um KI-Funktionen zu aktivieren."
@@ -1759,6 +1759,7 @@ lesson:
     action_restart: "Neu starten"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  discover_more: "Mehr Inhalte entdecken"
   book:
     companion: "Buch-Begleiter"
     by_author: "von {author}"
@@ -2697,6 +2698,7 @@ resource:
   free: "Gratis"
   paid: "Kurs"
 discover:
+  to_content: "Zum Content Browser"
   title: "Inhalte entdecken"
   subtitle: "Finde Lernmaterial, bevor du es herunterlädst."
   loading: "Verfügbare Inhalte werden geladen…"
