@@ -20,6 +20,7 @@ import {useNavigate} from "react-router-dom";
 
 import DueReviewCard from "../../shared/DueReviewCard";
 import {useI18n} from "../../hooks/useI18n";
+import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";
 import type {ReviewQueueItem} from "../../storage/types";
 
@@ -38,7 +39,7 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
             return;
         }
         let cancelled = false;
-        void (async () => {
+        async function refresh() {
             try {
                 const queue = await getStorage().elementErrors.reviewQueue(
                     userId,
@@ -47,9 +48,20 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
             } catch {
                 if (!cancelled) setItems([]);
             }
-        })();
+        }
+        void refresh();
+        // #761 — recompute the due count live after each answered review
+        // question (useReviewLesson fires REVIEWS_CHANGED_EVENT per SRS
+        // write) and when the tab regains focus, mirroring NavReviewsBadge.
+        // Without this the card stays stale during / after a review session.
+        const onReviewsChanged = () => void refresh();
+        const onFocus = () => void refresh();
+        window.addEventListener(REVIEWS_CHANGED_EVENT, onReviewsChanged);
+        window.addEventListener("focus", onFocus);
         return () => {
             cancelled = true;
+            window.removeEventListener(REVIEWS_CHANGED_EVENT, onReviewsChanged);
+            window.removeEventListener("focus", onFocus);
         };
     }, [userId]);
 
