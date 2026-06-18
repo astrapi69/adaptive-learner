@@ -30,7 +30,15 @@ import pytest
 import yaml
 
 I18N_DIR = Path(__file__).resolve().parent.parent / "config" / "i18n"
+# Languages with a full assessment-question translation pack (text_<lang> on
+# every QUESTIONS entry + a _LANG_TO_KEY row). These drive the assessment
+# coverage checks below.
 PHASE26_LANGS = ["pt", "tr", "ja"]
+# Languages whose UI CATALOG (config/i18n/<lang>.yaml) is fully translated and
+# must hold the no-EN-passthrough + <10%-identical quality bars. ``hi`` is
+# catalog-only (#570) — it has no assessment pack yet, so it joins the catalog
+# gates here but NOT the assessment gates above.
+CATALOG_AUDIT_LANGS = ["pt", "tr", "ja", "hi"]
 
 # Whole-word EN markers that should NOT appear in pt/tr/ja
 # values. Each word is a strong signal that an EN string was
@@ -144,7 +152,7 @@ def _flatten(value, prefix: str = "") -> dict[str, object]:
 # --- 1. No EN passthrough ----------------------------------------------
 
 
-@pytest.mark.parametrize("lang", PHASE26_LANGS)
+@pytest.mark.parametrize("lang", CATALOG_AUDIT_LANGS)
 def test_no_en_passthrough_markers(lang: str):
     """Spot-check: no obvious EN words appear as standalone tokens
     in the translated values. The check is heuristic + has a
@@ -180,7 +188,7 @@ def test_placeholders_do_not_trip_en_markers():
     assert "the" not in cleaned.replace(" ", "")
 
 
-@pytest.mark.parametrize("lang", PHASE26_LANGS)
+@pytest.mark.parametrize("lang", CATALOG_AUDIT_LANGS)
 def test_values_are_not_identical_to_en(lang: str):
     """Verify the catalog actually diverges from EN. We tolerate
     a small overlap for proper nouns + technical identifiers
