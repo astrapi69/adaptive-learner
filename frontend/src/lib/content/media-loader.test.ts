@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  DEFAULT_MEDIA_PRIORITY,
+  bookToMediaResource,
+  effectiveMediaPriority,
   fetchMediaResources,
   isAffiliateUrl,
   mediaForDomain,
@@ -210,5 +213,71 @@ describe("fetchMediaResources", () => {
     );
     const resources = await fetchMediaResources();
     expect(resources).toHaveLength(3);
+  });
+});
+
+describe("media priority (#769)", () => {
+  it("parses an explicit priority and defaults to null", () => {
+    const withPriority = projectMediaResource(
+      { type: "youtube", title: "x", url: "https://e.com", priority: 3 },
+      "language",
+    );
+    const without = projectMediaResource(
+      { type: "youtube", title: "y", url: "https://f.com" },
+      "language",
+    );
+    expect(withPriority?.priority).toBe(3);
+    expect(without?.priority).toBeNull();
+  });
+
+  it("effectiveMediaPriority falls back to the default", () => {
+    expect(
+      effectiveMediaPriority({
+        type: "book",
+        title: "b",
+        url: "https://b.com",
+        domain: "d",
+        priority: 0,
+      }),
+    ).toBe(0);
+    expect(
+      effectiveMediaPriority({
+        type: "youtube",
+        title: "v",
+        url: "https://v.com",
+        domain: "d",
+      }),
+    ).toBe(DEFAULT_MEDIA_PRIORITY);
+  });
+});
+
+describe("bookToMediaResource (#769)", () => {
+  it("builds a priority-0 book resource from a url", () => {
+    const book = bookToMediaResource(
+      { title: "Psychologie", author: "Zimbardo", url: "https://www.amazon.de/dp/3868943234/" },
+      "psychology",
+    );
+    expect(book).toMatchObject({
+      type: "book",
+      title: "Psychologie",
+      author: "Zimbardo",
+      url: "https://www.amazon.de/dp/3868943234/",
+      domain: "psychology",
+      priority: 0,
+    });
+  });
+
+  it("constructs an Amazon link from an ASIN when no url is given", () => {
+    const book = bookToMediaResource(
+      { title: "KI für Einsteiger", asin: "B0F43H6T2M" },
+      "ai",
+    );
+    expect(book?.url).toBe("https://www.amazon.com/dp/B0F43H6T2M");
+  });
+
+  it("returns null without a title or a link", () => {
+    expect(bookToMediaResource(null, "d")).toBeNull();
+    expect(bookToMediaResource({ title: "" }, "d")).toBeNull();
+    expect(bookToMediaResource({ title: "No link" }, "d")).toBeNull();
   });
 });

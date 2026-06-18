@@ -114,6 +114,60 @@ describe("LessonResources", () => {
     expect(screen.getAllByText("Same")).toHaveLength(1);
   });
 
+  it("auto-inserts the set book as the first media item (#769)", async () => {
+    domainMedia.value = [
+      {
+        type: "youtube",
+        title: "Domain video",
+        url: "https://youtu.be/aircAruvnKk",
+        domain: "ai",
+      },
+    ];
+    render(
+      <LessonResources
+        lesson={lesson({})}
+        setBook={{
+          title: "KI für Einsteiger",
+          author: "Asterios Raptis",
+          url: "https://www.amazon.de/dp/B0F43H6T2M/",
+        }}
+      />,
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId("lesson-resources")).toBeInTheDocument(),
+    );
+    // The book renders, with a working link.
+    const bookLink = screen.getByText("KI für Einsteiger").closest("a");
+    expect(bookLink).toHaveAttribute(
+      "href",
+      "https://www.amazon.de/dp/B0F43H6T2M/",
+    );
+    // The book group (priority 0) sorts before the youtube group (default).
+    const groups = Array.from(
+      screen
+        .getByTestId("lesson-resources")
+        .querySelectorAll("[data-testid^='lesson-resources-group-']"),
+    ).map((el) => el.getAttribute("data-testid"));
+    expect(groups[0]).toBe("lesson-resources-group-book");
+    expect(groups).toContain("lesson-resources-group-youtube");
+    expect(groups.indexOf("lesson-resources-group-book")).toBeLessThan(
+      groups.indexOf("lesson-resources-group-youtube"),
+    );
+  });
+
+  it("renders the section for a set book even with no other media (#769)", async () => {
+    render(
+      <LessonResources
+        lesson={lesson({})}
+        setBook={{ title: "Solo Book", url: "https://example.com/book" }}
+      />,
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId("lesson-resources")).toBeInTheDocument(),
+    );
+    expect(screen.getByText("Solo Book")).toBeInTheDocument();
+  });
+
   it("groups resources by type", async () => {
     domainMedia.value = [
       {

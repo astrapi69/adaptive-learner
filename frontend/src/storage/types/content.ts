@@ -35,6 +35,18 @@ export interface ContentSetEntry {
   cover_image: string | null;
   cached_version: string | null;
   update_available: boolean;
+  /** Optional set-level book (#769). When present, the lesson's "Vertiefe
+   *  das Thema" section auto-inserts it as the first media item. */
+  book?: ContentSetBook | null;
+}
+
+/** A set's manifest-level book block surfaced to the lesson media section
+ *  (#769). Mirrors the manifest \`sets[].book\` shape. */
+export interface ContentSetBook {
+  title: string;
+  author?: string | null;
+  url?: string | null;
+  asin?: string | null;
 }
 
 export interface ContentSetSource {

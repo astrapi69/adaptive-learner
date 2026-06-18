@@ -12,6 +12,7 @@
 
 import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../lib/constants";
 import type {AttemptRecord} from "./types/element-errors";
+import type {ContentSetBook} from "./types/content";
 
 // ---- Row shapes (mirror backend Pydantic Out-schemas) -----------------
 
@@ -432,6 +433,10 @@ export interface ContentSetRow {
     /** Cached repo-level manifest YAML (verbatim, for
      *  re-parsing after a schema upgrade). */
     manifest_yaml: string;
+    /** #769 — optional set-level book block (structured-cloned,
+     *  not indexed, so no schema bump). Older rows read as
+     *  ``undefined`` -> treated as "no book". */
+    book?: ContentSetBook | null;
 }
 
 /**
