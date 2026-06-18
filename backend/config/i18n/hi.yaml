@@ -450,6 +450,18 @@ settings:
   hints_enabled_desc: "हर अभ्यास पर एक क्रमिक संकेत बटन देता है।"
   hint_xp_cost: "प्रति संकेत XP लागत"
   hint_xp_cost_desc: "संकेत बटन पर दिखाया जाता है। 0 = निःशुल्क।"
+  section_reminders: "अनुस्मारक"
+  reminders_enabled: "दैनिक सीखने के अनुस्मारक"
+  reminders_enabled_desc: "जब समीक्षाएँ देय हों तो ब्राउज़र सूचना प्राप्त करें। यह केवल तभी काम करता है जब ऐप खुला हो।"
+  reminders_time: "अनुस्मारक समय"
+  reminders_time_desc: "हर दिन आपको कब याद दिलाना है।"
+  reminders_weekdays: "दिन"
+  reminders_weekdays_desc: "किन दिनों में आपको याद दिलाना है।"
+  reminders_permission_request: "सूचनाएँ सक्षम करें"
+  reminders_permission_denied: "सूचनाएँ अवरुद्ध हैं। अनुस्मारक प्राप्त करने के लिए उन्हें अपने ब्राउज़र की साइट सेटिंग में सक्षम करें।"
+  reminders_unsupported: "आपका ब्राउज़र सूचनाओं का समर्थन नहीं करता।"
+  reminders_notification_title: "समीक्षा का समय"
+  reminders_notification_body: "{n} समीक्षाएँ देय हैं। अपनी श्रृंखला बनाए रखें!"
   support:
     heading: सहायता
     description: Something not working as expected? Create a report of your recent actions to help the developer reproduce it. You review everything before it leaves your browser.

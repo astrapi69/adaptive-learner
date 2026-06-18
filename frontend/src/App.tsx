@@ -17,6 +17,7 @@ import GlobalShortcuts from "./components/GlobalShortcuts";
 import UpdatePromptHost from "./components/UpdatePromptHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
+import ReminderScheduler from "./components/ReminderScheduler";
 import Navigation from "./components/Navigation";
 import OfflineIndicator from "./components/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
@@ -174,6 +175,7 @@ export default function App() {
             </Suspense>
             <InstallPrompt />
             <MilestoneHost />
+            <ReminderScheduler />
             <Suspense fallback={null}>
               <EventRecorderSetup />
             </Suspense>
