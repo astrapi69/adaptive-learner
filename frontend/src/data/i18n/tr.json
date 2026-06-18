@@ -2445,6 +2445,7 @@
       "track_aria": "{total} dersten {done} tanesi tamamlandı"
     },
     "view": {
+      "paths": "Yollarım",
       "label": "Görünüm",
       "personal": "Kişisel",
       "graph": "Grafik",
@@ -2512,7 +2513,27 @@
       "start_adaptive": "Uyarlanabilir ders başlat",
       "region_label": "Hata kümeleri paneli"
     },
-    "search_label": "Dersleri ara — ilk eşleşmeye gitmek için Enter'a basın"
+    "search_label": "Dersleri ara — ilk eşleşmeye gitmek için Enter'a basın",
+    "custom": {
+      "title": "Öğrenme yollarım",
+      "subtitle": "Dersleri kendi sıralı yolunuzda bir araya getirin.",
+      "create_title": "Yol oluştur",
+      "name_placeholder": "Yol adı",
+      "description_placeholder": "Açıklama (isteğe bağlı)",
+      "create": "Yol oluştur",
+      "empty": "Henüz özel yol yok. Yukarıdan bir tane oluşturun ve ders ekleyin.",
+      "progress": "{total} dersten {done} tamamlandı",
+      "continue": "Devam et",
+      "delete": "Yolu sil",
+      "next_hint": "Sonraki: {lesson}",
+      "add_lesson": "Ders ekle",
+      "search_lessons": "Ders ara…",
+      "no_lessons": "Ders bulunamadı.",
+      "done_adding": "Bitti",
+      "move_up": "Yukarı taşı",
+      "move_down": "Aşağı taşı",
+      "remove_lesson": "Dersi kaldır"
+    }
   },
   "pwa": {
     "offline_message": "Çevrimdışısınız. Kaydedilen içerik kullanılabilir.",

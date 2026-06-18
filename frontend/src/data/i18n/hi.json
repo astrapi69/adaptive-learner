@@ -2445,6 +2445,7 @@
       "track_aria": "{done} of {total} lessons done"
     },
     "view": {
+      "paths": "मेरे पथ",
       "label": "View",
       "personal": "Personal",
       "graph": "Graph",
@@ -2512,7 +2513,27 @@
       "start_adaptive": "Start adaptive lesson",
       "region_label": "Error clusters panel"
     },
-    "search_label": "Search lessons — press Enter to navigate to the first match"
+    "search_label": "Search lessons — press Enter to navigate to the first match",
+    "custom": {
+      "title": "मेरे शिक्षण पथ",
+      "subtitle": "पाठों को अपने क्रमबद्ध पथ में जोड़ें।",
+      "create_title": "एक पथ बनाएं",
+      "name_placeholder": "पथ का नाम",
+      "description_placeholder": "विवरण (वैकल्पिक)",
+      "create": "पथ बनाएं",
+      "empty": "अभी कोई कस्टम पथ नहीं। ऊपर एक बनाएं और पाठ जोड़ें।",
+      "progress": "{total} में से {done} पूर्ण",
+      "continue": "जारी रखें",
+      "delete": "पथ हटाएं",
+      "next_hint": "अगला: {lesson}",
+      "add_lesson": "एक पाठ जोड़ें",
+      "search_lessons": "पाठ खोजें…",
+      "no_lessons": "कोई पाठ नहीं मिला।",
+      "done_adding": "हो गया",
+      "move_up": "ऊपर ले जाएं",
+      "move_down": "नीचे ले जाएं",
+      "remove_lesson": "पाठ हटाएं"
+    }
   },
   "pwa": {
     "offline_message": "You're offline. Saved content is available.",

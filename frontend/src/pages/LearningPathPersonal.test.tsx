@@ -38,6 +38,18 @@ vi.mock("../lib/learnerState", () => ({
     readLearnerState: () => ({userId: "u1"}),
 }));
 
+// CustomPathsView reads getStorage(); stub the namespaces it uses so
+// the "paths" view mounts without IndexedDB / a backend.
+vi.mock("../storage", () => ({
+    getStorage: () => ({
+        lessonProgress: {list: async () => []},
+        contentLoader: {
+            listSets: async () => ({sets: [], sources: []}),
+            listLessons: async () => ({lessons: []}),
+        },
+    }),
+}));
+
 import LearningPathPersonal from "./LearningPathPersonal";
 
 function lesson(n: number, over = {}) {
@@ -196,6 +208,26 @@ describe("LearningPathPersonal", () => {
         expect(
             localStorage.getItem("adaptive-learner.learning-path-filter"),
         ).toBe("all");
+    });
+
+    it("switches to the My Paths view and persists the choice", async () => {
+        useHookMock.mockReturnValue({
+            state: "ready",
+            data: {activeSets: [set()], notDownloadedSets: []},
+        });
+        renderPage();
+        fireEvent.click(screen.getByTestId("learning-path-view-paths"));
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("custom-paths-view"),
+            ).toBeInTheDocument(),
+        );
+        expect(
+            screen.getByTestId("custom-path-create-form"),
+        ).toBeInTheDocument();
+        expect(localStorage.getItem("adaptive-learner.learning-path-view")).toBe(
+            "paths",
+        );
     });
 
     it("switches to the lazy graph view and persists the choice", async () => {

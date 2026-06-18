@@ -2445,6 +2445,7 @@
       "track_aria": "{total}件中{done}件のレッスンが完了"
     },
     "view": {
+      "paths": "マイパス",
       "label": "表示",
       "personal": "パーソナル",
       "graph": "グラフ",
@@ -2512,7 +2513,27 @@
       "start_adaptive": "アダプティブレッスンを開始",
       "region_label": "エラークラスターパネル"
     },
-    "search_label": "レッスンを検索 — Enter キーで最初の一致に移動"
+    "search_label": "レッスンを検索 — Enter キーで最初の一致に移動",
+    "custom": {
+      "title": "マイ学習パス",
+      "subtitle": "レッスンを自分だけの順番にまとめましょう。",
+      "create_title": "パスを作成",
+      "name_placeholder": "パス名",
+      "description_placeholder": "説明（任意）",
+      "create": "パスを作成",
+      "empty": "まだカスタムパスがありません。上で作成してレッスンを追加してください。",
+      "progress": "{total} 中 {done} 完了",
+      "continue": "続ける",
+      "delete": "パスを削除",
+      "next_hint": "次: {lesson}",
+      "add_lesson": "レッスンを追加",
+      "search_lessons": "レッスンを検索…",
+      "no_lessons": "レッスンが見つかりません。",
+      "done_adding": "完了",
+      "move_up": "上へ",
+      "move_down": "下へ",
+      "remove_lesson": "レッスンを削除"
+    }
   },
   "pwa": {
     "offline_message": "オフラインです。保存済みのコンテンツは利用できます。",

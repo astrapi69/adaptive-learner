@@ -2445,6 +2445,7 @@
       "track_aria": "{done} de {total} lecciones completadas"
     },
     "view": {
+      "paths": "Mis rutas",
       "label": "Vista",
       "personal": "Personal",
       "graph": "Gráfico",
@@ -2512,7 +2513,27 @@
       "start_adaptive": "Iniciar lección adaptativa",
       "region_label": "Panel de grupos de errores"
     },
-    "search_label": "Buscar lecciones — pulsa Enter para ir a la primera coincidencia"
+    "search_label": "Buscar lecciones — pulsa Enter para ir a la primera coincidencia",
+    "custom": {
+      "title": "Mis rutas de aprendizaje",
+      "subtitle": "Reúne lecciones en tu propia ruta ordenada.",
+      "create_title": "Crear una ruta",
+      "name_placeholder": "Nombre de la ruta",
+      "description_placeholder": "Descripción (opcional)",
+      "create": "Crear ruta",
+      "empty": "Aún no hay rutas propias. Crea una arriba y añade lecciones.",
+      "progress": "{done} de {total} hechas",
+      "continue": "Continuar",
+      "delete": "Eliminar ruta",
+      "next_hint": "Siguiente: {lesson}",
+      "add_lesson": "Añadir una lección",
+      "search_lessons": "Buscar lecciones…",
+      "no_lessons": "No se encontraron lecciones.",
+      "done_adding": "Listo",
+      "move_up": "Subir",
+      "move_down": "Bajar",
+      "remove_lesson": "Quitar lección"
+    }
   },
   "pwa": {
     "offline_message": "Estás sin conexión. El contenido guardado está disponible.",
