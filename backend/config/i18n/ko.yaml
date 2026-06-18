@@ -1775,6 +1775,10 @@ content:
     no_results: "'{query}'에 대한 결과가 없습니다"
     hint: "다른 검색어를 시도해 보세요"
     clear: "검색 지우기"
+    available: "다운로드 가능"
+    your_content: "내 콘텐츠"
+    download_prompt_title: "이 세트를 다운로드할까요?"
+    download_prompt_body: "이 세트는 아직 다운로드되지 않았습니다. 지금 다운로드할까요?"
   save_adaptive:
     button: "이 레슨을 저장할까요?"
   create_lesson:

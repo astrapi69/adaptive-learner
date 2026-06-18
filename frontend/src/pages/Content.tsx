@@ -36,6 +36,7 @@ import { Input } from "@/components/ui/input";
 import ContinueLearning from "../components/ContinueLearning";
 import ImportLessonModal from "../components/content/ImportLessonModal";
 import MyLessonsSection from "../components/content/MyLessonsSection";
+import AvailableContentResults from "../components/content/AvailableContentResults";
 import ContentTree from "../components/content/ContentTree";
 import ContentShareDialog from "../components/content/ContentShareDialog";
 import type { DownloadState } from "../components/content/ContentSetRow";
@@ -707,6 +708,9 @@ export default function ContentPage() {
 
       {searchResult.active ? (
         <section className="content-search-results space-y-4" data-testid="content-search-results">
+          <h2 className="font-semibold" data-testid="content-search-your">
+            {t("content.search.your_content", "Your content")}
+          </h2>
           {searchResult.matches.length === 0 ? (
             <div className="content-empty" data-testid="content-search-empty">
               <p>
@@ -766,6 +770,13 @@ export default function ContentPage() {
               })}
             </>
           )}
+          {/* EXP-034 / DIS-07 — index sets matching the query that the
+              learner hasn't downloaded yet, with a download prompt. */}
+          <AvailableContentResults
+            query={searchResult.query}
+            downloadedSets={downloadedSets}
+            onDownloaded={loadSets}
+          />
         </section>
       ) : (
         <>

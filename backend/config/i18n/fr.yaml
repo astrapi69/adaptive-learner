@@ -1766,6 +1766,10 @@ content:
     no_results: "Aucun résultat pour '{query}'"
     hint: "Essaie un autre terme de recherche"
     clear: "Effacer la recherche"
+    available: "Disponible au téléchargement"
+    your_content: "Vos contenus"
+    download_prompt_title: "Télécharger ce set ?"
+    download_prompt_body: "Ce set n'est pas encore téléchargé. Le télécharger maintenant ?"
   save_adaptive:
     button: "Enregistrer cette leçon ?"
   create_lesson:

@@ -1912,7 +1912,11 @@
       "results": "{count} Ergebnisse",
       "no_results": "Keine Ergebnisse für '{query}'",
       "hint": "Versuche einen anderen Suchbegriff",
-      "clear": "Suche löschen"
+      "clear": "Suche löschen",
+      "available": "Zum Herunterladen verfügbar",
+      "your_content": "Deine Inhalte",
+      "download_prompt_title": "Dieses Set herunterladen?",
+      "download_prompt_body": "Dieses Set ist noch nicht heruntergeladen. Jetzt herunterladen?"
     },
     "save_adaptive": {
       "button": "Diese Lektion speichern?"
