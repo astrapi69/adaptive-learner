@@ -16,13 +16,14 @@ import type { XPState } from "../storage/types";
 
 const readLearnerState = vi.fn<() => { userId: string | null }>();
 const getState = vi.fn<(userId: string) => Promise<XPState>>();
+const getStreakHeatmap = vi.fn();
 
 vi.mock("../lib/learnerState", () => ({
   readLearnerState: () => readLearnerState(),
 }));
 
 vi.mock("../storage", () => ({
-  getStorage: () => ({ gamification: { getState } }),
+  getStorage: () => ({ gamification: { getState, getStreakHeatmap } }),
 }));
 
 import NavXpBadge from "./NavXpBadge";
@@ -52,6 +53,7 @@ describe("NavXpBadge", () => {
   beforeEach(() => {
     readLearnerState.mockReturnValue({ userId: "u1" });
     getState.mockResolvedValue(makeState());
+    getStreakHeatmap.mockResolvedValue([]);
   });
 
   afterEach(() => {

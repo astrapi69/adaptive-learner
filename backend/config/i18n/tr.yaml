@@ -1008,6 +1008,16 @@ gamification:
   xp_header_tooltip: Deneyim puanlarınız
   xp_to_next_level: Bir sonraki seviye için {n} XP
   max_level: Maksimum seviyeye ulaşıldı
+  level_detail:
+    activity: "Etkinlik (son 7 gün)"
+    activity_unit: "oturum"
+    activity_empty: "Son 7 günde etkinlik yok."
+    milestones: "Kilometre taşları"
+    ms_level: "Seviye {level}"
+    ms_xp: "{xp} XP"
+    reached: "ulaşıldı"
+    locked: "kilitli"
+    how: "Seviyeler artan bir XP eğrisinde yükselir: 0, 100, 300, 600, 1000 XP - her adım bir öncekinden 100 XP fazla gerektirir."
   level_detail_title: "Seviye ilerlemesi"
   level_up: Seviye atladın!
   reason_session_complete: Oturum tamamlandı

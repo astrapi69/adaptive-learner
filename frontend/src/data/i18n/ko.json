@@ -1071,6 +1071,17 @@
     "xp_header_tooltip": "당신의 경험치",
     "xp_to_next_level": "다음 레벨까지 {n} XP",
     "max_level": "최고 레벨 도달",
+    "level_detail": {
+      "activity": "활동 (최근 7일)",
+      "activity_unit": "세션",
+      "activity_empty": "최근 7일간 활동이 없습니다.",
+      "milestones": "마일스톤",
+      "ms_level": "레벨 {level}",
+      "ms_xp": "{xp} XP",
+      "reached": "달성",
+      "locked": "잠김",
+      "how": "레벨은 증가하는 XP 곡선으로 올라갑니다: 0, 100, 300, 600, 1000 XP - 각 단계는 이전보다 100 XP 더 필요합니다."
+    },
     "level_detail_title": "레벨 진행도",
     "level_up": "레벨 업!",
     "reason_session_complete": "세션 완료",

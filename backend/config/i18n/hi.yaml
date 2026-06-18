@@ -1009,6 +1009,16 @@ gamification:
   xp_header_tooltip: Your experience points
   xp_to_next_level: '{n} XP to next level'
   max_level: Max level reached
+  level_detail:
+    activity: "गतिविधि (पिछले 7 दिन)"
+    activity_unit: "सत्र"
+    activity_empty: "पिछले 7 दिनों में कोई गतिविधि नहीं।"
+    milestones: "मील के पत्थर"
+    ms_level: "लेवल {level}"
+    ms_xp: "{xp} XP"
+    reached: "हासिल"
+    locked: "लॉक"
+    how: "लेवल बढ़ती XP वक्र पर ऊपर जाते हैं: 0, 100, 300, 600, 1000 XP - हर चरण को पिछले से 100 XP अधिक चाहिए।"
   level_detail_title: "स्तर प्रगति"
   level_up: Level up!
   reason_session_complete: Session completed

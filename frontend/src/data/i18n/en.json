@@ -1071,6 +1071,17 @@
     "xp_header_tooltip": "Your experience points",
     "xp_to_next_level": "{n} XP to next level",
     "max_level": "Max level reached",
+    "level_detail": {
+      "activity": "Activity (last 7 days)",
+      "activity_unit": "sessions",
+      "activity_empty": "No activity in the last 7 days.",
+      "milestones": "Milestones",
+      "ms_level": "Level {level}",
+      "ms_xp": "{xp} XP",
+      "reached": "reached",
+      "locked": "locked",
+      "how": "Levels rise on a growing XP curve: 0, 100, 300, 600, 1000 XP - each step needs 100 XP more than the last."
+    },
     "level_detail_title": "Level progress",
     "level_up": "Level up!",
     "reason_session_complete": "Session completed",
