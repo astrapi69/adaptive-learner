@@ -148,6 +148,16 @@ export function isThemeChoice(value: string): value is ThemeChoice {
 }
 
 /**
+ * Whether a concrete theme is dark-family (dark background surface).
+ * Drives the dark icon variant in the nav/landing header so the brand
+ * mark keeps WCAG-AA contrast on dark surfaces. Defaults to ``false``
+ * for an unknown id (treat as light).
+ */
+export function isDarkTheme(id: ThemeId): boolean {
+    return THEMES.find((meta) => meta.id === id)?.family === "dark";
+}
+
+/**
  * Resolve a user choice to the concrete ``data-theme`` value to apply.
  * ``auto`` maps to ``dark`` when the OS prefers dark, else ``light``.
  */

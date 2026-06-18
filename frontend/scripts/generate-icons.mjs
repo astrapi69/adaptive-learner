@@ -35,6 +35,10 @@ const OUT = resolve(FRONTEND, "public");
 /** Brand palette derived from the source mark. */
 const LEAF = "#16cfc2"; // the solid swoosh teal (sampled from the source)
 const LEAF_RGB = {r: 0x16, g: 0xcf, b: 0xc2};
+// Dark-mode variant: the same mark recoloured to light teal (Tailwind
+// teal-300, #5eead4) so it keeps high WCAG-AA contrast on dark surfaces
+// (~11.8:1 on #1e1e2e). Used for the dark favicon + dark header icons.
+const LEAF_DARK_RGB = {r: 0x5e, g: 0xea, b: 0xd4};
 const TILE_BG = {r: 255, g: 255, b: 255, alpha: 1}; // opaque white tile (matches the source design)
 const TRANSPARENT = {r: 0, g: 0, b: 0, alpha: 0};
 const OG_BG = "#f0fdfa"; // teal-50, light card background for the social preview
@@ -83,7 +87,7 @@ async function detectMarkBox(srcPath) {
  *
  * @returns {Promise<{data: Buffer, info: {width: number, height: number}}>}
  */
-async function keyedTealMark(srcPath, box) {
+async function keyedTealMark(srcPath, box, color = LEAF_RGB) {
     const {data, info} = await sharp(srcPath)
         .extract(box)
         .ensureAlpha()
@@ -93,9 +97,9 @@ async function keyedTealMark(srcPath, box) {
     const out = Buffer.alloc(width * height * 4);
     for (let p = 0, q = 0; p < data.length; p += channels, q += 4) {
         const coverage = Math.min(255, Math.round((255 - data[p]) * 1.4));
-        out[q] = LEAF_RGB.r;
-        out[q + 1] = LEAF_RGB.g;
-        out[q + 2] = LEAF_RGB.b;
+        out[q] = color.r;
+        out[q + 1] = color.g;
+        out[q + 2] = color.b;
         out[q + 3] = coverage;
     }
     return sharp(out, {raw: {width, height, channels: 4}}).png().toBuffer();
@@ -130,17 +134,32 @@ async function main() {
     // The recentred, tightly-cropped mark, white keyed out, flattened to
     // flat brand teal on transparent so it composites on any background.
     const mark = await keyedTealMark(SOURCE, box);
+    // Dark-mode mark: identical geometry, recoloured to light teal.
+    const markDark = await keyedTealMark(SOURCE, box, LEAF_DARK_RGB);
 
+    // The transparent favicon + PWA/header icons, generated for both the
+    // light (brand teal) and dark (light teal) variants from one geometry.
     const transparentTargets = [
-        {name: "favicon-16x16.png", size: 16, margin: 0.04},
-        {name: "favicon-32x32.png", size: 32, margin: 0.04},
-        {name: "icon-192.png", size: 192, margin: 0.06},
-        {name: "icon-512.png", size: 512, margin: 0.06},
+        {base: "favicon-16x16", size: 16, margin: 0.04},
+        {base: "favicon-32x32", size: 32, margin: 0.04},
+        {base: "icon-192", size: 192, margin: 0.06},
+        {base: "icon-512", size: 512, margin: 0.06},
     ];
-    for (const t of transparentTargets) {
-        const buf = await buildSquare({mark, size: t.size, margin: t.margin, background: TRANSPARENT});
-        await writeFile(resolve(OUT, t.name), buf);
-        console.log(`  ${t.name} (${t.size}x${t.size}, transparent)`);
+    for (const variant of [
+        {suffix: "", art: mark, label: "light teal"},
+        {suffix: "-dark", art: markDark, label: "light teal / dark-mode"},
+    ]) {
+        for (const t of transparentTargets) {
+            const name = `${t.base}${variant.suffix}.png`;
+            const buf = await buildSquare({
+                mark: variant.art,
+                size: t.size,
+                margin: t.margin,
+                background: TRANSPARENT,
+            });
+            await writeFile(resolve(OUT, name), buf);
+            console.log(`  ${name} (${t.size}x${t.size}, transparent, ${variant.label})`);
+        }
     }
 
     // apple-touch-icon: iOS composites transparency onto black, so use an opaque white tile.
