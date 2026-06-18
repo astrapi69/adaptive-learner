@@ -62,7 +62,7 @@
     "cat_ai_config": "Sauvegarde de clé IA"
   },
   "nav": {
-    "discover": "Découvrir",
+    "discover": "Découvrir du contenu",
     "offline_long": "Hors ligne — les sessions passées restent lisibles",
     "sync_pending": "{n} modification(s) en attente de synchronisation",
     "statistics": "Statistiques",
@@ -82,7 +82,7 @@
     "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactivez-le dans les Paramètres.",
-    "content": "Contenu",
+    "content": "Mon contenu",
     "mode_badge_content": "Contenu",
     "mode_badge_ai": "IA+Contenu",
     "mode_badge_tooltip_content": "Aucune clé API configurée — uniquement le contenu pré-construit. Ajoute une clé dans les Paramètres pour activer les fonctions IA.",
@@ -1899,6 +1899,7 @@
     }
   },
   "content": {
+    "discover_more": "Trouver plus de contenu",
     "book": {
       "companion": "Complément du livre",
       "by_author": "par {author}",
@@ -2941,6 +2942,7 @@
     "paid": "Cours"
   },
   "discover": {
+    "to_content": "Aller au navigateur de contenu",
     "title": "Découvrir du contenu",
     "subtitle": "Trouvez du matériel d'apprentissage avant de le télécharger.",
     "loading": "Chargement du contenu disponible…",

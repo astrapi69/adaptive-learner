@@ -29,14 +29,13 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ContinueLearning from "../components/ContinueLearning";
 import ImportLessonModal from "../components/content/ImportLessonModal";
 import MyLessonsSection from "../components/content/MyLessonsSection";
-import AvailableContentResults from "../components/content/AvailableContentResults";
 import ContentTree from "../components/content/ContentTree";
 import ContentShareDialog from "../components/content/ContentShareDialog";
 import type { DownloadState } from "../components/content/ContentSetRow";
@@ -673,6 +672,17 @@ export default function ContentPage() {
         </div>
       </div>
 
+      {/* #772 — the Content Browser is "Meine Inhalte": only locally
+          downloaded sets. Discovering new (not-downloaded) content happens on
+          /discover; a persistent hint points there while browsing. */}
+      {!searchResult.active && (
+        <p className="mb-4 text-sm text-muted-foreground" data-testid="content-discover-hint">
+          <Link to="/discover" className="text-accent hover:underline">
+            {t("content.discover_more", "Find more content")} →
+          </Link>
+        </p>
+      )}
+
       {/* UX overhaul C3 — Continue Learning: the learner's recent
           activity, directly below the search, above the tree. Hidden
           while a search is active (results replace the browse view)
@@ -770,13 +780,14 @@ export default function ContentPage() {
               })}
             </>
           )}
-          {/* EXP-034 / DIS-07 — index sets matching the query that the
-              learner hasn't downloaded yet, with a download prompt. */}
-          <AvailableContentResults
-            query={searchResult.query}
-            downloadedSets={downloadedSets}
-            onDownloaded={loadSets}
-          />
+          {/* #772 — the Content Browser shows only local content. Not-yet-
+              downloaded sets are discovered on /discover; point there instead
+              of surfacing index results here. */}
+          <p className="text-sm text-muted-foreground" data-testid="content-search-discover-hint">
+            <Link to="/discover" className="text-accent hover:underline">
+              {t("content.discover_more", "Find more content")} →
+            </Link>
+          </p>
         </section>
       ) : (
         <>

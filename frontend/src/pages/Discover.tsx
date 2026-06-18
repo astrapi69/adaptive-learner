@@ -15,6 +15,7 @@
 
 import { Compass } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { ApiError } from "../api/client";
 import { useI18n } from "../hooks/useI18n";
@@ -128,6 +129,13 @@ export default function Discover() {
   const results = useMemo(
     () => queryDiscoverSets(allSets, filters, sort),
     [allSets, filters, sort],
+  );
+
+  // #772 — once the learner has downloaded a set this session, point them
+  // back to the Content Browser ("Meine Inhalte"), where it now lives.
+  const hasDownloaded = useMemo(
+    () => Object.values(downloadState).some((state) => state === "done"),
+    [downloadState],
   );
 
   const filterDefs: FilterDef[] = useMemo(() => {
@@ -270,6 +278,17 @@ export default function Discover() {
           </p>
         </div>
       </header>
+
+      {hasDownloaded && (
+        <p
+          className="mb-3 text-sm text-muted-foreground"
+          data-testid="discover-to-content"
+        >
+          <Link to="/content" className="text-accent hover:underline">
+            {t("discover.to_content", "Go to Content Browser")} →
+          </Link>
+        </p>
+      )}
 
       <SearchField
         value={rawQuery}
