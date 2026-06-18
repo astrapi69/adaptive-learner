@@ -62,6 +62,7 @@
     "cat_ai_config": "Sauvegarde de clé IA"
   },
   "nav": {
+    "discover": "Découvrir",
     "offline_long": "Hors ligne — les sessions passées restent lisibles",
     "sync_pending": "{n} modification(s) en attente de synchronisation",
     "statistics": "Statistiques",
@@ -367,6 +368,8 @@
     "summary_corrected": "{corrected} sur {total} corrigés",
     "summary_trend": "Bien — vos points faibles se renforcent.",
     "summary_next": "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision.",
+    "summary_remaining": "Encore {n} à revoir. On continue ?",
+    "another_round": "Encore un tour",
     "summary_repeat": "Revenez dans environ 2 jours pour garder cela en mémoire.",
     "explain_heading": "Pourquoi vous les avez ratés",
     "explain_article_gender": "Attention au genre : les noms en -o sont souvent masculins (el/un), en -a féminins (la/una). L'article suit la terminaison.",
@@ -475,6 +478,18 @@
     "hints_enabled_desc": "Propose un bouton d'indice par paliers sur chaque exercice.",
     "hint_xp_cost": "Coût en XP par indice",
     "hint_xp_cost_desc": "Affiché sur le bouton d'indice. 0 = gratuit.",
+    "section_reminders": "Rappels",
+    "reminders_enabled": "Rappels d'apprentissage quotidiens",
+    "reminders_enabled_desc": "Recevez une notification du navigateur lorsque des révisions sont dues. Ne fonctionne que lorsque l'application est ouverte.",
+    "reminders_time": "Heure du rappel",
+    "reminders_time_desc": "Quand vous le rappeler chaque jour.",
+    "reminders_weekdays": "Jours",
+    "reminders_weekdays_desc": "Quels jours vous le rappeler.",
+    "reminders_permission_request": "Activer les notifications",
+    "reminders_permission_denied": "Les notifications sont bloquées. Activez-les dans les paramètres du site de votre navigateur pour recevoir des rappels.",
+    "reminders_unsupported": "Votre navigateur ne prend pas en charge les notifications.",
+    "reminders_notification_title": "C'est l'heure de réviser",
+    "reminders_notification_body": "{n} révisions sont dues. Gardez votre série !",
     "support": {
       "heading": "Assistance",
       "description": "Quelque chose ne fonctionne pas comme prévu ? Créez un rapport de vos actions récentes pour aider le développeur à le reproduire. Vous vérifiez tout avant que cela ne quitte votre navigateur.",
@@ -715,6 +730,10 @@
       "60_days": "60 jours",
       "never": "Jamais"
     },
+    "review_limit": {
+      "label": "Questions par révision",
+      "desc": "Combien d'éléments une session de révision présente avant de se terminer. Les éléments restants passent au tour suivant."
+    },
     "max_lesson_size": {
       "title": "Taille maximale de leçon",
       "hint": "Lors de l'enregistrement d'une longue analyse de chat comme leçon hors ligne, les leçons avec plus d'étapes que ce nombre sont automatiquement divisées en plusieurs parties.",
@@ -881,6 +900,7 @@
     "confirm": "Confirm restore",
     "invalid_format": "This file is not a valid Adaptive Learner backup.",
     "not_a_backup_file": "Ce fichier n'est pas une sauvegarde valide. Choisissez un fichier exporté avec « Créer une sauvegarde ».",
+    "version_mismatch": "Cette sauvegarde provient de la version {{from}} ; cette appli est en {{to}}. Vérifiez les changements ci-dessous et confirmez l'import.",
     "too_large": "Ce fichier de sauvegarde est trop volumineux (plus de 100 Mo).",
     "export_success": "Backup downloaded ({{count}} records).",
     "export_error": "Backup failed: {{detail}}",
@@ -1064,6 +1084,18 @@
     "xp_header_tooltip": "Vos points d'expérience",
     "xp_to_next_level": "{n} XP jusqu'au niveau suivant",
     "max_level": "Niveau maximum atteint",
+    "level_detail": {
+      "activity": "Activité (7 derniers jours)",
+      "activity_unit": "sessions",
+      "activity_empty": "Aucune activité ces 7 derniers jours.",
+      "milestones": "Jalons",
+      "ms_level": "Niveau {level}",
+      "ms_xp": "{xp} XP",
+      "reached": "atteint",
+      "locked": "verrouillé",
+      "how": "Les niveaux suivent une courbe d'XP croissante : 0, 100, 300, 600, 1000 XP - chaque palier demande 100 XP de plus que le précédent."
+    },
+    "level_detail_title": "Progression du niveau",
     "level_up": "Niveau supérieur !",
     "reason_session_complete": "Session terminée",
     "reason_assessment_complete": "Évaluation terminée",
@@ -1816,6 +1848,7 @@
         "copy": "Copier le résultat",
         "download": "Enregistrer comme fichier",
         "download_json": "Exporter en JSON",
+        "anki": "Exporter les cartes (Anki)",
         "copied": "Résultat copié dans le presse-papiers",
         "copy_failed": "Impossible de copier dans le presse-papiers",
         "title": "Résultat de la leçon",
@@ -1880,7 +1913,8 @@
       "completed": "Ensemble terminé",
       "empty": "Commencez votre première leçon !",
       "progress": "Étape {n}/{total}",
-      "imported_analysis": "Analyse importée"
+      "imported_analysis": "Analyse importée",
+      "lesson_fallback": "Leçon"
     },
     "import_chat": {
       "button": "Importer un chat"
@@ -1890,7 +1924,11 @@
       "results": "{count} résultats",
       "no_results": "Aucun résultat pour '{query}'",
       "hint": "Essaie un autre terme de recherche",
-      "clear": "Effacer la recherche"
+      "clear": "Effacer la recherche",
+      "available": "Disponible au téléchargement",
+      "your_content": "Vos contenus",
+      "download_prompt_title": "Télécharger ce set ?",
+      "download_prompt_body": "Ce set n'est pas encore téléchargé. Le télécharger maintenant ?"
     },
     "save_adaptive": {
       "button": "Enregistrer cette leçon ?"
@@ -2085,6 +2123,30 @@
         "issues": "{count} cartes avec problemes",
         "all_ok": "Toutes les cartes sont valides. Aucun probleme trouve.",
         "problem": "Probleme",
+        "suggestion": "Suggestion"
+      }
+    },
+    "quality": {
+      "button": "Contrôle qualité",
+      "title": "Contrôle qualité",
+      "loading": "Vérification des cartes...",
+      "offline_note": "Fonctionne hors ligne : accents, articles et cartes en double. Aucune clé API requise.",
+      "failed": "Contrôle qualité indisponible.",
+      "accent": {
+        "problem": "Accent manquant : {word}"
+      },
+      "article": {
+        "problem": "Article incorrect : {actual} {noun}"
+      },
+      "duplicate": {
+        "problem": "Doublon de : {other}"
+      },
+      "report": {
+        "summary": "{cards} cartes vérifiées dans {lessons} leçons",
+        "ok": "{count} cartes correctes",
+        "issues": "{count} cartes avec des problèmes",
+        "all_ok": "Aucun problème trouvé : accents, articles et doublons corrects.",
+        "problem": "Problème",
         "suggestion": "Suggestion"
       }
     },
@@ -2411,6 +2473,7 @@
       "track_aria": "{done} sur {total} leçons terminées"
     },
     "view": {
+      "paths": "Mes parcours",
       "label": "Vue",
       "personal": "Personnel",
       "graph": "Graphe",
@@ -2478,7 +2541,27 @@
       "start_adaptive": "Lancer une leçon adaptative",
       "region_label": "Panneau des groupes d'erreurs"
     },
-    "search_label": "Rechercher des leçons — appuyez sur Entrée pour aller au premier résultat"
+    "search_label": "Rechercher des leçons — appuyez sur Entrée pour aller au premier résultat",
+    "custom": {
+      "title": "Mes parcours d'apprentissage",
+      "subtitle": "Assemblez des leçons dans votre propre parcours ordonné.",
+      "create_title": "Créer un parcours",
+      "name_placeholder": "Nom du parcours",
+      "description_placeholder": "Description (facultatif)",
+      "create": "Créer le parcours",
+      "empty": "Aucun parcours personnel pour l'instant. Créez-en un ci-dessus et ajoutez des leçons.",
+      "progress": "{done} sur {total} terminées",
+      "continue": "Continuer",
+      "delete": "Supprimer le parcours",
+      "next_hint": "Suivant : {lesson}",
+      "add_lesson": "Ajouter une leçon",
+      "search_lessons": "Rechercher des leçons…",
+      "no_lessons": "Aucune leçon trouvée.",
+      "done_adding": "Terminé",
+      "move_up": "Monter",
+      "move_down": "Descendre",
+      "remove_lesson": "Retirer la leçon"
+    }
   },
   "pwa": {
     "offline_message": "Vous êtes hors ligne. Le contenu enregistré reste disponible.",
@@ -2499,6 +2582,17 @@
     }
   },
   "share": {
+    "achievement": {
+      "button": "Partager",
+      "title": "Partagez votre progression",
+      "copied": "Copié dans le presse-papiers",
+      "lesson_complete": "Je viens de réussir une leçon sur Adaptive Learner !",
+      "streak": "Je suis sur une série d'apprentissage de {days} jours avec Adaptive Learner !",
+      "level": "Je viens d'atteindre le niveau {level} sur Adaptive Learner !",
+      "badge": "J'ai obtenu le badge « {badge} » sur Adaptive Learner !",
+      "progress": "J'apprends avec Adaptive Learner, niveau {level}, série de {days} jours.",
+      "hashtag": "#AdaptiveLearner"
+    },
     "pr": {
       "preparing": "Préparation du dépôt...",
       "uploading": "Envoi de la leçon...",
@@ -2613,10 +2707,31 @@
     "strike": "Barré",
     "task_list": "Liste de tâches",
     "toolbar_label": "Mise en forme du texte",
+    "ctx_history": "Historique",
+    "ctx_clipboard": "Presse-papiers",
+    "ctx_format": "Mise en forme",
+    "ctx_insert": "Insérer",
+    "ctx_heading": "Titre",
+    "ctx_align": "Alignement",
+    "ctx_list": "Liste",
+    "ctx_quote": "Citation",
+    "context_menu_label": "Actions de l'éditeur",
+    "select_all": "Tout sélectionner",
+    "cut": "Couper",
+    "copy": "Copier",
+    "paste": "Coller",
+    "table": "Tableau",
+    "horizontal_rule": "Ligne horizontale",
+    "subscript": "Indice",
+    "superscript": "Exposant",
+    "paragraph": "Texte normal",
+    "align_justify": "Justifier",
     "underline": "Souligné (Ctrl+U)",
     "undo": "Annuler (Ctrl+Z)"
   },
   "languages": {
+    "ko": "Coréen",
+    "id": "Indonésien",
     "en": "Anglais",
     "es": "Espagnol",
     "fr": "Français",
@@ -2822,5 +2937,67 @@
     "type_website": "Sites web",
     "free": "Gratuit",
     "paid": "Cours"
+  },
+  "discover": {
+    "title": "Découvrir du contenu",
+    "subtitle": "Trouvez du matériel d'apprentissage avant de le télécharger.",
+    "loading": "Chargement du contenu disponible…",
+    "search_placeholder": "Espagnol, IA, psychologie…",
+    "search_aria": "Rechercher dans le contenu disponible",
+    "search_clear": "Effacer la recherche",
+    "filter": {
+      "all": "Tous",
+      "language": "Langue",
+      "level": "Niveau",
+      "domain": "Domaine",
+      "trust": "Confiance",
+      "ai_checked": "Vérifié par IA",
+      "yes": "Oui",
+      "no": "Non"
+    },
+    "trust": {
+      "official": "Officiellement recommandé",
+      "verified": "Vérifié",
+      "validated": "Validé"
+    },
+    "sort": {
+      "label": "Trier",
+      "relevance": "Pertinence",
+      "newest": "Plus récents",
+      "lessons": "Plus de leçons"
+    },
+    "domain": {
+      "language": "Langues",
+      "ai": "IA",
+      "psychology": "Psychologie",
+      "programming": "Programmation"
+    },
+    "result": {
+      "count": "{n} sets"
+    },
+    "empty": {
+      "no_sets": "Aucun contenu disponible pour l'instant.",
+      "no_results": "Aucun résultat pour « {query} »."
+    },
+    "card": {
+      "download": "Télécharger",
+      "downloading": "Téléchargement…",
+      "retry": "Réessayer",
+      "downloaded": "Déjà présent",
+      "lessons": "{n} leçons",
+      "cards": "{n} cartes",
+      "ai_checked": "Vérifié par IA",
+      "remove": "Retirer",
+      "progress": "Téléchargement des leçons"
+    },
+    "toast": {
+      "downloaded": "Set téléchargé et prêt à l'emploi.",
+      "removed": "Set retiré. Vous pouvez le télécharger à nouveau quand vous voulez."
+    },
+    "error": {
+      "download_failed": "Impossible de télécharger le set.",
+      "remove_failed": "Impossible de retirer le set.",
+      "load_failed": "Impossible de charger le contenu disponible."
+    }
   }
 }

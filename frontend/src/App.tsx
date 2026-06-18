@@ -17,6 +17,7 @@ import GlobalShortcuts from "./components/GlobalShortcuts";
 import UpdatePromptHost from "./components/UpdatePromptHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
+import ReminderScheduler from "./components/ReminderScheduler";
 import Navigation from "./components/Navigation";
 import OfflineIndicator from "./components/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
@@ -32,6 +33,7 @@ import SkipToContent from "./components/SkipToContent";
 const AnkiPage = lazyWithReload(() => import("./pages/Anki"));
 const Assessment = lazyWithReload(() => import("./pages/Assessment"));
 const ContentPage = lazyWithReload(() => import("./pages/Content"));
+const DiscoverPage = lazyWithReload(() => import("./pages/Discover"));
 const AddRepo = lazyWithReload(() => import("./pages/AddRepo"));
 const CreateLesson = lazyWithReload(() => import("./pages/CreateLesson"));
 const LearningPath = lazyWithReload(() => import("./pages/LearningPathPersonal"));
@@ -154,6 +156,7 @@ export default function App() {
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />
                 <Route path="/content" element={<ContentPage />} />
+                <Route path="/discover" element={<DiscoverPage />} />
                 <Route path="/add-repo" element={<AddRepo />} />
                 <Route path="/learning-path" element={<LearningPath />} />
                 <Route path="/create-lesson" element={<CreateLesson />} />
@@ -172,6 +175,7 @@ export default function App() {
             </Suspense>
             <InstallPrompt />
             <MilestoneHost />
+            <ReminderScheduler />
             <Suspense fallback={null}>
               <EventRecorderSetup />
             </Suspense>

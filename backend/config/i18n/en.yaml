@@ -56,6 +56,7 @@ data_export:
   cat_settings: "Settings"
   cat_ai_config: "AI key backup"
 nav:
+  discover: "Discover"
   offline_long: "Offline — past sessions stay readable"
   sync_pending: "{n} change(s) waiting to sync"
   statistics: "Statistics"
@@ -343,6 +344,8 @@ review:
   summary_corrected: "{corrected} of {total} corrected"
   summary_trend: "Nice — your weak spots are getting stronger."
   summary_next: "Mastered items drop out; the rest return for review soon."
+  summary_remaining: "Still {n} due. Keep going?"
+  another_round: "Another round"
   summary_repeat: "Come back in about 2 days to keep these fresh."
   explain_heading: "Why you missed these"
   explain_article_gender: "Watch the gender: nouns ending in -o are usually masculine (el/un), -a feminine (la/una). The article follows the ending."
@@ -445,6 +448,18 @@ settings:
   hints_enabled_desc: "Offer a staged hint button on each exercise."
   hint_xp_cost: "XP cost per hint"
   hint_xp_cost_desc: "Shown on the hint button. Set to 0 for free hints."
+  section_reminders: "Reminders"
+  reminders_enabled: "Daily learning reminders"
+  reminders_enabled_desc: "Get a browser notification when reviews are due. Fires only while the app is open."
+  reminders_time: "Reminder time"
+  reminders_time_desc: "When to remind you each day."
+  reminders_weekdays: "Days"
+  reminders_weekdays_desc: "Which days to remind you."
+  reminders_permission_request: "Enable notifications"
+  reminders_permission_denied: "Notifications are blocked. Enable them in your browser's site settings to receive reminders."
+  reminders_unsupported: "Your browser does not support notifications."
+  reminders_notification_title: "Time to review"
+  reminders_notification_body: "{n} reviews are due. Keep your streak going!"
   support:
     heading: "Support"
     description: "Something not working as expected? Create a report of your recent actions to help the developer reproduce it. You review everything before it leaves your browser."
@@ -678,6 +693,9 @@ settings:
     30_days: "30 days"
     60_days: "60 days"
     never: Never
+  review_limit:
+    label: "Questions per review"
+    desc: "How many elements one review session presents before it ends. More due items roll over to the next round."
   max_lesson_size:
     title: Maximum lesson size
     hint: "When saving a long chat analysis as an offline lesson, lessons with more than this many steps are automatically split into multiple parts."
@@ -822,6 +840,7 @@ backup:
   confirm: Confirm restore
   invalid_format: This file is not a valid Adaptive Learner backup.
   not_a_backup_file: 'This file is not a valid backup file. Please choose a file exported with ''Create backup''.'
+  version_mismatch: "This backup is from version {{from}}; this app is {{to}}. Review the changes below and confirm to import."
   too_large: 'This backup file is too large (over 100 MB).'
   export_success: Backup downloaded ({{count}} records).
   export_error: 'Backup failed: {{detail}}'
@@ -1002,6 +1021,17 @@ gamification:
   xp_header_tooltip: Your experience points
   xp_to_next_level: '{n} XP to next level'
   max_level: Max level reached
+  level_detail:
+    activity: "Activity (last 7 days)"
+    activity_unit: "sessions"
+    activity_empty: "No activity in the last 7 days."
+    milestones: "Milestones"
+    ms_level: "Level {level}"
+    ms_xp: "{xp} XP"
+    reached: "reached"
+    locked: "locked"
+    how: "Levels rise on a growing XP curve: 0, 100, 300, 600, 1000 XP - each step needs 100 XP more than the last."
+  level_detail_title: "Level progress"
   level_up: Level up!
   reason_session_complete: Session completed
   reason_assessment_complete: Assessment completed
@@ -1654,6 +1684,7 @@ lesson:
       copy: "Copy result"
       download: "Save as file"
       download_json: "Export as JSON"
+      anki: "Export cards (Anki)"
       copied: "Result copied to clipboard"
       copy_failed: "Could not copy to clipboard"
       title: "Lesson result"
@@ -1747,6 +1778,7 @@ content:
     empty: "Start your first lesson!"
     progress: "Step {n}/{total}"
     imported_analysis: "Imported analysis"
+    lesson_fallback: "Lesson"
   import_chat:
     button: "Import Chat"
   search:
@@ -1755,6 +1787,10 @@ content:
     no_results: "No results for '{query}'"
     hint: "Try a different search term"
     clear: "Clear search"
+    available: "Available to download"
+    your_content: "Your content"
+    download_prompt_title: "Download this set?"
+    download_prompt_body: "This set isn't downloaded yet. Download it now?"
   save_adaptive:
     button: "Save this lesson?"
   create_lesson:
@@ -1930,6 +1966,25 @@ content:
       ok: "{count} cards OK"
       issues: "{count} cards with issues"
       all_ok: "All cards passed. No issues found."
+      problem: "Problem"
+      suggestion: "Suggestion"
+  quality:
+    button: "Quality check"
+    title: "Quality check"
+    loading: "Checking cards..."
+    offline_note: "Runs offline - accents, articles, and duplicate cards. No API key needed."
+    failed: "Quality check unavailable."
+    accent:
+      problem: "Missing accent: {word}"
+    article:
+      problem: "Wrong article: {actual} {noun}"
+    duplicate:
+      problem: "Duplicate of: {other}"
+    report:
+      summary: "Checked {cards} cards in {lessons} lessons"
+      ok: "{count} cards OK"
+      issues: "{count} cards with issues"
+      all_ok: "No issues found - accents, articles, and duplicates all clean."
       problem: "Problem"
       suggestion: "Suggestion"
   placement:
@@ -2211,6 +2266,7 @@ learning_path:
     lesson_count: "{n} lessons"
     track_aria: "{done} of {total} lessons done"
   view:
+    paths: "My paths"
     label: "View"
     personal: "Personal"
     graph: "Graph"
@@ -2271,6 +2327,25 @@ learning_path:
     start_adaptive: "Start adaptive lesson"
     region_label: "Error clusters panel"
   search_label: "Search lessons — press Enter to navigate to the first match"
+  custom:
+    title: "My Learning Paths"
+    subtitle: "Assemble lessons into your own ordered path."
+    create_title: "Create a path"
+    name_placeholder: "Path name"
+    description_placeholder: "Description (optional)"
+    create: "Create path"
+    empty: "No custom paths yet. Create one above and add lessons to it."
+    progress: "{done} of {total} done"
+    continue: "Continue"
+    delete: "Delete path"
+    next_hint: "Next: {lesson}"
+    add_lesson: "Add a lesson"
+    search_lessons: "Search lessons…"
+    no_lessons: "No lessons found."
+    done_adding: "Done"
+    move_up: "Move up"
+    move_down: "Move down"
+    remove_lesson: "Remove lesson"
 pwa:
   offline_message: "You're offline. Saved content is available."
   online_message: "Back online!"
@@ -2288,6 +2363,16 @@ pwa:
     action: "Update"
     later: "Later"
 share:
+  achievement:
+    button: Share
+    title: Share your progress
+    copied: Copied to clipboard
+    lesson_complete: I just aced a lesson on Adaptive Learner!
+    streak: I am on a {days}-day learning streak with Adaptive Learner!
+    level: I just reached level {level} on Adaptive Learner!
+    badge: I earned the "{badge}" badge on Adaptive Learner!
+    progress: I am learning with Adaptive Learner, level {level}, {days}-day streak.
+    hashtag: '#AdaptiveLearner'
   pr:
     preparing: "Preparing repository..."
     uploading: "Uploading lesson..."
@@ -2404,9 +2489,30 @@ editor:
   strike: "Strikethrough"
   task_list: "Task list"
   toolbar_label: "Text formatting"
+  ctx_history: "History"
+  ctx_clipboard: "Clipboard"
+  ctx_format: "Formatting"
+  ctx_insert: "Insert"
+  ctx_heading: "Heading"
+  ctx_align: "Alignment"
+  ctx_list: "List"
+  ctx_quote: "Quote"
+  context_menu_label: "Editor actions"
+  select_all: "Select all"
+  cut: "Cut"
+  copy: "Copy"
+  paste: "Paste"
+  table: "Table"
+  horizontal_rule: "Horizontal rule"
+  subscript: "Subscript"
+  superscript: "Superscript"
+  paragraph: "Normal text"
+  align_justify: "Justify"
   underline: "Underline (Ctrl+U)"
   undo: "Undo (Ctrl+Z)"
 languages:
+  ko: "Korean"
+  id: "Indonesian"
   en: "English"
   es: "Spanish"
   fr: "French"
@@ -2594,3 +2700,55 @@ resource:
   type_website: "Websites"
   free: "Free"
   paid: "Course"
+discover:
+  title: "Discover content"
+  subtitle: "Find learning material before you download it."
+  loading: "Loading available content…"
+  search_placeholder: "Spanish, AI, psychology…"
+  search_aria: "Search available content"
+  search_clear: "Clear search"
+  filter:
+    all: "All"
+    language: "Language"
+    level: "Level"
+    domain: "Domain"
+    trust: "Trust"
+    ai_checked: "AI-checked"
+    "yes": "Yes"
+    "no": "No"
+  trust:
+    official: "Officially recommended"
+    verified: "Verified"
+    validated: "Validated"
+  sort:
+    label: "Sort"
+    relevance: "Relevance"
+    newest: "Newest"
+    lessons: "Most lessons"
+  domain:
+    language: "Languages"
+    ai: "AI"
+    psychology: "Psychology"
+    programming: "Programming"
+  result:
+    count: "{n} sets"
+  empty:
+    no_sets: "No content available yet."
+    no_results: "No results for “{query}”."
+  card:
+    download: "Download"
+    downloading: "Downloading…"
+    retry: "Retry"
+    downloaded: "Already present"
+    lessons: "{n} lessons"
+    cards: "{n} cards"
+    ai_checked: "AI-checked"
+    remove: "Remove"
+    progress: "Downloading lessons"
+  toast:
+    downloaded: "Set downloaded and ready to use."
+    removed: "Set removed. You can download it again anytime."
+  error:
+    download_failed: "Could not download the set."
+    remove_failed: "Could not remove the set."
+    load_failed: "Could not load available content."

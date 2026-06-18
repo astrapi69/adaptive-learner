@@ -56,6 +56,7 @@ data_export:
   cat_settings: "設定"
   cat_ai_config: "AI キーのバックアップ"
 nav:
+  discover: "見つける"
   offline_long: "オフライン — 過去のセッションは引き続き閲覧できます"
   sync_pending: "{n} 件の変更が同期待ちです"
   statistics: "統計"
@@ -343,6 +344,8 @@ review:
   summary_corrected: "{total}問中{corrected}問を修正"
   summary_trend: "いいですね — 弱点が強くなっています。"
   summary_next: "習得した項目は外れ、残りはまもなく復習に戻ります。"
+  summary_remaining: "あと {n} 件。続けますか？"
+  another_round: "もう1ラウンド"
   summary_repeat: "約2日後にもう一度復習すると定着します。"
   explain_heading: "間違えた理由"
   explain_article_gender: "性に注意：-o で終わる名詞はたいてい男性（el/un）、-a は女性（la/una）。冠詞は語尾に従います。"
@@ -445,6 +448,18 @@ settings:
   hints_enabled_desc: "各練習で段階的なヒントボタンを表示します。"
   hint_xp_cost: "ヒント1回あたりのXPコスト"
   hint_xp_cost_desc: "ヒントボタンに表示されます。0で無料。"
+  section_reminders: "リマインダー"
+  reminders_enabled: "毎日の学習リマインダー"
+  reminders_enabled_desc: "復習の時期になるとブラウザ通知を受け取ります。アプリが開いている間のみ機能します。"
+  reminders_time: "リマインダーの時刻"
+  reminders_time_desc: "毎日いつ通知するか。"
+  reminders_weekdays: "曜日"
+  reminders_weekdays_desc: "通知する曜日。"
+  reminders_permission_request: "通知を有効にする"
+  reminders_permission_denied: "通知がブロックされています。リマインダーを受け取るには、ブラウザのサイト設定で有効にしてください。"
+  reminders_unsupported: "お使いのブラウザは通知に対応していません。"
+  reminders_notification_title: "復習の時間です"
+  reminders_notification_body: "{n}件の復習が期限を迎えています。連続記録を続けましょう！"
   support:
     heading: "サポート"
     description: "想定どおりに動作しませんか？最近の操作のレポートを作成すると、開発者が問題を再現しやすくなります。ブラウザから送信される前にすべてを確認できます。"
@@ -678,6 +693,9 @@ settings:
     30_days: "30日間"
     60_days: "60日間"
     never: "無期限"
+  review_limit:
+    label: "復習あたりの問題数"
+    desc: "1回の復習セッションで終了前に出題する要素数。残りの要素は次のラウンドに回ります。"
   max_lesson_size:
     title: "レッスンの最大サイズ"
     hint: "長いチャット分析をオフラインレッスンとして保存する場合、このステップ数を超えるレッスンは自動的に複数のパートに分割されます。"
@@ -822,6 +840,7 @@ backup:
   confirm: 復元を確認
   invalid_format: このファイルは有効な Adaptive Learner バックアップではありません。
   not_a_backup_file: 'このファイルは有効なバックアップファイルではありません。「バックアップを作成」でエクスポートしたファイルを選択してください。'
+  version_mismatch: "このバックアップはバージョン {{from}} のものです。アプリは {{to}} です。下の変更を確認してインポートを実行してください。"
   too_large: 'このバックアップファイルは大きすぎます（100 MB 超）。'
   export_success: バックアップをダウンロードしました ({{count}} 件)。
   export_error: 'バックアップに失敗しました: {{detail}}'
@@ -1002,6 +1021,17 @@ gamification:
   xp_header_tooltip: あなたの経験値
   xp_to_next_level: 次のレベルまで {n} XP
   max_level: 最大レベルに到達しました
+  level_detail:
+    activity: "アクティビティ（過去7日）"
+    activity_unit: "セッション"
+    activity_empty: "過去7日間のアクティビティはありません。"
+    milestones: "マイルストーン"
+    ms_level: "レベル {level}"
+    ms_xp: "{xp} XP"
+    reached: "達成"
+    locked: "未達成"
+    how: "レベルは増加するXPカーブで上がります：0、100、300、600、1000 XP - 各段階は前より100 XP多く必要です。"
+  level_detail_title: "レベルの進捗"
   level_up: レベルアップ！
   reason_session_complete: セッション完了
   reason_assessment_complete: アセスメント完了
@@ -1678,6 +1708,7 @@ lesson:
       copy: "結果をコピー"
       download: "ファイルとして保存"
       download_json: "JSONとしてエクスポート"
+      anki: "カードを書き出す (Anki)"
       copied: "結果をクリップボードにコピーしました"
       copy_failed: "クリップボードにコピーできませんでした"
       title: "レッスン結果"
@@ -1736,6 +1767,7 @@ content:
     empty: "最初のレッスンを始めましょう！"
     progress: "ステップ {n}/{total}"
     imported_analysis: "インポートされた分析"
+    lesson_fallback: "レッスン"
   import_chat:
     button: "チャットをインポート"
   search:
@@ -1744,6 +1776,10 @@ content:
     no_results: "'{query}' の結果がありません"
     hint: "別の検索語を試してください"
     clear: "検索をクリア"
+    available: "ダウンロード可能"
+    your_content: "あなたのコンテンツ"
+    download_prompt_title: "このセットをダウンロードしますか？"
+    download_prompt_body: "このセットはまだダウンロードされていません。今すぐダウンロードしますか？"
   save_adaptive:
     button: "このレッスンを保存しますか？"
   create_lesson:
@@ -1919,6 +1955,25 @@ content:
       ok: "{count}枚のカードはOK"
       issues: "{count}枚のカードに問題あり"
       all_ok: "すべてのカードが合格しました。問題は見つかりませんでした。"
+      problem: "問題"
+      suggestion: "提案"
+  quality:
+    button: "品質チェック"
+    title: "品質チェック"
+    loading: "カードを確認しています..."
+    offline_note: "オフラインで動作します - アクセント、冠詞、重複カード。APIキーは不要です。"
+    failed: "品質チェックを利用できません。"
+    accent:
+      problem: "アクセント抜け: {word}"
+    article:
+      problem: "冠詞の誤り: {actual} {noun}"
+    duplicate:
+      problem: "次の重複: {other}"
+    report:
+      summary: "{lessons} レッスンの {cards} 枚のカードを確認しました"
+      ok: "{count} 枚のカードはOK"
+      issues: "問題のあるカード {count} 枚"
+      all_ok: "問題は見つかりませんでした - アクセント、冠詞、重複はすべて良好です。"
       problem: "問題"
       suggestion: "提案"
   placement:
@@ -2201,6 +2256,7 @@ learning_path:
     lesson_count: "{n}件のレッスン"
     track_aria: "{total}件中{done}件のレッスンが完了"
   view:
+    paths: "マイパス"
     label: "表示"
     personal: "パーソナル"
     graph: "グラフ"
@@ -2261,6 +2317,25 @@ learning_path:
     start_adaptive: "アダプティブレッスンを開始"
     region_label: "エラークラスターパネル"
   search_label: "レッスンを検索 — Enter キーで最初の一致に移動"
+  custom:
+    title: "マイ学習パス"
+    subtitle: "レッスンを自分だけの順番にまとめましょう。"
+    create_title: "パスを作成"
+    name_placeholder: "パス名"
+    description_placeholder: "説明（任意）"
+    create: "パスを作成"
+    empty: "まだカスタムパスがありません。上で作成してレッスンを追加してください。"
+    progress: "{total} 中 {done} 完了"
+    continue: "続ける"
+    delete: "パスを削除"
+    next_hint: "次: {lesson}"
+    add_lesson: "レッスンを追加"
+    search_lessons: "レッスンを検索…"
+    no_lessons: "レッスンが見つかりません。"
+    done_adding: "完了"
+    move_up: "上へ"
+    move_down: "下へ"
+    remove_lesson: "レッスンを削除"
 pwa:
   offline_message: "オフラインです。保存済みのコンテンツは利用できます。"
   online_message: "再びオンラインになりました！"
@@ -2278,6 +2353,16 @@ pwa:
     action: "更新"
     later: "後で"
 share:
+  achievement:
+    button: 共有
+    title: 進捗を共有
+    copied: クリップボードにコピーしました
+    lesson_complete: Adaptive Learner でレッスンを完璧にこなしました！
+    streak: Adaptive Learner で{days}日連続の学習ストリーク中です！
+    level: Adaptive Learner でレベル{level}に到達しました！
+    badge: Adaptive Learner で「{badge}」バッジを獲得しました！
+    progress: Adaptive Learner で学習中です。レベル{level}、{days}日連続。
+    hashtag: '#AdaptiveLearner'
   pr:
     preparing: "リポジトリを準備しています..."
     uploading: "レッスンをアップロードしています..."
@@ -2394,9 +2479,30 @@ editor:
   strike: "取り消し線"
   task_list: "タスクリスト"
   toolbar_label: "テキストの書式設定"
+  ctx_history: "履歴"
+  ctx_clipboard: "クリップボード"
+  ctx_format: "書式"
+  ctx_insert: "挿入"
+  ctx_heading: "見出し"
+  ctx_align: "配置"
+  ctx_list: "リスト"
+  ctx_quote: "引用"
+  context_menu_label: "エディター操作"
+  select_all: "すべて選択"
+  cut: "切り取り"
+  copy: "コピー"
+  paste: "貼り付け"
+  table: "表"
+  horizontal_rule: "水平線"
+  subscript: "下付き文字"
+  superscript: "上付き文字"
+  paragraph: "標準テキスト"
+  align_justify: "両端揃え"
   underline: "下線 (Ctrl+U)"
   undo: "元に戻す (Ctrl+Z)"
 languages:
+  ko: "韓国語"
+  id: "インドネシア語"
   en: "英語"
   es: "スペイン語"
   fr: "フランス語"
@@ -2584,3 +2690,55 @@ resource:
   type_website: "ウェブサイト"
   free: "無料"
   paid: "コース"
+discover:
+  title: "コンテンツを見つける"
+  subtitle: "ダウンロードする前に学習教材を見つけましょう。"
+  loading: "利用可能なコンテンツを読み込み中…"
+  search_placeholder: "スペイン語、AI、心理学…"
+  search_aria: "利用可能なコンテンツを検索"
+  search_clear: "検索をクリア"
+  filter:
+    all: "すべて"
+    language: "言語"
+    level: "レベル"
+    domain: "分野"
+    trust: "信頼度"
+    ai_checked: "AIチェック済み"
+    "yes": "はい"
+    "no": "いいえ"
+  trust:
+    official: "公式推奨"
+    verified: "検証済み"
+    validated: "確認済み"
+  sort:
+    label: "並べ替え"
+    relevance: "関連度"
+    newest: "新しい順"
+    lessons: "レッスン数"
+  domain:
+    language: "言語"
+    ai: "AI"
+    psychology: "心理学"
+    programming: "プログラミング"
+  result:
+    count: "{n} セット"
+  empty:
+    no_sets: "まだ利用可能なコンテンツはありません。"
+    no_results: "「{query}」の結果はありません。"
+  card:
+    download: "ダウンロード"
+    downloading: "ダウンロード中…"
+    retry: "再試行"
+    downloaded: "ダウンロード済み"
+    lessons: "{n} レッスン"
+    cards: "{n} カード"
+    ai_checked: "AIチェック済み"
+    remove: "削除"
+    progress: "レッスンをダウンロード中"
+  toast:
+    downloaded: "セットをダウンロードしました。"
+    removed: "セットを削除しました。いつでも再ダウンロードできます。"
+  error:
+    download_failed: "セットをダウンロードできませんでした。"
+    remove_failed: "セットを削除できませんでした。"
+    load_failed: "利用可能なコンテンツを読み込めませんでした。"

@@ -29,6 +29,7 @@ vi.mock("../../storage", () => ({
 }));
 
 import ReviewQueueCard from "./ReviewQueueCard";
+import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
 import type {ReviewQueueItem} from "../../storage/types";
 
 function item(overrides: Partial<ReviewQueueItem> = {}): ReviewQueueItem {
@@ -160,6 +161,45 @@ describe("ReviewQueueCard: populated queue", () => {
         fireEvent.click(quick);
         expect(screen.getByTestId("location-probe")).toHaveTextContent(
             "/review/language-fr-a1?quick=1",
+        );
+    });
+});
+
+describe("ReviewQueueCard: reviews-changed live recompute (#761)", () => {
+    it("re-reads the queue and decrements when reviews change", async () => {
+        reviewQueueMock.mockResolvedValue([
+            item({id: "a", overdue: true}),
+            item({id: "b", overdue: true}),
+        ]);
+        renderCard("user-1");
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("review-queue-total"),
+            ).toHaveTextContent("2"),
+        );
+
+        // A review answer mastered one element — the queue shrinks. The
+        // card must recompute live without a remount / route change.
+        reviewQueueMock.mockResolvedValue([item({id: "a", overdue: true})]);
+        notifyReviewsChanged();
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("review-queue-total"),
+            ).toHaveTextContent("1"),
+        );
+    });
+
+    it("hides the card once the queue empties after a review", async () => {
+        reviewQueueMock.mockResolvedValue([item({id: "a", overdue: true})]);
+        renderCard("user-1");
+        await screen.findByTestId("review-queue-card");
+
+        reviewQueueMock.mockResolvedValue([]);
+        notifyReviewsChanged();
+        await waitFor(() =>
+            expect(
+                screen.queryByTestId("review-queue-card"),
+            ).not.toBeInTheDocument(),
         );
     });
 });

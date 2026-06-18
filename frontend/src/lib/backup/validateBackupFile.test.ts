@@ -5,6 +5,7 @@ import {
     readBackupFile,
     validateBackupText,
 } from "./validateBackupFile";
+import {buildAlbBytes} from "./albContainer";
 
 const validBackup = {
     format: "adaptive-learner-backup",
@@ -119,5 +120,43 @@ describe("readBackupFile (#642)", () => {
         Object.defineProperty(file, "size", {value: MAX_BACKUP_BYTES});
         const r = await readBackupFile(file);
         expect(r.ok).toBe(true);
+    });
+});
+
+// --- EXP-031 / BAK-03/05: .alb container + cross-format ------------------
+
+describe("readBackupFile — .alb container", () => {
+    function albFile(): File {
+        const bytes = buildAlbBytes(
+            {...validBackup, app_version: "1.50.0"} as never,
+            "full",
+        );
+        // A user-renamed extension must NOT matter — detection is by magic
+        // bytes, so name it ".json" on purpose.
+        return new File([bytes], "renamed.json");
+    }
+
+    it("detects + parses an .alb file by magic bytes (not extension)", async () => {
+        const r = await readBackupFile(albFile());
+        expect(r.ok).toBe(true);
+        if (r.ok) {
+            expect(r.container).toBe("alb");
+            expect(r.payload.user_id).toBe("user-1");
+            expect(r.manifest?.app_version).toBe("1.50.0");
+        }
+    });
+
+    it("still accepts a legacy JSON backup (no regression)", async () => {
+        const r = await readBackupFile(fileOf(JSON.stringify(validBackup)));
+        expect(r.ok).toBe(true);
+        if (r.ok) expect(r.container).toBe("json");
+    });
+
+    it("rejects a foreign ZIP as not_a_backup", async () => {
+        // A ZIP that is not an .alb (no manifest/data) must be rejected,
+        // not crash.
+        const bogus = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x00, 0x01]);
+        const r = await readBackupFile(new File([bogus], "x.alb"));
+        expect(r).toEqual({ok: false, error: "not_a_backup"});
     });
 });

@@ -42,6 +42,13 @@ export interface ContentSetSource {
   branch: string;
 }
 
+/** Per-set download progress (EXP-034 / DIS-06): ``current`` lessons cached
+ *  of ``total``. ``total`` is known once the set manifest is read. */
+export interface ContentDownloadProgress {
+  current: number;
+  total: number;
+}
+
 export interface ContentSetsList {
   sets: ContentSetEntry[];
   sources: ContentSetSource[];
@@ -73,6 +80,12 @@ export interface ContentLessonStep {
   /** Display text for {@link example_url}; the viewer falls back to a
    *  localized "View example" label when empty. */
   example_label?: string | null;
+  /** #709 — EXERCISE steps only: an explicit reference to the theory step
+   *  this exercise practices, by the theory step's id (preferred) or
+   *  title. The "Re-read theory" backlink resolves it exactly, falling
+   *  back to the term-overlap heuristic (#634/#635) when absent or
+   *  unresolvable. Additive; old lessons omit it. */
+  theory_ref?: string | null;
   /** #673 — set ONLY on synthesised SRS review steps
    *  ({@link synthesizeReviewLesson}). Carries the source lesson_id the
    *  reviewed element belongs to, so the review recorder can address the
@@ -251,7 +264,15 @@ export interface ContentLesson {
  */
 export interface IContentLoaderNamespace {
   listSets(): Promise<ContentSetsList>;
-  downloadSet(source: string, setId: string): Promise<ContentSetEntry>;
+  /** Download + cache ONE set's lessons + assets (per-set download,
+   *  EXP-034 / DIS-06 — not a whole-repo sync). ``onProgress`` is fired as
+   *  each lesson is fetched so the UI can show "lesson N of M"; Dexie mode
+   *  emits it, API mode (atomic server-side) ignores it. */
+  downloadSet(
+    source: string,
+    setId: string,
+    onProgress?: (progress: ContentDownloadProgress) => void,
+  ): Promise<ContentSetEntry>;
   listLessons(source: string, setId: string): Promise<ContentLessonList>;
   getLesson(source: string, setId: string, filename: string): Promise<ContentLesson>;
   /** Phase 54 / v1.37.0 — fetch one cached asset by relative

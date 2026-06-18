@@ -32,6 +32,12 @@ import { useFeedbackIntensity } from "../../hooks/useFeedbackIntensity";
 import { useI18n } from "../../hooks/useI18n";
 import LessonFavoriteToggle from "./LessonFavoriteToggle";
 import AnswerDiff from "../../shared/AnswerDiff";
+import ShareButton from "../../shared/ShareButton";
+import { generateShareText } from "../../lib/share/generate-share-text";
+import {
+  downloadAnkiDeck,
+  lessonCardsToAnki,
+} from "../../lib/export/anki-export";
 import { explainError } from "../../lib/review/explain-error";
 import { readExplanationsEnabled } from "../../lib/review/reviewPref";
 import { useNextStepSuggestions } from "../../hooks/useNextStepSuggestions";
@@ -647,6 +653,47 @@ export default function LessonSummary({
           <FileJson aria-hidden="true" />
           {t("lesson.summary.export.download_json", "Export as JSON")}
         </Button>
+        {/* #721 — export this lesson's cards as an Anki-importable
+            TSV .txt deck (distinct from the .apkg AI-extraction flow). */}
+        {lesson.cards.length > 0 && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="min-h-11 gap-2"
+            onClick={() =>
+              downloadAnkiDeck(
+                lessonCardsToAnki(lesson.cards),
+                lesson.title,
+                { deckTags: [lesson.title] },
+              )
+            }
+            data-testid="lesson-summary-export-anki"
+          >
+            <Download aria-hidden="true" />
+            {t("lesson.summary.export.anki", "Export cards (Anki)")}
+          </Button>
+        )}
+        {/* Social sharing (#717) — celebrate a perfect run. Web Share
+            API on mobile, clipboard-copy fallback on desktop. PII-free:
+            the text reflects only the achievement, never the learner. */}
+        {stars === 3 && (
+          <ShareButton
+            text={
+              generateShareText({ kind: "lesson_complete" }, t).text
+            }
+            url={generateShareText({ kind: "lesson_complete" }, t).url}
+            label={t("share.achievement.button", "Share")}
+            onShared={(how) => {
+              if (how === "copied") {
+                notify.success(
+                  t("share.achievement.copied", "Copied to clipboard"),
+                );
+              }
+            }}
+            testId="lesson-summary-share"
+          />
+        )}
       </div>
 
       {/* Phase 52F / v1.35.0 — correction round. Self-hides

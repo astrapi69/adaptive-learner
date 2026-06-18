@@ -308,6 +308,27 @@ describe("Dexie content-loader: downloadSet", () => {
     expect(filenames).toContain("manifest.yaml");
   });
 
+  it("reports per-lesson download progress (DIS-06)", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+    });
+    const events: Array<{ current: number; total: number }> = [];
+    await downloadSetDexie(
+      SOURCE,
+      SET_ID,
+      [{ source: SOURCE, branch: BRANCH }],
+      (p) => events.push(p),
+    );
+    // An initial (0, total) and a (total, total) when done.
+    expect(events[0]).toEqual({ current: 0, total: events[0].total });
+    const last = events[events.length - 1];
+    expect(last.current).toBe(last.total);
+    expect(last.total).toBeGreaterThan(0);
+  });
+
   it("prunes the stale version when re-downloading a newer version (#62)", async () => {
     installFetchMock({
       [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,

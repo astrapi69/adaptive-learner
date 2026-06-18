@@ -15,6 +15,7 @@ import {
     triggerBackupDownload,
 } from "./backup-download";
 import type {BackupPayload} from "../types/domain";
+import {isZipBytes, parseAlbBytes} from "../lib/backup/albContainer";
 
 const payload: BackupPayload = {
     format: "adaptive-learner-backup",
@@ -35,7 +36,7 @@ afterEach(() => {
 describe("backupFilename", () => {
     it("uses an ISO date and the user-id prefix", () => {
         const name = backupFilename("abcdef1234567890");
-        expect(name).toMatch(/^adaptive-learner-backup-\d{4}-\d{2}-\d{2}-abcdef12\.json$/);
+        expect(name).toMatch(/^adaptive-learner-backup-\d{4}-\d{2}-\d{2}-abcdef12\.alb$/);
     });
 });
 
@@ -69,8 +70,10 @@ describe("saveBackupToDisk", () => {
             expect.objectContaining({suggestedName: "suggested.json"}),
         );
         expect(write).toHaveBeenCalledOnce();
-        // The written content is the pretty-printed payload.
-        expect(JSON.parse(write.mock.calls[0][0])).toMatchObject({
+        // The written content is the .alb (ZIP) bytes — EXP-031.
+        const written = write.mock.calls[0][0] as Uint8Array;
+        expect(isZipBytes(written)).toBe(true);
+        expect(parseAlbBytes(written).payload).toMatchObject({
             format: "adaptive-learner-backup",
         });
         expect(close).toHaveBeenCalledOnce();

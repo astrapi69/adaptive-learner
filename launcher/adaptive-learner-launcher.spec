@@ -120,8 +120,8 @@ if sys.platform == "darwin":
         info_plist={
             "CFBundleName": "AdaptiveLearner Launcher",
             "CFBundleDisplayName": "AdaptiveLearner Launcher",
-            "CFBundleVersion": "1.86.0",
-            "CFBundleShortVersionString": "1.86.0",
+            "CFBundleVersion": "1.87.0",
+            "CFBundleShortVersionString": "1.87.0",
             "NSHighResolutionCapable": True,
             "NSRequiresAquaSystemAppearance": False,
         },

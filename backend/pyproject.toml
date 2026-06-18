@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive_learner"
-version = "1.86.0"
+version = "1.87.0"
 description = "Adaptive learning system based on the six-method learning model."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -17,6 +17,7 @@ pluginforge = "^0.10.0"
 alembic = "^1.18.4"
 cryptography = "^48.0.0"
 ruamel-yaml = "^0.19.0"
+pyyaml = "^6.0"
 
 # Bundled plugins — installed editable from the plugins/ subtree so
 # entry-point discovery picks them up and tests run against the

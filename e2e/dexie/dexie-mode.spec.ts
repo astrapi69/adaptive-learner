@@ -156,6 +156,16 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
+        name: "Discover (EXP-034 / DIS-05)",
+        path: "/discover",
+        // ``discover-loading`` is the first render; the index
+        // fetch then resolves to ``discover-page`` (which holds
+        // the empty-state when no index is reachable). The loader
+        // is error-tolerant (per-repo failures resolve to []), so
+        // an offline first-visit never crashes or toasts.
+        expectedTestIds: ["discover-loading", "discover-page"],
+    },
+    {
         name: "Lesson (viewer, Phase 44, not-cached path)",
         path: "/lesson/astrapi69--adaptive-learner-content/language-fr-a1/01-greetings.json",
         // First-visit GH-Pages users land on the "not cached"

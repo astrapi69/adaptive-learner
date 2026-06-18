@@ -10,7 +10,7 @@
  * tag, status and action blocks live in the sub-components below.
  */
 
-import { BookOpen, Download, FolderOpen, Sparkles } from "lucide-react";
+import { BookOpen, Download, FolderOpen, ListChecks, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -47,6 +47,9 @@ interface ContentSetRowProps {
   /** When set, the AI-check button is rendered VISIBLE but DISABLED with
    *  this reason as its tooltip (feature-state policy, #335). */
   aiCheckDisabledReason?: string;
+  /** EXP-032 / CQV — open the deterministic, offline content-quality
+   *  dialog (accents / articles / duplicates). Omit to hide the button. */
+  onQualityCheck?: (entry: ContentSetEntry) => void;
   /** EXP-033 / AIV-11 — "AI-checked" signature badge status for this set.
    *  Defaults to "none" (no badge). */
   aiBadgeStatus?: AiCheckBadgeStatus;
@@ -240,6 +243,7 @@ function ContentSetActions({
   onDownload,
   onAiCheck,
   aiCheckDisabledReason,
+  onQualityCheck,
 }: {
   entry: ContentSetEntry;
   downloadState: DownloadState;
@@ -249,6 +253,7 @@ function ContentSetActions({
   onDownload: (entry: ContentSetEntry) => void;
   onAiCheck?: (entry: ContentSetEntry) => void;
   aiCheckDisabledReason?: string;
+  onQualityCheck?: (entry: ContentSetEntry) => void;
 }) {
   const { t } = useI18n();
   return (
@@ -262,6 +267,18 @@ function ContentSetActions({
         >
           <BookOpen size={14} aria-hidden="true" />
           {t("content.action.open", "Open")}
+        </Button>
+      )}
+      {isCached && onQualityCheck && (
+        <Button
+          type="button"
+          variant="outline"
+          className="content-set-quality-btn"
+          onClick={() => onQualityCheck(entry)}
+          data-testid={`content-set-${entry.id}-quality-check`}
+        >
+          <ListChecks size={14} aria-hidden="true" />
+          {t("content.quality.button", "Quality check")}
         </Button>
       )}
       {isCached && onAiCheck && (
@@ -307,6 +324,7 @@ export default function ContentSetRow({
   onOpenMedia,
   onAiCheck,
   aiCheckDisabledReason,
+  onQualityCheck,
   aiBadgeStatus = "none",
 }: ContentSetRowProps) {
   const { t } = useI18n();
@@ -359,6 +377,7 @@ export default function ContentSetRow({
           onDownload={onDownload}
           onAiCheck={onAiCheck}
           aiCheckDisabledReason={aiCheckDisabledReason}
+          onQualityCheck={onQualityCheck}
         />
       }
     />

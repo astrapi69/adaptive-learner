@@ -20,6 +20,11 @@
 
 import type {BackupPayload} from "../../types/domain";
 import {validateBackupPayload} from "../../storage/backup";
+import {
+    type AlbManifest,
+    isZipBytes,
+    parseAlbBytes,
+} from "./albContainer";
 
 /**
  * Largest file we attempt to read + parse (uncompressed). A multi-hundred-
@@ -33,7 +38,14 @@ export const MAX_BACKUP_BYTES = 100 * 1024 * 1024;
 export type BackupFileError = "too_large" | "not_a_backup";
 
 export type BackupFileResult =
-    | {ok: true; payload: BackupPayload}
+    | {
+          ok: true;
+          payload: BackupPayload;
+          /** ``"alb"`` for a ZIP container, ``"json"`` for a legacy file. */
+          container: "alb" | "json";
+          /** Present only for an ``.alb`` file (BAK-03 version check). */
+          manifest?: AlbManifest;
+      }
     | {ok: false; error: BackupFileError};
 
 /**
@@ -61,7 +73,33 @@ export function validateBackupText(text: string): BackupFileResult {
     } catch {
         return {ok: false, error: "not_a_backup"};
     }
-    return {ok: true, payload: parsed};
+    return {ok: true, payload: parsed, container: "json"};
+}
+
+/**
+ * Validate raw `.alb` (ZIP) bytes: unzip, then run ``data.json`` through
+ * the SAME {@link validateBackupPayload} contract as the legacy path, so
+ * the two cannot drift. Returns the manifest too (for the pre-import
+ * version check). Never throws.
+ */
+export function validateAlbBytes(bytes: Uint8Array): BackupFileResult {
+    let parsed;
+    try {
+        parsed = parseAlbBytes(bytes, MAX_BACKUP_BYTES);
+    } catch {
+        return {ok: false, error: "not_a_backup"};
+    }
+    try {
+        validateBackupPayload(parsed.payload);
+    } catch {
+        return {ok: false, error: "not_a_backup"};
+    }
+    return {
+        ok: true,
+        payload: parsed.payload,
+        container: "alb",
+        manifest: parsed.manifest,
+    };
 }
 
 /**
@@ -78,9 +116,22 @@ export async function readBackupFile(file: File): Promise<BackupFileResult> {
     if (file.size > MAX_BACKUP_BYTES) {
         return {ok: false, error: "too_large"};
     }
+    // Format is decided by MAGIC BYTES, not the extension (users rename):
+    // a ZIP signature (PK\x03\x04) is an `.alb` container; anything else is
+    // parsed as legacy JSON (#642 contract). EXP-031 / BAK-03.
+    let buffer: ArrayBuffer;
+    try {
+        buffer = await file.arrayBuffer();
+    } catch {
+        return {ok: false, error: "not_a_backup"};
+    }
+    const bytes = new Uint8Array(buffer);
+    if (isZipBytes(bytes)) {
+        return validateAlbBytes(bytes);
+    }
     let text: string;
     try {
-        text = await file.text();
+        text = new TextDecoder().decode(bytes);
     } catch {
         return {ok: false, error: "not_a_backup"};
     }

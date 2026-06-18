@@ -62,6 +62,7 @@
     "cat_ai_config": "AI anahtar yedeği"
   },
   "nav": {
+    "discover": "Keşfet",
     "offline_long": "Çevrimdışı — önceki oturumlar okunabilir kalır",
     "sync_pending": "{n} değişiklik eşitlenmeyi bekliyor",
     "statistics": "İstatistikler",
@@ -367,6 +368,8 @@
     "summary_corrected": "{total} hatadan {corrected} tanesi düzeltildi",
     "summary_trend": "Güzel — zayıf noktaların güçleniyor.",
     "summary_next": "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner.",
+    "summary_remaining": "{n} tane daha var. Devam?",
+    "another_round": "Bir tur daha",
     "summary_repeat": "Taze kalması için yaklaşık 2 gün sonra geri dön.",
     "explain_heading": "Bunları neden kaçırdın",
     "explain_article_gender": "Cinsiyete dikkat: -o ile biten adlar genelde eril (el/un), -a ile bitenler dişildir (la/una). Artikel sona göre belirlenir.",
@@ -475,6 +478,18 @@
     "hints_enabled_desc": "Her alıştırmada kademeli bir ipucu düğmesi sunar.",
     "hint_xp_cost": "İpucu başına XP maliyeti",
     "hint_xp_cost_desc": "İpucu düğmesinde gösterilir. 0 = ücretsiz.",
+    "section_reminders": "Hatırlatıcılar",
+    "reminders_enabled": "Günlük öğrenme hatırlatıcıları",
+    "reminders_enabled_desc": "Tekrarların zamanı geldiğinde tarayıcı bildirimi alın. Yalnızca uygulama açıkken çalışır.",
+    "reminders_time": "Hatırlatma saati",
+    "reminders_time_desc": "Her gün sizi ne zaman hatırlatalım.",
+    "reminders_weekdays": "Günler",
+    "reminders_weekdays_desc": "Hangi günlerde hatırlatalım.",
+    "reminders_permission_request": "Bildirimleri etkinleştir",
+    "reminders_permission_denied": "Bildirimler engellendi. Hatırlatıcı almak için tarayıcınızın site ayarlarından etkinleştirin.",
+    "reminders_unsupported": "Tarayıcınız bildirimleri desteklemiyor.",
+    "reminders_notification_title": "Tekrar zamanı",
+    "reminders_notification_body": "{n} tekrar bekliyor. Serini sürdür!",
     "support": {
       "heading": "Destek",
       "description": "Bir şey beklediğiniz gibi çalışmıyor mu? Geliştiricinin sorunu yeniden oluşturmasına yardımcı olmak için son işlemlerinizin bir raporunu oluşturun. Tarayıcınızdan çıkmadan önce her şeyi gözden geçirirsiniz.",
@@ -715,6 +730,10 @@
       "60_days": "60 gün",
       "never": "Hiçbir zaman"
     },
+    "review_limit": {
+      "label": "Tekrar başına soru",
+      "desc": "Bir tekrar oturumunun bitmeden önce kaç öğe gösterdiği. Kalan öğeler sonraki tura aktarılır."
+    },
     "max_lesson_size": {
       "title": "Maksimum ders boyutu",
       "hint": "Uzun bir sohbet analizini çevrimdışı ders olarak kaydederken, bu sayıdan fazla adıma sahip dersler otomatik olarak birden fazla parçaya bölünür.",
@@ -881,6 +900,7 @@
     "confirm": "Geri yüklemeyi onayla",
     "invalid_format": "Bu dosya geçerli bir Adaptive Learner yedeği değil.",
     "not_a_backup_file": "Bu dosya geçerli bir yedek dosyası değil. Lütfen 'Yedek oluştur' ile dışa aktarılmış bir dosya seçin.",
+    "version_mismatch": "Bu yedek {{from}} sürümünden; bu uygulama {{to}}. Aşağıdaki değişiklikleri inceleyip içe aktarmayı onaylayın.",
     "too_large": "Bu yedek dosyası çok büyük (100 MB'tan fazla).",
     "export_success": "Yedek indirildi ({{count}} kayıt).",
     "export_error": "Yedekleme başarısız oldu: {{detail}}",
@@ -1064,6 +1084,18 @@
     "xp_header_tooltip": "Deneyim puanlarınız",
     "xp_to_next_level": "Bir sonraki seviye için {n} XP",
     "max_level": "Maksimum seviyeye ulaşıldı",
+    "level_detail": {
+      "activity": "Etkinlik (son 7 gün)",
+      "activity_unit": "oturum",
+      "activity_empty": "Son 7 günde etkinlik yok.",
+      "milestones": "Kilometre taşları",
+      "ms_level": "Seviye {level}",
+      "ms_xp": "{xp} XP",
+      "reached": "ulaşıldı",
+      "locked": "kilitli",
+      "how": "Seviyeler artan bir XP eğrisinde yükselir: 0, 100, 300, 600, 1000 XP - her adım bir öncekinden 100 XP fazla gerektirir."
+    },
+    "level_detail_title": "Seviye ilerlemesi",
     "level_up": "Seviye atladın!",
     "reason_session_complete": "Oturum tamamlandı",
     "reason_assessment_complete": "Değerlendirme tamamlandı",
@@ -1816,6 +1848,7 @@
         "copy": "Sonucu kopyala",
         "download": "Dosya olarak kaydet",
         "download_json": "JSON olarak dışa aktar",
+        "anki": "Kartları dışa aktar (Anki)",
         "copied": "Sonuç panoya kopyalandı",
         "copy_failed": "Panoya kopyalanamadı",
         "title": "Ders sonucu",
@@ -1880,7 +1913,8 @@
       "completed": "Set tamamlandı",
       "empty": "İlk dersine başla!",
       "progress": "Adım {n}/{total}",
-      "imported_analysis": "İçe aktarılan analiz"
+      "imported_analysis": "İçe aktarılan analiz",
+      "lesson_fallback": "Ders"
     },
     "import_chat": {
       "button": "Sohbeti içe aktar"
@@ -1890,7 +1924,11 @@
       "results": "{count} sonuç",
       "no_results": "'{query}' için sonuç yok",
       "hint": "Farklı bir arama terimi dene",
-      "clear": "Aramayı temizle"
+      "clear": "Aramayı temizle",
+      "available": "İndirilebilir",
+      "your_content": "Senin içeriğin",
+      "download_prompt_title": "Bu set indirilsin mi?",
+      "download_prompt_body": "Bu set henüz indirilmedi. Şimdi indirilsin mi?"
     },
     "save_adaptive": {
       "button": "Bu dersi kaydet?"
@@ -2086,6 +2124,30 @@
         "all_ok": "Tum kartlar gecti. Sorun bulunamadi.",
         "problem": "Sorun",
         "suggestion": "Oneri"
+      }
+    },
+    "quality": {
+      "button": "Kalite kontrolü",
+      "title": "Kalite kontrolü",
+      "loading": "Kartlar denetleniyor...",
+      "offline_note": "Çevrimdışı çalışır - aksanlar, artikeller ve yinelenen kartlar. API anahtarı gerekmez.",
+      "failed": "Kalite kontrolü kullanılamıyor.",
+      "accent": {
+        "problem": "Eksik aksan: {word}"
+      },
+      "article": {
+        "problem": "Yanlış artikel: {actual} {noun}"
+      },
+      "duplicate": {
+        "problem": "Şunun kopyası: {other}"
+      },
+      "report": {
+        "summary": "{lessons} derste {cards} kart denetlendi",
+        "ok": "{count} kart tamam",
+        "issues": "Sorunlu {count} kart",
+        "all_ok": "Sorun bulunamadı - aksanlar, artikeller ve yinelemeler temiz.",
+        "problem": "Sorun",
+        "suggestion": "Öneri"
       }
     },
     "placement": {
@@ -2411,6 +2473,7 @@
       "track_aria": "{total} dersten {done} tanesi tamamlandı"
     },
     "view": {
+      "paths": "Yollarım",
       "label": "Görünüm",
       "personal": "Kişisel",
       "graph": "Grafik",
@@ -2478,7 +2541,27 @@
       "start_adaptive": "Uyarlanabilir ders başlat",
       "region_label": "Hata kümeleri paneli"
     },
-    "search_label": "Dersleri ara — ilk eşleşmeye gitmek için Enter'a basın"
+    "search_label": "Dersleri ara — ilk eşleşmeye gitmek için Enter'a basın",
+    "custom": {
+      "title": "Öğrenme yollarım",
+      "subtitle": "Dersleri kendi sıralı yolunuzda bir araya getirin.",
+      "create_title": "Yol oluştur",
+      "name_placeholder": "Yol adı",
+      "description_placeholder": "Açıklama (isteğe bağlı)",
+      "create": "Yol oluştur",
+      "empty": "Henüz özel yol yok. Yukarıdan bir tane oluşturun ve ders ekleyin.",
+      "progress": "{total} dersten {done} tamamlandı",
+      "continue": "Devam et",
+      "delete": "Yolu sil",
+      "next_hint": "Sonraki: {lesson}",
+      "add_lesson": "Ders ekle",
+      "search_lessons": "Ders ara…",
+      "no_lessons": "Ders bulunamadı.",
+      "done_adding": "Bitti",
+      "move_up": "Yukarı taşı",
+      "move_down": "Aşağı taşı",
+      "remove_lesson": "Dersi kaldır"
+    }
   },
   "pwa": {
     "offline_message": "Çevrimdışısınız. Kaydedilen içerik kullanılabilir.",
@@ -2499,6 +2582,17 @@
     }
   },
   "share": {
+    "achievement": {
+      "button": "Paylaş",
+      "title": "İlerlemeni paylaş",
+      "copied": "Panoya kopyalandı",
+      "lesson_complete": "Adaptive Learner'da az önce bir dersi başarıyla tamamladım!",
+      "streak": "Adaptive Learner'da {days} günlük öğrenme serisindeyim!",
+      "level": "Adaptive Learner'da az önce seviye {level} seviyesine ulaştım!",
+      "badge": "Adaptive Learner'da \"{badge}\" rozetini kazandım!",
+      "progress": "Adaptive Learner ile öğreniyorum: seviye {level}, {days} günlük seri.",
+      "hashtag": "#AdaptiveLearner"
+    },
     "pr": {
       "preparing": "Depo hazırlanıyor...",
       "uploading": "Ders yükleniyor...",
@@ -2613,10 +2707,31 @@
     "strike": "Üstü çizili",
     "task_list": "Görev listesi",
     "toolbar_label": "Metin biçimlendirme",
+    "ctx_history": "Geçmiş",
+    "ctx_clipboard": "Pano",
+    "ctx_format": "Biçimlendirme",
+    "ctx_insert": "Ekle",
+    "ctx_heading": "Başlık",
+    "ctx_align": "Hizalama",
+    "ctx_list": "Liste",
+    "ctx_quote": "Alıntı",
+    "context_menu_label": "Düzenleyici eylemleri",
+    "select_all": "Tümünü seç",
+    "cut": "Kes",
+    "copy": "Kopyala",
+    "paste": "Yapıştır",
+    "table": "Tablo",
+    "horizontal_rule": "Yatay çizgi",
+    "subscript": "Alt simge",
+    "superscript": "Üst simge",
+    "paragraph": "Normal metin",
+    "align_justify": "İki yana yasla",
     "underline": "Altı çizili (Ctrl+U)",
     "undo": "Geri al (Ctrl+Z)"
   },
   "languages": {
+    "ko": "Korece",
+    "id": "Endonezce",
     "en": "İngilizce",
     "es": "İspanyolca",
     "fr": "Fransızca",
@@ -2822,5 +2937,67 @@
     "type_website": "Web siteleri",
     "free": "Ücretsiz",
     "paid": "Kurs"
+  },
+  "discover": {
+    "title": "İçerik keşfet",
+    "subtitle": "Öğrenme materyalini indirmeden önce bul.",
+    "loading": "Kullanılabilir içerik yükleniyor…",
+    "search_placeholder": "İspanyolca, yapay zeka, psikoloji…",
+    "search_aria": "Kullanılabilir içerikte ara",
+    "search_clear": "Aramayı temizle",
+    "filter": {
+      "all": "Tümü",
+      "language": "Dil",
+      "level": "Seviye",
+      "domain": "Alan",
+      "trust": "Güven",
+      "ai_checked": "Yapay zeka kontrollü",
+      "yes": "Evet",
+      "no": "Hayır"
+    },
+    "trust": {
+      "official": "Resmi olarak önerilen",
+      "verified": "Doğrulanmış",
+      "validated": "Onaylanmış"
+    },
+    "sort": {
+      "label": "Sırala",
+      "relevance": "İlgililik",
+      "newest": "En yeni",
+      "lessons": "En çok ders"
+    },
+    "domain": {
+      "language": "Diller",
+      "ai": "Yapay zeka",
+      "psychology": "Psikoloji",
+      "programming": "Programlama"
+    },
+    "result": {
+      "count": "{n} set"
+    },
+    "empty": {
+      "no_sets": "Henüz içerik yok.",
+      "no_results": "“{query}” için sonuç yok."
+    },
+    "card": {
+      "download": "İndir",
+      "downloading": "İndiriliyor…",
+      "retry": "Yeniden dene",
+      "downloaded": "Zaten mevcut",
+      "lessons": "{n} ders",
+      "cards": "{n} kart",
+      "ai_checked": "Yapay zeka kontrollü",
+      "remove": "Kaldır",
+      "progress": "Dersler indiriliyor"
+    },
+    "toast": {
+      "downloaded": "Set indirildi ve kullanıma hazır.",
+      "removed": "Set kaldırıldı. İstediğin zaman yeniden indirebilirsin."
+    },
+    "error": {
+      "download_failed": "Set indirilemedi.",
+      "remove_failed": "Set kaldırılamadı.",
+      "load_failed": "Kullanılabilir içerik yüklenemedi."
+    }
   }
 }

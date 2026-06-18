@@ -130,10 +130,12 @@ async function seedLearner(page: Page): Promise<void> {
  * Returns true if the requested state was reached, false otherwise (so the
  * caller can skip rather than commit a meaningless baseline).
  */
-async function playBundledLesson(
-    page: Page,
-    stopAt: "summary" | "matching-result",
-): Promise<boolean> {
+/**
+ * Download the bundled set (if not already cached) and open its first
+ * lesson, leaving the page on the lesson runner (``lesson-page`` visible).
+ * Shared opener for every lesson-state seed.
+ */
+async function openFirstBundledLesson(page: Page): Promise<void> {
     await page.goto("/content");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 20_000});
     await page.getByTestId("content-other-toggle").click();
@@ -142,6 +144,13 @@ async function playBundledLesson(
     await expect(openBtn).toBeVisible({timeout: 25_000});
     await openBtn.click();
     await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 20_000});
+}
+
+async function playBundledLesson(
+    page: Page,
+    stopAt: "summary" | "matching-result",
+): Promise<boolean> {
+    await openFirstBundledLesson(page);
 
     for (let i = 0; i < 60; i++) {
         if (await page.getByTestId("lesson-summary").count()) break;
@@ -274,6 +283,244 @@ export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
             return playBundledLesson(page, "summary");
         case "lesson-matching":
             return playBundledLesson(page, "matching-result");
+        default:
+            return false;
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ * Critical-surfaces matrix (#705) — surfaces × viewports, default theme.
+ *
+ * Phase 1 of #705: broaden the #244 theme matrix (which is 5 views ×
+ * desktop) into the critical user-facing surfaces, each shot at three
+ * responsive viewports so layout regressions (overflow, stacked nav,
+ * touch targets) are caught alongside the theme/contrast ones.
+ * ------------------------------------------------------------------ */
+
+/** The three responsive breakpoints every critical surface is shot at. */
+export const VIEWPORTS = {
+    desktop: {width: 1920, height: 1080},
+    tablet: {width: 768, height: 1024},
+    mobile: {width: 375, height: 667},
+} as const;
+
+export type ViewportName = keyof typeof VIEWPORTS;
+
+/** Every critical surface in the Phase-1 (default-theme) matrix. */
+export const SURFACE_NAMES = [
+    "dashboard-empty",
+    "dashboard-populated",
+    "content-browser",
+    "set-detail",
+    "lesson-theory",
+    "lesson-cloze",
+    "lesson-matching",
+    "lesson-summary",
+    "review-session",
+    "statistics",
+    "settings-general",
+    "settings-data",
+    "settings-about",
+    "shortcut-help",
+] as const;
+
+export type SurfaceName = (typeof SURFACE_NAMES)[number];
+
+/**
+ * Advance the open lesson runner until ``predicate`` reports the wanted
+ * step is on screen, answering each intervening step. Returns true when
+ * the predicate matched, false if the lesson ended first (so the caller
+ * can skip rather than commit a meaningless baseline).
+ */
+async function advanceLessonUntil(
+    page: Page,
+    predicate: () => Promise<boolean>,
+): Promise<boolean> {
+    for (let i = 0; i < 60; i++) {
+        if (await predicate()) return true;
+        if (await page.getByTestId("lesson-summary").count()) return false;
+        await answerCurrentStep(page);
+        const check = page.getByTestId("lesson-check");
+        if (await check.count()) {
+            await expect(check).toBeEnabled({timeout: 5_000});
+            await check.click();
+        }
+        const next = page.getByTestId("lesson-next");
+        if (await next.count()) {
+            await expect(next).toBeVisible({timeout: 5_000});
+            await next.click();
+            await page.waitForTimeout(80);
+        }
+    }
+    return false;
+}
+
+/** Open the bundled lesson and stop on the first ``lesson-theory`` step. */
+async function gotoLessonTheory(page: Page): Promise<boolean> {
+    await openFirstBundledLesson(page);
+    const theory = page.getByTestId("lesson-theory");
+    if (await theory.count()) {
+        await expect(theory.first()).toBeVisible({timeout: 10_000});
+        return true;
+    }
+    return advanceLessonUntil(
+        page,
+        async () => (await page.getByTestId("lesson-theory").count()) > 0,
+    );
+}
+
+/** Open the bundled lesson and stop on the first ``cloze-exercise`` step. */
+async function gotoLessonCloze(page: Page): Promise<boolean> {
+    await openFirstBundledLesson(page);
+    const reached = await advanceLessonUntil(
+        page,
+        async () => (await page.getByTestId("cloze-exercise").count()) > 0,
+    );
+    if (reached) {
+        await expect(page.getByTestId("cloze-exercise").first()).toBeVisible({
+            timeout: 10_000,
+        });
+    }
+    return reached;
+}
+
+/** Open the bundled lesson and stop on the unsolved ``matching-exercise``. */
+async function gotoLessonMatching(page: Page): Promise<boolean> {
+    await openFirstBundledLesson(page);
+    const reached = await advanceLessonUntil(
+        page,
+        async () => (await page.getByTestId("matching-exercise").count()) > 0,
+    );
+    if (reached) {
+        await expect(page.getByTestId("matching-exercise").first()).toBeVisible({
+            timeout: 10_000,
+        });
+    }
+    return reached;
+}
+
+/**
+ * Seed a learner, then drive a wrong-answer matching playthrough (which
+ * writes ``ElementError`` rows) and open the set's review session.
+ * Falls back to whatever review state renders (active / empty) — both are
+ * valid, deterministic screenshots; only an unreachable page is skipped.
+ */
+async function gotoReviewSession(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await playBundledLesson(page, "matching-result");
+    await page.goto(`/review/${SET_ID}`);
+    const surface = page
+        .getByTestId("review-page")
+        .or(page.getByTestId("review-empty"));
+    try {
+        await expect(surface.first()).toBeVisible({timeout: 20_000});
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Bring ``surface`` into its screenshot state in the DEFAULT theme. The
+ * caller has already set the viewport + frozen the clock. Returns true
+ * when ready, false when the surface can't be reached deterministically
+ * (caller skips).
+ */
+export async function gotoSurface(
+    page: Page,
+    surface: SurfaceName,
+): Promise<boolean> {
+    switch (surface) {
+        case "dashboard-empty":
+            await seedLearner(page);
+            await page.goto("/dashboard");
+            await expect(page.getByTestId("dashboard")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "dashboard-populated":
+            await seedLearner(page);
+            await playBundledLesson(page, "summary");
+            await page.goto("/dashboard");
+            await expect(page.getByTestId("dashboard")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "content-browser":
+            await seedLearner(page);
+            await page.goto("/content");
+            await expect(page.getByTestId("content-tree")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "set-detail":
+            await seedLearner(page);
+            await page.goto("/content");
+            await expect(page.getByTestId("content-tree")).toBeVisible({
+                timeout: 20_000,
+            });
+            await page.getByTestId("content-other-toggle").click();
+            await page.getByTestId(`content-set-${SET_ID}-action`).click();
+            // The downloaded set exposes its Open control once cached — a
+            // stable signal that the set-detail surface has rendered.
+            await expect(page.getByTestId(`content-set-${SET_ID}-open`)).toBeVisible(
+                {timeout: 25_000},
+            );
+            return true;
+        case "lesson-theory":
+            await seedLearner(page);
+            return gotoLessonTheory(page);
+        case "lesson-cloze":
+            await seedLearner(page);
+            return gotoLessonCloze(page);
+        case "lesson-matching":
+            await seedLearner(page);
+            return gotoLessonMatching(page);
+        case "lesson-summary":
+            await seedLearner(page);
+            return playBundledLesson(page, "summary");
+        case "review-session":
+            return gotoReviewSession(page);
+        case "statistics":
+            await seedLearner(page);
+            await playBundledLesson(page, "summary");
+            await page.goto("/statistics");
+            await expect(page.getByTestId("statistics")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "settings-general":
+            await seedLearner(page);
+            await page.goto("/settings?tab=general");
+            await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "settings-data":
+            await seedLearner(page);
+            await page.goto("/settings?tab=data");
+            await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "settings-about":
+            await seedLearner(page);
+            await page.goto("/settings?tab=about");
+            await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "shortcut-help":
+            await seedLearner(page);
+            await page.goto("/dashboard");
+            await expect(page.getByTestId("dashboard")).toBeVisible({
+                timeout: 20_000,
+            });
+            await page.keyboard.press("?");
+            await expect(page.getByTestId("shortcut-help")).toBeVisible({
+                timeout: 10_000,
+            });
+            return true;
         default:
             return false;
     }

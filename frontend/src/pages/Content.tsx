@@ -36,6 +36,7 @@ import { Input } from "@/components/ui/input";
 import ContinueLearning from "../components/ContinueLearning";
 import ImportLessonModal from "../components/content/ImportLessonModal";
 import MyLessonsSection from "../components/content/MyLessonsSection";
+import AvailableContentResults from "../components/content/AvailableContentResults";
 import ContentTree from "../components/content/ContentTree";
 import ContentShareDialog from "../components/content/ContentShareDialog";
 import type { DownloadState } from "../components/content/ContentSetRow";
@@ -84,6 +85,7 @@ import {
 } from "../lib/content/lesson-export";
 import { getStorage, resolveStorageMode } from "../storage";
 import AiValidationDialog from "../components/content/AiValidationDialog";
+import QualityCheckDialog from "../components/content/QualityCheckDialog";
 import { badgeStatusForCachedSet } from "../lib/ai/validation-signature";
 import type { AiCheckBadgeStatus } from "../shared/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../storage/types";
@@ -252,6 +254,9 @@ export default function ContentPage() {
   // Dexie mode (browser-direct provider call; no server route) + a
   // configured key; the button stays visible-but-disabled otherwise.
   const [aiCheckTarget, setAiCheckTarget] = useState<ContentSetEntry | null>(null);
+  // EXP-032 — deterministic, offline content-quality check (no key/mode gate).
+  const [qualityCheckTarget, setQualityCheckTarget] =
+    useState<ContentSetEntry | null>(null);
   // AIV-11 — per-set "AI-checked" badge status, keyed "{source}#{id}".
   const [aiBadgeBySet, setAiBadgeBySet] = useState<Record<string, AiCheckBadgeStatus>>({});
   const aiCheckIsDexie = resolveStorageMode() === "dexie";
@@ -703,6 +708,9 @@ export default function ContentPage() {
 
       {searchResult.active ? (
         <section className="content-search-results space-y-4" data-testid="content-search-results">
+          <h2 className="font-semibold" data-testid="content-search-your">
+            {t("content.search.your_content", "Your content")}
+          </h2>
           {searchResult.matches.length === 0 ? (
             <div className="content-empty" data-testid="content-search-empty">
               <p>
@@ -762,6 +770,13 @@ export default function ContentPage() {
               })}
             </>
           )}
+          {/* EXP-034 / DIS-07 — index sets matching the query that the
+              learner hasn't downloaded yet, with a download prompt. */}
+          <AvailableContentResults
+            query={searchResult.query}
+            downloadedSets={downloadedSets}
+            onDownloaded={loadSets}
+          />
         </section>
       ) : (
         <>
@@ -872,6 +887,7 @@ export default function ContentPage() {
                   void handleOpenLesson(e, { focusResources: true }),
                 onAiCheck: (e) => setAiCheckTarget(e),
                 aiCheckDisabledReason,
+                onQualityCheck: (e) => setQualityCheckTarget(e),
                 aiBadgeStatusFor: (e) =>
                   aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
               }}
@@ -894,6 +910,11 @@ export default function ContentPage() {
         entry={aiCheckTarget}
         activeProvider={activeProvider ?? null}
         onClose={() => setAiCheckTarget(null)}
+      />
+
+      <QualityCheckDialog
+        entry={qualityCheckTarget}
+        onClose={() => setQualityCheckTarget(null)}
       />
 
       <ImportLessonModal

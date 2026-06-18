@@ -1,0 +1,2754 @@
+app:
+  name: Adaptive Learner
+  tagline: 당신에게 맞춰 적응하는 학습.
+  skeleton_notice: 스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 — docs/adaptive-learner-project-reference.md를 참고하세요.
+common:
+  save: 저장
+  cancel: 취소
+  loading: 불러오는 중…
+  error: 문제가 발생했습니다.
+  back: 뒤로
+  next: 다음
+  start: 시작
+  submit: 제출
+  continue: 계속
+  done: 완료
+  delete: 삭제
+  edit: 편집
+  confirm: 확인
+  'yes': true
+  'no': false
+  optional: 선택
+  required: 필수
+  minutes: 분
+  close: "닫기"
+avatar:
+  error:
+    unsupported_type: "지원하지 않는 이미지 형식입니다 (JPEG, PNG 또는 WebP를 사용하세요)."
+    too_large: "크기를 조정한 후에도 이미지가 너무 큽니다. 다른 이미지를 사용해 보세요."
+    decode_failed: "해당 이미지를 읽을 수 없습니다."
+data_export:
+  title: "데이터 내보내기"
+  full_intro: "모든 데이터를 가져오기 가능한 백업 파일 하나로 내보냅니다."
+  full_button: "전체 백업 만들기"
+  full_done: "전체 백업이 생성되었습니다."
+  exporting: "내보내는 중…"
+  selective_intro: "또는 포함할 항목을 정확히 선택하세요. 파일은 동일한 방식으로 가져옵니다."
+  select_all: "전체 선택 / 해제"
+  selective_button: "선택한 데이터 내보내기"
+  selective_done: "{n}개의 레코드를 내보냈습니다."
+  includes_hint: "이 카테고리와 함께 자동으로 내보내집니다"
+  failed: "내보내기 실패: {detail}"
+  group_content: "콘텐츠"
+  group_master: "기본 데이터"
+  group_extra: "추가 데이터"
+  group_gamification: "게이미피케이션"
+  group_config: "설정"
+  cat_projects: "학습 프로젝트 (세션, 평가, 메모 포함)"
+  cat_curricula: "커리큘럼 (주제 및 레슨 포함)"
+  cat_progress: "레슨 진행도 (오답 / SRS 포함)"
+  cat_subjects: "과목"
+  cat_tags: "태그"
+  cat_imports: "채팅 가져오기 (메시지 포함)"
+  cat_anki: "Anki 카드"
+  cat_questions: "학습 질문"
+  cat_gamification: "XP, 배지, 연속 기록, 미션"
+  cat_settings: "설정"
+  cat_ai_config: "AI 키 백업"
+nav:
+  discover: "둘러보기"
+  offline_long: "오프라인 — 지난 세션은 계속 읽을 수 있습니다"
+  sync_pending: "동기화 대기 중인 변경 사항 {n}건"
+  statistics: "통계"
+  profile: "내 프로필"
+  learning_path: "학습 경로"
+  dashboard: 대시보드
+  session: 세션
+  curriculum: 커리큘럼
+  progress: 진행도
+  import: 가져오기
+  settings: 설정
+  help: 도움말
+  home: 홈
+  menu: 메뉴
+  online: 온라인
+  offline: 오프라인
+  anki: Anki
+  dev_badge: DEV
+  dev_badge_tooltip: "개발자 모드가 켜져 있습니다 — 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요."
+  content: 콘텐츠
+  mode_badge_content: 콘텐츠
+  mode_badge_ai: "AI+콘텐츠"
+  mode_badge_tooltip_content: "API 키가 설정되지 않았습니다 — 사전 제작된 콘텐츠만 사용합니다. AI 기능을 사용하려면 설정에서 키를 추가하세요."
+  mode_badge_tooltip_ai: "AI 제공자가 설정되었습니다 — 연습 문제에 AI를 활용해 오답 보기와 힌트를 생성합니다. 콘텐츠 세트를 둘러보려면 누르세요."
+  mode_badge_label_content: "모드: 콘텐츠 전용"
+  mode_badge_label_ai: "모드: AI + 콘텐츠"
+  sync_paired: "동기화: 페어링됨 (설정 > 동기화)"
+  sync_unpaired: "동기화: 페어링 안 됨 (설정 > 동기화)"
+import:
+  title: 대화 가져오기
+  subtitle: ChatGPT, Claude 또는 Gemini와의 대화를 붙여넣거나 업로드하면 즉시 학습 인사이트를 얻을 수 있습니다.
+  quick:
+    title: 빠른 분석
+    hint: 여기에 대화를 붙여넣으세요. 한 단계로 저장하고 분석합니다.
+    placeholder: ChatGPT, Claude, Gemini 또는 마크다운 대화를 여기에 붙여넣으세요…
+  file:
+    title: 파일 업로드
+    hint: .json, .md 또는 .txt 파일을 여기로 드래그하거나 클릭해서 선택하세요.
+    formats: ChatGPT conversations.json · Claude 내보내기 · 마크다운 · 일반 JSON
+  list:
+    title: 가져온 대화 목록
+    empty: 아직 대화가 없습니다. 빠른 분석을 사용하거나 파일을 업로드하세요.
+  detected_format: 감지된 형식
+  analyze: 분석
+  reanalyze: 다시 분석
+  analyzing: 분석 중…
+  analyzed: 분석 완료
+  analysis_title: 분석
+  analysis_ready: 분석이 준비되었습니다.
+  analysis_fallback: 분석은 실행되었지만 AI 응답을 깔끔하게 파싱할 수 없었습니다.
+  analysis_fallback_long: AI 응답을 구조화된 JSON으로 파싱할 수 없었습니다. 아래 요약은 대체 결과입니다.
+  analysis_error: 대화를 분석할 수 없었습니다.
+  analysis_phase_reading: "1/3단계: 채팅 읽는 중…"
+  analysis_phase_analyzing: "2/3단계: 내용 분석 중…"
+  analysis_phase_preparing: "3/3단계: 결과 준비 중…"
+  analysis_estimate: "분석에는 약 15-30초가 걸립니다…"
+  analysis_done: "완료!"
+  analysis_cancel: "취소"
+  analysis_failed_inline: "분석에 실패했습니다. 다시 시도해 주세요."
+  analysis_save_error: 분석 결과를 저장할 수 없었습니다.
+  back_to_list: 가져오기 목록으로
+  create_curriculum: 커리큘럼 만들기
+  go_to_curriculum: 커리큘럼으로 이동
+  curriculum_created: 분석으로부터 커리큘럼이 생성되었습니다.
+  curriculum_error: 커리큘럼을 만들 수 없었습니다.
+  curriculum_description: 가져온 대화로부터 생성됨.
+  default_curriculum_title: 가져온 커리큘럼
+  field_topic: 주제
+  field_method: 추천 학습법
+  field_strengths: 강점
+  field_weaknesses: 약점
+  field_errors: 오류 패턴
+  field_subtopics: 하위 주제
+  field_curriculum: 추천 커리큘럼
+  file_imported_one: 대화를 가져왔습니다. 상세 페이지에서 분석을 클릭하세요.
+  file_imported_many: 대화 {count}개를 가져왔습니다.
+  list_error: 가져온 대화를 불러올 수 없었습니다.
+  load_error: 대화를 불러올 수 없었습니다.
+  messages: 메시지
+  no_api_key: 분석을 사용하려면 설정에서 활성 AI 제공자의 API 키를 설정하세요.
+  no_lessons: 분석에서 추천된 레슨이 없습니다.
+  no_user: 대화를 가져오기 전에 온보딩을 완료하세요.
+  parse_error: 입력 형식을 인식할 수 없었습니다.
+  priority: 우선순위
+  role_assistant: AI
+  role_system: 시스템
+  role_user: 나
+  save_error: 대화를 저장할 수 없었습니다.
+  settings_error: AI 설정을 읽을 수 없었습니다.
+  start_session: 세션 시작
+  continue_session: 세션 계속
+  session_start_error: 세션을 시작할 수 없었습니다.
+  transcript: 대화 기록
+  show_transcript: 원본 대화 기록 보기
+  anki_extract: Anki 카드 추출
+  anki_extracting: 카드 추출 중…
+  anki_extracted: Anki 카드 {n}개를 추출했습니다. Anki 페이지에서 확인하세요.
+  anki_no_cards: 추출된 Anki 카드가 없습니다.
+  anki_extract_failed: Anki 카드를 추출할 수 없었습니다.
+  delete: 삭제
+  delete_aria: 이 대화 삭제
+  delete_confirm: 이 가져온 대화를 삭제하시겠습니까? 되돌릴 수 없습니다.
+  delete_success: 대화가 삭제되었습니다.
+  delete_error: 대화를 삭제할 수 없었습니다.
+  duplicate_detected: 이 대화는 이미 가져왔습니다. 기존 항목을 표시합니다.
+  chat_language: "채팅 언어 (당신이 말하는 언어)"
+  learning_language: "학습 언어"
+  select_language: "언어를 선택하세요…"
+curriculum:
+  title: 커리큘럼
+  active: 활성 커리큘럼
+  new_placeholder: 새 커리큘럼 제목…
+  create: 커리큘럼 만들기
+  created: 커리큘럼이 생성되었습니다.
+  saved: 저장되었습니다.
+  deleted: 주제가 삭제되었습니다.
+  add_topic: 주제 추가
+  add_root_topic: 최상위 주제 추가
+  add_subtopic: 하위 주제 추가
+  rename_topic: 주제 이름 변경
+  topic_title: 제목
+  no_topics: 아직 주제가 없습니다 — 첫 주제를 추가하여 시작하세요.
+  no_curriculum: 주제 트리를 만들려면 커리큘럼을 생성하세요.
+  delete_confirm: 이 주제를 삭제하시겠습니까? 하위 항목은 각자의 최상위 항목으로 유지됩니다.
+  lessons_title: 레슨
+  add_lesson: 레슨 추가
+  new_lesson_placeholder: 새 레슨 제목…
+  no_lessons: 아직 레슨이 없습니다.
+  lesson_created: 레슨이 생성되었습니다.
+  lesson_saved: 레슨이 저장되었습니다.
+  lesson_deleted: 레슨이 삭제되었습니다.
+  lesson_delete_confirm: 이 레슨을 삭제하시겠습니까?
+  add_description: "설명 추가"
+  description_aria: "커리큘럼 설명"
+  description_placeholder: "이 커리큘럼은 왜 만들었나요? 무엇을 다루나요?"
+  description_saved: "설명이 저장되었습니다."
+  edit_description: "설명 편집"
+  lesson_content_aria: "레슨 내용"
+  lesson_content_placeholder: "레슨 내용 — 제목, 목록, 코드 블록, 링크를 지원합니다."
+  no_description: "아직 설명이 없습니다."
+landing:
+  title: Adaptive Learner
+  subtitle: 당신에게 맞춰 적응하는 학습.
+  choose_language: 언어를 선택하세요
+  start_button: 학습 여정을 시작하세요
+  docs_link: 문서 읽기
+  checking_session: 다시 오신 것을 환영합니다…
+  recovered_toast: 다시 오신 것을 환영합니다! 학습 데이터가 그대로 남아 있습니다.
+  intro: Adaptive Learner는 연구로 입증된 여섯 가지 학습법 중 당신에게 가장 잘 맞는 방법을 찾아내고, 모든 세션에서 일곱 단계 주기를 안내합니다.
+onboarding:
+  title: 학습 프로젝트 만들기
+  intro: 학습 목표를 알려주세요. Adaptive Learner는 이를 바탕으로 프로필을 구성하고 시작 학습법을 추천합니다.
+  concepts_explainer_prefix: "당신은 "
+  concepts_explainer_mid1: "를 정의한 다음, 간단한 평가를 완료해 "
+  concepts_explainer_mid2: "을 구성합니다 — 이는 앞으로의 모든 "
+  concepts_explainer_suffix: "을 안내합니다."
+  term_learning_project: "학습 프로젝트"
+  term_learning_profile: "학습 프로필"
+  term_learning_session: "학습 세션"
+  field_name: 이름
+  field_topic: 주제
+  field_topic_hint: "예: 스페인어 B1, 선형대수학."
+  field_goal: 목표
+  field_goal_hint: 무엇을 할 수 있게 되고 싶으신가요?
+  field_timeframe: 기간
+  field_timeframe_hint: "예: 4주, 한 학기."
+  field_daily_minutes: 하루 학습 시간(분)
+  field_current_problem: 현재 문제
+  field_current_problem_hint: 선택 — 지금 무엇이 가로막고 있나요?
+  submit: 프로젝트를 만들고 평가 시작
+  creating: 프로젝트 생성 중…
+  subject_suggestions: "추천 과목 (탭하여 지정):"
+  default_goal: "{topic} 학습"
+  invite_title: "학습 프로필을 더 자세히 설정하시겠어요?"
+  invite_subtitle: "1분이면 되고 세션을 맞춤화해 줍니다 — 나중에 해도 됩니다."
+  invite_start_now: "바로 시작하기"
+  invite_setup_profile: "프로필 설정"
+  restore_hint: "이미 Adaptive Learner로 학습 중이신가요? 백업에서 복원하세요."
+  restore_backup: "기존 백업에서 복원"
+  restoring: "복원 중…"
+  restore_success: "백업이 복원되었습니다. 다시 오신 것을 환영합니다!"
+  wizard:
+    step_label: "{total}단계 중 {current}단계"
+    next: "다음"
+    back: "뒤로"
+    goal_title: "학습 목표가 무엇인가요?"
+    timeframe_title: "시간이 얼마나 있나요?"
+    timeframe_4w: "4주"
+    timeframe_3m: "3개월"
+    timeframe_semester: "한 학기"
+    timeframe_flexible: "유연하게"
+    minutes_title: "하루에 몇 분이나 하시겠어요?"
+    minutes_value: "하루 {n}분"
+    problem_title: "지금 무엇이 당신을 가로막고 있나요?"
+    done_title: "준비 완료! 평가를 시작할까요?"
+    done_subtitle: "12문항 평가가 당신의 학습 프로필을 구성합니다."
+    start_assessment: "네, 시작합니다"
+    later: "나중에"
+assessment:
+  title: 학습 유형 평가
+  intro: 짧은 12문항으로 학습 프로필을 결정합니다. 정답이나 오답은 없으니 직감대로 답하세요.
+  question_progress: 질문 {current} / {total}
+  next_question: 다음 질문
+  prev_question: 이전 질문
+  continue_later: 나중에 계속
+  submit: 평가하기
+  evaluating: 평가 중…
+  result_title: 당신의 학습 프로필
+  dominant_method: 선호 학습법
+  continue_to_dashboard: 대시보드로 이동
+  read_summary: 요약 읽기
+  swipe_hint: "왼쪽 / 오른쪽으로 스와이프 (또는 방향키 사용)하여 이동하세요."
+dashboard:
+  no_data: "아직 데이터가 없습니다."
+  title: 대시보드
+  welcome: 다시 오신 것을 환영합니다
+  quick_start: 새 세션 시작
+  quick_start_subtitle: 프로필에 따라 학습법이 선택됩니다.
+  card_profile: 학습 프로필
+  profile_incomplete: "학습 프로필이 완성되지 않았습니다."
+  profile_resume: "학습 프로필 계속하기"
+  profile_start: "학습 프로필 만들기"
+  card_progress: 진행도
+  card_distribution: 학습법 분포
+  card_counter: 세션
+  card_tools: 도구 추천
+  card_recent_sessions: 최근 세션
+  card_spaced: 분산 연습
+  card_review_queue: 복습 예정
+  card_focus_areas: 집중 영역
+  card_paused_lessons: 학습 이어가기
+  review_queue:
+    loading: "불러오는 중…"
+    elements: "개 요소 복습 예정"
+    overdue: "기한 초과 — 여기서 시작하세요"
+    open: "복습 세션 열기"
+    quick: "빠른 복습"
+  focus_areas:
+    loading: "오류를 분석하는 중…"
+    subtitle: "당신의 도전 영역:"
+    errors: "오류"
+    hint_answers: "힌트를 사용한 답변 {n}개"
+    mastery_progress: "숙달 진행도"
+    cta: "적응형 레슨 시작"
+    tag:
+      article_gender: "관사 성별"
+      spelling_accent: "철자와 강세 표시"
+      verb_conjugation: "동사 활용"
+      word_order: "어순"
+    mastery_split: '수용: {receptive} · 산출: {productive}'
+  create_lesson: "레슨 만들기"
+  metric_mean_stress: "평균 스트레스"
+  metric_mean_understanding: "평균 이해도"
+  metric_streak: "연속 학습일"
+  metric_total_minutes: "총 학습 시간(분)"
+  metric_total_sessions: "총 세션 수"
+  pronunciation_quick_start: "발음 연습"
+  spaced_dismiss: "닫기"
+  spaced_empty: "지금 복습할 항목이 없습니다. 훌륭한 리듬이에요!"
+  spaced_interval_label: "복습 예정"
+  spaced_start: "시작"
+adaptive:
+  page_title: "적응형 레슨"
+  session_title: "적응형 레슨"
+  loading: "오류를 분석하는 중…"
+  empty_body: "아직 적응할 데이터가 없습니다 — 레슨을 연습하여 데이터를 쌓으세요."
+  not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요."
+  back_to_dashboard: "대시보드로 돌아가기"
+  transparency:
+    focus_prefix: "이 레슨은 다음에 집중합니다:"
+    tag_none: "가장 약한 요소들"
+    errors_line: "활성 오류 {n}건 기반"
+  summary:
+    aria_label: "적응형 레슨 요약"
+    heading: "적응형 레슨 완료"
+    score: "점수"
+    mastered_delta: "향상: 이번 세션에서 요소 {n}개를 숙달했습니다!"
+    note: "요소 점수가 업데이트되었습니다. 다음 적응형 레슨은 아직 연습이 필요한 요소를 다룹니다."
+  error:
+    missing_params: "선택된 콘텐츠 세트가 없습니다."
+    load_failed: "적응형 레슨을 생성할 수 없었습니다."
+review:
+  summary_remaining: "아직 {n}개 남았어요. 계속할까요?"
+  another_round: "한 번 더"
+  your_answer: "당신의 답변:"
+  correct_answer: "정답:"
+  summary_corrected: "{total}개 중 {corrected}개 교정됨"
+  summary_trend: "좋아요 — 약한 부분이 점점 강해지고 있어요."
+  summary_next: "숙달한 항목은 제외되고, 나머지는 곧 복습으로 돌아옵니다."
+  summary_repeat: "약 2일 후에 다시 와서 이 항목들을 신선하게 유지하세요."
+  explain_heading: "이 문제들을 틀린 이유"
+  explain_article_gender: "성별에 유의하세요: -o로 끝나는 명사는 보통 남성형(el/un), -a는 여성형(la/una)입니다. 관사는 어미를 따릅니다."
+  explain_spelling_accent: "정확한 철자와 강세 표시를 확인하세요 — 작은 차이가 단어를 바꿉니다."
+  explain_verb_conjugation: "답하기 전에 동사를 주어 및 시제에 맞추세요."
+  explain_word_order: "이 구조의 어순에 유의하세요."
+  page_title: "복습"
+  session_title: "복습 세션"
+  subtitle: "SRS 복습 예정인 요소 {n}개를 복습합니다"
+  subtitle_capped: "SRS 복습 예정인 {due}개 중 {shown}개를 복습합니다"
+  loading: "복습 세션을 불러오는 중…"
+  empty_body: "모두 완료했습니다! 이 세트에 복습 예정인 요소가 없습니다."
+  not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요."
+  back_to_dashboard: "대시보드로 돌아가기"
+  summary:
+    aria_label: "복습 요약"
+    heading: "복습 완료"
+    score: "점수"
+    note: "요소 점수가 업데이트되었습니다. 숙달한 요소는 다음 세션에 나타나지 않습니다."
+  error:
+    missing_params: "선택된 콘텐츠 세트가 없습니다."
+    load_failed: "복습 세션을 불러올 수 없었습니다."
+  spaced_empty: 지금 복습할 항목이 없습니다. 훌륭한 리듬이에요!
+  spaced_interval_label: 복습 예정
+  spaced_start: 시작
+  spaced_dismiss: 닫기
+  metric_total_sessions: 총 세션 수
+  metric_total_minutes: 총 학습 시간(분)
+  metric_mean_understanding: 평균 이해도
+  metric_mean_stress: 평균 스트레스
+  metric_streak: 연속 학습일
+  no_data: 아직 세션이 없습니다 — 첫 세션을 시작하여 추이를 확인하세요.
+  pronunciation_quick_start: 발음 연습
+session:
+  title: 학습 세션
+  topic_label: "주제"
+  in_progress: 세션 진행 중
+  send_message: 메시지 보내기
+  message_placeholder: 답변을 작성하세요…
+  ai_thinking: 생각하는 중…
+  ai_error: AI 제공자가 응답할 수 없었습니다.
+  no_api_key: "AI 키가 설정되지 않았습니다. 튜터와 대화하려면 설정에서 AI 제공자의 키를 추가하세요. 레슨과 복습은 키 없이도 작동합니다."
+  welcome_empty: "학습할 준비가 되었습니다! 첫 메시지를 작성하세요."
+  end_session: 세션 종료
+  end_session_confirm: 정말이신가요? 세션을 닫고 평가를 요청합니다.
+  switch_recommended: 학습법 전환 추천
+  switch_recommended_subtitle: 최근 평가를 보면 다른 학습법이 더 잘 맞을 수 있습니다.
+  switch_accept: 학습법 전환
+  switch_dismiss: 현재 학습법 유지
+  rating_title: 세션은 어땠나요?
+  rating_understanding: 얼마나 잘 이해했나요?
+  rating_stress: 얼마나 스트레스를 받았나요?
+  rating_method_fit: 학습법이 얼마나 잘 맞았나요?
+  rating_notes: 메모 (선택)
+  rating_submit: 평가 제출
+  step_progress: 단계 {current} / {total}
+  step_advance_toast: '다음으로 이동: {step}'
+  cycle_label: 주기 {n}
+  cycle_advanced: 주기 {n} 시작됨
+  cycles_completed: 완료된 주기
+  next_topic: '다음 주제:'
+  step_reason_tooltip: 이 단계인 이유는?
+  offline_start_blocked: 오프라인 상태입니다. 새 세션에는 네트워크 연결이 필요합니다 — 지난 세션은 대시보드에서 계속 읽을 수 있습니다.
+  peek_step_prefix: "단계"
+  rating_notes_aria: "세션 메모"
+  rating_notes_placeholder: "무엇이 잘 됐고, 무엇이 안 됐고, 다음에 무엇을 시도할지…"
+progress:
+  title: 진행도
+  chart_timeline: 시간에 따른 이해도와 스트레스
+  chart_methods: 학습법 분포
+  commit_history: 세션 기록
+  commit_method: 학습법
+  commit_understanding: 이해도
+  commit_stress: 스트레스
+  commit_duration: 소요 시간
+  commit_date: 날짜
+  no_commits: 아직 완료된 세션이 없습니다.
+  step_eval_title: AI 단계 평가 인사이트
+  step_eval_empty: 아직 AI 단계 평가 데이터가 없습니다 — 세션을 시작하면 여기에 인사이트가 표시됩니다.
+  step_eval_avg_confidence: 평균 AI 신뢰도
+  step_eval_repeats: AI가 '아직 준비되지 않음'이라고 한 횟수
+  step_eval_advances: 단계 진행
+  step_eval_backward: 뒤로 전환
+  step_eval_stickiest_label: '가장 오래 머문 단계:'
+  commit_notes_aria: "세션 메모"
+  session_count: "세션"
+settings:
+  review_limit:
+    label: "복습당 문제 수"
+    desc: "복습 세션이 끝나기 전에 제시하는 요소 수입니다. 남은 항목은 다음 회차로 넘어갑니다."
+  install:
+    heading: "앱 설치"
+    description: "Adaptive Learner를 앱으로 설치하여 오프라인 접근과 전체 화면 환경을 누리세요."
+    button: "앱 설치"
+    already: "이미 설치됨"
+    unavailable: "브라우저가 아직 설치를 제안하지 않았습니다."
+    installed: "앱이 설치되었습니다."
+  section_review: "복습"
+  explanations_enabled: "오류 설명 표시"
+  explanations_enabled_desc: "레슨 후 각 오답에 대해 짧은 규칙 팁을 표시합니다."
+  section_hints: "힌트"
+  hints_enabled: "연습 중 힌트 표시"
+  hints_enabled_desc: "각 연습 문제에 단계별 힌트 버튼을 제공합니다."
+  hint_xp_cost: "힌트당 XP 비용"
+  hint_xp_cost_desc: "힌트 버튼에 표시됩니다. 무료 힌트는 0으로 설정하세요."
+  section_reminders: "알림"
+  reminders_enabled: "매일 학습 알림"
+  reminders_enabled_desc: "복습할 항목이 있을 때 브라우저 알림을 받습니다. 앱이 열려 있을 때만 작동합니다."
+  reminders_time: "알림 시간"
+  reminders_time_desc: "매일 언제 알림을 받을지."
+  reminders_weekdays: "요일"
+  reminders_weekdays_desc: "어떤 요일에 알림을 받을지."
+  reminders_permission_request: "알림 사용"
+  reminders_permission_denied: "알림이 차단되어 있습니다. 알림을 받으려면 브라우저의 사이트 설정에서 사용 설정하세요."
+  reminders_unsupported: "브라우저가 알림을 지원하지 않습니다."
+  reminders_notification_title: "복습할 시간입니다"
+  reminders_notification_body: "복습 {n}건이 예정되어 있습니다. 연속 기록을 이어가세요!"
+  support:
+    heading: "지원"
+    description: "예상대로 작동하지 않나요? 최근 작업 내역에 대한 보고서를 만들어 개발자가 문제를 재현하도록 도울 수 있습니다. 브라우저를 벗어나기 전에 모든 내용을 직접 검토합니다."
+    create_report: "오류 보고서 만들기"
+    report_default_message: "사용자가 시작한 보고서"
+  tab_integrations: "연동"
+  github:
+    title: "GitHub 연동"
+    intro: "레슨을 풀 리퀘스트로 공유하는 데 필요합니다. 'repo' 권한이 있는 토큰을 생성하세요."
+    token: "GitHub 토큰"
+    format_invalid: "GitHub 토큰은 'ghp_' 또는 'github_pat_'로 시작합니다."
+    test: "테스트"
+    testing: "테스트 중..."
+    save: "저장"
+    remove: "제거"
+    saved: "GitHub 토큰이 저장되었습니다."
+    removed: "GitHub 토큰이 제거되었습니다."
+    test_success: "{username}(으)로 연결되었습니다"
+    test_invalid: "토큰이 유효하지 않습니다."
+    test_rate_limit: "GitHub 요청 한도에 도달했습니다. 나중에 다시 시도하세요."
+    test_network: "GitHub에 연결할 수 없었습니다."
+    test_no_token: "테스트할 토큰이 없습니다."
+    source_file: "secrets.yaml에 저장됨"
+    source_env: "환경 변수로 관리됨"
+    source_browser: "이 브라우저에 저장됨"
+  title: 설정
+  help_intro: "앱 내 용어집을 둘러보고 검색하세요. 전체 문서를 보려면 항목을 클릭하세요."
+  section_language: 언어
+  mode_title: "모드"
+  mode_solo: "솔로 모드"
+  mode_solo_desc: "스스로 학습합니다. 모든 기능을 사용할 수 있습니다."
+  mode_multiplayer: "멀티플레이어 모드"
+  mode_multiplayer_desc: "리더보드, 토너먼트, 친구. 향후 버전에서 제공됩니다."
+  mode_coming_soon: "출시 예정"
+  section_provider: AI 제공자
+  section_api_keys: API 키
+  section_danger: 계정
+  section_ui: 인터페이스
+  section_appearance: "외관"
+  section_profile: "프로필"
+  username_label: "표시 이름"
+  username_placeholder: "이름"
+  username_save: "저장"
+  username_empty: "이름은 비워둘 수 없습니다."
+  avatar_upload: "사진 업로드"
+  avatar_remove: "제거"
+  avatar_crop_title: "사진 조정"
+  avatar_crop_instructions: "드래그하여 위치를 옮기고, 스크롤하거나 핀치하여 확대/축소하세요."
+  avatar_crop_apply: "적용"
+  avatar_crop_cancel: "취소"
+  avatar_crop_zoom: "확대/축소"
+  avatar_preview_title: "프로필 사진"
+  avatar_change: "사진 변경"
+  avatar_button_label: "프로필 사진 보기 또는 변경"
+  theme: "테마"
+  theme_description: "앱의 모양을 선택하세요. 자동은 시스템의 밝게/어둡게 설정을 따릅니다."
+  theme_group_recommended: "추천"
+  theme_group_classic: "클래식"
+  theme_groups: "테마 그룹"
+  tab_general: "일반"
+  group_general: "일반"
+  group_learning: "학습 & AI"
+  group_data: "데이터 & 연동"
+  group_info: "정보"
+  nav_aria: "설정 탐색"
+  tab_ai: "AI"
+  tab_learning: "학습"
+  tab_plugins: "플러그인"
+  tab_data: "데이터"
+  tab_help: "도움말"
+  tab_about: "정보"
+  tabs_aria: "설정 섹션"
+  section_feedback: "피드백"
+  section_interaction: "상호작용"
+  missions_title: "일일 미션"
+  missions_enabled: "일일 미션"
+  missions_enabled_hint: "매일 대시보드에 달성 가능한 목표 몇 가지를 표시합니다. 선택 사항이며 없어도 앱은 동일하게 작동합니다."
+  missions_count: "하루 미션 수"
+  missions_difficulty: "난이도 구성"
+  missions_difficulty_balanced: "균형"
+  missions_difficulty_easy: "쉬움"
+  missions_difficulty_challenging: "도전적"
+  missions_reset: "오늘의 미션 초기화"
+  missions_reset_confirm: "초기화 확인"
+  missions_reset_done: "오늘의 미션이 다시 섞였습니다."
+  missions_reset_failed: "미션을 초기화할 수 없었습니다."
+  gestures: 스와이프 제스처
+  gestures_description: 평가, 세션, 커리큘럼에서 스와이프로 이동합니다.
+  profile_title: "학습 프로필"
+  profile_resume: "학습 프로필 계속하기"
+  profile_redo: "학습 프로필 다시 받기"
+  profile_create: "학습 프로필 만들기"
+  profile_incomplete_hint: "완료하지 않은 평가가 있습니다."
+  profile_redo_hint: "평가를 다시 받아 학습 프로필을 업데이트하세요."
+  profile_create_hint: "짧은 평가를 받아 개인 맞춤 학습 프로필을 얻으세요."
+  lesson_shortcuts: "레슨 키보드 단축키"
+  lesson_shortcuts_description: "Enter를 눌러 답을 확인하고, 다시 Enter를 눌러 다음 단계로 이동하세요."
+  button_tooltips: 버튼 툴팁 표시
+  button_tooltips_description: "아이콘 버튼 위에 마우스를 올리면 기능을 설명하는 툴팁을 표시합니다. 화면 낭독기 레이블은 관계없이 항상 유지됩니다."
+  developer_mode: 개발자 모드
+  developer_mode_description: "오류 알림에 전체 기술 정보(상태 코드, 엔드포인트, 스택 트레이스)를 표시합니다. 이 기능이 켜져 있는 동안 탐색 막대에 'DEV' 배지가 나타납니다. 기본값은 꺼짐이며, 디버깅용으로 선택해 사용하세요."
+  feedback_intensity: "피드백 강도"
+  feedback_intensity_description: "앱이 당신의 진행을 얼마나 크게 축하할지 정합니다."
+  feedback_intensity_subtle: "은은하게"
+  feedback_intensity_subtle_desc: "정답/오답 색상만 표시합니다. 문구, 컨페티, 마일스톤 오버레이는 없습니다."
+  feedback_intensity_normal: "보통"
+  feedback_intensity_normal_desc: "애니메이션, 칭찬 문구, 만점 시 컨페티를 표시합니다."
+  feedback_intensity_enthusiastic: "열정적으로"
+  feedback_intensity_enthusiastic_desc: "모든 것에 더해 마일스톤 오버레이와 모든 정답 시 칭찬을 표시합니다."
+  feedback_intensity_reduced_motion_hint: "시스템에서 모션 줄이기가 켜져 있어, 이 설정과 관계없이 피드백이 은은하게 유지됩니다."
+  sounds: "소리"
+  sounds_description: "정답, 별, 마일스톤에서 짧은 합성 차임을 재생합니다. 기본값은 꺼짐이며, 소리는 화면에도 함께 표시되지 않는 정보를 결코 전달하지 않습니다."
+  sounds_volume: "음량"
+  sounds_test: "테스트"
+  section_storage_mode: 저장소 모드
+  storage_mode_help: 데이터가 어디에 저장될지 선택하세요. 로컬 모드는 모든 것을 이 브라우저에 보관하고, 서버 모드는 AdaptiveLearner 백엔드와 통신합니다.
+  storage_mode_api: 서버
+  storage_mode_api_hint: 실행 중인 AdaptiveLearner 백엔드가 필요합니다.
+  storage_mode_dexie: 로컬 (브라우저)
+  storage_mode_dexie_hint: 데이터와 API 키가 이 브라우저에 저장되며, AI 호출은 페이지에서 직접 이루어집니다.
+  storage_mode_warning: 데이터는 모드 간에 동기화되지 않습니다. 동기화는 향후 버전에 계획되어 있습니다.
+  storage_mode_switch_notice: 저장소 모드가 저장되었습니다. 새 백엔드로 전환하려면 페이지를 새로고침하세요.
+  language_label: 표시 언어
+  language_search_placeholder: "언어 검색…"
+  language_no_results: "언어를 찾을 수 없습니다"
+  language_search_label: "언어 검색"
+  provider_label: 활성 제공자
+  provider_anthropic: Anthropic Claude
+  provider_openai: OpenAI GPT
+  provider_gemini: Google Gemini
+  api_key_label: API 키
+  api_key_placeholder: 여기에 붙여넣으세요…
+  api_key_placeholder_replace: "저장된 키를 교체하려면 새 키를 붙여넣으세요…"
+  api_key:
+    test: "테스트"
+    testing: "테스트 중…"
+    test_success: "키가 작동합니다!"
+    test_invalid: "키가 유효하지 않거나 만료되었습니다."
+    test_network: "연결에 실패했습니다. 인터넷 연결을 확인하세요."
+    test_rate_limit: "요청 한도에 도달했습니다. 나중에 다시 시도하세요."
+    test_no_key: "테스트할 키가 없습니다."
+    format_invalid: "형식이 유효하지 않습니다."
+    rollback_warning: "새 키가 작동하지 않습니다. 이전 키를 유지할까요?"
+    rollback_keep_old: "이전 키 유지"
+    rollback_save_anyway: "그래도 저장"
+    rollback_cancel: "취소"
+    rollback_restore: "마지막으로 작동한 키 복원"
+    format_hint:
+      anthropic: "sk-ant-로 시작합니다"
+      openai: "sk-로 시작합니다"
+      gemini: "AI로 시작합니다"
+  api_key_saved: 키가 저장됨
+  api_key_missing: 설정 안 됨
+  api_key_set: 키 저장
+  api_key_delete: 키 제거
+  api_key_confirm_delete: 정말 이 API 키를 제거하시겠습니까?
+  saved: 저장되었습니다.
+  save_failed: 저장에 실패했습니다.
+  provider_active: 활성
+  active_provider_missing_key: 활성 제공자이지만 저장된 API 키가 없습니다. 키가 저장될 때까지 AI 응답은 건너뜁니다.
+  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  api_key_source_file: "키 출처: secrets.yaml"
+  api_key_source_env: "키 출처: 환경 변수"
+  api_key_source_settings: "키 출처: 설정"
+  api_key_source_none: 설정된 키 없음
+  api_key_external_hint_file: "~/.config/adaptive_learner/secrets.yaml에 저장되어 있습니다. 여기서 저장하면 덮어씁니다."
+  api_key_external_hint_env: 이 키는 ADAPTIVE_LEARNER_{PROVIDER}_API_KEY 환경 변수로 설정되어 있습니다.
+  section_model_overrides: 모델 재정의
+  model_overrides_hint: 각 제공자의 기본 모델을 사용하려면 비워 두세요. 비어 있지 않은 값은 대화 시 기본값을 대체합니다.
+  model_override_placeholder: "모델 식별자 (예: claude-3-5-haiku-latest)"
+  model_override_set: 재정의 활성
+  model_override_default: 기본 모델
+  model_override_save: 모델 저장
+  model_override_clear: 기본값 사용
+  model_picker_placeholder: 모델 ID를 선택하거나 입력하세요
+  model_picker_open: 모델 목록 열기
+  model_picker_default_hint: '기본값 사용:'
+  model_picker_loading: 모델 불러오는 중...
+  model_picker_error: 모델을 불러올 수 없었습니다. API 키를 확인하세요.
+  model_picker_retry: 다시 시도
+  model_picker_no_key: 사용 가능한 모델을 불러오려면 이 제공자의 API 키를 저장하세요.
+  model_picker_recommended: 추천
+  model_picker_all: 모든 모델
+  model_picker_suggestions: 추천 (오프라인)
+  section_gamification: 게이미피케이션
+  xp_notifications: XP 알림 표시
+  xp_notifications_help: XP를 얻을 때 떠오르는 '+50 XP' 애니메이션을 표시합니다.
+  badge_notifications: 배지 알림 표시
+  badge_notifications_help: 새 배지를 얻으면 알림을 표시합니다.
+  daily_session_goal: 일일 세션 목표
+  daily_session_goal_help: 진행 힌트로 표시되는 하루 세션 수입니다.
+  reset_progress: 진행도 초기화
+  reset_progress_help: XP, 배지, 연속 기록을 영구히 삭제합니다. 되돌릴 수 없습니다.
+  reset_confirm_first: 확인하려면 다시 클릭하세요
+  reset_confirm_second: 영구 삭제하려면 한 번 더 클릭하세요
+  section_voice: 음성
+  voice:
+    tts_enabled: 말하기 버튼 표시
+    tts_enabled_help: 스피커 아이콘을 클릭하면 AI 응답을 소리 내어 읽습니다.
+    auto_play: AI 응답 자동 재생
+    auto_play_help: 각 AI 응답을 자동으로 소리 내어 읽습니다 (기본값은 꺼짐).
+    tts_voice: 음성
+    tts_voice_help: 기본값은 프로젝트 언어에 가장 가까운 음성을 사용합니다.
+    voice_default: 기본값 (자동 선택)
+    tts_rate: 속도
+    tts_pitch: 음높이
+    stt_enabled: 마이크 버튼 표시
+    stt_enabled_help: 브라우저의 음성 인식을 통해 답변을 받아쓰세요.
+    stt_lang: 받아쓰기 언어 재정의
+    stt_lang_help: '프로젝트 / UI 언어를 사용하려면 비워 두세요. 형식: BCP-47 (예: en-US, es-ES).'
+    pronunciation_enabled: 발음 연습
+    pronunciation_enabled_help: 언어 학습 프로젝트 대시보드에 '발음 연습' 버튼을 표시합니다.
+  source_languages:
+    title: 추가 출처 언어
+    hint: 당신이 함께 구사하는 언어입니다. 이 출처 언어로 작성된 레슨이 메인 콘텐츠 목록에 표시됩니다.
+    app_language: 앱 언어
+  direction:
+    title: 선호 연습 방향
+    hint: 적응형 레슨이 인식(목표어 -> 당신의 언어)과 산출(당신의 언어 -> 목표어)을 어떻게 균형 잡을지 정합니다. 산출이 더 어렵습니다. 자동은 인식이 탄탄해지면 산출을 도입합니다.
+    label: 방향
+    auto: 자동
+    receptive_first: 인식 먼저
+    productive_focus: 산출
+    balanced: 균형
+  paused_retention:
+    title: 일시 정지된 레슨 보관
+    hint: "이 기간보다 오래된 일시 정지 레슨은 자동으로 중단됩니다. 나이와 관계없이 일시 정지 레슨 최대 10개는 보관됩니다."
+    label: 일시 정지 레슨 보관 기간
+    7_days: "7일"
+    14_days: "14일"
+    30_days: "30일"
+    60_days: "60일"
+    never: 안 함
+  max_lesson_size:
+    title: 최대 레슨 크기
+    hint: "긴 채팅 분석을 오프라인 레슨으로 저장할 때, 이 단계 수를 초과하는 레슨은 자동으로 여러 부분으로 나뉩니다."
+    label: 부분당 단계 수
+    range_hint: "(기본값 {default}, 범위 {min}–{max})"
+  danger_zone_backup_button: "백업 만들기"
+  danger_zone_backup_offer: "먼저 백업을 만들까요?"
+  danger_zone_cancel: "취소"
+  danger_zone_complete_toast: "모든 데이터가 삭제되었습니다."
+  danger_zone_confirm_prompt: "확인하려면 RESET을 입력하세요"
+  danger_zone_continue: "계속"
+  danger_zone_failed_toast: "초기화 실패:"
+  danger_zone_final_button: "영구 삭제"
+  danger_zone_heading: "위험 구역"
+  danger_zone_input_placeholder: "RESET"
+  danger_zone_intro: "이 기기의 모든 학습자 상태를 영구히 삭제합니다."
+  danger_zone_reset_button: "전체 초기화"
+  danger_zone_warning: "이 작업은 모든 학습 데이터 — 세션, 진행도, 프로필, 커리큘럼, 가져오기, Anki 카드, 설정, API 키 —를 영구히 삭제합니다. 이 작업은 되돌릴 수 없습니다."
+  section_sync: "동기화"
+methods:
+  deductive:
+    label: 연역적
+    summary: 일반에서 구체로 — 규칙을 먼저, 예시는 나중에.
+  inductive:
+    label: 귀납적
+    summary: 구체에서 일반으로 — 예시를 먼저, 규칙을 도출.
+  error_based:
+    label: 오류 기반
+    summary: 실수에서 배우기 — 교정과 설명.
+  dialogic:
+    label: 대화적
+    summary: 대화 속에서 생각하기 — 스트레스를 낮추고 동기를 키웁니다.
+  contextual:
+    label: 맥락적
+    summary: 실제 맥락에서 적용하기 — 전이를 연습합니다.
+  ai_adaptive:
+    label: AI 적응형
+    summary: AI가 당신에게 가장 잘 맞는 학습법을 선택합니다.
+cycle_steps:
+  input:
+    label: 입력
+    description: 정보, 예시 또는 과제가 제시됩니다.
+  attempt:
+    label: 시도
+    description: 안전망 없이 처음으로 적용합니다.
+  error:
+    label: 오류
+    description: 기대와 결과 사이의 불일치.
+  feedback:
+    label: 피드백
+    description: 설명과 함께 교정합니다.
+  adapt:
+    label: 적응
+    description: 학습법, 속도 또는 초점을 조정합니다.
+  repeat:
+    label: 반복
+    description: 다시 시도합니다.
+  integrate:
+    label: 통합
+    description: 경험을 통해 지식이 자리 잡습니다.
+errors:
+  network: 서버에 연결할 수 없었습니다.
+  not_found: 찾을 수 없습니다.
+  validation: 잘못된 입력입니다.
+  conflict: 항목이 이미 존재합니다.
+  server: 서버 오류 — 나중에 다시 시도하세요.
+toast:
+  project_created: 프로젝트가 생성되었습니다.
+  assessment_saved: 프로필이 저장되었습니다.
+  session_started: 세션이 시작되었습니다.
+  session_ended: 세션이 종료되었습니다.
+  rating_saved: 평가가 저장되었습니다.
+  api_key_saved: API 키가 저장되었습니다.
+  api_key_restored: "마지막으로 작동한 키가 복원되었습니다."
+  api_key_deleted: API 키가 제거되었습니다.
+  method_switched: 학습법이 전환되었습니다.
+install:
+  title: 홈 화면에 추가
+  subtitle: "더 나은 오프라인 사용을 위해 Adaptive Learner를 앱으로 설치하세요."
+  install: 설치
+  dismiss: 나중에
+  aria_label: Adaptive Learner 설치
+about:
+  section_heading: Adaptive Learner 정보
+  loading: 정보를 불러오는 중…
+  load_failed: '시스템 정보를 불러올 수 없었습니다:'
+  version_heading: 버전
+  app_label: Adaptive Learner
+  build_hash_label: 빌드
+  build_date_label: 빌드 날짜
+  check_update: "업데이트 확인"
+  checking: "확인 중…"
+  update_available: "버전 {version}을(를) 사용할 수 있습니다!"
+  up_to_date: "최신 버전을 사용하고 있습니다."
+  check_failed: "확인에 실패했습니다. 온라인 상태인가요?"
+  last_checked: "마지막 확인: {when}"
+  never_checked: "확인한 적 없음"
+  update_now: "지금 업데이트"
+  system_heading: 시스템
+  storage_label: 저장소
+  storage_api: 서버 (FastAPI + SQLite)
+  storage_dexie: 로컬 브라우저 저장소 (IndexedDB)
+  data_dir_label: 데이터 디렉터리
+  db_path_label: 데이터베이스 경로
+  platform_label: 플랫폼
+  dep_unknown: 알 수 없음
+  identity_heading: 신원 파일
+  identity_loading: 신원 상태를 불러오는 중…
+  identity_error: '신원 상태를 불러올 수 없었습니다:'
+  identity_path_label: 경로
+  identity_status_label: 상태
+  identity_status_active: 활성
+  identity_status_missing: 찾을 수 없음
+  identity_last_seen_label: 마지막 업데이트
+  identity_explainer: 이 파일은 Adaptive Learner가 자동으로 관리합니다. 브라우저 데이터를 삭제한 후에도 사용자 신원을 복구할 수 있게 해 줍니다. 수동으로 편집하지 마세요.
+  credits_heading: 크레딧
+  author_label: 제작자
+  dependencies_label: 사용 기술
+  ai_assistance_label: "AI 지원"
+  ai_assistance_value: "Claude (Anthropic) - 아키텍처, 코드, 콘텐츠, 문서"
+  tagline: 자기 주도 학습자를 위해 만들어졌습니다.
+  donations_heading: 개발 지원
+  donations_intro: Adaptive Learner는 무료이자 오픈 소스입니다. 도움이 되셨다면 후원을 고려해 주세요.
+  donations_primary: 선호
+  donations:
+    liberapay_desc: 정기 후원. 오픈 소스이며 플랫폼이 수수료를 가져가지 않습니다.
+    github_desc: 기존 GitHub 계정으로 후원하세요.
+    kofi_desc: 일회성 후원. 로그인이 필요 없습니다.
+  license_heading: 라이선스 & 자료
+  license_label: 라이선스
+  license_text_link: (전문)
+  repo_label: 저장소
+  docs_label: 문서
+  issues_label: 이슈
+backup:
+  section_title: 백업
+  section_help: 계정의 모든 데이터를 JSON 파일로 내보냅니다. API 키는 포함되지 않으므로 복원 후 다시 입력해야 합니다.
+  export: 백업 만들기
+  exporting: 내보내는 중…
+  import: 백업에서 복원
+  importing: 복원 중…
+  confirm: 복원 확인
+  invalid_format: 이 파일은 유효한 Adaptive Learner 백업이 아닙니다.
+  not_a_backup_file: '이 파일은 유효한 백업 파일이 아닙니다. ''백업 만들기''로 내보낸 파일을 선택하세요.'
+  version_mismatch: "이 백업은 버전 {{from}}에서 만들어졌으며, 이 앱은 {{to}}입니다. 아래 변경 사항을 검토하고 가져오기를 확인하세요."
+  too_large: '이 백업 파일이 너무 큽니다 (100MB 초과).'
+  export_success: 백업을 다운로드했습니다 (레코드 {{count}}개).
+  export_error: '백업 실패: {{detail}}'
+  import_parse_error: '백업을 읽을 수 없었습니다: {{detail}}'
+  import_error: '복원 실패: {{detail}}'
+  comparison_title: 복원 확인
+  comparison_help: '복원은 병합 방식입니다: 새 레코드는 삽입하고, 변경 가능한 레코드는 백업이 더 최신일 때만 업데이트하며, 기록 행은 그대로 유지합니다. 삭제되는 것은 없습니다. API 키는 무시됩니다.'
+  table_header: 테이블
+  current_header: 현재
+  incoming_header: 백업
+  restored_summary: 복원이 완료되었습니다.
+  restored_inserted: '삽입: {{n}}'
+  restored_updated: '업데이트: {{n}}'
+  restored_skipped: '건너뜀: {{n}}'
+  restored_errors: '오류: {{n}}'
+  col_inserted: '삽입'
+  col_updated: '갱신'
+  col_skipped: '건너뜀'
+  col_errors: '오류'
+  error_details: '오류 상세'
+  restored_with_errors: '레코드 {{n}}개를 복원할 수 없었습니다.'
+  last_backup: '마지막 백업: {{when}}'
+  reminder_overdue: 마지막 백업으로부터 {{days}}일이 넘게 지났습니다.
+  saved_as: '백업 저장됨: {{filename}}'
+  downloaded: '백업 다운로드됨: {{filename}} (레코드 {{count}}개).'
+  contains_title: '백업에 포함된 내용:'
+  count_element_errors: '오류 항목 {{n}}개'
+  count_lesson_progress: '레슨 진행도 {{n}}개'
+  count_user_badges: '배지 {{n}}개'
+  count_sessions: '세션 {{n}}개'
+  count_projects: '프로젝트 {{n}}개'
+  count_imports: '채팅 가져오기 {{n}}개'
+  record_count: '총 레코드 {{count}}개'
+  auto_title: 자동 백업
+  auto_help: 세션 10회를 완료할 때마다 또는 일주일에 한 번 자동으로 백업합니다.
+  auto_run: 지금 백업
+  auto_run_success: 자동 백업이 생성되었습니다.
+  auto_run_error: '자동 백업 실패: {{detail}}'
+  auto_restored: 자동 백업이 복원되었습니다.
+  auto_restore: 복원
+  auto_restore_error: '복원 실패: {{detail}}'
+  auto_records: '레코드 {{n}}개'
+  auto_none: 아직 자동 백업이 없습니다. 첫 백업은 세션 10회 또는 7일 후에 실행됩니다.
+  storage_pressure: 브라우저 저장 공간이 거의 가득 찼습니다 (할당량의 {{pct}}%). 지금 수동 백업을 내보내세요.
+  compare_title: 백업 비교
+  compare_help: 백업 파일 두 개를 (또는 파일 하나와 현재 상태를) 선택하여 둘 사이의 변경 사항을 확인하세요. 비교는 읽기 전용으로, 어떤 데이터도 수정되지 않습니다.
+  compare_slot_a: 백업 A (이전)
+  compare_slot_b: 백업 B (최신)
+  compare_pick: 파일 선택…
+  compare_use_current: 현재 상태 사용
+  compare_current_label: 현재 상태
+  compare_clear: 지우기
+  compare_label_a: 백업 A
+  compare_label_b: 백업 B
+  compare_records: 레코드
+  compare_loading: 백업을 비교하는 중…
+  compare_progress: 비교 중…
+  compare_hide_unchanged: 변경 없는 테이블 숨기기
+  compare_sort_label: '정렬:'
+  compare_sort_delta: 변경 많은 순
+  compare_sort_alpha: 알파벳순
+  compare_no_changes: 두 백업이 동일합니다 — 차이점이 감지되지 않았습니다.
+  compare_section_added: 추가됨
+  compare_section_removed: 제거됨
+  compare_section_changed: 변경됨
+  compare_field: 필드
+  compare_old: 이전
+  compare_new: 새로운
+  compare_field_changes: 필드 변경
+  compare_high_volume_hint: 대용량 테이블 — 레코드 단위 미리보기는 요약하여 표시됩니다.
+  compare_export_md: 마크다운으로 내보내기
+  compare_markdown_downloaded: 비교 결과를 내보냈습니다.
+  confirm_with_counts: 복원 ({{added}}개 추가, {{updated}}개 업데이트)
+  auto_compare_as_a: A로 비교
+  auto_compare_as_b: B로 비교
+  compare_auto_label: 자동 백업 {{date}}
+  auto_compare_missing: 자동 백업을 더 이상 사용할 수 없습니다 — 순환되어 삭제되었습니다.
+export:
+  title: 내보내기
+  intro: 학습 여정을 마크다운 또는 PDF로 다운로드하세요. 마크다운은 편집하고 공유할 수 있는 일반 텍스트이며, PDF는 브라우저의 인쇄 대화상자를 열어 사본을 저장할 수 있게 합니다.
+  progress_label: 진행 보고서 (전체 여정)
+  session_label: 세션 상세
+  curriculum_label: 커리큘럼 개요
+  select_session: -- 세션 선택 --
+  select_curriculum: -- 커리큘럼 선택 --
+  preview: 미리보기
+  preview_title: 미리보기
+  preview_close: 닫기
+  download_md: 마크다운
+  download_pdf: PDF
+  busy: 작업 중...
+  download_success: 내보내기를 다운로드했습니다.
+  print_opened: 인쇄 대화상자가 열렸습니다. "PDF로 저장"을 선택하세요.
+  error: '내보내기 실패: {{detail}}'
+  preview_error: '미리보기 실패: {{detail}}'
+  load_error: '내보내기 데이터를 불러올 수 없었습니다: {{detail}}'
+  pick_session: 먼저 세션을 선택하세요.
+  pick_curriculum: 먼저 커리큘럼을 선택하세요.
+  title_progress: 학습 진행도
+  title_session: 세션 상세
+  title_curriculum: 커리큘럼
+sync:
+  api_mode_note: 이 기기는 자체 백엔드를 실행하고 있습니다. 페어링된 기기도 동기화 패널에서 이 연결을 볼 수 있어야 합니다.
+  camera_denied: 카메라 접근이 거부되었습니다
+  camera_denied_hint: 브라우저 설정에서 카메라 접근을 허용한 다음 스캐너를 다시 여세요.
+  camera_error: 카메라를 시작할 수 없었습니다
+  camera_error_hint: 카메라를 시작하는 중 문제가 발생했습니다. 다시 시도하거나 링크 붙여넣기를 사용하세요.
+  conflict_apply: 선택 적용
+  conflict_cancel: 취소 (모두 로컬 유지)
+  conflicts_intro: 마지막 동기화 이후 두 기기가 같은 레코드를 변경했습니다. 각 항목에 대해 어느 버전을 유지할지 선택하세요.
+  conflicts_title: 동기화 충돌 해결
+  connect: 연결
+  connected_to: 연결됨
+  copy_error: 클립보드에 복사할 수 없었습니다.
+  copy_link: 링크 복사
+  desktop_hint: 짧게 유효한 페어링 링크를 생성하세요. 휴대폰에서 이 앱을 열고 링크를 붙여넣으면 두 기기가 같은 사용자 계정을 공유합니다.
+  expires_at: 만료
+  generate: 페어링 코드 생성
+  generating: 생성 중…
+  history: 최근 동기화
+  host: 로컬 IP / 호스트
+  image_decode_failed: 이 이미지에서 QR 코드를 읽을 수 없었습니다. 스크린샷을 다시 찍으세요.
+  image_decoding: 이미지 읽는 중…
+  intro: 같은 로컬 네트워크에 있는 휴대폰과 데스크톱을 페어링하세요. 동기화는 항상 선택 사항이며, 변경 사항을 병합하고 싶을 때 '지금 동기화'를 클릭합니다.
+  invalid_qr: 유효한 페어링 코드가 아닙니다.
+  keep_local: 이 기기 유지
+  keep_remote: 다른 기기 유지
+  last_sync: 마지막 동기화
+  link_copied: 페어링 링크가 복사되었습니다.
+  local_version: 이 기기
+  merge: 수동으로 병합
+  merge_editor: 병합된 레코드 (편집 가능)
+  never: 없음
+  no_camera: 사용 가능한 카메라가 없습니다
+  no_camera_hint: 이 기기에는 사용 가능한 카메라가 없습니다. 대신 링크 붙여넣기 옵션을 사용하세요.
+  no_user: 페어링 코드를 생성하기 전에 온보딩을 완료하세요.
+  now: 지금 동기화
+  pair_error: 기기를 페어링할 수 없었습니다.
+  paired: 기기가 페어링되었습니다.
+  paired_at: 페어링됨
+  pairing: 페어링 중…
+  paste_link_fallback: 또는 링크를 수동으로 붙여넣으세요
+  phone_hint_v17: 데스크톱의 설정 > 동기화 화면에 있는 QR 코드를 스캔하세요. 휴대폰의 후면 카메라가 페어링 링크를 자동으로 읽습니다.
+  port: 포트
+  qr_alt: 페어링 QR 코드
+  remote_version: 다른 기기
+  scan_again: 다시 스캔
+  scan_hint: 휴대폰의 설정 > 동기화를 열고 이 링크를 붙여넣은 다음 연결을 누르세요. 링크는 5분 후에 만료되며 한 번만 사용할 수 있습니다.
+  scan_instruction: 데스크톱의 QR 코드를 카메라로 비추세요.
+  scan_qr: QR 코드 스캔
+  scan_success: 연결을 찾았습니다
+  scan_success_hint: 데스크톱과 확인하는 중…
+  smart_merge: 스마트 병합 (AI)
+  smart_merge_error: 스마트 병합에 실패했습니다.
+  smart_merge_ready: AI 병합 준비 완료 — 검토 후 적용하세요.
+  smart_merge_running: AI로 병합하는 중…
+  sync_error: 동기화에 실패했습니다.
+  synced: 동기화됨
+  syncing: 동기화 중…
+  unpair: 기기 페어링 해제
+  unpair_confirm: 이 기기의 페어링을 해제할까요? 로컬 데이터는 유지되며, 다시 페어링할 때까지 향후 동기화가 차단됩니다.
+  unpaired: 기기 페어링이 해제되었습니다.
+  upload_qr: QR 이미지 업로드
+  upload_qr_hint: '카메라가 없나요? 데스크톱의 QR 스크린샷을 찍어 업로드하세요:'
+gamification:
+  trend_up: "지난주보다 많음"
+  trend_down: "지난주보다 적음"
+  trend_flat: "지난주와 같음"
+  activity_7d: "활동 (최근 7일)"
+  activity_cell: "{date}에 {count}회"
+  card_xp: XP & 레벨
+  level: 레벨
+  xp: XP
+  xp_no_data: 세션을 완료하여 XP를 획득하세요.
+  xp_earned: 획득한 XP
+  xp_gain_aria: 이 레슨으로 {n} XP를 획득했습니다
+  xp_header_aria: 레벨 {level}, 총 {xp} XP
+  xp_header_tooltip: 당신의 경험치
+  xp_to_next_level: '다음 레벨까지 {n} XP'
+  max_level: 최고 레벨 도달
+  level_detail:
+    activity: "활동 (최근 7일)"
+    activity_unit: "세션"
+    activity_empty: "최근 7일간 활동이 없습니다."
+    milestones: "마일스톤"
+    ms_level: "레벨 {level}"
+    ms_xp: "{xp} XP"
+    reached: "달성"
+    locked: "잠김"
+    how: "레벨은 증가하는 XP 곡선으로 올라갑니다: 0, 100, 300, 600, 1000 XP - 각 단계는 이전보다 100 XP 더 필요합니다."
+  level_detail_title: "레벨 진행도"
+  level_up: 레벨 업!
+  reason_session_complete: 세션 완료
+  reason_assessment_complete: 평가 완료
+  reason_conversation_imported: 대화 가져옴
+  reason_flat: XP 획득
+  card_badges: 배지
+  badges_earned: 획득
+  badges_empty: 아직 사용 가능한 배지가 없습니다.
+  badge_earned_toast: '배지 획득: {name}'
+  badge_category:
+    getting_started: 시작하기
+    consistency: 꾸준함
+    method_explorer: 학습법 탐험가
+    depth: 깊이
+    polyglot: 다국어
+  tier:
+    bronze: 브론즈
+    silver: 실버
+    gold: 골드
+    locked: 잠김
+  gallery:
+    title: 배지
+    count: "{total}개 중 {earned}개 획득"
+    filter_all: 전체
+    sort_label: "정렬 기준"
+    sort_recent: 최근 획득순
+    sort_progress: 다음 등급까지의 진행도
+    sort_category: 카테고리
+    locked_hint: 계속 학습하여 이 배지를 잠금 해제하세요.
+    next_tier: "{tier}까지 {current} / {target}"
+    tiers_heading: 등급
+    view_all: 모든 배지 보기
+    next_badge: 다음 배지
+  badges:
+    first_session:
+      name: 첫 세션
+      description: 첫 학습 세션을 완료하세요.
+    first_assessment:
+      name: 첫 평가
+      description: 학습 유형 평가를 완료하세요.
+    first_import:
+      name: 첫 가져오기
+      description: 첫 대화를 가져오세요.
+    streak_3_days:
+      name: 3일 연속
+      description: 3일 연속으로 연습하세요.
+    streak_7_days:
+      name: 7일 연속
+      description: 7일 연속으로 연습하세요.
+    streak_30_days:
+      name: 30일 연속
+      description: 30일 연속으로 연습하세요.
+    streak_100_days:
+      name: 100일 연속
+      description: 100일 연속으로 연습하세요.
+    all_six_methods:
+      name: 학습법 탐험가
+      description: 여섯 가지 학습법 모두에서 세션을 완료하세요.
+    deductive_10:
+      name: 연역적 10
+      description: 연역적 세션 10회를 완료하세요.
+    inductive_10:
+      name: 귀납적 10
+      description: 귀납적 세션 10회를 완료하세요.
+    error_based_10:
+      name: 오류 기반 10
+      description: 오류 기반 세션 10회를 완료하세요.
+    dialogic_10:
+      name: 대화적 10
+      description: 대화적 세션 10회를 완료하세요.
+    contextual_10:
+      name: 맥락적 10
+      description: 맥락적 세션 10회를 완료하세요.
+    ai_adaptive_10:
+      name: AI 적응형 10
+      description: AI 적응형 세션 10회를 완료하세요.
+    five_cycles_one_session:
+      name: 다섯 주기
+      description: 한 세션에서 다섯 주기를 완료하세요.
+    sessions_10:
+      name: 10 세션
+      description: 총 10회의 세션을 완료하세요.
+    sessions_50:
+      name: 50 세션
+      description: 총 50회의 세션을 완료하세요.
+    sessions_100:
+      name: 100 세션
+      description: 총 100회의 세션을 완료하세요.
+    level_5:
+      name: 레벨 5
+      description: 레벨 5에 도달하세요.
+    level_10:
+      name: 레벨 10
+      description: 레벨 10에 도달하세요.
+    level_25:
+      name: 레벨 25
+      description: 레벨 25에 도달하세요.
+    two_languages:
+      name: 다국어
+      description: 두 가지 언어로 학습하세요.
+    three_providers:
+      name: 제공자 3종
+      description: 세 가지 AI 제공자를 설정하세요.
+    import_10_conversations:
+      name: 대화 큐레이터
+      description: 대화 10개를 가져오세요.
+    first_lesson:
+      name: 첫 레슨
+      description: 첫 콘텐츠 레슨을 완료하세요.
+    lessons_10:
+      name: 10 레슨 완료
+      description: 콘텐츠 레슨 10개를 완료하세요.
+    three_star_streak:
+      name: 3별 연속
+      description: 세 레슨 연속으로 별 3개를 획득하세요.
+    review_master:
+      name: 복습 마스터
+      description: 분산 반복을 통해 요소 50개를 숙달하세요.
+  card_streak: 연속 기록
+  current_streak: 현재 연속 기록
+  longest_streak: 최장 연속 기록
+  freezes_available: 사용 가능한 동결
+  streak_no_data: 세션을 시작하여 연속 기록을 시작하세요.
+  streak_calendar: 활동 히트맵
+  weekend_mode: 주말 모드
+  weekend_mode_help: 주말은 연속 기록 끊김에 포함되지 않습니다.
+  reset_done: '진행도 초기화: XP {xp}, 배지 {badges}개, 연속 기록 {streak}개.'
+  reset_failed: 진행도를 초기화할 수 없었습니다.
+  weekend_mode_save_failed: 주말 모드 설정을 저장할 수 없었습니다.
+  danger_zone_heading: 위험 구역
+  danger_zone_intro: 이 기기의 모든 학습자 상태를 영구히 삭제합니다.
+  danger_zone_reset_button: 전체 초기화
+  danger_zone_warning: 이 작업은 모든 학습 데이터 — 세션, 진행도, 프로필, 커리큘럼, 가져오기, Anki 카드, 설정, API 키 —를 영구히 삭제합니다. 이 작업은 되돌릴 수 없습니다.
+  danger_zone_confirm_prompt: '확인하려면 RESET을 입력하세요'
+  danger_zone_input_placeholder: RESET
+  danger_zone_final_button: 영구 삭제
+  danger_zone_backup_offer: 먼저 백업을 만들까요?
+  danger_zone_backup_button: 백업 만들기
+  danger_zone_complete_toast: 모든 데이터가 삭제되었습니다.
+  danger_zone_cancel: 취소
+  danger_zone_continue: 계속
+  danger_zone_failed_toast: '초기화 실패:'
+anki:
+  title: Anki 내보내기
+  intro: AI가 제안한 플래시카드를 검토하고, 원하는 카드를 수락한 다음, Anki용 .apkg 파일로 내보내세요.
+  filter_project: 프로젝트
+  filter_all_projects: 모든 프로젝트
+  filter_accepted: 수락된 것만
+  stats: '{total}개 중 {accepted}개 수락됨'
+  export_button: .apkg로 내보내기
+  exporting: .apkg 생성 중…
+  export_no_accepted: 내보내기 전에 카드를 하나 이상 수락하세요.
+  export_success: 카드 {n}개를 {filename}(으)로 내보냈습니다.
+  export_failed: 내보내기에 실패했습니다.
+  empty: 아직 카드가 없습니다. 세션이나 가져온 대화에서 추출을 시작하거나 카드를 직접 추가하세요.
+  empty_title: "아직 Anki 카드가 없습니다."
+  empty_body: "대화를 가져온 다음 'Anki 카드 추출'을 클릭하여 플래시카드를 만드세요."
+  empty_cta: "대화 가져오기"
+  load_failed: 카드를 불러올 수 없었습니다.
+  delete_confirm: 이 카드를 삭제하시겠습니까?
+  front: 앞면
+  back: 뒷면
+  card_type: 유형
+  accept: 수락
+  unaccept: 수락 취소
+  reject: 거부
+  deck_description: Adaptive Learner에서 내보낸 카드입니다.
+voice:
+  speak: 소리 내어 읽기
+  stop_speaking: 읽기 중지
+  start_listening: 받아쓰기 시작
+  stop_listening: 듣기 중지
+  mic_permission_denied: 마이크 접근이 거부되었습니다.
+  mic_error: 음성 인식 오류입니다.
+  mic_no_device: "마이크를 찾을 수 없습니다. 마이크를 연결하고 다시 시도하세요."
+  mic_network: "음성 인식이 오프라인 상태입니다. 인터넷 연결을 확인하세요."
+pronunciation:
+  title: 발음 연습
+  intro: 문구를 생성하고, 소리 내어 말한 다음, 즉시 피드백을 받으세요.
+  project_label: 프로젝트
+  target_label: 목표 문구
+  no_phrase: 생성을 클릭하여 시작하세요.
+  generate: 문구 생성
+  next_phrase: 다음 문구
+  generating: 생성 중…
+  your_attempt: 당신의 시도
+  attempt_placeholder: 마이크를 눌러 받아쓰거나, 말한 내용을 입력하세요.
+  submit: 시도 제출
+  judging: 채점 중…
+  match: 일치
+  miss: 계속 연습하세요
+  focus_on: '집중할 부분:'
+  phrase_failed: 문구를 생성할 수 없었습니다.
+  judge_failed: 해당 시도를 채점할 수 없었습니다.
+  ineligible: 발음 연습은 언어 학습 프로젝트에서 사용할 수 있습니다. 프로젝트에 '언어' 아래 과목을 추가하여 활성화하세요.
+notebooklm:
+  section_title: 학습 자료 (NotebookLM 호환)
+  generate_questions: 학습 질문 생성
+  generating: 질문 생성 중…
+  download_zip: NotebookLM 패키지 다운로드
+  exporting_zip: ZIP 생성 중…
+  study_guide: 학습 가이드 다운로드
+  generating_guide: 학습 가이드 생성 중…
+  filter_difficulty: 난이도로 필터
+  filter_all: 전체
+  empty: 아직 학습 질문이 없습니다. 최근 세션에서 몇 개를 생성하세요.
+  delete_confirm: 이 학습 질문을 삭제하시겠습니까?
+  questions_load_failed: 학습 질문을 불러올 수 없었습니다.
+  questions_generated: 새 학습 질문 {n}개를 생성했습니다.
+  no_questions_generated: 추출된 학습 질문이 없습니다. 세션을 한두 번 더 한 뒤 시도하세요.
+  generate_failed: 학습 질문을 생성할 수 없었습니다.
+  zip_exported: 파일 {n}개를 {filename}(으)로 내보냈습니다.
+  zip_failed: ZIP 내보내기에 실패했습니다.
+  guide_ready: 학습 가이드를 다운로드했습니다.
+  guide_failed: 학습 가이드를 생성할 수 없었습니다.
+
+feature:
+  api_key_required: "API 키가 필요합니다. 설정에서 제공자를 설정하세요."
+  desktop_only: "데스크톱 앱에서만 사용할 수 있습니다."
+ui:
+  themes:
+    "catppuccin-latte": "Catppuccin Latte"
+    "supabase": "Supabase"
+    "graphite": "Graphite"
+    "catppuccin-mocha": "Catppuccin Mocha"
+    "soft-pop": "Soft Pop"
+    "amethyst-haze": "Amethyst Haze"
+    light: "라이트"
+    dark: "다크"
+    ocean: "오션"
+    forest: "포레스트"
+    high-contrast: "고대비"
+    sepia: "세피아"
+    auto: "자동 (시스템)"
+  # DEV-MODE-FRIENDLY-ERRORS-01 — status-code-mapped friendly
+  # toast strings. Shown in place of HTTP details when
+  # Developer Mode is off (default). Dev mode bypasses these
+  # and renders the technical message verbatim.
+  errors:
+    bad_request: "요청을 처리할 수 없었습니다."
+    forbidden: "접근이 거부되었습니다. 설정을 확인하세요."
+    not_found: "이 페이지 또는 기능을 찾을 수 없습니다."
+    conflict: "이 작업이 현재 상태와 충돌합니다."
+    rate_limited: "요청이 너무 많습니다. 잠시 기다린 후 다시 시도하세요."
+    upstream_unavailable: "현재 AI 서비스에 연결할 수 없습니다."
+    server: "내부 오류가 발생했습니다."
+    network: "서버에 연결되지 않았습니다."
+    timeout: "요청이 너무 오래 걸렸습니다."
+    generic: "문제가 발생했습니다. 나중에 다시 시도하세요."
+    unexpected: "문제가 발생했습니다."
+  error_report:
+    dialog_title: "문제 신고"
+    intro: "Adaptive Learner가 오류를 감지했으며 개발자에게 보낼 버그 보고서를 준비할 수 있습니다."
+    description_label: "재현 단계 (선택)"
+    description_placeholder: "오류가 나타났을 때 무엇을 하고 있었는지 간단히 설명하세요. 건너뛰려면 비워 두세요."
+    include_error: "오류 메시지 및 스택 트레이스"
+    include_environment: "환경 정보 (버전, 브라우저, OS)"
+    include_history: "작업 내역"
+    view: "보기"
+    privacy_note: "프로젝트 내용, 비밀번호, API 키는 절대 전송되지 않습니다."
+    preview: "미리보기 표시"
+    hide_preview: "미리보기 숨기기"
+    copy_preview: "미리보기 복사"
+    copied: "복사되었습니다!"
+    copy_failed: "복사에 실패했습니다"
+    open_github: "GitHub에서 열기"
+    close: "닫기"
+    truncated: "GitHub의 URL 길이 제한에 맞게 보고서가 잘렸습니다."
+    intro_proactive: "최근 작업 내역에 대한 보고서를 준비하여 개발자에게 보내세요. 브라우저를 벗어나기 전에 포함된 내용을 정확히 확인할 수 있습니다."
+    app_state: "앱 상태"
+    online: "온라인"
+    offline: "오프라인"
+    download_json: "JSON 다운로드"
+    category_all: "전체"
+    no_events_in_category: "이 카테고리에 이벤트가 없습니다."
+    category:
+      navigation: "탐색"
+      ui: "인터페이스"
+      network: "네트워크"
+      storage: "저장소"
+      exercise: "연습"
+      error: "오류"
+  help:
+    learn_more: "자세히 보기"
+    open_help: "도움말 열기"
+    drawer_title: "도움말"
+    related: "관련 개념"
+    search_placeholder: "용어집 검색..."
+    categories:
+      concepts: "핵심 개념"
+      methods: "학습법"
+      steps: "주기 단계"
+      features: "앱 기능"
+    no_results: "일치하는 항목이 없습니다."
+  api_key:
+    required: "API 키가 필요합니다."
+    required_with_feature: "API 키가 필요합니다 {feature}."
+    required_long: "이 작업을 사용하려면 설정에서 제공자 키를 설정하세요."
+    open_settings: "설정 열기"
+    skip_banner: "AI 기능을 사용하려면 설정에서 API 키를 설정하세요."
+    skip_banner_dismiss: "닫기"
+    feature_analyze: "대화를 분석하려면"
+    feature_session: "세션을 시작하려면"
+    feature_anki: "Anki 카드를 추출하려면"
+    feature_study_guide: "학습 가이드를 생성하려면"
+    feature_study_questions: "학습 질문을 생성하려면"
+    feature_pronunciation: "발음 연습을 하려면"
+  common:
+    close: "닫기"
+    loading: "불러오는 중…"
+  a11y:
+    # Phase 39 (WCAG 2.1 AA) accessibility strings. The skip
+    # link is the first focusable element on every page; SC
+    # 2.4.1 (Bypass Blocks) requires a way to jump past the
+    # navigation directly into the main content.
+    skip_to_content: "본문으로 건너뛰기"
+    # Chart text-alternative strings (C4). Substitution
+    # placeholders are inserted via String.replace at the
+    # callsite to keep the AT-announced text consistent
+    # with the visible caption.
+    chart_show_as_table: "데이터를 표로 보기"
+    chart_radar_label: "학습 프로필 레이더 차트"
+    chart_radar_summary: "가장 강한 학습법: {method} ({value})"
+    chart_timeline_label: "최근 {n}개 세션의 진행 타임라인"
+    chart_timeline_summary: "세션 {n}개; 이해도 추세 {trend}"
+    chart_timeline_trend_up: "상승"
+    chart_timeline_trend_down: "하락"
+    chart_timeline_trend_flat: "보합"
+    chart_distribution_label: "학습법 분포 막대 차트"
+    chart_distribution_summary: "가장 많이 사용한 학습법: {method} (세션 {count}개, {pct}%)"
+    streak_cell_label: "{date}에 세션 {count}개"
+    streak_cell_label_zero: "{date}에 세션 없음"
+    chart_radar_value: "점수"
+  tooltips:
+    # Generic icon-button labels. Aim: 1-3 words, action-oriented.
+    delete: "삭제"
+    edit: "편집"
+    close: "닫기"
+    save: "저장"
+    cancel: "취소"
+    send: "보내기"
+    send_message: "메시지 보내기"
+    confirm: "확인"
+    open: "열기"
+    expand: "펼치기"
+    collapse: "접기"
+    copy: "복사"
+    copy_text: "텍스트 복사"
+    paste: "붙여넣기"
+    download: "다운로드"
+    upload: "업로드"
+    retry: "다시 시도"
+    dismiss: "닫기"
+    refresh: "새로고침"
+    settings: "설정"
+    help: "도움말 열기"
+    menu: "메뉴"
+    back: "뒤로"
+    next: "다음"
+    previous: "이전"
+    search: "검색"
+    scan_qr: "QR 코드 스캔"
+    mic: "음성 입력"
+    play: "재생"
+    pause: "일시정지"
+    stop: "정지"
+    read_aloud: "소리 내어 읽기"
+    add: "추가"
+    add_topic: "주제 추가"
+    add_subtopic: "하위 주제 추가"
+    add_lesson: "레슨 추가"
+    add_root_topic: "최상위 주제 추가"
+    rename: "이름 변경"
+    select: "선택"
+    select_all: "전체 선택"
+    deselect_all: "전체 선택 해제"
+    show_more: "더 보기"
+    show_less: "덜 보기"
+    show_preview: "미리보기 표시"
+    hide_preview: "미리보기 숨기기"
+    accept: "수락"
+    reject: "거부"
+    end_session: "세션 종료"
+    start_session: "세션 시작"
+    continue_session: "세션 계속"
+    rate_session: "이 세션 평가"
+    submit_rating: "평가 제출"
+    new_session: "새 세션 시작"
+    new_curriculum: "커리큘럼 만들기"
+    new_project: "새 프로젝트"
+    analyze: "분석 실행"
+    chat_language: 채팅 언어 (당신이 말하는 언어)
+    learning_language: 학습 언어
+    select_language: 언어를 선택하세요…
+    reanalyze: "분석 다시 실행"
+    method_switch_accept: "추천 학습법으로 전환"
+    method_switch_dismiss: "현재 학습법 유지"
+    export_markdown: "마크다운으로 내보내기"
+    export_pdf: "PDF로 내보내기"
+    extract_anki: "Anki 카드 추출"
+    backup_export: "백업 내보내기"
+    backup_import: "백업 가져오기"
+    sync_pair: "동기화 페어링"
+    rating_low: "{n} - 낮음"
+    rating_medium: "{n} - 보통"
+    rating_high: "{n} - 높음"
+# Learning Repository plugin (v1.26.0 / Phase 42 / BL-30)
+repo:
+  readme_title: "학습 프로젝트: {topic}"
+  readme_goal_heading: "목표"
+  readme_status_heading: "상태"
+  readme_active: "활성"
+  readme_archived: "보관됨"
+  readme_progress_heading: "진행도"
+  readme_sessions_label: "세션"
+  readme_cycles_label: "주기"
+  readme_method_distribution_heading: "학습법 분포"
+  readme_topics_heading: "주제"
+  readme_no_topics: "_아직 다룬 주제가 없습니다._"
+  readme_see_also_heading: "함께 보기"
+  readme_see_stats: "[LEARNING_STATS.md](LEARNING_STATS.md) — 오류율, 이해도, 전이, 개입 기록."
+  readme_see_cheatsheet: "[CHEATSHEET.md](CHEATSHEET.md) — 정리된 메모 + 메타 학습 인사이트."
+  readme_see_roadmap: "[ROADMAP.md](ROADMAP.md) — 다음 단계."
+  stats_title: "학습 통계"
+  stats_intro: "세션 평가와 평점에서 자동으로 도출된 세션별 지표입니다. 수동으로 편집하지 마세요."
+  stats_no_sessions: "_아직 세션이 없습니다._"
+  stats_sessions_heading: "세션"
+  stats_table_session: "세션"
+  stats_table_method: "학습법"
+  stats_table_understanding: "이해도"
+  stats_table_transfer: "전이"
+  stats_table_stress: "스트레스"
+  stats_table_cycles: "주기"
+  stats_table_status: "상태"
+  stats_method_switches_heading: "학습법 전환"
+  stats_no_method_switches: "_기록된 학습법 전환이 없습니다._"
+  stats_table_from: "이전"
+  stats_table_to: "이후"
+  stats_table_reason: "이유"
+  stats_table_when: "시점"
+  stats_exit_threshold_heading: "종료 기준"
+  stats_exit_threshold_body: "주제는 2회 연속 주기에 걸쳐 이해도 ≥ 9/10이고 전이 ≥ 8/10으로 안정될 때 숙달된 것으로 간주합니다. 고정된 행은 이 조건을 충족하는 세션을 나타냅니다."
+  stats_exit_pin_marker: "✅ 종료 기준 충족"
+  cheatsheet_title: "치트시트"
+  cheatsheet_intro: "세션에서 정리한 메모입니다. 메타 학습 인사이트 섹션은 meta_learning으로 태그된 메모 — 당신이 어떻게 가장 잘 배우는지에 대한 관찰 —를 모읍니다."
+  cheatsheet_notes_heading: "메모"
+  cheatsheet_meta_learning_heading: "메타 학습 인사이트"
+  cheatsheet_no_notes: "_아직 메모가 없습니다._"
+  cheatsheet_no_meta_learning: "_아직 메타 학습 인사이트가 없습니다. 학습 과정에 대한 관찰을 기록하려면 meta_learning으로 태그된 세션 메모를 추가하세요._"
+  roadmap_title: "로드맵"
+  roadmap_intro: "열린 주제 + 추천 다음 단계."
+  roadmap_next_steps_heading: "다음 단계"
+  roadmap_no_next_steps: "_활성 프로젝트가 없습니다. 새 세션을 시작하여 이 목록을 채우세요._"
+  roadmap_resume_active: "활성 세션을 이어가세요 (학습법: **{method}**, 단계 {step}/7, 주기 {cycle})."
+  roadmap_start_first: "첫 학습 세션을 시작하세요. 평가는 학습법 **{method}**을(를) 추천합니다."
+  roadmap_start_next: "다음 세션을 시작하세요. 마지막으로 완료한 세션은 학습법 **{method}**을(를) 사용했습니다."
+  roadmap_open_topics_heading: "열린 주제"
+  roadmap_no_open_topics: "_아직 정의된 주제가 없습니다._"
+  topic_readme_title: "주제: {title}"
+  topic_readme_sessions_heading: "이 주제에 대한 세션"
+  topic_readme_methods_heading: "사용한 학습법"
+  topic_readme_parent_link: "← [프로젝트 루트](../README.md)"
+  topic_readme_no_sessions: "_이 주제를 다룬 세션이 없습니다._"
+  loading: "저장소를 렌더링하는 중…"
+  widget_subtitle: "이 프로젝트의 진행도, 메모, 로드맵의 버전 관리된 스냅샷입니다."
+  settings_description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
+  settings_enable_git: "git 영속화 활성화"
+  dexie_unavailable_body: "이 기능은 서버 모드에서만 사용할 수 있습니다. git 기반 학습 저장소를 사용하려면 설정에서 서버 모드로 전환하세요."
+  back_to_dashboard: "대시보드로 돌아가기"
+  page:
+    title: "학습 저장소"
+    rendered_at: "렌더링 시각"
+    language: "언어"
+  action:
+    rerender: "다시 렌더링"
+    download_zip: "ZIP 다운로드"
+    persist: "git에 영속화"
+    persisting: "영속화 중…"
+    persist_dexie_tooltip: "git 버전 관리는 서버 모드에서만 사용할 수 있습니다."
+  toast:
+    zip_downloaded: "ZIP을 다운로드했습니다"
+    persisted: "git에 영속화되었습니다"
+  error:
+    render_failed: "저장소를 렌더링할 수 없었습니다"
+    zip_failed: "ZIP을 내보낼 수 없었습니다"
+    persist_failed: "git에 영속화할 수 없었습니다"
+    missing_project: "선택된 프로젝트가 없습니다."
+  widget:
+    title: "학습 저장소"
+    open: "저장소 열기"
+    subtitle: "이 프로젝트의 진행도, 메모, 로드맵의 버전 관리된 스냅샷입니다."
+  settings:
+    title: "학습 저장소"
+    loading: "불러오는 중…"
+    repos_dir: "저장소 디렉터리"
+    save: "설정 저장"
+    saving: "저장 중…"
+    toast:
+      saved: "설정이 저장되었습니다"
+    error:
+      load: "설정을 불러올 수 없었습니다"
+      save: "설정을 저장할 수 없었습니다"
+# Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
+    description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
+    enable_git: "git 영속화 활성화"
+lesson:
+  resources_title: "더 알아보기"
+  resources_domain: "{domain}에 대해 더 보기"
+  motivation:
+    halftime: "절반 왔어요 — 계속 가세요!"
+    last: "마지막입니다 — 멋지게 마무리하세요!"
+  theory:
+    view_example: "예시 보기"
+  tts:
+    read_aloud: "소리 내어 읽기"
+    stop: "정지"
+    auto_read: "자동 소리 내어 읽기"
+    speed: "속도"
+    no_voice: "{language}에 사용 가능한 음성이 없습니다"
+    reading: "읽는 중…"
+    read_all: "전체 읽기"
+    play: "재생"
+    pause: "일시정지"
+    prev_step: "이전 단계"
+    next_step: "다음 단계"
+    step_position: "이론 단계 {total}개 중 {current}단계"
+  contributed_by: 기여자 {name}
+  page_title: "레슨"
+  set_label: "세트"
+  loading: "레슨을 불러오는 중…"
+  not_cached_body: "이 레슨은 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 세트를 다운로드하세요."
+  progress:
+    step_of: "단계 {current} / {total}"
+    summary: "요약"
+    aria_label: "레슨 진행도"
+  nav:
+    aria_label: "단계 탐색"
+  action:
+    prev: "이전"
+    next: "다음"
+    finish: "레슨 끝내기"
+    back_to_browser: "콘텐츠 브라우저로 돌아가기"
+    pause: "레슨 일시 정지"
+    open_browser: "콘텐츠 브라우저 열기"
+    back_to_lesson: "레슨으로 돌아가기"
+  button:
+    check: "확인"
+    next: "다음"
+    check_disabled_hint: "먼저 연습 문제에 답하세요"
+  reviewed:
+    completed: "완료됨"
+  exercise:
+    reread_theory: "이론 다시 읽기"
+    back_to_exercise: "연습으로 돌아가기"
+    loading: "연습을 불러오는 중…"
+    coming_soon: "이 연습 유형({type})은 향후 버전에서 제공됩니다. 다음 단계로 건너뛰세요."
+    missing_type: "이 연습에 유형이 없습니다. 콘텐츠를 업데이트하세요."
+    matching:
+      submit: "답 확인"
+      retry: "다시 시도"
+      counter: "{total}개 중 {matched}개 연결됨"
+      result: "점수: {correct} / {total}"
+      instructions: "왼쪽에서 항목을 선택한 다음, 오른쪽에서 일치하는 번역을 선택하세요."
+      left_label: "단어"
+      right_label: "번역"
+      empty: "이 연결 연습에는 짝이 없습니다."
+      left_label_productive: 의미
+      right_label_productive: 단어
+      left_label_knowledge: "용어"
+      correct_hint: "정답: {label}"
+      your_answer: "당신의 답변: {label}"
+      right_label_knowledge: "정의"
+      instruction_knowledge: "각 용어를 그 정의와 연결하세요."
+      instructions_knowledge: "왼쪽에서 항목을 선택한 다음, 오른쪽에서 일치하는 것을 선택하세요."
+      selected_sr: "선택됨: {label}"
+    picture:
+      submit: "답 확인"
+      retry: "다시 시도"
+      result_correct: "정답입니다!"
+      result_wrong: "아쉬워요 — 강조된 타일이 정답입니다."
+      grid_label: "이미지 선택지"
+      correct_label: "정답"
+      wrong_label: "오답"
+      empty: "이 그림 선택 연습에는 이미지가 없습니다."
+    free_text:
+      submit: "답 확인"
+      retry: "다시 시도"
+      placeholder: "답을 입력하세요…"
+      code_placeholder: "코드를 입력하세요…"
+      input_label: "당신의 답변"
+      hint_show: "힌트가 필요한가요?"
+      result_correct: "정답입니다!"
+      result_wrong: "아쉬워요."
+      result_almost: "거의 맞았어요! 다음에 유의하세요:"
+      empty: "이 자유 입력 연습에는 허용된 답이 없습니다."
+    word_tiles:
+      instructions: "타일을 순서대로 배열하세요. 탭하여 배치하고, 화살표나 드래그로 순서를 바꾸세요."
+      reorder_aria: "타일 {tile}, {total}개 중 {n}번째 위치. 화살표 키로 순서 변경, Enter로 제거."
+      move_left: "왼쪽으로 이동"
+      move_right: "오른쪽으로 이동"
+      submit: "답 확인"
+      retry: "다시 시도"
+      answer_label: "당신의 답변"
+      answer_placeholder: "아래 타일을 탭하여 답을 만드세요"
+      scrambled_label: "사용 가능한 타일"
+      scrambled_done: "모든 타일이 배치되었습니다."
+      hint_show: "힌트가 필요한가요?"
+      result_correct: "정답입니다!"
+      result_wrong: "아쉬워요."
+      empty: "이 단어 타일 연습에는 타일이 없습니다."
+    cloze:
+      submit: "답 확인"
+      retry: "다시 시도"
+      hint_show: "힌트가 필요한가요?"
+      sentence_label: "빈칸 채우기 문장"
+      blank_label: "빈칸 {n}"
+      select_placeholder: "선택하세요…"
+      result_correct: "모두 정답입니다!"
+      result_partial: "{total}개 중 {correct}개 정답."
+      empty: "이 빈칸 채우기 연습에는 빈칸이 없습니다."
+    instruction:
+      matching:
+        receptive: 짝을 맞추세요 (인식)
+        productive: 짝을 맞추세요 (번역)
+      free_text:
+        receptive: 이것은 무슨 뜻인가요?
+        productive: '번역하세요:'
+      word_tiles:
+        receptive: 번역을 만드세요
+        productive: 문장을 만드세요
+      picture_choice:
+        receptive: 일치하는 의미를 고르세요
+        productive: 일치하는 그림을 고르세요
+    direction:
+      receptive_hint: 의미를 인식하세요
+      productive_hint: 답을 산출하세요
+  summary:
+    heading: "완료했습니다"
+    aria_label: "레슨 요약"
+    score: "점수"
+    score_bar_aria: "점수: {pct} 퍼센트"
+    stars_aria: "별 3개 중 {n}개"
+    time: "시간"
+    minutes: "{n}분"
+    hints_used: "사용한 힌트"
+    breakdown_heading: "연습 상세"
+    breakdown_correct_answer: "정답: {answer}"
+    breakdown_unattempted: "시도 안 함"
+    export:
+      copy: "결과 복사"
+      download: "파일로 저장"
+      download_json: "JSON으로 내보내기"
+      anki: "카드 내보내기 (Anki)"
+      copied: "결과가 클립보드에 복사되었습니다"
+      copy_failed: "클립보드에 복사할 수 없었습니다"
+      title: "레슨 결과"
+      date: "날짜"
+      correct: "정답"
+      mistakes: "오답"
+      no_mistakes: "오답 없음 - 완벽한 진행!"
+      question: "질문"
+      your_answer: "당신의 답변"
+      no_answer: "(없음)"
+      correct_answer: "정답"
+      weak_areas: "약한 영역"
+    mark_complete: "완료로 표시"
+    next_lesson: "다음 레슨"
+    repeat: "레슨 반복"
+    restart: "처음부터 다시"
+    back_to_browser: "콘텐츠 브라우저로 돌아가기"
+    encourage_0: "연습이 완벽을 만듭니다!"
+    encourage_1: "좋은 출발이에요 - 계속 가세요!"
+    encourage_2: "거의 완벽해요!"
+    encourage_3: "만점입니다!"
+  error_replay:
+    title: "오답 다시 풀기: {lesson}"
+    heading: "다시 풀기 완료"
+    score: "이제 {correct}/{total} 정답!"
+    done: "레슨으로 돌아가기"
+    empty: "다시 풀 항목이 없습니다 — 몇 가지 실수를 한 후 레슨 요약에서 이 화면을 여세요."
+    summary_aria: "오답 다시 풀기 요약"
+  next_step:
+    title: "다음은?"
+    next_lesson: "다음 레슨"
+    start: "시작"
+    resume: "이어가기"
+    resume_detail: "단계 {step} / {total}"
+    adaptive: "적응형 레슨"
+    adaptive_focus: "집중: {topic}"
+    adaptive_errors: "이 레슨의 오류 {count}개"
+    error_replay: "오답 다시 풀기"
+    error_replay_detail: "연습 {count}개 다시"
+    errors_corrected: "모든 오류가 교정되었습니다!"
+    still_errors: "아직 오류 {count}개. 다시 시도할까요?"
+    review: "복습"
+    review_due: "요소 {count}개 복습 예정"
+    set_complete: "세트 완료!"
+    set_complete_detail: "{set}의 레슨 {count}개를 모두 완료했습니다!"
+    try_set: "다음은 어때요: {set}"
+    view_set: "세트 보기"
+    focus_vocabulary: "어휘"
+  correction:
+    title: "교정 라운드"
+    subtitle: "틀린 단어에 대한 빠른 드릴 몇 가지."
+    skip: "건너뛰기"
+    next: "다음"
+    complete_heading: "교정 라운드 완료"
+    improvement: "요소 {n}개가 향상되었습니다."
+    improvement_singular: "요소 {n}개가 향상되었습니다."
+  error:
+    load_failed: "레슨을 불러올 수 없었습니다."
+    missing_params: "선택된 레슨이 없습니다. 콘텐츠 세트를 둘러보고 하나 선택하세요."
+  exit:
+    title: "레슨을 나가시겠어요?"
+    body: "나가는 방법을 선택하세요: 나중에 돌아오려면 일시 정지, 시도를 버리려면 중단, 그대로 머무르려면 계속."
+    continue: "계속 학습"
+    pause: "일시 정지"
+    abandon: "중단"
+    abandon_confirm_title: "이전 답변을 버릴까요?"
+    abandon_confirm_body: "이전 답변은 버려집니다. 이미 배운 것(숙달 진행도)은 유지됩니다."
+    confirm_cancel: "옵션으로 돌아가기"
+    abandon_confirm_ok: "네, 버립니다"
+    paused_toast: "레슨이 일시 정지되었습니다. 언제든 다시 시작할 수 있습니다."
+    abandoned_toast: "레슨이 중단되었습니다."
+  resume:
+    heading: "레슨을 이어갈까요?"
+    body: '"{title}"을(를) 일시 정지했습니다. 멈춘 곳부터 계속할까요, 처음부터 다시 시작할까요?'
+    action_resume: "계속"
+    action_restart: "처음부터 다시"
+# Content-Loader plugin (Phase 43 / EXP-002)
+content:
+  book:
+    companion: "도서 동반 자료"
+    by_author: "{author} 저"
+    view: "도서로 이동"
+  books:
+    title: "추천 도서"
+    view_on_amazon: "Amazon에서 보기"
+  continue_learning:
+    title: "학습 이어가기"
+    resume: "이어가기"
+    next: "다음 레슨"
+    completed: "세트 완료됨"
+    empty: "첫 레슨을 시작하세요!"
+    progress: "단계 {n}/{total}"
+    imported_analysis: "가져온 분석"
+    lesson_fallback: "레슨"
+  import_chat:
+    button: "채팅 가져오기"
+  search:
+    placeholder: "레슨 검색..."
+    results: "결과 {count}개"
+    no_results: "'{query}'에 대한 결과가 없습니다"
+    hint: "다른 검색어를 시도해 보세요"
+    clear: "검색 지우기"
+    available: "다운로드 가능"
+    your_content: "내 콘텐츠"
+    download_prompt_title: "이 세트를 다운로드할까요?"
+    download_prompt_body: "이 세트는 아직 다운로드되지 않았습니다. 지금 다운로드할까요?"
+  save_adaptive:
+    button: "이 레슨을 저장할까요?"
+  create_lesson:
+    button: "새 레슨 만들기"
+  import_lesson:
+    button: "레슨 가져오기"
+    modal_title: "레슨 가져오기"
+    choose_file: ".json 또는 .zip 파일 선택"
+    invalid: "잘못된 파일"
+    preview: "{title} · {lang} · 레슨 {lessons}개 · 연습 {exercises}개"
+    import: "가져오기"
+    imported: "레슨을 가져왔습니다."
+    failed: "레슨을 가져올 수 없었습니다."
+  my_lessons:
+    export_set: "세트로 내보내기"
+    share: "커뮤니티에 공유"
+    exported: "레슨을 내보냈습니다."
+    title: "내 레슨"
+    downloaded_title: "다운로드한 세트"
+    empty: "채팅을 가져와 분석하여 첫 레슨을 만드세요."
+    from_analysis: "분석에서"
+    from_adaptive: "적응형 레슨에서"
+    from_imported: "가져옴"
+    play: "재생"
+    edit: "편집"
+    delete: "삭제"
+    export: "내보내기"
+    delete_confirm: "이 레슨을 삭제하시겠습니까? 되돌릴 수 없습니다."
+    deleted: "레슨이 삭제되었습니다."
+    delete_failed: "레슨을 삭제할 수 없었습니다."
+  save_lesson:
+    button: "오프라인 레슨으로 저장"
+    modal_title: "오프라인 레슨으로 저장"
+    title_label: "레슨 제목"
+    summary: "연습 {exercises}개 · 이론 단계 {theory}개 · 약 {minutes}분"
+    theory_only: "연습을 만들기에 어휘가 부족합니다. 더 많은 연습 자료를 위해 더 긴 채팅을 가져오세요."
+    save: "저장"
+    saved: "내 레슨에 저장되었습니다."
+    failed: "레슨을 저장할 수 없었습니다."
+    title_native_label: 목표어로 된 제목
+    target_lang_label: 학습하는 언어
+    source_lang_label: 당신의 언어
+    level_label: 레벨
+    not_enough_data: 완전한 레슨을 만들기에 어휘가 부족합니다 (연습 {min}개 이상 필요). 더 많은 연습 자료를 위해 더 긴 채팅을 가져오세요.
+    same_language: 학습하는 언어와 당신의 언어는 서로 달라야 합니다.
+    same_language_hint: "학습하는 언어와 당신의 언어가 같습니다 — 문법이나 모국어 레슨에는 괜찮습니다. 공유하면 콘텐츠 트리의 동일 언어 분기에 배치됩니다."
+    split_notice: "이 레슨은 {steps}단계로, {parts}개 부분으로 저장됩니다 (부분당 최대 {max}단계)."
+    part_title: "{title} - 파트 {n}"
+  lesson_gen:
+    fallback_title: "가져온 레슨"
+    focus: "초점"
+    topics: "주제"
+    strengths: "이미 알고 있는 것"
+    weaknesses: "함께 연습할 것"
+    errors: "흔한 실수"
+    match_prompt: "각 단어를 그 번역과 연결하세요."
+    free_prompt: "번역하세요: {word}"
+    cloze_prompt: "빠진 단어를 채우세요."
+    tiles_prompt: "단어를 문장으로 배열하세요 ({word})."
+  page_title: "콘텐츠 세트"
+  intro: "API 키 없이 사용할 수 있는 사전 제작 레슨 세트입니다. 다운로드한 항목은 로컬에 캐시되며 첫 다운로드 후에는 오프라인에서도 작동합니다."
+  sources: "출처"
+  lessons: "레슨"
+  loading: "콘텐츠 세트를 불러오는 중…"
+  empty: "아직 사용 가능한 콘텐츠 세트가 없습니다. 네트워크 연결을 확인하고 새로고침하거나, 설정에서 출처를 구성하세요."
+  source:
+    bundled: "내장"
+    github: "GitHub"
+  status:
+    ready: "준비됨"
+    update_available: "업데이트 가능"
+    downloading: "다운로드 중…"
+  action:
+    refresh: "새로고침"
+    refreshing: "새로고침 중…"
+    download: "다운로드"
+    update: "업데이트"
+    installed: "설치됨"
+    open: "열기"
+  toast:
+    downloaded: "세트를 다운로드했으며 사용할 준비가 되었습니다."
+  warning:
+    no_lessons_in_set: "이 세트에는 아직 레슨이 없습니다."
+  error:
+    list_failed: "콘텐츠 세트를 불러올 수 없었습니다."
+    download_failed: "세트를 다운로드할 수 없었습니다."
+    open_failed: "레슨을 열 수 없었습니다."
+  tree:
+    i_speak: 나는 다음을 말합니다
+    learn: "{lang} 학습"
+    sets: 세트
+    other_sources: 다른 출처 언어
+    for_speakers: "{lang} 사용자용"
+    knowledge: 지식
+    own_lesson: "내 레슨"
+    own_edit: "내 편집"
+    your_lessons: "내 레슨"
+    plus_own: "+{n}개 직접 작성"
+    domain_psychology: 심리학
+    domain_programming: 프로그래밍
+    domain_math: 수학
+    code_copy: "코드 복사"
+    code_output: "출력:"
+    no_primary: 아직 당신의 언어를 위한 세트가 없습니다. 아래에서 다른 출처 언어를 둘러보세요.
+  validation:
+    title: 품질 검사
+    checking: 레슨을 검사하는 중…
+    intro: 공유하기 전에 레슨의 완성도와 유효한 언어 쌍을 검사합니다.
+    passed: 품질 검사를 통과했습니다. 커뮤니티에 공유할 준비가 되었습니다.
+    failed: '공유하기 전에 다음 문제를 해결하세요:'
+    continue: GitHub로 계속
+    cancel: 닫기
+    no_lessons: 세트에 레슨이 없습니다.
+    missing_target_language: 목표어(가르치는 언어)가 누락되었습니다.
+    missing_source_language: 출처 언어(설명을 작성하는 언어)가 누락되었습니다.
+    invalid_target_language: 목표어 '{code}'은(는) 2글자 ISO 코드가 아닙니다.
+    invalid_source_language: 출처 언어 '{code}'은(는) 2글자 ISO 코드가 아닙니다.
+    same_source_target: 출처 언어와 목표어가 동일합니다 ('{code}').
+    missing_title: 제목이 누락되었습니다.
+    missing_title_native: 원어 제목(목표어로 된 제목)이 누락되었습니다.
+    lesson_too_few_exercises: 레슨 '{lesson}'에 연습이 {count}개 있습니다. 최소 {min}개가 필요합니다.
+    lesson_too_few_types: 레슨 '{lesson}'은(는) 연습 유형을 {count}개 사용합니다. 최소 {min}개가 필요합니다.
+    lesson_no_theory: 레슨 '{lesson}'에 이론 단계가 없습니다.
+    example_url_invalid: "레슨 '{lesson}': 단계 '{step}'에 잘못된 예시 URL이 있습니다 (http/https만 가능)."
+    empty_card: "레슨 '{lesson}': 카드 '{card}'의 앞면 또는 뒷면이 비어 있습니다."
+    back_language_mismatch: "레슨 '{lesson}': 카드 '{card}'의 뒷면이 {source}처럼 보이지 않습니다."
+    free_text_too_few_accepts: "레슨 '{lesson}': 자유 입력 연습 '{exercise}'에 허용된 답이 최소 {min}개 필요합니다."
+    matching_too_few_pairs: "레슨 '{lesson}': 연결 연습 '{exercise}'에 짝이 최소 {min}개 필요합니다."
+    missing_distractors: "레슨 '{lesson}': 연습 '{exercise}'에 오답 보기(틀린 선택지)가 필요합니다."
+    non_cefr_level: 레벨 '{level}'은(는) CEFR 등급(A1-C2)이 아닙니다.
+    level_too_complex: "레슨 '{lesson}': 텍스트가 한쪽당 평균 {avg}단어로, 레벨 {level}에 비해 높습니다 (약 {cap}개 예상)."
+    source_language_heuristic: 카드 뒷면에 {found} 고유 문자가 포함되어 있지만 출처 언어는 '{lang}'입니다.
+    target_language_heuristic: 카드 앞면에 {found} 고유 문자가 포함되어 있지만 목표어는 '{lang}'입니다.
+    failed_share_anyway: "품질 검사에서 문제가 발견되었습니다. 그래도 공유할 수 있습니다 — 검토자가 풀 리퀘스트에 기록된 결과를 보게 됩니다."
+  ai_validation:
+    intro: AI가 추가로 번역 정확성, 문법, 레벨 적합성을 검사할 수 있습니다.
+    privacy: 레슨 내용이 {provider}로 전송됩니다. 개인 데이터는 전송되지 않습니다.
+    consent: AI 검증 실행
+    run: AI로 검사
+    running: AI가 레슨을 검토하는 중…
+    ai_passed: 'AI 검토: 좋아 보입니다.'
+    ai_review: 'AI 검토: 아래에 제안이 있습니다.'
+    score: 점수
+    failed: AI 검토를 사용할 수 없습니다. 품질 검사를 통과했으므로 그래도 공유할 수 있습니다.
+    auto_fix: 적용
+    applied: 적용됨
+    fix_applied: 제안이 적용되었습니다.
+    fix_failed: 제안을 적용할 수 없었습니다.
+  ai_check:
+    badge:
+      verified: "AI 검사 완료"
+      stale: "AI 검사 오래됨"
+      invalid: "AI 검사 무효"
+    last_checked: "마지막 검사: {when}"
+    recheck: "다시 검사"
+    export:
+      button: "보고서를 마크다운으로 내보내기"
+      lesson: "레슨"
+      card: "카드"
+      field: "필드"
+    button: "AI로 검사"
+    title: "AI 콘텐츠 검사"
+    loading: "카드를 준비하는 중..."
+    cost_estimate: "카드 약 {cards}개, 토큰 약 {tokens}개, 약 {usd}."
+    privacy: "레슨 카드가 검토를 위해 설정된 AI 제공자로 전송됩니다. 개인 데이터는 전송되지 않습니다."
+    confirm: "검사"
+    progress: "배치 {total}개 중 {current}번째 검사 중..."
+    rate_limited: "다른 검사를 실행하기 전에 잠시 기다려 주세요."
+    failed: "AI 검사를 사용할 수 없습니다."
+    unavailable_mode: "브라우저 저장소 모드에서만 사용할 수 있습니다."
+    report:
+      summary: "레슨 {lessons}개에서 카드 {cards}개를 검사했습니다"
+      ok: "카드 {count}개 정상"
+      issues: "문제가 있는 카드 {count}개"
+      all_ok: "모든 카드가 통과했습니다. 발견된 문제가 없습니다."
+      problem: "문제"
+      suggestion: "제안"
+  quality:
+    button: "품질 검사"
+    title: "품질 검사"
+    loading: "카드를 검사하는 중..."
+    offline_note: "오프라인으로 실행됩니다 - 강세, 관사, 중복 카드를 검사합니다. API 키가 필요 없습니다."
+    failed: "품질 검사를 사용할 수 없습니다."
+    accent:
+      problem: "강세 표시 누락: {word}"
+    article:
+      problem: "잘못된 관사: {actual} {noun}"
+    duplicate:
+      problem: "중복: {other}"
+    report:
+      summary: "레슨 {lessons}개에서 카드 {cards}개를 검사했습니다"
+      ok: "카드 {count}개 정상"
+      issues: "문제가 있는 카드 {count}개"
+      all_ok: "발견된 문제가 없습니다 - 강세, 관사, 중복 모두 깨끗합니다."
+      problem: "문제"
+      suggestion: "제안"
+  placement:
+    lands_under: 당신의 레슨은 다음 아래에 배치됩니다
+    duplicate: '비슷한 레슨이 이미 존재합니다: {title}. 그래도 공유할까요?'
+  wizard:
+    title: 커뮤니티에 공유
+    metadata_intro: 공유하기 전에 레슨 정보를 확인하고 수정하세요.
+    edit_title: 제목
+    edit_source: 출처 언어 (당신이 말하는 언어)
+    edit_target: 목표 언어 (당신이 배우는 언어)
+    edit_level: 레벨 (CEFR)
+    select_language: 언어를 선택하세요…
+    select_level: 레벨을 선택하세요…
+    exercises_label: 연습
+    cards_label: 카드
+    err_title: 제목을 추가하세요.
+    err_source: 출처 언어를 선택하세요.
+    err_target: 목표 언어를 선택하세요.
+    err_same_language: 출처 언어와 목표 언어는 달라야 합니다.
+    err_level: CEFR 레벨(A1-C2)을 선택하세요.
+    err_empty: 이 레슨에 연습이 없습니다. 레슨을 다시 만드세요.
+    regenerate: 다시 생성
+    same_language_domain_hint: 출처 언어와 목표 언어가 같습니다 - 이는 지식(비언어) 콘텐츠로 공유됩니다.
+    step_label: 단계 {n} / {total}
+    lands_under: 당신의 레슨은 다음 아래에 배치됩니다
+    new_set: 새 세트입니다! 이곳에 처음으로 기여하는 분이에요.
+    next_to_existing: 이 세트의 기존 레슨 {count}개 옆에.
+    summary_counts: '레슨 {lessons}개, 연습 {exercises}개, 카드 {cards}개, 약 {minutes}분'
+    checking: 비슷한 레슨을 확인하는 중…
+    no_duplicates: 중복이 발견되지 않았습니다. 당신의 레슨은 고유합니다!
+    near_duplicate: '이 레슨은 이미 존재합니다: "{title}".'
+    similar_found: '비슷한 레슨이 발견되었습니다: "{title}".'
+    overlap: '카드 {total}개 중 {cards}개 공통, 연습 {ex}개 일치.'
+    diff_cards: '카드: {m}/{t} 공유'
+    diff_exercises: '연습: {m}/{t} 공유'
+    suggest_new_only: 새 연습만 제안하기
+    share_as_variation: 그래도 공유 - 변형으로
+    share_full: 그래도 전체 레슨 공유
+    variation_note_placeholder: 당신의 버전은 어떻게 다른가요? (선택)
+    show_differences: 차이점 보기
+    ready_to_share: "모든 준비가 끝났습니다. 레슨을 풀 리퀘스트로 공유할까요?"
+    share_button: 공유
+    thanks: 공유해 주셔서 감사합니다! 당신의 기여가 다른 학습자에게 도움이 됩니다.
+    submitted: "당신의 레슨이 미리 채워진 풀 리퀘스트가 GitHub에 열렸습니다. 검토한 후 \"Create pull request\"를 클릭하세요 - content-repo CI가 자동으로 검증합니다."
+    view_submission: "GitHub에서 풀 리퀘스트 열기"
+    view_upload: "GitHub 업로드 페이지 열기"
+    popup_blocked: "브라우저가 GitHub 탭을 차단했습니다. 아래 링크를 클릭하여 수동으로 여세요."
+    upload_instructions: "레슨 파일이 다운로드되었습니다. 방금 열린 GitHub 페이지에서 파일을 업로드 영역으로 드래그한 다음 \"Propose changes\"를 클릭하세요 - GitHub가 풀 리퀘스트를 만들어 줍니다."
+    paste_instructions: "레슨 파일이 다운로드되었고 GitHub의 새 파일 편집기가 올바른 경로에서 열렸습니다. 다운로드한 파일을 열어 그 내용을 편집기에 붙여넣은 다음 \"Propose new file\"을 클릭하세요 - 제목과 설명은 이미 채워져 있습니다."
+    copy_pr_body: "풀 리퀘스트 설명 복사"
+    copy_pr_body_done: "복사되었습니다!"
+    done: 완료
+    back: 뒤로
+    next: 계속
+  contributions:
+    title: 내 기여
+    count: 당신은 커뮤니티에 레슨 {n}개를 기여했습니다.
+    contributor: 커뮤니티 기여자 - 레슨 {n}개 공유!
+    view: 보기
+    status_submitted: 제출됨
+    status_accepted: 수락됨
+    status_rejected: 거부됨
+  gaps:
+    title: 누락된 레슨
+    intro: 커뮤니티 라이브러리에 몇 가지 공백이 있습니다. 하나를 채우는 데 도움을 주시겠어요?
+    next_level: '{source} 사용자를 위한 {target}에는 레슨이 있지만, {level}은(는) 아직 존재하지 않습니다.'
+    missing_pair: '{source} 사용자를 위한 {target} {level}은(는) 아직 존재하지 않습니다.'
+    help: 도와주시겠어요?
+  credit:
+    name_label: 이름 (선택)
+    name_placeholder: "예: 김민지"
+    show_name: 레슨에 이름 표시
+    privacy: "당신의 이름이 레슨과 풀 리퀘스트에 표시됩니다."
+milestone:
+  streak: "{n}일 연속!"
+  level_up: "레벨 {n} 도달!"
+  mastery: "요소 {n}개 숙달!"
+  badge: "배지 획득!"
+  view_all_badges: "탭하여 모든 배지 보기"
+missions:
+  card_title: "오늘의 미션"
+  card_all_done: "모든 미션 완료!"
+  card_tomorrow: "내일 새 미션이 있어요."
+  card_empty: "오늘 미션이 없습니다."
+  templates:
+    complete-1-lesson:
+      title: "레슨 완료하기"
+      description: "오늘 레슨 1개를 끝내세요."
+    complete-2-lessons:
+      title: "레슨 두 개 완료하기"
+      description: "오늘 레슨 2개를 끝내세요."
+    complete-3-lessons:
+      title: "레슨 세 개 완료하기"
+      description: "오늘 레슨 3개를 끝내세요."
+    score-2-stars:
+      title: "별 2개 획득하기"
+      description: "레슨에서 별을 2개 이상 받으세요."
+    score-3-stars:
+      title: "별 3개 획득하기"
+      description: "레슨에서 완벽하게 별 3개를 받으세요."
+    try-new-set:
+      title: "새 세트 시도하기"
+      description: "아직 열어보지 않은 세트에서 레슨을 시작하세요."
+    review-5-elements:
+      title: "요소 5개 복습하기"
+      description: "오늘 요소 5개를 복습하세요."
+    review-10-elements:
+      title: "요소 10개 복습하기"
+      description: "오늘 요소 10개를 복습하세요."
+    complete-review-session:
+      title: "복습 마치기"
+      description: "복습 세션을 완료하세요."
+    review-overdue:
+      title: "기한 초과 복습 처리하기"
+      description: "기한이 지난 모든 요소를 복습하세요."
+    master-1-element:
+      title: "요소 숙달하기"
+      description: "오늘 요소 1개를 숙달하세요."
+    master-3-elements:
+      title: "요소 세 개 숙달하기"
+      description: "오늘 요소 3개를 숙달하세요."
+    master-5-elements:
+      title: "요소 다섯 개 숙달하기"
+      description: "오늘 요소 5개를 숙달하세요."
+    zero-errors-lesson:
+      title: "무결점 레슨"
+      description: "실수 없이 레슨을 끝내세요."
+    try-adaptive-lesson:
+      title: "적응형 레슨 시도하기"
+      description: "적응형 레슨을 시작하세요."
+    use-cloze:
+      title: "빈칸 채우기 5개 풀기"
+      description: "빈칸 채우기 연습 5개를 완료하세요."
+    use-all-types:
+      title: "모든 연습 유형 사용하기"
+      description: "오늘 5가지 연습 유형을 모두 사용하세요."
+    learn-15-minutes:
+      title: "15분 학습하기"
+      description: "최소 15분 동안 학습하세요."
+    learn-30-minutes:
+      title: "30분 학습하기"
+      description: "최소 30분 동안 학습하세요."
+    keep-streak:
+      title: "연속 기록 유지하기"
+      description: "오늘 연속 기록을 이어가세요."
+    extend-streak-7:
+      title: "7일 연속 달성하기"
+      description: "7일 연속 학습 기록을 만드세요."
+    weekend-learner:
+      title: "주말 학습자"
+      description: "주말에 학습하세요."
+
+create_lesson:
+  title: "레슨 만들기"
+  step_of: "단계 {current} / {total}"
+  step_pending: "이 단계는 다음 업데이트에서 제공됩니다."
+  nav_label: "마법사 탐색"
+  cancel: "취소"
+  back: "뒤로"
+  next: "다음"
+  cancel_confirm_title: "이 레슨을 버릴까요?"
+  cancel_confirm_body: "저장하지 않은 레슨이 사라집니다."
+  cancel_keep: "계속 편집"
+  cancel_discard: "버리기"
+  meta:
+    heading: "레슨 정보"
+    title_label: "제목"
+    title_placeholder: "내 레슨"
+    title_required: "제목이 필요합니다."
+    title_native_label: "목표어로 된 제목"
+    target_lang_label: "학습하는 언어"
+    source_lang_label: "당신의 언어"
+    level_label: "레벨"
+    same_language: "학습하는 언어는 당신의 언어와 달라야 합니다."
+    description_label: "주제 / 설명"
+    author_label: "작성자 이름"
+  cards:
+    heading: "어휘 카드 추가"
+    front_label: "앞면 (학습하는 언어)"
+    back_label: "뒷면 (당신의 언어)"
+    notes_label: "메모 (선택)"
+    image_label: "이미지 참조 (선택)"
+    add: "카드 추가"
+    import_csv: "CSV 가져오기"
+    csv_hint: "앞면, 뒷면, 메모를 행으로 붙여넣으세요 (쉼표 또는 탭으로 구분). 예: Bonjour, Guten Tag, 격식 있는 인사"
+    csv_preview: "{total}개 행 중 {valid}개 준비됨"
+    csv_add: "카드 {n}개 추가"
+    count: "카드 {n}개"
+    min_hint: "연습에는 카드 {n}개가 필요합니다"
+    min_to_advance: "계속하려면 카드를 최소 {n}개 추가하세요."
+    clear_all: "전체 지우기"
+    clear_confirm_title: "모든 카드를 제거할까요?"
+    edit: "카드 편집"
+    delete: "카드 삭제"
+    drag: "드래그하여 순서 변경"
+    save_edit: "저장"
+  draft:
+    title: "초안 발견"
+    body: "완료하지 않은 레슨이 있습니다. 멈춘 곳부터 계속할까요, 새로 시작할까요?"
+    start_fresh: "새로 시작"
+    continue: "계속"
+  exercises:
+    heading: "연습 생성"
+    count_label: "연습 개수"
+    types_label: "연습 유형"
+    direction_label: "방향"
+    generate: "연습 자동 생성"
+    regenerate: "다시 생성"
+    count: "연습 {n}개"
+    min_hint: "연습 {n}개가 필요합니다"
+    min_to_advance: "계속하려면 연습을 최소 {n}개 생성하세요."
+    drag: "드래그하여 순서 변경"
+    delete: "연습 삭제"
+    type:
+      matching: "연결"
+      free_text: "자유 입력"
+      cloze: "빈칸 채우기"
+      word_tiles: "단어 타일"
+      picture_choice: "그림 선택"
+    dir:
+      auto: "자동"
+      receptive: "수용"
+      productive: "산출"
+      balanced: "균형"
+  review:
+    heading: "검토 후 저장"
+    title: "제목"
+    pair: "언어"
+    cards: "카드"
+    exercises: "연습"
+    check_hasTitle: "제목 있음"
+    check_languagePair: "언어 쌍이 유효함"
+    check_enoughCards: "카드 4개 이상"
+    check_enoughExercises: "연습 5개 이상"
+    check_enoughTypes: "연습 유형 2개 이상"
+    check_schemaValid: "유효한 레슨 구조"
+  save:
+    saved: "레슨이 저장되었습니다!"
+    failed: "레슨을 저장할 수 없었습니다."
+    save_local: "로컬에 저장"
+    save_share: "저장 후 공유"
+    play: "레슨 재생"
+    create_another: "다른 레슨 만들기"
+    to_browser: "콘텐츠 브라우저로"
+  templates:
+    heading: "템플릿으로 시작"
+    blank:
+      title: "빈 레슨"
+      desc: "메타데이터만 — 카드는 직접 추가합니다."
+    vocabulary:
+      title: "어휘 목록"
+      desc: "카드 슬롯 10개, 연결 + 자유 입력."
+    grammar:
+      title: "문법 레슨"
+      desc: "카드 슬롯 5개, 빈칸 채우기가 포함된 혼합 연습."
+    conversation:
+      title: "회화 연습"
+      desc: "카드 슬롯 5개, 단어 타일 + 빈칸 채우기."
+
+learning_path:
+  continue: "이어가기"
+  start: "시작"
+  completed: "완료됨"
+  next_level: "다음 레벨 사용 가능"
+  not_started: "아직 시작 안 함"
+  not_downloaded: "다운로드 안 됨"
+  download: "다운로드"
+  filter_mine: "내 것만"
+  filter_all: "모든 세트"
+  filter_label: "세트 필터"
+  adaptive: "적응형 레슨 시작"
+  error_replay: "오답 다시 풀기"
+  personal:
+    title: "당신의 학습 경로"
+    empty: "시작하려면 레슨 세트를 다운로드하세요."
+    all_done: "레슨 {n}개를 모두 완료했습니다!"
+    downloaded: "다운로드됨"
+    lesson_count: "레슨 {n}개"
+    track_aria: "레슨 {total}개 중 {done}개 완료"
+  view:
+    paths: "내 경로"
+    label: "보기"
+    personal: "개인"
+    graph: "그래프"
+    map: "지도"
+  map:
+    languages: "언어"
+    knowledge: "지식"
+    total: "전체: {n}% 완료"
+  mastery:
+    receptive: "수용"
+    productive: "산출"
+    mastered: "숙달됨"
+  title: "학습 경로"
+  subtitle: "당신이 어디에 있고 다음은 무엇인지."
+  aria_canvas: "학습 경로 그래프"
+  reset_layout: "레이아웃 초기화"
+  loading: "학습 경로를 구성하는 중…"
+  empty: "학습 경로를 보려면 먼저 레슨 세트를 다운로드하세요."
+  empty_cta: "콘텐츠 둘러보기"
+  error: "학습 경로를 불러올 수 없었습니다."
+  to_content: "콘텐츠 브라우저"
+  node:
+    lesson: "레슨"
+    stars: "별"
+    recommended: "추천"
+    locked: "잠김"
+    receptive_short: "R"
+    productive_short: "P"
+    exercises: "연습 {n}개"
+    xp: "XP"
+  group:
+    mastery: "수용 {r}개, 산출 {p}개 숙달"
+    progress_aria: "레슨 {total}개 중 {completed}개 완료"
+    toggle_aria: "{title} 세트 — 레슨 {total}개 중 {completed}개 완료"
+  search_placeholder: "레슨 검색…"
+  filter:
+    status: "상태 필터"
+    direction: "방향 필터"
+    all: "전체"
+    not_started: "시작 안 함"
+    in_progress: "진행 중"
+    mastered: "숙달됨"
+    receptive: "수용만"
+    productive: "산출만"
+  stats:
+    title: "통계"
+    lessons: "레슨"
+    receptive: "수용"
+    productive: "산출"
+    lessons_aria: "레슨 {total}개 중 {done}개 완료"
+    productive_aria: "레슨 {n}개 산출 숙달"
+    receptive_aria: "레슨 {n}개 수용 숙달"
+    region_label: "학습 경로 통계"
+  clusters:
+    toggle: "오류 클러스터 보기"
+    empty: "아직 공통된 오류 패턴이 없습니다 — 계속 연습하세요."
+    lessons: "레슨 {n}개"
+    start_adaptive: "적응형 레슨 시작"
+    region_label: "오류 클러스터 패널"
+  search_label: "레슨 검색 — Enter를 눌러 첫 번째 일치 항목으로 이동"
+  custom:
+    title: "내 학습 경로"
+    subtitle: "레슨을 나만의 순서있는 경로로 구성하세요."
+    create_title: "경로 만들기"
+    name_placeholder: "경로 이름"
+    description_placeholder: "설명 (선택 사항)"
+    create: "경로 만들기"
+    empty: "아직 사용자 경로가 없습니다. 위에서 하나 만들고 레슨을 추가하세요."
+    progress: "{total}개 중 {done}개 완료"
+    continue: "계속하기"
+    delete: "경로 삭제"
+    next_hint: "다음: {lesson}"
+    add_lesson: "레슨 추가"
+    search_lessons: "레슨 검색…"
+    no_lessons: "레슨을 찾을 수 없습니다."
+    done_adding: "완료"
+    move_up: "위로 이동"
+    move_down: "아래로 이동"
+    remove_lesson: "레슨 제거"
+pwa:
+  offline_message: "오프라인 상태입니다. 저장된 콘텐츠를 사용할 수 있습니다."
+  online_message: "다시 온라인입니다!"
+  offline_dismiss: "닫기"
+  action_unavailable: "오프라인에서 사용할 수 없음"
+  cache_heading: "오프라인 캐시"
+  cache_summary: "{size} MB · 레슨 {count}개 캐시됨"
+  cache_empty: "아직 캐시된 오프라인 콘텐츠가 없습니다."
+  cache_clear: "캐시 지우기"
+  cache_clear_confirm: "오프라인 캐시를 지울까요?"
+  cache_clear_action: "네, 지웁니다"
+  cache_cleared: "오프라인 캐시가 지워졌습니다."
+  update:
+    message: "새 버전을 사용할 수 있습니다."
+    action: "업데이트"
+    later: "나중에"
+share:
+  achievement:
+    button: 공유
+    title: 진행 상황 공유
+    copied: 클립보드에 복사되었습니다
+    lesson_complete: 방금 Adaptive Learner에서 레슨을 완벽하게 해냈어요!
+    streak: Adaptive Learner로 {days}일 연속 학습 중이에요!
+    level: 방금 Adaptive Learner에서 레벨 {level}에 도달했어요!
+    badge: Adaptive Learner에서 "{badge}" 배지를 획득했어요!
+    progress: Adaptive Learner로 학습 중이에요, 레벨 {level}, {days}일 연속.
+    hashtag: '#AdaptiveLearner'
+  pr:
+    preparing: "저장소를 준비하는 중..."
+    uploading: "레슨을 업로드하는 중..."
+    creating: "풀 리퀘스트를 생성하는 중..."
+    success: "풀 리퀘스트가 생성되었습니다! 당신의 레슨이 커밋되고 GitHub에 풀 리퀘스트가 열렸으며, content-repo CI가 자동으로 검증합니다."
+    no_token: "팁: 설정 > 연동에서 GitHub 토큰을 추가하면 풀 리퀘스트를 자동으로 만들 수 있습니다."
+    fallback: "대신 GitHub로 수동 공유"
+    err_auth: "GitHub 토큰이 거부되었습니다. 설정 > 연동에서 확인하세요."
+    err_rate: "GitHub 요청 한도에 도달했습니다. 나중에 다시 시도하세요."
+    err_github: "GitHub가 요청을 거부했습니다: {detail}"
+    err_network: "GitHub에 연결할 수 없었습니다. 연결을 확인하고 다시 시도하세요."
+
+taxonomy:
+  filter_title: "프로젝트 필터"
+  loading: "필터를 불러오는 중…"
+  filter_load_failed: "필터 데이터를 불러오지 못했습니다."
+  subject: "과목"
+  all_subjects: "모든 과목"
+  all_projects: "모든 프로젝트 ({count})"
+  filtered_projects: "일치하는 프로젝트 ({count})"
+  clear_filters: "필터 지우기"
+  tags: "태그"
+  no_user_tags_short: "아직 태그가 없습니다."
+  no_matching_projects: "일치하는 프로젝트가 없습니다."
+  no_projects: "아직 프로젝트가 없습니다."
+
+# Subject taxonomy display names (data-i18n). Keyed by a normalized
+# form of the canonical English subject name (backend/config/seed/
+# subjects.yaml). Proper nouns (Python, JavaScript, React, ...) carry
+# no key and fall back to subject.name in every language.
+subjects:
+  languages: "언어"
+  mathematics: "수학"
+  programming: "프로그래밍"
+  sciences: "과학"
+  music: "음악"
+  humanities: "인문학"
+  social_sciences: "사회과학"
+  skills: "기술"
+  english: "영어"
+  spanish: "스페인어"
+  french: "프랑스어"
+  german: "독일어"
+  greek: "그리스어"
+  italian: "이탈리아어"
+  portuguese: "포르투갈어"
+  japanese: "일본어"
+  chinese: "중국어"
+  turkish: "터키어"
+  grammar: "문법"
+  vocabulary: "어휘"
+  conversation: "회화"
+  arithmetic: "산술"
+  algebra: "대수학"
+  geometry: "기하학"
+  trigonometry: "삼각법"
+  calculus: "미적분학"
+  statistics: "통계학"
+  linear_algebra: "선형대수학"
+  discrete_mathematics: "이산수학"
+  basics: "기초"
+  frameworks: "프레임워크"
+  data_science: "데이터 과학"
+  algorithms: "알고리즘"
+  data_structures: "자료 구조"
+  design_patterns: "디자인 패턴"
+  databases: "데이터베이스"
+  physics: "물리학"
+  chemistry: "화학"
+  biology: "생물학"
+  astronomy: "천문학"
+  earth_sciences: "지구과학"
+  theory: "이론"
+  piano: "피아노"
+  guitar: "기타"
+  violin: "바이올린"
+  singing: "노래"
+  composition: "작곡"
+  history: "역사"
+  philosophy: "철학"
+  literature: "문학"
+  art_history: "미술사"
+  economics: "경제학"
+  psychology: "심리학"
+  sociology: "사회학"
+  political_science: "정치학"
+  writing: "글쓰기"
+  public_speaking: "발표"
+  photography: "사진"
+  design: "디자인"
+  cooking: "요리"
+editor:
+  align_center: "가운데 정렬"
+  align_left: "왼쪽 정렬"
+  align_right: "오른쪽 정렬"
+  blockquote: "인용"
+  bold: "굵게 (Ctrl+B)"
+  bullet_list: "글머리 기호 목록"
+  character_count: "{count}자"
+  code_block: "코드 블록"
+  code_block_copied: "복사됨"
+  code_block_copy: "코드 복사"
+  code_block_language: "코드 블록 언어"
+  h1: "제목 1"
+  h2: "제목 2"
+  h3: "제목 3"
+  highlight: "강조 표시"
+  inline_code: "인라인 코드"
+  italic: "기울임 (Ctrl+I)"
+  link: "링크 삽입"
+  link_prompt: "URL (링크를 제거하려면 비워 두세요)"
+  ordered_list: "번호 매기기 목록"
+  redo: "다시 실행 (Ctrl+Shift+Z)"
+  strike: "취소선"
+  task_list: "작업 목록"
+  toolbar_label: "텍스트 서식"
+  ctx_history: "기록"
+  ctx_clipboard: "클립보드"
+  ctx_format: "서식"
+  ctx_insert: "삽입"
+  ctx_heading: "제목"
+  ctx_align: "정렬"
+  ctx_list: "목록"
+  ctx_quote: "인용"
+  context_menu_label: "편집기 작업"
+  select_all: "모두 선택"
+  cut: "잘라내기"
+  copy: "복사"
+  paste: "붙여넣기"
+  table: "표"
+  horizontal_rule: "가로줄"
+  subscript: "아래 첨자"
+  superscript: "위 첨자"
+  paragraph: "일반 텍스트"
+  align_justify: "양쪽 맞춤"
+  underline: "밑줄 (Ctrl+U)"
+  undo: "실행 취소 (Ctrl+Z)"
+languages:
+  ko: "한국어"
+  id: "인도네시아어"
+  en: "영어"
+  es: "스페인어"
+  fr: "프랑스어"
+  pt: "포르투갈어"
+  de: "독일어"
+  tr: "터키어"
+  ja: "일본어"
+  el: "그리스어"
+  hi: "힌디어"
+  script:
+    latin: "라틴"
+    greek: "그리스"
+    cyrillic: "키릴"
+    arabic: "아랍"
+    devanagari: "데바나가리"
+    bengali: "벵골"
+    cjk: "CJK"
+    hangul: "한글"
+
+statistics:
+  title: "학습 통계"
+  total_time: "학습 시간"
+  completed_lessons: "완료한 레슨"
+  avg_accuracy: "평균 정확도"
+  current_streak: "현재 연속 기록"
+  streak_days: "{n}일"
+  time_hm: "{h}시간 {m}분"
+  time_m: "{m}분"
+  weak_areas_title: "개선할 영역"
+  weak_areas_empty: "아직 추적된 실수가 없습니다 — 계속하세요!"
+  practice: "연습"
+  errors: "오류"
+  last_answer: "당신의 마지막 답변:"
+  activity_title: "활동 (최근 90일)"
+  activity_aria: "최근 90일 동안 하루에 완료한 레슨"
+  activity_cell: "{date}에 레슨 {count}개"
+  activity_empty: "아직 활동이 없습니다."
+  pairs_title: "언어 쌍별 진행도"
+  pairs_empty: "진행도 추적을 시작하려면 레슨 세트를 다운로드하세요."
+  pair_level_aria: "{level}: {percent}% 완료"
+
+shortcuts:
+  title: "키보드 단축키"
+  group_global: "전역"
+  group_navigation: "탐색"
+  group_lesson: "레슨 중"
+  show_help: "키보드 단축키 표시"
+  open_settings: "설정 열기"
+  search_content: "콘텐츠 검색"
+  close_dialog: "대화상자 닫기"
+  go_dashboard: "대시보드로 이동"
+  go_settings: "설정으로 이동"
+  go_content: "콘텐츠로 이동"
+  go_statistics: "통계로 이동"
+  lesson_enter: "답 확인 후 계속"
+  lesson_choice: "답 옵션 선택"
+  lesson_undo_match: "마지막 연결 취소"
+
+srs:
+  due_badge: "{n}개 예정"
+  due_badge_tooltip: "복습 예정"
+  due_badge_aria: "복습 {n}개 예정"
+  status_new: "신규"
+  status_learning: "학습 중"
+  status_due: "예정"
+  status_mastered: "숙달됨"
+  elements_mastered_aria: "요소 {total}개 중 {mastered}개 숙달"
+  show_only_due: "예정만 보기"
+  show_all: "전체 보기"
+  details: "요소 상세"
+  hide_details: "상세 숨기기"
+  element_mastered: "숙달됨"
+  attempt_correct: "정답"
+  attempt_wrong: "오답"
+  attempt_trajectory: "시도 {n}: {outcome}"
+  element_due: "지금 예정"
+  element_scheduled: "예약됨"
+  element_meta: "연속 {streak} · 오류 {errors}개"
+  element_meta_review: "연속 {streak} · 오류 {errors}개 · {days}일 후 복습"
+  last_answer: "당신의 답변:"
+  correct: "정답:"
+  no_elements: "아직 추적된 요소가 없습니다."
+  settings_title: "분산 반복"
+  settings_intro: "틀린 항목은 맞힐수록 길어지는 일정에 따라 복습으로 돌아오므로, 아는 항목보다 약한 부분을 더 자주 연습합니다."
+  schedule_streak: "{n}회 연속 정답"
+  schedule_streak_plus: "{n}회 이상 연속 정답"
+  schedule_days: "{d}일 후 복습"
+  settings_mastery: "항목은 {n}회 연속 정답 후 숙달된 것으로 간주하며, 오답이 나오면 초기화됩니다."
+  settings_learn_more: "이 방법에 대해 자세히 알아보기"
+
+hints:
+  reveal: "힌트 보기"
+  disabled: "힌트가 꺼져 있습니다. 설정에서 활성화하세요."
+  cost: "−{n} XP"
+  length: "답은 {n}글자입니다"
+  first_letters: "“{prefix}”로 시작합니다 ({n}글자)"
+  not: "“{label}”이(가) 아닙니다"
+  item: "“{label}”로 시작하세요"
+  reveal_pair: "“{left}”은(는) “{right}”와(과) 짝입니다"
+
+favorites:
+  card_title: "내 즐겨찾기"
+  card_more: "+{n}개 더"
+  add: "즐겨찾기에 추가"
+  remove: "즐겨찾기에서 제거"
+  empty: "아직 즐겨찾기가 없습니다 — 레슨의 별을 탭하여 저장하세요."
+  save_prompt: "이 레슨을 즐겨찾기에 저장"
+content_repo:
+  title: "콘텐츠 저장소"
+  last_sync: "마지막 동기화: {when}"
+  added: "저장소가 추가되었습니다."
+  synced: "동기화됨: 세트 {sets}개, 레슨 {lessons}개."
+  token_hint: "비공개 저장소에는 토큰이 필요합니다 — 아래에 붙여넣거나, 설정 → 연동에서 공유 토큰을 설정하세요."
+  trust_official: "공식: 프로젝트 팀이 큐레이션하고 품질을 보증합니다."
+  trust_verified: "검증됨: 커뮤니티가 기여하고 팀이 검토했습니다."
+  trust_validated: "유효성 확인됨: 기술적으로 정확하며, 내용은 개별적으로 검토되지 않았습니다."
+  official:
+    title: "공식 콘텐츠"
+    counts: "세트 {sets}개 · 레슨 {lessons}개"
+  user:
+    list_title: "내 콘텐츠 저장소"
+    empty: "연결된 저장소가 없습니다. 아래에서 하나 추가하세요."
+    counts: "세트 {sets}개 · 레슨 {lessons}개"
+  recommended:
+    title: "추천 저장소"
+  add:
+    title: "저장소 추가"
+  add_link:
+    title: "이 콘텐츠 저장소를 추가할까요?"
+    body: "Adaptive Learner에 콘텐츠 저장소를 추가하도록 초대받았습니다."
+    invalid: "이 초대 링크에는 유효한 저장소가 포함되어 있지 않습니다."
+  field:
+    url: "GitHub 저장소 URL"
+    branch: "브랜치"
+    token: "토큰 (비공개 저장소, 선택)"
+  action:
+    add: "저장소 추가"
+    cancel: "취소"
+    confirm_remove: "제거 확인"
+    connect: "저장소 연결"
+    move_down: "아래로 이동"
+    move_up: "위로 이동"
+    remove: "제거"
+    share: "공유"
+    sync: "지금 동기화"
+  badge:
+    coach: "코치"
+    official: "공식"
+  trust:
+    dropped: "동기화되었지만 검증에 실패했습니다 — 이 저장소는 이제 미검증으로 표시됩니다."
+    recommended: "공식 추천"
+    unknown: "미검증"
+    validated: "유효성 확인됨"
+  status:
+    never_synced: "아직 동기화 안 됨"
+  rating:
+    aria: "당신의 평점"
+    label: "당신의 평점"
+    star: "5점 중 {n}점 평가"
+  share:
+    copied: "링크가 복사되었습니다."
+    copy: "복사"
+    copy_failed: "복사할 수 없었습니다."
+    hint: "다른 사람이 이 공개 저장소를 추가할 수 있도록 이 링크를 공유하세요. 비공개 저장소의 경우 URL과 읽기 전용 토큰을 따로 보내세요."
+    qr_alt: "공유 링크용 QR 코드"
+  progress:
+    validating: "저장소를 검증하는 중…"
+    manifest: "매니페스트를 불러오는 중…"
+    sets: "세트를 불러오는 중…"
+    lessons: "레슨을 캐시하는 중…"
+    validate: "콘텐츠를 확인하는 중…"
+  error:
+    invalid_url: "유효한 GitHub 저장소 URL을 입력하세요 (예: owner/repo)."
+    save_failed: "저장소를 추가할 수 없었습니다."
+    sync_failed: "동기화에 실패했습니다. 다시 시도하세요."
+  validation:
+    failed: "검증 실패: {reason}"
+    passed: "검증 통과: 세트 {sets}개, 레슨 {lessons}개."
+resource:
+  type_youtube: "동영상"
+  type_podcast: "팟캐스트"
+  type_article: "기사"
+  type_book: "도서"
+  type_course: "강좌"
+  type_website: "웹사이트"
+  free: "무료"
+  paid: "강좌"
+discover:
+  title: "콘텐츠 둘러보기"
+  subtitle: "다운로드하기 전에 학습 자료를 찾아보세요."
+  loading: "사용 가능한 콘텐츠 불러오는 중…"
+  search_placeholder: "스페인어, AI, 심리학…"
+  search_aria: "사용 가능한 콘텐츠 검색"
+  search_clear: "검색 지우기"
+  filter:
+    all: "전체"
+    language: "언어"
+    level: "수준"
+    domain: "분야"
+    trust: "신뢰도"
+    ai_checked: "AI 검증됨"
+    "yes": "예"
+    "no": "아니요"
+  trust:
+    official: "공식 추천"
+    verified: "검증됨"
+    validated: "확인됨"
+  sort:
+    label: "정렬"
+    relevance: "관련성"
+    newest: "최신순"
+    lessons: "레슨 많은순"
+  domain:
+    language: "언어"
+    ai: "AI"
+    psychology: "심리학"
+    programming: "프로그래밍"
+  result:
+    count: "{n}개 세트"
+  empty:
+    no_sets: "아직 사용 가능한 콘텐츠가 없습니다."
+    no_results: "“{query}”에 대한 결과가 없습니다."
+  card:
+    download: "다운로드"
+    downloading: "다운로드 중…"
+    retry: "다시 시도"
+    downloaded: "이미 있음"
+    lessons: "{n}개 레슨"
+    cards: "{n}개 카드"
+    ai_checked: "AI 검증됨"
+    remove: "삭제"
+    progress: "레슨 다운로드 중"
+  toast:
+    downloaded: "세트를 다운로드했습니다."
+    removed: "세트를 삭제했습니다. 언제든지 다시 다운로드할 수 있습니다."
+  error:
+    download_failed: "세트를 다운로드할 수 없습니다."
+    remove_failed: "세트를 삭제할 수 없습니다."
+    load_failed: "사용 가능한 콘텐츠를 불러올 수 없습니다."

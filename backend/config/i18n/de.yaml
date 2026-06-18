@@ -56,6 +56,7 @@ data_export:
   cat_settings: "Einstellungen"
   cat_ai_config: "KI-Schlüssel-Sicherung"
 nav:
+  discover: "Entdecken"
   offline_long: "Offline — frühere Sitzungen bleiben lesbar"
   sync_pending: "{n} Änderung(en) warten auf Sync"
   statistics: "Statistik"
@@ -343,6 +344,8 @@ review:
   summary_corrected: "{corrected} von {total} korrigiert"
   summary_trend: "Stark — deine Schwachstellen werden besser."
   summary_next: "Gemeisterte Elemente fallen weg; der Rest kommt bald zur Wiederholung."
+  summary_remaining: "Noch {n} fällig. Weitermachen?"
+  another_round: "Weitere Runde"
   summary_repeat: "Komm in etwa 2 Tagen wieder, um das frisch zu halten."
   explain_heading: "Warum du diese verpasst hast"
   explain_article_gender: "Achte auf das Geschlecht: Nomen auf -o sind meist maskulin (el/un), auf -a feminin (la/una). Der Artikel richtet sich nach der Endung."
@@ -445,6 +448,18 @@ settings:
   hints_enabled_desc: "Bietet bei jeder Übung einen gestuften Tipp-Button."
   hint_xp_cost: "XP-Kosten pro Tipp"
   hint_xp_cost_desc: "Wird auf dem Tipp-Button angezeigt. 0 = kostenlos."
+  section_reminders: "Erinnerungen"
+  reminders_enabled: "Tägliche Lern-Erinnerungen"
+  reminders_enabled_desc: "Erhalte eine Browser-Benachrichtigung, wenn Wiederholungen fällig sind. Funktioniert nur, solange die App geöffnet ist."
+  reminders_time: "Erinnerungszeit"
+  reminders_time_desc: "Wann du täglich erinnert werden möchtest."
+  reminders_weekdays: "Tage"
+  reminders_weekdays_desc: "An welchen Tagen erinnert werden soll."
+  reminders_permission_request: "Benachrichtigungen aktivieren"
+  reminders_permission_denied: "Benachrichtigungen sind blockiert. Aktiviere sie in den Website-Einstellungen deines Browsers, um Erinnerungen zu erhalten."
+  reminders_unsupported: "Dein Browser unterstützt keine Benachrichtigungen."
+  reminders_notification_title: "Zeit zum Wiederholen"
+  reminders_notification_body: "{n} Wiederholungen sind fällig. Bleib an deiner Serie dran!"
   support:
     heading: "Support"
     description: "Etwas funktioniert nicht wie erwartet? Erstelle einen Bericht deiner letzten Aktionen, damit die Entwicklung das Problem nachvollziehen kann. Du prüfst alles, bevor es deinen Browser verlässt."
@@ -678,6 +693,9 @@ settings:
     30_days: "30 Tage"
     60_days: "60 Tage"
     never: Nie
+  review_limit:
+    label: "Fragen pro Wiederholung"
+    desc: "Wie viele Elemente eine Wiederholungssitzung zeigt, bevor sie endet. Weitere fällige Elemente kommen in die nächste Runde."
   max_lesson_size:
     title: Maximale Lektionsgröße
     hint: "Wenn eine lange Chat-Analyse als Offline-Lektion gespeichert wird, werden Lektionen mit mehr als dieser Anzahl an Schritten automatisch in mehrere Teile aufgeteilt."
@@ -822,6 +840,7 @@ backup:
   confirm: Wiederherstellung bestätigen
   invalid_format: Diese Datei ist keine gültige Adaptive-Learner-Sicherung.
   not_a_backup_file: 'Diese Datei ist keine gültige Backup-Datei. Bitte wähle eine Datei, die mit „Sicherung erstellen“ exportiert wurde.'
+  version_mismatch: "Dieses Backup stammt aus Version {{from}}; diese App ist {{to}}. Prüfe die Änderungen unten und bestätige den Import."
   too_large: 'Diese Backup-Datei ist zu groß (über 100 MB).'
   export_success: Sicherung heruntergeladen ({{count}} Datensätze).
   export_error: 'Sicherung fehlgeschlagen: {{detail}}'
@@ -1002,6 +1021,17 @@ gamification:
   xp_header_tooltip: Deine Erfahrungspunkte
   xp_to_next_level: '{n} XP bis zum nächsten Level'
   max_level: Höchstes Level erreicht
+  level_detail:
+    activity: "Aktivität (letzte 7 Tage)"
+    activity_unit: "Sitzungen"
+    activity_empty: "Keine Aktivität in den letzten 7 Tagen."
+    milestones: "Meilensteine"
+    ms_level: "Level {level}"
+    ms_xp: "{xp} XP"
+    reached: "erreicht"
+    locked: "gesperrt"
+    how: "Levels steigen auf einer wachsenden XP-Kurve: 0, 100, 300, 600, 1000 XP - jede Stufe braucht 100 XP mehr als die vorige."
+  level_detail_title: "Level-Fortschritt"
   level_up: Level aufgestiegen!
   reason_session_complete: Sitzung abgeschlossen
   reason_assessment_complete: Selbsteinschätzung abgeschlossen
@@ -1683,6 +1713,7 @@ lesson:
       copy: "Ergebnis kopieren"
       download: "Als Datei speichern"
       download_json: "Als JSON exportieren"
+      anki: "Karten exportieren (Anki)"
       copied: "Ergebnis in Zwischenablage kopiert"
       copy_failed: "Kopieren in die Zwischenablage fehlgeschlagen"
       title: "Lektionsergebnis"
@@ -1741,6 +1772,7 @@ content:
     empty: "Starte deine erste Lektion!"
     progress: "Aufgabe {n}/{total}"
     imported_analysis: "Importierte Analyse"
+    lesson_fallback: "Lektion"
   import_chat:
     button: "Chat importieren"
   search:
@@ -1749,6 +1781,10 @@ content:
     no_results: "Keine Ergebnisse für '{query}'"
     hint: "Versuche einen anderen Suchbegriff"
     clear: "Suche löschen"
+    available: "Zum Herunterladen verfügbar"
+    your_content: "Deine Inhalte"
+    download_prompt_title: "Dieses Set herunterladen?"
+    download_prompt_body: "Dieses Set ist noch nicht heruntergeladen. Jetzt herunterladen?"
   save_adaptive:
     button: "Diese Lektion speichern?"
   create_lesson:
@@ -1924,6 +1960,25 @@ content:
       ok: "{count} Karten OK"
       issues: "{count} Karten mit Problemen"
       all_ok: "Alle Karten bestanden. Keine Probleme gefunden."
+      problem: "Problem"
+      suggestion: "Vorschlag"
+  quality:
+    button: "Qualitätsprüfung"
+    title: "Qualitätsprüfung"
+    loading: "Karten werden geprüft..."
+    offline_note: "Läuft offline - Akzente, Artikel und doppelte Karten. Kein API-Schlüssel nötig."
+    failed: "Qualitätsprüfung nicht verfügbar."
+    accent:
+      problem: "Fehlender Akzent: {word}"
+    article:
+      problem: "Falscher Artikel: {actual} {noun}"
+    duplicate:
+      problem: "Duplikat von: {other}"
+    report:
+      summary: "{cards} Karten in {lessons} Lektionen geprüft"
+      ok: "{count} Karten OK"
+      issues: "{count} Karten mit Problemen"
+      all_ok: "Keine Probleme gefunden - Akzente, Artikel und Duplikate sind sauber."
       problem: "Problem"
       suggestion: "Vorschlag"
   placement:
@@ -2205,6 +2260,7 @@ learning_path:
     lesson_count: "{n} Lektionen"
     track_aria: "{done} von {total} Lektionen abgeschlossen"
   view:
+    paths: "Meine Pfade"
     label: "Ansicht"
     personal: "Persönlich"
     graph: "Graph"
@@ -2265,6 +2321,25 @@ learning_path:
     start_adaptive: "Adaptive Lektion starten"
     region_label: "Bereich Fehlercluster"
   search_label: "Lektionen suchen — Enter drücken, um zum ersten Treffer zu springen"
+  custom:
+    title: "Meine Lernpfade"
+    subtitle: "Stelle Lektionen zu deinem eigenen geordneten Pfad zusammen."
+    create_title: "Pfad erstellen"
+    name_placeholder: "Pfadname"
+    description_placeholder: "Beschreibung (optional)"
+    create: "Pfad erstellen"
+    empty: "Noch keine eigenen Pfade. Erstelle oben einen und füge Lektionen hinzu."
+    progress: "{done} von {total} erledigt"
+    continue: "Fortsetzen"
+    delete: "Pfad löschen"
+    next_hint: "Nächste: {lesson}"
+    add_lesson: "Lektion hinzufügen"
+    search_lessons: "Lektionen suchen…"
+    no_lessons: "Keine Lektionen gefunden."
+    done_adding: "Fertig"
+    move_up: "Nach oben"
+    move_down: "Nach unten"
+    remove_lesson: "Lektion entfernen"
 pwa:
   offline_message: "Du bist offline. Gespeicherte Inhalte sind verfügbar."
   online_message: "Wieder online!"
@@ -2282,6 +2357,16 @@ pwa:
     action: "Aktualisieren"
     later: "Später"
 share:
+  achievement:
+    button: Teilen
+    title: Fortschritt teilen
+    copied: In die Zwischenablage kopiert
+    lesson_complete: Ich habe gerade eine Lektion bei Adaptive Learner gemeistert!
+    streak: Ich habe eine {days}-Tage-Lernsträhne bei Adaptive Learner!
+    level: Ich habe gerade Level {level} bei Adaptive Learner erreicht!
+    badge: Ich habe das Abzeichen „{badge}“ bei Adaptive Learner verdient!
+    progress: Ich lerne mit Adaptive Learner, Level {level}, {days}-Tage-Strähne.
+    hashtag: '#AdaptiveLearner'
   pr:
     preparing: "Repository wird vorbereitet..."
     uploading: "Lektion wird hochgeladen..."
@@ -2398,9 +2483,30 @@ editor:
   strike: "Durchgestrichen"
   task_list: "Aufgabenliste"
   toolbar_label: "Textformatierung"
+  ctx_history: "Verlauf"
+  ctx_clipboard: "Zwischenablage"
+  ctx_format: "Formatierung"
+  ctx_insert: "Einfügen"
+  ctx_heading: "Überschrift"
+  ctx_align: "Ausrichtung"
+  ctx_list: "Liste"
+  ctx_quote: "Zitat"
+  context_menu_label: "Editor-Aktionen"
+  select_all: "Alles auswählen"
+  cut: "Ausschneiden"
+  copy: "Kopieren"
+  paste: "Einfügen"
+  table: "Tabelle"
+  horizontal_rule: "Horizontale Linie"
+  subscript: "Tiefgestellt"
+  superscript: "Hochgestellt"
+  paragraph: "Normaler Text"
+  align_justify: "Blocksatz"
   underline: "Unterstrichen (Strg+U)"
   undo: "Rückgängig (Strg+Z)"
 languages:
+  ko: "Koreanisch"
+  id: "Indonesisch"
   en: "Englisch"
   es: "Spanisch"
   fr: "Französisch"
@@ -2588,3 +2694,55 @@ resource:
   type_website: "Webseiten"
   free: "Gratis"
   paid: "Kurs"
+discover:
+  title: "Inhalte entdecken"
+  subtitle: "Finde Lernmaterial, bevor du es herunterlädst."
+  loading: "Verfügbare Inhalte werden geladen…"
+  search_placeholder: "Spanisch, KI, Psychologie…"
+  search_aria: "Verfügbare Inhalte durchsuchen"
+  search_clear: "Suche zurücksetzen"
+  filter:
+    all: "Alle"
+    language: "Sprache"
+    level: "Niveau"
+    domain: "Bereich"
+    trust: "Vertrauen"
+    ai_checked: "KI-geprüft"
+    "yes": "Ja"
+    "no": "Nein"
+  trust:
+    official: "Offiziell empfohlen"
+    verified: "Verifiziert"
+    validated: "Validiert"
+  sort:
+    label: "Sortierung"
+    relevance: "Relevanz"
+    newest: "Neueste"
+    lessons: "Meiste Lektionen"
+  domain:
+    language: "Sprachen"
+    ai: "KI"
+    psychology: "Psychologie"
+    programming: "Programmierung"
+  result:
+    count: "{n} Sets"
+  empty:
+    no_sets: "Noch keine Inhalte verfügbar."
+    no_results: "Keine Ergebnisse für „{query}“."
+  card:
+    download: "Herunterladen"
+    downloading: "Wird geladen…"
+    retry: "Erneut versuchen"
+    downloaded: "Bereits vorhanden"
+    lessons: "{n} Lektionen"
+    cards: "{n} Karten"
+    ai_checked: "KI-geprüft"
+    remove: "Entfernen"
+    progress: "Lektionen werden geladen"
+  toast:
+    downloaded: "Set heruntergeladen und einsatzbereit."
+    removed: "Set entfernt. Du kannst es jederzeit erneut herunterladen."
+  error:
+    download_failed: "Set konnte nicht heruntergeladen werden."
+    remove_failed: "Set konnte nicht entfernt werden."
+    load_failed: "Verfügbare Inhalte konnten nicht geladen werden."

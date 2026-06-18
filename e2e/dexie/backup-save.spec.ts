@@ -50,7 +50,9 @@ test.describe("Backup — save to disk (Dexie)", () => {
             page.waitForEvent("download", {timeout: 15000}),
             exportBtn.click(),
         ]);
-        expect(download.suggestedFilename()).toMatch(/\.json$/);
+        // EXP-031 (#714) — backups now export as the `.alb` ZIP
+        // container, not a bare `.json` dump.
+        expect(download.suggestedFilename()).toMatch(/\.alb$/);
 
         // The export reported success (no error toast).
         await expect(page.locator(".Toastify__toast--error")).toHaveCount(0);

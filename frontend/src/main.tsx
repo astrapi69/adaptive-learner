@@ -25,6 +25,7 @@ import "./styles/themes/theme-soft-pop.css";
 import "./styles/themes/theme-amethyst-haze.css";
 import "./styles/global.css";
 import "./styles/fonts-devanagari.css";
+import "./styles/fonts-hangul.css";
 // Side-effect: capture ``beforeinstallprompt`` at startup (#604) so the
 // Settings "Install app" button can offer a manual install later.
 import "./lib/pwa/install";

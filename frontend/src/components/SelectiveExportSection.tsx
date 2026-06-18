@@ -74,7 +74,11 @@ export default function SelectiveExportSection() {
       } else {
         const tables = resolveSelectedTables(selected);
         const subset = filterBackupPayload(payload, tables);
-        const outcome = await saveBackupToDisk(subset, selectiveExportFilename());
+        const outcome = await saveBackupToDisk(
+          subset,
+          selectiveExportFilename(),
+          "selective",
+        );
         if (outcome.method !== "cancelled") {
           notify.success(
             t("data_export.selective_done", "Exported {n} records.").replace(

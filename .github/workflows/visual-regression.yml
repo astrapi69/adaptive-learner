@@ -1,26 +1,27 @@
 name: Visual regression
 
-# Block 8 (#244). Visual tests are SLOW and require a committed baseline,
-# so they run as their own job — NOT in the smoke/PR gate. Manual-first
-# (workflow_dispatch) per the "wired != working" rule: trigger once after
-# the baseline PNGs are committed, confirm green, then enable the
-# pull_request trigger below if desired.
+# Block 8 (#244) + critical-surfaces matrix (#705). Visual tests are SLOW
+# and require a committed baseline, so they run as their own job — NOT in
+# the smoke/PR gate (screenshots change on every UI PR; same night-shift
+# rationale as the mutation / dexie-smoke workflows, #575). Runs nightly
+# (04:00 UTC, after the nightly suite) + on demand via workflow_dispatch.
+#
+# NOT wired to pull_request on purpose. Manual-first per the "wired !=
+# working" rule: trigger once after the baseline PNGs are committed and
+# confirm green before relying on the schedule.
 
 on:
   workflow_dispatch:
-  # Uncomment once e2e/visual/screenshots/ baselines are committed:
-  # pull_request:
-  #   paths:
-  #     - "frontend/src/**"
-  #     - "e2e/visual/**"
-  #     - ".github/workflows/visual-regression.yml"
+  schedule:
+    # Nightly at 04:00 UTC — after the nightly test suite (#575).
+    - cron: "0 4 * * *"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   visual:
-    name: Theme screenshot matrix
+    name: Visual screenshot matrix (themes + critical surfaces)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

@@ -216,7 +216,10 @@ function pictureTileClassName(states: {
     isPlaceholder: boolean;
 }): string {
     return cn(
-        "relative flex min-h-[88px] w-full cursor-pointer flex-col items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] p-2 text-center text-sm text-[var(--fg)] enabled:hover:bg-[var(--surface-2)]",
+        // #762 — h-full (not a hardcoded min-height) so every tile fills
+        // its grid cell; combined with the grid's `[grid-auto-rows:1fr]`
+        // all tiles in a row match the tallest while text still wraps.
+        "relative flex h-full min-h-[88px] w-full cursor-pointer flex-col items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] p-2 text-center text-sm text-[var(--fg)] enabled:hover:bg-[var(--surface-2)]",
         states.isSelected &&
             "is-selected border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_12%,var(--surface))]",
         states.showAsCorrect &&
@@ -352,7 +355,7 @@ function PictureChoiceExercise(
             <DirectionInstruction exercise={exercise} />
 
             <ul
-                className="m-0 grid list-none grid-cols-2 gap-2 p-0 min-[600px]:grid-cols-4"
+                className="m-0 grid list-none grid-cols-2 gap-2 p-0 [grid-auto-rows:1fr] min-[600px]:grid-cols-4"
                 data-testid="picture-grid"
                 aria-label={t(
                     "lesson.exercise.picture.grid_label",
