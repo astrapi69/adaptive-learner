@@ -605,6 +605,7 @@ settings:
     test_success: "Kunci berfungsi!"
     test_invalid: "Kunci tidak valid atau kedaluwarsa."
     test_network: "Koneksi gagal. Periksa koneksi internet Anda."
+    test_error: "Pengujian gagal. Penyedia menolak permintaan."
     test_rate_limit: "Batas laju tercapai. Coba lagi nanti."
     test_no_key: "Tidak ada kunci untuk diuji."
     format_invalid: "Format tidak valid."

@@ -602,6 +602,7 @@ settings:
     test_success: "La cle fonctionne !"
     test_invalid: "Cle invalide ou expiree."
     test_network: "Connexion echouee. Verifie ta connexion internet."
+    test_error: "Échec du test. Le fournisseur a rejeté la requête."
     test_rate_limit: "Limite de debit atteinte. Reessaie plus tard."
     test_no_key: "Aucune cle a tester."
     format_invalid: "Format invalide."

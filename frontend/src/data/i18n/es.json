@@ -634,6 +634,7 @@
       "test_success": "¡La clave funciona!",
       "test_invalid": "Clave no válida o caducada.",
       "test_network": "Conexión fallida. Comprueba tu conexión a internet.",
+      "test_error": "La prueba falló. El proveedor rechazó la solicitud.",
       "test_rate_limit": "Límite de uso alcanzado. Inténtalo más tarde.",
       "test_no_key": "No hay clave para probar.",
       "format_invalid": "Formato no válido.",
