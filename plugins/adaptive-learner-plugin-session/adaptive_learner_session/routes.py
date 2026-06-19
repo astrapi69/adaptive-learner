@@ -86,6 +86,7 @@ from .route_helpers import (
     _get_session,
     _is_language_project,
     _latest_profile,
+    _learning_context_for,
     _pick_initial_method,
     _profile_to_dict,
     _project_to_dict,
@@ -191,6 +192,14 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
     analysis_block = _analysis_context_for(db, payload.imported_conversation_id, payload.lang)
     if analysis_block:
         prompt = f"{prompt}\n\n{analysis_block}"
+
+    # #797 — give the AI awareness of the learner's lesson progress
+    # (completed content + scores, the lesson in progress, recent
+    # mistakes) so it builds on real progress instead of answering
+    # generically. Empty for a learner with no lesson activity.
+    learning_block = _learning_context_for(db, project, payload.lang)
+    if learning_block:
+        prompt = f"{prompt}\n\n{learning_block}"
 
     # v0.2.0: persist the system prompt as a real SessionMessage so
     # subsequent /message calls (where the AI orchestrator loads

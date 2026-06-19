@@ -16,13 +16,104 @@ from sqlalchemy.orm import Session
 
 from app.exceptions import NotFoundError
 from app.models import (
+    ElementError,
     ImportedConversation,
     LearningProfile,
     LearningProject,
     LearningSession,
+    LessonProgress,
 )
 
-from .prompts import METHODS, build_analysis_context
+from .prompts import (
+    METHODS,
+    CompletedLesson,
+    InProgressLesson,
+    LearningContext,
+    RecentMistake,
+    build_analysis_context,
+    build_learning_context,
+)
+
+
+def _humanize_lesson_label(set_id: str, lesson_filename: str) -> str:
+    """A readable ``<set> — <lesson>`` label from the cache ids.
+
+    The lesson filename (``01-greetings.json``) is stripped + spaced
+    (``01 greetings``); resolving the authored lesson title would need a
+    content-loader round-trip per lesson, so the id-derived label is used
+    instead — enough for the AI to recognise which lesson is meant.
+    """
+    lesson = lesson_filename.rsplit("/", 1)[-1]
+    if lesson.endswith(".json"):
+        lesson = lesson[: -len(".json")]
+    lesson = lesson.replace("-", " ").replace("_", " ").strip()
+    return f"{set_id} — {lesson}" if lesson else set_id
+
+
+def _learning_context_for(db: Session, project: LearningProject, lang: str) -> str:
+    """Render the learner's lesson progress + recent mistakes as a prompt
+    addendum so a new AI session is aware of completed content, the lesson
+    in progress, and the elements the learner keeps missing (#797).
+
+    Reads only what already exists (``LessonProgress`` + ``ElementError``
+    for the project's user); returns ``""`` for a learner with no lesson
+    activity so the caller can append unconditionally.
+    """
+    rows = db.query(LessonProgress).filter(LessonProgress.user_id == project.user_id).all()
+    completed_rows = sorted(
+        (r for r in rows if r.status == "completed"),
+        key=lambda r: r.completed_at or r.updated_at or "",
+        reverse=True,
+    )
+    completed = [
+        CompletedLesson(
+            label=_humanize_lesson_label(r.set_id, r.lesson_filename),
+            correct=r.score_correct or 0,
+            total=r.score_total or 0,
+        )
+        for r in completed_rows
+    ]
+    active_rows = sorted(
+        (r for r in rows if r.status in ("in_progress", "paused")),
+        key=lambda r: r.updated_at or "",
+        reverse=True,
+    )
+    in_progress = None
+    if active_rows:
+        latest = active_rows[0]
+        in_progress = InProgressLesson(
+            label=_humanize_lesson_label(latest.set_id, latest.lesson_filename),
+            step=(latest.current_step or 0) + 1,
+        )
+    error_rows = sorted(
+        (
+            e
+            for e in db.query(ElementError)
+            .filter(
+                ElementError.user_id == project.user_id,
+                ElementError.mastered.is_(False),
+            )
+            .all()
+        ),
+        key=lambda e: e.last_attempt_at or e.last_error_at or "",
+        reverse=True,
+    )
+    mistakes = [
+        RecentMistake(
+            element=e.element_key,
+            answered=e.user_answer or "",
+            expected=e.correct_answer or "",
+            count=e.error_count or 0,
+        )
+        for e in error_rows
+    ]
+    context = LearningContext(
+        topic=project.topic,
+        completed=completed,
+        in_progress=in_progress,
+        mistakes=mistakes,
+    )
+    return build_learning_context(context, lang)
 
 
 def _get_project(db: Session, project_id: str) -> LearningProject:

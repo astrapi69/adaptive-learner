@@ -19,8 +19,13 @@ from adaptive_learner_session.prompts import (
     METHODS,
     MIN_STEP,
     STEP_RANGE,
+    CompletedLesson,
+    InProgressLesson,
+    LearningContext,
+    RecentMistake,
     _dominant_method,
     build_analysis_context,
+    build_learning_context,
     build_prompt,
 )
 
@@ -280,3 +285,57 @@ def test_analysis_context_skips_missing_fields():
     assert "Weaknesses:" not in out
     # The continue instruction is always present when there is any content.
     assert "Continue the learning session" in out
+
+
+# --- Learning-progress context (#797) --------------------------------------
+
+
+def test_learning_context_empty_returns_blank():
+    assert build_learning_context(None, "en") == ""
+    assert (
+        build_learning_context(
+            LearningContext(topic="X", completed=[], in_progress=None, mistakes=[]),
+            "en",
+        )
+        == ""
+    )
+
+
+def test_learning_context_renders_progress_and_mistakes_en():
+    ctx = LearningContext(
+        topic="French",
+        completed=[CompletedLesson("fr — 01", 8, 10)],
+        in_progress=InProgressLesson("fr — 02", 3),
+        mistakes=[RecentMistake("bonjour", "bonsoir", "bonjour", 2)],
+    )
+    out = build_learning_context(ctx, "en")
+    assert "LEARNING CONTEXT" in out
+    assert "Completed lessons: fr — 01 (8/10)" in out
+    assert "Currently working on: fr — 02, step 3" in out
+    assert 'bonjour (answered "bonsoir", correct "bonjour", 2x)' in out
+    assert 'You are a tutor for "French"' in out
+
+
+def test_learning_context_german_labels():
+    ctx = LearningContext(
+        topic="Franzoesisch",
+        completed=[CompletedLesson("fr — 01", 8, 10)],
+        in_progress=None,
+        mistakes=[],
+    )
+    out = build_learning_context(ctx, "de")
+    assert "LERNKONTEXT" in out
+    assert "Abgeschlossene Lektionen:" in out
+    assert 'Du bist ein Tutor fuer "Franzoesisch"' in out
+
+
+def test_learning_context_caps_lists():
+    ctx = LearningContext(
+        topic="T",
+        completed=[CompletedLesson(f"l{i}", 1, 1) for i in range(20)],
+        in_progress=None,
+        mistakes=[RecentMistake(f"e{i}", "a", "b", 1) for i in range(20)],
+    )
+    out = build_learning_context(ctx, "en")
+    assert "l11" in out and "l12" not in out
+    assert "e7 " in out and "e8 " not in out

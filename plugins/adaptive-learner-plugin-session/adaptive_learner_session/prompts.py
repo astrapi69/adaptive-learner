@@ -805,3 +805,151 @@ def build_analysis_context(analysis: dict[str, Any] | None, lang: str) -> str:
         return ""
     labels = _ANALYSIS_LABELS_DE if _lang_key(lang) == "de" else _ANALYSIS_LABELS_EN
     return "\n".join(_render_analysis_lines(fields, labels))
+
+
+# --- Learning-progress context (lesson awareness, #797) -----------------
+#
+# A session started from the Dashboard / project knows the topic + goal, but
+# not what the learner has actually DONE: which content lessons they
+# completed (and how well), what they are working on now, and which elements
+# they keep getting wrong. Without that, the AI answers generically and even
+# claims it "has no access to previous lessons". This block renders the
+# learner's lesson progress + recent mistakes into a bounded system-prompt
+# addendum so the tutor builds on real progress and targets weaknesses.
+#
+# Bounded by construction (token budget): at most the most recent
+# MAX_COMPLETED completed lessons and MAX_ERRORS recent mistakes, each a
+# single short line.
+
+MAX_COMPLETED_LESSONS = 12
+MAX_RECENT_ERRORS = 8
+
+
+@dataclass(frozen=True)
+class CompletedLesson:
+    """One finished lesson: a display label + its score."""
+
+    label: str
+    correct: int
+    total: int
+
+
+@dataclass(frozen=True)
+class InProgressLesson:
+    """The lesson the learner is currently on (label + 1-based step)."""
+
+    label: str
+    step: int
+
+
+@dataclass(frozen=True)
+class RecentMistake:
+    """One element the learner got wrong, with their answer vs the right one."""
+
+    element: str
+    answered: str
+    expected: str
+    count: int
+
+
+@dataclass(frozen=True)
+class LearningContext:
+    """Structured input for :func:`build_learning_context` — the gatherer
+    (DB / IndexedDB) fills this; the builder only formats it."""
+
+    topic: str
+    completed: list[CompletedLesson]
+    in_progress: InProgressLesson | None
+    mistakes: list[RecentMistake]
+
+
+@dataclass(frozen=True)
+class _LearningLabels:
+    header: str
+    topic: str
+    completed: str
+    none_yet: str
+    in_progress: str  # contains "{label}" + "{step}"
+    mistakes: str
+    mistake_item: str  # contains "{element}", "{answered}", "{expected}", "{count}"
+    closing: str  # contains "{topic}"
+
+
+_LEARNING_LABELS_EN = _LearningLabels(
+    header=("LEARNING CONTEXT — use it, and do not re-teach what the learner already knows:"),
+    topic="Topic: ",
+    completed="Completed lessons: ",
+    none_yet="none yet",
+    in_progress="Currently working on: {label}, step {step}",
+    mistakes="Recent mistakes to focus on: ",
+    mistake_item='{element} (answered "{answered}", correct "{expected}", {count}x)',
+    closing=(
+        'You are a tutor for "{topic}". Build on the progress above, focus '
+        "on the learner's weaknesses and the next steps, and do NOT repeat "
+        "what they have already mastered."
+    ),
+)
+
+_LEARNING_LABELS_DE = _LearningLabels(
+    header=("LERNKONTEXT — nutze ihn und wiederhole NICHT, was der Lerner schon kann:"),
+    topic="Thema: ",
+    completed="Abgeschlossene Lektionen: ",
+    none_yet="noch keine",
+    in_progress="Aktuell in Bearbeitung: {label}, Schritt {step}",
+    mistakes="Aktuelle Fehler zum Fokussieren: ",
+    mistake_item='{element} (geantwortet "{answered}", richtig "{expected}", {count}x)',
+    closing=(
+        'Du bist ein Tutor fuer "{topic}". Knuepfe an den bisherigen '
+        "Fortschritt an, fokussiere auf die Schwaechen und die naechsten "
+        "Schritte und wiederhole NICHT, was der Lerner schon beherrscht."
+    ),
+)
+
+
+def _format_completed(lessons: list[CompletedLesson]) -> str:
+    return "; ".join(f"{lesson.label} ({lesson.correct}/{lesson.total})" for lesson in lessons)
+
+
+def _format_mistakes(labels: _LearningLabels, mistakes: list[RecentMistake]) -> str:
+    return "; ".join(
+        labels.mistake_item.format(
+            element=mistake.element,
+            answered=mistake.answered,
+            expected=mistake.expected,
+            count=mistake.count,
+        )
+        for mistake in mistakes
+    )
+
+
+def build_learning_context(context: LearningContext | None, lang: str) -> str:
+    """Render lesson progress + recent mistakes into a prompt addendum.
+
+    Returns ``""`` when the learner has no lesson activity at all (no
+    completed lesson, nothing in progress, no recorded mistakes), so the
+    caller can append unconditionally without changing behaviour for a
+    brand-new learner. Lists are capped to the most recent
+    :data:`MAX_COMPLETED_LESSONS` / :data:`MAX_RECENT_ERRORS` entries to
+    keep the block within the token budget.
+    """
+    if context is None:
+        return ""
+    completed = context.completed[:MAX_COMPLETED_LESSONS]
+    mistakes = context.mistakes[:MAX_RECENT_ERRORS]
+    if not completed and context.in_progress is None and not mistakes:
+        return ""
+    labels = _LEARNING_LABELS_DE if _lang_key(lang) == "de" else _LEARNING_LABELS_EN
+    lines = [labels.header, f"{labels.topic}{context.topic}"]
+    lines.append(
+        f"{labels.completed}{_format_completed(completed) if completed else labels.none_yet}"
+    )
+    if context.in_progress is not None:
+        lines.append(
+            labels.in_progress.format(
+                label=context.in_progress.label, step=context.in_progress.step
+            )
+        )
+    if mistakes:
+        lines.append(f"{labels.mistakes}{_format_mistakes(labels, mistakes)}")
+    lines.append(labels.closing.format(topic=context.topic))
+    return "\n".join(lines)
