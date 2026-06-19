@@ -918,6 +918,7 @@
     "restored_inserted": "挿入: {{n}}",
     "restored_updated": "更新: {{n}}",
     "restored_skipped": "スキップ: {{n}}",
+    "api_keys_skipped": "APIキーをインポートできませんでした。設定 > 連携 で再入力してください。",
     "restored_errors": "エラー: {{n}}",
     "col_inserted": "挿入",
     "col_updated": "更新",

@@ -918,6 +918,7 @@
     "restored_inserted": "Eklenen: {{n}}",
     "restored_updated": "Güncellenen: {{n}}",
     "restored_skipped": "Atlanan: {{n}}",
+    "api_keys_skipped": "API anahtarları içe aktarılamadı. Lütfen bunları Ayarlar > Entegrasyonlar bölümünden yeniden girin.",
     "restored_errors": "Hatalar: {{n}}",
     "col_inserted": "Ekl.",
     "col_updated": "Günc.",

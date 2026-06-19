@@ -858,6 +858,7 @@ backup:
   restored_inserted: 'Inserted: {{n}}'
   restored_updated: 'Updated: {{n}}'
   restored_skipped: 'Skipped: {{n}}'
+  api_keys_skipped: "No se pudieron importar las claves de API. Vuelve a introducirlas en Ajustes > Integraciones."
   restored_errors: 'Errors: {{n}}'
   col_inserted: 'Ins.'
   col_updated: 'Act.'

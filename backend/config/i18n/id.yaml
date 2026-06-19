@@ -858,6 +858,7 @@ backup:
   restored_inserted: 'Disisipkan: {{n}}'
   restored_updated: 'Diperbarui: {{n}}'
   restored_skipped: 'Dilewati: {{n}}'
+  api_keys_skipped: "Kunci API tidak dapat diimpor. Silakan masukkan kembali di Pengaturan > Integrasi."
   restored_errors: 'Kesalahan: {{n}}'
   col_inserted: 'Sisip'
   col_updated: 'Perb.'

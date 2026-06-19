@@ -858,6 +858,7 @@ backup:
   restored_inserted: 'Eingefügt: {{n}}'
   restored_updated: 'Aktualisiert: {{n}}'
   restored_skipped: 'Übersprungen: {{n}}'
+  api_keys_skipped: "API-Schlüssel konnten nicht importiert werden. Bitte gib sie unter Einstellungen > Integrationen erneut ein."
   restored_errors: 'Fehler: {{n}}'
   col_inserted: 'Eingef.'
   col_updated: 'Aktual.'

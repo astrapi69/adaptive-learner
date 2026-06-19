@@ -767,6 +767,10 @@ export interface RestoreSummary {
     inserted: number;
     updated: number;
     skipped: number;
+    /** API-key rollback-cache rows that could not be imported (no usable
+     *  key in the backup, #787). Non-zero -> tell the user to re-enter
+     *  their API keys in Settings. Absent for older backends. */
+    api_keys_skipped?: number;
     errors: string[];
     tables: Record<string, RestoreTableSummary>;
     /** Content-set cache restore counts (#130). Absent for pre-1.3.0

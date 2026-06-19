@@ -858,6 +858,7 @@ backup:
   restored_inserted: '삽입: {{n}}'
   restored_updated: '업데이트: {{n}}'
   restored_skipped: '건너뜀: {{n}}'
+  api_keys_skipped: "API 키를 가져올 수 없습니다. 설정 > 통합에서 다시 입력하세요."
   restored_errors: '오류: {{n}}'
   col_inserted: '삽입'
   col_updated: '갱신'
