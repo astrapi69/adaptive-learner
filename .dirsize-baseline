@@ -1,0 +1,11 @@
+# Directory-size baseline (#809) — flat SOURCE-file counts > 15 that are
+# tolerated until migrated (ratchet: may only shrink, never grow; a NEW
+# oversized directory fails `check-directory-size.sh --gate`).
+# Remaining god-folders after the shared/ + hooks/ + pages/ migrations:
+frontend/src/components
+frontend/src/components/content
+frontend/src/components/lesson
+frontend/src/lib
+frontend/src/lib/content
+frontend/src/storage
+frontend/src/storage/types
