@@ -1984,7 +1984,7 @@
       "target_lang_label": "Language learned",
       "source_lang_label": "Your language",
       "level_label": "Level",
-      "not_enough_data": "Not enough vocabulary for a full lesson (need at least {min} exercises). Import a longer chat for more practice material.",
+      "not_enough_data": "Few exercises — at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).",
       "same_language": "The language learned and your language must be different.",
       "same_language_hint": "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
       "split_notice": "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each).",

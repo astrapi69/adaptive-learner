@@ -4,6 +4,7 @@ import {
   cefrFromAnalysisLevel,
   detectTargetLanguage,
   generateLessonFromAnalysis,
+  isSaveableLesson,
   isShareableLesson,
   summarizeGeneratedLesson,
   validateGeneratedLesson,
@@ -306,6 +307,31 @@ describe("EXP-018 fix: language pair + CEFR + shareability helpers", () => {
         estimatedMinutes: 8,
         vocabularyCount: 5,
         theoryOnly: false,
+      }),
+    ).toBe(false);
+  });
+
+  it("isSaveableLesson accepts a theory-only lesson with >= 1 step (#795)", () => {
+    // One theory step, zero exercises → not shareable, but saveable.
+    const theoryOnly = {
+      theorySteps: 1,
+      exercises: 0,
+      exerciseTypeCounts: {},
+      estimatedMinutes: 1,
+      vocabularyCount: 0,
+      theoryOnly: true,
+    };
+    expect(isShareableLesson(theoryOnly)).toBe(false);
+    expect(isSaveableLesson(theoryOnly)).toBe(true);
+    // A lesson with no steps at all is not saveable.
+    expect(
+      isSaveableLesson({
+        theorySteps: 0,
+        exercises: 0,
+        exerciseTypeCounts: {},
+        estimatedMinutes: 0,
+        vocabularyCount: 0,
+        theoryOnly: true,
       }),
     ).toBe(false);
   });

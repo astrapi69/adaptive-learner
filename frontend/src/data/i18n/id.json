@@ -1984,7 +1984,7 @@
       "target_lang_label": "Bahasa yang dipelajari",
       "source_lang_label": "Bahasamu",
       "level_label": "Tingkat",
-      "not_enough_data": "Kosakata tidak cukup untuk pelajaran lengkap (perlu setidaknya {min} latihan). Impor obrolan yang lebih panjang untuk materi latihan tambahan.",
+      "not_enough_data": "Sedikit latihan — minimal {min} disarankan untuk pelajaran bahasa lengkap. Kamu tetap bisa menyimpannya (misalnya sebagai pelajaran teori saja).",
       "same_language": "Bahasa yang dipelajari dan bahasamu harus berbeda.",
       "same_language_hint": "Bahasa yang dipelajari dan bahasamu sama — tidak masalah untuk pelajaran tata bahasa atau bahasa ibu. Saat dibagikan, pelajaran ini akan masuk ke cabang bahasa-sama pada pohon konten.",
       "split_notice": "Pelajaran ini memiliki {steps} langkah dan akan disimpan sebagai {parts} bagian (maksimal {max} langkah per bagian).",

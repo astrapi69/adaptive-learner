@@ -6,6 +6,7 @@ import {
   cefrFromAnalysisLevel,
   detectTargetLanguage,
   generateLessonFromAnalysis,
+  isSaveableLesson,
   isShareableLesson,
   MIN_SHAREABLE_EXERCISES,
   slugify,
@@ -193,17 +194,18 @@ export default function SaveOfflineLessonModal({
     .replace("{theory}", String(summary.theorySteps))
     .replace("{minutes}", String(summary.estimatedMinutes));
 
-  // EXP-018 follow-up bugfix: the Save-as-Lesson flow must NEVER
-  // produce an unshareable lesson — gate the Save button on the same
-  // minimums the sharing validator enforces (>= 5 exercises across
-  // >= 2 types). A same-language pair is NOT a hard block: a grammar
-  // or native-language study lesson (German grammar for German
-  // speakers) is a legitimate offline lesson. It only affects the
-  // language-pair tree placement when shared, so we surface it as an
-  // informational hint, not a gate.
+  // #795: local saving and content-repo contribution are separate
+  // concerns. A lesson is SAVEABLE as long as it has >= 1 step of any
+  // type — a theory-only knowledge lesson (grammar, technical topics,
+  // AI explanations) is legitimate offline content. The stricter
+  // SHAREABLE minimum (>= 5 exercises across >= 2 types) only governs
+  // contributing to the content repo, so a low-exercise lesson surfaces
+  // an informational hint here but never blocks Save. A same-language
+  // pair is likewise a hint, not a gate.
   const shareable = isShareableLesson(summary);
+  const saveable = isSaveableLesson(summary);
   const sameLanguage = sourceLang === targetLang;
-  const canSave = shareable && title.trim().length > 0;
+  const canSave = saveable && title.trim().length > 0;
 
   return (
     <div className="modal-overlay" data-testid="save-offline-lesson-modal">
@@ -304,7 +306,7 @@ export default function SaveOfflineLessonModal({
           >
             {t(
               "content.save_lesson.not_enough_data",
-              "Not enough vocabulary for a full lesson (need at least {min} exercises). Import a longer chat for more practice material.",
+              "Few exercises — at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).",
             ).replace("{min}", String(MIN_SHAREABLE_EXERCISES))}
           </p>
         )}

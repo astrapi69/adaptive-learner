@@ -1830,7 +1830,7 @@ content:
     target_lang_label: Idioma aprendido
     source_lang_label: Seu idioma
     level_label: Nível
-    not_enough_data: Vocabulário insuficiente para uma lição completa (são necessários pelo menos {min} exercícios). Importe uma conversa mais longa para mais material.
+    not_enough_data: Poucos exercícios — recomenda-se pelo menos {min} para uma lição de idioma completa. Você ainda pode salvá-la (por exemplo, como lição apenas de teoria).
     same_language: O idioma aprendido e o seu idioma devem ser diferentes.
     same_language_hint: "O idioma aprendido e seu idioma são os mesmos — ótimo para uma aula de gramática ou no idioma nativo. Ao compartilhar, aparece no ramo do mesmo idioma da árvore de conteúdo."
     split_notice: "Esta aula tem {steps} etapas e será salva em {parts} partes (máx. {max} etapas cada)."

@@ -200,7 +200,7 @@ describe("SaveOfflineLessonModal", () => {
     expect(arg.title_native).toBeTruthy();
   });
 
-  it("blocks saving when vocabulary is too small for a shareable lesson", () => {
+  it("shows a non-blocking hint when there are too few exercises to share (#795)", () => {
     renderModal({
       analysis: {
         topic: "French grammar",
@@ -208,12 +208,37 @@ describe("SaveOfflineLessonModal", () => {
         vocabulary: [{ word: "a", translation: "b" }],
       },
     });
-    // Not enough data → warning shown AND the Save button disabled,
-    // so the flow can't produce an unshareable lesson (EXP-018 fix).
+    // Too few exercises for a shareable lesson → the hint is shown,
+    // but it no longer blocks Save: the lesson still has theory steps,
+    // so it is a legitimate offline knowledge lesson.
     expect(
       screen.getByTestId("save-lesson-not-enough-data"),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("save-lesson-save")).toBeDisabled();
+    expect(screen.getByTestId("save-lesson-save")).not.toBeDisabled();
+  });
+
+  it("saves a theory-only lesson (no exercises, #795)", async () => {
+    // A grammar / AI-explanation chat with no vocabulary produces a
+    // theory-only lesson. It must still be saveable — the Save button
+    // is enabled as long as there is at least one step.
+    saveUserSet.mockResolvedValue({});
+    renderModal({
+      analysis: {
+        topic: "German cases explained",
+        summary: "Nominative, accusative, dative, genitive.",
+        // no vocabulary -> theory-only lesson
+      },
+    });
+    const saveBtn = screen.getByTestId("save-lesson-save");
+    expect(saveBtn).not.toBeDisabled();
+    await act(async () => {
+      fireEvent.click(saveBtn);
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as {
+      lessons: Array<{ steps: unknown[] }>;
+    };
+    expect(arg.lessons.length).toBeGreaterThanOrEqual(1);
   });
 
   it("allows saving a same-language lesson (grammar / native study)", async () => {
