@@ -741,6 +741,15 @@
       "productive_focus": "産出",
       "balanced": "バランス"
     },
+    "matching_resolve": {
+      "title": "解答アニメーション",
+      "hint": "確認後に「解答を表示」を押したとき、マッチング演習が正しいペアをどのように表示するか。",
+      "label": "効果",
+      "slide": "スライド",
+      "color": "色",
+      "connect": "線でつなぐ",
+      "stack": "重ねる"
+    },
     "paused_retention": {
       "title": "一時停止中のレッスンの保持期間",
       "hint": "この期間より古い一時停止中のレッスンは自動的に放棄されます。年齢に関係なく、最大10件の一時停止中のレッスンが保持されます。",
@@ -1744,7 +1753,9 @@
         "right_label_knowledge": "定義",
         "instruction_knowledge": "各用語を定義と一致させてください。",
         "instructions_knowledge": "左の項目を選んでから、右の対応する項目を選んでください。",
-        "selected_sr": "選択中: {label}"
+        "selected_sr": "選択中: {label}",
+        "resolve": "解答を表示",
+        "resolve_announce": "解答を表示しました。{total} 組中 {correct} 組が正解でした。"
       },
       "picture": {
         "submit": "答えを確認",

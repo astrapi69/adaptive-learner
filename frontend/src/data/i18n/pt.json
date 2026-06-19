@@ -741,6 +741,15 @@
       "productive_focus": "Produzir",
       "balanced": "Equilibrado"
     },
+    "matching_resolve": {
+      "title": "Animação de resolução",
+      "hint": "Como o exercício de correspondência revela os pares corretos ao tocar em 'Resolver' após verificar.",
+      "label": "Efeito",
+      "slide": "Deslizar",
+      "color": "Cor",
+      "connect": "Conectar",
+      "stack": "Empilhar"
+    },
     "paused_retention": {
       "title": "Retenção de aulas pausadas",
       "hint": "As aulas pausadas mais antigas que este período são automaticamente abandonadas. Até 10 aulas pausadas são mantidas independentemente da idade.",
@@ -1744,7 +1753,9 @@
         "right_label_knowledge": "Definição",
         "instruction_knowledge": "Associe cada termo à sua definição.",
         "instructions_knowledge": "Selecione um item à esquerda e depois o seu correspondente à direita.",
-        "selected_sr": "Selecionado: {label}"
+        "selected_sr": "Selecionado: {label}",
+        "resolve": "Resolver",
+        "resolve_announce": "Solução exibida. {correct} de {total} pares estavam corretos."
       },
       "picture": {
         "submit": "Verificar resposta",

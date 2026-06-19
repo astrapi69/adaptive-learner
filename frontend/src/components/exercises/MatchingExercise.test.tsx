@@ -16,7 +16,7 @@ import "@testing-library/jest-dom/vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {fireEvent, render, screen} from "@testing-library/react";
-import {beforeEach, describe, expect, it, vi} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import MatchingExercise, {
     MATCHING_PAIR_COLORS,
@@ -661,6 +661,119 @@ describe("MatchingExercise: bidirectional selection (#507)", () => {
         expect(onComplete).toHaveBeenCalledWith(
             expect.objectContaining({ correct: 3, total: 3 }),
         );
+    });
+});
+
+describe("MatchingExercise: animated pair resolution (#824)", () => {
+    afterEach(() => {
+        localStorage.clear();
+    });
+
+    function solveAll() {
+        for (let i = 0; i < 3; i++) {
+            fireEvent.click(screen.getByTestId(`matching-left-${i}`));
+            fireEvent.click(screen.getByTestId(`matching-right-${i}`));
+        }
+    }
+
+    it("hides the Auflösen button until the answer is checked", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(
+            screen.queryByTestId("matching-resolve"),
+        ).not.toBeInTheDocument();
+        solveAll();
+        // Still hidden before pressing Check.
+        expect(
+            screen.queryByTestId("matching-resolve"),
+        ).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(screen.getByTestId("matching-resolve")).toBeInTheDocument();
+    });
+
+    it("reveals the resolution view on click and hides the columns", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        solveAll();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(screen.queryByTestId("matching-resolution")).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        const resolution = screen.getByTestId("matching-resolution");
+        // Default effect is "slide".
+        expect(resolution).toHaveAttribute("data-effect", "slide");
+        // The interactive columns are gone; the resolve button too.
+        expect(screen.queryByTestId("matching-left")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("matching-resolve")).not.toBeInTheDocument();
+    });
+
+    it("uses the configured effect from localStorage", () => {
+        localStorage.setItem(
+            "adaptive-learner.matching.resolve_effect",
+            "stack",
+        );
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        solveAll();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        expect(screen.getByTestId("matching-resolution")).toHaveAttribute(
+            "data-effect",
+            "stack",
+        );
+        // Stack shows one paired row per pair, in authored order.
+        expect(screen.getByTestId("matching-resolved-row-0")).toHaveTextContent(
+            "Bonjour",
+        );
+    });
+
+    it("announces the original correct count after resolving", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        // 0→1 (wrong), 1→0 (wrong), 2→2 (correct): 1/3 correct.
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        const status = screen.getByTestId("matching-resolve-status");
+        expect(status).toHaveTextContent("1");
+        expect(status).toHaveTextContent("3");
+    });
+
+    it("'Try again' clears the resolved view back to the columns", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        solveAll();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        expect(screen.getByTestId("matching-resolution")).toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("matching-retry"));
+        expect(
+            screen.queryByTestId("matching-resolution"),
+        ).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-left")).toBeInTheDocument();
+    });
+
+    it("skips the animation under prefers-reduced-motion", () => {
+        const mql = {
+            matches: true,
+            media: "(prefers-reduced-motion: reduce)",
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+            addListener: vi.fn(),
+            removeListener: vi.fn(),
+            onchange: null,
+            dispatchEvent: vi.fn(),
+        } as unknown as MediaQueryList;
+        const spy = vi
+            .spyOn(window, "matchMedia")
+            .mockImplementation(() => mql);
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        solveAll();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        // The resolution shows immediately with no animation utility.
+        const tile = screen.getByTestId("matching-resolved-b-0");
+        expect(tile.className).not.toContain("animate-[matching-resolve");
+        spy.mockRestore();
     });
 });
 

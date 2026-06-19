@@ -705,6 +705,14 @@ settings:
     receptive_first: Reconocer primero
     productive_focus: Producir
     balanced: Equilibrado
+  matching_resolve:
+    title: "Animación al resolver"
+    hint: "Cómo el ejercicio de emparejamiento muestra los pares correctos al pulsar 'Resolver' tras comprobar."
+    label: "Efecto"
+    slide: "Deslizar"
+    color: "Color"
+    connect: "Conectar"
+    stack: "Apilar"
   paused_retention:
     title: Retención de lecciones pausadas
     hint: "Las lecciones pausadas más antiguas que este período se abandonan automáticamente. Se conservan hasta 10 lecciones pausadas independientemente de su antigüedad."
@@ -1622,6 +1630,8 @@ lesson:
       instruction_knowledge: "Relaciona cada término con su definición."
       instructions_knowledge: "Selecciona un elemento a la izquierda y luego su correspondencia a la derecha."
       selected_sr: "Seleccionado: {label}"
+      resolve: "Resolver"
+      resolve_announce: "Solución mostrada. {correct} de {total} pares eran correctos."
     picture:
       submit: "Comprobar respuesta"
       retry: "Intentar de nuevo"

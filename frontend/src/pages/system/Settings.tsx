@@ -15,6 +15,7 @@ import GitHubIntegrationSection from "../../components/GitHubIntegrationSection"
 import FeedbackIntensityControl from "../../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../../components/GamificationSettingsSection";
 import DirectionStrategyControl from "../../components/DirectionStrategyControl";
+import MatchingResolveControl from "../../components/MatchingResolveControl";
 import SrsTransparencySection from "../../components/SrsTransparencySection";
 import DailyRemindersControl from "../../components/DailyRemindersControl";
 import HintSettingsControl from "../../components/HintSettingsControl";
@@ -640,6 +641,7 @@ export default function Settings() {
         </section>
         <MissionSettingsControl />
         <DirectionStrategyControl />
+        <MatchingResolveControl />
         <HintSettingsControl />
         <ReviewSettingsControl />
         <SrsTransparencySection />
