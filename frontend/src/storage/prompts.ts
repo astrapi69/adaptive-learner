@@ -240,3 +240,137 @@ export function buildAnalysisContext(
         langKey(lang) === "de" ? ANALYSIS_LABELS_DE : ANALYSIS_LABELS_EN;
     return renderAnalysisLines(fields, labels).join("\n");
 }
+
+
+// --- Learning-progress context (lesson awareness, #797) -----------------
+//
+// Dexie-mode mirror of the backend ``build_learning_context``. Renders the
+// learner's lesson progress + recent mistakes into a bounded system-prompt
+// addendum so a new AI session is aware of completed content, the lesson in
+// progress, and the elements the learner keeps missing — instead of
+// answering generically. Output is byte-identical to the Python builder for
+// the same input (pinned by a cross-language golden).
+
+/** Cap the most-recent completed lessons folded into the prompt. */
+export const MAX_COMPLETED_LESSONS = 12;
+/** Cap the most-recent mistakes folded into the prompt. */
+export const MAX_RECENT_ERRORS = 8;
+
+/** One finished lesson: a display label + its score. */
+export interface CompletedLesson {
+    label: string;
+    correct: number;
+    total: number;
+}
+
+/** The lesson the learner is currently on (label + 1-based step). */
+export interface InProgressLesson {
+    label: string;
+    step: number;
+}
+
+/** One element the learner got wrong (their answer vs the right one). */
+export interface RecentMistake {
+    element: string;
+    answered: string;
+    expected: string;
+    count: number;
+}
+
+/** Structured input for {@link buildLearningContext} — the gatherer
+ *  (IndexedDB) fills this; the builder only formats it. */
+export interface LearningContext {
+    topic: string;
+    completed: CompletedLesson[];
+    inProgress: InProgressLesson | null;
+    mistakes: RecentMistake[];
+}
+
+interface LearningLabels {
+    header: string;
+    topic: string;
+    completed: string;
+    noneYet: string;
+    inProgress: (label: string, step: number) => string;
+    mistakes: string;
+    mistakeItem: (m: RecentMistake) => string;
+    closing: (topic: string) => string;
+}
+
+const LEARNING_LABELS_EN: LearningLabels = {
+    header:
+        "LEARNING CONTEXT — use it, and do not re-teach what the learner " +
+        "already knows:",
+    topic: "Topic: ",
+    completed: "Completed lessons: ",
+    noneYet: "none yet",
+    inProgress: (label, step) => `Currently working on: ${label}, step ${step}`,
+    mistakes: "Recent mistakes to focus on: ",
+    mistakeItem: (m) =>
+        `${m.element} (answered "${m.answered}", correct "${m.expected}", ${m.count}x)`,
+    closing: (topic) =>
+        `You are a tutor for "${topic}". Build on the progress above, focus ` +
+        "on the learner's weaknesses and the next steps, and do NOT repeat " +
+        "what they have already mastered.",
+};
+
+const LEARNING_LABELS_DE: LearningLabels = {
+    header:
+        "LERNKONTEXT — nutze ihn und wiederhole NICHT, was der Lerner schon " +
+        "kann:",
+    topic: "Thema: ",
+    completed: "Abgeschlossene Lektionen: ",
+    noneYet: "noch keine",
+    inProgress: (label, step) =>
+        `Aktuell in Bearbeitung: ${label}, Schritt ${step}`,
+    mistakes: "Aktuelle Fehler zum Fokussieren: ",
+    mistakeItem: (m) =>
+        `${m.element} (geantwortet "${m.answered}", richtig "${m.expected}", ${m.count}x)`,
+    closing: (topic) =>
+        `Du bist ein Tutor fuer "${topic}". Knuepfe an den bisherigen ` +
+        "Fortschritt an, fokussiere auf die Schwaechen und die naechsten " +
+        "Schritte und wiederhole NICHT, was der Lerner schon beherrscht.",
+};
+
+function formatCompleted(lessons: CompletedLesson[]): string {
+    return lessons
+        .map((lesson) => `${lesson.label} (${lesson.correct}/${lesson.total})`)
+        .join("; ");
+}
+
+/**
+ * Render lesson progress + recent mistakes into a system-prompt addendum.
+ * Returns "" when the learner has no lesson activity at all (no completed
+ * lesson, nothing in progress, no recorded mistakes), so callers can append
+ * unconditionally. Lists are capped to the most recent
+ * {@link MAX_COMPLETED_LESSONS} / {@link MAX_RECENT_ERRORS} entries to keep
+ * the block within the token budget.
+ *
+ * @param context - Structured progress data, or null.
+ * @param lang - "de…" -> German, else English.
+ * @returns The prompt addendum, or "" when there's nothing to add.
+ */
+export function buildLearningContext(
+    context: LearningContext | null,
+    lang: string,
+): string {
+    if (!context) return "";
+    const completed = context.completed.slice(0, MAX_COMPLETED_LESSONS);
+    const mistakes = context.mistakes.slice(0, MAX_RECENT_ERRORS);
+    if (completed.length === 0 && context.inProgress === null && mistakes.length === 0) {
+        return "";
+    }
+    const labels = langKey(lang) === "de" ? LEARNING_LABELS_DE : LEARNING_LABELS_EN;
+    const lines = [labels.header, `${labels.topic}${context.topic}`];
+    lines.push(
+        `${labels.completed}${completed.length ? formatCompleted(completed) : labels.noneYet}`,
+    );
+    if (context.inProgress !== null) {
+        lines.push(labels.inProgress(context.inProgress.label, context.inProgress.step));
+    }
+    if (mistakes.length) {
+        lines.push(`${labels.mistakes}${mistakes.map(labels.mistakeItem).join("; ")}`);
+    }
+    lines.push(labels.closing(context.topic));
+    return lines.join("\n");
+}
