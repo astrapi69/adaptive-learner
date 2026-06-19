@@ -42,10 +42,13 @@ const FORMAT_RULES: Record<AIProvider, FormatRule> = {
   gemini: { prefix: null, minLength: 20, reject: ["sk-"] },
 };
 
-/** Characters an API key is built from: alphanumerics plus ``-`` and
- *  ``_``. Rejects a key with spaces / quotes / stray punctuation from
- *  a bad copy-paste (covers every current provider's key alphabet). */
-const KEY_CHARSET = /^[A-Za-z0-9_-]+$/;
+/** A real API key never contains whitespace; an internal space / tab /
+ *  newline is the tell-tale of a corrupted copy-paste. We reject on
+ *  whitespace ONLY and deliberately do NOT use a positive character
+ *  allowlist: providers change their key alphabets over time (e.g. newer
+ *  Google keys carry characters outside ``[A-Za-z0-9_-]``), and a positive
+ *  allowlist silently rejects valid keys — the exact #793 regression. */
+const KEY_WHITESPACE = /\s/;
 
 /**
  * Short, human-readable hint per provider, used as the English
@@ -71,7 +74,7 @@ export function isValidApiKeyFormat(
   if (trimmed.length === 0) return false;
   const rule = FORMAT_RULES[provider];
   if (trimmed.length < rule.minLength) return false;
-  if (!KEY_CHARSET.test(trimmed)) return false;
+  if (KEY_WHITESPACE.test(trimmed)) return false;
   if (rule.prefix !== null && !trimmed.startsWith(rule.prefix)) return false;
   if (rule.reject?.some((bad) => trimmed.startsWith(bad))) return false;
   return true;
