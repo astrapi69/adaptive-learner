@@ -335,9 +335,7 @@ def mask_secret(secret: str | None) -> str | None:
     return f"{trimmed[:4]}…{trimmed[-4:]}"
 
 
-def resolve_key_preview(
-    repo: SettingsRepository, user_id: str, provider: AIProvider
-) -> str | None:
+def resolve_key_preview(repo: SettingsRepository, user_id: str, provider: AIProvider) -> str | None:
     """Resolve the active key for ``provider`` and return its masked preview.
 
     Uses the same precedence as :func:`resolve_api_key` (env > secrets.yaml

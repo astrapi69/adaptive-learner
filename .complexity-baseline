@@ -18,4 +18,6 @@ frontend/src/components/exercises/WordTilesExercise.tsx 21
 # availability + AI-checked, #683/#687/#688). Behaviour-preserving decomposition
 # of the 850-line page is deferred (burn-down follow-up), same ratchet approach
 # as the #647->#656 FreeText/WordTiles entries above. Must only shrink.
-frontend/src/pages/Content.tsx 22
+# Path updated for the #809/#811 directory regrouping (pages/ -> pages/content/);
+# worst cc shrank 22 -> 21 in the move, ratcheted down to match.
+frontend/src/pages/content/Content.tsx 21

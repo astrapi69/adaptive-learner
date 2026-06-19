@@ -55,7 +55,12 @@ def _build_settings_out(repo: SettingsRepository, settings) -> UserSettingsOut:
     # has_<provider>_key flags + source must come from the resolver,
     # not just the DB column (which model_validate read).
     for provider, source_attr, has_attr, preview_attr in (
-        (AIProvider.ANTHROPIC, "key_source_anthropic", "has_anthropic_key", "key_preview_anthropic"),
+        (
+            AIProvider.ANTHROPIC,
+            "key_source_anthropic",
+            "has_anthropic_key",
+            "key_preview_anthropic",
+        ),
         (AIProvider.OPENAI, "key_source_openai", "has_openai_key", "key_preview_openai"),
         (AIProvider.GEMINI, "key_source_gemini", "has_gemini_key", "key_preview_gemini"),
     ):
@@ -64,7 +69,11 @@ def _build_settings_out(repo: SettingsRepository, settings) -> UserSettingsOut:
         setattr(out, has_attr, source != ApiKeySource.NONE)
         # #810 — masked preview so the Settings provider overview can show
         # WHICH key is stored. Never exposes the decrypted value.
-        setattr(out, preview_attr, settings_service.resolve_key_preview(repo, settings.user_id, provider))
+        setattr(
+            out,
+            preview_attr,
+            settings_service.resolve_key_preview(repo, settings.user_id, provider),
+        )
     return out
 
 
