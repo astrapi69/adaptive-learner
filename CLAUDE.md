@@ -9,7 +9,26 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.88.0** (feature release -
+- **Current state:** **v1.89.0** (feature release -
+  **Configured-providers overview** - a Settings panel lists the AI providers
+  with a masked key preview (#812); **`.alb` localStorage snapshot** - the ZIP
+  backup export/import now carries the localStorage snapshot too (#792);
+  **browser-direct Anki AI extraction** - flashcard extraction works in Dexie
+  mode without a backend (#808); **theory-only offline lessons** can now be
+  saved (#796). Changed: AI chat analysis runs in the active UI language (#806);
+  the API-key live test hits the models-list endpoint instead of a generation
+  call (#800); Gemini/OpenAI key-format validation relaxed (#794/#782); the AI
+  gets lesson-progress context on session start (#798); **directory
+  restructuring** - oversized directories grouped by concern with a god-folder
+  CI guard (max files/dir) (#811). Fixes: native `confirm()` replaced with an
+  app confirmation modal (#784); button-styled set/learning-path links carry
+  `data-slot` so labels stay visible (#780); Dexie-mode `api_key_backups`
+  no-longer crashes an API-mode import (#788); `.alb` files accepted at every
+  backup-import surface (#786); per-level statistics labels stack above the bar
+  (#805); ContentPage complexity gate restored (#790). Deps: cryptography 49 +
+  backend/frontend minor-patch groups (#776/#777/#778). No schema/API/data
+  change.)
+  v1.88.0 = (feature release -
   **QR-code app sharing** - a "Share the app" entry in the About tab shows a
   scannable QR code of the public app URL (copy / download-PNG / native
   share), backed by a reusable `shared/QrCodeModal` that reuses the bundled
