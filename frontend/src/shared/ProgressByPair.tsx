@@ -85,24 +85,29 @@ export default function ProgressByPair({
                     {pair.levels.map((level) => (
                         <div
                             key={level.level}
-                            className="flex items-center gap-3"
+                            className="flex flex-col gap-1"
                         >
-                            <span className="w-10 shrink-0 text-sm text-fg-secondary">
-                                {level.level}
-                            </span>
+                            <div className="flex items-baseline justify-between gap-2">
+                                <span
+                                    className="min-w-0 break-words text-sm font-medium text-fg-secondary"
+                                    title={level.level}
+                                >
+                                    {level.level}
+                                </span>
+                                <span className="shrink-0 text-sm text-fg-muted">
+                                    {level.percent}%
+                                </span>
+                            </div>
                             <ProgressBar
                                 valueNow={level.percent}
                                 ariaLabel={level.barLabel}
-                                className="relative h-3 flex-1 overflow-hidden rounded-full bg-bg-secondary"
+                                className="relative h-3 w-full overflow-hidden rounded-full bg-bg-secondary"
                                 fillClassName="h-full rounded-full bg-accent"
                                 labelClassName="sr-only"
                                 testId={`pair-${pair.name}-level-${level.level}`}
                             >
                                 {level.percent}%
                             </ProgressBar>
-                            <span className="w-10 shrink-0 text-right text-sm text-fg-muted">
-                                {level.percent}%
-                            </span>
                         </div>
                     ))}
                 </div>

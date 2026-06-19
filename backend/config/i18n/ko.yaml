@@ -605,6 +605,7 @@ settings:
     test_success: "키가 작동합니다!"
     test_invalid: "키가 유효하지 않거나 만료되었습니다."
     test_network: "연결에 실패했습니다. 인터넷 연결을 확인하세요."
+    test_error: "테스트에 실패했습니다. 제공업체가 요청을 거부했습니다."
     test_rate_limit: "요청 한도에 도달했습니다. 나중에 다시 시도하세요."
     test_no_key: "테스트할 키가 없습니다."
     format_invalid: "형식이 유효하지 않습니다."

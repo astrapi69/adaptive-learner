@@ -602,6 +602,7 @@ settings:
     test_success: "Anahtar çalışıyor!"
     test_invalid: "Anahtar geçersiz veya süresi dolmuş."
     test_network: "Bağlantı başarısız. İnternet bağlantını kontrol et."
+    test_error: "Test başarısız oldu. Sağlayıcı isteği reddetti."
     test_rate_limit: "Hız sınırına ulaşıldı. Daha sonra dene."
     test_no_key: "Test edilecek anahtar yok."
     format_invalid: "Geçersiz biçim."
