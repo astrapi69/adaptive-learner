@@ -431,7 +431,7 @@ function MatchingExercise(
                         {leftLabel}
                     </div>
                     <ul
-                        className="m-0 grid list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
+                        className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-left"
                         aria-label={leftLabel}
                     >
@@ -466,7 +466,7 @@ function MatchingExercise(
                         {rightLabel}
                     </div>
                     <ul
-                        className="m-0 grid list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
+                        className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-right"
                         aria-label={rightLabel}
                     >
