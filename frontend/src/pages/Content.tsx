@@ -66,6 +66,7 @@ import {
   type UserFoldInput,
 } from "../lib/content/content-tree";
 import { computeUserFold } from "../lib/content/user-fold";
+import { resolveAiCheckDisabledReason } from "../lib/content/ai-check-gate";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
   listContributions,
@@ -259,11 +260,7 @@ export default function ContentPage() {
   // AIV-11 — per-set "AI-checked" badge status, keyed "{source}#{id}".
   const [aiBadgeBySet, setAiBadgeBySet] = useState<Record<string, AiCheckBadgeStatus>>({});
   const aiCheckIsDexie = resolveStorageMode() === "dexie";
-  const aiCheckDisabledReason = !aiCheckIsDexie
-    ? t("content.ai_check.unavailable_mode", "Available in browser-storage mode only.")
-    : !hasKey
-      ? t("feature.api_key_required", "API key required. Configure a provider in Settings.")
-      : undefined;
+  const aiCheckDisabledReason = resolveAiCheckDisabledReason(t, aiCheckIsDexie, hasKey);
 
   // --- Content Browser search (#354 — extracted to useContentSearch) ---
   const {
