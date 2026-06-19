@@ -4,9 +4,9 @@
  * skipped and the result is driven purely by the injected fetch.
  */
 
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { checkForUpdate } from "./sw-update";
+import { activateAndReload, checkForUpdate } from "./sw-update";
 import type { VersionManifest } from "./version-check";
 
 const current: VersionManifest = { version: "1.85.0", buildHash: "aaaaaaa" };
@@ -64,5 +64,26 @@ describe("checkForUpdate", () => {
       jsonFetch({ version: "1.85.0", buildHash: "ccccccc" }),
     );
     expect(r.status).toBe("available");
+  });
+});
+
+describe("activateAndReload", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // Regression pin (#818): the apply action must always reload. happy-dom has
+  // no navigator.serviceWorker, so this exercises the no-registration
+  // fallback — a plain reload, never a no-op.
+  it("reloads when there is no service worker", async () => {
+    const reload = vi.fn();
+    vi.spyOn(window, "location", "get").mockReturnValue({
+      ...window.location,
+      reload,
+    } as Location);
+
+    await activateAndReload();
+
+    expect(reload).toHaveBeenCalledTimes(1);
   });
 });
