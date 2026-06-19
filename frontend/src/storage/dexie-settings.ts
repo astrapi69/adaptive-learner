@@ -8,7 +8,6 @@
 import { getDb, nowIso } from "./db";
 import { ensureSettings, requireRow, rowToSettings } from "./dexie-rows";
 import { fetchAvailableModels } from "./model-discovery";
-import { aiComplete, resolveModel } from "./ai-providers";
 import { ApiError } from "../api/client";
 import type { UserSettingsRow } from "./db";
 import type { AIProvider } from "../lib/constants";
@@ -156,13 +155,15 @@ export const dexieSettings: IStorageService["settings"] = {
         return { success: false, kind: "no_key" };
       }
       try {
-        await aiComplete({
-          provider,
-          model: resolveModel(provider, null),
-          apiKey: key,
-          messages: [{ role: "user", content: "Hi" }],
-          maxTokens: 1,
-        });
+        // #799 — validate the key against the provider's lightweight
+        // models-list GET (OpenAI /v1/models, Gemini /v1beta/models?key=,
+        // Anthropic /v1/models), NOT a generation call. A generateContent /
+        // chat completion with a 1-token cap returns empty content on
+        // Gemini (a false failure) and depends on per-model access / quota
+        // on OpenAI — neither reflects whether the key is VALID. A 200 here
+        // means the provider accepts the key; the GET is browser-direct +
+        // CORS-friendly (no preflight on Gemini's query-param key).
+        await fetchAvailableModels(provider, key.trim());
         return { success: true, kind: "ok" };
       } catch (err) {
         if (err instanceof ApiError) {

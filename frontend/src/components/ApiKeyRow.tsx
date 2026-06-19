@@ -55,6 +55,11 @@ function testResultMessage(kind: ApiKeyTestKind, t: Translate): string {
     return `⚠ ${t("settings.api_key.test_rate_limit", "Rate limit hit. Try later.")}`;
   if (kind === "no_key")
     return `⚠ ${t("settings.api_key.test_no_key", "No key to test.")}`;
+  if (kind === "error")
+    return `✗ ${t(
+      "settings.api_key.test_error",
+      "Test failed. The provider rejected the request.",
+    )}`;
   return `⚠ ${t(
     "settings.api_key.test_network",
     "Connection failed. Check your internet connection.",

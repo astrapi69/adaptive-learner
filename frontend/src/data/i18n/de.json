@@ -634,6 +634,7 @@
       "test_success": "Schlüssel funktioniert!",
       "test_invalid": "Schlüssel ungültig oder abgelaufen.",
       "test_network": "Verbindung fehlgeschlagen. Prüfe deine Internetverbindung.",
+      "test_error": "Test fehlgeschlagen. Der Anbieter hat die Anfrage abgelehnt.",
       "test_rate_limit": "Rate-Limit erreicht. Versuche es später.",
       "test_no_key": "Kein Schlüssel zum Testen.",
       "format_invalid": "Ungültiges Format.",
