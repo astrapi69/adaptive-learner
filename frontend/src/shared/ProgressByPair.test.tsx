@@ -44,4 +44,31 @@ describe("ProgressByPair", () => {
         expect(a1).toHaveAttribute("aria-valuenow", "100");
         expect(a1).toHaveAttribute("aria-label", "A1: 100% complete");
     });
+
+    it("renders a long level label in full with a title fallback (no truncation)", () => {
+        // Adaptive / imported sets carry long pseudo-level labels
+        // ("ADAPTIV (FEHLER)", "IMPORT: …") that the old fixed-width
+        // label clipped. The label must show in full and expose the same
+        // text via title= for a hover fallback.
+        const longLabel = "ADAPTIV (FEHLER)";
+        render(
+            <ProgressByPair
+                pairs={[
+                    {
+                        name: "German → Spanish",
+                        percent: 30,
+                        levels: [
+                            {level: longLabel, percent: 30, barLabel: `${longLabel}: 30% complete`},
+                        ],
+                    },
+                ]}
+                emptyLabel="empty"
+            />,
+        );
+        const label = screen.getByText(longLabel);
+        expect(label).toBeInTheDocument();
+        expect(label).toHaveAttribute("title", longLabel);
+        // The fixed-width clip class is gone.
+        expect(label).not.toHaveClass("w-10");
+    });
 });
