@@ -634,6 +634,7 @@
       "test_success": "A chave funciona!",
       "test_invalid": "Chave inválida ou expirada.",
       "test_network": "Falha na conexão. Verifique sua internet.",
+      "test_error": "Falha no teste. O provedor rejeitou a solicitação.",
       "test_rate_limit": "Limite de uso atingido. Tente mais tarde.",
       "test_no_key": "Nenhuma chave para testar.",
       "format_invalid": "Formato inválido.",
