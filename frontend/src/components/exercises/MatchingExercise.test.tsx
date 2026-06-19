@@ -663,3 +663,20 @@ describe("MatchingExercise: bidirectional selection (#507)", () => {
         );
     });
 });
+
+describe("MatchingExercise: equal-height tiles (#822)", () => {
+    // Regression pin (#822): the two column lists must stretch to equal
+    // height so left/right tiles line up even when terms are short and
+    // definitions long. flex-1 fills the (stretched) column div, and
+    // [grid-auto-rows:1fr] then distributes the rows equally across both
+    // grids; without flex-1 each list only matched its own content height.
+    it("stretches both columns with flex-1 + equal auto rows", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        for (const testId of ["matching-left", "matching-right"]) {
+            const list = screen.getByTestId(testId);
+            const classes = list.className.split(/\s+/);
+            expect(classes).toContain("flex-1");
+            expect(classes).toContain("[grid-auto-rows:1fr]");
+        }
+    });
+});
