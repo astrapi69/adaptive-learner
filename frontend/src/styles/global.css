@@ -2324,6 +2324,14 @@ select:focus {
   margin-left: auto;
 }
 
+/* #813 — inline live-test result; takes its own full-width line below the
+   row controls so it never crowds the action buttons. */
+.configured-provider-test-result {
+  flex-basis: 100%;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .api-key-warning {
   margin: 0;
   font-size: 0.85rem;

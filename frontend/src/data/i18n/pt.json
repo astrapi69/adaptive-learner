@@ -634,7 +634,13 @@
       "status_external": "Externo",
       "set_active": "Usar como provedor ativo",
       "edit": "Editar",
-      "add": "Adicionar chave"
+      "add": "Adicionar chave",
+      "test": "Testar",
+      "testing": "A testar…",
+      "test_connection_ok": "Ligação OK",
+      "test_key_invalid": "Chave inválida",
+      "test_network_error": "Erro de rede",
+      "test_backend_only": "Só pode ser testado com o backend"
     },
     "api_key_label": "Chave de API",
     "api_key_placeholder": "Cole aqui…",

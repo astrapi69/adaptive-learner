@@ -604,6 +604,12 @@ settings:
     set_active: Χρήση ως ενεργού παρόχου
     edit: Επεξεργασία
     add: Προσθήκη κλειδιού
+    test: Δοκιμή
+    testing: "Δοκιμή…"
+    test_connection_ok: Σύνδεση εντάξει
+    test_key_invalid: Μη έγκυρο κλειδί
+    test_network_error: Σφάλμα δικτύου
+    test_backend_only: Δοκιμάζεται μόνο με το backend
   api_key_label: Κλειδί API
   api_key_placeholder: Επικόλληση εδώ...
   api_key_placeholder_replace: "Επικολλήστε νέο κλειδί για να αντικαταστήσετε το αποθηκευμένο…"
