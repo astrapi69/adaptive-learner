@@ -25,35 +25,35 @@ import { ConfirmProvider } from "./contexts/ConfirmContext";
 import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
-import Landing from "./pages/Landing";
+import Landing from "./pages/onboarding/Landing";
 import SkipToContent from "./components/SkipToContent";
 
 // Route-level code-splitting. Landing stays in the main bundle as
 // the entry route; everything else loads on first navigation. See
 // BUNDLE-SIZE-DYNAMIC-IMPORT-01.
-const AnkiPage = lazyWithReload(() => import("./pages/Anki"));
-const Assessment = lazyWithReload(() => import("./pages/Assessment"));
-const ContentPage = lazyWithReload(() => import("./pages/Content"));
-const DiscoverPage = lazyWithReload(() => import("./pages/Discover"));
-const AddRepo = lazyWithReload(() => import("./pages/AddRepo"));
-const CreateLesson = lazyWithReload(() => import("./pages/CreateLesson"));
-const LearningPath = lazyWithReload(() => import("./pages/LearningPathPersonal"));
-const Curriculum = lazyWithReload(() => import("./pages/Curriculum"));
-const Dashboard = lazyWithReload(() => import("./pages/Dashboard"));
-const LessonPage = lazyWithReload(() => import("./pages/Lesson"));
-const ReviewPage = lazyWithReload(() => import("./pages/Review"));
-const AdaptiveLessonPage = lazyWithReload(() => import("./pages/AdaptiveLesson"));
-const ErrorReplayLessonPage = lazyWithReload(() => import("./pages/ErrorReplayLesson"));
-const Import = lazyWithReload(() => import("./pages/Import"));
-const ImportDetail = lazyWithReload(() => import("./pages/ImportDetail"));
-const LearningRepoPage = lazyWithReload(() => import("./pages/LearningRepo"));
-const NotFound = lazyWithReload(() => import("./pages/NotFound"));
-const Onboarding = lazyWithReload(() => import("./pages/Onboarding"));
-const Progress = lazyWithReload(() => import("./pages/Progress"));
-const LearningStatistics = lazyWithReload(() => import("./pages/LearningStatistics"));
-const Pronunciation = lazyWithReload(() => import("./pages/Pronunciation"));
-const Session = lazyWithReload(() => import("./pages/Session"));
-const Settings = lazyWithReload(() => import("./pages/Settings"));
+const AnkiPage = lazyWithReload(() => import("./pages/content/Anki"));
+const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"));
+const ContentPage = lazyWithReload(() => import("./pages/content/Content"));
+const DiscoverPage = lazyWithReload(() => import("./pages/content/Discover"));
+const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
+const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
+const LearningPath = lazyWithReload(() => import("./pages/learning-path/LearningPathPersonal"));
+const Curriculum = lazyWithReload(() => import("./pages/content/Curriculum"));
+const Dashboard = lazyWithReload(() => import("./pages/dashboard/Dashboard"));
+const LessonPage = lazyWithReload(() => import("./pages/lesson/Lesson"));
+const ReviewPage = lazyWithReload(() => import("./pages/lesson/Review"));
+const AdaptiveLessonPage = lazyWithReload(() => import("./pages/lesson/AdaptiveLesson"));
+const ErrorReplayLessonPage = lazyWithReload(() => import("./pages/lesson/ErrorReplayLesson"));
+const Import = lazyWithReload(() => import("./pages/content/Import"));
+const ImportDetail = lazyWithReload(() => import("./pages/content/ImportDetail"));
+const LearningRepoPage = lazyWithReload(() => import("./pages/content/LearningRepo"));
+const NotFound = lazyWithReload(() => import("./pages/system/NotFound"));
+const Onboarding = lazyWithReload(() => import("./pages/onboarding/Onboarding"));
+const Progress = lazyWithReload(() => import("./pages/dashboard/Progress"));
+const LearningStatistics = lazyWithReload(() => import("./pages/dashboard/LearningStatistics"));
+const Pronunciation = lazyWithReload(() => import("./pages/lesson/Pronunciation"));
+const Session = lazyWithReload(() => import("./pages/lesson/Session"));
+const Settings = lazyWithReload(() => import("./pages/system/Settings"));
 
 // Lazy-loaded so ``eventRecorder`` (statically imported inside both
 // components) lands in its own chunk instead of the main bundle.
