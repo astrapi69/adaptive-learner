@@ -55,6 +55,10 @@ function daysSince(iso: string | null): number | null {
 // Phase 41F: extracted to ``utils/backup-download.ts`` so the
 // DangerZone pre-reset backup button can produce identical files.
 import {saveBackupToDisk, backupFilename} from "../utils/backup-download";
+import {
+    applyLocalStorageSnapshot,
+    withLocalStorageSnapshot,
+} from "../lib/backup/localStorageSnapshot";
 
 interface ComparisonRow {
     table: string;
@@ -471,7 +475,12 @@ export default function BackupSection() {
         }
         setBusy("export");
         try {
-            const payload = await storage.backup.export(userId);
+            // Attach a localStorage snapshot (preferences + contributions
+            // that don't live in the DB tables) so the backup is portable
+            // across a browser reset / device migration (P1 offline parity).
+            const payload = withLocalStorageSnapshot(
+                await storage.backup.export(userId),
+            );
             const filename = backupFilename(userId);
             const outcome = await saveBackupToDisk(payload, filename);
             if (outcome.method === "cancelled") {
@@ -616,6 +625,14 @@ export default function BackupSection() {
         setBusy("import");
         try {
             const summary = await storage.backup.import(userId, pendingPayload);
+            // Restore the localStorage snapshot (preferences + contributions)
+            // frontend-side, in both storage modes — the backend ignores the
+            // payload's local_storage block. Legacy backups carry none -> no-op.
+            const localApplied = applyLocalStorageSnapshot(
+                pendingPayload.local_storage,
+            );
+            // eslint-disable-next-line no-console -- round-trip trace, see below
+            console.log("[Backup] localStorage keys applied:", localApplied);
             // #126 — surface the full result in the browser console so a
             // real Export -> Import round-trip is debuggable without a
             // backend log. Errors are logged separately as a list.

@@ -752,6 +752,11 @@ export interface BackupPayload {
     data: Record<string, Record<string, unknown>[]>;
     /** Downloaded lesson content (#130). Absent in pre-1.3.0 backups. */
     content_sets?: ContentSetBackupEntry[];
+    /** Flat snapshot of backup-eligible localStorage keys (P1 offline
+     *  parity). Carries user preferences + contributions that don't live
+     *  in the DB tables. Absent in pre-1.4.0 backups; secrets excluded.
+     *  Applied frontend-side on import in both storage modes. */
+    local_storage?: Record<string, string>;
     stats: BackupStats;
 }
 

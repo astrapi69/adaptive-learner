@@ -18,6 +18,7 @@ import OnboardingWizard, {
 import {useI18n} from "../hooks/useI18n";
 import {isEmptyInstall, pickAdoptedIdentity} from "../lib/firstRunRestore";
 import {readBackupFile} from "../lib/backup/validateBackupFile";
+import {applyLocalStorageSnapshot} from "../lib/backup/localStorageSnapshot";
 import {
     readLearnerState,
     setLanguage,
@@ -294,6 +295,9 @@ export default function Onboarding() {
                 identity.userId,
                 payload,
             );
+            // Restore the localStorage snapshot (preferences + contributions)
+            // frontend-side. Legacy backups carry none -> no-op.
+            applyLocalStorageSnapshot(payload.local_storage);
             // #126 parity — surface the round-trip in the console so a
             // real restore is debuggable without a backend log.
             // eslint-disable-next-line no-console -- #126: intentional round-trip trace for backend-less debugging
