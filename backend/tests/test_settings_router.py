@@ -239,6 +239,58 @@ def test_post_api_key_response_never_contains_plaintext(client: TestClient):
     assert parsed["has_anthropic_key"] is True
 
 
+# --- #810 masked key preview -----------------------------------------------
+
+
+def test_mask_secret_first_and_last_four():
+    """``mask_secret`` reveals only the first 4 + last 4 chars."""
+    assert settings_service.mask_secret("AIzaSyA-secret-1234567f3k") == "AIza…7f3k"
+    assert settings_service.mask_secret("  AIzaSyABCDEF1234  ") == "AIza…1234"
+    assert settings_service.mask_secret("short") == "•••••"
+    assert settings_service.mask_secret("") is None
+    assert settings_service.mask_secret(None) is None
+
+
+def test_get_settings_exposes_masked_preview_after_save(client: TestClient):
+    """#810 — saving a key then re-reading returns a masked preview
+    (first 4 + last 4), never the plaintext, and survives navigate-away."""
+    user_id = _make_user(client)
+    plaintext = "AIzaSyA-secret-1234567f3k"
+    save = client.post(
+        f"/api/settings/{user_id}/api-key",
+        json={"provider": "gemini", "key": plaintext},
+    )
+    assert save.status_code == 200
+    assert save.json()["key_preview_gemini"] == "AIza…7f3k"
+
+    # Re-read as if the user navigated away and came back.
+    reread = client.get(f"/api/settings/{user_id}")
+    assert reread.status_code == 200
+    body = reread.json()
+    assert body["has_gemini_key"] is True
+    assert body["key_preview_gemini"] == "AIza…7f3k"
+    assert plaintext not in reread.text
+
+
+def test_preview_is_null_without_a_key(client: TestClient):
+    user_id = _make_user(client)
+    body = client.get(f"/api/settings/{user_id}").json()
+    assert body["key_preview_anthropic"] is None
+    assert body["key_preview_openai"] is None
+    assert body["key_preview_gemini"] is None
+
+
+def test_preview_clears_on_delete(client: TestClient):
+    user_id = _make_user(client)
+    client.post(
+        f"/api/settings/{user_id}/api-key",
+        json={"provider": "anthropic", "key": "sk-ant-" + "a" * 95},
+    )
+    after = client.delete(f"/api/settings/{user_id}/api-key/anthropic")
+    assert after.status_code == 200
+    assert after.json()["key_preview_anthropic"] is None
+
+
 def test_post_api_key_round_trip_via_service(client: TestClient):
     """The decrypt path must recover the exact plaintext."""
     user_id = _make_user(client)

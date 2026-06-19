@@ -310,6 +310,42 @@ def resolve_api_key(
     return None, ApiKeySource.NONE
 
 
+def mask_secret(secret: str | None) -> str | None:
+    """Mask an API key down to a first-4 + last-4 preview (e.g. ``AIza…7f3k``).
+
+    Mirrors the frontend ``maskSecret`` helper so the Settings provider
+    overview can confirm WHICH key is stored without ever exposing the
+    full value. Secrets of 8 characters or fewer collapse to a row of
+    bullet characters (no overlap, zero characters revealed). Returns
+    ``None`` for an empty / missing secret.
+
+    Args:
+        secret: The plaintext key, or ``None``.
+
+    Returns:
+        The masked preview, or ``None`` when there is nothing to show.
+    """
+    if secret is None:
+        return None
+    trimmed = secret.strip()
+    if not trimmed:
+        return None
+    if len(trimmed) <= 8:
+        return "•" * len(trimmed)
+    return f"{trimmed[:4]}…{trimmed[-4:]}"
+
+
+def resolve_key_preview(repo: SettingsRepository, user_id: str, provider: AIProvider) -> str | None:
+    """Resolve the active key for ``provider`` and return its masked preview.
+
+    Uses the same precedence as :func:`resolve_api_key` (env > secrets.yaml
+    > DB), so the preview reflects the key that AI calls actually use. The
+    decrypted key is masked immediately and never returned in full.
+    """
+    key, _source = resolve_api_key(repo, user_id, provider)
+    return mask_secret(key)
+
+
 def resolve_default_model(
     repo: SettingsRepository, user_id: str, provider: AIProvider
 ) -> str | None:
@@ -350,8 +386,10 @@ __all__ = [
     "get_api_key_backup",
     "get_decrypted_api_key",
     "get_or_create_settings",
+    "mask_secret",
     "resolve_api_key",
     "resolve_default_model",
+    "resolve_key_preview",
     "restore_api_key_backup",
     "set_api_key",
     "update_settings",

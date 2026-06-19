@@ -625,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "Configured AI providers",
+      "hint": "Keys you have saved stay stored. Only a masked preview is shown — never the full key.",
+      "status_active": "Active",
+      "status_empty": "Empty",
+      "status_desktop_only": "Desktop only",
+      "status_external": "External",
+      "set_active": "Use as active provider",
+      "edit": "Edit",
+      "add": "Add key"
+    },
     "api_key_label": "API key",
     "api_key_placeholder": "Paste here…",
     "api_key_placeholder_replace": "Paste a new key to replace the stored one…",

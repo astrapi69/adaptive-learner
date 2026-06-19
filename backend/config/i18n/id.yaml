@@ -596,6 +596,17 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  # #810 — tabel penyedia yang dikonfigurasi di tab AI.
+  providers:
+    title: Penyedia AI yang dikonfigurasi
+    hint: "Kunci yang Anda simpan tetap tersimpan. Hanya pratinjau yang disamarkan yang ditampilkan, tidak pernah kunci lengkapnya."
+    status_active: Aktif
+    status_empty: Kosong
+    status_desktop_only: Hanya desktop
+    status_external: Eksternal
+    set_active: Gunakan sebagai penyedia aktif
+    edit: Edit
+    add: Tambah kunci
   api_key_label: Kunci API
   api_key_placeholder: Tempel di sini…
   api_key_placeholder_replace: "Tempel kunci baru untuk mengganti yang tersimpan…"

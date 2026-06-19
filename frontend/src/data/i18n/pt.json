@@ -625,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "Provedores de IA configurados",
+      "hint": "As chaves guardadas permanecem armazenadas. Apenas é mostrada uma pré-visualização mascarada, nunca a chave completa.",
+      "status_active": "Ativo",
+      "status_empty": "Vazio",
+      "status_desktop_only": "Apenas computador",
+      "status_external": "Externo",
+      "set_active": "Usar como provedor ativo",
+      "edit": "Editar",
+      "add": "Adicionar chave"
+    },
     "api_key_label": "Chave de API",
     "api_key_placeholder": "Cole aqui…",
     "api_key_placeholder_replace": "Cole uma nova chave para substituir a armazenada…",

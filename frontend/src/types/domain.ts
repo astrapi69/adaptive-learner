@@ -62,6 +62,13 @@ export interface UserSettings {
     key_source_anthropic: ApiKeySource;
     key_source_openai: ApiKeySource;
     key_source_gemini: ApiKeySource;
+    // #810 — masked preview of the stored key (first 4 + last 4 chars,
+    // e.g. "AIza…7f3k"), or null when no key is configured. The full key
+    // is NEVER sent to the client. Optional so legacy payloads / fixtures
+    // that predate the field still type-check.
+    key_preview_anthropic?: string | null;
+    key_preview_openai?: string | null;
+    key_preview_gemini?: string | null;
     created_at: string;
     updated_at: string;
 }

@@ -193,6 +193,28 @@ describe("DexieStorage.settings", () => {
         expect(cleared.has_anthropic_key).toBe(false);
     });
 
+    it("#810 — exposes a masked key_preview that survives navigate-away (re-read)", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const key = "AIzaSyA-secret-1234567f3k";
+
+        await dexieStorage.settings.setApiKey(u.id, {
+            provider: "gemini",
+            key,
+        });
+
+        // Re-read as if the user navigated away and came back: the key is
+        // still stored and a masked preview (first 4 + last 4) is shown,
+        // never the full key.
+        const reread = await dexieStorage.settings.get(u.id);
+        expect(reread.has_gemini_key).toBe(true);
+        expect(reread.key_preview_gemini).toBe("AIza…7f3k");
+        expect(reread.key_preview_gemini).not.toContain(key);
+
+        const afterDelete = await dexieStorage.settings.deleteApiKey(u.id, "gemini");
+        expect(afterDelete.has_gemini_key).toBe(false);
+        expect(afterDelete.key_preview_gemini).toBeNull();
+    });
+
     it("update clears model override on empty-string sentinel", async () => {
         const u = await dexieStorage.users.create({name: "A"});
         const set = await dexieStorage.settings.update(u.id, {

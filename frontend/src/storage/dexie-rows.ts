@@ -10,6 +10,7 @@
 import type { EntityTable } from "dexie";
 
 import { ApiError } from "../api/client";
+import { maskSecret } from "../lib/maskSecret";
 import {
   newId,
   nowIso,
@@ -96,6 +97,11 @@ export function rowToSettings(row: UserSettingsRow): UserSettings {
     key_source_anthropic: row.api_key_anthropic ? "settings" : "none",
     key_source_openai: row.api_key_openai ? "settings" : "none",
     key_source_gemini: row.api_key_gemini ? "settings" : "none",
+    // #810 — masked preview computed client-side from the locally-stored
+    // key so the Settings provider overview can confirm WHICH key is set.
+    key_preview_anthropic: maskSecret(row.api_key_anthropic),
+    key_preview_openai: maskSecret(row.api_key_openai),
+    key_preview_gemini: maskSecret(row.api_key_gemini),
     created_at: row.created_at,
     updated_at: row.updated_at,
   };
