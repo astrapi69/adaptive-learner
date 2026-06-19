@@ -14,7 +14,7 @@
 
 import "fake-indexeddb/auto";
 
-import {afterEach, beforeEach, describe, expect, it} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {ApiError} from "../api/client";
 import {_resetDbForTests, getDb} from "./db";
@@ -839,6 +839,46 @@ describe("DexieStorage API-key test + rollback backup (Phase 65)", () => {
             provider: "anthropic",
         });
         expect(result).toEqual({success: false, kind: "no_key"});
+    });
+
+    // #799 — the key is validated via the provider's models-list GET, not a
+    // generation call (which falsely failed on Gemini's 1-token cap).
+    it("testApiKey reports ok when the models endpoint accepts the key", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        const fetchMock = vi.fn(async () => ({
+            ok: true,
+            status: 200,
+            json: async () => ({data: [{id: "gpt-4o-mini"}]}),
+        }));
+        vi.stubGlobal("fetch", fetchMock);
+        const result = await dexieStorage.settings.testApiKey(user.id, {
+            provider: "openai",
+            key: "sk-799-ok-" + "a".repeat(30),
+        });
+        expect(result).toEqual({success: true, kind: "ok"});
+        expect(fetchMock).toHaveBeenCalledWith(
+            "https://api.openai.com/v1/models",
+            expect.objectContaining({method: "GET"}),
+        );
+        vi.unstubAllGlobals();
+    });
+
+    it("testApiKey reports invalid on a 401 from the models endpoint", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(async () => ({
+                ok: false,
+                status: 401,
+                json: async () => ({error: {message: "invalid key"}}),
+            })),
+        );
+        const result = await dexieStorage.settings.testApiKey(user.id, {
+            provider: "gemini",
+            key: "799-invalid-" + "b".repeat(30),
+        });
+        expect(result).toEqual({success: false, kind: "invalid"});
+        vi.unstubAllGlobals();
     });
 
     it("backs up + reports + restores the last-known-good key", async () => {

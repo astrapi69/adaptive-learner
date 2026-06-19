@@ -602,6 +602,7 @@ settings:
     test_success: "Key works!"
     test_invalid: "Key invalid or expired."
     test_network: "Connection failed. Check your internet connection."
+    test_error: "Test failed. The provider rejected the request."
     test_rate_limit: "Rate limit hit. Try later."
     test_no_key: "No key to test."
     format_invalid: "Invalid format."
