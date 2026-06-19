@@ -92,6 +92,38 @@ describe("SetRow", () => {
         expect(action).toHaveAttribute("href", "/lesson/src/psych/02.json");
     });
 
+    it("marks the bg-accent action link with data-slot=button (#779)", () => {
+        // The action is a router <a> styled bg-accent/text-accent-fg. Without
+        // data-slot="button" the global ``a:not([data-slot=button])`` rule
+        // forces color:var(--accent) over text-accent-fg -> accent-on-accent
+        // (invisible label) in every theme. Pin the carve-out.
+        renderRow(setFixture());
+        expect(screen.getByTestId("set-action-psych")).toHaveAttribute(
+            "data-slot",
+            "button",
+        );
+    });
+
+    it("marks the next-level action link with data-slot=button (#779)", () => {
+        renderRow(
+            setFixture({
+                mode: "set_complete",
+                percentComplete: 100,
+                currentLesson: null,
+                nextLevel: {
+                    source: "src",
+                    setId: "psych-a2",
+                    title: "Psychologie A2",
+                    level: "a2",
+                    downloaded: true,
+                },
+            }),
+        );
+        const action = screen.getByTestId("set-action-psych");
+        expect(action.getAttribute("data-mode")).toBe("next_level");
+        expect(action).toHaveAttribute("data-slot", "button");
+    });
+
     it("renders a start action for an untouched set", () => {
         renderRow(
             setFixture({

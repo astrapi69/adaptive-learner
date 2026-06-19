@@ -206,6 +206,11 @@ export default function SetDetail({set}: SetDetailProps) {
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                 <Link
                     to={`/adaptive-lesson/${encodeURIComponent(set.setId)}`}
+                    // #779 — data-slot so the global anchor-color rule skips
+                    // these button-styled links (else the label inherits
+                    // var(--accent): accent-on-accent on the solid button,
+                    // and accent-instead-of-foreground on the outline one).
+                    data-slot="button"
                     className={`${actionClass} bg-accent text-accent-fg`}
                     data-testid={`set-adaptive-${set.setId}`}
                 >
@@ -215,6 +220,7 @@ export default function SetDetail({set}: SetDetailProps) {
                 {set.errorCount > 0 && (
                     <Link
                         to={`/review/${encodeURIComponent(set.setId)}`}
+                        data-slot="button"
                         className={`${actionClass} border border-border text-foreground hover:bg-muted`}
                         data-testid={`set-error-replay-${set.setId}`}
                     >
