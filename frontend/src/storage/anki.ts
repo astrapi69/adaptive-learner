@@ -2,22 +2,23 @@
  * Dexie-mode Anki service (Phase 30B / v1.17.0).
  *
  * Full CRUD on ``anki_card_suggestions`` runs against IndexedDB.
- * Vocabulary extraction from an imported conversation's
- * ``analysis_result.vocabulary`` (Phase 30D) also runs locally —
- * no AI call required.
  *
- * AI session extraction is deferred in Dexie mode: the
- * browser-direct AI path needs the user's stored API key + a
- * model + a prompt, and reproducing the full backend pipeline
- * client-side is meaningful additional surface. v1.17.0 throws
- * a clear error so the user knows to switch to API mode for
- * that flow (the Anki page surfaces the error as a toast).
+ * Card extraction (#807) runs browser-direct: with a configured API key, the
+ * conversation/session transcript is sent through the active provider (see
+ * ``anki-extraction``), extracting language vocabulary AND knowledge concepts
+ * — the same result as the API-mode backend. The conversation path also keeps
+ * a deterministic ``analysis_result.vocabulary`` fallback for the no-key case.
  */
 
 import {ApiError} from "../api/client";
 
 import {getDb, newId, nowIso} from "./db";
 import type {AnkiCardRow} from "./db";
+import {
+    aiExtractCards,
+    resolveDexieAiConfig,
+    type ExtractedCard,
+} from "./anki-extraction";
 import type {
     AnkiCardCreateBody,
     AnkiCardListFilters,
@@ -220,38 +221,24 @@ function cardsFromVocabulary(
     return out;
 }
 
-export async function extractFromConversationDexie(
-    conversationId: string,
+/** Persist extracted cards as ``anki_card_suggestions`` rows (Dexie). */
+async function persistDexieCards(
+    cards: ExtractedCard[],
+    owner: {
+        userId: string;
+        sessionId: string | null;
+        conversationId: string | null;
+        projectId: string | null;
+    },
 ): Promise<AnkiCardSuggestion[]> {
     const db = getDb();
-    const conv = await db.importedConversations.get(conversationId);
-    if (!conv) {
-        throw new ApiError(404, `Conversation ${conversationId} not found`);
-    }
-    const analysis = conv.analysis_result;
-    const vocab = (analysis && typeof analysis === "object"
-        ? (analysis as Record<string, unknown>).vocabulary
-        : null) ?? null;
-    const cards = cardsFromVocabulary(vocab);
-    if (cards.length === 0) {
-        // No vocabulary in this conversation's analysis. Dexie
-        // mode doesn't yet support browser-direct AI extraction
-        // for the transcript path; surface a clear error so the
-        // page can toast it.
-        throw new ApiError(
-            400,
-            "No vocabulary found in this conversation's analysis. " +
-                "AI extraction from the transcript is only available " +
-                "in API mode for now.",
-        );
-    }
     const ts = nowIso();
     const inserted: AnkiCardRow[] = cards.map((c) => ({
         id: newId(),
-        user_id: conv.user_id,
-        session_id: null,
-        conversation_id: conversationId,
-        project_id: conv.project_id ?? null,
+        user_id: owner.userId,
+        session_id: owner.sessionId,
+        conversation_id: owner.conversationId,
+        project_id: owner.projectId,
         card_type: c.card_type,
         front: c.front,
         back: c.back,
@@ -266,17 +253,109 @@ export async function extractFromConversationDexie(
     return inserted.map(rowToOut);
 }
 
-export async function extractFromSessionDexie(
-    _sessionId: string,
+/**
+ * #807 — extract Anki cards from an imported conversation in Dexie mode.
+ *
+ * When an API key is configured, run a browser-direct AI extraction over the
+ * transcript (handles language vocabulary AND knowledge concepts, same as the
+ * API-mode backend). With no key, fall back to the deterministic
+ * vocabulary-from-analysis path (free, no AI); if that is also empty, ask the
+ * user to configure a key.
+ */
+export async function extractFromConversationDexie(
+    conversationId: string,
 ): Promise<AnkiCardSuggestion[]> {
-    // Browser-direct AI extraction from a session transcript
-    // is a meaningful surface (provider switch, model picker,
-    // streaming progress). Deferred to a polish patch — for
-    // v1.17.0, Dexie users can still manually add cards in the
-    // Anki page UI.
-    throw new ApiError(
-        501,
-        "AI session-extraction is not yet available in Dexie mode. " +
-            "Switch to API mode in Settings, or add cards manually.",
-    );
+    const db = getDb();
+    const conv = await db.importedConversations.get(conversationId);
+    if (!conv) {
+        throw new ApiError(404, `Conversation ${conversationId} not found`);
+    }
+    const analysis = conv.analysis_result;
+    const vocab = (analysis && typeof analysis === "object"
+        ? (analysis as Record<string, unknown>).vocabulary
+        : null) ?? null;
+
+    const aiConfig = await resolveDexieAiConfig(conv.user_id);
+    let cards: ExtractedCard[];
+    if (aiConfig) {
+        const messages = await db.importedMessages
+            .where("conversation_id")
+            .equals(conversationId)
+            .sortBy("order_index");
+        const transcript = messages
+            .map((m) => `${m.role}: ${m.content}`)
+            .join("\n\n");
+        cards = await aiExtractCards(aiConfig, transcript);
+        // If the model returned nothing usable, fall back to any vocabulary
+        // the analysis already captured so the user still gets cards.
+        if (cards.length === 0) cards = cardsFromVocabulary(vocab);
+    } else {
+        cards = cardsFromVocabulary(vocab);
+        if (cards.length === 0) {
+            throw new ApiError(
+                400,
+                "An API key is required to extract cards from this " +
+                    "conversation. Configure a provider in Settings.",
+            );
+        }
+    }
+    if (cards.length === 0) {
+        throw new ApiError(
+            400,
+            "No cards could be extracted from this conversation.",
+        );
+    }
+    return persistDexieCards(cards, {
+        userId: conv.user_id,
+        sessionId: null,
+        conversationId,
+        projectId: conv.project_id ?? null,
+    });
+}
+
+/**
+ * #807 — browser-direct AI extraction from a session transcript in Dexie
+ * mode. Requires a configured API key (no deterministic fallback exists for
+ * a free-form session).
+ */
+export async function extractFromSessionDexie(
+    sessionId: string,
+): Promise<AnkiCardSuggestion[]> {
+    const db = getDb();
+    const session = await db.learningSessions.get(sessionId);
+    if (!session) {
+        throw new ApiError(404, `Session ${sessionId} not found`);
+    }
+    const project = session.project_id
+        ? await db.learningProjects.get(session.project_id)
+        : null;
+    const aiConfig = await resolveDexieAiConfig(project?.user_id ?? "");
+    if (!aiConfig) {
+        throw new ApiError(
+            400,
+            "An API key is required to extract cards from this session. " +
+                "Configure a provider in Settings.",
+        );
+    }
+    const messages = await db.sessionMessages
+        .where("session_id")
+        .equals(sessionId)
+        .sortBy("created_at");
+    const transcript = messages
+        .filter((m) => m.role !== "system")
+        .map((m) => `${m.role}: ${m.content}`)
+        .join("\n\n");
+    const cards = await aiExtractCards(aiConfig, transcript);
+    if (cards.length === 0) {
+        throw new ApiError(
+            400,
+            "No cards could be extracted from this session.",
+        );
+    }
+    return persistDexieCards(cards, {
+        userId: project?.user_id ?? "",
+        sessionId,
+        conversationId: null,
+        projectId: session.project_id ?? null,
+    });
 }

@@ -930,3 +930,42 @@ describe("DexieStorage API-key test + rollback backup (Phase 65)", () => {
         ).rejects.toBeInstanceOf(ApiError);
     });
 });
+
+describe("DexieStorage Anki extraction (#807)", () => {
+    const convBody = (messages: {role: "user" | "assistant"; content: string}[]) => ({
+        source: "manual" as const,
+        title: "Ansible basics",
+        model: null,
+        source_created_at: null,
+        messages: messages.map((m) => ({...m, timestamp: null})),
+    });
+
+    it("requires an API key when there is no vocabulary to fall back on", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        const conv = await dexieStorage.imports.create(
+            user.id,
+            convBody([{role: "user", content: "How does an Ansible playbook run?"}]),
+        );
+        // No key configured + no analysis vocabulary -> clear "key required",
+        // NOT the old "only available in API mode" message.
+        await expect(
+            dexieStorage.anki.extractFromConversation(conv.id),
+        ).rejects.toThrow(/API key/i);
+    });
+
+    it("falls back to analysis vocabulary without a key", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        const conv = await dexieStorage.imports.create(
+            user.id,
+            convBody([{role: "user", content: "Spanish greetings"}]),
+        );
+        await dexieStorage.imports.saveAnalysis(conv.id, {
+            analysis_result: {
+                vocabulary: [{word: "hola", translation: "hello"}],
+            },
+        } as never);
+        const cards = await dexieStorage.anki.extractFromConversation(conv.id);
+        expect(cards.length).toBeGreaterThan(0);
+        expect(cards[0].back).toContain("hello");
+    });
+});
