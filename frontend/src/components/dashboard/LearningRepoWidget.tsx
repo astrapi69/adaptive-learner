@@ -12,7 +12,7 @@
 import {GitBranch} from "lucide-react";
 import {Link} from "react-router-dom";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 
 interface LearningRepoWidgetProps {
     projectId: string;

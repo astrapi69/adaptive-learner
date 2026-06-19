@@ -12,7 +12,7 @@ import { QrCode } from "lucide-react";
 import { useState } from "react";
 
 import { SHARE_URL } from "../../lib/share/generate-share-text";
-import QrCodeModal from "../../shared/QrCodeModal";
+import QrCodeModal from "../../shared/feedback/QrCodeModal";
 import { notify } from "../../utils/notify";
 
 interface Props {

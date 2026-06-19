@@ -13,14 +13,14 @@ import {ChevronDown, ListChecks, RefreshCw, Sparkles} from "lucide-react";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 
-import {useI18n} from "../../hooks/useI18n";
-import {useFavorites} from "../../hooks/useFavorites";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {useFavorites} from "../../hooks/learning/useFavorites";
 import {readLearnerState} from "../../lib/learnerState";
 import ElementDetailList, {
     type ElementDetailItem,
-} from "../../shared/ElementDetailList";
-import FavoriteToggle from "../../shared/FavoriteToggle";
-import type {SrsBadgeTone} from "../../shared/SrsStatusBadge";
+} from "../../shared/gamification/ElementDetailList";
+import FavoriteToggle from "../../shared/media/FavoriteToggle";
+import type {SrsBadgeTone} from "../../shared/gamification/SrsStatusBadge";
 import LessonRow from "./LessonRow";
 import type {PersonalPathSet} from "../../lib/learning-path/personal-path";
 import type {SrsElementDetail} from "../../lib/srs/status";

@@ -13,8 +13,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import type { ContentLesson } from "../../storage/types";
-import type { LessonLoadStatus } from "../../hooks/useLesson";
-import { useI18n } from "../../hooks/useI18n";
+import type { LessonLoadStatus } from "../../hooks/lesson/useLesson";
+import { useI18n } from "../../hooks/ui/useI18n";
 
 export type LessonStatusKind = "missing" | "loading" | "not-cached" | "error";
 

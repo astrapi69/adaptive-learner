@@ -11,7 +11,7 @@
 import {useState} from "react";
 
 import {Input} from "@/components/ui/input";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {
     DEFAULT_MAX_LESSON_SIZE,
     MAX_MAX_LESSON_SIZE,

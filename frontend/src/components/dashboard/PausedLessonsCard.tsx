@@ -23,7 +23,7 @@ import {BookOpen, Clock} from "lucide-react";
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {
     MAX_PAUSED,
     readRetentionDays,

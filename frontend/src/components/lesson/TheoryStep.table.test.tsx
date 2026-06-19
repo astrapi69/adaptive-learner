@@ -9,12 +9,12 @@ import "@testing-library/jest-dom/vitest";
 import {render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({t: (_k: string, fb?: string) => fb ?? _k, lang: "en"}),
 }));
 
 import TheoryStep from "./TheoryStep";
-import type {ReadAloudController} from "../../hooks/useReadAloud";
+import type {ReadAloudController} from "../../hooks/lesson/useReadAloud";
 
 const tts = {
     enabled: false,

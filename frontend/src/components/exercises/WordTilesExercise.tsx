@@ -65,12 +65,12 @@ import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
-import InlineMarkdown from "../../shared/InlineMarkdown";
+import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import {deriveWordTilesAttempt} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";

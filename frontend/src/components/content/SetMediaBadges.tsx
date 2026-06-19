@@ -19,7 +19,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "../../hooks/ui/useI18n";
 import type { MediaResource, MediaType } from "../../lib/content/media-loader";
 
 interface SetMediaBadgesProps {

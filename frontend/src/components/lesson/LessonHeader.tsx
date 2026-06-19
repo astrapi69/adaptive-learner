@@ -12,7 +12,7 @@ import { Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LessonExitDialog from "./LessonExitDialog";
 import type { ContentLesson } from "../../storage/types";
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "../../hooks/ui/useI18n";
 
 interface LessonHeaderProps {
   lesson: ContentLesson;

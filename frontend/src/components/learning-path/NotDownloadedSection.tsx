@@ -24,7 +24,7 @@ import {
     Loader2,
 } from "lucide-react";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {Button} from "@/components/ui/button";
 import {cn} from "../../lib/utils";
 import {getStorage} from "../../storage";

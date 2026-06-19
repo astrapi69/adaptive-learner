@@ -28,7 +28,7 @@
 import React from "react";
 import {toast} from "react-toastify";
 import {ApiError} from "../api/client";
-import {isDevMode} from "../hooks/useDevMode";
+import {isDevMode} from "../hooks/settings/useDevMode";
 import {friendlyErrorMessage} from "./errorMessages";
 
 // Truncate the visible error message so the toast stays

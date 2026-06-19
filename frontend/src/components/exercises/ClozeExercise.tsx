@@ -30,12 +30,12 @@ import {Check, X} from "lucide-react";
 import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
-import InlineMarkdown from "../../shared/InlineMarkdown";
+import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import {deriveClozeAttempts} from "../../lib/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../lib/exercises/token-diff";

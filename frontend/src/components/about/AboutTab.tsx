@@ -12,7 +12,7 @@
 import { useEffect, useState } from "react";
 
 import { ApiError } from "../../api/client";
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "../../hooks/ui/useI18n";
 import { getStorage, resolveStorageMode } from "../../storage";
 import type { SystemInfo } from "../../types/domain";
 

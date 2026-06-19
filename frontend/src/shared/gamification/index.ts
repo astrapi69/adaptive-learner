@@ -1,0 +1,27 @@
+// Barrel for shared/gamification (grouped by concern, #809). Re-export only.
+export * from "./ActivityHeatmap";
+export {default as ActivityHeatmap} from "./ActivityHeatmap";
+export * from "./BadgeGrid";
+export {default as BadgeGrid} from "./BadgeGrid";
+export * from "./DueReviewCard";
+export {default as DueReviewCard} from "./DueReviewCard";
+export * from "./ElementDetailList";
+export {default as ElementDetailList} from "./ElementDetailList";
+export * from "./ElementProgressBar";
+export {default as ElementProgressBar} from "./ElementProgressBar";
+export * from "./HintButton";
+export {default as HintButton} from "./HintButton";
+export * from "./LevelDetail";
+export {default as LevelDetail} from "./LevelDetail";
+export * from "./LevelProgressCard";
+export {default as LevelProgressCard} from "./LevelProgressCard";
+export * from "./ReviewSummary";
+export {default as ReviewSummary} from "./ReviewSummary";
+export * from "./SrsStatusBadge";
+export {default as SrsStatusBadge} from "./SrsStatusBadge";
+export * from "./StreakCalendar";
+export {default as StreakCalendar} from "./StreakCalendar";
+export * from "./WeakAreasList";
+export {default as WeakAreasList} from "./WeakAreasList";
+export * from "./XpBadge";
+export {default as XpBadge} from "./XpBadge";

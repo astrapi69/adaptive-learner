@@ -24,9 +24,9 @@ import { Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import LevelProgressCard from "../shared/LevelProgressCard";
-import XpBadge from "../shared/XpBadge";
-import { useI18n } from "../hooks/useI18n";
+import LevelProgressCard from "../shared/gamification/LevelProgressCard";
+import XpBadge from "../shared/gamification/XpBadge";
+import { useI18n } from "../hooks/ui/useI18n";
 import { readLearnerState } from "../lib/learnerState";
 import { buildLevelMilestones } from "../lib/gamification/levelMilestones";
 import { subscribeCelebration } from "../lib/praise/celebration-bus";

@@ -22,17 +22,17 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import AnimatedCounter from "../../shared/AnimatedCounter";
+import AnimatedCounter from "../../shared/data-display/AnimatedCounter";
 import CorrectionBlock from "../exercises/CorrectionBlock";
 import DiffHighlight from "../exercises/DiffHighlight";
 import Confetti from "../feedback/Confetti";
 import NextStepSuggestions from "./NextStepSuggestions";
-import { useCountUp } from "../../hooks/useCountUp";
-import { useFeedbackIntensity } from "../../hooks/useFeedbackIntensity";
-import { useI18n } from "../../hooks/useI18n";
+import { useCountUp } from "../../hooks/ui/useCountUp";
+import { useFeedbackIntensity } from "../../hooks/settings/useFeedbackIntensity";
+import { useI18n } from "../../hooks/ui/useI18n";
 import LessonFavoriteToggle from "./LessonFavoriteToggle";
-import AnswerDiff from "../../shared/AnswerDiff";
-import ShareButton from "../../shared/ShareButton";
+import AnswerDiff from "../../shared/data-display/AnswerDiff";
+import ShareButton from "../../shared/layout/ShareButton";
 import { generateShareText } from "../../lib/share/generate-share-text";
 import {
   downloadAnkiDeck,
@@ -40,7 +40,7 @@ import {
 } from "../../lib/export/anki-export";
 import { explainError } from "../../lib/review/explain-error";
 import { readExplanationsEnabled } from "../../lib/review/reviewPref";
-import { useNextStepSuggestions } from "../../hooks/useNextStepSuggestions";
+import { useNextStepSuggestions } from "../../hooks/learning/useNextStepSuggestions";
 import { collectFailedExercises } from "../../lib/lesson/error-replay";
 import { tokenDiff } from "../../lib/exercises/token-diff";
 import { allowsConfetti } from "../../lib/feedback/feedbackPref";

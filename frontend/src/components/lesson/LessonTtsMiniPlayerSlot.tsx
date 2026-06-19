@@ -8,7 +8,7 @@
  */
 
 import LessonTtsMiniPlayer from "./LessonTtsMiniPlayer";
-import type { ReadAloudController } from "../../hooks/useReadAloud";
+import type { ReadAloudController } from "../../hooks/lesson/useReadAloud";
 import type { TheoryBlock } from "../../lib/lesson/tts-text";
 
 interface LessonTtsMiniPlayerSlotProps {

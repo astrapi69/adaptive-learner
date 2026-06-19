@@ -26,7 +26,7 @@ import {
     SheetContent,
     SheetTitle,
 } from "@/components/ui/sheet";
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {
     generateBadgeSvg,
     TIER_PALETTE,

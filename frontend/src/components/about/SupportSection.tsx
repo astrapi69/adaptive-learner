@@ -12,7 +12,7 @@
 import {LifeBuoy} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 
 export default function SupportSection() {
     const {t} = useI18n();

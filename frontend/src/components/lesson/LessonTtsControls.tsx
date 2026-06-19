@@ -15,8 +15,8 @@ import type { ContentLesson } from "../../storage/types";
 import {
   READ_ALOUD_SPEEDS,
   type ReadAloudController,
-} from "../../hooks/useReadAloud";
-import { useI18n } from "../../hooks/useI18n";
+} from "../../hooks/lesson/useReadAloud";
+import { useI18n } from "../../hooks/ui/useI18n";
 
 interface LessonTtsControlsProps {
   isSummary: boolean;

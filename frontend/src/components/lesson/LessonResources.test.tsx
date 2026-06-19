@@ -6,7 +6,7 @@ import type { MediaResource } from "../../lib/content/media-loader";
 import type { ContentLesson } from "../../storage/types";
 import LessonResources from "./LessonResources";
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_k: string, fallback: string) => fallback,
     lang: "en",

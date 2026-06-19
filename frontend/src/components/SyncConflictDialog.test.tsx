@@ -15,7 +15,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {render, screen, fireEvent} from "@testing-library/react";
 
 import SyncConflictDialog, {parseMergeResponse} from "./SyncConflictDialog";
-import {I18nProvider} from "../hooks/useI18n";
+import {I18nProvider} from "../hooks/ui/useI18n";
 import {ApiError} from "../api/client";
 import type {ConflictBundle, ConflictResolution} from "../storage/sync-engine";
 

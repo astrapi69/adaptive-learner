@@ -18,7 +18,7 @@ vi.mock("../../lib/pwa/sw-update", () => ({
   activateAndReload: (...args: unknown[]) => activateAndReload(...args),
 }));
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_key: string, fallback?: string) => fallback ?? _key,
     lang: "en",

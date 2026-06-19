@@ -19,7 +19,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 
 import BackupSection from "./BackupSection";
-import {I18nProvider} from "../hooks/useI18n";
+import {I18nProvider} from "../hooks/ui/useI18n";
 import {_resetStorageCacheForTests, getStorage} from "../storage";
 import {setUserId} from "../lib/learnerState";
 import type {BackupPayload} from "../types/domain";

@@ -9,7 +9,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
 import { describe, expect, it } from "vitest";
 
-import { I18nProvider } from "../hooks/useI18n";
+import { I18nProvider } from "../hooks/ui/useI18n";
 import { ConfirmProvider, useConfirm } from "./ConfirmContext";
 
 function Harness() {

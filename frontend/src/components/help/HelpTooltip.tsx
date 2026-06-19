@@ -28,8 +28,8 @@ import * as HoverCard from "@radix-ui/react-hover-card";
 import {type ReactNode} from "react";
 
 import {useHelp} from "../../contexts/HelpContext";
-import {useGlossary} from "../../hooks/useGlossary";
-import {useI18n} from "../../hooks/useI18n";
+import {useGlossary} from "../../hooks/content/useGlossary";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {getGlossaryEntry} from "../../lib/help-glossary";
 
 interface Props {

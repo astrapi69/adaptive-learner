@@ -17,7 +17,7 @@
 import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {
     readGamificationPrefs,
     setBadgeNotifications,

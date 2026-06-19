@@ -27,7 +27,7 @@ import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {extractJsonObject} from "../lib/extract-json";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";

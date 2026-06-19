@@ -19,7 +19,7 @@ import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 // App language is mutable per test (default "de") so the
 // source-language-default tests can assert "app language wins".
 const i18nMock = vi.hoisted(() => ({ lang: "de" }));
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_key: string, fallback: string) => fallback,
     lang: i18nMock.lang,

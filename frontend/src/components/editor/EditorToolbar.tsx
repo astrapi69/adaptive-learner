@@ -26,7 +26,7 @@
 
 import type {Editor} from "@tiptap/react";
 import {Fragment, useEffect, useState} from "react";
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {EDITOR_COMMANDS, TOOLBAR_GROUPS} from "./editor-commands";
 
 interface Props {
