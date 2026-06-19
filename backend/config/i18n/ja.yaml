@@ -3,6 +3,9 @@ app:
   tagline: あなたに合わせて適応する学習。
   skeleton_notice: スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます — docs/adaptive-learner-project-reference.md を参照してください。
 common:
+  ok: "OK"
+  remove: "削除"
+  confirm_title: "確認"
   save: 保存
   cancel: キャンセル
   loading: 読み込み中…

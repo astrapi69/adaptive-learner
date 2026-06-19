@@ -3,6 +3,9 @@ app:
   tagline: Aprendizaje que se adapta a ti.
   skeleton_notice: Estado esqueleto. Los modelos de dominio, plugins y paginas llegan en fases proximas — ver docs/adaptive-learner-project-reference.md.
 common:
+  ok: "Aceptar"
+  remove: "Quitar"
+  confirm_title: "Confirmar"
   save: Guardar
   cancel: Cancelar
   loading: Cargando...

@@ -139,15 +139,19 @@ describe("SyncSection — paired", () => {
         expect(screen.getByTestId("sync-history-1")).toBeTruthy();
     });
 
-    it("unpair confirmation flow clears the config", () => {
+    it("unpair confirmation flow clears the config", async () => {
         pair();
         const originalConfirm = window.confirm;
-        // happy-dom doesn't define ``window.confirm``; stub it.
+        // happy-dom doesn't define ``window.confirm``; stub it. Without a
+        // ConfirmProvider, useConfirm() falls back to window.confirm (#783).
         (window as unknown as {confirm: () => boolean}).confirm = () => true;
         renderSection();
         fireEvent.click(screen.getByTestId("sync-unpair-button"));
-        // Section now renders the unpaired view.
-        expect(screen.queryByTestId("sync-paired-view")).toBeNull();
+        // handleUnpair is async (awaits confirm) — the unpaired view
+        // appears on the next microtask.
+        await waitFor(() =>
+            expect(screen.queryByTestId("sync-paired-view")).toBeNull(),
+        );
         (window as unknown as {confirm: typeof window.confirm}).confirm =
             originalConfirm;
     });

@@ -3,6 +3,9 @@ app:
   tagline: Learning that adapts to you.
   skeleton_notice: Skeleton state. Domain models, plugins and pages land in upcoming phases — see docs/adaptive-learner-project-reference.md.
 common:
+  ok: "OK"
+  remove: "Remove"
+  confirm_title: "Please confirm"
   save: Save
   cancel: Cancel
   loading: Loading…

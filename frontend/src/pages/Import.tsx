@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import HelpLink from "../components/help/HelpLink";
 import { useButtonTooltips } from "../hooks/useButtonTooltips";
 import { useI18n } from "../hooks/useI18n";
+import { useConfirm } from "../contexts/ConfirmContext";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
 import { getDb } from "../storage/db";
@@ -52,6 +53,7 @@ interface ImportPageProps {
 
 export default function Import({ onNavigate }: ImportPageProps = {}) {
   const { t } = useI18n();
+  const confirm = useConfirm();
   const tooltipsOn = useButtonTooltips();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -161,9 +163,14 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
     // Don't bubble — the row's own onClick navigates to detail.
     e.stopPropagation();
     if (
-      !window.confirm(
-        t("import.delete_confirm", "Delete this imported conversation? This cannot be undone."),
-      )
+      !(await confirm({
+        message: t(
+          "import.delete_confirm",
+          "Delete this imported conversation? This cannot be undone.",
+        ),
+        confirmLabel: t("common.delete", "Delete"),
+        variant: "danger",
+      }))
     ) {
       return;
     }

@@ -21,6 +21,7 @@ import ReminderScheduler from "./components/ReminderScheduler";
 import Navigation from "./components/Navigation";
 import OfflineIndicator from "./components/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
+import { ConfirmProvider } from "./contexts/ConfirmContext";
 import { I18nProvider } from "./hooks/useI18n";
 import { useTheme } from "./hooks/useTheme";
 import { useContentRepoAutoSync } from "./hooks/useContentRepoAutoSync";
@@ -138,6 +139,7 @@ export default function App() {
       <I18nProvider>
         <FeatureProvider registry={featureRegistry} context={featureContext}>
           <HelpProvider>
+            <ConfirmProvider>
             <SkipToContent />
             <UpdatePromptHost />
             <Navigation />
@@ -202,6 +204,7 @@ export default function App() {
               pauseOnHover
               theme="colored"
             />
+            </ConfirmProvider>
           </HelpProvider>
         </FeatureProvider>
       </I18nProvider>

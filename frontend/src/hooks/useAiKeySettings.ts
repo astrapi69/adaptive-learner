@@ -17,6 +17,7 @@ import {useState} from "react";
 
 import {ApiError} from "../api/client";
 import {useI18n} from "./useI18n";
+import {useConfirm} from "../contexts/ConfirmContext";
 import {refreshApiKeyStatus} from "./useApiKeyStatus";
 import type {AIProvider} from "../lib/constants";
 import {getStorage} from "../storage";
@@ -37,6 +38,7 @@ export function useAiKeySettings(
     onSettingsChange: (next: UserSettings) => void,
 ) {
     const {t} = useI18n();
+    const confirm = useConfirm();
 
     const [keyDrafts, setKeyDrafts] = useState<Record<AIProvider, string>>({
         anthropic: "",
@@ -264,7 +266,11 @@ export function useAiKeySettings(
 
     const handleDeleteKey = async (provider: AIProvider) => {
         if (busy) return;
-        const ok = window.confirm(t("settings.api_key_confirm_delete", "Really remove this API key?"));
+        const ok = await confirm({
+            message: t("settings.api_key_confirm_delete", "Really remove this API key?"),
+            confirmLabel: t("common.remove", "Remove"),
+            variant: "danger",
+        });
         if (!ok) return;
         setBusy(`delete-${provider}`);
         try {
