@@ -5,6 +5,9 @@
     "skeleton_notice": "スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます — docs/adaptive-learner-project-reference.md を参照してください。"
   },
   "common": {
+    "ok": "OK",
+    "remove": "削除",
+    "confirm_title": "確認",
     "save": "保存",
     "cancel": "キャンセル",
     "loading": "読み込み中…",
@@ -622,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "設定済みのAIプロバイダー",
+      "hint": "保存したキーは保持されます。マスクされたプレビューのみが表示され、完全なキーは表示されません。",
+      "status_active": "有効",
+      "status_empty": "未設定",
+      "status_desktop_only": "デスクトップのみ",
+      "status_external": "外部",
+      "set_active": "アクティブなプロバイダーとして使用",
+      "edit": "編集",
+      "add": "キーを追加"
+    },
     "api_key_label": "API キー",
     "api_key_placeholder": "ここに貼り付け…",
     "api_key_placeholder_replace": "保存済みのキーを置き換える新しいキーを貼り付けてください…",
@@ -631,6 +645,7 @@
       "test_success": "キーは有効です！",
       "test_invalid": "キーが無効または期限切れです。",
       "test_network": "接続に失敗しました。インターネット接続を確認してください。",
+      "test_error": "テストに失敗しました。プロバイダーがリクエストを拒否しました。",
       "test_rate_limit": "レート制限に達しました。後でお試しください。",
       "test_no_key": "テストするキーがありません。",
       "format_invalid": "形式が無効です。",
@@ -642,7 +657,7 @@
       "format_hint": {
         "anthropic": "sk-ant- で始まります",
         "openai": "sk- で始まります",
-        "gemini": "AI で始まります"
+        "gemini": "20文字以上"
       }
     },
     "api_key_saved": "キーを保存しました",
@@ -915,6 +930,7 @@
     "restored_inserted": "挿入: {{n}}",
     "restored_updated": "更新: {{n}}",
     "restored_skipped": "スキップ: {{n}}",
+    "api_keys_skipped": "APIキーをインポートできませんでした。設定 > 連携 で再入力してください。",
     "restored_errors": "エラー: {{n}}",
     "col_inserted": "挿入",
     "col_updated": "更新",
@@ -1980,7 +1996,7 @@
       "target_lang_label": "学習する言語",
       "source_lang_label": "あなたの言語",
       "level_label": "レベル",
-      "not_enough_data": "完全なレッスンには語彙が足りません（少なくとも{min}個の演習が必要）。より多くの練習素材のため、長いチャットをインポートしてください。",
+      "not_enough_data": "演習が少なめです。完全な語学レッスンには少なくとも{min}個を推奨します。それでも保存できます（例：理論のみのレッスンとして）。",
       "same_language": "学習する言語とあなたの言語は異なる必要があります。",
       "same_language_hint": "学習言語とあなたの言語が同じです — 文法や母語のレッスンには問題ありません。共有する場合、コンテンツツリーの同言語ブランチに表示されます。",
       "split_notice": "このレッスンには {steps} ステップがあり、{parts} パートとして保存されます（各パート最大 {max} ステップ）。",

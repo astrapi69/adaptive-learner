@@ -27,7 +27,7 @@ vi.mock("../../storage", () => ({
     }),
 }));
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({t: (_k: string, fb: string) => fb, lang: "en"}),
 }));
 

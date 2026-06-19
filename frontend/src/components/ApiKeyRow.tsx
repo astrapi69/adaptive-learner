@@ -12,9 +12,9 @@
 import { FlaskConical, Save, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useI18n } from "../hooks/useI18n";
-import { SecretInput } from "../shared/SecretInput";
-import { API_KEY_PREFIX, isValidApiKeyFormat } from "../lib/apiKeyFormat";
+import { useI18n } from "../hooks/ui/useI18n";
+import { SecretInput } from "../shared/forms/SecretInput";
+import { API_KEY_FORMAT_HINT, isValidApiKeyFormat } from "../lib/apiKeyFormat";
 import type { AIProvider } from "../lib/constants";
 import type { ApiKeySource, UserSettings } from "../types/domain";
 import type { ApiKeyTestKind, ApiKeyTestResult } from "../storage/types";
@@ -55,6 +55,11 @@ function testResultMessage(kind: ApiKeyTestKind, t: Translate): string {
     return `⚠ ${t("settings.api_key.test_rate_limit", "Rate limit hit. Try later.")}`;
   if (kind === "no_key")
     return `⚠ ${t("settings.api_key.test_no_key", "No key to test.")}`;
+  if (kind === "error")
+    return `✗ ${t(
+      "settings.api_key.test_error",
+      "Test failed. The provider rejected the request.",
+    )}`;
   return `⚠ ${t(
     "settings.api_key.test_network",
     "Connection failed. Check your internet connection.",
@@ -67,15 +72,11 @@ interface ApiKeyRowProps {
   draft: string;
   busy: string | null;
   testResult: ApiKeyTestResult | null;
-  rollbackActive: boolean;
   backupAvailable: boolean;
   onDraftChange: (value: string) => void;
   onSave: () => void;
   onTest: () => void;
   onDelete: () => void;
-  onKeepOld: () => void;
-  onSaveAnyway: () => void;
-  onDismissRollback: () => void;
   onRestoreBackup: () => void;
 }
 
@@ -86,15 +87,11 @@ export default function ApiKeyRow({
   draft,
   busy,
   testResult,
-  rollbackActive,
   backupAvailable,
   onDraftChange,
   onSave,
   onTest,
   onDelete,
-  onKeepOld,
-  onSaveAnyway,
-  onDismissRollback,
   onRestoreBackup,
 }: ApiKeyRowProps) {
   const { t } = useI18n();
@@ -204,11 +201,7 @@ export default function ApiKeyRow({
         busy={busy}
         testResult={testResult}
         formatState={formatState}
-        rollbackActive={rollbackActive}
         backupAvailable={backupAvailable}
-        onKeepOld={onKeepOld}
-        onSaveAnyway={onSaveAnyway}
-        onDismissRollback={onDismissRollback}
         onRestoreBackup={onRestoreBackup}
       />
     </div>
@@ -301,30 +294,25 @@ interface ApiKeyFeedbackProps {
   busy: string | null;
   testResult: ApiKeyTestResult | null;
   formatState: FormatState;
-  rollbackActive: boolean;
   backupAvailable: boolean;
-  onKeepOld: () => void;
-  onSaveAnyway: () => void;
-  onDismissRollback: () => void;
   onRestoreBackup: () => void;
 }
 
-/** Test-result message, format error, and the rollback prompt. */
+/** Test-result message, format error, and the non-blocking restore link.
+ *  #793 — a failed live test never blocks the save, so there is no
+ *  blocking rollback panel; the only recovery affordance is the standalone
+ *  "restore last working key" link, shown when a backup exists. */
 function ApiKeyFeedback({
   provider,
   busy,
   testResult,
   formatState,
-  rollbackActive,
   backupAvailable,
-  onKeepOld,
-  onSaveAnyway,
-  onDismissRollback,
   onRestoreBackup,
 }: ApiKeyFeedbackProps) {
   const { t } = useI18n();
   const showStandaloneRestore =
-    backupAvailable && !rollbackActive && testResult !== null && !testResult.success;
+    backupAvailable && testResult !== null && !testResult.success;
 
   return (
     <>
@@ -342,64 +330,9 @@ function ApiKeyFeedback({
           {t("settings.api_key.format_invalid", "Invalid format.")}{" "}
           {t(
             `settings.api_key.format_hint.${provider}`,
-            `Starts with ${API_KEY_PREFIX[provider]}`,
+            API_KEY_FORMAT_HINT[provider],
           )}
         </p>
-      )}
-      {rollbackActive && (
-        <div
-          className="api-key-rollback"
-          data-testid={`api-key-rollback-${provider}`}
-          role="alertdialog"
-          aria-label={t(
-            "settings.api_key.rollback_warning",
-            "The new key doesn't work. Keep the old key?",
-          )}
-        >
-          <p className="api-key-rollback-message">
-            {t(
-              "settings.api_key.rollback_warning",
-              "The new key doesn't work. Keep the old key?",
-            )}
-          </p>
-          <div className="api-key-rollback-actions">
-            <Button
-              type="button"
-              data-testid={`api-key-rollback-keep-${provider}`}
-              onClick={onKeepOld}
-            >
-              {t("settings.api_key.rollback_keep_old", "Keep old key")}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              data-testid={`api-key-rollback-save-anyway-${provider}`}
-              onClick={onSaveAnyway}
-              disabled={busy === `save-${provider}`}
-            >
-              {t("settings.api_key.rollback_save_anyway", "Save anyway")}
-            </Button>
-            <Button
-              type="button"
-              variant="link"
-              data-testid={`api-key-rollback-cancel-${provider}`}
-              onClick={onDismissRollback}
-            >
-              {t("settings.api_key.rollback_cancel", "Cancel")}
-            </Button>
-            {backupAvailable && (
-              <Button
-                type="button"
-                variant="link"
-                data-testid={`api-key-restore-${provider}`}
-                onClick={onRestoreBackup}
-                disabled={busy === `restore-${provider}`}
-              >
-                {t("settings.api_key.rollback_restore", "Restore last working key")}
-              </Button>
-            )}
-          </div>
-        </div>
       )}
       {showStandaloneRestore && (
         <Button

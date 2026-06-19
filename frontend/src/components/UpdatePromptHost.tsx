@@ -8,9 +8,9 @@
  * works identically in API and Dexie / GitHub-Pages builds.
  */
 
-import UpdatePrompt from "../shared/UpdatePrompt";
-import { useAppUpdate } from "../hooks/useAppUpdate";
-import { useI18n } from "../hooks/useI18n";
+import UpdatePrompt from "../shared/feedback/UpdatePrompt";
+import { useAppUpdate } from "../hooks/system/useAppUpdate";
+import { useI18n } from "../hooks/ui/useI18n";
 
 export default function UpdatePromptHost() {
   const { t } = useI18n();

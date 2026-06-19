@@ -13,7 +13,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 
 import SyncSection from "./SyncSection";
-import {I18nProvider} from "../hooks/useI18n";
+import {I18nProvider} from "../hooks/ui/useI18n";
 import {_resetStorageCacheForTests} from "../storage";
 import {
     writeSyncConfig,
@@ -139,15 +139,19 @@ describe("SyncSection — paired", () => {
         expect(screen.getByTestId("sync-history-1")).toBeTruthy();
     });
 
-    it("unpair confirmation flow clears the config", () => {
+    it("unpair confirmation flow clears the config", async () => {
         pair();
         const originalConfirm = window.confirm;
-        // happy-dom doesn't define ``window.confirm``; stub it.
+        // happy-dom doesn't define ``window.confirm``; stub it. Without a
+        // ConfirmProvider, useConfirm() falls back to window.confirm (#783).
         (window as unknown as {confirm: () => boolean}).confirm = () => true;
         renderSection();
         fireEvent.click(screen.getByTestId("sync-unpair-button"));
-        // Section now renders the unpaired view.
-        expect(screen.queryByTestId("sync-paired-view")).toBeNull();
+        // handleUnpair is async (awaits confirm) — the unpaired view
+        // appears on the next microtask.
+        await waitFor(() =>
+            expect(screen.queryByTestId("sync-paired-view")).toBeNull(),
+        );
         (window as unknown as {confirm: typeof window.confirm}).confirm =
             originalConfirm;
     });

@@ -12,8 +12,8 @@ import type { NavigateFunction } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
-import { useI18n } from "../../hooks/useI18n";
-import type { UseContentSharingResult } from "../../hooks/useContentSharing";
+import { useI18n } from "../../hooks/ui/useI18n";
+import type { UseContentSharingResult } from "../../hooks/content/useContentSharing";
 import type { ContentSetEntry } from "../../storage/types";
 import ShareWizard from "./ShareWizard";
 

@@ -15,7 +15,7 @@ import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 import { useMemo, type ReactNode } from "react";
 
 import { featureRegistry, type FeatureContext } from "./featureConfig";
-import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
+import { useApiKeyStatus } from "../hooks/settings/useApiKeyStatus";
 import { resolveStorageMode } from "../storage";
 
 interface TestFeatureProviderProps {

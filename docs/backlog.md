@@ -248,6 +248,11 @@ tiebreaker.
 
 - [ ] **BL-19**: Social features (share progress, study
   groups) — Requires multi-user. Far future.
+- [ ] **EXP-035**: Vercel AI Elements integration (AI-UI library, Tier 3 over
+  custom). Codebase-audited; recommended first step is AIE-04 (Reasoning UI,
+  net-new) using AI Elements as a pure UI layer (no Vercel AI SDK). AIE-03
+  (CodeBlock) + AIE-10 (Streaming) deprioritized — both already covered. See
+  [explorations/EXP-035-vercel-ai-elements.md](explorations/EXP-035-vercel-ai-elements.md).
 
 ## Trigger-Gated Items
 

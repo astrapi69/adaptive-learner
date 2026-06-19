@@ -17,7 +17,7 @@ import {act, render, screen, fireEvent, cleanup} from "@testing-library/react";
 
 import {ApiError} from "../api/client";
 
-vi.mock("../hooks/useI18n", () => ({
+vi.mock("../hooks/ui/useI18n", () => ({
     useI18n: () => ({
         t: (_key: string, fallback?: string) => fallback ?? _key,
         lang: "en",

@@ -25,6 +25,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-coverage test-coverage-backend test-coverage-frontend \
        stryker stryker-quick \
        check-types check-types-backend check-types-frontend check-file-sizes check-complexity check-complexity-gate check-complexity-gate-update \
+       check-directory-size check-directory-size-gate \
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
@@ -334,6 +335,12 @@ check-file-sizes: ## Cohesion watcher: warn >500, error >1000 lines (ratchet via
 
 check-complexity: ## Complexity watcher (warn-only): radon (Python) + eslint complexity (TS)
 	bash scripts/check-complexity.sh
+
+check-directory-size: ## God-folder watcher (warn-only): >15 flat source files per dir (#809)
+	bash scripts/check-directory-size.sh
+
+check-directory-size-gate: ## God-folder ratchet gate: fail on a NEW oversized dir vs .dirsize-baseline
+	bash scripts/check-directory-size.sh --gate
 
 check-complexity-gate: ## Complexity ratchet gate (#407): fail on new/regressed offenders vs .complexity-baseline
 	bash scripts/check-complexity.sh --gate

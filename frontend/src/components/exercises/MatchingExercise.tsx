@@ -27,14 +27,14 @@
 import {forwardRef, useEffect, useMemo, useState} from "react";
 import type {Ref} from "react";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,
-} from "../../shared/useKeyboardShortcuts";
+} from "../../shared/hooks/useKeyboardShortcuts";
 import type {ContentLessonExercise} from "../../storage/types";
 import type {
     ControlledExerciseProps,

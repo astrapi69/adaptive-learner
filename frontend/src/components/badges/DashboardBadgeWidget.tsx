@@ -12,9 +12,9 @@
 import {useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {generateBadgeSvg, type BadgeTier} from "../../lib/badges/badge-svg";
-import BadgeGrid, {type BadgeGridItem} from "../../shared/BadgeGrid";
+import BadgeGrid, {type BadgeGridItem} from "../../shared/gamification/BadgeGrid";
 import type {BadgeWithProgress} from "../../storage/types";
 import BadgeGallery from "./BadgeGallery";
 

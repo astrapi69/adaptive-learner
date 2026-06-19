@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { isValidApiKeyFormat, API_KEY_PREFIX } from "./apiKeyFormat";
+import { isValidApiKeyFormat, API_KEY_FORMAT_HINT } from "./apiKeyFormat";
 
 describe("isValidApiKeyFormat", () => {
   it("accepts a well-formed Anthropic key", () => {
@@ -24,9 +24,36 @@ describe("isValidApiKeyFormat", () => {
     expect(isValidApiKeyFormat("openai", "sk-short")).toBe(false);
   });
 
-  it("accepts a well-formed Gemini key and rejects a wrong prefix", () => {
-    expect(isValidApiKeyFormat("gemini", "AI" + "a".repeat(35))).toBe(true);
-    expect(isValidApiKeyFormat("gemini", "BB" + "a".repeat(35))).toBe(false);
+  it("accepts a classic AIza-prefixed Gemini key", () => {
+    expect(isValidApiKeyFormat("gemini", "AIza" + "a".repeat(35))).toBe(true);
+  });
+
+  it("accepts a valid Gemini key WITHOUT the AI prefix (#781)", () => {
+    // Newer Google keys do not all start with AI/AIza — these must
+    // not be rejected on prefix.
+    expect(isValidApiKeyFormat("gemini", "BB" + "a".repeat(35))).toBe(true);
+    expect(isValidApiKeyFormat("gemini", "x9_-" + "Z".repeat(30))).toBe(true);
+  });
+
+  it("rejects a too-short Gemini key", () => {
+    expect(isValidApiKeyFormat("gemini", "abc")).toBe(false);
+  });
+
+  it("rejects a key with internal whitespace (corrupted paste)", () => {
+    expect(isValidApiKeyFormat("gemini", "key with spaces " + "a".repeat(30))).toBe(
+      false,
+    );
+    expect(
+      isValidApiKeyFormat("openai", "sk-" + "a".repeat(20) + "\t" + "b".repeat(10)),
+    ).toBe(false);
+  });
+
+  it("accepts a key with characters outside [A-Za-z0-9_-] (#793)", () => {
+    // Newer Google keys carry characters (e.g. ".") that a positive
+    // charset allowlist falsely rejected, blocking a valid key from being
+    // saved. Only whitespace is disqualifying now.
+    expect(isValidApiKeyFormat("gemini", "AIzaSy.AB-cd_0123456789xyz")).toBe(true);
+    expect(isValidApiKeyFormat("openai", "sk-proj.ABCdef0123456789xyz")).toBe(true);
   });
 
   it("treats empty / whitespace as invalid", () => {
@@ -44,9 +71,9 @@ describe("isValidApiKeyFormat", () => {
     expect(isValidApiKeyFormat("gemini", "sk-" + "a".repeat(45))).toBe(false);
   });
 
-  it("exposes the expected prefix per provider", () => {
-    expect(API_KEY_PREFIX.anthropic).toBe("sk-ant-");
-    expect(API_KEY_PREFIX.openai).toBe("sk-");
-    expect(API_KEY_PREFIX.gemini).toBe("AI");
+  it("exposes a format hint per provider (Gemini is length-based, #781)", () => {
+    expect(API_KEY_FORMAT_HINT.anthropic).toMatch(/sk-ant-/);
+    expect(API_KEY_FORMAT_HINT.openai).toMatch(/sk-/);
+    expect(API_KEY_FORMAT_HINT.gemini).not.toMatch(/AI/);
   });
 });

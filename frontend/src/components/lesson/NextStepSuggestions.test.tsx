@@ -22,7 +22,7 @@ vi.mock("../../lib/feedback/feedbackPref", () => ({
 }));
 
 import NextStepSuggestions from "./NextStepSuggestions";
-import type {NextStepSuggestions as Suggestions} from "../../hooks/useNextStepSuggestions";
+import type {NextStepSuggestions as Suggestions} from "../../hooks/learning/useNextStepSuggestions";
 
 function makeSuggestions(
     overrides: Partial<Suggestions> = {},

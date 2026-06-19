@@ -62,6 +62,13 @@ export interface UserSettings {
     key_source_anthropic: ApiKeySource;
     key_source_openai: ApiKeySource;
     key_source_gemini: ApiKeySource;
+    // #810 — masked preview of the stored key (first 4 + last 4 chars,
+    // e.g. "AIza…7f3k"), or null when no key is configured. The full key
+    // is NEVER sent to the client. Optional so legacy payloads / fixtures
+    // that predate the field still type-check.
+    key_preview_anthropic?: string | null;
+    key_preview_openai?: string | null;
+    key_preview_gemini?: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -752,6 +759,11 @@ export interface BackupPayload {
     data: Record<string, Record<string, unknown>[]>;
     /** Downloaded lesson content (#130). Absent in pre-1.3.0 backups. */
     content_sets?: ContentSetBackupEntry[];
+    /** Flat snapshot of backup-eligible localStorage keys (P1 offline
+     *  parity). Carries user preferences + contributions that don't live
+     *  in the DB tables. Absent in pre-1.4.0 backups; secrets excluded.
+     *  Applied frontend-side on import in both storage modes. */
+    local_storage?: Record<string, string>;
     stats: BackupStats;
 }
 
@@ -767,6 +779,10 @@ export interface RestoreSummary {
     inserted: number;
     updated: number;
     skipped: number;
+    /** API-key rollback-cache rows that could not be imported (no usable
+     *  key in the backup, #787). Non-zero -> tell the user to re-enter
+     *  their API keys in Settings. Absent for older backends. */
+    api_keys_skipped?: number;
     errors: string[];
     tables: Record<string, RestoreTableSummary>;
     /** Content-set cache restore counts (#130). Absent for pre-1.3.0

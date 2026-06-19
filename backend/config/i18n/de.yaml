@@ -3,6 +3,9 @@ app:
   tagline: Adaptives Lernen nach dem Sechs-Methoden-Modell.
   skeleton_notice: Skeleton-Stand. Domain-Modelle, Plugins und Seiten folgen in den nächsten Phasen — siehe docs/adaptive-learner-project-reference.md.
 common:
+  ok: "OK"
+  remove: "Entfernen"
+  confirm_title: "Bitte bestätigen"
   save: Speichern
   cancel: Abbrechen
   loading: Lädt …
@@ -590,6 +593,17 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  # #810 — Uebersichtstabelle der konfigurierten Anbieter im KI-Tab.
+  providers:
+    title: Konfigurierte KI-Anbieter
+    hint: "Gespeicherte Schlüssel bleiben erhalten. Es wird nur eine maskierte Vorschau angezeigt, niemals der vollständige Schlüssel."
+    status_active: Aktiv
+    status_empty: Leer
+    status_desktop_only: Nur Desktop
+    status_external: Extern
+    set_active: Als aktiven Anbieter verwenden
+    edit: Bearbeiten
+    add: Schlüssel hinzufügen
   api_key_label: API-Key
   api_key_placeholder: Hier einfügen …
   api_key_placeholder_replace: "Neuen Schlüssel einfügen, um den gespeicherten zu ersetzen …"
@@ -599,6 +613,7 @@ settings:
     test_success: "Schlüssel funktioniert!"
     test_invalid: "Schlüssel ungültig oder abgelaufen."
     test_network: "Verbindung fehlgeschlagen. Prüfe deine Internetverbindung."
+    test_error: "Test fehlgeschlagen. Der Anbieter hat die Anfrage abgelehnt."
     test_rate_limit: "Rate-Limit erreicht. Versuche es später."
     test_no_key: "Kein Schlüssel zum Testen."
     format_invalid: "Ungültiges Format."
@@ -610,7 +625,7 @@ settings:
     format_hint:
       anthropic: "Beginnt mit sk-ant-"
       openai: "Beginnt mit sk-"
-      gemini: "Beginnt mit AI"
+      gemini: "Mindestens 20 Zeichen"
   api_key_saved: Key gespeichert
   api_key_missing: Nicht gesetzt
   api_key_set: Key speichern
@@ -855,6 +870,7 @@ backup:
   restored_inserted: 'Eingefügt: {{n}}'
   restored_updated: 'Aktualisiert: {{n}}'
   restored_skipped: 'Übersprungen: {{n}}'
+  api_keys_skipped: "API-Schlüssel konnten nicht importiert werden. Bitte gib sie unter Einstellungen > Integrationen erneut ein."
   restored_errors: 'Fehler: {{n}}'
   col_inserted: 'Eingef.'
   col_updated: 'Aktual.'
@@ -1831,7 +1847,7 @@ content:
     target_lang_label: Gelernte Sprache
     source_lang_label: Deine Sprache
     level_label: Niveau
-    not_enough_data: Nicht genug Vokabeln für eine vollständige Lektion (mindestens {min} Übungen nötig). Importiere einen längeren Chat für mehr Übungsmaterial.
+    not_enough_data: Wenige Übungen — für eine vollständige Sprachlektion werden mindestens {min} empfohlen. Du kannst die Lektion trotzdem speichern (z. B. als reine Theorie-Lektion).
     same_language: Die gelernte Sprache und deine Sprache müssen unterschiedlich sein.
     same_language_hint: "Die Lernsprache und deine Sprache sind identisch — das ist in Ordnung für eine Grammatik- oder Muttersprachen-Lektion. Beim Teilen landet sie im gleichsprachigen Zweig des Inhaltsbaums."
     split_notice: "Diese Lektion hat {steps} Schritte und wird als {parts} Teile gespeichert (max. {max} Schritte pro Teil)."

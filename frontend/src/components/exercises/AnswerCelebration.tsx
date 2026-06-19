@@ -24,9 +24,9 @@ import {useEffect, useRef, useState} from "react";
 
 import {Check, X} from "lucide-react";
 
-import {useFeedbackIntensity} from "../../hooks/useFeedbackIntensity";
-import {useI18n} from "../../hooks/useI18n";
-import FeedbackPulse from "../../shared/FeedbackPulse";
+import {useFeedbackIntensity} from "../../hooks/settings/useFeedbackIntensity";
+import {useI18n} from "../../hooks/ui/useI18n";
+import FeedbackPulse from "../../shared/feedback/FeedbackPulse";
 import {
     nextCorrectAnswerIndex,
     shouldPraiseCorrect,

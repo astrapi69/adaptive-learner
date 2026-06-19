@@ -12,8 +12,8 @@
 
 import {Minus, TrendingDown, TrendingUp} from "lucide-react";
 
-import {useI18n} from "../../hooks/useI18n";
-import StreakCalendar from "../../shared/StreakCalendar";
+import {useI18n} from "../../hooks/ui/useI18n";
+import StreakCalendar from "../../shared/gamification/StreakCalendar";
 import type {HeatmapEntryOut} from "../../storage/types";
 
 interface ActivityTrendProps {

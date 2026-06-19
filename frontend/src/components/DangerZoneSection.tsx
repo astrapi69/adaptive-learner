@@ -38,11 +38,12 @@ import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
-import {useDialogFocus} from "../hooks/useDialogFocus";
-import {useI18n} from "../hooks/useI18n";
+import {useDialogFocus} from "../hooks/ui/useDialogFocus";
+import {useI18n} from "../hooks/ui/useI18n";
 import {clearLearnerState, readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import {backupFilename, saveBackupToDisk} from "../utils/backup-download";
+import {withLocalStorageSnapshot} from "../lib/backup/localStorageSnapshot";
 import {notify} from "../utils/notify";
 
 type Step = "idle" | "confirm" | "typed";
@@ -85,7 +86,9 @@ export default function DangerZoneSection() {
             // Same export path as Settings > Daten > "Sicherung erstellen"
             // (BackupSection.handleExport): one endpoint, one save helper, so
             // the two buttons can never produce different files (#331).
-            const payload = await getStorage().backup.export(userId);
+            const payload = withLocalStorageSnapshot(
+                await getStorage().backup.export(userId),
+            );
             const outcome = await saveBackupToDisk(payload, backupFilename(userId));
             if (outcome.method === "cancelled") {
                 // User dismissed the OS save dialog; nothing was written.

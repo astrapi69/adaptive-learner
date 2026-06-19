@@ -14,7 +14,7 @@
 
 import "fake-indexeddb/auto";
 
-import {afterEach, beforeEach, describe, expect, it} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {ApiError} from "../api/client";
 import {_resetDbForTests, getDb} from "./db";
@@ -191,6 +191,28 @@ describe("DexieStorage.settings", () => {
             "anthropic",
         );
         expect(cleared.has_anthropic_key).toBe(false);
+    });
+
+    it("#810 — exposes a masked key_preview that survives navigate-away (re-read)", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const key = "AIzaSyA-secret-1234567f3k";
+
+        await dexieStorage.settings.setApiKey(u.id, {
+            provider: "gemini",
+            key,
+        });
+
+        // Re-read as if the user navigated away and came back: the key is
+        // still stored and a masked preview (first 4 + last 4) is shown,
+        // never the full key.
+        const reread = await dexieStorage.settings.get(u.id);
+        expect(reread.has_gemini_key).toBe(true);
+        expect(reread.key_preview_gemini).toBe("AIza…7f3k");
+        expect(reread.key_preview_gemini).not.toContain(key);
+
+        const afterDelete = await dexieStorage.settings.deleteApiKey(u.id, "gemini");
+        expect(afterDelete.has_gemini_key).toBe(false);
+        expect(afterDelete.key_preview_gemini).toBeNull();
     });
 
     it("update clears model override on empty-string sentinel", async () => {
@@ -841,6 +863,46 @@ describe("DexieStorage API-key test + rollback backup (Phase 65)", () => {
         expect(result).toEqual({success: false, kind: "no_key"});
     });
 
+    // #799 — the key is validated via the provider's models-list GET, not a
+    // generation call (which falsely failed on Gemini's 1-token cap).
+    it("testApiKey reports ok when the models endpoint accepts the key", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        const fetchMock = vi.fn(async () => ({
+            ok: true,
+            status: 200,
+            json: async () => ({data: [{id: "gpt-4o-mini"}]}),
+        }));
+        vi.stubGlobal("fetch", fetchMock);
+        const result = await dexieStorage.settings.testApiKey(user.id, {
+            provider: "openai",
+            key: "sk-799-ok-" + "a".repeat(30),
+        });
+        expect(result).toEqual({success: true, kind: "ok"});
+        expect(fetchMock).toHaveBeenCalledWith(
+            "https://api.openai.com/v1/models",
+            expect.objectContaining({method: "GET"}),
+        );
+        vi.unstubAllGlobals();
+    });
+
+    it("testApiKey reports invalid on a 401 from the models endpoint", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(async () => ({
+                ok: false,
+                status: 401,
+                json: async () => ({error: {message: "invalid key"}}),
+            })),
+        );
+        const result = await dexieStorage.settings.testApiKey(user.id, {
+            provider: "gemini",
+            key: "799-invalid-" + "b".repeat(30),
+        });
+        expect(result).toEqual({success: false, kind: "invalid"});
+        vi.unstubAllGlobals();
+    });
+
     it("backs up + reports + restores the last-known-good key", async () => {
         const user = await dexieStorage.users.create({name: "A"});
         // No backup initially.
@@ -888,5 +950,44 @@ describe("DexieStorage API-key test + rollback backup (Phase 65)", () => {
         await expect(
             dexieStorage.settings.restoreApiKeyBackup(user.id, "gemini"),
         ).rejects.toBeInstanceOf(ApiError);
+    });
+});
+
+describe("DexieStorage Anki extraction (#807)", () => {
+    const convBody = (messages: {role: "user" | "assistant"; content: string}[]) => ({
+        source: "manual" as const,
+        title: "Ansible basics",
+        model: null,
+        source_created_at: null,
+        messages: messages.map((m) => ({...m, timestamp: null})),
+    });
+
+    it("requires an API key when there is no vocabulary to fall back on", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        const conv = await dexieStorage.imports.create(
+            user.id,
+            convBody([{role: "user", content: "How does an Ansible playbook run?"}]),
+        );
+        // No key configured + no analysis vocabulary -> clear "key required",
+        // NOT the old "only available in API mode" message.
+        await expect(
+            dexieStorage.anki.extractFromConversation(conv.id),
+        ).rejects.toThrow(/API key/i);
+    });
+
+    it("falls back to analysis vocabulary without a key", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        const conv = await dexieStorage.imports.create(
+            user.id,
+            convBody([{role: "user", content: "Spanish greetings"}]),
+        );
+        await dexieStorage.imports.saveAnalysis(conv.id, {
+            analysis_result: {
+                vocabulary: [{word: "hola", translation: "hello"}],
+            },
+        } as never);
+        const cards = await dexieStorage.anki.extractFromConversation(conv.id);
+        expect(cards.length).toBeGreaterThan(0);
+        expect(cards[0].back).toContain("hello");
     });
 });

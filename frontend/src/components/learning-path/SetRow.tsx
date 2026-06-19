@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import {Link} from "react-router-dom";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {cn} from "../../lib/utils";
 import {lessonRoute} from "../../lib/content/continue-learning";
 import {relativeTime} from "../../lib/utils/relative-time";
@@ -95,6 +95,12 @@ function SetAction({set}: {set: PersonalPathSet}) {
             return (
                 <Link
                     to={to}
+                    // #779 — mark button-styled anchors so the global
+                    // ``a:not([data-slot="button"]){color:var(--accent)}``
+                    // rule skips them; otherwise it overrides
+                    // ``text-accent-fg`` and the label goes accent-on-accent
+                    // (invisible) in every theme.
+                    data-slot="button"
                     className={cn(base, "bg-accent text-accent-fg")}
                     data-testid={`set-action-${set.setId}`}
                     data-mode="next_level"
@@ -132,6 +138,7 @@ function SetAction({set}: {set: PersonalPathSet}) {
     return (
         <Link
             to={to}
+            data-slot="button"
             className={cn(base, "bg-accent text-accent-fg")}
             data-testid={`set-action-${set.setId}`}
             data-mode={set.mode}

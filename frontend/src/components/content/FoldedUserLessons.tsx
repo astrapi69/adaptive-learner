@@ -14,10 +14,10 @@
 
 import { Pencil, User } from "lucide-react";
 
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "../../hooks/ui/useI18n";
 import type { FoldedUserLesson } from "../../lib/content/content-tree";
 import type { ContentSetEntry } from "../../storage/types";
-import IconBadge from "../../shared/IconBadge";
+import IconBadge from "../../shared/layout/IconBadge";
 import UserSetActions from "./UserSetActions";
 
 export interface FoldedUserLessonsProps {

@@ -8,7 +8,7 @@
  * plain-language explanation, and a link to the learning methodology.
  */
 
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {SRS_MASTERY_THRESHOLD, SRS_SCHEDULE} from "../lib/srs/status";
 
 const METHODOLOGY_URL = "https://astrapi69.github.io/adaptive-learner/docs/";

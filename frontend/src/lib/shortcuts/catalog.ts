@@ -13,7 +13,7 @@
  * unit-testable without a DOM.
  */
 
-import type {ShortcutHelpGroup} from "../../shared/ShortcutHelpDialog";
+import type {ShortcutHelpGroup} from "../../shared/feedback/ShortcutHelpDialog";
 
 export type Translate = (key: string, fallback?: string) => string;
 

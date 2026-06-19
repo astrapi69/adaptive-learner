@@ -11,7 +11,7 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { I18nProvider } from "../hooks/useI18n";
+import { I18nProvider } from "../hooks/ui/useI18n";
 import { _resetStorageCacheForTests } from "../storage";
 
 import GitHubIntegrationSection from "./GitHubIntegrationSection";

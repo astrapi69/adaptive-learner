@@ -5,6 +5,9 @@
     "skeleton_notice": "Estado de esqueleto. Modelos de domínio, plugins e páginas chegam em fases posteriores — veja docs/adaptive-learner-project-reference.md."
   },
   "common": {
+    "ok": "OK",
+    "remove": "Remover",
+    "confirm_title": "Confirmar",
     "save": "Salvar",
     "cancel": "Cancelar",
     "loading": "Carregando…",
@@ -622,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "Provedores de IA configurados",
+      "hint": "As chaves guardadas permanecem armazenadas. Apenas é mostrada uma pré-visualização mascarada, nunca a chave completa.",
+      "status_active": "Ativo",
+      "status_empty": "Vazio",
+      "status_desktop_only": "Apenas computador",
+      "status_external": "Externo",
+      "set_active": "Usar como provedor ativo",
+      "edit": "Editar",
+      "add": "Adicionar chave"
+    },
     "api_key_label": "Chave de API",
     "api_key_placeholder": "Cole aqui…",
     "api_key_placeholder_replace": "Cole uma nova chave para substituir a armazenada…",
@@ -631,6 +645,7 @@
       "test_success": "A chave funciona!",
       "test_invalid": "Chave inválida ou expirada.",
       "test_network": "Falha na conexão. Verifique sua internet.",
+      "test_error": "Falha no teste. O provedor rejeitou a solicitação.",
       "test_rate_limit": "Limite de uso atingido. Tente mais tarde.",
       "test_no_key": "Nenhuma chave para testar.",
       "format_invalid": "Formato inválido.",
@@ -642,7 +657,7 @@
       "format_hint": {
         "anthropic": "Começa com sk-ant-",
         "openai": "Começa com sk-",
-        "gemini": "Começa com AI"
+        "gemini": "Pelo menos 20 caracteres"
       }
     },
     "api_key_saved": "Chave salva",
@@ -915,6 +930,7 @@
     "restored_inserted": "Inseridos: {{n}}",
     "restored_updated": "Atualizados: {{n}}",
     "restored_skipped": "Ignorados: {{n}}",
+    "api_keys_skipped": "Não foi possível importar as chaves de API. Insira-as novamente em Definições > Integrações.",
     "restored_errors": "Erros: {{n}}",
     "col_inserted": "Ins.",
     "col_updated": "Atu.",
@@ -1980,7 +1996,7 @@
       "target_lang_label": "Idioma aprendido",
       "source_lang_label": "Seu idioma",
       "level_label": "Nível",
-      "not_enough_data": "Vocabulário insuficiente para uma lição completa (são necessários pelo menos {min} exercícios). Importe uma conversa mais longa para mais material.",
+      "not_enough_data": "Poucos exercícios — recomenda-se pelo menos {min} para uma lição de idioma completa. Você ainda pode salvá-la (por exemplo, como lição apenas de teoria).",
       "same_language": "O idioma aprendido e o seu idioma devem ser diferentes.",
       "same_language_hint": "O idioma aprendido e seu idioma são os mesmos — ótimo para uma aula de gramática ou no idioma nativo. Ao compartilhar, aparece no ramo do mesmo idioma da árvore de conteúdo.",
       "split_notice": "Esta aula tem {steps} etapas e será salva em {parts} partes (máx. {max} etapas cada).",

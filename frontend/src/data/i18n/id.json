@@ -5,6 +5,9 @@
     "skeleton_notice": "Status kerangka. Model domain, plugin, dan halaman akan hadir pada fase mendatang — lihat docs/adaptive-learner-project-reference.md."
   },
   "common": {
+    "ok": "OK",
+    "remove": "Hapus",
+    "confirm_title": "Konfirmasi",
     "save": "Simpan",
     "cancel": "Batal",
     "loading": "Memuat…",
@@ -626,6 +629,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "Penyedia AI yang dikonfigurasi",
+      "hint": "Kunci yang Anda simpan tetap tersimpan. Hanya pratinjau yang disamarkan yang ditampilkan, tidak pernah kunci lengkapnya.",
+      "status_active": "Aktif",
+      "status_empty": "Kosong",
+      "status_desktop_only": "Hanya desktop",
+      "status_external": "Eksternal",
+      "set_active": "Gunakan sebagai penyedia aktif",
+      "edit": "Edit",
+      "add": "Tambah kunci"
+    },
     "api_key_label": "Kunci API",
     "api_key_placeholder": "Tempel di sini…",
     "api_key_placeholder_replace": "Tempel kunci baru untuk mengganti yang tersimpan…",
@@ -635,6 +649,7 @@
       "test_success": "Kunci berfungsi!",
       "test_invalid": "Kunci tidak valid atau kedaluwarsa.",
       "test_network": "Koneksi gagal. Periksa koneksi internet Anda.",
+      "test_error": "Pengujian gagal. Penyedia menolak permintaan.",
       "test_rate_limit": "Batas laju tercapai. Coba lagi nanti.",
       "test_no_key": "Tidak ada kunci untuk diuji.",
       "format_invalid": "Format tidak valid.",
@@ -646,7 +661,7 @@
       "format_hint": {
         "anthropic": "Diawali dengan sk-ant-",
         "openai": "Diawali dengan sk-",
-        "gemini": "Diawali dengan AI"
+        "gemini": "Minimal 20 karakter"
       }
     },
     "api_key_saved": "Kunci disimpan",
@@ -915,6 +930,7 @@
     "restored_inserted": "Disisipkan: {{n}}",
     "restored_updated": "Diperbarui: {{n}}",
     "restored_skipped": "Dilewati: {{n}}",
+    "api_keys_skipped": "Kunci API tidak dapat diimpor. Silakan masukkan kembali di Pengaturan > Integrasi.",
     "restored_errors": "Kesalahan: {{n}}",
     "col_inserted": "Sisip",
     "col_updated": "Perb.",
@@ -1980,7 +1996,7 @@
       "target_lang_label": "Bahasa yang dipelajari",
       "source_lang_label": "Bahasamu",
       "level_label": "Tingkat",
-      "not_enough_data": "Kosakata tidak cukup untuk pelajaran lengkap (perlu setidaknya {min} latihan). Impor obrolan yang lebih panjang untuk materi latihan tambahan.",
+      "not_enough_data": "Sedikit latihan — minimal {min} disarankan untuk pelajaran bahasa lengkap. Kamu tetap bisa menyimpannya (misalnya sebagai pelajaran teori saja).",
       "same_language": "Bahasa yang dipelajari dan bahasamu harus berbeda.",
       "same_language_hint": "Bahasa yang dipelajari dan bahasamu sama — tidak masalah untuk pelajaran tata bahasa atau bahasa ibu. Saat dibagikan, pelajaran ini akan masuk ke cabang bahasa-sama pada pohon konten.",
       "split_notice": "Pelajaran ini memiliki {steps} langkah dan akan disimpan sebagai {parts} bagian (maksimal {max} langkah per bagian).",

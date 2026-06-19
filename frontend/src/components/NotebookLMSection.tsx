@@ -21,7 +21,8 @@ import { ApiError } from "../api/client";
 import ApiKeyRequiredNotice from "./ApiKeyRequiredNotice";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "../features/featureConfig";
-import { useI18n } from "../hooks/useI18n";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useConfirm } from "../contexts/ConfirmContext";
 import { buildNotebookLMPackage } from "../lib/export/notebooklm-package";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
@@ -36,6 +37,7 @@ const DIFFICULTIES: StudyQuestionDifficulty[] = ["easy", "medium", "hard"];
 
 export default function NotebookLMSection({ projectId }: NotebookLMSectionProps) {
   const { t } = useI18n();
+  const confirm = useConfirm();
   const [questions, setQuestions] = useState<StudyQuestion[] | null>(null);
   const [filterDifficulty, setFilterDifficulty] = useState<StudyQuestionDifficulty | "">("");
   const [generating, setGenerating] = useState(false);
@@ -99,7 +101,14 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
   };
 
   const removeQuestion = async (q: StudyQuestion) => {
-    if (!confirm(t("notebooklm.delete_confirm", "Delete this study question?"))) return;
+    if (
+      !(await confirm({
+        message: t("notebooklm.delete_confirm", "Delete this study question?"),
+        confirmLabel: t("common.delete", "Delete"),
+        variant: "danger",
+      }))
+    )
+      return;
     try {
       await getStorage().notebooklm.deleteQuestion(q.id);
       setQuestions((prev) => (prev ? prev.filter((x) => x.id !== q.id) : prev));

@@ -16,7 +16,7 @@ import type {FavoriteEntry} from "../../lib/favorites/favorites";
 
 const favoritesMock = vi.fn();
 
-vi.mock("../../hooks/useFavorites", () => ({
+vi.mock("../../hooks/learning/useFavorites", () => ({
     useFavorites: () => ({
         favorites: favoritesMock(),
         isFavorite: () => false,

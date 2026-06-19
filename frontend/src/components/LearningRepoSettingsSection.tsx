@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ApiError } from "../api/client";
 import { FEATURES } from "../features/featureConfig";
-import { useI18n } from "../hooks/useI18n";
+import { useI18n } from "../hooks/ui/useI18n";
 import { getStorage } from "../storage";
 import { notify } from "../utils/notify";
 

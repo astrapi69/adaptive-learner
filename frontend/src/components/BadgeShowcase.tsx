@@ -12,7 +12,7 @@
  * underlying name_key text.
  */
 
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import type {BadgeWithProgress} from "../storage/types";
 
 const ICON_GLYPH: Record<string, string> = {

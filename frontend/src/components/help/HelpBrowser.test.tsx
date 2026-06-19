@@ -19,7 +19,7 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import HelpBrowser from "./HelpBrowser";
 import {HelpProvider, useHelp} from "../../contexts/HelpContext";
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({
         t: (_key: string, fallback?: string) => fallback ?? _key,
         lang: "en",

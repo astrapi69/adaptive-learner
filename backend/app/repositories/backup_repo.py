@@ -15,7 +15,8 @@ backup and sync stay consistent.
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
+from contextlib import AbstractContextManager, contextmanager
 from typing import Any
 
 from sqlalchemy import text
@@ -81,6 +82,16 @@ class BackupRepository(Repository):
         (``PRAGMA defer_foreign_keys=ON``) so a self-referential or
         within-transaction parent/child order cannot trip mid-restore."""
 
+    @abstractmethod
+    def savepoint(self) -> AbstractContextManager[None]:
+        """Context manager wrapping a nested transaction (SAVEPOINT).
+
+        Restore flushes one table at a time inside this savepoint so a
+        single table's failed flush (e.g. an unexpected constraint
+        violation) rolls back ONLY that table's pending rows, leaving the
+        already-restored tables intact — the import degrades gracefully
+        instead of aborting the whole restore with a 500 (#787)."""
+
 
 class SqlAlchemyBackupRepository(BackupRepository):
     """SQLAlchemy-backed :class:`BackupRepository`."""
@@ -129,6 +140,14 @@ class SqlAlchemyBackupRepository(BackupRepository):
 
     def begin_deferred_fk(self) -> None:
         self._db.execute(text("PRAGMA defer_foreign_keys=ON"))
+
+    @contextmanager
+    def savepoint(self) -> Iterator[None]:
+        # ``begin_nested`` emits SAVEPOINT and, on an exception inside the
+        # block, rolls back to it (expunging rows added in the block) and
+        # re-raises — the caller decides how to record the skipped table.
+        with self._db.begin_nested():
+            yield
 
 
 __all__ = ["BackupRepository", "SqlAlchemyBackupRepository"]

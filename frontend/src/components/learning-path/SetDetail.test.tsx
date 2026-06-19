@@ -83,4 +83,20 @@ describe("SetDetail", () => {
         expect(link).toHaveAttribute("href", "/review/psych");
         expect(link).toHaveTextContent("12");
     });
+
+    it("marks both action links with data-slot=button (#779)", () => {
+        // Button-styled router <a>s must carry data-slot="button" so the
+        // global ``a:not([data-slot=button]){color:var(--accent)}`` rule
+        // skips them; otherwise the solid action's label is accent-on-accent
+        // (invisible) and the outline action's text loses --fg-primary.
+        renderDetail(setFixture({errorCount: 3}));
+        expect(screen.getByTestId("set-adaptive-psych")).toHaveAttribute(
+            "data-slot",
+            "button",
+        );
+        expect(screen.getByTestId("set-error-replay-psych")).toHaveAttribute(
+            "data-slot",
+            "button",
+        );
+    });
 });

@@ -1,8 +1,8 @@
 import {useState} from "react";
 
-import {useButtonTooltips} from "../hooks/useButtonTooltips";
-import {useI18n} from "../hooks/useI18n";
-import {useSwipe} from "../hooks/useSwipe";
+import {useButtonTooltips} from "../hooks/settings/useButtonTooltips";
+import {useI18n} from "../hooks/ui/useI18n";
+import {useSwipe} from "../hooks/ui/useSwipe";
 import type {TypedTreeNode} from "../lib/tree";
 import {readGesturePref} from "../lib/gesturePref";
 import type {LearningTopic} from "../types";

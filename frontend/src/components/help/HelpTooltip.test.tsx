@@ -21,7 +21,7 @@ import {render, screen} from "@testing-library/react";
 import {HelpProvider} from "../../contexts/HelpContext";
 import HelpTooltip from "./HelpTooltip";
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({
         t: (_key: string, fallback?: string) => fallback ?? _key,
         lang: "en",

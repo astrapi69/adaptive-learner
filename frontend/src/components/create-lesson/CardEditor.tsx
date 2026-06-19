@@ -30,8 +30,8 @@ import {
 } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
 
-import {useDialogFocus} from "../../hooks/useDialogFocus";
-import {useI18n} from "../../hooks/useI18n";
+import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson-draft";
 

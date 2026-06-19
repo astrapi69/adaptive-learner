@@ -19,8 +19,8 @@ import { ExternalLink, Square, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import CodeBlock from "../content/CodeBlock";
-import { useI18n } from "../../hooks/useI18n";
-import type { ReadAloudController } from "../../hooks/useReadAloud";
+import { useI18n } from "../../hooks/ui/useI18n";
+import type { ReadAloudController } from "../../hooks/lesson/useReadAloud";
 import { parseStepAnchor } from "../../lib/lesson-anchors";
 import { markdownToSpeech } from "../../lib/lesson/tts-text";
 

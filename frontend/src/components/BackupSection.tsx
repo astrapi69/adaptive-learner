@@ -20,7 +20,7 @@ import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {BackupCompare} from "./BackupCompare";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage, resolveStorageMode} from "../storage";
 import {notify} from "../utils/notify";
@@ -28,7 +28,7 @@ import {readBackupFile} from "../lib/backup/validateBackupFile";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
-import {useBackupCompare} from "../hooks/useBackupCompare";
+import {useBackupCompare} from "../hooks/system/useBackupCompare";
 
 const LAST_BACKUP_KEY = "adaptive-learner.last_backup_at";
 const BACKUP_REMINDER_DAYS = 7;
@@ -55,6 +55,10 @@ function daysSince(iso: string | null): number | null {
 // Phase 41F: extracted to ``utils/backup-download.ts`` so the
 // DangerZone pre-reset backup button can produce identical files.
 import {saveBackupToDisk, backupFilename} from "../utils/backup-download";
+import {
+    applyLocalStorageSnapshot,
+    withLocalStorageSnapshot,
+} from "../lib/backup/localStorageSnapshot";
 
 interface ComparisonRow {
     table: string;
@@ -471,7 +475,12 @@ export default function BackupSection() {
         }
         setBusy("export");
         try {
-            const payload = await storage.backup.export(userId);
+            // Attach a localStorage snapshot (preferences + contributions
+            // that don't live in the DB tables) so the backup is portable
+            // across a browser reset / device migration (P1 offline parity).
+            const payload = withLocalStorageSnapshot(
+                await storage.backup.export(userId),
+            );
             const filename = backupFilename(userId);
             const outcome = await saveBackupToDisk(payload, filename);
             if (outcome.method === "cancelled") {
@@ -616,6 +625,14 @@ export default function BackupSection() {
         setBusy("import");
         try {
             const summary = await storage.backup.import(userId, pendingPayload);
+            // Restore the localStorage snapshot (preferences + contributions)
+            // frontend-side, in both storage modes — the backend ignores the
+            // payload's local_storage block. Legacy backups carry none -> no-op.
+            const localApplied = applyLocalStorageSnapshot(
+                pendingPayload.local_storage,
+            );
+            // eslint-disable-next-line no-console -- round-trip trace, see below
+            console.log("[Backup] localStorage keys applied:", localApplied);
             // #126 — surface the full result in the browser console so a
             // real Export -> Import round-trip is debuggable without a
             // backend log. Errors are logged separately as a list.
@@ -655,6 +672,18 @@ export default function BackupSection() {
                 notify.error(summaryMsg);
             } else {
                 notify.success(summaryMsg);
+            }
+            // #787 — a Dexie-origin backup can't restore API keys (active
+            // keys are stripped on export; rollback-cache rows without a
+            // usable key are skipped). Tell the user to re-enter them
+            // instead of leaving the keys silently missing.
+            if ((summary.api_keys_skipped ?? 0) > 0) {
+                notify.warning(
+                    t(
+                        "backup.api_keys_skipped",
+                        "API keys could not be imported. Please re-enter them in Settings > Integrations.",
+                    ),
+                );
             }
         } catch (err) {
             const detail = err instanceof Error ? err.message : String(err);

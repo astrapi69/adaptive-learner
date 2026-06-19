@@ -187,6 +187,14 @@ class UserSettingsOut(BaseModel):
     key_source_anthropic: ApiKeySource = ApiKeySource.NONE
     key_source_openai: ApiKeySource = ApiKeySource.NONE
     key_source_gemini: ApiKeySource = ApiKeySource.NONE
+    # #810 — masked preview of the resolved key (first 4 + last 4 chars,
+    # e.g. "AIza…7f3k"), or None when no key is configured. The full /
+    # decrypted key is NEVER returned; the router computes the preview by
+    # resolving the key and masking it. ``None`` default so callers that
+    # build this directly from the ORM row (legacy tests) still validate.
+    key_preview_anthropic: str | None = None
+    key_preview_openai: str | None = None
+    key_preview_gemini: str | None = None
     created_at: datetime
     updated_at: datetime
 

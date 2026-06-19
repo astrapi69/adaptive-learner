@@ -9,7 +9,7 @@
 
 import {CheckCircle2, Lock} from "lucide-react";
 
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 
 export default function ModeIndicator() {
     const {t} = useI18n();

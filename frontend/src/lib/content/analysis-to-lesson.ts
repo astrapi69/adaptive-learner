@@ -219,15 +219,32 @@ export function cefrFromAnalysisLevel(
 }
 
 /** True when a generated lesson clears the sharing-validator
- *  minimums (>= 5 exercises across >= 2 types). The Save-as-Lesson
- *  modal gates the Save button on this so a theory-only / tiny
- *  analysis can't be saved as an unshareable lesson. */
+ *  minimums (>= 5 exercises across >= 2 types). This is the stricter
+ *  CONTRIBUTION gate (a lesson must clear it to be shared to the
+ *  content repo); it does NOT gate local saving — see
+ *  ``isSaveableLesson``. */
 export function isShareableLesson(summary: GeneratedLessonSummary): boolean {
   return (
     summary.exercises >= MIN_SHAREABLE_EXERCISES &&
     Object.keys(summary.exerciseTypeCounts).length >=
       MIN_SHAREABLE_EXERCISE_TYPES
   );
+}
+
+/** Minimum total steps for a generated lesson to be worth saving
+ *  offline. A single step of any kind is enough — a lone theory step
+ *  with no exercises (a grammar note, a technical explanation, an AI
+ *  summary) is a legitimate knowledge lesson. This is deliberately
+ *  looser than ``isShareableLesson``: saving locally and contributing
+ *  to the content repo are separate concerns (#795). */
+export const MIN_SAVEABLE_STEPS = 1;
+
+/** True when a generated lesson is worth saving offline: it carries at
+ *  least one step of any type. Theory-only knowledge lessons (grammar,
+ *  technical topics, AI explanations) are saveable even with 0
+ *  exercises. The Save-as-Lesson modal gates the Save button on this. */
+export function isSaveableLesson(summary: GeneratedLessonSummary): boolean {
+  return summary.theorySteps + summary.exercises >= MIN_SAVEABLE_STEPS;
 }
 
 // ---------------------------------------------------------------------------

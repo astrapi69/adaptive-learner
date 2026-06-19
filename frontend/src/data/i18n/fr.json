@@ -5,6 +5,9 @@
     "skeleton_notice": "Etat squelette. Les modeles de domaine, plugins et pages arrivent dans les phases suivantes — voir docs/adaptive-learner-project-reference.md."
   },
   "common": {
+    "ok": "OK",
+    "remove": "Supprimer",
+    "confirm_title": "Confirmer",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "loading": "Chargement...",
@@ -622,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "Fournisseurs d'IA configurés",
+      "hint": "Les clés enregistrées sont conservées. Seul un aperçu masqué est affiché, jamais la clé complète.",
+      "status_active": "Actif",
+      "status_empty": "Vide",
+      "status_desktop_only": "Bureau uniquement",
+      "status_external": "Externe",
+      "set_active": "Utiliser comme fournisseur actif",
+      "edit": "Modifier",
+      "add": "Ajouter une clé"
+    },
     "api_key_label": "Cle API",
     "api_key_placeholder": "Coller ici...",
     "api_key_placeholder_replace": "Colle une nouvelle cle pour remplacer celle enregistree…",
@@ -631,6 +645,7 @@
       "test_success": "La cle fonctionne !",
       "test_invalid": "Cle invalide ou expiree.",
       "test_network": "Connexion echouee. Verifie ta connexion internet.",
+      "test_error": "Échec du test. Le fournisseur a rejeté la requête.",
       "test_rate_limit": "Limite de debit atteinte. Reessaie plus tard.",
       "test_no_key": "Aucune cle a tester.",
       "format_invalid": "Format invalide.",
@@ -642,7 +657,7 @@
       "format_hint": {
         "anthropic": "Commence par sk-ant-",
         "openai": "Commence par sk-",
-        "gemini": "Commence par AI"
+        "gemini": "Au moins 20 caractères"
       }
     },
     "api_key_saved": "Cle enregistree",
@@ -915,6 +930,7 @@
     "restored_inserted": "Inserted: {{n}}",
     "restored_updated": "Updated: {{n}}",
     "restored_skipped": "Skipped: {{n}}",
+    "api_keys_skipped": "Les clés API n'ont pas pu être importées. Veuillez les saisir à nouveau dans Paramètres > Intégrations.",
     "restored_errors": "Errors: {{n}}",
     "col_inserted": "Ins.",
     "col_updated": "Maj",
@@ -1980,7 +1996,7 @@
       "target_lang_label": "Langue apprise",
       "source_lang_label": "Votre langue",
       "level_label": "Niveau",
-      "not_enough_data": "Pas assez de vocabulaire pour une leçon complète (au moins {min} exercices nécessaires). Importez une conversation plus longue pour plus de matériel.",
+      "not_enough_data": "Peu d'exercices — au moins {min} sont recommandés pour une leçon de langue complète. Vous pouvez quand même l'enregistrer (par exemple comme leçon de théorie uniquement).",
       "same_language": "La langue apprise et votre langue doivent être différentes.",
       "same_language_hint": "La langue apprise et votre langue sont identiques — parfait pour une leçon de grammaire ou en langue maternelle. Lors du partage, elle apparaît dans la branche de même langue de l'arbre de contenu.",
       "split_notice": "Cette leçon contient {steps} étapes et sera enregistrée en {parts} parties (max. {max} étapes chacune).",

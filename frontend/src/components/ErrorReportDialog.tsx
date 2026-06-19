@@ -4,7 +4,7 @@ import {Bug, Check, ChevronDown, ChevronUp, Copy, Download} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {copyToClipboard} from "../utils/clipboard";
 import {downloadBlob} from "../lib/lesson/result-download";
 import {

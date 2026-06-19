@@ -3,6 +3,9 @@ app:
   tagline: Learning that adapts to you.
   skeleton_notice: Skeleton state. Domain models, plugins and pages land in upcoming phases — see docs/adaptive-learner-project-reference.md.
 common:
+  ok: "OK"
+  remove: "Remove"
+  confirm_title: "Please confirm"
   save: Save
   cancel: Cancel
   loading: Loading…
@@ -590,6 +593,17 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  # #810 — configured-providers overview table on the AI tab.
+  providers:
+    title: Configured AI providers
+    hint: "Keys you have saved stay stored. Only a masked preview is shown — never the full key."
+    status_active: Active
+    status_empty: Empty
+    status_desktop_only: Desktop only
+    status_external: External
+    set_active: Use as active provider
+    edit: Edit
+    add: Add key
   api_key_label: API key
   api_key_placeholder: Paste here…
   api_key_placeholder_replace: "Paste a new key to replace the stored one…"
@@ -599,6 +613,7 @@ settings:
     test_success: "Key works!"
     test_invalid: "Key invalid or expired."
     test_network: "Connection failed. Check your internet connection."
+    test_error: "Test failed. The provider rejected the request."
     test_rate_limit: "Rate limit hit. Try later."
     test_no_key: "No key to test."
     format_invalid: "Invalid format."
@@ -610,7 +625,7 @@ settings:
     format_hint:
       anthropic: "Starts with sk-ant-"
       openai: "Starts with sk-"
-      gemini: "Starts with AI"
+      gemini: "At least 20 characters"
   api_key_saved: Key stored
   api_key_missing: Not set
   api_key_set: Save key
@@ -855,6 +870,7 @@ backup:
   restored_inserted: 'Inserted: {{n}}'
   restored_updated: 'Updated: {{n}}'
   restored_skipped: 'Skipped: {{n}}'
+  api_keys_skipped: "API keys could not be imported. Please re-enter them in Settings > Integrations."
   restored_errors: 'Errors: {{n}}'
   col_inserted: 'Ins.'
   col_updated: 'Upd.'
@@ -1837,7 +1853,7 @@ content:
     target_lang_label: Language learned
     source_lang_label: Your language
     level_label: Level
-    not_enough_data: Not enough vocabulary for a full lesson (need at least {min} exercises). Import a longer chat for more practice material.
+    not_enough_data: Few exercises — at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).
     same_language: The language learned and your language must be different.
     same_language_hint: "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree."
     split_notice: "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each)."

@@ -20,7 +20,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {filterStandardProjects} from "../lib/learning-project";
 import {translateSubjectName} from "../lib/subjectI18n";
 import {

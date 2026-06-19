@@ -5,6 +5,9 @@
     "skeleton_notice": "İskelet aşaması. Alan modelleri, eklentiler ve sayfalar sonraki aşamalarda geliyor — bkz. docs/adaptive-learner-project-reference.md."
   },
   "common": {
+    "ok": "Tamam",
+    "remove": "Kaldır",
+    "confirm_title": "Onayla",
     "save": "Kaydet",
     "cancel": "İptal",
     "loading": "Yükleniyor…",
@@ -622,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "Yapılandırılmış yapay zekâ sağlayıcıları",
+      "hint": "Kaydettiğiniz anahtarlar saklanır. Yalnızca maskelenmiş bir önizleme gösterilir, anahtarın tamamı asla gösterilmez.",
+      "status_active": "Etkin",
+      "status_empty": "Boş",
+      "status_desktop_only": "Yalnızca masaüstü",
+      "status_external": "Harici",
+      "set_active": "Etkin sağlayıcı olarak kullan",
+      "edit": "Düzenle",
+      "add": "Anahtar ekle"
+    },
     "api_key_label": "API anahtarı",
     "api_key_placeholder": "Buraya yapıştır…",
     "api_key_placeholder_replace": "Saklanan anahtarı değiştirmek için yeni bir anahtar yapıştırın…",
@@ -631,6 +645,7 @@
       "test_success": "Anahtar çalışıyor!",
       "test_invalid": "Anahtar geçersiz veya süresi dolmuş.",
       "test_network": "Bağlantı başarısız. İnternet bağlantını kontrol et.",
+      "test_error": "Test başarısız oldu. Sağlayıcı isteği reddetti.",
       "test_rate_limit": "Hız sınırına ulaşıldı. Daha sonra dene.",
       "test_no_key": "Test edilecek anahtar yok.",
       "format_invalid": "Geçersiz biçim.",
@@ -642,7 +657,7 @@
       "format_hint": {
         "anthropic": "sk-ant- ile başlar",
         "openai": "sk- ile başlar",
-        "gemini": "AI ile başlar"
+        "gemini": "En az 20 karakter"
       }
     },
     "api_key_saved": "Anahtar saklandı",
@@ -915,6 +930,7 @@
     "restored_inserted": "Eklenen: {{n}}",
     "restored_updated": "Güncellenen: {{n}}",
     "restored_skipped": "Atlanan: {{n}}",
+    "api_keys_skipped": "API anahtarları içe aktarılamadı. Lütfen bunları Ayarlar > Entegrasyonlar bölümünden yeniden girin.",
     "restored_errors": "Hatalar: {{n}}",
     "col_inserted": "Ekl.",
     "col_updated": "Günc.",
@@ -1980,7 +1996,7 @@
       "target_lang_label": "Öğrenilen dil",
       "source_lang_label": "Sizin diliniz",
       "level_label": "Seviye",
-      "not_enough_data": "Tam bir ders için yeterli kelime yok (en az {min} alıştırma gerekli). Daha fazla alıştırma materyali için daha uzun bir sohbet içe aktarın.",
+      "not_enough_data": "Az alıştırma — tam bir dil dersi için en az {min} önerilir. Yine de kaydedebilirsiniz (örneğin yalnızca teori dersi olarak).",
       "same_language": "Öğrenilen dil ile sizin diliniz farklı olmalıdır.",
       "same_language_hint": "Öğrenilen dil ve diliniz aynı — dilbilgisi veya anadil dersi için uygundur. Paylaşıldığında içerik ağacının aynı dil dalına yerleşir.",
       "split_notice": "Bu dersin {steps} adımı var ve {parts} parça olarak kaydedilecektir (bölüm başına en fazla {max} adım).",

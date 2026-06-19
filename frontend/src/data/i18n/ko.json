@@ -5,6 +5,9 @@
     "skeleton_notice": "스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 — docs/adaptive-learner-project-reference.md를 참고하세요."
   },
   "common": {
+    "ok": "확인",
+    "remove": "제거",
+    "confirm_title": "확인",
     "save": "저장",
     "cancel": "취소",
     "loading": "불러오는 중…",
@@ -626,6 +629,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "구성된 AI 공급자",
+      "hint": "저장한 키는 그대로 유지됩니다. 전체 키는 표시되지 않으며 마스킹된 미리 보기만 표시됩니다.",
+      "status_active": "활성",
+      "status_empty": "비어 있음",
+      "status_desktop_only": "데스크톱 전용",
+      "status_external": "외부",
+      "set_active": "활성 공급자로 사용",
+      "edit": "편집",
+      "add": "키 추가"
+    },
     "api_key_label": "API 키",
     "api_key_placeholder": "여기에 붙여넣으세요…",
     "api_key_placeholder_replace": "저장된 키를 교체하려면 새 키를 붙여넣으세요…",
@@ -635,6 +649,7 @@
       "test_success": "키가 작동합니다!",
       "test_invalid": "키가 유효하지 않거나 만료되었습니다.",
       "test_network": "연결에 실패했습니다. 인터넷 연결을 확인하세요.",
+      "test_error": "테스트에 실패했습니다. 제공업체가 요청을 거부했습니다.",
       "test_rate_limit": "요청 한도에 도달했습니다. 나중에 다시 시도하세요.",
       "test_no_key": "테스트할 키가 없습니다.",
       "format_invalid": "형식이 유효하지 않습니다.",
@@ -646,7 +661,7 @@
       "format_hint": {
         "anthropic": "sk-ant-로 시작합니다",
         "openai": "sk-로 시작합니다",
-        "gemini": "AI로 시작합니다"
+        "gemini": "20자 이상"
       }
     },
     "api_key_saved": "키가 저장됨",
@@ -915,6 +930,7 @@
     "restored_inserted": "삽입: {{n}}",
     "restored_updated": "업데이트: {{n}}",
     "restored_skipped": "건너뜀: {{n}}",
+    "api_keys_skipped": "API 키를 가져올 수 없습니다. 설정 > 통합에서 다시 입력하세요.",
     "restored_errors": "오류: {{n}}",
     "col_inserted": "삽입",
     "col_updated": "갱신",
@@ -1980,7 +1996,7 @@
       "target_lang_label": "학습하는 언어",
       "source_lang_label": "당신의 언어",
       "level_label": "레벨",
-      "not_enough_data": "완전한 레슨을 만들기에 어휘가 부족합니다 (연습 {min}개 이상 필요). 더 많은 연습 자료를 위해 더 긴 채팅을 가져오세요.",
+      "not_enough_data": "연습이 적습니다 — 완전한 언어 레슨에는 최소 {min}개를 권장합니다. 그래도 저장할 수 있습니다 (예: 이론 전용 레슨으로).",
       "same_language": "학습하는 언어와 당신의 언어는 서로 달라야 합니다.",
       "same_language_hint": "학습하는 언어와 당신의 언어가 같습니다 — 문법이나 모국어 레슨에는 괜찮습니다. 공유하면 콘텐츠 트리의 동일 언어 분기에 배치됩니다.",
       "split_notice": "이 레슨은 {steps}단계로, {parts}개 부분으로 저장됩니다 (부분당 최대 {max}단계).",

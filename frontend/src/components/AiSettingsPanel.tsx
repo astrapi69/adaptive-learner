@@ -9,18 +9,35 @@
  * links and data-testid assertions keep working.
  */
 
+import { useRef } from "react";
+
 import { Button } from "@/components/ui/button";
 import { ModelPicker } from "./ModelPicker";
 import ApiKeyRow from "./ApiKeyRow";
-import { useI18n } from "../hooks/useI18n";
-import { useAiKeySettings } from "../hooks/useAiKeySettings";
+import ConfiguredProvidersTable from "./ConfiguredProvidersTable";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useAiKeySettings } from "../hooks/settings/useAiKeySettings";
 import { DEFAULT_MODELS } from "../storage/ai-providers";
+import { resolveStorageMode } from "../storage";
 import {
   AI_PROVIDERS,
   MODEL_SUGGESTIONS,
   type AIProvider,
 } from "../lib/constants";
 import type { UserSettings } from "../types";
+
+/**
+ * Scroll a provider's key input into view and focus it. Used by the
+ * overview table's Edit / Add actions. Guards ``scrollIntoView`` / ``focus``
+ * so it is a no-op under happy-dom.
+ */
+function focusProviderInput(provider: AIProvider): void {
+  const el = document.querySelector<HTMLInputElement>(
+    `[data-testid="api-key-input-${provider}"]`,
+  );
+  el?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+  el?.focus?.();
+}
 
 interface AiSettingsPanelProps {
   /** The loaded user settings (the AI tab only renders once present). */
@@ -38,6 +55,8 @@ export default function AiSettingsPanel({
   active,
 }: AiSettingsPanelProps) {
   const { t } = useI18n();
+  const mode = resolveStorageMode();
+  const overviewRef = useRef<HTMLDivElement>(null);
   const {
     busy,
     keyDrafts,
@@ -45,13 +64,9 @@ export default function AiSettingsPanel({
     modelDrafts,
     setModelDrafts,
     testResults,
-    rollbackPrompt,
     backupAvailable,
     handleProviderChange,
     handleSaveKey,
-    handleSaveAnyway,
-    handleKeepOldKey,
-    handleDismissRollback,
     handleRestoreBackup,
     handleTestKey,
     handleSaveModel,
@@ -59,8 +74,26 @@ export default function AiSettingsPanel({
     handleDeleteKey,
   } = useAiKeySettings(settings, onSettingsChange);
 
+  // #810 — after a save the key field clears; bring the user back to the
+  // overview where the freshly-stored key now shows (masked).
+  const handleSaveKeyAndReturn = async (provider: AIProvider) => {
+    await handleSaveKey(provider);
+    overviewRef.current?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <>
+      <div ref={overviewRef} hidden={!active}>
+        <ConfiguredProvidersTable
+          settings={settings}
+          mode={mode}
+          busy={busy}
+          onSetActive={handleProviderChange}
+          onEdit={focusProviderInput}
+          onDelete={handleDeleteKey}
+        />
+      </div>
+
       <section className="settings-section" hidden={!active}>
         <h2 className="settings-section-title">{t("settings.section_provider", "AI provider")}</h2>
         <label className="form-row">
@@ -176,17 +209,13 @@ export default function AiSettingsPanel({
             draft={keyDrafts[provider]}
             busy={busy}
             testResult={testResults[provider]}
-            rollbackActive={rollbackPrompt?.provider === provider}
             backupAvailable={backupAvailable[provider]}
             onDraftChange={(value) =>
               setKeyDrafts((prev) => ({ ...prev, [provider]: value }))
             }
-            onSave={() => handleSaveKey(provider)}
+            onSave={() => handleSaveKeyAndReturn(provider)}
             onTest={() => handleTestKey(provider)}
             onDelete={() => handleDeleteKey(provider)}
-            onKeepOld={() => handleKeepOldKey(provider)}
-            onSaveAnyway={() => handleSaveAnyway(provider)}
-            onDismissRollback={handleDismissRollback}
             onRestoreBackup={() => handleRestoreBackup(provider)}
           />
         ))}

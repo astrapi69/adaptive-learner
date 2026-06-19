@@ -31,7 +31,7 @@ beforeEach(() => {
   );
 });
 
-vi.mock("../../hooks/useNextStepSuggestions", () => ({
+vi.mock("../../hooks/learning/useNextStepSuggestions", () => ({
   useNextStepSuggestions: () => ({
     loading: false,
     nextLesson: { available: false, isPaused: false },

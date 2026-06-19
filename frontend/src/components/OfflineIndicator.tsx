@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { WifiOff, X } from "lucide-react";
 
-import { useI18n } from "../hooks/useI18n";
-import { useOnlineStatus } from "../hooks/useOnlineStatus";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useOnlineStatus } from "../hooks/system/useOnlineStatus";
 
 /**
  * S2 (PWA hardening) — offline status banner.

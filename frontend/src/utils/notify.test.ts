@@ -31,7 +31,7 @@ vi.mock("react-toastify", () => ({
 // Mock the dev-mode helper so tests can flip between
 // production / developer mode deterministically.
 const isDevModeMock = vi.fn(() => false);
-vi.mock("../hooks/useDevMode", () => ({
+vi.mock("../hooks/settings/useDevMode", () => ({
     isDevMode: () => isDevModeMock(),
 }));
 

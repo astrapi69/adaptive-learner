@@ -32,7 +32,7 @@ import {
 import {CSS} from "@dnd-kit/utilities";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import type {
     ExerciseGenConfig,
     GeneratableType,

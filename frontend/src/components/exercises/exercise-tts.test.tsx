@@ -11,7 +11,7 @@
 import {render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
-import {I18nProvider} from "../../hooks/useI18n";
+import {I18nProvider} from "../../hooks/ui/useI18n";
 import type {ContentLessonExercise} from "../../storage/types";
 
 import FreeTextExercise from "./FreeTextExercise";

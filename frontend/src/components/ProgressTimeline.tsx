@@ -9,8 +9,8 @@ import {
     YAxis,
 } from "recharts";
 
-import {useChartTheme} from "../hooks/useChartTheme";
-import {useI18n} from "../hooks/useI18n";
+import {useChartTheme} from "../hooks/ui/useChartTheme";
+import {useI18n} from "../hooks/ui/useI18n";
 import {tooltipContentStyle} from "../lib/chartTheme";
 import type {TrackingSummary} from "../types";
 import ChartSummary from "./charts/ChartSummary";

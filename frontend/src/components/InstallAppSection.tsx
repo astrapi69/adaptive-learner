@@ -11,8 +11,8 @@
 import {Download} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/useI18n";
-import {useInstallAvailable} from "../hooks/useInstallAvailable";
+import {useI18n} from "../hooks/ui/useI18n";
+import {useInstallAvailable} from "../hooks/system/useInstallAvailable";
 import {isStandalone, promptInstall} from "../lib/pwa/install";
 import {notify} from "../utils/notify";
 

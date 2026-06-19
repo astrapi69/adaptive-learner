@@ -17,7 +17,7 @@ import {describe, expect, it} from "vitest";
 import {render, screen} from "@testing-library/react";
 
 import {ExerciseStepPlaceholder} from "./ExerciseDispatcher";
-import {I18nProvider} from "../../hooks/useI18n";
+import {I18nProvider} from "../../hooks/ui/useI18n";
 import type {ContentLessonStep} from "../../storage/types";
 
 // The TS union forbids an empty / unknown ``type``; the bug is about

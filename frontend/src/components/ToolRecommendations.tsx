@@ -1,4 +1,4 @@
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {METHOD_COLORS} from "../lib/constants";
 import {bestTextOn} from "../styles/contrast";
 import type {ToolRecommendation} from "../types";

@@ -378,22 +378,29 @@ describe("buildSystemPrompt (Phase 36 Bug 2)", () => {
     it("names every supported language in the directive", () => {
         for (const [code, name] of Object.entries(LANGUAGE_NAMES)) {
             const prompt = buildSystemPrompt(code);
-            expect(prompt).toContain("LANGUAGE — IMPORTANT");
-            expect(prompt).toContain(`IN ${name}`);
+            expect(prompt).toContain("LANGUAGE — CRITICAL");
+            expect(prompt).toContain(`in ${name}`);
         }
+    });
+
+    // #803 — the directive must override the transcript's own language.
+    it("tells the model to ignore the transcript language", () => {
+        const prompt = buildSystemPrompt("de");
+        expect(prompt).toContain("REGARDLESS of the language used in the transcript");
+        expect(prompt).toContain("MUST be in German");
     });
 
     it("falls back to English for unknown / empty codes", () => {
         for (const bogus of ["xx", "", "  ", "klingon"]) {
             const prompt = buildSystemPrompt(bogus);
-            expect(prompt).toContain("IN English");
-            expect(prompt).toContain("LANGUAGE — IMPORTANT");
+            expect(prompt).toContain("in English");
+            expect(prompt).toContain("LANGUAGE — CRITICAL");
         }
     });
 
     it("normalises case (DE and de resolve to German)", () => {
-        expect(buildSystemPrompt("DE")).toContain("IN German");
-        expect(buildSystemPrompt("de")).toContain("IN German");
+        expect(buildSystemPrompt("DE")).toContain("in German");
+        expect(buildSystemPrompt("de")).toContain("in German");
     });
 
     it("explicitly keeps enum identifiers untranslated", () => {
@@ -444,7 +451,7 @@ describe("analyzeConversation lang passthrough (Phase 36 Bug 2)", () => {
         const call = mockedAiComplete.mock.calls[0]?.[0];
         const systemMsg = call?.messages.find((m) => m.role === "system");
         expect(systemMsg).toBeDefined();
-        expect(systemMsg!.content).toContain("IN German");
+        expect(systemMsg!.content).toContain("in German");
     });
 
     it("defaults to English when lang is omitted (backwards compat)", async () => {
@@ -457,6 +464,6 @@ describe("analyzeConversation lang passthrough (Phase 36 Bug 2)", () => {
         });
         const call = mockedAiComplete.mock.calls[0]?.[0];
         const systemMsg = call?.messages.find((m) => m.role === "system");
-        expect(systemMsg!.content).toContain("IN English");
+        expect(systemMsg!.content).toContain("in English");
     });
 });

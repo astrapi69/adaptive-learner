@@ -56,14 +56,14 @@ def test_test_api_key_no_key_short_circuits():
 
 
 def test_test_api_key_success(monkeypatch):
-    monkeypatch.setattr(api_key_test.httpx, "post", lambda *a, **k: _FakeResponse(200))
+    monkeypatch.setattr(api_key_test.httpx, "get", lambda *a, **k: _FakeResponse(200))
     result = api_key_test.test_api_key(AIProvider.OPENAI, "sk-whatever")
     assert result.success is True
     assert result.kind == "ok"
 
 
 def test_test_api_key_invalid(monkeypatch):
-    monkeypatch.setattr(api_key_test.httpx, "post", lambda *a, **k: _FakeResponse(401))
+    monkeypatch.setattr(api_key_test.httpx, "get", lambda *a, **k: _FakeResponse(401))
     result = api_key_test.test_api_key(AIProvider.ANTHROPIC, "sk-ant-bad")
     assert result.success is False
     assert result.kind == "invalid"
@@ -73,7 +73,7 @@ def test_test_api_key_network_failure(monkeypatch):
     def _boom(*a, **k):
         raise httpx.ConnectError("no route to host")
 
-    monkeypatch.setattr(api_key_test.httpx, "post", _boom)
+    monkeypatch.setattr(api_key_test.httpx, "get", _boom)
     result = api_key_test.test_api_key(AIProvider.GEMINI, "AIxxxxxxxxx")
     assert result.success is False
     assert result.kind == "network"
@@ -84,7 +84,7 @@ def test_test_api_key_network_failure(monkeypatch):
 
 def test_test_api_key_endpoint_returns_classified_result(client, monkeypatch):
     monkeypatch.setattr(
-        "app.services.api_key_test.httpx.post",
+        "app.services.api_key_test.httpx.get",
         lambda *a, **k: _FakeResponse(401),
     )
     user_id = _make_user(client)

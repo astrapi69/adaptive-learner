@@ -3,9 +3,9 @@ import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
 import {Button} from "@/components/ui/button";
-import {useButtonTooltips} from "../hooks/useButtonTooltips";
-import {useDialogFocus} from "../hooks/useDialogFocus";
-import {useI18n} from "../hooks/useI18n";
+import {useButtonTooltips} from "../hooks/settings/useButtonTooltips";
+import {useDialogFocus} from "../hooks/ui/useDialogFocus";
+import {useI18n} from "../hooks/ui/useI18n";
 import RichTextEditor from "./editor/RichTextEditor";
 import EditorToolbar from "./editor/EditorToolbar";
 import {serializeEditorContent} from "./editor/content-utils";

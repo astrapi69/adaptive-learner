@@ -21,7 +21,16 @@ import {
     type SessionMessageRow,
     type StepEvaluationRow,
 } from "./db";
-import {buildAnalysisContext, buildPrompt} from "./prompts";
+import {
+    buildAnalysisContext,
+    buildLearningContext,
+    buildPrompt,
+    type CompletedLesson,
+    type InProgressLesson,
+    type LearningContext,
+    type RecentMistake,
+} from "./prompts";
+import type {AdaptiveLearnerDB} from "./db";
 import {evaluateStep, type StepEvaluation} from "./step-evaluator";
 import {ApiError} from "../api/client";
 import {LEARNING_METHODS, type LearningMethod} from "../lib/constants";
@@ -107,6 +116,129 @@ function rowToMessageDto(row: SessionMessageRow): SessionMessage {
  * a ``role=system`` SessionMessage so later /message calls see
  * it in the chronological history.
  */
+/** Readable ``<set> — <lesson>`` label from the cache ids (no content
+ *  round-trip): the set title when cached, else the set id, plus the
+ *  filename stripped + spaced. Mirrors the backend ``_humanize_lesson_label``
+ *  (with the set title substituted when available). */
+function lessonLabel(setTitle: string | null, setId: string, filename: string): string {
+    let lesson = filename.split("/").pop() ?? filename;
+    if (lesson.endsWith(".json")) lesson = lesson.slice(0, -".json".length);
+    lesson = lesson.replace(/[-_]/g, " ").trim();
+    const setLabel = setTitle && setTitle.length > 0 ? setTitle : setId;
+    return lesson ? `${setLabel} — ${lesson}` : setLabel;
+}
+
+/**
+ * Gather the learner's lesson progress + recent mistakes from IndexedDB and
+ * render them into a system-prompt addendum (#797). Dexie-mode equivalent of
+ * the backend ``_learning_context_for``: reads ``lessonProgress`` +
+ * ``elementErrors`` for the user, resolves set titles from ``contentSets``,
+ * and delegates to the shared {@link buildLearningContext}. Returns "" for a
+ * learner with no lesson activity.
+ */
+export async function buildLearningContextForUser(
+    db: AdaptiveLearnerDB,
+    userId: string,
+    topic: string,
+    lang: string,
+): Promise<string> {
+    const progressRows = await db.lessonProgress
+        .where("user_id")
+        .equals(userId)
+        .toArray();
+
+    // Resolve set titles once (a small map keyed by source/set_id).
+    const titleByKey = new Map<string, string>();
+    for (const row of progressRows) {
+        const key = `${row.source}/${row.set_id}`;
+        if (titleByKey.has(key)) continue;
+        const setRow = await db.contentSets
+            .where("set_id")
+            .equals(row.set_id)
+            .filter((s) => s.source === row.source)
+            .first();
+        titleByKey.set(key, setRow?.title ?? "");
+    }
+    const titleFor = (source: string, setId: string): string | null =>
+        titleByKey.get(`${source}/${setId}`) || null;
+
+    const completed: CompletedLesson[] = progressRows
+        .filter((r) => r.status === "completed")
+        .sort((a, b) =>
+            (b.completed_at ?? b.updated_at ?? "").localeCompare(
+                a.completed_at ?? a.updated_at ?? "",
+            ),
+        )
+        .map((r) => ({
+            label: lessonLabel(titleFor(r.source, r.set_id), r.set_id, r.lesson_filename),
+            correct: r.score_correct ?? 0,
+            total: r.score_total ?? 0,
+        }));
+
+    const activeRows = progressRows
+        .filter((r) => r.status === "in_progress" || r.status === "paused")
+        .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""));
+    const inProgress: InProgressLesson | null =
+        activeRows.length > 0
+            ? {
+                  label: lessonLabel(
+                      titleFor(activeRows[0].source, activeRows[0].set_id),
+                      activeRows[0].set_id,
+                      activeRows[0].lesson_filename,
+                  ),
+                  step: (activeRows[0].current_step ?? 0) + 1,
+              }
+            : null;
+
+    const errorRows = await db.elementErrors
+        .where("user_id")
+        .equals(userId)
+        .filter((e) => e.mastered === false)
+        .toArray();
+    const mistakes: RecentMistake[] = errorRows
+        .sort((a, b) =>
+            (b.last_attempt_at ?? b.last_error_at ?? "").localeCompare(
+                a.last_attempt_at ?? a.last_error_at ?? "",
+            ),
+        )
+        .map((e) => ({
+            element: e.element_key,
+            answered: e.user_answer ?? "",
+            expected: e.correct_answer ?? "",
+            count: e.error_count ?? 0,
+        }));
+
+    const context: LearningContext = {topic, completed, inProgress, mistakes};
+    return buildLearningContext(context, lang);
+}
+
+/**
+ * Phase 36 Bug 4 — if an active session already exists for ``convId``,
+ * return it with its persisted system prompt (so ImportDetail's "Start
+ * session" resumes instead of duplicating). ``null`` when none exists.
+ * Extracted from {@link startSession} to keep it under the complexity gate.
+ */
+async function resumeActiveImportedSession(
+    db: AdaptiveLearnerDB,
+    convId: string,
+): Promise<{session: LearningSession; system_prompt: string} | null> {
+    const active = await db.learningSessions
+        .where("imported_conversation_id")
+        .equals(convId)
+        .filter((row) => row.status === "active")
+        .first();
+    if (!active) return null;
+    const priorSystem = await db.sessionMessages
+        .where("session_id")
+        .equals(active.id)
+        .filter((m) => m.role === "system")
+        .sortBy("created_at");
+    return {
+        session: rowToSessionDto(active),
+        system_prompt: priorSystem[0]?.content ?? "",
+    };
+}
+
 export async function startSession(opts: {
     projectId: string;
     method?: LearningMethod;
@@ -132,22 +264,11 @@ export async function startSession(opts: {
     // the backend's short-circuit in
     // ``adaptive_learner_session.routes.start_session``.
     if (opts.importedConversationId) {
-        const active = await db.learningSessions
-            .where("imported_conversation_id")
-            .equals(opts.importedConversationId)
-            .filter((row) => row.status === "active")
-            .first();
-        if (active) {
-            const priorSystem = await db.sessionMessages
-                .where("session_id")
-                .equals(active.id)
-                .filter((m) => m.role === "system")
-                .sortBy("created_at");
-            return {
-                session: rowToSessionDto(active),
-                system_prompt: priorSystem[0]?.content ?? "",
-            };
-        }
+        const resumed = await resumeActiveImportedSession(
+            db,
+            opts.importedConversationId,
+        );
+        if (resumed) return resumed;
     }
 
     const profile = await db.learningProfiles
@@ -215,6 +336,19 @@ export async function startSession(opts: {
         if (analysisBlock) {
             systemPrompt = `${systemPrompt}\n\n${analysisBlock}`;
         }
+    }
+    // #797 — give the AI awareness of the learner's lesson progress
+    // (completed content + scores, the lesson in progress, recent
+    // mistakes) so it builds on real progress instead of answering
+    // generically. Empty for a learner with no lesson activity.
+    const learningBlock = await buildLearningContextForUser(
+        db,
+        project.user_id,
+        project.topic,
+        opts.lang ?? "en",
+    );
+    if (learningBlock) {
+        systemPrompt = `${systemPrompt}\n\n${learningBlock}`;
     }
     const systemMsg: SessionMessageRow = {
         id: newId(),

@@ -15,8 +15,8 @@ import {useMemo, useState} from "react";
 import {BookOpen, Search} from "lucide-react";
 
 import {useHelp} from "../../contexts/HelpContext";
-import {useGlossary} from "../../hooks/useGlossary";
-import {useI18n} from "../../hooks/useI18n";
+import {useGlossary} from "../../hooks/content/useGlossary";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {listGlossaryEntries} from "../../lib/help-glossary";
 import type {GlossaryCategory, GlossaryEntry} from "../../types/help";
 

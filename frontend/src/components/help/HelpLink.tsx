@@ -29,8 +29,8 @@
 import {HelpCircle} from "lucide-react";
 
 import {useHelp} from "../../contexts/HelpContext";
-import {useButtonTooltips} from "../../hooks/useButtonTooltips";
-import {useI18n} from "../../hooks/useI18n";
+import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
+import {useI18n} from "../../hooks/ui/useI18n";
 
 interface Props {
     glossaryKey: string;

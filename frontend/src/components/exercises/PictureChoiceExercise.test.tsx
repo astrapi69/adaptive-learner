@@ -24,7 +24,7 @@ const useAssetMock = vi.fn<() => UseAssetStub>(() => ({
     loading: false,
     error: true,
 }));
-vi.mock("../../hooks/useAsset", () => ({
+vi.mock("../../hooks/ui/useAsset", () => ({
     useAsset: () => useAssetMock(),
 }));
 

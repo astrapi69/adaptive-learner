@@ -1,0 +1,21 @@
+// Barrel for shared/media (grouped by concern, #809). Re-export only.
+export * from "./AvatarPreviewDialog";
+export {default as AvatarPreviewDialog} from "./AvatarPreviewDialog";
+export * from "./AvatarUpload";
+export {default as AvatarUpload} from "./AvatarUpload";
+export * from "./CurriculumCard";
+export {default as CurriculumCard} from "./CurriculumCard";
+export * from "./FavoriteToggle";
+export {default as FavoriteToggle} from "./FavoriteToggle";
+export * from "./FavoritesList";
+export {default as FavoritesList} from "./FavoritesList";
+export * from "./ImageCropDialog";
+export {default as ImageCropDialog} from "./ImageCropDialog";
+export * from "./InitialsAvatar";
+export {default as InitialsAvatar} from "./InitialsAvatar";
+export * from "./ResourceCard";
+export {default as ResourceCard} from "./ResourceCard";
+export * from "./SetDiscoveryCard";
+export {default as SetDiscoveryCard} from "./SetDiscoveryCard";
+export * from "./YouTubeThumbnail";
+export {default as YouTubeThumbnail} from "./YouTubeThumbnail";
