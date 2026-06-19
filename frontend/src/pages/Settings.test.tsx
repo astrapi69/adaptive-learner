@@ -849,9 +849,10 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
     });
   });
 
-  it("auto-tests on Save and shows the rollback panel when the key fails", async () => {
+  it("persists the key even when the live test fails (advisory, non-blocking) (#793)", async () => {
     apiGet.mockResolvedValue(BASE);
     apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
+    apiSetKey.mockResolvedValue({ ...BASE, has_anthropic_key: true });
     renderSettings();
     await screen.findByTestId("settings");
     fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
@@ -860,12 +861,19 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
     });
+    // The key is persisted up-front; a failing live test must NOT block it.
     await waitFor(() => {
-      expect(screen.getByTestId("api-key-rollback-anthropic")).toBeInTheDocument();
+      expect(apiSetKey).toHaveBeenCalled();
     });
-    // Failing key was NOT saved (we tested before overwriting).
-    expect(apiSetKey).not.toHaveBeenCalled();
+    // A failing key is never backed up as last-known-good.
     expect(apiBackupKey).not.toHaveBeenCalled();
+    // No blocking rollback panel — the failing result is surfaced instead.
+    expect(
+      screen.queryByTestId("api-key-rollback-anthropic"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByTestId("api-key-test-result-anthropic"),
+    ).toHaveTextContent(/invalid|expired/i);
   });
 
   it("a successful Save persists the key AND backs it up", async () => {
@@ -889,10 +897,11 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
     });
   });
 
-  it("'Save anyway' persists the failing key WITHOUT backing it up", async () => {
+  it("shows no restore link after a failed test when no backup exists (#793)", async () => {
     apiGet.mockResolvedValue(BASE);
     apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
     apiSetKey.mockResolvedValue({ ...BASE, has_anthropic_key: true });
+    apiGetBackup.mockResolvedValue({ has: false, tested_at: null });
     renderSettings();
     await screen.findByTestId("settings");
     fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
@@ -901,20 +910,19 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
     });
-    await screen.findByTestId("api-key-rollback-anthropic");
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("api-key-rollback-save-anyway-anthropic"));
-    });
     await waitFor(() => {
       expect(apiSetKey).toHaveBeenCalled();
     });
-    // A failed key must never become the last-known-good backup.
     expect(apiBackupKey).not.toHaveBeenCalled();
+    expect(
+      screen.queryByTestId("api-key-restore-link-anthropic"),
+    ).not.toBeInTheDocument();
   });
 
-  it("offers Restore in the rollback panel when a backup exists, and restores it", async () => {
+  it("offers a standalone restore link when a failed save has a backup, and restores it (#793)", async () => {
     apiGet.mockResolvedValue(BASE);
     apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
+    apiSetKey.mockResolvedValue({ ...BASE, has_anthropic_key: true });
     apiGetBackup.mockResolvedValue({
       has: true,
       tested_at: "2026-06-01T00:00:00Z",
@@ -927,7 +935,7 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
     });
-    const restore = await screen.findByTestId("api-key-restore-anthropic");
+    const restore = await screen.findByTestId("api-key-restore-link-anthropic");
     // The restore re-tests after restoring; let that pass.
     apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
     await act(async () => {

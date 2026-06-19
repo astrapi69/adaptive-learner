@@ -39,10 +39,21 @@ describe("isValidApiKeyFormat", () => {
     expect(isValidApiKeyFormat("gemini", "abc")).toBe(false);
   });
 
-  it("rejects a Gemini key with illegal characters", () => {
+  it("rejects a key with internal whitespace (corrupted paste)", () => {
     expect(isValidApiKeyFormat("gemini", "key with spaces " + "a".repeat(30))).toBe(
       false,
     );
+    expect(
+      isValidApiKeyFormat("openai", "sk-" + "a".repeat(20) + "\t" + "b".repeat(10)),
+    ).toBe(false);
+  });
+
+  it("accepts a key with characters outside [A-Za-z0-9_-] (#793)", () => {
+    // Newer Google keys carry characters (e.g. ".") that a positive
+    // charset allowlist falsely rejected, blocking a valid key from being
+    // saved. Only whitespace is disqualifying now.
+    expect(isValidApiKeyFormat("gemini", "AIzaSy.AB-cd_0123456789xyz")).toBe(true);
+    expect(isValidApiKeyFormat("openai", "sk-proj.ABCdef0123456789xyz")).toBe(true);
   });
 
   it("treats empty / whitespace as invalid", () => {

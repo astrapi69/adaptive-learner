@@ -45,13 +45,9 @@ export default function AiSettingsPanel({
     modelDrafts,
     setModelDrafts,
     testResults,
-    rollbackPrompt,
     backupAvailable,
     handleProviderChange,
     handleSaveKey,
-    handleSaveAnyway,
-    handleKeepOldKey,
-    handleDismissRollback,
     handleRestoreBackup,
     handleTestKey,
     handleSaveModel,
@@ -176,7 +172,6 @@ export default function AiSettingsPanel({
             draft={keyDrafts[provider]}
             busy={busy}
             testResult={testResults[provider]}
-            rollbackActive={rollbackPrompt?.provider === provider}
             backupAvailable={backupAvailable[provider]}
             onDraftChange={(value) =>
               setKeyDrafts((prev) => ({ ...prev, [provider]: value }))
@@ -184,9 +179,6 @@ export default function AiSettingsPanel({
             onSave={() => handleSaveKey(provider)}
             onTest={() => handleTestKey(provider)}
             onDelete={() => handleDeleteKey(provider)}
-            onKeepOld={() => handleKeepOldKey(provider)}
-            onSaveAnyway={() => handleSaveAnyway(provider)}
-            onDismissRollback={handleDismissRollback}
             onRestoreBackup={() => handleRestoreBackup(provider)}
           />
         ))}

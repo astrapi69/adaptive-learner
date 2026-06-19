@@ -61,14 +61,7 @@ export function useAiKeySettings(
         openai: null,
         gemini: null,
     });
-    // C4 — when an auto-test on save fails, this holds the provider +
-    // failure kind so the inline rollback panel (keep old / save anyway
-    // / cancel) renders for that provider.
-    const [rollbackPrompt, setRollbackPrompt] = useState<{
-        provider: AIProvider;
-        kind: ApiKeyTestResult["kind"];
-    } | null>(null);
-    // C4 — whether a last-known-good backup exists per provider (drives
+    // #793 — whether a last-known-good backup exists per provider (drives
     // the "restore last working key" affordance). Loaded after settings.
     const [backupAvailable, setBackupAvailable] = useState<Record<AIProvider, boolean>>({
         anthropic: false,
@@ -94,51 +87,58 @@ export function useAiKeySettings(
         }
     };
 
-    // C4 — persist a key (no test). Backs up the key as last-known-good
-    // only when ``backup`` is true (i.e. it passed its test).
-    const persistKey = async (provider: AIProvider, key: string, backup: boolean) => {
+    // Persist a key (no test). Backing the key up as last-known-good is
+    // the caller's responsibility (#793 — only after an advisory test
+    // passes), so this just stores the key and refreshes the UI.
+    const persistKey = async (provider: AIProvider, key: string) => {
         const updated = await getStorage().settings.setApiKey(settings.user_id, {
             provider,
             key,
         });
-        if (backup) {
-            await getStorage().settings.backupApiKey(settings.user_id, {
-                provider,
-                key,
-            });
-            setBackupAvailable((prev) => ({ ...prev, [provider]: true }));
-        }
         onSettingsChange(updated);
         setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
         await refreshApiKeyStatus();
         notify.success(t("toast.api_key_saved", "API key saved."));
     };
 
-    // C4 — revised save flow: auto-test the new key BEFORE overwriting.
-    // Passes -> save + back up. Fails -> rollback panel (the old key is
-    // untouched because we tested without saving).
+    // #793 — save flow: a shape-valid key MUST always be saveable. The
+    // live test is advisory only and must never block the save (a flaky
+    // or false-negative provider test previously diverted a valid key to
+    // the rollback panel and never persisted it). So: persist first, then
+    // test. Test passes -> back the key up as last-known-good. Test fails
+    // -> the key stays saved; surface the result + a non-blocking "restore
+    // last working key" link (no blocking rollback panel).
     const handleSaveKey = async (provider: AIProvider) => {
         if (busy) return;
         const key = keyDrafts[provider].trim();
         if (key.length === 0) return;
         setBusy(`save-${provider}`);
-        setRollbackPrompt(null);
         try {
-            const test = await getStorage().settings.testApiKey(settings.user_id, {
-                provider,
-                key,
-            });
+            await persistKey(provider, key);
+            let test: ApiKeyTestResult;
+            try {
+                test = await getStorage().settings.testApiKey(settings.user_id, {
+                    provider,
+                    key,
+                });
+            } catch {
+                // A thrown call (not a classified result) is a connectivity
+                // problem — advisory only, the key is already saved.
+                test = { success: false, kind: "network" };
+            }
             setTestResults((prev) => ({ ...prev, [provider]: test }));
             if (test.success) {
-                await persistKey(provider, key, true);
+                await getStorage().settings.backupApiKey(settings.user_id, {
+                    provider,
+                    key,
+                });
+                setBackupAvailable((prev) => ({ ...prev, [provider]: true }));
             } else {
-                // Surface keep-old / save-anyway / cancel. If a backup
-                // exists, the panel also offers restore.
+                // Offer the standalone restore link only when a backup exists.
                 const info = await getStorage()
                     .settings.getApiKeyBackup(settings.user_id, provider)
                     .catch(() => ({ has: false, tested_at: null }));
                 setBackupAvailable((prev) => ({ ...prev, [provider]: info.has }));
-                setRollbackPrompt({ provider, kind: test.kind });
             }
         } catch (err) {
             const detail = err instanceof ApiError ? err.detail : t("common.error");
@@ -148,37 +148,9 @@ export function useAiKeySettings(
         }
     };
 
-    const handleSaveAnyway = async (provider: AIProvider) => {
-        if (busy) return;
-        const key = keyDrafts[provider].trim();
-        if (key.length === 0) return;
-        setBusy(`save-${provider}`);
-        try {
-            // No backup — the key failed its test, so it must not become
-            // the last-known-good.
-            await persistKey(provider, key, false);
-            setRollbackPrompt(null);
-        } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
-        } finally {
-            setBusy(null);
-        }
-    };
-
-    // Discard the draft, keep the currently-active key.
-    const handleKeepOldKey = (provider: AIProvider) => {
-        setRollbackPrompt(null);
-        setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
-    };
-
-    // Dismiss the panel but keep the draft so the user can fix a typo.
-    const handleDismissRollback = () => setRollbackPrompt(null);
-
     const handleRestoreBackup = async (provider: AIProvider) => {
         if (busy) return;
         setBusy(`restore-${provider}`);
-        setRollbackPrompt(null);
         try {
             const updated = await getStorage().settings.restoreApiKeyBackup(settings.user_id, provider);
             onSettingsChange(updated);
@@ -293,13 +265,9 @@ export function useAiKeySettings(
         modelDrafts,
         setModelDrafts,
         testResults,
-        rollbackPrompt,
         backupAvailable,
         handleProviderChange,
         handleSaveKey,
-        handleSaveAnyway,
-        handleKeepOldKey,
-        handleDismissRollback,
         handleRestoreBackup,
         handleTestKey,
         handleSaveModel,
