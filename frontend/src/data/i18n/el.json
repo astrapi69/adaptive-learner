@@ -642,7 +642,7 @@
       "format_hint": {
         "anthropic": "Ξεκινά με sk-ant-",
         "openai": "Ξεκινά με sk-",
-        "gemini": "Ξεκινά με AI"
+        "gemini": "Τουλάχιστον 20 χαρακτήρες"
       }
     },
     "api_key_saved": "Το κλειδί αποθηκεύτηκε",

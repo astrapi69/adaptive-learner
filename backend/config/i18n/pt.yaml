@@ -610,7 +610,7 @@ settings:
     format_hint:
       anthropic: "Começa com sk-ant-"
       openai: "Começa com sk-"
-      gemini: "Começa com AI"
+      gemini: "Pelo menos 20 caracteres"
   api_key_saved: Chave salva
   api_key_missing: Não definida
   api_key_set: Salvar chave

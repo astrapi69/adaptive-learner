@@ -646,7 +646,7 @@
       "format_hint": {
         "anthropic": "sk-ant-로 시작합니다",
         "openai": "sk-로 시작합니다",
-        "gemini": "AI로 시작합니다"
+        "gemini": "20자 이상"
       }
     },
     "api_key_saved": "키가 저장됨",

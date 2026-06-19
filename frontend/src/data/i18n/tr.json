@@ -642,7 +642,7 @@
       "format_hint": {
         "anthropic": "sk-ant- ile başlar",
         "openai": "sk- ile başlar",
-        "gemini": "AI ile başlar"
+        "gemini": "En az 20 karakter"
       }
     },
     "api_key_saved": "Anahtar saklandı",

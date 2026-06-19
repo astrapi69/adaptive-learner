@@ -613,7 +613,7 @@ settings:
     format_hint:
       anthropic: "Diawali dengan sk-ant-"
       openai: "Diawali dengan sk-"
-      gemini: "Diawali dengan AI"
+      gemini: "Minimal 20 karakter"
   api_key_saved: Kunci disimpan
   api_key_missing: Belum disetel
   api_key_set: Simpan kunci
