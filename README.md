@@ -203,7 +203,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**358 lessons · 19 sets · 4 domain(s)** (ai, language, programming, psychology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**424 lessons · 25 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -223,9 +223,15 @@ Full documentation (German default at `/docs/`, English at
 | Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 |
 | Englisch A2 — Grundlagen | de | en | A2 | 15 |
 | Englisch B1 — Mittelstufe | de | en | B1 | 15 |
-| Psychologie — Grundlagen | de | de | A1 | 106 |
+| Psychologie — Grundlagen | de | de | A1 | 112 |
 | Python — Grundlagen | de | de | A1 | 15 |
 | KI für Einsteiger | de | de | A1 | 12 |
+| Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 |
+| Koreanisch A1 (für Deutschsprachige) | de | ko | A1 | 10 |
+| Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 |
+| Portugiesisch (Brasilianisch) A1 (für Deutschsprachige) | de | pt | A1 | 10 |
+| Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 |
+| IT-Grundlagen | de | de | A1 | 10 |
 <!-- CONTENT-STATS:END -->
 
 ### Content repos
