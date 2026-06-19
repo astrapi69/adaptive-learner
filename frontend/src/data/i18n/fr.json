@@ -642,7 +642,7 @@
       "format_hint": {
         "anthropic": "Commence par sk-ant-",
         "openai": "Commence par sk-",
-        "gemini": "Commence par AI"
+        "gemini": "Au moins 20 caractères"
       }
     },
     "api_key_saved": "Cle enregistree",

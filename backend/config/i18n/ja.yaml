@@ -610,7 +610,7 @@ settings:
     format_hint:
       anthropic: "sk-ant- で始まります"
       openai: "sk- で始まります"
-      gemini: "AI で始まります"
+      gemini: "20文字以上"
   api_key_saved: キーを保存しました
   api_key_missing: 未設定
   api_key_set: キーを保存

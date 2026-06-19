@@ -14,7 +14,7 @@ import { FlaskConical, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../hooks/useI18n";
 import { SecretInput } from "../shared/SecretInput";
-import { API_KEY_PREFIX, isValidApiKeyFormat } from "../lib/apiKeyFormat";
+import { API_KEY_FORMAT_HINT, isValidApiKeyFormat } from "../lib/apiKeyFormat";
 import type { AIProvider } from "../lib/constants";
 import type { ApiKeySource, UserSettings } from "../types/domain";
 import type { ApiKeyTestKind, ApiKeyTestResult } from "../storage/types";
@@ -342,7 +342,7 @@ function ApiKeyFeedback({
           {t("settings.api_key.format_invalid", "Invalid format.")}{" "}
           {t(
             `settings.api_key.format_hint.${provider}`,
-            `Starts with ${API_KEY_PREFIX[provider]}`,
+            API_KEY_FORMAT_HINT[provider],
           )}
         </p>
       )}

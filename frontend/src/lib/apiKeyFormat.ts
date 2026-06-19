@@ -4,36 +4,57 @@
  * Catches the two cheap-to-detect mistakes before a key is ever
  * saved or test-called: a typo'd / truncated key, and a key pasted
  * into the wrong provider's field (an OpenAI ``sk-...`` into the
- * Anthropic row). This is a shape check only — it never proves the
+ * Gemini row). This is a shape check only — it never proves the
  * key works; the "Test" button does that with a live call.
  *
  * Format rules (deliberately loose lower bounds — providers lengthen
- * their keys over time, so we gate on prefix + a conservative
- * minimum length, never an exact length):
+ * their keys and change their prefixes over time, so we gate on a
+ * conservative minimum length + an allowed character set, and only
+ * require a positive prefix where the provider keeps it stable):
  *
- *   - Anthropic: ``sk-ant-`` prefix, >= 90 chars
- *   - OpenAI:    ``sk-`` prefix, >= 40 chars
- *   - Gemini:    ``AI`` prefix, >= 30 chars
+ *   - Anthropic: ``sk-ant-`` prefix, >= 40 chars
+ *   - OpenAI:    ``sk-`` prefix, >= 20 chars
+ *   - Gemini:    NO prefix requirement, >= 20 chars (#781 — newer
+ *     Google keys do not all start with ``AI``/``AIza``); a
+ *     ``reject`` guard still rejects an Anthropic/OpenAI ``sk-`` key
+ *     pasted into the Gemini field.
+ *
+ * If a key is the right shape but actually invalid, the user finds
+ * out on the first AI call (the provider returns an auth error) —
+ * that is the intended safety net, not this format gate.
  */
 
 import type { AIProvider } from "./constants";
 
 interface FormatRule {
-  prefix: string;
+  /** Required leading prefix, or ``null`` when the provider has no
+   *  reliable one (so we never reject a valid key on prefix alone). */
+  prefix: string | null;
   minLength: number;
+  /** Prefixes that disqualify the key — used to catch a
+   *  wrong-provider paste when there is no positive prefix to match. */
+  reject?: string[];
 }
 
 const FORMAT_RULES: Record<AIProvider, FormatRule> = {
-  anthropic: { prefix: "sk-ant-", minLength: 90 },
-  openai: { prefix: "sk-", minLength: 40 },
-  gemini: { prefix: "AI", minLength: 30 },
+  anthropic: { prefix: "sk-ant-", minLength: 40 },
+  openai: { prefix: "sk-", minLength: 20 },
+  gemini: { prefix: null, minLength: 20, reject: ["sk-"] },
 };
 
-/** The expected prefix per provider, for the inline format hint. */
-export const API_KEY_PREFIX: Record<AIProvider, string> = {
-  anthropic: "sk-ant-",
-  openai: "sk-",
-  gemini: "AI",
+/** Characters an API key is built from: alphanumerics plus ``-`` and
+ *  ``_``. Rejects a key with spaces / quotes / stray punctuation from
+ *  a bad copy-paste (covers every current provider's key alphabet). */
+const KEY_CHARSET = /^[A-Za-z0-9_-]+$/;
+
+/**
+ * Short, human-readable hint per provider, used as the English
+ * fallback for the inline ``settings.api_key.format_hint.*`` string.
+ */
+export const API_KEY_FORMAT_HINT: Record<AIProvider, string> = {
+  anthropic: "Starts with sk-ant-",
+  openai: "Starts with sk-",
+  gemini: "At least 20 characters",
 };
 
 /**
@@ -49,5 +70,9 @@ export function isValidApiKeyFormat(
   const trimmed = key.trim();
   if (trimmed.length === 0) return false;
   const rule = FORMAT_RULES[provider];
-  return trimmed.startsWith(rule.prefix) && trimmed.length >= rule.minLength;
+  if (trimmed.length < rule.minLength) return false;
+  if (!KEY_CHARSET.test(trimmed)) return false;
+  if (rule.prefix !== null && !trimmed.startsWith(rule.prefix)) return false;
+  if (rule.reject?.some((bad) => trimmed.startsWith(bad))) return false;
+  return true;
 }

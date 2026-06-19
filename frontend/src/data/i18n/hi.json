@@ -642,7 +642,7 @@
       "format_hint": {
         "anthropic": "sk-ant- से शुरू होती है",
         "openai": "sk- से शुरू होती है",
-        "gemini": "AI से शुरू होती है"
+        "gemini": "कम से कम 20 अक्षर"
       }
     },
     "api_key_saved": "कुंजी संग्रहीत",

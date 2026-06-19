@@ -642,7 +642,7 @@
       "format_hint": {
         "anthropic": "Empieza con sk-ant-",
         "openai": "Empieza con sk-",
-        "gemini": "Empieza con AI"
+        "gemini": "Al menos 20 caracteres"
       }
     },
     "api_key_saved": "Clave almacenada",
