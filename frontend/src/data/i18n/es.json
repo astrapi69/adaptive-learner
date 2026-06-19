@@ -1984,7 +1984,7 @@
       "target_lang_label": "Idioma aprendido",
       "source_lang_label": "Tu idioma",
       "level_label": "Nivel",
-      "not_enough_data": "No hay suficiente vocabulario para una lección completa (se necesitan al menos {min} ejercicios). Importa un chat más largo para más material de práctica.",
+      "not_enough_data": "Pocos ejercicios: se recomiendan al menos {min} para una lección de idioma completa. Puedes guardarla igualmente (por ejemplo, como lección solo de teoría).",
       "same_language": "El idioma aprendido y tu idioma deben ser diferentes.",
       "same_language_hint": "El idioma aprendido y tu idioma son iguales — válido para una lección de gramática o en lengua materna. Al compartirla, aparecerá en la rama del mismo idioma del árbol de contenido.",
       "split_notice": "Esta lección tiene {steps} pasos y se guardará en {parts} partes (máx. {max} pasos cada una).",

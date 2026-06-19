@@ -1830,7 +1830,7 @@ content:
     target_lang_label: Öğrenilen dil
     source_lang_label: Sizin diliniz
     level_label: Seviye
-    not_enough_data: Tam bir ders için yeterli kelime yok (en az {min} alıştırma gerekli). Daha fazla alıştırma materyali için daha uzun bir sohbet içe aktarın.
+    not_enough_data: Az alıştırma — tam bir dil dersi için en az {min} önerilir. Yine de kaydedebilirsiniz (örneğin yalnızca teori dersi olarak).
     same_language: Öğrenilen dil ile sizin diliniz farklı olmalıdır.
     same_language_hint: "Öğrenilen dil ve diliniz aynı — dilbilgisi veya anadil dersi için uygundur. Paylaşıldığında içerik ağacının aynı dil dalına yerleşir."
     split_notice: "Bu dersin {steps} adımı var ve {parts} parça olarak kaydedilecektir (bölüm başına en fazla {max} adım)."
