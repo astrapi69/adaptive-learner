@@ -105,6 +105,24 @@ const COMMUNITY_BRANCH = "main";
  *  this — it's a local download. */
 const COMMUNITY_SHARING_ENABLED = true;
 
+/** EXP-033 / AIV-02 — why the set-wide "Check with AI" trigger is disabled,
+ *  or undefined when it is available. Gated to Dexie mode (browser-direct
+ *  provider call; no server route) + a configured key. Extracted to keep
+ *  ContentPage under the complexity gate. */
+function resolveAiCheckDisabledReason(
+  t: (key: string, fallback?: string) => string,
+  isDexie: boolean,
+  hasKey: boolean,
+): string | undefined {
+  if (!isDexie) {
+    return t("content.ai_check.unavailable_mode", "Available in browser-storage mode only.");
+  }
+  if (!hasKey) {
+    return t("feature.api_key_required", "API key required. Configure a provider in Settings.");
+  }
+  return undefined;
+}
+
 export default function ContentPage() {
   const { t, lang } = useI18n();
   const online = useOnlineStatus();
@@ -259,11 +277,7 @@ export default function ContentPage() {
   // AIV-11 — per-set "AI-checked" badge status, keyed "{source}#{id}".
   const [aiBadgeBySet, setAiBadgeBySet] = useState<Record<string, AiCheckBadgeStatus>>({});
   const aiCheckIsDexie = resolveStorageMode() === "dexie";
-  const aiCheckDisabledReason = !aiCheckIsDexie
-    ? t("content.ai_check.unavailable_mode", "Available in browser-storage mode only.")
-    : !hasKey
-      ? t("feature.api_key_required", "API key required. Configure a provider in Settings.")
-      : undefined;
+  const aiCheckDisabledReason = resolveAiCheckDisabledReason(t, aiCheckIsDexie, hasKey);
 
   // --- Content Browser search (#354 — extracted to useContentSearch) ---
   const {
