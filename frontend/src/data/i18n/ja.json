@@ -625,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "設定済みのAIプロバイダー",
+      "hint": "保存したキーは保持されます。マスクされたプレビューのみが表示され、完全なキーは表示されません。",
+      "status_active": "有効",
+      "status_empty": "未設定",
+      "status_desktop_only": "デスクトップのみ",
+      "status_external": "外部",
+      "set_active": "アクティブなプロバイダーとして使用",
+      "edit": "編集",
+      "add": "キーを追加"
+    },
     "api_key_label": "API キー",
     "api_key_placeholder": "ここに貼り付け…",
     "api_key_placeholder_replace": "保存済みのキーを置き換える新しいキーを貼り付けてください…",

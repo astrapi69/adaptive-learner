@@ -2267,6 +2267,63 @@ select:focus {
   padding-left: var(--space-3);
 }
 
+/* #810 — Configured AI providers overview list. One row per provider:
+   active radio | name+icon | model | status | masked preview | actions.
+   Wraps gracefully on narrow viewports so nothing overflows at 375px. */
+.configured-providers-list {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.configured-provider-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.configured-provider-row.is-active-provider {
+  border-left: 3px solid var(--accent);
+}
+
+.configured-provider-active {
+  display: flex;
+  align-items: center;
+}
+
+.configured-provider-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1 1 8rem;
+  min-width: 0;
+}
+
+.configured-provider-model,
+.configured-provider-preview {
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.configured-provider-status {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.configured-provider-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
 .api-key-warning {
   margin: 0;
   font-size: 0.85rem;

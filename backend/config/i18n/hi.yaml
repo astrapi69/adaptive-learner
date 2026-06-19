@@ -595,6 +595,17 @@ settings:
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
+  # #810 — AI tab par configured providers ki suchi tabel.
+  providers:
+    title: कॉन्फ़िगर किए गए AI प्रदाता
+    hint: "आपके द्वारा सहेजी गई कुंजियाँ संग्रहीत रहती हैं। केवल मास्क किया गया पूर्वावलोकन दिखाया जाता है, पूरी कुंजी कभी नहीं।"
+    status_active: सक्रिय
+    status_empty: खाली
+    status_desktop_only: केवल डेस्कटॉप
+    status_external: बाहरी
+    set_active: सक्रिय प्रदाता के रूप में उपयोग करें
+    edit: संपादित करें
+    add: कुंजी जोड़ें
   api_key_label: API कुंजी
   api_key_placeholder: यहाँ पेस्ट करें…
   api_key_placeholder_replace: सहेजी गई कुंजी को बदलने के लिए नई कुंजी पेस्ट करें…

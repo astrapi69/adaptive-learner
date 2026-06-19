@@ -625,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "Διαμορφωμένοι πάροχοι AI",
+      "hint": "Τα αποθηκευμένα κλειδιά διατηρούνται. Εμφανίζεται μόνο μια καλυμμένη προεπισκόπηση, ποτέ ολόκληρο το κλειδί.",
+      "status_active": "Ενεργό",
+      "status_empty": "Κενό",
+      "status_desktop_only": "Μόνο για υπολογιστή",
+      "status_external": "Εξωτερικό",
+      "set_active": "Χρήση ως ενεργού παρόχου",
+      "edit": "Επεξεργασία",
+      "add": "Προσθήκη κλειδιού"
+    },
     "api_key_label": "Κλειδί API",
     "api_key_placeholder": "Επικόλληση εδώ...",
     "api_key_placeholder_replace": "Επικολλήστε νέο κλειδί για να αντικαταστήσετε το αποθηκευμένο…",

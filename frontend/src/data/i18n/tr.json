@@ -625,6 +625,17 @@
     "provider_anthropic": "Anthropic Claude",
     "provider_openai": "OpenAI GPT",
     "provider_gemini": "Google Gemini",
+    "providers": {
+      "title": "Yapılandırılmış yapay zekâ sağlayıcıları",
+      "hint": "Kaydettiğiniz anahtarlar saklanır. Yalnızca maskelenmiş bir önizleme gösterilir, anahtarın tamamı asla gösterilmez.",
+      "status_active": "Etkin",
+      "status_empty": "Boş",
+      "status_desktop_only": "Yalnızca masaüstü",
+      "status_external": "Harici",
+      "set_active": "Etkin sağlayıcı olarak kullan",
+      "edit": "Düzenle",
+      "add": "Anahtar ekle"
+    },
     "api_key_label": "API anahtarı",
     "api_key_placeholder": "Buraya yapıştır…",
     "api_key_placeholder_replace": "Saklanan anahtarı değiştirmek için yeni bir anahtar yapıştırın…",
