@@ -3,6 +3,9 @@ app:
   tagline: Pembelajaran yang menyesuaikan dengan Anda.
   skeleton_notice: Status kerangka. Model domain, plugin, dan halaman akan hadir pada fase mendatang — lihat docs/adaptive-learner-project-reference.md.
 common:
+  ok: "OK"
+  remove: "Hapus"
+  confirm_title: "Konfirmasi"
   save: Simpan
   cancel: Batal
   loading: Memuat…

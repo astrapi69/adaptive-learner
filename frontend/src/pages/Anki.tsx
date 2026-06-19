@@ -21,6 +21,7 @@ import { ApiError } from "../api/client";
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import { FEATURES } from "../features/featureConfig";
 import { useI18n } from "../hooks/useI18n";
+import { useConfirm } from "../contexts/ConfirmContext";
 import { filterStandardProjects } from "../lib/learning-project";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
@@ -30,6 +31,7 @@ import type { LearningProject } from "../types";
 
 export default function AnkiPage() {
   const { t } = useI18n();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const [cards, setCards] = useState<AnkiCardSuggestion[]>([]);
   const [projects, setProjects] = useState<LearningProject[]>([]);
@@ -114,7 +116,14 @@ export default function AnkiPage() {
   };
 
   const remove = async (card: AnkiCardSuggestion) => {
-    if (!confirm(t("anki.delete_confirm", "Delete this card?"))) return;
+    if (
+      !(await confirm({
+        message: t("anki.delete_confirm", "Delete this card?"),
+        confirmLabel: t("common.delete", "Delete"),
+        variant: "danger",
+      }))
+    )
+      return;
     try {
       await getStorage().anki.remove(card.id);
       setCards((prev) => prev.filter((c) => c.id !== card.id));

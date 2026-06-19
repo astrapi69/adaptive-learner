@@ -3,6 +3,9 @@ app:
   tagline: Μάθηση που προσαρμόζεται σε σένα.
   skeleton_notice: Σκελετική κατάσταση. Τα μοντέλα του τομέα, τα plugins και οι σελίδες έρχονται στις επόμενες φάσεις — δες docs/adaptive-learner-project-reference.md.
 common:
+  ok: "Εντάξει"
+  remove: "Αφαίρεση"
+  confirm_title: "Επιβεβαίωση"
   save: Αποθήκευση
   cancel: Άκυρο
   loading: Φόρτωση...

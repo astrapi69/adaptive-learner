@@ -24,6 +24,7 @@ import QRCode from "qrcode";
 import {Button} from "@/components/ui/button";
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {useConfirm} from "../contexts/ConfirmContext";
 import {readLearnerState} from "../lib/learnerState";
 import {resolveStorageMode} from "../storage";
 import {
@@ -48,6 +49,7 @@ const DEFAULT_BACKEND_PORT = 18001;
 
 export default function SyncSection() {
     const {t} = useI18n();
+    const confirm = useConfirm();
     const storageMode = resolveStorageMode();
 
     const [config, setConfig] = useState<SyncConfig | null>(readSyncConfig);
@@ -157,10 +159,12 @@ export default function SyncSection() {
         }
     }
 
-    function handleUnpair() {
-        const ok = window.confirm(
-            t("sync.unpair_confirm"),
-        );
+    async function handleUnpair() {
+        const ok = await confirm({
+            message: t("sync.unpair_confirm"),
+            confirmLabel: t("common.remove", "Remove"),
+            variant: "danger",
+        });
         if (!ok) return;
         getSyncEngine().unpair();
         refreshFromStorage();

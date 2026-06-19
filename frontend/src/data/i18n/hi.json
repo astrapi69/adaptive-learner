@@ -5,6 +5,9 @@
     "skeleton_notice": "स्केलेटन अवस्था। डोमेन मॉडल, प्लगइन और पेज आने वाले चरणों में जुड़ेंगे — देखें docs/adaptive-learner-project-reference.md।"
   },
   "common": {
+    "ok": "ठीक है",
+    "remove": "हटाएं",
+    "confirm_title": "कृपया पुष्टि करें",
     "save": "सहेजें",
     "cancel": "रद्द करें",
     "loading": "लोड हो रहा है…",

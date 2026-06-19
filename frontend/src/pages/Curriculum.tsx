@@ -10,6 +10,7 @@ import TopicTree from "../components/TopicTree";
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {useConfirm} from "../contexts/ConfirmContext";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
@@ -39,6 +40,7 @@ type DialogMode =
 
 export default function Curriculum() {
     const {t} = useI18n();
+    const confirm = useConfirm();
     const navigate = useNavigate();
 
     const [curricula, setCurricula] = useState<Curriculum[]>([]);
@@ -110,9 +112,11 @@ export default function Curriculum() {
 
     const handleDeleteLesson = async (lessonId: string) => {
         if (!selectedId || submitting) return;
-        const ok = window.confirm(
-            t("curriculum.lesson_delete_confirm", "Delete this lesson?"),
-        );
+        const ok = await confirm({
+            message: t("curriculum.lesson_delete_confirm", "Delete this lesson?"),
+            confirmLabel: t("common.delete", "Delete"),
+            variant: "danger",
+        });
         if (!ok) return;
         setSubmitting(true);
         try {
@@ -241,12 +245,14 @@ export default function Curriculum() {
 
     const handleDelete = async (topicId: string) => {
         if (!selectedId || submitting) return;
-        const ok = window.confirm(
-            t(
+        const ok = await confirm({
+            message: t(
                 "curriculum.delete_confirm",
                 "Delete this topic? Its children stay as their own roots.",
             ),
-        );
+            confirmLabel: t("common.delete", "Delete"),
+            variant: "danger",
+        });
         if (!ok) return;
         setSubmitting(true);
         try {

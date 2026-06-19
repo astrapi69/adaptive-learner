@@ -5,6 +5,9 @@
     "skeleton_notice": "Skeleton-Stand. Domain-Modelle, Plugins und Seiten folgen in den nächsten Phasen — siehe docs/adaptive-learner-project-reference.md."
   },
   "common": {
+    "ok": "OK",
+    "remove": "Entfernen",
+    "confirm_title": "Bitte bestätigen",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "loading": "Lädt …",

@@ -5,6 +5,9 @@
     "skeleton_notice": "Etat squelette. Les modeles de domaine, plugins et pages arrivent dans les phases suivantes — voir docs/adaptive-learner-project-reference.md."
   },
   "common": {
+    "ok": "OK",
+    "remove": "Supprimer",
+    "confirm_title": "Confirmer",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "loading": "Chargement...",

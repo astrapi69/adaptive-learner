@@ -5,6 +5,9 @@
     "skeleton_notice": "스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 — docs/adaptive-learner-project-reference.md를 참고하세요."
   },
   "common": {
+    "ok": "확인",
+    "remove": "제거",
+    "confirm_title": "확인",
     "save": "저장",
     "cancel": "취소",
     "loading": "불러오는 중…",

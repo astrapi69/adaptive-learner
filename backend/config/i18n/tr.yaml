@@ -3,6 +3,9 @@ app:
   tagline: Sana uyum sağlayan öğrenme.
   skeleton_notice: İskelet aşaması. Alan modelleri, eklentiler ve sayfalar sonraki aşamalarda geliyor — bkz. docs/adaptive-learner-project-reference.md.
 common:
+  ok: "Tamam"
+  remove: "Kaldır"
+  confirm_title: "Onayla"
   save: Kaydet
   cancel: İptal
   loading: Yükleniyor…
