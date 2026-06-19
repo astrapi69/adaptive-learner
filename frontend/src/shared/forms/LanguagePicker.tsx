@@ -245,7 +245,7 @@ export default function LanguagePicker({
                 aria-label={ariaLabel}
                 data-testid={`${testId}-trigger`}
                 onClick={() => !disabled && setOpen((o) => !o)}
-                className="flex min-h-[44px] w-full items-center justify-between gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm text-fg-primary disabled:opacity-50"
+                className="flex min-h-[44px] w-full items-center justify-between gap-2 rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-fg-primary disabled:opacity-50"
             >
                 <span className="flex items-center gap-2 truncate">
                     {selected ? (
@@ -273,7 +273,10 @@ export default function LanguagePicker({
             </button>
 
             {open && (
-                <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-md border border-border bg-elevated shadow-elevated">
+                <div
+                    data-testid={`${testId}-panel`}
+                    className="absolute z-50 mt-1 w-full overflow-hidden rounded-md border border-border bg-bg-elevated shadow-[var(--shadow-elevated)]"
+                >
                     <div className="flex items-center gap-2 border-b border-border px-3 py-2">
                         <Search
                             size={14}
