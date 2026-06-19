@@ -33,7 +33,11 @@ import type {
 } from "../types/domain";
 
 export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
-export const BACKUP_VERSION = "1.3.0";
+// 1.4.0 — adds the optional ``local_storage`` snapshot block (P1 offline
+// parity). Backward-compatible: a reader ignores the block it doesn't know,
+// and a pre-1.4.0 backup simply lacks it (import then leaves localStorage
+// untouched).
+export const BACKUP_VERSION = "1.4.0";
 
 export const EXCLUDED_USER_SETTINGS_FIELDS: ReadonlySet<string> = new Set([
     "api_key_anthropic",
