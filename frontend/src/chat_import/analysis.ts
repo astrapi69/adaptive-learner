@@ -205,8 +205,12 @@ export function buildSystemPrompt(
         );
     }
     const directive = [
-        "LANGUAGE — IMPORTANT:",
-        `Write all free-text string values IN ${name}. This applies to:`,
+        "LANGUAGE — CRITICAL:",
+        `Write ALL free-text string values in ${name}, REGARDLESS of the ` +
+            `language used in the transcript. The transcript's own language ` +
+            `does NOT determine the output language — ${name} does. Even if ` +
+            `the conversation is in another language, the analysis MUST be ` +
+            `in ${name}. This applies to:`,
         "- topic, subtopics",
         "- strengths, weaknesses, error_patterns",
         "- recommended_focus",
