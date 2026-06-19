@@ -52,7 +52,7 @@ interface ImportPageProps {
 }
 
 export default function Import({ onNavigate }: ImportPageProps = {}) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const confirm = useConfirm();
   const tooltipsOn = useButtonTooltips();
   const navigate = useNavigate();
@@ -289,6 +289,9 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         timestamp: m.timestamp,
       })),
       title,
+      // #803 — emit the analysis in the active UI display language
+      // (previously omitted, so it always defaulted to English).
+      lang: lang || readLearnerState().language || "en",
     });
     try {
       await getStorage().imports.saveAnalysis(conversationId, {
