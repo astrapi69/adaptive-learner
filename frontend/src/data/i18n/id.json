@@ -638,7 +638,13 @@
       "status_external": "Eksternal",
       "set_active": "Gunakan sebagai penyedia aktif",
       "edit": "Edit",
-      "add": "Tambah kunci"
+      "add": "Tambah kunci",
+      "test": "Uji",
+      "testing": "Menguji…",
+      "test_connection_ok": "Koneksi oke",
+      "test_key_invalid": "Kunci tidak valid",
+      "test_network_error": "Kesalahan jaringan",
+      "test_backend_only": "Hanya dapat diuji dengan backend"
     },
     "api_key_label": "Kunci API",
     "api_key_placeholder": "Tempel di sini…",

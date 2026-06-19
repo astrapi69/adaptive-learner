@@ -604,6 +604,12 @@ settings:
     set_active: Usar como proveedor activo
     edit: Editar
     add: Añadir clave
+    test: Probar
+    testing: "Probando…"
+    test_connection_ok: Conexión correcta
+    test_key_invalid: Clave no válida
+    test_network_error: Error de red
+    test_backend_only: Solo se puede probar con el backend
   api_key_label: Clave API
   api_key_placeholder: Pegar aqui...
   api_key_placeholder_replace: "Pega una clave nueva para reemplazar la guardada…"

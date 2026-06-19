@@ -604,6 +604,12 @@ settings:
     set_active: Use as active provider
     edit: Edit
     add: Add key
+    test: Test
+    testing: "Testing…"
+    test_connection_ok: Connection ok
+    test_key_invalid: Key invalid
+    test_network_error: Network error
+    test_backend_only: Only testable with the backend
   api_key_label: API key
   api_key_placeholder: Paste here…
   api_key_placeholder_replace: "Paste a new key to replace the stored one…"

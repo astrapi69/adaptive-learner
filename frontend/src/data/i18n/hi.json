@@ -634,7 +634,13 @@
       "status_external": "बाहरी",
       "set_active": "सक्रिय प्रदाता के रूप में उपयोग करें",
       "edit": "संपादित करें",
-      "add": "कुंजी जोड़ें"
+      "add": "कुंजी जोड़ें",
+      "test": "परीक्षण करें",
+      "testing": "परीक्षण हो रहा है…",
+      "test_connection_ok": "कनेक्शन ठीक है",
+      "test_key_invalid": "कुंजी अमान्य",
+      "test_network_error": "नेटवर्क त्रुटि",
+      "test_backend_only": "केवल बैकएंड के साथ परीक्षण योग्य"
     },
     "api_key_label": "API कुंजी",
     "api_key_placeholder": "यहाँ पेस्ट करें…",

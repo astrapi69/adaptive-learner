@@ -634,7 +634,13 @@
       "status_external": "Harici",
       "set_active": "Etkin sağlayıcı olarak kullan",
       "edit": "Düzenle",
-      "add": "Anahtar ekle"
+      "add": "Anahtar ekle",
+      "test": "Test et",
+      "testing": "Test ediliyor…",
+      "test_connection_ok": "Bağlantı tamam",
+      "test_key_invalid": "Anahtar geçersiz",
+      "test_network_error": "Ağ hatası",
+      "test_backend_only": "Yalnızca arka uç ile test edilebilir"
     },
     "api_key_label": "API anahtarı",
     "api_key_placeholder": "Buraya yapıştır…",

@@ -634,7 +634,13 @@
       "status_external": "外部",
       "set_active": "アクティブなプロバイダーとして使用",
       "edit": "編集",
-      "add": "キーを追加"
+      "add": "キーを追加",
+      "test": "テスト",
+      "testing": "テスト中…",
+      "test_connection_ok": "接続OK",
+      "test_key_invalid": "キーが無効です",
+      "test_network_error": "ネットワークエラー",
+      "test_backend_only": "バックエンドでのみテスト可能"
     },
     "api_key_label": "API キー",
     "api_key_placeholder": "ここに貼り付け…",

@@ -1,21 +1,27 @@
 /**
- * Tests for the Settings AI-tab "Configured AI providers" overview (#810).
+ * Tests for the Settings AI-tab "Configured AI providers" overview
+ * (#810, test button #813).
  *
  * Pins:
  * - Three configured providers → three rows, each "Active" with a masked
  *   preview shown.
- * - An empty provider → "Empty" status, no delete button, an "Add key"
- *   affordance.
+ * - An empty provider → "Empty" status, no delete/test button, an
+ *   "Add key" affordance.
  * - The masked preview renders exactly the first 4 + last 4 chars.
  * - The active provider is highlighted + its radio is checked.
- * - Edit / Delete / set-active actions fire their callbacks.
+ * - Edit / Delete / Test / set-active actions fire their callbacks.
+ * - The Test button shows a spinner while testing, renders the inline
+ *   result (ok / invalid / network), auto-hides success after 10s, and
+ *   is disabled + backend-only for a CORS-blocked provider in Dexie mode.
  */
 
 import "@testing-library/jest-dom/vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import ConfiguredProvidersTable from "./ConfiguredProvidersTable";
+import type { AIProvider } from "../lib/constants";
+import type { ApiKeyTestResult } from "../storage/types";
 import type { UserSettings } from "../types/domain";
 
 vi.mock("../hooks/ui/useI18n", () => ({
@@ -47,30 +53,67 @@ function settings(over: Partial<UserSettings> = {}): UserSettings {
   };
 }
 
+const NO_RESULTS: Record<AIProvider, ApiKeyTestResult | null> = {
+  anthropic: null,
+  openai: null,
+  gemini: null,
+};
+
 const noop = () => {};
+
+interface RenderOpts {
+  settings?: UserSettings;
+  mode?: "api" | "dexie";
+  busy?: string | null;
+  testResults?: Record<AIProvider, ApiKeyTestResult | null>;
+  onSetActive?: (p: AIProvider) => void;
+  onEdit?: (p: AIProvider) => void;
+  onDelete?: (p: AIProvider) => void;
+  onTest?: (p: AIProvider) => void;
+}
+
+function renderTable(opts: RenderOpts = {}) {
+  return render(
+    <ConfiguredProvidersTable
+      settings={opts.settings ?? settings()}
+      mode={opts.mode ?? "api"}
+      busy={opts.busy ?? null}
+      testResults={opts.testResults ?? NO_RESULTS}
+      onSetActive={opts.onSetActive ?? noop}
+      onEdit={opts.onEdit ?? noop}
+      onDelete={opts.onDelete ?? noop}
+      onTest={opts.onTest ?? noop}
+    />,
+  );
+}
+
+const configured = (over: Partial<UserSettings> = {}) =>
+  settings({
+    has_anthropic_key: true,
+    key_source_anthropic: "settings",
+    key_preview_anthropic: "sk-a…WXYZ",
+    ...over,
+  });
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe("ConfiguredProvidersTable", () => {
   it("shows all three providers as Active with masked previews when configured", () => {
-    render(
-      <ConfiguredProvidersTable
-        settings={settings({
-          has_anthropic_key: true,
-          has_openai_key: true,
-          has_gemini_key: true,
-          key_source_anthropic: "settings",
-          key_source_openai: "settings",
-          key_source_gemini: "settings",
-          key_preview_anthropic: "sk-a…WXYZ",
-          key_preview_openai: "sk-p…1234",
-          key_preview_gemini: "AIza…7f3k",
-        })}
-        mode="api"
-        busy={null}
-        onSetActive={noop}
-        onEdit={noop}
-        onDelete={noop}
-      />,
-    );
+    renderTable({
+      settings: settings({
+        has_anthropic_key: true,
+        has_openai_key: true,
+        has_gemini_key: true,
+        key_source_anthropic: "settings",
+        key_source_openai: "settings",
+        key_source_gemini: "settings",
+        key_preview_anthropic: "sk-a…WXYZ",
+        key_preview_openai: "sk-p…1234",
+        key_preview_gemini: "AIza…7f3k",
+      }),
+    });
 
     for (const provider of ["anthropic", "openai", "gemini"] as const) {
       expect(screen.getByTestId(`provider-overview-row-${provider}`)).toBeInTheDocument();
@@ -84,61 +127,43 @@ describe("ConfiguredProvidersTable", () => {
     );
   });
 
-  it("shows Empty + an Add affordance and no delete button for an unconfigured provider", () => {
-    render(
-      <ConfiguredProvidersTable
-        settings={settings()}
-        mode="api"
-        busy={null}
-        onSetActive={noop}
-        onEdit={noop}
-        onDelete={noop}
-      />,
-    );
+  it("shows Empty + Add affordance and no delete/test button for an unconfigured provider", () => {
+    renderTable();
 
     expect(screen.getByTestId("provider-overview-status-openai")).toHaveTextContent("Empty");
     expect(screen.getByTestId("provider-overview-preview-openai")).toHaveTextContent("—");
     expect(screen.queryByTestId("provider-overview-delete-openai")).not.toBeInTheDocument();
-    // Edit/Add button is always present; its accessible name is the Add variant.
-    expect(screen.getByTestId("provider-overview-edit-openai")).toHaveAccessibleName(
-      /Add key/i,
-    );
+    expect(screen.queryByTestId("provider-overview-test-openai")).not.toBeInTheDocument();
+    expect(screen.getByTestId("provider-overview-edit-openai")).toHaveAccessibleName(/Add key/i);
   });
 
   it("highlights the active provider and checks its radio", () => {
-    render(
-      <ConfiguredProvidersTable
-        settings={settings({ active_provider: "gemini", has_gemini_key: true, key_source_gemini: "settings", key_preview_gemini: "AIza…7f3k" })}
-        mode="api"
-        busy={null}
-        onSetActive={noop}
-        onEdit={noop}
-        onDelete={noop}
-      />,
-    );
+    renderTable({
+      settings: settings({
+        active_provider: "gemini",
+        has_gemini_key: true,
+        key_source_gemini: "settings",
+        key_preview_gemini: "AIza…7f3k",
+      }),
+    });
 
     expect(screen.getByTestId("provider-overview-active-gemini")).toBeChecked();
     expect(screen.getByTestId("provider-overview-active-anthropic")).not.toBeChecked();
     expect(screen.getByTestId("provider-overview-badge-gemini")).toBeInTheDocument();
   });
 
-  it("fires onEdit, onDelete and onSetActive callbacks", () => {
+  it("fires onEdit, onDelete, onTest and onSetActive callbacks", () => {
     const onEdit = vi.fn();
     const onDelete = vi.fn();
+    const onTest = vi.fn();
     const onSetActive = vi.fn();
-    render(
-      <ConfiguredProvidersTable
-        settings={settings({ has_anthropic_key: true, key_source_anthropic: "settings", key_preview_anthropic: "sk-a…WXYZ" })}
-        mode="api"
-        busy={null}
-        onSetActive={onSetActive}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />,
-    );
+    renderTable({ settings: configured(), onEdit, onDelete, onTest, onSetActive });
 
     fireEvent.click(screen.getByTestId("provider-overview-edit-anthropic"));
     expect(onEdit).toHaveBeenCalledWith("anthropic");
+
+    fireEvent.click(screen.getByTestId("provider-overview-test-anthropic"));
+    expect(onTest).toHaveBeenCalledWith("anthropic");
 
     fireEvent.click(screen.getByTestId("provider-overview-delete-anthropic"));
     expect(onDelete).toHaveBeenCalledWith("anthropic");
@@ -147,29 +172,85 @@ describe("ConfiguredProvidersTable", () => {
     expect(onSetActive).toHaveBeenCalledWith("openai");
   });
 
-  it("marks a CORS-blocked provider Desktop only in Dexie mode", async () => {
-    // No provider is CORS-blocked today, so drive the branch by spying on
-    // the desktop-only predicate. This keeps the rendered status honest
-    // (data-driven) while still covering the desktop_only render path.
+  it("shows a spinner + disables the Test button while testing", () => {
+    renderTable({ settings: configured(), busy: "test-anthropic" });
+    const btn = screen.getByTestId("provider-overview-test-anthropic");
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveTextContent("Testing…");
+  });
+
+  it("renders a green 'Connection ok' result on success", () => {
+    renderTable({
+      settings: configured(),
+      testResults: { ...NO_RESULTS, anthropic: { success: true, kind: "ok" } },
+    });
+    const result = screen.getByTestId("provider-overview-test-result-anthropic");
+    expect(result).toHaveTextContent("Connection ok");
+    expect(result).toHaveClass("text-success");
+  });
+
+  it("renders 'Key invalid' on a 401 result and 'Network error' offline", () => {
+    const { rerender } = renderTable({
+      settings: configured(),
+      testResults: { ...NO_RESULTS, anthropic: { success: false, kind: "invalid" } },
+    });
+    expect(screen.getByTestId("provider-overview-test-result-anthropic")).toHaveTextContent(
+      "Key invalid",
+    );
+    expect(screen.getByTestId("provider-overview-test-result-anthropic")).toHaveClass("text-error");
+
+    rerender(
+      <ConfiguredProvidersTable
+        settings={configured()}
+        mode="api"
+        busy={null}
+        testResults={{ ...NO_RESULTS, anthropic: { success: false, kind: "network" } }}
+        onSetActive={noop}
+        onEdit={noop}
+        onDelete={noop}
+        onTest={noop}
+      />,
+    );
+    expect(screen.getByTestId("provider-overview-test-result-anthropic")).toHaveTextContent(
+      "Network error",
+    );
+  });
+
+  it("auto-hides the success result after 10 seconds", () => {
+    vi.useFakeTimers();
+    renderTable({
+      settings: configured(),
+      testResults: { ...NO_RESULTS, anthropic: { success: true, kind: "ok" } },
+    });
+    expect(screen.getByTestId("provider-overview-test-result-anthropic")).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+    expect(
+      screen.queryByTestId("provider-overview-test-result-anthropic"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("disables Test + shows the backend-only tooltip for a CORS-blocked provider in Dexie mode", async () => {
     const statusModule = await import("../lib/aiProviderStatus");
     const spy = vi
       .spyOn(statusModule, "isDesktopOnlyProvider")
       .mockImplementation((p) => p === "openai");
 
-    render(
-      <ConfiguredProvidersTable
-        settings={settings({ has_openai_key: true, key_source_openai: "settings", key_preview_openai: "sk-p…1234" })}
-        mode="dexie"
-        busy={null}
-        onSetActive={noop}
-        onEdit={noop}
-        onDelete={noop}
-      />,
-    );
+    renderTable({
+      settings: configured({
+        has_openai_key: true,
+        key_source_openai: "settings",
+        key_preview_openai: "sk-p…1234",
+      }),
+      mode: "dexie",
+    });
 
-    expect(screen.getByTestId("provider-overview-status-openai")).toHaveTextContent(
-      "Desktop only",
-    );
+    expect(screen.getByTestId("provider-overview-status-openai")).toHaveTextContent("Desktop only");
+    const btn = screen.getByTestId("provider-overview-test-openai");
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveAccessibleName(/Only testable with the backend/i);
     spy.mockRestore();
   });
 });
