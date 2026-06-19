@@ -13,7 +13,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { useI18n } from "../hooks/useI18n";
-import ProgressRing from "../shared/ProgressRing";
+import ProgressRing from "../shared/data-display/ProgressRing";
 import type { XPState } from "../storage/types";
 
 interface XPWidgetProps {

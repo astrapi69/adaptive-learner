@@ -14,8 +14,8 @@ import { BookOpen, Download, FolderOpen, ListChecks, Sparkles } from "lucide-rea
 
 import { Button } from "@/components/ui/button";
 
-import ListRow from "../../shared/ListRow";
-import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../shared/AiCheckedBadge";
+import ListRow from "../../shared/layout/ListRow";
+import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { useI18n } from "../../hooks/useI18n";
 import { isOfficialSource } from "../../lib/content/content-repos";
 import type { MediaResource } from "../../lib/content/media-loader";

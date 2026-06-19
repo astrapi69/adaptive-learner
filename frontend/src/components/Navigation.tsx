@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import MenuToggleButton from "../shared/MenuToggleButton";
+import MenuToggleButton from "../shared/layout/MenuToggleButton";
 import NavXpBadge from "./NavXpBadge";
 import NavReviewsBadge from "./NavReviewsBadge";
 import NavAvatar from "./NavAvatar";

@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import SetDiscoveryCard, { type SetDiscoveryCardLabels } from "./SetDiscoveryCard";
-import type { SearchableSet } from "../lib/content/search-index-loader";
+import type { SearchableSet } from "../../lib/content/search-index-loader";
 
 const LABELS: SetDiscoveryCardLabels = {
   download: "Download",

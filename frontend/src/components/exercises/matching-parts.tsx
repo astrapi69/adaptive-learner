@@ -13,7 +13,7 @@ import type {CSSProperties} from "react";
 import {useI18n} from "../../hooks/useI18n";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
-import InlineMarkdown from "../../shared/InlineMarkdown";
+import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import {
     instructionKey,
     resolveConcreteDirection,

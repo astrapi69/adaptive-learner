@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import ImageCropDialog from "./ImageCropDialog";
-import * as cropImage from "../lib/avatar/crop-image";
+import * as cropImage from "../../lib/avatar/crop-image";
 
 const fakeImage = {
   naturalWidth: 400,

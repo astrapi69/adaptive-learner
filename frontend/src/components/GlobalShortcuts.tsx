@@ -20,11 +20,11 @@
 import {useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-import ShortcutHelpDialog from "../shared/ShortcutHelpDialog";
+import ShortcutHelpDialog from "../shared/feedback/ShortcutHelpDialog";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,
-} from "../shared/useKeyboardShortcuts";
+} from "../shared/hooks/useKeyboardShortcuts";
 import {buildShortcutGroups, isMacPlatform} from "../lib/shortcuts/catalog";
 import {useI18n} from "../hooks/useI18n";
 

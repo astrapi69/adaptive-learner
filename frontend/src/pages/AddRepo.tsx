@@ -14,7 +14,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import DownloadProgress from "../shared/DownloadProgress";
+import DownloadProgress from "../shared/feedback/DownloadProgress";
 import { useI18n } from "../hooks/useI18n";
 import {
   addUserRepo,

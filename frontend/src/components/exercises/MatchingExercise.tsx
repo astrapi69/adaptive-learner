@@ -34,7 +34,7 @@ import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,
-} from "../../shared/useKeyboardShortcuts";
+} from "../../shared/hooks/useKeyboardShortcuts";
 import type {ContentLessonExercise} from "../../storage/types";
 import type {
     ControlledExerciseProps,

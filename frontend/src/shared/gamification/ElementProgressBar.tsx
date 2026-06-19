@@ -11,7 +11,7 @@
  * <ElementProgressBar mastered={3} total={8} ariaLabel="3 of 8 elements mastered" />
  */
 
-import ProgressBar from "./ProgressBar";
+import ProgressBar from "../data-display/ProgressBar";
 
 export interface ElementProgressBarProps {
     mastered: number;

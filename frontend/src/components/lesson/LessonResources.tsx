@@ -32,7 +32,7 @@ import {
   type MediaResource,
   type MediaType,
 } from "../../lib/content/media-loader";
-import ResourceCard from "../../shared/ResourceCard";
+import ResourceCard from "../../shared/media/ResourceCard";
 import type { ContentLesson, ContentSetBook } from "../../storage/types";
 
 interface LessonResourcesProps {

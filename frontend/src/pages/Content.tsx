@@ -87,7 +87,7 @@ import { getStorage, resolveStorageMode } from "../storage";
 import AiValidationDialog from "../components/content/AiValidationDialog";
 import QualityCheckDialog from "../components/content/QualityCheckDialog";
 import { badgeStatusForCachedSet } from "../lib/ai/validation-signature";
-import type { AiCheckBadgeStatus } from "../shared/AiCheckedBadge";
+import type { AiCheckBadgeStatus } from "../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../storage/types";
 import { isOfficialSource, readUserRepos, userRepoSource } from "../lib/content/content-repos";
 import { fetchRecommendedRepos, recommendedSource } from "../lib/content/recommended-repos";

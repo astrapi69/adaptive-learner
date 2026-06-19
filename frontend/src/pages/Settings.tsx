@@ -36,14 +36,14 @@ import VoiceSettingsSection from "../components/VoiceSettingsSection";
 import AiSettingsPanel from "../components/AiSettingsPanel";
 import SyncSection from "../components/SyncSection";
 import ThemePicker from "../components/ThemePicker";
-import AvatarUpload from "../shared/AvatarUpload";
+import AvatarUpload from "../shared/media/AvatarUpload";
 import SelectiveExportSection from "../components/SelectiveExportSection";
 import SettingsSidebar from "../components/settings/SettingsSidebar";
 import SettingsMobileMenu from "../components/settings/SettingsMobileMenu";
 import type { SidebarGroup } from "../lib/settings/sidebar-model";
 import { useI18n } from "../hooks/useI18n";
 import { buildLanguageOptions } from "../lib/languages";
-import LanguagePicker from "../shared/LanguagePicker";
+import LanguagePicker from "../shared/forms/LanguagePicker";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
 import {
   readLessonShortcutsEnabled,

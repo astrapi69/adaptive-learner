@@ -18,7 +18,7 @@ import {RefreshCw, Zap} from "lucide-react";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-import DueReviewCard from "../../shared/DueReviewCard";
+import DueReviewCard from "../../shared/gamification/DueReviewCard";
 import {useI18n} from "../../hooks/useI18n";
 import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";

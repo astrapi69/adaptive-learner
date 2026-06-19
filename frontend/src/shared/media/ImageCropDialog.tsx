@@ -35,7 +35,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { useDialogFocus } from "../hooks/useDialogFocus";
+import { useDialogFocus } from "../../hooks/useDialogFocus";
 import {
   centeredOffset,
   clampOffset,
@@ -45,7 +45,7 @@ import {
   loadImageFromBlob,
   sourceRect,
   type Offset,
-} from "../lib/avatar/crop-image";
+} from "../../lib/avatar/crop-image";
 
 /** Display size of the square crop viewport, in CSS px. Kept small
  *  enough to fit a 320px phone inside the dialog padding. */

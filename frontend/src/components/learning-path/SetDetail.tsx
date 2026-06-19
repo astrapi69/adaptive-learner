@@ -18,9 +18,9 @@ import {useFavorites} from "../../hooks/useFavorites";
 import {readLearnerState} from "../../lib/learnerState";
 import ElementDetailList, {
     type ElementDetailItem,
-} from "../../shared/ElementDetailList";
-import FavoriteToggle from "../../shared/FavoriteToggle";
-import type {SrsBadgeTone} from "../../shared/SrsStatusBadge";
+} from "../../shared/gamification/ElementDetailList";
+import FavoriteToggle from "../../shared/media/FavoriteToggle";
+import type {SrsBadgeTone} from "../../shared/gamification/SrsStatusBadge";
 import LessonRow from "./LessonRow";
 import type {PersonalPathSet} from "../../lib/learning-path/personal-path";
 import type {SrsElementDetail} from "../../lib/srs/status";

@@ -37,12 +37,12 @@ import {
   fetchAllIndices,
   type SearchableSet,
 } from "../lib/content/search-index-loader";
-import FilterBar, { type FilterDef } from "../shared/FilterBar";
-import SearchField from "../shared/SearchField";
+import FilterBar, { type FilterDef } from "../shared/forms/FilterBar";
+import SearchField from "../shared/forms/SearchField";
 import SetDiscoveryCard, {
   type SetDiscoveryCardLabels,
   type SetDiscoveryDownloadState,
-} from "../shared/SetDiscoveryCard";
+} from "../shared/media/SetDiscoveryCard";
 import { getStorage } from "../storage";
 import { notify } from "../utils/notify";
 

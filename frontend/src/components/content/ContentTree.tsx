@@ -25,7 +25,7 @@ import { mediaForDomain, type MediaResource } from "../../lib/content/media-load
 import type { ContentSetEntry } from "../../storage/types";
 import BookRecommendationsSection from "./BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
-import type { AiCheckBadgeStatus } from "../../shared/AiCheckedBadge";
+import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import FoldedUserLessons from "./FoldedUserLessons";
 
 /** Per-row state + actions forwarded down to {@link ContentSetRow}. */

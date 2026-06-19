@@ -25,7 +25,7 @@ import { FlaskConical, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "../api/client";
 import { useI18n } from "../hooks/useI18n";
-import { SecretInput } from "../shared/SecretInput";
+import { SecretInput } from "../shared/forms/SecretInput";
 import { isValidGitHubTokenFormat } from "../lib/github/github-api";
 import { getStorage } from "../storage";
 import type { GitHubTokenStatus, GitHubVerifyKind } from "../storage/types";

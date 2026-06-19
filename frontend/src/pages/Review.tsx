@@ -46,8 +46,8 @@ import type {
     ExerciseScored,
 } from "../components/exercises/exercise-control";
 import {Button} from "@/components/ui/button";
-import ProgressBar from "../shared/ProgressBar";
-import LessonStepNav from "../shared/LessonStepNav";
+import ProgressBar from "../shared/data-display/ProgressBar";
+import LessonStepNav from "../shared/layout/LessonStepNav";
 import {useI18n} from "../hooks/useI18n";
 import {useLessonShortcuts} from "../hooks/useLessonShortcuts";
 import {
@@ -56,7 +56,7 @@ import {
 } from "../hooks/useLessonEnterKey";
 import {useReviewLesson} from "../hooks/useReviewLesson";
 import {readReviewLimit} from "../lib/learning/reviewLimitPref";
-import ReviewSummaryView from "../shared/ReviewSummary";
+import ReviewSummaryView from "../shared/gamification/ReviewSummary";
 import type {
     ContentLesson,
     ContentLessonStep,

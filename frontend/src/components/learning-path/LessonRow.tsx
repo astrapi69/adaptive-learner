@@ -17,8 +17,8 @@ import {useI18n} from "../../hooks/useI18n";
 import {cn} from "../../lib/utils";
 import {lessonRoute} from "../../lib/content/continue-learning";
 import {relativeTime} from "../../lib/utils/relative-time";
-import ElementProgressBar from "../../shared/ElementProgressBar";
-import SrsStatusBadge, {type SrsBadgeTone} from "../../shared/SrsStatusBadge";
+import ElementProgressBar from "../../shared/gamification/ElementProgressBar";
+import SrsStatusBadge, {type SrsBadgeTone} from "../../shared/gamification/SrsStatusBadge";
 import type {SrsLessonStatus} from "../../lib/srs/status";
 import type {
     MasteryState,

@@ -2,7 +2,7 @@ import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import AvatarUpload from "./AvatarUpload";
-import * as cropImage from "../lib/avatar/crop-image";
+import * as cropImage from "../../lib/avatar/crop-image";
 
 function renderUpload(value: string | null, over: Partial<React.ComponentProps<typeof AvatarUpload>> = {}) {
     const onChange = vi.fn();

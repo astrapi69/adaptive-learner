@@ -24,8 +24,8 @@ import { Check, Download, Loader2, ShieldCheck, Sparkles, Trash2 } from "lucide-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { SearchableSet } from "../lib/content/search-index-loader";
-import DownloadProgress from "./DownloadProgress";
+import type { SearchableSet } from "../../lib/content/search-index-loader";
+import DownloadProgress from "../feedback/DownloadProgress";
 
 export type SetDiscoveryDownloadState = "idle" | "downloading" | "done" | "error";
 

@@ -13,10 +13,10 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import ProgressBar from "../../shared/ProgressBar";
+import ProgressBar from "../../shared/data-display/ProgressBar";
 import ValidationReport, {
   type ValidationReportItem,
-} from "../../shared/ValidationReport";
+} from "../../shared/feedback/ValidationReport";
 import { useI18n } from "../../hooks/useI18n";
 import { useAiCardValidation } from "../../hooks/useAiCardValidation";
 import {

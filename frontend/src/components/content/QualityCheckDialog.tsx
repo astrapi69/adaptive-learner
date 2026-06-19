@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import ValidationReport, {
   type ValidationReportItem,
   type ValidationReportIssue,
-} from "../../shared/ValidationReport";
+} from "../../shared/feedback/ValidationReport";
 import { useI18n } from "../../hooks/useI18n";
 import {
   useContentQualityCheck,

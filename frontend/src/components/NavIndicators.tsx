@@ -11,8 +11,8 @@ import { NavLink } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../hooks/useI18n";
-import OfflineBadge from "../shared/OfflineBadge";
-import SyncStatusBadge from "../shared/SyncStatusBadge";
+import OfflineBadge from "../shared/status/OfflineBadge";
+import SyncStatusBadge from "../shared/status/SyncStatusBadge";
 
 /** "AI+Content" vs "Content"-only mode badge (links to the content browser). */
 export function NavModeBadge({ mode }: { mode: string }) {

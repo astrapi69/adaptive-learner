@@ -21,9 +21,9 @@ import {useEffect, useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Flame, GraduationCap, Target, Timer} from "lucide-react";
 
-import ActivityHeatmap from "../shared/ActivityHeatmap";
-import ProgressByPair from "../shared/ProgressByPair";
-import WeakAreasList from "../shared/WeakAreasList";
+import ActivityHeatmap from "../shared/gamification/ActivityHeatmap";
+import ProgressByPair from "../shared/data-display/ProgressByPair";
+import WeakAreasList from "../shared/gamification/WeakAreasList";
 import {useI18n} from "../hooks/useI18n";
 import {usePersonalPath} from "../hooks/usePersonalPath";
 import {languageDisplayName} from "../lib/content/language-names";

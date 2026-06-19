@@ -26,7 +26,7 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 
 import Confetti from "../components/feedback/Confetti";
-import ProgressBar from "../shared/ProgressBar";
+import ProgressBar from "../shared/data-display/ProgressBar";
 import {
     ExerciseDispatcher,
     SUPPORTED_EXERCISE_TYPES,

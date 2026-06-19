@@ -30,7 +30,7 @@ import { ImagePlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { useDialogFocus } from "../hooks/useDialogFocus";
+import { useDialogFocus } from "../../hooks/useDialogFocus";
 
 export interface AvatarPreviewDialogProps {
   /** Data URL (or any image src) to preview. */

@@ -17,7 +17,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import InitialsAvatar from "../shared/InitialsAvatar";
+import InitialsAvatar from "../shared/media/InitialsAvatar";
 import { useI18n } from "../hooks/useI18n";
 import { readLearnerState } from "../lib/learnerState";
 import { PROFILE_UPDATED_EVENT } from "../lib/profileSignal";

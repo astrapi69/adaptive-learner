@@ -35,8 +35,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import DownloadProgress from "../shared/DownloadProgress";
-import { SecretInput } from "../shared/SecretInput";
+import DownloadProgress from "../shared/feedback/DownloadProgress";
+import { SecretInput } from "../shared/forms/SecretInput";
 import { buildAddRepoLink } from "../lib/content/share-link";
 import { useI18n } from "../hooks/useI18n";
 import { getStorage } from "../storage";

@@ -6,7 +6,7 @@
  * store (useFavorites) + i18n labels. Renders nothing without a user.
  */
 
-import FavoriteToggle from "../../shared/FavoriteToggle";
+import FavoriteToggle from "../../shared/media/FavoriteToggle";
 import {useFavorites} from "../../hooks/useFavorites";
 import {useI18n} from "../../hooks/useI18n";
 

@@ -42,10 +42,10 @@ import {useI18n} from "../../hooks/useI18n";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,
-} from "../../shared/useKeyboardShortcuts";
+} from "../../shared/hooks/useKeyboardShortcuts";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
-import InlineMarkdown from "../../shared/InlineMarkdown";
+import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import ExerciseHint from "./ExerciseHint";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";

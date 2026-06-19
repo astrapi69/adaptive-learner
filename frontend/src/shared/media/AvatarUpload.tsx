@@ -47,8 +47,8 @@ import {
   AVATAR_MAX_DIMENSION,
   dataUrlByteLength,
   isAcceptedImageType,
-} from "../lib/avatar/resize-image";
-import { blobToDataUrl } from "../lib/avatar/crop-image";
+} from "../../lib/avatar/resize-image";
+import { blobToDataUrl } from "../../lib/avatar/crop-image";
 
 export interface AvatarCropLabels {
   title?: string;

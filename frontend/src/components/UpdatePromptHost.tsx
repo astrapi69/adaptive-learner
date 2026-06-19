@@ -8,7 +8,7 @@
  * works identically in API and Dexie / GitHub-Pages builds.
  */
 
-import UpdatePrompt from "../shared/UpdatePrompt";
+import UpdatePrompt from "../shared/feedback/UpdatePrompt";
 import { useAppUpdate } from "../hooks/useAppUpdate";
 import { useI18n } from "../hooks/useI18n";
 

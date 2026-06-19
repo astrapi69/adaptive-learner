@@ -24,7 +24,7 @@ import {
     useState,
 } from "react";
 
-import ConfirmDialog, { type ConfirmVariant } from "../shared/ConfirmDialog";
+import ConfirmDialog, { type ConfirmVariant } from "../shared/feedback/ConfirmDialog";
 import { useI18n } from "../hooks/useI18n";
 
 export interface ConfirmOptions {

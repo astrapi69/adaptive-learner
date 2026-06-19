@@ -22,7 +22,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import AnimatedCounter from "../../shared/AnimatedCounter";
+import AnimatedCounter from "../../shared/data-display/AnimatedCounter";
 import CorrectionBlock from "../exercises/CorrectionBlock";
 import DiffHighlight from "../exercises/DiffHighlight";
 import Confetti from "../feedback/Confetti";
@@ -31,8 +31,8 @@ import { useCountUp } from "../../hooks/useCountUp";
 import { useFeedbackIntensity } from "../../hooks/useFeedbackIntensity";
 import { useI18n } from "../../hooks/useI18n";
 import LessonFavoriteToggle from "./LessonFavoriteToggle";
-import AnswerDiff from "../../shared/AnswerDiff";
-import ShareButton from "../../shared/ShareButton";
+import AnswerDiff from "../../shared/data-display/AnswerDiff";
+import ShareButton from "../../shared/layout/ShareButton";
 import { generateShareText } from "../../lib/share/generate-share-text";
 import {
   downloadAnkiDeck,

@@ -36,8 +36,8 @@ import {
 } from "../../lib/learning-path/custom-paths";
 import {getStorage} from "../../storage";
 import type {LessonProgress} from "../../storage/types";
-import CurriculumCard from "../../shared/CurriculumCard";
-import LessonPicker, {type PickableLesson} from "../../shared/LessonPicker";
+import CurriculumCard from "../../shared/media/CurriculumCard";
+import LessonPicker, {type PickableLesson} from "../../shared/forms/LessonPicker";
 import {Button} from "@/components/ui/button";
 
 interface CustomPathsViewProps {
