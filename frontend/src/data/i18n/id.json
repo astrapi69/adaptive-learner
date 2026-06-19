@@ -745,6 +745,15 @@
       "productive_focus": "Produksi",
       "balanced": "Seimbang"
     },
+    "matching_resolve": {
+      "title": "Animasi penyelesaian",
+      "hint": "Cara latihan menjodohkan menampilkan pasangan yang benar saat Anda menekan 'Selesaikan' setelah memeriksa.",
+      "label": "Efek",
+      "slide": "Geser",
+      "color": "Warna",
+      "connect": "Hubungkan",
+      "stack": "Tumpuk"
+    },
     "paused_retention": {
       "title": "Retensi pelajaran yang dijeda",
       "hint": "Pelajaran yang dijeda lebih lama dari ini secara otomatis ditinggalkan. Hingga 10 pelajaran yang dijeda tetap disimpan terlepas dari usianya.",
@@ -1744,7 +1753,9 @@
         "right_label_knowledge": "Definisi",
         "instruction_knowledge": "Cocokkan setiap istilah dengan definisinya.",
         "instructions_knowledge": "Pilih item di sebelah kiri, lalu pasangannya di sebelah kanan.",
-        "selected_sr": "Dipilih: {label}"
+        "selected_sr": "Dipilih: {label}",
+        "resolve": "Selesaikan",
+        "resolve_announce": "Solusi ditampilkan. {correct} dari {total} pasangan sudah benar."
       },
       "picture": {
         "submit": "Periksa jawaban",

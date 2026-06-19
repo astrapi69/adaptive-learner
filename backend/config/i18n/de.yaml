@@ -705,6 +705,14 @@ settings:
     receptive_first: Zuerst erkennen
     productive_focus: Produzieren
     balanced: Ausgeglichen
+  matching_resolve:
+    title: "Auflösungs-Effekt"
+    hint: "Wie die Zuordnungsübung die korrekten Paare zeigt, wenn du nach dem Prüfen auf 'Auflösen' tippst."
+    label: "Effekt"
+    slide: "Gleiten"
+    color: "Farbe"
+    connect: "Verbinden"
+    stack: "Stapeln"
   paused_retention:
     title: Pausierte Lektionen aufbewahren
     hint: "Pausierte Lektionen, die älter als dieser Zeitraum sind, werden automatisch aufgegeben. Bis zu 10 pausierte Lektionen werden unabhängig vom Alter behalten."
@@ -1625,6 +1633,8 @@ lesson:
       instruction_knowledge: "Ordne jeden Begriff seiner Definition zu."
       instructions_knowledge: "Wähle links ein Element, dann rechts die passende Zuordnung."
       selected_sr: "Ausgewählt: {label}"
+      resolve: "Auflösen"
+      resolve_announce: "Lösung angezeigt. {correct} von {total} Paaren waren korrekt."
     picture:
       submit: "Antwort prüfen"
       retry: "Erneut versuchen"

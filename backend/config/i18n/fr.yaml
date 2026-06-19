@@ -705,6 +705,14 @@ settings:
     receptive_first: Reconnaître d'abord
     productive_focus: Produire
     balanced: Équilibré
+  matching_resolve:
+    title: "Animation de résolution"
+    hint: "Comment l'exercice d'association révèle les paires correctes lorsque vous appuyez sur 'Résoudre' après vérification."
+    label: "Effet"
+    slide: "Glisser"
+    color: "Couleur"
+    connect: "Relier"
+    stack: "Empiler"
   paused_retention:
     title: Conservation des leçons en pause
     hint: "Les leçons en pause plus anciennes que cette période sont automatiquement abandonnées. Jusqu'à 10 leçons en pause sont conservées quel que soit leur âge."
@@ -1622,6 +1630,8 @@ lesson:
       instruction_knowledge: "Associe chaque terme à sa définition."
       instructions_knowledge: "Sélectionne un élément à gauche, puis sa correspondance à droite."
       selected_sr: "Sélectionné : {label}"
+      resolve: "Résoudre"
+      resolve_announce: "Solution affichée. {correct} paires correctes sur {total}."
     picture:
       submit: "Vérifier la réponse"
       retry: "Réessayer"

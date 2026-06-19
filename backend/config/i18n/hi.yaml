@@ -706,6 +706,14 @@ settings:
     receptive_first: पहले पहचानें
     productive_focus: उत्पादन करें
     balanced: संतुलित
+  matching_resolve:
+    title: "हल एनिमेशन"
+    hint: "जाँचने के बाद 'हल दिखाएँ' दबाने पर मिलान अभ्यास सही जोड़े कैसे दिखाता है।"
+    label: "प्रभाव"
+    slide: "स्लाइड"
+    color: "रंग"
+    connect: "जोड़ें"
+    stack: "ढेर"
   paused_retention:
     title: रोके गए पाठ की अवधारण
     hint: इससे पुराने रोके गए पाठ स्वचालित रूप से छोड़ दिए जाते हैं। आयु की परवाह किए बिना अधिकतम 10 रोके गए पाठ रखे जाते हैं।
@@ -1616,6 +1624,8 @@ lesson:
       instruction_knowledge: प्रत्येक शब्द को उसकी परिभाषा से मिलाएँ।
       instructions_knowledge: बाईं ओर एक आइटम चुनें, फिर दाईं ओर उसका मिलान चुनें।
       selected_sr: 'चयनित: {label}'
+      resolve: "हल दिखाएँ"
+      resolve_announce: "समाधान दिखाया गया। {total} में से {correct} जोड़े सही थे।"
     picture:
       submit: उत्तर जाँचें
       retry: फिर से कोशिश करें

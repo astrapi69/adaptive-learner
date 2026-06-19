@@ -3908,6 +3908,52 @@ select:focus {
   }
 }
 
+/* #824 — Matching "Auflösen" (solve) reveal animations. The
+   MatchingResolution component references these via `animate-[...]`
+   utilities (Tailwind ships no plugin that generates them). The
+   component drops the utility entirely under reduced motion, and the
+   global prefers-reduced-motion catch-all neutralises any that remain,
+   so motion-sensitive users get the final state immediately. */
+@keyframes matching-resolve-slide {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes matching-resolve-stack {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes matching-resolve-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes matching-resolve-line {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* EXP-018 / Phase 62 — subtle per-direction instruction line under
    an exercise prompt (receptive vs productive), with an eye/pencil
    icon hint. SHARED by DirectionInstruction across all renderers. */

@@ -7,11 +7,12 @@
  * back from MatchingExercise, so there is no cycle.
  */
 
-import {ArrowRight, Check, X} from "lucide-react";
+import {ArrowRight, Check, Sparkles, X} from "lucide-react";
 import type {CSSProperties} from "react";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {cn} from "@/lib/utils";
+import {Button} from "@/components/ui/button";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import {
@@ -551,7 +552,9 @@ export function MatchingRightTile({
     );
 }
 
-/** The score line + celebration + the shared exercise footer. */
+/** The score line + celebration + the shared exercise footer. The
+ *  #824 "Auflösen" button sits in the same row, shown only after the
+ *  first check and until the pairs have been revealed. */
 export function MatchingResultFooter({
     submitted,
     result,
@@ -559,6 +562,9 @@ export function MatchingResultFooter({
     canCheck,
     onCheck,
     onRetry,
+    canResolve = false,
+    onResolve,
+    resolveLabel,
 }: {
     submitted: boolean;
     result: {correct: number; total: number} | null;
@@ -566,6 +572,9 @@ export function MatchingResultFooter({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
+    canResolve?: boolean;
+    onResolve?: () => void;
+    resolveLabel?: string;
 }) {
     const {t} = useI18n();
     const allCorrect =
@@ -595,6 +604,18 @@ export function MatchingResultFooter({
                     </p>
                     <AnswerCelebration isCorrect={allCorrect} />
                 </>
+            )}
+            {canResolve && onResolve && (
+                <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={onResolve}
+                    data-testid="matching-resolve"
+                >
+                    <Sparkles size={14} aria-hidden="true" />
+                    {resolveLabel ?? "Solve"}
+                </Button>
             )}
             <ExerciseFooter
                 testidPrefix="matching"

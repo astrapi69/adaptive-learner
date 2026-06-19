@@ -741,6 +741,15 @@
       "productive_focus": "Üretme",
       "balanced": "Dengeli"
     },
+    "matching_resolve": {
+      "title": "Çözme animasyonu",
+      "hint": "Eşleştirme alıştırması, kontrolden sonra 'Çöz'e bastığınızda doğru çiftleri nasıl gösterir.",
+      "label": "Efekt",
+      "slide": "Kaydır",
+      "color": "Renk",
+      "connect": "Bağla",
+      "stack": "Yığ"
+    },
     "paused_retention": {
       "title": "Duraklatılmış ders saklama süresi",
       "hint": "Bu süreden daha eski duraklatılmış dersler otomatik olarak terk edilir. Yaşa bakılmaksızın en fazla 10 duraklatılmış ders saklanır.",
@@ -1744,7 +1753,9 @@
         "right_label_knowledge": "Tanım",
         "instruction_knowledge": "Her terimi tanımıyla eşleştir.",
         "instructions_knowledge": "Soldan bir öğe seç, ardından sağdaki eşini seç.",
-        "selected_sr": "Seçildi: {label}"
+        "selected_sr": "Seçildi: {label}",
+        "resolve": "Çöz",
+        "resolve_announce": "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu."
       },
       "picture": {
         "submit": "Cevabı kontrol et",

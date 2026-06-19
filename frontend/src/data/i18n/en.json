@@ -741,6 +741,15 @@
       "productive_focus": "Produce",
       "balanced": "Balanced"
     },
+    "matching_resolve": {
+      "title": "Solve animation",
+      "hint": "How the matching exercise reveals the correct pairs when you press 'Solve' after checking.",
+      "label": "Effect",
+      "slide": "Slide",
+      "color": "Color",
+      "connect": "Connect",
+      "stack": "Stack"
+    },
     "paused_retention": {
       "title": "Paused lesson retention",
       "hint": "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age.",
@@ -1744,7 +1753,9 @@
         "right_label_knowledge": "Definition",
         "instruction_knowledge": "Match each term with its definition.",
         "instructions_knowledge": "Select an item on the left, then its match on the right.",
-        "selected_sr": "Selected: {label}"
+        "selected_sr": "Selected: {label}",
+        "resolve": "Solve",
+        "resolve_announce": "Solution shown. {correct} of {total} pairs were correct."
       },
       "picture": {
         "submit": "Check answer",
