@@ -562,7 +562,7 @@ export default function Onboarding() {
                     <input
                         ref={restoreInputRef}
                         type="file"
-                        accept="application/json,.json"
+                        accept=".alb,.json,application/zip,application/json"
                         onChange={handleRestoreFile}
                         style={{display: "none"}}
                         data-testid="onboarding-restore-input"
