@@ -29,6 +29,10 @@
  *  - `storage_mode`: a per-DEVICE boot setting, not user learning data —
  *    restoring it across devices/modes could force a storage mode the
  *    target can't serve (e.g. API mode onto a PWA-only install).
+ *  - `last_backup_at`: a transient bookkeeping marker the export itself
+ *    writes. Snapshotting it makes a backup non-deterministic (a second
+ *    export in the same session differs from the first by this timestamp)
+ *    and it carries no learning data — exclude it (#792 regression).
  */
 export const BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS: readonly string[] = [
     "github_token",
@@ -38,6 +42,7 @@ export const BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS: readonly string[] = [
     "secret",
     "password",
     "storage_mode",
+    "last_backup_at",
 ];
 
 /** App namespace — only our own keys are snapshotted, never third-party. */

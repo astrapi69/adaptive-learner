@@ -212,6 +212,33 @@ export async function buildLearningContextForUser(
     return buildLearningContext(context, lang);
 }
 
+/**
+ * Phase 36 Bug 4 — if an active session already exists for ``convId``,
+ * return it with its persisted system prompt (so ImportDetail's "Start
+ * session" resumes instead of duplicating). ``null`` when none exists.
+ * Extracted from {@link startSession} to keep it under the complexity gate.
+ */
+async function resumeActiveImportedSession(
+    db: AdaptiveLearnerDB,
+    convId: string,
+): Promise<{session: LearningSession; system_prompt: string} | null> {
+    const active = await db.learningSessions
+        .where("imported_conversation_id")
+        .equals(convId)
+        .filter((row) => row.status === "active")
+        .first();
+    if (!active) return null;
+    const priorSystem = await db.sessionMessages
+        .where("session_id")
+        .equals(active.id)
+        .filter((m) => m.role === "system")
+        .sortBy("created_at");
+    return {
+        session: rowToSessionDto(active),
+        system_prompt: priorSystem[0]?.content ?? "",
+    };
+}
+
 export async function startSession(opts: {
     projectId: string;
     method?: LearningMethod;
@@ -237,22 +264,11 @@ export async function startSession(opts: {
     // the backend's short-circuit in
     // ``adaptive_learner_session.routes.start_session``.
     if (opts.importedConversationId) {
-        const active = await db.learningSessions
-            .where("imported_conversation_id")
-            .equals(opts.importedConversationId)
-            .filter((row) => row.status === "active")
-            .first();
-        if (active) {
-            const priorSystem = await db.sessionMessages
-                .where("session_id")
-                .equals(active.id)
-                .filter((m) => m.role === "system")
-                .sortBy("created_at");
-            return {
-                session: rowToSessionDto(active),
-                system_prompt: priorSystem[0]?.content ?? "",
-            };
-        }
+        const resumed = await resumeActiveImportedSession(
+            db,
+            opts.importedConversationId,
+        );
+        if (resumed) return resumed;
     }
 
     const profile = await db.learningProfiles
