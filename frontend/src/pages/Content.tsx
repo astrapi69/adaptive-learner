@@ -66,6 +66,7 @@ import {
   type UserFoldInput,
 } from "../lib/content/content-tree";
 import { computeUserFold } from "../lib/content/user-fold";
+import { resolveAiCheckDisabledReason } from "../lib/content/ai-check-gate";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
   listContributions,
@@ -104,24 +105,6 @@ const COMMUNITY_BRANCH = "main";
  *  if the repo is unavailable). Export (JSON / ZIP) is independent of
  *  this — it's a local download. */
 const COMMUNITY_SHARING_ENABLED = true;
-
-/** EXP-033 / AIV-02 — why the set-wide "Check with AI" trigger is disabled,
- *  or undefined when it is available. Gated to Dexie mode (browser-direct
- *  provider call; no server route) + a configured key. Extracted to keep
- *  ContentPage under the complexity gate. */
-function resolveAiCheckDisabledReason(
-  t: (key: string, fallback?: string) => string,
-  isDexie: boolean,
-  hasKey: boolean,
-): string | undefined {
-  if (!isDexie) {
-    return t("content.ai_check.unavailable_mode", "Available in browser-storage mode only.");
-  }
-  if (!hasKey) {
-    return t("feature.api_key_required", "API key required. Configure a provider in Settings.");
-  }
-  return undefined;
-}
 
 export default function ContentPage() {
   const { t, lang } = useI18n();
