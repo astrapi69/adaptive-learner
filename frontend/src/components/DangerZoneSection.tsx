@@ -38,8 +38,8 @@ import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
-import {useDialogFocus} from "../hooks/useDialogFocus";
-import {useI18n} from "../hooks/useI18n";
+import {useDialogFocus} from "../hooks/ui/useDialogFocus";
+import {useI18n} from "../hooks/ui/useI18n";
 import {clearLearnerState, readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import {backupFilename, saveBackupToDisk} from "../utils/backup-download";

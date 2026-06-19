@@ -2,7 +2,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 
 import { featureRegistry, type FeatureContext } from "./features/featureConfig";
-import { useApiKeyStatus } from "./hooks/useApiKeyStatus";
+import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
 import { resolveStorageMode } from "./storage";
 import { lazyWithReload } from "./lib/lazyWithReload";
 import { Routes, Route } from "react-router-dom";
@@ -22,9 +22,9 @@ import Navigation from "./components/Navigation";
 import OfflineIndicator from "./components/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
-import { I18nProvider } from "./hooks/useI18n";
-import { useTheme } from "./hooks/useTheme";
-import { useContentRepoAutoSync } from "./hooks/useContentRepoAutoSync";
+import { I18nProvider } from "./hooks/ui/useI18n";
+import { useTheme } from "./hooks/ui/useTheme";
+import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/Landing";
 import SkipToContent from "./components/SkipToContent";
 

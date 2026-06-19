@@ -16,7 +16,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TestFeatureProvider } from "../features/testFeatureProvider";
-import { I18nProvider } from "../hooks/useI18n";
+import { I18nProvider } from "../hooks/ui/useI18n";
 import { setLanguage, setProjectId, setUserId } from "../lib/learnerState";
 import { _resetStorageCacheForTests, getStorage, setPersistedStorageMode } from "../storage";
 import { _resetDbForTests } from "../storage/db";

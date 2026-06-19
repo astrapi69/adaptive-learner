@@ -16,11 +16,11 @@ import ValidationReport, {
   type ValidationReportItem,
   type ValidationReportIssue,
 } from "../../shared/feedback/ValidationReport";
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "../../hooks/ui/useI18n";
 import {
   useContentQualityCheck,
   type QualityCardMeta,
-} from "../../hooks/useContentQualityCheck";
+} from "../../hooks/content/useContentQualityCheck";
 import type { QualityReport } from "../../lib/content-quality";
 import type { ContentSetEntry } from "../../storage/types";
 

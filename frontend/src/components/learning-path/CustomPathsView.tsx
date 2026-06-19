@@ -19,7 +19,7 @@ import {ArrowDown, ArrowUp, Plus, X} from "lucide-react";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {
     lessonLabelFromFilename,
     lessonRoute,

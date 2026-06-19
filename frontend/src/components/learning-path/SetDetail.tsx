@@ -13,8 +13,8 @@ import {ChevronDown, ListChecks, RefreshCw, Sparkles} from "lucide-react";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 
-import {useI18n} from "../../hooks/useI18n";
-import {useFavorites} from "../../hooks/useFavorites";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {useFavorites} from "../../hooks/learning/useFavorites";
 import {readLearnerState} from "../../lib/learnerState";
 import ElementDetailList, {
     type ElementDetailItem,

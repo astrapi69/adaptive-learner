@@ -50,10 +50,10 @@ import {
 import type { ExerciseHandle } from "../components/exercises/exercise-control";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "../shared/data-display/ProgressBar";
-import { useI18n } from "../hooks/useI18n";
-import { useAdaptiveLesson } from "../hooks/useAdaptiveLesson";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useAdaptiveLesson } from "../hooks/lesson/useAdaptiveLesson";
 import type { ErrorTag } from "../lib/adaptive/error-classifier";
-import type { AdaptiveTransparency } from "../hooks/useAdaptiveLesson";
+import type { AdaptiveTransparency } from "../hooks/lesson/useAdaptiveLesson";
 import type {
   ContentLesson,
   ContentLessonStep,

@@ -16,7 +16,7 @@
  */
 
 import {ApiError} from "../api/client";
-import {resolveI18n} from "../hooks/useI18n";
+import {resolveI18n} from "../hooks/ui/useI18n";
 
 /**
  * Subset of ApiError properties relevant for friendly-message

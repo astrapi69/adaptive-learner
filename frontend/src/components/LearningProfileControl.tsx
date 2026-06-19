@@ -2,8 +2,8 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
-import {useHasIncompleteAssessment} from "../hooks/useAssessmentProgress";
-import {useI18n} from "../hooks/useI18n";
+import {useHasIncompleteAssessment} from "../hooks/learning/useAssessmentProgress";
+import {useI18n} from "../hooks/ui/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 

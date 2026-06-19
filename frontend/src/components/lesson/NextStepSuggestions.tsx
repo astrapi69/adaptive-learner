@@ -30,10 +30,10 @@ import {ArrowRight, Play, RefreshCw, RotateCcw, Target, Trophy} from "lucide-rea
 import {Link} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
 import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
-import type {NextStepSuggestions as Suggestions} from "../../hooks/useNextStepSuggestions";
+import type {NextStepSuggestions as Suggestions} from "../../hooks/learning/useNextStepSuggestions";
 import type {
     ContentLessonCard,
     ContentLessonExercise,

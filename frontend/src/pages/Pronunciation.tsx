@@ -25,7 +25,7 @@ import MicButton from "../components/MicButton";
 import SpeechButton from "../components/SpeechButton";
 import { ApiError } from "../api/client";
 import { FEATURES } from "../features/featureConfig";
-import { useI18n } from "../hooks/useI18n";
+import { useI18n } from "../hooks/ui/useI18n";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
 import type { PronunciationVerdict } from "../storage/types";

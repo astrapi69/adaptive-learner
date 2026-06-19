@@ -20,7 +20,7 @@ import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../api/client";
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import { FEATURES } from "../features/featureConfig";
-import { useI18n } from "../hooks/useI18n";
+import { useI18n } from "../hooks/ui/useI18n";
 import { useConfirm } from "../contexts/ConfirmContext";
 import { filterStandardProjects } from "../lib/learning-project";
 import { readLearnerState } from "../lib/learnerState";

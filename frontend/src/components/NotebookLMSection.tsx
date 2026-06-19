@@ -21,7 +21,7 @@ import { ApiError } from "../api/client";
 import ApiKeyRequiredNotice from "./ApiKeyRequiredNotice";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "../features/featureConfig";
-import { useI18n } from "../hooks/useI18n";
+import { useI18n } from "../hooks/ui/useI18n";
 import { useConfirm } from "../contexts/ConfirmContext";
 import { buildNotebookLMPackage } from "../lib/export/notebooklm-package";
 import { readLearnerState } from "../lib/learnerState";

@@ -22,7 +22,7 @@ vi.mock("@xyflow/react", () => ({
 }));
 
 const useDataMock = vi.fn();
-vi.mock("../hooks/useLearningPathData", () => ({
+vi.mock("../hooks/learning/useLearningPathData", () => ({
     useLearningPathData: () => useDataMock(),
 }));
 

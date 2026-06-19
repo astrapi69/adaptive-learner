@@ -12,8 +12,8 @@
 
 import {useMemo, useState} from "react";
 
-import {useI18n} from "../hooks/useI18n";
-import {useNotificationPermission} from "../hooks/useNotificationPermission";
+import {useI18n} from "../hooks/ui/useI18n";
+import {useNotificationPermission} from "../hooks/system/useNotificationPermission";
 import {
     readReminderSettings,
     setReminderTime,

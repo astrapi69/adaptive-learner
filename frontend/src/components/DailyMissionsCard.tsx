@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { useI18n } from "../hooks/useI18n";
+import { useI18n } from "../hooks/ui/useI18n";
 import { allowsConfetti, effectiveIntensity } from "../lib/feedback/feedbackPref";
 import { MISSION_PREF_CHANGE_EVENT, readMissionPrefs } from "../lib/missionPref";
 import { localTodayIso } from "../lib/missions/schedule";

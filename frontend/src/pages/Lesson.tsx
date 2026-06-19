@@ -38,21 +38,21 @@ import LessonTtsMiniPlayerSlot from "../components/lesson/LessonTtsMiniPlayerSlo
 import LessonStatusView, {
   resolveLessonStatusKind,
 } from "../components/lesson/LessonStatusView";
-import { useLessonAutoRead } from "../hooks/useLessonAutoRead";
+import { useLessonAutoRead } from "../hooks/lesson/useLessonAutoRead";
 import type { ExerciseHandle } from "../components/exercises/exercise-control";
 import {
   isPlayableExerciseStep,
   storedStepResult,
 } from "../lib/lesson/lesson-step-state";
-import { useI18n } from "../hooks/useI18n";
-import { useLesson } from "../hooks/useLesson";
-import { useLessonFlowControl } from "../hooks/useLessonFlowControl";
-import { useLessonNavigation } from "../hooks/useLessonNavigation";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useLesson } from "../hooks/lesson/useLesson";
+import { useLessonFlowControl } from "../hooks/lesson/useLessonFlowControl";
+import { useLessonNavigation } from "../hooks/lesson/useLessonNavigation";
 import {
   useLessonEnterKey,
   type LessonEnterNav,
-} from "../hooks/useLessonEnterKey";
-import { useLessonShortcuts } from "../hooks/useLessonShortcuts";
+} from "../hooks/lesson/useLessonEnterKey";
+import { useLessonShortcuts } from "../hooks/lesson/useLessonShortcuts";
 import {
   captureCelebrationSnapshot,
   celebrateProgressSince,

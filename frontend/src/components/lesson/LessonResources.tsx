@@ -22,7 +22,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "../../hooks/ui/useI18n";
 import {
   bookToMediaResource,
   effectiveMediaPriority,

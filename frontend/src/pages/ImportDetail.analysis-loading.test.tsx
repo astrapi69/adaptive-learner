@@ -24,7 +24,7 @@ import { TestFeatureProvider } from "../features/testFeatureProvider";
 // which matches the English copy the component passes inline — so
 // the text assertions hold without loading the real i18n catalogs
 // (and without the I18nProvider needing the real storage layer).
-vi.mock("../hooks/useI18n", () => ({
+vi.mock("../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb?: string) => fb ?? _k, lang: "en" }),
 }));
 
@@ -100,7 +100,7 @@ vi.mock("../storage/db", () => ({
   }),
 }));
 
-vi.mock("../hooks/useApiKeyStatus", () => ({
+vi.mock("../hooks/settings/useApiKeyStatus", () => ({
   useApiKeyStatus: () => ({ ready: true, hasKey: true }),
 }));
 

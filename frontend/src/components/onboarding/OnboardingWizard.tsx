@@ -2,7 +2,7 @@ import {useMemo, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {Progress} from "@/components/ui/progress";
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 
 /** The profile fields the wizard collects, ready for projects.update. */
 export interface WizardValues {

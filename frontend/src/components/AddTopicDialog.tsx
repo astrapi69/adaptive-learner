@@ -1,8 +1,8 @@
 import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {useDialogFocus} from "../hooks/useDialogFocus";
-import {useI18n} from "../hooks/useI18n";
+import {useDialogFocus} from "../hooks/ui/useDialogFocus";
+import {useI18n} from "../hooks/ui/useI18n";
 
 interface AddTopicDialogProps {
     open: boolean;

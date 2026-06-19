@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 
 /**
  * v0.6.0 / 9B — "Add to Home Screen" prompt.

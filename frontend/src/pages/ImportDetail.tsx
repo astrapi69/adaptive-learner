@@ -38,8 +38,8 @@ import {
   ANALYSIS_PHASE_INTERVAL_MS,
 } from "../lib/content/analysis-phases";
 import { FEATURES } from "../features/featureConfig";
-import { useI18n } from "../hooks/useI18n";
-import { useOnlineStatus } from "../hooks/useOnlineStatus";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useOnlineStatus } from "../hooks/system/useOnlineStatus";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
 import { getDb } from "../storage/db";

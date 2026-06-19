@@ -22,7 +22,7 @@
 import {AlertTriangle} from "lucide-react";
 import {Link} from "react-router-dom";
 
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 
 interface Props {
     /** Compact one-line layout for tight UI contexts.

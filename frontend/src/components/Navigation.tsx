@@ -16,15 +16,15 @@ import {
 
 import { useHelp } from "../contexts/HelpContext";
 import { helpKeyForPath } from "../lib/help-routes";
-import { useAppMode } from "../hooks/useAppMode";
-import { useButtonTooltips } from "../hooks/useButtonTooltips";
-import { useDevMode } from "../hooks/useDevMode";
-import { useI18n } from "../hooks/useI18n";
-import { useIsLessonActive } from "../hooks/useIsLessonActive";
-import { useOnlineStatus } from "../hooks/useOnlineStatus";
-import { useSyncQueueSize } from "../hooks/useSyncQueueSize";
-import { useScrollDirection } from "../hooks/useScrollDirection";
-import { useTheme } from "../hooks/useTheme";
+import { useAppMode } from "../hooks/settings/useAppMode";
+import { useButtonTooltips } from "../hooks/settings/useButtonTooltips";
+import { useDevMode } from "../hooks/settings/useDevMode";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useIsLessonActive } from "../hooks/lesson/useIsLessonActive";
+import { useOnlineStatus } from "../hooks/system/useOnlineStatus";
+import { useSyncQueueSize } from "../hooks/system/useSyncQueueSize";
+import { useScrollDirection } from "../hooks/ui/useScrollDirection";
+import { useTheme } from "../hooks/ui/useTheme";
 import { isDarkTheme } from "../lib/themes";
 import { readSyncConfig } from "../storage/sync-engine";
 

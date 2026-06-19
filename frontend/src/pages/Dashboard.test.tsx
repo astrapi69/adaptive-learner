@@ -153,7 +153,7 @@ describe("Dashboard page", () => {
     });
     // Drop the module-level useApiKeyStatus cache so each
     // test's apiSettingsGet mock is honoured.
-    const { _resetApiKeyStatusCacheForTests } = await import("../hooks/useApiKeyStatus");
+    const { _resetApiKeyStatusCacheForTests } = await import("../hooks/settings/useApiKeyStatus");
     _resetApiKeyStatusCacheForTests();
     localStorage.clear();
     localStorage.setItem("adaptive-learner.project_id", "p1");

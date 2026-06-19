@@ -15,7 +15,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import DownloadProgress from "../shared/feedback/DownloadProgress";
-import { useI18n } from "../hooks/useI18n";
+import { useI18n } from "../hooks/ui/useI18n";
 import {
   addUserRepo,
   parseGitHubRepoUrl,

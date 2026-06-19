@@ -35,7 +35,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { useDialogFocus } from "../../hooks/useDialogFocus";
+import { useDialogFocus } from "../../hooks/ui/useDialogFocus";
 import {
   centeredOffset,
   clampOffset,

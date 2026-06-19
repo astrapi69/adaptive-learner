@@ -69,7 +69,7 @@ const apiKeyStatusMock = vi.fn(() => ({
   activeProvider: null as string | null,
   refresh: vi.fn(),
 }));
-vi.mock("../hooks/useApiKeyStatus", () => ({
+vi.mock("../hooks/settings/useApiKeyStatus", () => ({
   useApiKeyStatus: () => apiKeyStatusMock(),
 }));
 vi.mock("../lib/learnerState", () => ({

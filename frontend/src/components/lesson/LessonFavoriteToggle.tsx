@@ -7,8 +7,8 @@
  */
 
 import FavoriteToggle from "../../shared/media/FavoriteToggle";
-import {useFavorites} from "../../hooks/useFavorites";
-import {useI18n} from "../../hooks/useI18n";
+import {useFavorites} from "../../hooks/learning/useFavorites";
+import {useI18n} from "../../hooks/ui/useI18n";
 
 export interface LessonFavoriteToggleProps {
     userId: string;

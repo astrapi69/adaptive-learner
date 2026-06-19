@@ -34,7 +34,7 @@ import type {
   SaveUserSetInput,
 } from "./types";
 import { USER_GENERATED_SOURCE } from "./types";
-import { isDevMode } from "../hooks/useDevMode";
+import { isDevMode } from "../hooks/settings/useDevMode";
 import { getDb } from "./db";
 import type { ContentSetRow, ContentSetFileRow } from "./db";
 import { resolveRepoToken } from "../lib/content/repo-token";

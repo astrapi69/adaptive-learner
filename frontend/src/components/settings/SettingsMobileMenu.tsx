@@ -17,8 +17,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Menu } from "lucide-react";
 
-import { useI18n } from "../../hooks/useI18n";
-import { useDialogFocus } from "../../hooks/useDialogFocus";
+import { useI18n } from "../../hooks/ui/useI18n";
+import { useDialogFocus } from "../../hooks/ui/useDialogFocus";
 import type { SettingsNavProps } from "../../lib/settings/sidebar-model";
 import { cn } from "@/lib/utils";
 

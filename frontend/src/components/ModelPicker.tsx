@@ -30,7 +30,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import type {AIProvider} from "../lib/constants";
 import {getStorage} from "../storage";
 import type {AvailableModel} from "../storage/types";

@@ -13,7 +13,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 
 import SyncSection from "./SyncSection";
-import {I18nProvider} from "../hooks/useI18n";
+import {I18nProvider} from "../hooks/ui/useI18n";
 import {_resetStorageCacheForTests} from "../storage";
 import {
     writeSyncConfig,

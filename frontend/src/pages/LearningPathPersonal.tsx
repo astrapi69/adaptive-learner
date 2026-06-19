@@ -23,8 +23,8 @@ import {lazy, Suspense, useMemo, useState} from "react";
 import {Link} from "react-router-dom";
 import {LayoutList, ListChecks, Map as MapIcon, Network} from "lucide-react";
 
-import {useI18n} from "../hooks/useI18n";
-import {usePersonalPath} from "../hooks/usePersonalPath";
+import {useI18n} from "../hooks/ui/useI18n";
+import {usePersonalPath} from "../hooks/learning/usePersonalPath";
 import {readLearnerState} from "../lib/learnerState";
 import SetRow from "../components/learning-path/SetRow";
 import SetDetail from "../components/learning-path/SetDetail";

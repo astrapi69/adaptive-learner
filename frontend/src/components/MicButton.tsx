@@ -18,8 +18,8 @@
 
 import {useEffect, useRef, useState} from "react";
 
-import {useButtonTooltips} from "../hooks/useButtonTooltips";
-import {useI18n} from "../hooks/useI18n";
+import {useButtonTooltips} from "../hooks/settings/useButtonTooltips";
+import {useI18n} from "../hooks/ui/useI18n";
 import {readVoicePrefs} from "../lib/voice/voicePref";
 import {
     isSpeechRecognitionSupported,

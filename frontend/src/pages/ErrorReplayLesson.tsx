@@ -35,14 +35,14 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "../components/exercises/exercise-control";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 
 type Translate = (key: string, fallback?: string) => string;
 import {
     useLessonEnterKey,
     type LessonEnterNav,
-} from "../hooks/useLessonEnterKey";
-import {useLessonShortcuts} from "../hooks/useLessonShortcuts";
+} from "../hooks/lesson/useLessonEnterKey";
+import {useLessonShortcuts} from "../hooks/lesson/useLessonShortcuts";
 import {prefersReducedMotion} from "../lib/feedback/feedbackPref";
 import type {
     ContentLessonCard,

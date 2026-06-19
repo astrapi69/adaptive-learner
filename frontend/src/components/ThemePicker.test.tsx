@@ -8,7 +8,7 @@ import {render, screen, fireEvent} from "@testing-library/react";
 
 import ThemePicker from "./ThemePicker";
 
-vi.mock("../hooks/useI18n", () => ({
+vi.mock("../hooks/ui/useI18n", () => ({
     useI18n: () => ({
         t: (_key: string, fallback?: string) => fallback ?? _key,
         lang: "en",

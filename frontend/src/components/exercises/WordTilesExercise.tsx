@@ -65,7 +65,7 @@ import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";

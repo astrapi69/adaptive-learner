@@ -26,7 +26,7 @@
 import {NodeViewWrapper, NodeViewContent, type NodeViewProps} from "@tiptap/react";
 import {useState} from "react";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 
 /** Visible options in the language picker. Keep in sync with
  *  the lowlight registration in ``code-block-config.ts``. */

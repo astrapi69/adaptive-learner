@@ -18,7 +18,7 @@
 import { Video } from "lucide-react";
 import { useState } from "react";
 
-import { useOnlineStatus } from "../../hooks/useOnlineStatus";
+import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
 import { extractVideoId, getThumbnailUrl } from "../../lib/media/youtube";
 
 interface YouTubeThumbnailProps {

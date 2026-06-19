@@ -20,7 +20,7 @@ const listSetsMock = vi.fn();
 const downloadSetMock = vi.fn();
 const deleteSetMock = vi.fn();
 
-vi.mock("../hooks/useI18n", () => ({
+vi.mock("../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fallback: string) => fallback, lang: "en" }),
 }));
 

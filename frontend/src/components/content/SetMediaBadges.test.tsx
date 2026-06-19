@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { MediaResource } from "../../lib/content/media-loader";
 import SetMediaBadges from "./SetMediaBadges";
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_k: string, fallback: string) => fallback,
     lang: "en",

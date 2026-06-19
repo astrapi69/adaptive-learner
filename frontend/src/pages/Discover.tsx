@@ -18,7 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { ApiError } from "../api/client";
-import { useI18n } from "../hooks/useI18n";
+import { useI18n } from "../hooks/ui/useI18n";
 import { isOfficialSource } from "../lib/content/content-repos";
 import { languageDisplayName } from "../lib/content/language-names";
 import {

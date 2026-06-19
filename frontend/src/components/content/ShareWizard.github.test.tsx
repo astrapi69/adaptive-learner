@@ -16,7 +16,7 @@ import { ApiError } from "../../api/client";
 import ShareWizard from "./ShareWizard";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_key: string, fallback: string) => fallback,
     lang: "de",

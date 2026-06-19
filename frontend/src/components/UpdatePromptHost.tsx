@@ -9,8 +9,8 @@
  */
 
 import UpdatePrompt from "../shared/feedback/UpdatePrompt";
-import { useAppUpdate } from "../hooks/useAppUpdate";
-import { useI18n } from "../hooks/useI18n";
+import { useAppUpdate } from "../hooks/system/useAppUpdate";
+import { useI18n } from "../hooks/ui/useI18n";
 
 export default function UpdatePromptHost() {
   const { t } = useI18n();

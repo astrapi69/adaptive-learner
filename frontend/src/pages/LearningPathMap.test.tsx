@@ -11,7 +11,7 @@ import {MemoryRouter} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const useHookMock = vi.fn();
-vi.mock("../hooks/usePersonalPath", () => ({
+vi.mock("../hooks/learning/usePersonalPath", () => ({
     usePersonalPath: () => useHookMock(),
 }));
 vi.mock("../lib/learnerState", () => ({

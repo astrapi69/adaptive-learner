@@ -20,7 +20,7 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {LANGUAGE_OPTIONS} from "../lib/content/language-options";
 import {readContributorName} from "../lib/content/contribution-history";
 import {Button} from "@/components/ui/button";

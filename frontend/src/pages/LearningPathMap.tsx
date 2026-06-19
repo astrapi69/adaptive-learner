@@ -36,8 +36,8 @@ import {
 
 import {Progress} from "../components/ui/progress";
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/useI18n";
-import {usePersonalPath} from "../hooks/usePersonalPath";
+import {useI18n} from "../hooks/ui/useI18n";
+import {usePersonalPath} from "../hooks/learning/usePersonalPath";
 import {readLearnerState} from "../lib/learnerState";
 import type {PersonalPathSet} from "../lib/learning-path/personal-path";
 import LessonRow from "../components/learning-path/LessonRow";

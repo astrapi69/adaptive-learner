@@ -30,7 +30,7 @@ vi.mock("../../utils/notify", () => ({
 
 // Mutable app language so a test can simulate a German UI.
 const i18nState = vi.hoisted(() => ({ lang: "en" }));
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_k: string, fallback: string) => fallback,
     lang: i18nState.lang,

@@ -21,9 +21,9 @@
 import {useEffect, useRef, useState} from "react";
 import {Volume2, Square} from "lucide-react";
 
-import {useButtonTooltips} from "../../hooks/useButtonTooltips";
-import {useI18n} from "../../hooks/useI18n";
-import {readLessonSpeed} from "../../hooks/useReadAloud";
+import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {readLessonSpeed} from "../../hooks/lesson/useReadAloud";
 import {
     isSpeechSynthesisSupported,
     loadVoices,

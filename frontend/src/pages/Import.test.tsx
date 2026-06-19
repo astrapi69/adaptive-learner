@@ -13,7 +13,7 @@ import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 import Import from "./Import";
-import {I18nProvider} from "../hooks/useI18n";
+import {I18nProvider} from "../hooks/ui/useI18n";
 import {_resetDbForTests} from "../storage/db";
 import {dexieStorage} from "../storage/dexie-storage";
 import {_resetStorageCacheForTests} from "../storage";

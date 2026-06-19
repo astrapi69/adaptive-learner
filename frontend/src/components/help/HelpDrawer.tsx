@@ -27,9 +27,9 @@ import { Button } from "@/components/ui/button";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "../ui/sheet";
 import { useHelp } from "../../contexts/HelpContext";
-import { useButtonTooltips } from "../../hooks/useButtonTooltips";
-import { useGlossary } from "../../hooks/useGlossary";
-import { useI18n } from "../../hooks/useI18n";
+import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
+import { useGlossary } from "../../hooks/content/useGlossary";
+import { useI18n } from "../../hooks/ui/useI18n";
 import { getGlossaryEntry, listGlossaryEntries } from "../../lib/help-glossary";
 import { docsUrlForSlug } from "../../lib/help-routes";
 import type { GlossaryEntry } from "../../types/help";

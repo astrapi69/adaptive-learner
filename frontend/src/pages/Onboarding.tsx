@@ -15,7 +15,7 @@ import HelpTooltip from "../components/help/HelpTooltip";
 import OnboardingWizard, {
     type WizardValues,
 } from "../components/onboarding/OnboardingWizard";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {isEmptyInstall, pickAdoptedIdentity} from "../lib/firstRunRestore";
 import {readBackupFile} from "../lib/backup/validateBackupFile";
 import {applyLocalStorageSnapshot} from "../lib/backup/localStorageSnapshot";

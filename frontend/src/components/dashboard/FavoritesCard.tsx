@@ -12,8 +12,8 @@
 import {useNavigate} from "react-router-dom";
 
 import FavoritesList from "../../shared/media/FavoritesList";
-import {useFavorites} from "../../hooks/useFavorites";
-import {useI18n} from "../../hooks/useI18n";
+import {useFavorites} from "../../hooks/learning/useFavorites";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {favoriteId} from "../../lib/favorites/favorites";
 import {lessonRoute} from "../../lib/content/continue-learning";
 

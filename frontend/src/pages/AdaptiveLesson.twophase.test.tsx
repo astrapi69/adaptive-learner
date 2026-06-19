@@ -21,7 +21,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const useAdaptiveLessonMock = vi.fn();
 
-vi.mock("../hooks/useAdaptiveLesson", () => ({
+vi.mock("../hooks/lesson/useAdaptiveLesson", () => ({
   useAdaptiveLesson: () => useAdaptiveLessonMock(),
 }));
 

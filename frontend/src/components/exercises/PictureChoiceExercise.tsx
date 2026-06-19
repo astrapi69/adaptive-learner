@@ -37,8 +37,8 @@ import {forwardRef, useMemo, useState} from "react";
 
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
-import {useAsset} from "../../hooks/useAsset";
-import {useI18n} from "../../hooks/useI18n";
+import {useAsset} from "../../hooks/ui/useAsset";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,

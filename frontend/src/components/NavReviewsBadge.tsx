@@ -14,7 +14,7 @@ import {RefreshCw} from "lucide-react";
 import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {dedupeReviewQueueByElement} from "../lib/review-lesson";
 import {subscribeCelebration} from "../lib/praise/celebration-bus";

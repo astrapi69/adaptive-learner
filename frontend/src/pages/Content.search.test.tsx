@@ -41,7 +41,7 @@ vi.mock("../storage", () => ({
   USER_GENERATED_SOURCE: "user-generated",
 }));
 
-vi.mock("../hooks/useApiKeyStatus", () => ({
+vi.mock("../hooks/settings/useApiKeyStatus", () => ({
   useApiKeyStatus: () => ({
     ready: true,
     hasKey: false,

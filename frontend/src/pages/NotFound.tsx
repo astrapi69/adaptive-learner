@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 
 /**
  * 404 fallback for unmatched routes. Keeps a single link back to

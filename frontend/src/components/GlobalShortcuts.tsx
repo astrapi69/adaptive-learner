@@ -26,7 +26,7 @@ import {
     type ShortcutDefinition,
 } from "../shared/hooks/useKeyboardShortcuts";
 import {buildShortcutGroups, isMacPlatform} from "../lib/shortcuts/catalog";
-import {useI18n} from "../hooks/useI18n";
+import {useI18n} from "../hooks/ui/useI18n";
 
 export default function GlobalShortcuts() {
     const {t} = useI18n();

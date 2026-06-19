@@ -55,11 +55,11 @@ import {
 import ContentBookCompanions from "../components/content/ContentBookCompanions";
 import ContentContributionsSection from "../components/content/ContentContributionsSection";
 import { splitHighlight } from "../lib/content/content-search";
-import { useContentSearch } from "../hooks/useContentSearch";
-import { useContentSharing } from "../hooks/useContentSharing";
-import { useI18n } from "../hooks/useI18n";
-import { useOnlineStatus } from "../hooks/useOnlineStatus";
-import { useSourceLanguages } from "../hooks/useSourceLanguages";
+import { useContentSearch } from "../hooks/content/useContentSearch";
+import { useContentSharing } from "../hooks/content/useContentSharing";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useOnlineStatus } from "../hooks/system/useOnlineStatus";
+import { useSourceLanguages } from "../hooks/settings/useSourceLanguages";
 import {
   buildContentTree,
   type FoldedUserLesson,
@@ -74,7 +74,7 @@ import {
   type SharedContribution,
 } from "../lib/content/contribution-history";
 import { detectGaps } from "../lib/content/gap-detector";
-import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
+import { useApiKeyStatus } from "../hooks/settings/useApiKeyStatus";
 import { readLearnerState } from "../lib/learnerState";
 import {
   buildContentSetZip,

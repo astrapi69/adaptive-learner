@@ -9,7 +9,7 @@ import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 import DashboardFilterBar, {applyFilter} from "./DashboardFilterBar";
-import {I18nProvider} from "../hooks/useI18n";
+import {I18nProvider} from "../hooks/ui/useI18n";
 import {_resetDbForTests} from "../storage/db";
 import {_resetStorageCacheForTests, getStorage} from "../storage";
 import type {LearningProject} from "../types/domain";

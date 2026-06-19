@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 import AiValidationDialog from "./AiValidationDialog";
-import { __resetRateLimitForTests } from "../../hooks/useAiCardValidation";
+import { __resetRateLimitForTests } from "../../hooks/content/useAiCardValidation";
 import type { ContentSetEntry } from "../../storage/types";
 
 const listLessonsMock = vi.fn();
@@ -27,7 +27,7 @@ vi.mock("../../lib/learnerState", () => ({
   readLearnerState: () => ({ userId: "u1" }),
 }));
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb: string) => fb, lang: "en" }),
 }));
 

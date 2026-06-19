@@ -4,8 +4,8 @@ import {toast} from "react-toastify";
 
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
-import {useI18n} from "../hooks/useI18n";
-import {useTheme} from "../hooks/useTheme";
+import {useI18n} from "../hooks/ui/useI18n";
+import {useTheme} from "../hooks/ui/useTheme";
 import {isDarkTheme} from "../lib/themes";
 import {UI_LANGUAGES} from "../lib/languages";
 import {

@@ -26,7 +26,7 @@
 import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {useButtonTooltips} from "../../hooks/useButtonTooltips";
+import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
 import QRImageUpload from "./QRImageUpload";
 import QRScanner, {type QRScannerError} from "./QRScanner";
 

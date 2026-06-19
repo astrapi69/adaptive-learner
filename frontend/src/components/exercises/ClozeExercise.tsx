@@ -30,7 +30,7 @@ import {Check, X} from "lucide-react";
 import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";

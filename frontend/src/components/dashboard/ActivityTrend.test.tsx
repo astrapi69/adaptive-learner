@@ -4,7 +4,7 @@ import {cleanup, render, screen} from "@testing-library/react";
 import ActivityTrend from "./ActivityTrend";
 import type {HeatmapEntryOut} from "../../storage/types";
 
-vi.mock("../../hooks/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({t: (_k: string, fb?: string) => fb ?? _k}),
 }));
 

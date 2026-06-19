@@ -48,13 +48,13 @@ import type {
 import {Button} from "@/components/ui/button";
 import ProgressBar from "../shared/data-display/ProgressBar";
 import LessonStepNav from "../shared/layout/LessonStepNav";
-import {useI18n} from "../hooks/useI18n";
-import {useLessonShortcuts} from "../hooks/useLessonShortcuts";
+import {useI18n} from "../hooks/ui/useI18n";
+import {useLessonShortcuts} from "../hooks/lesson/useLessonShortcuts";
 import {
     useLessonEnterKey,
     type LessonEnterNav,
-} from "../hooks/useLessonEnterKey";
-import {useReviewLesson} from "../hooks/useReviewLesson";
+} from "../hooks/lesson/useLessonEnterKey";
+import {useReviewLesson} from "../hooks/lesson/useReviewLesson";
 import {readReviewLimit} from "../lib/learning/reviewLimitPref";
 import ReviewSummaryView from "../shared/gamification/ReviewSummary";
 import type {

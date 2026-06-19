@@ -7,8 +7,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { useChartTheme } from "../hooks/useChartTheme";
-import { useI18n } from "../hooks/useI18n";
+import { useChartTheme } from "../hooks/ui/useChartTheme";
+import { useI18n } from "../hooks/ui/useI18n";
 import { LEARNING_METHODS, METHOD_COLORS } from "../lib/constants";
 import type { LearningProfile } from "../types";
 import ChartSummary from "./charts/ChartSummary";

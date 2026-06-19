@@ -12,8 +12,8 @@
 import { Button } from "@/components/ui/button";
 import { ModelPicker } from "./ModelPicker";
 import ApiKeyRow from "./ApiKeyRow";
-import { useI18n } from "../hooks/useI18n";
-import { useAiKeySettings } from "../hooks/useAiKeySettings";
+import { useI18n } from "../hooks/ui/useI18n";
+import { useAiKeySettings } from "../hooks/settings/useAiKeySettings";
 import { DEFAULT_MODELS } from "../storage/ai-providers";
 import {
   AI_PROVIDERS,

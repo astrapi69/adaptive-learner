@@ -31,8 +31,8 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/useI18n";
-import {useLearningPathData} from "../hooks/useLearningPathData";
+import {useI18n} from "../hooks/ui/useI18n";
+import {useLearningPathData} from "../hooks/learning/useLearningPathData";
 import LessonNode from "../components/learning-path/LessonNode";
 import SetGroupNode from "../components/learning-path/SetGroupNode";
 import {

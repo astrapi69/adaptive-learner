@@ -2,8 +2,8 @@ import {useEffect, useRef, useState, type FormEvent} from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import {useButtonTooltips} from "../hooks/useButtonTooltips";
-import {useI18n} from "../hooks/useI18n";
+import {useButtonTooltips} from "../hooks/settings/useButtonTooltips";
+import {useI18n} from "../hooks/ui/useI18n";
 import type {MessageRole} from "../lib/constants";
 import MicButton from "./MicButton";
 import SpeechButton from "./SpeechButton";

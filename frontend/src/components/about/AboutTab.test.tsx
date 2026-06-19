@@ -17,7 +17,7 @@ import DonationSection from "./DonationSection";
 import LicenseResourcesSection from "./LicenseResourcesSection";
 import SystemInfoSection from "./SystemInfoSection";
 import VersionSection from "./VersionSection";
-import {I18nProvider} from "../../hooks/useI18n";
+import {I18nProvider} from "../../hooks/ui/useI18n";
 import {_resetStorageCacheForTests} from "../../storage";
 import type {SystemInfo} from "../../types/domain";
 

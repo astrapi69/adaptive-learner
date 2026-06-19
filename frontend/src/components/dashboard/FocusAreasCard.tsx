@@ -36,7 +36,7 @@ import {focusAreaTags} from "../../lib/adaptive/error-classifier";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
 import {masteryCounts, type MasteryCounts} from "../../lib/srs/mastery";
 import type {PrioritizedElement} from "../../lib/adaptive/types";
-import {useI18n} from "../../hooks/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {getStorage} from "../../storage";
 
 const TAG_I18N_KEYS: Record<ErrorTag, [string, string]> = {

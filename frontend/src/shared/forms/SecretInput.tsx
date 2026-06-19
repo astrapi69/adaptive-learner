@@ -33,7 +33,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "../../hooks/ui/useI18n";
 
 /**
  * Attributes that opt the field out of every common password manager's

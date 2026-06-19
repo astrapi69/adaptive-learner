@@ -4,7 +4,7 @@ import {MemoryRouter} from "react-router-dom";
 
 import {NavSyncIndicator, NavOnlineIndicator} from "./NavIndicators";
 
-vi.mock("../hooks/useI18n", () => ({
+vi.mock("../hooks/ui/useI18n", () => ({
     useI18n: () => ({
         t: (_k: string, fb?: string) => fb ?? _k,
         lang: "en",
