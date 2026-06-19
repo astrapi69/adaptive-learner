@@ -103,6 +103,14 @@ export function useAppUpdate(): AppUpdateState {
   }, [online]);
 
   const applyUpdate = useCallback(() => {
+    // Close the banner immediately so the click ALWAYS has a visible effect
+    // (#818). The banner is usually flagged by version.json with no waiting
+    // SW; a plain reload then gets served stale from the old precache and
+    // version.json still reports newer, so the banner used to reappear at
+    // once and the button looked dead. Hiding it here decouples the user
+    // feedback from the reload timing; activateAndReload still does the real
+    // skip-waiting + fresh reload.
+    setDismissed(true);
     void activateAndReload();
   }, []);
 
