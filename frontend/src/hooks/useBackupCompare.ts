@@ -15,6 +15,7 @@ import {useRef, useState} from "react";
 import {useI18n} from "./useI18n";
 import {getStorage} from "../storage";
 import {getAutoBackupPayload, type AutoBackupSummary} from "../storage/auto-backup";
+import {readBackupFile as readValidatedBackupFile} from "../lib/backup/validateBackupFile";
 import type {BackupPayload} from "../types/domain";
 
 /** One filled compare slot: a parsed backup plus a display label. */
@@ -42,20 +43,27 @@ export function useBackupCompare(userId: string | null) {
     const [compareError, setCompareError] = useState<string | null>(null);
 
     async function readBackupFile(file: File): Promise<BackupPayload> {
-        const text = await file.text();
-        const parsed = JSON.parse(text) as BackupPayload;
-        if (
-            parsed.format !== "adaptive-learner-backup" ||
-            typeof parsed.version !== "string"
-        ) {
+        // Format is decided by MAGIC BYTES, not the extension: a ZIP
+        // signature is an EXP-031 ``.alb`` container, anything else is
+        // parsed as a legacy ``.json`` backup. Delegating to the shared
+        // validated reader keeps the compare path in lock-step with the
+        // Settings/onboarding restore surfaces (both accept ``.alb`` +
+        // ``.json``) so a ``.alb`` backup is comparable, not rejected.
+        const result = await readValidatedBackupFile(file);
+        if (!result.ok) {
             throw new Error(
-                t(
-                    "backup.invalid_format",
-                    "This file is not a valid Adaptive Learner backup.",
-                ),
+                result.error === "too_large"
+                    ? t(
+                          "backup.too_large",
+                          "This backup file is too large (over 100 MB).",
+                      )
+                    : t(
+                          "backup.invalid_format",
+                          "This file is not a valid Adaptive Learner backup.",
+                      ),
             );
         }
-        return parsed;
+        return result.payload;
     }
 
     /** Parse a picked file into the given compare slot. */
