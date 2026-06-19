@@ -656,6 +656,18 @@ export default function BackupSection() {
             } else {
                 notify.success(summaryMsg);
             }
+            // #787 — a Dexie-origin backup can't restore API keys (active
+            // keys are stripped on export; rollback-cache rows without a
+            // usable key are skipped). Tell the user to re-enter them
+            // instead of leaving the keys silently missing.
+            if ((summary.api_keys_skipped ?? 0) > 0) {
+                notify.warning(
+                    t(
+                        "backup.api_keys_skipped",
+                        "API keys could not be imported. Please re-enter them in Settings > Integrations.",
+                    ),
+                );
+            }
         } catch (err) {
             const detail = err instanceof Error ? err.message : String(err);
             notify.error(

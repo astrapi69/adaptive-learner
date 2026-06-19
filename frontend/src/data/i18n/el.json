@@ -918,6 +918,7 @@
     "restored_inserted": "Inserted: {{n}}",
     "restored_updated": "Updated: {{n}}",
     "restored_skipped": "Skipped: {{n}}",
+    "api_keys_skipped": "Δεν ήταν δυνατή η εισαγωγή των κλειδιών API. Καταχωρίστε τα ξανά στις Ρυθμίσεις > Ενσωματώσεις.",
     "restored_errors": "Errors: {{n}}",
     "col_inserted": "Εισ.",
     "col_updated": "Ενημ.",

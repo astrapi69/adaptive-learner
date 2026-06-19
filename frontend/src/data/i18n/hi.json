@@ -918,6 +918,7 @@
     "restored_inserted": "डाले गए: {{n}}",
     "restored_updated": "अपडेट किए गए: {{n}}",
     "restored_skipped": "छोड़े गए: {{n}}",
+    "api_keys_skipped": "API कुंजियाँ आयात नहीं की जा सकीं। कृपया उन्हें सेटिंग्स > इंटीग्रेशन में फिर से दर्ज करें।",
     "restored_errors": "त्रुटियाँ: {{n}}",
     "col_inserted": "डाले",
     "col_updated": "अपड.",

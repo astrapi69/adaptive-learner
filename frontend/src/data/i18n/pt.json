@@ -918,6 +918,7 @@
     "restored_inserted": "Inseridos: {{n}}",
     "restored_updated": "Atualizados: {{n}}",
     "restored_skipped": "Ignorados: {{n}}",
+    "api_keys_skipped": "Não foi possível importar as chaves de API. Insira-as novamente em Definições > Integrações.",
     "restored_errors": "Erros: {{n}}",
     "col_inserted": "Ins.",
     "col_updated": "Atu.",

@@ -17,6 +17,7 @@ from sqlalchemy import Date, DateTime, String, Text, UniqueConstraint
 from app.database import Base
 from app.exceptions import ValidationError
 from app.repositories.backup_repo import BackupRepository
+from app.services import crypto
 from app.services.content_backup import restore_content_sets
 from app.services.sync_service import (
     TABLES as SYNC_TABLES,
@@ -111,6 +112,57 @@ def _text_fields(table: str) -> frozenset[str]:
     )
     _TEXT_FIELDS_CACHE[table] = fields
     return fields
+
+
+#: Table whose key column differs by storage mode (cleartext ``key`` in a
+#: Dexie backup vs Fernet ``encrypted_key`` in the backend).
+API_KEY_BACKUP_TABLE = "api_key_backups"
+
+
+def _normalize_api_key_backups(
+    records: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], int]:
+    """Reconcile ``api_key_backups`` rows across storage modes before insert.
+
+    The backend column is ``encrypted_key`` (Fernet ciphertext, NOT NULL).
+    A Dexie-mode backup instead carries the key in a cleartext ``key``
+    field (browser-local IndexedDB keeps keys in the clear). Restoring such
+    a row verbatim leaves ``encrypted_key`` NULL, and the INSERT aborts the
+    WHOLE restore with ``NOT NULL constraint failed: api_key_backups.
+    encrypted_key`` (#787).
+
+    Per row:
+      - a non-empty ``encrypted_key`` (API-origin backup) is kept as-is;
+      - else a non-empty cleartext ``key`` is encrypted to THIS install's
+        secret and stored as ``encrypted_key`` (the rollback cache is
+        re-homed, usable on the importing install);
+      - a row with neither — or whose encryption fails — is dropped, so the
+        user simply re-enters that key in Settings.
+
+    Returns ``(usable_rows, dropped_count)``. Never raises.
+    """
+    usable: list[dict[str, Any]] = []
+    dropped = 0
+    for record in records:
+        existing = record.get("encrypted_key")
+        if isinstance(existing, str) and existing:
+            usable.append(record)
+            continue
+        cleartext = record.get("key")
+        if isinstance(cleartext, str) and cleartext:
+            try:
+                ciphertext = crypto.encrypt_api_key(cleartext)
+            except Exception as exc:  # pragma: no cover - defensive
+                logger.warning(
+                    "api_key_backups: could not encrypt an imported key, dropping row: %s",
+                    exc,
+                )
+                dropped += 1
+                continue
+            usable.append({**record, "encrypted_key": ciphertext})
+            continue
+        dropped += 1
+    return usable, dropped
 
 
 def _coerce_record(table: str, record: dict[str, Any]) -> dict[str, Any]:
@@ -385,12 +437,20 @@ def _restore_table(
     spec = _spec(table)
     fk_remap = _FK_PARENTS.get(table, {})
     self_ref_cols = _SELF_REF_COLUMNS.get(table, ())
+    api_keys_skipped = 0
+    if table == API_KEY_BACKUP_TABLE:
+        # Translate cleartext-``key`` rows from a Dexie backup into the
+        # backend's Fernet ``encrypted_key`` (or drop them), so the INSERT
+        # never hits the NOT NULL constraint (#787).
+        records, api_keys_skipped = _normalize_api_key_backups(records)
     # A self-referential table must process parents before children so a
     # parent reconciled to a different local id is already in ``id_remap``
     # when its child is redirected (#127 subjects).
     if self_ref_cols:
         records = _order_parent_before_child(records, self_ref_cols)
     tally: dict[str, Any] = {"inserted": 0, "updated": 0, "skipped": 0, "errors": []}
+    if api_keys_skipped:
+        tally["api_keys_skipped"] = api_keys_skipped
     for record in records:
         outcome, error = _restore_one_record(
             repo, spec, table, record, user_id, id_remap, fk_remap, self_ref_cols
@@ -641,6 +701,7 @@ def restore_backup(
     total_inserted = 0
     total_updated = 0
     total_skipped = 0
+    total_api_keys_skipped = 0
     all_errors: list[str] = []
     # Accumulates {parent_table: {backup_id: local_id}} for natural-key
     # matches so child FKs are redirected to the local id (issue #49).
@@ -664,7 +725,11 @@ def restore_backup(
             continue
         summary: dict[str, Any]
         if records:
-            summary = _restore_table(repo, table, records, user_id, id_remap)
+            # Restore + flush each table inside its own SAVEPOINT so a
+            # single table's unexpected flush failure (a constraint we did
+            # not anticipate from a foreign / cross-mode backup) rolls back
+            # ONLY that table and the rest of the import still completes —
+            # a partial restore beats a 500 that loses everything (#787).
             # Flush after each table so the explicit FK-safe _RESTORE_ORDER
             # (parents first) is what actually drives insert order. The
             # session runs with autoflush=False and a single commit would
@@ -673,7 +738,23 @@ def restore_backup(
             # decoupled (FK columns, no relationships), so the unit-of-work
             # has no way to know a child must follow its parent. Flushing
             # per table in our own order sidesteps that entirely.
-            repo.flush()
+            try:
+                with repo.savepoint():
+                    summary = _restore_table(repo, table, records, user_id, id_remap)
+                    repo.flush()
+            except Exception as exc:
+                logger.error(
+                    "Restoring table %r failed at flush; table skipped, import continues: %s",
+                    table,
+                    exc,
+                    exc_info=True,
+                )
+                summary = {
+                    "inserted": 0,
+                    "updated": 0,
+                    "skipped": len(records),
+                    "errors": [f"{table}: skipped (flush failed): {exc}"],
+                }
         else:
             # An empty table is still recorded (#126) so the per-table
             # summary covers all 30 tables, not just the non-empty ones.
@@ -691,6 +772,7 @@ def restore_backup(
         total_inserted += summary["inserted"]
         total_updated += summary["updated"]
         total_skipped += summary["skipped"]
+        total_api_keys_skipped += summary.get("api_keys_skipped", 0)
         all_errors.extend(summary["errors"])
 
     repo.commit()
@@ -718,6 +800,10 @@ def restore_backup(
         "inserted": total_inserted,
         "updated": total_updated,
         "skipped": total_skipped,
+        # Count of API-key rollback-cache rows that could not be imported
+        # (no usable key in the backup). Non-zero -> the UI tells the user
+        # to re-enter their API keys in Settings (#787).
+        "api_keys_skipped": total_api_keys_skipped,
         "errors": all_errors,
         "tables": per_table,
         "content_sets": content_summary,
