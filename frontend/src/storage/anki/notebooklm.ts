@@ -10,16 +10,16 @@
  * toast.
  */
 
-import {ApiError} from "../api/client";
+import {ApiError} from "../../api/client";
 
-import {getDb, newId, nowIso} from "./dexie/db";
-import type {StudyQuestionRow} from "./dexie/db";
+import {getDb, newId, nowIso} from "../dexie/db";
+import type {StudyQuestionRow} from "../dexie/db";
 import type {
     StudyQuestion,
     StudyQuestionCreateBody,
     StudyQuestionListFilters,
     StudyQuestionUpdateBody,
-} from "./types";
+} from "../types";
 
 const ALLOWED_TYPES = new Set([
     "open",

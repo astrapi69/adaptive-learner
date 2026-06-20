@@ -30,7 +30,7 @@ import {
   listAnkiCards,
   markAnkiCardsExported,
   updateAnkiCard,
-} from "./anki";
+} from "./anki/anki";
 import { evaluateBadgesForUser } from "./gamification/badges";
 import {
   getDailyMissionsDexie,
@@ -62,7 +62,7 @@ import {
   listStudyQuestions,
   studyGuideDexie,
   updateStudyQuestion,
-} from "./notebooklm";
+} from "./anki/notebooklm";
 import { ApiError } from "../api/client";
 import {
   aiValidateDexie,

@@ -10,10 +10,10 @@
  * a deterministic ``analysis_result.vocabulary`` fallback for the no-key case.
  */
 
-import {ApiError} from "../api/client";
+import {ApiError} from "../../api/client";
 
-import {getDb, newId, nowIso} from "./dexie/db";
-import type {AnkiCardRow} from "./dexie/db";
+import {getDb, newId, nowIso} from "../dexie/db";
+import type {AnkiCardRow} from "../dexie/db";
 import {
     aiExtractCards,
     resolveDexieAiConfig,
@@ -24,7 +24,7 @@ import type {
     AnkiCardListFilters,
     AnkiCardSuggestion,
     AnkiCardUpdateBody,
-} from "./types";
+} from "../types";
 
 function rowToOut(row: AnkiCardRow): AnkiCardSuggestion {
     let tags: string[] = [];
