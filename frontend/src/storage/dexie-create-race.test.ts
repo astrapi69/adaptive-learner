@@ -154,7 +154,7 @@ describe("#390 Class C — v26 dedup lets a dup-laden DB open clean", () => {
         await seedDuplicatesAtV25();
         const db = new AdaptiveLearnerDB(MIGRATION_DB);
         await db.open();
-        expect(db.verno).toBe(28);
+        expect(db.verno).toBe(29);
         expect(
             await db.userSettings.where("user_id").equals("u1").count(),
         ).toBe(1);

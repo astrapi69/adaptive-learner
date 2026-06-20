@@ -51,6 +51,7 @@ import type {
     PluginSettingsRow,
     UserMissionRow,
     AiValidationResultRow,
+    UserDataRow,
 } from "./db-rows";
 
 // Re-export the row shapes so existing ``from "./db"`` imports keep
@@ -116,6 +117,10 @@ export class AdaptiveLearnerDB extends Dexie {
     // EXP-033 / Phase AIV — cached set-wide AI content-check reports.
     // One row per "{source-slug}#{set_id}"; overwritten on re-check.
     aiValidationResults!: EntityTable<AiValidationResultRow, "id">;
+    // #791 Teil B — device-local user-data previously kept only in
+    // localStorage (contributions, contributor name, custom paths). One row
+    // per localStorage key; Dexie is canonical, localStorage a read cache.
+    userData!: EntityTable<UserDataRow, "key">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -576,6 +581,13 @@ export class AdaptiveLearnerDB extends Dexie {
         // ``set_id`` index for lookups. No data migration.
         this.version(28).stores({
             aiValidationResults: "id, set_id, checked_at",
+        });
+        // Schema v29 — #791 Teil B: device-local user-data store. Clean add,
+        // one row per localStorage key (``key`` primary). No data migration in
+        // the upgrade hook; localStorage -> Dexie seeding happens at app boot
+        // (``syncUserDataAtBoot``) so the canonical store fills lazily.
+        this.version(29).stores({
+            userData: "key",
         });
     }
 }

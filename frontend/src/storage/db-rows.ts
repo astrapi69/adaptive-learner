@@ -676,6 +676,19 @@ export interface AiValidationResultRow {
     signature: import("../lib/ai/validation-signature").AiValidationSignature | null;
 }
 
+/** #791 Teil B — device-local user-data previously kept only in
+ *  localStorage (contribution history, contributor name, Curriculum-Builder
+ *  custom paths). One row per localStorage key; ``value`` is the raw stored
+ *  string (JSON for list blobs), mirroring the localStorage payload verbatim.
+ *  Dexie is the canonical durable store; the localStorage copy is a
+ *  synchronous read cache kept in sync at boot + on every write. */
+export interface UserDataRow {
+    /** The ``adaptive-learner.*`` localStorage key this row mirrors. */
+    key: string;
+    /** The raw stored string (JSON for list blobs, plain text for scalars). */
+    value: string;
+}
+
 /** EXP-010 / Phase 56 — a daily mission assigned to a user.
  *  Mirrors the backend ``UserMission`` model + the sync surface.
  *  ``assigned_date`` is a ``YYYY-MM-DD`` string. */
