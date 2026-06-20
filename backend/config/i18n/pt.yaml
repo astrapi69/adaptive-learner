@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "Notas da sessão"
   session_count: "Sessões"
 settings:
+  updates:
+    title: "Atualizações"
+    auto_check: "Verificação automática de atualizações"
+    interval: "Intervalo de verificação"
+    interval_daily: "Diário"
+    interval_weekly: "Semanal"
+    interval_monthly: "Mensal"
+    interval_never: "Nunca"
+    last_check: "Última verificação: {when}"
+    never_checked: "Nunca verificado"
+    current_version: "Versão atual: v{version}"
   install:
     heading: "Instalar aplicativo"
     description: "Instale o Adaptive Learner como app para acesso offline e tela cheia."
@@ -808,6 +819,11 @@ install:
   dismiss: Agora não
   aria_label: Instalar o Adaptive Learner
 about:
+  up_to_date_version: "Tens a versão mais recente. (v{version})"
+  update:
+    read_more: "Ler mais"
+    open_release: "Abrir página da versão"
+    later: "Mais tarde"
   section_heading: Sobre o Adaptive Learner
   loading: Carregando informações…
   load_failed: 'Não foi possível carregar as informações do sistema:'
@@ -2824,3 +2840,10 @@ discover:
     download_failed: "Não foi possível baixar o set."
     remove_failed: "Não foi possível remover o set."
     load_failed: "Não foi possível carregar o conteúdo disponível."
+update:
+  banner:
+    message: "Nova versão {version} disponível"
+    whats_new: "O que há de novo?"
+    release_page: "Página da versão"
+    later: "Mais tarde"
+    whats_new_title: "Novidades da {version}"

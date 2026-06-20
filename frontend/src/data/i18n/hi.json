@@ -465,6 +465,18 @@
     "session_count": "सत्र"
   },
   "settings": {
+    "updates": {
+      "title": "अपडेट",
+      "auto_check": "स्वचालित अपडेट जाँच",
+      "interval": "जाँच अंतराल",
+      "interval_daily": "दैनिक",
+      "interval_weekly": "साप्ताहिक",
+      "interval_monthly": "मासिक",
+      "interval_never": "कभी नहीं",
+      "last_check": "पिछली जाँच: {when}",
+      "never_checked": "कभी जाँच नहीं की",
+      "current_version": "वर्तमान संस्करण: v{version}"
+    },
     "install": {
       "heading": "ऐप इंस्टॉल करें",
       "description": "ऑफ़लाइन उपयोग और फ़ुल-स्क्रीन अनुभव के लिए Adaptive Learner को ऐप के रूप में इंस्टॉल करें।",
@@ -867,6 +879,12 @@
     "aria_label": "Adaptive Learner इंस्टॉल करें"
   },
   "about": {
+    "up_to_date_version": "आपके पास नवीनतम संस्करण है। (v{version})",
+    "update": {
+      "read_more": "और पढ़ें",
+      "open_release": "रिलीज़ पेज खोलें",
+      "later": "बाद में"
+    },
     "section_heading": "अडैप्टिव लर्नर के बारे में",
     "loading": "जानकारी लोड हो रही है…",
     "load_failed": "सिस्टम जानकारी लोड नहीं हो सकी:",
@@ -3085,6 +3103,15 @@
       "download_failed": "सेट डाउनलोड नहीं हो सका।",
       "remove_failed": "सेट हटाया नहीं जा सका।",
       "load_failed": "उपलब्ध सामग्री लोड नहीं हो सकी।"
+    }
+  },
+  "update": {
+    "banner": {
+      "message": "नया संस्करण {version} उपलब्ध",
+      "whats_new": "नया क्या है?",
+      "release_page": "रिलीज़ पेज",
+      "later": "बाद में",
+      "whats_new_title": "{version} में नया क्या है"
     }
   }
 }

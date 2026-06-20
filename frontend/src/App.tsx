@@ -16,6 +16,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
 import GlobalShortcuts from "./components/GlobalShortcuts";
 import UpdatePromptHost from "./components/UpdatePromptHost";
+import DesktopUpdateHost from "./components/DesktopUpdateHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import ReminderScheduler from "./components/ReminderScheduler";
@@ -151,6 +152,7 @@ export default function App() {
             <ConfirmProvider>
             <SkipToContent />
             <UpdatePromptHost />
+            <DesktopUpdateHost />
             <Navigation />
             <OfflineIndicator />
             <Suspense fallback={null}>

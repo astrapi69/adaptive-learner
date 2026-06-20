@@ -4,18 +4,22 @@
  *
  * Mounted once at the app root. Renders nothing until a newer build is
  * detected; then shows the discreet update banner with translated copy.
- * Storage-mode-agnostic (the update mechanism is pure frontend), so it
- * works identically in API and Dexie / GitHub-Pages builds.
+ * This is the Dexie/PWA (service-worker) path; API/desktop mode has no
+ * service worker and uses {@link DesktopUpdateHost} (GitHub Releases)
+ * instead (#840), so this host stays out of the way in API mode.
  */
 
 import UpdatePrompt from "../shared/feedback/UpdatePrompt";
 import { useAppUpdate } from "../hooks/system/useAppUpdate";
 import { useI18n } from "../hooks/ui/useI18n";
+import { resolveStorageMode } from "../storage";
 
 export default function UpdatePromptHost() {
   const { t } = useI18n();
   const { updateAvailable, applyUpdate, dismiss } = useAppUpdate();
 
+  // #840 — SW banner is Dexie/PWA only; API/desktop uses DesktopUpdateHost.
+  if (resolveStorageMode() === "api") return null;
   if (!updateAvailable) return null;
 
   return (

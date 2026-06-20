@@ -27,6 +27,7 @@ import LearningRepoSettingsSection from "../../components/LearningRepoSettingsSe
 import MissionSettingsControl from "../../components/MissionSettingsControl";
 import SourceLanguagesControl from "../../components/SourceLanguagesControl";
 import ModeIndicator from "../../components/ModeIndicator";
+import UpdatesSettingsSection from "../../components/settings/UpdatesSettingsSection";
 import SoundSettingsControl from "../../components/SoundSettingsControl";
 import HelpBrowser from "../../components/help/HelpBrowser";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
@@ -620,6 +621,14 @@ export default function Settings() {
           </ul>
         )}
       </section>
+
+      {/* #840 — desktop/API-mode update preferences. Hidden in Dexie/PWA
+          mode (that path uses the service worker, no GitHub check). */}
+      {currentMode === "api" && (
+        <div hidden={activeTab !== "general"}>
+          <UpdatesSettingsSection />
+        </div>
+      )}
 
       <div hidden={activeTab !== "general"}>
         <ModeIndicator />

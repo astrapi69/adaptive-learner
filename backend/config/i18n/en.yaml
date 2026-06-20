@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "Session notes"
   session_count: "Sessions"
 settings:
+  updates:
+    title: "Updates"
+    auto_check: "Automatic update check"
+    interval: "Check interval"
+    interval_daily: "Daily"
+    interval_weekly: "Weekly"
+    interval_monthly: "Monthly"
+    interval_never: "Never"
+    last_check: "Last check: {when}"
+    never_checked: "Never checked"
+    current_version: "Current version: v{version}"
   install:
     heading: "Install app"
     description: "Install Adaptive Learner as an app for offline access and a full-screen experience."
@@ -808,6 +819,11 @@ install:
   dismiss: Not now
   aria_label: Install Adaptive Learner
 about:
+  up_to_date_version: "You have the latest version. (v{version})"
+  update:
+    read_more: "Read more"
+    open_release: "Open release page"
+    later: "Later"
   section_heading: About Adaptive Learner
   loading: Loading information…
   load_failed: 'Could not load system info:'
@@ -2834,3 +2850,10 @@ discover:
     download_failed: "Could not download the set."
     remove_failed: "Could not remove the set."
     load_failed: "Could not load available content."
+update:
+  banner:
+    message: "New version {version} available"
+    whats_new: "What's new?"
+    release_page: "Release page"
+    later: "Later"
+    whats_new_title: "What's new in {version}"

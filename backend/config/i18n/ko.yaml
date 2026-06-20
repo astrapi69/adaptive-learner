@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "세션 메모"
   session_count: "세션"
 settings:
+  updates:
+    title: "업데이트"
+    auto_check: "자동 업데이트 확인"
+    interval: "확인 주기"
+    interval_daily: "매일"
+    interval_weekly: "매주"
+    interval_monthly: "매월"
+    interval_never: "안 함"
+    last_check: "마지막 확인: {when}"
+    never_checked: "확인한 적 없음"
+    current_version: "현재 버전: v{version}"
   review_limit:
     label: "복습당 문제 수"
     desc: "복습 세션이 끝나기 전에 제시하는 요소 수입니다. 남은 항목은 다음 회차로 넘어갑니다."
@@ -808,6 +819,11 @@ install:
   dismiss: 나중에
   aria_label: Adaptive Learner 설치
 about:
+  up_to_date_version: "최신 버전을 사용 중입니다. (v{version})"
+  update:
+    read_more: "더 보기"
+    open_release: "릴리스 페이지 열기"
+    later: "나중에"
   section_heading: Adaptive Learner 정보
   loading: 정보를 불러오는 중…
   load_failed: '시스템 정보를 불러올 수 없었습니다:'
@@ -2834,3 +2850,10 @@ discover:
     download_failed: "세트를 다운로드할 수 없습니다."
     remove_failed: "세트를 삭제할 수 없습니다."
     load_failed: "사용 가능한 콘텐츠를 불러올 수 없습니다."
+update:
+  banner:
+    message: "새 버전 {version} 사용 가능"
+    whats_new: "새로운 기능은?"
+    release_page: "릴리스 페이지"
+    later: "나중에"
+    whats_new_title: "{version}의 새로운 기능"
