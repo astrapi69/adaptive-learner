@@ -8,12 +8,7 @@ import NavGroup from "./nav/NavGroup";
 import NavXpBadge from "./NavXpBadge";
 import NavReviewsBadge from "./NavReviewsBadge";
 import NavAvatar from "./NavAvatar";
-import {
-  NavModeBadge,
-  NavOnlineIndicator,
-  NavSyncIndicator,
-  NavThemeToggle,
-} from "./NavIndicators";
+import { NavModeBadge, NavThemeToggle } from "./NavIndicators";
 
 import { useHelp } from "../contexts/HelpContext";
 import { helpKeyForPath } from "../lib/help-routes";
@@ -22,12 +17,9 @@ import { useButtonTooltips } from "../hooks/settings/useButtonTooltips";
 import { useDevMode } from "../hooks/settings/useDevMode";
 import { useI18n } from "../hooks/ui/useI18n";
 import { useIsLessonActive } from "../hooks/lesson/useIsLessonActive";
-import { useOnlineStatus } from "../hooks/system/useOnlineStatus";
-import { useSyncQueueSize } from "../hooks/system/useSyncQueueSize";
 import { useScrollDirection } from "../hooks/ui/useScrollDirection";
 import { useTheme } from "../hooks/ui/useTheme";
 import { isDarkTheme } from "../lib/themes";
-import { readSyncConfig } from "../storage/sync-engine";
 
 /**
  * Top navigation bar. Rendered on every authenticated page
@@ -49,8 +41,6 @@ export default function Navigation() {
   const { ready: modeReady, mode } = useAppMode();
   const { theme, toggle } = useTheme();
   const { openHelp } = useHelp();
-  const online = useOnlineStatus();
-  const syncPending = useSyncQueueSize();
   const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
   const { pathname } = useLocation();
   // During an active lesson the nav collapses to a minimal
@@ -67,21 +57,6 @@ export default function Navigation() {
   const scrollDir = useScrollDirection();
   const [menuOpen, setMenuOpen] = useState(false);
   const navHidden = lessonActive && !menuOpen && scrollDir === "down";
-  const [syncPaired, setSyncPaired] = useState<boolean>(
-    () => readSyncConfig() !== null,
-  );
-
-  useEffect(() => {
-    function refresh() {
-      setSyncPaired(readSyncConfig() !== null);
-    }
-    // Refresh the indicator when the user comes back to the
-    // tab (pair/unpair may have happened elsewhere) or when
-    // the route changes (post-Settings visit).
-    window.addEventListener("focus", refresh);
-    refresh();
-    return () => window.removeEventListener("focus", refresh);
-  }, [pathname]);
 
   // Collapse the drawer whenever the route changes — the back-button
   // backstop. A fresh page should never inherit the previous page's
@@ -282,8 +257,6 @@ export default function Navigation() {
       <NavReviewsBadge />
       <NavXpBadge />
       <NavAvatar />
-      <NavSyncIndicator paired={syncPaired} pendingCount={syncPending} />
-      <NavOnlineIndicator online={online} />
       <NavThemeToggle theme={theme} tooltipsOn={tooltipsOn} onToggle={toggle} />
     </nav>
   );

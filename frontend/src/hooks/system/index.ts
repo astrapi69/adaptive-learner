@@ -5,4 +5,3 @@ export * from "./useInstallAvailable";
 export * from "./useNotificationPermission";
 export * from "./useOnlineStatus";
 export * from "./useReminderScheduler";
-export * from "./useSyncQueueSize";

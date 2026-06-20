@@ -4042,60 +4042,6 @@ select:focus {
   }
 }
 
-.nav-online-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-3);
-  border-radius: 999px;
-  font-size: 0.85rem;
-  color: var(--fg-muted);
-  cursor: default;
-}
-
-.nav-online-dot {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: var(--accent);
-  transition:
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.nav-online-indicator.is-online .nav-online-dot {
-  /* Sit calmly. Green dot drawn from theme palette so dark mode
-     inherits a darker shade automatically. */
-  background: var(--success);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--success) 20%, transparent);
-}
-
-.nav-online-indicator.is-offline .nav-online-dot {
-  background: var(--danger);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger) 20%, transparent);
-}
-
-.nav-online-indicator.is-offline .nav-online-label {
-  color: var(--danger);
-}
-
-/* Pending-sync count badge overlaid on the sync indicator (#604). */
-.nav-sync-pending {
-  position: absolute;
-  top: -4px;
-  right: -6px;
-  min-width: 1rem;
-  height: 1rem;
-  padding: 0 0.25rem;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--accent-fg);
-  font-size: 0.625rem;
-  font-weight: 700;
-  line-height: 1rem;
-  text-align: center;
-}
-
 .nav-theme-toggle {
   background: transparent;
   border: 1px solid var(--border-strong);
@@ -4733,8 +4679,6 @@ select:focus {
 .app-nav.is-lesson-compact .nav-dev-badge,
 .app-nav.is-lesson-compact .nav-mode-badge,
 .app-nav.is-lesson-compact .nav-xp-badge,
-.app-nav.is-lesson-compact .nav-sync-indicator,
-.app-nav.is-lesson-compact .nav-online-indicator,
 .app-nav.is-lesson-compact .nav-brand-name {
   display: none;
 }
@@ -4769,7 +4713,6 @@ select:focus {
   .app-nav .nav-links.is-open {
     display: flex;
   }
-  .app-nav .nav-online-label,
   .app-nav .nav-brand-name {
     display: none;
   }
@@ -4794,11 +4737,11 @@ select:focus {
   /* ----- Navigation: hamburger-controlled drawer -------------- */
 
   /* #759 — the right-hand indicator cluster (reviews + two-line XP
-     badge + avatar + sync + online + theme toggle) plus the hamburger
-     overflowed the 375px viewport by a few px once the two-line XP
-     badge (German "100 XP insgesamt") widened the row. Tighten the nav
-     gap + horizontal padding at mobile so the cluster fits without
-     hiding anything; pinned by the no-horizontal-scroll @375px gate. */
+     badge + avatar + theme toggle) plus the hamburger overflowed the
+     375px viewport by a few px once the two-line XP badge (German
+     "100 XP insgesamt") widened the row. Tighten the nav gap +
+     horizontal padding at mobile so the cluster fits without hiding
+     anything; pinned by the no-horizontal-scroll @375px gate. */
   .app-nav {
     gap: var(--space-3);
     padding-left: var(--space-4);
@@ -4807,17 +4750,6 @@ select:focus {
 
   .nav-hamburger {
     display: inline-flex;
-  }
-
-  /* ----- Online indicator: dot-only on mobile ---------------- */
-  /* The "Online"/"Offline" word is removed to save horizontal
-     space; the dot + the ``title`` tooltip carry the meaning.
-     Same affordance pattern as the brand-name hiding from 9A. */
-  .nav-online-label {
-    display: none;
-  }
-  .nav-online-indicator {
-    padding: var(--space-1);
   }
 
   /* The drawer pops out below the nav bar. Width 100% of the
