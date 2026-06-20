@@ -9,6 +9,8 @@
  * unchanged.
  */
 
+import type { ReactNode } from "react";
+
 import { Button } from "@/components/ui/button";
 import type {
   ConversationAnalysisResult,
@@ -43,6 +45,9 @@ interface ImportActionBarProps {
   ankiFeature: FeatureGate;
   extractingAnki: boolean;
   onExtractAnki: () => void;
+  /** AIX-02 (#826) — optional slot rendered next to "Save as Offline
+   *  Lesson" (the "Generate exercises" button for theory-only lessons). */
+  extraActions?: ReactNode;
 }
 
 /** Analyze / curriculum / save-lesson / session / anki action buttons. */
@@ -52,6 +57,7 @@ export default function ImportActionBar(props: ImportActionBarProps) {
       <AnalyzeButton {...props} />
       <CurriculumButton {...props} />
       <SaveLessonButton {...props} />
+      {props.extraActions}
       <SessionButton {...props} />
       <AnkiButton {...props} />
     </div>

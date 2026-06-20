@@ -2000,6 +2000,22 @@
       "deleted": "Lesson deleted.",
       "delete_failed": "Could not delete the lesson."
     },
+    "ai_exercises": {
+      "button": "Generate exercises",
+      "generating": "Generating exercises…",
+      "regenerate": "Regenerate",
+      "regenerate_confirm": "Replace the generated exercises with a fresh set?",
+      "generated": "{n} exercises generated.",
+      "none": "The AI returned no usable exercises. Please try again.",
+      "failed": "Could not generate exercises. Please try again.",
+      "feature": "to generate exercises",
+      "preview_title": "Generated exercises",
+      "type_matching": "Matching",
+      "type_cloze": "Cloze",
+      "type_free_text": "Free text",
+      "type_word_tiles": "Word tiles",
+      "type_picture_choice": "Picture choice"
+    },
     "save_lesson": {
       "button": "Save as Offline Lesson",
       "modal_title": "Save as offline lesson",
