@@ -73,7 +73,7 @@ export default function GlobalShortcuts() {
                 modifiers: {alt: true},
                 context: "navigation",
                 description: "Go to content",
-                action: () => navigate("/content"),
+                action: () => navigate("/content?tab=my"),
             },
             {
                 id: "nav-progress",

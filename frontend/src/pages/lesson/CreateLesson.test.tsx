@@ -100,7 +100,7 @@ describe("CreateLesson — metadata step", () => {
     it("cancels straight to /content when nothing is entered", () => {
         renderPage();
         fireEvent.click(screen.getByTestId("create-lesson-cancel"));
-        expect(navigateMock).toHaveBeenCalledWith("/content");
+        expect(navigateMock).toHaveBeenCalledWith("/content?tab=my");
         expect(
             screen.queryByTestId("create-lesson-cancel-confirm"),
         ).not.toBeInTheDocument();
@@ -118,7 +118,7 @@ describe("CreateLesson — metadata step", () => {
         ).toBeInTheDocument();
         expect(navigateMock).not.toHaveBeenCalled();
         fireEvent.click(screen.getByTestId("create-lesson-cancel-discard"));
-        expect(navigateMock).toHaveBeenCalledWith("/content");
+        expect(navigateMock).toHaveBeenCalledWith("/content?tab=my");
     });
 });
 

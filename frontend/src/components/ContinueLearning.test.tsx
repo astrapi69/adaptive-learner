@@ -108,7 +108,7 @@ describe("ContinueLearning", () => {
         listProgressMock.mockResolvedValue([]);
         renderSection({showWhenEmpty: true});
         const link = await screen.findByTestId("continue-learning-empty-link");
-        expect(link).toHaveAttribute("href", "/content");
+        expect(link).toHaveAttribute("href", "/content?tab=my");
     });
 
     it("shows a resume row linking to the in-progress lesson", async () => {

@@ -338,7 +338,7 @@ function renderAdaptiveLessonStatus(
         <p>
           <Button
             type="button"
-            onClick={() => navigate("/content")}
+            onClick={() => navigate("/content?tab=my")}
             data-testid="adaptive-lesson-goto-content"
           >
             <Download size={14} aria-hidden="true" />

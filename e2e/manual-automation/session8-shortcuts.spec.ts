@@ -21,7 +21,7 @@ test.describe("Session 8 — Keyboard shortcuts", () => {
   });
 
   test("? toggles the help overlay; Escape closes it", async ({ page }) => {
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15_000,
     });

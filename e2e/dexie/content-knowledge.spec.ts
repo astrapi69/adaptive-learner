@@ -24,7 +24,7 @@ test.describe("Content Browser — Wissen (knowledge) section", () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
 
-        await page.goto("/content");
+        await page.goto("/content?tab=my");
 
         // The language tree renders...
         await expect(page.getByTestId("content-tree")).toBeVisible({
@@ -53,7 +53,7 @@ test.describe("Content Browser — Wissen (knowledge) section", () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
 
-        await page.goto("/content");
+        await page.goto("/content?tab=my");
         await expect(page.getByTestId("content-knowledge")).toBeVisible({
             timeout: 15000,
         });

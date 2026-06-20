@@ -176,7 +176,7 @@ export default function LearningPathGraph({
                     {headerExtra}
                     <Button asChild variant="secondary">
                         <Link
-                            to="/content"
+                            to="/content?tab=my"
                             data-testid="learning-path-to-content"
                         >
                             {t("learning_path.to_content", "Content Browser")}
@@ -218,7 +218,7 @@ export default function LearningPathGraph({
                         )}
                     </p>
                     <Button asChild variant="default">
-                        <Link to="/content">
+                        <Link to="/content?tab=my">
                             {t("learning_path.empty_cta", "Browse content")}
                         </Link>
                     </Button>

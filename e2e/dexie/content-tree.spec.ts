@@ -18,7 +18,7 @@ test.describe("Content Browser — source-language tree", () => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
 
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
 
     // Tree renders (not the flat list, not an error).
     const tree = page.getByTestId("content-tree");

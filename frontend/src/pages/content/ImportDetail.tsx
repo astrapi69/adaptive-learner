@@ -498,7 +498,7 @@ export default function ImportDetail({
       <main id="main" className="p-8" data-testid="import-detail-error">
         <h1>{t("errors.not_found", "Not found.")}</h1>
         <p>{error}</p>
-        <Button type="button" onClick={() => go("/import")}>
+        <Button type="button" onClick={() => go("/content?tab=import")}>
           {t("import.back_to_list", "Back to imports")}
         </Button>
       </main>
@@ -517,7 +517,7 @@ export default function ImportDetail({
         <Button
           type="button"
           variant="outline"
-          onClick={() => go("/import")}
+          onClick={() => go("/content?tab=import")}
           className="mb-4"
           data-testid="back-to-list"
         >
@@ -629,7 +629,7 @@ export default function ImportDetail({
           onCancel={() => setShowSaveLesson(false)}
           onSaved={() => {
             setShowSaveLesson(false);
-            go("/content");
+            go("/content?tab=my");
           }}
         />
       )}

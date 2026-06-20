@@ -143,7 +143,7 @@ describe("Discover page", () => {
     );
     expect(screen.getByTestId("discover-to-content").querySelector("a")).toHaveAttribute(
       "href",
-      "/content",
+      "/content?tab=my",
     );
   });
 

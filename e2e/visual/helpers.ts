@@ -136,7 +136,7 @@ async function seedLearner(page: Page): Promise<void> {
  * Shared opener for every lesson-state seed.
  */
 async function openFirstBundledLesson(page: Page): Promise<void> {
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 20_000});
     await page.getByTestId("content-other-toggle").click();
     await page.getByTestId(`content-set-${SET_ID}-action`).click();
@@ -448,14 +448,14 @@ export async function gotoSurface(
             return true;
         case "content-browser":
             await seedLearner(page);
-            await page.goto("/content");
+            await page.goto("/content?tab=my");
             await expect(page.getByTestId("content-tree")).toBeVisible({
                 timeout: 20_000,
             });
             return true;
         case "set-detail":
             await seedLearner(page);
-            await page.goto("/content");
+            await page.goto("/content?tab=my");
             await expect(page.getByTestId("content-tree")).toBeVisible({
                 timeout: 20_000,
             });

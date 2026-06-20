@@ -151,10 +151,9 @@ test.describe("Conversation import + analysis", () => {
             },
         );
 
-        // Navigate to the Import page. EXP-037 (#850): Import is no longer a
-        // top-level nav entry — it is a tab in Discover; /import redirects to
-        // /discover?tab=import, which renders the same page-import surface.
-        await page.goto("/import");
+        // Navigate to the Import page. #856: Import is a tab in the ContentHub
+        // (/content?tab=import); /import redirects here, same page-import surface.
+        await page.goto("/content?tab=import");
         await expect(page.getByTestId("page-import")).toBeVisible();
 
         // Paste the conversation.
@@ -180,8 +179,8 @@ test.describe("Conversation import + analysis", () => {
         expect(analyzeCallCount).toBeGreaterThanOrEqual(0);
 
         // After save + analyze, quickAnalyze() navigates to the
-        // detail page. The URL change is the contract pin.
-        await page.waitForURL(/\/import\/[^/]+/);
+        // detail page (#856: /content/import/:id). The URL change is the pin.
+        await page.waitForURL(/\/content\/import\/[^/]+/);
         await expect(
             page.getByTestId("page-import-detail"),
         ).toBeVisible();

@@ -64,7 +64,7 @@ test.describe("Spanish A1 — new lesson playthrough (es-a1-from-en, lesson 06)"
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
 
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({ timeout: 15000 });
 
     // English-source set sits under "other source languages"

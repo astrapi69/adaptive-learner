@@ -148,7 +148,7 @@ export default function ErrorReplayLesson() {
                 <Button
                     type="button"
                     variant="outline"
-                    onClick={() => navigate("/content")}
+                    onClick={() => navigate("/content?tab=my")}
                     data-testid="error-replay-exit"
                 >
                     <BookOpen size={14} aria-hidden="true" />

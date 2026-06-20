@@ -143,7 +143,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
               "This conversation was already imported. Showing the existing entry.",
             ),
           );
-          go(`/import/${existingId}`);
+          go(`/content/import/${existingId}`);
           return null;
         }
       }
@@ -337,7 +337,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
       await runAnalysisForConversation(saved.id, first.messages, first.title);
       setPasteText("");
       setPasteFormat("unknown");
-      go(`/import/${saved.id}`);
+      go(`/content/import/${saved.id}`);
     } catch (err) {
       const msg =
         err instanceof Error ? err.message : t("import.parse_error", "Could not parse the input.");
@@ -372,7 +372,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         notify.success(
           t("import.file_imported_one", "Conversation imported. Click Analyze on the detail page."),
         );
-        go(`/import/${saved[0].id}`);
+        go(`/content/import/${saved[0].id}`);
       } else {
         notify.success(
           t("import.file_imported_many", `Imported ${saved.length} conversations.`).replace(
@@ -514,7 +514,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
                 key={c.id}
                 data-testid={`import-row-${c.id}`}
                 className="flex items-center gap-3 border border-border rounded-app px-4 py-3 mb-2 cursor-pointer bg-card"
-                onClick={() => go(`/import/${c.id}`)}
+                onClick={() => go(`/content/import/${c.id}`)}
               >
                 <span aria-hidden="true" className="text-2xl">
                   {SOURCE_ICONS[c.source] ?? "📄"}

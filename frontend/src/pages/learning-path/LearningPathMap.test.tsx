@@ -164,7 +164,7 @@ describe("LearningPathMap", () => {
         expect(screen.getByTestId("learning-path-empty")).toBeInTheDocument();
         expect(screen.getByTestId("learning-path-to-content")).toHaveAttribute(
             "href",
-            "/content",
+            "/content?tab=my",
         );
     });
 });

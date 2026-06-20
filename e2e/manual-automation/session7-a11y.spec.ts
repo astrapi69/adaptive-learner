@@ -43,7 +43,7 @@ test.describe("Session 7 — Accessibility", () => {
   });
 
   test("skip-to-content moves focus into #main (#514)", async ({ page }) => {
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15_000,
     });
