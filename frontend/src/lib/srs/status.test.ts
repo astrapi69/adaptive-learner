@@ -13,7 +13,7 @@ import {
     intervalForStreak,
     srsLessonSummary,
 } from "./status";
-import {intervalDaysForStreak} from "../../storage/element-errors-dexie";
+import {intervalDaysForStreak} from "../../storage/dexie/element-errors-dexie";
 import type {ElementError} from "../../storage/types";
 
 function ee(over: Partial<ElementError>): ElementError {

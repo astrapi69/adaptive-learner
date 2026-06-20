@@ -19,7 +19,7 @@
  */
 
 import {ApiError} from "../../api/client";
-import {getDb} from "../../storage/db";
+import {getDb} from "../../storage/db/db";
 import type {
     LearningProjectRow,
     LearningSessionRow,
@@ -27,7 +27,7 @@ import type {
     SessionNoteRow,
     SessionRatingRow,
     StepEvaluationRow,
-} from "../../storage/db";
+} from "../../storage/db/db";
 
 import {buildRenderContext} from "./render-context";
 import type {

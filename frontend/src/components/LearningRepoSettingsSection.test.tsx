@@ -21,7 +21,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TestFeatureProvider } from "../features/testFeatureProvider";
 import { I18nProvider } from "../hooks/ui/useI18n";
-import { _resetDbForTests, getDb } from "../storage/db";
+import { _resetDbForTests, getDb } from "../storage/db/db";
 import { _resetStorageCacheForTests, getStorage } from "../storage";
 import type { StorageMode } from "../storage/types";
 

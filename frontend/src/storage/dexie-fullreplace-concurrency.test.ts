@@ -16,12 +16,12 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb, nowIso} from "./db";
-import {dexieCurricula, dexieLessons, dexieTopics} from "./dexie-curricula";
-import {dexieProjects, dexieUsers} from "./dexie-users";
-import {dexieSettings} from "./dexie-settings";
-import {dexieSubjects, dexieTags} from "./dexie-taxonomy";
-import {dexieImports} from "./dexie-imports";
+import {_resetDbForTests, getDb, nowIso} from "./db/db";
+import {dexieCurricula, dexieLessons, dexieTopics} from "./dexie/dexie-curricula";
+import {dexieProjects, dexieUsers} from "./dexie/dexie-users";
+import {dexieSettings} from "./dexie/dexie-settings";
+import {dexieSubjects, dexieTags} from "./dexie/dexie-taxonomy";
+import {dexieImports} from "./dexie/dexie-imports";
 
 beforeEach(async () => {
     await _resetDbForTests();

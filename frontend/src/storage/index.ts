@@ -20,9 +20,9 @@
  * connections are expensive to reopen.
  */
 
-import {apiStorage} from "./api-storage";
-import {getDb} from "./db";
-import {dexieStorage} from "./dexie-storage";
+import {apiStorage} from "./api/api-storage";
+import {getDb} from "./db/db";
+import {dexieStorage} from "./db/dexie-storage";
 import type {IStorageService, StorageMode} from "./types";
 
 const STORAGE_MODE_KEY = "adaptive-learner.storage_mode";
@@ -122,5 +122,5 @@ export async function getStorageRowCounts(): Promise<Record<string, number>> {
 }
 
 export type {IStorageService, StorageMode} from "./types";
-export {apiStorage} from "./api-storage";
-export {dexieStorage} from "./dexie-storage";
+export {apiStorage} from "./api/api-storage";
+export {dexieStorage} from "./db/dexie-storage";

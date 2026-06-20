@@ -37,7 +37,7 @@ import {
     type ConflictResolution,
     type SyncConfig,
     type SyncHistoryEntry,
-} from "../storage/sync-engine";
+} from "../storage/sync/sync-engine";
 import {notify} from "../utils/notify";
 import SyncConflictDialog from "./SyncConflictDialog";
 // Phase 61 C4 — lazy-load the QR scanner modal so ``html5-qrcode``

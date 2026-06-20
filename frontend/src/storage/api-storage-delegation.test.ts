@@ -57,7 +57,7 @@ vi.mock("../api/client", () => {
   return { api: rec("") };
 });
 
-import { apiStorage } from "./api-storage";
+import { apiStorage } from "./api/api-storage";
 
 beforeEach(() => {
   calls.length = 0;

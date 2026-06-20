@@ -15,7 +15,7 @@ import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { dexieStorage } from "./dexie-storage";
+import { dexieStorage } from "./db/dexie-storage";
 
 describe("build provenance (#66)", () => {
   it("the GH-Pages deploy workflow injects build metadata", () => {

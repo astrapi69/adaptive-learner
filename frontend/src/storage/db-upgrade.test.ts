@@ -1,6 +1,6 @@
 /**
  * Regression: the Dexie schema-v21 (v1.40.0) upgrade must complete in
- * place. The original upgrade did ``await import("./badges")`` INSIDE
+ * place. The original upgrade did ``await import("./gamification/badges")`` INSIDE
  * the IndexedDB upgrade transaction; a native dynamic import escapes
  * Dexie's promise-zone tracking, so the transaction auto-committed
  * during the await and the next ``tx.table(...)`` threw "The
@@ -19,8 +19,8 @@ import {fileURLToPath} from "node:url";
 import {dirname, resolve} from "node:path";
 import {afterEach, beforeEach, describe, expect, it} from "vitest";
 
-import {AdaptiveLearnerDB, _resetDbForTests} from "./db";
-import {BUNDLED_BADGES} from "./badges-data";
+import {AdaptiveLearnerDB, _resetDbForTests} from "./db/db";
+import {BUNDLED_BADGES} from "./gamification/badges-data";
 
 const NAME = "adaptive-learner";
 
@@ -170,7 +170,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
     it("does not use a dynamic import inside the v21 upgrade (the bug pattern)", () => {
         const here = dirname(fileURLToPath(import.meta.url));
-        const dbSrc = readFileSync(resolve(here, "db.ts"), "utf-8");
+        const dbSrc = readFileSync(resolve(here, "db", "db.ts"), "utf-8");
         const upgradeIdx = dbSrc.indexOf("this.version(21)");
         expect(upgradeIdx).toBeGreaterThan(-1);
         const upgradeBlock = dbSrc.slice(upgradeIdx, upgradeIdx + 1500);
@@ -179,7 +179,10 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
     it("badges-data.ts has no db.ts dependency (keeps the cycle broken)", () => {
         const here = dirname(fileURLToPath(import.meta.url));
-        const dataSrc = readFileSync(resolve(here, "badges-data.ts"), "utf-8");
+        const dataSrc = readFileSync(
+            resolve(here, "gamification", "badges-data.ts"),
+            "utf-8",
+        );
         expect(dataSrc).not.toMatch(/from\s+["']\.\/db["']/);
     });
 });

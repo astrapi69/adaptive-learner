@@ -15,8 +15,8 @@ import {
   listLessonsDexie,
   listSetsDexie,
   saveUserSetDexie,
-} from "./content-loader-dexie";
-import { _resetDbForTests } from "./db";
+} from "./content/content-loader-dexie";
+import { _resetDbForTests } from "./db/db";
 import { USER_GENERATED_SOURCE } from "./types";
 import { generateLessonFromAnalysis } from "../lib/content/analysis-to-lesson";
 import type { ConversationAnalysisResult } from "../types/domain";

@@ -48,8 +48,8 @@ vi.mock("../lib/github/github-api", () => ({
   },
 }));
 
-import { apiStorage } from "./api-storage";
-import { dexieStorage } from "./dexie-storage";
+import { apiStorage } from "./api/api-storage";
+import { dexieStorage } from "./db/dexie-storage";
 
 describe("ApiStorage.github (proxy mapping)", () => {
   beforeEach(() => vi.clearAllMocks());

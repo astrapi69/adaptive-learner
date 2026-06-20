@@ -10,8 +10,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
-} from "./content-loader-dexie-ai";
-import { _resetDbForTests, getDb } from "./db";
+} from "./content/content-loader-dexie-ai";
+import { _resetDbForTests, getDb } from "./db/db";
 import type { AiValidationCacheRecord } from "./types";
 
 const SOURCE = "astrapi69/adaptive-learner-content";

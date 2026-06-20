@@ -16,9 +16,9 @@ import "fake-indexeddb/auto";
 import Dexie from "dexie";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {AdaptiveLearnerDB, _resetDbForTests, getDb, nowIso} from "./db";
-import {ensureSettings} from "./dexie-rows";
-import {BUNDLED_BADGES, listBadgesWithProgress} from "./badges";
+import {AdaptiveLearnerDB, _resetDbForTests, getDb, nowIso} from "./db/db";
+import {ensureSettings} from "./db/dexie-rows";
+import {BUNDLED_BADGES, listBadgesWithProgress} from "./gamification/badges";
 
 beforeEach(async () => {
     await _resetDbForTests();

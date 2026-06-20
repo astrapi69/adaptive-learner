@@ -16,7 +16,7 @@ import {render, waitFor} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import QRScanner from "./QRScanner";
-import {buildPairingUri} from "../../storage/sync-engine";
+import {buildPairingUri} from "../../storage/sync/sync-engine";
 
 interface FakeInstance {
     instances: FakeInstance[];

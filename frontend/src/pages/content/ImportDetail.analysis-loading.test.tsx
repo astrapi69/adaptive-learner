@@ -88,7 +88,7 @@ vi.mock("../../storage", () => ({
   }),
 }));
 
-vi.mock("../../storage/db", () => ({
+vi.mock("../../storage/db/db", () => ({
   getDb: () => ({
     userSettings: {
       where: () => ({

@@ -13,8 +13,8 @@ import {
   activeSourcesDexie,
   dedupeContentEntries,
   listSetsDexie,
-} from "./content-loader-dexie";
-import { _resetDbForTests, getDb } from "./db";
+} from "./content/content-loader-dexie";
+import { _resetDbForTests, getDb } from "./db/db";
 import type { ContentSetEntry } from "./types";
 
 beforeEach(async () => {

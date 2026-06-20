@@ -19,7 +19,7 @@ import { TestFeatureProvider } from "../../features/testFeatureProvider";
 import { I18nProvider } from "../../hooks/ui/useI18n";
 import { setLanguage, setProjectId, setUserId } from "../../lib/learnerState";
 import { _resetStorageCacheForTests, getStorage, setPersistedStorageMode } from "../../storage";
-import { _resetDbForTests } from "../../storage/db";
+import { _resetDbForTests } from "../../storage/db/db";
 import AnkiPage from "./Anki";
 
 vi.mock("../../utils/notify", () => ({

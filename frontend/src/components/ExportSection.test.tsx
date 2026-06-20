@@ -22,7 +22,7 @@ import ExportSection from "./ExportSection";
 import {I18nProvider} from "../hooks/ui/useI18n";
 import {_resetStorageCacheForTests, getStorage} from "../storage";
 import {setUserId} from "../lib/learnerState";
-import type {ProgressReport} from "../storage/export-builder";
+import type {ProgressReport} from "../storage/backup/export-builder";
 
 vi.mock("../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},

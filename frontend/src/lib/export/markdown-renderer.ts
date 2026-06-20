@@ -24,7 +24,7 @@ import type {
     ProgressProject,
     ProgressReport,
     SessionDetail,
-} from "../../storage/export-builder";
+} from "../../storage/backup/export-builder";
 import {renderStoredContent} from "../tiptap-to-markdown";
 import {methodLabel, statusLabel, stepLabel, t} from "./i18n";
 

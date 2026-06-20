@@ -18,7 +18,7 @@ import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
 import {ApiError} from "../../api/client";
-import {_resetDbForTests, getDb} from "../../storage/db";
+import {_resetDbForTests, getDb} from "../../storage/db/db";
 
 import {loadDexieContext} from "./load-context-dexie";
 

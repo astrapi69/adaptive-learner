@@ -18,11 +18,11 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb} from "./db";
+import {_resetDbForTests, getDb} from "./db/db";
 import {
     computeReviewQueueDexie,
     recordElementAttemptsDexie,
-} from "./element-errors-dexie";
+} from "./dexie/element-errors-dexie";
 import type {ElementAttempt} from "./types";
 
 const USER = "user-1";

@@ -25,7 +25,7 @@ import "fake-indexeddb/auto";
 
 import {afterEach, beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb} from "./db";
+import {_resetDbForTests, getDb} from "./db/db";
 
 describe("SessionNote.kind (v1.26.0 Phase 42)", () => {
     beforeEach(async () => {

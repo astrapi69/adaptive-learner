@@ -12,7 +12,7 @@ import {describe, expect, it} from "vitest";
 import {
     buildLearningContext,
     type LearningContext,
-} from "./prompts";
+} from "./ai/prompts";
 
 const FIXTURE_DIR = path.resolve(
     process.cwd(),

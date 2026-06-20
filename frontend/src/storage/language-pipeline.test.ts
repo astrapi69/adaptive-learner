@@ -11,8 +11,8 @@ import "fake-indexeddb/auto";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { _resetDbForTests } from "./db";
-import { dexieStorage } from "./dexie-storage";
+import { _resetDbForTests } from "./db/db";
+import { dexieStorage } from "./db/dexie-storage";
 import type { ContentLesson } from "./types";
 
 beforeEach(async () => {
