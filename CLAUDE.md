@@ -1524,7 +1524,7 @@ All 10 hooks live in `backend/app/hookspecs.py`:
 ```
 adaptive-learner/
 ├── backend/app/           FastAPI app, routers, services, models, hookspecs
-├── backend/config/        app.yaml + i18n/ (8 catalogs)
+├── backend/config/        app.yaml + i18n/ (11 catalogs)
 ├── backend/tests/         pytest backend suite
 ├── plugins/               13 plugin packages
 ├── frontend/src/          api/, chat_import/, components/, hooks/, lib/,
@@ -1553,8 +1553,8 @@ adaptive-learner/
 
 ## Core conventions
 
-- i18n catalogs: `backend/config/i18n/{lang}.yaml` for 8 langs
-  (DE, EN, ES, FR, EL, PT, TR, JA), all fully translated.
+- i18n catalogs: `backend/config/i18n/{lang}.yaml` for 11 langs
+  (DE, EL, EN, ES, FR, HI, ID, JA, KO, PT, TR), all fully translated.
   `make sync-i18n` mirrors to `frontend/src/data/i18n/*.json`.
 - German content uses **real umlauts** (ä, ö, ü, ß) in
   `de.yaml`, `docs/help/de/**`, plugin German content. ASCII
