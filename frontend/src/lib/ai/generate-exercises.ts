@@ -30,6 +30,7 @@ import {
   type ExerciseCard,
   type QualityWarning,
 } from "./exercise-quality-gate";
+import { balanceExercises } from "./exercise-distribution";
 
 /** Options accepted when an {@link AiProvider} runs a completion. */
 export interface AiCompleteOptions {
@@ -106,11 +107,11 @@ export async function generateExercises(
     signal: options.signal,
     maxTokens: GENERATION_MAX_TOKENS,
   });
-  // AI -> Parser (AIX-01) -> Quality Gate (AIX-03) -> Result.
+  // AI -> Parser (AIX-01) -> Quality Gate (AIX-03) -> Distribution (AIX-04) -> Result.
   const parsed = parseGeneratedExercises(raw);
   const gate = validateExerciseQuality(parsed.cards);
   return {
-    cards: gate.passed,
+    cards: balanceExercises(gate.passed),
     skipped: parsed.skipped,
     errors: parsed.errors,
     rejected: gate.rejected,
