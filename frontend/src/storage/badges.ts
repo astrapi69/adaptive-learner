@@ -8,8 +8,8 @@
  * runtime YAML dependency in the browser bundle.
  */
 
-import {getDb, newId, nowIso} from "./db";
-import type {BadgeRow, UserBadgeRow} from "./db";
+import {getDb, newId, nowIso} from "./dexie/db";
+import type {BadgeRow, UserBadgeRow} from "./dexie/db";
 import {computeLevel, persistXP} from "./gamification";
 import type {
     BadgeEvaluationResult,
@@ -17,7 +17,7 @@ import type {
     BadgeWithProgress,
 } from "./types";
 
-import {BUNDLED_BADGES} from "./badges-data";
+import {BUNDLED_BADGES} from "./dexie/badges-data";
 
 // Re-exported so existing ``import {BUNDLED_BADGES} from "./badges"``
 // sites keep working; the data now lives in badges-data.ts (no

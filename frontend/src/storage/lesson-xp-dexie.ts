@@ -35,7 +35,7 @@ import {
 } from "../lib/gamification/lesson-xp";
 import type {XPAward} from "../lib/gamification/lesson-xp";
 import {currentStreakDays} from "../lib/gamification/streak";
-import {nowIso} from "./db";
+import {nowIso} from "./dexie/db";
 import {persistXP, userActivityDates} from "./gamification";
 import type {LessonProgress, XPAwardResult} from "./types";
 

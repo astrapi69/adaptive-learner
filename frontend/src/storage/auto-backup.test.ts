@@ -25,7 +25,7 @@ import {
     runAutoBackupNow,
     setAutoBackupEnabled,
 } from "./auto-backup";
-import {_resetDbForTests} from "./db";
+import {_resetDbForTests} from "./dexie/db";
 import {dexieStorage} from "./dexie-storage";
 
 beforeEach(async () => {

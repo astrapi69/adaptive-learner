@@ -15,9 +15,9 @@ import type {
   LessonUpdateBody,
   TopicCreateBody,
   TopicUpdateBody,
-} from "../api/client";
-import type { Curriculum, LearningTopic, Lesson } from "../types/domain";
-import type { IStorageService } from "./types";
+} from "../../api/client";
+import type { Curriculum, LearningTopic, Lesson } from "../../types/domain";
+import type { IStorageService } from "../types";
 
 export const dexieCurricula: IStorageService["curricula"] = {
     async list(userId: string): Promise<Curriculum[]> {

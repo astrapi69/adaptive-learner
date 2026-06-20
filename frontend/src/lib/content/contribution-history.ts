@@ -23,7 +23,7 @@
  * Dexie side effect).
  */
 
-import {mirrorUserData} from "../../storage/dexie-user-data";
+import {mirrorUserData} from "../../storage/dexie/dexie-user-data";
 
 const STORAGE_KEY = "adaptive-learner.contributions";
 const NAME_KEY = "adaptive-learner.contributor-name";

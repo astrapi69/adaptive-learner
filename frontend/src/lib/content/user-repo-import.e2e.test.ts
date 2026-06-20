@@ -49,7 +49,7 @@ import {
     type UserContentRepo,
 } from "./content-repos";
 import {getStorage} from "../../storage";
-import {_resetDbForTests} from "../../storage/db";
+import {_resetDbForTests} from "../../storage/dexie/db";
 import {SUPPORTED_EXERCISE_TYPES} from "../../components/exercises/ExerciseDispatcher";
 
 // --- real fixtures captured from the test repo -----------------------------

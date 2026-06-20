@@ -7,13 +7,13 @@
 
 import { getDb, nowIso } from "./db";
 import { ensureSettings, requireRow, rowToSettings } from "./dexie-rows";
-import { fetchAvailableModels } from "./model-discovery";
-import { ApiError } from "../api/client";
+import { fetchAvailableModels } from "../model-discovery";
+import { ApiError } from "../../api/client";
 import type { UserSettingsRow } from "./db";
-import type { AIProvider } from "../lib/constants";
-import type { ApiKeySetBody, SettingsPatchBody } from "../api/client";
-import type { UserSettings } from "../types/domain";
-import type { ApiKeyBackupInfo, ApiKeyTestResult, AvailableModel, IStorageService } from "./types";
+import type { AIProvider } from "../../lib/constants";
+import type { ApiKeySetBody, SettingsPatchBody } from "../../api/client";
+import type { UserSettings } from "../../types/domain";
+import type { ApiKeyBackupInfo, ApiKeyTestResult, AvailableModel, IStorageService } from "../types";
 
 export const dexieSettings: IStorageService["settings"] = {
     async get(userId: string): Promise<UserSettings> {

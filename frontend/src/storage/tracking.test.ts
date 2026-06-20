@@ -13,7 +13,7 @@ import {
     aggregateProgress,
     buildCommitFromSession,
 } from "./tracking";
-import type {LearningSessionRow, ProgressCommitRow, SessionRatingRow} from "./db";
+import type {LearningSessionRow, ProgressCommitRow, SessionRatingRow} from "./dexie/db";
 
 function commit(
     overrides: Partial<ProgressCommitRow> = {},

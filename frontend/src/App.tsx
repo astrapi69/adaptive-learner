@@ -4,7 +4,7 @@ import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 import { featureRegistry, type FeatureContext } from "./features/featureConfig";
 import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
 import { resolveStorageMode } from "./storage";
-import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie-user-data";
+import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie/dexie-user-data";
 import { lazyWithReload } from "./lib/lazyWithReload";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";

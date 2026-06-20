@@ -16,7 +16,7 @@ import {
     buildProgressReport,
     buildSessionDetail,
 } from "./export-builder";
-import {_resetDbForTests, getDb, newId, nowIso} from "./db";
+import {_resetDbForTests, getDb, newId, nowIso} from "./dexie/db";
 
 beforeEach(async () => {
     await _resetDbForTests();

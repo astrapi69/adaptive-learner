@@ -23,8 +23,8 @@
 
 import type {LearningMethod} from "../lib/constants";
 
-import {getDb, newId, nowIso} from "./db";
-import type {UserXPRow} from "./db";
+import {getDb, newId, nowIso} from "./dexie/db";
+import type {UserXPRow} from "./dexie/db";
 import type {XPAwardResult, XPState} from "./types";
 
 // ---- Pure helpers ---------------------------------------------------------

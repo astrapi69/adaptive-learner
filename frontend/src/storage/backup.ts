@@ -22,8 +22,8 @@
 import type {EntityTable} from "dexie";
 import {parse as parseYaml} from "yaml";
 
-import {getDb, nowIso, type AdaptiveLearnerDB} from "./db";
-import type {ContentSetRow, ContentSetFileRow} from "./db";
+import {getDb, nowIso, type AdaptiveLearnerDB} from "./dexie/db";
+import type {ContentSetRow, ContentSetFileRow} from "./dexie/db";
 import type {
     BackupPayload,
     BackupStats,

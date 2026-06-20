@@ -13,9 +13,9 @@ import type {
   LearningProjectUpdateBody,
   UserCreateBody,
   UserUpdateBody,
-} from "../api/client";
-import type { LearningProject, User } from "../types/domain";
-import type { IStorageService } from "./types";
+} from "../../api/client";
+import type { LearningProject, User } from "../../types/domain";
+import type { IStorageService } from "../types";
 
 export const dexieUsers: IStorageService["users"] = {
     async create(body: UserCreateBody): Promise<User> {

@@ -10,7 +10,7 @@
  * This module is the BARREL: the HTTP core lives in ``client-core``,
  * the namespace groups live in the per-domain ``client-*`` modules, and
  * here they are composed into the single ``api`` object (via spread) and
- * the payload types are re-exported so existing ``from "../api/client"``
+ * the payload types are re-exported so existing ``from "./client"``
  * imports keep working unchanged.
  */
 
@@ -35,7 +35,7 @@ export type {
 // #252 — request-body DTOs live in ./request-types (a pure module that
 // imports only lib/constants) so the IStorageService contract in
 // storage/types.ts can name them WITHOUT importing this client module.
-// Re-exported so existing `from "../api/client"` imports keep working.
+// Re-exported so existing `from "./client"` imports keep working.
 export type {
   UserCreateBody,
   UserUpdateBody,

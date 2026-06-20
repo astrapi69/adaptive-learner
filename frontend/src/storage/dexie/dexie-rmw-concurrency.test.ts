@@ -14,18 +14,18 @@ import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
 import {_resetDbForTests, getDb, nowIso} from "./db";
-import {persistXP, getXPState} from "./gamification";
-import {setWeekendMode, updateStreakState, getStreakState} from "./streaks";
+import {persistXP, getXPState} from "../gamification";
+import {setWeekendMode, updateStreakState, getStreakState} from "../streaks";
 import {
     getLessonProgressDexie,
     upsertLessonProgressDexie,
-} from "./lesson-progress-dexie";
+} from "../lesson-progress-dexie";
 import {dexieSession} from "./dexie-session";
-import {evaluateBadgesForUser, listBadgesWithProgress} from "./badges";
+import {evaluateBadgesForUser, listBadgesWithProgress} from "../badges";
 import {
     listElementErrorsDexie,
     recordElementAttemptsDexie,
-} from "./element-errors-dexie";
+} from "../element-errors-dexie";
 
 beforeEach(async () => {
     await _resetDbForTests();

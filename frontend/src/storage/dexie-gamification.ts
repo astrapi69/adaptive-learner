@@ -10,7 +10,7 @@
  */
 
 import { evaluateBadgesForUser, listBadgesWithProgress } from "./badges";
-import { getDb } from "./db";
+import { getDb } from "./dexie/db";
 import { awardXPFlat, getXPState, spendXP } from "./gamification";
 import {
   calendarHeatmap,

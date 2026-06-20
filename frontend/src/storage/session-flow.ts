@@ -20,7 +20,7 @@ import {
     type LearningSessionRow,
     type SessionMessageRow,
     type StepEvaluationRow,
-} from "./db";
+} from "./dexie/db";
 import {
     buildAnalysisContext,
     buildLanguageDirective,
@@ -31,7 +31,7 @@ import {
     type LearningContext,
     type RecentMistake,
 } from "./prompts";
-import type {AdaptiveLearnerDB} from "./db";
+import type {AdaptiveLearnerDB} from "./dexie/db";
 import {evaluateStep, type StepEvaluation} from "./step-evaluator";
 import {ApiError} from "../api/client";
 import {LEARNING_METHODS, type LearningMethod} from "../lib/constants";

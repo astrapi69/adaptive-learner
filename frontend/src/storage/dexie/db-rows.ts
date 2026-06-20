@@ -10,9 +10,9 @@
  * them for backward compatibility).
  */
 
-import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../lib/constants";
-import type {AttemptRecord} from "./types/element-errors";
-import type {ContentSetBook} from "./types/content";
+import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../../lib/constants";
+import type {AttemptRecord} from "../types/element-errors";
+import type {ContentSetBook} from "../types/content";
 
 // ---- Row shapes (mirror backend Pydantic Out-schemas) -----------------
 
@@ -475,7 +475,7 @@ export interface LessonProgressRow {
              *  (type-discriminated), used to re-render a revisited
              *  step's exact locked visual. See ``RawAnswer`` in
              *  storage/types.ts. Absent on pre-feature rows. */
-            raw_answer?: import("./types").RawAnswer | null;
+            raw_answer?: import("../types").RawAnswer | null;
         }
     >;
     score_correct: number;
@@ -663,7 +663,7 @@ export interface AiValidationResultRow {
     /** AIV-09 content hash of the checked cards (set in AIV-08/09). */
     content_hash: string | null;
     /** Per-card results (only cards the model returned). */
-    results: import("../lib/ai/content-validator").ValidationResult[];
+    results: import("../../lib/ai/content-validator").ValidationResult[];
     /** Provider response ids (AIV-09 signature). */
     response_ids: string[];
     provider: string;
@@ -673,7 +673,7 @@ export interface AiValidationResultRow {
     /** ISO timestamp the check completed. */
     checked_at: string;
     /** AIV-09 signature, or null for pre-signature caches. */
-    signature: import("../lib/ai/validation-signature").AiValidationSignature | null;
+    signature: import("../../lib/ai/validation-signature").AiValidationSignature | null;
 }
 
 /** #791 Teil B — device-local user-data previously kept only in

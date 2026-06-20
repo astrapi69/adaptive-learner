@@ -16,7 +16,7 @@ import {MemoryRouter} from "react-router-dom";
 
 import Onboarding from "./Onboarding";
 import {I18nProvider} from "../../hooks/ui/useI18n";
-import {_resetDbForTests} from "../../storage/db";
+import {_resetDbForTests} from "../../storage/dexie/db";
 import {_resetStorageCacheForTests, getStorage} from "../../storage";
 
 const mockNavigate = vi.fn();

@@ -18,7 +18,7 @@ import {
     restoreDexieBackup,
     validateBackupPayload,
 } from "./backup";
-import {_resetDbForTests, getDb} from "./db";
+import {_resetDbForTests, getDb} from "./dexie/db";
 import {dexieStorage} from "./dexie-storage";
 
 beforeEach(async () => {

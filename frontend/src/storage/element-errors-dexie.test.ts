@@ -16,7 +16,7 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb} from "./db";
+import {_resetDbForTests, getDb} from "./dexie/db";
 import {
     HINT_INTERVAL_FACTOR,
     MASTERY_THRESHOLD,

@@ -32,7 +32,7 @@
  */
 
 import {ApiError} from "../api/client";
-import {getDb} from "./db";
+import {getDb} from "./dexie/db";
 import type {ImportedConversation} from "../types/domain";
 
 // ----- Persistence ----------------------------------------------------

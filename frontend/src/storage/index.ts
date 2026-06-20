@@ -21,7 +21,7 @@
  */
 
 import {apiStorage} from "./api-storage";
-import {getDb} from "./db";
+import {getDb} from "./dexie/db";
 import {dexieStorage} from "./dexie-storage";
 import type {IStorageService, StorageMode} from "./types";
 

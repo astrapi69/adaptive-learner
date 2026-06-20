@@ -1,6 +1,6 @@
 /**
  * Regression: the Dexie schema-v21 (v1.40.0) upgrade must complete in
- * place. The original upgrade did ``await import("./badges")`` INSIDE
+ * place. The original upgrade did ``await import("../badges")`` INSIDE
  * the IndexedDB upgrade transaction; a native dynamic import escapes
  * Dexie's promise-zone tracking, so the transaction auto-committed
  * during the await and the next ``tx.table(...)`` threw "The

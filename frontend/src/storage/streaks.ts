@@ -6,8 +6,8 @@
  * as an API-mode user. Same constants, same walk semantics.
  */
 
-import {getDb, newId, nowIso} from "./db";
-import type {UserStreakRow} from "./db";
+import {getDb, newId, nowIso} from "./dexie/db";
+import type {UserStreakRow} from "./dexie/db";
 
 const FREEZE_GRANT_INTERVAL_DAYS = 7;
 const FREEZE_STOCK_CAP = 3;

@@ -18,7 +18,7 @@ import {beforeEach, describe, expect, it} from "vitest";
 
 import {AdaptiveLearnerDB, _resetDbForTests, getDb, nowIso} from "./db";
 import {ensureSettings} from "./dexie-rows";
-import {BUNDLED_BADGES, listBadgesWithProgress} from "./badges";
+import {BUNDLED_BADGES, listBadgesWithProgress} from "../badges";
 
 beforeEach(async () => {
     await _resetDbForTests();

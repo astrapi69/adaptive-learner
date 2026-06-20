@@ -12,8 +12,8 @@ import type {
     LearningSessionRow,
     ProgressCommitRow,
     SessionRatingRow,
-} from "./db";
-import {newId} from "./db";
+} from "./dexie/db";
+import {newId} from "./dexie/db";
 import type {
     MethodDistributionEntry,
     ProgressCommit,

@@ -22,7 +22,7 @@ import type {
     MissionStats,
 } from "../lib/missions/types";
 import {getTemplate} from "../lib/missions/catalog";
-import {getDb, newId, nowIso, type UserMissionRow} from "./db";
+import {getDb, newId, nowIso, type UserMissionRow} from "./dexie/db";
 
 export interface MissionDailyOptions {
     count?: number;

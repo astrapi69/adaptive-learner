@@ -11,7 +11,7 @@
 
 import type { AIProvider } from "../lib/constants";
 import { aiComplete, resolveModel } from "./ai-providers";
-import { getDb } from "./db";
+import { getDb } from "./dexie/db";
 
 /** One parsed flashcard candidate. Shape matches the vocabulary-derived
  *  cards so persistence is uniform. */

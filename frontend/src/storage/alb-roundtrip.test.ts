@@ -12,7 +12,7 @@ import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { createDexieBackup, restoreDexieBackup } from "./backup";
-import { _resetDbForTests, getDb } from "./db";
+import { _resetDbForTests, getDb } from "./dexie/db";
 import { dexieStorage } from "./dexie-storage";
 import { buildAlbBytes } from "../lib/backup/albContainer";
 import { readBackupFile } from "../lib/backup/validateBackupFile";

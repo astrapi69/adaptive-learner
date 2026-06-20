@@ -9,8 +9,8 @@
 
 import type { EntityTable } from "dexie";
 
-import { ApiError } from "../api/client";
-import { maskSecret } from "../lib/maskSecret";
+import { ApiError } from "../../api/client";
+import { maskSecret } from "../../lib/maskSecret";
 import {
   newId,
   nowIso,
@@ -37,7 +37,7 @@ import type {
   Lesson,
   User,
   UserSettings,
-} from "../types/domain";
+} from "../../types/domain";
 
 export function rowToUser(row: UserRow): User {
   return {

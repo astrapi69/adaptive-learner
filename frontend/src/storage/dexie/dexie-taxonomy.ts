@@ -6,15 +6,15 @@
  */
 
 import { getDb, newId, nowIso } from "./db";
-import { ApiError } from "../api/client";
+import { ApiError } from "../../api/client";
 import type {
   SubjectCreateBody,
   SubjectUpdateBody,
   TagCreateBody,
   TagUpdateBody,
-} from "../api/client";
-import type { Subject, Tag } from "../types/domain";
-import type { IStorageService } from "./types";
+} from "../../api/client";
+import type { Subject, Tag } from "../../types/domain";
+import type { IStorageService } from "../types";
 
 export const dexieSubjects: IStorageService["subjects"] = {
     async list(): Promise<Subject[]> {

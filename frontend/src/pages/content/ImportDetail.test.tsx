@@ -12,7 +12,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import ImportDetail from "./ImportDetail";
 import { DerivedFeatureProvider } from "../../features/testFeatureProvider";
 import { I18nProvider } from "../../hooks/ui/useI18n";
-import { _resetDbForTests } from "../../storage/db";
+import { _resetDbForTests } from "../../storage/dexie/db";
 import { dexieStorage } from "../../storage/dexie-storage";
 import { _resetStorageCacheForTests } from "../../storage";
 import { _resetApiKeyStatusCacheForTests } from "../../hooks/settings/useApiKeyStatus";

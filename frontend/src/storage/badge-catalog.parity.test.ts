@@ -16,7 +16,7 @@ import {join} from "node:path";
 
 import {describe, expect, it} from "vitest";
 
-import {BUNDLED_BADGES} from "./badges-data";
+import {BUNDLED_BADGES} from "./dexie/badges-data";
 
 interface GoldenEntry {
     key: string;

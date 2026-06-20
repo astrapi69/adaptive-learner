@@ -9,8 +9,8 @@
  * API-mode only by design.
  */
 
-import { ApiError } from "../api/client";
-import { computeContentHash } from "../chat_import/content-hash";
+import { ApiError } from "../../api/client";
+import { computeContentHash } from "../../chat_import/content-hash";
 import { getDb, newId, nowIso } from "./db";
 import type { ImportedConversationRow, ImportedMessageRow } from "./db";
 import {
@@ -23,8 +23,8 @@ import type {
   ImportedConversationCreateBody,
   ImportedConversationDetail,
   ImportedConversationUpdateBody,
-} from "../types/domain";
-import type { IStorageService } from "./types";
+} from "../../types/domain";
+import type { IStorageService } from "../types";
 
 export const dexieImports: IStorageService["imports"] = {
   async list(userId: string): Promise<ImportedConversation[]> {

@@ -14,8 +14,8 @@
  * matching the backend UNIQUE constraint.
  */
 
-import {getDb} from "./db";
-import type {ElementErrorRow} from "./db";
+import {getDb} from "./dexie/db";
+import type {ElementErrorRow} from "./dexie/db";
 import type {
     AttemptRecord,
     ElementAttempt,

@@ -12,8 +12,8 @@
 
 import {ApiError} from "../api/client";
 
-import {getDb, newId, nowIso} from "./db";
-import type {AnkiCardRow} from "./db";
+import {getDb, newId, nowIso} from "./dexie/db";
+import type {AnkiCardRow} from "./dexie/db";
 import {
     aiExtractCards,
     resolveDexieAiConfig,

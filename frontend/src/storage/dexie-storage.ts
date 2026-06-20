@@ -40,7 +40,7 @@ import {
   getDb,
   nowIso,
   type SubjectRow,
-} from "./db";
+} from "./dexie/db";
 import {
   clearAllAutoBackups,
 } from "./auto-backup";
@@ -95,12 +95,12 @@ import type {
   IStorageService,
 } from "./types";
 import { dexieGamification } from "./dexie-gamification";
-import { dexieCurricula, dexieLessons, dexieTopics } from "./dexie-curricula";
-import { dexieAssessment, dexieSession, dexieTools, dexieTracking } from "./dexie-session";
-import { dexieSettings } from "./dexie-settings";
-import { dexieProjectTaxonomy, dexieSubjects, dexieTags } from "./dexie-taxonomy";
-import { dexieProjects, dexieUsers } from "./dexie-users";
-import { dexieImports } from "./dexie-imports";
+import { dexieCurricula, dexieLessons, dexieTopics } from "./dexie/dexie-curricula";
+import { dexieAssessment, dexieSession, dexieTools, dexieTracking } from "./dexie/dexie-session";
+import { dexieSettings } from "./dexie/dexie-settings";
+import { dexieProjectTaxonomy, dexieSubjects, dexieTags } from "./dexie/dexie-taxonomy";
+import { dexieProjects, dexieUsers } from "./dexie/dexie-users";
+import { dexieImports } from "./dexie/dexie-imports";
 
 // Row <-> wire mappers + requireRow/ensureSettings live in
 // ./dexie-rows (#354), shared with the per-domain namespace modules.

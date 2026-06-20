@@ -7,18 +7,18 @@
 
 import { getDb, newId, nowIso } from "./db";
 import { requireRow, rowToProfile } from "./dexie-rows";
-import { calculateProfile, questionsForLang } from "./assessment";
-import { sendMessage, sendMessageStream, startSession } from "./session-flow";
-import { aggregateProgress, buildCommitFromSession, rowToCommit } from "./tracking";
-import { buildSpacedRecommendations, rankTools, recencyFromCommits } from "./tools";
-import { awardXPForSession } from "./gamification";
-import { evaluateBadgesForUser } from "./badges";
-import { updateStreakState } from "./streaks";
-import { maybeRunAutoBackup, recordCompletedSession } from "./auto-backup";
-import { ApiError } from "../api/client";
+import { calculateProfile, questionsForLang } from "../assessment";
+import { sendMessage, sendMessageStream, startSession } from "../session-flow";
+import { aggregateProgress, buildCommitFromSession, rowToCommit } from "../tracking";
+import { buildSpacedRecommendations, rankTools, recencyFromCommits } from "../tools";
+import { awardXPForSession } from "../gamification";
+import { evaluateBadgesForUser } from "../badges";
+import { updateStreakState } from "../streaks";
+import { maybeRunAutoBackup, recordCompletedSession } from "../auto-backup";
+import { ApiError } from "../../api/client";
 import type { LearningProfileRow, LearningSessionRow, MethodSwitchRow, SessionRatingRow } from "./db";
-import type { LearningMethod } from "../lib/constants";
-import type { SessionMessageBody, SessionRatingBody, SessionStartBody } from "../api/client";
+import type { LearningMethod } from "../../lib/constants";
+import type { SessionMessageBody, SessionRatingBody, SessionStartBody } from "../../api/client";
 import type {
   AssessmentEvaluatePayload,
   AssessmentQuestion,
@@ -34,8 +34,8 @@ import type {
   SpacedRecommendation,
   SwitchRecommendation,
   ToolRecommendation,
-} from "../types/domain";
-import type { IStorageService } from "./types";
+} from "../../types/domain";
+import type { IStorageService } from "../types";
 
 export const dexieAssessment: IStorageService["assessment"] = {
     questions: async (lang: string): Promise<AssessmentQuestion[]> =>

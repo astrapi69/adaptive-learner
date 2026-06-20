@@ -9,7 +9,7 @@
  */
 
 import { getStorage } from "../../storage";
-import { getDb } from "../../storage/db";
+import { getDb } from "../../storage/dexie/db";
 import { resolveModel } from "../../storage/ai-providers";
 import type { AIProvider } from "../constants";
 
