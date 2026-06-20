@@ -24,7 +24,7 @@ import {
   providerKeyStatus,
   type ProviderKeyStatus,
 } from "../lib/aiProviderStatus";
-import { DEFAULT_MODELS } from "../storage/ai-providers";
+import { DEFAULT_MODELS } from "../storage/ai/ai-providers";
 import type { ApiKeyTestResult, StorageMode } from "../storage/types";
 import type { UserSettings } from "../types/domain";
 

@@ -24,7 +24,7 @@ import "fake-indexeddb/auto";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {apiStorage} from "./api-storage";
-import {_resetDbForTests, getDb} from "./db";
+import {_resetDbForTests, getDb} from "./dexie/db";
 import {dexieStorage} from "./dexie-storage";
 
 beforeEach(async () => {

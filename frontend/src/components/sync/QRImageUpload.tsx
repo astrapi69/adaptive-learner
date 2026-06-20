@@ -28,7 +28,7 @@
 import {useRef, useState} from "react";
 import {Html5Qrcode} from "html5-qrcode";
 
-import {parsePairingUri} from "../../storage/sync-engine";
+import {parsePairingUri} from "../../storage/sync/sync-engine";
 
 const SCAN_FILE_REGION_ID = "qr-scanner-file-region";
 

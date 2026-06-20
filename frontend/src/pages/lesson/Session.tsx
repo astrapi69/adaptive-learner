@@ -13,7 +13,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import {useOnlineStatus} from "../../hooks/system/useOnlineStatus";
 import {readLearnerState} from "../../lib/learnerState";
 import {getStorage} from "../../storage";
-import {resolveModel} from "../../storage/ai-providers";
+import {resolveModel} from "../../storage/ai/ai-providers";
 import type {AvailableModel} from "../../storage/types";
 import {notify} from "../../utils/notify";
 import type {LearningMethod} from "../../lib/constants";

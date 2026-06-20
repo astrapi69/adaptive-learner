@@ -44,12 +44,12 @@ export interface IBackupNamespace {
  * renderer consume. Same shape in both storage modes.
  */
 export interface IExportNamespace {
-  progress(userId: string, lang: string): Promise<import("../export-types").ProgressReport>;
-  session(sessionId: string, lang: string): Promise<import("../export-types").SessionDetail>;
+  progress(userId: string, lang: string): Promise<import("../backup/export-types").ProgressReport>;
+  session(sessionId: string, lang: string): Promise<import("../backup/export-types").SessionDetail>;
   curriculum(
     curriculumId: string,
     lang: string,
-  ): Promise<import("../export-types").CurriculumOverview>;
+  ): Promise<import("../backup/export-types").CurriculumOverview>;
 }
 
 // --- Taxonomy: Subjects + Tags (v1.9.0 / Phase 22) ---------------------

@@ -27,7 +27,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {ApiError} from "../api/client";
 
 import {apiStorage} from "./api-storage";
-import {_resetDbForTests, getDb} from "./db";
+import {_resetDbForTests, getDb} from "./dexie/db";
 import {dexieStorage} from "./dexie-storage";
 
 const PROJECT_ID = "proj-1";

@@ -19,7 +19,7 @@ import {
     writeSyncConfig,
     writeLastSyncAt,
     appendSyncHistory,
-} from "../storage/sync-engine";
+} from "../storage/sync/sync-engine";
 
 vi.mock("../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},

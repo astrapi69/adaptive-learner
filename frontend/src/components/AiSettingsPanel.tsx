@@ -17,7 +17,7 @@ import ApiKeyRow from "./ApiKeyRow";
 import ConfiguredProvidersTable from "./ConfiguredProvidersTable";
 import { useI18n } from "../hooks/ui/useI18n";
 import { useAiKeySettings } from "../hooks/settings/useAiKeySettings";
-import { DEFAULT_MODELS } from "../storage/ai-providers";
+import { DEFAULT_MODELS } from "../storage/ai/ai-providers";
 import { resolveStorageMode } from "../storage";
 import {
   AI_PROVIDERS,

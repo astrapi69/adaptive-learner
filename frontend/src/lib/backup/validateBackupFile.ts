@@ -19,7 +19,7 @@
  */
 
 import type {BackupPayload} from "../../types/domain";
-import {validateBackupPayload} from "../../storage/backup";
+import {validateBackupPayload} from "../../storage/backup/backup";
 import {
     type AlbManifest,
     isZipBytes,

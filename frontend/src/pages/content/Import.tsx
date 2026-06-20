@@ -26,7 +26,7 @@ import { useI18n } from "../../hooks/ui/useI18n";
 import { useConfirm } from "../../contexts/ConfirmContext";
 import { readLearnerState } from "../../lib/learnerState";
 import { getStorage } from "../../storage";
-import { getDb } from "../../storage/db";
+import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";
 import {
   detectFormat,

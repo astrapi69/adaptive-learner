@@ -25,7 +25,7 @@ vi.mock("../hooks/ui/useI18n", () => ({
     }),
 }));
 
-vi.mock("../utils/eventRecorder", () => ({
+vi.mock("./eventRecorder", () => ({
     eventRecorder: {getAll: () => []},
     formatEventLog: () => "",
 }));

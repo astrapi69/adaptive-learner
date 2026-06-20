@@ -30,30 +30,30 @@ import {
   listAnkiCards,
   markAnkiCardsExported,
   updateAnkiCard,
-} from "./anki";
-import { evaluateBadgesForUser } from "./badges";
+} from "./anki/anki";
+import { evaluateBadgesForUser } from "./gamification/badges";
 import {
   getDailyMissionsDexie,
   regenerateDailyMissionsDexie,
-} from "./missions-dexie";
+} from "./gamification/missions-dexie";
 import {
   getDb,
   nowIso,
   type SubjectRow,
-} from "./db";
+} from "./dexie/db";
 import {
   clearAllAutoBackups,
-} from "./auto-backup";
+} from "./backup/auto-backup";
 import {
   createDexieBackup,
   getDexieBackupStats,
   restoreDexieBackup,
-} from "./backup";
+} from "./backup/backup";
 import {
   buildCurriculumOverview as dexieBuildCurriculumOverview,
   buildProgressReport as dexieBuildProgressReport,
   buildSessionDetail as dexieBuildSessionDetail,
-} from "./export-builder";
+} from "./backup/export-builder";
 import {
   createStudyQuestion,
   deleteStudyQuestion,
@@ -62,14 +62,14 @@ import {
   listStudyQuestions,
   studyGuideDexie,
   updateStudyQuestion,
-} from "./notebooklm";
+} from "./anki/notebooklm";
 import { ApiError } from "../api/client";
 import {
   aiValidateDexie,
   aiValidateCardsDexie,
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
-} from "./content-loader-dexie-ai";
+} from "./content/content-loader-dexie-ai";
 import {
   deleteSetDexie,
   activeSourcesDexie,
@@ -79,28 +79,28 @@ import {
   listLessonsDexie,
   listSetsDexie,
   saveUserSetDexie,
-} from "./content-loader-dexie";
+} from "./content/content-loader-dexie";
 import {
   getLessonProgressDexie,
   listLessonProgressDexie,
   upsertLessonProgressDexie,
-} from "./lesson-progress-dexie";
-import { awardLessonXpDexie } from "./lesson-xp-dexie";
+} from "./lessons/lesson-progress-dexie";
+import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
 import {
   computeReviewQueueDexie,
   listElementErrorsDexie,
   recordElementAttemptsDexie,
-} from "./element-errors-dexie";
+} from "./lessons/element-errors-dexie";
 import type {
   IStorageService,
 } from "./types";
-import { dexieGamification } from "./dexie-gamification";
-import { dexieCurricula, dexieLessons, dexieTopics } from "./dexie-curricula";
-import { dexieAssessment, dexieSession, dexieTools, dexieTracking } from "./dexie-session";
-import { dexieSettings } from "./dexie-settings";
-import { dexieProjectTaxonomy, dexieSubjects, dexieTags } from "./dexie-taxonomy";
-import { dexieProjects, dexieUsers } from "./dexie-users";
-import { dexieImports } from "./dexie-imports";
+import { dexieGamification } from "./gamification/dexie-gamification";
+import { dexieCurricula, dexieLessons, dexieTopics } from "./dexie/dexie-curricula";
+import { dexieAssessment, dexieSession, dexieTools, dexieTracking } from "./dexie/dexie-session";
+import { dexieSettings } from "./dexie/dexie-settings";
+import { dexieProjectTaxonomy, dexieSubjects, dexieTags } from "./dexie/dexie-taxonomy";
+import { dexieProjects, dexieUsers } from "./dexie/dexie-users";
+import { dexieImports } from "./dexie/dexie-imports";
 
 // Row <-> wire mappers + requireRow/ensureSettings live in
 // ./dexie-rows (#354), shared with the per-domain namespace modules.

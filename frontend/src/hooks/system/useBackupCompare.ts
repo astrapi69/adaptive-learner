@@ -14,7 +14,7 @@ import {useRef, useState} from "react";
 
 import {useI18n} from "../ui/useI18n";
 import {getStorage} from "../../storage";
-import {getAutoBackupPayload, type AutoBackupSummary} from "../../storage/auto-backup";
+import {getAutoBackupPayload, type AutoBackupSummary} from "../../storage/backup/auto-backup";
 import {readBackupFile as readValidatedBackupFile} from "../../lib/backup/validateBackupFile";
 import type {BackupPayload} from "../../types/domain";
 

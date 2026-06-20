@@ -5,7 +5,7 @@
 import { describe, it, expect } from "vitest";
 
 import { buildLevelMilestones } from "./levelMilestones";
-import { levelThreshold } from "../../storage/gamification";
+import { levelThreshold } from "../../storage/gamification/gamification";
 
 describe("buildLevelMilestones", () => {
   it("matches the documented thresholds (0/100/300/600/1000)", () => {
