@@ -216,7 +216,7 @@ landing:
   title: Adaptive Learner
   subtitle: Μάθηση που προσαρμόζεται σε σένα.
   choose_language: Επίλεξε τη γλώσσα σου
-  start_button: Ξεκίνα το ταξίδι μάθησής σου
+  start_button: Ξεκίνα το ταξίδι της μάθησής σου
   docs_link: Διαβάστε την τεκμηρίωση
   checking_session: Καλώς ήρθες ξανά...
   recovered_toast: Καλώς ήρθες ξανά! Τα δεδομένα μάθησής σου είναι ακόμα εδώ.
@@ -773,7 +773,7 @@ settings:
   section_sync: "Συγχρονισμός"
 methods:
   deductive:
-    label: Επαγωγική (από γενικό)
+    label: Παραγωγική (από γενικό)
     summary: Από το γενικό στο ειδικό — πρώτα οι κανόνες, μετά τα παραδείγματα.
   inductive:
     label: Επαγωγική (από ειδικό)
