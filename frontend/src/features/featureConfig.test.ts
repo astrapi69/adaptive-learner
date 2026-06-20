@@ -69,6 +69,14 @@ describe("featureRegistry", () => {
     }
   });
 
+  it("keeps default-disabled features disabled in every context (#900)", () => {
+    for (const ctx of [API, DEXIE_NO_KEY, DEXIE_KEY]) {
+      expect(featureRegistry.getState(FEATURES.LEARNING_PATH_GRAPH, ctx)).toBe(
+        "disabled",
+      );
+    }
+  });
+
   it("registers every catalog id", () => {
     for (const id of Object.values(FEATURES)) {
       expect(featureRegistry.has(id)).toBe(true);

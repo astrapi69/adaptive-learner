@@ -23,7 +23,10 @@ import {lazy, Suspense, useMemo, useState} from "react";
 import {Link} from "react-router-dom";
 import {LayoutList, ListChecks, Map as MapIcon, Network} from "lucide-react";
 
+import {useFeature} from "@astrapi69/feature-strategy-react";
+
 import {useI18n} from "../../hooks/ui/useI18n";
+import {FEATURES} from "../../features/featureConfig";
 import {usePersonalPath} from "../../hooks/learning/usePersonalPath";
 import {readLearnerState} from "../../lib/learnerState";
 import SetRow from "../../components/learning-path/SetRow";
@@ -104,9 +107,11 @@ function FilterToggle({
 function ViewSwitcher({
     view,
     onChange,
+    graphEnabled,
 }: {
     view: ViewMode;
     onChange: (v: ViewMode) => void;
+    graphEnabled: boolean;
 }) {
     const {t} = useI18n();
     const btn = (mode: ViewMode, label: string, icon: React.ReactNode) => (
@@ -149,11 +154,14 @@ function ViewSwitcher({
                 t("learning_path.view.map", "Map"),
                 <MapIcon size={16} aria-hidden="true" />,
             )}
-            {btn(
-                "graph",
-                t("learning_path.view.graph", "Graph"),
-                <Network size={16} aria-hidden="true" />,
-            )}
+            {/* Graph view gated behind LEARNING_PATH_GRAPH (disabled until the
+                graph layout is fixed, #900). */}
+            {graphEnabled &&
+                btn(
+                    "graph",
+                    t("learning_path.view.graph", "Graph"),
+                    <Network size={16} aria-hidden="true" />,
+                )}
         </div>
     );
 }
@@ -162,6 +170,7 @@ export default function LearningPathPersonal() {
     const {t} = useI18n();
     const userId = useMemo(() => readLearnerState().userId ?? "", []);
     const {state, data, reload} = usePersonalPath(userId);
+    const graphEnabled = useFeature(FEATURES.LEARNING_PATH_GRAPH).isActive;
     const [view, setView] = useState<ViewMode>(loadView);
     const [filter, setFilter] = useState<FilterMode>(loadFilter);
     const [expanded, setExpanded] = useState<string | null>(null);
@@ -184,7 +193,18 @@ export default function LearningPathPersonal() {
         }
     };
 
-    const switcher = <ViewSwitcher view={view} onChange={changeView} />;
+    // A persisted view=graph selection falls back to the personal view while
+    // the Graph feature is disabled (#900), so the gate also covers reloads.
+    const effectiveView: ViewMode =
+        view === "graph" && !graphEnabled ? "personal" : view;
+
+    const switcher = (
+        <ViewSwitcher
+            view={effectiveView}
+            onChange={changeView}
+            graphEnabled={graphEnabled}
+        />
+    );
 
     const viewFallback = (
         <main id="main" className="page" data-testid="learning-path-page">
@@ -194,7 +214,7 @@ export default function LearningPathPersonal() {
         </main>
     );
 
-    if (view === "map") {
+    if (effectiveView === "map") {
         return (
             <Suspense fallback={viewFallback}>
                 <LearningPathMap headerExtra={switcher} />
@@ -202,7 +222,7 @@ export default function LearningPathPersonal() {
         );
     }
 
-    if (view === "graph") {
+    if (effectiveView === "graph") {
         return (
             <Suspense fallback={viewFallback}>
                 <LearningPathGraph headerExtra={switcher} />
@@ -210,7 +230,7 @@ export default function LearningPathPersonal() {
         );
     }
 
-    if (view === "paths") {
+    if (effectiveView === "paths") {
         return (
             <main
                 id="main"
