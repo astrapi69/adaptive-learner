@@ -1,0 +1,12 @@
+# Folder-size whitelist — POINTER, not a second source of truth.
+#
+# The folder-size guard (scripts/check-folder-size.sh) reuses the existing
+# #809 god-folder guard (scripts/check-directory-size.sh). The canonical
+# whitelist of tolerated oversized directories — with a justification per
+# entry — lives in:
+#
+#     .dirsize-baseline
+#
+# Edit that file to add/remove a tolerated god-folder (ratchet: may only
+# shrink). This file exists only so the requested `.folder-size-whitelist`
+# name resolves to documentation instead of a divergent second list.
