@@ -1,0 +1,79 @@
+/**
+ * Tests for the update-accept persistence + suppression helpers (#846): once
+ * the user clicks "Aktualisieren" the banner must stay suppressed for the quiet
+ * window and for the accepted version, while a genuinely newer version (after
+ * the window) re-offers it.
+ */
+
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
+import {
+  ACCEPT_QUIET_MS,
+  ACCEPTED_AT_KEY,
+  ACCEPTED_VERSION_KEY,
+  readAcceptedAt,
+  readAcceptedVersion,
+  recordUpdateAccepted,
+  shouldShowUpdateBanner,
+} from "./update-accept";
+
+beforeEach(() => localStorage.clear());
+afterEach(() => localStorage.clear());
+
+describe("recordUpdateAccepted", () => {
+  it("stores the ISO timestamp and the accepted version", () => {
+    const now = Date.parse("2026-06-20T10:00:00.000Z");
+    recordUpdateAccepted("1.91.0", now);
+    expect(localStorage.getItem(ACCEPTED_AT_KEY)).toBe("2026-06-20T10:00:00.000Z");
+    expect(localStorage.getItem(ACCEPTED_VERSION_KEY)).toBe("1.91.0");
+    expect(readAcceptedAt()).toBe("2026-06-20T10:00:00.000Z");
+    expect(readAcceptedVersion()).toBe("1.91.0");
+  });
+
+  it("stamps the timestamp even when the version is unknown (SW-only update)", () => {
+    const now = Date.parse("2026-06-20T10:00:00.000Z");
+    recordUpdateAccepted(null, now);
+    expect(localStorage.getItem(ACCEPTED_AT_KEY)).toBe("2026-06-20T10:00:00.000Z");
+    expect(localStorage.getItem(ACCEPTED_VERSION_KEY)).toBeNull();
+  });
+});
+
+describe("shouldShowUpdateBanner", () => {
+  it("shows the banner when nothing was ever accepted", () => {
+    expect(shouldShowUpdateBanner("1.91.0")).toBe(true);
+  });
+
+  it("suppresses within the 1-hour quiet window (any version)", () => {
+    const accepted = Date.parse("2026-06-20T10:00:00.000Z");
+    recordUpdateAccepted("1.91.0", accepted);
+
+    // 30 seconds later — well inside the quiet window.
+    expect(shouldShowUpdateBanner("1.91.0", accepted + 30_000)).toBe(false);
+    // A newer version still suppressed while the window is open.
+    expect(shouldShowUpdateBanner("1.92.0", accepted + 30_000)).toBe(false);
+    // Just before the window closes.
+    expect(shouldShowUpdateBanner("1.92.0", accepted + ACCEPT_QUIET_MS - 1)).toBe(false);
+  });
+
+  it("keeps suppressing the SAME accepted version after the quiet window", () => {
+    const accepted = Date.parse("2026-06-20T10:00:00.000Z");
+    recordUpdateAccepted("1.91.0", accepted);
+    // 2 hours later: window closed, but the version was already accepted.
+    expect(shouldShowUpdateBanner("1.91.0", accepted + 2 * ACCEPT_QUIET_MS)).toBe(false);
+  });
+
+  it("re-offers a NEWER version once the quiet window has passed", () => {
+    const accepted = Date.parse("2026-06-20T10:00:00.000Z");
+    recordUpdateAccepted("1.91.0", accepted);
+    // 2 hours later, a newer deploy — banner comes back.
+    expect(shouldShowUpdateBanner("1.92.0", accepted + 2 * ACCEPT_QUIET_MS)).toBe(true);
+  });
+
+  it("treats a corrupt timestamp as no acceptance (fails open to showing)", () => {
+    localStorage.setItem(ACCEPTED_AT_KEY, "not-a-date");
+    localStorage.setItem(ACCEPTED_VERSION_KEY, "1.91.0");
+    // Quiet window can't apply (unparseable), and a different version isn't the
+    // accepted one, so a newer version shows.
+    expect(shouldShowUpdateBanner("1.92.0")).toBe(true);
+  });
+});
