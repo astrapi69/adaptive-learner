@@ -25,6 +25,11 @@ import {
   parseGeneratedExercises,
   type ExerciseGenerationParseResult,
 } from "./exercise-generation-parser";
+import {
+  validateExerciseQuality,
+  type ExerciseCard,
+  type QualityWarning,
+} from "./exercise-quality-gate";
 
 /** Options accepted when an {@link AiProvider} runs a completion. */
 export interface AiCompleteOptions {
@@ -52,8 +57,18 @@ export interface GenerateExercisesOptions extends ExercisePromptOptions {
 /** Reply length cap for an exercise-generation call (~8 cards of JSON). */
 const GENERATION_MAX_TOKENS = 2000;
 
-/** Outcome of a generation run: the validated cards plus parse stats. */
-export type ExerciseGenerationResult = ExerciseGenerationParseResult;
+/**
+ * Outcome of a generation run. ``cards`` are the parser-valid cards that
+ * ALSO passed the AIX-03 content quality gate; ``skipped`` is the parser's
+ * structural skip count; ``rejected`` are the cards the quality gate
+ * dropped; ``warnings`` are the gate's non-fatal flags.
+ */
+export interface ExerciseGenerationResult extends ExerciseGenerationParseResult {
+  /** AIX-03 — cards dropped by the content quality gate. */
+  rejected: ExerciseCard[];
+  /** AIX-03 — non-fatal quality warnings on the passed set. */
+  warnings: QualityWarning[];
+}
 
 /**
  * Generate exercises from a lesson's theory steps.
@@ -75,7 +90,13 @@ export async function generateExercises(
   options: GenerateExercisesOptions = {},
 ): Promise<ExerciseGenerationResult> {
   if (theorySteps.length === 0) {
-    return { cards: [], skipped: 0, errors: ["no theory steps to generate from"] };
+    return {
+      cards: [],
+      skipped: 0,
+      errors: ["no theory steps to generate from"],
+      rejected: [],
+      warnings: [],
+    };
   }
   const prompt = buildExerciseGenerationPrompt(theorySteps, {
     language: options.language,
@@ -85,7 +106,16 @@ export async function generateExercises(
     signal: options.signal,
     maxTokens: GENERATION_MAX_TOKENS,
   });
-  return parseGeneratedExercises(raw);
+  // AI -> Parser (AIX-01) -> Quality Gate (AIX-03) -> Result.
+  const parsed = parseGeneratedExercises(raw);
+  const gate = validateExerciseQuality(parsed.cards);
+  return {
+    cards: gate.passed,
+    skipped: parsed.skipped,
+    errors: parsed.errors,
+    rejected: gate.rejected,
+    warnings: gate.warnings,
+  };
 }
 
 /**

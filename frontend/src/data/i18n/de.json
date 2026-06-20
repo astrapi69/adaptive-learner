@@ -2006,6 +2006,7 @@
       "regenerate": "Neu generieren",
       "regenerate_confirm": "Die generierten Übungen durch einen neuen Satz ersetzen?",
       "generated": "{n} Übungen generiert.",
+      "generated_with_rejected": "{n} Übungen generiert, {r} wegen Qualität verworfen.",
       "none": "Die KI hat keine brauchbaren Übungen geliefert. Bitte erneut versuchen.",
       "failed": "Übungen konnten nicht generiert werden. Bitte erneut versuchen.",
       "feature": "um Übungen zu generieren",

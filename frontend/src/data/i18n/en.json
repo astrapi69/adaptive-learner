@@ -2006,6 +2006,7 @@
       "regenerate": "Regenerate",
       "regenerate_confirm": "Replace the generated exercises with a fresh set?",
       "generated": "{n} exercises generated.",
+      "generated_with_rejected": "{n} exercises generated, {r} rejected for quality.",
       "none": "The AI returned no usable exercises. Please try again.",
       "failed": "Could not generate exercises. Please try again.",
       "feature": "to generate exercises",

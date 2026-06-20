@@ -108,11 +108,22 @@ export default function GenerateExercisesButton({
         );
         return;
       }
+      // AIX-03 — the engine result carries the quality-gate rejects; add
+      // the gate's drops (``result.rejected``) to the mapper's drops
+      // (``skipped``) so the user learns how many were filtered out.
+      const rejected = (result.rejected?.length ?? 0) + skipped;
       notify.success(
-        t("content.ai_exercises.generated", "{n} exercises generated.").replace(
-          "{n}",
-          String(exercises.length),
-        ),
+        rejected > 0
+          ? t(
+              "content.ai_exercises.generated_with_rejected",
+              "{n} exercises generated, {r} rejected for quality.",
+            )
+              .replace("{n}", String(exercises.length))
+              .replace("{r}", String(rejected))
+          : t("content.ai_exercises.generated", "{n} exercises generated.").replace(
+              "{n}",
+              String(exercises.length),
+            ),
       );
       onGenerated(exercises, skipped);
     } catch (err) {
