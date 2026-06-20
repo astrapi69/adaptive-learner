@@ -303,6 +303,11 @@
     "swipe_hint": "Balayez vers la gauche / droite (ou utilisez les flèches) pour naviguer."
   },
   "dashboard": {
+    "tab": {
+      "overview": "Aperçu",
+      "activity": "Activité",
+      "missions": "Missions"
+    },
     "no_data": "Pas encore de données.",
     "title": "Tableau de bord",
     "welcome": "Bon retour",

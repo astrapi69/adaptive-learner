@@ -28,9 +28,10 @@ test.describe("#106 — resumable assessment", () => {
     }
     await expect(page.getByTestId("question-card-q06")).toBeVisible();
 
-    // Abandon: leave for the Dashboard. The profile is incomplete, so
-    // the profile card invites the learner to continue.
-    await page.goto("/dashboard");
+    // Abandon: leave for the Dashboard. The profile is incomplete, so the
+    // profile card invites the learner to continue. #858 — the profile card
+    // lives on the Aktivität tab.
+    await page.goto("/dashboard?tab=activity");
     const resume = page.getByTestId("dashboard-profile-resume");
     await expect(resume).toBeVisible({ timeout: 15000 });
     await page.getByTestId("dashboard-profile-resume-btn").click();
@@ -53,10 +54,14 @@ test.describe("#106 — resumable assessment", () => {
       timeout: 15000,
     });
 
-    // Completing clears the saved progress: back on the Dashboard the
-    // resume invitation is gone and the radar renders.
+    // Completing clears the saved progress: on the Aktivität tab the resume
+    // invitation is gone and the radar renders.
     await page.getByTestId("assessment-continue").click();
     await page.waitForURL("**/dashboard");
+    await page.goto("/dashboard?tab=activity");
     await expect(page.getByTestId("dashboard-profile-resume")).toHaveCount(0);
+    await expect(page.getByTestId("profile-radar")).toBeVisible({
+      timeout: 15000,
+    });
   });
 });

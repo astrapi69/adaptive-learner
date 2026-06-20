@@ -285,6 +285,10 @@ assessment:
   read_summary: Zusammenfassung vorlesen
   swipe_hint: "Nach links / rechts wischen (oder Pfeiltasten verwenden) zum Navigieren."
 dashboard:
+  tab:
+    overview: "Übersicht"
+    activity: "Aktivität"
+    missions: "Missionen"
   no_data: "Noch keine Daten vorhanden."
   title: Dashboard
   welcome: Willkommen zurück

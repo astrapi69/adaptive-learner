@@ -303,6 +303,11 @@
     "swipe_hint": "Gezinmek için sola / sağa kaydırın (veya ok tuşlarını kullanın)."
   },
   "dashboard": {
+    "tab": {
+      "overview": "Genel Bakış",
+      "activity": "Etkinlik",
+      "missions": "Görevler"
+    },
     "no_data": "Henüz veri yok.",
     "title": "Pano",
     "welcome": "Tekrar hoş geldin",
