@@ -253,14 +253,20 @@ so the same code runs against either backing.
 ### Dexie namespace module split
 
 `DexieStorage` is NOT one god-file. It is split into per-domain
-namespace modules under `frontend/src/storage/`, each owning one
-slice of the `IStorageService` surface: `dexie-imports`,
-`dexie-gamification`, `dexie-users`, `dexie-settings`,
-`dexie-session`, `dexie-curricula`, `dexie-taxonomy`, plus
-`lesson-progress-dexie`, `lesson-xp-dexie`, `element-errors-dexie`,
-`missions-dexie`, and `content-loader-dexie`. Shared row types live
-in `dexie-rows.ts`; the schema + db handle in `db.ts` /
-`dexie-storage.ts`. A new Dexie namespace is a new module, not
+namespace modules grouped by concern under `frontend/src/storage/*`
+(#809), each owning one slice of the `IStorageService` surface:
+`storage/dexie/` holds the DB engine + the generic CRUD namespaces
+(`db`, `db-migrations`, `db-rows`, `dexie-rows`, `dexie-imports`,
+`dexie-users`, `dexie-settings`, `dexie-session`, `dexie-curricula`,
+`dexie-taxonomy`, `dexie-user-data`, plus the `badges-data` seed
+catalogue); domain-specific namespaces live with their logic —
+`storage/gamification/` (`dexie-gamification`, `lesson-xp-dexie`,
+`missions-dexie`), `storage/lessons/` (`lesson-progress-dexie`,
+`element-errors-dexie`), `storage/content/` (`content-loader-dexie`).
+The two `IStorageService` implementations (`api-storage`,
+`dexie-storage`) and the `getStorage()` factory (`index.ts`) stay at
+the `storage/` root; each concern group carries a barrel `index.ts`.
+A new Dexie namespace is a new module in the matching group, not
 another method pile in one file.
 
 ### Dexie data integrity (R-M-W discipline)
