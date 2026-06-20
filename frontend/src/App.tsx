@@ -4,7 +4,7 @@ import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 import { featureRegistry, type FeatureContext } from "./features/featureConfig";
 import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
 import { resolveStorageMode } from "./storage";
-import { syncUserDataAtBoot } from "./storage/dexie-user-data";
+import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie-user-data";
 import { lazyWithReload } from "./lib/lazyWithReload";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -136,10 +136,11 @@ export default function App() {
   }, [handleOpenReport]);
 
   // #791 Teil B — reconcile the device-local user-data keys (contributions,
-  // contributor name, custom paths) between the Dexie canonical store and the
-  // localStorage cache once at boot. No-op in API mode.
+  // contributor name, custom paths) + the learner language between the Dexie
+  // canonical store and the localStorage cache once at boot. No-op in API mode.
   useEffect(() => {
     void syncUserDataAtBoot();
+    void syncLanguageAtBoot();
   }, []);
 
   return (

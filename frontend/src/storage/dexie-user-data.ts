@@ -124,3 +124,31 @@ export async function syncUserDataAtBoot(
         }
     }
 }
+
+const KEY_USER_ID = "adaptive-learner.user_id";
+const KEY_LANGUAGE = "adaptive-learner.language";
+
+/**
+ * Resolve the ``adaptive-learner.language`` redundancy (#791 Teil B): the
+ * learner language lived in BOTH localStorage and the Dexie
+ * ``user_settings.language`` column. Dexie ``user_settings`` is the single
+ * source of truth — at boot, hydrate the localStorage cache from the active
+ * user's ``user_settings.language`` so the two never diverge (and a Dexie
+ * restore propagates into the cache). No-op outside Dexie mode, when no user
+ * is resolved yet, or when settings carry no language.
+ */
+export async function syncLanguageAtBoot(): Promise<void> {
+    if (!isDexieMode()) return;
+    const userId = readLocal(KEY_USER_ID);
+    if (!userId) return;
+    try {
+        const db = getDb();
+        const settings = await db.userSettings.where("user_id").equals(userId).first();
+        const lang = settings?.language;
+        if (typeof lang === "string" && lang && readLocal(KEY_LANGUAGE) !== lang) {
+            writeLocal(KEY_LANGUAGE, lang);
+        }
+    } catch {
+        /* Dexie unavailable; the localStorage cache stays as-is */
+    }
+}

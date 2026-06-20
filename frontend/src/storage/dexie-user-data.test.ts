@@ -14,6 +14,7 @@ import {_resetDbForTests, getDb} from "./db";
 import {
     MANAGED_USER_DATA_KEYS,
     mirrorUserData,
+    syncLanguageAtBoot,
     syncUserDataAtBoot,
 } from "./dexie-user-data";
 import {listContributions, recordContribution} from "../lib/content/contribution-history";
@@ -88,6 +89,29 @@ describe("syncUserDataAtBoot (#791)", () => {
             "adaptive-learner.contributor-name",
             "adaptive-learner.custom-paths",
         ]);
+    });
+});
+
+describe("syncLanguageAtBoot (#791)", () => {
+    const USER_KEY = "adaptive-learner.user_id";
+    const LANG_KEY = "adaptive-learner.language";
+
+    it("hydrates the localStorage language cache from Dexie user_settings", async () => {
+        localStorage.setItem(USER_KEY, "u1");
+        localStorage.setItem(LANG_KEY, "en");
+        await getDb().userSettings.put({
+            id: "s1",
+            user_id: "u1",
+            language: "ko",
+        } as never);
+        await syncLanguageAtBoot();
+        expect(localStorage.getItem(LANG_KEY)).toBe("ko");
+    });
+
+    it("no-ops when no user is resolved", async () => {
+        localStorage.setItem(LANG_KEY, "en");
+        await syncLanguageAtBoot();
+        expect(localStorage.getItem(LANG_KEY)).toBe("en");
     });
 });
 
