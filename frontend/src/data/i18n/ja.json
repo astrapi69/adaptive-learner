@@ -2001,6 +2001,17 @@
       "delete_failed": "レッスンを削除できませんでした。"
     },
     "ai_exercises": {
+      "batch": {
+        "button": "すべてのレッスンに生成",
+        "running": "生成中…",
+        "none": "すべてのレッスンにすでに演習があります。",
+        "cost_confirm": "{n} 件のレッスンに演習を生成します（約 {tokens} トークン）。続行しますか？",
+        "progress": "レッスン {current} / {total}…",
+        "cancel": "キャンセル",
+        "done": "{total} 件中 {succeeded} 件完了：演習 {generated} 件、{skipped} 件スキップ。",
+        "cancelled": "停止しました。{total} 件中 {succeeded} 件完了、演習 {generated} 件。",
+        "failed": "一括生成に失敗しました。もう一度お試しください。"
+      },
       "max_reached": "再生成の上限に達しました。演習を手動で編集するか、より長いチャットをインポートしてください。",
       "feedback": {
         "title": "再生成する理由は？",

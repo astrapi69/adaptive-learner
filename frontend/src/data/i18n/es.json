@@ -2001,6 +2001,17 @@
       "delete_failed": "No se pudo eliminar la lección."
     },
     "ai_exercises": {
+      "batch": {
+        "button": "Generar para todas las lecciones",
+        "running": "Generando…",
+        "none": "Todas las lecciones ya tienen ejercicios.",
+        "cost_confirm": "Esto genera ejercicios para {n} lecciones (unos {tokens} tokens). ¿Continuar?",
+        "progress": "Lección {current} de {total}…",
+        "cancel": "Cancelar",
+        "done": "{succeeded} de {total} lecciones: {generated} ejercicios, {skipped} omitidas.",
+        "cancelled": "Detenido. {succeeded} de {total} lecciones, {generated} ejercicios.",
+        "failed": "La generación por lotes falló. Inténtalo de nuevo."
+      },
       "max_reached": "Se alcanzó el máximo de regeneraciones. Edita los ejercicios manualmente o importa un chat más largo.",
       "feedback": {
         "title": "¿Por qué regenerar?",

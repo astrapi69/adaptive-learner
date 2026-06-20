@@ -1848,6 +1848,16 @@ content:
     deleted: "Leçon supprimée."
     delete_failed: "Impossible de supprimer la leçon."
   ai_exercises:
+    batch:
+      button: "Générer pour toutes les leçons"
+      running: "Génération…"
+      none: "Toutes les leçons ont déjà des exercices."
+      cost_confirm: "Ceci génère des exercices pour {n} leçons (environ {tokens} jetons). Continuer ?"
+      progress: "Leçon {current} sur {total}…"
+      cancel: "Annuler"
+      done: "{succeeded} leçons sur {total} : {generated} exercices, {skipped} ignorées."
+      cancelled: "Arrêté. {succeeded} leçons sur {total}, {generated} exercices."
+      failed: "La génération par lot a échoué. Veuillez réessayer."
     max_reached: "Nombre maximal de régénérations atteint. Modifiez les exercices manuellement ou importez une conversation plus longue."
     feedback:
       title: "Pourquoi régénérer ?"

@@ -1846,6 +1846,16 @@ content:
     deleted: "Lição excluída."
     delete_failed: "Não foi possível excluir a lição."
   ai_exercises:
+    batch:
+      button: "Gerar para todas as lições"
+      running: "A gerar…"
+      none: "Todas as lições já têm exercícios."
+      cost_confirm: "Isto gera exercícios para {n} lições (cerca de {tokens} tokens). Continuar?"
+      progress: "Lição {current} de {total}…"
+      cancel: "Cancelar"
+      done: "{succeeded} de {total} lições: {generated} exercícios, {skipped} ignoradas."
+      cancelled: "Parado. {succeeded} de {total} lições, {generated} exercícios."
+      failed: "A geração em lote falhou. Tente novamente."
     max_reached: "Número máximo de regenerações atingido. Edite os exercícios manualmente ou importe uma conversa mais longa."
     feedback:
       title: "Porque regenerar?"

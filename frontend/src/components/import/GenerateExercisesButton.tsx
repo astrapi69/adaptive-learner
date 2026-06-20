@@ -37,19 +37,14 @@ import {
 } from "../../lib/ai/generate-exercises";
 import { cardsToExercises } from "../../lib/ai/cards-to-exercises";
 import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
+import type { ResolvedAiProvider } from "../../lib/ai/resolve-provider";
 import { LANGUAGE_OPTIONS } from "../../lib/content/language-options";
-import type { AIProvider } from "../../lib/constants";
 import type { ContentLessonExercise } from "../../storage/types";
 import { notify } from "../../utils/notify";
 
 type Translate = (key: string, fallback?: string) => string;
 
-/** Provider config resolved by the caller (mode-specific). */
-export interface ResolvedAiProvider {
-  provider: AIProvider;
-  model: string;
-  apiKey: string;
-}
+export type { ResolvedAiProvider };
 
 /** Max regenerations per lesson before the button disables (AIX-05). */
 export const MAX_REGENERATIONS = 3;
