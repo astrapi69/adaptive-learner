@@ -1,13 +1,11 @@
 /**
  * Dexie-mode NotebookLM service (Phase 32 / v1.19.0).
  *
- * Full CRUD on ``study_questions`` runs against IndexedDB. AI
- * generators + study-guide call require the backend AI hook +
- * a stored API key, neither of which the Dexie path can
- * reach from the browser without significant additional work.
- * Mirroring the Anki precedent: throw ``ApiError(501)`` with a
- * "switch to API mode" message; the page surfaces it as a
- * toast.
+ * Full CRUD on ``study_questions`` runs against IndexedDB. The AI generators
+ * (study questions + study guide) run BROWSER-DIRECT with the user's own API
+ * key (#902), mirroring the Anki-extraction precedent (#807): the gate is
+ * "is a key configured?", not "is the backend reachable?". Only when no key
+ * is configured do we report that a key is required.
  */
 
 import {ApiError} from "../../api/client";
@@ -20,6 +18,15 @@ import type {
     StudyQuestionListFilters,
     StudyQuestionUpdateBody,
 } from "../types";
+import {
+    assembleProjectTranscript,
+    assembleStudyGuideContext,
+    generateQuestionsFromProject,
+    generateQuestionsFromSession,
+    generateStudyGuide,
+    resolveDexieAiConfig,
+    type GeneratedQuestion,
+} from "./notebooklm-ai";
 
 const ALLOWED_TYPES = new Set([
     "open",
@@ -156,28 +163,109 @@ export async function deleteStudyQuestion(
     await db.studyQuestions.delete(questionId);
 }
 
-// AI paths — Dexie mode throws.
+// AI paths — browser-direct with the user's own API key (#902).
 
-export async function generateFromSessionDexie(): Promise<StudyQuestion[]> {
-    throw new ApiError(
-        501,
-        "AI study-question generation requires API mode. " +
-            "Switch to API mode in Settings to enable.",
-    );
+const NO_KEY_MESSAGE =
+    "An API key is required to use the AI generators. " +
+    "Configure a provider in Settings.";
+
+/** Persist parsed questions as ``study_questions`` rows and return them. */
+async function persistQuestions(
+    questions: GeneratedQuestion[],
+    meta: {userId: string; projectId: string; sessionId: string | null},
+): Promise<StudyQuestion[]> {
+    const db = getDb();
+    const ts = nowIso();
+    const rows: StudyQuestionRow[] = questions.map((q) => ({
+        id: newId(),
+        user_id: meta.userId,
+        project_id: meta.projectId,
+        session_id: meta.sessionId,
+        question: q.question,
+        expected_answer: q.expected_answer,
+        question_type: q.question_type,
+        difficulty: q.difficulty,
+        topic: q.topic,
+        edited: false,
+        created_at: ts,
+        updated_at: ts,
+    }));
+    if (rows.length > 0) await db.studyQuestions.bulkPut(rows);
+    return rows.map(rowToOut);
 }
 
-export async function generateFromProjectDexie(): Promise<StudyQuestion[]> {
-    throw new ApiError(
-        501,
-        "AI study-question generation requires API mode. " +
-            "Switch to API mode in Settings to enable.",
-    );
+export async function generateFromSessionDexie(
+    sessionId: string,
+): Promise<StudyQuestion[]> {
+    const db = getDb();
+    const session = await db.learningSessions.get(sessionId);
+    if (!session) {
+        throw new ApiError(404, `Session ${sessionId} not found`);
+    }
+    const project = session.project_id
+        ? await db.learningProjects.get(session.project_id)
+        : null;
+    if (!project) {
+        throw new ApiError(404, `Project for session ${sessionId} not found`);
+    }
+    const config = await resolveDexieAiConfig(project.user_id);
+    if (!config) throw new ApiError(400, NO_KEY_MESSAGE);
+
+    const questions = await generateQuestionsFromSession(sessionId, config);
+    if (questions.length === 0) {
+        throw new ApiError(
+            400,
+            "No study questions could be generated from this session.",
+        );
+    }
+    return persistQuestions(questions, {
+        userId: project.user_id,
+        projectId: project.id,
+        sessionId,
+    });
 }
 
-export async function studyGuideDexie(): Promise<string> {
-    throw new ApiError(
-        501,
-        "Study guide generation requires API mode for the AI call. " +
-            "Switch to API mode in Settings to enable.",
+export async function generateFromProjectDexie(
+    projectId: string,
+): Promise<StudyQuestion[]> {
+    const assembled = await assembleProjectTranscript(projectId);
+    if (!assembled) {
+        throw new ApiError(404, `Project ${projectId} not found`);
+    }
+    const config = await resolveDexieAiConfig(assembled.userId);
+    if (!config) throw new ApiError(400, NO_KEY_MESSAGE);
+
+    const questions = await generateQuestionsFromProject(
+        assembled.transcript,
+        config,
     );
+    if (questions.length === 0) {
+        throw new ApiError(
+            400,
+            "No study questions could be generated for this project.",
+        );
+    }
+    return persistQuestions(questions, {
+        userId: assembled.userId,
+        projectId,
+        sessionId: null,
+    });
+}
+
+export async function studyGuideDexie(projectId: string): Promise<string> {
+    const assembled = await assembleStudyGuideContext(projectId);
+    if (!assembled) {
+        throw new ApiError(404, `Project ${projectId} not found`);
+    }
+    const config = await resolveDexieAiConfig(assembled.userId);
+    if (!config) throw new ApiError(400, NO_KEY_MESSAGE);
+
+    const markdown = await generateStudyGuide(assembled.ctx, config);
+    if (!markdown.trim()) {
+        throw new ApiError(
+            503,
+            "The study guide could not be generated. Please try again.",
+        );
+    }
+    return markdown;
 }
