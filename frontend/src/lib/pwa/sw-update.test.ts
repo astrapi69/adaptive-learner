@@ -6,7 +6,11 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { activateAndReload, checkForUpdate } from "./sw-update";
+import {
+  activateAndReload,
+  activateInBackground,
+  checkForUpdate,
+} from "./sw-update";
 import type { VersionManifest } from "./version-check";
 
 const current: VersionManifest = { version: "1.85.0", buildHash: "aaaaaaa" };
@@ -83,6 +87,100 @@ describe("activateAndReload", () => {
     } as Location);
 
     await activateAndReload();
+
+    expect(reload).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("activateInBackground (#846)", () => {
+  /** Install a fake navigator.serviceWorker that never takes control. */
+  function stubServiceWorker(reg: Partial<ServiceWorkerRegistration> | null) {
+    const sw = {
+      getRegistration: vi.fn(async () => reg ?? undefined),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    };
+    Object.defineProperty(navigator, "serviceWorker", {
+      value: sw,
+      configurable: true,
+    });
+    return sw;
+  }
+
+  afterEach(() => {
+    // Remove the stub so the other tests (which rely on its absence) are clean.
+    if ("serviceWorker" in navigator) {
+      delete (navigator as { serviceWorker?: unknown }).serviceWorker;
+    }
+    vi.restoreAllMocks();
+  });
+
+  it("reloads once when there is no service-worker registration", async () => {
+    stubServiceWorker(null);
+    const reload = vi.fn();
+    await activateInBackground({ reload, sleep: async () => {} });
+    expect(reload).toHaveBeenCalledTimes(1);
+  });
+
+  // Core #846 contract: a SW that never yields a waiting worker / never fires
+  // controllerchange must be retried up to maxAttempts, then give up SILENTLY —
+  // no reload, so a stale build is never force-loaded into a re-banner loop.
+  it("retries up to maxAttempts then stops silently (no reload)", async () => {
+    const update = vi.fn(async () => {});
+    // `waiting` stays undefined and no controllerchange ever fires.
+    const reg = { update, waiting: undefined } as unknown as ServiceWorkerRegistration;
+    stubServiceWorker(reg);
+    const reload = vi.fn();
+
+    await activateInBackground({
+      reload,
+      maxAttempts: 15,
+      now: () => 0, // freeze the clock so maxTotalMs never trips first
+      sleep: async () => {}, // instant backoff
+    });
+
+    expect(update).toHaveBeenCalledTimes(15);
+    expect(reload).not.toHaveBeenCalled();
+  });
+
+  it("stops at the total-time ceiling before exhausting all attempts", async () => {
+    const update = vi.fn(async () => {});
+    const reg = { update, waiting: undefined } as unknown as ServiceWorkerRegistration;
+    stubServiceWorker(reg);
+    const reload = vi.fn();
+
+    // Clock jumps 30s per read; with a 60s ceiling the loop ends well before 15.
+    let clock = 0;
+    await activateInBackground({
+      reload,
+      maxAttempts: 15,
+      maxTotalMs: 60_000,
+      now: () => (clock += 30_000),
+      sleep: async () => {},
+    });
+
+    expect(update.mock.calls.length).toBeLessThan(15);
+    expect(reload).not.toHaveBeenCalled();
+  });
+
+  it("reloads when the fresh worker takes control (controllerchange)", async () => {
+    const update = vi.fn(async () => {});
+    const reg = { update, waiting: undefined } as unknown as ServiceWorkerRegistration;
+    const sw = stubServiceWorker(reg);
+    // Fire controllerchange on the first registered listener after one tick.
+    sw.addEventListener.mockImplementation(
+      (event: string, cb: () => void) => {
+        if (event === "controllerchange") queueMicrotask(cb);
+      },
+    );
+    const reload = vi.fn();
+
+    await activateInBackground({
+      reload,
+      maxAttempts: 15,
+      now: () => 0,
+      sleep: async () => {},
+    });
 
     expect(reload).toHaveBeenCalledTimes(1);
   });
