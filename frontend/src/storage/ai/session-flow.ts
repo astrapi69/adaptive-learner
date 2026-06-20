@@ -20,7 +20,7 @@ import {
     type LearningSessionRow,
     type SessionMessageRow,
     type StepEvaluationRow,
-} from "./dexie/db";
+} from "../dexie/db";
 import {
     buildAnalysisContext,
     buildLanguageDirective,
@@ -31,17 +31,17 @@ import {
     type LearningContext,
     type RecentMistake,
 } from "./prompts";
-import type {AdaptiveLearnerDB} from "./dexie/db";
+import type {AdaptiveLearnerDB} from "../dexie/db";
 import {evaluateStep, type StepEvaluation} from "./step-evaluator";
-import {ApiError} from "../api/client";
-import {LEARNING_METHODS, type LearningMethod} from "../lib/constants";
+import {ApiError} from "../../api/client";
+import {LEARNING_METHODS, type LearningMethod} from "../../lib/constants";
 import type {
     ConversationAnalysisResult,
     LearningProject,
     LearningSession,
     SessionMessage,
     StepEvaluationVerdict,
-} from "../types/domain";
+} from "../../types/domain";
 
 const MIN_STEP = 1;
 const MAX_STEP = 7;

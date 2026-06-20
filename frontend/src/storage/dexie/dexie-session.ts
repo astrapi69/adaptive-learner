@@ -8,7 +8,7 @@
 import { getDb, newId, nowIso } from "./db";
 import { requireRow, rowToProfile } from "./dexie-rows";
 import { calculateProfile, questionsForLang } from "../assessment";
-import { sendMessage, sendMessageStream, startSession } from "../session-flow";
+import { sendMessage, sendMessageStream, startSession } from "../ai/session-flow";
 import { aggregateProgress, buildCommitFromSession, rowToCommit } from "../tracking";
 import { buildSpacedRecommendations, rankTools, recencyFromCommits } from "../tools";
 import { awardXPForSession } from "../gamification";

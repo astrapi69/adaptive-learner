@@ -17,7 +17,7 @@ import type {
   AiValidationCacheRecord,
 } from "./types";
 import { getDb } from "./dexie/db";
-import { aiComplete, aiCompleteWithMeta, resolveModel } from "./ai-providers";
+import { aiComplete, aiCompleteWithMeta, resolveModel } from "./ai/ai-providers";
 import type { AIProvider } from "../lib/constants";
 import {
   buildAiValidationMessages,

@@ -21,8 +21,8 @@
  *     the toast / fallback machinery on the picker triggers.
  */
 
-import {ApiError} from "../api/client";
-import type {AIProvider} from "../lib/constants";
+import {ApiError} from "../../api/client";
+import type {AIProvider} from "../../lib/constants";
 
 export interface ModelInfo {
     id: string;

@@ -16,9 +16,9 @@ import { _resetDbForTests } from "../../storage/dexie/db";
 import { dexieStorage } from "../../storage/dexie-storage";
 import { _resetStorageCacheForTests } from "../../storage";
 import { _resetApiKeyStatusCacheForTests } from "../../hooks/settings/useApiKeyStatus";
-import { aiComplete } from "../../storage/ai-providers";
+import { aiComplete } from "../../storage/ai/ai-providers";
 
-vi.mock("../../storage/ai-providers", () => ({
+vi.mock("../../storage/ai/ai-providers", () => ({
   aiComplete: vi.fn(),
   resolveModel: vi.fn(() => "test-model"),
 }));

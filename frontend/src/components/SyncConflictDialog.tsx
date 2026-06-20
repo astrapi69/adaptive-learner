@@ -32,7 +32,7 @@ import {extractJsonObject} from "../lib/extract-json";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import {getDb} from "../storage/dexie/db";
-import {aiComplete, resolveModel} from "../storage/ai-providers";
+import {aiComplete, resolveModel} from "../storage/ai/ai-providers";
 import type {
     ConflictBundle,
     ConflictChoice,

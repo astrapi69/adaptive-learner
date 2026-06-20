@@ -9,7 +9,7 @@
 
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
-import {ApiError} from "../api/client";
+import {ApiError} from "../../api/client";
 import {
     clearModelCache,
     fetchAnthropicModels,

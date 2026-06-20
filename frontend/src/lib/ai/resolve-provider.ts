@@ -10,7 +10,7 @@
 
 import { getStorage } from "../../storage";
 import { getDb } from "../../storage/dexie/db";
-import { resolveModel } from "../../storage/ai-providers";
+import { resolveModel } from "../../storage/ai/ai-providers";
 import type { AIProvider } from "../constants";
 
 /** Provider config for a browser-direct completion. */

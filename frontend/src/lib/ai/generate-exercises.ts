@@ -14,7 +14,7 @@
  * itself never reaches for it.
  */
 
-import { aiComplete } from "../../storage/ai-providers";
+import { aiComplete } from "../../storage/ai/ai-providers";
 import type { AIProvider } from "../constants";
 import {
   buildExerciseGenerationPrompt,

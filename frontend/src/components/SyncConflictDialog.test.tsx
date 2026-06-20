@@ -23,7 +23,7 @@ vi.mock("../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
-vi.mock("../storage/ai-providers", () => ({
+vi.mock("../storage/ai/ai-providers", () => ({
     aiComplete: vi.fn(),
     resolveModel: vi.fn(() => "test-model"),
 }));

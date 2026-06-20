@@ -1,7 +1,7 @@
 import {describe, expect, it} from "vitest";
 
 import {buildAnalysisContext, buildLanguageDirective} from "./prompts";
-import type {ConversationAnalysisResult} from "../types/domain";
+import type {ConversationAnalysisResult} from "../../types/domain";
 
 const RICH: ConversationAnalysisResult = {
     topic: "Spanish past tense",

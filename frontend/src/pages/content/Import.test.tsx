@@ -19,9 +19,9 @@ import {dexieStorage} from "../../storage/dexie-storage";
 import {_resetStorageCacheForTests} from "../../storage";
 import * as analysisModule from "../../chat_import/analysis";
 import * as storageModule from "../../storage";
-import * as aiProvidersModule from "../../storage/ai-providers";
+import * as aiProvidersModule from "../../storage/ai/ai-providers";
 
-vi.mock("../../storage/ai-providers", () => ({
+vi.mock("../../storage/ai/ai-providers", () => ({
     aiComplete: vi.fn().mockResolvedValue(
         JSON.stringify({topic: "Mocked", summary: "Mocked analysis."}),
     ),

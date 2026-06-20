@@ -22,8 +22,8 @@
  * doesn't need to branch.
  */
 
-import {ApiError} from "../api/client";
-import type {AIProvider} from "../lib/constants";
+import {ApiError} from "../../api/client";
+import type {AIProvider} from "../../lib/constants";
 
 export interface ChatMessage {
     role: "system" | "user" | "assistant";

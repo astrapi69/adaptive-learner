@@ -10,7 +10,7 @@
  */
 
 import type { AIProvider } from "../lib/constants";
-import { aiComplete, resolveModel } from "./ai-providers";
+import { aiComplete, resolveModel } from "./ai/ai-providers";
 import { getDb } from "./dexie/db";
 
 /** One parsed flashcard candidate. Shape matches the vocabulary-derived

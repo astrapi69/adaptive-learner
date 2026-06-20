@@ -20,7 +20,7 @@
  * detail.
  */
 
-import {aiComplete, resolveModel} from "../storage/ai-providers";
+import {aiComplete, resolveModel} from "../storage/ai/ai-providers";
 import type {AIProvider, LearningMethod} from "../lib/constants";
 import {extractJsonObject} from "../lib/extract-json";
 import type {

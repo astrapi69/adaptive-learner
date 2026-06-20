@@ -6,13 +6,13 @@
  * the API mode would.
  */
 
-import PROMPTS_RAW from "../data/session-prompts.json";
-import {LEARNING_METHODS, type LearningMethod} from "../lib/constants";
+import PROMPTS_RAW from "../../data/session-prompts.json";
+import {LEARNING_METHODS, type LearningMethod} from "../../lib/constants";
 import type {
     ConversationAnalysisResult,
     LearningProfile,
     LearningProject,
-} from "../types/domain";
+} from "../../types/domain";
 
 interface PromptCell {
     de: string;

@@ -7,7 +7,7 @@
 
 import { getDb, nowIso } from "./db";
 import { ensureSettings, requireRow, rowToSettings } from "./dexie-rows";
-import { fetchAvailableModels } from "../model-discovery";
+import { fetchAvailableModels } from "../ai/model-discovery";
 import { ApiError } from "../../api/client";
 import type { UserSettingsRow } from "./db";
 import type { AIProvider } from "../../lib/constants";
