@@ -4,24 +4,28 @@ AdaptiveLearner's test discipline is enforced by `make test`
 on every change. The strategy is a pyramid: unit at the base,
 integration in the middle, E2E smoke at the top.
 
-## Test counts (v1.20.0)
+## Test counts (v1.79.0 baseline, verified 2026-06-15)
 
 | Layer | Count | Tool |
 |---|---|---|
-| Backend unit + integration | 786 | pytest ^9 |
-| Plugin tests (10 plugins) | 615 | pytest ^9 |
-| Frontend unit + integration | 1233 | Vitest 4 |
-| E2E smoke | 16 spec files | Playwright |
-| **Total (`make test`)** | **2634** | |
+| Backend unit + integration | 1215 | pytest ^9 |
+| Plugin tests (13 plugins) | 1018 | pytest ^9 |
+| Frontend unit + integration | 4139 | Vitest 4 |
+| **Total (`make test`)** | **6372** | |
+| E2E smoke | 17 spec files | Playwright |
+| Dexie-mode release gate | 73 specs | Playwright |
 
-Plugin breakdown: assessment 110 + ai-anthropic 34 +
-ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
-tools 58 + gamification 23 + anki 20 + notebooklm 27.
+The counts grow every release; treat them as a snapshot, not
+a hard contract. `docs/audits/current-coverage.md` is the
+canonical, always-current source. The 13 plugins are
+assessment, the three AI providers (anthropic / openai /
+gemini), session, tracking, tools, gamification, anki,
+notebooklm, learning-repo, content-loader, and missions.
 
 ## Backend pytest
 
 ```bash
-make test-backend      # 786 tests, ~35s
+make test-backend      # ~1215 tests
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```

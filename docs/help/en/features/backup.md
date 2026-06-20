@@ -14,8 +14,9 @@ under **Settings → Data**.
 A backup is a **complete snapshot**: all 30 data tables (learning
 projects, sessions, lesson progress, element-level errors,
 gamification with XP/streak/badges, missions, Anki cards, notes
-and more) **plus your downloaded content sets**. Nothing important
-is left behind.
+and more), **your downloaded content sets**, and a **localStorage
+snapshot** (your contributions, custom learning paths and local
+preferences). Nothing important is left behind.
 
 Before the export, the app shows a **"Your backup contains …"**
 preview with record counts per area, so you can see what will be
@@ -75,8 +76,11 @@ learning flow.
 ## Both storage modes
 
 Backup and restore work in **both** storage modes — server (API)
-and browser-only (Dexie/IndexedDB). The format is a single JSON
-file; there is no proprietary archive format.
+and browser-only (Dexie/IndexedDB). The backup is an **`.alb`
+file** — a ZIP archive that bundles the data tables, the
+localStorage snapshot and the content sets. `.alb` files are
+accepted at every backup-import surface (Settings → Data and the
+Danger Zone). Older single-JSON backups still import cleanly.
 
 !!! note "Privacy"
     The backup stays entirely in your hands. It is only stored

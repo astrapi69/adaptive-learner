@@ -43,8 +43,9 @@ KI-Anbieter außerhalb des Browsers sitzt.
 
 ## Die ersten fünf Minuten
 
-1. **App öffnen** und Sprache wählen. Alle 8 UI-Sprachen
-   sind voll übersetzt (DE, EN, ES, FR, EL, PT, TR, JA).
+1. **App öffnen** und Sprache wählen. Alle 11 UI-Sprachen
+   sind voll übersetzt (DE, EL, EN, ES, FR, HI, ID, JA, KO,
+   PT, TR).
 2. **Onboarding: nur Name + Thema.** Der Schnellstart
    verlangt nur diese zwei Felder, alles andere nimmt
    Vorgaben. Danach kannst du „Direkt loslegen" wählen oder

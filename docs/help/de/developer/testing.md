@@ -5,24 +5,29 @@ jeder Änderung erzwungen. Die Strategie ist eine Pyramide:
 Unit-Tests an der Basis, Integration in der Mitte, E2E-Smoke
 oben.
 
-## Test-Zahlen (v1.20.0)
+## Test-Zahlen (v1.79.0-Baseline, verifiziert 2026-06-15)
 
 | Schicht | Anzahl | Werkzeug |
 |---|---|---|
-| Backend-Unit + -Integration | 786 | pytest ^9 |
-| Plugin-Tests (10 Plugins) | 615 | pytest ^9 |
-| Frontend-Unit + -Integration | 1233 | Vitest 4 |
-| E2E-Smoke | 16 Spec-Dateien | Playwright |
-| **Gesamt (`make test`)** | **2634** | |
+| Backend-Unit + -Integration | 1215 | pytest ^9 |
+| Plugin-Tests (13 Plugins) | 1018 | pytest ^9 |
+| Frontend-Unit + -Integration | 4139 | Vitest 4 |
+| **Gesamt (`make test`)** | **6372** | |
+| E2E-Smoke | 17 Spec-Dateien | Playwright |
+| Dexie-Modus-Release-Gate | 73 Specs | Playwright |
 
-Plugin-Aufschlüsselung: assessment 110 + ai-anthropic 34 +
-ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
-tools 58 + gamification 23 + anki 20 + notebooklm 27.
+Die Zahlen wachsen mit jedem Release; behandle sie als
+Momentaufnahme, nicht als harten Vertrag.
+`docs/audits/current-coverage.md` ist die kanonische,
+stets aktuelle Quelle. Die 13 Plugins sind assessment, die
+drei KI-Anbieter (anthropic / openai / gemini), session,
+tracking, tools, gamification, anki, notebooklm,
+learning-repo, content-loader und missions.
 
 ## Backend-pytest
 
 ```bash
-make test-backend      # 786 Tests, ~35s
+make test-backend      # ~1215 Tests
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb  # bei erstem Fehler in Debugger
 ```

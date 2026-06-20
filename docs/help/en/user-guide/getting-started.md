@@ -41,8 +41,9 @@ the browser.
 
 ## The first five minutes
 
-1. **Open the app** and choose a language. All 8 UI languages are
-   fully translated (DE, EN, ES, FR, EL, PT, TR, JA).
+1. **Open the app** and choose a language. All 11 UI languages
+   are fully translated (DE, EL, EN, ES, FR, HI, ID, JA, KO,
+   PT, TR).
 2. **Onboarding: only name + topic.** The quick start asks for
    just these two fields, everything else takes defaults.
    Afterwards you can choose "Jump right in" or optionally set up

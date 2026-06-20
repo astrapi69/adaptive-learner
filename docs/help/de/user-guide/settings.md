@@ -3,8 +3,8 @@
 Die Einstellungen-Seite sammelt alles, was du ohne Code- oder
 YAML-Eingriff anpassen kannst. Abschnitte, von oben nach unten:
 
-1. **Sprache** — UI-Sprache (DE / EN / ES / FR / EL / PT /
-   TR / JA, alle voll übersetzt).
+1. **Sprache** — UI-Sprache (DE / EL / EN / ES / FR / HI /
+   ID / JA / KO / PT / TR, alle voll übersetzt).
 2. **KI-Anbieter + Modell-Picker** — welcher Anbieter deine
    Nachrichten sieht und welches Modell zum Einsatz kommt.
 3. **API-Schlüssel** — pro Anbieter mit Quellen-Attribution
@@ -23,9 +23,10 @@ YAML-Eingriff anpassen kannst. Abschnitte, von oben nach unten:
 ## Sprache
 
 Tauscht jeden UI-String beim nächsten Render live aus via
-`PATCH /api/settings/{user_id}`. Alle 8 Sprachen sind
-First-Class — DE / EN / ES / FR / EL / PT / TR / JA — jede mit
-einem voll übersetzten Katalog. Über `localStorage` persistent.
+`PATCH /api/settings/{user_id}`. Alle 11 Sprachen sind
+First-Class — DE / EL / EN / ES / FR / HI / ID / JA / KO / PT /
+TR — jede mit einem voll übersetzten Katalog. Über
+`localStorage` persistent.
 
 ## KI-Anbieter + Modell-Picker
 
@@ -44,7 +45,7 @@ zurück und zeigt einen „Offline-Default"-Hinweis. Der Header
 der Sitzung liest `<Anbieter>: <Modellname>`; volle ID +
 Kontext-Fenster sitzen im Tooltip.
 
-## API-Schlüssel (Phase 34 / v1.20.0)
+## API-Schlüssel
 
 Jeder Anbieter hat seine eigene Zeile: ein Schlüssel-
 Eingabefeld, einen Speichern-Knopf, einen Entfernen-Knopf,
@@ -71,6 +72,20 @@ Auflösungskette (höchste Priorität gewinnt): Umgebung >
 `secrets.yaml` > DB. Siehe
 [die Konfigurations-Doku](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) für die
 volle Aufschlüsselung.
+
+Schlüssel-Eingaben nutzen ein maskiertes **Secret-Eingabefeld**
+(mit Anzeigen/Verbergen-Umschalter) und lösen den Passwort-Manager
+des Browsers nicht aus.
+
+## Konfigurierte Anbieter
+
+Eine **Anbieter-Übersicht** listet die eingerichteten KI-Anbieter,
+jeweils mit einer **maskierten Schlüssel-Vorschau**, sodass du auf
+einen Blick siehst, welche Anbieter bereit sind. Jede Zeile hat
+einen **Test-Knopf**, der den Modell-Listen-Endpunkt des Anbieters
+aufruft und ok / ungültiger Schlüssel / Rate-Limit / Netzwerkfehler
+meldet — ein sicherer Check, der keine Generierungs-Tokens
+verbraucht.
 
 ## Speichermodus
 
@@ -195,3 +210,20 @@ Im Lokal-Modus blendet das Panel die Zeilen aus, die nur bei
 laufendem Backend Sinn ergeben (Python-Version,
 FastAPI / SQLAlchemy / Pydantic / PluginForge-Versionen,
 DB-Pfad).
+
+### App teilen
+
+Der Über-Tab hat einen **App teilen**-Eintrag, der einen scannbaren
+**QR-Code** der öffentlichen App-URL zeigt, mit Kopieren- /
+PNG-Laden- / Nativ-Teilen-Aktionen — praktisch, um die App aufs
+Handy zu bringen.
+
+### Nach Updates suchen
+
+Ein **Nach Updates suchen**-Knopf vergleicht deine Version mit dem
+neuesten GitHub-Release. Der Desktop-Build führt zusätzlich eine
+**Auto-Update-Prüfung** über die GitHub-Releases-API durch und
+meldet, wenn eine neuere Version verfügbar ist. Nach einem
+PWA-Update bleibt das „Neue Version verfügbar"-Banner verschwunden,
+sobald du es akzeptierst (es taucht nicht bei jedem Reload wieder
+auf).

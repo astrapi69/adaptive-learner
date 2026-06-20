@@ -18,7 +18,7 @@ forwards transparently.
 
 ## Authentication
 
-v1.20.0 has no per-request authentication. The system is
+The API has no per-request authentication. The system is
 single-user-per-browser: a `user_id` is stored in
 `localStorage` and passed in URL paths
 (`/users/{user_id}/...`).
@@ -148,7 +148,7 @@ readability.
 
 ## Pagination
 
-Endpoints do not paginate at v1.20.0. The dataset is
+Endpoints do not paginate. The dataset is
 single-user and small; the largest list (sessions per
 project) hits hundreds, not thousands. A future phase will
 add cursor-based pagination if the data shape grows.

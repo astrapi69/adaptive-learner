@@ -127,7 +127,7 @@ Version: dieselbe Nummer in allen 10
 Plugin-`pyproject.toml`-Dateien plus den drei Plugin-
 `__init__.py`-`__version__`-Literalen. Eine spätere „Core
 vs Third-Party-Plugin"-Entscheidung könnte das entkoppeln;
-das v1.20.0-Setup ist einheitlich über die 18 propagierten
+das aktuelle Setup ist einheitlich über die 18 propagierten
 Dateien.
 
 ## Hotfix-Flow
