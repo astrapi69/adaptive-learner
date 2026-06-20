@@ -23,6 +23,7 @@ import {
 } from "./db";
 import {
     buildAnalysisContext,
+    buildLanguageDirective,
     buildLearningContext,
     buildPrompt,
     type CompletedLesson,
@@ -320,6 +321,10 @@ export async function startSession(opts: {
         cycleStep,
         opts.lang ?? "en",
     );
+    // #827 — the prompt-cell matrix only carries DE + EN, so for every other
+    // UI language the AI would otherwise reply in English. Append an explicit
+    // output-language directive naming the learner's language.
+    systemPrompt = `${systemPrompt}\n\n${buildLanguageDirective(opts.lang ?? "en")}`;
     // When the session is started from an analysed chat import, fold the
     // analysis into the system prompt so the AI continues with the
     // imported context instead of starting blank. Mirrors the backend

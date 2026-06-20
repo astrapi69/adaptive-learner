@@ -638,6 +638,56 @@ def build_prompt(
     return f"{cell}\n\n{context}"
 
 
+# Human language names for the explicit output-language directive (#827).
+# The prompt-cell matrix above only carries DE + EN, so for every other UI
+# language the AI receives an English prompt and -- without this directive --
+# replies in English. Maps the 11 UI language codes to (English name, endonym).
+LANGUAGE_NAMES: dict[str, tuple[str, str]] = {
+    "de": ("German", "Deutsch"),
+    "el": ("Greek", "Ελληνικά"),
+    "en": ("English", "English"),
+    "es": ("Spanish", "Español"),
+    "fr": ("French", "Français"),
+    "hi": ("Hindi", "हिन्दी"),
+    "id": ("Indonesian", "Bahasa Indonesia"),
+    "ja": ("Japanese", "日本語"),
+    "ko": ("Korean", "한국어"),
+    "pt": ("Portuguese", "Português"),
+    "tr": ("Turkish", "Türkçe"),
+}
+
+
+def _base_lang(lang: str) -> str:
+    """Bare language subtag: ``"de-DE"`` / ``"pt_BR"`` -> ``"de"`` / ``"pt"``."""
+    if not isinstance(lang, str) or not lang:
+        return "en"
+    return lang.lower().replace("_", "-").split("-", 1)[0]
+
+
+def build_language_directive(lang: str) -> str:
+    """An explicit \"reply in <language>\" instruction for the session prompt.
+
+    The 42-cell matrix only has DE + EN, so a learner on any of the other
+    nine UI languages would otherwise get English replies. This directive
+    names the learner's language so the AI answers in it regardless of the
+    language the instructions themselves are written in. Falls back to
+    English for an unknown / empty code. Kept byte-identical to the Dexie
+    mirror ``buildLanguageDirective`` in ``storage/prompts.ts`` (#827).
+
+    Args:
+        lang: The learner's UI language code (e.g. ``"ko"``, ``"pt-BR"``).
+
+    Returns:
+        A one-line directive, always non-empty.
+    """
+    english, endonym = LANGUAGE_NAMES.get(_base_lang(lang), LANGUAGE_NAMES["en"])
+    named = english if english == endonym else f"{english} ({endonym})"
+    return (
+        f"IMPORTANT: Always write your replies to the learner in {named}, "
+        "regardless of the language of these instructions."
+    )
+
+
 def _str_list(value: Any) -> list[str]:
     """Coerce an analysis field to a clean list of non-empty strings."""
     if not isinstance(value, list):
