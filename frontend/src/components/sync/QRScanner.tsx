@@ -31,7 +31,7 @@
 import {useEffect, useRef, useState} from "react";
 import {Html5Qrcode} from "html5-qrcode";
 
-import {parsePairingUri, type PairingPayload} from "../../storage/sync-engine";
+import {parsePairingUri, type PairingPayload} from "../../storage/sync/sync-engine";
 
 const SCANNER_DIV_ID = "qr-scanner-region";
 const FPS = 10;

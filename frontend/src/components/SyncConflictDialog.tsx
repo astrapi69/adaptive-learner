@@ -37,7 +37,7 @@ import type {
     ConflictBundle,
     ConflictChoice,
     ConflictResolution,
-} from "../storage/sync-engine";
+} from "../storage/sync/sync-engine";
 import {notify} from "../utils/notify";
 import type {AIProvider} from "../lib/constants";
 

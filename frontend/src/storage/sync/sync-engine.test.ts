@@ -24,7 +24,7 @@ import {
     type ConflictBundle,
     type ConflictResolution,
 } from "./sync-engine";
-import {_resetDbForTests, getDb} from "./dexie/db";
+import {_resetDbForTests, getDb} from "../dexie/db";
 
 beforeEach(async () => {
     await _resetDbForTests();

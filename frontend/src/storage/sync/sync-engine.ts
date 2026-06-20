@@ -31,9 +31,9 @@
  * fires automatically.
  */
 
-import {ApiError} from "../api/client";
-import {getDb} from "./dexie/db";
-import type {ImportedConversation} from "../types/domain";
+import {ApiError} from "../../api/client";
+import {getDb} from "../dexie/db";
+import type {ImportedConversation} from "../../types/domain";
 
 // ----- Persistence ----------------------------------------------------
 
