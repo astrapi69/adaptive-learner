@@ -76,12 +76,12 @@ export default function GlobalShortcuts() {
                 action: () => navigate("/content"),
             },
             {
-                id: "nav-statistics",
+                id: "nav-progress",
                 key: "p",
                 modifiers: {alt: true},
                 context: "navigation",
-                description: "Go to statistics",
-                action: () => navigate("/statistics"),
+                description: "Go to progress",
+                action: () => navigate("/progress"),
             },
         ];
         if (helpOpen) {

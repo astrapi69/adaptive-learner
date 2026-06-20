@@ -59,6 +59,18 @@ data_export:
   cat_settings: "Paramètres"
   cat_ai_config: "Sauvegarde de clé IA"
 nav:
+  group:
+    learn: "Apprendre"
+    content: "Contenu"
+    progress: "Progrès"
+    more: "Plus"
+  tab:
+    learn: "Apprendre"
+    content: "Contenu"
+    discover: "Découvrir"
+    progress: "Progrès"
+    more: "Plus"
+  primary: "Navigation principale"
   discover: "Découvrir du contenu"
   offline_long: "Hors ligne — les sessions passées restent lisibles"
   sync_pending: "{n} modification(s) en attente de synchronisation"
@@ -416,6 +428,10 @@ session:
   rating_notes_aria: "Notes de session"
   rating_notes_placeholder: "Ce qui a marché, ce qui n'a pas marché, à essayer la prochaine fois…"
 progress:
+  tab:
+    overview: "Aperçu"
+    stats: "Statistiques"
+    paths: "Mes parcours"
   title: Progres
   chart_timeline: Comprehension et stress au fil du temps
   chart_methods: Distribution des methodes
@@ -1804,6 +1820,8 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  anki_export:
+    button: "Export Anki"
   discover_more: "Trouver plus de contenu"
   book:
     companion: "Complément du livre"
@@ -2790,6 +2808,9 @@ resource:
   free: "Gratuit"
   paid: "Cours"
 discover:
+  tab:
+    discover: "Découvrir"
+    import: "Importer"
   to_content: "Aller au navigateur de contenu"
   title: "Découvrir du contenu"
   subtitle: "Trouvez du matériel d'apprentissage avant de le télécharger."

@@ -59,6 +59,18 @@ data_export:
   cat_settings: "Ayarlar"
   cat_ai_config: "AI anahtar yedeği"
 nav:
+  group:
+    learn: "Öğren"
+    content: "İçerik"
+    progress: "İlerleme"
+    more: "Daha fazla"
+  tab:
+    learn: "Öğren"
+    content: "İçerik"
+    discover: "Keşfet"
+    progress: "İlerleme"
+    more: "Daha fazla"
+  primary: "Ana gezinme"
   discover: "İçerik keşfet"
   offline_long: "Çevrimdışı — önceki oturumlar okunabilir kalır"
   sync_pending: "{n} değişiklik eşitlenmeyi bekliyor"
@@ -416,6 +428,10 @@ session:
   rating_notes_aria: "Oturum notları"
   rating_notes_placeholder: "Ne işe yaradı, ne yaramadı, bir dahaki sefere ne denenmeli…"
 progress:
+  tab:
+    overview: "Genel bakış"
+    stats: "İstatistikler"
+    paths: "Yollarım"
   title: İlerleme
   chart_timeline: Zaman içinde anlayış ve stres
   chart_methods: Yöntem dağılımı
@@ -1802,6 +1818,8 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  anki_export:
+    button: "Anki dışa aktarma"
   discover_more: "Daha fazla içerik bul"
   book:
     companion: "Kitap eki"
@@ -2788,6 +2806,9 @@ resource:
   free: "Ücretsiz"
   paid: "Kurs"
 discover:
+  tab:
+    discover: "Keşfet"
+    import: "İçe aktar"
   to_content: "İçerik Tarayıcısına git"
   title: "İçerik keşfet"
   subtitle: "Öğrenme materyalini indirmeden önce bul."

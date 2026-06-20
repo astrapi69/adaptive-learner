@@ -65,6 +65,20 @@
     "cat_ai_config": "KI-Schlüssel-Sicherung"
   },
   "nav": {
+    "group": {
+      "learn": "Lernen",
+      "content": "Inhalte",
+      "progress": "Fortschritt",
+      "more": "Mehr"
+    },
+    "tab": {
+      "learn": "Lernen",
+      "content": "Inhalte",
+      "discover": "Entdecken",
+      "progress": "Fortschritt",
+      "more": "Mehr"
+    },
+    "primary": "Hauptnavigation",
     "discover": "Inhalte entdecken",
     "offline_long": "Offline — frühere Sitzungen bleiben lesbar",
     "sync_pending": "{n} Änderung(en) warten auf Sync",
@@ -444,6 +458,11 @@
     "rating_notes_placeholder": "Was hat funktioniert, was nicht, was beim nächsten Mal versuchen…"
   },
   "progress": {
+    "tab": {
+      "overview": "Übersicht",
+      "stats": "Statistik",
+      "paths": "Meine Pfade"
+    },
     "title": "Fortschritt",
     "chart_timeline": "Verstehen und Stress über Zeit",
     "chart_methods": "Methodenverteilung",
@@ -1950,6 +1969,9 @@
     }
   },
   "content": {
+    "anki_export": {
+      "button": "Anki-Export"
+    },
     "discover_more": "Mehr Inhalte entdecken",
     "book": {
       "companion": "Buch-Begleiter",
@@ -3043,6 +3065,10 @@
     "paid": "Kurs"
   },
   "discover": {
+    "tab": {
+      "discover": "Entdecken",
+      "import": "Importieren"
+    },
     "to_content": "Zum Content Browser",
     "title": "Inhalte entdecken",
     "subtitle": "Finde Lernmaterial, bevor du es herunterlädst.",

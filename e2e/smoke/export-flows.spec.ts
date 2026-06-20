@@ -64,9 +64,11 @@ test.describe("Export flows", () => {
     }) => {
         await createTestUser(page, {name: "Curriculum Export E2E"});
 
-        // Create a curriculum so the dropdown is non-empty.
-        await page.getByTestId("nav-curriculum").click();
-        await page.waitForURL("**/curriculum");
+        // Create a curriculum so the dropdown is non-empty. EXP-037 (#850):
+        // Curriculum is no longer a top-level nav entry — it is the "Meine
+        // Pfade" tab in Progress; /curriculum redirects to /progress?tab=paths,
+        // which renders the same curriculum surface.
+        await page.goto("/curriculum");
         await page
             .getByTestId("curriculum-new-title")
             .fill("E2E Test Curriculum");

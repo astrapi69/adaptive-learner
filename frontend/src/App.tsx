@@ -6,7 +6,7 @@ import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
 import { resolveStorageMode } from "./storage";
 import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie-user-data";
 import { lazyWithReload } from "./lib/lazyWithReload";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./styles/toast-theme.css";
@@ -21,6 +21,7 @@ import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import ReminderScheduler from "./components/ReminderScheduler";
 import Navigation from "./components/Navigation";
+import BottomTabBar from "./components/nav/BottomTabBar";
 import OfflineIndicator from "./components/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
@@ -36,23 +37,22 @@ import SkipToContent from "./components/SkipToContent";
 const AnkiPage = lazyWithReload(() => import("./pages/content/Anki"));
 const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"));
 const ContentPage = lazyWithReload(() => import("./pages/content/Content"));
-const DiscoverPage = lazyWithReload(() => import("./pages/content/Discover"));
+// EXP-037 (#850) — Discover + Import merged into a tabbed hub.
+const DiscoverHub = lazyWithReload(() => import("./pages/content/DiscoverHub"));
 const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
 const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
 const LearningPath = lazyWithReload(() => import("./pages/learning-path/LearningPathPersonal"));
-const Curriculum = lazyWithReload(() => import("./pages/content/Curriculum"));
 const Dashboard = lazyWithReload(() => import("./pages/dashboard/Dashboard"));
 const LessonPage = lazyWithReload(() => import("./pages/lesson/Lesson"));
 const ReviewPage = lazyWithReload(() => import("./pages/lesson/Review"));
 const AdaptiveLessonPage = lazyWithReload(() => import("./pages/lesson/AdaptiveLesson"));
 const ErrorReplayLessonPage = lazyWithReload(() => import("./pages/lesson/ErrorReplayLesson"));
-const Import = lazyWithReload(() => import("./pages/content/Import"));
 const ImportDetail = lazyWithReload(() => import("./pages/content/ImportDetail"));
 const LearningRepoPage = lazyWithReload(() => import("./pages/content/LearningRepo"));
 const NotFound = lazyWithReload(() => import("./pages/system/NotFound"));
 const Onboarding = lazyWithReload(() => import("./pages/onboarding/Onboarding"));
-const Progress = lazyWithReload(() => import("./pages/dashboard/Progress"));
-const LearningStatistics = lazyWithReload(() => import("./pages/dashboard/LearningStatistics"));
+// EXP-037 (#850) — Progress + Statistics + Curriculum merged into a tabbed hub.
+const ProgressHub = lazyWithReload(() => import("./pages/dashboard/ProgressHub"));
 const Pronunciation = lazyWithReload(() => import("./pages/lesson/Pronunciation"));
 const Session = lazyWithReload(() => import("./pages/lesson/Session"));
 const Settings = lazyWithReload(() => import("./pages/system/Settings"));
@@ -162,14 +162,25 @@ export default function App() {
                 <Route path="/assessment" element={<Assessment />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/session" element={<Session />} />
-                <Route path="/curriculum" element={<Curriculum />} />
-                <Route path="/progress" element={<Progress />} />
-                <Route path="/statistics" element={<LearningStatistics />} />
-                <Route path="/import" element={<Import />} />
+                {/* EXP-037 (#850) — old destinations redirect to their new
+                    tabbed home; the routes stay alive for bookmarks/links. */}
+                <Route
+                  path="/curriculum"
+                  element={<Navigate to="/progress?tab=paths" replace />}
+                />
+                <Route path="/progress" element={<ProgressHub />} />
+                <Route
+                  path="/statistics"
+                  element={<Navigate to="/progress?tab=stats" replace />}
+                />
+                <Route
+                  path="/import"
+                  element={<Navigate to="/discover?tab=import" replace />}
+                />
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />
                 <Route path="/content" element={<ContentPage />} />
-                <Route path="/discover" element={<DiscoverPage />} />
+                <Route path="/discover" element={<DiscoverHub />} />
                 <Route path="/add-repo" element={<AddRepo />} />
                 <Route path="/learning-path" element={<LearningPath />} />
                 <Route path="/create-lesson" element={<CreateLesson />} />
@@ -186,6 +197,7 @@ export default function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
+            <BottomTabBar />
             <InstallPrompt />
             <MilestoneHost />
             <ReminderScheduler />

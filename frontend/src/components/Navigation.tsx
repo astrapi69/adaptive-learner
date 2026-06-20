@@ -4,6 +4,7 @@ import { NavLink, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import MenuToggleButton from "../shared/layout/MenuToggleButton";
+import NavGroup from "./nav/NavGroup";
 import NavXpBadge from "./NavXpBadge";
 import NavReviewsBadge from "./NavReviewsBadge";
 import NavAvatar from "./NavAvatar";
@@ -207,56 +208,41 @@ export default function Navigation() {
         data-testid="nav-links"
         onClick={closeMenuOnLinkTap}
       >
-        <NavLink
-          to="/dashboard"
-          className={linkClass}
-          data-testid="nav-dashboard"
-        >
-          {t("nav.dashboard", "Dashboard")}
-        </NavLink>
-        <NavLink
-          to="/learning-path"
-          className={linkClass}
-          data-testid="nav-learning-path"
-        >
-          {t("nav.learning_path", "Learning Path")}
-        </NavLink>
-        <NavLink to="/session" className={linkClass} data-testid="nav-session">
-          {t("nav.session", "Session")}
-        </NavLink>
-        <NavLink
-          to="/curriculum"
-          className={linkClass}
-          data-testid="nav-curriculum"
-        >
-          {t("nav.curriculum", "Curriculum")}
-        </NavLink>
-        <NavLink
-          to="/progress"
-          className={linkClass}
-          data-testid="nav-progress"
-        >
-          {t("nav.progress", "Progress")}
-        </NavLink>
-        <NavLink
-          to="/statistics"
-          className={linkClass}
-          data-testid="nav-statistics"
-        >
-          {t("nav.statistics", "Statistics")}
-        </NavLink>
-        <NavLink to="/import" className={linkClass} data-testid="nav-import">
-          {t("nav.import", "Import")}
-        </NavLink>
-        <NavLink to="/anki" className={linkClass} data-testid="nav-anki">
-          {t("nav.anki", "Anki")}
-        </NavLink>
-        <NavLink to="/content" className={linkClass} data-testid="nav-content">
-          {t("nav.content", "My content")}
-        </NavLink>
-        <NavLink to="/discover" className={linkClass} data-testid="nav-discover">
-          {t("nav.discover", "Discover content")}
-        </NavLink>
+        {/* EXP-037 (#850) — primary nav reduced to 7 grouped-order
+            entries. Removed from the bar (still reachable): Session
+            (start from Dashboard/Lesson), Curriculum + Statistics
+            (tabs in /progress), Import (tab in /discover), Anki
+            (action on /content). Group order: LERNEN, INHALTE,
+            FORTSCHRITT, then the Settings + Help utility entries. */}
+        <NavGroup label={t("nav.group.learn", "LEARN")} testId="nav-group-learn">
+          <NavLink
+            to="/dashboard"
+            className={linkClass}
+            data-testid="nav-dashboard"
+          >
+            {t("nav.dashboard", "Dashboard")}
+          </NavLink>
+          <NavLink
+            to="/learning-path"
+            className={linkClass}
+            data-testid="nav-learning-path"
+          >
+            {t("nav.learning_path", "Learning Path")}
+          </NavLink>
+        </NavGroup>
+        <NavGroup label={t("nav.group.content", "CONTENT")} testId="nav-group-content">
+          <NavLink to="/content" className={linkClass} data-testid="nav-content">
+            {t("nav.content", "My content")}
+          </NavLink>
+          <NavLink to="/discover" className={linkClass} data-testid="nav-discover">
+            {t("nav.discover", "Discover content")}
+          </NavLink>
+        </NavGroup>
+        <NavGroup label={t("nav.group.progress", "PROGRESS")} testId="nav-group-progress">
+          <NavLink to="/progress" className={linkClass} data-testid="nav-progress">
+            {t("nav.progress", "Progress")}
+          </NavLink>
+        </NavGroup>
         <NavLink
           to="/settings"
           className={linkClass}

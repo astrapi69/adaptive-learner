@@ -21,13 +21,41 @@ describe("Navigation", () => {
         }
     });
 
-    it("renders on /dashboard with the four canonical links", () => {
+    // EXP-037 (#850): the primary nav is reduced to 7 grouped-order entries
+    // (5 primary + Settings + Help). Session/Curriculum/Statistics/Import/Anki
+    // were removed from the bar (still reachable via redirects/actions/tabs).
+    it("renders exactly the 7 grouped-order primary entries on /dashboard", () => {
         renderAt("/dashboard");
         expect(screen.getByTestId("app-nav")).toBeInTheDocument();
-        expect(screen.getByTestId("nav-dashboard")).toBeInTheDocument();
-        expect(screen.getByTestId("nav-session")).toBeInTheDocument();
-        expect(screen.getByTestId("nav-progress")).toBeInTheDocument();
-        expect(screen.getByTestId("nav-settings")).toBeInTheDocument();
+        // Present: the 5 primary destinations + Settings + Help.
+        for (const id of [
+            "nav-dashboard",
+            "nav-learning-path",
+            "nav-content",
+            "nav-discover",
+            "nav-progress",
+            "nav-settings",
+            "nav-help",
+        ]) {
+            expect(screen.getByTestId(id)).toBeInTheDocument();
+        }
+        // Removed from the bar (no longer rendered).
+        for (const id of [
+            "nav-session",
+            "nav-curriculum",
+            "nav-statistics",
+            "nav-import",
+            "nav-anki",
+        ]) {
+            expect(screen.queryByTestId(id)).not.toBeInTheDocument();
+        }
+    });
+
+    it("groups the primary entries (NavGroup sections present)", () => {
+        renderAt("/dashboard");
+        expect(screen.getByTestId("nav-group-learn")).toBeInTheDocument();
+        expect(screen.getByTestId("nav-group-content")).toBeInTheDocument();
+        expect(screen.getByTestId("nav-group-progress")).toBeInTheDocument();
     });
 
     it("highlights the active route via NavLink isActive", () => {

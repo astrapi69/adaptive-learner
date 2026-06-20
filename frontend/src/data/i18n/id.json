@@ -65,6 +65,20 @@
     "cat_ai_config": "Cadangan kunci AI"
   },
   "nav": {
+    "group": {
+      "learn": "Belajar",
+      "content": "Konten",
+      "progress": "Progres",
+      "more": "Lainnya"
+    },
+    "tab": {
+      "learn": "Belajar",
+      "content": "Konten",
+      "discover": "Jelajahi",
+      "progress": "Progres",
+      "more": "Lainnya"
+    },
+    "primary": "Navigasi utama",
     "discover": "Jelajahi konten",
     "offline_long": "Luring — sesi sebelumnya tetap dapat dibaca",
     "sync_pending": "{n} perubahan menunggu untuk disinkronkan",
@@ -444,6 +458,11 @@
     "rating_notes_placeholder": "Apa yang berhasil, apa yang tidak, apa yang akan dicoba lain kali..."
   },
   "progress": {
+    "tab": {
+      "overview": "Ringkasan",
+      "stats": "Statistik",
+      "paths": "Jalur saya"
+    },
     "title": "Kemajuan",
     "chart_timeline": "Pemahaman dan stres dari waktu ke waktu",
     "chart_methods": "Distribusi metode",
@@ -1950,6 +1969,9 @@
     }
   },
   "content": {
+    "anki_export": {
+      "button": "Ekspor Anki"
+    },
     "discover_more": "Temukan konten lainnya",
     "book": {
       "companion": "Pendamping buku",
@@ -3043,6 +3065,10 @@
     "paid": "Kursus"
   },
   "discover": {
+    "tab": {
+      "discover": "Jelajahi",
+      "import": "Impor"
+    },
     "to_content": "Buka Penjelajah Konten",
     "title": "Jelajahi konten",
     "subtitle": "Temukan materi belajar sebelum mengunduhnya.",
