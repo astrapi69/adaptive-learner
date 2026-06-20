@@ -53,6 +53,16 @@ navigation:
           ja: はじめに
         slug: user-guide/getting-started
       - title:
+          de: Navigation
+          en: Navigation
+          es: Navegación
+          fr: Navigation
+          el: Πλοήγηση
+          pt: Navegação
+          tr: Gezinme
+          ja: ナビゲーション
+        slug: user-guide/navigation
+      - title:
           de: Onboarding
           en: Onboarding
           es: Introducción
@@ -213,6 +223,26 @@ navigation:
           tr: İçerik tarayıcı
           ja: コンテンツブラウザ
         slug: features/content-browser
+      - title:
+          de: Inhalte entdecken
+          en: Discover content
+          es: Descubrir contenido
+          fr: Découvrir du contenu
+          el: Ανακάλυψη περιεχομένου
+          pt: Descobrir conteúdo
+          tr: İçerik keşfet
+          ja: コンテンツを探す
+        slug: features/discover
+      - title:
+          de: KI-Übungsgenerierung
+          en: AI exercise generation
+          es: Generación de ejercicios con IA
+          fr: Génération d'exercices par IA
+          el: Δημιουργία ασκήσεων με AI
+          pt: Geração de exercícios por IA
+          tr: Yapay zekâ ile alıştırma üretimi
+          ja: AI演習生成
+        slug: features/ai-exercise-generation
       - title:
           de: Mehrere Content-Repositories
           en: Multiple content repositories
