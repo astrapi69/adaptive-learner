@@ -22,6 +22,7 @@
  */
 
 import {computeStars, type StarRating} from "../lesson-summary";
+import {compareByDownloadPriority} from "../content/download-priority";
 import {
     elementSrsDetails,
     srsLessonSummary,
@@ -336,16 +337,17 @@ function attachNextLevels(
 export function buildPersonalPath(
     input: BuildPersonalPathInput,
 ): PersonalPathData {
+    // All active sets are downloaded; the shared comparator (#909) orders them
+    // started-first (most-recent activity), then untouched downloaded by title.
+    // Not-downloaded sets are tier 3, handled as a separate section below.
     const activeSets = input.sets
         .map((s) => buildSet(s, input.progress, input.errors))
-        .sort((a, b) => {
-            if (a.lastActivity && b.lastActivity) {
-                return a.lastActivity > b.lastActivity ? -1 : 1;
-            }
-            if (a.lastActivity) return -1;
-            if (b.lastActivity) return 1;
-            return a.title.localeCompare(b.title);
-        });
+        .sort((a, b) =>
+            compareByDownloadPriority(
+                {downloaded: true, lastActivity: a.lastActivity, title: a.title},
+                {downloaded: true, lastActivity: b.lastActivity, title: b.title},
+            ),
+        );
 
     const candidates: LevelCandidate[] = [
         ...input.sets.map((s) => ({
