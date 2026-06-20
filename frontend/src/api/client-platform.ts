@@ -38,16 +38,16 @@ export const platformApi = {
      * structured payload ready for Markdown / PDF rendering.
      */
     progress: (userId: string, lang: string) =>
-      apiCall<import("../storage/export-types").ProgressReport>(
+      apiCall<import("../storage/backup/export-types").ProgressReport>(
         `/export/progress?user_id=${encodeURIComponent(userId)}` +
           `&lang=${encodeURIComponent(lang)}`,
       ),
     session: (sessionId: string, lang: string) =>
-      apiCall<import("../storage/export-types").SessionDetail>(
+      apiCall<import("../storage/backup/export-types").SessionDetail>(
         `/export/session/${encodeURIComponent(sessionId)}` + `?lang=${encodeURIComponent(lang)}`,
       ),
     curriculum: (curriculumId: string, lang: string) =>
-      apiCall<import("../storage/export-types").CurriculumOverview>(
+      apiCall<import("../storage/backup/export-types").CurriculumOverview>(
         `/export/curriculum/${encodeURIComponent(curriculumId)}` +
           `?lang=${encodeURIComponent(lang)}`,
       ),

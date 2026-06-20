@@ -83,7 +83,7 @@ vi.mock("../storage", async () => {
 
 // BackupSection touches the auto-backup module on mount (Dexie-only path,
 // skipped in API mode, but the import must still resolve without IndexedDB).
-vi.mock("../storage/auto-backup", () => ({
+vi.mock("../storage/backup/auto-backup", () => ({
     isAutoBackupEnabled: () => false,
     setAutoBackupEnabled: () => undefined,
     listAutoBackups: async () => [],

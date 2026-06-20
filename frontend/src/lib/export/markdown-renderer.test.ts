@@ -13,7 +13,7 @@ import type {
     CurriculumOverview,
     ProgressReport,
     SessionDetail,
-} from "../../storage/export-builder";
+} from "../../storage/backup/export-builder";
 import {
     exportFilename,
     renderMarkdown,

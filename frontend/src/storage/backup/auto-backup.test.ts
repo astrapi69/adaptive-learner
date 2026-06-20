@@ -25,8 +25,8 @@ import {
     runAutoBackupNow,
     setAutoBackupEnabled,
 } from "./auto-backup";
-import {_resetDbForTests} from "./dexie/db";
-import {dexieStorage} from "./dexie-storage";
+import {_resetDbForTests} from "../dexie/db";
+import {dexieStorage} from "../dexie-storage";
 
 beforeEach(async () => {
     localStorage.clear();

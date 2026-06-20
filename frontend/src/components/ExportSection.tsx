@@ -29,7 +29,7 @@ import type {
     CurriculumOverview,
     ProgressReport,
     SessionDetail,
-} from "../storage/export-builder";
+} from "../storage/backup/export-builder";
 import {notify} from "../utils/notify";
 import type {Curriculum, LearningSession} from "../types/domain";
 

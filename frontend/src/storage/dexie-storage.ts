@@ -43,17 +43,17 @@ import {
 } from "./dexie/db";
 import {
   clearAllAutoBackups,
-} from "./auto-backup";
+} from "./backup/auto-backup";
 import {
   createDexieBackup,
   getDexieBackupStats,
   restoreDexieBackup,
-} from "./backup";
+} from "./backup/backup";
 import {
   buildCurriculumOverview as dexieBuildCurriculumOverview,
   buildProgressReport as dexieBuildProgressReport,
   buildSessionDetail as dexieBuildSessionDetail,
-} from "./export-builder";
+} from "./backup/export-builder";
 import {
   createStudyQuestion,
   deleteStudyQuestion,

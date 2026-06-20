@@ -22,15 +22,15 @@
 import type {EntityTable} from "dexie";
 import {parse as parseYaml} from "yaml";
 
-import {getDb, nowIso, type AdaptiveLearnerDB} from "./dexie/db";
-import type {ContentSetRow, ContentSetFileRow} from "./dexie/db";
+import {getDb, nowIso, type AdaptiveLearnerDB} from "../dexie/db";
+import type {ContentSetRow, ContentSetFileRow} from "../dexie/db";
 import type {
     BackupPayload,
     BackupStats,
     ContentSetBackupEntry,
     RestoreSummary,
     RestoreTableSummary,
-} from "../types/domain";
+} from "../../types/domain";
 
 export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
 // 1.4.0 — adds the optional ``local_storage`` snapshot block (P1 offline

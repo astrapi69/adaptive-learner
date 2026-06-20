@@ -14,7 +14,7 @@ import { buildSpacedRecommendations, rankTools, recencyFromCommits } from "../se
 import { awardXPForSession } from "../gamification/gamification";
 import { evaluateBadgesForUser } from "../gamification/badges";
 import { updateStreakState } from "../gamification/streaks";
-import { maybeRunAutoBackup, recordCompletedSession } from "../auto-backup";
+import { maybeRunAutoBackup, recordCompletedSession } from "../backup/auto-backup";
 import { ApiError } from "../../api/client";
 import type { LearningProfileRow, LearningSessionRow, MethodSwitchRow, SessionRatingRow } from "./db";
 import type { LearningMethod } from "../../lib/constants";

@@ -26,7 +26,7 @@ import {
     setAutoBackupEnabled,
     type AutoBackupSummary,
     type StoragePressureReport,
-} from "../storage/auto-backup";
+} from "../storage/backup/auto-backup";
 import {notify} from "../utils/notify";
 import type {RestoreSummary} from "../types/domain";
 

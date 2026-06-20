@@ -39,7 +39,7 @@ const autoMock = vi.hoisted(() => ({
 // NOTE: plain functions (not vi.fn) on purpose — the file's afterEach
 // runs vi.restoreAllMocks(), which would strip vi.fn implementations
 // and make listAutoBackups() return undefined for later tests.
-vi.mock("../storage/auto-backup", () => ({
+vi.mock("../storage/backup/auto-backup", () => ({
     isAutoBackupEnabled: () => true,
     setAutoBackupEnabled: () => undefined,
     listAutoBackups: async () => autoMock.entries,

@@ -26,7 +26,7 @@
 import Dexie, {type EntityTable} from "dexie";
 
 import {createDexieBackup, restoreDexieBackup} from "./backup";
-import type {BackupPayload, RestoreSummary} from "../types/domain";
+import type {BackupPayload, RestoreSummary} from "../../types/domain";
 
 const ENABLED_KEY = "adaptive-learner.auto_backup_enabled";
 const COUNTER_KEY = "adaptive-learner.auto_backup_session_counter";
@@ -242,7 +242,7 @@ export async function deleteAutoBackup(id: string): Promise<void> {
  * does not exist (the slot may have been rotated out between
  * the list render and the compare click).
  */
-export async function getAutoBackupPayload(id: string): Promise<import("../types/domain").BackupPayload | null> {
+export async function getAutoBackupPayload(id: string): Promise<import("../../types/domain").BackupPayload | null> {
     const db = getBackupDb();
     const row = await db.backups.get(id);
     return row ? row.payload : null;

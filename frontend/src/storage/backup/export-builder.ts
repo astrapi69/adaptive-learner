@@ -36,7 +36,7 @@ import type {
   ProgressCommitRow,
   SessionRatingRow,
   StepEvaluationRow,
-} from "./dexie/db";
+} from "../dexie/db";
 
 export const EXPORT_FORMAT = "adaptive-learner-export";
 export const EXPORT_VERSION = "1.3.0";

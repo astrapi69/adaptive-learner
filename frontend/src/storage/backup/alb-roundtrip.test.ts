@@ -12,10 +12,10 @@ import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { createDexieBackup, restoreDexieBackup } from "./backup";
-import { _resetDbForTests, getDb } from "./dexie/db";
-import { dexieStorage } from "./dexie-storage";
-import { buildAlbBytes } from "../lib/backup/albContainer";
-import { readBackupFile } from "../lib/backup/validateBackupFile";
+import { _resetDbForTests, getDb } from "../dexie/db";
+import { dexieStorage } from "../dexie-storage";
+import { buildAlbBytes } from "../../lib/backup/albContainer";
+import { readBackupFile } from "../../lib/backup/validateBackupFile";
 
 const AVATAR = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
 
