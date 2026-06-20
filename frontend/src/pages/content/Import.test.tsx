@@ -14,6 +14,7 @@ import {MemoryRouter} from "react-router-dom";
 
 import Import from "./Import";
 import {I18nProvider} from "../../hooks/ui/useI18n";
+import {TestFeatureProvider} from "../../features/testFeatureProvider";
 import {_resetDbForTests} from "../../storage/dexie/db";
 import {dexieStorage} from "../../storage/dexie-storage";
 import {_resetStorageCacheForTests} from "../../storage";
@@ -69,11 +70,13 @@ async function makeUserWithKey() {
 
 function renderImport() {
     return render(
-        <I18nProvider>
-            <MemoryRouter>
-                <Import />
-            </MemoryRouter>
-        </I18nProvider>,
+        <TestFeatureProvider>
+            <I18nProvider>
+                <MemoryRouter>
+                    <Import />
+                </MemoryRouter>
+            </I18nProvider>
+        </TestFeatureProvider>,
     );
 }
 

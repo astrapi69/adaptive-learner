@@ -20,6 +20,9 @@ import { useNavigate } from "react-router-dom";
 
 import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
+import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
+import { FEATURES } from "../../features/featureConfig";
+import { useFeatureAvailable } from "../../features/useFeatureAvailable";
 import HelpLink from "../../components/help/HelpLink";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useI18n } from "../../hooks/ui/useI18n";
@@ -57,6 +60,10 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
   const tooltipsOn = useButtonTooltips();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // Gate the AI analysis the same way ImportDetail does (#911): in Dexie mode
+  // without a key the feature is disabled, so the button is disabled with a
+  // reason instead of letting the click fail.
+  const analyze = useFeatureAvailable(FEATURES.CONVERSATION_ANALYZE);
 
   const [pasteText, setPasteText] = useState("");
   const [pasteFormat, setPasteFormat] = useState<string>("unknown");
@@ -429,6 +436,12 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
             "Paste a conversation here. We will save it and analyze it in one step.",
           )}
         </p>
+        {!analyze.available && (
+          <ApiKeyRequiredNotice
+            feature={t("ui.api_key.feature_analyze", "to analyze conversations")}
+            settingsHref="/settings?tab=integrations"
+          />
+        )}
         <textarea
           value={pasteText}
           onChange={(e) => onPasteChange(e.target.value)}
@@ -450,7 +463,8 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
           <Button
             type="button"
             onClick={quickAnalyze}
-            disabled={!pasteText.trim() || busy}
+            disabled={!pasteText.trim() || busy || !analyze.available}
+            title={analyze.tooltip}
             data-testid="quick-analyze-button"
           >
             {busy && busyAction === "analyze"
