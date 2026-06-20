@@ -26,6 +26,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        stryker stryker-quick \
        check-types check-types-backend check-types-frontend check-file-sizes check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
+       check-folder-size check-folder-size-update \
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
@@ -341,6 +342,13 @@ check-directory-size: ## God-folder watcher (warn-only): >15 flat source files p
 
 check-directory-size-gate: ## God-folder ratchet gate: fail on a NEW oversized dir vs .dirsize-baseline
 	bash scripts/check-directory-size.sh --gate
+
+check-folder-size: ## Folder-size guard (gate): alias of check-directory-size-gate (#809)
+	bash scripts/check-folder-size.sh
+
+check-folder-size-update: ## Folder-size: show current offenders to whitelist in .dirsize-baseline
+	@echo "Current flat-source-file counts over threshold (edit .dirsize-baseline to whitelist):"
+	@bash scripts/check-folder-size.sh --warn
 
 check-complexity-gate: ## Complexity ratchet gate (#407): fail on new/regressed offenders vs .complexity-baseline
 	bash scripts/check-complexity.sh --gate

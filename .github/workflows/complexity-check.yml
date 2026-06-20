@@ -71,11 +71,12 @@ jobs:
         # offender vs .complexity-baseline. No `|| true`: this is the hard gate.
         run: bash scripts/check-complexity.sh --gate
 
-      - name: Directory-size ratchet gate
-        # God-folder guard (#809): fails if a NEW directory exceeds 15 flat
-        # source files vs .dirsize-baseline. Tolerates the not-yet-migrated
-        # god-folders listed in the baseline (ratchet: may only shrink).
-        run: bash scripts/check-directory-size.sh --gate
+      - name: Folder-size guard (god-folder gate)
+        # Fails if a NEW directory exceeds 15 flat source files vs
+        # .dirsize-baseline. Tolerates the not-yet-migrated god-folders listed
+        # in the baseline (ratchet: may only shrink). check-folder-size.sh is a
+        # thin alias of the #809 check-directory-size.sh --gate.
+        run: bash scripts/check-folder-size.sh
 
   complexity-report:
     name: Complexity report (warn-view)
