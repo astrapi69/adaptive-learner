@@ -10,13 +10,17 @@
  *
  * Discreet by contract: the check runs ONCE on mount (not per navigation),
  * is SKIPPED while offline (the fetch would fail), and never surfaces an
- * error. ``dismiss`` hides the prompt for the current app session only —
- * the in-memory state resets on the next full load, so a deferred update
- * is re-offered on the next start, not on every navigation.
+ * error. ``dismiss`` ("Später") hides the prompt for the current app session
+ * only — the in-memory state resets on the next full load, so a deferred
+ * update is re-offered on the next start, not on every navigation.
  *
- * ``applyUpdate`` asks any waiting SW to ``skipWaiting`` (so the new SW
- * takes control) and reloads; with no SW it falls back to a plain reload.
- * Never reloads on its own — only when the user calls it.
+ * ``applyUpdate`` ("Aktualisieren") is a final decision (#846): it records the
+ * accepted version + timestamp in localStorage and drives the SW activation in
+ * the BACKGROUND with capped retries ({@link activateInBackground}). The
+ * recorded acceptance makes {@link shouldShowUpdateBanner} suppress the banner
+ * across a (possibly stale) reload, so the banner can never re-nag for an
+ * already-accepted version — only a genuinely NEWER version re-offers it. Never
+ * reloads on its own — only when a fresh worker takes control after a click.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -24,10 +28,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useOnlineStatus } from "./useOnlineStatus";
 import { fetchLatestVersion, isUpdateAvailable } from "../../lib/pwa/version-check";
 import {
-  activateAndReload,
+  activateInBackground,
   CURRENT_BUILD,
   versionJsonUrl,
 } from "../../lib/pwa/sw-update";
+import {
+  recordUpdateAccepted,
+  shouldShowUpdateBanner,
+} from "../../lib/pwa/update-accept";
 
 export interface AppUpdateState {
   /** True when a newer build is available and not yet dismissed. */
@@ -103,21 +111,29 @@ export function useAppUpdate(): AppUpdateState {
   }, [online]);
 
   const applyUpdate = useCallback(() => {
+    // The click is a final decision: persist it (#846) so a stale reload (no
+    // waiting SW -> old precache served, version.json still newer) can never
+    // re-nag. Recording the accepted version + timestamp makes
+    // shouldShowUpdateBanner suppress the banner across the reload, and from
+    // then on only a NEWER version re-offers it.
+    recordUpdateAccepted(latestVersion);
     // Close the banner immediately so the click ALWAYS has a visible effect
-    // (#818). The banner is usually flagged by version.json with no waiting
-    // SW; a plain reload then gets served stale from the old precache and
-    // version.json still reports newer, so the banner used to reappear at
-    // once and the button looked dead. Hiding it here decouples the user
-    // feedback from the reload timing; activateAndReload still does the real
-    // skip-waiting + fresh reload.
+    // (#818), then drive the SW activation in the BACKGROUND with capped
+    // retries (#846) — it reloads only when a fresh worker actually takes
+    // control, never on a stale build, and gives up silently if it can't.
     setDismissed(true);
-    void activateAndReload();
-  }, []);
+    void activateInBackground();
+  }, [latestVersion]);
 
   const dismiss = useCallback(() => setDismissed(true), []);
 
+  // Suppress the banner once the user has accepted an update — within the quiet
+  // window or for the already-accepted version (#846). Read per-render so the
+  // suppression survives a reload (the in-memory ``dismissed`` does not).
+  const suppressed = !shouldShowUpdateBanner(latestVersion);
+
   return {
-    updateAvailable: hasUpdate && !dismissed,
+    updateAvailable: hasUpdate && !dismissed && !suppressed,
     currentVersion: CURRENT_BUILD.version,
     latestVersion,
     applyUpdate,

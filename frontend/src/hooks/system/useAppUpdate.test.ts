@@ -17,13 +17,13 @@ vi.mock("./useOnlineStatus", () => ({
 
 // Stub the SW activation so applyUpdate does not call window.location.reload
 // in the test (happy-dom has no navigation). We only assert the hook calls it.
-const { activateAndReload } = vi.hoisted(() => ({
-  activateAndReload: vi.fn(),
+const { activateInBackground } = vi.hoisted(() => ({
+  activateInBackground: vi.fn(),
 }));
 vi.mock("../../lib/pwa/sw-update", async (importOriginal) => {
   const actual =
     await importOriginal<typeof import("../../lib/pwa/sw-update")>();
-  return { ...actual, activateAndReload };
+  return { ...actual, activateInBackground };
 });
 
 function mockFetchVersion(version: string) {
@@ -35,7 +35,8 @@ function mockFetchVersion(version: string) {
 
 afterEach(() => {
   online = true;
-  activateAndReload.mockClear();
+  activateInBackground.mockClear();
+  localStorage.clear();
   vi.useRealTimers();
   vi.restoreAllMocks();
 });
@@ -51,11 +52,10 @@ describe("useAppUpdate", () => {
   });
 
   // Regression pin (#818): clicking "Aktualisieren" must hide the banner
-  // immediately AND trigger the service-worker activation/reload. Before the
-  // fix the banner stayed (a plain reload was served stale from the old
-  // precache and version.json still reported newer), so the button looked
-  // dead.
-  it("applyUpdate hides the banner at once and triggers the reload (#818)", async () => {
+  // immediately AND trigger the service-worker activation. Before the fix the
+  // banner stayed (a plain reload was served stale from the old precache and
+  // version.json still reported newer), so the button looked dead.
+  it("applyUpdate hides the banner at once and triggers the background activation (#818)", async () => {
     mockFetchVersion("999.0.0");
     const { result } = renderHook(() => useAppUpdate());
     await waitFor(() => expect(result.current.updateAvailable).toBe(true));
@@ -63,7 +63,42 @@ describe("useAppUpdate", () => {
     act(() => result.current.applyUpdate());
 
     expect(result.current.updateAvailable).toBe(false);
-    expect(activateAndReload).toHaveBeenCalledTimes(1);
+    expect(activateInBackground).toHaveBeenCalledTimes(1);
+  });
+
+  // Regression pin (#846): once the user clicks "Aktualisieren" the decision is
+  // final — the banner must NOT reappear for that version, even across a (stale)
+  // reload that re-mounts the hook with version.json still reporting newer.
+  it("does not re-show the banner for an accepted version after a remount (#846)", async () => {
+    mockFetchVersion("999.0.0");
+    const first = renderHook(() => useAppUpdate());
+    await waitFor(() => expect(first.result.current.updateAvailable).toBe(true));
+
+    act(() => first.result.current.applyUpdate());
+    expect(first.result.current.updateAvailable).toBe(false);
+    first.unmount();
+
+    // Re-mount (simulates the reload): version.json STILL reports 999.0.0, but
+    // the recorded acceptance must keep the banner suppressed.
+    mockFetchVersion("999.0.0");
+    const second = renderHook(() => useAppUpdate());
+    await waitFor(() =>
+      expect(second.result.current.latestVersion).toBe("999.0.0"),
+    );
+    expect(second.result.current.updateAvailable).toBe(false);
+  });
+
+  // #846: a genuinely NEWER version (after the quiet window) re-offers the banner.
+  it("re-shows the banner for a newer version once the quiet window passed (#846)", async () => {
+    // Record an acceptance of 999.0.0 two hours ago.
+    const { recordUpdateAccepted } = await import("../../lib/pwa/update-accept");
+    recordUpdateAccepted("999.0.0", Date.now() - 2 * 60 * 60 * 1000);
+
+    // A newer deploy appears.
+    mockFetchVersion("1000.0.0");
+    const { result } = renderHook(() => useAppUpdate());
+    await waitFor(() => expect(result.current.updateAvailable).toBe(true));
+    expect(result.current.latestVersion).toBe("1000.0.0");
   });
 
   it("does not flag when the deployed version matches", async () => {

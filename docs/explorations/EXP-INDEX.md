@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-19
-**Anzahl EXPs:** 35
+**Stand:** 2026-06-20
+**Anzahl EXPs:** 36
 
 > Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
 > [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
@@ -54,6 +54,7 @@
 | 034 | Content Discovery + Suchindex               | Vision       | gestuft | Mittel  | 002, 003, 023, 032 |
 | 035 | Vercel AI Elements Integration (AI-UI)      | Feature      | Zukunft | Niedrig | shadcn/ui, Session |
 | 036 | KI-Übungsgenerierung aus Theorie-Content    | Feature      | 2     | Hoch      | 013, 021, 033, 018 |
+| 037 | Navigation Restructuring (12 → 7 Einträge)  | Querschnitt  | 2     | Hoch      | 022, 034, 032/033  |
 
 ## Umsetzungsstand (Stand v1.85.0)
 

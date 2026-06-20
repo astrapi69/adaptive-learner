@@ -20,6 +20,7 @@
  */
 
 import {
+  Layers,
   Map as MapIcon,
   MessageSquare,
   Plus,
@@ -639,6 +640,22 @@ export default function ContentPage() {
             <MessageSquare className="h-5 w-5" aria-hidden="true" />
             <span className="hidden md:inline">
               {t("content.import_chat.button", "Import Chat")}
+            </span>
+          </Button>
+          {/* EXP-037 (#850) — Anki is no longer a top-level nav entry; its
+              export lives here as an action on "Meine Inhalte". */}
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-[44px] gap-2"
+            onClick={() => navigate("/anki")}
+            title={t("content.anki_export.button", "Anki export")}
+            aria-label={t("content.anki_export.button", "Anki export")}
+            data-testid="content-anki-export"
+          >
+            <Layers className="h-5 w-5" aria-hidden="true" />
+            <span className="hidden md:inline">
+              {t("content.anki_export.button", "Anki export")}
             </span>
           </Button>
           <Button

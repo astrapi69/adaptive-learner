@@ -9,7 +9,30 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.90.0** (feature release -
+- **Current state:** **v1.91.0** (UX release -
+  **Navigation restructuring (EXP-037, #850)** - the primary nav drops from
+  12+ entries to 7 grouped entries (Nielsen-Norman 5-7) with no function loss,
+  every page still reachable: a 7-entry primary bar (Dashboard, Lernpfad, Meine
+  Inhalte, Entdecken, Fortschritt, Settings, Help) via a reusable `NavGroup`
+  labelled-section component; a mobile `BottomTabBar` (5 tabs - Lernen, Inhalte,
+  Entdecken, Fortschritt, Mehr - plus a "Mehr" bottom sheet, hidden on the
+  funnel + during lessons, 44px targets, all themes); **ProgressHub** (`/progress`
+  tabbed Uebersicht / Statistik / Meine Pfade, embedding Progress +
+  LearningStatistics + Curriculum, only the active tab mounted); **DiscoverHub**
+  (`/discover` gains an Import tab); Anki removed from the nav, reachable via an
+  action on Meine Inhalte (`/anki` kept); Session also removed from the nav
+  (route kept); redirects keep old links alive (`/statistics` ->
+  `/progress?tab=stats`, `/curriculum` -> `/progress?tab=paths`, `/import` ->
+  `/discover?tab=import`, `/import/:id` separate); new `nav.group.*` /
+  `nav.tab.*` / `progress.tab.*` / `discover.tab.*` / `content.anki_export` i18n
+  keys in all 11 languages. Fix: the PWA update banner no longer reappears after
+  the user accepts "Aktualisieren" - acceptance is persisted (version +
+  timestamp in localStorage) and gated by `shouldShowUpdateBanner` so it stays
+  dismissed across reloads within a 1h quiet window and for the accepted
+  version, with SW activation moved to a capped-backoff background driver that
+  reloads only on a real `controllerchange` (#846). Docs: EXP-037 design doc
+  (#848). No schema/API/data change.)
+  v1.90.0 = (feature release -
   **AI Exercise Generation Pipeline (EXP-036 / AIX-01-AIX-06)** - a
   generate->quality-gate->balance->feedback pipeline for AI-authored exercises:
   the generation prompt + defensive JSON parser (#817), a "generate exercises"

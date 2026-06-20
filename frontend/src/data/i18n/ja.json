@@ -65,6 +65,20 @@
     "cat_ai_config": "AI キーのバックアップ"
   },
   "nav": {
+    "group": {
+      "learn": "学習",
+      "content": "コンテンツ",
+      "progress": "進捗",
+      "more": "その他"
+    },
+    "tab": {
+      "learn": "学習",
+      "content": "コンテンツ",
+      "discover": "発見",
+      "progress": "進捗",
+      "more": "その他"
+    },
+    "primary": "メインナビゲーション",
     "discover": "コンテンツを見つける",
     "offline_long": "オフライン — 過去のセッションは引き続き閲覧できます",
     "sync_pending": "{n} 件の変更が同期待ちです",
@@ -444,6 +458,11 @@
     "rating_notes_placeholder": "うまくいったこと、いかなかったこと、次に試すこと…"
   },
   "progress": {
+    "tab": {
+      "overview": "概要",
+      "stats": "統計",
+      "paths": "マイパス"
+    },
     "title": "進捗",
     "chart_timeline": "時間経過に伴う理解度とストレス",
     "chart_methods": "方法の分布",
@@ -1950,6 +1969,9 @@
     }
   },
   "content": {
+    "anki_export": {
+      "button": "Anki エクスポート"
+    },
     "discover_more": "もっとコンテンツを見つける",
     "book": {
       "companion": "書籍ガイド",
@@ -3043,6 +3065,10 @@
     "paid": "コース"
   },
   "discover": {
+    "tab": {
+      "discover": "発見",
+      "import": "インポート"
+    },
     "to_content": "コンテンツブラウザへ",
     "title": "コンテンツを見つける",
     "subtitle": "ダウンロードする前に学習教材を見つけましょう。",

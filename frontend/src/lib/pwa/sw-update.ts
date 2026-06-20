@@ -90,6 +90,103 @@ export async function activateAndReload(): Promise<void> {
   }
 }
 
+/** Options for {@link activateInBackground} (defaults injectable for tests). */
+export interface BackgroundActivateOptions {
+  /** Max activation attempts before giving up silently. Default 15. */
+  maxAttempts?: number;
+  /** First backoff delay in ms; doubles each attempt. Default 1000. */
+  baseDelayMs?: number;
+  /** Cap on a single backoff delay so 15 attempts fit ~60s. Default 8000. */
+  maxDelayMs?: number;
+  /** Hard ceiling on total elapsed time. Default 60000 (~60s). */
+  maxTotalMs?: number;
+  /** Reload impl (injectable for tests). Default ``window.location.reload``. */
+  reload?: () => void;
+  /** Epoch-ms clock (injectable for tests). Default ``Date.now``. */
+  now?: () => number;
+  /** Async delay (injectable for tests). Default ``setTimeout``-backed. */
+  sleep?: (ms: number) => Promise<void>;
+}
+
+const defaultSleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Drive the service-worker activation in the BACKGROUND after the user clicked
+ * "Aktualisieren", retrying on a capped exponential backoff (#846).
+ *
+ * Unlike {@link activateAndReload} (which fires an unconditional safety-net
+ * reload after ~1.2s), this NEVER reloads on a stale build. It only reloads when
+ * a fresh worker actually takes control (``controllerchange``). The skip-waiting
+ * + reload handshake can race or fail (SW not yet parked, transient fetch
+ * glitch), so each attempt re-nudges ``reg.update()`` and skip-waits whatever is
+ * parked, with backoff between attempts (1s, 2s, 4s, 8s, capped at
+ * ``maxDelayMs``). Whichever limit hits first — ``maxAttempts`` or
+ * ``maxTotalMs`` — ends the loop.
+ *
+ * If it never takes within the budget, it gives up **silently**: no reload, no
+ * banner. The next app start loads the new build anyway. Because the banner is
+ * suppressed via {@link shouldShowUpdateBanner} the instant the user clicks,
+ * even a stale reload mid-retry cannot make the banner reappear.
+ */
+export async function activateInBackground(
+  options: BackgroundActivateOptions = {},
+): Promise<void> {
+  const maxAttempts = options.maxAttempts ?? 15;
+  const baseDelay = options.baseDelayMs ?? 1000;
+  const maxDelay = options.maxDelayMs ?? 8000;
+  const maxTotal = options.maxTotalMs ?? 60_000;
+  const reload = options.reload ?? (() => window.location.reload());
+  const now = options.now ?? Date.now;
+  const sleep = options.sleep ?? defaultSleep;
+
+  // No service worker at all: there is no stale precache to serve, so a single
+  // plain reload genuinely fetches the fresh build and can't loop. This keeps
+  // the click meaningful on non-PWA browsers while never re-nagging.
+  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
+    reload();
+    return;
+  }
+
+  let reg: ServiceWorkerRegistration | undefined;
+  try {
+    reg = await navigator.serviceWorker.getRegistration();
+  } catch {
+    reload();
+    return;
+  }
+  if (!reg) {
+    reload();
+    return;
+  }
+
+  // Reload exactly once, when (and only when) the fresh worker takes control.
+  let reloaded = false;
+  const reloadOnce = () => {
+    if (reloaded) return;
+    reloaded = true;
+    reload();
+  };
+  navigator.serviceWorker.addEventListener("controllerchange", reloadOnce);
+
+  const start = now();
+  for (let attempt = 0; attempt < maxAttempts && !reloaded; attempt++) {
+    try {
+      await reg.update();
+      reg.waiting?.postMessage({ type: "SKIP_WAITING" });
+    } catch {
+      /* best-effort — retry on the next pass */
+    }
+    if (reloaded) break;
+
+    const elapsed = now() - start;
+    if (elapsed >= maxTotal) break;
+    const delay = Math.min(baseDelay * 2 ** attempt, maxDelay, maxTotal - elapsed);
+    await sleep(delay);
+  }
+  // Silent give-up: no reload, no banner. The next app start picks it up.
+}
+
 /** Outcome of an explicit user-triggered update check (#664). */
 export type UpdateCheckStatus = "available" | "current" | "error";
 

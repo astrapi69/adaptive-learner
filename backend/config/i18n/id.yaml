@@ -59,6 +59,18 @@ data_export:
   cat_settings: "Pengaturan"
   cat_ai_config: "Cadangan kunci AI"
 nav:
+  group:
+    learn: "Belajar"
+    content: "Konten"
+    progress: "Progres"
+    more: "Lainnya"
+  tab:
+    learn: "Belajar"
+    content: "Konten"
+    discover: "Jelajahi"
+    progress: "Progres"
+    more: "Lainnya"
+  primary: "Navigasi utama"
   discover: "Jelajahi konten"
   offline_long: "Luring — sesi sebelumnya tetap dapat dibaca"
   sync_pending: "{n} perubahan menunggu untuk disinkronkan"
@@ -416,6 +428,10 @@ session:
   rating_notes_aria: "Catatan sesi"
   rating_notes_placeholder: "Apa yang berhasil, apa yang tidak, apa yang akan dicoba lain kali..."
 progress:
+  tab:
+    overview: "Ringkasan"
+    stats: "Statistik"
+    paths: "Jalur saya"
   title: Kemajuan
   chart_timeline: Pemahaman dan stres dari waktu ke waktu
   chart_methods: Distribusi metode
@@ -1813,6 +1829,8 @@ lesson:
     action_restart: "Mulai dari awal"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  anki_export:
+    button: "Ekspor Anki"
   discover_more: "Temukan konten lainnya"
   book:
     companion: "Pendamping buku"
@@ -2798,6 +2816,9 @@ resource:
   free: "Gratis"
   paid: "Kursus"
 discover:
+  tab:
+    discover: "Jelajahi"
+    import: "Impor"
   to_content: "Buka Penjelajah Konten"
   title: "Jelajahi konten"
   subtitle: "Temukan materi belajar sebelum mengunduhnya."

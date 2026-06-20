@@ -4021,6 +4021,27 @@ select:focus {
   cursor: pointer;
 }
 
+/* EXP-037 (#850) — NavGroup is a transparent grouping wrapper: on the
+   horizontal top bar (and its mobile drawer) its links flow as direct flex
+   items and the section label is hidden (grouping is order-only there). The
+   same component is reused in the mobile "Mehr" sheet OUTSIDE .app-nav, where
+   the label IS shown as a real section header. */
+.nav-group {
+  display: contents;
+}
+.app-nav .nav-group-label {
+  display: none;
+}
+
+/* Mobile: reserve scroll space at the bottom for the fixed BottomTabBar so
+   page content is never hidden behind it. The bar is md:hidden, so the
+   padding only applies on the same small viewports. */
+@media (max-width: 767px) {
+  body.has-bottom-nav #root {
+    padding-bottom: 4rem;
+  }
+}
+
 .nav-online-indicator {
   display: inline-flex;
   align-items: center;

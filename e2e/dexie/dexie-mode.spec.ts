@@ -71,9 +71,12 @@ const ROUTES: RouteCase[] = [
         expectedTestIds: ["session", "onboarding"],
     },
     {
-        name: "Curriculum",
+        // EXP-037 (#850): /curriculum now redirects to /progress?tab=paths,
+        // which mounts ProgressHub (synchronous tab bar) + the Curriculum tab.
+        name: "Curriculum (redirects to Progress > Meine Pfade tab)",
         path: "/curriculum",
         expectedTestIds: [
+            "progress-hub",
             "curriculum",
             "curriculum-loading",
             "curriculum-error",
@@ -81,14 +84,27 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
-        name: "Progress",
-        path: "/progress",
-        expectedTestIds: ["progress", "onboarding"],
+        // EXP-037 (#850): /statistics redirects to /progress?tab=stats.
+        name: "Statistics (redirects to Progress > Statistik tab)",
+        path: "/statistics",
+        expectedTestIds: [
+            "progress-hub",
+            "statistics",
+            "statistics-loading",
+            "onboarding",
+        ],
     },
     {
-        name: "Import",
+        name: "Progress (hub, Übersicht tab)",
+        path: "/progress",
+        expectedTestIds: ["progress-hub", "progress", "onboarding"],
+    },
+    {
+        // EXP-037 (#850): /import redirects to /discover?tab=import, which
+        // mounts DiscoverHub (synchronous tab bar) + the Import tab.
+        name: "Import (redirects to Discover > Import tab)",
         path: "/import",
-        expectedTestIds: ["page-import"],
+        expectedTestIds: ["discover-hub", "page-import"],
     },
     {
         name: "Create Lesson (Phase 65 / EXP-021)",
@@ -156,14 +172,14 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
-        name: "Discover (EXP-034 / DIS-05)",
+        name: "Discover (hub, EXP-034 / EXP-037)",
         path: "/discover",
-        // ``discover-loading`` is the first render; the index
-        // fetch then resolves to ``discover-page`` (which holds
-        // the empty-state when no index is reachable). The loader
-        // is error-tolerant (per-repo failures resolve to []), so
-        // an offline first-visit never crashes or toasts.
-        expectedTestIds: ["discover-loading", "discover-page"],
+        // EXP-037 (#850): DiscoverHub renders its tab bar synchronously
+        // (``discover-hub``); the Discover tab then resolves to
+        // ``discover-loading`` → ``discover-page``. The loader is
+        // error-tolerant (per-repo failures resolve to []), so an offline
+        // first-visit never crashes or toasts.
+        expectedTestIds: ["discover-hub", "discover-loading", "discover-page"],
     },
     {
         name: "Lesson (viewer, Phase 44, not-cached path)",
