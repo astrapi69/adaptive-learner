@@ -97,6 +97,10 @@ describe("Landing page", () => {
         )) as HTMLAnchorElement;
         expect(docsLink.target).toBe("_blank");
         expect(docsLink.rel).toContain("noopener");
+        // Language-aware docs link (#866): default (de) -> docs root.
+        expect(docsLink.getAttribute("href")).toBe(
+            "https://astrapi69.github.io/adaptive-learner/docs/",
+        );
     });
 
     it("clicking the start button routes to /onboarding", async () => {

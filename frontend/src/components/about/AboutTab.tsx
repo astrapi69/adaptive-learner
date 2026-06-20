@@ -25,7 +25,7 @@ import SystemInfoSection from "./SystemInfoSection";
 import VersionSection from "./VersionSection";
 
 export default function AboutTab() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const storageMode = resolveStorageMode();
   const [info, setInfo] = useState<SystemInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +88,7 @@ export default function AboutTab() {
           <CreditsSection t={t} />
           <ShareAppSection t={t} />
           <DonationSection t={t} />
-          <LicenseResourcesSection info={info} t={t} />
+          <LicenseResourcesSection info={info} t={t} lang={lang} />
         </div>
       )}
       <SupportSection />

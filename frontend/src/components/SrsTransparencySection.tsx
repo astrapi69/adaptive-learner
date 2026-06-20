@@ -10,11 +10,10 @@
 
 import {useI18n} from "../hooks/ui/useI18n";
 import {SRS_MASTERY_THRESHOLD, SRS_SCHEDULE} from "../lib/srs/status";
-
-const METHODOLOGY_URL = "https://astrapi69.github.io/adaptive-learner/docs/";
+import {docsHomeUrl} from "../lib/help-routes";
 
 export default function SrsTransparencySection() {
-    const {t} = useI18n();
+    const {t, lang} = useI18n();
     return (
         <section
             className="settings-section"
@@ -64,7 +63,7 @@ export default function SrsTransparencySection() {
                 ).replace("{n}", String(SRS_MASTERY_THRESHOLD))}
             </p>
             <a
-                href={METHODOLOGY_URL}
+                href={docsHomeUrl(lang)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-accent underline"
