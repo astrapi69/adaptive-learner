@@ -1846,6 +1846,17 @@ content:
     deleted: "Lição excluída."
     delete_failed: "Não foi possível excluir a lição."
   ai_exercises:
+    max_reached: "Número máximo de regenerações atingido. Edite os exercícios manualmente ou importe uma conversa mais longa."
+    feedback:
+      title: "Porque regenerar?"
+      too_easy: "Demasiado fácil"
+      too_hard: "Demasiado difícil"
+      wrong_language: "Idioma errado"
+      more_variety: "Mais variedade"
+      none: "Sem motivo específico"
+      language_label: "Idioma"
+      freetext_label: "Mais alguma coisa? (opcional)"
+      freetext_placeholder: "O seu comentário…"
     button: "Gerar exercícios"
     generating: "A gerar exercícios…"
     regenerate: "Regenerar"

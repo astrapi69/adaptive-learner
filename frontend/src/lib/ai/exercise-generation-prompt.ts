@@ -32,6 +32,13 @@ export interface ExercisePromptOptions {
   language?: string;
   /** Upper bound on the number of cards requested. Default 8. */
   maxCards?: number;
+  /** AIX-05 — user feedback from a regeneration ("make them harder",
+   *  "wrong language", free text). When present, the prompt asks for a
+   *  DIFFERENT set that addresses it. */
+  feedback?: string;
+  /** AIX-05 — questions from the previous generation the model must NOT
+   *  repeat (so a regeneration is genuinely fresh). */
+  avoidQuestions?: string[];
 }
 
 /** The five exercise types the schema accepts. NO ``multiple_choice``. */
@@ -110,6 +117,7 @@ export function buildExerciseGenerationPrompt(
   return [
     "You are an instructional designer. Read the THEORY below.",
     `Create ${want} exercises (at most ${maxCards}) that test understanding of it.`,
+    ...regenerationBlock(options),
     "",
     "RULES",
     `- Write every exercise in the same language as the theory (${language}).`,
@@ -137,6 +145,24 @@ export function buildExerciseGenerationPrompt(
     "THEORY",
     context,
   ].join("\n");
+}
+
+/** AIX-05 — the regeneration block: surfaces the user's feedback and the
+ *  questions to avoid. Empty when this is a first generation. */
+function regenerationBlock(options: ExercisePromptOptions): string[] {
+  const feedback = options.feedback?.trim();
+  const avoid = (options.avoidQuestions ?? [])
+    .map((q) => q.trim())
+    .filter(Boolean);
+  if (!feedback && avoid.length === 0) return [];
+  const lines = ["", "REGENERATION"];
+  lines.push("- The previous attempt was unsatisfactory. Generate a DIFFERENT set.");
+  if (feedback) lines.push(`- Address this feedback: ${feedback}`);
+  if (avoid.length > 0) {
+    lines.push("- Do NOT repeat any of these previous questions:");
+    for (const question of avoid.slice(0, 20)) lines.push(`  * ${question}`);
+  }
+  return lines;
 }
 
 /** A compact, schema-correct example embedded in the prompt. */

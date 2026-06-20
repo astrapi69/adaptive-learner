@@ -1851,6 +1851,17 @@ content:
     deleted: "Lektion gelöscht."
     delete_failed: "Die Lektion konnte nicht gelöscht werden."
   ai_exercises:
+    max_reached: "Maximale Anzahl an Neugenerierungen erreicht. Bearbeite die Übungen manuell oder importiere einen längeren Chat."
+    feedback:
+      title: "Warum neu generieren?"
+      too_easy: "Zu einfach"
+      too_hard: "Zu schwer"
+      wrong_language: "Falsche Sprache"
+      more_variety: "Mehr Abwechslung"
+      none: "Kein bestimmter Grund"
+      language_label: "Sprache"
+      freetext_label: "Sonst noch etwas? (optional)"
+      freetext_placeholder: "Dein Feedback…"
     button: "Übungen generieren"
     generating: "Übungen werden generiert…"
     regenerate: "Neu generieren"

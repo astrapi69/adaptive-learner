@@ -611,6 +611,9 @@ export default function ImportDetail({
                 theorySteps={theorySteps}
                 language={sourceLang || undefined}
                 hasGenerated={generatedExercises.length > 0}
+                previousQuestions={generatedExercises.map(
+                  (ex) => ex.sentence ?? ex.prompt,
+                )}
                 resolveProvider={resolveExerciseProvider}
                 onGenerated={(exercises) => setGeneratedExercises(exercises)}
                 t={t}

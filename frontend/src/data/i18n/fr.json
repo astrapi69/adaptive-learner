@@ -2001,6 +2001,18 @@
       "delete_failed": "Impossible de supprimer la leçon."
     },
     "ai_exercises": {
+      "max_reached": "Nombre maximal de régénérations atteint. Modifiez les exercices manuellement ou importez une conversation plus longue.",
+      "feedback": {
+        "title": "Pourquoi régénérer ?",
+        "too_easy": "Trop facile",
+        "too_hard": "Trop difficile",
+        "wrong_language": "Mauvaise langue",
+        "more_variety": "Plus de variété",
+        "none": "Aucune raison particulière",
+        "language_label": "Langue",
+        "freetext_label": "Autre chose ? (facultatif)",
+        "freetext_placeholder": "Vos remarques…"
+      },
       "button": "Générer des exercices",
       "generating": "Génération des exercices…",
       "regenerate": "Régénérer",

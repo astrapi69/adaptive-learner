@@ -1,19 +1,25 @@
 /**
- * AIX-02 (EXP-036) — "Generate exercises" button for theory-only lessons.
+ * AIX-02 / AIX-05 (EXP-036) — "Generate exercises" button for theory-only
+ * lessons, with a feedback-driven regeneration loop.
  *
  * A chat-imported lesson with prose theory but no exercises is read-only.
  * This button lets the user spend their own API tokens to turn the theory
- * into practiseable exercises (AIX-01 engine + AIX-02 quality gate), in
- * both storage modes (the provider config is resolved by the caller, so
- * Dexie resolves it browser-direct and a future API path can inject its
- * own).
+ * into practiseable exercises (AIX-01 engine + AIX-03 quality gate +
+ * AIX-04 balancing), in both storage modes (the provider config is
+ * resolved by the caller, so Dexie resolves it browser-direct and a future
+ * API path can inject its own).
  *
- * Self-contained: it owns the spinner, the no-key notice, the
- * regenerate-confirm, and the success/error toasts. The caller supplies
- * the theory steps, a provider resolver (a seam that returns ``null`` when
- * no key is configured), and an ``onGenerated`` callback that receives the
- * mapped exercises. The AI engine is injected (``generate``) so the unit
- * test runs without a real network call.
+ * AIX-05: the FIRST generation is one click. A REGENERATION opens a
+ * feedback dialog (too easy / too hard / wrong language / more variety /
+ * free text); the choice becomes prompt feedback and the previous
+ * questions are sent as "avoid these", so the new set is genuinely
+ * different. A lesson allows at most {@link MAX_REGENERATIONS}
+ * regenerations; after that the button disables with an explanatory note.
+ *
+ * Self-contained: it owns the spinner, the no-key notice, the feedback
+ * dialog, the retry counter, and the success/error toasts. The AI engine
+ * is injected (``generate``) so the unit test runs without a real network
+ * call.
  */
 
 import { useState } from "react";
@@ -21,13 +27,17 @@ import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import ApiKeyRequiredNotice from "../ApiKeyRequiredNotice";
-import { useConfirm } from "../../contexts/ConfirmContext";
+import RegenerateFeedbackDialog, {
+  feedbackForReason,
+  type RegenerateFeedback,
+} from "./RegenerateFeedbackDialog";
 import {
   browserDirectProvider,
   generateExercises as defaultGenerate,
 } from "../../lib/ai/generate-exercises";
 import { cardsToExercises } from "../../lib/ai/cards-to-exercises";
 import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
+import { LANGUAGE_OPTIONS } from "../../lib/content/language-options";
 import type { AIProvider } from "../../lib/constants";
 import type { ContentLessonExercise } from "../../storage/types";
 import { notify } from "../../utils/notify";
@@ -41,13 +51,19 @@ export interface ResolvedAiProvider {
   apiKey: string;
 }
 
+/** Max regenerations per lesson before the button disables (AIX-05). */
+export const MAX_REGENERATIONS = 3;
+
 interface GenerateExercisesButtonProps {
   /** The lesson's theory steps (prose context for the AI). */
   theorySteps: TheoryStep[];
   /** Target language for the exercises (BCP47-ish); optional. */
   language?: string;
-  /** True once exercises were already generated -> "Regenerate" + confirm. */
+  /** True once exercises were already generated -> "Regenerate" + feedback. */
   hasGenerated: boolean;
+  /** Questions from the current generation, sent as "avoid these" on a
+   *  regeneration so the new set is fresh (AIX-05). */
+  previousQuestions?: string[];
   /**
    * Resolve the active provider's config, or ``null`` when no key is set.
    * The Dexie caller reads it from IndexedDB settings (browser-direct).
@@ -65,27 +81,24 @@ export default function GenerateExercisesButton({
   theorySteps,
   language,
   hasGenerated,
+  previousQuestions,
   resolveProvider,
   onGenerated,
   t,
   generate = defaultGenerate,
 }: GenerateExercisesButtonProps) {
-  const confirm = useConfirm();
   const [busy, setBusy] = useState(false);
   const [needsKey, setNeedsKey] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [regenCount, setRegenCount] = useState(0);
 
-  async function handleClick() {
+  const maxReached = regenCount >= MAX_REGENERATIONS;
+
+  async function runGeneration(feedbackOpts?: {
+    feedback?: string;
+    language?: string;
+  }) {
     if (busy) return;
-    if (hasGenerated) {
-      const ok = await confirm({
-        message: t(
-          "content.ai_exercises.regenerate_confirm",
-          "Replace the generated exercises with a fresh set?",
-        ),
-        confirmLabel: t("content.ai_exercises.regenerate", "Regenerate"),
-      });
-      if (!ok) return;
-    }
     setBusy(true);
     setNeedsKey(false);
     try {
@@ -95,7 +108,11 @@ export default function GenerateExercisesButton({
         return;
       }
       const provider = browserDirectProvider(config);
-      const result = await generate(theorySteps, provider, { language });
+      const result = await generate(theorySteps, provider, {
+        language: feedbackOpts?.language ?? language,
+        feedback: feedbackOpts?.feedback,
+        avoidQuestions: feedbackOpts?.feedback ? previousQuestions : undefined,
+      });
       const { exercises, skipped } = cardsToExercises(result.cards, {
         clozePrompt: t("content.lesson_gen.cloze_prompt", "Fill in the missing word."),
       });
@@ -108,9 +125,6 @@ export default function GenerateExercisesButton({
         );
         return;
       }
-      // AIX-03 — the engine result carries the quality-gate rejects; add
-      // the gate's drops (``result.rejected``) to the mapper's drops
-      // (``skipped``) so the user learns how many were filtered out.
       const rejected = (result.rejected?.length ?? 0) + skipped;
       notify.success(
         rejected > 0
@@ -136,13 +150,42 @@ export default function GenerateExercisesButton({
     }
   }
 
+  function handleClick() {
+    if (busy || maxReached) return;
+    if (hasGenerated) {
+      setFeedbackOpen(true);
+      return;
+    }
+    void runGeneration();
+  }
+
+  function handleFeedback(feedback: RegenerateFeedback) {
+    setFeedbackOpen(false);
+    const languageName = feedback.language
+      ? LANGUAGE_OPTIONS.find((o) => o.code === feedback.language)?.name
+      : undefined;
+    setRegenCount((count) => count + 1);
+    void runGeneration({
+      feedback: feedbackForReason(feedback.reason, feedback.freeText, languageName),
+      language: feedback.language,
+    });
+  }
+
   return (
     <div className="contents">
       <Button
         type="button"
         variant="secondary"
         onClick={handleClick}
-        disabled={busy}
+        disabled={busy || maxReached}
+        title={
+          maxReached
+            ? t(
+                "content.ai_exercises.max_reached",
+                "Maximum regeneration attempts reached. Edit the exercises manually or import a longer chat.",
+              )
+            : undefined
+        }
         data-testid="generate-exercises-button"
       >
         {busy ? (
@@ -160,6 +203,17 @@ export default function GenerateExercisesButton({
             ? t("content.ai_exercises.regenerate", "Regenerate")
             : t("content.ai_exercises.button", "Generate exercises")}
       </Button>
+      {maxReached && (
+        <p
+          className="w-full text-sm text-fg-muted"
+          data-testid="generate-exercises-max-reached"
+        >
+          {t(
+            "content.ai_exercises.max_reached",
+            "Maximum regeneration attempts reached. Edit the exercises manually or import a longer chat.",
+          )}
+        </p>
+      )}
       {needsKey && (
         <div className="w-full" data-testid="generate-exercises-no-key">
           <ApiKeyRequiredNotice
@@ -168,6 +222,13 @@ export default function GenerateExercisesButton({
           />
         </div>
       )}
+      <RegenerateFeedbackDialog
+        open={feedbackOpen}
+        defaultLanguage={language}
+        onSubmit={handleFeedback}
+        onCancel={() => setFeedbackOpen(false)}
+        t={t}
+      />
     </div>
   );
 }

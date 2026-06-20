@@ -102,6 +102,8 @@ export async function generateExercises(
   const prompt = buildExerciseGenerationPrompt(theorySteps, {
     language: options.language,
     maxCards: options.maxCards,
+    feedback: options.feedback,
+    avoidQuestions: options.avoidQuestions,
   });
   const raw = await provider.complete(prompt, {
     signal: options.signal,

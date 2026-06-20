@@ -105,3 +105,29 @@ describe("detectLanguageHint", () => {
     expect(detectLanguageHint("The quick brown fox jumps over the lazy dog.")).toBe("en");
   });
 });
+
+describe("buildExerciseGenerationPrompt — regeneration (AIX-05)", () => {
+  const STEPS: TheoryStep[] = [{ id: "s1", title: "T", body: "Some theory text." }];
+
+  it("has no regeneration block on a first generation", () => {
+    expect(buildExerciseGenerationPrompt(STEPS)).not.toContain("REGENERATION");
+  });
+
+  it("includes the user feedback when provided", () => {
+    const prompt = buildExerciseGenerationPrompt(STEPS, {
+      feedback: "Make the questions noticeably harder.",
+    });
+    expect(prompt).toContain("REGENERATION");
+    expect(prompt).toContain("harder");
+  });
+
+  it("lists previous questions to avoid", () => {
+    const prompt = buildExerciseGenerationPrompt(STEPS, {
+      feedback: "more variety",
+      avoidQuestions: ["What is X?", "Define Y."],
+    });
+    expect(prompt).toContain("Do NOT repeat");
+    expect(prompt).toContain("What is X?");
+    expect(prompt).toContain("Define Y.");
+  });
+});
