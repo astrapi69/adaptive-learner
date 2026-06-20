@@ -1,31 +1,10 @@
 import { Map as MapIcon, Mic, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Suspense, lazy, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
-import ContinueLearning from "../../components/ContinueLearning";
 import DashboardFilterBar from "../../components/DashboardFilterBar";
-import HelpLink from "../../components/help/HelpLink";
-import HelpTooltip from "../../components/help/HelpTooltip";
-import FocusAreasCard from "../../components/dashboard/FocusAreasCard";
-import PausedLessonsCard from "../../components/dashboard/PausedLessonsCard";
-import LearningRepoWidget from "../../components/dashboard/LearningRepoWidget";
-import ReviewQueueCard from "../../components/dashboard/ReviewQueueCard";
-import FavoritesCard from "../../components/dashboard/FavoritesCard";
-import MethodDistribution from "../../components/MethodDistribution";
-import ProfileRadar from "../../components/ProfileRadar";
-import ProgressTimeline from "../../components/ProgressTimeline";
-import RecentSessions from "../../components/RecentSessions";
 import QuickStartButton from "../../components/QuickStartButton";
-import SessionCounter from "../../components/SessionCounter";
-import SpacedRecommendations from "../../components/SpacedRecommendations";
-import ToolRecommendations from "../../components/ToolRecommendations";
-import XPWidget from "../../components/XPWidget";
-import DashboardBadgeWidget from "../../components/badges/DashboardBadgeWidget";
-import DailyMissionsCard from "../../components/DailyMissionsCard";
-import StreakCalendar from "../../components/StreakCalendar";
-import StreakWidget from "../../components/StreakWidget";
-import ActivityTrend from "../../components/dashboard/ActivityTrend";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../../api/client";
@@ -41,6 +20,20 @@ import type {
   ToolRecommendation,
   TrackingSummary,
 } from "../../types";
+
+// #858 — the Dashboard is split into three lazy-loaded tabs. The data is
+// fetched once below and passed in, so only the active tab's bundle mounts.
+const DashboardOverviewTab = lazy(() => import("./DashboardOverviewTab"));
+const DashboardActivityTab = lazy(() => import("./DashboardActivityTab"));
+const DashboardMissionsTab = lazy(() => import("./DashboardMissionsTab"));
+
+type DashboardTabId = "overview" | "activity" | "missions";
+const DASHBOARD_TAB_ORDER: DashboardTabId[] = ["overview", "activity", "missions"];
+function normalizeDashboardTab(raw: string | null): DashboardTabId {
+  return DASHBOARD_TAB_ORDER.includes(raw as DashboardTabId)
+    ? (raw as DashboardTabId)
+    : "overview";
+}
 
 /**
  * Dashboard page (project-reference §8 row ``/dashboard``).
@@ -60,6 +53,14 @@ import type {
 export default function Dashboard() {
   const { t, lang } = useI18n();
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
+  const activeTab = normalizeDashboardTab(params.get("tab"));
+  function selectTab(id: DashboardTabId) {
+    const next = new URLSearchParams(params);
+    if (id === "overview") next.delete("tab");
+    else next.set("tab", id);
+    setParams(next, { replace: true });
+  }
   // Issue 4 / feature-strategy — gate QuickStart on the SESSION_START
   // feature (disabled in Dexie mode without a key; active in API mode).
   const sessionFeature = useFeature(FEATURES.SESSION_START);
@@ -206,14 +207,6 @@ export default function Dashboard() {
         )}
       </header>
 
-      {/* UX overhaul C4 — Continue Learning at the TOP: answers
-                "where was I, what next?" before any gamification. */}
-      {userId && (
-        <div className="mb-4">
-          <ContinueLearning userId={userId} maxItems={3} />
-        </div>
-      )}
-
       {showApiKeyBanner && (
         <div
           className="api-key-skip-banner"
@@ -320,145 +313,61 @@ export default function Dashboard() {
         />
       )}
 
-      {/* UX overhaul C4 — widgets reordered around the learning
-                flow: actionable first (paused, missions, focus, review),
-                then motivational (XP / streak / badges), then the
-                analytical panels. */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {/* All user-scoped cards share one guard (fragment children
-            flatten into the grid, so layout is unchanged) — keeps the
-            Dashboard component under the complexity gate. */}
-        {userId && (
-          <>
-            <PausedLessonsCard userId={userId} />
-            <article className="dashboard-card dashboard-card-wide">
-              <DailyMissionsCard userId={userId} />
-            </article>
-            <FocusAreasCard userId={userId} />
-            <ReviewQueueCard userId={userId} />
-            <FavoritesCard userId={userId} />
-          </>
+      {/* #858 — three tabs: Übersicht (default) / Aktivität / Missionen.
+                The data fetched above is passed into the active (lazy) tab,
+                so only the active tab's bundle mounts. */}
+      <div
+        role="tablist"
+        aria-label={t("dashboard.title", "Dashboard")}
+        data-testid="dashboard-tabs"
+        className="mb-4 flex gap-1 border-b border-border"
+      >
+        {DASHBOARD_TAB_ORDER.map((id) => {
+          const isActive = id === activeTab;
+          return (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => selectTab(id)}
+              data-testid={`dashboard-tab-${id}`}
+              className={`min-h-[44px] rounded-t-app px-4 text-sm font-medium ${
+                isActive
+                  ? "border-b-2 border-accent text-accent"
+                  : "text-fg-muted hover:text-fg-primary"
+              }`}
+            >
+              {t(`dashboard.tab.${id}`, id)}
+            </button>
+          );
+        })}
+      </div>
+
+      <Suspense fallback={null}>
+        {activeTab === "overview" && (
+          <DashboardOverviewTab
+            userId={userId}
+            xpState={xpState}
+            streakState={streakState}
+          />
         )}
-
-        <article className="dashboard-card">
-          <h2 className="dashboard-card-title">
-            <HelpTooltip glossaryKey="feature_gamification">
-              {t("gamification.card_xp", "XP & Level")}
-            </HelpTooltip>
-            <HelpLink glossaryKey="feature_gamification" />
-          </h2>
-          <XPWidget state={xpState} />
-        </article>
-
-        <article className="dashboard-card dashboard-card-wide">
-          <h2 className="dashboard-card-title">{t("gamification.card_streak", "Streak")}</h2>
-          <StreakWidget state={streakState} />
-          <ActivityTrend entries={heatmap} />
-          <StreakCalendar entries={heatmap} />
-        </article>
-
-        <article className="dashboard-card dashboard-card-wide">
-          <h2 className="dashboard-card-title">{t("gamification.card_badges", "Badges")}</h2>
-          <DashboardBadgeWidget badges={badges} />
-        </article>
-
-        <article className="dashboard-card">
-          <h2 className="dashboard-card-title">
-            <HelpTooltip glossaryKey="learning_profile">
-              {t("dashboard.card_profile", "Learning profile")}
-            </HelpTooltip>
-            <HelpLink glossaryKey="learning_profile" />
-          </h2>
-          {profile ? (
-            <ProfileRadar profile={profile} height={280} />
-          ) : incompleteAssessment ? (
-            <div
-              className="tile flex flex-col items-start gap-2"
-              data-testid="dashboard-profile-resume"
-            >
-              <p>{t("dashboard.profile_incomplete", "Learning profile incomplete.")}</p>
-              <Button
-                type="button"
-                data-testid="dashboard-profile-resume-btn"
-                onClick={() => navigate("/assessment")}
-              >
-                {t("dashboard.profile_resume", "Continue learning profile")}
-              </Button>
-            </div>
-          ) : (
-            <div
-              className="tile flex flex-col items-start gap-2"
-              data-testid="dashboard-profile-empty"
-            >
-              <p className="muted">{t("dashboard.no_data")}</p>
-              <Button
-                type="button"
-                variant="outline"
-                data-testid="dashboard-profile-start-btn"
-                onClick={() => navigate("/assessment")}
-              >
-                {t("dashboard.profile_start", "Create learning profile")}
-              </Button>
-            </div>
-          )}
-        </article>
-
-        <article className="dashboard-card">
-          <h2 className="dashboard-card-title">
-            <HelpTooltip glossaryKey="learning_session">
-              {t("dashboard.card_counter", "Sessions")}
-            </HelpTooltip>
-            <HelpLink glossaryKey="learning_session" />
-          </h2>
-          <SessionCounter summary={summary} />
-        </article>
-
-        <article className="dashboard-card dashboard-card-wide">
-          <h2 className="dashboard-card-title">{t("dashboard.card_progress", "Progress")}</h2>
-          <ProgressTimeline summary={summary} />
-        </article>
-
-        <article className="dashboard-card">
-          <h2 className="dashboard-card-title">
-            <HelpTooltip glossaryKey="method_ai_adaptive">
-              {t("dashboard.card_distribution", "Method distribution")}
-            </HelpTooltip>
-            <HelpLink glossaryKey="method_ai_adaptive" />
-          </h2>
-          <MethodDistribution summary={summary} />
-        </article>
-
-        <article className="dashboard-card">
-          <h2 className="dashboard-card-title">
-            {t("dashboard.card_tools", "Tool recommendations")}
-          </h2>
-          <ToolRecommendations tools={tools} />
-        </article>
-
-        <article className="dashboard-card">
-          <h2 className="dashboard-card-title">
-            <HelpTooltip glossaryKey="feature_spaced_repetition">
-              {t("dashboard.card_spaced", "Spaced practice")}
-            </HelpTooltip>
-            <HelpLink glossaryKey="feature_spaced_repetition" />
-          </h2>
-          <SpacedRecommendations cards={spaced} />
-        </article>
-
-        <article className="dashboard-card dashboard-card-wide">
-          <h2 className="dashboard-card-title">
-            {t("dashboard.card_recent_sessions", "Recent sessions")}
-          </h2>
-          <RecentSessions sessions={summary?.recent_sessions ?? []} />
-        </article>
-
-        {/* Phase 49G: widget shows in BOTH storage modes.
-                    DexieStorage.learningRepo renders client-side
-                    (49E + parity-proven by 49F). */}
-        {readLearnerState().projectId ? (
-          <LearningRepoWidget projectId={readLearnerState().projectId as string} />
-        ) : null}
-      </section>
+        {activeTab === "activity" && (
+          <DashboardActivityTab
+            userId={userId}
+            summary={summary}
+            tools={tools}
+            spaced={spaced}
+            heatmap={heatmap}
+            profile={profile}
+            incompleteAssessment={incompleteAssessment}
+            projectId={readLearnerState().projectId}
+          />
+        )}
+        {activeTab === "missions" && (
+          <DashboardMissionsTab userId={userId} badges={badges} />
+        )}
+      </Suspense>
     </main>
   );
 }

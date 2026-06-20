@@ -285,6 +285,10 @@ assessment:
   read_summary: 요약 읽기
   swipe_hint: "왼쪽 / 오른쪽으로 스와이프 (또는 방향키 사용)하여 이동하세요."
 dashboard:
+  tab:
+    overview: "개요"
+    activity: "활동"
+    missions: "미션"
   no_data: "아직 데이터가 없습니다."
   title: 대시보드
   welcome: 다시 오신 것을 환영합니다

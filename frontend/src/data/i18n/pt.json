@@ -303,6 +303,11 @@
     "swipe_hint": "Deslize para a esquerda / direita (ou use as setas) para navegar."
   },
   "dashboard": {
+    "tab": {
+      "overview": "Visão geral",
+      "activity": "Atividade",
+      "missions": "Missões"
+    },
     "no_data": "Ainda não há dados.",
     "title": "Painel",
     "welcome": "Bem-vindo de volta",

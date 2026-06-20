@@ -303,6 +303,11 @@
     "swipe_hint": "スワイプで左右に移動（または矢印キーを使用）。"
   },
   "dashboard": {
+    "tab": {
+      "overview": "概要",
+      "activity": "アクティビティ",
+      "missions": "ミッション"
+    },
     "no_data": "まだデータがありません。",
     "title": "ダッシュボード",
     "welcome": "おかえりなさい",

@@ -303,6 +303,11 @@
     "swipe_hint": "Geser kiri / kanan (atau gunakan tombol panah) untuk menavigasi."
   },
   "dashboard": {
+    "tab": {
+      "overview": "Ringkasan",
+      "activity": "Aktivitas",
+      "missions": "Misi"
+    },
     "no_data": "Belum ada data.",
     "title": "Dasbor",
     "welcome": "Selamat datang kembali",
