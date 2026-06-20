@@ -13,7 +13,9 @@
 
 import type {SystemInfo} from "../../types/domain";
 
+import {resolveStorageMode} from "../../storage";
 import UpdateCheckControl from "./UpdateCheckControl";
+import DesktopUpdateCheckControl from "./DesktopUpdateCheckControl";
 
 interface Props {
     info: SystemInfo;
@@ -21,6 +23,9 @@ interface Props {
 }
 
 export default function VersionSection({info, t}: Props) {
+    // #840 — Dexie/PWA keeps the service-worker check; API/desktop uses the
+    // GitHub Releases check (no service worker exists in desktop mode).
+    const isApiMode = resolveStorageMode() === "api";
     const commitUrl =
         info.app.build_hash !== "unknown"
             ? `${info.app.repository_url}/commit/${info.app.build_hash}`
@@ -71,7 +76,7 @@ export default function VersionSection({info, t}: Props) {
                         : new Date(info.app.build_date).toLocaleString()}
                 </dd>
             </dl>
-            <UpdateCheckControl />
+            {isApiMode ? <DesktopUpdateCheckControl /> : <UpdateCheckControl />}
         </article>
     );
 }

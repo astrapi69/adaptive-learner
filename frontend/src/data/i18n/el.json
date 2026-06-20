@@ -465,6 +465,18 @@
     "session_count": "Συνεδρίες"
   },
   "settings": {
+    "updates": {
+      "title": "Ενημερώσεις",
+      "auto_check": "Αυτόματος έλεγχος ενημερώσεων",
+      "interval": "Διάστημα ελέγχου",
+      "interval_daily": "Καθημερινά",
+      "interval_weekly": "Εβδομαδιαία",
+      "interval_monthly": "Μηνιαία",
+      "interval_never": "Ποτέ",
+      "last_check": "Τελευταίος έλεγχος: {when}",
+      "never_checked": "Δεν έχει ελεγχθεί ποτέ",
+      "current_version": "Τρέχουσα έκδοση: v{version}"
+    },
     "install": {
       "heading": "Εγκατάσταση εφαρμογής",
       "description": "Εγκαταστήστε το Adaptive Learner ως εφαρμογή για πρόσβαση εκτός σύνδεσης και πλήρη οθόνη.",
@@ -867,6 +879,12 @@
     "aria_label": "Εγκατάσταση Adaptive Learner"
   },
   "about": {
+    "up_to_date_version": "Έχετε την πιο πρόσφατη έκδοση. (v{version})",
+    "update": {
+      "read_more": "Διαβάστε περισσότερα",
+      "open_release": "Άνοιγμα σελίδας έκδοσης",
+      "later": "Αργότερα"
+    },
     "section_heading": "Σχετικά με το Adaptive Learner",
     "loading": "Φόρτωση πληροφοριών…",
     "load_failed": "Δεν ήταν δυνατή η φόρτωση πληροφοριών συστήματος:",
@@ -3085,6 +3103,15 @@
       "download_failed": "Δεν ήταν δυνατή η λήψη του συνόλου.",
       "remove_failed": "Δεν ήταν δυνατή η αφαίρεση του συνόλου.",
       "load_failed": "Δεν ήταν δυνατή η φόρτωση του διαθέσιμου περιεχομένου."
+    }
+  },
+  "update": {
+    "banner": {
+      "message": "Νέα έκδοση {version} διαθέσιμη",
+      "whats_new": "Τι νέο υπάρχει;",
+      "release_page": "Σελίδα έκδοσης",
+      "later": "Αργότερα",
+      "whats_new_title": "Τι νέο υπάρχει στην {version}"
     }
   }
 }

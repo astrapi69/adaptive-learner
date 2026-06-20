@@ -465,6 +465,18 @@
     "session_count": "Sesiones"
   },
   "settings": {
+    "updates": {
+      "title": "Actualizaciones",
+      "auto_check": "Comprobación automática de actualizaciones",
+      "interval": "Intervalo de comprobación",
+      "interval_daily": "Diario",
+      "interval_weekly": "Semanal",
+      "interval_monthly": "Mensual",
+      "interval_never": "Nunca",
+      "last_check": "Última comprobación: {when}",
+      "never_checked": "Nunca comprobado",
+      "current_version": "Versión actual: v{version}"
+    },
     "install": {
       "heading": "Instalar aplicación",
       "description": "Instala Adaptive Learner como app para acceso sin conexión y pantalla completa.",
@@ -867,6 +879,12 @@
     "aria_label": "Instalar Adaptive Learner"
   },
   "about": {
+    "up_to_date_version": "Tienes la última versión. (v{version})",
+    "update": {
+      "read_more": "Leer más",
+      "open_release": "Abrir página de la versión",
+      "later": "Más tarde"
+    },
     "section_heading": "Acerca de Adaptive Learner",
     "loading": "Cargando información…",
     "load_failed": "No se pudo cargar la información del sistema:",
@@ -3085,6 +3103,15 @@
       "download_failed": "No se pudo descargar el set.",
       "remove_failed": "No se pudo eliminar el set.",
       "load_failed": "No se pudo cargar el contenido disponible."
+    }
+  },
+  "update": {
+    "banner": {
+      "message": "Nueva versión {version} disponible",
+      "whats_new": "¿Qué hay de nuevo?",
+      "release_page": "Página de la versión",
+      "later": "Más tarde",
+      "whats_new_title": "Novedades de {version}"
     }
   }
 }

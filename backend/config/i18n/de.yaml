@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "Sitzungsnotizen"
   session_count: "Sitzungen"
 settings:
+  updates:
+    title: "Updates"
+    auto_check: "Automatische Update-Prüfung"
+    interval: "Prüfintervall"
+    interval_daily: "Täglich"
+    interval_weekly: "Wöchentlich"
+    interval_monthly: "Monatlich"
+    interval_never: "Nie"
+    last_check: "Letzte Prüfung: {when}"
+    never_checked: "Noch nie geprüft"
+    current_version: "Aktuelle Version: v{version}"
   install:
     heading: "App installieren"
     description: "Installiere Adaptive Learner als App für Offline-Zugriff und eine Vollbild-Erfahrung."
@@ -808,6 +819,11 @@ install:
   dismiss: Nicht jetzt
   aria_label: Adaptive Learner installieren
 about:
+  up_to_date_version: "Du hast die neueste Version. (v{version})"
+  update:
+    read_more: "Mehr lesen"
+    open_release: "Release-Seite öffnen"
+    later: "Später"
   section_heading: Über Adaptive Learner
   loading: Informationen werden geladen…
   load_failed: 'Systeminformationen konnten nicht geladen werden:'
@@ -2828,3 +2844,10 @@ discover:
     download_failed: "Set konnte nicht heruntergeladen werden."
     remove_failed: "Set konnte nicht entfernt werden."
     load_failed: "Verfügbare Inhalte konnten nicht geladen werden."
+update:
+  banner:
+    message: "Neue Version {version} verfügbar"
+    whats_new: "Was ist neu?"
+    release_page: "Release-Seite"
+    later: "Später"
+    whats_new_title: "Was ist neu in {version}"

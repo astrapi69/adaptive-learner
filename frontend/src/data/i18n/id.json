@@ -465,6 +465,18 @@
     "session_count": "Sesi"
   },
   "settings": {
+    "updates": {
+      "title": "Pembaruan",
+      "auto_check": "Pemeriksaan pembaruan otomatis",
+      "interval": "Interval pemeriksaan",
+      "interval_daily": "Harian",
+      "interval_weekly": "Mingguan",
+      "interval_monthly": "Bulanan",
+      "interval_never": "Tidak pernah",
+      "last_check": "Pemeriksaan terakhir: {when}",
+      "never_checked": "Belum pernah diperiksa",
+      "current_version": "Versi saat ini: v{version}"
+    },
     "review_limit": {
       "label": "Pertanyaan per ulasan",
       "desc": "Berapa banyak elemen yang ditampilkan satu sesi ulasan sebelum berakhir. Item jatuh tempo lainnya dialihkan ke putaran berikutnya."
@@ -867,6 +879,12 @@
     "aria_label": "Pasang Adaptive Learner"
   },
   "about": {
+    "up_to_date_version": "Anda memiliki versi terbaru. (v{version})",
+    "update": {
+      "read_more": "Baca selengkapnya",
+      "open_release": "Buka halaman rilis",
+      "later": "Nanti"
+    },
     "section_heading": "Tentang Adaptive Learner",
     "loading": "Memuat informasi…",
     "load_failed": "Tidak dapat memuat info sistem:",
@@ -3085,6 +3103,15 @@
       "download_failed": "Tidak dapat mengunduh set.",
       "remove_failed": "Tidak dapat menghapus set.",
       "load_failed": "Tidak dapat memuat konten yang tersedia."
+    }
+  },
+  "update": {
+    "banner": {
+      "message": "Versi baru {version} tersedia",
+      "whats_new": "Apa yang baru?",
+      "release_page": "Halaman rilis",
+      "later": "Nanti",
+      "whats_new_title": "Yang baru di {version}"
     }
   }
 }

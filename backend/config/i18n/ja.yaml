@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "セッションのメモ"
   session_count: "セッション"
 settings:
+  updates:
+    title: "アップデート"
+    auto_check: "自動アップデート確認"
+    interval: "確認間隔"
+    interval_daily: "毎日"
+    interval_weekly: "毎週"
+    interval_monthly: "毎月"
+    interval_never: "しない"
+    last_check: "前回の確認: {when}"
+    never_checked: "未確認"
+    current_version: "現在のバージョン: v{version}"
   install:
     heading: "アプリをインストール"
     description: "オフラインアクセスと全画面表示のために Adaptive Learner をアプリとしてインストールします。"
@@ -808,6 +819,11 @@ install:
   dismiss: 今はしない
   aria_label: Adaptive Learner をインストール
 about:
+  up_to_date_version: "最新バージョンを使用しています。(v{version})"
+  update:
+    read_more: "もっと読む"
+    open_release: "リリースページを開く"
+    later: "後で"
   section_heading: Adaptive Learner について
   loading: 情報を読み込み中…
   load_failed: 'システム情報を読み込めませんでした:'
@@ -2824,3 +2840,10 @@ discover:
     download_failed: "セットをダウンロードできませんでした。"
     remove_failed: "セットを削除できませんでした。"
     load_failed: "利用可能なコンテンツを読み込めませんでした。"
+update:
+  banner:
+    message: "新しいバージョン {version} が利用可能です"
+    whats_new: "新着情報は？"
+    release_page: "リリースページ"
+    later: "後で"
+    whats_new_title: "{version} の新着情報"
