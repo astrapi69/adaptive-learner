@@ -21,6 +21,16 @@
 export const ACCEPTED_AT_KEY = "adaptive-learner.update.last_accepted_at";
 /** The version string the user accepted (banner stays hidden for it). */
 export const ACCEPTED_VERSION_KEY = "adaptive-learner.update.accepted_version";
+/**
+ * sessionStorage flag: set the instant the user clicks "Aktualisieren". This is
+ * the HARD in-session guard (#845) — once set, the banner stays suppressed for
+ * the rest of the browser session no matter what (survives reloads, independent
+ * of any version comparison or timestamp parsing). It is the belt to the
+ * localStorage quiet-window suspenders: even if the version is unknown, the
+ * clock is wrong, or a stale reload re-reports the same "new" version, the
+ * banner cannot re-nag within the session the click happened in.
+ */
+export const ACCEPTED_SESSION_KEY = "adaptive-learner.update.accepted_session";
 
 /** How long the banner stays quiet after a click, regardless of version. */
 export const ACCEPT_QUIET_MS = 60 * 60 * 1000; // 1 hour
@@ -38,6 +48,23 @@ function writeKey(key: string, value: string): void {
     localStorage.setItem(key, value);
   } catch {
     /* localStorage unavailable (private mode) — non-fatal */
+  }
+}
+
+/** Whether the user accepted an update earlier in THIS browser session. */
+export function readAcceptedThisSession(): boolean {
+  try {
+    return sessionStorage.getItem(ACCEPTED_SESSION_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function markAcceptedThisSession(): void {
+  try {
+    sessionStorage.setItem(ACCEPTED_SESSION_KEY, "true");
+  } catch {
+    /* sessionStorage unavailable — the localStorage quiet window still covers it */
   }
 }
 
@@ -64,6 +91,9 @@ export function recordUpdateAccepted(
   version: string | null,
   now: number = Date.now(),
 ): void {
+  // Hard in-session guard first: even if both localStorage writes below fail
+  // (private mode), the banner stays suppressed for the rest of the session.
+  markAcceptedThisSession();
   writeKey(ACCEPTED_AT_KEY, new Date(now).toISOString());
   if (version) writeKey(ACCEPTED_VERSION_KEY, version);
 }
@@ -83,6 +113,11 @@ export function shouldShowUpdateBanner(
   newVersion: string | null,
   now: number = Date.now(),
 ): boolean {
+  // Hard in-session guard: once the user clicked "Aktualisieren" this session,
+  // never re-offer the banner until the next browser session (#845). This
+  // closes the re-nag loop regardless of version/timestamp edge cases.
+  if (readAcceptedThisSession()) return false;
+
   const acceptedAt = readAcceptedAt();
   if (acceptedAt) {
     const accepted = Date.parse(acceptedAt);
