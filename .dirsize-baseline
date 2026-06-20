@@ -7,5 +7,4 @@ frontend/src/components/content
 frontend/src/components/lesson
 frontend/src/lib
 frontend/src/lib/content
-frontend/src/storage
 frontend/src/storage/types
