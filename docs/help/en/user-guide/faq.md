@@ -130,9 +130,9 @@ Local-network bidirectional sync since v1.0.0. Settings →
 Sync → "Pair this device": scan the QR code on the other
 device's screen (rear camera), or paste the pairing URL.
 Once paired, push + pull buttons exchange data; conflicts
-go through an AI-merge resolver. 28 tables on the sync
-surface as of v1.19.0 (subjects + tags + study questions
-included).
+go through an AI-merge resolver. 30 tables on the sync
+surface (incl. lesson progress, element errors, and
+missions).
 
 ## How is this different from ChatGPT?
 

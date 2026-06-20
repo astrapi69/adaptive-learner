@@ -1,6 +1,6 @@
 # Deployment
 
-Vier Deployment-Modi ab v1.20.0:
+Vier Deployment-Modi:
 
 | Modus | Wo | Backend | KI-Aufrufe | Schlüssel-Quelle |
 |---|---|---|---|---|

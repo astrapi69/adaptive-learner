@@ -3,8 +3,8 @@
 The Settings page collects everything you can tweak without
 touching code or YAML. Sections, top to bottom:
 
-1. **Language** — UI language (DE / EN / ES / FR / EL / PT /
-   TR / JA, all fully translated).
+1. **Language** — UI language (DE / EL / EN / ES / FR / HI /
+   ID / JA / KO / PT / TR, all fully translated).
 2. **AI provider + model picker** — which provider sees your
    messages, and which model to use.
 3. **API keys** — per-provider keys with source attribution
@@ -23,9 +23,9 @@ touching code or YAML. Sections, top to bottom:
 ## Language
 
 Live-swaps every UI string on the next render via `PATCH
-/api/settings/{user_id}`. All 8 languages are first-class —
-DE / EN / ES / FR / EL / PT / TR / JA — each with a fully
-translated catalog. Persisted across reloads via
+/api/settings/{user_id}`. All 11 languages are first-class —
+DE / EL / EN / ES / FR / HI / ID / JA / KO / PT / TR — each
+with a fully translated catalog. Persisted across reloads via
 `localStorage`.
 
 ## AI provider + model picker

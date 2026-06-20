@@ -128,7 +128,7 @@ Shape; das Frontend verzweigt nicht auf den Speichermodus.
 ```
 adaptive-learner/
 ├── backend/app/           FastAPI-Schale + DB + Hookspecs + Plugin-Manager
-├── backend/config/        app.yaml + i18n/ (8 Sprachen)
+├── backend/config/        app.yaml + i18n/ (11 Sprachen)
 ├── frontend/src/storage/  IStorageService + ApiStorage + DexieStorage
 ├── frontend/src/pages/    Landing, Onboarding, Assessment, Dashboard, ...
 ├── plugins/               7 Plugins, jedes ein eigenständiges Poetry-Paket

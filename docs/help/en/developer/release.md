@@ -12,8 +12,7 @@ Adaptive Learner follows Semantic Versioning 2.0.0:
 - **Major (X.0.0)** — breaking changes in API or
   architecture. Reserved for future big shifts.
 - **Minor (X.Y.0)** — new features, backward-compatible.
-  Default for each phase completion (we're at v1.20.0 / 34
-  phases shipped).
+  Default for each phase completion (we're at v1.91.0).
 - **Patch (X.Y.Z)** — bug fixes, backward-compatible. Hotfix
   chains.
 
@@ -125,7 +124,7 @@ Plugins lock-step with the canonical app version. The same
 number across all 10 plugin `pyproject.toml` files plus the
 three plugin `__init__.py` `__version__` literals. A future
 "core vs third-party plugin" decision may unlink them, but
-the v1.20.0 setup is uniform across the 18 propagated files.
+the current setup is uniform across the 18 propagated files.
 
 ## Hotfix flow
 

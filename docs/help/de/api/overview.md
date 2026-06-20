@@ -18,7 +18,7 @@ Server-Proxy transparent weiterleitet.
 
 ## Authentifizierung
 
-v1.20.0 hat keine Pro-Request-Authentifizierung. Das System
+Die API hat keine Pro-Request-Authentifizierung. Das System
 ist Single-User-pro-Browser: eine `user_id` liegt im
 `localStorage` und wird in URL-Pfaden mitgegeben
 (`/users/{user_id}/...`).
@@ -140,7 +140,7 @@ Untermenge für Lesbarkeit.
 
 ## Paginierung
 
-Endpunkte paginieren bei v1.20.0 nicht. Der Datensatz ist
+Endpunkte paginieren nicht. Der Datensatz ist
 Single-User und klein; die größte Liste (Sessions pro
 Projekt) liegt im niedrigen dreistelligen Bereich, nicht im
 vierstelligen. Eine spätere Phase wird Cursor-basierte

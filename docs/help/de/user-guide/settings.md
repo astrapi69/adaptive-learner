@@ -3,8 +3,8 @@
 Die Einstellungen-Seite sammelt alles, was du ohne Code- oder
 YAML-Eingriff anpassen kannst. Abschnitte, von oben nach unten:
 
-1. **Sprache** — UI-Sprache (DE / EN / ES / FR / EL / PT /
-   TR / JA, alle voll übersetzt).
+1. **Sprache** — UI-Sprache (DE / EL / EN / ES / FR / HI /
+   ID / JA / KO / PT / TR, alle voll übersetzt).
 2. **KI-Anbieter + Modell-Picker** — welcher Anbieter deine
    Nachrichten sieht und welches Modell zum Einsatz kommt.
 3. **API-Schlüssel** — pro Anbieter mit Quellen-Attribution
@@ -23,9 +23,10 @@ YAML-Eingriff anpassen kannst. Abschnitte, von oben nach unten:
 ## Sprache
 
 Tauscht jeden UI-String beim nächsten Render live aus via
-`PATCH /api/settings/{user_id}`. Alle 8 Sprachen sind
-First-Class — DE / EN / ES / FR / EL / PT / TR / JA — jede mit
-einem voll übersetzten Katalog. Über `localStorage` persistent.
+`PATCH /api/settings/{user_id}`. Alle 11 Sprachen sind
+First-Class — DE / EL / EN / ES / FR / HI / ID / JA / KO / PT /
+TR — jede mit einem voll übersetzten Katalog. Über
+`localStorage` persistent.
 
 ## KI-Anbieter + Modell-Picker
 
