@@ -2001,6 +2001,17 @@
       "delete_failed": "Tidak dapat menghapus pelajaran."
     },
     "ai_exercises": {
+      "batch": {
+        "button": "Buat untuk semua pelajaran",
+        "running": "Membuat…",
+        "none": "Semua pelajaran sudah memiliki latihan.",
+        "cost_confirm": "Ini membuat latihan untuk {n} pelajaran (sekitar {tokens} token). Lanjutkan?",
+        "progress": "Pelajaran {current} dari {total}…",
+        "cancel": "Batal",
+        "done": "{succeeded} dari {total} pelajaran: {generated} latihan, {skipped} dilewati.",
+        "cancelled": "Dihentikan. {succeeded} dari {total} pelajaran, {generated} latihan.",
+        "failed": "Pembuatan massal gagal. Silakan coba lagi."
+      },
       "max_reached": "Batas maksimum pembuatan ulang tercapai. Edit latihan secara manual atau impor obrolan yang lebih panjang.",
       "feedback": {
         "title": "Mengapa membuat ulang?",

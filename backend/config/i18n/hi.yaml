@@ -1841,6 +1841,16 @@ content:
     deleted: पाठ हटा दिया गया।
     delete_failed: पाठ हटाया नहीं जा सका।
   ai_exercises:
+    batch:
+      button: "सभी पाठों के लिए बनाएँ"
+      running: "बना रहे हैं…"
+      none: "सभी पाठों में पहले से अभ्यास हैं।"
+      cost_confirm: "इससे {n} पाठों के लिए अभ्यास बनेंगे (लगभग {tokens} टोकन)। जारी रखें?"
+      progress: "पाठ {current}/{total}…"
+      cancel: "रद्द करें"
+      done: "{total} में से {succeeded} पाठ पूर्ण: {generated} अभ्यास, {skipped} छोड़े गए।"
+      cancelled: "रोका गया। {total} में से {succeeded} पाठ पूर्ण, {generated} अभ्यास।"
+      failed: "बैच जनरेशन विफल। कृपया फिर से प्रयास करें।"
     max_reached: "पुनर्निर्माण का अधिकतम प्रयास पूरा हुआ। अभ्यासों को मैन्युअल रूप से संपादित करें या लंबी चैट आयात करें।"
     feedback:
       title: "फिर से क्यों बनाएँ?"

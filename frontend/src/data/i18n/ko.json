@@ -2001,6 +2001,17 @@
       "delete_failed": "레슨을 삭제할 수 없었습니다."
     },
     "ai_exercises": {
+      "batch": {
+        "button": "모든 레슨에 대해 생성",
+        "running": "생성 중…",
+        "none": "모든 레슨에 이미 연습문제가 있습니다.",
+        "cost_confirm": "{n}개 레슨에 대해 연습문제를 생성합니다(약 {tokens} 토큰). 계속할까요?",
+        "progress": "레슨 {current}/{total}…",
+        "cancel": "취소",
+        "done": "{total}개 중 {succeeded}개 완료: 연습문제 {generated}개, {skipped}개 건너뜀.",
+        "cancelled": "중지됨. {total}개 중 {succeeded}개 완료, 연습문제 {generated}개.",
+        "failed": "일괄 생성에 실패했습니다. 다시 시도해 주세요."
+      },
       "max_reached": "재생성 최대 횟수에 도달했습니다. 연습문제를 직접 편집하거나 더 긴 대화를 가져오세요.",
       "feedback": {
         "title": "왜 다시 생성하나요?",

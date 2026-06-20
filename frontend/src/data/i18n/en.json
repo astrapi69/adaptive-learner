@@ -2001,6 +2001,17 @@
       "delete_failed": "Could not delete the lesson."
     },
     "ai_exercises": {
+      "batch": {
+        "button": "Generate for all lessons",
+        "running": "Generating…",
+        "none": "All lessons already have exercises.",
+        "cost_confirm": "This generates exercises for {n} lessons (about {tokens} tokens). Continue?",
+        "progress": "Lesson {current} of {total}…",
+        "cancel": "Cancel",
+        "done": "{succeeded} of {total} lessons done: {generated} exercises, {skipped} skipped.",
+        "cancelled": "Stopped. {succeeded} of {total} lessons done, {generated} exercises.",
+        "failed": "Batch generation failed. Please try again."
+      },
       "max_reached": "Maximum regeneration attempts reached. Edit the exercises manually or import a longer chat.",
       "feedback": {
         "title": "Why regenerate?",

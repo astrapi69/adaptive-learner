@@ -2001,6 +2001,17 @@
       "delete_failed": "Ders silinemedi."
     },
     "ai_exercises": {
+      "batch": {
+        "button": "Tüm dersler için oluştur",
+        "running": "Oluşturuluyor…",
+        "none": "Tüm derslerde zaten alıştırma var.",
+        "cost_confirm": "Bu, {n} ders için alıştırma oluşturur (yaklaşık {tokens} jeton). Devam edilsin mi?",
+        "progress": "Ders {current} / {total}…",
+        "cancel": "İptal",
+        "done": "{total} dersten {succeeded} tanesi: {generated} alıştırma, {skipped} atlandı.",
+        "cancelled": "Durduruldu. {total} dersten {succeeded} tanesi, {generated} alıştırma.",
+        "failed": "Toplu oluşturma başarısız oldu. Lütfen tekrar deneyin."
+      },
       "max_reached": "Maksimum yeniden oluşturma sayısına ulaşıldı. Alıştırmaları elle düzenleyin veya daha uzun bir sohbet içe aktarın.",
       "feedback": {
         "title": "Neden yeniden oluşturulsun?",

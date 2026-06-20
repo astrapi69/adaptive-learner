@@ -2001,6 +2001,17 @@
       "delete_failed": "Die Lektion konnte nicht gelöscht werden."
     },
     "ai_exercises": {
+      "batch": {
+        "button": "Übungen für alle Lektionen generieren",
+        "running": "Wird generiert…",
+        "none": "Alle Lektionen haben bereits Übungen.",
+        "cost_confirm": "Dies generiert Übungen für {n} Lektionen (etwa {tokens} Tokens). Fortfahren?",
+        "progress": "Lektion {current} von {total}…",
+        "cancel": "Abbrechen",
+        "done": "{succeeded} von {total} Lektionen fertig: {generated} Übungen, {skipped} übersprungen.",
+        "cancelled": "Gestoppt. {succeeded} von {total} Lektionen fertig, {generated} Übungen.",
+        "failed": "Stapelgenerierung fehlgeschlagen. Bitte erneut versuchen."
+      },
       "max_reached": "Maximale Anzahl an Neugenerierungen erreicht. Bearbeite die Übungen manuell oder importiere einen längeren Chat.",
       "feedback": {
         "title": "Warum neu generieren?",

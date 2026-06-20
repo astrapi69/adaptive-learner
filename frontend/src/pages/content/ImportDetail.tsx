@@ -57,7 +57,7 @@ import {
 } from "../../lib/content/analysis-to-lesson";
 import { analysisLessonLabels } from "../../lib/content/analysis-lesson-labels";
 import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
-import { resolveModel } from "../../storage/ai-providers";
+import { resolveActiveAiProvider } from "../../lib/ai/resolve-provider";
 import { notify } from "../../utils/notify";
 import type { AIProvider } from "../../lib/constants";
 import type { ContentLessonExercise } from "../../storage/types";
@@ -485,17 +485,7 @@ export default function ImportDetail({
   async function resolveExerciseProvider(): Promise<ResolvedAiProvider | null> {
     const { userId } = readLearnerState();
     if (!userId) return null;
-    const settings = await getStorage().settings.get(userId);
-    const provider = settings.active_provider as AIProvider;
-    const apiKey = await readApiKeyFor(userId, provider);
-    if (!apiKey) return null;
-    const override =
-      provider === "anthropic"
-        ? settings.model_override_anthropic
-        : provider === "openai"
-          ? settings.model_override_openai
-          : settings.model_override_gemini;
-    return { provider, model: resolveModel(provider, override ?? null), apiKey };
+    return resolveActiveAiProvider(userId);
   }
 
   if (loading) {
