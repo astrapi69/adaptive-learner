@@ -1853,6 +1853,7 @@ content:
     regenerate: "Régénérer"
     regenerate_confirm: "Remplacer les exercices générés par une nouvelle série ?"
     generated: "{n} exercices générés."
+    generated_with_rejected: "{n} exercices générés, {r} rejetés pour la qualité."
     none: "L'IA n'a renvoyé aucun exercice utilisable. Veuillez réessayer."
     failed: "Impossible de générer les exercices. Veuillez réessayer."
     feature: "pour générer des exercices"

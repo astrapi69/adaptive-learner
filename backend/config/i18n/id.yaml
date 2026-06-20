@@ -1862,6 +1862,7 @@ content:
     regenerate: "Buat ulang"
     regenerate_confirm: "Ganti latihan yang dibuat dengan set baru?"
     generated: "{n} latihan dibuat."
+    generated_with_rejected: "{n} latihan dibuat, {r} ditolak karena kualitas."
     none: "AI tidak mengembalikan latihan yang dapat digunakan. Silakan coba lagi."
     failed: "Tidak dapat membuat latihan. Silakan coba lagi."
     feature: "untuk membuat latihan"

@@ -2006,6 +2006,7 @@
       "regenerate": "Regenerar",
       "regenerate_confirm": "¿Reemplazar los ejercicios generados por un conjunto nuevo?",
       "generated": "{n} ejercicios generados.",
+      "generated_with_rejected": "{n} ejercicios generados, {r} descartados por calidad.",
       "none": "La IA no devolvió ejercicios utilizables. Inténtalo de nuevo.",
       "failed": "No se pudieron generar los ejercicios. Inténtalo de nuevo.",
       "feature": "para generar ejercicios",

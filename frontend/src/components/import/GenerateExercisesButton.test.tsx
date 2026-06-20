@@ -46,6 +46,8 @@ function twoGoodCards(): ExerciseGenerationResult {
     ],
     skipped: 0,
     errors: [],
+    rejected: [],
+    warnings: [],
   };
 }
 
@@ -95,6 +97,23 @@ describe("GenerateExercisesButton", () => {
     expect(mockNotify.success).toHaveBeenCalledWith("2 exercises generated.");
   });
 
+  it("reports the rejected count when the quality gate dropped cards", async () => {
+    renderButton({
+      generate: vi.fn(async () => {
+        const good = twoGoodCards();
+        return {
+          ...good,
+          rejected: [
+            { type: "free_text" as const, question: "bad", accepts: ["x"], distractors: [] },
+          ],
+        };
+      }),
+    });
+    fireEvent.click(screen.getByTestId("generate-exercises-button"));
+    await waitFor(() => expect(mockNotify.success).toHaveBeenCalled());
+    expect(mockNotify.success.mock.calls[0][0]).toContain("rejected");
+  });
+
   it("shows the API-key notice when no key is configured", async () => {
     const { onGenerated } = renderButton({ resolveProvider: async () => null });
     fireEvent.click(screen.getByTestId("generate-exercises-button"));
@@ -118,7 +137,13 @@ describe("GenerateExercisesButton", () => {
 
   it("reports when the AI returns no usable exercises", async () => {
     const { onGenerated } = renderButton({
-      generate: vi.fn(async () => ({ cards: [], skipped: 1, errors: ["bad"] })),
+      generate: vi.fn(async () => ({
+        cards: [],
+        skipped: 1,
+        errors: ["bad"],
+        rejected: [],
+        warnings: [],
+      })),
     });
     fireEvent.click(screen.getByTestId("generate-exercises-button"));
     await waitFor(() => expect(mockNotify.error).toHaveBeenCalled());

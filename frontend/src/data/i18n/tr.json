@@ -2006,6 +2006,7 @@
       "regenerate": "Yeniden oluştur",
       "regenerate_confirm": "Oluşturulan alıştırmalar yeni bir setle değiştirilsin mi?",
       "generated": "{n} alıştırma oluşturuldu.",
+      "generated_with_rejected": "{n} alıştırma oluşturuldu, {r} kalite nedeniyle reddedildi.",
       "none": "Yapay zeka kullanılabilir alıştırma döndürmedi. Lütfen tekrar deneyin.",
       "failed": "Alıştırmalar oluşturulamadı. Lütfen tekrar deneyin.",
       "feature": "alıştırma oluşturmak için",
