@@ -51,6 +51,7 @@ vi.mock("../../storage", () => ({
 }));
 
 import LearningPathPersonal from "./LearningPathPersonal";
+import {TestFeatureProvider} from "../../features/testFeatureProvider";
 
 function lesson(n: number, over = {}) {
     return {
@@ -95,9 +96,11 @@ function set(over = {}) {
 
 function renderPage() {
     return render(
-        <MemoryRouter>
-            <LearningPathPersonal />
-        </MemoryRouter>,
+        <TestFeatureProvider>
+            <MemoryRouter>
+                <LearningPathPersonal />
+            </MemoryRouter>
+        </TestFeatureProvider>,
     );
 }
 
@@ -230,18 +233,30 @@ describe("LearningPathPersonal", () => {
         );
     });
 
-    it("switches to the lazy graph view and persists the choice", async () => {
+    it("hides the Graph tab while LEARNING_PATH_GRAPH is disabled (#900)", () => {
         useHookMock.mockReturnValue({
             state: "ready",
             data: {activeSets: [set()], notDownloadedSets: []},
         });
         renderPage();
-        fireEvent.click(screen.getByTestId("learning-path-view-graph"));
-        await waitFor(() =>
-            expect(screen.getByTestId("graph-mock")).toBeInTheDocument(),
-        );
-        expect(localStorage.getItem("adaptive-learner.learning-path-view")).toBe(
-            "graph",
-        );
+        // Other tabs render; the graph tab is gated off by default.
+        expect(
+            screen.getByTestId("learning-path-view-map"),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("learning-path-view-graph"),
+        ).toBeNull();
+    });
+
+    it("falls back to the personal view when graph is persisted but disabled (#900)", () => {
+        localStorage.setItem("adaptive-learner.learning-path-view", "graph");
+        useHookMock.mockReturnValue({
+            state: "ready",
+            data: {activeSets: [set()], notDownloadedSets: []},
+        });
+        renderPage();
+        // The lazy graph view never mounts; the personal set list shows.
+        expect(screen.queryByTestId("graph-mock")).toBeNull();
+        expect(screen.getByTestId("learning-path-sets")).toBeInTheDocument();
     });
 });

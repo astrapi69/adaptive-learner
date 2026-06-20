@@ -9,7 +9,7 @@
  *     Level-1 row; expanding it reveals Level-2 lesson rows; clicking
  *     a lesson row navigates into the viewer.
  *   - At 375px the page does not overflow horizontally.
- *   - Switching to the Graph view lazy-loads the xyflow canvas.
+ *   - The Graph view tab is gated off (LEARNING_PATH_GRAPH disabled, #900).
  *
  * STABLE SELECTORS ONLY: ``data-testid`` anchors + routes.
  */
@@ -136,9 +136,7 @@ test.describe("Learning Path — personal view + graph", () => {
         expect(overflow, "horizontal overflow at 375px").toBeLessThanOrEqual(1);
     });
 
-    test("switching to the graph view lazy-loads the xyflow canvas", async ({
-        page,
-    }) => {
+    test("the graph view tab is gated off (#900)", async ({page}) => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
 
@@ -148,14 +146,12 @@ test.describe("Learning Path — personal view + graph", () => {
             timeout: 15000,
         });
 
-        await page.getByTestId("learning-path-view-graph").click();
-        await expect(page.getByTestId("learning-path-canvas")).toBeVisible({
-            timeout: 15000,
-        });
-        // A lesson node for the played set renders in the graph.
+        // Map tab is reachable; the Graph tab is disabled until its layout
+        // is fixed, so its button is not rendered.
+        await expect(page.getByTestId("learning-path-view-map")).toBeVisible();
         await expect(
-            page.locator(`[data-testid^="lesson-node-${SET_ID}-"]`).first(),
-        ).toBeVisible({timeout: 10000});
+            page.getByTestId("learning-path-view-graph"),
+        ).toHaveCount(0);
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
