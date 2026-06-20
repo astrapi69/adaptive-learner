@@ -164,11 +164,34 @@ describe("helpers", () => {
         expect(looksLikeOpaqueId("   ")).toBe(true);
     });
 
+    it("looksLikeOpaqueId flags split + filename-derived analysis ids (#854)", () => {
+        // Auto-split lessons append a part suffix to the title/id; the
+        // filename-derived label turns the dashes into spaces. All of
+        // these reached the learner before #854.
+        expect(
+            looksLikeOpaqueId(
+                "analysis-b8ff9ed4-e201-42aa-8f96-83424332c3a4 — Part 2 of 3",
+            ),
+        ).toBe(true);
+        expect(
+            looksLikeOpaqueId("analysis-b8ff9ed4-e201-42aa-8f96-83424332c3a4-part-2"),
+        ).toBe(true);
+        expect(
+            looksLikeOpaqueId("analysis b8ff9ed4 e201 42aa 8f96 83424332c3a4"),
+        ).toBe(true);
+        expect(
+            looksLikeOpaqueId("analysis b8ff9ed4 e201 42aa 8f96 83424332c3a4 part 2"),
+        ).toBe(true);
+    });
+
     it("looksLikeOpaqueId passes real human titles through", () => {
         expect(looksLikeOpaqueId("Spanish A1")).toBe(false);
         expect(looksLikeOpaqueId("03 articles")).toBe(false);
         expect(looksLikeOpaqueId("Trauma und PTBS")).toBe(false);
         expect(looksLikeOpaqueId("Français B1")).toBe(false);
+        // #854: a hyphenated real set name must NOT be mistaken for an id.
+        expect(looksLikeOpaqueId("Ansible-Grundlagen")).toBe(false);
+        expect(looksLikeOpaqueId("Spanisch A1 — Teil 2")).toBe(false);
     });
 
     it("lessonRoute builds the /lesson route with a slugged source", () => {

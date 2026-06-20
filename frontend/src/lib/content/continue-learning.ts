@@ -129,15 +129,26 @@ export function lessonLabelFromFilename(filename: string): string {
  * shown to the learner (#729: "Continue Learning showed hashes instead
  * of names" — a user-generated / analysis / snapshot set whose title or
  * lesson filename fell back to its raw id).
+ *
+ * #854: imported analyses are auto-split (``lesson-splitter``), so the
+ * title / filename that reaches this guard is rarely the bare id. It is
+ * one of ``analysis-<uuid> — Part 2 of 3`` (split title), ``analysis-
+ * <uuid>-part-2`` (split id), or the filename-derived spaced label
+ * ``analysis b8ff9ed4 e201 …`` (separators turned into spaces). The
+ * checks therefore match the ``analysis`` marker + leading UUID block in
+ * any separator form REGARDLESS of what trails it, not an exact anchor.
  */
 export function looksLikeOpaqueId(value: string): boolean {
     const v = value.trim();
     if (!v) return true;
-    // analysis-<uuid> (legacy chat-import sets, pre-#134).
-    if (/^analysis-[0-9a-f-]{8,}$/i.test(v)) return true;
-    // A bare UUID (optionally with a short prefix like "set-").
+    // ``analysis-<uuid>…`` set ids in any separator form (dash or the
+    // filename-derived space), with any trailing suffix ("…-part-2",
+    // "… — Part 2 of 3").
+    if (/^analysis[\s-]+[0-9a-f]{8}[\s-]/i.test(v)) return true;
+    // A UUID at the start (dash- or space-separated), with or without a
+    // short word prefix like "set-", regardless of what trails it.
     if (
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        /^(?:[a-z]+[\s-])?[0-9a-f]{8}[\s-][0-9a-f]{4}[\s-][0-9a-f]{4}[\s-][0-9a-f]{4}[\s-][0-9a-f]{12}\b/i.test(
             v,
         )
     ) {
