@@ -62,6 +62,7 @@ plugins:
             Einstellungen: Settings
             Lob und Belohnungen: Praise and celebrations
             Tägliche Missionen: Daily missions
+            KI-Inhaltsprüfung: AI content check
             Content Browser: Content browser
             Mehrere Content-Repositories: Multiple content repositories
             Backup und Wiederherstellung: Backup and restore
@@ -109,6 +110,7 @@ plugins:
             Einstellungen: Configuración
             Lob und Belohnungen: Elogios y celebraciones
             Tägliche Missionen: Misiones diarias
+            KI-Inhaltsprüfung: Verificación de contenido con IA
             FAQ: Preguntas frecuentes
             Features: Funciones
             Content Browser: Explorador de contenido
@@ -161,6 +163,7 @@ plugins:
             Einstellungen: Paramètres
             Lob und Belohnungen: Encouragements et célébrations
             Tägliche Missionen: Missions quotidiennes
+            KI-Inhaltsprüfung: Vérification de contenu par IA
             Features: Fonctionnalités
             Content Browser: Explorateur de contenu
             Mehrere Content-Repositories: Plusieurs dépôts de contenu
@@ -212,6 +215,7 @@ plugins:
             Einstellungen: Ρυθμίσεις
             Lob und Belohnungen: Έπαινος και γιορτές
             Tägliche Missionen: Καθημερινές αποστολές
+            KI-Inhaltsprüfung: Έλεγχος περιεχομένου με AI
             FAQ: Συχνές ερωτήσεις
             Features: Λειτουργίες
             Content Browser: Περιήγηση περιεχομένου
@@ -265,6 +269,7 @@ plugins:
             Einstellungen: Configurações
             Lob und Belohnungen: Elogios e celebrações
             Tägliche Missionen: Missões diárias
+            KI-Inhaltsprüfung: Verificação de conteúdo por IA
             FAQ: Perguntas frequentes
             Features: Funcionalidades
             Content Browser: Explorador de conteúdo
@@ -318,6 +323,7 @@ plugins:
             Einstellungen: Ayarlar
             Lob und Belohnungen: Övgü ve kutlamalar
             Tägliche Missionen: Günlük görevler
+            KI-Inhaltsprüfung: Yapay zekâ ile içerik denetimi
             FAQ: SSS
             Features: Özellikler
             Content Browser: İçerik tarayıcı
@@ -371,6 +377,7 @@ plugins:
             Einstellungen: 設定
             Lob und Belohnungen: 称賛とお祝い
             Tägliche Missionen: デイリーミッション
+            KI-Inhaltsprüfung: AIコンテンツチェック
             FAQ: よくある質問
             Features: 機能
             Content Browser: コンテンツブラウザ
@@ -444,6 +451,7 @@ nav:
   - Einstellungen: de/user-guide/settings.md
   - Lob und Belohnungen: de/user-guide/celebrations.md
   - Tägliche Missionen: de/user-guide/missions.md
+  - KI-Inhaltsprüfung: de/user-guide/ai-validation.md
   - FAQ: de/user-guide/faq.md
 - Features:
   - Content Browser: de/features/content-browser.md
