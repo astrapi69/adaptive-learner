@@ -19,13 +19,13 @@ import {setWeekendMode, updateStreakState, getStreakState} from "../gamification
 import {
     getLessonProgressDexie,
     upsertLessonProgressDexie,
-} from "../lesson-progress-dexie";
+} from "../lessons/lesson-progress-dexie";
 import {dexieSession} from "./dexie-session";
 import {evaluateBadgesForUser, listBadgesWithProgress} from "../gamification/badges";
 import {
     listElementErrorsDexie,
     recordElementAttemptsDexie,
-} from "../element-errors-dexie";
+} from "../lessons/element-errors-dexie";
 
 beforeEach(async () => {
     await _resetDbForTests();

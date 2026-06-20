@@ -17,9 +17,9 @@
 import type {
     LessonProgress,
     LessonProgressUpsertBody,
-} from "./types";
-import {getDb} from "./dexie/db";
-import type {LessonProgressRow} from "./dexie/db";
+} from "../types";
+import {getDb} from "../dexie/db";
+import type {LessonProgressRow} from "../dexie/db";
 
 function slugifySource(source: string): string {
     return source.replace(/\//g, "--");

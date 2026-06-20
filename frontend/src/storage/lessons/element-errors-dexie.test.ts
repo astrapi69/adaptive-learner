@@ -16,7 +16,7 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb} from "./dexie/db";
+import {_resetDbForTests, getDb} from "../dexie/db";
 import {
     HINT_INTERVAL_FACTOR,
     MASTERY_THRESHOLD,
@@ -25,7 +25,7 @@ import {
     listElementErrorsDexie,
     recordElementAttemptsDexie,
 } from "./element-errors-dexie";
-import type {ElementAttempt} from "./types";
+import type {ElementAttempt} from "../types";
 
 const USER = "user-1";
 

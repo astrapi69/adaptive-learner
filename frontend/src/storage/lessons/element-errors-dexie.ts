@@ -14,14 +14,14 @@
  * matching the backend UNIQUE constraint.
  */
 
-import {getDb} from "./dexie/db";
-import type {ElementErrorRow} from "./dexie/db";
+import {getDb} from "../dexie/db";
+import type {ElementErrorRow} from "../dexie/db";
 import type {
     AttemptRecord,
     ElementAttempt,
     ElementError,
     ReviewQueueItem,
-} from "./types";
+} from "../types";
 
 /** Phase 46 D4: 3 consecutive correct → mastered. Same
  *  constant as ``backend/app/services/element_errors.py``;

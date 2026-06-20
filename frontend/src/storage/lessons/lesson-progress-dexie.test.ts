@@ -15,7 +15,7 @@ import {
     listLessonProgressDexie,
     upsertLessonProgressDexie,
 } from "./lesson-progress-dexie";
-import {_resetDbForTests, getDb} from "./dexie/db";
+import {_resetDbForTests, getDb} from "../dexie/db";
 
 const USER = "user-1";
 const SOURCE = "astrapi69/adaptive-learner-content";

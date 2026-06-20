@@ -84,13 +84,13 @@ import {
   getLessonProgressDexie,
   listLessonProgressDexie,
   upsertLessonProgressDexie,
-} from "./lesson-progress-dexie";
+} from "./lessons/lesson-progress-dexie";
 import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
 import {
   computeReviewQueueDexie,
   listElementErrorsDexie,
   recordElementAttemptsDexie,
-} from "./element-errors-dexie";
+} from "./lessons/element-errors-dexie";
 import type {
   IStorageService,
 } from "./types";
