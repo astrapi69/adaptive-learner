@@ -11,8 +11,8 @@ import {
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
 } from "./content-loader-dexie-ai";
-import { _resetDbForTests, getDb } from "./dexie/db";
-import type { AiValidationCacheRecord } from "./types";
+import { _resetDbForTests, getDb } from "../dexie/db";
+import type { AiValidationCacheRecord } from "../types";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
 const SET_ID = "es-a1";

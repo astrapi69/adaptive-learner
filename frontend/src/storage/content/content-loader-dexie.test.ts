@@ -22,7 +22,7 @@ import {
   listSetsDexie,
   mimeTypeForAssetPath,
 } from "./content-loader-dexie";
-import { _resetDbForTests, getDb } from "./dexie/db";
+import { _resetDbForTests, getDb } from "../dexie/db";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
 const BRANCH = "main";

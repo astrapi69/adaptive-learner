@@ -69,7 +69,7 @@ import {
   aiValidateCardsDexie,
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
-} from "./content-loader-dexie-ai";
+} from "./content/content-loader-dexie-ai";
 import {
   deleteSetDexie,
   activeSourcesDexie,
@@ -79,7 +79,7 @@ import {
   listLessonsDexie,
   listSetsDexie,
   saveUserSetDexie,
-} from "./content-loader-dexie";
+} from "./content/content-loader-dexie";
 import {
   getLessonProgressDexie,
   listLessonProgressDexie,

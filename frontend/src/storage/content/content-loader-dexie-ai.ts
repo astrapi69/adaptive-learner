@@ -15,16 +15,16 @@ import type {
   AiValidateCardsInput,
   AiValidateCardsResult,
   AiValidationCacheRecord,
-} from "./types";
-import { getDb } from "./dexie/db";
-import { aiComplete, aiCompleteWithMeta, resolveModel } from "./ai/ai-providers";
-import type { AIProvider } from "../lib/constants";
+} from "../types";
+import { getDb } from "../dexie/db";
+import { aiComplete, aiCompleteWithMeta, resolveModel } from "../ai/ai-providers";
+import type { AIProvider } from "../../lib/constants";
 import {
   buildAiValidationMessages,
   parseAiValidationResult,
   type AiValidationResult,
-} from "../lib/content/ai-content-validator";
-import { runCardValidation } from "../lib/ai/validation-runner";
+} from "../../lib/content/ai-content-validator";
+import { runCardValidation } from "../../lib/ai/validation-runner";
 import { slugifySource } from "./content-loader-dexie";
 
 /** Dexie-mode AI validation: resolve the user's provider + key from

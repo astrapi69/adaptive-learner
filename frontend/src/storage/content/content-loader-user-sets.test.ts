@@ -16,10 +16,10 @@ import {
   listSetsDexie,
   saveUserSetDexie,
 } from "./content-loader-dexie";
-import { _resetDbForTests } from "./dexie/db";
-import { USER_GENERATED_SOURCE } from "./types";
-import { generateLessonFromAnalysis } from "../lib/content/analysis-to-lesson";
-import type { ConversationAnalysisResult } from "../types/domain";
+import { _resetDbForTests } from "../dexie/db";
+import { USER_GENERATED_SOURCE } from "../types";
+import { generateLessonFromAnalysis } from "../../lib/content/analysis-to-lesson";
+import type { ConversationAnalysisResult } from "../../types/domain";
 
 const ANALYSIS: ConversationAnalysisResult = {
   topic: "Spanish travel",

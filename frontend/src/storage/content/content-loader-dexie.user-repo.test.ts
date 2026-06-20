@@ -14,8 +14,8 @@ import {
   dedupeContentEntries,
   listSetsDexie,
 } from "./content-loader-dexie";
-import { _resetDbForTests, getDb } from "./dexie/db";
-import type { ContentSetEntry } from "./types";
+import { _resetDbForTests, getDb } from "../dexie/db";
+import type { ContentSetEntry } from "../types";
 
 beforeEach(async () => {
   await _resetDbForTests();
