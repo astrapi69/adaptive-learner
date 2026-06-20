@@ -2000,6 +2000,22 @@
       "deleted": "Lección eliminada.",
       "delete_failed": "No se pudo eliminar la lección."
     },
+    "ai_exercises": {
+      "button": "Generar ejercicios",
+      "generating": "Generando ejercicios…",
+      "regenerate": "Regenerar",
+      "regenerate_confirm": "¿Reemplazar los ejercicios generados por un conjunto nuevo?",
+      "generated": "{n} ejercicios generados.",
+      "none": "La IA no devolvió ejercicios utilizables. Inténtalo de nuevo.",
+      "failed": "No se pudieron generar los ejercicios. Inténtalo de nuevo.",
+      "feature": "para generar ejercicios",
+      "preview_title": "Ejercicios generados",
+      "type_matching": "Emparejamiento",
+      "type_cloze": "Rellenar huecos",
+      "type_free_text": "Texto libre",
+      "type_word_tiles": "Fichas de palabras",
+      "type_picture_choice": "Elección de imagen"
+    },
     "save_lesson": {
       "button": "Guardar como lección sin conexión",
       "modal_title": "Guardar como lección sin conexión",

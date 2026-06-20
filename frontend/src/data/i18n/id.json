@@ -2000,6 +2000,22 @@
       "deleted": "Pelajaran dihapus.",
       "delete_failed": "Tidak dapat menghapus pelajaran."
     },
+    "ai_exercises": {
+      "button": "Buat latihan",
+      "generating": "Membuat latihan…",
+      "regenerate": "Buat ulang",
+      "regenerate_confirm": "Ganti latihan yang dibuat dengan set baru?",
+      "generated": "{n} latihan dibuat.",
+      "none": "AI tidak mengembalikan latihan yang dapat digunakan. Silakan coba lagi.",
+      "failed": "Tidak dapat membuat latihan. Silakan coba lagi.",
+      "feature": "untuk membuat latihan",
+      "preview_title": "Latihan yang dibuat",
+      "type_matching": "Mencocokkan",
+      "type_cloze": "Isian rumpang",
+      "type_free_text": "Teks bebas",
+      "type_word_tiles": "Ubin kata",
+      "type_picture_choice": "Pilihan gambar"
+    },
     "save_lesson": {
       "button": "Simpan sebagai Pelajaran Luring",
       "modal_title": "Simpan sebagai pelajaran luring",

@@ -1840,6 +1840,21 @@ content:
     delete_confirm: यह पाठ हटाएँ? इसे पूर्ववत नहीं किया जा सकता।
     deleted: पाठ हटा दिया गया।
     delete_failed: पाठ हटाया नहीं जा सका।
+  ai_exercises:
+    button: "अभ्यास बनाएँ"
+    generating: "अभ्यास बनाए जा रहे हैं…"
+    regenerate: "फिर से बनाएँ"
+    regenerate_confirm: "बनाए गए अभ्यासों को नए सेट से बदलें?"
+    generated: "{n} अभ्यास बनाए गए।"
+    none: "AI ने कोई उपयोगी अभ्यास नहीं लौटाया। कृपया फिर से प्रयास करें।"
+    failed: "अभ्यास नहीं बनाए जा सके। कृपया फिर से प्रयास करें।"
+    feature: "अभ्यास बनाने के लिए"
+    preview_title: "बनाए गए अभ्यास"
+    type_matching: "मिलान"
+    type_cloze: "रिक्त स्थान भरें"
+    type_free_text: "मुक्त पाठ"
+    type_word_tiles: "शब्द टाइलें"
+    type_picture_choice: "चित्र चयन"
   save_lesson:
     button: ऑफ़लाइन पाठ के रूप में सहेजें
     modal_title: ऑफ़लाइन पाठ के रूप में सहेजें

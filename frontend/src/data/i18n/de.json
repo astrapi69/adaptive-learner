@@ -2000,6 +2000,22 @@
       "deleted": "Lektion gelöscht.",
       "delete_failed": "Die Lektion konnte nicht gelöscht werden."
     },
+    "ai_exercises": {
+      "button": "Übungen generieren",
+      "generating": "Übungen werden generiert…",
+      "regenerate": "Neu generieren",
+      "regenerate_confirm": "Die generierten Übungen durch einen neuen Satz ersetzen?",
+      "generated": "{n} Übungen generiert.",
+      "none": "Die KI hat keine brauchbaren Übungen geliefert. Bitte erneut versuchen.",
+      "failed": "Übungen konnten nicht generiert werden. Bitte erneut versuchen.",
+      "feature": "um Übungen zu generieren",
+      "preview_title": "Generierte Übungen",
+      "type_matching": "Zuordnung",
+      "type_cloze": "Lückentext",
+      "type_free_text": "Freitext",
+      "type_word_tiles": "Wortkacheln",
+      "type_picture_choice": "Bildauswahl"
+    },
     "save_lesson": {
       "button": "Als Offline-Lektion speichern",
       "modal_title": "Als Offline-Lektion speichern",
