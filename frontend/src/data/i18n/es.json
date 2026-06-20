@@ -2001,6 +2001,18 @@
       "delete_failed": "No se pudo eliminar la lección."
     },
     "ai_exercises": {
+      "max_reached": "Se alcanzó el máximo de regeneraciones. Edita los ejercicios manualmente o importa un chat más largo.",
+      "feedback": {
+        "title": "¿Por qué regenerar?",
+        "too_easy": "Demasiado fácil",
+        "too_hard": "Demasiado difícil",
+        "wrong_language": "Idioma incorrecto",
+        "more_variety": "Más variedad",
+        "none": "Sin motivo concreto",
+        "language_label": "Idioma",
+        "freetext_label": "¿Algo más? (opcional)",
+        "freetext_placeholder": "Tus comentarios…"
+      },
       "button": "Generar ejercicios",
       "generating": "Generando ejercicios…",
       "regenerate": "Regenerar",

@@ -2001,6 +2001,18 @@
       "delete_failed": "レッスンを削除できませんでした。"
     },
     "ai_exercises": {
+      "max_reached": "再生成の上限に達しました。演習を手動で編集するか、より長いチャットをインポートしてください。",
+      "feedback": {
+        "title": "再生成する理由は？",
+        "too_easy": "簡単すぎる",
+        "too_hard": "難しすぎる",
+        "wrong_language": "言語が違う",
+        "more_variety": "もっと種類を",
+        "none": "特に理由はない",
+        "language_label": "言語",
+        "freetext_label": "その他（任意）",
+        "freetext_placeholder": "フィードバックを入力…"
+      },
       "button": "演習を生成",
       "generating": "演習を生成中…",
       "regenerate": "再生成",

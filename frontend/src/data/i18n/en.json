@@ -2001,6 +2001,18 @@
       "delete_failed": "Could not delete the lesson."
     },
     "ai_exercises": {
+      "max_reached": "Maximum regeneration attempts reached. Edit the exercises manually or import a longer chat.",
+      "feedback": {
+        "title": "Why regenerate?",
+        "too_easy": "Too easy",
+        "too_hard": "Too hard",
+        "wrong_language": "Wrong language",
+        "more_variety": "More variety",
+        "none": "No particular reason",
+        "language_label": "Language",
+        "freetext_label": "Anything else? (optional)",
+        "freetext_placeholder": "Your feedback…"
+      },
       "button": "Generate exercises",
       "generating": "Generating exercises…",
       "regenerate": "Regenerate",

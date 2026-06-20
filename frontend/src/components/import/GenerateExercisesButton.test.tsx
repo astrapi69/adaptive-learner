@@ -150,25 +150,56 @@ describe("GenerateExercisesButton", () => {
     expect(onGenerated).not.toHaveBeenCalled();
   });
 
-  it("renders the regenerate label and confirms before regenerating", async () => {
-    // happy-dom has no window.confirm; the ConfirmContext fallback calls it
-    // when present, so install a stub that confirms.
-    const confirmStub = vi.fn(() => true);
-    window.confirm = confirmStub;
-    const { onGenerated } = renderButton({ hasGenerated: true });
+  it("renders the regenerate label and opens the feedback dialog", async () => {
+    const generate = vi.fn(async () => twoGoodCards());
+    const { onGenerated } = renderButton({ hasGenerated: true, generate });
     const button = screen.getByTestId("generate-exercises-button");
     expect(button).toHaveTextContent("Regenerate");
     fireEvent.click(button);
+    // The feedback dialog opens instead of generating immediately.
+    expect(screen.getByTestId("regenerate-feedback-dialog")).toBeInTheDocument();
+    expect(onGenerated).not.toHaveBeenCalled();
+    // Submitting the dialog runs the regeneration.
+    fireEvent.click(screen.getByTestId("regenerate-feedback-submit"));
     await waitFor(() => expect(onGenerated).toHaveBeenCalledTimes(1));
-    expect(confirmStub).toHaveBeenCalled();
   });
 
-  it("does not regenerate when the confirm is dismissed", async () => {
-    const confirmStub = vi.fn(() => false);
-    window.confirm = confirmStub;
+  it("passes feedback + previous questions on a 'too easy' regeneration", async () => {
+    const generate = vi.fn(async () => twoGoodCards());
+    renderButton({
+      hasGenerated: true,
+      generate,
+      previousQuestions: ["Old question?"],
+    });
+    fireEvent.click(screen.getByTestId("generate-exercises-button"));
+    fireEvent.click(screen.getByTestId("regenerate-reason-too_easy"));
+    fireEvent.click(screen.getByTestId("regenerate-feedback-submit"));
+    await waitFor(() => expect(generate).toHaveBeenCalledTimes(1));
+    const opts = (generate.mock.calls[0] as unknown[])[2] as
+      | { feedback?: string; avoidQuestions?: string[] }
+      | undefined;
+    expect(opts?.feedback).toContain("harder");
+    expect(opts?.avoidQuestions).toEqual(["Old question?"]);
+  });
+
+  it("does not regenerate when the feedback dialog is cancelled", async () => {
     const { onGenerated } = renderButton({ hasGenerated: true });
     fireEvent.click(screen.getByTestId("generate-exercises-button"));
-    await waitFor(() => expect(confirmStub).toHaveBeenCalled());
+    fireEvent.click(screen.getByTestId("regenerate-feedback-cancel"));
     expect(onGenerated).not.toHaveBeenCalled();
+  });
+
+  it("disables the button after the max regenerations", async () => {
+    const generate = vi.fn(async () => twoGoodCards());
+    renderButton({ hasGenerated: true, generate });
+    for (let i = 0; i < 3; i++) {
+      fireEvent.click(screen.getByTestId("generate-exercises-button"));
+      fireEvent.click(screen.getByTestId("regenerate-feedback-submit"));
+      await waitFor(() => expect(generate).toHaveBeenCalledTimes(i + 1));
+    }
+    await waitFor(() =>
+      expect(screen.getByTestId("generate-exercises-max-reached")).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("generate-exercises-button")).toBeDisabled();
   });
 });

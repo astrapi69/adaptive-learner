@@ -2001,6 +2001,18 @@
       "delete_failed": "Ders silinemedi."
     },
     "ai_exercises": {
+      "max_reached": "Maksimum yeniden oluşturma sayısına ulaşıldı. Alıştırmaları elle düzenleyin veya daha uzun bir sohbet içe aktarın.",
+      "feedback": {
+        "title": "Neden yeniden oluşturulsun?",
+        "too_easy": "Çok kolay",
+        "too_hard": "Çok zor",
+        "wrong_language": "Yanlış dil",
+        "more_variety": "Daha fazla çeşitlilik",
+        "none": "Belirli bir neden yok",
+        "language_label": "Dil",
+        "freetext_label": "Başka bir şey? (isteğe bağlı)",
+        "freetext_placeholder": "Geri bildiriminiz…"
+      },
       "button": "Alıştırma oluştur",
       "generating": "Alıştırmalar oluşturuluyor…",
       "regenerate": "Yeniden oluştur",

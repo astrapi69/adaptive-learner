@@ -1857,6 +1857,17 @@ content:
     deleted: "레슨이 삭제되었습니다."
     delete_failed: "레슨을 삭제할 수 없었습니다."
   ai_exercises:
+    max_reached: "재생성 최대 횟수에 도달했습니다. 연습문제를 직접 편집하거나 더 긴 대화를 가져오세요."
+    feedback:
+      title: "왜 다시 생성하나요?"
+      too_easy: "너무 쉬움"
+      too_hard: "너무 어려움"
+      wrong_language: "잘못된 언어"
+      more_variety: "더 다양하게"
+      none: "특별한 이유 없음"
+      language_label: "언어"
+      freetext_label: "그 밖에 의견 (선택)"
+      freetext_placeholder: "의견을 입력하세요…"
     button: "연습문제 생성"
     generating: "연습문제 생성 중…"
     regenerate: "다시 생성"

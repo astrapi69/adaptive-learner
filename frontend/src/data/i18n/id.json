@@ -2001,6 +2001,18 @@
       "delete_failed": "Tidak dapat menghapus pelajaran."
     },
     "ai_exercises": {
+      "max_reached": "Batas maksimum pembuatan ulang tercapai. Edit latihan secara manual atau impor obrolan yang lebih panjang.",
+      "feedback": {
+        "title": "Mengapa membuat ulang?",
+        "too_easy": "Terlalu mudah",
+        "too_hard": "Terlalu sulit",
+        "wrong_language": "Bahasa salah",
+        "more_variety": "Lebih bervariasi",
+        "none": "Tanpa alasan khusus",
+        "language_label": "Bahasa",
+        "freetext_label": "Ada lagi? (opsional)",
+        "freetext_placeholder": "Masukan Anda…"
+      },
       "button": "Buat latihan",
       "generating": "Membuat latihan…",
       "regenerate": "Buat ulang",
