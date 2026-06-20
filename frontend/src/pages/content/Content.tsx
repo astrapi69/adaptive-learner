@@ -12,88 +12,58 @@
  * API mode (backend orchestrator) and Dexie mode (in-browser
  * fetch + IndexedDB cache).
  *
- * This page is the layout shell: it loads the sets, owns the search +
- * toolbar + Continue Learning + contributions + search results, and
- * composes the extracted sections — {@link MyLessonsSection},
- * {@link ContentTree}, and {@link ContentShareDialog} (backed by
- * {@link useContentSharing}).
+ * This page is the layout shell: it loads the sets (via
+ * {@link useContentSetsData}), owns the search + Continue Learning +
+ * contributions, and composes the extracted sections — the
+ * {@link ContentToolbar}, {@link ContentSearchResults},
+ * {@link ContentGapsSection}, {@link MyLessonsSection},
+ * {@link ContentTree}, {@link DeleteLessonModal}, and
+ * {@link ContentShareDialog} (backed by {@link useContentSharing}).
+ * Set-level handlers live in {@link useContentSetActions}.
  */
 
-import {
-  Layers,
-  Map as MapIcon,
-  MessageSquare,
-  Plus,
-  RefreshCw,
-  Search,
-  Upload,
-  X,
-} from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import ContinueLearning from "../../components/ContinueLearning";
 import ImportLessonModal from "../../components/content/ImportLessonModal";
 import MyLessonsSection from "../../components/content/MyLessonsSection";
 import ContentTree from "../../components/content/ContentTree";
 import ContentShareDialog from "../../components/content/ContentShareDialog";
-import type { DownloadState } from "../../components/content/ContentSetRow";
-import {
-  type BookRecommendations,
-  fetchBookRecommendations,
-} from "../../lib/content/book-recommendations";
-import {
-  type BookMetadata,
-  fetchBookCompanion,
-  isFetchableSource,
-} from "../../lib/content/book-companion";
-import {
-  type MediaResource,
-  fetchMediaResources,
-} from "../../lib/content/media-loader";
 import ContentBookCompanions from "../../components/content/ContentBookCompanions";
 import ContentContributionsSection from "../../components/content/ContentContributionsSection";
-import { splitHighlight } from "../../lib/content/content-search";
+import ContentToolbar from "../../components/content/ContentToolbar";
+import ContentSearchResults from "../../components/content/ContentSearchResults";
+import ContentGapsSection from "../../components/content/ContentGapsSection";
+import DeleteLessonModal from "../../components/content/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
+import { useContentSetsData } from "../../hooks/content/useContentSetsData";
+import { useContentSetActions } from "../../hooks/content/useContentSetActions";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
 import { useSourceLanguages } from "../../hooks/settings/useSourceLanguages";
 import {
   buildContentTree,
   type FoldedUserLesson,
-  type UserFoldInput,
 } from "../../lib/content/content-tree";
 import { computeUserFold } from "../../lib/content/user-fold";
 import { resolveAiCheckDisabledReason } from "../../lib/content/ai-check-gate";
-import { languageDisplayName } from "../../lib/content/language-names";
 import {
   listContributions,
   recordContribution,
-  type SharedContribution,
 } from "../../lib/content/contribution-history";
-import { detectGaps } from "../../lib/content/gap-detector";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
 import { readLearnerState } from "../../lib/learnerState";
-import {
-  buildContentSetZip,
-  contentSetFileName,
-  downloadLessonJson,
-  triggerDownload,
-  type ExportSetMeta,
-} from "../../lib/content/lesson-export";
-import { getStorage, resolveStorageMode } from "../../storage";
+import { resolveStorageMode } from "../../storage";
 import AiValidationDialog from "../../components/content/AiValidationDialog";
 import QualityCheckDialog from "../../components/content/QualityCheckDialog";
-import { badgeStatusForCachedSet } from "../../lib/ai/validation-signature";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
-import { isOfficialSource, readUserRepos, userRepoSource } from "../../lib/content/content-repos";
-import { fetchRecommendedRepos, recommendedSource } from "../../lib/content/recommended-repos";
-import type { ContentLesson, ContentSetEntry, ContentSetSource } from "../../storage/types";
-import { notify } from "../../utils/notify";
+import { isOfficialSource } from "../../lib/content/content-repos";
+import type { ContentSetEntry } from "../../storage/types";
 
 /** Community contribution target repo (manual maintainer review). */
 const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
@@ -111,28 +81,28 @@ export default function ContentPage() {
   const { t, lang } = useI18n();
   const online = useOnlineStatus();
   const navigate = useNavigate();
-  const [sets, setSets] = useState<ContentSetEntry[]>([]);
-  const [sources, setSources] = useState<ContentSetSource[]>([]);
-  // #141 — per-domain book recommendations, fetched once from the
-  // official content repo (graceful empty on failure / offline).
-  const [bookRecs, setBookRecs] = useState<BookRecommendations>({});
-  // EXP-029 / MED-06 — per-domain supplementary media (media.yaml),
-  // fetched once from the official content repo (graceful empty on
-  // failure / offline). Drives the set-row media-availability badges.
-  const [media, setMedia] = useState<MediaResource[]>([]);
-  // EXP-025 / AUTH-02 — book a connected repo accompanies, keyed by source.
-  const [bookCompanions, setBookCompanions] = useState<Record<string, BookMetadata>>({});
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [perSetState, setPerSetState] = useState<Record<string, DownloadState>>({});
-  // EXP-026 / UGC-04 — the loaded lessons of each user-generated set,
-  // keyed ``${source}#${id}``, used to fold them into the tree.
-  const [userLessonsBySet, setUserLessonsBySet] = useState<
-    Record<string, UserFoldInput["lessons"]>
-  >({});
-  // Phase 59C — My Lessons delete-confirm modal target.
-  const [deleteTarget, setDeleteTarget] = useState<ContentSetEntry | null>(null);
-  const [deleting, setDeleting] = useState(false);
+  const data = useContentSetsData();
+  const {
+    sets,
+    setSets,
+    sources,
+    loading,
+    refreshing,
+    loadSets,
+    handleRefresh,
+    bookRecs,
+    media,
+    bookCompanions,
+    perSetState,
+    setPerSetState,
+    userLessonsBySet,
+    repoMeta,
+    recommendedSources,
+    contributions,
+    setContributions,
+    aiBadgeBySet,
+  } = data;
+
   // Phase 59E — import-lesson modal.
   const [showImport, setShowImport] = useState(false);
   // Phase 60 — source-language tree: the learner's active source
@@ -146,108 +116,10 @@ export default function ContentPage() {
     setCollapsed((prev) => ({ ...prev, [nodeId]: !prev[nodeId] }));
   // "Other source languages" section is collapsed by default.
   const [otherExpanded, setOtherExpanded] = useState(false);
-  // EXP-023 Phase A — source filter over the content tree.
-  // EXP-023 Phase B — per-repo trust/coach lookup for source badges.
-  const [repoMeta, setRepoMeta] = useState<Record<string, { trust: number; coach: boolean }>>({});
-  const [recommendedSources, setRecommendedSources] = useState<Set<string>>(new Set());
-  useEffect(() => {
-    let cancelled = false;
-    void readUserRepos().then((repos) => {
-      if (cancelled) return;
-      const map: Record<string, { trust: number; coach: boolean }> = {};
-      for (const r of repos) {
-        map[userRepoSource(r.owner, r.repo)] = {
-          trust: r.trust ?? 0,
-          coach: Boolean(r.coach),
-        };
-      }
-      setRepoMeta(map);
-    });
-    void fetchRecommendedRepos().then((list) => {
-      if (cancelled) return;
-      const set = new Set<string>();
-      for (const rec of list) {
-        const s = recommendedSource(rec);
-        if (s) set.add(s);
-      }
-      setRecommendedSources(set);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-  // #141 — load per-domain book recommendations once on mount.
-  useEffect(() => {
-    let cancelled = false;
-    void fetchBookRecommendations().then((recs) => {
-      if (!cancelled) setBookRecs(recs);
-    });
-    void fetchMediaResources().then((list) => {
-      if (!cancelled) setMedia(list);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-  // EXP-025 / AUTH-02 — load the book a connected repo accompanies, if
-  // any. Keyed off the configured sources; bundled sources are skipped.
-  const sourcesSig = sources.map((s) => `${s.source}@${s.branch}`).join(",");
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      const bySource: Record<string, BookMetadata> = {};
-      for (const src of sources) {
-        if (!isFetchableSource(src.source)) continue;
-        const book = await fetchBookCompanion(src.source, src.branch);
-        if (book) bySource[src.source] = book;
-      }
-      if (!cancelled) setBookCompanions(bySource);
-    })();
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sourcesSig]);
   // EXP-023 Phase B — source filter: "all" / "official" / a specific
   // user-repo source ("owner/repo").
   const [sourceFilter, setSourceFilter] = useState<string>("all");
-  // Phase 64D — local contribution history (localStorage; no server).
-  const [contributions, setContributions] = useState<SharedContribution[]>([]);
-  useEffect(() => {
-    setContributions(listContributions());
-  }, []);
-  // AIV-11 — load the cached AI-validation signatures for downloaded sets
-  // and derive the badge status (cheap: version-based, no hash recompute).
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      const storage = getStorage();
-      const downloaded = sets.filter(
-        (s) => s.source !== USER_GENERATED_SOURCE && s.cached_version !== null,
-      );
-      const map: Record<string, AiCheckBadgeStatus> = {};
-      for (const entry of downloaded) {
-        try {
-          const cache = await storage.contentLoader.getAiValidationCache(
-            entry.source,
-            entry.id,
-          );
-          const status = badgeStatusForCachedSet(
-            cache?.signature ?? null,
-            cache?.set_version ?? null,
-            entry.cached_version,
-          );
-          if (status !== "none") map[`${entry.source}#${entry.id}`] = status;
-        } catch {
-          /* a cache read failure just means no badge for that set */
-        }
-      }
-      if (!cancelled) setAiBadgeBySet(map);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [sets]);
+
   const { hasKey, activeProvider } = useApiKeyStatus();
   const userId = readLearnerState().userId;
 
@@ -258,8 +130,6 @@ export default function ContentPage() {
   // EXP-032 — deterministic, offline content-quality check (no key/mode gate).
   const [qualityCheckTarget, setQualityCheckTarget] =
     useState<ContentSetEntry | null>(null);
-  // AIV-11 — per-set "AI-checked" badge status, keyed "{source}#{id}".
-  const [aiBadgeBySet, setAiBadgeBySet] = useState<Record<string, AiCheckBadgeStatus>>({});
   const aiCheckIsDexie = resolveStorageMode() === "dexie";
   const aiCheckDisabledReason = resolveAiCheckDisabledReason(t, aiCheckIsDexie, hasKey);
 
@@ -272,195 +142,19 @@ export default function ContentPage() {
     searchResult,
   } = useContentSearch(sets);
 
-  /** Highlight raw query occurrences inside a label. */
-  const highlightNodes = (text: string, query: string) =>
-    splitHighlight(text, query).map((seg, i) =>
-      seg.match ? (
-        <mark key={i} className="bg-transparent font-semibold text-accent">
-          {seg.text}
-        </mark>
-      ) : (
-        <span key={i}>{seg.text}</span>
-      ),
-    );
-
-  const loadSets = useCallback(async () => {
-    try {
-      const data = await getStorage().contentLoader.listSets();
-      setSets(data.sets);
-      setSources(data.sources);
-    } catch (err) {
-      notify.error(t("content.error.list_failed", "Could not load content sets."), {
-        apiError: err instanceof Error ? undefined : undefined,
-      });
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [t]);
-
-  useEffect(() => {
-    void loadSets();
-  }, [loadSets]);
-
-  const handleRefresh = () => {
-    setRefreshing(true);
-    void loadSets();
-  };
-
-  const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
-
-  /** Navigate to a specific lesson file (used by search results). */
-  const openLessonFile = (source: string, id: string, filename: string) => {
-    const slug = source.replace(/\//g, "--");
-    navigate(
-      `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(id)}/${encodeURIComponent(filename)}`,
-    );
-  };
-
-  const handleOpenLesson = async (
-    entry: ContentSetEntry,
-    opts?: { focusResources?: boolean },
-  ) => {
-    // Phase 44 / EXP-002 / 3B: jump to the set's first
-    // cached lesson. Future enhancements can swap this for
-    // a dedicated per-set lesson list page.
-    try {
-      const listing = await getStorage().contentLoader.listLessons(entry.source, entry.id);
-      const first = listing.lessons[0];
-      if (!first) {
-        notify.warning(t("content.warning.no_lessons_in_set", "This set has no lessons yet."));
-        return;
-      }
-      const slug = entry.source.replace(/\//g, "--");
-      // EXP-029 / MED-06 — a media-badge click deep-links to the
-      // "Vertiefe das Thema" section (LessonResources scrolls to its
-      // anchor when present).
-      const hash = opts?.focusResources ? "#lesson-resources" : "";
-      navigate(
-        `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(entry.id)}/${encodeURIComponent(first)}${hash}`,
-      );
-    } catch (err) {
-      notify.error(t("content.error.open_failed", "Could not open the lesson."), {
-        apiError: err instanceof Error ? undefined : undefined,
-      });
-    }
-  };
-
-  // Phase 59C — edit a user-generated lesson: jump back to its
-  // source conversation's import page, where re-saving overwrites
-  // the set in place. Only analysis-sourced sets carry a
-  // recoverable conversation id (set id is ``analysis-{convId}``).
-  const handleEditUserSet = (entry: ContentSetEntry) => {
-    const convId = entry.id.replace(/^analysis-/, "");
-    navigate(`/import/${encodeURIComponent(convId)}`);
-  };
-
-  const handleDeleteUserSet = async () => {
-    if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      await getStorage().contentLoader.deleteSet(deleteTarget.source, deleteTarget.id);
-      setSets((prev) =>
-        prev.filter((row) => !(row.source === deleteTarget.source && row.id === deleteTarget.id)),
-      );
-      notify.success(t("content.my_lessons.deleted", "Lesson deleted."));
-      setDeleteTarget(null);
-    } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(
-        `${t("content.my_lessons.delete_failed", "Could not delete the lesson.")} ${detail}`,
-      );
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  // Phase 59D — export + community sharing.
-  const exportMeta = (entry: ContentSetEntry): ExportSetMeta => ({
-    set_id: entry.id,
-    title: entry.title,
-    language: entry.language,
-    level: entry.level,
-    description: entry.description,
-  });
-
-  const fetchSetLessons = async (entry: ContentSetEntry): Promise<ContentLesson[]> => {
-    const listing = await getStorage().contentLoader.listLessons(entry.source, entry.id);
-    return Promise.all(
-      listing.lessons.map((f) => getStorage().contentLoader.getLesson(entry.source, entry.id, f)),
-    );
-  };
-
-  const handleExportJson = async (entry: ContentSetEntry) => {
-    try {
-      const lessons = await fetchSetLessons(entry);
-      if (lessons.length === 1) {
-        downloadLessonJson(lessons[0]);
-      } else {
-        const blob = await buildContentSetZip(exportMeta(entry), lessons);
-        triggerDownload(blob, contentSetFileName(entry.title));
-      }
-      notify.success(t("content.my_lessons.exported", "Lesson exported."));
-    } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
-    }
-  };
-
-  const handleExportSet = async (entry: ContentSetEntry) => {
-    try {
-      const lessons = await fetchSetLessons(entry);
-      const blob = await buildContentSetZip(exportMeta(entry), lessons);
-      triggerDownload(blob, contentSetFileName(entry.title));
-      notify.success(t("content.my_lessons.exported", "Lesson exported."));
-    } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
-    }
-  };
-
-  // EXP-026 / UGC-04 — load each user-generated set's lessons so they
-  // can be folded into the matching published tree node. Keyed off
-  // ``sets`` (state, stable between renders) so it doesn't loop.
-  useEffect(() => {
-    let cancelled = false;
-    const userGen = sets.filter((s) => s.source === USER_GENERATED_SOURCE);
-    if (userGen.length === 0) {
-      setUserLessonsBySet({});
-      return;
-    }
-    void (async () => {
-      const byKey: Record<string, UserFoldInput["lessons"]> = {};
-      for (const set of userGen) {
-        try {
-          const listing = await getStorage().contentLoader.listLessons(set.source, set.id);
-          const lessons = await Promise.all(
-            listing.lessons.map(async (filename) => {
-              const lesson = await getStorage().contentLoader.getLesson(
-                set.source,
-                set.id,
-                filename,
-              );
-              return {
-                id: lesson.id,
-                filename,
-                title: lesson.title,
-                variation_of: lesson.variation_of,
-              };
-            }),
-          );
-          byKey[`${set.source}#${set.id}`] = lessons;
-        } catch {
-          /* a set that fails to load just stays in the My Lessons fallback */
-        }
-      }
-      if (!cancelled) setUserLessonsBySet(byKey);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [sets]);
+  const {
+    deleteTarget,
+    setDeleteTarget,
+    deleting,
+    openLessonFile,
+    handleOpenLesson,
+    handleEditUserSet,
+    handleDeleteUserSet,
+    handleExportJson,
+    handleExportSet,
+    fetchSetLessons,
+    handleDownload,
+  } = useContentSetActions({ navigate, setSets, setPerSetState });
 
   // Phase 60 — community-share + opt-in AI validation (extracted to
   // useContentSharing). The page keeps the contribution history.
@@ -476,24 +170,6 @@ export default function ContentPage() {
       status: "submitted",
     });
     setContributions(listContributions());
-  };
-
-  const handleDownload = async (entry: ContentSetEntry) => {
-    const key = setKey(entry);
-    setPerSetState((prev) => ({ ...prev, [key]: "downloading" }));
-    try {
-      const updated = await getStorage().contentLoader.downloadSet(entry.source, entry.id);
-      setSets((prev) =>
-        prev.map((row) => (row.source === entry.source && row.id === entry.id ? updated : row)),
-      );
-      setPerSetState((prev) => ({ ...prev, [key]: "done" }));
-      notify.success(t("content.toast.downloaded", "Set downloaded and ready to use."));
-    } catch (err) {
-      setPerSetState((prev) => ({ ...prev, [key]: "error" }));
-      notify.error(t("content.error.download_failed", "Could not download the set."), {
-        apiError: err instanceof Error ? undefined : undefined,
-      });
-    }
   };
 
   if (loading) {
@@ -575,116 +251,14 @@ export default function ContentPage() {
 
       {/* UX overhaul C1 — compact toolbar: search FIRST (full width),
           then icon-only action buttons (icon + label from md up). */}
-      <div className="mb-4 flex flex-wrap items-center gap-2" data-testid="content-toolbar">
-        <div
-          className="relative flex min-w-[200px] flex-1 items-center"
-          data-testid="content-search-bar"
-        >
-          {!searchQuery && (
-            <Search
-              size={18}
-              className="pointer-events-none absolute right-3 text-muted-foreground"
-              aria-hidden="true"
-            />
-          )}
-          <Input
-            ref={searchInputRef}
-            type="search"
-            value={searchQuery}
-            onFocus={activateSearch}
-            onChange={(e) => {
-              activateSearch();
-              setSearchQuery(e.target.value);
-            }}
-            placeholder={t("content.search.placeholder", "Search lessons...")}
-            aria-label={t("content.search.placeholder", "Search lessons...")}
-            className="pl-3 pr-10"
-            data-testid="content-search-input"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              className="absolute right-2 flex h-8 w-8 items-center justify-center rounded text-muted-foreground hover:text-foreground"
-              onClick={() => setSearchQuery("")}
-              aria-label={t("content.search.clear", "Clear search")}
-              data-testid="content-search-clear"
-            >
-              <X size={16} aria-hidden="true" />
-            </button>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-[44px] gap-2"
-            onClick={() => setShowImport(true)}
-            title={t("content.import_lesson.button", "Import Lesson")}
-            aria-label={t("content.import_lesson.button", "Import Lesson")}
-            data-testid="content-import-lesson"
-          >
-            <Upload className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("content.import_lesson.button", "Import Lesson")}
-            </span>
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-[44px] gap-2"
-            onClick={() => navigate("/content?tab=import")}
-            title={t("content.import_chat.button", "Import Chat")}
-            aria-label={t("content.import_chat.button", "Import Chat")}
-            data-testid="content-import-chat"
-          >
-            <MessageSquare className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("content.import_chat.button", "Import Chat")}
-            </span>
-          </Button>
-          {/* EXP-037 (#850) — Anki is no longer a top-level nav entry; its
-              export lives here as an action on "Meine Inhalte". */}
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-[44px] gap-2"
-            onClick={() => navigate("/anki")}
-            title={t("content.anki_export.button", "Anki export")}
-            aria-label={t("content.anki_export.button", "Anki export")}
-            data-testid="content-anki-export"
-          >
-            <Layers className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("content.anki_export.button", "Anki export")}
-            </span>
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-[44px] gap-2"
-            onClick={() => navigate("/learning-path")}
-            title={t("nav.learning_path", "Learning Path")}
-            aria-label={t("nav.learning_path", "Learning Path")}
-            data-testid="content-learning-path"
-          >
-            <MapIcon className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">{t("nav.learning_path", "Learning Path")}</span>
-          </Button>
-          <Button
-            type="button"
-            className="min-h-[44px] gap-2"
-            onClick={() => navigate("/create-lesson")}
-            title={t("content.create_lesson.button", "Create New Lesson")}
-            aria-label={t("content.create_lesson.button", "Create New Lesson")}
-            data-testid="content-create-lesson"
-          >
-            <Plus className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("content.create_lesson.button", "Create New Lesson")}
-            </span>
-          </Button>
-        </div>
-      </div>
+      <ContentToolbar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        activateSearch={activateSearch}
+        searchInputRef={searchInputRef}
+        onImportLesson={() => setShowImport(true)}
+        navigate={navigate}
+      />
 
       {/* #772 — the Content Browser is "Meine Inhalte": only locally
           downloaded sets. Discovering new (not-downloaded) content happens on
@@ -731,128 +305,19 @@ export default function ContentPage() {
       )}
 
       {searchResult.active ? (
-        <section className="content-search-results space-y-4" data-testid="content-search-results">
-          <h2 className="font-semibold" data-testid="content-search-your">
-            {t("content.search.your_content", "Your content")}
-          </h2>
-          {searchResult.matches.length === 0 ? (
-            <div className="content-empty" data-testid="content-search-empty">
-              <p>
-                {t("content.search.no_results", "No results for '{query}'").replace(
-                  "{query}",
-                  searchResult.query.trim(),
-                )}
-              </p>
-              <p className="muted">{t("content.search.hint", "Try a different search term")}</p>
-            </div>
-          ) : (
-            <>
-              <p className="text-sm text-muted-foreground" data-testid="content-search-count">
-                {t("content.search.results", "{count} results").replace(
-                  "{count}",
-                  String(searchResult.lessonCount),
-                )}
-              </p>
-              {searchResult.matches.map((match) => {
-                const entry = downloadedSets.find(
-                  (s) => s.source === match.source && s.id === match.setId,
-                );
-                if (!entry) return null;
-                return (
-                  <div
-                    key={`${match.source}#${match.setId}`}
-                    data-testid={`content-search-set-${match.setId}`}
-                  >
-                    <h3 className="font-semibold">
-                      {highlightNodes(entry.title, searchResult.query)}
-                      <span className="ml-1 text-sm font-normal text-muted-foreground">
-                        · {(entry.source_language || "").toUpperCase()}
-                        {entry.target_language
-                          ? ` → ${entry.target_language.toUpperCase()}`
-                          : ""}{" "}
-                        {entry.level}
-                      </span>
-                    </h3>
-                    <ul className="mt-1 space-y-1 pl-4">
-                      {match.matchedLessons.map((lessonRef) => (
-                        <li key={lessonRef.filename}>
-                          <button
-                            type="button"
-                            className="text-left text-accent hover:underline"
-                            onClick={() =>
-                              openLessonFile(match.source, match.setId, lessonRef.filename)
-                            }
-                            data-testid={`content-search-lesson-${match.setId}-${lessonRef.filename}`}
-                          >
-                            {highlightNodes(lessonRef.title, searchResult.query)}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </>
-          )}
-          {/* #772 — the Content Browser shows only local content. Not-yet-
-              downloaded sets are discovered on /discover; point there instead
-              of surfacing index results here. */}
-          <p className="text-sm text-muted-foreground" data-testid="content-search-discover-hint">
-            <Link to="/content?tab=discover" className="text-accent hover:underline">
-              {t("content.discover_more", "Find more content")} →
-            </Link>
-          </p>
-        </section>
+        <ContentSearchResults
+          searchResult={searchResult}
+          downloadedSets={downloadedSets}
+          openLessonFile={openLessonFile}
+        />
       ) : (
         <>
           {/* Phase 64E — encouraging gap suggestions ("Can you help?"). */}
-          {(() => {
-            const gaps = detectGaps(downloadedSets).slice(0, 5);
-            if (gaps.length === 0) return null;
-            return (
-              <section className="content-section content-gaps" data-testid="content-gaps">
-                <h2>{t("content.gaps.title", "Missing Lessons")}</h2>
-                <p className="content-gaps-intro">
-                  {t(
-                    "content.gaps.intro",
-                    "The community library has a few gaps. Can you help fill one?",
-                  )}
-                </p>
-                <ul className="content-gaps-list" data-testid="content-gaps-list">
-                  {gaps.map((gap, i) => (
-                    <li
-                      key={`${gap.kind}-${gap.source}-${gap.target}-${gap.level}-${i}`}
-                      className="content-gap-row"
-                    >
-                      <span>
-                        {(gap.kind === "next_level"
-                          ? t(
-                              "content.gaps.next_level",
-                              "{target} for {source} speakers has lessons, but {level} doesn't exist yet.",
-                            )
-                          : t(
-                              "content.gaps.missing_pair",
-                              "{target} {level} for {source} speakers doesn't exist yet.",
-                            )
-                        )
-                          .replace("{target}", languageDisplayName(gap.target, lang))
-                          .replace("{source}", languageDisplayName(gap.source, lang))
-                          .replace("{level}", gap.level)}
-                      </span>{" "}
-                      <a
-                        href={`https://github.com/${COMMUNITY_REPO}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="content-gap-help"
-                      >
-                        {t("content.gaps.help", "Can you help?")}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })()}
+          <ContentGapsSection
+            downloadedSets={downloadedSets}
+            lang={lang}
+            communityRepo={COMMUNITY_REPO}
+          />
 
           <h2 className="content-section-title">
             {t("content.my_lessons.downloaded_title", "Downloaded sets")}
@@ -913,7 +378,7 @@ export default function ContentPage() {
                 onAiCheck: (e) => setAiCheckTarget(e),
                 aiCheckDisabledReason,
                 onQualityCheck: (e) => setQualityCheckTarget(e),
-                aiBadgeStatusFor: (e) =>
+                aiBadgeStatusFor: (e): AiCheckBadgeStatus =>
                   aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
               }}
               folded={{
@@ -963,45 +428,12 @@ export default function ContentPage() {
         onShared={recordShare}
       />
 
-      {deleteTarget && (
-        <div className="modal-overlay" data-testid="my-lesson-delete-modal">
-          <div
-            className="modal-card"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="delete-lesson-title"
-          >
-            <h2 id="delete-lesson-title" className="modal-title">
-              {deleteTarget.title}
-            </h2>
-            <p>
-              {t("content.my_lessons.delete_confirm", "Delete this lesson? This cannot be undone.")}
-            </p>
-            <div className="form-actions">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setDeleteTarget(null)}
-                disabled={deleting}
-                data-testid="my-lesson-delete-cancel"
-              >
-                {t("common.cancel", "Cancel")}
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={handleDeleteUserSet}
-                disabled={deleting}
-                data-testid="my-lesson-delete-confirm"
-              >
-                {deleting
-                  ? t("common.loading", "Loading…")
-                  : t("content.my_lessons.delete", "Delete")}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteLessonModal
+        target={deleteTarget}
+        deleting={deleting}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteUserSet}
+      />
     </main>
   );
 }
