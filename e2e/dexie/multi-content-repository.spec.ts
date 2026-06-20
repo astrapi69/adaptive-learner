@@ -110,7 +110,7 @@ test.describe("EXP-023 Phase B — multi content repository", () => {
     await expect(page.getByTestId("content-repo-trust-jane-alpha")).toBeVisible();
 
     // --- Content Browser: per-repo filter chips + badges. -----------
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });

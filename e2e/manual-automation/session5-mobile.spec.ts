@@ -68,7 +68,7 @@ test.describe("Session 5 — Mobile", () => {
   test("key touch targets are at least 44px tall", async ({ page }) => {
     const nav = new NavBar(page);
     await seedLearner(page);
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     // The header hamburger is the canonical 44px mobile target.
     await expect(nav.hamburger).toBeVisible();
     const box = await nav.hamburger.boundingBox();

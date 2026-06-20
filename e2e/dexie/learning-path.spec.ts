@@ -21,7 +21,7 @@ const SET_ID = "fr-a1-from-en";
 /** Download the bundled set and play its first lesson to the summary
  *  (any answers — we only need recorded progress for the path). */
 async function playFirstLesson(page: Page): Promise<void> {
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15000});
     await page.getByTestId("content-other-toggle").click();
     await page.getByTestId(`content-set-${SET_ID}-action`).click();

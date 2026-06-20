@@ -34,7 +34,7 @@ test.describe("#43 — sticky lesson footer stays pinned across steps", () => {
   test("footer bottom stays flush with the viewport bottom on every step", async ({
     page,
   }) => {
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({ timeout: 15000 });
     await page.getByTestId("content-other-toggle").click();
     const action = page.getByTestId(`content-set-${SET_ID}-action`);

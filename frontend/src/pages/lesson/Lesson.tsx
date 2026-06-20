@@ -371,7 +371,7 @@ export default function LessonPage() {
         isInProgress={isInProgress}
         exitOpen={exitOpen}
         onPauseClick={() => setExitOpen(true)}
-        onExit={() => navigate("/content")}
+        onExit={() => navigate("/content?tab=my")}
         onExitContinue={() => setExitOpen(false)}
         onExitPause={() => void handlePauseFromDialog()}
         onExitAbandon={() => void handleAbandonFromDialog()}
@@ -473,7 +473,7 @@ export default function LessonPage() {
             }
           }}
           onRepeat={() => goToStep(0)}
-          onExit={() => navigate("/content")}
+          onExit={() => navigate("/content?tab=my")}
         />
         <LessonResources
           lesson={lesson}

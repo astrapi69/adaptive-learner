@@ -92,7 +92,7 @@ async function injectFakeSpeech(page: Page): Promise<void> {
 /** UI-download the set once and land on the first lesson; returns the
  *  resolved lesson URL so later navigations skip the download. */
 async function downloadAndOpenFirstLesson(page: Page): Promise<string> {
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
         timeout: 15000,
     });

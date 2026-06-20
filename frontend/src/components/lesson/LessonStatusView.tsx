@@ -62,7 +62,7 @@ export default function LessonStatusView({
           )}
         </p>
         <Button asChild variant="default">
-          <Link to="/content">
+          <Link to="/content?tab=my">
             {t("lesson.action.open_browser", "Open content browser")}
           </Link>
         </Button>
@@ -93,7 +93,7 @@ export default function LessonStatusView({
         <p>
           <Button
             type="button"
-            onClick={() => navigate("/content")}
+            onClick={() => navigate("/content?tab=my")}
             data-testid="lesson-goto-content"
           >
             <Download size={14} aria-hidden="true" />
@@ -110,7 +110,7 @@ export default function LessonStatusView({
         {t("lesson.error.load_failed", "Could not load lesson.")}
         {error ? ` (${error})` : ""}
       </p>
-      <Button type="button" onClick={() => navigate("/content")}>
+      <Button type="button" onClick={() => navigate("/content?tab=my")}>
         {t("lesson.action.open_browser", "Open content browser")}
       </Button>
     </main>

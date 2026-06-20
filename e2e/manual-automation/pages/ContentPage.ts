@@ -18,7 +18,9 @@ export const BUNDLED_SET_ID = FIXTURE_SET_ID;
 export class ContentPage {
   constructor(private readonly page: Page) {}
 
-  readonly url = "/content";
+  // #856 — the "My content" browser is the ``my`` tab of the ContentHub
+  // (/content defaults to the Entdecken/Discover tab).
+  readonly url = "/content?tab=my";
 
   get tree(): Locator {
     return this.page.getByTestId("content-tree");

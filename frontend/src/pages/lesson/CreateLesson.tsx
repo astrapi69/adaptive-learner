@@ -263,7 +263,7 @@ export default function CreateLesson() {
 
     function discard() {
         clearLessonDraft();
-        navigate("/content");
+        navigate("/content?tab=my");
     }
 
     function applyDraft(draft: LessonDraft) {
@@ -286,7 +286,7 @@ export default function CreateLesson() {
         if (dirty) {
             setConfirmCancel(true);
         } else {
-            navigate("/content");
+            navigate("/content?tab=my");
         }
     }
 
@@ -417,7 +417,7 @@ export default function CreateLesson() {
                             type="button"
                             variant="secondary"
                             data-testid="create-lesson-to-browser"
-                            onClick={() => navigate("/content")}
+                            onClick={() => navigate("/content?tab=my")}
                         >
                             {t(
                                 "create_lesson.save.to_browser",

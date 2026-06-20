@@ -252,7 +252,7 @@ export default function ContinueLearning({
                 </h2>
                 <p className="text-sm text-muted-foreground">
                     <Link
-                        to="/content"
+                        to="/content?tab=my"
                         className="text-accent hover:underline"
                         data-testid="continue-learning-empty-link"
                     >

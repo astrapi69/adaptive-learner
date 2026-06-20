@@ -122,7 +122,7 @@ describe("LearningPathPersonal", () => {
         expect(screen.getByTestId("learning-path-empty")).toBeInTheDocument();
         expect(
             screen.getByTestId("learning-path-to-content"),
-        ).toHaveAttribute("href", "/content");
+        ).toHaveAttribute("href", "/content?tab=my");
     });
 
     it("shows the error state", () => {

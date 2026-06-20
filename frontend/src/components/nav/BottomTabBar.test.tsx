@@ -1,8 +1,9 @@
 /**
- * Tests for BottomTabBar (EXP-037 / #850): the mobile primary navigation —
- * 5 tabs (Learn, Content, Discover, Progress, More) with a "More" sheet for the
- * secondary destinations. Hidden on the pre-onboarding funnel and during a
- * lesson.
+ * Tests for BottomTabBar (EXP-037 / #850; #856): the mobile primary
+ * navigation — 5 tabs (Learn, Content, Learning Path, Progress, More) with a
+ * "More" sheet for the secondary destinations (Settings, Help). #856 merged
+ * the separate "Discover" tab into "Content" and promoted Learning Path from
+ * the sheet into the primary bar. Hidden on the funnel and during a lesson.
  */
 
 import { fireEvent, render, screen } from "@testing-library/react";
@@ -30,12 +31,14 @@ describe("BottomTabBar", () => {
     for (const id of [
       "tab-learn",
       "tab-content",
-      "tab-discover",
+      "tab-learning-path",
       "tab-progress",
       "tab-more",
     ]) {
       expect(screen.getByTestId(id)).toBeInTheDocument();
     }
+    // #856 — the separate Discover tab was merged into Content.
+    expect(screen.queryByTestId("tab-discover")).not.toBeInTheDocument();
   });
 
   it("is hidden on the pre-onboarding funnel", () => {
@@ -56,9 +59,10 @@ describe("BottomTabBar", () => {
     expect(screen.queryByTestId("more-sheet")).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId("tab-more"));
     expect(screen.getByTestId("more-sheet")).toBeInTheDocument();
-    expect(screen.getByTestId("more-learning-path")).toBeInTheDocument();
     expect(screen.getByTestId("more-settings")).toBeInTheDocument();
     expect(screen.getByTestId("more-help")).toBeInTheDocument();
+    // #856 — Learning Path moved out of the sheet into the primary bar.
+    expect(screen.queryByTestId("more-learning-path")).not.toBeInTheDocument();
   });
 
   it("closes the More sheet via the close button", () => {

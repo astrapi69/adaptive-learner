@@ -284,7 +284,7 @@ export default function Discover() {
           className="mb-3 text-sm text-muted-foreground"
           data-testid="discover-to-content"
         >
-          <Link to="/content" className="text-accent hover:underline">
+          <Link to="/content?tab=my" className="text-accent hover:underline">
             {t("discover.to_content", "Go to Content Browser")} →
           </Link>
         </p>

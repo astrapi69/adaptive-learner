@@ -119,7 +119,7 @@ test.describe("EXP-023 Phase C — recommended repos + local ratings", () => {
     ).toHaveAttribute("aria-checked", "true");
 
     // --- Content Browser shows the recommended badge. ---------------
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });

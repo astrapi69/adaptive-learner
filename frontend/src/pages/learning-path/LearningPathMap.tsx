@@ -243,7 +243,7 @@ export default function LearningPathMap({headerExtra}: LearningPathMapProps) {
                     </p>
                     <Button asChild variant="default">
                         <Link
-                            to="/content"
+                            to="/content?tab=my"
                             className="rounded-app bg-accent font-medium text-accent-fg"
                             data-testid="learning-path-to-content"
                         >

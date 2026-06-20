@@ -86,7 +86,7 @@ export default function AddRepo() {
       notify.success(
         t("content_repo.added", "Repository added."),
       );
-      navigate("/content");
+      navigate("/content?tab=my");
     } catch {
       setError(
         t("content_repo.error.save_failed", "Could not add the repository."),

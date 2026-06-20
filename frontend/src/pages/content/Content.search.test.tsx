@@ -210,9 +210,9 @@ describe("Content Browser search", () => {
     // The "Your content" heading is the only result group; no index half.
     expect(screen.getByTestId("content-search-your")).toBeInTheDocument();
     expect(screen.queryByTestId("content-available-results")).not.toBeInTheDocument();
-    // Discovery of not-downloaded sets is pointed to /discover instead.
+    // Discovery of not-downloaded sets is pointed to the Entdecken tab (#856).
     const hint = screen.getByTestId("content-search-discover-hint");
-    expect(hint.querySelector("a")).toHaveAttribute("href", "/discover");
+    expect(hint.querySelector("a")).toHaveAttribute("href", "/content?tab=discover");
   });
 
   it("matches card content and navigates on lesson click", async () => {

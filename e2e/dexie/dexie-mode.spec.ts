@@ -100,11 +100,11 @@ const ROUTES: RouteCase[] = [
         expectedTestIds: ["progress-hub", "progress", "onboarding"],
     },
     {
-        // EXP-037 (#850): /import redirects to /discover?tab=import, which
-        // mounts DiscoverHub (synchronous tab bar) + the Import tab.
-        name: "Import (redirects to Discover > Import tab)",
+        // #856: /import redirects to /content?tab=import, which mounts the
+        // ContentHub (synchronous tab bar) + the Import tab.
+        name: "Import (redirects to Content > Import tab)",
         path: "/import",
-        expectedTestIds: ["discover-hub", "page-import"],
+        expectedTestIds: ["content-hub", "page-import"],
     },
     {
         name: "Create Lesson (Phase 65 / EXP-021)",
@@ -155,31 +155,36 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
-        name: "Content (Set Browser, Phase 43)",
+        name: "Content (hub, #856 — default Entdecken tab)",
         path: "/content",
-        // ``content-loading`` is the first render; the Dexie
-        // fetch then either resolves to ``content-page`` (with
-        // a network-reachable upstream OR a populated cache)
-        // or stays on ``content-empty`` (upstream unreachable
-        // AND empty cache, which is what a first-visit GH
-        // Pages user with no network sees). Both shapes count
-        // as success — the gate's job is to pin that the page
-        // never crashes or shows a raw HTTP error toast.
+        // #856: /content mounts the ContentHub tab bar synchronously
+        // (``content-hub``) and defaults to the Entdecken (Discover) tab,
+        // which resolves ``discover-loading`` → ``discover-page``. The
+        // loader is error-tolerant (per-repo failures resolve to []), so an
+        // offline first-visit never crashes or toasts.
+        expectedTestIds: ["content-hub", "discover-loading", "discover-page"],
+    },
+    {
+        name: "Content > My content tab (#856)",
+        path: "/content?tab=my",
+        // The "My content" set browser (Phase 43). ``content-loading`` is
+        // the first render; the Dexie fetch then resolves to
+        // ``content-page`` (network-reachable upstream OR populated cache)
+        // or stays on ``content-empty`` (offline + empty cache). All count
+        // as success — the gate pins that the page never crashes or toasts.
         expectedTestIds: [
+            "content-hub",
             "content-loading",
             "content-page",
             "content-empty",
         ],
     },
     {
-        name: "Discover (hub, EXP-034 / EXP-037)",
+        name: "Discover (redirects to Content > Entdecken tab, #856)",
         path: "/discover",
-        // EXP-037 (#850): DiscoverHub renders its tab bar synchronously
-        // (``discover-hub``); the Discover tab then resolves to
-        // ``discover-loading`` → ``discover-page``. The loader is
-        // error-tolerant (per-repo failures resolve to []), so an offline
-        // first-visit never crashes or toasts.
-        expectedTestIds: ["discover-hub", "discover-loading", "discover-page"],
+        // #856: /discover redirects to /content?tab=discover → the
+        // ContentHub Entdecken tab (``discover-loading`` → ``discover-page``).
+        expectedTestIds: ["content-hub", "discover-loading", "discover-page"],
     },
     {
         name: "Lesson (viewer, Phase 44, not-cached path)",
@@ -228,8 +233,9 @@ const ROUTES: RouteCase[] = [
         // Phase 61 C2 — ImportDetail was nav-reachable but unwalked.
         // With no cached conversation it shows its error/empty state
         // (or redirects to the import list) — never an error toast.
+        // #856 — canonical detail route is now /content/import/:id.
         name: "ImportDetail (no cached conversation)",
-        path: "/import/nonexistent-conversation",
+        path: "/content/import/nonexistent-conversation",
         expectedTestIds: [
             "page-import-detail",
             "import-detail-error",

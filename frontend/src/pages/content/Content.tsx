@@ -632,7 +632,7 @@ export default function ContentPage() {
             type="button"
             variant="outline"
             className="min-h-[44px] gap-2"
-            onClick={() => navigate("/import")}
+            onClick={() => navigate("/content?tab=import")}
             title={t("content.import_chat.button", "Import Chat")}
             aria-label={t("content.import_chat.button", "Import Chat")}
             data-testid="content-import-chat"
@@ -691,7 +691,7 @@ export default function ContentPage() {
           /discover; a persistent hint points there while browsing. */}
       {!searchResult.active && (
         <p className="mb-4 text-sm text-muted-foreground" data-testid="content-discover-hint">
-          <Link to="/discover" className="text-accent hover:underline">
+          <Link to="/content?tab=discover" className="text-accent hover:underline">
             {t("content.discover_more", "Find more content")} →
           </Link>
         </p>
@@ -798,7 +798,7 @@ export default function ContentPage() {
               downloaded sets are discovered on /discover; point there instead
               of surfacing index results here. */}
           <p className="text-sm text-muted-foreground" data-testid="content-search-discover-hint">
-            <Link to="/discover" className="text-accent hover:underline">
+            <Link to="/content?tab=discover" className="text-accent hover:underline">
               {t("content.discover_more", "Find more content")} →
             </Link>
           </p>

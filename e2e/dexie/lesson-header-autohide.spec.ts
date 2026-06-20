@@ -21,7 +21,7 @@ import { expect, test, type Page } from "@playwright/test";
 const SET_ID = "es-a1-from-en";
 
 async function openALesson(page: Page): Promise<void> {
-  await page.goto("/content");
+  await page.goto("/content?tab=my");
   await expect(page.getByTestId("content-tree")).toBeVisible({ timeout: 15000 });
   // English-source set lives under "other source languages" (the Dexie
   // build's default UI language is German).
@@ -81,7 +81,7 @@ test.describe("Lesson header auto-hide (real browser)", () => {
   });
 
   test("does NOT hide the nav on a non-lesson route", async ({ page }) => {
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });

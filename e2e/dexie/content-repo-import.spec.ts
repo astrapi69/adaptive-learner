@@ -216,7 +216,7 @@ test.describe("EXP-023 — external repo import: errors + playthrough", () => {
     );
 
     // Open the cached external set's first lesson.
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });

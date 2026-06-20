@@ -36,9 +36,8 @@ import SkipToContent from "./components/SkipToContent";
 // BUNDLE-SIZE-DYNAMIC-IMPORT-01.
 const AnkiPage = lazyWithReload(() => import("./pages/content/Anki"));
 const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"));
-const ContentPage = lazyWithReload(() => import("./pages/content/Content"));
-// EXP-037 (#850) — Discover + Import merged into a tabbed hub.
-const DiscoverHub = lazyWithReload(() => import("./pages/content/DiscoverHub"));
+// #856 — Discover + My-content + Import merged into one tabbed hub at /content.
+const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
 const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
 const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
 const LearningPath = lazyWithReload(() => import("./pages/learning-path/LearningPathPersonal"));
@@ -173,14 +172,22 @@ export default function App() {
                   path="/statistics"
                   element={<Navigate to="/progress?tab=stats" replace />}
                 />
+                {/* #856 — Content/Discover/Import unified at /content with
+                    tabs. Old destinations redirect to their new tabbed home;
+                    the routes stay alive for bookmarks/links. */}
                 <Route
                   path="/import"
-                  element={<Navigate to="/discover?tab=import" replace />}
+                  element={<Navigate to="/content?tab=import" replace />}
                 />
+                <Route
+                  path="/discover"
+                  element={<Navigate to="/content?tab=discover" replace />}
+                />
+                <Route path="/content" element={<ContentHub />} />
+                <Route path="/content/import/:conversationId" element={<ImportDetail />} />
+                {/* Old import-detail link kept alive for existing bookmarks. */}
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />
-                <Route path="/content" element={<ContentPage />} />
-                <Route path="/discover" element={<DiscoverHub />} />
                 <Route path="/add-repo" element={<AddRepo />} />
                 <Route path="/learning-path" element={<LearningPath />} />
                 <Route path="/create-lesson" element={<CreateLesson />} />

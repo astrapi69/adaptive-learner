@@ -206,11 +206,11 @@ export default function Navigation() {
           </NavLink>
         </NavGroup>
         <NavGroup label={t("nav.group.content", "CONTENT")} testId="nav-group-content">
+          {/* #856 — "My content" + "Discover" merged into one entry; the
+              tabs (Entdecken / Meine Inhalte / Importieren) live in the
+              ContentHub at /content. */}
           <NavLink to="/content" className={linkClass} data-testid="nav-content">
-            {t("nav.content", "My content")}
-          </NavLink>
-          <NavLink to="/discover" className={linkClass} data-testid="nav-discover">
-            {t("nav.discover", "Discover content")}
+            {t("nav.tab.content", "Content")}
           </NavLink>
         </NavGroup>
         <NavGroup label={t("nav.group.progress", "PROGRESS")} testId="nav-group-progress">

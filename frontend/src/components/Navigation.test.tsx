@@ -21,18 +21,18 @@ describe("Navigation", () => {
         }
     });
 
-    // EXP-037 (#850): the primary nav is reduced to 7 grouped-order entries
-    // (5 primary + Settings + Help). Session/Curriculum/Statistics/Import/Anki
-    // were removed from the bar (still reachable via redirects/actions/tabs).
-    it("renders exactly the 7 grouped-order primary entries on /dashboard", () => {
+    // EXP-037 (#850) reduced the primary nav to 7 grouped-order entries;
+    // #856 merged "My content" + "Discover" into one "Content" entry, so the
+    // bar now carries 6 (4 primary + Settings + Help). Session/Curriculum/
+    // Statistics/Import/Anki/Discover are reachable via redirects/tabs/actions.
+    it("renders the grouped-order primary entries on /dashboard", () => {
         renderAt("/dashboard");
         expect(screen.getByTestId("app-nav")).toBeInTheDocument();
-        // Present: the 5 primary destinations + Settings + Help.
+        // Present: the 4 primary destinations + Settings + Help.
         for (const id of [
             "nav-dashboard",
             "nav-learning-path",
             "nav-content",
-            "nav-discover",
             "nav-progress",
             "nav-settings",
             "nav-help",
@@ -46,6 +46,7 @@ describe("Navigation", () => {
             "nav-statistics",
             "nav-import",
             "nav-anki",
+            "nav-discover",
         ]) {
             expect(screen.queryByTestId(id)).not.toBeInTheDocument();
         }

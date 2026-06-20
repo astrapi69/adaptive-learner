@@ -71,7 +71,7 @@ test.describe("Lesson playthrough — all 5 exercise types", () => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
 
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({ timeout: 15000 });
 
     // The English-source set sits under "other source languages".
