@@ -5,21 +5,26 @@
  *
  * The learner assembles existing content lessons into ordered,
  * personal "custom paths". This is NOT a parallel ``curricula``
- * system: it stores nothing on the server, adds no Dexie table and
- * no SQLAlchemy model — it is user-local data persisted in
- * localStorage, exactly like ``contribution-history.ts`` and
- * ``learnerState.ts``. That gives identical behaviour in BOTH
- * storage modes (ApiStorage + DexieStorage) with no backend.
+ * system: it stores nothing on the server and adds no SQLAlchemy
+ * model — it is user-local data. That gives identical behaviour in
+ * BOTH storage modes (ApiStorage + DexieStorage) with no backend.
+ *
+ * #791 Teil B: in Dexie mode the canonical home is the IndexedDB
+ * ``userData`` store. The synchronous localStorage API below is kept
+ * as a read cache; production writes (no ``storage`` override) mirror
+ * through to Dexie via {@link mirrorUserData}, and
+ * {@link syncUserDataAtBoot} reconciles the two at app start.
  *
  * Every storage function takes an optional ``storage`` override
  * (defaulting to ``localStorage``) so the unit tests can inject an
- * in-memory ``Storage`` and stay deterministic. All reads tolerate
- * corrupt / absent / disabled storage by returning an empty list
- * rather than throwing — a custom path is a convenience, never
- * load-bearing data.
+ * in-memory ``Storage`` and stay deterministic (no Dexie side effect).
+ * All reads tolerate corrupt / absent / disabled storage by returning
+ * an empty list rather than throwing — a custom path is a convenience,
+ * never load-bearing data.
  */
 
 import type {LessonProgress} from "../../storage/types";
+import {mirrorUserData} from "../../storage/dexie-user-data";
 
 const STORAGE_KEY = "adaptive-learner.custom-paths";
 
@@ -108,6 +113,16 @@ function write(storage: Storage, list: CustomPath[]): void {
     }
 }
 
+/**
+ * Persist a mutated list: write the localStorage cache, then (production path
+ * only — no ``storage`` override) mirror it through to the Dexie canonical
+ * store. Keeps the unit tests' injected ``Storage`` free of Dexie effects.
+ */
+function persist(s: Storage, list: CustomPath[], override?: Storage): void {
+    write(s, list);
+    if (override === undefined) void mirrorUserData(STORAGE_KEY, JSON.stringify(list));
+}
+
 function nowIso(): string {
     return new Date().toISOString();
 }
@@ -162,7 +177,7 @@ export function createCustomPath(
     };
     const s = resolveStorage(storage);
     if (!s) return created;
-    write(s, [...read(s), created]);
+    persist(s, [...read(s), created], storage);
     return created;
 }
 
@@ -193,7 +208,7 @@ export function renameCustomPath(
     };
     if (!trimmedDescription) delete updated.description;
     list[idx] = updated;
-    write(s, list);
+    persist(s, list, storage);
     return updated;
 }
 
@@ -202,7 +217,7 @@ export function deleteCustomPath(id: string, storage?: Storage): CustomPath[] {
     const s = resolveStorage(storage);
     if (!s) return [];
     const next = read(s).filter((p) => p.id !== id);
-    write(s, next);
+    persist(s, next, storage);
     return next.slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
@@ -229,7 +244,7 @@ export function addLessonToPath(
         updatedAt: nowIso(),
     };
     list[idx] = updated;
-    write(s, list);
+    persist(s, list, storage);
     return updated;
 }
 
@@ -253,7 +268,7 @@ export function removeLessonFromPath(
     if (lessons.length === path.lessons.length) return path;
     const updated: CustomPath = {...path, lessons, updatedAt: nowIso()};
     list[idx] = updated;
-    write(s, list);
+    persist(s, list, storage);
     return updated;
 }
 
@@ -288,7 +303,7 @@ export function moveLessonInPath(
     lessons.splice(target, 0, moved);
     const updated: CustomPath = {...path, lessons, updatedAt: nowIso()};
     list[idx] = updated;
-    write(s, list);
+    persist(s, list, storage);
     return updated;
 }
 
