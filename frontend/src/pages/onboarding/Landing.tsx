@@ -16,6 +16,7 @@ import {
     setUserId,
 } from "../../lib/learnerState";
 import {getStorage, resolveStorageMode} from "../../storage";
+import {docsHomeUrl} from "../../lib/help-routes";
 
 /**
  * Landing page (project-reference §8 row ``/``).
@@ -222,7 +223,7 @@ export default function Landing() {
 
             <p className="landing-secondary">
                 <a
-                    href={`${import.meta.env.BASE_URL}docs/`}
+                    href={docsHomeUrl(lang)}
                     data-testid="landing-docs-link"
                     className="landing-secondary-link"
                     target="_blank"

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_HELP_KEY,
   DOCS_BASE_URL,
+  docsHomeUrl,
   docsUrlForSlug,
   helpKeyForPath,
 } from "./help-routes";
@@ -65,9 +66,31 @@ describe("docsUrlForSlug", () => {
     );
   });
 
-  it("falls back to the root tree for an unbuilt locale", () => {
+  it("falls back to the English tree for an unbuilt locale", () => {
     expect(docsUrlForSlug("features/backup", "zz")).toBe(
-      `${DOCS_BASE_URL}features/backup/`,
+      `${DOCS_BASE_URL}en/features/backup/`,
     );
+    // hi / id / ko have no built doc tree -> English, not German root.
+    expect(docsUrlForSlug("user-guide/settings", "ko")).toBe(
+      `${DOCS_BASE_URL}en/user-guide/settings/`,
+    );
+  });
+});
+
+describe("docsHomeUrl", () => {
+  it("puts the default language (de) at the docs root", () => {
+    expect(docsHomeUrl("de")).toBe(DOCS_BASE_URL);
+    expect(docsHomeUrl("de-DE")).toBe(DOCS_BASE_URL);
+  });
+
+  it("prefixes a built locale with its language", () => {
+    expect(docsHomeUrl("el")).toBe(`${DOCS_BASE_URL}el/`);
+    expect(docsHomeUrl("pt-BR")).toBe(`${DOCS_BASE_URL}pt/`);
+  });
+
+  it("falls back to English for an unbuilt locale", () => {
+    expect(docsHomeUrl("hi")).toBe(`${DOCS_BASE_URL}en/`);
+    expect(docsHomeUrl("id")).toBe(`${DOCS_BASE_URL}en/`);
+    expect(docsHomeUrl("ko")).toBe(`${DOCS_BASE_URL}en/`);
   });
 });

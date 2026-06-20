@@ -22,9 +22,38 @@ export const DOCS_BASE_URL =
 export const DEFAULT_HELP_KEY = "learning_project";
 
 /** Documentation languages that have a built locale on the site.
- *  Anything else falls back to the default (German) tree at the
- *  docs root. */
+ *  Built with mkdocs-static-i18n in folder mode: German is the
+ *  default and lives at the docs root, the other locales live under
+ *  a ``/<lang>/`` prefix. A UI language with no built doc tree
+ *  (hi / id / ko) falls back to English, NOT to the German root. */
 const DOCS_LANGS = new Set(["de", "en", "es", "fr", "el", "pt", "tr", "ja"]);
+
+/**
+ * Resolve the docs-site path prefix for a UI language.
+ *
+ * - the default language (German) -> ``""`` (the docs root)
+ * - any other built locale -> ``"<lang>/"``
+ * - an unbuilt locale -> ``"en/"`` (English fallback)
+ *
+ * @param lang - Active UI language (region codes like ``de-DE`` are
+ *   normalized to the base language).
+ */
+function docsLangPrefix(lang: string): string {
+  const base = lang.split("-")[0].toLowerCase();
+  if (base === "de") return "";
+  if (DOCS_LANGS.has(base)) return `${base}/`;
+  return "en/";
+}
+
+/**
+ * Build the absolute URL of the docs home for a UI language, e.g.
+ * the landing "Read the documentation" link and the About docs row.
+ *
+ * @param lang - Active UI language.
+ */
+export function docsHomeUrl(lang: string): string {
+  return `${DOCS_BASE_URL}${docsLangPrefix(lang)}`;
+}
 
 /** Route-prefix -> glossary-key table, most specific first.
  *  Matched by ``startsWith`` against the pathname so parameterized
@@ -63,8 +92,9 @@ export function helpKeyForPath(pathname: string): string {
  *
  * The site is built with mkdocs-static-i18n in folder mode with
  * German as the default locale: the default language lives at the
- * docs root (``/docs/<slug>/``) and every other language under a
- * locale prefix (``/docs/<lang>/<slug>/``).
+ * docs root (``/docs/<slug>/``) and every other built language under
+ * a locale prefix (``/docs/<lang>/<slug>/``). An unbuilt locale
+ * (hi / id / ko) falls back to the English tree.
  *
  * @param slug - Help-page slug without extension, e.g.
  *   ``features/content-browser``.
@@ -72,7 +102,5 @@ export function helpKeyForPath(pathname: string): string {
  *   are normalized to the base language).
  */
 export function docsUrlForSlug(slug: string, lang: string): string {
-  const base = lang.split("-")[0].toLowerCase();
-  const prefix = base === "de" || !DOCS_LANGS.has(base) ? "" : `${base}/`;
-  return `${DOCS_BASE_URL}${prefix}${slug}/`;
+  return `${DOCS_BASE_URL}${docsLangPrefix(lang)}${slug}/`;
 }
