@@ -119,32 +119,32 @@ function answerEchoesQuestion(question: string, answer: string): boolean {
   return questionWords(question).has(trimmed.toLowerCase());
 }
 
+/** Unicode codepoint ranges mapped to a script name (first match wins). */
+const SCRIPT_RANGES: ReadonlyArray<readonly [number, number, string]> = [
+  [0x4e00, 0x9fff, "cjk"],
+  [0x3040, 0x30ff, "cjk"],
+  [0x3400, 0x4dbf, "cjk"],
+  [0xac00, 0xd7af, "hangul"],
+  [0x0400, 0x04ff, "cyrillic"],
+  [0x0370, 0x03ff, "greek"],
+  [0x0900, 0x097f, "devanagari"],
+  [0x0600, 0x06ff, "arabic"],
+];
+
+/** Script of a single codepoint; defaults to ``latin``. */
+function scriptOfCodePoint(code: number): string {
+  for (const [lo, hi, name] of SCRIPT_RANGES) {
+    if (code >= lo && code <= hi) return name;
+  }
+  return "latin";
+}
+
 /** Dominant Unicode script of ``text`` (letters only), or null. */
 function dominantScript(text: string): string | null {
   const counts: Record<string, number> = {};
   for (const ch of text) {
     if (!/\p{L}/u.test(ch)) continue;
-    const code = ch.codePointAt(0) ?? 0;
-    let script: string;
-    if (
-      (code >= 0x4e00 && code <= 0x9fff) ||
-      (code >= 0x3040 && code <= 0x30ff) ||
-      (code >= 0x3400 && code <= 0x4dbf)
-    ) {
-      script = "cjk";
-    } else if (code >= 0xac00 && code <= 0xd7af) {
-      script = "hangul";
-    } else if (code >= 0x0400 && code <= 0x04ff) {
-      script = "cyrillic";
-    } else if (code >= 0x0370 && code <= 0x03ff) {
-      script = "greek";
-    } else if (code >= 0x0900 && code <= 0x097f) {
-      script = "devanagari";
-    } else if (code >= 0x0600 && code <= 0x06ff) {
-      script = "arabic";
-    } else {
-      script = "latin";
-    }
+    const script = scriptOfCodePoint(ch.codePointAt(0) ?? 0);
     counts[script] = (counts[script] ?? 0) + 1;
   }
   let best: string | null = null;
