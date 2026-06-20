@@ -1,10 +1,65 @@
-# What's new (v1.61 – v1.69)
+# What's new (v1.61 – v1.91)
 
 A user-oriented overview of the releases since v1.61.0. The full,
 technical notes per version are under
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v1.91.0 — Navigation restructuring
+
+- **Primary nav cut from 12+ entries to 7 grouped entries**
+  (Dashboard, Lernpfad, Meine Inhalte, Entdecken, Fortschritt,
+  Settings, Help) with no loss of function — every page stays
+  reachable ([Navigation](user-guide/navigation.md)).
+- **Mobile bottom tab bar** (Lernen / Inhalte / Entdecken /
+  Fortschritt / Mehr) with a "More" bottom sheet.
+- **ProgressHub** (`/progress`) groups Overview / Statistics /
+  My paths into tabs; **DiscoverHub** (`/discover`) gains an
+  Import tab. Old links keep working via redirects.
+- PWA update banner no longer reappears after you accept an update.
+
+## v1.90.0 — AI exercise generation + auto-update
+
+- **AI Exercise Generation pipeline**: generate exercises for a
+  theory-only lesson, with a quality gate, type balancing,
+  regenerate-with-feedback, and whole-set batch generation
+  ([AI exercise generation](features/ai-exercise-generation.md)).
+- **Animated pair resolution** in the Matching exercise.
+- **Per-provider Test button** in the configured-providers
+  overview ([Settings](user-guide/settings.md)).
+- **Desktop auto-update checker** via the GitHub Releases API.
+- AI session replies now come back in your UI language.
+
+## v1.87.0–v1.88.0 — Content discovery + QR sharing
+
+- **Content discovery (`/discover`)**: a search index over the
+  library; per-set download moved here, separate from your local
+  "My content" ([Discover](features/discover.md)).
+- **QR-code app sharing**: share the app via a scannable QR code
+  (copy / download PNG / native share).
+- **Curriculum Builder** + daily learning reminders.
+- **Korean + Indonesian UI** join the language set (now 11).
+
+## v1.86.0–v1.87.0 — AI content validation + `.alb` backup
+
+- **AI content validation**: set-wide quality checks with a
+  report UI, cached report + Markdown export, and an "AI-Checked"
+  badge ([AI content check](user-guide/ai-validation.md)).
+- **Media integration**: a "Deepen the topic" lesson section.
+- **`.alb` ZIP backup format** replaces the single JSON dump and
+  now carries a localStorage snapshot too
+  ([Backup and restore](features/backup.md)).
+
+## v1.70.0–v1.84.0 — UX, theming, and TipTap 3
+
+- **First-run restore**: an empty install offers "Restore from
+  backup" during onboarding.
+- **Documentation overhaul** + context-sensitive in-app help.
+- **TipTap editor migrated v2 → v3** (whole `@tiptap/*` stack).
+- **Feature-strategy gating**: AI features flip between
+  active / disabled / hidden without a reload.
+- Extensive dark-theme contrast + mobile-layout hardening.
 
 ## v1.69.0 — Example links + book recommendations
 

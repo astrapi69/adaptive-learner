@@ -1,9 +1,12 @@
 # Content Browser
 
-Der **Content Browser** unter `/content` ist deine zentrale
-Anlaufstelle, um Lektionssätze zu finden, herunterzuladen und zu
-starten. Er ist rund um den Lernfluss aufgebaut: zuerst Suche,
-dann Weitermachen, dann der Katalog.
+Der **Content Browser** („Meine Inhalte") ist der **Meine-Inhalte-
+Tab des Content-Hubs** unter `/content`. Er zeigt nur die
+Lektionssätze, die du bereits heruntergeladen hast, rund um den
+Lernfluss aufgebaut: zuerst Suche, dann Weitermachen, dann dein
+lokaler Katalog. Um *neue* Sätze zu finden und herunterzuladen,
+nutze den **Entdecken**-Tab — siehe
+[Inhalte entdecken](discover.md).
 
 <!-- TODO: Screenshot — Content Browser mit Suchfeld, Continue-Learning-Bereich und Set-Baum -->
 

@@ -45,7 +45,7 @@ zurück und zeigt einen „Offline-Default"-Hinweis. Der Header
 der Sitzung liest `<Anbieter>: <Modellname>`; volle ID +
 Kontext-Fenster sitzen im Tooltip.
 
-## API-Schlüssel (Phase 34 / v1.20.0)
+## API-Schlüssel
 
 Jeder Anbieter hat seine eigene Zeile: ein Schlüssel-
 Eingabefeld, einen Speichern-Knopf, einen Entfernen-Knopf,
@@ -72,6 +72,20 @@ Auflösungskette (höchste Priorität gewinnt): Umgebung >
 `secrets.yaml` > DB. Siehe
 [die Konfigurations-Doku](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) für die
 volle Aufschlüsselung.
+
+Schlüssel-Eingaben nutzen ein maskiertes **Secret-Eingabefeld**
+(mit Anzeigen/Verbergen-Umschalter) und lösen den Passwort-Manager
+des Browsers nicht aus.
+
+## Konfigurierte Anbieter
+
+Eine **Anbieter-Übersicht** listet die eingerichteten KI-Anbieter,
+jeweils mit einer **maskierten Schlüssel-Vorschau**, sodass du auf
+einen Blick siehst, welche Anbieter bereit sind. Jede Zeile hat
+einen **Test-Knopf**, der den Modell-Listen-Endpunkt des Anbieters
+aufruft und ok / ungültiger Schlüssel / Rate-Limit / Netzwerkfehler
+meldet — ein sicherer Check, der keine Generierungs-Tokens
+verbraucht.
 
 ## Speichermodus
 
@@ -196,3 +210,20 @@ Im Lokal-Modus blendet das Panel die Zeilen aus, die nur bei
 laufendem Backend Sinn ergeben (Python-Version,
 FastAPI / SQLAlchemy / Pydantic / PluginForge-Versionen,
 DB-Pfad).
+
+### App teilen
+
+Der Über-Tab hat einen **App teilen**-Eintrag, der einen scannbaren
+**QR-Code** der öffentlichen App-URL zeigt, mit Kopieren- /
+PNG-Laden- / Nativ-Teilen-Aktionen — praktisch, um die App aufs
+Handy zu bringen.
+
+### Nach Updates suchen
+
+Ein **Nach Updates suchen**-Knopf vergleicht deine Version mit dem
+neuesten GitHub-Release. Der Desktop-Build führt zusätzlich eine
+**Auto-Update-Prüfung** über die GitHub-Releases-API durch und
+meldet, wenn eine neuere Version verfügbar ist. Nach einem
+PWA-Update bleibt das „Neue Version verfügbar"-Banner verschwunden,
+sobald du es akzeptierst (es taucht nicht bei jedem Reload wieder
+auf).
