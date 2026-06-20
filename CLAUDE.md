@@ -9,7 +9,28 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.89.0** (feature release -
+- **Current state:** **v1.90.0** (feature release -
+  **AI Exercise Generation Pipeline (EXP-036 / AIX-01-AIX-06)** - a
+  generate->quality-gate->balance->feedback pipeline for AI-authored exercises:
+  the generation prompt + defensive JSON parser (#817), a "generate exercises"
+  button on theory-only lessons (#829), a deterministic quality gate (#834),
+  exercise-type distribution + balancing (#835), regenerate-with-feedback
+  (#836), and batch generation for an entire set (#838); **animated pair
+  resolution** in the Matching exercise (#825, refs #824); **per-provider Test
+  button** in the configured-providers overview (#814, refs #813); **desktop
+  auto-update checker** via the GitHub Releases API (#843); **AI session replies
+  in the learner's UI language** via an explicit prompt directive across all 11
+  languages (#828); **localStorage snapshot in the `.alb` backup** (#791, via
+  #837). Changed: **localStorage -> Dexie migration Part B** - contributions,
+  custom learning paths, and language-redundancy state move into Dexie (#837,
+  #791); pre-release CI hygiene - msgpack CVE bump, complexity baseline, and a
+  `db.ts` -> `db.ts` + `db-migrations.ts` god-file split (#844); CLAUDE.md
+  UI-language count corrected 8 -> 11. Fixes: PWA update banner "Apply now" now
+  closes the banner and reloads fresh (#819, refs #818); language dropdown
+  transparent background -> mapped bg tokens (#821, refs #820); Matching columns
+  stretch to equal-height rows (#823, refs #822). Docs: AI content-validation
+  user guide (#841); EXP-036 design doc (#815). No schema/API/data change.)
+  v1.89.0 = (feature release -
   **Configured-providers overview** - a Settings panel lists the AI providers
   with a masked key preview (#812); **`.alb` localStorage snapshot** - the ZIP
   backup export/import now carries the localStorage snapshot too (#792);

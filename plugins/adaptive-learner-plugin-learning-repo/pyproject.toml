@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-learning-repo"
-version = "1.89.0"
+version = "1.90.0"
 description = "Adaptive Learner: Git-backed Learning Repository — auto-emits per-project Markdown artefacts (README/STATS/CHEATSHEET/ROADMAP) from DB state (Phase 42 / BL-30)."
 authors = ["Asterios Raptis"]
 license = "MIT"
