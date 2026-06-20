@@ -14,10 +14,6 @@
 
 frontend/src/components/exercises/FreeTextExercise.tsx 21
 frontend/src/components/exercises/WordTilesExercise.tsx 21
-# ContentPage grew to cc 22 via the EXP-029/033 feature badges (media
-# availability + AI-checked, #683/#687/#688). Behaviour-preserving decomposition
-# of the 850-line page is deferred (burn-down follow-up), same ratchet approach
-# as the #647->#656 FreeText/WordTiles entries above. Must only shrink.
-# Path updated for the #809/#811 directory regrouping (pages/ -> pages/content/);
-# worst cc shrank 22 -> 21 in the move, ratcheted down to match.
+frontend/src/lib/ai/exercise-quality-gate.ts 23
 frontend/src/pages/content/Content.tsx 21
+frontend/src/pages/content/ImportDetail.tsx 25
