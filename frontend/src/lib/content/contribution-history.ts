@@ -14,7 +14,16 @@
  *
  * Pure storage helpers; all reads tolerate corrupt/absent storage by
  * returning an empty history rather than throwing.
+ *
+ * #791 Teil B: in Dexie mode the canonical home is the IndexedDB ``userData``
+ * store. The synchronous localStorage API below is kept as a read cache;
+ * production writes (no ``storage`` override) mirror through to Dexie via
+ * {@link mirrorUserData}, and {@link syncUserDataAtBoot} reconciles the two at
+ * app start. Tests that pass an explicit ``storage`` override stay pure (no
+ * Dexie side effect).
  */
+
+import {mirrorUserData} from "../../storage/dexie-user-data";
 
 const STORAGE_KEY = "adaptive-learner.contributions";
 const NAME_KEY = "adaptive-learner.contributor-name";
@@ -91,6 +100,7 @@ export function recordContribution(
   const existing = read(s).filter((e) => e.github_url !== entry.github_url);
   const next = [...existing, entry];
   write(s, next);
+  if (storage === undefined) void mirrorUserData(STORAGE_KEY, JSON.stringify(next));
   return next.slice().sort((a, b) => b.shared_at.localeCompare(a.shared_at));
 }
 
@@ -125,6 +135,7 @@ export function writeContributorName(name: string, storage?: Storage): void {
     const trimmed = name.trim();
     if (trimmed) s.setItem(NAME_KEY, trimmed);
     else s.removeItem(NAME_KEY);
+    if (storage === undefined) void mirrorUserData(NAME_KEY, trimmed || null);
   } catch {
     /* ignore */
   }
@@ -136,6 +147,7 @@ export function clearContributions(storage?: Storage): void {
   if (!s) return;
   try {
     s.removeItem(STORAGE_KEY);
+    if (storage === undefined) void mirrorUserData(STORAGE_KEY, null);
   } catch {
     /* ignore */
   }

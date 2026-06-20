@@ -465,6 +465,18 @@
     "session_count": "Sessões"
   },
   "settings": {
+    "updates": {
+      "title": "Atualizações",
+      "auto_check": "Verificação automática de atualizações",
+      "interval": "Intervalo de verificação",
+      "interval_daily": "Diário",
+      "interval_weekly": "Semanal",
+      "interval_monthly": "Mensal",
+      "interval_never": "Nunca",
+      "last_check": "Última verificação: {when}",
+      "never_checked": "Nunca verificado",
+      "current_version": "Versão atual: v{version}"
+    },
     "install": {
       "heading": "Instalar aplicativo",
       "description": "Instale o Adaptive Learner como app para acesso offline e tela cheia.",
@@ -634,7 +646,13 @@
       "status_external": "Externo",
       "set_active": "Usar como provedor ativo",
       "edit": "Editar",
-      "add": "Adicionar chave"
+      "add": "Adicionar chave",
+      "test": "Testar",
+      "testing": "A testar…",
+      "test_connection_ok": "Ligação OK",
+      "test_key_invalid": "Chave inválida",
+      "test_network_error": "Erro de rede",
+      "test_backend_only": "Só pode ser testado com o backend"
     },
     "api_key_label": "Chave de API",
     "api_key_placeholder": "Cole aqui…",
@@ -734,6 +752,15 @@
       "receptive_first": "Reconhecer primeiro",
       "productive_focus": "Produzir",
       "balanced": "Equilibrado"
+    },
+    "matching_resolve": {
+      "title": "Animação de resolução",
+      "hint": "Como o exercício de correspondência revela os pares corretos ao tocar em 'Resolver' após verificar.",
+      "label": "Efeito",
+      "slide": "Deslizar",
+      "color": "Cor",
+      "connect": "Conectar",
+      "stack": "Empilhar"
     },
     "paused_retention": {
       "title": "Retenção de aulas pausadas",
@@ -852,6 +879,12 @@
     "aria_label": "Instalar o Adaptive Learner"
   },
   "about": {
+    "up_to_date_version": "Tens a versão mais recente. (v{version})",
+    "update": {
+      "read_more": "Ler mais",
+      "open_release": "Abrir página da versão",
+      "later": "Mais tarde"
+    },
     "section_heading": "Sobre o Adaptive Learner",
     "loading": "Carregando informações…",
     "load_failed": "Não foi possível carregar as informações do sistema:",
@@ -1738,7 +1771,9 @@
         "right_label_knowledge": "Definição",
         "instruction_knowledge": "Associe cada termo à sua definição.",
         "instructions_knowledge": "Selecione um item à esquerda e depois o seu correspondente à direita.",
-        "selected_sr": "Selecionado: {label}"
+        "selected_sr": "Selecionado: {label}",
+        "resolve": "Resolver",
+        "resolve_announce": "Solução exibida. {correct} de {total} pares estavam corretos."
       },
       "picture": {
         "submit": "Verificar resposta",
@@ -1982,6 +2017,46 @@
       "delete_confirm": "Excluir esta lição? Isso não pode ser desfeito.",
       "deleted": "Lição excluída.",
       "delete_failed": "Não foi possível excluir a lição."
+    },
+    "ai_exercises": {
+      "batch": {
+        "button": "Gerar para todas as lições",
+        "running": "A gerar…",
+        "none": "Todas as lições já têm exercícios.",
+        "cost_confirm": "Isto gera exercícios para {n} lições (cerca de {tokens} tokens). Continuar?",
+        "progress": "Lição {current} de {total}…",
+        "cancel": "Cancelar",
+        "done": "{succeeded} de {total} lições: {generated} exercícios, {skipped} ignoradas.",
+        "cancelled": "Parado. {succeeded} de {total} lições, {generated} exercícios.",
+        "failed": "A geração em lote falhou. Tente novamente."
+      },
+      "max_reached": "Número máximo de regenerações atingido. Edite os exercícios manualmente ou importe uma conversa mais longa.",
+      "feedback": {
+        "title": "Porque regenerar?",
+        "too_easy": "Demasiado fácil",
+        "too_hard": "Demasiado difícil",
+        "wrong_language": "Idioma errado",
+        "more_variety": "Mais variedade",
+        "none": "Sem motivo específico",
+        "language_label": "Idioma",
+        "freetext_label": "Mais alguma coisa? (opcional)",
+        "freetext_placeholder": "O seu comentário…"
+      },
+      "button": "Gerar exercícios",
+      "generating": "A gerar exercícios…",
+      "regenerate": "Regenerar",
+      "regenerate_confirm": "Substituir os exercícios gerados por um novo conjunto?",
+      "generated": "{n} exercícios gerados.",
+      "generated_with_rejected": "{n} exercícios gerados, {r} rejeitados por qualidade.",
+      "none": "A IA não devolveu exercícios utilizáveis. Tente novamente.",
+      "failed": "Não foi possível gerar os exercícios. Tente novamente.",
+      "feature": "para gerar exercícios",
+      "preview_title": "Exercícios gerados",
+      "type_matching": "Correspondência",
+      "type_cloze": "Preencher lacunas",
+      "type_free_text": "Texto livre",
+      "type_word_tiles": "Peças de palavras",
+      "type_picture_choice": "Escolha de imagem"
     },
     "save_lesson": {
       "button": "Salvar como lição offline",
@@ -3028,6 +3103,15 @@
       "download_failed": "Não foi possível baixar o set.",
       "remove_failed": "Não foi possível remover o set.",
       "load_failed": "Não foi possível carregar o conteúdo disponível."
+    }
+  },
+  "update": {
+    "banner": {
+      "message": "Nova versão {version} disponível",
+      "whats_new": "O que há de novo?",
+      "release_page": "Página da versão",
+      "later": "Mais tarde",
+      "whats_new_title": "Novidades da {version}"
     }
   }
 }

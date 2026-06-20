@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.89.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.90.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -203,7 +203,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**424 lessons · 25 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**432 lessons · 26 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -232,6 +232,7 @@ Full documentation (German default at `/docs/`, English at
 | Portugiesisch (Brasilianisch) A1 (für Deutschsprachige) | de | pt | A1 | 10 |
 | Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 |
 | IT-Grundlagen | de | de | A1 | 10 |
+| Ansible-Grundlagen für Quality Engineering | de | de | B1 | 8 |
 <!-- CONTENT-STATS:END -->
 
 ### Content repos

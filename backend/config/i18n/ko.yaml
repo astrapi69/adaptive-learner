@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "세션 메모"
   session_count: "세션"
 settings:
+  updates:
+    title: "업데이트"
+    auto_check: "자동 업데이트 확인"
+    interval: "확인 주기"
+    interval_daily: "매일"
+    interval_weekly: "매주"
+    interval_monthly: "매월"
+    interval_never: "안 함"
+    last_check: "마지막 확인: {when}"
+    never_checked: "확인한 적 없음"
+    current_version: "현재 버전: v{version}"
   review_limit:
     label: "복습당 문제 수"
     desc: "복습 세션이 끝나기 전에 제시하는 요소 수입니다. 남은 항목은 다음 회차로 넘어갑니다."
@@ -607,6 +618,12 @@ settings:
     set_active: 활성 공급자로 사용
     edit: 편집
     add: 키 추가
+    test: 테스트
+    testing: "테스트 중…"
+    test_connection_ok: 연결 정상
+    test_key_invalid: 키가 잘못됨
+    test_network_error: 네트워크 오류
+    test_backend_only: 백엔드에서만 테스트 가능
   api_key_label: API 키
   api_key_placeholder: 여기에 붙여넣으세요…
   api_key_placeholder_replace: "저장된 키를 교체하려면 새 키를 붙여넣으세요…"
@@ -702,6 +719,14 @@ settings:
     receptive_first: 인식 먼저
     productive_focus: 산출
     balanced: 균형
+  matching_resolve:
+    title: "정답 애니메이션"
+    hint: "확인 후 '정답 보기'를 누르면 짝맞추기 연습이 올바른 짝을 어떻게 표시하는지."
+    label: "효과"
+    slide: "슬라이드"
+    color: "색상"
+    connect: "연결"
+    stack: "쌓기"
   paused_retention:
     title: 일시 정지된 레슨 보관
     hint: "이 기간보다 오래된 일시 정지 레슨은 자동으로 중단됩니다. 나이와 관계없이 일시 정지 레슨 최대 10개는 보관됩니다."
@@ -794,6 +819,11 @@ install:
   dismiss: 나중에
   aria_label: Adaptive Learner 설치
 about:
+  up_to_date_version: "최신 버전을 사용 중입니다. (v{version})"
+  update:
+    read_more: "더 보기"
+    open_release: "릴리스 페이지 열기"
+    later: "나중에"
   section_heading: Adaptive Learner 정보
   loading: 정보를 불러오는 중…
   load_failed: '시스템 정보를 불러올 수 없었습니다:'
@@ -1625,6 +1655,8 @@ lesson:
       instruction_knowledge: "각 용어를 그 정의와 연결하세요."
       instructions_knowledge: "왼쪽에서 항목을 선택한 다음, 오른쪽에서 일치하는 것을 선택하세요."
       selected_sr: "선택됨: {label}"
+      resolve: "정답 보기"
+      resolve_announce: "정답을 표시했습니다. {total}쌍 중 {correct}쌍이 정확했습니다."
     picture:
       submit: "답 확인"
       retry: "다시 시도"
@@ -1840,6 +1872,43 @@ content:
     delete_confirm: "이 레슨을 삭제하시겠습니까? 되돌릴 수 없습니다."
     deleted: "레슨이 삭제되었습니다."
     delete_failed: "레슨을 삭제할 수 없었습니다."
+  ai_exercises:
+    batch:
+      button: "모든 레슨에 대해 생성"
+      running: "생성 중…"
+      none: "모든 레슨에 이미 연습문제가 있습니다."
+      cost_confirm: "{n}개 레슨에 대해 연습문제를 생성합니다(약 {tokens} 토큰). 계속할까요?"
+      progress: "레슨 {current}/{total}…"
+      cancel: "취소"
+      done: "{total}개 중 {succeeded}개 완료: 연습문제 {generated}개, {skipped}개 건너뜀."
+      cancelled: "중지됨. {total}개 중 {succeeded}개 완료, 연습문제 {generated}개."
+      failed: "일괄 생성에 실패했습니다. 다시 시도해 주세요."
+    max_reached: "재생성 최대 횟수에 도달했습니다. 연습문제를 직접 편집하거나 더 긴 대화를 가져오세요."
+    feedback:
+      title: "왜 다시 생성하나요?"
+      too_easy: "너무 쉬움"
+      too_hard: "너무 어려움"
+      wrong_language: "잘못된 언어"
+      more_variety: "더 다양하게"
+      none: "특별한 이유 없음"
+      language_label: "언어"
+      freetext_label: "그 밖에 의견 (선택)"
+      freetext_placeholder: "의견을 입력하세요…"
+    button: "연습문제 생성"
+    generating: "연습문제 생성 중…"
+    regenerate: "다시 생성"
+    regenerate_confirm: "생성된 연습문제를 새 세트로 교체할까요?"
+    generated: "연습문제 {n}개를 생성했습니다."
+    generated_with_rejected: "연습문제 {n}개를 생성했습니다. {r}개는 품질 문제로 제외되었습니다."
+    none: "AI가 사용 가능한 연습문제를 반환하지 않았습니다. 다시 시도해 주세요."
+    failed: "연습문제를 생성하지 못했습니다. 다시 시도해 주세요."
+    feature: "연습문제를 생성하려면"
+    preview_title: "생성된 연습문제"
+    type_matching: "짝맞추기"
+    type_cloze: "빈칸 채우기"
+    type_free_text: "자유 입력"
+    type_word_tiles: "단어 타일"
+    type_picture_choice: "그림 선택"
   save_lesson:
     button: "오프라인 레슨으로 저장"
     modal_title: "오프라인 레슨으로 저장"
@@ -2781,3 +2850,10 @@ discover:
     download_failed: "세트를 다운로드할 수 없습니다."
     remove_failed: "세트를 삭제할 수 없습니다."
     load_failed: "사용 가능한 콘텐츠를 불러올 수 없습니다."
+update:
+  banner:
+    message: "새 버전 {version} 사용 가능"
+    whats_new: "새로운 기능은?"
+    release_page: "릴리스 페이지"
+    later: "나중에"
+    whats_new_title: "{version}의 새로운 기능"

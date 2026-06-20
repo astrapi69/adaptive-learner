@@ -29,7 +29,14 @@ import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
+import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
+import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
+import {
+    MATCHING_RESOLVE_PREF_CHANGE_EVENT,
+    readMatchingResolveEffect,
+    type MatchingResolveEffect,
+} from "../../lib/learning/matchingResolvePref";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {
     useKeyboardShortcuts,
@@ -236,6 +243,26 @@ function MatchingExercise(
         return () => window.clearTimeout(id);
     }, [wrongFlash]);
 
+    /** #824 — once the answer is checked, the learner can reveal the
+     *  correct pairs with the configured animated effect. */
+    const [resolved, setResolved] = useState(false);
+    const [resolveEffect, setResolveEffect] = useState<MatchingResolveEffect>(
+        () => readMatchingResolveEffect(),
+    );
+    useEffect(() => {
+        const refresh = () => setResolveEffect(readMatchingResolveEffect());
+        window.addEventListener("storage", refresh);
+        window.addEventListener(MATCHING_RESOLVE_PREF_CHANGE_EVENT, refresh);
+        return () => {
+            window.removeEventListener("storage", refresh);
+            window.removeEventListener(
+                MATCHING_RESOLVE_PREF_CHANGE_EVENT,
+                refresh,
+            );
+        };
+    }, []);
+    const reduceMotion = useMemo(() => prefersReducedMotion(), []);
+
     const pairedRightIndices = useMemo(
         () => new Set(matches.values()),
         [matches],
@@ -276,8 +303,35 @@ function MatchingExercise(
             setSlotByLeft(new Map());
             setSelectedLeft(null);
             setSelectedRight(null);
+            setResolved(false);
         },
     });
+
+    /** The correct pairs in authored order, ready for the resolution
+     *  view (#824). ``slot`` uses the authored index for stable, distinct
+     *  per-pair colors; ``wasCorrect`` reflects the learner's own match. */
+    const resolvedPairs: ResolvedPair[] = useMemo(
+        () =>
+            leftTiles.map((tile) => {
+                const chosen = matches.get(tile.index);
+                return {
+                    left: tile.label,
+                    right: productive
+                        ? (pairs[tile.index]?.left ?? "")
+                        : (pairs[tile.index]?.right ?? ""),
+                    slot: tile.index,
+                    wasCorrect:
+                        chosen !== undefined &&
+                        matchingPairIsCorrect(
+                            pairs,
+                            productive,
+                            tile.index,
+                            chosen,
+                        ),
+                };
+            }),
+        [leftTiles, matches, pairs, productive],
+    );
 
     const releaseSlot = (leftIdx: number) => {
         setSlotByLeft((prev) => {
@@ -416,6 +470,7 @@ function MatchingExercise(
                 testId="matching-hint-button"
             />
 
+            {!resolved && (
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
                     <div
@@ -431,7 +486,7 @@ function MatchingExercise(
                         {leftLabel}
                     </div>
                     <ul
-                        className="m-0 grid list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
+                        className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-left"
                         aria-label={leftLabel}
                     >
@@ -466,7 +521,7 @@ function MatchingExercise(
                         {rightLabel}
                     </div>
                     <ul
-                        className="m-0 grid list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
+                        className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-right"
                         aria-label={rightLabel}
                     >
@@ -491,6 +546,19 @@ function MatchingExercise(
                     </ul>
                 </div>
             </div>
+            )}
+
+            {resolved && (
+                <MatchingResolution
+                    pairs={resolvedPairs}
+                    effect={resolveEffect}
+                    reduceMotion={reduceMotion}
+                    correctCount={result?.correct ?? 0}
+                    totalCount={pairs.length}
+                    leftLabel={leftLabel}
+                    rightLabel={rightLabel}
+                />
+            )}
 
             <MatchingResultFooter
                 submitted={submitted}
@@ -499,6 +567,9 @@ function MatchingExercise(
                 canCheck={allPaired}
                 onCheck={submit}
                 onRetry={reset}
+                canResolve={submitted && !resolved}
+                onResolve={() => setResolved(true)}
+                resolveLabel={t("lesson.exercise.matching.resolve", "Solve")}
             />
         </section>
     );

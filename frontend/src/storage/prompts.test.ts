@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {buildAnalysisContext} from "./prompts";
+import {buildAnalysisContext, buildLanguageDirective} from "./prompts";
 import type {ConversationAnalysisResult} from "../types/domain";
 
 const RICH: ConversationAnalysisResult = {
@@ -56,5 +56,33 @@ describe("buildAnalysisContext", () => {
         expect(out).not.toContain("Summary:");
         expect(out).not.toContain("Weaknesses:");
         expect(out).toContain("Continue the learning session");
+    });
+});
+
+describe("buildLanguageDirective (#827)", () => {
+    it("names the learner's language with its endonym", () => {
+        expect(buildLanguageDirective("ko")).toContain("Korean (한국어)");
+        expect(buildLanguageDirective("hi")).toContain("Hindi (हिन्दी)");
+        expect(buildLanguageDirective("id")).toContain(
+            "Indonesian (Bahasa Indonesia)",
+        );
+        expect(buildLanguageDirective("de")).toContain("German (Deutsch)");
+    });
+
+    it("strips the region subtag", () => {
+        expect(buildLanguageDirective("pt-BR")).toContain("Portuguese (Português)");
+        expect(buildLanguageDirective("de_AT")).toContain("German (Deutsch)");
+    });
+
+    it("omits the redundant parenthetical for English", () => {
+        expect(buildLanguageDirective("en")).toBe(
+            "IMPORTANT: Always write your replies to the learner in English, " +
+                "regardless of the language of these instructions.",
+        );
+    });
+
+    it("falls back to English for an unknown or empty code", () => {
+        expect(buildLanguageDirective("xx")).toContain("English");
+        expect(buildLanguageDirective("")).toContain("English");
     });
 });

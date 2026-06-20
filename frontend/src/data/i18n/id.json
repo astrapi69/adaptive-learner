@@ -465,6 +465,18 @@
     "session_count": "Sesi"
   },
   "settings": {
+    "updates": {
+      "title": "Pembaruan",
+      "auto_check": "Pemeriksaan pembaruan otomatis",
+      "interval": "Interval pemeriksaan",
+      "interval_daily": "Harian",
+      "interval_weekly": "Mingguan",
+      "interval_monthly": "Bulanan",
+      "interval_never": "Tidak pernah",
+      "last_check": "Pemeriksaan terakhir: {when}",
+      "never_checked": "Belum pernah diperiksa",
+      "current_version": "Versi saat ini: v{version}"
+    },
     "review_limit": {
       "label": "Pertanyaan per ulasan",
       "desc": "Berapa banyak elemen yang ditampilkan satu sesi ulasan sebelum berakhir. Item jatuh tempo lainnya dialihkan ke putaran berikutnya."
@@ -638,7 +650,13 @@
       "status_external": "Eksternal",
       "set_active": "Gunakan sebagai penyedia aktif",
       "edit": "Edit",
-      "add": "Tambah kunci"
+      "add": "Tambah kunci",
+      "test": "Uji",
+      "testing": "Menguji…",
+      "test_connection_ok": "Koneksi oke",
+      "test_key_invalid": "Kunci tidak valid",
+      "test_network_error": "Kesalahan jaringan",
+      "test_backend_only": "Hanya dapat diuji dengan backend"
     },
     "api_key_label": "Kunci API",
     "api_key_placeholder": "Tempel di sini…",
@@ -738,6 +756,15 @@
       "receptive_first": "Kenali dulu",
       "productive_focus": "Produksi",
       "balanced": "Seimbang"
+    },
+    "matching_resolve": {
+      "title": "Animasi penyelesaian",
+      "hint": "Cara latihan menjodohkan menampilkan pasangan yang benar saat Anda menekan 'Selesaikan' setelah memeriksa.",
+      "label": "Efek",
+      "slide": "Geser",
+      "color": "Warna",
+      "connect": "Hubungkan",
+      "stack": "Tumpuk"
     },
     "paused_retention": {
       "title": "Retensi pelajaran yang dijeda",
@@ -852,6 +879,12 @@
     "aria_label": "Pasang Adaptive Learner"
   },
   "about": {
+    "up_to_date_version": "Anda memiliki versi terbaru. (v{version})",
+    "update": {
+      "read_more": "Baca selengkapnya",
+      "open_release": "Buka halaman rilis",
+      "later": "Nanti"
+    },
     "section_heading": "Tentang Adaptive Learner",
     "loading": "Memuat informasi…",
     "load_failed": "Tidak dapat memuat info sistem:",
@@ -1738,7 +1771,9 @@
         "right_label_knowledge": "Definisi",
         "instruction_knowledge": "Cocokkan setiap istilah dengan definisinya.",
         "instructions_knowledge": "Pilih item di sebelah kiri, lalu pasangannya di sebelah kanan.",
-        "selected_sr": "Dipilih: {label}"
+        "selected_sr": "Dipilih: {label}",
+        "resolve": "Selesaikan",
+        "resolve_announce": "Solusi ditampilkan. {correct} dari {total} pasangan sudah benar."
       },
       "picture": {
         "submit": "Periksa jawaban",
@@ -1982,6 +2017,46 @@
       "delete_confirm": "Hapus pelajaran ini? Tindakan ini tidak dapat dibatalkan.",
       "deleted": "Pelajaran dihapus.",
       "delete_failed": "Tidak dapat menghapus pelajaran."
+    },
+    "ai_exercises": {
+      "batch": {
+        "button": "Buat untuk semua pelajaran",
+        "running": "Membuat…",
+        "none": "Semua pelajaran sudah memiliki latihan.",
+        "cost_confirm": "Ini membuat latihan untuk {n} pelajaran (sekitar {tokens} token). Lanjutkan?",
+        "progress": "Pelajaran {current} dari {total}…",
+        "cancel": "Batal",
+        "done": "{succeeded} dari {total} pelajaran: {generated} latihan, {skipped} dilewati.",
+        "cancelled": "Dihentikan. {succeeded} dari {total} pelajaran, {generated} latihan.",
+        "failed": "Pembuatan massal gagal. Silakan coba lagi."
+      },
+      "max_reached": "Batas maksimum pembuatan ulang tercapai. Edit latihan secara manual atau impor obrolan yang lebih panjang.",
+      "feedback": {
+        "title": "Mengapa membuat ulang?",
+        "too_easy": "Terlalu mudah",
+        "too_hard": "Terlalu sulit",
+        "wrong_language": "Bahasa salah",
+        "more_variety": "Lebih bervariasi",
+        "none": "Tanpa alasan khusus",
+        "language_label": "Bahasa",
+        "freetext_label": "Ada lagi? (opsional)",
+        "freetext_placeholder": "Masukan Anda…"
+      },
+      "button": "Buat latihan",
+      "generating": "Membuat latihan…",
+      "regenerate": "Buat ulang",
+      "regenerate_confirm": "Ganti latihan yang dibuat dengan set baru?",
+      "generated": "{n} latihan dibuat.",
+      "generated_with_rejected": "{n} latihan dibuat, {r} ditolak karena kualitas.",
+      "none": "AI tidak mengembalikan latihan yang dapat digunakan. Silakan coba lagi.",
+      "failed": "Tidak dapat membuat latihan. Silakan coba lagi.",
+      "feature": "untuk membuat latihan",
+      "preview_title": "Latihan yang dibuat",
+      "type_matching": "Mencocokkan",
+      "type_cloze": "Isian rumpang",
+      "type_free_text": "Teks bebas",
+      "type_word_tiles": "Ubin kata",
+      "type_picture_choice": "Pilihan gambar"
     },
     "save_lesson": {
       "button": "Simpan sebagai Pelajaran Luring",
@@ -3028,6 +3103,15 @@
       "download_failed": "Tidak dapat mengunduh set.",
       "remove_failed": "Tidak dapat menghapus set.",
       "load_failed": "Tidak dapat memuat konten yang tersedia."
+    }
+  },
+  "update": {
+    "banner": {
+      "message": "Versi baru {version} tersedia",
+      "whats_new": "Apa yang baru?",
+      "release_page": "Halaman rilis",
+      "later": "Nanti",
+      "whats_new_title": "Yang baru di {version}"
     }
   }
 }

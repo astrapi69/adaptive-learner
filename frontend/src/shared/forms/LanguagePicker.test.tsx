@@ -181,4 +181,26 @@ describe("LanguagePicker", () => {
         fireEvent.click(screen.getByTestId("language-picker-trigger"));
         expect(screen.queryAllByRole("group")).toHaveLength(0);
     });
+
+    // Regression pin (#820): the dropdown panel must carry an OPAQUE,
+    // theme-token background. It previously used the bare ``bg-elevated``
+    // utility, which has no @theme mapping (only ``bg-bg-elevated`` does),
+    // so Tailwind emitted no background rule and the panel was transparent —
+    // options overlapped the content behind it.
+    it("renders the dropdown panel with an opaque token background (#820)", () => {
+        setup();
+        fireEvent.click(screen.getByTestId("language-picker-trigger"));
+        const panel = screen.getByTestId("language-picker-panel");
+        const classes = panel.className.split(/\s+/);
+        // The valid, mapped utility — not the dead bare ``bg-elevated``.
+        expect(classes).toContain("bg-bg-elevated");
+        expect(classes).not.toContain("bg-elevated");
+    });
+
+    it("renders the trigger with an opaque token background (#820)", () => {
+        setup();
+        expect(
+            screen.getByTestId("language-picker-trigger").className,
+        ).toContain("bg-bg-surface");
+    });
 });

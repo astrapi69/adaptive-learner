@@ -29,6 +29,8 @@ import { useFeature } from "@astrapi69/feature-strategy-react";
 import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
 import SaveOfflineLessonModal from "../../components/content/SaveOfflineLessonModal";
 import ImportActionBar from "../../components/import/ImportActionBar";
+import ImportGenerateExercisesButton from "../../components/import/ImportGenerateExercisesButton";
+import GeneratedExercisesPreview from "../../components/import/GeneratedExercisesPreview";
 import ImportLanguagePickers from "../../components/import/ImportLanguagePickers";
 import AnalysisLoadingSection from "../../components/import/AnalysisLoadingSection";
 import AnalysisResultsSection from "../../components/import/AnalysisResultsSection";
@@ -46,6 +48,11 @@ import { getDb } from "../../storage/db";
 import { analyzeConversation } from "../../chat_import/analysis";
 import { importHeadingTitle } from "../../lib/content/import-title";
 import { detectLearningLanguage } from "../../lib/content/detect-chat-language";
+import {
+  resolveActiveAiProvider,
+  type ResolvedAiProvider,
+} from "../../lib/ai/resolve-provider";
+import { useTheoryExercises } from "../../hooks/content/useTheoryExercises";
 import { notify } from "../../utils/notify";
 import type { AIProvider } from "../../lib/constants";
 import type {
@@ -111,6 +118,16 @@ export default function ImportDetail({
   const [startingSession, setStartingSession] = useState(false);
   // Phase 59B — "Save as Offline Lesson" preview modal.
   const [showSaveLesson, setShowSaveLesson] = useState(false);
+  // AIX-02 (#826) — theory-only detection + generated-exercise state
+  // (derivation extracted into the hook to keep this page under the
+  // complexity gate). ``detail`` may be null on the first render.
+  const {
+    theorySteps,
+    showGenerate,
+    generatedExercises,
+    setGeneratedExercises,
+    previousQuestions,
+  } = useTheoryExercises(detail?.analysis_result ?? null, t);
   // #240 — the raw transcript is collapsed by default so the analysis
   // results stay front-and-center; long chats no longer bury them.
   const [transcriptOpen, setTranscriptOpen] = useState(false);
@@ -460,6 +477,15 @@ export default function ImportDetail({
     }
   }
 
+  // AIX-02 (#826) — resolve the active provider's config for browser-direct
+  // exercise generation. Returns null when no key is configured (the button
+  // then shows the inline "API key required" notice).
+  async function resolveExerciseProvider(): Promise<ResolvedAiProvider | null> {
+    const { userId } = readLearnerState();
+    if (!userId) return null;
+    return resolveActiveAiProvider(userId);
+  }
+
   if (loading) {
     return (
       <main id="main" className="p-8">
@@ -543,6 +569,19 @@ export default function ImportDetail({
           ankiFeature={ankiFeature}
           extractingAnki={extractingAnki}
           onExtractAnki={extractAnkiCards}
+          extraActions={
+            <ImportGenerateExercisesButton
+              analysis={analysis}
+              show={showGenerate}
+              theorySteps={theorySteps}
+              sourceLang={sourceLang}
+              generatedExercises={generatedExercises}
+              previousQuestions={previousQuestions}
+              resolveProvider={resolveExerciseProvider}
+              onGenerated={setGeneratedExercises}
+              t={t}
+            />
+          }
         />
       </header>
 
@@ -566,6 +605,8 @@ export default function ImportDetail({
 
       <AnalysisResultsSection analysis={analysis} t={t} />
 
+      <GeneratedExercisesPreview exercises={generatedExercises} t={t} />
+
       <ImportTranscript
         messages={detail.messages}
         messageCount={detail.message_count}
@@ -584,6 +625,7 @@ export default function ImportDetail({
           // doesn't guess (falls back to its own guess only if absent).
           sourceLanguage={sourceLang || detail.source_language || null}
           targetLanguage={targetLang || detail.target_language || null}
+          extraExercises={generatedExercises}
           onCancel={() => setShowSaveLesson(false)}
           onSaved={() => {
             setShowSaveLesson(false);

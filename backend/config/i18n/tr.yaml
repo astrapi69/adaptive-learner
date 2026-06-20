@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "Oturum notları"
   session_count: "Oturumlar"
 settings:
+  updates:
+    title: "Güncellemeler"
+    auto_check: "Otomatik güncelleme denetimi"
+    interval: "Denetim aralığı"
+    interval_daily: "Günlük"
+    interval_weekly: "Haftalık"
+    interval_monthly: "Aylık"
+    interval_never: "Asla"
+    last_check: "Son denetim: {when}"
+    never_checked: "Hiç denetlenmedi"
+    current_version: "Geçerli sürüm: v{version}"
   install:
     heading: "Uygulamayı yükle"
     description: "Çevrimdışı erişim ve tam ekran deneyimi için Adaptive Learner'ı uygulama olarak yükleyin."
@@ -604,6 +615,12 @@ settings:
     set_active: Etkin sağlayıcı olarak kullan
     edit: Düzenle
     add: Anahtar ekle
+    test: Test et
+    testing: "Test ediliyor…"
+    test_connection_ok: Bağlantı tamam
+    test_key_invalid: Anahtar geçersiz
+    test_network_error: Ağ hatası
+    test_backend_only: Yalnızca arka uç ile test edilebilir
   api_key_label: API anahtarı
   api_key_placeholder: Buraya yapıştır…
   api_key_placeholder_replace: "Saklanan anahtarı değiştirmek için yeni bir anahtar yapıştırın…"
@@ -699,6 +716,14 @@ settings:
     receptive_first: Önce tanıma
     productive_focus: Üretme
     balanced: Dengeli
+  matching_resolve:
+    title: "Çözme animasyonu"
+    hint: "Eşleştirme alıştırması, kontrolden sonra 'Çöz'e bastığınızda doğru çiftleri nasıl gösterir."
+    label: "Efekt"
+    slide: "Kaydır"
+    color: "Renk"
+    connect: "Bağla"
+    stack: "Yığ"
   paused_retention:
     title: Duraklatılmış ders saklama süresi
     hint: "Bu süreden daha eski duraklatılmış dersler otomatik olarak terk edilir. Yaşa bakılmaksızın en fazla 10 duraklatılmış ders saklanır."
@@ -794,6 +819,11 @@ install:
   dismiss: Şimdi değil
   aria_label: Adaptive Learner'ı yükle
 about:
+  up_to_date_version: "En son sürüme sahipsin. (v{version})"
+  update:
+    read_more: "Daha fazla oku"
+    open_release: "Sürüm sayfasını aç"
+    later: "Sonra"
   section_heading: Adaptive Learner hakkında
   loading: Bilgiler yükleniyor…
   load_failed: 'Sistem bilgileri yüklenemedi:'
@@ -1614,6 +1644,8 @@ lesson:
       instruction_knowledge: "Her terimi tanımıyla eşleştir."
       instructions_knowledge: "Soldan bir öğe seç, ardından sağdaki eşini seç."
       selected_sr: "Seçildi: {label}"
+      resolve: "Çöz"
+      resolve_announce: "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu."
     picture:
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"
@@ -1829,6 +1861,43 @@ content:
     delete_confirm: "Bu ders silinsin mi? Bu geri alınamaz."
     deleted: "Ders silindi."
     delete_failed: "Ders silinemedi."
+  ai_exercises:
+    batch:
+      button: "Tüm dersler için oluştur"
+      running: "Oluşturuluyor…"
+      none: "Tüm derslerde zaten alıştırma var."
+      cost_confirm: "Bu, {n} ders için alıştırma oluşturur (yaklaşık {tokens} jeton). Devam edilsin mi?"
+      progress: "Ders {current} / {total}…"
+      cancel: "İptal"
+      done: "{total} dersten {succeeded} tanesi: {generated} alıştırma, {skipped} atlandı."
+      cancelled: "Durduruldu. {total} dersten {succeeded} tanesi, {generated} alıştırma."
+      failed: "Toplu oluşturma başarısız oldu. Lütfen tekrar deneyin."
+    max_reached: "Maksimum yeniden oluşturma sayısına ulaşıldı. Alıştırmaları elle düzenleyin veya daha uzun bir sohbet içe aktarın."
+    feedback:
+      title: "Neden yeniden oluşturulsun?"
+      too_easy: "Çok kolay"
+      too_hard: "Çok zor"
+      wrong_language: "Yanlış dil"
+      more_variety: "Daha fazla çeşitlilik"
+      none: "Belirli bir neden yok"
+      language_label: "Dil"
+      freetext_label: "Başka bir şey? (isteğe bağlı)"
+      freetext_placeholder: "Geri bildiriminiz…"
+    button: "Alıştırma oluştur"
+    generating: "Alıştırmalar oluşturuluyor…"
+    regenerate: "Yeniden oluştur"
+    regenerate_confirm: "Oluşturulan alıştırmalar yeni bir setle değiştirilsin mi?"
+    generated: "{n} alıştırma oluşturuldu."
+    generated_with_rejected: "{n} alıştırma oluşturuldu, {r} kalite nedeniyle reddedildi."
+    none: "Yapay zeka kullanılabilir alıştırma döndürmedi. Lütfen tekrar deneyin."
+    failed: "Alıştırmalar oluşturulamadı. Lütfen tekrar deneyin."
+    feature: "alıştırma oluşturmak için"
+    preview_title: "Oluşturulan alıştırmalar"
+    type_matching: "Eşleştirme"
+    type_cloze: "Boşluk doldurma"
+    type_free_text: "Serbest metin"
+    type_word_tiles: "Kelime kartları"
+    type_picture_choice: "Resim seçimi"
   save_lesson:
     button: "Çevrimdışı ders olarak kaydet"
     modal_title: "Çevrimdışı ders olarak kaydet"
@@ -2771,3 +2840,10 @@ discover:
     download_failed: "Set indirilemedi."
     remove_failed: "Set kaldırılamadı."
     load_failed: "Kullanılabilir içerik yüklenemedi."
+update:
+  banner:
+    message: "Yeni sürüm {version} mevcut"
+    whats_new: "Yenilikler neler?"
+    release_page: "Sürüm sayfası"
+    later: "Sonra"
+    whats_new_title: "{version} sürümündeki yenilikler"

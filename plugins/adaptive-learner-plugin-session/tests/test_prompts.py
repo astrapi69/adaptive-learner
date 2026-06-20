@@ -25,6 +25,7 @@ from adaptive_learner_session.prompts import (
     RecentMistake,
     _dominant_method,
     build_analysis_context,
+    build_language_directive,
     build_learning_context,
     build_prompt,
 )
@@ -339,3 +340,36 @@ def test_learning_context_caps_lists():
     out = build_learning_context(ctx, "en")
     assert "l11" in out and "l12" not in out
     assert "e7 " in out and "e8 " not in out
+
+
+# --- build_language_directive (#827) ---------------------------------------
+
+
+@pytest.mark.parametrize(
+    "lang,expected",
+    [
+        ("de", "German (Deutsch)"),
+        ("ko", "Korean (한국어)"),
+        ("hi", "Hindi (हिन्दी)"),
+        ("id", "Indonesian (Bahasa Indonesia)"),
+        ("ja", "Japanese (日本語)"),
+        ("pt-BR", "Portuguese (Português)"),
+        ("tr", "Turkish (Türkçe)"),
+    ],
+)
+def test_language_directive_names_the_learner_language(lang, expected):
+    out = build_language_directive(lang)
+    assert out.startswith("IMPORTANT: Always write your replies to the learner in ")
+    assert expected in out
+
+
+def test_language_directive_english_has_no_redundant_parenthetical():
+    assert build_language_directive("en") == (
+        "IMPORTANT: Always write your replies to the learner in English, "
+        "regardless of the language of these instructions."
+    )
+
+
+def test_language_directive_falls_back_to_english_for_unknown_code():
+    assert "English" in build_language_directive("xx")
+    assert "English" in build_language_directive("")

@@ -88,9 +88,11 @@ export default function AiSettingsPanel({
           settings={settings}
           mode={mode}
           busy={busy}
+          testResults={testResults}
           onSetActive={handleProviderChange}
           onEdit={focusProviderInput}
           onDelete={handleDeleteKey}
+          onTest={handleTestKey}
         />
       </div>
 

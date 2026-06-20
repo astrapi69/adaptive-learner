@@ -90,15 +90,32 @@ When you add a `localStorage` key, decide its class:
    must NOT travel with a backup, add it to the exclusion patterns with a
    comment, like `storage_mode`.
 
-## Roadmap: migrate true user-data to Dexie (Teil B)
+## Migrate true user-data to Dexie (Teil B) ✅
 
-The snapshot makes localStorage data **portable via backup**. A follow-up
-(tracked separately) migrates the genuine *user data* keys —
-`contributions` / `contributor-name` (contribution history) and
-`custom-paths` (Curriculum Builder) — into Dexie tables with a
-read-through-then-localStorage-fallback, and resolves the `language`
-redundancy (it lives in both `localStorage` and the Dexie
-`user_settings` table) down to a single source. That work additionally
-protects the data against a browser reset *without* a backup and lets it
-sync across devices in Dexie mode. Until then, the localStorage snapshot
-in the backup is the portability guarantee.
+Teil A makes localStorage data **portable via backup**. Teil B promotes the
+genuine *user data* keys to a **canonical Dexie store** so they live in the
+durable IndexedDB store, not only in the fragile `localStorage`:
+
+- `contributions` / `contributor-name` (contribution history) and
+  `custom-paths` (Curriculum Builder) are mirrored into a Dexie key/value
+  store `userData` (schema v29). The mechanism lives in
+  `frontend/src/storage/dexie-user-data.ts`:
+  - **write-through** (`mirrorUserData`) — every production write of a managed
+    key is mirrored into Dexie (a Dexie failure never undoes the localStorage
+    write that already succeeded);
+  - **boot reconcile** (`syncUserDataAtBoot`) — at app start Dexie wins when it
+    holds a value (covers a Dexie restore), otherwise an existing localStorage
+    value seeds Dexie.
+  - The synchronous localStorage API on `contribution-history.ts` /
+    `custom-paths.ts` is kept as a **read cache**, so the React callers stay
+    unchanged. All operations are **no-ops in API mode**.
+- The `language` redundancy (it lived in both `localStorage` and the Dexie
+  `user_settings.language` column) is resolved to a single source: Dexie
+  `user_settings` is canonical, and `syncLanguageAtBoot` hydrates the
+  localStorage cache from it at boot so the two never diverge.
+
+Restore continues to flow through the Teil A localStorage snapshot: a restore
+writes the keys into `localStorage`, and the next boot's reconcile seeds the
+Dexie canonical store from them. The keys therefore stay in the localStorage
+snapshot as well (belt-and-braces); they are deliberately **not** added to the
+user-scoped Dexie record backup (they carry no `user_id`).

@@ -4,6 +4,7 @@ import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 import { featureRegistry, type FeatureContext } from "./features/featureConfig";
 import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
 import { resolveStorageMode } from "./storage";
+import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie-user-data";
 import { lazyWithReload } from "./lib/lazyWithReload";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -15,6 +16,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
 import GlobalShortcuts from "./components/GlobalShortcuts";
 import UpdatePromptHost from "./components/UpdatePromptHost";
+import DesktopUpdateHost from "./components/DesktopUpdateHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import ReminderScheduler from "./components/ReminderScheduler";
@@ -134,6 +136,14 @@ export default function App() {
     return () => window.removeEventListener("adaptive-learner:open-error-report", handleOpenReport);
   }, [handleOpenReport]);
 
+  // #791 Teil B — reconcile the device-local user-data keys (contributions,
+  // contributor name, custom paths) + the learner language between the Dexie
+  // canonical store and the localStorage cache once at boot. No-op in API mode.
+  useEffect(() => {
+    void syncUserDataAtBoot();
+    void syncLanguageAtBoot();
+  }, []);
+
   return (
     <ErrorBoundary>
       <I18nProvider>
@@ -142,6 +152,7 @@ export default function App() {
             <ConfirmProvider>
             <SkipToContent />
             <UpdatePromptHost />
+            <DesktopUpdateHost />
             <Navigation />
             <OfflineIndicator />
             <Suspense fallback={null}>

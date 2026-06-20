@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
 **Stand:** 2026-06-19
-**Anzahl EXPs:** 34
+**Anzahl EXPs:** 35
 
 > Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
 > [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
@@ -53,6 +53,7 @@
 | 033 | KI-gestützte Content-Validierung (AI Review) | Querschnitt  | gestuft | Mittel  | 032, 023, 028, 030 |
 | 034 | Content Discovery + Suchindex               | Vision       | gestuft | Mittel  | 002, 003, 023, 032 |
 | 035 | Vercel AI Elements Integration (AI-UI)      | Feature      | Zukunft | Niedrig | shadcn/ui, Session |
+| 036 | KI-Übungsgenerierung aus Theorie-Content    | Feature      | 2     | Hoch      | 013, 021, 033, 018 |
 
 ## Umsetzungsstand (Stand v1.85.0)
 
@@ -88,7 +89,10 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
   032 (deterministische Content-Validierung, CQV-01..05),
   034 (Content Discovery + Suchindex, DIS-01..09 — repo-seitiger
   `search-index.json`, client-seitige Suche, Per-Set-Download statt
-  Repo-Sync) — alle Vorhaben, 0% umgesetzt.
+  Repo-Sync),
+  036 (KI-Übungsgenerierung aus Theorie-Content, AIX-01..06 — schließt die
+  Lücke Chat-Import → spielbare Lektion: LLM erzeugt Übungen aus reiner
+  Prosa-Theorie, beide Storage-Modi) — alle Vorhaben, 0% umgesetzt.
 - **Zurückgestellt / Zukunft:** 004 (GitHub-Org), 009/011/012 (soziale Features —
   brauchen Cloud-Backend + Nutzerbasis), 014 (Community-Feedback — teilweise via
   Community-Sharing), 015 (Kinder-Variante),

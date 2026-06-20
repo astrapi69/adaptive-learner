@@ -465,6 +465,18 @@
     "session_count": "セッション"
   },
   "settings": {
+    "updates": {
+      "title": "アップデート",
+      "auto_check": "自動アップデート確認",
+      "interval": "確認間隔",
+      "interval_daily": "毎日",
+      "interval_weekly": "毎週",
+      "interval_monthly": "毎月",
+      "interval_never": "しない",
+      "last_check": "前回の確認: {when}",
+      "never_checked": "未確認",
+      "current_version": "現在のバージョン: v{version}"
+    },
     "install": {
       "heading": "アプリをインストール",
       "description": "オフラインアクセスと全画面表示のために Adaptive Learner をアプリとしてインストールします。",
@@ -634,7 +646,13 @@
       "status_external": "外部",
       "set_active": "アクティブなプロバイダーとして使用",
       "edit": "編集",
-      "add": "キーを追加"
+      "add": "キーを追加",
+      "test": "テスト",
+      "testing": "テスト中…",
+      "test_connection_ok": "接続OK",
+      "test_key_invalid": "キーが無効です",
+      "test_network_error": "ネットワークエラー",
+      "test_backend_only": "バックエンドでのみテスト可能"
     },
     "api_key_label": "API キー",
     "api_key_placeholder": "ここに貼り付け…",
@@ -734,6 +752,15 @@
       "receptive_first": "まず認識",
       "productive_focus": "産出",
       "balanced": "バランス"
+    },
+    "matching_resolve": {
+      "title": "解答アニメーション",
+      "hint": "確認後に「解答を表示」を押したとき、マッチング演習が正しいペアをどのように表示するか。",
+      "label": "効果",
+      "slide": "スライド",
+      "color": "色",
+      "connect": "線でつなぐ",
+      "stack": "重ねる"
     },
     "paused_retention": {
       "title": "一時停止中のレッスンの保持期間",
@@ -852,6 +879,12 @@
     "aria_label": "Adaptive Learner をインストール"
   },
   "about": {
+    "up_to_date_version": "最新バージョンを使用しています。(v{version})",
+    "update": {
+      "read_more": "もっと読む",
+      "open_release": "リリースページを開く",
+      "later": "後で"
+    },
     "section_heading": "Adaptive Learner について",
     "loading": "情報を読み込み中…",
     "load_failed": "システム情報を読み込めませんでした:",
@@ -1738,7 +1771,9 @@
         "right_label_knowledge": "定義",
         "instruction_knowledge": "各用語を定義と一致させてください。",
         "instructions_knowledge": "左の項目を選んでから、右の対応する項目を選んでください。",
-        "selected_sr": "選択中: {label}"
+        "selected_sr": "選択中: {label}",
+        "resolve": "解答を表示",
+        "resolve_announce": "解答を表示しました。{total} 組中 {correct} 組が正解でした。"
       },
       "picture": {
         "submit": "答えを確認",
@@ -1982,6 +2017,46 @@
       "delete_confirm": "このレッスンを削除しますか？元に戻せません。",
       "deleted": "レッスンを削除しました。",
       "delete_failed": "レッスンを削除できませんでした。"
+    },
+    "ai_exercises": {
+      "batch": {
+        "button": "すべてのレッスンに生成",
+        "running": "生成中…",
+        "none": "すべてのレッスンにすでに演習があります。",
+        "cost_confirm": "{n} 件のレッスンに演習を生成します（約 {tokens} トークン）。続行しますか？",
+        "progress": "レッスン {current} / {total}…",
+        "cancel": "キャンセル",
+        "done": "{total} 件中 {succeeded} 件完了：演習 {generated} 件、{skipped} 件スキップ。",
+        "cancelled": "停止しました。{total} 件中 {succeeded} 件完了、演習 {generated} 件。",
+        "failed": "一括生成に失敗しました。もう一度お試しください。"
+      },
+      "max_reached": "再生成の上限に達しました。演習を手動で編集するか、より長いチャットをインポートしてください。",
+      "feedback": {
+        "title": "再生成する理由は？",
+        "too_easy": "簡単すぎる",
+        "too_hard": "難しすぎる",
+        "wrong_language": "言語が違う",
+        "more_variety": "もっと種類を",
+        "none": "特に理由はない",
+        "language_label": "言語",
+        "freetext_label": "その他（任意）",
+        "freetext_placeholder": "フィードバックを入力…"
+      },
+      "button": "演習を生成",
+      "generating": "演習を生成中…",
+      "regenerate": "再生成",
+      "regenerate_confirm": "生成された演習を新しいセットに置き換えますか？",
+      "generated": "{n} 件の演習を生成しました。",
+      "generated_with_rejected": "{n} 件の演習を生成しました（{r} 件は品質のため除外）。",
+      "none": "AI から使用可能な演習が返されませんでした。もう一度お試しください。",
+      "failed": "演習を生成できませんでした。もう一度お試しください。",
+      "feature": "演習を生成するには",
+      "preview_title": "生成された演習",
+      "type_matching": "マッチング",
+      "type_cloze": "穴埋め",
+      "type_free_text": "自由記述",
+      "type_word_tiles": "ワードタイル",
+      "type_picture_choice": "画像選択"
     },
     "save_lesson": {
       "button": "オフラインレッスンとして保存",
@@ -3028,6 +3103,15 @@
       "download_failed": "セットをダウンロードできませんでした。",
       "remove_failed": "セットを削除できませんでした。",
       "load_failed": "利用可能なコンテンツを読み込めませんでした。"
+    }
+  },
+  "update": {
+    "banner": {
+      "message": "新しいバージョン {version} が利用可能です",
+      "whats_new": "新着情報は？",
+      "release_page": "リリースページ",
+      "later": "後で",
+      "whats_new_title": "{version} の新着情報"
     }
   }
 }

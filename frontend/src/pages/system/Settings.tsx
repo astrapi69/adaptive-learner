@@ -15,6 +15,7 @@ import GitHubIntegrationSection from "../../components/GitHubIntegrationSection"
 import FeedbackIntensityControl from "../../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../../components/GamificationSettingsSection";
 import DirectionStrategyControl from "../../components/DirectionStrategyControl";
+import MatchingResolveControl from "../../components/MatchingResolveControl";
 import SrsTransparencySection from "../../components/SrsTransparencySection";
 import DailyRemindersControl from "../../components/DailyRemindersControl";
 import HintSettingsControl from "../../components/HintSettingsControl";
@@ -26,6 +27,7 @@ import LearningRepoSettingsSection from "../../components/LearningRepoSettingsSe
 import MissionSettingsControl from "../../components/MissionSettingsControl";
 import SourceLanguagesControl from "../../components/SourceLanguagesControl";
 import ModeIndicator from "../../components/ModeIndicator";
+import UpdatesSettingsSection from "../../components/settings/UpdatesSettingsSection";
 import SoundSettingsControl from "../../components/SoundSettingsControl";
 import HelpBrowser from "../../components/help/HelpBrowser";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
@@ -620,6 +622,14 @@ export default function Settings() {
         )}
       </section>
 
+      {/* #840 — desktop/API-mode update preferences. Hidden in Dexie/PWA
+          mode (that path uses the service worker, no GitHub check). */}
+      {currentMode === "api" && (
+        <div hidden={activeTab !== "general"}>
+          <UpdatesSettingsSection />
+        </div>
+      )}
+
       <div hidden={activeTab !== "general"}>
         <ModeIndicator />
       </div>
@@ -640,6 +650,7 @@ export default function Settings() {
         </section>
         <MissionSettingsControl />
         <DirectionStrategyControl />
+        <MatchingResolveControl />
         <HintSettingsControl />
         <ReviewSettingsControl />
         <SrsTransparencySection />

@@ -438,6 +438,17 @@ progress:
   commit_notes_aria: सत्र नोट्स
   session_count: सत्र
 settings:
+  updates:
+    title: "अपडेट"
+    auto_check: "स्वचालित अपडेट जाँच"
+    interval: "जाँच अंतराल"
+    interval_daily: "दैनिक"
+    interval_weekly: "साप्ताहिक"
+    interval_monthly: "मासिक"
+    interval_never: "कभी नहीं"
+    last_check: "पिछली जाँच: {when}"
+    never_checked: "कभी जाँच नहीं की"
+    current_version: "वर्तमान संस्करण: v{version}"
   install:
     heading: "ऐप इंस्टॉल करें"
     description: "ऑफ़लाइन उपयोग और फ़ुल-स्क्रीन अनुभव के लिए Adaptive Learner को ऐप के रूप में इंस्टॉल करें।"
@@ -606,6 +617,12 @@ settings:
     set_active: सक्रिय प्रदाता के रूप में उपयोग करें
     edit: संपादित करें
     add: कुंजी जोड़ें
+    test: परीक्षण करें
+    testing: "परीक्षण हो रहा है…"
+    test_connection_ok: कनेक्शन ठीक है
+    test_key_invalid: कुंजी अमान्य
+    test_network_error: नेटवर्क त्रुटि
+    test_backend_only: केवल बैकएंड के साथ परीक्षण योग्य
   api_key_label: API कुंजी
   api_key_placeholder: यहाँ पेस्ट करें…
   api_key_placeholder_replace: सहेजी गई कुंजी को बदलने के लिए नई कुंजी पेस्ट करें…
@@ -700,6 +717,14 @@ settings:
     receptive_first: पहले पहचानें
     productive_focus: उत्पादन करें
     balanced: संतुलित
+  matching_resolve:
+    title: "हल एनिमेशन"
+    hint: "जाँचने के बाद 'हल दिखाएँ' दबाने पर मिलान अभ्यास सही जोड़े कैसे दिखाता है।"
+    label: "प्रभाव"
+    slide: "स्लाइड"
+    color: "रंग"
+    connect: "जोड़ें"
+    stack: "ढेर"
   paused_retention:
     title: रोके गए पाठ की अवधारण
     hint: इससे पुराने रोके गए पाठ स्वचालित रूप से छोड़ दिए जाते हैं। आयु की परवाह किए बिना अधिकतम 10 रोके गए पाठ रखे जाते हैं।
@@ -795,6 +820,11 @@ install:
   dismiss: अभी नहीं
   aria_label: Adaptive Learner इंस्टॉल करें
 about:
+  up_to_date_version: "आपके पास नवीनतम संस्करण है। (v{version})"
+  update:
+    read_more: "और पढ़ें"
+    open_release: "रिलीज़ पेज खोलें"
+    later: "बाद में"
   section_heading: अडैप्टिव लर्नर के बारे में
   loading: जानकारी लोड हो रही है…
   load_failed: 'सिस्टम जानकारी लोड नहीं हो सकी:'
@@ -1610,6 +1640,8 @@ lesson:
       instruction_knowledge: प्रत्येक शब्द को उसकी परिभाषा से मिलाएँ।
       instructions_knowledge: बाईं ओर एक आइटम चुनें, फिर दाईं ओर उसका मिलान चुनें।
       selected_sr: 'चयनित: {label}'
+      resolve: "हल दिखाएँ"
+      resolve_announce: "समाधान दिखाया गया। {total} में से {correct} जोड़े सही थे।"
     picture:
       submit: उत्तर जाँचें
       retry: फिर से कोशिश करें
@@ -1824,6 +1856,43 @@ content:
     delete_confirm: यह पाठ हटाएँ? इसे पूर्ववत नहीं किया जा सकता।
     deleted: पाठ हटा दिया गया।
     delete_failed: पाठ हटाया नहीं जा सका।
+  ai_exercises:
+    batch:
+      button: "सभी पाठों के लिए बनाएँ"
+      running: "बना रहे हैं…"
+      none: "सभी पाठों में पहले से अभ्यास हैं।"
+      cost_confirm: "इससे {n} पाठों के लिए अभ्यास बनेंगे (लगभग {tokens} टोकन)। जारी रखें?"
+      progress: "पाठ {current}/{total}…"
+      cancel: "रद्द करें"
+      done: "{total} में से {succeeded} पाठ पूर्ण: {generated} अभ्यास, {skipped} छोड़े गए।"
+      cancelled: "रोका गया। {total} में से {succeeded} पाठ पूर्ण, {generated} अभ्यास।"
+      failed: "बैच जनरेशन विफल। कृपया फिर से प्रयास करें।"
+    max_reached: "पुनर्निर्माण का अधिकतम प्रयास पूरा हुआ। अभ्यासों को मैन्युअल रूप से संपादित करें या लंबी चैट आयात करें।"
+    feedback:
+      title: "फिर से क्यों बनाएँ?"
+      too_easy: "बहुत आसान"
+      too_hard: "बहुत कठिन"
+      wrong_language: "गलत भाषा"
+      more_variety: "अधिक विविधता"
+      none: "कोई खास कारण नहीं"
+      language_label: "भाषा"
+      freetext_label: "और कुछ? (वैकल्पिक)"
+      freetext_placeholder: "आपकी प्रतिक्रिया…"
+    button: "अभ्यास बनाएँ"
+    generating: "अभ्यास बनाए जा रहे हैं…"
+    regenerate: "फिर से बनाएँ"
+    regenerate_confirm: "बनाए गए अभ्यासों को नए सेट से बदलें?"
+    generated: "{n} अभ्यास बनाए गए।"
+    generated_with_rejected: "{n} अभ्यास बनाए गए, {r} गुणवत्ता के कारण अस्वीकृत।"
+    none: "AI ने कोई उपयोगी अभ्यास नहीं लौटाया। कृपया फिर से प्रयास करें।"
+    failed: "अभ्यास नहीं बनाए जा सके। कृपया फिर से प्रयास करें।"
+    feature: "अभ्यास बनाने के लिए"
+    preview_title: "बनाए गए अभ्यास"
+    type_matching: "मिलान"
+    type_cloze: "रिक्त स्थान भरें"
+    type_free_text: "मुक्त पाठ"
+    type_word_tiles: "शब्द टाइलें"
+    type_picture_choice: "चित्र चयन"
   save_lesson:
     button: ऑफ़लाइन पाठ के रूप में सहेजें
     modal_title: ऑफ़लाइन पाठ के रूप में सहेजें
@@ -2757,3 +2826,10 @@ discover:
     download_failed: "सेट डाउनलोड नहीं हो सका।"
     remove_failed: "सेट हटाया नहीं जा सका।"
     load_failed: "उपलब्ध सामग्री लोड नहीं हो सकी।"
+update:
+  banner:
+    message: "नया संस्करण {version} उपलब्ध"
+    whats_new: "नया क्या है?"
+    release_page: "रिलीज़ पेज"
+    later: "बाद में"
+    whats_new_title: "{version} में नया क्या है"

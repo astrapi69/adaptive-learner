@@ -15,6 +15,17 @@ vi.mock("./useOnlineStatus", () => ({
   useOnlineStatus: () => online,
 }));
 
+// Stub the SW activation so applyUpdate does not call window.location.reload
+// in the test (happy-dom has no navigation). We only assert the hook calls it.
+const { activateAndReload } = vi.hoisted(() => ({
+  activateAndReload: vi.fn(),
+}));
+vi.mock("../../lib/pwa/sw-update", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("../../lib/pwa/sw-update")>();
+  return { ...actual, activateAndReload };
+});
+
 function mockFetchVersion(version: string) {
   globalThis.fetch = vi.fn(async () => ({
     ok: true,
@@ -24,6 +35,7 @@ function mockFetchVersion(version: string) {
 
 afterEach(() => {
   online = true;
+  activateAndReload.mockClear();
   vi.useRealTimers();
   vi.restoreAllMocks();
 });
@@ -36,6 +48,22 @@ describe("useAppUpdate", () => {
     expect(result.current.latestVersion).toBe("999.0.0");
     act(() => result.current.dismiss());
     expect(result.current.updateAvailable).toBe(false);
+  });
+
+  // Regression pin (#818): clicking "Aktualisieren" must hide the banner
+  // immediately AND trigger the service-worker activation/reload. Before the
+  // fix the banner stayed (a plain reload was served stale from the old
+  // precache and version.json still reported newer), so the button looked
+  // dead.
+  it("applyUpdate hides the banner at once and triggers the reload (#818)", async () => {
+    mockFetchVersion("999.0.0");
+    const { result } = renderHook(() => useAppUpdate());
+    await waitFor(() => expect(result.current.updateAvailable).toBe(true));
+
+    act(() => result.current.applyUpdate());
+
+    expect(result.current.updateAvailable).toBe(false);
+    expect(activateAndReload).toHaveBeenCalledTimes(1);
   });
 
   it("does not flag when the deployed version matches", async () => {

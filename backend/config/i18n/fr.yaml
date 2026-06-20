@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "Notes de session"
   session_count: "Sessions"
 settings:
+  updates:
+    title: "Mises à jour"
+    auto_check: "Vérification automatique des mises à jour"
+    interval: "Intervalle de vérification"
+    interval_daily: "Quotidien"
+    interval_weekly: "Hebdomadaire"
+    interval_monthly: "Mensuel"
+    interval_never: "Jamais"
+    last_check: "Dernière vérification : {when}"
+    never_checked: "Jamais vérifié"
+    current_version: "Version actuelle : v{version}"
   install:
     heading: "Installer l'application"
     description: "Installez Adaptive Learner comme application pour un accès hors ligne et un mode plein écran."
@@ -604,6 +615,12 @@ settings:
     set_active: Utiliser comme fournisseur actif
     edit: Modifier
     add: Ajouter une clé
+    test: Tester
+    testing: "Test en cours…"
+    test_connection_ok: Connexion OK
+    test_key_invalid: Clé invalide
+    test_network_error: Erreur réseau
+    test_backend_only: Testable uniquement avec le backend
   api_key_label: Cle API
   api_key_placeholder: Coller ici...
   api_key_placeholder_replace: "Colle une nouvelle cle pour remplacer celle enregistree…"
@@ -699,6 +716,14 @@ settings:
     receptive_first: Reconnaître d'abord
     productive_focus: Produire
     balanced: Équilibré
+  matching_resolve:
+    title: "Animation de résolution"
+    hint: "Comment l'exercice d'association révèle les paires correctes lorsque vous appuyez sur 'Résoudre' après vérification."
+    label: "Effet"
+    slide: "Glisser"
+    color: "Couleur"
+    connect: "Relier"
+    stack: "Empiler"
   paused_retention:
     title: Conservation des leçons en pause
     hint: "Les leçons en pause plus anciennes que cette période sont automatiquement abandonnées. Jusqu'à 10 leçons en pause sont conservées quel que soit leur âge."
@@ -794,6 +819,11 @@ install:
   dismiss: Plus tard
   aria_label: Installer Adaptive Learner
 about:
+  up_to_date_version: "Vous avez la dernière version. (v{version})"
+  update:
+    read_more: "Lire plus"
+    open_release: "Ouvrir la page de la version"
+    later: "Plus tard"
   section_heading: À propos d'Adaptive Learner
   loading: Chargement des informations…
   load_failed: 'Impossible de charger les informations système :'
@@ -1616,6 +1646,8 @@ lesson:
       instruction_knowledge: "Associe chaque terme à sa définition."
       instructions_knowledge: "Sélectionne un élément à gauche, puis sa correspondance à droite."
       selected_sr: "Sélectionné : {label}"
+      resolve: "Résoudre"
+      resolve_announce: "Solution affichée. {correct} paires correctes sur {total}."
     picture:
       submit: "Vérifier la réponse"
       retry: "Réessayer"
@@ -1831,6 +1863,43 @@ content:
     delete_confirm: "Supprimer cette leçon ? Cette action est irréversible."
     deleted: "Leçon supprimée."
     delete_failed: "Impossible de supprimer la leçon."
+  ai_exercises:
+    batch:
+      button: "Générer pour toutes les leçons"
+      running: "Génération…"
+      none: "Toutes les leçons ont déjà des exercices."
+      cost_confirm: "Ceci génère des exercices pour {n} leçons (environ {tokens} jetons). Continuer ?"
+      progress: "Leçon {current} sur {total}…"
+      cancel: "Annuler"
+      done: "{succeeded} leçons sur {total} : {generated} exercices, {skipped} ignorées."
+      cancelled: "Arrêté. {succeeded} leçons sur {total}, {generated} exercices."
+      failed: "La génération par lot a échoué. Veuillez réessayer."
+    max_reached: "Nombre maximal de régénérations atteint. Modifiez les exercices manuellement ou importez une conversation plus longue."
+    feedback:
+      title: "Pourquoi régénérer ?"
+      too_easy: "Trop facile"
+      too_hard: "Trop difficile"
+      wrong_language: "Mauvaise langue"
+      more_variety: "Plus de variété"
+      none: "Aucune raison particulière"
+      language_label: "Langue"
+      freetext_label: "Autre chose ? (facultatif)"
+      freetext_placeholder: "Vos remarques…"
+    button: "Générer des exercices"
+    generating: "Génération des exercices…"
+    regenerate: "Régénérer"
+    regenerate_confirm: "Remplacer les exercices générés par une nouvelle série ?"
+    generated: "{n} exercices générés."
+    generated_with_rejected: "{n} exercices générés, {r} rejetés pour la qualité."
+    none: "L'IA n'a renvoyé aucun exercice utilisable. Veuillez réessayer."
+    failed: "Impossible de générer les exercices. Veuillez réessayer."
+    feature: "pour générer des exercices"
+    preview_title: "Exercices générés"
+    type_matching: "Association"
+    type_cloze: "Texte à trous"
+    type_free_text: "Texte libre"
+    type_word_tiles: "Tuiles de mots"
+    type_picture_choice: "Choix d'image"
   save_lesson:
     button: "Enregistrer comme leçon hors ligne"
     modal_title: "Enregistrer comme leçon hors ligne"
@@ -2773,3 +2842,10 @@ discover:
     download_failed: "Impossible de télécharger le set."
     remove_failed: "Impossible de retirer le set."
     load_failed: "Impossible de charger le contenu disponible."
+update:
+  banner:
+    message: "Nouvelle version {version} disponible"
+    whats_new: "Quoi de neuf ?"
+    release_page: "Page de la version"
+    later: "Plus tard"
+    whats_new_title: "Nouveautés de {version}"

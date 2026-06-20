@@ -436,6 +436,17 @@ progress:
   commit_notes_aria: "Session notes"
   session_count: "Sessions"
 settings:
+  updates:
+    title: "Updates"
+    auto_check: "Automatic update check"
+    interval: "Check interval"
+    interval_daily: "Daily"
+    interval_weekly: "Weekly"
+    interval_monthly: "Monthly"
+    interval_never: "Never"
+    last_check: "Last check: {when}"
+    never_checked: "Never checked"
+    current_version: "Current version: v{version}"
   install:
     heading: "Install app"
     description: "Install Adaptive Learner as an app for offline access and a full-screen experience."
@@ -604,6 +615,12 @@ settings:
     set_active: Use as active provider
     edit: Edit
     add: Add key
+    test: Test
+    testing: "Testing…"
+    test_connection_ok: Connection ok
+    test_key_invalid: Key invalid
+    test_network_error: Network error
+    test_backend_only: Only testable with the backend
   api_key_label: API key
   api_key_placeholder: Paste here…
   api_key_placeholder_replace: "Paste a new key to replace the stored one…"
@@ -699,6 +716,14 @@ settings:
     receptive_first: Recognise first
     productive_focus: Produce
     balanced: Balanced
+  matching_resolve:
+    title: "Solve animation"
+    hint: "How the matching exercise reveals the correct pairs when you press 'Solve' after checking."
+    label: "Effect"
+    slide: "Slide"
+    color: "Color"
+    connect: "Connect"
+    stack: "Stack"
   paused_retention:
     title: Paused lesson retention
     hint: "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age."
@@ -794,6 +819,11 @@ install:
   dismiss: Not now
   aria_label: Install Adaptive Learner
 about:
+  up_to_date_version: "You have the latest version. (v{version})"
+  update:
+    read_more: "Read more"
+    open_release: "Open release page"
+    later: "Later"
   section_heading: About Adaptive Learner
   loading: Loading information…
   load_failed: 'Could not load system info:'
@@ -1625,6 +1655,8 @@ lesson:
       instruction_knowledge: "Match each term with its definition."
       instructions_knowledge: "Select an item on the left, then its match on the right."
       selected_sr: "Selected: {label}"
+      resolve: "Solve"
+      resolve_announce: "Solution shown. {correct} of {total} pairs were correct."
     picture:
       submit: "Check answer"
       retry: "Try again"
@@ -1840,6 +1872,43 @@ content:
     delete_confirm: "Delete this lesson? This cannot be undone."
     deleted: "Lesson deleted."
     delete_failed: "Could not delete the lesson."
+  ai_exercises:
+    batch:
+      button: "Generate for all lessons"
+      running: "Generating…"
+      none: "All lessons already have exercises."
+      cost_confirm: "This generates exercises for {n} lessons (about {tokens} tokens). Continue?"
+      progress: "Lesson {current} of {total}…"
+      cancel: "Cancel"
+      done: "{succeeded} of {total} lessons done: {generated} exercises, {skipped} skipped."
+      cancelled: "Stopped. {succeeded} of {total} lessons done, {generated} exercises."
+      failed: "Batch generation failed. Please try again."
+    max_reached: "Maximum regeneration attempts reached. Edit the exercises manually or import a longer chat."
+    feedback:
+      title: "Why regenerate?"
+      too_easy: "Too easy"
+      too_hard: "Too hard"
+      wrong_language: "Wrong language"
+      more_variety: "More variety"
+      none: "No particular reason"
+      language_label: "Language"
+      freetext_label: "Anything else? (optional)"
+      freetext_placeholder: "Your feedback…"
+    button: "Generate exercises"
+    generating: "Generating exercises…"
+    regenerate: "Regenerate"
+    regenerate_confirm: "Replace the generated exercises with a fresh set?"
+    generated: "{n} exercises generated."
+    generated_with_rejected: "{n} exercises generated, {r} rejected for quality."
+    none: "The AI returned no usable exercises. Please try again."
+    failed: "Could not generate exercises. Please try again."
+    feature: "to generate exercises"
+    preview_title: "Generated exercises"
+    type_matching: "Matching"
+    type_cloze: "Cloze"
+    type_free_text: "Free text"
+    type_word_tiles: "Word tiles"
+    type_picture_choice: "Picture choice"
   save_lesson:
     button: "Save as Offline Lesson"
     modal_title: "Save as offline lesson"
@@ -2781,3 +2850,10 @@ discover:
     download_failed: "Could not download the set."
     remove_failed: "Could not remove the set."
     load_failed: "Could not load available content."
+update:
+  banner:
+    message: "New version {version} available"
+    whats_new: "What's new?"
+    release_page: "Release page"
+    later: "Later"
+    whats_new_title: "What's new in {version}"
