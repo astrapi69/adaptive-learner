@@ -173,6 +173,16 @@ navigation:
           ja: デイリーミッション
         slug: user-guide/missions
       - title:
+          de: KI-Inhaltsprüfung
+          en: AI content check
+          es: Verificación de contenido con IA
+          fr: Vérification de contenu par IA
+          el: Έλεγχος περιεχομένου με AI
+          pt: Verificação de conteúdo por IA
+          tr: Yapay zekâ ile içerik denetimi
+          ja: AIコンテンツチェック
+        slug: user-guide/ai-validation
+      - title:
           de: FAQ
           en: FAQ
           es: Preguntas frecuentes
