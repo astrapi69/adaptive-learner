@@ -151,9 +151,10 @@ test.describe("Conversation import + analysis", () => {
             },
         );
 
-        // Navigate to the Import page.
-        await page.getByTestId("nav-import").click();
-        await page.waitForURL("**/import");
+        // Navigate to the Import page. EXP-037 (#850): Import is no longer a
+        // top-level nav entry — it is a tab in Discover; /import redirects to
+        // /discover?tab=import, which renders the same page-import surface.
+        await page.goto("/import");
         await expect(page.getByTestId("page-import")).toBeVisible();
 
         // Paste the conversation.

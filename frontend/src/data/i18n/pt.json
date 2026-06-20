@@ -65,6 +65,20 @@
     "cat_ai_config": "Backup de chave de IA"
   },
   "nav": {
+    "group": {
+      "learn": "Aprender",
+      "content": "Conteúdo",
+      "progress": "Progresso",
+      "more": "Mais"
+    },
+    "tab": {
+      "learn": "Aprender",
+      "content": "Conteúdo",
+      "discover": "Descobrir",
+      "progress": "Progresso",
+      "more": "Mais"
+    },
+    "primary": "Navegação principal",
     "discover": "Descobrir conteúdo",
     "offline_long": "Offline — as sessões anteriores continuam acessíveis",
     "sync_pending": "{n} alteração(ões) aguardando sincronização",
@@ -444,6 +458,11 @@
     "rating_notes_placeholder": "O que funcionou, o que não, o que tentar da próxima vez…"
   },
   "progress": {
+    "tab": {
+      "overview": "Visão geral",
+      "stats": "Estatísticas",
+      "paths": "Meus caminhos"
+    },
     "title": "Progresso",
     "chart_timeline": "Compreensão e estresse ao longo do tempo",
     "chart_methods": "Distribuição de métodos",
@@ -1950,6 +1969,9 @@
     }
   },
   "content": {
+    "anki_export": {
+      "button": "Exportar para Anki"
+    },
     "discover_more": "Descobrir mais conteúdo",
     "book": {
       "companion": "Companhia do livro",
@@ -3043,6 +3065,10 @@
     "paid": "Curso"
   },
   "discover": {
+    "tab": {
+      "discover": "Descobrir",
+      "import": "Importar"
+    },
     "to_content": "Ir para o navegador de conteúdo",
     "title": "Descobrir conteúdo",
     "subtitle": "Encontre material de aprendizagem antes de baixá-lo.",

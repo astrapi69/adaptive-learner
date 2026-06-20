@@ -65,6 +65,20 @@
     "cat_ai_config": "AI कुंजी बैकअप"
   },
   "nav": {
+    "group": {
+      "learn": "सीखें",
+      "content": "सामग्री",
+      "progress": "प्रगति",
+      "more": "अधिक"
+    },
+    "tab": {
+      "learn": "सीखें",
+      "content": "सामग्री",
+      "discover": "खोजें",
+      "progress": "प्रगति",
+      "more": "अधिक"
+    },
+    "primary": "मुख्य नेविगेशन",
     "discover": "सामग्री खोजें",
     "offline_long": "ऑफ़लाइन — पिछले सत्र पढ़ने योग्य रहते हैं",
     "sync_pending": "{n} परिवर्तन सिंक होने की प्रतीक्षा में",
@@ -444,6 +458,11 @@
     "rating_notes_placeholder": "क्या काम आया, क्या नहीं, अगली बार क्या आज़माएँ..."
   },
   "progress": {
+    "tab": {
+      "overview": "अवलोकन",
+      "stats": "आँकड़े",
+      "paths": "मेरे पथ"
+    },
     "title": "प्रगति",
     "chart_timeline": "समय के साथ समझ और तनाव",
     "chart_methods": "तरीकों का वितरण",
@@ -1950,6 +1969,9 @@
     }
   },
   "content": {
+    "anki_export": {
+      "button": "Anki निर्यात"
+    },
     "discover_more": "और सामग्री खोजें",
     "book": {
       "companion": "पुस्तक साथी",
@@ -3043,6 +3065,10 @@
     "paid": "कोर्स"
   },
   "discover": {
+    "tab": {
+      "discover": "खोजें",
+      "import": "आयात"
+    },
     "to_content": "कॉन्टेंट ब्राउज़र पर जाएं",
     "title": "सामग्री खोजें",
     "subtitle": "डाउनलोड करने से पहले सीखने की सामग्री खोजें।",

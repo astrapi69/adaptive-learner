@@ -65,6 +65,20 @@
     "cat_ai_config": "AI key backup"
   },
   "nav": {
+    "group": {
+      "learn": "Learn",
+      "content": "Content",
+      "progress": "Progress",
+      "more": "More"
+    },
+    "tab": {
+      "learn": "Learn",
+      "content": "Content",
+      "discover": "Discover",
+      "progress": "Progress",
+      "more": "More"
+    },
+    "primary": "Primary navigation",
     "discover": "Discover content",
     "offline_long": "Offline — past sessions stay readable",
     "sync_pending": "{n} change(s) waiting to sync",
@@ -444,6 +458,11 @@
     "rating_notes_placeholder": "What worked, what didn't, what to try next time..."
   },
   "progress": {
+    "tab": {
+      "overview": "Overview",
+      "stats": "Statistics",
+      "paths": "My paths"
+    },
     "title": "Progress",
     "chart_timeline": "Understanding and stress over time",
     "chart_methods": "Method distribution",
@@ -1950,6 +1969,9 @@
     }
   },
   "content": {
+    "anki_export": {
+      "button": "Anki export"
+    },
     "discover_more": "Find more content",
     "book": {
       "companion": "Book companion",
@@ -3043,6 +3065,10 @@
     "paid": "Course"
   },
   "discover": {
+    "tab": {
+      "discover": "Discover",
+      "import": "Import"
+    },
     "to_content": "Go to Content Browser",
     "title": "Discover content",
     "subtitle": "Find learning material before you download it.",
