@@ -19,25 +19,18 @@
  * {@link useContentSharing}).
  */
 
-import {
-  Layers,
-  Map as MapIcon,
-  MessageSquare,
-  Plus,
-  RefreshCw,
-  Search,
-  Upload,
-  X,
-} from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import ContinueLearning from "../../components/ContinueLearning";
 import ImportLessonModal from "../../components/content/ImportLessonModal";
 import MyLessonsSection from "../../components/content/MyLessonsSection";
 import ContentTree from "../../components/content/ContentTree";
+import ContentToolbar from "../../components/content/ContentToolbar";
+import ContentSearchResults from "../../components/content/ContentSearchResults";
+import ContentGapsSection from "../../components/content/ContentGapsSection";
 import ContentShareDialog from "../../components/content/ContentShareDialog";
 import type { DownloadState } from "../../components/content/ContentSetRow";
 import {
@@ -55,7 +48,6 @@ import {
 } from "../../lib/content/media-loader";
 import ContentBookCompanions from "../../components/content/ContentBookCompanions";
 import ContentContributionsSection from "../../components/content/ContentContributionsSection";
-import { splitHighlight } from "../../lib/content/content-search";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useI18n } from "../../hooks/ui/useI18n";
@@ -68,13 +60,11 @@ import {
 } from "../../lib/content/content-tree";
 import { computeUserFold } from "../../lib/content/user-fold";
 import { resolveAiCheckDisabledReason } from "../../lib/content/ai-check-gate";
-import { languageDisplayName } from "../../lib/content/language-names";
 import {
   listContributions,
   recordContribution,
   type SharedContribution,
 } from "../../lib/content/contribution-history";
-import { detectGaps } from "../../lib/content/gap-detector";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
 import { readLearnerState } from "../../lib/learnerState";
 import {
@@ -271,18 +261,6 @@ export default function ContentPage() {
     searchInputRef,
     searchResult,
   } = useContentSearch(sets);
-
-  /** Highlight raw query occurrences inside a label. */
-  const highlightNodes = (text: string, query: string) =>
-    splitHighlight(text, query).map((seg, i) =>
-      seg.match ? (
-        <mark key={i} className="bg-transparent font-semibold text-accent">
-          {seg.text}
-        </mark>
-      ) : (
-        <span key={i}>{seg.text}</span>
-      ),
-    );
 
   const loadSets = useCallback(async () => {
     try {
@@ -575,116 +553,13 @@ export default function ContentPage() {
 
       {/* UX overhaul C1 — compact toolbar: search FIRST (full width),
           then icon-only action buttons (icon + label from md up). */}
-      <div className="mb-4 flex flex-wrap items-center gap-2" data-testid="content-toolbar">
-        <div
-          className="relative flex min-w-[200px] flex-1 items-center"
-          data-testid="content-search-bar"
-        >
-          {!searchQuery && (
-            <Search
-              size={18}
-              className="pointer-events-none absolute right-3 text-muted-foreground"
-              aria-hidden="true"
-            />
-          )}
-          <Input
-            ref={searchInputRef}
-            type="search"
-            value={searchQuery}
-            onFocus={activateSearch}
-            onChange={(e) => {
-              activateSearch();
-              setSearchQuery(e.target.value);
-            }}
-            placeholder={t("content.search.placeholder", "Search lessons...")}
-            aria-label={t("content.search.placeholder", "Search lessons...")}
-            className="pl-3 pr-10"
-            data-testid="content-search-input"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              className="absolute right-2 flex h-8 w-8 items-center justify-center rounded text-muted-foreground hover:text-foreground"
-              onClick={() => setSearchQuery("")}
-              aria-label={t("content.search.clear", "Clear search")}
-              data-testid="content-search-clear"
-            >
-              <X size={16} aria-hidden="true" />
-            </button>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-[44px] gap-2"
-            onClick={() => setShowImport(true)}
-            title={t("content.import_lesson.button", "Import Lesson")}
-            aria-label={t("content.import_lesson.button", "Import Lesson")}
-            data-testid="content-import-lesson"
-          >
-            <Upload className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("content.import_lesson.button", "Import Lesson")}
-            </span>
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-[44px] gap-2"
-            onClick={() => navigate("/content?tab=import")}
-            title={t("content.import_chat.button", "Import Chat")}
-            aria-label={t("content.import_chat.button", "Import Chat")}
-            data-testid="content-import-chat"
-          >
-            <MessageSquare className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("content.import_chat.button", "Import Chat")}
-            </span>
-          </Button>
-          {/* EXP-037 (#850) — Anki is no longer a top-level nav entry; its
-              export lives here as an action on "Meine Inhalte". */}
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-[44px] gap-2"
-            onClick={() => navigate("/anki")}
-            title={t("content.anki_export.button", "Anki export")}
-            aria-label={t("content.anki_export.button", "Anki export")}
-            data-testid="content-anki-export"
-          >
-            <Layers className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("content.anki_export.button", "Anki export")}
-            </span>
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-[44px] gap-2"
-            onClick={() => navigate("/learning-path")}
-            title={t("nav.learning_path", "Learning Path")}
-            aria-label={t("nav.learning_path", "Learning Path")}
-            data-testid="content-learning-path"
-          >
-            <MapIcon className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">{t("nav.learning_path", "Learning Path")}</span>
-          </Button>
-          <Button
-            type="button"
-            className="min-h-[44px] gap-2"
-            onClick={() => navigate("/create-lesson")}
-            title={t("content.create_lesson.button", "Create New Lesson")}
-            aria-label={t("content.create_lesson.button", "Create New Lesson")}
-            data-testid="content-create-lesson"
-          >
-            <Plus className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("content.create_lesson.button", "Create New Lesson")}
-            </span>
-          </Button>
-        </div>
-      </div>
+      <ContentToolbar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        activateSearch={activateSearch}
+        searchInputRef={searchInputRef}
+        onImportLesson={() => setShowImport(true)}
+      />
 
       {/* #772 — the Content Browser is "Meine Inhalte": only locally
           downloaded sets. Discovering new (not-downloaded) content happens on
@@ -731,128 +606,19 @@ export default function ContentPage() {
       )}
 
       {searchResult.active ? (
-        <section className="content-search-results space-y-4" data-testid="content-search-results">
-          <h2 className="font-semibold" data-testid="content-search-your">
-            {t("content.search.your_content", "Your content")}
-          </h2>
-          {searchResult.matches.length === 0 ? (
-            <div className="content-empty" data-testid="content-search-empty">
-              <p>
-                {t("content.search.no_results", "No results for '{query}'").replace(
-                  "{query}",
-                  searchResult.query.trim(),
-                )}
-              </p>
-              <p className="muted">{t("content.search.hint", "Try a different search term")}</p>
-            </div>
-          ) : (
-            <>
-              <p className="text-sm text-muted-foreground" data-testid="content-search-count">
-                {t("content.search.results", "{count} results").replace(
-                  "{count}",
-                  String(searchResult.lessonCount),
-                )}
-              </p>
-              {searchResult.matches.map((match) => {
-                const entry = downloadedSets.find(
-                  (s) => s.source === match.source && s.id === match.setId,
-                );
-                if (!entry) return null;
-                return (
-                  <div
-                    key={`${match.source}#${match.setId}`}
-                    data-testid={`content-search-set-${match.setId}`}
-                  >
-                    <h3 className="font-semibold">
-                      {highlightNodes(entry.title, searchResult.query)}
-                      <span className="ml-1 text-sm font-normal text-muted-foreground">
-                        · {(entry.source_language || "").toUpperCase()}
-                        {entry.target_language
-                          ? ` → ${entry.target_language.toUpperCase()}`
-                          : ""}{" "}
-                        {entry.level}
-                      </span>
-                    </h3>
-                    <ul className="mt-1 space-y-1 pl-4">
-                      {match.matchedLessons.map((lessonRef) => (
-                        <li key={lessonRef.filename}>
-                          <button
-                            type="button"
-                            className="text-left text-accent hover:underline"
-                            onClick={() =>
-                              openLessonFile(match.source, match.setId, lessonRef.filename)
-                            }
-                            data-testid={`content-search-lesson-${match.setId}-${lessonRef.filename}`}
-                          >
-                            {highlightNodes(lessonRef.title, searchResult.query)}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </>
-          )}
-          {/* #772 — the Content Browser shows only local content. Not-yet-
-              downloaded sets are discovered on /discover; point there instead
-              of surfacing index results here. */}
-          <p className="text-sm text-muted-foreground" data-testid="content-search-discover-hint">
-            <Link to="/content?tab=discover" className="text-accent hover:underline">
-              {t("content.discover_more", "Find more content")} →
-            </Link>
-          </p>
-        </section>
+        <ContentSearchResults
+          searchResult={searchResult}
+          downloadedSets={downloadedSets}
+          onOpenLesson={openLessonFile}
+        />
       ) : (
         <>
           {/* Phase 64E — encouraging gap suggestions ("Can you help?"). */}
-          {(() => {
-            const gaps = detectGaps(downloadedSets).slice(0, 5);
-            if (gaps.length === 0) return null;
-            return (
-              <section className="content-section content-gaps" data-testid="content-gaps">
-                <h2>{t("content.gaps.title", "Missing Lessons")}</h2>
-                <p className="content-gaps-intro">
-                  {t(
-                    "content.gaps.intro",
-                    "The community library has a few gaps. Can you help fill one?",
-                  )}
-                </p>
-                <ul className="content-gaps-list" data-testid="content-gaps-list">
-                  {gaps.map((gap, i) => (
-                    <li
-                      key={`${gap.kind}-${gap.source}-${gap.target}-${gap.level}-${i}`}
-                      className="content-gap-row"
-                    >
-                      <span>
-                        {(gap.kind === "next_level"
-                          ? t(
-                              "content.gaps.next_level",
-                              "{target} for {source} speakers has lessons, but {level} doesn't exist yet.",
-                            )
-                          : t(
-                              "content.gaps.missing_pair",
-                              "{target} {level} for {source} speakers doesn't exist yet.",
-                            )
-                        )
-                          .replace("{target}", languageDisplayName(gap.target, lang))
-                          .replace("{source}", languageDisplayName(gap.source, lang))
-                          .replace("{level}", gap.level)}
-                      </span>{" "}
-                      <a
-                        href={`https://github.com/${COMMUNITY_REPO}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="content-gap-help"
-                      >
-                        {t("content.gaps.help", "Can you help?")}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })()}
+          <ContentGapsSection
+            downloadedSets={downloadedSets}
+            lang={lang}
+            repo={COMMUNITY_REPO}
+          />
 
           <h2 className="content-section-title">
             {t("content.my_lessons.downloaded_title", "Downloaded sets")}
