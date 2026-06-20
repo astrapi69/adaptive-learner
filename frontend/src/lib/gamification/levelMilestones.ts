@@ -9,7 +9,7 @@
  * by 100. Pure + deterministic.
  */
 
-import { levelThreshold } from "../../storage/gamification";
+import { levelThreshold } from "../../storage/gamification/gamification";
 
 /** One step on the level ladder, with whether the learner has reached it. */
 export interface LevelMilestone {

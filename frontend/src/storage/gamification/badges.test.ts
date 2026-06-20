@@ -13,7 +13,7 @@ import {
     evaluateBadgesForUser,
     listBadgesWithProgress,
 } from "./badges";
-import {_resetDbForTests, getDb, nowIso} from "./dexie/db";
+import {_resetDbForTests, getDb, nowIso} from "../dexie/db";
 
 beforeEach(async () => {
     await _resetDbForTests();

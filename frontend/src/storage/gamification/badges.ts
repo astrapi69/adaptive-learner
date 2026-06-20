@@ -8,16 +8,16 @@
  * runtime YAML dependency in the browser bundle.
  */
 
-import {getDb, newId, nowIso} from "./dexie/db";
-import type {BadgeRow, UserBadgeRow} from "./dexie/db";
+import {getDb, newId, nowIso} from "../dexie/db";
+import type {BadgeRow, UserBadgeRow} from "../dexie/db";
 import {computeLevel, persistXP} from "./gamification";
 import type {
     BadgeEvaluationResult,
     BadgeTierUpgrade,
     BadgeWithProgress,
-} from "./types";
+} from "../types";
 
-import {BUNDLED_BADGES} from "./dexie/badges-data";
+import {BUNDLED_BADGES} from "../dexie/badges-data";
 
 // Re-exported so existing ``import {BUNDLED_BADGES} from "./badges"``
 // sites keep working; the data now lives in badges-data.ts (no
@@ -235,7 +235,7 @@ async function lastNLessonsAllThreeStar(
         return bc.localeCompare(ac);
     });
     const top = rows.slice(0, n);
-    const {computeStars} = await import("../lib/gamification/lesson-xp");
+    const {computeStars} = await import("../../lib/gamification/lesson-xp");
     return top.every(
         (row) => computeStars(row.score_correct, row.score_total) === 3,
     );

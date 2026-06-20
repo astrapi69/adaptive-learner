@@ -21,11 +21,11 @@
  * Level 1 starts at 0 XP; level 2 at 100; level 3 at 300; ...
  */
 
-import type {LearningMethod} from "../lib/constants";
+import type {LearningMethod} from "../../lib/constants";
 
-import {getDb, newId, nowIso} from "./dexie/db";
-import type {UserXPRow} from "./dexie/db";
-import type {XPAwardResult, XPState} from "./types";
+import {getDb, newId, nowIso} from "../dexie/db";
+import type {UserXPRow} from "../dexie/db";
+import type {XPAwardResult, XPState} from "../types";
 
 // ---- Pure helpers ---------------------------------------------------------
 

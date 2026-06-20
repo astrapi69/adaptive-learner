@@ -10,14 +10,14 @@
  */
 
 import { evaluateBadgesForUser, listBadgesWithProgress } from "./badges";
-import { getDb } from "./dexie/db";
+import { getDb } from "../dexie/db";
 import { awardXPFlat, getXPState, spendXP } from "./gamification";
 import {
   calendarHeatmap,
   getStreakState,
   setWeekendMode as setWeekendModeStorage,
 } from "./streaks";
-import type { IStorageService } from "./types";
+import type { IStorageService } from "../types";
 
 export const dexieGamification: IStorageService["gamification"] = {
   getState: (userId) => getXPState(userId),

@@ -22,10 +22,10 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb} from "./dexie/db";
-import {dexieStorage} from "./dexie-storage";
+import {_resetDbForTests, getDb} from "../dexie/db";
+import {dexieStorage} from "../dexie-storage";
 import {awardLessonXpDexie} from "./lesson-xp-dexie";
-import type {LessonProgress} from "./types";
+import type {LessonProgress} from "../types";
 
 const USER = "user-1";
 const PROJECT = "project-1";

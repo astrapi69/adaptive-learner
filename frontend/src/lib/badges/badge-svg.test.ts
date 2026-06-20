@@ -4,7 +4,7 @@
 
 import {describe, expect, it} from "vitest";
 
-import {BUNDLED_BADGES} from "../../storage/badges";
+import {BUNDLED_BADGES} from "../../storage/gamification/badges";
 import {
     generateBadgeSvg,
     KEY_TO_SHAPE,

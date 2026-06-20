@@ -10,7 +10,7 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb} from "./dexie/db";
+import {_resetDbForTests, getDb} from "../dexie/db";
 import {
     awardXPFlat,
     awardXPForSession,

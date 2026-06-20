@@ -5,7 +5,7 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb, nowIso} from "./dexie/db";
+import {_resetDbForTests, getDb, nowIso} from "../dexie/db";
 import {
     calendarHeatmap,
     computeCurrentStreakWithState,

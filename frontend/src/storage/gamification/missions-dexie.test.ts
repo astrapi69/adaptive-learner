@@ -8,7 +8,7 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {_resetDbForTests, getDb, newId} from "./dexie/db";
+import {_resetDbForTests, getDb, newId} from "../dexie/db";
 import {
     getDailyMissionsDexie,
     regenerateDailyMissionsDexie,

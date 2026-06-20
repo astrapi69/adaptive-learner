@@ -31,11 +31,11 @@ import {
   markAnkiCardsExported,
   updateAnkiCard,
 } from "./anki";
-import { evaluateBadgesForUser } from "./badges";
+import { evaluateBadgesForUser } from "./gamification/badges";
 import {
   getDailyMissionsDexie,
   regenerateDailyMissionsDexie,
-} from "./missions-dexie";
+} from "./gamification/missions-dexie";
 import {
   getDb,
   nowIso,
@@ -85,7 +85,7 @@ import {
   listLessonProgressDexie,
   upsertLessonProgressDexie,
 } from "./lesson-progress-dexie";
-import { awardLessonXpDexie } from "./lesson-xp-dexie";
+import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
 import {
   computeReviewQueueDexie,
   listElementErrorsDexie,
@@ -94,7 +94,7 @@ import {
 import type {
   IStorageService,
 } from "./types";
-import { dexieGamification } from "./dexie-gamification";
+import { dexieGamification } from "./gamification/dexie-gamification";
 import { dexieCurricula, dexieLessons, dexieTopics } from "./dexie/dexie-curricula";
 import { dexieAssessment, dexieSession, dexieTools, dexieTracking } from "./dexie/dexie-session";
 import { dexieSettings } from "./dexie/dexie-settings";

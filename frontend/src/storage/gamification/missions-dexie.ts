@@ -11,18 +11,18 @@
  * persisting completion transitions.
  */
 
-import {computeStars} from "../lib/gamification/lesson-xp";
+import {computeStars} from "../../lib/gamification/lesson-xp";
 import {awardXPFlat} from "./gamification";
-import {assignDailyMissions} from "../lib/missions/generator";
-import {evaluateProgress} from "../lib/missions/progress";
+import {assignDailyMissions} from "../../lib/missions/generator";
+import {evaluateProgress} from "../../lib/missions/progress";
 import type {
     DailyMission,
     DifficultyMix,
     MissionProfile,
     MissionStats,
-} from "../lib/missions/types";
-import {getTemplate} from "../lib/missions/catalog";
-import {getDb, newId, nowIso, type UserMissionRow} from "./dexie/db";
+} from "../../lib/missions/types";
+import {getTemplate} from "../../lib/missions/catalog";
+import {getDb, newId, nowIso, type UserMissionRow} from "../dexie/db";
 
 export interface MissionDailyOptions {
     count?: number;

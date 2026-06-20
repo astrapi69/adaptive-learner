@@ -16,7 +16,7 @@ import {join} from "node:path";
 
 import {describe, expect, it} from "vitest";
 
-import {BUNDLED_BADGES} from "./dexie/badges-data";
+import {BUNDLED_BADGES} from "../dexie/badges-data";
 
 interface GoldenEntry {
     key: string;
@@ -31,9 +31,10 @@ interface GoldenEntry {
     > | null;
 }
 
-// __dirname = frontend/src/storage -> repo root is 3 up.
+// __dirname = frontend/src/storage/gamification -> repo root is 4 up.
 const GOLDEN_PATH = join(
     __dirname,
+    "..",
     "..",
     "..",
     "..",

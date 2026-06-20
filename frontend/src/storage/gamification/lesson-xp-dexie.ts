@@ -28,16 +28,16 @@
  * cross-language parity contract.
  */
 
-import {isFirstAttempt} from "../lib/gamification/first-attempt";
+import {isFirstAttempt} from "../../lib/gamification/first-attempt";
 import {
     calculateLessonSessionXp,
     computeStars,
-} from "../lib/gamification/lesson-xp";
-import type {XPAward} from "../lib/gamification/lesson-xp";
-import {currentStreakDays} from "../lib/gamification/streak";
-import {nowIso} from "./dexie/db";
+} from "../../lib/gamification/lesson-xp";
+import type {XPAward} from "../../lib/gamification/lesson-xp";
+import {currentStreakDays} from "../../lib/gamification/streak";
+import {nowIso} from "../dexie/db";
 import {persistXP, userActivityDates} from "./gamification";
-import type {LessonProgress, XPAwardResult} from "./types";
+import type {LessonProgress, XPAwardResult} from "../types";
 
 /**
  * Award lesson-XP for a just-completed LessonProgress row.
