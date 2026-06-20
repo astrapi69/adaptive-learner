@@ -93,6 +93,58 @@ export function buildPrompt(
     return `${cell}\n\n${context}`;
 }
 
+// --- Output-language directive (#827) ------------------------------------
+//
+// The prompt-cell matrix above only carries DE + EN, so for every other UI
+// language the AI receives an English prompt and would otherwise reply in
+// English. Maps the 11 UI language codes to (English name, endonym). Dexie
+// mirror of the backend ``LANGUAGE_NAMES`` / ``build_language_directive`` —
+// kept byte-identical.
+
+const LANGUAGE_NAMES: Record<string, [string, string]> = {
+    de: ["German", "Deutsch"],
+    el: ["Greek", "Ελληνικά"],
+    en: ["English", "English"],
+    es: ["Spanish", "Español"],
+    fr: ["French", "Français"],
+    hi: ["Hindi", "हिन्दी"],
+    id: ["Indonesian", "Bahasa Indonesia"],
+    ja: ["Japanese", "日本語"],
+    ko: ["Korean", "한국어"],
+    pt: ["Portuguese", "Português"],
+    tr: ["Turkish", "Türkçe"],
+};
+
+/** Bare language subtag: "de-DE" / "pt_BR" -> "de" / "pt". */
+function baseLang(lang: string): string {
+    if (!lang) return "en";
+    return lang.toLowerCase().replace(/_/g, "-").split("-", 1)[0];
+}
+
+/**
+ * An explicit "reply in <language>" instruction for the session prompt.
+ * The 42-cell matrix only has DE + EN, so a learner on any of the other nine
+ * UI languages would otherwise get English replies. Names the learner's
+ * language so the AI answers in it regardless of the language the
+ * instructions are written in. Falls back to English for an unknown code.
+ * Byte-identical to the backend ``build_language_directive`` (#827).
+ *
+ * @param lang - The learner's UI language code (e.g. "ko", "pt-BR").
+ * @returns A one-line directive, always non-empty.
+ *
+ * @example
+ * buildLanguageDirective("ko");
+ * // "IMPORTANT: Always write your replies to the learner in Korean (한국어), …"
+ */
+export function buildLanguageDirective(lang: string): string {
+    const [english, endonym] = LANGUAGE_NAMES[baseLang(lang)] ?? LANGUAGE_NAMES.en;
+    const named = english === endonym ? english : `${english} (${endonym})`;
+    return (
+        `IMPORTANT: Always write your replies to the learner in ${named}, ` +
+        "regardless of the language of these instructions."
+    );
+}
+
 function cleanList(value: unknown): string[] {
     if (!Array.isArray(value)) return [];
     return value.map((item) => String(item).trim()).filter((s) => s.length > 0);

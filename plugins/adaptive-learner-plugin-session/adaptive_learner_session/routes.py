@@ -78,7 +78,7 @@ from app.services.ai_caller import build_ai_caller
 
 from . import pronunciation as _pronunciation
 from . import streaming
-from .prompts import build_prompt
+from .prompts import build_language_directive, build_prompt
 from .route_helpers import (
     _analysis_context_for,
     _fire_on_session_complete,
@@ -183,6 +183,11 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
         )
     except ValueError as exc:
         raise ValidationError(str(exc)) from exc
+
+    # #827 — the prompt-cell matrix only carries DE + EN, so for every other
+    # UI language the AI would otherwise reply in English. Append an explicit
+    # output-language directive naming the learner's language.
+    prompt = f"{prompt}\n\n{build_language_directive(payload.lang)}"
 
     # When the session is started from an analysed chat import, fold the
     # analysis (topic / summary / level / strengths / weaknesses / error
