@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-tools"
-version = "1.90.0"
+version = "1.91.0"
 description = "Adaptive Learner: static external-tool recommendations tailored to the learner's profile."
 authors = ["Asterios Raptis"]
 license = "MIT"
