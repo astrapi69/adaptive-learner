@@ -268,9 +268,9 @@ export const dexieStorage: IStorageService = {
     createQuestion: (userId, body) => createStudyQuestion(userId, body),
     updateQuestion: (questionId, body) => updateStudyQuestion(questionId, body),
     deleteQuestion: (questionId) => deleteStudyQuestion(questionId),
-    generateFromSession: () => generateFromSessionDexie(),
-    generateFromProject: () => generateFromProjectDexie(),
-    studyGuide: () => studyGuideDexie(),
+    generateFromSession: (sessionId) => generateFromSessionDexie(sessionId),
+    generateFromProject: (projectId) => generateFromProjectDexie(projectId),
+    studyGuide: (projectId) => studyGuideDexie(projectId),
   },
 
   pronunciation: {
