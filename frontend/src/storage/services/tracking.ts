@@ -7,19 +7,19 @@
  * work end-to-end without the backend.
  */
 
-import {LEARNING_METHODS, type LearningMethod} from "../lib/constants";
+import {LEARNING_METHODS, type LearningMethod} from "../../lib/constants";
 import type {
     LearningSessionRow,
     ProgressCommitRow,
     SessionRatingRow,
-} from "./dexie/db";
-import {newId} from "./dexie/db";
+} from "../dexie/db";
+import {newId} from "../dexie/db";
 import type {
     MethodDistributionEntry,
     ProgressCommit,
     RecentSessionEntry,
     TrackingSummary,
-} from "../types/domain";
+} from "../../types/domain";
 
 const TREND_WINDOW = 5;
 const RATING_SCALE = 5;

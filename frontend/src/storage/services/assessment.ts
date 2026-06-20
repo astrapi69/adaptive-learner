@@ -23,10 +23,10 @@
  * profiles.
  */
 
-import type {AssessmentAnswer, AssessmentQuestion} from "../types/domain";
-import type {LearningMethod} from "../lib/constants";
-import {LEARNING_METHODS} from "../lib/constants";
-import QUESTIONS_RAW from "../data/assessment-questions.json";
+import type {AssessmentAnswer, AssessmentQuestion} from "../../types/domain";
+import type {LearningMethod} from "../../lib/constants";
+import {LEARNING_METHODS} from "../../lib/constants";
+import QUESTIONS_RAW from "../../data/assessment-questions.json";
 
 interface QuestionRaw {
     id: string;

@@ -4,8 +4,8 @@
  * ``adaptive_learner_tools.spaced_recommendations``.
  */
 
-import {LEARNING_METHODS, type LearningMethod} from "../lib/constants";
-import type {SpacedRecommendation, ToolRecommendation} from "../types/domain";
+import {LEARNING_METHODS, type LearningMethod} from "../../lib/constants";
+import type {SpacedRecommendation, ToolRecommendation} from "../../types/domain";
 
 interface Tool {
     name: string;

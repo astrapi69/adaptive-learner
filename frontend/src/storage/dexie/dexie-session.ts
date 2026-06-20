@@ -7,10 +7,10 @@
 
 import { getDb, newId, nowIso } from "./db";
 import { requireRow, rowToProfile } from "./dexie-rows";
-import { calculateProfile, questionsForLang } from "../assessment";
+import { calculateProfile, questionsForLang } from "../services/assessment";
 import { sendMessage, sendMessageStream, startSession } from "../ai/session-flow";
-import { aggregateProgress, buildCommitFromSession, rowToCommit } from "../tracking";
-import { buildSpacedRecommendations, rankTools, recencyFromCommits } from "../tools";
+import { aggregateProgress, buildCommitFromSession, rowToCommit } from "../services/tracking";
+import { buildSpacedRecommendations, rankTools, recencyFromCommits } from "../services/tools";
 import { awardXPForSession } from "../gamification/gamification";
 import { evaluateBadgesForUser } from "../gamification/badges";
 import { updateStreakState } from "../gamification/streaks";
