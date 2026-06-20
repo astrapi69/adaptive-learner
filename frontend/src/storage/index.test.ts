@@ -6,11 +6,12 @@
  * test hook.
  */
 
-import {afterEach, beforeEach, describe, expect, it} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {
     _resetStorageCacheForTests,
     getStorage,
+    isDexieOnlyBuild,
     resolveStorageMode,
     setPersistedStorageMode,
 } from "./index";
@@ -45,6 +46,23 @@ describe("resolveStorageMode", () => {
     it("ignores junk localStorage values", () => {
         localStorage.setItem(STORAGE_KEY, "magic");
         expect(resolveStorageMode()).toBe("api");
+    });
+
+    it("forces 'dexie' on a dexie-only build, ignoring a stale persisted 'api' (#907)", () => {
+        vi.stubEnv("VITE_STORAGE_MODE", "dexie");
+        try {
+            // The installed-PWA failure mode: localStorage carries "api" from a
+            // past Settings toggle, but the GH Pages build has no backend.
+            setPersistedStorageMode("api");
+            expect(resolveStorageMode()).toBe("dexie");
+            expect(isDexieOnlyBuild()).toBe(true);
+        } finally {
+            vi.unstubAllEnvs();
+        }
+    });
+
+    it("is not a dexie-only build when VITE_STORAGE_MODE is unset", () => {
+        expect(isDexieOnlyBuild()).toBe(false);
     });
 });
 

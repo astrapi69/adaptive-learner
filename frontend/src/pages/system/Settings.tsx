@@ -58,6 +58,7 @@ import { Input } from "@/components/ui/input";
 import {
   getStorage,
   getStorageRowCounts,
+  isDexieOnlyBuild,
   resolveStorageMode,
   setPersistedStorageMode,
   type StorageMode,
@@ -556,7 +557,10 @@ export default function Settings() {
       <section
         className="settings-section"
         data-testid="settings-storage-mode"
-        hidden={activeTab !== "general"}
+        // Hidden on a Dexie-only build (GH Pages / installed PWA): there is no
+        // backend, so the Server option does not exist and the mode is forced
+        // to Dexie (#907).
+        hidden={activeTab !== "general" || isDexieOnlyBuild()}
       >
         <h2 className="settings-section-title">
           {t("settings.section_storage_mode", "Storage mode")}
