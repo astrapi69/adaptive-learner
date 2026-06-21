@@ -26,7 +26,7 @@ import { useState } from "react";
 import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import ApiKeyRequiredNotice from "../ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "../settings/ai/ApiKeyRequiredNotice";
 import RegenerateFeedbackDialog, {
   feedbackForReason,
   type RegenerateFeedback,
@@ -38,7 +38,7 @@ import {
 import { cardsToExercises } from "../../lib/ai/cards-to-exercises";
 import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
 import type { ResolvedAiProvider } from "../../lib/ai/resolve-provider";
-import { LANGUAGE_OPTIONS } from "../../lib/content/language-options";
+import { LANGUAGE_OPTIONS } from "../../lib/content/language/language-options";
 import type { ContentLessonExercise } from "../../storage/types";
 import { notify } from "../../utils/notify";
 

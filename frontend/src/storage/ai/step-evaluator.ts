@@ -14,7 +14,7 @@
 
 import {aiComplete, resolveModel, type ChatMessage} from "./ai-providers";
 import type {AIProvider, LearningMethod} from "../../lib/constants";
-import {extractJsonObject} from "../../lib/extract-json";
+import {extractJsonObject} from "../../lib/utils/extract-json";
 
 const MIN_STEP = 1;
 const MAX_STEP = 7;

@@ -16,7 +16,7 @@ import {
   readUserRepos,
   syncUserRepo,
   userRepoSource,
-} from "../../lib/content/content-repos";
+} from "../../lib/content/repos/content-repos";
 
 export function useContentRepoAutoSync(): void {
   useEffect(() => {

@@ -44,11 +44,11 @@ import {
     type ShortcutDefinition,
 } from "../../shared/hooks/useKeyboardShortcuts";
 import {cn} from "@/lib/utils";
-import ReadAloudButton from "../lesson/ReadAloudButton";
+import ReadAloudButton from "../lesson/tts/ReadAloudButton";
 import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import ExerciseHint from "./ExerciseHint";
-import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
-import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
+import {generatePlaceholderSvg} from "../../lib/content/media/placeholder-svg";
+import {derivePictureChoiceAttempt} from "../../lib/srs/element-attempt";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DirectionInstruction from "./DirectionInstruction";

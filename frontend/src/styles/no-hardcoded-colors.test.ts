@@ -42,12 +42,12 @@ const ALLOWLIST: Record<string, string> = {
     // a real color; this is only the initial value).
     "components/TagManager.tsx": "user-tag default color (data)",
     "components/ProjectTaxonomy.tsx": "user-tag default color (data)",
-    "components/DashboardFilterBar.tsx": "user-tag default color (data)",
+    "components/dashboard/DashboardFilterBar.tsx": "user-tag default color (data)",
     // Computed contrast over the FIXED brand method palette — the
     // dot-inset overlay is chosen against METHOD_COLORS by bestTextOn
     // and is theme-independent by construction.
-    "components/MethodBadge.tsx": "computed contrast over brand palette",
-    "components/QuickStartButton.tsx": "computed contrast over brand palette",
+    "components/session/MethodBadge.tsx": "computed contrast over brand palette",
+    "components/dashboard/QuickStartButton.tsx": "computed contrast over brand palette",
     // On-brand translucent chip over a colored donation banner.
     "components/about/DonationSection.tsx": "translucent chip on brand banner",
 };

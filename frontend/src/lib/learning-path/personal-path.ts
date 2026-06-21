@@ -21,8 +21,8 @@
  * lessonKey helpers so the redesign and the graph view agree.
  */
 
-import {computeStars, type StarRating} from "../lesson-summary";
-import {compareByDownloadPriority} from "../content/download-priority";
+import {computeStars, type StarRating} from "../lesson/lesson-summary";
+import {compareByDownloadPriority} from "../content/browse/download-priority";
 import {
     elementSrsDetails,
     srsLessonSummary,

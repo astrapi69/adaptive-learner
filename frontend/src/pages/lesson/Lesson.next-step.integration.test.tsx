@@ -50,7 +50,7 @@ vi.mock("../../storage", () => ({
 }));
 
 import LessonPage from "./Lesson";
-import {setUserId, clearLearnerState} from "../../lib/learnerState";
+import {setUserId, clearLearnerState} from "../../lib/learning/learnerState";
 import type {ElementError, ReviewQueueItem} from "../../storage/types";
 
 const SET_ID = "language-fr-a1";

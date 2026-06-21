@@ -16,8 +16,8 @@ import { useMemo, useState } from "react";
 import {
   generateLessonFromAnalysis,
   summarizeGeneratedLesson,
-} from "../../lib/content/analysis-to-lesson";
-import { analysisLessonLabels } from "../../lib/content/analysis-lesson-labels";
+} from "../../lib/content/analysis/analysis-to-lesson";
+import { analysisLessonLabels } from "../../lib/content/analysis/analysis-lesson-labels";
 import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
 import type { ContentLessonExercise } from "../../storage/types";
 import type { ConversationAnalysisResult } from "../../types/domain";

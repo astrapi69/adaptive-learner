@@ -23,8 +23,8 @@ import {
   syncPhaseI18n,
   userRepoSource,
   type SyncProgress,
-} from "../../lib/content/content-repos";
-import { validateUserRepo } from "../../lib/content/content-repo-validate";
+} from "../../lib/content/repos/content-repos";
+import { validateUserRepo } from "../../lib/content/repos/content-repo-validate";
 import { notify } from "../../utils/notify";
 
 export default function AddRepo() {

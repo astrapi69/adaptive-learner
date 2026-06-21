@@ -34,10 +34,9 @@ import {forwardRef, useEffect, useRef, useState} from "react";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import ReadAloudButton from "../lesson/ReadAloudButton";
-import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
+import ExercisePromptRow from "./ExercisePromptRow";
 import ExerciseHint from "./ExerciseHint";
-import {deriveFreeTextAttempt} from "../../lib/element-attempt";
+import {deriveFreeTextAttempt} from "../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -492,21 +491,12 @@ function FreeTextExercise(
             className="flex flex-col gap-3"
             data-testid="free-text-exercise"
         >
-            <div className="exercise-prompt-row">
-                <p
-                    className="m-0 font-medium"
-                    data-testid="free-text-prompt"
-                >
-                    <InlineMarkdown>{exercise.prompt ?? ""}</InlineMarkdown>
-                </p>
-                {ttsLang && !codeMode && (
-                    <ReadAloudButton
-                        text={exercise.prompt ?? ""}
-                        lang={ttsLang}
-                        testId="free-text-prompt"
-                    />
-                )}
-            </div>
+            <ExercisePromptRow
+                prompt={exercise.prompt ?? ""}
+                ttsLang={ttsLang}
+                codeMode={codeMode}
+                testId="free-text-prompt"
+            />
 
             <ExerciseHint
                 exercise={exercise}

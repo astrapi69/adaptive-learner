@@ -10,7 +10,7 @@
 import type { EntityTable } from "dexie";
 
 import { ApiError } from "../../api/client";
-import { maskSecret } from "../../lib/maskSecret";
+import { maskSecret } from "../../lib/providers/maskSecret";
 import {
   newId,
   nowIso,

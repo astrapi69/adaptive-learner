@@ -16,7 +16,7 @@ import OnboardingWizard, {
     type WizardValues,
 } from "../../components/onboarding/OnboardingWizard";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/firstRunRestore";
+import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/backup/firstRunRestore";
 import {readBackupFile} from "../../lib/backup/validateBackupFile";
 import {applyLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
 import {
@@ -24,9 +24,9 @@ import {
     setLanguage,
     setProjectId,
     setUserId,
-} from "../../lib/learnerState";
-import {translateSubjectPath} from "../../lib/subjectI18n";
-import {suggestSubjects, type SubjectSuggestion} from "../../lib/subjectSuggest";
+} from "../../lib/learning/learnerState";
+import {translateSubjectPath} from "../../lib/i18n/subjectI18n";
+import {suggestSubjects, type SubjectSuggestion} from "../../lib/learning/subjectSuggest";
 import {getStorage} from "../../storage";
 import type {LearningProject, Subject} from "../../types/domain";
 import {notify} from "../../utils/notify";

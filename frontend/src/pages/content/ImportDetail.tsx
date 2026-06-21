@@ -26,8 +26,8 @@ import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
-import SaveOfflineLessonModal from "../../components/content/SaveOfflineLessonModal";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
+import SaveOfflineLessonModal from "../../components/content/lessons/SaveOfflineLessonModal";
 import ImportActionBar from "../../components/import/ImportActionBar";
 import ImportGenerateExercisesButton from "../../components/import/ImportGenerateExercisesButton";
 import GeneratedExercisesPreview from "../../components/import/GeneratedExercisesPreview";
@@ -38,16 +38,16 @@ import ImportTranscript from "../../components/import/ImportTranscript";
 import {
   ANALYSIS_PHASES,
   ANALYSIS_PHASE_INTERVAL_MS,
-} from "../../lib/content/analysis-phases";
+} from "../../lib/content/analysis/analysis-phases";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";
-import { importHeadingTitle } from "../../lib/content/import-title";
-import { detectLearningLanguage } from "../../lib/content/detect-chat-language";
+import { importHeadingTitle } from "../../lib/content/lesson/import-title";
+import { detectLearningLanguage } from "../../lib/content/language/detect-chat-language";
 import {
   resolveActiveAiProvider,
   type ResolvedAiProvider,

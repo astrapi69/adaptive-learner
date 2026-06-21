@@ -79,7 +79,7 @@ export const sessionApi = {
         signal?: AbortSignal;
       },
     ) =>
-      import("../lib/sse-reader").then(({ streamSse }) =>
+      import("../lib/utils/sse-reader").then(({ streamSse }) =>
         streamSse({
           url: `${API_BASE}/plugins/session/${encodeURIComponent(sessionId)}/message/stream`,
           body,

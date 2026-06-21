@@ -14,7 +14,7 @@ const useHookMock = vi.fn();
 vi.mock("../../hooks/learning/usePersonalPath", () => ({
     usePersonalPath: () => useHookMock(),
 }));
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "u1"}),
 }));
 vi.mock("../../components/learning-path/LessonRow", () => ({

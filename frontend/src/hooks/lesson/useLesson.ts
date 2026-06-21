@@ -28,7 +28,7 @@
 
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {ApiError} from "../../api/client";
 import {getStorage} from "../../storage";
 import type {

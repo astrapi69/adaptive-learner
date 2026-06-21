@@ -28,7 +28,7 @@ import {useFeature} from "@astrapi69/feature-strategy-react";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {FEATURES} from "../../features/featureConfig";
 import {usePersonalPath} from "../../hooks/learning/usePersonalPath";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import SetRow from "../../components/learning-path/SetRow";
 import SetDetail from "../../components/learning-path/SetDetail";
 import NotDownloadedSection from "../../components/learning-path/NotDownloadedSection";

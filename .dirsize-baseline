@@ -4,9 +4,4 @@
 # `check-folder-size.sh`). This file IS the folder-size whitelist; every
 # entry below is a known god-folder with a follow-up issue tracking its split.
 # Format: path  # reason / tracking issue
-frontend/src/components          # 84 files — broad UI component pile, split tracked
-frontend/src/components/content  # 24 files — content-browser components, split tracked
-frontend/src/components/lesson   # 19 files — lesson-viewer components, split tracked
-frontend/src/lib                 # 29 files — mixed pure-logic helpers, split tracked
-frontend/src/lib/content         # 48 files — content pipeline (validate/import/analysis), split tracked
-frontend/src/storage/types       # 18 files — IStorageService type slices, split tracked
+frontend/src/lib/ai              # 16 files — AI generation/validation helpers, split tracked (#917)

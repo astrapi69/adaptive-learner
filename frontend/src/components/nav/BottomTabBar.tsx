@@ -32,7 +32,7 @@ import {
 
 import NavGroup from "./NavGroup";
 import { useHelp } from "../../contexts/HelpContext";
-import { helpKeyForPath } from "../../lib/help-routes";
+import { helpKeyForPath } from "../../lib/help/help-routes";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useIsLessonActive } from "../../hooks/lesson/useIsLessonActive";
 

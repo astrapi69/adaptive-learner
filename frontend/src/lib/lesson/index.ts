@@ -1,0 +1,16 @@
+export { collectFailedExercises, failedExerciseCount } from "./error-replay";
+export { LESSON_STEP_ANCHOR_PREFIX, findStepById, parseStepAnchor, rewriteAnchors } from "./lesson-anchors";
+export { isPlayableExerciseStep, storedStepResult } from "./lesson-step-state";
+export { buildExerciseBreakdown, computeStars, deriveCanonicalAnswer } from "./lesson-summary";
+export type { ExerciseBreakdownEntry, StarRating } from "./lesson-summary";
+export { DEFAULT_LESSON_SHORTCUTS_ENABLED, LESSON_SHORTCUTS_CHANGE_EVENT, decideLessonEnterAction, readLessonShortcutsEnabled, setLessonShortcutsEnabled } from "./lessonShortcutsPref";
+export type { LessonEnterAction, LessonEnterState } from "./lessonShortcutsPref";
+export { lessonMotivation } from "./motivation";
+export type { MotivationKind } from "./motivation";
+export { buildLessonJsonExport, buildLessonMarkdownExport, downloadBlob } from "./result-download";
+export type { LessonExportInputs } from "./result-download";
+export { buildLessonResultJson, buildLessonResultMarkdown, collectWeakAreas, formatUserAnswer, lessonResultFilename } from "./result-export";
+export type { LessonResultJson, LessonResultJsonExercise, LessonResultLabels, WeakArea } from "./result-export";
+export { findPrecedingTheoryIndex, findRelatedTheoryIndex, findTheoryIndexByRef } from "./theory-link";
+export { collectTheoryRun, markdownToSpeech, runStepForChar, theoryBlockAround } from "./tts-text";
+export type { TheoryBlock, TheoryRun, TheoryRunStep } from "./tts-text";

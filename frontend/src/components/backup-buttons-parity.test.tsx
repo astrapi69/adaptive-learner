@@ -18,9 +18,9 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
-import BackupSection from "./BackupSection";
-import DangerZoneSection from "./DangerZoneSection";
-import {setUserId} from "../lib/learnerState";
+import BackupSection from "./settings/backup/BackupSection";
+import DangerZoneSection from "./settings/data/DangerZoneSection";
+import {setUserId} from "../lib/learning/learnerState";
 import type {BackupPayload} from "../types/domain";
 
 vi.mock("react-router-dom", async () => {

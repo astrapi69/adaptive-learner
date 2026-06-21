@@ -20,14 +20,14 @@ import { useNavigate } from "react-router-dom";
 
 import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import { FEATURES } from "../../features/featureConfig";
 import { useFeatureAvailable } from "../../features/useFeatureAvailable";
 import HelpLink from "../../components/help/HelpLink";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useConfirm } from "../../contexts/ConfirmContext";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";

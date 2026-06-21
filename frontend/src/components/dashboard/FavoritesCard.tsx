@@ -15,7 +15,7 @@ import FavoritesList from "../../shared/media/FavoritesList";
 import {useFavorites} from "../../hooks/learning/useFavorites";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {favoriteId} from "../../lib/favorites/favorites";
-import {lessonRoute} from "../../lib/content/continue-learning";
+import {lessonRoute} from "../../lib/content/browse/continue-learning";
 
 export interface FavoritesCardProps {
     userId: string;

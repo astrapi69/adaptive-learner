@@ -36,7 +36,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import type {
     ExerciseGenConfig,
     GeneratableType,
-} from "../../lib/content/exercise-generator";
+} from "../../lib/content/lesson/exercise-generator";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export const MIN_EXERCISES = 5;

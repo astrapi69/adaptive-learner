@@ -42,7 +42,7 @@ import {
 } from "react";
 import { useNavigate, useParams, type NavigateFunction } from "react-router-dom";
 
-import SaveAdaptiveLessonButton from "../../components/content/SaveAdaptiveLessonButton";
+import SaveAdaptiveLessonButton from "../../components/content/lessons/SaveAdaptiveLessonButton";
 import {
   ExerciseDispatcher,
   SUPPORTED_EXERCISE_TYPES,

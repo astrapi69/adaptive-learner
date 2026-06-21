@@ -18,7 +18,7 @@ import {
   downloadLessonJson,
   triggerDownload,
   type ExportSetMeta,
-} from "../../lib/content/lesson-export";
+} from "../../lib/content/lesson/lesson-export";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 import { useI18n } from "../ui/useI18n";
@@ -30,7 +30,7 @@ interface UseContentSetActionsDeps {
   setSets: React.Dispatch<React.SetStateAction<ContentSetEntry[]>>;
   /** Per-set download status, owned by the data hook. */
   setPerSetState: React.Dispatch<
-    React.SetStateAction<Record<string, import("../../components/content/ContentSetRow").DownloadState>>
+    React.SetStateAction<Record<string, import("../../components/content/browser/ContentSetRow").DownloadState>>
   >;
 }
 

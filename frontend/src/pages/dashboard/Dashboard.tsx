@@ -2,16 +2,16 @@ import { Map as MapIcon, Mic, Pencil } from "lucide-react";
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
-import DashboardFilterBar from "../../components/DashboardFilterBar";
-import QuickStartButton from "../../components/QuickStartButton";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
+import DashboardFilterBar from "../../components/dashboard/DashboardFilterBar";
+import QuickStartButton from "../../components/dashboard/QuickStartButton";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useHasIncompleteAssessment } from "../../hooks/learning/useAssessmentProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { BadgeWithProgress, HeatmapEntryOut, StreakStateOut, XPState } from "../../storage/types";
 import type {

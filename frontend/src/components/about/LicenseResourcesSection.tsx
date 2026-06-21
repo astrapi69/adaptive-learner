@@ -8,7 +8,7 @@
  */
 
 import type {SystemInfo} from "../../types/domain";
-import {docsHomeUrl} from "../../lib/help-routes";
+import {docsHomeUrl} from "../../lib/help/help-routes";
 
 interface Props {
     info: SystemInfo;

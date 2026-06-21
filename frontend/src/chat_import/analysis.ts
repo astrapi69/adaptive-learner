@@ -22,7 +22,7 @@
 
 import {aiComplete, resolveModel} from "../storage/ai/ai-providers";
 import type {AIProvider, LearningMethod} from "../lib/constants";
-import {extractJsonObject} from "../lib/extract-json";
+import {extractJsonObject} from "../lib/utils/extract-json";
 import type {
     AnalysisSuggestedLesson,
     ConversationAnalysisResult,

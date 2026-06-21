@@ -12,7 +12,7 @@ import {fileURLToPath} from "node:url";
 import {dirname, resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
-import {THEME_IDS} from "../../lib/themes";
+import {THEME_IDS} from "../../lib/theme/themes";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 

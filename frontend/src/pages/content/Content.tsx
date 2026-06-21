@@ -27,17 +27,17 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import ContinueLearning from "../../components/ContinueLearning";
-import ImportLessonModal from "../../components/content/ImportLessonModal";
-import MyLessonsSection from "../../components/content/MyLessonsSection";
-import ContentTree from "../../components/content/ContentTree";
-import ContentShareDialog from "../../components/content/ContentShareDialog";
-import ContentBookCompanions from "../../components/content/ContentBookCompanions";
-import ContentContributionsSection from "../../components/content/ContentContributionsSection";
-import ContentToolbar from "../../components/content/ContentToolbar";
-import ContentSearchResults from "../../components/content/ContentSearchResults";
-import ContentGapsSection from "../../components/content/ContentGapsSection";
-import DeleteLessonModal from "../../components/content/DeleteLessonModal";
+import ContinueLearning from "../../components/dashboard/ContinueLearning";
+import ImportLessonModal from "../../components/content/lessons/ImportLessonModal";
+import MyLessonsSection from "../../components/content/lessons/MyLessonsSection";
+import ContentTree from "../../components/content/browser/ContentTree";
+import ContentShareDialog from "../../components/content/share/ContentShareDialog";
+import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
+import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
+import ContentToolbar from "../../components/content/browser/ContentToolbar";
+import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
+import ContentGapsSection from "../../components/content/contributions/ContentGapsSection";
+import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
@@ -48,21 +48,21 @@ import { useSourceLanguages } from "../../hooks/settings/useSourceLanguages";
 import {
   buildContentTree,
   type FoldedUserLesson,
-} from "../../lib/content/content-tree";
-import { computeUserFold } from "../../lib/content/user-fold";
-import { resolveAiCheckDisabledReason } from "../../lib/content/ai-check-gate";
+} from "../../lib/content/browse/content-tree";
+import { computeUserFold } from "../../lib/content/browse/user-fold";
+import { resolveAiCheckDisabledReason } from "../../lib/content/validation/ai-check-gate";
 import {
   listContributions,
   recordContribution,
-} from "../../lib/content/contribution-history";
+} from "../../lib/content/placement/contribution-history";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { resolveStorageMode } from "../../storage";
-import AiValidationDialog from "../../components/content/AiValidationDialog";
-import QualityCheckDialog from "../../components/content/QualityCheckDialog";
+import AiValidationDialog from "../../components/content/quality/AiValidationDialog";
+import QualityCheckDialog from "../../components/content/quality/QualityCheckDialog";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
-import { isOfficialSource } from "../../lib/content/content-repos";
+import { isOfficialSource } from "../../lib/content/repos/content-repos";
 import type { ContentSetEntry } from "../../storage/types";
 
 /** Community contribution target repo (manual maintainer review). */

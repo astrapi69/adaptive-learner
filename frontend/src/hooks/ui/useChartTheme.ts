@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-import {readChartTheme, type ChartTheme} from "../../lib/chartTheme";
+import {readChartTheme, type ChartTheme} from "../../lib/theme/chartTheme";
 
 /**
  * Phase 58F — resolved chart colors that track the active theme.
