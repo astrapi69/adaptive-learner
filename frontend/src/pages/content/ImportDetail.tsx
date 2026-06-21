@@ -46,7 +46,7 @@ import { readLearnerState } from "../../lib/learnerState";
 import { getStorage } from "../../storage";
 import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";
-import { importHeadingTitle } from "../../lib/content/import-title";
+import { importHeadingTitle } from "../../lib/content/lesson/import-title";
 import { detectLearningLanguage } from "../../lib/content/detect-chat-language";
 import {
   resolveActiveAiProvider,

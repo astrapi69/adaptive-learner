@@ -26,8 +26,8 @@
 
 import { stringify as stringifyYaml } from "yaml";
 
-import type { ContentLesson } from "../../storage/types";
-import { slugify } from "./analysis/analysis-to-lesson";
+import type { ContentLesson } from "../../../storage/types";
+import { slugify } from "../analysis/analysis-to-lesson";
 
 /** Metadata describing a set to export (mirrors the saved set). */
 export interface ExportSetMeta {

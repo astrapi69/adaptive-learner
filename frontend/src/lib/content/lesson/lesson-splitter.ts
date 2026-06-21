@@ -24,7 +24,7 @@
  * under ``tests/fixtures/lesson-splitter-parity/``).
  */
 
-import type {ContentLesson, ContentLessonCard, ContentLessonStep} from "../../storage/types";
+import type {ContentLesson, ContentLessonCard, ContentLessonStep} from "../../../storage/types";
 
 /** Context handed to a {@link SplitOptions.partTitle} formatter. */
 export interface PartTitleContext {

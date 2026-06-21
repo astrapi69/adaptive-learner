@@ -39,7 +39,7 @@ import {
   downloadLessonJson,
   lessonJson,
   type CommunityPrDetails,
-} from "../../lib/content/lesson-export";
+} from "../../lib/content/lesson/lesson-export";
 import { lessonBranchName } from "../../lib/github/github-api";
 import {
   autoDetectTargetLanguage,

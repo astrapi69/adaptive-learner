@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { parse as parseYaml } from "yaml";
 
-import { generateLessonFromAnalysis } from "./analysis/analysis-to-lesson";
+import { generateLessonFromAnalysis } from "../analysis/analysis-to-lesson";
 import {
   buildContentSetZip,
   buildManifestYaml,
@@ -15,7 +15,7 @@ import {
   lessonJson,
   type CommunityPrDetails,
 } from "./lesson-export";
-import type { ConversationAnalysisResult } from "../../types/domain";
+import type { ConversationAnalysisResult } from "../../../types/domain";
 
 const ANALYSIS: ConversationAnalysisResult = {
   topic: "Spanish travel",

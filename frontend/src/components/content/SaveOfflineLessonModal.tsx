@@ -13,8 +13,8 @@ import {
   summarizeGeneratedLesson,
 } from "../../lib/content/analysis/analysis-to-lesson";
 import { analysisLessonLabels } from "../../lib/content/analysis/analysis-lesson-labels";
-import { appendExercisesToLesson } from "../../lib/content/append-exercises";
-import {splitLesson} from "../../lib/content/lesson-splitter";
+import { appendExercisesToLesson } from "../../lib/content/lesson/append-exercises";
+import {splitLesson} from "../../lib/content/lesson/lesson-splitter";
 import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language-options";
 import {readMaxLessonSize} from "../../lib/learning/maxLessonSizePref";
 import { getStorage } from "../../storage";

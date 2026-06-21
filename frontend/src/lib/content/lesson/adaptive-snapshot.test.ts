@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 
 import { snapshotAdaptiveLesson } from "./adaptive-snapshot";
-import { validateGeneratedLesson } from "./analysis/analysis-to-lesson";
-import type { ContentLesson } from "../../storage/types";
+import { validateGeneratedLesson } from "../analysis/analysis-to-lesson";
+import type { ContentLesson } from "../../../storage/types";
 
 // A live adaptive lesson shape (Phase 53C): non-slug ids + cards:[]
 // with exercises referencing source-set cards.

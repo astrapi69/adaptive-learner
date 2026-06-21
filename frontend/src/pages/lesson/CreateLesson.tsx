@@ -35,7 +35,7 @@ import {
     generateExercises,
     type ExerciseGenConfig,
     type GeneratorCard,
-} from "../../lib/content/exercise-generator";
+} from "../../lib/content/lesson/exercise-generator";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -45,19 +45,19 @@ import {
     type LessonCardDraft,
     type LessonDraft,
     type LessonMeta,
-} from "../../lib/content/lesson-draft";
+} from "../../lib/content/lesson/lesson-draft";
 import {
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
     type DraftValidationChecks,
-} from "../../lib/content/draft-to-lesson";
+} from "../../lib/content/lesson/draft-to-lesson";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import {
     applyTemplate,
     type LessonTemplateKey,
-} from "../../lib/content/lesson-templates";
+} from "../../lib/content/lesson/lesson-templates";
 import type {ContentLessonExercise, ContentSetEntry} from "../../storage/types";
 
 const TOTAL_STEPS = 4;

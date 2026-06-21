@@ -60,7 +60,7 @@ import {
   buildWordTiles,
   selectExercises,
   type GeneratorCard,
-} from "../exercise-generator";
+} from "../lesson/exercise-generator";
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 

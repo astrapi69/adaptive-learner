@@ -24,8 +24,8 @@
  * unaffected if the adaptive generator changes (it's stored verbatim).
  */
 
-import type { ContentLesson, ContentLessonStep } from "../../storage/types";
-import { slugify, validateGeneratedLesson } from "./analysis/analysis-to-lesson";
+import type { ContentLesson, ContentLessonStep } from "../../../storage/types";
+import { slugify, validateGeneratedLesson } from "../analysis/analysis-to-lesson";
 
 export function snapshotAdaptiveLesson(lesson: ContentLesson): ContentLesson {
   const id = slugify(lesson.id) || "adaptive-lesson";

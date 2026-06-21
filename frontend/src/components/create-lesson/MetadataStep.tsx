@@ -18,8 +18,8 @@ import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language-options"
 import {
     LESSON_TEMPLATE_KEYS,
     type LessonTemplateKey,
-} from "../../lib/content/lesson-templates";
-import type {LessonMeta} from "../../lib/content/lesson-draft";
+} from "../../lib/content/lesson/lesson-templates";
+import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 
 type Translate = (key: string, fallback?: string) => string;
 

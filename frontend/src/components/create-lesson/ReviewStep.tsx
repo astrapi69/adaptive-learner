@@ -11,8 +11,8 @@ import {Button} from "@/components/ui/button";
 import {
     allChecksPass,
     type DraftValidationChecks,
-} from "../../lib/content/draft-to-lesson";
-import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson-draft";
+} from "../../lib/content/lesson/draft-to-lesson";
+import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
