@@ -54,18 +54,24 @@ class LearningMethod(str, Enum):
 
 
 class SessionStatus(str, Enum):
+    """Lifecycle state of a learning session."""
+
     ACTIVE = "active"
     COMPLETED = "completed"
     ABANDONED = "abandoned"
 
 
 class MessageRole(str, Enum):
+    """Author role of a chat / session message."""
+
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"
 
 
 class AIProvider(str, Enum):
+    """The supported AI completion providers."""
+
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
@@ -75,6 +81,8 @@ class AIProvider(str, Enum):
 
 
 class UserCreate(BaseModel):
+    """Request body for creating a user."""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -94,12 +102,16 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    """Partial-update payload for a user (all fields optional)."""
+
     name: str | None = Field(default=None, min_length=1, max_length=200)
     email: EmailStr | None = None
     language: str | None = Field(default=None, max_length=10)
 
 
 class UserOut(BaseModel):
+    """API response shape for a user."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -380,6 +392,8 @@ class AvailableModelOut(BaseModel):
 
 
 class LearningProjectCreate(BaseModel):
+    """Request body for creating a learning project (carries ``user_id``)."""
+
     user_id: str
     topic: str = Field(min_length=1, max_length=500)
     goal: str = Field(min_length=1)
@@ -418,6 +432,8 @@ class LearningProjectCreateBody(BaseModel):
 
 
 class LearningProjectUpdate(BaseModel):
+    """Partial-update payload for a learning project (all fields optional)."""
+
     topic: str | None = Field(default=None, min_length=1, max_length=500)
     goal: str | None = Field(default=None, min_length=1)
     timeframe: str | None = Field(default=None, min_length=1, max_length=100)
@@ -427,6 +443,8 @@ class LearningProjectUpdate(BaseModel):
 
 
 class LearningProjectOut(BaseModel):
+    """API response shape for a learning project."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -451,6 +469,8 @@ class LearningProjectOut(BaseModel):
 
 
 class LearningProfileCreate(BaseModel):
+    """Request body for creating a learning profile (six method weights)."""
+
     user_id: str
     project_id: str
     deductive: float = Field(default=0.0, ge=0.0, le=1.0)
@@ -463,6 +483,8 @@ class LearningProfileCreate(BaseModel):
 
 
 class LearningProfileUpdate(BaseModel):
+    """Partial-update payload for a learning profile (all fields optional)."""
+
     deductive: float | None = Field(default=None, ge=0.0, le=1.0)
     inductive: float | None = Field(default=None, ge=0.0, le=1.0)
     error_based: float | None = Field(default=None, ge=0.0, le=1.0)
@@ -473,6 +495,9 @@ class LearningProfileUpdate(BaseModel):
 
 
 class LearningProfileOut(BaseModel):
+    """API response shape for a learning profile (includes the derived
+    ``dominant_method``)."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -493,6 +518,8 @@ class LearningProfileOut(BaseModel):
 
 
 class CurriculumCreate(BaseModel):
+    """Request body for creating a curriculum (carries ``user_id``)."""
+
     user_id: str
     title: str = Field(min_length=1, max_length=500)
     description: str | None = None
@@ -503,12 +530,16 @@ class CurriculumCreate(BaseModel):
 
 
 class CurriculumUpdate(BaseModel):
+    """Partial-update payload for a curriculum (all fields optional)."""
+
     title: str | None = Field(default=None, min_length=1, max_length=500)
     description: str | None = None
     language: str | None = Field(default=None, max_length=10)
 
 
 class CurriculumOut(BaseModel):
+    """API response shape for a curriculum."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -525,6 +556,8 @@ class CurriculumOut(BaseModel):
 
 
 class LearningTopicCreate(BaseModel):
+    """Request body for creating a curriculum topic node."""
+
     curriculum_id: str
     parent_id: str | None = None
     title: str = Field(min_length=1, max_length=500)
@@ -533,6 +566,8 @@ class LearningTopicCreate(BaseModel):
 
 
 class LearningTopicUpdate(BaseModel):
+    """Partial-update payload for a curriculum topic (all fields optional)."""
+
     parent_id: str | None = None
     title: str | None = Field(default=None, min_length=1, max_length=500)
     description: str | None = None
@@ -540,6 +575,8 @@ class LearningTopicUpdate(BaseModel):
 
 
 class LearningTopicOut(BaseModel):
+    """API response shape for a curriculum topic node."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -556,6 +593,8 @@ class LearningTopicOut(BaseModel):
 
 
 class LessonCreate(BaseModel):
+    """Request body for creating a lesson under a curriculum."""
+
     curriculum_id: str
     title: str = Field(min_length=1, max_length=500)
     content: str = ""
@@ -563,12 +602,16 @@ class LessonCreate(BaseModel):
 
 
 class LessonUpdate(BaseModel):
+    """Partial-update payload for a lesson (all fields optional)."""
+
     title: str | None = Field(default=None, min_length=1, max_length=500)
     content: str | None = None
     order_index: int | None = Field(default=None, ge=0)
 
 
 class LessonOut(BaseModel):
+    """API response shape for a lesson."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -584,6 +627,8 @@ class LessonOut(BaseModel):
 
 
 class LearningSessionCreate(BaseModel):
+    """Request body for starting a learning session."""
+
     project_id: str
     method: LearningMethod
     cycle_step: int = Field(default=1, ge=1, le=7)
@@ -591,6 +636,8 @@ class LearningSessionCreate(BaseModel):
 
 
 class LearningSessionUpdate(BaseModel):
+    """Partial-update payload for a learning session (all fields optional)."""
+
     method: LearningMethod | None = None
     cycle_step: int | None = Field(default=None, ge=1, le=7)
     status: SessionStatus | None = None
@@ -598,6 +645,8 @@ class LearningSessionUpdate(BaseModel):
 
 
 class LearningSessionOut(BaseModel):
+    """API response shape for a learning session (auto-loop + import fields)."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -646,17 +695,23 @@ class LearningSessionOut(BaseModel):
 
 
 class SessionMessageCreate(BaseModel):
+    """Request body for appending a message to a session."""
+
     session_id: str
     role: MessageRole
     content: str = Field(min_length=1)
 
 
 class SessionMessageUpdate(BaseModel):
+    """Partial-update payload for a session message (all fields optional)."""
+
     role: MessageRole | None = None
     content: str | None = Field(default=None, min_length=1)
 
 
 class SessionMessageOut(BaseModel):
+    """API response shape for a session message."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -670,6 +725,8 @@ class SessionMessageOut(BaseModel):
 
 
 class SessionRatingCreate(BaseModel):
+    """Request body for rating a session (1-5 scales)."""
+
     session_id: str
     understanding: int = Field(ge=1, le=5)
     stress: int = Field(ge=1, le=5)
@@ -678,6 +735,8 @@ class SessionRatingCreate(BaseModel):
 
 
 class SessionRatingUpdate(BaseModel):
+    """Partial-update payload for a session rating (all fields optional)."""
+
     understanding: int | None = Field(default=None, ge=1, le=5)
     stress: int | None = Field(default=None, ge=1, le=5)
     method_fit: int | None = Field(default=None, ge=1, le=5)
@@ -685,6 +744,8 @@ class SessionRatingUpdate(BaseModel):
 
 
 class SessionRatingOut(BaseModel):
+    """API response shape for a session rating."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -700,6 +761,8 @@ class SessionRatingOut(BaseModel):
 
 
 class SessionNoteCreate(BaseModel):
+    """Request body for adding a note to a session."""
+
     session_id: str
     content: str = Field(min_length=1)
     # v1.26.0 / Phase 42 — see models.SESSION_NOTE_KINDS for
@@ -710,11 +773,15 @@ class SessionNoteCreate(BaseModel):
 
 
 class SessionNoteUpdate(BaseModel):
+    """Partial-update payload for a session note (all fields optional)."""
+
     content: str | None = Field(default=None, min_length=1)
     kind: str | None = Field(default=None, max_length=32)
 
 
 class SessionNoteOut(BaseModel):
+    """API response shape for a session note."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -730,6 +797,8 @@ class SessionNoteOut(BaseModel):
 
 
 class ProgressCommitCreate(BaseModel):
+    """Request body for recording a progress commit at session end."""
+
     project_id: str
     session_id: str
     method: LearningMethod
@@ -754,6 +823,8 @@ class ProgressCommitUpdate(BaseModel):
 
 
 class ProgressCommitOut(BaseModel):
+    """API response shape for a progress commit (with joined notes)."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -802,6 +873,8 @@ class StepEvaluationOut(BaseModel):
 
 
 class MethodSwitchCreate(BaseModel):
+    """Request body for recording a learning-method switch."""
+
     project_id: str
     from_method: LearningMethod
     to_method: LearningMethod
@@ -817,6 +890,8 @@ class MethodSwitchUpdate(BaseModel):
 
 
 class MethodSwitchOut(BaseModel):
+    """API response shape for a method-switch record."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -831,6 +906,8 @@ class MethodSwitchOut(BaseModel):
 
 
 class ImportedConversationSource(str, Enum):
+    """Origin platform of an imported chat conversation."""
+
     CHATGPT = "chatgpt"
     CLAUDE = "claude"
     GEMINI = "gemini"
@@ -839,12 +916,16 @@ class ImportedConversationSource(str, Enum):
 
 
 class ImportedMessageCreate(BaseModel):
+    """One message in the payload that imports a conversation transcript."""
+
     role: MessageRole
     content: str = Field(min_length=1)
     timestamp: datetime | None = None
 
 
 class ImportedMessageOut(BaseModel):
+    """API response shape for an imported conversation message."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -904,6 +985,9 @@ class ImportedConversationAnalysis(BaseModel):
 
 
 class ImportedConversationOut(BaseModel):
+    """API response shape for an imported conversation (summary, no
+    transcript)."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -955,6 +1039,8 @@ class SubjectCreate(BaseModel):
 
 
 class SubjectUpdate(BaseModel):
+    """Partial-update payload for a subject node (all fields optional)."""
+
     parent_id: str | None = None
     name: str | None = Field(default=None, min_length=1, max_length=200)
     description: str | None = None
@@ -962,6 +1048,8 @@ class SubjectUpdate(BaseModel):
 
 
 class SubjectOut(BaseModel):
+    """API response shape for a taxonomy subject node."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -985,11 +1073,15 @@ class TagCreate(BaseModel):
 
 
 class TagUpdate(BaseModel):
+    """Partial-update payload for a tag (all fields optional)."""
+
     name: str | None = Field(default=None, min_length=1, max_length=100)
     color: str | None = Field(default=None, max_length=20)
 
 
 class TagOut(BaseModel):
+    """API response shape for a per-user tag."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -1011,6 +1103,8 @@ class ProjectSubjectOut(BaseModel):
 
 
 class ProjectTagOut(BaseModel):
+    """Read-only API response for a project-to-tag association row."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str

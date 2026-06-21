@@ -65,6 +65,7 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
         self._db = db
 
     def get_user(self, user_id: str) -> User | None:
+        """Return the user row by primary key, or ``None`` if absent."""
         return self._db.get(User, user_id)
 
     def find(
@@ -77,6 +78,11 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
         element_key: str,
         direction: str,
     ) -> ElementError | None:
+        """Return the row matching the full composite key (including direction), or ``None``.
+
+        Receptive and productive rows for the same card are distinct
+        identities (EXP-018 / Phase 62); the direction is part of the key.
+        """
         stmt = select(ElementError).where(
             ElementError.user_id == user_id,
             ElementError.set_id == set_id,
@@ -90,17 +96,25 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
         return self._db.execute(stmt).scalar_one_or_none()
 
     def add(self, row: ElementError) -> None:
+        """Stage a new element-error row for insertion (no flush/commit)."""
         self._db.add(row)
 
     def flush(self) -> None:
+        """Flush pending changes so generated ids/state become visible."""
         self._db.flush()
 
     def commit(self) -> None:
+        """Commit the current transaction (the bulk-upsert boundary)."""
         self._db.commit()
 
     def list_for_user(
         self, user_id: str, *, set_id: str | None = None, include_mastered: bool = True
     ) -> list[ElementError]:
+        """Return the user's rows newest-updated first.
+
+        Optionally narrow to a single ``set_id`` and exclude mastered rows
+        when ``include_mastered`` is ``False``.
+        """
         stmt = select(ElementError).where(ElementError.user_id == user_id)
         if set_id is not None:
             stmt = stmt.where(ElementError.set_id == set_id)

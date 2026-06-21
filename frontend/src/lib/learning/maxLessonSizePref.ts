@@ -17,6 +17,9 @@ export const DEFAULT_MAX_LESSON_SIZE = 10;
 export const MIN_MAX_LESSON_SIZE = 5;
 export const MAX_MAX_LESSON_SIZE = 20;
 
+/** The configured maximum lesson size, clamped to
+ *  ``[MIN_MAX_LESSON_SIZE, MAX_MAX_LESSON_SIZE]`` (falls back to the
+ *  default for a missing / out-of-range / non-numeric value). */
 export function readMaxLessonSize(): number {
     try {
         const raw = localStorage.getItem(MAX_LESSON_SIZE_PREF_KEY);
@@ -35,6 +38,8 @@ export function readMaxLessonSize(): number {
     }
 }
 
+/** Persist the maximum lesson size (best-effort; ignored when
+ *  localStorage is unavailable). */
 export function writeMaxLessonSize(size: number): void {
     try {
         localStorage.setItem(MAX_LESSON_SIZE_PREF_KEY, String(size));

@@ -41,6 +41,7 @@ export function dequeueMilestone(): Milestone | undefined {
     return queue.shift();
 }
 
+/** Number of milestones currently waiting in the queue. */
 export function milestoneQueueLength(): number {
     return queue.length;
 }

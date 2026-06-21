@@ -17,6 +17,11 @@ import {methodDistribution} from "../render-context";
 import type {RenderContext} from "../render-context";
 import {topicFolderName} from "../topic-folder-slug";
 
+/**
+ * Render the project README.md body: title, goal, status,
+ * progress, method distribution (when non-empty), topic links,
+ * and the see-also section.
+ */
 export function renderReadme(ctx: RenderContext, labels: Labels): string {
     const lines: string[] = [
         `# ${formatLabel(labels.readme_title, {topic: ctx.project.topic})}`,

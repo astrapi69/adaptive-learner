@@ -60,6 +60,17 @@ function depth(subject: Subject, byId: Map<string, Subject>): number {
     return n;
 }
 
+/**
+ * Score the subjects tree against the free-text ``topic`` and return
+ * the best matches, highest score first, with deeper (more specific)
+ * subjects winning ties.
+ *
+ * @param topic - The user's free-text topic (e.g. "Spanish grammar").
+ * @param subjects - The full subjects tree to score against.
+ * @param limit - Maximum number of suggestions to return (default 3).
+ * @returns Up to ``limit`` scored {@link SubjectSuggestion}s; empty
+ *   when the topic is blank, no subjects are given, or nothing scores.
+ */
 export function suggestSubjects(
     topic: string,
     subjects: readonly Subject[],

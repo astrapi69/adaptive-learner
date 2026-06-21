@@ -41,6 +41,7 @@ def create_project(
     payload: LearningProjectCreateBody,
     repo: ProjectsRepository = Depends(get_projects_repo),
 ) -> LearningProjectOut:
+    """Create a learning project for the given user."""
     return LearningProjectOut.model_validate(
         projects_service.create_project(repo, user_id, payload)
     )
@@ -53,6 +54,7 @@ def create_project(
 def list_projects(
     user_id: str, repo: ProjectsRepository = Depends(get_projects_repo)
 ) -> list[LearningProjectOut]:
+    """List all learning projects belonging to the given user."""
     return [
         LearningProjectOut.model_validate(p) for p in projects_service.list_projects(repo, user_id)
     ]
@@ -67,6 +69,7 @@ projects_router = APIRouter(prefix="/projects", tags=["projects"])
 def get_project(
     project_id: str, repo: ProjectsRepository = Depends(get_projects_repo)
 ) -> LearningProjectOut:
+    """Return a single learning project by id (404 if not found)."""
     return LearningProjectOut.model_validate(projects_service.get_project(repo, project_id))
 
 
@@ -76,6 +79,7 @@ def update_project(
     payload: LearningProjectUpdate,
     repo: ProjectsRepository = Depends(get_projects_repo),
 ) -> LearningProjectOut:
+    """Partially update a learning project (404 if not found)."""
     return LearningProjectOut.model_validate(
         projects_service.update_project(repo, project_id, payload)
     )

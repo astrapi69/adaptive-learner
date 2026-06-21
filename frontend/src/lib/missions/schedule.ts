@@ -26,6 +26,8 @@ const LANGUAGE_TIMEZONE: Record<string, string> = {
     ja: "Asia/Tokyo",
 };
 
+/** Map a UI language code to a coarse IANA timezone, defaulting to
+ *  UTC for unknown languages. */
 export function languageToTimezone(lang: string): string {
     const base = lang.split("-")[0]?.toLowerCase() ?? "";
     return LANGUAGE_TIMEZONE[base] ?? "UTC";

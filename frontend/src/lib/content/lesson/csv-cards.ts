@@ -42,6 +42,17 @@ function isHeaderRow(front: string, back: string): boolean {
     );
 }
 
+/**
+ * Parse pasted comma- or tab-separated text into card rows
+ * (``front, back, notes``). The delimiter is auto-detected per line
+ * (tab wins when present, else comma), an obvious header row is
+ * skipped, surrounding quotes are stripped, and blank lines are
+ * ignored. Each row carries a ``valid`` flag (front + back both
+ * non-empty) so the caller can preview and fix invalid rows.
+ *
+ * @param text - The raw pasted / file text.
+ * @returns One {@link ParsedCsvRow} per non-empty, non-header line.
+ */
 export function parseCsvCards(text: string): ParsedCsvRow[] {
     const rows: ParsedCsvRow[] = [];
     const lines = text.split(/\r?\n/);

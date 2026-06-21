@@ -92,6 +92,13 @@ Score guidance: 1.0 = identical, 0.9 = minor differences, 0.7 = recognisable, 0.
 
 Be kind. The transcription may add noise — judge by ear, not by exact text.`;
 
+/**
+ * Build the AI judge prompt that scores a pronunciation attempt by comparing
+ * the spoken transcription against the target phrase in the given language.
+ *
+ * @param args - Target phrase, the actual transcription, and the language.
+ * @return The prompt string sent to the AI provider.
+ */
 export function buildJudgePrompt(args: {
   target: string;
   actual: string;

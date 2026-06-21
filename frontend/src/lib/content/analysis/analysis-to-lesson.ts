@@ -483,6 +483,13 @@ export function generateLessonFromAnalysis(
   return lesson;
 }
 
+/**
+ * Summarize a generated lesson for display: counts of each exercise type and
+ * other headline metrics shown after analysis-to-lesson conversion.
+ *
+ * @param lesson - The generated content lesson.
+ * @return A summary with per-exercise-type counts.
+ */
 export function summarizeGeneratedLesson(
   lesson: ContentLesson,
 ): GeneratedLessonSummary {

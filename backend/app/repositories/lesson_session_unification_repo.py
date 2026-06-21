@@ -66,6 +66,7 @@ class SqlAlchemyLessonSessionUnificationRepository(LessonSessionUnificationRepos
         self._db = db
 
     def get_content_pseudo_project(self, user_id: str) -> LearningProject | None:
+        """Return the user's ``kind='content'`` pseudo-project, or ``None``."""
         return (
             self._db.query(LearningProject)
             .filter(
@@ -84,6 +85,7 @@ class SqlAlchemyLessonSessionUnificationRepository(LessonSessionUnificationRepos
         timeframe: str,
         daily_minutes: int,
     ) -> LearningProject:
+        """Insert the content pseudo-project and flush (no commit) so its id is visible."""
         proj = LearningProject(
             user_id=user_id,
             topic=topic,
@@ -107,6 +109,7 @@ class SqlAlchemyLessonSessionUnificationRepository(LessonSessionUnificationRepos
         cycle_step: int,
         status: str,
     ) -> LearningSession:
+        """Insert a completed LearningSession, commit, and return the refreshed row."""
         sess = LearningSession(
             project_id=project_id,
             method=method,

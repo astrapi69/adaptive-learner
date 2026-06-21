@@ -140,6 +140,7 @@ export interface RenderContext {
 
 // --- Helpers (pure functions of the context) --------------------------
 
+/** All ratings attached to ``sessionId``, in stored order. */
 export function ratingsFor(
     ctx: RenderContext,
     sessionId: string,
@@ -147,6 +148,7 @@ export function ratingsFor(
     return ctx.ratings.filter((r) => r.session_id === sessionId);
 }
 
+/** The most recent rating for ``sessionId``, or ``null`` when the session has none. */
 export function latestRating(
     ctx: RenderContext,
     sessionId: string,
@@ -155,6 +157,7 @@ export function latestRating(
     return rs.length === 0 ? null : rs[rs.length - 1];
 }
 
+/** All session notes attached to ``sessionId``. */
 export function notesFor(
     ctx: RenderContext,
     sessionId: string,
@@ -162,6 +165,7 @@ export function notesFor(
     return ctx.notes.filter((n) => n.session_id === sessionId);
 }
 
+/** All step evaluations attached to ``sessionId``. */
 export function stepEvalsFor(
     ctx: RenderContext,
     sessionId: string,
@@ -169,6 +173,7 @@ export function stepEvalsFor(
     return ctx.step_evaluations.filter((e) => e.session_id === sessionId);
 }
 
+/** All session notes of the given ``kind`` across the whole project. */
 export function notesByKind(
     ctx: RenderContext,
     kind: string,
@@ -287,6 +292,13 @@ export interface RenderContextInputs {
     rendered_at?: string;
 }
 
+/**
+ * Build a RenderContext from raw row tuples. Pure transform
+ * (no I/O): derives the topic slices and stamps ``rendered_at``
+ * (defaulting to now, pinnable for deterministic tests). Single
+ * source of truth for the "data tuple -> context" step, shared
+ * by the Dexie loader and the parity test.
+ */
 export function buildRenderContext(
     inputs: RenderContextInputs,
 ): RenderContext {

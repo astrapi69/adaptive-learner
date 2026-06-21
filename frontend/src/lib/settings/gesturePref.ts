@@ -28,6 +28,11 @@ function detectTouchCapable(): boolean {
     return false;
 }
 
+/**
+ * Read the swipe-gesture on/off preference. Falls back to
+ * touch-capability detection (ON for touch devices, OFF
+ * otherwise) when no value is stored.
+ */
 export function readGesturePref(): boolean {
     try {
         const raw = localStorage.getItem(KEY_ENABLED);
@@ -39,6 +44,7 @@ export function readGesturePref(): boolean {
     return detectTouchCapable();
 }
 
+/** Persist the swipe-gesture on/off preference to localStorage. */
 export function writeGesturePref(enabled: boolean): void {
     try {
         localStorage.setItem(KEY_ENABLED, enabled ? "true" : "false");
@@ -47,6 +53,7 @@ export function writeGesturePref(enabled: boolean): void {
     }
 }
 
+/** True once the "swipe to navigate" hint has been shown and recorded. */
 export function readGestureHintShown(): boolean {
     try {
         return localStorage.getItem(KEY_HINT_SHOWN) === "true";
@@ -55,6 +62,7 @@ export function readGestureHintShown(): boolean {
     }
 }
 
+/** Record that the "swipe to navigate" hint has been shown, so it never re-appears. */
 export function markGestureHintShown(): void {
     try {
         localStorage.setItem(KEY_HINT_SHOWN, "true");

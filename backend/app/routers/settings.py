@@ -81,6 +81,7 @@ def _build_settings_out(repo: SettingsRepository, settings) -> UserSettingsOut:
 def get_settings(
     user_id: str, repo: SettingsRepository = Depends(get_settings_repo)
 ) -> UserSettingsOut:
+    """Get the user's settings, auto-creating an empty row on first access."""
     return _build_settings_out(repo, settings_service.get_or_create_settings(repo, user_id))
 
 
@@ -90,6 +91,7 @@ def patch_settings(
     payload: SettingsPatchBody,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
+    """Update the user's settings (active provider, language, model overrides)."""
     return _build_settings_out(repo, settings_service.update_settings(repo, user_id, payload))
 
 
@@ -116,6 +118,7 @@ def set_api_key(
     payload: ApiKeySetBody,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
+    """Save (Fernet-encrypt) an AI provider API key for the user."""
     return _build_settings_out(repo, settings_service.set_api_key(repo, user_id, payload))
 
 
@@ -125,6 +128,7 @@ def delete_api_key(
     provider: AIProvider,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
+    """Clear the stored API key for the given provider."""
     return _build_settings_out(repo, settings_service.delete_api_key(repo, user_id, provider))
 
 
@@ -134,6 +138,7 @@ def test_api_key(
     payload: ApiKeyTestBody,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> ApiKeyTestOut:
+    """Test an API key (caller-supplied or the user's configured key) without saving it."""
     # Test the caller-supplied key when given (the pre-save check),
     # otherwise resolve the user's configured key (env > secrets.yaml
     # > DB) and test that. Never saves anything.
@@ -150,6 +155,7 @@ def backup_api_key(
     payload: ApiKeyBackupBody,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
+    """Cache a tested-good API key as the last-known-good backup."""
     # Cache a tested-good key as the last-known-good backup. The
     # caller (save flow) invokes this only after a successful test.
     settings_service.backup_api_key(repo, user_id, payload.provider, payload.key)
@@ -165,6 +171,7 @@ def get_api_key_backup_info(
     provider: AIProvider,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> ApiKeyBackupInfoOut:
+    """Report whether a key backup exists for the provider and when it was tested."""
     backup = settings_service.get_api_key_backup(repo, user_id, provider)
     if backup is None:
         return ApiKeyBackupInfoOut(has=False, tested_at=None)
@@ -180,6 +187,7 @@ def restore_api_key_backup(
     provider: AIProvider,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
+    """Restore the backed-up API key as the active key for the provider."""
     # NotFoundError (no backup) maps to 404 via the global handler.
     return _build_settings_out(
         repo, settings_service.restore_api_key_backup(repo, user_id, provider)
@@ -195,6 +203,7 @@ def list_available_models(
     provider: AIProvider = Query(..., description="Provider to query for available models."),
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> list[AvailableModelOut]:
+    """List the AI models available for the given provider using the user's key."""
     # Phase 34 — resolve via env > secrets.yaml > DB so the
     # model picker works for desktop users whose key lives in
     # ``~/.config/adaptive_learner/secrets.yaml``.

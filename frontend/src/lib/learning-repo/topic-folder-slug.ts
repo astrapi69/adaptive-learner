@@ -18,6 +18,11 @@
  * exactly the same string.
  */
 
+/**
+ * Build the ``NN_slug`` folder name for a topic: zero-padded
+ * order plus the lowercased title with non-alphanumeric runs
+ * collapsed to underscores (empty slug defaults to "topic").
+ */
 export function topicFolderName(order: number, title: string): string {
     // Replace each char: alphanumeric stays (lowercased),
     // everything else becomes ``_``. Matches Python's

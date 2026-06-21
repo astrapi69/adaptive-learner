@@ -57,11 +57,13 @@ class SqlAlchemyLessonProgressRepository(LessonProgressRepository):
         self._db = db
 
     def get_user(self, user_id: str) -> User | None:
+        """Return the user row, or ``None`` when it does not exist."""
         return self._db.get(User, user_id)
 
     def find(
         self, *, user_id: str, source: str, set_id: str, lesson_filename: str
     ) -> LessonProgress | None:
+        """Return the row for the composite key, or ``None`` when absent."""
         return (
             self._db.query(LessonProgress)
             .filter(
@@ -74,6 +76,7 @@ class SqlAlchemyLessonProgressRepository(LessonProgressRepository):
         )
 
     def list_for_user(self, user_id: str) -> list[LessonProgress]:
+        """Return the user's rows, newest-updated first."""
         return (
             self._db.query(LessonProgress)
             .filter(LessonProgress.user_id == user_id)
@@ -82,15 +85,19 @@ class SqlAlchemyLessonProgressRepository(LessonProgressRepository):
         )
 
     def add(self, row: LessonProgress) -> None:
+        """Stage a new row for insertion (no flush/commit)."""
         self._db.add(row)
 
     def flush(self) -> None:
+        """Flush pending changes so the new id is visible."""
         self._db.flush()
 
     def commit(self) -> None:
+        """Commit the current transaction."""
         self._db.commit()
 
     def refresh(self, row: LessonProgress) -> None:
+        """Refresh the row from the database after commit."""
         self._db.refresh(row)
 
 

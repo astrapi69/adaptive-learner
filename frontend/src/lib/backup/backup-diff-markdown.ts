@@ -29,6 +29,12 @@ export interface RenderMarkdownOptions {
     now?: string;
 }
 
+/**
+ * Render a human-readable Markdown report for a backup diff:
+ * a header with dates/versions/totals, a summary table, and
+ * per-table added/removed/changed sections (zero-delta tables
+ * omitted, high-volume tables summarised by count).
+ */
 export function renderDiffMarkdown(
     diff: BackupDiff,
     opts: RenderMarkdownOptions,

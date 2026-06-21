@@ -97,6 +97,7 @@ def create_curriculum(
     payload: _CurriculumCreateBody,
     repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> CurriculumOut:
+    """Create a curriculum for the user."""
     from app.schemas import CurriculumCreate
 
     create_payload = CurriculumCreate(user_id=user_id, **payload.model_dump())
@@ -110,6 +111,7 @@ def create_curriculum(
 def list_curricula(
     user_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> list[CurriculumOut]:
+    """List all curricula for the user."""
     return [
         CurriculumOut.model_validate(c)
         for c in curriculum_service.list_curriculums_for_user(repo, user_id)
@@ -123,6 +125,7 @@ def list_curricula(
 def get_curriculum(
     curriculum_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> CurriculumOut:
+    """Get a single curriculum by id."""
     return CurriculumOut.model_validate(curriculum_service.get_curriculum(repo, curriculum_id))
 
 
@@ -132,6 +135,7 @@ def update_curriculum(
     payload: CurriculumUpdate,
     repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> CurriculumOut:
+    """Update a curriculum's fields."""
     return CurriculumOut.model_validate(
         curriculum_service.update_curriculum(repo, curriculum_id, payload)
     )
@@ -141,6 +145,7 @@ def update_curriculum(
 def delete_curriculum(
     curriculum_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> Response:
+    """Delete a curriculum and its topics/lessons."""
     curriculum_service.delete_curriculum(repo, curriculum_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -155,6 +160,7 @@ def delete_curriculum(
 def list_topics(
     curriculum_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> list[LearningTopicOut]:
+    """List all topics in a curriculum (flat, ordered)."""
     return [
         LearningTopicOut.model_validate(t)
         for t in curriculum_service.list_topics(repo, curriculum_id)
@@ -171,6 +177,7 @@ def create_topic(
     payload: _TopicCreateBody,
     repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> LearningTopicOut:
+    """Create a topic under a curriculum."""
     from app.schemas import LearningTopicCreate
 
     create_payload = LearningTopicCreate(curriculum_id=curriculum_id, **payload.model_dump())
@@ -187,6 +194,7 @@ def create_topic(
 def list_lessons(
     curriculum_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> list[LessonOut]:
+    """List all lessons in a curriculum (ordered)."""
     return [
         LessonOut.model_validate(row)
         for row in curriculum_service.list_lessons(repo, curriculum_id)
@@ -203,6 +211,7 @@ def create_lesson(
     payload: _LessonCreateBody,
     repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> LessonOut:
+    """Create a lesson under a curriculum."""
     from app.schemas import LessonCreate
 
     create_payload = LessonCreate(curriculum_id=curriculum_id, **payload.model_dump())
@@ -216,6 +225,7 @@ def create_lesson(
 def get_topic(
     topic_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> LearningTopicOut:
+    """Get a single topic by id."""
     return LearningTopicOut.model_validate(curriculum_service.get_topic(repo, topic_id))
 
 
@@ -225,6 +235,7 @@ def update_topic(
     payload: LearningTopicUpdate,
     repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> LearningTopicOut:
+    """Update a topic's fields."""
     return LearningTopicOut.model_validate(curriculum_service.update_topic(repo, topic_id, payload))
 
 
@@ -232,6 +243,7 @@ def update_topic(
 def delete_topic(
     topic_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> Response:
+    """Delete a topic."""
     curriculum_service.delete_topic(repo, topic_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -243,6 +255,7 @@ def delete_topic(
 def get_lesson(
     lesson_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> LessonOut:
+    """Get a single lesson by id."""
     return LessonOut.model_validate(curriculum_service.get_lesson(repo, lesson_id))
 
 
@@ -252,6 +265,7 @@ def update_lesson(
     payload: LessonUpdate,
     repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> LessonOut:
+    """Update a lesson's fields."""
     return LessonOut.model_validate(curriculum_service.update_lesson(repo, lesson_id, payload))
 
 
@@ -259,5 +273,6 @@ def update_lesson(
 def delete_lesson(
     lesson_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
 ) -> Response:
+    """Delete a lesson."""
     curriculum_service.delete_lesson(repo, lesson_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

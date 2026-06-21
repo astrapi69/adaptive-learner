@@ -47,6 +47,8 @@ function highestCrossed(
     return crossed;
 }
 
+/** The highest streak threshold (7/30/100 days) newly crossed
+ *  between ``prev`` and ``next``, or null when none was crossed. */
 export function detectStreakMilestone(
     prev: number,
     next: number,
@@ -56,6 +58,9 @@ export function detectStreakMilestone(
     return {id: `streak-${value}`, type: "streak", value};
 }
 
+/** The highest mastery threshold (50/100/500 mastered elements)
+ *  newly crossed between ``prev`` and ``next``, or null when none
+ *  was crossed. */
 export function detectMasteryMilestone(
     prev: number,
     next: number,

@@ -397,12 +397,14 @@ function shortId(value: unknown): string {
 
 // ---- Filter / sort helpers -----------------------------------------------
 
+/** Keep only the table diffs that have at least one added/removed/changed row. */
 export function filterChangedTables(tables: TableDiff[]): TableDiff[] {
     return tables.filter(
         (t) => t.added.length + t.removed.length + t.changed.length > 0,
     );
 }
 
+/** Sort table diffs by total change count, largest delta first. */
 export function sortTablesByDelta(tables: TableDiff[]): TableDiff[] {
     return [...tables].sort((a, b) => {
         const da = a.added.length + a.removed.length + a.changed.length;
@@ -411,6 +413,7 @@ export function sortTablesByDelta(tables: TableDiff[]): TableDiff[] {
     });
 }
 
+/** Sort table diffs alphabetically by table name. */
 export function sortTablesAlphabetically(tables: TableDiff[]): TableDiff[] {
     return [...tables].sort((a, b) => a.table.localeCompare(b.table));
 }

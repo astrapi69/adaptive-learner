@@ -128,6 +128,11 @@ interface GhResponse<T> {
   body: T;
 }
 
+/**
+ * Browser-direct GitHub REST client used in Dexie mode to fork a repo, commit
+ * a lesson, and open a pull request without a backend. Retries and fork-poll
+ * behaviour are configurable for testing.
+ */
 export class GitHubApi {
   private readonly fetchImpl: typeof fetch;
   private readonly sleep: (ms: number) => Promise<void>;

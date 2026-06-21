@@ -43,23 +43,27 @@ def _status() -> GitHubTokenStatusOut:
 
 @router.get("/token", response_model=GitHubTokenStatusOut)
 def get_token_status() -> GitHubTokenStatusOut:
+    """Return whether a GitHub token is configured and where it is stored."""
     return _status()
 
 
 @router.post("/token", response_model=GitHubTokenStatusOut)
 def set_token(payload: GitHubTokenSetBody) -> GitHubTokenStatusOut:
+    """Store the GitHub token (Fernet-encrypted) and return the new status."""
     secrets_service.write_github_token(payload.token)
     return _status()
 
 
 @router.delete("/token", response_model=GitHubTokenStatusOut)
 def clear_token() -> GitHubTokenStatusOut:
+    """Remove the stored GitHub token and return the cleared status."""
     secrets_service.clear_github_token()
     return _status()
 
 
 @router.post("/verify-token", response_model=GitHubVerifyOut)
 def verify_token(payload: GitHubVerifyBody) -> GitHubVerifyOut:
+    """Verify a GitHub token (the supplied one or the stored one) and return its validity + username."""
     token = payload.token or github_service.resolve_token()
     result = github_service.verify_token(token)
     return GitHubVerifyOut(valid=result.valid, username=result.username, kind=result.kind)
@@ -67,6 +71,7 @@ def verify_token(payload: GitHubVerifyBody) -> GitHubVerifyOut:
 
 @router.post("/create-pr", response_model=GitHubCreatePrOut)
 def create_pr(payload: GitHubCreatePrBody) -> GitHubCreatePrOut:
+    """Open a community pull request for a shared lesson via the fork -> branch -> commit -> PR flow."""
     token = github_service.resolve_token()
     manifest_update = None
     if payload.manifest_update is not None:

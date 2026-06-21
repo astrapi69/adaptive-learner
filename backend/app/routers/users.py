@@ -24,11 +24,13 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post("", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def create_user(payload: UserCreate, repo: UsersRepository = Depends(get_users_repo)) -> UserOut:
+    """Create a new user."""
     return UserOut.model_validate(users_service.create_user(repo, payload))
 
 
 @router.get("/{user_id}", response_model=UserOut)
 def get_user(user_id: str, repo: UsersRepository = Depends(get_users_repo)) -> UserOut:
+    """Return a single user by id (404 if not found)."""
     return UserOut.model_validate(users_service.get_user(repo, user_id))
 
 
@@ -36,4 +38,5 @@ def get_user(user_id: str, repo: UsersRepository = Depends(get_users_repo)) -> U
 def update_user(
     user_id: str, payload: UserUpdate, repo: UsersRepository = Depends(get_users_repo)
 ) -> UserOut:
+    """Partially update a user (404 if not found, 409 on email collision)."""
     return UserOut.model_validate(users_service.update_user(repo, user_id, payload))

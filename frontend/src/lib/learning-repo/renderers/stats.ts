@@ -20,6 +20,12 @@ import {latestRating, type RatingData, type SessionData} from "../render-context
 import type {RenderContext} from "../render-context";
 import {exitThresholdIndices} from "../thresholds";
 
+/**
+ * Render the LEARNING_STATS.md body for one project: the
+ * per-session understanding/transfer/stress table (scaled to
+ * /10), the method-switch sub-table, and the exit-threshold
+ * reminder block.
+ */
 export function renderStats(ctx: RenderContext, labels: Labels): string {
     const lines: string[] = [
         `# ${labels.stats_title}`,
