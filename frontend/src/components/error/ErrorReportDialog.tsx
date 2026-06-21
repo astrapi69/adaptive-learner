@@ -3,22 +3,22 @@ import * as Dialog from "@radix-ui/react-dialog";
 import {Bug, Check, ChevronDown, ChevronUp, Copy, Download} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../api/client";
-import {useI18n} from "../hooks/ui/useI18n";
-import {copyToClipboard} from "../utils/clipboard";
-import {downloadBlob} from "../lib/lesson/result-download";
+import {ApiError} from "../../api/client";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {copyToClipboard} from "../../utils/clipboard";
+import {downloadBlob} from "../../lib/lesson/result-download";
 import {
     eventRecorder,
     formatEventLog,
     type EventCategory,
-} from "../utils/eventRecorder";
+} from "../../utils/eventRecorder";
 import {
     buildEventReportJson,
     eventReportFilename,
     filterByCategory,
     latestAppState,
     presentCategories,
-} from "../utils/event-report";
+} from "../../utils/event-report";
 
 const ISSUES_URL = "https://github.com/astrapi69/adaptive-learner/issues/new";
 // GitHub rejects URLs over ~8192 chars. After encoding, special

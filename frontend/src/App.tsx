@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./styles/toast-theme.css";
 
 import type { ApiError } from "./api/client";
-import ErrorBoundary from "./components/ErrorBoundary";
+import ErrorBoundary from "./components/error/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
 import GlobalShortcuts from "./components/GlobalShortcuts";
 import UpdatePromptHost from "./components/pwa/UpdatePromptHost";
@@ -59,8 +59,8 @@ const Settings = lazyWithReload(() => import("./pages/system/Settings"));
 // Lazy-loaded so ``eventRecorder`` (statically imported inside both
 // components) lands in its own chunk instead of the main bundle.
 // See BUNDLE-SIZE-DYNAMIC-IMPORT-01.
-const EventRecorderSetup = lazyWithReload(() => import("./components/EventRecorderSetup"));
-const ErrorReportDialog = lazyWithReload(() => import("./components/ErrorReportDialog"));
+const EventRecorderSetup = lazyWithReload(() => import("./components/error/EventRecorderSetup"));
+const ErrorReportDialog = lazyWithReload(() => import("./components/error/ErrorReportDialog"));
 
 /**
  * Application root. Three concentric layers:

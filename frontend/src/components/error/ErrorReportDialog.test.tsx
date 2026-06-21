@@ -14,9 +14,9 @@
 import {describe, it, expect, vi, beforeEach} from "vitest";
 import {render, screen, fireEvent, cleanup} from "@testing-library/react";
 
-import {ApiError} from "../api/client";
+import {ApiError} from "../../api/client";
 
-vi.mock("../hooks/ui/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({
         t: (_key: string, fallback?: string) => fallback ?? _key,
         lang: "en",
@@ -24,9 +24,9 @@ vi.mock("../hooks/ui/useI18n", () => ({
     }),
 }));
 
-vi.mock("../utils/eventRecorder", async (importOriginal) => {
+vi.mock("../../utils/eventRecorder", async (importOriginal) => {
     const actual =
-        await importOriginal<typeof import("../utils/eventRecorder")>();
+        await importOriginal<typeof import("../../utils/eventRecorder")>();
     return {
         ...actual,
         eventRecorder: {

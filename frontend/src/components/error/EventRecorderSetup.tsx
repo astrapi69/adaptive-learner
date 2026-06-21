@@ -1,8 +1,8 @@
 import {useEffect, useRef} from "react";
 import {useLocation} from "react-router-dom";
 
-import {captureAppState} from "../utils/appState";
-import {eventRecorder, setAppStateProvider} from "../utils/eventRecorder";
+import {captureAppState} from "../../utils/appState";
+import {eventRecorder, setAppStateProvider} from "../../utils/eventRecorder";
 
 /**
  * Invisible component that installs global event recorders.
