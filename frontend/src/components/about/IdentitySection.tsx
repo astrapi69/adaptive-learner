@@ -50,6 +50,12 @@ export default function IdentitySection({t}: Props) {
         };
     }, []);
 
+    // The identity file is a backend-only diagnostic. If the status can't be
+    // read (no backend reachable — e.g. the section mounted in api mode without
+    // a running server), don't surface a raw "HTTP 404"; just render nothing
+    // (#914). The section is already storage-mode-gated by the caller.
+    if (!loading && (error || !status)) return null;
+
     return (
         <article
             data-testid="about-identity-section"
@@ -61,16 +67,6 @@ export default function IdentitySection({t}: Props) {
             {loading && (
                 <p data-testid="about-identity-loading" className="muted">
                     {t("about.identity_loading", "Loading identity status…")}
-                </p>
-            )}
-            {error && !status && (
-                <p
-                    data-testid="about-identity-error"
-                    role="alert"
-                    style={{color: "var(--danger)"}}
-                >
-                    {t("about.identity_error", "Could not load identity status:")}{" "}
-                    {error}
                 </p>
             )}
             {status && (

@@ -14,6 +14,8 @@
  */
 
 import {useEffect, useMemo, useState} from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/ui/useI18n";
@@ -360,9 +362,13 @@ export default function ExportSection() {
                             {t("export.preview_close", "Close")}
                         </Button>
                     </div>
-                    <pre className="export-preview-body">
-                        {shortPreview(preview.markdown, 30)}
-                    </pre>
+                    {/* Render the Markdown (headings/bold/tables) instead of
+                        showing the raw source — #914. */}
+                    <div className="export-preview-body markdown-body">
+                        <Markdown remarkPlugins={[remarkGfm]}>
+                            {shortPreview(preview.markdown, 30)}
+                        </Markdown>
+                    </div>
                 </div>
             )}
         </section>
