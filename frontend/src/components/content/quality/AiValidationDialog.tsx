@@ -13,6 +13,7 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import ModalShell from "../../../shared/feedback/ModalShell";
 import ProgressBar from "../../../shared/data-display/ProgressBar";
 import ValidationReport, {
   type ValidationReportItem,
@@ -105,16 +106,14 @@ export default function AiValidationDialog({
   };
 
   return (
-    <div className="modal-overlay" data-testid="ai-validation-modal">
-      <div
-        className="modal-card max-w-2xl"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="ai-validation-title"
-      >
-        <h2 id="ai-validation-title" className="modal-title">
-          {t("content.ai_check.title", "AI content check")}
-        </h2>
+    <ModalShell
+      open
+      onClose={close}
+      title={t("content.ai_check.title", "AI content check")}
+      closeLabel={t("common.close", "Close")}
+      testId="ai-validation-modal"
+    >
+      <div className="flex flex-col gap-1">
         <p className="text-sm text-fg-muted">{entry.title}</p>
 
         {/* Loading the set's lessons (before the estimate is ready). */}
@@ -282,6 +281,6 @@ export default function AiValidationDialog({
           </div>
         )}
       </div>
-    </div>
+    </ModalShell>
   );
 }
