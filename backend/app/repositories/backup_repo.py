@@ -100,22 +100,33 @@ class SqlAlchemyBackupRepository(BackupRepository):
         self._db = db
 
     def user_exists(self, user_id: str) -> bool:
+        """Return True if a user row with the given id exists."""
         return self._db.get(User, user_id) is not None
 
     def scoped_rows(self, table: str, user_id: str) -> list[Any]:
+        """Return all rows of ``table`` that belong to ``user_id`` (FK-scoped)."""
         rows: list[Any] = _scoped_query(self._db, table, user_id).all()
         return rows
 
     def scoped_count(self, table: str, user_id: str) -> int:
+        """Return the row count of ``table`` scoped to ``user_id``."""
         count: int = _scoped_query(self._db, table, user_id).count()
         return count
 
     def get_by_pk(self, model: type[Any], pk: str) -> Any | None:
+        """Return the ``model`` row with primary key ``pk``, or None."""
         return self._db.get(model, pk)
 
     def find_by_column_groups(
         self, model: type[Any], groups: Sequence[Sequence[tuple[str, Any]]]
     ) -> Any | None:
+        """Return the first ``model`` row matching any natural-key group.
+
+        Each group is a list of ``(column, value)`` pairs ANDed together;
+        groups are tried in order (``None`` matches via ``IS NULL``). Used by
+        restore to resolve a row by natural key when its primary key differs.
+        Returns None when no group matches.
+        """
         for group in groups:
             query = self._db.query(model)
             for col, value in group:
@@ -127,22 +138,32 @@ class SqlAlchemyBackupRepository(BackupRepository):
         return None
 
     def add(self, entity: Any) -> None:
+        """Stage ``entity`` for insertion in the current transaction."""
         self._db.add(entity)
 
     def flush(self) -> None:
+        """Flush pending changes to the database without committing."""
         self._db.flush()
 
     def commit(self) -> None:
+        """Commit the current transaction."""
         self._db.commit()
 
     def rollback(self) -> None:
+        """Roll back the current transaction."""
         self._db.rollback()
 
     def begin_deferred_fk(self) -> None:
+        """Defer foreign-key checks for the connection (SQLite restore order)."""
         self._db.execute(text("PRAGMA defer_foreign_keys=ON"))
 
     @contextmanager
     def savepoint(self) -> Iterator[None]:
+        """Yield a nested SAVEPOINT; on error roll back to it and re-raise.
+
+        Lets restore attempt one table inside a savepoint so a failure
+        expunges only that table's rows rather than aborting the whole run.
+        """
         # ``begin_nested`` emits SAVEPOINT and, on an exception inside the
         # block, rolls back to it (expunging rows added in the block) and
         # re-raises — the caller decides how to record the skipped table.

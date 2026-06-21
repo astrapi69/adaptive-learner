@@ -65,21 +65,32 @@ class SqlAlchemySyncRepository(SyncRepository):
         self._db = db
 
     def user_exists(self, user_id: str) -> bool:
+        """True when the user row exists."""
         return self._db.get(User, user_id) is not None
 
     def get_by_pk(self, model: type[Any], pk: str) -> Any | None:
+        """Primary-key lookup on ``model``, or ``None`` when absent."""
         return self._db.get(model, pk)
 
     def add(self, entity: Any) -> None:
+        """Stage a new row for insertion (no flush or commit)."""
         self._db.add(entity)
 
     def flush(self) -> None:
+        """Flush pending changes to the DB without committing."""
         self._db.flush()
 
     def commit(self) -> None:
+        """Commit the current transaction."""
         self._db.commit()
 
     def scoped_rows_since(self, table: str, user_id: str, since: datetime | None) -> list[Any]:
+        """Return user-scoped rows of ``table`` newer than ``since``.
+
+        Filters to rows whose timestamp is greater than ``since`` (all
+        rows when ``since`` is None) and orders oldest-first so child
+        rows follow their parents within a batch.
+        """
         spec = TABLES[table]
         query = _scoped_query(self._db, table, user_id)
         ts_col = getattr(spec.model, spec.timestamp_field)
@@ -92,6 +103,7 @@ class SqlAlchemySyncRepository(SyncRepository):
         return rows
 
     def scoped_count(self, table: str, user_id: str) -> int:
+        """Return the user-scoped row count of ``table``."""
         count: int = _scoped_query(self._db, table, user_id).count()
         return count
 
