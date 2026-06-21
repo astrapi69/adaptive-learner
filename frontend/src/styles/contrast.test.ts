@@ -14,7 +14,7 @@ import { dirname, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { METHOD_COLORS, LEARNING_METHODS } from "../lib/constants";
-import { THEME_IDS } from "../lib/themes";
+import { THEME_IDS } from "../lib/theme/themes";
 import { AA_LARGE_TEXT_OR_UI, AA_NORMAL_TEXT, bestTextOn, contrastRatio } from "./contrast";
 
 const HERE = dirname(fileURLToPath(import.meta.url));

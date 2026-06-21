@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useTheme} from "../../hooks/ui/useTheme";
-import {isDarkTheme} from "../../lib/themes";
+import {isDarkTheme} from "../../lib/theme/themes";
 import {UI_LANGUAGES} from "../../lib/i18n/languages";
 import {
     clearLearnerState,

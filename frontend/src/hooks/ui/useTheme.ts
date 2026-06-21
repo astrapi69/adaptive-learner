@@ -6,7 +6,7 @@ import {
     THEMES,
     type ThemeChoice,
     type ThemeId,
-} from "../../lib/themes";
+} from "../../lib/theme/themes";
 
 /**
  * Phase 58E — theme hook for the 6-theme + auto model.

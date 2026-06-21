@@ -19,7 +19,7 @@ import { useI18n } from "../../hooks/ui/useI18n";
 import { useIsLessonActive } from "../../hooks/lesson/useIsLessonActive";
 import { useScrollDirection } from "../../hooks/ui/useScrollDirection";
 import { useTheme } from "../../hooks/ui/useTheme";
-import { isDarkTheme } from "../../lib/themes";
+import { isDarkTheme } from "../../lib/theme/themes";
 
 /**
  * Top navigation bar. Rendered on every authenticated page
