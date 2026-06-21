@@ -31,7 +31,7 @@ import {
   parseLessonResources,
   type MediaResource,
   type MediaType,
-} from "../../lib/content/media-loader";
+} from "../../lib/content/media/media-loader";
 import ResourceCard from "../../shared/media/ResourceCard";
 import type { ContentLesson, ContentSetBook } from "../../storage/types";
 

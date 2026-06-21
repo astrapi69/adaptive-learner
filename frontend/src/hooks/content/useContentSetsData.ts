@@ -17,16 +17,16 @@ import type { DownloadState } from "../../components/content/ContentSetRow";
 import {
   type BookRecommendations,
   fetchBookRecommendations,
-} from "../../lib/content/book-recommendations";
+} from "../../lib/content/media/book-recommendations";
 import {
   type BookMetadata,
   fetchBookCompanion,
   isFetchableSource,
-} from "../../lib/content/book-companion";
+} from "../../lib/content/media/book-companion";
 import {
   type MediaResource,
   fetchMediaResources,
-} from "../../lib/content/media-loader";
+} from "../../lib/content/media/media-loader";
 import { type UserFoldInput } from "../../lib/content/browse/content-tree";
 import {
   listContributions,

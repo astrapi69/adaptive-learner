@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { Book } from "../../lib/content/book-recommendations";
+import type { Book } from "../../lib/content/media/book-recommendations";
 import BookRecommendations from "./BookRecommendations";
 
 vi.mock("../../hooks/ui/useI18n", () => ({

@@ -21,7 +21,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import type { Book } from "../../lib/content/book-recommendations";
+import type { Book } from "../../lib/content/media/book-recommendations";
 import { useI18n } from "../../hooks/ui/useI18n";
 
 interface BookRecommendationsProps {

@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { MediaResource } from "../../lib/content/media-loader";
+import type { MediaResource } from "../../lib/content/media/media-loader";
 import type { ContentLesson } from "../../storage/types";
 import LessonResources from "./LessonResources";
 
@@ -14,9 +14,9 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 }));
 
 const domainMedia = vi.hoisted(() => ({ value: [] as MediaResource[] }));
-vi.mock("../../lib/content/media-loader", async (importOriginal) => {
+vi.mock("../../lib/content/media/media-loader", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("../../lib/content/media-loader")>();
+    await importOriginal<typeof import("../../lib/content/media/media-loader")>();
   return {
     ...actual,
     fetchMediaResources: vi.fn(async () => domainMedia.value),

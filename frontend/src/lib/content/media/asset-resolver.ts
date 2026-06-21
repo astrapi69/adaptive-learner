@@ -24,7 +24,7 @@
  * Pure module-level state. Tests reset it via ``_resetForTests``.
  */
 
-import {getStorage} from "../../storage";
+import {getStorage} from "../../../storage";
 
 interface AssetCacheEntry {
     url: string;

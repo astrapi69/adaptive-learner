@@ -47,7 +47,7 @@ import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import ExerciseHint from "./ExerciseHint";
-import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
+import {generatePlaceholderSvg} from "../../lib/content/media/placeholder-svg";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";

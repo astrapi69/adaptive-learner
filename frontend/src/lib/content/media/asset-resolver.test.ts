@@ -15,7 +15,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 const getAssetMock = vi.fn();
 const revokeMock = vi.fn();
 
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
     getStorage: () => ({
         contentLoader: {
             getAsset: getAssetMock,
