@@ -31,7 +31,7 @@ import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import ImportLessonModal from "../../components/content/ImportLessonModal";
 import MyLessonsSection from "../../components/content/MyLessonsSection";
 import ContentTree from "../../components/content/ContentTree";
-import ContentShareDialog from "../../components/content/ContentShareDialog";
+import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/ContentBookCompanions";
 import ContentContributionsSection from "../../components/content/ContentContributionsSection";
 import ContentToolbar from "../../components/content/ContentToolbar";

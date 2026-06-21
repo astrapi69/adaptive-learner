@@ -12,11 +12,11 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ApiError } from "../../api/client";
+import { ApiError } from "../../../api/client";
 import ShareWizard from "./ShareWizard";
-import type { ContentLesson, ContentSetEntry } from "../../storage/types";
+import type { ContentLesson, ContentSetEntry } from "../../../storage/types";
 
-vi.mock("../../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_key: string, fallback: string) => fallback,
     lang: "de",
@@ -24,7 +24,7 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 }));
 
 const emitCelebration = vi.fn();
-vi.mock("../../lib/praise/celebration-bus", () => ({
+vi.mock("../../../lib/praise/celebration-bus", () => ({
   emitCelebration: (e: unknown) => emitCelebration(e),
 }));
 
@@ -32,7 +32,7 @@ const githubMock = vi.hoisted(() => ({
   getStatus: vi.fn(),
   createLessonPr: vi.fn(),
 }));
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
   getStorage: () => ({ github: githubMock }),
 }));
 

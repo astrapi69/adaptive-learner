@@ -13,9 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useI18n } from "../../hooks/ui/useI18n";
-import type { UseShareWizardResult } from "../../hooks/content/useShareWizard";
-import { CEFR_LEVELS, LANGUAGE_OPTIONS } from "../../lib/content/language/language-options";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import type { UseShareWizardResult } from "../../../hooks/content/useShareWizard";
+import { CEFR_LEVELS, LANGUAGE_OPTIONS } from "../../../lib/content/language/language-options";
 import { isCefr, LEVEL_NONE } from "./shareWizardHelpers";
 
 export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult }) {

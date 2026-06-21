@@ -5,8 +5,8 @@
  * block sharing.
  */
 
-import { useI18n } from "../../hooks/ui/useI18n";
-import type { UseShareWizardResult } from "../../hooks/content/useShareWizard";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import type { UseShareWizardResult } from "../../../hooks/content/useShareWizard";
 
 export default function ShareWizardStep3({ wiz }: { wiz: UseShareWizardResult }) {
   const { t } = useI18n();

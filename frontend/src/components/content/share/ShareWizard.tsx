@@ -32,11 +32,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-import { useI18n } from "../../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   useShareWizard,
   type ShareWizardProps,
-} from "../../hooks/content/useShareWizard";
+} from "../../../hooks/content/useShareWizard";
 import { TOTAL_STEPS, type Step } from "./shareWizardHelpers";
 import ShareWizardStep1 from "./ShareWizardStep1";
 import ShareWizardStep2 from "./ShareWizardStep2";
