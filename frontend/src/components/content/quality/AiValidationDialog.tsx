@@ -13,19 +13,19 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import ProgressBar from "../../shared/data-display/ProgressBar";
+import ProgressBar from "../../../shared/data-display/ProgressBar";
 import ValidationReport, {
   type ValidationReportItem,
-} from "../../shared/feedback/ValidationReport";
-import { useI18n } from "../../hooks/ui/useI18n";
-import { useAiCardValidation } from "../../hooks/content/useAiCardValidation";
+} from "../../../shared/feedback/ValidationReport";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { useAiCardValidation } from "../../../hooks/content/useAiCardValidation";
 import {
   buildValidationMarkdown,
   type ValidationMarkdownRow,
-} from "../../lib/ai/validation-markdown";
-import { downloadBlob } from "../../lib/lesson/result-download";
-import type { AIProvider } from "../../lib/constants";
-import type { ContentSetEntry } from "../../storage/types";
+} from "../../../lib/ai/validation-markdown";
+import { downloadBlob } from "../../../lib/lesson/result-download";
+import type { AIProvider } from "../../../lib/constants";
+import type { ContentSetEntry } from "../../../storage/types";
 
 export interface AiValidationDialogProps {
   /** The set under review, or null when the dialog is closed. */

@@ -8,7 +8,7 @@
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import type { ContentSetEntry } from "../../../storage/types";
-import GenerateSetExercisesButton from "../GenerateSetExercisesButton";
+import GenerateSetExercisesButton from "../quality/GenerateSetExercisesButton";
 import UserSetActions from "./UserSetActions";
 
 interface MyLessonsSectionProps {

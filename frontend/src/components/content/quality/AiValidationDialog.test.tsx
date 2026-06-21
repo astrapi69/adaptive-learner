@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 import AiValidationDialog from "./AiValidationDialog";
-import { __resetRateLimitForTests } from "../../hooks/content/useAiCardValidation";
-import type { ContentSetEntry } from "../../storage/types";
+import { __resetRateLimitForTests } from "../../../hooks/content/useAiCardValidation";
+import type { ContentSetEntry } from "../../../storage/types";
 
 const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
@@ -11,7 +11,7 @@ const aiValidateCardsMock = vi.fn();
 const getCacheMock = vi.fn();
 const saveCacheMock = vi.fn();
 
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
   getStorage: () => ({
     contentLoader: {
       listLessons: listLessonsMock,
@@ -23,11 +23,11 @@ vi.mock("../../storage", () => ({
   }),
 }));
 
-vi.mock("../../lib/learning/learnerState", () => ({
+vi.mock("../../../lib/learning/learnerState", () => ({
   readLearnerState: () => ({ userId: "u1" }),
 }));
 
-vi.mock("../../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb: string) => fb, lang: "en" }),
 }));
 

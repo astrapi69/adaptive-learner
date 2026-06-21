@@ -58,8 +58,8 @@ import {
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
 import { readLearnerState } from "../../lib/learning/learnerState";
 import { resolveStorageMode } from "../../storage";
-import AiValidationDialog from "../../components/content/AiValidationDialog";
-import QualityCheckDialog from "../../components/content/QualityCheckDialog";
+import AiValidationDialog from "../../components/content/quality/AiValidationDialog";
+import QualityCheckDialog from "../../components/content/quality/QualityCheckDialog";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
 import { isOfficialSource } from "../../lib/content/repos/content-repos";

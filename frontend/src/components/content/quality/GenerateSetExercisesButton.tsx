@@ -13,18 +13,18 @@ import { useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import ApiKeyRequiredNotice from "../settings/ai/ApiKeyRequiredNotice";
-import { useConfirm } from "../../contexts/ConfirmContext";
+import ApiKeyRequiredNotice from "../../settings/ai/ApiKeyRequiredNotice";
+import { useConfirm } from "../../../contexts/ConfirmContext";
 import {
   estimateBatchTokens,
   generateExercisesForSet as defaultRunBatch,
   type SetBatchDeps,
-} from "../../lib/ai/generate-exercises-for-set";
-import { buildSetBatchDeps } from "../../lib/ai/set-batch-deps";
-import { resolveActiveAiProvider } from "../../lib/ai/resolve-provider";
-import { readLearnerState } from "../../lib/learning/learnerState";
-import type { ContentSetEntry } from "../../storage/types";
-import { notify } from "../../utils/notify";
+} from "../../../lib/ai/generate-exercises-for-set";
+import { buildSetBatchDeps } from "../../../lib/ai/set-batch-deps";
+import { resolveActiveAiProvider } from "../../../lib/ai/resolve-provider";
+import { readLearnerState } from "../../../lib/learning/learnerState";
+import type { ContentSetEntry } from "../../../storage/types";
+import { notify } from "../../../utils/notify";
 
 type Translate = (key: string, fallback?: string) => string;
 

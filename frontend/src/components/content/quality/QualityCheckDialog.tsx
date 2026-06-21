@@ -15,14 +15,14 @@ import { Button } from "@/components/ui/button";
 import ValidationReport, {
   type ValidationReportItem,
   type ValidationReportIssue,
-} from "../../shared/feedback/ValidationReport";
-import { useI18n } from "../../hooks/ui/useI18n";
+} from "../../../shared/feedback/ValidationReport";
+import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   useContentQualityCheck,
   type QualityCardMeta,
-} from "../../hooks/content/useContentQualityCheck";
-import type { QualityReport } from "../../lib/content-quality";
-import type { ContentSetEntry } from "../../storage/types";
+} from "../../../hooks/content/useContentQualityCheck";
+import type { QualityReport } from "../../../lib/content-quality";
+import type { ContentSetEntry } from "../../../storage/types";
 
 export interface QualityCheckDialogProps {
   /** The set under review, or null when the dialog is closed. */

@@ -2,12 +2,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 
 import QualityCheckDialog from "./QualityCheckDialog";
-import type { ContentSetEntry } from "../../storage/types";
+import type { ContentSetEntry } from "../../../storage/types";
 
 const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
 
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
   getStorage: () => ({
     contentLoader: {
       listLessons: listLessonsMock,
@@ -16,7 +16,7 @@ vi.mock("../../storage", () => ({
   }),
 }));
 
-vi.mock("../../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb: string) => fb, lang: "en" }),
 }));
 
