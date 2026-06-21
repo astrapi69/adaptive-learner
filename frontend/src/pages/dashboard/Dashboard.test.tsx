@@ -41,6 +41,22 @@ vi.mock("../../api/client", async () => {
         ...actual.api.settings,
         get: (...args: unknown[]) => apiSettingsGet(...args),
       },
+      // #899 — the Dashboard's data effect also fires gamification +
+      // pronunciation reads. Left unmocked they hit a real (refused) network,
+      // and the latency delays Promise.allSettled past the default
+      // findByTestId timeout once the Aktivität tab is lazy (#858) — the radar
+      // then renders too late. Stub them to resolve instantly.
+      gamification: {
+        ...actual.api.gamification,
+        getState: () => Promise.resolve(null),
+        listBadges: () => Promise.resolve(null),
+        getStreak: () => Promise.resolve(null),
+        getStreakHeatmap: () => Promise.resolve([]),
+      },
+      pronunciation: {
+        ...actual.api.pronunciation,
+        eligibility: () => Promise.resolve({ eligible: false }),
+      },
     },
   };
 });
@@ -185,7 +201,12 @@ describe("Dashboard page", () => {
     apiTools.mockResolvedValue(TOOLS);
     renderDashboard(undefined, ACTIVITY);
     await screen.findByTestId("dashboard");
-    expect(await screen.findByTestId("profile-radar")).toBeInTheDocument();
+    // The Aktivität tab is lazy (#858) and mounts after the data effect
+    // resolves; a generous timeout keeps the first lazy assertion off the
+    // 1s-default knife-edge (#899).
+    expect(
+      await screen.findByTestId("profile-radar", undefined, { timeout: 5000 }),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("progress-timeline")).toBeInTheDocument();
     expect(screen.getByTestId("method-distribution")).toBeInTheDocument();
     expect(screen.getByTestId("session-counter")).toBeInTheDocument();
