@@ -60,6 +60,9 @@ export function readAssessmentProgress(
     }
 }
 
+/** Persist the in-flight assessment progress for a project, then fire
+ *  the change event so the same tab re-reads live. No-op when
+ *  ``projectId`` is null or localStorage is unavailable. */
 export function writeAssessmentProgress(
     projectId: string | null,
     progress: AssessmentProgress,
@@ -73,6 +76,9 @@ export function writeAssessmentProgress(
     notifyChange();
 }
 
+/** Delete the saved assessment progress for a project (e.g. once the
+ *  profile is computed), then fire the change event. No-op when
+ *  ``projectId`` is null or localStorage is unavailable. */
 export function clearAssessmentProgress(projectId: string | null): void {
     if (!projectId) return;
     try {

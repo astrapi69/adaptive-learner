@@ -86,14 +86,17 @@ export function enqueueRequest(
   writeQueue(items.slice(-MAX_ITEMS));
 }
 
+/** Snapshot of the currently queued offline requests, oldest first. */
 export function getSyncQueue(): SyncQueueItem[] {
   return readQueue();
 }
 
+/** Number of requests currently waiting in the offline sync queue. */
 export function syncQueueSize(): number {
   return readQueue().length;
 }
 
+/** Empty the offline sync queue (drops all pending requests). */
 export function clearSyncQueue(): void {
   writeQueue([]);
 }

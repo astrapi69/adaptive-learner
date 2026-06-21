@@ -76,6 +76,8 @@ function readString(key: string, fallback: string): string {
     return fallback;
 }
 
+/** Read all voice preferences from localStorage, falling back to the
+ *  documented defaults for any unset / invalid key. */
 export function readVoicePrefs(): VoicePrefs {
     return {
         ttsEnabled: readBool(K.ttsEnabled, true),
@@ -89,29 +91,37 @@ export function readVoicePrefs(): VoicePrefs {
     };
 }
 
+/** Persist whether TTS (read-aloud) is enabled. */
 export function writeTtsEnabled(v: boolean): void {
     try { localStorage.setItem(K.ttsEnabled, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
 }
+/** Persist whether STT (voice dictation) is enabled. */
 export function writeSttEnabled(v: boolean): void {
     try { localStorage.setItem(K.sttEnabled, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
 }
+/** Persist whether AI replies are auto-played aloud. */
 export function writeAutoPlayAi(v: boolean): void {
     try { localStorage.setItem(K.autoPlay, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
 }
+/** Persist the TTS speaking rate (clamped to 0.5..2.0). */
 export function writeTtsRate(v: number): void {
     const clamped = Math.max(0.5, Math.min(2.0, v));
     try { localStorage.setItem(K.rate, String(clamped)); } catch { /* localStorage unavailable — best effort */ }
 }
+/** Persist the TTS pitch (clamped to 0.5..2.0). */
 export function writeTtsPitch(v: number): void {
     const clamped = Math.max(0.5, Math.min(2.0, v));
     try { localStorage.setItem(K.pitch, String(clamped)); } catch { /* localStorage unavailable — best effort */ }
 }
+/** Persist the preferred TTS voice name ("" = pick a default by lang). */
 export function writeTtsVoiceName(v: string): void {
     try { localStorage.setItem(K.voiceName, v); } catch { /* localStorage unavailable — best effort */ }
 }
+/** Persist the STT language override ("" = use the project / user lang). */
 export function writeSttLangOverride(v: string): void {
     try { localStorage.setItem(K.sttLang, v); } catch { /* localStorage unavailable — best effort */ }
 }
+/** Persist whether the pronunciation page is enabled. */
 export function writePronunciationEnabled(v: boolean): void {
     try { localStorage.setItem(K.pronunciation, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
 }

@@ -40,6 +40,8 @@ function notifyChange(): void {
     }
 }
 
+/** Read the stored mission preferences, falling back to
+ *  {@link DEFAULT_MISSION_PREFS} for any unset or invalid value. */
 export function readMissionPrefs(): MissionPrefs {
     let enabled = DEFAULT_MISSION_PREFS.enabled;
     let count = DEFAULT_MISSION_PREFS.count;
@@ -60,6 +62,8 @@ export function readMissionPrefs(): MissionPrefs {
     return {enabled, count, difficultyMix};
 }
 
+/** Persist whether daily missions are shown and notify same-tab
+ *  listeners. */
 export function setMissionsEnabled(enabled: boolean): void {
     try {
         localStorage.setItem(KEY_ENABLED, enabled ? "true" : "false");
@@ -69,6 +73,8 @@ export function setMissionsEnabled(enabled: boolean): void {
     notifyChange();
 }
 
+/** Persist the daily mission count (rounded + clamped to 1..3) and
+ *  notify same-tab listeners. */
 export function setMissionCount(count: number): void {
     try {
         const clamped = Math.max(1, Math.min(3, Math.round(count)));
@@ -79,6 +85,7 @@ export function setMissionCount(count: number): void {
     notifyChange();
 }
 
+/** Persist the difficulty mix and notify same-tab listeners. */
 export function setMissionDifficultyMix(mix: DifficultyMix): void {
     try {
         localStorage.setItem(KEY_MIX, mix);

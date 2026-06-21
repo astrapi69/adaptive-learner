@@ -38,6 +38,8 @@ export const DEFAULT_INTENSITY: FeedbackIntensity = "normal";
 export const DEFAULT_SOUND_ENABLED = false;
 export const DEFAULT_SOUND_VOLUME = 50;
 
+/** Read the stored feedback intensity, falling back to
+ *  {@link DEFAULT_INTENSITY} when unset or invalid. */
 export function readFeedbackIntensity(): FeedbackIntensity {
     try {
         const raw = localStorage.getItem(KEY_INTENSITY);
@@ -65,6 +67,7 @@ function notifyChange(): void {
     }
 }
 
+/** Persist the feedback intensity and notify same-tab listeners. */
 export function setFeedbackIntensity(intensity: FeedbackIntensity): void {
     try {
         localStorage.setItem(KEY_INTENSITY, intensity);
@@ -74,6 +77,8 @@ export function setFeedbackIntensity(intensity: FeedbackIntensity): void {
     notifyChange();
 }
 
+/** Read whether celebration sounds are enabled, falling back to
+ *  {@link DEFAULT_SOUND_ENABLED} when unset or invalid. */
 export function readSoundEnabled(): boolean {
     try {
         const raw = localStorage.getItem(KEY_SOUND_ENABLED);
@@ -85,6 +90,7 @@ export function readSoundEnabled(): boolean {
     return DEFAULT_SOUND_ENABLED;
 }
 
+/** Persist the sound-enabled flag and notify same-tab listeners. */
 export function setSoundEnabled(enabled: boolean): void {
     try {
         localStorage.setItem(KEY_SOUND_ENABLED, enabled ? "true" : "false");
@@ -94,6 +100,8 @@ export function setSoundEnabled(enabled: boolean): void {
     notifyChange();
 }
 
+/** Read the stored sound volume clamped to 0..100, falling back to
+ *  {@link DEFAULT_SOUND_VOLUME} when unset or invalid. */
 export function readSoundVolume(): number {
     try {
         const raw = localStorage.getItem(KEY_SOUND_VOLUME);
@@ -109,6 +117,8 @@ export function readSoundVolume(): number {
     return DEFAULT_SOUND_VOLUME;
 }
 
+/** Persist the sound volume (rounded + clamped to 0..100) and
+ *  notify same-tab listeners. */
 export function setSoundVolume(volume: number): void {
     try {
         const clamped = Math.max(0, Math.min(100, Math.round(volume)));
@@ -181,6 +191,8 @@ export function nextCorrectAnswerIndex(): number {
     return _correctAnswerCount++;
 }
 
+/** Reset the session-local correct-answer counter (tests + new
+ *  sessions). */
 export function resetCorrectAnswerCount(): void {
     _correctAnswerCount = 0;
 }

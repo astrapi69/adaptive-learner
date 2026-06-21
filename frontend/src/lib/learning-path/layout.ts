@@ -89,6 +89,8 @@ function posKey(userId: string): string {
     return `${POS_PREFIX}:${userId || "anon"}`;
 }
 
+/** Persist a user's custom node positions to localStorage
+ *  (best-effort; never throws). */
 export function savePositions(userId: string, positions: StoredPositions): void {
     try {
         localStorage.setItem(posKey(userId), JSON.stringify(positions));
@@ -97,6 +99,8 @@ export function savePositions(userId: string, positions: StoredPositions): void 
     }
 }
 
+/** Load a user's stored custom node positions, or null when absent
+ *  or unparseable. */
 export function loadPositions(userId: string): StoredPositions | null {
     try {
         const raw = localStorage.getItem(posKey(userId));
@@ -106,6 +110,7 @@ export function loadPositions(userId: string): StoredPositions | null {
     }
 }
 
+/** Remove a user's stored custom node positions (the Reset action). */
 export function clearPositions(userId: string): void {
     try {
         localStorage.removeItem(posKey(userId));

@@ -33,6 +33,7 @@ export function readHintsEnabled(): boolean {
     return DEFAULT_HINTS_ENABLED;
 }
 
+/** Persist whether hints are offered and notify open surfaces. */
 export function setHintsEnabled(enabled: boolean): void {
     try {
         localStorage.setItem(KEY_ENABLED, enabled ? "true" : "false");
@@ -62,6 +63,8 @@ export function readHintXpCost(): number {
     return DEFAULT_HINT_XP_COST;
 }
 
+/** Persist the per-hint XP cost (clamped to 0..MAX) and notify open
+ *  surfaces. */
 export function setHintXpCost(value: number): void {
     try {
         localStorage.setItem(KEY_XP_COST, String(clampHintXpCost(value)));

@@ -25,6 +25,10 @@ export interface ErrorCluster {
 
 const MIN_CLUSTER_LESSONS = 2;
 
+/** Group lessons by shared error tag into clusters (each tag shared
+ *  by 2+ lessons), summing error volume and picking the
+ *  most-affected set to launch an adaptive lesson from. Returns
+ *  clusters sorted by descending error count. */
 export function buildErrorClusters(
     errorsByLesson: Record<string, ElementError[]>,
 ): ErrorCluster[] {

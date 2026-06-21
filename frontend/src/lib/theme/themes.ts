@@ -139,10 +139,13 @@ export const THEMES: readonly ThemeMeta[] = [
 
 export const THEME_IDS: readonly ThemeId[] = THEMES.map((meta) => meta.id);
 
+/** Type guard: whether ``value`` is a registered concrete theme id. */
 export function isKnownTheme(value: string): value is ThemeId {
     return THEMES.some((meta) => meta.id === value);
 }
 
+/** Type guard: whether ``value`` is a valid theme choice (a known
+ *  theme id or ``"auto"``). */
 export function isThemeChoice(value: string): value is ThemeChoice {
     return value === "auto" || isKnownTheme(value);
 }

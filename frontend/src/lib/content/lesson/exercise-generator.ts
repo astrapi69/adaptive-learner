@@ -111,6 +111,9 @@ export function blankExample(example: string, word: string): string | null {
 
 // --- per-type builders ---------------------------------------------
 
+/** Build matching exercises by chunking ``cards`` into groups of
+ *  ``groupSize``; each group becomes one front/back pairing exercise.
+ *  A trailing group of fewer than 2 cards is dropped as degenerate. */
 export function buildMatching(
     cards: GeneratorCard[],
     groupSize: number,
@@ -136,6 +139,9 @@ export function buildMatching(
     return out;
 }
 
+/** Build one free-text exercise per card: the prompt template's
+ *  ``{word}`` is replaced with the card front, and the accepted answers
+ *  are the card back plus its lowercase variant. */
 export function buildFreeText(
     cards: GeneratorCard[],
     promptTemplate: string,
@@ -150,6 +156,9 @@ export function buildFreeText(
     }));
 }
 
+/** Build cloze exercises from cards that carry an example sentence:
+ *  the card front is blanked out of its example (via
+ *  {@link blankExample}). Cards without a usable example are skipped. */
 export function buildCloze(
     cards: GeneratorCard[],
     prompt: string,
@@ -173,6 +182,9 @@ export function buildCloze(
     return out;
 }
 
+/** Build word-tiles exercises from cards that carry an example
+ *  sentence: the example is split into shuffleable word tiles. Cards
+ *  whose example has fewer than 2 words are skipped. */
 export function buildWordTiles(
     cards: GeneratorCard[],
     promptTemplate: string,

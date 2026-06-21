@@ -220,6 +220,7 @@ const STRINGS = {
 
 export type ExportStringKey = keyof (typeof STRINGS)["en"];
 
+/** Resolve an export-string ``key`` for the given language (DE/EN, normalised). */
 export function t(lang: string, key: ExportStringKey): string {
     const table = STRINGS[normaliseLang(lang)];
     return table[key];
@@ -244,6 +245,7 @@ const METHOD_LABELS = {
     },
 } as const;
 
+/** Localized display label for a learning ``method``; the raw key is returned when unknown. */
 export function methodLabel(lang: string, method: string): string {
     const table = METHOD_LABELS[normaliseLang(lang)];
     return (table as Record<string, string>)[method] ?? method;
@@ -270,6 +272,7 @@ const STEP_LABELS = {
     },
 } as const;
 
+/** Localized display label for a 1-7 session ``step``; the number is returned when unknown. */
 export function stepLabel(lang: string, step: number): string {
     const table = STEP_LABELS[normaliseLang(lang)];
     return (table as Record<number, string>)[step] ?? String(step);
@@ -288,6 +291,7 @@ const STATUS_LABELS = {
     },
 } as const;
 
+/** Localized display label for a project/session ``status``; the raw key is returned when unknown. */
 export function statusLabel(lang: string, status: string): string {
     const table = STATUS_LABELS[normaliseLang(lang)];
     return (table as Record<string, string>)[status] ?? status;

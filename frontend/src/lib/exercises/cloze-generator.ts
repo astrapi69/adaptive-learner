@@ -63,6 +63,16 @@ export interface GenerateClozeArgs {
     sourceCard: ContentLessonCard | null;
 }
 
+/**
+ * Synthesise a Cloze exercise that targets the specific token the user
+ * got wrong, from an SRS error + (optional) source card. Deterministic
+ * (no randomness / AI / async). Returns ``null`` when no cloze can be
+ * constructed, so the caller falls back to replaying the original
+ * exercise. See the module docstring for the full precedence algorithm
+ * and distractor-pool contract.
+ *
+ * @returns The generated cloze exercise, or ``null`` (graceful fallback).
+ */
 export function generateClozeFromError({
     error,
     sourceExercise,

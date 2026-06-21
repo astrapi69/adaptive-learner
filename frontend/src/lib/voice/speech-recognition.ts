@@ -47,6 +47,8 @@ function getRecognitionCtor(): SpeechRecognitionCtor | null {
     return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
+/** Whether the browser exposes the Web Speech recognition API. Gate
+ *  mic UI on this and hide the affordance entirely when false. */
 export function isSpeechRecognitionSupported(): boolean {
     return getRecognitionCtor() !== null;
 }

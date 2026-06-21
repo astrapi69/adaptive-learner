@@ -19,6 +19,8 @@ export const DEFAULT_LESSON_SHORTCUTS_ENABLED = true;
 export const LESSON_SHORTCUTS_CHANGE_EVENT =
     "adaptive-learner:lesson-shortcuts-pref";
 
+/** Read whether the lesson Enter-key shortcut is enabled. Falls back to
+ *  {@link DEFAULT_LESSON_SHORTCUTS_ENABLED} when unset or unreadable. */
 export function readLessonShortcutsEnabled(): boolean {
     try {
         const raw = localStorage.getItem(KEY_ENABLED);
@@ -30,6 +32,9 @@ export function readLessonShortcutsEnabled(): boolean {
     return DEFAULT_LESSON_SHORTCUTS_ENABLED;
 }
 
+/** Persist the lesson Enter-key shortcut preference and dispatch
+ *  {@link LESSON_SHORTCUTS_CHANGE_EVENT} so hooks re-read live in the
+ *  same tab. Storage / dispatch failures are swallowed. */
 export function setLessonShortcutsEnabled(enabled: boolean): void {
     try {
         localStorage.setItem(KEY_ENABLED, enabled ? "true" : "false");

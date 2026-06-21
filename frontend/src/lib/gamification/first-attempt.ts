@@ -30,6 +30,12 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
     );
 }
 
+/**
+ * True iff every step in the JSON ``step_results`` payload was
+ * cleared on its first try (``attempts == 1`` or absent).
+ * Conservative: returns false on null/empty/malformed input so
+ * the first-attempt bonus is only awarded on positive evidence.
+ */
 export function isFirstAttempt(
     step_results: string | null | undefined,
 ): boolean {

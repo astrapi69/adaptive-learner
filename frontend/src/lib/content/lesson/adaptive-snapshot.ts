@@ -27,6 +27,17 @@
 import type { ContentLesson, ContentLessonStep } from "../../../storage/types";
 import { slugify, validateGeneratedLesson } from "../analysis/analysis-to-lesson";
 
+/**
+ * Turn a live adaptive lesson into a self-contained, schema-valid
+ * lesson that can be saved and replayed offline: reissue every id as a
+ * slug-safe positional id and clear ``cards`` / ``card_ids`` (each
+ * exercise already holds its own data). Throws (via
+ * {@link validateGeneratedLesson}) if the result would be invalid, so
+ * the save path never persists a broken lesson.
+ *
+ * @param lesson - The in-memory adaptive lesson (built for rendering).
+ * @returns A new, validated snapshot lesson (the input is not mutated).
+ */
 export function snapshotAdaptiveLesson(lesson: ContentLesson): ContentLesson {
   const id = slugify(lesson.id) || "adaptive-lesson";
   const steps: ContentLessonStep[] = lesson.steps.map((step, i) => {

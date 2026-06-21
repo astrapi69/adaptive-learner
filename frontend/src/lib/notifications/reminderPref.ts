@@ -106,6 +106,7 @@ export function readReminderSettings(): ReminderSettings {
     };
 }
 
+/** Persist whether daily reminders are enabled and notify listeners. */
 export function setRemindersEnabled(enabled: boolean): void {
     try {
         localStorage.setItem(KEY_ENABLED, enabled ? "true" : "false");
@@ -115,6 +116,8 @@ export function setRemindersEnabled(enabled: boolean): void {
     notifyChange();
 }
 
+/** Persist the reminder time and notify listeners. Ignored when
+ *  ``time`` is not a valid 24h ``HH:MM`` string. */
 export function setReminderTime(time: string): void {
     if (!isValidTime(time)) return;
     try {
@@ -125,6 +128,8 @@ export function setReminderTime(time: string): void {
     notifyChange();
 }
 
+/** Persist the reminder weekdays (clamped, de-duped, sorted) and
+ *  notify listeners. */
 export function setReminderWeekdays(weekdays: readonly number[]): void {
     try {
         localStorage.setItem(KEY_WEEKDAYS, clampWeekdays(weekdays).join(","));
@@ -146,6 +151,8 @@ export function readLastShownDate(): string | null {
     }
 }
 
+/** Record the local calendar day (``YYYY-MM-DD``) a reminder was
+ *  last shown, so it fires at most once per day. */
 export function setLastShownDate(isoDate: string): void {
     try {
         localStorage.setItem(KEY_LAST_SHOWN, isoDate);

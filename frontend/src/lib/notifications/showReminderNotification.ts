@@ -17,6 +17,11 @@ export interface ReminderNotificationOptions {
     onClick: () => void;
 }
 
+/**
+ * Show a single foreground reminder notification and wire its click
+ * to ``options.onClick``. Returns false (showing nothing) when the
+ * Notification API is unavailable or permission is not granted.
+ */
 export function showReminderNotification(
     options: ReminderNotificationOptions,
 ): boolean {

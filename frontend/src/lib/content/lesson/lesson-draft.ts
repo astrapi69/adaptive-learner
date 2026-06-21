@@ -45,10 +45,14 @@ export function newCardId(): string {
     return `card-${Date.now().toString(36)}-${_idSeq}`;
 }
 
+/** A blank card draft with a fresh id and empty fields. */
 export function emptyCard(): LessonCardDraft {
     return {id: newCardId(), front: "", back: "", notes: "", image: ""};
 }
 
+/** Persist the in-progress draft to localStorage, stamping a fresh
+ *  ``updatedAt``. Best-effort: a storage failure is swallowed (drafting
+ *  is non-critical). */
 export function saveLessonDraft(draft: LessonDraft): void {
     try {
         localStorage.setItem(
@@ -116,6 +120,7 @@ export function loadLessonDraft(): LessonDraft | null {
     }
 }
 
+/** Remove the stored draft (on successful save or explicit discard). */
 export function clearLessonDraft(): void {
     try {
         localStorage.removeItem(LESSON_DRAFT_KEY);

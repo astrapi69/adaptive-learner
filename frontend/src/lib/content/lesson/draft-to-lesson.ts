@@ -87,6 +87,9 @@ export function draftSetId(meta: LessonMeta): string {
     return `created-${slugify(meta.title) || "lesson"}`;
 }
 
+/** Wrap a built lesson in the ``SaveUserSetInput`` that persists it to
+ *  "My Lessons" via ``saveUserSet`` (origin ``"imported"``, since a
+ *  hand-authored lesson has no analysis/adaptive origin in the enum). */
 export function buildUserSetInput(
     input: DraftLessonInput,
     lesson: ContentLesson,
@@ -143,6 +146,7 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     };
 }
 
+/** True iff every save-readiness check passed (the draft is saveable). */
 export function allChecksPass(checks: DraftValidationChecks): boolean {
     return Object.values(checks).every(Boolean);
 }

@@ -21,6 +21,8 @@ interface LearnerState {
     language: string | null;
 }
 
+/** Read the current learner's user id, project id, and language from
+ *  localStorage. Any field is ``null`` when not yet set. */
 export function readLearnerState(): LearnerState {
     return {
         userId: localStorage.getItem(KEY_USER_ID),
@@ -29,18 +31,23 @@ export function readLearnerState(): LearnerState {
     };
 }
 
+/** Persist the active learner's user id. */
 export function setUserId(userId: string): void {
     localStorage.setItem(KEY_USER_ID, userId);
 }
 
+/** Persist the active learner's current project id. */
 export function setProjectId(projectId: string): void {
     localStorage.setItem(KEY_PROJECT_ID, projectId);
 }
 
+/** Persist the active learner's UI language. */
 export function setLanguage(lang: string): void {
     localStorage.setItem(KEY_LANGUAGE, lang);
 }
 
+/** Remove all learner-state keys in one sweep (e.g. on sign-out /
+ *  reset). */
 export function clearLearnerState(): void {
     localStorage.removeItem(KEY_USER_ID);
     localStorage.removeItem(KEY_PROJECT_ID);

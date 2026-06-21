@@ -47,6 +47,7 @@ function readNumber(key: string, fallback: number): number {
     return fallback;
 }
 
+/** Read all gamification preferences from localStorage, falling back to the defaults. */
 export function readGamificationPrefs(): GamificationPrefs {
     return {
         xpNotifications: readBool(KEY_XP_NOTIF, true),
@@ -55,6 +56,7 @@ export function readGamificationPrefs(): GamificationPrefs {
     };
 }
 
+/** Persist the XP-notification toggle to localStorage. */
 export function setXpNotifications(enabled: boolean): void {
     try {
         localStorage.setItem(KEY_XP_NOTIF, enabled ? "true" : "false");
@@ -63,6 +65,7 @@ export function setXpNotifications(enabled: boolean): void {
     }
 }
 
+/** Persist the badge-notification toggle to localStorage. */
 export function setBadgeNotifications(enabled: boolean): void {
     try {
         localStorage.setItem(KEY_BADGE_NOTIF, enabled ? "true" : "false");
@@ -71,6 +74,10 @@ export function setBadgeNotifications(enabled: boolean): void {
     }
 }
 
+/**
+ * Persist the daily session goal to localStorage, clamped to
+ * the 1-10 range.
+ */
 export function setDailySessionGoal(goal: number): void {
     try {
         const clamped = Math.max(1, Math.min(10, Math.floor(goal)));

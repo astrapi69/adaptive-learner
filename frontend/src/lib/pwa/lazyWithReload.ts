@@ -69,6 +69,12 @@ function clearReloadFlag(): void {
     }
 }
 
+/**
+ * ``React.lazy`` wrapper that triggers a single full reload when
+ * a dynamic chunk import fails because of a stale deploy. The
+ * one-shot reload flag prevents a reload loop for genuinely
+ * missing chunks or offline states.
+ */
 export function lazyWithReload<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the canonical React.lazy generic
     T extends ComponentType<any>,

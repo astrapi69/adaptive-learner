@@ -48,6 +48,9 @@ export function readMatchingResolveEffect(): MatchingResolveEffect {
     return DEFAULT_RESOLVE_EFFECT;
 }
 
+/** Persist the resolve effect and dispatch
+ *  {@link MATCHING_RESOLVE_PREF_CHANGE_EVENT} so same-tab listeners
+ *  refresh. */
 export function writeMatchingResolveEffect(effect: MatchingResolveEffect): void {
     try {
         localStorage.setItem(KEY, effect);

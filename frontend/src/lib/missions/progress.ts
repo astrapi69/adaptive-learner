@@ -26,6 +26,8 @@ export function readStat(
     return typeof value === "number" ? value : 0;
 }
 
+/** Evaluate a mission template against today's stats snapshot,
+ *  returning the clamped current value, target, and completion flag. */
 export function evaluateProgress(
     template: MissionTemplate,
     stats: MissionStats,

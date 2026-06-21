@@ -13,10 +13,12 @@ const TEMPLATES: readonly MissionTemplate[] = (
     templatesBundle as {templates: MissionTemplate[]}
 ).templates;
 
+/** All bundled mission templates. */
 export function getTemplates(): readonly MissionTemplate[] {
     return TEMPLATES;
 }
 
+/** Look up a mission template by id, or undefined when unknown. */
 export function getTemplate(id: string): MissionTemplate | undefined {
     return TEMPLATES.find((t) => t.id === id);
 }
