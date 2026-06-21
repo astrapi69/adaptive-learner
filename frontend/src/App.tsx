@@ -5,7 +5,7 @@ import { featureRegistry, type FeatureContext } from "./features/featureConfig";
 import { useApiKeyStatus } from "./hooks/settings/useApiKeyStatus";
 import { resolveStorageMode } from "./storage";
 import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie/dexie-user-data";
-import { lazyWithReload } from "./lib/lazyWithReload";
+import { lazyWithReload } from "./lib/pwa/lazyWithReload";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

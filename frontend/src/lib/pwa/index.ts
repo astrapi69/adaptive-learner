@@ -1,0 +1,11 @@
+export { LESSON_CACHE_NAME, clearLessonCache, formatMegabytes, getCacheInfo } from "./cache-info";
+export type { CacheInfo } from "./cache-info";
+export { canInstall, isStandalone, promptInstall, subscribeInstall } from "./install";
+export { isChunkLoadError, lazyWithReload, shouldReloadForChunkError } from "./lazyWithReload";
+export { CURRENT_BUILD, activateAndReload, activateInBackground, checkForUpdate, versionJsonUrl } from "./sw-update";
+export type { BackgroundActivateOptions, UpdateCheckOutcome, UpdateCheckStatus } from "./sw-update";
+export { SYNC_QUEUE_CHANGED_EVENT, clearSyncQueue, enqueueRequest, getSyncQueue, initSyncQueueReplay, replaySyncQueue, syncQueueSize } from "./sync-queue";
+export type { SyncQueueItem } from "./sync-queue";
+export { ACCEPTED_AT_KEY, ACCEPTED_SESSION_KEY, ACCEPTED_VERSION_KEY, ACCEPT_QUIET_MS, readAcceptedAt, readAcceptedThisSession, readAcceptedVersion, recordUpdateAccepted, shouldShowUpdateBanner } from "./update-accept";
+export { fetchLatestVersion, isUpdateAvailable, parseVersionManifest } from "./version-check";
+export type { VersionManifest } from "./version-check";
