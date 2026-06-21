@@ -13,4 +13,3 @@
 # only shrink). File-level granularity matches .filesize-baseline.
 
 frontend/src/pages/content/Content.tsx 21
-frontend/src/pages/content/ImportDetail.tsx 25
