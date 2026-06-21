@@ -128,12 +128,14 @@ class StatusResponse(BaseModel):
 
 @router.get("/status", response_model=StatusResponse)
 def sync_status(user_id: str, repo: SyncRepository = Depends(get_sync_repo)) -> StatusResponse:
+    """Return per-table row counts and the server time for the user's sync surface."""
     summary = compute_status(repo, user_id)
     return StatusResponse(**summary)
 
 
 @router.post("/push", response_model=PushResponse)
 def sync_push(payload: PushBody, repo: SyncRepository = Depends(get_sync_repo)) -> PushResponse:
+    """Apply incoming records for one table, reporting accepted, conflicting, and skipped ids."""
     if payload.table not in sync_service.TABLES:
         raise ValidationError(f"Unknown sync table: {payload.table!r}")
     since = sync_service._from_iso(payload.since) if payload.since else None
@@ -161,6 +163,7 @@ def sync_push(payload: PushBody, repo: SyncRepository = Depends(get_sync_repo)) 
 
 @router.post("/pull", response_model=PullResponse)
 def sync_pull(payload: PullBody, repo: SyncRepository = Depends(get_sync_repo)) -> PullResponse:
+    """Return the user's records (optionally filtered by table and since-timestamp) for the client to apply."""
     tables = tuple(payload.tables) if payload.tables else ALL_SYNC_TABLES
     unknown = [t for t in tables if t not in sync_service.TABLES]
     if unknown:
@@ -174,6 +177,7 @@ def sync_pull(payload: PullBody, repo: SyncRepository = Depends(get_sync_repo)) 
 def sync_resolve(
     payload: ResolveBody, repo: SyncRepository = Depends(get_sync_repo)
 ) -> ResolveResponse:
+    """Apply the caller's conflict-resolution decisions (local / remote / merged) per record."""
     resolutions = [
         Resolution(
             table=r.table,

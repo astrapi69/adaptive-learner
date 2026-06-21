@@ -64,6 +64,7 @@ class _AssignTagBody(BaseModel):
 
 @subjects_router.get("", response_model=list[SubjectOut])
 def list_subjects(repo: TaxonomyRepository = Depends(get_taxonomy_repo)) -> list[SubjectOut]:
+    """List all global subjects."""
     return [SubjectOut.model_validate(row) for row in taxonomy_service.list_subjects(repo)]
 
 
@@ -71,6 +72,7 @@ def list_subjects(repo: TaxonomyRepository = Depends(get_taxonomy_repo)) -> list
 def get_subject(
     subject_id: str, repo: TaxonomyRepository = Depends(get_taxonomy_repo)
 ) -> SubjectOut:
+    """Get a single subject by id."""
     return SubjectOut.model_validate(taxonomy_service.get_subject(repo, subject_id))
 
 
@@ -82,6 +84,7 @@ def get_subject(
 def create_subject(
     payload: SubjectCreate, repo: TaxonomyRepository = Depends(get_taxonomy_repo)
 ) -> SubjectOut:
+    """Create a new global subject."""
     return SubjectOut.model_validate(taxonomy_service.create_subject(repo, payload))
 
 
@@ -91,6 +94,7 @@ def update_subject(
     payload: SubjectUpdate,
     repo: TaxonomyRepository = Depends(get_taxonomy_repo),
 ) -> SubjectOut:
+    """Update a subject's fields."""
     return SubjectOut.model_validate(taxonomy_service.update_subject(repo, subject_id, payload))
 
 
@@ -98,6 +102,7 @@ def update_subject(
 def delete_subject(
     subject_id: str, repo: TaxonomyRepository = Depends(get_taxonomy_repo)
 ) -> Response:
+    """Delete a subject."""
     taxonomy_service.delete_subject(repo, subject_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -109,6 +114,7 @@ def delete_subject(
 def list_user_tags(
     user_id: str, repo: TaxonomyRepository = Depends(get_taxonomy_repo)
 ) -> list[TagOut]:
+    """List all tags for the user."""
     return [
         TagOut.model_validate(row) for row in taxonomy_service.list_tags_for_user(repo, user_id)
     ]
@@ -124,6 +130,7 @@ def create_user_tag(
     payload: TagCreate,
     repo: TaxonomyRepository = Depends(get_taxonomy_repo),
 ) -> TagOut:
+    """Create a tag for the user."""
     return TagOut.model_validate(taxonomy_service.create_tag(repo, user_id, payload))
 
 
@@ -136,11 +143,13 @@ def update_tag(
     payload: TagUpdate,
     repo: TaxonomyRepository = Depends(get_taxonomy_repo),
 ) -> TagOut:
+    """Update a tag's fields."""
     return TagOut.model_validate(taxonomy_service.update_tag(repo, tag_id, payload))
 
 
 @tags_router.delete("/{tag_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_tag(tag_id: str, repo: TaxonomyRepository = Depends(get_taxonomy_repo)) -> Response:
+    """Delete a tag."""
     taxonomy_service.delete_tag(repo, tag_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -152,6 +161,7 @@ def delete_tag(tag_id: str, repo: TaxonomyRepository = Depends(get_taxonomy_repo
 def list_project_subjects(
     project_id: str, repo: TaxonomyRepository = Depends(get_taxonomy_repo)
 ) -> list[SubjectOut]:
+    """List the subjects assigned to a project."""
     return [
         SubjectOut.model_validate(row)
         for row in taxonomy_service.list_project_subjects(repo, project_id)
@@ -168,6 +178,7 @@ def assign_subject_to_project(
     payload: _AssignSubjectBody,
     repo: TaxonomyRepository = Depends(get_taxonomy_repo),
 ) -> SubjectOut:
+    """Assign a subject to a project."""
     taxonomy_service.assign_subject_to_project(repo, project_id, payload.subject_id)
     return SubjectOut.model_validate(taxonomy_service.get_subject(repo, payload.subject_id))
 
@@ -181,6 +192,7 @@ def unassign_subject_from_project(
     subject_id: str,
     repo: TaxonomyRepository = Depends(get_taxonomy_repo),
 ) -> Response:
+    """Unassign a subject from a project."""
     taxonomy_service.unassign_subject_from_project(repo, project_id, subject_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -189,6 +201,7 @@ def unassign_subject_from_project(
 def list_project_tags(
     project_id: str, repo: TaxonomyRepository = Depends(get_taxonomy_repo)
 ) -> list[TagOut]:
+    """List the tags assigned to a project."""
     return [
         TagOut.model_validate(row) for row in taxonomy_service.list_project_tags(repo, project_id)
     ]
@@ -204,6 +217,7 @@ def assign_tag_to_project(
     payload: _AssignTagBody,
     repo: TaxonomyRepository = Depends(get_taxonomy_repo),
 ) -> TagOut:
+    """Assign a tag to a project."""
     taxonomy_service.assign_tag_to_project(repo, project_id, payload.tag_id)
     return TagOut.model_validate(taxonomy_service.get_tag(repo, payload.tag_id))
 
@@ -217,5 +231,6 @@ def unassign_tag_from_project(
     tag_id: str,
     repo: TaxonomyRepository = Depends(get_taxonomy_repo),
 ) -> Response:
+    """Unassign a tag from a project."""
     taxonomy_service.unassign_tag_from_project(repo, project_id, tag_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

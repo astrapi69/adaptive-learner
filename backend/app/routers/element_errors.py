@@ -58,6 +58,7 @@ def list_element_errors(
     ),
     repo: ElementErrorsRepository = Depends(get_element_errors_repo),
 ) -> list[ElementErrorOut]:
+    """List the user's element-error rows, optionally filtered by set and mastery state."""
     _require_user(repo, user_id)
     rows = element_errors_service.list_for_user(
         repo,
