@@ -27,7 +27,7 @@ import HelpLink from "../../components/help/HelpLink";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useConfirm } from "../../contexts/ConfirmContext";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";

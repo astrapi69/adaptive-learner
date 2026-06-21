@@ -8,7 +8,7 @@ let currentName = "Ada Lovelace";
 const usersGet = vi.fn(async () => ({ id: "u-1", name: currentName, language: "de" }));
 const settingsGet = vi.fn(async () => ({ avatar: null }));
 
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
   readLearnerState: () => ({ userId: "u-1", projectId: null, language: null }),
 }));
 vi.mock("../../hooks/ui/useI18n", () => ({

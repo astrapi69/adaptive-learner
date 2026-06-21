@@ -6,7 +6,7 @@
  */
 
 import {getStorage} from "../../storage";
-import {dedupeReviewQueueByElement} from "../review-lesson";
+import {dedupeReviewQueueByElement} from "../review/review-lesson";
 
 export interface DueReviewsSummary {
     /** Count of UNIQUE overdue elements (deduped across EXP-018 directions). */

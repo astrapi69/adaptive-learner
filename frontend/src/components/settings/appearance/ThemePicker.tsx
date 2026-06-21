@@ -17,7 +17,7 @@ import {useState} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {useTheme} from "../../../hooks/ui/useTheme";
-import {THEMES, type ThemeChoice} from "../../../lib/themes";
+import {THEMES, type ThemeChoice} from "../../../lib/theme/themes";
 
 /** Mini "dashboard" preview rendered inside each card. */
 function ThemeSwatch({

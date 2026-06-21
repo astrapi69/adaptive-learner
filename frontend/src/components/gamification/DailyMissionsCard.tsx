@@ -28,7 +28,7 @@ import { useEffect, useState } from "react";
 
 import { useI18n } from "../../hooks/ui/useI18n";
 import { allowsConfetti, effectiveIntensity } from "../../lib/feedback/feedbackPref";
-import { MISSION_PREF_CHANGE_EVENT, readMissionPrefs } from "../../lib/missionPref";
+import { MISSION_PREF_CHANGE_EVENT, readMissionPrefs } from "../../lib/missions/missionPref";
 import { localTodayIso } from "../../lib/missions/schedule";
 import type { DailyMission } from "../../lib/missions/types";
 import { celebrateMissions } from "../../lib/praise/celebration-bus";

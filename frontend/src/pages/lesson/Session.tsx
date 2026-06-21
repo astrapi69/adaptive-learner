@@ -11,7 +11,7 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useOnlineStatus} from "../../hooks/system/useOnlineStatus";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 import {resolveModel} from "../../storage/ai/ai-providers";
 import type {AvailableModel} from "../../storage/types";

@@ -11,7 +11,7 @@ import {
 
 import {useChartTheme} from "../../hooks/ui/useChartTheme";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {tooltipContentStyle} from "../../lib/chartTheme";
+import {tooltipContentStyle} from "../../lib/theme/chartTheme";
 import type {TrackingSummary} from "../../types";
 import ChartSummary from "../charts/ChartSummary";
 

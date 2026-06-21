@@ -22,7 +22,7 @@ import { useExerciseHints } from "../../hooks/lesson/useExerciseHints";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { emitXpSpent } from "../../lib/gamification/xp-spent-event";
 import { markHintUsed } from "../../lib/hints/hint-usage";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { ContentLessonExercise } from "../../storage/types";
 

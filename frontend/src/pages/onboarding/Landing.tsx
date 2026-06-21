@@ -6,17 +6,17 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useTheme} from "../../hooks/ui/useTheme";
-import {isDarkTheme} from "../../lib/themes";
-import {UI_LANGUAGES} from "../../lib/languages";
+import {isDarkTheme} from "../../lib/theme/themes";
+import {UI_LANGUAGES} from "../../lib/i18n/languages";
 import {
     clearLearnerState,
     readLearnerState,
     setLanguage,
     setProjectId,
     setUserId,
-} from "../../lib/learnerState";
+} from "../../lib/learning/learnerState";
 import {getStorage, resolveStorageMode} from "../../storage";
-import {docsHomeUrl} from "../../lib/help-routes";
+import {docsHomeUrl} from "../../lib/help/help-routes";
 
 /**
  * Landing page (project-reference §8 row ``/``).

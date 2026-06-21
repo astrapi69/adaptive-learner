@@ -11,13 +11,13 @@ import {useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {readLearnerState} from "../../../lib/learnerState";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {
     readMissionPrefs,
     setMissionCount,
     setMissionDifficultyMix,
     setMissionsEnabled,
-} from "../../../lib/missionPref";
+} from "../../../lib/missions/missionPref";
 import {localTodayIso} from "../../../lib/missions/schedule";
 import type {DifficultyMix} from "../../../lib/missions/types";
 import {getStorage} from "../../../storage";

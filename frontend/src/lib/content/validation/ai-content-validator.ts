@@ -15,7 +15,7 @@
  */
 
 import type { ContentLesson } from "../../../storage/types";
-import { extractJsonObject } from "../../extract-json";
+import { extractJsonObject } from "../../utils/extract-json";
 import type { ValidationMeta } from "./content-validator";
 
 // #252 — the type shapes moved to a pure module so type-only consumers

@@ -233,7 +233,7 @@ describe("ConfiguredProvidersTable", () => {
   });
 
   it("disables Test + shows the backend-only tooltip for a CORS-blocked provider in Dexie mode", async () => {
-    const statusModule = await import("../../../lib/aiProviderStatus");
+    const statusModule = await import("../../../lib/providers/aiProviderStatus");
     const spy = vi
       .spyOn(statusModule, "isDesktopOnlyProvider")
       .mockImplementation((p) => p === "openai");

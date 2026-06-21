@@ -19,7 +19,7 @@ import {
     isGlossaryLoaded,
     loadGlossaryLanguage,
     subscribeGlossary,
-} from "../../lib/help-glossary";
+} from "../../lib/help/help-glossary";
 
 export function useGlossary(lang: string): boolean {
     const [loaded, setLoaded] = useState(() => isGlossaryLoaded(lang));

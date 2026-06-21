@@ -23,7 +23,7 @@ import {
   isDesktopOnlyProvider,
   providerKeyStatus,
   type ProviderKeyStatus,
-} from "../../../lib/aiProviderStatus";
+} from "../../../lib/providers/aiProviderStatus";
 import { DEFAULT_MODELS } from "../../../storage/ai/ai-providers";
 import type { ApiKeyTestResult, StorageMode } from "../../../storage/types";
 import type { UserSettings } from "../../../types/domain";

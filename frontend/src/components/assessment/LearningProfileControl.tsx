@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {useHasIncompleteAssessment} from "../../hooks/learning/useAssessmentProgress";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 
 /**

@@ -11,7 +11,7 @@ import { ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useHasIncompleteAssessment } from "../../hooks/learning/useAssessmentProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { BadgeWithProgress, HeatmapEntryOut, StreakStateOut, XPState } from "../../storage/types";
 import type {

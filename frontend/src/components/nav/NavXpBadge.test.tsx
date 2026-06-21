@@ -18,7 +18,7 @@ const readLearnerState = vi.fn<() => { userId: string | null }>();
 const getState = vi.fn<(userId: string) => Promise<XPState>>();
 const getStreakHeatmap = vi.fn();
 
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
   readLearnerState: () => readLearnerState(),
 }));
 

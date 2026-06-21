@@ -17,7 +17,7 @@ import type {Edge, Node} from "@xyflow/react";
 
 import type {LessonNodeData} from "../../components/learning-path/LessonNodeView";
 import type {SetGroupNodeData} from "../../components/learning-path/SetGroupNodeView";
-import {computeStars} from "../lesson-summary";
+import {computeStars} from "../lesson/lesson-summary";
 import type {ElementError, LessonProgress} from "../../storage/types";
 import {makeEdge} from "./layout";
 

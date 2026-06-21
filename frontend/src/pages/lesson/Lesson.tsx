@@ -62,7 +62,7 @@ import { clearHintUsage } from "../../lib/hints/hint-usage";
 import { lessonMotivation } from "../../lib/lesson/motivation";
 import { notify } from "../../utils/notify";
 import { celebrateMissions } from "../../lib/praise/celebration-bus";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { ContentSetBook, RawAnswer } from "../../storage/types";
 

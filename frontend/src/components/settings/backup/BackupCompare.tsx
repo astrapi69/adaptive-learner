@@ -33,8 +33,8 @@ import {
     type BackupDiff,
     type ChangedRecord,
     type TableDiff,
-} from "../../../lib/backup-diff";
-import {renderDiffMarkdown} from "../../../lib/backup-diff-markdown";
+} from "../../../lib/backup/backup-diff";
+import {renderDiffMarkdown} from "../../../lib/backup/backup-diff-markdown";
 import {notify} from "../../../utils/notify";
 import type {BackupPayload} from "../../../types/domain";
 

@@ -104,7 +104,7 @@ vi.mock("../../hooks/settings/useApiKeyStatus", () => ({
   useApiKeyStatus: () => ({ ready: true, hasKey: true }),
 }));
 
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
   readLearnerState: () => ({
     userId: "user-1",
     language: "en",

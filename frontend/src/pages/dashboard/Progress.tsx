@@ -10,7 +10,7 @@ import RichTextEditor from "../../components/editor/RichTextEditor";
 import {parseEditorContent} from "../../components/editor/content-utils";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 import type {
     ProgressCommit,

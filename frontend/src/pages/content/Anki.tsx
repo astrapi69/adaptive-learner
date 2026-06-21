@@ -22,8 +22,8 @@ import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNot
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useConfirm } from "../../contexts/ConfirmContext";
-import { filterStandardProjects } from "../../lib/learning-project";
-import { readLearnerState } from "../../lib/learnerState";
+import { filterStandardProjects } from "../../lib/learning/learning-project";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { AnkiCardSuggestion } from "../../storage/types";
 import { notify } from "../../utils/notify";

@@ -44,15 +44,15 @@ import SettingsSidebar from "../../components/settings/SettingsSidebar";
 import SettingsMobileMenu from "../../components/settings/SettingsMobileMenu";
 import type { SidebarGroup } from "../../lib/settings/sidebar-model";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { buildLanguageOptions } from "../../lib/languages";
+import { buildLanguageOptions } from "../../lib/i18n/languages";
 import LanguagePicker from "../../shared/forms/LanguagePicker";
-import { readGesturePref, writeGesturePref } from "../../lib/gesturePref";
+import { readGesturePref, writeGesturePref } from "../../lib/settings/gesturePref";
 import {
   readLessonShortcutsEnabled,
   setLessonShortcutsEnabled,
 } from "../../lib/lesson/lessonShortcutsPref";
-import { readLearnerState, setLanguage } from "../../lib/learnerState";
-import { notifyProfileUpdated } from "../../lib/profileSignal";
+import { readLearnerState, setLanguage } from "../../lib/learning/learnerState";
+import { notifyProfileUpdated } from "../../lib/learning/profileSignal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

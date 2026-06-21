@@ -14,7 +14,7 @@
  * does the storage reads and feeds the results in.
  */
 
-import {computeStars, type StarRating} from "../../lesson-summary";
+import {computeStars, type StarRating} from "../../lesson/lesson-summary";
 import type {LessonProgress} from "../../../storage/types";
 
 /** One set's most-recently-touched lesson-progress row. */

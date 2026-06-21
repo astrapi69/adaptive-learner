@@ -56,7 +56,7 @@ import {
   recordContribution,
 } from "../../lib/content/placement/contribution-history";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { resolveStorageMode } from "../../storage";
 import AiValidationDialog from "../../components/content/AiValidationDialog";
 import QualityCheckDialog from "../../components/content/QualityCheckDialog";

@@ -23,8 +23,8 @@ import {
     setBadgeNotifications,
     setDailySessionGoal,
     setXpNotifications,
-} from "../../../lib/gamificationPref";
-import {readLearnerState} from "../../../lib/learnerState";
+} from "../../../lib/gamification/gamificationPref";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {getStorage} from "../../../storage";
 import type {BadgeWithProgress} from "../../../storage/types";
 import {notify} from "../../../utils/notify";

@@ -30,7 +30,7 @@ import {type ReactNode} from "react";
 import {useHelp} from "../../contexts/HelpContext";
 import {useGlossary} from "../../hooks/content/useGlossary";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {getGlossaryEntry} from "../../lib/help-glossary";
+import {getGlossaryEntry} from "../../lib/help/help-glossary";
 
 interface Props {
     /** Stable glossary key (e.g. ``"curriculum"``,

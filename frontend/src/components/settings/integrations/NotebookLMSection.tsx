@@ -24,7 +24,7 @@ import { FEATURES } from "../../../features/featureConfig";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { useConfirm } from "../../../contexts/ConfirmContext";
 import { buildNotebookLMPackage } from "../../../lib/export/notebooklm-package";
-import { readLearnerState } from "../../../lib/learnerState";
+import { readLearnerState } from "../../../lib/learning/learnerState";
 import { getStorage } from "../../../storage";
 import type { StudyQuestion, StudyQuestionDifficulty } from "../../../storage/types";
 import { notify } from "../../../utils/notify";

@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import CodeBlock from "../content/CodeBlock";
 import { useI18n } from "../../hooks/ui/useI18n";
 import type { ReadAloudController } from "../../hooks/lesson/useReadAloud";
-import { parseStepAnchor } from "../../lib/lesson-anchors";
+import { parseStepAnchor } from "../../lib/lesson/lesson-anchors";
 import { markdownToSpeech } from "../../lib/lesson/tts-text";
 
 interface TheoryStepProps {

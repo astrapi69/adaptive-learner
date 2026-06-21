@@ -40,7 +40,7 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../../api/client";
 import {useDialogFocus} from "../../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {clearLearnerState, readLearnerState} from "../../../lib/learnerState";
+import {clearLearnerState, readLearnerState} from "../../../lib/learning/learnerState";
 import {getStorage} from "../../../storage";
 import {backupFilename, saveBackupToDisk} from "../../../utils/backup-download";
 import {withLocalStorageSnapshot} from "../../../lib/backup/localStorageSnapshot";

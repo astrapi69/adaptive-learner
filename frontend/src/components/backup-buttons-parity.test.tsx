@@ -20,7 +20,7 @@ import {MemoryRouter} from "react-router-dom";
 
 import BackupSection from "./settings/backup/BackupSection";
 import DangerZoneSection from "./settings/data/DangerZoneSection";
-import {setUserId} from "../lib/learnerState";
+import {setUserId} from "../lib/learning/learnerState";
 import type {BackupPayload} from "../types/domain";
 
 vi.mock("react-router-dom", async () => {

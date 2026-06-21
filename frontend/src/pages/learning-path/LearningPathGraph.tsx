@@ -43,7 +43,7 @@ import {
     savePositions,
     snapshotPositions,
 } from "../../lib/learning-path/layout";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {
     DEFAULT_FILTERS,
     classifyNode,
