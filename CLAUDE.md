@@ -9,7 +9,29 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.91.0** (UX release -
+- **Current state:** **v1.92.0** (Dexie-hardening + technical-debt release -
+  headline is a **critical fix so the installed PWA runs in Dexie mode instead
+  of API mode** (#907) plus browser-direct Dexie-mode fixes (study guide #902,
+  pronunciation #903, identity hidden #914, server option hidden on GH Pages
+  #907), a tabbed Dashboard restructure (#858), and a large **technical-debt
+  sweep**: six god-folder splits dropped from `.dirsize-baseline` - `components/`
+  84 files, `lib/content/` 49, `lib/` 29, `components/content/` 28,
+  `components/lesson/` 19, `storage/types/` 18 (#874-#879, each grouped by
+  concern with a barrel + parent re-export, imports + `import.meta.glob`
+  data-paths rewritten); the cc>20 complexity offenders brought under the gate -
+  FreeText/WordTiles 21->18 via a shared `ExercisePromptRow`, ImportDetail
+  20->18 via a `resolveConversationId` helper, stale exercise-quality-gate
+  baseline dropped (#884-#887, frontend baseline now zero TS offenders); ~387
+  Google-style docstrings/TSDoc across the repository contracts, Pydantic
+  schemas, FastAPI route handlers, and the frontend `src/lib` logic layer (Clean
+  Code Block 8, #888); plus a shared `safeSet` helper + `push_records` branch
+  split (Block 9, #889) and a `lib/ai` folder-size baseline entry (#917). Also:
+  update banner no longer reappears after acceptance (#905), feature-strategy
+  applied consistently (#911) + `useFeatureAvailable` hook, downloaded lessons
+  shown first (#909), Content.tsx god-file split 1007->439 (#896), storage
+  god-folder split 41->9 subdirs (#868), Greek i18n fixes (#859), E2E gap-fill
+  specs (#862). No schema/API/data-model change.)
+  v1.91.0 = (UX release -
   **Navigation restructuring (EXP-037, #850)** - the primary nav drops from
   12+ entries to 7 grouped entries (Nielsen-Norman 5-7) with no function loss,
   every page still reachable: a 7-entry primary bar (Dashboard, Lernpfad, Meine
