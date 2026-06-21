@@ -11,12 +11,12 @@
 import { Square, Volume2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import type { ContentLesson } from "../../storage/types";
+import type { ContentLesson } from "../../../storage/types";
 import {
   READ_ALOUD_SPEEDS,
   type ReadAloudController,
-} from "../../hooks/lesson/useReadAloud";
-import { useI18n } from "../../hooks/ui/useI18n";
+} from "../../../hooks/lesson/useReadAloud";
+import { useI18n } from "../../../hooks/ui/useI18n";
 
 interface LessonTtsControlsProps {
   isSummary: boolean;

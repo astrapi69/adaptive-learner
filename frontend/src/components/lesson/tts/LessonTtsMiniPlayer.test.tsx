@@ -5,7 +5,7 @@
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
-import {I18nProvider} from "../../hooks/ui/useI18n";
+import {I18nProvider} from "../../../hooks/ui/useI18n";
 import LessonTtsMiniPlayer from "./LessonTtsMiniPlayer";
 
 function renderPlayer(

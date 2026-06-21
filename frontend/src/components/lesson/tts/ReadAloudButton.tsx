@@ -21,17 +21,17 @@
 import {useEffect, useRef, useState} from "react";
 import {Volume2, Square} from "lucide-react";
 
-import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
-import {useI18n} from "../../hooks/ui/useI18n";
-import {readLessonSpeed} from "../../hooks/lesson/useReadAloud";
+import {useButtonTooltips} from "../../../hooks/settings/useButtonTooltips";
+import {useI18n} from "../../../hooks/ui/useI18n";
+import {readLessonSpeed} from "../../../hooks/lesson/useReadAloud";
 import {
     isSpeechSynthesisSupported,
     loadVoices,
     pickVoice,
     speak,
     stop,
-} from "../../lib/voice/speech-synthesis";
-import {readVoicePrefs} from "../../lib/voice/voicePref";
+} from "../../../lib/voice/speech-synthesis";
+import {readVoicePrefs} from "../../../lib/voice/voicePref";
 
 interface ReadAloudButtonProps {
     /** The text to read. Empty / whitespace renders nothing. */

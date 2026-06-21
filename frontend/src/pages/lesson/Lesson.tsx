@@ -31,10 +31,10 @@ import LessonResources from "../../components/lesson/LessonResources";
 import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
 import LessonHeader from "../../components/lesson/chrome/LessonHeader";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
-import LessonTtsControls from "../../components/lesson/LessonTtsControls";
+import LessonTtsControls from "../../components/lesson/tts/LessonTtsControls";
 import LessonStepView from "../../components/lesson/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
-import LessonTtsMiniPlayerSlot from "../../components/lesson/LessonTtsMiniPlayerSlot";
+import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
 import LessonStatusView, {
   resolveLessonStatusKind,
 } from "../../components/lesson/LessonStatusView";
