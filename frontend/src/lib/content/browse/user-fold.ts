@@ -12,10 +12,10 @@
  * the My Lessons fallback (decision E4), unmatched ones stay.
  */
 
-import type { ContentSetEntry } from "../../storage/types";
+import type { ContentSetEntry } from "../../../storage/types";
 import type { UserFoldInput } from "./content-tree";
-import { baseLanguage } from "./language-utils";
-import { resolveTreePlacement } from "./placement/tree-placement";
+import { baseLanguage } from "../language-utils";
+import { resolveTreePlacement } from "../placement/tree-placement";
 
 export interface UserFoldResult {
   /** Sets matched to a published node, ready to fold into the tree. */

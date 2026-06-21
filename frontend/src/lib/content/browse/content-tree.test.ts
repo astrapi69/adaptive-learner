@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { ContentSetEntry } from "../../storage/types";
+import type { ContentSetEntry } from "../../../storage/types";
 import { baseLanguage, buildContentTree } from "./content-tree";
 
 function entry(over: Partial<ContentSetEntry>): ContentSetEntry {

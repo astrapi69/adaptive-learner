@@ -20,7 +20,7 @@ import {
     resolveContinueAction,
     rowStars,
 } from "./continue-learning";
-import type {LessonProgress} from "../../storage/types";
+import type {LessonProgress} from "../../../storage/types";
 
 function progress(
     over: Partial<LessonProgress> & {

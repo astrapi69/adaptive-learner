@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import {
   splitHighlight,
   type ContentSearchResult,
-} from "../../lib/content/content-search";
+} from "../../lib/content/browse/content-search";
 import { useI18n } from "../../hooks/ui/useI18n";
 import type { ContentSetEntry } from "../../storage/types";
 

@@ -20,9 +20,9 @@
  * `primary` vs `other`.
  */
 
-import type { ContentSetEntry } from "../../storage/types";
-import { baseLanguage, domainOf } from "./language-utils";
-import { resolveTreePlacement } from "./placement/tree-placement";
+import type { ContentSetEntry } from "../../../storage/types";
+import { baseLanguage, domainOf } from "../language-utils";
+import { resolveTreePlacement } from "../placement/tree-placement";
 
 // Re-exported for existing consumers that import these from
 // content-tree; the definitions live in language-utils (#540, to break

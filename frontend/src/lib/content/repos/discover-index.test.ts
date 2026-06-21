@@ -15,7 +15,7 @@ import {
   sortDiscoverSets,
   type DiscoverFilters,
 } from "./discover-index";
-import { normalizeSearchText } from "../content-search";
+import { normalizeSearchText } from "../browse/content-search";
 import type { SearchableSet } from "./search-index-loader";
 
 function makeSet(over: Partial<SearchableSet>): SearchableSet {

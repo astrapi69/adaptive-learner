@@ -27,7 +27,7 @@ import {
   type MediaResource,
   fetchMediaResources,
 } from "../../lib/content/media-loader";
-import { type UserFoldInput } from "../../lib/content/content-tree";
+import { type UserFoldInput } from "../../lib/content/browse/content-tree";
 import {
   listContributions,
   type SharedContribution,

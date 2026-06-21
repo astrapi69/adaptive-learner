@@ -48,8 +48,8 @@ import { useSourceLanguages } from "../../hooks/settings/useSourceLanguages";
 import {
   buildContentTree,
   type FoldedUserLesson,
-} from "../../lib/content/content-tree";
-import { computeUserFold } from "../../lib/content/user-fold";
+} from "../../lib/content/browse/content-tree";
+import { computeUserFold } from "../../lib/content/browse/user-fold";
 import { resolveAiCheckDisabledReason } from "../../lib/content/validation/ai-check-gate";
 import {
   listContributions,

@@ -13,7 +13,7 @@
  */
 
 import { isOfficialSource } from "./content-repos";
-import { normalizeSearchText } from "../content-search";
+import { normalizeSearchText } from "../browse/content-search";
 import type { SearchableSet } from "./search-index-loader";
 
 /** Minimal shape of a locally-cached set, for download-state matching. */

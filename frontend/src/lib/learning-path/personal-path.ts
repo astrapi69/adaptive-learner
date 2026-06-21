@@ -22,7 +22,7 @@
  */
 
 import {computeStars, type StarRating} from "../lesson-summary";
-import {compareByDownloadPriority} from "../content/download-priority";
+import {compareByDownloadPriority} from "../content/browse/download-priority";
 import {
     elementSrsDetails,
     srsLessonSummary,
