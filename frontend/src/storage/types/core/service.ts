@@ -15,15 +15,15 @@ import type {
 } from "../content/curricula";
 import type { IElementErrorsNamespace } from "../learning/element-errors";
 import type { IGamificationNamespace } from "../learning/gamification";
-import type { IGitHubNamespace } from "../github";
+import type { IGitHubNamespace } from "../integrations/github";
 import type { IImportsNamespace } from "../content/imports";
 import type {
   ILearningRepoNamespace,
   IPluginSettingsNamespace,
-} from "../learning-repo";
+} from "../integrations/learning-repo";
 import type { ILessonProgressNamespace } from "../content/lesson-progress";
 import type { IMissionsNamespace } from "../learning/missions";
-import type { INotebookLMNamespace } from "../notebooklm";
+import type { INotebookLMNamespace } from "../integrations/notebooklm";
 import type {
   IAnkiNamespace,
   IPronunciationNamespace,
