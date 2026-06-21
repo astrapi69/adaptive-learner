@@ -21,7 +21,7 @@ import {describe, expect, it} from "vitest";
 import type {ContentLesson} from "../../../storage/types";
 import {splitLesson} from "./lesson-splitter";
 
-const REPO_ROOT = join(__dirname, "..", "..", "..", "..");
+const REPO_ROOT = join(__dirname, "..", "..", "..", "..", "..");
 const FIXTURE_DIR = join(
     REPO_ROOT,
     "tests",
