@@ -166,15 +166,30 @@ class TestDockerMissingDialog:
         assert opens == []
 
 
-# --- welcome-then-docker-check ordering ----------------------------
+# --- Docker check is the first interactive step (#942 Bug 1) --------
 
 
-class TestWelcomeBeforeDockerCheck:
-    """Welcome dialog fires before the Docker check, never after.
-    Once welcomed=True, the welcome dialog is skipped. Both invariants
-    are essential to the UX contract documented in the prompt."""
+class TestDockerCheckBeforeWelcome:
+    """The Docker check is the FIRST interactive step (#942 Bug 1): the
+    welcome dialog only fires AFTER Docker is confirmed ready, and is
+    skipped entirely when Docker is unavailable. Once welcomed=True it is
+    skipped regardless."""
 
-    def test_welcome_fires_when_welcomed_false(self, tmp_path: Path) -> None:
+    def test_welcome_not_shown_when_docker_unavailable(self, tmp_path: Path) -> None:
+        from adaptive_learner_launcher import __main__ as main_mod
+
+        with (
+            patch.object(main_mod.settings, "get", side_effect=lambda k: False if k == "welcomed" else None),
+            patch.object(main_mod, "_ensure_docker_ready", return_value=False),
+            patch.object(main_mod.config, "get_show_details_default", return_value=False),
+            patch.object(main_mod, "_retry_pending_cleanup"),
+            patch.object(main_mod.ui, "welcome_dialog") as welcome_mock,
+        ):
+            rc = main_mod._run_launcher()
+        assert rc == 1
+        welcome_mock.assert_not_called()
+
+    def test_welcome_fires_after_docker_ready_when_welcomed_false(self, tmp_path: Path) -> None:
         from adaptive_learner_launcher import __main__ as main_mod
 
         seen: dict[str, object] = {}
@@ -186,14 +201,20 @@ class TestWelcomeBeforeDockerCheck:
         with (
             patch.object(main_mod.settings, "get", side_effect=lambda k: False if k == "welcomed" else None),
             patch.object(main_mod.settings, "update") as update_mock,
-            patch.object(main_mod.docker, "docker_installed", return_value=(False, "no")),
+            patch.object(main_mod, "_ensure_docker_ready", return_value=True),
             patch.object(main_mod.config, "get_show_details_default", return_value=False),
             patch.object(main_mod, "_retry_pending_cleanup"),
             patch.object(main_mod.ui, "welcome_dialog", side_effect=fake_welcome),
-            patch.object(main_mod.ui, "three_button_dialog", return_value="cancel"),
-            patch.object(main_mod.webbrowser, "open"),
+            # Abort right after the welcome so the flow exits cleanly:
+            # no manifest, no legacy install, install offer declined.
+            patch.object(main_mod.manifest, "read_manifest", return_value=None),
+            patch.object(main_mod.config, "resolve_repo_path", return_value=tmp_path),
+            patch.object(main_mod.config, "is_valid_repo", return_value=False),
+            patch.object(main_mod.config, "launcher_config_path", return_value=tmp_path / "nope.json"),
+            patch.object(main_mod, "_install_or_welcome", return_value=None),
         ):
-            main_mod._run_launcher()
+            rc = main_mod._run_launcher()
+        assert rc == 0
         assert seen.get("called") is True
         update_mock.assert_any_call("welcomed", True)
 
@@ -202,12 +223,10 @@ class TestWelcomeBeforeDockerCheck:
 
         with (
             patch.object(main_mod.settings, "get", return_value=True),
-            patch.object(main_mod.docker, "docker_installed", return_value=(False, "no")),
+            patch.object(main_mod, "_ensure_docker_ready", return_value=False),
             patch.object(main_mod.config, "get_show_details_default", return_value=False),
             patch.object(main_mod, "_retry_pending_cleanup"),
             patch.object(main_mod.ui, "welcome_dialog") as welcome_mock,
-            patch.object(main_mod.ui, "three_button_dialog", return_value="cancel"),
-            patch.object(main_mod.webbrowser, "open"),
         ):
             main_mod._run_launcher()
         welcome_mock.assert_not_called()

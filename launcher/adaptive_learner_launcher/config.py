@@ -20,6 +20,10 @@ ENV_FILENAME = ".env"
 ENV_EXAMPLE_FILENAME = ".env.example"
 
 _PORT_LINE_RE = re.compile(r"^\s*ADAPTIVE_LEARNER_PORT\s*=\s*(\d+)\s*$", re.MULTILINE)
+_PUBLIC_PORT_LINE_RE = re.compile(
+    r"^\s*ADAPTIVE_LEARNER_PUBLIC_PORT\s*=\s*(\d+)\s*$", re.MULTILINE
+)
+PUBLIC_PORT_ENV_KEY = "ADAPTIVE_LEARNER_PUBLIC_PORT"
 
 
 def appdata_dir(env: dict[str, str] | None = None) -> Path:
@@ -99,16 +103,34 @@ def is_valid_repo(repo: Path) -> bool:
 
 
 def read_port(repo: Path) -> int:
-    """Read ``ADAPTIVE_LEARNER_PORT`` from ``.env`` in the repo; fall back to default.
+    """Read ``ADAPTIVE_LEARNER_PORT`` (the internal backend port) from ``.env``.
 
-    Used so the launcher opens the browser on the user's configured port
-    rather than hardcoding 7880.
+    Retained for backward compatibility; the launcher opens the browser
+    and runs the health check against the *public* host port instead -
+    see :func:`read_public_port`. The production compose stack only
+    publishes the public port to the host, so that is the one the
+    launcher must use.
     """
+    return _read_port_with(repo, _PORT_LINE_RE)
+
+
+def read_public_port(repo: Path) -> int:
+    """Read ``ADAPTIVE_LEARNER_PUBLIC_PORT`` from ``.env``; fall back to default.
+
+    The public port is the host-published port the user reaches in the
+    browser (``docker-compose.prod.yml`` maps it to the frontend nginx
+    container). The launcher opens the browser and waits for health on
+    this port.
+    """
+    return _read_port_with(repo, _PUBLIC_PORT_LINE_RE)
+
+
+def _read_port_with(repo: Path, pattern: re.Pattern[str]) -> int:
     env_file = repo / ENV_FILENAME
     if not env_file.is_file():
         return DEFAULT_PORT
     try:
-        match = _PORT_LINE_RE.search(env_file.read_text(encoding="utf-8"))
+        match = pattern.search(env_file.read_text(encoding="utf-8"))
     except OSError:
         return DEFAULT_PORT
     if not match:
@@ -118,3 +140,59 @@ def read_port(repo: Path) -> int:
     except ValueError:
         return DEFAULT_PORT
     return port if 1 <= port <= 65535 else DEFAULT_PORT
+
+
+def resolve_launch_port(
+    repo: Path,
+    *,
+    cli_port: int | None = None,
+    env: dict[str, str] | None = None,
+) -> int:
+    """Resolve the effective host port the launcher should publish on.
+
+    Precedence (first valid wins):
+      1. ``--port`` from the command line (``cli_port``).
+      2. ``port`` in ``launcher.json``.
+      3. ``ADAPTIVE_LEARNER_PUBLIC_PORT`` in the repo ``.env``.
+      4. :data:`DEFAULT_PORT`.
+
+    A value out of the 1-65535 range is ignored in favour of the next
+    source.
+    """
+    if _is_valid_port(cli_port):
+        return int(cli_port)  # type: ignore[arg-type]
+    configured = load_launcher_config(env).get("port")
+    if _is_valid_port(configured):
+        return int(configured)
+    return read_public_port(repo)
+
+
+def _is_valid_port(value: object) -> bool:
+    try:
+        port = int(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return False
+    return 1 <= port <= 65535
+
+
+def write_public_port(repo: Path, port: int) -> None:
+    """Persist ``ADAPTIVE_LEARNER_PUBLIC_PORT`` into the repo ``.env``.
+
+    Upserts the line so the next ``docker compose up`` publishes the
+    frontend on the chosen host port (and the CORS origin, which
+    interpolates the same variable, stays consistent). Creates ``.env``
+    if it does not exist yet.
+    """
+    env_file = repo / ENV_FILENAME
+    line = f"{PUBLIC_PORT_ENV_KEY}={port}"
+    try:
+        text = env_file.read_text(encoding="utf-8") if env_file.is_file() else ""
+    except OSError:
+        text = ""
+    if _PUBLIC_PORT_LINE_RE.search(text):
+        text = _PUBLIC_PORT_LINE_RE.sub(line, text, count=1)
+    else:
+        if text and not text.endswith("\n"):
+            text += "\n"
+        text += line + "\n"
+    env_file.write_text(text, encoding="utf-8")

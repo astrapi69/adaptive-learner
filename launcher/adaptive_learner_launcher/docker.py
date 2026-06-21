@@ -6,7 +6,9 @@ render a concrete error message rather than re-inventing failure strings.
 
 from __future__ import annotations
 
+import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -16,7 +18,6 @@ _CREATE_NO_WINDOW = 0x08000000
 
 
 def _creation_flags() -> int:
-    import sys
     if sys.platform == "win32":
         return _CREATE_NO_WINDOW
     return 0
@@ -60,6 +61,43 @@ def docker_daemon_running() -> tuple[bool, str]:
     return True, "running"
 
 
+def start_docker_desktop() -> tuple[bool, str]:
+    """Best-effort launch of Docker Desktop for the current platform.
+
+    Returns ``(True, detail)`` when the start command was dispatched (the
+    daemon still needs ~30 s to come up, so the caller should poll
+    :func:`docker_daemon_running` afterwards), or ``(False, detail)`` when
+    no known launch path worked. Never raises; a failure here only means
+    the user has to start Docker Desktop by hand.
+    """
+    platform = sys.platform
+    try:
+        if platform == "darwin":
+            subprocess.Popen(["open", "-a", "Docker"])
+            return True, "open -a Docker"
+        if platform == "win32":
+            candidates = [
+                Path(r"C:\Program Files\Docker\Docker\Docker Desktop.exe"),
+                Path(r"C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"),
+            ]
+            for exe in candidates:
+                if exe.is_file():
+                    subprocess.Popen([str(exe)], creationflags=_creation_flags())
+                    return True, str(exe)
+            return False, "Docker Desktop.exe not found in the default location"
+        # Linux: Docker Desktop ships a desktop launcher; fall back to it.
+        launcher = shutil.which("docker-desktop") or shutil.which("systemctl")
+        if launcher and launcher.endswith("systemctl"):
+            subprocess.Popen([launcher, "--user", "start", "docker-desktop"])
+            return True, "systemctl --user start docker-desktop"
+        if launcher:
+            subprocess.Popen([launcher])
+            return True, launcher
+        return False, "no Docker Desktop launcher found on PATH"
+    except (OSError, ValueError) as exc:
+        return False, f"could not start Docker Desktop: {exc}"
+
+
 def compose_up(repo: Path, compose_file: str) -> tuple[bool, str]:
     """Start the stack detached. Returns the compose output on failure."""
     try:
@@ -93,6 +131,27 @@ def compose_down(repo: Path, compose_file: str) -> tuple[bool, str]:
     return True, "stopped"
 
 
+def stack_running(repo: Path, compose_file: str) -> bool:
+    """True if the compose stack has at least one running container.
+
+    Uses ``docker compose ps -q`` which lists only running service
+    containers; a non-empty result means the app is up. Any failure
+    (docker missing, daemon down, compose error) is treated as
+    not-running so the caller falls back to the start flow.
+    """
+    try:
+        result = _run(
+            ["docker", "compose", "-f", compose_file, "ps", "-q"],
+            cwd=repo,
+            timeout=15.0,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
+    if result.returncode != 0:
+        return False
+    return bool((result.stdout or "").strip())
+
+
 def compose_logs_tail(repo: Path, compose_file: str, lines: int = 20) -> str:
     """Return the last ``lines`` of container output for error reporting."""
     try:
@@ -107,13 +166,21 @@ def compose_logs_tail(repo: Path, compose_file: str, lines: int = 20) -> str:
 
 
 def remove_volumes() -> tuple[bool, str]:
-    """Remove all Docker volumes whose name contains 'adaptive_learner'.
+    """Remove all Docker volumes belonging to Adaptive Learner.
 
-    Dynamic lookup via ``docker volume ls --filter`` so we never
+    Matches both the current ``adaptive-learner`` (hyphen) project name
+    and the legacy ``adaptive_learner`` (underscore) one so an old
+    install is still cleaned up. Same-key Docker filters are OR'd, so a
+    single ``volume ls`` returns the union. Dynamic lookup so we never
     hardcode volume names that vary by compose config.
     """
     try:
-        result = _run(["docker", "volume", "ls", "--filter", "name=adaptive_learner", "-q"])
+        result = _run([
+            "docker", "volume", "ls",
+            "--filter", "name=adaptive-learner",
+            "--filter", "name=adaptive_learner",
+            "-q",
+        ])
     except (FileNotFoundError, subprocess.TimeoutExpired):
         return True, "docker not available, skipping"
     volumes = [v for v in (result.stdout or "").strip().splitlines() if v]
@@ -127,12 +194,19 @@ def remove_volumes() -> tuple[bool, str]:
 
 
 def remove_images() -> tuple[bool, str]:
-    """Remove all Docker images matching 'adaptive_learner'.
+    """Remove all Adaptive Learner Docker images.
 
-    Uses ``--force`` so running containers do not block removal.
+    Matches both the ``adaptive-learner`` (hyphen) and legacy
+    ``adaptive_learner`` (underscore) image references. Uses ``--force``
+    so running containers do not block removal.
     """
     try:
-        result = _run(["docker", "images", "--filter", "reference=*adaptive_learner*", "-q"])
+        result = _run([
+            "docker", "images",
+            "--filter", "reference=*adaptive-learner*",
+            "--filter", "reference=*adaptive_learner*",
+            "-q",
+        ])
     except (FileNotFoundError, subprocess.TimeoutExpired):
         return True, "docker not available, skipping"
     images = [i for i in (result.stdout or "").strip().splitlines() if i]
