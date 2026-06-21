@@ -26,7 +26,7 @@ import ProgressByPair from "../../shared/data-display/ProgressByPair";
 import WeakAreasList from "../../shared/gamification/WeakAreasList";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {usePersonalPath} from "../../hooks/learning/usePersonalPath";
-import {languageDisplayName} from "../../lib/content/language-names";
+import {languageDisplayName} from "../../lib/content/language/language-names";
 import {readLearnerState} from "../../lib/learnerState";
 import {
     buildLessonActivity,

@@ -24,7 +24,7 @@ vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fallback: string) => fallback, lang: "en" }),
 }));
 
-vi.mock("../../lib/content/language-names", () => ({
+vi.mock("../../lib/content/language/language-names", () => ({
   languageDisplayName: (code: string) => code.toUpperCase(),
 }));
 

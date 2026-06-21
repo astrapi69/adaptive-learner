@@ -7,7 +7,7 @@
  * No side effects, no app-specific imports beyond the shared type.
  */
 
-import type { ContentSetEntry } from "../../storage/types";
+import type { ContentSetEntry } from "../../../storage/types";
 
 /** Base subtag of a BCP-47 code: "de-AT" -> "de", "FR" -> "fr". */
 export function baseLanguage(code: string): string {

@@ -21,7 +21,7 @@
  */
 
 import type { ContentSetEntry } from "../../../storage/types";
-import { baseLanguage, domainOf } from "../language-utils";
+import { baseLanguage, domainOf } from "../language/language-utils";
 import { resolveTreePlacement } from "../placement/tree-placement";
 
 // Re-exported for existing consumers that import these from

@@ -14,7 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language-options";
+import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {
     LESSON_TEMPLATE_KEYS,
     type LessonTemplateKey,

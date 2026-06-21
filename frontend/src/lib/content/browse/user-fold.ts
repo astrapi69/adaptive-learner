@@ -14,7 +14,7 @@
 
 import type { ContentSetEntry } from "../../../storage/types";
 import type { UserFoldInput } from "./content-tree";
-import { baseLanguage } from "../language-utils";
+import { baseLanguage } from "../language/language-utils";
 import { resolveTreePlacement } from "../placement/tree-placement";
 
 export interface UserFoldResult {

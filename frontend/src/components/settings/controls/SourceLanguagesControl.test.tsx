@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import SourceLanguagesControl from "./SourceLanguagesControl";
-import { readAdditionalSourceLanguages } from "../../../lib/content/sourceLanguagePref";
+import { readAdditionalSourceLanguages } from "../../../lib/content/language/sourceLanguagePref";
 
 afterEach(() => {
   localStorage.clear();

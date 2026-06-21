@@ -47,7 +47,7 @@ import { getStorage } from "../../storage";
 import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";
 import { importHeadingTitle } from "../../lib/content/lesson/import-title";
-import { detectLearningLanguage } from "../../lib/content/detect-chat-language";
+import { detectLearningLanguage } from "../../lib/content/language/detect-chat-language";
 import {
   resolveActiveAiProvider,
   type ResolvedAiProvider,
