@@ -15,7 +15,7 @@
 
 import {describe, expect, it, vi} from "vitest";
 
-import type {BackupPayload} from "../types/domain";
+import type {BackupPayload} from "../../types/domain";
 import {
     APPEND_ONLY_TABLES,
     HIGH_VOLUME_TABLES,

@@ -16,7 +16,7 @@ import OnboardingWizard, {
     type WizardValues,
 } from "../../components/onboarding/OnboardingWizard";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/firstRunRestore";
+import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/backup/firstRunRestore";
 import {readBackupFile} from "../../lib/backup/validateBackupFile";
 import {applyLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
 import {

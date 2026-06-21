@@ -1,8 +1,8 @@
 import {describe, expect, it, vi} from "vitest";
 
 import {isEmptyInstall, pickAdoptedIdentity} from "./firstRunRestore";
-import type {IStorageService} from "../storage/types";
-import type {BackupPayload} from "../types/domain";
+import type {IStorageService} from "../../storage/types";
+import type {BackupPayload} from "../../types/domain";
 
 function backup(
     overrides: Partial<BackupPayload> & {

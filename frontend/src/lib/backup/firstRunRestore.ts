@@ -17,8 +17,8 @@
  * stays thin and both pieces are unit-testable without a DOM.
  */
 
-import type {IStorageService} from "../storage/types";
-import type {BackupPayload} from "../types/domain";
+import type {IStorageService} from "../../storage/types";
+import type {BackupPayload} from "../../types/domain";
 
 /** Identity to seed before importing a first-run backup. */
 export interface AdoptedIdentity {

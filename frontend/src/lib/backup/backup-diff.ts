@@ -27,7 +27,7 @@
  * to re-filter.
  */
 
-import type {BackupPayload} from "../types/domain";
+import type {BackupPayload} from "../../types/domain";
 
 export const APPEND_ONLY_TABLES: ReadonlySet<string> = new Set([
     "learning_sessions",
