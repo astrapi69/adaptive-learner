@@ -2040,6 +2040,8 @@ content:
       stale: "AI-jaanch puraani"
       invalid: "AI-jaanch amaanya"
     last_checked: "antim jaanch: {when}"
+    checked_with: "इसके साथ जाँचा गया"
+    date: "तिथि"
     recheck: "phir se janchein"
     export:
       button: "report ko Markdown ke roop mein export karein"

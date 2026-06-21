@@ -65,4 +65,34 @@ describe("buildValidationMarkdown", () => {
     expect(md).toContain("All cards passed.");
     expect(md).not.toContain("| --- |");
   });
+
+  it("renders provenance meta lines under the heading (#940)", () => {
+    const md = buildValidationMarkdown({
+      setName: "Set",
+      summaryLine: "Checked 5 cards.",
+      headers: HEADERS,
+      allOkLine: "All cards passed.",
+      rows: [],
+      metaLines: ["Checked with: Anthropic Claude (claude-x)", "Date: 2026-06-21"],
+    });
+    const lines = md.split("\n");
+    expect(lines[0]).toBe("# AI content check: Set");
+    expect(md).toContain("Checked with: Anthropic Claude (claude-x)");
+    expect(md).toContain("Date: 2026-06-21");
+    // Meta lines come before the summary.
+    expect(md.indexOf("Checked with")).toBeLessThan(md.indexOf("Checked 5 cards."));
+  });
+
+  it("all-empty meta lines produce identical output to omitting them", () => {
+    const base = {
+      setName: "Set",
+      summaryLine: "Checked 5 cards.",
+      headers: HEADERS,
+      allOkLine: "All cards passed.",
+      rows: [],
+    };
+    const withEmpty = buildValidationMarkdown({ ...base, metaLines: ["", ""] });
+    const without = buildValidationMarkdown(base);
+    expect(withEmpty).toBe(without);
+  });
 });

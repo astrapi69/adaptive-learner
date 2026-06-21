@@ -2047,6 +2047,8 @@ content:
       stale: "Revision IA desactualizada"
       invalid: "Revision IA no valida"
     last_checked: "Ultima revision: {when}"
+    checked_with: "Verificado con"
+    date: "Fecha"
     recheck: "Revisar de nuevo"
     export:
       button: "Exportar informe como Markdown"

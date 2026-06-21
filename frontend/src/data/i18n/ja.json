@@ -2222,6 +2222,8 @@
         "invalid": "AI確認が無効"
       },
       "last_checked": "最終確認: {when}",
+      "checked_with": "チェックに使用",
+      "date": "日付",
       "recheck": "再確認",
       "export": {
         "button": "レポートをMarkdownで書き出す",

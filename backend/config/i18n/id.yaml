@@ -2056,6 +2056,8 @@ content:
       stale: "Pemeriksaan AI usang"
       invalid: "Pemeriksaan AI tidak valid"
     last_checked: "Pemeriksaan terakhir: {when}"
+    checked_with: "Diperiksa dengan"
+    date: "Tanggal"
     recheck: "Periksa ulang"
     export:
       button: "Ekspor laporan sebagai Markdown"
