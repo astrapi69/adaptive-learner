@@ -9,11 +9,11 @@ import {
     YAxis,
 } from "recharts";
 
-import {useChartTheme} from "../hooks/ui/useChartTheme";
-import {useI18n} from "../hooks/ui/useI18n";
-import {tooltipContentStyle} from "../lib/chartTheme";
-import type {TrackingSummary} from "../types";
-import ChartSummary from "./charts/ChartSummary";
+import {useChartTheme} from "../../hooks/ui/useChartTheme";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {tooltipContentStyle} from "../../lib/chartTheme";
+import type {TrackingSummary} from "../../types";
+import ChartSummary from "../charts/ChartSummary";
 
 interface ProgressTimelineProps {
     summary: TrackingSummary | null;

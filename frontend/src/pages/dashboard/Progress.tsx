@@ -3,8 +3,8 @@ import {useNavigate} from "react-router-dom";
 
 import MethodBadge from "../../components/session/MethodBadge";
 import NotebookLMSection from "../../components/settings/integrations/NotebookLMSection";
-import MethodDistribution from "../../components/MethodDistribution";
-import ProgressTimeline from "../../components/ProgressTimeline";
+import MethodDistribution from "../../components/progress/MethodDistribution";
+import ProgressTimeline from "../../components/progress/ProgressTimeline";
 import StepEvaluationInsights from "../../components/session/StepEvaluationInsights";
 import RichTextEditor from "../../components/editor/RichTextEditor";
 import {parseEditorContent} from "../../components/editor/content-utils";

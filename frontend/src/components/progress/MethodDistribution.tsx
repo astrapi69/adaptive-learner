@@ -9,12 +9,12 @@ import {
     YAxis,
 } from "recharts";
 
-import {useChartTheme} from "../hooks/ui/useChartTheme";
-import {useI18n} from "../hooks/ui/useI18n";
-import {tooltipContentStyle} from "../lib/chartTheme";
-import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
-import type {TrackingSummary} from "../types";
-import ChartSummary from "./charts/ChartSummary";
+import {useChartTheme} from "../../hooks/ui/useChartTheme";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {tooltipContentStyle} from "../../lib/chartTheme";
+import {METHOD_COLORS, type LearningMethod} from "../../lib/constants";
+import type {TrackingSummary} from "../../types";
+import ChartSummary from "../charts/ChartSummary";
 
 interface MethodDistributionProps {
     summary: TrackingSummary | null;

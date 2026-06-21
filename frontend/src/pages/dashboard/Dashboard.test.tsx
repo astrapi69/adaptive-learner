@@ -65,15 +65,15 @@ vi.mock("../../api/client", async () => {
 // render recharts SVG. The Dashboard's own wiring is what we
 // test here; the chart components have their own dedicated
 // tests (or empty-state coverage).
-vi.mock("../../components/ProfileRadar", () => ({
+vi.mock("../../components/progress/ProfileRadar", () => ({
   default: ({ profile }: { profile: LearningProfile }) => (
     <div data-testid="profile-radar">{profile.dominant_method}</div>
   ),
 }));
-vi.mock("../../components/ProgressTimeline", () => ({
+vi.mock("../../components/progress/ProgressTimeline", () => ({
   default: () => <div data-testid="progress-timeline" />,
 }));
-vi.mock("../../components/MethodDistribution", () => ({
+vi.mock("../../components/progress/MethodDistribution", () => ({
   default: () => <div data-testid="method-distribution" />,
 }));
 

@@ -4,7 +4,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import AssessmentNav from "../../components/assessment/AssessmentNav";
 import AssessmentProgress from "../../components/assessment/AssessmentProgress";
-import ProfileRadar from "../../components/ProfileRadar";
+import ProfileRadar from "../../components/progress/ProfileRadar";
 import QuestionCard from "../../components/assessment/QuestionCard";
 import SpeechButton from "../../components/voice/SpeechButton";
 import {ApiError} from "../../api/client";
