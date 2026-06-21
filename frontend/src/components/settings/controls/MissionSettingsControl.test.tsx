@@ -7,13 +7,13 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import MissionSettingsControl from "./MissionSettingsControl";
-import {readMissionPrefs} from "../lib/missionPref";
+import {readMissionPrefs} from "../../../lib/missionPref";
 
 const regenerate = vi.fn();
-vi.mock("../storage", () => ({
+vi.mock("../../../storage", () => ({
     getStorage: () => ({missions: {regenerate}}),
 }));
-vi.mock("../lib/learnerState", () => ({
+vi.mock("../../../lib/learnerState", () => ({
     readLearnerState: () => ({userId: "u1"}),
 }));
 

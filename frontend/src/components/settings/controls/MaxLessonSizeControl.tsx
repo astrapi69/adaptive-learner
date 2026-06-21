@@ -11,14 +11,14 @@
 import {useState} from "react";
 
 import {Input} from "@/components/ui/input";
-import {useI18n} from "../hooks/ui/useI18n";
+import {useI18n} from "../../../hooks/ui/useI18n";
 import {
     DEFAULT_MAX_LESSON_SIZE,
     MAX_MAX_LESSON_SIZE,
     MIN_MAX_LESSON_SIZE,
     readMaxLessonSize,
     writeMaxLessonSize,
-} from "../lib/learning/maxLessonSizePref";
+} from "../../../lib/learning/maxLessonSizePref";
 
 export default function MaxLessonSizeControl() {
     const {t} = useI18n();

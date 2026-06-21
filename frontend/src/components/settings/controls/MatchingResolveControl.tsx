@@ -11,14 +11,14 @@
 
 import {useEffect, useState} from "react";
 
-import {useI18n} from "../hooks/ui/useI18n";
+import {useI18n} from "../../../hooks/ui/useI18n";
 import {
     MATCHING_RESOLVE_EFFECT_OPTIONS,
     MATCHING_RESOLVE_PREF_CHANGE_EVENT,
     readMatchingResolveEffect,
     writeMatchingResolveEffect,
     type MatchingResolveEffect,
-} from "../lib/learning/matchingResolvePref";
+} from "../../../lib/learning/matchingResolvePref";
 
 const LABELS: Record<MatchingResolveEffect, {key: string; fallback: string}> = {
     slide: {key: "settings.matching_resolve.slide", fallback: "Slide"},

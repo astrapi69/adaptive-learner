@@ -14,13 +14,13 @@
 
 import {useState} from "react";
 
-import {useI18n} from "../hooks/ui/useI18n";
+import {useI18n} from "../../../hooks/ui/useI18n";
 import {
     prefersReducedMotion,
     readFeedbackIntensity,
     setFeedbackIntensity,
     type FeedbackIntensity,
-} from "../lib/feedback/feedbackPref";
+} from "../../../lib/feedback/feedbackPref";
 
 const LEVELS: FeedbackIntensity[] = ["subtle", "normal", "enthusiastic"];
 

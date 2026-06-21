@@ -16,7 +16,7 @@ import FeedbackIntensityControl from "./FeedbackIntensityControl";
 import {
     FEEDBACK_PREF_CHANGE_EVENT,
     readFeedbackIntensity,
-} from "../lib/feedback/feedbackPref";
+} from "../../../lib/feedback/feedbackPref";
 
 beforeEach(() => {
     localStorage.clear();

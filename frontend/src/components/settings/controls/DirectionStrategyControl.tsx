@@ -12,14 +12,14 @@
 
 import {useEffect, useState} from "react";
 
-import {useI18n} from "../hooks/ui/useI18n";
-import type {DirectionStrategy} from "../lib/adaptive/lesson-generator";
+import {useI18n} from "../../../hooks/ui/useI18n";
+import type {DirectionStrategy} from "../../../lib/adaptive/lesson-generator";
 import {
   DIRECTION_PREF_CHANGE_EVENT,
   DIRECTION_STRATEGY_OPTIONS,
   readDirectionStrategy,
   writeDirectionStrategy,
-} from "../lib/learning/directionPref";
+} from "../../../lib/learning/directionPref";
 
 const LABELS: Record<DirectionStrategy, {key: string; fallback: string}> = {
   auto: {key: "settings.direction.auto", fallback: "Automatic"},

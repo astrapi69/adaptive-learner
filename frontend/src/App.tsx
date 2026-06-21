@@ -19,7 +19,7 @@ import UpdatePromptHost from "./components/UpdatePromptHost";
 import DesktopUpdateHost from "./components/DesktopUpdateHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
-import ReminderScheduler from "./components/ReminderScheduler";
+import ReminderScheduler from "./components/settings/controls/ReminderScheduler";
 import Navigation from "./components/nav/Navigation";
 import BottomTabBar from "./components/nav/BottomTabBar";
 import OfflineIndicator from "./components/OfflineIndicator";

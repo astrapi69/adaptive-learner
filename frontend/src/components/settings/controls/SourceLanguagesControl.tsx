@@ -14,12 +14,12 @@
 
 import { useEffect, useState } from "react";
 
-import { useI18n } from "../hooks/ui/useI18n";
-import { languageDisplayName } from "../lib/content/language-names";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { languageDisplayName } from "../../../lib/content/language-names";
 import {
   readAdditionalSourceLanguages,
   writeAdditionalSourceLanguages,
-} from "../lib/content/sourceLanguagePref";
+} from "../../../lib/content/sourceLanguagePref";
 
 // The languages the app is translated into — the sensible set of
 // source languages a learner is likely to read explanations in.
