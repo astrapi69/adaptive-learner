@@ -1,6 +1,6 @@
 import TopicNode from "./TopicNode";
-import {buildTreeFromFlat} from "../lib/tree";
-import type {LearningTopic} from "../types";
+import {buildTreeFromFlat} from "../../lib/tree";
+import type {LearningTopic} from "../../types";
 
 interface TopicTreeProps {
     topics: readonly LearningTopic[];

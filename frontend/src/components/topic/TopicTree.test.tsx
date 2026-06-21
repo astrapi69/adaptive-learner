@@ -2,7 +2,7 @@ import {act, render, screen, fireEvent} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import TopicTree from "./TopicTree";
-import type {LearningTopic} from "../types";
+import type {LearningTopic} from "../../types";
 
 function topic(
     id: string,

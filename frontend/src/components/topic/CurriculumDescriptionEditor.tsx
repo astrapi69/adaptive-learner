@@ -27,13 +27,13 @@ import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/ui/useI18n";
-import RichTextEditor from "./editor/RichTextEditor";
-import EditorToolbar from "./editor/EditorToolbar";
+import {useI18n} from "../../hooks/ui/useI18n";
+import RichTextEditor from "../editor/RichTextEditor";
+import EditorToolbar from "../editor/EditorToolbar";
 import {
     parseEditorContent,
     serializeEditorContent,
-} from "./editor/content-utils";
+} from "../editor/content-utils";
 
 interface Props {
     /** Stored description string (legacy plain text or
