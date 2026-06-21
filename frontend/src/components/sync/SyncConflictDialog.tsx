@@ -28,7 +28,7 @@ import {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {extractJsonObject} from "../../lib/extract-json";
+import {extractJsonObject} from "../../lib/utils/extract-json";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 import {getDb} from "../../storage/dexie/db";
