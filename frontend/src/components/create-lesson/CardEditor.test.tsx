@@ -10,7 +10,7 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import CardEditor from "./CardEditor";
-import type {LessonCardDraft} from "../../lib/content/lesson-draft";
+import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
 
 function card(id: string, front = "Bonjour", back = "Hallo"): LessonCardDraft {
     return {id, front, back, notes: "", image: ""};

@@ -15,7 +15,7 @@
 import { Pencil, User } from "lucide-react";
 
 import { useI18n } from "../../hooks/ui/useI18n";
-import type { FoldedUserLesson } from "../../lib/content/content-tree";
+import type { FoldedUserLesson } from "../../lib/content/browse/content-tree";
 import type { ContentSetEntry } from "../../storage/types";
 import IconBadge from "../../shared/layout/IconBadge";
 import UserSetActions from "./UserSetActions";

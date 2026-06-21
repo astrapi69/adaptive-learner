@@ -38,7 +38,7 @@ import ImportTranscript from "../../components/import/ImportTranscript";
 import {
   ANALYSIS_PHASES,
   ANALYSIS_PHASE_INTERVAL_MS,
-} from "../../lib/content/analysis-phases";
+} from "../../lib/content/analysis/analysis-phases";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
@@ -46,8 +46,8 @@ import { readLearnerState } from "../../lib/learnerState";
 import { getStorage } from "../../storage";
 import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";
-import { importHeadingTitle } from "../../lib/content/import-title";
-import { detectLearningLanguage } from "../../lib/content/detect-chat-language";
+import { importHeadingTitle } from "../../lib/content/lesson/import-title";
+import { detectLearningLanguage } from "../../lib/content/language/detect-chat-language";
 import {
   resolveActiveAiProvider,
   type ResolvedAiProvider,

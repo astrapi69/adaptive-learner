@@ -6,7 +6,7 @@
 import {render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
-import {buildContentTree, type UserFoldInput} from "../../lib/content/content-tree";
+import {buildContentTree, type UserFoldInput} from "../../lib/content/browse/content-tree";
 import type {ContentSetEntry} from "../../storage/types";
 import ContentTree, {type FoldedLessonActions} from "./ContentTree";
 

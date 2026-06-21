@@ -6,7 +6,7 @@
  * predicates and the wizard-flow types without duplicating them.
  */
 
-import { CEFR_LEVELS } from "../../lib/content/language-options";
+import { CEFR_LEVELS } from "../../lib/content/language/language-options";
 
 /** One of the four wizard steps. */
 export type Step = 1 | 2 | 3 | 4;

@@ -9,7 +9,7 @@ import {
     type ContentSearchResult,
     type IndexedLesson,
     type IndexedSet,
-} from "../../lib/content/content-search";
+} from "../../lib/content/browse/content-search";
 import {getStorage} from "../../storage";
 import type {ContentSetEntry} from "../../storage/types";
 

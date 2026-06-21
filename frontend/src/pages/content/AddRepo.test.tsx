@@ -12,12 +12,12 @@ const { addUserRepo, syncUserRepo, validateUserRepo } = vi.hoisted(() => ({
   syncUserRepo: vi.fn(),
   validateUserRepo: vi.fn(),
 }));
-vi.mock("../../lib/content/content-repos", async (orig) => ({
-  ...(await orig<typeof import("../../lib/content/content-repos")>()),
+vi.mock("../../lib/content/repos/content-repos", async (orig) => ({
+  ...(await orig<typeof import("../../lib/content/repos/content-repos")>()),
   addUserRepo,
   syncUserRepo,
 }));
-vi.mock("../../lib/content/content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("../../lib/content/repos/content-repo-validate", () => ({ validateUserRepo }));
 vi.mock("../../utils/notify", () => ({
   notify: { success: vi.fn(), error: vi.fn() },
 }));

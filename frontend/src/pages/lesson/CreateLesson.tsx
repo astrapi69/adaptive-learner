@@ -21,8 +21,8 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
-import {LANGUAGE_OPTIONS} from "../../lib/content/language-options";
-import {readContributorName} from "../../lib/content/contribution-history";
+import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
+import {readContributorName} from "../../lib/content/placement/contribution-history";
 import {Button} from "@/components/ui/button";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
 import ReviewStep from "../../components/create-lesson/ReviewStep";
@@ -35,7 +35,7 @@ import {
     generateExercises,
     type ExerciseGenConfig,
     type GeneratorCard,
-} from "../../lib/content/exercise-generator";
+} from "../../lib/content/lesson/exercise-generator";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -45,19 +45,19 @@ import {
     type LessonCardDraft,
     type LessonDraft,
     type LessonMeta,
-} from "../../lib/content/lesson-draft";
+} from "../../lib/content/lesson/lesson-draft";
 import {
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
     type DraftValidationChecks,
-} from "../../lib/content/draft-to-lesson";
+} from "../../lib/content/lesson/draft-to-lesson";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import {
     applyTemplate,
     type LessonTemplateKey,
-} from "../../lib/content/lesson-templates";
+} from "../../lib/content/lesson/lesson-templates";
 import type {ContentLessonExercise, ContentSetEntry} from "../../storage/types";
 
 const TOTAL_STEPS = 4;

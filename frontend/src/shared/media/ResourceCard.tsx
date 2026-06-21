@@ -35,7 +35,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { useI18n } from "../../hooks/ui/useI18n";
-import type { MediaResource, MediaType } from "../../lib/content/media-loader";
+import type { MediaResource, MediaType } from "../../lib/content/media/media-loader";
 import YouTubeThumbnail from "./YouTubeThumbnail";
 
 interface ResourceCardProps {

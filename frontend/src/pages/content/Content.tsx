@@ -48,13 +48,13 @@ import { useSourceLanguages } from "../../hooks/settings/useSourceLanguages";
 import {
   buildContentTree,
   type FoldedUserLesson,
-} from "../../lib/content/content-tree";
-import { computeUserFold } from "../../lib/content/user-fold";
-import { resolveAiCheckDisabledReason } from "../../lib/content/ai-check-gate";
+} from "../../lib/content/browse/content-tree";
+import { computeUserFold } from "../../lib/content/browse/user-fold";
+import { resolveAiCheckDisabledReason } from "../../lib/content/validation/ai-check-gate";
 import {
   listContributions,
   recordContribution,
-} from "../../lib/content/contribution-history";
+} from "../../lib/content/placement/contribution-history";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
 import { readLearnerState } from "../../lib/learnerState";
 import { resolveStorageMode } from "../../storage";
@@ -62,7 +62,7 @@ import AiValidationDialog from "../../components/content/AiValidationDialog";
 import QualityCheckDialog from "../../components/content/QualityCheckDialog";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
-import { isOfficialSource } from "../../lib/content/content-repos";
+import { isOfficialSource } from "../../lib/content/repos/content-repos";
 import type { ContentSetEntry } from "../../storage/types";
 
 /** Community contribution target repo (manual maintainer review). */

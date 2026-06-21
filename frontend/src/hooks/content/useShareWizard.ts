@@ -18,19 +18,19 @@ import { useOnlineStatus } from "../system/useOnlineStatus";
 import {
   readContributorName,
   writeContributorName,
-} from "../../lib/content/contribution-history";
+} from "../../lib/content/placement/contribution-history";
 import {
   validateSetForSharing,
   type ValidationIssue,
   type ValidationMeta,
   type ValidationResult,
-} from "../../lib/content/content-validator";
+} from "../../lib/content/validation/content-validator";
 import {
   detectDuplicate,
   extractSupplement,
   markAsVariation,
   type DuplicateResult,
-} from "../../lib/content/duplicate-detection";
+} from "../../lib/content/validation/duplicate-detection";
 import {
   buildPrBody,
   buildPrTitle,
@@ -39,14 +39,14 @@ import {
   downloadLessonJson,
   lessonJson,
   type CommunityPrDetails,
-} from "../../lib/content/lesson-export";
+} from "../../lib/content/lesson/lesson-export";
 import { lessonBranchName } from "../../lib/github/github-api";
 import {
   autoDetectTargetLanguage,
   computePlacement,
   estimateLevel,
   suggestFilename,
-} from "../../lib/content/placement-engine";
+} from "../../lib/content/placement/placement-engine";
 import { emitCelebration } from "../../lib/praise/celebration-bus";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";

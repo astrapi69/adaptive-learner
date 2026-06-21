@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LANGUAGE_OPTIONS } from "../../lib/content/language-options";
+import { LANGUAGE_OPTIONS } from "../../lib/content/language/language-options";
 
 interface ImportLanguagePickersProps {
   sourceLang: string;

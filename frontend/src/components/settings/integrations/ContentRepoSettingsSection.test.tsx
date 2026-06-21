@@ -29,18 +29,18 @@ const { notifyError, notifySuccess, validateUserRepo } = vi.hoisted(() => ({
 vi.mock("../../../utils/notify", () => ({
   notify: { error: notifyError, success: notifySuccess },
 }));
-vi.mock("../../../lib/content/content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("../../../lib/content/repos/content-repo-validate", () => ({ validateUserRepo }));
 vi.mock("qrcode", () => ({
   default: { toDataURL: vi.fn(async () => "data:image/png;base64,QR") },
 }));
 const { fetchRecommendedRepos } = vi.hoisted(() => ({
   fetchRecommendedRepos: vi.fn(),
 }));
-vi.mock("../../../lib/content/recommended-repos", async (orig) => ({
-  ...(await orig<typeof import("../../../lib/content/recommended-repos")>()),
+vi.mock("../../../lib/content/repos/recommended-repos", async (orig) => ({
+  ...(await orig<typeof import("../../../lib/content/repos/recommended-repos")>()),
   fetchRecommendedRepos,
 }));
-vi.mock("../../../lib/content/repo-token", () => ({
+vi.mock("../../../lib/content/repos/repo-token", () => ({
   resolveRepoToken: () => "",
   writeRepoToken: vi.fn(),
   clearRepoToken: vi.fn(),

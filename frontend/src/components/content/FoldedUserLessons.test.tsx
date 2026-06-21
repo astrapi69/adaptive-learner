@@ -1,7 +1,7 @@
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
-import type {FoldedUserLesson} from "../../lib/content/content-tree";
+import type {FoldedUserLesson} from "../../lib/content/browse/content-tree";
 import type {ContentSetEntry} from "../../storage/types";
 import FoldedUserLessons from "./FoldedUserLessons";
 

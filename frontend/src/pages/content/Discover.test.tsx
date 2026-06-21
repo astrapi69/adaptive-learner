@@ -13,7 +13,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import Discover from "./Discover";
-import type { SearchableSet } from "../../lib/content/search-index-loader";
+import type { SearchableSet } from "../../lib/content/repos/search-index-loader";
 
 const fetchAllIndicesMock = vi.fn();
 const listSetsMock = vi.fn();
@@ -24,16 +24,16 @@ vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fallback: string) => fallback, lang: "en" }),
 }));
 
-vi.mock("../../lib/content/language-names", () => ({
+vi.mock("../../lib/content/language/language-names", () => ({
   languageDisplayName: (code: string) => code.toUpperCase(),
 }));
 
-vi.mock("../../lib/content/discover-repos", () => ({
+vi.mock("../../lib/content/repos/discover-repos", () => ({
   collectDiscoveryRepos: vi.fn(async () => [{ url: "owner/repo", branch: "main" }]),
 }));
 
-vi.mock("../../lib/content/search-index-loader", async (orig) => ({
-  ...(await orig<typeof import("../../lib/content/search-index-loader")>()),
+vi.mock("../../lib/content/repos/search-index-loader", async (orig) => ({
+  ...(await orig<typeof import("../../lib/content/repos/search-index-loader")>()),
   fetchAllIndices: (...args: unknown[]) => fetchAllIndicesMock(...args),
 }));
 

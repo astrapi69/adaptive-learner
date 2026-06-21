@@ -14,7 +14,7 @@ import { useI18n } from "../ui/useI18n";
 import {
   readAdditionalSourceLanguages,
   SOURCE_LANGUAGES_CHANGE_EVENT,
-} from "../../lib/content/sourceLanguagePref";
+} from "../../lib/content/language/sourceLanguagePref";
 
 export interface SourceLanguages {
   /** Base subtag of the app language ("de", "en", ...). */

@@ -13,7 +13,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import ShareWizard from "./ShareWizard";
-import { CEFR_LEVELS } from "../../lib/content/language-options";
+import { CEFR_LEVELS } from "../../lib/content/language/language-options";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 
 // App language is mutable per test (default "de") so the

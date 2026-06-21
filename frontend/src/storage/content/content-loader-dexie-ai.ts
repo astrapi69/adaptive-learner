@@ -23,7 +23,7 @@ import {
   buildAiValidationMessages,
   parseAiValidationResult,
   type AiValidationResult,
-} from "../../lib/content/ai-content-validator";
+} from "../../lib/content/validation/ai-content-validator";
 import { runCardValidation } from "../../lib/ai/validation-runner";
 import { slugifySource } from "./content-loader-dexie";
 

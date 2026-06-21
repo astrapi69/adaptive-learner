@@ -17,26 +17,26 @@ import type { DownloadState } from "../../components/content/ContentSetRow";
 import {
   type BookRecommendations,
   fetchBookRecommendations,
-} from "../../lib/content/book-recommendations";
+} from "../../lib/content/media/book-recommendations";
 import {
   type BookMetadata,
   fetchBookCompanion,
   isFetchableSource,
-} from "../../lib/content/book-companion";
+} from "../../lib/content/media/book-companion";
 import {
   type MediaResource,
   fetchMediaResources,
-} from "../../lib/content/media-loader";
-import { type UserFoldInput } from "../../lib/content/content-tree";
+} from "../../lib/content/media/media-loader";
+import { type UserFoldInput } from "../../lib/content/browse/content-tree";
 import {
   listContributions,
   type SharedContribution,
-} from "../../lib/content/contribution-history";
-import { readUserRepos, userRepoSource } from "../../lib/content/content-repos";
+} from "../../lib/content/placement/contribution-history";
+import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
 import {
   fetchRecommendedRepos,
   recommendedSource,
-} from "../../lib/content/recommended-repos";
+} from "../../lib/content/repos/recommended-repos";
 import { badgeStatusForCachedSet } from "../../lib/ai/validation-signature";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { getStorage } from "../../storage";

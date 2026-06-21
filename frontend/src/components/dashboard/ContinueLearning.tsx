@@ -39,7 +39,7 @@ import {
     resolveContinueAction,
     rowStars,
     type ContinueMode,
-} from "../../lib/content/continue-learning";
+} from "../../lib/content/browse/continue-learning";
 import {getStorage} from "../../storage";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
 

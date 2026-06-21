@@ -22,7 +22,7 @@
 
 import {useEffect, useState} from "react";
 
-import {releaseAssetUrl, resolveAssetUrl} from "../../lib/content/asset-resolver";
+import {releaseAssetUrl, resolveAssetUrl} from "../../lib/content/media/asset-resolver";
 
 export interface UseAssetResult {
     url: string | null;

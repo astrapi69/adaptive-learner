@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useI18n } from "../../hooks/ui/useI18n";
-import { snapshotAdaptiveLesson } from "../../lib/content/adaptive-snapshot";
+import { snapshotAdaptiveLesson } from "../../lib/content/lesson/adaptive-snapshot";
 import { readLearnerState } from "../../lib/learnerState";
 import { getStorage } from "../../storage";
 import type { ContentLesson } from "../../storage/types";

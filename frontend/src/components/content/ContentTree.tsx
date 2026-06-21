@@ -18,10 +18,10 @@ import {
   type FoldedUserLesson,
   type SourceGroup,
   type TargetGroup,
-} from "../../lib/content/content-tree";
-import { languageDisplayName } from "../../lib/content/language-names";
-import { booksForDomain, type BookRecommendations } from "../../lib/content/book-recommendations";
-import { mediaForDomain, type MediaResource } from "../../lib/content/media-loader";
+} from "../../lib/content/browse/content-tree";
+import { languageDisplayName } from "../../lib/content/language/language-names";
+import { booksForDomain, type BookRecommendations } from "../../lib/content/media/book-recommendations";
+import { mediaForDomain, type MediaResource } from "../../lib/content/media/media-loader";
 import type { ContentSetEntry } from "../../storage/types";
 import BookRecommendationsSection from "./BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
