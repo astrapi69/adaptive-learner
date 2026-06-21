@@ -9,7 +9,7 @@
 
 import {describe, expect, it} from "vitest";
 
-import en from "../data/i18n/en.json";
+import en from "../../data/i18n/en.json";
 import {
     subjectNameKey,
     translateSubjectName,

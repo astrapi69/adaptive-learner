@@ -22,7 +22,7 @@ import {useSearchParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {filterStandardProjects} from "../../lib/learning/learning-project";
-import {translateSubjectName} from "../../lib/subjectI18n";
+import {translateSubjectName} from "../../lib/i18n/subjectI18n";
 import {
     countProjectsPerSubject,
     groupSubjectsByCategory,

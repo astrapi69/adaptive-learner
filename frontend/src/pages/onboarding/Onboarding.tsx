@@ -25,7 +25,7 @@ import {
     setProjectId,
     setUserId,
 } from "../../lib/learning/learnerState";
-import {translateSubjectPath} from "../../lib/subjectI18n";
+import {translateSubjectPath} from "../../lib/i18n/subjectI18n";
 import {suggestSubjects, type SubjectSuggestion} from "../../lib/learning/subjectSuggest";
 import {getStorage} from "../../storage";
 import type {LearningProject, Subject} from "../../types/domain";

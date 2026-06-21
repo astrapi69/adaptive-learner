@@ -13,7 +13,7 @@
  * here. The picker and Settings/Landing pick it up automatically.
  */
 
-import type {LanguagePickerOption} from "../shared/forms/LanguagePicker";
+import type {LanguagePickerOption} from "../../shared/forms/LanguagePicker";
 
 /** Writing systems, used to group the picker once it grows large. */
 export type WritingScript =

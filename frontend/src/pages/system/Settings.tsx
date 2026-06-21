@@ -44,7 +44,7 @@ import SettingsSidebar from "../../components/settings/SettingsSidebar";
 import SettingsMobileMenu from "../../components/settings/SettingsMobileMenu";
 import type { SidebarGroup } from "../../lib/settings/sidebar-model";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { buildLanguageOptions } from "../../lib/languages";
+import { buildLanguageOptions } from "../../lib/i18n/languages";
 import LanguagePicker from "../../shared/forms/LanguagePicker";
 import { readGesturePref, writeGesturePref } from "../../lib/settings/gesturePref";
 import {
