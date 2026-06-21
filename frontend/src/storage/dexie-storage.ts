@@ -63,6 +63,11 @@ import {
   studyGuideDexie,
   updateStudyQuestion,
 } from "./anki/notebooklm";
+import { resolveDexieAiConfig } from "./anki/anki-extraction";
+import {
+  generatePhrase as generatePronunciationPhrase,
+  judgeAttempt as judgePronunciationAttempt,
+} from "../lib/ai/pronunciation-ai";
 import { ApiError } from "../api/client";
 import {
   aiValidateDexie,
@@ -128,6 +133,29 @@ function writeGitHubToken(token: string): void {
   } catch {
     /* storage unavailable — best effort */
   }
+}
+
+/**
+ * Resolve the browser-direct AI config for a pronunciation call (#903): find
+ * the project's owner, then its active provider + key. Throws ApiError(400)
+ * when no key is configured, so the page reports "API key required" rather
+ * than failing the AI call.
+ */
+async function resolvePronunciationAiConfig(projectId: string) {
+  const db = getDb();
+  const project = await db.learningProjects.get(projectId);
+  if (!project) {
+    throw new ApiError(404, `Project ${projectId} not found`);
+  }
+  const config = await resolveDexieAiConfig(project.user_id);
+  if (!config) {
+    throw new ApiError(
+      400,
+      "An API key is required for pronunciation practice. " +
+        "Configure a provider in Settings.",
+    );
+  }
+  return config;
 }
 
 export const dexieStorage: IStorageService = {
@@ -300,19 +328,32 @@ export const dexieStorage: IStorageService = {
       }
       return { eligible: false };
     },
-    phrase: async () => {
-      throw new ApiError(
-        501,
-        "Pronunciation practice requires API mode for the AI calls. " +
-          "Switch to API mode in Settings.",
-      );
+    // #903 — browser-direct with the user's own key (gate: "key present?",
+    // not "backend reachable?"), mirroring the study guide (#902) + Anki (#807).
+    phrase: async (args) => {
+      const config = await resolvePronunciationAiConfig(args.project_id);
+      const phrase = await generatePronunciationPhrase(config, {
+        language: args.language,
+        level: args.level,
+        focus: args.focus,
+        previous: args.previous,
+      });
+      if (!phrase) {
+        throw new ApiError(502, "Could not generate a phrase. Please try again.");
+      }
+      return { phrase, language: args.language };
     },
-    judge: async () => {
-      throw new ApiError(
-        501,
-        "Pronunciation practice requires API mode for the AI calls. " +
-          "Switch to API mode in Settings.",
-      );
+    judge: async (args) => {
+      const config = await resolvePronunciationAiConfig(args.project_id);
+      const verdict = await judgePronunciationAttempt(config, {
+        target: args.target,
+        actual: args.actual,
+        language: args.language,
+      });
+      if (!verdict) {
+        throw new ApiError(502, "Could not score that attempt. Please try again.");
+      }
+      return verdict;
     },
   },
 
