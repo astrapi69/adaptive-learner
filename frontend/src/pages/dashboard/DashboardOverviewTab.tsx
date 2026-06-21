@@ -11,6 +11,7 @@ import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import FavoritesCard from "../../components/dashboard/FavoritesCard";
 import FocusAreasCard from "../../components/dashboard/FocusAreasCard";
 import PausedLessonsCard from "../../components/dashboard/PausedLessonsCard";
+import ReviewQueueCard from "../../components/dashboard/ReviewQueueCard";
 import HelpLink from "../../components/help/HelpLink";
 import HelpTooltip from "../../components/help/HelpTooltip";
 import StreakWidget from "../../components/gamification/StreakWidget";
@@ -32,21 +33,21 @@ export default function DashboardOverviewTab({
   const { t } = useI18n();
   return (
     <div data-testid="dashboard-tab-overview-panel">
+      {/* #931 — learner content first: Continue learning, then Review due,
+          then quick stats, then the secondary actionable cards. */}
       {userId && (
         <div className="mb-4">
           <ContinueLearning userId={userId} maxItems={3} />
         </div>
       )}
 
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {userId && (
-          <>
-            <PausedLessonsCard userId={userId} />
-            <FocusAreasCard userId={userId} />
-            <FavoritesCard userId={userId} />
-          </>
-        )}
+      {userId && (
+        <div className="mb-4">
+          <ReviewQueueCard userId={userId} />
+        </div>
+      )}
 
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <article className="dashboard-card">
           <h2 className="dashboard-card-title">
             <HelpTooltip glossaryKey="feature_gamification">
@@ -63,6 +64,14 @@ export default function DashboardOverviewTab({
           </h2>
           <StreakWidget state={streakState} />
         </article>
+
+        {userId && (
+          <>
+            <PausedLessonsCard userId={userId} />
+            <FocusAreasCard userId={userId} />
+            <FavoritesCard userId={userId} />
+          </>
+        )}
       </section>
     </div>
   );

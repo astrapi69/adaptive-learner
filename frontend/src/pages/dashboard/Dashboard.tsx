@@ -64,6 +64,9 @@ export default function Dashboard() {
   // Issue 4 / feature-strategy — gate QuickStart on the SESSION_START
   // feature (disabled in Dexie mode without a key; active in API mode).
   const sessionFeature = useFeature(FEATURES.SESSION_START);
+  // #931 — the project filter (subjects + tags) is hidden until multi-project
+  // exists; useless with a single project and no project-creation UI.
+  const advancedDashboard = useFeature(FEATURES.ADVANCED_DASHBOARD);
   const [apiKeyBannerDismissed, setApiKeyBannerDismissed] = useState<boolean>(
     () => localStorage.getItem("adaptive-learner.api_key_banner_dismissed") === "true",
   );
@@ -252,61 +255,9 @@ export default function Dashboard() {
           feature={t("ui.api_key.feature_session", "to start a session")}
         />
       )}
-      <QuickStartButton
-        suggestedMethod={profile?.dominant_method ?? null}
-        disabled={!sessionFeature.isActive}
-      />
 
-      {/* UX overhaul C5 — secondary action buttons: icon-only on
-                mobile (min 44px touch target), icon + label from md up. */}
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        {pronunciationEligible && (
-          <Button
-            type="button"
-            variant="secondary"
-            className="dashboard-pronunciation-quick-start"
-            onClick={() => navigate("/pronunciation")}
-            title={t("dashboard.pronunciation_quick_start", "Pronunciation Practice")}
-            aria-label={t("dashboard.pronunciation_quick_start", "Pronunciation Practice")}
-            data-testid="dashboard-pronunciation-button"
-          >
-            <Mic className="h-5 w-5" aria-hidden="true" />
-            <span className="hidden md:inline">
-              {t("dashboard.pronunciation_quick_start", "Pronunciation Practice")}
-            </span>
-          </Button>
-        )}
-
-        <Button
-          type="button"
-          variant="secondary"
-          className="dashboard-create-lesson"
-          onClick={() => navigate("/create-lesson")}
-          title={t("dashboard.create_lesson", "Create a lesson")}
-          aria-label={t("dashboard.create_lesson", "Create a lesson")}
-          data-testid="dashboard-create-lesson"
-        >
-          <Pencil className="h-5 w-5" aria-hidden="true" />
-          <span className="hidden md:inline">
-            {t("dashboard.create_lesson", "Create a lesson")}
-          </span>
-        </Button>
-
-        <Button
-          type="button"
-          variant="secondary"
-          className="dashboard-learning-path"
-          onClick={() => navigate("/learning-path")}
-          title={t("nav.learning_path", "Learning Path")}
-          aria-label={t("nav.learning_path", "Learning Path")}
-          data-testid="dashboard-learning-path"
-        >
-          <MapIcon className="h-5 w-5" aria-hidden="true" />
-          <span className="hidden md:inline">{t("nav.learning_path", "Learning Path")}</span>
-        </Button>
-      </div>
-
-      {userId && (
+      {/* #931 — project filter hidden until multi-project exists. */}
+      {userId && advancedDashboard.isActive && (
         <DashboardFilterBar
           userId={userId}
           onSelectProject={() => setActiveProjectVersion((v) => v + 1)}
@@ -368,6 +319,64 @@ export default function Dashboard() {
           <DashboardMissionsTab userId={userId} badges={badges} />
         )}
       </Suspense>
+
+      {/* #931 — secondary "Quick actions" footer: the learner content (tabs)
+          comes first; starting a session + power-user shortcuts live here. */}
+      <section className="dashboard-quick-actions mt-6 border-t border-border pt-4">
+        <h2 className="mb-2 text-sm font-semibold text-fg-muted">
+          {t("dashboard.quick_actions", "Quick actions")}
+        </h2>
+        <QuickStartButton
+          suggestedMethod={profile?.dominant_method ?? null}
+          disabled={!sessionFeature.isActive}
+        />
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {pronunciationEligible && (
+            <Button
+              type="button"
+              variant="secondary"
+              className="dashboard-pronunciation-quick-start"
+              onClick={() => navigate("/pronunciation")}
+              title={t("dashboard.pronunciation_quick_start", "Pronunciation Practice")}
+              aria-label={t("dashboard.pronunciation_quick_start", "Pronunciation Practice")}
+              data-testid="dashboard-pronunciation-button"
+            >
+              <Mic className="h-5 w-5" aria-hidden="true" />
+              <span className="hidden md:inline">
+                {t("dashboard.pronunciation_quick_start", "Pronunciation Practice")}
+              </span>
+            </Button>
+          )}
+
+          <Button
+            type="button"
+            variant="secondary"
+            className="dashboard-create-lesson"
+            onClick={() => navigate("/create-lesson")}
+            title={t("dashboard.create_lesson", "Create a lesson")}
+            aria-label={t("dashboard.create_lesson", "Create a lesson")}
+            data-testid="dashboard-create-lesson"
+          >
+            <Pencil className="h-5 w-5" aria-hidden="true" />
+            <span className="hidden md:inline">
+              {t("dashboard.create_lesson", "Create a lesson")}
+            </span>
+          </Button>
+
+          <Button
+            type="button"
+            variant="secondary"
+            className="dashboard-learning-path"
+            onClick={() => navigate("/learning-path")}
+            title={t("nav.learning_path", "Learning Path")}
+            aria-label={t("nav.learning_path", "Learning Path")}
+            data-testid="dashboard-learning-path"
+          >
+            <MapIcon className="h-5 w-5" aria-hidden="true" />
+            <span className="hidden md:inline">{t("nav.learning_path", "Learning Path")}</span>
+          </Button>
+        </div>
+      </section>
     </main>
   );
 }

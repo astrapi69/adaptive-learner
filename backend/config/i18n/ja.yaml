@@ -327,6 +327,7 @@ dashboard:
       word_order: "語順"
     mastery_split: '認識: {receptive} · 産出: {productive}'
   create_lesson: "レッスンを作成"
+  quick_actions: "クイック操作"
   metric_mean_stress: "平均ストレス"
   metric_mean_understanding: "平均理解度"
   metric_streak: "連続日数"

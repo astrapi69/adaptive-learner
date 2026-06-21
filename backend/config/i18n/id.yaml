@@ -327,6 +327,7 @@ dashboard:
       word_order: "Urutan kata"
     mastery_split: 'Reseptif: {receptive} · Produktif: {productive}'
   create_lesson: "Buat pelajaran"
+  quick_actions: "Tindakan cepat"
   metric_mean_stress: "Ø Stres"
   metric_mean_understanding: "Ø Pemahaman"
   metric_streak: "Rentetan hari"
