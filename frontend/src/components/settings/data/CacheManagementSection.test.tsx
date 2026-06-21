@@ -10,9 +10,9 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import CacheManagementSection from "./CacheManagementSection";
-import * as cacheInfo from "../lib/pwa/cache-info";
+import * as cacheInfo from "../../../lib/pwa/cache-info";
 
-vi.mock("../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb?: string) => fb ?? _k }),
 }));
 

@@ -16,13 +16,13 @@ import { toast } from "react-toastify";
 import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useI18n } from "../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   clearLessonCache,
   formatMegabytes,
   getCacheInfo,
   type CacheInfo,
-} from "../lib/pwa/cache-info";
+} from "../../../lib/pwa/cache-info";
 
 export default function CacheManagementSection() {
   const { t } = useI18n();

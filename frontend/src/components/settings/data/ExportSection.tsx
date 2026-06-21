@@ -18,22 +18,22 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/ui/useI18n";
-import {readLearnerState} from "../lib/learnerState";
+import {useI18n} from "../../../hooks/ui/useI18n";
+import {readLearnerState} from "../../../lib/learnerState";
 import {
     exportFilename,
     renderMarkdown,
-} from "../lib/export/markdown-renderer";
-import {openPrintWindow} from "../lib/export/pdf-generator";
-import {filterStandardProjects} from "../lib/learning-project";
-import {getStorage} from "../storage";
+} from "../../../lib/export/markdown-renderer";
+import {openPrintWindow} from "../../../lib/export/pdf-generator";
+import {filterStandardProjects} from "../../../lib/learning-project";
+import {getStorage} from "../../../storage";
 import type {
     CurriculumOverview,
     ProgressReport,
     SessionDetail,
-} from "../storage/backup/export-builder";
-import {notify} from "../utils/notify";
-import type {Curriculum, LearningSession} from "../types/domain";
+} from "../../../storage/backup/export-builder";
+import {notify} from "../../../utils/notify";
+import type {Curriculum, LearningSession} from "../../../types/domain";
 
 type ExportType = "progress" | "session" | "curriculum";
 type ExportFormat = "md" | "pdf";

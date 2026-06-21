@@ -4,15 +4,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const exportMock = vi.fn();
 const saveBackupToDiskMock = vi.fn();
 
-vi.mock("../storage", () => ({
+vi.mock("../../../storage", () => ({
   getStorage: () => ({ backup: { export: exportMock } }),
 }));
-vi.mock("../lib/learnerState", () => ({ readLearnerState: () => ({ userId: "u1" }) }));
-vi.mock("../utils/backup-download", () => ({
+vi.mock("../../../lib/learnerState", () => ({ readLearnerState: () => ({ userId: "u1" }) }));
+vi.mock("../../../utils/backup-download", () => ({
   saveBackupToDisk: (...args: unknown[]) => saveBackupToDiskMock(...args),
   backupFilename: () => "adaptive-learner-backup-x.json",
 }));
-vi.mock("../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
   notify: { success: vi.fn(), error: vi.fn() },
 }));
 

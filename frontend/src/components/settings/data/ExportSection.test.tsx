@@ -19,16 +19,16 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 
 import ExportSection from "./ExportSection";
-import {I18nProvider} from "../hooks/ui/useI18n";
-import {_resetStorageCacheForTests, getStorage} from "../storage";
-import {setUserId} from "../lib/learnerState";
-import type {ProgressReport} from "../storage/backup/export-builder";
+import {I18nProvider} from "../../../hooks/ui/useI18n";
+import {_resetStorageCacheForTests, getStorage} from "../../../storage";
+import {setUserId} from "../../../lib/learnerState";
+import type {ProgressReport} from "../../../storage/backup/export-builder";
 
-vi.mock("../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
-vi.mock("../lib/export/pdf-generator", () => ({
+vi.mock("../../../lib/export/pdf-generator", () => ({
     openPrintWindow: vi.fn().mockResolvedValue(undefined),
 }));
 
@@ -116,7 +116,7 @@ describe("ExportSection", () => {
         vi.spyOn(storage.users.projects, "list").mockResolvedValue([]);
         vi.spyOn(storage.curricula, "list").mockResolvedValue([]);
         vi.spyOn(storage.export, "progress").mockResolvedValue(sampleProgress);
-        const {openPrintWindow} = await import("../lib/export/pdf-generator");
+        const {openPrintWindow} = await import("../../../lib/export/pdf-generator");
         renderSection();
         const button = await screen.findByTestId("export-pdf-progress");
         await act(async () => {

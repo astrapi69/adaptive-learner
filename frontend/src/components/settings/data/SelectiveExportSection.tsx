@@ -20,8 +20,8 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { useI18n } from "../hooks/ui/useI18n";
-import { readLearnerState } from "../lib/learnerState";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { readLearnerState } from "../../../lib/learnerState";
 import {
   allCategoryIds,
   categoryById,
@@ -29,10 +29,10 @@ import {
   filterBackupPayload,
   resolveSelectedTables,
   selectiveExportFilename,
-} from "../lib/backup/selective-export";
-import { getStorage } from "../storage";
-import { backupFilename, saveBackupToDisk } from "../utils/backup-download";
-import { notify } from "../utils/notify";
+} from "../../../lib/backup/selective-export";
+import { getStorage } from "../../../storage";
+import { backupFilename, saveBackupToDisk } from "../../../utils/backup-download";
+import { notify } from "../../../utils/notify";
 
 /** Default ticked categories — the everyday content the learner owns. */
 const DEFAULT_SELECTED = ["projects", "curricula", "progress", "subjects"];

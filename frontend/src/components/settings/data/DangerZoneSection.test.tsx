@@ -27,8 +27,8 @@ vi.mock("react-router-dom", async () => {
 
 const storageReset = vi.fn();
 const storageBackupExport = vi.fn();
-vi.mock("../storage", async () => {
-    const actual = await vi.importActual<typeof import("../storage")>(
+vi.mock("../../../storage", async () => {
+    const actual = await vi.importActual<typeof import("../../../storage")>(
         "../storage",
     );
     return {
@@ -42,7 +42,7 @@ vi.mock("../storage", async () => {
 
 const notifySuccess = vi.fn();
 const notifyError = vi.fn();
-vi.mock("../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
     notify: {
         success: (...a: unknown[]) => notifySuccess(...a),
         error: (...a: unknown[]) => notifyError(...a),
@@ -59,7 +59,7 @@ const saveBackupToDiskMock = vi.fn(async (..._a: unknown[]) => ({
     method: "download" as const,
     filename: "backup-u-backup.json",
 }));
-vi.mock("../utils/backup-download", () => ({
+vi.mock("../../../utils/backup-download", () => ({
     saveBackupToDisk: (...a: unknown[]) => saveBackupToDiskMock(...a),
     backupFilename: (userId: string) => `backup-${userId}.json`,
 }));
@@ -193,7 +193,7 @@ describe("DangerZoneSection", () => {
     });
 
     it("reset failure shows error toast + preserves localStorage", async () => {
-        const {ApiError} = await import("../api/client");
+        const {ApiError} = await import("../../../api/client");
         storageReset.mockRejectedValue(new ApiError(500, "DB down"));
         localStorage.setItem("adaptive-learner.user_id", "u-keep");
 
