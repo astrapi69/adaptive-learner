@@ -53,20 +53,20 @@ import {
   userRepoSource,
   type SyncProgress,
   type UserContentRepo,
-} from "../../../lib/content/content-repos";
-import { validateUserRepo } from "../../../lib/content/content-repo-validate";
-import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../../../lib/content/repo-token";
+} from "../../../lib/content/repos/content-repos";
+import { validateUserRepo } from "../../../lib/content/repos/content-repo-validate";
+import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../../../lib/content/repos/repo-token";
 import {
   clearRepoRating,
   readRepoRating,
   writeRepoRating,
-} from "../../../lib/content/repo-rating";
+} from "../../../lib/content/repos/repo-rating";
 import {
   fetchRecommendedRepos,
   isRecommendedSource,
   recommendedSource,
   type RecommendedRepo,
-} from "../../../lib/content/recommended-repos";
+} from "../../../lib/content/repos/recommended-repos";
 import { notify } from "../../../utils/notify";
 
 interface OfficialSummary {

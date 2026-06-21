@@ -11,7 +11,7 @@ const update = vi.fn();
 const listSets = vi.fn();
 const downloadSet = vi.fn();
 
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
   getStorage: () => ({
     pluginSettings: { get, update },
     contentLoader: { listSets, downloadSet },

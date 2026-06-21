@@ -32,11 +32,11 @@ import {
   listContributions,
   type SharedContribution,
 } from "../../lib/content/contribution-history";
-import { readUserRepos, userRepoSource } from "../../lib/content/content-repos";
+import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
 import {
   fetchRecommendedRepos,
   recommendedSource,
-} from "../../lib/content/recommended-repos";
+} from "../../lib/content/repos/recommended-repos";
 import { badgeStatusForCachedSet } from "../../lib/ai/validation-signature";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { getStorage } from "../../storage";

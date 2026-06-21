@@ -62,7 +62,7 @@ import AiValidationDialog from "../../components/content/AiValidationDialog";
 import QualityCheckDialog from "../../components/content/QualityCheckDialog";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
-import { isOfficialSource } from "../../lib/content/content-repos";
+import { isOfficialSource } from "../../lib/content/repos/content-repos";
 import type { ContentSetEntry } from "../../storage/types";
 
 /** Community contribution target repo (manual maintainer review). */

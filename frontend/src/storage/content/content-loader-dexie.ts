@@ -37,12 +37,12 @@ import { USER_GENERATED_SOURCE } from "../types";
 import { isDevMode } from "../../hooks/settings/useDevMode";
 import { getDb } from "../dexie/db";
 import type { ContentSetRow, ContentSetFileRow } from "../dexie/db";
-import { resolveRepoToken } from "../../lib/content/repo-token";
+import { resolveRepoToken } from "../../lib/content/repos/repo-token";
 import {
   fetchGitHubFileBytesOptional,
   fetchGitHubFileText,
   fetchWithRetry,
-} from "../../lib/content/github-fetch";
+} from "../../lib/content/repos/github-fetch";
 
 const RAW_BASE = "https://raw.githubusercontent.com";
 const BUNDLED_PREFIX = "bundled:";

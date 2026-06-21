@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 
 import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { isOfficialSource } from "../../lib/content/content-repos";
+import { isOfficialSource } from "../../lib/content/repos/content-repos";
 import { languageDisplayName } from "../../lib/content/language-names";
 import {
   availableDomains,
@@ -31,12 +31,12 @@ import {
   queryDiscoverSets,
   type DiscoverFilters,
   type DiscoverSort,
-} from "../../lib/content/discover-index";
-import { collectDiscoveryRepos } from "../../lib/content/discover-repos";
+} from "../../lib/content/repos/discover-index";
+import { collectDiscoveryRepos } from "../../lib/content/repos/discover-repos";
 import {
   fetchAllIndices,
   type SearchableSet,
-} from "../../lib/content/search-index-loader";
+} from "../../lib/content/repos/search-index-loader";
 import FilterBar, { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchField from "../../shared/forms/SearchField";
 import SetDiscoveryCard, {

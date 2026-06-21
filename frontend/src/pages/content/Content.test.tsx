@@ -33,8 +33,8 @@ const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
 const aiValidateMock = vi.fn();
 
-vi.mock("../../lib/content/recommended-repos", async (orig) => ({
-  ...(await orig<typeof import("../../lib/content/recommended-repos")>()),
+vi.mock("../../lib/content/repos/recommended-repos", async (orig) => ({
+  ...(await orig<typeof import("../../lib/content/repos/recommended-repos")>()),
   fetchRecommendedRepos: vi.fn(async () => []),
 }));
 

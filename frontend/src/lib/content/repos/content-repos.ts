@@ -18,7 +18,7 @@
  * single ``user_repo`` into the array transparently.
  */
 
-import { getStorage } from "../../storage";
+import { getStorage } from "../../../storage";
 import { validateUserRepo } from "./content-repo-validate";
 import { resolveRepoToken } from "./repo-token";
 
