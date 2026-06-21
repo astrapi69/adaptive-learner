@@ -48,7 +48,7 @@ import {
   buildExerciseBreakdown,
   computeStars,
   type StarRating,
-} from "../../lib/lesson-summary";
+} from "../../lib/lesson/lesson-summary";
 import type { LessonResultLabels } from "../../lib/lesson/result-export";
 import {
   buildLessonJsonExport,

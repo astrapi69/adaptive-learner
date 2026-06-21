@@ -11,7 +11,7 @@ import {
     parseStepAnchor,
     rewriteAnchors,
 } from "./lesson-anchors";
-import type {ContentLesson} from "../storage/types";
+import type {ContentLesson} from "../../storage/types";
 
 function _lesson(overrides: Partial<ContentLesson> = {}): ContentLesson {
     return {

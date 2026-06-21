@@ -23,7 +23,7 @@ import type {
     ContentLesson,
     ContentLessonExercise,
     LessonProgress,
-} from "../storage/types";
+} from "../../storage/types";
 
 describe("computeStars", () => {
     it("returns 3 stars at 100%", () => {

@@ -14,7 +14,7 @@
  * react-markdown.
  */
 
-import type {ContentLesson, ContentLessonStep} from "../storage/types";
+import type {ContentLesson, ContentLessonStep} from "../../storage/types";
 
 /**
  * In-app step-anchor prefix the viewer recognises. A link

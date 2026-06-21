@@ -6,7 +6,7 @@ import type {
   ElementError,
   LessonProgress,
 } from "../../storage/types";
-import type { ExerciseBreakdownEntry } from "../lesson-summary";
+import type { ExerciseBreakdownEntry } from "./lesson-summary";
 import {
   buildLessonResultJson,
   buildLessonResultMarkdown,

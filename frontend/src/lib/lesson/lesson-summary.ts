@@ -25,7 +25,7 @@ import type {
     ContentLesson,
     ContentLessonExercise,
     LessonProgress,
-} from "../storage/types";
+} from "../../storage/types";
 
 export type StarRating = 0 | 1 | 2 | 3;
 
