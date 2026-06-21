@@ -5,16 +5,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 
-import { I18nProvider } from "../hooks/ui/useI18n";
-import { resolveStorageMode } from "../storage";
-import { useOnlineStatus } from "../hooks/system/useOnlineStatus";
-import * as updateChecker from "../lib/utils/updateChecker";
+import { I18nProvider } from "../../hooks/ui/useI18n";
+import { resolveStorageMode } from "../../storage";
+import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
+import * as updateChecker from "../../lib/utils/updateChecker";
 
-vi.mock("../storage", async (importActual) => ({
-  ...(await importActual<typeof import("../storage")>()),
+vi.mock("../../storage", async (importActual) => ({
+  ...(await importActual<typeof import("../../storage")>()),
   resolveStorageMode: vi.fn(),
 }));
-vi.mock("../hooks/system/useOnlineStatus", () => ({ useOnlineStatus: vi.fn() }));
+vi.mock("../../hooks/system/useOnlineStatus", () => ({ useOnlineStatus: vi.fn() }));
 
 const mockMode = vi.mocked(resolveStorageMode);
 const mockOnline = vi.mocked(useOnlineStatus);

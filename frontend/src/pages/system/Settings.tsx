@@ -26,7 +26,7 @@ import PausedLessonsRetentionControl from "../../components/settings/controls/Pa
 import LearningRepoSettingsSection from "../../components/settings/integrations/LearningRepoSettingsSection";
 import MissionSettingsControl from "../../components/settings/controls/MissionSettingsControl";
 import SourceLanguagesControl from "../../components/settings/controls/SourceLanguagesControl";
-import ModeIndicator from "../../components/ModeIndicator";
+import ModeIndicator from "../../components/pwa/ModeIndicator";
 import UpdatesSettingsSection from "../../components/settings/UpdatesSettingsSection";
 import SoundSettingsControl from "../../components/settings/controls/SoundSettingsControl";
 import HelpBrowser from "../../components/help/HelpBrowser";

@@ -9,10 +9,10 @@
  * instead (#840), so this host stays out of the way in API mode.
  */
 
-import UpdatePrompt from "../shared/feedback/UpdatePrompt";
-import { useAppUpdate } from "../hooks/system/useAppUpdate";
-import { useI18n } from "../hooks/ui/useI18n";
-import { resolveStorageMode } from "../storage";
+import UpdatePrompt from "../../shared/feedback/UpdatePrompt";
+import { useAppUpdate } from "../../hooks/system/useAppUpdate";
+import { useI18n } from "../../hooks/ui/useI18n";
+import { resolveStorageMode } from "../../storage";
 
 export default function UpdatePromptHost() {
   const { t } = useI18n();

@@ -17,17 +17,17 @@
 import { useEffect, useRef, useState } from "react";
 import { RefreshCw, X } from "lucide-react";
 
-import { useI18n } from "../hooks/ui/useI18n";
-import { useOnlineStatus } from "../hooks/system/useOnlineStatus";
-import { resolveStorageMode } from "../storage";
-import { CURRENT_BUILD } from "../lib/pwa/sw-update";
+import { useI18n } from "../../hooks/ui/useI18n";
+import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
+import { resolveStorageMode } from "../../storage";
+import { CURRENT_BUILD } from "../../lib/pwa/sw-update";
 import {
   checkForUpdate,
   shouldNotifyForUpdate,
   type UpdateCheckResult,
-} from "../lib/utils/updateChecker";
-import { isCheckDue, readUpdatePrefs, writeUpdatePrefs } from "../lib/utils/updatePrefs";
-import ReleaseNotes, { RELEASE_NOTES_LIMIT } from "./about/ReleaseNotes";
+} from "../../lib/utils/updateChecker";
+import { isCheckDue, readUpdatePrefs, writeUpdatePrefs } from "../../lib/utils/updatePrefs";
+import ReleaseNotes, { RELEASE_NOTES_LIMIT } from "../about/ReleaseNotes";
 
 export default function DesktopUpdateHost() {
   const { t } = useI18n();
