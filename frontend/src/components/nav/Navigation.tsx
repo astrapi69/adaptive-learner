@@ -3,23 +3,23 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import MenuToggleButton from "../shared/layout/MenuToggleButton";
-import NavGroup from "./nav/NavGroup";
+import MenuToggleButton from "../../shared/layout/MenuToggleButton";
+import NavGroup from "./NavGroup";
 import NavXpBadge from "./NavXpBadge";
 import NavReviewsBadge from "./NavReviewsBadge";
 import NavAvatar from "./NavAvatar";
 import { NavModeBadge, NavThemeToggle } from "./NavIndicators";
 
-import { useHelp } from "../contexts/HelpContext";
-import { helpKeyForPath } from "../lib/help-routes";
-import { useAppMode } from "../hooks/settings/useAppMode";
-import { useButtonTooltips } from "../hooks/settings/useButtonTooltips";
-import { useDevMode } from "../hooks/settings/useDevMode";
-import { useI18n } from "../hooks/ui/useI18n";
-import { useIsLessonActive } from "../hooks/lesson/useIsLessonActive";
-import { useScrollDirection } from "../hooks/ui/useScrollDirection";
-import { useTheme } from "../hooks/ui/useTheme";
-import { isDarkTheme } from "../lib/themes";
+import { useHelp } from "../../contexts/HelpContext";
+import { helpKeyForPath } from "../../lib/help-routes";
+import { useAppMode } from "../../hooks/settings/useAppMode";
+import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
+import { useDevMode } from "../../hooks/settings/useDevMode";
+import { useI18n } from "../../hooks/ui/useI18n";
+import { useIsLessonActive } from "../../hooks/lesson/useIsLessonActive";
+import { useScrollDirection } from "../../hooks/ui/useScrollDirection";
+import { useTheme } from "../../hooks/ui/useTheme";
+import { isDarkTheme } from "../../lib/themes";
 
 /**
  * Top navigation bar. Rendered on every authenticated page

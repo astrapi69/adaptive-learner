@@ -14,7 +14,7 @@ import { Moon, Sun } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { useI18n } from "../hooks/ui/useI18n";
+import { useI18n } from "../../hooks/ui/useI18n";
 
 /** "AI+Content" vs "Content"-only mode badge (links to the content browser). */
 export function NavModeBadge({ mode }: { mode: string }) {

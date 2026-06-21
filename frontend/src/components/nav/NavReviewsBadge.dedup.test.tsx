@@ -14,18 +14,18 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const reviewQueueMock = vi.fn();
 
-vi.mock("../hooks/ui/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({
         t: (_k: string, fallback?: string) => fallback ?? _k,
         lang: "en",
     }),
 }));
 
-vi.mock("../lib/learnerState", () => ({
+vi.mock("../../lib/learnerState", () => ({
     readLearnerState: () => ({userId: "user-1"}),
 }));
 
-vi.mock("../storage", () => ({
+vi.mock("../../storage", () => ({
     getStorage: () => ({
         elementErrors: {reviewQueue: reviewQueueMock},
     }),

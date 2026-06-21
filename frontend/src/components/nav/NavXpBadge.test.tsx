@@ -12,22 +12,22 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { XPState } from "../storage/types";
+import type { XPState } from "../../storage/types";
 
 const readLearnerState = vi.fn<() => { userId: string | null }>();
 const getState = vi.fn<(userId: string) => Promise<XPState>>();
 const getStreakHeatmap = vi.fn();
 
-vi.mock("../lib/learnerState", () => ({
+vi.mock("../../lib/learnerState", () => ({
   readLearnerState: () => readLearnerState(),
 }));
 
-vi.mock("../storage", () => ({
+vi.mock("../../storage", () => ({
   getStorage: () => ({ gamification: { getState, getStreakHeatmap } }),
 }));
 
 import NavXpBadge from "./NavXpBadge";
-import { emitCelebration } from "../lib/praise/celebration-bus";
+import { emitCelebration } from "../../lib/praise/celebration-bus";
 
 function makeState(overrides: Partial<XPState> = {}): XPState {
   return {

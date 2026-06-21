@@ -14,13 +14,13 @@ import {RefreshCw} from "lucide-react";
 import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
-import {useI18n} from "../hooks/ui/useI18n";
-import {readLearnerState} from "../lib/learnerState";
-import {dedupeReviewQueueByElement} from "../lib/review-lesson";
-import {subscribeCelebration} from "../lib/praise/celebration-bus";
-import {REVIEWS_CHANGED_EVENT} from "../lib/review/reviewsChanged";
-import {getStorage} from "../storage";
-import type {CelebrationType} from "../lib/praise/celebration-bus";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {readLearnerState} from "../../lib/learnerState";
+import {dedupeReviewQueueByElement} from "../../lib/review-lesson";
+import {subscribeCelebration} from "../../lib/praise/celebration-bus";
+import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
+import {getStorage} from "../../storage";
+import type {CelebrationType} from "../../lib/praise/celebration-bus";
 
 const REVIEW_AFFECTING: ReadonlySet<CelebrationType> = new Set<CelebrationType>(
     ["lesson_complete"],

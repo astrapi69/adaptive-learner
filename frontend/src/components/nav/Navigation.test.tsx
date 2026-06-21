@@ -168,8 +168,8 @@ describe("Navigation", () => {
         // Mount with the full provider tree so useHelp() sees a
         // real HelpProvider (the nav button calls openHelp which
         // would otherwise no-op in the bare hook fallback).
-        const {HelpProvider} = await import("../contexts/HelpContext");
-        const HelpDrawer = (await import("./help/HelpDrawer")).default;
+        const {HelpProvider} = await import("../../contexts/HelpContext");
+        const HelpDrawer = (await import("../help/HelpDrawer")).default;
         render(
             <MemoryRouter initialEntries={["/dashboard"]}>
                 <HelpProvider>

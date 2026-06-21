@@ -24,16 +24,16 @@ import { Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import LevelProgressCard from "../shared/gamification/LevelProgressCard";
-import XpBadge from "../shared/gamification/XpBadge";
-import { useI18n } from "../hooks/ui/useI18n";
-import { readLearnerState } from "../lib/learnerState";
-import { buildLevelMilestones } from "../lib/gamification/levelMilestones";
-import { subscribeCelebration } from "../lib/praise/celebration-bus";
-import { XP_SPENT_EVENT } from "../lib/gamification/xp-spent-event";
-import { getStorage } from "../storage";
-import type { CelebrationType } from "../lib/praise/celebration-bus";
-import type { HeatmapEntryOut, XPState } from "../storage/types";
+import LevelProgressCard from "../../shared/gamification/LevelProgressCard";
+import XpBadge from "../../shared/gamification/XpBadge";
+import { useI18n } from "../../hooks/ui/useI18n";
+import { readLearnerState } from "../../lib/learnerState";
+import { buildLevelMilestones } from "../../lib/gamification/levelMilestones";
+import { subscribeCelebration } from "../../lib/praise/celebration-bus";
+import { XP_SPENT_EVENT } from "../../lib/gamification/xp-spent-event";
+import { getStorage } from "../../storage";
+import type { CelebrationType } from "../../lib/praise/celebration-bus";
+import type { HeatmapEntryOut, XPState } from "../../storage/types";
 
 /** Celebration events that can move the XP total — a refresh trigger. */
 const XP_AFFECTING: ReadonlySet<CelebrationType> = new Set<CelebrationType>([
