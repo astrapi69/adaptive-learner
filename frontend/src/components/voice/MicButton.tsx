@@ -18,15 +18,15 @@
 
 import {useEffect, useRef, useState} from "react";
 
-import {useButtonTooltips} from "../hooks/settings/useButtonTooltips";
-import {useI18n} from "../hooks/ui/useI18n";
-import {readVoicePrefs} from "../lib/voice/voicePref";
+import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {readVoicePrefs} from "../../lib/voice/voicePref";
 import {
     isSpeechRecognitionSupported,
     start as startRecognition,
     type RecognitionHandle,
-} from "../lib/voice/speech-recognition";
-import {notify} from "../utils/notify";
+} from "../../lib/voice/speech-recognition";
+import {notify} from "../../utils/notify";
 
 interface MicButtonProps {
     /** BCP-47 lang. Defaults to the user's i18n lang.  */

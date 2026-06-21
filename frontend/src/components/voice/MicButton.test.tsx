@@ -8,11 +8,11 @@
 import {act, fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
-import {I18nProvider} from "../hooks/ui/useI18n";
-import {VOICE_PREF_KEYS} from "../lib/voice/voicePref";
+import {I18nProvider} from "../../hooks/ui/useI18n";
+import {VOICE_PREF_KEYS} from "../../lib/voice/voicePref";
 
 const notifyError = vi.fn();
-vi.mock("../utils/notify", () => ({
+vi.mock("../../utils/notify", () => ({
     notify: {
         error: (...args: unknown[]) => notifyError(...args),
         success: vi.fn(),

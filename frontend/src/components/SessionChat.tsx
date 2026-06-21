@@ -5,8 +5,8 @@ import remarkGfm from "remark-gfm";
 import {useButtonTooltips} from "../hooks/settings/useButtonTooltips";
 import {useI18n} from "../hooks/ui/useI18n";
 import type {MessageRole} from "../lib/constants";
-import MicButton from "./MicButton";
-import SpeechButton from "./SpeechButton";
+import MicButton from "./voice/MicButton";
+import SpeechButton from "./voice/SpeechButton";
 import {markdownToSpeech} from "../lib/lesson/tts-text";
 
 export interface ChatMessage {

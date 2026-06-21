@@ -6,7 +6,7 @@ import AssessmentNav from "../../components/AssessmentNav";
 import AssessmentProgress from "../../components/AssessmentProgress";
 import ProfileRadar from "../../components/ProfileRadar";
 import QuestionCard from "../../components/QuestionCard";
-import SpeechButton from "../../components/SpeechButton";
+import SpeechButton from "../../components/voice/SpeechButton";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {hapticSwipe, useSwipe} from "../../hooks/ui/useSwipe";

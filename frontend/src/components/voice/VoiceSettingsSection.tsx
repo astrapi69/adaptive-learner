@@ -20,14 +20,14 @@
 
 import {useEffect, useState} from "react";
 
-import {useI18n} from "../hooks/ui/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 import {
     isSpeechRecognitionSupported,
-} from "../lib/voice/speech-recognition";
+} from "../../lib/voice/speech-recognition";
 import {
     isSpeechSynthesisSupported,
     loadVoices,
-} from "../lib/voice/speech-synthesis";
+} from "../../lib/voice/speech-synthesis";
 import {
     readVoicePrefs,
     writeAutoPlayAi,
@@ -38,7 +38,7 @@ import {
     writeTtsPitch,
     writeTtsRate,
     writeTtsVoiceName,
-} from "../lib/voice/voicePref";
+} from "../../lib/voice/voicePref";
 
 export default function VoiceSettingsSection() {
     const {t} = useI18n();

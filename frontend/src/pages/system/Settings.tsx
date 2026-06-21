@@ -34,7 +34,7 @@ import { setButtonTooltipsEnabled, useButtonTooltips } from "../../hooks/setting
 import { setDevModeEnabled, useDevMode } from "../../hooks/settings/useDevMode";
 import { Feature } from "@astrapi69/feature-strategy-react";
 import { FEATURES } from "../../features/featureConfig";
-import VoiceSettingsSection from "../../components/VoiceSettingsSection";
+import VoiceSettingsSection from "../../components/voice/VoiceSettingsSection";
 import AiSettingsPanel from "../../components/settings/ai/AiSettingsPanel";
 import SyncSection from "../../components/sync/SyncSection";
 import ThemePicker from "../../components/settings/appearance/ThemePicker";
