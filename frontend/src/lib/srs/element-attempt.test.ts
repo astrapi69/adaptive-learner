@@ -19,7 +19,7 @@ import {
     deriveWordTilesAttempt,
     type AttemptContext,
 } from "./element-attempt";
-import type {ContentLessonExercise} from "../storage/types";
+import type {ContentLessonExercise} from "../../storage/types";
 
 const CTX: AttemptContext = {
     setId: "language-fr-a1",

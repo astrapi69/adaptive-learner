@@ -37,7 +37,7 @@ import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import ExerciseHint from "./ExerciseHint";
-import {deriveFreeTextAttempt} from "../../lib/element-attempt";
+import {deriveFreeTextAttempt} from "../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";

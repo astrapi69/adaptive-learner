@@ -27,8 +27,8 @@
  *   - word_tiles with 1 tile (edge case) → "vocabulary"
  */
 
-import {resolveConcreteDirection} from "./exercises/direction";
-import type {ContentLessonExercise, ElementAttempt} from "../storage/types";
+import {resolveConcreteDirection} from "../exercises/direction";
+import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
 export interface AttemptContext {
     setId: string;

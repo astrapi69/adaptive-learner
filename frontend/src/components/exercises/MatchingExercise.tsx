@@ -30,7 +30,7 @@ import type {Ref} from "react";
 import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
-import {deriveMatchingAttempts} from "../../lib/element-attempt";
+import {deriveMatchingAttempts} from "../../lib/srs/element-attempt";
 import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
 import {
     MATCHING_RESOLVE_PREF_CHANGE_EVENT,
