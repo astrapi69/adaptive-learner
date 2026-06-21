@@ -17,9 +17,9 @@
  * App-independent: takes plain values, imports only shared types.
  */
 
-import type { ApiKeySource } from "../types/domain";
-import type { StorageMode } from "../storage/types";
-import type { AIProvider } from "./constants";
+import type { ApiKeySource } from "../../types/domain";
+import type { StorageMode } from "../../storage/types";
+import type { AIProvider } from "../constants";
 
 /** One of the four mutually-exclusive provider key states. */
 export type ProviderKeyStatus = "active" | "empty" | "desktop_only" | "external";

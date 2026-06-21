@@ -24,7 +24,7 @@
  * that is the intended safety net, not this format gate.
  */
 
-import type { AIProvider } from "./constants";
+import type { AIProvider } from "../constants";
 
 interface FormatRule {
   /** Required leading prefix, or ``null`` when the provider has no
