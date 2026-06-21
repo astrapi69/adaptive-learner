@@ -327,6 +327,7 @@ dashboard:
       word_order: "어순"
     mastery_split: '수용: {receptive} · 산출: {productive}'
   create_lesson: "레슨 만들기"
+  quick_actions: "빠른 작업"
   metric_mean_stress: "평균 스트레스"
   metric_mean_understanding: "평균 이해도"
   metric_streak: "연속 학습일"

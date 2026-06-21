@@ -327,6 +327,7 @@ dashboard:
       word_order: "Kelime sırası"
     mastery_split: 'Tanıma: {receptive} · Üretim: {productive}'
   create_lesson: "Ders oluştur"
+  quick_actions: "Hızlı işlemler"
   metric_mean_stress: "Ø Stres"
   metric_mean_understanding: "Ø Anlama"
   metric_streak: "Gün serisi"

@@ -329,6 +329,7 @@ dashboard:
       word_order: शब्द क्रम
     mastery_split: 'ग्रहणशील: {receptive} · उत्पादक: {productive}'
   create_lesson: एक पाठ बनाएँ
+  quick_actions: "त्वरित क्रियाएँ"
   metric_mean_stress: Ø तनाव
   metric_mean_understanding: Ø समझ
   metric_streak: दिन की श्रृंखला

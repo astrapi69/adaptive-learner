@@ -61,6 +61,7 @@ export const FEATURES = {
   REVIEW_SESSION: "review-session",
   ASSESSMENT: "assessment",
   DASHBOARD: "dashboard",
+  ADVANCED_DASHBOARD: "advanced-dashboard",
   LEARNING_PATH: "learning-path",
   LEARNING_PATH_GRAPH: "learning-path-graph",
   PROGRESS: "progress",
@@ -108,8 +109,15 @@ export const REASON_DESKTOP_ONLY = "desktop_only";
  * ``LEARNING_PATH_GRAPH``: the xyflow Graph view has a broken layout /
  * unreadable nodes (#900). Disabled until the graph layout is fixed; re-enable
  * by removing it from this list.
+ *
+ * ``ADVANCED_DASHBOARD``: the Dashboard project filter (subjects + tags) is
+ * useless with a single project and no project-creation UI (#931). Hidden until
+ * multi-project lands; re-enable by removing it from this list.
  */
-const DEFAULT_DISABLED: readonly FeatureId[] = [FEATURES.LEARNING_PATH_GRAPH];
+const DEFAULT_DISABLED: readonly FeatureId[] = [
+  FEATURES.LEARNING_PATH_GRAPH,
+  FEATURES.ADVANCED_DASHBOARD,
+];
 
 /** AI-backed features: disabled in Dexie mode without a configured key. */
 const NEEDS_AI_KEY: readonly FeatureId[] = [
