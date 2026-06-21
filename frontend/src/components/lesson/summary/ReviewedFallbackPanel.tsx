@@ -10,8 +10,8 @@
 
 import { CheckCircle2 } from "lucide-react";
 
-import { useI18n } from "../../hooks/ui/useI18n";
-import type { ContentLessonExercise, LessonStepResultStored } from "../../storage/types";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import type { ContentLessonExercise, LessonStepResultStored } from "../../../storage/types";
 
 interface ReviewedFallbackPanelProps {
   exercise: ContentLessonExercise;

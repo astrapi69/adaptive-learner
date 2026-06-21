@@ -22,46 +22,46 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import AnimatedCounter from "../../shared/data-display/AnimatedCounter";
-import CorrectionBlock from "../exercises/CorrectionBlock";
-import DiffHighlight from "../exercises/DiffHighlight";
-import Confetti from "../feedback/Confetti";
+import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
+import CorrectionBlock from "../../exercises/CorrectionBlock";
+import DiffHighlight from "../../exercises/DiffHighlight";
+import Confetti from "../../feedback/Confetti";
 import NextStepSuggestions from "./NextStepSuggestions";
-import { useCountUp } from "../../hooks/ui/useCountUp";
-import { useFeedbackIntensity } from "../../hooks/settings/useFeedbackIntensity";
-import { useI18n } from "../../hooks/ui/useI18n";
-import LessonFavoriteToggle from "./chrome/LessonFavoriteToggle";
-import AnswerDiff from "../../shared/data-display/AnswerDiff";
-import ShareButton from "../../shared/layout/ShareButton";
-import { generateShareText } from "../../lib/share/generate-share-text";
+import { useCountUp } from "../../../hooks/ui/useCountUp";
+import { useFeedbackIntensity } from "../../../hooks/settings/useFeedbackIntensity";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import LessonFavoriteToggle from "../chrome/LessonFavoriteToggle";
+import AnswerDiff from "../../../shared/data-display/AnswerDiff";
+import ShareButton from "../../../shared/layout/ShareButton";
+import { generateShareText } from "../../../lib/share/generate-share-text";
 import {
   downloadAnkiDeck,
   lessonCardsToAnki,
-} from "../../lib/export/anki-export";
-import { explainError } from "../../lib/review/explain-error";
-import { readExplanationsEnabled } from "../../lib/review/reviewPref";
-import { useNextStepSuggestions } from "../../hooks/learning/useNextStepSuggestions";
-import { collectFailedExercises } from "../../lib/lesson/error-replay";
-import { tokenDiff } from "../../lib/exercises/token-diff";
-import { allowsConfetti } from "../../lib/feedback/feedbackPref";
+} from "../../../lib/export/anki-export";
+import { explainError } from "../../../lib/review/explain-error";
+import { readExplanationsEnabled } from "../../../lib/review/reviewPref";
+import { useNextStepSuggestions } from "../../../hooks/learning/useNextStepSuggestions";
+import { collectFailedExercises } from "../../../lib/lesson/error-replay";
+import { tokenDiff } from "../../../lib/exercises/token-diff";
+import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
 import {
   buildExerciseBreakdown,
   computeStars,
   type StarRating,
-} from "../../lib/lesson/lesson-summary";
-import type { LessonResultLabels } from "../../lib/lesson/result-export";
+} from "../../../lib/lesson/lesson-summary";
+import type { LessonResultLabels } from "../../../lib/lesson/result-export";
 import {
   buildLessonJsonExport,
   buildLessonMarkdownExport,
   downloadBlob,
-} from "../../lib/lesson/result-download";
-import { isFirstAttempt } from "../../lib/gamification/first-attempt";
-import { calculateLessonSessionXp } from "../../lib/gamification/lesson-xp";
-import { emitCelebration } from "../../lib/praise/celebration-bus";
-import { nextPraise } from "../../lib/praise/phrase-picker";
-import { getStorage } from "../../storage";
-import type { ContentLesson, ElementError, LessonProgress } from "../../storage/types";
-import { notify } from "../../utils/notify";
+} from "../../../lib/lesson/result-download";
+import { isFirstAttempt } from "../../../lib/gamification/first-attempt";
+import { calculateLessonSessionXp } from "../../../lib/gamification/lesson-xp";
+import { emitCelebration } from "../../../lib/praise/celebration-bus";
+import { nextPraise } from "../../../lib/praise/phrase-picker";
+import { getStorage } from "../../../storage";
+import type { ContentLesson, ElementError, LessonProgress } from "../../../storage/types";
+import { notify } from "../../../utils/notify";
 
 interface LessonSummaryProps {
   lesson: ContentLesson;

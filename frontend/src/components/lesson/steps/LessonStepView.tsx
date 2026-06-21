@@ -14,7 +14,7 @@ import { BookOpen, ChevronLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import TheoryStep from "./TheoryStep";
-import ReviewedFallbackPanel from "../ReviewedFallbackPanel";
+import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
 import { ExerciseDispatcher } from "../../exercises/ExerciseDispatcher";
 import type {
   ExerciseHandle,

@@ -31,7 +31,7 @@ beforeEach(() => {
   );
 });
 
-vi.mock("../../hooks/learning/useNextStepSuggestions", () => ({
+vi.mock("../../../hooks/learning/useNextStepSuggestions", () => ({
   useNextStepSuggestions: () => ({
     loading: false,
     nextLesson: { available: false, isPaused: false },
@@ -44,7 +44,7 @@ vi.mock("../../hooks/learning/useNextStepSuggestions", () => ({
 }));
 
 import LessonSummary from "./LessonSummary";
-import type { ContentLesson, LessonProgress } from "../../storage/types";
+import type { ContentLesson, LessonProgress } from "../../../storage/types";
 
 const LESSON: ContentLesson = {
   id: "l1",
