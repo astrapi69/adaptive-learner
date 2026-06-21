@@ -8,7 +8,7 @@
  * dashboard widget (56F) reads them.
  */
 
-import type {DifficultyMix} from "./missions/types";
+import type {DifficultyMix} from "./types";
 
 const KEY_ENABLED = "adaptive-learner.missions.enabled";
 const KEY_COUNT = "adaptive-learner.missions.count";

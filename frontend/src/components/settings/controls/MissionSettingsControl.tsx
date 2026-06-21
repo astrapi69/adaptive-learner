@@ -17,7 +17,7 @@ import {
     setMissionCount,
     setMissionDifficultyMix,
     setMissionsEnabled,
-} from "../../../lib/missionPref";
+} from "../../../lib/missions/missionPref";
 import {localTodayIso} from "../../../lib/missions/schedule";
 import type {DifficultyMix} from "../../../lib/missions/types";
 import {getStorage} from "../../../storage";
