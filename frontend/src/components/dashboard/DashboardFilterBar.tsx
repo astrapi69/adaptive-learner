@@ -20,23 +20,23 @@ import {useEffect, useMemo, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/ui/useI18n";
-import {filterStandardProjects} from "../lib/learning-project";
-import {translateSubjectName} from "../lib/subjectI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {filterStandardProjects} from "../../lib/learning-project";
+import {translateSubjectName} from "../../lib/subjectI18n";
 import {
     countProjectsPerSubject,
     groupSubjectsByCategory,
     rankSubjects,
     SUBJECT_GROUP_THRESHOLD,
-} from "../lib/dashboard/subjectFilter";
-import {readLearnerState, setProjectId} from "../lib/learnerState";
-import {getStorage} from "../storage";
+} from "../../lib/dashboard/subjectFilter";
+import {readLearnerState, setProjectId} from "../../lib/learnerState";
+import {getStorage} from "../../storage";
 import type {
     LearningProject,
     Subject,
     Tag,
-} from "../types/domain";
-import {notify} from "../utils/notify";
+} from "../../types/domain";
+import {notify} from "../../utils/notify";
 
 interface DashboardFilterBarProps {
     userId: string;

@@ -3,8 +3,8 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
-import DashboardFilterBar from "../../components/DashboardFilterBar";
-import QuickStartButton from "../../components/QuickStartButton";
+import DashboardFilterBar from "../../components/dashboard/DashboardFilterBar";
+import QuickStartButton from "../../components/dashboard/QuickStartButton";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../../api/client";

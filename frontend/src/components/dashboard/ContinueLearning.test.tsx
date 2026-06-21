@@ -18,14 +18,14 @@ import {MemoryRouter} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import ContinueLearning from "./ContinueLearning";
-import type {LessonProgress} from "../storage/types";
+import type {LessonProgress} from "../../storage/types";
 
 const listProgressMock = vi.fn();
 const listSetsMock = vi.fn();
 const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
 
-vi.mock("../storage", () => ({
+vi.mock("../../storage", () => ({
     getStorage: () => ({
         lessonProgress: {list: listProgressMock},
         contentLoader: {
@@ -36,7 +36,7 @@ vi.mock("../storage", () => ({
     }),
 }));
 
-vi.mock("../hooks/ui/useI18n", () => ({
+vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({t: (_k: string, fb: string) => fb, lang: "en"}),
 }));
 

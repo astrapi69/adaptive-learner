@@ -9,12 +9,12 @@ import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 import DashboardFilterBar, {applyFilter} from "./DashboardFilterBar";
-import {I18nProvider} from "../hooks/ui/useI18n";
-import {_resetDbForTests} from "../storage/dexie/db";
-import {_resetStorageCacheForTests, getStorage} from "../storage";
-import type {LearningProject} from "../types/domain";
+import {I18nProvider} from "../../hooks/ui/useI18n";
+import {_resetDbForTests} from "../../storage/dexie/db";
+import {_resetStorageCacheForTests, getStorage} from "../../storage";
+import type {LearningProject} from "../../types/domain";
 
-vi.mock("../utils/notify", () => ({
+vi.mock("../../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
@@ -232,7 +232,7 @@ describe("DashboardFilterBar", () => {
         // — that's the backend's lazy-create path). Bar should
         // render the two standard topics and skip the pseudo.
         const seeded = await seedScenario();
-        const {getDb} = await import("../storage/dexie/db");
+        const {getDb} = await import("../../storage/dexie/db");
         const db = getDb();
         await db.learningProjects.put({
             id: "pseudo-content",

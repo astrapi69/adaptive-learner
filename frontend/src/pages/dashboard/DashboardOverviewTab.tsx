@@ -7,7 +7,7 @@
  * lazy-loaded wrapper, the data is fetched once by the Dashboard and passed in.
  */
 
-import ContinueLearning from "../../components/ContinueLearning";
+import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import FavoritesCard from "../../components/dashboard/FavoritesCard";
 import FocusAreasCard from "../../components/dashboard/FocusAreasCard";
 import PausedLessonsCard from "../../components/dashboard/PausedLessonsCard";

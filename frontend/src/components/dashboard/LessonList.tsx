@@ -3,15 +3,15 @@ import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
 import {Button} from "@/components/ui/button";
-import {useButtonTooltips} from "../hooks/settings/useButtonTooltips";
-import {useI18n} from "../hooks/ui/useI18n";
-import RichTextEditor from "./editor/RichTextEditor";
-import EditorToolbar from "./editor/EditorToolbar";
+import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
+import {useI18n} from "../../hooks/ui/useI18n";
+import RichTextEditor from "../editor/RichTextEditor";
+import EditorToolbar from "../editor/EditorToolbar";
 import {
     parseEditorContent,
     serializeEditorContent,
-} from "./editor/content-utils";
-import type {Lesson} from "../types";
+} from "../editor/content-utils";
+import type {Lesson} from "../../types";
 
 interface LessonListProps {
     lessons: readonly Lesson[];

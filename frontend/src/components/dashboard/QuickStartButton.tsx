@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router-dom";
 
-import {useI18n} from "../hooks/ui/useI18n";
-import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
-import {bestTextOn} from "../styles/contrast";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {METHOD_COLORS, type LearningMethod} from "../../lib/constants";
+import {bestTextOn} from "../../styles/contrast";
 
 interface QuickStartButtonProps {
     /**

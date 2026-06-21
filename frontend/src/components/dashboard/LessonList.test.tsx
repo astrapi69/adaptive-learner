@@ -2,7 +2,7 @@ import {render, screen, fireEvent, waitFor, act} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import LessonList from "./LessonList";
-import type {Lesson} from "../types";
+import type {Lesson} from "../../types";
 
 function lesson(id: string, title: string, content = ""): Lesson {
     return {
