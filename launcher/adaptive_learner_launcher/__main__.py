@@ -20,7 +20,7 @@ import sys
 import webbrowser
 from pathlib import Path
 
-from adaptive_learner_launcher import __version__, config, docker, health, i18n, installer, lockfile, manifest, settings, ui, update_check
+from adaptive_learner_launcher import __version__, config, docker, health, i18n, installer, lockfile, manifest, ports, settings, ui, update_check
 
 
 logger = logging.getLogger("adaptive_learner_launcher")
@@ -41,9 +41,35 @@ def _docker_security_url() -> str:
     return DOCKER_SECURITY_ANCHOR_DE if i18n.active_language() == "de" else DOCKER_SECURITY_ANCHOR_EN
 
 
+def _parse_cli_port(argv: list[str] | None = None) -> int | None:
+    """Parse an optional ``--port N`` from the command line.
+
+    Returns the port when given and in range, else ``None``. Unknown
+    arguments are ignored so the launcher never aborts on a stray flag
+    passed by a desktop shortcut.
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--port", type=int, default=None)
+    try:
+        known, _ = parser.parse_known_args(argv)
+    except SystemExit:
+        return None
+    if known.port is not None and 1 <= known.port <= 65535:
+        return known.port
+    if known.port is not None:
+        logger.warning("Ignoring out-of-range --port %s", known.port)
+    return None
+
+
 def main() -> int:
     _setup_logging()
     logger.info("AdaptiveLearner launcher v%s starting", __version__)
+
+    cli_port = _parse_cli_port(sys.argv[1:])
+    if cli_port is not None:
+        logger.info("Host port overridden via --port %d", cli_port)
 
     # i18n must be live before the welcome dialog or any other UI
     # string is rendered. Reads settings.language; falls back to OS
@@ -70,82 +96,33 @@ def main() -> int:
     except Exception as exc:
         logger.warning("could not write lockfile: %s", exc)
     try:
-        return _run_launcher()
+        return _run_launcher(cli_port=cli_port)
     finally:
         lockfile.clear_lock(lock_path)
 
 
-def _run_launcher() -> int:
+def _run_launcher(*, cli_port: int | None = None) -> int:
     show_details = config.get_show_details_default()
 
     # 0. Retry pending cleanup from a previously interrupted uninstall.
     _retry_pending_cleanup()
 
-    # 0.5 First-ever-launch welcome. Tells the user what AdaptiveLearner
-    # needs (Docker, ~800 MB) and what the first run looks like
-    # (~2 GB / 5-10 min) BEFORE any check fires. Order matters: the
-    # user should know what is required before being told they don't
-    # have it.
+    # 1. Docker MUST be installed and running before anything else. The
+    # user should hit the Docker requirement as the very first thing
+    # (#942 Bug 1), not after a welcome or install step that would be
+    # wasted if Docker is unavailable.
+    if not _ensure_docker_ready(show_details):
+        return 1
+
+    # 2. First-ever-launch welcome. Tells the user what the first run
+    # looks like (~2 GB / 5-10 min) before the big build kicks off.
+    # Shown only after Docker is confirmed ready.
     if not bool(settings.get("welcomed")):
         ui.welcome_dialog(
             guide_url=_docker_guide_url(),
             security_url=_docker_security_url(),
         )
         settings.update("welcomed", True)
-
-    # 1. Docker installed?
-    ok, detail = docker.docker_installed()
-    if not ok:
-        logger.error("docker --version failed: %s", detail)
-        choice = ui.three_button_dialog(
-            title=i18n.t("docker.missing.title"),
-            message=(
-                f"{i18n.t('docker.missing.heading')}\n\n"
-                f"{i18n.t('docker.missing.explanation')}\n\n"
-                f"{i18n.t('docker.missing.next_step')}"
-            ),
-            primary_label=i18n.t("docker.missing.install_button"),
-            secondary_label=i18n.t("docker.missing.guide_button"),
-            cancel_label=i18n.t("docker.missing.quit_button"),
-        )
-        if choice == "primary":
-            try:
-                webbrowser.open(DOCKER_INSTALL_URL)
-            except OSError as exc:
-                logger.warning("opening Docker download page failed: %s", exc)
-        elif choice == "secondary":
-            try:
-                webbrowser.open(_docker_guide_url())
-            except OSError as exc:
-                logger.warning("opening AdaptiveLearner Docker guide failed: %s", exc)
-        return 1
-
-    # 2. Docker daemon running? Retry loop: user may need to start Docker Desktop.
-    for attempt in range(3):
-        ok, detail = docker.docker_daemon_running()
-        if ok:
-            break
-        logger.warning("docker info failed (attempt %d): %s", attempt + 1, detail)
-        choice = ui.error_dialog(
-            title=i18n.t("docker.daemon.title"),
-            message=i18n.t("docker.daemon.message"),
-            actions=[(i18n.t("common.retry"), "retry"), (i18n.t("common.cancel"), "cancel")],
-            details=f"docker info attempt {attempt + 1} failed:\n{detail}",
-            help_url=INSTALL_GUIDE_URL,
-            initial_show_details=show_details,
-        )
-        if choice != "retry":
-            return 1
-    else:
-        ui.error_dialog(
-            title=i18n.t("docker.daemon.title"),
-            message=i18n.t("docker.daemon.exhausted_message"),
-            actions=[(i18n.t("common.ok"), "ok")],
-            details="docker info failed on three consecutive retries.",
-            help_url=INSTALL_GUIDE_URL,
-            initial_show_details=show_details,
-        )
-        return 1
 
     # 3. Locate repo via manifest or legacy launcher.json.
     #    Priority: manifest (written by installer) > launcher.json (legacy).
@@ -198,26 +175,52 @@ def _run_launcher() -> int:
         )
         return 1
 
-    port = config.read_port(repo)
+    # 5. Installed-app management (#942 Bug 5). Three states:
+    #    - running  -> Open / Stop / Uninstall
+    #    - stopped  -> Start / Uninstall
+    #    (not-installed was handled by the install flow above)
+    display_port = config.resolve_launch_port(repo, cli_port=cli_port)
+    if docker.stack_running(repo, config.COMPOSE_FILENAME):
+        return _manage_running(repo, display_port)
+    if not _offer_start_or_uninstall(repo):
+        return 0  # user chose Uninstall or closed the menu
 
-    # 5. Launch status window, run docker compose + health wait + browser on a
-    # background thread so the UI stays responsive.
-    window = ui.StatusWindow()
-    window.set_starting(i18n.t("status.starting"))
+    # 6. Resolve the host port and make sure it is free BEFORE starting
+    # the container (#942 Bug 3). If another app (e.g. Bibliogon) holds
+    # the port, offer a free fallback and persist it so compose
+    # publishes on the chosen port.
+    port = _resolve_free_port(repo, cli_port)
+    if port is None:
+        return 1
+
+    # 7. Launch the progress window, run docker compose + health wait +
+    # browser on a background thread so the UI stays responsive.
+    window = ui.StatusWindow(title=i18n.t("progress.title_start"))
+    steps = [
+        i18n.t("progress.step.docker"),
+        i18n.t("progress.step.start"),
+        i18n.t("progress.step.health"),
+        i18n.t("progress.step.ready"),
+    ]
+    window.set_steps(steps)
+    window.complete_step(0)  # Docker already verified above
 
     def worker() -> None:
+        window.after(0, lambda: window.start_step(1, i18n.t("status.starting")))
         ok, up_detail = docker.compose_up(repo, config.COMPOSE_FILENAME)
         if not ok:
             logger.error("compose up failed: %s", up_detail)
-            window.after(0, lambda: _handle_compose_failure(window, port, up_detail, show_details))
+            window.after(0, lambda: (window.fail_step(1), _handle_compose_failure(window, port, up_detail, show_details)))
             return
+        window.after(0, lambda: window.complete_step(1))
 
-        window.after(0, lambda: window.set_starting(i18n.t("status.almost_ready")))
+        window.after(0, lambda: window.start_step(2, i18n.t("status.almost_ready")))
         if not health.wait_for_healthy(port, timeout_seconds=60.0):
             tail = docker.compose_logs_tail(repo, config.COMPOSE_FILENAME, lines=20)
             logger.error("health timeout; last lines:\n%s", tail)
-            window.after(0, lambda: _handle_health_timeout(window, repo, port, tail, show_details))
+            window.after(0, lambda: (window.fail_step(2), _handle_health_timeout(window, repo, port, tail, show_details)))
             return
+        window.after(0, lambda: (window.complete_step(2), window.complete_step(3)))
 
         url = f"http://localhost:{port}"
         try:
@@ -246,6 +249,286 @@ def _run_launcher() -> int:
 
 
 # --- Step helpers ---
+
+
+def _ensure_docker_ready(show_details: bool) -> bool:
+    """Verify Docker is installed AND the daemon is running.
+
+    This is the FIRST interactive step in the launcher (#942 Bug 1): the
+    user must be told about the Docker requirement before any other
+    dialog. Returns True once Docker is ready, False to abort.
+
+    When the daemon is not running, the dialog offers a "Start Docker
+    Desktop" button that launches Docker Desktop and then re-checks, so
+    the user does not have to leave the launcher.
+    """
+    ok, detail = docker.docker_installed()
+    if not ok:
+        logger.error("docker --version failed: %s", detail)
+        choice = ui.three_button_dialog(
+            title=i18n.t("docker.missing.title"),
+            message=(
+                f"{i18n.t('docker.missing.heading')}\n\n"
+                f"{i18n.t('docker.missing.explanation')}\n\n"
+                f"{i18n.t('docker.missing.next_step')}"
+            ),
+            primary_label=i18n.t("docker.missing.install_button"),
+            secondary_label=i18n.t("docker.missing.guide_button"),
+            cancel_label=i18n.t("docker.missing.quit_button"),
+        )
+        if choice == "primary":
+            _open_url(DOCKER_INSTALL_URL, "Docker download page")
+        elif choice == "secondary":
+            _open_url(_docker_guide_url(), "AdaptiveLearner Docker guide")
+        return False
+
+    # Daemon running? Loop until the user starts Docker or cancels.
+    for attempt in range(10):
+        ok, detail = docker.docker_daemon_running()
+        if ok:
+            return True
+        logger.warning("docker info failed (attempt %d): %s", attempt + 1, detail)
+        choice = ui.three_button_dialog(
+            title=i18n.t("docker.daemon.title"),
+            message=i18n.t("docker.daemon.message"),
+            primary_label=i18n.t("docker.daemon.start_button"),
+            secondary_label=i18n.t("common.retry"),
+            cancel_label=i18n.t("common.cancel"),
+        )
+        if choice == "cancel":
+            return False
+        if choice == "primary":
+            started, start_detail = docker.start_docker_desktop()
+            logger.info("start Docker Desktop: ok=%s detail=%s", started, start_detail)
+            if not started:
+                ui.info_box(i18n.t("docker.daemon.title"), i18n.t("docker.daemon.start_failed"))
+            else:
+                # Give Docker Desktop time to come up, polling so the user
+                # does not have to keep clicking Retry.
+                if _wait_for_daemon(timeout_seconds=90.0):
+                    return True
+        # secondary == Retry, or start timed out: loop re-checks immediately.
+
+    ui.error_dialog(
+        title=i18n.t("docker.daemon.title"),
+        message=i18n.t("docker.daemon.exhausted_message"),
+        actions=[(i18n.t("common.ok"), "ok")],
+        details="docker info did not become reachable.",
+        help_url=INSTALL_GUIDE_URL,
+        initial_show_details=show_details,
+    )
+    return False
+
+
+def _wait_for_daemon(*, timeout_seconds: float) -> bool:
+    """Poll ``docker info`` until it succeeds or the timeout elapses."""
+    import time
+
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        ok, _ = docker.docker_daemon_running()
+        if ok:
+            return True
+        time.sleep(2.0)
+    return False
+
+
+def _resolve_free_port(repo: Path, cli_port: int | None) -> int | None:
+    """Return a free host port, prompting the user on a conflict.
+
+    Resolves the configured port (CLI > launcher.json > .env > default)
+    and checks availability before ``docker compose up`` (#942 Bug 3).
+    On a conflict it suggests the next free port; if the user accepts it
+    is persisted to ``.env`` so compose publishes on it. Returns the
+    chosen port, or None if the user cancels / no port is free.
+    """
+    port = config.resolve_launch_port(repo, cli_port=cli_port)
+    if ports.is_available(port):
+        return port
+
+    suggested = ports.find_available(port + 1)
+    if suggested is None:
+        ui.error_box(
+            i18n.t("port_conflict.none_free_title"),
+            i18n.t("port_conflict.none_free_message", port=port),
+        )
+        return None
+
+    choice = ui.two_button_dialog(
+        title=i18n.t("port_conflict.title", port=port),
+        message=i18n.t("port_conflict.message", port=port, suggested=suggested),
+        primary_label=i18n.t("port_conflict.use_suggested", suggested=suggested),
+        secondary_label=i18n.t("common.cancel"),
+    )
+    if choice != "primary":
+        return None
+    try:
+        config.write_public_port(repo, suggested)
+    except OSError as exc:
+        logger.warning("could not persist chosen port to .env: %s", exc)
+    logger.info("Port %d busy; using %d instead", port, suggested)
+    return suggested
+
+
+def _open_url(url: str, what: str) -> None:
+    try:
+        webbrowser.open(url)
+    except OSError as exc:
+        logger.warning("opening %s failed: %s", what, exc)
+
+
+# --- Installed-app management (#942 Bug 5) ---
+
+
+def _manage_running(repo: Path, port: int) -> int:
+    """Management menu for a running stack: Open / Stop / Uninstall.
+
+    Loops so that cancelling the uninstall confirmation returns to the
+    menu instead of exiting. Closing the menu (X / Escape) is a no-op.
+    """
+    while True:
+        action = ui.choice_dialog(
+            title=i18n.t("manage.running.title"),
+            message=i18n.t("manage.running.message", port=port),
+            buttons=[
+                (i18n.t("common.open_browser"), "open"),
+                (i18n.t("manage.stop"), "stop"),
+                (i18n.t("manage.uninstall"), "uninstall"),
+            ],
+        )
+        if action == "open":
+            _open_url(f"http://localhost:{port}", "AdaptiveLearner")
+            return 0
+        if action == "stop":
+            _stop_stack(repo)
+            return 0
+        if action == "uninstall":
+            if _quick_uninstall(repo):
+                return 0
+            continue  # uninstall cancelled -> back to the menu
+        return 0  # menu closed
+
+
+def _offer_start_or_uninstall(repo: Path) -> bool:
+    """Menu for an installed-but-stopped app: Start / Uninstall.
+
+    Returns True to proceed to the start flow, False if the user chose
+    Uninstall or closed the menu.
+    """
+    action = ui.choice_dialog(
+        title=i18n.t("manage.stopped.title"),
+        message=i18n.t("manage.stopped.message"),
+        buttons=[
+            (i18n.t("manage.start"), "start"),
+            (i18n.t("manage.uninstall"), "uninstall"),
+        ],
+    )
+    if action == "start":
+        return True
+    if action == "uninstall":
+        _quick_uninstall(repo)
+    return False
+
+
+def _stop_stack(repo: Path) -> None:
+    """Stop the running stack, showing a brief progress window."""
+    window = ui.StatusWindow(title=i18n.t("manage.stopping"))
+    window.set_steps([i18n.t("manage.stop")])
+    window.start_step(0, i18n.t("manage.stopping"))
+
+    def worker() -> None:
+        ok, detail = docker.compose_down(repo, config.COMPOSE_FILENAME)
+        if not ok:
+            logger.warning("stop failed: %s", detail)
+            window.after(0, lambda: window.fail_step(0))
+        else:
+            window.after(0, lambda: window.complete_step(0))
+        window.after(800, window.close)
+
+    window.run_in_background(worker)
+    window.run_mainloop()
+
+
+def _quick_uninstall(repo: Path) -> bool:
+    """Data-preserving uninstall (#942 Bug 5).
+
+    Removes the containers and images but KEEPS the data volume, so the
+    user's learning data survives a later reinstall. Returns True if the
+    uninstall ran, False if the user cancelled the confirmation.
+    """
+    choice = ui.two_button_dialog(
+        title=i18n.t("quick_uninstall.confirm_title"),
+        message=i18n.t("quick_uninstall.confirm_message"),
+        primary_label=i18n.t("manage.uninstall"),
+        secondary_label=i18n.t("common.cancel"),
+    )
+    if choice != "primary":
+        return False
+
+    window = ui.StatusWindow(title=i18n.t("quick_uninstall.progress"))
+    window.set_steps([i18n.t("manage.stop"), i18n.t("progress.step.build")])
+
+    def worker() -> None:
+        window.after(0, lambda: window.start_step(0, i18n.t("manage.stopping")))
+        ok, detail = docker.compose_down(repo, config.COMPOSE_FILENAME)
+        if not ok:
+            logger.warning("quick-uninstall compose down: %s", detail)
+        window.after(0, lambda: window.complete_step(0))
+
+        window.after(0, lambda: window.start_step(1, i18n.t("uninstall.removing_images")))
+        ok2, detail2 = docker.remove_images()
+        if not ok2:
+            logger.warning("quick-uninstall remove images: %s", detail2)
+        window.after(0, lambda: window.complete_step(1))
+        window.after(400, window.close)
+
+    window.run_in_background(worker)
+    window.run_mainloop()
+
+    # Best-effort: drop a desktop/Start-menu shortcut if we can find one.
+    _remove_desktop_shortcut()
+
+    ui.two_button_dialog(
+        title=i18n.t("quick_uninstall.complete_title"),
+        message=i18n.t("quick_uninstall.complete_message"),
+        primary_label=i18n.t("common.ok"),
+        secondary_label="",
+    )
+    return True
+
+
+def _remove_desktop_shortcut() -> None:
+    """Best-effort removal of a launcher shortcut. Never raises.
+
+    Only Windows ships a predictable shortcut location; elsewhere this is
+    a no-op. A missing shortcut is fine - the user may have launched the
+    executable directly.
+    """
+    import sys
+
+    if sys.platform != "win32":
+        return
+    import os
+
+    candidates: list[Path] = []
+    public = os.environ.get("PUBLIC")
+    appdata = os.environ.get("APPDATA")
+    userprofile = os.environ.get("USERPROFILE")
+    for base in (userprofile, public):
+        if base:
+            candidates.append(Path(base) / "Desktop" / "AdaptiveLearner.lnk")
+    if appdata:
+        candidates.append(
+            Path(appdata)
+            / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "AdaptiveLearner.lnk"
+        )
+    for shortcut in candidates:
+        try:
+            if shortcut.is_file():
+                shortcut.unlink()
+                logger.info("Removed shortcut: %s", shortcut)
+        except OSError as exc:
+            logger.warning("Could not remove shortcut %s: %s", shortcut, exc)
 
 
 def _schedule_update_check(window: ui.StatusWindow, mdata: dict | None) -> None:
@@ -467,22 +750,28 @@ def _run_install_flow() -> Path | None:
         return None
     target = Path(picked) if picked else target
 
-    # Show status window during download + extract
-    window = ui.StatusWindow()
-    window.set_starting(
-        i18n.t("install.downloading", version=f"v{installer.ADAPTIVE_LEARNER_TARGET_VERSION}")
-    )
+    # Show progress window with a step checklist during install.
+    window = ui.StatusWindow(title=i18n.t("progress.title_install"))
+    window.set_steps([
+        i18n.t("progress.step.docker"),
+        i18n.t("progress.step.download"),
+        i18n.t("progress.step.build"),
+        i18n.t("progress.step.health"),
+        i18n.t("progress.step.ready"),
+    ])
+    window.complete_step(0)  # Docker already verified before the install flow
 
     result: dict = {}
 
     def worker() -> None:
         # Phase 1: Download and extract
+        window.after(0, lambda: window.start_step(1, i18n.t("install.downloading", version=f"v{installer.ADAPTIVE_LEARNER_TARGET_VERSION}")))
         ok, detail = installer.download_release(target)
         if not ok:
             result["error"] = detail
-            window.after(0, window.destroy)
+            window.after(0, lambda: (window.fail_step(1), window.destroy()))
             return
-        window.after(0, lambda: window.set_starting(i18n.t("install.preparing_config")))
+        window.after(0, lambda: window.complete_step(1))
         ok2, detail2 = installer.create_env_file(target)
         if not ok2:
             logger.warning("env file creation: %s", detail2)
@@ -491,7 +780,7 @@ def _run_install_flow() -> Path | None:
             manifest.write_manifest(target, installer.ADAPTIVE_LEARNER_TARGET_VERSION)
         except Exception as exc:
             result["error"] = f"Could not write manifest: {exc}"
-            window.after(0, window.destroy)
+            window.after(0, lambda: (window.fail_step(1), window.destroy()))
             return
         # Save to legacy config too for backward compat
         cfg = config.load_launcher_config()
@@ -499,19 +788,21 @@ def _run_install_flow() -> Path | None:
         config.save_launcher_config(cfg)
 
         # Phase 2: Build and start Docker stack
-        window.after(0, lambda: window.set_starting(i18n.t("install.building_images")))
+        window.after(0, lambda: window.start_step(2, i18n.t("install.building_images")))
         ok3, detail3 = docker.compose_build(target, config.COMPOSE_FILENAME)
         if not ok3:
             result["error"] = f"Docker build failed:\n{detail3}"
-            window.after(0, window.destroy)
+            window.after(0, lambda: (window.fail_step(2), window.destroy()))
             return
+        window.after(0, lambda: window.complete_step(2))
 
         # Phase 3: Wait for health
-        window.after(0, lambda: window.set_starting(i18n.t("install.waiting_health")))
-        port = config.read_port(target)
+        window.after(0, lambda: window.start_step(3, i18n.t("install.waiting_health")))
+        port = config.read_public_port(target)
         if not health.wait_for_healthy(port, timeout_seconds=120.0):
             # Not fatal: stack may still be starting
             result["slow_start"] = True
+        window.after(0, lambda: (window.complete_step(3), window.complete_step(4)))
 
         result["ok"] = True
         result["port"] = port
@@ -755,17 +1046,21 @@ def _shutdown(window: ui.StatusWindow, repo: Path) -> None:
 
 
 def _handle_already_running() -> None:
+    """Another launcher instance is alive, so the app is running.
+
+    Offer the same management menu as the running-state path (Open /
+    Stop / Uninstall) instead of only opening the browser (#942 Bug 5).
+    """
     repo = config.resolve_repo_path()
-    port = config.read_port(repo) if config.is_valid_repo(repo) else config.DEFAULT_PORT
-    url = f"http://localhost:{port}"
-    ui.info_box(
-        i18n.t("already_running.title"),
-        i18n.t("already_running.message"),
-    )
-    try:
-        webbrowser.open(url)
-    except OSError as exc:
-        logger.warning("webbrowser.open failed: %s", exc)
+    port = config.read_public_port(repo) if config.is_valid_repo(repo) else config.DEFAULT_PORT
+    if config.is_valid_repo(repo):
+        _manage_running(repo, port)
+    else:
+        ui.info_box(
+            i18n.t("already_running.title"),
+            i18n.t("already_running.message"),
+        )
+        _open_url(f"http://localhost:{port}", "AdaptiveLearner")
 
 
 def _setup_logging() -> None:

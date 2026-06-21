@@ -88,11 +88,11 @@ jobs:
       - name: Run launcher unit tests
         run: poetry run pytest tests/ -v
 
-      - name: Regenerate placeholder icon (PNG frames via Pillow)
+      - name: Generate launcher icon from brand mark (via Pillow)
         run: poetry run python scripts/make_icon.py
 
-      - name: Convert placeholder icon to .icns (macOS-only iconutil)
-        # adaptive_learner.ico is multi-size; make_icns.py extracts the largest
+      - name: Convert icon to .icns (macOS-only iconutil)
+        # adaptive-learner.ico is multi-size; make_icns.py extracts the largest
         # frame, resamples to the standard .icns size set, and invokes
         # iconutil. iconutil is macOS-only so this step does not run on
         # Linux/Windows builds.
