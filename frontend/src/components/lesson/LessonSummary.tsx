@@ -30,7 +30,7 @@ import NextStepSuggestions from "./NextStepSuggestions";
 import { useCountUp } from "../../hooks/ui/useCountUp";
 import { useFeedbackIntensity } from "../../hooks/settings/useFeedbackIntensity";
 import { useI18n } from "../../hooks/ui/useI18n";
-import LessonFavoriteToggle from "./LessonFavoriteToggle";
+import LessonFavoriteToggle from "./chrome/LessonFavoriteToggle";
 import AnswerDiff from "../../shared/data-display/AnswerDiff";
 import ShareButton from "../../shared/layout/ShareButton";
 import { generateShareText } from "../../lib/share/generate-share-text";
