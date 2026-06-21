@@ -34,7 +34,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import ReadAloudButton from "../lesson/ReadAloudButton";
+import ReadAloudButton from "../lesson/tts/ReadAloudButton";
 import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import {deriveClozeAttempts} from "../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";

@@ -34,7 +34,7 @@ import {forwardRef, useEffect, useRef, useState} from "react";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import ReadAloudButton from "../lesson/ReadAloudButton";
+import ReadAloudButton from "../lesson/tts/ReadAloudButton";
 import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import ExerciseHint from "./ExerciseHint";
 import {deriveFreeTextAttempt} from "../../lib/srs/element-attempt";

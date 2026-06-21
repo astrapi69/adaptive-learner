@@ -11,7 +11,7 @@ import {describe, expect, it, vi} from "vitest";
 
 import LessonExitDialog from "./LessonExitDialog";
 
-vi.mock("../../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
     useI18n: () => ({
         t: (_key: string, fallback?: string) => fallback ?? _key,
         lang: "en",

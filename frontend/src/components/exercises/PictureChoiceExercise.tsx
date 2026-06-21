@@ -44,7 +44,7 @@ import {
     type ShortcutDefinition,
 } from "../../shared/hooks/useKeyboardShortcuts";
 import {cn} from "@/lib/utils";
-import ReadAloudButton from "../lesson/ReadAloudButton";
+import ReadAloudButton from "../lesson/tts/ReadAloudButton";
 import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import ExerciseHint from "./ExerciseHint";
 import {generatePlaceholderSvg} from "../../lib/content/media/placeholder-svg";

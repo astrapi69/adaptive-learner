@@ -17,12 +17,12 @@ import {MemoryRouter} from "react-router-dom";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 const reducedMotionMock = vi.fn(() => false);
-vi.mock("../../lib/feedback/feedbackPref", () => ({
+vi.mock("../../../lib/feedback/feedbackPref", () => ({
     prefersReducedMotion: () => reducedMotionMock(),
 }));
 
 import NextStepSuggestions from "./NextStepSuggestions";
-import type {NextStepSuggestions as Suggestions} from "../../hooks/learning/useNextStepSuggestions";
+import type {NextStepSuggestions as Suggestions} from "../../../hooks/learning/useNextStepSuggestions";
 
 function makeSuggestions(
     overrides: Partial<Suggestions> = {},

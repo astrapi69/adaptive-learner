@@ -14,25 +14,25 @@ import { BookOpen, ChevronLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import TheoryStep from "./TheoryStep";
-import ReviewedFallbackPanel from "./ReviewedFallbackPanel";
-import { ExerciseDispatcher } from "../exercises/ExerciseDispatcher";
+import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
+import { ExerciseDispatcher } from "../../exercises/ExerciseDispatcher";
 import type {
   ExerciseHandle,
   ExerciseScored,
-} from "../exercises/exercise-control";
-import type { ReadAloudController } from "../../hooks/lesson/useReadAloud";
-import { useI18n } from "../../hooks/ui/useI18n";
-import { stampHintUsage, wasHintUsed } from "../../lib/hints/hint-usage";
-import { formatUserAnswer } from "../../lib/lesson/result-export";
-import { rewriteAnchors } from "../../lib/lesson/lesson-anchors";
-import { getStorage } from "../../storage";
+} from "../../exercises/exercise-control";
+import type { ReadAloudController } from "../../../hooks/lesson/useReadAloud";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { stampHintUsage, wasHintUsed } from "../../../lib/hints/hint-usage";
+import { formatUserAnswer } from "../../../lib/lesson/result-export";
+import { rewriteAnchors } from "../../../lib/lesson/lesson-anchors";
+import { getStorage } from "../../../storage";
 import type {
   ContentLesson,
   ContentLessonStep,
   LessonProgress,
   LessonStepResult,
   RawAnswer,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 interface LessonStepViewProps {
   step: ContentLessonStep;
