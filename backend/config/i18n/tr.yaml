@@ -285,6 +285,10 @@ assessment:
   read_summary: Özeti oku
   swipe_hint: "Gezinmek için sola / sağa kaydırın (veya ok tuşlarını kullanın)."
 dashboard:
+  tab:
+    overview: "Genel Bakış"
+    activity: "Etkinlik"
+    missions: "Görevler"
   no_data: "Henüz veri yok."
   title: Pano
   welcome: Tekrar hoş geldin
@@ -323,6 +327,7 @@ dashboard:
       word_order: "Kelime sırası"
     mastery_split: 'Tanıma: {receptive} · Üretim: {productive}'
   create_lesson: "Ders oluştur"
+  quick_actions: "Hızlı işlemler"
   metric_mean_stress: "Ø Stres"
   metric_mean_understanding: "Ø Anlama"
   metric_streak: "Gün serisi"

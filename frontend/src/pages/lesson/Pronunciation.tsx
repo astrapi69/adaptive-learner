@@ -17,16 +17,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useFeature } from "@astrapi69/feature-strategy-react";
+import { useFeatureAvailable } from "../../features/useFeatureAvailable";
 
 import { Button } from "@/components/ui/button";
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
-import MicButton from "../../components/MicButton";
-import SpeechButton from "../../components/SpeechButton";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
+import MicButton from "../../components/voice/MicButton";
+import SpeechButton from "../../components/voice/SpeechButton";
 import { ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { PronunciationVerdict } from "../../storage/types";
 import type { LearningProject } from "../../types";
@@ -39,7 +39,7 @@ export default function PronunciationPage() {
   // call, so the Generate button is gated on the pronunciation
   // feature (disabled in Dexie mode without a key, active in API
   // mode). The mic + scoring flow stays usable for an existing phrase.
-  const pronunciationFeature = useFeature(FEATURES.PRONUNCIATION_GENERATE);
+  const pronunciation = useFeatureAvailable(FEATURES.PRONUNCIATION_GENERATE);
   const [project, setProject] = useState<LearningProject | null>(null);
   const [eligible, setEligible] = useState<boolean | null>(null);
   const [target, setTarget] = useState<string>("");
@@ -188,7 +188,7 @@ export default function PronunciationPage() {
         <p className="pronunciation-card__target" data-testid="pronunciation-target">
           {target || t("pronunciation.no_phrase", "Click Generate to start.")}
         </p>
-        {pronunciationFeature.isDisabled && (
+        {!pronunciation.available && (
           <ApiKeyRequiredNotice
             compact
             feature={t("ui.api_key.feature_pronunciation", "for pronunciation practice")}
@@ -198,12 +198,8 @@ export default function PronunciationPage() {
           type="button"
           variant="default"
           onClick={generatePhrase}
-          disabled={generating || !pronunciationFeature.isActive}
-          title={
-            pronunciationFeature.isDisabled
-              ? t(`feature.${pronunciationFeature.reason}`, "API key required.")
-              : undefined
-          }
+          disabled={generating || !pronunciation.available}
+          title={pronunciation.tooltip}
           data-testid="pronunciation-generate"
         >
           {generating

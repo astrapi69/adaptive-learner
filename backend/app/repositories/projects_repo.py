@@ -59,9 +59,11 @@ class SqlAlchemyProjectsRepository(ProjectsRepository):
         self._db = db
 
     def get_user(self, user_id: str) -> User | None:
+        """Return the user row, or ``None`` when it does not exist."""
         return self._db.get(User, user_id)
 
     def get_by_id(self, project_id: str) -> LearningProject | None:
+        """Return the project row, or ``None`` when it does not exist."""
         return self._db.get(LearningProject, project_id)
 
     def create(
@@ -75,6 +77,7 @@ class SqlAlchemyProjectsRepository(ProjectsRepository):
         current_problem: str | None,
         active: bool,
     ) -> LearningProject:
+        """Insert a project and return the committed row."""
         project = LearningProject(
             user_id=user_id,
             topic=topic,
@@ -90,6 +93,7 @@ class SqlAlchemyProjectsRepository(ProjectsRepository):
         return project
 
     def list_by_user(self, user_id: str) -> list[LearningProject]:
+        """Return the user's projects, newest first."""
         return (
             self._db.query(LearningProject)
             .filter(LearningProject.user_id == user_id)
@@ -100,6 +104,7 @@ class SqlAlchemyProjectsRepository(ProjectsRepository):
     def apply_update(
         self, project: LearningProject, fields: Mapping[str, object]
     ) -> LearningProject:
+        """Set the given attributes, persist, and return the project."""
         for key, value in fields.items():
             setattr(project, key, value)
         self._db.commit()

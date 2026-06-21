@@ -127,7 +127,7 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
     await setAnthropicKey(page);
 
     // 1-2. Import + paste a German chat about French, then analyze.
-    await page.goto("/import");
+    await page.goto("/content?tab=import");
     await page.getByTestId("quick-paste-textarea").fill(GERMAN_ABOUT_FRENCH);
     await page.getByTestId("quick-analyze-button").click();
 
@@ -199,7 +199,7 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
     await setAnthropicKey(page);
 
     // 1-2. Import + paste a German chat about German grammar, then analyze.
-    await page.goto("/import");
+    await page.goto("/content?tab=import");
     await page.getByTestId("quick-paste-textarea").fill(GERMAN_ABOUT_GERMAN);
     await page.getByTestId("quick-analyze-button").click();
     await expect(page.getByTestId("conversation-transcript")).toBeVisible({

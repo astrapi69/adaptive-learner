@@ -5,15 +5,19 @@
  * returned ``IStorageService``. The factory decides between
  * ApiStorage and DexieStorage at first call:
  *
+ *   0. Build-time ``VITE_STORAGE_MODE === "dexie"`` — the GH Pages
+ *      build is a Dexie-ONLY deployment with NO backend. This is a
+ *      hard fact about the deployment, so it wins over everything
+ *      else: a stale persisted ``"api"`` preference (from the
+ *      Settings toggle, carried in localStorage shared with the
+ *      installed PWA) can never be satisfied there and would make
+ *      every request 404 (#907).
  *   1. ``localStorage["adaptive-learner.storage_mode"]`` — if the
  *      user has explicitly chosen a mode in Settings, honour it.
+ *      Only consulted when the build is NOT a dexie-only build.
  *   2. Build-time ``VITE_STORAGE_MODE`` — set by the GH Pages
  *      build to ``"dexie"``. Empty / unset means auto-pick.
- *   3. Auto-pick: if ``VITE_API_BASE`` is set to a non-empty
- *      absolute URL OR the build is running in local dev (the
- *      default ``/api`` proxy), use ApiStorage. Otherwise use
- *      DexieStorage (10B+; until then auto-pick still resolves
- *      to ApiStorage).
+ *   3. Auto-pick: fall back to ApiStorage (local dev default).
  *
  * The picked instance is cached for the lifetime of the page so
  * repeated ``getStorage()`` calls return the same object — Dexie
@@ -21,7 +25,7 @@
  */
 
 import {apiStorage} from "./api-storage";
-import {getDb} from "./db";
+import {getDb} from "./dexie/db";
 import {dexieStorage} from "./dexie-storage";
 import type {IStorageService, StorageMode} from "./types";
 
@@ -69,8 +73,23 @@ function readBuildTimeMode(): StorageMode | null {
  * Resolve the storage mode that should be used right now.
  * Exported for Settings UI ("Current mode: …") and tests.
  */
+/**
+ * True when this is a Dexie-ONLY deployment (the GH Pages / installed-PWA
+ * build, ``VITE_STORAGE_MODE === "dexie"``). There is no backend, so the
+ * storage-mode choice does not exist — the Settings toggle is hidden and the
+ * mode is forced to ``"dexie"`` regardless of any persisted preference (#907).
+ */
+export function isDexieOnlyBuild(): boolean {
+    return readBuildTimeMode() === "dexie";
+}
+
 export function resolveStorageMode(): StorageMode {
-    return readPersistedMode() ?? readBuildTimeMode() ?? "api";
+    const buildTime = readBuildTimeMode();
+    // A dexie-only deployment (GH Pages / installed PWA) has no backend, so the
+    // build-time mode is authoritative — a stale persisted "api" preference
+    // cannot be honoured there and would 404 every request (#907).
+    if (buildTime === "dexie") return "dexie";
+    return readPersistedMode() ?? buildTime ?? "api";
 }
 
 let cachedStorage: IStorageService | null = null;

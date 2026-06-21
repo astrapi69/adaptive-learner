@@ -23,7 +23,7 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import {
     lessonLabelFromFilename,
     lessonRoute,
-} from "../../lib/content/continue-learning";
+} from "../../lib/content/browse/continue-learning";
 import {
     addLessonToPath,
     createCustomPath,

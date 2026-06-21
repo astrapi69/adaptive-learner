@@ -69,9 +69,8 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import ReadAloudButton from "../lesson/ReadAloudButton";
-import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
-import {deriveWordTilesAttempt} from "../../lib/element-attempt";
+import ExercisePromptRow from "./ExercisePromptRow";
+import {deriveWordTilesAttempt} from "../../lib/srs/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
@@ -677,21 +676,12 @@ function WordTilesExercise(
             className="flex flex-col gap-3"
             data-testid="word-tiles-exercise"
         >
-            <div className="exercise-prompt-row">
-                <p
-                    className="m-0 font-medium"
-                    data-testid="word-tiles-prompt"
-                >
-                    <InlineMarkdown>{exercise.prompt ?? ""}</InlineMarkdown>
-                </p>
-                {ttsLang && !codeMode && (
-                    <ReadAloudButton
-                        text={exercise.prompt ?? ""}
-                        lang={ttsLang}
-                        testId="word-tiles-prompt"
-                    />
-                )}
-            </div>
+            <ExercisePromptRow
+                prompt={exercise.prompt ?? ""}
+                ttsLang={ttsLang}
+                codeMode={codeMode}
+                testId="word-tiles-prompt"
+            />
 
             <ExerciseHint
                 exercise={exercise}

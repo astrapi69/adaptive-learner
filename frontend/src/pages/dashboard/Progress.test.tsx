@@ -28,10 +28,10 @@ vi.mock("../../api/client", async () => {
   };
 });
 
-vi.mock("../../components/ProgressTimeline", () => ({
+vi.mock("../../components/progress/ProgressTimeline", () => ({
   default: () => <div data-testid="progress-timeline" />,
 }));
-vi.mock("../../components/MethodDistribution", () => ({
+vi.mock("../../components/progress/MethodDistribution", () => ({
   default: () => <div data-testid="method-distribution" />,
 }));
 

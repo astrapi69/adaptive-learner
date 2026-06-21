@@ -23,9 +23,9 @@ import {
 import { MAX_CARDS_PER_RUN } from "../../lib/ai/validation-runner";
 import { computeContentHash } from "../../lib/ai/content-hash";
 import { buildSignature } from "../../lib/ai/validation-signature";
-import { resolveModel } from "../../storage/ai-providers";
+import { resolveModel } from "../../storage/ai/ai-providers";
 import { getStorage } from "../../storage";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import type { AIProvider } from "../../lib/constants";
 import type { ContentSetEntry } from "../../storage/types";
 

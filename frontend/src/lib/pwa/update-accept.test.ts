@@ -10,15 +10,23 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   ACCEPT_QUIET_MS,
   ACCEPTED_AT_KEY,
+  ACCEPTED_SESSION_KEY,
   ACCEPTED_VERSION_KEY,
   readAcceptedAt,
+  readAcceptedThisSession,
   readAcceptedVersion,
   recordUpdateAccepted,
   shouldShowUpdateBanner,
 } from "./update-accept";
 
-beforeEach(() => localStorage.clear());
-afterEach(() => localStorage.clear());
+beforeEach(() => {
+  localStorage.clear();
+  sessionStorage.clear();
+});
+afterEach(() => {
+  localStorage.clear();
+  sessionStorage.clear();
+});
 
 describe("recordUpdateAccepted", () => {
   it("stores the ISO timestamp and the accepted version", () => {
@@ -35,6 +43,12 @@ describe("recordUpdateAccepted", () => {
     recordUpdateAccepted(null, now);
     expect(localStorage.getItem(ACCEPTED_AT_KEY)).toBe("2026-06-20T10:00:00.000Z");
     expect(localStorage.getItem(ACCEPTED_VERSION_KEY)).toBeNull();
+  });
+
+  it("sets the in-session guard flag (#845)", () => {
+    recordUpdateAccepted("1.91.0");
+    expect(sessionStorage.getItem(ACCEPTED_SESSION_KEY)).toBe("true");
+    expect(readAcceptedThisSession()).toBe(true);
   });
 });
 
@@ -62,11 +76,31 @@ describe("shouldShowUpdateBanner", () => {
     expect(shouldShowUpdateBanner("1.91.0", accepted + 2 * ACCEPT_QUIET_MS)).toBe(false);
   });
 
-  it("re-offers a NEWER version once the quiet window has passed", () => {
+  it("re-offers a NEWER version once the quiet window has passed (fresh session)", () => {
     const accepted = Date.parse("2026-06-20T10:00:00.000Z");
     recordUpdateAccepted("1.91.0", accepted);
+    // The in-session guard (#845) only applies within the accepting session;
+    // a fresh session falls back to the localStorage quiet-window logic.
+    sessionStorage.clear();
     // 2 hours later, a newer deploy — banner comes back.
     expect(shouldShowUpdateBanner("1.92.0", accepted + 2 * ACCEPT_QUIET_MS)).toBe(true);
+  });
+
+  it("suppresses for the rest of the session once accepted, regardless of version or clock (#845)", () => {
+    const accepted = Date.parse("2026-06-20T10:00:00.000Z");
+    recordUpdateAccepted("1.91.0", accepted);
+    // Even a much newer version, long after the quiet window, stays suppressed
+    // while the session flag is set — this is the hard re-nag guard.
+    expect(
+      shouldShowUpdateBanner("2.0.0", accepted + 10 * ACCEPT_QUIET_MS),
+    ).toBe(false);
+  });
+
+  it("session guard suppresses even when localStorage was never written", () => {
+    // Simulate the sessionStorage flag set without the localStorage timestamp
+    // (e.g. a private-mode localStorage write that failed).
+    sessionStorage.setItem(ACCEPTED_SESSION_KEY, "true");
+    expect(shouldShowUpdateBanner("1.92.0")).toBe(false);
   });
 
   it("treats a corrupt timestamp as no acceptance (fails open to showing)", () => {

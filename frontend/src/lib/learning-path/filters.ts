@@ -50,6 +50,9 @@ function passesDirection(d: LessonNodeData, f: DirectionFilter): boolean {
     return d.productiveMastered;
 }
 
+/** Whether a lesson node matches the search query (by title
+ *  substring or exact lesson number). An empty query matches
+ *  nothing. */
 export function matchesQuery(d: LessonNodeData, query: string): boolean {
     const q = query.trim().toLowerCase();
     if (!q) return false;
@@ -80,6 +83,8 @@ export interface GraphStats {
     productiveMastered: number;
 }
 
+/** Aggregate totals across a list of lesson nodes: total, completed,
+ *  and receptive/productive mastered counts. */
 export function graphStats(lessons: LessonNodeData[]): GraphStats {
     let completed = 0;
     let receptiveMastered = 0;

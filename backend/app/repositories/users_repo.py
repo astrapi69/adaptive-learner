@@ -58,9 +58,16 @@ class SqlAlchemyUsersRepository(UsersRepository):
         self._db = db
 
     def get_by_id(self, user_id: str) -> User | None:
+        """Return the user row, or ``None`` when it does not exist."""
         return self._db.get(User, user_id)
 
     def create(self, *, name: str, email: str | None, language: str) -> User:
+        """Insert a user and return the committed row.
+
+        Raises:
+            UniqueViolationError: when the email collides with an
+                existing row.
+        """
         user = User(name=name, email=email, language=language)
         self._db.add(user)
         try:
@@ -74,6 +81,11 @@ class SqlAlchemyUsersRepository(UsersRepository):
         return user
 
     def update_fields(self, user: User, fields: Mapping[str, object]) -> User:
+        """Apply the given attributes, persist, and return the user.
+
+        Raises:
+            UniqueViolationError: when the new email collides.
+        """
         for key, value in fields.items():
             setattr(user, key, value)
         try:

@@ -27,14 +27,14 @@ localStorage.setItem("adaptive-learner.storage_mode", "dexie");
 
 // Stub the two non-content concerns (network-isolated, mirrors
 // content-repos.test.ts): the validator passes, no per-repo token.
-vi.mock("./content-repo-validate", () => ({
+vi.mock("./repos/content-repo-validate", () => ({
     validateUserRepo: vi.fn(async () => ({
         ok: true,
         setCount: 1,
         lessonCount: 1,
     })),
 }));
-vi.mock("./repo-token", () => ({resolveRepoToken: () => ""}));
+vi.mock("./repos/repo-token", () => ({resolveRepoToken: () => ""}));
 
 import inceptionLesson from "./__fixtures__/inception-lesson.json";
 import REPO_MANIFEST from "./__fixtures__/repo-manifest.yaml?raw";
@@ -47,9 +47,9 @@ import {
     syncUserRepo,
     userRepoSource,
     type UserContentRepo,
-} from "./content-repos";
+} from "./repos/content-repos";
 import {getStorage} from "../../storage";
-import {_resetDbForTests} from "../../storage/db";
+import {_resetDbForTests} from "../../storage/dexie/db";
 import {SUPPORTED_EXERCISE_TYPES} from "../../components/exercises/ExerciseDispatcher";
 
 // --- real fixtures captured from the test repo -----------------------------

@@ -17,7 +17,7 @@ import type {Edge, Node} from "@xyflow/react";
 
 import type {LessonNodeData} from "../../components/learning-path/LessonNodeView";
 import type {SetGroupNodeData} from "../../components/learning-path/SetGroupNodeView";
-import {computeStars} from "../lesson-summary";
+import {computeStars} from "../lesson/lesson-summary";
 import type {ElementError, LessonProgress} from "../../storage/types";
 import {makeEdge} from "./layout";
 
@@ -54,6 +54,8 @@ export interface BuiltGraph {
     edges: Edge[];
 }
 
+/** The composite key (``setId::filename``) used to index progress
+ *  and error rows for a lesson. */
 export function lessonKey(setId: string, filename: string): string {
     return `${setId}::${filename}`;
 }
@@ -90,6 +92,10 @@ function statusFor(
     return "completed";
 }
 
+/** Build the React Flow nodes + edges for the learning-path graph
+ *  from content sets, lesson progress, per-direction mastery, and
+ *  the adaptive recommendation. Pure: one set-group node per set,
+ *  one lesson node per lesson, plus sequential/adaptive edges. */
 export function buildLearningPathGraph(input: GraphBuildInput): BuiltGraph {
     const nodes: Node[] = [];
     const edges: Edge[] = [];

@@ -8,13 +8,17 @@
  */
 
 import type {SystemInfo} from "../../types/domain";
+import {docsHomeUrl} from "../../lib/help/help-routes";
 
 interface Props {
     info: SystemInfo;
     t: (key: string, fallback?: string) => string;
+    /** Active UI language, used to pick the localized docs URL. */
+    lang: string;
 }
 
-export default function LicenseResourcesSection({info, t}: Props) {
+export default function LicenseResourcesSection({info, t, lang}: Props) {
+    const docsUrl = docsHomeUrl(lang);
     return (
         <article
             data-testid="about-license-section"
@@ -57,12 +61,12 @@ export default function LicenseResourcesSection({info, t}: Props) {
                 </dt>
                 <dd data-testid="about-docs" style={ddStyle}>
                     <a
-                        href={info.app.docs_url}
+                        href={docsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         data-testid="about-docs-link"
                     >
-                        {info.app.docs_url.replace(/^https?:\/\//, "")}
+                        {docsUrl.replace(/^https?:\/\//, "")}
                     </a>
                 </dd>
                 <dt>

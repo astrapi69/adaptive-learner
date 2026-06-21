@@ -15,7 +15,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { LANGUAGE_OPTIONS } from "../../lib/content/language-options";
+import { LANGUAGE_OPTIONS } from "../../lib/content/language/language-options";
 
 type Translate = (key: string, fallback?: string) => string;
 

@@ -285,6 +285,10 @@ assessment:
   read_summary: Zusammenfassung vorlesen
   swipe_hint: "Nach links / rechts wischen (oder Pfeiltasten verwenden) zum Navigieren."
 dashboard:
+  tab:
+    overview: "Übersicht"
+    activity: "Aktivität"
+    missions: "Missionen"
   no_data: "Noch keine Daten vorhanden."
   title: Dashboard
   welcome: Willkommen zurück
@@ -323,6 +327,7 @@ dashboard:
       word_order: "Wortstellung"
     mastery_split: 'Rezeptiv: {receptive} · Produktiv: {productive}'
   create_lesson: "Lektion erstellen"
+  quick_actions: "Schnellaktionen"
   metric_mean_stress: "Ø Stress"
   metric_mean_understanding: "Ø Verständnis"
   metric_streak: "Tagesserie"

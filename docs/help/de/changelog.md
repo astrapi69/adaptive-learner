@@ -1,10 +1,65 @@
-# Was ist neu (v1.61 – v1.69)
+# Was ist neu (v1.61 – v1.91)
 
 Ein nutzerorientierter Überblick über die Releases seit v1.61.0.
 Die vollständigen, technischen Notizen pro Version stehen unter
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v1.91.0 — Navigations-Umbau
+
+- **Hauptnavigation von über 12 auf 7 gruppierte Einträge**
+  reduziert (Dashboard, Lernpfad, Meine Inhalte, Entdecken,
+  Fortschritt, Settings, Help) — ohne Funktionsverlust, jede
+  Seite bleibt erreichbar ([Navigation](user-guide/navigation.md)).
+- **Mobile Bottom-Tab-Leiste** (Lernen / Inhalte / Entdecken /
+  Fortschritt / Mehr) mit „Mehr"-Bottom-Sheet.
+- **ProgressHub** (`/progress`) gruppiert Übersicht / Statistik /
+  Meine Pfade in Tabs; **DiscoverHub** (`/discover`) bekommt einen
+  Import-Tab. Alte Links bleiben über Redirects gültig.
+- Das PWA-Update-Banner taucht nach „Aktualisieren" nicht wieder auf.
+
+## v1.90.0 — KI-Übungsgenerierung + Auto-Update
+
+- **KI-Übungsgenerierungs-Pipeline**: Übungen für eine reine
+  Theorie-Lektion erzeugen, mit Qualitäts-Gate, Typ-Balancierung,
+  Regenerieren-mit-Feedback und Batch-Erzeugung für ein ganzes Set
+  ([KI-Übungsgenerierung](features/ai-exercise-generation.md)).
+- **Animierte Paar-Auflösung** in der Matching-Übung.
+- **Test-Knopf pro Anbieter** in der Anbieter-Übersicht
+  ([Einstellungen](user-guide/settings.md)).
+- **Desktop-Auto-Update-Prüfung** über die GitHub-Releases-API.
+- KI-Session-Antworten kommen jetzt in deiner UI-Sprache zurück.
+
+## v1.87.0–v1.88.0 — Content-Entdeckung + QR-Sharing
+
+- **Content-Entdeckung (`/discover`)**: ein Suchindex über die
+  Bibliothek; der Set-Download ist hierher gewandert, getrennt von
+  deinen lokalen „Meine Inhalte" ([Entdecken](features/discover.md)).
+- **QR-Code-App-Sharing**: die App über einen scannbaren QR-Code
+  teilen (kopieren / PNG laden / nativ teilen).
+- **Curriculum-Builder** + tägliche Lern-Erinnerungen.
+- **Koreanisch + Indonesisch** kommen dazu (jetzt 11 Sprachen).
+
+## v1.86.0–v1.87.0 — KI-Inhaltsprüfung + `.alb`-Backup
+
+- **KI-Inhaltsprüfung**: set-weite Qualitätschecks mit Report-UI,
+  gecachtem Report + Markdown-Export und einem „KI-geprüft"-Badge
+  ([KI-Inhaltsprüfung](user-guide/ai-validation.md)).
+- **Medien-Integration**: ein „Vertiefe das Thema"-Lektionsabschnitt.
+- **`.alb`-ZIP-Backup-Format** ersetzt den einzelnen JSON-Dump und
+  trägt jetzt auch einen localStorage-Snapshot
+  ([Backup und Wiederherstellung](features/backup.md)).
+
+## v1.70.0–v1.84.0 — UX, Theming und TipTap 3
+
+- **Erstinstallation-Restore**: eine leere Installation bietet im
+  Onboarding „Aus Backup wiederherstellen" an.
+- **Doku-Überarbeitung** + kontextsensitive In-App-Hilfe.
+- **TipTap-Editor von v2 auf v3 migriert** (ganzer `@tiptap/*`-Stack).
+- **Feature-Strategy-Gating**: KI-Funktionen wechseln ohne Reload
+  zwischen aktiv / deaktiviert / versteckt.
+- Umfangreiche Dark-Theme-Kontrast- und Mobile-Layout-Härtung.
 
 ## v1.69.0 — Beispiel-Links + Buchempfehlungen
 

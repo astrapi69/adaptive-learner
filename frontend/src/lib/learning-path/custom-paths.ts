@@ -24,7 +24,7 @@
  */
 
 import type {LessonProgress} from "../../storage/types";
-import {mirrorUserData} from "../../storage/dexie-user-data";
+import {mirrorUserData} from "../../storage/dexie/dexie-user-data";
 
 const STORAGE_KEY = "adaptive-learner.custom-paths";
 

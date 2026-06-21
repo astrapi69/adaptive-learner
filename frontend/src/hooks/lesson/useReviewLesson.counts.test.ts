@@ -22,7 +22,7 @@ const reviewQueueMock = vi.fn();
 const listSetsMock = vi.fn();
 const getLessonMock = vi.fn();
 
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "user-1"}),
 }));
 

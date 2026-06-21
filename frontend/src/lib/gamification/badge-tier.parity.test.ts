@@ -12,7 +12,7 @@ import {join} from "node:path";
 
 import {describe, expect, it} from "vitest";
 
-import {evaluateBadgeTier, tierUpgradeXp} from "../../storage/badges";
+import {evaluateBadgeTier, tierUpgradeXp} from "../../storage/gamification/badges";
 
 // __dirname = frontend/src/lib/gamification -> repo root is 4 up.
 const REPO_ROOT = join(__dirname, "..", "..", "..", "..");

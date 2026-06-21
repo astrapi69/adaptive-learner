@@ -19,7 +19,7 @@
  * the model returns is echoed back verbatim in the report.
  */
 
-import { stripFences } from "../extract-json";
+import { stripFences } from "../utils/extract-json";
 
 /** The minimal card shape the validator reads. Structurally a subset of
  *  ``ContentLessonCard`` so callers pass cards straight through. */

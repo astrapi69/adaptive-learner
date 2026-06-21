@@ -19,7 +19,7 @@ import { expect, test, type Page } from "@playwright/test";
 const SET_ID = "fr-a1-from-en";
 
 async function openFirstLesson(page: Page): Promise<void> {
-  await page.goto("/content");
+  await page.goto("/content?tab=my");
   await expect(page.getByTestId("content-tree")).toBeVisible({ timeout: 15000 });
   await page.getByTestId("content-other-toggle").click();
   const action = page.getByTestId(`content-set-${SET_ID}-action`);

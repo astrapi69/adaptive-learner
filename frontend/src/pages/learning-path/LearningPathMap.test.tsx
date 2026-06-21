@@ -14,7 +14,7 @@ const useHookMock = vi.fn();
 vi.mock("../../hooks/learning/usePersonalPath", () => ({
     usePersonalPath: () => useHookMock(),
 }));
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "u1"}),
 }));
 vi.mock("../../components/learning-path/LessonRow", () => ({
@@ -164,7 +164,7 @@ describe("LearningPathMap", () => {
         expect(screen.getByTestId("learning-path-empty")).toBeInTheDocument();
         expect(screen.getByTestId("learning-path-to-content")).toHaveAttribute(
             "href",
-            "/content",
+            "/content?tab=my",
         );
     });
 });

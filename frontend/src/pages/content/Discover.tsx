@@ -19,8 +19,8 @@ import { Link } from "react-router-dom";
 
 import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { isOfficialSource } from "../../lib/content/content-repos";
-import { languageDisplayName } from "../../lib/content/language-names";
+import { isOfficialSource } from "../../lib/content/repos/content-repos";
+import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,
   availableLanguages,
@@ -31,12 +31,12 @@ import {
   queryDiscoverSets,
   type DiscoverFilters,
   type DiscoverSort,
-} from "../../lib/content/discover-index";
-import { collectDiscoveryRepos } from "../../lib/content/discover-repos";
+} from "../../lib/content/repos/discover-index";
+import { collectDiscoveryRepos } from "../../lib/content/repos/discover-repos";
 import {
   fetchAllIndices,
   type SearchableSet,
-} from "../../lib/content/search-index-loader";
+} from "../../lib/content/repos/search-index-loader";
 import FilterBar, { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchField from "../../shared/forms/SearchField";
 import SetDiscoveryCard, {
@@ -284,7 +284,7 @@ export default function Discover() {
           className="mb-3 text-sm text-muted-foreground"
           data-testid="discover-to-content"
         >
-          <Link to="/content" className="text-accent hover:underline">
+          <Link to="/content?tab=my" className="text-accent hover:underline">
             {t("discover.to_content", "Go to Content Browser")} →
           </Link>
         </p>

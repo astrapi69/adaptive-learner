@@ -204,7 +204,7 @@ test.describe("No horizontal scroll — real lesson content", () => {
     const VW = 320;
     await page.setViewportSize({ width: VW, height: 720 });
 
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await page.getByTestId("content-tree").waitFor({ timeout: 15000 });
     await page.getByTestId("content-other-toggle").click();
     await page.getByTestId("content-set-es-a1-from-en-action").click();

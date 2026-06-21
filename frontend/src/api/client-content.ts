@@ -197,7 +197,7 @@ export const contentApi = {
      *  Opt-in AI content review; the backend resolves the AI key
      *  server-side and returns the structured result. */
     aiValidate: (input: import("../storage/types").AiValidateInput) =>
-      apiCall<import("../lib/content/content-validation-types").AiValidationResult>(
+      apiCall<import("../lib/content/validation/content-validation-types").AiValidationResult>(
         "/content/validate-lesson",
         {
           method: "POST",

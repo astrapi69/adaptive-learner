@@ -1,11 +1,7 @@
 # Directory-size baseline (#809) — flat SOURCE-file counts > 15 that are
 # tolerated until migrated (ratchet: may only shrink, never grow; a NEW
-# oversized directory fails `check-directory-size.sh --gate`).
-# Remaining god-folders after the shared/ + hooks/ + pages/ migrations:
-frontend/src/components
-frontend/src/components/content
-frontend/src/components/lesson
-frontend/src/lib
-frontend/src/lib/content
-frontend/src/storage
-frontend/src/storage/types
+# oversized directory fails `check-directory-size.sh --gate`, aliased as
+# `check-folder-size.sh`). This file IS the folder-size whitelist; every
+# entry below is a known god-folder with a follow-up issue tracking its split.
+# Format: path  # reason / tracking issue
+frontend/src/lib/ai              # 16 files — AI generation/validation helpers, split tracked (#917)

@@ -1,10 +1,9 @@
 # Data models
 
-The **25 SQLAlchemy models** in
+The **30 SQLAlchemy models** in
 `backend/app/models/__init__.py`, with their wire-shape
-Pydantic schemas. Sync surface includes 28 tables (the 25
-models + 3 association tables: `project_subjects`,
-`project_tags`, `user_badges`).
+Pydantic schemas. The sync surface covers 30 tables
+(`sync_service.ALL_SYNC_TABLES`).
 
 The original 14 models from v0.7.0 are documented in detail
 below; the 11 added since (Phase 12+ imports, Phase 22
@@ -239,7 +238,7 @@ class ImportedConversationSource(str, Enum):
 The wire form is the lowercase string value (e.g.
 `"deductive"`, not `"DEDUCTIVE"`).
 
-## Models added since the v0.7.0 baseline (11)
+## Models added since the v0.7.0 baseline
 
 | Model | Table | Since | Purpose |
 |---|---|---|---|
@@ -255,3 +254,7 @@ The wire form is the lowercase string value (e.g.
 | UserStreak | user_streaks | v1.16.0 | Streak state + freezes + weekend mode |
 | AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | AI-extracted flashcard candidate |
 | StudyQuestion | study_questions | v1.19.0 | AI-generated active-recall question |
+| ApiKeyBackup | api_key_backups | v1.49.0 | Rollback cache for replaced AI keys |
+| LessonProgress | lesson_progress | v1.28.0 | Per-lesson step state (in_progress / paused / completed) |
+| ElementError | element_errors | v1.30.0 | Per-element SRS error + mastery tracking |
+| UserMission | user_missions | v1.39.0 | Daily-mission assignment + progress |

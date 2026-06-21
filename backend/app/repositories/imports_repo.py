@@ -111,12 +111,15 @@ class SqlAlchemyImportsRepository(ImportsRepository):
         self._db = db
 
     def get_user(self, user_id: str) -> User | None:
+        """Return the user row, or ``None`` when it does not exist."""
         return self._db.get(User, user_id)
 
     def get_project(self, project_id: str) -> LearningProject | None:
+        """Return the project row, or ``None`` when it does not exist."""
         return self._db.get(LearningProject, project_id)
 
     def find_by_content_hash(self, user_id: str, content_hash: str) -> ImportedConversation | None:
+        """Return this user's conversation with the given hash, if any."""
         return (
             self._db.query(ImportedConversation)
             .filter(
@@ -127,6 +130,7 @@ class SqlAlchemyImportsRepository(ImportsRepository):
         )
 
     def create_conversation(self, new: NewConversation) -> ImportedConversation:
+        """Insert the conversation header and its ordered messages, commit, and return the refreshed row."""
         conv = ImportedConversation(
             user_id=new.user_id,
             project_id=new.project_id,
@@ -157,6 +161,7 @@ class SqlAlchemyImportsRepository(ImportsRepository):
         return conv
 
     def list_by_user(self, user_id: str) -> list[ImportedConversation]:
+        """Return the user's conversations, newest import first."""
         return (
             self._db.query(ImportedConversation)
             .filter(ImportedConversation.user_id == user_id)
@@ -167,6 +172,7 @@ class SqlAlchemyImportsRepository(ImportsRepository):
     def get_by_id(
         self, conversation_id: str, *, with_messages: bool = False
     ) -> ImportedConversation | None:
+        """Return a conversation by id, optionally eager-loading messages; ``None`` if missing."""
         query = self._db.query(ImportedConversation).filter(
             ImportedConversation.id == conversation_id
         )
@@ -177,6 +183,7 @@ class SqlAlchemyImportsRepository(ImportsRepository):
     def apply_update(
         self, conv: ImportedConversation, fields: Mapping[str, object]
     ) -> ImportedConversation:
+        """Set the given attributes on the row, commit, and return the refreshed row."""
         for key, value in fields.items():
             setattr(conv, key, value)
         self._db.commit()
@@ -184,12 +191,14 @@ class SqlAlchemyImportsRepository(ImportsRepository):
         return conv
 
     def delete(self, conv: ImportedConversation) -> None:
+        """Delete the conversation (cascading its messages) and commit."""
         self._db.delete(conv)
         self._db.commit()
 
     def save_analysis(
         self, conv: ImportedConversation, analysis_text: str | None
     ) -> ImportedConversation:
+        """Persist the serialized analysis blob, mark the conversation analyzed, and return it."""
         conv.analysis_result = analysis_text
         conv.analyzed = True
         self._db.commit()
@@ -197,6 +206,7 @@ class SqlAlchemyImportsRepository(ImportsRepository):
         return conv
 
     def get_active_session_for_conversation(self, conversation_id: str) -> LearningSession | None:
+        """Return the newest ``active`` session for the conversation, or ``None``."""
         return (
             self._db.query(LearningSession)
             .filter(

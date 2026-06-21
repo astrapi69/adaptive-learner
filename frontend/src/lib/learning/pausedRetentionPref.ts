@@ -27,6 +27,9 @@ export const RETENTION_OPTIONS: { days: number; labelKey: string; fallback: stri
     {days: 0,  labelKey: "settings.paused_retention.never",   fallback: "Never"},
 ];
 
+/** The configured paused-lesson retention in days (``0`` = never
+ *  abandon). Falls back to the default for a missing / negative /
+ *  non-numeric value. */
 export function readRetentionDays(): number {
     try {
         const raw = localStorage.getItem(RETENTION_PREF_KEY);
@@ -38,6 +41,8 @@ export function readRetentionDays(): number {
     }
 }
 
+/** Persist the paused-lesson retention in days (best-effort; ignored
+ *  when localStorage is unavailable). */
 export function writeRetentionDays(days: number): void {
     try {
         localStorage.setItem(RETENTION_PREF_KEY, String(days));

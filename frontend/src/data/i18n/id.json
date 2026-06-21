@@ -303,6 +303,11 @@
     "swipe_hint": "Geser kiri / kanan (atau gunakan tombol panah) untuk menavigasi."
   },
   "dashboard": {
+    "tab": {
+      "overview": "Ringkasan",
+      "activity": "Aktivitas",
+      "missions": "Misi"
+    },
     "no_data": "Belum ada data.",
     "title": "Dasbor",
     "welcome": "Selamat datang kembali",
@@ -344,6 +349,7 @@
       "mastery_split": "Reseptif: {receptive} · Produktif: {productive}"
     },
     "create_lesson": "Buat pelajaran",
+    "quick_actions": "Tindakan cepat",
     "metric_mean_stress": "Ø Stres",
     "metric_mean_understanding": "Ø Pemahaman",
     "metric_streak": "Rentetan hari",

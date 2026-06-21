@@ -42,7 +42,7 @@ import {
 } from "react";
 import { useNavigate, useParams, type NavigateFunction } from "react-router-dom";
 
-import SaveAdaptiveLessonButton from "../../components/content/SaveAdaptiveLessonButton";
+import SaveAdaptiveLessonButton from "../../components/content/lessons/SaveAdaptiveLessonButton";
 import {
   ExerciseDispatcher,
   SUPPORTED_EXERCISE_TYPES,
@@ -338,7 +338,7 @@ function renderAdaptiveLessonStatus(
         <p>
           <Button
             type="button"
-            onClick={() => navigate("/content")}
+            onClick={() => navigate("/content?tab=my")}
             data-testid="adaptive-lesson-goto-content"
           >
             <Download size={14} aria-hidden="true" />

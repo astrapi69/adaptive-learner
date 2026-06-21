@@ -285,6 +285,10 @@ assessment:
   read_summary: 요약 읽기
   swipe_hint: "왼쪽 / 오른쪽으로 스와이프 (또는 방향키 사용)하여 이동하세요."
 dashboard:
+  tab:
+    overview: "개요"
+    activity: "활동"
+    missions: "미션"
   no_data: "아직 데이터가 없습니다."
   title: 대시보드
   welcome: 다시 오신 것을 환영합니다
@@ -323,6 +327,7 @@ dashboard:
       word_order: "어순"
     mastery_split: '수용: {receptive} · 산출: {productive}'
   create_lesson: "레슨 만들기"
+  quick_actions: "빠른 작업"
   metric_mean_stress: "평균 스트레스"
   metric_mean_understanding: "평균 이해도"
   metric_streak: "연속 학습일"

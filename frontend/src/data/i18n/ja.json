@@ -303,6 +303,11 @@
     "swipe_hint": "スワイプで左右に移動（または矢印キーを使用）。"
   },
   "dashboard": {
+    "tab": {
+      "overview": "概要",
+      "activity": "アクティビティ",
+      "missions": "ミッション"
+    },
     "no_data": "まだデータがありません。",
     "title": "ダッシュボード",
     "welcome": "おかえりなさい",
@@ -344,6 +349,7 @@
       "mastery_split": "認識: {receptive} · 産出: {productive}"
     },
     "create_lesson": "レッスンを作成",
+    "quick_actions": "クイック操作",
     "metric_mean_stress": "平均ストレス",
     "metric_mean_understanding": "平均理解度",
     "metric_streak": "連続日数",

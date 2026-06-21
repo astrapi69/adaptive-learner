@@ -15,7 +15,7 @@ import {Link} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useFavorites} from "../../hooks/learning/useFavorites";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import ElementDetailList, {
     type ElementDetailItem,
 } from "../../shared/gamification/ElementDetailList";

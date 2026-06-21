@@ -60,6 +60,7 @@ def create_import(
     payload: ImportedConversationCreate,
     repo: ImportsRepository = Depends(get_imports_repo),
 ) -> ImportedConversationOut:
+    """Create an imported conversation for the user."""
     conv = imports_service.create_conversation(repo, user_id, payload)
     return ImportedConversationOut.model_validate(imports_service.to_out_dict(conv))
 
@@ -71,6 +72,7 @@ def create_import(
 def list_imports(
     user_id: str, repo: ImportsRepository = Depends(get_imports_repo)
 ) -> list[ImportedConversationOut]:
+    """List all imported conversations for the user."""
     return [
         ImportedConversationOut.model_validate(imports_service.to_out_dict(c))
         for c in imports_service.list_conversations(repo, user_id)
@@ -89,6 +91,7 @@ imports_router = APIRouter(prefix="/imports", tags=["imports"])
 def get_import(
     conversation_id: str, repo: ImportsRepository = Depends(get_imports_repo)
 ) -> ImportedConversationDetail:
+    """Get an imported conversation with its messages."""
     conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
     return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))
 
@@ -102,6 +105,7 @@ def update_import(
     payload: ImportedConversationUpdate,
     repo: ImportsRepository = Depends(get_imports_repo),
 ) -> ImportedConversationOut:
+    """Update an imported conversation's fields."""
     conv = imports_service.update_conversation(repo, conversation_id, payload)
     return ImportedConversationOut.model_validate(imports_service.to_out_dict(conv))
 
@@ -113,6 +117,7 @@ def update_import(
 def delete_import(
     conversation_id: str, repo: ImportsRepository = Depends(get_imports_repo)
 ) -> Response:
+    """Delete an imported conversation."""
     imports_service.delete_conversation(repo, conversation_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -167,6 +172,7 @@ def save_analysis(
     payload: ImportedConversationAnalysis,
     repo: ImportsRepository = Depends(get_imports_repo),
 ) -> ImportedConversationDetail:
+    """Persist a pre-computed AI analysis onto a conversation (Dexie-mode path)."""
     imports_service.save_analysis(repo, conversation_id, payload)
     conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
     return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))

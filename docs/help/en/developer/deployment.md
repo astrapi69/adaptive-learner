@@ -1,6 +1,6 @@
 # Deployment
 
-Four deployment modes ship at v1.20.0:
+Four deployment modes ship:
 
 | Mode | Where | Backend | AI calls | Key source |
 |---|---|---|---|---|

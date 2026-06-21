@@ -303,6 +303,11 @@
     "swipe_hint": "Balayez vers la gauche / droite (ou utilisez les flèches) pour naviguer."
   },
   "dashboard": {
+    "tab": {
+      "overview": "Aperçu",
+      "activity": "Activité",
+      "missions": "Missions"
+    },
     "no_data": "Pas encore de données.",
     "title": "Tableau de bord",
     "welcome": "Bon retour",
@@ -344,6 +349,7 @@
       "mastery_split": "Réceptif : {receptive} · Productif : {productive}"
     },
     "create_lesson": "Créer une leçon",
+    "quick_actions": "Actions rapides",
     "metric_mean_stress": "Ø Stress",
     "metric_mean_understanding": "Ø Compréhension",
     "metric_streak": "Série de jours",

@@ -24,8 +24,8 @@ import type {
     ProgressProject,
     ProgressReport,
     SessionDetail,
-} from "../../storage/export-builder";
-import {renderStoredContent} from "../tiptap-to-markdown";
+} from "../../storage/backup/export-builder";
+import {renderStoredContent} from "../utils/tiptap-to-markdown";
 import {methodLabel, statusLabel, stepLabel, t} from "./i18n";
 
 export type ExportPayload = ProgressReport | SessionDetail | CurriculumOverview;

@@ -35,11 +35,11 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,
-} from "../../lib/review-lesson";
+} from "../../lib/review/review-lesson";
 import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
 import {stampHintUsage} from "../../lib/hints/hint-usage";
 import {getStorage} from "../../storage";

@@ -20,6 +20,11 @@
 import {formatLabel, type Labels} from "../labels";
 import type {RenderContext, SessionData} from "../render-context";
 
+/**
+ * Render the ROADMAP.md body: an immediate next-step
+ * suggestion (resume-active / start-next / start-first) plus
+ * the list of open topics still in flight.
+ */
 export function renderRoadmap(
     ctx: RenderContext,
     labels: Labels,

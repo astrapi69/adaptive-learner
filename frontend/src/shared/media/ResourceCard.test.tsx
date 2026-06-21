@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { MediaResource } from "../../lib/content/media-loader";
+import type { MediaResource } from "../../lib/content/media/media-loader";
 import ResourceCard from "./ResourceCard";
 
 vi.mock("../../hooks/ui/useI18n", () => ({

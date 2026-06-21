@@ -18,9 +18,9 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
-import BackupSection from "./BackupSection";
-import DangerZoneSection from "./DangerZoneSection";
-import {setUserId} from "../lib/learnerState";
+import BackupSection from "./settings/backup/BackupSection";
+import DangerZoneSection from "./settings/data/DangerZoneSection";
+import {setUserId} from "../lib/learning/learnerState";
 import type {BackupPayload} from "../types/domain";
 
 vi.mock("react-router-dom", async () => {
@@ -83,7 +83,7 @@ vi.mock("../storage", async () => {
 
 // BackupSection touches the auto-backup module on mount (Dexie-only path,
 // skipped in API mode, but the import must still resolve without IndexedDB).
-vi.mock("../storage/auto-backup", () => ({
+vi.mock("../storage/backup/auto-backup", () => ({
     isAutoBackupEnabled: () => false,
     setAutoBackupEnabled: () => undefined,
     listAutoBackups: async () => [],

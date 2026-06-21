@@ -1,9 +1,11 @@
 # Content Browser
 
-The **Content Browser** at `/content` is your central place to
-find, download and start lesson sets. It is built around the
-learning flow: search first, then Continue Learning, then the
-catalog.
+The **Content Browser** ("My content") is the **My content tab of
+the Content hub** at `/content`. It shows only the lesson sets you
+have already downloaded, built around the learning flow: search
+first, then Continue Learning, then your local catalog. To find
+and download *new* sets, use the **Discover** tab —
+see [Discover content](discover.md).
 
 <!-- TODO: Screenshot — Content Browser with search field, Continue Learning section and set tree -->
 

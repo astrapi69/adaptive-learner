@@ -191,22 +191,22 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
                         .join(", ")}
                 </p>
             )}
-            <ul className="focus-areas-list">
+            <ul className="focus-areas-list flex list-none flex-col gap-2">
                 {state.suggested.map((focus) => (
                     <li
                         key={focus.element_key}
-                        className="focus-areas-item"
+                        className="focus-areas-item flex items-center gap-3"
                         data-testid={`focus-area-item-${focus.element_key}`}
                     >
-                        <span className="focus-areas-key">
+                        <span className="focus-areas-key min-w-0 flex-1 truncate">
                             {focus.element_key}
                         </span>
-                        <span className="muted">
+                        <span className="muted shrink-0 whitespace-nowrap text-sm">
                             {focus.error_count}{" "}
                             {t("dashboard.focus_areas.errors", "errors")}
                         </span>
                         <progress
-                            className="focus-areas-progress"
+                            className="focus-areas-progress w-24 shrink-0"
                             value={focus.correct_streak}
                             max={MASTERY_STREAK_TARGET}
                             aria-label={t(

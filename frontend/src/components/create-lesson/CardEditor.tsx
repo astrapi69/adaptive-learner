@@ -32,8 +32,8 @@ import {CSS} from "@dnd-kit/utilities";
 
 import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/csv-cards";
-import type {LessonCardDraft} from "../../lib/content/lesson-draft";
+import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/lesson/csv-cards";
+import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
 
 export const MIN_CARDS = 4;
 

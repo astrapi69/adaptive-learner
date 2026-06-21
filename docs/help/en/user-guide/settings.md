@@ -3,8 +3,8 @@
 The Settings page collects everything you can tweak without
 touching code or YAML. Sections, top to bottom:
 
-1. **Language** — UI language (DE / EN / ES / FR / EL / PT /
-   TR / JA, all fully translated).
+1. **Language** — UI language (DE / EL / EN / ES / FR / HI /
+   ID / JA / KO / PT / TR, all fully translated).
 2. **AI provider + model picker** — which provider sees your
    messages, and which model to use.
 3. **API keys** — per-provider keys with source attribution
@@ -23,9 +23,9 @@ touching code or YAML. Sections, top to bottom:
 ## Language
 
 Live-swaps every UI string on the next render via `PATCH
-/api/settings/{user_id}`. All 8 languages are first-class —
-DE / EN / ES / FR / EL / PT / TR / JA — each with a fully
-translated catalog. Persisted across reloads via
+/api/settings/{user_id}`. All 11 languages are first-class —
+DE / EL / EN / ES / FR / HI / ID / JA / KO / PT / TR — each
+with a fully translated catalog. Persisted across reloads via
 `localStorage`.
 
 ## AI provider + model picker
@@ -45,7 +45,7 @@ the picker falls back to the static defaults and surfaces a
 `<Provider>: <Model name>`; the full id + context window
 sit in the tooltip.
 
-## API keys (Phase 34 / v1.20.0)
+## API keys
 
 Each provider has its own row: a key-entry input, a Save
 button, a Remove button, the active-provider badge, plus the
@@ -67,6 +67,18 @@ new **source attribution** badge:
 Resolution chain (highest priority wins): env > secrets.yaml
 > DB. See [the Configuration doc](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) for
 the full breakdown.
+
+Key inputs use a masked **secret input** (with a show/hide
+toggle) and do not trigger the browser's password manager.
+
+## Configured providers
+
+A **configured-providers overview** lists the AI providers you
+have set up, each with a **masked key preview** so you can see at
+a glance which providers are ready. Every row has a **Test button**
+that calls the provider's models-list endpoint and reports back
+ok / invalid key / rate-limited / network error — a safe check
+that does not spend generation tokens.
 
 ## Storage mode
 
@@ -183,3 +195,18 @@ link, repository, docs, issue tracker).
 In Local mode the panel hides the rows that only make sense
 for a running backend (Python version, FastAPI /
 SQLAlchemy / Pydantic / PluginForge versions, DB path).
+
+### Share the app
+
+The About tab has a **Share the app** entry that shows a scannable
+**QR code** of the public app URL, with copy / download-PNG /
+native-share actions — handy for getting the app onto a phone.
+
+### Check for updates
+
+A **Check for updates** button compares your version against the
+latest GitHub release. The desktop build additionally runs an
+**auto-update checker** via the GitHub Releases API and tells you
+when a newer version is available. After a PWA update, the
+"new version available" banner stays dismissed once you accept it
+(it no longer reappears on every reload).

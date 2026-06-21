@@ -25,9 +25,9 @@ wird lokal zwischengespeichert (im Dateisystem bei Backend-
 Betrieb, in IndexedDB im reinen Browser-Modus), sodass du
 nach dem ersten Download offline lernen kannst.
 
-Der Pilot-Satz aus v1.27.0 ist **Französisch A1** (2
-Lektionen, 14 Karten, 9 Übungen, die alle vier Übungstypen
-abdecken). Jedes Release seither bringt neue hinzu — siehe
+Die gebündelte Bibliothek ist auf **26 Content-Sets — 424
+Lektionen / 5405 Karten** über 10 Content-Sprachen und 5
+Domänen gewachsen. Jedes Release bringt neue hinzu — siehe
 das
 [Set-Repo](https://github.com/astrapi69/adaptive-learner-content)
 für den aktuellen Katalog.
@@ -48,7 +48,9 @@ jede Karte und Übung:
      Kacheln eines gefundenen Paares teilen sich eine
      **eigene Farbe** und ein **Nummern-Badge**, sodass die
      Zuordnung farbenblind-sicher erkennbar ist (nicht nur
-     über Farbe).
+     über Farbe), und das Auflösen eines Paares spielt eine
+     kurze **Animation**, damit die Verbindung leicht zu
+     verfolgen ist.
    - **Bildauswahl** — wähle das Bild, das zum Hinweis
      passt.
    - **Freitext** — tippe die Antwort.

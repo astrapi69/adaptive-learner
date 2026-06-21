@@ -32,6 +32,7 @@ class SqlAlchemyResetRepository(ResetRepository):
         self._db = db
 
     def truncate_all_tables(self) -> int:
+        """Delete every row in every table (reverse-FK order), commit, and return the table count."""
         tables = list(reversed(Base.metadata.sorted_tables))
         for table in tables:
             self._db.execute(table.delete())

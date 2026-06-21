@@ -175,9 +175,8 @@ def upsert_progress(
     if update.time_spent_seconds_delta > 0:
         row.time_spent_seconds = row.time_spent_seconds + update.time_spent_seconds_delta
 
-    # BUG #41 — track the live navigation position so a paused lesson resumes
-    # where the user left off. Persisted on every autosave / step / pause;
-    # clamped to >= 0.
+    # Track the live navigation position so a paused lesson resumes where the
+    # user left off. Persisted on every autosave / step / pause; clamped to >= 0.
     if update.current_step is not None:
         row.current_step = max(0, update.current_step)
 
@@ -257,9 +256,9 @@ def _apply_step_result(row: LessonProgress, step_result: dict[str, Any], now: da
     user_answer = step_result.get("user_answer")
     if user_answer is not None:
         merged["user_answer"] = str(user_answer)
-    # BUG P1 / Problem 2: the raw answer (a type-discriminated dict) persisted
-    # verbatim so a revisited step re-renders its exact locked visual. Stored
-    # only when the client sent one (every freshly-graded step does).
+    # The raw answer (a type-discriminated dict) is persisted verbatim so a
+    # revisited step re-renders its exact locked visual. Stored only when the
+    # client sent one (every freshly-graded step does).
     raw_answer = step_result.get("raw_answer")
     if isinstance(raw_answer, dict):
         merged["raw_answer"] = raw_answer

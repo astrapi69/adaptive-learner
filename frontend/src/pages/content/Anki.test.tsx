@@ -17,9 +17,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TestFeatureProvider } from "../../features/testFeatureProvider";
 import { I18nProvider } from "../../hooks/ui/useI18n";
-import { setLanguage, setProjectId, setUserId } from "../../lib/learnerState";
+import { setLanguage, setProjectId, setUserId } from "../../lib/learning/learnerState";
 import { _resetStorageCacheForTests, getStorage, setPersistedStorageMode } from "../../storage";
-import { _resetDbForTests } from "../../storage/db";
+import { _resetDbForTests } from "../../storage/dexie/db";
 import AnkiPage from "./Anki";
 
 vi.mock("../../utils/notify", () => ({

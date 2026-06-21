@@ -101,7 +101,7 @@ test.describe("Adaptive lesson — generation + completion", () => {
 
     // 1) Download the set + play its first lesson with wrong answers
     //    to record element errors.
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({ timeout: 15000 });
     const action = page.getByTestId(`content-set-${SET_ID}-action`);
     await expect(action).toBeVisible({ timeout: 15000 });

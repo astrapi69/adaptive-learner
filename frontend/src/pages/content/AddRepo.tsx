@@ -23,8 +23,8 @@ import {
   syncPhaseI18n,
   userRepoSource,
   type SyncProgress,
-} from "../../lib/content/content-repos";
-import { validateUserRepo } from "../../lib/content/content-repo-validate";
+} from "../../lib/content/repos/content-repos";
+import { validateUserRepo } from "../../lib/content/repos/content-repo-validate";
 import { notify } from "../../utils/notify";
 
 export default function AddRepo() {
@@ -86,7 +86,7 @@ export default function AddRepo() {
       notify.success(
         t("content_repo.added", "Repository added."),
       );
-      navigate("/content");
+      navigate("/content?tab=my");
     } catch {
       setError(
         t("content_repo.error.save_failed", "Could not add the repository."),

@@ -46,6 +46,88 @@ class PushResult:
     skipped: list[str] = field(default_factory=list)
 
 
+def _push_append_only_record(
+    repo: SyncRepository,
+    user_id: str,
+    table: str,
+    record: dict[str, Any],
+    record_id: str,
+    existing: Any | None,
+    result: PushResult,
+) -> None:
+    """Apply one record to an append-only table: insert if unknown, else skip.
+
+    A known id is treated as an idempotent re-send (skipped); a row that does
+    not scope to ``user_id`` is skipped defensively.
+    """
+    if existing is not None:
+        result.skipped.append(record_id)
+        return
+    row = _apply_record(table, record, None)
+    if not row_belongs_to_user(table, row, user_id):
+        result.skipped.append(record_id)
+        return
+    repo.add(row)
+    result.accepted.append(record_id)
+
+
+def _push_mutable_record(
+    repo: SyncRepository,
+    user_id: str,
+    table: str,
+    spec: Any,
+    record: dict[str, Any],
+    record_id: str,
+    existing: Any | None,
+    since: datetime | None,
+    result: PushResult,
+) -> None:
+    """Apply one record to a mutable table (insert / last-write update / conflict).
+
+    Insert when unknown; accept the remote write when the local row was
+    untouched since ``since`` (or on an idempotent same-timestamp re-send);
+    otherwise record a conflict for both-sides-changed. Rows that do not scope
+    to ``user_id`` are skipped defensively.
+    """
+    remote_ts = _from_iso(record.get(spec.timestamp_field))
+    if existing is None:
+        row = _apply_record(table, record, None)
+        if not row_belongs_to_user(table, row, user_id):
+            result.skipped.append(record_id)
+            return
+        repo.add(row)
+        result.accepted.append(record_id)
+        return
+    if not row_belongs_to_user(table, existing, user_id):
+        # Same id but wrong user -- defensive skip. Should never happen in
+        # practice because UUIDs collide at 1 in 2**128.
+        result.skipped.append(record_id)
+        return
+    local_ts: datetime | None = getattr(existing, spec.timestamp_field, None)
+    if local_ts is None:
+        local_ts = datetime.min.replace(tzinfo=UTC)
+    if local_ts.tzinfo is None:
+        local_ts = local_ts.replace(tzinfo=UTC)
+    # Local untouched since the client's last sync? Accept the remote write.
+    if since is None or local_ts <= since:
+        _apply_record(table, record, existing)
+        result.accepted.append(record_id)
+        return
+    # Both sides changed.
+    if remote_ts is not None and local_ts == remote_ts:
+        # Same timestamp -- idempotent re-send of the same write.
+        result.accepted.append(record_id)
+        return
+    result.conflicts.append(
+        ConflictBundle(
+            table=table,
+            record_id=record_id,
+            local=serialize_row(table, existing),
+            remote=record,
+        )
+    )
+
+
 def push_records(
     repo: SyncRepository,
     user_id: str,
@@ -73,61 +155,11 @@ def push_records(
             continue
         existing = repo.get_by_pk(model, record_id)
         if spec.append_only:
-            if existing is not None:
-                result.skipped.append(record_id)
-                continue
-            row = _apply_record(table, record, None)
-            if not row_belongs_to_user(table, row, user_id):
-                # Skip rows that don't scope to this user, defensively.
-                result.skipped.append(record_id)
-                continue
-            repo.add(row)
-            result.accepted.append(record_id)
-            continue
-
-        # Mutable table.
-        remote_ts = _from_iso(record.get(spec.timestamp_field))
-        if existing is None:
-            row = _apply_record(table, record, None)
-            if not row_belongs_to_user(table, row, user_id):
-                result.skipped.append(record_id)
-                continue
-            repo.add(row)
-            result.accepted.append(record_id)
-            continue
-        if not row_belongs_to_user(table, existing, user_id):
-            # Same id but wrong user — defensive skip. Should
-            # never happen in practice because UUIDs collide
-            # at 1 in 2**128.
-            result.skipped.append(record_id)
-            continue
-        local_ts: datetime | None = getattr(existing, spec.timestamp_field, None)
-        if local_ts is None:
-            local_ts = datetime.min.replace(tzinfo=UTC)
-        if local_ts.tzinfo is None:
-            local_ts = local_ts.replace(tzinfo=UTC)
-
-        # Local untouched since the client's last sync? Accept remote.
-        if since is None or local_ts <= since:
-            _apply_record(table, record, existing)
-            result.accepted.append(record_id)
-            continue
-
-        # Both changed. Conflict.
-        if remote_ts is not None and local_ts == remote_ts:
-            # Same timestamp — treat as no-op accept (idempotent
-            # second send of the same write).
-            result.accepted.append(record_id)
-            continue
-        local_dict = serialize_row(table, existing)
-        result.conflicts.append(
-            ConflictBundle(
-                table=table,
-                record_id=record_id,
-                local=local_dict,
-                remote=record,
+            _push_append_only_record(repo, user_id, table, record, record_id, existing, result)
+        else:
+            _push_mutable_record(
+                repo, user_id, table, spec, record, record_id, existing, since, result
             )
-        )
 
     if result.accepted or result.conflicts == [] and result.accepted == []:
         # Always commit even on empty acceptance so subsequent

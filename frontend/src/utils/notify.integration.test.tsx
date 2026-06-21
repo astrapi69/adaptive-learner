@@ -25,12 +25,12 @@ vi.mock("../hooks/ui/useI18n", () => ({
     }),
 }));
 
-vi.mock("../utils/eventRecorder", () => ({
+vi.mock("./eventRecorder", () => ({
     eventRecorder: {getAll: () => []},
     formatEventLog: () => "",
 }));
 
-import ErrorReportDialog from "../components/ErrorReportDialog";
+import ErrorReportDialog from "../components/error/ErrorReportDialog";
 
 /** Mirror of the App.tsx wiring — listens for the custom event
  *  and mounts the dialog. Implemented here so the test exercises

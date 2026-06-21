@@ -74,6 +74,7 @@ def validate_lesson(
     body: ValidateLessonRequest,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> ValidationResultResponse:
+    """Run the opt-in AI content review for a lesson and return the structured validation result."""
     settings = settings_service.get_or_create_settings(repo, body.user_id)
     provider_key = settings.active_provider
     try:

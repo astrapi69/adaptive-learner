@@ -14,14 +14,15 @@ import {MemoryRouter} from "react-router-dom";
 
 import Import from "./Import";
 import {I18nProvider} from "../../hooks/ui/useI18n";
-import {_resetDbForTests} from "../../storage/db";
+import {TestFeatureProvider} from "../../features/testFeatureProvider";
+import {_resetDbForTests} from "../../storage/dexie/db";
 import {dexieStorage} from "../../storage/dexie-storage";
 import {_resetStorageCacheForTests} from "../../storage";
 import * as analysisModule from "../../chat_import/analysis";
 import * as storageModule from "../../storage";
-import * as aiProvidersModule from "../../storage/ai-providers";
+import * as aiProvidersModule from "../../storage/ai/ai-providers";
 
-vi.mock("../../storage/ai-providers", () => ({
+vi.mock("../../storage/ai/ai-providers", () => ({
     aiComplete: vi.fn().mockResolvedValue(
         JSON.stringify({topic: "Mocked", summary: "Mocked analysis."}),
     ),
@@ -58,7 +59,7 @@ async function makeUserWithKey() {
     localStorage.setItem("adaptive-learner.user_id", user.id);
     // Inject a fake key directly via the Dexie row so the
     // analysis can be invoked end-to-end.
-    const {getDb} = await import("../../storage/db");
+    const {getDb} = await import("../../storage/dexie/db");
     const db = getDb();
     const settings = await db.userSettings.where("user_id").equals(user.id).first();
     if (settings) {
@@ -69,11 +70,13 @@ async function makeUserWithKey() {
 
 function renderImport() {
     return render(
-        <I18nProvider>
-            <MemoryRouter>
-                <Import />
-            </MemoryRouter>
-        </I18nProvider>,
+        <TestFeatureProvider>
+            <I18nProvider>
+                <MemoryRouter>
+                    <Import />
+                </MemoryRouter>
+            </I18nProvider>
+        </TestFeatureProvider>,
     );
 }
 

@@ -22,9 +22,9 @@ available set; click one to download it. The set is cached locally
 browser-only mode), so you can learn offline after the first
 download.
 
-The pilot set from v1.27.0 is **French A1** (2 lessons, 14 cards,
-9 exercises covering all four exercise types). Every release since
-adds more — see the
+The bundled library has grown to **26 content sets — 424 lessons
+/ 5405 cards** across 10 content languages and 5 domains. Every
+release adds more — see the
 [set repo](https://github.com/astrapi69/adaptive-learner-content)
 for the current catalog.
 
@@ -42,7 +42,8 @@ step by step through each card and exercise:
    - **Matching** — drag pairs (word ↔ translation). Both tiles of
      a found pair share a **distinct color** and a **number
      badge**, so the pairing is recognizable in a colorblind-safe
-     way (not by color alone).
+     way (not by color alone), and resolving a pair plays a short
+     **animation** so the link is easy to follow.
    - **Picture choice** — pick the image that matches the prompt.
    - **Free text** — type the answer.
    - **Word tiles** — assemble a sentence from tiles.

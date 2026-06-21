@@ -25,19 +25,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import LessonResumeDialog from "../../components/lesson/LessonResumeDialog";
-import LessonSummary from "../../components/lesson/LessonSummary";
-import LessonResources from "../../components/lesson/LessonResources";
-import LessonFavoriteToggle from "../../components/lesson/LessonFavoriteToggle";
-import LessonHeader from "../../components/lesson/LessonHeader";
-import LessonProgressBar from "../../components/lesson/LessonProgressBar";
-import LessonTtsControls from "../../components/lesson/LessonTtsControls";
-import LessonStepView from "../../components/lesson/LessonStepView";
-import LessonFooterNav from "../../components/lesson/LessonFooterNav";
-import LessonTtsMiniPlayerSlot from "../../components/lesson/LessonTtsMiniPlayerSlot";
+import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
+import LessonSummary from "../../components/lesson/summary/LessonSummary";
+import LessonResources from "../../components/lesson/steps/LessonResources";
+import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
+import LessonHeader from "../../components/lesson/chrome/LessonHeader";
+import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
+import LessonTtsControls from "../../components/lesson/tts/LessonTtsControls";
+import LessonStepView from "../../components/lesson/steps/LessonStepView";
+import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
+import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
 import LessonStatusView, {
   resolveLessonStatusKind,
-} from "../../components/lesson/LessonStatusView";
+} from "../../components/lesson/steps/LessonStatusView";
 import { useLessonAutoRead } from "../../hooks/lesson/useLessonAutoRead";
 import type { ExerciseHandle } from "../../components/exercises/exercise-control";
 import {
@@ -62,7 +62,7 @@ import { clearHintUsage } from "../../lib/hints/hint-usage";
 import { lessonMotivation } from "../../lib/lesson/motivation";
 import { notify } from "../../utils/notify";
 import { celebrateMissions } from "../../lib/praise/celebration-bus";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { ContentSetBook, RawAnswer } from "../../storage/types";
 
@@ -371,7 +371,7 @@ export default function LessonPage() {
         isInProgress={isInProgress}
         exitOpen={exitOpen}
         onPauseClick={() => setExitOpen(true)}
-        onExit={() => navigate("/content")}
+        onExit={() => navigate("/content?tab=my")}
         onExitContinue={() => setExitOpen(false)}
         onExitPause={() => void handlePauseFromDialog()}
         onExitAbandon={() => void handleAbandonFromDialog()}
@@ -473,7 +473,7 @@ export default function LessonPage() {
             }
           }}
           onRepeat={() => goToStep(0)}
-          onExit={() => navigate("/content")}
+          onExit={() => navigate("/content?tab=my")}
         />
         <LessonResources
           lesson={lesson}

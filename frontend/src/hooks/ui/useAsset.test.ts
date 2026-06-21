@@ -23,7 +23,7 @@ vi.mock("../../storage", () => ({
     }),
 }));
 
-import {_cacheSnapshot, _resetForTests} from "../../lib/content/asset-resolver";
+import {_cacheSnapshot, _resetForTests} from "../../lib/content/media/asset-resolver";
 import {useAsset} from "./useAsset";
 
 beforeEach(() => {

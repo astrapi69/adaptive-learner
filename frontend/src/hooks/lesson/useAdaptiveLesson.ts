@@ -48,7 +48,7 @@ import {generateAdaptiveLesson} from "../../lib/adaptive/lesson-generator";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
 import type {ErrorAnalysis} from "../../lib/adaptive/types";
 import {readDirectionStrategy} from "../../lib/learning/directionPref";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 import type {
     ContentLesson,

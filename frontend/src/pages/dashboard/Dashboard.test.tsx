@@ -41,6 +41,22 @@ vi.mock("../../api/client", async () => {
         ...actual.api.settings,
         get: (...args: unknown[]) => apiSettingsGet(...args),
       },
+      // #899 — the Dashboard's data effect also fires gamification +
+      // pronunciation reads. Left unmocked they hit a real (refused) network,
+      // and the latency delays Promise.allSettled past the default
+      // findByTestId timeout once the Aktivität tab is lazy (#858) — the radar
+      // then renders too late. Stub them to resolve instantly.
+      gamification: {
+        ...actual.api.gamification,
+        getState: () => Promise.resolve(null),
+        listBadges: () => Promise.resolve(null),
+        getStreak: () => Promise.resolve(null),
+        getStreakHeatmap: () => Promise.resolve([]),
+      },
+      pronunciation: {
+        ...actual.api.pronunciation,
+        eligibility: () => Promise.resolve({ eligible: false }),
+      },
     },
   };
 });
@@ -49,15 +65,15 @@ vi.mock("../../api/client", async () => {
 // render recharts SVG. The Dashboard's own wiring is what we
 // test here; the chart components have their own dedicated
 // tests (or empty-state coverage).
-vi.mock("../../components/ProfileRadar", () => ({
+vi.mock("../../components/progress/ProfileRadar", () => ({
   default: ({ profile }: { profile: LearningProfile }) => (
     <div data-testid="profile-radar">{profile.dominant_method}</div>
   ),
 }));
-vi.mock("../../components/ProgressTimeline", () => ({
+vi.mock("../../components/progress/ProgressTimeline", () => ({
   default: () => <div data-testid="progress-timeline" />,
 }));
-vi.mock("../../components/MethodDistribution", () => ({
+vi.mock("../../components/progress/MethodDistribution", () => ({
   default: () => <div data-testid="method-distribution" />,
 }));
 
@@ -117,15 +133,23 @@ const TOOLS: ToolRecommendation[] = [
   },
 ];
 
-function renderDashboard(context?: Partial<FeatureContext>) {
+function renderDashboard(
+  context?: Partial<FeatureContext>,
+  initialPath = "/dashboard",
+) {
   return render(
     <TestFeatureProvider context={context}>
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[initialPath]}>
         <Dashboard />
       </MemoryRouter>
     </TestFeatureProvider>,
   );
 }
+
+// #858 — the analytical panels (profile, sessions, progress, method, tools,
+// spaced) live on the lazy "Aktivität" tab; render straight at ?tab=activity
+// and await the lazy mount.
+const ACTIVITY = "/dashboard?tab=activity";
 
 // SESSION_START is disabled in Dexie mode without a key — the context that
 // engages the Dashboard's QuickStart gate + skip banner after the
@@ -175,9 +199,14 @@ describe("Dashboard page", () => {
     apiProfile.mockResolvedValue(PROFILE);
     apiProgress.mockResolvedValue(SUMMARY);
     apiTools.mockResolvedValue(TOOLS);
-    renderDashboard();
+    renderDashboard(undefined, ACTIVITY);
     await screen.findByTestId("dashboard");
-    expect(screen.getByTestId("profile-radar")).toBeInTheDocument();
+    // The Aktivität tab is lazy (#858) and mounts after the data effect
+    // resolves; a generous timeout keeps the first lazy assertion off the
+    // 1s-default knife-edge (#899).
+    expect(
+      await screen.findByTestId("profile-radar", undefined, { timeout: 5000 }),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("progress-timeline")).toBeInTheDocument();
     expect(screen.getByTestId("method-distribution")).toBeInTheDocument();
     expect(screen.getByTestId("session-counter")).toBeInTheDocument();
@@ -190,9 +219,11 @@ describe("Dashboard page", () => {
     apiProfile.mockRejectedValue(new ApiError(404, "No assessment profile yet."));
     apiProgress.mockResolvedValue({ tracking: undefined } as ProgressSummary);
     apiTools.mockResolvedValue([]);
-    renderDashboard();
+    renderDashboard(undefined, ACTIVITY);
     await screen.findByTestId("dashboard");
-    expect(screen.getByTestId("dashboard-profile-empty")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("dashboard-profile-empty"),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("session-counter-empty")).toBeInTheDocument();
     expect(screen.getByTestId("tool-recs-empty")).toBeInTheDocument();
   });
@@ -233,9 +264,9 @@ describe("Dashboard page", () => {
         urgency: 0.5,
       },
     ]);
-    renderDashboard();
+    renderDashboard(undefined, ACTIVITY);
     await screen.findByTestId("dashboard");
-    expect(screen.getByTestId("spaced-recs")).toBeInTheDocument();
+    expect(await screen.findByTestId("spaced-recs")).toBeInTheDocument();
     expect(screen.getByTestId("spaced-rec-sr-deductive-first")).toBeInTheDocument();
   });
 
@@ -244,9 +275,9 @@ describe("Dashboard page", () => {
     apiProgress.mockResolvedValue(SUMMARY);
     apiTools.mockResolvedValue(TOOLS);
     apiSpaced.mockResolvedValue([]);
-    renderDashboard();
+    renderDashboard(undefined, ACTIVITY);
     await screen.findByTestId("dashboard");
-    expect(screen.getByTestId("spaced-recs-empty")).toBeInTheDocument();
+    expect(await screen.findByTestId("spaced-recs-empty")).toBeInTheDocument();
   });
 
   // --- Issue 4: API-key gating + dismissible skip banner --------------
@@ -313,14 +344,29 @@ describe("Dashboard page", () => {
     apiProgress.mockResolvedValue(SUMMARY);
     apiTools.mockResolvedValue(TOOLS);
     apiSpaced.mockResolvedValue([]);
+    // #858 — feature_gamification (XP card) lives on the default Übersicht
+    // tab; the analytical card tooltips moved to the Aktivität tab.
     renderDashboard();
     await screen.findByTestId("dashboard");
-    // Each tooltip renders a span with testid
-    // ``help-term-<glossaryKey>`` (see HelpTooltip).
-    expect(screen.getByTestId("help-term-learning_profile")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("help-term-feature_gamification"),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the analytical-card tooltips on the Aktivität tab", async () => {
+    apiProfile.mockResolvedValue(PROFILE);
+    apiProgress.mockResolvedValue(SUMMARY);
+    apiTools.mockResolvedValue(TOOLS);
+    apiSpaced.mockResolvedValue([]);
+    renderDashboard(undefined, ACTIVITY);
+    await screen.findByTestId("dashboard");
+    expect(
+      await screen.findByTestId("help-term-learning_profile"),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("help-term-learning_session")).toBeInTheDocument();
-    expect(screen.getByTestId("help-term-feature_gamification")).toBeInTheDocument();
     expect(screen.getByTestId("help-term-method_ai_adaptive")).toBeInTheDocument();
-    expect(screen.getByTestId("help-term-feature_spaced_repetition")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("help-term-feature_spaced_repetition"),
+    ).toBeInTheDocument();
   });
 });

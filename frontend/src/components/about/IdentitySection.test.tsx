@@ -87,16 +87,17 @@ describe("IdentitySection", () => {
         ).toBeNull();
     });
 
-    it("surfaces the error banner when the status endpoint fails", async () => {
+    it("renders nothing when the status endpoint fails (#914 — no raw HTTP error)", async () => {
         const {ApiError} = await import("../../api/client");
-        apiIdentityStatus.mockRejectedValue(new ApiError(500, "boom"));
-        render(<IdentitySection t={tFn} />);
+        apiIdentityStatus.mockRejectedValue(new ApiError(404, "Not Found"));
+        const {container} = render(<IdentitySection t={tFn} />);
+        // The section disappears entirely on a load failure instead of showing
+        // a "Could not load identity status: HTTP 404" banner.
         await waitFor(() => {
-            expect(
-                screen.getByTestId("about-identity-error"),
-            ).toBeInTheDocument();
+            expect(screen.queryByTestId("about-identity-loading")).toBeNull();
         });
-        expect(screen.queryByTestId("about-identity-status-active")).toBeNull();
-        expect(screen.queryByTestId("about-identity-status-missing")).toBeNull();
+        expect(screen.queryByTestId("about-identity-section")).toBeNull();
+        expect(screen.queryByTestId("about-identity-error")).toBeNull();
+        expect(container.firstChild).toBeNull();
     });
 });

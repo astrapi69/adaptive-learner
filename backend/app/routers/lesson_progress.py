@@ -46,6 +46,7 @@ def list_lesson_progress(
     user_id: str,
     repo: LessonProgressRepository = Depends(get_lesson_progress_repo),
 ) -> list[LessonProgressOut]:
+    """List all lesson-progress records for the given user."""
     rows = lesson_progress_service.list_progress(repo, user_id)
     return [LessonProgressOut.model_validate(row) for row in rows]
 
@@ -61,6 +62,7 @@ def get_lesson_progress(
     lesson_filename: str,
     repo: LessonProgressRepository = Depends(get_lesson_progress_repo),
 ) -> LessonProgressOut:
+    """Return the user's progress for one lesson (404 if none recorded)."""
     row = lesson_progress_service.get_progress(
         repo,
         user_id,
@@ -87,6 +89,7 @@ def upsert_lesson_progress(
         get_lesson_session_unification_repo
     ),
 ) -> LessonProgressOut:
+    """Create or update the user's progress for a lesson and return the resulting record."""
     step_result = payload.step_result.model_dump() if payload.step_result is not None else None
     update = lesson_progress_service.ProgressUpdate(
         source=payload.source,

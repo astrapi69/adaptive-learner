@@ -1,10 +1,9 @@
 # Datenmodelle
 
-Die **25 SQLAlchemy-Models** in
+Die **30 SQLAlchemy-Models** in
 `backend/app/models/__init__.py`, mit ihren Wire-Shape-
-Pydantic-Schemas. Die Sync-Oberfläche umfasst 28 Tabellen
-(die 25 Models + 3 Assoziations-Tabellen:
-`project_subjects`, `project_tags`, `user_badges`).
+Pydantic-Schemas. Die Sync-Oberfläche umfasst 30 Tabellen
+(`sync_service.ALL_SYNC_TABLES`).
 
 Die ursprünglichen 14 Models von v0.7.0 sind unten im Detail
 dokumentiert; die 11 seitdem hinzugekommenen (Phase 12+

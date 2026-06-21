@@ -230,7 +230,7 @@ describe("DonationSection", () => {
 
 describe("LicenseResourcesSection", () => {
     it("renders license + repo + docs + issues links", () => {
-        render(<LicenseResourcesSection info={apiInfo} t={tFn} />);
+        render(<LicenseResourcesSection info={apiInfo} t={tFn} lang="de" />);
         expect(screen.getByTestId("about-license").textContent).toContain(
             "MIT",
         );
@@ -248,6 +248,20 @@ describe("LicenseResourcesSection", () => {
         expect(
             screen.getByTestId("about-issues-link").getAttribute("href"),
         ).toBe("https://github.com/astrapi69/adaptive-learner/issues");
+    });
+
+    it("points the docs link at the active UI language (#866)", () => {
+        render(<LicenseResourcesSection info={apiInfo} t={tFn} lang="el" />);
+        expect(
+            screen.getByTestId("about-docs-link").getAttribute("href"),
+        ).toBe("https://astrapi69.github.io/adaptive-learner/docs/el/");
+    });
+
+    it("falls the docs link back to English for an unbuilt locale (#866)", () => {
+        render(<LicenseResourcesSection info={apiInfo} t={tFn} lang="ko" />);
+        expect(
+            screen.getByTestId("about-docs-link").getAttribute("href"),
+        ).toBe("https://astrapi69.github.io/adaptive-learner/docs/en/");
     });
 });
 

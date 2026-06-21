@@ -118,7 +118,7 @@ test.describe("EXP-023 Phase A — user content repository", () => {
     ).toBeVisible();
 
     // --- Browse: the user set carries the "Your repo" badge. ---------
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });
@@ -134,7 +134,7 @@ test.describe("EXP-023 Phase A — user content repository", () => {
     // loader must fall back to the cached rows from the sync above.
     await page.unroute(`**/raw.githubusercontent.com/${OWNER_REPO}/main/**`);
     await page.context().setOffline(true);
-    await page.goto("/content");
+    await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });

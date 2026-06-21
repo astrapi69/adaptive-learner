@@ -26,8 +26,8 @@ import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
-import SaveOfflineLessonModal from "../../components/content/SaveOfflineLessonModal";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
+import SaveOfflineLessonModal from "../../components/content/lessons/SaveOfflineLessonModal";
 import ImportActionBar from "../../components/import/ImportActionBar";
 import ImportGenerateExercisesButton from "../../components/import/ImportGenerateExercisesButton";
 import GeneratedExercisesPreview from "../../components/import/GeneratedExercisesPreview";
@@ -38,16 +38,16 @@ import ImportTranscript from "../../components/import/ImportTranscript";
 import {
   ANALYSIS_PHASES,
   ANALYSIS_PHASE_INTERVAL_MS,
-} from "../../lib/content/analysis-phases";
+} from "../../lib/content/analysis/analysis-phases";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
-import { getDb } from "../../storage/db";
+import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";
-import { importHeadingTitle } from "../../lib/content/import-title";
-import { detectLearningLanguage } from "../../lib/content/detect-chat-language";
+import { importHeadingTitle } from "../../lib/content/lesson/import-title";
+import { detectLearningLanguage } from "../../lib/content/language/detect-chat-language";
 import {
   resolveActiveAiProvider,
   type ResolvedAiProvider,
@@ -70,12 +70,25 @@ interface ImportDetailProps {
 /** How long the "Done!" flash lingers before results fade in. */
 const ANALYSIS_DONE_FLASH_MS = 500;
 
+/** Resolve the active conversation id: explicit test override wins, else the
+ * route param, else an empty string. Extracted to keep the component function
+ * below the complexity gate. */
+function resolveConversationId(
+  override: string | undefined,
+  routeParam: string | undefined,
+): string {
+  return override ?? routeParam ?? "";
+}
+
 export default function ImportDetail({
   conversationIdOverride,
   onNavigate,
 }: ImportDetailProps = {}) {
   const params = useParams<{ conversationId: string }>();
-  const conversationId = conversationIdOverride ?? params.conversationId ?? "";
+  const conversationId = resolveConversationId(
+    conversationIdOverride,
+    params.conversationId,
+  );
   const { t, lang } = useI18n();
   const online = useOnlineStatus();
   const navigate = useNavigate();
@@ -498,7 +511,7 @@ export default function ImportDetail({
       <main id="main" className="p-8" data-testid="import-detail-error">
         <h1>{t("errors.not_found", "Not found.")}</h1>
         <p>{error}</p>
-        <Button type="button" onClick={() => go("/import")}>
+        <Button type="button" onClick={() => go("/content?tab=import")}>
           {t("import.back_to_list", "Back to imports")}
         </Button>
       </main>
@@ -517,7 +530,7 @@ export default function ImportDetail({
         <Button
           type="button"
           variant="outline"
-          onClick={() => go("/import")}
+          onClick={() => go("/content?tab=import")}
           className="mb-4"
           data-testid="back-to-list"
         >
@@ -629,7 +642,7 @@ export default function ImportDetail({
           onCancel={() => setShowSaveLesson(false)}
           onSaved={() => {
             setShowSaveLesson(false);
-            go("/content");
+            go("/content?tab=my");
           }}
         />
       )}

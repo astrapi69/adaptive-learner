@@ -61,7 +61,9 @@ export const FEATURES = {
   REVIEW_SESSION: "review-session",
   ASSESSMENT: "assessment",
   DASHBOARD: "dashboard",
+  ADVANCED_DASHBOARD: "advanced-dashboard",
   LEARNING_PATH: "learning-path",
+  LEARNING_PATH_GRAPH: "learning-path-graph",
   PROGRESS: "progress",
   ONBOARDING: "onboarding",
   THEMES: "themes",
@@ -97,6 +99,25 @@ export const REASON_API_KEY_REQUIRED = "api_key_required";
  * mode. Components localize it via ``feature.${reason}`` (``feature.desktop_only``).
  */
 export const REASON_DESKTOP_ONLY = "desktop_only";
+
+/**
+ * Features that ship ``disabled`` by default in EVERY context, independent of
+ * storage mode or AI key. Used to hide a not-yet-launch-ready surface without
+ * deleting its code. The descriptor default (not a strategy rule) governs, so
+ * the feature stays disabled no matter what context the provider supplies.
+ *
+ * ``LEARNING_PATH_GRAPH``: the xyflow Graph view has a broken layout /
+ * unreadable nodes (#900). Disabled until the graph layout is fixed; re-enable
+ * by removing it from this list.
+ *
+ * ``ADVANCED_DASHBOARD``: the Dashboard project filter (subjects + tags) is
+ * useless with a single project and no project-creation UI (#931). Hidden until
+ * multi-project lands; re-enable by removing it from this list.
+ */
+const DEFAULT_DISABLED: readonly FeatureId[] = [
+  FEATURES.LEARNING_PATH_GRAPH,
+  FEATURES.ADVANCED_DASHBOARD,
+];
 
 /** AI-backed features: disabled in Dexie mode without a configured key. */
 const NEEDS_AI_KEY: readonly FeatureId[] = [
@@ -143,7 +164,7 @@ function desktopOnlyRule(): FeatureCondition<FeatureContext> {
 function buildRegistry(): FeatureRegistry<FeatureContext> {
   const descriptors: FeatureDescriptor[] = Object.values(FEATURES).map((id) => ({
     id,
-    defaultState: "active",
+    defaultState: DEFAULT_DISABLED.includes(id) ? "disabled" : "active",
   }));
 
   const rules: Record<string, FeatureCondition<FeatureContext>> = Object.fromEntries([

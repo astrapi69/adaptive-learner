@@ -30,30 +30,30 @@ import {
   listAnkiCards,
   markAnkiCardsExported,
   updateAnkiCard,
-} from "./anki";
-import { evaluateBadgesForUser } from "./badges";
+} from "./anki/anki";
+import { evaluateBadgesForUser } from "./gamification/badges";
 import {
   getDailyMissionsDexie,
   regenerateDailyMissionsDexie,
-} from "./missions-dexie";
+} from "./gamification/missions-dexie";
 import {
   getDb,
   nowIso,
   type SubjectRow,
-} from "./db";
+} from "./dexie/db";
 import {
   clearAllAutoBackups,
-} from "./auto-backup";
+} from "./backup/auto-backup";
 import {
   createDexieBackup,
   getDexieBackupStats,
   restoreDexieBackup,
-} from "./backup";
+} from "./backup/backup";
 import {
   buildCurriculumOverview as dexieBuildCurriculumOverview,
   buildProgressReport as dexieBuildProgressReport,
   buildSessionDetail as dexieBuildSessionDetail,
-} from "./export-builder";
+} from "./backup/export-builder";
 import {
   createStudyQuestion,
   deleteStudyQuestion,
@@ -62,14 +62,19 @@ import {
   listStudyQuestions,
   studyGuideDexie,
   updateStudyQuestion,
-} from "./notebooklm";
+} from "./anki/notebooklm";
+import { resolveDexieAiConfig } from "./anki/anki-extraction";
+import {
+  generatePhrase as generatePronunciationPhrase,
+  judgeAttempt as judgePronunciationAttempt,
+} from "../lib/ai/pronunciation-ai";
 import { ApiError } from "../api/client";
 import {
   aiValidateDexie,
   aiValidateCardsDexie,
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
-} from "./content-loader-dexie-ai";
+} from "./content/content-loader-dexie-ai";
 import {
   deleteSetDexie,
   activeSourcesDexie,
@@ -79,28 +84,28 @@ import {
   listLessonsDexie,
   listSetsDexie,
   saveUserSetDexie,
-} from "./content-loader-dexie";
+} from "./content/content-loader-dexie";
 import {
   getLessonProgressDexie,
   listLessonProgressDexie,
   upsertLessonProgressDexie,
-} from "./lesson-progress-dexie";
-import { awardLessonXpDexie } from "./lesson-xp-dexie";
+} from "./lessons/lesson-progress-dexie";
+import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
 import {
   computeReviewQueueDexie,
   listElementErrorsDexie,
   recordElementAttemptsDexie,
-} from "./element-errors-dexie";
+} from "./lessons/element-errors-dexie";
 import type {
   IStorageService,
 } from "./types";
-import { dexieGamification } from "./dexie-gamification";
-import { dexieCurricula, dexieLessons, dexieTopics } from "./dexie-curricula";
-import { dexieAssessment, dexieSession, dexieTools, dexieTracking } from "./dexie-session";
-import { dexieSettings } from "./dexie-settings";
-import { dexieProjectTaxonomy, dexieSubjects, dexieTags } from "./dexie-taxonomy";
-import { dexieProjects, dexieUsers } from "./dexie-users";
-import { dexieImports } from "./dexie-imports";
+import { dexieGamification } from "./gamification/dexie-gamification";
+import { dexieCurricula, dexieLessons, dexieTopics } from "./dexie/dexie-curricula";
+import { dexieAssessment, dexieSession, dexieTools, dexieTracking } from "./dexie/dexie-session";
+import { dexieSettings } from "./dexie/dexie-settings";
+import { dexieProjectTaxonomy, dexieSubjects, dexieTags } from "./dexie/dexie-taxonomy";
+import { dexieProjects, dexieUsers } from "./dexie/dexie-users";
+import { dexieImports } from "./dexie/dexie-imports";
 
 // Row <-> wire mappers + requireRow/ensureSettings live in
 // ./dexie-rows (#354), shared with the per-domain namespace modules.
@@ -128,6 +133,29 @@ function writeGitHubToken(token: string): void {
   } catch {
     /* storage unavailable — best effort */
   }
+}
+
+/**
+ * Resolve the browser-direct AI config for a pronunciation call (#903): find
+ * the project's owner, then its active provider + key. Throws ApiError(400)
+ * when no key is configured, so the page reports "API key required" rather
+ * than failing the AI call.
+ */
+async function resolvePronunciationAiConfig(projectId: string) {
+  const db = getDb();
+  const project = await db.learningProjects.get(projectId);
+  if (!project) {
+    throw new ApiError(404, `Project ${projectId} not found`);
+  }
+  const config = await resolveDexieAiConfig(project.user_id);
+  if (!config) {
+    throw new ApiError(
+      400,
+      "An API key is required for pronunciation practice. " +
+        "Configure a provider in Settings.",
+    );
+  }
+  return config;
 }
 
 export const dexieStorage: IStorageService = {
@@ -268,9 +296,9 @@ export const dexieStorage: IStorageService = {
     createQuestion: (userId, body) => createStudyQuestion(userId, body),
     updateQuestion: (questionId, body) => updateStudyQuestion(questionId, body),
     deleteQuestion: (questionId) => deleteStudyQuestion(questionId),
-    generateFromSession: () => generateFromSessionDexie(),
-    generateFromProject: () => generateFromProjectDexie(),
-    studyGuide: () => studyGuideDexie(),
+    generateFromSession: (sessionId) => generateFromSessionDexie(sessionId),
+    generateFromProject: (projectId) => generateFromProjectDexie(projectId),
+    studyGuide: (projectId) => studyGuideDexie(projectId),
   },
 
   pronunciation: {
@@ -300,19 +328,32 @@ export const dexieStorage: IStorageService = {
       }
       return { eligible: false };
     },
-    phrase: async () => {
-      throw new ApiError(
-        501,
-        "Pronunciation practice requires API mode for the AI calls. " +
-          "Switch to API mode in Settings.",
-      );
+    // #903 — browser-direct with the user's own key (gate: "key present?",
+    // not "backend reachable?"), mirroring the study guide (#902) + Anki (#807).
+    phrase: async (args) => {
+      const config = await resolvePronunciationAiConfig(args.project_id);
+      const phrase = await generatePronunciationPhrase(config, {
+        language: args.language,
+        level: args.level,
+        focus: args.focus,
+        previous: args.previous,
+      });
+      if (!phrase) {
+        throw new ApiError(502, "Could not generate a phrase. Please try again.");
+      }
+      return { phrase, language: args.language };
     },
-    judge: async () => {
-      throw new ApiError(
-        501,
-        "Pronunciation practice requires API mode for the AI calls. " +
-          "Switch to API mode in Settings.",
-      );
+    judge: async (args) => {
+      const config = await resolvePronunciationAiConfig(args.project_id);
+      const verdict = await judgePronunciationAttempt(config, {
+        target: args.target,
+        actual: args.actual,
+        language: args.language,
+      });
+      if (!verdict) {
+        throw new ApiError(502, "Could not score that attempt. Please try again.");
+      }
+      return verdict;
     },
   },
 

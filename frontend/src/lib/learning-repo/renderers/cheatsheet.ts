@@ -24,6 +24,11 @@ import {notesByKind, type RenderContext, type SessionNoteData} from "../render-c
 const SESSION_NOTE_KIND_NOTE = "note";
 const SESSION_NOTE_KIND_META_LEARNING = "meta_learning";
 
+/**
+ * Render the CHEATSHEET.md body for one project: a deduplicated
+ * Notes section (``kind="note"``) followed by a Meta-Learning
+ * Insights section (``kind="meta_learning"``).
+ */
 export function renderCheatsheet(
     ctx: RenderContext,
     labels: Labels,

@@ -42,7 +42,7 @@ vi.mock("../../storage", () => ({
     }),
 }));
 
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({
         userId: "user-1",
         projectId: "p1",

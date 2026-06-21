@@ -234,6 +234,15 @@ export interface ClassifyClustersOpts {
     lessons?: ReadonlyMap<string, ContentLesson>;
 }
 
+/**
+ * Classify error clusters into language-specific weakness categories
+ * (article gender, spelling/accent, verb conjugation, word order, ...) that
+ * drive adaptive-lesson generation.
+ *
+ * @param clusters - Raw error clusters derived from the learner's history.
+ * @param opts - Classification options (domain/language context).
+ * @return One classified cluster per input cluster.
+ */
 export function classifyClusters(
     clusters: readonly ErrorCluster[],
     opts: ClassifyClustersOpts,

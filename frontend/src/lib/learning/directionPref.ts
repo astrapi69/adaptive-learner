@@ -31,6 +31,8 @@ export const DEFAULT_DIRECTION_STRATEGY: DirectionStrategy = "auto";
  *  (the native ``storage`` event only fires in other tabs). */
 export const DIRECTION_PREF_CHANGE_EVENT = "adaptive-learner:direction-pref";
 
+/** The configured direction strategy, falling back to the default
+ *  for an unset / unrecognised localStorage value. */
 export function readDirectionStrategy(): DirectionStrategy {
   try {
     const raw = localStorage.getItem(KEY);
@@ -43,6 +45,8 @@ export function readDirectionStrategy(): DirectionStrategy {
   return DEFAULT_DIRECTION_STRATEGY;
 }
 
+/** Persist the direction strategy and dispatch
+ *  {@link DIRECTION_PREF_CHANGE_EVENT} so same-tab listeners refresh. */
 export function writeDirectionStrategy(strategy: DirectionStrategy): void {
   try {
     localStorage.setItem(KEY, strategy);

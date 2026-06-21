@@ -92,12 +92,5 @@ for (const vp of VIEWPORTS) {
                 overflow.clientWidth + 1,
             );
         });
-
-        test("Online indicator visible in the nav", async ({page}) => {
-            await completeOnboarding(page, {name: `${vp.name} User`});
-            await completeAssessment(page);
-            await page.waitForURL("**/dashboard");
-            await expect(page.getByTestId("nav-online-indicator")).toBeVisible();
-        });
     });
 }

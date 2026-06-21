@@ -216,7 +216,7 @@ landing:
   title: Adaptive Learner
   subtitle: Μάθηση που προσαρμόζεται σε σένα.
   choose_language: Επίλεξε τη γλώσσα σου
-  start_button: Ξεκίνα το ταξίδι μάθησής σου
+  start_button: Ξεκίνα το ταξίδι της μάθησής σου
   docs_link: Διαβάστε την τεκμηρίωση
   checking_session: Καλώς ήρθες ξανά...
   recovered_toast: Καλώς ήρθες ξανά! Τα δεδομένα μάθησής σου είναι ακόμα εδώ.
@@ -285,6 +285,10 @@ assessment:
   read_summary: Ανάγνωση περίληψης
   swipe_hint: "Σύρετε αριστερά / δεξιά (ή χρησιμοποιήστε τα βέλη) για πλοήγηση."
 dashboard:
+  tab:
+    overview: "Επισκόπηση"
+    activity: "Δραστηριότητα"
+    missions: "Αποστολές"
   no_data: "Δεν υπάρχουν ακόμη δεδομένα."
   title: Πίνακας
   welcome: Καλώς ήρθες ξανά
@@ -323,6 +327,7 @@ dashboard:
       word_order: "Σειρά λέξεων"
     mastery_split: 'Αναγνώριση: {receptive} · Παραγωγή: {productive}'
   create_lesson: "Δημιουργία μαθήματος"
+  quick_actions: "Γρήγορες ενέργειες"
   metric_mean_stress: "Ø Άγχος"
   metric_mean_understanding: "Ø Κατανόηση"
   metric_streak: "Σερί ημερών"
@@ -773,7 +778,7 @@ settings:
   section_sync: "Συγχρονισμός"
 methods:
   deductive:
-    label: Επαγωγική (από γενικό)
+    label: Παραγωγική (από γενικό)
     summary: Από το γενικό στο ειδικό — πρώτα οι κανόνες, μετά τα παραδείγματα.
   inductive:
     label: Επαγωγική (από ειδικό)

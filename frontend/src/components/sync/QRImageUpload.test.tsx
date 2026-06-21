@@ -13,7 +13,7 @@ import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import QRImageUpload from "./QRImageUpload";
-import {buildPairingUri} from "../../storage/sync-engine";
+import {buildPairingUri} from "../../storage/sync/sync-engine";
 
 const scanFileMock = vi.fn();
 

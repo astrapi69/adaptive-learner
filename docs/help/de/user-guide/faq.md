@@ -138,8 +138,8 @@ Sync → „Dieses Gerät koppeln": QR-Code vom anderen
 Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
 einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
 Daten aus; Konflikte gehen durch einen KI-Merge-Resolver.
-28 Tabellen auf der Sync-Oberfläche ab v1.19.0 (Subjects +
-Tags + Study Questions inbegriffen).
+30 Tabellen auf der Sync-Oberfläche (inkl. Lektions-
+Fortschritt, Element-Fehler und Missionen).
 
 ## Wie ist das anders als ChatGPT?
 

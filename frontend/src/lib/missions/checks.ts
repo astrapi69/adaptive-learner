@@ -33,6 +33,8 @@ export const SUPPORTED_CHECK_FUNCTIONS: ReadonlySet<string> = new Set([
     "weekend_learning_today",
 ]);
 
+/** Whether a mission's ``check_function`` can be evaluated against
+ *  existing data, and so is safe for the generator to assign. */
 export function isSupportedCheck(checkFunction: string): boolean {
     return SUPPORTED_CHECK_FUNCTIONS.has(checkFunction);
 }

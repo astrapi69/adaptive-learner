@@ -1,17 +1,17 @@
 import {useCallback, useEffect, useState, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
-import AddTopicDialog from "../../components/AddTopicDialog";
-import CurriculumDescriptionEditor from "../../components/CurriculumDescriptionEditor";
+import AddTopicDialog from "../../components/topic/AddTopicDialog";
+import CurriculumDescriptionEditor from "../../components/topic/CurriculumDescriptionEditor";
 import HelpLink from "../../components/help/HelpLink";
 import HelpTooltip from "../../components/help/HelpTooltip";
-import LessonList from "../../components/LessonList";
-import TopicTree from "../../components/TopicTree";
+import LessonList from "../../components/dashboard/LessonList";
+import TopicTree from "../../components/topic/TopicTree";
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useConfirm} from "../../contexts/ConfirmContext";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import type {Curriculum, LearningTopic, Lesson} from "../../types";

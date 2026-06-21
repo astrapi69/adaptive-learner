@@ -1,11 +1,12 @@
 /**
  * BottomTabBar — the mobile primary navigation (EXP-037 / #850).
  *
- * A fixed bottom tab bar with 5 items — Lernen, Inhalte, Entdecken,
+ * A fixed bottom tab bar with 5 items — Lernen, Inhalte, Lernpfad,
  * Fortschritt, and a "Mehr" button that opens a bottom sheet with the
- * secondary destinations (Lernpfad, Einstellungen, Hilfe). This is the
+ * secondary destinations (Einstellungen, Hilfe). This is the
  * expectation-matching mobile pattern (Duolingo / Quizlet / Anki) that
- * replaces a 12-entry hamburger list.
+ * replaces a 12-entry hamburger list. (#856 merged the separate "Entdecken"
+ * tab into "Inhalte" and promoted Lernpfad from the "Mehr" sheet.)
  *
  * Mobile only (``md:hidden``); the desktop grouped top bar
  * ({@link Navigation}) takes over from ``md`` up. Hidden on the
@@ -21,7 +22,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   BarChart3,
   BookOpen,
-  Compass,
   HelpCircle,
   Home,
   Map as MapIcon,
@@ -32,7 +32,7 @@ import {
 
 import NavGroup from "./NavGroup";
 import { useHelp } from "../../contexts/HelpContext";
-import { helpKeyForPath } from "../../lib/help-routes";
+import { helpKeyForPath } from "../../lib/help/help-routes";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useIsLessonActive } from "../../hooks/lesson/useIsLessonActive";
 
@@ -73,10 +73,13 @@ export default function BottomTabBar() {
 
   if (HIDE_ON.includes(pathname) || lessonActive) return null;
 
+  // #856 — "Inhalte" + "Entdecken" merged into one Content tab (the
+  // ContentHub at /content opens on its Entdecken tab). The freed slot
+  // promotes Lernpfad into the primary bar (it leaves the "Mehr" sheet).
   const tabs: TabDef[] = [
     { to: "/dashboard", icon: Home, label: t("nav.tab.learn", "Learn"), testId: "tab-learn" },
     { to: "/content", icon: BookOpen, label: t("nav.tab.content", "Content"), testId: "tab-content" },
-    { to: "/discover", icon: Compass, label: t("nav.tab.discover", "Discover"), testId: "tab-discover" },
+    { to: "/learning-path", icon: MapIcon, label: t("nav.learning_path", "Learning Path"), testId: "tab-learning-path" },
     { to: "/progress", icon: BarChart3, label: t("nav.tab.progress", "Progress"), testId: "tab-progress" },
   ];
 
@@ -147,17 +150,6 @@ export default function BottomTabBar() {
                 <X size={18} aria-hidden="true" />
               </button>
             </div>
-
-            <NavGroup label={t("nav.group.learn", "LEARN")} testId="more-group-learn">
-              <NavLink
-                to="/learning-path"
-                className="more-sheet-link flex min-h-[44px] items-center gap-3 rounded-app px-2 text-fg-primary hover:bg-bg-elevated"
-                data-testid="more-learning-path"
-              >
-                <MapIcon size={18} aria-hidden="true" />
-                {t("nav.learning_path", "Learning Path")}
-              </NavLink>
-            </NavGroup>
 
             <NavGroup label={t("nav.group.more", "MORE")} testId="more-group-utility">
               <NavLink

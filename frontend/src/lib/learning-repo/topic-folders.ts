@@ -20,6 +20,11 @@ import {formatLabel, type Labels} from "./labels";
 import type {RenderContext, TopicSlice} from "./render-context";
 import {topicFolderName} from "./topic-folder-slug";
 
+/**
+ * Build the ``{path: content}`` map of per-topic stub READMEs,
+ * one numbered ``NN_slug/README.md`` per ``ctx.topics`` slice.
+ * Returns an empty map when the project has no topic history.
+ */
 export function renderTopicFolders(
     ctx: RenderContext,
     labels: Labels,

@@ -20,13 +20,16 @@ import { useNavigate } from "react-router-dom";
 
 import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
+import { FEATURES } from "../../features/featureConfig";
+import { useFeatureAvailable } from "../../features/useFeatureAvailable";
 import HelpLink from "../../components/help/HelpLink";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useConfirm } from "../../contexts/ConfirmContext";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
-import { getDb } from "../../storage/db";
+import { getDb } from "../../storage/dexie/db";
 import { analyzeConversation } from "../../chat_import/analysis";
 import {
   detectFormat,
@@ -57,6 +60,10 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
   const tooltipsOn = useButtonTooltips();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // Gate the AI analysis the same way ImportDetail does (#911): in Dexie mode
+  // without a key the feature is disabled, so the button is disabled with a
+  // reason instead of letting the click fail.
+  const analyze = useFeatureAvailable(FEATURES.CONVERSATION_ANALYZE);
 
   const [pasteText, setPasteText] = useState("");
   const [pasteFormat, setPasteFormat] = useState<string>("unknown");
@@ -143,7 +150,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
               "This conversation was already imported. Showing the existing entry.",
             ),
           );
-          go(`/import/${existingId}`);
+          go(`/content/import/${existingId}`);
           return null;
         }
       }
@@ -337,7 +344,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
       await runAnalysisForConversation(saved.id, first.messages, first.title);
       setPasteText("");
       setPasteFormat("unknown");
-      go(`/import/${saved.id}`);
+      go(`/content/import/${saved.id}`);
     } catch (err) {
       const msg =
         err instanceof Error ? err.message : t("import.parse_error", "Could not parse the input.");
@@ -372,7 +379,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         notify.success(
           t("import.file_imported_one", "Conversation imported. Click Analyze on the detail page."),
         );
-        go(`/import/${saved[0].id}`);
+        go(`/content/import/${saved[0].id}`);
       } else {
         notify.success(
           t("import.file_imported_many", `Imported ${saved.length} conversations.`).replace(
@@ -429,6 +436,12 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
             "Paste a conversation here. We will save it and analyze it in one step.",
           )}
         </p>
+        {!analyze.available && (
+          <ApiKeyRequiredNotice
+            feature={t("ui.api_key.feature_analyze", "to analyze conversations")}
+            settingsHref="/settings?tab=integrations"
+          />
+        )}
         <textarea
           value={pasteText}
           onChange={(e) => onPasteChange(e.target.value)}
@@ -450,7 +463,8 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
           <Button
             type="button"
             onClick={quickAnalyze}
-            disabled={!pasteText.trim() || busy}
+            disabled={!pasteText.trim() || busy || !analyze.available}
+            title={analyze.tooltip}
             data-testid="quick-analyze-button"
           >
             {busy && busyAction === "analyze"
@@ -514,7 +528,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
                 key={c.id}
                 data-testid={`import-row-${c.id}`}
                 className="flex items-center gap-3 border border-border rounded-app px-4 py-3 mb-2 cursor-pointer bg-card"
-                onClick={() => go(`/import/${c.id}`)}
+                onClick={() => go(`/content/import/${c.id}`)}
               >
                 <span aria-hidden="true" className="text-2xl">
                   {SOURCE_ICONS[c.source] ?? "📄"}

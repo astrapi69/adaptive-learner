@@ -24,6 +24,8 @@
  * button doesn't render at all.
  */
 
+/** Whether the browser exposes ``window.speechSynthesis``. Gate the
+ *  read-aloud UI on this so the button never renders unsupported. */
 export function isSpeechSynthesisSupported(): boolean {
     return (
         typeof window !== "undefined" &&

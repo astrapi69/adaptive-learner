@@ -37,6 +37,7 @@ afterEach(() => {
   online = true;
   activateInBackground.mockClear();
   localStorage.clear();
+  sessionStorage.clear();
   vi.useRealTimers();
   vi.restoreAllMocks();
 });
@@ -88,11 +89,15 @@ describe("useAppUpdate", () => {
     expect(second.result.current.updateAvailable).toBe(false);
   });
 
-  // #846: a genuinely NEWER version (after the quiet window) re-offers the banner.
+  // #846: a genuinely NEWER version (after the quiet window) re-offers the banner
+  // in a FRESH session. The #845 in-session guard suppresses for the rest of the
+  // accepting session, so the cross-session re-offer is what we pin here.
   it("re-shows the banner for a newer version once the quiet window passed (#846)", async () => {
     // Record an acceptance of 999.0.0 two hours ago.
     const { recordUpdateAccepted } = await import("../../lib/pwa/update-accept");
     recordUpdateAccepted("999.0.0", Date.now() - 2 * 60 * 60 * 1000);
+    // New browser session: the in-session guard does not carry over.
+    sessionStorage.clear();
 
     // A newer deploy appears.
     mockFetchVersion("1000.0.0");

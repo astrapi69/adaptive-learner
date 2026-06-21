@@ -8,7 +8,7 @@ machst einen 12-Fragen-Test, die App findet heraus, welche
 Methoden zu dir passen, dann führen KI-gestützte Sessions
 dich durch einen Sieben-Schritt-Lernzyklus. Die App passt an,
 wie sie unterrichtet, basierend darauf, wie du tatsächlich
-lernst. **v1.20.0**, 34 Entwicklungsphasen ausgeliefert.
+lernst. **v1.91.0**, ausgeliefert über mehr als 90 Releases.
 
 [Jetzt ausprobieren](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
@@ -89,18 +89,22 @@ freigeschaltet hat.
 
 ## Status
 
-Aktive Entwicklung. **v1.20.0 wurde am 2026-05-22
-veröffentlicht** mit dateibasierter Schlüsselkonfiguration
-über `secrets.yaml` für den Desktop-Launcher-Use-Case.
-34 Entwicklungsphasen ausgeliefert.
+Aktive Entwicklung. **v1.91.0** ist ein UX-Release, das die
+Hauptnavigation von über 12 Einträgen auf 7 gruppierte
+Einträge (Nielsen-Norman 5-7) reduziert hat — ohne
+Funktionsverlust, plus einer mobilen Bottom-Tab-Leiste.
 
-- **2634 Tests** (786 Backend + 615 Plugins + 1233 Frontend
-  Vitest + 16 Playwright-Smoke-Spec-Dateien)
-- **8 Sprachen, alle voll übersetzt** (DE / EN / ES / FR /
-  EL / PT / TR / JA)
-- **10 Plugins** (Assessment / 3 KI-Anbieter / Session /
-  Tracking / Tools / Gamification / Anki / NotebookLM)
-- **25 SQLAlchemy-Modelle**, Sync-Oberfläche 28 Tabellen
+- **Über 6.000 automatisierte Tests** über Backend, Plugins
+  und Frontend (Vitest), plus einer Playwright-Smoke- und
+  Dexie-Modus-Release-Gate-Suite
+- **11 UI-Sprachen, alle voll übersetzt** (DE / EL / EN / ES /
+  FR / HI / ID / JA / KO / PT / TR)
+- **13 Plugins** (Assessment / 3 KI-Anbieter / Session /
+  Tracking / Tools / Gamification / Anki / NotebookLM /
+  Learning-Repo / Content-Loader / Missions)
+- **26 gebündelte Content-Sets** — 424 Lektionen / 5405
+  Karten über 10 Content-Sprachen und 5 Domänen
+- **30 SQLAlchemy-Modelle**, Sync-Oberfläche 30 Tabellen
 - **2 Speichermodi** (Lokal IndexedDB / FastAPI-Backend),
   plus dem `secrets.yaml`-Overlay des Desktop-Launchers
 - **MIT-lizenziert**

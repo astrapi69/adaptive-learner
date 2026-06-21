@@ -17,7 +17,7 @@ import {
     lessonResultFilename,
     type LessonResultLabels,
 } from "./result-export";
-import type {ExerciseBreakdownEntry} from "../lesson-summary";
+import type {ExerciseBreakdownEntry} from "./lesson-summary";
 import type {
     ContentLesson,
     ElementError,

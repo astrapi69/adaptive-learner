@@ -17,12 +17,12 @@ import {
 } from "./analysis";
 import type {NormalizedMessage} from "./types";
 
-vi.mock("../storage/ai-providers", () => ({
+vi.mock("../storage/ai/ai-providers", () => ({
     aiComplete: vi.fn(),
     resolveModel: vi.fn(() => "test-model"),
 }));
 
-import {aiComplete} from "../storage/ai-providers";
+import {aiComplete} from "../storage/ai/ai-providers";
 
 const mockedAiComplete = vi.mocked(aiComplete);
 

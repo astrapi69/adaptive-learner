@@ -10,13 +10,13 @@ const { readUserRepos, syncUserRepo } = vi.hoisted(() => ({
   readUserRepos: vi.fn(),
   syncUserRepo: vi.fn(),
 }));
-vi.mock("../../lib/content/content-repos", async (orig) => ({
-  ...(await orig<typeof import("../../lib/content/content-repos")>()),
+vi.mock("../../lib/content/repos/content-repos", async (orig) => ({
+  ...(await orig<typeof import("../../lib/content/repos/content-repos")>()),
   readUserRepos,
   syncUserRepo,
 }));
 
-import { isUserRepoSyncDue, SYNC_THRESHOLD_MS } from "../../lib/content/content-repos";
+import { isUserRepoSyncDue, SYNC_THRESHOLD_MS } from "../../lib/content/repos/content-repos";
 import { useContentRepoAutoSync } from "./useContentRepoAutoSync";
 
 const fresh = () => new Date().toISOString();

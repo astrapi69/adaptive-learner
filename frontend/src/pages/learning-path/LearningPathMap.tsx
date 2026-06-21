@@ -38,7 +38,7 @@ import {Progress} from "../../components/ui/progress";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {usePersonalPath} from "../../hooks/learning/usePersonalPath";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import type {PersonalPathSet} from "../../lib/learning-path/personal-path";
 import LessonRow from "../../components/learning-path/LessonRow";
 
@@ -243,7 +243,7 @@ export default function LearningPathMap({headerExtra}: LearningPathMapProps) {
                     </p>
                     <Button asChild variant="default">
                         <Link
-                            to="/content"
+                            to="/content?tab=my"
                             className="rounded-app bg-accent font-medium text-accent-fg"
                             data-testid="learning-path-to-content"
                         >

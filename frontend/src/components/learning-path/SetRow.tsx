@@ -30,7 +30,7 @@ import {Link} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {cn} from "../../lib/utils";
-import {lessonRoute} from "../../lib/content/continue-learning";
+import {lessonRoute} from "../../lib/content/browse/continue-learning";
 import {relativeTime} from "../../lib/utils/relative-time";
 import type {PersonalPathSet} from "../../lib/learning-path/personal-path";
 
