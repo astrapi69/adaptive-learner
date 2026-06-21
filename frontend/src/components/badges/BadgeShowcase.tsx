@@ -12,8 +12,8 @@
  * underlying name_key text.
  */
 
-import {useI18n} from "../hooks/ui/useI18n";
-import type {BadgeWithProgress} from "../storage/types";
+import {useI18n} from "../../hooks/ui/useI18n";
+import type {BadgeWithProgress} from "../../storage/types";
 
 const ICON_GLYPH: Record<string, string> = {
     rocket: "🚀",
