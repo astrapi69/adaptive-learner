@@ -27,7 +27,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import ContinueLearning from "../../components/ContinueLearning";
+import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import ImportLessonModal from "../../components/content/ImportLessonModal";
 import MyLessonsSection from "../../components/content/MyLessonsSection";
 import ContentTree from "../../components/content/ContentTree";

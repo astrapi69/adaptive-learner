@@ -20,9 +20,9 @@ import { useNavigate } from "react-router-dom";
 import { useFeatureAvailable } from "../../features/useFeatureAvailable";
 
 import { Button } from "@/components/ui/button";
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
-import MicButton from "../../components/MicButton";
-import SpeechButton from "../../components/SpeechButton";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
+import MicButton from "../../components/voice/MicButton";
+import SpeechButton from "../../components/voice/SpeechButton";
 import { ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";

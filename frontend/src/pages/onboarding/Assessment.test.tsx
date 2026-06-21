@@ -47,7 +47,7 @@ vi.mock("../../utils/notify", () => ({
 // ResponsiveContainer goes wide on dimensions that happy-dom
 // fudges, and the chart's rendering is orthogonal to the page
 // behaviour we want to pin here.
-vi.mock("../../components/ProfileRadar", () => ({
+vi.mock("../../components/progress/ProfileRadar", () => ({
     default: ({profile}: {profile: LearningProfile}) => (
         <div data-testid="profile-radar">
             {`${profile.dominant_method}@${profile.version}`}

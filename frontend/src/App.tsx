@@ -12,24 +12,24 @@ import "react-toastify/dist/ReactToastify.css";
 import "./styles/toast-theme.css";
 
 import type { ApiError } from "./api/client";
-import ErrorBoundary from "./components/ErrorBoundary";
+import ErrorBoundary from "./components/error/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
-import GlobalShortcuts from "./components/GlobalShortcuts";
-import UpdatePromptHost from "./components/UpdatePromptHost";
-import DesktopUpdateHost from "./components/DesktopUpdateHost";
+import GlobalShortcuts from "./components/a11y/GlobalShortcuts";
+import UpdatePromptHost from "./components/pwa/UpdatePromptHost";
+import DesktopUpdateHost from "./components/pwa/DesktopUpdateHost";
 import HelpDrawer from "./components/help/HelpDrawer";
-import InstallPrompt from "./components/InstallPrompt";
-import ReminderScheduler from "./components/ReminderScheduler";
-import Navigation from "./components/Navigation";
+import InstallPrompt from "./components/pwa/InstallPrompt";
+import ReminderScheduler from "./components/settings/controls/ReminderScheduler";
+import Navigation from "./components/nav/Navigation";
 import BottomTabBar from "./components/nav/BottomTabBar";
-import OfflineIndicator from "./components/OfflineIndicator";
+import OfflineIndicator from "./components/pwa/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
 import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/onboarding/Landing";
-import SkipToContent from "./components/SkipToContent";
+import SkipToContent from "./components/a11y/SkipToContent";
 
 // Route-level code-splitting. Landing stays in the main bundle as
 // the entry route; everything else loads on first navigation. See
@@ -59,8 +59,8 @@ const Settings = lazyWithReload(() => import("./pages/system/Settings"));
 // Lazy-loaded so ``eventRecorder`` (statically imported inside both
 // components) lands in its own chunk instead of the main bundle.
 // See BUNDLE-SIZE-DYNAMIC-IMPORT-01.
-const EventRecorderSetup = lazyWithReload(() => import("./components/EventRecorderSetup"));
-const ErrorReportDialog = lazyWithReload(() => import("./components/ErrorReportDialog"));
+const EventRecorderSetup = lazyWithReload(() => import("./components/error/EventRecorderSetup"));
+const ErrorReportDialog = lazyWithReload(() => import("./components/error/ErrorReportDialog"));
 
 /**
  * Application root. Three concentric layers:
