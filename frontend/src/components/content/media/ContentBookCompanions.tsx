@@ -5,7 +5,7 @@
  * gate; renders nothing when no source has a companion book.
  */
 
-import type { BookMetadata } from "../../lib/content/media/book-companion";
+import type { BookMetadata } from "../../../lib/content/media/book-companion";
 import BookCompanion from "./BookCompanion";
 
 interface ContentBookCompanionsProps {

@@ -32,7 +32,7 @@ import ImportLessonModal from "../../components/content/lessons/ImportLessonModa
 import MyLessonsSection from "../../components/content/lessons/MyLessonsSection";
 import ContentTree from "../../components/content/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
-import ContentBookCompanions from "../../components/content/ContentBookCompanions";
+import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
 import ContentContributionsSection from "../../components/content/ContentContributionsSection";
 import ContentToolbar from "../../components/content/ContentToolbar";
 import ContentSearchResults from "../../components/content/ContentSearchResults";

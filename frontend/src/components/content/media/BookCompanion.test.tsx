@@ -1,7 +1,7 @@
 import {render, screen} from "@testing-library/react";
 import {describe, expect, it} from "vitest";
 
-import type {BookMetadata} from "../../lib/content/media/book-companion";
+import type {BookMetadata} from "../../../lib/content/media/book-companion";
 import BookCompanion from "./BookCompanion";
 
 function book(over: Partial<BookMetadata> = {}): BookMetadata {

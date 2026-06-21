@@ -17,8 +17,8 @@ import { BookOpen, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-import { useI18n } from "../../hooks/ui/useI18n";
-import type { BookMetadata } from "../../lib/content/media/book-companion";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import type { BookMetadata } from "../../../lib/content/media/book-companion";
 
 export interface BookCompanionProps {
   book: BookMetadata;

@@ -19,8 +19,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { useI18n } from "../../hooks/ui/useI18n";
-import type { MediaResource, MediaType } from "../../lib/content/media/media-loader";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import type { MediaResource, MediaType } from "../../../lib/content/media/media-loader";
 
 interface SetMediaBadgesProps {
   /** All media available for the set (already filtered to its domain +

@@ -2,10 +2,10 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { MediaResource } from "../../lib/content/media/media-loader";
+import type { MediaResource } from "../../../lib/content/media/media-loader";
 import SetMediaBadges from "./SetMediaBadges";
 
-vi.mock("../../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_k: string, fallback: string) => fallback,
     lang: "en",

@@ -23,7 +23,7 @@ import { languageDisplayName } from "../../lib/content/language/language-names";
 import { booksForDomain, type BookRecommendations } from "../../lib/content/media/book-recommendations";
 import { mediaForDomain, type MediaResource } from "../../lib/content/media/media-loader";
 import type { ContentSetEntry } from "../../storage/types";
-import BookRecommendationsSection from "./BookRecommendations";
+import BookRecommendationsSection from "./media/BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import FoldedUserLessons from "./lessons/FoldedUserLessons";
