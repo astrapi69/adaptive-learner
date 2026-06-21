@@ -12,21 +12,21 @@
 
 import { Brain, Calculator, ChevronDown, ChevronRight, Code, GraduationCap } from "lucide-react";
 
-import { useI18n } from "../../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   buildContentTree,
   type FoldedUserLesson,
   type SourceGroup,
   type TargetGroup,
-} from "../../lib/content/browse/content-tree";
-import { languageDisplayName } from "../../lib/content/language/language-names";
-import { booksForDomain, type BookRecommendations } from "../../lib/content/media/book-recommendations";
-import { mediaForDomain, type MediaResource } from "../../lib/content/media/media-loader";
-import type { ContentSetEntry } from "../../storage/types";
-import BookRecommendationsSection from "./media/BookRecommendations";
+} from "../../../lib/content/browse/content-tree";
+import { languageDisplayName } from "../../../lib/content/language/language-names";
+import { booksForDomain, type BookRecommendations } from "../../../lib/content/media/book-recommendations";
+import { mediaForDomain, type MediaResource } from "../../../lib/content/media/media-loader";
+import type { ContentSetEntry } from "../../../storage/types";
+import BookRecommendationsSection from "../media/BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
-import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
-import FoldedUserLessons from "./lessons/FoldedUserLessons";
+import type { AiCheckBadgeStatus } from "../../../shared/status/AiCheckedBadge";
+import FoldedUserLessons from "../lessons/FoldedUserLessons";
 
 /** Per-row state + actions forwarded down to {@link ContentSetRow}. */
 export interface ContentSetRowActions {

@@ -14,7 +14,7 @@
 import { Check, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { useI18n } from "../../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 
 interface CodeBlockProps {
   code: string;
@@ -33,7 +33,7 @@ export default function CodeBlock({ code, language, output }: CodeBlockProps) {
     let cancelled = false;
     void (async () => {
       try {
-        const hljs = (await import("../../lib/content/media/hljs")).default;
+        const hljs = (await import("../../../lib/content/media/hljs")).default;
         const lang =
           language && hljs.getLanguage(language) ? language : null;
         // highlight.js HTML-escapes the input and only adds its own

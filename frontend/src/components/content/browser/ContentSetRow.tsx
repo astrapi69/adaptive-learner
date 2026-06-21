@@ -14,13 +14,13 @@ import { BookOpen, Download, FolderOpen, ListChecks, Sparkles } from "lucide-rea
 
 import { Button } from "@/components/ui/button";
 
-import ListRow from "../../shared/layout/ListRow";
-import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
-import { useI18n } from "../../hooks/ui/useI18n";
-import { isOfficialSource } from "../../lib/content/repos/content-repos";
-import type { MediaResource } from "../../lib/content/media/media-loader";
-import type { ContentSetEntry } from "../../storage/types";
-import SetMediaBadges from "./media/SetMediaBadges";
+import ListRow from "../../../shared/layout/ListRow";
+import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../../shared/status/AiCheckedBadge";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { isOfficialSource } from "../../../lib/content/repos/content-repos";
+import type { MediaResource } from "../../../lib/content/media/media-loader";
+import type { ContentSetEntry } from "../../../storage/types";
+import SetMediaBadges from "../media/SetMediaBadges";
 
 export type DownloadState = "idle" | "downloading" | "done" | "error";
 

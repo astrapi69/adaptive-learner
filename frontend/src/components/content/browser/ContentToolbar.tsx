@@ -23,7 +23,7 @@ import type { NavigateFunction } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useI18n } from "../../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 
 interface ContentToolbarProps {
   searchQuery: string;

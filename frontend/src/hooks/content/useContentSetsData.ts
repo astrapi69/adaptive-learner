@@ -13,7 +13,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import type { DownloadState } from "../../components/content/ContentSetRow";
+import type { DownloadState } from "../../components/content/browser/ContentSetRow";
 import {
   type BookRecommendations,
   fetchBookRecommendations,
