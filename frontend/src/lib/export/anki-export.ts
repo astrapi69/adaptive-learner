@@ -13,7 +13,7 @@
  */
 
 import {downloadBlob} from "../lesson/result-download";
-import type {ContentLessonCard} from "../../storage/types/content";
+import type {ContentLessonCard} from "../../storage/types/content/content";
 
 /** Minimal front/back/tags shape — all an Anki Basic note needs. */
 export interface AnkiExportCard {

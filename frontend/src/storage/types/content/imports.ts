@@ -10,7 +10,7 @@ import type {
   ImportedConversationCreateBody,
   ImportedConversationDetail,
   ImportedConversationUpdateBody,
-} from "../../types/domain";
+} from "../../../types/domain";
 
 export interface IImportsNamespace {
   list(userId: string): Promise<ImportedConversation[]>;

@@ -12,7 +12,7 @@
 
 import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../../lib/constants";
 import type {AttemptRecord} from "../types/element-errors";
-import type {ContentSetBook} from "../types/content";
+import type {ContentSetBook} from "../types/content/content";
 
 // ---- Row shapes (mirror backend Pydantic Out-schemas) -----------------
 
