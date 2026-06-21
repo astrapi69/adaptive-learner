@@ -60,6 +60,32 @@ describe("partitionModels — openai", () => {
     ]);
     expect(ids(rest)).toEqual(["gpt-3.5-turbo", "dall-e-3"]);
   });
+
+  it("does not mis-claim a 2nd gpt-4o-mini variant as gpt-4o (#928 regression)", () => {
+    const { recommended, rest } = partitionModels(
+      "openai",
+      models(
+        "gpt-4o-mini-2024-07-18",
+        "gpt-4o-mini-2024-05-13",
+        "gpt-4o-2024-08-06",
+      ),
+    );
+    // Recommended is exactly one mini (newest) + the real gpt-4o.
+    expect(ids(recommended)).toEqual([
+      "gpt-4o-mini-2024-07-18",
+      "gpt-4o-2024-08-06",
+    ]);
+    // The leftover mini variant goes to "All models", not Recommended.
+    expect(ids(rest)).toEqual(["gpt-4o-mini-2024-05-13"]);
+  });
+
+  it("shows o3-mini even when no gpt-4o models exist", () => {
+    const { recommended } = partitionModels(
+      "openai",
+      models("o3-mini-2025-01-31", "gpt-3.5-turbo"),
+    );
+    expect(ids(recommended)).toEqual(["o3-mini-2025-01-31"]);
+  });
 });
 
 describe("partitionModels — fallback", () => {

@@ -45,6 +45,10 @@ export interface PartitionedModels<T extends ModelLike> {
  * Split a provider's model list into a curated "recommended" group (one model
  * per {@link RECOMMENDED_MODELS} family, newest match per family) and the rest.
  *
+ * Each model is owned by the FIRST (most specific) family it matches, so a
+ * ``gpt-4o-mini`` variant can never be mis-claimed by the broader ``gpt-4o``
+ * family — even when the api returns several dated mini variants (#928).
+ *
  * Falls back to the original "first 3" heuristic when NO model matches any
  * recommended family (an unexpected provider id scheme), so the Recommended
  * group is never empty when models exist.
@@ -54,22 +58,28 @@ export function partitionModels<T extends ModelLike>(
   models: readonly T[],
 ): PartitionedModels<T> {
   const families = RECOMMENDED_MODELS[provider] ?? [];
+  // The most-specific family a model belongs to (first match in list order),
+  // or -1 when it matches none. Families are ordered specific→broad, so
+  // "gpt-4o-mini" claims its models before the broader "gpt-4o" is considered.
+  const owningFamily = (id: string): number => {
+    for (let i = 0; i < families.length; i++) {
+      if (id.startsWith(families[i])) return i;
+    }
+    return -1;
+  };
   const recommended: T[] = [];
-  const claimed = new Set<string>();
-  for (const family of families) {
-    // Prefer the newest dated variant of the family (lexically-largest id),
-    // so "claude-sonnet-4-20250514" beats an older "claude-sonnet-4-...".
+  for (let i = 0; i < families.length; i++) {
+    // Among the models OWNED by family i, prefer the newest variant
+    // (lexically-largest id, e.g. "claude-sonnet-4-20250514" beats an older one).
     let best: T | null = null;
     for (const m of models) {
-      if (claimed.has(m.id) || !m.id.startsWith(family)) continue;
+      if (owningFamily(m.id) !== i) continue;
       if (best === null || m.id > best.id) best = m;
     }
-    if (best) {
-      recommended.push(best);
-      claimed.add(best.id);
-    }
+    if (best) recommended.push(best);
   }
-  const rest = models.filter((m) => !claimed.has(m.id));
+  const recommendedIds = new Set(recommended.map((m) => m.id));
+  const rest = models.filter((m) => !recommendedIds.has(m.id));
   if (recommended.length === 0 && models.length > 0) {
     return { recommended: models.slice(0, 3), rest: models.slice(3) };
   }
