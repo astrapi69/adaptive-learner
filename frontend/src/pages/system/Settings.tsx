@@ -36,7 +36,7 @@ import { Feature } from "@astrapi69/feature-strategy-react";
 import { FEATURES } from "../../features/featureConfig";
 import VoiceSettingsSection from "../../components/VoiceSettingsSection";
 import AiSettingsPanel from "../../components/AiSettingsPanel";
-import SyncSection from "../../components/SyncSection";
+import SyncSection from "../../components/sync/SyncSection";
 import ThemePicker from "../../components/ThemePicker";
 import AvatarUpload from "../../shared/media/AvatarUpload";
 import SelectiveExportSection from "../../components/SelectiveExportSection";

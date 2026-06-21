@@ -26,20 +26,20 @@
 import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../api/client";
-import {useI18n} from "../hooks/ui/useI18n";
-import {extractJsonObject} from "../lib/extract-json";
-import {readLearnerState} from "../lib/learnerState";
-import {getStorage} from "../storage";
-import {getDb} from "../storage/dexie/db";
-import {aiComplete, resolveModel} from "../storage/ai/ai-providers";
+import {ApiError} from "../../api/client";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {extractJsonObject} from "../../lib/extract-json";
+import {readLearnerState} from "../../lib/learnerState";
+import {getStorage} from "../../storage";
+import {getDb} from "../../storage/dexie/db";
+import {aiComplete, resolveModel} from "../../storage/ai/ai-providers";
 import type {
     ConflictBundle,
     ConflictChoice,
     ConflictResolution,
-} from "../storage/sync/sync-engine";
-import {notify} from "../utils/notify";
-import type {AIProvider} from "../lib/constants";
+} from "../../storage/sync/sync-engine";
+import {notify} from "../../utils/notify";
+import type {AIProvider} from "../../lib/constants";
 
 interface DialogProps {
     conflicts: ConflictBundle[];

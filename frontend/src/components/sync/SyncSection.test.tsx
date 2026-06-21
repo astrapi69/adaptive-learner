@@ -13,15 +13,15 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 
 import SyncSection from "./SyncSection";
-import {I18nProvider} from "../hooks/ui/useI18n";
-import {_resetStorageCacheForTests} from "../storage";
+import {I18nProvider} from "../../hooks/ui/useI18n";
+import {_resetStorageCacheForTests} from "../../storage";
 import {
     writeSyncConfig,
     writeLastSyncAt,
     appendSyncHistory,
-} from "../storage/sync/sync-engine";
+} from "../../storage/sync/sync-engine";
 
-vi.mock("../utils/notify", () => ({
+vi.mock("../../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
@@ -30,7 +30,7 @@ vi.mock("../utils/notify", () => ({
 // and emits unrecoverable errors). The modal's overlay /
 // open-close lifecycle is the surface we want to pin here; the
 // scanner-internal behaviour lives in QRScanner.test.tsx.
-vi.mock("./sync/QRScanner", () => ({
+vi.mock("./QRScanner", () => ({
     default: () => null,
 }));
 

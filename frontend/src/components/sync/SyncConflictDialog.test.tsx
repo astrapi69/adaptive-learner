@@ -15,15 +15,15 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {render, screen, fireEvent} from "@testing-library/react";
 
 import SyncConflictDialog, {parseMergeResponse} from "./SyncConflictDialog";
-import {I18nProvider} from "../hooks/ui/useI18n";
-import {ApiError} from "../api/client";
-import type {ConflictBundle, ConflictResolution} from "../storage/sync/sync-engine";
+import {I18nProvider} from "../../hooks/ui/useI18n";
+import {ApiError} from "../../api/client";
+import type {ConflictBundle, ConflictResolution} from "../../storage/sync/sync-engine";
 
-vi.mock("../utils/notify", () => ({
+vi.mock("../../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
-vi.mock("../storage/ai/ai-providers", () => ({
+vi.mock("../../storage/ai/ai-providers", () => ({
     aiComplete: vi.fn(),
     resolveModel: vi.fn(() => "test-model"),
 }));
