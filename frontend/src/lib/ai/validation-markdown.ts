@@ -40,10 +40,17 @@ export function buildValidationMarkdown(args: {
   headers: ValidationMarkdownHeaders;
   /** Shown in place of the table when there are no issues. */
   allOkLine: string;
+  /** Optional provenance lines under the heading, e.g.
+   *  "Checked with: Anthropic Claude (claude-…)" + "Date: 2026-…". */
+  metaLines?: readonly string[];
 }): string {
   const lines: string[] = [];
   lines.push(`# AI content check: ${args.setName}`);
   lines.push("");
+  for (const meta of args.metaLines ?? []) {
+    if (meta) lines.push(meta);
+  }
+  if (args.metaLines && args.metaLines.some((m) => m)) lines.push("");
   lines.push(args.summaryLine);
   lines.push("");
   if (args.rows.length === 0) {

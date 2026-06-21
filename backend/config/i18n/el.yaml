@@ -2047,6 +2047,8 @@ content:
       stale: "Elegxos TN xronismenos"
       invalid: "MI egkuros elegxos TN"
     last_checked: "Teleutaios elegxos: {when}"
+    checked_with: "Ελέγχθηκε με"
+    date: "Ημερομηνία"
     recheck: "Epanelegxos"
     export:
       button: "Exagwgi anaforas se Markdown"

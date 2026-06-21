@@ -2047,6 +2047,8 @@ content:
       stale: "Verification IA obsolete"
       invalid: "Verification IA invalide"
     last_checked: "Derniere verification : {when}"
+    checked_with: "Vérifié avec"
+    date: "Date"
     recheck: "Reverifier"
     export:
       button: "Exporter le rapport en Markdown"

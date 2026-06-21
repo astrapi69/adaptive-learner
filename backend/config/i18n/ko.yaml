@@ -2056,6 +2056,8 @@ content:
       stale: "AI 검사 오래됨"
       invalid: "AI 검사 무효"
     last_checked: "마지막 검사: {when}"
+    checked_with: "검사 도구"
+    date: "날짜"
     recheck: "다시 검사"
     export:
       button: "보고서를 마크다운으로 내보내기"

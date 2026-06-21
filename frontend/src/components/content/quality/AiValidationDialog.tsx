@@ -24,6 +24,7 @@ import {
   buildValidationMarkdown,
   type ValidationMarkdownRow,
 } from "../../../lib/ai/validation-markdown";
+import { checkedWithLine } from "../../../lib/ai/validation-provenance";
 import { downloadBlob } from "../../../lib/lesson/result-download";
 import type { AIProvider } from "../../../lib/constants";
 import type { ContentSetEntry } from "../../../storage/types";
@@ -70,6 +71,23 @@ export default function AiValidationDialog({
       ? Math.round((state.progress.current / state.progress.total) * 100)
       : 0;
 
+  const formatCheckedAt = (iso: string | null): string => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
+  };
+
+  // #940 — surface which provider + model ran the check (read from the run,
+  // never hardcoded). Empty for an older cached report without provenance.
+  const providerLabel = state.provider
+    ? t(`settings.provider_${state.provider}`, state.provider)
+    : "";
+  const checkedWith = checkedWithLine({
+    prefix: t("content.ai_check.checked_with", "Checked with"),
+    providerLabel,
+    model: state.model,
+  });
+
   const handleExportMarkdown = () => {
     const rows: ValidationMarkdownRow[] = state.issueRows.flatMap((row) =>
       row.result.issues.map((issue) => ({
@@ -94,15 +112,15 @@ export default function AiValidationDialog({
       },
       allOkLine: t("content.ai_check.report.all_ok", "All cards passed. No issues found."),
       rows,
+      metaLines: [
+        checkedWith,
+        state.checkedAt
+          ? `${t("content.ai_check.date", "Date")}: ${formatCheckedAt(state.checkedAt)}`
+          : "",
+      ],
     });
     const slug = entry.id.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
     downloadBlob(markdown, `ai-check-${slug}.md`, "text/markdown");
-  };
-
-  const formatCheckedAt = (iso: string | null): string => {
-    if (!iso) return "";
-    const d = new Date(iso);
-    return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
   };
 
   return (
@@ -241,6 +259,14 @@ export default function AiValidationDialog({
               items={reportItems}
               testId="ai-validation-report"
             />
+            {checkedWith && (
+              <p
+                className="text-xs text-fg-muted"
+                data-testid="ai-validation-checked-with"
+              >
+                {checkedWith}
+              </p>
+            )}
             <div className="form-actions">
               <Button
                 type="button"

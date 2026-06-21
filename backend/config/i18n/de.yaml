@@ -2050,6 +2050,8 @@ content:
       stale: "KI-Pruefung veraltet"
       invalid: "KI-Pruefung ungueltig"
     last_checked: "Letzte Pruefung: {when}"
+    checked_with: "Geprüft mit"
+    date: "Datum"
     recheck: "Erneut pruefen"
     export:
       button: "Bericht als Markdown exportieren"
