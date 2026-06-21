@@ -9,11 +9,11 @@ import type {
   LearningProjectUpdateBody,
   UserCreateBody,
   UserUpdateBody,
-} from "../../api/request-types";
+} from "../../../api/request-types";
 import type {
   LearningProject,
   User,
-} from "../../types/domain";
+} from "../../../types/domain";
 
 export interface IUsersNamespace {
   create(body: UserCreateBody): Promise<User>;

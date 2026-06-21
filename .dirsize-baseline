@@ -4,5 +4,4 @@
 # `check-folder-size.sh`). This file IS the folder-size whitelist; every
 # entry below is a known god-folder with a follow-up issue tracking its split.
 # Format: path  # reason / tracking issue
-frontend/src/storage/types       # 18 files — IStorageService type slices, split tracked
 frontend/src/lib/ai              # 16 files — AI generation/validation helpers, split tracked (#917)

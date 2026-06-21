@@ -21,20 +21,20 @@
  */
 
 
-export * from "./users";
-export * from "./settings";
-export * from "./github";
-export * from "./session";
-export * from "./content";
-export * from "./lesson-progress";
-export * from "./element-errors";
-export * from "./missions";
-export * from "./curricula";
-export * from "./learning-repo";
-export * from "./system";
-export * from "./anki";
-export * from "./notebooklm";
-export * from "./pronunciation";
-export * from "./gamification";
-export * from "./imports";
-export * from "./service";
+export * from "./core/users";
+export * from "./core/settings";
+export * from "./integrations/github";
+export * from "./core/session";
+export * from "./content/content";
+export * from "./content/lesson-progress";
+export * from "./learning/element-errors";
+export * from "./learning/missions";
+export * from "./content/curricula";
+export * from "./integrations/learning-repo";
+export * from "./core/system";
+export * from "./integrations/anki";
+export * from "./integrations/notebooklm";
+export * from "./learning/pronunciation";
+export * from "./learning/gamification";
+export * from "./content/imports";
+export * from "./core/service";

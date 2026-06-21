@@ -11,14 +11,14 @@ import type {
   LessonUpdateBody,
   TopicCreateBody,
   TopicUpdateBody,
-} from "../../api/request-types";
+} from "../../../api/request-types";
 import type {
   Curriculum,
   LearningTopic,
   Lesson,
   SpacedRecommendation,
   ToolRecommendation,
-} from "../../types/domain";
+} from "../../../types/domain";
 
 export interface IToolsNamespace {
   recommendations(projectId: string, lang: string): Promise<ToolRecommendation[]>;
