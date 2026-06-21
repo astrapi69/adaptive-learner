@@ -39,7 +39,7 @@ import {readLearnerState} from "../../lib/learning/learnerState";
 import {
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,
-} from "../../lib/review-lesson";
+} from "../../lib/review/review-lesson";
 import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
 import {stampHintUsage} from "../../lib/hints/hint-usage";
 import {getStorage} from "../../storage";

@@ -48,7 +48,7 @@
  *   preserving queue order. No theory steps.
  */
 
-import {generateClozeFromError} from "./exercises/cloze-generator";
+import {generateClozeFromError} from "../exercises/cloze-generator";
 import type {
     ContentLesson,
     ContentLessonCard,
@@ -56,7 +56,7 @@ import type {
     ContentLessonStep,
     ElementError,
     ReviewQueueItem,
-} from "../storage/types";
+} from "../../storage/types";
 
 export const DEFAULT_REVIEW_LIMIT = 10;
 

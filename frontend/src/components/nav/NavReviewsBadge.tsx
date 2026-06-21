@@ -16,7 +16,7 @@ import {NavLink, useLocation} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {readLearnerState} from "../../lib/learning/learnerState";
-import {dedupeReviewQueueByElement} from "../../lib/review-lesson";
+import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {subscribeCelebration} from "../../lib/praise/celebration-bus";
 import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";

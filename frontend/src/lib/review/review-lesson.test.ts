@@ -22,7 +22,7 @@ import type {
     ContentLesson,
     ContentLessonExercise,
     ReviewQueueItem,
-} from "../storage/types";
+} from "../../storage/types";
 
 function makeExercise(
     id: string,

@@ -20,7 +20,7 @@ import type {
     ContentLessonExercise,
     ContentLessonStep,
     ReviewQueueItem,
-} from "../storage/types";
+} from "../../storage/types";
 
 function matchingExercise(id: string): ContentLessonExercise {
     return {
