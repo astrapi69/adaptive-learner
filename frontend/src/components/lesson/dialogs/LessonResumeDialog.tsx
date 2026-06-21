@@ -19,8 +19,8 @@ import {useRef} from "react";
 import {PlayCircle, RotateCcw} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
-import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
-import {useI18n} from "../../hooks/ui/useI18n";
+import {useDialogFocus} from "../../../hooks/ui/useDialogFocus";
+import {useI18n} from "../../../hooks/ui/useI18n";
 
 export interface LessonResumeDialogProps {
     open: boolean;

@@ -25,7 +25,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import LessonResumeDialog from "../../components/lesson/LessonResumeDialog";
+import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
 import LessonSummary from "../../components/lesson/LessonSummary";
 import LessonResources from "../../components/lesson/LessonResources";
 import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
