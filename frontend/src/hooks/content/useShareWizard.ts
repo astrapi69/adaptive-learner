@@ -24,13 +24,13 @@ import {
   type ValidationIssue,
   type ValidationMeta,
   type ValidationResult,
-} from "../../lib/content/content-validator";
+} from "../../lib/content/validation/content-validator";
 import {
   detectDuplicate,
   extractSupplement,
   markAsVariation,
   type DuplicateResult,
-} from "../../lib/content/duplicate-detection";
+} from "../../lib/content/validation/duplicate-detection";
 import {
   buildPrBody,
   buildPrTitle,

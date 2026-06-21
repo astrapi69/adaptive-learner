@@ -10,7 +10,7 @@
  * slice over {@link detectGaps}.
  */
 
-import { detectGaps } from "../../lib/content/gap-detector";
+import { detectGaps } from "../../lib/content/validation/gap-detector";
 import { languageDisplayName } from "../../lib/content/language-names";
 import { useI18n } from "../../hooks/ui/useI18n";
 import type { ContentSetEntry } from "../../storage/types";

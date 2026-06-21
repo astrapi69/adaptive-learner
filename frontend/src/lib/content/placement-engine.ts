@@ -23,7 +23,7 @@
 
 import type { ContentLessonCard, ContentSetEntry } from "../../storage/types";
 import { detectTargetLanguage, slugify } from "./analysis-to-lesson";
-import { treePlacement } from "./content-validator";
+import { treePlacement } from "./validation/content-validator";
 
 export interface PlacementMeta {
   source_language: string;

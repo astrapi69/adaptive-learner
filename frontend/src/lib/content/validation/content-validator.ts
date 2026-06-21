@@ -13,7 +13,7 @@
  * keys, so error messages stay translatable and specific.
  */
 
-import type { ContentLesson } from "../../storage/types";
+import type { ContentLesson } from "../../../storage/types";
 
 export interface ValidationMeta {
   title: string;

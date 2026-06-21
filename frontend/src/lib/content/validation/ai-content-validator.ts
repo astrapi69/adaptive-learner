@@ -14,8 +14,8 @@
  * so it works in both modes (Dexie = browser-direct, API = backend).
  */
 
-import type { ContentLesson } from "../../storage/types";
-import { extractJsonObject } from "../extract-json";
+import type { ContentLesson } from "../../../storage/types";
+import { extractJsonObject } from "../../extract-json";
 import type { ValidationMeta } from "./content-validator";
 
 // #252 — the type shapes moved to a pure module so type-only consumers

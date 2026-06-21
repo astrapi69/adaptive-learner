@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { ContentLesson, ContentSetEntry } from "../../storage/types";
+import type { ContentLesson, ContentSetEntry } from "../../../storage/types";
 import {
   compareLessons,
   detectDuplicate,

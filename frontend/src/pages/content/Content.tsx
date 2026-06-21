@@ -50,7 +50,7 @@ import {
   type FoldedUserLesson,
 } from "../../lib/content/content-tree";
 import { computeUserFold } from "../../lib/content/user-fold";
-import { resolveAiCheckDisabledReason } from "../../lib/content/ai-check-gate";
+import { resolveAiCheckDisabledReason } from "../../lib/content/validation/ai-check-gate";
 import {
   listContributions,
   recordContribution,

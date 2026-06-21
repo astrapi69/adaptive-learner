@@ -13,7 +13,7 @@ import type {
   ContentLessonExercise,
   ContentLessonStep,
   ContentSetEntry,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 function baseLang(code: string): string {
   return (code || "").split("-")[0].toLowerCase();

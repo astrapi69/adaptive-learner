@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { ContentLesson } from "../../storage/types";
+import type { ContentLesson } from "../../../storage/types";
 import {
   QUALITY,
   treePlacement,

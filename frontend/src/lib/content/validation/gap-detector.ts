@@ -16,7 +16,7 @@
  * lesson content and are intentionally out of scope here.
  */
 
-import type { ContentSetEntry } from "../../storage/types";
+import type { ContentSetEntry } from "../../../storage/types";
 
 /** CEFR ladder, lowercase, low → high. */
 export const CEFR_LADDER = ["a1", "a2", "b1", "b2", "c1", "c2"] as const;

@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import type { ContentSetEntry } from "../../storage/types";
+import type { ContentSetEntry } from "../../../storage/types";
 import { detectGaps } from "./gap-detector";
 
 function set(

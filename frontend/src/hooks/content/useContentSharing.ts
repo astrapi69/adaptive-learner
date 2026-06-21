@@ -17,8 +17,8 @@ import {
   validateSetForSharing,
   type ValidationIssue,
   type ValidationResult,
-} from "../../lib/content/content-validator";
-import type { AiValidationResult } from "../../lib/content/ai-content-validator";
+} from "../../lib/content/validation/content-validator";
+import type { AiValidationResult } from "../../lib/content/validation/ai-content-validator";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
 import { readLearnerState } from "../../lib/learnerState";
 import { getStorage } from "../../storage";

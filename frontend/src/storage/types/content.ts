@@ -4,7 +4,7 @@
  * Split out of the former ``storage/types.ts`` god-file (#354).
  */
 
-import type { AiValidationResult } from "../../lib/content/content-validation-types";
+import type { AiValidationResult } from "../../lib/content/validation/content-validation-types";
 
 export interface ContentSetEntry {
   source: string;
