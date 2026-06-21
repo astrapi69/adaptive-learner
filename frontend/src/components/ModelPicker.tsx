@@ -32,6 +32,7 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/ui/useI18n";
 import type {AIProvider} from "../lib/constants";
+import {partitionModels} from "../lib/ai/model-recommendations";
 import {getStorage} from "../storage";
 import type {AvailableModel} from "../storage/types";
 
@@ -52,8 +53,6 @@ type FetchState =
     | {kind: "loading"}
     | {kind: "loaded"; models: AvailableModel[]}
     | {kind: "error"; detail: string};
-
-const RECOMMENDED_LIMIT = 3;
 
 export function ModelPicker({
     userId,
@@ -136,8 +135,9 @@ export function ModelPicker({
         );
     }, [draft, fetchState]);
 
-    const recommended = filtered.slice(0, RECOMMENDED_LIMIT);
-    const rest = filtered.slice(RECOMMENDED_LIMIT);
+    // Curated grouping shared by all three providers (#917): pull the
+    // recommended families to the top instead of the provider's raw order.
+    const {recommended, rest} = partitionModels(provider, filtered);
 
     const showStaticFallback =
         fetchState.kind === "error" || (fetchState.kind === "loaded" && filtered.length === 0);
