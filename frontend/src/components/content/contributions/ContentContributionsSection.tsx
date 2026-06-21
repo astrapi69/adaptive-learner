@@ -5,11 +5,11 @@
  * are no contributions.
  */
 
-import { useI18n } from "../../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   CONTRIBUTOR_THRESHOLD,
   type SharedContribution,
-} from "../../lib/content/placement/contribution-history";
+} from "../../../lib/content/placement/contribution-history";
 
 interface ContentContributionsSectionProps {
   contributions: SharedContribution[];

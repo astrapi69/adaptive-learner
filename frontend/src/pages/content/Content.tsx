@@ -33,10 +33,10 @@ import MyLessonsSection from "../../components/content/lessons/MyLessonsSection"
 import ContentTree from "../../components/content/browser/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
-import ContentContributionsSection from "../../components/content/ContentContributionsSection";
+import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
 import ContentToolbar from "../../components/content/browser/ContentToolbar";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
-import ContentGapsSection from "../../components/content/ContentGapsSection";
+import ContentGapsSection from "../../components/content/contributions/ContentGapsSection";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";

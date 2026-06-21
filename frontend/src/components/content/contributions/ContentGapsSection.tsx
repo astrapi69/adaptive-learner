@@ -10,10 +10,10 @@
  * slice over {@link detectGaps}.
  */
 
-import { detectGaps } from "../../lib/content/validation/gap-detector";
-import { languageDisplayName } from "../../lib/content/language/language-names";
-import { useI18n } from "../../hooks/ui/useI18n";
-import type { ContentSetEntry } from "../../storage/types";
+import { detectGaps } from "../../../lib/content/validation/gap-detector";
+import { languageDisplayName } from "../../../lib/content/language/language-names";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import type { ContentSetEntry } from "../../../storage/types";
 
 interface ContentGapsSectionProps {
   downloadedSets: ContentSetEntry[];
