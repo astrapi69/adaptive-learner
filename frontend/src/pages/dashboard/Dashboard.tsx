@@ -2,7 +2,7 @@ import { Map as MapIcon, Mic, Pencil } from "lucide-react";
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import DashboardFilterBar from "../../components/DashboardFilterBar";
 import QuickStartButton from "../../components/QuickStartButton";
 import { Button } from "@/components/ui/button";

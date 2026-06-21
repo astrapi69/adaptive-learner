@@ -26,7 +26,7 @@ import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import SaveOfflineLessonModal from "../../components/content/SaveOfflineLessonModal";
 import ImportActionBar from "../../components/import/ImportActionBar";
 import ImportGenerateExercisesButton from "../../components/import/ImportGenerateExercisesButton";

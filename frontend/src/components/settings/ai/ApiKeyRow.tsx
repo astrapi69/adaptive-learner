@@ -12,12 +12,12 @@
 import { FlaskConical, Save, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useI18n } from "../hooks/ui/useI18n";
-import { SecretInput } from "../shared/forms/SecretInput";
-import { API_KEY_FORMAT_HINT, isValidApiKeyFormat } from "../lib/apiKeyFormat";
-import type { AIProvider } from "../lib/constants";
-import type { ApiKeySource, UserSettings } from "../types/domain";
-import type { ApiKeyTestKind, ApiKeyTestResult } from "../storage/types";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { SecretInput } from "../../../shared/forms/SecretInput";
+import { API_KEY_FORMAT_HINT, isValidApiKeyFormat } from "../../../lib/apiKeyFormat";
+import type { AIProvider } from "../../../lib/constants";
+import type { ApiKeySource, UserSettings } from "../../../types/domain";
+import type { ApiKeyTestKind, ApiKeyTestResult } from "../../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
 type FormatState = "empty" | "valid" | "invalid";

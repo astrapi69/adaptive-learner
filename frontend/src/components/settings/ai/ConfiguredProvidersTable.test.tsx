@@ -20,11 +20,11 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import ConfiguredProvidersTable from "./ConfiguredProvidersTable";
-import type { AIProvider } from "../lib/constants";
-import type { ApiKeyTestResult } from "../storage/types";
-import type { UserSettings } from "../types/domain";
+import type { AIProvider } from "../../../lib/constants";
+import type { ApiKeyTestResult } from "../../../storage/types";
+import type { UserSettings } from "../../../types/domain";
 
-vi.mock("../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb: string) => fb, lang: "en" }),
 }));
 
@@ -233,7 +233,7 @@ describe("ConfiguredProvidersTable", () => {
   });
 
   it("disables Test + shows the backend-only tooltip for a CORS-blocked provider in Dexie mode", async () => {
-    const statusModule = await import("../lib/aiProviderStatus");
+    const statusModule = await import("../../../lib/aiProviderStatus");
     const spy = vi
       .spyOn(statusModule, "isDesktopOnlyProvider")
       .mockImplementation((p) => p === "openai");

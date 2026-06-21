@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
-import ApiKeyRequiredNotice from "../../components/ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import { FEATURES } from "../../features/featureConfig";
 import { useFeatureAvailable } from "../../features/useFeatureAvailable";
 import HelpLink from "../../components/help/HelpLink";

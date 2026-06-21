@@ -17,11 +17,11 @@
 import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
-import {ApiError} from "../api/client";
+import {ApiError} from "../../../api/client";
 import {ModelPicker, __test__} from "./ModelPicker";
 
 const mockGetAvailableModels = vi.fn();
-vi.mock("../storage", () => ({
+vi.mock("../../../storage", () => ({
     getStorage: () => ({
         settings: {
             getAvailableModels: mockGetAvailableModels,

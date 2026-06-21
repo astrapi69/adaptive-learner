@@ -15,16 +15,16 @@ import { Button } from "@/components/ui/button";
 import { ModelPicker } from "./ModelPicker";
 import ApiKeyRow from "./ApiKeyRow";
 import ConfiguredProvidersTable from "./ConfiguredProvidersTable";
-import { useI18n } from "../hooks/ui/useI18n";
-import { useAiKeySettings } from "../hooks/settings/useAiKeySettings";
-import { DEFAULT_MODELS } from "../storage/ai/ai-providers";
-import { resolveStorageMode } from "../storage";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { useAiKeySettings } from "../../../hooks/settings/useAiKeySettings";
+import { DEFAULT_MODELS } from "../../../storage/ai/ai-providers";
+import { resolveStorageMode } from "../../../storage";
 import {
   AI_PROVIDERS,
   MODEL_SUGGESTIONS,
   type AIProvider,
-} from "../lib/constants";
-import type { UserSettings } from "../types";
+} from "../../../lib/constants";
+import type { UserSettings } from "../../../types";
 
 /**
  * Scroll a provider's key input into view and focus it. Used by the

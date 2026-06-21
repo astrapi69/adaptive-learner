@@ -35,7 +35,7 @@ import { setDevModeEnabled, useDevMode } from "../../hooks/settings/useDevMode";
 import { Feature } from "@astrapi69/feature-strategy-react";
 import { FEATURES } from "../../features/featureConfig";
 import VoiceSettingsSection from "../../components/VoiceSettingsSection";
-import AiSettingsPanel from "../../components/AiSettingsPanel";
+import AiSettingsPanel from "../../components/settings/ai/AiSettingsPanel";
 import SyncSection from "../../components/sync/SyncSection";
 import ThemePicker from "../../components/ThemePicker";
 import AvatarUpload from "../../shared/media/AvatarUpload";

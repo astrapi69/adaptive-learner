@@ -17,16 +17,16 @@ import { Bot, FlaskConical, Gem, Pencil, Plus, Sparkles, Trash2 } from "lucide-r
 import { useEffect, useState, type ComponentType } from "react";
 
 import { Button } from "@/components/ui/button";
-import { useI18n } from "../hooks/ui/useI18n";
-import { AI_PROVIDERS, type AIProvider } from "../lib/constants";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { AI_PROVIDERS, type AIProvider } from "../../../lib/constants";
 import {
   isDesktopOnlyProvider,
   providerKeyStatus,
   type ProviderKeyStatus,
-} from "../lib/aiProviderStatus";
-import { DEFAULT_MODELS } from "../storage/ai/ai-providers";
-import type { ApiKeyTestResult, StorageMode } from "../storage/types";
-import type { UserSettings } from "../types/domain";
+} from "../../../lib/aiProviderStatus";
+import { DEFAULT_MODELS } from "../../../storage/ai/ai-providers";
+import type { ApiKeyTestResult, StorageMode } from "../../../storage/types";
+import type { UserSettings } from "../../../types/domain";
 
 type Translate = (key: string, fallback?: string) => string;
 

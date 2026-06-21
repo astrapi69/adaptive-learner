@@ -26,7 +26,7 @@ import { useState } from "react";
 import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import ApiKeyRequiredNotice from "../ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "../settings/ai/ApiKeyRequiredNotice";
 import RegenerateFeedbackDialog, {
   feedbackForReason,
   type RegenerateFeedback,

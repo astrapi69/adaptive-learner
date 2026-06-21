@@ -18,7 +18,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
 import { ApiError } from "../api/client";
-import ApiKeyRequiredNotice from "./ApiKeyRequiredNotice";
+import ApiKeyRequiredNotice from "./settings/ai/ApiKeyRequiredNotice";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "../features/featureConfig";
 import { useI18n } from "../hooks/ui/useI18n";
