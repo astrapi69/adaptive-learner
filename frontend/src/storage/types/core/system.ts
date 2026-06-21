@@ -9,7 +9,7 @@ import type {
   SubjectUpdateBody,
   TagCreateBody,
   TagUpdateBody,
-} from "../../api/request-types";
+} from "../../../api/request-types";
 import type {
   BackupPayload,
   BackupStats,
@@ -17,7 +17,7 @@ import type {
   Subject,
   SystemInfo,
   Tag,
-} from "../../types/domain";
+} from "../../../types/domain";
 
 export interface ISystemNamespace {
   info(): Promise<SystemInfo>;
@@ -44,12 +44,12 @@ export interface IBackupNamespace {
  * renderer consume. Same shape in both storage modes.
  */
 export interface IExportNamespace {
-  progress(userId: string, lang: string): Promise<import("../backup/export-types").ProgressReport>;
-  session(sessionId: string, lang: string): Promise<import("../backup/export-types").SessionDetail>;
+  progress(userId: string, lang: string): Promise<import("../../backup/export-types").ProgressReport>;
+  session(sessionId: string, lang: string): Promise<import("../../backup/export-types").SessionDetail>;
   curriculum(
     curriculumId: string,
     lang: string,
-  ): Promise<import("../backup/export-types").CurriculumOverview>;
+  ): Promise<import("../../backup/export-types").CurriculumOverview>;
 }
 
 // --- Taxonomy: Subjects + Tags (v1.9.0 / Phase 22) ---------------------

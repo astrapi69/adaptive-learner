@@ -21,20 +21,20 @@
  */
 
 
-export * from "./users";
-export * from "./settings";
+export * from "./core/users";
+export * from "./core/settings";
 export * from "./github";
-export * from "./session";
+export * from "./core/session";
 export * from "./content";
 export * from "./lesson-progress";
 export * from "./element-errors";
 export * from "./missions";
 export * from "./curricula";
 export * from "./learning-repo";
-export * from "./system";
+export * from "./core/system";
 export * from "./anki";
 export * from "./notebooklm";
 export * from "./pronunciation";
 export * from "./gamification";
 export * from "./imports";
-export * from "./service";
+export * from "./core/service";

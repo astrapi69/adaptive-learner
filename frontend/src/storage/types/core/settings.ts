@@ -7,9 +7,9 @@
 import type {
   ApiKeySetBody,
   SettingsPatchBody,
-} from "../../api/request-types";
-import type { AIProvider } from "../../lib/constants";
-import type { UserSettings } from "../../types/domain";
+} from "../../../api/request-types";
+import type { AIProvider } from "../../../lib/constants";
+import type { UserSettings } from "../../../types/domain";
 
 export interface AvailableModel {
   id: string;

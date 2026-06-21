@@ -8,8 +8,8 @@ import type {
   SessionMessageBody,
   SessionRatingBody,
   SessionStartBody,
-} from "../../api/request-types";
-import type { LearningMethod } from "../../lib/constants";
+} from "../../../api/request-types";
+import type { LearningMethod } from "../../../lib/constants";
 import type {
   AssessmentEvaluatePayload,
   AssessmentQuestion,
@@ -23,7 +23,7 @@ import type {
   SessionRating,
   SessionStartResult,
   SwitchRecommendation,
-} from "../../types/domain";
+} from "../../../types/domain";
 
 export interface IAssessmentNamespace {
   questions(lang: string): Promise<AssessmentQuestion[]>;

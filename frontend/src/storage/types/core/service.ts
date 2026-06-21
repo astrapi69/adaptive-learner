@@ -4,7 +4,7 @@
  * Split out of the former ``storage/types.ts`` god-file (#354).
  */
 
-import type { IContentLoaderNamespace } from "./content";
+import type { IContentLoaderNamespace } from "../content";
 import type {
   ICurriculaNamespace,
   II18nNamespace,
@@ -12,22 +12,22 @@ import type {
   IPluginsNamespace,
   IToolsNamespace,
   ITopicsNamespace,
-} from "./curricula";
-import type { IElementErrorsNamespace } from "./element-errors";
-import type { IGamificationNamespace } from "./gamification";
-import type { IGitHubNamespace } from "./github";
-import type { IImportsNamespace } from "./imports";
+} from "../curricula";
+import type { IElementErrorsNamespace } from "../element-errors";
+import type { IGamificationNamespace } from "../gamification";
+import type { IGitHubNamespace } from "../github";
+import type { IImportsNamespace } from "../imports";
 import type {
   ILearningRepoNamespace,
   IPluginSettingsNamespace,
-} from "./learning-repo";
-import type { ILessonProgressNamespace } from "./lesson-progress";
-import type { IMissionsNamespace } from "./missions";
-import type { INotebookLMNamespace } from "./notebooklm";
+} from "../learning-repo";
+import type { ILessonProgressNamespace } from "../lesson-progress";
+import type { IMissionsNamespace } from "../missions";
+import type { INotebookLMNamespace } from "../notebooklm";
 import type {
   IAnkiNamespace,
   IPronunciationNamespace,
-} from "./pronunciation";
+} from "../pronunciation";
 import type {
   IAssessmentNamespace,
   ISessionNamespace,
