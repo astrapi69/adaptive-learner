@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { parse as parseYaml } from "yaml";
 
-import { generateLessonFromAnalysis } from "./analysis-to-lesson";
+import { generateLessonFromAnalysis } from "./analysis/analysis-to-lesson";
 import {
   buildContentSetZip,
   buildManifestYaml,

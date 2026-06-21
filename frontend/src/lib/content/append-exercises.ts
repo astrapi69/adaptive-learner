@@ -12,7 +12,7 @@
  */
 
 import type { ContentLesson, ContentLessonExercise, ContentLessonStep } from "../../storage/types";
-import { validateGeneratedLesson } from "./analysis-to-lesson";
+import { validateGeneratedLesson } from "./analysis/analysis-to-lesson";
 
 /** Wrap an exercise as a slug-safe ``exercise`` step. */
 function exerciseStep(exercise: ContentLessonExercise): ContentLessonStep {

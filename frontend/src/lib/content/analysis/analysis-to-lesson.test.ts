@@ -11,7 +11,7 @@ import {
   slugify,
   DEFAULT_ANALYSIS_LESSON_LABELS,
 } from "./analysis-to-lesson";
-import type { ConversationAnalysisResult } from "../../types/domain";
+import type { ConversationAnalysisResult } from "../../../types/domain";
 
 const RICH: ConversationAnalysisResult = {
   topic: "Spanish travel vocabulary",

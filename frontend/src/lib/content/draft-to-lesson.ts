@@ -8,7 +8,7 @@
  * validated against the same invariants as the analysis generator.
  */
 
-import {slugify, validateGeneratedLesson} from "./analysis-to-lesson";
+import {slugify, validateGeneratedLesson} from "./analysis/analysis-to-lesson";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
     ContentLesson,

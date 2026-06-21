@@ -12,7 +12,7 @@ import {
   ANALYSIS_PHASES,
   ANALYSIS_PHASE_FALLBACKS,
   ANALYSIS_PHASE_PROGRESS,
-} from "../../lib/content/analysis-phases";
+} from "../../lib/content/analysis/analysis-phases";
 
 interface AnalysisLoadingSectionProps {
   analyzing: boolean;

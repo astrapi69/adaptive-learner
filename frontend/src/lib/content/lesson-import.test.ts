@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { generateLessonFromAnalysis } from "./analysis-to-lesson";
+import { generateLessonFromAnalysis } from "./analysis/analysis-to-lesson";
 import { buildContentSetZip, lessonJson } from "./lesson-export";
 import { parseImportFile } from "./lesson-import";
 import type { ConversationAnalysisResult } from "../../types/domain";

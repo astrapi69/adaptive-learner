@@ -38,7 +38,7 @@ import ImportTranscript from "../../components/import/ImportTranscript";
 import {
   ANALYSIS_PHASES,
   ANALYSIS_PHASE_INTERVAL_MS,
-} from "../../lib/content/analysis-phases";
+} from "../../lib/content/analysis/analysis-phases";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";

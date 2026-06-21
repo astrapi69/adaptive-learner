@@ -11,8 +11,8 @@ import {
   MIN_SHAREABLE_EXERCISES,
   slugify,
   summarizeGeneratedLesson,
-} from "../../lib/content/analysis-to-lesson";
-import { analysisLessonLabels } from "../../lib/content/analysis-lesson-labels";
+} from "../../lib/content/analysis/analysis-to-lesson";
+import { analysisLessonLabels } from "../../lib/content/analysis/analysis-lesson-labels";
 import { appendExercisesToLesson } from "../../lib/content/append-exercises";
 import {splitLesson} from "../../lib/content/lesson-splitter";
 import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language-options";

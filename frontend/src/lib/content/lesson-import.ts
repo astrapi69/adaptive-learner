@@ -17,7 +17,7 @@
 import { parse as parseYaml } from "yaml";
 
 import type { ContentLesson } from "../../storage/types";
-import { slugify, validateGeneratedLesson } from "./analysis-to-lesson";
+import { slugify, validateGeneratedLesson } from "./analysis/analysis-to-lesson";
 
 export interface ImportedSet {
   set_id: string;

@@ -25,7 +25,7 @@
  */
 
 import type { ContentLesson, ContentLessonStep } from "../../storage/types";
-import { slugify, validateGeneratedLesson } from "./analysis-to-lesson";
+import { slugify, validateGeneratedLesson } from "./analysis/analysis-to-lesson";
 
 export function snapshotAdaptiveLesson(lesson: ContentLesson): ContentLesson {
   const id = slugify(lesson.id) || "adaptive-lesson";

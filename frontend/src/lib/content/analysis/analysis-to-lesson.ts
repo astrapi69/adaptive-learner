@@ -48,11 +48,11 @@ import type {
   ContentLessonCard,
   ContentLessonExercise,
   ContentLessonStep,
-} from "../../storage/types";
+} from "../../../storage/types";
 import type {
   ConversationAnalysisResult,
   VocabularyEntry,
-} from "../../types/domain";
+} from "../../../types/domain";
 import {
   buildCloze,
   buildFreeText,
@@ -60,7 +60,7 @@ import {
   buildWordTiles,
   selectExercises,
   type GeneratorCard,
-} from "./exercise-generator";
+} from "../exercise-generator";
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 

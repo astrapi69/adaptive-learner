@@ -8,7 +8,7 @@ import {
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import ImportLessonModal from "./ImportLessonModal";
-import { generateLessonFromAnalysis } from "../../lib/content/analysis-to-lesson";
+import { generateLessonFromAnalysis } from "../../lib/content/analysis/analysis-to-lesson";
 import { lessonJson } from "../../lib/content/lesson-export";
 import type { ConversationAnalysisResult } from "../../types/domain";
 
