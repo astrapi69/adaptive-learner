@@ -85,7 +85,7 @@ def ask_copyable_url(url: str) -> None:
     """Popup a small window showing a URL the user can copy/paste."""
     _ensure_root()
     win = tk.Toplevel()
-    win.title("AdaptiveLearner URL")
+    win.title("Adaptive Learner URL")
     tk.Label(win, text="Copy this URL and paste into your browser:").pack(padx=16, pady=(16, 4))
     entry = tk.Entry(win, width=40)
     entry.insert(0, url)
@@ -700,7 +700,7 @@ class StatusWindow:
 
     def __init__(self, on_close: callable | None = None, *, title: str | None = None) -> None:
         self._root = _ensure_root()
-        self._root.title("AdaptiveLearner")
+        self._root.title("Adaptive Learner")
         self._root.geometry("420x340")
         self._root.protocol("WM_DELETE_WINDOW", self._handle_close)
 

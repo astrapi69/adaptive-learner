@@ -89,7 +89,7 @@ jobs:
       - name: Run launcher unit tests
         run: poetry run pytest tests/ -v
 
-      - name: Regenerate placeholder icon
+      - name: Generate launcher icon from brand mark
         run: poetry run python scripts/make_icon.py
 
       - name: Build adaptive-learner-launcher binary
