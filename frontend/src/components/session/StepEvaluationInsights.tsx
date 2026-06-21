@@ -1,6 +1,6 @@
-import {useI18n} from "../hooks/ui/useI18n";
-import {CYCLE_STEPS} from "../lib/constants";
-import type {StepEvaluationSummary} from "../types";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {CYCLE_STEPS} from "../../lib/constants";
+import type {StepEvaluationSummary} from "../../types";
 
 interface Props {
     summary: StepEvaluationSummary | null;

@@ -8,9 +8,9 @@
  * plain-language explanation, and a link to the learning methodology.
  */
 
-import {useI18n} from "../hooks/ui/useI18n";
-import {SRS_MASTERY_THRESHOLD, SRS_SCHEDULE} from "../lib/srs/status";
-import {docsHomeUrl} from "../lib/help-routes";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {SRS_MASTERY_THRESHOLD, SRS_SCHEDULE} from "../../lib/srs/status";
+import {docsHomeUrl} from "../../lib/help-routes";
 
 export default function SrsTransparencySection() {
     const {t, lang} = useI18n();

@@ -16,7 +16,7 @@ import FeedbackIntensityControl from "../../components/settings/controls/Feedbac
 import GamificationSettingsSection from "../../components/settings/controls/GamificationSettingsSection";
 import DirectionStrategyControl from "../../components/settings/controls/DirectionStrategyControl";
 import MatchingResolveControl from "../../components/settings/controls/MatchingResolveControl";
-import SrsTransparencySection from "../../components/SrsTransparencySection";
+import SrsTransparencySection from "../../components/session/SrsTransparencySection";
 import DailyRemindersControl from "../../components/settings/controls/DailyRemindersControl";
 import HintSettingsControl from "../../components/settings/controls/HintSettingsControl";
 import ReviewSettingsControl from "../../components/settings/controls/ReviewSettingsControl";

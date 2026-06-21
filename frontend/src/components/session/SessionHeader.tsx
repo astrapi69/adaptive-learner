@@ -7,8 +7,8 @@
 
 import HelpLink from "../help/HelpLink";
 import HelpTooltip from "../help/HelpTooltip";
-import MethodBadge from "../MethodBadge";
-import CycleProgress from "../CycleProgress";
+import MethodBadge from "./MethodBadge";
+import CycleProgress from "./CycleProgress";
 import type {
     LearningProject,
     LearningSession,

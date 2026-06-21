@@ -1,5 +1,5 @@
-import {useI18n} from "../hooks/ui/useI18n";
-import type {TrackingSummary} from "../types";
+import {useI18n} from "../../hooks/ui/useI18n";
+import type {TrackingSummary} from "../../types";
 
 interface SessionCounterProps {
     summary: TrackingSummary | null;

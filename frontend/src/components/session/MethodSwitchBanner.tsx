@@ -1,8 +1,8 @@
-import HelpLink from "./help/HelpLink";
+import HelpLink from "../help/HelpLink";
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/ui/useI18n";
-import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
-import {bestTextOn} from "../styles/contrast";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {METHOD_COLORS, type LearningMethod} from "../../lib/constants";
+import {bestTextOn} from "../../styles/contrast";
 
 interface MethodSwitchBannerProps {
     /** Method the recommender suggests switching to. */

@@ -2,7 +2,7 @@ import {render, screen} from "@testing-library/react";
 import {describe, expect, it} from "vitest";
 
 import StepEvaluationInsights from "./StepEvaluationInsights";
-import type {StepEvaluationSummary} from "../types";
+import type {StepEvaluationSummary} from "../../types";
 
 const EMPTY: StepEvaluationSummary = {
     total_evaluations: 0,

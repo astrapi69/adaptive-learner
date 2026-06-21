@@ -3,7 +3,7 @@ import {MemoryRouter} from "react-router-dom";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import RecentSessions from "./RecentSessions";
-import type {RecentSessionEntry} from "../types";
+import type {RecentSessionEntry} from "../../types";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {

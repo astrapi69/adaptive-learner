@@ -2,8 +2,8 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/ui/useI18n";
-import type {SpacedRecommendation} from "../types";
+import {useI18n} from "../../hooks/ui/useI18n";
+import type {SpacedRecommendation} from "../../types";
 
 /**
  * v0.4.0 — spaced-repetition cards on the Dashboard.

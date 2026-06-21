@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router-dom";
 
 import MethodBadge from "./MethodBadge";
-import {useI18n} from "../hooks/ui/useI18n";
-import type {RecentSessionEntry} from "../types";
+import {useI18n} from "../../hooks/ui/useI18n";
+import type {RecentSessionEntry} from "../../types";
 
 interface RecentSessionsProps {
     sessions: readonly RecentSessionEntry[];

@@ -3,10 +3,10 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 
 import {LEARNING_METHODS} from "../../lib/constants";
 
-import MethodSwitchBanner from "../../components/MethodSwitchBanner";
+import MethodSwitchBanner from "../../components/session/MethodSwitchBanner";
 import SessionHeader from "../../components/session/SessionHeader";
-import RatingDialog, {type RatingValues} from "../../components/RatingDialog";
-import SessionChat, {type ChatMessage} from "../../components/SessionChat";
+import RatingDialog, {type RatingValues} from "../../components/session/RatingDialog";
+import SessionChat, {type ChatMessage} from "../../components/session/SessionChat";
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";

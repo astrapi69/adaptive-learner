@@ -2,7 +2,7 @@ import {render, screen} from "@testing-library/react";
 import {describe, expect, it} from "vitest";
 
 import SessionCounter from "./SessionCounter";
-import type {TrackingSummary} from "../types";
+import type {TrackingSummary} from "../../types";
 
 const SUMMARY: TrackingSummary = {
     total_sessions: 5,

@@ -1,10 +1,10 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 
-import HelpLink from "./help/HelpLink";
-import {useI18n} from "../hooks/ui/useI18n";
-import {useSwipe} from "../hooks/ui/useSwipe";
-import {CYCLE_STEPS, cycleStepForIndex} from "../lib/constants";
-import {readGesturePref} from "../lib/gesturePref";
+import HelpLink from "../help/HelpLink";
+import {useI18n} from "../../hooks/ui/useI18n";
+import {useSwipe} from "../../hooks/ui/useSwipe";
+import {CYCLE_STEPS, cycleStepForIndex} from "../../lib/constants";
+import {readGesturePref} from "../../lib/gesturePref";
 
 interface CycleProgressProps {
     /**

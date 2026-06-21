@@ -2,12 +2,12 @@ import {useEffect, useRef, useState, type FormEvent} from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import {useButtonTooltips} from "../hooks/settings/useButtonTooltips";
-import {useI18n} from "../hooks/ui/useI18n";
-import type {MessageRole} from "../lib/constants";
-import MicButton from "./voice/MicButton";
-import SpeechButton from "./voice/SpeechButton";
-import {markdownToSpeech} from "../lib/lesson/tts-text";
+import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
+import {useI18n} from "../../hooks/ui/useI18n";
+import type {MessageRole} from "../../lib/constants";
+import MicButton from "../voice/MicButton";
+import SpeechButton from "../voice/SpeechButton";
+import {markdownToSpeech} from "../../lib/lesson/tts-text";
 
 export interface ChatMessage {
     /** Unique id for React key purposes. Backend-issued where available;

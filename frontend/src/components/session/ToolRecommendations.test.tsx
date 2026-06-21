@@ -2,7 +2,7 @@ import {render, screen} from "@testing-library/react";
 import {describe, expect, it} from "vitest";
 
 import ToolRecommendations from "./ToolRecommendations";
-import type {ToolRecommendation} from "../types";
+import type {ToolRecommendation} from "../../types";
 
 const RECS: ToolRecommendation[] = [
     {

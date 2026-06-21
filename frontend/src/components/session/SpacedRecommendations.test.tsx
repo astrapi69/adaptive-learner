@@ -3,7 +3,7 @@ import {MemoryRouter} from "react-router-dom";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import SpacedRecommendations from "./SpacedRecommendations";
-import type {SpacedRecommendation} from "../types";
+import type {SpacedRecommendation} from "../../types";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
