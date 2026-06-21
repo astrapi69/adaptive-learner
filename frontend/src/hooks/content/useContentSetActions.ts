@@ -30,7 +30,7 @@ interface UseContentSetActionsDeps {
   setSets: React.Dispatch<React.SetStateAction<ContentSetEntry[]>>;
   /** Per-set download status, owned by the data hook. */
   setPerSetState: React.Dispatch<
-    React.SetStateAction<Record<string, import("../../components/content/ContentSetRow").DownloadState>>
+    React.SetStateAction<Record<string, import("../../components/content/browser/ContentSetRow").DownloadState>>
   >;
 }
 

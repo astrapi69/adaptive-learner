@@ -60,7 +60,7 @@ import {
   type ShareMethod,
   type ShareMode,
   type Step,
-} from "../../components/content/shareWizardHelpers";
+} from "../../components/content/share/shareWizardHelpers";
 
 export interface ShareWizardProps {
   entry: ContentSetEntry;
