@@ -13,7 +13,7 @@ const listSets = vi.fn();
 const downloadSet = vi.fn();
 const githubGetStatus = vi.fn();
 
-vi.mock("../storage", () => ({
+vi.mock("../../../storage", () => ({
   getStorage: () => ({
     pluginSettings: { get: pluginGet, update: pluginUpdate },
     contentLoader: { listSets, downloadSet },
@@ -26,21 +26,21 @@ const { notifyError, notifySuccess, validateUserRepo } = vi.hoisted(() => ({
   notifySuccess: vi.fn(),
   validateUserRepo: vi.fn(),
 }));
-vi.mock("../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
   notify: { error: notifyError, success: notifySuccess },
 }));
-vi.mock("../lib/content/content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("../../../lib/content/content-repo-validate", () => ({ validateUserRepo }));
 vi.mock("qrcode", () => ({
   default: { toDataURL: vi.fn(async () => "data:image/png;base64,QR") },
 }));
 const { fetchRecommendedRepos } = vi.hoisted(() => ({
   fetchRecommendedRepos: vi.fn(),
 }));
-vi.mock("../lib/content/recommended-repos", async (orig) => ({
-  ...(await orig<typeof import("../lib/content/recommended-repos")>()),
+vi.mock("../../../lib/content/recommended-repos", async (orig) => ({
+  ...(await orig<typeof import("../../../lib/content/recommended-repos")>()),
   fetchRecommendedRepos,
 }));
-vi.mock("../lib/content/repo-token", () => ({
+vi.mock("../../../lib/content/repo-token", () => ({
   resolveRepoToken: () => "",
   writeRepoToken: vi.fn(),
   clearRepoToken: vi.fn(),

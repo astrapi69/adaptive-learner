@@ -11,19 +11,19 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { I18nProvider } from "../hooks/ui/useI18n";
-import { _resetStorageCacheForTests } from "../storage";
+import { I18nProvider } from "../../../hooks/ui/useI18n";
+import { _resetStorageCacheForTests } from "../../../storage";
 
 import GitHubIntegrationSection from "./GitHubIntegrationSection";
 
-vi.mock("../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
   notify: { error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn() },
 }));
 
 const verifyTokenSpy = vi.fn();
 
-vi.mock("../lib/github/github-api", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../lib/github/github-api")>();
+vi.mock("../../../lib/github/github-api", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../../lib/github/github-api")>();
   return {
     ...actual,
     GitHubApi: class {

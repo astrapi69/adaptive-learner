@@ -25,11 +25,11 @@ import { Feature } from "@astrapi69/feature-strategy-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ApiError } from "../api/client";
-import { FEATURES } from "../features/featureConfig";
-import { useI18n } from "../hooks/ui/useI18n";
-import { getStorage } from "../storage";
-import { notify } from "../utils/notify";
+import { ApiError } from "../../../api/client";
+import { FEATURES } from "../../../features/featureConfig";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { getStorage } from "../../../storage";
+import { notify } from "../../../utils/notify";
 
 const DEFAULT_REPOS_DIR = "~/.local/share/adaptive_learner/repos";
 

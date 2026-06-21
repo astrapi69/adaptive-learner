@@ -35,11 +35,11 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import DownloadProgress from "../shared/feedback/DownloadProgress";
-import { SecretInput } from "../shared/forms/SecretInput";
-import { buildAddRepoLink } from "../lib/content/share-link";
-import { useI18n } from "../hooks/ui/useI18n";
-import { getStorage } from "../storage";
+import DownloadProgress from "../../../shared/feedback/DownloadProgress";
+import { SecretInput } from "../../../shared/forms/SecretInput";
+import { buildAddRepoLink } from "../../../lib/content/share-link";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { getStorage } from "../../../storage";
 import {
   OFFICIAL_SOURCE,
   addUserRepo,
@@ -53,21 +53,21 @@ import {
   userRepoSource,
   type SyncProgress,
   type UserContentRepo,
-} from "../lib/content/content-repos";
-import { validateUserRepo } from "../lib/content/content-repo-validate";
-import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../lib/content/repo-token";
+} from "../../../lib/content/content-repos";
+import { validateUserRepo } from "../../../lib/content/content-repo-validate";
+import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../../../lib/content/repo-token";
 import {
   clearRepoRating,
   readRepoRating,
   writeRepoRating,
-} from "../lib/content/repo-rating";
+} from "../../../lib/content/repo-rating";
 import {
   fetchRecommendedRepos,
   isRecommendedSource,
   recommendedSource,
   type RecommendedRepo,
-} from "../lib/content/recommended-repos";
-import { notify } from "../utils/notify";
+} from "../../../lib/content/recommended-repos";
+import { notify } from "../../../utils/notify";
 
 interface OfficialSummary {
   setCount: number;

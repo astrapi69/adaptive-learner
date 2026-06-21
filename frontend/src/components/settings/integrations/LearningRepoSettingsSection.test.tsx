@@ -19,15 +19,15 @@ import "fake-indexeddb/auto";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TestFeatureProvider } from "../features/testFeatureProvider";
-import { I18nProvider } from "../hooks/ui/useI18n";
-import { _resetDbForTests, getDb } from "../storage/dexie/db";
-import { _resetStorageCacheForTests, getStorage } from "../storage";
-import type { StorageMode } from "../storage/types";
+import { TestFeatureProvider } from "../../../features/testFeatureProvider";
+import { I18nProvider } from "../../../hooks/ui/useI18n";
+import { _resetDbForTests, getDb } from "../../../storage/dexie/db";
+import { _resetStorageCacheForTests, getStorage } from "../../../storage";
+import type { StorageMode } from "../../../storage/types";
 
 import LearningRepoSettingsSection from "./LearningRepoSettingsSection";
 
-vi.mock("../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
   notify: {
     error: vi.fn(),
     success: vi.fn(),

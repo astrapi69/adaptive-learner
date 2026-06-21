@@ -2,7 +2,7 @@ import {Fragment, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import MethodBadge from "../../components/MethodBadge";
-import NotebookLMSection from "../../components/NotebookLMSection";
+import NotebookLMSection from "../../components/settings/integrations/NotebookLMSection";
 import MethodDistribution from "../../components/MethodDistribution";
 import ProgressTimeline from "../../components/ProgressTimeline";
 import StepEvaluationInsights from "../../components/StepEvaluationInsights";

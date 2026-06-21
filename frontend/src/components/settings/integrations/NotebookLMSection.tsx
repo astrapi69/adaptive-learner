@@ -17,17 +17,17 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
-import { ApiError } from "../api/client";
-import ApiKeyRequiredNotice from "./settings/ai/ApiKeyRequiredNotice";
+import { ApiError } from "../../../api/client";
+import ApiKeyRequiredNotice from "../ai/ApiKeyRequiredNotice";
 import { Button } from "@/components/ui/button";
-import { FEATURES } from "../features/featureConfig";
-import { useI18n } from "../hooks/ui/useI18n";
-import { useConfirm } from "../contexts/ConfirmContext";
-import { buildNotebookLMPackage } from "../lib/export/notebooklm-package";
-import { readLearnerState } from "../lib/learnerState";
-import { getStorage } from "../storage";
-import type { StudyQuestion, StudyQuestionDifficulty } from "../storage/types";
-import { notify } from "../utils/notify";
+import { FEATURES } from "../../../features/featureConfig";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import { useConfirm } from "../../../contexts/ConfirmContext";
+import { buildNotebookLMPackage } from "../../../lib/export/notebooklm-package";
+import { readLearnerState } from "../../../lib/learnerState";
+import { getStorage } from "../../../storage";
+import type { StudyQuestion, StudyQuestionDifficulty } from "../../../storage/types";
+import { notify } from "../../../utils/notify";
 
 interface NotebookLMSectionProps {
   projectId: string;
