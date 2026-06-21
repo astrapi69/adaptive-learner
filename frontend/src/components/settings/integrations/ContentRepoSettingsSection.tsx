@@ -37,7 +37,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DownloadProgress from "../../../shared/feedback/DownloadProgress";
 import { SecretInput } from "../../../shared/forms/SecretInput";
-import { buildAddRepoLink } from "../../../lib/content/share-link";
+import { buildAddRepoLink } from "../../../lib/content/placement/share-link";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
 import {

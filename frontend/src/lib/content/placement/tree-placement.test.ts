@@ -4,7 +4,7 @@
 
 import {describe, expect, it} from "vitest";
 
-import type {ContentSetEntry} from "../../storage/types";
+import type {ContentSetEntry} from "../../../storage/types";
 import {resolveTreePlacement, type UserSetPlacementInput} from "./tree-placement";
 
 function publishedSet(over: Partial<ContentSetEntry>): ContentSetEntry {

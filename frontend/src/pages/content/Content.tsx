@@ -54,7 +54,7 @@ import { resolveAiCheckDisabledReason } from "../../lib/content/validation/ai-ch
 import {
   listContributions,
   recordContribution,
-} from "../../lib/content/contribution-history";
+} from "../../lib/content/placement/contribution-history";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
 import { readLearnerState } from "../../lib/learnerState";
 import { resolveStorageMode } from "../../storage";

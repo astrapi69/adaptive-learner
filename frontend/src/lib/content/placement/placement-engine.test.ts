@@ -9,7 +9,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import type { ContentLessonCard, ContentSetEntry } from "../../storage/types";
+import type { ContentLessonCard, ContentSetEntry } from "../../../storage/types";
 import {
   autoDetectTargetLanguage,
   computePlacement,

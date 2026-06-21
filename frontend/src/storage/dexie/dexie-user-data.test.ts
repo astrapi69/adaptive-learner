@@ -17,7 +17,7 @@ import {
     syncLanguageAtBoot,
     syncUserDataAtBoot,
 } from "./dexie-user-data";
-import {listContributions, recordContribution} from "../../lib/content/contribution-history";
+import {listContributions, recordContribution} from "../../lib/content/placement/contribution-history";
 import {createCustomPath, listCustomPaths} from "../../lib/learning-path/custom-paths";
 
 const CONTRIB_KEY = "adaptive-learner.contributions";

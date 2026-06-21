@@ -31,7 +31,7 @@ import { type UserFoldInput } from "../../lib/content/content-tree";
 import {
   listContributions,
   type SharedContribution,
-} from "../../lib/content/contribution-history";
+} from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
 import {
   fetchRecommendedRepos,

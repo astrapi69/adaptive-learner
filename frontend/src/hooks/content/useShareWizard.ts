@@ -18,7 +18,7 @@ import { useOnlineStatus } from "../system/useOnlineStatus";
 import {
   readContributorName,
   writeContributorName,
-} from "../../lib/content/contribution-history";
+} from "../../lib/content/placement/contribution-history";
 import {
   validateSetForSharing,
   type ValidationIssue,
@@ -46,7 +46,7 @@ import {
   computePlacement,
   estimateLevel,
   suggestFilename,
-} from "../../lib/content/placement-engine";
+} from "../../lib/content/placement/placement-engine";
 import { emitCelebration } from "../../lib/praise/celebration-bus";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";

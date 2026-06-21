@@ -22,7 +22,7 @@ import {useNavigate} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {LANGUAGE_OPTIONS} from "../../lib/content/language-options";
-import {readContributorName} from "../../lib/content/contribution-history";
+import {readContributorName} from "../../lib/content/placement/contribution-history";
 import {Button} from "@/components/ui/button";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
 import ReviewStep from "../../components/create-lesson/ReviewStep";
