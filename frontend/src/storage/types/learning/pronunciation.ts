@@ -9,7 +9,7 @@ import type {
   AnkiCardListFilters,
   AnkiCardSuggestion,
   AnkiCardUpdateBody,
-} from "./anki";
+} from "../anki";
 
 export interface PronunciationVerdict {
   matches: boolean;
