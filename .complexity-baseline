@@ -12,6 +12,5 @@
 # immediately; existing offenders below are grandfathered (ratchet may
 # only shrink). File-level granularity matches .filesize-baseline.
 
-frontend/src/lib/ai/exercise-quality-gate.ts 23
 frontend/src/pages/content/Content.tsx 21
 frontend/src/pages/content/ImportDetail.tsx 25
