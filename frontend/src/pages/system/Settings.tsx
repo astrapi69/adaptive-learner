@@ -37,7 +37,7 @@ import { FEATURES } from "../../features/featureConfig";
 import VoiceSettingsSection from "../../components/VoiceSettingsSection";
 import AiSettingsPanel from "../../components/settings/ai/AiSettingsPanel";
 import SyncSection from "../../components/sync/SyncSection";
-import ThemePicker from "../../components/ThemePicker";
+import ThemePicker from "../../components/settings/appearance/ThemePicker";
 import AvatarUpload from "../../shared/media/AvatarUpload";
 import SelectiveExportSection from "../../components/settings/data/SelectiveExportSection";
 import SettingsSidebar from "../../components/settings/SettingsSidebar";
