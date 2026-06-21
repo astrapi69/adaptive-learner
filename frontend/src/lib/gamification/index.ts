@@ -1,0 +1,10 @@
+export { isFirstAttempt } from "./first-attempt";
+export { GAMIFICATION_PREF_KEYS, readGamificationPrefs, setBadgeNotifications, setDailySessionGoal, setXpNotifications } from "./gamificationPref";
+export type { GamificationPrefs } from "./gamificationPref";
+export { calculateLessonSessionXp, computeStars } from "./lesson-xp";
+export type { CalculateLessonSessionXpInput, XPAward, XPBreakdown } from "./lesson-xp";
+export { buildLevelMilestones } from "./levelMilestones";
+export type { LevelMilestone } from "./levelMilestones";
+export { currentStreakDays } from "./streak";
+export { XP_SPENT_EVENT, emitXpSpent } from "./xp-spent-event";
+export type { XpSpentDetail } from "./xp-spent-event";
