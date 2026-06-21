@@ -2,7 +2,7 @@ import {render, screen, fireEvent} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import QuestionCard from "./QuestionCard";
-import type {AssessmentQuestion} from "../types";
+import type {AssessmentQuestion} from "../../types";
 
 const SINGLE: AssessmentQuestion = {
     id: "q03",

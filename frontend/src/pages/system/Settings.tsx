@@ -20,7 +20,7 @@ import SrsTransparencySection from "../../components/session/SrsTransparencySect
 import DailyRemindersControl from "../../components/settings/controls/DailyRemindersControl";
 import HintSettingsControl from "../../components/settings/controls/HintSettingsControl";
 import ReviewSettingsControl from "../../components/settings/controls/ReviewSettingsControl";
-import LearningProfileControl from "../../components/LearningProfileControl";
+import LearningProfileControl from "../../components/assessment/LearningProfileControl";
 import MaxLessonSizeControl from "../../components/settings/controls/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../../components/settings/controls/PausedLessonsRetentionControl";
 import LearningRepoSettingsSection from "../../components/settings/integrations/LearningRepoSettingsSection";

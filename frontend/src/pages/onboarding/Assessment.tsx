@@ -2,10 +2,10 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
-import AssessmentNav from "../../components/AssessmentNav";
-import AssessmentProgress from "../../components/AssessmentProgress";
+import AssessmentNav from "../../components/assessment/AssessmentNav";
+import AssessmentProgress from "../../components/assessment/AssessmentProgress";
 import ProfileRadar from "../../components/ProfileRadar";
-import QuestionCard from "../../components/QuestionCard";
+import QuestionCard from "../../components/assessment/QuestionCard";
 import SpeechButton from "../../components/voice/SpeechButton";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";

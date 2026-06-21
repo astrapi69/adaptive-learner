@@ -1,4 +1,4 @@
-import type {AssessmentQuestion} from "../types";
+import type {AssessmentQuestion} from "../../types";
 
 interface QuestionCardProps {
     question: AssessmentQuestion;
