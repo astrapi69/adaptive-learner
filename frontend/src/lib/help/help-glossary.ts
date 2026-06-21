@@ -33,7 +33,7 @@ type Bundle = {
 // ENGLISH eager: the lingua-franca fallback is always needed, so it is
 // inlined (~50 KB) rather than fetched. Keeps the getters synchronous
 // for every key in every language (EN fallback) from the first render.
-const EN_BUNDLES = import.meta.glob<Bundle>("../data/help/*.en.json", {
+const EN_BUNDLES = import.meta.glob<Bundle>("../../data/help/*.en.json", {
     eager: true,
     import: "default",
 });
@@ -42,7 +42,7 @@ const EN_BUNDLES = import.meta.glob<Bundle>("../data/help/*.en.json", {
 // fetched on demand by ``loadGlossaryLanguage``. The negative pattern
 // excludes EN so its files are not also emitted as unused lazy chunks.
 const LAZY_BUNDLES = import.meta.glob<Bundle>(
-    ["../data/help/*.json", "!../data/help/*.en.json"],
+    ["../../data/help/*.json", "!../../data/help/*.en.json"],
     {import: "default"},
 );
 
@@ -93,7 +93,7 @@ function indexBundle(bundle: Bundle, order: OrderedKey[]): void {
 (() => {
     const order: OrderedKey[] = [];
     for (const category of CATEGORY_ORDER) {
-        const bundle = EN_BUNDLES[`../data/help/${category}.en.json`];
+        const bundle = EN_BUNDLES[`../../data/help/${category}.en.json`];
         if (bundle) indexBundle(bundle as Bundle, order);
     }
     ORDER.set("en", order);
@@ -128,7 +128,7 @@ async function loadOne(lang: string): Promise<void> {
         pending = (async () => {
             const order: OrderedKey[] = [];
             for (const category of CATEGORY_ORDER) {
-                const loader = LAZY_BUNDLES[`../data/help/${category}.${lang}.json`];
+                const loader = LAZY_BUNDLES[`../../data/help/${category}.${lang}.json`];
                 if (!loader) continue;
                 indexBundle((await loader()) as Bundle, order);
             }
