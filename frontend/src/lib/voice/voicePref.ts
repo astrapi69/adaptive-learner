@@ -92,38 +92,51 @@ export function readVoicePrefs(): VoicePrefs {
 }
 
 /** Persist whether TTS (read-aloud) is enabled. */
+/**
+ * Best-effort localStorage write: persists ``value`` under ``key`` and
+ * silently ignores failures (private-mode / quota / disabled storage). Shared
+ * by every voice-preference writer so the try/catch is not repeated per key.
+ */
+function safeSet(key: string, value: string): void {
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        /* localStorage unavailable — best effort */
+    }
+}
+
 export function writeTtsEnabled(v: boolean): void {
-    try { localStorage.setItem(K.ttsEnabled, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
+    safeSet(K.ttsEnabled, v ? "true" : "false");
 }
 /** Persist whether STT (voice dictation) is enabled. */
 export function writeSttEnabled(v: boolean): void {
-    try { localStorage.setItem(K.sttEnabled, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
+    safeSet(K.sttEnabled, v ? "true" : "false");
 }
 /** Persist whether AI replies are auto-played aloud. */
 export function writeAutoPlayAi(v: boolean): void {
-    try { localStorage.setItem(K.autoPlay, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
+    safeSet(K.autoPlay, v ? "true" : "false");
 }
 /** Persist the TTS speaking rate (clamped to 0.5..2.0). */
 export function writeTtsRate(v: number): void {
     const clamped = Math.max(0.5, Math.min(2.0, v));
-    try { localStorage.setItem(K.rate, String(clamped)); } catch { /* localStorage unavailable — best effort */ }
+    safeSet(K.rate, String(clamped));
 }
 /** Persist the TTS pitch (clamped to 0.5..2.0). */
 export function writeTtsPitch(v: number): void {
     const clamped = Math.max(0.5, Math.min(2.0, v));
-    try { localStorage.setItem(K.pitch, String(clamped)); } catch { /* localStorage unavailable — best effort */ }
+    safeSet(K.pitch, String(clamped));
 }
 /** Persist the preferred TTS voice name ("" = pick a default by lang). */
 export function writeTtsVoiceName(v: string): void {
-    try { localStorage.setItem(K.voiceName, v); } catch { /* localStorage unavailable — best effort */ }
+    safeSet(K.voiceName, v);
 }
 /** Persist the STT language override ("" = use the project / user lang). */
 export function writeSttLangOverride(v: string): void {
-    try { localStorage.setItem(K.sttLang, v); } catch { /* localStorage unavailable — best effort */ }
+    safeSet(K.sttLang, v);
 }
 /** Persist whether the pronunciation page is enabled. */
 export function writePronunciationEnabled(v: boolean): void {
-    try { localStorage.setItem(K.pronunciation, v ? "true" : "false"); } catch { /* localStorage unavailable — best effort */ }
+    safeSet(K.pronunciation, v ? "true" : "false");
 }
 
 export const VOICE_PREF_KEYS = K;
