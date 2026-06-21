@@ -8,10 +8,10 @@ import {
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import SaveOfflineLessonModal from "./SaveOfflineLessonModal";
-import type { ConversationAnalysisResult } from "../../types/domain";
+import type { ConversationAnalysisResult } from "../../../types/domain";
 
 const saveUserSet = vi.fn();
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
   getStorage: () => ({
     contentLoader: { saveUserSet: (...a: unknown[]) => saveUserSet(...a) },
   }),
@@ -19,7 +19,7 @@ vi.mock("../../storage", () => ({
 
 const toastSuccess = vi.fn();
 const toastError = vi.fn();
-vi.mock("../../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
   notify: {
     success: (m: string) => toastSuccess(m),
     error: (m: unknown) => toastError(m),
@@ -30,7 +30,7 @@ vi.mock("../../utils/notify", () => ({
 
 // Mutable app language so a test can simulate a German UI.
 const i18nState = vi.hoisted(() => ({ lang: "en" }));
-vi.mock("../../hooks/ui/useI18n", () => ({
+vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
     t: (_k: string, fallback: string) => fallback,
     lang: i18nState.lang,

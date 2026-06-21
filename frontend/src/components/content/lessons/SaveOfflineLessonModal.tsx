@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { useI18n } from "../../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   cefrFromAnalysisLevel,
   detectTargetLanguage,
@@ -11,16 +11,16 @@ import {
   MIN_SHAREABLE_EXERCISES,
   slugify,
   summarizeGeneratedLesson,
-} from "../../lib/content/analysis/analysis-to-lesson";
-import { analysisLessonLabels } from "../../lib/content/analysis/analysis-lesson-labels";
-import { appendExercisesToLesson } from "../../lib/content/lesson/append-exercises";
-import {splitLesson} from "../../lib/content/lesson/lesson-splitter";
-import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
-import {readMaxLessonSize} from "../../lib/learning/maxLessonSizePref";
-import { getStorage } from "../../storage";
-import type { ContentLessonExercise, ContentSetEntry } from "../../storage/types";
-import type { ConversationAnalysisResult } from "../../types/domain";
-import { notify } from "../../utils/notify";
+} from "../../../lib/content/analysis/analysis-to-lesson";
+import { analysisLessonLabels } from "../../../lib/content/analysis/analysis-lesson-labels";
+import { appendExercisesToLesson } from "../../../lib/content/lesson/append-exercises";
+import {splitLesson} from "../../../lib/content/lesson/lesson-splitter";
+import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../../lib/content/language/language-options";
+import {readMaxLessonSize} from "../../../lib/learning/maxLessonSizePref";
+import { getStorage } from "../../../storage";
+import type { ContentLessonExercise, ContentSetEntry } from "../../../storage/types";
+import type { ConversationAnalysisResult } from "../../../types/domain";
+import { notify } from "../../../utils/notify";
 
 interface SaveOfflineLessonModalProps {
   open: boolean;

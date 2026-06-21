@@ -6,9 +6,9 @@
  * set / Share / Delete); all are delivered as callbacks from the page.
  */
 
-import { useI18n } from "../../hooks/ui/useI18n";
-import type { ContentSetEntry } from "../../storage/types";
-import GenerateSetExercisesButton from "./GenerateSetExercisesButton";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import type { ContentSetEntry } from "../../../storage/types";
+import GenerateSetExercisesButton from "../GenerateSetExercisesButton";
 import UserSetActions from "./UserSetActions";
 
 interface MyLessonsSectionProps {

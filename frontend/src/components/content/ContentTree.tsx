@@ -26,7 +26,7 @@ import type { ContentSetEntry } from "../../storage/types";
 import BookRecommendationsSection from "./BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
-import FoldedUserLessons from "./FoldedUserLessons";
+import FoldedUserLessons from "./lessons/FoldedUserLessons";
 
 /** Per-row state + actions forwarded down to {@link ContentSetRow}. */
 export interface ContentSetRowActions {

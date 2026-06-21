@@ -13,8 +13,8 @@ import { Download, FolderOpen, Pencil, Play, Share2, Trash2 } from "lucide-react
 
 import { Button } from "@/components/ui/button";
 
-import { useI18n } from "../../hooks/ui/useI18n";
-import type { ContentSetEntry } from "../../storage/types";
+import { useI18n } from "../../../hooks/ui/useI18n";
+import type { ContentSetEntry } from "../../../storage/types";
 
 export interface UserSetActionsProps {
   entry: ContentSetEntry;

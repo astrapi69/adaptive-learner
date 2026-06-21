@@ -28,8 +28,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import ContinueLearning from "../../components/dashboard/ContinueLearning";
-import ImportLessonModal from "../../components/content/ImportLessonModal";
-import MyLessonsSection from "../../components/content/MyLessonsSection";
+import ImportLessonModal from "../../components/content/lessons/ImportLessonModal";
+import MyLessonsSection from "../../components/content/lessons/MyLessonsSection";
 import ContentTree from "../../components/content/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/ContentBookCompanions";
@@ -37,7 +37,7 @@ import ContentContributionsSection from "../../components/content/ContentContrib
 import ContentToolbar from "../../components/content/ContentToolbar";
 import ContentSearchResults from "../../components/content/ContentSearchResults";
 import ContentGapsSection from "../../components/content/ContentGapsSection";
-import DeleteLessonModal from "../../components/content/DeleteLessonModal";
+import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";

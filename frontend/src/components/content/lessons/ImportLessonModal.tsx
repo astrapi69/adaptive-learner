@@ -1,13 +1,13 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { useI18n } from "../../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   parseImportFile,
   type ImportedSet,
-} from "../../lib/content/lesson/lesson-import";
-import { getStorage } from "../../storage";
-import { notify } from "../../utils/notify";
+} from "../../../lib/content/lesson/lesson-import";
+import { getStorage } from "../../../storage";
+import { notify } from "../../../utils/notify";
 
 interface ImportLessonModalProps {
   open: boolean;
