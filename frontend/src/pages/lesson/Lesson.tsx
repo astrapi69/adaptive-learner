@@ -27,17 +27,17 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
 import LessonSummary from "../../components/lesson/LessonSummary";
-import LessonResources from "../../components/lesson/LessonResources";
+import LessonResources from "../../components/lesson/steps/LessonResources";
 import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
 import LessonHeader from "../../components/lesson/chrome/LessonHeader";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
 import LessonTtsControls from "../../components/lesson/tts/LessonTtsControls";
-import LessonStepView from "../../components/lesson/LessonStepView";
+import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
 import LessonStatusView, {
   resolveLessonStatusKind,
-} from "../../components/lesson/LessonStatusView";
+} from "../../components/lesson/steps/LessonStatusView";
 import { useLessonAutoRead } from "../../hooks/lesson/useLessonAutoRead";
 import type { ExerciseHandle } from "../../components/exercises/exercise-control";
 import {

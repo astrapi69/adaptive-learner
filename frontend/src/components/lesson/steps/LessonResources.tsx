@@ -22,7 +22,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useI18n } from "../../hooks/ui/useI18n";
+import { useI18n } from "../../../hooks/ui/useI18n";
 import {
   bookToMediaResource,
   effectiveMediaPriority,
@@ -31,9 +31,9 @@ import {
   parseLessonResources,
   type MediaResource,
   type MediaType,
-} from "../../lib/content/media/media-loader";
-import ResourceCard from "../../shared/media/ResourceCard";
-import type { ContentLesson, ContentSetBook } from "../../storage/types";
+} from "../../../lib/content/media/media-loader";
+import ResourceCard from "../../../shared/media/ResourceCard";
+import type { ContentLesson, ContentSetBook } from "../../../storage/types";
 
 interface LessonResourcesProps {
   lesson: ContentLesson;
