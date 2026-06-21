@@ -70,12 +70,25 @@ interface ImportDetailProps {
 /** How long the "Done!" flash lingers before results fade in. */
 const ANALYSIS_DONE_FLASH_MS = 500;
 
+/** Resolve the active conversation id: explicit test override wins, else the
+ * route param, else an empty string. Extracted to keep the component function
+ * below the complexity gate. */
+function resolveConversationId(
+  override: string | undefined,
+  routeParam: string | undefined,
+): string {
+  return override ?? routeParam ?? "";
+}
+
 export default function ImportDetail({
   conversationIdOverride,
   onNavigate,
 }: ImportDetailProps = {}) {
   const params = useParams<{ conversationId: string }>();
-  const conversationId = conversationIdOverride ?? params.conversationId ?? "";
+  const conversationId = resolveConversationId(
+    conversationIdOverride,
+    params.conversationId,
+  );
   const { t, lang } = useI18n();
   const online = useOnlineStatus();
   const navigate = useNavigate();
