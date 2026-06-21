@@ -30,8 +30,8 @@ import { useHelp } from "../../contexts/HelpContext";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useGlossary } from "../../hooks/content/useGlossary";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { getGlossaryEntry, listGlossaryEntries } from "../../lib/help-glossary";
-import { docsUrlForSlug } from "../../lib/help-routes";
+import { getGlossaryEntry, listGlossaryEntries } from "../../lib/help/help-glossary";
+import { docsUrlForSlug } from "../../lib/help/help-routes";
 import type { GlossaryEntry } from "../../types/help";
 
 /** Heuristic related-concepts extractor: scans the article's

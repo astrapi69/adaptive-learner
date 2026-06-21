@@ -16,7 +16,7 @@ import {
     setUserId,
 } from "../../lib/learning/learnerState";
 import {getStorage, resolveStorageMode} from "../../storage";
-import {docsHomeUrl} from "../../lib/help-routes";
+import {docsHomeUrl} from "../../lib/help/help-routes";
 
 /**
  * Landing page (project-reference §8 row ``/``).

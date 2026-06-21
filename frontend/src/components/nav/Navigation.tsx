@@ -11,7 +11,7 @@ import NavAvatar from "./NavAvatar";
 import { NavModeBadge, NavThemeToggle } from "./NavIndicators";
 
 import { useHelp } from "../../contexts/HelpContext";
-import { helpKeyForPath } from "../../lib/help-routes";
+import { helpKeyForPath } from "../../lib/help/help-routes";
 import { useAppMode } from "../../hooks/settings/useAppMode";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useDevMode } from "../../hooks/settings/useDevMode";

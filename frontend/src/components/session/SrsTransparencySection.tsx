@@ -10,7 +10,7 @@
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {SRS_MASTERY_THRESHOLD, SRS_SCHEDULE} from "../../lib/srs/status";
-import {docsHomeUrl} from "../../lib/help-routes";
+import {docsHomeUrl} from "../../lib/help/help-routes";
 
 export default function SrsTransparencySection() {
     const {t, lang} = useI18n();

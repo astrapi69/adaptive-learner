@@ -17,7 +17,7 @@ import {BookOpen, Search} from "lucide-react";
 import {useHelp} from "../../contexts/HelpContext";
 import {useGlossary} from "../../hooks/content/useGlossary";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {listGlossaryEntries} from "../../lib/help-glossary";
+import {listGlossaryEntries} from "../../lib/help/help-glossary";
 import type {GlossaryCategory, GlossaryEntry} from "../../types/help";
 
 const CATEGORY_ORDER: GlossaryCategory[] = [

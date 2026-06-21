@@ -22,7 +22,7 @@
  * codes like ``de-DE`` resolve to ``de`` before lookup.
  */
 
-import type {GlossaryEntry} from "../types/help";
+import type {GlossaryEntry} from "../../types/help";
 
 type Bundle = {
     category: string;

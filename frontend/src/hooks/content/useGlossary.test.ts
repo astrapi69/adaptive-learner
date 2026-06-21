@@ -12,7 +12,7 @@ import {describe, it, expect, vi} from "vitest";
 import {renderHook, waitFor} from "@testing-library/react";
 
 import {useGlossary} from "./useGlossary";
-import {getGlossaryEntry, isGlossaryLoaded} from "../../lib/help-glossary";
+import {getGlossaryEntry, isGlossaryLoaded} from "../../lib/help/help-glossary";
 
 describe("useGlossary", () => {
     it("reports English as loaded immediately (eager, no fetch)", () => {
