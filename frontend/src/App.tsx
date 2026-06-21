@@ -14,7 +14,7 @@ import "./styles/toast-theme.css";
 import type { ApiError } from "./api/client";
 import ErrorBoundary from "./components/error/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
-import GlobalShortcuts from "./components/GlobalShortcuts";
+import GlobalShortcuts from "./components/a11y/GlobalShortcuts";
 import UpdatePromptHost from "./components/pwa/UpdatePromptHost";
 import DesktopUpdateHost from "./components/pwa/DesktopUpdateHost";
 import HelpDrawer from "./components/help/HelpDrawer";
@@ -29,7 +29,7 @@ import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/onboarding/Landing";
-import SkipToContent from "./components/SkipToContent";
+import SkipToContent from "./components/a11y/SkipToContent";
 
 // Route-level code-splitting. Landing stays in the main bundle as
 // the entry route; everything else loads on first navigation. See

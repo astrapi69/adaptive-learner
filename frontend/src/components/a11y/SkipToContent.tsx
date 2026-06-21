@@ -1,6 +1,6 @@
 import type {MouseEvent} from "react";
 
-import {useI18n} from "../hooks/ui/useI18n";
+import {useI18n} from "../../hooks/ui/useI18n";
 
 /**
  * WCAG 2.1 SC 2.4.1 (Bypass Blocks). First focusable element on
