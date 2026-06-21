@@ -29,7 +29,7 @@ const storageReset = vi.fn();
 const storageBackupExport = vi.fn();
 vi.mock("../../../storage", async () => {
     const actual = await vi.importActual<typeof import("../../../storage")>(
-        "../storage",
+        "../../../storage",
     );
     return {
         ...actual,
