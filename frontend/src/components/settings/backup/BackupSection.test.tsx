@@ -19,13 +19,13 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 
 import BackupSection from "./BackupSection";
-import {I18nProvider} from "../hooks/ui/useI18n";
-import {_resetStorageCacheForTests, getStorage} from "../storage";
-import {setUserId} from "../lib/learnerState";
-import type {BackupPayload} from "../types/domain";
-import {notify} from "../utils/notify";
+import {I18nProvider} from "../../../hooks/ui/useI18n";
+import {_resetStorageCacheForTests, getStorage} from "../../../storage";
+import {setUserId} from "../../../lib/learnerState";
+import type {BackupPayload} from "../../../types/domain";
+import {notify} from "../../../utils/notify";
 
-vi.mock("../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
@@ -39,7 +39,7 @@ const autoMock = vi.hoisted(() => ({
 // NOTE: plain functions (not vi.fn) on purpose — the file's afterEach
 // runs vi.restoreAllMocks(), which would strip vi.fn implementations
 // and make listAutoBackups() return undefined for later tests.
-vi.mock("../storage/backup/auto-backup", () => ({
+vi.mock("../../../storage/backup/auto-backup", () => ({
     isAutoBackupEnabled: () => true,
     setAutoBackupEnabled: () => undefined,
     listAutoBackups: async () => autoMock.entries,

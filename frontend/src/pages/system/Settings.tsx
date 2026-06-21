@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ApiError } from "../../api/client";
 import AboutTab from "../../components/about/AboutTab";
 import IdentitySection from "../../components/about/IdentitySection";
-import BackupSection from "../../components/BackupSection";
+import BackupSection from "../../components/settings/backup/BackupSection";
 import CacheManagementSection from "../../components/CacheManagementSection";
 import InstallAppSection from "../../components/InstallAppSection";
 import ContentRepoSettingsSection from "../../components/ContentRepoSettingsSection";

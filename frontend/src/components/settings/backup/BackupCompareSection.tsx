@@ -11,8 +11,8 @@
 import {Button} from "@/components/ui/button";
 
 import {BackupCompare} from "./BackupCompare";
-import {useI18n} from "../hooks/ui/useI18n";
-import type {UseBackupCompareResult} from "../hooks/system/useBackupCompare";
+import {useI18n} from "../../../hooks/ui/useI18n";
+import type {UseBackupCompareResult} from "../../../hooks/system/useBackupCompare";
 
 interface BackupCompareSectionProps {
     /** Shared compare state + handlers from {@link useBackupCompare}. */

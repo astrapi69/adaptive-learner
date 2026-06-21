@@ -24,7 +24,7 @@
 import {useEffect, useMemo, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../hooks/ui/useI18n";
+import {useI18n} from "../../../hooks/ui/useI18n";
 import {
     diffBackups,
     filterChangedTables,
@@ -33,10 +33,10 @@ import {
     type BackupDiff,
     type ChangedRecord,
     type TableDiff,
-} from "../lib/backup-diff";
-import {renderDiffMarkdown} from "../lib/backup-diff-markdown";
-import {notify} from "../utils/notify";
-import type {BackupPayload} from "../types/domain";
+} from "../../../lib/backup-diff";
+import {renderDiffMarkdown} from "../../../lib/backup-diff-markdown";
+import {notify} from "../../../utils/notify";
+import type {BackupPayload} from "../../../types/domain";
 
 type SortMode = "delta" | "alpha";
 

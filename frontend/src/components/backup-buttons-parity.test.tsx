@@ -18,7 +18,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
-import BackupSection from "./BackupSection";
+import BackupSection from "./settings/backup/BackupSection";
 import DangerZoneSection from "./DangerZoneSection";
 import {setUserId} from "../lib/learnerState";
 import type {BackupPayload} from "../types/domain";

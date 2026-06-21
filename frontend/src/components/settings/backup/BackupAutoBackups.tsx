@@ -13,7 +13,7 @@ import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 
-import {useI18n} from "../hooks/ui/useI18n";
+import {useI18n} from "../../../hooks/ui/useI18n";
 import {
     checkTimeTrigger,
     deleteAutoBackup,
@@ -26,9 +26,9 @@ import {
     setAutoBackupEnabled,
     type AutoBackupSummary,
     type StoragePressureReport,
-} from "../storage/backup/auto-backup";
-import {notify} from "../utils/notify";
-import type {RestoreSummary} from "../types/domain";
+} from "../../../storage/backup/auto-backup";
+import {notify} from "../../../utils/notify";
+import type {RestoreSummary} from "../../../types/domain";
 
 interface BackupAutoBackupsProps {
     /** Active user; the panel only mounts once the learner is known. */

@@ -12,7 +12,7 @@
 import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
-import type {BackupPayload} from "../types/domain";
+import type {BackupPayload} from "../../../types/domain";
 import {BackupCompare} from "./BackupCompare";
 
 function buildPayload(data: Record<string, Record<string, unknown>[]>): BackupPayload {

@@ -20,15 +20,15 @@ import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {BackupCompare} from "./BackupCompare";
-import {useI18n} from "../hooks/ui/useI18n";
-import {readLearnerState} from "../lib/learnerState";
-import {getStorage, resolveStorageMode} from "../storage";
-import {notify} from "../utils/notify";
-import {readBackupFile} from "../lib/backup/validateBackupFile";
-import type {BackupPayload, BackupStats, RestoreSummary} from "../types/domain";
+import {useI18n} from "../../../hooks/ui/useI18n";
+import {readLearnerState} from "../../../lib/learnerState";
+import {getStorage, resolveStorageMode} from "../../../storage";
+import {notify} from "../../../utils/notify";
+import {readBackupFile} from "../../../lib/backup/validateBackupFile";
+import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
-import {useBackupCompare} from "../hooks/system/useBackupCompare";
+import {useBackupCompare} from "../../../hooks/system/useBackupCompare";
 
 const LAST_BACKUP_KEY = "adaptive-learner.last_backup_at";
 const BACKUP_REMINDER_DAYS = 7;
@@ -54,11 +54,11 @@ function daysSince(iso: string | null): number | null {
 
 // Phase 41F: extracted to ``utils/backup-download.ts`` so the
 // DangerZone pre-reset backup button can produce identical files.
-import {saveBackupToDisk, backupFilename} from "../utils/backup-download";
+import {saveBackupToDisk, backupFilename} from "../../../utils/backup-download";
 import {
     applyLocalStorageSnapshot,
     withLocalStorageSnapshot,
-} from "../lib/backup/localStorageSnapshot";
+} from "../../../lib/backup/localStorageSnapshot";
 
 interface ComparisonRow {
     table: string;
