@@ -20,7 +20,7 @@ vi.mock("../../hooks/ui/useI18n", () => ({
     }),
 }));
 
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "user-1"}),
 }));
 

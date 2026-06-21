@@ -28,7 +28,7 @@ vi.mock("../../lib/notifications/showReminderNotification", () => ({
     showReminderNotification: (opts: ReminderNotificationOptions) => show(opts),
 }));
 
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "u1"}),
 }));
 

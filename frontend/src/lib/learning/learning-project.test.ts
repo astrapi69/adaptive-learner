@@ -9,7 +9,7 @@ import {
     filterStandardProjects,
     isStandardProject,
 } from "./learning-project";
-import type { LearningProject } from "../types/domain";
+import type { LearningProject } from "../../types/domain";
 
 function makeProject(
     overrides: Partial<LearningProject> = {},

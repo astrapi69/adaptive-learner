@@ -35,7 +35,7 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,

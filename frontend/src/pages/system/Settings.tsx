@@ -51,8 +51,8 @@ import {
   readLessonShortcutsEnabled,
   setLessonShortcutsEnabled,
 } from "../../lib/lesson/lessonShortcutsPref";
-import { readLearnerState, setLanguage } from "../../lib/learnerState";
-import { notifyProfileUpdated } from "../../lib/profileSignal";
+import { readLearnerState, setLanguage } from "../../lib/learning/learnerState";
+import { notifyProfileUpdated } from "../../lib/learning/profileSignal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

@@ -16,7 +16,7 @@
  * filtering is a UI-policy decision, not a data-hiding one.
  */
 
-import type { LearningProject } from "../types/domain";
+import type { LearningProject } from "../../types/domain";
 
 /**
  * True iff this project is the wizard-created kind a user

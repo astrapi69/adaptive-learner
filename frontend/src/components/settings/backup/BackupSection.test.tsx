@@ -21,7 +21,7 @@ import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 import BackupSection from "./BackupSection";
 import {I18nProvider} from "../../../hooks/ui/useI18n";
 import {_resetStorageCacheForTests, getStorage} from "../../../storage";
-import {setUserId} from "../../../lib/learnerState";
+import {setUserId} from "../../../lib/learning/learnerState";
 import type {BackupPayload} from "../../../types/domain";
 import {notify} from "../../../utils/notify";
 

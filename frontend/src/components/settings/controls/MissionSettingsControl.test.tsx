@@ -13,7 +13,7 @@ const regenerate = vi.fn();
 vi.mock("../../../storage", () => ({
     getStorage: () => ({missions: {regenerate}}),
 }));
-vi.mock("../../../lib/learnerState", () => ({
+vi.mock("../../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "u1"}),
 }));
 

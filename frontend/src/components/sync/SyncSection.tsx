@@ -25,7 +25,7 @@ import {Button} from "@/components/ui/button";
 import {api, ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useConfirm} from "../../contexts/ConfirmContext";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {resolveStorageMode} from "../../storage";
 import {
     buildPairingUri,

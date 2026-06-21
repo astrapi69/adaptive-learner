@@ -24,7 +24,7 @@ import {
     setDailySessionGoal,
     setXpNotifications,
 } from "../../../lib/gamificationPref";
-import {readLearnerState} from "../../../lib/learnerState";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {getStorage} from "../../../storage";
 import type {BadgeWithProgress} from "../../../storage/types";
 import {notify} from "../../../utils/notify";

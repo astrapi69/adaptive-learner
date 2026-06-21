@@ -16,7 +16,7 @@
  * 'Languages > Spanish > Grammar'" without forcing AI calls.
  */
 
-import type {Subject} from "../types/domain";
+import type {Subject} from "../../types/domain";
 
 export interface SubjectSuggestion {
     subject: Subject;

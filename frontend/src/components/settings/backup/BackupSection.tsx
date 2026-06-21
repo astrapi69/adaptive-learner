@@ -21,7 +21,7 @@ import {useEffect, useRef, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {BackupCompare} from "./BackupCompare";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {readLearnerState} from "../../../lib/learnerState";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {getStorage, resolveStorageMode} from "../../../storage";
 import {notify} from "../../../utils/notify";
 import {readBackupFile} from "../../../lib/backup/validateBackupFile";

@@ -14,7 +14,7 @@ import {
     setLanguage,
     setProjectId,
     setUserId,
-} from "../../lib/learnerState";
+} from "../../lib/learning/learnerState";
 import {getStorage, resolveStorageMode} from "../../storage";
 import {docsHomeUrl} from "../../lib/help-routes";
 

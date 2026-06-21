@@ -16,7 +16,7 @@
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getDueReviewsSummary} from "../../lib/notifications/dueReviews";
 import {isReminderDue, localDateKey} from "../../lib/notifications/reminder";
 import {

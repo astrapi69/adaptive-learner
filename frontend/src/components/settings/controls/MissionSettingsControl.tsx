@@ -11,7 +11,7 @@ import {useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {readLearnerState} from "../../../lib/learnerState";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {
     readMissionPrefs,
     setMissionCount,

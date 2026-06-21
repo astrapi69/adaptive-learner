@@ -15,7 +15,7 @@ import {
     readGestureHintShown,
     readGesturePref,
 } from "../../lib/gesturePref";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {
     clearAssessmentProgress,
     readAssessmentProgress,

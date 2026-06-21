@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { readLearnerState } from "../../../lib/learnerState";
+import { readLearnerState } from "../../../lib/learning/learnerState";
 import {
   allCategoryIds,
   categoryById,

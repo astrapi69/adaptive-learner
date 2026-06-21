@@ -29,7 +29,7 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {extractJsonObject} from "../../lib/extract-json";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 import {getDb} from "../../storage/dexie/db";
 import {aiComplete, resolveModel} from "../../storage/ai/ai-providers";

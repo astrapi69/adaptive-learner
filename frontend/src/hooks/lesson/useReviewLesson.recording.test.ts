@@ -12,7 +12,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 const recordBulkMock = vi.fn().mockResolvedValue([]);
 const reviewQueueMock = vi.fn().mockResolvedValue([]);
 
-vi.mock("../../lib/learnerState", () => ({
+vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "user-1"}),
 }));
 

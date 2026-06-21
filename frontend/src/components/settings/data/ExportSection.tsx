@@ -19,13 +19,13 @@ import remarkGfm from "remark-gfm";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {readLearnerState} from "../../../lib/learnerState";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {
     exportFilename,
     renderMarkdown,
 } from "../../../lib/export/markdown-renderer";
 import {openPrintWindow} from "../../../lib/export/pdf-generator";
-import {filterStandardProjects} from "../../../lib/learning-project";
+import {filterStandardProjects} from "../../../lib/learning/learning-project";
 import {getStorage} from "../../../storage";
 import type {
     CurriculumOverview,

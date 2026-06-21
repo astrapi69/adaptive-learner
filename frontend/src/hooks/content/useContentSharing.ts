@@ -20,7 +20,7 @@ import {
 } from "../../lib/content/validation/content-validator";
 import type { AiValidationResult } from "../../lib/content/validation/ai-content-validator";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 import { notify } from "../../utils/notify";

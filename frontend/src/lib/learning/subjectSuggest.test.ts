@@ -5,7 +5,7 @@
 import {describe, expect, it} from "vitest";
 
 import {suggestSubjects} from "./subjectSuggest";
-import type {Subject} from "../types/domain";
+import type {Subject} from "../../types/domain";
 
 function subj(id: string, name: string, parent: string | null = null): Subject {
     return {

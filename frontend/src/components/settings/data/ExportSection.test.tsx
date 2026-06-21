@@ -21,7 +21,7 @@ import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 import ExportSection from "./ExportSection";
 import {I18nProvider} from "../../../hooks/ui/useI18n";
 import {_resetStorageCacheForTests, getStorage} from "../../../storage";
-import {setUserId} from "../../../lib/learnerState";
+import {setUserId} from "../../../lib/learning/learnerState";
 import type {ProgressReport} from "../../../storage/backup/export-builder";
 
 vi.mock("../../../utils/notify", () => ({

@@ -7,7 +7,7 @@ const saveBackupToDiskMock = vi.fn();
 vi.mock("../../../storage", () => ({
   getStorage: () => ({ backup: { export: exportMock } }),
 }));
-vi.mock("../../../lib/learnerState", () => ({ readLearnerState: () => ({ userId: "u1" }) }));
+vi.mock("../../../lib/learning/learnerState", () => ({ readLearnerState: () => ({ userId: "u1" }) }));
 vi.mock("../../../utils/backup-download", () => ({
   saveBackupToDisk: (...args: unknown[]) => saveBackupToDiskMock(...args),
   backupFilename: () => "adaptive-learner-backup-x.json",

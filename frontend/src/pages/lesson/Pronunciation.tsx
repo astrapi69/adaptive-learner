@@ -26,7 +26,7 @@ import SpeechButton from "../../components/voice/SpeechButton";
 import { ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { readLearnerState } from "../../lib/learnerState";
+import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
 import type { PronunciationVerdict } from "../../storage/types";
 import type { LearningProject } from "../../types";

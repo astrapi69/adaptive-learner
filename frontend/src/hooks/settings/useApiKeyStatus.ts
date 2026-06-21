@@ -43,7 +43,7 @@
 import {useCallback, useEffect, useState} from "react";
 
 import type {AIProvider} from "../../lib/constants";
-import {readLearnerState} from "../../lib/learnerState";
+import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 
 interface ApiKeyStatus {
