@@ -7,10 +7,10 @@ import {render, screen, waitFor} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import DailyMissionsCard from "./DailyMissionsCard";
-import type {DailyMission} from "../lib/missions/types";
+import type {DailyMission} from "../../lib/missions/types";
 
 const getDaily = vi.fn();
-vi.mock("../storage", () => ({
+vi.mock("../../storage", () => ({
     getStorage: () => ({missions: {getDaily}}),
 }));
 

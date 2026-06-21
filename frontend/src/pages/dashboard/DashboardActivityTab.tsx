@@ -21,7 +21,7 @@ import ProgressTimeline from "../../components/ProgressTimeline";
 import RecentSessions from "../../components/session/RecentSessions";
 import SessionCounter from "../../components/session/SessionCounter";
 import SpacedRecommendations from "../../components/session/SpacedRecommendations";
-import StreakCalendar from "../../components/StreakCalendar";
+import StreakCalendar from "../../components/gamification/StreakCalendar";
 import ToolRecommendations from "../../components/session/ToolRecommendations";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../hooks/ui/useI18n";

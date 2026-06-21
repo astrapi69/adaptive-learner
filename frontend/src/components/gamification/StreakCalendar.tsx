@@ -12,8 +12,8 @@
  * passes it through here.
  */
 
-import {useI18n} from "../hooks/ui/useI18n";
-import type {HeatmapEntryOut} from "../storage/types";
+import {useI18n} from "../../hooks/ui/useI18n";
+import type {HeatmapEntryOut} from "../../storage/types";
 
 function tierForCount(count: number): number {
     if (count <= 0) return 0;

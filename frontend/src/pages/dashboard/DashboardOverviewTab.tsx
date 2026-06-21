@@ -13,8 +13,8 @@ import FocusAreasCard from "../../components/dashboard/FocusAreasCard";
 import PausedLessonsCard from "../../components/dashboard/PausedLessonsCard";
 import HelpLink from "../../components/help/HelpLink";
 import HelpTooltip from "../../components/help/HelpTooltip";
-import StreakWidget from "../../components/StreakWidget";
-import XPWidget from "../../components/XPWidget";
+import StreakWidget from "../../components/gamification/StreakWidget";
+import XPWidget from "../../components/gamification/XPWidget";
 import { useI18n } from "../../hooks/ui/useI18n";
 import type { StreakStateOut, XPState } from "../../storage/types";
 

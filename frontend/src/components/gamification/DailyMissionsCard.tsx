@@ -26,15 +26,15 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { useI18n } from "../hooks/ui/useI18n";
-import { allowsConfetti, effectiveIntensity } from "../lib/feedback/feedbackPref";
-import { MISSION_PREF_CHANGE_EVENT, readMissionPrefs } from "../lib/missionPref";
-import { localTodayIso } from "../lib/missions/schedule";
-import type { DailyMission } from "../lib/missions/types";
-import { celebrateMissions } from "../lib/praise/celebration-bus";
-import { getStorage } from "../storage";
-import { notify } from "../utils/notify";
-import Confetti from "./feedback/Confetti";
+import { useI18n } from "../../hooks/ui/useI18n";
+import { allowsConfetti, effectiveIntensity } from "../../lib/feedback/feedbackPref";
+import { MISSION_PREF_CHANGE_EVENT, readMissionPrefs } from "../../lib/missionPref";
+import { localTodayIso } from "../../lib/missions/schedule";
+import type { DailyMission } from "../../lib/missions/types";
+import { celebrateMissions } from "../../lib/praise/celebration-bus";
+import { getStorage } from "../../storage";
+import { notify } from "../../utils/notify";
+import Confetti from "../feedback/Confetti";
 
 const ICONS: Record<string, LucideIcon> = {
   "book-open": BookOpen,

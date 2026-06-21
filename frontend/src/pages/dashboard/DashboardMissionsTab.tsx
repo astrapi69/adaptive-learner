@@ -6,7 +6,7 @@
  * once by the Dashboard and passed in.
  */
 
-import DailyMissionsCard from "../../components/DailyMissionsCard";
+import DailyMissionsCard from "../../components/gamification/DailyMissionsCard";
 import DashboardBadgeWidget from "../../components/badges/DashboardBadgeWidget";
 import { useI18n } from "../../hooks/ui/useI18n";
 import type { BadgeWithProgress } from "../../storage/types";

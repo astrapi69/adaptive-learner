@@ -6,8 +6,8 @@
  * + ``StreakCalendar`` in the same card.
  */
 
-import {useI18n} from "../hooks/ui/useI18n";
-import type {StreakStateOut} from "../storage/types";
+import {useI18n} from "../../hooks/ui/useI18n";
+import type {StreakStateOut} from "../../storage/types";
 
 interface StreakWidgetProps {
     state: StreakStateOut | null;
