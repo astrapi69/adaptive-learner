@@ -13,16 +13,31 @@ from unittest.mock import patch
 from adaptive_learner_launcher import launcher_app
 
 
-class TestNeverClosesItself:
-    """The single window may ONLY be closed by its X (WM_DELETE_WINDOW);
-    no programmatic root close anywhere (#984)."""
+class TestCloseAffordance:
+    """Closing is driven by the X / tray, never an in-window button.
 
-    def test_no_programmatic_root_close(self) -> None:
+    #984 forbade an in-window cancel/close BUTTON (the window must stay
+    persistent). #987 added the legitimate programmatic close path: the
+    WM_DELETE_WINDOW handler ``_on_close`` (X when the app is not running)
+    and the tray "Quit" action both funnel through ``_quit``.
+    """
+
+    def test_close_funnels_through_single_quit(self) -> None:
         src = Path(launcher_app.__file__).read_text(encoding="utf-8")
-        for forbidden in ("_root.destroy", "_root.quit", "_root.close", "self.close("):
-            assert forbidden not in src, (
-                f"{forbidden} found in launcher_app - only the X button may "
-                "close the window (#984)"
+        # Exactly one root teardown, in the deliberate _quit handler.
+        assert src.count("self._root.destroy()") == 1, (
+            "the window must be destroyed from exactly one place (_quit); "
+            "every close path funnels through it (#984/#987)"
+        )
+        assert "self._root.quit(" not in src
+        # No close-and-reopen helper that an in-window button could call.
+        assert "self.close(" not in src
+
+    def test_no_state_offers_an_in_window_close_button(self) -> None:
+        for state in ("no_docker", "not_installed", "running", "stopped"):
+            ids = [a for a, _ in launcher_app.buttons_for_state(state)]
+            assert not ({"cancel", "close", "quit"} & set(ids)), (
+                f"state {state} must not expose an in-window close button (#984)"
             )
 
 
@@ -97,3 +112,25 @@ class TestDispatchAction:
 
     def test_unknown_action_returns_none(self) -> None:
         assert launcher_app.dispatch_action("frobnicate", **self._CTX) is None
+
+
+class TestShouldMinimizeToTray:
+    """Minimize to tray ONLY when running AND the tray extra is available (#987)."""
+
+    def test_running_with_tray(self) -> None:
+        assert launcher_app.should_minimize_to_tray("running", tray_available=True) is True
+
+    def test_running_without_tray_closes(self) -> None:
+        assert launcher_app.should_minimize_to_tray("running", tray_available=False) is False
+
+    def test_stopped_always_closes(self) -> None:
+        assert launcher_app.should_minimize_to_tray("stopped", tray_available=True) is False
+        assert launcher_app.should_minimize_to_tray("not_installed", tray_available=True) is False
+        assert launcher_app.should_minimize_to_tray("no_docker", tray_available=True) is False
+
+
+class TestTrayMenuLabels:
+    def test_has_every_menu_action(self) -> None:
+        labels = launcher_app.tray_menu_labels()
+        assert set(labels) == set(launcher_app.tray.menu_action_ids())
+        assert all(isinstance(v, str) and v for v in labels.values())
