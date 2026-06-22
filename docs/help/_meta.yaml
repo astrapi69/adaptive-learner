@@ -33,6 +33,26 @@ languages:
 
 navigation:
   - title:
+      de: Installation
+      en: Installation
+      es: Instalación
+      fr: Installation
+      el: Εγκατάσταση
+      pt: Instalação
+      tr: Kurulum
+      ja: インストール
+    children:
+      - title:
+          de: Docker Desktop installieren
+          en: Install Docker Desktop
+          es: Instalar Docker Desktop
+          fr: Installer Docker Desktop
+          el: Εγκατάσταση Docker Desktop
+          pt: Instalar o Docker Desktop
+          tr: Docker Desktop kurulumu
+          ja: Docker Desktop のインストール
+        slug: install/docker-desktop
+  - title:
       de: Benutzerhandbuch
       en: User Guide
       es: Guía del usuario

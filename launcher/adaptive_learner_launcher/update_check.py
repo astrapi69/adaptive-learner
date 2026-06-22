@@ -18,7 +18,7 @@ from collections.abc import Callable
 
 logger = logging.getLogger("adaptive_learner_launcher.update_check")
 
-RELEASES_URL = "https://api.github.com/repos/astrapi69/adaptive_learner/releases/latest"
+RELEASES_URL = "https://api.github.com/repos/astrapi69/adaptive-learner/releases/latest"
 TIMEOUT_SECONDS = 5.0
 
 
