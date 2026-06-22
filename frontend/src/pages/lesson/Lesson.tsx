@@ -240,14 +240,14 @@ export default function LessonPage() {
     }
   }, [lesson, currentStepIndex, t]);
 
-  // #959 — on mobile the lesson header fills the viewport and pushes the
-  // progress bar + step content below the fold, forcing a manual scroll on
-  // every step. After load + each step change, bring the content into view
-  // so the learner sees the task, not the header. Mobile only (< 640px;
-  // desktop has the room) and honors prefers-reduced-motion.
+  // #959 — the lesson header (set line + title + description) eats too
+  // much vertical space on EVERY viewport, so the progress bar + step
+  // content start below the fold and the learner has to scroll on each of
+  // the steps. After load + each step change, bring the content into view
+  // so they see the task, not the header. All viewports; honors
+  // prefers-reduced-motion.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (window.innerWidth >= 640) return;
     if (showResumePrompt) return; // let the resume overlay settle first
     const target = stepScrollRef.current;
     if (!target?.scrollIntoView) return; // jsdom/happy-dom: no-op
@@ -391,6 +391,7 @@ export default function LessonPage() {
       <LessonHeader
         lesson={lesson}
         setTitle={setTitle}
+        currentStepIndex={currentStepIndex}
         isInProgress={isInProgress}
         exitOpen={exitOpen}
         onPauseClick={() => setExitOpen(true)}
@@ -422,15 +423,20 @@ export default function LessonPage() {
       />
 
       {/* #959 — scroll anchor: a step change scrolls this to the top of
-          the viewport on mobile, lifting the header off-screen so the
-          progress bar + task land in view. scroll-mt leaves a little gap
-          under the (auto-hiding) nav. */}
+          the viewport, lifting the header off-screen so the progress bar +
+          task land in view. scroll-mt leaves a little gap under the
+          (auto-hiding) nav. */}
       <div ref={stepScrollRef} aria-hidden="true" className="scroll-mt-4" />
 
+      {/* #959 — keep "Step n of m" visible while reading: the bar sticks to
+          the top of the scroll container (all viewports). The lesson nav
+          auto-hides on scroll-down, so the bar fills the space it vacates;
+          z-10 stays below the nav (z-50) when the nav is shown. */}
       <LessonProgressBar
         isSummary={isSummary}
         currentStepIndex={currentStepIndex}
         totalSteps={totalSteps}
+        className="sticky top-0 z-10"
       />
 
       <LessonTtsControls
