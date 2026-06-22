@@ -249,18 +249,26 @@ class _ErrorDialog:
             padx=self.PAD,
         ).pack(fill="x", pady=(0, 4))
 
+        # Scrollable details: long compose/npm-ci output must be scrollable
+        # via a visible scrollbar, not a fixed static block (#981).
+        text_frame = tk.Frame(self._details_frame)
+        text_frame.pack(fill="both", expand=True, padx=self.PAD)
+        scrollbar = tk.Scrollbar(text_frame, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
         text_widget = tk.Text(
-            self._details_frame,
-            height=10,
+            text_frame,
+            height=12,
             width=70,
-            wrap="none",
+            wrap="word",
             font=("Consolas", 9),
             borderwidth=1,
             relief="solid",
+            yscrollcommand=scrollbar.set,
         )
         text_widget.insert("1.0", self._details)
         text_widget.configure(state="disabled")
-        text_widget.pack(fill="both", expand=True, padx=self.PAD)
+        text_widget.pack(side="left", fill="both", expand=True)
+        scrollbar.configure(command=text_widget.yview)
 
         tools = tk.Frame(self._details_frame)
         tools.pack(fill="x", padx=self.PAD, pady=(6, self.PAD))
