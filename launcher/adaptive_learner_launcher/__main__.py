@@ -25,10 +25,10 @@ from adaptive_learner_launcher import __version__, config, docker, health, i18n,
 
 logger = logging.getLogger("adaptive_learner_launcher")
 
-INSTALL_GUIDE_URL = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/launcher-windows.md"
+INSTALL_GUIDE_URL = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md"
 DOCKER_INSTALL_URL = "https://docs.docker.com/desktop/install/windows-install/"
-DOCKER_GUIDE_URL_EN = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/install/docker-desktop.md"
-DOCKER_GUIDE_URL_DE = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/de/install/docker-desktop.md"
+DOCKER_GUIDE_URL_EN = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md"
+DOCKER_GUIDE_URL_DE = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/de/install/docker-desktop.md"
 DOCKER_SECURITY_ANCHOR_EN = DOCKER_GUIDE_URL_EN + "#is-docker-safe-to-install"
 DOCKER_SECURITY_ANCHOR_DE = DOCKER_GUIDE_URL_DE + "#ist-docker-sicher-zu-installieren"
 
