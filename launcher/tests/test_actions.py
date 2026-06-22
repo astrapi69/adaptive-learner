@@ -270,11 +270,24 @@ class TestStart:
         ok, msg = actions.start("c.yml", "adaptive-learner")
         assert ok is True and "laeuft bereits" in msg
 
-    def test_not_installed(self, monkeypatch) -> None:
+    def test_starts_from_removed_state(self, monkeypatch) -> None:
+        # not_installed (containers gone after `down`, images present) ->
+        # compose up creates + starts them -> running (#977). Must NOT refuse.
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        seq = iter(["not_installed", "running"])
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        ok, msg = actions.start("c.yml", "adaptive-learner")
+        assert ok is True
+
+    def test_real_compose_error_when_nothing_to_start(self, monkeypatch) -> None:
+        # A truly-missing compose file surfaces the real compose error,
+        # not a misleading "nicht installiert".
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
         monkeypatch.setattr(actions, "get_state", lambda *a, **k: "not_installed")
-        ok, msg = actions.start("c.yml", "adaptive-learner")
-        assert ok is False and "nicht installiert" in msg
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result(returncode=1, stderr="no configuration file"))
+        ok, msg = actions.start("nope.yml", "adaptive-learner")
+        assert ok is False and "fehlgeschlagen" in msg
 
     def test_starts_stopped_container(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
