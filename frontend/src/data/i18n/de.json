@@ -1734,7 +1734,11 @@
       "label": "Lektionsmodus",
       "practice": "Üben",
       "exam": "Prüfen",
-      "timed": "Auf Zeit"
+      "timed": "Auf Zeit",
+      "error": "Fehler trainieren",
+      "reverse": "Rückwärts",
+      "shuffle": "Zufall",
+      "endless": "Endlos"
     },
     "exam": {
       "passed": "Bestanden",

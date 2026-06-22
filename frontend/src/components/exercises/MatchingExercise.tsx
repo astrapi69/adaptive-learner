@@ -28,7 +28,7 @@ import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/ui/useI18n";
-import {useIsExamMode} from "../../hooks/lesson/useLessonMode";
+import {useLessonMode} from "../../hooks/lesson/useLessonMode";
 import ExerciseHint from "./ExerciseHint";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../lib/srs/element-attempt";
@@ -165,7 +165,7 @@ function MatchingExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t, lang} = useI18n();
-    const isExam = useIsExamMode();
+    const {showAnswerToggle} = useLessonMode();
     const pairs = useMemo(() => exercise.pairs ?? [], [exercise.pairs]);
     const reviewedMatching =
         reviewed?.kind === "matching" ? reviewed : null;
@@ -499,7 +499,7 @@ function MatchingExercise(
                 testId="matching-hint-button"
             />
 
-            {submitted && !isExam && (
+            {submitted && showAnswerToggle && (
                 <MatchingViewToggle
                     view={view}
                     onShowUserAnswers={showUserAnswers}

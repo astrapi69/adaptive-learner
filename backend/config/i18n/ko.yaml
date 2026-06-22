@@ -1621,6 +1621,10 @@ lesson:
     practice: "연습"
     exam: "시험"
     timed: "시간 제한"
+    error: "오답 연습"
+    reverse: "역방향"
+    shuffle: "셔플"
+    endless: "무한"
   exam:
     passed: "합격"
     not_passed: "불합격"

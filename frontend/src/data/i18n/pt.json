@@ -1734,7 +1734,11 @@
       "label": "Modo de lição",
       "practice": "Prática",
       "exam": "Exame",
-      "timed": "Cronometrado"
+      "timed": "Cronometrado",
+      "error": "Treinar erros",
+      "reverse": "Inverso",
+      "shuffle": "Aleatório",
+      "endless": "Infinito"
     },
     "exam": {
       "passed": "Aprovado",

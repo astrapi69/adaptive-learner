@@ -1734,7 +1734,11 @@
       "label": "レッスンモード",
       "practice": "練習",
       "exam": "試験",
-      "timed": "タイム制"
+      "timed": "タイム制",
+      "error": "間違いを練習",
+      "reverse": "逆方向",
+      "shuffle": "シャッフル",
+      "endless": "エンドレス"
     },
     "exam": {
       "passed": "合格",

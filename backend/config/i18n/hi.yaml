@@ -1606,6 +1606,10 @@ lesson:
     practice: "अभ्यास"
     exam: "परीक्षा"
     timed: "समयबद्ध"
+    error: "गलतियाँ अभ्यास"
+    reverse: "उल्टा"
+    shuffle: "यादृच्छिक"
+    endless: "अंतहीन"
   exam:
     passed: "उत्तीर्ण"
     not_passed: "अनुत्तीर्ण"

@@ -66,7 +66,7 @@ import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 
 import {useI18n} from "../../hooks/ui/useI18n";
-import {useIsExamMode} from "../../hooks/lesson/useLessonMode";
+import {useLessonMode} from "../../hooks/lesson/useLessonMode";
 import ExerciseHint from "./ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
@@ -553,7 +553,7 @@ function WordTilesExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t} = useI18n();
-    const isExam = useIsExamMode();
+    const {showAnswerToggle} = useLessonMode();
     const tiles = exercise.tiles ?? [];
     const acceptOrderings = exercise.accept_orderings;
     const reviewedWordTiles =
@@ -855,7 +855,7 @@ function WordTilesExercise(
                 onShowHint={() => setShowHint(true)}
             />
 
-            {submitted && !isExam && (
+            {submitted && showAnswerToggle && (
                 <>
                     <ExerciseAnswerToggle
                         view={view}

@@ -1734,7 +1734,11 @@
       "label": "Mode de leçon",
       "practice": "Entraînement",
       "exam": "Examen",
-      "timed": "Chronométré"
+      "timed": "Chronométré",
+      "error": "Entraîner les erreurs",
+      "reverse": "Inversé",
+      "shuffle": "Aléatoire",
+      "endless": "Infini"
     },
     "exam": {
       "passed": "Réussi",

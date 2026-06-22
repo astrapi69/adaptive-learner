@@ -1,46 +1,46 @@
 /**
- * Lesson-mode context (#1007).
+ * Lesson-mode context (#1007 / #1011).
  *
- * Practice mode (the default) keeps every learning aid on; exam mode hides
- * the scaffolding (theory recap, hints, auto-read, the solution / answer
- * toggles, and the celebration) so the learner retrieves under realistic
- * conditions — the "testing effect".
+ * Provides the active mode's {@link LessonModeConfig} to the subtree.
+ * Exercise + help components read flags off it (``showHints``,
+ * ``immediateFeedback``, …) instead of branching on a mode string — so a
+ * new mode is one row in {@link MODE_CONFIGS}, not a component change.
  *
- * Exercise renderers + helper components read the mode through
- * {@link useLessonMode} instead of threading a prop through four layers.
- * The default is ``practice`` so any surface WITHOUT a provider — the
- * Review and Adaptive-Lesson runners, and every existing test — behaves
- * exactly as before (all aids on). Only the main lesson player wraps its
- * content in {@link LessonModeProvider} with the active mode.
+ * The default is the ``practice`` config, so any surface WITHOUT a
+ * provider — the Review and Adaptive-Lesson runners, and every existing
+ * test — behaves exactly as before (all aids on, immediate feedback). Only
+ * the main lesson player wraps its content in {@link LessonModeProvider}.
  */
 
 import {createContext, useContext, type ReactNode} from "react";
 
+import {
+    configForMode,
+    MODE_CONFIGS,
+    type LessonModeConfig,
+} from "../../lib/learning/lessonModeConfig";
 import type {LessonMode} from "../../lib/learning/lessonModePref";
 
-const LessonModeContext = createContext<LessonMode>("practice");
+const LessonModeContext = createContext<LessonModeConfig>(
+    MODE_CONFIGS.practice,
+);
 
 export interface LessonModeProviderProps {
     mode: LessonMode;
     children: ReactNode;
 }
 
-/** Provide the active lesson mode to the subtree. */
+/** Provide the active mode's config to the subtree. */
 export function LessonModeProvider({mode, children}: LessonModeProviderProps) {
     return (
-        <LessonModeContext.Provider value={mode}>
+        <LessonModeContext.Provider value={configForMode(mode)}>
             {children}
         </LessonModeContext.Provider>
     );
 }
 
-/** The active lesson mode. ``practice`` when no provider is present. */
-export function useLessonMode(): LessonMode {
+/** The active lesson-mode config. The ``practice`` config when no provider
+ *  is present (all aids on, immediate feedback). */
+export function useLessonMode(): LessonModeConfig {
     return useContext(LessonModeContext);
-}
-
-/** Convenience: true when the current subtree runs in exam mode (aids
- *  hidden). ``false`` outside a provider. */
-export function useIsExamMode(): boolean {
-    return useContext(LessonModeContext) === "exam";
 }

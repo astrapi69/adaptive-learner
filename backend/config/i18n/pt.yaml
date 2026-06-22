@@ -1610,6 +1610,10 @@ lesson:
     practice: "Prática"
     exam: "Exame"
     timed: "Cronometrado"
+    error: "Treinar erros"
+    reverse: "Inverso"
+    shuffle: "Aleatório"
+    endless: "Infinito"
   exam:
     passed: "Aprovado"
     not_passed: "Não aprovado"

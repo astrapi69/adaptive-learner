@@ -1734,7 +1734,11 @@
       "label": "Ders modu",
       "practice": "Alıştırma",
       "exam": "Sınav",
-      "timed": "Süreli"
+      "timed": "Süreli",
+      "error": "Hataları çalış",
+      "reverse": "Ters",
+      "shuffle": "Karışık",
+      "endless": "Sonsuz"
     },
     "exam": {
       "passed": "Geçti",
