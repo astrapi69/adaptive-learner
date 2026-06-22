@@ -9,7 +9,25 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.92.0** (Dexie-hardening + technical-debt release -
+- **Current state:** **v1.93.0** (launcher + content-dialog release -
+  the Docker-based desktop **launcher** gets a Docker-first flow (daemon-not-
+  running dialog with "Start Docker Desktop"), a step-checklist progress window
+  (Check Docker / Download / Build / Start / Ready) for the start + install
+  flows, a configurable host-facing public port (`--port` / `launcher.json` /
+  `.env`) with conflict detection (e.g. vs Bibliogon) + free-port fallback, the
+  compose project pinned to `adaptive-learner` (explicit container_name/image,
+  fixed internal backend port 8000 matching the nginx proxy - fixes the
+  nginx<->backend port mismatch), uninstall matching both `adaptive-learner` +
+  legacy `adaptive_learner`, and the brand icon (#942); the **AI / quality
+  content-check dialogs** become usable on desktop - a shared `ModalShell`
+  (scrollable body + sticky header, always-visible X, Escape + backdrop-click
+  dismiss, `role=dialog`/`aria-modal`, focus restore) backs `AiValidationDialog`
+  + `QualityCheckDialog` so a long report no longer pushes the Close button
+  off-screen (#937); and the AI content-check now shows its **provenance** -
+  "Checked with: provider (model)" in the dialog + Markdown export via a shared
+  `validation-provenance.ts`, with `content.ai_check.checked_with` / `.date`
+  i18n in all 11 languages (#940). No schema/API/data-model change.)
+  v1.92.0 = (Dexie-hardening + technical-debt release -
   headline is a **critical fix so the installed PWA runs in Dexie mode instead
   of API mode** (#907) plus browser-direct Dexie-mode fixes (study guide #902,
   pronunciation #903, identity hidden #914, server option hidden on GH Pages
