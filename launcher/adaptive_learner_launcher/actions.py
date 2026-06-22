@@ -109,7 +109,11 @@ def get_state(project: str = DEFAULT_PROJECT) -> str:
 # --- Ports ----------------------------------------------------------------
 
 def check_port(port: int) -> tuple[bool, str]:
-    """Return (free, message). Free == nothing is listening on the port."""
+    """Return (free, message). Validates the range first, then whether
+    anything is listening. Free == in range AND nothing listening."""
+    valid, reason = _validate_port(port)
+    if not valid:
+        return False, reason
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.settimeout(1.0)
         in_use = sock.connect_ex(("127.0.0.1", port)) == 0
@@ -118,13 +122,20 @@ def check_port(port: int) -> tuple[bool, str]:
     return True, f"Port {port} ist frei."
 
 
-def find_free_port(start: int) -> tuple[bool, int, str]:
-    """Return (found, port, message), scanning upward from ``start``."""
-    for candidate in range(max(start, MIN_PORT), MAX_PORT + 1):
-        free, _ = check_port(candidate)
-        if free:
-            return True, candidate, f"Freier Port gefunden: {candidate}."
-    return False, start, "Kein freier Port gefunden."
+def find_free_port(start: int, *, max_tries: int = 100) -> tuple[bool, int, str]:
+    """Return (found, port, message), scanning up to ``max_tries`` ports
+    from ``start``. Returns ``(False, 0, ...)`` on an invalid start or
+    when no free port is found."""
+    valid, _ = _validate_port(start)
+    if not valid:
+        return False, 0, f"Ungueltiger Start-Port: {start}."
+    last = min(start + max_tries - 1, MAX_PORT)
+    for candidate in range(start, last + 1):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.settimeout(0.5)
+            if sock.connect_ex(("127.0.0.1", candidate)) != 0:
+                return True, candidate, f"Freier Port gefunden: {candidate}."
+    return False, 0, "Kein freier Port gefunden."
 
 
 # --- Lifecycle (install / start / stop / uninstall) -----------------------
@@ -136,39 +147,64 @@ def _compose(project: str, compose_file: str, *args: str, timeout: float) -> sub
     )
 
 
+_DOCKER_UNAVAILABLE = "Docker ist nicht verfuegbar (nicht gestartet)."
+
+
 def install(compose_file: str, project: str = DEFAULT_PROJECT, port: int = DEFAULT_PORT,
             *, on_step: ProgressFn | None = None) -> tuple[bool, str]:
-    """Build + start the stack, then VERIFY it is running and healthy."""
+    """Build + start the stack, then VERIFY it is running and healthy.
+
+    Guards (each returns ``(False, ...)``): invalid port, Docker down,
+    missing compose file, occupied port. If the app is already running it
+    returns ``(True, "Bereits installiert")``.
+    """
     valid, reason = _validate_port(port)
     if not valid:
         return False, reason
+    docker_ok, _ = check_docker()
+    if not docker_ok:
+        return False, _DOCKER_UNAVAILABLE
+    if get_state(project) == "running":
+        return True, "App ist bereits installiert und laeuft."
+    if not Path(compose_file).is_file():
+        return False, f"Compose-Datei nicht gefunden: {compose_file}"
+    port_free, port_msg = check_port(port)
+    if not port_free:
+        return False, port_msg
     _notify(on_step, "Docker-Images werden gebaut (beim ersten Mal einige Minuten)...")
     try:
         result = _compose(project, compose_file, "up", "--build", "-d", timeout=600.0)
     except FileNotFoundError:
-        return False, "Docker ist nicht installiert (docker nicht im PATH)."
+        return False, _DOCKER_UNAVAILABLE
     except subprocess.TimeoutExpired:
         return False, "Docker-Build hat das Zeitlimit (10 Min) ueberschritten."
     if result.returncode != 0:
         return False, f"Docker-Build fehlgeschlagen:\n{_tail(result)}"
-    _notify(on_step, "Container starten...")
+    _notify(on_step, "Bereitschaft pruefen...")
     if get_state(project) != "running":
         return False, "Container wurde gebaut, laeuft aber nicht."
-    _notify(on_step, "Bereitschaft pruefen...")
     healthy, health_msg = health_check(port, HEALTH_PATH, timeout=120)
     if not healthy:
-        return True, f"Installiert; App startet noch ({health_msg})."
+        return False, f"Installiert, aber die App ist nicht erreichbar: {health_msg}"
     return True, "Installation abgeschlossen. App ist bereit."
 
 
 def start(compose_file: str, project: str = DEFAULT_PROJECT,
           *, on_step: ProgressFn | None = None) -> tuple[bool, str]:
     """Start a stopped stack, then VERIFY it is running."""
+    docker_ok, _ = check_docker()
+    if not docker_ok:
+        return False, _DOCKER_UNAVAILABLE
+    state = get_state(project)
+    if state == "running":
+        return True, "App laeuft bereits."
+    if state == "not_installed":
+        return False, "App ist nicht installiert."
     _notify(on_step, "Container starten...")
     try:
         result = _compose(project, compose_file, "up", "-d", timeout=120.0)
     except FileNotFoundError:
-        return False, "Docker ist nicht installiert (docker nicht im PATH)."
+        return False, _DOCKER_UNAVAILABLE
     except subprocess.TimeoutExpired:
         return False, "Start hat das Zeitlimit ueberschritten."
     if result.returncode != 0:
@@ -184,9 +220,15 @@ def stop(project: str = DEFAULT_PROJECT) -> tuple[bool, str]:
     Uses ``docker stop`` by id so the containers REMAIN (state -> stopped),
     keeping data + images for a fast restart. Verified.
     """
-    running = _project_container_ids(running_only=True)
-    if not running:
+    docker_ok, _ = check_docker()
+    if not docker_ok:
+        return False, _DOCKER_UNAVAILABLE
+    state = get_state(project)
+    if state == "not_installed":
+        return False, "App ist nicht installiert."
+    if state == "stopped":
         return True, "App war bereits gestoppt."
+    running = _project_container_ids(running_only=True)
     try:
         _run(["docker", "stop", *running], timeout=60.0)
     except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
@@ -203,15 +245,19 @@ def uninstall(project: str = DEFAULT_PROJECT) -> tuple[bool, str]:
     directory, and re-lists to confirm - never claims success while a
     container survives. Volumes are PRESERVED (data survives a reinstall).
     """
+    docker_ok, _ = check_docker()
+    if not docker_ok:
+        return False, _DOCKER_UNAVAILABLE
     ids = _project_container_ids(running_only=False)
-    if ids:
-        try:
-            _run(["docker", "rm", "-f", *ids], timeout=60.0)
-        except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
-            return False, f"Entfernen fehlgeschlagen: {exc}"
+    if not ids:
+        return True, "Nichts zu deinstallieren (kein Container vorhanden)."
+    try:
+        _run(["docker", "rm", "-f", *ids], timeout=60.0)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        return False, f"Entfernen fehlgeschlagen: {exc}"
     remaining = _project_container_ids(running_only=False)
     if remaining:
-        return False, f"{len(remaining)} Container konnte(n) nicht entfernt werden."
+        return False, f"Teilweise entfernt: {len(remaining)} Container konnte(n) nicht entfernt werden."
     _remove_images()  # best-effort, frees disk; never blocks success
     return True, "Deinstallation abgeschlossen. Deine Lerndaten bleiben erhalten."
 
