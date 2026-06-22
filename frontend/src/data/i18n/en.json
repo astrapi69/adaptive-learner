@@ -1734,7 +1734,11 @@
       "label": "Lesson mode",
       "practice": "Practice",
       "exam": "Exam",
-      "timed": "Timed"
+      "timed": "Timed",
+      "error": "Train errors",
+      "reverse": "Reverse",
+      "shuffle": "Shuffle",
+      "endless": "Endless"
     },
     "exam": {
       "passed": "Passed",

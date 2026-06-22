@@ -1615,6 +1615,10 @@ lesson:
     practice: "Üben"
     exam: "Prüfen"
     timed: "Auf Zeit"
+    error: "Fehler trainieren"
+    reverse: "Rückwärts"
+    shuffle: "Zufall"
+    endless: "Endlos"
   exam:
     passed: "Bestanden"
     not_passed: "Nicht bestanden"

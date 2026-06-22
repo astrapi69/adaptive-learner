@@ -8,13 +8,15 @@ import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it} from "vitest";
 
-import {LessonModeProvider, useIsExamMode} from "./useLessonMode";
+import {LessonModeProvider, useLessonMode} from "./useLessonMode";
 import ExerciseHint from "../../components/exercises/ExerciseHint";
 import WordTilesExercise from "../../components/exercises/WordTilesExercise";
 import type {ContentLessonExercise} from "../../storage/types";
 
 function ModeProbe() {
-    return <span data-testid="probe">{String(useIsExamMode())}</span>;
+    return (
+        <span data-testid="probe">{useLessonMode().mode}</span>
+    );
 }
 
 const HINTED: ContentLessonExercise = {
@@ -27,19 +29,19 @@ const HINTED: ContentLessonExercise = {
     hint: "Two short words.",
 };
 
-describe("useIsExamMode", () => {
-    it("is false without a provider (default practice)", () => {
+describe("useLessonMode", () => {
+    it("returns the practice config without a provider", () => {
         render(<ModeProbe />);
-        expect(screen.getByTestId("probe")).toHaveTextContent("false");
+        expect(screen.getByTestId("probe")).toHaveTextContent("practice");
     });
 
-    it("is true inside an exam-mode provider", () => {
+    it("returns the active mode's config inside a provider", () => {
         render(
             <LessonModeProvider mode="exam">
                 <ModeProbe />
             </LessonModeProvider>,
         );
-        expect(screen.getByTestId("probe")).toHaveTextContent("true");
+        expect(screen.getByTestId("probe")).toHaveTextContent("exam");
     });
 });
 

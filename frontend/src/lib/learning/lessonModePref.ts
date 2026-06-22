@@ -15,7 +15,14 @@
  * Presentation/UX only: neither changes scoring or the SRS layer here.
  */
 
-export type LessonMode = "practice" | "exam" | "timed";
+export type LessonMode =
+    | "practice"
+    | "exam"
+    | "timed"
+    | "error"
+    | "reverse"
+    | "shuffle"
+    | "endless";
 
 /** Valid exam pass thresholds (percent correct). */
 export type ExamPassThreshold = 60 | 70 | 80;
@@ -23,7 +30,15 @@ export type ExamPassThreshold = 60 | 70 | 80;
 const MODE_KEY = "adaptive-learner.lesson.default_mode";
 const THRESHOLD_KEY = "adaptive-learner.lesson.exam_pass_threshold";
 
-const VALID_MODES: readonly LessonMode[] = ["practice", "exam", "timed"];
+const VALID_MODES: readonly LessonMode[] = [
+    "practice",
+    "exam",
+    "timed",
+    "error",
+    "reverse",
+    "shuffle",
+    "endless",
+];
 const VALID_THRESHOLDS: readonly ExamPassThreshold[] = [60, 70, 80];
 
 export const DEFAULT_LESSON_MODE: LessonMode = "practice";

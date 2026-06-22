@@ -34,6 +34,7 @@ import {
   readDefaultLessonMode,
   type LessonMode,
 } from "../../lib/learning/lessonModePref";
+import { configForMode } from "../../lib/learning/lessonModeConfig";
 import LessonSummary from "../../components/lesson/summary/LessonSummary";
 import LessonResources from "../../components/lesson/steps/LessonResources";
 import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
@@ -149,6 +150,7 @@ export default function LessonPage() {
   const [lessonMode, setLessonMode] = useState<LessonMode>(() =>
     readDefaultLessonMode(),
   );
+  const modeConfig = configForMode(lessonMode);
 
   // #594 Hint Economy — start each lesson with a clean hint-usage slate
   // so a hint on a reused exercise id from a prior lesson never bleeds.
@@ -481,8 +483,9 @@ export default function LessonPage() {
         />
       )}
 
-      {/* Auto-read / read-aloud is a scaffolding aid: hidden in exam mode. */}
-      {lessonMode === "practice" && (
+      {/* Auto-read / read-aloud is a scaffolding aid: shown only in modes
+          whose config enables it (#1011). */}
+      {modeConfig.showReadAloud && (
         <LessonTtsControls
           isSummary={isSummary}
           lesson={lesson}

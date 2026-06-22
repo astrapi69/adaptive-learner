@@ -25,7 +25,7 @@ import {useEffect, useRef, useState} from "react";
 import {Check, X} from "lucide-react";
 
 import {useFeedbackIntensity} from "../../hooks/settings/useFeedbackIntensity";
-import {useIsExamMode} from "../../hooks/lesson/useLessonMode";
+import {useLessonMode} from "../../hooks/lesson/useLessonMode";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FeedbackPulse from "../../shared/feedback/FeedbackPulse";
 import {
@@ -46,13 +46,13 @@ export default function AnswerCelebration({
 }: AnswerCelebrationProps) {
     const {lang} = useI18n();
     const intensity = useFeedbackIntensity();
-    const isExam = useIsExamMode();
+    const {immediateFeedback} = useLessonMode();
     const [phrase, setPhrase] = useState<string | null>(null);
     const fired = useRef(false);
 
     useEffect(() => {
-        // Exam mode (#1007): no immediate celebration / reward feedback.
-        if (isExam || fired.current) return;
+        // No immediate celebration in modes without immediate feedback (#1011).
+        if (!immediateFeedback || fired.current) return;
         fired.current = true;
         // Route through the bus so the sound layer reacts
         // (sound self-gates on the sound preference).
@@ -66,7 +66,7 @@ export default function AnswerCelebration({
             const picked = nextPraise("correct_answer", lang);
             if (picked) setPhrase(picked.phrase);
         }
-    }, [isCorrect, intensity, lang, isExam]);
+    }, [isCorrect, intensity, lang, immediateFeedback]);
 
     // A green pulse on a correct answer / a red shake on a wrong one,
     // reusing the shared FeedbackPulse (no-op under reduced motion).
@@ -74,7 +74,7 @@ export default function AnswerCelebration({
     const showPulse = intensity !== "subtle";
 
     // Exam mode (#1007): suppress all immediate per-answer feedback.
-    if (isExam) return null;
+    if (!immediateFeedback) return null;
     if (!showPulse && (!isCorrect || phrase === null)) return null;
 
     return (

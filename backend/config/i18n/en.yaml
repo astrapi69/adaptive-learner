@@ -1621,6 +1621,10 @@ lesson:
     practice: "Practice"
     exam: "Exam"
     timed: "Timed"
+    error: "Train errors"
+    reverse: "Reverse"
+    shuffle: "Shuffle"
+    endless: "Endless"
   exam:
     passed: "Passed"
     not_passed: "Not passed"

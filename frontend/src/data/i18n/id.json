@@ -1734,7 +1734,11 @@
       "label": "Mode pelajaran",
       "practice": "Latihan",
       "exam": "Ujian",
-      "timed": "Berwaktu"
+      "timed": "Berwaktu",
+      "error": "Latih kesalahan",
+      "reverse": "Terbalik",
+      "shuffle": "Acak",
+      "endless": "Tanpa henti"
     },
     "exam": {
       "passed": "Lulus",

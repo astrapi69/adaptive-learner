@@ -15,7 +15,6 @@ import {useEffect, useState} from "react";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {
     EXAM_PASS_THRESHOLD_OPTIONS,
-    LESSON_MODE_OPTIONS,
     LESSON_MODE_PREF_CHANGE_EVENT,
     readDefaultLessonMode,
     readExamPassThreshold,
@@ -35,7 +34,20 @@ const MODE_LABELS: Record<LessonMode, {key: string; fallback: string}> = {
     practice: {key: "lesson.mode.practice", fallback: "Practice"},
     exam: {key: "lesson.mode.exam", fallback: "Exam"},
     timed: {key: "lesson.mode.timed", fallback: "Timed"},
+    error: {key: "lesson.mode.error", fallback: "Train errors"},
+    reverse: {key: "lesson.mode.reverse", fallback: "Reverse"},
+    shuffle: {key: "lesson.mode.shuffle", fallback: "Shuffle"},
+    endless: {key: "lesson.mode.endless", fallback: "Endless"},
 };
+
+// The default-mode dropdown only offers the fully-wired modes; the
+// card-source modes (error/reverse/shuffle/endless) become selectable as
+// their own PRs land (#1011).
+const SELECTABLE_DEFAULT_MODES: readonly LessonMode[] = [
+    "practice",
+    "exam",
+    "timed",
+];
 
 const DIFFICULTY_LABELS: Record<
     TimedDifficulty,
@@ -98,7 +110,7 @@ export default function LessonModeControl() {
                     }}
                     data-testid="lesson-mode-default-select"
                 >
-                    {LESSON_MODE_OPTIONS.map((value) => (
+                    {SELECTABLE_DEFAULT_MODES.map((value) => (
                         <option key={value} value={value}>
                             {t(MODE_LABELS[value].key, MODE_LABELS[value].fallback)}
                         </option>

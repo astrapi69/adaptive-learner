@@ -1612,6 +1612,10 @@ lesson:
     practice: "Εξάσκηση"
     exam: "Εξέταση"
     timed: "Με χρόνο"
+    error: "Εξάσκηση λαθών"
+    reverse: "Αντίστροφα"
+    shuffle: "Τυχαία"
+    endless: "Ατέρμονο"
   exam:
     passed: "Επιτυχία"
     not_passed: "Αποτυχία"
