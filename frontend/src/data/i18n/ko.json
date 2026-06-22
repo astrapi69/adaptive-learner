@@ -1860,6 +1860,7 @@
         "result_correct": "정답입니다!",
         "result_wrong": "아쉬워요.",
         "result_almost": "거의 맞았어요! 다음에 유의하세요:",
+        "accepted": "허용되는 답",
         "empty": "이 자유 입력 연습에는 허용된 답이 없습니다."
       },
       "word_tiles": {

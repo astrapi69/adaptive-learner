@@ -1860,6 +1860,7 @@
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait.",
         "result_almost": "Presque ! Attention à :",
+        "accepted": "Réponses acceptées",
         "empty": "Cet exercice n'a pas de réponses acceptées."
       },
       "word_tiles": {

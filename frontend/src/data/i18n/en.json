@@ -1860,6 +1860,7 @@
         "result_correct": "Correct!",
         "result_wrong": "Not quite.",
         "result_almost": "Almost! Watch out for:",
+        "accepted": "Accepted answers",
         "empty": "This free-text exercise has no accepted answers."
       },
       "word_tiles": {

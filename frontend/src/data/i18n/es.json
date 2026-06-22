@@ -1860,6 +1860,7 @@
         "result_correct": "¡Correcto!",
         "result_wrong": "Casi.",
         "result_almost": "¡Casi! Fíjate en:",
+        "accepted": "Respuestas aceptadas",
         "empty": "Este ejercicio no tiene respuestas aceptadas."
       },
       "word_tiles": {

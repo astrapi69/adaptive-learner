@@ -1860,6 +1860,7 @@
         "result_correct": "Doğru!",
         "result_wrong": "Pek değil.",
         "result_almost": "Neredeyse! Şuna dikkat et:",
+        "accepted": "Kabul edilen yanıtlar",
         "empty": "Bu serbest metin alıştırmasının kabul edilen cevabı yok."
       },
       "word_tiles": {

@@ -27,6 +27,7 @@ import FreeTextExercise, {
     isFreeTextCorrect,
     isFreeTextNearMiss,
 } from "./FreeTextExercise";
+import {LessonModeProvider} from "../../hooks/lesson/useLessonMode";
 import type {ContentLessonExercise} from "../../storage/types";
 
 const EXERCISE: ContentLessonExercise = {
@@ -127,6 +128,39 @@ describe("isFreeTextCorrect (code mode, schema v1.3)", () => {
         expect(isFreeTextCorrect("println('Hallo Welt')", accept, true)).toBe(
             false,
         );
+    });
+});
+
+describe("FreeTextExercise: My-answer / Solution toggle (#1005)", () => {
+    function submitWrong() {
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "wrongword"},
+        });
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+    }
+
+    it("after a wrong answer, toggles to the accepted-answers solution", () => {
+        render(<FreeTextExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        submitWrong();
+        // My-answer view (default) shows the token diff.
+        expect(screen.getByTestId("free-text-answer-toggle")).toBeInTheDocument();
+        expect(screen.getByTestId("free-text-diff-row")).toBeInTheDocument();
+        // Solution view lists the accepted answers.
+        fireEvent.click(screen.getByTestId("free-text-solution"));
+        const solution = screen.getByTestId("free-text-solution-view");
+        expect(solution).toHaveTextContent("Merci");
+        expect(screen.queryByTestId("free-text-diff-row")).toBeNull();
+    });
+
+    it("hides the toggle in exam mode (no solution reveal)", () => {
+        render(
+            <LessonModeProvider mode="exam">
+                <FreeTextExercise exercise={EXERCISE} onComplete={vi.fn()} />
+            </LessonModeProvider>,
+        );
+        submitWrong();
+        expect(screen.queryByTestId("free-text-answer-toggle")).toBeNull();
+        expect(screen.queryByTestId("free-text-diff-row")).toBeNull();
     });
 });
 

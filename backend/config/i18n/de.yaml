@@ -1726,6 +1726,7 @@ lesson:
       result_correct: "Richtig!"
       result_wrong: "Nicht ganz."
       result_almost: "Fast! Achte auf:"
+      accepted: "Akzeptierte Antworten"
       empty: "Diese Freitext-Übung hat keine akzeptierten Antworten."
     word_tiles:
       instructions: "Bring die Kacheln in die richtige Reihenfolge. Tippe zum Platzieren; nutze die Pfeile oder ziehe zum Umordnen."

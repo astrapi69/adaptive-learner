@@ -1860,6 +1860,7 @@
         "result_correct": "正解です！",
         "result_wrong": "惜しい。",
         "result_almost": "おしい！次に注意:",
+        "accepted": "正解として認められる答え",
         "empty": "この自由記述演習には受け付ける答えがありません。"
       },
       "word_tiles": {

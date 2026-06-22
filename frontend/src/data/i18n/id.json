@@ -1860,6 +1860,7 @@
         "result_correct": "Benar!",
         "result_wrong": "Belum tepat.",
         "result_almost": "Hampir! Perhatikan:",
+        "accepted": "Jawaban yang diterima",
         "empty": "Latihan teks bebas ini tidak memiliki jawaban yang diterima."
       },
       "word_tiles": {
