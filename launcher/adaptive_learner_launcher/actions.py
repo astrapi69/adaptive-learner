@@ -323,11 +323,18 @@ def install(compose_file: str, project: str = DEFAULT_PROJECT, port: int = DEFAU
 
 
 def start(compose_file: str, project: str = DEFAULT_PROJECT,
-          *, on_step: ProgressFn | None = None) -> tuple[bool, str]:
-    """Start the stack via ``compose up -d``, then VERIFY it is running.
+          *, on_step: ProgressFn | None = None,
+          on_output: OutputFn | None = None) -> tuple[bool, str]:
+    """Start the stack via ``compose up --build -d``, then VERIFY it runs.
 
-    ``compose up -d`` creates the containers if they do not exist yet, so
-    it works from BOTH 'stopped' (containers present) AND a removed-state
+    Always passes ``--build`` so a ``git pull`` / code change is picked up
+    automatically on the next start (#999); Docker's layer cache makes an
+    UNCHANGED rebuild near-instant (a few seconds), so this is cheap. The
+    build output streams live through ``on_output`` like :func:`install`
+    (#992).
+
+    ``up --build -d`` also creates the containers if they do not exist yet,
+    so it works from BOTH 'stopped' (containers present) AND a removed-state
     (containers gone after ``down``, images still present). It does NOT
     refuse on 'not_installed' - that was a regression that broke the start
     flow whenever the app was installed but had no container yet (#977).
@@ -338,15 +345,17 @@ def start(compose_file: str, project: str = DEFAULT_PROJECT,
         return False, _DOCKER_UNAVAILABLE
     if get_state(project) == "running":
         return True, "App laeuft bereits."
-    _notify(on_step, "Container starten...")
+    _notify(on_step, "Image wird aktualisiert... (nach Code-Aenderungen einige Minuten, sonst Sekunden)")
     try:
-        result = _compose(project, compose_file, "up", "-d", timeout=120.0)
+        rc, tail = _stream_compose(
+            project, compose_file, "up", "--build", "-d",
+            on_output=on_output, timeout=900.0)
     except FileNotFoundError:
         return False, _DOCKER_UNAVAILABLE
     except subprocess.TimeoutExpired:
         return False, "Start hat das Zeitlimit ueberschritten."
-    if result.returncode != 0:
-        return False, f"Start fehlgeschlagen:\n{_tail(result)}"
+    if rc != 0:
+        return False, f"Start fehlgeschlagen:\n{tail}"
     if get_state(project) != "running":
         return False, "Start-Befehl lief, aber kein Container laeuft."
     return True, "App gestartet."

@@ -73,7 +73,7 @@ def dispatch_action(action_id: str, *, compose_file: str, project: str, port: in
     if action_id == "install":
         return actions.install(compose_file, project, port, on_step=on_step, on_output=on_output)
     if action_id == "start":
-        return actions.start(compose_file, project, on_step=on_step)
+        return actions.start(compose_file, project, on_step=on_step, on_output=on_output)
     if action_id == "stop":
         return actions.stop(project)
     if action_id == "uninstall":

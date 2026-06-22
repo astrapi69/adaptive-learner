@@ -353,7 +353,7 @@ class TestStart:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
         seq = iter(["not_installed", "running"])
         monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (0, ""))
         ok, msg = actions.start("c.yml", "adaptive-learner")
         assert ok is True
 
@@ -362,7 +362,7 @@ class TestStart:
         # not a misleading "nicht installiert".
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
         monkeypatch.setattr(actions, "get_state", lambda *a, **k: "not_installed")
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result(returncode=1, stderr="no configuration file"))
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (1, "no configuration file"))
         ok, msg = actions.start("nope.yml", "adaptive-learner")
         assert ok is False and "fehlgeschlagen" in msg
 
@@ -370,14 +370,14 @@ class TestStart:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
         seq = iter(["stopped", "running"])
         monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (0, ""))
         ok, msg = actions.start("c.yml", "adaptive-learner")
         assert ok is True
 
     def test_start_command_fails(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
         monkeypatch.setattr(actions, "get_state", lambda *a, **k: "stopped")
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result(returncode=1, stderr="boom"))
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (1, "boom"))
         ok, msg = actions.start("c.yml", "adaptive-learner")
         assert ok is False and "fehlgeschlagen" in msg
 
@@ -385,9 +385,30 @@ class TestStart:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
         seq = iter(["stopped", "stopped"])
         monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (0, ""))
         ok, msg = actions.start("c.yml", "adaptive-learner")
         assert ok is False
+
+    def test_start_passes_build_and_streams_output(self, monkeypatch) -> None:
+        # Auto-rebuild on every start so a git pull is picked up (#999),
+        # streamed live like install (#992).
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        seq = iter(["stopped", "running"])
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
+        captured: dict[str, tuple] = {}
+
+        def fake_stream(project, compose_file, *args, on_output=None, timeout):
+            captured["args"] = args
+            if on_output is not None:
+                on_output("Rebuilding image...")
+            return 0, ""
+
+        monkeypatch.setattr(actions, "_stream_compose", fake_stream)
+        output: list[str] = []
+        ok, _ = actions.start("c.yml", "adaptive-learner", on_output=output.append)
+        assert ok is True
+        assert captured["args"] == ("up", "--build", "-d")
+        assert output == ["Rebuilding image..."]
 
 
 # --- stop (5) -------------------------------------------------------------
