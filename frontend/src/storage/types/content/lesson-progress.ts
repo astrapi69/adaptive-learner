@@ -82,6 +82,17 @@ export interface LessonStepResultStored {
   hint_used?: boolean;
 }
 
+/**
+ * One completed-attempt entry in ``LessonProgress.attempt_history``
+ * (#983). ``errors`` is derived in the UI as ``total - correct``.
+ */
+export interface LessonAttempt {
+  /** ISO-8601 completion timestamp. */
+  at: string;
+  correct: number;
+  total: number;
+}
+
 export interface LessonProgress {
   id: string;
   user_id: string;
@@ -107,6 +118,17 @@ export interface LessonProgress {
   paused_at: string | null;
   /** Phase 63A — set on abandon, cleared on completion. */
   abandoned_at: string | null;
+  /** #983 — lesson retry tracking. Number of COMPLETED attempts.
+   *  Optional on the wire so pre-feature fixtures/rows type-check;
+   *  read with `?? 0`. */
+  attempts?: number;
+  /** #983 — the highest-percentage attempt's raw score, so progress
+   *  surfaces can show the BEST result, not the last. Read with `?? 0`. */
+  best_score_correct?: number;
+  best_score_total?: number;
+  /** #983 — completed-attempt history, oldest first. Powers the
+   *  improvement comparison after a retry. Read with `?? []`. */
+  attempt_history?: LessonAttempt[];
 }
 
 /**

@@ -59,7 +59,39 @@ function rowToWire(row: LessonProgressRow): LessonProgress {
         // undefined here.
         paused_at: row.paused_at ?? null,
         abandoned_at: row.abandoned_at ?? null,
+        // #983 — retry tracking; coalesce so pre-feature rows present
+        // the same wire shape (no attempts recorded yet).
+        attempts: row.attempts ?? 0,
+        best_score_correct: row.best_score_correct ?? 0,
+        best_score_total: row.best_score_total ?? 0,
+        attempt_history: row.attempt_history ?? [],
     };
+}
+
+/** #983 — account one completed attempt onto the row (mirrors the
+ *  backend ``_record_completed_attempt``): bump ``attempts``, append to
+ *  ``attempt_history``, and lift ``best_score_*`` only when this attempt
+ *  beat the previous best by percentage (ties keep the earlier best). */
+const ATTEMPT_HISTORY_CAP = 50;
+function recordCompletedAttempt(row: LessonProgressRow, nowIso: string): void {
+    row.attempts = (row.attempts ?? 0) + 1;
+    const history = [...(row.attempt_history ?? [])];
+    history.push({
+        at: nowIso,
+        correct: row.score_correct,
+        total: row.score_total,
+    });
+    row.attempt_history = history.slice(-ATTEMPT_HISTORY_CAP);
+
+    const currentPct = row.score_total
+        ? row.score_correct / row.score_total
+        : 0;
+    const bestTotal = row.best_score_total ?? 0;
+    const bestPct = bestTotal ? (row.best_score_correct ?? 0) / bestTotal : -1;
+    if (bestTotal === 0 || currentPct > bestPct) {
+        row.best_score_correct = row.score_correct;
+        row.best_score_total = row.score_total;
+    }
 }
 
 function recomputeScore(
@@ -153,6 +185,10 @@ export async function upsertLessonProgressDexie(
               completed_at: null,
               paused_at: null,
               abandoned_at: null,
+              attempts: 0,
+              best_score_correct: 0,
+              best_score_total: 0,
+              attempt_history: [],
           };
 
     if (body.step_result) {
@@ -200,6 +236,10 @@ export async function upsertLessonProgressDexie(
         // service behaviour (Phase 63A).
         row.paused_at = null;
         row.abandoned_at = null;
+        // #983 — account this completion as one (re-)attempt. Runs for
+        // the first completion too, so a never-retried lesson reports
+        // attempts === 1. Preserved across mark_restarted below.
+        recordCompletedAttempt(row, now);
     }
 
     // Phase 63A — pause / abandon / resume transitions. Mirror

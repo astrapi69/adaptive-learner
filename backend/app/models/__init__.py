@@ -1429,6 +1429,42 @@ class LessonProgress(Base):
         DateTime(timezone=True),
         nullable=True,
     )
+    # #983 — lesson retry with improvement tracking. Each time the row
+    # transitions into ``completed`` counts as one attempt: ``attempts``
+    # increments and a ``{at, correct, total}`` entry is appended to
+    # ``attempt_history`` (a JSON list, capped). ``best_score_*`` keep the
+    # highest-percentage attempt so progress surfaces show the learner's
+    # BEST, not their last (a retry can never lower the displayed score).
+    # All four survive ``mark_restarted`` (the retry reset only clears
+    # score_correct/score_total/step_results) so the learning curve is
+    # preserved. SRS ElementErrors live in their own table and are never
+    # touched by a retry — mistakes stay valuable data.
+    attempts: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default="0",
+    )
+    best_score_correct: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default="0",
+    )
+    best_score_total: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default="0",
+    )
+    # JSON list: [{"at": ISO-8601, "correct": int, "total": int}, ...].
+    # Capped at the most recent entries on write so the row stays bounded.
+    attempt_history: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+        default="[]",
+        server_default="[]",
+    )
 
     def __repr__(self) -> str:
         return (
