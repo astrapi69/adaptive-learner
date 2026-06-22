@@ -137,12 +137,22 @@ def check_port(port: int, *, host: str = "") -> tuple[bool, str]:
     port": Docker publishes by binding all interfaces, so we bind the same
     way. ``SO_REUSEADDR`` is intentionally not set so a live conflict
     surfaces instead of being masked.
+
+    On Windows a plain bind probe is too permissive - it succeeds even when
+    another socket already holds the port (and a ``0.0.0.0`` bind does not
+    conflict with a ``127.0.0.1`` listener), so an occupied port would read
+    as free and the conflict detection would silently fail (#990). We set
+    ``SO_EXCLUSIVEADDRUSE`` there, the Windows-only option that makes the
+    bind fail on any overlapping bind. It does not exist on Linux/macOS, so
+    those keep the plain-bind behaviour.
     """
     valid, reason = _validate_port(port)
     if not valid:
         return False, reason
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):  # Windows only
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
         sock.bind((host, port))
     except OSError:
         return False, f"Port {port} ist belegt."
