@@ -24,10 +24,26 @@ import {
     type ExamPassThreshold,
     type LessonMode,
 } from "../../../lib/learning/lessonModePref";
+import {
+    readTimedDifficulty,
+    TIMED_DIFFICULTY_OPTIONS,
+    writeTimedDifficulty,
+    type TimedDifficulty,
+} from "../../../lib/learning/timedMode";
 
 const MODE_LABELS: Record<LessonMode, {key: string; fallback: string}> = {
     practice: {key: "lesson.mode.practice", fallback: "Practice"},
     exam: {key: "lesson.mode.exam", fallback: "Exam"},
+    timed: {key: "lesson.mode.timed", fallback: "Timed"},
+};
+
+const DIFFICULTY_LABELS: Record<
+    TimedDifficulty,
+    {key: string; fallback: string}
+> = {
+    relaxed: {key: "settings.lesson_mode.timed_relaxed", fallback: "Relaxed (2× time)"},
+    normal: {key: "settings.lesson_mode.timed_normal", fallback: "Normal"},
+    fast: {key: "settings.lesson_mode.timed_fast", fallback: "Fast (0.7× time)"},
 };
 
 export default function LessonModeControl() {
@@ -36,11 +52,15 @@ export default function LessonModeControl() {
     const [threshold, setThreshold] = useState<ExamPassThreshold>(() =>
         readExamPassThreshold(),
     );
+    const [difficulty, setDifficulty] = useState<TimedDifficulty>(() =>
+        readTimedDifficulty(),
+    );
 
     useEffect(() => {
         const refresh = () => {
             setMode(readDefaultLessonMode());
             setThreshold(readExamPassThreshold());
+            setDifficulty(readTimedDifficulty());
         };
         window.addEventListener("storage", refresh);
         window.addEventListener(LESSON_MODE_PREF_CHANGE_EVENT, refresh);
@@ -105,6 +125,33 @@ export default function LessonModeControl() {
                     {EXAM_PASS_THRESHOLD_OPTIONS.map((value) => (
                         <option key={value} value={value}>
                             {value}%
+                        </option>
+                    ))}
+                </select>
+            </label>
+            <label className="form-row">
+                <span className="form-label">
+                    {t(
+                        "settings.lesson_mode.timed_difficulty_label",
+                        "Timed mode difficulty",
+                    )}
+                </span>
+                <select
+                    className="form-select"
+                    value={difficulty}
+                    onChange={(e) => {
+                        const next = e.target.value as TimedDifficulty;
+                        setDifficulty(next);
+                        writeTimedDifficulty(next);
+                    }}
+                    data-testid="lesson-mode-timed-difficulty-select"
+                >
+                    {TIMED_DIFFICULTY_OPTIONS.map((value) => (
+                        <option key={value} value={value}>
+                            {t(
+                                DIFFICULTY_LABELS[value].key,
+                                DIFFICULTY_LABELS[value].fallback,
+                            )}
                         </option>
                     ))}
                 </select>

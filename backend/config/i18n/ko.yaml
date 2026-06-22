@@ -462,6 +462,10 @@ settings:
     hint: "연습 모드는 모든 학습 보조 기능을 유지합니다. 시험 모드는 힌트, 이론 복습, 자동 읽기, 정답 표시를 숨겨 현실적인 조건에서 회상하도록 합니다."
     default_label: "기본 모드"
     threshold_label: "합격 기준"
+    timed_difficulty_label: "시간 제한 모드 난이도"
+    timed_relaxed: "여유 (2× 시간)"
+    timed_normal: "보통"
+    timed_fast: "빠름 (0.7× 시간)"
   updates:
     title: "업데이트"
     auto_check: "자동 업데이트 확인"
@@ -1616,10 +1620,20 @@ lesson:
     label: "레슨 모드"
     practice: "연습"
     exam: "시험"
+    timed: "시간 제한"
   exam:
     passed: "합격"
     not_passed: "불합격"
     threshold_hint: "(합격 ≥ {pct}%)"
+  timed:
+    remaining: "남은 시간"
+    seconds_left: "{n}초 남음"
+    time_up: "시간 초과!"
+    bonus: "+{n}초 보너스"
+    stats_answered: "{total}개 중 {n}개를 제시간에 응답."
+    stats_avg: "평균 응답 시간: {s}초"
+    stats_fastest: "가장 빠름: {s}초 ({type})"
+    stats_slowest: "가장 느림: {s}초 ({type})"
   resources_title: "더 알아보기"
   resources_domain: "{domain}에 대해 더 보기"
   motivation:

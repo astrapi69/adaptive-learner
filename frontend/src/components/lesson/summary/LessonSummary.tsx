@@ -66,6 +66,7 @@ import {
   readExamPassThreshold,
   type LessonMode,
 } from "../../../lib/learning/lessonModePref";
+import type { TimedRunStats } from "../../../lib/learning/timedMode";
 import { emitCelebration } from "../../../lib/praise/celebration-bus";
 import { nextPraise } from "../../../lib/praise/phrase-picker";
 import { getStorage } from "../../../storage";
@@ -79,6 +80,9 @@ interface LessonSummaryProps {
    *  adds a Passed / Not-passed line against the configured threshold.
    *  Defaults to ``practice`` so existing callers are unaffected. */
   lessonMode?: LessonMode;
+  /** #1009 — timed-mode per-question timing summary (answered-in-time,
+   *  average / fastest / slowest). Null outside timed mode. */
+  timedStats?: TimedRunStats | null;
   /** Next lesson's filename within the set, or null when
    *  there is no successor (last lesson OR list not yet
    *  fetched). When null, the "Next lesson" button hides. */
@@ -125,6 +129,7 @@ export default function LessonSummary({
   lesson,
   progress,
   lessonMode = "practice",
+  timedStats = null,
   nextLessonFilename,
   userId,
   setId,
@@ -481,6 +486,55 @@ export default function LessonSummary({
             )}
           </span>
         </p>
+      )}
+
+      {/* #1009 — timed-mode timing stats. */}
+      {lessonMode === "timed" && timedStats && timedStats.total > 0 && (
+        <ul
+          className="lesson-summary-stats m-0"
+          data-testid="lesson-summary-timed-stats"
+        >
+          <li>
+            {t(
+              "lesson.timed.stats_answered",
+              "{n} of {total} answered in time.",
+            )
+              .replace("{n}", String(timedStats.answeredInTime))
+              .replace("{total}", String(timedStats.total))}
+          </li>
+          <li>
+            {t("lesson.timed.stats_avg", "Average answer time: {s}s").replace(
+              "{s}",
+              String(timedStats.averageSeconds),
+            )}
+          </li>
+          {timedStats.fastest && (
+            <li>
+              {t("lesson.timed.stats_fastest", "Fastest: {s}s ({type})")
+                .replace("{s}", String(timedStats.fastest.seconds))
+                .replace(
+                  "{type}",
+                  t(
+                    `lesson.exercise.type_${timedStats.fastest.type}`,
+                    timedStats.fastest.type,
+                  ),
+                )}
+            </li>
+          )}
+          {timedStats.slowest && (
+            <li>
+              {t("lesson.timed.stats_slowest", "Slowest: {s}s ({type})")
+                .replace("{s}", String(timedStats.slowest.seconds))
+                .replace(
+                  "{type}",
+                  t(
+                    `lesson.exercise.type_${timedStats.slowest.type}`,
+                    timedStats.slowest.type,
+                  ),
+                )}
+            </li>
+          )}
+        </ul>
       )}
 
       {/* #983 — after a re-attempt, show the improvement vs the previous

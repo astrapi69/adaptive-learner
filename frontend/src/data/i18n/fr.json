@@ -494,7 +494,11 @@
       "title": "Mode de leçon",
       "hint": "Le mode entraînement garde toutes les aides. Le mode examen masque les indices, le rappel de théorie, la lecture automatique et la solution pour réviser dans des conditions réalistes.",
       "default_label": "Mode par défaut",
-      "threshold_label": "Seuil de réussite"
+      "threshold_label": "Seuil de réussite",
+      "timed_difficulty_label": "Difficulté du mode chronométré",
+      "timed_relaxed": "Détendu (2× temps)",
+      "timed_normal": "Normal",
+      "timed_fast": "Rapide (0,7× temps)"
     },
     "updates": {
       "title": "Mises à jour",
@@ -1729,12 +1733,23 @@
     "mode": {
       "label": "Mode de leçon",
       "practice": "Entraînement",
-      "exam": "Examen"
+      "exam": "Examen",
+      "timed": "Chronométré"
     },
     "exam": {
       "passed": "Réussi",
       "not_passed": "Échoué",
       "threshold_hint": "(réussite ≥ {pct} %)"
+    },
+    "timed": {
+      "remaining": "Temps restant",
+      "seconds_left": "{n}s restantes",
+      "time_up": "Temps écoulé !",
+      "bonus": "+{n}s bonus",
+      "stats_answered": "{n} sur {total} répondues à temps.",
+      "stats_avg": "Temps de réponse moyen : {s}s",
+      "stats_fastest": "La plus rapide : {s}s ({type})",
+      "stats_slowest": "La plus lente : {s}s ({type})"
     },
     "resources_title": "Approfondir le sujet",
     "resources_domain": "Plus sur {domain}",

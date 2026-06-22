@@ -494,7 +494,11 @@
       "title": "レッスンモード",
       "hint": "練習モードではすべての補助が有効です。試験モードではヒント、理論の復習、自動読み上げ、解答の表示を隠し、現実的な条件で思い出せるようにします。",
       "default_label": "既定のモード",
-      "threshold_label": "合格基準"
+      "threshold_label": "合格基準",
+      "timed_difficulty_label": "タイム制モードの難易度",
+      "timed_relaxed": "ゆったり（2倍）",
+      "timed_normal": "ふつう",
+      "timed_fast": "はやい（0.7倍）"
     },
     "updates": {
       "title": "アップデート",
@@ -1729,12 +1733,23 @@
     "mode": {
       "label": "レッスンモード",
       "practice": "練習",
-      "exam": "試験"
+      "exam": "試験",
+      "timed": "タイム制"
     },
     "exam": {
       "passed": "合格",
       "not_passed": "不合格",
       "threshold_hint": "(合格 ≥ {pct}%)"
+    },
+    "timed": {
+      "remaining": "残り時間",
+      "seconds_left": "残り{n}秒",
+      "time_up": "時間切れ！",
+      "bonus": "+{n}秒ボーナス",
+      "stats_answered": "{total}問中{n}問を時間内に解答。",
+      "stats_avg": "平均解答時間: {s}秒",
+      "stats_fastest": "最速: {s}秒 ({type})",
+      "stats_slowest": "最遅: {s}秒 ({type})"
     },
     "resources_title": "さらに学ぶ",
     "resources_domain": "{domain} についてもっと見る",

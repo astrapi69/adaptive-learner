@@ -29,6 +29,17 @@ describe("LessonModeToggle", () => {
         expect(onChange).toHaveBeenCalledWith("exam");
     });
 
+    it("offers the timed mode (#1009)", () => {
+        const onChange = vi.fn();
+        render(<LessonModeToggle mode="timed" onChange={onChange} />);
+        expect(screen.getByTestId("lesson-mode-timed")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+        fireEvent.click(screen.getByTestId("lesson-mode-practice"));
+        expect(onChange).toHaveBeenCalledWith("practice");
+    });
+
     it("disables both buttons when the lesson is under way", () => {
         render(
             <LessonModeToggle mode="exam" onChange={() => {}} disabled />,

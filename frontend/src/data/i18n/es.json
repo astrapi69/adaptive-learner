@@ -494,7 +494,11 @@
       "title": "Modo de lección",
       "hint": "El modo práctica mantiene todas las ayudas. El modo examen oculta las pistas, el repaso de teoría, la lectura automática y la solución para que recuperes en condiciones realistas.",
       "default_label": "Modo predeterminado",
-      "threshold_label": "Umbral para aprobar"
+      "threshold_label": "Umbral para aprobar",
+      "timed_difficulty_label": "Dificultad del modo con tiempo",
+      "timed_relaxed": "Relajado (2× tiempo)",
+      "timed_normal": "Normal",
+      "timed_fast": "Rápido (0,7× tiempo)"
     },
     "updates": {
       "title": "Actualizaciones",
@@ -1729,12 +1733,23 @@
     "mode": {
       "label": "Modo de lección",
       "practice": "Práctica",
-      "exam": "Examen"
+      "exam": "Examen",
+      "timed": "Con tiempo"
     },
     "exam": {
       "passed": "Aprobado",
       "not_passed": "No aprobado",
       "threshold_hint": "(aprobado ≥ {pct}%)"
+    },
+    "timed": {
+      "remaining": "Tiempo restante",
+      "seconds_left": "{n}s restantes",
+      "time_up": "¡Se acabó el tiempo!",
+      "bonus": "+{n}s de bonificación",
+      "stats_answered": "{n} de {total} respondidas a tiempo.",
+      "stats_avg": "Tiempo medio de respuesta: {s}s",
+      "stats_fastest": "Más rápida: {s}s ({type})",
+      "stats_slowest": "Más lenta: {s}s ({type})"
     },
     "resources_title": "Profundiza en el tema",
     "resources_domain": "Más sobre {domain}",

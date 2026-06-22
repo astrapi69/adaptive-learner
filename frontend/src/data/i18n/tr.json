@@ -494,7 +494,11 @@
       "title": "Ders modu",
       "hint": "Alıştırma modu tüm yardımları açık tutar. Sınav modu ipuçlarını, teori tekrarını, otomatik okumayı ve çözümü gizler; böylece gerçekçi koşullarda hatırlarsın.",
       "default_label": "Varsayılan mod",
-      "threshold_label": "Geçme eşiği"
+      "threshold_label": "Geçme eşiği",
+      "timed_difficulty_label": "Süreli mod zorluğu",
+      "timed_relaxed": "Rahat (2× süre)",
+      "timed_normal": "Normal",
+      "timed_fast": "Hızlı (0,7× süre)"
     },
     "updates": {
       "title": "Güncellemeler",
@@ -1729,12 +1733,23 @@
     "mode": {
       "label": "Ders modu",
       "practice": "Alıştırma",
-      "exam": "Sınav"
+      "exam": "Sınav",
+      "timed": "Süreli"
     },
     "exam": {
       "passed": "Geçti",
       "not_passed": "Geçmedi",
       "threshold_hint": "(geçme ≥ %{pct})"
+    },
+    "timed": {
+      "remaining": "Kalan süre",
+      "seconds_left": "{n}sn kaldı",
+      "time_up": "Süre doldu!",
+      "bonus": "+{n}sn bonus",
+      "stats_answered": "{total} sorudan {n} tanesi süresinde yanıtlandı.",
+      "stats_avg": "Ortalama yanıt süresi: {s}sn",
+      "stats_fastest": "En hızlı: {s}sn ({type})",
+      "stats_slowest": "En yavaş: {s}sn ({type})"
     },
     "resources_title": "Konuyu derinleştir",
     "resources_domain": "{domain} hakkında daha fazlası",

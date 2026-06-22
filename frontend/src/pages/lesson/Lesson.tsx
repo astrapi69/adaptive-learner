@@ -27,7 +27,9 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
 import LessonModeToggle from "../../components/lesson/chrome/LessonModeToggle";
+import LessonCountdownBar from "../../components/lesson/chrome/LessonCountdownBar";
 import { LessonModeProvider } from "../../hooks/lesson/useLessonMode";
+import { useTimedLesson } from "../../hooks/lesson/useTimedLesson";
 import {
   readDefaultLessonMode,
   type LessonMode,
@@ -205,6 +207,19 @@ export default function LessonPage() {
     setReviewedRaw(stored?.raw_answer ?? null);
     enterLockRef.current = false;
   }
+
+  // #1009 — timed-mode orchestration (countdown length, timeout
+  // auto-advance, correct-answer bonus, end-of-run timing stats). Inert
+  // unless the lesson runs in timed mode, so practice/exam are unaffected.
+  const timed = useTimedLesson({
+    enabled: lessonMode === "timed",
+    lesson,
+    currentStepIndex,
+    checked,
+    progress,
+    recordStepResult,
+    goNext,
+  });
 
   // Scroll-to-top on step change + the #140 theory back-link
   // round-trip live in the extracted hook (#354).
@@ -480,6 +495,36 @@ export default function LessonPage() {
         />
       )}
 
+      {/* #1009 — timed-mode per-question countdown + time-up notice. */}
+      {lessonMode === "timed" && !isSummary && isExerciseStep && (
+        <>
+          <LessonCountdownBar
+            remaining={timed.remainingSeconds}
+            total={timed.limitSeconds}
+          />
+          {timed.bonusSeconds > 0 && (
+            <p
+              className="m-0 px-2 text-sm font-medium text-[var(--exercise-correct)]"
+              data-testid="lesson-timed-bonus"
+            >
+              {t("lesson.timed.bonus", "+{n}s bonus").replace(
+                "{n}",
+                String(timed.bonusSeconds),
+              )}
+            </p>
+          )}
+          {timed.timedOut && (
+            <p
+              className="m-0 px-2 font-semibold text-[var(--exercise-wrong)]"
+              role="status"
+              data-testid="lesson-timed-timeout"
+            >
+              {t("lesson.timed.time_up", "Time's up!")}
+            </p>
+          )}
+        </>
+      )}
+
       <LessonModeProvider mode={lessonMode}>
       {isSummary ? (
         <>
@@ -487,6 +532,7 @@ export default function LessonPage() {
           lesson={lesson}
           progress={progress}
           lessonMode={lessonMode}
+          timedStats={lessonMode === "timed" ? timed.stats : null}
           nextLessonFilename={nextLessonFilename}
           userId={learnerUserId ?? ""}
           setId={setId}
