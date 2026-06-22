@@ -543,13 +543,24 @@ def _quick_uninstall(repo: Path) -> bool:
 
     window = ui.StatusWindow(title=i18n.t("quick_uninstall.progress"))
     window.set_steps([i18n.t("manage.stop"), i18n.t("progress.step.build")])
+    result: dict = {}
 
     def worker() -> None:
         window.after(0, lambda: window.start_step(0, i18n.t("manage.stopping")))
+        # compose down is best-effort (clean teardown when the compose
+        # file is present); the authoritative removal is remove_containers,
+        # which works by id + VERIFIES the container is actually gone (#964).
         ok, detail = docker.compose_down(repo, config.COMPOSE_FILENAME)
         if not ok:
             logger.warning("quick-uninstall compose down: %s", detail)
-        window.after(0, lambda: window.complete_step(0))
+        removed_ok, removed_detail = docker.remove_containers()
+        result["removed_ok"] = removed_ok
+        result["removed_detail"] = removed_detail
+        if not removed_ok:
+            logger.error("quick-uninstall container removal failed: %s", removed_detail)
+            window.after(0, lambda: window.fail_step(0))
+        else:
+            window.after(0, lambda: window.complete_step(0))
 
         window.after(0, lambda: window.start_step(1, i18n.t("uninstall.removing_images")))
         ok2, detail2 = docker.remove_images()
@@ -560,6 +571,16 @@ def _quick_uninstall(repo: Path) -> bool:
 
     window.run_in_background(worker)
     window.run_mainloop()
+
+    # Honest reporting: never claim success while a container survives.
+    if not result.get("removed_ok", False):
+        ui.error_dialog(
+            title=i18n.t("uninstall.failed.title"),
+            message=i18n.t("uninstall.failed.message"),
+            actions=[(i18n.t("common.ok"), "ok")],
+            details=result.get("removed_detail", "container still present"),
+        )
+        return False
 
     # Best-effort: drop a desktop/Start-menu shortcut if we can find one.
     _remove_desktop_shortcut()
@@ -923,84 +944,6 @@ def _run_install_flow() -> Path | None:
         return target
 
     return None
-
-
-def _run_uninstall_flow(install_dir: Path) -> bool:
-    """Uninstall AdaptiveLearner after user confirmation. Returns True if uninstalled."""
-    show_details = config.get_show_details_default()
-    choice = ui.two_button_dialog(
-        title=i18n.t("uninstall.title"),
-        message=i18n.t("uninstall.message", path=str(install_dir)),
-        primary_label=i18n.t("uninstall.confirm"),
-        secondary_label=i18n.t("common.cancel"),
-    )
-    if choice != "primary":
-        return False
-
-    # Write cleanup state BEFORE any destructive operation so a crash
-    # or abort mid-uninstall can be retried on next launcher start.
-    manifest.write_cleanup_pending(install_dir)
-
-    # Phase 1: Stop Docker stack (best-effort, continue if Docker is not running)
-    window = ui.StatusWindow()
-    window.set_starting(i18n.t("uninstall.stopping"))
-
-    def uninstall_worker() -> None:
-        ok, detail = docker.compose_down(install_dir, config.COMPOSE_FILENAME)
-        manifest.update_cleanup_step("compose_down", ok)
-        if not ok:
-            logger.warning("compose down: %s", detail)
-
-        window.after(0, lambda: window.set_starting(i18n.t("uninstall.removing_volumes")))
-        ok2, detail2 = docker.remove_volumes()
-        manifest.update_cleanup_step("remove_volumes", ok2)
-        if not ok2:
-            logger.warning("remove volumes: %s", detail2)
-
-        window.after(0, lambda: window.set_starting(i18n.t("uninstall.removing_images")))
-        ok3, detail3 = docker.remove_images()
-        manifest.update_cleanup_step("remove_images", ok3)
-        if not ok3:
-            logger.warning("remove images: %s", detail3)
-
-        window.after(0, window.close)
-
-    window.run_in_background(uninstall_worker)
-    window.run_mainloop()
-
-    # Phase 2: Remove install directory
-    ok, detail = installer.remove_install(install_dir)
-    manifest.update_cleanup_step("rmtree", ok)
-    if not ok:
-        ui.error_dialog(
-            title=i18n.t("uninstall.failed.title"),
-            message=i18n.t("uninstall.failed.message"),
-            actions=[(i18n.t("common.ok"), "ok")],
-            details=detail,
-            initial_show_details=show_details,
-        )
-        return False
-
-    # Phase 3: Clean up manifest and legacy config
-    manifest.delete_manifest()
-    manifest.update_cleanup_step("delete_manifest", True)
-    try:
-        cfg = config.load_launcher_config()
-        cfg.pop("repo_path", None)
-        config.save_launcher_config(cfg)
-    except Exception:
-        pass
-
-    # All steps done: remove cleanup state file
-    manifest.delete_cleanup_pending()
-
-    ui.two_button_dialog(
-        title=i18n.t("uninstall.complete.title"),
-        message=i18n.t("uninstall.complete.message"),
-        primary_label=i18n.t("common.ok"),
-        secondary_label="",
-    )
-    return True
 
 
 def _installation_moved_picker() -> Path | None:

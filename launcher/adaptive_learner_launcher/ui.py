@@ -366,9 +366,21 @@ def two_button_dialog(
         result["choice"] = choice
         win.destroy()
 
-    primary = tk.Button(buttons, text=primary_label, width=22, command=lambda: _click("primary"))
-    primary.pack(side="left", padx=(0, 8))
-    tk.Button(buttons, text=secondary_label, width=12, command=lambda: _click("secondary")).pack(side="left")
+    # Render the secondary button only when it has a label. An empty
+    # secondary_label means "OK-only" (e.g. the uninstall-complete
+    # dialog); rendering it anyway produced a textless ghost button
+    # (#964). Escape / X still map to "secondary" (dismiss).
+    has_secondary = bool(secondary_label)
+    primary = tk.Button(
+        buttons, text=primary_label, width=22 if has_secondary else 16,
+        command=lambda: _click("primary"),
+    )
+    primary.pack(side="left", padx=(0, 8) if has_secondary else 0)
+    if has_secondary:
+        tk.Button(
+            buttons, text=secondary_label, width=12,
+            command=lambda: _click("secondary"),
+        ).pack(side="left")
 
     primary.focus_set()
     win.bind("<Return>", lambda _e: _click("primary"))

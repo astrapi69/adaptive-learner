@@ -141,6 +141,52 @@ def compose_down(repo: Path, compose_file: str) -> tuple[bool, str]:
     return True, "stopped"
 
 
+# Container-name filters covering the current ``adaptive-learner`` project
+# (compose sets container_name adaptive-learner-backend / -frontend) plus the
+# legacy ``adaptive_learner`` (underscore) names a faulty older launcher may
+# have created. Multiple ``--filter name=`` are OR'd by docker.
+_CONTAINER_NAME_FILTERS = ["name=adaptive-learner", "name=adaptive_learner"]
+
+
+def _list_app_container_ids() -> list[str]:
+    """Return the ids of all Adaptive Learner containers (running OR stopped).
+
+    Empty list when docker is unavailable or none exist. Used by the
+    uninstall path to remove by id (works regardless of which directory
+    the compose project was started from) and to VERIFY removal.
+    """
+    cmd = ["docker", "ps", "-aq"]
+    for flt in _CONTAINER_NAME_FILTERS:
+        cmd += ["--filter", flt]
+    try:
+        result = _run(cmd, timeout=15.0)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return []
+    return [cid for cid in (result.stdout or "").strip().splitlines() if cid]
+
+
+def remove_containers() -> tuple[bool, str]:
+    """Force-remove every Adaptive Learner container, then VERIFY it is gone.
+
+    ``docker rm -f`` stops + removes in one step and works by id, so it
+    does not depend on the compose file being found in a particular
+    directory (the failure mode where ``compose down`` reported success
+    but removed nothing). Returns ``(False, detail)`` if any container
+    survives, so the caller never claims a successful uninstall while a
+    container is still present.
+    """
+    ids = _list_app_container_ids()
+    if ids:
+        try:
+            _run(["docker", "rm", "-f", *ids], timeout=60.0)
+        except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+            return False, f"container removal failed: {exc}"
+    remaining = _list_app_container_ids()
+    if remaining:
+        return False, f"{len(remaining)} container(s) could not be removed: {', '.join(remaining)}"
+    return True, f"removed {len(ids)} container(s)"
+
+
 def stack_running(repo: Path, compose_file: str) -> bool:
     """True if the compose stack has at least one running container.
 

@@ -348,14 +348,31 @@ class TestQuickUninstall:
         with (
             patch.object(main_mod.ui, "two_button_dialog", return_value="primary"),
             patch.object(main_mod.docker, "compose_down", return_value=(True, "")) as down_mock,
+            patch.object(main_mod.docker, "remove_containers", return_value=(True, "removed 2")) as rmc_mock,
             patch.object(main_mod.docker, "remove_images", return_value=(True, "")) as images_mock,
             patch.object(main_mod.docker, "remove_volumes") as volumes_mock,
             patch.object(main_mod, "_remove_desktop_shortcut"),
         ):
             assert main_mod._quick_uninstall(tmp_path) is True
         down_mock.assert_called_once()
+        rmc_mock.assert_called_once()  # verified container removal
         images_mock.assert_called_once()
         volumes_mock.assert_not_called()  # data is preserved
+
+    def test_reports_failure_when_container_survives(self, tmp_path: Path) -> None:
+        # remove_containers verifies + reports failure -> uninstall must NOT
+        # claim success; it shows an error and returns False (#964).
+        with (
+            patch.object(main_mod.ui, "two_button_dialog", return_value="primary"),
+            patch.object(main_mod.docker, "compose_down", return_value=(True, "")),
+            patch.object(main_mod.docker, "remove_containers", return_value=(False, "1 container(s) could not be removed")),
+            patch.object(main_mod.docker, "remove_images", return_value=(True, "")),
+            patch.object(main_mod.ui, "error_dialog") as error_mock,
+            patch.object(main_mod, "_remove_desktop_shortcut") as shortcut_mock,
+        ):
+            assert main_mod._quick_uninstall(tmp_path) is False
+        error_mock.assert_called_once()
+        shortcut_mock.assert_not_called()  # did not reach the success path
 
 
 class TestStackStateBranch:
