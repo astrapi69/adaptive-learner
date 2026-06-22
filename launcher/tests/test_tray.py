@@ -9,6 +9,8 @@ rules.
 
 from __future__ import annotations
 
+import time
+import types
 from unittest.mock import patch
 
 from adaptive_learner_launcher import tray
@@ -65,5 +67,101 @@ class TestTrayControllerNoExtra:
 
     def test_start_false_when_icon_image_missing(self) -> None:
         # Extra present but no readable icon -> graceful False, no crash.
-        with patch.object(tray, "HAS_TRAY", True), patch.object(tray, "_load_icon_image", return_value=None):
+        with (
+            patch.object(tray, "HAS_TRAY", True),
+            patch.object(tray, "_load_icon_image", return_value=None),
+        ):
+            assert self._controller().start() is False
+
+
+def _fake_pystray(run_behavior):
+    """A stand-in pystray module whose Icon.run runs ``run_behavior``.
+
+    ``run_behavior(icon, setup)`` mimics a backend: it may call ``setup``
+    (success), raise (no AppIndicator), or block (tray never appears).
+    """
+
+    class FakeIcon:
+        def __init__(self, name, image=None, title=None, menu=None) -> None:
+            self.name = name
+            self.visible = False
+            self.stopped = False
+
+        def run(self, setup=None) -> None:
+            run_behavior(self, setup)
+
+        def stop(self) -> None:
+            self.stopped = True
+
+    return types.SimpleNamespace(
+        Icon=FakeIcon,
+        Menu=lambda *items: ("menu", items),
+        MenuItem=lambda label, handler, default=False: (label, handler, default),
+    )
+
+
+class TestTrayControllerStartThreaded:
+    """The icon runs in a daemon thread via ``run(setup=...)``, never
+    ``run_detached()`` (unimplemented on Linux GTK/AppIndicator, #1003)."""
+
+    def _controller(self) -> tray.TrayController:
+        return tray.TrayController(
+            port=8501,
+            tooltip="tip",
+            labels={a: a for a in tray.menu_action_ids()},
+            callbacks={a: (lambda: None) for a in tray.menu_action_ids()},
+        )
+
+    def test_no_run_detached_in_source(self) -> None:
+        from pathlib import Path
+
+        src = Path(tray.__file__).read_text(encoding="utf-8")
+        assert ".run_detached(" not in src, (
+            "run_detached() is unsupported on Linux (#1003)"
+        )
+
+    def test_start_true_when_icon_becomes_visible(self) -> None:
+        fake = _fake_pystray(lambda icon, setup: setup(icon))  # backend shows the icon
+        with (
+            patch.object(tray, "HAS_TRAY", True),
+            patch.object(tray, "pystray", fake),
+            patch.object(tray, "_load_icon_image", return_value=object()),
+        ):
+            ctrl = self._controller()
+            assert ctrl.start() is True
+            assert ctrl._icon.visible is True
+
+    def test_start_false_when_loop_raises(self) -> None:
+        def _raise(icon, setup):
+            raise RuntimeError("no appindicator typelib")
+
+        fake = _fake_pystray(_raise)
+        with (
+            patch.object(tray, "HAS_TRAY", True),
+            patch.object(tray, "pystray", fake),
+            patch.object(tray, "_load_icon_image", return_value=object()),
+        ):
+            assert self._controller().start() is False
+
+    def test_start_false_for_unreliable_xorg_backend(self) -> None:
+        # The legacy X11 backend fires setup but never docks on GNOME, so it
+        # is refused before the window is hidden (#1003).
+        fake = _fake_pystray(lambda icon, setup: setup(icon))
+        fake.Icon.__module__ = "pystray._xorg"
+        with (
+            patch.object(tray, "HAS_TRAY", True),
+            patch.object(tray, "pystray", fake),
+            patch.object(tray, "_load_icon_image", return_value=object()),
+        ):
+            assert self._controller().start() is False
+
+    def test_start_false_when_tray_never_appears(self) -> None:
+        # Backend "runs" but never calls setup -> start times out, no hang.
+        fake = _fake_pystray(lambda icon, setup: time.sleep(1.0))
+        with (
+            patch.object(tray, "HAS_TRAY", True),
+            patch.object(tray, "pystray", fake),
+            patch.object(tray, "_load_icon_image", return_value=object()),
+            patch.object(tray.TrayController, "_READY_TIMEOUT_SECONDS", 0.1),
+        ):
             assert self._controller().start() is False
