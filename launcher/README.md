@@ -20,9 +20,42 @@ python3 -m adaptive_learner_launcher
 
 | Option | Effect |
 |--------|--------|
-| `--port N` | Use host port `N` (1-65535) for the app. |
+| `--port N` | Use host port `N` (1-65535) for the app (default 8501). |
 | `--debug` | Verbose logging to stdout **and** `launcher-debug.log` (written to the current directory, truncated each run). |
+| `--version` | Print the launcher version and exit. |
 | `--help` / `-h` | Show usage and exit. |
+
+Default host port is **8501** (not 7880 — that is Bibliogon's). Port
+source priority: `--port` > `launcher.json` > `.env`
+(`ADAPTIVE_LEARNER_PUBLIC_PORT`) > default 8501. On a conflict the
+launcher offers an alternative free port and persists the choice.
+
+## Prerequisites
+
+- Python 3.11+ (the launcher runs from source on the system Python; real
+  devices run it on CPython 3.14).
+- Docker Desktop installed and running. See
+  [Install Docker Desktop](../docs/help/en/install/docker-desktop.md).
+
+## Uninstall
+
+From the launcher's management menu (when the app is installed): choose
+**Uninstall**. It stops + removes the `adaptive-learner` container and
+image but keeps your data (volumes are not deleted). To also wipe
+volumes, config, and shortcuts, use the cleanup scripts below.
+
+## Troubleshooting
+
+- **"Docker Desktop not started"** — start Docker Desktop, wait for the
+  running state, click "Retry". The launcher checks Docker first and does
+  nothing else until it is up.
+- **Port already in use** — the launcher detects the conflict before
+  starting the container and offers an alternative free port; accept the
+  suggestion (it is persisted for next time).
+- **Docker build failed** — re-run with `--debug` and share
+  `launcher-debug.log`; it captures every docker command + its output.
+  If a previous attempt left stale containers/images, run the cleanup
+  script and retry.
 
 When a launcher bug appears, reproduce it with `--debug` and share the
 generated `launcher-debug.log`:

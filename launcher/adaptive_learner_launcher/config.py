@@ -13,7 +13,10 @@ from pathlib import Path
 
 
 APP_NAME = "AdaptiveLearner"
-DEFAULT_PORT = 7880
+# 8501 is Adaptive Learner's own default host port. It must NOT be 7880
+# (that is Bibliogon's port) - defaulting there guaranteed a conflict with
+# a sibling app on the same machine.
+DEFAULT_PORT = 8501
 DEFAULT_REPO_DIR_NAME = "adaptive_learner"
 COMPOSE_FILENAME = "docker-compose.prod.yml"
 ENV_FILENAME = ".env"

@@ -48,6 +48,12 @@ COPY backend/ .
 RUN groupadd -r adaptive_learner && useradd -r -g adaptive_learner adaptive_learner && \
     mkdir -p /app/data && chown -R adaptive_learner:adaptive_learner /app
 
+# The system user (useradd -r) has no usable home, so platformdirs would
+# resolve config/cache under /home/adaptive_learner (not writable) and the
+# Fernet secret.key creation crashes at startup with EACCES. Point HOME at
+# the writable, persisted data volume so ~/.config + ~/.cache land there.
+ENV HOME=/app/data
+
 USER adaptive_learner
 
 # Default backend port. Override at run time with

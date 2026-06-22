@@ -427,7 +427,13 @@ def three_button_dialog(
     return result["choice"]
 
 
-def choice_dialog(title: str, message: str, buttons: list[tuple[str, str]]) -> str | None:
+def choice_dialog(
+    title: str,
+    message: str,
+    buttons: list[tuple[str, str]],
+    *,
+    links: list[tuple[str, str]] | None = None,
+) -> str | None:
     """Show a message with N labeled buttons; return the chosen value.
 
     ``buttons`` is a list of ``(label, value)`` tuples rendered left to
@@ -435,6 +441,13 @@ def choice_dialog(title: str, message: str, buttons: list[tuple[str, str]]) -> s
     the X or pressing Escape returns ``None`` (an explicit "do nothing"
     that is distinct from any button value) so a destructive action can
     never be triggered by closing the window.
+
+    ``links`` is an optional list of ``(label, url)`` tuples rendered as
+    a separate row of buttons that open ``url`` in the browser WITHOUT
+    closing the dialog. This lets the user read an external page (release
+    notes, install guide) and return to choose an option. Only the
+    ``buttons`` choices and the window X/Escape dismiss the dialog
+    (#956).
 
     Used for the installed-app management menu (Open / Stop / Uninstall)
     where the cancel-equivalent must be a no-op, not the last button.
@@ -448,6 +461,23 @@ def choice_dialog(title: str, message: str, buttons: list[tuple[str, str]]) -> s
     result: dict = {"choice": None}
 
     tk.Label(win, text=message, justify="left", wraplength=420, padx=20, pady=16).pack()
+
+    def _open_link(url: str) -> None:
+        # Open the browser WITHOUT dismissing the dialog.
+        logger.debug("dialog link open (dialog stays open): %s", url)
+        try:
+            webbrowser.open(url)
+        except OSError as exc:
+            logger.warning("opening %s failed: %s", url, exc)
+
+    if links:
+        link_row = tk.Frame(win)
+        link_row.pack(padx=20, pady=(0, 8))
+        for index, (label, url) in enumerate(links):
+            tk.Button(
+                link_row, text=label, width=24,
+                command=lambda u=url: _open_link(u),
+            ).pack(side="left", padx=(0, 8) if index < len(links) - 1 else 0)
 
     button_row = tk.Frame(win)
     button_row.pack(padx=20, pady=(0, 16))
@@ -742,6 +772,7 @@ class StatusWindow:
         self._on_close_cb = on_close
         self._stop_cb: callable | None = None
         self._spinner_running = False
+        self._spinner_after_id: str | None = None
 
     # --- Step checklist API ---
 
@@ -817,9 +848,10 @@ class StatusWindow:
             self._spinner_frame = (self._spinner_frame + 1) % len(self._SPINNER_FRAMES)
             self._set_glyph(self._active_index, self._SPINNER_FRAMES[self._spinner_frame], "#1a73e8")
         try:
-            self._root.after(120, self._tick_spinner)
+            self._spinner_after_id = self._root.after(120, self._tick_spinner)
         except tk.TclError:
             self._spinner_running = False
+            self._spinner_after_id = None
 
     # --- Legacy single-message API (kept for callers not using steps) ---
 
@@ -849,6 +881,16 @@ class StatusWindow:
 
     def close(self) -> None:
         logger.debug("StatusWindow.close")
+        # Cancel the pending spinner tick first: otherwise the queued
+        # after-callback fires after destroy() and Tk raises
+        # 'invalid command name ..._tick_spinner' (#956).
+        self._spinner_running = False
+        if self._spinner_after_id is not None:
+            try:
+                self._root.after_cancel(self._spinner_after_id)
+            except tk.TclError:
+                pass
+            self._spinner_after_id = None
         try:
             self._root.destroy()
         except tk.TclError:
@@ -895,7 +937,34 @@ def _ensure_root() -> tk.Tk:
     if _root_singleton is None or not _is_root_alive(_root_singleton):
         _root_singleton = tk.Tk()
         _root_singleton.withdraw()
+        _set_window_icon(_root_singleton)
     return _root_singleton
+
+
+def _set_window_icon(root: tk.Tk) -> None:
+    """Set the Adaptive Learner window/taskbar icon. Never raises.
+
+    Tries the launcher's bundled PNG first, then the frontend branding
+    mark. A missing or unreadable icon falls back to the Tk default
+    (icon problems must never crash the launcher).
+    """
+    from pathlib import Path as _Path
+
+    candidates = [
+        _Path(__file__).parent / "adaptive-learner.png",
+        _Path(__file__).parents[2] / "frontend" / "branding" / "adaptive-learner-mark.png",
+    ]
+    for icon_path in candidates:
+        if not icon_path.exists():
+            continue
+        try:
+            image = tk.PhotoImage(file=str(icon_path))
+            root.iconphoto(True, image)
+            # Keep a reference so the image is not garbage-collected.
+            root._al_icon = image  # type: ignore[attr-defined]
+            return
+        except Exception as exc:  # noqa: BLE001 - icon is best-effort
+            logger.debug("could not set window icon from %s: %s", icon_path, exc)
 
 
 def _is_root_alive(root: tk.Tk) -> bool:
