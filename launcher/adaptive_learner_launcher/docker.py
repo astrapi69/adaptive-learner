@@ -45,30 +45,15 @@ def _run(cmd: list[str], *, cwd: Path | None = None, timeout: float = 10.0) -> s
 
 
 def docker_installed() -> tuple[bool, str]:
-    """True if ``docker --version`` succeeds."""
-    try:
-        result = _run(["docker", "--version"])
-    except FileNotFoundError:
-        return False, "docker command not found on PATH"
-    except subprocess.TimeoutExpired:
-        return False, "docker --version timed out"
-    if result.returncode != 0:
-        return False, result.stderr.strip() or "docker --version exited non-zero"
-    return True, result.stdout.strip()
+    """True if the docker CLI exists. Thin wrapper over actions (#970)."""
+    from adaptive_learner_launcher import actions
+    return actions.docker_installed()
 
 
 def docker_daemon_running() -> tuple[bool, str]:
-    """True if ``docker info`` succeeds, i.e. the daemon is reachable."""
-    try:
-        result = _run(["docker", "info"], timeout=15.0)
-    except FileNotFoundError:
-        return False, "docker command not found on PATH"
-    except subprocess.TimeoutExpired:
-        return False, "docker info timed out; Docker Desktop may be starting"
-    if result.returncode != 0:
-        stderr = result.stderr.strip()
-        return False, stderr.splitlines()[0] if stderr else "daemon not reachable"
-    return True, "running"
+    """True if the daemon is reachable. Thin wrapper over actions (#970)."""
+    from adaptive_learner_launcher import actions
+    return actions.check_docker()
 
 
 def start_docker_desktop() -> tuple[bool, str]:
@@ -188,91 +173,27 @@ def remove_containers() -> tuple[bool, str]:
 
 
 def stack_running(repo: Path, compose_file: str) -> bool:
-    """True if the compose stack has at least one running container.
-
-    Uses ``docker compose ps -q`` which lists only running service
-    containers; a non-empty result means the app is up. Any failure
-    (docker missing, daemon down, compose error) is treated as
-    not-running so the caller falls back to the start flow.
-    """
-    try:
-        result = _run(
-            ["docker", "compose", "-f", compose_file, "ps", "-q"],
-            cwd=repo,
-            timeout=15.0,
-        )
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return False
-    if result.returncode != 0:
-        return False
-    return bool((result.stdout or "").strip())
+    """Compose-project running check. Thin wrapper over actions (#970)."""
+    from adaptive_learner_launcher import actions
+    return actions.stack_running(repo, compose_file)
 
 
 def compose_logs_tail(repo: Path, compose_file: str, lines: int = 20) -> str:
-    """Return the last ``lines`` of container output for error reporting."""
-    try:
-        result = _run(
-            ["docker", "compose", "-f", compose_file, "logs", "--tail", str(lines)],
-            cwd=repo,
-            timeout=15.0,
-        )
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return "(logs unavailable)"
-    return (result.stdout or result.stderr or "(no output)").strip()
+    """Last ``lines`` of compose output. Thin wrapper over actions (#970)."""
+    from adaptive_learner_launcher import actions
+    return actions.compose_logs_tail(repo, compose_file, lines)
 
 
 def remove_volumes() -> tuple[bool, str]:
-    """Remove all Docker volumes belonging to Adaptive Learner.
-
-    Matches both the current ``adaptive-learner`` (hyphen) project name
-    and the legacy ``adaptive_learner`` (underscore) one so an old
-    install is still cleaned up. Same-key Docker filters are OR'd, so a
-    single ``volume ls`` returns the union. Dynamic lookup so we never
-    hardcode volume names that vary by compose config.
-    """
-    try:
-        result = _run([
-            "docker", "volume", "ls",
-            "--filter", "name=adaptive-learner",
-            "--filter", "name=adaptive_learner",
-            "-q",
-        ])
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return True, "docker not available, skipping"
-    volumes = [v for v in (result.stdout or "").strip().splitlines() if v]
-    if not volumes:
-        return True, "no volumes found"
-    try:
-        _run(["docker", "volume", "rm"] + volumes, timeout=30.0)
-    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
-        return False, f"volume removal failed: {exc}"
-    return True, f"removed {len(volumes)} volume(s)"
+    """Remove Adaptive Learner volumes. Thin wrapper over actions (#970)."""
+    from adaptive_learner_launcher import actions
+    return actions.remove_volumes()
 
 
 def remove_images() -> tuple[bool, str]:
-    """Remove all Adaptive Learner Docker images.
-
-    Matches both the ``adaptive-learner`` (hyphen) and legacy
-    ``adaptive_learner`` (underscore) image references. Uses ``--force``
-    so running containers do not block removal.
-    """
-    try:
-        result = _run([
-            "docker", "images",
-            "--filter", "reference=*adaptive-learner*",
-            "--filter", "reference=*adaptive_learner*",
-            "-q",
-        ])
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return True, "docker not available, skipping"
-    images = [i for i in (result.stdout or "").strip().splitlines() if i]
-    if not images:
-        return True, "no images found"
-    try:
-        _run(["docker", "image", "rm", "--force"] + images, timeout=60.0)
-    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
-        return False, f"image removal failed: {exc}"
-    return True, f"removed {len(images)} image(s)"
+    """Remove Adaptive Learner images. Thin wrapper over actions (#970)."""
+    from adaptive_learner_launcher import actions
+    return actions.remove_images()
 
 
 def compose_build(repo: Path, compose_file: str) -> tuple[bool, str]:

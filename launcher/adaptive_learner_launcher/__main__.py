@@ -408,7 +408,7 @@ def _ensure_docker_ready(show_details: bool) -> bool:
     Desktop" button that launches Docker Desktop and then re-checks, so
     the user does not have to leave the launcher.
     """
-    ok, detail = docker.docker_installed()
+    ok, detail = actions.docker_installed()
     if not ok:
         logger.error("docker --version failed: %s", detail)
         # Docker is not installed, so this flow always aborts. The two

@@ -13,40 +13,23 @@ PyInstaller bundle without bundling ``lsof``/``netstat`` or shelling out.
 
 from __future__ import annotations
 
-import socket
+from adaptive_learner_launcher import actions
 
 
 def is_available(port: int, *, host: str = "") -> bool:
     """Return True if a TCP server could bind ``port`` on ``host``.
 
-    ``host=""`` binds all interfaces, mirroring how Docker publishes a
-    port. ``SO_REUSEADDR`` is intentionally NOT set: we want the bind to
-    fail when another process already holds the port so a live conflict
-    is detected rather than masked.
+    Thin wrapper over :func:`actions.check_port` (the single source of
+    truth, which probes by BIND the same way Docker publishes a port).
     """
-    if not 1 <= port <= 65535:
-        return False
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        sock.bind((host, port))
-    except OSError:
-        return False
-    finally:
-        sock.close()
-    return True
+    free, _ = actions.check_port(port, host=host)
+    return free
 
 
 def find_available(start: int, *, host: str = "", max_tries: int = 100) -> int | None:
-    """Return the first available port at or above ``start``.
+    """Return the first available port at or above ``start``, or ``None``.
 
-    Scans ``start, start+1, ...`` up to ``max_tries`` candidates, never
-    past 65535. Returns ``None`` when no free port is found in range.
+    Thin wrapper over :func:`actions.find_free_port`.
     """
-    port = start
-    for _ in range(max_tries):
-        if port > 65535:
-            return None
-        if is_available(port, host=host):
-            return port
-        port += 1
-    return None
+    found, port, _ = actions.find_free_port(start, max_tries=max_tries)
+    return port if found else None

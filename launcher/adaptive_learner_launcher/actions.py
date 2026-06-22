@@ -70,8 +70,30 @@ def _notify(on_step: ProgressFn | None, label: str) -> None:
 
 # --- Docker + state -------------------------------------------------------
 
+def docker_installed() -> tuple[bool, str]:
+    """Return (installed, message). True if the ``docker`` binary exists.
+
+    Distinct from :func:`check_docker`: this only checks the CLI is
+    present (``docker --version``), not whether the daemon is running -
+    so callers can tell "not installed" from "installed but stopped".
+    """
+    try:
+        result = _run(["docker", "--version"], timeout=10.0)
+    except FileNotFoundError:
+        return False, "Docker ist nicht installiert (docker nicht im PATH)."
+    except subprocess.TimeoutExpired:
+        return False, "Docker antwortet nicht."
+    if result.returncode != 0:
+        return False, (result.stderr or "").strip() or "docker --version schlug fehl."
+    return True, (result.stdout or "").strip() or "Docker ist installiert."
+
+
 def check_docker() -> tuple[bool, str]:
-    """Return (running, message). True only when the daemon is reachable."""
+    """Return (running, message). True only when the daemon is reachable.
+
+    Covers the installed-check too: FileNotFoundError -> not installed;
+    a non-zero ``docker info`` -> installed but the daemon is not started.
+    """
     try:
         result = _run(["docker", "info"], timeout=10.0)
     except FileNotFoundError:
@@ -108,17 +130,24 @@ def get_state(project: str = DEFAULT_PROJECT) -> str:
 
 # --- Ports ----------------------------------------------------------------
 
-def check_port(port: int) -> tuple[bool, str]:
-    """Return (free, message). Validates the range first, then whether
-    anything is listening. Free == in range AND nothing listening."""
+def check_port(port: int, *, host: str = "") -> tuple[bool, str]:
+    """Return (free, message). Validates the range, then probes by BIND.
+
+    Bind (not connect) is the correct check for "can docker publish this
+    port": Docker publishes by binding all interfaces, so we bind the same
+    way. ``SO_REUSEADDR`` is intentionally not set so a live conflict
+    surfaces instead of being masked.
+    """
     valid, reason = _validate_port(port)
     if not valid:
         return False, reason
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1.0)
-        in_use = sock.connect_ex(("127.0.0.1", port)) == 0
-    if in_use:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.bind((host, port))
+    except OSError:
         return False, f"Port {port} ist belegt."
+    finally:
+        sock.close()
     return True, f"Port {port} ist frei."
 
 
@@ -131,10 +160,9 @@ def find_free_port(start: int, *, max_tries: int = 100) -> tuple[bool, int, str]
         return False, 0, f"Ungueltiger Start-Port: {start}."
     last = min(start + max_tries - 1, MAX_PORT)
     for candidate in range(start, last + 1):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.settimeout(0.5)
-            if sock.connect_ex(("127.0.0.1", candidate)) != 0:
-                return True, candidate, f"Freier Port gefunden: {candidate}."
+        free, _ = check_port(candidate)
+        if free:
+            return True, candidate, f"Freier Port gefunden: {candidate}."
     return False, 0, "Kein freier Port gefunden."
 
 
@@ -263,6 +291,13 @@ def uninstall(project: str = DEFAULT_PROJECT) -> tuple[bool, str]:
 
 
 def _remove_images() -> None:
+    ok, detail = remove_images()
+    if not ok:
+        logger.warning("image removal failed: %s", detail)
+
+
+def remove_images() -> tuple[bool, str]:
+    """Remove all Adaptive Learner Docker images (current + legacy names)."""
     try:
         result = _run([
             "docker", "images",
@@ -271,19 +306,82 @@ def _remove_images() -> None:
             "-q",
         ])
     except (FileNotFoundError, subprocess.TimeoutExpired):
-        return
+        return True, "Docker nicht verfuegbar, uebersprungen."
     images = [i for i in (result.stdout or "").strip().splitlines() if i]
-    if images:
-        try:
-            _run(["docker", "image", "rm", "--force", *images], timeout=60.0)
-        except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
-            logger.warning("image removal failed: %s", exc)
+    if not images:
+        return True, "Keine Images gefunden."
+    try:
+        _run(["docker", "image", "rm", "--force", *images], timeout=60.0)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        return False, f"Image-Entfernung fehlgeschlagen: {exc}"
+    return True, f"{len(images)} Image(s) entfernt."
+
+
+def remove_volumes() -> tuple[bool, str]:
+    """Remove the Adaptive Learner Docker volumes (current + legacy names).
+
+    DESTRUCTIVE - deletes learner data. Only the cleanup/full-reset path
+    calls this; the normal uninstall preserves volumes.
+    """
+    try:
+        result = _run([
+            "docker", "volume", "ls",
+            "--filter", "name=adaptive-learner",
+            "--filter", "name=adaptive_learner",
+            "-q",
+        ])
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return True, "Docker nicht verfuegbar, uebersprungen."
+    volumes = [v for v in (result.stdout or "").strip().splitlines() if v]
+    if not volumes:
+        return True, "Keine Volumes gefunden."
+    try:
+        _run(["docker", "volume", "rm", *volumes], timeout=30.0)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        return False, f"Volume-Entfernung fehlgeschlagen: {exc}"
+    return True, f"{len(volumes)} Volume(s) entfernt."
+
+
+def stack_running(repo: Path, compose_file: str) -> bool:
+    """True if the compose stack has at least one running container.
+
+    Compose-project view (``compose ps -q``), distinct from the
+    name-filter view in :func:`get_state`. Any failure -> not running.
+    """
+    try:
+        result = _run(
+            ["docker", "compose", "-f", compose_file, "ps", "-q"],
+            cwd=repo, timeout=15.0,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
+    if result.returncode != 0:
+        return False
+    return bool((result.stdout or "").strip())
+
+
+def compose_logs_tail(repo: Path, compose_file: str, lines: int = 20) -> str:
+    """Return the last ``lines`` of compose output, for error diagnostics."""
+    try:
+        result = _run(
+            ["docker", "compose", "-f", compose_file, "logs", "--tail", str(lines)],
+            cwd=repo, timeout=15.0,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return ""
+    return (result.stdout or "").strip() or (result.stderr or "").strip()
 
 
 # --- Health + browser -----------------------------------------------------
 
 def health_check(port: int, path: str = HEALTH_PATH, timeout: int = 30) -> tuple[bool, str]:
-    """Poll ``http://localhost:{port}{path}`` until it responds 2xx or times out."""
+    """Poll ``http://localhost:{port}{path}`` until the backend is healthy
+    or the timeout elapses.
+
+    Healthy means HTTP 200 AND a JSON body with ``status == "ok"`` - the
+    strict semantics (a 200 with a degraded/non-ok body is NOT healthy).
+    A 5xx is surfaced as a server error in the message.
+    """
     import time
 
     url = f"http://localhost:{port}{path}"
@@ -292,9 +390,19 @@ def health_check(port: int, path: str = HEALTH_PATH, timeout: int = 30) -> tuple
     while time.monotonic() < deadline:
         try:
             with urllib.request.urlopen(url, timeout=3.0) as resp:
-                if 200 <= resp.status < 300:
-                    return True, f"App ist erreichbar (HTTP {resp.status})."
-                last = f"HTTP {resp.status}"
+                status = resp.status
+                body = resp.read().decode("utf-8") if status == 200 else ""
+            if status == 200:
+                try:
+                    if json.loads(body).get("status") == "ok":
+                        return True, "App ist erreichbar und gesund (status=ok)."
+                    last = "Antwort, aber status != ok"
+                except json.JSONDecodeError:
+                    last = "ungueltige JSON-Antwort"
+            elif 500 <= status < 600:
+                last = f"Server-Fehler (HTTP {status})"
+            else:
+                last = f"HTTP {status}"
         except Exception as exc:  # noqa: BLE001 - any failure means not-ready-yet
             last = str(exc)
         time.sleep(1.0)
