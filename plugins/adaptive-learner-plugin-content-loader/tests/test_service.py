@@ -335,6 +335,34 @@ class TestListSets:
         assert len(entries) == 1
         assert entries[0].cached_version == "1.0.0"
 
+    async def test_lists_downloaded_set_from_unconfigured_source(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        # A set downloaded from a source NOT in self.sources (the download
+        # endpoint accepts any source by slug + default branch) is cached on
+        # disk and MUST still appear in "My Content". Before the fix,
+        # list_sets only surfaced cache for configured sources, so GET /sets
+        # returned [] right after a successful download.
+        from adaptive_learner_content_loader.cache import store_set
+
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            "1.0.0",
+            manifest_yaml=REPO_MANIFEST,
+            lessons={"01-greetings.json": _make_lesson("01", "G")},
+        )
+        # No configured sources at all -> the upstream loop never runs and no
+        # network call is made; the set is surfaced purely from the cache.
+        service = ContentLoaderService(cache_root=tmp_path, sources=[])
+        entries = await service.list_sets()
+        assert len(entries) == 1
+        assert entries[0].source == SOURCE
+        assert entries[0].set.id == SET_ID
+        assert entries[0].cached_version == "1.0.0"
+
 
 # --- dedupe across sources --------------------------------------------
 

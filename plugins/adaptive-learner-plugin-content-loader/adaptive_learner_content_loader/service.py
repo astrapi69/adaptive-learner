@@ -33,6 +33,7 @@ from .cache import (
     reconcile_set_version,
     slugify_source,
     store_set,
+    unslugify_source,
 )
 from .exceptions import (
     ContentLoaderError,
@@ -267,14 +268,43 @@ class ContentLoaderService:
         # Collapse same-id sets advertised by more than one source
         # before the user-generated lessons (unique ids) are added.
         deduped = _dedupe_content_entries(entries)
-        # Phase 59B — user-generated sets ("My Lessons") aren't an
-        # upstream source; surface every cached one directly.
-        deduped.extend(
-            self._cached_entries_for_source(
-                SourceRef(source=USER_GENERATED_SOURCE, branch=""),
-            ),
-        )
+        # A downloaded set lives in the cache and must ALWAYS appear in "My
+        # Content", even if its source is not in self.sources (or the source
+        # list is empty / unreachable). Without this, a set downloaded from a
+        # source the download endpoint accepted by slug but that is not in the
+        # configured sources is cached on disk yet never listed -> GET /sets
+        # returns [] right after a successful download. This is the cache
+        # directory-listing the slugify/unslugify round-trip was designed for.
+        seen = {(entry.source, entry.set.id) for entry in deduped}
+        for entry in self._all_cached_entries():
+            key = (entry.source, entry.set.id)
+            if key not in seen:
+                deduped.append(entry)
+                seen.add(key)
         return deduped
+
+    def _all_cached_entries(self) -> list[SetEntry]:
+        """Surface every downloaded (cached) set on disk.
+
+        Reads the cache directory listing and inverts each source slug back
+        to its ``owner/name`` form (the round-trip ``slugify_source`` /
+        ``unslugify_source`` was built for), independent of ``self.sources``.
+        This includes user-generated sets ("My Lessons"), whose source dir is
+        cached the same way.
+        """
+        entries: list[SetEntry] = []
+        if not self.cache_root.is_dir():
+            return entries
+        for source_dir in sorted(self.cache_root.iterdir()):
+            if not source_dir.is_dir():
+                continue
+            source = unslugify_source(source_dir.name)
+            entries.extend(
+                self._cached_entries_for_source(
+                    SourceRef(source=source, branch=""),
+                ),
+            )
+        return entries
 
     def _cached_entries_for_source(
         self,
