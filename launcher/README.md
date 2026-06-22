@@ -23,7 +23,17 @@ python3 -m adaptive_learner_launcher --start
 python3 -m adaptive_learner_launcher --stop
 python3 -m adaptive_learner_launcher --uninstall
 python3 -m adaptive_learner_launcher --open        # open in browser
+python3 -m adaptive_learner_launcher --window      # persistent window (preview)
 ```
+
+## Persistent window (preview)
+
+`--window` opens a single long-lived window (instead of the dialog chain)
+showing the current state with an inline, live-validated **port field**
+(✓/✗ via `actions.check_port`) and state-aware buttons (Install / Start /
+Stop / Uninstall / Open). All actions go through the `actions` layer on a
+background thread. It is opt-in while the classic flow stays the default;
+it becomes the default once verified on a real device.
 
 ## Run from source
 

@@ -121,6 +121,7 @@ def _maybe_show_help(argv: list[str] | None = None) -> bool:
     parser.add_argument("--stop", action="store_true", help="Stop the running app and exit.")
     parser.add_argument("--uninstall", action="store_true", help="Remove the app containers/images and exit.")
     parser.add_argument("--open", action="store_true", help="Open the app in the browser and exit.")
+    parser.add_argument("--window", action="store_true", help="Open the persistent launcher window (preview).")
     parser.print_help()
     return True
 
@@ -209,6 +210,19 @@ def main() -> int:
         return action_rc
 
     logger.info("AdaptiveLearner launcher v%s starting", __version__)
+
+    # Single persistent window (#984): the default when running from a
+    # source checkout (the repo + compose file are present, so install =
+    # build), or on explicit --window. End-user (frozen) installs that
+    # still need to DOWNLOAD a release keep the classic flow below until
+    # the window grows a download step.
+    if "--window" in sys.argv[1:] or config.source_checkout_repo() is not None:
+        try:
+            i18n.init(settings.get("language"))
+        except Exception as exc:
+            logger.warning("i18n init failed, continuing in English: %s", exc)
+        from adaptive_learner_launcher import launcher_app
+        return launcher_app.run_app()
     if debug:
         logger.debug("Debug mode enabled (verbose logging to launcher-debug.log)")
 
