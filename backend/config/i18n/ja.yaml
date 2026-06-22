@@ -1868,6 +1868,20 @@ lesson:
     action_restart: "最初からやり直す"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "リポジトリとして共有"
+    title: "リポジトリとして共有"
+    needs_token: "リポジトリとして共有するには、設定 → 連携で GitHub トークンを追加してください。"
+    repo_label: "リポジトリ (owner/name)"
+    private: "プライベート"
+    public: "パブリック"
+    branch: "ブランチ"
+    lessons_note: "このセットの全 {n} レッスンが含まれます。"
+    invalid_repo: "リポジトリを owner/name の形式で入力してください。"
+    submit: "エクスポート"
+    working: "エクスポート中…"
+    done: "セットをリポジトリにプッシュしました。"
+    failed: "エクスポートに失敗しました。"
   anki_export:
     button: "Anki エクスポート"
   discover_more: "もっとコンテンツを見つける"

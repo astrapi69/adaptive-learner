@@ -1879,6 +1879,20 @@ lesson:
     action_restart: "Mulai dari awal"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Bagikan sebagai repositori"
+    title: "Bagikan sebagai repositori"
+    needs_token: "Tambahkan token GitHub di Pengaturan → Integrasi untuk berbagi sebagai repositori."
+    repo_label: "Repositori (owner/name)"
+    private: "Privat"
+    public: "Publik"
+    branch: "Branch"
+    lessons_note: "Semua {n} pelajaran set ini akan disertakan."
+    invalid_repo: "Masukkan repositori sebagai owner/name."
+    submit: "Ekspor"
+    working: "Mengekspor…"
+    done: "Set Anda telah didorong ke repositori."
+    failed: "Ekspor gagal."
   anki_export:
     button: "Ekspor Anki"
   discover_more: "Temukan konten lainnya"

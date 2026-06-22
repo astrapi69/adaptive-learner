@@ -9,7 +9,7 @@
  * the DexieStorage swap (10F) a single line in the factory.
  */
 
-import { api } from "../api/client";
+import { api, ApiError } from "../api/client";
 import { enqueueRequest } from "../lib/pwa/sync-queue";
 import type {
   ApiKeyTestResult,
@@ -421,6 +421,15 @@ export const apiStorage: IStorageService = {
         number: wire.number,
         manifestUpdated: wire.manifest_updated,
       };
+    },
+    // #1017 — server-mode export (token lives server-side) needs a backend
+    // push endpoint; tracked as a follow-up. Browser (Dexie) mode has the
+    // full export today. Fail with a clear, friendly message until then.
+    exportSetToRepo: async () => {
+      throw new ApiError(
+        501,
+        "Exporting a set to a GitHub repository is currently available in browser (Dexie) mode.",
+      );
     },
   },
 

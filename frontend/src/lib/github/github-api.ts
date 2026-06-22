@@ -401,6 +401,111 @@ export class GitHubApi {
     );
     return { url: pr.url, number: pr.number, manifestUpdated };
   }
+
+  // --- Repository export (#1017) -----------------------------------------
+
+  /** The authenticated user's login, or throws ApiError. */
+  async getUsername(): Promise<string> {
+    const resp = await this.require<{ login: string }>(
+      "GET",
+      "/user",
+      undefined,
+      [200],
+    );
+    return resp.body.login;
+  }
+
+  /** Ensure ``owner/repo`` exists, creating it (with an initial commit so
+   *  it has a base ref) when missing. Returns the default branch. */
+  async ensureRepo(
+    ownerRepo: string,
+    options: { private: boolean; description?: string },
+  ): Promise<{ defaultBranch: string }> {
+    const existing = await this.call<{ default_branch?: string }>(
+      "GET",
+      `/repos/${ownerRepo}`,
+    );
+    if (existing.ok) {
+      return { defaultBranch: existing.body?.default_branch || "main" };
+    }
+    if (existing.status !== 404) {
+      throw new ApiError(
+        existing.status,
+        `GitHub GET /repos/${ownerRepo}: ${githubErrorDetail(existing.body)}`,
+        `/repos/${ownerRepo}`,
+        "GET",
+      );
+    }
+    const name = ownerRepo.split("/").slice(-1)[0];
+    const created = await this.require<{ default_branch?: string }>(
+      "POST",
+      "/user/repos",
+      {
+        name,
+        private: options.private,
+        description: options.description ?? "",
+        auto_init: true,
+      },
+      [200, 201],
+    );
+    return { defaultBranch: created.body?.default_branch || "main" };
+  }
+
+  /** Push ``files`` to ``ownerRepo``@``branch`` in a SINGLE commit via the
+   *  Git Data API (blobs -> tree -> commit -> ref). Far fewer API calls
+   *  than the per-file Contents API. Returns the commit's html url. */
+  async pushFiles(
+    ownerRepo: string,
+    branch: string,
+    files: ReadonlyArray<{ path: string; content: string }>,
+    message: string,
+  ): Promise<{ commitUrl: string }> {
+    const baseSha = await this.baseSha(ownerRepo, branch);
+    const baseCommit = await this.require<{ tree: { sha: string } }>(
+      "GET",
+      `/repos/${ownerRepo}/git/commits/${baseSha}`,
+      undefined,
+      [200],
+    );
+    const blobs = await Promise.all(
+      files.map(async (file) => {
+        const blob = await this.require<{ sha: string }>(
+          "POST",
+          `/repos/${ownerRepo}/git/blobs`,
+          { content: utf8ToBase64(file.content), encoding: "base64" },
+          [200, 201],
+        );
+        return { path: file.path, sha: blob.body.sha };
+      }),
+    );
+    const tree = await this.require<{ sha: string }>(
+      "POST",
+      `/repos/${ownerRepo}/git/trees`,
+      {
+        base_tree: baseCommit.body.tree.sha,
+        tree: blobs.map((b) => ({
+          path: b.path,
+          mode: "100644",
+          type: "blob",
+          sha: b.sha,
+        })),
+      },
+      [200, 201],
+    );
+    const commit = await this.require<{ sha: string; html_url: string }>(
+      "POST",
+      `/repos/${ownerRepo}/git/commits`,
+      { message, tree: tree.body.sha, parents: [baseSha] },
+      [200, 201],
+    );
+    await this.require(
+      "PATCH",
+      `/repos/${ownerRepo}/git/refs/heads/${branch}`,
+      { sha: commit.body.sha, force: false },
+      [200],
+    );
+    return { commitUrl: commit.body.html_url };
+  }
 }
 
 /** Pull a human-readable detail out of a GitHub error body. */

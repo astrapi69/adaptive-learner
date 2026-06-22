@@ -1868,6 +1868,20 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Depo olarak paylaş"
+    title: "Depo olarak paylaş"
+    needs_token: "Depo olarak paylaşmak için Ayarlar → Entegrasyonlar'da bir GitHub belirteci ekleyin."
+    repo_label: "Depo (owner/name)"
+    private: "Özel"
+    public: "Herkese açık"
+    branch: "Dal"
+    lessons_note: "Bu setteki {n} dersin tümü dahil edilecek."
+    invalid_repo: "Depoyu owner/name olarak girin."
+    submit: "Dışa aktar"
+    working: "Dışa aktarılıyor…"
+    done: "Setiniz depoya gönderildi."
+    failed: "Dışa aktarma başarısız."
   anki_export:
     button: "Anki dışa aktarma"
   discover_more: "Daha fazla içerik bul"

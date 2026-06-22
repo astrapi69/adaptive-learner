@@ -67,4 +67,32 @@ export interface IGitHubNamespace {
   verifyToken(token?: string): Promise<GitHubVerifyResult>;
   /** Run the full PR flow. Throws ``ApiError`` on any GitHub failure. */
   createLessonPr(args: CreateLessonPrArgs): Promise<CreateLessonPrResult>;
+  /** Export a set to a GitHub repository in the content-repo format
+   *  (#1017): ensure the repo exists, then push all files in one commit.
+   *  Throws ``ApiError`` on any GitHub failure. */
+  exportSetToRepo(args: ExportSetToRepoArgs): Promise<ExportSetToRepoResult>;
+}
+
+export interface ExportSetToRepoArgs {
+  /** ``owner/repo`` of the target repository. */
+  ownerRepo: string;
+  /** ``true`` creates a private repo (when it doesn't exist yet). */
+  private: boolean;
+  /** Target branch (usually the repo's default, e.g. ``main``). */
+  branch: string;
+  /** Short repo description (used when creating the repo). */
+  description?: string;
+  /** The files to commit (content-repo format). */
+  files: ReadonlyArray<{ path: string; content: string }>;
+  /** The commit message. */
+  message: string;
+}
+
+export interface ExportSetToRepoResult {
+  /** ``owner/repo`` the set was exported to. */
+  ownerRepo: string;
+  /** Browser URL of the pushed commit. */
+  commitUrl: string;
+  /** Repo home URL (for the "open repository" link). */
+  repoUrl: string;
 }

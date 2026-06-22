@@ -1870,6 +1870,20 @@ lesson:
     action_restart: "Επανεκκίνηση"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Κοινή χρήση ως αποθετήριο"
+    title: "Κοινή χρήση ως αποθετήριο"
+    needs_token: "Πρόσθεσε ένα διακριτικό GitHub στις Ρυθμίσεις → Ενσωματώσεις για κοινή χρήση ως αποθετήριο."
+    repo_label: "Αποθετήριο (owner/name)"
+    private: "Ιδιωτικό"
+    public: "Δημόσιο"
+    branch: "Κλάδος"
+    lessons_note: "Θα συμπεριληφθούν και τα {n} μαθήματα αυτού του σετ."
+    invalid_repo: "Δώσε το αποθετήριο ως owner/name."
+    submit: "Εξαγωγή"
+    working: "Εξαγωγή…"
+    done: "Το σετ σου ανέβηκε στο αποθετήριο."
+    failed: "Η εξαγωγή απέτυχε."
   anki_export:
     button: "Εξαγωγή Anki"
   discover_more: "Βρείτε περισσότερο περιεχόμενο"
