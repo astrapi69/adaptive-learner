@@ -184,8 +184,10 @@ export default defineConfig({
                         // / new version is picked up on the next online load.
                         // The stale-version indicator (S1 part 3) surfaces the
                         // update to the user proactively. MUST precede the
-                        // generic ``/api/`` NetworkFirst rule below (Workbox
-                        // uses first-match) so these URLs hit this route.
+                        // generic ``/api/`` NetworkOnly rule below (Workbox
+                        // uses first-match) so these content URLs are cached
+                        // for offline playback while every other /api/ call
+                        // goes straight to the network (#997).
                         // (Bundled / Dexie-mode content is intentionally NOT
                         // matched here — it already lives in IndexedDB, and
                         // intercepting the download fetch would risk serving a
@@ -208,27 +210,20 @@ export default defineConfig({
                         },
                     },
                     {
-                        // Phase 9B — network-first for API GETs so
-                        // returning users see cached read responses
-                        // when offline. POST / PATCH / DELETE still
-                        // need network (NetworkOnly via the fallback
-                        // entry below).
-                        urlPattern: ({url, request}) =>
-                            url.pathname.startsWith("/api/") &&
-                            request.method === "GET",
-                        handler: "NetworkFirst",
-                        options: {
-                            cacheName: "adaptive-learner-api",
-                            networkTimeoutSeconds: 4,
-                            expiration: {
-                                maxEntries: 60,
-                                maxAgeSeconds: 60 * 60 * 24,
-                            },
-                            cacheableResponse: {statuses: [0, 200]},
-                        },
-                    },
-                    {
-                        // Mutating API calls — never cache.
+                        // #997 — ALL /api/ calls are NetworkOnly (no SW
+                        // caching or interception). The backend is the
+                        // authoritative store and /api/ is only ever used in
+                        // server (API) mode — Dexie/PWA mode reads IndexedDB
+                        // and never touches /api/. The previous Phase 9B
+                        // NetworkFirst cache of API GETs served a stale/empty
+                        // set list right after a download ("downloaded sets
+                        // disappear"), and a slow GET hit the 4s timeout with
+                        // no cache entry -> workbox "no-response", so the real
+                        // network response/error never reached the app. Letting
+                        // every /api/ request go straight to the network fixes
+                        // both. (Offline lesson playback is preserved by the
+                        // version-aware lesson/asset StaleWhileRevalidate rule
+                        // ABOVE, which is content, not mutable API state.)
                         urlPattern: /^\/api\//,
                         handler: "NetworkOnly",
                     },
