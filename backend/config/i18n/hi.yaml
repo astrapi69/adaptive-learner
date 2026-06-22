@@ -459,6 +459,11 @@ progress:
   commit_notes_aria: सत्र नोट्स
   session_count: सत्र
 settings:
+  lesson_mode:
+    title: "पाठ मोड"
+    hint: "अभ्यास मोड में सभी सहायताएँ चालू रहती हैं। परीक्षा मोड संकेत, सिद्धांत पुनरावलोकन, स्वतः वाचन और समाधान छिपा देता है ताकि आप वास्तविक परिस्थितियों में याद करें।"
+    default_label: "डिफ़ॉल्ट मोड"
+    threshold_label: "उत्तीर्ण सीमा"
   updates:
     title: "अपडेट"
     auto_check: "स्वचालित अपडेट जाँच"
@@ -1592,6 +1597,14 @@ repo:
     description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
     enable_git: git दृढ़ता सक्षम करें
 lesson:
+  mode:
+    label: "पाठ मोड"
+    practice: "अभ्यास"
+    exam: "परीक्षा"
+  exam:
+    passed: "उत्तीर्ण"
+    not_passed: "अनुत्तीर्ण"
+    threshold_hint: "(उत्तीर्ण ≥ {pct}%)"
   resources_title: "विषय को गहराई से जानें"
   resources_domain: "{domain} के बारे में और जानें"
   motivation:

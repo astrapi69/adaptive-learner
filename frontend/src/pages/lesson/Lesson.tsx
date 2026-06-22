@@ -26,6 +26,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
+import LessonModeToggle from "../../components/lesson/chrome/LessonModeToggle";
+import { LessonModeProvider } from "../../hooks/lesson/useLessonMode";
+import {
+  readDefaultLessonMode,
+  type LessonMode,
+} from "../../lib/learning/lessonModePref";
 import LessonSummary from "../../components/lesson/summary/LessonSummary";
 import LessonResources from "../../components/lesson/steps/LessonResources";
 import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
@@ -131,6 +137,16 @@ export default function LessonPage() {
   // on mount; useLesson already reads it for the progress
   // path but doesn't expose it.
   const learnerUserId = useMemo(() => readLearnerState().userId, []);
+
+  // #1007 — Practice / Exam mode. Seeded from the learner's default-mode
+  // setting; switchable until the lesson is under way (so the rules can't
+  // change mid-run). Practice keeps every aid on; exam hides the
+  // scaffolding (hints, theory recap, auto-read, solution toggles,
+  // celebration). Default ``practice`` keeps the lower-pressure mode for
+  // new learners.
+  const [lessonMode, setLessonMode] = useState<LessonMode>(() =>
+    readDefaultLessonMode(),
+  );
 
   // #594 Hint Economy — start each lesson with a clean hint-usage slate
   // so a hint on a reused exercise id from a prior lesson never bleeds.
@@ -439,22 +455,38 @@ export default function LessonPage() {
         className="sticky top-0 z-10"
       />
 
-      <LessonTtsControls
-        isSummary={isSummary}
-        lesson={lesson}
-        tts={tts}
-        autoRead={autoRead}
-        toggleAutoRead={toggleAutoRead}
-        startContinuous={startContinuous}
-        isContinuous={isContinuous}
-        continuousAvailable={continuousAvailable}
-      />
+      {/* #1007 — mode toggle (Practice / Exam). Locked once the lesson is
+          under way so a mid-run flip can't change the rules. Hidden on the
+          summary screen. */}
+      {!isSummary && (
+        <LessonModeToggle
+          mode={lessonMode}
+          onChange={setLessonMode}
+          disabled={isInProgress}
+        />
+      )}
 
+      {/* Auto-read / read-aloud is a scaffolding aid: hidden in exam mode. */}
+      {lessonMode === "practice" && (
+        <LessonTtsControls
+          isSummary={isSummary}
+          lesson={lesson}
+          tts={tts}
+          autoRead={autoRead}
+          toggleAutoRead={toggleAutoRead}
+          startContinuous={startContinuous}
+          isContinuous={isContinuous}
+          continuousAvailable={continuousAvailable}
+        />
+      )}
+
+      <LessonModeProvider mode={lessonMode}>
       {isSummary ? (
         <>
         <LessonSummary
           lesson={lesson}
           progress={progress}
+          lessonMode={lessonMode}
           nextLessonFilename={nextLessonFilename}
           userId={learnerUserId ?? ""}
           setId={setId}
@@ -547,6 +579,7 @@ export default function LessonPage() {
           recordStepResult={recordStepResult}
         />
       )}
+      </LessonModeProvider>
 
       <LessonFooterNav
         isSummary={isSummary}

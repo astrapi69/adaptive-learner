@@ -490,6 +490,12 @@
     "session_count": "Sesi"
   },
   "settings": {
+    "lesson_mode": {
+      "title": "Mode pelajaran",
+      "hint": "Mode latihan mempertahankan semua bantuan. Mode ujian menyembunyikan petunjuk, ulasan teori, baca otomatis, dan solusi agar Anda mengingat dalam kondisi realistis.",
+      "default_label": "Mode bawaan",
+      "threshold_label": "Ambang kelulusan"
+    },
     "updates": {
       "title": "Pembaruan",
       "auto_check": "Pemeriksaan pembaruan otomatis",
@@ -1720,6 +1726,16 @@
     }
   },
   "lesson": {
+    "mode": {
+      "label": "Mode pelajaran",
+      "practice": "Latihan",
+      "exam": "Ujian"
+    },
+    "exam": {
+      "passed": "Lulus",
+      "not_passed": "Tidak lulus",
+      "threshold_hint": "(lulus ≥ {pct}%)"
+    },
     "resources_title": "Jelajahi lebih lanjut",
     "resources_domain": "Lebih lanjut tentang {domain}",
     "motivation": {

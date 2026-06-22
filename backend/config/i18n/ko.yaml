@@ -457,6 +457,11 @@ progress:
   commit_notes_aria: "세션 메모"
   session_count: "세션"
 settings:
+  lesson_mode:
+    title: "레슨 모드"
+    hint: "연습 모드는 모든 학습 보조 기능을 유지합니다. 시험 모드는 힌트, 이론 복습, 자동 읽기, 정답 표시를 숨겨 현실적인 조건에서 회상하도록 합니다."
+    default_label: "기본 모드"
+    threshold_label: "합격 기준"
   updates:
     title: "업데이트"
     auto_check: "자동 업데이트 확인"
@@ -1607,6 +1612,14 @@ repo:
     description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
     enable_git: "git 영속화 활성화"
 lesson:
+  mode:
+    label: "레슨 모드"
+    practice: "연습"
+    exam: "시험"
+  exam:
+    passed: "합격"
+    not_passed: "불합격"
+    threshold_hint: "(합격 ≥ {pct}%)"
   resources_title: "더 알아보기"
   resources_domain: "{domain}에 대해 더 보기"
   motivation:

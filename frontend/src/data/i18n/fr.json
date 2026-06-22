@@ -490,6 +490,12 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "lesson_mode": {
+      "title": "Mode de leçon",
+      "hint": "Le mode entraînement garde toutes les aides. Le mode examen masque les indices, le rappel de théorie, la lecture automatique et la solution pour réviser dans des conditions réalistes.",
+      "default_label": "Mode par défaut",
+      "threshold_label": "Seuil de réussite"
+    },
     "updates": {
       "title": "Mises à jour",
       "auto_check": "Vérification automatique des mises à jour",
@@ -1720,6 +1726,16 @@
     }
   },
   "lesson": {
+    "mode": {
+      "label": "Mode de leçon",
+      "practice": "Entraînement",
+      "exam": "Examen"
+    },
+    "exam": {
+      "passed": "Réussi",
+      "not_passed": "Échoué",
+      "threshold_hint": "(réussite ≥ {pct} %)"
+    },
     "resources_title": "Approfondir le sujet",
     "resources_domain": "Plus sur {domain}",
     "motivation": {

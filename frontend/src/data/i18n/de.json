@@ -490,6 +490,12 @@
     "session_count": "Sitzungen"
   },
   "settings": {
+    "lesson_mode": {
+      "title": "Lektionsmodus",
+      "hint": "Im Übungsmodus bleiben alle Hilfen an. Im Prüfungsmodus werden Tipps, Theorie-Wiederholung, Vorlesen und die Auflösung ausgeblendet, damit du unter realistischen Bedingungen abrufst.",
+      "default_label": "Standardmodus",
+      "threshold_label": "Bestehens-Grenze"
+    },
     "updates": {
       "title": "Updates",
       "auto_check": "Automatische Update-Prüfung",
@@ -1720,6 +1726,16 @@
     }
   },
   "lesson": {
+    "mode": {
+      "label": "Lektionsmodus",
+      "practice": "Üben",
+      "exam": "Prüfen"
+    },
+    "exam": {
+      "passed": "Bestanden",
+      "not_passed": "Nicht bestanden",
+      "threshold_hint": "(bestanden ab {pct}%)"
+    },
     "resources_title": "Vertiefe das Thema",
     "resources_domain": "Mehr zum Thema {domain}",
     "motivation": {
