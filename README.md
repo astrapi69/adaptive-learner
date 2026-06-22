@@ -332,7 +332,10 @@ make install   # Poetry + npm + all 13 plugins as path-deps
 make dev       # backend :18001 + frontend :15174 (Vite dev server)
 ```
 
-Full setup walkthrough lives at
+New contributors should start with the
+[Developer Onboarding guide](https://astrapi69.github.io/adaptive-learner/docs/en/developer/onboarding/)
+— a step-by-step walkthrough of your first bug-fix. The full setup
+reference lives at
 [docs/developer/setup](https://astrapi69.github.io/adaptive-learner/docs/en/developer/setup/).
 
 ## Tech stack

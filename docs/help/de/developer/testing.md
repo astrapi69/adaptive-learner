@@ -5,29 +5,29 @@ jeder Änderung erzwungen. Die Strategie ist eine Pyramide:
 Unit-Tests an der Basis, Integration in der Mitte, E2E-Smoke
 oben.
 
-## Test-Zahlen (v1.79.0-Baseline, verifiziert 2026-06-15)
+## Test-Zahlen
 
-| Schicht | Anzahl | Werkzeug |
-|---|---|---|
-| Backend-Unit + -Integration | 1215 | pytest ^9 |
-| Plugin-Tests (13 Plugins) | 1018 | pytest ^9 |
-| Frontend-Unit + -Integration | 4139 | Vitest 4 |
-| **Gesamt (`make test`)** | **6372** | |
-| E2E-Smoke | 17 Spec-Dateien | Playwright |
-| Dexie-Modus-Release-Gate | 73 Specs | Playwright |
+| Schicht | Werkzeug |
+|---|---|
+| Backend-Unit + -Integration | pytest ^9 |
+| Plugin-Tests (13 Plugins) | pytest ^9 |
+| Frontend-Unit + -Integration | Vitest 4 |
+| E2E-Smoke | Playwright |
+| Dexie-Modus-Release-Gate | Playwright |
 
-Die Zahlen wachsen mit jedem Release; behandle sie als
-Momentaufnahme, nicht als harten Vertrag.
-`docs/audits/current-coverage.md` ist die kanonische,
-stets aktuelle Quelle. Die 13 Plugins sind assessment, die
-drei KI-Anbieter (anthropic / openai / gemini), session,
-tracking, tools, gamification, anki, notebooklm,
-learning-repo, content-loader und missions.
+Die Zahlen wachsen mit jedem Release. Um duplizierte Zahlen zu
+vermeiden, die auseinanderdriften, hält diese Seite KEINE
+Gesamtzahl fest. `docs/audits/current-coverage.md` ist die
+einzige kanonische, stets aktuelle Quelle für Test-Zahlen und
+Coverage. Die 13 Plugins sind assessment, die drei KI-Anbieter
+(anthropic / openai / gemini), session, tracking, tools,
+gamification, anki, notebooklm, learning-repo, content-loader
+und missions.
 
 ## Backend-pytest
 
 ```bash
-make test-backend      # ~1215 Tests
+make test-backend
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb  # bei erstem Fehler in Debugger
 ```
@@ -43,7 +43,7 @@ Isolation ist hart — `ADAPTIVE_LEARNER_TEST=1` wird vor jedem
 Jedes Plugin hat sein eigenes `tests/`-Verzeichnis:
 
 ```bash
-make test-plugins              # alle 10
+make test-plugins              # alle 13
 make test-plugin-session       # nur eines
 cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ```
@@ -55,13 +55,23 @@ du Hook-Firing testest.
 ## Frontend-Vitest
 
 ```bash
-make test-frontend                # 1233 Tests, ~6s
+make test-frontend                # führt Vitest aus frontend/ aus
 cd frontend && npx vitest         # Watch-Modus
 cd frontend && npx vitest run src/storage/  # ein Verzeichnis
 ```
 
+Vitest aus `frontend/` ausführen (die Konfiguration liegt in
+`frontend/vite.config.ts`), oder über `make test-frontend`. Aus
+dem Repo-Wurzelverzeichnis wird die Konfiguration nicht
+gefunden, die `node`-Umgebung verwendet, und DOM-nutzende Tests
+scheitern mit `ReferenceError: document is not defined`.
+
 Tests liegen neben dem Quelltext: `Component.test.tsx` neben
 `Component.tsx`. happy-dom ist die Umgebung; React 19 + RTL.
+Die i18n-Paritäts-Prüfung (11 Sprachen), die
+Theme-Token-Paritäts-Prüfung und die Design-Token-Prüfung
+("keine hartkodierten Farben") laufen als Vitest-Tests in
+derselben Suite.
 
 ## Mock-Patterns
 
@@ -128,14 +138,27 @@ brüchigen CSS-Selektoren. Smoke-Specs sind NICHT im
 `make test`-Pfad; sie brauchen eine laufende App
 (`make dev-bg` zuerst).
 
+Neben `e2e/smoke/` enthält der `e2e/`-Baum drei weitere
+Spec-Familien:
+
+- `e2e/dexie/` — das Dexie-Modus-Release-Gate. Baut das
+  Frontend mit `VITE_STORAGE_MODE=dexie` (die GitHub-Pages-Form,
+  ohne Backend) und läuft jede über die Navigation erreichbare
+  Route ab; jeder Fehler-Toast oder Seitenabsturz lässt es
+  scheitern. Ausführen mit `make test-dexie-smoke`.
+- `e2e/visual/` — Visuelle Baseline-Regressions-Specs.
+- `e2e/manual-automation/` — Playwright-Automatisierung des
+  manuellen Testplans.
+
 ## Coverage
 
 ```bash
 make test-coverage   # opt-in; langsam + thermisch heftig
 ```
 
-Coverage läuft auf CI bei jedem Push auf main; Artefakte
-herunterladen:
+Coverage ist ein Bericht, kein Merge-Gate, und läuft daher
+nicht bei PRs. Der `coverage.yml`-Workflow läuft nächtlich
+(und auf Abruf); Artefakte herunterladen:
 
 ```bash
 gh run download --name backend-coverage
@@ -158,23 +181,70 @@ cd backend && poetry run pre-commit install
 ```
 
 Hooks: ruff check (Auto-Fix), ruff format, Trailing
-Whitespace, End-of-File-Fixer, check-yaml,
-check-merge-conflict. Nur Backend — Frontend-Lint läuft zur
-CI-Zeit, nicht pre-commit.
+Whitespace, End-of-File-Fixer, check-yaml, check-json,
+check-added-large-files, check-merge-conflict, Frontend-ESLint,
+eine Plugin-Lockfile/pyproject-Paarungs-Prüfung und ein
+Bundled-Content-Statistik-Validator. Im CI-Pre-Commit-Job
+werden die Hooks `prettier-frontend` und `eslint`
+übersprungen (der Frontend-Tests-Job führt ESLint stattdessen
+mit installierten Abhängigkeiten aus).
 
 ## CI
 
-`.github/workflows/ci.yml` läuft bei jedem Push auf main +
-jedem PR:
+CI teilt sich in zwei Stufen: Korrektheits-Gates laufen bei
+jedem PR (sie müssen zum Mergen grün sein), und die teuren oder
+nur-warnenden Suiten laufen zur Nachtschicht und beim Release.
 
-1. Backend-Tests (Python 3.12 + 3.13 Matrix)
-2. Plugin-Tests (ein Job pro Plugin; Matrix-Strategy)
-3. Frontend-Vitest + tsc + Lint
-4. ruff check + Format-Check
+`.github/workflows/ci.yml` läuft bei Push auf `develop` /
+`main` und bei jedem PR (Python 3.12):
+
+1. Backend-Tests (pytest)
+2. Plugin-Tests (`make test-plugins`, alle 13 über die
+   Backend-venv)
+3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
+   Circular-Dependency-Prüfung, Stylelint, Vitest,
+   `vite build`, `npm audit`
+4. Pre-Commit-Hooks über alle Dateien
+5. Backend ruff + mypy + pip-audit
+6. Docs-Drift-Verifizierer (`verify_docs.py` + mkdocs-nav-Sync)
+
+**Test Impact Analysis (#615):** bei einem PR laufen nur die
+betroffenen Tests — `vitest run --changed origin/<base>` und
+`pytest --testmon`. Push auf `develop` / `main`, die
+nächtlichen Läufe und der Release-Lauf führen immer die VOLLE
+Suite aus. Der Rückfall auf die volle Suite ist automatisch
+(nicht auflösbare Basis-Referenz oder ein testmon-Cache-Miss).
+
+Zwei weitere PR-Gates leben in eigenen Workflows:
+
+- `complexity-check.yml` — das Komplexitäts-Ratschen-Gate
+  (`make check-complexity-gate`, radon für Python +
+  ESLint-Komplexität für TS). Es ist ein Baseline-Ratschen: es
+  scheitert nur an NEUEN oder verschlechterten Verstößen
+  gegenüber `.complexity-baseline`, blockiert also neue
+  Komplexität, ohne ein Aufräumen der bestehenden Schuld zu
+  erzwingen. Der volle nur-warnende Komplexitätsbericht läuft
+  nächtlich.
+- `cohesion-check.yml` — die Dateigrößen-Prüfung (Gate gegen
+  `.filesize-whitelist`). Die begleitende Ordnergrößen-Prüfung
+  läuft lokal über `make check-folder-size`.
+
+**Nachtschicht / Release (nicht bei PRs):**
+
+- `dexie-smoke.yml` — Dexie-Modus-E2E-Gate (täglich + auf
+  `release/**` + Abruf; lokal `make test-dexie-smoke`)
+- `coverage.yml` — Coverage-Bericht (täglich + Abruf)
+- `security-scan.yml` — pip-audit / npm audit / bandit
+  (wöchentlich + auf `release/**` + Abruf; nur-warnend)
+- `content-stats.yml` — Content-Statistik-Drift gegen ein
+  frisches Content-Checkout (täglich + Abruf)
+- `mutation-frontend.yml` — Stryker-Mutation-Testing (gegatetes
+  Nächtlich + Abruf); Backend-Mutation-Testing nutzt mutmut
 
 `.github/workflows/release-gate.yml` läuft bei Tag-Pushes:
-verifiziert Version-Pins (kein Drift über 12 Dateien), Plugin-
-Lockfiles passen, regenerierte Artefakte sind aktuell.
+verifiziert, dass alle versionstragenden Dateien im Gleichschritt
+sind (kein Drift), Plugin-Lockfiles passen, und regenerierte
+Artefakte aktuell sind.
 
 ## Manueller Testplan
 

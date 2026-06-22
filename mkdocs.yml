@@ -486,6 +486,7 @@ nav:
   - Tracking: de/concept/tracking.md
   - Werkzeuge: de/concept/tools.md
 - Entwickler-Dokumentation:
+  - Onboarding: de/developer/onboarding.md
   - Architektur: de/developer/architecture.md
   - Setup: de/developer/setup.md
   - Plugin-Leitfaden: de/developer/plugin-guide.md

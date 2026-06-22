@@ -23,11 +23,16 @@ A set has three levels:
    JSON file per lesson, validated against schema v1.0 on every
    download.
 
-The pilot sets shipped with Adaptive Learner live in the separate
+The sets shipped with Adaptive Learner live in the separate
 content repo [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
 (checked out as a sibling checkout `../adaptive-learner-content` and
-bundled by the build via `frontend/scripts/copy-bundled-content.mjs`)
-and serve well as a template.
+bundled offline into the GitHub Pages build via
+`frontend/scripts/copy-bundled-content.mjs`) and serve well as a
+template. The current size of the library (lesson / set / domain
+counts, the per-set table, and the active domains) is the
+CONTENT-STATS block in the project [`README.md`](https://github.com/astrapi69/adaptive-learner#readme) —
+that block is the single source of truth, generated from a fresh
+content checkout, so this guide does not duplicate the numbers.
 
 ## Language pairs (v1.44.0)
 
@@ -77,6 +82,21 @@ my-content-repo/
         ...
 ```
 
+### Search index (`search-index.json`)
+
+Content discovery and search (the *Discover* surface) is driven by
+a lean `search-index.json` published at the repo root (~4 KB,
+metadata only — no card content). The official content repo
+provides it, and the app fetches the indices of every configured
+repo client-side (CORS-safe, cached in localStorage with a 24 h
+stale-while-revalidate TTL) so a learner can FIND a set before
+downloading it. Each entry advertises the set's `id`, `name`,
+`description`, `source_language` / `target_language`, `level`,
+`domain`, `lesson_count`, `card_count`, `tags`, an `ai_validated`
+flag, a `trust_level`, an optional companion `book`, and an
+`updated_at` timestamp. Keep it in sync with the set manifests; a
+PR to the official repo regenerates it.
+
 ## Manifest format
 
 Both manifest files (root + set) use the same shape with
@@ -94,7 +114,7 @@ sets:
     level: B1                 # CEFR für Sprachen, frei für andere Domänen
     version: '1.0.0'          # Semver — pro Set-Release erhöht
     lesson_count: 12
-    domain: language          # 'language' / 'math' / 'programming' / ...
+    domain: language          # active domains: ai / language / programming / psychology / technology
     description: >-
       Optionale Set-Beschreibung.
     tags:
@@ -600,6 +620,22 @@ no empty card fronts/backs and (for non-Latin source scripts) card
 backs in the source script. These are minimums, not goals — the
 checklist above asks for more.
 
+### Set-wide AI content check (optional)
+
+Besides the share-time check, a downloaded set can be reviewed
+set-wide via *Check with AI*. This is fully optional and uses the
+**provider + model** the learner has configured (Anthropic /
+OpenAI / Gemini); the cards are sent in batches to that provider
+for review. The flow shows a cost estimate, runs with a progress
+bar + cancel, and produces a **per-card report** that is cached in
+the browser and can be exported as **Markdown** (with a line
+recording which provider + model ran the check). When the report
+passes, the set earns an **"AI-Checked" badge** backed by a
+content hash + a signature, so a later edit to the cards
+invalidates the badge until the set is re-checked. The AI check is
+never a gate — it is advisory provenance, not a publishing
+requirement.
+
 ## Local testing
 
 The content loader's schema validator runs as part of `make test`.
@@ -670,17 +706,23 @@ Stick to the documented fields.
 (Markdown). Exercise steps must not carry a `body` — use the
 exercise's `prompt` instead.
 
-## Reference: the pilot sets
+## Reference: the bundled sets
 
-The two sets shipped with Adaptive Learner are the canonical
-references:
+Adaptive Learner ships a sizeable library across several domains
+(languages, programming, psychology, AI, technology — see the
+README CONTENT-STATS block for the live counts + the full
+per-set table). A few good canonical references in the
+`adaptive-learner-content` repo:
 
-- `sets/en/fr-a1/` — French A1 for English speakers (10 lessons,
-  ~2 hours); `sets/de/fr-a1/` is the German-source pilot set.
-- `sets/en/es-a1/` + `sets/de/es-a1/` — Spanish A1 (15 lessons per
-  source language), in the `adaptive-learner-content` repo.
+- `sets/en/fr-a1/` — French A1 for English speakers;
+  `sets/de/fr-a1/` is the German-source counterpart.
+- `sets/en/es-a1/` + `sets/de/es-a1/` — Spanish A1 (one per source
+  language).
+- The "Python — Grundlagen" set under `sets/de/` is a
+  `domain: programming` example (German source == target), useful
+  as a non-language reference.
 
-Both follow the conventions described in this guide. Reading
+They all follow the conventions described in this guide. Reading
 through a complete lesson is the fastest way to internalize the
 structure.
 
