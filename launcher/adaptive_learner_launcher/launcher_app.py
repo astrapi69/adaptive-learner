@@ -16,9 +16,8 @@ from __future__ import annotations
 import logging
 import threading
 import tkinter as tk
-from pathlib import Path
 
-from adaptive_learner_launcher import actions, config, i18n, manifest, ui
+from adaptive_learner_launcher import actions, config, i18n, manifest, tray, ui
 
 logger = logging.getLogger("adaptive_learner_launcher.launcher_app")
 
@@ -76,6 +75,21 @@ def dispatch_action(action_id: str, *, compose_file: str, project: str, port: in
     return None
 
 
+def should_minimize_to_tray(state: str, *, tray_available: bool) -> bool:
+    """Whether closing the window should minimize to the tray.
+
+    Minimize only when the app is RUNNING and the system-tray extra is
+    available; otherwise the X closes the launcher (the not-running and
+    no-pystray cases both close, #987). Pure (no Tk) so it is unit-testable.
+    """
+    return state == "running" and tray_available
+
+
+def tray_menu_labels() -> dict[str, str]:
+    """Localized tray-menu labels keyed by action id (#987)."""
+    return {action_id: i18n.t(label_key) for action_id, label_key in tray.MENU_SPEC}
+
+
 class LauncherApp:
     """The persistent window. Thin Tk over the helpers above."""
 
@@ -85,11 +99,16 @@ class LauncherApp:
         repo = config.source_checkout_repo() or manifest.install_dir_from_manifest() or config.resolve_repo_path()
         self._compose_file = str(repo / config.COMPOSE_FILENAME)
         self._port = config.read_public_port(repo) if repo else actions.DEFAULT_PORT
+        self._tray: tray.TrayController | None = None
 
         self._root = tk.Tk()
         self._root.title("Adaptive Learner")
         self._root.geometry("440x320")
         ui._set_window_icon(self._root)  # crash-safe (#956)
+        # Closing the window minimizes to the system tray while the app is
+        # running (if the tray extra is installed); otherwise it closes the
+        # launcher (#987).
+        self._root.protocol("WM_DELETE_WINDOW", self._on_close)
 
         self._state_label = tk.Label(self._root, font=("Segoe UI", 12, "bold"))
         self._state_label.pack(pady=(18, 8))
@@ -201,6 +220,60 @@ class LauncherApp:
         if busy:
             self._clear_status()
             self._log(i18n.t("status.starting"))
+
+    # --- close / system tray (#987) ---
+
+    def _on_close(self) -> None:
+        """WM_DELETE_WINDOW handler: minimize to tray or close the launcher.
+
+        Minimizes to the system tray only while the app is running AND the
+        tray extra is available; in every other case (app stopped, no
+        pystray, tray failed to start) it closes the launcher.
+        """
+        if should_minimize_to_tray(actions.get_state(self._project), tray_available=tray.tray_available()):
+            if self._minimize_to_tray():
+                return
+        self._quit()
+
+    def _minimize_to_tray(self) -> bool:
+        """Show the tray icon and hide the window. Returns False on failure
+        (the caller then closes the launcher instead)."""
+        controller = tray.TrayController(
+            port=self._port,
+            tooltip=i18n.t("tray.tooltip", port=self._port),
+            labels=tray_menu_labels(),
+            callbacks={
+                # open / quit touch Tk, so marshal onto the Tk thread;
+                # open_browser is thread-safe (#987). stop reuses the
+                # existing action handler (no new business logic).
+                "open": lambda: self._root.after(0, self._restore_window),
+                "open_browser": lambda: actions.open_browser(self._port),
+                "stop": lambda: self._root.after(0, lambda: self._on_action("stop")),
+                "quit": lambda: self._root.after(0, self._quit),
+            },
+        )
+        if not controller.start():
+            return False
+        self._tray = controller
+        self._root.withdraw()
+        return True
+
+    def _restore_window(self) -> None:
+        """Bring the window back from the tray."""
+        self._stop_tray()
+        self._root.deiconify()
+        self._root.lift()
+        self._refresh()
+
+    def _stop_tray(self) -> None:
+        if self._tray is not None:
+            self._tray.stop()
+            self._tray = None
+
+    def _quit(self) -> None:
+        """Close the launcher completely (tray icon removed if present)."""
+        self._stop_tray()
+        self._root.destroy()
 
     def run(self) -> None:
         self._root.mainloop()

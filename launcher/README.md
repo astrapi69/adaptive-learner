@@ -35,6 +35,21 @@ Stop / Uninstall / Open). All actions go through the `actions` layer on a
 background thread. It is opt-in while the classic flow stays the default;
 it becomes the default once verified on a real device.
 
+### Minimize to system tray (optional)
+
+With the optional `tray` extra installed, closing the window **while the
+app is running** minimizes it to the system tray instead of quitting:
+
+```bash
+pip install adaptive-learner-launcher[tray]   # installs pystray + Pillow
+```
+
+A tray icon then appears with a right-click menu (Open / Open in browser /
+Stop / Quit) and click-to-restore; the tooltip shows the running port. All
+tray actions route through the `actions` layer. Without the extra (or when
+the app is not running) the X button simply closes the launcher — no crash,
+no behaviour change.
+
 ## Run from source
 
 ```bash
