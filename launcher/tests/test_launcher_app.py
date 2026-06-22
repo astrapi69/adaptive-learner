@@ -41,6 +41,22 @@ class TestCloseAffordance:
             )
 
 
+class TestWindowSizing:
+    """The window is wide enough for the three-button row in every language,
+    and minsize keeps it from being shrunk until a button clips (#991)."""
+
+    def test_geometry_is_wide_enough_for_three_buttons(self) -> None:
+        width = int(launcher_app.WINDOW_GEOMETRY.split("x")[0])
+        # Three width-18 buttons (~430px) + window chrome need well over 440px
+        # (the old size that clipped "Deinstallieren").
+        assert width >= 600, f"window too narrow ({width}px) for the button row"
+
+    def test_minsize_floor_is_set_and_fits_the_buttons(self) -> None:
+        assert launcher_app.MIN_WIDTH >= 600 and launcher_app.MIN_HEIGHT >= 400
+        src = Path(launcher_app.__file__).read_text(encoding="utf-8")
+        assert "self._root.minsize(MIN_WIDTH, MIN_HEIGHT)" in src
+
+
 class TestPortEditable:
     def test_editable_before_running(self) -> None:
         assert launcher_app.port_editable("not_installed") is True
