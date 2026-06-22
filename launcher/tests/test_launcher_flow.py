@@ -8,12 +8,19 @@ the background worker synchronously so no event loop is needed.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 
 from adaptive_learner_launcher import __main__ as main_mod
+from adaptive_learner_launcher import ui as ui_mod
+
+# Captured at import time, BEFORE the autouse fixture below patches
+# ``ui.StatusWindow`` with a test stub. The contract test must check the
+# real class, not the stub.
+_REAL_STATUS_WINDOW = ui_mod.StatusWindow
 
 
 class _FakeStatusWindow:
@@ -60,6 +67,71 @@ class TestParseCliPort:
 
     def test_unknown_flag_ignored(self) -> None:
         assert main_mod._parse_cli_port(["--banana", "x"]) is None
+
+
+class TestParseCliDebug:
+
+    def test_debug_flag_set(self) -> None:
+        assert main_mod._parse_cli_debug(["--debug"]) is True
+
+    def test_debug_with_port(self) -> None:
+        assert main_mod._parse_cli_debug(["--port", "8501", "--debug"]) is True
+
+    def test_no_debug(self) -> None:
+        assert main_mod._parse_cli_debug([]) is False
+
+    def test_unknown_flag_ignored(self) -> None:
+        assert main_mod._parse_cli_debug(["--banana"]) is False
+
+
+class TestMaybeShowHelp:
+
+    def test_help_long_flag(self, capsys) -> None:
+        assert main_mod._maybe_show_help(["--help"]) is True
+        out = capsys.readouterr().out
+        assert "--port" in out and "--debug" in out
+
+    def test_help_short_flag(self, capsys) -> None:
+        assert main_mod._maybe_show_help(["-h"]) is True
+
+    def test_no_help(self) -> None:
+        assert main_mod._maybe_show_help(["--debug"]) is False
+        assert main_mod._maybe_show_help([]) is False
+
+
+class TestStatusWindowContract:
+    """Pin the ``__main__`` -> ``StatusWindow`` method contract.
+
+    ``StatusWindow`` wraps ``tk.Tk`` by composition (no inheritance), so a
+    Tk method such as ``destroy`` is NOT automatically available — the
+    public teardown method is ``close``. Calling ``window.destroy()``
+    crashed the launcher on a real device (#948). This test fails if
+    ``__main__`` ever calls a ``window`` method that the real
+    ``StatusWindow`` does not provide.
+    """
+
+    def test_every_window_call_exists_on_status_window(self) -> None:
+        source = Path(main_mod.__file__).read_text(encoding="utf-8")
+        called = set(re.findall(r"\bwindow\.([a-z_][a-z0-9_]*)", source))
+        assert called, "expected to find window.* calls in __main__"
+        missing = sorted(
+            name for name in called if not hasattr(_REAL_STATUS_WINDOW, name)
+        )
+        assert not missing, (
+            f"__main__ calls window methods not on StatusWindow: {missing}. "
+            "Add the method to StatusWindow or use an existing one "
+            "(e.g. close() instead of destroy())."
+        )
+
+    def test_destroy_is_not_called(self) -> None:
+        source = Path(main_mod.__file__).read_text(encoding="utf-8")
+        assert "window.destroy" not in source, (
+            "StatusWindow has no destroy(); use window.close() (#948)."
+        )
+
+    def test_status_window_exposes_close_not_destroy(self) -> None:
+        assert hasattr(_REAL_STATUS_WINDOW, "close")
+        assert not hasattr(_REAL_STATUS_WINDOW, "destroy")
 
 
 class TestResolveFreePort:
