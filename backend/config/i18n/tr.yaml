@@ -1642,6 +1642,9 @@ lesson:
   reviewed:
     completed: "Tamamlandı"
   exercise:
+    toggle:
+      my_answer: "Cevabım"
+      solution: "Çözüm"
     reread_theory: "Teoriyi tekrar oku"
     back_to_exercise: "Alıştırmaya dön"
     loading: "Alıştırma yükleniyor…"

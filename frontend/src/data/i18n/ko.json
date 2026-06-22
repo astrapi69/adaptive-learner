@@ -1774,6 +1774,10 @@
       "completed": "완료됨"
     },
     "exercise": {
+      "toggle": {
+        "my_answer": "내 답변",
+        "solution": "정답"
+      },
       "reread_theory": "이론 다시 읽기",
       "back_to_exercise": "연습으로 돌아가기",
       "loading": "연습을 불러오는 중…",

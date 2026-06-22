@@ -348,7 +348,13 @@ describe("reviewed mode: locked post-check visual (Problem 2)", () => {
             "correct",
         );
         expect(screen.queryByTestId("word-tiles-submit")).toBeNull();
-        expect(screen.getByTestId("word-tile-placed-0")).toBeDisabled();
+        // #1005 — after check, the interactive placed tiles are replaced by
+        // the read-only My-answer / Solution toggle views. The reviewed
+        // [0, 1] order is correct, so its tiles render green.
+        expect(screen.queryByTestId("word-tile-placed-0")).toBeNull();
+        expect(
+            screen.getByTestId("word-tiles-my-answer-view-tile-0"),
+        ).toHaveAttribute("data-correct", "true");
     });
 
     it("cloze reconstructs the blanks + result, inputs locked", () => {

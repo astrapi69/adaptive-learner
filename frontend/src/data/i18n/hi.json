@@ -1774,6 +1774,10 @@
       "completed": "पूर्ण"
     },
     "exercise": {
+      "toggle": {
+        "my_answer": "मेरा उत्तर",
+        "solution": "समाधान"
+      },
       "reread_theory": "सिद्धांत फिर से पढ़ें",
       "back_to_exercise": "अभ्यास पर वापस",
       "loading": "अभ्यास लोड हो रहा है…",

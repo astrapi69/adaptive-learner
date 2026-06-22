@@ -1644,6 +1644,9 @@ lesson:
   reviewed:
     completed: "Terminé"
   exercise:
+    toggle:
+      my_answer: "Ma réponse"
+      solution: "Solution"
     reread_theory: "Relire la théorie"
     back_to_exercise: "Retour à l'exercice"
     loading: "Chargement de l'exercice…"
