@@ -92,18 +92,14 @@ class TestRemoveImages:
 
 
 class TestComposeBuild:
+    """Thin wrapper over actions.compose_build (#970)."""
 
-    def test_success(self, tmp_path: Path) -> None:
-        with patch("adaptive_learner_launcher.docker._run", return_value=_run_result()):
-            ok, _ = docker.compose_build(tmp_path, "docker-compose.prod.yml")
-        assert ok
-
-    def test_failure_returns_detail(self, tmp_path: Path) -> None:
-        with patch("adaptive_learner_launcher.docker._run",
-                   return_value=_run_result(returncode=1, stderr="build error")):
+    def test_delegates_to_actions(self, tmp_path: Path) -> None:
+        from adaptive_learner_launcher import actions
+        with patch.object(actions, "compose_build", return_value=(True, "gebaut")) as m:
             ok, detail = docker.compose_build(tmp_path, "docker-compose.prod.yml")
-        assert not ok
-        assert "build error" in detail
+        assert ok and detail == "gebaut"
+        m.assert_called_once()
 
 
 class TestRemoveContainers:

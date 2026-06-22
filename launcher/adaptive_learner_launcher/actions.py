@@ -242,6 +242,21 @@ def start(compose_file: str, project: str = DEFAULT_PROJECT,
     return True, "App gestartet."
 
 
+def compose_build(compose_file: str, project: str = DEFAULT_PROJECT) -> tuple[bool, str]:
+    """Build images and start the stack (``up --build -d``). Granular - no
+    health check or slow-start handling, so callers keep that UX. Returns
+    the compose output tail on failure."""
+    try:
+        result = _compose(project, compose_file, "up", "--build", "-d", timeout=600.0)
+    except FileNotFoundError:
+        return False, _DOCKER_UNAVAILABLE
+    except subprocess.TimeoutExpired:
+        return False, "Docker-Build hat das Zeitlimit (10 Min) ueberschritten."
+    if result.returncode != 0:
+        return False, f"Docker-Build fehlgeschlagen:\n{_tail(result)}"
+    return True, "gebaut und gestartet."
+
+
 def stop(project: str = DEFAULT_PROJECT) -> tuple[bool, str]:
     """Stop the running containers, then VERIFY none are running.
 

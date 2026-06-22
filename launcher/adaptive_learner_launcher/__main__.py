@@ -945,9 +945,10 @@ def _run_install_flow() -> Path | None:
         cfg["repo_path"] = str(target)
         config.save_launcher_config(cfg)
 
-        # Phase 2: Build and start Docker stack
+        # Phase 2: Build and start Docker stack (granular action; the
+        # health/slow-start handling stays here in Phase 3).
         window.after(0, lambda: window.start_step(2, i18n.t("install.building_images")))
-        ok3, detail3 = docker.compose_build(target, config.COMPOSE_FILENAME)
+        ok3, detail3 = actions.compose_build(str(target / config.COMPOSE_FILENAME), actions.DEFAULT_PROJECT)
         if not ok3:
             result["error"] = f"Docker build failed:\n{detail3}"
             window.after(0, lambda: (window.fail_step(2), window.close()))

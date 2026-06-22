@@ -226,6 +226,36 @@ class TestInstall:
         assert ok is False and "Port" in msg
 
 
+# --- compose_build (granular) (5) -----------------------------------------
+
+class TestComposeBuild:
+    def test_success(self) -> None:
+        with patch.object(actions, "_run", return_value=_result()):
+            ok, msg = actions.compose_build("c.yml", "adaptive-learner")
+        assert ok is True
+
+    def test_build_fails(self) -> None:
+        with patch.object(actions, "_run", return_value=_result(returncode=1, stderr="npm ci failed")):
+            ok, msg = actions.compose_build("c.yml", "adaptive-learner")
+        assert ok is False and "fehlgeschlagen" in msg
+
+    def test_docker_missing(self) -> None:
+        with patch.object(actions, "_run", side_effect=FileNotFoundError):
+            ok, msg = actions.compose_build("c.yml", "adaptive-learner")
+        assert ok is False
+
+    def test_timeout(self) -> None:
+        with patch.object(actions, "_run", side_effect=subprocess.TimeoutExpired(cmd="docker", timeout=600)):
+            ok, msg = actions.compose_build("c.yml", "adaptive-learner")
+        assert ok is False and "Zeitlimit" in msg
+
+    def test_uses_project_and_build_flags(self) -> None:
+        with patch.object(actions, "_run", return_value=_result()) as run_mock:
+            actions.compose_build("c.yml", "adaptive-learner")
+        cmd = run_mock.call_args[0][0]
+        assert "-p" in cmd and "adaptive-learner" in cmd and "--build" in cmd
+
+
 # --- start (6) ------------------------------------------------------------
 
 class TestStart:
