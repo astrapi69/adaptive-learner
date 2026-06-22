@@ -39,6 +39,13 @@ class TestReleaseZipUrl:
         assert "/tags/v1.2.3.zip" in url
         assert "/tags/vv1.2.3.zip" not in url
 
+    def test_targets_correct_repo_slug(self) -> None:
+        # The repo is astrapi69/adaptive-learner (hyphen). The underscore
+        # form 404s on a fresh install download (#952).
+        assert installer.GITHUB_REPO == "astrapi69/adaptive-learner"
+        assert "adaptive_learner" not in installer.release_zip_url("1.2.3")
+        assert "astrapi69/adaptive-learner/archive" in installer.release_zip_url("1.2.3")
+
 
 class TestDownloadRelease:
 

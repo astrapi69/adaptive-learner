@@ -39,8 +39,8 @@ class TestCheckLauncherTargetStale:
     ) -> None:
         """Newer release exists; user clicks Open download page.
 
-        Expected: webbrowser opens the release URL, helper returns
-        False (install aborts).
+        Expected: webbrowser opens the stable /releases/latest page
+        (#952), helper returns False (install aborts).
         """
         _patch_target(monkeypatch, "0.17.0")
         with patch(
@@ -54,9 +54,7 @@ class TestCheckLauncherTargetStale:
         ) as mock_open:
             result = launcher_main._check_launcher_target_stale()
         assert result is False
-        mock_open.assert_called_once_with(
-            "https://example/release/v0.25.0"
-        )
+        mock_open.assert_called_once_with(launcher_main.RELEASE_PAGE_URL)
 
     def test_latest_newer_continue_with_older_proceeds(
         self, monkeypatch

@@ -99,6 +99,42 @@ class TestMaybeShowHelp:
         assert main_mod._maybe_show_help([]) is False
 
 
+class TestReleaseLinks:
+    """The release/download page links must target the correct repo and
+    the stable /releases/latest page (#952)."""
+
+    def test_release_page_url_is_latest_on_correct_repo(self) -> None:
+        assert (
+            main_mod.RELEASE_PAGE_URL
+            == "https://github.com/astrapi69/adaptive-learner/releases/latest"
+        )
+
+    def test_no_underscore_slug_in_main_urls(self) -> None:
+        source = Path(main_mod.__file__).read_text(encoding="utf-8")
+        assert "astrapi69/adaptive_learner" not in source
+
+    def test_stale_dialog_download_opens_release_page(self) -> None:
+        with (
+            patch.object(
+                main_mod.update_check, "fetch_latest_version",
+                return_value=("v999.0.0", "https://example.invalid/whatever"),
+            ),
+            patch.object(main_mod.update_check, "is_newer", return_value=True),
+            patch.object(main_mod.ui, "three_button_dialog", return_value="primary"),
+            patch.object(main_mod.webbrowser, "open") as open_mock,
+        ):
+            assert main_mod._check_launcher_target_stale() is False
+        open_mock.assert_called_once_with(main_mod.RELEASE_PAGE_URL)
+
+    def test_update_notification_opens_release_page(self) -> None:
+        with (
+            patch.object(main_mod.ui, "three_button_dialog", return_value="primary"),
+            patch.object(main_mod.webbrowser, "open") as open_mock,
+        ):
+            main_mod._show_update_notification("v999.0.0", "https://example.invalid/x", "1.0.0")
+        open_mock.assert_called_once_with(main_mod.RELEASE_PAGE_URL)
+
+
 class TestStatusWindowContract:
     """Pin the ``__main__`` -> ``StatusWindow`` method contract.
 

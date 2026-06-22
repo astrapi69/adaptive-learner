@@ -40,11 +40,11 @@ This means a future native-speaker pass that fixes a translation but leaves the 
 
 ## How to submit corrections
 
-The public call-for-reviewers lives at GitHub issue [#18](https://github.com/astrapi69/adaptive_learner/issues/18) (labeled `help wanted` + `good first issue` + `documentation`). If you found this file via that issue, welcome — the path below is the one the issue links to.
+The public call-for-reviewers lives at GitHub issue [#18](https://github.com/astrapi69/adaptive-learner/issues/18) (labeled `help wanted` + `good first issue` + `documentation`). If you found this file via that issue, welcome — the path below is the one the issue links to.
 
 If you read one of the pending-review catalogs and find errors, the path is:
 
-1. Fork the repo at <https://github.com/astrapi69/adaptive_learner>.
+1. Fork the repo at <https://github.com/astrapi69/adaptive-learner>.
 2. Edit the relevant `launcher/adaptive_learner_launcher/locales/{lang}.json` directly.
 3. Remove the `_meta` block when the entire catalog has been reviewed (keep it if your pass was partial — add a Notes column entry to this file noting the partial state).
 4. Open a PR. Tag it `i18n-{lang}` so the maintainer can route it.
