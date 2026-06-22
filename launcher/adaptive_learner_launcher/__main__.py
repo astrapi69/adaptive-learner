@@ -351,9 +351,11 @@ def _run_launcher(*, cli_port: int | None = None) -> int:
     window.set_steps(steps)
     window.complete_step(0)  # Docker already verified above
 
+    compose_file = str(repo / config.COMPOSE_FILENAME)
+
     def worker() -> None:
         window.after(0, lambda: window.start_step(1, i18n.t("status.starting")))
-        ok, up_detail = docker.compose_up(repo, config.COMPOSE_FILENAME)
+        ok, up_detail = actions.start(compose_file, actions.DEFAULT_PROJECT)
         if not ok:
             logger.error("compose up failed: %s", up_detail)
             window.after(0, lambda: (window.fail_step(1), _handle_compose_failure(window, port, up_detail, show_details)))
@@ -362,7 +364,7 @@ def _run_launcher(*, cli_port: int | None = None) -> int:
 
         window.after(0, lambda: window.start_step(2, i18n.t("status.almost_ready")))
         if not health.wait_for_healthy(port, timeout_seconds=60.0):
-            tail = docker.compose_logs_tail(repo, config.COMPOSE_FILENAME, lines=20)
+            tail = actions.compose_logs_tail(repo, config.COMPOSE_FILENAME, lines=20)
             logger.error("health timeout; last lines:\n%s", tail)
             window.after(0, lambda: (window.fail_step(2), _handle_health_timeout(window, repo, port, tail, show_details)))
             return

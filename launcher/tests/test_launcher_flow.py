@@ -39,6 +39,12 @@ class _FakeStatusWindow:
     def close(self) -> None: ...
     def run_mainloop(self) -> None: ...
 
+    def set_starting(self, *_a, **_k) -> None: ...
+    def set_stopping(self, *_a, **_k) -> None: ...
+
+    def set_running(self, *_a, **_k) -> None:
+        self.running = True
+
     def after(self, _delay, callback=None) -> None:
         if callable(callback):
             callback()
@@ -438,3 +444,35 @@ class TestStackStateBranch:
             rc = main_mod._run_launcher()
         assert rc == 0
         resolve_mock.assert_not_called()  # did not proceed to start
+
+    def test_start_flow_success_opens_browser(self, tmp_path: Path) -> None:
+        # Drives the start worker to completion: start succeeds, health
+        # passes, the browser opens on the resolved port. Pins the start
+        # path through the actions layer (#966/step c).
+        patches = self._common_patches(tmp_path)
+        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], \
+             patch.object(main_mod.actions, "get_state", return_value="stopped"), \
+             patch.object(main_mod, "_offer_start_or_uninstall", return_value=True), \
+             patch.object(main_mod, "_resolve_free_port", return_value=8501), \
+             patch.object(main_mod.actions, "start", return_value=(True, "App gestartet.")) as start_mock, \
+             patch.object(main_mod.health, "wait_for_healthy", return_value=True), \
+             patch.object(main_mod, "_schedule_update_check"), \
+             patch.object(main_mod.webbrowser, "open", return_value=True) as open_mock:
+            rc = main_mod._run_launcher()
+        assert rc == 0
+        start_mock.assert_called_once()
+        open_mock.assert_called_once_with("http://localhost:8501")
+
+    def test_start_flow_failure_shows_dialog(self, tmp_path: Path) -> None:
+        patches = self._common_patches(tmp_path)
+        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], \
+             patch.object(main_mod.actions, "get_state", return_value="stopped"), \
+             patch.object(main_mod, "_offer_start_or_uninstall", return_value=True), \
+             patch.object(main_mod, "_resolve_free_port", return_value=8501), \
+             patch.object(main_mod.actions, "start", return_value=(False, "Start fehlgeschlagen:\nboom")), \
+             patch.object(main_mod, "_handle_compose_failure") as fail_mock, \
+             patch.object(main_mod.webbrowser, "open") as open_mock:
+            rc = main_mod._run_launcher()
+        assert rc == 0
+        fail_mock.assert_called_once()
+        open_mock.assert_not_called()  # never reached the browser step
