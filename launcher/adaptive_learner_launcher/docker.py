@@ -6,10 +6,14 @@ render a concrete error message rather than re-inventing failure strings.
 
 from __future__ import annotations
 
+import logging
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+
+logger = logging.getLogger("adaptive_learner_launcher.docker")
 
 
 # Windows-specific: hide the flashing black cmd.exe window when launched
@@ -24,7 +28,8 @@ def _creation_flags() -> int:
 
 
 def _run(cmd: list[str], *, cwd: Path | None = None, timeout: float = 10.0) -> subprocess.CompletedProcess:
-    return subprocess.run(
+    logger.debug("docker exec: %s (cwd=%s, timeout=%ss)", " ".join(cmd), cwd, timeout)
+    result = subprocess.run(
         cmd,
         cwd=str(cwd) if cwd else None,
         capture_output=True,
@@ -32,6 +37,11 @@ def _run(cmd: list[str], *, cwd: Path | None = None, timeout: float = 10.0) -> s
         timeout=timeout,
         creationflags=_creation_flags(),
     )
+    logger.debug(
+        "docker exit=%s stdout=%r stderr=%r",
+        result.returncode, (result.stdout or "")[-2000:], (result.stderr or "")[-2000:],
+    )
+    return result
 
 
 def docker_installed() -> tuple[bool, str]:

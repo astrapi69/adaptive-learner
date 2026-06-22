@@ -9,10 +9,14 @@ from __future__ import annotations
 
 import datetime
 import locale
+import logging
 import threading
 import tkinter as tk
 import webbrowser
 from tkinter import filedialog, messagebox
+
+
+logger = logging.getLogger("adaptive_learner_launcher.ui")
 
 
 _OS_LOCALE_PREFIXES: tuple[tuple[str, str], ...] = (
@@ -703,6 +707,11 @@ class StatusWindow:
         self._root.title("Adaptive Learner")
         self._root.geometry("420x340")
         self._root.protocol("WM_DELETE_WINDOW", self._handle_close)
+        # Route Tk callback exceptions through the logger so a crash in a
+        # scheduled callback lands in launcher-debug.log (with --debug),
+        # not only on stderr. This is how the #948 destroy() crash was
+        # diagnosed; capturing it makes the next one self-reporting.
+        self._root.report_callback_exception = self._log_tk_exception
 
         self._label = tk.Label(
             self._root,
@@ -759,6 +768,7 @@ class StatusWindow:
 
     def start_step(self, index: int, detail: str = "") -> None:
         """Mark step ``index`` active (spinner) and update the detail line."""
+        logger.debug("step %d start: %s", index, detail)
         self._active_index = index
         self._set_glyph(index, self._SPINNER_FRAMES[0], "#1a73e8")
         self._highlight_text(index, "#222")
@@ -768,6 +778,7 @@ class StatusWindow:
         self._root.update_idletasks()
 
     def complete_step(self, index: int) -> None:
+        logger.debug("step %d complete", index)
         self._set_glyph(index, self._GLYPH_DONE, "#188038")
         self._highlight_text(index, "#444")
         if self._active_index == index:
@@ -775,6 +786,7 @@ class StatusWindow:
         self._root.update_idletasks()
 
     def fail_step(self, index: int) -> None:
+        logger.debug("step %d FAILED", index)
         self._set_glyph(index, self._GLYPH_FAILED, "#c5221f")
         self._highlight_text(index, "#c5221f")
         if self._active_index == index:
@@ -836,10 +848,20 @@ class StatusWindow:
         self._root.update_idletasks()
 
     def close(self) -> None:
+        logger.debug("StatusWindow.close")
         try:
             self._root.destroy()
         except tk.TclError:
             pass
+
+    def _log_tk_exception(self, exc_type, exc_value, exc_tb) -> None:
+        """Log an exception raised inside a Tk callback.
+
+        Installed as ``self._root.report_callback_exception`` so a crash
+        in a scheduled callback is captured by the logger instead of only
+        printed to stderr (where it is lost outside ``--debug``).
+        """
+        logger.error("Tk callback error", exc_info=(exc_type, exc_value, exc_tb))
 
     def run_mainloop(self) -> None:
         self._root.mainloop()

@@ -63,9 +63,61 @@ def _parse_cli_port(argv: list[str] | None = None) -> int | None:
     return None
 
 
+def _parse_cli_debug(argv: list[str] | None = None) -> bool:
+    """Return True when ``--debug`` is present on the command line.
+
+    Unknown arguments are ignored so a stray flag passed by a desktop
+    shortcut never aborts the launcher (same policy as ``--port``).
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--debug", action="store_true")
+    try:
+        known, _ = parser.parse_known_args(argv)
+    except SystemExit:
+        return False
+    return bool(known.debug)
+
+
+def _maybe_show_help(argv: list[str] | None = None) -> bool:
+    """Print usage when ``-h`` / ``--help`` was requested.
+
+    Returns True when help was shown (the caller then exits). Kept
+    separate from the lenient ``parse_known_args`` parsers above so the
+    launcher only ever exits on an explicit help request, never on a
+    stray flag from a desktop shortcut.
+    """
+    import argparse
+
+    args = sys.argv[1:] if argv is None else argv
+    if not ({"-h", "--help"} & set(args)):
+        return False
+    parser = argparse.ArgumentParser(
+        prog="adaptive_learner_launcher",
+        description="Adaptive Learner desktop launcher (Docker-based).",
+    )
+    parser.add_argument(
+        "--port", type=int, metavar="N",
+        help="Host port for the app (1-65535).",
+    )
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="Verbose logging to stdout and launcher-debug.log.",
+    )
+    parser.print_help()
+    return True
+
+
 def main() -> int:
-    _setup_logging()
+    if _maybe_show_help(sys.argv[1:]):
+        return 0
+
+    debug = _parse_cli_debug(sys.argv[1:])
+    _setup_logging(debug=debug)
     logger.info("AdaptiveLearner launcher v%s starting", __version__)
+    if debug:
+        logger.debug("Debug mode enabled (verbose logging to launcher-debug.log)")
 
     cli_port = _parse_cli_port(sys.argv[1:])
     if cli_port is not None:
@@ -769,7 +821,7 @@ def _run_install_flow() -> Path | None:
         ok, detail = installer.download_release(target)
         if not ok:
             result["error"] = detail
-            window.after(0, lambda: (window.fail_step(1), window.destroy()))
+            window.after(0, lambda: (window.fail_step(1), window.close()))
             return
         window.after(0, lambda: window.complete_step(1))
         ok2, detail2 = installer.create_env_file(target)
@@ -780,7 +832,7 @@ def _run_install_flow() -> Path | None:
             manifest.write_manifest(target, installer.ADAPTIVE_LEARNER_TARGET_VERSION)
         except Exception as exc:
             result["error"] = f"Could not write manifest: {exc}"
-            window.after(0, lambda: (window.fail_step(1), window.destroy()))
+            window.after(0, lambda: (window.fail_step(1), window.close()))
             return
         # Save to legacy config too for backward compat
         cfg = config.load_launcher_config()
@@ -792,7 +844,7 @@ def _run_install_flow() -> Path | None:
         ok3, detail3 = docker.compose_build(target, config.COMPOSE_FILENAME)
         if not ok3:
             result["error"] = f"Docker build failed:\n{detail3}"
-            window.after(0, lambda: (window.fail_step(2), window.destroy()))
+            window.after(0, lambda: (window.fail_step(2), window.close()))
             return
         window.after(0, lambda: window.complete_step(2))
 
@@ -806,7 +858,7 @@ def _run_install_flow() -> Path | None:
 
         result["ok"] = True
         result["port"] = port
-        window.after(0, window.destroy)
+        window.after(0, window.close)
 
     window.run_in_background(worker)
     window.run_mainloop()
@@ -892,7 +944,7 @@ def _run_uninstall_flow(install_dir: Path) -> bool:
         if not ok3:
             logger.warning("remove images: %s", detail3)
 
-        window.after(0, window.destroy)
+        window.after(0, window.close)
 
     window.run_in_background(uninstall_worker)
     window.run_mainloop()
@@ -1063,11 +1115,11 @@ def _handle_already_running() -> None:
         _open_url(f"http://localhost:{port}", "AdaptiveLearner")
 
 
-def _setup_logging() -> None:
+def _setup_logging(*, debug: bool = False) -> None:
     from logging.handlers import RotatingFileHandler
 
     root = logging.getLogger()
-    root.setLevel(logging.INFO)
+    root.setLevel(logging.DEBUG if debug else logging.INFO)
     fmt = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
 
     # Handler 1: legacy launcher.log under APPDATA/AdaptiveLearner/
@@ -1090,6 +1142,34 @@ def _setup_logging() -> None:
         root.addHandler(activity_handler)
     except OSError:
         pass  # Never crash because activity logging setup failed
+
+    if debug:
+        _add_debug_handlers(root, fmt)
+
+
+def _add_debug_handlers(root: logging.Logger, fmt: logging.Formatter) -> None:
+    """Attach the ``--debug`` handlers: stdout plus a CWD debug log.
+
+    ``launcher-debug.log`` is written to the current working directory
+    (where the user runs ``python -m adaptive_learner_launcher``) and
+    truncated on each debug run so a fresh capture is easy to share.
+    Failures are swallowed: a missing-permission CWD must never block
+    the launcher from starting.
+    """
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(fmt)
+    stdout_handler.setLevel(logging.DEBUG)
+    root.addHandler(stdout_handler)
+
+    try:
+        debug_path = Path.cwd() / "launcher-debug.log"
+        debug_handler = logging.FileHandler(str(debug_path), mode="w", encoding="utf-8")
+        debug_handler.setFormatter(fmt)
+        debug_handler.setLevel(logging.DEBUG)
+        root.addHandler(debug_handler)
+        logger.debug("Debug log: %s", debug_path)
+    except OSError as exc:
+        logger.warning("could not open launcher-debug.log: %s", exc)
 
 
 if __name__ == "__main__":
