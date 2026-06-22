@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "Soldan bir öğe seç, ardından sağdaki eşini seç.",
         "selected_sr": "Seçildi: {label}",
         "resolve": "Çöz",
-        "resolve_announce": "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu."
+        "resolve_announce": "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu.",
+        "my_answers": "Cevaplarım"
       },
       "picture": {
         "submit": "Cevabı kontrol et",
@@ -1943,6 +1944,16 @@
       "mark_complete": "Tamamlandı olarak işaretle",
       "next_lesson": "Sonraki ders",
       "repeat": "Dersi tekrarla",
+      "retry": "Tekrar pratik yap",
+      "retry_heading": "Gelişimin",
+      "retry_attempt": "Deneme {n}: %{pct}",
+      "retry_from": "(önceki: %{pct})",
+      "retry_improvement": "Gelişme",
+      "retry_errors_fixed": "Düzeltilen hatalar",
+      "retry_errors_fixed_value": "{total} hatadan {fixed} tanesi",
+      "retry_best": "En iyi sonuç",
+      "retry_best_value": "%{pct} (deneme {n})",
+      "retry_new_record": "Yeni rekor!",
       "restart": "Baştan başla",
       "back_to_browser": "İçerik tarayıcısına dön",
       "encourage_0": "Pratik mükemmelleştirir!",

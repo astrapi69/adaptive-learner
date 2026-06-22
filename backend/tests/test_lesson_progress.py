@@ -587,3 +587,102 @@ def test_mark_restarted_resets_to_in_progress_and_clears_step_results(
     assert body["score_total"] == 0
     assert body["paused_at"] is None
     assert body["abandoned_at"] is None
+
+
+def _record_attempt(
+    client: TestClient,
+    user_id: str,
+    *,
+    step_id: str,
+    correct: int,
+    total: int,
+) -> dict:
+    """Score one step then mark the lesson complete — one full attempt."""
+    client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "step_result": {"step_id": step_id, "correct": correct, "total": total},
+        },
+    )
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_completed": True,
+        },
+    )
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def test_first_completion_records_one_attempt_and_best(client: TestClient) -> None:
+    """#983 — a never-retried completion still reports attempts == 1, a
+    one-entry history, and a best score equal to the run."""
+    user_id = _make_user(client)
+    body = _record_attempt(client, user_id, step_id="s1", correct=3, total=5)
+    assert body["attempts"] == 1
+    assert body["best_score_correct"] == 3
+    assert body["best_score_total"] == 5
+    assert len(body["attempt_history"]) == 1
+    assert body["attempt_history"][0]["correct"] == 3
+    assert body["attempt_history"][0]["total"] == 5
+
+
+def test_retry_tracks_improvement_and_keeps_best(client: TestClient) -> None:
+    """#983 — restart + a better re-attempt bumps attempts, appends to the
+    history, and lifts the best score."""
+    user_id = _make_user(client)
+    _record_attempt(client, user_id, step_id="s1", correct=3, total=5)  # 60%
+
+    # Retry: restart the row (clears score, preserves attempts/best/history).
+    restarted = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_restarted": True,
+        },
+    ).json()
+    assert restarted["status"] == "in_progress"
+    assert restarted["score_correct"] == 0
+    # Retry must NOT wipe the learning curve.
+    assert restarted["attempts"] == 1
+    assert restarted["best_score_correct"] == 3
+    assert len(restarted["attempt_history"]) == 1
+
+    body = _record_attempt(client, user_id, step_id="s1", correct=5, total=5)  # 100%
+    assert body["attempts"] == 2
+    assert body["best_score_correct"] == 5
+    assert body["best_score_total"] == 5
+    assert len(body["attempt_history"]) == 2
+    assert body["attempt_history"][-1]["correct"] == 5
+
+
+def test_retry_with_worse_score_keeps_the_better_best(client: TestClient) -> None:
+    """#983 — a worse re-attempt records the attempt but the best score is
+    unchanged (a retry can never lower the displayed best)."""
+    user_id = _make_user(client)
+    _record_attempt(client, user_id, step_id="s1", correct=5, total=5)  # 100%
+    client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_restarted": True,
+        },
+    )
+    body = _record_attempt(client, user_id, step_id="s1", correct=2, total=5)  # 40%
+    assert body["attempts"] == 2
+    # Best stays at the 100% run.
+    assert body["best_score_correct"] == 5
+    assert body["best_score_total"] == 5
+    # Last attempt is the 40% one.
+    assert body["score_correct"] == 2
+    assert body["attempt_history"][-1]["correct"] == 2

@@ -140,8 +140,7 @@ def _maybe_show_version(argv: list[str] | None = None) -> bool:
 
 def _cli_action_config() -> dict:
     """Resolve {project, compose_file, port} for headless CLI actions."""
-    install_dir = manifest.install_dir_from_manifest()
-    repo = install_dir if install_dir else config.resolve_repo_path()
+    repo = config.source_checkout_repo() or manifest.install_dir_from_manifest() or config.resolve_repo_path()
     return {
         "project": actions.DEFAULT_PROJECT,
         "compose_file": str(repo / config.COMPOSE_FILENAME),
@@ -286,14 +285,22 @@ def _run_launcher(*, cli_port: int | None = None) -> int:
     #    a) manifest exists + install_dir valid -> proceed
     #    b) manifest exists + install_dir missing -> treat as not installed
     #    c) no manifest -> check legacy launcher.json, else show install UI
+    # Prefer a source checkout (developer scenario): its compose file is
+    # the current one, so we never build a stale downloaded release from a
+    # tmp dir (#981). Frozen-binary / pip installs have no valid repo at
+    # parents[2], so this is None and the download path is used.
+    source_repo = config.source_checkout_repo()
     mdata = manifest.read_manifest()
-    if mdata and mdata.get("install_dir"):
+    if source_repo is not None:
+        repo = source_repo
+        logger.info("Using source-checkout repo: %s", repo)
+    elif mdata and mdata.get("install_dir"):
         repo = Path(mdata["install_dir"])
         if not config.is_valid_repo(repo):
             logger.warning("Manifest points at %s but it is not a valid repo", repo)
             mdata = None  # fall through to install UI
 
-    if mdata is None:
+    if source_repo is None and mdata is None:
         # Try legacy launcher.json
         repo = config.resolve_repo_path()
         if config.is_valid_repo(repo):
@@ -505,6 +512,15 @@ def _resolve_free_port(repo: Path, cli_port: int | None) -> int | None:
     port = config.resolve_launch_port(repo, cli_port=cli_port)
     free, _ = actions.check_port(port)
     if free:
+        # Persist the chosen port to .env so `docker compose up` PUBLISHES
+        # exactly the port the launcher then health-checks (#983). compose
+        # reads ADAPTIVE_LEARNER_PUBLIC_PORT from .env, not launcher.json;
+        # without this they can disagree (e.g. a stale launcher.json port
+        # vs the repo .env default), so health-checks the wrong port.
+        try:
+            config.write_public_port(repo, port)
+        except OSError as exc:
+            logger.warning("could not persist port to .env: %s", exc)
         return port
 
     found, suggested, _ = actions.find_free_port(port + 1)

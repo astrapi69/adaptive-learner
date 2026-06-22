@@ -1581,6 +1581,13 @@ class LessonProgressOut(BaseModel):
     completed_at: datetime | None = None
     paused_at: datetime | None = None
     abandoned_at: datetime | None = None
+    # #983 — lesson retry with improvement tracking. ``attempts`` counts
+    # completed attempts; ``best_score_*`` keep the highest-percentage
+    # attempt; ``attempt_history`` lists ``{at, correct, total}`` entries.
+    attempts: int = 0
+    best_score_correct: int = 0
+    best_score_total: int = 0
+    attempt_history: list[dict[str, Any]] = Field(default_factory=list)
 
 
 # --- ElementError (Phase 46B / EXP-007 / P-129) ----------------------------

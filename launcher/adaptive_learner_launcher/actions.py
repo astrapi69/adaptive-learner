@@ -219,15 +219,20 @@ def install(compose_file: str, project: str = DEFAULT_PROJECT, port: int = DEFAU
 
 def start(compose_file: str, project: str = DEFAULT_PROJECT,
           *, on_step: ProgressFn | None = None) -> tuple[bool, str]:
-    """Start a stopped stack, then VERIFY it is running."""
+    """Start the stack via ``compose up -d``, then VERIFY it is running.
+
+    ``compose up -d`` creates the containers if they do not exist yet, so
+    it works from BOTH 'stopped' (containers present) AND a removed-state
+    (containers gone after ``down``, images still present). It does NOT
+    refuse on 'not_installed' - that was a regression that broke the start
+    flow whenever the app was installed but had no container yet (#977).
+    A truly-missing compose file/images surfaces as the real compose error.
+    """
     docker_ok, _ = check_docker()
     if not docker_ok:
         return False, _DOCKER_UNAVAILABLE
-    state = get_state(project)
-    if state == "running":
+    if get_state(project) == "running":
         return True, "App laeuft bereits."
-    if state == "not_installed":
-        return False, "App ist nicht installiert."
     _notify(on_step, "Container starten...")
     try:
         result = _compose(project, compose_file, "up", "-d", timeout=120.0)

@@ -463,11 +463,14 @@ class TestStackStateBranch:
             patch.object(main_mod.config, "is_valid_repo", return_value=True),
             patch.object(main_mod, "_ensure_env_file", return_value=(True, "ok")),
             patch.object(main_mod.config, "resolve_launch_port", return_value=7880),
+            # These tests exercise the manifest-based path; force the
+            # source-checkout preference off so repo == the manifest dir.
+            patch.object(main_mod.config, "source_checkout_repo", return_value=None),
         )
 
     def test_running_routes_to_manage_running(self, tmp_path: Path) -> None:
         patches = self._common_patches(tmp_path)
-        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], \
+        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], patches[8], \
              patch.object(main_mod.actions, "get_state", return_value="running"), \
              patch.object(main_mod, "_manage_running", return_value=0) as manage_mock:
             rc = main_mod._run_launcher()
@@ -476,7 +479,7 @@ class TestStackStateBranch:
 
     def test_stopped_uninstall_choice_exits(self, tmp_path: Path) -> None:
         patches = self._common_patches(tmp_path)
-        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], \
+        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], patches[8], \
              patch.object(main_mod.actions, "get_state", return_value="stopped"), \
              patch.object(main_mod, "_offer_start_or_uninstall", return_value=False), \
              patch.object(main_mod, "_resolve_free_port") as resolve_mock:
@@ -489,7 +492,7 @@ class TestStackStateBranch:
         # passes, the browser opens on the resolved port. Pins the start
         # path through the actions layer (#966/step c).
         patches = self._common_patches(tmp_path)
-        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], \
+        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], patches[8], \
              patch.object(main_mod.actions, "get_state", return_value="stopped"), \
              patch.object(main_mod, "_offer_start_or_uninstall", return_value=True), \
              patch.object(main_mod, "_resolve_free_port", return_value=8501), \
@@ -504,7 +507,7 @@ class TestStackStateBranch:
 
     def test_start_flow_failure_shows_dialog(self, tmp_path: Path) -> None:
         patches = self._common_patches(tmp_path)
-        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], \
+        with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], patches[8], \
              patch.object(main_mod.actions, "get_state", return_value="stopped"), \
              patch.object(main_mod, "_offer_start_or_uninstall", return_value=True), \
              patch.object(main_mod, "_resolve_free_port", return_value=8501), \

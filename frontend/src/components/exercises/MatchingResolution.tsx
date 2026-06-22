@@ -212,6 +212,12 @@ export interface MatchingResolutionProps {
     totalCount: number;
     leftLabel: string;
     rightLabel: string;
+    /** #977 — play the reveal animation. False when the learner toggles
+     *  BACK to the solution view (it already animated once): the end
+     *  result shows immediately without re-running the effect. Defaults
+     *  to true so direct callers (and the Review/AdaptiveLesson paths)
+     *  keep the original behaviour. */
+    animate?: boolean;
 }
 
 /**
@@ -227,8 +233,13 @@ export default function MatchingResolution({
     totalCount,
     leftLabel,
     rightLabel,
+    animate = true,
 }: MatchingResolutionProps) {
     const {t} = useI18n();
+    // Suppress every animation utility when the caller disabled animation
+    // (re-toggle) OR the user prefers reduced motion — both render the
+    // tiles at their final state immediately.
+    const noMotion = reduceMotion || !animate;
     const announcement = t(
         "lesson.exercise.matching.resolve_announce",
         "Solution shown. {correct} of {total} pairs were correct.",
@@ -258,7 +269,7 @@ export default function MatchingResolution({
                             pair={pair}
                             index={i}
                             effect={effect}
-                            reduceMotion={reduceMotion}
+                            reduceMotion={noMotion}
                         />
                     ))}
                 </ul>
@@ -285,7 +296,7 @@ export default function MatchingResolution({
                             side="a"
                             index={i}
                             effect={effect}
-                            reduceMotion={reduceMotion}
+                            reduceMotion={noMotion}
                             tinted={tinted}
                         />
                     ))}
@@ -302,7 +313,7 @@ export default function MatchingResolution({
                             side="b"
                             index={i}
                             effect={effect}
-                            reduceMotion={reduceMotion}
+                            reduceMotion={noMotion}
                             tinted={tinted}
                         />
                     ))}
@@ -310,7 +321,7 @@ export default function MatchingResolution({
                 {effect === "connect" && (
                     <ConnectorOverlay
                         count={pairs.length}
-                        reduceMotion={reduceMotion}
+                        reduceMotion={noMotion}
                     />
                 )}
             </div>
