@@ -25,11 +25,17 @@ Ein Set hat drei Ebenen:
    eine JSON-Datei pro Lektion, bei jedem Download gegen Schema
    v1.0 validiert.
 
-Die mit Adaptive Learner ausgelieferten Pilot-Sets liegen im separaten
+Die mit Adaptive Learner ausgelieferten Sets liegen im separaten
 Content-Repo [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
 (als Geschwister-Checkout `../adaptive-learner-content` ausgecheckt und
-vom Build über `frontend/scripts/copy-bundled-content.mjs` gebündelt)
-und eignen sich gut als Vorlage.
+offline in den GitHub-Pages-Build über
+`frontend/scripts/copy-bundled-content.mjs` gebündelt) und eignen
+sich gut als Vorlage. Die aktuelle Größe der Bibliothek (Lektions-,
+Set- und Domänen-Zahlen, die Set-Tabelle und die aktiven Domänen)
+ist der CONTENT-STATS-Block in der Projekt-[`README.md`](https://github.com/astrapi69/adaptive-learner#readme) —
+dieser Block ist die alleinige Wahrheitsquelle, aus einem frischen
+Content-Checkout generiert, daher dupliziert dieser Leitfaden die
+Zahlen nicht.
 
 ## Sprachpaare (v1.44.0)
 
@@ -81,6 +87,22 @@ mein-content-repo/
         ...
 ```
 
+### Such-Index (`search-index.json`)
+
+Content-Discovery und Suche (die *Entdecken*-Oberfläche) werden von
+einer schlanken `search-index.json` im Repo-Root angetrieben (~4 KB,
+nur Metadaten — kein Karteninhalt). Das offizielle Content-Repo
+liefert sie aus, und die App holt die Indizes jedes konfigurierten
+Repos clientseitig (CORS-sicher, in localStorage mit 24-h-Stale-
+while-Revalidate-TTL gecacht), damit ein Lernender ein Set FINDEN
+kann, bevor er es herunterlädt. Jeder Eintrag bewirbt die `id`, den
+`name`, die `description`, `source_language` / `target_language`,
+`level`, `domain`, `lesson_count`, `card_count`, `tags`, ein
+`ai_validated`-Flag, ein `trust_level`, ein optionales Begleitbuch
+`book` und einen `updated_at`-Zeitstempel des Sets. Halte sie mit
+den Set-Manifesten synchron; ein PR an das offizielle Repo
+regeneriert sie.
+
 ## Manifest-Format
 
 Beide Manifest-Dateien (Root + Set) verwenden die gleiche Form
@@ -98,7 +120,7 @@ sets:
     level: B1                 # CEFR für Sprachen, frei für andere Domänen
     version: '1.0.0'          # Semver — pro Set-Release erhöht
     lesson_count: 12
-    domain: language          # 'language' / 'math' / 'programming' / ...
+    domain: language          # aktive Domänen: ai / language / programming / psychology / technology
     description: >-
       Optionale Set-Beschreibung.
     tags:
@@ -624,6 +646,24 @@ nicht-lateinischen Ausgangsschriften) Karten-Rückseiten in der
 Ausgangsschrift. Das sind Mindestwerte, keine Ziele — die
 Checkliste oben verlangt mehr.
 
+### Set-weite KI-Inhaltsprüfung (optional)
+
+Neben der Prüfung beim Teilen kann ein heruntergeladenes Set
+set-weit über *Mit KI prüfen* begutachtet werden. Das ist völlig
+optional und nutzt den **Anbieter + das Modell**, das der Lernende
+konfiguriert hat (Anthropic / OpenAI / Gemini); die Karten werden
+in Stapeln an diesen Anbieter zur Prüfung gesendet. Der Ablauf
+zeigt eine Kostenschätzung, läuft mit Fortschrittsbalken +
+Abbrechen und erzeugt einen **Pro-Karte-Bericht**, der im Browser
+gecacht und als **Markdown** exportiert werden kann (mit einer
+Zeile, die festhält, welcher Anbieter + welches Modell die Prüfung
+ausgeführt hat). Besteht der Bericht, erhält das Set eine
+**„KI-geprüft"-Plakette**, die durch einen Content-Hash + eine
+Signatur abgesichert ist, sodass eine spätere Änderung an den
+Karten die Plakette ungültig macht, bis das Set erneut geprüft
+wird. Die KI-Prüfung ist nie ein Tor — sie ist beratende
+Provenienz, keine Veröffentlichungsvoraussetzung.
+
 ## Lokales Testen
 
 Der Schema-Validator des Content-Loaders läuft im Rahmen von
@@ -696,18 +736,23 @@ Lektion. Halte dich an die dokumentierten Felder.
 `body`-Feld (Markdown). Exercise-Steps dürfen kein `body` tragen
 — nutze stattdessen den `prompt` der Übung.
 
-## Referenz: die Pilot-Sets
+## Referenz: die gebündelten Sets
 
-Die beiden mit Adaptive Learner ausgelieferten Sets sind die
-kanonischen Referenzen:
+Adaptive Learner liefert eine umfangreiche Bibliothek über mehrere
+Domänen aus (Sprachen, Programmierung, Psychologie, KI, Technik —
+siehe den CONTENT-STATS-Block in der README für die aktuellen
+Zahlen + die vollständige Set-Tabelle). Ein paar gute kanonische
+Referenzen im `adaptive-learner-content`-Repo:
 
-- `sets/en/fr-a1/` — Französisch A1 für Englischsprachige (10
-  Lektionen, ~2 Stunden); `sets/de/fr-a1/` ist das deutschsprachige
-  Pilot-Set.
-- `sets/en/es-a1/` + `sets/de/es-a1/` — Spanisch A1 (15 Lektionen je
-  Quellsprache), im `adaptive-learner-content`-Repo.
+- `sets/en/fr-a1/` — Französisch A1 für Englischsprachige;
+  `sets/de/fr-a1/` ist das deutschsprachige Gegenstück.
+- `sets/en/es-a1/` + `sets/de/es-a1/` — Spanisch A1 (eines je
+  Quellsprache).
+- Das Set „Python — Grundlagen" unter `sets/de/` ist ein
+  `domain: programming`-Beispiel (deutsche Quelle == Ziel),
+  nützlich als Nicht-Sprach-Referenz.
 
-Beide folgen den in diesem Leitfaden beschriebenen Konventionen.
+Alle folgen den in diesem Leitfaden beschriebenen Konventionen.
 Eine vollständige Lektion durchzulesen ist der schnellste Weg,
 die Struktur zu verinnerlichen.
 

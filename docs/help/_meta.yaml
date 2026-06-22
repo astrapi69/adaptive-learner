@@ -336,6 +336,16 @@ navigation:
       ja: 開発者ドキュメント
     children:
       - title:
+          de: Onboarding
+          en: Onboarding
+          es: Onboarding
+          fr: Onboarding
+          el: Onboarding
+          pt: Onboarding
+          tr: Onboarding
+          ja: オンボーディング
+        slug: developer/onboarding
+      - title:
           de: Architektur
           en: Architecture
           es: Arquitectura

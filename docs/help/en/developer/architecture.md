@@ -19,10 +19,11 @@ Adaptive Learner is a 4-layer plugin-driven application.
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ Plugins            10 packages under plugins/               │
+│ Plugins            13 packages under plugins/               │
 │                    (ai-{anthropic,openai,gemini}, assessment,│
 │                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm)                        │
+│                    anki, notebooklm, learning-repo,         │
+│                    content-loader, missions)                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -40,14 +41,19 @@ satisfy one contract:
   `api/client.ts` that talks to the FastAPI backend.
 - **`dexieStorage`** (local-first): full IndexedDB stack
   mirroring all 30 SQLAlchemy models. AI calls fire direct
-  from the browser via `storage/ai-providers.ts`.
+  from the browser via the `storage/ai/` namespace.
 
-`IStorageService` exposes 22 namespaces (users, projects,
-settings, assessment, session with streaming, tracking,
-tools, curricula, topics, lessons, plugins, system, backup,
-export, subjects, tags, projectTaxonomy, imports,
-gamification, anki, pronunciation, notebooklm). Both
-backings implement every method.
+`IStorageService` (`storage/types/core/service.ts`) exposes 29
+namespaces (users, projects, settings, assessment, session
+with streaming, tracking, tools, curricula, topics, lessons,
+plugins, imports, system, backup, export, subjects, tags,
+projectTaxonomy, gamification, anki, pronunciation,
+notebooklm, contentLoader, lessonProgress, elementErrors,
+pluginSettings, learningRepo, missions, github). Both
+backings implement every method. `DexieStorage` is split into
+per-domain namespace modules under `storage/dexie/`,
+`storage/gamification/`, `storage/lessons/`,
+`storage/content/`, etc. — not one god-file.
 
 The factory reads
 `localStorage["adaptive-learner.storage_mode"]` then
@@ -103,7 +109,7 @@ plugins/adaptive-learner-plugin-<name>/
 - All plugins are free (MIT). The licensing infrastructure
   exists but is dormant (`LICENSING_ENABLED = False`).
 
-## Hooks (8 specs in `backend/app/hookspecs.py`)
+## Hooks (10 specs in `backend/app/hookspecs.py`)
 
 | Hook | When | First-result? |
 |---|---|---|
@@ -130,8 +136,13 @@ UI (React) → IStorageService
                             → Anthropic / OpenAI / Gemini SDK
 ```
 
-Unidirectional. No direct DB access from routers (services
-own the SQLAlchemy work). No frontend code in the backend.
+Unidirectional. No direct DB access from routers. Core
+request services reach the DB only through a **repository**
+interface (`backend/app/repositories/`, composed in
+`deps.py`); the repository package is HTTP-free and returns
+domain entities. Plugins still use SQLAlchemy `Session`
+directly (repository migration Phase 2 is pending). No
+frontend code in the backend.
 
 ## Error handling
 
@@ -165,13 +176,64 @@ domain errors to HTTP status codes. See
   `.adaptive-learner-production` marker; if a test ever
   sees it, the run aborts with `pytest.exit(returncode=2)`.
 
+## Frontend structure (post god-folder splits)
+
+Folders are grouped by concern/domain, each with a barrel
+(`index.ts`) + parent re-export:
+
+```
+frontend/src/
+  api/          FastAPI client (the only place fetch() lives)
+  components/   UI, grouped by concern: dashboard/ lesson/ exercises/
+                content/ settings/ nav/ progress/ session/ import/ ...
+  features/     feature-strategy gating (useFeatureAvailable, featureConfig)
+  hooks/        React hooks
+  lib/          business logic, grouped by domain: lesson/ srs/ ai/
+                adaptive/ review/ gamification/ content/ learning-path/ ...
+  pages/        route components + content/ dashboard/ lesson/
+                learning-path/ onboarding/ system/ subdirs
+  shared/       app-independent reusable components
+  storage/      dual storage; see the Storage layer page. Subdirs:
+                dexie/ backup/ content/ gamification/ lessons/ ai/
+                anki/ sync/ services/ types/
+  styles/       design tokens + per-theme CSS
+```
+
+## Navigation (EXP-037)
+
+The primary nav is **7 grouped entries** (Dashboard, Lernpfad,
+Meine Inhalte, Entdecken, Fortschritt, Settings, Help) via a
+reusable `NavGroup`. On mobile a `BottomTabBar` shows 5 tabs
+(Lernen, Inhalte, Entdecken, Fortschritt, Mehr) plus a "Mehr"
+bottom sheet (hidden during lessons + on the funnel). Several
+pages are tabbed hubs:
+
+- **Dashboard** — Overview / Activity / Missions tabs
+  (`DashboardOverviewTab` / `DashboardActivityTab` /
+  `DashboardMissionsTab`; only the active tab mounts).
+- **ProgressHub** (`/progress`) — Übersicht / Statistik /
+  Meine Pfade.
+- **DiscoverHub** (`/discover`) — adds an Import tab;
+  **ContentHub** is "Meine Inhalte" (downloaded content only).
+
+Old links stay alive via redirects (`/statistics` →
+`/progress?tab=stats`, `/import` → `/discover?tab=import`, …).
+
 ## Theming
 
-5 themes (Classic, Cool Modern, Nord, Notebook, Studio) ×
-light/dark = 10 variants. CSS variables throughout; no
-Tailwind. Custom properties in
-`frontend/src/styles/global.css`. New UI elements MUST use
-the variable set.
+CSS-variable design tokens drive every visual property —
+12 theme files (`light`, `dark`, `ocean`, `forest`,
+`high-contrast`, `sepia` + the recommended WCAG-AA presets
+`catppuccin-latte/-mocha`, `supabase`, `graphite`,
+`soft-pop`, `amethyst-haze`) plus an `auto` mode following
+the OS. The canonical token set lives once per theme in
+`frontend/src/styles/themes/theme-*.css`; theme-agnostic
+tokens live in `global.css`. **Tailwind CSS v4 + shadcn/ui**
+are adopted (v1.54.0+, incremental migration): utilities
+consume the CSS variables via an `@theme` bridge, so every
+theme recolors automatically. New UI uses Tailwind utilities
+(token-backed); no hardcoded colors, enforced by
+`no-hardcoded-colors.test.ts`.
 
 ## Mobile / PWA
 
