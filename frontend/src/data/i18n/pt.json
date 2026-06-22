@@ -1439,7 +1439,7 @@
       "ocean": "Oceano",
       "forest": "Floresta",
       "high-contrast": "Alto contraste",
-      "sepia": "Sepia",
+      "sepia": "Sépia",
       "auto": "Automatico (sistema)"
     },
     "errors": {
@@ -1504,18 +1504,18 @@
       "no_results": "Nenhuma entrada correspondente."
     },
     "api_key": {
-      "required": "API key required.",
-      "required_with_feature": "API key required {feature}.",
-      "required_long": "Configure a provider key in Settings to enable this action.",
+      "required": "Chave de API necessária.",
+      "required_with_feature": "Chave de API necessária {feature}.",
+      "required_long": "Configure uma chave de provedor nas Configurações para ativar esta ação.",
       "open_settings": "Abrir definições",
-      "skip_banner": "Configure an API key in Settings to use AI features.",
-      "skip_banner_dismiss": "Dismiss",
-      "feature_analyze": "to analyze conversations",
+      "skip_banner": "Configure uma chave de API nas Configurações para usar os recursos de IA.",
+      "skip_banner_dismiss": "Dispensar",
+      "feature_analyze": "para analisar conversas",
       "feature_session": "para iniciar uma sessão",
-      "feature_anki": "to extract Anki cards",
-      "feature_study_guide": "to generate a study guide",
-      "feature_study_questions": "to generate study questions",
-      "feature_pronunciation": "for pronunciation practice"
+      "feature_anki": "para extrair cartões Anki",
+      "feature_study_guide": "para gerar um guia de estudo",
+      "feature_study_questions": "para gerar perguntas de estudo",
+      "feature_pronunciation": "para praticar a pronúncia"
     },
     "common": {
       "close": "Fechar",
@@ -3112,7 +3112,7 @@
       "programming": "Programação"
     },
     "result": {
-      "count": "{n} sets"
+      "count": "{n} conjuntos"
     },
     "empty": {
       "no_sets": "Ainda não há conteúdo disponível.",
