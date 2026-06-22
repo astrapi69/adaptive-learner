@@ -63,7 +63,7 @@ export default function ContentHub() {
         role="tablist"
         aria-label={t("nav.tab.content", "Content")}
         data-testid="content-hub-tabs"
-        className="flex gap-1 border-b border-border px-4 pt-3"
+        className="flex flex-wrap gap-1 border-b border-border px-4 pt-3"
       >
         {tabs.map((tab) => {
           const isActive = tab.id === active;
