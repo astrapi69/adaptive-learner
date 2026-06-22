@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "बाईं ओर एक आइटम चुनें, फिर दाईं ओर उसका मिलान चुनें।",
         "selected_sr": "चयनित: {label}",
         "resolve": "हल दिखाएँ",
-        "resolve_announce": "समाधान दिखाया गया। {total} में से {correct} जोड़े सही थे।"
+        "resolve_announce": "समाधान दिखाया गया। {total} में से {correct} जोड़े सही थे।",
+        "my_answers": "मेरे उत्तर"
       },
       "picture": {
         "submit": "उत्तर जाँचें",
@@ -1905,6 +1906,16 @@
       "mark_complete": "पूर्ण के रूप में चिह्नित करें",
       "next_lesson": "अगला पाठ",
       "repeat": "पाठ दोहराएँ",
+      "retry": "फिर से अभ्यास करें",
+      "retry_heading": "आपकी प्रगति",
+      "retry_attempt": "प्रयास {n}: {pct}%",
+      "retry_from": "(पहले {pct}%)",
+      "retry_improvement": "सुधार",
+      "retry_errors_fixed": "ठीक की गई गलतियाँ",
+      "retry_errors_fixed_value": "{total} में से {fixed}",
+      "retry_best": "सर्वश्रेष्ठ परिणाम",
+      "retry_best_value": "{pct}% (प्रयास {n})",
+      "retry_new_record": "नया रिकॉर्ड!",
       "restart": "फिर से शुरू करें",
       "back_to_browser": "सामग्री ब्राउज़र पर वापस",
       "encourage_0": "अभ्यास से ही पूर्णता आती है!",

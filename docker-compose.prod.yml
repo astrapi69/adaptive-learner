@@ -29,7 +29,7 @@ services:
       # at /app/data is the persistence boundary.
       - ADAPTIVE_LEARNER_DATA_DIR=/app/data
       - ADAPTIVE_LEARNER_PORT=8000
-      - ADAPTIVE_LEARNER_CORS_ORIGINS=${ADAPTIVE_LEARNER_CORS_ORIGINS:-http://localhost:${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}}
+      - ADAPTIVE_LEARNER_CORS_ORIGINS=${ADAPTIVE_LEARNER_CORS_ORIGINS:-http://localhost:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}}
       - ADAPTIVE_LEARNER_SECRET_KEY=${ADAPTIVE_LEARNER_SECRET_KEY:-}
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')\""]
@@ -44,13 +44,14 @@ services:
     image: adaptive-learner-frontend
     build: ./frontend
     # Host-published port the user reaches in the browser.
-    # ``ADAPTIVE_LEARNER_PUBLIC_PORT`` (default 7880) is distinct from
+    # ``ADAPTIVE_LEARNER_PUBLIC_PORT`` (default 8501) is distinct from
     # the backend's internal ``ADAPTIVE_LEARNER_PORT`` (8000) — they're
-    # not interchangeable. The launcher publishes on this port and can
+    # not interchangeable. 8501 is Adaptive Learner's own port (NOT 7880,
+    # which is Bibliogon's). The launcher publishes on this port and can
     # move it on a conflict (e.g. with bibliogon) by writing a new value
     # into .env before compose up.
     ports:
-      - "${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}:80"
+      - "${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}:80"
     depends_on:
       backend:
         condition: service_healthy

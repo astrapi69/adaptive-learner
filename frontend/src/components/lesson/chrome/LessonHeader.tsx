@@ -17,6 +17,8 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 interface LessonHeaderProps {
   lesson: ContentLesson;
   setTitle: string | null;
+  /** Current step index; the description only shows on the first step. */
+  currentStepIndex: number;
   isInProgress: boolean;
   exitOpen: boolean;
   onPauseClick: () => void;
@@ -30,6 +32,7 @@ interface LessonHeaderProps {
 export default function LessonHeader({
   lesson,
   setTitle,
+  currentStepIndex,
   isInProgress,
   exitOpen,
   onPauseClick,
@@ -39,6 +42,10 @@ export default function LessonHeader({
   onExitAbandon,
 }: LessonHeaderProps) {
   const { t } = useI18n();
+  // #959 — the description is read on the first step; from step 2 onward it
+  // just eats vertical space and pushes the task below the fold. Show it
+  // only on the first step (and never on the summary screen).
+  const showDescription = currentStepIndex === 0;
 
   return (
     <header className="lesson-header">
@@ -73,14 +80,23 @@ export default function LessonHeader({
         onAbandon={onExitAbandon}
       />
       {setTitle && (
-        <p className="lesson-header-set" data-testid="lesson-header-set">
+        // #959 — keep the set context compact (smaller, single line with
+        // ellipsis) so it never costs more than one row.
+        <p
+          className="lesson-header-set truncate text-sm"
+          data-testid="lesson-header-set"
+        >
           <span className="lesson-header-set-label">
             {t("lesson.set_label", "Set")}:
           </span>
           {setTitle}
         </p>
       )}
-      <h1>{lesson.title}</h1>
+      {/* #959 — title on one line with ellipsis; the full title is still
+          available on the set detail page + the page <title>. */}
+      <h1 className="truncate" title={lesson.title}>
+        {lesson.title}
+      </h1>
       {lesson.contributed_by && (
         <p className="lesson-credit" data-testid="lesson-credit">
           {t("lesson.contributed_by", "Contributed by {name}").replace(
@@ -89,8 +105,12 @@ export default function LessonHeader({
           )}
         </p>
       )}
-      {lesson.description && (
-        <p className="lesson-description">{lesson.description}</p>
+      {showDescription && lesson.description && (
+        // #959 — first step only; clamp to 2 lines on mobile, full on
+        // desktop (sm+), which has the vertical room.
+        <p className="lesson-description line-clamp-2 sm:line-clamp-none">
+          {lesson.description}
+        </p>
       )}
     </header>
   );

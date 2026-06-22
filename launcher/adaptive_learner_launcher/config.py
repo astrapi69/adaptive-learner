@@ -13,7 +13,10 @@ from pathlib import Path
 
 
 APP_NAME = "AdaptiveLearner"
-DEFAULT_PORT = 7880
+# 8501 is Adaptive Learner's own default host port. It must NOT be 7880
+# (that is Bibliogon's port) - defaulting there guaranteed a conflict with
+# a sibling app on the same machine.
+DEFAULT_PORT = 8501
 DEFAULT_REPO_DIR_NAME = "adaptive_learner"
 COMPOSE_FILENAME = "docker-compose.prod.yml"
 ENV_FILENAME = ".env"
@@ -100,6 +103,25 @@ def resolve_repo_path(env: dict[str, str] | None = None) -> Path:
 def is_valid_repo(repo: Path) -> bool:
     """A valid repo has the production compose file we invoke."""
     return (repo / COMPOSE_FILENAME).is_file()
+
+
+def source_checkout_repo() -> Path | None:
+    """Return the Adaptive Learner repo root IF the launcher is running from
+    a source checkout, else ``None``.
+
+    ``__file__`` is ``<repo>/launcher/adaptive_learner_launcher/config.py``,
+    so ``parents[2]`` is the repo root. When that root carries the
+    production compose file, the launcher is running from a real checkout
+    and should use it directly - never a stale downloaded release in a tmp
+    dir (#981). In a PyInstaller bundle or a pip install, ``parents[2]`` is
+    not a valid repo, so this returns ``None`` and the download path is
+    used (end users are unaffected).
+    """
+    try:
+        candidate = Path(__file__).resolve().parents[2]
+    except IndexError:  # pragma: no cover - path too shallow
+        return None
+    return candidate if is_valid_repo(candidate) else None
 
 
 def read_port(repo: Path) -> int:

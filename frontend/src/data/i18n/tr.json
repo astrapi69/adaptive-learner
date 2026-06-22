@@ -1504,18 +1504,18 @@
       "no_results": "Eşleşen kayıt yok."
     },
     "api_key": {
-      "required": "API key required.",
-      "required_with_feature": "API key required {feature}.",
-      "required_long": "Configure a provider key in Settings to enable this action.",
+      "required": "API anahtarı gerekli.",
+      "required_with_feature": "API anahtarı gerekli {feature}.",
+      "required_long": "Bu eylemi etkinleştirmek için Ayarlar’da bir sağlayıcı anahtarı yapılandırın.",
       "open_settings": "Ayarları aç",
-      "skip_banner": "Configure an API key in Settings to use AI features.",
-      "skip_banner_dismiss": "Dismiss",
-      "feature_analyze": "to analyze conversations",
+      "skip_banner": "Yapay zeka özelliklerini kullanmak için Ayarlar’da bir API anahtarı yapılandırın.",
+      "skip_banner_dismiss": "Kapat",
+      "feature_analyze": "konuşmaları analiz etmek için",
       "feature_session": "bir oturum başlatmak için",
-      "feature_anki": "to extract Anki cards",
-      "feature_study_guide": "to generate a study guide",
-      "feature_study_questions": "to generate study questions",
-      "feature_pronunciation": "for pronunciation practice"
+      "feature_anki": "Anki kartları çıkarmak için",
+      "feature_study_guide": "bir çalışma kılavuzu oluşturmak için",
+      "feature_study_questions": "çalışma soruları oluşturmak için",
+      "feature_pronunciation": "telaffuz alıştırması için"
     },
     "common": {
       "close": "Kapat",
@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "Soldan bir öğe seç, ardından sağdaki eşini seç.",
         "selected_sr": "Seçildi: {label}",
         "resolve": "Çöz",
-        "resolve_announce": "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu."
+        "resolve_announce": "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu.",
+        "my_answers": "Cevaplarım"
       },
       "picture": {
         "submit": "Cevabı kontrol et",
@@ -1943,6 +1944,16 @@
       "mark_complete": "Tamamlandı olarak işaretle",
       "next_lesson": "Sonraki ders",
       "repeat": "Dersi tekrarla",
+      "retry": "Tekrar pratik yap",
+      "retry_heading": "Gelişimin",
+      "retry_attempt": "Deneme {n}: %{pct}",
+      "retry_from": "(önceki: %{pct})",
+      "retry_improvement": "Gelişme",
+      "retry_errors_fixed": "Düzeltilen hatalar",
+      "retry_errors_fixed_value": "{total} hatadan {fixed} tanesi",
+      "retry_best": "En iyi sonuç",
+      "retry_best_value": "%{pct} (deneme {n})",
+      "retry_new_record": "Yeni rekor!",
       "restart": "Baştan başla",
       "back_to_browser": "İçerik tarayıcısına dön",
       "encourage_0": "Pratik mükemmelleştirir!",

@@ -17,6 +17,11 @@ features should land as plugins, not core changes.
 
 ## Getting Started
 
+New here? Start with the **[Developer Onboarding guide](docs/help/en/developer/onboarding.md)**
+— a practical, step-by-step walkthrough of your first bug-fix
+(clone → find a bug → branch → fix → test → PR). The sections below
+are the reference details it builds on.
+
 ### Prerequisites
 
 - Python 3.11 or newer

@@ -78,8 +78,8 @@ nav:
   profile: "Dein Profil"
   learning_path: "Lernpfad"
   dashboard: Dashboard
-  session: Session
-  curriculum: Curriculum
+  session: "Sitzung"
+  curriculum: "Lehrplan"
   progress: Fortschritt
   import: Import
   settings: Einstellungen
@@ -181,7 +181,7 @@ import:
   learning_language: "Lernsprache"
   select_language: "Sprache wählen…"
 curriculum:
-  title: Curriculum
+  title: "Lehrplan"
   active: Aktives Curriculum
   new_placeholder: Titel des neuen Curriculums …
   create: Curriculum anlegen
@@ -300,7 +300,7 @@ dashboard:
   profile_start: "Lernprofil erstellen"
   card_progress: Fortschritt
   card_distribution: Methodenverteilung
-  card_counter: Sessions
+  card_counter: "Sitzungen"
   card_tools: Werkzeug-Empfehlungen
   card_recent_sessions: Letzte Sessions
   card_spaced: Geplante Übung
@@ -797,7 +797,7 @@ methods:
     summary: Die KI wählt für dich die jeweils beste Methode.
 cycle_steps:
   input:
-    label: Input
+    label: "Eingabe"
     description: Information, Beispiel oder Aufgabe wird vorgestellt.
   attempt:
     label: Versuch
@@ -1079,7 +1079,7 @@ gamification:
   activity_7d: "Aktivität (letzte 7 Tage)"
   activity_cell: "{count} am {date}"
   card_xp: XP & Level
-  level: Level
+  level: "Stufe"
   xp: XP
   xp_no_data: Schließe eine Sitzung ab, um XP zu sammeln.
   xp_earned: XP erhalten
@@ -1093,7 +1093,7 @@ gamification:
     activity_unit: "Sitzungen"
     activity_empty: "Keine Aktivität in den letzten 7 Tagen."
     milestones: "Meilensteine"
-    ms_level: "Level {level}"
+    ms_level: "Stufe {level}"
     ms_xp: "{xp} XP"
     reached: "erreicht"
     locked: "gesperrt"
@@ -1672,6 +1672,7 @@ lesson:
       selected_sr: "Ausgewählt: {label}"
       resolve: "Auflösen"
       resolve_announce: "Lösung angezeigt. {correct} von {total} Paaren waren korrekt."
+      my_answers: "Meine Antworten"
     picture:
       submit: "Antwort prüfen"
       retry: "Erneut versuchen"
@@ -1800,6 +1801,16 @@ lesson:
     mark_complete: "Als abgeschlossen markieren"
     next_lesson: "Nächste Lektion"
     repeat: "Lektion wiederholen"
+    retry: "Erneut üben"
+    retry_heading: "Deine Verbesserung"
+    retry_attempt: "Versuch {n}: {pct}%"
+    retry_from: "(von {pct}%)"
+    retry_improvement: "Verbesserung"
+    retry_errors_fixed: "Behobene Fehler"
+    retry_errors_fixed_value: "{fixed} von {total}"
+    retry_best: "Bestes Ergebnis"
+    retry_best_value: "{pct}% (Versuch {n})"
+    retry_new_record: "Neuer Rekord!"
     restart: "Neu beginnen"
     back_to_browser: "Zurück zur Inhaltsübersicht"
     encourage_0: "Übung macht den Meister!"
@@ -2394,7 +2405,7 @@ learning_path:
   empty: "Lade zuerst ein Lektionsset herunter, um deinen Lernpfad zu sehen."
   empty_cta: "Inhalte durchsuchen"
   error: "Lernpfad konnte nicht geladen werden."
-  to_content: "Content Browser"
+  to_content: "Inhaltsbrowser"
   node:
     lesson: "Lektion"
     stars: "Sterne"

@@ -1,37 +1,23 @@
 """Health-check polling for the AdaptiveLearner backend.
 
-Uses ``urllib`` from the standard library so the PyInstaller bundle stays
-dependency-free. Intentionally forgiving: any HTTP 200 with JSON
-``status == "ok"`` counts as healthy, but we do not require specific
-version fields.
+Thin wrappers over the actions layer (#970), which owns the HTTP probe
+logic (HTTP 200 + JSON ``status == "ok"``). ``wait_for_healthy`` keeps its
+injectable ``clock``/``sleep`` so callers/tests can drive time
+deterministically.
 """
 
 from __future__ import annotations
 
-import json
 import time
-import urllib.error
-import urllib.request
 
+from adaptive_learner_launcher import actions
 
-HEALTH_PATH = "/api/health"
+HEALTH_PATH = actions.HEALTH_PATH
 
 
 def is_healthy(port: int, *, timeout: float = 2.0) -> bool:
-    """One shot: True if the backend answers healthy, False otherwise."""
-    url = f"http://localhost:{port}{HEALTH_PATH}"
-    try:
-        with urllib.request.urlopen(url, timeout=timeout) as resp:
-            if resp.status != 200:
-                return False
-            body = resp.read().decode("utf-8")
-    except (urllib.error.URLError, TimeoutError, ConnectionError, OSError):
-        return False
-    try:
-        data = json.loads(body)
-    except json.JSONDecodeError:
-        return False
-    return data.get("status") == "ok"
+    """One shot: True if the backend answers healthy. Wrapper over actions."""
+    return actions.is_healthy(port)
 
 
 def wait_for_healthy(
@@ -42,10 +28,9 @@ def wait_for_healthy(
     clock: callable = time.monotonic,
     sleep: callable = time.sleep,
 ) -> bool:
-    """Poll ``is_healthy`` until it returns True or ``timeout_seconds`` elapses.
+    """Poll ``is_healthy`` until True or ``timeout_seconds`` elapses.
 
-    ``clock`` and ``sleep`` are injectable for unit tests that need
-    deterministic control over time.
+    ``clock`` and ``sleep`` are injectable for deterministic unit tests.
     """
     deadline = clock() + timeout_seconds
     while clock() < deadline:

@@ -35,10 +35,21 @@ I18N_DIR = Path(__file__).resolve().parent.parent / "config" / "i18n"
 # coverage checks below.
 PHASE26_LANGS = ["pt", "tr", "ja"]
 # Languages whose UI CATALOG (config/i18n/<lang>.yaml) is fully translated and
-# must hold the no-EN-passthrough + <10%-identical quality bars. ``hi`` is
-# catalog-only (#570) — it has no assessment pack yet, so it joins the catalog
-# gates here but NOT the assessment gates above.
+# must hold the no-EN-passthrough quality bar. ``hi`` is catalog-only (#570) —
+# it has no assessment pack yet, so it joins the catalog gates here but NOT the
+# assessment gates above.
+#
+# The EN-passthrough MARKER heuristic (``test_no_en_passthrough_markers``) is a
+# substring scan for English function words; it is only safe for languages whose
+# script / vocabulary does not collide with those substrings (e.g. German
+# "Thema" contains "the", Spanish "Error" is a real word). It therefore stays
+# scoped to these four.
 CATALOG_AUDIT_LANGS = ["pt", "tr", "ja", "hi"]
+# The "value byte-identical to EN" gate (``test_values_are_not_identical_to_en``)
+# is script-agnostic and the durable guard against an untranslated string falling
+# back to English in the UI (#944). It runs for EVERY non-EN catalog: a regression
+# that copies an EN string into any catalog now fails the gate.
+IDENTICAL_AUDIT_LANGS = ["de", "el", "es", "fr", "hi", "id", "ja", "ko", "pt", "tr"]
 
 # Whole-word EN markers that should NOT appear in pt/tr/ja
 # values. Each word is a strong signal that an EN string was
@@ -188,12 +199,17 @@ def test_placeholders_do_not_trip_en_markers():
     assert "the" not in cleaned.replace(" ", "")
 
 
-@pytest.mark.parametrize("lang", CATALOG_AUDIT_LANGS)
+@pytest.mark.parametrize("lang", IDENTICAL_AUDIT_LANGS)
 def test_values_are_not_identical_to_en(lang: str):
     """Verify the catalog actually diverges from EN. We tolerate
     a small overlap for proper nouns + technical identifiers
     (Anthropic Claude, OpenAI GPT, the app name itself, etc.),
-    capped at 10% of values."""
+    capped at 10% of values.
+
+    Runs for every non-EN catalog (#944): an untranslated key that
+    copies the EN string is the failure mode this gate exists to catch.
+    Loanwords that are legitimately identical (e.g. "Menu", "Server")
+    stay well within the 10% headroom."""
     target = _flatten(_load(lang))
     reference = _flatten(_load("en"))
     identical = 0

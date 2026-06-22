@@ -27,7 +27,7 @@ from urllib.request import urlopen
 
 logger = logging.getLogger("adaptive_learner_launcher.installer")
 
-GITHUB_REPO = "astrapi69/adaptive_learner"
+GITHUB_REPO = "astrapi69/adaptive-learner"
 
 # The AdaptiveLearner version this launcher was built for. Updated during
 # the release workflow (Step 4) alongside the other version strings.

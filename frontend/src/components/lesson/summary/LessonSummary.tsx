@@ -27,6 +27,7 @@ import CorrectionBlock from "../../exercises/CorrectionBlock";
 import DiffHighlight from "../../exercises/DiffHighlight";
 import Confetti from "../../feedback/Confetti";
 import NextStepSuggestions from "./NextStepSuggestions";
+import RetryResultComparison from "./RetryResultComparison";
 import { useCountUp } from "../../../hooks/ui/useCountUp";
 import { useFeedbackIntensity } from "../../../hooks/settings/useFeedbackIntensity";
 import { useI18n } from "../../../hooks/ui/useI18n";
@@ -435,6 +436,15 @@ export default function LessonSummary({
         </span>
       </div>
 
+      {/* #983 — after a re-attempt, show the improvement vs the previous
+          run + the best score. Self-hides on a first run (attempts < 2). */}
+      <RetryResultComparison
+        attempts={progress?.attempts ?? 0}
+        attemptHistory={progress?.attempt_history ?? []}
+        bestCorrect={progress?.best_score_correct ?? 0}
+        bestTotal={progress?.best_score_total ?? 0}
+      />
+
       {xpGain > 0 && (
         <div
           className="lesson-summary-xp"
@@ -784,7 +794,7 @@ export default function LessonSummary({
           data-testid="lesson-summary-repeat"
         >
           <RotateCcw aria-hidden="true" />
-          {t("lesson.summary.repeat", "Repeat lesson")}
+          {t("lesson.summary.retry", "Practice again")}
         </Button>
         <Button
           type="button"

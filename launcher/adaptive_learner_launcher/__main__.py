@@ -20,15 +20,19 @@ import sys
 import webbrowser
 from pathlib import Path
 
-from adaptive_learner_launcher import __version__, config, docker, health, i18n, installer, lockfile, manifest, ports, settings, ui, update_check
+from adaptive_learner_launcher import __version__, actions, config, docker, health, i18n, installer, lockfile, manifest, settings, ui, update_check
 
 
 logger = logging.getLogger("adaptive_learner_launcher")
 
-INSTALL_GUIDE_URL = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/launcher-windows.md"
+INSTALL_GUIDE_URL = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md"
+# Stable "latest release" page (redirects to the newest tag). Used for the
+# stale-launcher + update-available dialogs so the link is always current
+# and never points at an outdated/missing tag (#952).
+RELEASE_PAGE_URL = "https://github.com/astrapi69/adaptive-learner/releases/latest"
 DOCKER_INSTALL_URL = "https://docs.docker.com/desktop/install/windows-install/"
-DOCKER_GUIDE_URL_EN = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/install/docker-desktop.md"
-DOCKER_GUIDE_URL_DE = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/de/install/docker-desktop.md"
+DOCKER_GUIDE_URL_EN = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md"
+DOCKER_GUIDE_URL_DE = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/de/install/docker-desktop.md"
 DOCKER_SECURITY_ANCHOR_EN = DOCKER_GUIDE_URL_EN + "#is-docker-safe-to-install"
 DOCKER_SECURITY_ANCHOR_DE = DOCKER_GUIDE_URL_DE + "#ist-docker-sicher-zu-installieren"
 
@@ -63,9 +67,164 @@ def _parse_cli_port(argv: list[str] | None = None) -> int | None:
     return None
 
 
+def _parse_cli_debug(argv: list[str] | None = None) -> bool:
+    """Return True when ``--debug`` is present on the command line.
+
+    Unknown arguments are ignored so a stray flag passed by a desktop
+    shortcut never aborts the launcher (same policy as ``--port``).
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--debug", action="store_true")
+    try:
+        known, _ = parser.parse_known_args(argv)
+    except SystemExit:
+        return False
+    return bool(known.debug)
+
+
+def _maybe_show_help(argv: list[str] | None = None) -> bool:
+    """Print usage when ``-h`` / ``--help`` was requested.
+
+    Returns True when help was shown (the caller then exits). Kept
+    separate from the lenient ``parse_known_args`` parsers above so the
+    launcher only ever exits on an explicit help request, never on a
+    stray flag from a desktop shortcut.
+    """
+    import argparse
+
+    args = sys.argv[1:] if argv is None else argv
+    if not ({"-h", "--help"} & set(args)):
+        return False
+    parser = argparse.ArgumentParser(
+        prog="adaptive_learner_launcher",
+        description="Adaptive Learner desktop launcher (Docker-based).",
+    )
+    parser.add_argument(
+        "--port", type=int, metavar="N",
+        help="Host port for the app (1-65535).",
+    )
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="Verbose logging to stdout and launcher-debug.log.",
+    )
+    parser.add_argument(
+        "--version", action="store_true",
+        help="Print the launcher version and exit.",
+    )
+    # Headless action flags (CLI<->GUI parity). Each routes through actions.
+    parser.add_argument("--check", action="store_true", help="Check Docker status and exit.")
+    parser.add_argument("--status", action="store_true", help="Print app state (running/stopped/...) and exit.")
+    parser.add_argument("--install", action="store_true", help="Build + start the app and exit.")
+    parser.add_argument("--start", action="store_true", help="Start the stopped app and exit.")
+    parser.add_argument("--stop", action="store_true", help="Stop the running app and exit.")
+    parser.add_argument("--uninstall", action="store_true", help="Remove the app containers/images and exit.")
+    parser.add_argument("--open", action="store_true", help="Open the app in the browser and exit.")
+    parser.add_argument("--window", action="store_true", help="Open the persistent launcher window (preview).")
+    parser.print_help()
+    return True
+
+
+def _maybe_show_version(argv: list[str] | None = None) -> bool:
+    """Print the version when ``--version`` was requested.
+
+    Returns True when the version was shown (the caller then exits).
+    """
+    args = sys.argv[1:] if argv is None else argv
+    if "--version" not in args:
+        return False
+    print(f"adaptive_learner_launcher {__version__}")
+    return True
+
+
+def _cli_action_config() -> dict:
+    """Resolve {project, compose_file, port} for headless CLI actions."""
+    repo = config.source_checkout_repo() or manifest.install_dir_from_manifest() or config.resolve_repo_path()
+    return {
+        "project": actions.DEFAULT_PROJECT,
+        "compose_file": str(repo / config.COMPOSE_FILENAME),
+        "port": config.read_public_port(repo) if repo else actions.DEFAULT_PORT,
+    }
+
+
+def _maybe_run_cli_action(argv: list[str]) -> int | None:
+    """Route a headless CLI action through the actions layer.
+
+    Returns an exit code when an action flag was handled, or ``None`` when
+    no action flag was present (the caller then launches the GUI). Every
+    branch calls ONLY ``actions.*`` - no business logic lives here.
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(add_help=False)
+    for flag in ("check", "status", "install", "start", "stop", "uninstall", "open"):
+        parser.add_argument(f"--{flag}", action="store_true")
+    try:
+        args, _ = parser.parse_known_args(argv)
+    except SystemExit:
+        return None
+
+    cfg = _cli_action_config()
+    if args.check:
+        ok, msg = actions.check_docker()
+        print(msg)
+        return 0 if ok else 1
+    if args.status:
+        print(f"Status: {actions.get_state(cfg['project'])}")
+        return 0
+    if args.install:
+        ok, msg = actions.install(cfg["compose_file"], cfg["project"], cfg["port"],
+                                  on_step=lambda label: print(label))
+        print(msg)
+        return 0 if ok else 1
+    if args.start:
+        ok, msg = actions.start(cfg["compose_file"], cfg["project"])
+        print(msg)
+        return 0 if ok else 1
+    if args.stop:
+        ok, msg = actions.stop(cfg["project"])
+        print(msg)
+        return 0 if ok else 1
+    if args.uninstall:
+        ok, msg = actions.uninstall(cfg["project"])
+        print(msg)
+        return 0 if ok else 1
+    if args.open:
+        actions.open_browser(cfg["port"])
+        return 0
+    return None
+
+
 def main() -> int:
-    _setup_logging()
+    if _maybe_show_help(sys.argv[1:]):
+        return 0
+    if _maybe_show_version(sys.argv[1:]):
+        return 0
+
+    debug = _parse_cli_debug(sys.argv[1:])
+    _setup_logging(debug=debug)
+
+    action_rc = _maybe_run_cli_action(sys.argv[1:])
+    if action_rc is not None:
+        return action_rc
+
     logger.info("AdaptiveLearner launcher v%s starting", __version__)
+
+    # Single persistent window (#984): the default when running from a
+    # source checkout (the repo + compose file are present, so install =
+    # build), or on explicit --window. End-user (frozen) installs that
+    # still need to DOWNLOAD a release keep the classic flow below until
+    # the window grows a download step.
+    if "--window" in sys.argv[1:] or config.source_checkout_repo() is not None:
+        try:
+            i18n.init(settings.get("language"))
+        except Exception as exc:
+            logger.warning("i18n init failed, continuing in English: %s", exc)
+        from adaptive_learner_launcher import launcher_app
+        return launcher_app.run_app()
+    if debug:
+        logger.debug("Debug mode enabled (verbose logging to launcher-debug.log)")
 
     cli_port = _parse_cli_port(sys.argv[1:])
     if cli_port is not None:
@@ -130,14 +289,22 @@ def _run_launcher(*, cli_port: int | None = None) -> int:
     #    a) manifest exists + install_dir valid -> proceed
     #    b) manifest exists + install_dir missing -> treat as not installed
     #    c) no manifest -> check legacy launcher.json, else show install UI
+    # Prefer a source checkout (developer scenario): its compose file is
+    # the current one, so we never build a stale downloaded release from a
+    # tmp dir (#981). Frozen-binary / pip installs have no valid repo at
+    # parents[2], so this is None and the download path is used.
+    source_repo = config.source_checkout_repo()
     mdata = manifest.read_manifest()
-    if mdata and mdata.get("install_dir"):
+    if source_repo is not None:
+        repo = source_repo
+        logger.info("Using source-checkout repo: %s", repo)
+    elif mdata and mdata.get("install_dir"):
         repo = Path(mdata["install_dir"])
         if not config.is_valid_repo(repo):
             logger.warning("Manifest points at %s but it is not a valid repo", repo)
             mdata = None  # fall through to install UI
 
-    if mdata is None:
+    if source_repo is None and mdata is None:
         # Try legacy launcher.json
         repo = config.resolve_repo_path()
         if config.is_valid_repo(repo):
@@ -180,7 +347,7 @@ def _run_launcher(*, cli_port: int | None = None) -> int:
     #    - stopped  -> Start / Uninstall
     #    (not-installed was handled by the install flow above)
     display_port = config.resolve_launch_port(repo, cli_port=cli_port)
-    if docker.stack_running(repo, config.COMPOSE_FILENAME):
+    if actions.get_state() == "running":
         return _manage_running(repo, display_port)
     if not _offer_start_or_uninstall(repo):
         return 0  # user chose Uninstall or closed the menu
@@ -205,9 +372,11 @@ def _run_launcher(*, cli_port: int | None = None) -> int:
     window.set_steps(steps)
     window.complete_step(0)  # Docker already verified above
 
+    compose_file = str(repo / config.COMPOSE_FILENAME)
+
     def worker() -> None:
         window.after(0, lambda: window.start_step(1, i18n.t("status.starting")))
-        ok, up_detail = docker.compose_up(repo, config.COMPOSE_FILENAME)
+        ok, up_detail = actions.start(compose_file, actions.DEFAULT_PROJECT)
         if not ok:
             logger.error("compose up failed: %s", up_detail)
             window.after(0, lambda: (window.fail_step(1), _handle_compose_failure(window, port, up_detail, show_details)))
@@ -216,7 +385,7 @@ def _run_launcher(*, cli_port: int | None = None) -> int:
 
         window.after(0, lambda: window.start_step(2, i18n.t("status.almost_ready")))
         if not health.wait_for_healthy(port, timeout_seconds=60.0):
-            tail = docker.compose_logs_tail(repo, config.COMPOSE_FILENAME, lines=20)
+            tail = actions.compose_logs_tail(repo, config.COMPOSE_FILENAME, lines=20)
             logger.error("health timeout; last lines:\n%s", tail)
             window.after(0, lambda: (window.fail_step(2), _handle_health_timeout(window, repo, port, tail, show_details)))
             return
@@ -262,29 +431,31 @@ def _ensure_docker_ready(show_details: bool) -> bool:
     Desktop" button that launches Docker Desktop and then re-checks, so
     the user does not have to leave the launcher.
     """
-    ok, detail = docker.docker_installed()
+    ok, detail = actions.docker_installed()
     if not ok:
         logger.error("docker --version failed: %s", detail)
-        choice = ui.three_button_dialog(
+        # Docker is not installed, so this flow always aborts. The two
+        # browser actions are non-closing links so the user can read the
+        # download page + guide and then quit (#956); only Quit / X
+        # dismiss.
+        ui.choice_dialog(
             title=i18n.t("docker.missing.title"),
             message=(
                 f"{i18n.t('docker.missing.heading')}\n\n"
                 f"{i18n.t('docker.missing.explanation')}\n\n"
                 f"{i18n.t('docker.missing.next_step')}"
             ),
-            primary_label=i18n.t("docker.missing.install_button"),
-            secondary_label=i18n.t("docker.missing.guide_button"),
-            cancel_label=i18n.t("docker.missing.quit_button"),
+            buttons=[(i18n.t("docker.missing.quit_button"), "quit")],
+            links=[
+                (i18n.t("docker.missing.install_button"), DOCKER_INSTALL_URL),
+                (i18n.t("docker.missing.guide_button"), _docker_guide_url()),
+            ],
         )
-        if choice == "primary":
-            _open_url(DOCKER_INSTALL_URL, "Docker download page")
-        elif choice == "secondary":
-            _open_url(_docker_guide_url(), "AdaptiveLearner Docker guide")
         return False
 
     # Daemon running? Loop until the user starts Docker or cancels.
     for attempt in range(10):
-        ok, detail = docker.docker_daemon_running()
+        ok, detail = actions.check_docker()
         if ok:
             return True
         logger.warning("docker info failed (attempt %d): %s", attempt + 1, detail)
@@ -326,7 +497,7 @@ def _wait_for_daemon(*, timeout_seconds: float) -> bool:
 
     deadline = time.monotonic() + timeout_seconds
     while time.monotonic() < deadline:
-        ok, _ = docker.docker_daemon_running()
+        ok, _ = actions.check_docker()
         if ok:
             return True
         time.sleep(2.0)
@@ -343,11 +514,21 @@ def _resolve_free_port(repo: Path, cli_port: int | None) -> int | None:
     chosen port, or None if the user cancels / no port is free.
     """
     port = config.resolve_launch_port(repo, cli_port=cli_port)
-    if ports.is_available(port):
+    free, _ = actions.check_port(port)
+    if free:
+        # Persist the chosen port to .env so `docker compose up` PUBLISHES
+        # exactly the port the launcher then health-checks (#983). compose
+        # reads ADAPTIVE_LEARNER_PUBLIC_PORT from .env, not launcher.json;
+        # without this they can disagree (e.g. a stale launcher.json port
+        # vs the repo .env default), so health-checks the wrong port.
+        try:
+            config.write_public_port(repo, port)
+        except OSError as exc:
+            logger.warning("could not persist port to .env: %s", exc)
         return port
 
-    suggested = ports.find_available(port + 1)
-    if suggested is None:
+    found, suggested, _ = actions.find_free_port(port + 1)
+    if not found:
         ui.error_box(
             i18n.t("port_conflict.none_free_title"),
             i18n.t("port_conflict.none_free_message", port=port),
@@ -437,7 +618,7 @@ def _stop_stack(repo: Path) -> None:
     window.start_step(0, i18n.t("manage.stopping"))
 
     def worker() -> None:
-        ok, detail = docker.compose_down(repo, config.COMPOSE_FILENAME)
+        ok, detail = actions.stop(actions.DEFAULT_PROJECT)
         if not ok:
             logger.warning("stop failed: %s", detail)
             window.after(0, lambda: window.fail_step(0))
@@ -466,24 +647,36 @@ def _quick_uninstall(repo: Path) -> bool:
         return False
 
     window = ui.StatusWindow(title=i18n.t("quick_uninstall.progress"))
-    window.set_steps([i18n.t("manage.stop"), i18n.t("progress.step.build")])
+    window.set_steps([i18n.t("manage.stop")])
+    result: dict = {}
 
     def worker() -> None:
         window.after(0, lambda: window.start_step(0, i18n.t("manage.stopping")))
-        ok, detail = docker.compose_down(repo, config.COMPOSE_FILENAME)
-        if not ok:
-            logger.warning("quick-uninstall compose down: %s", detail)
-        window.after(0, lambda: window.complete_step(0))
-
-        window.after(0, lambda: window.start_step(1, i18n.t("uninstall.removing_images")))
-        ok2, detail2 = docker.remove_images()
-        if not ok2:
-            logger.warning("quick-uninstall remove images: %s", detail2)
-        window.after(0, lambda: window.complete_step(1))
+        # Business logic lives in the actions layer: remove containers by
+        # id + VERIFY they are gone + drop images, all in one verified
+        # action (#964). The GUI handler only shows progress + result.
+        removed_ok, removed_detail = actions.uninstall(actions.DEFAULT_PROJECT)
+        result["removed_ok"] = removed_ok
+        result["removed_detail"] = removed_detail
+        if not removed_ok:
+            logger.error("quick-uninstall failed: %s", removed_detail)
+            window.after(0, lambda: window.fail_step(0))
+        else:
+            window.after(0, lambda: window.complete_step(0))
         window.after(400, window.close)
 
     window.run_in_background(worker)
     window.run_mainloop()
+
+    # Honest reporting: never claim success while a container survives.
+    if not result.get("removed_ok", False):
+        ui.error_dialog(
+            title=i18n.t("uninstall.failed.title"),
+            message=i18n.t("uninstall.failed.message"),
+            actions=[(i18n.t("common.ok"), "ok")],
+            details=result.get("removed_detail", "container still present"),
+        )
+        return False
 
     # Best-effort: drop a desktop/Start-menu shortcut if we can find one.
     _remove_desktop_shortcut()
@@ -578,19 +771,19 @@ def _show_update_notification(tag: str, url: str, current: str) -> None:
     Three choices: Open release page (primary) / Dismiss (secondary)
     / Don't check for updates (cancel - turns off auto_update_check).
     """
-    choice = ui.three_button_dialog(
+    # "Open release page" is a non-closing link so the user can read the
+    # notes and return to choose (#956). Only Dismiss / Don't-check / X
+    # dismiss the dialog.
+    choice = ui.choice_dialog(
         title=i18n.t("update.title"),
         message=i18n.t("update.message", current=current, tag=tag),
-        primary_label=i18n.t("update.primary"),
-        secondary_label=i18n.t("update.dismiss"),
-        cancel_label=i18n.t("update.disable"),
+        buttons=[
+            (i18n.t("update.dismiss"), "dismiss"),
+            (i18n.t("update.disable"), "disable"),
+        ],
+        links=[(i18n.t("update.primary"), RELEASE_PAGE_URL)],
     )
-    if choice == "primary":
-        try:
-            webbrowser.open(url)
-        except OSError as exc:
-            logger.warning("update release page open failed: %s", exc)
-    elif choice == "cancel":
+    if choice == "disable":
         # User opted out of future update checks.
         settings.update("auto_update_check", False)
         logger.info("Auto-update check disabled by user.")
@@ -676,31 +869,28 @@ def _check_launcher_target_stale() -> bool:
     if latest is None:
         return True  # fail-open
 
-    tag, url = latest
+    tag, _url = latest
     if not update_check.is_newer(installer.ADAPTIVE_LEARNER_TARGET_VERSION, tag):
         return True  # in sync (or this launcher is ahead, weird but proceed)
 
-    choice = ui.three_button_dialog(
+    # "Open download page" is a non-closing link so the user can read the
+    # release page and return to choose (#956). Only the decision buttons
+    # and X dismiss.
+    choice = ui.choice_dialog(
         title=i18n.t("stale.title"),
         message=i18n.t(
             "stale.message",
             target=installer.ADAPTIVE_LEARNER_TARGET_VERSION,
             latest=tag,
         ),
-        primary_label=i18n.t("stale.download"),
-        secondary_label=i18n.t("stale.continue_old"),
-        cancel_label=i18n.t("common.cancel"),
+        buttons=[
+            (i18n.t("stale.continue_old"), "continue"),
+            (i18n.t("common.cancel"), "cancel"),
+        ],
+        links=[(i18n.t("stale.download"), RELEASE_PAGE_URL)],
     )
-    if choice == "primary":
-        try:
-            webbrowser.open(url)
-        except OSError as exc:
-            logger.warning("opening release page failed: %s", exc)
-        return False  # abort install
-    if choice == "cancel":
-        return False  # abort install
-    # secondary: user knows what they're doing, proceed
-    return True
+    # continue == proceed with the older version; cancel / X == abort.
+    return choice == "continue"
 
 
 def _install_or_welcome() -> Path | None:
@@ -719,21 +909,19 @@ def _install_or_welcome() -> Path | None:
     if not _check_launcher_target_stale():
         return None  # user opted to abort due to outdated launcher
 
-    choice = ui.three_button_dialog(
+    # "Open guide" is a non-closing link so the user can read the install
+    # guide and return to choose (#956). Only Install / Cancel / X dismiss.
+    choice = ui.choice_dialog(
         title=i18n.t("install_prompt.title"),
         message=i18n.t("install_prompt.message"),
-        primary_label=i18n.t("install_prompt.install_button"),
-        secondary_label=i18n.t("install_prompt.guide_button"),
-        cancel_label=i18n.t("install_prompt.cancel_button"),
+        buttons=[
+            (i18n.t("install_prompt.install_button"), "install"),
+            (i18n.t("install_prompt.cancel_button"), "cancel"),
+        ],
+        links=[(i18n.t("install_prompt.guide_button"), INSTALL_GUIDE_URL)],
     )
-    if choice == "cancel":
-        return None
-    if choice == "secondary":
-        try:
-            webbrowser.open(INSTALL_GUIDE_URL)
-        except OSError as exc:
-            logger.warning("opening install guide failed: %s", exc)
-        return None
+    if choice != "install":
+        return None  # cancel or window closed
 
     # User chose "Install" -> pick folder, download, extract
     return _run_install_flow()
@@ -769,7 +957,7 @@ def _run_install_flow() -> Path | None:
         ok, detail = installer.download_release(target)
         if not ok:
             result["error"] = detail
-            window.after(0, lambda: (window.fail_step(1), window.destroy()))
+            window.after(0, lambda: (window.fail_step(1), window.close()))
             return
         window.after(0, lambda: window.complete_step(1))
         ok2, detail2 = installer.create_env_file(target)
@@ -780,19 +968,20 @@ def _run_install_flow() -> Path | None:
             manifest.write_manifest(target, installer.ADAPTIVE_LEARNER_TARGET_VERSION)
         except Exception as exc:
             result["error"] = f"Could not write manifest: {exc}"
-            window.after(0, lambda: (window.fail_step(1), window.destroy()))
+            window.after(0, lambda: (window.fail_step(1), window.close()))
             return
         # Save to legacy config too for backward compat
         cfg = config.load_launcher_config()
         cfg["repo_path"] = str(target)
         config.save_launcher_config(cfg)
 
-        # Phase 2: Build and start Docker stack
+        # Phase 2: Build and start Docker stack (granular action; the
+        # health/slow-start handling stays here in Phase 3).
         window.after(0, lambda: window.start_step(2, i18n.t("install.building_images")))
-        ok3, detail3 = docker.compose_build(target, config.COMPOSE_FILENAME)
+        ok3, detail3 = actions.compose_build(str(target / config.COMPOSE_FILENAME), actions.DEFAULT_PROJECT)
         if not ok3:
             result["error"] = f"Docker build failed:\n{detail3}"
-            window.after(0, lambda: (window.fail_step(2), window.destroy()))
+            window.after(0, lambda: (window.fail_step(2), window.close()))
             return
         window.after(0, lambda: window.complete_step(2))
 
@@ -806,7 +995,7 @@ def _run_install_flow() -> Path | None:
 
         result["ok"] = True
         result["port"] = port
-        window.after(0, window.destroy)
+        window.after(0, window.close)
 
     window.run_in_background(worker)
     window.run_mainloop()
@@ -854,84 +1043,6 @@ def _run_install_flow() -> Path | None:
     return None
 
 
-def _run_uninstall_flow(install_dir: Path) -> bool:
-    """Uninstall AdaptiveLearner after user confirmation. Returns True if uninstalled."""
-    show_details = config.get_show_details_default()
-    choice = ui.two_button_dialog(
-        title=i18n.t("uninstall.title"),
-        message=i18n.t("uninstall.message", path=str(install_dir)),
-        primary_label=i18n.t("uninstall.confirm"),
-        secondary_label=i18n.t("common.cancel"),
-    )
-    if choice != "primary":
-        return False
-
-    # Write cleanup state BEFORE any destructive operation so a crash
-    # or abort mid-uninstall can be retried on next launcher start.
-    manifest.write_cleanup_pending(install_dir)
-
-    # Phase 1: Stop Docker stack (best-effort, continue if Docker is not running)
-    window = ui.StatusWindow()
-    window.set_starting(i18n.t("uninstall.stopping"))
-
-    def uninstall_worker() -> None:
-        ok, detail = docker.compose_down(install_dir, config.COMPOSE_FILENAME)
-        manifest.update_cleanup_step("compose_down", ok)
-        if not ok:
-            logger.warning("compose down: %s", detail)
-
-        window.after(0, lambda: window.set_starting(i18n.t("uninstall.removing_volumes")))
-        ok2, detail2 = docker.remove_volumes()
-        manifest.update_cleanup_step("remove_volumes", ok2)
-        if not ok2:
-            logger.warning("remove volumes: %s", detail2)
-
-        window.after(0, lambda: window.set_starting(i18n.t("uninstall.removing_images")))
-        ok3, detail3 = docker.remove_images()
-        manifest.update_cleanup_step("remove_images", ok3)
-        if not ok3:
-            logger.warning("remove images: %s", detail3)
-
-        window.after(0, window.destroy)
-
-    window.run_in_background(uninstall_worker)
-    window.run_mainloop()
-
-    # Phase 2: Remove install directory
-    ok, detail = installer.remove_install(install_dir)
-    manifest.update_cleanup_step("rmtree", ok)
-    if not ok:
-        ui.error_dialog(
-            title=i18n.t("uninstall.failed.title"),
-            message=i18n.t("uninstall.failed.message"),
-            actions=[(i18n.t("common.ok"), "ok")],
-            details=detail,
-            initial_show_details=show_details,
-        )
-        return False
-
-    # Phase 3: Clean up manifest and legacy config
-    manifest.delete_manifest()
-    manifest.update_cleanup_step("delete_manifest", True)
-    try:
-        cfg = config.load_launcher_config()
-        cfg.pop("repo_path", None)
-        config.save_launcher_config(cfg)
-    except Exception:
-        pass
-
-    # All steps done: remove cleanup state file
-    manifest.delete_cleanup_pending()
-
-    ui.two_button_dialog(
-        title=i18n.t("uninstall.complete.title"),
-        message=i18n.t("uninstall.complete.message"),
-        primary_label=i18n.t("common.ok"),
-        secondary_label="",
-    )
-    return True
-
-
 def _installation_moved_picker() -> Path | None:
     """AdaptiveLearner was launched here before but the remembered folder no
     longer resolves. Offer folder picker or install guide.
@@ -939,21 +1050,19 @@ def _installation_moved_picker() -> Path | None:
     Three buttons: Choose folder / Open install guide / Cancel.
     """
     while True:
-        choice = ui.three_button_dialog(
+        # "Open install guide" is a non-closing link (#956); only Choose
+        # folder / Cancel / X dismiss.
+        choice = ui.choice_dialog(
             title=i18n.t("moved.title"),
             message=i18n.t("moved.message"),
-            primary_label=i18n.t("moved.choose_folder"),
-            secondary_label=i18n.t("install_prompt.guide_button"),
-            cancel_label=i18n.t("common.cancel"),
+            buttons=[
+                (i18n.t("moved.choose_folder"), "choose"),
+                (i18n.t("common.cancel"), "cancel"),
+            ],
+            links=[(i18n.t("install_prompt.guide_button"), INSTALL_GUIDE_URL)],
         )
-        if choice == "cancel":
-            return None
-        if choice == "secondary":
-            try:
-                webbrowser.open(INSTALL_GUIDE_URL)
-            except OSError as exc:
-                logger.warning("opening install guide failed: %s", exc)
-            return None
+        if choice != "choose":
+            return None  # cancel or window closed
         picked = ui.pick_folder(i18n.t("moved.choose_folder_picker"))
         if picked is None:
             continue  # back to the three-button dialog
@@ -1063,11 +1172,11 @@ def _handle_already_running() -> None:
         _open_url(f"http://localhost:{port}", "AdaptiveLearner")
 
 
-def _setup_logging() -> None:
+def _setup_logging(*, debug: bool = False) -> None:
     from logging.handlers import RotatingFileHandler
 
     root = logging.getLogger()
-    root.setLevel(logging.INFO)
+    root.setLevel(logging.DEBUG if debug else logging.INFO)
     fmt = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
 
     # Handler 1: legacy launcher.log under APPDATA/AdaptiveLearner/
@@ -1090,6 +1199,34 @@ def _setup_logging() -> None:
         root.addHandler(activity_handler)
     except OSError:
         pass  # Never crash because activity logging setup failed
+
+    if debug:
+        _add_debug_handlers(root, fmt)
+
+
+def _add_debug_handlers(root: logging.Logger, fmt: logging.Formatter) -> None:
+    """Attach the ``--debug`` handlers: stdout plus a CWD debug log.
+
+    ``launcher-debug.log`` is written to the current working directory
+    (where the user runs ``python -m adaptive_learner_launcher``) and
+    truncated on each debug run so a fresh capture is easy to share.
+    Failures are swallowed: a missing-permission CWD must never block
+    the launcher from starting.
+    """
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(fmt)
+    stdout_handler.setLevel(logging.DEBUG)
+    root.addHandler(stdout_handler)
+
+    try:
+        debug_path = Path.cwd() / "launcher-debug.log"
+        debug_handler = logging.FileHandler(str(debug_path), mode="w", encoding="utf-8")
+        debug_handler.setFormatter(fmt)
+        debug_handler.setLevel(logging.DEBUG)
+        root.addHandler(debug_handler)
+        logger.debug("Debug log: %s", debug_path)
+    except OSError as exc:
+        logger.warning("could not open launcher-debug.log: %s", exc)
 
 
 if __name__ == "__main__":

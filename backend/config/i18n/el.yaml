@@ -196,14 +196,14 @@ curriculum:
   no_topics: Δεν υπάρχουν θέματα ακόμα — πρόσθεσε το πρώτο για να ξεκινήσεις.
   no_curriculum: Δημιούργησε πρόγραμμα για να ξεκινήσει η δομή θεμάτων.
   delete_confirm: Διαγραφή αυτού του θέματος; Τα παιδιά του θα παραμείνουν ως ρίζες.
-  lessons_title: Lessons
-  add_lesson: Add lesson
-  new_lesson_placeholder: New lesson title…
-  no_lessons: No lessons yet.
-  lesson_created: Lesson created.
-  lesson_saved: Lesson saved.
-  lesson_deleted: Lesson deleted.
-  lesson_delete_confirm: Delete this lesson?
+  lessons_title: "Μαθήματα"
+  add_lesson: "Προσθήκη μαθήματος"
+  new_lesson_placeholder: "Τίτλος νέου μαθήματος…"
+  no_lessons: "Δεν υπάρχουν ακόμη μαθήματα."
+  lesson_created: "Το μάθημα δημιουργήθηκε."
+  lesson_saved: "Το μάθημα αποθηκεύτηκε."
+  lesson_deleted: "Το μάθημα διαγράφηκε."
+  lesson_delete_confirm: "Διαγραφή αυτού του μαθήματος;"
   add_description: "Προσθήκη περιγραφής"
   description_aria: "Περιγραφή προγράμματος σπουδών"
   description_placeholder: "Γιατί αυτό το πρόγραμμα; Τι καλύπτει;"
@@ -224,13 +224,13 @@ landing:
 onboarding:
   title: Δημιουργία έργου μάθησης
   intro: Πες μας για τον στόχο μάθησής σου. Το Adaptive Learner το χρησιμοποιεί για να χτίσει το προφίλ σου και να προτείνει μέθοδο εκκίνησης.
-  concepts_explainer_prefix: "You'll define a "
-  concepts_explainer_mid1: ", then complete a brief assessment to build a "
-  concepts_explainer_mid2: " — which guides every "
-  concepts_explainer_suffix: " ahead."
-  term_learning_project: "learning project"
-  term_learning_profile: "learning profile"
-  term_learning_session: "learning session"
+  concepts_explainer_prefix: "Θα ορίσετε ένα "
+  concepts_explainer_mid1: ", και στη συνέχεια ολοκληρώνετε μια σύντομη αξιολόγηση για να χτίσετε το "
+  concepts_explainer_mid2: " — που καθοδηγεί κάθε "
+  concepts_explainer_suffix: " που ακολουθεί."
+  term_learning_project: "μαθησιακό έργο"
+  term_learning_profile: "μαθησιακό προφίλ"
+  term_learning_session: "μαθησιακή συνεδρία"
   field_name: Το όνομά σου
   field_topic: Θέμα
   field_topic_hint: π.χ. Ισπανικά Β1, γραμμική άλγεβρα.
@@ -302,7 +302,7 @@ dashboard:
   card_distribution: Κατανομή μεθόδων
   card_counter: Συνεδρίες
   card_tools: Συστάσεις εργαλείων
-  card_recent_sessions: Recent sessions
+  card_recent_sessions: "Πρόσφατες συνεδρίες"
   card_spaced: Διανεμημένη εξάσκηση
   card_review_queue: Προς επανάληψη
   card_focus_areas: Σημεία εστίασης
@@ -393,7 +393,7 @@ review:
   spaced_start: Έναρξη
   spaced_dismiss: Απόρριψη
   metric_total_sessions: Συνολικές συνεδρίες
-  metric_total_minutes: Total minutes
+  metric_total_minutes: "Συνολικά λεπτά"
   metric_mean_understanding: Μέση κατανόηση
   metric_mean_stress: Μέσο άγχος
   metric_streak: Σερί ημερών
@@ -408,7 +408,7 @@ session:
   ai_thinking: Σκέφτομαι...
   ai_error: Ο πάροχος AI δεν μπόρεσε να απαντήσει.
   no_api_key: "Δεν έχει οριστεί κλειδί AI. Πρόσθεσε ένα κλειδί για τον πάροχο AI στις Ρυθμίσεις για να συνομιλήσεις με τον εκπαιδευτή. Τα μαθήματα και οι επαναλήψεις λειτουργούν χωρίς κλειδί."
-  welcome_empty: "Ready to learn! Write your first message."
+  welcome_empty: "Έτοιμοι για μάθηση! Γράψτε το πρώτο σας μήνυμα."
   end_session: Τερματισμός συνεδρίας
   end_session_confirm: Σίγουρα; Θα κλείσουμε τη συνεδρία και θα ζητήσουμε αξιολόγηση.
   switch_recommended: Συνιστάται αλλαγή μεθόδου
@@ -423,10 +423,10 @@ session:
   rating_submit: Υποβολή αξιολόγησης
   step_progress: Βήμα {current} από {total}
   step_advance_toast: 'Μετάβαση σε: {step}'
-  cycle_label: Cycle {n}
-  cycle_advanced: Cycle {n} started
-  cycles_completed: Cycles completed
-  next_topic: 'Next topic:'
+  cycle_label: "Κύκλος {n}"
+  cycle_advanced: "Ο κύκλος {n} ξεκίνησε"
+  cycles_completed: "Ολοκληρωμένοι κύκλοι"
+  next_topic: "Επόμενο θέμα:"
   step_reason_tooltip: Γιατί αυτό το βήμα;
   offline_start_blocked: Είσαι εκτός σύνδεσης. Οι νέες συνεδρίες χρειάζονται δίκτυο — οι προηγούμενες διαβάζονται κανονικά από το Dashboard.
   peek_step_prefix: "Βήμα"
@@ -521,7 +521,7 @@ settings:
     source_env: "Διαχειρίζεται μέσω μεταβλητής περιβάλλοντος"
     source_browser: "Αποθηκεύτηκε σε αυτό το πρόγραμμα περιήγησης"
   title: Ρυθμίσεις
-  help_intro: "Browse and search the in-app glossary. Click any entry for the full article."
+  help_intro: "Περιηγηθείτε και αναζητήστε στο ενσωματωμένο γλωσσάρι. Κάντε κλικ σε οποιαδήποτε καταχώριση για το πλήρες άρθρο."
   section_language: Γλώσσα
   mode_title: "Λειτουργία"
   mode_solo: "Ατομική λειτουργία"
@@ -532,7 +532,7 @@ settings:
   section_provider: Πάροχος AI
   section_api_keys: Κλειδιά API
   section_danger: Λογαριασμός
-  section_ui: Interface
+  section_ui: "Διεπαφή"
   section_appearance: "Εμφάνιση"
   section_profile: "Προφίλ"
   username_label: "Εμφανιζόμενο όνομα"
@@ -581,8 +581,8 @@ settings:
   missions_reset_confirm: "Επιβεβαίωση"
   missions_reset_done: "Οι σημερινές αποστολές ανανεώθηκαν."
   missions_reset_failed: "Αδυναμία επαναφοράς αποστολών."
-  gestures: Swipe Gestures
-  gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
+  gestures: "Κινήσεις σάρωσης"
+  gestures_description: "Σαρώστε για πλοήγηση στην Αξιολόγηση, τη Συνεδρία και το Πρόγραμμα σπουδών."
   profile_title: "Προφίλ μάθησης"
   profile_resume: "Συνέχεια προφίλ μάθησης"
   profile_redo: "Επανάληψη προφίλ μάθησης"
@@ -592,8 +592,8 @@ settings:
   profile_create_hint: "Κάντε μια σύντομη αξιολόγηση για ένα εξατομικευμένο προφίλ μάθησης."
   lesson_shortcuts: "Συντομεύσεις πληκτρολογίου στα μαθήματα"
   lesson_shortcuts_description: "Πατήστε Enter για να ελέγξετε την απάντησή σας και ξανά Enter για να προχωρήσετε στο επόμενο βήμα."
-  button_tooltips: Show button tooltips
-  button_tooltips_description: "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless."
+  button_tooltips: "Εμφάνιση επεξηγήσεων κουμπιών"
+  button_tooltips_description: "Εμφάνιση επεξήγησης κατά την αιώρηση πάνω σε εικονίδια-κουμπιά. Οι ετικέτες αναγνώστη οθόνης παραμένουν ενεργές ανεξάρτητα."
   developer_mode: Λειτουργία προγραμματιστή
   developer_mode_description: "Εμφανίζει όλες τις τεχνικές λεπτομέρειες (κωδικός κατάστασης, endpoint, ίχνος στοίβας) στα μηνύματα σφάλματος. Όταν είναι ενεργό, εμφανίζεται μια ένδειξη 'DEV' στη γραμμή πλοήγησης. Απενεργοποιημένο από προεπιλογή· ενεργοποιήστε το μόνο για αποσφαλμάτωση."
   feedback_intensity: "Ένταση ανατροφοδότησης"
@@ -611,7 +611,7 @@ settings:
   sounds_test: "Δοκιμή"
   section_storage_mode: Λειτουργία αποθήκευσης
   storage_mode_help: Διάλεξε πού ζουν τα δεδομένα σου. Η τοπική λειτουργία κρατά τα πάντα σε αυτόν τον περιηγητή· η λειτουργία Server μιλά με το backend του AdaptiveLearner.
-  storage_mode_api: Server
+  storage_mode_api: "Διακομιστής"
   storage_mode_api_hint: Απαιτεί ενεργό backend AdaptiveLearner.
   storage_mode_dexie: Τοπικό (Περιηγητής)
   storage_mode_dexie_hint: Δεδομένα και κλειδιά API ζουν σε αυτόν τον περιηγητή· οι κλήσεις AI γίνονται απευθείας από τη σελίδα.
@@ -687,17 +687,17 @@ settings:
   model_override_default: Προεπιλεγμένο μοντέλο
   model_override_save: Αποθήκευση μοντέλου
   model_override_clear: Χρήση προεπιλογής
-  model_picker_placeholder: Select or type a model id
-  model_picker_open: Open model list
-  model_picker_default_hint: 'Uses default:'
-  model_picker_loading: Loading models...
-  model_picker_error: Could not load models. Check your API key.
-  model_picker_retry: Retry
-  model_picker_no_key: Save an API key for this provider to load the available models.
-  model_picker_recommended: Recommended
-  model_picker_all: All models
-  model_picker_suggestions: Suggested (offline)
-  section_gamification: Gamification
+  model_picker_placeholder: "Επιλέξτε ή πληκτρολογήστε ένα αναγνωριστικό μοντέλου"
+  model_picker_open: "Άνοιγμα λίστας μοντέλων"
+  model_picker_default_hint: "Χρησιμοποιεί το προεπιλεγμένο:"
+  model_picker_loading: "Φόρτωση μοντέλων..."
+  model_picker_error: "Δεν ήταν δυνατή η φόρτωση των μοντέλων. Ελέγξτε το κλειδί API σας."
+  model_picker_retry: "Επανάληψη"
+  model_picker_no_key: "Αποθηκεύστε ένα κλειδί API για αυτόν τον πάροχο για να φορτωθούν τα διαθέσιμα μοντέλα."
+  model_picker_recommended: "Συνιστάται"
+  model_picker_all: "Όλα τα μοντέλα"
+  model_picker_suggestions: "Προτεινόμενα (εκτός σύνδεσης)"
+  section_gamification: "Παιχνιδοποίηση"
   xp_notifications: Εμφάνιση ειδοποιήσεων XP
   xp_notifications_help: Αναδυόμενη κίνηση «+50 XP» όταν κερδίζεις.
   badge_notifications: Εμφάνιση ειδοποιήσεων σημάτων
@@ -897,40 +897,40 @@ about:
   docs_label: Τεκμηρίωση
   issues_label: Issues
 backup:
-  section_title: Backup
-  section_help: Export everything in your account as a JSON file. API keys are NOT included; you will need to re-enter them after a restore.
-  export: Create Backup
-  exporting: Exporting…
-  import: Restore from Backup
-  importing: Restoring…
-  confirm: Confirm restore
-  invalid_format: This file is not a valid Adaptive Learner backup.
+  section_title: "Αντίγραφο ασφαλείας"
+  section_help: "Εξαγάγετε τα πάντα στον λογαριασμό σας ως αρχείο JSON. Τα κλειδιά API ΔΕΝ περιλαμβάνονται· θα πρέπει να τα εισαγάγετε ξανά μετά την επαναφορά."
+  export: "Δημιουργία αντιγράφου ασφαλείας"
+  exporting: "Εξαγωγή…"
+  import: "Επαναφορά από αντίγραφο ασφαλείας"
+  importing: "Επαναφορά…"
+  confirm: "Επιβεβαίωση επαναφοράς"
+  invalid_format: "Αυτό το αρχείο δεν είναι έγκυρο αντίγραφο ασφαλείας του Adaptive Learner."
   not_a_backup_file: 'Αυτό το αρχείο δεν είναι έγκυρο αρχείο αντιγράφου ασφαλείας. Επιλέξτε ένα αρχείο που εξήχθη με «Δημιουργία αντιγράφου ασφαλείας».'
   version_mismatch: "Αυτό το αντίγραφο είναι από την έκδοση {{from}}· η εφαρμογή είναι {{to}}. Ελέγξτε τις αλλαγές παρακάτω και επιβεβαιώστε την εισαγωγή."
   too_large: 'Αυτό το αρχείο αντιγράφου ασφαλείας είναι πολύ μεγάλο (πάνω από 100 MB).'
-  export_success: Backup downloaded ({{count}} records).
-  export_error: 'Backup failed: {{detail}}'
-  import_parse_error: 'Could not read backup: {{detail}}'
-  import_error: 'Restore failed: {{detail}}'
-  comparison_title: Confirm restore
-  comparison_help: 'Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.'
-  table_header: Table
-  current_header: Current
-  incoming_header: Backup
-  restored_summary: Restore complete.
-  restored_inserted: 'Inserted: {{n}}'
-  restored_updated: 'Updated: {{n}}'
-  restored_skipped: 'Skipped: {{n}}'
+  export_success: "Το αντίγραφο ασφαλείας λήφθηκε ({{count}} εγγραφές)."
+  export_error: "Το αντίγραφο ασφαλείας απέτυχε: {{detail}}"
+  import_parse_error: "Δεν ήταν δυνατή η ανάγνωση του αντιγράφου ασφαλείας: {{detail}}"
+  import_error: "Η επαναφορά απέτυχε: {{detail}}"
+  comparison_title: "Επιβεβαίωση επαναφοράς"
+  comparison_help: "Η επαναφορά θα συγχωνεύσει: νέες εγγραφές εισάγονται, μεταβλητές εγγραφές ενημερώνονται μόνο αν το αντίγραφο είναι νεότερο, οι εγγραφές ιστορικού διατηρούνται ως έχουν. Τίποτα δεν διαγράφεται. Τα κλειδιά API αγνοούνται."
+  table_header: "Πίνακας"
+  current_header: "Τρέχον"
+  incoming_header: "Αντίγραφο"
+  restored_summary: "Η επαναφορά ολοκληρώθηκε."
+  restored_inserted: "Εισήχθησαν: {{n}}"
+  restored_updated: "Ενημερώθηκαν: {{n}}"
+  restored_skipped: "Παραλείφθηκαν: {{n}}"
   api_keys_skipped: "Δεν ήταν δυνατή η εισαγωγή των κλειδιών API. Καταχωρίστε τα ξανά στις Ρυθμίσεις > Ενσωματώσεις."
-  restored_errors: 'Errors: {{n}}'
+  restored_errors: "Σφάλματα: {{n}}"
   col_inserted: 'Εισ.'
   col_updated: 'Ενημ.'
   col_skipped: 'Παράλ.'
   col_errors: 'Σφάλ.'
   error_details: 'Λεπτομέρειες σφαλμάτων'
-  restored_with_errors: '{{n}} records could not be restored.'
-  last_backup: 'Last backup: {{when}}'
-  reminder_overdue: It has been more than {{days}} days since your last backup.
+  restored_with_errors: "{{n}} εγγραφές δεν ήταν δυνατό να επαναφερθούν."
+  last_backup: "Τελευταίο αντίγραφο ασφαλείας: {{when}}"
+  reminder_overdue: "Έχουν περάσει περισσότερες από {{days}} ημέρες από το τελευταίο σας αντίγραφο ασφαλείας."
   saved_as: 'Το αντίγραφο αποθηκεύτηκε: {{filename}}'
   downloaded: 'Το αντίγραφο λήφθηκε: {{filename}} ({{count}} εγγραφές).'
   contains_title: 'Το αντίγραφο ασφαλείας σας περιέχει:'
@@ -941,137 +941,137 @@ backup:
   count_projects: '{{n}} έργα'
   count_imports: '{{n}} εισαγωγές συνομιλιών'
   record_count: 'Σύνολο {{count}} εγγραφών'
-  auto_title: Auto-backup
-  auto_help: Automatically back up after every 10 completed sessions or once a week.
-  auto_run: Back up now
-  auto_run_success: Auto-backup created.
-  auto_run_error: 'Auto-backup failed: {{detail}}'
-  auto_restored: Auto-backup restored.
-  auto_restore: Restore
-  auto_restore_error: 'Restore failed: {{detail}}'
-  auto_records: '{{n}} records'
-  auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
-  storage_pressure: Browser storage is almost full ({{pct}}% of quota). Export a manual backup now.
-  compare_title: Compare Backups
-  compare_help: Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified — comparison is read-only.
-  compare_slot_a: Backup A (older)
-  compare_slot_b: Backup B (newer)
-  compare_pick: Pick file…
-  compare_use_current: Use current state
-  compare_current_label: Current state
-  compare_clear: Clear
-  compare_label_a: Backup A
-  compare_label_b: Backup B
-  compare_records: records
-  compare_loading: Comparing backups…
-  compare_progress: Comparing…
-  compare_hide_unchanged: Hide unchanged tables
-  compare_sort_label: 'Sort:'
-  compare_sort_delta: Most changes first
-  compare_sort_alpha: Alphabetical
-  compare_no_changes: The two backups are identical — no differences detected.
-  compare_section_added: Added
-  compare_section_removed: Removed
-  compare_section_changed: Changed
-  compare_field: Field
-  compare_old: Old
-  compare_new: New
-  compare_field_changes: field changes
-  compare_high_volume_hint: High-volume table — record-level previews shown abbreviated.
-  compare_export_md: Export as Markdown
-  compare_markdown_downloaded: Diff exported.
-  confirm_with_counts: Restore ({{added}} added, {{updated}} updated)
-  auto_compare_as_a: Compare as A
-  auto_compare_as_b: Compare as B
-  compare_auto_label: Auto-backup {{date}}
-  auto_compare_missing: Auto-backup is no longer available — it was rotated out.
+  auto_title: "Αυτόματο αντίγραφο ασφαλείας"
+  auto_help: "Αυτόματο αντίγραφο ασφαλείας μετά από κάθε 10 ολοκληρωμένες συνεδρίες ή μία φορά την εβδομάδα."
+  auto_run: "Δημιουργία αντιγράφου τώρα"
+  auto_run_success: "Δημιουργήθηκε αυτόματο αντίγραφο ασφαλείας."
+  auto_run_error: "Το αυτόματο αντίγραφο ασφαλείας απέτυχε: {{detail}}"
+  auto_restored: "Το αυτόματο αντίγραφο ασφαλείας επαναφέρθηκε."
+  auto_restore: "Επαναφορά"
+  auto_restore_error: "Η επαναφορά απέτυχε: {{detail}}"
+  auto_records: "{{n}} εγγραφές"
+  auto_none: "Δεν υπάρχουν ακόμη αυτόματα αντίγραφα. Το πρώτο εκτελείται μετά από 10 συνεδρίες ή 7 ημέρες."
+  storage_pressure: "Ο χώρος αποθήκευσης του προγράμματος περιήγησης είναι σχεδόν γεμάτος ({{pct}}% του ορίου). Εξαγάγετε τώρα ένα χειροκίνητο αντίγραφο ασφαλείας."
+  compare_title: "Σύγκριση αντιγράφων ασφαλείας"
+  compare_help: "Επιλέξτε δύο αρχεία αντιγράφων (ή ένα αρχείο μαζί με την τρέχουσα κατάσταση) για να δείτε τι άλλαξε μεταξύ τους. Δεν τροποποιείται κανένα δεδομένο — η σύγκριση είναι μόνο για ανάγνωση."
+  compare_slot_a: "Αντίγραφο A (παλαιότερο)"
+  compare_slot_b: "Αντίγραφο B (νεότερο)"
+  compare_pick: "Επιλογή αρχείου…"
+  compare_use_current: "Χρήση τρέχουσας κατάστασης"
+  compare_current_label: "Τρέχουσα κατάσταση"
+  compare_clear: "Εκκαθάριση"
+  compare_label_a: "Αντίγραφο A"
+  compare_label_b: "Αντίγραφο B"
+  compare_records: "εγγραφές"
+  compare_loading: "Σύγκριση αντιγράφων ασφαλείας…"
+  compare_progress: "Σύγκριση…"
+  compare_hide_unchanged: "Απόκρυψη αμετάβλητων πινάκων"
+  compare_sort_label: "Ταξινόμηση:"
+  compare_sort_delta: "Πρώτα οι περισσότερες αλλαγές"
+  compare_sort_alpha: "Αλφαβητικά"
+  compare_no_changes: "Τα δύο αντίγραφα ασφαλείας είναι πανομοιότυπα — δεν εντοπίστηκαν διαφορές."
+  compare_section_added: "Προστέθηκαν"
+  compare_section_removed: "Αφαιρέθηκαν"
+  compare_section_changed: "Άλλαξαν"
+  compare_field: "Πεδίο"
+  compare_old: "Παλιό"
+  compare_new: "Νέο"
+  compare_field_changes: "αλλαγές πεδίων"
+  compare_high_volume_hint: "Πίνακας μεγάλου όγκου — οι προεπισκοπήσεις ανά εγγραφή εμφανίζονται συντομευμένες."
+  compare_export_md: "Εξαγωγή ως Markdown"
+  compare_markdown_downloaded: "Η διαφορά εξήχθη."
+  confirm_with_counts: "Επαναφορά ({{added}} προστέθηκαν, {{updated}} ενημερώθηκαν)"
+  auto_compare_as_a: "Σύγκριση ως A"
+  auto_compare_as_b: "Σύγκριση ως B"
+  compare_auto_label: "Αυτόματο αντίγραφο {{date}}"
+  auto_compare_missing: "Το αυτόματο αντίγραφο ασφαλείας δεν είναι πλέον διαθέσιμο — αντικαταστάθηκε."
 export:
-  title: Export
-  intro: Download your learning journey as Markdown or PDF. Markdown is plain text you can edit and share; PDF opens your browser's print dialog so you can save a copy.
-  progress_label: Progress Report (full journey)
-  session_label: Session Detail
-  curriculum_label: Curriculum Overview
-  select_session: -- pick a session --
-  select_curriculum: -- pick a curriculum --
-  preview: Preview
-  preview_title: Preview
-  preview_close: Close
+  title: "Εξαγωγή"
+  intro: "Κατεβάστε το ταξίδι μάθησής σας ως Markdown ή PDF. Το Markdown είναι απλό κείμενο που μπορείτε να επεξεργαστείτε και να μοιραστείτε· το PDF ανοίγει το παράθυρο εκτύπωσης του προγράμματος περιήγησης ώστε να αποθηκεύσετε ένα αντίγραφο."
+  progress_label: "Αναφορά προόδου (πλήρες ταξίδι)"
+  session_label: "Λεπτομέρειες συνεδρίας"
+  curriculum_label: "Επισκόπηση προγράμματος σπουδών"
+  select_session: "-- επιλέξτε συνεδρία --"
+  select_curriculum: "-- επιλέξτε πρόγραμμα σπουδών --"
+  preview: "Προεπισκόπηση"
+  preview_title: "Προεπισκόπηση"
+  preview_close: "Κλείσιμο"
   download_md: Markdown
   download_pdf: PDF
-  busy: Working...
-  download_success: Export downloaded.
-  print_opened: Print dialog opened. Pick "Save as PDF".
-  error: 'Export failed: {{detail}}'
-  preview_error: 'Preview failed: {{detail}}'
-  load_error: 'Could not load export data: {{detail}}'
-  pick_session: Pick a session first.
-  pick_curriculum: Pick a curriculum first.
-  title_progress: Learning Progress
-  title_session: Session Detail
-  title_curriculum: Curriculum
+  busy: "Επεξεργασία..."
+  download_success: "Η εξαγωγή λήφθηκε."
+  print_opened: "Άνοιξε το παράθυρο εκτύπωσης. Επιλέξτε «Αποθήκευση ως PDF»."
+  error: "Η εξαγωγή απέτυχε: {{detail}}"
+  preview_error: "Η προεπισκόπηση απέτυχε: {{detail}}"
+  load_error: "Δεν ήταν δυνατή η φόρτωση των δεδομένων εξαγωγής: {{detail}}"
+  pick_session: "Επιλέξτε πρώτα μια συνεδρία."
+  pick_curriculum: "Επιλέξτε πρώτα ένα πρόγραμμα σπουδών."
+  title_progress: "Πρόοδος μάθησης"
+  title_session: "Λεπτομέρειες συνεδρίας"
+  title_curriculum: "Πρόγραμμα σπουδών"
 sync:
-  api_mode_note: This device is running its own backend. The paired device should also see this connection in its sync panel.
-  camera_denied: Camera access denied
-  camera_denied_hint: Allow camera access in your browser settings, then re-open the scanner.
-  camera_error: Could not start the camera
-  camera_error_hint: Something went wrong starting the camera. Try again, or use paste-the-link.
-  conflict_apply: Apply choices
-  conflict_cancel: Cancel (keep all local)
-  conflicts_intro: Both devices changed the same record since the last sync. Pick which version to keep for each one.
-  conflicts_title: Resolve sync conflicts
-  connect: Connect
-  connected_to: Connected to
-  copy_error: Could not copy to clipboard.
-  copy_link: Copy link
-  desktop_hint: Generate a short-lived pairing link. Open this app on your phone, paste the link, and the two devices will share the same user account.
-  expires_at: Expires
-  generate: Generate pairing code
-  generating: Generating…
-  history: Recent syncs
-  host: Local IP / host
-  image_decode_failed: Could not read a QR code from this image. Re-take the screenshot.
-  image_decoding: Reading image…
-  intro: Pair a phone and a desktop on the same local network. Sync is always opt-in; you click Sync Now when you want to merge changes.
-  invalid_qr: Not a valid pairing code.
-  keep_local: Keep this device
-  keep_remote: Keep other device
-  last_sync: Last sync
-  link_copied: Pairing link copied.
-  local_version: This device
-  merge: Merge manually
-  merge_editor: Merged record (editable)
-  never: never
-  no_camera: No camera available
-  no_camera_hint: This device has no camera available. Use the paste-the-link option instead.
-  no_user: Complete the onboarding before generating a pairing code.
-  now: Sync Now
-  pair_error: Could not pair the device.
-  paired: Device paired.
-  paired_at: Paired
-  pairing: Pairing…
-  paste_link_fallback: Or paste the link manually
-  phone_hint_v17: Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically.
-  port: Port
-  qr_alt: Pairing QR code
-  remote_version: Other device
-  scan_again: Scan again
-  scan_hint: Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once.
-  scan_instruction: Point your camera at the QR code on your desktop.
-  scan_qr: Scan QR Code
-  scan_success: Connection found
-  scan_success_hint: Verifying with the desktop…
-  smart_merge: Smart Merge (AI)
-  smart_merge_error: Smart merge failed.
-  smart_merge_ready: AI merge ready — review and apply.
-  smart_merge_running: Merging with AI…
-  sync_error: Sync failed.
-  synced: Synced
-  syncing: Syncing…
-  unpair: Unpair device
-  unpair_confirm: Unpair this device? Local data is kept; future syncs are blocked until you pair again.
-  unpaired: Device unpaired.
-  upload_qr: Upload QR image
-  upload_qr_hint: 'No camera? Take a screenshot of the desktop''s QR and upload it:'
+  api_mode_note: "Αυτή η συσκευή εκτελεί το δικό της backend. Η συζευγμένη συσκευή θα πρέπει επίσης να βλέπει αυτή τη σύνδεση στον πίνακα συγχρονισμού της."
+  camera_denied: "Η πρόσβαση στην κάμερα απορρίφθηκε"
+  camera_denied_hint: "Επιτρέψτε την πρόσβαση στην κάμερα στις ρυθμίσεις του προγράμματος περιήγησης και μετά ανοίξτε ξανά τον σαρωτή."
+  camera_error: "Δεν ήταν δυνατή η εκκίνηση της κάμερας"
+  camera_error_hint: "Κάτι πήγε στραβά κατά την εκκίνηση της κάμερας. Δοκιμάστε ξανά ή χρησιμοποιήστε την επικόλληση συνδέσμου."
+  conflict_apply: "Εφαρμογή επιλογών"
+  conflict_cancel: "Άκυρο (διατήρηση όλων των τοπικών)"
+  conflicts_intro: "Και οι δύο συσκευές άλλαξαν την ίδια εγγραφή από τον τελευταίο συγχρονισμό. Επιλέξτε ποια έκδοση θα διατηρηθεί για κάθε μία."
+  conflicts_title: "Επίλυση διενέξεων συγχρονισμού"
+  connect: "Σύνδεση"
+  connected_to: "Συνδεδεμένο με"
+  copy_error: "Δεν ήταν δυνατή η αντιγραφή στο πρόχειρο."
+  copy_link: "Αντιγραφή συνδέσμου"
+  desktop_hint: "Δημιουργήστε έναν σύνδεσμο σύζευξης σύντομης διάρκειας. Ανοίξτε αυτή την εφαρμογή στο τηλέφωνό σας, επικολλήστε τον σύνδεσμο και οι δύο συσκευές θα μοιράζονται τον ίδιο λογαριασμό χρήστη."
+  expires_at: "Λήγει"
+  generate: "Δημιουργία κωδικού σύζευξης"
+  generating: "Δημιουργία…"
+  history: "Πρόσφατοι συγχρονισμοί"
+  host: "Τοπική IP / κεντρικός υπολογιστής"
+  image_decode_failed: "Δεν ήταν δυνατή η ανάγνωση κωδικού QR από αυτή την εικόνα. Τραβήξτε ξανά το στιγμιότυπο οθόνης."
+  image_decoding: "Ανάγνωση εικόνας…"
+  intro: "Συζεύξτε ένα τηλέφωνο και έναν υπολογιστή στο ίδιο τοπικό δίκτυο. Ο συγχρονισμός είναι πάντα προαιρετικός· κάνετε κλικ στο «Συγχρονισμός τώρα» όταν θέλετε να συγχωνεύσετε αλλαγές."
+  invalid_qr: "Μη έγκυρος κωδικός σύζευξης."
+  keep_local: "Διατήρηση αυτής της συσκευής"
+  keep_remote: "Διατήρηση της άλλης συσκευής"
+  last_sync: "Τελευταίος συγχρονισμός"
+  link_copied: "Ο σύνδεσμος σύζευξης αντιγράφηκε."
+  local_version: "Αυτή η συσκευή"
+  merge: "Μη αυτόματη συγχώνευση"
+  merge_editor: "Συγχωνευμένη εγγραφή (επεξεργάσιμη)"
+  never: "ποτέ"
+  no_camera: "Δεν υπάρχει διαθέσιμη κάμερα"
+  no_camera_hint: "Αυτή η συσκευή δεν διαθέτει κάμερα. Χρησιμοποιήστε αντ’ αυτού την επιλογή επικόλλησης συνδέσμου."
+  no_user: "Ολοκληρώστε την εισαγωγή πριν δημιουργήσετε κωδικό σύζευξης."
+  now: "Συγχρονισμός τώρα"
+  pair_error: "Δεν ήταν δυνατή η σύζευξη της συσκευής."
+  paired: "Η συσκευή συζεύχθηκε."
+  paired_at: "Συζεύχθηκε"
+  pairing: "Σύζευξη…"
+  paste_link_fallback: "Ή επικολλήστε τον σύνδεσμο μη αυτόματα"
+  phone_hint_v17: "Σαρώστε τον κωδικό QR στην οθόνη Ρυθμίσεις > Συγχρονισμός του υπολογιστή σας. Η πίσω κάμερα του τηλεφώνου διαβάζει αυτόματα τον σύνδεσμο σύζευξης."
+  port: "Θύρα"
+  qr_alt: "Κωδικός QR σύζευξης"
+  remote_version: "Άλλη συσκευή"
+  scan_again: "Σάρωση ξανά"
+  scan_hint: "Ανοίξτε τις Ρυθμίσεις > Συγχρονισμός του τηλεφώνου, επικολλήστε αυτόν τον σύνδεσμο και πατήστε Σύνδεση. Ο σύνδεσμος λήγει σε 5 λεπτά και μπορεί να χρησιμοποιηθεί μία φορά."
+  scan_instruction: "Στρέψτε την κάμερά σας στον κωδικό QR του υπολογιστή σας."
+  scan_qr: "Σάρωση κωδικού QR"
+  scan_success: "Βρέθηκε σύνδεση"
+  scan_success_hint: "Επαλήθευση με τον υπολογιστή…"
+  smart_merge: "Έξυπνη συγχώνευση (AI)"
+  smart_merge_error: "Η έξυπνη συγχώνευση απέτυχε."
+  smart_merge_ready: "Η συγχώνευση AI είναι έτοιμη — ελέγξτε και εφαρμόστε."
+  smart_merge_running: "Συγχώνευση με AI…"
+  sync_error: "Ο συγχρονισμός απέτυχε."
+  synced: "Συγχρονίστηκε"
+  syncing: "Συγχρονισμός…"
+  unpair: "Αποσύζευξη συσκευής"
+  unpair_confirm: "Αποσύζευξη αυτής της συσκευής; Τα τοπικά δεδομένα διατηρούνται· οι μελλοντικοί συγχρονισμοί αποκλείονται μέχρι να γίνει ξανά σύζευξη."
+  unpaired: "Η συσκευή αποσυζεύχθηκε."
+  upload_qr: "Μεταφόρτωση εικόνας QR"
+  upload_qr_hint: "Δεν υπάρχει κάμερα; Τραβήξτε ένα στιγμιότυπο οθόνης του QR του υπολογιστή και μεταφορτώστε το:"
 gamification:
   trend_up: "Περισσότερα από την περασμένη εβδομάδα"
   trend_down: "Λιγότερα από την περασμένη εβδομάδα"
@@ -1228,19 +1228,19 @@ gamification:
   reset_done: 'Πρόοδος μηδενίστηκε: {xp} XP, {badges} σήματα, {streak} σερί.'
   reset_failed: Δεν ήταν δυνατή η επαναφορά της προόδου.
   weekend_mode_save_failed: Δεν αποθηκεύτηκε η λειτουργία Σαββατοκύριακου.
-  danger_zone_heading: Danger Zone
-  danger_zone_intro: Permanently delete every piece of learner state on this device.
-  danger_zone_reset_button: Reset Everything
-  danger_zone_warning: This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.
-  danger_zone_confirm_prompt: 'Type RESET to confirm'
+  danger_zone_heading: "Ζώνη κινδύνου"
+  danger_zone_intro: "Διαγράψτε οριστικά κάθε κατάσταση μαθητή σε αυτή τη συσκευή."
+  danger_zone_reset_button: "Επαναφορά όλων"
+  danger_zone_warning: "Αυτό διαγράφει ΟΛΑ τα δεδομένα μάθησής σας οριστικά — συνεδρίες, πρόοδο, προφίλ, προγράμματα σπουδών, εισαγωγές, κάρτες Anki, ρυθμίσεις και κλειδιά API. Αυτή η ενέργεια ΔΕΝ μπορεί να αναιρεθεί."
+  danger_zone_confirm_prompt: "Πληκτρολογήστε RESET για επιβεβαίωση"
   danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Delete permanently
-  danger_zone_backup_offer: Create a backup first?
-  danger_zone_backup_button: Create backup
-  danger_zone_complete_toast: All data has been deleted.
-  danger_zone_cancel: Cancel
-  danger_zone_continue: Continue
-  danger_zone_failed_toast: 'Reset failed:'
+  danger_zone_final_button: "Οριστική διαγραφή"
+  danger_zone_backup_offer: "Δημιουργία αντιγράφου ασφαλείας πρώτα;"
+  danger_zone_backup_button: "Δημιουργία αντιγράφου ασφαλείας"
+  danger_zone_complete_toast: "Όλα τα δεδομένα διαγράφηκαν."
+  danger_zone_cancel: "Άκυρο"
+  danger_zone_continue: "Συνέχεια"
+  danger_zone_failed_toast: "Η επαναφορά απέτυχε:"
 anki:
   title: Εξαγωγή Anki
   intro: Έλεγξε τις κάρτες που πρότεινε η ΤΝ, αποδέξου όσες θέλεις και εξήγαγέ τες ως αρχείο .apkg για το Anki.
@@ -1346,23 +1346,23 @@ ui:
     generic: "Κάτι πήγε στραβά. Δοκίμασε ξανά αργότερα."
     unexpected: "Κάτι πήγε στραβά."
   error_report:
-    dialog_title: "Report an issue"
-    intro: "Adaptive Learner caught an error and can prepare a bug report for the developer."
-    description_label: "Steps to reproduce (optional)"
-    description_placeholder: "Briefly describe what you were doing when the error appeared. Leave blank to skip."
-    include_error: "Error message and stacktrace"
-    include_environment: "Environment info (version, browser, OS)"
-    include_history: "Action history"
-    view: "View"
-    privacy_note: "No project content, no passwords, no API keys are ever sent."
-    preview: "Show preview"
-    hide_preview: "Hide preview"
-    copy_preview: "Copy preview"
-    copied: "Copied!"
-    copy_failed: "Copy failed"
-    open_github: "Open on GitHub"
-    close: "Close"
-    truncated: "Report truncated to fit GitHub's URL length limit."
+    dialog_title: "Αναφορά προβλήματος"
+    intro: "Το Adaptive Learner εντόπισε ένα σφάλμα και μπορεί να ετοιμάσει μια αναφορά σφάλματος για τον προγραμματιστή."
+    description_label: "Βήματα αναπαραγωγής (προαιρετικά)"
+    description_placeholder: "Περιγράψτε σύντομα τι κάνατε όταν εμφανίστηκε το σφάλμα. Αφήστε το κενό για παράλειψη."
+    include_error: "Μήνυμα σφάλματος και ίχνος στοίβας"
+    include_environment: "Πληροφορίες περιβάλλοντος (έκδοση, πρόγραμμα περιήγησης, λειτουργικό)"
+    include_history: "Ιστορικό ενεργειών"
+    view: "Προβολή"
+    privacy_note: "Δεν αποστέλλεται ποτέ περιεχόμενο έργου, κωδικοί πρόσβασης ή κλειδιά API."
+    preview: "Εμφάνιση προεπισκόπησης"
+    hide_preview: "Απόκρυψη προεπισκόπησης"
+    copy_preview: "Αντιγραφή προεπισκόπησης"
+    copied: "Αντιγράφηκε!"
+    copy_failed: "Η αντιγραφή απέτυχε"
+    open_github: "Άνοιγμα στο GitHub"
+    close: "Κλείσιμο"
+    truncated: "Η αναφορά περικόπηκε για να χωρέσει στο όριο μήκους URL του GitHub."
     intro_proactive: "Ετοιμάστε μια αναφορά των πρόσφατων ενεργειών σας για αποστολή στον προγραμματιστή. Βλέπετε ακριβώς τι περιέχει πριν φύγει οτιδήποτε από το πρόγραμμα περιήγησής σας."
     app_state: "Κατάσταση εφαρμογής"
     online: "συνδεδεμένος"
@@ -1378,125 +1378,125 @@ ui:
       exercise: "Άσκηση"
       error: "Σφάλματα"
   help:
-    learn_more: "Learn more"
-    open_help: "Open help"
-    drawer_title: "Help"
-    related: "Related concepts"
-    search_placeholder: "Search the glossary..."
+    learn_more: "Μάθετε περισσότερα"
+    open_help: "Άνοιγμα βοήθειας"
+    drawer_title: "Βοήθεια"
+    related: "Σχετικές έννοιες"
+    search_placeholder: "Αναζήτηση στο γλωσσάρι..."
     categories:
-      concepts: "Core concepts"
-      methods: "Learning methods"
-      steps: "Cycle steps"
-      features: "App features"
-    no_results: "No matching entries."
+      concepts: "Βασικές έννοιες"
+      methods: "Μέθοδοι μάθησης"
+      steps: "Βήματα κύκλου"
+      features: "Λειτουργίες εφαρμογής"
+    no_results: "Δεν βρέθηκαν αντιστοιχίες."
   api_key:
-    required: "API key required."
-    required_with_feature: "API key required {feature}."
-    required_long: "Configure a provider key in Settings to enable this action."
-    open_settings: "Open Settings"
-    skip_banner: "Configure an API key in Settings to use AI features."
-    skip_banner_dismiss: "Dismiss"
-    feature_analyze: "to analyze conversations"
-    feature_session: "to start a session"
-    feature_anki: "to extract Anki cards"
-    feature_study_guide: "to generate a study guide"
-    feature_study_questions: "to generate study questions"
-    feature_pronunciation: "for pronunciation practice"
+    required: "Απαιτείται κλειδί API."
+    required_with_feature: "Απαιτείται κλειδί API {feature}."
+    required_long: "Ρυθμίστε ένα κλειδί παρόχου στις Ρυθμίσεις για να ενεργοποιήσετε αυτή την ενέργεια."
+    open_settings: "Άνοιγμα ρυθμίσεων"
+    skip_banner: "Ρυθμίστε ένα κλειδί API στις Ρυθμίσεις για να χρησιμοποιήσετε λειτουργίες AI."
+    skip_banner_dismiss: "Παράβλεψη"
+    feature_analyze: "για ανάλυση συνομιλιών"
+    feature_session: "για να ξεκινήσετε μια συνεδρία"
+    feature_anki: "για εξαγωγή καρτών Anki"
+    feature_study_guide: "για δημιουργία οδηγού μελέτης"
+    feature_study_questions: "για δημιουργία ερωτήσεων μελέτης"
+    feature_pronunciation: "για εξάσκηση στην προφορά"
   common:
-    close: "Close"
+    close: "Κλείσιμο"
     loading: "Φόρτωση…"
   a11y:
     # Phase 39 (WCAG 2.1 AA). EN passthrough per the existing
     # project convention (es/fr/el inherit EN for ui.* keys).
-    skip_to_content: "Skip to main content"
-    chart_show_as_table: "Show data as table"
-    chart_radar_label: "Learning profile radar chart"
-    chart_radar_summary: "Your strongest learning method: {method} ({value})"
-    chart_timeline_label: "Progress timeline of the last {n} sessions"
-    chart_timeline_summary: "{n} sessions; understanding trending {trend}"
+    skip_to_content: "Μετάβαση στο κύριο περιεχόμενο"
+    chart_show_as_table: "Εμφάνιση δεδομένων ως πίνακα"
+    chart_radar_label: "Διάγραμμα ραντάρ προφίλ μάθησης"
+    chart_radar_summary: "Η πιο δυνατή σας μέθοδος μάθησης: {method} ({value})"
+    chart_timeline_label: "Χρονολόγιο προόδου των τελευταίων {n} συνεδριών"
+    chart_timeline_summary: "{n} συνεδρίες· η κατανόηση τείνει προς τα {trend}"
     chart_timeline_trend_up: "up"
-    chart_timeline_trend_down: "down"
-    chart_timeline_trend_flat: "flat"
-    chart_distribution_label: "Method distribution bar chart"
-    chart_distribution_summary: "Most-used method: {method} ({count} sessions, {pct}%)"
-    streak_cell_label: "{count} sessions on {date}"
-    streak_cell_label_zero: "No sessions on {date}"
+    chart_timeline_trend_down: "κάτω"
+    chart_timeline_trend_flat: "σταθερή"
+    chart_distribution_label: "Ραβδόγραμμα κατανομής μεθόδων"
+    chart_distribution_summary: "Πιο χρησιμοποιημένη μέθοδος: {method} ({count} συνεδρίες, {pct}%)"
+    streak_cell_label: "{count} συνεδρίες στις {date}"
+    streak_cell_label_zero: "Καμία συνεδρία στις {date}"
     chart_radar_value: "Βαθμολογία"
   tooltips:
     # Generic icon-button labels. Aim: 1-3 words, action-oriented.
-    delete: "Delete"
-    edit: "Edit"
-    close: "Close"
-    save: "Save"
-    cancel: "Cancel"
-    send: "Send"
-    send_message: "Send message"
-    confirm: "Confirm"
-    open: "Open"
-    expand: "Expand"
-    collapse: "Collapse"
-    copy: "Copy"
-    copy_text: "Copy text"
-    paste: "Paste"
-    download: "Download"
-    upload: "Upload"
-    retry: "Retry"
-    dismiss: "Dismiss"
-    refresh: "Refresh"
-    settings: "Settings"
-    help: "Open help"
-    menu: "Menu"
-    back: "Back"
-    next: "Next"
-    previous: "Previous"
-    search: "Search"
-    scan_qr: "Scan QR code"
-    mic: "Voice input"
-    play: "Play"
-    pause: "Pause"
-    stop: "Stop"
-    read_aloud: "Read aloud"
-    add: "Add"
-    add_topic: "Add topic"
-    add_subtopic: "Add subtopic"
-    add_lesson: "Add lesson"
-    add_root_topic: "Add root topic"
-    rename: "Rename"
-    select: "Select"
-    select_all: "Select all"
-    deselect_all: "Deselect all"
-    show_more: "Show more"
-    show_less: "Show less"
+    delete: "Διαγραφή"
+    edit: "Επεξεργασία"
+    close: "Κλείσιμο"
+    save: "Αποθήκευση"
+    cancel: "Άκυρο"
+    send: "Αποστολή"
+    send_message: "Αποστολή μηνύματος"
+    confirm: "Επιβεβαίωση"
+    open: "Άνοιγμα"
+    expand: "Ανάπτυξη"
+    collapse: "Σύμπτυξη"
+    copy: "Αντιγραφή"
+    copy_text: "Αντιγραφή κειμένου"
+    paste: "Επικόλληση"
+    download: "Λήψη"
+    upload: "Μεταφόρτωση"
+    retry: "Επανάληψη"
+    dismiss: "Παράβλεψη"
+    refresh: "Ανανέωση"
+    settings: "Ρυθμίσεις"
+    help: "Άνοιγμα βοήθειας"
+    menu: "Μενού"
+    back: "Πίσω"
+    next: "Επόμενο"
+    previous: "Προηγούμενο"
+    search: "Αναζήτηση"
+    scan_qr: "Σάρωση κωδικού QR"
+    mic: "Φωνητική εισαγωγή"
+    play: "Αναπαραγωγή"
+    pause: "Παύση"
+    stop: "Διακοπή"
+    read_aloud: "Ανάγνωση φωναχτά"
+    add: "Προσθήκη"
+    add_topic: "Προσθήκη θέματος"
+    add_subtopic: "Προσθήκη υποθέματος"
+    add_lesson: "Προσθήκη μαθήματος"
+    add_root_topic: "Προσθήκη βασικού θέματος"
+    rename: "Μετονομασία"
+    select: "Επιλογή"
+    select_all: "Επιλογή όλων"
+    deselect_all: "Αποεπιλογή όλων"
+    show_more: "Εμφάνιση περισσότερων"
+    show_less: "Εμφάνιση λιγότερων"
     show_secret: "Εμφάνιση τιμής"
     hide_secret: "Απόκρυψη τιμής"
-    show_preview: "Show preview"
-    hide_preview: "Hide preview"
-    accept: "Accept"
-    reject: "Reject"
-    end_session: "End session"
-    start_session: "Start session"
-    continue_session: "Continue session"
-    rate_session: "Rate this session"
-    submit_rating: "Submit rating"
-    new_session: "Start a new session"
-    new_curriculum: "Create curriculum"
-    new_project: "New project"
-    analyze: "Run analysis"
+    show_preview: "Εμφάνιση προεπισκόπησης"
+    hide_preview: "Απόκρυψη προεπισκόπησης"
+    accept: "Αποδοχή"
+    reject: "Απόρριψη"
+    end_session: "Τερματισμός συνεδρίας"
+    start_session: "Έναρξη συνεδρίας"
+    continue_session: "Συνέχιση συνεδρίας"
+    rate_session: "Βαθμολόγηση αυτής της συνεδρίας"
+    submit_rating: "Υποβολή βαθμολογίας"
+    new_session: "Έναρξη νέας συνεδρίας"
+    new_curriculum: "Δημιουργία προγράμματος σπουδών"
+    new_project: "Νέο έργο"
+    analyze: "Εκτέλεση ανάλυσης"
     chat_language: Γλώσσα συνομιλίας (που μιλάς)
     learning_language: Γλώσσα εκμάθησης
     select_language: Επιλέξτε γλώσσα…
-    reanalyze: "Re-run analysis"
-    method_switch_accept: "Switch to suggested method"
-    method_switch_dismiss: "Keep current method"
-    export_markdown: "Export as Markdown"
-    export_pdf: "Export as PDF"
-    extract_anki: "Extract Anki cards"
-    backup_export: "Export backup"
-    backup_import: "Import backup"
-    sync_pair: "Pair sync"
-    rating_low: "{n} - Low"
-    rating_medium: "{n} - Medium"
-    rating_high: "{n} - High"
+    reanalyze: "Επανάληψη ανάλυσης"
+    method_switch_accept: "Αλλαγή στην προτεινόμενη μέθοδο"
+    method_switch_dismiss: "Διατήρηση τρέχουσας μεθόδου"
+    export_markdown: "Εξαγωγή ως Markdown"
+    export_pdf: "Εξαγωγή ως PDF"
+    extract_anki: "Εξαγωγή καρτών Anki"
+    backup_export: "Εξαγωγή αντιγράφου ασφαλείας"
+    backup_import: "Εισαγωγή αντιγράφου ασφαλείας"
+    sync_pair: "Σύζευξη συγχρονισμού"
+    rating_low: "{n} - Χαμηλό"
+    rating_medium: "{n} - Μέτριο"
+    rating_high: "{n} - Υψηλό"
 # Learning Repository plugin (v1.26.0 / Phase 42 / BL-30)
 # AI-translated, pending native review.
 repo:
@@ -1669,6 +1669,7 @@ lesson:
       selected_sr: "Επιλέχθηκε: {label}"
       resolve: "Επίλυση"
       resolve_announce: "Εμφανίστηκε η λύση. {correct} από {total} ζεύγη ήταν σωστά."
+      my_answers: "Οι απαντήσεις μου"
     picture:
       submit: "Έλεγχος απάντησης"
       retry: "Δοκίμασε ξανά"
@@ -1797,6 +1798,16 @@ lesson:
     mark_complete: "Σήμανση ως ολοκληρωμένο"
     next_lesson: "Επόμενο μάθημα"
     repeat: "Επανάληψη μαθήματος"
+    retry: "Εξάσκηση ξανά"
+    retry_heading: "Η βελτίωσή σου"
+    retry_attempt: "Προσπάθεια {n}: {pct}%"
+    retry_from: "(από {pct}%)"
+    retry_improvement: "Βελτίωση"
+    retry_errors_fixed: "Διορθωμένα λάθη"
+    retry_errors_fixed_value: "{fixed} από {total}"
+    retry_best: "Καλύτερο αποτέλεσμα"
+    retry_best_value: "{pct}% (προσπάθεια {n})"
+    retry_new_record: "Νέο ρεκόρ!"
     restart: "Έναρξη από την αρχή"
     back_to_browser: "Πίσω στον περιηγητή περιεχομένου"
     encourage_0: "Η εξάσκηση φέρνει την τελειότητα!"
@@ -2043,35 +2054,35 @@ content:
     fix_failed: Δεν ήταν δυνατή η εφαρμογή της πρότασης.
   ai_check:
     badge:
-      verified: "Elegmeno me TN"
-      stale: "Elegxos TN xronismenos"
-      invalid: "MI egkuros elegxos TN"
-    last_checked: "Teleutaios elegxos: {when}"
+      verified: "Ελεγμένο με ΤΝ"
+      stale: "Ξεπερασμένος έλεγχος ΤΝ"
+      invalid: "Μη έγκυρος έλεγχος ΤΝ"
+    last_checked: "Τελευταίος έλεγχος: {when}"
     checked_with: "Ελέγχθηκε με"
     date: "Ημερομηνία"
-    recheck: "Epanelegxos"
+    recheck: "Επανέλεγχος"
     export:
-      button: "Exagwgi anaforas se Markdown"
-      lesson: "Ma8Ima"
-      card: "Karta"
-      field: "Pedio"
-    button: "Elegxos me TN"
-    title: "Elegxos periexomenou me TN"
-    loading: "Proetoimasia kartwn..."
-    cost_estimate: "~{cards} kartes, ~{tokens} tokens, ~{usd}."
-    privacy: "Oi kartes sas tha staloun ston ru8mismeno paroxo TN gia elegxo. Den metaferontai proswpika dedomena."
-    confirm: "Elegxos"
-    progress: "Elegxos partidas {current} apo {total}..."
-    rate_limited: "Parakalw perimenete ligo prin ekteleste neo elegxo."
-    failed: "O elegxos me TN den einai diatesimos."
-    unavailable_mode: "Diatesimo mono se leitourgia apo8ikeusis programmatos periIgIsIs."
+      button: "Εξαγωγή αναφοράς ως Markdown"
+      lesson: "Μάθημα"
+      card: "Κάρτα"
+      field: "Πεδίο"
+    button: "Έλεγχος με ΤΝ"
+    title: "Έλεγχος περιεχομένου με ΤΝ"
+    loading: "Προετοιμασία καρτών..."
+    cost_estimate: "~{cards} κάρτες, ~{tokens} tokens, ~{usd}."
+    privacy: "Οι κάρτες του μαθήματός σας θα σταλούν στον ρυθμισμένο πάροχο ΤΝ για έλεγχο. Δεν μεταβιβάζονται προσωπικά δεδομένα."
+    confirm: "Έλεγχος"
+    progress: "Έλεγχος παρτίδας {current} από {total}..."
+    rate_limited: "Περιμένετε λίγο πριν εκτελέσετε νέο έλεγχο."
+    failed: "Ο έλεγχος με ΤΝ δεν είναι διαθέσιμος."
+    unavailable_mode: "Διαθέσιμο μόνο σε λειτουργία αποθήκευσης στο πρόγραμμα περιήγησης."
     report:
-      summary: "Elegx8Ikan {cards} kartes se {lessons} ma8Imata"
-      ok: "{count} kartes entaxei"
-      issues: "{count} kartes me provlImata"
-      all_ok: "Oles oi kartes pernoun. Den vre8Ikan provlImata."
-      problem: "ProvlIma"
-      suggestion: "Protasi"
+      summary: "Ελέγχθηκαν {cards} κάρτες σε {lessons} μαθήματα"
+      ok: "{count} κάρτες εντάξει"
+      issues: "{count} κάρτες με προβλήματα"
+      all_ok: "Όλες οι κάρτες πέρασαν. Δεν βρέθηκαν προβλήματα."
+      problem: "Πρόβλημα"
+      suggestion: "Πρόταση"
   quality:
     button: "Έλεγχος ποιότητας"
     title: "Έλεγχος ποιότητας"

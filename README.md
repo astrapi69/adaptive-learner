@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.93.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.94.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -285,7 +285,7 @@ Download from the
 Each release also ships a `.sha256` next to each binary for
 integrity verification. The launcher downloads the matching
 tagged source tree on first run, builds the Docker images,
-and starts the app on `http://localhost:7880`. On first start
+and starts the app on `http://localhost:8501`. On first start
 it also creates `~/.config/adaptive-learner/secrets.yaml` as a
 commented template — uncomment and fill in your provider API
 keys to skip the Settings UI dance.
@@ -310,7 +310,7 @@ irm https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.ps
 Both scripts clone the tagged release into `~/adaptive-learner/`,
 generate an `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet at-rest
 encryption), build the Docker images, and start the stack at
-`http://localhost:7880` (single port; nginx serves the static
+`http://localhost:8501` (single port; nginx serves the static
 frontend and proxies `/api/*` to FastAPI).
 
 ```bash
@@ -332,7 +332,10 @@ make install   # Poetry + npm + all 13 plugins as path-deps
 make dev       # backend :18001 + frontend :15174 (Vite dev server)
 ```
 
-Full setup walkthrough lives at
+New contributors should start with the
+[Developer Onboarding guide](https://astrapi69.github.io/adaptive-learner/docs/en/developer/onboarding/)
+— a step-by-step walkthrough of your first bug-fix. The full setup
+reference lives at
 [docs/developer/setup](https://astrapi69.github.io/adaptive-learner/docs/en/developer/setup/).
 
 ## Tech stack

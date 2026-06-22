@@ -146,6 +146,9 @@ export default function LessonPage() {
   // next click advances. All three reset whenever the step
   // changes (so a fresh exercise starts at "Prüfen" disabled).
   const exerciseRef = useRef<ExerciseHandle>(null);
+  // #959 — scroll anchor placed just above the progress bar so a step
+  // change can bring the task into view on mobile (see the effect below).
+  const stepScrollRef = useRef<HTMLDivElement>(null);
   const [answerable, setAnswerable] = useState(false);
   const [checked, setChecked] = useState(false);
   // Enter-key shortcut (#103). The listener is registered once and
@@ -236,6 +239,26 @@ export default function LessonPage() {
       );
     }
   }, [lesson, currentStepIndex, t]);
+
+  // #959 — the lesson header (set line + title + description) eats too
+  // much vertical space on EVERY viewport, so the progress bar + step
+  // content start below the fold and the learner has to scroll on each of
+  // the steps. After load + each step change, bring the content into view
+  // so they see the task, not the header. All viewports; honors
+  // prefers-reduced-motion.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (showResumePrompt) return; // let the resume overlay settle first
+    const target = stepScrollRef.current;
+    if (!target?.scrollIntoView) return; // jsdom/happy-dom: no-op
+    const reduceMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    target.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  }, [currentStepIndex, showResumePrompt]);
 
   // Keyboard shortcut (#103): Enter drives the two-phase Check / Next
   // button. The listener (shared with the Error-Replay runner via
@@ -368,6 +391,7 @@ export default function LessonPage() {
       <LessonHeader
         lesson={lesson}
         setTitle={setTitle}
+        currentStepIndex={currentStepIndex}
         isInProgress={isInProgress}
         exitOpen={exitOpen}
         onPauseClick={() => setExitOpen(true)}
@@ -398,10 +422,21 @@ export default function LessonPage() {
         onStartOver={() => void handleStartOver()}
       />
 
+      {/* #959 — scroll anchor: a step change scrolls this to the top of
+          the viewport, lifting the header off-screen so the progress bar +
+          task land in view. scroll-mt leaves a little gap under the
+          (auto-hiding) nav. */}
+      <div ref={stepScrollRef} aria-hidden="true" className="scroll-mt-4" />
+
+      {/* #959 — keep "Step n of m" visible while reading: the bar sticks to
+          the top of the scroll container (all viewports). The lesson nav
+          auto-hides on scroll-down, so the bar fills the space it vacates;
+          z-10 stays below the nav (z-50) when the nav is shown. */}
       <LessonProgressBar
         isSummary={isSummary}
         currentStepIndex={currentStepIndex}
         totalSteps={totalSteps}
+        className="sticky top-0 z-10"
       />
 
       <LessonTtsControls
@@ -472,7 +507,15 @@ export default function LessonPage() {
               );
             }
           }}
-          onRepeat={() => goToStep(0)}
+          onRepeat={() => {
+            // #983 — "Practice again": restart the row (clears step
+            // results + score, status -> in_progress) so the next
+            // completion is recorded as a fresh attempt and the
+            // improvement vs the prior run can be shown. attempts /
+            // best_score / attempt_history are preserved by the
+            // storage layer. Then jump back to the first step.
+            void markRestarted().then(() => goToStep(0));
+          }}
           onExit={() => navigate("/content?tab=my")}
         />
         <LessonResources

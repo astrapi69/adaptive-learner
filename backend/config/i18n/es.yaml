@@ -85,7 +85,7 @@ nav:
   settings: Ajustes
   help: Ayuda
   home: Inicio
-  menu: Menu
+  menu: "Menú"
   online: En linea
   offline: Sin conexion
   anki: Anki
@@ -196,14 +196,14 @@ curriculum:
   no_topics: Todavia no hay temas — anade el primero para empezar.
   no_curriculum: Crea un curriculo para empezar a construir un arbol de temas.
   delete_confirm: Eliminar este tema? Sus hijos quedaran como raices propias.
-  lessons_title: Lessons
-  add_lesson: Add lesson
-  new_lesson_placeholder: New lesson title…
-  no_lessons: No lessons yet.
-  lesson_created: Lesson created.
-  lesson_saved: Lesson saved.
-  lesson_deleted: Lesson deleted.
-  lesson_delete_confirm: Delete this lesson?
+  lessons_title: "Lecciones"
+  add_lesson: "Añadir lección"
+  new_lesson_placeholder: "Título de la nueva lección…"
+  no_lessons: "Aún no hay lecciones."
+  lesson_created: "Lección creada."
+  lesson_saved: "Lección guardada."
+  lesson_deleted: "Lección eliminada."
+  lesson_delete_confirm: "¿Eliminar esta lección?"
   add_description: "Añadir descripción"
   description_aria: "Descripción del currículo"
   description_placeholder: "¿Por qué este currículo? ¿Qué abarca?"
@@ -224,13 +224,13 @@ landing:
 onboarding:
   title: Crear un proyecto de aprendizaje
   intro: Cuentanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un metodo inicial.
-  concepts_explainer_prefix: "You'll define a "
-  concepts_explainer_mid1: ", then complete a brief assessment to build a "
-  concepts_explainer_mid2: " — which guides every "
-  concepts_explainer_suffix: " ahead."
-  term_learning_project: "learning project"
-  term_learning_profile: "learning profile"
-  term_learning_session: "learning session"
+  concepts_explainer_prefix: "Definirás un "
+  concepts_explainer_mid1: ", y luego completas una breve evaluación para construir tu "
+  concepts_explainer_mid2: " — que guía cada "
+  concepts_explainer_suffix: " por delante."
+  term_learning_project: "proyecto de aprendizaje"
+  term_learning_profile: "perfil de aprendizaje"
+  term_learning_session: "sesión de aprendizaje"
   field_name: Tu nombre
   field_topic: Tema
   field_topic_hint: p. ej. Espanol B1, algebra lineal.
@@ -302,7 +302,7 @@ dashboard:
   card_distribution: Distribucion de metodos
   card_counter: Sesiones
   card_tools: Recomendaciones de herramientas
-  card_recent_sessions: Recent sessions
+  card_recent_sessions: "Sesiones recientes"
   card_spaced: Práctica espaciada
   card_review_queue: Para repasar
   card_focus_areas: Áreas de enfoque
@@ -393,7 +393,7 @@ review:
   spaced_start: Empezar
   spaced_dismiss: Descartar
   metric_total_sessions: Sesiones totales
-  metric_total_minutes: Total minutes
+  metric_total_minutes: "Minutos totales"
   metric_mean_understanding: Comprension media
   metric_mean_stress: Estres medio
   metric_streak: Racha de dias
@@ -408,7 +408,7 @@ session:
   ai_thinking: Pensando...
   ai_error: El proveedor de IA no pudo responder.
   no_api_key: "No hay clave de IA configurada. Añade una clave para tu proveedor de IA en Ajustes para chatear con el tutor. Las lecciones y los repasos funcionan sin clave."
-  welcome_empty: "Ready to learn! Write your first message."
+  welcome_empty: "¡Listo para aprender! Escribe tu primer mensaje."
   end_session: Terminar sesion
   end_session_confirm: Seguro? Cerraremos la sesion y pediremos una valoracion.
   switch_recommended: Se recomienda cambiar de metodo
@@ -423,10 +423,10 @@ session:
   rating_submit: Enviar valoracion
   step_progress: Paso {current} de {total}
   step_advance_toast: 'Avanzando a: {step}'
-  cycle_label: Cycle {n}
-  cycle_advanced: Cycle {n} started
-  cycles_completed: Cycles completed
-  next_topic: 'Next topic:'
+  cycle_label: "Ciclo {n}"
+  cycle_advanced: "Ciclo {n} iniciado"
+  cycles_completed: "Ciclos completados"
+  next_topic: "Siguiente tema:"
   step_reason_tooltip: Por que este paso?
   offline_start_blocked: Estas sin conexion. Las nuevas sesiones necesitan red — las anteriores siguen siendo legibles desde el Dashboard.
   peek_step_prefix: "Paso"
@@ -521,7 +521,7 @@ settings:
     source_env: "Gestionado por variable de entorno"
     source_browser: "Guardado en este navegador"
   title: Ajustes
-  help_intro: "Browse and search the in-app glossary. Click any entry for the full article."
+  help_intro: "Explora y busca en el glosario integrado. Haz clic en cualquier entrada para ver el artículo completo."
   section_language: Idioma
   mode_title: "Modo"
   mode_solo: "Modo en solitario"
@@ -532,7 +532,7 @@ settings:
   section_provider: Proveedor de IA
   section_api_keys: Claves API
   section_danger: Cuenta
-  section_ui: Interface
+  section_ui: "Interfaz"
   section_appearance: "Apariencia"
   section_profile: "Perfil"
   username_label: "Nombre visible"
@@ -567,7 +567,7 @@ settings:
   tab_help: "Ayuda"
   tab_about: "Acerca de"
   tabs_aria: "Secciones de ajustes"
-  section_feedback: "Feedback"
+  section_feedback: "Comentarios"
   section_interaction: "Interacción"
   missions_title: "Misiones diarias"
   missions_enabled: "Misiones diarias"
@@ -581,8 +581,8 @@ settings:
   missions_reset_confirm: "Confirmar"
   missions_reset_done: "Misiones de hoy regeneradas."
   missions_reset_failed: "No se pudieron restablecer las misiones."
-  gestures: Swipe Gestures
-  gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
+  gestures: "Gestos de deslizamiento"
+  gestures_description: "Desliza para navegar en Evaluación, Sesión y Plan de estudios."
   profile_title: "Perfil de aprendizaje"
   profile_resume: "Continuar perfil de aprendizaje"
   profile_redo: "Rehacer perfil de aprendizaje"
@@ -592,8 +592,8 @@ settings:
   profile_create_hint: "Haz una breve evaluación para obtener un perfil de aprendizaje personalizado."
   lesson_shortcuts: "Atajos de teclado en las lecciones"
   lesson_shortcuts_description: "Pulsa Enter para comprobar tu respuesta y Enter de nuevo para ir al siguiente paso."
-  button_tooltips: Show button tooltips
-  button_tooltips_description: "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless."
+  button_tooltips: "Mostrar descripciones de botones"
+  button_tooltips_description: "Muestra una descripción al pasar el cursor sobre los botones de iconos. Las etiquetas para lectores de pantalla siguen activas igualmente."
   developer_mode: Modo Desarrollador
   developer_mode_description: "Muestra todos los detalles técnicos (código de estado, endpoint, traza) en los avisos de error. Aparece una etiqueta 'DEV' en la barra de navegación mientras está activo. Desactivado por defecto; actívalo solo para depurar."
   feedback_intensity: "Intensidad del feedback"
@@ -687,16 +687,16 @@ settings:
   model_override_default: Modelo predeterminado
   model_override_save: Guardar modelo
   model_override_clear: Usar predeterminado
-  model_picker_placeholder: Select or type a model id
-  model_picker_open: Open model list
-  model_picker_default_hint: 'Uses default:'
-  model_picker_loading: Loading models...
-  model_picker_error: Could not load models. Check your API key.
-  model_picker_retry: Retry
-  model_picker_no_key: Save an API key for this provider to load the available models.
-  model_picker_recommended: Recommended
-  model_picker_all: All models
-  model_picker_suggestions: Suggested (offline)
+  model_picker_placeholder: "Selecciona o escribe un id de modelo"
+  model_picker_open: "Abrir lista de modelos"
+  model_picker_default_hint: "Usa el predeterminado:"
+  model_picker_loading: "Cargando modelos..."
+  model_picker_error: "No se pudieron cargar los modelos. Comprueba tu clave de API."
+  model_picker_retry: "Reintentar"
+  model_picker_no_key: "Guarda una clave de API para este proveedor para cargar los modelos disponibles."
+  model_picker_recommended: "Recomendado"
+  model_picker_all: "Todos los modelos"
+  model_picker_suggestions: "Sugeridos (sin conexión)"
   section_gamification: Gamificación
   xp_notifications: Mostrar notificaciones de XP
   xp_notifications_help: Animación flotante «+50 XP» al ganar.
@@ -806,7 +806,7 @@ cycle_steps:
     label: Error
     description: Discrepancia entre expectativa y resultado.
   feedback:
-    label: Feedback
+    label: "Comentarios"
     description: Correccion con explicacion.
   adapt:
     label: Adaptar
@@ -897,40 +897,40 @@ about:
   docs_label: Documentación
   issues_label: Issues
 backup:
-  section_title: Backup
-  section_help: Export everything in your account as a JSON file. API keys are NOT included; you will need to re-enter them after a restore.
-  export: Create Backup
-  exporting: Exporting…
-  import: Restore from Backup
-  importing: Restoring…
-  confirm: Confirm restore
-  invalid_format: This file is not a valid Adaptive Learner backup.
+  section_title: "Copia de seguridad"
+  section_help: "Exporta todo lo de tu cuenta como archivo JSON. Las claves de API NO se incluyen; tendrás que volver a introducirlas tras una restauración."
+  export: "Crear copia de seguridad"
+  exporting: "Exportando…"
+  import: "Restaurar desde copia de seguridad"
+  importing: "Restaurando…"
+  confirm: "Confirmar restauración"
+  invalid_format: "Este archivo no es una copia de seguridad válida de Adaptive Learner."
   not_a_backup_file: 'Este archivo no es un archivo de copia de seguridad válido. Elige un archivo exportado con ''Crear copia de seguridad''.'
   version_mismatch: "Esta copia es de la versión {{from}}; esta app es la {{to}}. Revisa los cambios abajo y confirma la importación."
   too_large: 'Este archivo de copia de seguridad es demasiado grande (más de 100 MB).'
-  export_success: Backup downloaded ({{count}} records).
-  export_error: 'Backup failed: {{detail}}'
-  import_parse_error: 'Could not read backup: {{detail}}'
-  import_error: 'Restore failed: {{detail}}'
-  comparison_title: Confirm restore
-  comparison_help: 'Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.'
-  table_header: Table
-  current_header: Current
-  incoming_header: Backup
-  restored_summary: Restore complete.
-  restored_inserted: 'Inserted: {{n}}'
-  restored_updated: 'Updated: {{n}}'
-  restored_skipped: 'Skipped: {{n}}'
+  export_success: "Copia de seguridad descargada ({{count}} registros)."
+  export_error: "La copia de seguridad falló: {{detail}}"
+  import_parse_error: "No se pudo leer la copia de seguridad: {{detail}}"
+  import_error: "La restauración falló: {{detail}}"
+  comparison_title: "Confirmar restauración"
+  comparison_help: "La restauración combinará: los registros nuevos se insertan, los mutables se actualizan solo si la copia es más reciente, las filas de historial se conservan tal cual. No se elimina nada. Las claves de API se ignoran."
+  table_header: "Tabla"
+  current_header: "Actual"
+  incoming_header: "Copia"
+  restored_summary: "Restauración completada."
+  restored_inserted: "Insertados: {{n}}"
+  restored_updated: "Actualizados: {{n}}"
+  restored_skipped: "Omitidos: {{n}}"
   api_keys_skipped: "No se pudieron importar las claves de API. Vuelve a introducirlas en Ajustes > Integraciones."
-  restored_errors: 'Errors: {{n}}'
+  restored_errors: "Errores: {{n}}"
   col_inserted: 'Ins.'
   col_updated: 'Act.'
   col_skipped: 'Omit.'
   col_errors: 'Err.'
   error_details: 'Detalles de errores'
-  restored_with_errors: '{{n}} records could not be restored.'
-  last_backup: 'Last backup: {{when}}'
-  reminder_overdue: It has been more than {{days}} days since your last backup.
+  restored_with_errors: "No se pudieron restaurar {{n}} registros."
+  last_backup: "Última copia de seguridad: {{when}}"
+  reminder_overdue: "Han pasado más de {{days}} días desde tu última copia de seguridad."
   saved_as: 'Copia guardada: {{filename}}'
   downloaded: 'Copia descargada: {{filename}} ({{count}} registros).'
   contains_title: 'Tu copia de seguridad contiene:'
@@ -941,137 +941,137 @@ backup:
   count_projects: '{{n}} proyectos'
   count_imports: '{{n}} importaciones de chat'
   record_count: '{{count}} registros en total'
-  auto_title: Auto-backup
-  auto_help: Automatically back up after every 10 completed sessions or once a week.
-  auto_run: Back up now
-  auto_run_success: Auto-backup created.
-  auto_run_error: 'Auto-backup failed: {{detail}}'
-  auto_restored: Auto-backup restored.
-  auto_restore: Restore
-  auto_restore_error: 'Restore failed: {{detail}}'
-  auto_records: '{{n}} records'
-  auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
-  storage_pressure: Browser storage is almost full ({{pct}}% of quota). Export a manual backup now.
-  compare_title: Compare Backups
-  compare_help: Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified — comparison is read-only.
-  compare_slot_a: Backup A (older)
-  compare_slot_b: Backup B (newer)
-  compare_pick: Pick file…
-  compare_use_current: Use current state
-  compare_current_label: Current state
-  compare_clear: Clear
-  compare_label_a: Backup A
-  compare_label_b: Backup B
-  compare_records: records
-  compare_loading: Comparing backups…
-  compare_progress: Comparing…
-  compare_hide_unchanged: Hide unchanged tables
-  compare_sort_label: 'Sort:'
-  compare_sort_delta: Most changes first
-  compare_sort_alpha: Alphabetical
-  compare_no_changes: The two backups are identical — no differences detected.
-  compare_section_added: Added
-  compare_section_removed: Removed
-  compare_section_changed: Changed
-  compare_field: Field
-  compare_old: Old
-  compare_new: New
-  compare_field_changes: field changes
-  compare_high_volume_hint: High-volume table — record-level previews shown abbreviated.
-  compare_export_md: Export as Markdown
-  compare_markdown_downloaded: Diff exported.
-  confirm_with_counts: Restore ({{added}} added, {{updated}} updated)
-  auto_compare_as_a: Compare as A
-  auto_compare_as_b: Compare as B
-  compare_auto_label: Auto-backup {{date}}
-  auto_compare_missing: Auto-backup is no longer available — it was rotated out.
+  auto_title: "Copia de seguridad automática"
+  auto_help: "Hacer una copia de seguridad automática tras cada 10 sesiones completadas o una vez por semana."
+  auto_run: "Hacer copia ahora"
+  auto_run_success: "Copia de seguridad automática creada."
+  auto_run_error: "La copia de seguridad automática falló: {{detail}}"
+  auto_restored: "Copia de seguridad automática restaurada."
+  auto_restore: "Restaurar"
+  auto_restore_error: "La restauración falló: {{detail}}"
+  auto_records: "{{n}} registros"
+  auto_none: "Aún no hay copias automáticas. La primera se ejecuta tras 10 sesiones o 7 días."
+  storage_pressure: "El almacenamiento del navegador está casi lleno ({{pct}}% de la cuota). Exporta ahora una copia de seguridad manual."
+  compare_title: "Comparar copias de seguridad"
+  compare_help: "Elige dos archivos de copia (o un archivo más el estado actual) para ver qué cambió entre ellos. No se modifica ningún dato: la comparación es de solo lectura."
+  compare_slot_a: "Copia A (más antigua)"
+  compare_slot_b: "Copia B (más reciente)"
+  compare_pick: "Elegir archivo…"
+  compare_use_current: "Usar el estado actual"
+  compare_current_label: "Estado actual"
+  compare_clear: "Limpiar"
+  compare_label_a: "Copia A"
+  compare_label_b: "Copia B"
+  compare_records: "registros"
+  compare_loading: "Comparando copias de seguridad…"
+  compare_progress: "Comparando…"
+  compare_hide_unchanged: "Ocultar tablas sin cambios"
+  compare_sort_label: "Ordenar:"
+  compare_sort_delta: "Más cambios primero"
+  compare_sort_alpha: "Alfabético"
+  compare_no_changes: "Las dos copias de seguridad son idénticas: no se detectaron diferencias."
+  compare_section_added: "Añadidos"
+  compare_section_removed: "Eliminados"
+  compare_section_changed: "Modificados"
+  compare_field: "Campo"
+  compare_old: "Antiguo"
+  compare_new: "Nuevo"
+  compare_field_changes: "cambios de campos"
+  compare_high_volume_hint: "Tabla de gran volumen: las vistas previas por registro se muestran abreviadas."
+  compare_export_md: "Exportar como Markdown"
+  compare_markdown_downloaded: "Diferencias exportadas."
+  confirm_with_counts: "Restaurar ({{added}} añadidos, {{updated}} actualizados)"
+  auto_compare_as_a: "Comparar como A"
+  auto_compare_as_b: "Comparar como B"
+  compare_auto_label: "Copia automática {{date}}"
+  auto_compare_missing: "La copia de seguridad automática ya no está disponible: se rotó."
 export:
-  title: Export
-  intro: Download your learning journey as Markdown or PDF. Markdown is plain text you can edit and share; PDF opens your browser's print dialog so you can save a copy.
-  progress_label: Progress Report (full journey)
-  session_label: Session Detail
-  curriculum_label: Curriculum Overview
-  select_session: -- pick a session --
-  select_curriculum: -- pick a curriculum --
-  preview: Preview
-  preview_title: Preview
-  preview_close: Close
+  title: "Exportar"
+  intro: "Descarga tu recorrido de aprendizaje como Markdown o PDF. Markdown es texto sin formato que puedes editar y compartir; PDF abre el diálogo de impresión del navegador para guardar una copia."
+  progress_label: "Informe de progreso (recorrido completo)"
+  session_label: "Detalle de la sesión"
+  curriculum_label: "Resumen del plan de estudios"
+  select_session: "-- elige una sesión --"
+  select_curriculum: "-- elige un plan de estudios --"
+  preview: "Vista previa"
+  preview_title: "Vista previa"
+  preview_close: "Cerrar"
   download_md: Markdown
   download_pdf: PDF
-  busy: Working...
-  download_success: Export downloaded.
-  print_opened: Print dialog opened. Pick "Save as PDF".
-  error: 'Export failed: {{detail}}'
-  preview_error: 'Preview failed: {{detail}}'
-  load_error: 'Could not load export data: {{detail}}'
-  pick_session: Pick a session first.
-  pick_curriculum: Pick a curriculum first.
-  title_progress: Learning Progress
-  title_session: Session Detail
-  title_curriculum: Curriculum
+  busy: "Trabajando..."
+  download_success: "Exportación descargada."
+  print_opened: "Se abrió el diálogo de impresión. Elige «Guardar como PDF»."
+  error: "La exportación falló: {{detail}}"
+  preview_error: "La vista previa falló: {{detail}}"
+  load_error: "No se pudieron cargar los datos de exportación: {{detail}}"
+  pick_session: "Elige primero una sesión."
+  pick_curriculum: "Elige primero un plan de estudios."
+  title_progress: "Progreso de aprendizaje"
+  title_session: "Detalle de la sesión"
+  title_curriculum: "Plan de estudios"
 sync:
-  api_mode_note: This device is running its own backend. The paired device should also see this connection in its sync panel.
-  camera_denied: Camera access denied
-  camera_denied_hint: Allow camera access in your browser settings, then re-open the scanner.
-  camera_error: Could not start the camera
-  camera_error_hint: Something went wrong starting the camera. Try again, or use paste-the-link.
-  conflict_apply: Apply choices
-  conflict_cancel: Cancel (keep all local)
-  conflicts_intro: Both devices changed the same record since the last sync. Pick which version to keep for each one.
-  conflicts_title: Resolve sync conflicts
-  connect: Connect
-  connected_to: Connected to
-  copy_error: Could not copy to clipboard.
-  copy_link: Copy link
-  desktop_hint: Generate a short-lived pairing link. Open this app on your phone, paste the link, and the two devices will share the same user account.
-  expires_at: Expires
-  generate: Generate pairing code
-  generating: Generating…
-  history: Recent syncs
-  host: Local IP / host
-  image_decode_failed: Could not read a QR code from this image. Re-take the screenshot.
-  image_decoding: Reading image…
-  intro: Pair a phone and a desktop on the same local network. Sync is always opt-in; you click Sync Now when you want to merge changes.
-  invalid_qr: Not a valid pairing code.
-  keep_local: Keep this device
-  keep_remote: Keep other device
-  last_sync: Last sync
-  link_copied: Pairing link copied.
-  local_version: This device
-  merge: Merge manually
-  merge_editor: Merged record (editable)
-  never: never
-  no_camera: No camera available
-  no_camera_hint: This device has no camera available. Use the paste-the-link option instead.
-  no_user: Complete the onboarding before generating a pairing code.
-  now: Sync Now
-  pair_error: Could not pair the device.
-  paired: Device paired.
-  paired_at: Paired
-  pairing: Pairing…
-  paste_link_fallback: Or paste the link manually
-  phone_hint_v17: Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically.
-  port: Port
-  qr_alt: Pairing QR code
-  remote_version: Other device
-  scan_again: Scan again
-  scan_hint: Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once.
-  scan_instruction: Point your camera at the QR code on your desktop.
-  scan_qr: Scan QR Code
-  scan_success: Connection found
-  scan_success_hint: Verifying with the desktop…
-  smart_merge: Smart Merge (AI)
-  smart_merge_error: Smart merge failed.
-  smart_merge_ready: AI merge ready — review and apply.
-  smart_merge_running: Merging with AI…
-  sync_error: Sync failed.
-  synced: Synced
-  syncing: Syncing…
-  unpair: Unpair device
-  unpair_confirm: Unpair this device? Local data is kept; future syncs are blocked until you pair again.
-  unpaired: Device unpaired.
-  upload_qr: Upload QR image
-  upload_qr_hint: 'No camera? Take a screenshot of the desktop''s QR and upload it:'
+  api_mode_note: "Este dispositivo ejecuta su propio backend. El dispositivo emparejado también debería ver esta conexión en su panel de sincronización."
+  camera_denied: "Acceso a la cámara denegado"
+  camera_denied_hint: "Permite el acceso a la cámara en la configuración del navegador y vuelve a abrir el escáner."
+  camera_error: "No se pudo iniciar la cámara"
+  camera_error_hint: "Algo salió mal al iniciar la cámara. Inténtalo de nuevo o usa la opción de pegar el enlace."
+  conflict_apply: "Aplicar elecciones"
+  conflict_cancel: "Cancelar (conservar todo lo local)"
+  conflicts_intro: "Ambos dispositivos cambiaron el mismo registro desde la última sincronización. Elige qué versión conservar para cada uno."
+  conflicts_title: "Resolver conflictos de sincronización"
+  connect: "Conectar"
+  connected_to: "Conectado a"
+  copy_error: "No se pudo copiar al portapapeles."
+  copy_link: "Copiar enlace"
+  desktop_hint: "Genera un enlace de emparejamiento de corta duración. Abre esta app en tu teléfono, pega el enlace y los dos dispositivos compartirán la misma cuenta de usuario."
+  expires_at: "Caduca"
+  generate: "Generar código de emparejamiento"
+  generating: "Generando…"
+  history: "Sincronizaciones recientes"
+  host: "IP local / host"
+  image_decode_failed: "No se pudo leer un código QR de esta imagen. Vuelve a tomar la captura de pantalla."
+  image_decoding: "Leyendo imagen…"
+  intro: "Empareja un teléfono y un equipo en la misma red local. La sincronización siempre es opcional; haz clic en Sincronizar ahora cuando quieras combinar los cambios."
+  invalid_qr: "Código de emparejamiento no válido."
+  keep_local: "Conservar este dispositivo"
+  keep_remote: "Conservar el otro dispositivo"
+  last_sync: "Última sincronización"
+  link_copied: "Enlace de emparejamiento copiado."
+  local_version: "Este dispositivo"
+  merge: "Combinar manualmente"
+  merge_editor: "Registro combinado (editable)"
+  never: "nunca"
+  no_camera: "No hay cámara disponible"
+  no_camera_hint: "Este dispositivo no tiene cámara. Usa en su lugar la opción de pegar el enlace."
+  no_user: "Completa la introducción antes de generar un código de emparejamiento."
+  now: "Sincronizar ahora"
+  pair_error: "No se pudo emparejar el dispositivo."
+  paired: "Dispositivo emparejado."
+  paired_at: "Emparejado"
+  pairing: "Emparejando…"
+  paste_link_fallback: "O pega el enlace manualmente"
+  phone_hint_v17: "Escanea el código QR en la pantalla Configuración > Sincronización de tu equipo. La cámara trasera del teléfono lee el enlace de emparejamiento automáticamente."
+  port: "Puerto"
+  qr_alt: "Código QR de emparejamiento"
+  remote_version: "Otro dispositivo"
+  scan_again: "Escanear de nuevo"
+  scan_hint: "Abre Configuración > Sincronización del teléfono, pega este enlace y toca Conectar. El enlace caduca en 5 minutos y se puede usar una vez."
+  scan_instruction: "Apunta la cámara al código QR de tu equipo."
+  scan_qr: "Escanear código QR"
+  scan_success: "Conexión encontrada"
+  scan_success_hint: "Verificando con el equipo…"
+  smart_merge: "Combinación inteligente (IA)"
+  smart_merge_error: "La combinación inteligente falló."
+  smart_merge_ready: "La combinación con IA está lista: revísala y aplícala."
+  smart_merge_running: "Combinando con IA…"
+  sync_error: "La sincronización falló."
+  synced: "Sincronizado"
+  syncing: "Sincronizando…"
+  unpair: "Desemparejar dispositivo"
+  unpair_confirm: "¿Desemparejar este dispositivo? Los datos locales se conservan; las sincronizaciones futuras se bloquean hasta que vuelvas a emparejar."
+  unpaired: "Dispositivo desemparejado."
+  upload_qr: "Subir imagen QR"
+  upload_qr_hint: "¿Sin cámara? Haz una captura de pantalla del QR del equipo y súbela:"
 gamification:
   trend_up: "Más que la semana pasada"
   trend_down: "Menos que la semana pasada"
@@ -1228,19 +1228,19 @@ gamification:
   reset_done: 'Progreso reiniciado: {xp} XP, {badges} insignias, {streak} rachas.'
   reset_failed: No se pudo reiniciar el progreso.
   weekend_mode_save_failed: No se pudo guardar el modo fin de semana.
-  danger_zone_heading: Danger Zone
-  danger_zone_intro: Permanently delete every piece of learner state on this device.
-  danger_zone_reset_button: Reset Everything
-  danger_zone_warning: This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.
-  danger_zone_confirm_prompt: 'Type RESET to confirm'
+  danger_zone_heading: "Zona de peligro"
+  danger_zone_intro: "Elimina permanentemente todo el estado del aprendiz en este dispositivo."
+  danger_zone_reset_button: "Restablecer todo"
+  danger_zone_warning: "Esto elimina TODOS tus datos de aprendizaje permanentemente: sesiones, progreso, perfiles, planes de estudio, importaciones, tarjetas de Anki, configuración y claves de API. Esta acción NO se puede deshacer."
+  danger_zone_confirm_prompt: "Escribe RESET para confirmar"
   danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Delete permanently
-  danger_zone_backup_offer: Create a backup first?
-  danger_zone_backup_button: Create backup
-  danger_zone_complete_toast: All data has been deleted.
-  danger_zone_cancel: Cancel
-  danger_zone_continue: Continue
-  danger_zone_failed_toast: 'Reset failed:'
+  danger_zone_final_button: "Eliminar permanentemente"
+  danger_zone_backup_offer: "¿Crear primero una copia de seguridad?"
+  danger_zone_backup_button: "Crear copia de seguridad"
+  danger_zone_complete_toast: "Se han eliminado todos los datos."
+  danger_zone_cancel: "Cancelar"
+  danger_zone_continue: "Continuar"
+  danger_zone_failed_toast: "El restablecimiento falló:"
 anki:
   title: Exportación a Anki
   intro: Revisa las tarjetas sugeridas por la IA, acepta las que quieras y expórtalas como archivo .apkg para Anki.
@@ -1346,23 +1346,23 @@ ui:
     generic: "Algo salió mal. Inténtalo de nuevo más tarde."
     unexpected: "Algo salió mal."
   error_report:
-    dialog_title: "Report an issue"
-    intro: "Adaptive Learner caught an error and can prepare a bug report for the developer."
-    description_label: "Steps to reproduce (optional)"
-    description_placeholder: "Briefly describe what you were doing when the error appeared. Leave blank to skip."
-    include_error: "Error message and stacktrace"
-    include_environment: "Environment info (version, browser, OS)"
-    include_history: "Action history"
-    view: "View"
-    privacy_note: "No project content, no passwords, no API keys are ever sent."
-    preview: "Show preview"
-    hide_preview: "Hide preview"
-    copy_preview: "Copy preview"
-    copied: "Copied!"
-    copy_failed: "Copy failed"
-    open_github: "Open on GitHub"
-    close: "Close"
-    truncated: "Report truncated to fit GitHub's URL length limit."
+    dialog_title: "Informar de un problema"
+    intro: "Adaptive Learner detectó un error y puede preparar un informe de error para el desarrollador."
+    description_label: "Pasos para reproducir (opcional)"
+    description_placeholder: "Describe brevemente qué hacías cuando apareció el error. Déjalo en blanco para omitir."
+    include_error: "Mensaje de error y traza de pila"
+    include_environment: "Información del entorno (versión, navegador, SO)"
+    include_history: "Historial de acciones"
+    view: "Ver"
+    privacy_note: "Nunca se envía contenido de proyectos, contraseñas ni claves de API."
+    preview: "Mostrar vista previa"
+    hide_preview: "Ocultar vista previa"
+    copy_preview: "Copiar vista previa"
+    copied: "¡Copiado!"
+    copy_failed: "Error al copiar"
+    open_github: "Abrir en GitHub"
+    close: "Cerrar"
+    truncated: "El informe se recortó para ajustarse al límite de longitud de URL de GitHub."
     intro_proactive: "Prepara un informe de tus acciones recientes para enviarlo al desarrollador. Ves exactamente lo que contiene antes de que nada salga de tu navegador."
     app_state: "Estado de la app"
     online: "en línea"
@@ -1378,125 +1378,125 @@ ui:
       exercise: "Ejercicio"
       error: "Errores"
   help:
-    learn_more: "Learn more"
-    open_help: "Open help"
-    drawer_title: "Help"
-    related: "Related concepts"
-    search_placeholder: "Search the glossary..."
+    learn_more: "Más información"
+    open_help: "Abrir ayuda"
+    drawer_title: "Ayuda"
+    related: "Conceptos relacionados"
+    search_placeholder: "Buscar en el glosario..."
     categories:
-      concepts: "Core concepts"
-      methods: "Learning methods"
-      steps: "Cycle steps"
-      features: "App features"
-    no_results: "No matching entries."
+      concepts: "Conceptos básicos"
+      methods: "Métodos de aprendizaje"
+      steps: "Pasos del ciclo"
+      features: "Funciones de la app"
+    no_results: "No hay entradas coincidentes."
   api_key:
-    required: "API key required."
-    required_with_feature: "API key required {feature}."
-    required_long: "Configure a provider key in Settings to enable this action."
-    open_settings: "Open Settings"
-    skip_banner: "Configure an API key in Settings to use AI features."
-    skip_banner_dismiss: "Dismiss"
-    feature_analyze: "to analyze conversations"
-    feature_session: "to start a session"
-    feature_anki: "to extract Anki cards"
-    feature_study_guide: "to generate a study guide"
-    feature_study_questions: "to generate study questions"
-    feature_pronunciation: "for pronunciation practice"
+    required: "Se requiere una clave de API."
+    required_with_feature: "Se requiere una clave de API {feature}."
+    required_long: "Configura una clave de proveedor en Configuración para habilitar esta acción."
+    open_settings: "Abrir configuración"
+    skip_banner: "Configura una clave de API en Configuración para usar las funciones de IA."
+    skip_banner_dismiss: "Descartar"
+    feature_analyze: "para analizar conversaciones"
+    feature_session: "para iniciar una sesión"
+    feature_anki: "para extraer tarjetas de Anki"
+    feature_study_guide: "para generar una guía de estudio"
+    feature_study_questions: "para generar preguntas de estudio"
+    feature_pronunciation: "para practicar la pronunciación"
   common:
-    close: "Close"
+    close: "Cerrar"
     loading: "Cargando…"
   a11y:
     # Phase 39 (WCAG 2.1 AA). EN passthrough per the existing
     # project convention (es/fr/el inherit EN for ui.* keys).
-    skip_to_content: "Skip to main content"
-    chart_show_as_table: "Show data as table"
-    chart_radar_label: "Learning profile radar chart"
-    chart_radar_summary: "Your strongest learning method: {method} ({value})"
-    chart_timeline_label: "Progress timeline of the last {n} sessions"
-    chart_timeline_summary: "{n} sessions; understanding trending {trend}"
+    skip_to_content: "Saltar al contenido principal"
+    chart_show_as_table: "Mostrar los datos como tabla"
+    chart_radar_label: "Gráfico de radar del perfil de aprendizaje"
+    chart_radar_summary: "Tu método de aprendizaje más fuerte: {method} ({value})"
+    chart_timeline_label: "Cronología de progreso de las últimas {n} sesiones"
+    chart_timeline_summary: "{n} sesiones; la comprensión tiende a la {trend}"
     chart_timeline_trend_up: "up"
-    chart_timeline_trend_down: "down"
-    chart_timeline_trend_flat: "flat"
-    chart_distribution_label: "Method distribution bar chart"
-    chart_distribution_summary: "Most-used method: {method} ({count} sessions, {pct}%)"
-    streak_cell_label: "{count} sessions on {date}"
-    streak_cell_label_zero: "No sessions on {date}"
+    chart_timeline_trend_down: "baja"
+    chart_timeline_trend_flat: "estable"
+    chart_distribution_label: "Gráfico de barras de distribución de métodos"
+    chart_distribution_summary: "Método más usado: {method} ({count} sesiones, {pct}%)"
+    streak_cell_label: "{count} sesiones el {date}"
+    streak_cell_label_zero: "Ninguna sesión el {date}"
     chart_radar_value: "Puntuación"
   tooltips:
     # Generic icon-button labels. Aim: 1-3 words, action-oriented.
-    delete: "Delete"
-    edit: "Edit"
-    close: "Close"
-    save: "Save"
-    cancel: "Cancel"
-    send: "Send"
-    send_message: "Send message"
-    confirm: "Confirm"
-    open: "Open"
-    expand: "Expand"
-    collapse: "Collapse"
-    copy: "Copy"
-    copy_text: "Copy text"
-    paste: "Paste"
-    download: "Download"
-    upload: "Upload"
-    retry: "Retry"
-    dismiss: "Dismiss"
-    refresh: "Refresh"
-    settings: "Settings"
-    help: "Open help"
-    menu: "Menu"
-    back: "Back"
-    next: "Next"
-    previous: "Previous"
-    search: "Search"
-    scan_qr: "Scan QR code"
-    mic: "Voice input"
-    play: "Play"
-    pause: "Pause"
-    stop: "Stop"
-    read_aloud: "Read aloud"
-    add: "Add"
-    add_topic: "Add topic"
-    add_subtopic: "Add subtopic"
-    add_lesson: "Add lesson"
-    add_root_topic: "Add root topic"
-    rename: "Rename"
-    select: "Select"
-    select_all: "Select all"
-    deselect_all: "Deselect all"
-    show_more: "Show more"
-    show_less: "Show less"
+    delete: "Eliminar"
+    edit: "Editar"
+    close: "Cerrar"
+    save: "Guardar"
+    cancel: "Cancelar"
+    send: "Enviar"
+    send_message: "Enviar mensaje"
+    confirm: "Confirmar"
+    open: "Abrir"
+    expand: "Expandir"
+    collapse: "Contraer"
+    copy: "Copiar"
+    copy_text: "Copiar texto"
+    paste: "Pegar"
+    download: "Descargar"
+    upload: "Subir"
+    retry: "Reintentar"
+    dismiss: "Descartar"
+    refresh: "Actualizar"
+    settings: "Configuración"
+    help: "Abrir ayuda"
+    menu: "Menú"
+    back: "Atrás"
+    next: "Siguiente"
+    previous: "Anterior"
+    search: "Buscar"
+    scan_qr: "Escanear código QR"
+    mic: "Entrada de voz"
+    play: "Reproducir"
+    pause: "Pausar"
+    stop: "Detener"
+    read_aloud: "Leer en voz alta"
+    add: "Añadir"
+    add_topic: "Añadir tema"
+    add_subtopic: "Añadir subtema"
+    add_lesson: "Añadir lección"
+    add_root_topic: "Añadir tema raíz"
+    rename: "Renombrar"
+    select: "Seleccionar"
+    select_all: "Seleccionar todo"
+    deselect_all: "Deseleccionar todo"
+    show_more: "Mostrar más"
+    show_less: "Mostrar menos"
     show_secret: "Mostrar valor"
     hide_secret: "Ocultar valor"
-    show_preview: "Show preview"
-    hide_preview: "Hide preview"
-    accept: "Accept"
-    reject: "Reject"
-    end_session: "End session"
-    start_session: "Start session"
-    continue_session: "Continue session"
-    rate_session: "Rate this session"
-    submit_rating: "Submit rating"
-    new_session: "Start a new session"
-    new_curriculum: "Create curriculum"
-    new_project: "New project"
-    analyze: "Run analysis"
+    show_preview: "Mostrar vista previa"
+    hide_preview: "Ocultar vista previa"
+    accept: "Aceptar"
+    reject: "Rechazar"
+    end_session: "Finalizar sesión"
+    start_session: "Iniciar sesión"
+    continue_session: "Continuar sesión"
+    rate_session: "Valorar esta sesión"
+    submit_rating: "Enviar valoración"
+    new_session: "Iniciar una nueva sesión"
+    new_curriculum: "Crear plan de estudios"
+    new_project: "Nuevo proyecto"
+    analyze: "Ejecutar análisis"
     chat_language: Idioma del chat (que hablas)
     learning_language: Idioma que aprendes
     select_language: Selecciona un idioma…
-    reanalyze: "Re-run analysis"
-    method_switch_accept: "Switch to suggested method"
-    method_switch_dismiss: "Keep current method"
-    export_markdown: "Export as Markdown"
-    export_pdf: "Export as PDF"
-    extract_anki: "Extract Anki cards"
-    backup_export: "Export backup"
-    backup_import: "Import backup"
-    sync_pair: "Pair sync"
-    rating_low: "{n} - Low"
-    rating_medium: "{n} - Medium"
-    rating_high: "{n} - High"
+    reanalyze: "Volver a analizar"
+    method_switch_accept: "Cambiar al método sugerido"
+    method_switch_dismiss: "Mantener el método actual"
+    export_markdown: "Exportar como Markdown"
+    export_pdf: "Exportar como PDF"
+    extract_anki: "Extraer tarjetas de Anki"
+    backup_export: "Exportar copia de seguridad"
+    backup_import: "Importar copia de seguridad"
+    sync_pair: "Emparejar sincronización"
+    rating_low: "{n} - Bajo"
+    rating_medium: "{n} - Medio"
+    rating_high: "{n} - Alto"
 # Learning Repository plugin (v1.26.0 / Phase 42 / BL-30)
 # AI-translated, pending native review.
 repo:
@@ -1669,6 +1669,7 @@ lesson:
       selected_sr: "Seleccionado: {label}"
       resolve: "Resolver"
       resolve_announce: "Solución mostrada. {correct} de {total} pares eran correctos."
+      my_answers: "Mis respuestas"
     picture:
       submit: "Comprobar respuesta"
       retry: "Intentar de nuevo"
@@ -1797,6 +1798,16 @@ lesson:
     mark_complete: "Marcar como completada"
     next_lesson: "Lección siguiente"
     repeat: "Repetir lección"
+    retry: "Practicar de nuevo"
+    retry_heading: "Tu mejora"
+    retry_attempt: "Intento {n}: {pct}%"
+    retry_from: "(desde {pct}%)"
+    retry_improvement: "Mejora"
+    retry_errors_fixed: "Errores corregidos"
+    retry_errors_fixed_value: "{fixed} de {total}"
+    retry_best: "Mejor resultado"
+    retry_best_value: "{pct}% (intento {n})"
+    retry_new_record: "¡Nuevo récord!"
     restart: "Empezar de nuevo"
     back_to_browser: "Volver al explorador de contenido"
     encourage_0: "¡La práctica hace al maestro!"
@@ -2849,7 +2860,7 @@ discover:
     psychology: "Psicología"
     programming: "Programación"
   result:
-    count: "{n} sets"
+    count: "{n} conjuntos"
   empty:
     no_sets: "Aún no hay contenido disponible."
     no_results: "Sin resultados para «{query}»."

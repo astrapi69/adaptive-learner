@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.93.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.94.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
@@ -244,7 +244,7 @@ Jedes Release liefert auch eine `.sha256` neben jedem
 Binary zur Integritätsprüfung. Der Launcher lädt beim
 ersten Start den passenden getaggten Source-Tree
 herunter, baut die Docker-Images und startet die App
-unter `http://localhost:7880`. Beim Erststart wird
+unter `http://localhost:8501`. Beim Erststart wird
 außerdem `~/.config/adaptive-learner/secrets.yaml` als
 auskommentierte Vorlage angelegt — Zeilen einkommentieren
 und mit den eigenen Provider-Keys füllen, um das
@@ -271,7 +271,7 @@ Beide Skripte klonen das getaggte Release nach
 `~/adaptive-learner/`, erzeugen einen
 `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet-Verschlüsselung at
 rest), bauen die Docker-Images und starten den Stack unter
-`http://localhost:7880` (ein Port; nginx serviert das
+`http://localhost:8501` (ein Port; nginx serviert das
 statische Frontend und proxyt `/api/*` an FastAPI).
 
 ```bash

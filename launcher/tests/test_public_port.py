@@ -7,6 +7,14 @@ from pathlib import Path
 from adaptive_learner_launcher import config
 
 
+class TestDefaultPort:
+
+    def test_default_is_8501_not_bibliogon(self) -> None:
+        # 8501 is Adaptive Learner's own port; 7880 is Bibliogon's.
+        # Defaulting to 7880 guaranteed a sibling-app conflict (#956 / §5).
+        assert config.DEFAULT_PORT == 8501
+
+
 class TestReadPublicPort:
 
     def test_returns_default_when_no_env_file(self, tmp_path: Path) -> None:

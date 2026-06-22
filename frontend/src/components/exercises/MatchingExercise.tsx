@@ -24,7 +24,7 @@
  * ``recordStepResult`` keyed by step id.
  */
 
-import {forwardRef, useEffect, useMemo, useState} from "react";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/ui/useI18n";
@@ -56,6 +56,7 @@ import {
     MatchingRightTile,
     MatchingPrompt,
     MatchingResultFooter,
+    MatchingViewToggle,
     matchingPairIsCorrect,
     type LeftTile,
     type RightTile,
@@ -243,9 +244,20 @@ function MatchingExercise(
         return () => window.clearTimeout(id);
     }, [wrongFlash]);
 
-    /** #824 — once the answer is checked, the learner can reveal the
-     *  correct pairs with the configured animated effect. */
-    const [resolved, setResolved] = useState(false);
+    /** #824 / #977 — after the answer is checked, the learner toggles
+     *  between their own graded answers ("user-answers") and the revealed
+     *  solution ("solution"). Default is the graded grid, which is what
+     *  the columns already render after submit. */
+    const [view, setView] = useState<"user-answers" | "solution">(
+        "user-answers",
+    );
+    /** Whether the solution view has been shown at least once, so the
+     *  reveal animation plays only on the FIRST switch (#977). A ref (not
+     *  state) so flipping it never triggers a re-render mid-animation. */
+    const solutionShownRef = useRef(false);
+    /** The animate flag handed to MatchingResolution for the current
+     *  solution view; set once per switch in ``showSolution``. */
+    const [animateSolution, setAnimateSolution] = useState(false);
     const [resolveEffect, setResolveEffect] = useState<MatchingResolveEffect>(
         () => readMatchingResolveEffect(),
     );
@@ -303,9 +315,24 @@ function MatchingExercise(
             setSlotByLeft(new Map());
             setSelectedLeft(null);
             setSelectedRight(null);
-            setResolved(false);
+            setView("user-answers");
+            solutionShownRef.current = false;
+            setAnimateSolution(false);
         },
     });
+
+    /** Switch to the revealed-solution view (#977). Animates only the
+     *  first time it is shown; toggling back to it later renders the end
+     *  result immediately. No-op when already on the solution view so a
+     *  repeat click can't restart a mid-play animation. */
+    const showSolution = () => {
+        if (view === "solution") return;
+        const firstTime = !solutionShownRef.current;
+        solutionShownRef.current = true;
+        setAnimateSolution(firstTime);
+        setView("solution");
+    };
+    const showUserAnswers = () => setView("user-answers");
 
     /** The correct pairs in authored order, ready for the resolution
      *  view (#824). ``slot`` uses the authored index for stable, distinct
@@ -470,7 +497,20 @@ function MatchingExercise(
                 testId="matching-hint-button"
             />
 
-            {!resolved && (
+            {submitted && (
+                <MatchingViewToggle
+                    view={view}
+                    onShowUserAnswers={showUserAnswers}
+                    onShowSolution={showSolution}
+                    myAnswersLabel={t(
+                        "lesson.exercise.matching.my_answers",
+                        "My answers",
+                    )}
+                    solveLabel={t("lesson.exercise.matching.resolve", "Solve")}
+                />
+            )}
+
+            {view === "user-answers" && (
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
                     <div
@@ -548,11 +588,12 @@ function MatchingExercise(
             </div>
             )}
 
-            {resolved && (
+            {view === "solution" && (
                 <MatchingResolution
                     pairs={resolvedPairs}
                     effect={resolveEffect}
                     reduceMotion={reduceMotion}
+                    animate={animateSolution}
                     correctCount={result?.correct ?? 0}
                     totalCount={pairs.length}
                     leftLabel={leftLabel}
@@ -567,9 +608,6 @@ function MatchingExercise(
                 canCheck={allPaired}
                 onCheck={submit}
                 onRetry={reset}
-                canResolve={submitted && !resolved}
-                onResolve={() => setResolved(true)}
-                resolveLabel={t("lesson.exercise.matching.resolve", "Solve")}
             />
         </section>
     );

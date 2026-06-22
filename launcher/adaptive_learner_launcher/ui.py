@@ -9,10 +9,14 @@ from __future__ import annotations
 
 import datetime
 import locale
+import logging
 import threading
 import tkinter as tk
 import webbrowser
 from tkinter import filedialog, messagebox
+
+
+logger = logging.getLogger("adaptive_learner_launcher.ui")
 
 
 _OS_LOCALE_PREFIXES: tuple[tuple[str, str], ...] = (
@@ -245,18 +249,26 @@ class _ErrorDialog:
             padx=self.PAD,
         ).pack(fill="x", pady=(0, 4))
 
+        # Scrollable details: long compose/npm-ci output must be scrollable
+        # via a visible scrollbar, not a fixed static block (#981).
+        text_frame = tk.Frame(self._details_frame)
+        text_frame.pack(fill="both", expand=True, padx=self.PAD)
+        scrollbar = tk.Scrollbar(text_frame, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
         text_widget = tk.Text(
-            self._details_frame,
-            height=10,
+            text_frame,
+            height=12,
             width=70,
-            wrap="none",
+            wrap="word",
             font=("Consolas", 9),
             borderwidth=1,
             relief="solid",
+            yscrollcommand=scrollbar.set,
         )
         text_widget.insert("1.0", self._details)
         text_widget.configure(state="disabled")
-        text_widget.pack(fill="both", expand=True, padx=self.PAD)
+        text_widget.pack(side="left", fill="both", expand=True)
+        scrollbar.configure(command=text_widget.yview)
 
         tools = tk.Frame(self._details_frame)
         tools.pack(fill="x", padx=self.PAD, pady=(6, self.PAD))
@@ -362,9 +374,21 @@ def two_button_dialog(
         result["choice"] = choice
         win.destroy()
 
-    primary = tk.Button(buttons, text=primary_label, width=22, command=lambda: _click("primary"))
-    primary.pack(side="left", padx=(0, 8))
-    tk.Button(buttons, text=secondary_label, width=12, command=lambda: _click("secondary")).pack(side="left")
+    # Render the secondary button only when it has a label. An empty
+    # secondary_label means "OK-only" (e.g. the uninstall-complete
+    # dialog); rendering it anyway produced a textless ghost button
+    # (#964). Escape / X still map to "secondary" (dismiss).
+    has_secondary = bool(secondary_label)
+    primary = tk.Button(
+        buttons, text=primary_label, width=22 if has_secondary else 16,
+        command=lambda: _click("primary"),
+    )
+    primary.pack(side="left", padx=(0, 8) if has_secondary else 0)
+    if has_secondary:
+        tk.Button(
+            buttons, text=secondary_label, width=12,
+            command=lambda: _click("secondary"),
+        ).pack(side="left")
 
     primary.focus_set()
     win.bind("<Return>", lambda _e: _click("primary"))
@@ -423,7 +447,13 @@ def three_button_dialog(
     return result["choice"]
 
 
-def choice_dialog(title: str, message: str, buttons: list[tuple[str, str]]) -> str | None:
+def choice_dialog(
+    title: str,
+    message: str,
+    buttons: list[tuple[str, str]],
+    *,
+    links: list[tuple[str, str]] | None = None,
+) -> str | None:
     """Show a message with N labeled buttons; return the chosen value.
 
     ``buttons`` is a list of ``(label, value)`` tuples rendered left to
@@ -431,6 +461,13 @@ def choice_dialog(title: str, message: str, buttons: list[tuple[str, str]]) -> s
     the X or pressing Escape returns ``None`` (an explicit "do nothing"
     that is distinct from any button value) so a destructive action can
     never be triggered by closing the window.
+
+    ``links`` is an optional list of ``(label, url)`` tuples rendered as
+    a separate row of buttons that open ``url`` in the browser WITHOUT
+    closing the dialog. This lets the user read an external page (release
+    notes, install guide) and return to choose an option. Only the
+    ``buttons`` choices and the window X/Escape dismiss the dialog
+    (#956).
 
     Used for the installed-app management menu (Open / Stop / Uninstall)
     where the cancel-equivalent must be a no-op, not the last button.
@@ -444,6 +481,23 @@ def choice_dialog(title: str, message: str, buttons: list[tuple[str, str]]) -> s
     result: dict = {"choice": None}
 
     tk.Label(win, text=message, justify="left", wraplength=420, padx=20, pady=16).pack()
+
+    def _open_link(url: str) -> None:
+        # Open the browser WITHOUT dismissing the dialog.
+        logger.debug("dialog link open (dialog stays open): %s", url)
+        try:
+            webbrowser.open(url)
+        except OSError as exc:
+            logger.warning("opening %s failed: %s", url, exc)
+
+    if links:
+        link_row = tk.Frame(win)
+        link_row.pack(padx=20, pady=(0, 8))
+        for index, (label, url) in enumerate(links):
+            tk.Button(
+                link_row, text=label, width=24,
+                command=lambda u=url: _open_link(u),
+            ).pack(side="left", padx=(0, 8) if index < len(links) - 1 else 0)
 
     button_row = tk.Frame(win)
     button_row.pack(padx=20, pady=(0, 16))
@@ -703,6 +757,11 @@ class StatusWindow:
         self._root.title("Adaptive Learner")
         self._root.geometry("420x340")
         self._root.protocol("WM_DELETE_WINDOW", self._handle_close)
+        # Route Tk callback exceptions through the logger so a crash in a
+        # scheduled callback lands in launcher-debug.log (with --debug),
+        # not only on stderr. This is how the #948 destroy() crash was
+        # diagnosed; capturing it makes the next one self-reporting.
+        self._root.report_callback_exception = self._log_tk_exception
 
         self._label = tk.Label(
             self._root,
@@ -733,6 +792,7 @@ class StatusWindow:
         self._on_close_cb = on_close
         self._stop_cb: callable | None = None
         self._spinner_running = False
+        self._spinner_after_id: str | None = None
 
     # --- Step checklist API ---
 
@@ -759,6 +819,7 @@ class StatusWindow:
 
     def start_step(self, index: int, detail: str = "") -> None:
         """Mark step ``index`` active (spinner) and update the detail line."""
+        logger.debug("step %d start: %s", index, detail)
         self._active_index = index
         self._set_glyph(index, self._SPINNER_FRAMES[0], "#1a73e8")
         self._highlight_text(index, "#222")
@@ -768,6 +829,7 @@ class StatusWindow:
         self._root.update_idletasks()
 
     def complete_step(self, index: int) -> None:
+        logger.debug("step %d complete", index)
         self._set_glyph(index, self._GLYPH_DONE, "#188038")
         self._highlight_text(index, "#444")
         if self._active_index == index:
@@ -775,6 +837,7 @@ class StatusWindow:
         self._root.update_idletasks()
 
     def fail_step(self, index: int) -> None:
+        logger.debug("step %d FAILED", index)
         self._set_glyph(index, self._GLYPH_FAILED, "#c5221f")
         self._highlight_text(index, "#c5221f")
         if self._active_index == index:
@@ -805,9 +868,10 @@ class StatusWindow:
             self._spinner_frame = (self._spinner_frame + 1) % len(self._SPINNER_FRAMES)
             self._set_glyph(self._active_index, self._SPINNER_FRAMES[self._spinner_frame], "#1a73e8")
         try:
-            self._root.after(120, self._tick_spinner)
+            self._spinner_after_id = self._root.after(120, self._tick_spinner)
         except tk.TclError:
             self._spinner_running = False
+            self._spinner_after_id = None
 
     # --- Legacy single-message API (kept for callers not using steps) ---
 
@@ -836,10 +900,30 @@ class StatusWindow:
         self._root.update_idletasks()
 
     def close(self) -> None:
+        logger.debug("StatusWindow.close")
+        # Cancel the pending spinner tick first: otherwise the queued
+        # after-callback fires after destroy() and Tk raises
+        # 'invalid command name ..._tick_spinner' (#956).
+        self._spinner_running = False
+        if self._spinner_after_id is not None:
+            try:
+                self._root.after_cancel(self._spinner_after_id)
+            except tk.TclError:
+                pass
+            self._spinner_after_id = None
         try:
             self._root.destroy()
         except tk.TclError:
             pass
+
+    def _log_tk_exception(self, exc_type, exc_value, exc_tb) -> None:
+        """Log an exception raised inside a Tk callback.
+
+        Installed as ``self._root.report_callback_exception`` so a crash
+        in a scheduled callback is captured by the logger instead of only
+        printed to stderr (where it is lost outside ``--debug``).
+        """
+        logger.error("Tk callback error", exc_info=(exc_type, exc_value, exc_tb))
 
     def run_mainloop(self) -> None:
         self._root.mainloop()
@@ -873,7 +957,34 @@ def _ensure_root() -> tk.Tk:
     if _root_singleton is None or not _is_root_alive(_root_singleton):
         _root_singleton = tk.Tk()
         _root_singleton.withdraw()
+        _set_window_icon(_root_singleton)
     return _root_singleton
+
+
+def _set_window_icon(root: tk.Tk) -> None:
+    """Set the Adaptive Learner window/taskbar icon. Never raises.
+
+    Tries the launcher's bundled PNG first, then the frontend branding
+    mark. A missing or unreadable icon falls back to the Tk default
+    (icon problems must never crash the launcher).
+    """
+    from pathlib import Path as _Path
+
+    candidates = [
+        _Path(__file__).parent / "adaptive-learner.png",
+        _Path(__file__).parents[2] / "frontend" / "branding" / "adaptive-learner-mark.png",
+    ]
+    for icon_path in candidates:
+        if not icon_path.exists():
+            continue
+        try:
+            image = tk.PhotoImage(file=str(icon_path))
+            root.iconphoto(True, image)
+            # Keep a reference so the image is not garbage-collected.
+            root._al_icon = image  # type: ignore[attr-defined]
+            return
+        except Exception as exc:  # noqa: BLE001 - icon is best-effort
+            logger.debug("could not set window icon from %s: %s", icon_path, exc)
 
 
 def _is_root_alive(root: tk.Tk) -> bool:

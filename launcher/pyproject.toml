@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-launcher"
-version = "1.93.0"
+version = "1.94.0"
 description = "Windows Simple Launcher for AdaptiveLearner. Starts the Docker stack, opens the browser, stops the stack on exit."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -8,10 +8,11 @@ package-mode = true
 packages = [{include = "adaptive_learner_launcher"}]
 
 [tool.poetry.dependencies]
-# PyInstaller supports 3.11 through 3.13 as of the current release; pin
-# the upper bound here so poetry's solver is satisfied. Update when
-# PyInstaller ships support for 3.14+.
-python = ">=3.11,<3.14"
+# The launcher is stdlib-only and runs from source on the user's system
+# Python; real devices already run it on CPython 3.14 (the runtime that
+# surfaced #948). Keep the upper bound one minor ahead of the highest
+# tested runtime. PyInstaller 6.x builds on 3.11-3.14.
+python = ">=3.11,<3.15"
 # stdlib-only runtime: tkinter, urllib, webbrowser, subprocess, pathlib, json, logging
 # Tkinter ships with Python on Windows installers; no pip dep required.
 platformdirs = "^4.9.6"
