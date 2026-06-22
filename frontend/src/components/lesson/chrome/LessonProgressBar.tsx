@@ -7,12 +7,15 @@
  * ternary.
  */
 
+import { cn } from "@/lib/utils";
 import { useI18n } from "../../../hooks/ui/useI18n";
 
 interface LessonProgressBarProps {
   isSummary: boolean;
   currentStepIndex: number;
   totalSteps: number;
+  /** Extra utility classes (e.g. sticky positioning from the page). */
+  className?: string;
 }
 
 /** The step-progress bar with its accessible label. */
@@ -20,6 +23,7 @@ export default function LessonProgressBar({
   isSummary,
   currentStepIndex,
   totalSteps,
+  className,
 }: LessonProgressBarProps) {
   const { t } = useI18n();
   const progressPct =
@@ -27,7 +31,7 @@ export default function LessonProgressBar({
 
   return (
     <div
-      className="lesson-progress-bar"
+      className={cn("lesson-progress-bar", className)}
       role="progressbar"
       aria-valuenow={progressPct}
       aria-valuemin={0}
