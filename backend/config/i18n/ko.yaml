@@ -1678,6 +1678,7 @@ lesson:
       selected_sr: "선택됨: {label}"
       resolve: "정답 보기"
       resolve_announce: "정답을 표시했습니다. {total}쌍 중 {correct}쌍이 정확했습니다."
+      my_answers: "내 답변"
     picture:
       submit: "답 확인"
       retry: "다시 시도"

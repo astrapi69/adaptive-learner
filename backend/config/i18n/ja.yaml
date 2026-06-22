@@ -1667,6 +1667,7 @@ lesson:
       selected_sr: "選択中: {label}"
       resolve: "解答を表示"
       resolve_announce: "解答を表示しました。{total} 組中 {correct} 組が正解でした。"
+      my_answers: "自分の回答"
     picture:
       submit: "答えを確認"
       retry: "もう一度"

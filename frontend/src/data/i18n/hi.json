@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "बाईं ओर एक आइटम चुनें, फिर दाईं ओर उसका मिलान चुनें।",
         "selected_sr": "चयनित: {label}",
         "resolve": "हल दिखाएँ",
-        "resolve_announce": "समाधान दिखाया गया। {total} में से {correct} जोड़े सही थे।"
+        "resolve_announce": "समाधान दिखाया गया। {total} में से {correct} जोड़े सही थे।",
+        "my_answers": "मेरे उत्तर"
       },
       "picture": {
         "submit": "उत्तर जाँचें",

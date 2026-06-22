@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "Selecione um item à esquerda e depois o seu correspondente à direita.",
         "selected_sr": "Selecionado: {label}",
         "resolve": "Resolver",
-        "resolve_announce": "Solução exibida. {correct} de {total} pares estavam corretos."
+        "resolve_announce": "Solução exibida. {correct} de {total} pares estavam corretos.",
+        "my_answers": "Minhas respostas"
       },
       "picture": {
         "submit": "Verificar resposta",

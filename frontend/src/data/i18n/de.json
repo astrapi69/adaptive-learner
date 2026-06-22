@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "Wähle links ein Element, dann rechts die passende Zuordnung.",
         "selected_sr": "Ausgewählt: {label}",
         "resolve": "Auflösen",
-        "resolve_announce": "Lösung angezeigt. {correct} von {total} Paaren waren korrekt."
+        "resolve_announce": "Lösung angezeigt. {correct} von {total} Paaren waren korrekt.",
+        "my_answers": "Meine Antworten"
       },
       "picture": {
         "submit": "Antwort prüfen",

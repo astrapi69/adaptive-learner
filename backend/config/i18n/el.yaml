@@ -1669,6 +1669,7 @@ lesson:
       selected_sr: "Επιλέχθηκε: {label}"
       resolve: "Επίλυση"
       resolve_announce: "Εμφανίστηκε η λύση. {correct} από {total} ζεύγη ήταν σωστά."
+      my_answers: "Οι απαντήσεις μου"
     picture:
       submit: "Έλεγχος απάντησης"
       retry: "Δοκίμασε ξανά"

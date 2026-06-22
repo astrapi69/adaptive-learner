@@ -699,9 +699,81 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
         const resolution = screen.getByTestId("matching-resolution");
         // Default effect is "slide".
         expect(resolution).toHaveAttribute("data-effect", "slide");
-        // The interactive columns are gone; the resolve button too.
+        // The interactive columns are gone, but the #977 toggle stays so
+        // the learner can switch back to their own answers.
         expect(screen.queryByTestId("matching-left")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-resolve")).toBeInTheDocument();
+        expect(screen.getByTestId("matching-my-answers")).toBeInTheDocument();
+        // The solution toggle is the active view (#977 visual indicator).
+        expect(screen.getByTestId("matching-resolve")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+            "aria-pressed",
+            "false",
+        );
+    });
+
+    it("toggles back and forth between my answers and the solution (#977)", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        solveAll();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        // Default view after checking is the learner's graded answers.
+        expect(screen.getByTestId("matching-left")).toBeInTheDocument();
+        expect(screen.queryByTestId("matching-resolution")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+
+        // -> solution
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        expect(screen.getByTestId("matching-resolution")).toBeInTheDocument();
+        expect(screen.queryByTestId("matching-left")).not.toBeInTheDocument();
+
+        // -> back to my answers (graded columns return)
+        fireEvent.click(screen.getByTestId("matching-my-answers"));
+        expect(screen.getByTestId("matching-left")).toBeInTheDocument();
+        expect(screen.queryByTestId("matching-resolution")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+
+        // -> solution again (still reachable)
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        expect(screen.getByTestId("matching-resolution")).toBeInTheDocument();
+    });
+
+    it("animates the solution only on the first reveal (#977)", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        solveAll();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+
+        // First reveal: the slide animation utility is present.
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        expect(
+            screen.getByTestId("matching-resolved-b-0").className,
+        ).toContain("animate-[matching-resolve");
+
+        // Toggle away and back: the end result shows with no animation.
+        fireEvent.click(screen.getByTestId("matching-my-answers"));
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        expect(
+            screen.getByTestId("matching-resolved-b-0").className,
+        ).not.toContain("animate-[matching-resolve");
+    });
+
+    it("shows neither toggle button before the answer is checked (#977)", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(screen.queryByTestId("matching-my-answers")).not.toBeInTheDocument();
         expect(screen.queryByTestId("matching-resolve")).not.toBeInTheDocument();
+        solveAll();
+        expect(screen.queryByTestId("matching-my-answers")).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(screen.getByTestId("matching-my-answers")).toBeInTheDocument();
+        expect(screen.getByTestId("matching-resolve")).toBeInTheDocument();
     });
 
     it("uses the configured effect from localStorage", () => {

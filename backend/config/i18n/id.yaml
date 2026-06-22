@@ -1678,6 +1678,7 @@ lesson:
       selected_sr: "Dipilih: {label}"
       resolve: "Selesaikan"
       resolve_announce: "Solusi ditampilkan. {correct} dari {total} pasangan sudah benar."
+      my_answers: "Jawaban saya"
     picture:
       submit: "Periksa jawaban"
       retry: "Coba lagi"

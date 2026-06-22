@@ -552,9 +552,64 @@ export function MatchingRightTile({
     );
 }
 
-/** The score line + celebration + the shared exercise footer. The
- *  #824 "Auflösen" button sits in the same row, shown only after the
- *  first check and until the pairs have been revealed. */
+/** #977 — after checking, the learner toggles between their own graded
+ *  answers and the revealed solution. The active view is a ``default``
+ *  (filled) button carrying a Check; the inactive view is an ``outline``
+ *  button. ``aria-pressed`` conveys the active state to assistive tech.
+ *  Shown only after submit (the caller gates it). */
+export function MatchingViewToggle({
+    view,
+    onShowUserAnswers,
+    onShowSolution,
+    myAnswersLabel,
+    solveLabel,
+}: {
+    view: "user-answers" | "solution";
+    onShowUserAnswers: () => void;
+    onShowSolution: () => void;
+    myAnswersLabel: string;
+    solveLabel: string;
+}) {
+    const userActive = view === "user-answers";
+    const solutionActive = view === "solution";
+    return (
+        <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            data-testid="matching-view-toggle"
+        >
+            <Button
+                type="button"
+                variant={userActive ? "default" : "outline"}
+                size="sm"
+                aria-pressed={userActive}
+                onClick={onShowUserAnswers}
+                data-testid="matching-my-answers"
+            >
+                {userActive && <Check size={14} aria-hidden="true" />}
+                {myAnswersLabel}
+            </Button>
+            <Button
+                type="button"
+                variant={solutionActive ? "default" : "outline"}
+                size="sm"
+                aria-pressed={solutionActive}
+                onClick={onShowSolution}
+                data-testid="matching-resolve"
+            >
+                {solutionActive ? (
+                    <Check size={14} aria-hidden="true" />
+                ) : (
+                    <Sparkles size={14} aria-hidden="true" />
+                )}
+                {solveLabel}
+            </Button>
+        </div>
+    );
+}
+
+/** The score line + celebration + the shared exercise footer (check /
+ *  retry). The #977 view toggle lives in its own row above the views. */
 export function MatchingResultFooter({
     submitted,
     result,
@@ -562,9 +617,6 @@ export function MatchingResultFooter({
     canCheck,
     onCheck,
     onRetry,
-    canResolve = false,
-    onResolve,
-    resolveLabel,
 }: {
     submitted: boolean;
     result: {correct: number; total: number} | null;
@@ -572,9 +624,6 @@ export function MatchingResultFooter({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
-    canResolve?: boolean;
-    onResolve?: () => void;
-    resolveLabel?: string;
 }) {
     const {t} = useI18n();
     const allCorrect =
@@ -604,18 +653,6 @@ export function MatchingResultFooter({
                     </p>
                     <AnswerCelebration isCorrect={allCorrect} />
                 </>
-            )}
-            {canResolve && onResolve && (
-                <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    onClick={onResolve}
-                    data-testid="matching-resolve"
-                >
-                    <Sparkles size={14} aria-hidden="true" />
-                    {resolveLabel ?? "Solve"}
-                </Button>
             )}
             <ExerciseFooter
                 testidPrefix="matching"

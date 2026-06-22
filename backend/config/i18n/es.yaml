@@ -1669,6 +1669,7 @@ lesson:
       selected_sr: "Seleccionado: {label}"
       resolve: "Resolver"
       resolve_announce: "Solución mostrada. {correct} de {total} pares eran correctos."
+      my_answers: "Mis respuestas"
     picture:
       submit: "Comprobar respuesta"
       retry: "Intentar de nuevo"

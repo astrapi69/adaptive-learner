@@ -1667,6 +1667,7 @@ lesson:
       selected_sr: "Seçildi: {label}"
       resolve: "Çöz"
       resolve_announce: "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu."
+      my_answers: "Cevaplarım"
     picture:
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"
