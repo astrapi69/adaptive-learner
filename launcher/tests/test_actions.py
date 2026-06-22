@@ -425,6 +425,30 @@ class TestHealthCheck:
         assert ok is True
 
 
+# --- is_healthy (single-shot) (5) -----------------------------------------
+
+class TestIsHealthy:
+    def test_ok(self) -> None:
+        with patch("urllib.request.urlopen", return_value=_Resp(200, '{"status": "ok"}')):
+            assert actions.is_healthy(8501) is True
+
+    def test_status_not_ok(self) -> None:
+        with patch("urllib.request.urlopen", return_value=_Resp(200, '{"status": "degraded"}')):
+            assert actions.is_healthy(8501) is False
+
+    def test_non_200(self) -> None:
+        with patch("urllib.request.urlopen", return_value=_Resp(503)):
+            assert actions.is_healthy(8501) is False
+
+    def test_connection_error(self) -> None:
+        with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("refused")):
+            assert actions.is_healthy(8501) is False
+
+    def test_invalid_json(self) -> None:
+        with patch("urllib.request.urlopen", return_value=_Resp(200, "not json")):
+            assert actions.is_healthy(8501) is False
+
+
 # --- open_browser (3) -----------------------------------------------------
 
 class TestOpenBrowser:
