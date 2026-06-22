@@ -1667,6 +1667,7 @@ lesson:
       selected_sr: "Selecionado: {label}"
       resolve: "Resolver"
       resolve_announce: "Solução exibida. {correct} de {total} pares estavam corretos."
+      my_answers: "Minhas respostas"
     picture:
       submit: "Verificar resposta"
       retry: "Tentar de novo"

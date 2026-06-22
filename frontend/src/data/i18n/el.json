@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "Επίλεξε ένα στοιχείο αριστερά και μετά το ταίρι του δεξιά.",
         "selected_sr": "Επιλέχθηκε: {label}",
         "resolve": "Επίλυση",
-        "resolve_announce": "Εμφανίστηκε η λύση. {correct} από {total} ζεύγη ήταν σωστά."
+        "resolve_announce": "Εμφανίστηκε η λύση. {correct} από {total} ζεύγη ήταν σωστά.",
+        "my_answers": "Οι απαντήσεις μου"
       },
       "picture": {
         "submit": "Έλεγχος απάντησης",

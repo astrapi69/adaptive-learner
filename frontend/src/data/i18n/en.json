@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "Select an item on the left, then its match on the right.",
         "selected_sr": "Selected: {label}",
         "resolve": "Solve",
-        "resolve_announce": "Solution shown. {correct} of {total} pairs were correct."
+        "resolve_announce": "Solution shown. {correct} of {total} pairs were correct.",
+        "my_answers": "My answers"
       },
       "picture": {
         "submit": "Check answer",

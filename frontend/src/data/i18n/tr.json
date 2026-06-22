@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "Soldan bir öğe seç, ardından sağdaki eşini seç.",
         "selected_sr": "Seçildi: {label}",
         "resolve": "Çöz",
-        "resolve_announce": "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu."
+        "resolve_announce": "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu.",
+        "my_answers": "Cevaplarım"
       },
       "picture": {
         "submit": "Cevabı kontrol et",

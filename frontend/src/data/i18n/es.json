@@ -1798,7 +1798,8 @@
         "instructions_knowledge": "Selecciona un elemento a la izquierda y luego su correspondencia a la derecha.",
         "selected_sr": "Seleccionado: {label}",
         "resolve": "Resolver",
-        "resolve_announce": "Solución mostrada. {correct} de {total} pares eran correctos."
+        "resolve_announce": "Solución mostrada. {correct} de {total} pares eran correctos.",
+        "my_answers": "Mis respuestas"
       },
       "picture": {
         "submit": "Comprobar respuesta",
