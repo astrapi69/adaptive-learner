@@ -128,3 +128,20 @@ class TestReadPort:
     def test_falls_back_on_missing_key(self, tmp_path: Path) -> None:
         (tmp_path / ".env").write_text("OTHER=1\n", encoding="utf-8")
         assert config.read_port(tmp_path) == config.DEFAULT_PORT
+
+
+class TestSourceCheckoutRepo:
+    """source_checkout_repo lets a dev run against the local repo instead
+    of a stale downloaded release in a tmp dir (#981)."""
+
+    def test_returns_repo_with_compose_when_run_from_source(self) -> None:
+        # The test suite runs from the source checkout, so parents[2] of
+        # config.py is the repo root and carries the compose file.
+        repo = config.source_checkout_repo()
+        assert repo is not None
+        assert (repo / config.COMPOSE_FILENAME).is_file()
+
+    def test_none_when_root_is_not_a_repo(self, monkeypatch, tmp_path: Path) -> None:
+        # Simulate a frozen/pip layout: parents[2] has no compose file.
+        monkeypatch.setattr(config, "is_valid_repo", lambda p: False)
+        assert config.source_checkout_repo() is None
