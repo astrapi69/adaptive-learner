@@ -2222,6 +2222,8 @@
         "invalid": "Verificacao IA invalida"
       },
       "last_checked": "Ultima verificacao: {when}",
+      "checked_with": "Verificado com",
+      "date": "Data",
       "recheck": "Verificar novamente",
       "export": {
         "button": "Exportar relatorio como Markdown",

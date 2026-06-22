@@ -85,7 +85,7 @@ def ask_copyable_url(url: str) -> None:
     """Popup a small window showing a URL the user can copy/paste."""
     _ensure_root()
     win = tk.Toplevel()
-    win.title("AdaptiveLearner URL")
+    win.title("Adaptive Learner URL")
     tk.Label(win, text="Copy this URL and paste into your browser:").pack(padx=16, pady=(16, 4))
     entry = tk.Entry(win, width=40)
     entry.insert(0, url)
@@ -423,6 +423,54 @@ def three_button_dialog(
     return result["choice"]
 
 
+def choice_dialog(title: str, message: str, buttons: list[tuple[str, str]]) -> str | None:
+    """Show a message with N labeled buttons; return the chosen value.
+
+    ``buttons`` is a list of ``(label, value)`` tuples rendered left to
+    right. The first button is the Enter-default. Closing the window via
+    the X or pressing Escape returns ``None`` (an explicit "do nothing"
+    that is distinct from any button value) so a destructive action can
+    never be triggered by closing the window.
+
+    Used for the installed-app management menu (Open / Stop / Uninstall)
+    where the cancel-equivalent must be a no-op, not the last button.
+    """
+    assert buttons, "choice_dialog requires at least one button"
+    _ensure_root()
+    win = tk.Toplevel()
+    win.title(title)
+    win.resizable(False, False)
+
+    result: dict = {"choice": None}
+
+    tk.Label(win, text=message, justify="left", wraplength=420, padx=20, pady=16).pack()
+
+    button_row = tk.Frame(win)
+    button_row.pack(padx=20, pady=(0, 16))
+
+    def _click(value: str | None) -> None:
+        result["choice"] = value
+        win.destroy()
+
+    first_button: tk.Button | None = None
+    for index, (label, value) in enumerate(buttons):
+        btn = tk.Button(button_row, text=label, width=16, command=lambda v=value: _click(v))
+        btn.pack(side="left", padx=(0, 8) if index < len(buttons) - 1 else 0)
+        if first_button is None:
+            first_button = btn
+
+    if first_button is not None:
+        first_button.focus_set()
+        win.bind("<Return>", lambda _e: _click(buttons[0][1]))
+    win.bind("<Escape>", lambda _e: _click(None))
+    win.protocol("WM_DELETE_WINDOW", lambda: _click(None))
+
+    _center_over_root(win)
+    win.grab_set()
+    win.wait_window()
+    return result["choice"]
+
+
 def welcome_dialog(*, guide_url: str, security_url: str | None = None) -> None:
     """First-ever-launch welcome screen.
 
@@ -629,49 +677,150 @@ def _center_over_root(win: tk.Toplevel) -> None:
 
 
 class StatusWindow:
-    """A tiny window that shows current state and a Stop button.
+    """A small window that shows progress as a step checklist + Stop button.
+
+    The step list gives the user concrete feedback ("Download...",
+    "Start container...", "Ready") so a slow first-run build never looks
+    like a crash. Each step renders a status glyph: pending (·), active
+    (animated spinner), done (check) or failed (cross).
 
     Usage:
         win = StatusWindow()
-        win.set_starting()
+        win.set_steps(["Check Docker", "Start container", "Ready"])
+        win.start_step(0); win.complete_step(0)
         ...
         win.set_running(port, on_stop=callback)
         win.run_mainloop()  # blocks until stop
     """
 
-    def __init__(self, on_close: callable | None = None) -> None:
+    _SPINNER_FRAMES = ("|", "/", "-", "\\")
+    _GLYPH_PENDING = "·"  # middle dot
+    _GLYPH_DONE = "✓"  # check mark
+    _GLYPH_FAILED = "✗"  # ballot x
+
+    def __init__(self, on_close: callable | None = None, *, title: str | None = None) -> None:
         self._root = _ensure_root()
-        self._root.title("AdaptiveLearner")
-        self._root.geometry("360x200")
+        self._root.title("Adaptive Learner")
+        self._root.geometry("420x340")
         self._root.protocol("WM_DELETE_WINDOW", self._handle_close)
 
-        self._label = tk.Label(self._root, text="Starting AdaptiveLearner...", font=("Segoe UI", 11))
-        self._label.pack(pady=(24, 12))
+        self._label = tk.Label(
+            self._root,
+            text=title or "Starting AdaptiveLearner...",
+            font=("Segoe UI", 12, "bold"),
+        )
+        self._label.pack(pady=(20, 8))
 
-        self._detail = tk.Label(self._root, text="", font=("Segoe UI", 9), fg="#555")
-        self._detail.pack(pady=(0, 12))
+        # Step checklist. Each entry is (glyph_label, text_label).
+        self._steps_frame = tk.Frame(self._root)
+        self._steps_frame.pack(fill="x", padx=28, pady=(0, 8))
+        self._step_rows: list[tuple[tk.Label, tk.Label]] = []
+        self._active_index: int | None = None
+        self._spinner_frame = 0
 
-        self._button = tk.Button(self._root, text="", state="disabled", width=20)
+        self._detail = tk.Label(self._root, text="", font=("Segoe UI", 9), fg="#555", wraplength=380, justify="left")
+        self._detail.pack(pady=(0, 8))
+
+        self._button = tk.Button(self._root, text="", state="disabled", width=22)
         self._button.pack(pady=(0, 8))
 
         # Secondary action button (e.g. Settings). Hidden until set_running
         # populates it so the starting-state UI stays minimal.
-        self._secondary = tk.Button(self._root, text="", width=20)
+        self._secondary = tk.Button(self._root, text="", width=22)
         self._secondary.pack(pady=(0, 16))
         self._secondary.pack_forget()
 
         self._on_close_cb = on_close
         self._stop_cb: callable | None = None
+        self._spinner_running = False
+
+    # --- Step checklist API ---
+
+    def set_title(self, title: str) -> None:
+        self._label.configure(text=title)
+        self._root.update_idletasks()
+
+    def set_steps(self, labels: list[str]) -> None:
+        """Render a fresh checklist with every step in the pending state."""
+        for glyph, text in self._step_rows:
+            glyph.destroy()
+            text.destroy()
+        self._step_rows = []
+        self._active_index = None
+        for label in labels:
+            row = tk.Frame(self._steps_frame)
+            row.pack(fill="x", pady=2)
+            glyph = tk.Label(row, text=self._GLYPH_PENDING, font=("Consolas", 11), width=2, fg="#999")
+            glyph.pack(side="left")
+            text_label = tk.Label(row, text=label, font=("Segoe UI", 10), anchor="w", fg="#777")
+            text_label.pack(side="left", fill="x")
+            self._step_rows.append((glyph, text_label))
+        self._root.update_idletasks()
+
+    def start_step(self, index: int, detail: str = "") -> None:
+        """Mark step ``index`` active (spinner) and update the detail line."""
+        self._active_index = index
+        self._set_glyph(index, self._SPINNER_FRAMES[0], "#1a73e8")
+        self._highlight_text(index, "#222")
+        if detail:
+            self._detail.configure(text=detail)
+        self._ensure_spinner()
+        self._root.update_idletasks()
+
+    def complete_step(self, index: int) -> None:
+        self._set_glyph(index, self._GLYPH_DONE, "#188038")
+        self._highlight_text(index, "#444")
+        if self._active_index == index:
+            self._active_index = None
+        self._root.update_idletasks()
+
+    def fail_step(self, index: int) -> None:
+        self._set_glyph(index, self._GLYPH_FAILED, "#c5221f")
+        self._highlight_text(index, "#c5221f")
+        if self._active_index == index:
+            self._active_index = None
+        self._root.update_idletasks()
+
+    def set_error(self, message: str) -> None:
+        """Surface an error under the checklist without closing the window."""
+        self._detail.configure(text=message, fg="#c5221f")
+        self._root.update_idletasks()
+
+    def _set_glyph(self, index: int, glyph: str, color: str) -> None:
+        if 0 <= index < len(self._step_rows):
+            self._step_rows[index][0].configure(text=glyph, fg=color)
+
+    def _highlight_text(self, index: int, color: str) -> None:
+        if 0 <= index < len(self._step_rows):
+            self._step_rows[index][1].configure(fg=color)
+
+    def _ensure_spinner(self) -> None:
+        if self._spinner_running:
+            return
+        self._spinner_running = True
+        self._tick_spinner()
+
+    def _tick_spinner(self) -> None:
+        if self._active_index is not None:
+            self._spinner_frame = (self._spinner_frame + 1) % len(self._SPINNER_FRAMES)
+            self._set_glyph(self._active_index, self._SPINNER_FRAMES[self._spinner_frame], "#1a73e8")
+        try:
+            self._root.after(120, self._tick_spinner)
+        except tk.TclError:
+            self._spinner_running = False
+
+    # --- Legacy single-message API (kept for callers not using steps) ---
 
     def set_starting(self, detail: str = "") -> None:
         self._label.configure(text="Starting AdaptiveLearner...")
-        self._detail.configure(text=detail)
+        self._detail.configure(text=detail, fg="#555")
         self._button.configure(text="", state="disabled")
         self._root.update_idletasks()
 
     def set_running(self, port: int, on_stop: callable, on_settings: callable | None = None) -> None:
+        self._active_index = None
         self._label.configure(text=f"AdaptiveLearner is running on localhost:{port}")
-        self._detail.configure(text="Browser opened. Close this window or click Stop to shut down.")
+        self._detail.configure(text="Browser opened. Close this window or click Stop to shut down.", fg="#555")
         self._stop_cb = on_stop
         self._button.configure(text="Stop AdaptiveLearner", state="normal", command=self._handle_stop)
         if on_settings is not None:
@@ -680,8 +829,9 @@ class StatusWindow:
         self._root.update_idletasks()
 
     def set_stopping(self) -> None:
+        self._active_index = None
         self._label.configure(text="Stopping AdaptiveLearner...")
-        self._detail.configure(text="Waiting for docker compose down to finish.")
+        self._detail.configure(text="Waiting for docker compose down to finish.", fg="#555")
         self._button.configure(text="", state="disabled")
         self._root.update_idletasks()
 

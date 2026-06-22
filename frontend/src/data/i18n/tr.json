@@ -2222,6 +2222,8 @@
         "invalid": "Yapay zeka denetimi gecersiz"
       },
       "last_checked": "Son denetim: {when}",
+      "checked_with": "Şununla denetlendi",
+      "date": "Tarih",
       "recheck": "Yeniden denetle",
       "export": {
         "button": "Raporu Markdown olarak disa aktar",

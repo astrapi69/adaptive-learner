@@ -2222,6 +2222,8 @@
         "invalid": "AI-check invalid"
       },
       "last_checked": "Last check: {when}",
+      "checked_with": "Checked with",
+      "date": "Date",
       "recheck": "Re-check",
       "export": {
         "button": "Export report as Markdown",

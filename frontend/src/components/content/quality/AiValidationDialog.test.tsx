@@ -118,6 +118,10 @@ describe("AiValidationDialog", () => {
     });
     expect(screen.getByTestId("validation-report-ok")).toHaveTextContent("1 cards OK");
     expect(screen.getByTestId("validation-report-item-c2")).toHaveTextContent("la casa");
+    // #940 — the report shows which provider + model ran the check.
+    expect(screen.getByTestId("ai-validation-checked-with")).toHaveTextContent(
+      "gpt-4o-mini",
+    );
     expect(aiValidateCardsMock).toHaveBeenCalledTimes(1);
     const call = aiValidateCardsMock.mock.calls[0][0];
     expect(call.cards).toHaveLength(2);

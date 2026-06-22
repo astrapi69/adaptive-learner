@@ -12,6 +12,7 @@ import { useEffect, useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import ModalShell from "../../../shared/feedback/ModalShell";
 import ValidationReport, {
   type ValidationReportItem,
   type ValidationReportIssue,
@@ -116,16 +117,14 @@ export default function QualityCheckDialog({
   };
 
   return (
-    <div className="modal-overlay" data-testid="quality-check-modal">
-      <div
-        className="modal-card max-w-2xl"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="quality-check-title"
-      >
-        <h2 id="quality-check-title" className="modal-title">
-          {t("content.quality.title", "Quality check")}
-        </h2>
+    <ModalShell
+      open
+      onClose={close}
+      title={t("content.quality.title", "Quality check")}
+      closeLabel={t("common.close", "Close")}
+      testId="quality-check-modal"
+    >
+      <div className="flex flex-col gap-1">
         <p className="text-sm text-fg-muted">{entry.title}</p>
 
         {state.phase === "loading" && (
@@ -206,6 +205,6 @@ export default function QualityCheckDialog({
           </div>
         )}
       </div>
-    </div>
+    </ModalShell>
   );
 }
