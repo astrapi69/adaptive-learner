@@ -225,15 +225,15 @@ class TestResolveFreePort:
     def test_returns_port_when_available(self, tmp_path: Path) -> None:
         with (
             patch.object(main_mod.config, "resolve_launch_port", return_value=7880),
-            patch.object(main_mod.ports, "is_available", return_value=True),
+            patch.object(main_mod.actions, "check_port", return_value=(True, "frei")),
         ):
             assert main_mod._resolve_free_port(tmp_path, None) == 7880
 
     def test_suggests_and_persists_free_port_on_conflict(self, tmp_path: Path) -> None:
         with (
             patch.object(main_mod.config, "resolve_launch_port", return_value=7880),
-            patch.object(main_mod.ports, "is_available", return_value=False),
-            patch.object(main_mod.ports, "find_available", return_value=7881),
+            patch.object(main_mod.actions, "check_port", return_value=(False, "belegt")),
+            patch.object(main_mod.actions, "find_free_port", return_value=(True, 7881, "ok")),
             patch.object(main_mod.ui, "two_button_dialog", return_value="primary"),
             patch.object(main_mod.config, "write_public_port") as write_mock,
         ):
@@ -243,8 +243,8 @@ class TestResolveFreePort:
     def test_returns_none_when_user_cancels(self, tmp_path: Path) -> None:
         with (
             patch.object(main_mod.config, "resolve_launch_port", return_value=7880),
-            patch.object(main_mod.ports, "is_available", return_value=False),
-            patch.object(main_mod.ports, "find_available", return_value=7881),
+            patch.object(main_mod.actions, "check_port", return_value=(False, "belegt")),
+            patch.object(main_mod.actions, "find_free_port", return_value=(True, 7881, "ok")),
             patch.object(main_mod.ui, "two_button_dialog", return_value="secondary"),
             patch.object(main_mod.config, "write_public_port") as write_mock,
         ):
@@ -254,8 +254,8 @@ class TestResolveFreePort:
     def test_returns_none_when_no_free_port(self, tmp_path: Path) -> None:
         with (
             patch.object(main_mod.config, "resolve_launch_port", return_value=65535),
-            patch.object(main_mod.ports, "is_available", return_value=False),
-            patch.object(main_mod.ports, "find_available", return_value=None),
+            patch.object(main_mod.actions, "check_port", return_value=(False, "belegt")),
+            patch.object(main_mod.actions, "find_free_port", return_value=(False, 0, "none")),
             patch.object(main_mod.ui, "error_box") as error_mock,
         ):
             assert main_mod._resolve_free_port(tmp_path, None) is None
@@ -279,14 +279,14 @@ class TestEnsureDockerReady:
     def test_true_when_daemon_running(self) -> None:
         with (
             patch.object(main_mod.docker, "docker_installed", return_value=(True, "v")),
-            patch.object(main_mod.docker, "docker_daemon_running", return_value=(True, "ok")),
+            patch.object(main_mod.actions, "check_docker", return_value=(True, "ok")),
         ):
             assert main_mod._ensure_docker_ready(False) is True
 
     def test_cancel_on_daemon_dialog_aborts(self) -> None:
         with (
             patch.object(main_mod.docker, "docker_installed", return_value=(True, "v")),
-            patch.object(main_mod.docker, "docker_daemon_running", return_value=(False, "down")),
+            patch.object(main_mod.actions, "check_docker", return_value=(False, "down")),
             patch.object(main_mod.ui, "three_button_dialog", return_value="cancel"),
         ):
             assert main_mod._ensure_docker_ready(False) is False
@@ -294,7 +294,7 @@ class TestEnsureDockerReady:
     def test_start_button_then_daemon_comes_up(self) -> None:
         with (
             patch.object(main_mod.docker, "docker_installed", return_value=(True, "v")),
-            patch.object(main_mod.docker, "docker_daemon_running", return_value=(False, "down")),
+            patch.object(main_mod.actions, "check_docker", return_value=(False, "down")),
             patch.object(main_mod.ui, "three_button_dialog", return_value="primary"),
             patch.object(main_mod.docker, "start_docker_desktop", return_value=(True, "started")),
             patch.object(main_mod, "_wait_for_daemon", return_value=True),
@@ -423,7 +423,7 @@ class TestStackStateBranch:
     def test_running_routes_to_manage_running(self, tmp_path: Path) -> None:
         patches = self._common_patches(tmp_path)
         with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], \
-             patch.object(main_mod.docker, "stack_running", return_value=True), \
+             patch.object(main_mod.actions, "get_state", return_value="running"), \
              patch.object(main_mod, "_manage_running", return_value=0) as manage_mock:
             rc = main_mod._run_launcher()
         assert rc == 0
@@ -432,7 +432,7 @@ class TestStackStateBranch:
     def test_stopped_uninstall_choice_exits(self, tmp_path: Path) -> None:
         patches = self._common_patches(tmp_path)
         with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5], patches[6], patches[7], \
-             patch.object(main_mod.docker, "stack_running", return_value=False), \
+             patch.object(main_mod.actions, "get_state", return_value="stopped"), \
              patch.object(main_mod, "_offer_start_or_uninstall", return_value=False), \
              patch.object(main_mod, "_resolve_free_port") as resolve_mock:
             rc = main_mod._run_launcher()
