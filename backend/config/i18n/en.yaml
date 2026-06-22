@@ -462,6 +462,10 @@ settings:
     hint: "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions."
     default_label: "Default mode"
     threshold_label: "Exam pass threshold"
+    timed_difficulty_label: "Timed mode difficulty"
+    timed_relaxed: "Relaxed (2× time)"
+    timed_normal: "Normal"
+    timed_fast: "Fast (0.7× time)"
   updates:
     title: "Updates"
     auto_check: "Automatic update check"
@@ -1616,10 +1620,20 @@ lesson:
     label: "Lesson mode"
     practice: "Practice"
     exam: "Exam"
+    timed: "Timed"
   exam:
     passed: "Passed"
     not_passed: "Not passed"
     threshold_hint: "(pass ≥ {pct}%)"
+  timed:
+    remaining: "Time remaining"
+    seconds_left: "{n}s left"
+    time_up: "Time's up!"
+    bonus: "+{n}s bonus"
+    stats_answered: "{n} of {total} answered in time."
+    stats_avg: "Average answer time: {s}s"
+    stats_fastest: "Fastest: {s}s ({type})"
+    stats_slowest: "Slowest: {s}s ({type})"
   resources_title: "Explore further"
   resources_domain: "More on {domain}"
   motivation:

@@ -464,6 +464,10 @@ settings:
     hint: "अभ्यास मोड में सभी सहायताएँ चालू रहती हैं। परीक्षा मोड संकेत, सिद्धांत पुनरावलोकन, स्वतः वाचन और समाधान छिपा देता है ताकि आप वास्तविक परिस्थितियों में याद करें।"
     default_label: "डिफ़ॉल्ट मोड"
     threshold_label: "उत्तीर्ण सीमा"
+    timed_difficulty_label: "समयबद्ध मोड कठिनाई"
+    timed_relaxed: "आरामदायक (2× समय)"
+    timed_normal: "सामान्य"
+    timed_fast: "तेज़ (0.7× समय)"
   updates:
     title: "अपडेट"
     auto_check: "स्वचालित अपडेट जाँच"
@@ -1601,10 +1605,20 @@ lesson:
     label: "पाठ मोड"
     practice: "अभ्यास"
     exam: "परीक्षा"
+    timed: "समयबद्ध"
   exam:
     passed: "उत्तीर्ण"
     not_passed: "अनुत्तीर्ण"
     threshold_hint: "(उत्तीर्ण ≥ {pct}%)"
+  timed:
+    remaining: "शेष समय"
+    seconds_left: "{n}s शेष"
+    time_up: "समय समाप्त!"
+    bonus: "+{n}s बोनस"
+    stats_answered: "{total} में से {n} समय पर उत्तरित।"
+    stats_avg: "औसत उत्तर समय: {s}s"
+    stats_fastest: "सबसे तेज़: {s}s ({type})"
+    stats_slowest: "सबसे धीमी: {s}s ({type})"
   resources_title: "विषय को गहराई से जानें"
   resources_domain: "{domain} के बारे में और जानें"
   motivation:

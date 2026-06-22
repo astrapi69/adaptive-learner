@@ -462,6 +462,10 @@ settings:
     hint: "Η εξάσκηση διατηρεί όλα τα βοηθήματα. Η εξέταση κρύβει υποδείξεις, επανάληψη θεωρίας, αυτόματη ανάγνωση και τη λύση ώστε να ανακαλείς σε ρεαλιστικές συνθήκες."
     default_label: "Προεπιλεγμένη λειτουργία"
     threshold_label: "Όριο επιτυχίας"
+    timed_difficulty_label: "Δυσκολία λειτουργίας με χρόνο"
+    timed_relaxed: "Χαλαρό (2× χρόνος)"
+    timed_normal: "Κανονικό"
+    timed_fast: "Γρήγορο (0,7× χρόνος)"
   updates:
     title: "Ενημερώσεις"
     auto_check: "Αυτόματος έλεγχος ενημερώσεων"
@@ -1607,10 +1611,20 @@ lesson:
     label: "Λειτουργία μαθήματος"
     practice: "Εξάσκηση"
     exam: "Εξέταση"
+    timed: "Με χρόνο"
   exam:
     passed: "Επιτυχία"
     not_passed: "Αποτυχία"
     threshold_hint: "(επιτυχία ≥ {pct}%)"
+  timed:
+    remaining: "Υπόλοιπος χρόνος"
+    seconds_left: "{n}s απομένουν"
+    time_up: "Ο χρόνος τελείωσε!"
+    bonus: "+{n}s μπόνους"
+    stats_answered: "{n} από {total} απαντήθηκαν εγκαίρως."
+    stats_avg: "Μέσος χρόνος απάντησης: {s}s"
+    stats_fastest: "Ταχύτερη: {s}s ({type})"
+    stats_slowest: "Πιο αργή: {s}s ({type})"
   resources_title: "Εμβάθυνε στο θέμα"
   resources_domain: "Περισσότερα για {domain}"
   motivation:

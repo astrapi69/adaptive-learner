@@ -9,7 +9,7 @@
  * Tailwind + design tokens (shadcn ``Button``); works in every theme.
  */
 
-import {GraduationCap, Lightbulb} from "lucide-react";
+import {GraduationCap, Lightbulb, Timer} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -36,6 +36,7 @@ export default function LessonModeToggle({
     const {t} = useI18n();
     const practiceActive = mode === "practice";
     const examActive = mode === "exam";
+    const timedActive = mode === "timed";
     return (
         <div
             className="flex flex-wrap items-center gap-2 px-2 py-1"
@@ -66,6 +67,18 @@ export default function LessonModeToggle({
             >
                 <GraduationCap size={14} aria-hidden="true" />
                 {t("lesson.mode.exam", "Exam")}
+            </Button>
+            <Button
+                type="button"
+                variant={timedActive ? "default" : "outline"}
+                size="sm"
+                aria-pressed={timedActive}
+                disabled={disabled}
+                onClick={() => onChange("timed")}
+                data-testid="lesson-mode-timed"
+            >
+                <Timer size={14} aria-hidden="true" />
+                {t("lesson.mode.timed", "Timed")}
             </Button>
         </div>
     );

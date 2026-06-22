@@ -462,6 +462,10 @@ settings:
     hint: "O modo prática mantém todas as ajudas. O modo exame oculta dicas, revisão de teoria, leitura automática e a solução para que você recupere em condições realistas."
     default_label: "Modo padrão"
     threshold_label: "Limite para aprovação"
+    timed_difficulty_label: "Dificuldade do modo cronometrado"
+    timed_relaxed: "Relaxado (2× tempo)"
+    timed_normal: "Normal"
+    timed_fast: "Rápido (0,7× tempo)"
   updates:
     title: "Atualizações"
     auto_check: "Verificação automática de atualizações"
@@ -1605,10 +1609,20 @@ lesson:
     label: "Modo de lição"
     practice: "Prática"
     exam: "Exame"
+    timed: "Cronometrado"
   exam:
     passed: "Aprovado"
     not_passed: "Não aprovado"
     threshold_hint: "(aprovado ≥ {pct}%)"
+  timed:
+    remaining: "Tempo restante"
+    seconds_left: "{n}s restantes"
+    time_up: "Tempo esgotado!"
+    bonus: "+{n}s de bônus"
+    stats_answered: "{n} de {total} respondidas a tempo."
+    stats_avg: "Tempo médio de resposta: {s}s"
+    stats_fastest: "Mais rápida: {s}s ({type})"
+    stats_slowest: "Mais lenta: {s}s ({type})"
   resources_title: "Aprofunde o tema"
   resources_domain: "Mais sobre {domain}"
   motivation:

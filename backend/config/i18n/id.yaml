@@ -462,6 +462,10 @@ settings:
     hint: "Mode latihan mempertahankan semua bantuan. Mode ujian menyembunyikan petunjuk, ulasan teori, baca otomatis, dan solusi agar Anda mengingat dalam kondisi realistis."
     default_label: "Mode bawaan"
     threshold_label: "Ambang kelulusan"
+    timed_difficulty_label: "Tingkat kesulitan mode berwaktu"
+    timed_relaxed: "Santai (2× waktu)"
+    timed_normal: "Normal"
+    timed_fast: "Cepat (0,7× waktu)"
   updates:
     title: "Pembaruan"
     auto_check: "Pemeriksaan pembaruan otomatis"
@@ -1616,10 +1620,20 @@ lesson:
     label: "Mode pelajaran"
     practice: "Latihan"
     exam: "Ujian"
+    timed: "Berwaktu"
   exam:
     passed: "Lulus"
     not_passed: "Tidak lulus"
     threshold_hint: "(lulus ≥ {pct}%)"
+  timed:
+    remaining: "Sisa waktu"
+    seconds_left: "{n}d tersisa"
+    time_up: "Waktu habis!"
+    bonus: "+{n}d bonus"
+    stats_answered: "{n} dari {total} dijawab tepat waktu."
+    stats_avg: "Waktu jawab rata-rata: {s}d"
+    stats_fastest: "Tercepat: {s}d ({type})"
+    stats_slowest: "Terlama: {s}d ({type})"
   resources_title: "Jelajahi lebih lanjut"
   resources_domain: "Lebih lanjut tentang {domain}"
   motivation:
