@@ -1860,6 +1860,7 @@
         "result_correct": "Richtig!",
         "result_wrong": "Nicht ganz.",
         "result_almost": "Fast! Achte auf:",
+        "accepted": "Akzeptierte Antworten",
         "empty": "Diese Freitext-Übung hat keine akzeptierten Antworten."
       },
       "word_tiles": {

@@ -1721,6 +1721,7 @@ lesson:
       result_correct: "Correto!"
       result_wrong: "Quase."
       result_almost: "Quase! Atenção a:"
+      accepted: "Respostas aceites"
       empty: "Este exercício não tem respostas aceitas."
     word_tiles:
       instructions: "Coloque as peças na ordem certa. Toque para posicionar; use as setas ou arraste para reordenar."

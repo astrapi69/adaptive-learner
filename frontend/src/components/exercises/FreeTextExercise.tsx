@@ -32,10 +32,12 @@ import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import {useLessonMode} from "../../hooks/lesson/useLessonMode";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ExercisePromptRow from "./ExercisePromptRow";
 import ExerciseHint from "./ExerciseHint";
+import ExerciseAnswerToggle, {type AnswerView} from "./ExerciseAnswerToggle";
 import {deriveFreeTextAttempt} from "../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../lib/exercises/token-diff";
@@ -332,6 +334,12 @@ function FreeTextResult({
     // feedback. Computed here so the component stays under the complexity
     // gate; the ternary below only consults it on the wrong branch.
     const nearMiss = isFreeTextNearMiss(input, accept, codeMode);
+    // #1005/#1011 — after a wrong answer, toggle between "My answer" (the
+    // learner's text + token diff) and "Solution" (the accepted answers).
+    // Gated on the mode's ``showAnswerToggle`` (hidden in exam mode).
+    const {showAnswerToggle} = useLessonMode();
+    const [view, setView] = useState<AnswerView>("my-answer");
+    const showReveal = submitted && !isCorrect && showAnswerToggle;
     return (
         <div className="flex flex-wrap items-center gap-3">
             {submitted && (
@@ -369,15 +377,40 @@ function FreeTextResult({
                             </>
                         )}
                     </p>
-                    {!isCorrect && (
-                        <div
-                            className="free-text-diff-row"
-                            data-testid="free-text-diff-row"
-                        >
-                            <DiffHighlight
-                                tokens={tokenDiff(input, canonical)}
-                                className="free-text-diff"
+                    {showReveal && (
+                        <div className="flex w-full flex-col gap-2">
+                            <ExerciseAnswerToggle
+                                view={view}
+                                onShowMyAnswer={() => setView("my-answer")}
+                                onShowSolution={() => setView("solution")}
+                                testIdPrefix="free-text"
                             />
+                            {view === "my-answer" ? (
+                                <div
+                                    className="free-text-diff-row"
+                                    data-testid="free-text-diff-row"
+                                >
+                                    <DiffHighlight
+                                        tokens={tokenDiff(input, canonical)}
+                                        className="free-text-diff"
+                                    />
+                                </div>
+                            ) : (
+                                <div
+                                    className="rounded-sm border border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_12%,var(--surface))] px-3 py-2"
+                                    data-testid="free-text-solution-view"
+                                >
+                                    <span className="block text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]">
+                                        {t(
+                                            "lesson.exercise.free_text.accepted",
+                                            "Accepted answers",
+                                        )}
+                                    </span>
+                                    <span className="text-[var(--fg)]">
+                                        {accept.join(" · ")}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     )}
                     <AnswerCelebration isCorrect={isCorrect} />
