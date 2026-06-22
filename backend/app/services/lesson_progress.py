@@ -49,6 +49,52 @@ def _decode_results(row: LessonProgress) -> dict[str, Any]:
     return parsed if isinstance(parsed, dict) else {}
 
 
+#: Cap on the number of attempt-history entries kept per row, so a
+#: heavily-retried lesson can't grow the JSON column without bound.
+_ATTEMPT_HISTORY_CAP = 50
+
+
+def _decode_history(row: LessonProgress) -> list[dict[str, Any]]:
+    """Parse the stored attempt-history JSON list. Malformed / empty
+    returns ``[]`` so one broken row never breaks the page."""
+    if not row.attempt_history:
+        return []
+    try:
+        parsed = json.loads(row.attempt_history)
+    except json.JSONDecodeError:
+        return []
+    return parsed if isinstance(parsed, list) else []
+
+
+def _record_completed_attempt(row: LessonProgress, now: datetime) -> None:
+    """Account one completed attempt (#983): bump ``attempts``, append to
+    ``attempt_history``, and lift ``best_score_*`` when this attempt beat
+    the previous best by percentage (ties keep the earlier best, so the
+    'best attempt' is the FIRST time the high score was reached)."""
+    row.attempts = (row.attempts or 0) + 1
+    history = _decode_history(row)
+    history.append(
+        {
+            "at": now.isoformat(),
+            "correct": row.score_correct,
+            "total": row.score_total,
+        }
+    )
+    row.attempt_history = json.dumps(history[-_ATTEMPT_HISTORY_CAP:])
+
+    current_pct = (
+        row.score_correct / row.score_total if row.score_total else 0.0
+    )
+    best_pct = (
+        row.best_score_correct / row.best_score_total
+        if row.best_score_total
+        else -1.0
+    )
+    if row.best_score_total == 0 or current_pct > best_pct:
+        row.best_score_correct = row.score_correct
+        row.best_score_total = row.score_total
+
+
 def _recompute_score(results: dict[str, Any]) -> tuple[int, int]:
     correct = 0
     total = 0
@@ -233,6 +279,10 @@ def _get_or_create_row(
         score_correct=0,
         score_total=0,
         time_spent_seconds=0,
+        attempts=0,
+        best_score_correct=0,
+        best_score_total=0,
+        attempt_history="[]",
         started_at=now,
         updated_at=now,
     )
@@ -279,6 +329,10 @@ def _apply_lifecycle_flags(row: LessonProgress, update: ProgressUpdate, now: dat
         # terminal state is unambiguous.
         row.paused_at = None
         row.abandoned_at = None
+        # #983 — account this completion as one (re-)attempt. Runs for the
+        # very first completion too, so a never-retried lesson reports
+        # attempts == 1 + a one-entry history + a best score.
+        _record_completed_attempt(row, now)
         just_completed = True
 
     # Phase 63A — pause / abandon / resume transitions.
@@ -367,4 +421,9 @@ def _row_to_wire(row: LessonProgress) -> dict[str, Any]:
         "completed_at": row.completed_at,
         "paused_at": row.paused_at,
         "abandoned_at": row.abandoned_at,
+        # #983 — retry tracking.
+        "attempts": row.attempts,
+        "best_score_correct": row.best_score_correct,
+        "best_score_total": row.best_score_total,
+        "attempt_history": _decode_history(row),
     }

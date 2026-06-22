@@ -507,7 +507,15 @@ export default function LessonPage() {
               );
             }
           }}
-          onRepeat={() => goToStep(0)}
+          onRepeat={() => {
+            // #983 — "Practice again": restart the row (clears step
+            // results + score, status -> in_progress) so the next
+            // completion is recorded as a fresh attempt and the
+            // improvement vs the prior run can be shown. attempts /
+            // best_score / attempt_history are preserved by the
+            // storage layer. Then jump back to the first step.
+            void markRestarted().then(() => goToStep(0));
+          }}
           onExit={() => navigate("/content?tab=my")}
         />
         <LessonResources

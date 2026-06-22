@@ -200,3 +200,74 @@ describe("Dexie lessonProgress: upsert", () => {
         expect(b[0].score_correct).toBe(0);
     });
 });
+
+describe("Dexie lessonProgress: retry tracking (#983)", () => {
+    async function completeWith(correct: number, total: number) {
+        await upsertLessonProgressDexie(USER, {
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            step_result: {step_id: "s1", correct, total},
+        });
+        return upsertLessonProgressDexie(USER, {
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            mark_completed: true,
+        });
+    }
+
+    it("records one attempt + best on the first completion", async () => {
+        const row = await completeWith(3, 5);
+        expect(row.attempts).toBe(1);
+        expect(row.best_score_correct).toBe(3);
+        expect(row.best_score_total).toBe(5);
+        expect(row.attempt_history).toHaveLength(1);
+        expect(row.attempt_history?.[0]).toMatchObject({correct: 3, total: 5});
+    });
+
+    it("restart preserves attempts/best/history but clears the score", async () => {
+        await completeWith(3, 5);
+        const restarted = await upsertLessonProgressDexie(USER, {
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            mark_restarted: true,
+        });
+        expect(restarted.status).toBe("in_progress");
+        expect(restarted.score_correct).toBe(0);
+        expect(restarted.attempts).toBe(1);
+        expect(restarted.best_score_correct).toBe(3);
+        expect(restarted.attempt_history).toHaveLength(1);
+    });
+
+    it("a better re-attempt bumps attempts + lifts the best", async () => {
+        await completeWith(3, 5);
+        await upsertLessonProgressDexie(USER, {
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            mark_restarted: true,
+        });
+        const row = await completeWith(5, 5);
+        expect(row.attempts).toBe(2);
+        expect(row.best_score_correct).toBe(5);
+        expect(row.best_score_total).toBe(5);
+        expect(row.attempt_history).toHaveLength(2);
+    });
+
+    it("a worse re-attempt keeps the earlier, better best", async () => {
+        await completeWith(5, 5);
+        await upsertLessonProgressDexie(USER, {
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            mark_restarted: true,
+        });
+        const row = await completeWith(2, 5);
+        expect(row.attempts).toBe(2);
+        // Best unchanged; a retry never lowers the displayed best.
+        expect(row.best_score_correct).toBe(5);
+        expect(row.score_correct).toBe(2);
+    });
+});

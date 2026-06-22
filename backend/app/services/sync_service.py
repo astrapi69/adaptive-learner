@@ -596,6 +596,12 @@ TABLES: dict[str, TableSpec] = {
             "started_at",
             "updated_at",
             "completed_at",
+            # #983 — retry tracking; carried in backup/sync so the best
+            # score + improvement history survive restore + multi-device.
+            "attempts",
+            "best_score_correct",
+            "best_score_total",
+            "attempt_history",
         ),
         timestamp_field="updated_at",
         append_only=False,

@@ -493,6 +493,13 @@ export interface LessonProgressRow {
     paused_at: string | null;
     /** Phase 63A — set on abandon, cleared on completion. */
     abandoned_at: string | null;
+    /** #983 — lesson retry tracking. All non-indexed, so no Dexie
+     *  version bump is needed; pre-feature rows read back as undefined
+     *  and the wire mapping coalesces (``?? 0`` / ``?? []``). */
+    attempts?: number;
+    best_score_correct?: number;
+    best_score_total?: number;
+    attempt_history?: {at: string; correct: number; total: number}[];
 }
 
 /**

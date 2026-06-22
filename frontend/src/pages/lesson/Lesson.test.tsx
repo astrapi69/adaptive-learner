@@ -629,8 +629,9 @@ describe("LessonPage: ready state rendering", () => {
     expect(row).toHaveAttribute("data-status", "unattempted");
   });
 
-  it("Repeat button calls goToStep(0)", () => {
+  it("Practice again restarts the row then returns to step 0 (#983)", async () => {
     const goToStep = vi.fn();
+    const markRestarted = vi.fn().mockResolvedValue(undefined);
     useLessonMock.mockReturnValue({
       status: "ready",
       lesson: LESSON,
@@ -643,11 +644,15 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markRestarted,
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
     fireEvent.click(screen.getByTestId("lesson-summary-repeat"));
-    expect(goToStep).toHaveBeenCalledWith(0);
+    // #983 — restart FIRST (clears the run so the next completion counts
+    // as a fresh attempt), then jump back to the first step.
+    expect(markRestarted).toHaveBeenCalled();
+    await waitFor(() => expect(goToStep).toHaveBeenCalledWith(0));
   });
 
   it("Next lesson button hides when the set has only this lesson", async () => {
