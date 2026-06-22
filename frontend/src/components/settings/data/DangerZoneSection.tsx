@@ -179,10 +179,13 @@ export default function DangerZoneSection() {
                 )}
             </p>
 
-            {/* Always-visible backup offer (Phase 41F spec). */}
+            {/* Always-visible backup offer (Phase 41F spec). Stacks on
+                mobile so a long translation (e.g. el
+                "Δημιουργία αντιγράφου ασφαλείας") never overflows the
+                container at 375px — #957. */}
             <div
                 data-testid="danger-zone-backup-offer"
-                style={backupOfferStyle}
+                className="mb-4 mt-3 flex flex-col gap-3 rounded-md bg-bg-elevated px-3 py-2 sm:flex-row sm:items-center"
             >
                 <span>
                     {t(
@@ -194,6 +197,7 @@ export default function DangerZoneSection() {
                     type="button"
                     variant="secondary"
                     data-testid="danger-zone-backup-btn"
+                    className="h-auto w-full whitespace-normal sm:w-auto"
                     onClick={handleBackup}
                     disabled={busy !== null}
                 >
@@ -206,6 +210,7 @@ export default function DangerZoneSection() {
                     type="button"
                     variant="destructive"
                     data-testid="danger-zone-reset-btn"
+                    className="h-auto w-full whitespace-normal sm:w-auto"
                     onClick={() => setStep("confirm")}
                     disabled={busy !== null}
                     aria-label={t(
@@ -287,6 +292,7 @@ export default function DangerZoneSection() {
                                 type="button"
                                 variant="secondary"
                                 data-testid="danger-zone-cancel"
+                                className="h-auto w-full whitespace-normal sm:w-auto"
                                 onClick={reset}
                                 disabled={busy === "reset"}
                             >
@@ -297,6 +303,7 @@ export default function DangerZoneSection() {
                                     type="button"
                                     variant="default"
                                     data-testid="danger-zone-continue"
+                                    className="h-auto w-full whitespace-normal sm:w-auto"
                                     onClick={() => setStep("typed")}
                                 >
                                     {t(
@@ -310,6 +317,7 @@ export default function DangerZoneSection() {
                                     type="button"
                                     variant="destructive"
                                     data-testid="danger-zone-final-btn"
+                                    className="h-auto w-full whitespace-normal sm:w-auto"
                                     onClick={handleReset}
                                     disabled={!canSubmit}
                                 >
@@ -334,15 +342,4 @@ const dangerSectionStyle: React.CSSProperties = {
     borderRadius: 8,
     padding: 16,
     marginTop: "2rem",
-};
-
-const backupOfferStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-    padding: "8px 12px",
-    background: "var(--surface-2, var(--surface))",
-    borderRadius: 6,
-    marginTop: 12,
-    marginBottom: 16,
 };
