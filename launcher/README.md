@@ -8,6 +8,22 @@ browser, and lets the user stop or uninstall the app from a Tk window.
 - Runtime: CPython 3.11-3.14 (real devices run it on 3.14)
 - No `asyncio` in Tk code; background work runs on threads
   (`StatusWindow.run_in_background`)
+- Layered: **Actions** (`actions.py`, pure, verified, Tk-free) ← GUI +
+  CLI call only actions. See [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Headless actions (CLI ↔ GUI parity)
+
+Every GUI operation is also a CLI flag, routed through `actions.py`:
+
+```bash
+python3 -m adaptive_learner_launcher --check       # Docker status
+python3 -m adaptive_learner_launcher --status      # app state
+python3 -m adaptive_learner_launcher --install     # build + start
+python3 -m adaptive_learner_launcher --start
+python3 -m adaptive_learner_launcher --stop
+python3 -m adaptive_learner_launcher --uninstall
+python3 -m adaptive_learner_launcher --open        # open in browser
+```
 
 ## Run from source
 

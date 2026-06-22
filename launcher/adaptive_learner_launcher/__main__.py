@@ -20,7 +20,7 @@ import sys
 import webbrowser
 from pathlib import Path
 
-from adaptive_learner_launcher import __version__, config, docker, health, i18n, installer, lockfile, manifest, ports, settings, ui, update_check
+from adaptive_learner_launcher import __version__, actions, config, docker, health, i18n, installer, lockfile, manifest, ports, settings, ui, update_check
 
 
 logger = logging.getLogger("adaptive_learner_launcher")
@@ -113,6 +113,14 @@ def _maybe_show_help(argv: list[str] | None = None) -> bool:
         "--version", action="store_true",
         help="Print the launcher version and exit.",
     )
+    # Headless action flags (CLI<->GUI parity). Each routes through actions.
+    parser.add_argument("--check", action="store_true", help="Check Docker status and exit.")
+    parser.add_argument("--status", action="store_true", help="Print app state (running/stopped/...) and exit.")
+    parser.add_argument("--install", action="store_true", help="Build + start the app and exit.")
+    parser.add_argument("--start", action="store_true", help="Start the stopped app and exit.")
+    parser.add_argument("--stop", action="store_true", help="Stop the running app and exit.")
+    parser.add_argument("--uninstall", action="store_true", help="Remove the app containers/images and exit.")
+    parser.add_argument("--open", action="store_true", help="Open the app in the browser and exit.")
     parser.print_help()
     return True
 
@@ -129,6 +137,65 @@ def _maybe_show_version(argv: list[str] | None = None) -> bool:
     return True
 
 
+def _cli_action_config() -> dict:
+    """Resolve {project, compose_file, port} for headless CLI actions."""
+    install_dir = manifest.install_dir_from_manifest()
+    repo = install_dir if install_dir else config.resolve_repo_path()
+    return {
+        "project": actions.DEFAULT_PROJECT,
+        "compose_file": str(repo / config.COMPOSE_FILENAME),
+        "port": config.read_public_port(repo) if repo else actions.DEFAULT_PORT,
+    }
+
+
+def _maybe_run_cli_action(argv: list[str]) -> int | None:
+    """Route a headless CLI action through the actions layer.
+
+    Returns an exit code when an action flag was handled, or ``None`` when
+    no action flag was present (the caller then launches the GUI). Every
+    branch calls ONLY ``actions.*`` - no business logic lives here.
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(add_help=False)
+    for flag in ("check", "status", "install", "start", "stop", "uninstall", "open"):
+        parser.add_argument(f"--{flag}", action="store_true")
+    try:
+        args, _ = parser.parse_known_args(argv)
+    except SystemExit:
+        return None
+
+    cfg = _cli_action_config()
+    if args.check:
+        ok, msg = actions.check_docker()
+        print(msg)
+        return 0 if ok else 1
+    if args.status:
+        print(f"Status: {actions.get_state(cfg['project'])}")
+        return 0
+    if args.install:
+        ok, msg = actions.install(cfg["compose_file"], cfg["project"], cfg["port"],
+                                  on_step=lambda label: print(label))
+        print(msg)
+        return 0 if ok else 1
+    if args.start:
+        ok, msg = actions.start(cfg["compose_file"], cfg["project"])
+        print(msg)
+        return 0 if ok else 1
+    if args.stop:
+        ok, msg = actions.stop(cfg["project"])
+        print(msg)
+        return 0 if ok else 1
+    if args.uninstall:
+        ok, msg = actions.uninstall(cfg["project"])
+        print(msg)
+        return 0 if ok else 1
+    if args.open:
+        actions.open_browser(cfg["port"])
+        return 0
+    return None
+
+
 def main() -> int:
     if _maybe_show_help(sys.argv[1:]):
         return 0
@@ -137,6 +204,11 @@ def main() -> int:
 
     debug = _parse_cli_debug(sys.argv[1:])
     _setup_logging(debug=debug)
+
+    action_rc = _maybe_run_cli_action(sys.argv[1:])
+    if action_rc is not None:
+        return action_rc
+
     logger.info("AdaptiveLearner launcher v%s starting", __version__)
     if debug:
         logger.debug("Debug mode enabled (verbose logging to launcher-debug.log)")
@@ -513,7 +585,7 @@ def _stop_stack(repo: Path) -> None:
     window.start_step(0, i18n.t("manage.stopping"))
 
     def worker() -> None:
-        ok, detail = docker.compose_down(repo, config.COMPOSE_FILENAME)
+        ok, detail = actions.stop(actions.DEFAULT_PROJECT)
         if not ok:
             logger.warning("stop failed: %s", detail)
             window.after(0, lambda: window.fail_step(0))
@@ -542,31 +614,22 @@ def _quick_uninstall(repo: Path) -> bool:
         return False
 
     window = ui.StatusWindow(title=i18n.t("quick_uninstall.progress"))
-    window.set_steps([i18n.t("manage.stop"), i18n.t("progress.step.build")])
+    window.set_steps([i18n.t("manage.stop")])
     result: dict = {}
 
     def worker() -> None:
         window.after(0, lambda: window.start_step(0, i18n.t("manage.stopping")))
-        # compose down is best-effort (clean teardown when the compose
-        # file is present); the authoritative removal is remove_containers,
-        # which works by id + VERIFIES the container is actually gone (#964).
-        ok, detail = docker.compose_down(repo, config.COMPOSE_FILENAME)
-        if not ok:
-            logger.warning("quick-uninstall compose down: %s", detail)
-        removed_ok, removed_detail = docker.remove_containers()
+        # Business logic lives in the actions layer: remove containers by
+        # id + VERIFY they are gone + drop images, all in one verified
+        # action (#964). The GUI handler only shows progress + result.
+        removed_ok, removed_detail = actions.uninstall(actions.DEFAULT_PROJECT)
         result["removed_ok"] = removed_ok
         result["removed_detail"] = removed_detail
         if not removed_ok:
-            logger.error("quick-uninstall container removal failed: %s", removed_detail)
+            logger.error("quick-uninstall failed: %s", removed_detail)
             window.after(0, lambda: window.fail_step(0))
         else:
             window.after(0, lambda: window.complete_step(0))
-
-        window.after(0, lambda: window.start_step(1, i18n.t("uninstall.removing_images")))
-        ok2, detail2 = docker.remove_images()
-        if not ok2:
-            logger.warning("quick-uninstall remove images: %s", detail2)
-        window.after(0, lambda: window.complete_step(1))
         window.after(400, window.close)
 
     window.run_in_background(worker)
