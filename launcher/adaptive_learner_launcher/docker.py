@@ -197,21 +197,9 @@ def remove_images() -> tuple[bool, str]:
 
 
 def compose_build(repo: Path, compose_file: str) -> tuple[bool, str]:
-    """Build images and start the stack. Used by the install flow where
-    images need to be pulled/built for the first time."""
-    try:
-        result = _run(
-            ["docker", "compose", "-f", compose_file, "up", "--build", "-d"],
-            cwd=repo,
-            timeout=600.0,  # first build can take several minutes
-        )
-    except FileNotFoundError:
-        return False, "docker command not found on PATH"
-    except subprocess.TimeoutExpired:
-        return False, "docker compose up --build timed out after 10 minutes"
-    if result.returncode != 0:
-        return False, _tail_output(result)
-    return True, "started"
+    """Build + start the stack. Thin wrapper over actions (#970)."""
+    from adaptive_learner_launcher import actions
+    return actions.compose_build(str(repo / compose_file))
 
 
 def _tail_output(result: subprocess.CompletedProcess) -> str:

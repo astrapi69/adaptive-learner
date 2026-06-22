@@ -411,6 +411,45 @@ class TestQuickUninstall:
         shortcut_mock.assert_not_called()  # did not reach the success path
 
 
+class TestInstallFlowWorker:
+    """_run_install_flow drives download -> actions.compose_build -> health.
+    The build step now goes through the actions layer (#966/step c)."""
+
+    def test_success_returns_install_dir_via_actions(self, tmp_path: Path) -> None:
+        with (
+            patch.object(main_mod.config, "default_repo_path", return_value=tmp_path),
+            patch.object(main_mod.ui, "pick_folder", return_value=str(tmp_path)),
+            patch.object(main_mod.installer, "download_release", return_value=(True, "ok")),
+            patch.object(main_mod.installer, "create_env_file", return_value=(True, "ok")),
+            patch.object(main_mod.manifest, "write_manifest"),
+            patch.object(main_mod.config, "load_launcher_config", return_value={}),
+            patch.object(main_mod.config, "save_launcher_config"),
+            patch.object(main_mod.actions, "compose_build", return_value=(True, "gebaut")) as build_mock,
+            patch.object(main_mod.config, "read_public_port", return_value=8501),
+            patch.object(main_mod.health, "wait_for_healthy", return_value=True),
+            patch.object(main_mod.ui, "two_button_dialog", return_value="secondary"),
+        ):
+            result = main_mod._run_install_flow()
+        assert result == tmp_path
+        build_mock.assert_called_once()
+
+    def test_build_failure_returns_none(self, tmp_path: Path) -> None:
+        with (
+            patch.object(main_mod.config, "default_repo_path", return_value=tmp_path),
+            patch.object(main_mod.ui, "pick_folder", return_value=str(tmp_path)),
+            patch.object(main_mod.installer, "download_release", return_value=(True, "ok")),
+            patch.object(main_mod.installer, "create_env_file", return_value=(True, "ok")),
+            patch.object(main_mod.manifest, "write_manifest"),
+            patch.object(main_mod.config, "load_launcher_config", return_value={}),
+            patch.object(main_mod.config, "save_launcher_config"),
+            patch.object(main_mod.actions, "compose_build", return_value=(False, "Docker-Build fehlgeschlagen:\nboom")),
+            patch.object(main_mod.ui, "error_dialog") as error_mock,
+        ):
+            result = main_mod._run_install_flow()
+        assert result is None
+        error_mock.assert_called_once()
+
+
 class TestStackStateBranch:
     """``_run_launcher`` routes to the management menu based on stack state."""
 
