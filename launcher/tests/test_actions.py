@@ -1,7 +1,9 @@
 """Tests for the launcher actions layer. No tkinter / no display needed.
 
-Docker is mocked at ``actions._run``; ports use real sockets; config uses
-tmp files. These run in CI without Docker or a GUI.
+Docker is mocked at ``actions._run`` (or the high-level helpers
+``check_docker`` / ``get_state`` / ``_project_container_ids``); ports use
+real sockets; config uses tmp files; health uses a mocked urlopen. These
+run in CI without Docker or a GUI. Minimum 5 tests per action.
 """
 
 from __future__ import annotations
@@ -9,8 +11,9 @@ from __future__ import annotations
 import json
 import socket
 import subprocess
+import urllib.error
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -20,6 +23,16 @@ from adaptive_learner_launcher import actions
 def _result(returncode: int = 0, stdout: str = "", stderr: str = "") -> subprocess.CompletedProcess:
     return subprocess.CompletedProcess(args=[], returncode=returncode, stdout=stdout, stderr=stderr)
 
+
+def _bind_free_port() -> tuple[socket.socket, int]:
+    """Bind a listening socket on an ephemeral port; caller closes it."""
+    sock = socket.socket()
+    sock.bind(("127.0.0.1", 0))
+    sock.listen(1)
+    return sock, sock.getsockname()[1]
+
+
+# --- check_docker (5) -----------------------------------------------------
 
 class TestCheckDocker:
     def test_running(self) -> None:
@@ -32,16 +45,33 @@ class TestCheckDocker:
             ok, msg = actions.check_docker()
         assert ok is False and "nicht installiert" in msg
 
-    def test_daemon_down(self) -> None:
+    def test_daemon_stopped(self) -> None:
         with patch.object(actions, "_run", return_value=_result(returncode=1, stderr="cannot connect")):
             ok, msg = actions.check_docker()
-        assert ok is False
+        assert ok is False and "gestartet" in msg
 
+    def test_timeout(self) -> None:
+        with patch.object(actions, "_run", side_effect=subprocess.TimeoutExpired(cmd="docker", timeout=10)):
+            ok, msg = actions.check_docker()
+        assert ok is False and "antwortet nicht" in msg
+
+    def test_permission_denied(self) -> None:
+        with patch.object(actions, "_run", return_value=_result(returncode=1, stderr="permission denied")):
+            ok, msg = actions.check_docker()
+        assert ok is False and isinstance(msg, str)
+
+
+# --- get_state (6) --------------------------------------------------------
 
 class TestGetState:
     def test_no_docker(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (False, "down"))
         assert actions.get_state("adaptive-learner") == "no_docker"
+
+    def test_not_installed(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
+        assert actions.get_state() == "not_installed"
 
     def test_running(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
@@ -54,11 +84,20 @@ class TestGetState:
                             lambda *, running_only: [] if running_only else ["c1"])
         assert actions.get_state() == "stopped"
 
-    def test_not_installed(self, monkeypatch) -> None:
+    def test_both_containers_running(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
-        assert actions.get_state() == "not_installed"
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: ["backend", "frontend"])
+        assert actions.get_state() == "running"
 
+    def test_any_running_is_running(self, monkeypatch) -> None:
+        # One of two containers running -> treated as running (app reachable).
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_project_container_ids",
+                            lambda *, running_only: ["backend"] if running_only else ["backend", "frontend"])
+        assert actions.get_state() == "running"
+
+
+# --- check_port (6) -------------------------------------------------------
 
 class TestCheckPort:
     def test_free(self) -> None:
@@ -66,106 +105,465 @@ class TestCheckPort:
         assert ok is True and "frei" in msg
 
     def test_occupied(self) -> None:
-        sock = socket.socket()
-        sock.bind(("127.0.0.1", 0))
-        sock.listen(1)
-        port = sock.getsockname()[1]
+        sock, port = _bind_free_port()
         try:
             ok, msg = actions.check_port(port)
             assert ok is False and "belegt" in msg
         finally:
             sock.close()
 
-    def test_find_free_port(self) -> None:
+    def test_port_zero_invalid(self) -> None:
+        ok, msg = actions.check_port(0)
+        assert ok is False
+
+    def test_below_minimum(self) -> None:
+        ok, msg = actions.check_port(1023)
+        assert ok is False and "1024" in msg and "65535" in msg
+
+    def test_above_maximum(self) -> None:
+        ok, _ = actions.check_port(65536)
+        assert ok is False
+
+    def test_default_port_returns_bool(self) -> None:
+        ok, msg = actions.check_port(actions.DEFAULT_PORT)
+        assert isinstance(ok, bool) and isinstance(msg, str)
+
+
+# --- find_free_port (5) ---------------------------------------------------
+
+class TestFindFreePort:
+    def test_start_free(self) -> None:
         found, port, _ = actions.find_free_port(59000)
-        assert found is True and 59000 <= port <= actions.MAX_PORT
+        assert found is True and port == 59000
+
+    def test_start_occupied_next_free(self) -> None:
+        sock, port = _bind_free_port()
+        try:
+            found, chosen, _ = actions.find_free_port(port)
+            assert found is True and chosen > port
+        finally:
+            sock.close()
+
+    def test_invalid_start_below_min(self) -> None:
+        found, port, msg = actions.find_free_port(1023)
+        assert found is False and port == 0 and "Ungueltig" in msg
+
+    def test_none_free_returns_zero(self) -> None:
+        with patch("socket.socket") as sock_cls:
+            sock_cls.return_value.__enter__.return_value.connect_ex.return_value = 0  # all in use
+            found, port, msg = actions.find_free_port(50000, max_tries=3)
+        assert found is False and port == 0
+
+    def test_returns_port_in_range(self) -> None:
+        found, port, _ = actions.find_free_port(58000)
+        assert found is True and actions.MIN_PORT <= port <= actions.MAX_PORT
 
 
-class TestLifecycleVerification:
-    def test_uninstall_success_when_gone(self) -> None:
-        # ids present -> rm -> verify empty == success
-        with patch.object(actions, "_project_container_ids", side_effect=[["c1"], []]), \
-             patch.object(actions, "_run", return_value=_result()), \
-             patch.object(actions, "_remove_images"):
-            ok, msg = actions.uninstall("adaptive-learner")
+# --- install (8) ----------------------------------------------------------
+
+class TestInstall:
+    def _ok_guards(self, monkeypatch, *, state_seq) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "check_port", lambda p: (True, "frei"))
+        seq = iter(state_seq)
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
+
+    def test_normal_install(self, monkeypatch, tmp_path) -> None:
+        compose = tmp_path / "docker-compose.prod.yml"
+        compose.write_text("services: {}")
+        self._ok_guards(monkeypatch, state_seq=["not_installed", "running"])
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "health_check", lambda *a, **k: (True, "ok"))
+        ok, msg = actions.install(str(compose), "adaptive-learner", 8501)
         assert ok is True and "abgeschlossen" in msg
 
-    def test_uninstall_fails_when_survives(self) -> None:
-        with patch.object(actions, "_project_container_ids", side_effect=[["c1"], ["c1"]]), \
-             patch.object(actions, "_run", return_value=_result()), \
-             patch.object(actions, "_remove_images"):
-            ok, msg = actions.uninstall("adaptive-learner")
-        assert ok is False and "nicht entfernt" in msg
+    def test_compose_file_missing(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "not_installed")
+        ok, msg = actions.install("/nope/does-not-exist.yml", "adaptive-learner", 8501)
+        assert ok is False and "nicht gefunden" in msg
 
-    def test_stop_verifies_no_running(self) -> None:
-        with patch.object(actions, "_project_container_ids", side_effect=[["c1"], []]), \
-             patch.object(actions, "_run", return_value=_result()):
-            ok, msg = actions.stop("adaptive-learner")
-        assert ok is True
+    def test_docker_not_running(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (False, "down"))
+        ok, msg = actions.install("x.yml", "adaptive-learner", 8501)
+        assert ok is False and "Docker" in msg
 
-    def test_stop_fails_if_still_running(self) -> None:
-        with patch.object(actions, "_project_container_ids", side_effect=[["c1"], ["c1"]]), \
-             patch.object(actions, "_run", return_value=_result()):
-            ok, msg = actions.stop("adaptive-learner")
-        assert ok is False
+    def test_port_occupied(self, monkeypatch, tmp_path) -> None:
+        compose = tmp_path / "c.yml"
+        compose.write_text("x")
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "not_installed")
+        monkeypatch.setattr(actions, "check_port", lambda p: (False, "Port 8501 ist belegt."))
+        ok, msg = actions.install(str(compose), "adaptive-learner", 8501)
+        assert ok is False and "belegt" in msg
 
-    def test_install_verifies_running(self, monkeypatch) -> None:
+    def test_build_fails(self, monkeypatch, tmp_path) -> None:
+        compose = tmp_path / "c.yml"
+        compose.write_text("x")
+        self._ok_guards(monkeypatch, state_seq=["not_installed"])
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result(returncode=1, stderr="npm ci failed"))
+        ok, msg = actions.install(str(compose), "adaptive-learner", 8501)
+        assert ok is False and "fehlgeschlagen" in msg
+
+    def test_health_check_fails(self, monkeypatch, tmp_path) -> None:
+        compose = tmp_path / "c.yml"
+        compose.write_text("x")
+        self._ok_guards(monkeypatch, state_seq=["not_installed", "running"])
         monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "health_check", lambda *a, **k: (False, "timeout"))
+        ok, msg = actions.install(str(compose), "adaptive-learner", 8501)
+        assert ok is False and "nicht erreichbar" in msg
+
+    def test_already_installed(self, monkeypatch, tmp_path) -> None:
+        compose = tmp_path / "c.yml"
+        compose.write_text("x")
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
         monkeypatch.setattr(actions, "get_state", lambda *a, **k: "running")
-        monkeypatch.setattr(actions, "health_check", lambda *a, **k: (True, "ok"))
-        ok, msg = actions.install("docker-compose.prod.yml", "adaptive-learner", 8501)
-        assert ok is True
+        ok, msg = actions.install(str(compose), "adaptive-learner", 8501)
+        assert ok is True and "bereits" in msg
 
-    def test_install_fails_when_not_running(self, monkeypatch) -> None:
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
-        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "stopped")
-        ok, msg = actions.install("docker-compose.prod.yml", "adaptive-learner", 8501)
-        assert ok is False
-
-    def test_install_rejects_bad_port(self) -> None:
-        ok, msg = actions.install("docker-compose.prod.yml", "adaptive-learner", 80)
+    def test_invalid_port(self) -> None:
+        ok, msg = actions.install("c.yml", "adaptive-learner", 80)
         assert ok is False and "Port" in msg
 
 
-class TestConfig:
-    def test_load_save_roundtrip(self, tmp_path: Path) -> None:
-        path = tmp_path / "config.json"
-        actions.save_config(path, {"port": 8501, "project": "adaptive-learner"})
-        cfg = actions.load_config(path)
-        assert cfg["port"] == 8501 and cfg["project"] == "adaptive-learner"
+# --- start (6) ------------------------------------------------------------
 
-    def test_load_missing_returns_empty(self, tmp_path: Path) -> None:
-        assert actions.load_config(tmp_path / "nope.json") == {}
+class TestStart:
+    def test_docker_not_running(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (False, "down"))
+        ok, msg = actions.start("c.yml", "adaptive-learner")
+        assert ok is False and "Docker" in msg
 
-    def test_set_port_valid(self, tmp_path: Path) -> None:
-        path = tmp_path / "config.json"
-        path.write_text("{}")
-        ok, msg = actions.set_port(path, 9000)
+    def test_already_running(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "running")
+        ok, msg = actions.start("c.yml", "adaptive-learner")
+        assert ok is True and "laeuft bereits" in msg
+
+    def test_not_installed(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "not_installed")
+        ok, msg = actions.start("c.yml", "adaptive-learner")
+        assert ok is False and "nicht installiert" in msg
+
+    def test_starts_stopped_container(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        seq = iter(["stopped", "running"])
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        ok, msg = actions.start("c.yml", "adaptive-learner")
         assert ok is True
-        assert json.loads(path.read_text())["port"] == 9000
 
-    def test_set_port_invalid_low(self, tmp_path: Path) -> None:
-        path = tmp_path / "config.json"
-        path.write_text("{}")
-        ok, msg = actions.set_port(path, 80)
+    def test_start_command_fails(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "stopped")
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result(returncode=1, stderr="boom"))
+        ok, msg = actions.start("c.yml", "adaptive-learner")
+        assert ok is False and "fehlgeschlagen" in msg
+
+    def test_not_running_after_start(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        seq = iter(["stopped", "stopped"])
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        ok, msg = actions.start("c.yml", "adaptive-learner")
         assert ok is False
 
-    def test_set_port_invalid_high(self, tmp_path: Path) -> None:
-        path = tmp_path / "config.json"
-        path.write_text("{}")
-        ok, _ = actions.set_port(path, 70000)
+
+# --- stop (5) -------------------------------------------------------------
+
+class TestStop:
+    def test_docker_not_running(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (False, "down"))
+        ok, msg = actions.stop("adaptive-learner")
+        assert ok is False and "Docker" in msg
+
+    def test_not_installed(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "not_installed")
+        ok, msg = actions.stop("adaptive-learner")
+        assert ok is False and "nicht installiert" in msg
+
+    def test_already_stopped(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "stopped")
+        ok, msg = actions.stop("adaptive-learner")
+        assert ok is True and "bereits gestoppt" in msg
+
+    def test_stops_running_and_verifies(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "running")
+        # First list (to stop) returns ["c1"]; the verify list returns [].
+        ids = iter([["c1"], []])
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        ok, msg = actions.stop("adaptive-learner")
+        assert ok is True
+
+    def test_still_running_after_stop(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: "running")
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: ["c1"])
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        ok, msg = actions.stop("adaptive-learner")
         assert ok is False
 
 
-class TestVersion:
-    def test_has_dotted_version(self) -> None:
+# --- uninstall (7) --------------------------------------------------------
+
+class TestUninstall:
+    def test_docker_not_running(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (False, "down"))
+        ok, msg = actions.uninstall("adaptive-learner")
+        assert ok is False and "Docker" in msg
+
+    def test_nothing_to_remove(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
+        ok, msg = actions.uninstall("adaptive-learner")
+        assert ok is True and "Nichts" in msg
+
+    def test_removes_running_and_verifies(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        ids = iter([["c1", "c2"], []])
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_remove_images", lambda: None)
+        ok, msg = actions.uninstall("adaptive-learner")
+        assert ok is True and "abgeschlossen" in msg
+
+    def test_removes_stopped_and_verifies(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        ids = iter([["c1"], []])
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_remove_images", lambda: None)
+        ok, _ = actions.uninstall("adaptive-learner")
+        assert ok is True
+
+    def test_partial_removal_reports_failure(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        ids = iter([["c1", "c2"], ["c2"]])  # one survives
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        ok, msg = actions.uninstall("adaptive-learner")
+        assert ok is False and "Teilweise" in msg
+
+    def test_rm_raises(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: ["c1"])
+
+        def boom(*a, **k):
+            raise subprocess.TimeoutExpired(cmd="docker", timeout=60)
+
+        monkeypatch.setattr(actions, "_run", boom)
+        ok, msg = actions.uninstall("adaptive-learner")
+        assert ok is False and "fehlgeschlagen" in msg
+
+    def test_double_uninstall(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
+        ok, msg = actions.uninstall("adaptive-learner")
+        assert ok is True and "Nichts" in msg
+
+
+# --- health_check (5) -----------------------------------------------------
+
+class _Resp:
+    def __init__(self, status: int) -> None:
+        self.status = status
+
+    def __enter__(self) -> "_Resp":
+        return self
+
+    def __exit__(self, *exc) -> bool:
+        return False
+
+
+class TestHealthCheck:
+    def test_200_ok(self) -> None:
+        with patch("urllib.request.urlopen", return_value=_Resp(200)):
+            ok, msg = actions.health_check(8501, "/api/health", timeout=2)
+        assert ok is True
+
+    def test_connection_refused(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())  # unused; keep fast
+        with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("refused")), \
+             patch("time.sleep"):
+            ok, msg = actions.health_check(8501, "/api/health", timeout=1)
+        assert ok is False
+
+    def test_500_server_error(self) -> None:
+        with patch("urllib.request.urlopen", return_value=_Resp(500)), patch("time.sleep"):
+            ok, msg = actions.health_check(8501, "/api/health", timeout=1)
+        assert ok is False
+
+    def test_timeout_message(self) -> None:
+        with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("x")), patch("time.sleep"):
+            ok, msg = actions.health_check(8501, "/api/health", timeout=1)
+        assert ok is False and "erreichbar" in msg
+
+    def test_late_then_ok(self) -> None:
+        with patch("urllib.request.urlopen", side_effect=[urllib.error.URLError("x"), _Resp(200)]), \
+             patch("time.sleep"):
+            ok, msg = actions.health_check(8501, "/api/health", timeout=5)
+        assert ok is True
+
+
+# --- open_browser (3) -----------------------------------------------------
+
+class TestOpenBrowser:
+    def test_opens_url(self) -> None:
+        with patch("webbrowser.open") as mock:
+            actions.open_browser(8501)
+        mock.assert_called_once_with("http://localhost:8501/")
+
+    def test_port_and_path(self) -> None:
+        with patch("webbrowser.open") as mock:
+            actions.open_browser(9000, "/import")
+        mock.assert_called_once_with("http://localhost:9000/import")
+
+    def test_never_raises(self) -> None:
+        with patch("webbrowser.open", side_effect=OSError("no display")):
+            actions.open_browser(8501)  # must not raise
+
+    def test_default_path_is_root(self) -> None:
+        with patch("webbrowser.open") as mock:
+            actions.open_browser(8501)
+        assert mock.call_args[0][0].endswith(":8501/")
+
+    def test_custom_port(self) -> None:
+        with patch("webbrowser.open") as mock:
+            actions.open_browser(12345, "/")
+        mock.assert_called_once_with("http://localhost:12345/")
+
+
+# --- get_version (3) ------------------------------------------------------
+
+class TestGetVersion:
+    def test_is_string(self) -> None:
+        assert isinstance(actions.get_version(), str)
+
+    def test_has_dot(self) -> None:
         assert "." in actions.get_version()
 
+    def test_non_empty(self) -> None:
+        assert len(actions.get_version()) > 0
+
+    def test_matches_module_version(self) -> None:
+        from adaptive_learner_launcher import __version__
+        assert actions.get_version() == __version__
+
+    def test_semver_like(self) -> None:
+        # At least major.minor.patch (two dots), e.g. 1.93.0.
+        assert actions.get_version().count(".") >= 2
+
+
+# --- load_config (5) ------------------------------------------------------
+
+class TestLoadConfig:
+    def test_valid_json(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text('{"port": 8501}')
+        assert actions.load_config(path)["port"] == 8501
+
+    def test_missing_file(self, tmp_path: Path) -> None:
+        assert actions.load_config(tmp_path / "nope.json") == {}
+
+    def test_empty_file(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text("")
+        assert actions.load_config(path) == {}
+
+    def test_broken_json(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text("{not json")
+        assert actions.load_config(path) == {}
+
+    def test_all_fields(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text('{"port": 9000, "project": "adaptive-learner", "compose_file": "x.yml"}')
+        cfg = actions.load_config(path)
+        assert cfg["port"] == 9000 and cfg["project"] == "adaptive-learner" and cfg["compose_file"] == "x.yml"
+
+
+# --- save_config (5) ------------------------------------------------------
+
+class TestSaveConfig:
+    def test_writes_file(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        actions.save_config(path, {"port": 8501})
+        assert path.is_file()
+
+    def test_creates_parent_dir(self, tmp_path: Path) -> None:
+        path = tmp_path / "sub" / "dir" / "c.json"
+        actions.save_config(path, {"port": 8501})
+        assert path.is_file()
+
+    def test_overwrites(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text('{"port": 1}')
+        actions.save_config(path, {"port": 9999})
+        assert json.loads(path.read_text())["port"] == 9999
+
+    def test_port_in_file(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        actions.save_config(path, {"port": 9000})
+        assert json.loads(path.read_text())["port"] == 9000
+
+    def test_roundtrip(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        data = {"port": 8501, "project": "adaptive-learner"}
+        actions.save_config(path, data)
+        assert actions.load_config(path) == data
+
+
+# --- set_port (6) ---------------------------------------------------------
+
+class TestSetPort:
+    def test_valid_default(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text("{}")
+        ok, _ = actions.set_port(path, 8501)
+        assert ok is True and json.loads(path.read_text())["port"] == 8501
+
+    def test_minimum(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text("{}")
+        ok, _ = actions.set_port(path, 1024)
+        assert ok is True
+
+    def test_maximum(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text("{}")
+        ok, _ = actions.set_port(path, 65535)
+        assert ok is True
+
+    def test_below_minimum(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text("{}")
+        ok, _ = actions.set_port(path, 1023)
+        assert ok is False
+
+    def test_above_maximum(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text("{}")
+        ok, _ = actions.set_port(path, 65536)
+        assert ok is False
+
+    def test_zero(self, tmp_path: Path) -> None:
+        path = tmp_path / "c.json"
+        path.write_text("{}")
+        ok, _ = actions.set_port(path, 0)
+        assert ok is False
+
+
+# --- CLI <-> GUI parity ---------------------------------------------------
 
 class TestCliGuiParity:
-    """Every CLI action flag must map to an action function (CLI<->GUI parity)."""
+    """Every CLI action flag must map to an action function."""
 
-    # CLI flag -> the action function that implements it.
     CLI_TO_ACTION = {
         "check": "check_docker",
         "status": "get_state",
@@ -180,6 +578,6 @@ class TestCliGuiParity:
 
     def test_every_cli_flag_has_action(self) -> None:
         for flag, func_name in self.CLI_TO_ACTION.items():
-            assert hasattr(actions, func_name) and callable(getattr(actions, func_name)), (
+            assert callable(getattr(actions, func_name, None)), (
                 f"CLI --{flag} maps to actions.{func_name}, which is missing"
             )
