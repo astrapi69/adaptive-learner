@@ -20,7 +20,7 @@ import sys
 import webbrowser
 from pathlib import Path
 
-from adaptive_learner_launcher import __version__, actions, config, docker, health, i18n, installer, lockfile, manifest, ports, settings, ui, update_check
+from adaptive_learner_launcher import __version__, actions, config, docker, health, i18n, installer, lockfile, manifest, settings, ui, update_check
 
 
 logger = logging.getLogger("adaptive_learner_launcher")
@@ -326,7 +326,7 @@ def _run_launcher(*, cli_port: int | None = None) -> int:
     #    - stopped  -> Start / Uninstall
     #    (not-installed was handled by the install flow above)
     display_port = config.resolve_launch_port(repo, cli_port=cli_port)
-    if docker.stack_running(repo, config.COMPOSE_FILENAME):
+    if actions.get_state() == "running":
         return _manage_running(repo, display_port)
     if not _offer_start_or_uninstall(repo):
         return 0  # user chose Uninstall or closed the menu
@@ -432,7 +432,7 @@ def _ensure_docker_ready(show_details: bool) -> bool:
 
     # Daemon running? Loop until the user starts Docker or cancels.
     for attempt in range(10):
-        ok, detail = docker.docker_daemon_running()
+        ok, detail = actions.check_docker()
         if ok:
             return True
         logger.warning("docker info failed (attempt %d): %s", attempt + 1, detail)
@@ -474,7 +474,7 @@ def _wait_for_daemon(*, timeout_seconds: float) -> bool:
 
     deadline = time.monotonic() + timeout_seconds
     while time.monotonic() < deadline:
-        ok, _ = docker.docker_daemon_running()
+        ok, _ = actions.check_docker()
         if ok:
             return True
         time.sleep(2.0)
@@ -491,11 +491,12 @@ def _resolve_free_port(repo: Path, cli_port: int | None) -> int | None:
     chosen port, or None if the user cancels / no port is free.
     """
     port = config.resolve_launch_port(repo, cli_port=cli_port)
-    if ports.is_available(port):
+    free, _ = actions.check_port(port)
+    if free:
         return port
 
-    suggested = ports.find_available(port + 1)
-    if suggested is None:
+    found, suggested, _ = actions.find_free_port(port + 1)
+    if not found:
         ui.error_box(
             i18n.t("port_conflict.none_free_title"),
             i18n.t("port_conflict.none_free_message", port=port),
