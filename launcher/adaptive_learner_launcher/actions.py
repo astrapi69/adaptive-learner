@@ -374,37 +374,44 @@ def compose_logs_tail(repo: Path, compose_file: str, lines: int = 20) -> str:
 
 # --- Health + browser -----------------------------------------------------
 
-def health_check(port: int, path: str = HEALTH_PATH, timeout: int = 30) -> tuple[bool, str]:
-    """Poll ``http://localhost:{port}{path}`` until the backend is healthy
-    or the timeout elapses.
+def _health_probe(port: int, path: str = HEALTH_PATH) -> tuple[bool, str]:
+    """One shot: (healthy, detail). Healthy == HTTP 200 AND JSON
+    ``status == "ok"`` (strict). A 5xx is surfaced as a server error."""
+    url = f"http://localhost:{port}{path}"
+    try:
+        with urllib.request.urlopen(url, timeout=3.0) as resp:
+            status = resp.status
+            body = resp.read().decode("utf-8") if status == 200 else ""
+    except Exception as exc:  # noqa: BLE001 - any failure means not-ready-yet
+        return False, str(exc)
+    if status == 200:
+        try:
+            if json.loads(body).get("status") == "ok":
+                return True, "App ist erreichbar und gesund (status=ok)."
+            return False, "Antwort, aber status != ok"
+        except json.JSONDecodeError:
+            return False, "ungueltige JSON-Antwort"
+    if 500 <= status < 600:
+        return False, f"Server-Fehler (HTTP {status})"
+    return False, f"HTTP {status}"
 
-    Healthy means HTTP 200 AND a JSON body with ``status == "ok"`` - the
-    strict semantics (a 200 with a degraded/non-ok body is NOT healthy).
-    A 5xx is surfaced as a server error in the message.
-    """
+
+def is_healthy(port: int, path: str = HEALTH_PATH) -> bool:
+    """One-shot health check (no polling). True == healthy now."""
+    return _health_probe(port, path)[0]
+
+
+def health_check(port: int, path: str = HEALTH_PATH, timeout: int = 30) -> tuple[bool, str]:
+    """Poll :func:`_health_probe` until healthy or ``timeout`` elapses."""
     import time
 
-    url = f"http://localhost:{port}{path}"
     deadline = time.monotonic() + timeout
     last = "keine Antwort"
     while time.monotonic() < deadline:
-        try:
-            with urllib.request.urlopen(url, timeout=3.0) as resp:
-                status = resp.status
-                body = resp.read().decode("utf-8") if status == 200 else ""
-            if status == 200:
-                try:
-                    if json.loads(body).get("status") == "ok":
-                        return True, "App ist erreichbar und gesund (status=ok)."
-                    last = "Antwort, aber status != ok"
-                except json.JSONDecodeError:
-                    last = "ungueltige JSON-Antwort"
-            elif 500 <= status < 600:
-                last = f"Server-Fehler (HTTP {status})"
-            else:
-                last = f"HTTP {status}"
-        except Exception as exc:  # noqa: BLE001 - any failure means not-ready-yet
-            last = str(exc)
+        ok, detail = _health_probe(port, path)
+        if ok:
+            return True, detail
+        last = detail
         time.sleep(1.0)
     return False, f"App nicht erreichbar nach {timeout}s ({last})."
 
