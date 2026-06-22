@@ -86,8 +86,8 @@
     "profile": "Dein Profil",
     "learning_path": "Lernpfad",
     "dashboard": "Dashboard",
-    "session": "Session",
-    "curriculum": "Curriculum",
+    "session": "Sitzung",
+    "curriculum": "Lehrplan",
     "progress": "Fortschritt",
     "import": "Import",
     "settings": "Einstellungen",
@@ -194,7 +194,7 @@
     "select_language": "Sprache wählen…"
   },
   "curriculum": {
-    "title": "Curriculum",
+    "title": "Lehrplan",
     "active": "Aktives Curriculum",
     "new_placeholder": "Titel des neuen Curriculums …",
     "create": "Curriculum anlegen",
@@ -319,7 +319,7 @@
     "profile_start": "Lernprofil erstellen",
     "card_progress": "Fortschritt",
     "card_distribution": "Methodenverteilung",
-    "card_counter": "Sessions",
+    "card_counter": "Sitzungen",
     "card_tools": "Werkzeug-Empfehlungen",
     "card_recent_sessions": "Letzte Sessions",
     "card_spaced": "Geplante Übung",
@@ -850,7 +850,7 @@
   },
   "cycle_steps": {
     "input": {
-      "label": "Input",
+      "label": "Eingabe",
       "description": "Information, Beispiel oder Aufgabe wird vorgestellt."
     },
     "attempt": {
@@ -1149,7 +1149,7 @@
     "activity_7d": "Aktivität (letzte 7 Tage)",
     "activity_cell": "{count} am {date}",
     "card_xp": "XP & Level",
-    "level": "Level",
+    "level": "Stufe",
     "xp": "XP",
     "xp_no_data": "Schließe eine Sitzung ab, um XP zu sammeln.",
     "xp_earned": "XP erhalten",
@@ -1163,7 +1163,7 @@
       "activity_unit": "Sitzungen",
       "activity_empty": "Keine Aktivität in den letzten 7 Tagen.",
       "milestones": "Meilensteine",
-      "ms_level": "Level {level}",
+      "ms_level": "Stufe {level}",
       "ms_xp": "{xp} XP",
       "reached": "erreicht",
       "locked": "gesperrt",
@@ -2621,7 +2621,7 @@
     "empty": "Lade zuerst ein Lektionsset herunter, um deinen Lernpfad zu sehen.",
     "empty_cta": "Inhalte durchsuchen",
     "error": "Lernpfad konnte nicht geladen werden.",
-    "to_content": "Content Browser",
+    "to_content": "Inhaltsbrowser",
     "node": {
       "lesson": "Lektion",
       "stars": "Sterne",
