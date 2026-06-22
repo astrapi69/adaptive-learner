@@ -1879,6 +1879,20 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Share as repository"
+    title: "Share as repository"
+    needs_token: "Add a GitHub token in Settings → Integrations to share as a repository."
+    repo_label: "Repository (owner/name)"
+    private: "Private"
+    public: "Public"
+    branch: "Branch"
+    lessons_note: "All {n} lessons of this set will be included."
+    invalid_repo: "Enter the repository as owner/name."
+    submit: "Export"
+    working: "Exporting…"
+    done: "Your set was pushed to the repository."
+    failed: "Export failed."
   anki_export:
     button: "Anki export"
   discover_more: "Find more content"

@@ -1879,6 +1879,20 @@ lesson:
     action_restart: "처음부터 다시"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "저장소로 공유"
+    title: "저장소로 공유"
+    needs_token: "저장소로 공유하려면 설정 → 통합에서 GitHub 토큰을 추가하세요."
+    repo_label: "저장소 (owner/name)"
+    private: "비공개"
+    public: "공개"
+    branch: "브랜치"
+    lessons_note: "이 세트의 모든 {n}개 레슨이 포함됩니다."
+    invalid_repo: "저장소를 owner/name 형식으로 입력하세요."
+    submit: "내보내기"
+    working: "내보내는 중…"
+    done: "세트를 저장소에 푸시했습니다."
+    failed: "내보내기 실패."
   anki_export:
     button: "Anki 내보내기"
   discover_more: "더 많은 콘텐츠 찾기"

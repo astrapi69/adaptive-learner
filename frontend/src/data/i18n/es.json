@@ -2025,6 +2025,21 @@
     }
   },
   "content": {
+    "repo_export": {
+      "button": "Compartir como repositorio",
+      "title": "Compartir como repositorio",
+      "needs_token": "Añade un token de GitHub en Ajustes → Integraciones para compartir como repositorio.",
+      "repo_label": "Repositorio (owner/name)",
+      "private": "Privado",
+      "public": "Público",
+      "branch": "Rama",
+      "lessons_note": "Se incluirán las {n} lecciones de este conjunto.",
+      "invalid_repo": "Introduce el repositorio como owner/name.",
+      "submit": "Exportar",
+      "working": "Exportando…",
+      "done": "Tu conjunto se subió al repositorio.",
+      "failed": "Error al exportar."
+    },
     "anki_export": {
       "button": "Exportar a Anki"
     },

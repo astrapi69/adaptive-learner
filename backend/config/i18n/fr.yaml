@@ -1870,6 +1870,20 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Partager comme dépôt"
+    title: "Partager comme dépôt"
+    needs_token: "Ajoute un token GitHub dans Paramètres → Intégrations pour partager comme dépôt."
+    repo_label: "Dépôt (owner/name)"
+    private: "Privé"
+    public: "Public"
+    branch: "Branche"
+    lessons_note: "Les {n} leçons de cet ensemble seront incluses."
+    invalid_repo: "Saisis le dépôt sous la forme owner/name."
+    submit: "Exporter"
+    working: "Exportation…"
+    done: "Ton ensemble a été poussé vers le dépôt."
+    failed: "Échec de l'export."
   anki_export:
     button: "Export Anki"
   discover_more: "Trouver plus de contenu"
