@@ -33,8 +33,10 @@ _STATE_LABELS = {
 
 # action_id -> i18n label key, per state. action_id drives dispatch_action.
 _BUTTONS: dict[str, list[tuple[str, str]]] = {
+    # No "cancel" / close button anywhere: the ONLY way to close the
+    # single window is its X (WM_DELETE_WINDOW) (#984).
     "no_docker": [("recheck", "common.retry")],
-    "not_installed": [("install", "install_prompt.install_button"), ("cancel", "common.cancel")],
+    "not_installed": [("install", "install_prompt.install_button")],
     "stopped": [("start", "manage.start"), ("uninstall", "manage.uninstall")],
     "running": [("open", "common.open_browser"), ("stop", "manage.stop"), ("uninstall", "manage.uninstall")],
 }
@@ -50,7 +52,7 @@ def buttons_for_state(state: str) -> list[tuple[str, str]]:
     return list(_BUTTONS.get(state, []))
 
 
-def dispatch_action(action_id: str, *, compose_file: str, project: str, port: int) -> tuple[bool, str] | None:
+def dispatch_action(action_id: str, *, compose_file: str, project: str, port: int, on_step=None) -> tuple[bool, str] | None:
     """Run the action for ``action_id`` through the actions layer.
 
     Returns ``(ok, message)`` for actions that report a result, or
@@ -58,9 +60,9 @@ def dispatch_action(action_id: str, *, compose_file: str, project: str, port: in
     recheck). Pure (no Tk) so it is unit-testable by mocking ``actions``.
     """
     if action_id == "install":
-        return actions.install(compose_file, project, port)
+        return actions.install(compose_file, project, port, on_step=on_step)
     if action_id == "start":
-        return actions.start(compose_file, project)
+        return actions.start(compose_file, project, on_step=on_step)
     if action_id == "stop":
         return actions.stop(project)
     if action_id == "uninstall":
@@ -68,7 +70,7 @@ def dispatch_action(action_id: str, *, compose_file: str, project: str, port: in
     if action_id == "open":
         actions.open_browser(port)
         return None
-    if action_id in ("recheck", "cancel"):
+    if action_id == "recheck":
         return None
     logger.warning("unknown action_id: %s", action_id)
     return None
@@ -80,7 +82,7 @@ class LauncherApp:
     def __init__(self, *, project: str = actions.DEFAULT_PROJECT) -> None:
         self._project = project
         self._config_path = config.launcher_config_path()
-        repo = manifest.install_dir_from_manifest() or config.resolve_repo_path()
+        repo = config.source_checkout_repo() or manifest.install_dir_from_manifest() or config.resolve_repo_path()
         self._compose_file = str(repo / config.COMPOSE_FILENAME)
         self._port = config.read_public_port(repo) if repo else actions.DEFAULT_PORT
 
@@ -102,13 +104,37 @@ class LauncherApp:
         self._port_indicator.pack(side="left", padx=(6, 0))
         self._port_entry.bind("<KeyRelease>", lambda _e: self._validate_port())
 
-        self._detail = tk.Label(self._root, text="", fg="#555", wraplength=400, justify="left")
-        self._detail.pack(pady=(0, 8))
-
         self._button_row = tk.Frame(self._root)
         self._button_row.pack(pady=(4, 0))
 
+        # In-window status/progress/error area (scrollable). Everything is
+        # shown HERE - no separate dialog, no close-and-reopen (#984).
+        status_frame = tk.Frame(self._root)
+        status_frame.pack(fill="both", expand=True, padx=12, pady=(8, 12))
+        scrollbar = tk.Scrollbar(status_frame, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
+        self._status = tk.Text(
+            status_frame, height=8, wrap="word", state="disabled",
+            relief="flat", font=("Consolas", 9), yscrollcommand=scrollbar.set,
+        )
+        self._status.pack(side="left", fill="both", expand=True)
+        scrollbar.configure(command=self._status.yview)
+        self._status.tag_configure("ok", foreground="#188038")
+        self._status.tag_configure("err", foreground="#c5221f")
+        self._status.tag_configure("info", foreground="#555")
+
         self._refresh()
+
+    def _log(self, line: str, *, tag: str = "info") -> None:
+        self._status.configure(state="normal")
+        self._status.insert("end", line + "\n", tag)
+        self._status.see("end")
+        self._status.configure(state="disabled")
+
+    def _clear_status(self) -> None:
+        self._status.configure(state="normal")
+        self._status.delete("1.0", "end")
+        self._status.configure(state="disabled")
 
     # --- rendering ---
 
@@ -140,10 +166,9 @@ class LauncherApp:
     # --- actions (threaded) ---
 
     def _on_action(self, action_id: str) -> None:
-        if action_id == "cancel":
-            self._root.destroy()
-            return
-        # Persist an edited port before a lifecycle action uses it.
+        # NOTE: no programmatic window close anywhere - only the X closes
+        # the window (#984). Persist an edited port before a lifecycle
+        # action uses it.
         raw = self._port_var.get().strip()
         if raw.isdigit():
             ok, _ = actions.set_port(self._config_path, int(raw))
@@ -151,10 +176,13 @@ class LauncherApp:
                 self._port = int(raw)
         self._set_busy(True)
 
+        def step(label: str) -> None:
+            self._root.after(0, lambda: self._log(label))
+
         def worker() -> None:
             result = dispatch_action(
                 action_id, compose_file=self._compose_file,
-                project=self._project, port=self._port,
+                project=self._project, port=self._port, on_step=step,
             )
             self._root.after(0, lambda: self._on_result(action_id, result))
 
@@ -164,14 +192,15 @@ class LauncherApp:
         self._set_busy(False)
         if result is not None:
             ok, msg = result
-            self._detail.configure(text=msg, fg="#188038" if ok else "#c5221f")
-        self._refresh()
+            self._log(msg, tag="ok" if ok else "err")
+        self._refresh()  # updates state heading + buttons; window stays open
 
     def _set_busy(self, busy: bool) -> None:
         for child in self._button_row.winfo_children():
             child.configure(state="disabled" if busy else "normal")
         if busy:
-            self._detail.configure(text=i18n.t("status.starting"), fg="#555")
+            self._clear_status()
+            self._log(i18n.t("status.starting"))
 
     def run(self) -> None:
         self._root.mainloop()

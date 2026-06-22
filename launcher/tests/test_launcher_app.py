@@ -7,9 +7,23 @@ editability, and the action dispatch (mocking the actions layer).
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import patch
 
 from adaptive_learner_launcher import launcher_app
+
+
+class TestNeverClosesItself:
+    """The single window may ONLY be closed by its X (WM_DELETE_WINDOW);
+    no programmatic root close anywhere (#984)."""
+
+    def test_no_programmatic_root_close(self) -> None:
+        src = Path(launcher_app.__file__).read_text(encoding="utf-8")
+        for forbidden in ("_root.destroy", "_root.quit", "_root.close", "self.close("):
+            assert forbidden not in src, (
+                f"{forbidden} found in launcher_app - only the X button may "
+                "close the window (#984)"
+            )
 
 
 class TestPortEditable:
@@ -24,8 +38,14 @@ class TestPortEditable:
 
 class TestButtonsForState:
     def test_not_installed(self) -> None:
+        # No cancel/close button: only the window X closes it (#984).
         ids = [a for a, _ in launcher_app.buttons_for_state("not_installed")]
-        assert ids == ["install", "cancel"]
+        assert ids == ["install"]
+
+    def test_no_state_offers_a_close_button(self) -> None:
+        for state in ("no_docker", "not_installed", "running", "stopped"):
+            ids = [a for a, _ in launcher_app.buttons_for_state(state)]
+            assert not ({"cancel", "close", "quit"} & set(ids))
 
     def test_running(self) -> None:
         ids = [a for a, _ in launcher_app.buttons_for_state("running")]

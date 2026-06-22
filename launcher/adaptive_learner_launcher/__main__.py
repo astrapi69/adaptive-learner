@@ -211,8 +211,12 @@ def main() -> int:
 
     logger.info("AdaptiveLearner launcher v%s starting", __version__)
 
-    if "--window" in sys.argv[1:]:
-        # Opt-in persistent window (preview). i18n first so labels render.
+    # Single persistent window (#984): the default when running from a
+    # source checkout (the repo + compose file are present, so install =
+    # build), or on explicit --window. End-user (frozen) installs that
+    # still need to DOWNLOAD a release keep the classic flow below until
+    # the window grows a download step.
+    if "--window" in sys.argv[1:] or config.source_checkout_repo() is not None:
         try:
             i18n.init(settings.get("language"))
         except Exception as exc:
