@@ -457,6 +457,11 @@ progress:
   commit_notes_aria: "Notas de la sesión"
   session_count: "Sesiones"
 settings:
+  lesson_mode:
+    title: "Modo de lección"
+    hint: "El modo práctica mantiene todas las ayudas. El modo examen oculta las pistas, el repaso de teoría, la lectura automática y la solución para que recuperes en condiciones realistas."
+    default_label: "Modo predeterminado"
+    threshold_label: "Umbral para aprobar"
   updates:
     title: "Actualizaciones"
     auto_check: "Comprobación automática de actualizaciones"
@@ -1598,6 +1603,14 @@ repo:
     description: "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git."
     enable_git: "Activar persistencia git"
 lesson:
+  mode:
+    label: "Modo de lección"
+    practice: "Práctica"
+    exam: "Examen"
+  exam:
+    passed: "Aprobado"
+    not_passed: "No aprobado"
+    threshold_hint: "(aprobado ≥ {pct}%)"
   resources_title: "Profundiza en el tema"
   resources_domain: "Más sobre {domain}"
   motivation:

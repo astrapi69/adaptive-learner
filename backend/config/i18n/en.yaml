@@ -457,6 +457,11 @@ progress:
   commit_notes_aria: "Session notes"
   session_count: "Sessions"
 settings:
+  lesson_mode:
+    title: "Lesson mode"
+    hint: "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions."
+    default_label: "Default mode"
+    threshold_label: "Exam pass threshold"
   updates:
     title: "Updates"
     auto_check: "Automatic update check"
@@ -1607,6 +1612,14 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  mode:
+    label: "Lesson mode"
+    practice: "Practice"
+    exam: "Exam"
+  exam:
+    passed: "Passed"
+    not_passed: "Not passed"
+    threshold_hint: "(pass ≥ {pct}%)"
   resources_title: "Explore further"
   resources_domain: "More on {domain}"
   motivation:

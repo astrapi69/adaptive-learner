@@ -490,6 +490,12 @@
     "session_count": "Sessões"
   },
   "settings": {
+    "lesson_mode": {
+      "title": "Modo de lição",
+      "hint": "O modo prática mantém todas as ajudas. O modo exame oculta dicas, revisão de teoria, leitura automática e a solução para que você recupere em condições realistas.",
+      "default_label": "Modo padrão",
+      "threshold_label": "Limite para aprovação"
+    },
     "updates": {
       "title": "Atualizações",
       "auto_check": "Verificação automática de atualizações",
@@ -1720,6 +1726,16 @@
     }
   },
   "lesson": {
+    "mode": {
+      "label": "Modo de lição",
+      "practice": "Prática",
+      "exam": "Exame"
+    },
+    "exam": {
+      "passed": "Aprovado",
+      "not_passed": "Não aprovado",
+      "threshold_hint": "(aprovado ≥ {pct}%)"
+    },
     "resources_title": "Aprofunde o tema",
     "resources_domain": "Mais sobre {domain}",
     "motivation": {

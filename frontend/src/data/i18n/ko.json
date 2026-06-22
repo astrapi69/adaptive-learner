@@ -490,6 +490,12 @@
     "session_count": "세션"
   },
   "settings": {
+    "lesson_mode": {
+      "title": "레슨 모드",
+      "hint": "연습 모드는 모든 학습 보조 기능을 유지합니다. 시험 모드는 힌트, 이론 복습, 자동 읽기, 정답 표시를 숨겨 현실적인 조건에서 회상하도록 합니다.",
+      "default_label": "기본 모드",
+      "threshold_label": "합격 기준"
+    },
     "updates": {
       "title": "업데이트",
       "auto_check": "자동 업데이트 확인",
@@ -1720,6 +1726,16 @@
     }
   },
   "lesson": {
+    "mode": {
+      "label": "레슨 모드",
+      "practice": "연습",
+      "exam": "시험"
+    },
+    "exam": {
+      "passed": "합격",
+      "not_passed": "불합격",
+      "threshold_hint": "(합격 ≥ {pct}%)"
+    },
     "resources_title": "더 알아보기",
     "resources_domain": "{domain}에 대해 더 보기",
     "motivation": {

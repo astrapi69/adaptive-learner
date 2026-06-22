@@ -457,6 +457,11 @@ progress:
   commit_notes_aria: "Oturum notları"
   session_count: "Oturumlar"
 settings:
+  lesson_mode:
+    title: "Ders modu"
+    hint: "Alıştırma modu tüm yardımları açık tutar. Sınav modu ipuçlarını, teori tekrarını, otomatik okumayı ve çözümü gizler; böylece gerçekçi koşullarda hatırlarsın."
+    default_label: "Varsayılan mod"
+    threshold_label: "Geçme eşiği"
   updates:
     title: "Güncellemeler"
     auto_check: "Otomatik güncelleme denetimi"
@@ -1596,6 +1601,14 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  mode:
+    label: "Ders modu"
+    practice: "Alıştırma"
+    exam: "Sınav"
+  exam:
+    passed: "Geçti"
+    not_passed: "Geçmedi"
+    threshold_hint: "(geçme ≥ %{pct})"
   resources_title: "Konuyu derinleştir"
   resources_domain: "{domain} hakkında daha fazlası"
   motivation:

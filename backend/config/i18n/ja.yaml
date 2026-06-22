@@ -457,6 +457,11 @@ progress:
   commit_notes_aria: "セッションのメモ"
   session_count: "セッション"
 settings:
+  lesson_mode:
+    title: "レッスンモード"
+    hint: "練習モードではすべての補助が有効です。試験モードではヒント、理論の復習、自動読み上げ、解答の表示を隠し、現実的な条件で思い出せるようにします。"
+    default_label: "既定のモード"
+    threshold_label: "合格基準"
   updates:
     title: "アップデート"
     auto_check: "自動アップデート確認"
@@ -1596,6 +1601,14 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする"
 lesson:
+  mode:
+    label: "レッスンモード"
+    practice: "練習"
+    exam: "試験"
+  exam:
+    passed: "合格"
+    not_passed: "不合格"
+    threshold_hint: "(合格 ≥ {pct}%)"
   resources_title: "さらに学ぶ"
   resources_domain: "{domain} についてもっと見る"
   motivation:

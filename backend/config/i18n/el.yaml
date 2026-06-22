@@ -457,6 +457,11 @@ progress:
   commit_notes_aria: "Σημειώσεις συνεδρίας"
   session_count: "Συνεδρίες"
 settings:
+  lesson_mode:
+    title: "Λειτουργία μαθήματος"
+    hint: "Η εξάσκηση διατηρεί όλα τα βοηθήματα. Η εξέταση κρύβει υποδείξεις, επανάληψη θεωρίας, αυτόματη ανάγνωση και τη λύση ώστε να ανακαλείς σε ρεαλιστικές συνθήκες."
+    default_label: "Προεπιλεγμένη λειτουργία"
+    threshold_label: "Όριο επιτυχίας"
   updates:
     title: "Ενημερώσεις"
     auto_check: "Αυτόματος έλεγχος ενημερώσεων"
@@ -1598,6 +1603,14 @@ repo:
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
     enable_git: "Ενεργοποίηση εμμονής git"
 lesson:
+  mode:
+    label: "Λειτουργία μαθήματος"
+    practice: "Εξάσκηση"
+    exam: "Εξέταση"
+  exam:
+    passed: "Επιτυχία"
+    not_passed: "Αποτυχία"
+    threshold_hint: "(επιτυχία ≥ {pct}%)"
   resources_title: "Εμβάθυνε στο θέμα"
   resources_domain: "Περισσότερα για {domain}"
   motivation:

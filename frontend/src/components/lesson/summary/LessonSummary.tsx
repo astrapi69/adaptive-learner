@@ -10,6 +10,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Check,
   CheckCircle2,
   ChevronRight,
   ClipboardCopy,
@@ -17,10 +18,12 @@ import {
   FileJson,
   RotateCcw,
   Star,
+  X,
   Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import CorrectionBlock from "../../exercises/CorrectionBlock";
@@ -58,6 +61,11 @@ import {
 } from "../../../lib/lesson/result-download";
 import { isFirstAttempt } from "../../../lib/gamification/first-attempt";
 import { calculateLessonSessionXp } from "../../../lib/gamification/lesson-xp";
+import {
+  examPassed,
+  readExamPassThreshold,
+  type LessonMode,
+} from "../../../lib/learning/lessonModePref";
 import { emitCelebration } from "../../../lib/praise/celebration-bus";
 import { nextPraise } from "../../../lib/praise/phrase-picker";
 import { getStorage } from "../../../storage";
@@ -67,6 +75,10 @@ import { notify } from "../../../utils/notify";
 interface LessonSummaryProps {
   lesson: ContentLesson;
   progress: LessonProgress | null;
+  /** #1007 — the mode the run was played in. In ``exam`` mode the summary
+   *  adds a Passed / Not-passed line against the configured threshold.
+   *  Defaults to ``practice`` so existing callers are unaffected. */
+  lessonMode?: LessonMode;
   /** Next lesson's filename within the set, or null when
    *  there is no successor (last lesson OR list not yet
    *  fetched). When null, the "Next lesson" button hides. */
@@ -112,6 +124,7 @@ function deriveSummaryStats(progress: LessonProgress | null): {
 export default function LessonSummary({
   lesson,
   progress,
+  lessonMode = "practice",
   nextLessonFilename,
   userId,
   setId,
@@ -129,6 +142,11 @@ export default function LessonSummary({
     deriveSummaryStats(progress);
 
   const stars: StarRating = computeStars(correct, total);
+
+  // #1007 — exam-mode pass/fail against the configured threshold.
+  const examThreshold = useMemo(() => readExamPassThreshold(), []);
+  const examPass =
+    lessonMode === "exam" && examPassed(correct, total, examThreshold);
 
   // #594 Hint Economy — how many steps this run was answered with a hint
   // revealed. Read from the persisted step results.
@@ -435,6 +453,35 @@ export default function LessonSummary({
           %)
         </span>
       </div>
+
+      {/* #1007 — exam-mode pass/fail against the configured threshold. */}
+      {lessonMode === "exam" && total > 0 && (
+        <p
+          className={cn(
+            "m-0 inline-flex items-center gap-1.5 font-semibold",
+            examPass
+              ? "text-[var(--exercise-correct)]"
+              : "text-[var(--exercise-wrong)]",
+          )}
+          data-testid="lesson-summary-exam-result"
+          data-passed={examPass}
+        >
+          {examPass ? (
+            <Check size={16} aria-hidden="true" />
+          ) : (
+            <X size={16} aria-hidden="true" />
+          )}
+          {examPass
+            ? t("lesson.exam.passed", "Passed")
+            : t("lesson.exam.not_passed", "Not passed")}
+          <span className="font-normal text-[var(--fg-muted)]">
+            {t("lesson.exam.threshold_hint", "(pass ≥ {pct}%)").replace(
+              "{pct}",
+              String(examThreshold),
+            )}
+          </span>
+        </p>
+      )}
 
       {/* #983 — after a re-attempt, show the improvement vs the previous
           run + the best score. Self-hides on a first run (attempts < 2). */}
