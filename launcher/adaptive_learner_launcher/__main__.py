@@ -502,6 +502,15 @@ def _resolve_free_port(repo: Path, cli_port: int | None) -> int | None:
     port = config.resolve_launch_port(repo, cli_port=cli_port)
     free, _ = actions.check_port(port)
     if free:
+        # Persist the chosen port to .env so `docker compose up` PUBLISHES
+        # exactly the port the launcher then health-checks (#983). compose
+        # reads ADAPTIVE_LEARNER_PUBLIC_PORT from .env, not launcher.json;
+        # without this they can disagree (e.g. a stale launcher.json port
+        # vs the repo .env default), so health-checks the wrong port.
+        try:
+            config.write_public_port(repo, port)
+        except OSError as exc:
+            logger.warning("could not persist port to .env: %s", exc)
         return port
 
     found, suggested, _ = actions.find_free_port(port + 1)
