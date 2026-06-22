@@ -41,6 +41,16 @@ _BUTTONS: dict[str, list[tuple[str, str]]] = {
 }
 
 
+# Window sizing. The running/stopped state shows three width-18 buttons in a
+# single row (~430px); 440px clipped the rightmost one ("Deinstallieren") in
+# German. 620px fits all three with margin in every UI language, and minsize
+# keeps the button row + scrollable status area fully visible if the user
+# shrinks the window (#991).
+WINDOW_GEOMETRY = "620x470"
+MIN_WIDTH = 600
+MIN_HEIGHT = 420
+
+
 def port_editable(state: str) -> bool:
     """The port field is editable only before the app is running."""
     return state in ("not_installed", "stopped")
@@ -103,7 +113,8 @@ class LauncherApp:
 
         self._root = tk.Tk()
         self._root.title("Adaptive Learner")
-        self._root.geometry("440x320")
+        self._root.geometry(WINDOW_GEOMETRY)
+        self._root.minsize(MIN_WIDTH, MIN_HEIGHT)  # button row never clips (#991)
         ui._set_window_icon(self._root)  # crash-safe (#956)
         # Closing the window minimizes to the system tray while the app is
         # running (if the tray extra is installed); otherwise it closes the
