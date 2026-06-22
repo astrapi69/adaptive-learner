@@ -150,3 +150,45 @@ class TestComposeBuild:
             ok, detail = docker.compose_build(tmp_path, "docker-compose.prod.yml")
         assert not ok
         assert "build error" in detail
+
+
+class TestRemoveContainers:
+    """remove_containers must remove by id AND verify the container is gone,
+    so the uninstall never claims success while a container survives (#964)."""
+
+    def test_success_when_none_remain(self) -> None:
+        # ps (one container) -> rm -> ps (empty) == success.
+        with patch(
+            "adaptive_learner_launcher.docker._run",
+            side_effect=[
+                _run_result(stdout="abc123\n"),  # list before
+                _run_result(stdout=""),            # rm -f
+                _run_result(stdout=""),            # list after (verify): gone
+            ],
+        ):
+            ok, detail = docker.remove_containers()
+        assert ok is True
+        assert "removed 1" in detail
+
+    def test_failure_when_container_survives(self) -> None:
+        # ps -> rm -> ps still lists the container == verified failure.
+        with patch(
+            "adaptive_learner_launcher.docker._run",
+            side_effect=[
+                _run_result(stdout="abc123\n"),
+                _run_result(stdout=""),
+                _run_result(stdout="abc123\n"),  # still present!
+            ],
+        ):
+            ok, detail = docker.remove_containers()
+        assert ok is False
+        assert "could not be removed" in detail
+
+    def test_noop_when_no_containers(self) -> None:
+        with patch(
+            "adaptive_learner_launcher.docker._run",
+            side_effect=[_run_result(stdout=""), _run_result(stdout="")],
+        ):
+            ok, detail = docker.remove_containers()
+        assert ok is True
+        assert "removed 0" in detail
