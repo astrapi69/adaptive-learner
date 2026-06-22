@@ -51,35 +51,44 @@ class TestStartDockerDesktop:
 
 
 class TestStackRunning:
+    # docker.stack_running wraps actions.stack_running (#970), which uses
+    # actions._run. Patch there.
 
     def test_true_when_container_ids_present(self, tmp_path: Path) -> None:
-        with patch("adaptive_learner_launcher.docker._run", return_value=_run_result(stdout="abc123\n")):
+        from adaptive_learner_launcher import actions
+        with patch.object(actions, "_run", return_value=_run_result(stdout="abc123\n")):
             assert docker.stack_running(tmp_path, "docker-compose.prod.yml") is True
 
     def test_false_when_no_ids(self, tmp_path: Path) -> None:
-        with patch("adaptive_learner_launcher.docker._run", return_value=_run_result(stdout="\n")):
+        from adaptive_learner_launcher import actions
+        with patch.object(actions, "_run", return_value=_run_result(stdout="\n")):
             assert docker.stack_running(tmp_path, "docker-compose.prod.yml") is False
 
     def test_false_on_nonzero(self, tmp_path: Path) -> None:
-        with patch("adaptive_learner_launcher.docker._run", return_value=_run_result(returncode=1)):
+        from adaptive_learner_launcher import actions
+        with patch.object(actions, "_run", return_value=_run_result(returncode=1)):
             assert docker.stack_running(tmp_path, "docker-compose.prod.yml") is False
 
     def test_false_when_docker_missing(self, tmp_path: Path) -> None:
-        with patch("adaptive_learner_launcher.docker._run", side_effect=FileNotFoundError):
+        from adaptive_learner_launcher import actions
+        with patch.object(actions, "_run", side_effect=FileNotFoundError):
             assert docker.stack_running(tmp_path, "docker-compose.prod.yml") is False
 
 
 class TestCleanupFiltersMatchBothNamingStyles:
+    # The legacy hyphen+underscore filters now live in actions (#970).
 
     def test_remove_volumes_filters_hyphen_and_underscore(self) -> None:
-        with patch("adaptive_learner_launcher.docker._run", return_value=_run_result(stdout="")) as run:
+        from adaptive_learner_launcher import actions
+        with patch.object(actions, "_run", return_value=_run_result(stdout="")) as run:
             docker.remove_volumes()
         args = run.call_args[0][0]
         assert "name=adaptive-learner" in args
         assert "name=adaptive_learner" in args
 
     def test_remove_images_filters_hyphen_and_underscore(self) -> None:
-        with patch("adaptive_learner_launcher.docker._run", return_value=_run_result(stdout="")) as run:
+        from adaptive_learner_launcher import actions
+        with patch.object(actions, "_run", return_value=_run_result(stdout="")) as run:
             docker.remove_images()
         args = run.call_args[0][0]
         assert "reference=*adaptive-learner*" in args

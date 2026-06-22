@@ -149,8 +149,7 @@ class TestFindFreePort:
         assert found is False and port == 0 and "Ungueltig" in msg
 
     def test_none_free_returns_zero(self) -> None:
-        with patch("socket.socket") as sock_cls:
-            sock_cls.return_value.__enter__.return_value.connect_ex.return_value = 0  # all in use
+        with patch.object(actions, "check_port", return_value=(False, "belegt")):
             found, port, msg = actions.find_free_port(50000, max_tries=3)
         assert found is False and port == 0
 
@@ -371,8 +370,12 @@ class TestUninstall:
 # --- health_check (5) -----------------------------------------------------
 
 class _Resp:
-    def __init__(self, status: int) -> None:
+    def __init__(self, status: int, body: str = '{"status": "ok"}') -> None:
         self.status = status
+        self._body = body
+
+    def read(self) -> bytes:
+        return self._body.encode("utf-8")
 
     def __enter__(self) -> "_Resp":
         return self
@@ -382,21 +385,32 @@ class _Resp:
 
 
 class TestHealthCheck:
-    def test_200_ok(self) -> None:
-        with patch("urllib.request.urlopen", return_value=_Resp(200)):
+    def test_200_status_ok(self) -> None:
+        with patch("urllib.request.urlopen", return_value=_Resp(200, '{"status": "ok"}')):
             ok, msg = actions.health_check(8501, "/api/health", timeout=2)
-        assert ok is True
+        assert ok is True and "ok" in msg
 
-    def test_connection_refused(self, monkeypatch) -> None:
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())  # unused; keep fast
+    def test_200_but_not_ok_is_unhealthy(self) -> None:
+        # Stricter semantics: HTTP 200 with status != ok is NOT healthy.
+        with patch("urllib.request.urlopen", return_value=_Resp(200, '{"status": "degraded"}')), \
+             patch("time.sleep"):
+            ok, _ = actions.health_check(8501, "/api/health", timeout=1)
+        assert ok is False
+
+    def test_invalid_json_is_unhealthy(self) -> None:
+        with patch("urllib.request.urlopen", return_value=_Resp(200, "not json")), patch("time.sleep"):
+            ok, _ = actions.health_check(8501, "/api/health", timeout=1)
+        assert ok is False
+
+    def test_connection_refused(self) -> None:
         with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("refused")), \
              patch("time.sleep"):
-            ok, msg = actions.health_check(8501, "/api/health", timeout=1)
+            ok, _ = actions.health_check(8501, "/api/health", timeout=1)
         assert ok is False
 
     def test_500_server_error(self) -> None:
         with patch("urllib.request.urlopen", return_value=_Resp(500)), patch("time.sleep"):
-            ok, msg = actions.health_check(8501, "/api/health", timeout=1)
+            ok, _ = actions.health_check(8501, "/api/health", timeout=1)
         assert ok is False
 
     def test_timeout_message(self) -> None:
@@ -407,7 +421,7 @@ class TestHealthCheck:
     def test_late_then_ok(self) -> None:
         with patch("urllib.request.urlopen", side_effect=[urllib.error.URLError("x"), _Resp(200)]), \
              patch("time.sleep"):
-            ok, msg = actions.health_check(8501, "/api/health", timeout=5)
+            ok, _ = actions.health_check(8501, "/api/health", timeout=5)
         assert ok is True
 
 
@@ -557,6 +571,157 @@ class TestSetPort:
         path.write_text("{}")
         ok, _ = actions.set_port(path, 0)
         assert ok is False
+
+
+# --- docker_installed (5) -------------------------------------------------
+
+class TestDockerInstalled:
+    def test_installed(self) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="Docker version 27.1")):
+            ok, msg = actions.docker_installed()
+        assert ok is True and "Docker version" in msg
+
+    def test_not_installed(self) -> None:
+        with patch.object(actions, "_run", side_effect=FileNotFoundError):
+            ok, msg = actions.docker_installed()
+        assert ok is False and "nicht installiert" in msg
+
+    def test_timeout(self) -> None:
+        with patch.object(actions, "_run", side_effect=subprocess.TimeoutExpired(cmd="docker", timeout=10)):
+            ok, _ = actions.docker_installed()
+        assert ok is False
+
+    def test_nonzero_exit(self) -> None:
+        with patch.object(actions, "_run", return_value=_result(returncode=1, stderr="boom")):
+            ok, msg = actions.docker_installed()
+        assert ok is False and "boom" in msg
+
+    def test_distinct_from_check_docker(self, monkeypatch) -> None:
+        # Installed but daemon down: docker_installed True, check_docker False.
+        def fake_run(cmd, **kw):
+            if "--version" in cmd:
+                return _result(stdout="Docker version 27.1")
+            return _result(returncode=1, stderr="cannot connect")  # docker info
+
+        monkeypatch.setattr(actions, "_run", fake_run)
+        assert actions.docker_installed()[0] is True
+        assert actions.check_docker()[0] is False
+
+
+# --- remove_volumes (5) ---------------------------------------------------
+
+class TestRemoveVolumes:
+    def test_removes_found(self) -> None:
+        with patch.object(actions, "_run", side_effect=[_result(stdout="vol1\nvol2\n"), _result()]):
+            ok, msg = actions.remove_volumes()
+        assert ok is True and "2" in msg
+
+    def test_none_found(self) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="")):
+            ok, msg = actions.remove_volumes()
+        assert ok is True and "Keine" in msg
+
+    def test_docker_missing(self) -> None:
+        with patch.object(actions, "_run", side_effect=FileNotFoundError):
+            ok, msg = actions.remove_volumes()
+        assert ok is True and "uebersprungen" in msg
+
+    def test_rm_fails(self) -> None:
+        def side(cmd, **kw):
+            if "ls" in cmd:
+                return _result(stdout="vol1\n")
+            raise subprocess.TimeoutExpired(cmd="docker", timeout=30)
+
+        with patch.object(actions, "_run", side_effect=side):
+            ok, msg = actions.remove_volumes()
+        assert ok is False and "fehlgeschlagen" in msg
+
+    def test_returns_tuple(self) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="")):
+            result = actions.remove_volumes()
+        assert isinstance(result, tuple) and isinstance(result[0], bool)
+
+
+# --- remove_images (5) ----------------------------------------------------
+
+class TestRemoveImages:
+    def test_removes_found(self) -> None:
+        with patch.object(actions, "_run", side_effect=[_result(stdout="img1\n"), _result()]):
+            ok, msg = actions.remove_images()
+        assert ok is True and "1" in msg
+
+    def test_none_found(self) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="")):
+            ok, msg = actions.remove_images()
+        assert ok is True and "Keine" in msg
+
+    def test_docker_missing(self) -> None:
+        with patch.object(actions, "_run", side_effect=FileNotFoundError):
+            ok, msg = actions.remove_images()
+        assert ok is True
+
+    def test_rm_fails(self) -> None:
+        def side(cmd, **kw):
+            if "images" in cmd:
+                return _result(stdout="img1\n")
+            raise subprocess.TimeoutExpired(cmd="docker", timeout=60)
+
+        with patch.object(actions, "_run", side_effect=side):
+            ok, msg = actions.remove_images()
+        assert ok is False
+
+    def test_returns_tuple(self) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="")):
+            assert isinstance(actions.remove_images(), tuple)
+
+
+# --- stack_running (5) ----------------------------------------------------
+
+class TestStackRunning:
+    def test_running(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="abc123\n")):
+            assert actions.stack_running(tmp_path, "docker-compose.prod.yml") is True
+
+    def test_not_running_empty(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="")):
+            assert actions.stack_running(tmp_path, "docker-compose.prod.yml") is False
+
+    def test_nonzero_exit(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", return_value=_result(returncode=1)):
+            assert actions.stack_running(tmp_path, "docker-compose.prod.yml") is False
+
+    def test_docker_missing(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", side_effect=FileNotFoundError):
+            assert actions.stack_running(tmp_path, "docker-compose.prod.yml") is False
+
+    def test_timeout(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", side_effect=subprocess.TimeoutExpired(cmd="docker", timeout=15)):
+            assert actions.stack_running(tmp_path, "docker-compose.prod.yml") is False
+
+
+# --- compose_logs_tail (5) ------------------------------------------------
+
+class TestComposeLogsTail:
+    def test_returns_stdout(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="line1\nline2")):
+            assert "line2" in actions.compose_logs_tail(tmp_path, "c.yml")
+
+    def test_falls_back_to_stderr(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="", stderr="err")):
+            assert actions.compose_logs_tail(tmp_path, "c.yml") == "err"
+
+    def test_docker_missing(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", side_effect=FileNotFoundError):
+            assert actions.compose_logs_tail(tmp_path, "c.yml") == ""
+
+    def test_timeout(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", side_effect=subprocess.TimeoutExpired(cmd="docker", timeout=15)):
+            assert actions.compose_logs_tail(tmp_path, "c.yml") == ""
+
+    def test_passes_line_count(self, tmp_path: Path) -> None:
+        with patch.object(actions, "_run", return_value=_result(stdout="x")) as run_mock:
+            actions.compose_logs_tail(tmp_path, "c.yml", lines=7)
+        assert "7" in run_mock.call_args[0][0]
 
 
 # --- CLI <-> GUI parity ---------------------------------------------------

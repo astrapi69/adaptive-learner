@@ -268,7 +268,7 @@ class TestEnsureDockerReady:
         # Docker-not-installed dialog is a choice_dialog with the
         # download/guide as non-closing links (#956); it always aborts.
         with (
-            patch.object(main_mod.docker, "docker_installed", return_value=(False, "no")),
+            patch.object(main_mod.actions, "docker_installed", return_value=(False, "no")),
             patch.object(main_mod.ui, "choice_dialog", return_value="quit") as dlg,
             patch.object(main_mod, "_open_url"),
         ):
@@ -278,14 +278,14 @@ class TestEnsureDockerReady:
 
     def test_true_when_daemon_running(self) -> None:
         with (
-            patch.object(main_mod.docker, "docker_installed", return_value=(True, "v")),
+            patch.object(main_mod.actions, "docker_installed", return_value=(True, "v")),
             patch.object(main_mod.actions, "check_docker", return_value=(True, "ok")),
         ):
             assert main_mod._ensure_docker_ready(False) is True
 
     def test_cancel_on_daemon_dialog_aborts(self) -> None:
         with (
-            patch.object(main_mod.docker, "docker_installed", return_value=(True, "v")),
+            patch.object(main_mod.actions, "docker_installed", return_value=(True, "v")),
             patch.object(main_mod.actions, "check_docker", return_value=(False, "down")),
             patch.object(main_mod.ui, "three_button_dialog", return_value="cancel"),
         ):
@@ -293,7 +293,7 @@ class TestEnsureDockerReady:
 
     def test_start_button_then_daemon_comes_up(self) -> None:
         with (
-            patch.object(main_mod.docker, "docker_installed", return_value=(True, "v")),
+            patch.object(main_mod.actions, "docker_installed", return_value=(True, "v")),
             patch.object(main_mod.actions, "check_docker", return_value=(False, "down")),
             patch.object(main_mod.ui, "three_button_dialog", return_value="primary"),
             patch.object(main_mod.docker, "start_docker_desktop", return_value=(True, "started")),

@@ -135,7 +135,7 @@ class TestDockerMissingDialog:
         from adaptive_learner_launcher import __main__ as main_mod
 
         with (
-            patch.object(main_mod.docker, "docker_installed", return_value=(False, "no")),
+            patch.object(main_mod.actions, "docker_installed", return_value=(False, "no")),
             patch.object(main_mod.config, "get_show_details_default", return_value=False),
             patch.object(main_mod, "_retry_pending_cleanup"),
             patch.object(main_mod.settings, "get", return_value=True),  # already welcomed
