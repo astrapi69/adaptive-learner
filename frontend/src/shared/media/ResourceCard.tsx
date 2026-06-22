@@ -35,17 +35,42 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { useI18n } from "../../hooks/ui/useI18n";
-import type { MediaResource, MediaType } from "../../lib/content/media/media-loader";
 import YouTubeThumbnail from "./YouTubeThumbnail";
 
-interface ResourceCardProps {
-  resource: MediaResource;
-  /** Optional click hook (analytics / tracking). The default navigation
-   *  happens through the anchor regardless. */
-  onClick?: (resource: MediaResource) => void;
+/** Media kinds this card knows how to render. Local (no app import) so the
+ *  component stays app-agnostic; the app's ``MediaType`` is the same union
+ *  and is structurally assignable (#1021). */
+export type ResourceMediaType =
+  | "youtube"
+  | "podcast"
+  | "article"
+  | "book"
+  | "course"
+  | "website";
+
+/** The minimal structural shape this card renders. The app's richer
+ *  ``MediaResource`` is structurally assignable; the generic ``T`` flows
+ *  the real type through ``onClick`` unchanged. */
+export interface DisplayResource {
+  type: ResourceMediaType;
+  title: string;
+  url: string;
+  description?: string | null;
+  duration?: string | null;
+  language?: string | null;
+  level?: string | null;
+  free?: boolean | null;
+  paid?: boolean | null;
 }
 
-const TYPE_ICON: Record<MediaType, LucideIcon> = {
+interface ResourceCardProps<T extends DisplayResource = DisplayResource> {
+  resource: T;
+  /** Optional click hook (analytics / tracking). The default navigation
+   *  happens through the anchor regardless. */
+  onClick?: (resource: T) => void;
+}
+
+const TYPE_ICON: Record<ResourceMediaType, LucideIcon> = {
   youtube: Video,
   podcast: Mic,
   article: FileText,
@@ -60,7 +85,10 @@ function languageBadge(language: string | null | undefined): string | null {
   return language.length <= 3 ? language.toUpperCase() : language;
 }
 
-export default function ResourceCard({ resource, onClick }: ResourceCardProps) {
+export default function ResourceCard<T extends DisplayResource>({
+  resource,
+  onClick,
+}: ResourceCardProps<T>) {
   const { t } = useI18n();
   const Icon = TYPE_ICON[resource.type] ?? Globe;
   const lang = languageBadge(resource.language);
