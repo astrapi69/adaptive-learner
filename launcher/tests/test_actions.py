@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import socket
 import subprocess
+import sys
 import urllib.error
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -171,10 +172,37 @@ class TestInstall:
         compose = tmp_path / "docker-compose.prod.yml"
         compose.write_text("services: {}")
         self._ok_guards(monkeypatch, state_seq=["not_installed", "running"])
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (0, ""))
         monkeypatch.setattr(actions, "health_check", lambda *a, **k: (True, "ok"))
         ok, msg = actions.install(str(compose), "adaptive-learner", 8501)
         assert ok is True and "abgeschlossen" in msg
+
+    def test_install_streams_steps_and_build_output(self, monkeypatch, tmp_path) -> None:
+        compose = tmp_path / "docker-compose.prod.yml"
+        compose.write_text("services: {}")
+        self._ok_guards(monkeypatch, state_seq=["not_installed", "running"])
+
+        def fake_stream(project, compose_file, *args, on_output=None, timeout):
+            if args[0] == "build" and on_output is not None:
+                on_output("Building frontend...")
+                on_output("Building backend...")
+            return 0, ""
+
+        monkeypatch.setattr(actions, "_stream_compose", fake_stream)
+        monkeypatch.setattr(actions, "health_check", lambda *a, **k: (True, "ok"))
+        steps: list[str] = []
+        output: list[str] = []
+        ok, _ = actions.install(
+            str(compose), "adaptive-learner", 8501,
+            on_step=steps.append, on_output=output.append,
+        )
+        assert ok is True
+        # Step-by-step progress is emitted, in order, with the build between.
+        assert any("Image bauen" in s for s in steps)
+        assert any("Container starten" in s for s in steps)
+        assert any("Bereitschaft" in s for s in steps)
+        # The build output was streamed line-by-line.
+        assert output == ["Building frontend...", "Building backend..."]
 
     def test_compose_file_missing(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
@@ -200,15 +228,15 @@ class TestInstall:
         compose = tmp_path / "c.yml"
         compose.write_text("x")
         self._ok_guards(monkeypatch, state_seq=["not_installed"])
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result(returncode=1, stderr="npm ci failed"))
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (1, "npm ci failed"))
         ok, msg = actions.install(str(compose), "adaptive-learner", 8501)
-        assert ok is False and "fehlgeschlagen" in msg
+        assert ok is False and "fehlgeschlagen" in msg and "npm ci failed" in msg
 
     def test_health_check_fails(self, monkeypatch, tmp_path) -> None:
         compose = tmp_path / "c.yml"
         compose.write_text("x")
         self._ok_guards(monkeypatch, state_seq=["not_installed", "running"])
-        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (0, ""))
         monkeypatch.setattr(actions, "health_check", lambda *a, **k: (False, "timeout"))
         ok, msg = actions.install(str(compose), "adaptive-learner", 8501)
         assert ok is False and "nicht erreichbar" in msg
@@ -224,6 +252,55 @@ class TestInstall:
     def test_invalid_port(self) -> None:
         ok, msg = actions.install("c.yml", "adaptive-learner", 80)
         assert ok is False and "Port" in msg
+
+
+# --- _stream (live output primitive) (5) ----------------------------------
+
+class TestStream:
+    """The streaming primitive behind the live install build output (#992).
+
+    Exercised with a real short-lived Python subprocess (no Docker needed)
+    so the Popen/line-reading/timeout path is genuinely covered.
+    """
+
+    def test_streams_each_line_in_order(self) -> None:
+        seen: list[str] = []
+        rc, tail = actions._stream(
+            [sys.executable, "-c", "print('a'); print('b'); print('c')"],
+            on_output=seen.append, timeout=10.0,
+        )
+        assert rc == 0
+        assert seen == ["a", "b", "c"]
+        assert "c" in tail
+
+    def test_nonzero_returncode_is_reported(self) -> None:
+        rc, _ = actions._stream(
+            [sys.executable, "-c", "import sys; print('x'); sys.exit(3)"],
+            on_output=lambda _l: None, timeout=10.0,
+        )
+        assert rc == 3
+
+    def test_on_output_optional(self) -> None:
+        rc, tail = actions._stream(
+            [sys.executable, "-c", "print('hi')"], timeout=10.0)
+        assert rc == 0 and "hi" in tail
+
+    def test_broken_callback_does_not_break_the_stream(self) -> None:
+        def boom(_line: str) -> None:
+            raise ValueError("callback exploded")
+
+        rc, _ = actions._stream(
+            [sys.executable, "-c", "print('still ok')"],
+            on_output=boom, timeout=10.0,
+        )
+        assert rc == 0
+
+    def test_timeout_kills_and_raises(self) -> None:
+        with pytest.raises(subprocess.TimeoutExpired):
+            actions._stream(
+                [sys.executable, "-c", "import time; time.sleep(30)"],
+                timeout=0.5,
+            )
 
 
 # --- compose_build (granular) (5) -----------------------------------------

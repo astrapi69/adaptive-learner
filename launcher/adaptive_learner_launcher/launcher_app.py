@@ -61,15 +61,17 @@ def buttons_for_state(state: str) -> list[tuple[str, str]]:
     return list(_BUTTONS.get(state, []))
 
 
-def dispatch_action(action_id: str, *, compose_file: str, project: str, port: int, on_step=None) -> tuple[bool, str] | None:
+def dispatch_action(action_id: str, *, compose_file: str, project: str, port: int, on_step=None, on_output=None) -> tuple[bool, str] | None:
     """Run the action for ``action_id`` through the actions layer.
 
     Returns ``(ok, message)`` for actions that report a result, or
     ``None`` for fire-and-forget / navigational ids (open, cancel,
-    recheck). Pure (no Tk) so it is unit-testable by mocking ``actions``.
+    recheck). ``on_step`` streams step labels; ``on_output`` streams the
+    install build's output line-by-line (#992). Pure (no Tk) so it is
+    unit-testable by mocking ``actions``.
     """
     if action_id == "install":
-        return actions.install(compose_file, project, port, on_step=on_step)
+        return actions.install(compose_file, project, port, on_step=on_step, on_output=on_output)
     if action_id == "start":
         return actions.start(compose_file, project, on_step=on_step)
     if action_id == "stop":
@@ -209,10 +211,15 @@ class LauncherApp:
         def step(label: str) -> None:
             self._root.after(0, lambda: self._log(label))
 
+        def output(line: str) -> None:
+            # Stream each build line into the scrollable log on the Tk thread.
+            self._root.after(0, lambda raw=line: self._log(raw))
+
         def worker() -> None:
             result = dispatch_action(
                 action_id, compose_file=self._compose_file,
-                project=self._project, port=self._port, on_step=step,
+                project=self._project, port=self._port,
+                on_step=step, on_output=output,
             )
             self._root.after(0, lambda: self._on_result(action_id, result))
 

@@ -14,9 +14,11 @@ Contract for every action:
   uninstall confirms the containers are actually gone).
 
 Long-running actions (:func:`install`, :func:`start`) accept an optional
-``on_step(label: str)`` progress callback. The callback is a plain
-Python callable - the GUI passes one that marshals onto the Tk thread,
-but the action neither knows nor cares.
+``on_step(label: str)`` progress callback, and :func:`install` also takes
+an ``on_output(line: str)`` callback that streams the Docker build's output
+line-by-line as it happens. Both are plain Python callables - the GUI
+passes ones that marshal onto the Tk thread, but the action neither knows
+nor cares.
 """
 
 from __future__ import annotations
@@ -25,6 +27,7 @@ import json
 import logging
 import socket
 import subprocess
+import threading
 import urllib.request
 import webbrowser
 from collections.abc import Callable
@@ -46,6 +49,8 @@ MAX_PORT = 65535
 _NAME_FILTERS = ("name=adaptive-learner", "name=adaptive_learner")
 
 ProgressFn = Callable[[str], None]
+# Per-line output callback for a streamed command (e.g. the Docker build).
+OutputFn = Callable[[str], None]
 
 
 def _run(cmd: list[str], *, timeout: float = 15.0, cwd: Path | None = None) -> subprocess.CompletedProcess:
@@ -185,20 +190,92 @@ def _compose(project: str, compose_file: str, *args: str, timeout: float) -> sub
     )
 
 
+def _stream(
+    cmd: list[str],
+    *,
+    on_output: OutputFn | None = None,
+    timeout: float,
+    tail_lines: int = 15,
+    keep: int = 400,
+) -> tuple[int, str]:
+    """Run ``cmd``, streaming combined stdout+stderr line-by-line to
+    ``on_output`` as each line arrives. Returns ``(returncode, tail)`` where
+    ``tail`` is the last ``tail_lines`` lines (for an error message).
+
+    Unlike :func:`_run` (which blocks until the process exits and only then
+    returns the whole output), this surfaces progress live - the Docker
+    build prints for minutes, and the user must see it move (#992). A
+    watchdog timer kills the process after ``timeout`` and the call then
+    raises :class:`subprocess.TimeoutExpired`, matching ``_run``'s contract.
+    Tk-free: ``on_output`` is a plain callable the GUI marshals onto its
+    own thread.
+    """
+    logger.debug("stream: %s (timeout=%ss)", " ".join(cmd), timeout)
+    proc = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, bufsize=1,
+    )
+    lines: list[str] = []
+    killed = {"v": False}
+
+    def _kill() -> None:
+        killed["v"] = True
+        proc.kill()
+
+    timer = threading.Timer(timeout, _kill)
+    timer.start()
+    try:
+        assert proc.stdout is not None
+        for raw in proc.stdout:
+            line = raw.rstrip("\n")
+            lines.append(line)
+            if len(lines) > keep:
+                lines.pop(0)
+            if on_output is not None:
+                try:
+                    on_output(line)
+                except Exception as exc:  # noqa: BLE001 - output UI must never break the build
+                    logger.debug("output callback failed: %s", exc)
+        proc.wait()
+    finally:
+        timer.cancel()
+    if killed["v"]:
+        raise subprocess.TimeoutExpired(cmd, timeout)
+    return proc.returncode, "\n".join(lines[-tail_lines:])
+
+
+def _stream_compose(
+    project: str, compose_file: str, *args: str,
+    on_output: OutputFn | None = None, timeout: float,
+) -> tuple[int, str]:
+    """Stream a ``docker compose`` subcommand (see :func:`_stream`)."""
+    return _stream(
+        ["docker", "compose", "-p", project, "-f", compose_file, *args],
+        on_output=on_output, timeout=timeout,
+    )
+
+
 _DOCKER_UNAVAILABLE = "Docker ist nicht verfuegbar (nicht gestartet)."
 
 
 def install(compose_file: str, project: str = DEFAULT_PROJECT, port: int = DEFAULT_PORT,
-            *, on_step: ProgressFn | None = None) -> tuple[bool, str]:
+            *, on_step: ProgressFn | None = None,
+            on_output: OutputFn | None = None) -> tuple[bool, str]:
     """Build + start the stack, then VERIFY it is running and healthy.
 
     Guards (each returns ``(False, ...)``): invalid port, Docker down,
     missing compose file, occupied port. If the app is already running it
     returns ``(True, "Bereits installiert")``.
+
+    Emits step labels through ``on_step`` and streams the Docker build's
+    output line-by-line through ``on_output`` (the first build takes
+    minutes, so the user must see it move - #992). Both callbacks are
+    optional and Tk-free; the GUI marshals them onto its own thread.
     """
     valid, reason = _validate_port(port)
     if not valid:
         return False, reason
+    _notify(on_step, "Docker pruefen...")
     docker_ok, _ = check_docker()
     if not docker_ok:
         return False, _DOCKER_UNAVAILABLE
@@ -209,21 +286,39 @@ def install(compose_file: str, project: str = DEFAULT_PROJECT, port: int = DEFAU
     port_free, port_msg = check_port(port)
     if not port_free:
         return False, port_msg
-    _notify(on_step, "Docker-Images werden gebaut (beim ersten Mal einige Minuten)...")
+    _notify(on_step, "Docker laeuft ✓")
+
+    _notify(on_step, "Image bauen... (kann beim ersten Mal einige Minuten dauern)")
     try:
-        result = _compose(project, compose_file, "up", "--build", "-d", timeout=600.0)
+        build_rc, build_tail = _stream_compose(
+            project, compose_file, "build", on_output=on_output, timeout=900.0)
     except FileNotFoundError:
         return False, _DOCKER_UNAVAILABLE
     except subprocess.TimeoutExpired:
-        return False, "Docker-Build hat das Zeitlimit (10 Min) ueberschritten."
-    if result.returncode != 0:
-        return False, f"Docker-Build fehlgeschlagen:\n{_tail(result)}"
+        return False, "Docker-Build hat das Zeitlimit (15 Min) ueberschritten."
+    if build_rc != 0:
+        return False, f"Docker-Build fehlgeschlagen:\n{build_tail}"
+    _notify(on_step, "Image gebaut ✓")
+
+    _notify(on_step, "Container starten...")
+    try:
+        up_rc, up_tail = _stream_compose(
+            project, compose_file, "up", "-d", on_output=on_output, timeout=180.0)
+    except FileNotFoundError:
+        return False, _DOCKER_UNAVAILABLE
+    except subprocess.TimeoutExpired:
+        return False, "Start hat das Zeitlimit ueberschritten."
+    if up_rc != 0:
+        return False, f"Start fehlgeschlagen:\n{up_tail}"
+    _notify(on_step, "Container gestartet ✓")
+
     _notify(on_step, "Bereitschaft pruefen...")
     if get_state(project) != "running":
         return False, "Container wurde gebaut, laeuft aber nicht."
     healthy, health_msg = health_check(port, HEALTH_PATH, timeout=120)
     if not healthy:
         return False, f"Installiert, aber die App ist nicht erreichbar: {health_msg}"
+    _notify(on_step, "Bereitschaft bestaetigt ✓")
     return True, "Installation abgeschlossen. App ist bereit."
 
 
