@@ -71,11 +71,10 @@ import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ExercisePromptRow from "./ExercisePromptRow";
 import {deriveWordTilesAttempt} from "../../lib/srs/element-attempt";
-import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
-import DiffHighlight from "./DiffHighlight";
 import DirectionInstruction from "./DirectionInstruction";
+import ExerciseAnswerToggle, {type AnswerView} from "./ExerciseAnswerToggle";
 import ExerciseFooter from "./ExerciseFooter";
 import type {
     ControlledExerciseProps,
@@ -144,6 +143,67 @@ function _arraysEqual(
         if (a[i] !== b[i]) return false;
     }
     return true;
+}
+
+/** Per-position correctness of the learner's placed order, for the
+ *  "My answer" view (#1005). A position is correct when its tile sits in
+ *  its canonical slot (``tiles`` index === slot). When the whole answer is
+ *  accepted (canonical OR an authored ``accept_orderings`` permutation),
+ *  every position is marked correct so an accepted alternative shows all
+ *  green. Pure + exported for unit tests. */
+export function wordTilesPerTileCorrect(
+    placed: readonly number[],
+    isCorrect: boolean,
+): boolean[] {
+    if (isCorrect) return placed.map(() => true);
+    return placed.map((tileIndex, slot) => tileIndex === slot);
+}
+
+/** Read-only tile row shown after checking. Each tile carries enough
+ *  spacing (flex gap) to read as a sentence — replacing the old squished
+ *  token-diff line (#1005). ``correctness === null`` paints every tile
+ *  green (the all-correct solution view); otherwise per-position. */
+function WordTilesAnswerView({
+    labels,
+    correctness,
+    testId,
+    ariaLabel,
+}: {
+    labels: string[];
+    correctness: boolean[] | null;
+    testId: string;
+    ariaLabel: string;
+}) {
+    return (
+        <div
+            className="rounded-sm border border-border bg-[var(--surface)] p-2"
+            data-testid={testId}
+            aria-label={ariaLabel}
+        >
+            <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+                {labels.map((label, i) => {
+                    const ok = correctness ? correctness[i] : true;
+                    return (
+                        <li key={i}>
+                            <span
+                                className={cn(
+                                    WORD_TILE_BASE,
+                                    "cursor-default",
+                                    ok
+                                        ? "border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]"
+                                        : "border-[var(--exercise-wrong)] bg-[color-mix(in_srgb,var(--exercise-wrong)_12%,var(--surface))]",
+                                )}
+                                data-testid={`${testId}-tile-${i}`}
+                                data-correct={ok}
+                            >
+                                {label}
+                            </span>
+                        </li>
+                    );
+                })}
+            </ul>
+        </div>
+    );
 }
 
 /** Apply a @dnd-kit drag-end to the placed-index sequence.
@@ -358,13 +418,12 @@ function WordTilesHint({
     );
 }
 
-/** Correct/wrong feedback (with a token diff on a miss) + celebration +
- *  the shared exercise footer. */
+/** Correct/wrong feedback + celebration + the shared exercise footer.
+ *  The readable correction (My answer / Solution tiles) lives in the
+ *  toggle views above, not in a token-diff line (#1005). */
 function WordTilesResult({
     submitted,
     isCorrect,
-    userDisplay,
-    canonicalDisplay,
     controlled,
     canCheck,
     onCheck,
@@ -373,8 +432,6 @@ function WordTilesResult({
 }: {
     submitted: boolean;
     isCorrect: boolean;
-    userDisplay: string;
-    canonicalDisplay: string;
     controlled: boolean;
     canCheck: boolean;
     onCheck: () => void;
@@ -413,17 +470,6 @@ function WordTilesResult({
                             </>
                         )}
                     </p>
-                    {!isCorrect && (
-                        <div
-                            className="word-tiles-diff-row"
-                            data-testid="word-tiles-diff-row"
-                        >
-                            <DiffHighlight
-                                tokens={tokenDiff(userDisplay, canonicalDisplay)}
-                                className="word-tiles-diff"
-                            />
-                        </div>
-                    )}
                     <AnswerCelebration isCorrect={isCorrect} />
                 </>
             )}
@@ -532,6 +578,10 @@ function WordTilesExercise(
         reviewedWordTiles ? [...reviewedWordTiles.placed] : [],
     );
     const [showHint, setShowHint] = useState(false);
+    /** #1005 — after checking, toggle between the learner's graded order
+     *  ("my-answer") and the correct order ("solution"). Default is the
+     *  learner's own answer. */
+    const [view, setView] = useState<AnswerView>("my-answer");
     // The tile index currently being pointer-dragged (drives the
     // floating DragOverlay copy). null when no drag is active.
     const [activeId, setActiveId] = useState<number | null>(null);
@@ -596,7 +646,10 @@ function WordTilesExercise(
                 raw_answer: {kind: "word_tiles", placed: [...placed]},
             };
         },
-        resetAnswer: () => setPlaced([]),
+        resetAnswer: () => {
+            setPlaced([]);
+            setView("my-answer");
+        },
     });
 
     const handlePlace = (index: number) => {
@@ -665,11 +718,12 @@ function WordTilesExercise(
 
     const isCorrect = result !== null && result.correct > 0;
 
-    /** For wrong-result feedback, render the canonical
-     *  ``tiles`` joined by spaces — the schema guarantees
-     *  the canonical order is always accepted. */
-    const canonicalDisplay = tiles.join(" ");
-    const userDisplay = placed.map((idx) => tiles[idx]).join(" ");
+    /** #1005 — the My-answer / Solution toggle views. My-answer shows the
+     *  learner's tiles in their chosen order with per-position green/red;
+     *  Solution shows the canonical ``tiles`` order, all green and readable
+     *  (the schema guarantees the canonical order is always accepted). */
+    const myAnswerLabels = placed.map((idx) => tiles[idx]);
+    const myAnswerCorrectness = wordTilesPerTileCorrect(placed, isCorrect);
 
     return (
         <section
@@ -691,6 +745,7 @@ function WordTilesExercise(
 
             <DirectionInstruction exercise={exercise} />
 
+            {!submitted && (
             <p
                 className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
                 data-testid="word-tiles-instructions"
@@ -700,7 +755,9 @@ function WordTilesExercise(
                     "Arrange the tiles in order. Tap to place; drag a placed tile (or use the arrows) to reorder.",
                 )}
             </p>
+            )}
 
+            {!submitted && (
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -778,13 +835,16 @@ function WordTilesExercise(
                     ) : null}
                 </DragOverlay>
             </DndContext>
+            )}
 
+            {!submitted && (
             <WordTilesScrambledRow
                 scrambledIndices={scrambledIndices}
                 tiles={tiles}
                 submitted={submitted}
                 onPlace={handlePlace}
             />
+            )}
 
             <WordTilesHint
                 hint={exercise.hint}
@@ -793,11 +853,41 @@ function WordTilesExercise(
                 onShowHint={() => setShowHint(true)}
             />
 
+            {submitted && (
+                <>
+                    <ExerciseAnswerToggle
+                        view={view}
+                        onShowMyAnswer={() => setView("my-answer")}
+                        onShowSolution={() => setView("solution")}
+                        testIdPrefix="word-tiles"
+                    />
+                    {view === "my-answer" ? (
+                        <WordTilesAnswerView
+                            labels={myAnswerLabels}
+                            correctness={myAnswerCorrectness}
+                            testId="word-tiles-my-answer-view"
+                            ariaLabel={t(
+                                "lesson.exercise.toggle.my_answer",
+                                "My answer",
+                            )}
+                        />
+                    ) : (
+                        <WordTilesAnswerView
+                            labels={tiles}
+                            correctness={null}
+                            testId="word-tiles-solution-view"
+                            ariaLabel={t(
+                                "lesson.exercise.toggle.solution",
+                                "Solution",
+                            )}
+                        />
+                    )}
+                </>
+            )}
+
             <WordTilesResult
                 submitted={submitted}
                 isCorrect={isCorrect}
-                userDisplay={userDisplay}
-                canonicalDisplay={canonicalDisplay}
                 controlled={controlled}
                 canCheck={allPlaced}
                 onCheck={submit}

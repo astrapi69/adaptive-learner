@@ -1774,6 +1774,10 @@
       "completed": "Abgeschlossen"
     },
     "exercise": {
+      "toggle": {
+        "my_answer": "Meine Antwort",
+        "solution": "Auflösung"
+      },
       "reread_theory": "Theorie nochmal lesen",
       "back_to_exercise": "Zurück zur Übung",
       "loading": "Übung wird geladen…",

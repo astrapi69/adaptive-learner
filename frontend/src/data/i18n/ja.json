@@ -1774,6 +1774,10 @@
       "completed": "完了"
     },
     "exercise": {
+      "toggle": {
+        "my_answer": "自分の回答",
+        "solution": "解答"
+      },
       "reread_theory": "理論をもう一度読む",
       "back_to_exercise": "練習に戻る",
       "loading": "演習を読み込み中…",

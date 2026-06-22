@@ -1774,6 +1774,10 @@
       "completed": "Completado"
     },
     "exercise": {
+      "toggle": {
+        "my_answer": "Mi respuesta",
+        "solution": "Solución"
+      },
       "reread_theory": "Releer la teoría",
       "back_to_exercise": "Volver al ejercicio",
       "loading": "Cargando ejercicio…",
