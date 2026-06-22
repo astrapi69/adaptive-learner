@@ -151,6 +151,40 @@ class TestReleaseLinks:
         assert main_mod.RELEASE_PAGE_URL in [url for _label, url in links]
 
 
+class TestCliActionRouting:
+    """The headless CLI flags route through actions.* and return its
+    exit code; no action flag returns None (-> GUI launches)."""
+
+    def test_no_action_returns_none(self) -> None:
+        assert main_mod._maybe_run_cli_action([]) is None
+        assert main_mod._maybe_run_cli_action(["--debug"]) is None
+
+    def test_check_routes_to_actions(self) -> None:
+        with patch.object(main_mod.actions, "check_docker", return_value=(True, "ok")):
+            assert main_mod._maybe_run_cli_action(["--check"]) == 0
+        with patch.object(main_mod.actions, "check_docker", return_value=(False, "down")):
+            assert main_mod._maybe_run_cli_action(["--check"]) == 1
+
+    def test_status_routes_to_actions(self, capsys) -> None:
+        with patch.object(main_mod.actions, "get_state", return_value="running"):
+            assert main_mod._maybe_run_cli_action(["--status"]) == 0
+        assert "running" in capsys.readouterr().out
+
+    def test_stop_routes_to_actions(self) -> None:
+        with patch.object(main_mod.actions, "stop", return_value=(True, "stopped")) as stop_mock:
+            assert main_mod._maybe_run_cli_action(["--stop"]) == 0
+        stop_mock.assert_called_once()
+
+    def test_uninstall_failure_exit_code(self) -> None:
+        with patch.object(main_mod.actions, "uninstall", return_value=(False, "still there")):
+            assert main_mod._maybe_run_cli_action(["--uninstall"]) == 1
+
+    def test_open_routes_to_actions(self) -> None:
+        with patch.object(main_mod.actions, "open_browser") as open_mock:
+            assert main_mod._maybe_run_cli_action(["--open"]) == 0
+        open_mock.assert_called_once()
+
+
 class TestStatusWindowContract:
     """Pin the ``__main__`` -> ``StatusWindow`` method contract.
 
@@ -339,34 +373,30 @@ class TestQuickUninstall:
     def test_cancel_does_nothing(self, tmp_path: Path) -> None:
         with (
             patch.object(main_mod.ui, "two_button_dialog", return_value="secondary"),
-            patch.object(main_mod.docker, "compose_down") as down_mock,
+            patch.object(main_mod.actions, "uninstall") as uninstall_mock,
         ):
             assert main_mod._quick_uninstall(tmp_path) is False
-        down_mock.assert_not_called()
+        uninstall_mock.assert_not_called()
 
-    def test_confirm_removes_containers_and_images_but_keeps_volumes(self, tmp_path: Path) -> None:
+    def test_confirm_delegates_to_actions_uninstall(self, tmp_path: Path) -> None:
+        # The GUI handler delegates the business logic to actions.uninstall
+        # (which removes + verifies + keeps volumes); the handler only shows
+        # progress + the completion dialog.
         with (
             patch.object(main_mod.ui, "two_button_dialog", return_value="primary"),
-            patch.object(main_mod.docker, "compose_down", return_value=(True, "")) as down_mock,
-            patch.object(main_mod.docker, "remove_containers", return_value=(True, "removed 2")) as rmc_mock,
-            patch.object(main_mod.docker, "remove_images", return_value=(True, "")) as images_mock,
-            patch.object(main_mod.docker, "remove_volumes") as volumes_mock,
+            patch.object(main_mod.actions, "uninstall", return_value=(True, "removed")) as uninstall_mock,
             patch.object(main_mod, "_remove_desktop_shortcut"),
         ):
             assert main_mod._quick_uninstall(tmp_path) is True
-        down_mock.assert_called_once()
-        rmc_mock.assert_called_once()  # verified container removal
-        images_mock.assert_called_once()
-        volumes_mock.assert_not_called()  # data is preserved
+        uninstall_mock.assert_called_once()
 
     def test_reports_failure_when_container_survives(self, tmp_path: Path) -> None:
-        # remove_containers verifies + reports failure -> uninstall must NOT
-        # claim success; it shows an error and returns False (#964).
+        # actions.uninstall verifies + reports failure -> the handler must
+        # NOT claim success; it shows an error and returns False (#964).
         with (
             patch.object(main_mod.ui, "two_button_dialog", return_value="primary"),
-            patch.object(main_mod.docker, "compose_down", return_value=(True, "")),
-            patch.object(main_mod.docker, "remove_containers", return_value=(False, "1 container(s) could not be removed")),
-            patch.object(main_mod.docker, "remove_images", return_value=(True, "")),
+            patch.object(main_mod.actions, "uninstall",
+                         return_value=(False, "1 Container konnte nicht entfernt werden.")),
             patch.object(main_mod.ui, "error_dialog") as error_mock,
             patch.object(main_mod, "_remove_desktop_shortcut") as shortcut_mock,
         ):
