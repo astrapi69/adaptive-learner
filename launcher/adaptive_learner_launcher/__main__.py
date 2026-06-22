@@ -26,6 +26,10 @@ from adaptive_learner_launcher import __version__, config, docker, health, i18n,
 logger = logging.getLogger("adaptive_learner_launcher")
 
 INSTALL_GUIDE_URL = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md"
+# Stable "latest release" page (redirects to the newest tag). Used for the
+# stale-launcher + update-available dialogs so the link is always current
+# and never points at an outdated/missing tag (#952).
+RELEASE_PAGE_URL = "https://github.com/astrapi69/adaptive-learner/releases/latest"
 DOCKER_INSTALL_URL = "https://docs.docker.com/desktop/install/windows-install/"
 DOCKER_GUIDE_URL_EN = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md"
 DOCKER_GUIDE_URL_DE = "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/de/install/docker-desktop.md"
@@ -639,7 +643,7 @@ def _show_update_notification(tag: str, url: str, current: str) -> None:
     )
     if choice == "primary":
         try:
-            webbrowser.open(url)
+            webbrowser.open(RELEASE_PAGE_URL)
         except OSError as exc:
             logger.warning("update release page open failed: %s", exc)
     elif choice == "cancel":
@@ -728,7 +732,7 @@ def _check_launcher_target_stale() -> bool:
     if latest is None:
         return True  # fail-open
 
-    tag, url = latest
+    tag, _url = latest
     if not update_check.is_newer(installer.ADAPTIVE_LEARNER_TARGET_VERSION, tag):
         return True  # in sync (or this launcher is ahead, weird but proceed)
 
@@ -745,7 +749,7 @@ def _check_launcher_target_stale() -> bool:
     )
     if choice == "primary":
         try:
-            webbrowser.open(url)
+            webbrowser.open(RELEASE_PAGE_URL)
         except OSError as exc:
             logger.warning("opening release page failed: %s", exc)
         return False  # abort install
