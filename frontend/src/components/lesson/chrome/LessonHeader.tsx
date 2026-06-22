@@ -90,7 +90,12 @@ export default function LessonHeader({
         </p>
       )}
       {lesson.description && (
-        <p className="lesson-description">{lesson.description}</p>
+        // #959 — clamp to 2 lines on mobile so the header stays compact
+        // and the step content isn't pushed below the fold; full text on
+        // desktop (sm+), which has the vertical room.
+        <p className="lesson-description line-clamp-2 sm:line-clamp-none">
+          {lesson.description}
+        </p>
       )}
     </header>
   );

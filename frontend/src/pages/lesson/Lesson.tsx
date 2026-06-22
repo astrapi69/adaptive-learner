@@ -146,6 +146,9 @@ export default function LessonPage() {
   // next click advances. All three reset whenever the step
   // changes (so a fresh exercise starts at "Prüfen" disabled).
   const exerciseRef = useRef<ExerciseHandle>(null);
+  // #959 — scroll anchor placed just above the progress bar so a step
+  // change can bring the task into view on mobile (see the effect below).
+  const stepScrollRef = useRef<HTMLDivElement>(null);
   const [answerable, setAnswerable] = useState(false);
   const [checked, setChecked] = useState(false);
   // Enter-key shortcut (#103). The listener is registered once and
@@ -236,6 +239,26 @@ export default function LessonPage() {
       );
     }
   }, [lesson, currentStepIndex, t]);
+
+  // #959 — on mobile the lesson header fills the viewport and pushes the
+  // progress bar + step content below the fold, forcing a manual scroll on
+  // every step. After load + each step change, bring the content into view
+  // so the learner sees the task, not the header. Mobile only (< 640px;
+  // desktop has the room) and honors prefers-reduced-motion.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth >= 640) return;
+    if (showResumePrompt) return; // let the resume overlay settle first
+    const target = stepScrollRef.current;
+    if (!target?.scrollIntoView) return; // jsdom/happy-dom: no-op
+    const reduceMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    target.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  }, [currentStepIndex, showResumePrompt]);
 
   // Keyboard shortcut (#103): Enter drives the two-phase Check / Next
   // button. The listener (shared with the Error-Replay runner via
@@ -397,6 +420,12 @@ export default function LessonPage() {
         onResume={() => void handleResume()}
         onStartOver={() => void handleStartOver()}
       />
+
+      {/* #959 — scroll anchor: a step change scrolls this to the top of
+          the viewport on mobile, lifting the header off-screen so the
+          progress bar + task land in view. scroll-mt leaves a little gap
+          under the (auto-hiding) nav. */}
+      <div ref={stepScrollRef} aria-hidden="true" className="scroll-mt-4" />
 
       <LessonProgressBar
         isSummary={isSummary}
