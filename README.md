@@ -285,7 +285,7 @@ Download from the
 Each release also ships a `.sha256` next to each binary for
 integrity verification. The launcher downloads the matching
 tagged source tree on first run, builds the Docker images,
-and starts the app on `http://localhost:7880`. On first start
+and starts the app on `http://localhost:8501`. On first start
 it also creates `~/.config/adaptive-learner/secrets.yaml` as a
 commented template — uncomment and fill in your provider API
 keys to skip the Settings UI dance.
@@ -310,7 +310,7 @@ irm https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.ps
 Both scripts clone the tagged release into `~/adaptive-learner/`,
 generate an `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet at-rest
 encryption), build the Docker images, and start the stack at
-`http://localhost:7880` (single port; nginx serves the static
+`http://localhost:8501` (single port; nginx serves the static
 frontend and proxies `/api/*` to FastAPI).
 
 ```bash

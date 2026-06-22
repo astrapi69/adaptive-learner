@@ -98,6 +98,22 @@ class TestMaybeShowHelp:
         assert main_mod._maybe_show_help(["--debug"]) is False
         assert main_mod._maybe_show_help([]) is False
 
+    def test_help_lists_version(self, capsys) -> None:
+        assert main_mod._maybe_show_help(["--help"]) is True
+        assert "--version" in capsys.readouterr().out
+
+
+class TestMaybeShowVersion:
+
+    def test_version_flag_prints_version(self, capsys) -> None:
+        assert main_mod._maybe_show_version(["--version"]) is True
+        out = capsys.readouterr().out
+        assert main_mod.__version__ in out
+
+    def test_no_version_flag(self) -> None:
+        assert main_mod._maybe_show_version(["--debug"]) is False
+        assert main_mod._maybe_show_version([]) is False
+
 
 class TestReleaseLinks:
     """The release/download page links must target the correct repo and
@@ -113,26 +129,26 @@ class TestReleaseLinks:
         source = Path(main_mod.__file__).read_text(encoding="utf-8")
         assert "astrapi69/adaptive_learner" not in source
 
-    def test_stale_dialog_download_opens_release_page(self) -> None:
+    def test_stale_dialog_offers_release_page_as_link(self) -> None:
+        # The browser open happens INSIDE choice_dialog (non-closing link,
+        # #956). The dialog must be offered the /releases/latest link.
         with (
             patch.object(
                 main_mod.update_check, "fetch_latest_version",
                 return_value=("v999.0.0", "https://example.invalid/whatever"),
             ),
             patch.object(main_mod.update_check, "is_newer", return_value=True),
-            patch.object(main_mod.ui, "three_button_dialog", return_value="primary"),
-            patch.object(main_mod.webbrowser, "open") as open_mock,
+            patch.object(main_mod.ui, "choice_dialog", return_value="cancel") as dlg,
         ):
             assert main_mod._check_launcher_target_stale() is False
-        open_mock.assert_called_once_with(main_mod.RELEASE_PAGE_URL)
+        links = dlg.call_args.kwargs["links"]
+        assert main_mod.RELEASE_PAGE_URL in [url for _label, url in links]
 
-    def test_update_notification_opens_release_page(self) -> None:
-        with (
-            patch.object(main_mod.ui, "three_button_dialog", return_value="primary"),
-            patch.object(main_mod.webbrowser, "open") as open_mock,
-        ):
+    def test_update_notification_offers_release_page_as_link(self) -> None:
+        with patch.object(main_mod.ui, "choice_dialog", return_value="dismiss") as dlg:
             main_mod._show_update_notification("v999.0.0", "https://example.invalid/x", "1.0.0")
-        open_mock.assert_called_once_with(main_mod.RELEASE_PAGE_URL)
+        links = dlg.call_args.kwargs["links"]
+        assert main_mod.RELEASE_PAGE_URL in [url for _label, url in links]
 
 
 class TestStatusWindowContract:
@@ -215,12 +231,16 @@ class TestResolveFreePort:
 class TestEnsureDockerReady:
 
     def test_false_when_not_installed(self) -> None:
+        # Docker-not-installed dialog is a choice_dialog with the
+        # download/guide as non-closing links (#956); it always aborts.
         with (
             patch.object(main_mod.docker, "docker_installed", return_value=(False, "no")),
-            patch.object(main_mod.ui, "three_button_dialog", return_value="cancel"),
+            patch.object(main_mod.ui, "choice_dialog", return_value="quit") as dlg,
             patch.object(main_mod, "_open_url"),
         ):
             assert main_mod._ensure_docker_ready(False) is False
+        link_urls = [url for _label, url in dlg.call_args.kwargs["links"]]
+        assert main_mod.DOCKER_INSTALL_URL in link_urls
 
     def test_true_when_daemon_running(self) -> None:
         with (

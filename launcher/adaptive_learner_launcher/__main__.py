@@ -109,12 +109,30 @@ def _maybe_show_help(argv: list[str] | None = None) -> bool:
         "--debug", action="store_true",
         help="Verbose logging to stdout and launcher-debug.log.",
     )
+    parser.add_argument(
+        "--version", action="store_true",
+        help="Print the launcher version and exit.",
+    )
     parser.print_help()
+    return True
+
+
+def _maybe_show_version(argv: list[str] | None = None) -> bool:
+    """Print the version when ``--version`` was requested.
+
+    Returns True when the version was shown (the caller then exits).
+    """
+    args = sys.argv[1:] if argv is None else argv
+    if "--version" not in args:
+        return False
+    print(f"adaptive_learner_launcher {__version__}")
     return True
 
 
 def main() -> int:
     if _maybe_show_help(sys.argv[1:]):
+        return 0
+    if _maybe_show_version(sys.argv[1:]):
         return 0
 
     debug = _parse_cli_debug(sys.argv[1:])
@@ -321,21 +339,23 @@ def _ensure_docker_ready(show_details: bool) -> bool:
     ok, detail = docker.docker_installed()
     if not ok:
         logger.error("docker --version failed: %s", detail)
-        choice = ui.three_button_dialog(
+        # Docker is not installed, so this flow always aborts. The two
+        # browser actions are non-closing links so the user can read the
+        # download page + guide and then quit (#956); only Quit / X
+        # dismiss.
+        ui.choice_dialog(
             title=i18n.t("docker.missing.title"),
             message=(
                 f"{i18n.t('docker.missing.heading')}\n\n"
                 f"{i18n.t('docker.missing.explanation')}\n\n"
                 f"{i18n.t('docker.missing.next_step')}"
             ),
-            primary_label=i18n.t("docker.missing.install_button"),
-            secondary_label=i18n.t("docker.missing.guide_button"),
-            cancel_label=i18n.t("docker.missing.quit_button"),
+            buttons=[(i18n.t("docker.missing.quit_button"), "quit")],
+            links=[
+                (i18n.t("docker.missing.install_button"), DOCKER_INSTALL_URL),
+                (i18n.t("docker.missing.guide_button"), _docker_guide_url()),
+            ],
         )
-        if choice == "primary":
-            _open_url(DOCKER_INSTALL_URL, "Docker download page")
-        elif choice == "secondary":
-            _open_url(_docker_guide_url(), "AdaptiveLearner Docker guide")
         return False
 
     # Daemon running? Loop until the user starts Docker or cancels.
@@ -634,19 +654,19 @@ def _show_update_notification(tag: str, url: str, current: str) -> None:
     Three choices: Open release page (primary) / Dismiss (secondary)
     / Don't check for updates (cancel - turns off auto_update_check).
     """
-    choice = ui.three_button_dialog(
+    # "Open release page" is a non-closing link so the user can read the
+    # notes and return to choose (#956). Only Dismiss / Don't-check / X
+    # dismiss the dialog.
+    choice = ui.choice_dialog(
         title=i18n.t("update.title"),
         message=i18n.t("update.message", current=current, tag=tag),
-        primary_label=i18n.t("update.primary"),
-        secondary_label=i18n.t("update.dismiss"),
-        cancel_label=i18n.t("update.disable"),
+        buttons=[
+            (i18n.t("update.dismiss"), "dismiss"),
+            (i18n.t("update.disable"), "disable"),
+        ],
+        links=[(i18n.t("update.primary"), RELEASE_PAGE_URL)],
     )
-    if choice == "primary":
-        try:
-            webbrowser.open(RELEASE_PAGE_URL)
-        except OSError as exc:
-            logger.warning("update release page open failed: %s", exc)
-    elif choice == "cancel":
+    if choice == "disable":
         # User opted out of future update checks.
         settings.update("auto_update_check", False)
         logger.info("Auto-update check disabled by user.")
@@ -736,27 +756,24 @@ def _check_launcher_target_stale() -> bool:
     if not update_check.is_newer(installer.ADAPTIVE_LEARNER_TARGET_VERSION, tag):
         return True  # in sync (or this launcher is ahead, weird but proceed)
 
-    choice = ui.three_button_dialog(
+    # "Open download page" is a non-closing link so the user can read the
+    # release page and return to choose (#956). Only the decision buttons
+    # and X dismiss.
+    choice = ui.choice_dialog(
         title=i18n.t("stale.title"),
         message=i18n.t(
             "stale.message",
             target=installer.ADAPTIVE_LEARNER_TARGET_VERSION,
             latest=tag,
         ),
-        primary_label=i18n.t("stale.download"),
-        secondary_label=i18n.t("stale.continue_old"),
-        cancel_label=i18n.t("common.cancel"),
+        buttons=[
+            (i18n.t("stale.continue_old"), "continue"),
+            (i18n.t("common.cancel"), "cancel"),
+        ],
+        links=[(i18n.t("stale.download"), RELEASE_PAGE_URL)],
     )
-    if choice == "primary":
-        try:
-            webbrowser.open(RELEASE_PAGE_URL)
-        except OSError as exc:
-            logger.warning("opening release page failed: %s", exc)
-        return False  # abort install
-    if choice == "cancel":
-        return False  # abort install
-    # secondary: user knows what they're doing, proceed
-    return True
+    # continue == proceed with the older version; cancel / X == abort.
+    return choice == "continue"
 
 
 def _install_or_welcome() -> Path | None:
@@ -775,21 +792,19 @@ def _install_or_welcome() -> Path | None:
     if not _check_launcher_target_stale():
         return None  # user opted to abort due to outdated launcher
 
-    choice = ui.three_button_dialog(
+    # "Open guide" is a non-closing link so the user can read the install
+    # guide and return to choose (#956). Only Install / Cancel / X dismiss.
+    choice = ui.choice_dialog(
         title=i18n.t("install_prompt.title"),
         message=i18n.t("install_prompt.message"),
-        primary_label=i18n.t("install_prompt.install_button"),
-        secondary_label=i18n.t("install_prompt.guide_button"),
-        cancel_label=i18n.t("install_prompt.cancel_button"),
+        buttons=[
+            (i18n.t("install_prompt.install_button"), "install"),
+            (i18n.t("install_prompt.cancel_button"), "cancel"),
+        ],
+        links=[(i18n.t("install_prompt.guide_button"), INSTALL_GUIDE_URL)],
     )
-    if choice == "cancel":
-        return None
-    if choice == "secondary":
-        try:
-            webbrowser.open(INSTALL_GUIDE_URL)
-        except OSError as exc:
-            logger.warning("opening install guide failed: %s", exc)
-        return None
+    if choice != "install":
+        return None  # cancel or window closed
 
     # User chose "Install" -> pick folder, download, extract
     return _run_install_flow()
@@ -995,21 +1010,19 @@ def _installation_moved_picker() -> Path | None:
     Three buttons: Choose folder / Open install guide / Cancel.
     """
     while True:
-        choice = ui.three_button_dialog(
+        # "Open install guide" is a non-closing link (#956); only Choose
+        # folder / Cancel / X dismiss.
+        choice = ui.choice_dialog(
             title=i18n.t("moved.title"),
             message=i18n.t("moved.message"),
-            primary_label=i18n.t("moved.choose_folder"),
-            secondary_label=i18n.t("install_prompt.guide_button"),
-            cancel_label=i18n.t("common.cancel"),
+            buttons=[
+                (i18n.t("moved.choose_folder"), "choose"),
+                (i18n.t("common.cancel"), "cancel"),
+            ],
+            links=[(i18n.t("install_prompt.guide_button"), INSTALL_GUIDE_URL)],
         )
-        if choice == "cancel":
-            return None
-        if choice == "secondary":
-            try:
-                webbrowser.open(INSTALL_GUIDE_URL)
-            except OSError as exc:
-                logger.warning("opening install guide failed: %s", exc)
-            return None
+        if choice != "choose":
+            return None  # cancel or window closed
         picked = ui.pick_folder(i18n.t("moved.choose_folder_picker"))
         if picked is None:
             continue  # back to the three-button dialog

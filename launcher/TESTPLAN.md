@@ -106,11 +106,13 @@ python3 -m adaptive_learner_launcher
 python3 -m adaptive_learner_launcher --port 9000
 python3 -m adaptive_learner_launcher --help
 python3 -m adaptive_learner_launcher --debug
+python3 -m adaptive_learner_launcher --version
 ```
 
-- [ ] `--port` sets the port
-- [ ] `--help` shows the options
+- [ ] `--port` sets the port (default 8501)
+- [ ] `--help` shows the options (incl. `--version`)
 - [ ] `--debug` prints verbose logs to stdout and writes `launcher-debug.log`
+- [ ] `--version` prints the launcher version and exits
 
 ## State 8: Error handling
 

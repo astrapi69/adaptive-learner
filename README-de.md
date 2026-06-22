@@ -244,7 +244,7 @@ Jedes Release liefert auch eine `.sha256` neben jedem
 Binary zur Integritätsprüfung. Der Launcher lädt beim
 ersten Start den passenden getaggten Source-Tree
 herunter, baut die Docker-Images und startet die App
-unter `http://localhost:7880`. Beim Erststart wird
+unter `http://localhost:8501`. Beim Erststart wird
 außerdem `~/.config/adaptive-learner/secrets.yaml` als
 auskommentierte Vorlage angelegt — Zeilen einkommentieren
 und mit den eigenen Provider-Keys füllen, um das
@@ -271,7 +271,7 @@ Beide Skripte klonen das getaggte Release nach
 `~/adaptive-learner/`, erzeugen einen
 `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet-Verschlüsselung at
 rest), bauen die Docker-Images und starten den Stack unter
-`http://localhost:7880` (ein Port; nginx serviert das
+`http://localhost:8501` (ein Port; nginx serviert das
 statische Frontend und proxyt `/api/*` an FastAPI).
 
 ```bash

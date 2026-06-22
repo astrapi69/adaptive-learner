@@ -126,44 +126,37 @@ class TestWelcomedFlag:
 
 
 class TestDockerMissingDialog:
-    """``_run_launcher`` shows a three-button dialog when Docker is
-    not installed. Each button must dispatch to the right URL or to
-    ``return 1`` (quit). Heavy patching: docker checks, ui calls,
-    webbrowser, settings, retry helpers."""
+    """``_run_launcher`` shows a choice_dialog when Docker is not
+    installed (#956). The download page + Docker guide are offered as
+    non-closing links; the dialog always aborts (``return 1``). Heavy
+    patching: docker checks, ui calls, settings, retry helpers."""
 
-    def _run(self, choice: str):
+    def _run(self, choice):
         from adaptive_learner_launcher import __main__ as main_mod
-
-        opens: list[str] = []
 
         with (
             patch.object(main_mod.docker, "docker_installed", return_value=(False, "no")),
             patch.object(main_mod.config, "get_show_details_default", return_value=False),
             patch.object(main_mod, "_retry_pending_cleanup"),
             patch.object(main_mod.settings, "get", return_value=True),  # already welcomed
-            patch.object(main_mod.ui, "three_button_dialog", return_value=choice) as dlg,
-            patch.object(main_mod.webbrowser, "open", side_effect=opens.append),
+            patch.object(main_mod.ui, "choice_dialog", return_value=choice) as dlg,
         ):
             rc = main_mod._run_launcher()
-        return rc, opens, dlg
+        return rc, dlg
 
-    def test_install_button_opens_docker_download_page(self) -> None:
+    def test_offers_download_and_guide_as_links(self) -> None:
         from adaptive_learner_launcher import __main__ as main_mod
 
-        rc, opens, _ = self._run("primary")
+        rc, dlg = self._run("quit")
         assert rc == 1
-        assert opens == [main_mod.DOCKER_INSTALL_URL]
+        link_urls = [url for _label, url in dlg.call_args.kwargs["links"]]
+        assert main_mod.DOCKER_INSTALL_URL in link_urls
+        assert any("docs/help" in u and "docker-desktop.md" in u for u in link_urls)
 
-    def test_guide_button_opens_adaptive_learner_docker_guide(self) -> None:
-        rc, opens, _ = self._run("secondary")
-        assert rc == 1
-        assert len(opens) == 1
-        assert "docs/help" in opens[0] and "docker-desktop.md" in opens[0]
-
-    def test_quit_button_returns_without_opening_browser(self) -> None:
-        rc, opens, _ = self._run("cancel")
-        assert rc == 1
-        assert opens == []
+    def test_aborts_with_rc_1_regardless_of_choice(self) -> None:
+        # Quit button or window-close (None) -> abort, no proceed.
+        assert self._run("quit")[0] == 1
+        assert self._run(None)[0] == 1
 
 
 # --- Docker check is the first interactive step (#942 Bug 1) --------
