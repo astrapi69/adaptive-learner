@@ -97,10 +97,15 @@ class TestButtonsForState:
 class TestDispatchAction:
     _CTX = {"compose_file": "c.yml", "project": "adaptive-learner", "port": 8501}
 
-    def test_install_routes_to_actions(self) -> None:
-        with patch.object(launcher_app.actions, "install", return_value=(True, "ok")) as m:
+    def test_install_routes_to_ensure_installed(self) -> None:
+        # #1045 - install routes through ensure_installed (download-if-needed
+        # then install), with the install dir = the compose file's parent.
+        with patch.object(launcher_app.actions, "ensure_installed", return_value=(True, "ok")) as m:
             assert launcher_app.dispatch_action("install", **self._CTX) == (True, "ok")
         m.assert_called_once()
+        # The first positional arg is the install dir (the compose file's parent).
+        from pathlib import Path
+        assert m.call_args.args[0] == Path("c.yml").parent
 
     def test_start_routes_to_actions(self) -> None:
         with patch.object(launcher_app.actions, "start", return_value=(True, "ok")) as m:

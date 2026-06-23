@@ -323,6 +323,41 @@ def install(compose_file: str, project: str = DEFAULT_PROJECT, port: int = DEFAU
     return True, "Installation abgeschlossen. App ist bereit."
 
 
+def ensure_installed(install_dir: Path, project: str = DEFAULT_PROJECT,
+                     port: int = DEFAULT_PORT, *,
+                     on_step: ProgressFn | None = None,
+                     on_output: OutputFn | None = None) -> tuple[bool, str]:
+    """Single install entry point for the persistent window (#1045).
+
+    When ``install_dir`` is NOT a valid repo (the frozen-binary case: no local
+    checkout, no compose file), DOWNLOAD the release into it + create the
+    ``.env`` first, streaming progress to the GUI log; then install. When a
+    valid repo is already present (source checkout or a prior download), this
+    is just :func:`install`. ONE code path for source checkouts and frozen
+    binaries alike - the window stays open throughout.
+    """
+    from adaptive_learner_launcher import config, installer
+
+    compose_file = install_dir / config.COMPOSE_FILENAME
+    if not config.is_valid_repo(install_dir):
+        docker_ok, _ = check_docker()
+        if not docker_ok:
+            return False, _DOCKER_UNAVAILABLE
+        _notify(on_step, "Release wird heruntergeladen...")
+        try:
+            ok, detail = installer.download_release(install_dir)
+        except Exception as exc:  # noqa: BLE001 - surface as a friendly result
+            return False, f"Download fehlgeschlagen: {exc}"
+        if not ok:
+            return False, f"Download fehlgeschlagen: {detail}"
+        _notify(on_step, "Release heruntergeladen ✓")
+        env_ok, env_detail = installer.create_env_file(install_dir)
+        if not env_ok:
+            return False, f"Konfiguration fehlgeschlagen: {env_detail}"
+        _notify(on_step, "Konfiguration vorbereitet ✓")
+    return install(str(compose_file), project, port, on_step=on_step, on_output=on_output)
+
+
 def start(compose_file: str, project: str = DEFAULT_PROJECT,
           *, on_step: ProgressFn | None = None,
           on_output: OutputFn | None = None) -> tuple[bool, str]:
