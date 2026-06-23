@@ -2430,6 +2430,7 @@ learning_path:
   error_replay: "Réviser les erreurs"
   train_errors: "Entraîner les erreurs"
   shuffle: "Mode aléatoire"
+  endless: "Sans fin"
   personal:
     title: "Ton parcours d'apprentissage"
     empty: "Télécharge un ensemble de leçons pour commencer."
@@ -2944,6 +2945,33 @@ update:
     release_page: "Page de la version"
     later: "Plus tard"
     whats_new_title: "Nouveautés de {version}"
+endless:
+  session_title: "Entraînement sans fin"
+  page_title: "Entraînement sans fin"
+  back_to_dashboard: "Retour au tableau de bord"
+  loading: "Chargement de la session d'entraînement…"
+  empty_body: "Cet ensemble n'a pas encore d'exercices à pratiquer."
+  not_cached_body: "Cet ensemble n'est pas encore téléchargé. Ouvrez le navigateur de contenu pour le télécharger d'abord."
+  paused: "En pause — faites une petite pause."
+  resume: "Reprendre"
+  pause: "Pause"
+  end: "Terminer"
+  no_card: "Aucune autre carte pour le moment."
+  stat:
+    cards: "{n} cartes"
+    correct: "{n} correctes"
+  error:
+    missing_params: "Aucun ensemble de contenu sélectionné."
+    load_failed: "Impossible de charger la session d'entraînement."
+  summary:
+    heading: "Session d'entraînement terminée !"
+    duration: "Durée"
+    cards: "Cartes"
+    correct: "Correctes"
+    reviews: "Révisions faites"
+    new: "Nouvelles apprises"
+    errors: "Erreurs travaillées"
+    xp: "XP d'entraînement"
 shuffle:
   session_title: "Session aléatoire"
   page_title: "Mode aléatoire"

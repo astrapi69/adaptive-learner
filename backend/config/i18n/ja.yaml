@@ -2428,6 +2428,7 @@ learning_path:
   error_replay: "間違いを復習"
   train_errors: "間違いを練習"
   shuffle: "シャッフル"
+  endless: "エンドレス"
   personal:
     title: "あなたの学習パス"
     empty: "始めるにはレッスンセットをダウンロードしてください。"
@@ -2942,6 +2943,33 @@ update:
     release_page: "リリースページ"
     later: "後で"
     whats_new_title: "{version} の新着情報"
+endless:
+  session_title: "エンドレス練習"
+  page_title: "エンドレス練習"
+  back_to_dashboard: "ダッシュボードに戻る"
+  loading: "練習セッションを読み込み中…"
+  empty_body: "このセットにはまだ練習する問題がありません。"
+  not_cached_body: "このセットはまだダウンロードされていません。先にコンテンツブラウザーを開いてダウンロードしてください。"
+  paused: "一時停止中 — ひと休みしましょう。"
+  resume: "再開"
+  pause: "一時停止"
+  end: "終了"
+  no_card: "今はもうカードがありません。"
+  stat:
+    cards: "{n} 枚"
+    correct: "{n} 正解"
+  error:
+    missing_params: "コンテンツセットが選択されていません。"
+    load_failed: "練習セッションを読み込めませんでした。"
+  summary:
+    heading: "練習セッション完了！"
+    duration: "時間"
+    cards: "カード"
+    correct: "正解"
+    reviews: "復習した数"
+    new: "新しく覚えた数"
+    errors: "練習した間違い"
+    xp: "練習XP"
 shuffle:
   session_title: "シャッフルセッション"
   page_title: "シャッフル"

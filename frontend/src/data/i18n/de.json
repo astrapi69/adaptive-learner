@@ -2662,6 +2662,7 @@
     "error_replay": "Fehler wiederholen",
     "train_errors": "Fehler trainieren",
     "shuffle": "Zufallsmodus",
+    "endless": "Endlos",
     "personal": {
       "title": "Dein Lernpfad",
       "empty": "Lade ein Lektionsset herunter, um zu beginnen.",
@@ -3220,6 +3221,37 @@
       "release_page": "Release-Seite",
       "later": "Später",
       "whats_new_title": "Was ist neu in {version}"
+    }
+  },
+  "endless": {
+    "session_title": "Endlos-Übung",
+    "page_title": "Endlos-Übung",
+    "back_to_dashboard": "Zurück zum Dashboard",
+    "loading": "Übungssitzung wird geladen…",
+    "empty_body": "Dieses Set hat noch keine Übungen zum Üben.",
+    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
+    "paused": "Pausiert — mach eine kurze Pause.",
+    "resume": "Fortsetzen",
+    "pause": "Pause",
+    "end": "Beenden",
+    "no_card": "Im Moment keine weiteren Karten.",
+    "stat": {
+      "cards": "{n} Karten",
+      "correct": "{n} richtig"
+    },
+    "error": {
+      "missing_params": "Kein Inhaltsset ausgewählt.",
+      "load_failed": "Übungssitzung konnte nicht geladen werden."
+    },
+    "summary": {
+      "heading": "Übungssitzung abgeschlossen!",
+      "duration": "Dauer",
+      "cards": "Karten",
+      "correct": "Richtig",
+      "reviews": "Wiederholungen erledigt",
+      "new": "Neu gelernt",
+      "errors": "Fehler geübt",
+      "xp": "Übungs-XP"
     }
   },
   "shuffle": {

@@ -2438,6 +2438,7 @@ learning_path:
   error_replay: "Ulangi kesalahan"
   train_errors: "Latih kesalahan"
   shuffle: "Acak"
+  endless: "Tanpa henti"
   personal:
     title: "Jalur Pembelajaranmu"
     empty: "Unduh sebuah set pelajaran untuk memulai."
@@ -2952,6 +2953,33 @@ update:
     release_page: "Halaman rilis"
     later: "Nanti"
     whats_new_title: "Yang baru di {version}"
+endless:
+  session_title: "Latihan tanpa henti"
+  page_title: "Latihan tanpa henti"
+  back_to_dashboard: "Kembali ke Dasbor"
+  loading: "Memuat sesi latihan…"
+  empty_body: "Set ini belum memiliki latihan untuk dikerjakan."
+  not_cached_body: "Set ini belum diunduh. Buka peramban konten untuk mengunduhnya terlebih dahulu."
+  paused: "Dijeda — istirahat sejenak."
+  resume: "Lanjutkan"
+  pause: "Jeda"
+  end: "Akhiri"
+  no_card: "Belum ada kartu lagi saat ini."
+  stat:
+    cards: "{n} kartu"
+    correct: "{n} benar"
+  error:
+    missing_params: "Tidak ada set konten yang dipilih."
+    load_failed: "Tidak dapat memuat sesi latihan."
+  summary:
+    heading: "Sesi latihan selesai!"
+    duration: "Durasi"
+    cards: "Kartu"
+    correct: "Benar"
+    reviews: "Tinjauan selesai"
+    new: "Baru dipelajari"
+    errors: "Kesalahan dilatih"
+    xp: "XP latihan"
 shuffle:
   session_title: "Sesi acak"
   page_title: "Acak"

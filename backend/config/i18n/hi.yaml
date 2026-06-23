@@ -2420,6 +2420,7 @@ learning_path:
   error_replay: त्रुटियाँ दोबारा करें
   train_errors: "गलतियाँ अभ्यास करें"
   shuffle: "मिश्रण"
+  endless: "अनवरत"
   personal:
     title: आपका सीखने का पथ
     empty: शुरू करने के लिए एक पाठ सेट डाउनलोड करें।
@@ -2928,6 +2929,33 @@ update:
     release_page: "रिलीज़ पेज"
     later: "बाद में"
     whats_new_title: "{version} में नया क्या है"
+endless:
+  session_title: "अनवरत अभ्यास"
+  page_title: "अनवरत अभ्यास"
+  back_to_dashboard: "डैशबोर्ड पर वापस"
+  loading: "अभ्यास सत्र लोड हो रहा है…"
+  empty_body: "इस सेट में अभ्यास के लिए अभी कोई अभ्यास नहीं है।"
+  not_cached_body: "यह सेट अभी डाउनलोड नहीं हुआ है। पहले इसे डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।"
+  paused: "रुका हुआ — थोड़ा विराम लें।"
+  resume: "जारी रखें"
+  pause: "रोकें"
+  end: "समाप्त"
+  no_card: "अभी और कार्ड नहीं हैं।"
+  stat:
+    cards: "{n} कार्ड"
+    correct: "{n} सही"
+  error:
+    missing_params: "कोई सामग्री सेट चयनित नहीं।"
+    load_failed: "अभ्यास सत्र लोड नहीं हो सका।"
+  summary:
+    heading: "अभ्यास सत्र पूरा हुआ!"
+    duration: "अवधि"
+    cards: "कार्ड"
+    correct: "सही"
+    reviews: "पुनरावलोकन पूर्ण"
+    new: "नया सीखा"
+    errors: "त्रुटियाँ अभ्यास कीं"
+    xp: "अभ्यास XP"
 shuffle:
   session_title: "मिश्रित सत्र"
   page_title: "मिश्रण"

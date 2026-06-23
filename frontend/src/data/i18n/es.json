@@ -2662,6 +2662,7 @@
     "error_replay": "Repetir errores",
     "train_errors": "Entrenar errores",
     "shuffle": "Modo aleatorio",
+    "endless": "Sin fin",
     "personal": {
       "title": "Tu ruta de aprendizaje",
       "empty": "Descarga un conjunto de lecciones para empezar.",
@@ -3220,6 +3221,37 @@
       "release_page": "Página de la versión",
       "later": "Más tarde",
       "whats_new_title": "Novedades de {version}"
+    }
+  },
+  "endless": {
+    "session_title": "Práctica sin fin",
+    "page_title": "Práctica sin fin",
+    "back_to_dashboard": "Volver al panel",
+    "loading": "Cargando sesión de práctica…",
+    "empty_body": "Este conjunto aún no tiene ejercicios para practicar.",
+    "not_cached_body": "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero.",
+    "paused": "En pausa: tómate un respiro.",
+    "resume": "Reanudar",
+    "pause": "Pausar",
+    "end": "Terminar",
+    "no_card": "No hay más tarjetas por ahora.",
+    "stat": {
+      "cards": "{n} tarjetas",
+      "correct": "{n} correctas"
+    },
+    "error": {
+      "missing_params": "Ningún conjunto de contenido seleccionado.",
+      "load_failed": "No se pudo cargar la sesión de práctica."
+    },
+    "summary": {
+      "heading": "¡Sesión de práctica completada!",
+      "duration": "Duración",
+      "cards": "Tarjetas",
+      "correct": "Correctas",
+      "reviews": "Repasos hechos",
+      "new": "Nuevas aprendidas",
+      "errors": "Errores practicados",
+      "xp": "XP de práctica"
     }
   },
   "shuffle": {
