@@ -14,7 +14,7 @@ import subprocess
 import sys
 import urllib.error
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -1145,3 +1145,48 @@ class TestCleanupOfferLines:
     def test_empty_when_nothing_stale(self) -> None:
         assert actions.cleanup_offer_lines(
             {"containers": [], "images": [], "volumes": [], "configs": []}) == []
+
+
+class TestEnsureInstalled:
+    def test_installs_directly_when_repo_valid(self, monkeypatch, tmp_path) -> None:
+        # A valid repo (source checkout / prior download) -> no download.
+        from adaptive_learner_launcher import config, installer
+        monkeypatch.setattr(config, "is_valid_repo", lambda d: True)
+        called = {}
+        monkeypatch.setattr(installer, "download_release",
+                            lambda d: called.setdefault("download", True) or (True, "ok"))
+        monkeypatch.setattr(actions, "install",
+                            lambda compose, project, port, **k: (True, "Installation abgeschlossen."))
+        ok, msg = actions.ensure_installed(tmp_path, "adaptive-learner", 8501)
+        assert ok is True
+        assert "download" not in called  # never downloaded
+
+    def test_downloads_then_installs_when_no_repo(self, monkeypatch, tmp_path) -> None:
+        # Frozen binary: no valid repo -> download + env + install, all streamed.
+        from adaptive_learner_launcher import config, installer
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(config, "is_valid_repo", lambda d: False)
+        order: list[str] = []
+        monkeypatch.setattr(installer, "download_release",
+                            lambda d: (order.append("download") or (True, "ok")))
+        monkeypatch.setattr(installer, "create_env_file",
+                            lambda d: (order.append("env") or (True, "created")))
+        monkeypatch.setattr(actions, "install",
+                            lambda compose, project, port, **k: (order.append("install") or (True, "ok")))
+        steps: list[str] = []
+        ok, _ = actions.ensure_installed(tmp_path, "adaptive-learner", 8501, on_step=steps.append)
+        assert ok is True
+        assert order == ["download", "env", "install"]
+        assert "Release wird heruntergeladen..." in steps
+
+    def test_download_failure_aborts(self, monkeypatch, tmp_path) -> None:
+        from adaptive_learner_launcher import config, installer
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(config, "is_valid_repo", lambda d: False)
+        monkeypatch.setattr(installer, "download_release", lambda d: (False, "404"))
+        installed = {}
+        monkeypatch.setattr(actions, "install",
+                            lambda *a, **k: installed.setdefault("x", True) or (True, "ok"))
+        ok, msg = actions.ensure_installed(tmp_path, "adaptive-learner", 8501)
+        assert ok is False and "Download" in msg
+        assert "x" not in installed  # never reached install

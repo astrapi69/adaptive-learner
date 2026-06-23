@@ -2,7 +2,8 @@
 # Replace with your domain logic when project domain is finalized.
 
 """Tests for the JSON-backed i18n catalog, welcome-flag handling, and
-the Docker-missing dispatch added to ``__main__._run_launcher``.
+the welcomed/language settings flags (the old _run_launcher dialog
+chain was removed in #1045).
 
 UI primitives (``ui.welcome_dialog``, ``ui.three_button_dialog``,
 ``ui.error_dialog``) are not exercised end-to-end - they require a
@@ -15,7 +16,6 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 
 from adaptive_learner_launcher import i18n, settings
 
@@ -123,112 +123,3 @@ class TestWelcomedFlag:
 
 
 # --- Docker-missing dialog dispatch --------------------------------
-
-
-class TestDockerMissingDialog:
-    """``_run_launcher`` shows a choice_dialog when Docker is not
-    installed (#956). The download page + Docker guide are offered as
-    non-closing links; the dialog always aborts (``return 1``). Heavy
-    patching: docker checks, ui calls, settings, retry helpers."""
-
-    def _run(self, choice):
-        from adaptive_learner_launcher import __main__ as main_mod
-
-        with (
-            patch.object(main_mod.actions, "docker_installed", return_value=(False, "no")),
-            patch.object(main_mod.config, "get_show_details_default", return_value=False),
-            patch.object(main_mod, "_retry_pending_cleanup"),
-            patch.object(main_mod.settings, "get", return_value=True),  # already welcomed
-            patch.object(main_mod.ui, "choice_dialog", return_value=choice) as dlg,
-        ):
-            rc = main_mod._run_launcher()
-        return rc, dlg
-
-    def test_offers_download_and_guide_as_links(self) -> None:
-        from adaptive_learner_launcher import __main__ as main_mod
-
-        rc, dlg = self._run("quit")
-        assert rc == 1
-        link_urls = [url for _label, url in dlg.call_args.kwargs["links"]]
-        assert main_mod.DOCKER_INSTALL_URL in link_urls
-        assert any("docs/help" in u and "docker-desktop.md" in u for u in link_urls)
-
-    def test_aborts_with_rc_1_regardless_of_choice(self) -> None:
-        # Quit button or window-close (None) -> abort, no proceed.
-        assert self._run("quit")[0] == 1
-        assert self._run(None)[0] == 1
-
-
-# --- Docker check is the first interactive step (#942 Bug 1) --------
-
-
-class TestDockerCheckBeforeWelcome:
-    """The Docker check is the FIRST interactive step (#942 Bug 1): the
-    welcome dialog only fires AFTER Docker is confirmed ready, and is
-    skipped entirely when Docker is unavailable. Once welcomed=True it is
-    skipped regardless."""
-
-    def test_welcome_not_shown_when_docker_unavailable(self, tmp_path: Path) -> None:
-        from adaptive_learner_launcher import __main__ as main_mod
-
-        with (
-            patch.object(main_mod.settings, "get", side_effect=lambda k: False if k == "welcomed" else None),
-            patch.object(main_mod, "_ensure_docker_ready", return_value=False),
-            patch.object(main_mod.config, "get_show_details_default", return_value=False),
-            patch.object(main_mod, "_retry_pending_cleanup"),
-            patch.object(main_mod.ui, "welcome_dialog") as welcome_mock,
-        ):
-            rc = main_mod._run_launcher()
-        assert rc == 1
-        welcome_mock.assert_not_called()
-
-    def test_welcome_fires_after_docker_ready_when_welcomed_false(self, tmp_path: Path) -> None:
-        from adaptive_learner_launcher import __main__ as main_mod
-
-        seen: dict[str, object] = {}
-
-        def fake_welcome(**kwargs: object) -> None:
-            seen.update(kwargs)
-            seen["called"] = True
-
-        with (
-            patch.object(main_mod.settings, "get", side_effect=lambda k: False if k == "welcomed" else None),
-            patch.object(main_mod.settings, "update") as update_mock,
-            patch.object(main_mod, "_ensure_docker_ready", return_value=True),
-            patch.object(main_mod.config, "get_show_details_default", return_value=False),
-            patch.object(main_mod, "_retry_pending_cleanup"),
-            patch.object(main_mod.ui, "welcome_dialog", side_effect=fake_welcome),
-            # Abort right after the welcome so the flow exits cleanly:
-            # no manifest, no legacy install, install offer declined.
-            patch.object(main_mod.manifest, "read_manifest", return_value=None),
-            patch.object(main_mod.config, "resolve_repo_path", return_value=tmp_path),
-            patch.object(main_mod.config, "is_valid_repo", return_value=False),
-            patch.object(main_mod.config, "launcher_config_path", return_value=tmp_path / "nope.json"),
-            patch.object(main_mod, "_install_or_welcome", return_value=None),
-        ):
-            rc = main_mod._run_launcher()
-        assert rc == 0
-        assert seen.get("called") is True
-        update_mock.assert_any_call("welcomed", True)
-
-    def test_welcome_skipped_when_welcomed_true(self) -> None:
-        from adaptive_learner_launcher import __main__ as main_mod
-
-        with (
-            patch.object(main_mod.settings, "get", return_value=True),
-            patch.object(main_mod, "_ensure_docker_ready", return_value=False),
-            patch.object(main_mod.config, "get_show_details_default", return_value=False),
-            patch.object(main_mod, "_retry_pending_cleanup"),
-            patch.object(main_mod.ui, "welcome_dialog") as welcome_mock,
-        ):
-            main_mod._run_launcher()
-        welcome_mock.assert_not_called()
-
-
-@pytest.fixture(autouse=True)
-def _reset_i18n_state() -> None:
-    """Each test starts with a fresh catalog + active language."""
-    i18n._CATALOG = {}
-    i18n.init(None)
-    yield
-    i18n._CATALOG = {}

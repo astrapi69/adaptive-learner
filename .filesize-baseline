@@ -16,7 +16,8 @@
 #
 # Format: <relativer Pfad>  <max-Zeilen>   (# = Kommentar)
 
-# Launcher CLI entrypoint — crossed 1000 lines via the Docker-first launcher
-# flow + inline port field (#976/#986). Mixed-concern god-file; frozen here,
-# must not grow. Split tracked under #372.
-launcher/adaptive_learner_launcher/__main__.py  1233
+
+# Launcher actions layer — the single business-logic module; crossed 1000
+# via the install-manifest + startup-cleanup + ensure_installed additions
+# (#1042/#1043/#1045). Frozen here; split tracked under #372.
+launcher/adaptive_learner_launcher/actions.py  1002

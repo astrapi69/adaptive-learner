@@ -71,7 +71,13 @@ def dispatch_action(action_id: str, *, compose_file: str, project: str, port: in
     unit-testable by mocking ``actions``.
     """
     if action_id == "install":
-        return actions.install(compose_file, project, port, on_step=on_step, on_output=on_output)
+        # #1045 - single entry: download the release if there is no local repo
+        # (frozen binary), then install. ``compose_file``'s parent is the
+        # install dir (where a download lands).
+        from pathlib import Path
+        return actions.ensure_installed(
+            Path(compose_file).parent, project, port,
+            on_step=on_step, on_output=on_output)
     if action_id == "start":
         return actions.start(compose_file, project, on_step=on_step, on_output=on_output)
     if action_id == "stop":
