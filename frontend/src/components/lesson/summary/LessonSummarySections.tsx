@@ -16,20 +16,16 @@ import { Button } from "@/components/ui/button";
 import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import AnswerDiff from "../../../shared/data-display/AnswerDiff";
 import Confetti from "../../feedback/Confetti";
-import ShareButton from "../../../shared/layout/ShareButton";
 import LessonExamResult from "./LessonExamResult";
-import { generateShareText } from "../../../lib/share/generate-share-text";
 import {
   downloadAnkiDeck,
   lessonCardsToAnki,
 } from "../../../lib/export/anki-export";
 import { explainError } from "../../../lib/review/explain-error";
 import { readExplanationsEnabled } from "../../../lib/review/reviewPref";
-import type { StarRating } from "../../../lib/lesson/lesson-summary";
 import type { LessonMode } from "../../../lib/learning/lessonModePref";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
 import type { ContentLesson, ElementError } from "../../../storage/types";
-import { notify } from "../../../utils/notify";
 
 /** The i18n lookup signature the parent passes down. */
 type TFn = (key: string, fallback?: string) => string;
@@ -249,20 +245,18 @@ export function SummaryExplanations({
 
 /**
  * The result-export action row (#138): copy / download Markdown, download
- * JSON, optional Anki-deck export, and a share button on a perfect run. The
- * copy / download / JSON handlers are computed by the parent (which owns the
- * breakdown); the card / star guards live here.
+ * JSON, and an optional Anki-deck export. The copy / download / JSON handlers
+ * are computed by the parent (which owns the breakdown); the card guard lives
+ * here. (Social sharing moved to the dedicated ShareResultButton row, #1073.)
  */
 export function SummaryExportActions({
   lesson,
-  stars,
   t,
   onCopy,
   onDownload,
   onDownloadJson,
 }: {
   lesson: ContentLesson;
-  stars: StarRating;
   t: TFn;
   onCopy: () => void;
   onDownload: () => void;
@@ -322,21 +316,6 @@ export function SummaryExportActions({
           <Download aria-hidden="true" />
           {t("lesson.summary.export.anki", "Export cards (Anki)")}
         </Button>
-      )}
-      {stars === 3 && (
-        <ShareButton
-          text={generateShareText({ kind: "lesson_complete" }, t).text}
-          url={generateShareText({ kind: "lesson_complete" }, t).url}
-          label={t("share.achievement.button", "Share")}
-          onShared={(how) => {
-            if (how === "copied") {
-              notify.success(
-                t("share.achievement.copied", "Copied to clipboard"),
-              );
-            }
-          }}
-          testId="lesson-summary-share"
-        />
       )}
     </div>
   );

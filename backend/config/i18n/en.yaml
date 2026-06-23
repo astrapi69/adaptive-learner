@@ -2554,6 +2554,14 @@ share:
     copied: "Copied"
     share: "Share"
     qr_alt: "QR code linking to the app"
+  result:
+    text: 'I completed "{title}" with {pct}%! 🎓 {correct} of {total} correct.'
+    cta_record: 'Show your friends!'
+    cta_great: 'Share your great result!'
+    cta_neutral: 'Share result'
+    cta_low: 'Share result'
+    image_complete: 'Lesson complete!'
+    image_score: '{correct} of {total} correct'
   achievement:
     button: Share
     title: Share your progress

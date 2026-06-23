@@ -2792,6 +2792,15 @@
       "share": "Bagikan",
       "qr_alt": "Kode QR yang menautkan ke aplikasi"
     },
+    "result": {
+      "text": "Saya menyelesaikan \"{title}\" dengan {pct}%! 🎓 {correct} dari {total} benar.",
+      "cta_record": "Tunjukkan ke temanmu!",
+      "cta_great": "Bagikan hasil hebatmu!",
+      "cta_neutral": "Bagikan hasil",
+      "cta_low": "Bagikan hasil",
+      "image_complete": "Pelajaran selesai!",
+      "image_score": "{correct} dari {total} benar"
+    },
     "achievement": {
       "button": "Bagikan",
       "title": "Bagikan progres Anda",

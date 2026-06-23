@@ -2792,6 +2792,15 @@
       "share": "Teilen",
       "qr_alt": "QR-Code, der zur App führt"
     },
+    "result": {
+      "text": "Ich habe \"{title}\" mit {pct}% abgeschlossen! 🎓 {correct} von {total} richtig.",
+      "cta_record": "Zeig es deinen Freunden!",
+      "cta_great": "Teile dein tolles Ergebnis!",
+      "cta_neutral": "Ergebnis teilen",
+      "cta_low": "Ergebnis teilen",
+      "image_complete": "Lektion abgeschlossen!",
+      "image_score": "{correct} von {total} richtig"
+    },
     "achievement": {
       "button": "Teilen",
       "title": "Fortschritt teilen",
