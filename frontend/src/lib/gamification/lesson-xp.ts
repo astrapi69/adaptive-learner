@@ -38,6 +38,9 @@ export interface XPBreakdown {
     star_bonus?: number;
     first_attempt_3star_bonus?: number;
     streak_multiplier_pct?: number;
+    /** Lesson-mode reward weight as a percent bonus (#1007 Phase 2),
+     *  emitted only when the mode multiplier is not 1.0 (e.g. exam = 50). */
+    mode_multiplier_pct?: number;
 }
 
 /**
@@ -59,6 +62,9 @@ export interface CalculateLessonSessionXpInput {
     stars: number;
     first_attempt: boolean;
     streak_days: number;
+    /** Lesson-mode reward weight (#1007 Phase 2). Default 1.0; the
+     *  caller passes ``MODE_CONFIGS[mode].xpMultiplier`` (exam = 1.5). */
+    xp_multiplier?: number;
 }
 
 /**
@@ -139,11 +145,22 @@ export function calculateLessonSessionXp(
         (breakdown.star_bonus ?? 0) +
         (breakdown.first_attempt_3star_bonus ?? 0);
 
+    const xp_multiplier = input.xp_multiplier ?? 1.0;
     const capped_days = Math.min(input.streak_days, 7);
-    const multiplier = 1.0 + 0.25 * capped_days;
+    const streak_multiplier = 1.0 + 0.25 * capped_days;
+    // SAME expression + order as the Python source
+    // (``streak_multiplier * xp_multiplier``, then ``round(pre * eff)``)
+    // so the float product and banker's-rounded result stay
+    // byte-identical for the parity goldens.
+    const multiplier = streak_multiplier * xp_multiplier;
     const xp_earned = pythonRound(pre_multiplier * multiplier);
     if (input.streak_days > 0) {
-        breakdown.streak_multiplier_pct = pythonRound((multiplier - 1.0) * 100);
+        breakdown.streak_multiplier_pct = pythonRound(
+            (streak_multiplier - 1.0) * 100,
+        );
+    }
+    if (xp_multiplier !== 1.0) {
+        breakdown.mode_multiplier_pct = pythonRound((xp_multiplier - 1.0) * 100);
     }
 
     return {

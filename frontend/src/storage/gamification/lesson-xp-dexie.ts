@@ -35,6 +35,8 @@ import {
 } from "../../lib/gamification/lesson-xp";
 import type {XPAward} from "../../lib/gamification/lesson-xp";
 import {currentStreakDays} from "../../lib/gamification/streak";
+import {configForMode} from "../../lib/learning/lessonModeConfig";
+import type {LessonMode} from "../../lib/learning/lessonModePref";
 import {nowIso} from "../dexie/db";
 import {persistXP, userActivityDates} from "./gamification";
 import type {LessonProgress, XPAwardResult} from "../types";
@@ -66,10 +68,16 @@ export async function awardLessonXpDexie(
     // sees the same input shape.
     const firstAttempt = isFirstAttempt(JSON.stringify(progress.step_results));
     const stars = computeStars(progress.score_correct, progress.score_total);
+    // #1007 Phase 2 — apply the lesson mode's reward weight (exam = 1.5×).
+    // configForMode falls back to practice (1.0×) for an unknown/missing mode.
+    const xpMultiplier = configForMode(
+        (progress.lesson_mode ?? "practice") as LessonMode,
+    ).xpMultiplier;
     const award: XPAward = calculateLessonSessionXp({
         stars,
         first_attempt: firstAttempt,
         streak_days: streakDays,
+        xp_multiplier: xpMultiplier,
     });
 
     const {row, levelUp} = await persistXP(userId, award.xp_earned);

@@ -18,6 +18,7 @@ from adaptive_learner_gamification.xp_service import (
     compute_level,
     compute_stars,
     current_streak_days,
+    lesson_xp_multiplier_for_mode,
     level_threshold,
 )
 
@@ -247,6 +248,37 @@ def test_lesson_xp_stars_add_ten_each() -> None:
     assert one.breakdown["star_bonus"] == 10
     assert two.breakdown["star_bonus"] == 20
     assert three.breakdown["star_bonus"] == 30
+
+
+# --- #1007 Phase 2 — lesson-mode XP multiplier ---------------------------
+
+
+def test_lesson_xp_multiplier_for_mode_values() -> None:
+    """The mode map mirrors the frontend MODE_CONFIGS xpMultiplier."""
+    assert lesson_xp_multiplier_for_mode("exam") == 1.5
+    assert lesson_xp_multiplier_for_mode("timed") == 1.25
+    assert lesson_xp_multiplier_for_mode("reverse") == 1.25
+    assert lesson_xp_multiplier_for_mode("practice") == 1.0
+    # Unknown / None fall back to practice (1.0).
+    assert lesson_xp_multiplier_for_mode("nope") == 1.0
+    assert lesson_xp_multiplier_for_mode(None) == 1.0
+
+
+def test_lesson_xp_exam_multiplier_scales_award() -> None:
+    """Exam mode (1.5×) scales the pre-multiplier subtotal."""
+    practice = calculate_lesson_session_xp(
+        stars=3, first_attempt=True, streak_days=0
+    )
+    exam = calculate_lesson_session_xp(
+        stars=3, first_attempt=True, streak_days=0, xp_multiplier=1.5
+    )
+    # 30 base + 30 stars + 20 first-attempt = 80 -> 80 * 1.5 = 120.
+    assert practice.xp_earned == 80
+    assert exam.xp_earned == 120
+    assert exam.multiplier == 1.5
+    assert exam.breakdown["mode_multiplier_pct"] == 50
+    # A 1.0 multiplier leaves the breakdown free of the mode key.
+    assert "mode_multiplier_pct" not in practice.breakdown
 
 
 def test_lesson_xp_first_attempt_three_star_bonus() -> None:

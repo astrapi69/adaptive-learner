@@ -1,0 +1,9 @@
+{
+  "breakdown": {
+    "base": 30,
+    "mode_multiplier_pct": 25
+  },
+  "multiplier": 1.25,
+  "reason": "lesson_complete",
+  "xp_earned": 38
+}

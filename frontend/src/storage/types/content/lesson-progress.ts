@@ -36,6 +36,10 @@ export interface LessonProgressUpsertBody {
   source: string;
   set_id: string;
   lesson_filename: string;
+  /** #1007 Phase 2 — the lesson mode the run is played in
+   *  (practice/exam/timed/…). Sent on the first upsert (lesson start);
+   *  omitting it leaves the stored value unchanged. */
+  lesson_mode?: string;
   step_result?: LessonStepResult;
   time_spent_seconds_delta?: number;
   /** BUG #41 — the step index the user is currently on, so a paused
@@ -101,6 +105,10 @@ export interface LessonProgress {
   lesson_filename: string;
   /** Phase 63A — lifecycle widened from in_progress|completed. */
   status: "in_progress" | "paused" | "abandoned" | "completed";
+  /** #1007 Phase 2 — the mode the run was played in (practice/exam/…).
+   *  Optional on the wire so pre-feature rows type-check; read with
+   *  `?? "practice"`. */
+  lesson_mode?: string;
   /** Map of step_id → result. Parsed JSON; never a string. */
   step_results: Record<string, LessonStepResultStored>;
   score_correct: number;

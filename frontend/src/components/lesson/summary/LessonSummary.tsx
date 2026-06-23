@@ -61,6 +61,7 @@ import {
 } from "../../../lib/lesson/result-download";
 import { isFirstAttempt } from "../../../lib/gamification/first-attempt";
 import { calculateLessonSessionXp } from "../../../lib/gamification/lesson-xp";
+import { configForMode } from "../../../lib/learning/lessonModeConfig";
 import {
   examPassed,
   readExamPassThreshold,
@@ -209,8 +210,11 @@ export default function LessonSummary({
       stars,
       first_attempt: firstAttempt,
       streak_days: streakDays,
+      // #1007 Phase 2 — show the mode-weighted XP (exam = 1.5×) so the
+      // summary matches the XP actually awarded.
+      xp_multiplier: configForMode(lessonMode).xpMultiplier,
     }).xp_earned;
-  }, [total, progress, stars, streakDays]);
+  }, [total, progress, stars, streakDays, lessonMode]);
 
   useEffect(() => {
     if (!userId) {

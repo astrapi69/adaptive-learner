@@ -94,6 +94,19 @@ export default function LessonPage() {
   const setId = params.setId ?? "";
   const filename = params.filename ?? "";
 
+  // #1007 — Practice / Exam / Timed mode. Seeded from the learner's
+  // default-mode setting; switchable until the lesson is under way (so the
+  // rules can't change mid-run). Practice keeps every aid on; exam hides
+  // the scaffolding (hints, theory recap, auto-read, solution toggles,
+  // celebration). Declared before useLesson so the mode is persisted on
+  // every progress upsert (#1007 Phase 2 — XP + SRS read the attempt's
+  // mode). Default ``practice`` keeps the lower-pressure mode for new
+  // learners.
+  const [lessonMode, setLessonMode] = useState<LessonMode>(() =>
+    readDefaultLessonMode(),
+  );
+  const modeConfig = configForMode(lessonMode);
+
   const {
     status,
     lesson,
@@ -111,7 +124,7 @@ export default function LessonPage() {
     markResumed,
     markRestarted,
     autosave,
-  } = useLesson({ source, setId, lessonFilename: filename });
+  } = useLesson({ source, setId, lessonFilename: filename, lessonMode });
 
   // Phase 63 B/C/E lifecycle (exit dialog, resume prompt, auto-pause,
   // 30s autosave) lives in the extracted hook (#354).
@@ -140,17 +153,6 @@ export default function LessonPage() {
   // on mount; useLesson already reads it for the progress
   // path but doesn't expose it.
   const learnerUserId = useMemo(() => readLearnerState().userId, []);
-
-  // #1007 — Practice / Exam mode. Seeded from the learner's default-mode
-  // setting; switchable until the lesson is under way (so the rules can't
-  // change mid-run). Practice keeps every aid on; exam hides the
-  // scaffolding (hints, theory recap, auto-read, solution toggles,
-  // celebration). Default ``practice`` keeps the lower-pressure mode for
-  // new learners.
-  const [lessonMode, setLessonMode] = useState<LessonMode>(() =>
-    readDefaultLessonMode(),
-  );
-  const modeConfig = configForMode(lessonMode);
 
   // #594 Hint Economy — start each lesson with a clean hint-usage slate
   // so a hint on a reused exercise id from a prior lesson never bleeds.
