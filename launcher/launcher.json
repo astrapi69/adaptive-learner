@@ -1,0 +1,28 @@
+{
+  "app_name": "Adaptive Learner",
+  "app_slug": "adaptive-learner",
+  "container_name": "adaptive-learner",
+  "image_name": "adaptive-learner",
+  "compose_project": "adaptive-learner",
+  "compose_file": "docker-compose.prod.yml",
+  "default_port": 8501,
+  "env_port_key": "ADAPTIVE_LEARNER_PUBLIC_PORT",
+  "health_check_path": "/api/health",
+  "health_check_key": "status",
+  "health_check_value": "ok",
+  "browser_path": "/",
+  "icon_path": "adaptive-learner.png",
+  "config_dir": "~/.adaptive-learner",
+  "locale": "de",
+  "repo_url": "https://github.com/astrapi69/adaptive-learner",
+  "releases_url": "https://github.com/astrapi69/adaptive-learner/releases/latest",
+  "docs_url": "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md",
+  "update_check_enabled": true,
+  "app_version": "1.95.0",
+  "legacy_names": ["bibliogon", "adaptive_learner"],
+  "cleanup_configs": [
+    "~/.bibliogon",
+    "~/.config/bibliogon",
+    "~/.local/share/bibliogon"
+  ]
+}
