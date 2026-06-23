@@ -588,6 +588,8 @@ TABLES: dict[str, TableSpec] = {
             "set_id",
             "lesson_filename",
             "status",
+            # #1007 Phase 2 — the lesson mode the run was played in.
+            "lesson_mode",
             "step_results",
             "score_correct",
             "score_total",

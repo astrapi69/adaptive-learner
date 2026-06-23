@@ -460,6 +460,10 @@ export interface LessonProgressRow {
     lesson_filename: string;
     /** Phase 63A — widened from in_progress|completed. */
     status: "in_progress" | "paused" | "abandoned" | "completed";
+    /** #1007 Phase 2 — the mode the run was played in (practice/exam/…).
+     *  Non-indexed field; no Dexie schema-version bump needed. Optional
+     *  so pre-feature rows read back as undefined (→ "practice"). */
+    lesson_mode?: string;
     step_results: Record<
         string,
         {

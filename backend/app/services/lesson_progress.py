@@ -82,14 +82,8 @@ def _record_completed_attempt(row: LessonProgress, now: datetime) -> None:
     )
     row.attempt_history = json.dumps(history[-_ATTEMPT_HISTORY_CAP:])
 
-    current_pct = (
-        row.score_correct / row.score_total if row.score_total else 0.0
-    )
-    best_pct = (
-        row.best_score_correct / row.best_score_total
-        if row.best_score_total
-        else -1.0
-    )
+    current_pct = row.score_correct / row.score_total if row.score_total else 0.0
+    best_pct = row.best_score_correct / row.best_score_total if row.best_score_total else -1.0
     if row.best_score_total == 0 or current_pct > best_pct:
         row.best_score_correct = row.score_correct
         row.best_score_total = row.score_total
@@ -174,6 +168,9 @@ class ProgressUpdate:
     source: str
     set_id: str
     lesson_filename: str
+    # #1007 Phase 2 — the lesson mode the run is played in; set on the
+    # first upsert (lesson start). None leaves the stored value unchanged.
+    lesson_mode: str | None = None
     step_result: dict[str, Any] | None = None
     time_spent_seconds_delta: int = 0
     current_step: int | None = None
@@ -226,6 +223,13 @@ def upsert_progress(
     if update.current_step is not None:
         row.current_step = max(0, update.current_step)
 
+    # #1007 Phase 2 — record the mode the run is played in. The
+    # frontend sends it on the first upsert; the in-lesson toggle is
+    # locked once the run is under way, so a later overwrite can't
+    # change the rules mid-run.
+    if update.lesson_mode is not None:
+        row.lesson_mode = update.lesson_mode
+
     just_completed = _apply_lifecycle_flags(row, update, now)
 
     row.updated_at = now
@@ -275,6 +279,7 @@ def _get_or_create_row(
         set_id=update.set_id,
         lesson_filename=update.lesson_filename,
         status="in_progress",
+        lesson_mode=update.lesson_mode or "practice",
         step_results="{}",
         score_correct=0,
         score_total=0,
@@ -411,6 +416,7 @@ def _row_to_wire(row: LessonProgress) -> dict[str, Any]:
         "set_id": row.set_id,
         "lesson_filename": row.lesson_filename,
         "status": row.status,
+        "lesson_mode": row.lesson_mode,
         "step_results": _decode_results(row),
         "score_correct": row.score_correct,
         "score_total": row.score_total,

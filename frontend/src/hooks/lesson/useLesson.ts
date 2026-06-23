@@ -47,6 +47,11 @@ export interface UseLessonOptions {
     source: string;
     setId: string;
     lessonFilename: string;
+    /** #1007 Phase 2 — the lesson mode the run is played in. Sent on
+     *  every progress upsert so the attempt records the mode (the
+     *  server-side XP award + SRS read it). Read via a live ref so the
+     *  persist callbacks aren't recreated when the pre-run toggle flips. */
+    lessonMode?: string;
 }
 
 export interface UseLessonResult {
@@ -91,7 +96,7 @@ export interface UseLessonResult {
 }
 
 export function useLesson(opts: UseLessonOptions): UseLessonResult {
-    const {source, setId, lessonFilename} = opts;
+    const {source, setId, lessonFilename, lessonMode} = opts;
     const [status, setStatus] = useState<LessonLoadStatus>("loading");
     const [lesson, setLesson] = useState<ContentLesson | null>(null);
     const [progress, setProgress] = useState<LessonProgress | null>(null);
@@ -114,6 +119,14 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
     useEffect(() => {
         currentStepIndexRef.current = currentStepIndex;
     }, [currentStepIndex]);
+
+    // #1007 Phase 2 — mirror the active lesson mode into a ref so the
+    // persist callbacks send the current value (the pre-run toggle can
+    // still flip it) without being recreated on every flip.
+    const lessonModeRef = useRef(lessonMode);
+    useEffect(() => {
+        lessonModeRef.current = lessonMode;
+    }, [lessonMode]);
 
     const fetchInitial = useCallback(async () => {
         setStatus("loading");
@@ -253,6 +266,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                         source,
                         set_id: setId,
                         lesson_filename: lessonFilename,
+                        lesson_mode: lessonModeRef.current,
                         step_result: result,
                         time_spent_seconds_delta: timeDelta,
                         current_step: currentStepIndexRef.current,
@@ -287,6 +301,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                     source,
                     set_id: setId,
                     lesson_filename: lessonFilename,
+                    lesson_mode: lessonModeRef.current,
                     time_spent_seconds_delta: timeDelta,
                     mark_completed: true,
                 },
@@ -324,6 +339,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                         source,
                         set_id: setId,
                         lesson_filename: lessonFilename,
+                        lesson_mode: lessonModeRef.current,
                         time_spent_seconds_delta: timeDelta,
                         current_step: currentStepIndexRef.current,
                         [flag]: true,
@@ -375,6 +391,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                 source,
                 set_id: setId,
                 lesson_filename: lessonFilename,
+                lesson_mode: lessonModeRef.current,
                 time_spent_seconds_delta: delta,
                 current_step: currentStepIndexRef.current,
             });
