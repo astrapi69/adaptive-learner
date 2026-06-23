@@ -113,8 +113,10 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     await page.waitForTimeout(100);
 }
 
-/** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard. */
-async function seedLearner(page: Page): Promise<void> {
+/** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard.
+ *  Exported so the per-feature capture script (#1023) reuses the single
+ *  onboarding path instead of re-implementing it. */
+export async function seedLearner(page: Page): Promise<void> {
     await completeOnboarding(page);
     await completeAssessment(page);
     await page.waitForURL("**/dashboard", {timeout: 30_000});
@@ -133,9 +135,10 @@ async function seedLearner(page: Page): Promise<void> {
 /**
  * Download the bundled set (if not already cached) and open its first
  * lesson, leaving the page on the lesson runner (``lesson-page`` visible).
- * Shared opener for every lesson-state seed.
+ * Shared opener for every lesson-state seed. Exported for the per-feature
+ * capture script (#1023).
  */
-async function openFirstBundledLesson(page: Page): Promise<void> {
+export async function openFirstBundledLesson(page: Page): Promise<void> {
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 20_000});
     await page.getByTestId("content-other-toggle").click();
@@ -186,8 +189,9 @@ async function playBundledLesson(
     return false;
 }
 
-/** Answer whatever exercise the current step renders (any valid answer). */
-async function answerCurrentStep(page: Page): Promise<void> {
+/** Answer whatever exercise the current step renders (any valid answer).
+ *  Exported for the per-feature capture script (#1023). */
+export async function answerCurrentStep(page: Page): Promise<void> {
     if (await page.getByTestId("free-text-input").count()) {
         await page.getByTestId("free-text-input").fill("Bonjour");
     } else if (await page.getByTestId("word-tiles-exercise").count()) {
@@ -331,8 +335,9 @@ export type SurfaceName = (typeof SURFACE_NAMES)[number];
  * step is on screen, answering each intervening step. Returns true when
  * the predicate matched, false if the lesson ended first (so the caller
  * can skip rather than commit a meaningless baseline).
+ * Exported for the per-feature capture script (#1023).
  */
-async function advanceLessonUntil(
+export async function advanceLessonUntil(
     page: Page,
     predicate: () => Promise<boolean>,
 ): Promise<boolean> {

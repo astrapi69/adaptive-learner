@@ -412,6 +412,20 @@ test-visual-update: ## Regenerate the visual baseline (REVIEW the diff before co
 	@echo "=== Updating visual-regression baseline (review before committing!) ==="
 	cd e2e && npx playwright test --config=playwright.visual.config.ts --update-snapshots
 
+capture-screenshots: ## Capture/update per-feature screenshot baselines (REVIEW the diff before committing)
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	@echo ""
+	@echo "=== Capturing per-feature screenshots (review before committing!) ==="
+	cd e2e && npx playwright test --config=playwright.features.config.ts --update-snapshots
+
+verify-screenshots: ## Verify per-feature screenshots against the committed baselines
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	@echo ""
+	@echo "=== Verifying per-feature screenshots ==="
+	cd e2e && npx playwright test --config=playwright.features.config.ts
+
 # --- Version sync ---
 
 sync-versions: ## Propagate backend/pyproject.toml version to all subsystems
