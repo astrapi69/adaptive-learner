@@ -2659,6 +2659,7 @@
     "error_replay": "Hataları tekrarla",
     "train_errors": "Hataları çalış",
     "shuffle": "Karışık mod",
+    "endless": "Sonsuz",
     "personal": {
       "title": "Öğrenme yolun",
       "empty": "Başlamak için bir ders seti indir.",
@@ -3217,6 +3218,37 @@
       "release_page": "Sürüm sayfası",
       "later": "Sonra",
       "whats_new_title": "{version} sürümündeki yenilikler"
+    }
+  },
+  "endless": {
+    "session_title": "Sonsuz alıştırma",
+    "page_title": "Sonsuz alıştırma",
+    "back_to_dashboard": "Panoya dön",
+    "loading": "Alıştırma oturumu yükleniyor…",
+    "empty_body": "Bu sette henüz alıştırılacak alıştırma yok.",
+    "not_cached_body": "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç.",
+    "paused": "Duraklatıldı — biraz nefes al.",
+    "resume": "Devam et",
+    "pause": "Duraklat",
+    "end": "Bitir",
+    "no_card": "Şu an başka kart yok.",
+    "stat": {
+      "cards": "{n} kart",
+      "correct": "{n} doğru"
+    },
+    "error": {
+      "missing_params": "İçerik seti seçilmedi.",
+      "load_failed": "Alıştırma oturumu yüklenemedi."
+    },
+    "summary": {
+      "heading": "Alıştırma oturumu tamamlandı!",
+      "duration": "Süre",
+      "cards": "Kart",
+      "correct": "Doğru",
+      "reviews": "Yapılan tekrarlar",
+      "new": "Yeni öğrenilen",
+      "errors": "Çalışılan hatalar",
+      "xp": "Alıştırma XP"
     }
   },
   "shuffle": {

@@ -9,7 +9,13 @@
  * review queue). Tailwind, 44px targets.
  */
 
-import {ChevronDown, ListChecks, RefreshCw, Shuffle} from "lucide-react";
+import {
+    ChevronDown,
+    Infinity as InfinityIcon,
+    ListChecks,
+    RefreshCw,
+    Shuffle,
+} from "lucide-react";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 
@@ -262,6 +268,21 @@ export default function SetDetail({set}: SetDetailProps) {
                         <RefreshCw size={16} aria-hidden="true" />
                         {t("learning_path.error_replay", "Retry errors")} (
                         {set.errorCount})
+                    </Link>
+                )}
+                {/* #1015 — Endlos-Modus: a continuous SRS practice stream over
+                    the set (due -> new -> random repetition, never finishes).
+                    Needs >= 1 lesson with exercises; the page re-checks and
+                    shows an empty state otherwise. */}
+                {set.totalCount >= 1 && (
+                    <Link
+                        to={`/endless-lesson/${encodeURIComponent(set.setId)}`}
+                        data-slot="button"
+                        className={`${actionClass} border border-border text-foreground hover:bg-muted`}
+                        data-testid={`set-endless-${set.setId}`}
+                    >
+                        <InfinityIcon size={16} aria-hidden="true" />
+                        {t("learning_path.endless", "Endless")}
                     </Link>
                 )}
             </div>

@@ -2659,6 +2659,7 @@
     "error_replay": "Retry errors",
     "train_errors": "Train errors",
     "shuffle": "Shuffle",
+    "endless": "Endless",
     "personal": {
       "title": "Your Learning Path",
       "empty": "Download a lesson set to begin.",
@@ -3217,6 +3218,37 @@
       "release_page": "Release page",
       "later": "Later",
       "whats_new_title": "What's new in {version}"
+    }
+  },
+  "endless": {
+    "session_title": "Endless practice",
+    "page_title": "Endless practice",
+    "back_to_dashboard": "Back to Dashboard",
+    "loading": "Loading practice session…",
+    "empty_body": "This set has no exercises to practise yet.",
+    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
+    "paused": "Paused — take a breather.",
+    "resume": "Resume",
+    "pause": "Pause",
+    "end": "End",
+    "no_card": "No more cards right now.",
+    "stat": {
+      "cards": "{n} cards",
+      "correct": "{n} correct"
+    },
+    "error": {
+      "missing_params": "No content set selected.",
+      "load_failed": "Could not load the practice session."
+    },
+    "summary": {
+      "heading": "Practice session complete!",
+      "duration": "Duration",
+      "cards": "Cards",
+      "correct": "Correct",
+      "reviews": "Reviews done",
+      "new": "New learned",
+      "errors": "Errors practised",
+      "xp": "Practice XP"
     }
   },
   "shuffle": {
