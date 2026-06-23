@@ -35,6 +35,10 @@ import {
   type LessonMode,
 } from "../../lib/learning/lessonModePref";
 import { configForMode } from "../../lib/learning/lessonModeConfig";
+import {
+  reverseLesson,
+  stepIsReversible,
+} from "../../lib/reverse/reverse-lesson";
 import LessonSummary from "../../components/lesson/summary/LessonSummary";
 import LessonResources from "../../components/lesson/steps/LessonResources";
 import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
@@ -153,6 +157,21 @@ export default function LessonPage() {
   // on mount; useLesson already reads it for the progress
   // path but doesn't expose it.
   const learnerUserId = useMemo(() => readLearnerState().userId, []);
+
+  // #1013 — reverse mode flips each exercise's drill direction (matching
+  // gets its columns flipped; other types stay original + show a
+  // "(not reversible)" note). Memoized so the played exercise objects keep
+  // a stable identity across renders — a fresh object every render would
+  // remount the active exercise and wipe the in-progress answer. The
+  // synthetic lesson is purely presentational: ``useLesson`` keeps the
+  // original ``lesson`` for progress IO (step ids are preserved).
+  const playedLesson = useMemo(
+    () =>
+      lesson && modeConfig.cardDirection === "reverse"
+        ? reverseLesson(lesson)
+        : lesson,
+    [lesson, modeConfig.cardDirection],
+  );
 
   // #594 Hint Economy — start each lesson with a clean hint-usage slate
   // so a hint on a reused exercise id from a prior lesson never bleeds.
@@ -397,9 +416,13 @@ export default function LessonPage() {
   // is null, so this only narrows the type for the code below.
   if (lesson === null) return null;
 
-  const totalSteps = lesson.steps.length;
+  // #1013 — the lesson actually played (reverse mode flips the exercises;
+  // identical to ``lesson`` in every other mode). ``?? lesson`` narrows the
+  // memo's ``ContentLesson | null`` now that ``lesson`` is non-null.
+  const played = playedLesson ?? lesson;
+  const totalSteps = played.steps.length;
   const isSummary = currentStepIndex >= totalSteps;
-  const step = isSummary ? null : lesson.steps[currentStepIndex];
+  const step = isSummary ? null : played.steps[currentStepIndex];
   // An exercise step gates the two-phase button; theory steps
   // (and any unsupported/placeholder exercise type) keep the
   // plain always-enabled "Next" button so the user is never
@@ -536,7 +559,7 @@ export default function LessonPage() {
       {isSummary ? (
         <>
         <LessonSummary
-          lesson={lesson}
+          lesson={played}
           progress={progress}
           lessonMode={lessonMode}
           timedStats={lessonMode === "timed" ? timed.stats : null}
@@ -610,9 +633,28 @@ export default function LessonPage() {
         />
         </>
       ) : (
+        <>
+        {/* #1013 — reverse mode can't gradeably reverse non-matching
+            exercise types, so they play in their original format with this
+            note (the issue's documented fallback). */}
+        {modeConfig.cardDirection === "reverse" &&
+          isExerciseStep &&
+          step &&
+          !stepIsReversible(step) && (
+            <p
+              className="m-0 px-2 text-sm italic text-[var(--fg-secondary)]"
+              role="note"
+              data-testid="lesson-reverse-not-reversible"
+            >
+              {t(
+                "lesson.reverse.not_reversible",
+                "This exercise type can't be reversed — shown in its original format.",
+              )}
+            </p>
+          )}
         <LessonStepView
           step={step!}
-          lesson={lesson}
+          lesson={played}
           setId={setId}
           lessonFilename={filename}
           source={source}
@@ -631,6 +673,7 @@ export default function LessonPage() {
           onChecked={() => setChecked(true)}
           recordStepResult={recordStepResult}
         />
+        </>
       )}
       </LessonModeProvider>
 

@@ -1630,6 +1630,8 @@ lesson:
     stats_avg: "Ortalama yanıt süresi: {s}sn"
     stats_fastest: "En hızlı: {s}sn ({type})"
     stats_slowest: "En yavaş: {s}sn ({type})"
+  reverse:
+    not_reversible: "Bu alıştırma türü tersine çevrilemez — orijinal biçiminde gösteriliyor."
   resources_title: "Konuyu derinleştir"
   resources_domain: "{domain} hakkında daha fazlası"
   motivation:

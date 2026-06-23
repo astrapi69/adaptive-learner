@@ -1758,6 +1758,9 @@
       "stats_fastest": "Tercepat: {s}d ({type})",
       "stats_slowest": "Terlama: {s}d ({type})"
     },
+    "reverse": {
+      "not_reversible": "Tipe latihan ini tidak dapat dibalik — ditampilkan dalam format aslinya."
+    },
     "resources_title": "Jelajahi lebih lanjut",
     "resources_domain": "Lebih lanjut tentang {domain}",
     "motivation": {
