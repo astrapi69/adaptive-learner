@@ -24,8 +24,8 @@ import { Button } from "@/components/ui/button";
 
 import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import CorrectionBlock from "../../exercises/CorrectionBlock";
-import DiffHighlight from "../../exercises/DiffHighlight";
 import Confetti from "../../feedback/Confetti";
+import LessonAnswersDetail from "./LessonAnswersDetail";
 import LessonExamResult from "./LessonExamResult";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
@@ -44,7 +44,6 @@ import { explainError } from "../../../lib/review/explain-error";
 import { readExplanationsEnabled } from "../../../lib/review/reviewPref";
 import { useNextStepSuggestions } from "../../../hooks/learning/useNextStepSuggestions";
 import { collectFailedExercises } from "../../../lib/lesson/error-replay";
-import { tokenDiff } from "../../../lib/exercises/token-diff";
 import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
 import {
   buildExerciseBreakdown,
@@ -592,84 +591,11 @@ export default function LessonSummary({
         )}
       </ul>
 
-      {breakdown.length > 0 && (
-        <section
-          className="lesson-summary-breakdown"
-          data-testid="lesson-summary-breakdown"
-          aria-label={t(
-            "lesson.summary.breakdown_heading",
-            "Exercise breakdown",
-          )}
-        >
-          <h3>{t("lesson.summary.breakdown_heading", "Exercise breakdown")}</h3>
-          <ul className="lesson-summary-breakdown-list">
-            {breakdown.map((entry) => {
-              const rowStatus = !entry.attempted
-                ? "unattempted"
-                : entry.fullyCorrect
-                  ? "correct"
-                  : "wrong";
-              return (
-                <li
-                  key={entry.stepId}
-                  className={`lesson-summary-breakdown-row is-${rowStatus}`}
-                  data-testid={`lesson-summary-breakdown-${entry.stepId}`}
-                  data-status={rowStatus}
-                >
-                  <span className="lesson-summary-breakdown-title">
-                    {entry.title}
-                  </span>
-                  {entry.attempted ? (
-                    <span className="lesson-summary-breakdown-score">
-                      {entry.correct} / {entry.total}
-                    </span>
-                  ) : (
-                    <span className="lesson-summary-breakdown-score lesson-summary-breakdown-unattempted">
-                      {t(
-                        "lesson.summary.breakdown_unattempted",
-                        "Not attempted",
-                      )}
-                    </span>
-                  )}
-                  {entry.attempted &&
-                    !entry.fullyCorrect &&
-                    entry.canonicalAnswer &&
-                    // Phase 52C / v1.35.0 — when the
-                    // stored user_answer is available
-                    // (free-text + word-tiles), show
-                    // the token-level diff against
-                    // the canonical instead of a bare
-                    // "Correct answer: X" line. The
-                    // bare line stays as the fallback
-                    // for matching + picture-choice
-                    // (no text answer) and for
-                    // lessons stored pre-v1.35.0.
-                    (entry.userAnswer ? (
-                      <span
-                        className="lesson-summary-breakdown-diff"
-                        data-testid={`lesson-summary-breakdown-diff-${entry.stepId}`}
-                      >
-                        <DiffHighlight
-                          tokens={tokenDiff(
-                            entry.userAnswer,
-                            entry.canonicalAnswer,
-                          )}
-                        />
-                      </span>
-                    ) : (
-                      <span className="lesson-summary-breakdown-canonical">
-                        {t(
-                          "lesson.summary.breakdown_correct_answer",
-                          "Correct answer: {answer}",
-                        ).replace("{answer}", entry.canonicalAnswer)}
-                      </span>
-                    ))}
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
+      {/* #1007 Phase 2 — the collected-answers "View all answers" detail
+          (collapsed by default). In exam mode this is where the learner
+          finally sees every per-question result; in practice mode it
+          declutters the summary. */}
+      <LessonAnswersDetail breakdown={breakdown} />
 
       {/* #599 — auto-generated explanations + your-vs-correct diff for
                 the run's still-weak text mistakes, gated by the

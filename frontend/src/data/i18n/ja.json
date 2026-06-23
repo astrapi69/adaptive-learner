@@ -1969,6 +1969,7 @@
       "breakdown_heading": "演習の内訳",
       "breakdown_correct_answer": "正解: {answer}",
       "breakdown_unattempted": "未挑戦",
+      "view_all_answers": "すべての回答を見る ({n})",
       "export": {
         "copy": "結果をコピー",
         "download": "ファイルとして保存",

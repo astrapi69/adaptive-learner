@@ -1792,6 +1792,7 @@ lesson:
     breakdown_heading: "연습 상세"
     breakdown_correct_answer: "정답: {answer}"
     breakdown_unattempted: "시도 안 함"
+    view_all_answers: "모든 답 보기 ({n})"
     export:
       copy: "결과 복사"
       download: "파일로 저장"

@@ -1931,6 +1931,7 @@
       "breakdown_heading": "Rincian latihan",
       "breakdown_correct_answer": "Jawaban yang benar: {answer}",
       "breakdown_unattempted": "Tidak dicoba",
+      "view_all_answers": "Lihat semua jawaban ({n})",
       "export": {
         "copy": "Salin hasil",
         "download": "Simpan sebagai berkas",
