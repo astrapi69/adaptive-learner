@@ -192,7 +192,8 @@ class TestRichInstallManifest:
         assert data["volumes"] == ["adaptive-learner-data"]
         # legacy fields preserved for old readers
         assert data["version"] == "1.94.1"
-        assert data["install_dir"] == "/opt/al"
+        # install_dir is stored as str(Path(...)) -> platform-native separator.
+        assert data["install_dir"] == str(Path("/opt/al"))
 
     def test_install_dir_from_manifest_still_works(self, tmp_path: Path) -> None:
         with _patch_path(tmp_path):
