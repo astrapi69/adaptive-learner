@@ -9,7 +9,7 @@
  * Tailwind + design tokens (shadcn ``Button``); works in every theme.
  */
 
-import {GraduationCap, Lightbulb, Timer} from "lucide-react";
+import {ArrowLeftRight, GraduationCap, Lightbulb, Timer} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -24,7 +24,7 @@ export interface LessonModeToggleProps {
 }
 
 /**
- * Render the Practice / Exam segmented control.
+ * Render the Practice / Exam / Timed / Reverse segmented control.
  *
  * @param props - See {@link LessonModeToggleProps}.
  */
@@ -37,6 +37,7 @@ export default function LessonModeToggle({
     const practiceActive = mode === "practice";
     const examActive = mode === "exam";
     const timedActive = mode === "timed";
+    const reverseActive = mode === "reverse";
     return (
         <div
             className="flex flex-wrap items-center gap-2 px-2 py-1"
@@ -79,6 +80,18 @@ export default function LessonModeToggle({
             >
                 <Timer size={14} aria-hidden="true" />
                 {t("lesson.mode.timed", "Timed")}
+            </Button>
+            <Button
+                type="button"
+                variant={reverseActive ? "default" : "outline"}
+                size="sm"
+                aria-pressed={reverseActive}
+                disabled={disabled}
+                onClick={() => onChange("reverse")}
+                data-testid="lesson-mode-reverse"
+            >
+                <ArrowLeftRight size={14} aria-hidden="true" />
+                {t("lesson.mode.reverse", "Reverse")}
             </Button>
         </div>
     );

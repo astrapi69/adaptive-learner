@@ -59,8 +59,10 @@ test.describe("Session 5 — Mobile", () => {
     await nav.hamburger.click();
     await expect(nav.links).toBeVisible();
     await nav.link("content").click();
-    await page.waitForURL("**/content");
-    await expect(page.getByTestId("content-tree")).toBeVisible({
+    await page.waitForURL(/\/content/);
+    // #856 — /content renders the ContentHub (tabbed); the old
+    // "content-tree" testid is gone.
+    await expect(page.getByTestId("content-hub")).toBeVisible({
       timeout: 15_000,
     });
   });

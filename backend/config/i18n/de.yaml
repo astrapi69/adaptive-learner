@@ -1635,6 +1635,8 @@ lesson:
     stats_avg: "Durchschnittliche Antwortzeit: {s}s"
     stats_fastest: "Schnellste: {s}s ({type})"
     stats_slowest: "Langsamste: {s}s ({type})"
+  reverse:
+    not_reversible: "Dieser Aufgabentyp lässt sich nicht umkehren — er wird im Originalformat angezeigt."
   resources_title: "Vertiefe das Thema"
   resources_domain: "Mehr zum Thema {domain}"
   motivation:

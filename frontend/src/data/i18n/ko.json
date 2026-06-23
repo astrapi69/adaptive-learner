@@ -1758,6 +1758,9 @@
       "stats_fastest": "가장 빠름: {s}초 ({type})",
       "stats_slowest": "가장 느림: {s}초 ({type})"
     },
+    "reverse": {
+      "not_reversible": "이 문제 유형은 뒤집을 수 없어 원래 형식으로 표시됩니다."
+    },
     "resources_title": "더 알아보기",
     "resources_domain": "{domain}에 대해 더 보기",
     "motivation": {

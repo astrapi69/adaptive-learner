@@ -1758,6 +1758,9 @@
       "stats_fastest": "Ταχύτερη: {s}s ({type})",
       "stats_slowest": "Πιο αργή: {s}s ({type})"
     },
+    "reverse": {
+      "not_reversible": "Αυτός ο τύπος άσκησης δεν μπορεί να αντιστραφεί — εμφανίζεται στην αρχική του μορφή."
+    },
     "resources_title": "Εμβάθυνε στο θέμα",
     "resources_domain": "Περισσότερα για {domain}",
     "motivation": {

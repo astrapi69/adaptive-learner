@@ -1758,6 +1758,9 @@
       "stats_fastest": "सबसे तेज़: {s}s ({type})",
       "stats_slowest": "सबसे धीमी: {s}s ({type})"
     },
+    "reverse": {
+      "not_reversible": "इस अभ्यास प्रकार को उलटा नहीं किया जा सकता — इसे मूल रूप में दिखाया गया है।"
+    },
     "resources_title": "विषय को गहराई से जानें",
     "resources_domain": "{domain} के बारे में और जानें",
     "motivation": {

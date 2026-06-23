@@ -40,6 +40,17 @@ describe("LessonModeToggle", () => {
         expect(onChange).toHaveBeenCalledWith("practice");
     });
 
+    it("offers the reverse mode (#1013)", () => {
+        const onChange = vi.fn();
+        render(<LessonModeToggle mode="reverse" onChange={onChange} />);
+        expect(screen.getByTestId("lesson-mode-reverse")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+        fireEvent.click(screen.getByTestId("lesson-mode-practice"));
+        expect(onChange).toHaveBeenCalledWith("practice");
+    });
+
     it("disables both buttons when the lesson is under way", () => {
         render(
             <LessonModeToggle mode="exam" onChange={() => {}} disabled />,
