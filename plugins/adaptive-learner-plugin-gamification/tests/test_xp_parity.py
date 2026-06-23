@@ -100,6 +100,7 @@ def test_calculate_lesson_session_xp_matches_goldens():
             stars=case["stars"],
             first_attempt=case["first_attempt"],
             streak_days=case["streak_days"],
+            xp_multiplier=case.get("xp_multiplier", 1.0),
         )
         payload = _award_to_dict(award)
         golden = EXPECTED_DIR / f"{case['name']}.json"

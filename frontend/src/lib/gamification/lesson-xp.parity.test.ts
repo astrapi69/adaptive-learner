@@ -45,6 +45,7 @@ interface CalculateXpCase {
     stars: number;
     first_attempt: boolean;
     streak_days: number;
+    xp_multiplier?: number;
 }
 
 interface ParityFixture {
@@ -79,6 +80,7 @@ describe("lesson-XP cross-language parity", () => {
                 stars: c.stars,
                 first_attempt: c.first_attempt,
                 streak_days: c.streak_days,
+                xp_multiplier: c.xp_multiplier ?? 1.0,
             });
             const payload = {
                 xp_earned: award.xp_earned,

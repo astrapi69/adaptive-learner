@@ -42,6 +42,7 @@ function rowToWire(row: LessonProgressRow): LessonProgress {
         set_id: row.set_id,
         lesson_filename: row.lesson_filename,
         status: row.status,
+        lesson_mode: row.lesson_mode ?? "practice",
         step_results: row.step_results,
         score_correct: row.score_correct,
         score_total: row.score_total,
@@ -175,6 +176,7 @@ export async function upsertLessonProgressDexie(
               set_id: body.set_id,
               lesson_filename: body.lesson_filename,
               status: "in_progress",
+              lesson_mode: body.lesson_mode ?? "practice",
               step_results: {},
               score_correct: 0,
               score_total: 0,
@@ -220,6 +222,12 @@ export async function upsertLessonProgressDexie(
 
     if (body.time_spent_seconds_delta && body.time_spent_seconds_delta > 0) {
         row.time_spent_seconds += body.time_spent_seconds_delta;
+    }
+
+    // #1007 Phase 2 — record the mode the run is played in (sent on the
+    // first upsert; the in-lesson toggle locks once under way).
+    if (body.lesson_mode != null) {
+        row.lesson_mode = body.lesson_mode;
     }
 
     // BUG #41 — persist the live navigation position so a paused
