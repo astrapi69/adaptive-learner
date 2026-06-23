@@ -82,14 +82,8 @@ def _record_completed_attempt(row: LessonProgress, now: datetime) -> None:
     )
     row.attempt_history = json.dumps(history[-_ATTEMPT_HISTORY_CAP:])
 
-    current_pct = (
-        row.score_correct / row.score_total if row.score_total else 0.0
-    )
-    best_pct = (
-        row.best_score_correct / row.best_score_total
-        if row.best_score_total
-        else -1.0
-    )
+    current_pct = row.score_correct / row.score_total if row.score_total else 0.0
+    best_pct = row.best_score_correct / row.best_score_total if row.best_score_total else -1.0
     if row.best_score_total == 0 or current_pct > best_pct:
         row.best_score_correct = row.score_correct
         row.best_score_total = row.score_total
