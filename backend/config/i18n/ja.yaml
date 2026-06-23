@@ -2544,6 +2544,14 @@ share:
     copied: "コピーしました"
     share: "共有"
     qr_alt: "アプリへのリンクのQRコード"
+  result:
+    text: '「{title}」を{pct}%で完了しました！🎓 {total}問中{correct}問正解。'
+    cta_record: '友達に見せよう！'
+    cta_great: '素晴らしい結果をシェアしよう！'
+    cta_neutral: '結果をシェア'
+    cta_low: '結果をシェア'
+    image_complete: 'レッスン完了！'
+    image_score: '{total}問中{correct}問正解'
   achievement:
     button: 共有
     title: 進捗を共有

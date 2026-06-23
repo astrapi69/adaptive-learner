@@ -2792,6 +2792,15 @@
       "share": "Compartilhar",
       "qr_alt": "Código QR que leva ao app"
     },
+    "result": {
+      "text": "Concluí \"{title}\" com {pct}%! 🎓 {correct} de {total} corretas.",
+      "cta_record": "Mostre aos seus amigos!",
+      "cta_great": "Compartilhe seu ótimo resultado!",
+      "cta_neutral": "Compartilhar resultado",
+      "cta_low": "Compartilhar resultado",
+      "image_complete": "Lição concluída!",
+      "image_score": "{correct} de {total} corretas"
+    },
     "achievement": {
       "button": "Compartilhar",
       "title": "Compartilhe seu progresso",

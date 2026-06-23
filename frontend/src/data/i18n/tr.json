@@ -2792,6 +2792,15 @@
       "share": "Paylaş",
       "qr_alt": "Uygulamaya bağlanan QR kodu"
     },
+    "result": {
+      "text": "\"{title}\" dersini %{pct} ile tamamladım! 🎓 {total} sorudan {correct} doğru.",
+      "cta_record": "Arkadaşlarına göster!",
+      "cta_great": "Harika sonucunu paylaş!",
+      "cta_neutral": "Sonucu paylaş",
+      "cta_low": "Sonucu paylaş",
+      "image_complete": "Ders tamamlandı!",
+      "image_score": "{total} sorudan {correct} doğru"
+    },
     "achievement": {
       "button": "Paylaş",
       "title": "İlerlemeni paylaş",

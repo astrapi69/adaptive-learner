@@ -25,6 +25,7 @@ import {
   SummaryTimedStats,
   SummaryXp,
 } from "./LessonSummarySections";
+import ShareResultButton from "../../share/ShareResultButton";
 import { useCountUp } from "../../../hooks/ui/useCountUp";
 import { useFeedbackIntensity } from "../../../hooks/settings/useFeedbackIntensity";
 import { useI18n } from "../../../hooks/ui/useI18n";
@@ -194,18 +195,38 @@ export default function LessonSummary({
   // async input; it defaults to 0 (no multiplier) for an anonymous
   // run or an unreachable read, and refines once fetched.
   const [streakDays, setStreakDays] = useState(0);
+  // #1073 — the learner's level + total XP for the share card. Both default
+  // to undefined (no level line on the card) for an anonymous / unreachable
+  // run and refine once fetched, alongside the streak.
+  const [level, setLevel] = useState<number | undefined>(undefined);
+  const [totalXp, setTotalXp] = useState<number | undefined>(undefined);
   useEffect(() => {
     if (!userId) {
       setStreakDays(0);
+      setLevel(undefined);
+      setTotalXp(undefined);
       return;
     }
     let cancelled = false;
     void (async () => {
+      const storage = getStorage();
       try {
-        const streak = await getStorage().gamification.getStreak(userId);
+        const streak = await storage.gamification.getStreak(userId);
         if (!cancelled) setStreakDays(streak?.current_streak_days ?? 0);
       } catch {
         if (!cancelled) setStreakDays(0);
+      }
+      try {
+        const state = await storage.gamification.getState(userId);
+        if (!cancelled) {
+          setLevel(state?.level);
+          setTotalXp(state?.total_xp);
+        }
+      } catch {
+        if (!cancelled) {
+          setLevel(undefined);
+          setTotalXp(undefined);
+        }
       }
     })();
     return () => {
@@ -513,6 +534,29 @@ export default function LessonSummary({
 
       <SummaryXp xpGain={xpGain} animate={intensity !== "subtle"} t={t} />
 
+      {/* #1073 — share the result (lesson title + score). Shown for every
+          scored run; the CTA copy is louder on a great score / streak and
+          stays quiet (never hidden) on a low one. */}
+      {total > 0 && (
+        <div
+          className="lesson-summary-share flex justify-center"
+          data-testid="lesson-summary-share"
+        >
+          <ShareResultButton
+            result={{
+              lessonTitle: lesson.title,
+              correct,
+              total,
+              scorePct,
+              stars,
+              level,
+              xp: totalXp,
+              streakDays,
+            }}
+          />
+        </div>
+      )}
+
       <ul className="lesson-summary-stats">
         <li>
           <strong>{t("lesson.summary.time", "Time")}:</strong>{" "}
@@ -549,7 +593,6 @@ export default function LessonSummary({
                 directly under the breakdown it summarizes. */}
       <SummaryExportActions
         lesson={lesson}
-        stars={stars}
         t={t}
         onCopy={() => {
           void handleCopyResult();

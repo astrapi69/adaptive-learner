@@ -2546,6 +2546,14 @@ share:
     copied: "Copiado"
     share: "Compartir"
     qr_alt: "Código QR que enlaza a la app"
+  result:
+    text: '¡Completé "{title}" con un {pct}%! 🎓 {correct} de {total} correctas.'
+    cta_record: '¡Muéstraselo a tus amigos!'
+    cta_great: '¡Comparte tu gran resultado!'
+    cta_neutral: 'Compartir resultado'
+    cta_low: 'Compartir resultado'
+    image_complete: '¡Lección completada!'
+    image_score: '{correct} de {total} correctas'
   achievement:
     button: Compartir
     title: Comparte tu progreso

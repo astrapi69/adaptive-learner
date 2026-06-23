@@ -2792,6 +2792,15 @@
       "share": "Partager",
       "qr_alt": "Code QR menant à l'application"
     },
+    "result": {
+      "text": "J'ai terminé \"{title}\" avec {pct}% ! 🎓 {correct} sur {total} correctes.",
+      "cta_record": "Montre-le à tes amis !",
+      "cta_great": "Partage ton excellent résultat !",
+      "cta_neutral": "Partager le résultat",
+      "cta_low": "Partager le résultat",
+      "image_complete": "Leçon terminée !",
+      "image_score": "{correct} sur {total} correctes"
+    },
     "achievement": {
       "button": "Partager",
       "title": "Partagez votre progression",

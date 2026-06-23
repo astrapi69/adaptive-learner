@@ -51,9 +51,13 @@ export interface ShareTextResult {
 /**
  * Interpolate ``{token}`` placeholders in a template with the supplied
  * values. Unknown tokens are left untouched so a translation that drops
- * a token never crashes — it just renders literally.
+ * a token never crashes — it just renders literally. Exported so the
+ * lesson-result share builder reuses one interpolation contract.
  */
-function interpolate(template: string, values: Record<string, string>): string {
+export function interpolate(
+    template: string,
+    values: Record<string, string>,
+): string {
     return template.replace(/\{([a-z_][a-z0-9_]*)\}/g, (whole, key: string) =>
         key in values ? values[key] : whole,
     );

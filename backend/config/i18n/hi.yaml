@@ -2536,6 +2536,14 @@ share:
     copied: "कॉपी किया गया"
     share: "साझा करें"
     qr_alt: "ऐप से जुड़ा QR कोड"
+  result:
+    text: 'मैंने "{title}" को {pct}% के साथ पूरा किया! 🎓 {total} में से {correct} सही.'
+    cta_record: 'अपने दोस्तों को दिखाएं!'
+    cta_great: 'अपना शानदार परिणाम साझा करें!'
+    cta_neutral: 'परिणाम साझा करें'
+    cta_low: 'परिणाम साझा करें'
+    image_complete: 'पाठ पूरा हुआ!'
+    image_score: '{total} में से {correct} सही'
   achievement:
     button: साझा करें
     title: अपनी प्रगति साझा करें

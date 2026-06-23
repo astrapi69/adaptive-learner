@@ -38,6 +38,14 @@ export interface ShareButtonProps {
     onShared?: (method: ShareMethod) => void;
     /** Visual variant: a bordered button (default) or a compact link. */
     variant?: "button" | "link";
+    /** Optional async producer of files (e.g. a generated PNG card) to share
+     *  alongside the text. When it resolves to files AND the platform can
+     *  share them (``navigator.canShare``), they are attached; otherwise the
+     *  share degrades to text-only. PII-free by contract, like ``text``. */
+    getFiles?: () => Promise<File[] | null>;
+    /** Render only the icon (the ``label`` becomes the accessible name) —
+     *  for dense rows like the dashboard. */
+    iconOnly?: boolean;
     testId?: string;
 }
 
@@ -59,6 +67,8 @@ export default function ShareButton({
     label,
     onShared,
     variant = "button",
+    getFiles,
+    iconOnly = false,
     testId = "share-button",
 }: ShareButtonProps) {
     const [busy, setBusy] = useState(false);
@@ -71,11 +81,26 @@ export default function ShareButton({
                 typeof navigator !== "undefined"
                     ? (navigator as Navigator & {
                           share?: (data: ShareData) => Promise<void>;
+                          canShare?: (data: ShareData) => boolean;
                       })
                     : undefined;
             if (nav?.share) {
+                // Best-effort image attachment: only when the producer yields
+                // files AND the platform can actually share them.
+                let files: File[] | null = null;
+                if (getFiles) {
+                    try {
+                        files = await getFiles();
+                    } catch {
+                        files = null;
+                    }
+                }
+                const withFiles =
+                    files && files.length > 0 && nav.canShare?.({files})
+                        ? {text, url, files}
+                        : {text, url};
                 try {
-                    await nav.share({text, url});
+                    await nav.share(withFiles);
                     onShared?.("shared");
                     return;
                 } catch (err) {
@@ -94,10 +119,11 @@ export default function ShareButton({
         }
     };
 
-    const className =
-        variant === "link"
-            ? "inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium text-accent hover:underline"
-            : "inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-fg-secondary hover:bg-muted disabled:opacity-60";
+    const className = iconOnly
+        ? "inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-fg-secondary hover:bg-muted disabled:opacity-60"
+        : variant === "link"
+          ? "inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+          : "inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-fg-secondary hover:bg-muted disabled:opacity-60";
 
     return (
         <button
@@ -106,9 +132,11 @@ export default function ShareButton({
             disabled={busy}
             className={className}
             data-testid={testId}
+            aria-label={iconOnly ? label : undefined}
+            title={iconOnly ? label : undefined}
         >
-            <Share2 size={14} aria-hidden="true" />
-            {label}
+            <Share2 size={iconOnly ? 16 : 14} aria-hidden="true" />
+            {!iconOnly && label}
         </button>
     );
 }

@@ -2792,6 +2792,15 @@
       "share": "공유",
       "qr_alt": "앱으로 연결되는 QR 코드"
     },
+    "result": {
+      "text": "\"{title}\"을(를) {pct}%로 완료했어요! 🎓 {total}개 중 {correct}개 정답.",
+      "cta_record": "친구에게 자랑하기!",
+      "cta_great": "멋진 결과를 공유하세요!",
+      "cta_neutral": "결과 공유",
+      "cta_low": "결과 공유",
+      "image_complete": "레슨 완료!",
+      "image_score": "{total}개 중 {correct}개 정답"
+    },
     "achievement": {
       "button": "공유",
       "title": "진행 상황 공유",
