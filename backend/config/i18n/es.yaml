@@ -1818,6 +1818,7 @@ lesson:
     breakdown_heading: "Detalle de ejercicios"
     breakdown_correct_answer: "Respuesta correcta: {answer}"
     breakdown_unattempted: "Sin intentar"
+    view_all_answers: "Ver todas las respuestas ({n})"
     export:
       copy: "Copiar resultado"
       download: "Guardar como archivo"

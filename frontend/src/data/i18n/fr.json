@@ -1969,6 +1969,7 @@
       "breakdown_heading": "Détail des exercices",
       "breakdown_correct_answer": "Bonne réponse : {answer}",
       "breakdown_unattempted": "Non tentée",
+      "view_all_answers": "Voir toutes les réponses ({n})",
       "export": {
         "copy": "Copier le résultat",
         "download": "Enregistrer comme fichier",

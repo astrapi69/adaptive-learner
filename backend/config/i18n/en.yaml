@@ -1792,6 +1792,7 @@ lesson:
     breakdown_heading: "Exercise breakdown"
     breakdown_correct_answer: "Correct answer: {answer}"
     breakdown_unattempted: "Not attempted"
+    view_all_answers: "View all answers ({n})"
     export:
       copy: "Copy result"
       download: "Save as file"

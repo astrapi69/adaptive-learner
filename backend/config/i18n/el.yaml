@@ -1818,6 +1818,7 @@ lesson:
     breakdown_heading: "Ανάλυση ασκήσεων"
     breakdown_correct_answer: "Σωστή απάντηση: {answer}"
     breakdown_unattempted: "Δεν επιχειρήθηκε"
+    view_all_answers: "Δείτε όλες τις απαντήσεις ({n})"
     export:
       copy: "Αντιγραφή αποτελέσματος"
       download: "Αποθήκευση ως αρχείο"

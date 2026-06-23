@@ -1777,6 +1777,7 @@ lesson:
     breakdown_heading: अभ्यास विवरण
     breakdown_correct_answer: 'सही उत्तर: {answer}'
     breakdown_unattempted: प्रयास नहीं किया
+    view_all_answers: "सभी उत्तर देखें ({n})"
     export:
       copy: परिणाम कॉपी करें
       download: फ़ाइल के रूप में सहेजें
