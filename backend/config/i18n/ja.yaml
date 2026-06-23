@@ -1618,6 +1618,9 @@ lesson:
     passed: "合格"
     not_passed: "不合格"
     threshold_hint: "(合格 ≥ {pct}%)"
+    result_title: "試験結果"
+    retry: "試験をやり直す"
+    xp_bonus: "試験ボーナス{pct}%を含む"
   timed:
     remaining: "残り時間"
     seconds_left: "残り{n}秒"

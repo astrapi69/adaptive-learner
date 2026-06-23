@@ -1618,6 +1618,9 @@ lesson:
     passed: "Geçti"
     not_passed: "Geçmedi"
     threshold_hint: "(geçme ≥ %{pct})"
+    result_title: "Sınav sonucu"
+    retry: "Sınavı tekrarla"
+    xp_bonus: "%{pct} sınav bonusu dahil"
   timed:
     remaining: "Kalan süre"
     seconds_left: "{n}sn kaldı"

@@ -1629,6 +1629,9 @@ lesson:
     passed: "Passed"
     not_passed: "Not passed"
     threshold_hint: "(pass ≥ {pct}%)"
+    result_title: "Exam result"
+    retry: "Retry exam"
+    xp_bonus: "incl. {pct}% exam bonus"
   timed:
     remaining: "Time remaining"
     seconds_left: "{n}s left"

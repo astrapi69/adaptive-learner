@@ -1743,7 +1743,10 @@
     "exam": {
       "passed": "Bestanden",
       "not_passed": "Nicht bestanden",
-      "threshold_hint": "(bestanden ab {pct}%)"
+      "threshold_hint": "(bestanden ab {pct}%)",
+      "result_title": "Prüfungsergebnis",
+      "retry": "Prüfung wiederholen",
+      "xp_bonus": "inkl. {pct}% Prüfungsbonus"
     },
     "timed": {
       "remaining": "Verbleibende Zeit",

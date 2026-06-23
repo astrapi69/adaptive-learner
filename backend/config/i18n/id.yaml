@@ -1629,6 +1629,9 @@ lesson:
     passed: "Lulus"
     not_passed: "Tidak lulus"
     threshold_hint: "(lulus ≥ {pct}%)"
+    result_title: "Hasil ujian"
+    retry: "Ulangi ujian"
+    xp_bonus: "termasuk bonus ujian {pct}%"
   timed:
     remaining: "Sisa waktu"
     seconds_left: "{n}d tersisa"

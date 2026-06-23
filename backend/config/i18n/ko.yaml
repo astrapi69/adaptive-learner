@@ -1629,6 +1629,9 @@ lesson:
     passed: "합격"
     not_passed: "불합격"
     threshold_hint: "(합격 ≥ {pct}%)"
+    result_title: "시험 결과"
+    retry: "시험 다시 보기"
+    xp_bonus: "시험 보너스 {pct}% 포함"
   timed:
     remaining: "남은 시간"
     seconds_left: "{n}초 남음"
