@@ -62,10 +62,10 @@ function theoryStep(id: string): ContentLessonStep {
 }
 
 describe("isReversibleType", () => {
-    it("is true only for matching", () => {
+    it("is true for matching and cloze", () => {
         expect(isReversibleType("matching")).toBe(true);
+        expect(isReversibleType("cloze")).toBe(true);
         for (const type of [
-            "cloze",
             "free_text",
             "word_tiles",
             "picture_choice",
