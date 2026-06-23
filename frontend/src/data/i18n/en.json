@@ -2655,6 +2655,7 @@
     "adaptive": "Start adaptive lesson",
     "error_replay": "Retry errors",
     "train_errors": "Train errors",
+    "shuffle": "Shuffle",
     "personal": {
       "title": "Your Learning Path",
       "empty": "Download a lesson set to begin.",
@@ -3213,6 +3214,25 @@
       "release_page": "Release page",
       "later": "Later",
       "whats_new_title": "What's new in {version}"
+    }
+  },
+  "shuffle": {
+    "session_title": "Shuffle session",
+    "page_title": "Shuffle",
+    "loading": "Loading shuffle session…",
+    "empty_body": "This set needs at least two lessons with exercises to shuffle.",
+    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
+    "back_to_dashboard": "Back to Dashboard",
+    "subtitle": "Mixing {n} questions from {lessons} lessons",
+    "error": {
+      "load_failed": "Could not load shuffle session.",
+      "missing_params": "No content set selected."
+    },
+    "summary": {
+      "heading": "Shuffle training complete!",
+      "score": "{correct} of {total} correct",
+      "from_lessons": "from {n} different lessons",
+      "another": "Shuffle again"
     }
   }
 }

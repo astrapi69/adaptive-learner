@@ -45,6 +45,7 @@ const Dashboard = lazyWithReload(() => import("./pages/dashboard/Dashboard"));
 const LessonPage = lazyWithReload(() => import("./pages/lesson/Lesson"));
 const ReviewPage = lazyWithReload(() => import("./pages/lesson/Review"));
 const AdaptiveLessonPage = lazyWithReload(() => import("./pages/lesson/AdaptiveLesson"));
+const ShuffleLessonPage = lazyWithReload(() => import("./pages/lesson/ShuffleLesson"));
 const ErrorReplayLessonPage = lazyWithReload(() => import("./pages/lesson/ErrorReplayLesson"));
 const ImportDetail = lazyWithReload(() => import("./pages/content/ImportDetail"));
 const LearningRepoPage = lazyWithReload(() => import("./pages/content/LearningRepo"));
@@ -194,6 +195,7 @@ export default function App() {
                 <Route path="/lesson/:setSlug/:setId/:filename" element={<LessonPage />} />
                 <Route path="/review/:setId" element={<ReviewPage />} />
                 <Route path="/adaptive-lesson/:setId" element={<AdaptiveLessonPage />} />
+                <Route path="/shuffle-lesson/:setId" element={<ShuffleLessonPage />} />
                 <Route
                   path="/error-replay/:setSlug/:setId/:filename"
                   element={<ErrorReplayLessonPage />}

@@ -9,7 +9,7 @@
  * review queue). Tailwind, 44px targets.
  */
 
-import {ChevronDown, ListChecks, RefreshCw} from "lucide-react";
+import {ChevronDown, ListChecks, RefreshCw, Shuffle} from "lucide-react";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 
@@ -237,6 +237,21 @@ export default function SetDetail({set}: SetDetailProps) {
                     setId={set.setId}
                     errorCount={set.errorCount}
                 />
+                {/* #1014 — set-level Zufallsmodus: interleave every lesson's
+                    exercises. Needs >= 2 lessons to interleave; the page itself
+                    re-checks "with exercises" and shows an empty state if the
+                    bundle can't be shuffled. */}
+                {set.totalCount >= 2 && (
+                    <Link
+                        to={`/shuffle-lesson/${encodeURIComponent(set.setId)}`}
+                        data-slot="button"
+                        className={`${actionClass} border border-border text-foreground hover:bg-muted`}
+                        data-testid={`set-shuffle-${set.setId}`}
+                    >
+                        <Shuffle size={16} aria-hidden="true" />
+                        {t("learning_path.shuffle", "Shuffle")}
+                    </Link>
+                )}
                 {set.errorCount > 0 && (
                     <Link
                         to={`/review/${encodeURIComponent(set.setId)}`}

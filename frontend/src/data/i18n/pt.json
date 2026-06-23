@@ -2655,6 +2655,7 @@
     "adaptive": "Iniciar lição adaptativa",
     "error_replay": "Repetir erros",
     "train_errors": "Treinar erros",
+    "shuffle": "Modo aleatório",
     "personal": {
       "title": "O teu percurso de aprendizagem",
       "empty": "Baixa um conjunto de lições para começar.",
@@ -3213,6 +3214,25 @@
       "release_page": "Página da versão",
       "later": "Mais tarde",
       "whats_new_title": "Novidades da {version}"
+    }
+  },
+  "shuffle": {
+    "session_title": "Sessão aleatória",
+    "page_title": "Modo aleatório",
+    "loading": "Carregando sessão aleatória…",
+    "empty_body": "Este conjunto precisa de pelo menos duas lições com exercícios para embaralhar.",
+    "not_cached_body": "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro.",
+    "back_to_dashboard": "Voltar ao painel",
+    "subtitle": "Misturando {n} perguntas de {lessons} lições",
+    "error": {
+      "load_failed": "Não foi possível carregar a sessão aleatória.",
+      "missing_params": "Nenhum conjunto de conteúdo selecionado."
+    },
+    "summary": {
+      "heading": "Treino aleatório concluído!",
+      "score": "{correct} de {total} corretas",
+      "from_lessons": "de {n} lições diferentes",
+      "another": "Embaralhar de novo"
     }
   }
 }

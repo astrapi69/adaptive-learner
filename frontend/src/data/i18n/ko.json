@@ -2655,6 +2655,7 @@
     "adaptive": "적응형 레슨 시작",
     "error_replay": "오답 다시 풀기",
     "train_errors": "오답 연습",
+    "shuffle": "셔플",
     "personal": {
       "title": "당신의 학습 경로",
       "empty": "시작하려면 레슨 세트를 다운로드하세요.",
@@ -3213,6 +3214,25 @@
       "release_page": "릴리스 페이지",
       "later": "나중에",
       "whats_new_title": "{version}의 새로운 기능"
+    }
+  },
+  "shuffle": {
+    "session_title": "셔플 세션",
+    "page_title": "셔플",
+    "loading": "셔플 세션 로드 중…",
+    "empty_body": "셔플하려면 연습이 있는 레슨이 두 개 이상 필요합니다.",
+    "not_cached_body": "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요.",
+    "back_to_dashboard": "대시보드로 돌아가기",
+    "subtitle": "{lessons}개 레슨에서 {n}개 문제 섞기",
+    "error": {
+      "load_failed": "셔플 세션을 불러올 수 없습니다.",
+      "missing_params": "선택된 콘텐츠 세트가 없습니다."
+    },
+    "summary": {
+      "heading": "셔플 연습 완료!",
+      "score": "{total}개 중 {correct}개 정답",
+      "from_lessons": "{n}개의 서로 다른 레슨에서",
+      "another": "다시 섞기"
     }
   }
 }

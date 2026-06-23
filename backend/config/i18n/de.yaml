@@ -2426,6 +2426,7 @@ learning_path:
   adaptive: "Adaptive Lektion starten"
   error_replay: "Fehler wiederholen"
   train_errors: "Fehler trainieren"
+  shuffle: "Zufallsmodus"
   personal:
     title: "Dein Lernpfad"
     empty: "Lade ein Lektionsset herunter, um zu beginnen."
@@ -2940,3 +2941,19 @@ update:
     release_page: "Release-Seite"
     later: "Später"
     whats_new_title: "Was ist neu in {version}"
+shuffle:
+  session_title: "Zufallssitzung"
+  page_title: "Zufallsmodus"
+  loading: "Zufallssitzung wird geladen…"
+  empty_body: "Dieses Set braucht mindestens zwei Lektionen mit Übungen zum Mischen."
+  not_cached_body: "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen."
+  back_to_dashboard: "Zurück zum Dashboard"
+  subtitle: "{n} Fragen aus {lessons} Lektionen gemischt"
+  error:
+    load_failed: "Zufallssitzung konnte nicht geladen werden."
+    missing_params: "Kein Inhalts-Set ausgewählt."
+  summary:
+    heading: "Zufallstraining abgeschlossen!"
+    score: "{correct} von {total} richtig"
+    from_lessons: "aus {n} verschiedenen Lektionen"
+    another: "Nochmal mischen"

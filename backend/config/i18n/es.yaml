@@ -2424,6 +2424,7 @@ learning_path:
   adaptive: "Iniciar lección adaptativa"
   error_replay: "Repetir errores"
   train_errors: "Entrenar errores"
+  shuffle: "Modo aleatorio"
   personal:
     title: "Tu ruta de aprendizaje"
     empty: "Descarga un conjunto de lecciones para empezar."
@@ -2938,3 +2939,19 @@ update:
     release_page: "Página de la versión"
     later: "Más tarde"
     whats_new_title: "Novedades de {version}"
+shuffle:
+  session_title: "Sesión aleatoria"
+  page_title: "Modo aleatorio"
+  loading: "Cargando sesión aleatoria…"
+  empty_body: "Este conjunto necesita al menos dos lecciones con ejercicios para mezclar."
+  not_cached_body: "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero."
+  back_to_dashboard: "Volver al panel"
+  subtitle: "Mezclando {n} preguntas de {lessons} lecciones"
+  error:
+    load_failed: "No se pudo cargar la sesión aleatoria."
+    missing_params: "Ningún conjunto seleccionado."
+  summary:
+    heading: "¡Entrenamiento aleatorio completado!"
+    score: "{correct} de {total} correctas"
+    from_lessons: "de {n} lecciones diferentes"
+    another: "Mezclar de nuevo"
