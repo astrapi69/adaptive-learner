@@ -3,27 +3,29 @@
 Frozen-binary detection (``config.source_checkout_repo()`` returning None)
 must have NO effect on which GUI is launched: ``main()`` always runs the
 persistent window, for source checkouts AND frozen binaries. There is no
-dialog-chain fallback. These tests inject a fake ``launcher_app`` module so
-they run without tkinter (CI builds exercise the real window).
+dialog-chain fallback. These tests stub ``launcher_app.run_app`` so they run
+headless (importing the module is fine; only ``tk.Tk()`` needs a display,
+which the CI build's manual/window checks cover separately).
 """
 
 from __future__ import annotations
 
 import sys
-import types
 from pathlib import Path
 
 import pytest
 
 from adaptive_learner_launcher import __main__ as m
+from adaptive_learner_launcher import launcher_app
 
 
 @pytest.fixture
 def fake_window(monkeypatch):
     calls: list[int] = []
-    fake = types.ModuleType("adaptive_learner_launcher.launcher_app")
-    fake.run_app = lambda **kwargs: (calls.append(1) or 0)  # type: ignore[attr-defined]
-    monkeypatch.setitem(sys.modules, "adaptive_learner_launcher.launcher_app", fake)
+    # main() does a lazy ``from adaptive_learner_launcher import launcher_app``
+    # which resolves to THIS real module object, so stubbing run_app here is
+    # what main() actually calls (a sys.modules swap would be bypassed).
+    monkeypatch.setattr(launcher_app, "run_app", lambda **kwargs: (calls.append(1) or 0))
     # Neutralize everything around the GUI launch so main() is deterministic.
     monkeypatch.setattr(sys, "argv", ["adaptive_learner_launcher"])
     monkeypatch.setattr(m, "_maybe_show_help", lambda argv: False)
