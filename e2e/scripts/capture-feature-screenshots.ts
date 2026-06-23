@@ -274,7 +274,18 @@ for (const feature of FEATURES) {
             const ready = await feature.setup(page);
             test.skip(!ready, `Could not reach ${feature.path} deterministically`);
             await settleForScreenshot(page);
-            await expect(page).toHaveScreenshot(`${feature.path}${vp.suffix}.png`, {
+            // Pass the snapshot name as an ARRAY of path segments, not a
+            // string. Playwright sanitises a string name (``/`` and ``.``
+            // both become ``-``), which would flatten
+            // ``answer-toggle/aufloesung.mobile`` to a single
+            // ``answer-toggle-aufloesung-mobile.png`` file at the features
+            // root. For an array it does ``path.join(...name)`` with NO
+            // sanitisation, so the baseline lands at the intended
+            // ``features/<feature>/<shot>.png`` subdirectory the issue +
+            // CONTRIBUTING require (#1023).
+            const segments = feature.path.split("/");
+            const file = `${segments.pop()}${vp.suffix}.png`;
+            await expect(page).toHaveScreenshot([...segments, file], {
                 fullPage: true,
             });
         });
