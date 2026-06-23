@@ -11,6 +11,8 @@ derived location:
 - ``launcher/adaptive_learner_launcher/__init__.py`` (``__version__`` literal)
 - ``launcher/adaptive-learner-launcher.spec`` (CFBundleVersion +
   CFBundleShortVersionString plist entries; both get the same value)
+- ``launcher/launcher.json`` (``app_version`` field; the docker-app-launcher
+  update check compares it against the latest GitHub release)
 - ``plugins/*/pyproject.toml`` (every plugin)
 - Plugin ``__init__.py`` files that hold a ``__version__ = "..."``
   literal AND do not already use importlib.metadata or tomllib
@@ -226,6 +228,34 @@ def update_init_version_literal(
     return True
 
 
+def update_launcher_json_app_version(
+    path: Path, new_version: str, dry_run: bool
+) -> bool:
+    """Update the ``app_version`` field in ``launcher.json`` (surgical).
+
+    ``launcher.json`` is the docker-app-launcher config; its ``app_version``
+    drives the update check (compared against the latest GitHub release) and
+    must track the canonical version. A regex on the single value keeps the
+    rest of the hand-formatted JSON untouched (no full reserialization)."""
+    if not path.is_file():
+        return False
+    content = path.read_text(encoding="utf-8")
+    pattern = re.compile(r'("app_version"\s*:\s*)"([^"]+)"')
+    match = pattern.search(content)
+    if not match:
+        return False
+    if match.group(2) == new_version:
+        return False
+    new_content = pattern.sub(rf'\g<1>"{new_version}"', content, count=1)
+    if not dry_run:
+        path.write_text(new_content, encoding="utf-8")
+    print(
+        f"  {path.relative_to(REPO)}: app_version "
+        f"{match.group(2)} -> {new_version}"
+    )
+    return True
+
+
 _INSTALL_PLACEHOLDER = "@@ADAPTIVE_LEARNER_VERSION@@"
 
 # Generated installer artifacts. The template is the editable source;
@@ -344,6 +374,9 @@ def collect_targets() -> list[tuple[Path, str]]:
     targets.append(
         (REPO / "launcher" / "adaptive-learner-launcher.spec", "spec")
     )
+    targets.append(
+        (REPO / "launcher" / "launcher.json", "launcher_json")
+    )
 
     for plugin_pyproject in sorted(
         (REPO / "plugins").glob("*/pyproject.toml")
@@ -361,6 +394,7 @@ HANDLERS = {
     "package_lock": update_package_lock_version,
     "spec": update_spec_plist,
     "init_literal": update_init_version_literal,
+    "launcher_json": update_launcher_json_app_version,
 }
 
 
