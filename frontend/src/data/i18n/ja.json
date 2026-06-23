@@ -2655,6 +2655,7 @@
     "adaptive": "アダプティブレッスンを開始",
     "error_replay": "間違いを復習",
     "train_errors": "間違いを練習",
+    "shuffle": "シャッフル",
     "personal": {
       "title": "あなたの学習パス",
       "empty": "始めるにはレッスンセットをダウンロードしてください。",
@@ -3213,6 +3214,25 @@
       "release_page": "リリースページ",
       "later": "後で",
       "whats_new_title": "{version} の新着情報"
+    }
+  },
+  "shuffle": {
+    "session_title": "シャッフルセッション",
+    "page_title": "シャッフル",
+    "loading": "シャッフルセッションを読み込み中…",
+    "empty_body": "シャッフルには演習のあるレッスンが2つ以上必要です。",
+    "not_cached_body": "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。",
+    "back_to_dashboard": "ダッシュボードに戻る",
+    "subtitle": "{lessons}個のレッスンから{n}問をミックス",
+    "error": {
+      "load_failed": "シャッフルセッションを読み込めませんでした。",
+      "missing_params": "コンテンツセットが選択されていません。"
+    },
+    "summary": {
+      "heading": "シャッフル練習が完了しました！",
+      "score": "{total}問中{correct}問正解",
+      "from_lessons": "{n}個の異なるレッスンから",
+      "another": "もう一度シャッフル"
     }
   }
 }

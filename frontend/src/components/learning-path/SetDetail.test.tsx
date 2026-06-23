@@ -97,6 +97,19 @@ describe("SetDetail", () => {
         expect(screen.queryByTestId("lesson-train-errors-02.json")).toBeNull();
     });
 
+    it("offers the set-level shuffle action when the set has >= 2 lessons (#1014)", () => {
+        renderDetail(setFixture());
+        expect(screen.getByTestId("set-shuffle-psych")).toHaveAttribute(
+            "href",
+            "/shuffle-lesson/psych",
+        );
+    });
+
+    it("hides the shuffle action for a single-lesson set (#1014)", () => {
+        renderDetail(setFixture({lessons: [lesson(1)], totalCount: 1}));
+        expect(screen.queryByTestId("set-shuffle-psych")).toBeNull();
+    });
+
     it("hides the error-replay action when there are no errors", () => {
         renderDetail(setFixture({errorCount: 0}));
         expect(screen.queryByTestId("set-error-replay-psych")).toBeNull();

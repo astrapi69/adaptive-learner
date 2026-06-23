@@ -2424,6 +2424,7 @@ learning_path:
   adaptive: "Démarrer une leçon adaptative"
   error_replay: "Réviser les erreurs"
   train_errors: "Entraîner les erreurs"
+  shuffle: "Mode aléatoire"
   personal:
     title: "Ton parcours d'apprentissage"
     empty: "Télécharge un ensemble de leçons pour commencer."
@@ -2938,3 +2939,19 @@ update:
     release_page: "Page de la version"
     later: "Plus tard"
     whats_new_title: "Nouveautés de {version}"
+shuffle:
+  session_title: "Session aléatoire"
+  page_title: "Mode aléatoire"
+  loading: "Chargement de la session aléatoire…"
+  empty_body: "Ce jeu a besoin d'au moins deux leçons avec des exercices pour être mélangé."
+  not_cached_body: "Ce jeu n'est pas encore téléchargé. Ouvre l'explorateur de contenu pour le télécharger d'abord."
+  back_to_dashboard: "Retour au tableau de bord"
+  subtitle: "Mélange de {n} questions issues de {lessons} leçons"
+  error:
+    load_failed: "Impossible de charger la session aléatoire."
+    missing_params: "Aucun jeu de contenu sélectionné."
+  summary:
+    heading: "Entraînement aléatoire terminé !"
+    score: "{correct} sur {total} correctes"
+    from_lessons: "de {n} leçons différentes"
+    another: "Mélanger à nouveau"

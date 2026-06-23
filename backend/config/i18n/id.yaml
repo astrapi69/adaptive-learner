@@ -2432,6 +2432,7 @@ learning_path:
   adaptive: "Mulai pelajaran adaptif"
   error_replay: "Ulangi kesalahan"
   train_errors: "Latih kesalahan"
+  shuffle: "Acak"
   personal:
     title: "Jalur Pembelajaranmu"
     empty: "Unduh sebuah set pelajaran untuk memulai."
@@ -2946,3 +2947,19 @@ update:
     release_page: "Halaman rilis"
     later: "Nanti"
     whats_new_title: "Yang baru di {version}"
+shuffle:
+  session_title: "Sesi acak"
+  page_title: "Acak"
+  loading: "Memuat sesi acak…"
+  empty_body: "Set ini perlu setidaknya dua pelajaran dengan latihan untuk diacak."
+  not_cached_body: "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya dulu."
+  back_to_dashboard: "Kembali ke Dasbor"
+  subtitle: "Mencampur {n} pertanyaan dari {lessons} pelajaran"
+  error:
+    load_failed: "Tidak dapat memuat sesi acak."
+    missing_params: "Tidak ada set konten dipilih."
+  summary:
+    heading: "Latihan acak selesai!"
+    score: "{correct} dari {total} benar"
+    from_lessons: "dari {n} pelajaran berbeda"
+    another: "Acak lagi"

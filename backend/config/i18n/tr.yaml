@@ -2422,6 +2422,7 @@ learning_path:
   adaptive: "Uyarlanabilir dersi başlat"
   error_replay: "Hataları tekrarla"
   train_errors: "Hataları çalış"
+  shuffle: "Karışık mod"
   personal:
     title: "Öğrenme yolun"
     empty: "Başlamak için bir ders seti indir."
@@ -2936,3 +2937,19 @@ update:
     release_page: "Sürüm sayfası"
     later: "Sonra"
     whats_new_title: "{version} sürümündeki yenilikler"
+shuffle:
+  session_title: "Karışık oturum"
+  page_title: "Karışık mod"
+  loading: "Karışık oturum yükleniyor…"
+  empty_body: "Bu set karıştırmak için alıştırma içeren en az iki ders gerektirir."
+  not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
+  back_to_dashboard: "Panoya dön"
+  subtitle: "{lessons} dersten {n} soru karıştırılıyor"
+  error:
+    load_failed: "Karışık oturum yüklenemedi."
+    missing_params: "İçerik seti seçilmedi."
+  summary:
+    heading: "Karışık çalışma tamamlandı!"
+    score: "{total} sorudan {correct} doğru"
+    from_lessons: "{n} farklı dersten"
+    another: "Tekrar karıştır"
