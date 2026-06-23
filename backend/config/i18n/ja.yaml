@@ -1630,6 +1630,8 @@ lesson:
     stats_avg: "平均解答時間: {s}秒"
     stats_fastest: "最速: {s}秒 ({type})"
     stats_slowest: "最遅: {s}秒 ({type})"
+  reverse:
+    not_reversible: "この問題形式は反転できません — 元の形式で表示しています。"
   resources_title: "さらに学ぶ"
   resources_domain: "{domain} についてもっと見る"
   motivation:

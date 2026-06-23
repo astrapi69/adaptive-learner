@@ -1758,6 +1758,9 @@
       "stats_fastest": "Fastest: {s}s ({type})",
       "stats_slowest": "Slowest: {s}s ({type})"
     },
+    "reverse": {
+      "not_reversible": "This exercise type can't be reversed — shown in its original format."
+    },
     "resources_title": "Explore further",
     "resources_domain": "More on {domain}",
     "motivation": {

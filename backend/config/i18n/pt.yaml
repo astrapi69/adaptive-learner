@@ -1630,6 +1630,8 @@ lesson:
     stats_avg: "Tempo médio de resposta: {s}s"
     stats_fastest: "Mais rápida: {s}s ({type})"
     stats_slowest: "Mais lenta: {s}s ({type})"
+  reverse:
+    not_reversible: "Este tipo de exercício não pode ser invertido — exibido no formato original."
   resources_title: "Aprofunde o tema"
   resources_domain: "Mais sobre {domain}"
   motivation:
