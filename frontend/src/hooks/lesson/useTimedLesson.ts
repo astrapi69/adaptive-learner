@@ -23,6 +23,7 @@ import {
     timeLimitSeconds,
     readTimedDifficulty,
     type ExerciseType,
+    type TimedDifficulty,
     type TimedQuestionRecord,
     type TimedRunStats,
 } from "../../lib/learning/timedMode";
@@ -40,6 +41,33 @@ function forcedWrongTotal(exercise: ContentLessonExercise): number {
     if (exercise.type === "matching") return exercise.pairs?.length ?? 1;
     if (exercise.type === "cloze") return exercise.blanks?.length ?? 1;
     return 1;
+}
+
+/**
+ * The countdown length for the active question: the per-type × difficulty
+ * limit plus the carried correct-answer bonus, or 0 when the step is not a
+ * timed exercise step. Extracted so the hook computes it the same way in the
+ * render-phase `limitSeconds` and the new-step `setRemaining` reset.
+ *
+ * @param isExerciseStep - True on an enabled, non-theory exercise step.
+ * @param exercise - The active step's exercise (``null`` on a theory step).
+ * @param difficulty - The run's timed difficulty.
+ * @param appliedBonus - Bonus seconds carried into this question.
+ */
+function questionLimitSeconds(
+    isExerciseStep: boolean,
+    exercise: ContentLessonExercise | null,
+    difficulty: TimedDifficulty,
+    appliedBonus: number,
+): number {
+    if (!isExerciseStep || !exercise) return 0;
+    return (
+        timeLimitSeconds(
+            exercise.type as ExerciseType,
+            difficulty,
+            exercise.pairs?.length ?? 1,
+        ) + appliedBonus
+    );
 }
 
 export interface UseTimedLessonOptions {
@@ -104,14 +132,12 @@ export function useTimedLesson({
     const isExerciseStep =
         enabled && exercise != null && step != null && step.type !== "theory";
 
-    const limitSeconds =
-        isExerciseStep && exercise
-            ? timeLimitSeconds(
-                  exercise.type as ExerciseType,
-                  difficultyRef.current,
-                  exercise.pairs?.length ?? 1,
-              ) + appliedBonusRef.current
-            : 0;
+    const limitSeconds = questionLimitSeconds(
+        isExerciseStep,
+        exercise,
+        difficultyRef.current,
+        appliedBonusRef.current,
+    );
 
     // Render-phase reset on a new step: snapshot the bonus EARNED so far as
     // the bonus APPLIED to this question (so earning a bonus mid-step never
@@ -123,13 +149,12 @@ export function useTimedLesson({
         stepStartRef.current = Date.now();
         setTimedOut(false);
         setRemaining(
-            isExerciseStep && exercise
-                ? timeLimitSeconds(
-                      exercise.type as ExerciseType,
-                      difficultyRef.current,
-                      exercise.pairs?.length ?? 1,
-                  ) + appliedBonusRef.current
-                : 0,
+            questionLimitSeconds(
+                isExerciseStep,
+                exercise,
+                difficultyRef.current,
+                appliedBonusRef.current,
+            ),
         );
         if (advanceTimerRef.current !== null) {
             window.clearTimeout(advanceTimerRef.current);
