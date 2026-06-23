@@ -90,6 +90,14 @@ export function useLessonEnterKey({
                 if (enterLockRef.current) return;
                 enterLockRef.current = true;
                 exerciseRef.current?.submit();
+            } else if (action === "submit-next") {
+                // #1007 Phase 2 — exam: submit + advance in one keystroke,
+                // so the per-question feedback never shows (revealed at the
+                // end). Mirrors the single-button footer.
+                if (enterLockRef.current) return;
+                enterLockRef.current = true;
+                exerciseRef.current?.submit();
+                nav.goNext();
             } else {
                 nav.goNext();
             }
