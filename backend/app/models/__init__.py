@@ -1363,6 +1363,18 @@ class LessonProgress(Base):
         nullable=False,
         default="in_progress",
     )
+    # #1007 Phase 2 — the lesson mode the run was played in
+    # (``practice`` | ``exam`` | ``timed`` | ``error`` | ``reverse`` |
+    # ``shuffle`` | ``endless``). Persisted on the attempt so the
+    # server-side XP award applies the mode reward weight (exam =
+    # 1.5×) and the SRS layer can weight passed exam items. Free
+    # string; the mode set lives in the frontend MODE_CONFIGS.
+    lesson_mode: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="practice",
+        server_default="practice",
+    )
     # JSON object: {step_id: {correct: int, total: int,
     #   attempts: int, completed_at: ISO-8601 string}}.
     # Empty ``{}`` when nothing answered yet.

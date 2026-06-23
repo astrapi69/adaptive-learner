@@ -26,6 +26,7 @@ import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import CorrectionBlock from "../../exercises/CorrectionBlock";
 import DiffHighlight from "../../exercises/DiffHighlight";
 import Confetti from "../../feedback/Confetti";
+import LessonExamResult from "./LessonExamResult";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
 import { useCountUp } from "../../../hooks/ui/useCountUp";
@@ -58,6 +59,13 @@ import {
 } from "../../../lib/lesson/result-download";
 import { isFirstAttempt } from "../../../lib/gamification/first-attempt";
 import { calculateLessonSessionXp } from "../../../lib/gamification/lesson-xp";
+import { configForMode } from "../../../lib/learning/lessonModeConfig";
+import {
+  examPassed,
+  readExamPassThreshold,
+  type LessonMode,
+} from "../../../lib/learning/lessonModePref";
+import type { TimedRunStats } from "../../../lib/learning/timedMode";
 import { emitCelebration } from "../../../lib/praise/celebration-bus";
 import { nextPraise } from "../../../lib/praise/phrase-picker";
 import { getStorage } from "../../../storage";
@@ -67,6 +75,13 @@ import { notify } from "../../../utils/notify";
 interface LessonSummaryProps {
   lesson: ContentLesson;
   progress: LessonProgress | null;
+  /** #1007 — the mode the run was played in. In ``exam`` mode the summary
+   *  adds a Passed / Not-passed line against the configured threshold.
+   *  Defaults to ``practice`` so existing callers are unaffected. */
+  lessonMode?: LessonMode;
+  /** #1009 — timed-mode per-question timing summary (answered-in-time,
+   *  average / fastest / slowest). Null outside timed mode. */
+  timedStats?: TimedRunStats | null;
   /** Next lesson's filename within the set, or null when
    *  there is no successor (last lesson OR list not yet
    *  fetched). When null, the "Next lesson" button hides. */
@@ -112,6 +127,8 @@ function deriveSummaryStats(progress: LessonProgress | null): {
 export default function LessonSummary({
   lesson,
   progress,
+  lessonMode = "practice",
+  timedStats = null,
   nextLessonFilename,
   userId,
   setId,
@@ -129,6 +146,11 @@ export default function LessonSummary({
     deriveSummaryStats(progress);
 
   const stars: StarRating = computeStars(correct, total);
+
+  // #1007 — exam-mode pass/fail against the configured threshold.
+  const examThreshold = useMemo(() => readExamPassThreshold(), []);
+  const examPass =
+    lessonMode === "exam" && examPassed(correct, total, examThreshold);
 
   // #594 Hint Economy — how many steps this run was answered with a hint
   // revealed. Read from the persisted step results.
@@ -186,8 +208,17 @@ export default function LessonSummary({
       stars,
       first_attempt: firstAttempt,
       streak_days: streakDays,
+      // #1007 Phase 2 — show the mode-weighted XP (exam = 1.5×) so the
+      // summary matches the XP actually awarded.
+      xp_multiplier: configForMode(lessonMode).xpMultiplier,
     }).xp_earned;
-  }, [total, progress, stars, streakDays]);
+  }, [total, progress, stars, streakDays, lessonMode]);
+
+  // #1007 Phase 2 — the mode reward weight as a percent bonus (exam = 50),
+  // surfaced in the exam result card. 0 for practice (no bonus note).
+  const modeBonusPct = Math.round(
+    (configForMode(lessonMode).xpMultiplier - 1) * 100,
+  );
 
   useEffect(() => {
     if (!userId) {
@@ -435,6 +466,73 @@ export default function LessonSummary({
           %)
         </span>
       </div>
+
+      {/* #1007 Phase 2 — dedicated exam result panel (verdict + score +
+          time + XP incl. bonus + retry). Replaces the inline pass/fail
+          line; the per-exercise breakdown below is the "view all
+          answers" detail. */}
+      {lessonMode === "exam" && total > 0 && (
+        <LessonExamResult
+          examPass={examPass}
+          examThreshold={examThreshold}
+          correct={correct}
+          total={total}
+          scorePct={scorePct}
+          minutes={minutes}
+          xpGain={xpGain}
+          bonusPct={modeBonusPct}
+          onRetry={onRepeat}
+        />
+      )}
+
+      {/* #1009 — timed-mode timing stats. */}
+      {lessonMode === "timed" && timedStats && timedStats.total > 0 && (
+        <ul
+          className="lesson-summary-stats m-0"
+          data-testid="lesson-summary-timed-stats"
+        >
+          <li>
+            {t(
+              "lesson.timed.stats_answered",
+              "{n} of {total} answered in time.",
+            )
+              .replace("{n}", String(timedStats.answeredInTime))
+              .replace("{total}", String(timedStats.total))}
+          </li>
+          <li>
+            {t("lesson.timed.stats_avg", "Average answer time: {s}s").replace(
+              "{s}",
+              String(timedStats.averageSeconds),
+            )}
+          </li>
+          {timedStats.fastest && (
+            <li>
+              {t("lesson.timed.stats_fastest", "Fastest: {s}s ({type})")
+                .replace("{s}", String(timedStats.fastest.seconds))
+                .replace(
+                  "{type}",
+                  t(
+                    `lesson.exercise.type_${timedStats.fastest.type}`,
+                    timedStats.fastest.type,
+                  ),
+                )}
+            </li>
+          )}
+          {timedStats.slowest && (
+            <li>
+              {t("lesson.timed.stats_slowest", "Slowest: {s}s ({type})")
+                .replace("{s}", String(timedStats.slowest.seconds))
+                .replace(
+                  "{type}",
+                  t(
+                    `lesson.exercise.type_${timedStats.slowest.type}`,
+                    timedStats.slowest.type,
+                  ),
+                )}
+            </li>
+          )}
+        </ul>
+      )}
 
       {/* #983 — after a re-attempt, show the improvement vs the previous
           run + the best score. Self-hides on a first run (attempts < 2). */}

@@ -35,6 +35,31 @@ Stop / Uninstall / Open). All actions go through the `actions` layer on a
 background thread. It is opt-in while the classic flow stays the default;
 it becomes the default once verified on a real device.
 
+### Minimize to system tray (optional)
+
+With the optional `tray` extra installed, closing the window **while the
+app is running** minimizes it to the system tray instead of quitting:
+
+```bash
+pip install adaptive-learner-launcher[tray]   # installs pystray + Pillow
+```
+
+On **Linux**, `pystray`'s GTK/AppIndicator backend additionally needs the
+AppIndicator GIR typelib (Ubuntu ships the GNOME tray extension by default,
+but not always the typelib):
+
+```bash
+sudo apt install gir1.2-ayatanaappindicator3-0.1   # or gir1.2-appindicator3-0.1
+```
+
+A tray icon then appears with a right-click menu (Open / Open in browser /
+Stop / Quit) and click-to-restore; the tooltip shows the running port. All
+tray actions route through the `actions` layer. If the tray cannot start
+(extra not installed, AppIndicator missing, or the icon never appears) the
+X button simply closes the launcher — no crash, and the window is never
+hidden with no way to bring it back. Run `python -m adaptive_learner_launcher
+--debug` and grep for `tray` to see which case applied.
+
 ## Run from source
 
 ```bash

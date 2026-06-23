@@ -51,6 +51,35 @@ Touch-Target unter dem Home-Indicator, ein Overlay das die Navigation
 verdeckt. Diese Klasse von Fehlern findet nur ein Blick auf ein echtes
 Geraet (oder eine ehrliche Beschreibung dessen, was dort geprueft wurde).
 
+## Feature-Screenshots
+
+Jedes neue oder visuell geaenderte Feature MUSS einen Screenshot in
+`e2e/visual/features/` bekommen:
+
+1. Screenshot-Spec in `e2e/scripts/capture-feature-screenshots.ts`
+   ergaenzen (neuer `FeatureShot`-Eintrag in der `FEATURES`-Map fuer das
+   Feature).
+2. `make capture-screenshots` ausfuehren.
+3. Neue PNGs committen: `git add e2e/visual/features/`.
+4. README in `e2e/visual/features/README.md` aktualisieren (Katalog-Tabelle).
+
+Einstellungen: 1280x720 (Desktop) + 375x812 (Mobile), Default-Theme (dark),
+Deutsch, PNG. Realistische Testdaten (keine "Test-1" Titel). Die
+Mobile-Variante traegt das `.mobile.png`-Suffix.
+
+Dies gilt fuer JEDEN PR der UI-Aenderungen enthaelt. Reine Backend-,
+Launcher-, Test- und Doku-PRs sind ausgenommen.
+
+Generierung + Review laufen auf einer konsistenten Maschine
+(`make capture-screenshots`), nicht im fluechtigen CI/Web-Container
+(Font-Anti-Aliasing unterscheidet sich pro Maschine). Kein CI-Gate -
+on-demand, aber Pflicht bei UI-PRs. Niemals `--update-snapshots` benutzen,
+um einen Diff zu uebertuenchen, der einen echten Bug zeigt - den Bug fixen.
+Features die Playwright nicht erreicht (der Desktop-Launcher) werden manuell
+in den passenden Ordner aufgenommen. Voller Ablauf:
+[docs/developer/testing.md](../../docs/developer/testing.md) +
+[e2e/visual/features/README.md](../../e2e/visual/features/README.md).
+
 ## Quick check after every change
 
 ### 1. Run the tests

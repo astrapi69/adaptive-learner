@@ -35,6 +35,7 @@ import {describe, expect, it, vi} from "vitest";
 import WordTilesExercise, {
     applyDragReorder,
     isWordTilesCorrect,
+    wordTilesPerTileCorrect,
 } from "./WordTilesExercise";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -60,6 +61,22 @@ const EXERCISE_MULTI_ORDER: ContentLessonExercise = {
     accept_orderings: [[0, 2, 1, 3]],
     distractors: [],
 };
+
+describe("wordTilesPerTileCorrect (#1005)", () => {
+    it("marks every position correct when the whole answer is accepted", () => {
+        expect(wordTilesPerTileCorrect([1, 0], true)).toEqual([true, true]);
+    });
+
+    it("marks each position by its canonical slot when wrong", () => {
+        // slot 0 holds tile 0 (correct), slot 1 holds tile 0? no — [0, 2, 1]:
+        // slot0=0 ✓, slot1=2 ✗, slot2=1 ✗
+        expect(wordTilesPerTileCorrect([0, 2, 1], false)).toEqual([
+            true,
+            false,
+            false,
+        ]);
+    });
+});
 
 describe("isWordTilesCorrect (matcher)", () => {
     it("accepts the canonical order when accept_orderings is absent", () => {
@@ -233,7 +250,7 @@ describe("WordTilesExercise: submit lifecycle", () => {
         );
     });
 
-    it("wrong order reports correct=0 and shows the canonical via DiffHighlight", () => {
+    it("wrong order: My-answer view shows the user's order with per-tile state; Solution view shows the readable canonical (#1005)", () => {
         const onComplete = vi.fn();
         render(
             <WordTilesExercise
@@ -241,18 +258,37 @@ describe("WordTilesExercise: submit lifecycle", () => {
                 onComplete={onComplete}
             />,
         );
+        // Place "revoir" then "Au" -> [1, 0] = "revoir Au" (wrong).
         fireEvent.click(screen.getByTestId("word-tile-scrambled-1"));
         fireEvent.click(screen.getByTestId("word-tile-scrambled-0"));
         fireEvent.click(screen.getByTestId("word-tiles-submit"));
         expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
         const result = screen.getByTestId("word-tiles-result");
         expect(result).toHaveAttribute("data-result", "wrong");
-        // Phase 52C / v1.35.0 — canonical surfaces in the diff
-        // sibling, NOT inline in the result paragraph.
-        expect(result).not.toHaveTextContent("Au revoir");
-        const diffRow = screen.getByTestId("word-tiles-diff-row");
-        expect(diffRow).toBeInTheDocument();
-        expect(diffRow).toHaveTextContent("Au revoir");
+        // The toggle replaces the old (squished) diff row.
+        expect(screen.queryByTestId("word-tiles-diff-row")).toBeNull();
+        expect(screen.getByTestId("word-tiles-answer-toggle")).toBeInTheDocument();
+
+        // My-answer view is the default: the learner's order, both tiles
+        // marked incorrect (neither sits in its canonical slot).
+        const myView = screen.getByTestId("word-tiles-my-answer-view");
+        expect(myView).toHaveTextContent("revoir");
+        expect(screen.getByTestId("word-tiles-my-answer-view-tile-0")).toHaveAttribute(
+            "data-correct",
+            "false",
+        );
+
+        // Toggle to the Solution view: readable canonical order, all green.
+        fireEvent.click(screen.getByTestId("word-tiles-solution"));
+        const solution = screen.getByTestId("word-tiles-solution-view");
+        expect(solution).toHaveTextContent("Au");
+        expect(solution).toHaveTextContent("revoir");
+        expect(screen.getByTestId("word-tiles-solution-view-tile-0")).toHaveAttribute(
+            "data-correct",
+            "true",
+        );
+        // The interactive answer row + scrambled bar are gone after check.
+        expect(screen.queryByTestId("word-tiles-scrambled-row")).toBeNull();
     });
 
     it("any accept_orderings permutation reports correct=1", () => {

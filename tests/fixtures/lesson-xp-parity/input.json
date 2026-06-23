@@ -25,7 +25,15 @@
     {"name": "stars_2_first_no_3star_bonus", "stars": 2, "first_attempt": true, "streak_days": 0},
     {"name": "stars_1_streak_4", "stars": 1, "first_attempt": false, "streak_days": 4},
     {"name": "clamped_negative_stars", "stars": -3, "first_attempt": false, "streak_days": 0},
-    {"name": "clamped_high_stars", "stars": 99, "first_attempt": true, "streak_days": 0}
+    {"name": "clamped_high_stars", "stars": 99, "first_attempt": true, "streak_days": 0},
+    {"name": "exam_stars_0_no_streak", "stars": 0, "first_attempt": false, "streak_days": 0, "xp_multiplier": 1.5},
+    {"name": "exam_stars_2_no_streak", "stars": 2, "first_attempt": false, "streak_days": 0, "xp_multiplier": 1.5},
+    {"name": "exam_stars_3_first_no_streak", "stars": 3, "first_attempt": true, "streak_days": 0, "xp_multiplier": 1.5},
+    {"name": "exam_stars_1_streak_2", "stars": 1, "first_attempt": false, "streak_days": 2, "xp_multiplier": 1.5},
+    {"name": "exam_stars_3_first_streak_4", "stars": 3, "first_attempt": true, "streak_days": 4, "xp_multiplier": 1.5},
+    {"name": "exam_stars_3_first_streak_20_capped", "stars": 3, "first_attempt": true, "streak_days": 20, "xp_multiplier": 1.5},
+    {"name": "timed_stars_0_no_streak", "stars": 0, "first_attempt": false, "streak_days": 0, "xp_multiplier": 1.25},
+    {"name": "timed_stars_3_first_streak_2", "stars": 3, "first_attempt": true, "streak_days": 2, "xp_multiplier": 1.25}
   ],
   "streak_cases": [
     {"name": "empty_activity", "activity_dates": [], "today": "2026-05-27", "expected_streak": 0},

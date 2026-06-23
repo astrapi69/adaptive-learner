@@ -457,6 +457,15 @@ progress:
   commit_notes_aria: "Session notes"
   session_count: "Sessions"
 settings:
+  lesson_mode:
+    title: "Lesson mode"
+    hint: "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions."
+    default_label: "Default mode"
+    threshold_label: "Exam pass threshold"
+    timed_difficulty_label: "Timed mode difficulty"
+    timed_relaxed: "Relaxed (2× time)"
+    timed_normal: "Normal"
+    timed_fast: "Fast (0.7× time)"
   updates:
     title: "Updates"
     auto_check: "Automatic update check"
@@ -1607,6 +1616,31 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  mode:
+    label: "Lesson mode"
+    practice: "Practice"
+    exam: "Exam"
+    timed: "Timed"
+    error: "Train errors"
+    reverse: "Reverse"
+    shuffle: "Shuffle"
+    endless: "Endless"
+  exam:
+    passed: "Passed"
+    not_passed: "Not passed"
+    threshold_hint: "(pass ≥ {pct}%)"
+    result_title: "Exam result"
+    retry: "Retry exam"
+    xp_bonus: "incl. {pct}% exam bonus"
+  timed:
+    remaining: "Time remaining"
+    seconds_left: "{n}s left"
+    time_up: "Time's up!"
+    bonus: "+{n}s bonus"
+    stats_answered: "{n} of {total} answered in time."
+    stats_avg: "Average answer time: {s}s"
+    stats_fastest: "Fastest: {s}s ({type})"
+    stats_slowest: "Slowest: {s}s ({type})"
   resources_title: "Explore further"
   resources_domain: "More on {domain}"
   motivation:
@@ -1653,6 +1687,9 @@ lesson:
   reviewed:
     completed: "Completed"
   exercise:
+    toggle:
+      my_answer: "My answer"
+      solution: "Solution"
     reread_theory: "Re-read theory"
     back_to_exercise: "Back to exercise"
     loading: "Exercise loading…"
@@ -1698,6 +1735,7 @@ lesson:
       result_correct: "Correct!"
       result_wrong: "Not quite."
       result_almost: "Almost! Watch out for:"
+      accepted: "Accepted answers"
       empty: "This free-text exercise has no accepted answers."
     word_tiles:
       instructions: "Arrange the tiles in order. Tap to place; use the arrows or drag to reorder."
@@ -1845,6 +1883,20 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Share as repository"
+    title: "Share as repository"
+    needs_token: "Add a GitHub token in Settings → Integrations to share as a repository."
+    repo_label: "Repository (owner/name)"
+    private: "Private"
+    public: "Public"
+    branch: "Branch"
+    lessons_note: "All {n} lessons of this set will be included."
+    invalid_repo: "Enter the repository as owner/name."
+    submit: "Export"
+    working: "Exporting…"
+    done: "Your set was pushed to the repository."
+    failed: "Export failed."
   anki_export:
     button: "Anki export"
   discover_more: "Find more content"
@@ -2382,6 +2434,8 @@ learning_path:
   filter_label: "Filter sets"
   adaptive: "Start adaptive lesson"
   error_replay: "Retry errors"
+  train_errors: "Train errors"
+  shuffle: "Shuffle"
   personal:
     title: "Your Learning Path"
     empty: "Download a lesson set to begin."
@@ -2896,3 +2950,19 @@ update:
     release_page: "Release page"
     later: "Later"
     whats_new_title: "What's new in {version}"
+shuffle:
+  session_title: "Shuffle session"
+  page_title: "Shuffle"
+  loading: "Loading shuffle session…"
+  empty_body: "This set needs at least two lessons with exercises to shuffle."
+  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
+  back_to_dashboard: "Back to Dashboard"
+  subtitle: "Mixing {n} questions from {lessons} lessons"
+  error:
+    load_failed: "Could not load shuffle session."
+    missing_params: "No content set selected."
+  summary:
+    heading: "Shuffle training complete!"
+    score: "{correct} of {total} correct"
+    from_lessons: "from {n} different lessons"
+    another: "Shuffle again"

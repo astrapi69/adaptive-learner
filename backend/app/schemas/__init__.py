@@ -1503,6 +1503,15 @@ class LessonProgressUpsert(BaseModel):
     source: str = Field(..., min_length=1, max_length=200)
     set_id: str = Field(..., min_length=1, max_length=120)
     lesson_filename: str = Field(..., min_length=1, max_length=200)
+    lesson_mode: str | None = Field(
+        default=None,
+        max_length=20,
+        description=(
+            "#1007 Phase 2 — the lesson mode the run is played in "
+            "(practice/exam/timed/…). Sent on the first upsert; omitted "
+            "leaves the stored value unchanged."
+        ),
+    )
     step_result: StepResultIn | None = None
     time_spent_seconds_delta: int = Field(default=0, ge=0)
     current_step: int | None = Field(
@@ -1571,6 +1580,8 @@ class LessonProgressOut(BaseModel):
     lesson_filename: str
     # "in_progress" | "paused" | "abandoned" | "completed"
     status: str
+    # #1007 Phase 2 — the mode the run was played in (practice/exam/…).
+    lesson_mode: str = "practice"
     step_results: dict[str, Any]
     score_correct: int
     score_total: int

@@ -457,6 +457,15 @@ progress:
   commit_notes_aria: "Notes de session"
   session_count: "Sessions"
 settings:
+  lesson_mode:
+    title: "Mode de leçon"
+    hint: "Le mode entraînement garde toutes les aides. Le mode examen masque les indices, le rappel de théorie, la lecture automatique et la solution pour réviser dans des conditions réalistes."
+    default_label: "Mode par défaut"
+    threshold_label: "Seuil de réussite"
+    timed_difficulty_label: "Difficulté du mode chronométré"
+    timed_relaxed: "Détendu (2× temps)"
+    timed_normal: "Normal"
+    timed_fast: "Rapide (0,7× temps)"
   updates:
     title: "Mises à jour"
     auto_check: "Vérification automatique des mises à jour"
@@ -1598,6 +1607,31 @@ repo:
     description: "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de vos données de session. L'intégration git facultative valide chaque génération pour que vous puissiez parcourir l'historique avec n'importe quel client git."
     enable_git: "Activer la persistance git"
 lesson:
+  mode:
+    label: "Mode de leçon"
+    practice: "Entraînement"
+    exam: "Examen"
+    timed: "Chronométré"
+    error: "Entraîner les erreurs"
+    reverse: "Inversé"
+    shuffle: "Aléatoire"
+    endless: "Infini"
+  exam:
+    passed: "Réussi"
+    not_passed: "Échoué"
+    threshold_hint: "(réussite ≥ {pct} %)"
+    result_title: "Résultat de l'examen"
+    retry: "Refaire l'examen"
+    xp_bonus: "incl. {pct}% de bonus d'examen"
+  timed:
+    remaining: "Temps restant"
+    seconds_left: "{n}s restantes"
+    time_up: "Temps écoulé !"
+    bonus: "+{n}s bonus"
+    stats_answered: "{n} sur {total} répondues à temps."
+    stats_avg: "Temps de réponse moyen : {s}s"
+    stats_fastest: "La plus rapide : {s}s ({type})"
+    stats_slowest: "La plus lente : {s}s ({type})"
   resources_title: "Approfondir le sujet"
   resources_domain: "Plus sur {domain}"
   motivation:
@@ -1644,6 +1678,9 @@ lesson:
   reviewed:
     completed: "Terminé"
   exercise:
+    toggle:
+      my_answer: "Ma réponse"
+      solution: "Solution"
     reread_theory: "Relire la théorie"
     back_to_exercise: "Retour à l'exercice"
     loading: "Chargement de l'exercice…"
@@ -1689,6 +1726,7 @@ lesson:
       result_correct: "Correct !"
       result_wrong: "Pas tout à fait."
       result_almost: "Presque ! Attention à :"
+      accepted: "Réponses acceptées"
       empty: "Cet exercice n'a pas de réponses acceptées."
     word_tiles:
       instructions: "Mets les tuiles dans l'ordre. Touche pour placer ; utilise les flèches ou glisse pour réordonner."
@@ -1836,6 +1874,20 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Partager comme dépôt"
+    title: "Partager comme dépôt"
+    needs_token: "Ajoute un token GitHub dans Paramètres → Intégrations pour partager comme dépôt."
+    repo_label: "Dépôt (owner/name)"
+    private: "Privé"
+    public: "Public"
+    branch: "Branche"
+    lessons_note: "Les {n} leçons de cet ensemble seront incluses."
+    invalid_repo: "Saisis le dépôt sous la forme owner/name."
+    submit: "Exporter"
+    working: "Exportation…"
+    done: "Ton ensemble a été poussé vers le dépôt."
+    failed: "Échec de l'export."
   anki_export:
     button: "Export Anki"
   discover_more: "Trouver plus de contenu"
@@ -2374,6 +2426,8 @@ learning_path:
   filter_label: "Filtrer les ensembles"
   adaptive: "Démarrer une leçon adaptative"
   error_replay: "Réviser les erreurs"
+  train_errors: "Entraîner les erreurs"
+  shuffle: "Mode aléatoire"
   personal:
     title: "Ton parcours d'apprentissage"
     empty: "Télécharge un ensemble de leçons pour commencer."
@@ -2888,3 +2942,19 @@ update:
     release_page: "Page de la version"
     later: "Plus tard"
     whats_new_title: "Nouveautés de {version}"
+shuffle:
+  session_title: "Session aléatoire"
+  page_title: "Mode aléatoire"
+  loading: "Chargement de la session aléatoire…"
+  empty_body: "Ce jeu a besoin d'au moins deux leçons avec des exercices pour être mélangé."
+  not_cached_body: "Ce jeu n'est pas encore téléchargé. Ouvre l'explorateur de contenu pour le télécharger d'abord."
+  back_to_dashboard: "Retour au tableau de bord"
+  subtitle: "Mélange de {n} questions issues de {lessons} leçons"
+  error:
+    load_failed: "Impossible de charger la session aléatoire."
+    missing_params: "Aucun jeu de contenu sélectionné."
+  summary:
+    heading: "Entraînement aléatoire terminé !"
+    score: "{correct} sur {total} correctes"
+    from_lessons: "de {n} leçons différentes"
+    another: "Mélanger à nouveau"

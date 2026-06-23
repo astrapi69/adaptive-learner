@@ -490,6 +490,16 @@
     "session_count": "Sessões"
   },
   "settings": {
+    "lesson_mode": {
+      "title": "Modo de lição",
+      "hint": "O modo prática mantém todas as ajudas. O modo exame oculta dicas, revisão de teoria, leitura automática e a solução para que você recupere em condições realistas.",
+      "default_label": "Modo padrão",
+      "threshold_label": "Limite para aprovação",
+      "timed_difficulty_label": "Dificuldade do modo cronometrado",
+      "timed_relaxed": "Relaxado (2× tempo)",
+      "timed_normal": "Normal",
+      "timed_fast": "Rápido (0,7× tempo)"
+    },
     "updates": {
       "title": "Atualizações",
       "auto_check": "Verificação automática de atualizações",
@@ -1720,6 +1730,34 @@
     }
   },
   "lesson": {
+    "mode": {
+      "label": "Modo de lição",
+      "practice": "Prática",
+      "exam": "Exame",
+      "timed": "Cronometrado",
+      "error": "Treinar erros",
+      "reverse": "Inverso",
+      "shuffle": "Aleatório",
+      "endless": "Infinito"
+    },
+    "exam": {
+      "passed": "Aprovado",
+      "not_passed": "Não aprovado",
+      "threshold_hint": "(aprovado ≥ {pct}%)",
+      "result_title": "Resultado do exame",
+      "retry": "Repetir exame",
+      "xp_bonus": "incl. {pct}% de bónus de exame"
+    },
+    "timed": {
+      "remaining": "Tempo restante",
+      "seconds_left": "{n}s restantes",
+      "time_up": "Tempo esgotado!",
+      "bonus": "+{n}s de bônus",
+      "stats_answered": "{n} de {total} respondidas a tempo.",
+      "stats_avg": "Tempo médio de resposta: {s}s",
+      "stats_fastest": "Mais rápida: {s}s ({type})",
+      "stats_slowest": "Mais lenta: {s}s ({type})"
+    },
     "resources_title": "Aprofunde o tema",
     "resources_domain": "Mais sobre {domain}",
     "motivation": {
@@ -1774,6 +1812,10 @@
       "completed": "Concluído"
     },
     "exercise": {
+      "toggle": {
+        "my_answer": "Minha resposta",
+        "solution": "Solução"
+      },
       "reread_theory": "Reler a teoria",
       "back_to_exercise": "Voltar ao exercício",
       "loading": "A carregar o exercício…",
@@ -1821,6 +1863,7 @@
         "result_correct": "Correto!",
         "result_wrong": "Quase.",
         "result_almost": "Quase! Atenção a:",
+        "accepted": "Respostas aceites",
         "empty": "Este exercício não tem respostas aceitas."
       },
       "word_tiles": {
@@ -1986,6 +2029,21 @@
     }
   },
   "content": {
+    "repo_export": {
+      "button": "Partilhar como repositório",
+      "title": "Partilhar como repositório",
+      "needs_token": "Adiciona um token do GitHub em Definições → Integrações para partilhar como repositório.",
+      "repo_label": "Repositório (owner/name)",
+      "private": "Privado",
+      "public": "Público",
+      "branch": "Ramo",
+      "lessons_note": "Todas as {n} lições deste conjunto serão incluídas.",
+      "invalid_repo": "Indica o repositório como owner/name.",
+      "submit": "Exportar",
+      "working": "A exportar…",
+      "done": "O teu conjunto foi enviado para o repositório.",
+      "failed": "Falha na exportação."
+    },
     "anki_export": {
       "button": "Exportar para Anki"
     },
@@ -2599,6 +2657,8 @@
     "filter_label": "Filtrar conjuntos",
     "adaptive": "Iniciar lição adaptativa",
     "error_replay": "Repetir erros",
+    "train_errors": "Treinar erros",
+    "shuffle": "Modo aleatório",
     "personal": {
       "title": "O teu percurso de aprendizagem",
       "empty": "Baixa um conjunto de lições para começar.",
@@ -3157,6 +3217,25 @@
       "release_page": "Página da versão",
       "later": "Mais tarde",
       "whats_new_title": "Novidades da {version}"
+    }
+  },
+  "shuffle": {
+    "session_title": "Sessão aleatória",
+    "page_title": "Modo aleatório",
+    "loading": "Carregando sessão aleatória…",
+    "empty_body": "Este conjunto precisa de pelo menos duas lições com exercícios para embaralhar.",
+    "not_cached_body": "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro.",
+    "back_to_dashboard": "Voltar ao painel",
+    "subtitle": "Misturando {n} perguntas de {lessons} lições",
+    "error": {
+      "load_failed": "Não foi possível carregar a sessão aleatória.",
+      "missing_params": "Nenhum conjunto de conteúdo selecionado."
+    },
+    "summary": {
+      "heading": "Treino aleatório concluído!",
+      "score": "{correct} de {total} corretas",
+      "from_lessons": "de {n} lições diferentes",
+      "another": "Embaralhar de novo"
     }
   }
 }

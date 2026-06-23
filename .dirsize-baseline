@@ -5,3 +5,4 @@
 # entry below is a known god-folder with a follow-up issue tracking its split.
 # Format: path  # reason / tracking issue
 frontend/src/lib/ai              # 16 files — AI generation/validation helpers, split tracked (#917)
+frontend/src/components/exercises # 17 files — 5 renderers + dispatcher + control + answer-toggle (#1019), split tracked (#809)

@@ -586,6 +586,30 @@ export const dexieStorage: IStorageService = {
       const { GitHubApi } = await import("../lib/github/github-api");
       return new GitHubApi(token).createLessonPr(args);
     },
+    exportSetToRepo: async (args) => {
+      const token = readGitHubToken().trim();
+      if (!token) {
+        throw new ApiError(401, "No GitHub token configured.");
+      }
+      const { GitHubApi } = await import("../lib/github/github-api");
+      const api = new GitHubApi(token);
+      const { defaultBranch } = await api.ensureRepo(args.ownerRepo, {
+        private: args.private,
+        description: args.description,
+      });
+      const branch = args.branch || defaultBranch;
+      const { commitUrl } = await api.pushFiles(
+        args.ownerRepo,
+        branch,
+        args.files,
+        args.message,
+      );
+      return {
+        ownerRepo: args.ownerRepo,
+        commitUrl,
+        repoUrl: `https://github.com/${args.ownerRepo}`,
+      };
+    },
   },
 
   // Phase 41F Danger Zone: typed-confirm reset for Dexie mode.

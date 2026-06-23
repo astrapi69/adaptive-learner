@@ -82,6 +82,15 @@ test suite before merge.
 - Backup-touching changes require a manual round-trip test (export -> import
   -> verify) in addition to unit tests. Unit tests are necessary but not
   sufficient (BACKUP-AKZEPTANZTEST rule).
+- **Feature-Screenshots:** jedes neue oder visuell geaenderte UI-Feature
+  bekommt einen Screenshot in `e2e/visual/features/{feature-name}/` (Desktop
+  1280×720 `feature.png` + Mobile 375×812 `feature.mobile.png`, Default-Theme
+  `dark`, Deutsch, realistische Testdaten). Ablauf: `FEATURES`-Eintrag in
+  `e2e/scripts/capture-feature-screenshots.ts` ergaenzen ->
+  `make capture-screenshots` -> PNGs + README-Katalog committen. Kein CI-Gate
+  (on-demand), aber Pflicht bei UI-PRs; reine Backend-/Launcher-/Test-/Doku-PRs
+  sind ausgenommen. Details: `.claude/rules/quality-checks.md` ->
+  Feature-Screenshots + `e2e/visual/features/README.md`.
 
 **Enforcement:**
 

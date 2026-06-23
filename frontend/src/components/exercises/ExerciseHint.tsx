@@ -19,6 +19,7 @@
 
 import HintButton from "../../shared/gamification/HintButton";
 import { useExerciseHints } from "../../hooks/lesson/useExerciseHints";
+import { useLessonMode } from "../../hooks/lesson/useLessonMode";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { emitXpSpent } from "../../lib/gamification/xp-spent-event";
 import { markHintUsed } from "../../lib/hints/hint-usage";
@@ -39,7 +40,10 @@ export default function ExerciseHint({
     testId,
 }: ExerciseHintProps) {
     const {t} = useI18n();
+    const {showHints} = useLessonMode();
     const {hints, xpCost, available, hasHints} = useExerciseHints(exercise);
+    // Hints are a scaffolding aid — hidden in modes that disable them (#1011).
+    if (!showHints) return null;
     if (submitted) return null;
 
     // Hints turned off in settings: show the disabled affordance with a

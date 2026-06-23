@@ -457,6 +457,15 @@ progress:
   commit_notes_aria: "セッションのメモ"
   session_count: "セッション"
 settings:
+  lesson_mode:
+    title: "レッスンモード"
+    hint: "練習モードではすべての補助が有効です。試験モードではヒント、理論の復習、自動読み上げ、解答の表示を隠し、現実的な条件で思い出せるようにします。"
+    default_label: "既定のモード"
+    threshold_label: "合格基準"
+    timed_difficulty_label: "タイム制モードの難易度"
+    timed_relaxed: "ゆったり（2倍）"
+    timed_normal: "ふつう"
+    timed_fast: "はやい（0.7倍）"
   updates:
     title: "アップデート"
     auto_check: "自動アップデート確認"
@@ -1596,6 +1605,31 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする"
 lesson:
+  mode:
+    label: "レッスンモード"
+    practice: "練習"
+    exam: "試験"
+    timed: "タイム制"
+    error: "間違いを練習"
+    reverse: "逆方向"
+    shuffle: "シャッフル"
+    endless: "エンドレス"
+  exam:
+    passed: "合格"
+    not_passed: "不合格"
+    threshold_hint: "(合格 ≥ {pct}%)"
+    result_title: "試験結果"
+    retry: "試験をやり直す"
+    xp_bonus: "試験ボーナス{pct}%を含む"
+  timed:
+    remaining: "残り時間"
+    seconds_left: "残り{n}秒"
+    time_up: "時間切れ！"
+    bonus: "+{n}秒ボーナス"
+    stats_answered: "{total}問中{n}問を時間内に解答。"
+    stats_avg: "平均解答時間: {s}秒"
+    stats_fastest: "最速: {s}秒 ({type})"
+    stats_slowest: "最遅: {s}秒 ({type})"
   resources_title: "さらに学ぶ"
   resources_domain: "{domain} についてもっと見る"
   motivation:
@@ -1642,6 +1676,9 @@ lesson:
   reviewed:
     completed: "完了"
   exercise:
+    toggle:
+      my_answer: "自分の回答"
+      solution: "解答"
     reread_theory: "理論をもう一度読む"
     back_to_exercise: "練習に戻る"
     loading: "演習を読み込み中…"
@@ -1687,6 +1724,7 @@ lesson:
       result_correct: "正解です！"
       result_wrong: "惜しい。"
       result_almost: "おしい！次に注意:"
+      accepted: "正解として認められる答え"
       empty: "この自由記述演習には受け付ける答えがありません。"
     word_tiles:
       instructions: "タイルを正しい順序に並べます。タップで配置し、矢印またはドラッグで並べ替えます。"
@@ -1834,6 +1872,20 @@ lesson:
     action_restart: "最初からやり直す"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "リポジトリとして共有"
+    title: "リポジトリとして共有"
+    needs_token: "リポジトリとして共有するには、設定 → 連携で GitHub トークンを追加してください。"
+    repo_label: "リポジトリ (owner/name)"
+    private: "プライベート"
+    public: "パブリック"
+    branch: "ブランチ"
+    lessons_note: "このセットの全 {n} レッスンが含まれます。"
+    invalid_repo: "リポジトリを owner/name の形式で入力してください。"
+    submit: "エクスポート"
+    working: "エクスポート中…"
+    done: "セットをリポジトリにプッシュしました。"
+    failed: "エクスポートに失敗しました。"
   anki_export:
     button: "Anki エクスポート"
   discover_more: "もっとコンテンツを見つける"
@@ -2372,6 +2424,8 @@ learning_path:
   filter_label: "セットを絞り込む"
   adaptive: "アダプティブレッスンを開始"
   error_replay: "間違いを復習"
+  train_errors: "間違いを練習"
+  shuffle: "シャッフル"
   personal:
     title: "あなたの学習パス"
     empty: "始めるにはレッスンセットをダウンロードしてください。"
@@ -2886,3 +2940,19 @@ update:
     release_page: "リリースページ"
     later: "後で"
     whats_new_title: "{version} の新着情報"
+shuffle:
+  session_title: "シャッフルセッション"
+  page_title: "シャッフル"
+  loading: "シャッフルセッションを読み込み中…"
+  empty_body: "シャッフルには演習のあるレッスンが2つ以上必要です。"
+  not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
+  back_to_dashboard: "ダッシュボードに戻る"
+  subtitle: "{lessons}個のレッスンから{n}問をミックス"
+  error:
+    load_failed: "シャッフルセッションを読み込めませんでした。"
+    missing_params: "コンテンツセットが選択されていません。"
+  summary:
+    heading: "シャッフル練習が完了しました！"
+    score: "{total}問中{correct}問正解"
+    from_lessons: "{n}個の異なるレッスンから"
+    another: "もう一度シャッフル"

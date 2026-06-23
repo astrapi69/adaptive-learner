@@ -457,6 +457,15 @@ progress:
   commit_notes_aria: "Catatan sesi"
   session_count: "Sesi"
 settings:
+  lesson_mode:
+    title: "Mode pelajaran"
+    hint: "Mode latihan mempertahankan semua bantuan. Mode ujian menyembunyikan petunjuk, ulasan teori, baca otomatis, dan solusi agar Anda mengingat dalam kondisi realistis."
+    default_label: "Mode bawaan"
+    threshold_label: "Ambang kelulusan"
+    timed_difficulty_label: "Tingkat kesulitan mode berwaktu"
+    timed_relaxed: "Santai (2× waktu)"
+    timed_normal: "Normal"
+    timed_fast: "Cepat (0,7× waktu)"
   updates:
     title: "Pembaruan"
     auto_check: "Pemeriksaan pembaruan otomatis"
@@ -1607,6 +1616,31 @@ repo:
     description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
     enable_git: "Aktifkan persistensi git"
 lesson:
+  mode:
+    label: "Mode pelajaran"
+    practice: "Latihan"
+    exam: "Ujian"
+    timed: "Berwaktu"
+    error: "Latih kesalahan"
+    reverse: "Terbalik"
+    shuffle: "Acak"
+    endless: "Tanpa henti"
+  exam:
+    passed: "Lulus"
+    not_passed: "Tidak lulus"
+    threshold_hint: "(lulus ≥ {pct}%)"
+    result_title: "Hasil ujian"
+    retry: "Ulangi ujian"
+    xp_bonus: "termasuk bonus ujian {pct}%"
+  timed:
+    remaining: "Sisa waktu"
+    seconds_left: "{n}d tersisa"
+    time_up: "Waktu habis!"
+    bonus: "+{n}d bonus"
+    stats_answered: "{n} dari {total} dijawab tepat waktu."
+    stats_avg: "Waktu jawab rata-rata: {s}d"
+    stats_fastest: "Tercepat: {s}d ({type})"
+    stats_slowest: "Terlama: {s}d ({type})"
   resources_title: "Jelajahi lebih lanjut"
   resources_domain: "Lebih lanjut tentang {domain}"
   motivation:
@@ -1653,6 +1687,9 @@ lesson:
   reviewed:
     completed: "Selesai"
   exercise:
+    toggle:
+      my_answer: "Jawaban saya"
+      solution: "Solusi"
     reread_theory: "Baca ulang teori"
     back_to_exercise: "Kembali ke latihan"
     loading: "Latihan sedang memuat…"
@@ -1698,6 +1735,7 @@ lesson:
       result_correct: "Benar!"
       result_wrong: "Belum tepat."
       result_almost: "Hampir! Perhatikan:"
+      accepted: "Jawaban yang diterima"
       empty: "Latihan teks bebas ini tidak memiliki jawaban yang diterima."
     word_tiles:
       instructions: "Susun ubin sesuai urutan. Ketuk untuk menempatkan; gunakan panah atau seret untuk menyusun ulang."
@@ -1845,6 +1883,20 @@ lesson:
     action_restart: "Mulai dari awal"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Bagikan sebagai repositori"
+    title: "Bagikan sebagai repositori"
+    needs_token: "Tambahkan token GitHub di Pengaturan → Integrasi untuk berbagi sebagai repositori."
+    repo_label: "Repositori (owner/name)"
+    private: "Privat"
+    public: "Publik"
+    branch: "Branch"
+    lessons_note: "Semua {n} pelajaran set ini akan disertakan."
+    invalid_repo: "Masukkan repositori sebagai owner/name."
+    submit: "Ekspor"
+    working: "Mengekspor…"
+    done: "Set Anda telah didorong ke repositori."
+    failed: "Ekspor gagal."
   anki_export:
     button: "Ekspor Anki"
   discover_more: "Temukan konten lainnya"
@@ -2382,6 +2434,8 @@ learning_path:
   filter_label: "Saring set"
   adaptive: "Mulai pelajaran adaptif"
   error_replay: "Ulangi kesalahan"
+  train_errors: "Latih kesalahan"
+  shuffle: "Acak"
   personal:
     title: "Jalur Pembelajaranmu"
     empty: "Unduh sebuah set pelajaran untuk memulai."
@@ -2896,3 +2950,19 @@ update:
     release_page: "Halaman rilis"
     later: "Nanti"
     whats_new_title: "Yang baru di {version}"
+shuffle:
+  session_title: "Sesi acak"
+  page_title: "Acak"
+  loading: "Memuat sesi acak…"
+  empty_body: "Set ini perlu setidaknya dua pelajaran dengan latihan untuk diacak."
+  not_cached_body: "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya dulu."
+  back_to_dashboard: "Kembali ke Dasbor"
+  subtitle: "Mencampur {n} pertanyaan dari {lessons} pelajaran"
+  error:
+    load_failed: "Tidak dapat memuat sesi acak."
+    missing_params: "Tidak ada set konten dipilih."
+  summary:
+    heading: "Latihan acak selesai!"
+    score: "{correct} dari {total} benar"
+    from_lessons: "dari {n} pelajaran berbeda"
+    another: "Acak lagi"

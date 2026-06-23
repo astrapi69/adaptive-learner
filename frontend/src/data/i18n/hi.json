@@ -490,6 +490,16 @@
     "session_count": "सत्र"
   },
   "settings": {
+    "lesson_mode": {
+      "title": "पाठ मोड",
+      "hint": "अभ्यास मोड में सभी सहायताएँ चालू रहती हैं। परीक्षा मोड संकेत, सिद्धांत पुनरावलोकन, स्वतः वाचन और समाधान छिपा देता है ताकि आप वास्तविक परिस्थितियों में याद करें।",
+      "default_label": "डिफ़ॉल्ट मोड",
+      "threshold_label": "उत्तीर्ण सीमा",
+      "timed_difficulty_label": "समयबद्ध मोड कठिनाई",
+      "timed_relaxed": "आरामदायक (2× समय)",
+      "timed_normal": "सामान्य",
+      "timed_fast": "तेज़ (0.7× समय)"
+    },
     "updates": {
       "title": "अपडेट",
       "auto_check": "स्वचालित अपडेट जाँच",
@@ -1720,6 +1730,34 @@
     }
   },
   "lesson": {
+    "mode": {
+      "label": "पाठ मोड",
+      "practice": "अभ्यास",
+      "exam": "परीक्षा",
+      "timed": "समयबद्ध",
+      "error": "गलतियाँ अभ्यास",
+      "reverse": "उल्टा",
+      "shuffle": "यादृच्छिक",
+      "endless": "अंतहीन"
+    },
+    "exam": {
+      "passed": "उत्तीर्ण",
+      "not_passed": "अनुत्तीर्ण",
+      "threshold_hint": "(उत्तीर्ण ≥ {pct}%)",
+      "result_title": "परीक्षा परिणाम",
+      "retry": "परीक्षा दोबारा दें",
+      "xp_bonus": "{pct}% परीक्षा बोनस सहित"
+    },
+    "timed": {
+      "remaining": "शेष समय",
+      "seconds_left": "{n}s शेष",
+      "time_up": "समय समाप्त!",
+      "bonus": "+{n}s बोनस",
+      "stats_answered": "{total} में से {n} समय पर उत्तरित।",
+      "stats_avg": "औसत उत्तर समय: {s}s",
+      "stats_fastest": "सबसे तेज़: {s}s ({type})",
+      "stats_slowest": "सबसे धीमी: {s}s ({type})"
+    },
     "resources_title": "विषय को गहराई से जानें",
     "resources_domain": "{domain} के बारे में और जानें",
     "motivation": {
@@ -1774,6 +1812,10 @@
       "completed": "पूर्ण"
     },
     "exercise": {
+      "toggle": {
+        "my_answer": "मेरा उत्तर",
+        "solution": "समाधान"
+      },
       "reread_theory": "सिद्धांत फिर से पढ़ें",
       "back_to_exercise": "अभ्यास पर वापस",
       "loading": "अभ्यास लोड हो रहा है…",
@@ -1821,6 +1863,7 @@
         "result_correct": "सही!",
         "result_wrong": "बिल्कुल नहीं।",
         "result_almost": "लगभग! इस पर ध्यान दें:",
+        "accepted": "स्वीकृत उत्तर",
         "empty": "इस मुक्त-पाठ अभ्यास में कोई स्वीकृत उत्तर नहीं हैं।"
       },
       "word_tiles": {
@@ -1986,6 +2029,21 @@
     }
   },
   "content": {
+    "repo_export": {
+      "button": "रिपॉज़िटरी के रूप में साझा करें",
+      "title": "रिपॉज़िटरी के रूप में साझा करें",
+      "needs_token": "रिपॉज़िटरी के रूप में साझा करने के लिए सेटिंग्स → इंटीग्रेशन में GitHub टोकन जोड़ें।",
+      "repo_label": "रिपॉज़िटरी (owner/name)",
+      "private": "निजी",
+      "public": "सार्वजनिक",
+      "branch": "ब्रांच",
+      "lessons_note": "इस सेट के सभी {n} पाठ शामिल होंगे।",
+      "invalid_repo": "रिपॉज़िटरी को owner/name के रूप में दर्ज करें।",
+      "submit": "निर्यात",
+      "working": "निर्यात हो रहा…",
+      "done": "आपका सेट रिपॉज़िटरी में पुश हो गया।",
+      "failed": "निर्यात विफल।"
+    },
     "anki_export": {
       "button": "Anki निर्यात"
     },
@@ -2599,6 +2657,8 @@
     "filter_label": "सेट फ़िल्टर करें",
     "adaptive": "अनुकूली पाठ शुरू करें",
     "error_replay": "त्रुटियाँ दोबारा करें",
+    "train_errors": "गलतियाँ अभ्यास करें",
+    "shuffle": "मिश्रण",
     "personal": {
       "title": "आपका सीखने का पथ",
       "empty": "शुरू करने के लिए एक पाठ सेट डाउनलोड करें।",
@@ -3157,6 +3217,25 @@
       "release_page": "रिलीज़ पेज",
       "later": "बाद में",
       "whats_new_title": "{version} में नया क्या है"
+    }
+  },
+  "shuffle": {
+    "session_title": "मिश्रित सत्र",
+    "page_title": "मिश्रण",
+    "loading": "मिश्रित सत्र लोड हो रहा है…",
+    "empty_body": "मिश्रण के लिए इस सेट में अभ्यास वाले कम से कम दो पाठ चाहिए।",
+    "not_cached_body": "यह सेट अभी डाउनलोड नहीं हुआ है। इसे पहले डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।",
+    "back_to_dashboard": "डैशबोर्ड पर वापस जाएँ",
+    "subtitle": "{lessons} पाठों से {n} प्रश्न मिश्रित",
+    "error": {
+      "load_failed": "मिश्रित सत्र लोड नहीं हो सका।",
+      "missing_params": "कोई सामग्री सेट चयनित नहीं।"
+    },
+    "summary": {
+      "heading": "मिश्रित अभ्यास पूर्ण!",
+      "score": "{total} में से {correct} सही",
+      "from_lessons": "{n} अलग-अलग पाठों से",
+      "another": "फिर मिलाएँ"
     }
   }
 }

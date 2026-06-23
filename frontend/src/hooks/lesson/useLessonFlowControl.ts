@@ -76,12 +76,15 @@ export function useLessonFlowControl({
     // also auto-pause when the tab is hidden or the window
     // unloads while the lesson is still in progress.
     const [exitOpen, setExitOpen] = useState(false);
-    // ``status === "in_progress"`` is the only state where an
-    // auto-pause makes sense. ``progress`` is null until the
-    // first upsert lands; we still allow an explicit pause from
-    // the dialog because it will create the row on the way.
-    const isInProgress =
-        progress === null || progress.status === "in_progress";
+    // A run is "in progress" ONLY once a started progress row exists
+    // (status ``in_progress``). ``progress`` is null until the first
+    // answer triggers an upsert, so a freshly-opened lesson is NOT yet
+    // under way: the mode toggle stays switchable and the back button
+    // just leaves (nothing to pause). Treating ``progress === null`` as
+    // in-progress (the old behaviour) locked the mode toggle for the
+    // whole lesson and auto-paused a lesson the learner never started
+    // (#1027). ``paused``/``completed`` are likewise not in-progress.
+    const isInProgress = progress?.status === "in_progress";
 
     // Phase 63C — resume prompt. Shown once when the lesson is
     // loaded and the stored progress is in the ``paused`` state.

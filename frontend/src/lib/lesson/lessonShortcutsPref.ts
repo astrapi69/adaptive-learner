@@ -65,15 +65,21 @@ export interface LessonEnterState {
     enteredReviewed: boolean;
     /** The exercise reports a checkable answer ("Check" enabled). */
     answerable: boolean;
+    /** #1007 Phase 2 — exam delayed-feedback flow: Enter submits AND
+     *  advances in one keystroke (no graded review), matching the
+     *  single-button footer. */
+    delayedFeedback?: boolean;
 }
 
-export type LessonEnterAction = "check" | "next" | "none";
+export type LessonEnterAction = "check" | "next" | "none" | "submit-next";
 
 /**
  * Pure decision for what the Enter key should do on a lesson step:
  *
  * - unanswered exercise  -> ``"none"`` (Enter has no effect)
- * - answered, not checked -> ``"check"`` (the "Prüfen" action)
+ * - answered, not checked -> ``"check"`` (the "Prüfen" action), or
+ *   ``"submit-next"`` in the exam delayed-feedback flow (submit + advance
+ *   in one keystroke, no graded review)
  * - checked / reviewed / theory step -> ``"next"`` (the "Weiter" action)
  * - summary screen -> ``"none"`` (it has its own actions)
  */
@@ -82,7 +88,8 @@ export function decideLessonEnterAction(
 ): LessonEnterAction {
     if (state.isSummary) return "none";
     if (state.isExerciseStep && !state.checked && !state.enteredReviewed) {
-        return state.answerable ? "check" : "none";
+        if (!state.answerable) return "none";
+        return state.delayedFeedback ? "submit-next" : "check";
     }
     return "next";
 }

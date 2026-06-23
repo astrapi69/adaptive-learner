@@ -19,6 +19,7 @@ import MatchingResolveControl from "../../components/settings/controls/MatchingR
 import SrsTransparencySection from "../../components/session/SrsTransparencySection";
 import DailyRemindersControl from "../../components/settings/controls/DailyRemindersControl";
 import HintSettingsControl from "../../components/settings/controls/HintSettingsControl";
+import LessonModeControl from "../../components/settings/controls/LessonModeControl";
 import ReviewSettingsControl from "../../components/settings/controls/ReviewSettingsControl";
 import LearningProfileControl from "../../components/assessment/LearningProfileControl";
 import MaxLessonSizeControl from "../../components/settings/controls/MaxLessonSizeControl";
@@ -653,6 +654,7 @@ export default function Settings() {
           <SoundSettingsControl />
         </section>
         <MissionSettingsControl />
+        <LessonModeControl />
         <DirectionStrategyControl />
         <MatchingResolveControl />
         <HintSettingsControl />

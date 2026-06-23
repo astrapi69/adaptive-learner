@@ -24,10 +24,22 @@ import { Check, Download, Loader2, ShieldCheck, Sparkles, Trash2 } from "lucide-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { SearchableSet } from "../../lib/content/repos/search-index-loader";
 import DownloadProgress from "../feedback/DownloadProgress";
 
 export type SetDiscoveryDownloadState = "idle" | "downloading" | "done" | "error";
+
+/** The minimal structural shape this card renders (#1021). Kept local so
+ *  the component stays app-agnostic — the app's richer ``SearchableSet`` is
+ *  structurally assignable, and the generic ``T`` flows the real type
+ *  through the callbacks unchanged. */
+export interface DiscoverableSet {
+  id: string;
+  name: string;
+  description: string;
+  level: string;
+  ai_validated: boolean;
+  trust_level: number;
+}
 
 export interface SetDiscoveryCardLabels {
   /** Download button. */
@@ -52,24 +64,24 @@ export interface SetDiscoveryCardLabels {
   progress: string;
 }
 
-export interface SetDiscoveryCardProps {
-  set: SearchableSet;
+export interface SetDiscoveryCardProps<T extends DiscoverableSet = DiscoverableSet> {
+  set: T;
   isDownloaded: boolean;
   /** Download progress state for this card (defaults to "idle"). */
   state?: SetDiscoveryDownloadState;
   /** Per-lesson download progress, shown while ``state === "downloading"``. */
   progress?: { current: number; total: number };
-  onDownload: (set: SearchableSet) => void;
+  onDownload: (set: T) => void;
   /** Remove a downloaded set (deletes its lessons; keeps the index entry).
    *  Omit to hide the remove action on downloaded sets. */
-  onRemove?: (set: SearchableSet) => void;
+  onRemove?: (set: T) => void;
   /** Pre-formatted language badge text, e.g. "DE → ES". */
   languageLabel: string;
   labels: SetDiscoveryCardLabels;
   testId?: string;
 }
 
-export default function SetDiscoveryCard({
+export default function SetDiscoveryCard<T extends DiscoverableSet>({
   set,
   isDownloaded,
   state = "idle",
@@ -79,7 +91,7 @@ export default function SetDiscoveryCard({
   languageLabel,
   labels,
   testId = "set-discovery-card",
-}: SetDiscoveryCardProps) {
+}: SetDiscoveryCardProps<T>) {
   const downloading = state === "downloading";
   const buttonLabel =
     state === "error" ? labels.retry : downloading ? labels.downloading : labels.download;

@@ -16,9 +16,8 @@ from __future__ import annotations
 import logging
 import threading
 import tkinter as tk
-from pathlib import Path
 
-from adaptive_learner_launcher import actions, config, i18n, manifest, ui
+from adaptive_learner_launcher import actions, config, i18n, manifest, tray, ui
 
 logger = logging.getLogger("adaptive_learner_launcher.launcher_app")
 
@@ -42,6 +41,16 @@ _BUTTONS: dict[str, list[tuple[str, str]]] = {
 }
 
 
+# Window sizing. The running/stopped state shows three width-18 buttons in a
+# single row (~430px); 440px clipped the rightmost one ("Deinstallieren") in
+# German. 620px fits all three with margin in every UI language, and minsize
+# keeps the button row + scrollable status area fully visible if the user
+# shrinks the window (#991).
+WINDOW_GEOMETRY = "620x470"
+MIN_WIDTH = 600
+MIN_HEIGHT = 420
+
+
 def port_editable(state: str) -> bool:
     """The port field is editable only before the app is running."""
     return state in ("not_installed", "stopped")
@@ -52,21 +61,29 @@ def buttons_for_state(state: str) -> list[tuple[str, str]]:
     return list(_BUTTONS.get(state, []))
 
 
-def dispatch_action(action_id: str, *, compose_file: str, project: str, port: int, on_step=None) -> tuple[bool, str] | None:
+def dispatch_action(action_id: str, *, compose_file: str, project: str, port: int, on_step=None, on_output=None) -> tuple[bool, str] | None:
     """Run the action for ``action_id`` through the actions layer.
 
     Returns ``(ok, message)`` for actions that report a result, or
     ``None`` for fire-and-forget / navigational ids (open, cancel,
-    recheck). Pure (no Tk) so it is unit-testable by mocking ``actions``.
+    recheck). ``on_step`` streams step labels; ``on_output`` streams the
+    install build's output line-by-line (#992). Pure (no Tk) so it is
+    unit-testable by mocking ``actions``.
     """
     if action_id == "install":
-        return actions.install(compose_file, project, port, on_step=on_step)
+        # #1045 - single entry: download the release if there is no local repo
+        # (frozen binary), then install. ``compose_file``'s parent is the
+        # install dir (where a download lands).
+        from pathlib import Path
+        return actions.ensure_installed(
+            Path(compose_file).parent, project, port,
+            on_step=on_step, on_output=on_output)
     if action_id == "start":
-        return actions.start(compose_file, project, on_step=on_step)
+        return actions.start(compose_file, project, on_step=on_step, on_output=on_output)
     if action_id == "stop":
         return actions.stop(project)
     if action_id == "uninstall":
-        return actions.uninstall(project)
+        return actions.uninstall(project, on_step=on_step)
     if action_id == "open":
         actions.open_browser(port)
         return None
@@ -74,6 +91,21 @@ def dispatch_action(action_id: str, *, compose_file: str, project: str, port: in
         return None
     logger.warning("unknown action_id: %s", action_id)
     return None
+
+
+def should_minimize_to_tray(state: str, *, tray_available: bool) -> bool:
+    """Whether closing the window should minimize to the tray.
+
+    Minimize only when the app is RUNNING and the system-tray extra is
+    available; otherwise the X closes the launcher (the not-running and
+    no-pystray cases both close, #987). Pure (no Tk) so it is unit-testable.
+    """
+    return state == "running" and tray_available
+
+
+def tray_menu_labels() -> dict[str, str]:
+    """Localized tray-menu labels keyed by action id (#987)."""
+    return {action_id: i18n.t(label_key) for action_id, label_key in tray.MENU_SPEC}
 
 
 class LauncherApp:
@@ -85,11 +117,17 @@ class LauncherApp:
         repo = config.source_checkout_repo() or manifest.install_dir_from_manifest() or config.resolve_repo_path()
         self._compose_file = str(repo / config.COMPOSE_FILENAME)
         self._port = config.read_public_port(repo) if repo else actions.DEFAULT_PORT
+        self._tray: tray.TrayController | None = None
 
         self._root = tk.Tk()
         self._root.title("Adaptive Learner")
-        self._root.geometry("440x320")
+        self._root.geometry(WINDOW_GEOMETRY)
+        self._root.minsize(MIN_WIDTH, MIN_HEIGHT)  # button row never clips (#991)
         ui._set_window_icon(self._root)  # crash-safe (#956)
+        # Closing the window minimizes to the system tray while the app is
+        # running (if the tray extra is installed); otherwise it closes the
+        # launcher (#987).
+        self._root.protocol("WM_DELETE_WINDOW", self._on_close)
 
         self._state_label = tk.Label(self._root, font=("Segoe UI", 12, "bold"))
         self._state_label.pack(pady=(18, 8))
@@ -124,6 +162,8 @@ class LauncherApp:
         self._status.tag_configure("info", foreground="#555")
 
         self._refresh()
+        # #1042 - at startup, offer in-window cleanup of stale leftovers.
+        self._offer_cleanup_if_stale()
 
     def _log(self, line: str, *, tag: str = "info") -> None:
         self._status.configure(state="normal")
@@ -163,6 +203,56 @@ class LauncherApp:
             fg="#188038" if free else "#c5221f",
         )
 
+    # --- startup cleanup offer (#1042) ---
+
+    def _offer_cleanup_if_stale(self) -> None:
+        """Scan for stale leftovers of previous installations and, if any are
+        found, offer cleanup IN THE WINDOW (no separate dialog). The scan runs
+        off the Tk thread and must never crash startup."""
+        def scan() -> None:
+            try:
+                stale = actions.find_stale_artifacts(self._project)
+            except Exception:  # noqa: BLE001 - the offer is non-critical
+                return
+            if actions.has_stale_artifacts(stale):
+                self._root.after(0, lambda: self._show_cleanup_offer(stale))
+
+        threading.Thread(target=scan, daemon=True).start()
+
+    def _show_cleanup_offer(self, stale: dict) -> None:
+        """Render the found-leftovers summary + an Aufraeumen/Ueberspringen
+        row inside the window."""
+        self._log("Fruehere Installationsreste gefunden:")
+        for line in actions.cleanup_offer_lines(stale):
+            self._log("  " + line)
+        offer = tk.Frame(self._root)
+        offer.pack(pady=(0, 8))
+
+        def run_cleanup() -> None:
+            offer.destroy()
+            self._run_cleanup(stale)
+
+        def skip() -> None:
+            offer.destroy()
+            self._log("Aufraeumen uebersprungen.")
+
+        tk.Button(offer, text="Aufraeumen", width=18, command=run_cleanup).pack(side="left", padx=4)
+        tk.Button(offer, text="Ueberspringen", width=18, command=skip).pack(side="left", padx=4)
+
+    def _run_cleanup(self, stale: dict) -> None:
+        """Run cleanup_stale on a worker thread, streaming each step to the log
+        like install/uninstall."""
+        self._set_busy(True)
+
+        def step(label: str) -> None:
+            self._root.after(0, lambda: self._log(label))
+
+        def worker() -> None:
+            result = actions.cleanup_stale(stale, on_step=step)
+            self._root.after(0, lambda: self._on_result("cleanup", result))
+
+        threading.Thread(target=worker, daemon=True).start()
+
     # --- actions (threaded) ---
 
     def _on_action(self, action_id: str) -> None:
@@ -179,10 +269,15 @@ class LauncherApp:
         def step(label: str) -> None:
             self._root.after(0, lambda: self._log(label))
 
+        def output(line: str) -> None:
+            # Stream each build line into the scrollable log on the Tk thread.
+            self._root.after(0, lambda raw=line: self._log(raw))
+
         def worker() -> None:
             result = dispatch_action(
                 action_id, compose_file=self._compose_file,
-                project=self._project, port=self._port, on_step=step,
+                project=self._project, port=self._port,
+                on_step=step, on_output=output,
             )
             self._root.after(0, lambda: self._on_result(action_id, result))
 
@@ -201,6 +296,60 @@ class LauncherApp:
         if busy:
             self._clear_status()
             self._log(i18n.t("status.starting"))
+
+    # --- close / system tray (#987) ---
+
+    def _on_close(self) -> None:
+        """WM_DELETE_WINDOW handler: minimize to tray or close the launcher.
+
+        Minimizes to the system tray only while the app is running AND the
+        tray extra is available; in every other case (app stopped, no
+        pystray, tray failed to start) it closes the launcher.
+        """
+        if should_minimize_to_tray(actions.get_state(self._project), tray_available=tray.tray_available()):
+            if self._minimize_to_tray():
+                return
+        self._quit()
+
+    def _minimize_to_tray(self) -> bool:
+        """Show the tray icon and hide the window. Returns False on failure
+        (the caller then closes the launcher instead)."""
+        controller = tray.TrayController(
+            port=self._port,
+            tooltip=i18n.t("tray.tooltip", port=self._port),
+            labels=tray_menu_labels(),
+            callbacks={
+                # open / quit touch Tk, so marshal onto the Tk thread;
+                # open_browser is thread-safe (#987). stop reuses the
+                # existing action handler (no new business logic).
+                "open": lambda: self._root.after(0, self._restore_window),
+                "open_browser": lambda: actions.open_browser(self._port),
+                "stop": lambda: self._root.after(0, lambda: self._on_action("stop")),
+                "quit": lambda: self._root.after(0, self._quit),
+            },
+        )
+        if not controller.start():
+            return False
+        self._tray = controller
+        self._root.withdraw()
+        return True
+
+    def _restore_window(self) -> None:
+        """Bring the window back from the tray."""
+        self._stop_tray()
+        self._root.deiconify()
+        self._root.lift()
+        self._refresh()
+
+    def _stop_tray(self) -> None:
+        if self._tray is not None:
+            self._tray.stop()
+            self._tray = None
+
+    def _quit(self) -> None:
+        """Close the launcher completely (tray icon removed if present)."""
+        self._stop_tray()
+        self._root.destroy()
 
     def run(self) -> None:
         self._root.mainloop()

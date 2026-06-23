@@ -457,6 +457,15 @@ progress:
   commit_notes_aria: "Σημειώσεις συνεδρίας"
   session_count: "Συνεδρίες"
 settings:
+  lesson_mode:
+    title: "Λειτουργία μαθήματος"
+    hint: "Η εξάσκηση διατηρεί όλα τα βοηθήματα. Η εξέταση κρύβει υποδείξεις, επανάληψη θεωρίας, αυτόματη ανάγνωση και τη λύση ώστε να ανακαλείς σε ρεαλιστικές συνθήκες."
+    default_label: "Προεπιλεγμένη λειτουργία"
+    threshold_label: "Όριο επιτυχίας"
+    timed_difficulty_label: "Δυσκολία λειτουργίας με χρόνο"
+    timed_relaxed: "Χαλαρό (2× χρόνος)"
+    timed_normal: "Κανονικό"
+    timed_fast: "Γρήγορο (0,7× χρόνος)"
   updates:
     title: "Ενημερώσεις"
     auto_check: "Αυτόματος έλεγχος ενημερώσεων"
@@ -1598,6 +1607,31 @@ repo:
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
     enable_git: "Ενεργοποίηση εμμονής git"
 lesson:
+  mode:
+    label: "Λειτουργία μαθήματος"
+    practice: "Εξάσκηση"
+    exam: "Εξέταση"
+    timed: "Με χρόνο"
+    error: "Εξάσκηση λαθών"
+    reverse: "Αντίστροφα"
+    shuffle: "Τυχαία"
+    endless: "Ατέρμονο"
+  exam:
+    passed: "Επιτυχία"
+    not_passed: "Αποτυχία"
+    threshold_hint: "(επιτυχία ≥ {pct}%)"
+    result_title: "Αποτέλεσμα εξέτασης"
+    retry: "Επανάληψη εξέτασης"
+    xp_bonus: "συμπ. {pct}% μπόνους εξέτασης"
+  timed:
+    remaining: "Υπόλοιπος χρόνος"
+    seconds_left: "{n}s απομένουν"
+    time_up: "Ο χρόνος τελείωσε!"
+    bonus: "+{n}s μπόνους"
+    stats_answered: "{n} από {total} απαντήθηκαν εγκαίρως."
+    stats_avg: "Μέσος χρόνος απάντησης: {s}s"
+    stats_fastest: "Ταχύτερη: {s}s ({type})"
+    stats_slowest: "Πιο αργή: {s}s ({type})"
   resources_title: "Εμβάθυνε στο θέμα"
   resources_domain: "Περισσότερα για {domain}"
   motivation:
@@ -1644,6 +1678,9 @@ lesson:
   reviewed:
     completed: "Ολοκληρώθηκε"
   exercise:
+    toggle:
+      my_answer: "Η απάντησή μου"
+      solution: "Λύση"
     reread_theory: "Ξαναδιάβασε τη θεωρία"
     back_to_exercise: "Επιστροφή στην άσκηση"
     loading: "Φόρτωση άσκησης…"
@@ -1689,6 +1726,7 @@ lesson:
       result_correct: "Σωστά!"
       result_wrong: "Όχι ακριβώς."
       result_almost: "Σχεδόν! Πρόσεξε:"
+      accepted: "Αποδεκτές απαντήσεις"
       empty: "Αυτή η άσκηση ελεύθερου κειμένου δεν έχει αποδεκτές απαντήσεις."
     word_tiles:
       instructions: "Βάλε τα πλακίδια στη σωστή σειρά. Πάτησε για τοποθέτηση· χρησιμοποίησε τα βέλη ή σύρε για αναδιάταξη."
@@ -1836,6 +1874,20 @@ lesson:
     action_restart: "Επανεκκίνηση"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Κοινή χρήση ως αποθετήριο"
+    title: "Κοινή χρήση ως αποθετήριο"
+    needs_token: "Πρόσθεσε ένα διακριτικό GitHub στις Ρυθμίσεις → Ενσωματώσεις για κοινή χρήση ως αποθετήριο."
+    repo_label: "Αποθετήριο (owner/name)"
+    private: "Ιδιωτικό"
+    public: "Δημόσιο"
+    branch: "Κλάδος"
+    lessons_note: "Θα συμπεριληφθούν και τα {n} μαθήματα αυτού του σετ."
+    invalid_repo: "Δώσε το αποθετήριο ως owner/name."
+    submit: "Εξαγωγή"
+    working: "Εξαγωγή…"
+    done: "Το σετ σου ανέβηκε στο αποθετήριο."
+    failed: "Η εξαγωγή απέτυχε."
   anki_export:
     button: "Εξαγωγή Anki"
   discover_more: "Βρείτε περισσότερο περιεχόμενο"
@@ -2374,6 +2426,8 @@ learning_path:
   filter_label: "Φιλτράρισμα σετ"
   adaptive: "Έναρξη προσαρμοστικού μαθήματος"
   error_replay: "Επανάληψη λαθών"
+  train_errors: "Εξάσκηση λαθών"
+  shuffle: "Τυχαία σειρά"
   personal:
     title: "Η διαδρομή μάθησής σου"
     empty: "Κατέβασε ένα σετ μαθημάτων για να ξεκινήσεις."
@@ -2888,3 +2942,19 @@ update:
     release_page: "Σελίδα έκδοσης"
     later: "Αργότερα"
     whats_new_title: "Τι νέο υπάρχει στην {version}"
+shuffle:
+  session_title: "Τυχαία συνεδρία"
+  page_title: "Τυχαία σειρά"
+  loading: "Φόρτωση τυχαίας συνεδρίας…"
+  empty_body: "Αυτό το σετ χρειάζεται τουλάχιστον δύο μαθήματα με ασκήσεις για ανακάτεμα."
+  not_cached_body: "Αυτό το σετ δεν έχει ληφθεί ακόμη. Άνοιξε τον περιηγητή περιεχομένου για να το κατεβάσεις πρώτα."
+  back_to_dashboard: "Επιστροφή στον πίνακα"
+  subtitle: "Ανάμειξη {n} ερωτήσεων από {lessons} μαθήματα"
+  error:
+    load_failed: "Δεν ήταν δυνατή η φόρτωση της τυχαίας συνεδρίας."
+    missing_params: "Δεν επιλέχθηκε σετ περιεχομένου."
+  summary:
+    heading: "Η τυχαία εξάσκηση ολοκληρώθηκε!"
+    score: "{correct} από {total} σωστές"
+    from_lessons: "από {n} διαφορετικά μαθήματα"
+    another: "Ανακάτεμα ξανά"

@@ -14,6 +14,7 @@ import { Download, FolderOpen, Pencil, Play, Share2, Trash2 } from "lucide-react
 import { Button } from "@/components/ui/button";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
+import ShareAsRepoButton from "../share/ShareAsRepoButton";
 import type { ContentSetEntry } from "../../../storage/types";
 
 export interface UserSetActionsProps {
@@ -90,6 +91,8 @@ export default function UserSetActions({
           {t("content.my_lessons.share", "Share with Community")}
         </Button>
       )}
+      {/* #1017 — export the set to a GitHub repository for class/team sharing. */}
+      <ShareAsRepoButton entry={entry} testIdPrefix={testIdPrefix} />
       <Button
         type="button"
         variant="secondary"

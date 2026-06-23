@@ -457,6 +457,15 @@ progress:
   commit_notes_aria: "Oturum notları"
   session_count: "Oturumlar"
 settings:
+  lesson_mode:
+    title: "Ders modu"
+    hint: "Alıştırma modu tüm yardımları açık tutar. Sınav modu ipuçlarını, teori tekrarını, otomatik okumayı ve çözümü gizler; böylece gerçekçi koşullarda hatırlarsın."
+    default_label: "Varsayılan mod"
+    threshold_label: "Geçme eşiği"
+    timed_difficulty_label: "Süreli mod zorluğu"
+    timed_relaxed: "Rahat (2× süre)"
+    timed_normal: "Normal"
+    timed_fast: "Hızlı (0,7× süre)"
   updates:
     title: "Güncellemeler"
     auto_check: "Otomatik güncelleme denetimi"
@@ -1596,6 +1605,31 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  mode:
+    label: "Ders modu"
+    practice: "Alıştırma"
+    exam: "Sınav"
+    timed: "Süreli"
+    error: "Hataları çalış"
+    reverse: "Ters"
+    shuffle: "Karışık"
+    endless: "Sonsuz"
+  exam:
+    passed: "Geçti"
+    not_passed: "Geçmedi"
+    threshold_hint: "(geçme ≥ %{pct})"
+    result_title: "Sınav sonucu"
+    retry: "Sınavı tekrarla"
+    xp_bonus: "%{pct} sınav bonusu dahil"
+  timed:
+    remaining: "Kalan süre"
+    seconds_left: "{n}sn kaldı"
+    time_up: "Süre doldu!"
+    bonus: "+{n}sn bonus"
+    stats_answered: "{total} sorudan {n} tanesi süresinde yanıtlandı."
+    stats_avg: "Ortalama yanıt süresi: {s}sn"
+    stats_fastest: "En hızlı: {s}sn ({type})"
+    stats_slowest: "En yavaş: {s}sn ({type})"
   resources_title: "Konuyu derinleştir"
   resources_domain: "{domain} hakkında daha fazlası"
   motivation:
@@ -1642,6 +1676,9 @@ lesson:
   reviewed:
     completed: "Tamamlandı"
   exercise:
+    toggle:
+      my_answer: "Cevabım"
+      solution: "Çözüm"
     reread_theory: "Teoriyi tekrar oku"
     back_to_exercise: "Alıştırmaya dön"
     loading: "Alıştırma yükleniyor…"
@@ -1687,6 +1724,7 @@ lesson:
       result_correct: "Doğru!"
       result_wrong: "Pek değil."
       result_almost: "Neredeyse! Şuna dikkat et:"
+      accepted: "Kabul edilen yanıtlar"
       empty: "Bu serbest metin alıştırmasının kabul edilen cevabı yok."
     word_tiles:
       instructions: "Kutucukları doğru sıraya diz. Yerleştirmek için dokun; yeniden sıralamak için okları kullan veya sürükle."
@@ -1834,6 +1872,20 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "Depo olarak paylaş"
+    title: "Depo olarak paylaş"
+    needs_token: "Depo olarak paylaşmak için Ayarlar → Entegrasyonlar'da bir GitHub belirteci ekleyin."
+    repo_label: "Depo (owner/name)"
+    private: "Özel"
+    public: "Herkese açık"
+    branch: "Dal"
+    lessons_note: "Bu setteki {n} dersin tümü dahil edilecek."
+    invalid_repo: "Depoyu owner/name olarak girin."
+    submit: "Dışa aktar"
+    working: "Dışa aktarılıyor…"
+    done: "Setiniz depoya gönderildi."
+    failed: "Dışa aktarma başarısız."
   anki_export:
     button: "Anki dışa aktarma"
   discover_more: "Daha fazla içerik bul"
@@ -2372,6 +2424,8 @@ learning_path:
   filter_label: "Setleri filtrele"
   adaptive: "Uyarlanabilir dersi başlat"
   error_replay: "Hataları tekrarla"
+  train_errors: "Hataları çalış"
+  shuffle: "Karışık mod"
   personal:
     title: "Öğrenme yolun"
     empty: "Başlamak için bir ders seti indir."
@@ -2886,3 +2940,19 @@ update:
     release_page: "Sürüm sayfası"
     later: "Sonra"
     whats_new_title: "{version} sürümündeki yenilikler"
+shuffle:
+  session_title: "Karışık oturum"
+  page_title: "Karışık mod"
+  loading: "Karışık oturum yükleniyor…"
+  empty_body: "Bu set karıştırmak için alıştırma içeren en az iki ders gerektirir."
+  not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
+  back_to_dashboard: "Panoya dön"
+  subtitle: "{lessons} dersten {n} soru karıştırılıyor"
+  error:
+    load_failed: "Karışık oturum yüklenemedi."
+    missing_params: "İçerik seti seçilmedi."
+  summary:
+    heading: "Karışık çalışma tamamlandı!"
+    score: "{total} sorudan {correct} doğru"
+    from_lessons: "{n} farklı dersten"
+    another: "Tekrar karıştır"

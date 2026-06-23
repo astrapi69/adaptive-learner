@@ -22,6 +22,7 @@ import type {
 } from "../../exercises/exercise-control";
 import type { ReadAloudController } from "../../../hooks/lesson/useReadAloud";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import { useLessonMode } from "../../../hooks/lesson/useLessonMode";
 import { stampHintUsage, wasHintUsed } from "../../../lib/hints/hint-usage";
 import { formatUserAnswer } from "../../../lib/lesson/result-export";
 import { rewriteAnchors } from "../../../lib/lesson/lesson-anchors";
@@ -79,6 +80,8 @@ export default function LessonStepView({
   recordStepResult,
 }: LessonStepViewProps) {
   const { t } = useI18n();
+  // Exam mode (#1007): "Re-read theory" is a scaffolding aid — hidden.
+  const { showTheoryRecap } = useLessonMode();
 
   const handleComplete = async (scored: ExerciseScored) => {
     if (!step.exercise) return;
@@ -137,7 +140,7 @@ export default function LessonStepView({
       {/* #140 — re-read the relevant theory from an exercise step.
                 Rendered once here so all five renderers inherit it; subtle so
                 it doesn't distract from practising. */}
-      {step.type !== "theory" && precedingTheoryIndex !== null && (
+      {step.type !== "theory" && precedingTheoryIndex !== null && showTheoryRecap && (
         <div className="mb-2">
           <Button
             type="button"

@@ -266,6 +266,7 @@ def calculate_lesson_session_xp(
     stars: int,
     first_attempt: bool,
     streak_days: int,
+    xp_multiplier: float = 1.0,
 ) -> XPAward:
     """Compute XP for a content-lesson completion (Phase 46E.1).
 
@@ -277,6 +278,20 @@ def calculate_lesson_session_xp(
     - First-attempt 3-star bonus: +20 XP (stars==3 AND
       first_attempt)
     - Streak multiplier: +25%/day capped at 7 days
+    - Lesson-mode multiplier (#1007 Phase 2): the active lesson
+      mode's reward weight (``exam`` = 1.5×, ``timed``/``reverse``
+      = 1.25×, others 1.0×). Resolved from the persisted
+      ``LessonProgress.lesson_mode`` by the caller — see
+      :func:`lesson_xp_multiplier_for_mode`. Mirrors the
+      ``xpMultiplier`` field of the frontend ``MODE_CONFIGS``
+      (``frontend/src/lib/learning/lessonModeConfig.ts``).
+
+    The streak and mode factors compose into one effective
+    multiplier (``streak_multiplier * xp_multiplier``) applied to
+    the pre-multiplier subtotal — the SAME expression, in the same
+    order, as the TS port, so the float product (and the
+    banker's-rounded result) stay byte-identical for the parity
+    goldens.
     """
     base = 30
     breakdown: dict[str, int] = {"base": base}
@@ -292,19 +307,47 @@ def calculate_lesson_session_xp(
     pre_multiplier = sum(breakdown.values())
 
     capped_days = min(streak_days, 7)
-    multiplier = 1.0 + 0.25 * capped_days
-    xp_earned = int(round(pre_multiplier * multiplier))
+    streak_multiplier = 1.0 + 0.25 * capped_days
+    effective_multiplier = streak_multiplier * xp_multiplier
+    xp_earned = int(round(pre_multiplier * effective_multiplier))
     if streak_days > 0:
-        breakdown["streak_multiplier_pct"] = int(round((multiplier - 1.0) * 100))
+        breakdown["streak_multiplier_pct"] = int(
+            round((streak_multiplier - 1.0) * 100)
+        )
+    if xp_multiplier != 1.0:
+        breakdown["mode_multiplier_pct"] = int(round((xp_multiplier - 1.0) * 100))
 
     return XPAward(
         xp_earned=xp_earned,
         xp_total=0,  # filled in by award_xp_for_lesson_session
         level=1,
-        multiplier=multiplier,
+        multiplier=effective_multiplier,
         breakdown=breakdown,
         reason="lesson_complete",
     )
+
+
+# Lesson-mode XP weights (#1007 Phase 2). Mirrors the ``xpMultiplier``
+# field of each mode in the frontend single source of truth
+# ``frontend/src/lib/learning/lessonModeConfig.ts`` (``MODE_CONFIGS``).
+# Keep the two in sync; ``test_lesson_xp_multiplier_for_mode`` pins the
+# exam value. Unknown / unset modes weigh 1.0 (practice).
+_MODE_XP_MULTIPLIER: dict[str, float] = {
+    "practice": 1.0,
+    "exam": 1.5,
+    "timed": 1.25,
+    "error": 1.0,
+    "reverse": 1.25,
+    "shuffle": 1.0,
+    "endless": 1.0,
+}
+
+
+def lesson_xp_multiplier_for_mode(mode: str | None) -> float:
+    """Reward multiplier for a lesson mode (default 1.0)."""
+    if not mode:
+        return 1.0
+    return _MODE_XP_MULTIPLIER.get(mode, 1.0)
 
 
 # ---------------------------------------------------------------------------
@@ -462,6 +505,20 @@ def _is_first_attempt(db: Session, lesson_progress_id: str | None) -> bool:
     return is_first_attempt_from_step_results(row.step_results)
 
 
+def _lesson_mode_for_progress(db: Session, lesson_progress_id: str | None) -> str | None:
+    """The persisted ``lesson_mode`` of a lesson-progress row (or None).
+
+    Returns ``None`` on a missing id / row so the XP multiplier
+    falls back to 1.0 (practice).
+    """
+    if not lesson_progress_id:
+        return None
+    from app.models import LessonProgress
+
+    row = db.get(LessonProgress, lesson_progress_id)
+    return row.lesson_mode if row is not None else None
+
+
 def award_xp_for_lesson_session(
     db: Session,
     *,
@@ -495,10 +552,12 @@ def award_xp_for_lesson_session(
     activity = _activity_dates_for_user(db, user_id)
     streak = current_streak_days(activity)
 
+    mode = _lesson_mode_for_progress(db, session.get("lesson_progress_id"))
     award = calculate_lesson_session_xp(
         stars=stars,
         first_attempt=first_attempt,
         streak_days=streak,
+        xp_multiplier=lesson_xp_multiplier_for_mode(mode),
     )
 
     row = _get_or_create_user_xp(db, user_id)

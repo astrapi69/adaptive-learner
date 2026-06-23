@@ -457,6 +457,15 @@ progress:
   commit_notes_aria: "세션 메모"
   session_count: "세션"
 settings:
+  lesson_mode:
+    title: "레슨 모드"
+    hint: "연습 모드는 모든 학습 보조 기능을 유지합니다. 시험 모드는 힌트, 이론 복습, 자동 읽기, 정답 표시를 숨겨 현실적인 조건에서 회상하도록 합니다."
+    default_label: "기본 모드"
+    threshold_label: "합격 기준"
+    timed_difficulty_label: "시간 제한 모드 난이도"
+    timed_relaxed: "여유 (2× 시간)"
+    timed_normal: "보통"
+    timed_fast: "빠름 (0.7× 시간)"
   updates:
     title: "업데이트"
     auto_check: "자동 업데이트 확인"
@@ -1607,6 +1616,31 @@ repo:
     description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
     enable_git: "git 영속화 활성화"
 lesson:
+  mode:
+    label: "레슨 모드"
+    practice: "연습"
+    exam: "시험"
+    timed: "시간 제한"
+    error: "오답 연습"
+    reverse: "역방향"
+    shuffle: "셔플"
+    endless: "무한"
+  exam:
+    passed: "합격"
+    not_passed: "불합격"
+    threshold_hint: "(합격 ≥ {pct}%)"
+    result_title: "시험 결과"
+    retry: "시험 다시 보기"
+    xp_bonus: "시험 보너스 {pct}% 포함"
+  timed:
+    remaining: "남은 시간"
+    seconds_left: "{n}초 남음"
+    time_up: "시간 초과!"
+    bonus: "+{n}초 보너스"
+    stats_answered: "{total}개 중 {n}개를 제시간에 응답."
+    stats_avg: "평균 응답 시간: {s}초"
+    stats_fastest: "가장 빠름: {s}초 ({type})"
+    stats_slowest: "가장 느림: {s}초 ({type})"
   resources_title: "더 알아보기"
   resources_domain: "{domain}에 대해 더 보기"
   motivation:
@@ -1653,6 +1687,9 @@ lesson:
   reviewed:
     completed: "완료됨"
   exercise:
+    toggle:
+      my_answer: "내 답변"
+      solution: "정답"
     reread_theory: "이론 다시 읽기"
     back_to_exercise: "연습으로 돌아가기"
     loading: "연습을 불러오는 중…"
@@ -1698,6 +1735,7 @@ lesson:
       result_correct: "정답입니다!"
       result_wrong: "아쉬워요."
       result_almost: "거의 맞았어요! 다음에 유의하세요:"
+      accepted: "허용되는 답"
       empty: "이 자유 입력 연습에는 허용된 답이 없습니다."
     word_tiles:
       instructions: "타일을 순서대로 배열하세요. 탭하여 배치하고, 화살표나 드래그로 순서를 바꾸세요."
@@ -1845,6 +1883,20 @@ lesson:
     action_restart: "처음부터 다시"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  repo_export:
+    button: "저장소로 공유"
+    title: "저장소로 공유"
+    needs_token: "저장소로 공유하려면 설정 → 통합에서 GitHub 토큰을 추가하세요."
+    repo_label: "저장소 (owner/name)"
+    private: "비공개"
+    public: "공개"
+    branch: "브랜치"
+    lessons_note: "이 세트의 모든 {n}개 레슨이 포함됩니다."
+    invalid_repo: "저장소를 owner/name 형식으로 입력하세요."
+    submit: "내보내기"
+    working: "내보내는 중…"
+    done: "세트를 저장소에 푸시했습니다."
+    failed: "내보내기 실패."
   anki_export:
     button: "Anki 내보내기"
   discover_more: "더 많은 콘텐츠 찾기"
@@ -2382,6 +2434,8 @@ learning_path:
   filter_label: "세트 필터"
   adaptive: "적응형 레슨 시작"
   error_replay: "오답 다시 풀기"
+  train_errors: "오답 연습"
+  shuffle: "셔플"
   personal:
     title: "당신의 학습 경로"
     empty: "시작하려면 레슨 세트를 다운로드하세요."
@@ -2896,3 +2950,19 @@ update:
     release_page: "릴리스 페이지"
     later: "나중에"
     whats_new_title: "{version}의 새로운 기능"
+shuffle:
+  session_title: "셔플 세션"
+  page_title: "셔플"
+  loading: "셔플 세션 로드 중…"
+  empty_body: "셔플하려면 연습이 있는 레슨이 두 개 이상 필요합니다."
+  not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요."
+  back_to_dashboard: "대시보드로 돌아가기"
+  subtitle: "{lessons}개 레슨에서 {n}개 문제 섞기"
+  error:
+    load_failed: "셔플 세션을 불러올 수 없습니다."
+    missing_params: "선택된 콘텐츠 세트가 없습니다."
+  summary:
+    heading: "셔플 연습 완료!"
+    score: "{total}개 중 {correct}개 정답"
+    from_lessons: "{n}개의 서로 다른 레슨에서"
+    another: "다시 섞기"
