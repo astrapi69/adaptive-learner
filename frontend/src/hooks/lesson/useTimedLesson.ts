@@ -23,6 +23,7 @@ import {
     timeLimitSeconds,
     readTimedDifficulty,
     type ExerciseType,
+    type TimedDifficulty,
     type TimedQuestionRecord,
     type TimedRunStats,
 } from "../../lib/learning/timedMode";
@@ -40,6 +41,27 @@ function forcedWrongTotal(exercise: ContentLessonExercise): number {
     if (exercise.type === "matching") return exercise.pairs?.length ?? 1;
     if (exercise.type === "cloze") return exercise.blanks?.length ?? 1;
     return 1;
+}
+
+/** The countdown length for the current question: the per-type-×-difficulty
+ *  base plus the carried correct-answer bonus, or 0 when the step is not a
+ *  timed exercise. Module-level so the two call sites (the live
+ *  ``limitSeconds`` + the per-step reset) share one branch instead of each
+ *  carrying the nested ternary. */
+function questionLimit(
+    exercise: ContentLessonExercise | null,
+    isExerciseStep: boolean,
+    difficulty: TimedDifficulty,
+    appliedBonus: number,
+): number {
+    if (!isExerciseStep || !exercise) return 0;
+    return (
+        timeLimitSeconds(
+            exercise.type as ExerciseType,
+            difficulty,
+            exercise.pairs?.length ?? 1,
+        ) + appliedBonus
+    );
 }
 
 export interface UseTimedLessonOptions {
@@ -104,14 +126,12 @@ export function useTimedLesson({
     const isExerciseStep =
         enabled && exercise != null && step != null && step.type !== "theory";
 
-    const limitSeconds =
-        isExerciseStep && exercise
-            ? timeLimitSeconds(
-                  exercise.type as ExerciseType,
-                  difficultyRef.current,
-                  exercise.pairs?.length ?? 1,
-              ) + appliedBonusRef.current
-            : 0;
+    const limitSeconds = questionLimit(
+        exercise,
+        isExerciseStep,
+        difficultyRef.current,
+        appliedBonusRef.current,
+    );
 
     // Render-phase reset on a new step: snapshot the bonus EARNED so far as
     // the bonus APPLIED to this question (so earning a bonus mid-step never
@@ -123,13 +143,12 @@ export function useTimedLesson({
         stepStartRef.current = Date.now();
         setTimedOut(false);
         setRemaining(
-            isExerciseStep && exercise
-                ? timeLimitSeconds(
-                      exercise.type as ExerciseType,
-                      difficultyRef.current,
-                      exercise.pairs?.length ?? 1,
-                  ) + appliedBonusRef.current
-                : 0,
+            questionLimit(
+                exercise,
+                isExerciseStep,
+                difficultyRef.current,
+                appliedBonusRef.current,
+            ),
         );
         if (advanceTimerRef.current !== null) {
             window.clearTimeout(advanceTimerRef.current);
