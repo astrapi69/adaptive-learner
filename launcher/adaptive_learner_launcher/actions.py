@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
 import socket
 import subprocess
 import threading
@@ -839,39 +840,120 @@ def _known_config_files() -> list[str]:
         return []
 
 
+def _human_size(num_bytes: int) -> str:
+    """Format a byte count the way Docker displays image sizes (decimal,
+    e.g. ``245 MB``). ``0 B`` for a zero/unknown size."""
+    if num_bytes <= 0:
+        return "0 B"
+    size = float(num_bytes)
+    for unit in ("B", "KB", "MB", "GB", "TB"):
+        if size < 1000 or unit == "TB":
+            return f"{size:.0f} {unit}"
+        size /= 1000
+    return f"{size:.0f} TB"
+
+
+def _image_size_bytes(ref: str) -> int:
+    """Disk size of a docker image in bytes, or ``0`` when it cannot be
+    determined (docker missing, image gone, unparsable output). Best-effort
+    and queried BEFORE removal so the freed size can be reported."""
+    try:
+        result = _run(
+            ["docker", "image", "inspect", ref, "--format", "{{.Size}}"],
+            timeout=15.0,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return 0
+    if result.returncode != 0:
+        return 0
+    try:
+        return int((result.stdout or "").strip())
+    except ValueError:
+        return 0
+
+
+def _remove_config_path(path: str) -> tuple[bool, str]:
+    """Delete a stale config file or directory. Returns ``(ok, detail)`` and
+    never raises; an already-absent path counts as success. Only the legacy,
+    non-active config dirs from :func:`find_stale_artifacts` reach here - the
+    learner's DATA dir lives elsewhere and is never targeted."""
+    target = Path(path).expanduser()
+    try:
+        if target.is_dir():
+            shutil.rmtree(target)
+        elif target.exists():
+            target.unlink()
+        return True, ""
+    except OSError as exc:
+        return False, str(exc)
+
+
 def cleanup_stale(stale: dict[str, list], *, on_step: ProgressFn | None = None,
                   remove_volumes_too: bool = False) -> tuple[bool, str]:
     """Remove the STALE artifacts found by :func:`find_stale_artifacts` (#1042).
 
-    Verbose: each container/image (and, when ``remove_volumes_too``, each
-    volume) is a separate ``on_step`` line with a ``✓``/``✗`` result, streamed
-    into the GUI log like install/uninstall. Volumes are DATA - skipped unless
-    the caller explicitly opts in. Config dirs are left untouched here (file
-    deletion is handled by the GUI confirm path, not docker). Best-effort: a
-    single failure is reported but does not abort the rest.
+    Verbose (#1052): a discovery line per category with its count, then a
+    SEPARATE ``on_step`` line per container / image / config dir (and, when
+    ``remove_volumes_too``, per volume) carrying a ``✓``/``✗`` result, then a
+    closing summary (artefacts removed + total space freed + a data-preserved
+    note). Image lines append the freed size (e.g. ``✓ (245 MB)``). Volumes are
+    DATA - skipped unless the caller opts in. Best-effort: a single failure is
+    reported but does not abort the rest. The summary's freed total counts
+    image disk size (the dominant, measurable artifact).
     """
     docker_ok, _ = check_docker()
     if not docker_ok:
         return False, _DOCKER_UNAVAILABLE
-    _notify(on_step, "Aufraeumen gestartet...")
+
+    containers = stale.get("containers", [])
+    images = stale.get("images", [])
+    volumes = stale.get("volumes", [])
+    configs = stale.get("configs", [])
+
+    _notify(on_step, "Aufraeum-Pruefung...")
+    _notify(on_step, f"Suche verwaiste Container... {len(containers)} gefunden")
+    _notify(on_step, f"Suche veraltete Images... {len(images)} gefunden")
+    _notify(on_step, f"Suche verwaiste Volumes... {len(volumes)} gefunden")
+    _notify(on_step, f"Suche Config-Reste... {len(configs)} gefunden")
+
+    removed = 0
     failures = 0
-    for name in stale.get("containers", []):
+    freed_bytes = 0
+
+    for name in containers:
         ok, detail = _docker_op(["docker", "rm", "-f", name], timeout=60.0)
         _notify(on_step, _step_label(f"Container '{name}' entfernen", ok, detail))
+        removed += 1 if ok else 0
         failures += 0 if ok else 1
-    for ref in stale.get("images", []):
+    for ref in images:
+        size = _image_size_bytes(ref)
         ok, detail = _docker_op(["docker", "image", "rm", "--force", ref], timeout=60.0)
-        _notify(on_step, _step_label(f"Image '{ref}' entfernen", ok, detail))
-        failures += 0 if ok else 1
+        size_note = f" ({_human_size(size)})" if ok and size > 0 else ""
+        _notify(on_step, _step_label(f"Image '{ref}' entfernen", ok, detail) + size_note)
+        if ok:
+            removed += 1
+            freed_bytes += size
+        else:
+            failures += 1
     if remove_volumes_too:
-        for vol in stale.get("volumes", []):
+        for vol in volumes:
             ok, detail = _docker_op(["docker", "volume", "rm", vol], timeout=30.0)
             _notify(on_step, _step_label(f"Volume '{vol}' entfernen", ok, detail))
+            removed += 1 if ok else 0
             failures += 0 if ok else 1
+    for path in configs:
+        ok, detail = _remove_config_path(path)
+        _notify(on_step, _step_label(f"Config '{path}' entfernen", ok, detail))
+        removed += 1 if ok else 0
+        failures += 0 if ok else 1
+
+    freed = _human_size(freed_bytes)
+    _notify(on_step, "Aufraeumen abgeschlossen.")
+    _notify(on_step, f"{removed} Artefakt(e) entfernt, {freed} freigegeben.")
+    _notify(on_step, "Lerndaten wurden beibehalten.")
     if failures:
         return False, f"Aufraeumen teilweise fehlgeschlagen ({failures} Schritt(e))."
-    _notify(on_step, "Aufraeumen abgeschlossen ✓")
-    return True, "Aufraeumen abgeschlossen."
+    return True, f"Aufraeumen abgeschlossen: {removed} Artefakt(e), {freed} freigegeben."
 
 
 def stack_running(repo: Path, compose_file: str) -> bool:

@@ -1059,8 +1059,49 @@ class TestCleanupStale:
         assert ok is True and "abgeschlossen" in msg
         assert "Container 'bibliogon-old' entfernen... ✓" in steps
         assert "Image 'bibliogon:latest' entfernen... ✓" in steps
-        # Volumes are DATA - skipped unless opted in.
-        assert not any("Volume" in s for s in steps)
+        # Volumes are DATA - not REMOVED unless opted in (no removal line).
+        assert not any("Volume '" in s for s in steps)
+
+    def test_emits_discovery_and_summary_lines(self, monkeypatch) -> None:
+        """#1052 - each step visible: per-category discovery counts up front
+        and a closing summary (count + freed space + data-preserved note)."""
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        steps: list[str] = []
+        stale = {"containers": ["c1", "c2"], "images": ["i1"],
+                 "volumes": ["v1"], "configs": []}
+        actions.cleanup_stale(stale, on_step=steps.append)
+        assert "Suche verwaiste Container... 2 gefunden" in steps
+        assert "Suche veraltete Images... 1 gefunden" in steps
+        assert "Suche verwaiste Volumes... 1 gefunden" in steps
+        assert "Suche Config-Reste... 0 gefunden" in steps
+        assert any(s.startswith("3 Artefakt(e) entfernt,") for s in steps)
+        assert "Lerndaten wurden beibehalten." in steps
+
+    def test_image_line_shows_freed_size(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_image_size_bytes", lambda ref: 245_000_000)
+        steps: list[str] = []
+        ok, msg = actions.cleanup_stale(
+            {"containers": [], "images": ["al:latest"], "volumes": [], "configs": []},
+            on_step=steps.append)
+        assert "Image 'al:latest' entfernen... ✓ (245 MB)" in steps
+        assert "245 MB freigegeben" in msg
+
+    def test_removes_stale_config_dir_and_reports_it(self, monkeypatch, tmp_path) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        stale_dir = tmp_path / ".adaptive-learner"
+        stale_dir.mkdir()
+        (stale_dir / "launcher.json").write_text("{}")
+        steps: list[str] = []
+        ok, _ = actions.cleanup_stale(
+            {"containers": [], "images": [], "volumes": [], "configs": [str(stale_dir)]},
+            on_step=steps.append)
+        assert ok is True
+        assert not stale_dir.exists()
+        assert f"Config '{stale_dir}' entfernen... ✓" in steps
 
     def test_removes_volumes_only_when_opted_in(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
