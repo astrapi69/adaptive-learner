@@ -460,50 +460,95 @@ class TestUninstall:
 
     def test_nothing_to_remove(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
-        ok, msg = actions.uninstall("adaptive-learner")
+        monkeypatch.setattr(actions, "_project_containers", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        steps: list[str] = []
+        ok, msg = actions.uninstall("adaptive-learner", on_step=steps.append)
         assert ok is True and "Nichts" in msg
+        assert "Keine Container gefunden ✓" in steps
 
     def test_removes_running_and_verifies(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        ids = iter([["c1", "c2"], []])
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend"),
+                                     ("c2", "adaptive-learner-frontend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
         monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
-        monkeypatch.setattr(actions, "_remove_images", lambda: None)
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
         ok, msg = actions.uninstall("adaptive-learner")
         assert ok is True and "abgeschlossen" in msg
 
+    def test_streams_a_verbose_step_per_container(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend"),
+                                     ("c2", "adaptive-learner-frontend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        steps: list[str] = []
+        actions.uninstall("adaptive-learner", on_step=steps.append)
+        assert "Deinstallation gestartet..." in steps
+        assert "Container 'adaptive-learner-backend' stoppen... ✓" in steps
+        assert "Container 'adaptive-learner-frontend' stoppen... ✓" in steps
+        assert "Container 'adaptive-learner-backend' entfernen... ✓" in steps
+        assert "Container 'adaptive-learner-frontend' entfernen... ✓" in steps
+        assert "Verifizierung: keine Container gefunden ✓" in steps
+
     def test_removes_stopped_and_verifies(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        ids = iter([["c1"], []])
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
         monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
-        monkeypatch.setattr(actions, "_remove_images", lambda: None)
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
         ok, _ = actions.uninstall("adaptive-learner")
         assert ok is True
 
     def test_partial_removal_reports_failure(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        ids = iter([["c1", "c2"], ["c2"]])  # one survives
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend"),
+                                     ("c2", "adaptive-learner-frontend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: ["c2"])  # survives
         monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
-        ok, msg = actions.uninstall("adaptive-learner")
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        steps: list[str] = []
+        ok, msg = actions.uninstall("adaptive-learner", on_step=steps.append)
         assert ok is False and "Teilweise" in msg
+        assert any("verbleiben ✗" in s for s in steps)
 
-    def test_rm_raises(self, monkeypatch) -> None:
+    def test_step_error_shown_per_step(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend")],
+        )
+        # docker rm fails with a permission error; the container survives ->
+        # the step shows the ✗ reason AND the verify reports partial removal.
         monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: ["c1"])
-
-        def boom(*a, **k):
-            raise subprocess.TimeoutExpired(cmd="docker", timeout=60)
-
-        monkeypatch.setattr(actions, "_run", boom)
-        ok, msg = actions.uninstall("adaptive-learner")
-        assert ok is False and "fehlgeschlagen" in msg
+        monkeypatch.setattr(
+            actions, "_run",
+            lambda *a, **k: _result(returncode=1, stderr="Error: permission denied"),
+        )
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        steps: list[str] = []
+        ok, msg = actions.uninstall("adaptive-learner", on_step=steps.append)
+        assert ok is False and "Teilweise" in msg
+        assert any("✗ Fehler: Error: permission denied" in s for s in steps)
 
     def test_double_uninstall(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_project_containers", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
         ok, msg = actions.uninstall("adaptive-learner")
         assert ok is True and "Nichts" in msg
 

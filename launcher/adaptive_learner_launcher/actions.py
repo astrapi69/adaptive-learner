@@ -400,34 +400,126 @@ def stop(project: str = DEFAULT_PROJECT) -> tuple[bool, str]:
     return True, "App gestoppt."
 
 
-def uninstall(project: str = DEFAULT_PROJECT) -> tuple[bool, str]:
+def uninstall(project: str = DEFAULT_PROJECT, *, on_step: ProgressFn | None = None) -> tuple[bool, str]:
     """Force-remove containers (and images), then VERIFY they are gone.
 
     Removes by id (``docker rm -f``) so it works regardless of the compose
     directory, and re-lists to confirm - never claims success while a
     container survives. Volumes are PRESERVED (data survives a reinstall).
+
+    Verbose (#1041): every container stop/remove and every image removal is a
+    SEPARATE step reported through ``on_step`` with a ``✓``/``✗`` result, so
+    the GUI streams the uninstall live (like install) instead of only showing
+    the final "abgeschlossen" line. ``on_step`` is best-effort; a failing
+    callback never breaks the uninstall.
     """
     docker_ok, _ = check_docker()
     if not docker_ok:
         return False, _DOCKER_UNAVAILABLE
-    ids = _project_container_ids(running_only=False)
-    if not ids:
+    _notify(on_step, "Deinstallation gestartet...")
+    containers = _project_containers(running_only=False)
+    if not containers:
+        _notify(on_step, "Keine Container gefunden ✓")
+        # No containers, but stray images may still linger - clear them too.
+        _uninstall_images(on_step)
         return True, "Nichts zu deinstallieren (kein Container vorhanden)."
-    try:
-        _run(["docker", "rm", "-f", *ids], timeout=60.0)
-    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
-        return False, f"Entfernen fehlgeschlagen: {exc}"
+
+    # Stop each container individually (best-effort; ``rm -f`` would also stop,
+    # but the spec wants a visible per-container step).
+    for cid, name in containers:
+        ok, detail = _docker_op(["docker", "stop", cid], timeout=60.0)
+        _notify(on_step, _step_label(f"Container '{name}' stoppen", ok, detail))
+
+    # Remove each container individually.
+    for cid, name in containers:
+        ok, detail = _docker_op(["docker", "rm", "-f", cid], timeout=60.0)
+        _notify(on_step, _step_label(f"Container '{name}' entfernen", ok, detail))
+
     remaining = _project_container_ids(running_only=False)
     if remaining:
+        _notify(on_step, f"Verifizierung: {len(remaining)} Container verbleiben ✗")
         return False, f"Teilweise entfernt: {len(remaining)} Container konnte(n) nicht entfernt werden."
-    _remove_images()  # best-effort, frees disk; never blocks success
+    _notify(on_step, "Verifizierung: keine Container gefunden ✓")
+
+    # Best-effort image cleanup (frees disk; never blocks success).
+    _uninstall_images(on_step)
     return True, "Deinstallation abgeschlossen. Deine Lerndaten bleiben erhalten."
 
 
-def _remove_images() -> None:
-    ok, detail = remove_images()
-    if not ok:
-        logger.warning("image removal failed: %s", detail)
+def _docker_op(cmd: list[str], *, timeout: float = 60.0) -> tuple[bool, str]:
+    """Run ONE docker step. Returns ``(ok, detail)`` - ``detail`` is the
+    trimmed last stderr line on failure (for the ``✗ Fehler: ...`` step), or
+    a short reason when docker is missing / times out. Never raises."""
+    try:
+        result = _run(cmd, timeout=timeout)
+    except FileNotFoundError:
+        return False, "Docker nicht gefunden"
+    except subprocess.TimeoutExpired:
+        return False, "Zeitueberschreitung"
+    if result.returncode != 0:
+        stderr = (result.stderr or "").strip()
+        return False, stderr.splitlines()[-1] if stderr else "unbekannter Fehler"
+    return True, ""
+
+
+def _step_label(label: str, ok: bool, detail: str) -> str:
+    """Format one verbose step line: ``<label>... ✓`` or
+    ``<label>... ✗ Fehler: <detail>`` (#1041)."""
+    return f"{label}... ✓" if ok else f"{label}... ✗ Fehler: {detail}"
+
+
+def _project_containers(*, running_only: bool) -> list[tuple[str, str]]:
+    """List this project's containers as ``(id, name)`` pairs (current +
+    legacy names). Empty on any docker failure - the caller treats that as
+    "nothing to remove"."""
+    cmd = ["docker", "ps"] if running_only else ["docker", "ps", "-a"]
+    for flt in _NAME_FILTERS:
+        cmd += ["--filter", flt]
+    cmd += ["--format", "{{.ID}}\t{{.Names}}"]
+    try:
+        result = _run(cmd, timeout=15.0)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return []
+    pairs: list[tuple[str, str]] = []
+    for line in (result.stdout or "").strip().splitlines():
+        cid, _, name = line.partition("\t")
+        if cid:
+            pairs.append((cid, name or cid))
+    return pairs
+
+
+def _project_images() -> list[tuple[str, str]]:
+    """List Adaptive Learner images as ``(id, reference)`` pairs (current +
+    legacy names), de-duplicated by id. Empty on any docker failure."""
+    try:
+        result = _run([
+            "docker", "images",
+            "--filter", "reference=*adaptive-learner*",
+            "--filter", "reference=*adaptive_learner*",
+            "--format", "{{.ID}}\t{{.Repository}}",
+        ])
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return []
+    pairs: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for line in (result.stdout or "").strip().splitlines():
+        cid, _, ref = line.partition("\t")
+        if cid and cid not in seen:
+            seen.add(cid)
+            pairs.append((cid, ref or cid))
+    return pairs
+
+
+def _uninstall_images(on_step: ProgressFn | None = None) -> None:
+    """Remove each Adaptive Learner image individually, reporting a verbose
+    step per image (#1041). Best-effort: a failure is logged + shown as a
+    ``✗`` step but never blocks the uninstall."""
+    for cid, ref in _project_images():
+        ok, detail = _docker_op(["docker", "image", "rm", "--force", cid], timeout=60.0)
+        _notify(on_step, _step_label(f"Image '{ref}' entfernen", ok, detail))
+        if not ok:
+            logger.warning("image removal failed for %s: %s", ref, detail)
+
 
 
 def remove_images() -> tuple[bool, str]:

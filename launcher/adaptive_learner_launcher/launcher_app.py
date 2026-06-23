@@ -77,7 +77,7 @@ def dispatch_action(action_id: str, *, compose_file: str, project: str, port: in
     if action_id == "stop":
         return actions.stop(project)
     if action_id == "uninstall":
-        return actions.uninstall(project)
+        return actions.uninstall(project, on_step=on_step)
     if action_id == "open":
         actions.open_browser(port)
         return None
