@@ -7,12 +7,68 @@
  * optional description. Behaviour-preserving.
  */
 
+import { useEffect, useRef, useState } from "react";
 import { Pause } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import LessonExitDialog from "../dialogs/LessonExitDialog";
 import type { ContentLesson } from "../../../storage/types";
 import { useI18n } from "../../../hooks/ui/useI18n";
+
+/**
+ * Lesson description clamped to two lines on every viewport with a
+ * "show more / less" toggle (#1043). The toggle is shown only when the text
+ * actually overflows two lines (measured against the clamped state), so a
+ * short description stays a plain paragraph and never costs an extra row.
+ *
+ * @param text - The lesson description (already known non-empty).
+ */
+export function LessonDescription({ text }: { text: string }) {
+  const { t } = useI18n();
+  const ref = useRef<HTMLParagraphElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [overflowing, setOverflowing] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // While clamped, scrollHeight exceeds clientHeight when a third line is
+    // needed; that is the only state where the toggle adds value.
+    const measure = () =>
+      setOverflowing(el.scrollHeight > el.clientHeight + 1);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [text, expanded]);
+
+  return (
+    <div className="lesson-description-wrap">
+      <p
+        ref={ref}
+        className={`lesson-description${expanded ? "" : " line-clamp-2"}`}
+        data-testid="lesson-description"
+      >
+        {text}
+      </p>
+      {(overflowing || expanded) && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="lesson-description-toggle h-auto px-0 text-sm text-fg-muted"
+          onClick={() => setExpanded((value) => !value)}
+          aria-expanded={expanded}
+          data-testid="lesson-description-toggle"
+        >
+          {expanded
+            ? t("ui.tooltips.show_less", "Show less")
+            : t("ui.tooltips.show_more", "Show more")}
+        </Button>
+      )}
+    </div>
+  );
+}
 
 interface LessonHeaderProps {
   lesson: ContentLesson;
@@ -106,11 +162,10 @@ export default function LessonHeader({
         </p>
       )}
       {showDescription && lesson.description && (
-        // #959 — first step only; clamp to 2 lines on mobile, full on
-        // desktop (sm+), which has the vertical room.
-        <p className="lesson-description line-clamp-2 sm:line-clamp-none">
-          {lesson.description}
-        </p>
+        // #959 — first step only. #1043 — clamp to 2 lines on every viewport
+        // with a "show more" toggle so even the first step's header stays
+        // compact; the full text is one tap away.
+        <LessonDescription text={lesson.description} />
       )}
     </header>
   );
