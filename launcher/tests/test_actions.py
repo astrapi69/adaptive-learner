@@ -18,7 +18,15 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from adaptive_learner_launcher import actions
+from adaptive_learner_launcher import actions, manifest
+
+
+@pytest.fixture(autouse=True)
+def _isolate_manifest(tmp_path, monkeypatch):
+    """Redirect the install manifest to a tmp file so the manifest writes the
+    install/start/uninstall actions now perform (#1043) never touch the real
+    user config dir during tests."""
+    monkeypatch.setattr(manifest, "manifest_path", lambda: tmp_path / "install.json")
 
 
 def _result(returncode: int = 0, stdout: str = "", stderr: str = "") -> subprocess.CompletedProcess:
@@ -460,50 +468,95 @@ class TestUninstall:
 
     def test_nothing_to_remove(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
-        ok, msg = actions.uninstall("adaptive-learner")
+        monkeypatch.setattr(actions, "_project_containers", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        steps: list[str] = []
+        ok, msg = actions.uninstall("adaptive-learner", on_step=steps.append)
         assert ok is True and "Nichts" in msg
+        assert "Keine Container gefunden ✓" in steps
 
     def test_removes_running_and_verifies(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        ids = iter([["c1", "c2"], []])
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend"),
+                                     ("c2", "adaptive-learner-frontend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
         monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
-        monkeypatch.setattr(actions, "_remove_images", lambda: None)
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
         ok, msg = actions.uninstall("adaptive-learner")
         assert ok is True and "abgeschlossen" in msg
 
+    def test_streams_a_verbose_step_per_container(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend"),
+                                     ("c2", "adaptive-learner-frontend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        steps: list[str] = []
+        actions.uninstall("adaptive-learner", on_step=steps.append)
+        assert "Deinstallation gestartet..." in steps
+        assert "Container 'adaptive-learner-backend' stoppen... ✓" in steps
+        assert "Container 'adaptive-learner-frontend' stoppen... ✓" in steps
+        assert "Container 'adaptive-learner-backend' entfernen... ✓" in steps
+        assert "Container 'adaptive-learner-frontend' entfernen... ✓" in steps
+        assert "Verifizierung: keine Container gefunden ✓" in steps
+
     def test_removes_stopped_and_verifies(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        ids = iter([["c1"], []])
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
         monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
-        monkeypatch.setattr(actions, "_remove_images", lambda: None)
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
         ok, _ = actions.uninstall("adaptive-learner")
         assert ok is True
 
     def test_partial_removal_reports_failure(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        ids = iter([["c1", "c2"], ["c2"]])  # one survives
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: next(ids))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend"),
+                                     ("c2", "adaptive-learner-frontend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: ["c2"])  # survives
         monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
-        ok, msg = actions.uninstall("adaptive-learner")
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        steps: list[str] = []
+        ok, msg = actions.uninstall("adaptive-learner", on_step=steps.append)
         assert ok is False and "Teilweise" in msg
+        assert any("verbleiben ✗" in s for s in steps)
 
-    def test_rm_raises(self, monkeypatch) -> None:
+    def test_step_error_shown_per_step(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend")],
+        )
+        # docker rm fails with a permission error; the container survives ->
+        # the step shows the ✗ reason AND the verify reports partial removal.
         monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: ["c1"])
-
-        def boom(*a, **k):
-            raise subprocess.TimeoutExpired(cmd="docker", timeout=60)
-
-        monkeypatch.setattr(actions, "_run", boom)
-        ok, msg = actions.uninstall("adaptive-learner")
-        assert ok is False and "fehlgeschlagen" in msg
+        monkeypatch.setattr(
+            actions, "_run",
+            lambda *a, **k: _result(returncode=1, stderr="Error: permission denied"),
+        )
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        steps: list[str] = []
+        ok, msg = actions.uninstall("adaptive-learner", on_step=steps.append)
+        assert ok is False and "Teilweise" in msg
+        assert any("✗ Fehler: Error: permission denied" in s for s in steps)
 
     def test_double_uninstall(self, monkeypatch) -> None:
         monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
-        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_project_containers", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
         ok, msg = actions.uninstall("adaptive-learner")
         assert ok is True and "Nichts" in msg
 
@@ -911,3 +964,184 @@ class TestCliGuiParity:
             assert callable(getattr(actions, func_name, None)), (
                 f"CLI --{flag} maps to actions.{func_name}, which is missing"
             )
+
+
+# --- install manifest + startup cleanup (#1042 / #1043) -------------------
+
+class TestArtifactCollection:
+    def test_collect_installed_artifacts(self, monkeypatch) -> None:
+        monkeypatch.setattr(
+            actions, "_run",
+            lambda *a, **k: _result(stdout="adaptive-learner-backend\tadaptive-learner-backend:latest\n"
+                                           "adaptive-learner-frontend\tadaptive-learner-frontend:latest"),
+        )
+        monkeypatch.setattr(actions, "_image_refs", lambda pats: ["adaptive-learner-backend:latest"])
+        monkeypatch.setattr(actions, "_docker_names", lambda kind, pats: ["adaptive-learner-data"])
+        arts = actions.collect_installed_artifacts("adaptive-learner")
+        assert arts["containers"] == [
+            {"name": "adaptive-learner-backend", "image": "adaptive-learner-backend:latest"},
+            {"name": "adaptive-learner-frontend", "image": "adaptive-learner-frontend:latest"},
+        ]
+        assert arts["images"] == ["adaptive-learner-backend:latest"]
+        assert arts["volumes"] == ["adaptive-learner-data"]
+
+
+class TestFindStaleArtifacts:
+    def _patch_docker(self, monkeypatch, *, containers, images, volumes) -> None:
+        monkeypatch.setattr(
+            actions, "_docker_names",
+            lambda kind, pats: containers if kind == "container" else volumes,
+        )
+        monkeypatch.setattr(actions, "_image_refs", lambda pats: images)
+
+    def test_manifest_excludes_active_install(self, monkeypatch) -> None:
+        # The active install (from the manifest) must NEVER be offered for cleanup;
+        # only the Bibliogon / old leftovers are stale.
+        monkeypatch.setattr(actions.manifest, "manifest_artifacts", lambda: {
+            "containers": ["adaptive-learner-backend"],
+            "images": ["adaptive-learner-backend:latest"],
+            "volumes": ["adaptive-learner-data"],
+            "configs": [],
+        })
+        self._patch_docker(
+            monkeypatch,
+            containers=["adaptive-learner-backend", "bibliogon-old"],
+            images=["adaptive-learner-backend:latest", "bibliogon:latest"],
+            volumes=["adaptive-learner-data", "bibliogon-data"],
+        )
+        stale = actions.find_stale_artifacts("adaptive-learner", config_dirs=[])
+        assert stale["containers"] == ["bibliogon-old"]
+        assert stale["images"] == ["bibliogon:latest"]
+        assert stale["volumes"] == ["bibliogon-data"]
+        assert stale["configs"] == []
+
+    def test_without_manifest_excludes_running(self, monkeypatch) -> None:
+        # No manifest -> protect the live install by excluding running containers.
+        monkeypatch.setattr(actions.manifest, "manifest_artifacts", lambda: {
+            "containers": [], "images": [], "volumes": [], "configs": [],
+        })
+        monkeypatch.setattr(actions, "_running_container_names", lambda: ["adaptive-learner-backend"])
+        self._patch_docker(
+            monkeypatch,
+            containers=["adaptive-learner-backend", "old-container"],
+            images=["old-image:latest"],
+            volumes=[],
+        )
+        stale = actions.find_stale_artifacts("adaptive-learner", config_dirs=[])
+        assert stale["containers"] == ["old-container"]
+        assert stale["images"] == ["old-image:latest"]
+
+    def test_stale_config_dirs_reported_when_present(self, monkeypatch, tmp_path) -> None:
+        monkeypatch.setattr(actions.manifest, "manifest_artifacts", lambda: {
+            "containers": [], "images": [], "volumes": [], "configs": [],
+        })
+        monkeypatch.setattr(actions, "_running_container_names", lambda: [])
+        self._patch_docker(monkeypatch, containers=[], images=[], volumes=[])
+        stale_dir = tmp_path / ".adaptive-learner"
+        stale_dir.mkdir()
+        missing = tmp_path / "gone"
+        stale = actions.find_stale_artifacts(config_dirs=[stale_dir, missing])
+        assert stale["configs"] == [str(stale_dir)]
+
+    def test_has_stale_artifacts(self) -> None:
+        assert actions.has_stale_artifacts({"containers": ["x"], "images": [], "volumes": [], "configs": []})
+        assert not actions.has_stale_artifacts({"containers": [], "images": [], "volumes": [], "configs": []})
+
+
+class TestCleanupStale:
+    def test_removes_containers_and_images_verbosely(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        steps: list[str] = []
+        stale = {"containers": ["bibliogon-old"], "images": ["bibliogon:latest"],
+                 "volumes": ["bibliogon-data"], "configs": []}
+        ok, msg = actions.cleanup_stale(stale, on_step=steps.append)
+        assert ok is True and "abgeschlossen" in msg
+        assert "Container 'bibliogon-old' entfernen... ✓" in steps
+        assert "Image 'bibliogon:latest' entfernen... ✓" in steps
+        # Volumes are DATA - skipped unless opted in.
+        assert not any("Volume" in s for s in steps)
+
+    def test_removes_volumes_only_when_opted_in(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        steps: list[str] = []
+        stale = {"containers": [], "images": [], "volumes": ["bibliogon-data"], "configs": []}
+        actions.cleanup_stale(stale, on_step=steps.append, remove_volumes_too=True)
+        assert "Volume 'bibliogon-data' entfernen... ✓" in steps
+
+    def test_reports_partial_failure(self, monkeypatch) -> None:
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "_run",
+                            lambda *a, **k: _result(returncode=1, stderr="denied"))
+        ok, msg = actions.cleanup_stale(
+            {"containers": ["x"], "images": [], "volumes": [], "configs": []})
+        assert ok is False and "fehlgeschlagen" in msg
+
+
+class TestManifestWiring:
+    def test_install_writes_manifest_with_history(self, monkeypatch, tmp_path) -> None:
+        compose = tmp_path / "docker-compose.prod.yml"
+        compose.write_text("services: {}")
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(actions, "check_port", lambda p: (True, "frei"))
+        seq = iter(["not_installed", "running", "running"])
+        monkeypatch.setattr(actions, "get_state", lambda *a, **k: next(seq))
+        monkeypatch.setattr(actions, "_stream_compose", lambda *a, **k: (0, ""))
+        monkeypatch.setattr(actions, "health_check", lambda *a, **k: (True, "ok"))
+        monkeypatch.setattr(actions, "collect_installed_artifacts", lambda project: {
+            "containers": [{"name": "adaptive-learner-backend", "image": "adaptive-learner-backend:latest"}],
+            "images": ["adaptive-learner-backend:latest"],
+            "volumes": ["adaptive-learner-data"],
+        })
+        ok, _ = actions.install(str(compose), "adaptive-learner", 8501)
+        assert ok is True
+        data = manifest.read_manifest()
+        assert data is not None
+        assert data["compose_project"] == "adaptive-learner"
+        assert data["containers"][0]["name"] == "adaptive-learner-backend"
+        assert data["install_history"][-1]["action"] == "install"
+
+    def test_uninstall_marks_manifest_uninstalled(self, monkeypatch) -> None:
+        # A manifest exists (written via the isolated tmp path).
+        monkeypatch.setattr(actions, "collect_installed_artifacts", lambda project: {
+            "containers": [], "images": [], "volumes": [],
+        })
+        manifest.write_install_manifest(
+            install_dir=Path("/opt/al"), app_version="1.94.1", launcher_version="1.94.1",
+            port=8501, compose_project="adaptive-learner", compose_file="x.yml",
+            containers=[{"name": "adaptive-learner-backend", "image": "i"}],
+            images=["i"], volumes=["adaptive-learner-data"],
+        )
+        monkeypatch.setattr(actions, "check_docker", lambda: (True, "ok"))
+        monkeypatch.setattr(
+            actions, "_project_containers",
+            lambda *, running_only: [("c1", "adaptive-learner-backend")],
+        )
+        monkeypatch.setattr(actions, "_project_container_ids", lambda *, running_only: [])
+        monkeypatch.setattr(actions, "_run", lambda *a, **k: _result())
+        monkeypatch.setattr(actions, "_uninstall_images", lambda on_step=None: None)
+        ok, _ = actions.uninstall("adaptive-learner")
+        assert ok is True
+        data = manifest.read_manifest()
+        assert data["status"] == "uninstalled"
+        assert data["install_history"][-1]["action"] == "uninstall"
+
+
+class TestCleanupOfferLines:
+    def test_summarizes_nonempty_categories(self) -> None:
+        lines = actions.cleanup_offer_lines({
+            "containers": ["bibliogon-old", "al-legacy"],
+            "images": ["bibliogon:latest"],
+            "volumes": [],
+            "configs": ["/home/u/.adaptive-learner"],
+        })
+        assert lines == [
+            "2 Container: bibliogon-old, al-legacy",
+            "1 Image(s): bibliogon:latest",
+            "1 Konfig-Verzeichnis(se): /home/u/.adaptive-learner",
+        ]
+
+    def test_empty_when_nothing_stale(self) -> None:
+        assert actions.cleanup_offer_lines(
+            {"containers": [], "images": [], "volumes": [], "configs": []}) == []

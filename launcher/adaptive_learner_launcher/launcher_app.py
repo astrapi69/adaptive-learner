@@ -77,7 +77,7 @@ def dispatch_action(action_id: str, *, compose_file: str, project: str, port: in
     if action_id == "stop":
         return actions.stop(project)
     if action_id == "uninstall":
-        return actions.uninstall(project)
+        return actions.uninstall(project, on_step=on_step)
     if action_id == "open":
         actions.open_browser(port)
         return None
@@ -156,6 +156,8 @@ class LauncherApp:
         self._status.tag_configure("info", foreground="#555")
 
         self._refresh()
+        # #1042 - at startup, offer in-window cleanup of stale leftovers.
+        self._offer_cleanup_if_stale()
 
     def _log(self, line: str, *, tag: str = "info") -> None:
         self._status.configure(state="normal")
@@ -194,6 +196,56 @@ class LauncherApp:
             text="✓" if free else "✗",
             fg="#188038" if free else "#c5221f",
         )
+
+    # --- startup cleanup offer (#1042) ---
+
+    def _offer_cleanup_if_stale(self) -> None:
+        """Scan for stale leftovers of previous installations and, if any are
+        found, offer cleanup IN THE WINDOW (no separate dialog). The scan runs
+        off the Tk thread and must never crash startup."""
+        def scan() -> None:
+            try:
+                stale = actions.find_stale_artifacts(self._project)
+            except Exception:  # noqa: BLE001 - the offer is non-critical
+                return
+            if actions.has_stale_artifacts(stale):
+                self._root.after(0, lambda: self._show_cleanup_offer(stale))
+
+        threading.Thread(target=scan, daemon=True).start()
+
+    def _show_cleanup_offer(self, stale: dict) -> None:
+        """Render the found-leftovers summary + an Aufraeumen/Ueberspringen
+        row inside the window."""
+        self._log("Fruehere Installationsreste gefunden:")
+        for line in actions.cleanup_offer_lines(stale):
+            self._log("  " + line)
+        offer = tk.Frame(self._root)
+        offer.pack(pady=(0, 8))
+
+        def run_cleanup() -> None:
+            offer.destroy()
+            self._run_cleanup(stale)
+
+        def skip() -> None:
+            offer.destroy()
+            self._log("Aufraeumen uebersprungen.")
+
+        tk.Button(offer, text="Aufraeumen", width=18, command=run_cleanup).pack(side="left", padx=4)
+        tk.Button(offer, text="Ueberspringen", width=18, command=skip).pack(side="left", padx=4)
+
+    def _run_cleanup(self, stale: dict) -> None:
+        """Run cleanup_stale on a worker thread, streaming each step to the log
+        like install/uninstall."""
+        self._set_busy(True)
+
+        def step(label: str) -> None:
+            self._root.after(0, lambda: self._log(label))
+
+        def worker() -> None:
+            result = actions.cleanup_stale(stale, on_step=step)
+            self._root.after(0, lambda: self._on_result("cleanup", result))
+
+        threading.Thread(target=worker, daemon=True).start()
 
     # --- actions (threaded) ---
 
