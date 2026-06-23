@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.94.1** (launcher + content-dialog release -
+- **Current state:** **v1.95.0** (launcher + content-dialog release -
   the Docker-based desktop **launcher** gets a Docker-first flow (daemon-not-
   running dialog with "Start Docker Desktop"), a step-checklist progress window
   (Check Docker / Download / Build / Start / Ready) for the start + install
