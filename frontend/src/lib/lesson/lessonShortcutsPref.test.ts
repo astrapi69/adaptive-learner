@@ -47,6 +47,26 @@ describe("decideLessonEnterAction", () => {
         ).toBe("next");
     });
 
+    it("submits + advances an answered exercise in the exam flow (#1007)", () => {
+        expect(
+            decideLessonEnterAction({
+                ...base,
+                answerable: true,
+                delayedFeedback: true,
+            }),
+        ).toBe("submit-next");
+    });
+
+    it("still does nothing on an unanswered exam exercise", () => {
+        expect(
+            decideLessonEnterAction({
+                ...base,
+                answerable: false,
+                delayedFeedback: true,
+            }),
+        ).toBe("none");
+    });
+
     it("does nothing on the summary screen", () => {
         expect(decideLessonEnterAction({...base, isSummary: true})).toBe(
             "none",

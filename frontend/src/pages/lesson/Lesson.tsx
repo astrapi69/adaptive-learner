@@ -414,6 +414,8 @@ export default function LessonPage() {
     checked,
     enteredReviewed,
     answerable,
+    // #1007 Phase 2 — exam: Enter submits + advances in one keystroke.
+    delayedFeedback: !modeConfig.immediateFeedback,
     goNext,
   };
 
@@ -640,9 +642,19 @@ export default function LessonPage() {
         answerable={answerable}
         isLastStep={isLastStep}
         currentStepIndex={currentStepIndex}
+        // #1007 Phase 2 — exam hides per-question feedback: one button that
+        // submits + advances, forward-only. The synchronous submit() grades
+        // + records, then goNext unmounts the step in the same React batch,
+        // so the renderer's correct/wrong line never paints (revealed only
+        // on the end-of-exam summary).
+        delayedFeedback={!modeConfig.immediateFeedback}
         goPrev={goPrev}
         goNext={goNext}
         onCheck={() => exerciseRef.current?.submit()}
+        onSubmitAndAdvance={() => {
+          exerciseRef.current?.submit();
+          goNext();
+        }}
       />
 
       {/* Floating read-aloud mini-player (C8) — visible while the
