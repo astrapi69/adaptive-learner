@@ -9,39 +9,26 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  CheckCircle2,
-  ChevronRight,
-  ClipboardCopy,
-  Download,
-  FileJson,
-  RotateCcw,
-  Star,
-  Zap,
-} from "lucide-react";
+import { CheckCircle2, ChevronRight, RotateCcw, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import CorrectionBlock from "../../exercises/CorrectionBlock";
-import Confetti from "../../feedback/Confetti";
 import LessonAnswersDetail from "./LessonAnswersDetail";
-import LessonExamResult from "./LessonExamResult";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
+import {
+  SummaryConfetti,
+  SummaryExamPanel,
+  SummaryExplanations,
+  SummaryExportActions,
+  SummaryTimedStats,
+  SummaryXp,
+} from "./LessonSummarySections";
 import { useCountUp } from "../../../hooks/ui/useCountUp";
 import { useFeedbackIntensity } from "../../../hooks/settings/useFeedbackIntensity";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import LessonFavoriteToggle from "../chrome/LessonFavoriteToggle";
-import AnswerDiff from "../../../shared/data-display/AnswerDiff";
-import ShareButton from "../../../shared/layout/ShareButton";
-import { generateShareText } from "../../../lib/share/generate-share-text";
-import {
-  downloadAnkiDeck,
-  lessonCardsToAnki,
-} from "../../../lib/export/anki-export";
-import { explainError } from "../../../lib/review/explain-error";
-import { readExplanationsEnabled } from "../../../lib/review/reviewPref";
 import { useNextStepSuggestions } from "../../../hooks/learning/useNextStepSuggestions";
 import { collectFailedExercises } from "../../../lib/lesson/error-replay";
 import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
@@ -68,7 +55,12 @@ import type { TimedRunStats } from "../../../lib/learning/timedMode";
 import { emitCelebration } from "../../../lib/praise/celebration-bus";
 import { nextPraise } from "../../../lib/praise/phrase-picker";
 import { getStorage } from "../../../storage";
-import type { ContentLesson, ElementError, LessonProgress } from "../../../storage/types";
+import type {
+  ContentLesson,
+  ElementError,
+  LessonAttempt,
+  LessonProgress,
+} from "../../../storage/types";
 import { notify } from "../../../utils/notify";
 
 interface LessonSummaryProps {
@@ -113,6 +105,10 @@ function deriveSummaryStats(progress: LessonProgress | null): {
   minutes: number;
   isCompleted: boolean;
   scorePct: number;
+  attempts: number;
+  attemptHistory: LessonAttempt[];
+  bestCorrect: number;
+  bestTotal: number;
 } {
   const correct = progress?.score_correct ?? 0;
   const total = progress?.score_total ?? 0;
@@ -120,7 +116,17 @@ function deriveSummaryStats(progress: LessonProgress | null): {
   const minutes = Math.max(1, Math.round(seconds / 60));
   const isCompleted = progress?.status === "completed";
   const scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;
-  return { correct, total, minutes, isCompleted, scorePct };
+  return {
+    correct,
+    total,
+    minutes,
+    isCompleted,
+    scorePct,
+    attempts: progress?.attempts ?? 0,
+    attemptHistory: progress?.attempt_history ?? [],
+    bestCorrect: progress?.best_score_correct ?? 0,
+    bestTotal: progress?.best_score_total ?? 0,
+  };
 }
 
 export default function LessonSummary({
@@ -141,8 +147,17 @@ export default function LessonSummary({
 }: LessonSummaryProps) {
   const { t, lang } = useI18n();
   const intensity = useFeedbackIntensity();
-  const { correct, total, minutes, isCompleted, scorePct } =
-    deriveSummaryStats(progress);
+  const {
+    correct,
+    total,
+    minutes,
+    isCompleted,
+    scorePct,
+    attempts,
+    attemptHistory,
+    bestCorrect,
+    bestTotal,
+  } = deriveSummaryStats(progress);
 
   const stars: StarRating = computeStars(correct, total);
 
@@ -339,7 +354,6 @@ export default function LessonSummary({
   // Confetti only on a perfect (3-star) lesson, and only when
   // the intensity allows it. Self-dismisses after the burst.
   const celebrateConfetti = stars === 3 && allowsConfetti(intensity);
-  const [showConfetti, setShowConfetti] = useState(celebrateConfetti);
 
   // The headline message: a "lesson_complete" praise phrase on a
   // perfect run (when phrases are allowed), otherwise the
@@ -379,9 +393,7 @@ export default function LessonSummary({
       data-stars={String(stars)}
       aria-label={t("lesson.summary.aria_label", "Lesson summary")}
     >
-      {celebrateConfetti && showConfetti && (
-        <Confetti onDone={() => setShowConfetti(false)} />
-      )}
+      <SummaryConfetti active={celebrateConfetti} />
       <h2>
         {isCompleted ? <CheckCircle2 size={20} aria-hidden="true" /> : null}
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
@@ -470,106 +482,36 @@ export default function LessonSummary({
           time + XP incl. bonus + retry). Replaces the inline pass/fail
           line; the per-exercise breakdown below is the "view all
           answers" detail. */}
-      {lessonMode === "exam" && total > 0 && (
-        <LessonExamResult
-          examPass={examPass}
-          examThreshold={examThreshold}
-          correct={correct}
-          total={total}
-          scorePct={scorePct}
-          minutes={minutes}
-          xpGain={xpGain}
-          bonusPct={modeBonusPct}
-          onRetry={onRepeat}
-        />
-      )}
+      <SummaryExamPanel
+        lessonMode={lessonMode}
+        total={total}
+        examPass={examPass}
+        examThreshold={examThreshold}
+        correct={correct}
+        scorePct={scorePct}
+        minutes={minutes}
+        xpGain={xpGain}
+        bonusPct={modeBonusPct}
+        onRetry={onRepeat}
+      />
 
       {/* #1009 — timed-mode timing stats. */}
-      {lessonMode === "timed" && timedStats && timedStats.total > 0 && (
-        <ul
-          className="lesson-summary-stats m-0"
-          data-testid="lesson-summary-timed-stats"
-        >
-          <li>
-            {t(
-              "lesson.timed.stats_answered",
-              "{n} of {total} answered in time.",
-            )
-              .replace("{n}", String(timedStats.answeredInTime))
-              .replace("{total}", String(timedStats.total))}
-          </li>
-          <li>
-            {t("lesson.timed.stats_avg", "Average answer time: {s}s").replace(
-              "{s}",
-              String(timedStats.averageSeconds),
-            )}
-          </li>
-          {timedStats.fastest && (
-            <li>
-              {t("lesson.timed.stats_fastest", "Fastest: {s}s ({type})")
-                .replace("{s}", String(timedStats.fastest.seconds))
-                .replace(
-                  "{type}",
-                  t(
-                    `lesson.exercise.type_${timedStats.fastest.type}`,
-                    timedStats.fastest.type,
-                  ),
-                )}
-            </li>
-          )}
-          {timedStats.slowest && (
-            <li>
-              {t("lesson.timed.stats_slowest", "Slowest: {s}s ({type})")
-                .replace("{s}", String(timedStats.slowest.seconds))
-                .replace(
-                  "{type}",
-                  t(
-                    `lesson.exercise.type_${timedStats.slowest.type}`,
-                    timedStats.slowest.type,
-                  ),
-                )}
-            </li>
-          )}
-        </ul>
-      )}
+      <SummaryTimedStats
+        lessonMode={lessonMode}
+        timedStats={timedStats}
+        t={t}
+      />
 
       {/* #983 — after a re-attempt, show the improvement vs the previous
           run + the best score. Self-hides on a first run (attempts < 2). */}
       <RetryResultComparison
-        attempts={progress?.attempts ?? 0}
-        attemptHistory={progress?.attempt_history ?? []}
-        bestCorrect={progress?.best_score_correct ?? 0}
-        bestTotal={progress?.best_score_total ?? 0}
+        attempts={attempts}
+        attemptHistory={attemptHistory}
+        bestCorrect={bestCorrect}
+        bestTotal={bestTotal}
       />
 
-      {xpGain > 0 && (
-        <div
-          className="lesson-summary-xp"
-          data-testid="lesson-summary-xp"
-          role="status"
-          aria-label={t(
-            "gamification.xp_gain_aria",
-            "You earned {n} XP for this lesson",
-          ).replace("{n}", String(xpGain))}
-        >
-          <span className="lesson-summary-xp-label">
-            {t("gamification.xp_earned", "XP earned")}
-          </span>
-          <span className="lesson-summary-xp-badge">
-            <span className="lesson-summary-xp-icon">
-              <Zap size={18} aria-hidden="true" />
-            </span>
-            <AnimatedCounter
-              value={xpGain}
-              durationMs={1000}
-              enabled={intensity !== "subtle"}
-              className="lesson-summary-xp-gain"
-              testId="lesson-summary-xp-gain"
-              format={(n) => `+${n} ${t("gamification.xp", "XP")}`}
-            />
-          </span>
-        </div>
-      )}
+      <SummaryXp xpGain={xpGain} animate={intensity !== "subtle"} t={t} />
 
       <ul className="lesson-summary-stats">
         <li>
@@ -600,135 +542,21 @@ export default function LessonSummary({
       {/* #599 — auto-generated explanations + your-vs-correct diff for
                 the run's still-weak text mistakes, gated by the
                 Settings toggle. */}
-      {readExplanationsEnabled() &&
-        (() => {
-          const mistakes = sessionErrors
-            .filter(
-              (e) =>
-                !e.mastered && (e.user_answer ?? "").trim() !== "",
-            )
-            .slice(0, 5);
-          if (mistakes.length === 0) return null;
-          return (
-            <section
-              className="lesson-summary-explanations"
-              data-testid="lesson-summary-explanations"
-            >
-              <h3>
-                {t("review.explain_heading", "Why you missed these")}
-              </h3>
-              <ul className="flex flex-col gap-3">
-                {mistakes.map((err) => {
-                  const expl = explainError(err);
-                  return (
-                    <li
-                      key={err.id}
-                      className="flex flex-col gap-1"
-                      data-testid={`lesson-summary-explain-${err.id}`}
-                    >
-                      <AnswerDiff
-                        userAnswer={err.user_answer}
-                        correctAnswer={err.correct_answer}
-                        yourLabel={t("review.your_answer", "Your answer:")}
-                        correctLabel={t("review.correct_answer", "Correct:")}
-                      />
-                      {expl && (
-                        <p className="text-sm text-fg-muted">
-                          {t(expl.key, expl.fallback)}
-                        </p>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          );
-        })()}
+      <SummaryExplanations sessionErrors={sessionErrors} t={t} />
 
       {/* #138 — export the result for AI-assisted practice.
                 Copy to clipboard or download as a .md file. Sits
                 directly under the breakdown it summarizes. */}
-      <div
-        className="lesson-summary-export-actions flex flex-wrap gap-2"
-        data-testid="lesson-summary-export"
-      >
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="min-h-11 gap-2"
-          onClick={() => {
-            void handleCopyResult();
-          }}
-          data-testid="lesson-summary-copy-result"
-        >
-          <ClipboardCopy aria-hidden="true" />
-          {t("lesson.summary.export.copy", "Copy result")}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="min-h-11 gap-2"
-          onClick={handleDownloadResult}
-          data-testid="lesson-summary-download-result"
-        >
-          <Download aria-hidden="true" />
-          {t("lesson.summary.export.download", "Save as file")}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="min-h-11 gap-2"
-          onClick={handleDownloadJson}
-          data-testid="lesson-summary-download-json"
-        >
-          <FileJson aria-hidden="true" />
-          {t("lesson.summary.export.download_json", "Export as JSON")}
-        </Button>
-        {/* #721 — export this lesson's cards as an Anki-importable
-            TSV .txt deck (distinct from the .apkg AI-extraction flow). */}
-        {lesson.cards.length > 0 && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="min-h-11 gap-2"
-            onClick={() =>
-              downloadAnkiDeck(
-                lessonCardsToAnki(lesson.cards),
-                lesson.title,
-                { deckTags: [lesson.title] },
-              )
-            }
-            data-testid="lesson-summary-export-anki"
-          >
-            <Download aria-hidden="true" />
-            {t("lesson.summary.export.anki", "Export cards (Anki)")}
-          </Button>
-        )}
-        {/* Social sharing (#717) — celebrate a perfect run. Web Share
-            API on mobile, clipboard-copy fallback on desktop. PII-free:
-            the text reflects only the achievement, never the learner. */}
-        {stars === 3 && (
-          <ShareButton
-            text={
-              generateShareText({ kind: "lesson_complete" }, t).text
-            }
-            url={generateShareText({ kind: "lesson_complete" }, t).url}
-            label={t("share.achievement.button", "Share")}
-            onShared={(how) => {
-              if (how === "copied") {
-                notify.success(
-                  t("share.achievement.copied", "Copied to clipboard"),
-                );
-              }
-            }}
-            testId="lesson-summary-share"
-          />
-        )}
-      </div>
+      <SummaryExportActions
+        lesson={lesson}
+        stars={stars}
+        t={t}
+        onCopy={() => {
+          void handleCopyResult();
+        }}
+        onDownload={handleDownloadResult}
+        onDownloadJson={handleDownloadJson}
+      />
 
       {/* Phase 52F / v1.35.0 — correction round. Self-hides
                 when the lesson was a perfect score, when no
