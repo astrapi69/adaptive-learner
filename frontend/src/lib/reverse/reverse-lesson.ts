@@ -110,3 +110,22 @@ export function reverseLesson(lesson: ContentLesson): ContentLesson {
         ),
     };
 }
+
+/**
+ * The lesson to actually play for a given card direction: the reversed
+ * lesson in reverse mode, the original otherwise. Null-tolerant so the
+ * lesson player can call it before the lesson has loaded — which keeps the
+ * mode branch out of the player component (cohesion).
+ *
+ * @param lesson - The loaded lesson, or ``null`` while loading.
+ * @param direction - The active mode's ``cardDirection``.
+ * @returns The lesson to play (same reference when not reversing), or
+ *   ``null`` when ``lesson`` is ``null``.
+ */
+export function maybeReverseLesson(
+    lesson: ContentLesson | null,
+    direction: "normal" | "reverse",
+): ContentLesson | null {
+    if (!lesson || direction !== "reverse") return lesson;
+    return reverseLesson(lesson);
+}

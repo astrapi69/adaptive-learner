@@ -9,6 +9,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     isReversibleType,
+    maybeReverseLesson,
     reverseExercise,
     reverseLesson,
     stepIsReversible,
@@ -151,5 +152,30 @@ describe("reverseLesson", () => {
         const reversed = reverseLesson(lesson);
         expect(reversed.cards).toBe(lesson.cards);
         expect(reversed.title).toBe(lesson.title);
+    });
+});
+
+describe("maybeReverseLesson", () => {
+    const lesson: ContentLesson = {
+        id: "lesson-1",
+        title: "Lesson 1",
+        estimated_minutes: 5,
+        cards: [],
+        steps: [exerciseStep("s1", matching("m1", "source_to_target"))],
+    };
+
+    it("returns the same reference when not in reverse mode", () => {
+        expect(maybeReverseLesson(lesson, "normal")).toBe(lesson);
+    });
+
+    it("reverses when in reverse mode", () => {
+        const out = maybeReverseLesson(lesson, "reverse");
+        expect(out).not.toBe(lesson);
+        expect(out?.steps[0].exercise?.direction).toBe("target_to_source");
+    });
+
+    it("passes null through in either mode", () => {
+        expect(maybeReverseLesson(null, "reverse")).toBeNull();
+        expect(maybeReverseLesson(null, "normal")).toBeNull();
     });
 });

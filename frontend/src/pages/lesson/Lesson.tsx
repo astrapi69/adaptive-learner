@@ -35,10 +35,8 @@ import {
   type LessonMode,
 } from "../../lib/learning/lessonModePref";
 import { configForMode } from "../../lib/learning/lessonModeConfig";
-import {
-  reverseLesson,
-  stepIsReversible,
-} from "../../lib/reverse/reverse-lesson";
+import { maybeReverseLesson } from "../../lib/reverse/reverse-lesson";
+import LessonReverseNote from "../../components/lesson/chrome/LessonReverseNote";
 import LessonSummary from "../../components/lesson/summary/LessonSummary";
 import LessonResources from "../../components/lesson/steps/LessonResources";
 import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
@@ -166,10 +164,7 @@ export default function LessonPage() {
   // synthetic lesson is purely presentational: ``useLesson`` keeps the
   // original ``lesson`` for progress IO (step ids are preserved).
   const playedLesson = useMemo(
-    () =>
-      lesson && modeConfig.cardDirection === "reverse"
-        ? reverseLesson(lesson)
-        : lesson,
+    () => maybeReverseLesson(lesson, modeConfig.cardDirection),
     [lesson, modeConfig.cardDirection],
   );
 
@@ -417,9 +412,10 @@ export default function LessonPage() {
   if (lesson === null) return null;
 
   // #1013 — the lesson actually played (reverse mode flips the exercises;
-  // identical to ``lesson`` in every other mode). ``?? lesson`` narrows the
-  // memo's ``ContentLesson | null`` now that ``lesson`` is non-null.
-  const played = playedLesson ?? lesson;
+  // identical to ``lesson`` in every other mode). ``maybeReverseLesson``
+  // returns ``lesson`` itself (or a transform of it), so it is non-null
+  // whenever ``lesson`` is — assert the type without adding a branch.
+  const played = playedLesson as NonNullable<typeof playedLesson>;
   const totalSteps = played.steps.length;
   const isSummary = currentStepIndex >= totalSteps;
   const step = isSummary ? null : played.steps[currentStepIndex];
@@ -637,21 +633,11 @@ export default function LessonPage() {
         {/* #1013 — reverse mode can't gradeably reverse non-matching
             exercise types, so they play in their original format with this
             note (the issue's documented fallback). */}
-        {modeConfig.cardDirection === "reverse" &&
-          isExerciseStep &&
-          step &&
-          !stepIsReversible(step) && (
-            <p
-              className="m-0 px-2 text-sm italic text-[var(--fg-secondary)]"
-              role="note"
-              data-testid="lesson-reverse-not-reversible"
-            >
-              {t(
-                "lesson.reverse.not_reversible",
-                "This exercise type can't be reversed — shown in its original format.",
-              )}
-            </p>
-          )}
+        <LessonReverseNote
+          reverseMode={modeConfig.cardDirection === "reverse"}
+          isExerciseStep={isExerciseStep}
+          step={step}
+        />
         <LessonStepView
           step={step!}
           lesson={played}
