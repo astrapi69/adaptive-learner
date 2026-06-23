@@ -68,20 +68,24 @@ afterEach(() => {
 });
 
 describe("LessonSummary exam result", () => {
-    it("shows no exam line in practice mode", () => {
+    it("shows no exam result panel in practice mode", () => {
         renderSummary("practice", 5, 10);
-        expect(screen.queryByTestId("lesson-summary-exam-result")).toBeNull();
+        expect(screen.queryByTestId("lesson-exam-result")).toBeNull();
     });
 
-    it("marks a passing run (>= 60%) as passed in exam mode", () => {
+    it("marks a passing run (>= 60%) as passed in exam mode (#1007 Phase 2)", () => {
         renderSummary("exam", 8, 10);
-        const line = screen.getByTestId("lesson-summary-exam-result");
-        expect(line).toHaveAttribute("data-passed", "true");
+        // The dedicated exam result panel (replaces the old inline line).
+        const panel = screen.getByTestId("lesson-exam-result");
+        expect(panel).toHaveAttribute("data-passed", "true");
+        expect(screen.getByTestId("lesson-exam-result-retry")).toBeInTheDocument();
     });
 
     it("marks a failing run (< 60%) as not passed in exam mode", () => {
         renderSummary("exam", 5, 10);
-        const line = screen.getByTestId("lesson-summary-exam-result");
-        expect(line).toHaveAttribute("data-passed", "false");
+        expect(screen.getByTestId("lesson-exam-result")).toHaveAttribute(
+            "data-passed",
+            "false",
+        );
     });
 });

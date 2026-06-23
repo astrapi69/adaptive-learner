@@ -10,7 +10,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Check,
   CheckCircle2,
   ChevronRight,
   ClipboardCopy,
@@ -18,17 +17,16 @@ import {
   FileJson,
   RotateCcw,
   Star,
-  X,
   Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import CorrectionBlock from "../../exercises/CorrectionBlock";
 import DiffHighlight from "../../exercises/DiffHighlight";
 import Confetti from "../../feedback/Confetti";
+import LessonExamResult from "./LessonExamResult";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
 import { useCountUp } from "../../../hooks/ui/useCountUp";
@@ -215,6 +213,12 @@ export default function LessonSummary({
       xp_multiplier: configForMode(lessonMode).xpMultiplier,
     }).xp_earned;
   }, [total, progress, stars, streakDays, lessonMode]);
+
+  // #1007 Phase 2 — the mode reward weight as a percent bonus (exam = 50),
+  // surfaced in the exam result card. 0 for practice (no bonus note).
+  const modeBonusPct = Math.round(
+    (configForMode(lessonMode).xpMultiplier - 1) * 100,
+  );
 
   useEffect(() => {
     if (!userId) {
@@ -463,33 +467,22 @@ export default function LessonSummary({
         </span>
       </div>
 
-      {/* #1007 — exam-mode pass/fail against the configured threshold. */}
+      {/* #1007 Phase 2 — dedicated exam result panel (verdict + score +
+          time + XP incl. bonus + retry). Replaces the inline pass/fail
+          line; the per-exercise breakdown below is the "view all
+          answers" detail. */}
       {lessonMode === "exam" && total > 0 && (
-        <p
-          className={cn(
-            "m-0 inline-flex items-center gap-1.5 font-semibold",
-            examPass
-              ? "text-[var(--exercise-correct)]"
-              : "text-[var(--exercise-wrong)]",
-          )}
-          data-testid="lesson-summary-exam-result"
-          data-passed={examPass}
-        >
-          {examPass ? (
-            <Check size={16} aria-hidden="true" />
-          ) : (
-            <X size={16} aria-hidden="true" />
-          )}
-          {examPass
-            ? t("lesson.exam.passed", "Passed")
-            : t("lesson.exam.not_passed", "Not passed")}
-          <span className="font-normal text-[var(--fg-muted)]">
-            {t("lesson.exam.threshold_hint", "(pass ≥ {pct}%)").replace(
-              "{pct}",
-              String(examThreshold),
-            )}
-          </span>
-        </p>
+        <LessonExamResult
+          examPass={examPass}
+          examThreshold={examThreshold}
+          correct={correct}
+          total={total}
+          scorePct={scorePct}
+          minutes={minutes}
+          xpGain={xpGain}
+          bonusPct={modeBonusPct}
+          onRetry={onRepeat}
+        />
       )}
 
       {/* #1009 — timed-mode timing stats. */}

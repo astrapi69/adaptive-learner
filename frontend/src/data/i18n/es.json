@@ -1743,7 +1743,10 @@
     "exam": {
       "passed": "Aprobado",
       "not_passed": "No aprobado",
-      "threshold_hint": "(aprobado ≥ {pct}%)"
+      "threshold_hint": "(aprobado ≥ {pct}%)",
+      "result_title": "Resultado del examen",
+      "retry": "Repetir examen",
+      "xp_bonus": "incl. {pct}% de bonificación de examen"
     },
     "timed": {
       "remaining": "Tiempo restante",

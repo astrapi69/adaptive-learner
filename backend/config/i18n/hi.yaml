@@ -1614,6 +1614,9 @@ lesson:
     passed: "उत्तीर्ण"
     not_passed: "अनुत्तीर्ण"
     threshold_hint: "(उत्तीर्ण ≥ {pct}%)"
+    result_title: "परीक्षा परिणाम"
+    retry: "परीक्षा दोबारा दें"
+    xp_bonus: "{pct}% परीक्षा बोनस सहित"
   timed:
     remaining: "शेष समय"
     seconds_left: "{n}s शेष"

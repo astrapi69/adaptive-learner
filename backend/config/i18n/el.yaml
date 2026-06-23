@@ -1620,6 +1620,9 @@ lesson:
     passed: "Επιτυχία"
     not_passed: "Αποτυχία"
     threshold_hint: "(επιτυχία ≥ {pct}%)"
+    result_title: "Αποτέλεσμα εξέτασης"
+    retry: "Επανάληψη εξέτασης"
+    xp_bonus: "συμπ. {pct}% μπόνους εξέτασης"
   timed:
     remaining: "Υπόλοιπος χρόνος"
     seconds_left: "{n}s απομένουν"
