@@ -104,17 +104,20 @@ person tagging):
   renders when refreshing a non-cached route.
 - Lighthouse audit — target PWA score > 90, Performance > 80.
 
-### Per-feature screenshot baselines (#1023)
+### Feature-Screenshots
 
-Every visual feature needs at least one screenshot in
-`e2e/visual/features/[feature-name]/`. **Desktop + mobile. Default
-theme (`dark`).** The screenshots serve double duty: pixel-diff
-regression and a documentation gallery of every visual feature.
+Every UI feature is documented visually. Screenshots are generated with
+Playwright and tracked under `e2e/visual/features/` — doubling as pixel-diff
+regression and a documentation gallery.
 
-Add a `FeatureShot` to the `FEATURES` map in
-`e2e/scripts/capture-feature-screenshots.ts` (a kebab-case
-`<feature>/<shot>` path + a `setup(page)` driving the dexie preview
-build into the state), then generate and review the PNGs:
+On any UI change:
+
+- Update the screenshot spec (a `FeatureShot` in the `FEATURES` map in
+  `e2e/scripts/capture-feature-screenshots.ts` — a kebab-case
+  `<feature>/<shot>` path + a `setup(page)` driving the dexie preview build
+  into the state).
+- `make capture-screenshots`
+- Commit the PNGs: `git add e2e/visual/features/`
 
 ```bash
 make capture-screenshots   # build dexie frontend + --update-snapshots
@@ -122,11 +125,18 @@ make capture-screenshots   # build dexie frontend + --update-snapshots
 make verify-screenshots    # pixel-compare against the committed baselines
 ```
 
-Baselines are generated + reviewed on a consistent machine (font
-anti-aliasing differs between machines), not in CI. Never
-`--update-snapshots` to silence a diff that reveals a real bug. Features
-not reachable by Playwright (the desktop launcher) are captured manually
-into the matching folder. See
+Naming convention:
+
+- Folder: kebab-case (e.g. `matching-animation/`)
+- Desktop: `feature.png` (1280×720)
+- Mobile: `feature.mobile.png` (375×812)
+- Default theme (`dark`), German, realistic test data (no "Test-1" titles)
+
+Baselines are generated + reviewed on a consistent machine (font anti-aliasing
+differs between machines), not in CI. Never `--update-snapshots` to silence a
+diff that reveals a real bug. Features Playwright can't reach (the desktop
+launcher) are captured manually into the matching folder. This applies to every
+PR with UI changes; pure backend / launcher / test / docs PRs are exempt. See
 [`e2e/visual/features/README.md`](e2e/visual/features/README.md) and
 [`docs/developer/testing.md`](docs/developer/testing.md).
 

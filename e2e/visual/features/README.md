@@ -1,75 +1,92 @@
-# Per-feature screenshot baselines (#1023)
+# Feature-Screenshots
 
-One labelled screenshot per **feature** (not per generic surface), used for
-**both** pixel-diff regression and a documentation gallery. Complements the
-two regression matrices in `../` (`theme-regression.spec.ts`,
-`critical-surfaces.spec.ts`), which are organised by theme/surface rather than
-by feature.
+Automatisiert generierte Screenshots aller UI-Features. Default-Theme (dark),
+Deutsch. Sie dienen doppelt: Pixel-Diff-Regression UND Doku-Galerie.
+Ergaenzend zur themen-/flaechen-orientierten Theme-Regression unter `../`
+(`theme-regression.spec.ts`, `critical-surfaces.spec.ts`) — diese hier ist
+nach **Feature** organisiert.
 
 ## Layout
 
 ```
 e2e/visual/features/
   <feature-name>/
-    <shot>.png          desktop, 1280×720
-    <shot>.mobile.png   mobile,  375×812
+    <shot>.png          Desktop, 1280×720
+    <shot>.mobile.png   Mobile,  375×812
 ```
 
-- **Folders + files are kebab-case.** One folder per feature, one PNG per
-  capturable state.
-- **Default theme: `dark`.** Captured client-side via the real
-  `adaptive-learner.theme` localStorage key (see `../helpers.ts` `setTheme`).
-- **Viewports:** desktop `1280×720` (`<shot>.png`) + mobile `375×812`
-  (`<shot>.mobile.png`). A desktop-anchored surface (e.g. a dialog) is
-  captured desktop-only via `desktopOnly: true` in the `FEATURES` map.
+- **Ordner + Dateien sind kebab-case.** Ein Ordner pro Feature, ein PNG pro
+  erfassbarem Zustand.
+- **Default-Theme: `dark`**, Sprache Deutsch, realistische Testdaten (keine
+  "Test-1" Titel). Theme wird client-seitig ueber den echten
+  `adaptive-learner.theme` localStorage-Key gesetzt (siehe `../helpers.ts`).
+- **Viewports:** Desktop `1280×720` (`<shot>.png`) + Mobile `375×812`
+  (`<shot>.mobile.png`). Eine desktop-verankerte Flaeche (z.B. ein Dialog) wird
+  via `desktopOnly: true` in der `FEATURES`-Map nur als Desktop erfasst.
 
 ## Source of truth
 
-`../../scripts/capture-feature-screenshots.ts` — the `FEATURES` map pairs each
-screenshot `path` (`<feature>/<shot>`) with a `setup(page)` that drives the
-**dexie preview build** (no backend, the GH-Pages shape) into the state to
-capture. A `setup` that can't reach its state deterministically returns
-`false`, and the shot is skipped rather than committing a meaningless baseline.
+`../../scripts/capture-feature-screenshots.ts` — die `FEATURES`-Map paart jeden
+Screenshot-`path` (`<feature>/<shot>`) mit einem `setup(page)`, das den
+**Dexie-Preview-Build** (kein Backend, die GH-Pages-Form) in den zu erfassenden
+Zustand bringt. Ein `setup`, das seinen Zustand nicht deterministisch erreicht,
+gibt `false` zurueck und der Shot wird uebersprungen statt eine sinnlose
+Baseline zu committen.
 
-## Generating / verifying (maintainer)
+## Katalog
 
-Baselines are generated + **reviewed** on a consistent machine — font
-anti-aliasing differs between machines, so they are NOT generated in an
-ephemeral CI/web container.
+| Feature | Desktop | Mobile | Stand |
+|---------|---------|--------|-------|
+| Dashboard Tabs — Übersicht | `dashboard-tabs/uebersicht.png` | `dashboard-tabs/uebersicht.mobile.png` | v1.94.1 |
+| Dashboard Tabs — Aktivität | `dashboard-tabs/aktivitaet.png` | `dashboard-tabs/aktivitaet.mobile.png` | v1.94.1 |
+| Dashboard Tabs — Missionen | `dashboard-tabs/missionen.png` | `dashboard-tabs/missionen.mobile.png` | v1.94.1 |
+| Content Hub — Entdecken | `content-hub/entdecken.png` | `content-hub/entdecken.mobile.png` | v1.94.1 |
+| Content Hub — Meine Inhalte | `content-hub/meine-inhalte.png` | `content-hub/meine-inhalte.mobile.png` | v1.94.1 |
+| Content Hub — Import | `content-hub/import.png` | `content-hub/import.mobile.png` | v1.94.1 |
+| Progress Hub — Übersicht | `progress-hub/uebersicht.png` | `progress-hub/uebersicht.mobile.png` | v1.94.1 |
+| Progress Hub — Statistik | `progress-hub/statistik.png` | `progress-hub/statistik.mobile.png` | v1.94.1 |
+| Progress Hub — Meine Pfade | `progress-hub/meine-pfade.png` | `progress-hub/meine-pfade.mobile.png` | v1.94.1 |
+| Matching — Paarung | `matching-animation/matching-pairing.png` | `matching-animation/matching-pairing.mobile.png` | v1.94.1 |
+| Matching — Auflösung | `matching-animation/matching-resolved.png` | `matching-animation/matching-resolved.mobile.png` | v1.94.1 |
+| Lektions-Modi — Übung | `lesson-modes/practice.png` | `lesson-modes/practice.mobile.png` | v1.94.1 |
+| Lektions-Modi — Prüfung | `lesson-modes/exam.png` | `lesson-modes/exam.mobile.png` | v1.94.1 |
+| Lektions-Modi — Zeit | `lesson-modes/timed.png` | `lesson-modes/timed.mobile.png` | v1.94.1 |
+| Antwort-Umschalter — Meine Antwort | `answer-toggle/meine-antwort.png` | `answer-toggle/meine-antwort.mobile.png` | v1.94.1 |
+| Antwort-Umschalter — Auflösung | `answer-toggle/aufloesung.png` | `answer-toggle/aufloesung.mobile.png` | v1.94.1 |
+| GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 |
+| QR-Code — App teilen | `qr-code/share-app.png` | — (Desktop-Dialog) | v1.94.1 |
+
+> Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
+> konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.
+> Beim Hinzufuegen eines Features hier eine Zeile ergaenzen.
+
+## Screenshots aktualisieren
 
 ```bash
-make capture-screenshots   # build dexie frontend, then --update-snapshots
-# review every changed PNG, then:
-git add e2e/visual/features/
-git commit -m "test(visual): capture <feature> baselines"
-
-make verify-screenshots    # pixel-compare against the committed PNGs
+make capture-screenshots
 ```
 
-**Never** `--update-snapshots` to silence a diff that reveals a real bug — fix
-the bug; regenerate only after an intended visual change.
+Erzeugt/aktualisiert die PNGs (`--update-snapshots`). Danach **jedes** geaenderte
+PNG pruefen, dann `git add e2e/visual/features/` und committen. Generierung +
+Review laufen auf einer konsistenten Maschine — Font-Anti-Aliasing
+unterscheidet sich pro Maschine, daher NICHT im fluechtigen CI/Web-Container.
 
-## Captured features
+## Screenshots pruefen (Visual Regression)
 
-| Folder | Shots | Feature |
-|--------|-------|---------|
-| `dashboard-tabs/` | `uebersicht`, `aktivitaet`, `missionen` | Tabbed Dashboard (#858) |
-| `content-hub/` | `entdecken`, `meine-inhalte`, `import` | Content Hub tabs (#856) |
-| `progress-hub/` | `uebersicht`, `statistik`, `meine-pfade` | Progress Hub tabs |
-| `matching-animation/` | `matching-pairing`, `matching-resolved` | Matching pair selection + resolution |
-| `lesson-modes/` | `practice`, `exam`, `timed` | Lesson mode toggle |
-| `answer-toggle/` | `meine-antwort`, `aufloesung` | Exercise answer toggle (#1004) |
-| `github-export/` | `share-dialog` | GitHub repo-export dialog (#1009) |
-| `qr-code/` | `share-app` | QR-code app sharing (#775) |
+```bash
+make verify-screenshots
+```
 
-## Manual-capture features (not web-reachable)
+**Niemals** `--update-snapshots` benutzen, um einen Diff zu uebertuenchen, der
+einen echten Bug zeigt — den Bug fixen; nur nach einer beabsichtigten visuellen
+Aenderung neu erzeugen.
 
-Some product features are **not** reachable by Playwright and are captured by
-hand into the matching folder:
+## Manuell erfasste Features (nicht via Playwright erreichbar)
 
-- **`launcher/`** — the desktop launcher is a native PyInstaller/Docker GUI
-  (`launcher/`), not a web route. Capture its states (Docker-not-running
-  dialog, step-checklist progress window, port field) manually with the OS
-  screenshot tool and drop the PNGs here, kebab-case, same naming convention.
+Manche Features sind fuer Playwright **nicht** erreichbar und werden von Hand in
+den passenden Ordner aufgenommen:
 
-These folders carry a `.gitkeep` until their PNGs exist.
+- **`launcher/`** — der Desktop-Launcher ist eine native PyInstaller/Docker-GUI
+  (`launcher/`), keine Web-Route. Seine Zustaende (Docker-nicht-aktiv-Dialog,
+  Schritt-Checkliste, Port-Feld) mit dem OS-Screenshot-Tool aufnehmen und hier
+  ablegen — kebab-case, gleiche Namenskonvention.
