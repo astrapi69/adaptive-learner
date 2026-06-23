@@ -82,7 +82,10 @@ test.describe("Matching resolution (#824/#825)", () => {
     // The reveal replaces the interactive grid: resolution shown, tiles gone.
     await expect(page.getByTestId("matching-resolution")).toBeVisible();
     await expect(page.getByTestId("matching-left-0")).toHaveCount(0);
-    await expect(page.getByTestId("matching-resolve")).toHaveCount(0);
+    // #977 — the Solution/My-answers toggle stays visible so the learner
+    // can switch back to their graded answers (it no longer disappears).
+    await expect(page.getByTestId("matching-resolve")).toBeVisible();
+    await expect(page.getByTestId("matching-my-answers")).toBeVisible();
   });
 
   test("prefers-reduced-motion drops the resolve animation", async ({ page }) => {
