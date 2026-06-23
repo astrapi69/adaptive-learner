@@ -685,67 +685,6 @@ function WordTilesEditor({
     );
 }
 
-interface WordTilesReviewProps {
-    submitted: boolean;
-    showAnswerToggle: boolean;
-    view: AnswerView;
-    myAnswerLabels: string[];
-    myAnswerCorrectness: boolean[];
-    tiles: string[];
-    t: (key: string, fallback?: string) => string;
-    onShowMyAnswer: () => void;
-    onShowSolution: () => void;
-}
-
-/** The post-check My-answer / Solution toggle (#1005). Self-gated — renders
- *  ``null`` until the answer is submitted and the mode allows the toggle, so
- *  the parent drops the ``submitted && showAnswerToggle &&`` guard and the
- *  view ternary (cohesion / #1047). */
-function WordTilesReview({
-    submitted,
-    showAnswerToggle,
-    view,
-    myAnswerLabels,
-    myAnswerCorrectness,
-    tiles,
-    t,
-    onShowMyAnswer,
-    onShowSolution,
-}: WordTilesReviewProps) {
-    if (!submitted || !showAnswerToggle) return null;
-    return (
-        <>
-            <ExerciseAnswerToggle
-                view={view}
-                onShowMyAnswer={onShowMyAnswer}
-                onShowSolution={onShowSolution}
-                testIdPrefix="word-tiles"
-            />
-            {view === "my-answer" ? (
-                <WordTilesAnswerView
-                    labels={myAnswerLabels}
-                    correctness={myAnswerCorrectness}
-                    testId="word-tiles-my-answer-view"
-                    ariaLabel={t(
-                        "lesson.exercise.toggle.my_answer",
-                        "My answer",
-                    )}
-                />
-            ) : (
-                <WordTilesAnswerView
-                    labels={tiles}
-                    correctness={null}
-                    testId="word-tiles-solution-view"
-                    ariaLabel={t(
-                        "lesson.exercise.toggle.solution",
-                        "Solution",
-                    )}
-                />
-            )}
-        </>
-    );
-}
-
 function WordTilesExercise(
     {
         exercise,
@@ -982,17 +921,37 @@ function WordTilesExercise(
                 onShowHint={() => setShowHint(true)}
             />
 
-            <WordTilesReview
-                submitted={submitted}
-                showAnswerToggle={showAnswerToggle}
-                view={view}
-                myAnswerLabels={myAnswerLabels}
-                myAnswerCorrectness={myAnswerCorrectness}
-                tiles={tiles}
-                t={t}
-                onShowMyAnswer={() => setView("my-answer")}
-                onShowSolution={() => setView("solution")}
-            />
+            {submitted && showAnswerToggle && (
+                <>
+                    <ExerciseAnswerToggle
+                        view={view}
+                        onShowMyAnswer={() => setView("my-answer")}
+                        onShowSolution={() => setView("solution")}
+                        testIdPrefix="word-tiles"
+                    />
+                    {view === "my-answer" ? (
+                        <WordTilesAnswerView
+                            labels={myAnswerLabels}
+                            correctness={myAnswerCorrectness}
+                            testId="word-tiles-my-answer-view"
+                            ariaLabel={t(
+                                "lesson.exercise.toggle.my_answer",
+                                "My answer",
+                            )}
+                        />
+                    ) : (
+                        <WordTilesAnswerView
+                            labels={tiles}
+                            correctness={null}
+                            testId="word-tiles-solution-view"
+                            ariaLabel={t(
+                                "lesson.exercise.toggle.solution",
+                                "Solution",
+                            )}
+                        />
+                    )}
+                </>
+            )}
 
             <WordTilesResult
                 submitted={submitted}
