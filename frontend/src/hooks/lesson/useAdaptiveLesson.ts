@@ -71,6 +71,11 @@ export interface UseAdaptiveLessonOptions {
     /** Cap on emitted exercises. Default 10 (matches the
      *  generator's default). */
     limit?: number;
+    /** #1012 — scope the adaptive lesson to a SINGLE lesson's errors.
+     *  When set, only ``ElementError`` rows whose ``lesson_id`` matches are
+     *  considered (the per-lesson "Fehler trainieren" entry point). Omit for
+     *  the set-wide adaptive lesson (every lesson's errors). */
+    lessonId?: string;
 }
 
 export interface AdaptiveTransparency {
@@ -116,7 +121,7 @@ const MAX_LESSONS_TO_FETCH = 30;
 export function useAdaptiveLesson(
     opts: UseAdaptiveLessonOptions,
 ): UseAdaptiveLessonResult {
-    const {setId, title, description, limit} = opts;
+    const {setId, title, description, limit, lessonId} = opts;
     const [status, setStatus] = useState<AdaptiveLessonStatus>("loading");
     const [lesson, setLesson] = useState<ContentLesson | null>(null);
     const [analysis, setAnalysis] = useState<ErrorAnalysis | null>(null);
@@ -141,11 +146,17 @@ export function useAdaptiveLesson(
         void (async () => {
             try {
                 const storage = getStorage();
-                const errors = await storage.elementErrors.list(userId, {
+                const allErrors = await storage.elementErrors.list(userId, {
                     setId,
                     includeMastered: true,
                 });
                 if (cancelled) return;
+                // #1012 — when a lessonId is given, restrict to that lesson's
+                // error rows so the per-lesson "Fehler trainieren" entry
+                // trains only this lesson's failed cards.
+                const errors = lessonId
+                    ? allErrors.filter((e) => e.lesson_id === lessonId)
+                    : allErrors;
                 const active = errors.filter((e) => !e.mastered);
                 const masteredBefore = errors.length - active.length;
                 if (active.length === 0) {
@@ -248,7 +259,7 @@ export function useAdaptiveLesson(
         return () => {
             cancelled = true;
         };
-    }, [setId, userId, title, description, limit]);
+    }, [setId, userId, title, description, limit, lessonId]);
 
     const totalSteps = lesson?.steps.length ?? 0;
 

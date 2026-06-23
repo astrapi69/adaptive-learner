@@ -2413,6 +2413,7 @@ learning_path:
   filter_label: सेट फ़िल्टर करें
   adaptive: अनुकूली पाठ शुरू करें
   error_replay: त्रुटियाँ दोबारा करें
+  train_errors: "गलतियाँ अभ्यास करें"
   personal:
     title: आपका सीखने का पथ
     empty: शुरू करने के लिए एक पाठ सेट डाउनलोड करें।

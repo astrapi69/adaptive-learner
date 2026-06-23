@@ -2431,6 +2431,7 @@ learning_path:
   filter_label: "Filter sets"
   adaptive: "Start adaptive lesson"
   error_replay: "Retry errors"
+  train_errors: "Train errors"
   personal:
     title: "Your Learning Path"
     empty: "Download a lesson set to begin."

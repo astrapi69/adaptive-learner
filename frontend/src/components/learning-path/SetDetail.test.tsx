@@ -64,12 +64,37 @@ describe("SetDetail", () => {
         ).toHaveLength(3);
     });
 
-    it("always offers an adaptive-lesson action", () => {
-        renderDetail(setFixture());
-        expect(screen.getByTestId("set-adaptive-psych")).toHaveAttribute(
+    it("offers the gated set-wide train-errors action when errors exist (#1012)", () => {
+        renderDetail(setFixture({errorCount: 7}));
+        const link = screen.getByTestId("set-train-errors-psych");
+        expect(link).toHaveAttribute("href", "/adaptive-lesson/psych");
+        expect(link).toHaveTextContent("7");
+    });
+
+    it("hides the set-wide train-errors action when there are no errors (#1012)", () => {
+        renderDetail(setFixture({errorCount: 0}));
+        expect(screen.queryByTestId("set-train-errors-psych")).toBeNull();
+    });
+
+    it("shows a per-lesson train-errors action scoped via ?lesson= (#1012)", () => {
+        const withErrors = lesson(1);
+        withErrors.srs = {
+            status: "due",
+            total: 5,
+            mastered: 2,
+            due: 3,
+            nextReviewAt: null,
+        };
+        renderDetail(setFixture({lessons: [withErrors, lesson(2), lesson(3)]}));
+        const link = screen.getByTestId("lesson-train-errors-01.json");
+        expect(link).toHaveAttribute(
             "href",
-            "/adaptive-lesson/psych",
+            "/adaptive-lesson/psych?lesson=01.json",
         );
+        // total 5 - mastered 2 = 3 active error cards.
+        expect(link).toHaveTextContent("3");
+        // Lessons without SRS data render no per-lesson train-errors button.
+        expect(screen.queryByTestId("lesson-train-errors-02.json")).toBeNull();
     });
 
     it("hides the error-replay action when there are no errors", () => {
@@ -90,7 +115,7 @@ describe("SetDetail", () => {
         // skips them; otherwise the solid action's label is accent-on-accent
         // (invisible) and the outline action's text loses --fg-primary.
         renderDetail(setFixture({errorCount: 3}));
-        expect(screen.getByTestId("set-adaptive-psych")).toHaveAttribute(
+        expect(screen.getByTestId("set-train-errors-psych")).toHaveAttribute(
             "data-slot",
             "button",
         );

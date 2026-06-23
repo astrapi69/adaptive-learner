@@ -2654,6 +2654,7 @@
     "filter_label": "Saring set",
     "adaptive": "Mulai pelajaran adaptif",
     "error_replay": "Ulangi kesalahan",
+    "train_errors": "Latih kesalahan",
     "personal": {
       "title": "Jalur Pembelajaranmu",
       "empty": "Unduh sebuah set pelajaran untuk memulai.",

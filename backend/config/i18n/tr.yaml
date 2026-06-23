@@ -2421,6 +2421,7 @@ learning_path:
   filter_label: "Setleri filtrele"
   adaptive: "Uyarlanabilir dersi başlat"
   error_replay: "Hataları tekrarla"
+  train_errors: "Hataları çalış"
   personal:
     title: "Öğrenme yolun"
     empty: "Başlamak için bir ders seti indir."

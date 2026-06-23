@@ -2654,6 +2654,7 @@
     "filter_label": "Filtrer les ensembles",
     "adaptive": "Démarrer une leçon adaptative",
     "error_replay": "Réviser les erreurs",
+    "train_errors": "Entraîner les erreurs",
     "personal": {
       "title": "Ton parcours d'apprentissage",
       "empty": "Télécharge un ensemble de leçons pour commencer.",
