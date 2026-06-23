@@ -35,7 +35,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        lock-all-plugins verify-plugin-locks \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
-       clean prod prod-down prod-logs help
+       clean prod prod-down prod-logs launcher-test help
 
 # --- Development ---
 
@@ -462,6 +462,23 @@ prod-down: ## Stop production
 
 prod-logs: ## Show production logs
 	docker compose -f docker-compose.prod.yml logs -f
+
+# --- Launcher (desktop, Docker-based) ---
+
+# Per-run capture of the desktop launcher's --debug output for later
+# analysis. Each run writes two timestamped files under launcher/logs/
+# (gitignored via the launcher-*.log pattern):
+#   launcher-<ts>.log        combined stdout/stderr (the live --debug stream)
+#   launcher-<ts>-debug.log  archived copy of the CWD launcher-debug.log
+# Pass extra flags via ARGS, e.g. `make launcher-test ARGS="--status"`.
+launcher-test: ## Run the desktop launcher in --debug; capture timestamped logs to launcher/logs/ for analysis
+	@mkdir -p launcher/logs
+	@ts=$$(date +%Y%m%d-%H%M%S); \
+	log="logs/launcher-$$ts.log"; \
+	echo "Launcher debug run -> launcher/$$log (close the window or Ctrl-C to stop)"; \
+	cd launcher && poetry run python -m adaptive_learner_launcher --debug $(ARGS) 2>&1 | tee "$$log"; \
+	cp -f launcher-debug.log "logs/launcher-$$ts-debug.log" 2>/dev/null || true; \
+	echo "Saved: launcher/logs/launcher-$$ts.log + launcher/logs/launcher-$$ts-debug.log"
 
 # --- Documentation (MkDocs) ---
 
