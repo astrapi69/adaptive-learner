@@ -59,3 +59,17 @@ bug — fix the bug; regenerate only after an intended visual change.
 
 A few features are **not** web-reachable by Playwright (the desktop launcher)
 and are captured manually into the matching folder — see the features README.
+
+### Feature-Screenshot-Katalog
+
+- **Directory:** `e2e/visual/features/{feature-name}/`
+- **Capture:** `make capture-screenshots`
+- **Verify:** `make verify-screenshots`
+- **Spec:** `e2e/scripts/capture-feature-screenshots.ts` (the `FEATURES` map)
+- **No CI gate** (on-demand) — but **mandatory on UI PRs** (see
+  [`CONTRIBUTING.md`](../../CONTRIBUTING.md) and
+  [`.claude/rules/quality-checks.md`](../../.claude/rules/quality-checks.md)).
+  Pure backend / launcher / test / docs PRs are exempt.
+- The existing **theme-regression** suite under `e2e/visual/`
+  (`theme-regression.spec.ts` + `critical-surfaces.spec.ts`) stays
+  independent — it is organised by theme/surface, this catalog by feature.
