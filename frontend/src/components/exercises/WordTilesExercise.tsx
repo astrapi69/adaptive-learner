@@ -538,6 +538,214 @@ function WordTilesScrambledRow({
     );
 }
 
+interface WordTilesEditorProps {
+    submitted: boolean;
+    sensors: ReturnType<typeof useSensors>;
+    placed: number[];
+    tiles: string[];
+    scrambledIndices: number[];
+    placedListRef: Ref<HTMLUListElement>;
+    reduceMotion: boolean;
+    activeId: number | null;
+    isCorrect: boolean;
+    t: (key: string, fallback?: string) => string;
+    onDragStart: (event: DragStartEvent) => void;
+    onDragEnd: (event: DragEndEvent) => void;
+    onDragCancel: () => void;
+    onPlace: (index: number) => void;
+    onRemove: (index: number) => void;
+    onMove: (from: number, to: number) => void;
+    onKeyReorder: (
+        slot: number,
+        e: React.KeyboardEvent<HTMLButtonElement>,
+    ) => void;
+}
+
+/** The pre-check editing surface: instructions, the drag-and-drop answer
+ *  row, and the scrambled tile bank. Self-gated — renders ``null`` once the
+ *  answer is submitted, so the parent drops three ``!submitted &&`` guards
+ *  and the answer-row ternaries (cohesion / #1047). */
+function WordTilesEditor({
+    submitted,
+    sensors,
+    placed,
+    tiles,
+    scrambledIndices,
+    placedListRef,
+    reduceMotion,
+    activeId,
+    isCorrect,
+    t,
+    onDragStart,
+    onDragEnd,
+    onDragCancel,
+    onPlace,
+    onRemove,
+    onMove,
+    onKeyReorder,
+}: WordTilesEditorProps) {
+    if (submitted) return null;
+    return (
+        <>
+            <p
+                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
+                data-testid="word-tiles-instructions"
+            >
+                {t(
+                    "lesson.exercise.word_tiles.instructions",
+                    "Arrange the tiles in order. Tap to place; drag a placed tile (or use the arrows) to reorder.",
+                )}
+            </p>
+
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={onDragStart}
+                onDragEnd={onDragEnd}
+                onDragCancel={onDragCancel}
+            >
+                <div
+                    className="min-h-16 rounded-sm border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)] p-2"
+                    data-testid="word-tiles-answer-row"
+                    aria-label={t(
+                        "lesson.exercise.word_tiles.answer_label",
+                        "Your answer",
+                    )}
+                    aria-live="polite"
+                >
+                    {placed.length === 0 ? (
+                        <p
+                            className="m-0 p-2 text-center text-sm italic text-[var(--fg-muted)]"
+                            data-testid="word-tiles-answer-empty"
+                        >
+                            {t(
+                                "lesson.exercise.word_tiles.answer_placeholder",
+                                "Tap tiles below to build your answer",
+                            )}
+                        </p>
+                    ) : (
+                        <SortableContext
+                            items={placed.map((i) => String(i))}
+                            strategy={rectSortingStrategy}
+                        >
+                            <ul
+                                className="m-0 flex list-none flex-wrap gap-2 p-0"
+                                ref={placedListRef}
+                            >
+                                {placed.map((tileIndex, slotIndex) => (
+                                    <PlacedTile
+                                        key={tileIndex}
+                                        tileIndex={tileIndex}
+                                        slotIndex={slotIndex}
+                                        label={tiles[tileIndex]}
+                                        total={placed.length}
+                                        submitted={submitted}
+                                        isCorrect={isCorrect}
+                                        reduceMotion={reduceMotion}
+                                        t={t}
+                                        onRemove={onRemove}
+                                        onMove={onMove}
+                                        onKeyReorder={onKeyReorder}
+                                    />
+                                ))}
+                            </ul>
+                        </SortableContext>
+                    )}
+                </div>
+
+                <DragOverlay>
+                    {activeId !== null ? (
+                        <div
+                            className={cn(WORD_TILE_BASE, WORD_TILE_PLACED)}
+                            data-testid="word-tile-drag-overlay"
+                            style={{
+                                cursor: "grabbing",
+                                ...(reduceMotion
+                                    ? {}
+                                    : {
+                                          transform: "scale(1.05)",
+                                          boxShadow: "var(--shadow-elevated)",
+                                          opacity: 0.95,
+                                      }),
+                            }}
+                        >
+                            {tiles[activeId]}
+                        </div>
+                    ) : null}
+                </DragOverlay>
+            </DndContext>
+
+            <WordTilesScrambledRow
+                scrambledIndices={scrambledIndices}
+                tiles={tiles}
+                submitted={submitted}
+                onPlace={onPlace}
+            />
+        </>
+    );
+}
+
+interface WordTilesReviewProps {
+    submitted: boolean;
+    showAnswerToggle: boolean;
+    view: AnswerView;
+    myAnswerLabels: string[];
+    myAnswerCorrectness: boolean[];
+    tiles: string[];
+    t: (key: string, fallback?: string) => string;
+    onShowMyAnswer: () => void;
+    onShowSolution: () => void;
+}
+
+/** The post-check My-answer / Solution toggle (#1005). Self-gated — renders
+ *  ``null`` until the answer is submitted and the mode allows the toggle, so
+ *  the parent drops the ``submitted && showAnswerToggle &&`` guard and the
+ *  view ternary (cohesion / #1047). */
+function WordTilesReview({
+    submitted,
+    showAnswerToggle,
+    view,
+    myAnswerLabels,
+    myAnswerCorrectness,
+    tiles,
+    t,
+    onShowMyAnswer,
+    onShowSolution,
+}: WordTilesReviewProps) {
+    if (!submitted || !showAnswerToggle) return null;
+    return (
+        <>
+            <ExerciseAnswerToggle
+                view={view}
+                onShowMyAnswer={onShowMyAnswer}
+                onShowSolution={onShowSolution}
+                testIdPrefix="word-tiles"
+            />
+            {view === "my-answer" ? (
+                <WordTilesAnswerView
+                    labels={myAnswerLabels}
+                    correctness={myAnswerCorrectness}
+                    testId="word-tiles-my-answer-view"
+                    ariaLabel={t(
+                        "lesson.exercise.toggle.my_answer",
+                        "My answer",
+                    )}
+                />
+            ) : (
+                <WordTilesAnswerView
+                    labels={tiles}
+                    correctness={null}
+                    testId="word-tiles-solution-view"
+                    ariaLabel={t(
+                        "lesson.exercise.toggle.solution",
+                        "Solution",
+                    )}
+                />
+            )}
+        </>
+    );
+}
+
 function WordTilesExercise(
     {
         exercise,
@@ -747,106 +955,25 @@ function WordTilesExercise(
 
             <DirectionInstruction exercise={exercise} />
 
-            {!submitted && (
-            <p
-                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
-                data-testid="word-tiles-instructions"
-            >
-                {t(
-                    "lesson.exercise.word_tiles.instructions",
-                    "Arrange the tiles in order. Tap to place; drag a placed tile (or use the arrows) to reorder.",
-                )}
-            </p>
-            )}
-
-            {!submitted && (
-            <DndContext
+            <WordTilesEditor
+                submitted={submitted}
                 sensors={sensors}
-                collisionDetection={closestCenter}
+                placed={placed}
+                tiles={tiles}
+                scrambledIndices={scrambledIndices}
+                placedListRef={placedListRef}
+                reduceMotion={reduceMotion}
+                activeId={activeId}
+                isCorrect={isCorrect}
+                t={t}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragCancel={() => setActiveId(null)}
-            >
-                <div
-                    className="min-h-16 rounded-sm border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)] p-2"
-                    data-testid="word-tiles-answer-row"
-                    aria-label={t(
-                        "lesson.exercise.word_tiles.answer_label",
-                        "Your answer",
-                    )}
-                    aria-live="polite"
-                >
-                    {placed.length === 0 ? (
-                        <p
-                            className="m-0 p-2 text-center text-sm italic text-[var(--fg-muted)]"
-                            data-testid="word-tiles-answer-empty"
-                        >
-                            {t(
-                                "lesson.exercise.word_tiles.answer_placeholder",
-                                "Tap tiles below to build your answer",
-                            )}
-                        </p>
-                    ) : (
-                        <SortableContext
-                            items={placed.map((i) => String(i))}
-                            strategy={rectSortingStrategy}
-                        >
-                            <ul
-                                className="m-0 flex list-none flex-wrap gap-2 p-0"
-                                ref={placedListRef}
-                            >
-                                {placed.map((tileIndex, slotIndex) => (
-                                    <PlacedTile
-                                        key={tileIndex}
-                                        tileIndex={tileIndex}
-                                        slotIndex={slotIndex}
-                                        label={tiles[tileIndex]}
-                                        total={placed.length}
-                                        submitted={submitted}
-                                        isCorrect={isCorrect}
-                                        reduceMotion={reduceMotion}
-                                        t={t}
-                                        onRemove={handleReturn}
-                                        onMove={reorder}
-                                        onKeyReorder={handleTileKeyDown}
-                                    />
-                                ))}
-                            </ul>
-                        </SortableContext>
-                    )}
-                </div>
-
-                <DragOverlay>
-                    {activeId !== null ? (
-                        <div
-                            className={cn(WORD_TILE_BASE, WORD_TILE_PLACED)}
-                            data-testid="word-tile-drag-overlay"
-                            style={{
-                                cursor: "grabbing",
-                                ...(reduceMotion
-                                    ? {}
-                                    : {
-                                          transform: "scale(1.05)",
-                                          boxShadow: "var(--shadow-elevated)",
-                                          opacity: 0.95,
-                                      }),
-                            }}
-                        >
-                            {tiles[activeId]}
-                        </div>
-                    ) : null}
-                </DragOverlay>
-            </DndContext>
-            )}
-
-            {!submitted && (
-            <WordTilesScrambledRow
-                scrambledIndices={scrambledIndices}
-                tiles={tiles}
-                submitted={submitted}
                 onPlace={handlePlace}
+                onRemove={handleReturn}
+                onMove={reorder}
+                onKeyReorder={handleTileKeyDown}
             />
-            )}
 
             <WordTilesHint
                 hint={exercise.hint}
@@ -855,37 +982,17 @@ function WordTilesExercise(
                 onShowHint={() => setShowHint(true)}
             />
 
-            {submitted && showAnswerToggle && (
-                <>
-                    <ExerciseAnswerToggle
-                        view={view}
-                        onShowMyAnswer={() => setView("my-answer")}
-                        onShowSolution={() => setView("solution")}
-                        testIdPrefix="word-tiles"
-                    />
-                    {view === "my-answer" ? (
-                        <WordTilesAnswerView
-                            labels={myAnswerLabels}
-                            correctness={myAnswerCorrectness}
-                            testId="word-tiles-my-answer-view"
-                            ariaLabel={t(
-                                "lesson.exercise.toggle.my_answer",
-                                "My answer",
-                            )}
-                        />
-                    ) : (
-                        <WordTilesAnswerView
-                            labels={tiles}
-                            correctness={null}
-                            testId="word-tiles-solution-view"
-                            ariaLabel={t(
-                                "lesson.exercise.toggle.solution",
-                                "Solution",
-                            )}
-                        />
-                    )}
-                </>
-            )}
+            <WordTilesReview
+                submitted={submitted}
+                showAnswerToggle={showAnswerToggle}
+                view={view}
+                myAnswerLabels={myAnswerLabels}
+                myAnswerCorrectness={myAnswerCorrectness}
+                tiles={tiles}
+                t={t}
+                onShowMyAnswer={() => setView("my-answer")}
+                onShowSolution={() => setView("solution")}
+            />
 
             <WordTilesResult
                 submitted={submitted}
