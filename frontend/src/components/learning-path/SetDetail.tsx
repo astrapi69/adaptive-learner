@@ -9,7 +9,7 @@
  * review queue). Tailwind, 44px targets.
  */
 
-import {ChevronDown, ListChecks, RefreshCw, Sparkles} from "lucide-react";
+import {ChevronDown, ListChecks, RefreshCw} from "lucide-react";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 
@@ -22,7 +22,11 @@ import ElementDetailList, {
 import FavoriteToggle from "../../shared/media/FavoriteToggle";
 import type {SrsBadgeTone} from "../../shared/gamification/SrsStatusBadge";
 import LessonRow from "./LessonRow";
-import type {PersonalPathSet} from "../../lib/learning-path/personal-path";
+import TrainErrorsButton from "../lesson/TrainErrorsButton";
+import type {
+    PersonalPathLesson,
+    PersonalPathSet,
+} from "../../lib/learning-path/personal-path";
 import type {SrsElementDetail} from "../../lib/srs/status";
 
 export interface SetDetailProps {
@@ -30,6 +34,15 @@ export interface SetDetailProps {
 }
 
 type T = (key: string, fallback?: string) => string;
+
+/** Active (non-mastered) error-card count for one lesson, derived from its
+ *  SRS roll-up (total tracked elements minus mastered). Mirrors the set-wide
+ *  ``errorCount`` definition in ``buildPersonalPath`` (#1012). */
+function lessonErrorCount(lesson: PersonalPathLesson): number {
+    const srs = lesson.srs;
+    if (!srs) return 0;
+    return Math.max(0, srs.total - srs.mastered);
+}
 
 function toElementItems(
     details: SrsElementDetail[],
@@ -156,28 +169,39 @@ export default function SetDetail({set}: SetDetailProps) {
                                     testId={`favorite-toggle-${lesson.filename}`}
                                 />
                             </div>
-                            {details.length > 0 && (
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setOpenLesson(
-                                            isOpen ? null : lesson.filename,
-                                        )
-                                    }
-                                    aria-expanded={isOpen}
-                                    className="ml-7 inline-flex items-center gap-1 py-1 text-xs text-fg-muted hover:text-fg-secondary"
-                                    data-testid={`lesson-details-toggle-${lesson.filename}`}
-                                >
-                                    <ChevronDown
-                                        size={12}
-                                        aria-hidden="true"
-                                        className={isOpen ? "rotate-180" : ""}
-                                    />
-                                    {isOpen
-                                        ? t("srs.hide_details", "Hide details")
-                                        : t("srs.details", "Element details")}
-                                </button>
-                            )}
+                            <div className="ml-7 flex flex-wrap items-center gap-3">
+                                {details.length > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setOpenLesson(
+                                                isOpen ? null : lesson.filename,
+                                            )
+                                        }
+                                        aria-expanded={isOpen}
+                                        className="inline-flex items-center gap-1 py-1 text-xs text-fg-muted hover:text-fg-secondary"
+                                        data-testid={`lesson-details-toggle-${lesson.filename}`}
+                                    >
+                                        <ChevronDown
+                                            size={12}
+                                            aria-hidden="true"
+                                            className={isOpen ? "rotate-180" : ""}
+                                        />
+                                        {isOpen
+                                            ? t("srs.hide_details", "Hide details")
+                                            : t("srs.details", "Element details")}
+                                    </button>
+                                )}
+                                {/* #1012 — per-lesson "Fehler trainieren":
+                                    scoped to this lesson's failed cards, hidden
+                                    when the lesson has no active errors. */}
+                                <TrainErrorsButton
+                                    setId={lesson.setId}
+                                    lessonId={lesson.filename}
+                                    errorCount={lessonErrorCount(lesson)}
+                                    className="px-2 py-1 text-xs"
+                                />
+                            </div>
                             {isOpen && (
                                 <div className="ml-7 mb-2">
                                     <ElementDetailList
@@ -204,19 +228,15 @@ export default function SetDetail({set}: SetDetailProps) {
             </ul>
 
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                <Link
-                    to={`/adaptive-lesson/${encodeURIComponent(set.setId)}`}
-                    // #779 — data-slot so the global anchor-color rule skips
-                    // these button-styled links (else the label inherits
-                    // var(--accent): accent-on-accent on the solid button,
-                    // and accent-instead-of-foreground on the outline one).
-                    data-slot="button"
-                    className={`${actionClass} bg-accent text-accent-fg`}
-                    data-testid={`set-adaptive-${set.setId}`}
-                >
-                    <Sparkles size={16} aria-hidden="true" />
-                    {t("learning_path.adaptive", "Start adaptive lesson")}
-                </Link>
+                {/* #1012 — set-wide "Fehler trainieren": the gated adaptive
+                    entry (every lesson's failed cards). Hidden when the set
+                    has no active errors (the adaptive lesson would dead-end on
+                    "empty" otherwise) — the Dashboard FocusAreasCard + lesson
+                    summary still surface the adaptive lesson when relevant. */}
+                <TrainErrorsButton
+                    setId={set.setId}
+                    errorCount={set.errorCount}
+                />
                 {set.errorCount > 0 && (
                     <Link
                         to={`/review/${encodeURIComponent(set.setId)}`}

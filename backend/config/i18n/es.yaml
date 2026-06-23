@@ -2423,6 +2423,7 @@ learning_path:
   filter_label: "Filtrar sets"
   adaptive: "Iniciar lección adaptativa"
   error_replay: "Repetir errores"
+  train_errors: "Entrenar errores"
   personal:
     title: "Tu ruta de aprendizaje"
     empty: "Descarga un conjunto de lecciones para empezar."

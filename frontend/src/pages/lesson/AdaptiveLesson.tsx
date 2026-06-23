@@ -40,7 +40,12 @@ import {
   type ReactElement,
   type Ref,
 } from "react";
-import { useNavigate, useParams, type NavigateFunction } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useSearchParams,
+  type NavigateFunction,
+} from "react-router-dom";
 
 import SaveAdaptiveLessonButton from "../../components/content/lessons/SaveAdaptiveLessonButton";
 import {
@@ -87,8 +92,11 @@ const TAG_I18N_KEYS: Record<ErrorTag, [string, string]> = {
 export default function AdaptiveLessonPage() {
   const params = useParams<UrlParams>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t } = useI18n();
   const setId = params.setId ?? "";
+  // #1012 — optional ?lesson= scope: train only this lesson's failed cards.
+  const lessonId = searchParams.get("lesson") ?? undefined;
 
   const {
     status,
@@ -105,6 +113,7 @@ export default function AdaptiveLessonPage() {
     finalize,
   } = useAdaptiveLesson({
     setId,
+    lessonId,
     title: t("adaptive.session_title", "Adaptive lesson"),
   });
 

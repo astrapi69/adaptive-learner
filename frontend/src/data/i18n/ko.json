@@ -2654,6 +2654,7 @@
     "filter_label": "세트 필터",
     "adaptive": "적응형 레슨 시작",
     "error_replay": "오답 다시 풀기",
+    "train_errors": "오답 연습",
     "personal": {
       "title": "당신의 학습 경로",
       "empty": "시작하려면 레슨 세트를 다운로드하세요.",

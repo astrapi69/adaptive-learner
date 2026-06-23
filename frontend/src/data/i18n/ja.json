@@ -2654,6 +2654,7 @@
     "filter_label": "セットを絞り込む",
     "adaptive": "アダプティブレッスンを開始",
     "error_replay": "間違いを復習",
+    "train_errors": "間違いを練習",
     "personal": {
       "title": "あなたの学習パス",
       "empty": "始めるにはレッスンセットをダウンロードしてください。",

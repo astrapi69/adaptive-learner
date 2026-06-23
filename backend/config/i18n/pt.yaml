@@ -2421,6 +2421,7 @@ learning_path:
   filter_label: "Filtrar conjuntos"
   adaptive: "Iniciar lição adaptativa"
   error_replay: "Repetir erros"
+  train_errors: "Treinar erros"
   personal:
     title: "O teu percurso de aprendizagem"
     empty: "Baixa um conjunto de lições para começar."
