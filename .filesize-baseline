@@ -15,3 +15,8 @@
 # Splitting wird in #372 verfolgt (Cohesion Phase 2).
 #
 # Format: <relativer Pfad>  <max-Zeilen>   (# = Kommentar)
+
+# Launcher CLI entrypoint — crossed 1000 lines via the Docker-first launcher
+# flow + inline port field (#976/#986). Mixed-concern god-file; frozen here,
+# must not grow. Split tracked under #372.
+launcher/adaptive_learner_launcher/__main__.py  1233

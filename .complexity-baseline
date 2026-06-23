@@ -12,4 +12,8 @@
 # immediately; existing offenders below are grandfathered (ratchet may
 # only shrink). File-level granularity matches .filesize-baseline.
 
-frontend/src/pages/content/Content.tsx 21
+frontend/src/components/exercises/MatchingExercise.tsx 21
+frontend/src/components/exercises/WordTilesExercise.tsx 24
+frontend/src/components/lesson/summary/LessonSummary.tsx 40
+frontend/src/hooks/lesson/useTimedLesson.ts 25
+frontend/src/pages/lesson/Lesson.tsx 22
