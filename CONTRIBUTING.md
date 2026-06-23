@@ -104,6 +104,32 @@ person tagging):
   renders when refreshing a non-cached route.
 - Lighthouse audit — target PWA score > 90, Performance > 80.
 
+### Per-feature screenshot baselines (#1023)
+
+Every visual feature needs at least one screenshot in
+`e2e/visual/features/[feature-name]/`. **Desktop + mobile. Default
+theme (`dark`).** The screenshots serve double duty: pixel-diff
+regression and a documentation gallery of every visual feature.
+
+Add a `FeatureShot` to the `FEATURES` map in
+`e2e/scripts/capture-feature-screenshots.ts` (a kebab-case
+`<feature>/<shot>` path + a `setup(page)` driving the dexie preview
+build into the state), then generate and review the PNGs:
+
+```bash
+make capture-screenshots   # build dexie frontend + --update-snapshots
+# review every new PNG under e2e/visual/features/, then commit it
+make verify-screenshots    # pixel-compare against the committed baselines
+```
+
+Baselines are generated + reviewed on a consistent machine (font
+anti-aliasing differs between machines), not in CI. Never
+`--update-snapshots` to silence a diff that reveals a real bug. Features
+not reachable by Playwright (the desktop launcher) are captured manually
+into the matching folder. See
+[`e2e/visual/features/README.md`](e2e/visual/features/README.md) and
+[`docs/developer/testing.md`](docs/developer/testing.md).
+
 ## Plugin Development
 
 Adaptive Learner plugins are standalone Poetry packages that register
