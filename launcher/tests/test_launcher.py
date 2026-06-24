@@ -64,3 +64,74 @@ class TestConfigLoads:
         # Cleanup patterns include the container plus the legacy names.
         assert "adaptive-learner" in cfg.cleanup_patterns()
         assert "bibliogon" in cfg.cleanup_patterns()
+
+
+class TestResolveAppDir:
+    """The launcher must run with the Compose stack as its CWD so a port
+    change writes ``.env`` where Compose reads it (docker-app-launcher#3)."""
+
+    def _make_repo(self, base: Path) -> Path:
+        base.mkdir(parents=True, exist_ok=True)
+        (base / "docker-compose.prod.yml").write_text("services: {}\n")
+        return base
+
+    @pytest.fixture
+    def isolate_source_root(self, tmp_path, monkeypatch):
+        """Point the source-checkout candidate at a compose-less dir.
+
+        The real checkout's repo root DOES carry ``docker-compose.prod.yml``, so
+        without this the source-root candidate would always match and mask the
+        env-var / home-default / None paths under test.
+        """
+        deep = tmp_path / "src" / "launcher" / "adaptive_learner_launcher"
+        deep.mkdir(parents=True, exist_ok=True)
+        monkeypatch.setattr(__main__, "_PACKAGE_DIR", deep)
+        monkeypatch.setattr(__main__.Path, "home", staticmethod(lambda: tmp_path / "nohome"))
+        return tmp_path
+
+    def test_env_var_wins(self, tmp_path, monkeypatch) -> None:
+        repo = self._make_repo(tmp_path / "custom")
+        monkeypatch.setenv("ADAPTIVE_LEARNER_DIR", str(repo))
+        assert __main__._resolve_app_dir() == repo
+
+    def test_env_var_ignored_without_compose_file(self, isolate_source_root, monkeypatch) -> None:
+        # A pointed-at dir that lacks the compose file is not a match; resolution
+        # falls through and finds nothing here.
+        monkeypatch.setenv("ADAPTIVE_LEARNER_DIR", str(isolate_source_root / "empty"))
+        assert __main__._resolve_app_dir() is None
+
+    def test_source_root_when_it_has_compose(self, tmp_path, monkeypatch) -> None:
+        # Source checkout: <repo>/launcher/<package>/ -> <repo> holds the compose.
+        repo = self._make_repo(tmp_path / "repo")
+        deep = repo / "launcher" / "adaptive_learner_launcher"
+        deep.mkdir(parents=True, exist_ok=True)
+        monkeypatch.delenv("ADAPTIVE_LEARNER_DIR", raising=False)
+        monkeypatch.setattr(__main__, "_PACKAGE_DIR", deep)
+        assert __main__._resolve_app_dir() == repo
+
+    def test_home_default_fallback(self, isolate_source_root, monkeypatch) -> None:
+        monkeypatch.delenv("ADAPTIVE_LEARNER_DIR", raising=False)
+        home = isolate_source_root / "home"
+        self._make_repo(home / "adaptive-learner")
+        monkeypatch.setattr(__main__.Path, "home", staticmethod(lambda: home))
+        assert __main__._resolve_app_dir() == home / "adaptive-learner"
+
+    def test_none_when_nothing_found(self, isolate_source_root) -> None:
+        assert __main__._resolve_app_dir() is None
+
+    def test_main_chdirs_into_resolved_dir(self, tmp_path, monkeypatch) -> None:
+        repo = self._make_repo(tmp_path / "repo")
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: repo)
+        chdirs: list[str] = []
+        monkeypatch.setattr(__main__.os, "chdir", lambda p: chdirs.append(str(p)))
+        monkeypatch.setattr(__main__, "_package_main", lambda args: 0)
+        assert __main__.main(["--status"]) == 0
+        assert chdirs == [str(repo)]
+
+    def test_main_does_not_chdir_when_unresolved(self, monkeypatch) -> None:
+        monkeypatch.setattr(__main__, "_resolve_app_dir", lambda: None)
+        chdirs: list[str] = []
+        monkeypatch.setattr(__main__.os, "chdir", lambda p: chdirs.append(str(p)))
+        monkeypatch.setattr(__main__, "_package_main", lambda args: 0)
+        assert __main__.main(["--status"]) == 0
+        assert chdirs == []
