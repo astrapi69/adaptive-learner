@@ -3282,5 +3282,63 @@
       "from_lessons": "de {n} lecciones diferentes",
       "another": "Mezclar de nuevo"
     }
+  },
+  "invitation_code": {
+    "title": "Códigos de invitación",
+    "generate": "Generar código",
+    "generated": "Código generado.",
+    "needs_token": "Añade un token para este repositorio (arriba) para generar códigos de invitación.",
+    "never_expires": "Sin caducidad",
+    "redeemed_hint": "El recuento de canjes requiere la app de escritorio.",
+    "code_copied": "Código copiado.",
+    "link_copied": "Enlace de invitación copiado.",
+    "qr_title": "Código de invitación",
+    "qr_alt": "Código QR del enlace de invitación",
+    "active": {
+      "title": "Códigos activos",
+      "empty": "Aún no hay códigos."
+    },
+    "field": {
+      "prefix": "Prefijo (opcional)",
+      "max_uses": "Máx. de canjes",
+      "expires": "Válido hasta",
+      "note": "Nota",
+      "note_placeholder": "p. ej. Clase 8a"
+    },
+    "col": {
+      "code": "Código",
+      "redeemed": "Canjeado",
+      "max": "Máx.",
+      "valid": "Válido",
+      "actions": "Acciones"
+    },
+    "badge": {
+      "inactive": "Inactivo"
+    },
+    "action": {
+      "copy_code": "Copiar código",
+      "copy_link": "Copiar enlace",
+      "qr": "Código QR",
+      "deactivate": "Desactivar",
+      "redeem": "Canjear"
+    },
+    "error": {
+      "expired": "Este código de invitación ha caducado.",
+      "inactive": "Este código de invitación ya no está activo.",
+      "full": "Este código de invitación está completo.",
+      "not_found": "Código de invitación no encontrado.",
+      "generate": "No se pudo generar el código.",
+      "repo_failed": "No se pudo añadir el repositorio: {reason}",
+      "generic": "No se pudo canjear el código. Inténtalo de nuevo."
+    },
+    "redeem": {
+      "title": "Canjear un código de invitación",
+      "body": "Introduce el código o enlace que te dio tu profesor para añadir sus lecciones. No se necesita cuenta.",
+      "label": "Código o enlace de invitación",
+      "enter": "Introduce un código o enlace de invitación.",
+      "enter_cta": "Introducir código de invitación",
+      "needs_link": "Pega el enlace de invitación completo. Contiene el repositorio que desbloquea el código.",
+      "success": "Contenido añadido: {sets} conjuntos."
+    }
   }
 }

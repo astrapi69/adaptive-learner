@@ -65,6 +65,10 @@ export interface UserContentRepo {
    *  is NOT stored here (it lives in the per-repo token store, out of the
    *  exportable settings); this is only the cosmetic flag. */
   coach?: boolean;
+  /** #1093 — true when this repo was added by redeeming an invitation code.
+   *  The learner is a guest, not the owner: re-share / Teilen controls are
+   *  hidden for invite-added repos (only the owner shares). */
+  shared_via_invite?: boolean;
 }
 
 /**

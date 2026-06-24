@@ -3282,5 +3282,63 @@
       "from_lessons": "{n} farklı dersten",
       "another": "Tekrar karıştır"
     }
+  },
+  "invitation_code": {
+    "title": "Davet kodları",
+    "generate": "Kod oluştur",
+    "generated": "Kod oluşturuldu.",
+    "needs_token": "Davet kodları oluşturmak için bu depo için yukarıya bir belirteç ekleyin.",
+    "never_expires": "Süresiz",
+    "redeemed_hint": "Kullanım sayıları masaüstü uygulamasını gerektirir.",
+    "code_copied": "Kod kopyalandı.",
+    "link_copied": "Davet bağlantısı kopyalandı.",
+    "qr_title": "Davet kodu",
+    "qr_alt": "Davet bağlantısı için QR kodu",
+    "active": {
+      "title": "Etkin kodlar",
+      "empty": "Henüz kod yok."
+    },
+    "field": {
+      "prefix": "Ön ek (isteğe bağlı)",
+      "max_uses": "Maks. kullanım",
+      "expires": "Geçerlilik tarihi",
+      "note": "Not",
+      "note_placeholder": "örn. 8a sınıfı"
+    },
+    "col": {
+      "code": "Kod",
+      "redeemed": "Kullanıldı",
+      "max": "Maks.",
+      "valid": "Geçerli",
+      "actions": "Eylemler"
+    },
+    "badge": {
+      "inactive": "Etkin değil"
+    },
+    "action": {
+      "copy_code": "Kodu kopyala",
+      "copy_link": "Bağlantıyı kopyala",
+      "qr": "QR kodu",
+      "deactivate": "Devre dışı bırak",
+      "redeem": "Kullan"
+    },
+    "error": {
+      "expired": "Bu davet kodunun süresi doldu.",
+      "inactive": "Bu davet kodu artık etkin değil.",
+      "full": "Bu davet kodu dolu.",
+      "not_found": "Davet kodu bulunamadı.",
+      "generate": "Kod oluşturulamadı.",
+      "repo_failed": "Depo eklenemedi: {reason}",
+      "generic": "Kod kullanılamadı. Tekrar deneyin."
+    },
+    "redeem": {
+      "title": "Davet kodunu kullan",
+      "body": "Eğitmeninizin verdiği kodu veya bağlantıyı girerek derslerini ekleyin. Hesap gerekmez.",
+      "label": "Davet kodu veya bağlantısı",
+      "enter": "Bir davet kodu veya bağlantısı girin.",
+      "enter_cta": "Davet kodu gir",
+      "needs_link": "Tam davet bağlantısını yapıştırın. Kodun açtığı depoyu içerir.",
+      "success": "İçerik eklendi: {sets} set."
+    }
   }
 }

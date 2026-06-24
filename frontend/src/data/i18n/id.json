@@ -3282,5 +3282,63 @@
       "from_lessons": "dari {n} pelajaran berbeda",
       "another": "Acak lagi"
     }
+  },
+  "invitation_code": {
+    "title": "Kode undangan",
+    "generate": "Buat kode",
+    "generated": "Kode dibuat.",
+    "needs_token": "Tambahkan token untuk repositori ini (di atas) untuk membuat kode undangan.",
+    "never_expires": "Tanpa kedaluwarsa",
+    "redeemed_hint": "Penghitungan penukaran memerlukan aplikasi desktop.",
+    "code_copied": "Kode disalin.",
+    "link_copied": "Tautan undangan disalin.",
+    "qr_title": "Kode undangan",
+    "qr_alt": "Kode QR untuk tautan undangan",
+    "active": {
+      "title": "Kode aktif",
+      "empty": "Belum ada kode."
+    },
+    "field": {
+      "prefix": "Awalan (opsional)",
+      "max_uses": "Maks. penukaran",
+      "expires": "Berlaku hingga",
+      "note": "Catatan",
+      "note_placeholder": "mis. Kelas 8a"
+    },
+    "col": {
+      "code": "Kode",
+      "redeemed": "Ditukar",
+      "max": "Maks.",
+      "valid": "Berlaku",
+      "actions": "Tindakan"
+    },
+    "badge": {
+      "inactive": "Nonaktif"
+    },
+    "action": {
+      "copy_code": "Salin kode",
+      "copy_link": "Salin tautan",
+      "qr": "Kode QR",
+      "deactivate": "Nonaktifkan",
+      "redeem": "Tukarkan"
+    },
+    "error": {
+      "expired": "Kode undangan ini telah kedaluwarsa.",
+      "inactive": "Kode undangan ini tidak lagi aktif.",
+      "full": "Kode undangan ini penuh.",
+      "not_found": "Kode undangan tidak ditemukan.",
+      "generate": "Tidak dapat membuat kode.",
+      "repo_failed": "Tidak dapat menambahkan repositori: {reason}",
+      "generic": "Tidak dapat menukarkan kode. Coba lagi."
+    },
+    "redeem": {
+      "title": "Tukarkan kode undangan",
+      "body": "Masukkan kode atau tautan yang diberikan pelatih Anda untuk menambahkan pelajaran mereka. Tanpa akun.",
+      "label": "Kode atau tautan undangan",
+      "enter": "Masukkan kode atau tautan undangan.",
+      "enter_cta": "Masukkan kode undangan",
+      "needs_link": "Tempel tautan undangan lengkap. Tautan itu memuat repositori yang dibuka oleh kode.",
+      "success": "Konten ditambahkan: {sets} set."
+    }
   }
 }
