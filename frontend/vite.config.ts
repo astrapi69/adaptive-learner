@@ -48,6 +48,22 @@ function emitVersionJson() {
     };
 }
 
+/**
+ * Inject the app version into index.html's JSON-LD at build time (and in dev),
+ * replacing the ``{{APP_VERSION}}`` placeholder with package.json's version so
+ * the structured-data ``softwareVersion`` never drifts from the canonical pin
+ * (#1104). A non-``%``-delimited token so Vite's env replacement leaves it for
+ * this transform.
+ */
+function injectAppVersionHtml() {
+    return {
+        name: "adaptive-learner:html-app-version",
+        transformIndexHtml(html: string) {
+            return html.replaceAll("{{APP_VERSION}}", pkg.version);
+        },
+    };
+}
+
 export default defineConfig({
     base,
     resolve: {
@@ -76,6 +92,7 @@ export default defineConfig({
         tailwindcss(),
         react(),
         emitVersionJson(),
+        injectAppVersionHtml(),
         VitePWA({
             // #613 — user-driven updates: the SW installs but WAITS instead
             // of auto-reloading the tab. ``useAppUpdate`` detects the

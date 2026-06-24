@@ -20,18 +20,66 @@
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
-    <title>Adaptive Learner</title>
-    <!-- Social preview (Open Graph + Twitter). Absolute URLs point at
-         the canonical public deployment, which is what crawlers fetch. -->
+    <meta name="application-name" content="Adaptive Learner"/>
+    <meta name="apple-mobile-web-app-title" content="Adaptive Learner"/>
+
+    <!-- SEO (#1104). DE is the primary locale; EN is the og:locale alternate. -->
+    <title>Adaptive Learner - KI-gestützte Sprachlern-App</title>
+    <meta name="description" content="Lerne Sprachen mit KI-generierten Übungen, 7 Lernmodi, Spaced Repetition und 26 Content-Sets in 10 Sprachen. Kostenlos, offline-fähig, Open Source."/>
+    <meta name="keywords" content="Sprachlernen, KI, Lernapp, Vokabeltrainer, Spaced Repetition, Flashcards, PWA, Open Source"/>
+    <meta name="author" content="Asterios Raptis"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="https://astrapi69.github.io/adaptive-learner/"/>
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp). Absolute URLs point at the
+         canonical public deployment, which is what crawlers fetch. -->
     <meta property="og:type" content="website"/>
-    <meta property="og:title" content="Adaptive Learner"/>
-    <meta property="og:description" content="Adaptive learning system based on the six-method learning model."/>
+    <meta property="og:site_name" content="Adaptive Learner"/>
+    <meta property="og:title" content="Adaptive Learner - KI-gestützte Sprachlern-App"/>
+    <meta property="og:description" content="Lerne Sprachen mit KI-generierten Übungen, 7 Lernmodi und Spaced Repetition. Kostenlos und offline-fähig."/>
     <meta property="og:image" content="https://astrapi69.github.io/adaptive-learner/og-image.png"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta property="og:image:alt" content="Adaptive Learner - Lerne Sprachen mit KI"/>
     <meta property="og:url" content="https://astrapi69.github.io/adaptive-learner/"/>
+    <meta property="og:locale" content="de_DE"/>
+    <meta property="og:locale:alternate" content="en_US"/>
+
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Adaptive Learner"/>
-    <meta name="twitter:description" content="Adaptive learning system based on the six-method learning model."/>
+    <meta name="twitter:title" content="Adaptive Learner - KI-gestützte Sprachlern-App"/>
+    <meta name="twitter:description" content="Lerne Sprachen mit KI-generierten Übungen, 7 Lernmodi und Spaced Repetition."/>
     <meta name="twitter:image" content="https://astrapi69.github.io/adaptive-learner/og-image.png"/>
+    <meta name="twitter:image:alt" content="Adaptive Learner - Lerne Sprachen mit KI"/>
+
+    <!-- Structured data: WebApplication (JSON-LD). The version is injected at
+         build time from package.json (no hardcoded literal). -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Adaptive Learner",
+      "description": "KI-gestützte Sprachlern-App mit 7 Lernmodi, Spaced Repetition und 26 Content-Sets in 10 Sprachen.",
+      "url": "https://astrapi69.github.io/adaptive-learner/",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "author": { "@type": "Person", "name": "Asterios Raptis", "url": "https://github.com/astrapi69" },
+      "inLanguage": ["de", "en", "el", "es", "fr", "hi", "ja", "ko", "pt", "tr", "id"],
+      "screenshot": "https://astrapi69.github.io/adaptive-learner/og-image.png",
+      "featureList": [
+        "7 learning modes (Practice, Exam, Timed, Error, Reverse, Shuffle, Endless)",
+        "AI-generated exercises",
+        "Spaced Repetition System",
+        "26 content sets in 10 languages",
+        "Offline-capable PWA",
+        "GitHub repository sharing with invitation codes",
+        "Social sharing with generated share cards"
+      ],
+      "softwareVersion": "{{APP_VERSION}}",
+      "license": "https://github.com/astrapi69/adaptive-learner/blob/main/LICENSE"
+    }
+    </script>
     <!-- Fonts are bundled locally in public/fonts/ (no CDN dependency) -->
     <!-- Phase 58E: apply the saved theme BEFORE first paint to avoid a
          flash of the wrong theme. Mirrors the resolution in
