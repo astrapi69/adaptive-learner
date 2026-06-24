@@ -81,6 +81,7 @@ from . import streaming
 from .prompts import build_language_directive, build_prompt
 from .route_helpers import (
     _analysis_context_for,
+    _conversation_context_for,
     _fire_on_session_complete,
     _get_project,
     _get_session,
@@ -197,6 +198,16 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
     analysis_block = _analysis_context_for(db, payload.imported_conversation_id, payload.lang)
     if analysis_block:
         prompt = f"{prompt}\n\n{analysis_block}"
+
+    # #1078 — fold in the imported chat's RAW transcript (the analysis block
+    # above is only the summary). Lets the tutor pick up the thread of the
+    # actual conversation, which is the point of "continue session" on an
+    # imported chat. Bounded to the most recent turns by a token budget.
+    conversation_block = _conversation_context_for(
+        db, payload.imported_conversation_id, payload.lang
+    )
+    if conversation_block:
+        prompt = f"{prompt}\n\n{conversation_block}"
 
     # #797 — give the AI awareness of the learner's lesson progress
     # (completed content + scores, the lesson in progress, recent

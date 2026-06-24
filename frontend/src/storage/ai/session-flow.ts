@@ -23,10 +23,12 @@ import {
 } from "../dexie/db";
 import {
     buildAnalysisContext,
+    buildConversationContext,
     buildLanguageDirective,
     buildLearningContext,
     buildPrompt,
     type CompletedLesson,
+    type ConversationTurn,
     type InProgressLesson,
     type LearningContext,
     type RecentMistake,
@@ -240,6 +242,42 @@ async function resumeActiveImportedSession(
     };
 }
 
+/**
+ * Assemble the imported-chat context for the session system prompt: the
+ * structured analysis summary (#827) AND the raw transcript (#1078), in that
+ * order. Returns ``""`` when the conversation carries neither, so the caller
+ * can append unconditionally.
+ *
+ * @param db - The Dexie database.
+ * @param conversationId - The imported conversation id.
+ * @param lang - UI language for the block labels.
+ */
+async function buildImportedContextBlock(
+    db: AdaptiveLearnerDB,
+    conversationId: string,
+    lang: string,
+): Promise<string> {
+    const conv = await db.importedConversations.get(conversationId);
+    const analysis = conv?.analysis_result as
+        | ConversationAnalysisResult
+        | null
+        | undefined;
+    const messageRows = await db.importedMessages
+        .where("conversation_id")
+        .equals(conversationId)
+        .sortBy("order_index");
+    const turns: ConversationTurn[] = messageRows.map((row) => ({
+        role: row.role,
+        content: row.content,
+    }));
+    return [
+        buildAnalysisContext(analysis, lang),
+        buildConversationContext(turns, lang),
+    ]
+        .filter((block) => block)
+        .join("\n\n");
+}
+
 export async function startSession(opts: {
     projectId: string;
     method?: LearningMethod;
@@ -330,16 +368,13 @@ export async function startSession(opts: {
     // imported context instead of starting blank. Mirrors the backend
     // ``start_session`` analysis-context injection.
     if (opts.importedConversationId) {
-        const conv = await db.importedConversations.get(
+        const importedBlock = await buildImportedContextBlock(
+            db,
             opts.importedConversationId,
+            opts.lang ?? "en",
         );
-        const analysis = conv?.analysis_result as
-            | ConversationAnalysisResult
-            | null
-            | undefined;
-        const analysisBlock = buildAnalysisContext(analysis, opts.lang ?? "en");
-        if (analysisBlock) {
-            systemPrompt = `${systemPrompt}\n\n${analysisBlock}`;
+        if (importedBlock) {
+            systemPrompt = `${systemPrompt}\n\n${importedBlock}`;
         }
     }
     // #797 — give the AI awareness of the learner's lesson progress
