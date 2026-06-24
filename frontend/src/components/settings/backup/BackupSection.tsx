@@ -15,7 +15,7 @@
  * branches on mode beyond the helper text.
  */
 
-import {Download, Upload} from "lucide-react";
+import {Download, ExternalLink, Upload} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
@@ -23,6 +23,7 @@ import {BackupCompare} from "./BackupCompare";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {readLearnerState} from "../../../lib/learning/learnerState";
 import {getStorage, resolveStorageMode} from "../../../storage";
+import {SHARE_URL} from "../../../lib/share/generate-share-text";
 import {notify} from "../../../utils/notify";
 import {readBackupFile} from "../../../lib/backup/validateBackupFile";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
@@ -730,6 +731,41 @@ export default function BackupSection() {
                 onFileChange={handleFileChange}
                 t={t}
             />
+
+            {/* #1085 — online-to-local migration entry: only meaningful on a
+                local (API mode) install, where the data lives elsewhere. */}
+            {storageMode === "api" && (
+                <div
+                    className="mt-4 rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] p-3"
+                    data-testid="migration-settings-card"
+                >
+                    <h3 className="m-0 text-base font-semibold">
+                        {t(
+                            "migration.settings.title",
+                            "Import from the online version",
+                        )}
+                    </h3>
+                    <p className="mt-1 mb-0 text-sm text-[var(--fg-muted)]">
+                        {t(
+                            "migration.settings.body",
+                            "Used Adaptive Learner online? Create a backup there, then use Import above to bring your data over.",
+                        )}
+                    </p>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-2 min-h-11 gap-2"
+                        onClick={() =>
+                            window.open(SHARE_URL, "_blank", "noopener,noreferrer")
+                        }
+                        data-testid="migration-settings-open-online"
+                    >
+                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                        {t("migration.action.open_online", "Open online version")}
+                    </Button>
+                </div>
+            )}
 
             {lastBackup !== null && (
                 <p

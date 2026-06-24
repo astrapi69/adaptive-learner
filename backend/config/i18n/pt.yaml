@@ -3045,3 +3045,14 @@ invitation_code:
     enter_cta: "Inserir código de convite"
     needs_link: "Cole o link de convite completo. Ele contém o repositório que o código desbloqueia."
     success: "Conteúdo adicionado: {sets} conjuntos."
+migration:
+  title: "Traga seus dados da versão online"
+  body: "Você usou o Adaptive Learner online? Traga seus dados de aprendizado com um arquivo de backup. Não é necessária conta."
+  hint: "Na versão online: Configurações, Dados, Criar backup, baixe o arquivo .alb e importe-o aqui."
+  action:
+    import: "Importar backup"
+    open_online: "Abrir versão online"
+    start_fresh: "Começar sem dados"
+  settings:
+    title: "Importar da versão online"
+    body: "Usou o Adaptive Learner online? Crie um backup lá e use Importar acima para trazer seus dados."

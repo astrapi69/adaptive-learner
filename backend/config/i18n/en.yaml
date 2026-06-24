@@ -3055,3 +3055,14 @@ invitation_code:
     enter_cta: "Enter invitation code"
     needs_link: "Paste the full invitation link. It carries the repository the code unlocks."
     success: "Content added: {sets} sets."
+migration:
+  title: "Bring your data from the online version"
+  body: "Have you used Adaptive Learner online? Bring your learning data over with a backup file. No account needed."
+  hint: "In the online version: Settings, Data, Create backup, download the .alb file, then import it here."
+  action:
+    import: "Import backup"
+    open_online: "Open online version"
+    start_fresh: "Start without data"
+  settings:
+    title: "Import from the online version"
+    body: "Used Adaptive Learner online? Create a backup there, then use Import above to bring your data over."

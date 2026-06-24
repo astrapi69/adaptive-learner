@@ -3045,3 +3045,14 @@ invitation_code:
     enter_cta: "Davet kodu gir"
     needs_link: "Tam davet bağlantısını yapıştırın. Kodun açtığı depoyu içerir."
     success: "İçerik eklendi: {sets} set."
+migration:
+  title: "Verilerinizi çevrimiçi sürümden getirin"
+  body: "Adaptive Learner'ı çevrimiçi kullandınız mı? Öğrenme verilerinizi bir yedek dosyasıyla getirin. Hesap gerekmez."
+  hint: "Çevrimiçi sürümde: Ayarlar, Veriler, Yedek oluştur, .alb dosyasını indirin ve burada içe aktarın."
+  action:
+    import: "Yedeği içe aktar"
+    open_online: "Çevrimiçi sürümü aç"
+    start_fresh: "Verisiz başla"
+  settings:
+    title: "Çevrimiçi sürümden içe aktar"
+    body: "Adaptive Learner'ı çevrimiçi kullandınız mı? Orada bir yedek oluşturun ve verilerinizi getirmek için yukarıdaki İçe Aktar'ı kullanın."
