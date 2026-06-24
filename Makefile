@@ -35,7 +35,10 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        lock-all-plugins verify-plugin-locks \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
-       clean prod prod-down prod-logs launcher-test help
+       clean prod prod-down prod-logs \
+       launcher-test launcher-install launcher-status launcher-check launcher-stop \
+       launcher-uninstall launcher-cleanup launcher-port launcher-version launcher-logs \
+       launcher-pytest launcher-update-package launcher-venv-fix launcher-tray-check help
 
 # --- Development ---
 
@@ -480,6 +483,53 @@ launcher-test: ## Run the desktop launcher in --debug; capture timestamped logs 
 	cp -f launcher-debug.log "logs/launcher-$$ts-debug.log" 2>/dev/null || true; \
 	echo "Saved: launcher/logs/launcher-$$ts.log + launcher/logs/launcher-$$ts-debug.log"
 
+launcher-install: ## Set up the launcher venv (with the tray extra)
+	cd launcher && poetry install --extras tray
+
+launcher-status: ## Print the app state (headless)
+	cd launcher && poetry run python -m adaptive_learner_launcher --status
+
+launcher-check: ## Check Docker (headless)
+	cd launcher && poetry run python -m adaptive_learner_launcher --check
+
+launcher-stop: ## Stop the app (headless)
+	cd launcher && poetry run python -m adaptive_learner_launcher --stop
+
+launcher-uninstall: ## Remove the app containers/images (headless)
+	cd launcher && poetry run python -m adaptive_learner_launcher --uninstall
+
+launcher-cleanup: ## Remove stale leftover artifacts (headless)
+	cd launcher && poetry run python -m adaptive_learner_launcher --cleanup
+
+launcher-port: ## Change the host port (usage: make launcher-port PORT=9000)
+	@test -n "$(PORT)" || { echo "Usage: make launcher-port PORT=<1024-65535>"; exit 1; }
+	cd launcher && poetry run python -m adaptive_learner_launcher --port $(PORT)
+
+launcher-version: ## Print the launcher version
+	cd launcher && poetry run python -m adaptive_learner_launcher --version
+
+launcher-logs: ## Show the most recent launcher debug logs (launcher/logs/)
+	@ls -lt launcher/logs/*.log 2>/dev/null | head -5 || echo "No logs yet"
+	@echo "---"
+	@latest=$$(ls -t launcher/logs/*.log 2>/dev/null | head -1); \
+	if [ -n "$$latest" ]; then tail -50 "$$latest"; else echo "No log file present"; fi
+
+launcher-pytest: ## Run the launcher unit tests
+	cd launcher && poetry run pytest tests/ -v
+
+launcher-update-package: ## Update the docker-app-launcher PyPI package
+	cd launcher && poetry update docker-app-launcher
+
+launcher-venv-fix: ## Enable system-site-packages (system gi / tray) in the launcher venv
+	@venv=$$(cd launcher && poetry env info -p) && \
+	sed -i 's/include-system-site-packages = false/include-system-site-packages = true/' "$$venv/pyvenv.cfg" && \
+	echo "system-site-packages enabled for $$venv"
+
+launcher-tray-check: ## Check the tray dependencies (pystray / Pillow / gi)
+	@cd launcher && poetry run python -c 'import importlib.util as u; \
+	checks=[("pystray","pystray","poetry install --extras tray"),("Pillow","PIL","poetry install --extras tray"),("gi (PyGObject)","gi","make launcher-venv-fix, or apt install python3-gi gir1.2-ayatanaappindicator3-0.1")]; \
+	[print(f"{n}: OK" if u.find_spec(m) else f"{n}: MISSING ({h})") for n,m,h in checks]'
+
 # --- Documentation (MkDocs) ---
 
 docs-install: ## Install MkDocs dependencies (separate venv in docs/)
@@ -715,5 +765,9 @@ clean: ## Remove build artifacts and caches
 # --- Help ---
 
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -vE '^launcher-' | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-25s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "=== Launcher ==="
+	@grep -E '^launcher-[a-zA-Z_-]*:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-25s\033[0m %s\n", $$1, $$2}'
