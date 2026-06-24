@@ -294,6 +294,110 @@ export function buildAnalysisContext(
 }
 
 
+// --- Imported-chat transcript context (#1078) ---------------------------
+//
+// Dexie-mode mirror of the backend ``build_conversation_context``. The
+// analysis block above is the AI's *summary* of the imported chat; this block
+// is the chat ITSELF — the raw turns the learner imported — so the tutor can
+// pick up the thread of the actual conversation ("continue where we left
+// off"), the whole point of resuming a session on an imported chat. Bounded
+// to the most recent turns by a character budget (~4 chars/token).
+
+/** Character budget for the rendered transcript (~3000 tokens). */
+export const CONVERSATION_CHAR_BUDGET = 12000;
+
+/** One imported-chat turn fed to {@link buildConversationContext}. */
+export interface ConversationTurn {
+    role: string;
+    content: string;
+}
+
+interface ConversationLabels {
+    intro: string;
+    user: string;
+    assistant: string;
+    omitted: string;
+    closing: string;
+}
+
+const CONVERSATION_LABELS_DE: ConversationLabels = {
+    intro: "=== Importierte Konversation (vorheriger Chat) ===",
+    user: "Lerner",
+    assistant: "Assistent",
+    omitted: "[... frühere Nachrichten ausgelassen ...]",
+    closing:
+        "Knüpfe an diese vorherige Konversation an. Der Lerner möchte das " +
+        "Thema vertiefen.",
+};
+
+const CONVERSATION_LABELS_EN: ConversationLabels = {
+    intro: "=== Imported conversation (previous chat) ===",
+    user: "Learner",
+    assistant: "Assistant",
+    omitted: "[... earlier messages omitted ...]",
+    closing:
+        "Continue from this previous conversation. The learner wants to go " +
+        "deeper on the topic.",
+};
+
+/**
+ * Render the imported chat transcript into a system-prompt addendum.
+ *
+ * Keeps the most recent turns within ``charBudget`` (chronological order
+ * preserved); when older turns are dropped, an omission marker is prepended.
+ * Returns ``""`` when there are no non-empty turns, so the caller can append
+ * unconditionally.
+ *
+ * @param turns - The imported conversation turns in chronological order.
+ * @param lang - UI language (only the DE/EN base selects the labels).
+ * @param charBudget - Max characters of rendered transcript body.
+ */
+export function buildConversationContext(
+    turns: ConversationTurn[] | null | undefined,
+    lang: string,
+    charBudget: number = CONVERSATION_CHAR_BUDGET,
+): string {
+    const labels =
+        langKey(lang) === "de"
+            ? CONVERSATION_LABELS_DE
+            : CONVERSATION_LABELS_EN;
+    const cleaned = (turns ?? [])
+        .map((turn) => ({
+            role: turn.role,
+            content: String(turn.content ?? "").trim(),
+        }))
+        .filter((turn) => turn.content !== "");
+    if (cleaned.length === 0) return "";
+
+    // Walk newest -> oldest, keeping lines that fit the budget; reverse to
+    // restore chronological order. The oldest turns drop off the front.
+    const kept: string[] = [];
+    let used = 0;
+    let truncated = false;
+    for (let i = cleaned.length - 1; i >= 0; i--) {
+        const {role, content} = cleaned[i];
+        const speaker =
+            String(role).trim().toLowerCase() === "assistant"
+                ? labels.assistant
+                : labels.user;
+        const line = `${speaker}: ${content}`;
+        if (used + line.length > charBudget && kept.length > 0) {
+            truncated = true;
+            break;
+        }
+        kept.push(line);
+        used += line.length;
+    }
+    kept.reverse();
+
+    const parts = [labels.intro];
+    if (truncated) parts.push(labels.omitted);
+    parts.push(kept.join("\n"));
+    parts.push(labels.closing);
+    return parts.join("\n");
+}
+
+
 // --- Learning-progress context (lesson awareness, #797) -----------------
 //
 // Dexie-mode mirror of the backend ``build_learning_context``. Renders the

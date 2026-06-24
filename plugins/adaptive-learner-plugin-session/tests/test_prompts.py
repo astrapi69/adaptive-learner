@@ -22,9 +22,11 @@ from adaptive_learner_session.prompts import (
     CompletedLesson,
     InProgressLesson,
     LearningContext,
+    ConversationTurn,
     RecentMistake,
     _dominant_method,
     build_analysis_context,
+    build_conversation_context,
     build_language_directive,
     build_learning_context,
     build_prompt,
@@ -286,6 +288,68 @@ def test_analysis_context_skips_missing_fields():
     assert "Weaknesses:" not in out
     # The continue instruction is always present when there is any content.
     assert "Continue the learning session" in out
+
+
+# --- Imported-chat transcript context (#1078) ------------------------------
+
+
+def _conversation_fixture() -> list[ConversationTurn]:
+    return [
+        ConversationTurn(role="user", content="How do I use ser vs estar?"),
+        ConversationTurn(role="assistant", content="Ser is for permanent traits."),
+        ConversationTurn(role="user", content="And for location?"),
+        ConversationTurn(role="assistant", content="Location uses estar."),
+    ]
+
+
+def test_conversation_context_includes_transcript_en():
+    out = build_conversation_context(_conversation_fixture(), "en")
+    assert "Imported conversation (previous chat)" in out
+    assert "Learner: How do I use ser vs estar?" in out
+    assert "Assistant: Ser is for permanent traits." in out
+    assert "Assistant: Location uses estar." in out
+    # The closing continue-instruction is present.
+    assert "Continue from this previous conversation" in out
+    # Nothing was dropped, so no omission marker.
+    assert "omitted" not in out
+
+
+def test_conversation_context_de_labels():
+    out = build_conversation_context(_conversation_fixture(), "de")
+    assert "Importierte Konversation" in out
+    assert "Lerner: How do I use ser vs estar?" in out
+    assert "Assistent: Ser is for permanent traits." in out
+    assert "Knüpfe an diese vorherige Konversation an" in out
+
+
+def test_conversation_context_empty_returns_blank():
+    assert build_conversation_context([], "en") == ""
+    assert build_conversation_context(None, "de") == ""
+    # Whitespace-only turns are skipped → no renderable content.
+    assert build_conversation_context([ConversationTurn(role="user", content="  ")], "en") == ""
+
+
+def test_conversation_context_truncates_oldest_keeping_recent():
+    # A long transcript: each turn ~1000 chars; a small budget keeps only the
+    # most recent turns and flags the omission.
+    turns = [
+        ConversationTurn(role="user", content=f"msg{i} " + "x" * 1000)
+        for i in range(10)
+    ]
+    out = build_conversation_context(turns, "en", char_budget=2500)
+    assert "earlier messages omitted" in out
+    # The most recent turns survive; the oldest are dropped.
+    assert "msg9" in out
+    assert "msg0" not in out
+    # Body stays within ~budget (plus the few label lines).
+    assert len(out) < 2500 + 600
+
+
+def test_conversation_context_keeps_at_least_the_newest_turn():
+    # Even a single over-budget turn is kept (never an empty body).
+    turns = [ConversationTurn(role="user", content="y" * 5000)]
+    out = build_conversation_context(turns, "en", char_budget=100)
+    assert "yyyy" in out
 
 
 # --- Learning-progress context (#797) --------------------------------------

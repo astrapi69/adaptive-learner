@@ -857,6 +857,119 @@ def build_analysis_context(analysis: dict[str, Any] | None, lang: str) -> str:
     return "\n".join(_render_analysis_lines(fields, labels))
 
 
+# --- Imported-chat transcript context (#1078) ---------------------------
+#
+# The analysis block above is the AI's *summary* of the imported chat; this
+# block is the chat ITSELF — the raw conversation turns the learner imported.
+# Without it the tutor can reference the analysis but cannot pick up the
+# thread of the actual discussion ("continue where we left off"), which is the
+# whole point of "Sitzung fortsetzen" on an imported chat.
+#
+# Bounded by a character budget (~4 chars/token, so ~3000 tokens). The MOST
+# RECENT turns are the most relevant, so when the transcript is too long the
+# OLDEST turns are dropped and the omission is flagged.
+
+#: Character budget for the rendered transcript (~3000 tokens at ~4 chars/token).
+CONVERSATION_CHAR_BUDGET = 12000
+
+
+@dataclass(frozen=True)
+class ConversationTurn:
+    """One imported-chat turn fed to :func:`build_conversation_context`."""
+
+    role: str
+    content: str
+
+
+@dataclass(frozen=True)
+class _ConversationLabels:
+    """Localized labels for one transcript render."""
+
+    intro: str
+    user: str
+    assistant: str
+    omitted: str
+    closing: str
+
+
+_CONVERSATION_LABELS_DE = _ConversationLabels(
+    intro="=== Importierte Konversation (vorheriger Chat) ===",
+    user="Lerner",
+    assistant="Assistent",
+    omitted="[... frühere Nachrichten ausgelassen ...]",
+    closing=(
+        "Knüpfe an diese vorherige Konversation an. Der Lerner möchte das "
+        "Thema vertiefen."
+    ),
+)
+
+_CONVERSATION_LABELS_EN = _ConversationLabels(
+    intro="=== Imported conversation (previous chat) ===",
+    user="Learner",
+    assistant="Assistant",
+    omitted="[... earlier messages omitted ...]",
+    closing=(
+        "Continue from this previous conversation. The learner wants to go "
+        "deeper on the topic."
+    ),
+)
+
+
+def _turn_role_label(role: str, labels: _ConversationLabels) -> str:
+    """Map a stored message role to its localized speaker label."""
+    return labels.assistant if str(role).strip().lower() == "assistant" else labels.user
+
+
+def build_conversation_context(
+    turns: list[ConversationTurn] | None,
+    lang: str,
+    *,
+    char_budget: int = CONVERSATION_CHAR_BUDGET,
+) -> str:
+    """Render the imported chat transcript into a system-prompt addendum.
+
+    Keeps the most recent turns within ``char_budget`` (chronological order
+    preserved); when older turns are dropped, an omission marker is prepended.
+    Returns ``""`` when there are no non-empty turns, so the caller can append
+    unconditionally.
+
+    Args:
+        turns: The imported conversation turns in chronological order.
+        lang: UI language (only the DE/EN base selects the labels).
+        char_budget: Max characters of rendered transcript body.
+    """
+    labels = _CONVERSATION_LABELS_DE if _lang_key(lang) == "de" else _CONVERSATION_LABELS_EN
+    cleaned = [
+        (t.role, str(t.content).strip())
+        for t in (turns or [])
+        if str(getattr(t, "content", "")).strip()
+    ]
+    if not cleaned:
+        return ""
+
+    # Walk newest -> oldest, keeping lines that fit the budget; reverse to
+    # restore chronological order. The oldest turns drop off the front.
+    kept: list[str] = []
+    used = 0
+    truncated = False
+    for role, content in reversed(cleaned):
+        line = f"{_turn_role_label(role, labels)}: {content}"
+        if used + len(line) > char_budget and kept:
+            truncated = True
+            break
+        kept.append(line)
+        used += len(line)
+    kept.reverse()
+
+    body = "\n".join(kept)
+    parts = [labels.intro]
+    if truncated:
+        parts.append(labels.omitted)
+    parts.append(body)
+    parts.append(labels.closing)
+    return "\n".join(parts)
+
+
 # --- Learning-progress context (lesson awareness, #797) -----------------
 #
 # A session started from the Dashboard / project knows the topic + goal, but

@@ -16,7 +16,7 @@ from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
 from app.main import app
-from app.models import ImportedConversation
+from app.models import ImportedConversation, ImportedMessage
 
 
 @pytest.fixture(name="client")
@@ -69,6 +69,30 @@ def _seed_analysed_conversation(user_id: str, project_id: str) -> str:
         db.close()
 
 
+def _seed_conversation_messages(conv_id: str) -> None:
+    """Attach a short raw transcript to the conversation (#1078)."""
+    turns = [
+        ("user", "How do I use the preterite of tener?"),
+        ("assistant", "It's irregular: tuve, tuviste, tuvo..."),
+        ("user", "And hacer?"),
+        ("assistant", "Also irregular: hice, hiciste, hizo..."),
+    ]
+    db = SessionLocal()
+    try:
+        for i, (role, content) in enumerate(turns):
+            db.add(
+                ImportedMessage(
+                    conversation_id=conv_id,
+                    role=role,
+                    content=content,
+                    order_index=i,
+                )
+            )
+        db.commit()
+    finally:
+        db.close()
+
+
 def test_start_with_import_injects_analysis_into_system_prompt(client: TestClient):
     user_id, project_id = _make_user_and_project(client)
     conv_id = _seed_analysed_conversation(user_id, project_id)
@@ -93,6 +117,33 @@ def test_start_with_import_injects_analysis_into_system_prompt(client: TestClien
     assert "Setze die Lernsitzung fort" in system_prompt
 
 
+def test_start_with_import_injects_raw_transcript(client: TestClient):
+    """#1078 — the raw imported chat transcript (not just the analysis
+    summary) is folded into the system prompt so the tutor can continue the
+    actual conversation."""
+    user_id, project_id = _make_user_and_project(client)
+    conv_id = _seed_analysed_conversation(user_id, project_id)
+    _seed_conversation_messages(conv_id)
+
+    resp = client.post(
+        "/api/plugins/session/start",
+        json={
+            "project_id": project_id,
+            "method": "deductive",
+            "lang": "de",
+            "imported_conversation_id": conv_id,
+        },
+    )
+    assert resp.status_code in (200, 201), resp.text
+    system_prompt = resp.json()["system_prompt"]
+
+    # The raw transcript block + its turns are present, alongside the summary.
+    assert "Importierte Konversation" in system_prompt
+    assert "Lerner: How do I use the preterite of tener?" in system_prompt
+    assert "Assistent: Also irregular: hice, hiciste, hizo..." in system_prompt
+    assert "Knüpfe an diese vorherige Konversation an" in system_prompt
+
+
 def test_start_without_import_has_no_analysis_block(client: TestClient):
     _user_id, project_id = _make_user_and_project(client)
     resp = client.post(
@@ -102,6 +153,8 @@ def test_start_without_import_has_no_analysis_block(client: TestClient):
     assert resp.status_code in (200, 201), resp.text
     system_prompt = resp.json()["system_prompt"]
     assert "Setze die Lernsitzung fort" not in system_prompt
+    # #1078 — no import → no raw-transcript block either.
+    assert "Importierte Konversation" not in system_prompt
 
 
 def test_resume_returns_the_analysis_carrying_prompt(client: TestClient):

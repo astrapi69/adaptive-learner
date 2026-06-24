@@ -1,6 +1,11 @@
 import {describe, expect, it} from "vitest";
 
-import {buildAnalysisContext, buildLanguageDirective} from "./prompts";
+import {
+    buildAnalysisContext,
+    buildConversationContext,
+    buildLanguageDirective,
+    type ConversationTurn,
+} from "./prompts";
 import type {ConversationAnalysisResult} from "../../types/domain";
 
 const RICH: ConversationAnalysisResult = {
@@ -56,6 +61,61 @@ describe("buildAnalysisContext", () => {
         expect(out).not.toContain("Summary:");
         expect(out).not.toContain("Weaknesses:");
         expect(out).toContain("Continue the learning session");
+    });
+});
+
+describe("buildConversationContext (#1078)", () => {
+    const TURNS: ConversationTurn[] = [
+        {role: "user", content: "How do I use ser vs estar?"},
+        {role: "assistant", content: "Ser is for permanent traits."},
+        {role: "user", content: "And for location?"},
+        {role: "assistant", content: "Location uses estar."},
+    ];
+
+    it("renders the transcript with EN labels", () => {
+        const out = buildConversationContext(TURNS, "en");
+        expect(out).toContain("Imported conversation (previous chat)");
+        expect(out).toContain("Learner: How do I use ser vs estar?");
+        expect(out).toContain("Assistant: Location uses estar.");
+        expect(out).toContain("Continue from this previous conversation");
+        expect(out).not.toContain("omitted");
+    });
+
+    it("renders DE labels", () => {
+        const out = buildConversationContext(TURNS, "de");
+        expect(out).toContain("Importierte Konversation");
+        expect(out).toContain("Lerner: How do I use ser vs estar?");
+        expect(out).toContain("Assistent: Ser is for permanent traits.");
+        expect(out).toContain("Knüpfe an diese vorherige Konversation an");
+    });
+
+    it("returns empty for no usable turns", () => {
+        expect(buildConversationContext([], "en")).toBe("");
+        expect(buildConversationContext(null, "de")).toBe("");
+        expect(
+            buildConversationContext([{role: "user", content: "   "}], "en"),
+        ).toBe("");
+    });
+
+    it("drops the oldest turns to fit the budget, keeping the newest", () => {
+        const turns: ConversationTurn[] = Array.from({length: 10}, (_, i) => ({
+            role: "user",
+            content: `msg${i} ${"x".repeat(1000)}`,
+        }));
+        const out = buildConversationContext(turns, "en", 2500);
+        expect(out).toContain("earlier messages omitted");
+        expect(out).toContain("msg9");
+        expect(out).not.toContain("msg0");
+        expect(out.length).toBeLessThan(2500 + 600);
+    });
+
+    it("keeps at least the newest turn even if it exceeds the budget", () => {
+        const out = buildConversationContext(
+            [{role: "user", content: "y".repeat(5000)}],
+            "en",
+            100,
+        );
+        expect(out).toContain("yyyy");
     });
 });
 

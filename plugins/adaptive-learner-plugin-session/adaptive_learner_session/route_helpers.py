@@ -18,6 +18,7 @@ from app.exceptions import NotFoundError
 from app.models import (
     ElementError,
     ImportedConversation,
+    ImportedMessage,
     LearningProfile,
     LearningProject,
     LearningSession,
@@ -27,10 +28,12 @@ from app.models import (
 from .prompts import (
     METHODS,
     CompletedLesson,
+    ConversationTurn,
     InProgressLesson,
     LearningContext,
     RecentMistake,
     build_analysis_context,
+    build_conversation_context,
     build_learning_context,
 )
 
@@ -188,6 +191,29 @@ def _analysis_context_for(db: Session, imported_conversation_id: str | None, lan
     if not isinstance(parsed, dict):
         return ""
     return build_analysis_context(parsed, lang)
+
+
+def _conversation_context_for(
+    db: Session, imported_conversation_id: str | None, lang: str
+) -> str:
+    """Render the imported chat's raw transcript as a prompt addendum (#1078).
+
+    Loads the conversation's ``ImportedMessage`` rows in chronological order
+    (``order_index``) and delegates to :func:`build_conversation_context`,
+    which keeps the most recent turns within the token budget. Returns ``""``
+    when there is no conversation or it has no messages, so the caller can
+    append unconditionally.
+    """
+    if not imported_conversation_id:
+        return ""
+    rows = (
+        db.query(ImportedMessage)
+        .filter(ImportedMessage.conversation_id == imported_conversation_id)
+        .order_by(ImportedMessage.order_index)
+        .all()
+    )
+    turns = [ConversationTurn(role=row.role, content=row.content) for row in rows]
+    return build_conversation_context(turns, lang)
 
 
 def _fire_on_session_complete(session: dict[str, Any], rating: dict[str, Any]) -> None:
