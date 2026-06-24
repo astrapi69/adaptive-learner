@@ -157,7 +157,10 @@ export async function fetchInviteCode(
   branch: string,
   code: string,
   token = "",
-  fetchImpl: typeof fetch = fetch,
+  // Bind to globalThis: a bare ``fetch`` reference invoked as ``fetchImpl(...)``
+  // throws "Illegal invocation" because native fetch requires the global object
+  // as its receiver.
+  fetchImpl: typeof fetch = fetch.bind(globalThis),
 ): Promise<InviteCodeFile | null> {
   const path = inviteCodeFilePath(code);
   const url = `${GITHUB_API_BASE}/repos/${repo}/contents/${encodeURI(path)}?ref=${encodeURIComponent(branch)}`;
