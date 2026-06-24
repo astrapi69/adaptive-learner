@@ -71,7 +71,7 @@ function secureRandomInt(maxExclusive: number): number {
   if (cryptoObj?.getRandomValues) {
     const limit = Math.floor(0x100000000 / maxExclusive) * maxExclusive;
     const buf = new Uint32Array(1);
-    let value = 0;
+    let value: number;
     do {
       cryptoObj.getRandomValues(buf);
       value = buf[0];
