@@ -7,6 +7,12 @@
   "compose_file": "docker-compose.prod.yml",
   "default_port": 8501,
   "env_port_key": "ADAPTIVE_LEARNER_PUBLIC_PORT",
+  "internal_ports": {"backend": 8000, "nginx": 80},
+  "env_internal_port_keys": {
+    "backend": "ADAPTIVE_LEARNER_BACKEND_PORT",
+    "nginx": "ADAPTIVE_LEARNER_NGINX_PORT"
+  },
+  "show_advanced_ports": true,
   "health_check_path": "/api/health",
   "health_check_key": "status",
   "health_check_value": "ok",

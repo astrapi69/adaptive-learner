@@ -58,6 +58,15 @@ class TestConfigLoads:
         assert cfg.health_check_path == "/api/health"
         assert cfg.app_version == __version__
 
+    def test_launcher_json_declares_internal_ports(self) -> None:
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        assert cfg.show_advanced_ports is True
+        assert cfg.internal_ports == {"backend": 8000, "nginx": 80}
+        assert cfg.env_internal_port_keys == {
+            "backend": "ADAPTIVE_LEARNER_BACKEND_PORT",
+            "nginx": "ADAPTIVE_LEARNER_NGINX_PORT",
+        }
+
     def test_legacy_names_drive_cleanup(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
         assert "bibliogon" in cfg.legacy_names
