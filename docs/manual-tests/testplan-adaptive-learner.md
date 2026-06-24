@@ -1,317 +1,321 @@
-# Manueller Testplan — Adaptive Learner v1.91.0+
+# Manueller Testplan — Adaptive Learner v1.95.0+
 
-Stand: 20.06.2026
+Stand: 22.06.2026 (Session 4)
 Tester: Aster + Beta-Tester
-Geraete: Desktop (Chrome/Brave), iPhone Safari, Android Chrome
 
-Fuer jeden Testfall: OK / BUG (mit Screenshot + Browser + Beschreibung)
+Struktur:
+- TEIL A: Was DU manuell testen musst (nach Prioritaet)
+- TEIL B: Was automatisiert ist (Referenz, nachtraeglich pruefbar)
 
----
-
-## 1. ERSTER EINDRUCK (Neue User Perspektive)
-
-### 1.1 Landing Page
-- [ ] App im Incognito-Fenster oeffnen (kein Cache, kein State)
-- [ ] Landing Page laedt ohne Fehler
-- [ ] "Lernreise beginnen" Button sichtbar und klickbar
-- [ ] App-Icon korrekt im Browser-Tab (Favicon)
-- [ ] Kein Konsolenfehler (DevTools → Console)
-
-### 1.2 Onboarding
-- [ ] Onboarding-Flow startet nach Klick
-- [ ] Sprache waehlbar (Dropdown funktioniert, nicht transparent)
-- [ ] "Aus bestehendem Backup wiederherstellen" → .alb UND .json waehlbar
-- [ ] Onboarding abschliessbar ohne Fehler
-- [ ] Nach Onboarding: Dashboard erscheint
-
-### 1.3 PWA Install
-- [ ] iPhone Safari: "Zum Home-Bildschirm" → App-Icon korrekt
-- [ ] Android Chrome: "App installieren" → Maskable Icon korrekt (nicht abgeschnitten)
-- [ ] Desktop Chrome: Install-Prompt funktioniert
+Fuer jeden manuellen Testfall: OK / BUG (Screenshot + Browser + Beschreibung)
 
 ---
 
-## 2. NAVIGATION (EXP-037, #850)
+# TEIL A: MANUELLE TESTS (Aster)
 
-### 2.1 Desktop (>= 1024px)
-- [ ] Max 7 Nav-Eintraege sichtbar
-- [ ] Gruppiert: Lernen / Inhalte / Fortschritt
-- [ ] Settings + Hilfe als Icons unten
-- [ ] Session, Curriculum, Statistik, Import, Anki NICHT in der Nav
-- [ ] Alle Menuepunkte klickbar, korrekte Seite oeffnet sich
-
-### 2.2 Mobile (< 640px)
-- [ ] Bottom Tab Bar mit 5 Items
-- [ ] "Mehr" oeffnet Drawer mit sekundaerer Navigation
-- [ ] Alle Tabs haben 44px Touch-Target
-- [ ] Kein horizontaler Overflow
-
-### 2.3 Redirects
-- [ ] /statistics → /progress?tab=stats
-- [ ] /curriculum → /progress?tab=paths
-- [ ] /import → /discover?tab=import
-- [ ] Kein 404 bei alten URLs
+Sortiert nach Prioritaet. Launch-Blocker zuerst.
 
 ---
 
-## 3. LERNEN (Kernfunktion)
+## PRIO 1: BACKUP-AKZEPTANZTEST (Launch-Gate!)
 
-### 3.1 Lektion starten
-- [ ] Set auswaehlen → Lektion oeffnen
-- [ ] Theorie-Schritte lesbar, korrekt formatiert
-- [ ] Fortschrittsbalken aktualisiert sich pro Schritt
-- [ ] "Automatisch vorlesen" funktioniert (Web Speech API)
+**Neuer Testfall unter PRIO 1 Backup-Akzeptanztest:**
+- [ ] GitHub Pages: Backup erstellen
+- [ ] Lokal installieren (Launcher)
+- [ ] .alb von GH Pages importieren → alles uebernommen
 
-### 3.2 Uebungstypen
-- [ ] Matching: Paare zuordnen, Pruefen zeigt Fehler
-- [ ] Matching: "Aufloesen" Button erscheint nach Pruefen
-- [ ] Matching: Animation funktioniert (Default: slide)
-- [ ] Matching: Paare GLEICHE Hoehe (nicht mehr ungleich)
-- [ ] Cloze: Lueckentext ausfuellbar, Pruefung korrekt
-- [ ] Free Text: Eingabe + Pruefung
-- [ ] Word Tiles: Woerter anordnen
+Dieser Test ist seit Session 2 als Launch-Gate definiert.
+Noch nie durchgefuehrt. JETZT machen.
+
+- [ ] Daten erzeugen: mindestens 2 Sets herunterladen, 3 Lektionen starten, Theme wechseln
+- [ ] Export: Settings → Daten → Backup erstellen → .alb Datei herunterladen
+- [ ] Dateigrösse pruefen (sollte >1MB sein wenn Sets geladen)
+- [ ] Browser-Daten KOMPLETT loeschen:
+      DevTools → Application → Storage → "Clear site data"
+      UND: IndexedDB "adaptive-learner" loeschen
+      UND: localStorage.clear()
+- [ ] App oeffnen → Onboarding → "Backup wiederherstellen"
+- [ ] .alb Datei auswaehlen → Import startet
+- [ ] KEIN HTTP 413 Fehler (nginx 50MB Limit gefixt)
+- [ ] Sets vorhanden (Meine Inhalte → alle zuvor geladenen Sets)
+- [ ] Fortschritt erhalten (gestartete Lektionen, Scores)
+- [ ] Settings korrekt (Theme, Sprache, Voice-Einstellungen)
+- [ ] Lern-Modi Einstellungen erhalten
+- [ ] XP + Level korrekt
+- [ ] Legacy .json Import: altes Backup-Format → funktioniert
+- [ ] API-Keys NICHT im Backup (Sicherheits-Check)
+
+---
+
+## PRIO 2: LAUNCHER (Desktop)
+
+### Grundfunktion (Ubuntu)
+- [ ] `python3 -m adaptive_learner_launcher --debug` → EIN Fenster oeffnet
+- [ ] Fenster verschwindet NIE von selbst
+- [ ] Docker-Check als erster Schritt (Hinweis wenn Docker nicht laeuft)
+- [ ] Live-Fortschritt bei Install im Log-Bereich (Zeile fuer Zeile)
+- [ ] "Image bauen..." sichtbar (nicht stiller Hintergrund)
+- [ ] Am Ende: "App ist bereit." in gruen
+
+### Port
+- [ ] Port-Feld sichtbar (Default 8501)
+- [ ] Port editierbar wenn gestoppt/nicht installiert
+- [ ] Port read-only wenn laeuft
+- [ ] Port WECHSELN: 8501 → 9000 → App erreichbar auf 9000
+- [ ] Port-Indikator: gruen wenn laeuft (nicht rot)
+
+### Zustaende
+- [ ] Nicht installiert: [Installieren] sichtbar
+- [ ] Laeuft: [Im Browser oeffnen] [Stoppen] [Deinstallieren]
+- [ ] Gestoppt: [Starten] [Deinstallieren]
+- [ ] Alle Buttons komplett sichtbar (620px breit, kein Abschneiden)
+
+### Deinstallieren
+- [ ] Verbose Output: jeden Container/Image einzeln mit ✓/✗
+- [ ] Image-Groessen angezeigt
+- [ ] Summary: "X Artefakte entfernt, Y MB freigegeben"
+- [ ] Zustand wechselt zu "Nicht installiert"
+
+### Cleanup beim Start
+- [ ] Findet verwaiste Artefakte (falls vorhanden)
+- [ ] User kann auswaehlen (Lerndaten default AUS)
+- [ ] Verbose Fortschritt
+
+### Windows
+- [ ] .exe startet (aus GitHub Release)
+- [ ] Persistentes Fenster (KEINE Dialog-Kette!)
+- [ ] Alle Funktionen wie auf Linux
+
+---
+
+## PRIO 3: CONTENT-QUALITAET (Native-Speaker Stichprobe)
+
+Erfordert Domaenenwissen. Nicht automatisierbar.
+
+- [ ] Deutsch-Englisch A1/B1: Uebersetzungen korrekt?
+- [ ] KI-Einsteiger (DE): Fachbegriffe korrekt? Erklaerungen verstaendlich?
+- [ ] Ansible QE: Kommandos korrekt? Syntax stimmt?
+- [ ] Japanisch A1: Hiragana/Katakana korrekt? Romanisierung stimmt?
+- [ ] Koreanisch A1: Hangul korrekt? Romanisierung stimmt?
+- [ ] Chinesisch A1: Pinyin korrekt? Zeichen stimmt?
+- [ ] Italienisch A1: Stichprobe Grammatik/Vokabeln
+- [ ] Portugiesisch-BR A1: Stichprobe
+
+---
+
+## PRIO 4: LERNEN - MANUELLE UX-PRUEFUNG
+
+### Uebungstypen (visuell pruefen)
+- [ ] Matching: Paare GLEICHE Hoehe (kein visueller Versatz)
+- [ ] Matching: "Aufloesen" Animation sieht gut aus (4 Effekte testen)
+- [ ] Word Tiles: Korrektur LESBAR (Leerzeichen, kein "DasGehirnvergisst...")
+- [ ] Free Text: Korrektur LESBAR (Token-Diff verstaendlich)
 - [ ] Picture Choice: Kacheln GLEICHE Hoehe
 
-### 3.3 Review / SRS
-- [ ] Review-Badge "X faellig" sichtbar in der Nav
-- [ ] Review starten → Karten kommen
-- [ ] Nach jeder Antwort: Badge-Zahl dekrementiert LIVE
-- [ ] Nach Review-Ende: Badge aktualisiert
+### Lern-Modi (jeden einmal durchspielen)
+- [ ] Modus-Toggle NICHT disabled auf neuen Lektionen
+- [ ] Pruefungsmodus: keine Hilfen, Ergebnis am Ende, 1.5x XP
+- [ ] Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang
+- [ ] Fehler-Modus: nur Fehlerkarten (nach min. 1 Fehler)
+- [ ] Rueckwaerts: Matching-Spalten getauscht
+- [ ] Zufall: Karten aus verschiedenen Lektionen gemischt
+- [ ] Endlos: kein Session-Ende, Statistik laeuft
 
-### 3.4 Fortschritt
-- [ ] Fortschrittsseite zeigt Sets mit korrektem Prozent
-- [ ] Fortschritt pro Sprachpaar: Labels nicht abgeschnitten,
-  genug Abstand zu Progress-Bars
-- [ ] Statistik-Tab: Heatmap, Charts korrekt
-- [ ] Curriculum-Tab: persoenliche Pfade sichtbar
-
----
-
-## 4. INHALTE
-
-### 4.1 Meine Inhalte
-- [ ] Heruntergeladene Sets sichtbar mit Fortschritt
-- [ ] Set-Action Buttons (Fortsetzen/Starten) LESBAR
-  (nicht unsichtbar, Button-Text kontrastiert)
-- [ ] Kein Hash-ID als Titel (keine UUIDs sichtbar)
-
-### 4.2 Entdecken (/discover)
-- [ ] Search-Index laedt (Sets werden angezeigt)
-- [ ] Suche funktioniert (Debounced)
-- [ ] Filter: Sprache, Level, Domain, Trust, KI-geprueft
-- [ ] Per-Set Download mit Fortschrittsbalken
-- [ ] Nach Download: Set erscheint in "Meine Inhalte"
-
-### 4.3 Content-Qualitaet (Stichprobe)
-- [ ] Deutsch-Englisch A1: 3 Lektionen durchspielen, Inhalte korrekt?
-- [ ] Deutsch-Spanisch A1: 2 Lektionen, Akzente korrekt?
-- [ ] KI-Einsteiger: 2 Lektionen, Fachinhalte korrekt?
-- [ ] Japanisch A1: Hiragana korrekt? Romaji dabei? (Stichprobe)
-- [ ] Koreanisch A1: Hangul korrekt? Romanisierung dabei?
-- [ ] IT-Grundlagen: Fachbegriffe korrekt?
+### Social Sharing (visuell + nativ)
+- [ ] Share-Button nach Lektion sichtbar
+- [ ] Mobile: native Share-Sheet (WhatsApp/Telegram)
+- [ ] Desktop: kopiert in Zwischenablage + Toast
+- [ ] PNG Share-Card: sieht gut aus (1200x630, Theme-Tokens)
 
 ---
 
-## 5. AI FEATURES
+## PRIO 5: AI FEATURES (braucht echten API-Key)
 
-### 5.1 API-Key Management
-- [ ] Settings → KI: Provider-Tabelle sichtbar
-- [ ] Anthropic Key eingeben → Format akzeptiert → Speichern
-- [ ] OpenAI Key eingeben → Format akzeptiert → Speichern
-- [ ] Gemini Key eingeben → Format akzeptiert → Speichern
-- [ ] "Testen" Button pro Provider → "Verbindung ok"
-- [ ] Key-Vorschau maskiert (erste 4 + letzte 4)
-- [ ] Key entfernen → ConfirmDialog (KEIN Browser-Dialog)
-- [ ] Kein Passwort-Manager Popup bei Key-Eingabe
-- [ ] Token-Felder (GitHub, Repo): kein Passwort-Manager
-
-### 5.2 AI Exercise Generation (EXP-036)
-- [ ] Lektion mit nur Theorie oeffnen (z.B. importierter Chat)
-- [ ] "Uebungen generieren" Button sichtbar
-- [ ] Klick → Spinner → Exercises werden generiert
-- [ ] Generierte Exercises in Vorschau angezeigt
-- [ ] Verschiedene Typen (matching, cloze, free_text)
-- [ ] "Als Offline-Lektion speichern" jetzt aktiv
-- [ ] Ohne API-Key: "API-Key benoetigt" Hinweis
-
-### 5.3 AI Session
-- [ ] Session starten → AI antwortet
-- [ ] AI antwortet in der richtigen Sprache (nicht Griechisch!)
-- [ ] AI kennt den Lektionskontext (erwaehnt das Thema)
-- [ ] AI kennt den Fortschritt (keine generischen Antworten)
-
-### 5.4 AI Content Validation
-- [ ] "Qualitaet pruefen" auf einem Set → AI prueft
-- [ ] Ergebnis: Trust-Badge aktualisiert
-- [ ] Ohne API-Key: Feature korrekt gegated
-
-### 5.5 Anki-Extraktion
-- [ ] Anki-Export Button in "Meine Inhalte"
-- [ ] Export funktioniert (Datei wird heruntergeladen)
-- [ ] Bei importiertem Chat: AI-Extraktion im Dexie-Modus
-  (kein "nur im API-Modus" Fehler)
+- [ ] Provider-Tabelle: Key eingeben → "Testen" → "Verbindung ok"
+- [ ] "Uebungen generieren" bei theory-only: AI liefert Ergebnis
+- [ ] Qualitaet der generierten Exercises: sinnvoll? Typenvielfalt?
+- [ ] "Sitzung fortsetzen" nach Chat-Import: AI kennt den Kontext
+- [ ] AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
+- [ ] Kein Button ohne Key fuehrt zu Error-Toast (disabled + Tooltip)
 
 ---
 
-## 6. BACKUP / DATEN
+## PRIO 6: THEMES (subjektive Aesthetik)
 
-### 6.1 Backup Export (.alb)
-- [ ] Settings → Daten → Backup erstellen
-- [ ] .alb Datei wird heruntergeladen
-- [ ] Dateiname enthaelt Datum
-
-### 6.2 Backup Import (.alb) — AKZEPTANZTEST
-- [ ] Browser-Daten KOMPLETT loeschen (IndexedDB + localStorage)
-- [ ] App oeffnen → Onboarding → "Backup wiederherstellen"
-- [ ] .alb Datei auswaehlen (NICHT nur .json!)
-- [ ] Import erfolgreich (kein 500er Fehler)
-- [ ] Pruefen: alle Sets vorhanden
-- [ ] Pruefen: Fortschritt korrekt
-- [ ] Pruefen: Settings wiederhergestellt
-- [ ] Pruefen: Theme korrekt
-- [ ] Pruefen: Voice-Settings korrekt
-- [ ] Pruefen: Curriculum Builder Pfade vorhanden
-
-### 6.3 Legacy .json Import
-- [ ] Altes .json Backup importieren → funktioniert
-- [ ] Kein Crash, graceful degradation
+Fuer JEDES Theme einmal durchklicken:
+- [ ] Light: lesbar, Kontraste
+- [ ] Dark: lesbar, App-Icon helle Variante
+- [ ] Ocean, Forest, Sepia, High-Contrast
+- [ ] Catppuccin Mocha, Soft Pop, Amethyst Haze
+- [ ] Buttons kontrastreich auf ALLEN Themes?
+- [ ] Dropdowns: opaker Hintergrund (nicht transparent)?
+- [ ] Share-Card: Theme-Tokens korrekt?
 
 ---
 
-## 7. THEMES + DARK MODE
+## PRIO 7: GERAETE-SPEZIFISCH (nicht scriptbar)
 
-### 7.1 Theme-Wechsel
-- [ ] Light Mode: alles lesbar, kein unsichtbarer Text
-- [ ] Dark Mode: alles lesbar, App-Icon wechselt zur hellen Variante
-- [ ] Ocean: alles lesbar
-- [ ] Forest: alles lesbar
-- [ ] High-Contrast: alles lesbar, hoher Kontrast
-- [ ] Sepia: alles lesbar
-- [ ] Catppuccin Mocha: alles lesbar
-- [ ] Soft Pop: alles lesbar
-- [ ] Amethyst Haze: alles lesbar
-
-### 7.2 Spezifische Theme-Checks
-- [ ] Buttons: Text auf allen Themes kontrastreich
-- [ ] Dropdowns: opaker Hintergrund auf allen Themes
-- [ ] Modals: Hintergrund sichtbar auf allen Themes
-- [ ] XP-Badge: zweizeilig, Icon korrekt auf Dark + Light
-
----
-
-## 8. EINSTELLUNGEN
-
-### 8.1 Allgemein
-- [ ] Sprache waehlbar (Dropdown NICHT transparent)
-- [ ] Alle 11 Sprachen waehlbar
-- [ ] Theme waehlbar
-- [ ] Entwicklermodus Toggle
-
-### 8.2 KI
-- [ ] Provider-Tabelle (Anthropic/OpenAI/Gemini)
-- [ ] Modell-Ueberschreibung funktioniert
-- [ ] Standard nutzen → Default-Modell
-
-### 8.3 Daten
-- [ ] Backup Export/Import (siehe Abschnitt 6)
-- [ ] Speicher-Modus angezeigt (Lokal/Server)
-
-### 8.4 Integrationen
-- [ ] GitHub-Token Feld: kein Passwort-Manager
-- [ ] Content-Repo Token: kein Passwort-Manager
-- [ ] Repository hinzufuegen funktioniert
-
-### 8.5 Ueber
-- [ ] Version korrekt (v1.91.0+)
-- [ ] Build-Hash vorhanden
-- [ ] "Auf Updates pruefen" funktioniert
-- [ ] QR-Code anzeigen → QR-Code Modal oeffnet sich
-
----
-
-## 9. UPDATE-MECHANISMUS
-
-### 9.1 PWA Update (Dexie-Modus)
-- [ ] Update-Banner erscheint bei neuer Version
-- [ ] "Aktualisieren" → Banner verschwindet SOFORT
-- [ ] Banner kommt NICHT zurueck nach Aktualisieren
-- [ ] "Spaeter" / X → Banner verschwindet
-- [ ] Banner kommt bei naechstem Start wieder (Spaeter)
-- [ ] Banner kommt NICHT wieder fuer dismissed Version
-
-### 9.2 Desktop Update (API-Modus, #845 Checkliste)
-- [ ] Siehe Issue #845 fuer vollstaendige Checkliste
-
----
-
-## 10. MATCHING-ANIMATION (#824)
-
-- [ ] Settings → Lernen: Dropdown "Aufloesungs-Effekt"
-- [ ] 4 Optionen: Gleiten / Farbe / Verbinden / Stapeln
-- [ ] Matching-Exercise → Pruefen → Aufloesen Button erscheint
-- [ ] Gleiten: rechte Spalte sortiert sich animiert um
-- [ ] Farbe: Paare bekommen gleiche Hintergrundfarbe
-- [ ] Verbinden: SVG-Linien zwischen Paaren
-- [ ] Stapeln: Paare stapeln sich als Zeilen
-
----
-
-## 11. SOCIAL / SHARING
-
-- [ ] QR-Code Modal: Code scannbar
-- [ ] QR-Code Download als PNG
-- [ ] Social Sharing (Web Share API, falls Browser unterstuetzt)
-
----
-
-## 12. RESPONSIVE + GERAETE
-
-### 12.1 Desktop (1920x1080)
-- [ ] Keine horizontale Scrollbar
-- [ ] Nav gruppiert, alle Bereiche erreichbar
-
-### 12.2 Tablet (768px)
-- [ ] Layout passt sich an
-- [ ] Keine abgeschnittenen Elemente
-
-### 12.3 Mobile (375px)
-- [ ] Bottom Tab Bar sichtbar
-- [ ] Kein horizontaler Overflow
-- [ ] Touch-Targets >= 44px
-- [ ] Modals nicht abgeschnitten
-
-### 12.4 iPhone Safari
-- [ ] PWA installierbar
-- [ ] Apple Touch Icon korrekt
+### iPhone Safari
+- [ ] "Zum Home-Bildschirm" → App-Icon korrekt
+- [ ] PWA startet im Dexie-Modus
 - [ ] Safe-Area Insets respektiert
+- [ ] Bottom Tab Bar nicht von Home-Indicator ueberlagert
 
-### 12.5 Android Chrome
-- [ ] PWA installierbar
-- [ ] Maskable Icon nicht abgeschnitten
+### Android Chrome
+- [ ] "App installieren" → Maskable Icon nicht abgeschnitten
+- [ ] PWA funktioniert, Dexie-Modus
 
----
-
-## 13. OFFLINE
-
-- [ ] App laden → Flugmodus an → App neu laden → App funktioniert
-- [ ] Lektion im Flugmodus durchspielbar
-- [ ] Review im Flugmodus machbar
-- [ ] Fortschritt wird nach Reconnect gespeichert
-- [ ] "Du bist offline" Hinweis (falls implementiert)
+### Desktop PWA
+- [ ] Install-Prompt → App startet standalone
+- [ ] Dexie-Modus (NICHT API-Modus, keine 404)
 
 ---
 
-## 14. ACCESSIBILITY (Stichprobe)
+## PRIO 8: SERVER-MODUS (via Launcher)
 
-- [ ] Tab-Navigation durch die App (kein Fokus-Trap)
-- [ ] Screen-Reader: Buttons haben Labels
-- [ ] High-Contrast Theme: alles lesbar
-- [ ] prefers-reduced-motion: Matching-Animation springt
-  direkt zum Ergebnis
+- [ ] Set herunterladen → in "Meine Inhalte" sichtbar (kein Cache-Problem)
+- [ ] Backup-Import: kein HTTP 413
+- [ ] Lektion durchspielen: keine workbox Fehler in der Konsole
+- [ ] Port wechseln → App erreichbar auf neuem Port
 
 ---
 
-## ERGEBNIS-ZUSAMMENFASSUNG
+# TEIL B: AUTOMATISIERTE TESTS (Referenz)
+
+Diese Tests laufen in CI oder via `make test`.
+Hier nur zur Dokumentation was abgedeckt ist.
+
+---
+
+## Automatisiert: Unit + Component Tests (Vitest, 5477+)
+
+Abdeckung:
+- Alle Exercise-Typen (Matching, Cloze, Free Text, Word Tiles, Picture Choice)
+- Answer Toggle (Meine Antwort / Aufloesung) fuer alle Typen
+- Lern-Modi Configs (MODE_CONFIGS Korrektheit)
+- SRS-Algorithmus
+- Backup Export/Import Serialisierung
+- Content-Loader (Download, Parse, Cache)
+- GitHub Repo Export (manifest.yaml, search-index.json Round-Trip)
+- Share-Text Builder + Share-Card Generator
+- Feature-Strategy (useFeatureAvailable Hook)
+- i18n Parity (alle 11 Sprachen, kein fehlender Key)
+- No-Hardcoded-Colors Guard
+- Complexity Gate
+- File-Size / Dir-Size Gates
+- Docs-Discipline Gate
+
+Ausfuehren: `make test` oder `cd frontend && npm test`
+
+---
+
+## Automatisiert: Backend + Plugin Tests (pytest, 1200+)
+
+Abdeckung:
+- FastAPI Endpoints (alle CRUD Operationen)
+- Content-Loader Plugin (Download, Cache, list_sets)
+- Gamification Plugin (XP, Level, Badges)
+- AI Plugins (Anthropic, OpenAI, Gemini) mit Mocks
+- Assessment Plugin (Profil, Fortschritt)
+- Session Plugin
+- Tracking Plugin
+- Backup Export/Import API
+- Alembic Migrations (Schema-Konsistenz)
+- Plugin-Lock Parity
+
+Ausfuehren: `make test` (Backend-Teil)
+
+---
+
+## Automatisiert: Dexie-Smoke E2E (Playwright TS, 91)
+
+Abdeckung:
+- Vollstaendiger Lesson-Playthrough (alle Exercise-Typen)
+- Content Hub Tabs (Entdecken, Meine Inhalte, Import)
+- Dashboard Tabs
+- Navigation (Desktop + Mobile)
+- Settings
+- Backup Round-Trip (programmatisch)
+- Alle Routes erreichbar (kein 404)
+
+Ausfuehren: `make dexie-smoke` oder `npx playwright test`
+
+---
+
+## Automatisiert: Manual-Automation E2E (Playwright TS, 18)
+
+Abdeckung:
+- Matching Resolution Flow
+- Content Hub Navigation
+- Keyboard Shortcuts
+- Session Flows (Mobile + Desktop)
+- Critical Surfaces
+
+Ausfuehren: `make test-manual-automation`
+
+---
+
+## Automatisiert: Launcher Tests (pytest, 430+)
+
+Abdeckung:
+- actions.py: Docker-Check, Status, Install, Start, Stop, Uninstall
+- Port-Validierung, Free-Port-Finder
+- Config Load/Save Round-Trip
+- Install-Manifest CRUD
+- Cleanup (find_stale, cleanup_stale)
+- Health-Check Logik
+- CLI-GUI Paritaet
+- i18n Key Parity (DE/EN)
+- Frozen-Binary Erkennung
+- Cross-Platform Port-Check (Windows SO_EXCLUSIVEADDRUSE)
+
+Ausfuehren: `cd launcher && poetry run pytest` oder `make launcher-test`
+
+---
+
+## Automatisiert: Accessibility (axe-core, in Dexie-Smoke)
+
+Abdeckung:
+- Dashboard: keine kritischen Violations
+- Settings: keine kritischen Violations
+- Content: keine kritischen Violations
+
+Erweiterung geplant: alle 15 Sektionen
+
+---
+
+## Automatisiert: Visual Regression (Feature-Screenshots)
+
+Abdeckung:
+- Dashboard Tabs (Desktop + Mobile)
+- Content Hub Tabs
+- Matching Animation
+- Lesson Modes
+- Answer Toggle
+- GitHub Export Dialog
+
+Ausfuehren: `make capture-screenshots` / `make verify-screenshots`
+
+---
+
+## Automatisiert: CI Gates (bei jedem PR)
+
+- tsc --noEmit (TypeScript Compiler)
+- eslint --max-warnings 0
+- ruff check + ruff format (Backend)
+- mypy --strict (Backend)
+- i18n Parity
+- No-Hardcoded-Colors
+- Complexity Gate (.complexity-baseline)
+- File-Size Gate (.filesize-baseline)
+- Dir-Size Gate (.dirsize-baseline)
+- Docs-Discipline
+- Version-Lockstep (19 Dateien)
+- Plugin-Lock Parity
+
+---
+
+# ERGEBNIS
 
 ```
 Datum:
@@ -319,22 +323,27 @@ Tester:
 Geraet + Browser:
 Version:
 
-Getestet: ___ von ___ Testfaellen
-OK:       ___
-BUG:      ___
-SKIP:     ___ (nicht testbar in diesem Setup)
+MANUELLE TESTS:
+  Getestet: ___ / ___
+  OK:       ___
+  BUG:      ___
+  SKIP:     ___
 
-Kritische Bugs:
-1. ...
-2. ...
+  Kritische Bugs (Launch-Blocker):
+  1.
 
-Mittlere Bugs:
-1. ...
-2. ...
+  Mittlere Bugs:
+  1.
 
-Kosmetische Bugs:
-1. ...
-2. ...
+  Kosmetische Bugs:
+  1.
+
+AUTOMATISIERTE TESTS:
+  Vitest:       ___/5477 gruen
+  Backend:      ___/1200 gruen
+  Dexie-Smoke:  ___/91 gruen
+  Launcher:     ___/430 gruen
+  CI Gates:     alle gruen? [ ]
 
 Fazit: LAUNCH-READY / NICHT LAUNCH-READY
 ```
