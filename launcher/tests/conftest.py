@@ -8,8 +8,22 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import os
 
 import pytest
+
+
+@pytest.fixture(autouse=True)
+def restore_cwd():
+    """Restore the working directory after each test.
+
+    ``main()`` chdir's into the resolved Compose-stack dir (#3); a test driving
+    it must not leak that change to sibling tests.
+    """
+    cwd = os.getcwd()
+    yield
+    with contextlib.suppress(OSError):
+        os.chdir(cwd)
 
 
 @pytest.fixture(autouse=True)
