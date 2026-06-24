@@ -13,5 +13,4 @@
 # only shrink). File-level granularity matches .filesize-baseline.
 
 frontend/src/components/exercises/MatchingExercise.tsx 21
-frontend/src/pages/lesson/Lesson.tsx 22
 frontend/src/storage/lessons/lesson-progress-dexie.ts 22

@@ -27,7 +27,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
 import LessonModeToggle from "../../components/lesson/chrome/LessonModeToggle";
-import LessonCountdownBar from "../../components/lesson/chrome/LessonCountdownBar";
+import LessonTimedStatus from "../../components/lesson/chrome/LessonTimedStatus";
 import { LessonModeProvider } from "../../hooks/lesson/useLessonMode";
 import { useTimedLesson } from "../../hooks/lesson/useTimedLesson";
 import {
@@ -522,34 +522,15 @@ export default function LessonPage() {
       )}
 
       {/* #1009 — timed-mode per-question countdown + time-up notice. */}
-      {lessonMode === "timed" && !isSummary && isExerciseStep && (
-        <>
-          <LessonCountdownBar
-            remaining={timed.remainingSeconds}
-            total={timed.limitSeconds}
-          />
-          {timed.bonusSeconds > 0 && (
-            <p
-              className="m-0 px-2 text-sm font-medium text-[var(--exercise-correct)]"
-              data-testid="lesson-timed-bonus"
-            >
-              {t("lesson.timed.bonus", "+{n}s bonus").replace(
-                "{n}",
-                String(timed.bonusSeconds),
-              )}
-            </p>
-          )}
-          {timed.timedOut && (
-            <p
-              className="m-0 px-2 font-semibold text-[var(--exercise-wrong)]"
-              role="status"
-              data-testid="lesson-timed-timeout"
-            >
-              {t("lesson.timed.time_up", "Time's up!")}
-            </p>
-          )}
-        </>
-      )}
+      <LessonTimedStatus
+        lessonMode={lessonMode}
+        isSummary={isSummary}
+        isExerciseStep={isExerciseStep}
+        remainingSeconds={timed.remainingSeconds}
+        limitSeconds={timed.limitSeconds}
+        bonusSeconds={timed.bonusSeconds}
+        timedOut={timed.timedOut}
+      />
 
       <LessonModeProvider mode={lessonMode}>
       {isSummary ? (
