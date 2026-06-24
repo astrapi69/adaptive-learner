@@ -171,7 +171,9 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Head-room over the deploy-pages timeout below so the job never kills
+    # the action mid-deploy (issue #1105).
+    timeout-minutes: 25
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -179,3 +181,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          # GitHub's Pages backend can hold a deployment in
+          # ``deployment_queued`` well past the action's default 10-minute
+          # timeout, aborting an otherwise-fine deploy ("Timeout reached,
+          # aborting!"). Give a slow-but-progressing deployment room to
+          # finish (issue #1105). Value is in milliseconds.
+          timeout: 1200000
