@@ -3282,5 +3282,63 @@
       "from_lessons": "from {n} different lessons",
       "another": "Shuffle again"
     }
+  },
+  "invitation_code": {
+    "title": "Invitation codes",
+    "generate": "Generate code",
+    "generated": "Code generated.",
+    "needs_token": "Add a token for this repository (above) to generate invitation codes.",
+    "never_expires": "No expiry",
+    "redeemed_hint": "Redemption counts need the desktop app.",
+    "code_copied": "Code copied.",
+    "link_copied": "Invite link copied.",
+    "qr_title": "Invitation code",
+    "qr_alt": "QR code for the invitation link",
+    "active": {
+      "title": "Active codes",
+      "empty": "No codes yet."
+    },
+    "field": {
+      "prefix": "Prefix (optional)",
+      "max_uses": "Max. redemptions",
+      "expires": "Valid until",
+      "note": "Note",
+      "note_placeholder": "e.g. Class 8a"
+    },
+    "col": {
+      "code": "Code",
+      "redeemed": "Redeemed",
+      "max": "Max",
+      "valid": "Valid",
+      "actions": "Actions"
+    },
+    "badge": {
+      "inactive": "Inactive"
+    },
+    "action": {
+      "copy_code": "Copy code",
+      "copy_link": "Copy link",
+      "qr": "QR code",
+      "deactivate": "Deactivate",
+      "redeem": "Redeem"
+    },
+    "error": {
+      "expired": "This invitation code has expired.",
+      "inactive": "This invitation code is no longer active.",
+      "full": "This invitation code is full.",
+      "not_found": "Invitation code not found.",
+      "generate": "Could not generate the code.",
+      "repo_failed": "Could not add the repository: {reason}",
+      "generic": "Could not redeem the code. Try again."
+    },
+    "redeem": {
+      "title": "Redeem an invitation code",
+      "body": "Enter the code or link your coach gave you to add their lessons. No account needed.",
+      "label": "Invitation code or link",
+      "enter": "Enter an invitation code or link.",
+      "enter_cta": "Enter invitation code",
+      "needs_link": "Paste the full invitation link. It carries the repository the code unlocks.",
+      "success": "Content added: {sets} sets."
+    }
   }
 }

@@ -39,6 +39,7 @@ const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"))
 // #856 — Discover + My-content + Import merged into one tabbed hub at /content.
 const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
 const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
+const RedeemInvite = lazyWithReload(() => import("./pages/content/RedeemInvite"));
 const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
 const LearningPath = lazyWithReload(() => import("./pages/learning-path/LearningPathPersonal"));
 const Dashboard = lazyWithReload(() => import("./pages/dashboard/Dashboard"));
@@ -191,6 +192,7 @@ export default function App() {
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />
                 <Route path="/add-repo" element={<AddRepo />} />
+                <Route path="/invite" element={<RedeemInvite />} />
                 <Route path="/learning-path" element={<LearningPath />} />
                 <Route path="/create-lesson" element={<CreateLesson />} />
                 <Route path="/lesson/:setSlug/:setId/:filename" element={<LessonPage />} />
