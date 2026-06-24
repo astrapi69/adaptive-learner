@@ -3055,3 +3055,14 @@ invitation_code:
     enter_cta: "Masukkan kode undangan"
     needs_link: "Tempel tautan undangan lengkap. Tautan itu memuat repositori yang dibuka oleh kode."
     success: "Konten ditambahkan: {sets} set."
+migration:
+  title: "Bawa data Anda dari versi online"
+  body: "Pernah memakai Adaptive Learner online? Bawa data belajar Anda dengan file cadangan. Tanpa akun."
+  hint: "Di versi online: Pengaturan, Data, Buat cadangan, unduh file .alb lalu impor di sini."
+  action:
+    import: "Impor cadangan"
+    open_online: "Buka versi online"
+    start_fresh: "Mulai tanpa data"
+  settings:
+    title: "Impor dari versi online"
+    body: "Pernah memakai Adaptive Learner online? Buat cadangan di sana, lalu gunakan Impor di atas untuk membawa data Anda."

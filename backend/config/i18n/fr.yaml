@@ -3047,3 +3047,14 @@ invitation_code:
     enter_cta: "Saisir un code d'invitation"
     needs_link: "Collez le lien d'invitation complet. Il contient le dépôt que le code débloque."
     success: "Contenu ajouté : {sets} ensembles."
+migration:
+  title: "Récupérez vos données depuis la version en ligne"
+  body: "Avez-vous utilisé Adaptive Learner en ligne ? Récupérez vos données d'apprentissage avec un fichier de sauvegarde. Aucun compte requis."
+  hint: "Dans la version en ligne : Paramètres, Données, Créer une sauvegarde, téléchargez le fichier .alb puis importez-le ici."
+  action:
+    import: "Importer la sauvegarde"
+    open_online: "Ouvrir la version en ligne"
+    start_fresh: "Commencer sans données"
+  settings:
+    title: "Importer depuis la version en ligne"
+    body: "Vous avez utilisé Adaptive Learner en ligne ? Créez-y une sauvegarde, puis utilisez Importer ci-dessus pour récupérer vos données."

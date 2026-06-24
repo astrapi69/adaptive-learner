@@ -3340,5 +3340,19 @@
       "needs_link": "Pega el enlace de invitación completo. Contiene el repositorio que desbloquea el código.",
       "success": "Contenido añadido: {sets} conjuntos."
     }
+  },
+  "migration": {
+    "title": "Trae tus datos desde la versión online",
+    "body": "¿Has usado Adaptive Learner online? Trae tus datos de aprendizaje con un archivo de copia de seguridad. No se necesita cuenta.",
+    "hint": "En la versión online: Ajustes, Datos, Crear copia de seguridad, descarga el archivo .alb e impórtalo aquí.",
+    "action": {
+      "import": "Importar copia de seguridad",
+      "open_online": "Abrir versión online",
+      "start_fresh": "Empezar sin datos"
+    },
+    "settings": {
+      "title": "Importar desde la versión online",
+      "body": "¿Usaste Adaptive Learner online? Crea allí una copia de seguridad y usa Importar arriba para traer tus datos."
+    }
   }
 }

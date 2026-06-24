@@ -3055,3 +3055,14 @@ invitation_code:
     enter_cta: "초대 코드 입력"
     needs_link: "전체 초대 링크를 붙여넣으세요. 코드가 잠금 해제하는 저장소가 포함되어 있습니다."
     success: "콘텐츠가 추가되었습니다: {sets}개 세트."
+migration:
+  title: "온라인 버전에서 데이터 가져오기"
+  body: "Adaptive Learner를 온라인에서 사용하셨나요? 백업 파일로 학습 데이터를 가져오세요. 계정이 필요 없습니다."
+  hint: "온라인 버전에서: 설정, 데이터, 백업 만들기, .alb 파일을 다운로드한 후 여기에서 가져오세요."
+  action:
+    import: "백업 가져오기"
+    open_online: "온라인 버전 열기"
+    start_fresh: "데이터 없이 시작"
+  settings:
+    title: "온라인 버전에서 가져오기"
+    body: "Adaptive Learner를 온라인에서 사용하셨나요? 거기서 백업을 만든 다음 위의 가져오기로 데이터를 옮기세요."
