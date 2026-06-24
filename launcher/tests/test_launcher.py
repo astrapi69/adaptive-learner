@@ -58,6 +58,13 @@ class TestConfigLoads:
         assert cfg.health_check_path == "/api/health"
         assert cfg.app_version == __version__
 
+    def test_launcher_json_locale_and_cleanup_search(self) -> None:
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        assert cfg.single_instance is True
+        assert cfg.cleanup_search_paths == ["~/.config/", "~/.local/share/", "~/"]
+        # locale "auto" is resolved to a concrete code by from_json -> resolve().
+        assert cfg.locale in ("de", "en", "el", "es", "fr", "hi", "ja", "ko", "pt", "tr", "id")
+
     def test_launcher_json_uses_brand_mark_icon(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
         # The brand mark resolves from the repo-root CWD the launcher chdirs to;
