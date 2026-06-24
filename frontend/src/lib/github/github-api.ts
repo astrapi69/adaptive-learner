@@ -143,7 +143,10 @@ export class GitHubApi {
     private readonly token: string,
     options: GitHubApiOptions = {},
   ) {
-    this.fetchImpl = options.fetchImpl ?? fetch;
+    // Bind to globalThis: the native ``fetch`` throws "Illegal invocation"
+    // when called as a method (``this.fetchImpl(...)``) because its receiver
+    // must be the global object, not the GitHubApi instance.
+    this.fetchImpl = options.fetchImpl ?? fetch.bind(globalThis);
     this.sleep =
       options.sleep ?? ((ms) => new Promise((res) => setTimeout(res, ms)));
     this.forkPollAttempts = options.forkPollAttempts ?? 10;

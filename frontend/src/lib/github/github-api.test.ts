@@ -135,6 +135,41 @@ describe("GitHubApi.verifyToken", () => {
   });
 });
 
+describe("GitHubApi default fetch is bound (no 'Illegal invocation')", () => {
+  // Regression: storing a bare ``fetch`` as ``this.fetchImpl`` and calling it
+  // as ``this.fetchImpl(...)`` invokes native fetch with the GitHubApi instance
+  // as its receiver, which browsers reject with
+  // "Failed to execute 'fetch' on 'Window': illegal invocation". The default
+  // must be bound to globalThis. This is the bug behind the failing invite-code
+  // "Code generieren" button.
+  it("calls the global fetch without an Illegal-invocation error when no fetchImpl is injected", async () => {
+    // A browser-style native fetch: rejects any receiver that is not the global
+    // object, exactly like the real ``window.fetch``. With the pre-fix code
+    // (``this.fetchImpl = fetch``) the method call ``this.fetchImpl(...)`` would
+    // run this with the GitHubApi instance as receiver and throw.
+    const calls: string[] = [];
+    const nativeFetch = function (this: unknown, url: string) {
+      if (this !== globalThis) {
+        throw new TypeError(
+          "Failed to execute 'fetch' on 'Window': Illegal invocation",
+        );
+      }
+      calls.push(url);
+      return Promise.resolve(mkResp(200, { login: "octocat" }));
+    } as unknown as typeof fetch;
+    vi.stubGlobal("fetch", nativeFetch);
+    try {
+      // No options -> falls back to the bound global fetch (the fix).
+      const api = new GitHubApi("ghp_x");
+      const result = await api.verifyToken();
+      expect(result).toEqual({ valid: true, username: "octocat", kind: "ok" });
+      expect(calls).toHaveLength(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});
+
 describe("GitHubApi.createLessonPr (full flow)", () => {
   function happyHandlers() {
     const manifest =

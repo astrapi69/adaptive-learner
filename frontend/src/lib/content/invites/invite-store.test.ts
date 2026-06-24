@@ -94,6 +94,40 @@ describe("fetchInviteCode", () => {
       fetchInviteCode("a/b", "main", "AB12", "", fetchImpl as unknown as typeof fetch),
     ).rejects.toThrow(/500/);
   });
+
+  it("uses the global fetch (bound) when no fetchImpl is injected", async () => {
+    // Regression: the default ``fetchImpl = fetch`` invoked as ``fetchImpl(...)``
+    // threw "Illegal invocation" because the receiver was not the global object.
+    // A browser-style native fetch enforces the receiver, so the pre-fix default
+    // would throw here; the bound default (the fix) passes globalThis.
+    const calls: string[] = [];
+    const nativeFetch = function (this: unknown, url: string) {
+      if (this !== globalThis) {
+        throw new TypeError(
+          "Failed to execute 'fetch' on 'Window': Illegal invocation",
+        );
+      }
+      calls.push(url);
+      return Promise.resolve(
+        githubContentsResponse({
+          code: "AB12",
+          repo: "a/b",
+          max_uses: 0,
+          expires: null,
+          note: "",
+          created: "",
+        }),
+      );
+    } as unknown as typeof fetch;
+    vi.stubGlobal("fetch", nativeFetch);
+    try {
+      const file = await fetchInviteCode("a/b", "main", "AB12");
+      expect(file?.code).toBe("AB12");
+      expect(calls).toHaveLength(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });
 
 describe("redemption records", () => {
