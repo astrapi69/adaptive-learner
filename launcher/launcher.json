@@ -28,11 +28,10 @@
   "docs_url": "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md",
   "update_check_enabled": true,
   "app_version": "1.95.0",
-  "legacy_names": ["bibliogon", "adaptive_learner"],
+  "legacy_names": ["adaptive_learner"],
   "cleanup_configs": [
-    "~/.bibliogon",
-    "~/.config/bibliogon",
-    "~/.local/share/bibliogon"
+    "~/.config/adaptive_learner",
+    "~/.local/share/adaptive_learner"
   ],
   "cleanup_search_paths": [
     "~/.config/",
