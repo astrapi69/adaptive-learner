@@ -27,22 +27,23 @@ files = [
 
 [[package]]
 name = "docker-app-launcher"
-version = "0.4.0"
+version = "0.5.0"
 description = "Configurable desktop launcher for Docker-based applications"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "docker_app_launcher-0.4.0-py3-none-any.whl", hash = "sha256:e44b1b877dc827144ced1fdbaf11d152ca199ed028e04102f5032971d6e635d3"},
-    {file = "docker_app_launcher-0.4.0.tar.gz", hash = "sha256:5fe8f265215b545aee46154f872b6984a106e0fb1daacb85dc9ef458af78e67c"},
+    {file = "docker_app_launcher-0.5.0-py3-none-any.whl", hash = "sha256:1b844ce3c0f13624878bf3225a13845f9d36f2fe1c768a732973c754fee4004d"},
+    {file = "docker_app_launcher-0.5.0.tar.gz", hash = "sha256:acfcbb4f2d394d164963e783ed3d5bfd363881eca7c866f90a97b138da68b9b3"},
 ]
 
 [package.dependencies]
 Pillow = {version = ">=10.0", optional = true, markers = "extra == \"tray\""}
+PyGObject = {version = ">=3.42,<3.52", optional = true, markers = "sys_platform == \"linux\" and extra == \"tray\""}
 pystray = {version = ">=0.19", optional = true, markers = "extra == \"tray\""}
 
 [package.extras]
-tray = ["Pillow (>=10.0)", "pystray (>=0.19)"]
+tray = ["Pillow (>=10.0)", "PyGObject (>=3.42,<3.52) ; sys_platform == \"linux\"", "pystray (>=0.19)"]
 
 [[package]]
 name = "iniconfig"
@@ -235,6 +236,35 @@ dev = ["pre-commit", "tox"]
 testing = ["coverage", "pytest", "pytest-benchmark"]
 
 [[package]]
+name = "pycairo"
+version = "1.29.0"
+description = "Python interface for cairo"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "sys_platform == \"linux\""
+files = [
+    {file = "pycairo-1.29.0-cp310-cp310-win32.whl", hash = "sha256:96c67e6caba72afd285c2372806a0175b1aa2f4537aa88fb4d9802d726effcd1"},
+    {file = "pycairo-1.29.0-cp310-cp310-win_amd64.whl", hash = "sha256:65bddd944aee9f7d7d72821b1c87e97593856617c2820a78d589d66aa8afbd08"},
+    {file = "pycairo-1.29.0-cp310-cp310-win_arm64.whl", hash = "sha256:15b36aea699e2ff215cb6a21501223246032e572a3a10858366acdd69c81a1c8"},
+    {file = "pycairo-1.29.0-cp311-cp311-win32.whl", hash = "sha256:12757ebfb304b645861283c20585c9204c3430671fad925419cba04844d6dfed"},
+    {file = "pycairo-1.29.0-cp311-cp311-win_amd64.whl", hash = "sha256:3391532db03f9601c1cee9ebfa15b7d1db183c6020f3e75c1348cee16825934f"},
+    {file = "pycairo-1.29.0-cp311-cp311-win_arm64.whl", hash = "sha256:b69be8bb65c46b680771dc6a1a422b1cdd0cffb17be548f223e8cbbb6205567c"},
+    {file = "pycairo-1.29.0-cp312-cp312-win32.whl", hash = "sha256:91bcd7b5835764c616a615d9948a9afea29237b34d2ed013526807c3d79bb1d0"},
+    {file = "pycairo-1.29.0-cp312-cp312-win_amd64.whl", hash = "sha256:3f01c3b5e49ef9411fff6bc7db1e765f542dc1c9cfed4542958a5afa3a8b8e76"},
+    {file = "pycairo-1.29.0-cp312-cp312-win_arm64.whl", hash = "sha256:eafe3d2076f3533535ad4a361fa0754e0ee66b90e548a3a0f558fed00b1248f2"},
+    {file = "pycairo-1.29.0-cp313-cp313-win32.whl", hash = "sha256:3eb382a4141591807073274522f7aecab9e8fa2f14feafd11ac03a13a58141d7"},
+    {file = "pycairo-1.29.0-cp313-cp313-win_amd64.whl", hash = "sha256:91114e4b3fbf4287c2b0788f83e1f566ce031bda49cf1c3c3c19c3e986e95c38"},
+    {file = "pycairo-1.29.0-cp313-cp313-win_arm64.whl", hash = "sha256:09b7f69a5ff6881e151354ea092137b97b0b1f0b2ab4eb81c92a02cc4a08e335"},
+    {file = "pycairo-1.29.0-cp314-cp314-win32.whl", hash = "sha256:69e2a7968a3fbb839736257bae153f547bca787113cc8d21e9e08ca4526e0b6b"},
+    {file = "pycairo-1.29.0-cp314-cp314-win_amd64.whl", hash = "sha256:e91243437a21cc4c67c401eff4433eadc45745275fa3ade1a0d877e50ffb90da"},
+    {file = "pycairo-1.29.0-cp314-cp314-win_arm64.whl", hash = "sha256:b72200ea0e5f73ae4c788cd2028a750062221385eb0e6d8f1ecc714d0b4fdf82"},
+    {file = "pycairo-1.29.0-cp314-cp314t-win_amd64.whl", hash = "sha256:5e45fce6185f553e79e4ef1722b8e98e6cde9900dbc48cb2637a9ccba86f627a"},
+    {file = "pycairo-1.29.0-cp314-cp314t-win_arm64.whl", hash = "sha256:caba0837a4b40d47c8dfb0f24cccc12c7831e3dd450837f2a356c75f21ce5a15"},
+    {file = "pycairo-1.29.0.tar.gz", hash = "sha256:f3f7fde97325cae80224c09f12564ef58d0d0f655da0e3b040f5807bd5bd3142"},
+]
+
+[[package]]
 name = "pygments"
 version = "2.20.0"
 description = "Pygments is a syntax highlighting package written in Python."
@@ -248,6 +278,21 @@ files = [
 
 [package.extras]
 windows-terminal = ["colorama (>=0.4.6)"]
+
+[[package]]
+name = "pygobject"
+version = "3.50.2"
+description = "Python bindings for GObject Introspection"
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["main"]
+markers = "sys_platform == \"linux\""
+files = [
+    {file = "pygobject-3.50.2.tar.gz", hash = "sha256:ece6b860aab77cb649fdfc6e88d8a83765e7a62f7ffd39a628d6e2a0d397a7ff"},
+]
+
+[package.dependencies]
+pycairo = ">=1.16"
 
 [[package]]
 name = "pyinstaller"
@@ -477,4 +522,4 @@ tray = ["pillow", "pystray"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "6a399641b6df5712038bbe9b1a7df1cef88068d1d122d8215e0b934651f09dc5"
+content-hash = "086fcc86426463b2cdf73a976c6030dc460c98965b5d2ddf569a867a3246435c"
