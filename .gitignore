@@ -121,3 +121,7 @@ docs/audits/coverage/
 
 # Complexity watcher (#400) local radon venv
 .radon-venv/
+
+# Launcher --debug log: written to the CWD on each run; the launcher chdirs
+# into the repo so it can land here (#1084).
+/launcher-debug.log

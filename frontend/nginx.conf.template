@@ -1,5 +1,5 @@
 server {
-    listen 80;
+    listen ${ADAPTIVE_LEARNER_NGINX_PORT};
     server_name _;
     root /usr/share/nginx/html;
     index index.html;
@@ -9,9 +9,14 @@ server {
     # sizable request. 50M covers every realistic payload (#994).
     client_max_body_size 50M;
 
-    # API calls go to backend
+    # API calls go to backend. The backend port is templated from the
+    # environment (ADAPTIVE_LEARNER_BACKEND_PORT) at container start via the
+    # nginx:alpine envsubst entrypoint, so an expert internal-port change in
+    # the launcher takes effect on rebuild. nginx's own runtime variables
+    # ($host, $remote_addr, ...) are not environment variables, so envsubst
+    # leaves them intact.
     location /api/ {
-        proxy_pass http://backend:8000;
+        proxy_pass http://backend:${ADAPTIVE_LEARNER_BACKEND_PORT};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

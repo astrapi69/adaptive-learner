@@ -12,12 +12,16 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    # Fixed internal backend port. In production the frontend nginx
-    # reverse-proxies /api/ to this port over the compose network, so it
-    # is an implementation detail decoupled from the host-published port
-    # (ADAPTIVE_LEARNER_PUBLIC_PORT). Keep it in lock-step with the
-    # proxy_pass target in frontend/nginx.conf and the healthcheck below.
-    command: sh -c 'uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2'
+    # Internal backend port. In production the frontend nginx reverse-proxies
+    # /api/ to this port over the compose network, decoupled from the
+    # host-published port (ADAPTIVE_LEARNER_PUBLIC_PORT). It defaults to 8000
+    # but is overridable (ADAPTIVE_LEARNER_BACKEND_PORT) for experts running
+    # multiple Docker apps; the launcher writes it into .env. Keep it in
+    # lock-step with the proxy_pass target in frontend/nginx.conf.template
+    # (also env-driven) and the healthcheck below.
+    command: sh -c 'uvicorn app.main:app --host 0.0.0.0 --port ${ADAPTIVE_LEARNER_BACKEND_PORT:-8000} --workers 2'
+    expose:
+      - "${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}"
     volumes:
       - adaptive-learner-data:/app/data
     environment:
@@ -28,11 +32,11 @@ services:
       # volume so they survive container rebuilds. The volume mount
       # at /app/data is the persistence boundary.
       - ADAPTIVE_LEARNER_DATA_DIR=/app/data
-      - ADAPTIVE_LEARNER_PORT=8000
+      - ADAPTIVE_LEARNER_PORT=${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}
       - ADAPTIVE_LEARNER_CORS_ORIGINS=${ADAPTIVE_LEARNER_CORS_ORIGINS:-http://localhost:${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}}
       - ADAPTIVE_LEARNER_SECRET_KEY=${ADAPTIVE_LEARNER_SECRET_KEY:-}
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')\""]
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}/api/health')\""]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -49,9 +53,15 @@ services:
     # not interchangeable. 8501 is Adaptive Learner's own port (NOT 7880,
     # which is Bibliogon's). The launcher publishes on this port and can
     # move it on a conflict (e.g. with bibliogon) by writing a new value
-    # into .env before compose up.
+    # into .env before compose up. The container-internal nginx listen port
+    # (ADAPTIVE_LEARNER_NGINX_PORT, default 80) is the right-hand side and is
+    # also env-driven so experts can change it; the frontend container needs
+    # both internal ports in its environment for the nginx envsubst step.
     ports:
-      - "${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}:80"
+      - "${ADAPTIVE_LEARNER_PUBLIC_PORT:-8501}:${ADAPTIVE_LEARNER_NGINX_PORT:-80}"
+    environment:
+      - ADAPTIVE_LEARNER_NGINX_PORT=${ADAPTIVE_LEARNER_NGINX_PORT:-80}
+      - ADAPTIVE_LEARNER_BACKEND_PORT=${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}
     depends_on:
       backend:
         condition: service_healthy
