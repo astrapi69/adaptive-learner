@@ -41,8 +41,6 @@ const LEAF_RGB = {r: 0x16, g: 0xcf, b: 0xc2};
 const LEAF_DARK_RGB = {r: 0x5e, g: 0xea, b: 0xd4};
 const TILE_BG = {r: 255, g: 255, b: 255, alpha: 1}; // opaque white tile (matches the source design)
 const TRANSPARENT = {r: 0, g: 0, b: 0, alpha: 0};
-const OG_BG = "#f0fdfa"; // teal-50, light card background for the social preview
-const OG_TEXT = "#0f766e"; // teal-700, accessible on the light card
 
 /**
  * Detects the bounding box of the non-white mark in the source image.
@@ -181,34 +179,58 @@ async function main() {
     await writeFile(resolve(OUT, "favicon.ico"), ico);
     console.log("  favicon.ico (16+32+48)");
 
-    // og-image: light brand card with the mark on the left and the wordmark on the right.
+    // og-image: dark brand card with the mark on the left and the wordmark +
+    // tagline + feature line on the right (#1104). One card per locale so a
+    // shared link reads in the viewer's language; the DE card is the default
+    // ``og-image.png`` (og:locale de_DE) + an EN ``og-image-en.png`` alternate.
     const ogW = 1200, ogH = 630;
     const ogMarkSize = 360;
-    const ogMark = await sharp(mark)
+    const ogMark = await sharp(markDark)
         .resize(ogMarkSize, ogMarkSize, {fit: "inside", background: TRANSPARENT})
         .toBuffer({resolveWithObject: true});
-    const ogCard = Buffer.from(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${ogW}" height="${ogH}">
-            <rect width="${ogW}" height="${ogH}" fill="${OG_BG}"/>
-            <rect x="0" y="0" width="${ogW}" height="10" fill="${LEAF}"/>
-            <text x="560" y="300" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif"
-                  font-size="66" font-weight="700" fill="${OG_TEXT}">Adaptive Learner</text>
-            <text x="562" y="356" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif"
-                  font-size="32" font-weight="400" fill="#0f2e2c">Learn the way you learn best</text>
-        </svg>`,
-    );
-    const og = await sharp(ogCard)
-        .composite([
-            {
-                input: ogMark.data,
-                left: Math.round(150 + (ogMarkSize - ogMark.info.width) / 2),
-                top: Math.round((ogH - ogMark.info.height) / 2),
-            },
-        ])
-        .png()
-        .toBuffer();
-    await writeFile(resolve(OUT, "og-image.png"), og);
-    console.log("  og-image.png (1200x630)");
+    const OG_DARK_BG = "#1a1b2e"; // dark-theme surface
+    const OG_WORDMARK = "#f0fdfa"; // near-white on the dark card
+    const OG_TAGLINE = "#5eead4"; // light teal accent (WCAG-AA on the dark bg)
+    const OG_FEATURES = "#9aa4b2"; // muted slate for the feature line
+    const ogFont = "Inter, Segoe UI, Helvetica, Arial, sans-serif";
+    const ogCards = [
+        {
+            file: "og-image.png",
+            tagline: "Lerne Sprachen mit KI",
+            features: "7 Lernmodi · Spaced Repetition · 10 Sprachen",
+        },
+        {
+            file: "og-image-en.png",
+            tagline: "Learn languages with AI",
+            features: "7 modes · Spaced repetition · 10 languages",
+        },
+    ];
+    for (const card of ogCards) {
+        const ogCard = Buffer.from(
+            `<svg xmlns="http://www.w3.org/2000/svg" width="${ogW}" height="${ogH}">
+                <rect width="${ogW}" height="${ogH}" fill="${OG_DARK_BG}"/>
+                <rect x="0" y="0" width="${ogW}" height="10" fill="${LEAF}"/>
+                <text x="560" y="288" font-family="${ogFont}"
+                      font-size="68" font-weight="700" fill="${OG_WORDMARK}">Adaptive Learner</text>
+                <text x="562" y="346" font-family="${ogFont}"
+                      font-size="34" font-weight="500" fill="${OG_TAGLINE}">${card.tagline}</text>
+                <text x="562" y="404" font-family="${ogFont}"
+                      font-size="23" font-weight="400" fill="${OG_FEATURES}">${card.features}</text>
+            </svg>`,
+        );
+        const og = await sharp(ogCard)
+            .composite([
+                {
+                    input: ogMark.data,
+                    left: Math.round(150 + (ogMarkSize - ogMark.info.width) / 2),
+                    top: Math.round((ogH - ogMark.info.height) / 2),
+                },
+            ])
+            .png()
+            .toBuffer();
+        await writeFile(resolve(OUT, card.file), og);
+        console.log(`  ${card.file} (1200x630, dark)`);
+    }
 
     console.log("Icon set generated in frontend/public/");
 }
