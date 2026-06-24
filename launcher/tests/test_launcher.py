@@ -58,6 +58,13 @@ class TestConfigLoads:
         assert cfg.health_check_path == "/api/health"
         assert cfg.app_version == __version__
 
+    def test_launcher_json_uses_brand_mark_icon(self) -> None:
+        cfg = LauncherConfig.from_json(LAUNCHER_JSON)
+        # The brand mark resolves from the repo-root CWD the launcher chdirs to;
+        # the tray reuses it (tray_icon_path empty -> falls back to icon_path).
+        assert cfg.icon_path == "frontend/branding/adaptive-learner-mark.png"
+        assert cfg.tray_icon_path == ""
+
     def test_launcher_json_declares_internal_ports(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
         assert cfg.show_advanced_ports is True
