@@ -83,10 +83,14 @@ class TestConfigLoads:
 
     def test_legacy_names_drive_cleanup(self) -> None:
         cfg = LauncherConfig.from_json(LAUNCHER_JSON)
-        assert "bibliogon" in cfg.legacy_names
+        # bibliogon is a SEPARATE project, not an Adaptive Learner legacy name
+        # (#1109) - it must never be matched, offered, or cleaned up here.
+        assert cfg.legacy_names == ["adaptive_learner"]
+        assert "bibliogon" not in cfg.legacy_names
         # Cleanup patterns include the container plus the legacy names.
         assert "adaptive-learner" in cfg.cleanup_patterns()
-        assert "bibliogon" in cfg.cleanup_patterns()
+        assert "adaptive_learner" in cfg.cleanup_patterns()
+        assert "bibliogon" not in cfg.cleanup_patterns()
 
 
 class TestResolveAppDir:
