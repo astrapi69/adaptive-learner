@@ -20,7 +20,9 @@
   "icon_path": "frontend/branding/adaptive-learner-mark.png",
   "tray_icon_path": "",
   "config_dir": "~/.adaptive-learner",
-  "locale": "de",
+  "locale": "auto",
+  "single_instance": true,
+  "log_level": "INFO",
   "repo_url": "https://github.com/astrapi69/adaptive-learner",
   "releases_url": "https://github.com/astrapi69/adaptive-learner/releases/latest",
   "docs_url": "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md",
@@ -31,5 +33,10 @@
     "~/.bibliogon",
     "~/.config/bibliogon",
     "~/.local/share/bibliogon"
+  ],
+  "cleanup_search_paths": [
+    "~/.config/",
+    "~/.local/share/",
+    "~/"
   ]
 }
