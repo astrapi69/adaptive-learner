@@ -2,15 +2,17 @@ name: Deploy GitHub Pages
 
 # Phase 10G + 11G — publish the Dexie-mode frontend at the root
 # AND the MkDocs documentation site at /docs/ to GitHub Pages.
-# Gitflow (#334): deploys the development version on every push to
-# develop (the active branch); can also be run manually from the
-# Actions tab. Frontend uses the Dexie storage backend (no backend
-# required); docs are static MkDocs Material in DE + EN. Switch to
-# main later if only tagged releases should deploy.
+# Gitflow (#334): this is the PRODUCTION site, so it deploys only on
+# push to main (main is written solely by release/* merges, so the
+# public site updates only on a release cut). The development version
+# is published separately to the preview host on every develop merge
+# (see deploy-preview.yml). Can also be run manually from the Actions
+# tab. Frontend uses the Dexie storage backend (no backend required);
+# docs are static MkDocs Material in DE + EN.
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
   workflow_dispatch: {}
 
 # Defensive opt-in: any JavaScript-runtime action still declaring

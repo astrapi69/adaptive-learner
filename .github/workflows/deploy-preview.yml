@@ -12,7 +12,11 @@ name: Deploy Preview
 # also the CONTENT source for the preview (bundled lessons), so a
 # preview exercises the test content end-to-end.
 #
-# Manual trigger only — pick the branch from the Actions tab.
+# Auto-deploys on every push to develop (so a merge to develop
+# refreshes the preview), and can also be triggered manually from the
+# Actions tab to preview an arbitrary feature branch. A manual
+# feature-branch preview is overwritten again by the next develop
+# merge, which is the intended behaviour (develop is the steady state).
 #
 # One-time prerequisites (NOT automated):
 #   1. astrapi69/adaptive-learner-content-test → Settings → Pages →
@@ -26,6 +30,8 @@ name: Deploy Preview
 # Result: https://astrapi69.github.io/adaptive-learner-content-test/
 
 on:
+  push:
+    branches: [develop]
   workflow_dispatch:
     inputs:
       branch:
@@ -68,7 +74,10 @@ jobs:
       - name: Check out the chosen branch
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.inputs.branch }}
+          # On workflow_dispatch this is the picked branch; on a push to
+          # develop github.event.inputs.branch is empty, so fall back to
+          # the triggering ref (develop).
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
           fetch-depth: 0
 
       # Use the content-test repo as the CONTENT source so the preview
@@ -145,4 +154,4 @@ jobs:
           # just the dist — no gitlink, no accumulated history.
           force_orphan: true
           # Record which branch + commit produced this preview.
-          commit_message: "preview: ${{ github.event.inputs.branch }}@${{ github.sha }}"
+          commit_message: "preview: ${{ github.event.inputs.branch || github.ref_name }}@${{ github.sha }}"
