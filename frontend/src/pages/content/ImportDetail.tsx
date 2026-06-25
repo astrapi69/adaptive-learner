@@ -25,6 +25,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
+import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
 
 import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import SaveOfflineLessonModal from "../../components/content/lessons/SaveOfflineLessonModal";
@@ -100,6 +101,11 @@ export default function ImportDetail({
   const analyzeFeature = useFeature(FEATURES.CONVERSATION_ANALYZE);
   const sessionFeature = useFeature(FEATURES.SESSION_START);
   const ankiFeature = useFeature(FEATURES.ANKI_EXTRACT);
+  // #1133 — only surface the "API key required" notice once the key status is
+  // actually known. Before that (``ready=false``), the feature reads disabled
+  // (we don't know yet), and showing the notice flashes a false warning to a
+  // user who DOES have a key — especially on a direct navigation to this page.
+  const { ready: apiKeyReady } = useApiKeyStatus();
 
   const [detail, setDetail] = useState<ImportedConversationDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -543,7 +549,7 @@ export default function ImportDetail({
           {detail.source} · {detail.message_count} {t("import.messages", "messages")}
           {detail.model ? ` · ${detail.model}` : ""}
         </p>
-        {analyzeFeature.isDisabled && (
+        {apiKeyReady && analyzeFeature.isDisabled && (
           <ApiKeyRequiredNotice
             feature={t("ui.api_key.feature_analyze", "to analyze conversations")}
           />
