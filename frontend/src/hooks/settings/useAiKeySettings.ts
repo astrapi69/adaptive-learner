@@ -87,15 +87,33 @@ export function useAiKeySettings(
         }
     };
 
+    // #1133 — make ``provider`` the active one when the current active
+    // provider has no stored key yet, so the FIRST working key immediately
+    // unlocks the AI-feature gate (which checks the active provider). Never
+    // hijacks an already-configured active provider.
+    const ensureUsableActiveProvider = async (
+        current: UserSettings,
+        provider: AIProvider,
+    ): Promise<UserSettings> => {
+        const activeHasKey = current[
+            `has_${current.active_provider}_key` as keyof UserSettings
+        ] as boolean;
+        if (current.active_provider === provider || activeHasKey) return current;
+        return getStorage().settings.update(current.user_id, {
+            active_provider: provider,
+        });
+    };
+
     // Persist a key (no test). Backing the key up as last-known-good is
     // the caller's responsibility (#793 — only after an advisory test
     // passes), so this just stores the key and refreshes the UI.
     const persistKey = async (provider: AIProvider, key: string) => {
-        const updated = await getStorage().settings.setApiKey(settings.user_id, {
+        const saved = await getStorage().settings.setApiKey(settings.user_id, {
             provider,
             key,
         });
-        onSettingsChange(updated);
+        const activated = await ensureUsableActiveProvider(saved, provider);
+        onSettingsChange(activated);
         setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
         await refreshApiKeyStatus();
         notify.success(t("toast.api_key_saved", "API key saved."));
@@ -183,6 +201,18 @@ export function useAiKeySettings(
                 key: draft.length > 0 ? draft : undefined,
             });
             setTestResults((prev) => ({ ...prev, [provider]: result }));
+            // #1133 — "it should just work": a drafted key that tests OK is
+            // saved, backed up as last-known-good, and (when nothing usable is
+            // active yet) made the active provider, so AI features unlock
+            // without a separate Save click.
+            if (result.success && draft.length > 0) {
+                await persistKey(provider, draft);
+                await getStorage().settings.backupApiKey(settings.user_id, {
+                    provider,
+                    key: draft,
+                });
+                setBackupAvailable((prev) => ({ ...prev, [provider]: true }));
+            }
         } catch {
             // A thrown call (rather than a classified result) is itself a
             // connectivity problem — surface it as the network outcome.
