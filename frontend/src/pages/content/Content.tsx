@@ -16,7 +16,7 @@
  * {@link useContentSetsData}), owns the search + Continue Learning +
  * contributions, and composes the extracted sections — the
  * {@link ContentToolbar}, {@link ContentSearchResults},
- * {@link ContentGapsSection}, {@link MyLessonsSection},
+ * {@link MyLessonsSection},
  * {@link ContentTree}, {@link DeleteLessonModal}, and
  * {@link ContentShareDialog} (backed by {@link useContentSharing}).
  * Set-level handlers live in {@link useContentSetActions}.
@@ -36,7 +36,6 @@ import ContentBookCompanions from "../../components/content/media/ContentBookCom
 import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
 import ContentToolbar from "../../components/content/browser/ContentToolbar";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
-import ContentGapsSection from "../../components/content/contributions/ContentGapsSection";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
@@ -312,13 +311,9 @@ export default function ContentPage() {
         />
       ) : (
         <>
-          {/* Phase 64E — encouraging gap suggestions ("Can you help?"). */}
-          <ContentGapsSection
-            downloadedSets={downloadedSets}
-            lang={lang}
-            communityRepo={COMMUNITY_REPO}
-          />
-
+          {/* #1149 — the "Missing Lessons" gap-suggestion block moved out
+              of "Meine Inhalte" (consumption) into the dedicated
+              /contribute area (production). */}
           <h2 className="content-section-title">
             {t("content.my_lessons.downloaded_title", "Downloaded sets")}
           </h2>
