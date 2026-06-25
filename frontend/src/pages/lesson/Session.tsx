@@ -1,5 +1,11 @@
-import {useCallback, useEffect, useState} from "react";
+import {lazy, Suspense, useCallback, useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
+
+// assistant-ui adoption Phase 0 (#1126): lazy so its ~47-package bundle only
+// loads behind the opt-in ``?ui=assistant`` flag, never on the default path.
+const AssistantUiThread = lazy(
+    () => import("../../components/session/assistant-ui/AssistantUiThread"),
+);
 
 import {LEARNING_METHODS} from "../../lib/constants";
 
@@ -599,11 +605,20 @@ export default function Session() {
                     />
                 )}
 
-            <SessionChat
-                messages={messages}
-                onSend={handleSend}
-                disabled={sendingMessage}
-            />
+            {searchParams.get("ui") === "assistant" && session?.id ? (
+                // Phase 0 spike (#1126): opt-in assistant-ui thread for the
+                // same session. Default path (no flag) renders the unchanged
+                // SessionChat below, so production is untouched.
+                <Suspense fallback={<div data-testid="aui-loading" />}>
+                    <AssistantUiThread sessionId={session.id} />
+                </Suspense>
+            ) : (
+                <SessionChat
+                    messages={messages}
+                    onSend={handleSend}
+                    disabled={sendingMessage}
+                />
+            )}
 
             <div className="form-actions">
                 <Button
