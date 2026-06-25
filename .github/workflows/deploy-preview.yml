@@ -118,6 +118,12 @@ jobs:
       - name: Configure SPA fallback
         run: cp frontend/dist/index.html frontend/dist/404.html
 
+      # GitHub Pages otherwise runs the build through Jekyll, which skips
+      # files/dirs starting with "_" and can choke on the Vite output.
+      # .nojekyll serves the dist verbatim.
+      - name: Disable Jekyll
+        run: touch frontend/dist/.nojekyll
+
       - name: Deploy to the content-test repo (gh-pages branch)
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -125,5 +131,11 @@ jobs:
           external_repository: astrapi69/adaptive-learner-content-test
           publish_branch: gh-pages
           publish_dir: frontend/dist
+          # Publish a FRESH orphan branch each run. The prior gh-pages tree
+          # carried a broken ``content/adaptive-learner-content`` submodule
+          # gitlink (no .gitmodules URL), which failed GitHub's Pages checkout
+          # ("fatal: No url found for submodule path ..."). An orphan branch is
+          # just the dist — no gitlink, no accumulated history.
+          force_orphan: true
           # Record which branch + commit produced this preview.
           commit_message: "preview: ${{ github.event.inputs.branch }}@${{ github.sha }}"
