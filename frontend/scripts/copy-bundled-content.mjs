@@ -82,9 +82,17 @@ function main() {
         return 0;
     }
 
-    // Copy the entire tree (root manifest + sets/) verbatim.
+    // Copy the entire tree (root manifest + sets/) verbatim, EXCEPT the
+    // content checkout's own ``.git``. A nested ``.git`` inside the published
+    // bundle makes a git-based deploy (peaceiris) treat the folder as a
+    // SUBMODULE gitlink, which then fails GitHub Pages' submodule checkout
+    // ("No url found for submodule path …"). The artifact-based main deploy
+    // never hit this; the preview deploy did.
     const dest = join(DEST_BASE, BUNDLED_REPO_KEY);
-    cpSync(SRC_BASE, dest, {recursive: true});
+    cpSync(SRC_BASE, dest, {
+        recursive: true,
+        filter: (src) => !/(^|[/\\])\.git([/\\]|$)/.test(src),
+    });
     log(`copied content tree to public/content/${BUNDLED_REPO_KEY}/`);
     return 0;
 }

@@ -124,6 +124,13 @@ jobs:
       - name: Disable Jekyll
         run: touch frontend/dist/.nojekyll
 
+      # Defence in depth: the bundled content tree must never carry a nested
+      # ``.git`` — peaceiris would commit it as a submodule gitlink and GitHub
+      # Pages' submodule checkout then fails. copy-bundled-content.mjs already
+      # filters it out; this guarantees it for any other source too.
+      - name: Strip nested .git dirs from the bundle
+        run: find frontend/dist -name .git -prune -exec rm -rf {} +
+
       - name: Deploy to the content-test repo (gh-pages branch)
         uses: peaceiris/actions-gh-pages@v4
         with:
