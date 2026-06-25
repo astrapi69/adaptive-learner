@@ -40,6 +40,9 @@ interface SessionChatProps {
     disabled?: boolean;
     /** Optional placeholder override for the textarea. */
     placeholder?: string;
+    /** #1143 — for an imported-chat session, the empty-state intro names the
+     *  imported chat's topic (e.g. "Reflexive Verben"). */
+    introTopic?: string | null;
 }
 
 /**
@@ -53,6 +56,7 @@ export default function SessionChat({
     onSend,
     disabled = false,
     placeholder,
+    introTopic,
 }: SessionChatProps) {
     const {t} = useI18n();
     const tooltipsOn = useButtonTooltips();
@@ -125,9 +129,23 @@ export default function SessionChat({
                             fontStyle: "italic",
                         }}
                     >
-                        {t(
-                            "session.welcome_empty",
-                            "Ready to learn! Write your first message.",
+                        {introTopic ? (
+                            <>
+                                <div data-testid="chat-intro-topic">
+                                    {t("session.topic_label", "Topic")}: {introTopic}
+                                </div>
+                                <div style={{marginTop: "0.5rem"}}>
+                                    {t(
+                                        "session.welcome_empty",
+                                        "Ready to learn! Write your first message.",
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            t(
+                                "session.welcome_empty",
+                                "Ready to learn! Write your first message.",
+                            )
                         )}
                     </div>
                 )}
