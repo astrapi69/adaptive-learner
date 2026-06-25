@@ -841,6 +841,23 @@ describe("session.get / session.getMessages (Phase 38 Bug 7)", () => {
         ).rejects.toMatchObject({status: 404});
     });
 
+    it("session.get returns imported_conversation_id (#1143/#1141)", async () => {
+        const {userId, projectId} = await setupUserWithKey();
+        const conv = await dexieStorage.imports.create(userId, {
+            source: "manual",
+            title: "Linked",
+            model: null,
+            source_created_at: null,
+            messages: [{role: "user", content: "x", timestamp: null}],
+        });
+        const started = await dexieStorage.session.start({
+            project_id: projectId,
+            imported_conversation_id: conv.id,
+        });
+        const fetched = await dexieStorage.session.get(started.session.id);
+        expect(fetched.imported_conversation_id).toBe(conv.id);
+    });
+
     it("session.getMessages returns the system prompt as the first entry", async () => {
         const {projectId} = await setupUserWithKey();
         const started = await dexieStorage.session.start({project_id: projectId});

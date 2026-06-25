@@ -348,6 +348,9 @@ export const dexieSession: IStorageService["session"] = {
         ended_at: row.ended_at,
         cycle_step: row.cycle_step,
         status: row.status,
+        // #1143/#1141 — without this the resume DTO loses the FK, so the
+        // session header topic + imported-chat intro/clean never trigger.
+        imported_conversation_id: row.imported_conversation_id ?? null,
       };
     },
     /**
