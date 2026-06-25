@@ -1,41 +1,41 @@
 # Frozen-Prompt-Analyse: Kontext importierter Lernchats
 
 > Entwickler-Referenz. Stand: 2026-06-25, verifiziert gegen `develop`
-> (HEAD `44d81d76`) mit lauffaehigen Tests + Code-Greps. Zeilennummern
-> beziehen sich auf diesen Stand; Funktionsnamen sind stabil. Pfade relativ
-> zum Repository-Root.
+> mit lauffähigen Tests + Code-Greps. Zeilennummern beziehen sich auf
+> diesen Stand; Funktionsnamen sind stabil. Pfade relativ zum
+> Repository-Root.
 
-> **Faktische Praezisierung (wichtig):** Eine verbreitete Verschaerfung lautet
+> **Faktische Präzisierung (wichtig):** Eine verbreitete Verschärfung lautet
 > „der Kontext-Aufbau-Code ist toter Code, wird nie erreicht". Das ist **nicht
-> korrekt** und in diesem Dokument bewusst richtiggestellt: Der Code laeuft
-> **genau einmal** - beim allerersten Start, der die Session ueberhaupt erst
+> korrekt** und in diesem Dokument bewusst richtiggestellt: Der Code läuft
+> **genau einmal** - beim allerersten Start, der die Session überhaupt erst
 > erzeugt - und wird danach nie wieder erreicht. Beweis durch Widerspruch:
-> Liefe er nie, gaebe es weder eine Session noch eine `role=system`-Message
+> Liefe er nie, gäbe es weder eine Session noch eine `role=system`-Message
 > zum Fortsetzen. Die korrekte Diagnose ist „einmalig gebaut, dann
 > eingefroren", nicht „tot".
 
 ## 1. Executive Summary
 
 Bei einem importierten Lernchat ist **"Sitzung fortsetzen"** der Regelpfad:
-Sobald eine Session fuer die Konversation existiert, navigiert ein Klick nur
+Sobald eine Session für die Konversation existiert, navigiert ein Klick nur
 noch zur bestehenden Session (Short-Circuit 1). Der Kontext (Analyse #827,
-Roh-Transkript #1078, Lernfortschritt #797) wird ausschliesslich beim
+Roh-Transkript #1078, Lernfortschritt #797) wird ausschließlich beim
 **allerersten** Start gebaut und als `role=system`-Nachricht eingefroren.
 
-**Kernaussage:** Fuer jede importierte Session existiert der Kontext-Aufbau
-nur als einmaliges Erst-Ereignis. Jedes spaetere "Fortsetzen" laedt die
-eingefrorene Nachricht wortwoertlich und baut nichts neu (Short-Circuit 1 auf
+**Kernaussage:** Für jede importierte Session existiert der Kontext-Aufbau
+nur als einmaliges Erst-Ereignis. Jedes spätere "Fortsetzen" lädt die
+eingefrorene Nachricht wortwörtlich und baut nichts neu (Short-Circuit 1 auf
 UI-Ebene, Short-Circuit 2 als Sicherheitsnetz in der Logik).
 
-**Impact:** Eine importierte Session traegt entweder gar keinen Kontext (wenn
+**Impact:** Eine importierte Session trägt entweder gar keinen Kontext (wenn
 sie vor dem jeweiligen Fix erzeugt wurde) oder den beim Erststart
 eingefrorenen Kontext. Verbesserungen an `prompts.ts` /
-`buildImportedContextBlock` wirken nur fuer **neu** importierte Chats beim
-ersten Start - nie ruekwirkend fuer bestehende Sessions. "Eingefroren" ist
+`buildImportedContextBlock` wirken nur für **neu** importierte Chats beim
+ersten Start - nie rückwirkend für bestehende Sessions. "Eingefroren" ist
 dabei nicht "verloren": der alte Prompt erreicht den Provider weiterhin
 (Abschnitt 3.5).
 
-## 2. Architektur-Ueberblick
+## 2. Architektur-Überblick
 
 ```mermaid
 graph TD
@@ -45,7 +45,7 @@ graph TD
     C -->|NEIN - nur Erststart| E["start mit importedConversationId"]
     D --> F[Session.tsx: Lade Session aus DB]
     E --> G{resumeActiveImportedSession findet Session?}
-    G -->|JA - Sicherheitsnetz| H[Short-Circuit 2: Gebe alte Session zurueck]
+    G -->|JA - Sicherheitsnetz| H[Short-Circuit 2: Gebe alte Session zurück]
     G -->|NEIN - einmalig| I[Kontext-Aufbau: buildImportedContextBlock]
     H --> F
     I --> J[Persistiere role=system Message]
@@ -61,12 +61,12 @@ graph TD
     style K fill:#51cf66,color:#000
     style M fill:#51cf66,color:#000
 
-    D -.->|Regelfall der Folgebesuche| N[Kontext-Code 366-400: laeuft NUR beim Erststart, danach nie]
-    H -.->|faengt jeden Folge-start ab| N
+    D -.->|Regelfall der Folgebesuche| N[Kontext-Code 366-400: läuft NUR beim Erststart, danach nie]
+    H -.->|fängt jeden Folge-start ab| N
 ```
 
 Legende: **Rot** = Short-Circuit. **Gelb** = Kontext-Aufbau + Persistierung
-(laeuft einmalig beim Erststart). **Gruen** = verbatim-Laden + Versand des
+(läuft einmalig beim Erststart). **Grün** = verbatim-Laden + Versand des
 eingefrorenen Prompts.
 
 ## 3. Der Regelpfad: "Sitzung fortsetzen"
@@ -92,9 +92,9 @@ if (activeSession) {
 }
 ```
 
-`activeSession` wird beim Laden ueber `getActiveForConversation(...)` befuellt
-(`ImportDetail.tsx:214`). **Erkenntnis:** Dies ist der Regelfall fuer jeden
-Folgebesuch; der gesamte Kontext-Code wird uebersprungen.
+`activeSession` wird beim Laden über `getActiveForConversation(...)` befüllt
+(`ImportDetail.tsx:214`). **Erkenntnis:** Dies ist der Regelfall für jeden
+Folgebesuch; der gesamte Kontext-Code wird übersprungen.
 
 ### 3.3 Schritt 2: Navigation
 
@@ -117,25 +117,24 @@ if (resumeId) {
 ```
 
 `getMessages` (`frontend/src/storage/dexie/dexie-session.ts:358-377`) liefert
-alle Messages unveraendert; die `role=system`-Message ist die beim Erststart
+alle Messages unverändert; die `role=system`-Message ist die beim Erststart
 persistierte Version.
 
 ### 3.5 Schritt 4: Message-Senden
 
-- **Datei/Zeilen:** `frontend/src/storage/ai/session-flow.ts:504-512`
-  (`sendMessage`)
+- **Datei/Zeilen:** `frontend/src/storage/ai/session-flow.ts` (`sendMessage`,
+  History-Bau via `buildOutgoingHistory`)
 
 ```ts
-const historyRows = await db.sessionMessages.where("session_id").equals(sess.id).toArray();
-historyRows.sort((a, b) => a.created_at.localeCompare(b.created_at));
-const history = historyRows.map((m) => ({role: m.role, content: m.content}));
+const history = await buildOutgoingHistory(db, sess, project);
 ```
 
-Die History enthaelt die eingefrorene `role=system`-Message; der
-Anthropic-Adapter sammelt sie in `body.system`
-(`frontend/src/storage/ai/ai-providers.ts:150-158`). **Ergebnis:** Die AI
-erhaelt den Kontext - aber die eingefrorene Fassung von damals. "Eingefroren"
-heisst nicht "fehlt".
+Vor dem Fix enthielt die History die eingefrorene `role=system`-Message
+unverändert; der Anthropic-Adapter sammelt sie in `body.system`
+(`frontend/src/storage/ai/ai-providers.ts:150-158`). **Ergebnis vor dem Fix:**
+Die AI erhielt den Kontext - aber die eingefrorene Fassung von damals.
+"Eingefroren" heißt nicht "fehlt". Nach dem Fix (Abschnitt 9.1) wird die
+ausgehende System-Message für importierte Sessions frisch gebaut.
 
 ## 4. Der Erststart: einziger Moment des Kontext-Aufbaus
 
@@ -147,9 +146,9 @@ Stelle im Code, die eine importierte Session anlegt - verifiziert: der einzige
 
 ### 4.1 Wann er auftritt
 
-- Genau beim ersten Oeffnen einer importierten Konversation, die noch keine
-  Session hat (oder nach manuellem Loeschen der Session).
-- Danach nie wieder fuer dieselbe Konversation.
+- Genau beim ersten Öffnen einer importierten Konversation, die noch keine
+  Session hat (oder nach manuellem Löschen der Session).
+- Danach nie wieder für dieselbe Konversation.
 
 ### 4.2 Short-Circuit 2 als Sicherheitsnetz
 
@@ -163,36 +162,37 @@ if (opts.importedConversationId) {
 }
 ```
 
-Selbst wenn `start()` ein zweites Mal aufgerufen wuerde, faengt
+Selbst wenn `start()` ein zweites Mal aufgerufen würde, fängt
 `resumeActiveImportedSession` den Aufruf ab, sobald eine Session existiert.
 
-### 4.3 Der Kontext-Aufbau (laeuft genau einmal)
+### 4.3 Der Kontext-Aufbau (läuft genau einmal)
 
-- **Datei/Zeilen:** `frontend/src/storage/ai/session-flow.ts:366-400`
-- `buildImportedContextBlock` (`:255-279`) liest `analysis_result` +
-  `importedMessages`, faltet das Ergebnis in `systemPrompt` (`:376-378`) und
-  persistiert die `role=system`-Message (`:393-400`).
+- **Datei/Zeilen:** `frontend/src/storage/ai/session-flow.ts` (`startSession`
+  via `composeSystemPrompt`)
+- `buildImportedContextBlock` (`session-flow.ts:255-279`) liest
+  `analysis_result` + `importedMessages`, das Ergebnis wird in `systemPrompt`
+  gefaltet und als `role=system`-Message persistiert.
 - **Status:** **Kein toter Code.** Er wird beim Erststart **genau einmal**
-  erreicht - der Moment, der die Session und damit den (spaeter eingefrorenen)
-  Prompt erst erzeugt. Hinter beiden Short-Circuits ist er fuer **Folge**-
-  besuche unerreichbar, nicht generell.
+  erreicht - der Moment, der die Session und damit den (anfänglich
+  persistierten) Prompt erst erzeugt. Hinter beiden Short-Circuits ist er für
+  **Folge**besuche unerreichbar, nicht generell.
 
 ## 5. Die zwei Short-Circuits (Root Cause)
 
 ### 5.1 Short-Circuit 1 (UI) - der Regelfall der Folgebesuche
 
-`frontend/src/pages/content/ImportDetail.tsx:370-377`. Faengt jeden Besuch ab,
-bei dem bereits eine `activeSession` existiert (also alle ausser dem
+`frontend/src/pages/content/ImportDetail.tsx:370-377`. Fängt jeden Besuch ab,
+bei dem bereits eine `activeSession` existiert (also alle außer dem
 Erststart). Reine Navigation, kein `start()`.
 
 ### 5.2 Short-Circuit 2 (Logik) - das Sicherheitsnetz
 
 `frontend/src/storage/ai/session-flow.ts:305-311` + `:224-243`. Verhindert
 Duplikate, falls `start()` trotz bestehender Session aufgerufen wird, und gibt
-den persistierten Prompt verbatim zurueck.
+den persistierten Prompt verbatim zurück.
 
-Zusammen sorgen beide dafuer, dass der Kontext-Aufbau nach dem Erststart nie
-wieder laeuft.
+Zusammen sorgten beide dafür, dass der Kontext-Aufbau nach dem Erststart nie
+wieder lief - die Grundlage des eingefrorenen Prompts.
 
 ## 6. Datenfluss-Diagramm: Regelfall vs. Erststart
 
@@ -206,18 +206,17 @@ sequenceDiagram
 
     Note over User,AI: REGELFALL: Folgebesuch -> Sitzung fortsetzen
     User->>UI: Klickt "Sitzung fortsetzen"
-    UI->>DB: Pruefe activeSession
+    UI->>DB: Prüfe activeSession
     DB-->>UI: Session existiert
     UI->>UI: Navigation zu /session?session=X (Short-Circuit 1)
     Note over UI,Flow: start() wird NICHT aufgerufen
-    Note over Flow: Kontext-Aufbau (366-400) wird NICHT erneut erreicht
     UI->>DB: session.getMessages(id)
     DB-->>UI: Messages inkl. role=system (von damals)
     User->>UI: Sendet Nachricht
     UI->>Flow: sendMessage(userMessage)
-    Flow->>DB: Lade History
-    DB-->>Flow: History mit role=system (eingefroren)
-    Flow->>AI: body.system (eingefroren, aber vorhanden)
+    Flow->>DB: buildOutgoingHistory (importiert -> Rebuild aus FK)
+    DB-->>Flow: History mit frisch gebautem role=system
+    Flow->>AI: body.system (frisch aus dem Chat, nach Fix #1122)
 
     Note over User,AI: ERSTSTART (einmalig pro Import): Sitzung starten
     User->>UI: Klickt "Sitzung starten" (keine Session vorhanden)
@@ -225,9 +224,8 @@ sequenceDiagram
     Flow->>DB: resumeActiveImportedSession()
     DB-->>Flow: keine Session gefunden
     Flow->>DB: Lade analysis_result + importedMessages
-    Flow->>Flow: buildImportedContextBlock() + Faltung
-    Flow->>DB: Persistiere role=system Message (Einfrieren)
-    Flow->>AI: body.system (frisch - nur dieses eine Mal)
+    Flow->>Flow: composeSystemPrompt() + Persistierung
+    Flow->>AI: body.system (frisch)
 ```
 
 ## 7. Auswirkungen auf Fixes
@@ -235,21 +233,22 @@ sequenceDiagram
 ### 7.1 Warum "N-mal gefixt, immer noch kaputt"
 
 - Fixes wie #827, #1078, #797 verbessern `prompts.ts` /
-  `buildImportedContextBlock` - Code, der nur beim **Erststart** laeuft.
-- Bestehende importierte Sessions wurden bereits frueher eingefroren; Short-
-  Circuit 1 (+ 2) verhindert jede Neuberechnung beim Fortsetzen.
+  `buildImportedContextBlock` - Code, der vor dem Fix nur beim **Erststart**
+  lief.
+- Bestehende importierte Sessions wurden bereits früher eingefroren; Short-
+  Circuit 1 (+ 2) verhinderte jede Neuberechnung beim Fortsetzen.
 - **Test-Artefakt:** Wer dieselbe importierte Konversation (mit bestehender
-  Session) erneut testet, trifft immer den eingefrorenen alten Prompt und
-  sieht den Fix nie - obwohl ein **frischer** Import beim Erststart korrekt
-  funktioniert.
+  Session) erneut testet, traf immer den eingefrorenen alten Prompt und sah
+  den Fix nie - obwohl ein **frischer** Import beim Erststart korrekt
+  funktionierte.
 
-### 7.2 Die harte Konsequenz
+### 7.2 Die harte Konsequenz (vor dem Fix)
 
-- Fuer **bestehende** importierte Sessions sind `prompts.ts`-Fixes wirkungslos.
-- Wirksam werden sie nur fuer **neu** importierte Chats beim Erststart - nicht
-  ruekwirkend.
-- Das ist die eigentliche Schaerfe: nicht "toter Code", sondern "einmal
-  eingefroren, nie aktualisiert".
+- Für **bestehende** importierte Sessions waren `prompts.ts`-Fixes wirkungslos.
+- Wirksam wurden sie nur für **neu** importierte Chats beim Erststart - nicht
+  rückwirkend.
+- Das ist die eigentliche Schärfe: nicht "toter Code", sondern "einmal
+  eingefroren, nie aktualisiert". Der Fix in Abschnitt 9.1 hebt das auf.
 
 ## 8. Verifikations-Methoden
 
@@ -257,49 +256,49 @@ sequenceDiagram
 
 1. DevTools -> Application -> IndexedDB -> App-DB -> `sessionMessages`.
 2. `role=system`-Message einer importierten Session suchen.
-3. Pruefen, ob sie `=== Imported conversation (previous chat) ===` (DE:
-   `=== Importierte Konversation (vorheriger Chat) ===`) enthaelt.
+3. Prüfen, ob sie `=== Imported conversation (previous chat) ===` (DE:
+   `=== Importierte Konversation (vorheriger Chat) ===`) enthält.
 4. Mit dem aktuellen `buildConversationContext` in `prompts.ts` abgleichen.
-5. Build-Hash im About-Tab gegen Commit `22e11c76` (#1078) pruefen - aelter
+5. Build-Hash im About-Tab gegen Commit `22e11c76` (#1078) prüfen - älter
    bedeutet, das Roh-Transkript-Feature ist im Deploy nicht aktiv.
 
 ### 8.2 Automatisierte Tests (aktuell im Repo)
 
-| Test | Datei | Pruefung |
+| Test | Datei | Prüfung |
 |---|---|---|
-| Persistenz beider Bloecke | `frontend/src/storage/ai/context-persistence.test.ts` | Erststart legt Analyse + Roh-Transkript in einer `role=system`-Message ab |
-| FROZEN | `frontend/src/storage/ai/context-persistence.test.ts` | Zweit-`start()` -> gleiche Session, byte-identischer Prompt; geaenderte Analyse erreicht den Prompt nicht |
-| Roh-Transkript erreicht AI (#1078) | `frontend/src/storage/ai/session-flow.test.ts` | Nach Resume traegt `body.system` beide Roh-Turns |
+| Persistenz beider Blöcke | `frontend/src/storage/ai/context-persistence.test.ts` | Erststart legt Analyse + Roh-Transkript in einer `role=system`-Message ab |
+| FROZEN | `frontend/src/storage/ai/context-persistence.test.ts` | Zweit-`start()` -> gleiche Session, byte-identischer Prompt; geänderte Analyse erreicht den persistierten Prompt nicht |
+| Roh-Transkript erreicht AI (#1078) | `frontend/src/storage/ai/session-flow.test.ts` | Nach Resume trägt `body.system` beide Roh-Turns |
+| REBUILD-ON-RESUME (#1122) | `frontend/src/storage/ai/session-flow.test.ts` | Mutierte Analyse + gelöschte `role=system`-Message -> frischer Kontext erreicht den Provider |
 | SC1 (UI) | `frontend/src/pages/content/ImportDetail.test.tsx` | Aktive Session -> nur Navigation, `start()` nicht aufgerufen; keine Session -> `start({imported_conversation_id})` |
 
-> Hinweis: Fruehere Iterationen nutzten `frozen-prompt-resume.test.ts` /
+> Hinweis: Frühere Iterationen nutzten `frozen-prompt-resume.test.ts` /
 > `frozen-prompt-ui.test.tsx`. Diese wurden in die obigen, dauerhaften Pins
 > integriert und existieren nicht mehr.
 
-## 9. Loesungsansaetze (Empfehlung)
+## 9. Lösungsansätze
 
 ### 9.1 Rebuild-on-Resume aus der Konversations-FK (IMPLEMENTIERT, #1122)
 
 > Status: umgesetzt in `fix/imported-session-rebuild-context-1122`. Die
 > Komposition wurde in `composeSystemPrompt` extrahiert; `sendMessage` /
-> `sendMessageStream` bauen die ausgehende System-Message fuer importierte
-> Sessions ueber `buildOutgoingHistory` frisch aus der FK. Die **Persistierung
-> bleibt bewusst unveraendert** (die gespeicherte `role=system`-Message ist nur
-> noch der Seed), daher bleibt der FROZEN-Persistenztest gueltig und wird NICHT
+> `sendMessageStream` bauen die ausgehende System-Message für importierte
+> Sessions über `buildOutgoingHistory` frisch aus der FK. Die **Persistierung
+> bleibt bewusst unverändert** (die gespeicherte `role=system`-Message ist nur
+> noch der Seed), daher bleibt der FROZEN-Persistenztest gültig und wird NICHT
 > invertiert. Neuer Pin: "REBUILD-ON-RESUME (#1122)" in `session-flow.test.ts`
-> (mutierte Analyse + geloeschte System-Message -> frischer Kontext erreicht
+> (mutierte Analyse + gelöschte System-Message -> frischer Kontext erreicht
 > den Provider).
 
 - **Idee:** Kontext nicht aus der eingefrorenen `role=system`-Message ziehen,
   sondern bei jeder Nachricht frisch aus der **Quelle** ableiten - dem
-  importierten Chat selbst. Diese Quelle ist immer verfuegbar: der Chat liegt
+  importierten Chat selbst. Diese Quelle ist immer verfügbar: der Chat liegt
   in `importedMessages` (gekeyt per `conversation_id`) und die Analyse in
-  `importedConversations.analysis_result`, und die Session traegt den FK
-  `imported_conversation_id` (`session-flow.ts:336`, zurueckgegeben in
+  `importedConversations.analysis_result`, und die Session trägt den FK
+  `imported_conversation_id` (`session-flow.ts:336`, zurückgegeben in
   `rowToSessionDto` `:102`).
-- **Mechanismus:** In `sendMessage` / `sendMessageStream`
-  (`frontend/src/storage/ai/session-flow.ts:504-512`) bei vorhandenem
-  `sess.imported_conversation_id` den Block frisch ueber
+- **Mechanismus:** In `sendMessage` / `sendMessageStream` bei vorhandenem
+  `sess.imported_conversation_id` den Block frisch über
   `buildImportedContextBlock(db, sess.imported_conversation_id, lang)`
   (`:255-279`) erzeugen und der History voranstellen - statt sich auf die
   persistierte System-Message zu verlassen.
@@ -308,32 +307,32 @@ sequenceDiagram
   genommen. Genau das ist die Anforderung "auch wenn nichts in der DB gefunden
   wird, dann den Chat nehmen". Auf der UI-Seite liegt derselbe Chat ohnehin im
   Speicher (`ImportDetail.tsx` `detail.messages` + `detail.analysis_result`),
-  was den Ansatz bestaetigt; der robustere Ort ist aber die Storage-Schicht
-  ueber den FK, weil er fuer jeden Resume-Weg und beide Storage-Modi greift.
-- **Vorteil:** Jeder zukuenftige Fix wirkt sofort fuer alle Sessions; das
+  was den Ansatz bestätigt; der robustere Ort ist aber die Storage-Schicht
+  über den FK, weil er für jeden Resume-Weg und beide Storage-Modi greift.
+- **Vorteil:** Jeder zukünftige Fix wirkt sofort für alle Sessions; das
   Stale-Session-Artefakt verschwindet; aktualisierte Analyse / Roh-Turns
-  fliessen laufend ein.
+  fließen laufend ein.
 - **Nachteil:** Etwas mehr Rechenzeit pro Nachricht; Doppel-Injektion
   vermeiden (entweder die persistierte System-Message nicht mehr mitsenden,
-  oder den frischen Block deduplizieren).
-- **Folge fuer Tests:** Da die Persistierung unveraendert bleibt, bleibt der
-  FROZEN-Persistenztest gueltig (nicht invertiert). Der neue Pin
-  "REBUILD-ON-RESUME (#1122)" in `session-flow.test.ts` deckt die Faelle
+  oder den frischen Block deduplizieren - hier wird die alte System-Message aus
+  der ausgehenden History gefiltert).
+- **Folge für Tests:** Da die Persistierung unverändert bleibt, bleibt der
+  FROZEN-Persistenztest gültig (nicht invertiert). Der neue Pin
+  "REBUILD-ON-RESUME (#1122)" in `session-flow.test.ts` deckt die Fälle
   mutierte Analyse + fehlende `role=system`-Message ab.
 
-### 9.2 Short-Circuit 1 erweitern
+### 9.2 Short-Circuit 1 erweitern (verworfen zugunsten 9.1)
 
 - **Idee:** Beim "Sitzung fortsetzen" nicht nur navigieren, sondern ein
-  Kontext-Update der `role=system`-Message anstossen.
+  Kontext-Update der `role=system`-Message anstoßen.
 - **Ort:** `frontend/src/pages/content/ImportDetail.tsx:370-377`.
-- **Vorteil:** Expliziter Trigger. **Nachteil:** UI-Logik wird komplexer; loest
-  das Problem nur fuer den UI-Pfad, nicht fuer andere Resume-Wege.
+- **Nachteil:** UI-Logik wird komplexer; löst das Problem nur für den UI-Pfad,
+  nicht für andere Resume-Wege. 9.1 ist allgemeiner.
 
-### 9.3 Prompt-Versionierung
+### 9.3 Prompt-Versionierung (verworfen)
 
 - **Idee:** Versionsnummer im persistierten Prompt; bei Mismatch neu bauen.
-- **Ort:** `startSession()` + `sendMessage()` in `session-flow.ts`.
-- **Vorteil:** Minimaler Overhead. **Nachteil:** Mehr Komplexitaet, Migration.
+- **Nachteil:** Mehr Komplexität, Migration - ohne Mehrwert gegenüber 9.1.
 
 ## 10. Referenzen
 
@@ -352,6 +351,7 @@ sequenceDiagram
 - #827: Analyse-Block
 - #1078: Roh-Transkript (Commit `22e11c76`, 2026-06-24)
 - #797: Lernfortschritts-Kontext
+- #1122: Frozen-Prompt beim Fortsetzen (dieser Fix)
 
 ### 10.3 Test-Dateien
 
