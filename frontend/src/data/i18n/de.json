@@ -97,6 +97,7 @@
     "online": "Online",
     "offline": "Offline",
     "anki": "Anki",
+    "contribute": "Beitragen",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Entwicklermodus aktiv — Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar.",
     "content": "Meine Inhalte",
@@ -2424,6 +2425,12 @@
       "show_name": "Namen in der Lektion anzeigen",
       "privacy": "Dein Name wird in der Lektion und im Pull Request angezeigt."
     }
+  },
+  "contribute": {
+    "title": "Beitragen",
+    "intro": "Hilf mit, die Community-Bibliothek zu erweitern, indem du ihre Lücken füllst.",
+    "loading": "Wird geladen…",
+    "empty": "Aktuell keine Lücken — die Community-Bibliothek deckt deine heruntergeladenen Sets ab. Danke!"
   },
   "milestone": {
     "streak": "{n}-Tage-Serie!",

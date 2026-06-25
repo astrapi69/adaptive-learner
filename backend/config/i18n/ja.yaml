@@ -89,6 +89,7 @@ nav:
   online: オンライン
   offline: オフライン
   anki: Anki
+  contribute: "貢献"
   dev_badge: DEV
   dev_badge_tooltip: "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
   content: "マイコンテンツ"
@@ -2227,6 +2228,11 @@ content:
     name_placeholder: '例: Maria S.'
     show_name: レッスンに名前を表示する
     privacy: "あなたの名前はレッスンとプルリクエストに表示されます。"
+contribute:
+  title: "貢献する"
+  intro: "不足している部分を補って、コミュニティライブラリの拡充に協力しましょう。"
+  loading: "読み込み中…"
+  empty: "現在、不足はありません。コミュニティライブラリはダウンロード済みのセットをカバーしています。ありがとうございます!"
 milestone:
   streak: "{n}日連続記録!"
   level_up: "レベル{n}に到達!"

@@ -91,6 +91,7 @@ nav:
   online: ऑनलाइन
   offline: ऑफ़लाइन
   anki: Anki
+  contribute: "योगदान"
   dev_badge: DEV
   dev_badge_tooltip: डेवलपर मोड चालू है — त्रुटि टोस्ट पूरी तकनीकी जानकारी दिखाते हैं। सेटिंग्स में टॉगल करें।
   content: "मेरी सामग्री"
@@ -2222,6 +2223,11 @@ content:
     name_placeholder: जैसे Maria S.
     show_name: पाठ में नाम दिखाएँ
     privacy: आपका नाम पाठ और pull request में दिखाया जाएगा।
+contribute:
+  title: "योगदान करें"
+  intro: "कमियों को भरकर समुदाय पुस्तकालय को बढ़ाने में मदद करें।"
+  loading: "लोड हो रहा है…"
+  empty: "अभी कोई कमी नहीं — समुदाय पुस्तकालय आपके डाउनलोड किए गए सेट को कवर करता है। धन्यवाद!"
 milestone:
   streak: '{n}-दिन की स्ट्रीक!'
   level_up: स्तर {n} तक पहुँचे!
