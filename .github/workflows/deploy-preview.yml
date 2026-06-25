@@ -1,0 +1,123 @@
+name: Deploy Preview
+
+# Preview deployment for feature branches (issue #1134). Builds any
+# chosen branch in Dexie mode and publishes it to the SEPARATE
+# astrapi69/adaptive-learner-preview GitHub-Pages repo, so the
+# production GH-Pages site (astrapi69/adaptive-learner) stays clean.
+#
+# Manual trigger only — pick the branch from the Actions tab. The
+# build mirrors deploy-gh-pages.yml (Dexie mode, content-repo
+# checkout for bundled lessons, SPA 404 fallback) but targets the
+# preview repo's base path and pushes via an SSH deploy key instead
+# of the GitHub Pages deployment API.
+#
+# One-time prerequisites (NOT automated):
+#   1. Create repo astrapi69/adaptive-learner-preview, enable Pages
+#      from the gh-pages branch.
+#   2. Generate an SSH keypair (ssh-keygen -t ed25519 -N "" -f key):
+#        - add key.pub as a WRITE deploy key on the preview repo,
+#        - add the private key as the PREVIEW_DEPLOY_KEY secret on
+#          this (adaptive-learner) repo.
+#
+# Result: https://astrapi69.github.io/adaptive-learner-preview/
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to deploy"
+        required: true
+        default: "develop"
+
+# Defensive opt-in: any JavaScript-runtime action still declaring
+# Node 20 (third-party or stragglers) is coerced to Node 24.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  # GH Pages serves the preview site under ``/adaptive-learner-preview/``.
+  # Vite's ``base`` reads this env so every asset URL gets the right
+  # prefix; a wrong base ships a white page (assets 404).
+  VITE_BASE: "/adaptive-learner-preview/"
+  # Force the Dexie storage backend — the preview has no backend,
+  # exactly like the production GH-Pages deployment.
+  VITE_STORAGE_MODE: "dexie"
+  VITE_API_BASE: ""
+
+# No special permissions: this workflow does not touch GitHub Pages
+# on THIS repo. It pushes to the external preview repo using the
+# PREVIEW_DEPLOY_KEY SSH deploy key, not GITHUB_TOKEN.
+permissions:
+  contents: read
+
+# Serialize preview deploys so two concurrent dispatches can't race
+# on the external repo's gh-pages branch.
+concurrency:
+  group: deploy-preview
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build & deploy preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the chosen branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      # The lesson content lives in the separate
+      # astrapi69/adaptive-learner-content repo. Check it out so
+      # copy-bundled-content.mjs can bundle it into the static site
+      # (offline-first). Without this the preview ships with no
+      # bundled lessons (the build fails open, but the site is empty).
+      - name: Check out content repo
+        uses: actions/checkout@v6
+        with:
+          repository: astrapi69/adaptive-learner-content
+          path: adaptive-learner-content
+          ref: main
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        # --legacy-peer-deps: #266 eslint@10 vs eslint-plugin-react ^9.7 peer cap.
+        run: npm ci --legacy-peer-deps
+
+      - name: Compute build metadata
+        run: |
+          echo "VITE_BUILD_HASH=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+          echo "VITE_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+        env:
+          # Point the bundled-content script at the content-repo
+          # checkout (above). Absolute path so it resolves
+          # independent of the frontend working-directory.
+          ADAPTIVE_LEARNER_CONTENT_DIR: ${{ github.workspace }}/adaptive-learner-content
+          # Build provenance shown in Settings -> About.
+          VITE_BUILD_HASH: ${{ env.VITE_BUILD_HASH }}
+          VITE_BUILD_DATE: ${{ env.VITE_BUILD_DATE }}
+
+      # SPA-router fallback for GH Pages: without 404.html, a direct
+      # hit on a nested route (``/dashboard``, ``/settings``) returns
+      # a GH-Pages 404 instead of letting React Router resolve it.
+      - name: Configure SPA fallback
+        run: cp frontend/dist/index.html frontend/dist/404.html
+
+      - name: Deploy to the preview repo
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.PREVIEW_DEPLOY_KEY }}
+          external_repository: astrapi69/adaptive-learner-preview
+          publish_branch: gh-pages
+          publish_dir: frontend/dist
+          # Record which branch + commit produced this preview.
+          commit_message: "preview: ${{ github.event.inputs.branch }}@${{ github.sha }}"
