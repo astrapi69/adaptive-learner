@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, type FormEvent} from "react";
+import {useEffect, useRef, useState, type FormEvent, type KeyboardEvent} from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -75,12 +75,26 @@ export default function SessionChat({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const submit = () => {
         const trimmed = draft.trim();
         if (!trimmed || disabled) return;
         onSend(trimmed);
         setDraft("");
+    };
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        submit();
+    };
+
+    // Enter sends the message; Shift+Enter inserts a newline (standard chat
+    // composer behaviour). A <textarea> never submits its form on Enter on its
+    // own, so this is what makes the keyboard send work.
+    const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            submit();
+        }
     };
 
     // v1.23.1 / Bug 7 follow-up — the system-prompt message
@@ -240,6 +254,7 @@ export default function SessionChat({
                     rows={2}
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder={
                         placeholder ??
                         t("session.message_placeholder", "Write your reply…")

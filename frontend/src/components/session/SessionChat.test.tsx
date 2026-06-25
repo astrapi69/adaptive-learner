@@ -79,6 +79,35 @@ describe("SessionChat", () => {
         expect(onSend).not.toHaveBeenCalled();
     });
 
+    // #1131 — Enter sends, Shift+Enter inserts a newline.
+    it("sends on Enter and clears the input", () => {
+        const onSend = vi.fn();
+        render(<SessionChat messages={MESSAGES} onSend={onSend} />);
+        const input = screen.getByTestId("chat-input") as HTMLTextAreaElement;
+        fireEvent.change(input, {target: {value: "   Frage   "}});
+        fireEvent.keyDown(input, {key: "Enter"});
+        expect(onSend).toHaveBeenCalledWith("Frage");
+        expect(input.value).toBe("");
+    });
+
+    it("does NOT send on Shift+Enter (newline)", () => {
+        const onSend = vi.fn();
+        render(<SessionChat messages={MESSAGES} onSend={onSend} />);
+        const input = screen.getByTestId("chat-input") as HTMLTextAreaElement;
+        fireEvent.change(input, {target: {value: "Frage"}});
+        fireEvent.keyDown(input, {key: "Enter", shiftKey: true});
+        expect(onSend).not.toHaveBeenCalled();
+    });
+
+    it("does not send on Enter when disabled", () => {
+        const onSend = vi.fn();
+        render(<SessionChat messages={MESSAGES} onSend={onSend} disabled />);
+        const input = screen.getByTestId("chat-input") as HTMLTextAreaElement;
+        fireEvent.change(input, {target: {value: "Frage"}});
+        fireEvent.keyDown(input, {key: "Enter"});
+        expect(onSend).not.toHaveBeenCalled();
+    });
+
     // Phase 39 C2 — WCAG SC 2.4.3 (Focus Order). The textarea is
     // the page's primary action; it must hold focus on first
     // mount so a keyboard-only user can type immediately.
