@@ -346,6 +346,152 @@ describe("session.start", () => {
             expect(system).toContain("tener");
         },
     );
+
+    it(
+        "carries the imported RAW TRANSCRIPT (#1078) into the AI call on a resumed turn",
+        async () => {
+            // The most valuable context-pipeline pin: not just the analysis
+            // SUMMARY (#827) but the raw imported chat turns (#1078) must
+            // survive start() -> persist -> resume -> provider call. A future
+            // refactor of buildImportedContextBlock / the system-message
+            // history rebuild that drops the transcript breaks this.
+            const {userId, projectId} = await setupUserWithKey();
+            const conv = await dexieStorage.imports.create(userId, {
+                source: "manual",
+                title: "Raw transcript chat",
+                model: null,
+                source_created_at: null,
+                messages: [
+                    {
+                        role: "user",
+                        content: "When do I use ser vs estar?",
+                        timestamp: null,
+                    },
+                    {role: "assistant", content: "Ser is for essence.", timestamp: null},
+                ],
+            });
+            // Analysis present too, but this test asserts the TRANSCRIPT block.
+            await getDb().importedConversations.update(conv.id, {
+                analyzed: true,
+                analysis_result: {
+                    topic: "Spanish ser vs estar",
+                    summary: "",
+                    user_level: "intermediate",
+                    strengths: [],
+                    weaknesses: [],
+                    error_patterns: [],
+                    vocabulary: [],
+                    suggested_curriculum: [],
+                },
+            });
+
+            const started = await dexieStorage.session.start({
+                project_id: projectId,
+                lang: "en",
+                imported_conversation_id: conv.id,
+            });
+
+            // Resume: the learner replies; the AI round-trip rebuilds history
+            // from the DB (including the persisted system message).
+            chatReplies.push("Sure, let's continue.");
+            await dexieStorage.session.message(started.session.id, {
+                role: "user",
+                content: "Continue please.",
+            });
+
+            const chatCall = calls.find(
+                (c) =>
+                    c.url.includes("anthropic") &&
+                    typeof (c.body as {system?: unknown})?.system === "string" &&
+                    !((c.body as {system: string}).system).includes(
+                        "Output ONLY a single valid JSON object",
+                    ),
+            );
+            expect(chatCall).toBeDefined();
+            const system = (chatCall!.body as {system: string}).system;
+            // The raw transcript block + both turns reach the provider.
+            expect(system).toContain("Imported conversation (previous chat)");
+            expect(system).toContain("Learner: When do I use ser vs estar?");
+            expect(system).toContain("Assistant: Ser is for essence.");
+        },
+    );
+
+    it(
+        "REBUILD-ON-RESUME (#1122): a resumed turn rebuilds context from the conversation FK, even with a mutated analysis and a deleted system message",
+        async () => {
+            const {userId, projectId} = await setupUserWithKey();
+            const conv = await dexieStorage.imports.create(userId, {
+                source: "manual",
+                title: "Rebuild chat",
+                model: null,
+                source_created_at: null,
+                messages: [
+                    {role: "user", content: "Original question", timestamp: null},
+                ],
+            });
+            await getDb().importedConversations.update(conv.id, {
+                analyzed: true,
+                analysis_result: {
+                    topic: "ORIGINAL-TOPIC",
+                    summary: "",
+                    user_level: "intermediate",
+                    strengths: [],
+                    weaknesses: [],
+                    error_patterns: [],
+                    vocabulary: [],
+                    suggested_curriculum: [],
+                },
+            });
+            const started = await dexieStorage.session.start({
+                project_id: projectId,
+                lang: "en",
+                imported_conversation_id: conv.id,
+            });
+            // The persisted prompt froze ORIGINAL-TOPIC.
+            expect(started.system_prompt).toContain("ORIGINAL-TOPIC");
+
+            // Simulate the real failure conditions: the source analysis changed
+            // AND the persisted system message is gone (old/empty session).
+            await getDb().importedConversations.update(conv.id, {
+                analysis_result: {
+                    topic: "REBUILT-TOPIC-123",
+                    summary: "",
+                    user_level: "intermediate",
+                    strengths: [],
+                    weaknesses: [],
+                    error_patterns: [],
+                    vocabulary: [],
+                    suggested_curriculum: [],
+                },
+            });
+            const systemRows = await getDb().sessionMessages
+                .where("session_id").equals(started.session.id)
+                .filter((m) => m.role === "system").toArray();
+            await getDb().sessionMessages.bulkDelete(systemRows.map((m) => m.id));
+
+            chatReplies.push("Continuing.");
+            await dexieStorage.session.message(started.session.id, {
+                role: "user",
+                content: "Continue please.",
+            });
+
+            const chatCall = calls.find(
+                (c) =>
+                    c.url.includes("anthropic") &&
+                    typeof (c.body as {system?: unknown})?.system === "string" &&
+                    !((c.body as {system: string}).system).includes(
+                        "Output ONLY a single valid JSON object",
+                    ),
+            );
+            expect(chatCall).toBeDefined();
+            const system = (chatCall!.body as {system: string}).system;
+            // Fresh rebuild from the FK: current analysis, NOT the frozen/missing copy.
+            expect(system).toContain("REBUILT-TOPIC-123");
+            expect(system).not.toContain("ORIGINAL-TOPIC");
+            expect(system).toContain("Imported conversation (previous chat)");
+            expect(system).toContain("Learner: Original question");
+        },
+    );
 });
 
 describe("session.message", () => {
