@@ -233,12 +233,19 @@ export default function Session() {
                 .then(([existingSession, history]) => {
                     if (cancelled) return;
                     setSession(existingSession);
+                    const mapped = history.map((row) => ({
+                        id: row.id,
+                        role: row.role,
+                        content: row.content,
+                    }));
+                    // #1143 — an imported-chat session opens CLEAN: keep only
+                    // the system message (so the topic intro shows) and hide any
+                    // prior exchange. The AI still sees the full history (it is
+                    // rebuilt from the DB on each turn, #1122).
                     setMessages(
-                        history.map((row) => ({
-                            id: row.id,
-                            role: row.role,
-                            content: row.content,
-                        })),
+                        existingSession.imported_conversation_id
+                            ? mapped.filter((m) => m.role === "system")
+                            : mapped,
                     );
                     setLoading(false);
                     void fetchSwitchRecommendation(existingSession.id);
@@ -646,6 +653,7 @@ export default function Session() {
                     messages={messages}
                     onSend={handleSend}
                     disabled={sendingMessage}
+                    introTopic={importedTopic}
                 />
             )}
 

@@ -50,6 +50,32 @@ describe("SessionChat", () => {
         ).not.toBeInTheDocument();
     });
 
+    // #1143 — imported-chat session: clean intro names the imported topic.
+    it("shows the imported topic in the empty-state intro", () => {
+        const onlySystem: ChatMessage[] = [
+            {id: "1", role: "system", content: "system prompt"},
+        ];
+        render(
+            <SessionChat
+                messages={onlySystem}
+                onSend={() => {}}
+                introTopic="Reflexive Verben"
+            />,
+        );
+        expect(screen.getByTestId("chat-intro-topic").textContent).toContain(
+            "Reflexive Verben",
+        );
+    });
+
+    it("shows no topic intro without an introTopic", () => {
+        const onlySystem: ChatMessage[] = [
+            {id: "1", role: "system", content: "system prompt"},
+        ];
+        render(<SessionChat messages={onlySystem} onSend={() => {}} />);
+        expect(screen.getByTestId("chat-welcome")).toBeInTheDocument();
+        expect(screen.queryByTestId("chat-intro-topic")).not.toBeInTheDocument();
+    });
+
     it("disables send when the draft is empty", () => {
         render(<SessionChat messages={MESSAGES} onSend={() => {}} />);
         const send = screen.getByTestId("chat-send") as HTMLButtonElement;
