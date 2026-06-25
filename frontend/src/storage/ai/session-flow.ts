@@ -320,17 +320,24 @@ async function composeSystemPrompt(
     // matrix only carries DE + EN).
     systemPrompt = `${systemPrompt}\n\n${buildLanguageDirective(lang)}`;
     if (importedConversationId) {
+        // Imported-chat session: the imported conversation IS the topical
+        // focus. Do NOT add the lesson-progress block (#797) — its "Currently
+        // working on: <lesson>" line pulls the tutor off the imported topic
+        // onto an unrelated in-progress lesson (#1137 "Inception-Effekt": an
+        // active inception-example lesson hijacking an imported grammar chat).
         const importedBlock = await buildImportedContextBlock(db, importedConversationId, lang);
         if (importedBlock) systemPrompt = `${systemPrompt}\n\n${importedBlock}`;
+    } else {
+        // #797 — fold in the learner's lesson progress + recent mistakes so a
+        // normal (non-imported) session builds on real progress.
+        const learningBlock = await buildLearningContextForUser(
+            db,
+            project.user_id,
+            project.topic,
+            lang,
+        );
+        if (learningBlock) systemPrompt = `${systemPrompt}\n\n${learningBlock}`;
     }
-    // #797 — fold in the learner's lesson progress + recent mistakes.
-    const learningBlock = await buildLearningContextForUser(
-        db,
-        project.user_id,
-        project.topic,
-        lang,
-    );
-    if (learningBlock) systemPrompt = `${systemPrompt}\n\n${learningBlock}`;
     return systemPrompt;
 }
 

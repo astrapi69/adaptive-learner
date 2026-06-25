@@ -884,3 +884,64 @@ describe("session.get / session.getMessages (Phase 38 Bug 7)", () => {
         ).rejects.toMatchObject({status: 404});
     });
 });
+
+describe("imported-session topic focus (#1137 Inception-Effekt)", () => {
+    async function seedInProgressLesson(userId: string) {
+        // Real path: an in-progress lesson in the inception-example set, so
+        // buildLearningContextForUser produces a "Currently working on" line.
+        await dexieStorage.lessonProgress.upsert(userId, {
+            source: "test",
+            set_id: "inception-example",
+            lesson_filename: "01.json",
+            step_result: {step_id: "step1", correct: 1, total: 2, attempts: 1},
+        });
+    }
+
+    it("does NOT inject the lesson-progress block into an imported-chat session", async () => {
+        const {userId, projectId} = await setupUserWithKey();
+        await seedInProgressLesson(userId);
+        const conv = await dexieStorage.imports.create(userId, {
+            source: "manual",
+            title: "Grammar chat",
+            model: null,
+            source_created_at: null,
+            messages: [{role: "user", content: "Explain the dative case", timestamp: null}],
+        });
+        await getDb().importedConversations.update(conv.id, {
+            analyzed: true,
+            analysis_result: {
+                topic: "German grammar",
+                summary: "",
+                user_level: "intermediate",
+                strengths: [],
+                weaknesses: [],
+                error_patterns: [],
+                vocabulary: [],
+                suggested_curriculum: [],
+            },
+        });
+
+        const result = await dexieStorage.session.start({
+            project_id: projectId,
+            lang: "en",
+            imported_conversation_id: conv.id,
+        });
+
+        // Imported topic present, in-progress lesson topic NOT bleeding in.
+        expect(result.system_prompt).toContain("Imported conversation (previous chat)");
+        expect(result.system_prompt).not.toContain("Currently working on");
+        expect(result.system_prompt).not.toContain("inception-example");
+    });
+
+    it("DOES inject the lesson-progress block into a normal (non-imported) session", async () => {
+        const {userId, projectId} = await setupUserWithKey();
+        await seedInProgressLesson(userId);
+
+        const result = await dexieStorage.session.start({
+            project_id: projectId,
+            lang: "en",
+        });
+
+        expect(result.system_prompt).toContain("Currently working on");
+    });
+});
