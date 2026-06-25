@@ -183,12 +183,13 @@ export default function Navigation() {
         data-testid="nav-links"
         onClick={closeMenuOnLinkTap}
       >
-        {/* EXP-037 (#850) — primary nav reduced to 7 grouped-order
-            entries. Removed from the bar (still reachable): Session
-            (start from Dashboard/Lesson), Curriculum + Statistics
-            (tabs in /progress), Import (tab in /discover), Anki
-            (action on /content). Group order: LERNEN, INHALTE,
-            FORTSCHRITT, then the Settings + Help utility entries. */}
+        {/* EXP-037 (#850) reduced the bar to grouped-order entries. Session
+            was removed then, but re-added (#1129) — the session chat had no
+            menu entry and was hard to reach. Still removed from the bar
+            (reachable elsewhere): Curriculum + Statistics (tabs in /progress),
+            Import (tab in /discover), Anki (action on /content). Group order:
+            LERNEN, INHALTE, FORTSCHRITT, then the Settings + Help utility
+            entries. */}
         <NavGroup label={t("nav.group.learn", "LEARN")} testId="nav-group-learn">
           <NavLink
             to="/dashboard"
@@ -203,6 +204,15 @@ export default function Navigation() {
             data-testid="nav-learning-path"
           >
             {t("nav.learning_path", "Learning Path")}
+          </NavLink>
+          {/* #1129 — re-added. ``/session`` start-mode begins a session for
+              the active project (routes to onboarding when none). */}
+          <NavLink
+            to="/session"
+            className={linkClass}
+            data-testid="nav-session"
+          >
+            {t("nav.session", "Session")}
           </NavLink>
         </NavGroup>
         <NavGroup label={t("nav.group.content", "CONTENT")} testId="nav-group-content">
