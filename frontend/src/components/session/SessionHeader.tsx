@@ -40,6 +40,9 @@ interface SessionHeaderProps {
     userSettings: UserSettings | null;
     activeModelInfo: ActiveModelInfo | null;
     stepEvaluation: StepEvaluationVerdict | null;
+    /** #1141 — for an imported-chat session, the topic line shows the imported
+     *  conversation's topic (e.g. "Reflexive Verben"), not the project's. */
+    topicOverride?: string | null;
     t: Translate;
 }
 
@@ -50,8 +53,10 @@ export default function SessionHeader({
     userSettings,
     activeModelInfo,
     stepEvaluation,
+    topicOverride,
     t,
 }: SessionHeaderProps) {
+    const displayedTopic = topicOverride || project?.topic;
     return (
         <header className="session-header">
             <div className="session-header-row">
@@ -113,7 +118,7 @@ export default function SessionHeader({
                     )}
                 </div>
             </div>
-            {project?.topic && (
+            {displayedTopic && (
                 <p
                     className="session-header-topic"
                     data-testid="session-header-topic"
@@ -121,7 +126,7 @@ export default function SessionHeader({
                     <span className="session-header-topic-label">
                         {t("session.topic_label", "Topic")}:
                     </span>
-                    {project.topic}
+                    {displayedTopic}
                 </p>
             )}
             <CycleProgress

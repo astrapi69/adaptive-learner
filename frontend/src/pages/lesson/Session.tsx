@@ -86,6 +86,10 @@ export default function Session() {
     // "Moving to: …" toast on an applied transition.
     const [stepEvaluation, setStepEvaluation] =
         useState<StepEvaluationVerdict | null>(null);
+    // #1141 — for an imported-chat session the header topic line shows the
+    // imported conversation's topic (e.g. "Reflexive Verben"), not the
+    // generic project topic.
+    const [importedTopic, setImportedTopic] = useState<string | null>(null);
 
     // Fetch the project once we know the session's project_id —
     // drives the topic line in the header (Phase 51 bugfix). The
@@ -109,6 +113,30 @@ export default function Session() {
             cancelled = true;
         };
     }, [session?.project_id]);
+
+    // #1141 — resolve the imported conversation's topic for the header when the
+    // session is linked to one. Prefers the analysis topic, falls back to the
+    // conversation title. Cleared for non-imported sessions.
+    useEffect(() => {
+        const convId = session?.imported_conversation_id;
+        if (!convId) {
+            setImportedTopic(null);
+            return;
+        }
+        let cancelled = false;
+        getStorage()
+            .imports.get(convId)
+            .then((detail) => {
+                if (cancelled) return;
+                setImportedTopic(detail.analysis_result?.topic || detail.title || null);
+            })
+            .catch(() => {
+                /* silent — header falls back to the project topic. */
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [session?.imported_conversation_id]);
 
     // Resolve the active model whenever userSettings changes. The
     // model id always renders; the human name + context window come
@@ -591,6 +619,7 @@ export default function Session() {
                 userSettings={userSettings}
                 activeModelInfo={activeModelInfo}
                 stepEvaluation={stepEvaluation}
+                topicOverride={importedTopic}
                 t={t}
             />
 
