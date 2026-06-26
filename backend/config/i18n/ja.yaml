@@ -866,6 +866,11 @@ toast:
   api_key_deleted: API キーを削除しました。
   method_switched: 方法を切り替えました。
 install:
+  ios:
+    title: "アプリとしてインストール"
+    steps: "共有アイコンをタップし、「ホーム画面に追加」を選ぶと、Safari のバーなしで開きます。"
+    aria_label: "iPhone にインストール"
+    dismiss: "閉じる"
   title: ホーム画面に追加
   subtitle: "オフラインでより快適に使うには、Adaptive Learner をアプリとしてインストールしてください。"
   install: インストール

@@ -931,6 +931,12 @@
     "method_switched": "Methode gewechselt."
   },
   "install": {
+    "ios": {
+      "title": "Als App installieren",
+      "steps": "Tippe auf das Teilen-Symbol und dann auf „Zum Home-Bildschirm“ — die App öffnet ohne Safari-Leiste.",
+      "aria_label": "Auf dem iPhone installieren",
+      "dismiss": "Schließen"
+    },
     "title": "Zum Startbildschirm hinzufügen",
     "subtitle": "Adaptive Learner als App installieren — für bessere Offline-Nutzung.",
     "install": "Installieren",

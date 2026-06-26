@@ -931,6 +931,12 @@
     "method_switched": "학습법이 전환되었습니다."
   },
   "install": {
+    "ios": {
+      "title": "앱으로 설치",
+      "steps": "공유 아이콘을 누른 다음 «홈 화면에 추가»를 선택하면 Safari 막대 없이 열립니다.",
+      "aria_label": "iPhone에 설치",
+      "dismiss": "닫기"
+    },
     "title": "홈 화면에 추가",
     "subtitle": "더 나은 오프라인 사용을 위해 Adaptive Learner를 앱으로 설치하세요.",
     "install": "설치",
