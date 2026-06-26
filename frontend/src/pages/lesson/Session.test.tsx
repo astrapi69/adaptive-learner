@@ -4,6 +4,8 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import Session from "./Session";
 import type {LearningSession} from "../../types";
+import {TestFeatureProvider} from "../../features/testFeatureProvider";
+import type {FeatureContext} from "../../features/featureConfig";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -110,11 +112,17 @@ const SESSION: LearningSession = {
     status: "active",
 };
 
-function renderSession() {
+function renderSession(context?: Partial<FeatureContext>) {
+    // Wrap in the feature provider Session now consumes (#1158). Default
+    // context = API mode with a key, so every existing test keeps the
+    // session feature ``active`` and behaves exactly as before; no-key tests
+    // pass ``{mode: "dexie", hasAiKey: false}`` to drive the gate.
     return render(
-        <MemoryRouter>
-            <Session />
-        </MemoryRouter>,
+        <TestFeatureProvider context={context}>
+            <MemoryRouter>
+                <Session />
+            </MemoryRouter>
+        </TestFeatureProvider>,
     );
 }
 
@@ -160,6 +168,32 @@ describe("Session page", () => {
         await waitFor(() => {
             expect(mockNavigate).toHaveBeenCalledWith("/onboarding", {replace: true});
         });
+    });
+
+    // #1158 — second line of defense: a direct /session navigation without a
+    // usable AI key (Dexie mode, no key) must NOT create/resume a dead
+    // chat. It shows a clean no-key empty state with a link to the AI
+    // settings tab instead.
+    it("no AI key (Dexie): renders the no-key empty state, never starts a session", async () => {
+        renderSession({mode: "dexie", hasAiKey: false});
+        await screen.findByTestId("session-no-key");
+        // The actionable link to the AI settings tab is present.
+        const link = screen.getByTestId("api-key-required-link");
+        expect(link.getAttribute("href")).toContain("/settings?tab=ai");
+        // No session was created and the chat never rendered.
+        expect(apiStart).not.toHaveBeenCalled();
+        expect(screen.queryByTestId("session")).not.toBeInTheDocument();
+    });
+
+    it("AI key present: a normal session renders the chat (gate does not fire)", async () => {
+        apiStart.mockResolvedValue({
+            session: SESSION,
+            system_prompt: "Du bist ein Lerncoach.",
+        });
+        renderSession({mode: "dexie", hasAiKey: true});
+        await screen.findByTestId("session");
+        expect(screen.queryByTestId("session-no-key")).not.toBeInTheDocument();
+        expect(apiStart).toHaveBeenCalled();
     });
 
     it("starts a new session, seeds the system prompt internally, but HIDES it from the chat", async () => {
@@ -861,11 +895,13 @@ describe("Session page", () => {
             },
         ]);
         render(
-            <MemoryRouter
-                initialEntries={["/session?session=resumed-session-id"]}
-            >
-                <Session />
-            </MemoryRouter>,
+            <TestFeatureProvider>
+                <MemoryRouter
+                    initialEntries={["/session?session=resumed-session-id"]}
+                >
+                    <Session />
+                </MemoryRouter>
+            </TestFeatureProvider>,
         );
         await screen.findByTestId("session");
         // The two resume endpoints fired.
@@ -912,11 +948,13 @@ describe("Session page", () => {
         });
         apiSessionGetMessages.mockResolvedValue([]);
         render(
-            <MemoryRouter
-                initialEntries={["/session?session=resumed-session-id"]}
-            >
-                <Session />
-            </MemoryRouter>,
+            <TestFeatureProvider>
+                <MemoryRouter
+                    initialEntries={["/session?session=resumed-session-id"]}
+                >
+                    <Session />
+                </MemoryRouter>
+            </TestFeatureProvider>,
         );
         await screen.findByTestId("session");
         expect(mockNavigate).not.toHaveBeenCalledWith("/onboarding", {
