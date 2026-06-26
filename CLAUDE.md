@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.95.0** (learning-modes release - a full
+- **Current state:** **v1.96.0** (learning-modes release - a full
   **lesson-mode system**: a lesson (or whole set) plays as **Practice**,
   **Exam**, **Timed (Auf Zeit)**, or **Zufall (interleaved shuffle)**, plus
   gated **"Fehler trainieren"** entry points, on a pure config-object

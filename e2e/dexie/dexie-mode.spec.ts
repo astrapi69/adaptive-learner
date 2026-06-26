@@ -66,9 +66,14 @@ const ROUTES: RouteCase[] = [
         expectedTestIds: ["dashboard", "dashboard-loading", "onboarding"],
     },
     {
-        name: "Session (redirects to Onboarding with empty state)",
+        // #1158 — in Dexie mode without an AI key the tutor chat is gated:
+        // /session renders the no-key empty state (``session-no-key``, with a
+        // link to the AI settings tab) instead of creating a dead session.
+        // With a key / projectId it shows ``session``; with neither it can
+        // still fall through to ``onboarding``.
+        name: "Session (no-key empty state / Onboarding)",
         path: "/session",
-        expectedTestIds: ["session", "onboarding"],
+        expectedTestIds: ["session-no-key", "session", "onboarding"],
     },
     {
         // EXP-037 (#850): /curriculum now redirects to /progress?tab=paths,
