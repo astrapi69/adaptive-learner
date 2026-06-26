@@ -458,6 +458,10 @@ progress:
   commit_notes_aria: "Notas da sessão"
   session_count: "Sessões"
 settings:
+  key_export_link:
+    heading: "Chaves de IA — exportação cifrada"
+    hint: "Exporte ou importe as suas chaves de IA num único ficheiro cifrado. Fica junto das outras cópias de segurança no separador Dados."
+    button: "Ir para a exportação de chaves (separador Dados)"
   key_vault:
     title: "Chaves de IA — exportação criptografada"
     intro: "Leve suas chaves de IA para outro dispositivo em um único arquivo criptografado, separado do backup normal (que nunca contém chaves)."

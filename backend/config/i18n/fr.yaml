@@ -458,6 +458,10 @@ progress:
   commit_notes_aria: "Notes de session"
   session_count: "Sessions"
 settings:
+  key_export_link:
+    heading: "Clés IA — export chiffré"
+    hint: "Exportez ou importez vos clés IA dans un seul fichier chiffré. Il se trouve avec les autres sauvegardes dans l'onglet Données."
+    button: "Aller à l'export des clés (onglet Données)"
   key_vault:
     title: "Clés d'IA — export chiffré"
     intro: "Transférez vos clés d'IA vers un autre appareil dans un seul fichier chiffré, séparé de la sauvegarde normale (qui ne contient jamais de clés)."

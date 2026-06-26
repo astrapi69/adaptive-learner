@@ -458,6 +458,10 @@ progress:
   commit_notes_aria: "세션 메모"
   session_count: "세션"
 settings:
+  key_export_link:
+    heading: "AI 키 — 암호화 내보내기"
+    hint: "AI 키를 하나의 암호화된 파일로 내보내거나 가져옵니다. 데이터 탭의 다른 백업과 함께 있습니다."
+    button: "키 내보내기로 이동 (데이터 탭)"
   key_vault:
     title: "AI 키 — 암호화 내보내기"
     intro: "AI 키를 하나의 암호화 파일로 다른 기기로 옮기세요. 일반 백업(키를 포함하지 않음)과는 별개입니다."

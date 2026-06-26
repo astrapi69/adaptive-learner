@@ -491,6 +491,11 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "key_export_link": {
+      "heading": "AI keys — encrypted export",
+      "hint": "Export or import your AI keys as a single encrypted file. It lives with the other backups in the Data tab.",
+      "button": "Go to key export (Data tab)"
+    },
     "key_vault": {
       "title": "AI keys — encrypted export",
       "intro": "Move your AI keys to another device in one encrypted file, separate from the normal backup (which never contains keys).",

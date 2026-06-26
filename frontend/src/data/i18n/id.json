@@ -491,6 +491,11 @@
     "session_count": "Sesi"
   },
   "settings": {
+    "key_export_link": {
+      "heading": "Kunci AI — ekspor terenkripsi",
+      "hint": "Ekspor atau impor kunci AI Anda sebagai satu berkas terenkripsi. Berada bersama cadangan lain di tab Data.",
+      "button": "Buka ekspor kunci (tab Data)"
+    },
     "key_vault": {
       "title": "Kunci AI — ekspor terenkripsi",
       "intro": "Pindahkan kunci AI Anda ke perangkat lain dalam satu berkas terenkripsi, terpisah dari cadangan biasa (yang tidak pernah berisi kunci).",

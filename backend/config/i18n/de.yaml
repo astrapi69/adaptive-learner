@@ -458,6 +458,10 @@ progress:
   commit_notes_aria: "Sitzungsnotizen"
   session_count: "Sitzungen"
 settings:
+  key_export_link:
+    heading: "KI-Schlüssel — verschlüsselter Export"
+    hint: "Exportiere oder importiere deine KI-Schlüssel als eine verschlüsselte Datei. Sie liegt bei den anderen Backups im Daten-Tab."
+    button: "Zum Schlüssel-Export (Daten-Tab)"
   key_vault:
     title: "KI-Schlüssel — verschlüsselter Export"
     intro: "Übertrage deine KI-Schlüssel in einer verschlüsselten Datei auf ein anderes Gerät — getrennt vom normalen Backup (das nie Schlüssel enthält)."
