@@ -491,6 +491,29 @@
     "session_count": "Oturumlar"
   },
   "settings": {
+    "key_vault": {
+      "title": "Yapay zekâ anahtarları — şifreli dışa aktarma",
+      "intro": "Yapay zekâ anahtarlarınızı tek bir şifreli dosyada başka bir cihaza taşıyın; normal yedekten (anahtar içermez) ayrıdır.",
+      "api_disabled": "Sunucu modunda anahtarlarınız sunucu tarafından yönetilir, bu yüzden burada dışa aktarılacak bir şey yok.",
+      "export_heading": "Dışa aktar",
+      "passphrase_hint": "Güçlü bir parola ifadesi seçin. Kurtarılamaz — onsuz dosya açılamaz.",
+      "passphrase_label": "Parola ifadesi",
+      "confirm_label": "Parola ifadesini onayla",
+      "no_keys": "Henüz dışa aktarılacak yapay zekâ anahtarı yok.",
+      "busy": "İşleniyor…",
+      "export_button": "Şifreli dosyayı dışa aktar",
+      "import_heading": "İçe aktar",
+      "import_button": "Anahtar dosyasını içe aktar",
+      "success_export": "Şifreli anahtar dosyası indirildi.",
+      "success_import": "Anahtarlar içe aktarıldı. Yapay zekâ özellikleri yeniden hazır.",
+      "error_too_short": "Parola ifadesi en az {n} karakter olmalıdır.",
+      "error_mismatch": "Parola ifadeleri eşleşmiyor.",
+      "error_export": "Dışa aktarma oluşturulamadı.",
+      "error_no_file": "Önce bir anahtar dosyası seçin.",
+      "error_no_passphrase": "Dışa aktarmada kullanılan parola ifadesini girin.",
+      "error_decrypt": "Parola ifadesi yanlış veya dosya bozuk.",
+      "error_import": "Anahtar dosyası içe aktarılamadı."
+    },
     "lesson_mode": {
       "title": "Ders modu",
       "hint": "Alıştırma modu tüm yardımları açık tutar. Sınav modu ipuçlarını, teori tekrarını, otomatik okumayı ve çözümü gizler; böylece gerçekçi koşullarda hatırlarsın.",

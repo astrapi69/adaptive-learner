@@ -491,6 +491,29 @@
     "session_count": "Sitzungen"
   },
   "settings": {
+    "key_vault": {
+      "title": "KI-Schlüssel — verschlüsselter Export",
+      "intro": "Übertrage deine KI-Schlüssel in einer verschlüsselten Datei auf ein anderes Gerät — getrennt vom normalen Backup (das nie Schlüssel enthält).",
+      "api_disabled": "Im Server-Modus werden deine Schlüssel serverseitig verwaltet, daher gibt es hier nichts zu exportieren.",
+      "export_heading": "Exportieren",
+      "passphrase_hint": "Wähle eine starke Passphrase. Sie kann nicht wiederhergestellt werden — ohne sie lässt sich die Datei nicht öffnen.",
+      "passphrase_label": "Passphrase",
+      "confirm_label": "Passphrase bestätigen",
+      "no_keys": "Es gibt noch keine KI-Schlüssel zum Exportieren.",
+      "busy": "Wird verarbeitet…",
+      "export_button": "Verschlüsselte Datei exportieren",
+      "import_heading": "Importieren",
+      "import_button": "Schlüsseldatei importieren",
+      "success_export": "Verschlüsselte Schlüsseldatei heruntergeladen.",
+      "success_import": "Schlüssel importiert. KI-Funktionen sind wieder bereit.",
+      "error_too_short": "Die Passphrase muss mindestens {n} Zeichen lang sein.",
+      "error_mismatch": "Die Passphrasen stimmen nicht überein.",
+      "error_export": "Export konnte nicht erstellt werden.",
+      "error_no_file": "Wähle zuerst eine Schlüsseldatei.",
+      "error_no_passphrase": "Gib die beim Export verwendete Passphrase ein.",
+      "error_decrypt": "Passphrase falsch oder Datei beschädigt.",
+      "error_import": "Schlüsseldatei konnte nicht importiert werden."
+    },
     "lesson_mode": {
       "title": "Lektionsmodus",
       "hint": "Im Übungsmodus bleiben alle Hilfen an. Im Prüfungsmodus werden Tipps, Theorie-Wiederholung, Vorlesen und die Auflösung ausgeblendet, damit du unter realistischen Bedingungen abrufst.",

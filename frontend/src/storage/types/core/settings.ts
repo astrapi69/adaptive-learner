@@ -39,6 +39,15 @@ export interface ISettingsNamespace {
   update(userId: string, body: SettingsPatchBody): Promise<UserSettings>;
   setApiKey(userId: string, body: ApiKeySetBody): Promise<UserSettings>;
   deleteApiKey(userId: string, provider: AIProvider): Promise<UserSettings>;
+  /**
+   * EXP-038 — read back the plaintext provider keys that are retrievable on
+   * the client, for the passphrase-encrypted key export. Returns only the
+   * providers whose key is locally readable. DexieStorage reads the IndexedDB
+   * row fields; ApiStorage returns ``{}`` because the keys live server-side
+   * (Fernet-encrypted) and never reach the client as plaintext — which gates
+   * the export entry off in API mode.
+   */
+  exportApiKeys(userId: string): Promise<Partial<Record<AIProvider, string>>>;
   getApp(): Promise<Record<string, unknown>>;
   /**
    * Phase 65 — live API-key test. Fires a minimal provider call and

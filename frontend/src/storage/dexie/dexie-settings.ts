@@ -116,6 +116,22 @@ export const dexieSettings: IStorageService["settings"] = {
       });
       return rowToSettings(updated as unknown as UserSettingsRow);
     },
+    async exportApiKeys(
+      userId: string,
+    ): Promise<Partial<Record<AIProvider, string>>> {
+      const db = getDb();
+      const user = await requireRow(db.users, userId, "User");
+      const row = await ensureSettings(db, userId, user.language);
+      const raw = row as unknown as Record<string, unknown>;
+      const out: Partial<Record<AIProvider, string>> = {};
+      for (const provider of ["anthropic", "openai", "gemini"] as const) {
+        const value = raw[`api_key_${provider}`];
+        if (typeof value === "string" && value.trim().length > 0) {
+          out[provider] = value;
+        }
+      }
+      return out;
+    },
     getApp: async () => ({}),
     async getAvailableModels(
       userId: string,
