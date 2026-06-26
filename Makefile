@@ -24,6 +24,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
        stryker stryker-quick \
+       verify-theme verify-theme-baseline-update \
        check-types check-types-backend check-types-frontend check-file-sizes check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
@@ -358,6 +359,17 @@ check-complexity-gate: ## Complexity ratchet gate (#407): fail on new/regressed 
 
 check-complexity-gate-update: ## Regenerate .complexity-baseline from current offenders (ratchet may only shrink)
 	bash scripts/check-complexity.sh --update-baseline
+
+verify-theme: ## Theme/token gate: Python token-matrix + WCAG contrast gate, then the Vitest no-hardcoded-colors / parity / contrast guards (#1169)
+	@echo ""
+	@echo "=== verify-theme: token completeness + undefined refs + WCAG contrast (Python, stdlib) ==="
+	python3 scripts/verify_theme.py --enforce
+	@echo ""
+	@echo "=== verify-theme: no-hardcoded-colors + token-parity + contrast (Vitest guards) ==="
+	cd frontend && npx vitest run src/styles/no-hardcoded-colors.test.ts src/styles/contrast.test.ts src/styles/themes/themes.test.ts
+
+verify-theme-baseline-update: ## Re-record .theme-baseline.json from current violations (ratchet only shrinks unless --allow-baseline-growth)
+	python3 scripts/verify_theme.py --update-baseline
 
 check-types: check-types-backend check-types-frontend ## Run all type checks
 
