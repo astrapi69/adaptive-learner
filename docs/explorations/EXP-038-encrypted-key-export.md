@@ -100,7 +100,8 @@ written; absent providers are omitted.
 
 ## UX flow
 
-**Export** (Settings → Data → "KI-Schlüssel (verschlüsselt)"):
+**Export** (Settings → AI → "KI-Schlüssel (verschlüsselt)" — next to the API
+keys it carries; relocated from the Data tab in #1181 for discoverability):
 1. Visible only in Dexie mode; the Export action is enabled only when ≥1 key
    exists (otherwise disabled with a hint).
 2. Passphrase + confirmation field. Mismatch / empty / too short → inline error,

@@ -11,7 +11,6 @@ import InstallAppSection from "../../components/settings/data/InstallAppSection"
 import ContentRepoSettingsSection from "../../components/settings/integrations/ContentRepoSettingsSection";
 import DangerZoneSection from "../../components/settings/data/DangerZoneSection";
 import ExportSection from "../../components/settings/data/ExportSection";
-import KeyVaultSection from "../../components/settings/data/KeyVaultSection";
 import GitHubIntegrationSection from "../../components/settings/integrations/GitHubIntegrationSection";
 import FeedbackIntensityControl from "../../components/settings/controls/FeedbackIntensityControl";
 import GamificationSettingsSection from "../../components/settings/controls/GamificationSettingsSection";
@@ -751,7 +750,6 @@ export default function Settings() {
           <SyncSection />
         </Feature>
         <BackupSection />
-        <KeyVaultSection />
         <Feature id={FEATURES.SELECTIVE_EXPORT}>
           <SelectiveExportSection />
         </Feature>

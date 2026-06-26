@@ -6,4 +6,6 @@ export * from "./ApiKeyRow";
 export { default as ApiKeyRow } from "./ApiKeyRow";
 export * from "./ConfiguredProvidersTable";
 export { default as ConfiguredProvidersTable } from "./ConfiguredProvidersTable";
+export * from "./KeyVaultSection";
+export { default as KeyVaultSection } from "./KeyVaultSection";
 export * from "./ModelPicker";

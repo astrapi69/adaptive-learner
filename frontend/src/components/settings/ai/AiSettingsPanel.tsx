@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ModelPicker } from "./ModelPicker";
 import ApiKeyRow from "./ApiKeyRow";
 import ConfiguredProvidersTable from "./ConfiguredProvidersTable";
+import KeyVaultSection from "./KeyVaultSection";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { useAiKeySettings } from "../../../hooks/settings/useAiKeySettings";
 import { DEFAULT_MODELS } from "../../../storage/ai/ai-providers";
@@ -222,6 +223,15 @@ export default function AiSettingsPanel({
           />
         ))}
       </section>
+
+      {/* Encrypted key export/import (EXP-038, #1165). Lives next to the
+          API keys it carries — that is where a learner manages keys and
+          looks for the export (#1181). KeyVaultSection renders its own
+          card and is storage-mode aware, so the wrapper only gates it on
+          the active tab. */}
+      <div className="settings-section" hidden={!active}>
+        <KeyVaultSection />
+      </div>
     </>
   );
 }
