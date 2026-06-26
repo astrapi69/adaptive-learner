@@ -332,6 +332,23 @@ make install   # Poetry + npm + all 13 plugins as path-deps
 make dev       # backend :18001 + frontend :15174 (Vite dev server)
 ```
 
+### Testing on a real phone in your LAN
+
+To check the app on a real iPhone/Android without deploying, use the
+single-origin LAN mode. Your computer and phone must be on the **same
+Wi-Fi**:
+
+```bash
+make dev-lan   # builds the frontend, then serves it + the API on one origin at 0.0.0.0:18001
+```
+
+It prints a URL like `http://<your-PC-LAN-IP>:18001` — open that in mobile
+Safari/Chrome. The frontend and API share one origin (no CORS hop, no
+second server), and the backend runs without `--reload` so app state
+survives. This is a **dev build served over plain HTTP**, not the
+installed PWA — for the PWA install flow, deploy or use the launcher.
+Stop with Ctrl+C.
+
 New contributors should start with the
 [Developer Onboarding guide](https://astrapi69.github.io/adaptive-learner/docs/en/developer/onboarding/)
 — a step-by-step walkthrough of your first bug-fix. The full setup
