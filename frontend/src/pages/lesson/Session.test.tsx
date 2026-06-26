@@ -869,7 +869,13 @@ describe("Session page", () => {
             status: "active",
             cycle_count: 1,
             cycle_topics: [],
-            imported_conversation_id: "conv-1",
+            // #1162 — this test documents the GENERIC resume contract
+            // ("replay its message history"). An imported session now opens
+            // CLEAN (#1143: only the system/intro message, prior exchange
+            // hidden), so a non-null imported FK here contradicts the
+            // assertions below. Use a non-imported session so the history
+            // actually renders. The imported-clean path is covered separately.
+            imported_conversation_id: null,
         });
         apiSessionGetMessages.mockResolvedValue([
             {
