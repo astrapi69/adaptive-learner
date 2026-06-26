@@ -97,6 +97,7 @@
     "online": "En ligne",
     "offline": "Hors ligne",
     "anki": "Anki",
+    "contribute": "Contribuer",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactivez-le dans les Paramètres.",
     "content": "Mon contenu",
@@ -2069,7 +2070,8 @@
       "empty": "Commencez votre première leçon !",
       "progress": "Étape {n}/{total}",
       "imported_analysis": "Analyse importée",
-      "lesson_fallback": "Leçon"
+      "lesson_fallback": "Leçon",
+      "lesson_part": "{label} · Partie {n}"
     },
     "import_chat": {
       "button": "Importer un chat"
@@ -2424,6 +2426,12 @@
       "show_name": "Afficher le nom dans la leçon",
       "privacy": "Ton nom sera affiche dans la lecon et dans la pull request."
     }
+  },
+  "contribute": {
+    "title": "Contribuer",
+    "intro": "Aidez à enrichir la bibliothèque communautaire en comblant ses lacunes.",
+    "loading": "Chargement…",
+    "empty": "Aucune lacune pour l'instant — la bibliothèque communautaire couvre vos ensembles téléchargés. Merci !"
   },
   "milestone": {
     "streak": "Série de {n} jours !",

@@ -89,6 +89,7 @@ nav:
   online: Online
   offline: Offline
   anki: Anki
+  contribute: "Contribute"
   dev_badge: DEV
   dev_badge_tooltip: "Developer Mode is on — error toasts show full technical detail. Toggle in Settings."
   content: "My content"
@@ -1919,6 +1920,7 @@ content:
     progress: "Step {n}/{total}"
     imported_analysis: "Imported analysis"
     lesson_fallback: "Lesson"
+    lesson_part: "{label} · Part {n}"
   import_chat:
     button: "Import Chat"
   search:
@@ -2238,6 +2240,11 @@ content:
     name_placeholder: e.g. Maria S.
     show_name: Show name in lesson
     privacy: "Your name will be shown in the lesson and the pull request."
+contribute:
+  title: "Contribute"
+  intro: "Help grow the community library by filling its gaps."
+  loading: "Loading…"
+  empty: "No gaps right now — the community library covers your downloaded sets. Thank you!"
 milestone:
   streak: "{n}-Day Streak!"
   level_up: "Level {n} reached!"

@@ -4,6 +4,8 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import Session from "./Session";
 import type {LearningSession} from "../../types";
+import {TestFeatureProvider} from "../../features/testFeatureProvider";
+import type {FeatureContext} from "../../features/featureConfig";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -23,6 +25,8 @@ const apiSettingsGet = vi.fn();
 const apiSettingsGetAvailableModels = vi.fn();
 const apiSessionGet = vi.fn();
 const apiSessionGetMessages = vi.fn();
+const apiProjectsGet = vi.fn();
+const apiImportsGet = vi.fn();
 
 /**
  * v1.6.0 — Session.tsx now sends via ``streamMessage``. The
@@ -84,6 +88,17 @@ vi.mock("../../api/client", async () => {
                 getAvailableModels: (...args: unknown[]) =>
                     apiSettingsGetAvailableModels(...args),
             },
+            // Header-only, fire-and-forget reads. Mocked so the page never
+            // makes a real connection in the unit run (the project topic + the
+            // imported-conversation topic lookups).
+            projects: {
+                ...actual.api.projects,
+                get: (...args: unknown[]) => apiProjectsGet(...args),
+            },
+            imports: {
+                ...actual.api.imports,
+                get: (...args: unknown[]) => apiImportsGet(...args),
+            },
         },
     };
 });
@@ -110,11 +125,17 @@ const SESSION: LearningSession = {
     status: "active",
 };
 
-function renderSession() {
+function renderSession(context?: Partial<FeatureContext>) {
+    // Wrap in the feature provider Session now consumes (#1158). Default
+    // context = API mode with a key, so every existing test keeps the
+    // session feature ``active`` and behaves exactly as before; no-key tests
+    // pass ``{mode: "dexie", hasAiKey: false}`` to drive the gate.
     return render(
-        <MemoryRouter>
-            <Session />
-        </MemoryRouter>,
+        <TestFeatureProvider context={context}>
+            <MemoryRouter>
+                <Session />
+            </MemoryRouter>
+        </TestFeatureProvider>,
     );
 }
 
@@ -131,6 +152,12 @@ describe("Session page", () => {
         apiSettingsGetAvailableModels.mockReset();
         apiSessionGet.mockReset();
         apiSessionGetMessages.mockReset();
+        apiProjectsGet.mockReset();
+        apiImportsGet.mockReset();
+        // Defaults: header-only reads resolve to empty stubs so no test makes a
+        // real network connection (both are fire-and-forget in Session.tsx).
+        apiProjectsGet.mockResolvedValue({id: "p-1", topic: "Quantenphysik"});
+        apiImportsGet.mockResolvedValue({title: null, analysis_result: null});
         // Default: no recommendation. Per-test override when the
         // banner path is being exercised.
         apiSwitchRec.mockResolvedValue({recommended: false});
@@ -160,6 +187,32 @@ describe("Session page", () => {
         await waitFor(() => {
             expect(mockNavigate).toHaveBeenCalledWith("/onboarding", {replace: true});
         });
+    });
+
+    // #1158 — second line of defense: a direct /session navigation without a
+    // usable AI key (Dexie mode, no key) must NOT create/resume a dead
+    // chat. It shows a clean no-key empty state with a link to the AI
+    // settings tab instead.
+    it("no AI key (Dexie): renders the no-key empty state, never starts a session", async () => {
+        renderSession({mode: "dexie", hasAiKey: false});
+        await screen.findByTestId("session-no-key");
+        // The actionable link to the AI settings tab is present.
+        const link = screen.getByTestId("api-key-required-link");
+        expect(link.getAttribute("href")).toContain("/settings?tab=ai");
+        // No session was created and the chat never rendered.
+        expect(apiStart).not.toHaveBeenCalled();
+        expect(screen.queryByTestId("session")).not.toBeInTheDocument();
+    });
+
+    it("AI key present: a normal session renders the chat (gate does not fire)", async () => {
+        apiStart.mockResolvedValue({
+            session: SESSION,
+            system_prompt: "Du bist ein Lerncoach.",
+        });
+        renderSession({mode: "dexie", hasAiKey: true});
+        await screen.findByTestId("session");
+        expect(screen.queryByTestId("session-no-key")).not.toBeInTheDocument();
+        expect(apiStart).toHaveBeenCalled();
     });
 
     it("starts a new session, seeds the system prompt internally, but HIDES it from the chat", async () => {
@@ -835,7 +888,15 @@ describe("Session page", () => {
             status: "active",
             cycle_count: 1,
             cycle_topics: [],
-            imported_conversation_id: "conv-1",
+            // #1162 — this test documents the GENERIC resume contract
+            // ("replay its message history"). An imported session now opens
+            // CLEAN (#1143: only the system/intro message, prior exchange
+            // hidden), so a non-null imported FK here contradicts the
+            // assertions below. Use a non-imported session so the history
+            // actually renders. The imported-clean path is covered separately.
+            // #1163 also mocks the header-only projects.get / imports.get reads
+            // so the suite makes no real network connection.
+            imported_conversation_id: null,
         });
         apiSessionGetMessages.mockResolvedValue([
             {
@@ -861,11 +922,13 @@ describe("Session page", () => {
             },
         ]);
         render(
-            <MemoryRouter
-                initialEntries={["/session?session=resumed-session-id"]}
-            >
-                <Session />
-            </MemoryRouter>,
+            <TestFeatureProvider>
+                <MemoryRouter
+                    initialEntries={["/session?session=resumed-session-id"]}
+                >
+                    <Session />
+                </MemoryRouter>
+            </TestFeatureProvider>,
         );
         await screen.findByTestId("session");
         // The two resume endpoints fired.
@@ -912,11 +975,13 @@ describe("Session page", () => {
         });
         apiSessionGetMessages.mockResolvedValue([]);
         render(
-            <MemoryRouter
-                initialEntries={["/session?session=resumed-session-id"]}
-            >
-                <Session />
-            </MemoryRouter>,
+            <TestFeatureProvider>
+                <MemoryRouter
+                    initialEntries={["/session?session=resumed-session-id"]}
+                >
+                    <Session />
+                </MemoryRouter>
+            </TestFeatureProvider>,
         );
         await screen.findByTestId("session");
         expect(mockNavigate).not.toHaveBeenCalledWith("/onboarding", {

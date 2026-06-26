@@ -222,6 +222,16 @@ export default function Navigation() {
           <NavLink to="/content" className={linkClass} data-testid="nav-content">
             {t("nav.tab.content", "Content")}
           </NavLink>
+          {/* #1149 — "Beitragen": the community-gaps block, kept distinct
+              from "Meine Inhalte" (consumption) and Discover (find +
+              download). */}
+          <NavLink
+            to="/contribute"
+            className={linkClass}
+            data-testid="nav-contribute"
+          >
+            {t("nav.contribute", "Contribute")}
+          </NavLink>
         </NavGroup>
         <NavGroup label={t("nav.group.progress", "PROGRESS")} testId="nav-group-progress">
           <NavLink to="/progress" className={linkClass} data-testid="nav-progress">

@@ -20,10 +20,14 @@ import PausedLessonsCard from "./PausedLessonsCard";
 import type {LessonProgress} from "../../storage/types";
 
 const listMock = vi.fn();
+const upsertMock = vi.fn();
+const listSetsMock = vi.fn();
+const getLessonMock = vi.fn();
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
-        lessonProgress: {list: listMock},
+        lessonProgress: {list: listMock, upsert: upsertMock},
+        contentLoader: {listSets: listSetsMock, getLesson: getLessonMock},
     }),
 }));
 
@@ -33,6 +37,11 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 
 beforeEach(() => {
     listMock.mockReset();
+    upsertMock.mockReset().mockResolvedValue(undefined);
+    // Default: no cached set titles, no cached lesson detail — rows then fall
+    // back to filename-derived labels (or the opaque-id guard).
+    listSetsMock.mockReset().mockResolvedValue({sets: []});
+    getLessonMock.mockReset().mockResolvedValue(null);
 });
 
 function _progress(
@@ -173,5 +182,52 @@ describe("PausedLessonsCard", () => {
         expect(
             screen.queryByTestId("paused-lessons-card"),
         ).not.toBeInTheDocument();
+    });
+
+    it("shows the cached lesson + set title, not the raw filename/id", async () => {
+        listMock.mockResolvedValue([_progress("01-greetings.json")]);
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {source: "owner/repo", id: "fr-a1", title: "French A1"},
+            ],
+        });
+        getLessonMock.mockResolvedValue({title: "Greetings & Intro"});
+        render(
+            <MemoryRouter>
+                <PausedLessonsCard userId="user-1" />
+            </MemoryRouter>,
+        );
+        const title = await screen.findByTestId(
+            "paused-lesson-title-01-greetings.json",
+        );
+        expect(title).toHaveTextContent("French A1");
+        expect(title).toHaveTextContent("Greetings & Intro");
+    });
+
+    it("never leaks a raw UUID for an imported-chat analysis part", async () => {
+        const uuid = "b8ff9ed4-e201-42aa-8f96-83424332c3a4";
+        const file = `analysis-${uuid}-part-3.json`;
+        const row = {
+            ..._progress(file),
+            source: "user-generated",
+            set_id: `analysis-${uuid}`,
+        };
+        listMock.mockResolvedValue([row]);
+        // Uncached set + uncached lesson — the opaque-id guard must engage.
+        listSetsMock.mockResolvedValue({sets: []});
+        getLessonMock.mockResolvedValue(null);
+        render(
+            <MemoryRouter>
+                <PausedLessonsCard userId="user-1" />
+            </MemoryRouter>,
+        );
+        const title = await screen.findByTestId(
+            `paused-lesson-title-${file}`,
+        );
+        // No raw hash leaks through.
+        expect(title.textContent).not.toMatch(/b8ff9ed4/);
+        // Readable fallbacks, with the part number preserved.
+        expect(title).toHaveTextContent("Imported analysis");
+        expect(title).toHaveTextContent("Part 3");
     });
 });

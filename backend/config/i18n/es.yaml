@@ -89,6 +89,7 @@ nav:
   online: En linea
   offline: Sin conexion
   anki: Anki
+  contribute: "Contribuir"
   dev_badge: DEV
   dev_badge_tooltip: "Modo Desarrollador activo — los avisos de error muestran detalles técnicos. Cámbialo en Ajustes."
   content: "Mi contenido"
@@ -1910,6 +1911,7 @@ content:
     progress: "Paso {n}/{total}"
     imported_analysis: "Análisis importado"
     lesson_fallback: "Lección"
+    lesson_part: "{label} · Parte {n}"
   import_chat:
     button: "Importar chat"
   search:
@@ -2229,6 +2231,11 @@ content:
     name_placeholder: p. ej. María S.
     show_name: Mostrar el nombre en la lección
     privacy: "Tu nombre se mostrará en la lección y en el pull request."
+contribute:
+  title: "Contribuir"
+  intro: "Ayuda a ampliar la biblioteca comunitaria llenando sus huecos."
+  loading: "Cargando…"
+  empty: "No hay huecos por ahora: la biblioteca comunitaria cubre tus conjuntos descargados. ¡Gracias!"
 milestone:
   streak: "¡Racha de {n} días!"
   level_up: "¡Nivel {n} alcanzado!"

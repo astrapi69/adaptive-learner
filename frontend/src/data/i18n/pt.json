@@ -97,6 +97,7 @@
     "online": "Online",
     "offline": "Offline",
     "anki": "Anki",
+    "contribute": "Contribuir",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Modo desenvolvedor ativo — as notificações de erro mostram detalhes técnicos. Desative em Definições.",
     "content": "Meu conteúdo",
@@ -2069,7 +2070,8 @@
       "empty": "Comece a sua primeira lição!",
       "progress": "Passo {n}/{total}",
       "imported_analysis": "Análise importada",
-      "lesson_fallback": "Lição"
+      "lesson_fallback": "Lição",
+      "lesson_part": "{label} · Parte {n}"
     },
     "import_chat": {
       "button": "Importar conversa"
@@ -2424,6 +2426,12 @@
       "show_name": "Mostrar nome na lição",
       "privacy": "Seu nome será exibido na lição e no pull request."
     }
+  },
+  "contribute": {
+    "title": "Contribuir",
+    "intro": "Ajude a ampliar a biblioteca da comunidade preenchendo as suas lacunas.",
+    "loading": "A carregar…",
+    "empty": "Sem lacunas no momento — a biblioteca da comunidade cobre os seus conjuntos baixados. Obrigado!"
   },
   "milestone": {
     "streak": "Sequência de {n} dias!",

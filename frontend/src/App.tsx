@@ -38,6 +38,8 @@ const AnkiPage = lazyWithReload(() => import("./pages/content/Anki"));
 const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"));
 // #856 — Discover + My-content + Import merged into one tabbed hub at /content.
 const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
+// #1149 — "Beitragen": the community-gaps block moved out of Meine Inhalte.
+const Contribute = lazyWithReload(() => import("./pages/content/Contribute"));
 const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
 const RedeemInvite = lazyWithReload(() => import("./pages/content/RedeemInvite"));
 const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
@@ -187,6 +189,7 @@ export default function App() {
                   element={<Navigate to="/content?tab=discover" replace />}
                 />
                 <Route path="/content" element={<ContentHub />} />
+                <Route path="/contribute" element={<Contribute />} />
                 <Route path="/content/import/:conversationId" element={<ImportDetail />} />
                 {/* Old import-detail link kept alive for existing bookmarks. */}
                 <Route path="/import/:conversationId" element={<ImportDetail />} />

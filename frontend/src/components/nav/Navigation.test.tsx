@@ -35,6 +35,7 @@ describe("Navigation", () => {
             "nav-learning-path",
             "nav-session",
             "nav-content",
+            "nav-contribute",
             "nav-progress",
             "nav-settings",
             "nav-help",

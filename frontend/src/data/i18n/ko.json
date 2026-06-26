@@ -97,6 +97,7 @@
     "online": "온라인",
     "offline": "오프라인",
     "anki": "Anki",
+    "contribute": "기여",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "개발자 모드가 켜져 있습니다 — 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요.",
     "content": "내 콘텐츠",
@@ -2069,7 +2070,8 @@
       "empty": "첫 레슨을 시작하세요!",
       "progress": "단계 {n}/{total}",
       "imported_analysis": "가져온 분석",
-      "lesson_fallback": "레슨"
+      "lesson_fallback": "레슨",
+      "lesson_part": "{label} · 파트 {n}"
     },
     "import_chat": {
       "button": "채팅 가져오기"
@@ -2424,6 +2426,12 @@
       "show_name": "레슨에 이름 표시",
       "privacy": "당신의 이름이 레슨과 풀 리퀘스트에 표시됩니다."
     }
+  },
+  "contribute": {
+    "title": "기여하기",
+    "intro": "부족한 부분을 채워 커뮤니티 라이브러리를 키우는 데 도움을 주세요.",
+    "loading": "불러오는 중…",
+    "empty": "현재 부족한 부분이 없습니다 — 커뮤니티 라이브러리가 다운로드한 세트를 모두 포함합니다. 감사합니다!"
   },
   "milestone": {
     "streak": "{n}일 연속!",

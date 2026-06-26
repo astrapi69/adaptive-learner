@@ -159,6 +159,71 @@ export function looksLikeOpaqueId(value: string): boolean {
     return false;
 }
 
+/**
+ * Extract the 1-based part number from a split-analysis id, filename, or
+ * title — e.g. ``"analysis-<uuid>-part-3"`` or ``"… — Part 2 of 3"`` → 3 / 2.
+ * Imported chats are auto-split (``lesson-splitter``), so each part carries a
+ * ``part-N`` marker; surfacing N keeps the row readable when the underlying
+ * title is itself an opaque id (#729). Returns ``null`` when no marker exists.
+ *
+ * @example
+ * partNumberOf("analysis-b8ff9ed4-...-part-3"); // 3
+ * partNumberOf("03-articles.json");             // null
+ */
+export function partNumberOf(value: string): number | null {
+    const match = value.match(/part[\s-]*(\d+)/i);
+    return match ? Number(match[1]) : null;
+}
+
+/**
+ * Resolve a set's display title, never leaking a raw machine id. A set absent
+ * from ``listSets`` (or carrying an empty / opaque title) would otherwise show
+ * its bare ``set_id`` — a UUID/hash for user-generated / analysis / snapshot
+ * sets (#729, generalizing the #368 analysis-id fix). Shared by the "Continue
+ * Learning" and the "Weiterlernen" (paused-lessons) dashboard surfaces.
+ *
+ * @param sets - The cached set listing (``listSets().sets``).
+ * @param source - The progress row's content source.
+ * @param setId - The progress row's set id.
+ * @param opaqueFallback - Localized label shown when the title resolves to an
+ *   opaque id (e.g. "Importierte Analyse").
+ */
+export function resolveSetTitle(
+    sets: ReadonlyArray<{source: string; id: string; title?: string | null}>,
+    source: string,
+    setId: string,
+    opaqueFallback: string,
+): string {
+    const entry = sets.find((s) => s.source === source && s.id === setId);
+    const resolved = entry?.title ?? setId;
+    return looksLikeOpaqueId(resolved) ? opaqueFallback : resolved;
+}
+
+/**
+ * Resolve a lesson's display title, falling back from the cached lesson title
+ * to a filename-derived label and finally to a generic label when even that is
+ * opaque (#729). For an opaque split-analysis lesson a ``part-N`` marker is
+ * preserved via ``partLabel`` so an imported-chat part shows e.g.
+ * "Lektion · Teil 3" instead of the raw UUID.
+ *
+ * @param lesson - The cached lesson detail, or ``null`` when uncached.
+ * @param filename - The progress row's lesson filename.
+ * @param opaqueFallback - Localized generic label (e.g. "Lektion").
+ * @param partLabel - Optional localized formatter for a split part number.
+ */
+export function resolveLessonTitle(
+    lesson: {title?: string | null} | null,
+    filename: string,
+    opaqueFallback: string,
+    partLabel?: (part: number) => string,
+): string {
+    const label = lesson?.title ?? lessonLabelFromFilename(filename);
+    if (!looksLikeOpaqueId(label)) return label;
+    const part = partNumberOf(filename) ?? partNumberOf(label);
+    if (part !== null && partLabel) return partLabel(part);
+    return opaqueFallback;
+}
+
 /** Build the /lesson/... route for a set source + lesson. */
 export function lessonRoute(
     source: string,

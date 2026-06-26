@@ -17,10 +17,34 @@ GitHub Issue vor jedem Code. `gh issue list --search` für Duplikate. Related-to
 
 **3. Begrenzte Autonomie-Direktive**
 Keine Rückfragen bei bekannten Mustern. Alle Schritte in einem Pass. Entscheidungen basieren auf der Projektarchitektur, nicht auf Rückfragen. Testfehler autonom fixen, bevor gestoppt wird. Commits in logischen Blöcken, Endbericht am Schluss. Proaktive Prompt-Kettung ist erlaubt.
-Stopp NUR bei echten Blockern: Abweichung von der EXP-Architektur, unklarer Root Cause, oder ein Defekt, der sich nicht ohne Architekturentscheidung lösen lässt. Kein Stopp bei Fragen, die aus der bestehenden Architektur beantwortbar sind (Agenten drehen sich sonst im Kreis). Kosmetisches Patchen über einem ungeklärten Defekt ist verboten.
+Stopp NUR bei echten Blockern: Abweichung von der EXP-Architektur, unklarer Root Cause, oder ein Defekt, der eine Architekturentscheidung erfordert. Fragen, die aus der bestehenden Architektur beantwortbar sind, lösen keinen Stopp aus. Kosmetisches Patchen über einem ungeklärten Defekt ist verboten.
 
 **4. PR-Target: develop (NICHT main!)**
 Gitflow Pflicht. `develop` ist Default-Branch und Integrationsziel. `main` NUR für Releases. Production deployt aus `main`, Preview/Staging aus `develop`. Release-Sperre: kein Code nach `develop`, wenn ein Release-Branch offen ist. No-Amend auf offenen PRs.
+
+```mermaid
+gitGraph
+    commit id: "develop"
+    branch feature
+    checkout feature
+    commit id: "Issue-First"
+    commit id: "Fix + Tests"
+    checkout main
+    merge feature tag: "PR gegen develop"
+    branch release
+    checkout release
+    commit id: "release-prepare"
+    commit id: "release-test"
+    checkout main
+    merge release tag: "v1.96.0"
+    branch hotfix
+    checkout hotfix
+    commit id: "P0-Fix"
+    checkout main
+    merge hotfix tag: "v1.96.1"
+```
+
+*Hinweis: `feature` und `hotfix` mergen konzeptionell nach `develop` bzw. zurück; das Diagramm zeigt den Fluss vereinfacht. `main` traegt ausschliesslich Release- und Hotfix-Tags.*
 
 **5. Wiederverwendung vor Neuerstellung (Library-First & Verify-First)**
 Native Language APIs -> Framework -> Library -> Selbst bauen (letzter Ausweg). Vor jeder Implementierung prüfen, ob Infrastruktur oder Code bereits existiert. Keine neuen Repos/Frameworks ohne Not.
@@ -32,9 +56,9 @@ Nie halb verdrahtete Features shippen. Entweder komplett oder gar nicht.
 Agenten neigen dazu, Fixes zu erfinden ohne die Ursache zu verstehen. Ehrliche Triage zuerst. Kein kosmetischer Fix über einem ungeklärten Defekt.
 
 **8. Prio-Reihenfolge**
-**Flow-Disziplin (WIP-Limit):** Offene, bereits begonnene PRs zuerst abschließen, bevor neue Arbeit angefangen wird. Erst fertigmachen, was offen ist, dann Neues.
-**Work-Item-Reihenfolge:** Hotfixes (P0 Production) > offene PRs abschließen > Bugs > Tech Debt/Infra > UI/UX > Cleanup > Features > Release.
-P0 (Blocker) -> P1 (Bugs) -> P2 (BF/UK) -> P3 (Nice-to-have) -> P4 (Vision). Keine Diskussion, direkt zuweisen.
+**Meta-Regel (WIP-Limit, gilt vor der Typ-Liste):** Offene, bereits begonnene PRs zuerst abschließen, bevor neue Arbeit beginnt. Erst fertigmachen, was offen ist, dann Neues anfangen. Senkt Cycle Time, verhindert angefangene-aber-nie-fertige Arbeit.
+**Work-Item-Typen (in dieser Reihenfolge):** Hotfix (P0 Production) > Bug > Tech Debt/Infra > UI/UX > Cleanup > Feature > Release.
+Stufen: P0 (Blocker) -> P1 (Bug) -> P2 (BF/UK) -> P3 (Nice-to-have) -> P4 (Vision). Keine Diskussion, direkt zuweisen.
 
 **9. Prompts sofort liefern**
 Wenn die Richtung klar ist: Prompt schreiben, nicht fragen. Entscheidungsfragen können danach geklärt werden.
@@ -44,6 +68,31 @@ Aster bestimmt den nächsten Task nach Prio und weist direkt zu. Nicht "was soll
 
 **11. EXP-Dokumente für Entscheidungen**
 Jede signifikante Feature-/Architektur-Entscheidung bekommt ein nummeriertes EXP-Dokument (aktuell 34+). Design vor Code.
+
+## Merge-Gate-Pipeline
+
+Der Weg von einem Finding bis zum grünen Merge auf `develop`:
+
+```mermaid
+flowchart TD
+    A[Finding] --> B{Issue existiert?}
+    B -->|nein| C[GitHub Issue anlegen]
+    B -->|ja| D[Related-to referenzieren]
+    C --> E[Root Cause klären]
+    D --> E
+    E --> F{Root Cause klar?}
+    F -->|nein| G[STOPP: Eskalation an Aster]
+    F -->|ja| H[Branch aus develop]
+    H --> I[Fix + mind. Reproduktion/Happy/Edge/Grenzwert-Tests]
+    I --> J[tsc + Vitest grün]
+    J --> K{UI betroffen?}
+    K -->|ja| L[Visual Regression Baseline + Visual-Device-Check Aster]
+    K -->|nein| M[PR gegen develop]
+    L --> M
+    M --> N{CI grün?}
+    N -->|nein| I
+    N -->|ja| O[Merge auf develop]
+```
 
 ## Architektur-Regeln (AL-spezifisch)
 
@@ -77,7 +126,7 @@ Playwright Visual Regression mit 60 Baselines. Bei UI-Änderung Baseline aktuali
 
 **B. Visual-Device-Check (manuell, nur Aster):**
 Agenten können keine Browser öffnen. Jedes sichtbare/interaktive Feature wird VOR dem Merge manuell auf echtem Gerät geprüft: iPhone plus Desktop-Chrome/Brave. "CI grün heißt nicht Browser grün". Dieses Gate ist nicht durch automatisierte Screenshots ersetzbar.
-**Bekanntes Skalierungsrisiko:** Der Device-Check liegt exklusiv bei Aster und wird mit wachsender Feature-Zahl zum Engpass im Merge-Fluss. Spätere Optionen offen: Cloud Device Farm, oder selektiver Device-Check (nur für interaktive/layout-kritische Features, rein textuelle Änderungen ausgenommen).
+**Bekanntes Skalierungsrisiko:** Der Device-Check liegt exklusiv bei Aster und wird mit wachsender Feature-Zahl zum Engpass im Merge-Fluss. Mitigation-Optionen: Cloud Device Farm, oder selektiver Device-Check (nur interaktive/layout-kritische Features, rein textuelle Änderungen ausgenommen). **Owner:** Aster. **Evaluation:** nach Abschluss der Closed Beta.
 
 ## Release-Gates & Rollback (vor jedem Tag)
 
@@ -86,6 +135,27 @@ Agenten können keine Browser öffnen. Jedes sichtbare/interaktive Feature wird 
 * **Visual-Device-Check** der release-relevanten UI-Features.
 * **Release-Reihenfolge:** alle Agenten-PRs gemergt -> Gates bestanden -> `release/x.y.z` schneiden (`make release-prepare` -> Changelog -> `release-test` -> `release-finish`).
 * **Rollback-Strategie:** Bei P0-Fehlern in Production sofortiger Rollback auf den letzten stabilen `main`-Tag. Hotfix-Branch wird erst nach dem Rollback erstellt, vom stabilen Tag aus, und folgt demselben Gate-Satz wie ein regulärer Release.
+
+```mermaid
+flowchart TD
+    A[develop release-fähig] --> B[release-prepare VERSION]
+    B --> C[sync-versions + verify-pins]
+    C --> D[Changelog eintragen]
+    D --> E[release-test: Vitest + Dexie-Smoke]
+    E --> F{grün?}
+    F -->|nein| G[Fix auf develop, NICHT taggen]
+    G --> E
+    F -->|ja| H[BACKUP-AKZEPTANZTEST manuell]
+    H --> I{bestanden?}
+    I -->|nein| G
+    I -->|ja| J[release-finish + release-publish]
+    J --> K[Tag auf main + GitHub Release]
+    K --> L{P0 in Production?}
+    L -->|nein| M[stabil]
+    L -->|ja| N[Rollback auf letzten stabilen main-Tag]
+    N --> O[Hotfix-Branch vom stabilen Tag]
+    O --> E
+```
 
 ## Plattform-Risiken (im Blick behalten)
 
@@ -104,3 +174,10 @@ Agenten können keine Browser öffnen. Jedes sichtbare/interaktive Feature wird 
 ## Staged Launch (Disziplin)
 
 Warm Audience (Medium + Facebook) -> Closed Beta (5-10 Tester + Native-Speaker-Content-Review) -> Reddit Soft-Launch -> Show HN (nach ausreichender Soak-Zeit). Unverifizierte Sprachsets (JA/KO/ZH) bis zum Native-Speaker-Review aus allen öffentlichen Pitches ausgeschlossen. Testzahlen allein sind kein Stabilitätsbeweis.
+```mermaid
+flowchart LR
+    A[Warm Audience<br/>Medium + Facebook] --> B[Closed Beta<br/>5-10 Tester + Native-Speaker-Review]
+    B --> C[Reddit Soft-Launch]
+    C --> D[Show HN<br/>nach Soak-Zeit]
+    E[JA/KO/ZH unverifiziert] -.ausgeschlossen bis Review.-> A
+```
