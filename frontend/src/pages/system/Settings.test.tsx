@@ -27,6 +27,7 @@ const apiTestKey = vi.fn();
 const apiBackupKey = vi.fn();
 const apiGetBackup = vi.fn();
 const apiRestoreBackup = vi.fn();
+const apiAvailableModels = vi.fn(async (..._args: unknown[]) => [] as unknown[]);
 vi.mock("../../api/client", async () => {
   const actual = await vi.importActual<typeof import("../../api/client")>("../../api/client");
   return {
@@ -44,6 +45,9 @@ vi.mock("../../api/client", async () => {
         update: (...args: unknown[]) => apiUpdate(...args),
         setApiKey: (...args: unknown[]) => apiSetKey(...args),
         deleteApiKey: (...args: unknown[]) => apiDeleteKey(...args),
+        // ModelPicker fetches the provider model list on mount; mock it so the
+        // settings page makes no real network connection in the unit run.
+        getAvailableModels: (...args: unknown[]) => apiAvailableModels(...args),
         testApiKey: (...args: unknown[]) => apiTestKey(...args),
         backupApiKey: (...args: unknown[]) => apiBackupKey(...args),
         getApiKeyBackup: (...args: unknown[]) => apiGetBackup(...args),
@@ -825,6 +829,11 @@ describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
     apiBackupKey.mockReset();
     apiGetBackup.mockReset();
     apiRestoreBackup.mockReset();
+    // #1133 — a successful live test auto-saves the drafted key, so the test
+    // path runs persistKey -> setApiKey. Resolve it (the default undefined made
+    // ensureUsableActiveProvider throw on `undefined`, and the test result fell
+    // through to the "network" outcome — a false "Connection failed").
+    apiSetKey.mockResolvedValue(BASE);
     apiBackupKey.mockResolvedValue(BASE);
     apiGetBackup.mockResolvedValue({ has: false, tested_at: null });
     apiRestoreBackup.mockResolvedValue({ ...BASE, has_anthropic_key: true });
