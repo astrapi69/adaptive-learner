@@ -9,7 +9,21 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.96.0** (learning-modes release - a full
+- **Current state:** **v1.96.0** (release - imported-chat **backend/API-mode
+  parity** (#1154) so desktop/server mode no longer drifts off an imported
+  chat's topic, plus the **tutor-session key gate** (#1158: the
+  "Continue/Start session" entry on an import is disabled with a tooltip when
+  no AI key is set, and `/session` shows a no-key empty state linking to the AI
+  settings tab instead of a dead chat); **Reverse** (#1013) + **Endless**
+  (#1015) lesson modes; **invitation-code content sharing** for coaches/teachers
+  (#1094); **online-to-local data migration** (#1099); the launcher moves onto
+  the standalone **`docker-app-launcher`** engine (#1064, 0.2.0 -> 0.12.1);
+  **SEO** meta/OG/sitemap (#1108); an auto-deploying **preview site** on
+  adaptive-learner-content-test (#1135); plus "Missing Lessons" -> `/contribute`
+  (#1149), Continue-Learning titles/UUID (#729), word-tile equivalence (#1160),
+  and the complexity burn-down (#1047). No schema/API/data change. See
+  changelog/releases/v1.96.0.md.)
+  Prior **v1.95.0** = (learning-modes release - a full
   **lesson-mode system**: a lesson (or whole set) plays as **Practice**,
   **Exam**, **Timed (Auf Zeit)**, or **Zufall (interleaved shuffle)**, plus
   gated **"Fehler trainieren"** entry points, on a pure config-object
