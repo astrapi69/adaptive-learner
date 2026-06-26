@@ -108,6 +108,10 @@ jobs:
         run: |
           echo "VITE_BUILD_HASH=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
           echo "VITE_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+          # #1172 — strand provenance. This is the PREVIEW/staging site
+          # (any develop/feature/fix branch), so the strand is "Latest".
+          echo "VITE_BUILD_BRANCH=${{ github.event.inputs.branch || github.ref_name }}" >> "$GITHUB_ENV"
+          echo "VITE_BUILD_STRANG=latest" >> "$GITHUB_ENV"
 
       - name: Build frontend
         working-directory: frontend
@@ -120,6 +124,9 @@ jobs:
           # Build provenance shown in Settings -> About.
           VITE_BUILD_HASH: ${{ env.VITE_BUILD_HASH }}
           VITE_BUILD_DATE: ${{ env.VITE_BUILD_DATE }}
+          # #1172 — deployment-strand provenance (Latest/preview).
+          VITE_BUILD_BRANCH: ${{ env.VITE_BUILD_BRANCH }}
+          VITE_BUILD_STRANG: ${{ env.VITE_BUILD_STRANG }}
 
       # SPA-router fallback for GH Pages: without 404.html, a direct
       # hit on a nested route (``/dashboard``, ``/settings``) returns

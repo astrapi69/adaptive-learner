@@ -119,6 +119,10 @@ jobs:
         run: |
           echo "VITE_BUILD_HASH=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
           echo "VITE_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+          # #1172 — strand provenance. This is the PRODUCTION site (deploys
+          # only on push to main), so the strand is the stable "Haupt".
+          echo "VITE_BUILD_BRANCH=${{ github.ref_name }}" >> "$GITHUB_ENV"
+          echo "VITE_BUILD_STRANG=haupt" >> "$GITHUB_ENV"
 
       - name: Build frontend
         working-directory: frontend
@@ -132,6 +136,9 @@ jobs:
           # build runs Dexie mode, which has no backend git to read).
           VITE_BUILD_HASH: ${{ env.VITE_BUILD_HASH }}
           VITE_BUILD_DATE: ${{ env.VITE_BUILD_DATE }}
+          # #1172 — deployment-strand provenance (Haupt/production).
+          VITE_BUILD_BRANCH: ${{ env.VITE_BUILD_BRANCH }}
+          VITE_BUILD_STRANG: ${{ env.VITE_BUILD_STRANG }}
 
       # The default SPA-router fallback for GH Pages is to copy
       # index.html to 404.html. Without it, any direct hit on a

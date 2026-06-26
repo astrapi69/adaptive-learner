@@ -84,6 +84,13 @@ export default defineConfig({
         __APP_VERSION__: JSON.stringify(pkg.version),
         __BUILD_HASH__: JSON.stringify(process.env.VITE_BUILD_HASH || "unknown"),
         __BUILD_DATE__: JSON.stringify(process.env.VITE_BUILD_DATE || "unknown"),
+        // #1172 — deployment-strand provenance. The branch that was built
+        // and the explicit strand ("haupt"/"latest") the deploy workflow
+        // sets. Both default to "unknown" for local/Docker builds where no
+        // workflow injects them; the strand resolver (lib/build/build-info)
+        // then falls back to the branch, and finally the URL.
+        __BUILD_BRANCH__: JSON.stringify(process.env.VITE_BUILD_BRANCH || "unknown"),
+        __BUILD_STRANG__: JSON.stringify(process.env.VITE_BUILD_STRANG || "unknown"),
     },
     plugins: [
         // Tailwind v4 Vite plugin. Must run before the React plugin so
