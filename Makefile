@@ -34,6 +34,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        lock-all-plugins verify-plugin-locks \
+       audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
        clean prod prod-down prod-logs \
@@ -681,6 +682,42 @@ verify-plugin-locks: ## Detect drift between each plugin's pyproject.toml and it
 		exit 1; \
 	fi; \
 	echo "OK: all plugin pyproject.toml/poetry.lock pairs in sync."
+
+# --- Security (local pre-PR checks; mirror the nightly Security Scan) ---
+# These targets mirror .github/workflows/security-scan.yml so a green local
+# run predicts a green nightly scan. The CI workflow stays the source of
+# truth (warn-only there); these are the convenient local pre-flight. No
+# accepted-advisory / ignore list exists in CI, so none is applied here.
+# pip-audit is already a backend dev-dep; bandit is installed inline into
+# the backend venv (mirrors CI's `pip install bandit`), no lockfile change.
+
+audit-backend: ## pip-audit the backend venv (incl. plugin path-deps), mirrors the nightly scan (warn-only)
+	@echo "=== pip-audit (backend venv, incl. plugin path-deps) ==="
+	@cd backend && poetry run pip-audit --skip-editable --progress-spinner=off || true
+
+audit-frontend: ## npm audit the frontend lockfile, mirrors the nightly scan (warn-only)
+	@echo "=== npm audit (frontend) ==="
+	@cd frontend && npm audit --package-lock-only || true
+
+bandit-backend: ## bandit SAST over app + plugins + scripts (MEDIUM+ severity & confidence), mirrors the nightly scan (warn-only)
+	@echo "=== bandit (app + plugins + scripts; MEDIUM+ severity & confidence) ==="
+	@cd backend && poetry run python -m pip install -q bandit >/dev/null 2>&1 || \
+		echo "WARN: could not install bandit (offline?); skipping the bandit run."
+	@cd backend && poetry run bandit -r app ../plugins ../scripts -ll -ii \
+		-x '*/tests/*,*/test_*.py' || true
+
+security-backend: bandit-backend audit-backend ## Backend security sweep: bandit SAST + pip-audit deps (warn-only, mirrors the nightly scan)
+	@echo "Backend security sweep complete (warn-only). The nightly Security Scan is the source of truth."
+
+check-security: ## Blocking dependency gate: pip-audit + npm audit fail on HIGH/CRITICAL (local pre-PR check)
+	@echo "=== check-security: pip-audit (backend, fails on any known vuln) ==="
+	@cd backend && poetry run pip-audit --skip-editable --progress-spinner=off
+	@echo "=== check-security: npm audit --audit-level=high (frontend) ==="
+	@cd frontend && npm audit --package-lock-only --audit-level=high
+	@echo "check-security passed: no high/critical dependency vulnerabilities."
+
+circular-deps: ## Circular-dependency check over frontend/src (madge via the existing check:circular script)
+	@cd frontend && npm run check:circular
 
 # --- Release ---
 # Aggregate Makefile targets for the release-workflow.md mechanical
