@@ -491,6 +491,29 @@
     "session_count": "Sesiones"
   },
   "settings": {
+    "key_vault": {
+      "title": "Claves de IA — exportación cifrada",
+      "intro": "Lleva tus claves de IA a otro dispositivo en un único archivo cifrado, separado de la copia de seguridad normal (que nunca contiene claves).",
+      "api_disabled": "En modo servidor tus claves las gestiona el servidor, así que aquí no hay nada que exportar.",
+      "export_heading": "Exportar",
+      "passphrase_hint": "Elige una frase de contraseña fuerte. No se puede recuperar: sin ella no se puede abrir el archivo.",
+      "passphrase_label": "Frase de contraseña",
+      "confirm_label": "Confirmar frase de contraseña",
+      "no_keys": "Todavía no hay claves de IA para exportar.",
+      "busy": "Procesando…",
+      "export_button": "Exportar archivo cifrado",
+      "import_heading": "Importar",
+      "import_button": "Importar archivo de claves",
+      "success_export": "Archivo de claves cifrado descargado.",
+      "success_import": "Claves importadas. Las funciones de IA están listas de nuevo.",
+      "error_too_short": "La frase de contraseña debe tener al menos {n} caracteres.",
+      "error_mismatch": "Las frases de contraseña no coinciden.",
+      "error_export": "No se pudo crear la exportación.",
+      "error_no_file": "Elige primero un archivo de claves.",
+      "error_no_passphrase": "Introduce la frase de contraseña usada al exportar.",
+      "error_decrypt": "Frase de contraseña incorrecta o archivo dañado.",
+      "error_import": "No se pudo importar el archivo de claves."
+    },
     "lesson_mode": {
       "title": "Modo de lección",
       "hint": "El modo práctica mantiene todas las ayudas. El modo examen oculta las pistas, el repaso de teoría, la lectura automática y la solución para que recuperes en condiciones realistas.",

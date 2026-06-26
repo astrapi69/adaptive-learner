@@ -491,6 +491,29 @@
     "session_count": "Sessões"
   },
   "settings": {
+    "key_vault": {
+      "title": "Chaves de IA — exportação criptografada",
+      "intro": "Leve suas chaves de IA para outro dispositivo em um único arquivo criptografado, separado do backup normal (que nunca contém chaves).",
+      "api_disabled": "No modo servidor, suas chaves são gerenciadas pelo servidor, então não há nada para exportar aqui.",
+      "export_heading": "Exportar",
+      "passphrase_hint": "Escolha uma frase-senha forte. Ela não pode ser recuperada — sem ela o arquivo não pode ser aberto.",
+      "passphrase_label": "Frase-senha",
+      "confirm_label": "Confirmar frase-senha",
+      "no_keys": "Ainda não há chaves de IA para exportar.",
+      "busy": "Processando…",
+      "export_button": "Exportar arquivo criptografado",
+      "import_heading": "Importar",
+      "import_button": "Importar arquivo de chaves",
+      "success_export": "Arquivo de chaves criptografado baixado.",
+      "success_import": "Chaves importadas. Os recursos de IA estão prontos novamente.",
+      "error_too_short": "A frase-senha deve ter pelo menos {n} caracteres.",
+      "error_mismatch": "As frases-senha não coincidem.",
+      "error_export": "Não foi possível criar a exportação.",
+      "error_no_file": "Escolha primeiro um arquivo de chaves.",
+      "error_no_passphrase": "Digite a frase-senha usada na exportação.",
+      "error_decrypt": "Frase-senha incorreta ou arquivo corrompido.",
+      "error_import": "Não foi possível importar o arquivo de chaves."
+    },
     "lesson_mode": {
       "title": "Modo de lição",
       "hint": "O modo prática mantém todas as ajudas. O modo exame oculta dicas, revisão de teoria, leitura automática e a solução para que você recupere em condições realistas.",

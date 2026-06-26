@@ -491,6 +491,29 @@
     "session_count": "Sesi"
   },
   "settings": {
+    "key_vault": {
+      "title": "Kunci AI — ekspor terenkripsi",
+      "intro": "Pindahkan kunci AI Anda ke perangkat lain dalam satu berkas terenkripsi, terpisah dari cadangan biasa (yang tidak pernah berisi kunci).",
+      "api_disabled": "Dalam mode server, kunci Anda dikelola oleh server, jadi tidak ada yang bisa diekspor di sini.",
+      "export_heading": "Ekspor",
+      "passphrase_hint": "Pilih frasa sandi yang kuat. Frasa ini tidak dapat dipulihkan — tanpanya berkas tidak dapat dibuka.",
+      "passphrase_label": "Frasa sandi",
+      "confirm_label": "Konfirmasi frasa sandi",
+      "no_keys": "Belum ada kunci AI untuk diekspor.",
+      "busy": "Memproses…",
+      "export_button": "Ekspor berkas terenkripsi",
+      "import_heading": "Impor",
+      "import_button": "Impor berkas kunci",
+      "success_export": "Berkas kunci terenkripsi diunduh.",
+      "success_import": "Kunci diimpor. Fitur AI siap kembali.",
+      "error_too_short": "Frasa sandi harus minimal {n} karakter.",
+      "error_mismatch": "Frasa sandi tidak cocok.",
+      "error_export": "Tidak dapat membuat ekspor.",
+      "error_no_file": "Pilih berkas kunci terlebih dahulu.",
+      "error_no_passphrase": "Masukkan frasa sandi yang digunakan saat ekspor.",
+      "error_decrypt": "Frasa sandi salah atau berkas rusak.",
+      "error_import": "Tidak dapat mengimpor berkas kunci."
+    },
     "lesson_mode": {
       "title": "Mode pelajaran",
       "hint": "Mode latihan mempertahankan semua bantuan. Mode ujian menyembunyikan petunjuk, ulasan teori, baca otomatis, dan solusi agar Anda mengingat dalam kondisi realistis.",
