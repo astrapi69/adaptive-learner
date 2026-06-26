@@ -89,6 +89,7 @@ nav:
   online: Çevrimiçi
   offline: Çevrimdışı
   anki: Anki
+  contribute: "Katkıda bulun"
   dev_badge: DEV
   dev_badge_tooltip: "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın."
   content: "İçeriğim"
@@ -2227,6 +2228,11 @@ content:
     name_placeholder: ör. Maria S.
     show_name: Adı derste göster
     privacy: "Adınız derste ve pull request'te gösterilecek."
+contribute:
+  title: "Katkıda bulun"
+  intro: "Boşluklarını doldurarak topluluk kitaplığının büyümesine yardım et."
+  loading: "Yükleniyor…"
+  empty: "Şu anda boşluk yok — topluluk kitaplığı indirdiğin setleri kapsıyor. Teşekkürler!"
 milestone:
   streak: "{n} günlük seri!"
   level_up: "Seviye {n}'e ulaşıldı!"
