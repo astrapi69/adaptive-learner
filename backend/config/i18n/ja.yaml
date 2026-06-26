@@ -1908,6 +1908,7 @@ content:
     progress: "ステップ {n}/{total}"
     imported_analysis: "インポートされた分析"
     lesson_fallback: "レッスン"
+    lesson_part: "{label} · パート{n}"
   import_chat:
     button: "チャットをインポート"
   search:

@@ -2069,7 +2069,8 @@
       "empty": "Ξεκινήστε το πρώτο σας μάθημα!",
       "progress": "Βήμα {n}/{total}",
       "imported_analysis": "Εισαγόμενη ανάλυση",
-      "lesson_fallback": "Μάθημα"
+      "lesson_fallback": "Μάθημα",
+      "lesson_part": "{label} · Μέρος {n}"
     },
     "import_chat": {
       "button": "Εισαγωγή συνομιλίας"

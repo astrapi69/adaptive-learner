@@ -1910,6 +1910,7 @@ content:
     progress: "Étape {n}/{total}"
     imported_analysis: "Analyse importée"
     lesson_fallback: "Leçon"
+    lesson_part: "{label} · Partie {n}"
   import_chat:
     button: "Importer un chat"
   search:

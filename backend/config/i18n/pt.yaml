@@ -1908,6 +1908,7 @@ content:
     progress: "Passo {n}/{total}"
     imported_analysis: "Análise importada"
     lesson_fallback: "Lição"
+    lesson_part: "{label} · Parte {n}"
   import_chat:
     button: "Importar conversa"
   search:

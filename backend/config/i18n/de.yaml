@@ -1913,6 +1913,7 @@ content:
     progress: "Aufgabe {n}/{total}"
     imported_analysis: "Importierte Analyse"
     lesson_fallback: "Lektion"
+    lesson_part: "{label} · Teil {n}"
   import_chat:
     button: "Chat importieren"
   search:

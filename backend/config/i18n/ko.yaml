@@ -1919,6 +1919,7 @@ content:
     progress: "단계 {n}/{total}"
     imported_analysis: "가져온 분석"
     lesson_fallback: "레슨"
+    lesson_part: "{label} · 파트 {n}"
   import_chat:
     button: "채팅 가져오기"
   search:

@@ -2069,7 +2069,8 @@
       "empty": "अपना पहला पाठ शुरू करें!",
       "progress": "चरण {n}/{total}",
       "imported_analysis": "आयातित विश्लेषण",
-      "lesson_fallback": "पाठ"
+      "lesson_fallback": "पाठ",
+      "lesson_part": "{label} · भाग {n}"
     },
     "import_chat": {
       "button": "चैट आयात करें"
