@@ -11,6 +11,7 @@ import logging
 import os
 import sys
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI
@@ -193,6 +194,18 @@ def create_lifespan(manager: PluginManager, startup_config: dict[str, Any], *, d
         # Backfill OpenAPI tags + summaries on the freshly-mounted plugin
         # routes (idempotent; explicit decorator metadata is preserved).
         ensure_route_metadata(app)
+
+        # Single-origin LAN device-test mode (``make dev-lan``): serve the
+        # built frontend from the backend port so a phone in the same WLAN
+        # can open one URL with no CORS hop. Gated by an env var so the
+        # default dev flow / tests / Docker are untouched. Mounted HERE,
+        # after every API + plugin route, so the ``/`` catch-all never
+        # shadows ``/api/...``.
+        if os.environ.get("ADAPTIVE_LEARNER_SERVE_FRONTEND"):
+            from app.frontend_static import default_dist_dir, mount_frontend_static
+
+            override = os.environ.get("ADAPTIVE_LEARNER_FRONTEND_DIST")
+            mount_frontend_static(app, Path(override) if override else default_dist_dir())
         _log_plugin_diagnostics_post(
             active=[p.name for p in manager.get_active_plugins()],
             load_errors=dict(manager.get_load_errors()),

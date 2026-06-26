@@ -16,7 +16,7 @@ FRONTEND_PORT ?= $(or $(ADAPTIVE_LEARNER_FRONTEND_PORT),15174)
 # this file is dev-only.
 ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 
-.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret stop restart fix-watchers \
+.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret dev-lan build-frontend stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
        test test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
@@ -84,6 +84,28 @@ dev: dev-secret ## Start backend + frontend (backend first, then frontend)
 		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
 		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
 		npm run dev
+
+build-frontend: ## Build frontend/dist. Default API mode; STORAGE_MODE=dexie for the GH-Pages shape.
+	@echo "Building frontend/dist (storage mode: $(or $(STORAGE_MODE),api))..."
+	@cd frontend && $(if $(filter dexie,$(STORAGE_MODE)),VITE_STORAGE_MODE=dexie ,)npm run build
+
+dev-lan: dev-secret build-frontend ## LAN device test: serve built frontend + API on ONE origin at 0.0.0.0:$(BACKEND_PORT), no --reload
+	@LAN_IP=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
+		echo ""; \
+		echo "Adaptive Learner — LAN device-test mode (single origin, API mode, no reload)"; \
+		echo "  On this machine:  http://localhost:$(BACKEND_PORT)"; \
+		if [ -n "$$LAN_IP" ]; then \
+			echo "  On your phone:    http://$$LAN_IP:$(BACKEND_PORT)   (same WLAN, open in Safari/Chrome)"; \
+		else \
+			echo "  (Could not detect a LAN IP via 'hostname -I'; find it manually with 'ip addr'.)"; \
+		fi; \
+		echo "  This is a dev build, NOT the installed PWA. Press Ctrl+C to stop."; \
+		echo ""
+	@cd backend && poetry env use python3.12 -q 2>/dev/null; \
+		. ../$(ADAPTIVE_LEARNER_DEV_SECRET_FILE) && \
+		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
+		ADAPTIVE_LEARNER_SERVE_FRONTEND=1 \
+		poetry run uvicorn app.main:app --host 0.0.0.0 --port $(BACKEND_PORT)
 
 DEV_LOG_DIR ?= /tmp/adaptive-learner-logs
 
