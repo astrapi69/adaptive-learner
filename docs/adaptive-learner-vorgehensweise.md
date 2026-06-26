@@ -1,11 +1,19 @@
 # Adaptive Learner Vorgehensweise (etabliert, Sessions 1-4)
 
 ## Rollen
-* **Aster:** Architekt, manuelles Testen, Geräteverifikation, Entscheidungen, Human-in-the-Loop
-* **Sparring Partner:** Prompts schreiben, Agenten koordinieren, Architektur-Beratung
-* **CCW:** Frontend, Features, E2E, Visual Regression, Doku (Claude Code Web)
-* **CC:** Backend, Infra, Launcher, Doku (Claude Code lokal)
-* **CCWc:** Content-Repository-Agent (Lektionen, Sets, search-index.json)
+
+Die folgenden Rollen sind nach Aufgaben getrennt. **Aktuell werden alle menschlichen Rollen von einer Person ausgefüllt**; die Trennung erlaubt, einzelne Rollen später ohne Umbau des Dokuments an weitere Personen zu übergeben.
+
+**Menschliche Rollen:**
+* **Architekt:** Architektur- und Scoping-Entscheidungen, Prioritäten, Human-in-the-Loop. Bestimmt den nächsten Task.
+* **QA-Tester:** Manuelles Testen, Geräteverifikation (Visual-Device-Check), Backup-Akzeptanztest.
+* **Release-Manager:** Release-Gates, Release-Cut, Tag/Publish, Rollback-Entscheidung.
+* **Sparring Partner:** Prompts schreiben, Agenten koordinieren, Architektur-Beratung.
+
+**Agenten-Rollen:**
+* **CCW:** Frontend, Features, E2E, Visual Regression, Doku (Claude Code Web).
+* **CC:** Backend, Infra, Launcher, Doku (Claude Code lokal).
+* **CCWc:** Content-Repository-Agent (Lektionen, Sets, search-index.json).
 
 ## Workflow
 
@@ -44,7 +52,7 @@ gitGraph
     merge hotfix tag: "v1.96.1"
 ```
 
-*Hinweis: `feature` und `hotfix` mergen konzeptionell nach `develop` bzw. zurück; das Diagramm zeigt den Fluss vereinfacht. `main` traegt ausschliesslich Release- und Hotfix-Tags.*
+*Hinweis: `feature` und `hotfix` mergen konzeptionell nach `develop` bzw. zurück; das Diagramm zeigt den Fluss vereinfacht. `main` trägt ausschließlich Release- und Hotfix-Tags.*
 
 **5. Wiederverwendung vor Neuerstellung (Library-First & Verify-First)**
 Native Language APIs -> Framework -> Library -> Selbst bauen (letzter Ausweg). Vor jeder Implementierung prüfen, ob Infrastruktur oder Code bereits existiert. Keine neuen Repos/Frameworks ohne Not.
@@ -64,7 +72,7 @@ Stufen: P0 (Blocker) -> P1 (Bug) -> P2 (BF/UK) -> P3 (Nice-to-have) -> P4 (Visio
 Wenn die Richtung klar ist: Prompt schreiben, nicht fragen. Entscheidungsfragen können danach geklärt werden.
 
 **10. Kein Wunschkonzert**
-Aster bestimmt den nächsten Task nach Prio und weist direkt zu. Nicht "was soll X machen?" fragen.
+Der Architekt bestimmt den nächsten Task nach Prio und weist direkt zu. Nicht "was soll X machen?" fragen.
 
 **11. EXP-Dokumente für Entscheidungen**
 Jede signifikante Feature-/Architektur-Entscheidung bekommt ein nummeriertes EXP-Dokument (aktuell 34+). Design vor Code.
@@ -81,12 +89,12 @@ flowchart TD
     C --> E[Root Cause klären]
     D --> E
     E --> F{Root Cause klar?}
-    F -->|nein| G[STOPP: Eskalation an Aster]
+    F -->|nein| G[STOPP: Eskalation an Architekt]
     F -->|ja| H[Branch aus develop]
     H --> I[Fix + mind. Reproduktion/Happy/Edge/Grenzwert-Tests]
     I --> J[tsc + Vitest grün]
     J --> K{UI betroffen?}
-    K -->|ja| L[Visual Regression Baseline + Visual-Device-Check Aster]
+    K -->|ja| L[Visual Regression Baseline + Visual-Device-Check QA-Tester]
     K -->|nein| M[PR gegen develop]
     L --> M
     M --> N{CI grün?}
@@ -124,17 +132,17 @@ flowchart TD
 **A. Visual Regression (automatisiert):**
 Playwright Visual Regression mit 60 Baselines. Bei UI-Änderung Baseline aktualisieren via `make capture-screenshots` in maschinen-konsistenter Umgebung (nicht im flüchtigen Container).
 
-**B. Visual-Device-Check (manuell, nur Aster):**
+**B. Visual-Device-Check (manuell, QA-Tester):**
 Agenten können keine Browser öffnen. Jedes sichtbare/interaktive Feature wird VOR dem Merge manuell auf echtem Gerät geprüft: iPhone plus Desktop-Chrome/Brave. "CI grün heißt nicht Browser grün". Dieses Gate ist nicht durch automatisierte Screenshots ersetzbar.
-**Bekanntes Skalierungsrisiko:** Der Device-Check liegt exklusiv bei Aster und wird mit wachsender Feature-Zahl zum Engpass im Merge-Fluss. Mitigation-Optionen: Cloud Device Farm, oder selektiver Device-Check (nur interaktive/layout-kritische Features, rein textuelle Änderungen ausgenommen). **Owner:** Aster. **Evaluation:** nach Abschluss der Closed Beta.
+**Bekanntes Skalierungsrisiko:** Der Device-Check liegt aktuell bei einer einzelnen Person (QA-Tester-Rolle) und wird mit wachsender Feature-Zahl zum Engpass im Merge-Fluss. Mitigation-Optionen: Cloud Device Farm, oder selektiver Device-Check (nur interaktive/layout-kritische Features, rein textuelle Änderungen ausgenommen). **Owner:** QA-Tester. **Evaluation:** nach Abschluss der Closed Beta.
 
 ## Release-Gates & Rollback (vor jedem Tag)
 
-* **BACKUP-AKZEPTANZTEST (manuell, nur Aster):** Echter Round-Trip-Beweis (Backup erstellen -> Browser-Daten komplett löschen -> Wiederherstellen -> Sets/Fortschritt/Settings/Theme prüfen, inkl. Cross-Mode GH-Pages -> Lokal) VOR backup-bezogenen Merges und vor Release.
+* **BACKUP-AKZEPTANZTEST (manuell, QA-Tester):** Echter Round-Trip-Beweis (Backup erstellen -> Browser-Daten komplett löschen -> Wiederherstellen -> Sets/Fortschritt/Settings/Theme prüfen, inkl. Cross-Mode GH-Pages -> Lokal) VOR backup-bezogenen Merges und vor Release.
 * **E2E Smoke grün** vor Release-Tag.
-* **Visual-Device-Check** der release-relevanten UI-Features.
-* **Release-Reihenfolge:** alle Agenten-PRs gemergt -> Gates bestanden -> `release/x.y.z` schneiden (`make release-prepare` -> Changelog -> `release-test` -> `release-finish`).
-* **Rollback-Strategie:** Bei P0-Fehlern in Production sofortiger Rollback auf den letzten stabilen `main`-Tag. Hotfix-Branch wird erst nach dem Rollback erstellt, vom stabilen Tag aus, und folgt demselben Gate-Satz wie ein regulärer Release.
+* **Visual-Device-Check** der release-relevanten UI-Features (QA-Tester).
+* **Release-Reihenfolge (Release-Manager):** alle Agenten-PRs gemergt -> Gates bestanden -> `release/x.y.z` schneiden (`make release-prepare` -> Changelog -> `release-test` -> `release-finish`).
+* **Rollback-Strategie (Release-Manager):** Bei P0-Fehlern in Production sofortiger Rollback auf den letzten stabilen `main`-Tag. Hotfix-Branch wird erst nach dem Rollback erstellt, vom stabilen Tag aus, und folgt demselben Gate-Satz wie ein regulärer Release.
 
 ```mermaid
 flowchart TD
@@ -164,7 +172,7 @@ flowchart TD
 
 ## Kommunikation
 
-* Deutsch mit Aster.
+* Deutsch im Team.
 * Englische Prompts an Agenten (echte UTF-8-Umlaute).
 * Keine Em-Dashes, kein Hedging, keine Verbosität.
 * Direkt, pragmatisch, keine Energie-Warnungen.
