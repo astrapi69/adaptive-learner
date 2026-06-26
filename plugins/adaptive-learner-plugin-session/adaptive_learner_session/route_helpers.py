@@ -18,6 +18,7 @@ from app.exceptions import NotFoundError
 from app.models import (
     ElementError,
     ImportedConversation,
+    ImportedMessage,
     LearningProfile,
     LearningProject,
     LearningSession,
@@ -27,11 +28,15 @@ from app.models import (
 from .prompts import (
     METHODS,
     CompletedLesson,
+    ConversationTurn,
     InProgressLesson,
     LearningContext,
     RecentMistake,
     build_analysis_context,
+    build_conversation_context,
+    build_language_directive,
     build_learning_context,
+    build_prompt,
 )
 
 
@@ -188,6 +193,96 @@ def _analysis_context_for(db: Session, imported_conversation_id: str | None, lan
     if not isinstance(parsed, dict):
         return ""
     return build_analysis_context(parsed, lang)
+
+
+def _conversation_context_for(
+    db: Session, imported_conversation_id: str | None, lang: str
+) -> str:
+    """Render the imported chat's raw transcript as a prompt addendum (#1078).
+
+    Loads the conversation's ``ImportedMessage`` rows in chronological order
+    (``order_index``) and delegates to :func:`build_conversation_context`,
+    which keeps the most recent turns within the token budget. Returns ``""``
+    when there is no conversation or it has no messages, so the caller can
+    append unconditionally.
+    """
+    if not imported_conversation_id:
+        return ""
+    rows = (
+        db.query(ImportedMessage)
+        .filter(ImportedMessage.conversation_id == imported_conversation_id)
+        .order_by(ImportedMessage.order_index)
+        .all()
+    )
+    turns = [ConversationTurn(role=row.role, content=row.content) for row in rows]
+    return build_conversation_context(turns, lang)
+
+
+def compose_system_prompt(
+    db: Session,
+    *,
+    project: LearningProject,
+    profile: LearningProfile | None,
+    method: str,
+    step: int,
+    lang: str | None,
+    imported_conversation_id: str | None,
+) -> str:
+    """Compose the full session system prompt from its live sources.
+
+    Assembles the method/step prompt cell (#827 matrix) + the
+    output-language directive (#827), then EITHER the imported-conversation
+    blocks (analysis #827 + raw transcript #1078) when the session is linked
+    to a chat import, OR the learner's lesson-progress block (#797) for a
+    normal session — never both.
+
+    The imported-vs-learning branch is the #1137 fix: an imported chat IS
+    the topical focus, so the ``Currently working on: <lesson>`` line from
+    the #797 block must NOT be folded in for imported sessions — it pulls the
+    tutor onto an unrelated in-progress lesson (the "Inception" drift).
+
+    Re-reads every block from the DB so the result reflects the CURRENT
+    state, not a snapshot; that is what makes the #1122 rebuild-on-resume
+    correct (later context improvements reach existing imported sessions).
+
+    Mirrors the Dexie-mode ``composeSystemPrompt`` in
+    ``frontend/src/storage/ai/session-flow.ts``.
+
+    Args:
+        db: SQLAlchemy session.
+        project: The session's learning project.
+        profile: The latest LearningProfile, or ``None``.
+        method: The session method key (e.g. ``deductive``).
+        step: The current cycle step (1-7).
+        lang: UI / output language for the prompt + block labels.
+        imported_conversation_id: The linked chat-import FK, or ``None``.
+
+    Returns:
+        The composed system prompt string.
+
+    Raises:
+        ValueError: when ``build_prompt`` rejects the method/step combo.
+    """
+    prompt = build_prompt(
+        project=_project_to_dict(project),
+        profile=_profile_to_dict(profile),
+        method=method,
+        step=step,
+        lang=lang,
+    )
+    prompt = f"{prompt}\n\n{build_language_directive(lang)}"
+    if imported_conversation_id:
+        analysis_block = _analysis_context_for(db, imported_conversation_id, lang)
+        if analysis_block:
+            prompt = f"{prompt}\n\n{analysis_block}"
+        conversation_block = _conversation_context_for(db, imported_conversation_id, lang)
+        if conversation_block:
+            prompt = f"{prompt}\n\n{conversation_block}"
+    else:
+        learning_block = _learning_context_for(db, project, lang)
+        if learning_block:
+            prompt = f"{prompt}\n\n{learning_block}"
+    return prompt
 
 
 def _fire_on_session_complete(session: dict[str, Any], rating: dict[str, Any]) -> None:

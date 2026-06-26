@@ -72,14 +72,17 @@ test.describe("Session 8 — Keyboard shortcuts", () => {
 
   test("Alt+D / Alt+C / Alt+S / Alt+P navigate", async ({ page }) => {
     await seedLearner(page);
+    // Regex matchers (not globs): Alt+C lands on /content?tab=my (the
+    // query breaks a "**/content" glob) and Alt+P now goes to /progress
+    // (EXP-037 #850 retired /statistics -> /progress?tab=stats).
     await page.keyboard.press("Alt+c");
-    await page.waitForURL("**/content");
+    await page.waitForURL(/\/content/);
     await page.keyboard.press("Alt+d");
-    await page.waitForURL("**/dashboard");
+    await page.waitForURL(/\/dashboard/);
     await page.keyboard.press("Alt+s");
-    await page.waitForURL("**/settings");
+    await page.waitForURL(/\/settings/);
     await page.keyboard.press("Alt+p");
-    await page.waitForURL("**/statistics");
+    await page.waitForURL(/\/progress/);
   });
 
   test("lesson: Enter checks an answered exercise", async ({ page }) => {

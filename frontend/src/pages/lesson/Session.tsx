@@ -1,5 +1,11 @@
-import {useCallback, useEffect, useState} from "react";
+import {lazy, Suspense, useCallback, useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
+
+// assistant-ui adoption Phase 0 (#1126): lazy so its ~47-package bundle only
+// loads behind the opt-in ``?ui=assistant`` flag, never on the default path.
+const AssistantUiThread = lazy(
+    () => import("../../components/session/assistant-ui/AssistantUiThread"),
+);
 
 import {LEARNING_METHODS} from "../../lib/constants";
 
@@ -7,8 +13,11 @@ import MethodSwitchBanner from "../../components/session/MethodSwitchBanner";
 import SessionHeader from "../../components/session/SessionHeader";
 import RatingDialog, {type RatingValues} from "../../components/session/RatingDialog";
 import SessionChat, {type ChatMessage} from "../../components/session/SessionChat";
+import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../../api/client";
+import {FEATURES} from "../../features/featureConfig";
+import {useFeatureAvailable} from "../../features/useFeatureAvailable";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useOnlineStatus} from "../../hooks/system/useOnlineStatus";
 import {readLearnerState} from "../../lib/learning/learnerState";
@@ -55,6 +64,13 @@ export default function Session() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const online = useOnlineStatus();
+    // #1158 — the tutor chat needs a usable AI key. When the session-start
+    // feature is gated off (Dexie mode without a key), the page must not
+    // create/resume a session that can only error-toast; it shows a clean
+    // no-key empty state instead (second line of defense behind the disabled
+    // entry buttons). API mode stays permissive — the key may be resolved
+    // server-side — so this only fires in Dexie mode without a key.
+    const sessionGate = useFeatureAvailable(FEATURES.SESSION_START);
 
     const [session, setSession] = useState<LearningSession | null>(null);
     const [project, setProject] = useState<LearningProject | null>(null);
@@ -80,6 +96,10 @@ export default function Session() {
     // "Moving to: …" toast on an applied transition.
     const [stepEvaluation, setStepEvaluation] =
         useState<StepEvaluationVerdict | null>(null);
+    // #1141 — for an imported-chat session the header topic line shows the
+    // imported conversation's topic (e.g. "Reflexive Verben"), not the
+    // generic project topic.
+    const [importedTopic, setImportedTopic] = useState<string | null>(null);
 
     // Fetch the project once we know the session's project_id —
     // drives the topic line in the header (Phase 51 bugfix). The
@@ -103,6 +123,30 @@ export default function Session() {
             cancelled = true;
         };
     }, [session?.project_id]);
+
+    // #1141 — resolve the imported conversation's topic for the header when the
+    // session is linked to one. Prefers the analysis topic, falls back to the
+    // conversation title. Cleared for non-imported sessions.
+    useEffect(() => {
+        const convId = session?.imported_conversation_id;
+        if (!convId) {
+            setImportedTopic(null);
+            return;
+        }
+        let cancelled = false;
+        getStorage()
+            .imports.get(convId)
+            .then((detail) => {
+                if (cancelled) return;
+                setImportedTopic(detail.analysis_result?.topic || detail.title || null);
+            })
+            .catch(() => {
+                /* silent — header falls back to the project topic. */
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [session?.imported_conversation_id]);
 
     // Resolve the active model whenever userSettings changes. The
     // model id always renders; the human name + context window come
@@ -182,6 +226,19 @@ export default function Session() {
     //    param hints the method (used by Dashboard's
     //    Spaced-Repetition cards).
     useEffect(() => {
+        // #1158 — second line of defense. Without a usable AI key the tutor
+        // chat can't run (every turn calls the provider), so skip the
+        // create/resume round-trip entirely and let the render-level no-key
+        // guard show the empty state. Catches every route-level entry (nav
+        // link, deep link, Dashboard quick-start, spaced-repetition cards),
+        // not just the import buttons. Fires only in Dexie mode without a
+        // key; API mode resolves to ``available`` (the key may be
+        // server-side) and proceeds as before.
+        if (!sessionGate.available) {
+            setLoading(false);
+            return;
+        }
+
         const projectId = readLearnerState().projectId;
         const resumeId = searchParams.get("session");
 
@@ -199,12 +256,19 @@ export default function Session() {
                 .then(([existingSession, history]) => {
                     if (cancelled) return;
                     setSession(existingSession);
+                    const mapped = history.map((row) => ({
+                        id: row.id,
+                        role: row.role,
+                        content: row.content,
+                    }));
+                    // #1143 — an imported-chat session opens CLEAN: keep only
+                    // the system message (so the topic intro shows) and hide any
+                    // prior exchange. The AI still sees the full history (it is
+                    // rebuilt from the DB on each turn, #1122).
                     setMessages(
-                        history.map((row) => ({
-                            id: row.id,
-                            role: row.role,
-                            content: row.content,
-                        })),
+                        existingSession.imported_conversation_id
+                            ? mapped.filter((m) => m.role === "system")
+                            : mapped,
                     );
                     setLoading(false);
                     void fetchSwitchRecommendation(existingSession.id);
@@ -319,7 +383,7 @@ export default function Session() {
         // ``fetchSwitchRecommendation`` is a stable useCallback so
         // it's fine to omit it from deps too.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [lang, navigate, online]);
+    }, [lang, navigate, online, sessionGate.available]);
 
     const handleSend = async (content: string) => {
         if (!session || sendingMessage) return;
@@ -557,6 +621,26 @@ export default function Session() {
         }
     };
 
+    // #1158 — no usable AI key: show a clean, actionable empty state with a
+    // direct link to the AI settings tab instead of a dead chat that only
+    // error-toasts. Reuses the shared ApiKeyRequiredNotice (link target
+    // ``/settings?tab=ai``). Lessons + reviews stay usable without a key;
+    // only the tutor-chat entry is gated. Fires only when the session
+    // feature is disabled (Dexie mode without a key).
+    if (!sessionGate.available) {
+        return (
+            <main id="main" data-testid="session-no-key" className="session-page">
+                <p className="muted" role="status">
+                    {t(
+                        "session.no_api_key",
+                        "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.",
+                    )}
+                </p>
+                <ApiKeyRequiredNotice />
+            </main>
+        );
+    }
+
     if (loading) {
         return (
             <main id="main" data-testid="session-loading" className="session-page">
@@ -585,6 +669,7 @@ export default function Session() {
                 userSettings={userSettings}
                 activeModelInfo={activeModelInfo}
                 stepEvaluation={stepEvaluation}
+                topicOverride={importedTopic}
                 t={t}
             />
 
@@ -599,11 +684,21 @@ export default function Session() {
                     />
                 )}
 
-            <SessionChat
-                messages={messages}
-                onSend={handleSend}
-                disabled={sendingMessage}
-            />
+            {searchParams.get("ui") === "assistant" && session?.id ? (
+                // Phase 0 spike (#1126): opt-in assistant-ui thread for the
+                // same session. Default path (no flag) renders the unchanged
+                // SessionChat below, so production is untouched.
+                <Suspense fallback={<div data-testid="aui-loading" />}>
+                    <AssistantUiThread sessionId={session.id} />
+                </Suspense>
+            ) : (
+                <SessionChat
+                    messages={messages}
+                    onSend={handleSend}
+                    disabled={sendingMessage}
+                    introTopic={importedTopic}
+                />
+            )}
 
             <div className="form-actions">
                 <Button

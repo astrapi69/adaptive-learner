@@ -89,6 +89,7 @@ nav:
   online: Çevrimiçi
   offline: Çevrimdışı
   anki: Anki
+  contribute: "Katkıda bulun"
   dev_badge: DEV
   dev_badge_tooltip: "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın."
   content: "İçeriğim"
@@ -1630,6 +1631,8 @@ lesson:
     stats_avg: "Ortalama yanıt süresi: {s}sn"
     stats_fastest: "En hızlı: {s}sn ({type})"
     stats_slowest: "En yavaş: {s}sn ({type})"
+  reverse:
+    not_reversible: "Bu alıştırma türü tersine çevrilemez — orijinal biçiminde gösteriliyor."
   resources_title: "Konuyu derinleştir"
   resources_domain: "{domain} hakkında daha fazlası"
   motivation:
@@ -1814,6 +1817,7 @@ lesson:
     breakdown_heading: "Alıştırma dökümü"
     breakdown_correct_answer: "Doğru cevap: {answer}"
     breakdown_unattempted: "Denenmedi"
+    view_all_answers: "Tüm yanıtları gör ({n})"
     export:
       copy: "Sonucu kopyala"
       download: "Dosya olarak kaydet"
@@ -1905,6 +1909,7 @@ content:
     progress: "Adım {n}/{total}"
     imported_analysis: "İçe aktarılan analiz"
     lesson_fallback: "Ders"
+    lesson_part: "{label} · Bölüm {n}"
   import_chat:
     button: "Sohbeti içe aktar"
   search:
@@ -2224,6 +2229,11 @@ content:
     name_placeholder: ör. Maria S.
     show_name: Adı derste göster
     privacy: "Adınız derste ve pull request'te gösterilecek."
+contribute:
+  title: "Katkıda bulun"
+  intro: "Boşluklarını doldurarak topluluk kitaplığının büyümesine yardım et."
+  loading: "Yükleniyor…"
+  empty: "Şu anda boşluk yok — topluluk kitaplığı indirdiğin setleri kapsıyor. Teşekkürler!"
 milestone:
   streak: "{n} günlük seri!"
   level_up: "Seviye {n}'e ulaşıldı!"
@@ -2426,6 +2436,7 @@ learning_path:
   error_replay: "Hataları tekrarla"
   train_errors: "Hataları çalış"
   shuffle: "Karışık mod"
+  endless: "Sonsuz"
   personal:
     title: "Öğrenme yolun"
     empty: "Başlamak için bir ders seti indir."
@@ -2540,6 +2551,14 @@ share:
     copied: "Kopyalandı"
     share: "Paylaş"
     qr_alt: "Uygulamaya bağlanan QR kodu"
+  result:
+    text: '"{title}" dersini %{pct} ile tamamladım! 🎓 {total} sorudan {correct} doğru.'
+    cta_record: 'Arkadaşlarına göster!'
+    cta_great: 'Harika sonucunu paylaş!'
+    cta_neutral: 'Sonucu paylaş'
+    cta_low: 'Sonucu paylaş'
+    image_complete: 'Ders tamamlandı!'
+    image_score: '{total} sorudan {correct} doğru'
   achievement:
     button: Paylaş
     title: İlerlemeni paylaş
@@ -2940,6 +2959,33 @@ update:
     release_page: "Sürüm sayfası"
     later: "Sonra"
     whats_new_title: "{version} sürümündeki yenilikler"
+endless:
+  session_title: "Sonsuz alıştırma"
+  page_title: "Sonsuz alıştırma"
+  back_to_dashboard: "Panoya dön"
+  loading: "Alıştırma oturumu yükleniyor…"
+  empty_body: "Bu sette henüz alıştırılacak alıştırma yok."
+  not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
+  paused: "Duraklatıldı — biraz nefes al."
+  resume: "Devam et"
+  pause: "Duraklat"
+  end: "Bitir"
+  no_card: "Şu an başka kart yok."
+  stat:
+    cards: "{n} kart"
+    correct: "{n} doğru"
+  error:
+    missing_params: "İçerik seti seçilmedi."
+    load_failed: "Alıştırma oturumu yüklenemedi."
+  summary:
+    heading: "Alıştırma oturumu tamamlandı!"
+    duration: "Süre"
+    cards: "Kart"
+    correct: "Doğru"
+    reviews: "Yapılan tekrarlar"
+    new: "Yeni öğrenilen"
+    errors: "Çalışılan hatalar"
+    xp: "Alıştırma XP"
 shuffle:
   session_title: "Karışık oturum"
   page_title: "Karışık mod"
@@ -2956,3 +3002,64 @@ shuffle:
     score: "{total} sorudan {correct} doğru"
     from_lessons: "{n} farklı dersten"
     another: "Tekrar karıştır"
+invitation_code:
+  title: "Davet kodları"
+  generate: "Kod oluştur"
+  generated: "Kod oluşturuldu."
+  needs_token: "Davet kodları oluşturmak için bu depo için yukarıya bir belirteç ekleyin."
+  never_expires: "Süresiz"
+  redeemed_hint: "Kullanım sayıları masaüstü uygulamasını gerektirir."
+  code_copied: "Kod kopyalandı."
+  link_copied: "Davet bağlantısı kopyalandı."
+  qr_title: "Davet kodu"
+  qr_alt: "Davet bağlantısı için QR kodu"
+  active:
+    title: "Etkin kodlar"
+    empty: "Henüz kod yok."
+  field:
+    prefix: "Ön ek (isteğe bağlı)"
+    max_uses: "Maks. kullanım"
+    expires: "Geçerlilik tarihi"
+    note: "Not"
+    note_placeholder: "örn. 8a sınıfı"
+  col:
+    code: "Kod"
+    redeemed: "Kullanıldı"
+    max: "Maks."
+    valid: "Geçerli"
+    actions: "Eylemler"
+  badge:
+    inactive: "Etkin değil"
+  action:
+    copy_code: "Kodu kopyala"
+    copy_link: "Bağlantıyı kopyala"
+    qr: "QR kodu"
+    deactivate: "Devre dışı bırak"
+    redeem: "Kullan"
+  error:
+    expired: "Bu davet kodunun süresi doldu."
+    inactive: "Bu davet kodu artık etkin değil."
+    full: "Bu davet kodu dolu."
+    not_found: "Davet kodu bulunamadı."
+    generate: "Kod oluşturulamadı."
+    repo_failed: "Depo eklenemedi: {reason}"
+    generic: "Kod kullanılamadı. Tekrar deneyin."
+  redeem:
+    title: "Davet kodunu kullan"
+    body: "Eğitmeninizin verdiği kodu veya bağlantıyı girerek derslerini ekleyin. Hesap gerekmez."
+    label: "Davet kodu veya bağlantısı"
+    enter: "Bir davet kodu veya bağlantısı girin."
+    enter_cta: "Davet kodu gir"
+    needs_link: "Tam davet bağlantısını yapıştırın. Kodun açtığı depoyu içerir."
+    success: "İçerik eklendi: {sets} set."
+migration:
+  title: "Verilerinizi çevrimiçi sürümden getirin"
+  body: "Adaptive Learner'ı çevrimiçi kullandınız mı? Öğrenme verilerinizi bir yedek dosyasıyla getirin. Hesap gerekmez."
+  hint: "Çevrimiçi sürümde: Ayarlar, Veriler, Yedek oluştur, .alb dosyasını indirin ve burada içe aktarın."
+  action:
+    import: "Yedeği içe aktar"
+    open_online: "Çevrimiçi sürümü aç"
+    start_fresh: "Verisiz başla"
+  settings:
+    title: "Çevrimiçi sürümden içe aktar"
+    body: "Adaptive Learner'ı çevrimiçi kullandınız mı? Orada bir yedek oluşturun ve verilerinizi getirmek için yukarıdaki İçe Aktar'ı kullanın."

@@ -89,6 +89,7 @@ nav:
   online: En linea
   offline: Sin conexion
   anki: Anki
+  contribute: "Contribuir"
   dev_badge: DEV
   dev_badge_tooltip: "Modo Desarrollador activo — los avisos de error muestran detalles técnicos. Cámbialo en Ajustes."
   content: "Mi contenido"
@@ -1632,6 +1633,8 @@ lesson:
     stats_avg: "Tiempo medio de respuesta: {s}s"
     stats_fastest: "Más rápida: {s}s ({type})"
     stats_slowest: "Más lenta: {s}s ({type})"
+  reverse:
+    not_reversible: "Este tipo de ejercicio no se puede invertir — se muestra en su formato original."
   resources_title: "Profundiza en el tema"
   resources_domain: "Más sobre {domain}"
   motivation:
@@ -1816,6 +1819,7 @@ lesson:
     breakdown_heading: "Detalle de ejercicios"
     breakdown_correct_answer: "Respuesta correcta: {answer}"
     breakdown_unattempted: "Sin intentar"
+    view_all_answers: "Ver todas las respuestas ({n})"
     export:
       copy: "Copiar resultado"
       download: "Guardar como archivo"
@@ -1907,6 +1911,7 @@ content:
     progress: "Paso {n}/{total}"
     imported_analysis: "Análisis importado"
     lesson_fallback: "Lección"
+    lesson_part: "{label} · Parte {n}"
   import_chat:
     button: "Importar chat"
   search:
@@ -2226,6 +2231,11 @@ content:
     name_placeholder: p. ej. María S.
     show_name: Mostrar el nombre en la lección
     privacy: "Tu nombre se mostrará en la lección y en el pull request."
+contribute:
+  title: "Contribuir"
+  intro: "Ayuda a ampliar la biblioteca comunitaria llenando sus huecos."
+  loading: "Cargando…"
+  empty: "No hay huecos por ahora: la biblioteca comunitaria cubre tus conjuntos descargados. ¡Gracias!"
 milestone:
   streak: "¡Racha de {n} días!"
   level_up: "¡Nivel {n} alcanzado!"
@@ -2428,6 +2438,7 @@ learning_path:
   error_replay: "Repetir errores"
   train_errors: "Entrenar errores"
   shuffle: "Modo aleatorio"
+  endless: "Sin fin"
   personal:
     title: "Tu ruta de aprendizaje"
     empty: "Descarga un conjunto de lecciones para empezar."
@@ -2542,6 +2553,14 @@ share:
     copied: "Copiado"
     share: "Compartir"
     qr_alt: "Código QR que enlaza a la app"
+  result:
+    text: '¡Completé "{title}" con un {pct}%! 🎓 {correct} de {total} correctas.'
+    cta_record: '¡Muéstraselo a tus amigos!'
+    cta_great: '¡Comparte tu gran resultado!'
+    cta_neutral: 'Compartir resultado'
+    cta_low: 'Compartir resultado'
+    image_complete: '¡Lección completada!'
+    image_score: '{correct} de {total} correctas'
   achievement:
     button: Compartir
     title: Comparte tu progreso
@@ -2942,6 +2961,33 @@ update:
     release_page: "Página de la versión"
     later: "Más tarde"
     whats_new_title: "Novedades de {version}"
+endless:
+  session_title: "Práctica sin fin"
+  page_title: "Práctica sin fin"
+  back_to_dashboard: "Volver al panel"
+  loading: "Cargando sesión de práctica…"
+  empty_body: "Este conjunto aún no tiene ejercicios para practicar."
+  not_cached_body: "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero."
+  paused: "En pausa: tómate un respiro."
+  resume: "Reanudar"
+  pause: "Pausar"
+  end: "Terminar"
+  no_card: "No hay más tarjetas por ahora."
+  stat:
+    cards: "{n} tarjetas"
+    correct: "{n} correctas"
+  error:
+    missing_params: "Ningún conjunto de contenido seleccionado."
+    load_failed: "No se pudo cargar la sesión de práctica."
+  summary:
+    heading: "¡Sesión de práctica completada!"
+    duration: "Duración"
+    cards: "Tarjetas"
+    correct: "Correctas"
+    reviews: "Repasos hechos"
+    new: "Nuevas aprendidas"
+    errors: "Errores practicados"
+    xp: "XP de práctica"
 shuffle:
   session_title: "Sesión aleatoria"
   page_title: "Modo aleatorio"
@@ -2958,3 +3004,64 @@ shuffle:
     score: "{correct} de {total} correctas"
     from_lessons: "de {n} lecciones diferentes"
     another: "Mezclar de nuevo"
+invitation_code:
+  title: "Códigos de invitación"
+  generate: "Generar código"
+  generated: "Código generado."
+  needs_token: "Añade un token para este repositorio (arriba) para generar códigos de invitación."
+  never_expires: "Sin caducidad"
+  redeemed_hint: "El recuento de canjes requiere la app de escritorio."
+  code_copied: "Código copiado."
+  link_copied: "Enlace de invitación copiado."
+  qr_title: "Código de invitación"
+  qr_alt: "Código QR del enlace de invitación"
+  active:
+    title: "Códigos activos"
+    empty: "Aún no hay códigos."
+  field:
+    prefix: "Prefijo (opcional)"
+    max_uses: "Máx. de canjes"
+    expires: "Válido hasta"
+    note: "Nota"
+    note_placeholder: "p. ej. Clase 8a"
+  col:
+    code: "Código"
+    redeemed: "Canjeado"
+    max: "Máx."
+    valid: "Válido"
+    actions: "Acciones"
+  badge:
+    inactive: "Inactivo"
+  action:
+    copy_code: "Copiar código"
+    copy_link: "Copiar enlace"
+    qr: "Código QR"
+    deactivate: "Desactivar"
+    redeem: "Canjear"
+  error:
+    expired: "Este código de invitación ha caducado."
+    inactive: "Este código de invitación ya no está activo."
+    full: "Este código de invitación está completo."
+    not_found: "Código de invitación no encontrado."
+    generate: "No se pudo generar el código."
+    repo_failed: "No se pudo añadir el repositorio: {reason}"
+    generic: "No se pudo canjear el código. Inténtalo de nuevo."
+  redeem:
+    title: "Canjear un código de invitación"
+    body: "Introduce el código o enlace que te dio tu profesor para añadir sus lecciones. No se necesita cuenta."
+    label: "Código o enlace de invitación"
+    enter: "Introduce un código o enlace de invitación."
+    enter_cta: "Introducir código de invitación"
+    needs_link: "Pega el enlace de invitación completo. Contiene el repositorio que desbloquea el código."
+    success: "Contenido añadido: {sets} conjuntos."
+migration:
+  title: "Trae tus datos desde la versión online"
+  body: "¿Has usado Adaptive Learner online? Trae tus datos de aprendizaje con un archivo de copia de seguridad. No se necesita cuenta."
+  hint: "En la versión online: Ajustes, Datos, Crear copia de seguridad, descarga el archivo .alb e impórtalo aquí."
+  action:
+    import: "Importar copia de seguridad"
+    open_online: "Abrir versión online"
+    start_fresh: "Empezar sin datos"
+  settings:
+    title: "Importar desde la versión online"
+    body: "¿Usaste Adaptive Learner online? Crea allí una copia de seguridad y usa Importar arriba para traer tus datos."

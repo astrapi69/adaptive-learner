@@ -33,14 +33,16 @@ interface Props {
     feature?: string;
     /** Override the default Settings link target. Useful
      *  when the AI keys live in a non-default Settings
-     *  section. Defaults to ``/settings#api-keys``. */
+     *  section. Defaults to the AI tab (#1133), where the
+     *  provider keys actually live — ``#api-keys`` landed on
+     *  the General tab. */
     settingsHref?: string;
 }
 
 export default function ApiKeyRequiredNotice({
     compact = false,
     feature,
-    settingsHref = "/settings#api-keys",
+    settingsHref = "/settings?tab=ai",
 }: Props) {
     const {t} = useI18n();
     const body = feature

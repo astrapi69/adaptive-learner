@@ -33,14 +33,15 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import {
     completedStepCount,
     groupRecentProgress,
-    lessonLabelFromFilename,
     lessonRoute,
-    looksLikeOpaqueId,
     resolveContinueAction,
+    resolveLessonTitle,
+    resolveSetTitle,
     rowStars,
     type ContinueMode,
 } from "../../lib/content/browse/continue-learning";
 import {getStorage} from "../../storage";
+import ShareResultButton from "../share/ShareResultButton";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
 
 export interface ContinueLearningProps {
@@ -69,34 +70,12 @@ interface DisplayItem {
     totalSteps?: number;
     /** Completed lesson's stars (modes "next" + "set_complete"). */
     stars?: number;
+    /** Completed lesson's score (modes "next" + "set_complete"), for the
+     *  #1073 share card. */
+    correct?: number;
+    total?: number;
+    scorePct?: number;
     updatedAt: string;
-}
-
-/** Resolve a set's display title, never leaking a raw machine id. A set
- *  absent from ``listSets`` (or carrying an empty / opaque title) would
- *  otherwise show its bare ``set_id`` — a UUID/hash for user-generated /
- *  analysis / snapshot sets (#729, generalizing the #368 analysis-id fix). */
-function setTitleOf(
-    sets: ContentSetEntry[],
-    source: string,
-    setId: string,
-    opaqueFallback: string,
-): string {
-    const entry = sets.find((s) => s.source === source && s.id === setId);
-    const resolved = entry?.title ?? setId;
-    return looksLikeOpaqueId(resolved) ? opaqueFallback : resolved;
-}
-
-/** Resolve a lesson's display title, falling back from the cached
- *  lesson title to a filename-derived label and finally to a generic
- *  label when even that is opaque (#729). */
-function lessonTitleOf(
-    lesson: ContentLesson | null,
-    filename: string,
-    opaqueFallback: string,
-): string {
-    const label = lesson?.title ?? lessonLabelFromFilename(filename);
-    return looksLikeOpaqueId(label) ? opaqueFallback : label;
 }
 
 /** Total exercise/theory steps in a lesson (best-effort; used for
@@ -191,7 +170,7 @@ export default function ContinueLearning({
                               )
                             : null;
 
-                    const lessonTitle = lessonTitleOf(
+                    const lessonTitle = resolveLessonTitle(
                         rowLesson,
                         group.mostRecent.lesson_filename,
                         lessonFallbackLabel,
@@ -199,7 +178,7 @@ export default function ContinueLearning({
                     const item: DisplayItem = {
                         source: group.source,
                         setId: group.setId,
-                        setTitle: setTitleOf(
+                        setTitle: resolveSetTitle(
                             sets,
                             group.source,
                             group.setId,
@@ -219,8 +198,16 @@ export default function ContinueLearning({
                         item.totalSteps = lessonStepTotal(rowLesson);
                     } else {
                         item.stars = rowStars(group.mostRecent);
+                        const correct = group.mostRecent.score_correct ?? 0;
+                        const scoredTotal = group.mostRecent.score_total ?? 0;
+                        item.correct = correct;
+                        item.total = scoredTotal;
+                        item.scorePct =
+                            scoredTotal > 0
+                                ? Math.round((correct / scoredTotal) * 100)
+                                : 0;
                         if (action.mode === "next") {
-                            item.nextTitle = lessonTitleOf(
+                            item.nextTitle = resolveLessonTitle(
                                 nextLesson,
                                 action.targetFilename,
                                 lessonFallbackLabel,
@@ -279,10 +266,11 @@ export default function ContinueLearning({
                     <li
                         key={`${item.source}#${item.setId}`}
                         data-testid={`continue-learning-item-${item.setId}`}
+                        className="flex items-center gap-1"
                     >
                         <Link
                             to={item.targetRoute}
-                            className="flex min-h-[44px] items-center gap-3 rounded-app border border-transparent bg-background p-2 hover:border-border hover:bg-muted"
+                            className="flex min-h-[44px] flex-1 items-center gap-3 rounded-app border border-transparent bg-background p-2 hover:border-border hover:bg-muted"
                             data-testid={`continue-learning-link-${item.setId}`}
                         >
                             <span className="text-accent" aria-hidden="true">
@@ -354,6 +342,20 @@ export default function ContinueLearning({
                                 </span>
                             </span>
                         </Link>
+                        {item.mode !== "resume" &&
+                            (item.total ?? 0) > 0 && (
+                                <ShareResultButton
+                                    iconOnly
+                                    result={{
+                                        lessonTitle: item.lessonTitle,
+                                        correct: item.correct ?? 0,
+                                        total: item.total ?? 0,
+                                        scorePct: item.scorePct ?? 0,
+                                        stars: item.stars ?? 0,
+                                    }}
+                                    testId={`continue-learning-share-${item.setId}`}
+                                />
+                            )}
                     </li>
                 ))}
             </ul>

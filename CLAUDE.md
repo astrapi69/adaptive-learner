@@ -9,7 +9,22 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.95.0** (launcher + content-dialog release -
+- **Current state:** **v1.96.0** (learning-modes release - a full
+  **lesson-mode system**: a lesson (or whole set) plays as **Practice**,
+  **Exam**, **Timed (Auf Zeit)**, or **Zufall (interleaved shuffle)**, plus
+  gated **"Fehler trainieren"** entry points, on a pure config-object
+  architecture (components read mode *flags*, not a mode string). Exam mode
+  adds delayed feedback, a dedicated end-of-exam result view, a pass/fail
+  verdict, and a 1.5x XP bonus; the chosen mode is persisted on the attempt
+  (**Alembic 0033** adds an additive `lesson_mode` column, `server_default
+  'practice'`). Plus My-answer/Solution toggles on word-tiles + free-text,
+  **set export to a GitHub repository** (the missing half of repo sharing),
+  and a launcher overhaul (single persistent window as the sole GUI entry
+  point #1045, verbose per-step startup cleanup #1052, a `make launcher-test`
+  log-capture target #1051). Deferred to v1.96.0: complexity burn-down
+  #1047-#1049, configurable-launcher extraction #1054, Reverse #1013 +
+  Endless #1015 modes. See changelog/releases/v1.95.0.md.)
+  Prior **v1.93.0** = (launcher + content-dialog release -
   the Docker-based desktop **launcher** gets a Docker-first flow (daemon-not-
   running dialog with "Start Docker Desktop"), a step-checklist progress window
   (Check Docker / Download / Build / Start / Ready) for the start + install

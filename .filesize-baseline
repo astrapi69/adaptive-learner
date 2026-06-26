@@ -17,7 +17,6 @@
 # Format: <relativer Pfad>  <max-Zeilen>   (# = Kommentar)
 
 
-# Launcher actions layer — the single business-logic module; crossed 1000
-# via the install-manifest + startup-cleanup + ensure_installed additions
-# (#1042/#1043/#1045). Frozen here; split tracked under #372.
-launcher/adaptive_learner_launcher/actions.py  1002
+# (Launcher modules removed in #1064 - the launcher now delegates to the
+#  docker-app-launcher PyPI package, so there is nothing under launcher/ to
+#  baseline here anymore.)

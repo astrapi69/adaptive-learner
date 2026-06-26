@@ -1,9 +1,11 @@
 """Regression pin for the nginx request-body limit (#994).
 
-The prod stack proxies the API through ``frontend/nginx.conf``. nginx
-defaults ``client_max_body_size`` to 1M, which 413s any larger upload
-(backup ``.alb`` import, content set-downloads, ...). This pins the
-directive at >= 50M so the limit can't silently regress to the default.
+The prod stack proxies the API through ``frontend/nginx.conf.template``
+(rendered at container start by the nginx envsubst entrypoint since #1086,
+which made the listen/proxy ports env-configurable). nginx defaults
+``client_max_body_size`` to 1M, which 413s any larger upload (backup ``.alb``
+import, content set-downloads, ...). This pins the directive at >= 50M so the
+limit can't silently regress to the default.
 """
 
 from __future__ import annotations
@@ -11,7 +13,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-NGINX_CONF = Path(__file__).resolve().parents[2] / "frontend" / "nginx.conf"
+NGINX_CONF = Path(__file__).resolve().parents[2] / "frontend" / "nginx.conf.template"
 
 
 def test_nginx_allows_large_request_bodies() -> None:

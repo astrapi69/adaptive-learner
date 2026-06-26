@@ -1,53 +1,27 @@
 # -*- mode: python ; coding: utf-8 -*-
-# PyInstaller spec for the AdaptiveLearner launcher (Windows, Linux, macOS).
+# PyInstaller spec for the Adaptive Learner launcher (Windows, Linux, macOS).
 #
 # Build:  poetry run pyinstaller adaptive-learner-launcher.spec
 # Output:
 #   Windows: dist/adaptive-learner-launcher.exe (single-file, windowed, icon embedded)
 #   Linux:   dist/adaptive-learner-launcher (ELF binary)
 #   macOS:   dist/AdaptiveLearner Launcher.app (bundle, icon if adaptive-learner.icns exists)
+#
+# The launcher implementation now lives in the docker-app-launcher PyPI
+# package (#1064); this app is a thin ``__main__`` wrapper plus a
+# ``launcher.json`` config. The launcher version is the static
+# ``adaptive_learner_launcher.__version__`` literal (kept current by
+# ``make sync-versions``), so no build-time version injection is needed here.
+# Windows file metadata still comes from version_info.txt; the macOS bundle
+# version below is updated by sync-versions.
 
 import os
-import re
 import sys
-from pathlib import Path
 
-# --- Build-time version injection ------------------------------------
-# Read the target AdaptiveLearner version from backend/pyproject.toml and
-# write a generated module the launcher imports. backend/pyproject.toml
-# is the canonical Python source-of-truth; the launcher's frozen binary
-# bakes the value in at build time so it is offline-evaluable in
-# production. The generated file is gitignored.
-#
-# PyInstaller exec()s spec files via build_main.exec(code, spec_namespace),
-# which does NOT define ``__file__``. PyInstaller injects ``SPECPATH``
-# (directory containing the spec file) into the namespace instead; use
-# that as the anchor.
-
-_spec_dir = Path(SPECPATH).resolve()
-_repo_root = _spec_dir.parent
-_backend_pyproject = _repo_root / "backend" / "pyproject.toml"
-_match = re.search(
-    r'^version\s*=\s*"([^"]+)"',
-    _backend_pyproject.read_text(encoding="utf-8"),
-    re.MULTILINE,
-)
-if _match is None:
-    raise SystemExit(
-        f"FATAL: cannot read version from {_backend_pyproject}"
-    )
-_target_version = _match.group(1)
-
-_build_info = (
-    _spec_dir / "adaptive_learner_launcher" / "_build_info.py"
-)
-_build_info.write_text(
-    "# AUTO-GENERATED at PyInstaller build time. Do not edit; regenerate "
-    "via\n# `poetry run pyinstaller adaptive-learner-launcher.spec`. See spec for "
-    "source.\n"
-    f'ADAPTIVE_LEARNER_TARGET_VERSION = "{_target_version}"\n',
-    encoding="utf-8",
-)
+# Available at build time (docker-app-launcher is a project dependency). Lists
+# every docker_app_launcher submodule the launcher imports lazily, so the
+# frozen binary bundles them.
+from docker_app_launcher.pyinstaller import hidden_imports
 
 block_cipher = None
 
@@ -57,11 +31,13 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        # JSON i18n catalogs read via importlib.resources at runtime.
-        # Without this, the frozen binary loses every translation.
-        ("adaptive_learner_launcher/locales", "adaptive_learner_launcher/locales"),
+        # The launcher config: __main__ resolves ``../launcher.json`` relative
+        # to the package dir, which is the bundle root (_MEIPASS) when frozen.
+        ("launcher.json", "."),
+        # Window icon (resolved best-effort at runtime; never fatal if absent).
+        ("adaptive-learner.png", "."),
     ],
-    hiddenimports=[],
+    hiddenimports=hidden_imports(),
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -71,7 +47,10 @@ a = Analysis(
         "pandas",
         "matplotlib",
         "scipy",
-        "PIL",  # Pillow is only for the icon-generation script, not runtime.
+        # Optional tray extra. tray.py is import-safe without it, so the frozen
+        # binary simply runs without a system tray (tray works from source).
+        "PIL",
+        "pystray",
     ],
     noarchive=False,
     cipher=block_cipher,
@@ -120,8 +99,8 @@ if sys.platform == "darwin":
         info_plist={
             "CFBundleName": "AdaptiveLearner Launcher",
             "CFBundleDisplayName": "AdaptiveLearner Launcher",
-            "CFBundleVersion": "1.95.0",
-            "CFBundleShortVersionString": "1.95.0",
+            "CFBundleVersion": "1.96.0",
+            "CFBundleShortVersionString": "1.96.0",
             "NSHighResolutionCapable": True,
             "NSRequiresAquaSystemAppearance": False,
         },

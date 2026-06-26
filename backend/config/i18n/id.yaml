@@ -89,6 +89,7 @@ nav:
   online: Daring
   offline: Luring
   anki: Anki
+  contribute: "Berkontribusi"
   dev_badge: DEV
   dev_badge_tooltip: "Mode Pengembang aktif — pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan."
   content: "Konten saya"
@@ -1641,6 +1642,8 @@ lesson:
     stats_avg: "Waktu jawab rata-rata: {s}d"
     stats_fastest: "Tercepat: {s}d ({type})"
     stats_slowest: "Terlama: {s}d ({type})"
+  reverse:
+    not_reversible: "Tipe latihan ini tidak dapat dibalik — ditampilkan dalam format aslinya."
   resources_title: "Jelajahi lebih lanjut"
   resources_domain: "Lebih lanjut tentang {domain}"
   motivation:
@@ -1790,6 +1793,7 @@ lesson:
     breakdown_heading: "Rincian latihan"
     breakdown_correct_answer: "Jawaban yang benar: {answer}"
     breakdown_unattempted: "Tidak dicoba"
+    view_all_answers: "Lihat semua jawaban ({n})"
     export:
       copy: "Salin hasil"
       download: "Simpan sebagai berkas"
@@ -1916,6 +1920,7 @@ content:
     progress: "Langkah {n}/{total}"
     imported_analysis: "Analisis yang diimpor"
     lesson_fallback: "Pelajaran"
+    lesson_part: "{label} · Bagian {n}"
   import_chat:
     button: "Impor Obrolan"
   search:
@@ -2235,6 +2240,11 @@ content:
     name_placeholder: mis. Maria S.
     show_name: Tampilkan nama di pelajaran
     privacy: "Namamu akan ditampilkan di pelajaran dan pull request."
+contribute:
+  title: "Berkontribusi"
+  intro: "Bantu memperbesar perpustakaan komunitas dengan mengisi celahnya."
+  loading: "Memuat…"
+  empty: "Tidak ada celah saat ini — perpustakaan komunitas mencakup set yang kamu unduh. Terima kasih!"
 milestone:
   streak: "Rentetan {n} Hari!"
   level_up: "Level {n} tercapai!"
@@ -2436,6 +2446,7 @@ learning_path:
   error_replay: "Ulangi kesalahan"
   train_errors: "Latih kesalahan"
   shuffle: "Acak"
+  endless: "Tanpa henti"
   personal:
     title: "Jalur Pembelajaranmu"
     empty: "Unduh sebuah set pelajaran untuk memulai."
@@ -2550,6 +2561,14 @@ share:
     copied: "Disalin"
     share: "Bagikan"
     qr_alt: "Kode QR yang menautkan ke aplikasi"
+  result:
+    text: 'Saya menyelesaikan "{title}" dengan {pct}%! 🎓 {correct} dari {total} benar.'
+    cta_record: 'Tunjukkan ke temanmu!'
+    cta_great: 'Bagikan hasil hebatmu!'
+    cta_neutral: 'Bagikan hasil'
+    cta_low: 'Bagikan hasil'
+    image_complete: 'Pelajaran selesai!'
+    image_score: '{correct} dari {total} benar'
   achievement:
     button: Bagikan
     title: Bagikan progres Anda
@@ -2950,6 +2969,33 @@ update:
     release_page: "Halaman rilis"
     later: "Nanti"
     whats_new_title: "Yang baru di {version}"
+endless:
+  session_title: "Latihan tanpa henti"
+  page_title: "Latihan tanpa henti"
+  back_to_dashboard: "Kembali ke Dasbor"
+  loading: "Memuat sesi latihan…"
+  empty_body: "Set ini belum memiliki latihan untuk dikerjakan."
+  not_cached_body: "Set ini belum diunduh. Buka peramban konten untuk mengunduhnya terlebih dahulu."
+  paused: "Dijeda — istirahat sejenak."
+  resume: "Lanjutkan"
+  pause: "Jeda"
+  end: "Akhiri"
+  no_card: "Belum ada kartu lagi saat ini."
+  stat:
+    cards: "{n} kartu"
+    correct: "{n} benar"
+  error:
+    missing_params: "Tidak ada set konten yang dipilih."
+    load_failed: "Tidak dapat memuat sesi latihan."
+  summary:
+    heading: "Sesi latihan selesai!"
+    duration: "Durasi"
+    cards: "Kartu"
+    correct: "Benar"
+    reviews: "Tinjauan selesai"
+    new: "Baru dipelajari"
+    errors: "Kesalahan dilatih"
+    xp: "XP latihan"
 shuffle:
   session_title: "Sesi acak"
   page_title: "Acak"
@@ -2966,3 +3012,64 @@ shuffle:
     score: "{correct} dari {total} benar"
     from_lessons: "dari {n} pelajaran berbeda"
     another: "Acak lagi"
+invitation_code:
+  title: "Kode undangan"
+  generate: "Buat kode"
+  generated: "Kode dibuat."
+  needs_token: "Tambahkan token untuk repositori ini (di atas) untuk membuat kode undangan."
+  never_expires: "Tanpa kedaluwarsa"
+  redeemed_hint: "Penghitungan penukaran memerlukan aplikasi desktop."
+  code_copied: "Kode disalin."
+  link_copied: "Tautan undangan disalin."
+  qr_title: "Kode undangan"
+  qr_alt: "Kode QR untuk tautan undangan"
+  active:
+    title: "Kode aktif"
+    empty: "Belum ada kode."
+  field:
+    prefix: "Awalan (opsional)"
+    max_uses: "Maks. penukaran"
+    expires: "Berlaku hingga"
+    note: "Catatan"
+    note_placeholder: "mis. Kelas 8a"
+  col:
+    code: "Kode"
+    redeemed: "Ditukar"
+    max: "Maks."
+    valid: "Berlaku"
+    actions: "Tindakan"
+  badge:
+    inactive: "Nonaktif"
+  action:
+    copy_code: "Salin kode"
+    copy_link: "Salin tautan"
+    qr: "Kode QR"
+    deactivate: "Nonaktifkan"
+    redeem: "Tukarkan"
+  error:
+    expired: "Kode undangan ini telah kedaluwarsa."
+    inactive: "Kode undangan ini tidak lagi aktif."
+    full: "Kode undangan ini penuh."
+    not_found: "Kode undangan tidak ditemukan."
+    generate: "Tidak dapat membuat kode."
+    repo_failed: "Tidak dapat menambahkan repositori: {reason}"
+    generic: "Tidak dapat menukarkan kode. Coba lagi."
+  redeem:
+    title: "Tukarkan kode undangan"
+    body: "Masukkan kode atau tautan yang diberikan pelatih Anda untuk menambahkan pelajaran mereka. Tanpa akun."
+    label: "Kode atau tautan undangan"
+    enter: "Masukkan kode atau tautan undangan."
+    enter_cta: "Masukkan kode undangan"
+    needs_link: "Tempel tautan undangan lengkap. Tautan itu memuat repositori yang dibuka oleh kode."
+    success: "Konten ditambahkan: {sets} set."
+migration:
+  title: "Bawa data Anda dari versi online"
+  body: "Pernah memakai Adaptive Learner online? Bawa data belajar Anda dengan file cadangan. Tanpa akun."
+  hint: "Di versi online: Pengaturan, Data, Buat cadangan, unduh file .alb lalu impor di sini."
+  action:
+    import: "Impor cadangan"
+    open_online: "Buka versi online"
+    start_fresh: "Mulai tanpa data"
+  settings:
+    title: "Impor dari versi online"
+    body: "Pernah memakai Adaptive Learner online? Buat cadangan di sana, lalu gunakan Impor di atas untuk membawa data Anda."

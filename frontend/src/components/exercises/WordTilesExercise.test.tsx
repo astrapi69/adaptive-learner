@@ -79,21 +79,27 @@ describe("wordTilesPerTileCorrect (#1005)", () => {
 });
 
 describe("isWordTilesCorrect (matcher)", () => {
+    // Generic non-connector tiles so Mechanism B (connector-move
+    // equivalence) never fires — these pin the exact-match contract.
+    const T2 = ["x", "y"];
+    const T3 = ["x", "y", "z"];
+    const T4 = ["w", "x", "y", "z"];
+
     it("accepts the canonical order when accept_orderings is absent", () => {
-        expect(isWordTilesCorrect([0, 1, 2], 3, null)).toBe(true);
-        expect(isWordTilesCorrect([0, 1], 2, undefined)).toBe(true);
+        expect(isWordTilesCorrect([0, 1, 2], T3, null)).toBe(true);
+        expect(isWordTilesCorrect([0, 1], T2, undefined)).toBe(true);
     });
 
     it("rejects any non-canonical order when accept_orderings is absent (D4)", () => {
-        expect(isWordTilesCorrect([1, 0], 2, null)).toBe(false);
-        expect(isWordTilesCorrect([2, 0, 1], 3, undefined)).toBe(false);
-        expect(isWordTilesCorrect([2, 1, 0], 3, null)).toBe(false);
+        expect(isWordTilesCorrect([1, 0], T2, null)).toBe(false);
+        expect(isWordTilesCorrect([2, 0, 1], T3, undefined)).toBe(false);
+        expect(isWordTilesCorrect([2, 1, 0], T3, null)).toBe(false);
     });
 
     it("rejects an incomplete placement", () => {
-        expect(isWordTilesCorrect([0], 2, null)).toBe(false);
-        expect(isWordTilesCorrect([], 2, null)).toBe(false);
-        expect(isWordTilesCorrect([0, 1], 3, null)).toBe(false);
+        expect(isWordTilesCorrect([0], T2, null)).toBe(false);
+        expect(isWordTilesCorrect([], T2, null)).toBe(false);
+        expect(isWordTilesCorrect([0, 1], T3, null)).toBe(false);
     });
 
     it("accepts any listed accept_orderings permutation", () => {
@@ -101,28 +107,28 @@ describe("isWordTilesCorrect (matcher)", () => {
             [0, 2, 1, 3],
             [3, 2, 1, 0],
         ];
-        expect(isWordTilesCorrect([0, 2, 1, 3], 4, accept)).toBe(true);
-        expect(isWordTilesCorrect([3, 2, 1, 0], 4, accept)).toBe(true);
+        expect(isWordTilesCorrect([0, 2, 1, 3], T4, accept)).toBe(true);
+        expect(isWordTilesCorrect([3, 2, 1, 0], T4, accept)).toBe(true);
     });
 
     it("still accepts the canonical order even when accept_orderings is present", () => {
         // Per schema: accept_orderings adds alternatives; it does
         // NOT replace the canonical.
         const accept = [[0, 2, 1, 3]];
-        expect(isWordTilesCorrect([0, 1, 2, 3], 4, accept)).toBe(true);
+        expect(isWordTilesCorrect([0, 1, 2, 3], T4, accept)).toBe(true);
     });
 
     it("rejects a permutation not in accept_orderings (and not canonical)", () => {
         const accept = [[0, 2, 1, 3]];
-        expect(isWordTilesCorrect([3, 2, 1, 0], 4, accept)).toBe(false);
+        expect(isWordTilesCorrect([3, 2, 1, 0], T4, accept)).toBe(false);
     });
 
     it("rejects when accept_orderings is an empty list and order is non-canonical", () => {
         // Schema gates empty-list separately, but if it ever
         // lands here the matcher should still fall back to
         // canonical-only.
-        expect(isWordTilesCorrect([1, 0], 2, [])).toBe(false);
-        expect(isWordTilesCorrect([0, 1], 2, [])).toBe(true);
+        expect(isWordTilesCorrect([1, 0], T2, [])).toBe(false);
+        expect(isWordTilesCorrect([0, 1], T2, [])).toBe(true);
     });
 });
 

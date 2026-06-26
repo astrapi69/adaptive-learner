@@ -38,6 +38,7 @@ import { Input } from "@/components/ui/input";
 import DownloadProgress from "../../../shared/feedback/DownloadProgress";
 import { SecretInput } from "../../../shared/forms/SecretInput";
 import { buildAddRepoLink } from "../../../lib/content/placement/share-link";
+import InviteCodesPanel from "../../content/invites/InviteCodesPanel";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
 import {
@@ -101,6 +102,7 @@ export default function ContentRepoSettingsSection() {
   const [share, setShare] = useState<
     { source: string; link: string; qr: string } | null
   >(null);
+  const [shareTab, setShareTab] = useState<"link" | "codes">("link");
   const [ratings, setRatings] = useState<Record<string, number>>({});
 
   const refresh = useCallback(async () => {
@@ -353,6 +355,7 @@ export default function ContentRepoSettingsSection() {
       } catch {
         /* QR is a nice-to-have; the copyable link still works */
       }
+      setShareTab("link");
       setShare({ source, link, qr });
     },
     [share],
@@ -585,18 +588,22 @@ export default function ContentRepoSettingsSection() {
                   >
                     <ArrowDown className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="min-h-11 gap-2"
-                    onClick={() => handleShare(repo)}
-                    disabled={busy}
-                    data-testid={`content-repo-share-${repo.owner}-${repo.repo}`}
-                  >
-                    <Share2 className="h-4 w-4" aria-hidden="true" />
-                    {t("content_repo.action.share", "Share")}
-                  </Button>
+                  {/* #1093 — owner-only Teilen: a repo added by redeeming an
+                      invitation code is a guest copy, so it offers no re-share. */}
+                  {!repo.shared_via_invite && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="min-h-11 gap-2"
+                      onClick={() => handleShare(repo)}
+                      disabled={busy}
+                      data-testid={`content-repo-share-${repo.owner}-${repo.repo}`}
+                    >
+                      <Share2 className="h-4 w-4" aria-hidden="true" />
+                      {t("content_repo.action.share", "Share")}
+                    </Button>
+                  )}
                   <Button
                     type="button"
                     variant={confirmRemove === source ? "destructive" : "outline"}
@@ -617,40 +624,82 @@ export default function ContentRepoSettingsSection() {
                     className="mt-3 rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] p-3"
                     data-testid={`content-repo-share-panel-${repo.owner}-${repo.repo}`}
                   >
-                    <p className="m-0 text-sm text-[var(--fg-muted)]">
-                      {t(
-                        "content_repo.share.hint",
-                        "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately.",
-                      )}
-                    </p>
-                    <div className="mt-2 flex flex-wrap items-center gap-2">
-                      <Input
-                        type="text"
-                        readOnly
-                        value={share.link}
-                        className="min-w-[16rem] flex-1"
-                        data-testid="content-repo-share-link"
-                        onFocus={(e) => e.currentTarget.select()}
-                      />
+                    {/* #1093 — Teilen splits into Link sharing + Invitation codes. */}
+                    <div
+                      className="mb-3 flex gap-1"
+                      role="tablist"
+                      aria-label={t("content_repo.action.share", "Share")}
+                    >
                       <Button
                         type="button"
                         size="sm"
-                        className="min-h-11 gap-2"
-                        onClick={() => handleCopyLink(share.link)}
-                        data-testid="content-repo-share-copy"
+                        variant={shareTab === "link" ? "default" : "outline"}
+                        className="min-h-9"
+                        role="tab"
+                        aria-selected={shareTab === "link"}
+                        onClick={() => setShareTab("link")}
+                        data-testid="content-repo-share-tab-link"
                       >
-                        <Copy className="h-4 w-4" aria-hidden="true" />
-                        {t("content_repo.share.copy", "Copy")}
+                        {t("content_repo.share.tab_link", "Link")}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={shareTab === "codes" ? "default" : "outline"}
+                        className="min-h-9"
+                        role="tab"
+                        aria-selected={shareTab === "codes"}
+                        onClick={() => setShareTab("codes")}
+                        data-testid="content-repo-share-tab-codes"
+                      >
+                        {t("invitation_code.title", "Invitation codes")}
                       </Button>
                     </div>
-                    {share.qr && (
-                      <img
-                        src={share.qr}
-                        alt={t("content_repo.share.qr_alt", "QR code for the share link")}
-                        className="mt-3 rounded-sm"
-                        width={180}
-                        height={180}
-                        data-testid="content-repo-share-qr"
+
+                    {shareTab === "link" ? (
+                      <>
+                        <p className="m-0 text-sm text-[var(--fg-muted)]">
+                          {t(
+                            "content_repo.share.hint",
+                            "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately.",
+                          )}
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <Input
+                            type="text"
+                            readOnly
+                            value={share.link}
+                            className="min-w-[16rem] flex-1"
+                            data-testid="content-repo-share-link"
+                            onFocus={(e) => e.currentTarget.select()}
+                          />
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="min-h-11 gap-2"
+                            onClick={() => handleCopyLink(share.link)}
+                            data-testid="content-repo-share-copy"
+                          >
+                            <Copy className="h-4 w-4" aria-hidden="true" />
+                            {t("content_repo.share.copy", "Copy")}
+                          </Button>
+                        </div>
+                        {share.qr && (
+                          <img
+                            src={share.qr}
+                            alt={t("content_repo.share.qr_alt", "QR code for the share link")}
+                            className="mt-3 rounded-sm"
+                            width={180}
+                            height={180}
+                            data-testid="content-repo-share-qr"
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <InviteCodesPanel
+                        source={source}
+                        branch={repo.branch}
+                        token={resolveRepoToken(source)}
                       />
                     )}
                   </div>

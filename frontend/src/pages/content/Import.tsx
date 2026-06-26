@@ -511,6 +511,27 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         />
       </section>
 
+      <section className="max-w-3xl mx-auto mb-8 px-6" data-testid="invite-redeem">
+        <h3>{t("invitation_code.redeem.title", "Redeem an invitation code")}</h3>
+        <div className="border border-border rounded-lg p-6 text-center bg-card">
+          <p className="m-0 text-fg-muted">
+            {t(
+              "invitation_code.redeem.body",
+              "Enter the code or link your coach gave you to add their lessons. No account needed.",
+            )}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-3 min-h-11"
+            onClick={() => go("/invite")}
+            data-testid="invite-redeem-open"
+          >
+            {t("invitation_code.redeem.enter_cta", "Enter invitation code")}
+          </Button>
+        </div>
+      </section>
+
       <section className="max-w-3xl mx-auto mb-12 px-6" data-testid="imports-list">
         <h3>
           {t("import.list.title", "Your imported conversations")} ({conversations.length})

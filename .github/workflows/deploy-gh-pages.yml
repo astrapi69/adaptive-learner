@@ -2,15 +2,17 @@ name: Deploy GitHub Pages
 
 # Phase 10G + 11G — publish the Dexie-mode frontend at the root
 # AND the MkDocs documentation site at /docs/ to GitHub Pages.
-# Gitflow (#334): deploys the development version on every push to
-# develop (the active branch); can also be run manually from the
-# Actions tab. Frontend uses the Dexie storage backend (no backend
-# required); docs are static MkDocs Material in DE + EN. Switch to
-# main later if only tagged releases should deploy.
+# Gitflow (#334): this is the PRODUCTION site, so it deploys only on
+# push to main (main is written solely by release/* merges, so the
+# public site updates only on a release cut). The development version
+# is published separately to the preview host on every develop merge
+# (see deploy-preview.yml). Can also be run manually from the Actions
+# tab. Frontend uses the Dexie storage backend (no backend required);
+# docs are static MkDocs Material in DE + EN.
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
   workflow_dispatch: {}
 
 # Defensive opt-in: any JavaScript-runtime action still declaring
@@ -171,7 +173,9 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Head-room over the deploy-pages timeout below so the job never kills
+    # the action mid-deploy (issue #1105).
+    timeout-minutes: 25
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -179,3 +183,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          # GitHub's Pages backend can hold a deployment in
+          # ``deployment_queued`` well past the action's default 10-minute
+          # timeout, aborting an otherwise-fine deploy ("Timeout reached,
+          # aborting!"). Give a slow-but-progressing deployment room to
+          # finish (issue #1105). Value is in milliseconds.
+          timeout: 1200000

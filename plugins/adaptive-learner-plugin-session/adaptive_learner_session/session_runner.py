@@ -27,6 +27,7 @@ from app.schemas import AIProvider, LearningSessionOut, MessageRole, SessionMess
 
 from . import ai_orchestration
 from .prompts import MAX_STEP, MIN_STEP
+from .route_helpers import _latest_profile, compose_system_prompt
 from .step_evaluator import EVALUATION_DEFAULT_MAX_TOKENS, StepEvaluation, evaluate_step
 from .topic_transition import TopicTransition, evaluate_topic_transition
 
@@ -252,6 +253,52 @@ def _load_prior_messages(db: Session, session_id: str) -> list[dict[str, Any]]:
         .all()
     )
     return [{"role": r.role, "content": r.content} for r in rows]
+
+
+def build_outgoing_history(db: Session, sess: LearningSession) -> list[dict[str, Any]]:
+    """Build the chronological AI message payload for one session turn.
+
+    Rebuild-on-Resume (#1122): for a session linked to an imported
+    conversation, the ``role=system`` message is REBUILT fresh from the
+    conversation FK on every turn (via :func:`compose_system_prompt`) instead
+    of replaying the frozen persisted copy. This makes later context
+    improvements take effect for existing imported sessions and keeps the
+    imported context current — the persisted seed (written at ``/start``) is
+    filtered out and replaced. For a normal (non-imported) session the
+    persisted chronological history is returned verbatim.
+
+    Mirrors the Dexie-mode ``buildOutgoingHistory`` in
+    ``frontend/src/storage/ai/session-flow.ts``.
+
+    Args:
+        db: SQLAlchemy session.
+        sess: The active LearningSession the turn belongs to.
+
+    Returns:
+        The ordered ``[{role, content}, ...]`` list for the AI provider.
+    """
+    history = _load_prior_messages(db, sess.id)
+    if not sess.imported_conversation_id:
+        return history
+
+    project = db.get(LearningProject, sess.project_id)
+    if project is None:
+        # Orphaned session: nothing to rebuild against, replay as-is.
+        return history
+    profile = _latest_profile(db, project.id)
+    owner = db.get(User, project.user_id)
+    lang = owner.language if owner else "en"
+    fresh_system = compose_system_prompt(
+        db,
+        project=project,
+        profile=profile,
+        method=sess.method,
+        step=int(sess.cycle_step),
+        lang=lang,
+        imported_conversation_id=sess.imported_conversation_id,
+    )
+    non_system = [m for m in history if m["role"] != "system"]
+    return [{"role": "system", "content": fresh_system}, *non_system]
 
 
 def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | None, str | None]:
@@ -773,8 +820,11 @@ def run_learning_call(ctx: MessageContext) -> str | None:
     db = ctx.db
     sess = ctx.session
     # Load EVERY prior message INCLUDING the user turn just saved, so the
-    # AI sees exactly what is persisted (chronological order).
-    history = _load_prior_messages(db, sess.id)
+    # AI sees exactly what is persisted (chronological order). For an
+    # imported session the system message is rebuilt fresh from the
+    # conversation FK (Rebuild-on-Resume, #1122) instead of replaying the
+    # frozen persisted copy.
+    history = build_outgoing_history(db, sess)
     try:
         learning_start = time.monotonic()
         assistant_text = ai_orchestration.call_ai_complete(

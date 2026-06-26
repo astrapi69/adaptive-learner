@@ -15,10 +15,13 @@ import HelpTooltip from "../../components/help/HelpTooltip";
 import OnboardingWizard, {
     type WizardValues,
 } from "../../components/onboarding/OnboardingWizard";
+import MigrationWelcomeDialog from "../../components/onboarding/MigrationWelcomeDialog";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/backup/firstRunRestore";
+import {isMigrationOffered, markMigrationOffered} from "../../lib/backup/migrationFlag";
 import {readBackupFile} from "../../lib/backup/validateBackupFile";
 import {applyLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
+import {SHARE_URL} from "../../lib/share/generate-share-text";
 import {
     readLearnerState,
     setLanguage,
@@ -81,6 +84,22 @@ export default function Onboarding() {
     const restoreInputRef = useRef<HTMLInputElement>(null);
     const [emptyInstall, setEmptyInstall] = useState(false);
     const [restoring, setRestoring] = useState(false);
+
+    // #1085 — online-to-local migration: on a fresh LOCAL (API mode) install
+    // offer to bring over data from the online (GitHub Pages) version via the
+    // existing backup. localStorage-gated so it is offered once per device.
+    const storageMode = getStorage().mode;
+    const [migrationOffered, setMigrationOffered] = useState(isMigrationOffered);
+    const showMigration =
+        storageMode === "api" && emptyInstall && !migrationOffered;
+
+    const dismissMigration = () => {
+        markMigrationOffered();
+        setMigrationOffered(true);
+    };
+    const openOnlineVersion = () => {
+        window.open(SHARE_URL, "_blank", "noopener,noreferrer");
+    };
 
     useEffect(() => {
         let cancelled = false;
@@ -305,6 +324,9 @@ export default function Onboarding() {
             if (summary.errors.length > 0) {
                 console.error("[Backup] First-run restore errors:", summary.errors);
             }
+            // #1085 — a restore (incl. an online-to-local migration) means the
+            // welcome offer is done; don't prompt again on this device.
+            markMigrationOffered();
             notify.success(
                 t("onboarding.restore_success", "Backup restored. Welcome back!"),
             );
@@ -573,6 +595,39 @@ export default function Onboarding() {
                     />
                 </section>
             )}
+
+            <MigrationWelcomeDialog
+                open={showMigration}
+                importing={restoring}
+                labels={{
+                    title: t(
+                        "migration.title",
+                        "Bring your data from the online version",
+                    ),
+                    body: t(
+                        "migration.body",
+                        "Have you used Adaptive Learner online? Bring your learning data over with a backup file. No account needed.",
+                    ),
+                    hint: t(
+                        "migration.hint",
+                        "In the online version: Settings, Data, Create backup, download the .alb file, then import it here.",
+                    ),
+                    importLabel: t("migration.action.import", "Import backup"),
+                    importing: t("onboarding.restoring", "Restoring…"),
+                    openOnline: t(
+                        "migration.action.open_online",
+                        "Open online version",
+                    ),
+                    startFresh: t(
+                        "migration.action.start_fresh",
+                        "Start without data",
+                    ),
+                    close: t("common.close", "Close"),
+                }}
+                onImport={() => restoreInputRef.current?.click()}
+                onOpenOnline={openOnlineVersion}
+                onStartFresh={dismissMigration}
+            />
         </main>
     );
 }

@@ -89,6 +89,7 @@ nav:
   online: En ligne
   offline: Hors ligne
   anki: Anki
+  contribute: "Contribuer"
   dev_badge: DEV
   dev_badge_tooltip: "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactivez-le dans les Paramètres."
   content: "Mon contenu"
@@ -1632,6 +1633,8 @@ lesson:
     stats_avg: "Temps de réponse moyen : {s}s"
     stats_fastest: "La plus rapide : {s}s ({type})"
     stats_slowest: "La plus lente : {s}s ({type})"
+  reverse:
+    not_reversible: "Ce type d'exercice ne peut pas être inversé — affiché dans son format d'origine."
   resources_title: "Approfondir le sujet"
   resources_domain: "Plus sur {domain}"
   motivation:
@@ -1816,6 +1819,7 @@ lesson:
     breakdown_heading: "Détail des exercices"
     breakdown_correct_answer: "Bonne réponse : {answer}"
     breakdown_unattempted: "Non tentée"
+    view_all_answers: "Voir toutes les réponses ({n})"
     export:
       copy: "Copier le résultat"
       download: "Enregistrer comme fichier"
@@ -1907,6 +1911,7 @@ content:
     progress: "Étape {n}/{total}"
     imported_analysis: "Analyse importée"
     lesson_fallback: "Leçon"
+    lesson_part: "{label} · Partie {n}"
   import_chat:
     button: "Importer un chat"
   search:
@@ -2226,6 +2231,11 @@ content:
     name_placeholder: par ex. Maria S.
     show_name: Afficher le nom dans la leçon
     privacy: "Ton nom sera affiche dans la lecon et dans la pull request."
+contribute:
+  title: "Contribuer"
+  intro: "Aidez à enrichir la bibliothèque communautaire en comblant ses lacunes."
+  loading: "Chargement…"
+  empty: "Aucune lacune pour l'instant — la bibliothèque communautaire couvre vos ensembles téléchargés. Merci !"
 milestone:
   streak: "Série de {n} jours !"
   level_up: "Niveau {n} atteint !"
@@ -2428,6 +2438,7 @@ learning_path:
   error_replay: "Réviser les erreurs"
   train_errors: "Entraîner les erreurs"
   shuffle: "Mode aléatoire"
+  endless: "Sans fin"
   personal:
     title: "Ton parcours d'apprentissage"
     empty: "Télécharge un ensemble de leçons pour commencer."
@@ -2542,6 +2553,14 @@ share:
     copied: "Copié"
     share: "Partager"
     qr_alt: "Code QR menant à l'application"
+  result:
+    text: 'J''ai terminé "{title}" avec {pct}% ! 🎓 {correct} sur {total} correctes.'
+    cta_record: 'Montre-le à tes amis !'
+    cta_great: 'Partage ton excellent résultat !'
+    cta_neutral: 'Partager le résultat'
+    cta_low: 'Partager le résultat'
+    image_complete: 'Leçon terminée !'
+    image_score: '{correct} sur {total} correctes'
   achievement:
     button: Partager
     title: Partagez votre progression
@@ -2942,6 +2961,33 @@ update:
     release_page: "Page de la version"
     later: "Plus tard"
     whats_new_title: "Nouveautés de {version}"
+endless:
+  session_title: "Entraînement sans fin"
+  page_title: "Entraînement sans fin"
+  back_to_dashboard: "Retour au tableau de bord"
+  loading: "Chargement de la session d'entraînement…"
+  empty_body: "Cet ensemble n'a pas encore d'exercices à pratiquer."
+  not_cached_body: "Cet ensemble n'est pas encore téléchargé. Ouvrez le navigateur de contenu pour le télécharger d'abord."
+  paused: "En pause — faites une petite pause."
+  resume: "Reprendre"
+  pause: "Pause"
+  end: "Terminer"
+  no_card: "Aucune autre carte pour le moment."
+  stat:
+    cards: "{n} cartes"
+    correct: "{n} correctes"
+  error:
+    missing_params: "Aucun ensemble de contenu sélectionné."
+    load_failed: "Impossible de charger la session d'entraînement."
+  summary:
+    heading: "Session d'entraînement terminée !"
+    duration: "Durée"
+    cards: "Cartes"
+    correct: "Correctes"
+    reviews: "Révisions faites"
+    new: "Nouvelles apprises"
+    errors: "Erreurs travaillées"
+    xp: "XP d'entraînement"
 shuffle:
   session_title: "Session aléatoire"
   page_title: "Mode aléatoire"
@@ -2958,3 +3004,64 @@ shuffle:
     score: "{correct} sur {total} correctes"
     from_lessons: "de {n} leçons différentes"
     another: "Mélanger à nouveau"
+invitation_code:
+  title: "Codes d'invitation"
+  generate: "Générer un code"
+  generated: "Code généré."
+  needs_token: "Ajoutez un jeton pour ce dépôt (ci-dessus) afin de générer des codes d'invitation."
+  never_expires: "Sans expiration"
+  redeemed_hint: "Le décompte des utilisations nécessite l'application de bureau."
+  code_copied: "Code copié."
+  link_copied: "Lien d'invitation copié."
+  qr_title: "Code d'invitation"
+  qr_alt: "QR code du lien d'invitation"
+  active:
+    title: "Codes actifs"
+    empty: "Aucun code pour l'instant."
+  field:
+    prefix: "Préfixe (facultatif)"
+    max_uses: "Utilisations max."
+    expires: "Valable jusqu'au"
+    note: "Note"
+    note_placeholder: "ex. Classe 8a"
+  col:
+    code: "Code"
+    redeemed: "Utilisé"
+    max: "Max."
+    valid: "Valide"
+    actions: "Actions"
+  badge:
+    inactive: "Inactif"
+  action:
+    copy_code: "Copier le code"
+    copy_link: "Copier le lien"
+    qr: "QR code"
+    deactivate: "Désactiver"
+    redeem: "Utiliser"
+  error:
+    expired: "Ce code d'invitation a expiré."
+    inactive: "Ce code d'invitation n'est plus actif."
+    full: "Ce code d'invitation est complet."
+    not_found: "Code d'invitation introuvable."
+    generate: "Impossible de générer le code."
+    repo_failed: "Impossible d'ajouter le dépôt : {reason}"
+    generic: "Impossible d'utiliser le code. Réessayez."
+  redeem:
+    title: "Utiliser un code d'invitation"
+    body: "Saisissez le code ou le lien fourni par votre enseignant pour ajouter ses leçons. Aucun compte requis."
+    label: "Code ou lien d'invitation"
+    enter: "Saisissez un code ou un lien d'invitation."
+    enter_cta: "Saisir un code d'invitation"
+    needs_link: "Collez le lien d'invitation complet. Il contient le dépôt que le code débloque."
+    success: "Contenu ajouté : {sets} ensembles."
+migration:
+  title: "Récupérez vos données depuis la version en ligne"
+  body: "Avez-vous utilisé Adaptive Learner en ligne ? Récupérez vos données d'apprentissage avec un fichier de sauvegarde. Aucun compte requis."
+  hint: "Dans la version en ligne : Paramètres, Données, Créer une sauvegarde, téléchargez le fichier .alb puis importez-le ici."
+  action:
+    import: "Importer la sauvegarde"
+    open_online: "Ouvrir la version en ligne"
+    start_fresh: "Commencer sans données"
+  settings:
+    title: "Importer depuis la version en ligne"
+    body: "Vous avez utilisé Adaptive Learner en ligne ? Créez-y une sauvegarde, puis utilisez Importer ci-dessus pour récupérer vos données."

@@ -50,6 +50,32 @@ describe("SessionChat", () => {
         ).not.toBeInTheDocument();
     });
 
+    // #1143 — imported-chat session: clean intro names the imported topic.
+    it("shows the imported topic in the empty-state intro", () => {
+        const onlySystem: ChatMessage[] = [
+            {id: "1", role: "system", content: "system prompt"},
+        ];
+        render(
+            <SessionChat
+                messages={onlySystem}
+                onSend={() => {}}
+                introTopic="Reflexive Verben"
+            />,
+        );
+        expect(screen.getByTestId("chat-intro-topic").textContent).toContain(
+            "Reflexive Verben",
+        );
+    });
+
+    it("shows no topic intro without an introTopic", () => {
+        const onlySystem: ChatMessage[] = [
+            {id: "1", role: "system", content: "system prompt"},
+        ];
+        render(<SessionChat messages={onlySystem} onSend={() => {}} />);
+        expect(screen.getByTestId("chat-welcome")).toBeInTheDocument();
+        expect(screen.queryByTestId("chat-intro-topic")).not.toBeInTheDocument();
+    });
+
     it("disables send when the draft is empty", () => {
         render(<SessionChat messages={MESSAGES} onSend={() => {}} />);
         const send = screen.getByTestId("chat-send") as HTMLButtonElement;
@@ -76,6 +102,35 @@ describe("SessionChat", () => {
         const send = screen.getByTestId("chat-send") as HTMLButtonElement;
         expect(send.disabled).toBe(true);
         fireEvent.click(send);
+        expect(onSend).not.toHaveBeenCalled();
+    });
+
+    // #1131 — Enter sends, Shift+Enter inserts a newline.
+    it("sends on Enter and clears the input", () => {
+        const onSend = vi.fn();
+        render(<SessionChat messages={MESSAGES} onSend={onSend} />);
+        const input = screen.getByTestId("chat-input") as HTMLTextAreaElement;
+        fireEvent.change(input, {target: {value: "   Frage   "}});
+        fireEvent.keyDown(input, {key: "Enter"});
+        expect(onSend).toHaveBeenCalledWith("Frage");
+        expect(input.value).toBe("");
+    });
+
+    it("does NOT send on Shift+Enter (newline)", () => {
+        const onSend = vi.fn();
+        render(<SessionChat messages={MESSAGES} onSend={onSend} />);
+        const input = screen.getByTestId("chat-input") as HTMLTextAreaElement;
+        fireEvent.change(input, {target: {value: "Frage"}});
+        fireEvent.keyDown(input, {key: "Enter", shiftKey: true});
+        expect(onSend).not.toHaveBeenCalled();
+    });
+
+    it("does not send on Enter when disabled", () => {
+        const onSend = vi.fn();
+        render(<SessionChat messages={MESSAGES} onSend={onSend} disabled />);
+        const input = screen.getByTestId("chat-input") as HTMLTextAreaElement;
+        fireEvent.change(input, {target: {value: "Frage"}});
+        fireEvent.keyDown(input, {key: "Enter"});
         expect(onSend).not.toHaveBeenCalled();
     });
 

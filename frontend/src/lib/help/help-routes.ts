@@ -61,6 +61,7 @@ export function docsHomeUrl(lang: string): string {
 const ROUTE_HELP_KEYS: ReadonlyArray<readonly [string, string]> = [
   ["/dashboard", "view_dashboard"],
   ["/content", "view_content_browser"],
+  ["/contribute", "view_content_browser"],
   ["/lesson", "view_lesson"],
   ["/review", "view_lesson"],
   ["/adaptive-lesson", "view_lesson"],

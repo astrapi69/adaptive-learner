@@ -17,16 +17,19 @@ import {
     newId,
     nowIso,
     type LearningProfileRow,
+    type LearningProjectRow,
     type LearningSessionRow,
     type SessionMessageRow,
     type StepEvaluationRow,
 } from "../dexie/db";
 import {
     buildAnalysisContext,
+    buildConversationContext,
     buildLanguageDirective,
     buildLearningContext,
     buildPrompt,
     type CompletedLesson,
+    type ConversationTurn,
     type InProgressLesson,
     type LearningContext,
     type RecentMistake,
@@ -240,6 +243,149 @@ async function resumeActiveImportedSession(
     };
 }
 
+/**
+ * Assemble the imported-chat context for the session system prompt: the
+ * structured analysis summary (#827) AND the raw transcript (#1078), in that
+ * order. Returns ``""`` when the conversation carries neither, so the caller
+ * can append unconditionally.
+ *
+ * @param db - The Dexie database.
+ * @param conversationId - The imported conversation id.
+ * @param lang - UI language for the block labels.
+ */
+async function buildImportedContextBlock(
+    db: AdaptiveLearnerDB,
+    conversationId: string,
+    lang: string,
+): Promise<string> {
+    const conv = await db.importedConversations.get(conversationId);
+    const analysis = conv?.analysis_result as
+        | ConversationAnalysisResult
+        | null
+        | undefined;
+    const messageRows = await db.importedMessages
+        .where("conversation_id")
+        .equals(conversationId)
+        .sortBy("order_index");
+    const turns: ConversationTurn[] = messageRows.map((row) => ({
+        role: row.role,
+        content: row.content,
+    }));
+    return [
+        buildAnalysisContext(analysis, lang),
+        buildConversationContext(turns, lang),
+    ]
+        .filter((block) => block)
+        .join("\n\n");
+}
+
+/**
+ * Compose the full session system prompt from its live sources: the
+ * method/step prompt cell (#827 matrix), the output-language directive, the
+ * imported-conversation block (analysis #827 + raw transcript #1078, only when
+ * the session is linked to an import) and the learner's lesson-progress block
+ * (#797). Re-reads everything from the DB, so the result reflects the CURRENT
+ * state, not a snapshot.
+ *
+ * Shared by {@link startSession} (to persist the initial copy) and the
+ * resume-time rebuild in {@link buildOutgoingHistory}.
+ */
+async function composeSystemPrompt(
+    db: AdaptiveLearnerDB,
+    opts: {
+        project: LearningProjectRow;
+        profile: LearningProfileRow | undefined;
+        method: LearningMethod;
+        cycleStep: number;
+        lang: string;
+        importedConversationId: string | null;
+    },
+): Promise<string> {
+    const {project, profile, method, cycleStep, lang, importedConversationId} = opts;
+    const projectDto: LearningProject = {
+        id: project.id,
+        user_id: project.user_id,
+        topic: project.topic,
+        goal: project.goal,
+        timeframe: project.timeframe,
+        daily_minutes: project.daily_minutes,
+        current_problem: project.current_problem,
+        active: project.active,
+        kind: (project.kind ?? "standard") as LearningProject["kind"],
+        created_at: project.created_at,
+        updated_at: project.updated_at,
+    };
+    let systemPrompt = buildPrompt(projectDto, profileRowToProfile(profile), method, cycleStep, lang);
+    // #827 — name the learner's output language explicitly (the prompt-cell
+    // matrix only carries DE + EN).
+    systemPrompt = `${systemPrompt}\n\n${buildLanguageDirective(lang)}`;
+    if (importedConversationId) {
+        // Imported-chat session: the imported conversation IS the topical
+        // focus. Do NOT add the lesson-progress block (#797) — its "Currently
+        // working on: <lesson>" line pulls the tutor off the imported topic
+        // onto an unrelated in-progress lesson (#1137 "Inception-Effekt": an
+        // active inception-example lesson hijacking an imported grammar chat).
+        const importedBlock = await buildImportedContextBlock(db, importedConversationId, lang);
+        if (importedBlock) systemPrompt = `${systemPrompt}\n\n${importedBlock}`;
+    } else {
+        // #797 — fold in the learner's lesson progress + recent mistakes so a
+        // normal (non-imported) session builds on real progress.
+        const learningBlock = await buildLearningContextForUser(
+            db,
+            project.user_id,
+            project.topic,
+            lang,
+        );
+        if (learningBlock) systemPrompt = `${systemPrompt}\n\n${learningBlock}`;
+    }
+    return systemPrompt;
+}
+
+/**
+ * Build the chronological message payload for the AI call.
+ *
+ * Rebuild-on-Resume (#1122): for a session linked to an imported conversation,
+ * the system prompt is REBUILT fresh from the conversation FK on every turn
+ * instead of replaying the frozen persisted copy. This makes later context
+ * improvements take effect for existing sessions, and — crucially — a missing
+ * or stale persisted `role=system` message still yields full context, because
+ * the imported chat itself (analysis + raw transcript) is the source of truth.
+ * For a non-imported session the persisted history is used as-is.
+ */
+async function buildOutgoingHistory(
+    db: AdaptiveLearnerDB,
+    sess: LearningSessionRow,
+    project: LearningProjectRow,
+): Promise<ChatMessage[]> {
+    const historyRows = await db.sessionMessages
+        .where("session_id")
+        .equals(sess.id)
+        .toArray();
+    historyRows.sort((a, b) => a.created_at.localeCompare(b.created_at));
+
+    if (!sess.imported_conversation_id) {
+        return historyRows.map((m) => ({role: m.role, content: m.content}));
+    }
+
+    const profile = await db.learningProfiles
+        .where("project_id")
+        .equals(project.id)
+        .first();
+    const owner = await db.users.get(project.user_id);
+    const freshSystem = await composeSystemPrompt(db, {
+        project,
+        profile,
+        method: sess.method as LearningMethod,
+        cycleStep: sess.cycle_step,
+        lang: owner?.language ?? "en",
+        importedConversationId: sess.imported_conversation_id,
+    });
+    const nonSystem = historyRows
+        .filter((m) => m.role !== "system")
+        .map((m) => ({role: m.role, content: m.content}));
+    return [{role: "system", content: freshSystem}, ...nonSystem];
+}
+
 export async function startSession(opts: {
     projectId: string;
     method?: LearningMethod;
@@ -299,62 +445,17 @@ export async function startSession(opts: {
     };
     await db.learningSessions.add(sessionRow);
 
-    const projectDto: LearningProject = {
-        id: project.id,
-        user_id: project.user_id,
-        topic: project.topic,
-        goal: project.goal,
-        timeframe: project.timeframe,
-        daily_minutes: project.daily_minutes,
-        current_problem: project.current_problem,
-        active: project.active,
-        // v1.31.0 / Phase 46F: Dexie-mode session-flow only
-        // operates on user-created projects (standard kind).
-        kind: (project.kind ?? "standard") as LearningProject["kind"],
-        created_at: project.created_at,
-        updated_at: project.updated_at,
-    };
-    let systemPrompt = buildPrompt(
-        projectDto,
-        profileRowToProfile(profile),
+    // Compose + persist the initial system prompt. For an imported session
+    // this same prompt is rebuilt fresh on every later turn (Rebuild-on-Resume,
+    // #1122) via buildOutgoingHistory, so the persisted copy is only the seed.
+    const systemPrompt = await composeSystemPrompt(db, {
+        project,
+        profile,
         method,
         cycleStep,
-        opts.lang ?? "en",
-    );
-    // #827 — the prompt-cell matrix only carries DE + EN, so for every other
-    // UI language the AI would otherwise reply in English. Append an explicit
-    // output-language directive naming the learner's language.
-    systemPrompt = `${systemPrompt}\n\n${buildLanguageDirective(opts.lang ?? "en")}`;
-    // When the session is started from an analysed chat import, fold the
-    // analysis into the system prompt so the AI continues with the
-    // imported context instead of starting blank. Mirrors the backend
-    // ``start_session`` analysis-context injection.
-    if (opts.importedConversationId) {
-        const conv = await db.importedConversations.get(
-            opts.importedConversationId,
-        );
-        const analysis = conv?.analysis_result as
-            | ConversationAnalysisResult
-            | null
-            | undefined;
-        const analysisBlock = buildAnalysisContext(analysis, opts.lang ?? "en");
-        if (analysisBlock) {
-            systemPrompt = `${systemPrompt}\n\n${analysisBlock}`;
-        }
-    }
-    // #797 — give the AI awareness of the learner's lesson progress
-    // (completed content + scores, the lesson in progress, recent
-    // mistakes) so it builds on real progress instead of answering
-    // generically. Empty for a learner with no lesson activity.
-    const learningBlock = await buildLearningContextForUser(
-        db,
-        project.user_id,
-        project.topic,
-        opts.lang ?? "en",
-    );
-    if (learningBlock) {
-        systemPrompt = `${systemPrompt}\n\n${learningBlock}`;
-    }
+        lang: opts.lang ?? "en",
+        importedConversationId: opts.importedConversationId ?? null,
+    });
     const systemMsg: SessionMessageRow = {
         id: newId(),
         session_id: sessionRow.id,
@@ -463,18 +564,10 @@ export async function sendMessage(opts: {
     const override = settings[`model_override_${provider}`] as string | null;
     const model = resolveModel(provider, override);
 
-    // Build the messages payload from the persisted chronological
-    // history. ``where().equals()`` doesn't preserve insertion
-    // order so we sort by created_at.
-    const historyRows = await db.sessionMessages
-        .where("session_id")
-        .equals(sess.id)
-        .toArray();
-    historyRows.sort((a, b) => a.created_at.localeCompare(b.created_at));
-    const history: ChatMessage[] = historyRows.map((m) => ({
-        role: m.role,
-        content: m.content,
-    }));
+    // Build the messages payload. For an imported session the system prompt
+    // is rebuilt fresh from the conversation FK (Rebuild-on-Resume, #1122);
+    // otherwise the persisted chronological history is used as-is.
+    const history: ChatMessage[] = await buildOutgoingHistory(db, sess, project);
 
     let assistantText: string;
     try {
@@ -657,15 +750,9 @@ export async function sendMessageStream(
     const override = settings[`model_override_${provider}`] as string | null;
     const model = resolveModel(provider, override);
 
-    const historyRows = await db.sessionMessages
-        .where("session_id")
-        .equals(sess.id)
-        .toArray();
-    historyRows.sort((a, b) => a.created_at.localeCompare(b.created_at));
-    const history: ChatMessage[] = historyRows.map((m) => ({
-        role: m.role,
-        content: m.content,
-    }));
+    // Rebuild-on-Resume for imported sessions (#1122); persisted history
+    // otherwise. Same contract as the non-stream sendMessage path.
+    const history: ChatMessage[] = await buildOutgoingHistory(db, sess, project);
 
     // Stream the assistant response, accumulating the full text
     // so we can persist it + feed it to the step evaluator after

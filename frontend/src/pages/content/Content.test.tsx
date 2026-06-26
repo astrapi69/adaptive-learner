@@ -822,16 +822,13 @@ describe("Content — My Lessons (Phase 59C)", () => {
     localStorage.clear();
   });
 
-  it("surfaces encouraging gap suggestions for missing levels", async () => {
-    // A published de->fr A1 set with no A2 -> a next-level gap.
+  it("no longer renders the 'Missing Lessons' gap block (#1149 — moved to /contribute)", async () => {
+    // A published de->fr A1 set with no A2 would be a next-level gap, but
+    // the gap block now lives in the dedicated /contribute area, not here.
     listSetsMock.mockResolvedValue({ sets: [SAMPLE_ENTRY], sources: [] });
     renderPage();
     await screen.findByTestId("content-page");
-    expect(await screen.findByTestId("content-gaps")).toBeInTheDocument();
-    const list = screen.getByTestId("content-gaps-list");
-    // The next missing CEFR level (A2) is suggested.
-    expect(list).toHaveTextContent("A2");
-    expect(list.querySelectorAll("li").length).toBeGreaterThan(0);
+    expect(screen.queryByTestId("content-gaps")).not.toBeInTheDocument();
   });
 });
 

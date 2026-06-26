@@ -89,6 +89,7 @@ nav:
   online: オンライン
   offline: オフライン
   anki: Anki
+  contribute: "貢献"
   dev_badge: DEV
   dev_badge_tooltip: "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
   content: "マイコンテンツ"
@@ -1630,6 +1631,8 @@ lesson:
     stats_avg: "平均解答時間: {s}秒"
     stats_fastest: "最速: {s}秒 ({type})"
     stats_slowest: "最遅: {s}秒 ({type})"
+  reverse:
+    not_reversible: "この問題形式は反転できません — 元の形式で表示しています。"
   resources_title: "さらに学ぶ"
   resources_domain: "{domain} についてもっと見る"
   motivation:
@@ -1814,6 +1817,7 @@ lesson:
     breakdown_heading: "演習の内訳"
     breakdown_correct_answer: "正解: {answer}"
     breakdown_unattempted: "未挑戦"
+    view_all_answers: "すべての回答を見る ({n})"
     export:
       copy: "結果をコピー"
       download: "ファイルとして保存"
@@ -1905,6 +1909,7 @@ content:
     progress: "ステップ {n}/{total}"
     imported_analysis: "インポートされた分析"
     lesson_fallback: "レッスン"
+    lesson_part: "{label} · パート{n}"
   import_chat:
     button: "チャットをインポート"
   search:
@@ -2224,6 +2229,11 @@ content:
     name_placeholder: '例: Maria S.'
     show_name: レッスンに名前を表示する
     privacy: "あなたの名前はレッスンとプルリクエストに表示されます。"
+contribute:
+  title: "貢献する"
+  intro: "不足している部分を補って、コミュニティライブラリの拡充に協力しましょう。"
+  loading: "読み込み中…"
+  empty: "現在、不足はありません。コミュニティライブラリはダウンロード済みのセットをカバーしています。ありがとうございます!"
 milestone:
   streak: "{n}日連続記録!"
   level_up: "レベル{n}に到達!"
@@ -2426,6 +2436,7 @@ learning_path:
   error_replay: "間違いを復習"
   train_errors: "間違いを練習"
   shuffle: "シャッフル"
+  endless: "エンドレス"
   personal:
     title: "あなたの学習パス"
     empty: "始めるにはレッスンセットをダウンロードしてください。"
@@ -2540,6 +2551,14 @@ share:
     copied: "コピーしました"
     share: "共有"
     qr_alt: "アプリへのリンクのQRコード"
+  result:
+    text: '「{title}」を{pct}%で完了しました！🎓 {total}問中{correct}問正解。'
+    cta_record: '友達に見せよう！'
+    cta_great: '素晴らしい結果をシェアしよう！'
+    cta_neutral: '結果をシェア'
+    cta_low: '結果をシェア'
+    image_complete: 'レッスン完了！'
+    image_score: '{total}問中{correct}問正解'
   achievement:
     button: 共有
     title: 進捗を共有
@@ -2940,6 +2959,33 @@ update:
     release_page: "リリースページ"
     later: "後で"
     whats_new_title: "{version} の新着情報"
+endless:
+  session_title: "エンドレス練習"
+  page_title: "エンドレス練習"
+  back_to_dashboard: "ダッシュボードに戻る"
+  loading: "練習セッションを読み込み中…"
+  empty_body: "このセットにはまだ練習する問題がありません。"
+  not_cached_body: "このセットはまだダウンロードされていません。先にコンテンツブラウザーを開いてダウンロードしてください。"
+  paused: "一時停止中 — ひと休みしましょう。"
+  resume: "再開"
+  pause: "一時停止"
+  end: "終了"
+  no_card: "今はもうカードがありません。"
+  stat:
+    cards: "{n} 枚"
+    correct: "{n} 正解"
+  error:
+    missing_params: "コンテンツセットが選択されていません。"
+    load_failed: "練習セッションを読み込めませんでした。"
+  summary:
+    heading: "練習セッション完了！"
+    duration: "時間"
+    cards: "カード"
+    correct: "正解"
+    reviews: "復習した数"
+    new: "新しく覚えた数"
+    errors: "練習した間違い"
+    xp: "練習XP"
 shuffle:
   session_title: "シャッフルセッション"
   page_title: "シャッフル"
@@ -2956,3 +3002,64 @@ shuffle:
     score: "{total}問中{correct}問正解"
     from_lessons: "{n}個の異なるレッスンから"
     another: "もう一度シャッフル"
+invitation_code:
+  title: "招待コード"
+  generate: "コードを生成"
+  generated: "コードを生成しました。"
+  needs_token: "招待コードを生成するには、このリポジトリのトークンを上で追加してください。"
+  never_expires: "有効期限なし"
+  redeemed_hint: "利用回数の集計にはデスクトップアプリが必要です。"
+  code_copied: "コードをコピーしました。"
+  link_copied: "招待リンクをコピーしました。"
+  qr_title: "招待コード"
+  qr_alt: "招待リンクのQRコード"
+  active:
+    title: "有効なコード"
+    empty: "まだコードがありません。"
+  field:
+    prefix: "接頭辞（任意）"
+    max_uses: "最大利用回数"
+    expires: "有効期限"
+    note: "メモ"
+    note_placeholder: "例: 8aクラス"
+  col:
+    code: "コード"
+    redeemed: "利用済み"
+    max: "最大"
+    valid: "有効"
+    actions: "操作"
+  badge:
+    inactive: "無効"
+  action:
+    copy_code: "コードをコピー"
+    copy_link: "リンクをコピー"
+    qr: "QRコード"
+    deactivate: "無効化"
+    redeem: "利用する"
+  error:
+    expired: "この招待コードは有効期限が切れています。"
+    inactive: "この招待コードは無効になりました。"
+    full: "この招待コードは上限に達しています。"
+    not_found: "招待コードが見つかりません。"
+    generate: "コードを生成できませんでした。"
+    repo_failed: "リポジトリを追加できませんでした: {reason}"
+    generic: "コードを利用できませんでした。もう一度お試しください。"
+  redeem:
+    title: "招待コードを利用する"
+    body: "指導者から受け取ったコードまたはリンクを入力して、そのレッスンを追加します。アカウントは不要です。"
+    label: "招待コードまたはリンク"
+    enter: "招待コードまたはリンクを入力してください。"
+    enter_cta: "招待コードを入力"
+    needs_link: "完全な招待リンクを貼り付けてください。コードが解放するリポジトリが含まれています。"
+    success: "コンテンツを追加しました: {sets} セット。"
+migration:
+  title: "オンライン版からデータを引き継ぐ"
+  body: "Adaptive Learner をオンラインで使いましたか？バックアップファイルで学習データを引き継げます。アカウントは不要です。"
+  hint: "オンライン版で: 設定、データ、バックアップを作成し、.alb ファイルをダウンロードしてここでインポートします。"
+  action:
+    import: "バックアップをインポート"
+    open_online: "オンライン版を開く"
+    start_fresh: "データなしで開始"
+  settings:
+    title: "オンライン版からインポート"
+    body: "Adaptive Learner をオンラインで使いましたか？そこでバックアップを作成し、上のインポートでデータを引き継いでください。"

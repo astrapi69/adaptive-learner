@@ -89,6 +89,7 @@ nav:
   online: Online
   offline: Offline
   anki: Anki
+  contribute: "Contribute"
   dev_badge: DEV
   dev_badge_tooltip: "Developer Mode is on — error toasts show full technical detail. Toggle in Settings."
   content: "My content"
@@ -1641,6 +1642,8 @@ lesson:
     stats_avg: "Average answer time: {s}s"
     stats_fastest: "Fastest: {s}s ({type})"
     stats_slowest: "Slowest: {s}s ({type})"
+  reverse:
+    not_reversible: "This exercise type can't be reversed — shown in its original format."
   resources_title: "Explore further"
   resources_domain: "More on {domain}"
   motivation:
@@ -1790,6 +1793,7 @@ lesson:
     breakdown_heading: "Exercise breakdown"
     breakdown_correct_answer: "Correct answer: {answer}"
     breakdown_unattempted: "Not attempted"
+    view_all_answers: "View all answers ({n})"
     export:
       copy: "Copy result"
       download: "Save as file"
@@ -1916,6 +1920,7 @@ content:
     progress: "Step {n}/{total}"
     imported_analysis: "Imported analysis"
     lesson_fallback: "Lesson"
+    lesson_part: "{label} · Part {n}"
   import_chat:
     button: "Import Chat"
   search:
@@ -2235,6 +2240,11 @@ content:
     name_placeholder: e.g. Maria S.
     show_name: Show name in lesson
     privacy: "Your name will be shown in the lesson and the pull request."
+contribute:
+  title: "Contribute"
+  intro: "Help grow the community library by filling its gaps."
+  loading: "Loading…"
+  empty: "No gaps right now — the community library covers your downloaded sets. Thank you!"
 milestone:
   streak: "{n}-Day Streak!"
   level_up: "Level {n} reached!"
@@ -2436,6 +2446,7 @@ learning_path:
   error_replay: "Retry errors"
   train_errors: "Train errors"
   shuffle: "Shuffle"
+  endless: "Endless"
   personal:
     title: "Your Learning Path"
     empty: "Download a lesson set to begin."
@@ -2550,6 +2561,14 @@ share:
     copied: "Copied"
     share: "Share"
     qr_alt: "QR code linking to the app"
+  result:
+    text: 'I completed "{title}" with {pct}%! 🎓 {correct} of {total} correct.'
+    cta_record: 'Show your friends!'
+    cta_great: 'Share your great result!'
+    cta_neutral: 'Share result'
+    cta_low: 'Share result'
+    image_complete: 'Lesson complete!'
+    image_score: '{correct} of {total} correct'
   achievement:
     button: Share
     title: Share your progress
@@ -2950,6 +2969,33 @@ update:
     release_page: "Release page"
     later: "Later"
     whats_new_title: "What's new in {version}"
+endless:
+  session_title: "Endless practice"
+  page_title: "Endless practice"
+  back_to_dashboard: "Back to Dashboard"
+  loading: "Loading practice session…"
+  empty_body: "This set has no exercises to practise yet."
+  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
+  paused: "Paused — take a breather."
+  resume: "Resume"
+  pause: "Pause"
+  end: "End"
+  no_card: "No more cards right now."
+  stat:
+    cards: "{n} cards"
+    correct: "{n} correct"
+  error:
+    missing_params: "No content set selected."
+    load_failed: "Could not load the practice session."
+  summary:
+    heading: "Practice session complete!"
+    duration: "Duration"
+    cards: "Cards"
+    correct: "Correct"
+    reviews: "Reviews done"
+    new: "New learned"
+    errors: "Errors practised"
+    xp: "Practice XP"
 shuffle:
   session_title: "Shuffle session"
   page_title: "Shuffle"
@@ -2966,3 +3012,64 @@ shuffle:
     score: "{correct} of {total} correct"
     from_lessons: "from {n} different lessons"
     another: "Shuffle again"
+invitation_code:
+  title: "Invitation codes"
+  generate: "Generate code"
+  generated: "Code generated."
+  needs_token: "Add a token for this repository (above) to generate invitation codes."
+  never_expires: "No expiry"
+  redeemed_hint: "Redemption counts need the desktop app."
+  code_copied: "Code copied."
+  link_copied: "Invite link copied."
+  qr_title: "Invitation code"
+  qr_alt: "QR code for the invitation link"
+  active:
+    title: "Active codes"
+    empty: "No codes yet."
+  field:
+    prefix: "Prefix (optional)"
+    max_uses: "Max. redemptions"
+    expires: "Valid until"
+    note: "Note"
+    note_placeholder: "e.g. Class 8a"
+  col:
+    code: "Code"
+    redeemed: "Redeemed"
+    max: "Max"
+    valid: "Valid"
+    actions: "Actions"
+  badge:
+    inactive: "Inactive"
+  action:
+    copy_code: "Copy code"
+    copy_link: "Copy link"
+    qr: "QR code"
+    deactivate: "Deactivate"
+    redeem: "Redeem"
+  error:
+    expired: "This invitation code has expired."
+    inactive: "This invitation code is no longer active."
+    full: "This invitation code is full."
+    not_found: "Invitation code not found."
+    generate: "Could not generate the code."
+    repo_failed: "Could not add the repository: {reason}"
+    generic: "Could not redeem the code. Try again."
+  redeem:
+    title: "Redeem an invitation code"
+    body: "Enter the code or link your coach gave you to add their lessons. No account needed."
+    label: "Invitation code or link"
+    enter: "Enter an invitation code or link."
+    enter_cta: "Enter invitation code"
+    needs_link: "Paste the full invitation link. It carries the repository the code unlocks."
+    success: "Content added: {sets} sets."
+migration:
+  title: "Bring your data from the online version"
+  body: "Have you used Adaptive Learner online? Bring your learning data over with a backup file. No account needed."
+  hint: "In the online version: Settings, Data, Create backup, download the .alb file, then import it here."
+  action:
+    import: "Import backup"
+    open_online: "Open online version"
+    start_fresh: "Start without data"
+  settings:
+    title: "Import from the online version"
+    body: "Used Adaptive Learner online? Create a backup there, then use Import above to bring your data over."

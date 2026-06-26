@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, type FormEvent} from "react";
+import {useEffect, useRef, useState, type FormEvent, type KeyboardEvent} from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -40,6 +40,9 @@ interface SessionChatProps {
     disabled?: boolean;
     /** Optional placeholder override for the textarea. */
     placeholder?: string;
+    /** #1143 — for an imported-chat session, the empty-state intro names the
+     *  imported chat's topic (e.g. "Reflexive Verben"). */
+    introTopic?: string | null;
 }
 
 /**
@@ -53,6 +56,7 @@ export default function SessionChat({
     onSend,
     disabled = false,
     placeholder,
+    introTopic,
 }: SessionChatProps) {
     const {t} = useI18n();
     const tooltipsOn = useButtonTooltips();
@@ -75,12 +79,26 @@ export default function SessionChat({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const submit = () => {
         const trimmed = draft.trim();
         if (!trimmed || disabled) return;
         onSend(trimmed);
         setDraft("");
+    };
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        submit();
+    };
+
+    // Enter sends the message; Shift+Enter inserts a newline (standard chat
+    // composer behaviour). A <textarea> never submits its form on Enter on its
+    // own, so this is what makes the keyboard send work.
+    const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            submit();
+        }
     };
 
     // v1.23.1 / Bug 7 follow-up — the system-prompt message
@@ -111,9 +129,23 @@ export default function SessionChat({
                             fontStyle: "italic",
                         }}
                     >
-                        {t(
-                            "session.welcome_empty",
-                            "Ready to learn! Write your first message.",
+                        {introTopic ? (
+                            <>
+                                <div data-testid="chat-intro-topic">
+                                    {t("session.topic_label", "Topic")}: {introTopic}
+                                </div>
+                                <div style={{marginTop: "0.5rem"}}>
+                                    {t(
+                                        "session.welcome_empty",
+                                        "Ready to learn! Write your first message.",
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            t(
+                                "session.welcome_empty",
+                                "Ready to learn! Write your first message.",
+                            )
                         )}
                     </div>
                 )}
@@ -240,6 +272,7 @@ export default function SessionChat({
                     rows={2}
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder={
                         placeholder ??
                         t("session.message_placeholder", "Write your reply…")

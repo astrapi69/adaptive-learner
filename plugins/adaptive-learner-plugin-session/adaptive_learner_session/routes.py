@@ -78,18 +78,14 @@ from app.services.ai_caller import build_ai_caller
 
 from . import pronunciation as _pronunciation
 from . import streaming
-from .prompts import build_language_directive, build_prompt
 from .route_helpers import (
-    _analysis_context_for,
     _fire_on_session_complete,
     _get_project,
     _get_session,
     _is_language_project,
     _latest_profile,
-    _learning_context_for,
     _pick_initial_method,
-    _profile_to_dict,
-    _project_to_dict,
+    compose_system_prompt,
 )
 from .route_schemas import (
     _EndBody,
@@ -173,38 +169,27 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
     db.commit()
     db.refresh(sess)
 
+    # Compose the system prompt from its live sources. The imported-vs-
+    # learning branch lives in compose_system_prompt: an imported session
+    # folds in the analysis (#827) + raw transcript (#1078) and SKIPS the
+    # lesson-progress block (#1137 — #797's "Currently working on" line would
+    # otherwise drag the tutor onto an unrelated lesson); a normal session
+    # folds in the lesson-progress block (#797) instead. For an imported
+    # session this same prompt is rebuilt fresh on every later turn
+    # (Rebuild-on-Resume, #1122) via build_outgoing_history, so the persisted
+    # copy below is only the seed.
     try:
-        prompt = build_prompt(
-            project=_project_to_dict(project),
-            profile=_profile_to_dict(profile),
+        prompt = compose_system_prompt(
+            db,
+            project=project,
+            profile=profile,
             method=method_key,
             step=payload.cycle_step,
             lang=payload.lang,
+            imported_conversation_id=payload.imported_conversation_id,
         )
     except ValueError as exc:
         raise ValidationError(str(exc)) from exc
-
-    # #827 — the prompt-cell matrix only carries DE + EN, so for every other
-    # UI language the AI would otherwise reply in English. Append an explicit
-    # output-language directive naming the learner's language.
-    prompt = f"{prompt}\n\n{build_language_directive(payload.lang)}"
-
-    # When the session is started from an analysed chat import, fold the
-    # analysis (topic / summary / level / strengths / weaknesses / error
-    # patterns / vocabulary / suggested curriculum) into the system
-    # prompt so the AI continues with the imported context instead of
-    # starting blank.
-    analysis_block = _analysis_context_for(db, payload.imported_conversation_id, payload.lang)
-    if analysis_block:
-        prompt = f"{prompt}\n\n{analysis_block}"
-
-    # #797 — give the AI awareness of the learner's lesson progress
-    # (completed content + scores, the lesson in progress, recent
-    # mistakes) so it builds on real progress instead of answering
-    # generically. Empty for a learner with no lesson activity.
-    learning_block = _learning_context_for(db, project, payload.lang)
-    if learning_block:
-        prompt = f"{prompt}\n\n{learning_block}"
 
     # v0.2.0: persist the system prompt as a real SessionMessage so
     # subsequent /message calls (where the AI orchestrator loads

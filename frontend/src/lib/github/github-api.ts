@@ -143,7 +143,10 @@ export class GitHubApi {
     private readonly token: string,
     options: GitHubApiOptions = {},
   ) {
-    this.fetchImpl = options.fetchImpl ?? fetch;
+    // Bind to globalThis: the native ``fetch`` throws "Illegal invocation"
+    // when called as a method (``this.fetchImpl(...)``) because its receiver
+    // must be the global object, not the GitHubApi instance.
+    this.fetchImpl = options.fetchImpl ?? fetch.bind(globalThis);
     this.sleep =
       options.sleep ?? ((ms) => new Promise((res) => setTimeout(res, ms)));
     this.forkPollAttempts = options.forkPollAttempts ?? 10;
@@ -505,6 +508,87 @@ export class GitHubApi {
       [200],
     );
     return { commitUrl: commit.body.html_url };
+  }
+
+  // --- Single-file content helpers (#1093 invitation codes) ---------------
+
+  /**
+   * GET a single file's decoded UTF-8 content + blob sha via the Contents API,
+   * or null when it does not exist (404). Throws on any other error status.
+   */
+  async getFile(
+    ownerRepo: string,
+    path: string,
+    ref?: string,
+  ): Promise<{ content: string; sha: string } | null> {
+    const query = ref ? `?ref=${encodeURIComponent(ref)}` : "";
+    const resp = await this.call<{ content?: string; sha?: string }>(
+      "GET",
+      `/repos/${ownerRepo}/contents/${encodeURI(path)}${query}`,
+    );
+    if (resp.status === 404) return null;
+    if (!resp.ok || !resp.body?.content || !resp.body?.sha) {
+      throw new ApiError(
+        resp.status,
+        `GitHub GET contents/${path}: ${githubErrorDetail(resp.body)}`,
+        path,
+        "GET",
+      );
+    }
+    return { content: base64ToUtf8(resp.body.content), sha: resp.body.sha };
+  }
+
+  /**
+   * List a directory's entries (name + path + type) via the Contents API.
+   * Returns ``[]`` when the directory does not exist (404). Throws on any
+   * other error status.
+   */
+  async listDir(
+    ownerRepo: string,
+    path: string,
+    ref?: string,
+  ): Promise<Array<{ name: string; path: string; type: string }>> {
+    const query = ref ? `?ref=${encodeURIComponent(ref)}` : "";
+    const resp = await this.call<
+      Array<{ name: string; path: string; type: string }>
+    >("GET", `/repos/${ownerRepo}/contents/${encodeURI(path)}${query}`);
+    if (resp.status === 404) return [];
+    if (!resp.ok || !Array.isArray(resp.body)) {
+      throw new ApiError(
+        resp.status,
+        `GitHub GET contents/${path}: ${githubErrorDetail(resp.body)}`,
+        path,
+        "GET",
+      );
+    }
+    return resp.body;
+  }
+
+  /**
+   * Create or update a single file via the Contents API. Pass the existing
+   * blob ``sha`` to update; omit it to create. Returns the new commit's sha.
+   */
+  async putFile(
+    ownerRepo: string,
+    branch: string,
+    path: string,
+    content: string,
+    message: string,
+    sha?: string,
+  ): Promise<{ commitSha: string }> {
+    const body: Record<string, unknown> = {
+      message,
+      content: utf8ToBase64(content),
+      branch,
+    };
+    if (sha) body.sha = sha;
+    const resp = await this.require<{ commit: { sha: string } }>(
+      "PUT",
+      `/repos/${ownerRepo}/contents/${encodeURI(path)}`,
+      body,
+      [200, 201],
+    );
+    return { commitSha: resp.body.commit.sha };
   }
 }
 

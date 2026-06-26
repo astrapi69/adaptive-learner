@@ -7,7 +7,7 @@ import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 
 import ImportDetail from "./ImportDetail";
 import { DerivedFeatureProvider } from "../../features/testFeatureProvider";
@@ -329,5 +329,105 @@ describe("ImportDetail page", () => {
     expect(screen.queryByTestId("analysis-loading")).toBeNull();
     expect((screen.getByTestId("analyze-button") as HTMLButtonElement).disabled).toBe(false);
     saveSpy.mockRestore();
+  });
+});
+
+/**
+ * Short-Circuit 1 (UI): startOrResumeSession() — when an active session
+ * exists the "Continue session" click only navigates (no start()); with no
+ * active session it calls start() WITH the imported_conversation_id FK.
+ * Pins the UI half of the imported-session resume path.
+ */
+function LocationProbe() {
+  const loc = useLocation();
+  return <div data-testid="loc">{loc.pathname + loc.search}</div>;
+}
+
+async function seedAnalysedConvWithProject() {
+  const user = await dexieStorage.users.create({ name: "A", language: "en" });
+  localStorage.setItem("adaptive-learner.user_id", user.id);
+  await dexieStorage.settings.setApiKey(user.id, { provider: "anthropic", key: "k" });
+  const project = await dexieStorage.users.projects.create(user.id, {
+    topic: "T",
+    goal: "G",
+    timeframe: "1w",
+    daily_minutes: 10,
+  });
+  localStorage.setItem("adaptive-learner.project_id", project.id);
+  const conv = await dexieStorage.imports.create(user.id, {
+    source: "manual",
+    title: "Test conversation",
+    messages: [
+      { role: "user", content: "Question one" },
+      { role: "assistant", content: "Answer one" },
+    ],
+  });
+  await dexieStorage.imports.saveAnalysis(conv.id, {
+    analysis_result: {
+      topic: "Test Topic",
+      user_level: "beginner",
+      summary: "A short summary.",
+      strengths: ["Clear question"],
+      weaknesses: ["Lacks detail"],
+      recommended_method: "inductive",
+      recommended_focus: "Practice more.",
+      suggested_curriculum: [{ title: "Lesson 1", description: "Intro", priority: 1 }],
+    },
+  });
+  return { userId: user.id, projectId: project.id, conv };
+}
+
+function renderDetailWithSessionRoute(conversationId: string) {
+  return render(
+    <I18nProvider>
+      <DerivedFeatureProvider>
+        <MemoryRouter initialEntries={[`/import/${conversationId}`]}>
+          <Routes>
+            <Route path="/import/:conversationId" element={<ImportDetail />} />
+            <Route path="/session" element={<LocationProbe />} />
+          </Routes>
+        </MemoryRouter>
+      </DerivedFeatureProvider>
+    </I18nProvider>,
+  );
+}
+
+describe("ImportDetail: Short-Circuit 1 (startOrResumeSession)", () => {
+  it("active session exists: click navigates to ?session=<id>, start() NOT called", async () => {
+    const { projectId, conv } = await seedAnalysedConvWithProject();
+    // Pre-create an ACTIVE session linked to this conversation.
+    const active = await dexieStorage.session.start({
+      project_id: projectId,
+      lang: "en",
+      imported_conversation_id: conv.id,
+    });
+    const startSpy = vi.spyOn(dexieStorage.session, "start");
+
+    renderDetailWithSessionRoute(conv.id);
+
+    const btn = await screen.findByTestId("continue-session-button");
+    await userEvent.click(btn);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loc").textContent).toBe(
+        `/session?session=${active.session.id}`,
+      );
+    });
+    expect(startSpy).not.toHaveBeenCalled();
+  });
+
+  it("no active session: click calls start() with imported_conversation_id", async () => {
+    const { conv } = await seedAnalysedConvWithProject();
+    const startSpy = vi.spyOn(dexieStorage.session, "start");
+
+    renderDetailWithSessionRoute(conv.id);
+
+    const btn = await screen.findByTestId("start-session-button");
+    await userEvent.click(btn);
+
+    await waitFor(() => expect(startSpy).toHaveBeenCalledTimes(1));
+    expect(startSpy.mock.calls[0][0]).toMatchObject({
+      imported_conversation_id: conv.id,
+    });
   });
 });

@@ -97,6 +97,7 @@
     "online": "Online",
     "offline": "Offline",
     "anki": "Anki",
+    "contribute": "Beitragen",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Entwicklermodus aktiv — Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar.",
     "content": "Meine Inhalte",
@@ -1758,6 +1759,9 @@
       "stats_fastest": "Schnellste: {s}s ({type})",
       "stats_slowest": "Langsamste: {s}s ({type})"
     },
+    "reverse": {
+      "not_reversible": "Dieser Aufgabentyp lässt sich nicht umkehren — er wird im Originalformat angezeigt."
+    },
     "resources_title": "Vertiefe das Thema",
     "resources_domain": "Mehr zum Thema {domain}",
     "motivation": {
@@ -1966,6 +1970,7 @@
       "breakdown_heading": "Übungs-Übersicht",
       "breakdown_correct_answer": "Richtige Antwort: {answer}",
       "breakdown_unattempted": "Nicht versucht",
+      "view_all_answers": "Alle Antworten ansehen ({n})",
       "export": {
         "copy": "Ergebnis kopieren",
         "download": "Als Datei speichern",
@@ -2065,7 +2070,8 @@
       "empty": "Starte deine erste Lektion!",
       "progress": "Aufgabe {n}/{total}",
       "imported_analysis": "Importierte Analyse",
-      "lesson_fallback": "Lektion"
+      "lesson_fallback": "Lektion",
+      "lesson_part": "{label} · Teil {n}"
     },
     "import_chat": {
       "button": "Chat importieren"
@@ -2421,6 +2427,12 @@
       "privacy": "Dein Name wird in der Lektion und im Pull Request angezeigt."
     }
   },
+  "contribute": {
+    "title": "Beitragen",
+    "intro": "Hilf mit, die Community-Bibliothek zu erweitern, indem du ihre Lücken füllst.",
+    "loading": "Wird geladen…",
+    "empty": "Aktuell keine Lücken — die Community-Bibliothek deckt deine heruntergeladenen Sets ab. Danke!"
+  },
   "milestone": {
     "streak": "{n}-Tage-Serie!",
     "level_up": "Level {n} erreicht!",
@@ -2659,6 +2671,7 @@
     "error_replay": "Fehler wiederholen",
     "train_errors": "Fehler trainieren",
     "shuffle": "Zufallsmodus",
+    "endless": "Endlos",
     "personal": {
       "title": "Dein Lernpfad",
       "empty": "Lade ein Lektionsset herunter, um zu beginnen.",
@@ -2786,6 +2799,15 @@
       "copied": "Kopiert",
       "share": "Teilen",
       "qr_alt": "QR-Code, der zur App führt"
+    },
+    "result": {
+      "text": "Ich habe \"{title}\" mit {pct}% abgeschlossen! 🎓 {correct} von {total} richtig.",
+      "cta_record": "Zeig es deinen Freunden!",
+      "cta_great": "Teile dein tolles Ergebnis!",
+      "cta_neutral": "Ergebnis teilen",
+      "cta_low": "Ergebnis teilen",
+      "image_complete": "Lektion abgeschlossen!",
+      "image_score": "{correct} von {total} richtig"
     },
     "achievement": {
       "button": "Teilen",
@@ -3219,6 +3241,37 @@
       "whats_new_title": "Was ist neu in {version}"
     }
   },
+  "endless": {
+    "session_title": "Endlos-Übung",
+    "page_title": "Endlos-Übung",
+    "back_to_dashboard": "Zurück zum Dashboard",
+    "loading": "Übungssitzung wird geladen…",
+    "empty_body": "Dieses Set hat noch keine Übungen zum Üben.",
+    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
+    "paused": "Pausiert — mach eine kurze Pause.",
+    "resume": "Fortsetzen",
+    "pause": "Pause",
+    "end": "Beenden",
+    "no_card": "Im Moment keine weiteren Karten.",
+    "stat": {
+      "cards": "{n} Karten",
+      "correct": "{n} richtig"
+    },
+    "error": {
+      "missing_params": "Kein Inhaltsset ausgewählt.",
+      "load_failed": "Übungssitzung konnte nicht geladen werden."
+    },
+    "summary": {
+      "heading": "Übungssitzung abgeschlossen!",
+      "duration": "Dauer",
+      "cards": "Karten",
+      "correct": "Richtig",
+      "reviews": "Wiederholungen erledigt",
+      "new": "Neu gelernt",
+      "errors": "Fehler geübt",
+      "xp": "Übungs-XP"
+    }
+  },
   "shuffle": {
     "session_title": "Zufallssitzung",
     "page_title": "Zufallsmodus",
@@ -3236,6 +3289,78 @@
       "score": "{correct} von {total} richtig",
       "from_lessons": "aus {n} verschiedenen Lektionen",
       "another": "Nochmal mischen"
+    }
+  },
+  "invitation_code": {
+    "title": "Einladungscodes",
+    "generate": "Code generieren",
+    "generated": "Code generiert.",
+    "needs_token": "Füge oben ein Token für dieses Repository hinzu, um Einladungscodes zu erzeugen.",
+    "never_expires": "Kein Ablauf",
+    "redeemed_hint": "Einlösungszahlen benötigen die Desktop-App.",
+    "code_copied": "Code kopiert.",
+    "link_copied": "Einladungslink kopiert.",
+    "qr_title": "Einladungscode",
+    "qr_alt": "QR-Code für den Einladungslink",
+    "active": {
+      "title": "Aktive Codes",
+      "empty": "Noch keine Codes."
+    },
+    "field": {
+      "prefix": "Präfix (optional)",
+      "max_uses": "Max. Einlösungen",
+      "expires": "Gültig bis",
+      "note": "Notiz",
+      "note_placeholder": "z. B. Klasse 8a"
+    },
+    "col": {
+      "code": "Code",
+      "redeemed": "Eingelöst",
+      "max": "Max.",
+      "valid": "Gültig",
+      "actions": "Aktionen"
+    },
+    "badge": {
+      "inactive": "Inaktiv"
+    },
+    "action": {
+      "copy_code": "Code kopieren",
+      "copy_link": "Link kopieren",
+      "qr": "QR-Code",
+      "deactivate": "Deaktivieren",
+      "redeem": "Einlösen"
+    },
+    "error": {
+      "expired": "Dieser Einladungscode ist abgelaufen.",
+      "inactive": "Dieser Einladungscode ist nicht mehr aktiv.",
+      "full": "Dieser Einladungscode ist voll.",
+      "not_found": "Einladungscode nicht gefunden.",
+      "generate": "Code konnte nicht erzeugt werden.",
+      "repo_failed": "Repository konnte nicht hinzugefügt werden: {reason}",
+      "generic": "Code konnte nicht eingelöst werden. Bitte erneut versuchen."
+    },
+    "redeem": {
+      "title": "Einladungscode einlösen",
+      "body": "Gib den Code oder Link deiner Lehrkraft ein, um deren Lektionen hinzuzufügen. Kein Konto nötig.",
+      "label": "Einladungscode oder Link",
+      "enter": "Gib einen Einladungscode oder Link ein.",
+      "enter_cta": "Einladungscode eingeben",
+      "needs_link": "Füge den vollständigen Einladungslink ein. Er enthält das Repository, das der Code freischaltet.",
+      "success": "Inhalt hinzugefügt: {sets} Sets."
+    }
+  },
+  "migration": {
+    "title": "Übernimm deine Daten aus der Online-Version",
+    "body": "Hast du Adaptive Learner online genutzt? Übernimm deine Lerndaten mit einer Backup-Datei. Kein Konto nötig.",
+    "hint": "In der Online-Version: Einstellungen, Daten, Backup erstellen, die .alb-Datei herunterladen und hier importieren.",
+    "action": {
+      "import": "Backup importieren",
+      "open_online": "Online-Version öffnen",
+      "start_fresh": "Ohne Daten starten"
+    },
+    "settings": {
+      "title": "Aus der Online-Version importieren",
+      "body": "Adaptive Learner online genutzt? Erstelle dort ein Backup und nutze oben Importieren, um deine Daten zu übernehmen."
     }
   }
 }

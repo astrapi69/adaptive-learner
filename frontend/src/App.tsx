@@ -38,7 +38,10 @@ const AnkiPage = lazyWithReload(() => import("./pages/content/Anki"));
 const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"));
 // #856 — Discover + My-content + Import merged into one tabbed hub at /content.
 const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
+// #1149 — "Beitragen": the community-gaps block moved out of Meine Inhalte.
+const Contribute = lazyWithReload(() => import("./pages/content/Contribute"));
 const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
+const RedeemInvite = lazyWithReload(() => import("./pages/content/RedeemInvite"));
 const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
 const LearningPath = lazyWithReload(() => import("./pages/learning-path/LearningPathPersonal"));
 const Dashboard = lazyWithReload(() => import("./pages/dashboard/Dashboard"));
@@ -46,6 +49,7 @@ const LessonPage = lazyWithReload(() => import("./pages/lesson/Lesson"));
 const ReviewPage = lazyWithReload(() => import("./pages/lesson/Review"));
 const AdaptiveLessonPage = lazyWithReload(() => import("./pages/lesson/AdaptiveLesson"));
 const ShuffleLessonPage = lazyWithReload(() => import("./pages/lesson/ShuffleLesson"));
+const EndlessLessonPage = lazyWithReload(() => import("./pages/lesson/EndlessLesson"));
 const ErrorReplayLessonPage = lazyWithReload(() => import("./pages/lesson/ErrorReplayLesson"));
 const ImportDetail = lazyWithReload(() => import("./pages/content/ImportDetail"));
 const LearningRepoPage = lazyWithReload(() => import("./pages/content/LearningRepo"));
@@ -185,17 +189,20 @@ export default function App() {
                   element={<Navigate to="/content?tab=discover" replace />}
                 />
                 <Route path="/content" element={<ContentHub />} />
+                <Route path="/contribute" element={<Contribute />} />
                 <Route path="/content/import/:conversationId" element={<ImportDetail />} />
                 {/* Old import-detail link kept alive for existing bookmarks. */}
                 <Route path="/import/:conversationId" element={<ImportDetail />} />
                 <Route path="/anki" element={<AnkiPage />} />
                 <Route path="/add-repo" element={<AddRepo />} />
+                <Route path="/invite" element={<RedeemInvite />} />
                 <Route path="/learning-path" element={<LearningPath />} />
                 <Route path="/create-lesson" element={<CreateLesson />} />
                 <Route path="/lesson/:setSlug/:setId/:filename" element={<LessonPage />} />
                 <Route path="/review/:setId" element={<ReviewPage />} />
                 <Route path="/adaptive-lesson/:setId" element={<AdaptiveLessonPage />} />
                 <Route path="/shuffle-lesson/:setId" element={<ShuffleLessonPage />} />
+                <Route path="/endless-lesson/:setId" element={<EndlessLessonPage />} />
                 <Route
                   path="/error-replay/:setSlug/:setId/:filename"
                   element={<ErrorReplayLessonPage />}
