@@ -70,6 +70,13 @@ Three guards, all in `make test`:
 Companion pins: `themes.test.ts` (every theme defines the same token
 set), `contrast.test.ts` (WCAG AA across all 12 themes).
 
+Standalone CLI gate (#1169): `make verify-theme` runs
+`scripts/verify_theme.py` (stdlib-only token-completeness + undefined
+`var()`-reference + WCAG-contrast + semantic-badge-contrast matrix gate,
+with a `.theme-baseline.json` ratchet) and then calls the three Vitest
+guards above. Use it as a single theme gate where the node toolchain is
+not available; see `docs/DESIGN-TOKENS.md` § Enforcement.
+
 When adding a setting/feature that needs a new color: add a token, do
 not inline a value. If it varies by theme, add it to all 12
 `theme-*.css`; if it is the same everywhere, add it to `global.css

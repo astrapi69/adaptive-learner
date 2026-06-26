@@ -150,3 +150,33 @@ three guards:
 
 Companions: `themes.test.ts` (token parity) and `contrast.test.ts`
 (WCAG AA across all 12 themes).
+
+### `make verify-theme` — the standalone CLI gate (#1169)
+
+`scripts/verify_theme.py` is a stdlib-only gate that re-checks the token
+**matrix** directly from `styles/themes/theme-*.css`, so a theme gate
+exists even where the node/vitest toolchain cannot run (CI/release
+contexts before an npm install). It bundles four checks:
+
+- **token-completeness** — every theme defines the reference (`light`)
+  token set (no light-fallthrough).
+- **undefined-refs** — every *fallback-less* `var(--name)` in any CSS
+  file resolves to a defined token (`var(--name, <fallback>)` is
+  intentional defaulting and is skipped). The Vitest suite does not do
+  this check.
+- **contrast** — WCAG 2.1 AA across all themes for the rendered
+  text/background pairs (mirrors `contrast.test.ts`, incl. the
+  `color-mix` matching tints).
+- **semantic-contrast** — status badge tints (success/warning/error/info
+  on their `-bg` surfaces) stay legible across all variants.
+
+`make verify-theme` runs this gate (`--enforce`) **and then calls** the
+three Vitest guards above (no duplication of the literal scan). The
+Python gate carries a **baseline ratchet** (`.theme-baseline.json`):
+only NEW violations vs the baseline fail `--enforce`, and the baseline
+only shrinks. The current state is clean (0 known violations), so the
+gate is hard-enforced. Re-record the baseline with
+`make verify-theme-baseline-update` when intentionally deferring debt.
+
+Not yet wired into `release-test` / PR CI — that is a follow-up decision
+(see #1169).

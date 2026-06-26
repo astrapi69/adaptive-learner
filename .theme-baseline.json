@@ -1,0 +1,4 @@
+{
+  "_comment": "Baseline of known theme/token violations for scripts/verify_theme.py. Ratchet: only NEW violations fail --enforce. Prune entries as they are fixed; do not add by hand.",
+  "violations": {}
+}
