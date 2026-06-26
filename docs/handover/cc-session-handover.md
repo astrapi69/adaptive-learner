@@ -1,135 +1,128 @@
-# CC Session Handover — docker-app-launcher + Adaptive Learner launcher
+# CC Session Handover
 
-**Date:** 2026-06-24
-**TL;DR:** Everything in the "offene Punkte 1–11" list is **already done and
-published as `docker-app-launcher` 0.8.0 on PyPI**. The *only* open item is
-merging the Adaptive Learner bump PR **#1103** (launcher dep → `^0.8.0`), which
-was at **11/12 CI checks green (1 pending)** when this session ended.
+> Stand: 2026-06-25. Für die nächste Session. Zwei Aufgaben in Reihenfolge:
+> **(1) Backend-Folgeschritt für importierte Chats**, danach **(2) Release v1.96.0**.
 
----
+## Kontext: was seit v1.95.0 gelaufen ist
 
-## Repos + branches + status
+`develop` trägt 58 Commits seit v1.95.0 (Version noch `1.95.0`, Release nicht
+getaggt). Schwerpunkt der letzten Sitzung: **importierte Lernchats** im
+**Dexie-Mode** (GH-Pages/Preview) end-to-end repariert:
 
-| Repo | Path | Branch | Last commit | Status |
-|------|------|--------|-------------|--------|
-| docker-app-launcher | `~/dev/git/hub/astrapi69/docker-app-launcher` | `main` | `4410748 chore(release): v0.8.0` | **Clean. v0.8.0 tagged + on PyPI. Nothing open.** |
-| adaptive-learner | `~/dev/git/hub/astrapi69/adaptive-learner` | `develop` | `0af7ba02 fix(github)...` | **PR #1103 open** (branch `chore/launcher-0.8.0`), bumps launcher dep `^0.7.0 → ^0.8.0`. |
+- #1078 Roh-Transkript als Kontext · #1122 Rebuild-on-Resume (kein eingefrorener
+  Prompt) · #1137 kein „Inception-Drift" (Lernfortschritt #797 bei Import
+  unterdrückt) · #1147 `session.get()`-DTO trug `imported_conversation_id` nicht
+  (Wurzel-Bug für Header/Intro) · #1141 Header-Thema · #1143 leerer Start +
+  Themen-Intro · #1133/#1148 API-Key-UX · #1131 Enter sendet · #1129 Session-Nav.
+- assistant-ui: #1127 Plan + #1128 Phase-0-Spike (`?ui=assistant`), Umbrella
+  **#1126** offen (Phasen 1-4).
 
-- docker-app-launcher releases: tag push `v*` → `.github/workflows/publish.yml` → PyPI. Gate: `make ci` / `make release-check`. Branch model = `main` (no develop).
-- PyPI latest confirmed: **0.8.0**.
+**Wichtig:** Diese Fixes sind **Dexie-only** (`frontend/src/storage/ai/`,
+`storage/dexie/`). Der **API-/Desktop-Modus läuft über das Backend** und hat
+dieselben Bugs noch. Das ist Aufgabe 1.
 
----
-
-## 1. WAS FERTIG IST (do NOT redo)
-
-The whole `docker-app-launcher` 0.3.0 → 0.8.0 arc is shipped. The 11 "offene
-Punkte" map to released versions:
-
-| # | Item | Where it shipped |
-|---|------|------------------|
-| 1 | Volume-filter fix (active `<compose_project>_*` volume excluded **unconditionally**, never offered/deleted; legacy volumes still offered) | **0.8.0** (re-fix of 0.6.0) |
-| 2 | Progress messages — every cleanup step logged incl. skipped volumes (`skipped (not selected)` / `skipped (active project)`); no silent gap | **0.8.0** |
-| 3 | Progress bar (`ttk.Progressbar`, determinate + indeterminate health) + **Docker build-step parser** (`DockerBuildProgress`, parses `#<n> [stage x/y]`) | **0.8.0** |
-| 4 | Platform-specific Docker check (`check_docker_detailed`) + guided start (`start_docker_daemon` linux systemctl/pkexec, `start_docker_desktop` win/mac) + GUI buttons on the no-Docker screen | **0.8.0** |
-| 5 | READMEs (EN + DE) updated for ALL new features + Features list; `README-de.md` fully real-umlaut | **0.6.0 / 0.7.0 / 0.8.0** |
-| 6 | `estimated_build_steps` config (0 = auto-detect) | **0.8.0** |
-| 7 | `docker_desktop_path` / `docker_install_url` config | **0.8.0** |
-| 8 | i18n new keys in all **11 languages** (de/en + el/es/fr/hi/ja/ko/pt/tr/id). Catalog now 102 keys/lang. New: `step_skip_volume`, `step_skip_volume_active`, `docker_not_running`, `docker_no_permission`, `docker_no_path`, `start_docker`, `open_install_guide` | **0.6.0 / 0.8.0** |
-| 9 | Tests for everything new (296→307 tests). `make ci` green. | **0.8.0** |
-| 10 | Version bump → tag → PyPI publish | **0.8.0 on PyPI** |
-| 11 | AL bump | **PR #1103 (open, awaiting merge)** |
-
-Earlier in the same arc (also DONE, published):
-- **0.3.0** — port-change `.env` fix + no-rebuild `change_port`.
-- **0.4.0** — expert internal ports (rebuild `change_internal_port`).
-- **0.5.0** — tray fix: Run-in-background button + iconify fallback, forced AppIndicator backend, `tray_icon_path` + generated default icon, `--debug` tray diagnostics.
-- **0.6.0** — active-volume cleanup guard (v1), German real-umlaut strings, two-row buttons, i18n → flat-key YAML catalogs in 11 languages, `cleanup_search_paths`.
-- **0.7.0** — in-window language picker + `locale:"auto"` (`detect_system_locale`), configurable `single_instance`/`log_level`/`log_max_size`/`log_backup_count`, complete `launcher.example.json`.
-
-AL side already merged on `develop`:
-- `#1083` wrapper `chdir`s to the resolved Compose dir; `#1086` compose+nginx env-templated for all 3 ports; `#1090` `launcher.json` brand-mark icon + bump 0.3.0; `#1091` `make launcher-*` targets; `#1096` bump 0.6.0; `#1098` bump 0.7.0 (`locale:auto` + single_instance + cleanup_search_paths); `#1092` Makefile targets.
-- AL `launcher.json` already has: `locale:"auto"`, `single_instance:true`, `log_level:"INFO"`, `cleanup_search_paths`, internal ports, brand-mark icon.
-
-Closed issues: docker-app-launcher #3,#5,#6,#9,#11,#13,#16; adaptive-learner #1082,#1084,#1089,#1091,#1095,#1097.
+Preview-Deploy: `adaptive-learner-content-test` ist der Preview-Host
+(`.github/workflows/deploy-preview.yml`, `force_orphan` + `.git`-Filter im
+Bundle, weil ein nested `.git` sonst einen Submodule-Gitlink erzeugt → GH-Pages
+bricht). PWA-Service-Worker cached hartnäckig — beim Testen DevTools →
+Application → SW „Update on reload" + Network „Disable cache".
 
 ---
 
-## 2. WAS DER AKTUELLE PR ENTHÄLT (PR #1103, AL)
+## AUFGABE 1 — Backend-Folgeschritt: importierte Chats im API-Mode
 
-Branch `chore/launcher-0.8.0` (already pushed). Contains ONLY:
-- `launcher/pyproject.toml`: `docker-app-launcher = {version = "^0.8.0", extras = ["tray"]}`
-- `launcher/poetry.lock`: relocked to 0.8.0.
+Datei: `plugins/adaptive-learner-plugin-session/adaptive_learner_session/routes.py`
+(+ ggf. `_context.py`/`prompts.py` desselben Plugins). Frontend-Referenz zum
+Spiegeln: `frontend/src/storage/ai/session-flow.ts`
+(`composeSystemPrompt`, `buildOutgoingHistory`).
 
-Launcher unit suite green locally: **17 passed**.
+### 1a. #1137-Pendant: #797 bei importierten Sessions überspringen
+`start_session` (routes.py ~132-238) hängt aktuell den Lernfortschritt
+(`_learning_context_for`, ~Zeile 216) **immer** an — auch bei importierten
+Sessions. Das zieht „Currently working on: <Lektion>" in den Prompt und lässt
+die KI zum aktiven Lektions-Thema abdriften statt beim importierten Chat zu
+bleiben (Inception-Effekt).
+- **Fix:** Genau wie #1137 (frontend) — wenn `imported_conversation_id` gesetzt
+  ist, nur Analyse (`_analysis_context_for`) + Roh-Transkript
+  (`_conversation_context_for`) anhängen und `_learning_context_for`
+  **weglassen**; sonst (normale Session) nur `_learning_context_for`.
 
----
+### 1b. #1122-Pendant: Rebuild-on-Resume (der größere Teil)
+Resume gibt aktuell den eingefrorenen `system_prompt` zurück (routes.py
+~141-163), und `append_message` / `append_message_stream` (~263 / ~326) bauen
+die History aus den persistierten DB-Messages = der eingefrorenen System-Message.
+Folge: spätere Kontext-Verbesserungen erreichen bestehende Sessions nie, und der
+importierte Kontext wird nicht frisch aus der Konversation gezogen.
+- **Fix (Lösung A, wie #1122):** Eine `compose_system_prompt(...)`-Hilfsfunktion
+  extrahieren (build_prompt + language-directive + imported-block + learning-block,
+  mit der 1a-Verzweigung). In `append_message` / `append_message_stream`: wenn die
+  Session ein `imported_conversation_id` trägt, die ausgehende System-Message
+  **frisch** aus der FK bauen (alte System-Message aus der ausgehenden History
+  filtern), statt die persistierte zu replayen. Persistierung darf unverändert
+  bleiben (die gespeicherte Kopie ist nur Seed) — der FROZEN-Persistenztest
+  bleibt dann gültig.
 
-## 3. WAS NOCH IN DEN PR/RELEASE MUSS (open items)
+### 1c. #1147-Pendant: Session-GET muss `imported_conversation_id` liefern
+Prüfen, ob das Backend-Session-DTO (Pydantic-Schema + `GET .../session/{id}`)
+`imported_conversation_id` enthält — sonst greifen Header-Thema (#1141) + Intro
+(#1143) im **API-Mode** nicht, weil `ApiStorage.session.get()` das Feld vom
+Backend bezieht. Falls es fehlt: ins Response-Schema aufnehmen.
 
-- **docker-app-launcher: NOTHING.** 0.8.0 is final + published.
-- **adaptive-learner: merge PR #1103** (was 11/12 green, 1 pending when the
-  session ended) and close issue **#1102**. No `launcher.json` change needed
-  (the new 0.8.0 fields — `estimated_build_steps`, `docker_desktop_path`,
-  `docker_install_url` — are optional; AL relies on auto-detect defaults).
-  Optional later: set `estimated_build_steps` in AL `launcher.json` (count the
-  steps of `frontend/Dockerfile` + `backend/Dockerfile`, ~38) for a smooth
-  build bar; set `docker_install_url` to the Ubuntu docs page if desired.
+### Nicht nötig im Backend
+- **#1133 (API-Key-Gate)**: Im API-Mode ist das Feature-Gate ohnehin permissiv
+  (`mode === "api" || hasAiKey`), die Analyse läuft serverseitig über den
+  3-Schichten-Key. Kein Backend-Change.
 
----
-
-## 4. EXAKTE BEFEHLE zum Weitermachen
-
-```bash
-# 1) Finish the AL bump (merge PR #1103 once CI is green)
-cd ~/dev/git/hub/astrapi69/adaptive-learner
-gh pr checks 1103                       # confirm all green
-gh pr merge 1103 --squash --delete-branch
-git checkout develop && git pull
-gh issue close 1102 -c "Merged via #1103."
-
-# 2) Try the launcher on Aster's machine (manual)
-make launcher-test                      # GUI in --debug, logs to launcher/logs/
-make launcher-tray-check                # pystray / Pillow / gi present?
-make launcher-version                   # should print 1.95.0
-# headless verbs: make launcher-status / launcher-check
-
-# 3) (Optional) verify the published package
-pip install -U "docker-app-launcher[tray]"   # Linux needs: sudo apt install libgirepository1.0-dev libcairo2-dev pkg-config gir1.2-ayatanaappindicator3-0.1
-python -c "import docker_app_launcher; print(docker_app_launcher.__version__)"  # 0.8.0
-```
-
-If a future `poetry lock` in `launcher/` fails with "doesn't match any
-versions" right after a publish, it's PyPI **simple-index lag** — retry:
-`poetry cache clear PyPI --all -n && poetry lock` (usually works on the 2nd try).
-
----
-
-## 5. Manual checks worth doing on Aster's machine (the reason for the bugs)
-
-The volume-filter + progress bugs were reported from a **running launcher** —
-verify the fixes live:
-1. Open the launcher; trigger the startup cleanup offer. The active volume
-   `adaptive-learner_adaptive-learner-data` must **NOT** appear; legacy
-   `bibliogon_*` volumes may. Each skipped volume logs a line (no silent gap).
-2. Install/start: a progress bar fills, parsing Docker build steps, and animates
-   during the health check.
-3. Stop Docker → the no-Docker screen shows a platform-specific reason + a
-   **Start Docker** button + **Open installation guide**.
-4. The language dropdown switches the UI live and persists.
+### Gates für Aufgabe 1
+- `make test` grün (backend + plugins + vitest). Neue pytest-Tests im
+  session-Plugin: (i) importierte Session injiziert #797 NICHT, normale schon;
+  (ii) eine importierte Session sendet beim 2. Turn frischen Kontext (mutierte
+  Analyse erreicht den AI-Call); (iii) Session-GET enthält die FK.
+- Issue-Pflicht: ein GitHub-Issue für „Backend: imported-session context parity
+  (rebuild-on-resume + #797 suppression)" anlegen, `Closes #NN` im Commit.
+- Branch `fix/...` von `develop`, PR gegen `develop`.
 
 ---
 
-## Gotchas / notes for next session
+## AUFGABE 2 — Release v1.96.0 (nach Aufgabe 1)
 
-- **`[tray]` extra pulls PyGObject on Linux** (sdist build) → needs
-  `libgirepository1.0-dev libcairo2-dev pkg-config`. CI apt-installs them
-  (docker-app-launcher `ci.yml` + AL `launcher-linux.yml`). The frozen launcher
-  binary excludes pystray by design → always uses the taskbar fallback; the
-  tray/AppIndicator path is for source runs.
-- **9 of 11 i18n languages are AI-translated** (el/es/fr/hi/ja/ko/pt/tr/id) and
-  would benefit from native review. Parity + placeholder-integrity tests guard
-  key/`{placeholder}` drift across all locales.
-- **Release only for runtime changes** (a docstring-only 0.4.1 was deliberately
-  NOT published; docs-only README changes ride the next release).
-- Memory file `reference_ecosystem_repo_paths.md` lists repo paths + the current
-  package version (keep it current on the next bump).
+Reihenfolge laut `.claude/rules/release-workflow.md` (Gitflow):
+1. **Vorher:** die 3 offenen Dependabot-PRs prüfen + mergen (oder bewusst
+   verschieben): #1150 (stylelint), #1151 (@types/node 26 — Major, ggf. tsconfig
+   `lib` prüfen), #1152 (backend-minor-patch).
+2. `make release-prepare VERSION=1.96.0` (Branch `release/1.96.0` von develop).
+3. Auf dem Branch: `backend/pyproject.toml` Version bumpen → `make sync-versions`
+   → `make sync-versions-check` + `scripts/verify_version_pins.sh 1.96.0`.
+4. Changelog `changelog/releases/v1.96.0.md` aus den Commits (gruppiert, siehe
+   Rohmaterial unten).
+5. `make release-test` (MANDATORY: `make test`, `tsc --noEmit`, vitest, smoke,
+   **`make test-dexie-smoke`**, ruff+mypy, pre-commit --all-files,
+   `make verify-docs-discipline`).
+6. `make release-finish VERSION=1.96.0` (merge → main + Tag, zurück nach develop).
+7. `make release-publish VERSION=1.96.0` (GitHub Release).
+8. Post-release: Journal-Eintrag, ROADMAP/CLAUDE.md, CLAUDE.md-Versions-/
+   Current-State-Block aktualisieren.
+
+### Changelog-Rohmaterial (Highlights seit v1.95.0)
+- **Importierte Chats (Dexie):** #1078/#1122/#1137/#1141/#1143/#1147 + #1133/#1148
+  (API-Key-UX) + #1131 (Enter) + #1129 (Session-Nav) + [Aufgabe-1-Backend-Parität].
+- **assistant-ui:** #1127 Plan + #1128 Phase-0-Spike (`?ui=assistant`).
+- **Lektionen:** #1013 Reverse-Mode, #1015 Endless-Mode, #1007/#1071/#1073,
+  #1047 Komplexitäts-Burn-down.
+- **Content:** #1094 Invitation-Codes, #1099 Online→Lokal-Migration.
+- **Launcher:** docker-app-launcher 0.2.0 → 0.12.1 (run-in-background, Tray-Icon,
+  konfigurierbare Ports).
+- **CI/Deploy:** #1135/#1139/#1140/#1146 (Preview-Deploy auf content-test),
+  #1108 SEO.
+
+---
+
+## Referenzen
+- Frontend-Implementierung zum Spiegeln: `frontend/src/storage/ai/session-flow.ts`
+  (`composeSystemPrompt`, `buildOutgoingHistory`), `storage/dexie/dexie-session.ts`
+  (`get()` mit FK).
+- Tests als Vorlage: `frontend/src/storage/ai/session-flow.test.ts`
+  („imported-session topic focus", „REBUILD-ON-RESUME", „session.get returns
+  imported_conversation_id").
+- assistant-ui-Migrationsplan: `docs/audits/2026-06-25-assistant-ui-adoption.md`.
+- Offene Issues: #1126 (assistant-ui Phasen 1-4).
