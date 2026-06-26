@@ -72,7 +72,10 @@ import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ExercisePromptRow from "./ExercisePromptRow";
 import {deriveWordTilesAttempt} from "../../lib/srs/element-attempt";
+import {isWordTilesCorrect} from "../../lib/exercises/word-tiles-equivalence";
 import type {ContentLessonExercise} from "../../storage/types";
+
+export {isWordTilesCorrect} from "../../lib/exercises/word-tiles-equivalence";
 import AnswerCelebration from "./AnswerCelebration";
 import DirectionInstruction from "./DirectionInstruction";
 import ExerciseAnswerToggle, {type AnswerView} from "./ExerciseAnswerToggle";
@@ -115,35 +118,6 @@ function _shuffle<T>(items: readonly T[], seed: string): T[] {
         [out[i], out[j]] = [out[j], out[i]];
     }
     return out;
-}
-
-/** True iff the placed sequence (indices into ``tiles``)
- *  matches the canonical order OR any of the alternate
- *  orderings authored in ``accept_orderings``. */
-export function isWordTilesCorrect(
-    placed: readonly number[],
-    tileCount: number,
-    acceptOrderings: readonly (readonly number[])[] | null | undefined,
-): boolean {
-    if (placed.length !== tileCount) return false;
-    const canonical = Array.from({length: tileCount}, (_, i) => i);
-    if (_arraysEqual(placed, canonical)) return true;
-    if (!acceptOrderings) return false;
-    for (const ordering of acceptOrderings) {
-        if (_arraysEqual(placed, ordering)) return true;
-    }
-    return false;
-}
-
-function _arraysEqual(
-    a: readonly number[],
-    b: readonly number[],
-): boolean {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) return false;
-    }
-    return true;
 }
 
 /** Per-position correctness of the learner's placed order, for the
@@ -368,12 +342,12 @@ type Translate = (key: string, fallback?: string) => string;
  *  when there is no reviewed answer. */
 function wordTilesReviewedResult(
     reviewedPlaced: readonly number[] | null | undefined,
-    tileCount: number,
+    tiles: readonly string[],
     acceptOrderings: readonly (readonly number[])[] | null | undefined,
 ): {correct: number; total: number} | null {
     if (reviewedPlaced == null) return null;
     return {
-        correct: isWordTilesCorrect(reviewedPlaced, tileCount, acceptOrderings)
+        correct: isWordTilesCorrect(reviewedPlaced, tiles, acceptOrderings)
             ? 1
             : 0,
         total: 1,
@@ -764,7 +738,7 @@ function WordTilesExercise(
 
     const reviewedResult = wordTilesReviewedResult(
         reviewedWordTiles?.placed,
-        tiles.length,
+        tiles,
         acceptOrderings,
     );
 
@@ -778,7 +752,7 @@ function WordTilesExercise(
         score: (): ExerciseScored => {
             const isCorrect = isWordTilesCorrect(
                 placed,
-                tiles.length,
+                tiles,
                 acceptOrderings,
             );
             return {
