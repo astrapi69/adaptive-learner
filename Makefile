@@ -18,7 +18,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 
 .PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
-       test test-backend test-frontend test-plugins test-plugin-assessment \
+       test test-fast test-changed test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
        test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke test-manual-automation \
@@ -190,6 +190,47 @@ install-plugins:
 test: test-backend test-plugins test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI)
 	@echo ""
 	@echo "=== All tests complete ==="
+
+# Fast local PR-mirror gate (#1174). Mirrors the merge-blocking checks the
+# PR CI runs (ci.yml: backend-tests pytest + lint-and-type-check ruff/mypy +
+# frontend-tests tsc/vitest), MINUS the slow/heavy bits (no coverage, no
+# plugins, no build/eslint/stylelint/audit). Runtime budget roughly < 15 min.
+# Needs no running backend -- pytest uses the in-memory TestClient.
+test-fast: ## Fast PR-mirror gate: backend ruff+mypy+pytest, frontend tsc+vitest (no coverage, no plugins) (#1174)
+	@echo ""
+	@echo "=== test-fast: backend ruff check app/ ==="
+	cd backend && poetry run ruff check app/
+	@echo ""
+	@echo "=== test-fast: backend mypy app/ ==="
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mypy app/
+	@echo ""
+	@echo "=== test-fast: backend pytest tests/ ==="
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -q
+	@echo ""
+	@echo "=== test-fast: frontend tsc --noEmit ==="
+	cd frontend && npx tsc --noEmit
+	@echo ""
+	@echo "=== test-fast: frontend vitest run ==="
+	cd frontend && npx vitest run
+	@echo ""
+	@echo "test-fast mirrors the PR gate (ci.yml). Full suite incl. plugins: 'make test'."
+
+# Test Impact Analysis (#615/#1174): run ONLY the tests whose covered code
+# changed vs origin/develop -- the local counterpart of the PR-CI selective
+# runs. Frontend uses vitest --changed; backend uses pytest-testmon (installed
+# inline if absent, mirroring CI). With no relevant changes the frontend run
+# passes with no tests and testmon selects nothing (pytest exit 5), both
+# treated as success -- never an error.
+test-changed: ## Test Impact Analysis: only tests affected vs origin/develop (vitest --changed + pytest --testmon) (#1174)
+	@echo ""
+	@echo "=== test-changed: frontend Vitest --changed origin/develop ==="
+	cd frontend && npx vitest run --changed origin/develop --passWithNoTests
+	@echo ""
+	@echo "=== test-changed: backend pytest --testmon (vs .testmondata) ==="
+	cd backend && poetry run pip install -q pytest-testmon
+	cd backend && { poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --testmon -q; code=$$?; [ $$code -eq 5 ] && exit 0; exit $$code; }
+	@echo ""
+	@echo "test-changed runs only impacted tests. Full run: 'make test' (nightly/CI run the full suite)."
 
 test-frontend: ## Run frontend unit tests (Vitest)
 	@echo ""
