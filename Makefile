@@ -21,7 +21,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test test-fast test-changed test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
-       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke test-manual-automation \
+       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
        stryker stryker-quick \
        verify-theme verify-theme-baseline-update \
@@ -432,6 +432,19 @@ test-e2e: ## Run Playwright e2e tests (starts servers automatically)
 test-e2e-ui: ## Run e2e tests with Playwright UI
 	cd e2e && npx playwright test --ui
 
+# Critical-flow smoke (#1177): the ``smoke`` Playwright project
+# (e2e/smoke/, defined in e2e/playwright.config.ts) covering the core
+# user journeys. It uses the default config's webServer, which
+# auto-starts the backend (uvicorn) + frontend (npm run dev) in API mode
+# — no build step (distinct from the Dexie-mode ``test-dexie-smoke``
+# gate, which builds VITE_STORAGE_MODE=dexie). This is the command the
+# release-test gate references.
+test-e2e-smoke: ## Playwright smoke project — critical user flows (auto-starts backend+frontend dev servers)
+	cd e2e && npx playwright test --project=smoke
+
+test-e2e-smoke-retries: ## Smoke project in CI mode (--retries=1, against flake)
+	cd e2e && npx playwright test --project=smoke --retries=1
+
 # DEXIE-MODE-RELEASE-GATE-01 — builds the frontend in
 # ``VITE_STORAGE_MODE=dexie`` (matching the GitHub Pages
 # deployment) and runs the dexie-mode Playwright spec against
@@ -709,7 +722,7 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Manual-test-plan automation (#616) ==="
 	@$(MAKE) test-manual-automation
 	@echo ""
-	@echo "Release test gate green. Run full Playwright smoke separately: cd e2e && npx playwright test --project=smoke"
+	@echo "Release test gate green. Run the full Playwright smoke separately: make test-e2e-smoke"
 
 release-build: ## Build release artifacts (release-workflow.md Step 6)
 	@PACKAGE_MODE=$$(grep "^package-mode" backend/pyproject.toml | head -1 | awk '{print $$3}' | tr -d ' '); \
@@ -818,7 +831,7 @@ clean: ## Remove build artifacts and caches
 # --- Help ---
 
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -vE '^launcher-' | \
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -vE '^launcher-' | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-25s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "=== Launcher ==="
