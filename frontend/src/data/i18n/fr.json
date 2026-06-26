@@ -957,6 +957,15 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "Build",
     "build_date_label": "Date de build",
+    "strang": {
+      "haupt": "Version principale (stable)",
+      "latest": "Version Latest (test)",
+      "unknown": "Canal inconnu",
+      "latest_warning": "Vous utilisez une version d'aperçu/de test. Elle n'est pas stable et peut contenir des erreurs.",
+      "branch_label": "Branche",
+      "commit_label": "Commit",
+      "fallback_note": "Canal déduit (aucun marqueur de build explicite)."
+    },
     "check_update": "Rechercher des mises à jour",
     "checking": "Vérification…",
     "update_available": "La version {version} est disponible !",
@@ -2827,7 +2836,12 @@
       "copy_url": "Copier l'URL",
       "copied": "Copié",
       "share": "Partager",
-      "qr_alt": "Code QR menant à l'application"
+      "qr_alt": "Code QR menant à l'application",
+      "haupt_label": "Version principale (stable)",
+      "haupt_intro": "Partage l'application stable via un code QR pour que d'autres puissent l'ouvrir.",
+      "latest_label": "Version Latest (test)",
+      "latest_warning": "Ceci est une version d'aperçu/de test. Elle n'est pas stable et peut contenir des erreurs. Ne la partage qu'avec des testeurs.",
+      "open_link": "Ouvrir le lien"
     },
     "result": {
       "text": "J'ai terminé \"{title}\" avec {pct}% ! 🎓 {correct} sur {total} correctes.",

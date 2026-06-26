@@ -957,6 +957,15 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "Build",
     "build_date_label": "Tanggal build",
+    "strang": {
+      "haupt": "Versi utama (stabil)",
+      "latest": "Versi Latest (uji)",
+      "unknown": "Saluran tidak dikenal",
+      "latest_warning": "Anda menggunakan build pratinjau/uji. Build ini tidak stabil dan mungkin mengandung kesalahan.",
+      "branch_label": "Branch",
+      "commit_label": "Commit",
+      "fallback_note": "Saluran disimpulkan (tanpa penanda build eksplisit)."
+    },
     "check_update": "Periksa pembaruan",
     "checking": "Memeriksa…",
     "update_available": "Versi {version} tersedia!",
@@ -2827,7 +2836,12 @@
       "copy_url": "Salin URL",
       "copied": "Disalin",
       "share": "Bagikan",
-      "qr_alt": "Kode QR yang menautkan ke aplikasi"
+      "qr_alt": "Kode QR yang menautkan ke aplikasi",
+      "haupt_label": "Versi utama (stabil)",
+      "haupt_intro": "Bagikan aplikasi stabil melalui kode QR agar orang lain dapat membukanya.",
+      "latest_label": "Versi Latest (uji)",
+      "latest_warning": "Ini adalah versi pratinjau/uji. Versi ini tidak stabil dan mungkin mengandung kesalahan. Bagikan hanya dengan penguji.",
+      "open_link": "Buka tautan"
     },
     "result": {
       "text": "Saya menyelesaikan \"{title}\" dengan {pct}%! 🎓 {correct} dari {total} benar.",

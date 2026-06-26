@@ -957,6 +957,15 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "ビルド",
     "build_date_label": "ビルド日",
+    "strang": {
+      "haupt": "メイン版（安定）",
+      "latest": "Latest版（テスト）",
+      "unknown": "不明なチャネル",
+      "latest_warning": "プレビュー/テストビルドを使用しています。安定しておらず、エラーが含まれる可能性があります。",
+      "branch_label": "ブランチ",
+      "commit_label": "コミット",
+      "fallback_note": "チャネルは推定されました（明示的なビルドマーカーなし）。"
+    },
     "check_update": "更新を確認",
     "checking": "確認中…",
     "update_available": "バージョン {version} が利用可能です！",
@@ -2827,7 +2836,12 @@
       "copy_url": "URLをコピー",
       "copied": "コピーしました",
       "share": "共有",
-      "qr_alt": "アプリへのリンクのQRコード"
+      "qr_alt": "アプリへのリンクのQRコード",
+      "haupt_label": "メイン版（安定）",
+      "haupt_intro": "安定版アプリをQRコードで共有して、他の人が開けるようにします。",
+      "latest_label": "Latest版（テスト）",
+      "latest_warning": "これはプレビュー/テスト版です。安定しておらず、エラーが含まれる可能性があります。テスターとのみ共有してください。",
+      "open_link": "リンクを開く"
     },
     "result": {
       "text": "「{title}」を{pct}%で完了しました！🎓 {total}問中{correct}問正解。",

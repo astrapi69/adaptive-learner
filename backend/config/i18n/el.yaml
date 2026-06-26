@@ -889,6 +889,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Build
   build_date_label: Ημερομηνία build
+  strang:
+    haupt: "Κύρια έκδοση (σταθερή)"
+    latest: "Έκδοση Latest (δοκιμαστική)"
+    unknown: "Άγνωστο κανάλι"
+    latest_warning: "Χρησιμοποιείτε μια έκδοση προεπισκόπησης/δοκιμής. Δεν είναι σταθερή και μπορεί να περιέχει σφάλματα."
+    branch_label: "Κλάδος"
+    commit_label: "Commit"
+    fallback_note: "Το κανάλι συνάχθηκε (χωρίς ρητό δείκτη build)."
   check_update: "Έλεγχος για ενημερώσεις"
   checking: "Έλεγχος…"
   update_available: "Η έκδοση {version} είναι διαθέσιμη!"
@@ -2580,6 +2588,11 @@ share:
     copied: "Αντιγράφηκε"
     share: "Κοινοποίηση"
     qr_alt: "Κωδικός QR που οδηγεί στην εφαρμογή"
+    haupt_label: "Κύρια έκδοση (σταθερή)"
+    haupt_intro: "Μοιραστείτε τη σταθερή εφαρμογή μέσω κωδικού QR ώστε άλλοι να μπορούν να την ανοίξουν."
+    latest_label: "Έκδοση Latest (δοκιμαστική)"
+    latest_warning: "Αυτή είναι μια έκδοση προεπισκόπησης/δοκιμής. Δεν είναι σταθερή και μπορεί να περιέχει σφάλματα. Μοιραστείτε την μόνο με δοκιμαστές."
+    open_link: "Άνοιγμα συνδέσμου"
   result:
     text: 'Ολοκλήρωσα το "{title}" με {pct}%! 🎓 {correct} από {total} σωστά.'
     cta_record: 'Δείξ’ το στους φίλους σου!'
