@@ -931,6 +931,12 @@
     "method_switched": "Methode changee."
   },
   "install": {
+    "ios": {
+      "title": "Installer comme une app",
+      "steps": "Touchez l’icône Partager, puis « Sur l’écran d’accueil » — l’app s’ouvre sans la barre de Safari.",
+      "aria_label": "Installer sur votre iPhone",
+      "dismiss": "Fermer"
+    },
     "title": "Ajouter a l'ecran d'accueil",
     "subtitle": "Installez Adaptive Learner comme une app pour une meilleure utilisation hors ligne.",
     "install": "Installer",

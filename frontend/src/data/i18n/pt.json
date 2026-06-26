@@ -931,6 +931,12 @@
     "method_switched": "Método trocado."
   },
   "install": {
+    "ios": {
+      "title": "Instalar como app",
+      "steps": "Toque no ícone Compartilhar e em «Adicionar à Tela de Início» — abre sem a barra do Safari.",
+      "aria_label": "Instalar no seu iPhone",
+      "dismiss": "Fechar"
+    },
     "title": "Adicionar à tela inicial",
     "subtitle": "Instale o Adaptive Learner como app para melhor uso off-line.",
     "install": "Instalar",

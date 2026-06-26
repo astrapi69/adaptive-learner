@@ -866,6 +866,11 @@ toast:
   api_key_deleted: Clave API eliminada.
   method_switched: Metodo cambiado.
 install:
+  ios:
+    title: "Instalar como app"
+    steps: "Toca el icono Compartir y luego «Añadir a pantalla de inicio»: se abre sin la barra de Safari."
+    aria_label: "Instalar en tu iPhone"
+    dismiss: "Cerrar"
   title: Anadir a la pantalla de inicio
   subtitle: "Instala Adaptive Learner como app para un mejor uso sin conexión."
   install: Instalar

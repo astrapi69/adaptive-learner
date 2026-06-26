@@ -19,6 +19,7 @@ import UpdatePromptHost from "./components/pwa/UpdatePromptHost";
 import DesktopUpdateHost from "./components/pwa/DesktopUpdateHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/pwa/InstallPrompt";
+import IosInstallHint from "./components/pwa/IosInstallHint";
 import ReminderScheduler from "./components/settings/controls/ReminderScheduler";
 import Navigation from "./components/nav/Navigation";
 import BottomTabBar from "./components/nav/BottomTabBar";
@@ -215,6 +216,7 @@ export default function App() {
             </Suspense>
             <BottomTabBar />
             <InstallPrompt />
+            <IosInstallHint />
             <MilestoneHost />
             <ReminderScheduler />
             <Suspense fallback={null}>

@@ -931,6 +931,12 @@
     "method_switched": "Method switched."
   },
   "install": {
+    "ios": {
+      "title": "Install as an app",
+      "steps": "Tap the Share icon, then “Add to Home Screen” — it opens without the Safari bar.",
+      "aria_label": "Install on your iPhone",
+      "dismiss": "Dismiss"
+    },
     "title": "Add to home screen",
     "subtitle": "Install Adaptive Learner as an app for better offline use.",
     "install": "Install",

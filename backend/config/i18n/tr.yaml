@@ -866,6 +866,11 @@ toast:
   api_key_deleted: API anahtarı kaldırıldı.
   method_switched: Yöntem değiştirildi.
 install:
+  ios:
+    title: "Uygulama olarak yükle"
+    steps: "Paylaş simgesine, ardından «Ana Ekrana Ekle» seçeneğine dokunun — Safari çubuğu olmadan açılır."
+    aria_label: "iPhone’unuza yükleyin"
+    dismiss: "Kapat"
   title: Ana ekrana ekle
   subtitle: "Daha iyi çevrimdışı kullanım için Adaptive Learner'ı uygulama olarak yükleyin."
   install: Yükle

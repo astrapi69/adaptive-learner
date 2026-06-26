@@ -866,6 +866,11 @@ toast:
   api_key_deleted: Kunci API dihapus.
   method_switched: Metode diganti.
 install:
+  ios:
+    title: "Pasang sebagai aplikasi"
+    steps: "Ketuk ikon Bagikan, lalu «Tambahkan ke Layar Utama» — terbuka tanpa bilah Safari."
+    aria_label: "Pasang di iPhone Anda"
+    dismiss: "Tutup"
   title: Tambahkan ke layar utama
   subtitle: "Pasang Adaptive Learner sebagai aplikasi untuk penggunaan offline yang lebih baik."
   install: Pasang
