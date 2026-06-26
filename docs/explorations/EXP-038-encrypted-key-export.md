@@ -100,8 +100,12 @@ written; absent providers are omitted.
 
 ## UX flow
 
-**Export** (Settings → AI → "KI-Schlüssel (verschlüsselt)" — next to the API
-keys it carries; relocated from the Data tab in #1181 for discoverability):
+**Export** (Settings → Data → "KI-Schlüssel (verschlüsselt)" — the single
+export entry point, next to the other backups. The AI tab carries only a
+reference button that jumps here, so a learner managing keys still finds it
+without a second export form duplicating the logic. History: #1182 briefly
+moved the section onto the AI tab; #1183 restored the single Data-tab home
+and added the AI-tab link instead):
 1. Visible only in Dexie mode; the Export action is enabled only when ≥1 key
    exists (otherwise disabled with a hint).
 2. Passphrase + confirmation field. Mismatch / empty / too short → inline error,

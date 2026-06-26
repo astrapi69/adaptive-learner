@@ -491,6 +491,11 @@
     "session_count": "Oturumlar"
   },
   "settings": {
+    "key_export_link": {
+      "heading": "Yapay zeka anahtarları — şifreli dışa aktarma",
+      "hint": "Yapay zeka anahtarlarınızı tek bir şifreli dosya olarak dışa veya içe aktarın. Veri sekmesindeki diğer yedeklerle birlikte bulunur.",
+      "button": "Anahtar dışa aktarmaya git (Veri sekmesi)"
+    },
     "key_vault": {
       "title": "Yapay zekâ anahtarları — şifreli dışa aktarma",
       "intro": "Yapay zekâ anahtarlarınızı tek bir şifreli dosyada başka bir cihaza taşıyın; normal yedekten (anahtar içermez) ayrıdır.",

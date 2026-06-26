@@ -458,6 +458,10 @@ progress:
   commit_notes_aria: "セッションのメモ"
   session_count: "セッション"
 settings:
+  key_export_link:
+    heading: "AIキー — 暗号化エクスポート"
+    hint: "AIキーを1つの暗号化ファイルとしてエクスポートまたはインポートします。データタブの他のバックアップと同じ場所にあります。"
+    button: "キーのエクスポートへ移動（データタブ）"
   key_vault:
     title: "AIキー — 暗号化エクスポート"
     intro: "AIキーを1つの暗号化ファイルで別のデバイスに移行します。通常のバックアップ（キーを含みません）とは別です。"

@@ -1,13 +1,13 @@
 /**
- * Regression test for #1181: the encrypted key-vault export/import
- * (EXP-038, `.alk`) must render on the AI tab — next to the API keys it
- * carries — not only on the Data tab where a learner managing keys never
- * looks. Heavy collaborators (the key-settings hook, the key/model rows)
- * are mocked; this test only pins the placement.
+ * Regression test for #1183: the encrypted key-vault export/import
+ * (EXP-038, `.alk`) lives ONLY on the Data tab. The AI tab carries a
+ * single reference button that navigates to it — never a second export
+ * form. (This reverses the #1182 placement.)
  */
 
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import AiSettingsPanel from "./AiSettingsPanel";
@@ -30,8 +30,8 @@ vi.mock("../../../utils/notify", () => ({
   notify: { success: vi.fn(), error: vi.fn() },
 }));
 
-// Keep the panel's key/model machinery inert — this test is about
-// placement, not the key-row behaviour (covered elsewhere).
+// Keep the panel's key/model machinery inert — this test is about the
+// key-export link, not the key-row behaviour (covered elsewhere).
 vi.mock("../../../hooks/settings/useAiKeySettings", () => ({
   useAiKeySettings: () => ({
     busy: null,
@@ -66,15 +66,36 @@ const settings = {
   has_gemini_key: false,
 } as unknown as UserSettings;
 
-describe("AiSettingsPanel — key-vault placement (#1181)", () => {
-  it("renders the key vault on the AI tab", () => {
-    render(
-      <AiSettingsPanel
-        settings={settings}
-        onSettingsChange={vi.fn()}
-        active={true}
-      />,
-    );
-    expect(screen.getByTestId("key-vault-section")).toBeInTheDocument();
+function renderPanel(onOpenKeyExport = vi.fn()) {
+  render(
+    <AiSettingsPanel
+      settings={settings}
+      onSettingsChange={vi.fn()}
+      active={true}
+      onOpenKeyExport={onOpenKeyExport}
+    />,
+  );
+  return onOpenKeyExport;
+}
+
+describe("AiSettingsPanel — key-export link (#1183)", () => {
+  it("shows the key-export reference button, not an export form", () => {
+    renderPanel();
+    expect(screen.getByTestId("ai-key-export-link")).toBeInTheDocument();
+    // No second export entry point on the AI tab.
+    expect(screen.queryByTestId("key-vault-section")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("key-vault-export-pass"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("key-vault-export-button"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("navigates to the export (Data tab) when the button is clicked", async () => {
+    const user = userEvent.setup();
+    const onOpenKeyExport = renderPanel();
+    await user.click(screen.getByTestId("ai-key-export-link"));
+    expect(onOpenKeyExport).toHaveBeenCalledTimes(1);
   });
 });
