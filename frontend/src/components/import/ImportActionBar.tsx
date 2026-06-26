@@ -164,13 +164,18 @@ function SessionButton({
       // ``imported_conversation_id`` FK so a future return-visit resumes
       // cleanly.
       //
-      // Issue 4 — disable when no API key is configured (NEW sessions
-      // need AI; resuming an EXISTING session does not, so the gate only
-      // fires when ``activeSession`` is null).
+      // #1158 — the tutor chat needs an AI key to FUNCTION, whether
+      // starting a new session OR continuing an existing one: resuming
+      // still sends new messages, each of which calls the provider. Gate
+      // BOTH on the key so the entry is never a dead door into a session
+      // that can only error-toast. (The earlier assumption that "resuming
+      // does not need AI" was wrong and produced the FUNKTION-NICHT-
+      // VERFUEGBAR violation.) The /session route carries a matching
+      // no-key guard as the second line of defense.
       onClick={onSession}
-      disabled={startingSession || (!activeSession && sessionFeature.isDisabled)}
+      disabled={startingSession || sessionFeature.isDisabled}
       title={
-        !activeSession && sessionFeature.isDisabled
+        sessionFeature.isDisabled
           ? t(`feature.${sessionFeature.reason}`, "API key required.")
           : undefined
       }
