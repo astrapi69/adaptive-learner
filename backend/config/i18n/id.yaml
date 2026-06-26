@@ -1920,6 +1920,7 @@ content:
     progress: "Langkah {n}/{total}"
     imported_analysis: "Analisis yang diimpor"
     lesson_fallback: "Pelajaran"
+    lesson_part: "{label} · Bagian {n}"
   import_chat:
     button: "Impor Obrolan"
   search:

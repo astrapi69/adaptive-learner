@@ -2070,7 +2070,8 @@
       "empty": "첫 레슨을 시작하세요!",
       "progress": "단계 {n}/{total}",
       "imported_analysis": "가져온 분석",
-      "lesson_fallback": "레슨"
+      "lesson_fallback": "레슨",
+      "lesson_part": "{label} · 파트 {n}"
     },
     "import_chat": {
       "button": "채팅 가져오기"

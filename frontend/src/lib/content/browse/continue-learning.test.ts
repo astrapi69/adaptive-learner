@@ -17,7 +17,10 @@ import {
     lessonLabelFromFilename,
     lessonRoute,
     looksLikeOpaqueId,
+    partNumberOf,
     resolveContinueAction,
+    resolveLessonTitle,
+    resolveSetTitle,
     rowStars,
 } from "./continue-learning";
 import type {LessonProgress} from "../../../storage/types";
@@ -197,6 +200,79 @@ describe("helpers", () => {
     it("lessonRoute builds the /lesson route with a slugged source", () => {
         expect(lessonRoute("owner/repo", "fr-a1", "01.json")).toBe(
             "/lesson/owner--repo/fr-a1/01.json",
+        );
+    });
+});
+
+describe("partNumberOf", () => {
+    it("extracts the part number from split ids/filenames/titles (#729)", () => {
+        expect(partNumberOf("analysis-b8ff9ed4-part-3.json")).toBe(3);
+        expect(partNumberOf("analysis-b8ff9ed4 — Part 2 of 3")).toBe(2);
+        expect(partNumberOf("analysis b8ff9ed4 part 7")).toBe(7);
+    });
+
+    it("returns null when there is no part marker", () => {
+        expect(partNumberOf("03-articles.json")).toBeNull();
+        expect(partNumberOf("Spanish A1")).toBeNull();
+    });
+});
+
+describe("resolveSetTitle", () => {
+    const sets = [
+        {source: "owner/repo", id: "fr-a1", title: "French A1"},
+        {source: "user-generated", id: "analysis-x", title: ""},
+    ];
+
+    it("returns the cached human title", () => {
+        expect(resolveSetTitle(sets, "owner/repo", "fr-a1", "FB")).toBe(
+            "French A1",
+        );
+    });
+
+    it("falls back to the localized label for an opaque set id (#729)", () => {
+        expect(
+            resolveSetTitle(
+                [],
+                "user-generated",
+                "analysis-b8ff9ed4-e201-42aa-8f96-83424332c3a4",
+                "Imported analysis",
+            ),
+        ).toBe("Imported analysis");
+    });
+
+    it("falls back when the cached title is opaque/empty", () => {
+        expect(
+            resolveSetTitle(sets, "user-generated", "analysis-x", "Imported"),
+        ).toBe("Imported");
+    });
+});
+
+describe("resolveLessonTitle", () => {
+    const partLabel = (n: number) => `Lesson · Part ${n}`;
+
+    it("returns the cached lesson title when present", () => {
+        expect(
+            resolveLessonTitle({title: "Greetings"}, "01.json", "Lesson"),
+        ).toBe("Greetings");
+    });
+
+    it("derives a label from the filename when uncached", () => {
+        expect(resolveLessonTitle(null, "03-articles.json", "Lesson")).toBe(
+            "03 articles",
+        );
+    });
+
+    it("never leaks an opaque analysis id, keeping the part number (#729)", () => {
+        const file = "analysis-b8ff9ed4-e201-42aa-8f96-83424332c3a4-part-3.json";
+        expect(resolveLessonTitle(null, file, "Lesson", partLabel)).toBe(
+            "Lesson · Part 3",
+        );
+    });
+
+    it("falls back to the generic label for an opaque id without a part", () => {
+        const file = "b8ff9ed4-e201-42aa-8f96-83424332c3a4.json";
+        expect(resolveLessonTitle(null, file, "Lesson", partLabel)).toBe(
+            "Lesson",
         );
     });
 });

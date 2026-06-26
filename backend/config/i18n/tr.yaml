@@ -1909,6 +1909,7 @@ content:
     progress: "Adım {n}/{total}"
     imported_analysis: "İçe aktarılan analiz"
     lesson_fallback: "Ders"
+    lesson_part: "{label} · Bölüm {n}"
   import_chat:
     button: "Sohbeti içe aktar"
   search:

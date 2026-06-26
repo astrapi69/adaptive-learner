@@ -33,10 +33,10 @@ import {useI18n} from "../../hooks/ui/useI18n";
 import {
     completedStepCount,
     groupRecentProgress,
-    lessonLabelFromFilename,
     lessonRoute,
-    looksLikeOpaqueId,
     resolveContinueAction,
+    resolveLessonTitle,
+    resolveSetTitle,
     rowStars,
     type ContinueMode,
 } from "../../lib/content/browse/continue-learning";
@@ -76,33 +76,6 @@ interface DisplayItem {
     total?: number;
     scorePct?: number;
     updatedAt: string;
-}
-
-/** Resolve a set's display title, never leaking a raw machine id. A set
- *  absent from ``listSets`` (or carrying an empty / opaque title) would
- *  otherwise show its bare ``set_id`` — a UUID/hash for user-generated /
- *  analysis / snapshot sets (#729, generalizing the #368 analysis-id fix). */
-function setTitleOf(
-    sets: ContentSetEntry[],
-    source: string,
-    setId: string,
-    opaqueFallback: string,
-): string {
-    const entry = sets.find((s) => s.source === source && s.id === setId);
-    const resolved = entry?.title ?? setId;
-    return looksLikeOpaqueId(resolved) ? opaqueFallback : resolved;
-}
-
-/** Resolve a lesson's display title, falling back from the cached
- *  lesson title to a filename-derived label and finally to a generic
- *  label when even that is opaque (#729). */
-function lessonTitleOf(
-    lesson: ContentLesson | null,
-    filename: string,
-    opaqueFallback: string,
-): string {
-    const label = lesson?.title ?? lessonLabelFromFilename(filename);
-    return looksLikeOpaqueId(label) ? opaqueFallback : label;
 }
 
 /** Total exercise/theory steps in a lesson (best-effort; used for
@@ -197,7 +170,7 @@ export default function ContinueLearning({
                               )
                             : null;
 
-                    const lessonTitle = lessonTitleOf(
+                    const lessonTitle = resolveLessonTitle(
                         rowLesson,
                         group.mostRecent.lesson_filename,
                         lessonFallbackLabel,
@@ -205,7 +178,7 @@ export default function ContinueLearning({
                     const item: DisplayItem = {
                         source: group.source,
                         setId: group.setId,
-                        setTitle: setTitleOf(
+                        setTitle: resolveSetTitle(
                             sets,
                             group.source,
                             group.setId,
@@ -234,7 +207,7 @@ export default function ContinueLearning({
                                 ? Math.round((correct / scoredTotal) * 100)
                                 : 0;
                         if (action.mode === "next") {
-                            item.nextTitle = lessonTitleOf(
+                            item.nextTitle = resolveLessonTitle(
                                 nextLesson,
                                 action.targetFilename,
                                 lessonFallbackLabel,

@@ -1920,6 +1920,7 @@ content:
     progress: "Step {n}/{total}"
     imported_analysis: "Imported analysis"
     lesson_fallback: "Lesson"
+    lesson_part: "{label} · Part {n}"
   import_chat:
     button: "Import Chat"
   search:

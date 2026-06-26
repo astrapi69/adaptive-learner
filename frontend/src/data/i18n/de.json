@@ -2070,7 +2070,8 @@
       "empty": "Starte deine erste Lektion!",
       "progress": "Aufgabe {n}/{total}",
       "imported_analysis": "Importierte Analyse",
-      "lesson_fallback": "Lektion"
+      "lesson_fallback": "Lektion",
+      "lesson_part": "{label} · Teil {n}"
     },
     "import_chat": {
       "button": "Chat importieren"
