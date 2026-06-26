@@ -24,9 +24,9 @@ from . import ai_orchestration
 from .route_helpers import _get_session
 from .session_runner import (
     _finalize_stream_exchange,
-    _load_prior_messages,
     _MessageBody,
     _resolve_active_key,
+    build_outgoing_history,
 )
 
 
@@ -188,7 +188,9 @@ def build_message_stream_response(
             f"Provider {provider_key!r} has no default model registered.",
         )
 
-    history = _load_prior_messages(db, sess.id)
+    # Rebuild-on-Resume for imported sessions (#1122); persisted history
+    # otherwise. Same contract as the non-stream /message path.
+    history = build_outgoing_history(db, sess)
     from app.main import manager
 
     async def _event_stream() -> Any:
