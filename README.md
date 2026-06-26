@@ -203,17 +203,21 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**432 lessons · 26 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**452 lessons · 30 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
 | अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 |
+| अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 |
 | French A1 (for English speakers) | en | fr | A1 | 15 |
 | Spanish A1 (for English speakers) | en | es | A1 | 15 |
 | Spanish A2 — Elementary | en | es | A2 | 15 |
 | Spanish B1 — Intermediate | en | es | B1 | 15 |
+| Spanish B2 (for English speakers) | en | es | B2 | 5 |
 | German A1 (for English speakers) | en | de | A1 | 5 |
+| German A2 (for English speakers) | en | de | A2 | 5 |
 | French A2 — Elementary | en | fr | A2 | 15 |
+| French B1 (for English speakers) | en | fr | B1 | 5 |
 | Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 |
 | Französisch A2 — Grundlagen | de | fr | A2 | 15 |
 | Französisch B1 — Mittelstufe | de | fr | B1 | 15 |
