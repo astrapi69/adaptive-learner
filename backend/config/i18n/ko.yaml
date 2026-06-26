@@ -889,6 +889,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: 빌드
   build_date_label: 빌드 날짜
+  strang:
+    haupt: "메인 버전 (안정)"
+    latest: "Latest 버전 (테스트)"
+    unknown: "알 수 없는 채널"
+    latest_warning: "미리보기/테스트 빌드를 사용 중입니다. 안정적이지 않으며 오류가 포함될 수 있습니다."
+    branch_label: "브랜치"
+    commit_label: "커밋"
+    fallback_note: "채널 추론됨 (명시적 빌드 마커 없음)."
   check_update: "업데이트 확인"
   checking: "확인 중…"
   update_available: "버전 {version}을(를) 사용할 수 있습니다!"
@@ -2588,6 +2596,11 @@ share:
     copied: "복사됨"
     share: "공유"
     qr_alt: "앱으로 연결되는 QR 코드"
+    haupt_label: "메인 버전 (안정)"
+    haupt_intro: "안정 버전 앱을 QR 코드로 공유하여 다른 사람들이 열 수 있도록 합니다."
+    latest_label: "Latest 버전 (테스트)"
+    latest_warning: "이것은 미리보기/테스트 버전입니다. 안정적이지 않으며 오류가 포함될 수 있습니다. 테스터와만 공유하세요."
+    open_link: "링크 열기"
   result:
     text: '"{title}"을(를) {pct}%로 완료했어요! 🎓 {total}개 중 {correct}개 정답.'
     cta_record: '친구에게 자랑하기!'

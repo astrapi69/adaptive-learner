@@ -889,6 +889,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Yapı
   build_date_label: Yapı tarihi
+  strang:
+    haupt: "Ana sürüm (kararlı)"
+    latest: "Latest sürüm (test)"
+    unknown: "Bilinmeyen kanal"
+    latest_warning: "Bir önizleme/test derlemesi kullanıyorsunuz. Kararlı değildir ve hatalar içerebilir."
+    branch_label: "Dal"
+    commit_label: "Commit"
+    fallback_note: "Kanal çıkarıldı (açık derleme işareti yok)."
   check_update: "Güncellemeleri denetle"
   checking: "Denetleniyor…"
   update_available: "{version} sürümü mevcut!"
@@ -2578,6 +2586,11 @@ share:
     copied: "Kopyalandı"
     share: "Paylaş"
     qr_alt: "Uygulamaya bağlanan QR kodu"
+    haupt_label: "Ana sürüm (kararlı)"
+    haupt_intro: "Kararlı uygulamayı QR kod ile paylaşın, böylece başkaları açabilir."
+    latest_label: "Latest sürüm (test)"
+    latest_warning: "Bu bir önizleme/test sürümüdür. Kararlı değildir ve hatalar içerebilir. Yalnızca test edenlerle paylaşın."
+    open_link: "Bağlantıyı aç"
   result:
     text: '"{title}" dersini %{pct} ile tamamladım! 🎓 {total} sorudan {correct} doğru.'
     cta_record: 'Arkadaşlarına göster!'
