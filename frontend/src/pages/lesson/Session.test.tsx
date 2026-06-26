@@ -25,6 +25,8 @@ const apiSettingsGet = vi.fn();
 const apiSettingsGetAvailableModels = vi.fn();
 const apiSessionGet = vi.fn();
 const apiSessionGetMessages = vi.fn();
+const apiProjectsGet = vi.fn();
+const apiImportsGet = vi.fn();
 
 /**
  * v1.6.0 — Session.tsx now sends via ``streamMessage``. The
@@ -86,6 +88,17 @@ vi.mock("../../api/client", async () => {
                 getAvailableModels: (...args: unknown[]) =>
                     apiSettingsGetAvailableModels(...args),
             },
+            // Header-only, fire-and-forget reads. Mocked so the page never
+            // makes a real connection in the unit run (the project topic + the
+            // imported-conversation topic lookups).
+            projects: {
+                ...actual.api.projects,
+                get: (...args: unknown[]) => apiProjectsGet(...args),
+            },
+            imports: {
+                ...actual.api.imports,
+                get: (...args: unknown[]) => apiImportsGet(...args),
+            },
         },
     };
 });
@@ -139,6 +152,12 @@ describe("Session page", () => {
         apiSettingsGetAvailableModels.mockReset();
         apiSessionGet.mockReset();
         apiSessionGetMessages.mockReset();
+        apiProjectsGet.mockReset();
+        apiImportsGet.mockReset();
+        // Defaults: header-only reads resolve to empty stubs so no test makes a
+        // real network connection (both are fire-and-forget in Session.tsx).
+        apiProjectsGet.mockResolvedValue({id: "p-1", topic: "Quantenphysik"});
+        apiImportsGet.mockResolvedValue({title: null, analysis_result: null});
         // Default: no recommendation. Per-test override when the
         // banner path is being exercised.
         apiSwitchRec.mockResolvedValue({recommended: false});
@@ -875,6 +894,8 @@ describe("Session page", () => {
             // hidden), so a non-null imported FK here contradicts the
             // assertions below. Use a non-imported session so the history
             // actually renders. The imported-clean path is covered separately.
+            // #1163 also mocks the header-only projects.get / imports.get reads
+            // so the suite makes no real network connection.
             imported_conversation_id: null,
         });
         apiSessionGetMessages.mockResolvedValue([
