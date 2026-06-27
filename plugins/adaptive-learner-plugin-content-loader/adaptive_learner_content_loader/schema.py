@@ -324,24 +324,17 @@ class Card(BaseModel):
         ge=1,
         le=5,
     )
-    media_type: str | None = Field(
+    media_type: Literal["text", "code", "formula", "diagram"] | None = Field(
         default=None,
         description=(
             "Card content kind: 'text' (default when null), 'code', "
             "'formula', or 'diagram'. Drives code-aware rendering + "
-            "exercise input (monospace editor for code/formula)."
+            "exercise input (monospace editor for code/formula). "
+            "EXP-039: a closed ``Literal`` so the generated JSON-Schema / "
+            "TS types carry the exact union (was a free ``str`` gated by "
+            "a runtime validator)."
         ),
     )
-
-    @field_validator("media_type")
-    @classmethod
-    def _known_media_type(cls, value: str | None) -> str | None:
-        if value is None:
-            return None
-        allowed = {"text", "code", "formula", "diagram"}
-        if value not in allowed:
-            raise ValueError(f"media_type must be one of {sorted(allowed)}; got {value!r}.")
-        return value
 
     @field_validator("id")
     @classmethod
@@ -361,6 +354,75 @@ class Card(BaseModel):
             if not _SLUG_RE.fullmatch(tag):
                 raise ValueError(f"tag '{tag}' must be slug-safe")
         return value
+
+
+class Pair(BaseModel):
+    """One left↔right pair in a MATCHING exercise.
+
+    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
+    so the generated JSON-Schema / TS types carry the structured
+    ``{left, right}`` shape instead of a loose string map. The
+    ``extra="forbid"`` config + the two required fields replace the
+    former per-pair key check in ``_validate_matching_fields``;
+    validation semantics are unchanged (a pair must have exactly
+    ``left`` and ``right``).
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    left: str = Field(
+        ...,
+        description="The left-column item. The renderer shuffles before display.",
+        min_length=1,
+        max_length=500,
+    )
+    right: str = Field(
+        ...,
+        description="The right-column item this pairs with.",
+        min_length=1,
+        max_length=500,
+    )
+
+
+class PictureImage(BaseModel):
+    """One image option in a PICTURE_CHOICE exercise.
+
+    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
+    so the generated JSON-Schema / TS types carry the structured
+    ``{src, label, is_correct?}`` shape instead of a loose string
+    map. ``extra="forbid"`` + the two required fields replace the
+    former key-subset / src+label-present checks; the
+    "exactly one correct" rule stays in ``_validate_picture_choice_fields``.
+
+    ``is_correct`` stays a ``str`` (``"true"`` marks the answer) for
+    backward compatibility with authored content, not a ``bool``.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    src: str = Field(
+        ...,
+        description=(
+            "Relative path inside the set's ``assets/`` directory "
+            "('assets/img/cat.png'). Resolved by the asset loader."
+        ),
+        min_length=1,
+        max_length=500,
+    )
+    label: str = Field(
+        ...,
+        description="Accessible label / alt text for the image option.",
+        min_length=1,
+        max_length=500,
+    )
+    is_correct: str | None = Field(
+        default=None,
+        description=(
+            "Set to the string ``'true'`` on exactly one image to mark "
+            "it the correct choice. Absent on the distractor images."
+        ),
+        max_length=10,
+    )
 
 
 class Exercise(BaseModel):
@@ -420,19 +482,18 @@ class Exercise(BaseModel):
     # for types that don't use them keeps the JSON files
     # consistent (no per-type field renaming).
 
-    pairs: list[dict[str, str]] | None = Field(
+    pairs: list[Pair] | None = Field(
         default=None,
         description=(
-            "MATCHING: list of {left, right} dicts to pair up. "
-            "Each dict has exactly two keys: 'left' and "
-            "'right'. The renderer shuffles before display."
+            "MATCHING: list of {left, right} pairs to match up. "
+            "The renderer shuffles before display."
         ),
     )
-    images: list[dict[str, str]] | None = Field(
+    images: list[PictureImage] | None = Field(
         default=None,
         description=(
-            "PICTURE_CHOICE: list of {src, label} dicts. "
-            "Exactly one entry MUST also include "
+            "PICTURE_CHOICE: list of {src, label, is_correct?} "
+            "options. Exactly one entry MUST include "
             "'is_correct': 'true'. ``src`` is a relative path "
             "inside the set's ``assets/`` directory."
         ),
@@ -551,30 +612,30 @@ class Exercise(BaseModel):
         return self
 
     def _validate_matching_fields(self) -> None:
-        """MATCHING requires non-empty 'pairs', each with exactly left+right keys."""
+        """MATCHING requires non-empty 'pairs'.
+
+        Each pair's exact ``{left, right}`` shape is enforced by the
+        ``Pair`` model (required fields + ``extra="forbid"``)
+        (EXP-039), so only the non-empty count is checked here.
+        """
         if not self.pairs:
             raise ValueError("MATCHING exercise requires non-empty 'pairs'")
-        for pair in self.pairs:
-            if set(pair.keys()) != {"left", "right"}:
-                raise ValueError("MATCHING pair must have exactly 'left' and 'right' keys")
 
     def _validate_picture_choice_fields(self) -> None:
-        """PICTURE_CHOICE requires >= 2 images, exactly one correct, allowed keys only."""
+        """PICTURE_CHOICE requires >= 2 images, exactly one correct.
+
+        Each image's ``{src, label, is_correct?}`` shape (required
+        src+label, no extra keys) is enforced by the ``PictureImage``
+        model (EXP-039); only the cross-image rules — at least two
+        options and exactly one marked correct — live here.
+        """
         if not self.images or len(self.images) < 2:
             raise ValueError("PICTURE_CHOICE requires at least 2 'images'")
-        correct_count = sum(1 for img in self.images if img.get("is_correct") == "true")
+        correct_count = sum(1 for img in self.images if img.is_correct == "true")
         if correct_count != 1:
             raise ValueError(
                 "PICTURE_CHOICE must have exactly one image marked 'is_correct': 'true'"
             )
-        for img in self.images:
-            allowed = {"src", "label", "is_correct"}
-            if not set(img.keys()) <= allowed:
-                raise ValueError(
-                    "PICTURE_CHOICE image keys must be a subset of {src, label, is_correct}"
-                )
-            if "src" not in img or "label" not in img:
-                raise ValueError("PICTURE_CHOICE image requires 'src' and 'label'")
 
     def _validate_free_text_fields(self) -> None:
         """FREE_TEXT requires a non-empty 'accept' list."""
@@ -598,9 +659,7 @@ class Exercise(BaseModel):
                     f"permutation of [0..{tile_count - 1}]"
                 )
             if set(ordering) != valid_indices:
-                raise ValueError(
-                    "accept_orderings entries must use every tile index exactly once"
-                )
+                raise ValueError("accept_orderings entries must use every tile index exactly once")
 
     def _validate_cloze_fields(self) -> None:
         """CLOZE (Phase 52D / P-127) requires sentence+blanks with matching '___'

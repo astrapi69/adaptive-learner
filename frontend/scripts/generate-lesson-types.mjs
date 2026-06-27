@@ -35,10 +35,36 @@ const BANNER = `/**
  * \`make sync-schema\`, then \`make sync-lesson-types\`.
  */`;
 
+/**
+ * Strip ``minItems`` / ``maxItems`` from every array node in the schema,
+ * in place. json-schema-to-typescript turns a bounded array into a tuple
+ * union (``[] | [T] | [T, T] | …``), which is correct for validation but
+ * useless as a CONSUMER type: a plain ``T[]`` is not assignable to such a
+ * union, so the ~147 lesson-type consumers (and any code constructing a
+ * lesson) would not type-check. Array cardinality is the JSON-Schema
+ * validator's job (the committed ``*.schema.json`` keep min/maxItems for
+ * ajv); the generated TS types only need the element type. So we drop the
+ * bounds before compiling and emit clean ``T[]`` arrays.
+ */
+function stripArrayBounds(node) {
+  if (Array.isArray(node)) {
+    for (const child of node) stripArrayBounds(child);
+    return;
+  }
+  if (node && typeof node === "object") {
+    if (node.type === "array") {
+      delete node.minItems;
+      delete node.maxItems;
+    }
+    for (const value of Object.values(node)) stripArrayBounds(value);
+  }
+}
+
 async function build() {
   const schema = JSON.parse(readFileSync(SCHEMA_PATH, "utf-8"));
   // Drop the custom x-schema-version key so json2ts does not emit a stray type.
   delete schema["x-schema-version"];
+  stripArrayBounds(schema);
   const ts = await compile(schema, "Lesson", {
     bannerComment: BANNER,
     additionalProperties: false,

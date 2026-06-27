@@ -48,197 +48,21 @@ export type Id = string;
  */
 export type Image = string | null;
 /**
- * Card content kind: 'text' (default when null), 'code', 'formula', or 'diagram'. Drives code-aware rendering + exercise input (monospace editor for code/formula).
+ * Card content kind: 'text' (default when null), 'code', 'formula', or 'diagram'. Drives code-aware rendering + exercise input (monospace editor for code/formula). EXP-039: a closed ``Literal`` so the generated JSON-Schema / TS types carry the exact union (was a free ``str`` gated by a runtime validator).
  */
-export type MediaType = string | null;
+export type MediaType = ("text" | "code" | "formula" | "diagram") | null;
 /**
  * Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings — anything that helps long-term retention.
  */
 export type Notes = string | null;
 /**
  * Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').
- *
- * @maxItems 20
  */
-export type Tags =
-  | []
-  | [string]
-  | [string, string]
-  | [string, string, string]
-  | [string, string, string, string]
-  | [string, string, string, string, string]
-  | [string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string, string, string]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ];
+export type Tags = string[];
 /**
  * Phase 52I / v1.35.0 / P-130. Optional list of ``{token, role}`` annotations on the card's ``front``. The cloze generator (52E) uses these to pick a semantically-meaningful blank when available; absent annotations fall through to a position-based heuristic so old content keeps working unchanged.
  */
-export type TokenRoles =
-  | []
-  | [CardTokenRole]
-  | [CardTokenRole, CardTokenRole]
-  | [CardTokenRole, CardTokenRole, CardTokenRole]
-  | [CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole]
-  | [CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole]
-  | [CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole]
-  | [CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole, CardTokenRole]
-  | [
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole
-    ]
-  | [
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole
-    ]
-  | [
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole,
-      CardTokenRole
-    ]
-  | null;
+export type TokenRoles = CardTokenRole[] | null;
 /**
  * Grammatical role of this token in the card.
  */
@@ -286,140 +110,7 @@ export type Free = boolean | null;
 export type Language = string | null;
 export type Level = string | null;
 export type Partnership = boolean | null;
-export type Tags1 =
-  | []
-  | [string]
-  | [string, string]
-  | [string, string, string]
-  | [string, string, string, string]
-  | [string, string, string, string, string]
-  | [string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string, string, string]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | null;
+export type Tags1 = string[] | null;
 /**
  * Human-readable title shown in the media list.
  */
@@ -436,12 +127,6 @@ export type Url = string;
  * Optional BCP-47 code of the language the learner already speaks (the language the card ``back`` / notes / theory are written in). Absent on pre-v1.2 lessons.
  */
 export type SourceLanguage = string | null;
-/**
- * Ordered sequence of theory + exercise steps. Must contain at least one step.
- *
- * @minItems 1
- */
-export type Steps = [LessonStep, ...LessonStep[]];
 /**
  * THEORY: Markdown content. Rendered by the same react-markdown pipeline the help system uses.
  */
@@ -468,10 +153,8 @@ export type AcceptOrderings = number[][] | null;
 export type Blanks = ClozeBlank[] | null;
 /**
  * Accepted answers for this blank. First entry is the canonical (shown after a wrong attempt). Same shape as FREE_TEXT.accept.
- *
- * @minItems 1
  */
-export type Accept1 = [string, ...string[]];
+export type Accept1 = string[];
 /**
  * Optional per-blank hint. Surfaced inline next to this specific blank, not lesson-wide.
  */
@@ -482,8 +165,6 @@ export type Hint1 = string | null;
 export type Placeholder = string | null;
 /**
  * Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.
- *
- * @maxItems 50
  */
 export type CardIds = string[];
 /**
@@ -496,142 +177,8 @@ export type ClozeMode = ("type" | "select") | null;
 export type Direction = "source_to_target" | "target_to_source" | "both" | "random";
 /**
  * Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.
- *
- * @maxItems 20
  */
-export type Distractors =
-  | []
-  | [string]
-  | [string, string]
-  | [string, string, string]
-  | [string, string, string, string]
-  | [string, string, string, string, string]
-  | [string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string, string]
-  | [string, string, string, string, string, string, string, string, string, string, string, string, string, string]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ]
-  | [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string
-    ];
+export type Distractors = string[];
 /**
  * Optional Markdown hint shown on demand. The viewer renders this behind a 'Need a hint?' button.
  */
@@ -641,21 +188,33 @@ export type Hint2 = string | null;
  */
 export type Id2 = string;
 /**
- * PICTURE_CHOICE: list of {src, label} dicts. Exactly one entry MUST also include 'is_correct': 'true'. ``src`` is a relative path inside the set's ``assets/`` directory.
+ * PICTURE_CHOICE: list of {src, label, is_correct?} options. Exactly one entry MUST include 'is_correct': 'true'. ``src`` is a relative path inside the set's ``assets/`` directory.
  */
-export type Images =
-  | {
-      [k: string]: string;
-    }[]
-  | null;
+export type Images = PictureImage[] | null;
 /**
- * MATCHING: list of {left, right} dicts to pair up. Each dict has exactly two keys: 'left' and 'right'. The renderer shuffles before display.
+ * Set to the string ``'true'`` on exactly one image to mark it the correct choice. Absent on the distractor images.
  */
-export type Pairs =
-  | {
-      [k: string]: string;
-    }[]
-  | null;
+export type IsCorrect = string | null;
+/**
+ * Accessible label / alt text for the image option.
+ */
+export type Label = string;
+/**
+ * Relative path inside the set's ``assets/`` directory ('assets/img/cat.png'). Resolved by the asset loader.
+ */
+export type Src = string;
+/**
+ * MATCHING: list of {left, right} pairs to match up. The renderer shuffles before display.
+ */
+export type Pairs = Pair[] | null;
+/**
+ * The left-column item. The renderer shuffles before display.
+ */
+export type Left = string;
+/**
+ * The right-column item this pairs with.
+ */
+export type Right = string;
 /**
  * The question text shown to the learner.
  */
@@ -692,6 +251,10 @@ export type Title1 = string | null;
  * THEORY or EXERCISE.
  */
 export type StepType = "theory" | "exercise";
+/**
+ * Ordered sequence of theory + exercise steps. Must contain at least one step.
+ */
+export type Steps = LessonStep[];
 /**
  * Optional BCP-47 code of the language taught (Phase 60 / v1.44.0). Mirrors the parent set's ``target_language``; lets an exported standalone lesson carry its own pair. Absent on pre-v1.2 lessons — the parent set is authoritative.
  */
@@ -881,4 +444,37 @@ export interface ClozeBlank {
   accept: Accept1;
   hint?: Hint1;
   placeholder?: Placeholder;
+}
+/**
+ * One image option in a PICTURE_CHOICE exercise.
+ *
+ * EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
+ * so the generated JSON-Schema / TS types carry the structured
+ * ``{src, label, is_correct?}`` shape instead of a loose string
+ * map. ``extra="forbid"`` + the two required fields replace the
+ * former key-subset / src+label-present checks; the
+ * "exactly one correct" rule stays in ``_validate_picture_choice_fields``.
+ *
+ * ``is_correct`` stays a ``str`` (``"true"`` marks the answer) for
+ * backward compatibility with authored content, not a ``bool``.
+ */
+export interface PictureImage {
+  is_correct?: IsCorrect;
+  label: Label;
+  src: Src;
+}
+/**
+ * One left↔right pair in a MATCHING exercise.
+ *
+ * EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
+ * so the generated JSON-Schema / TS types carry the structured
+ * ``{left, right}`` shape instead of a loose string map. The
+ * ``extra="forbid"`` config + the two required fields replace the
+ * former per-pair key check in ``_validate_matching_fields``;
+ * validation semantics are unchanged (a pair must have exactly
+ * ``left`` and ``right``).
+ */
+export interface Pair {
+  left: Left;
+  right: Right;
 }

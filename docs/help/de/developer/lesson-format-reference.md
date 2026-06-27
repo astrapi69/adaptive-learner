@@ -47,7 +47,7 @@ The smallest learnable unit (Phase 43 / 2B-lesson).
 | `hint` | `string | null` | no | - |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
 | `image` | `string | null` | no | - |
-| `media_type` | `string | null` | no | - |
+| `media_type` | `"text" | "code" | "formula" | "diagram" | null` | no | - |
 | `notes` | `string | null` | no | - |
 | `tags` | `string[]` | no | maxItems=20 |
 | `token_roles` | `CardTokenRole[] | null` | no | - |
@@ -89,8 +89,8 @@ One exercise step. Type-tagged via ``type``.
 | `distractors` | `string[]` | no | maxItems=20 |
 | `hint` | `string | null` | no | - |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
-| `images` | `{ [k: string]: string }[] | null` | no | - |
-| `pairs` | `{ [k: string]: string }[] | null` | no | - |
+| `images` | `PictureImage[] | null` | no | - |
+| `pairs` | `Pair[] | null` | no | - |
 | `prompt` | `string` | yes | minLen=1, maxLen=1000 |
 | `sentence` | `string | null` | no | - |
 | `tiles` | `string[] | null` | no | - |
@@ -135,6 +135,27 @@ One step in the lesson sequence.
 | `theory_ref` | `string | null` | no | - |
 | `title` | `string | null` | no | - |
 | `type` | `StepType` | yes | - |
+
+
+### `Pair`
+
+One left↔right pair in a MATCHING exercise.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `left` | `string` | yes | minLen=1, maxLen=500 |
+| `right` | `string` | yes | minLen=1, maxLen=500 |
+
+
+### `PictureImage`
+
+One image option in a PICTURE_CHOICE exercise.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `is_correct` | `string | null` | no | - |
+| `label` | `string` | yes | minLen=1, maxLen=500 |
+| `src` | `string` | yes | minLen=1, maxLen=500 |
 
 
 ### `StepType` (enum)
