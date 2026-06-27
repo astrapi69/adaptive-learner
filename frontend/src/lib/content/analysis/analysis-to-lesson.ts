@@ -61,6 +61,7 @@ import {
   selectExercises,
   type GeneratorCard,
 } from "../lesson/exercise-generator";
+import { validateLessonShape } from "../validation/lesson-schema-validator";
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -516,22 +517,28 @@ export function summarizeGeneratedLesson(
 }
 
 // ---------------------------------------------------------------------------
-// Validation (mirror of the backend Pydantic Lesson invariants)
+// Validation (#1205 / EXP-039)
+//
+// Two layers: ajv validates the STRUCTURAL shape against the generated
+// ``schema/lesson.schema.json`` (the SoT mirror) — fields, types, closed
+// enums, length/range bounds, ``additionalProperties: false`` — so the shape
+// can no longer drift from the Pydantic models. The imperative checks below
+// cover only the cross-field / semantic rules JSON-Schema cannot express:
+// slug-safety + uniqueness, referential integrity, cloze marker/blank parity,
+// picture-choice single-correct, and ``accept_orderings`` permutations.
 // ---------------------------------------------------------------------------
 
-/** Throws an Error on the first schema violation. Keeps the
- *  frontend honest without a Pydantic equivalent: the API-mode path
- *  re-validates with the real schema, this guards the Dexie path. */
+/** Throws an Error on the first violation. Structural shape comes from ajv
+ *  against the App-authoritative schema (Dexie path); the imperative checks
+ *  guard the semantics JSON-Schema cannot express. */
 export function validateGeneratedLesson(lesson: ContentLesson): void {
   const fail = (msg: string): never => {
     throw new Error(`generated lesson invalid: ${msg}`);
   };
-  if (!SLUG_RE.test(lesson.id)) fail(`lesson id '${lesson.id}' not slug-safe`);
-  if (!lesson.title || lesson.title.length > 200)
-    fail("lesson title empty or >200 chars");
-  if (lesson.estimated_minutes < 1) fail("estimated_minutes < 1");
-  if (lesson.steps.length < 1) fail("lesson needs at least one step");
+  const shape = validateLessonShape(lesson);
+  if (!shape.ok) fail(shape.errors[0] ?? "shape does not match the schema");
 
+  if (!SLUG_RE.test(lesson.id)) fail(`lesson id '${lesson.id}' not slug-safe`);
   const cardIds = validateCards(lesson.cards, fail);
   validateSteps(lesson.steps, cardIds, fail);
 }
@@ -548,7 +555,7 @@ function validateCards(
     if (!SLUG_RE.test(card.id)) fail(`card id '${card.id}' not slug-safe`);
     if (cardIds.has(card.id)) fail(`duplicate card id '${card.id}'`);
     cardIds.add(card.id);
-    if (!card.front || !card.back) fail(`card '${card.id}' needs front + back`);
+    // front/back presence + length is enforced by the ajv shape layer.
     for (const tag of card.tags) {
       if (!SLUG_RE.test(tag))
         fail(`card '${card.id}' tag '${tag}' not slug-safe`);
@@ -611,6 +618,16 @@ function validateExercise(
     if (!exercise.tiles || exercise.tiles.length < 2) {
       fail(`word_tiles '${exercise.id}' needs >= 2 tiles`);
     }
+    validateAcceptOrderings(exercise, fail);
+  } else if (exercise.type === "picture_choice") {
+    const correct = (exercise.images ?? []).filter(
+      (image) => image.is_correct === "true",
+    ).length;
+    if (correct !== 1) {
+      fail(
+        `picture_choice '${exercise.id}' needs exactly one correct image (has ${correct})`,
+      );
+    }
   } else if (exercise.type === "cloze") {
     if (!exercise.sentence) fail(`cloze '${exercise.id}' needs a sentence`);
     const markers = (exercise.sentence.match(/___/g) ?? []).length;
@@ -618,6 +635,28 @@ function validateExercise(
     if (markers !== blanks) {
       fail(
         `cloze '${exercise.id}' marker/blank mismatch (${markers} vs ${blanks})`,
+      );
+    }
+  }
+}
+
+/** WORD_TILES: every entry in ``accept_orderings`` must be a true permutation
+ *  of ``[0..tiles.length-1]`` (correct length, no gaps, no duplicates). */
+function validateAcceptOrderings(
+  exercise: ContentLessonExercise,
+  fail: (msg: string) => never,
+): void {
+  const orderings = exercise.accept_orderings;
+  if (!orderings) return;
+  const tileCount = exercise.tiles?.length ?? 0;
+  for (const ordering of orderings) {
+    const isPermutation =
+      ordering.length === tileCount &&
+      new Set(ordering).size === tileCount &&
+      ordering.every((index) => Number.isInteger(index) && index >= 0 && index < tileCount);
+    if (!isPermutation) {
+      fail(
+        `word_tiles '${exercise.id}' accept_orderings entry is not a permutation of [0..${tileCount - 1}]`,
       );
     }
   }
