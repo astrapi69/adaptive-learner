@@ -103,6 +103,15 @@ describe("#1205 fixture 2 — additionalProperties:false (foreign field)", () =>
     (lesson.steps[1].exercise as Record<string, unknown>).bogus = "x";
     expect(validateLessonShape(lesson).ok).toBe(false);
   });
+
+  // Error-message mapping: the reject must name the offending field, not a
+  // raw [object Object] / JSON dump.
+  it("names the offending field in the error message", () => {
+    const bad = { ...makeLesson(), bogus: 1 } as unknown as ContentLesson;
+    const [first] = validateLessonShape(bad).errors;
+    expect(first).toMatch(/bogus/);
+    expect(first).not.toMatch(/\[object Object\]/);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -286,6 +295,54 @@ describe("#1205 fixture 8 — closed exercise.type enum (ajv)", () => {
     (lesson.steps[0] as Record<string, unknown>).type = "video";
     expect(validateLessonShape(lesson).ok).toBe(false);
   });
+
+  it("names the field path of the bad enum value", () => {
+    const lesson = makeLesson();
+    (lesson.steps[1].exercise as Record<string, unknown>).type =
+      "multiple_choice";
+    const [first] = validateLessonShape(lesson).errors;
+    // The instancePath points at the offending field, not the whole object.
+    expect(first).toMatch(/steps\/1\/exercise\/type/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// cloze_mode enum — validated from the schema, not hard-coded (anti-drift).
+// ---------------------------------------------------------------------------
+describe("#1205 — cloze_mode is schema-validated", () => {
+  function clozeLesson(cloze_mode: string): ContentLesson {
+    return makeLesson({
+      steps: [
+        { id: "theory-intro", type: "theory", body: "t" },
+        {
+          id: "ex-cloze-01",
+          type: "exercise",
+          exercise: {
+            id: "ex-cloze-01",
+            type: "cloze",
+            prompt: "Fill in.",
+            card_ids: ["card-01"],
+            distractors: [],
+            cloze_mode,
+            sentence: "Le ___.",
+            blanks: [{ accept: ["chat"] }],
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+  }
+
+  it("accepts an allowed cloze_mode ('select')", () => {
+    expect(validateLessonShape(clozeLesson("select")).ok).toBe(true);
+  });
+
+  it("rejects an unknown cloze_mode (whatever the current enum is)", () => {
+    // The accepted set is read from schema/lesson.schema.json — when a new
+    // mode (e.g. #1195 'multiselect') is added to the Pydantic model and
+    // `make sync-schema` regenerates the schema, ajv accepts it with NO
+    // change here. That automatic follow-through is the anti-drift payoff.
+    expect(validateLessonShape(clozeLesson("not-a-real-mode")).ok).toBe(false);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -298,21 +355,30 @@ describe("#1205 fixture 8 — closed exercise.type enum (ajv)", () => {
 // with a stable reason, so neither the ajv layer nor the imperative layer can
 // silently drift.
 // ---------------------------------------------------------------------------
-describe("#1205 fixture 9 — golden parity pin (app-side)", () => {
+interface ParityCase {
+  name: string;
+  expectValid: boolean;
+  reason: string;
+  lesson: unknown;
+}
+const PARITY = JSON.parse(
+  readFileSync(join(HERE, "..", "__fixtures__", "lesson-shape-parity.json"), "utf-8"),
+) as { cases: ParityCase[] };
+
+describe("#1205 fixture 9 — shared shape-parity fixture (app-side)", () => {
   it("golden-good: the inception lesson validates clean", () => {
     expect(validateLessonShape(INCEPTION).ok).toBe(true);
     expect(() => validateGeneratedLesson(INCEPTION)).not.toThrow();
   });
 
-  it("golden-bad: a lesson with a foreign field + bad type rejects", () => {
-    const bad = {
-      ...makeLesson(),
-      bogus: 1,
-    } as unknown as ContentLesson;
-    (bad.steps[1].exercise as Record<string, unknown>).type = "multiple_choice";
-    const result = validateLessonShape(bad);
-    expect(result.ok).toBe(false);
-    // Stable: more than one structural error surfaces.
-    expect(result.errors.length).toBeGreaterThan(0);
-  });
+  // Each case in the shared fixture file must get the expected SHAPE verdict
+  // from the app-side ajv validator. The SAME file is the parity contract the
+  // content-repo validator is to be pinned against once it adopts jsonschema
+  // (EXP-039 step 8 / CCWc follow-up) — see the PR/report.
+  it.each(PARITY.cases)(
+    "shared fixture '$name' -> expectValid=$expectValid",
+    ({ lesson, expectValid }) => {
+      expect(validateLessonShape(lesson).ok).toBe(expectValid);
+    },
+  );
 });
