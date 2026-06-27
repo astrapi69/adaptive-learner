@@ -69,6 +69,7 @@ function rowToWire(row: ElementErrorRow): ElementError {
         mastered_at: row.mastered_at,
         hint_used: row.hint_used ?? false,
         hint_used_count: row.hint_used_count ?? 0,
+        last_attempt_exam: row.last_attempt_exam ?? false,
         attempt_count: row.attempt_count ?? 0,
         attempt_history: row.attempt_history ?? [],
         created_at: row.created_at,
@@ -119,6 +120,9 @@ function createElementRow(
         // #594 Hint Economy — latest hint flag + lifetime count.
         hint_used: attempt.hint_used ?? false,
         hint_used_count: attempt.hint_used ? 1 : 0,
+        // #1040 Exam-Mode SRS boost — only a CORRECT exam answer is
+        // stronger evidence; a wrong exam answer must not be delayed.
+        last_attempt_exam: (attempt.exam ?? false) && attempt.correct,
         // #603 Smart Review Queue — first attempt + history seed.
         attempt_count: 1,
         attempt_history: appendAttemptHistory(undefined, attempt, nowIso),
@@ -171,6 +175,9 @@ function advanceElementRow(
     if (attempt.hint_used) {
         next.hint_used_count = (next.hint_used_count ?? 0) + 1;
     }
+    // #1040 Exam-Mode SRS boost — the latest attempt drives the flag; only
+    // a CORRECT exam answer earns the lengthened interval.
+    next.last_attempt_exam = (attempt.exam ?? false) && attempt.correct;
     // #603 Smart Review Queue — bump the attempt count + ring buffer.
     next.attempt_count = (next.attempt_count ?? 0) + 1;
     next.attempt_history = appendAttemptHistory(
@@ -271,6 +278,18 @@ export function intervalDaysForStreak(correctStreak: number): number {
  *  ``element_srs.HINT_INTERVAL_FACTOR``. */
 export const HINT_INTERVAL_FACTOR = 0.5;
 
+/** #1040 Exam-Mode SRS boost (Phase 2 of #1007) — a card answered
+ *  CORRECTLY under exam pressure is stronger retention evidence, so the
+ *  next review comes LATER. The base interval is multiplied by this factor
+ *  when the element's most recent attempt was a correct exam answer
+ *  (``last_attempt_exam``). The mathematical inverse of
+ *  {@link HINT_INTERVAL_FACTOR} (0.5 -> 2.0), as the issue specifies.
+ *  Naturally bounded: the flag is only ever set on a correct answer
+ *  (streak >= 1), so the longest band it stretches is 7d (streak 2) -> 14d;
+ *  a mastered element (streak 3) leaves the queue, so there is no runaway.
+ *  Mirrors the backend ``element_srs.EXAM_INTERVAL_FACTOR``. */
+export const EXAM_INTERVAL_FACTOR = 2.0;
+
 function _addDays(iso: string, days: number): string {
     // Millisecond arithmetic so fractional days (the #594 hint factor
     // shortens an interval to e.g. 0.5d) are honoured exactly.
@@ -282,9 +301,12 @@ function _projectReviewItem(
     row: ElementErrorRow,
     nowIso: string,
 ): ReviewQueueItem {
+    // #594 hint factor shortens; #1040 exam factor lengthens. They compose
+    // multiplicatively (in practice never both apply — exam disables hints).
     const interval =
         intervalDaysForStreak(row.correct_streak) *
-        (row.hint_used ? HINT_INTERVAL_FACTOR : 1.0);
+        (row.hint_used ? HINT_INTERVAL_FACTOR : 1.0) *
+        (row.last_attempt_exam ? EXAM_INTERVAL_FACTOR : 1.0);
     const suggested = _addDays(row.last_attempt_at, interval);
     return {
         id: row.id,

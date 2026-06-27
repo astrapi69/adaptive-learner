@@ -198,6 +198,135 @@ def test_hint_used_halves_the_review_interval(user_id: str) -> None:
         db.close()
 
 
+# --- #1040 Exam-Mode SRS boost (Phase 2 of #1007) -------------------------
+
+
+def test_exam_factor_is_the_inverse_of_the_hint_factor() -> None:
+    """#1040 — the exam factor (>1, lengthens) is the mathematical inverse
+    of the #594 hint factor (<1, shortens), as the issue specifies."""
+    from app.services.element_srs import (
+        EXAM_INTERVAL_FACTOR,
+        HINT_INTERVAL_FACTOR,
+    )
+
+    assert EXAM_INTERVAL_FACTOR == 2.0
+    assert EXAM_INTERVAL_FACTOR == pytest.approx(1.0 / HINT_INTERVAL_FACTOR)
+
+
+def test_exam_correct_lengthens_the_review_interval(user_id: str) -> None:
+    """A CORRECT exam answer (streak 1 → 3d band) schedules its review at
+    double the interval (6d) — retrieving correctly under pressure is
+    stronger evidence of retention than a practice-mode correct answer."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        attempt = _attempt(correct=True)
+        attempt.exam = True
+        row = element_errors_service.record_attempt(repo, user_id, attempt)
+        db.commit()
+        assert row.last_attempt_exam is True
+        assert row.correct_streak == 1
+        queue = compute_review_queue(repo, user_id)
+        item = queue[0]
+        last = item.last_attempt_at
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=UTC)
+        # streak 1 → 3d band, doubled by the exam factor → 6d.
+        expected = last + timedelta(days=6)
+        delta = abs((item.suggested_review_at - expected).total_seconds())
+        assert delta < 1
+    finally:
+        db.close()
+
+
+def test_wrong_exam_answer_is_not_boosted(user_id: str) -> None:
+    """A WRONG exam answer is not stronger evidence — it must NOT be
+    delayed. ``last_attempt_exam`` stays false, so the interval is the
+    plain streak-0 1-day band (no perverse delay of a just-failed card)."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        attempt = _attempt(correct=False)
+        attempt.exam = True
+        row = element_errors_service.record_attempt(repo, user_id, attempt)
+        db.commit()
+        assert row.last_attempt_exam is False
+        queue = compute_review_queue(repo, user_id)
+        item = queue[0]
+        last = item.last_attempt_at
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=UTC)
+        # streak 0 → 1d band, NOT lengthened.
+        expected = last + timedelta(days=1)
+        delta = abs((item.suggested_review_at - expected).total_seconds())
+        assert delta < 1
+    finally:
+        db.close()
+
+
+def test_exam_boost_is_bounded_and_does_not_runaway(user_id: str) -> None:
+    """Obergrenze — the boost cannot endlessly defer (or endlessly repeat)
+    a strong card. Two correct exam answers reach the longest active band
+    (streak 2 → 7d → 14d); the third masters the card, removing it from the
+    queue. So the boost is capped at 14d and never compounds beyond it."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        for _ in range(2):
+            a = _attempt(correct=True)
+            a.exam = True
+            element_errors_service.record_attempt(repo, user_id, a)
+        db.commit()
+        queue = compute_review_queue(repo, user_id)
+        item = queue[0]
+        assert item.correct_streak == 2
+        last = item.last_attempt_at
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=UTC)
+        # streak 2 → 7d band, doubled → 14d (the bounded maximum).
+        expected = last + timedelta(days=14)
+        delta = abs((item.suggested_review_at - expected).total_seconds())
+        assert delta < 1
+        # The third correct exam answer masters the card → excluded.
+        a3 = _attempt(correct=True)
+        a3.exam = True
+        element_errors_service.record_attempt(repo, user_id, a3)
+        db.commit()
+        assert compute_review_queue(repo, user_id) == []
+    finally:
+        db.close()
+
+
+def test_exam_flag_clears_on_a_later_practice_answer(user_id: str) -> None:
+    """Regression — where Phase 2 does not apply (a plain practice answer),
+    the Phase 1 interval is unchanged. A correct exam answer sets the flag;
+    a subsequent correct PRACTICE answer clears it, so the interval reverts
+    to the plain streak band with no boost."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        exam = _attempt(correct=True)
+        exam.exam = True
+        element_errors_service.record_attempt(repo, user_id, exam)
+        # Plain practice answer (exam defaults to False) → streak 2.
+        row = element_errors_service.record_attempt(
+            repo, user_id, _attempt(correct=True)
+        )
+        db.commit()
+        assert row.last_attempt_exam is False
+        queue = compute_review_queue(repo, user_id)
+        item = queue[0]
+        last = item.last_attempt_at
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=UTC)
+        # streak 2 → 7d band, NO boost.
+        expected = last + timedelta(days=7)
+        delta = abs((item.suggested_review_at - expected).total_seconds())
+        assert delta < 1
+    finally:
+        db.close()
+
+
 def test_overdue_flag_against_injected_clock(user_id: str) -> None:
     db = SessionLocal()
     repo = SqlAlchemyElementErrorsRepository(db)

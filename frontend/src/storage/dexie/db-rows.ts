@@ -554,6 +554,11 @@ export interface ElementErrorRow {
     /** #594 Hint Economy — lifetime count of hint-assisted attempts on
      *  this element (feeds the "answers with hint" statistic). */
     hint_used_count?: number;
+    /** #1040 Exam-Mode SRS boost — whether the most recent attempt was a
+     *  correct exam answer (lengthens the SRS interval). Optional so
+     *  pre-#1040 rows read back as ``undefined`` (treated as false).
+     *  Stored inline (non-indexed) so no Dexie version bump is needed. */
+    last_attempt_exam?: boolean;
     /** #603 Smart Review Queue — total attempts (correct or wrong). */
     attempt_count?: number;
     /** #603 Smart Review Queue — the last 10 attempts (ring buffer).
