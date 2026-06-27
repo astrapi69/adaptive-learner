@@ -170,8 +170,9 @@ Chain: AdaptiveLearnerError -> API response (detail + traceback) -> ApiError -> 
 - Frontend: Vitest (happy-dom).
 - E2E: Playwright.
 - Mutation testing: mutmut (Python).
-- New endpoints: at least one happy-path test.
-- Bug fixes: failing test FIRST, then fix.
+- TDD: test first (RED), minimal code (GREEN), refactor. See tdd.md for the workflow and the four-test-per-feature guideline.
+- New endpoints: at least one happy-path test (the minimal floor).
+- Bug fixes: failing test FIRST, then fix (the RED step of the cycle).
 - Mocking: mock external services (LanguageTool, Pandoc), no real calls in tests.
 - `make test` must stay green after every change.
 - Surviving mutants in critical code: add tests. In trivial code: ignore.
