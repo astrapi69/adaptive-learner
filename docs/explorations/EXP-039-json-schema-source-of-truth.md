@@ -298,7 +298,8 @@ Empfehlung: **generiert** fuer den Feld-/Typ-Referenzteil (Tabelle aller Felder)
 **manuell** fuer den erklaerenden Prosa-Teil (Beispiele, Best Practices) mit einem
 leichten Drift-Check, dass kein Typ fehlt. Pydantics `Field(description=...)` ist
 bereits reich befuellt (siehe `schema.py`) — der Referenzteil faellt nahezu
-kostenlos ab.
+kostenlos ab. **Wo diese generierte Doku als gerenderte Seite erscheint
+(MkDocs-Site, App- vs. Content-Repo-Sichtbarkeit), behandelt Abschnitt 6.**
 
 ### 3.5 KI-Generierungs-Prompt (#6) bindet ans Schema
 
@@ -403,7 +404,83 @@ verlinktes Schema nativ.
 
 ---
 
-## 6. Migration (abwaertskompatibel, ohne bestehende Sets zu brechen)
+## 6. MkDocs-Publikation (gerenderte Schema-Doku fuer Beitragende)
+
+Die generierte, menschenlesbare Schema-/Lesson-Format-Doku (Abschnitt 3.4) soll
+nicht nur als Repo-Datei existieren, sondern als **gerenderte Seite auf der
+MkDocs-Doku-Site** auffindbar sein. Verifiziert gegen die vorhandene Pipeline.
+
+### 6.1 Die MkDocs-Pipeline liegt im App-Repo
+
+Bestaetigt im `Makefile` + `scripts/`:
+
+- `make docs-build` / `docs-serve` rufen `scripts/generate_mkdocs_nav.py` auf.
+- **`docs/help/_meta.yaml` ist die Single Source of Truth fuer die Nav** —
+  `generate_mkdocs_nav.py` rendert daraus die `nav:`-Bloecke in `mkdocs.yml`.
+- `make sync-mkdocs-nav` regeneriert; `make verify-mkdocs-nav`
+  (`generate_mkdocs_nav.py --check`) + `make check-mkdocs-orphans`
+  (`verify_docs.py --check mkdocs`) sind **release-blockende Gates**
+  (`verify-docs-discipline`): jede Help-`.md` ohne Nav-Eintrag (orphan) bzw.
+  jeder Nav-Eintrag ohne Datei (dangling) bricht das Gate.
+- Die MkDocs-Site rendert ausschliesslich `docs/help/{en,de}/**`. **Die
+  `docs/explorations/`-Dokumente (wie dieses EXP) sind bewusst NICHT Teil der
+  Site** — sie sind interne Design-Dokumente, keine Beitragenden-Doku.
+
+Konsequenz fuer die Platzierung: Die generierte Schema-Referenz gehoert unter
+`docs/help/{en,de}/developer/` (neben den bereits existierenden
+`developer/authoring-content.md` und `developer/lessons-and-srs.md`), **nicht**
+unter `docs/explorations/`. Vorschlag:
+`docs/help/{en,de}/developer/lesson-format-reference.md`.
+
+### 6.2 Einbindung ohne Gate-Bruch
+
+Die generierte Seite muss im **selben Schritt** in `docs/help/_meta.yaml`
+eingetragen werden, in dem sie erzeugt wird — sonst meldet `check-mkdocs-orphans`
+sie als verwaiste Datei (lessons-learned: "Doc files: existence is not
+discoverability"). Konkret:
+
+1. Der Schema-Doc-Generator (Abschnitt 3.4) schreibt
+   `developer/lesson-format-reference.md` in **beiden** Sprachen (en + de) —
+   `verify_docs.py` erzwingt en<->de-Help-Page-Paritaet.
+2. Ein `_meta.yaml`-Eintrag unter der Developer-Docs-Sektion mit Slug
+   `developer/lesson-format-reference` + Icon + Titel (de/en).
+3. `make sync-mkdocs-nav` regeneriert `mkdocs.yml`; `make verify-docs-discipline`
+   muss gruen bleiben.
+
+Weil die Seite **generiert** ist (aus `lesson.schema.json`, das wiederum aus
+Pydantic faellt), kann ihr Inhalt nicht gegen das Schema driften — sie ist ein
+Build-Artefakt. Der erklaerende Prosa-Teil (Beispiele, Best Practices) bleibt
+ggf. handgepflegt mit dem Drift-Check aus 3.4 (kein Typ fehlt).
+
+### 6.3 Cross-Repo-Sichtbarkeit (zentral): App-Site vs. Content-Repo-Spiegel
+
+Spannungsfeld: Die MkDocs-Site liegt im **App-Repo**, Content-Autoren arbeiten im
+**Content-Repo**. Drei Optionen:
+
+| Option | Wo erscheint die Schema-Doku | Pro | Contra |
+|--------|------------------------------|-----|--------|
+| **A. Nur App-MkDocs** | Eine gerenderte Seite auf der App-Doku-Site; Content-`README`/`LESSON-FORMAT.md` verlinkt dorthin | Eine autoritative Doku-Seite (App ist Schema-Quelle); kein Cross-Repo-Doku-Sync | Content-Autoren muessen das App-Doku-URL kennen; ein Klick weg vom Arbeitsplatz |
+| **B. App-MkDocs + Verweis/Spiegel im Content-Repo** | App-Site autoritativ **plus** ein kurzer, generierter/gespiegelter Doku-Stub im Content-Repo, der auf die App-Site verweist (und optional die Feld-Referenz mit-spiegelt, drift-gecheckt) | Auffindbar genau dort, wo Content-Autoren sind; App bleibt autoritativ | Ein zweiter, gespiegelter Doku-Ort (muss drift-gecheckt sein, sonst neue Drift) |
+| **C. Eigene MkDocs-Site im Content-Repo** | Content-Repo baut eine eigene Doku-Site | Vollstaendig lokal fuer Content-Autoren | Doppelte MkDocs-Infra; hoechste Drift-/Wartungslast; widerspricht "App gewinnt" |
+
+**Empfehlung: Option B.** Die **App-MkDocs-Seite ist die autoritative
+Schema-Doku** (die App ist die Schema-Quelle, also gehoert die kanonische
+gerenderte Doku auf die App-Site). Zusaetzlich ein **kurzer Verweis-Stub im
+Content-Repo** (z. B. ein `LESSON-FORMAT.md`-Kopf, der auf die App-Doku-URL
+zeigt), damit Content-Autoren die Doku ohne Repo-Wechsel finden. Falls der Stub
+auch die Feld-Referenz spiegelt, faellt sie unter denselben Cross-Repo-Drift-Check
+wie das Schema selbst (Abschnitt 4, Option A — Mirror + CI-Drift-Check), sodass
+**kein** manuell parallel gepflegter Doku-Zweig entsteht. Option A ist der
+minimale Fallback (nur Link, kein Spiegel); C ist abzulehnen (doppelte Infra,
+widerspricht der Master-Richtung).
+
+Wichtig in allen Faellen: Die Doku ist **aus dem App-autoritativen Schema
+generiert oder gegen es drift-geprueft**, nie manuell parallel gepflegt — sonst
+entsteht genau die Drift, die das Projekt beseitigt.
+
+---
+
+## 7. Migration (abwaertskompatibel, ohne bestehende Sets zu brechen)
 
 Leitplanke: **keine** bestehende Lesson darf nach der Migration ungueltig werden.
 Das JSON-Schema muss anfangs exakt das beschreiben, was Pydantic heute akzeptiert
@@ -425,24 +502,32 @@ Schrittfolge (Reihenfolge so, dass jeder Schritt fuer sich gruen ist):
 4. **(App / CCW) Drift-Gate.** `make sync-schema --check` ins Release-Gate
    (analog `sync-versions-check`): ein nicht regeneriertes Schema blockt den Tag.
 5. **(App / CCW) KI-Prompt + LESSON-FORMAT-Referenzteil ans Schema binden.**
-6. **(Content / CCWc) Schema-Mirror + Drift-Check.** `lesson.schema.json` ins
+6. **(App / CCW) MkDocs-Seite generieren + verdrahten (Abschnitt 6).** Den
+   Schema-Doc-Generator `developer/lesson-format-reference.md` (en + de) schreiben
+   lassen, im selben Schritt den `_meta.yaml`-Eintrag setzen, `make sync-mkdocs-nav`
+   laufen lassen; `make verify-docs-discipline` (orphan-/nav-Gate) muss gruen
+   bleiben.
+7. **(Content / CCWc) Schema-Mirror + Drift-Check.** `lesson.schema.json` ins
    Content-Repo spiegeln; CI-Job, der gegen die App-Kopie prueft (Option A).
-7. **(Content / CCWc) `validate_content.py` auf Schema-Validierung umstellen**
+8. **(Content / CCWc) `validate_content.py` auf Schema-Validierung umstellen**
    (Struktur via `jsonschema`/Mirror; Quality via quality-rules), unter Erhalt des
    bestehenden Paritaets-Vertrags, bis die geteilte Quelle ihn ersetzt.
-8. **(Content / CCWc) `$schema`-Verweis / `.vscode`-Mapping** in den
-   Lesson-Dateien + Autoren-Doku, damit Autoren Autocomplete bekommen.
+9. **(Content / CCWc) `$schema`-Verweis / `.vscode`-Mapping + Doku-Verweis-Stub**
+   (Abschnitt 6.3, Option B) in den Lesson-Dateien + Content-Repo-Doku, damit
+   Autoren Autocomplete bekommen und die gerenderte App-Doku ohne Repo-Wechsel
+   finden.
 
 Versionierung: das Schema traegt `CURRENT_SCHEMA_VERSION`; additive Felder bleiben
 Minor-Bumps (Major-Match-Gate unveraendert), sodass aeltere Sets weiter laden.
 
-Aufteilung: Schritte 1-5 sind **App-Repo (CCW)**, 6-8 sind **Content-Repo (CCWc)**.
+Aufteilung: Schritte 1-6 sind **App-Repo (CCW)**, 7-9 sind **Content-Repo (CCWc)**.
 Die App-Seite kann vollstaendig zuerst landen (sie bricht nichts, solange das
-Schema nur generiert + getestet wird); das Content-Repo zieht nach.
+Schema nur generiert + getestet + als Doku-Seite verdrahtet wird); das
+Content-Repo zieht nach.
 
 ---
 
-## 7. Offene Fragen / Entscheidungen fuer die Freigabe
+## 8. Offene Fragen / Entscheidungen fuer die Freigabe
 
 1. **TS <-> JSON-Schema-Richtung (Abschnitt 3.1).** Empfehlung: **Option A mit
    Pydantic als Quelle** (App-autoritativ, `model_json_schema()` nativ, TS +
@@ -461,12 +546,19 @@ Schema nur generiert + getestet wird); das Content-Repo zieht nach.
 5. **`jsonschema` als Content-CI-Dependency** (Abschnitt 3.2): das bewusst
    stdlib-only gehaltene Content-CI um `jsonschema` erweitern vs. Struktur-Check
    als App-Release-Gate gegen die Content-Sets fuehren.
-6. **Multiple-Choice (Abschnitt 1.4):** bestaetigen, dass MC bewusst **kein**
+6. **MkDocs-Sichtbarkeit (Abschnitt 6.3).** Empfehlung: **Option B (App-MkDocs
+   autoritativ + generierter/drift-gecheckter Verweis-Stub im Content-Repo)**.
+   Alternative: Option A (nur App-Site + Link). Option C (eigene Content-Site)
+   abgelehnt. Die generierte Seite lebt unter `docs/help/{en,de}/developer/`,
+   nicht in `docs/explorations/`, und wird ueber `_meta.yaml` eingebunden
+   (orphan-Gate gruen halten).
+7. **Multiple-Choice (Abschnitt 1.4):** bestaetigen, dass MC bewusst **kein**
    eigener Schema-Typ bleibt (Ausdruck via `cloze`-select, EXP-036 §4.3) — das
    geschlossene `ExerciseType`-Enum macht diese Entscheidung im Schema explizit.
-7. **Implementierungs-Aufteilung:** CCW (App: Schema-Generierung, TS-Typen,
-   quality-rules, Drift-Gate, KI-Prompt) vs. CCWc (Content: Mirror, Validator-
-   Umstellung, Autoren-Doku/Autocomplete). Schritte gemaess Abschnitt 6.
+8. **Implementierungs-Aufteilung:** CCW (App: Schema-Generierung, TS-Typen,
+   quality-rules, Drift-Gate, KI-Prompt, MkDocs-Seite) vs. CCWc (Content: Mirror,
+   Validator-Umstellung, Autoren-Doku/Autocomplete/Verweis-Stub). Schritte
+   gemaess Abschnitt 7.
 
 ---
 
@@ -476,8 +568,14 @@ Schema nur generiert + getestet wird); das Content-Repo zieht nach.
   Code-Verifikation zeigt, dass das Pydantic-Modell `schema.py` faktisch fuehrt
   (einziges feldvollstaendiges Runtime-Artefakt, TS explizit als Mirror
   dokumentiert). Das Dokument folgt dem verifizierten Ist-Zustand und legt die
-  Richtungsfrage als offene Entscheidung 7.1 vor — statt die Auftrags-Annahme
+  Richtungsfrage als offene Entscheidung 8.1 vor — statt die Auftrags-Annahme
   ungeprueft zu uebernehmen.
+- **MkDocs-Infrastruktur verifiziert (Abschnitt 6):** `docs-build` /
+  `sync-mkdocs-nav` / `verify-mkdocs-nav` / `check-mkdocs-orphans` existieren im
+  `Makefile`; `docs/help/_meta.yaml` ist die Nav-Quelle (via
+  `scripts/generate_mkdocs_nav.py`); die Site rendert nur `docs/help/**`, also
+  gehoert die generierte Schema-Doku dorthin (nicht in `docs/explorations/`), mit
+  `_meta.yaml`-Eintrag im selben Schritt (orphan-Gate).
 - **Korrektur der Auftrags-Praemisse:** `multiple_choice` (#890) ist **nicht**
   als Schema-Typ gemergt; er ist bewusst kein Typ (Ausdruck via `cloze`-select,
   belegt im KI-Prompt-Kommentar + EXP-036 §4.3). Im Sinne von GITHUB-ISSUE-PFLICHT
