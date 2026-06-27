@@ -357,6 +357,7 @@ function asContentSetEntry(
   src: ContentSetSource,
   parsed: ParsedSet,
   cachedVersion: string | null,
+  downloadedAt: string | null = null,
 ): ContentSetEntry {
   const updateAvailable =
     cachedVersion !== null && cachedVersion !== parsed.version;
@@ -379,6 +380,7 @@ function asContentSetEntry(
     cover_image: parsed.cover_image ?? null,
     cached_version: cachedVersion,
     update_available: updateAvailable,
+    downloaded_at: downloadedAt,
     book: asContentSetBook(parsed.book),
   };
 }
@@ -483,6 +485,7 @@ async function rowToCachedEntry(row: ContentSetRow): Promise<ContentSetEntry> {
     cover_image: row.cover_image,
     cached_version: row.version,
     update_available: false,
+    downloaded_at: row.downloaded_at ?? null,
     book: row.book ?? null,
   };
 }
@@ -545,7 +548,12 @@ export async function listSetsDexie(
     for (const parsed of manifest.sets) {
       const cached = await latestCachedRow(src.source, parsed.id);
       entries.push(
-        asContentSetEntry(src, parsed, cached ? cached.version : null),
+        asContentSetEntry(
+          src,
+          parsed,
+          cached ? cached.version : null,
+          cached ? (cached.downloaded_at ?? null) : null,
+        ),
       );
     }
   }
@@ -598,7 +606,12 @@ export async function downloadSetDexie(
   // Reconcile: idempotent re-download.
   const cached = await latestCachedRow(source, setId);
   if (cached && cached.version === target.version) {
-    return asContentSetEntry(src, target, cached.version);
+    return asContentSetEntry(
+      src,
+      target,
+      cached.version,
+      cached.downloaded_at ?? null,
+    );
   }
 
   // Set manifest → lesson filename list. Honours the
@@ -667,6 +680,7 @@ export async function downloadSetDexie(
   const db = getDb();
   const setPk = cacheKey(source, setId, target.version);
   const pair = resolveLanguagePair(target);
+  const downloadedAt = new Date().toISOString();
   await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
     const row: ContentSetRow = {
       id: setPk,
@@ -685,7 +699,7 @@ export async function downloadSetDexie(
       description: target.description ?? null,
       tags: JSON.stringify(target.tags ?? []),
       cover_image: target.cover_image ?? null,
-      downloaded_at: new Date().toISOString(),
+      downloaded_at: downloadedAt,
       manifest_yaml: setManifestText,
       book: asContentSetBook(target.book),
     };
@@ -738,7 +752,7 @@ export async function downloadSetDexie(
     }
   });
 
-  return asContentSetEntry(src, target, target.version);
+  return asContentSetEntry(src, target, target.version, downloadedAt);
 }
 
 export async function listLessonsDexie(

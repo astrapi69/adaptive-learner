@@ -48,6 +48,7 @@ function setFixture(overrides: Partial<PersonalPathSet> = {}): PersonalPathSet {
         totalCount: 3,
         percentComplete: 33,
         lastActivity: "2026-06-01T10:00:00Z",
+        downloadedAt: null,
         currentLesson: lesson(2, {
             dot: "in_progress",
             status: "in_progress",

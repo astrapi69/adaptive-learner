@@ -184,6 +184,23 @@ describe("buildPersonalPath — sorting by last activity", () => {
         });
         expect(result.activeSets.map((s) => s.setId)).toEqual(["psych", "py"]);
     });
+
+    // #1211 — a freshly downloaded (untouched) set must appear above older
+    // untouched downloads, ordered by download date descending — not by title.
+    it("orders untouched downloaded sets by most-recent download first", () => {
+        const sets = [
+            setInput("alpha", "Alpha", ["01.json"], {
+                downloaded_at: "2026-06-01T00:00:00Z",
+            }),
+            setInput("zulu", "Zulu", ["01.json"], {
+                downloaded_at: "2026-06-20T00:00:00Z",
+            }),
+        ];
+        const result = build({sets});
+        // Both untouched: Zulu was downloaded later, so it must come first
+        // even though its title sorts after Alpha.
+        expect(result.activeSets.map((s) => s.setId)).toEqual(["zulu", "alpha"]);
+    });
 });
 
 describe("buildPersonalPath — action resolution", () => {

@@ -47,6 +47,12 @@ export interface ContentSetEntry {
   cover_image: string | null;
   cached_version: string | null;
   update_available: boolean;
+  /** ISO-8601 timestamp of when this set was downloaded/cached, or ``null``
+   *  when not downloaded or unknown. Drives the "most recently downloaded
+   *  first" ordering of the personal Learning Path (#1211). Surfaced in
+   *  Dexie mode (from ``ContentSetRow.downloaded_at``); API mode has no
+   *  per-set download time, so it stays ``null`` there. */
+  downloaded_at?: string | null;
   /** Optional set-level book (#769). When present, the lesson's "Vertiefe
    *  das Thema" section auto-inserts it as the first media item. */
   book?: ContentSetBook | null;
