@@ -362,6 +362,16 @@ the loader checks `sentence.count("___") == len(blanks)`).
   seed. **Requires non-empty `distractors`** — the schema
   validator rejects `cloze_mode: "select"` without them.
 
+**Multiple choice is authored this way** — there is no separate
+`multiple_choice` exercise type (by design, see EXP-036 §4.3). A
+single-answer multiple-choice question is a one-blank cloze in
+`select` mode: the `sentence` (ending in `___`) is the question, the
+blank's `accept[0]` is the correct option, and `distractors` are the
+wrong options. Example: `"sentence": "The capital of France is ___."`,
+`"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
+`"distractors": ["Berlin", "Madrid", "Rome"]`. ("Select all that
+apply" / multi-answer is not yet supported — tracked in #1195.)
+
 **Multiple blanks per cloze** are supported: each `___` in the
 sentence is mapped in order to the next entry in `blanks`. Each
 blank can have its own hint + placeholder + accept list. The

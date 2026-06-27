@@ -373,6 +373,17 @@ len(blanks)`).
   `distractors`** — der Schema-Validator weist
   `cloze_mode: "select"` ohne sie ab.
 
+**Multiple Choice wird so erstellt** — es gibt bewusst keinen
+eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3). Eine
+Single-Choice-Frage ist ein Cloze mit einer Lücke im `select`-Modus:
+der `sentence` (endet auf `___`) ist die Frage, `accept[0]` der
+Lücke ist die richtige Option, und `distractors` sind die falschen
+Optionen. Beispiel: `"sentence": "Die Hauptstadt von Frankreich ist
+___."`, `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode":
+"select"`, `"distractors": ["Berlin", "Madrid", "Rom"]`. ("Alle
+zutreffenden auswählen" / Mehrfachauswahl ist noch nicht
+unterstützt — siehe #1195.)
+
 **Mehrere Lücken pro Cloze** sind unterstützt: jeder `___` im
 Satz wird der Reihe nach auf den nächsten Eintrag in `blanks`
 abgebildet. Jede Lücke kann eigenen Hint + Placeholder +
