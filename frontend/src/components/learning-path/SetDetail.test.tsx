@@ -40,6 +40,7 @@ function setFixture(overrides: Partial<PersonalPathSet> = {}): PersonalPathSet {
         totalCount: 3,
         percentComplete: 0,
         lastActivity: null,
+        downloadedAt: null,
         currentLesson: null,
         mode: "start",
         errorCount: 0,

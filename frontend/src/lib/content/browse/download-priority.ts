@@ -21,8 +21,32 @@ export interface DownloadPriorityItem {
   downloaded: boolean;
   /** ISO timestamp of the last activity, or ``null`` when never touched. */
   lastActivity: string | null;
+  /**
+   * ISO timestamp of when the set was downloaded, or ``null``/absent when
+   * unknown (e.g. API mode, which has no per-set download time). Drives the
+   * "most recently downloaded first" ordering of the untouched tier (#1211).
+   */
+  downloadedAt?: string | null;
   /** Display title, used as the stable tiebreaker within a tier. */
   title: string;
+}
+
+/**
+ * Descending ISO-timestamp compare. Returns <0 when ``a`` is newer (sorts
+ * first), >0 when ``b`` is newer; an absent/null timestamp is treated as
+ * oldest, so it sorts after any real timestamp. Equal/both-null → 0 so the
+ * caller falls through to its next tiebreaker (a stable title sort).
+ */
+function compareTimestampDesc(
+  a: string | null | undefined,
+  b: string | null | undefined,
+): number {
+  const av = a ?? "";
+  const bv = b ?? "";
+  if (av === bv) return 0;
+  if (!av) return 1;
+  if (!bv) return -1;
+  return av > bv ? -1 : 1;
 }
 
 /**
@@ -35,9 +59,17 @@ export function downloadPriorityRank(item: DownloadPriorityItem): 0 | 1 | 2 {
 }
 
 /**
- * Comparator implementing the 3-tier "downloaded first" ordering. Within the
- * started tier, most-recent activity wins; ties (and the untouched tiers) fall
- * back to a case-insensitive title sort so the order is deterministic.
+ * Comparator implementing the 3-tier "downloaded first" ordering.
+ *
+ *   - Started tier (0): most-recent activity first, then most-recent download
+ *     as a secondary tiebreaker.
+ *   - Untouched-downloaded tier (1): most-recent DOWNLOAD first (#1211) — a
+ *     freshly downloaded set surfaces at the top of its tier instead of being
+ *     buried alphabetically.
+ *   - Not-downloaded tier (2): title only.
+ *
+ * Every tier falls back to a case-insensitive title sort so the order is
+ * deterministic (equal/missing timestamps never flicker).
  *
  * @example
  * sets.sort(compareByDownloadPriority);
@@ -50,10 +82,16 @@ export function compareByDownloadPriority(
   const rb = downloadPriorityRank(b);
   if (ra !== rb) return ra - rb;
 
-  // Same tier: started tiers order by most-recent activity first.
-  if (ra === 0 && a.lastActivity && b.lastActivity) {
-    if (a.lastActivity > b.lastActivity) return -1;
-    if (a.lastActivity < b.lastActivity) return 1;
+  if (ra === 0) {
+    // Started tier: most-recent activity first, then most-recent download.
+    const byActivity = compareTimestampDesc(a.lastActivity, b.lastActivity);
+    if (byActivity !== 0) return byActivity;
+    const byDownload = compareTimestampDesc(a.downloadedAt, b.downloadedAt);
+    if (byDownload !== 0) return byDownload;
+  } else if (ra === 1) {
+    // Untouched-downloaded tier: most-recent download first (#1211).
+    const byDownload = compareTimestampDesc(a.downloadedAt, b.downloadedAt);
+    if (byDownload !== 0) return byDownload;
   }
   return a.title.localeCompare(b.title);
 }
