@@ -26,11 +26,11 @@ import {useNavigate, useParams, type NavigateFunction} from "react-router-dom";
 import {
     ExerciseDispatcher,
     SUPPORTED_EXERCISE_TYPES,
-} from "../../components/exercises/ExerciseDispatcher";
+} from "../../components/exercises";
 import type {
     ExerciseHandle,
     ExerciseScored,
-} from "../../components/exercises/exercise-control";
+} from "../../components/exercises";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useLessonShortcuts} from "../../hooks/lesson/useLessonShortcuts";

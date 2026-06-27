@@ -13,7 +13,7 @@ import { CheckCircle2, ChevronRight, RotateCcw, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import CorrectionBlock from "../../exercises/CorrectionBlock";
+import {CorrectionBlock} from "../../exercises";
 import LessonAnswersDetail from "./LessonAnswersDetail";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";

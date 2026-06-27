@@ -50,7 +50,7 @@ import LessonStatusView, {
   resolveLessonStatusKind,
 } from "../../components/lesson/steps/LessonStatusView";
 import { useLessonAutoRead } from "../../hooks/lesson/useLessonAutoRead";
-import type { ExerciseHandle } from "../../components/exercises/exercise-control";
+import type { ExerciseHandle } from "../../components/exercises";
 import {
   isPlayableExerciseStep,
   storedStepResult,

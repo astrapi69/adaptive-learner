@@ -30,11 +30,11 @@ import ProgressBar from "../../shared/data-display/ProgressBar";
 import {
     ExerciseDispatcher,
     SUPPORTED_EXERCISE_TYPES,
-} from "../../components/exercises/ExerciseDispatcher";
+} from "../../components/exercises";
 import type {
     ExerciseHandle,
     ExerciseScored,
-} from "../../components/exercises/exercise-control";
+} from "../../components/exercises";
 import {useI18n} from "../../hooks/ui/useI18n";
 
 type Translate = (key: string, fallback?: string) => string;

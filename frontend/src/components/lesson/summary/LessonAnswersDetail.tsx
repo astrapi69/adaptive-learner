@@ -14,7 +14,7 @@
  * value is derived by the caller.
  */
 
-import DiffHighlight from "../../exercises/DiffHighlight";
+import {DiffHighlight} from "../../exercises";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {tokenDiff} from "../../../lib/exercises/token-diff";
 import type {ExerciseBreakdownEntry} from "../../../lib/lesson/lesson-summary";

@@ -504,7 +504,12 @@ class Exercise(BaseModel):
             "FREE_TEXT: list of accepted answers. Exact-match "
             "first, Levenshtein-tolerant fallback in the "
             "renderer. The first entry is the canonical "
-            "answer shown after a wrong attempt."
+            "answer shown after a wrong attempt. CLOZE "
+            "``multiselect`` (#1195) reuses this field with a "
+            "mode-specific meaning: EVERY entry is a correct "
+            "option (not just the first), rendered as a checkbox "
+            "group with ``distractors`` and graded by exact-set "
+            "match; the two lists must be disjoint."
         ),
     )
     tiles: list[str] | None = Field(
@@ -551,7 +556,9 @@ class Exercise(BaseModel):
             "CLOZE: the cloze sentence with visible ``___`` "
             "markers at each blank position. The renderer "
             "splits on the markers + interleaves the per-blank "
-            "input control. Phase 52D / v1.35.0."
+            "input control. Phase 52D / v1.35.0. In "
+            "``multiselect`` mode (#1195) this is instead the "
+            "question stem (no ``___`` markers, no ``blanks``)."
         ),
         max_length=1000,
     )
@@ -560,17 +567,20 @@ class Exercise(BaseModel):
         description=(
             "CLOZE: per-marker metadata in left-to-right order. "
             "``len(blanks) == sentence.count('___')`` enforced "
-            "at validation time. Phase 52D / v1.35.0."
+            "at validation time. Phase 52D / v1.35.0. Not used "
+            "in ``multiselect`` mode (#1195)."
         ),
     )
-    cloze_mode: Literal["type", "select"] | None = Field(
+    cloze_mode: Literal["type", "select", "multiselect"] | None = Field(
         default=None,
         description=(
             "CLOZE: ``type`` renders an ``<input>`` per blank, "
-            "``select`` renders a ``<select>`` per blank with "
-            "options from ``distractors``. Defaults to "
-            "``type`` when omitted on a CLOZE exercise. "
-            "Phase 52D / v1.35.0."
+            "``select`` renders a single-answer ``<select>`` per "
+            "blank with options from ``distractors``, "
+            "``multiselect`` (#1195) renders a checkbox group of "
+            "``accept`` (all correct) + ``distractors`` for a "
+            "'select all that apply' question. Defaults to ``type`` when "
+            "omitted on a CLOZE exercise. Phase 52D / v1.35.0."
         ),
     )
 
@@ -662,8 +672,14 @@ class Exercise(BaseModel):
                 raise ValueError("accept_orderings entries must use every tile index exactly once")
 
     def _validate_cloze_fields(self) -> None:
-        """CLOZE (Phase 52D / P-127) requires sentence+blanks with matching '___'
-        marker count; 'select' mode also needs a non-empty distractor pool."""
+        """CLOZE (Phase 52D / P-127). The ``multiselect`` mode (#1195) is a
+        whole-question 'select all that apply' shape (sentence = question,
+        ``correct_answers`` + ``distractors``); the blank-based ``type`` /
+        ``select`` modes require sentence + blanks with a matching '___'
+        marker count, and ``select`` also needs a non-empty distractor pool."""
+        if self.cloze_mode == "multiselect":
+            self._validate_cloze_multiselect_fields()
+            return
         if not self.sentence:
             raise ValueError("CLOZE exercise requires non-empty 'sentence'")
         if not self.blanks:
@@ -679,6 +695,24 @@ class Exercise(BaseModel):
         # per-blank ``<select>`` options.
         if self.cloze_mode == "select" and not self.distractors:
             raise ValueError("CLOZE with cloze_mode='select' requires non-empty 'distractors'")
+
+    def _validate_cloze_multiselect_fields(self) -> None:
+        """CLOZE ``multiselect`` (#1195): a question stem + two disjoint,
+        non-empty option lists. Reuses ``accept`` (EVERY entry is a correct
+        option in this mode) + ``distractors`` (the wrong options). No
+        blanks/markers."""
+        if not self.sentence:
+            raise ValueError("CLOZE multiselect requires a non-empty 'sentence' (the question)")
+        if not self.accept:
+            raise ValueError("CLOZE multiselect requires non-empty 'accept' (the correct options)")
+        if not self.distractors:
+            raise ValueError("CLOZE multiselect requires non-empty 'distractors'")
+        overlap = set(self.accept) & set(self.distractors)
+        if overlap:
+            raise ValueError(
+                "CLOZE multiselect 'accept' and 'distractors' must be "
+                f"disjoint; shared option(s): {sorted(overlap)}"
+            )
 
 
 class LessonResource(BaseModel):

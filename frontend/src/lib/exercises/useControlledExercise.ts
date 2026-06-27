@@ -13,7 +13,7 @@
  *
  * The contract is unchanged, so the Lesson / Review / AdaptiveLesson
  * pages and every renderer test keep working: see
- * {@link ./../../components/exercises/exercise-control.ts}.
+ * {@link ./../../components/exercises/shell/exercise-control.ts}.
  */
 
 import {useEffect, useImperativeHandle, useState, type Ref} from "react";
@@ -21,7 +21,7 @@ import {useEffect, useImperativeHandle, useState, type Ref} from "react";
 import type {
     ExerciseHandle,
     ExerciseScored,
-} from "../../components/exercises/exercise-control";
+} from "../../components/exercises/shell/exercise-control";
 
 /** The minimal post-check result a renderer displays. The full
  *  {@link ExerciseScored} (attempts + raw_answer) still flows to

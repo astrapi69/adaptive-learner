@@ -145,7 +145,7 @@
         }
       ],
       "default": null,
-      "description": "FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt.",
+      "description": "FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.",
       "title": "Accept"
     },
     "accept_orderings": {
@@ -180,7 +180,7 @@
         }
       ],
       "default": null,
-      "description": "CLOZE: per-marker metadata in left-to-right order. ``len(blanks) == sentence.count('___')`` enforced at validation time. Phase 52D / v1.35.0.",
+      "description": "CLOZE: per-marker metadata in left-to-right order. ``len(blanks) == sentence.count('___')`` enforced at validation time. Phase 52D / v1.35.0. Not used in ``multiselect`` mode (#1195).",
       "title": "Blanks"
     },
     "card_ids": {
@@ -197,7 +197,8 @@
         {
           "enum": [
             "type",
-            "select"
+            "select",
+            "multiselect"
           ],
           "type": "string"
         },
@@ -206,7 +207,7 @@
         }
       ],
       "default": null,
-      "description": "CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a ``<select>`` per blank with options from ``distractors``. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.",
+      "description": "CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a single-answer ``<select>`` per blank with options from ``distractors``, ``multiselect`` (#1195) renders a checkbox group of ``accept`` (all correct) + ``distractors`` for a 'select all that apply' question. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.",
       "title": "Cloze Mode"
     },
     "direction": {
@@ -301,7 +302,7 @@
         }
       ],
       "default": null,
-      "description": "CLOZE: the cloze sentence with visible ``___`` markers at each blank position. The renderer splits on the markers + interleaves the per-blank input control. Phase 52D / v1.35.0.",
+      "description": "CLOZE: the cloze sentence with visible ``___`` markers at each blank position. The renderer splits on the markers + interleaves the per-blank input control. Phase 52D / v1.35.0. In ``multiselect`` mode (#1195) this is instead the question stem (no ``___`` markers, no ``blanks``).",
       "title": "Sentence"
     },
     "tiles": {

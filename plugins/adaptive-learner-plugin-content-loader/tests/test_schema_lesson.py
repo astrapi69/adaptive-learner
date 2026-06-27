@@ -594,6 +594,93 @@ class TestClozeExercise:
         assert rebuilt == ex
 
 
+def _exercise_multiselect(**overrides: object) -> Exercise:
+    """A valid #1195 cloze multiselect exercise: question stem + the
+    ``accept`` (all correct) / ``distractors`` (all wrong) option lists,
+    no blanks/markers."""
+    defaults: dict[str, object] = {
+        "id": "ex-cloze-ms-1",
+        "type": ExerciseType.CLOZE,
+        "cloze_mode": "multiselect",
+        "prompt": "Select all that apply.",
+        "sentence": "Welche Staedte liegen in Deutschland?",
+        "accept": ["Berlin", "Hamburg"],
+        "distractors": ["Wien", "Zuerich"],
+    }
+    defaults.update(overrides)
+    return Exercise(**defaults)
+
+
+class TestClozeMultiSelect:
+    """Pin the #1195 cloze ``multiselect`` ('select all that apply') mode.
+
+    Reuses ``accept`` (every entry correct in this mode) + ``distractors``;
+    no new field, no blanks/markers."""
+
+    def test_valid_multiselect(self) -> None:
+        ex = _exercise_multiselect()
+        assert ex.cloze_mode == "multiselect"
+        assert ex.accept == ["Berlin", "Hamburg"]
+        assert ex.distractors == ["Wien", "Zuerich"]
+        # No blanks/markers required in this mode.
+        assert ex.blanks is None
+
+    def test_requires_non_empty_accept(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_multiselect(accept=None)
+        with pytest.raises(ValidationError):
+            _exercise_multiselect(accept=[])
+
+    def test_requires_non_empty_distractors(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_multiselect(distractors=[])
+
+    def test_requires_non_empty_sentence(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_multiselect(sentence=None)
+
+    def test_accept_and_distractors_must_be_disjoint(self) -> None:
+        # The same option may not be both correct and a distractor.
+        with pytest.raises(ValidationError):
+            _exercise_multiselect(
+                accept=["Berlin", "Hamburg"],
+                distractors=["Hamburg", "Wien"],
+            )
+
+    def test_does_not_require_blanks_or_markers(self) -> None:
+        # A multiselect sentence has no '___' markers and no blanks; this
+        # must NOT trip the blank-based marker-count check.
+        ex = _exercise_multiselect(sentence="No markers here at all?")
+        assert ex.cloze_mode == "multiselect"
+
+    def test_multiselect_json_roundtrip(self) -> None:
+        ex = _exercise_multiselect()
+        rebuilt = Exercise.model_validate(ex.model_dump(mode="json"))
+        assert rebuilt == ex
+
+
+class TestClozeBackwardCompat:
+    """The blank-based ``type`` / ``select`` modes are unchanged (#1195)."""
+
+    def test_type_mode_still_valid(self) -> None:
+        ex = _exercise_cloze(cloze_mode="type")
+        assert ex.cloze_mode == "type"
+        assert ex.blanks is not None and len(ex.blanks) == 1
+
+    def test_select_mode_still_requires_distractors(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_cloze(cloze_mode="select")
+        ex = _exercise_cloze(cloze_mode="select", distractors=["le", "la"])
+        assert ex.cloze_mode == "select"
+
+    def test_blank_based_marker_check_still_enforced(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_cloze(
+                sentence="J'ai ___ ami et ___ amie.",
+                blanks=[{"accept": ["un"]}],
+            )
+
+
 class TestExerciseCommon:
     def test_id_must_be_slug(self) -> None:
         with pytest.raises(ValidationError):

@@ -1505,6 +1505,7 @@ Detailed rules in `.claude/rules/`:
 - `design-tokens.md` — design-token architecture (no hardcoded colors; see `docs/DESIGN-TOKENS.md`)
 - `lessons-learned.md` — known pitfalls
 - `quality-checks.md` — test strategy, pre-commit checklists
+- `tdd.md` — Test-Driven Development workflow (Red-Green-Refactor, four tests per feature/fix)
 - `ai-workflow.md` — feature/plugin order, docs protocol
 - `release-workflow.md` — `make sync-versions` chain, tag pattern
 

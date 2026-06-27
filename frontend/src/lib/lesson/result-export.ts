@@ -76,6 +76,12 @@ export function formatUserAnswer(
     });
     return parts.join(", ");
   }
+  // #1195 — cloze multiselect: the chosen option set, joined for display.
+  if (rawAnswer.kind === "cloze_multiselect") {
+    return rawAnswer.selected.length > 0
+      ? [...rawAnswer.selected].join(", ")
+      : null;
+  }
   return null;
 }
 

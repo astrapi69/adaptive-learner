@@ -9,8 +9,8 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it} from "vitest";
 
 import {LessonModeProvider, useLessonMode} from "./useLessonMode";
-import ExerciseHint from "../../components/exercises/ExerciseHint";
-import WordTilesExercise from "../../components/exercises/WordTilesExercise";
+import {ExerciseHint} from "../../components/exercises";
+import {WordTilesExercise} from "../../components/exercises";
 import type {ContentLessonExercise} from "../../storage/types";
 
 function ModeProbe() {
