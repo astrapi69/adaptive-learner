@@ -1926,6 +1926,14 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  set_link:
+    loading: "Loading set…"
+    not_found_title: "Set not found"
+    not_found_body: "This set isn’t available — it may not be downloaded yet, or it doesn’t exist."
+    go_discover: "Discover content"
+    start: "Start learning"
+    download_start: "Download & start"
+    lessons: "{n} lessons"
   repo_export:
     button: "Share as repository"
     title: "Share as repository"

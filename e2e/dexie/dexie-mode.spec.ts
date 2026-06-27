@@ -192,6 +192,21 @@ const ROUTES: RouteCase[] = [
         expectedTestIds: ["content-hub", "discover-loading", "discover-page"],
     },
     {
+        name: "Set deep-link (#892, direct URL — GH-Pages fallback)",
+        // A direct hit on a set deep-link (the case a shared/QR link
+        // produces): GH Pages serves 404.html → index.html and React
+        // Router resolves this client-side. A first-visit Dexie user with
+        // an empty cache (and offline, no backend) resolves the unknown
+        // set to the clean "not found" state — never a crash or a toast.
+        path: "/content/set/does-not-exist-892",
+        expectedTestIds: [
+            "set-deep-link-page",
+            "set-deep-link-loading",
+            "set-deep-link-not-found",
+            "set-deep-link-found",
+        ],
+    },
+    {
         name: "Lesson (viewer, Phase 44, not-cached path)",
         path: "/lesson/astrapi69--adaptive-learner-content/language-fr-a1/01-greetings.json",
         // First-visit GH-Pages users land on the "not cached"

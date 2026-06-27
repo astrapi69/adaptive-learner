@@ -1915,6 +1915,14 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  set_link:
+    loading: "Set yükleniyor…"
+    not_found_title: "Set bulunamadı"
+    not_found_body: "Bu set kullanılamıyor — henüz indirilmemiş ya da mevcut olmayabilir."
+    go_discover: "İçerik keşfet"
+    start: "Öğrenmeye başla"
+    download_start: "İndir ve başla"
+    lessons: "{n} ders"
   repo_export:
     button: "Depo olarak paylaş"
     title: "Depo olarak paylaş"

@@ -2077,6 +2077,15 @@
     }
   },
   "content": {
+    "set_link": {
+      "loading": "Memuat set…",
+      "not_found_title": "Set tidak ditemukan",
+      "not_found_body": "Set ini tidak tersedia — mungkin belum diunduh atau tidak ada.",
+      "go_discover": "Temukan konten",
+      "start": "Mulai belajar",
+      "download_start": "Unduh & mulai",
+      "lessons": "{n} pelajaran"
+    },
     "repo_export": {
       "button": "Bagikan sebagai repositori",
       "title": "Bagikan sebagai repositori",
