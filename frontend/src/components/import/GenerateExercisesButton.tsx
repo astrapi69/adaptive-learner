@@ -34,10 +34,10 @@ import RegenerateFeedbackDialog, {
 import {
   browserDirectProvider,
   generateExercises as defaultGenerate,
-} from "../../lib/ai/generate-exercises";
-import { cardsToExercises } from "../../lib/ai/cards-to-exercises";
-import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
-import type { ResolvedAiProvider } from "../../lib/ai/resolve-provider";
+} from "../../lib/ai/generation/generate-exercises";
+import { cardsToExercises } from "../../lib/ai/generation/cards-to-exercises";
+import type { TheoryStep } from "../../lib/ai/generation/exercise-generation-prompt";
+import type { ResolvedAiProvider } from "../../lib/ai/providers/resolve-provider";
 import { LANGUAGE_OPTIONS } from "../../lib/content/language/language-options";
 import type { ContentLessonExercise } from "../../storage/types";
 import { notify } from "../../utils/notify";

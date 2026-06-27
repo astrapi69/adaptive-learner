@@ -67,7 +67,7 @@ import { resolveDexieAiConfig } from "./anki/anki-extraction";
 import {
   generatePhrase as generatePronunciationPhrase,
   judgeAttempt as judgePronunciationAttempt,
-} from "../lib/ai/pronunciation-ai";
+} from "../lib/ai/providers/pronunciation-ai";
 import { ApiError } from "../api/client";
 import {
   aiValidateDexie,

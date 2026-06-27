@@ -355,7 +355,7 @@ export interface AiValidationCacheRecord {
   set_version: string | null;
   /** AIV-09 content hash of the checked cards (null until AIV-08/09). */
   content_hash: string | null;
-  results: import("../../../lib/ai/content-validator").ValidationResult[];
+  results: import("../../../lib/ai/validation/content-validator").ValidationResult[];
   response_ids: string[];
   provider: string;
   model: string;
@@ -364,7 +364,7 @@ export interface AiValidationCacheRecord {
   /** ISO timestamp the check completed. */
   checked_at: string;
   /** EXP-033 / AIV-09 signature, or null for pre-signature caches. */
-  signature?: import("../../../lib/ai/validation-signature").AiValidationSignature | null;
+  signature?: import("../../../lib/ai/validation/validation-signature").AiValidationSignature | null;
 }
 
 /** Input for the EXP-033 set-wide per-card AI check (AIV-02). */
@@ -377,7 +377,7 @@ export interface AiValidateCardsInput {
   /** Flattened cards to check (caller flattens across the set's lessons
    *  and applies the 500-card cap). Each item needs at least
    *  ``{id, front, back}``; ``notes`` is optional. */
-  cards: import("../../../lib/ai/content-validator").ValidationCard[];
+  cards: import("../../../lib/ai/validation/content-validator").ValidationCard[];
   /** Per-batch progress callback (Dexie, client-side). */
   onProgress?: (progress: { current: number; total: number }) => void;
   /** Abort the run mid-batch. */
@@ -386,7 +386,7 @@ export interface AiValidateCardsInput {
 
 /** Result of the EXP-033 set-wide per-card AI check (AIV-02). */
 export interface AiValidateCardsResult {
-  results: import("../../../lib/ai/content-validator").ValidationResult[];
+  results: import("../../../lib/ai/validation/content-validator").ValidationResult[];
   /** Provider response ids, gathered across batches (AIV-09 signature). */
   response_ids: string[];
   /** Provider slug ("openai" | "anthropic" | "gemini"). */

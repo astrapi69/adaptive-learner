@@ -13,18 +13,18 @@
  * persistence path the Save-as-Offline-Lesson flow uses.
  */
 
-import { getStorage } from "../../storage";
+import { getStorage } from "../../../storage";
 import type {
   ContentLesson,
   ContentLessonExercise,
   ContentSetEntry,
   UserLessonOrigin,
-} from "../../storage/types";
-import { appendExercisesToLesson } from "../content/lesson/append-exercises";
+} from "../../../storage/types";
+import { appendExercisesToLesson } from "../../content/lesson/append-exercises";
 import { cardsToExercises } from "./cards-to-exercises";
 import { browserDirectProvider, generateExercises } from "./generate-exercises";
 import type { BatchLesson, SetBatchDeps } from "./generate-exercises-for-set";
-import type { ResolvedAiProvider } from "./resolve-provider";
+import type { ResolvedAiProvider } from "../providers/resolve-provider";
 
 function theoryStepsOf(lesson: ContentLesson): BatchLesson["theorySteps"] {
   return lesson.steps

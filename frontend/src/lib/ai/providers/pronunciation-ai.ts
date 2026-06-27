@@ -8,9 +8,9 @@
  * key configured?", not "is the backend reachable?".
  */
 
-import { aiComplete } from "../../storage/ai/ai-providers";
-import type { DexieAiConfig } from "../../storage/anki/anki-extraction";
-import type { PronunciationVerdict } from "../../storage/types";
+import { aiComplete } from "../../../storage/ai/ai-providers";
+import type { DexieAiConfig } from "../../../storage/anki/anki-extraction";
+import type { PronunciationVerdict } from "../../../storage/types";
 
 // ---------------------------------------------------------------------------
 // Phrase generator — prompt + parser (ports pronunciation.generate_phrase)
