@@ -6,7 +6,7 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import {I18nProvider} from "../../hooks/ui/useI18n";
-import {VOICE_PREF_KEYS} from "../../lib/voice/voicePref";
+import {readVoicePrefs} from "../../lib/voice/voicePref";
 
 import VoiceSettingsSection from "./VoiceSettingsSection";
 
@@ -112,9 +112,7 @@ describe("VoiceSettingsSection toggles persist", () => {
         // Default is ON.
         expect(checkbox.checked).toBe(true);
         fireEvent.click(checkbox);
-        expect(localStorage.getItem(VOICE_PREF_KEYS.ttsEnabled)).toBe(
-            "false",
-        );
+        expect(readVoicePrefs().ttsEnabled).toBe(false);
     });
 
     it("rate slider clamps + persists", () => {
@@ -128,6 +126,6 @@ describe("VoiceSettingsSection toggles persist", () => {
             "settings-tts-rate",
         ) as HTMLInputElement;
         fireEvent.change(slider, {target: {value: "1.75"}});
-        expect(localStorage.getItem(VOICE_PREF_KEYS.rate)).toBe("1.75");
+        expect(readVoicePrefs().ttsRate).toBe(1.75);
     });
 });

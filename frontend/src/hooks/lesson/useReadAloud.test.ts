@@ -9,6 +9,7 @@
 
 import {beforeEach, describe, expect, it} from "vitest";
 
+import {VOICE_PREF_BLOCK_KEY} from "../../lib/voice/voicePref";
 import {
     READ_ALOUD_SPEEDS,
     readLessonSpeed,
@@ -35,10 +36,19 @@ describe("lesson read-aloud speed persistence", () => {
         expect(readLessonSpeed()).toBe(1.25);
     });
 
-    it("falls back to 1x for an out-of-set / garbage stored value", () => {
-        localStorage.setItem("adaptive-learner.voice.lesson_speed", "3");
+    it("falls back to 1x for an out-of-set block value", () => {
+        localStorage.setItem(
+            VOICE_PREF_BLOCK_KEY,
+            JSON.stringify({lessonSpeed: 3}),
+        );
         expect(readLessonSpeed()).toBe(1);
-        localStorage.setItem("adaptive-learner.voice.lesson_speed", "nope");
-        expect(readLessonSpeed()).toBe(1);
+    });
+
+    it("migrates a legacy lesson_speed key, clamping out-of-set values", () => {
+        localStorage.setItem("adaptive-learner.voice.lesson_speed", "0.75");
+        expect(readLessonSpeed()).toBe(0.75);
+        expect(
+            localStorage.getItem("adaptive-learner.voice.lesson_speed"),
+        ).toBeNull();
     });
 });

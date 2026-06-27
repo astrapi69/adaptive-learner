@@ -11,7 +11,7 @@
 import {act, renderHook} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
-import {useReadAloud, type ReadAloudController} from "./useReadAloud";
+import {readLessonSpeed, useReadAloud, type ReadAloudController} from "./useReadAloud";
 
 interface RecordedUtterance {
     text: string;
@@ -131,9 +131,7 @@ describe("useReadAloud engine", () => {
         act(() => h.current().speak("read me", {lang: "de"}));
         expect(spoken).toHaveLength(1);
         act(() => h.current().setSpeed(1.25));
-        expect(
-            localStorage.getItem("adaptive-learner.voice.lesson_speed"),
-        ).toBe("1.25");
+        expect(readLessonSpeed()).toBe(1.25);
         // Restarted (one more utterance) at rate base(1.0) x 1.25.
         expect(spoken).toHaveLength(2);
         expect(spoken[1].rate).toBeCloseTo(1.25);
