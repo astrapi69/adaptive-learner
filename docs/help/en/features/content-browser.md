@@ -45,6 +45,20 @@ The catalog splits into two trees:
 
 ---
 
+## Direct link to a single set
+
+Every set has its own **deep link** at `/content/set/:setId` that
+opens that set directly, skipping the catalog tree. Open the link
+and you land on the set — in both storage modes. This is what makes
+**per-set sharing** possible: a set-level QR code or share link can
+now point at a specific set, not just the app root.
+
+If the link refers to a set that does not exist (or that you have
+not downloaded yet), the page shows a friendly **not-found state**
+with a way back to the catalog, rather than an error.
+
+---
+
 ## Source badges and source filter
 
 Every downloaded set carries a **source badge** that shows where

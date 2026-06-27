@@ -30,7 +30,10 @@ Jedes heruntergeladene Set ist **eine Zeile**:
 | Aktionsschaltfläche | **Fortsetzen** / **Starten** / **Nächstes Level verfügbar** / **Abgeschlossen** |
 
 Die Sets sind nach letzter Aktivität sortiert (neueste zuerst). Noch
-nicht begonnene heruntergeladene Sets rutschen nach unten. Wenn du
+nicht begonnene heruntergeladene Sets rutschen nach unten — und
+unter diesen steht das **zuletzt heruntergeladene Set zuerst**, ein
+gerade frisch heruntergeladenes Set ist also oben in der
+Noch-nicht-begonnen-Gruppe statt vergraben. Wenn du
 alle Lektionen eines Kurses abgeschlossen hast und das nächste
 CEFR-Level existiert, bietet die Zeile **Nächstes Level verfügbar**
 an.

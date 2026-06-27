@@ -50,6 +50,14 @@ step by step through each card and exercise:
    - **Cloze** — fill a gap in the sentence (generated
      specifically from your mistakes, see below).
 
+A **cloze** gap comes in three flavours: *type* the answer,
+*select* one option from a list, or — when several answers are
+correct — **"select all that apply"** (a multi-select / checkbox
+gap that is only marked right when you pick exactly the correct
+set, no more and no fewer). The multi-answer variant lets authors
+write questions like *"Which of these are prime? 2, 4, 5, 9"*
+without a separate "multiple choice" exercise type.
+
 A progress bar at the top tracks how far you are in the lesson.
 You can stop at any time — your progress is saved per step and
 resumes where you left off.
@@ -142,6 +150,17 @@ Within the queue, the entries sort themselves: **overdue first**,
 then by **error count descending**, then by **most recent error
 first**. This way the elements you struggle with most rise to the
 top.
+
+### Exam-mode bonus
+
+Answering an element correctly in **Exam mode** is stronger
+evidence of retention than getting it right in relaxed practice —
+you recalled it under pressure, without immediate feedback. So an
+exam-passed element earns a **longer next-review interval** than the
+same correct answer would in practice mode. (It is the mirror image
+of using a hint, which *shortens* the interval.) The boost applies
+in both storage modes, so browser-only learners get the same
+scheduling.
 
 ---
 
