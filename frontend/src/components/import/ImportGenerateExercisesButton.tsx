@@ -11,7 +11,7 @@
 import GenerateExercisesButton, {
   type ResolvedAiProvider,
 } from "./GenerateExercisesButton";
-import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
+import type { TheoryStep } from "../../lib/ai/generation/exercise-generation-prompt";
 import type { ContentLessonExercise } from "../../storage/types";
 import type { ConversationAnalysisResult } from "../../types/domain";
 

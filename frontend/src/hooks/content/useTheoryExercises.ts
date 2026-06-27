@@ -18,7 +18,7 @@ import {
   summarizeGeneratedLesson,
 } from "../../lib/content/analysis/analysis-to-lesson";
 import { analysisLessonLabels } from "../../lib/content/analysis/analysis-lesson-labels";
-import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
+import type { TheoryStep } from "../../lib/ai/generation/exercise-generation-prompt";
 import type { ContentLessonExercise } from "../../storage/types";
 import type { ConversationAnalysisResult } from "../../types/domain";
 

@@ -21,7 +21,7 @@
  * come from AIX-01; nothing here calls an AI provider.
  */
 
-import type { ContentLessonExercise } from "../../storage/types";
+import type { ContentLessonExercise } from "../../../storage/types";
 import type { ValidCard } from "./exercise-generation-parser";
 
 /** Options for {@link cardsToExercises}. */

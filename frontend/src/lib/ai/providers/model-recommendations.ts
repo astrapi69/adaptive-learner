@@ -15,7 +15,7 @@
  * family to match regardless of the date suffix.
  */
 
-import type { AIProvider } from "../constants";
+import type { AIProvider } from "../../constants";
 
 /**
  * Recommended model families per provider, most-recommended first. Matched as

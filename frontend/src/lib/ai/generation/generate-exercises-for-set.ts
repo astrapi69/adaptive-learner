@@ -16,7 +16,7 @@
  * Library-grade: pure orchestration, no app-state / network imports.
  */
 
-import type { ContentLessonExercise } from "../../storage/types";
+import type { ContentLessonExercise } from "../../../storage/types";
 import type { TheoryStep } from "./exercise-generation-prompt";
 
 /** One lesson of a set, reduced to what the batch needs. */

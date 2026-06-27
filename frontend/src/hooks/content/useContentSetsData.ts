@@ -37,7 +37,7 @@ import {
   fetchRecommendedRepos,
   recommendedSource,
 } from "../../lib/content/repos/recommended-repos";
-import { badgeStatusForCachedSet } from "../../lib/ai/validation-signature";
+import { badgeStatusForCachedSet } from "../../lib/ai/validation/validation-signature";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { getStorage } from "../../storage";
 import { USER_GENERATED_SOURCE } from "../../storage/types";

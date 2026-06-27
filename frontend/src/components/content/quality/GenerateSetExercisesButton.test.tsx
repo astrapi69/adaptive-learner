@@ -8,7 +8,7 @@ import { MemoryRouter } from "react-router-dom";
 
 import GenerateSetExercisesButton from "./GenerateSetExercisesButton";
 import { I18nProvider } from "../../../hooks/ui/useI18n";
-import type { BatchLesson, SetBatchDeps } from "../../../lib/ai/generate-exercises-for-set";
+import type { BatchLesson, SetBatchDeps } from "../../../lib/ai/generation/generate-exercises-for-set";
 import type { ContentLessonExercise, ContentSetEntry } from "../../../storage/types";
 import { notify } from "../../../utils/notify";
 

@@ -10,8 +10,8 @@ import GenerateExercisesButton, {
   type ResolvedAiProvider,
 } from "./GenerateExercisesButton";
 import { I18nProvider } from "../../hooks/ui/useI18n";
-import type { ExerciseGenerationResult } from "../../lib/ai/generate-exercises";
-import type { TheoryStep } from "../../lib/ai/exercise-generation-prompt";
+import type { ExerciseGenerationResult } from "../../lib/ai/generation/generate-exercises";
+import type { TheoryStep } from "../../lib/ai/generation/exercise-generation-prompt";
 import { notify } from "../../utils/notify";
 
 vi.mock("../../utils/notify", () => ({

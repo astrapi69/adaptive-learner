@@ -10,7 +10,7 @@ import {
   type BatchLesson,
   type SetBatchDeps,
 } from "./generate-exercises-for-set";
-import type { ContentLessonExercise } from "../../storage/types";
+import type { ContentLessonExercise } from "../../../storage/types";
 
 function lesson(id: string, exerciseCount: number): BatchLesson {
   return {

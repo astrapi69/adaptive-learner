@@ -17,7 +17,7 @@
  * Library-grade: no app-state imports beyond the shared JSON helper.
  */
 
-import { extractJsonObject, stripFences } from "../utils/extract-json";
+import { extractJsonObject, stripFences } from "../../utils/extract-json";
 import {
   ALLOWED_EXERCISE_TYPES,
   type GeneratedExerciseType,
