@@ -18,21 +18,21 @@
 
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import {readLearnerState} from "../../lib/learning/learnerState";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {
     buildEndlessPlan,
     endlessStepAt,
     type EndlessPlan,
     type EndlessSourceLesson,
-} from "../../lib/endless/endless-stream";
-import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
-import {stampHintUsage} from "../../lib/hints/hint-usage";
-import {getStorage} from "../../storage";
+} from "../../../lib/endless/endless-stream";
+import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
+import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {getStorage} from "../../../storage";
 import type {
     ContentLessonCard,
     ContentLessonStep,
     ElementAttempt,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 export type EndlessLessonStatus =
     | "loading"

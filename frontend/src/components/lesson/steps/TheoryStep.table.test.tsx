@@ -14,7 +14,7 @@ vi.mock("../../../hooks/ui/useI18n", () => ({
 }));
 
 import TheoryStep from "./TheoryStep";
-import type {ReadAloudController} from "../../../hooks/lesson/useReadAloud";
+import type {ReadAloudController} from "../../../hooks/lesson/audio/useReadAloud";
 
 const tts = {
     enabled: false,

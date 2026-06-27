@@ -24,15 +24,15 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {readLearnerState} from "../../lib/learning/learnerState";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {
     buildShuffleLesson,
     type ShuffleSourceLesson,
-} from "../../lib/shuffle/shuffle-lesson";
-import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
-import {stampHintUsage} from "../../lib/hints/hint-usage";
-import {getStorage} from "../../storage";
-import type {ContentLesson, ElementAttempt} from "../../storage/types";
+} from "../../../lib/shuffle/shuffle-lesson";
+import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
+import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {getStorage} from "../../../storage";
+import type {ContentLesson, ElementAttempt} from "../../../storage/types";
 
 export type ShuffleLessonStatus =
     | "loading"

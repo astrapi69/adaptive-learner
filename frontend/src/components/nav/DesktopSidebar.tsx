@@ -41,7 +41,7 @@ import NavGroup from "./NavGroup";
 import { useHelp } from "../../contexts/HelpContext";
 import { helpKeyForPath } from "../../lib/help/help-routes";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { useIsLessonActive } from "../../hooks/lesson/useIsLessonActive";
+import { useIsLessonActive } from "../../hooks/lesson/session/useIsLessonActive";
 import { useTheme } from "../../hooks/ui/useTheme";
 import { isDarkTheme } from "../../lib/theme/themes";
 

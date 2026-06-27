@@ -4,4 +4,3 @@
 # `check-folder-size.sh`). This file IS the folder-size whitelist; every
 # entry below is a known god-folder with a follow-up issue tracking its split.
 # Format: path  # reason / tracking issue
-frontend/src/hooks/lesson        # 16 files — the lesson-session hooks (viewer + review + shuffle + endless + timed + flow/nav/tts), split tracked (#809)

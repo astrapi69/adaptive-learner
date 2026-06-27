@@ -19,7 +19,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const useReviewLessonMock = vi.fn();
 
-vi.mock("../../hooks/lesson/useReviewLesson", () => ({
+vi.mock("../../hooks/lesson/modes/useReviewLesson", () => ({
   useReviewLesson: () => useReviewLessonMock(),
 }));
 

@@ -25,7 +25,7 @@ import {useEffect, useRef, useState} from "react";
 import {Check, X} from "lucide-react";
 
 import {useFeedbackIntensity} from "../../../hooks/settings/useFeedbackIntensity";
-import {useLessonMode} from "../../../hooks/lesson/useLessonMode";
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import FeedbackPulse from "../../../shared/feedback/FeedbackPulse";
 import {

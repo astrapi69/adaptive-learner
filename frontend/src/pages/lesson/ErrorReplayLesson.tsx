@@ -41,8 +41,8 @@ type Translate = (key: string, fallback?: string) => string;
 import {
     useLessonEnterKey,
     type LessonEnterNav,
-} from "../../hooks/lesson/useLessonEnterKey";
-import {useLessonShortcuts} from "../../hooks/lesson/useLessonShortcuts";
+} from "../../hooks/lesson/interaction/useLessonEnterKey";
+import {useLessonShortcuts} from "../../hooks/lesson/interaction/useLessonShortcuts";
 import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
 import type {
     ContentLessonCard,

@@ -1,12 +1,7 @@
-// Barrel for hooks/lesson (grouped by concern, #809). Re-export only.
-export * from "./useAdaptiveLesson";
-export * from "./useExerciseHints";
-export * from "./useIsLessonActive";
-export * from "./useLesson";
-export * from "./useLessonAutoRead";
-export * from "./useLessonEnterKey";
-export * from "./useLessonFlowControl";
-export * from "./useLessonNavigation";
-export * from "./useLessonShortcuts";
-export * from "./useReadAloud";
-export * from "./useReviewLesson";
+// Parent barrel for hooks/lesson (grouped by concern, #809). Re-export only.
+// modes (lesson-mode variants), session (core playback/nav), interaction
+// (keyboard/hints), audio (read-aloud). Re-exports the full hook surface.
+export * from "./modes";
+export * from "./session";
+export * from "./interaction";
+export * from "./audio";

@@ -13,7 +13,7 @@ import {useEffect, useState} from "react";
 import {
     LESSON_SHORTCUTS_CHANGE_EVENT,
     readLessonShortcutsEnabled,
-} from "../../lib/lesson/lessonShortcutsPref";
+} from "../../../lib/lesson/lessonShortcutsPref";
 
 export function useLessonShortcuts(): boolean {
     const [enabled, setEnabled] = useState<boolean>(() =>

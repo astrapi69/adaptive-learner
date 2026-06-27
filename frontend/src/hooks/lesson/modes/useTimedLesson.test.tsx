@@ -8,7 +8,7 @@ import {act, renderHook} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {useTimedLesson} from "./useTimedLesson";
-import type {ContentLesson} from "../../storage/types";
+import type {ContentLesson} from "../../../storage/types";
 
 const LESSON: ContentLesson = {
     id: "l1",

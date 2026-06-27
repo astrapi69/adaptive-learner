@@ -22,7 +22,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const useLessonMock = vi.fn();
 const listLessonsMock = vi.fn();
 
-vi.mock("../../hooks/lesson/useLesson", () => ({
+vi.mock("../../hooks/lesson/session/useLesson", () => ({
   useLesson: () => useLessonMock(),
 }));
 

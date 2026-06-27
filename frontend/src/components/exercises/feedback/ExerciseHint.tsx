@@ -18,8 +18,8 @@
  */
 
 import HintButton from "../../../shared/gamification/HintButton";
-import { useExerciseHints } from "../../../hooks/lesson/useExerciseHints";
-import { useLessonMode } from "../../../hooks/lesson/useLessonMode";
+import { useExerciseHints } from "../../../hooks/lesson/interaction/useExerciseHints";
+import { useLessonMode } from "../../../hooks/lesson/modes/useLessonMode";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { emitXpSpent } from "../../../lib/gamification/xp-spent-event";
 import { markHintUsed } from "../../../lib/hints/hint-usage";

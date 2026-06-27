@@ -22,11 +22,11 @@ const reviewQueueMock = vi.fn();
 const listSetsMock = vi.fn();
 const getLessonMock = vi.fn();
 
-vi.mock("../../lib/learning/learnerState", () => ({
+vi.mock("../../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "user-1"}),
 }));
 
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
     getStorage: () => ({
         elementErrors: {
             reviewQueue: reviewQueueMock,
@@ -41,7 +41,7 @@ import type {
     ContentLesson,
     ContentLessonExercise,
     ReviewQueueItem,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 const SET_ID = "es-a1";
 

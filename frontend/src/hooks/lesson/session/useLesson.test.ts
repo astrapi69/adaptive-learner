@@ -22,7 +22,7 @@ const getLessonMock = vi.fn();
 const getProgressMock = vi.fn();
 const upsertProgressMock = vi.fn();
 
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
     getStorage: () => ({
         contentLoader: {
             getLesson: getLessonMock,
@@ -38,7 +38,7 @@ vi.mock("../../storage", () => ({
     }),
 }));
 
-vi.mock("../../lib/learning/learnerState", () => ({
+vi.mock("../../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({
         userId: "user-1",
         projectId: "project-1",

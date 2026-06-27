@@ -28,14 +28,14 @@
 
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import {readLearnerState} from "../../lib/learning/learnerState";
-import {ApiError} from "../../api/client";
-import {getStorage} from "../../storage";
+import {readLearnerState} from "../../../lib/learning/learnerState";
+import {ApiError} from "../../../api/client";
+import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
     LessonProgress,
     LessonStepResult,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 export type LessonLoadStatus =
     | "loading"

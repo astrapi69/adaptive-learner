@@ -16,7 +16,7 @@ import { useAppMode } from "../../hooks/settings/useAppMode";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useDevMode } from "../../hooks/settings/useDevMode";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { useIsLessonActive } from "../../hooks/lesson/useIsLessonActive";
+import { useIsLessonActive } from "../../hooks/lesson/session/useIsLessonActive";
 import { useScrollDirection } from "../../hooks/ui/useScrollDirection";
 import { useTheme } from "../../hooks/ui/useTheme";
 import { isDarkTheme } from "../../lib/theme/themes";

@@ -11,10 +11,10 @@
 
 import {useMemo} from "react";
 
-import {useI18n} from "../ui/useI18n";
-import {formatHint, generateHints} from "../../lib/hints/generate-hint";
-import {readHintsEnabled, readHintXpCost} from "../../lib/hints/hintPref";
-import type {ContentLessonExercise} from "../../storage/types";
+import {useI18n} from "../../ui/useI18n";
+import {formatHint, generateHints} from "../../../lib/hints/generate-hint";
+import {readHintsEnabled, readHintXpCost} from "../../../lib/hints/hintPref";
+import type {ContentLessonExercise} from "../../../storage/types";
 
 export interface ExerciseHintsResult {
     /** Ready-to-display, ordered hint strings (empty when off/none). */

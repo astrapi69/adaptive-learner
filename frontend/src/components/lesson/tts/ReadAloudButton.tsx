@@ -23,7 +23,7 @@ import {Volume2, Square} from "lucide-react";
 
 import {useButtonTooltips} from "../../../hooks/settings/useButtonTooltips";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {readLessonSpeed} from "../../../hooks/lesson/useReadAloud";
+import {readLessonSpeed} from "../../../hooks/lesson/audio/useReadAloud";
 import {
     isSpeechSynthesisSupported,
     loadVoices,

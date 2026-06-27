@@ -66,7 +66,7 @@ import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {useLessonMode} from "../../../hooks/lesson/useLessonMode";
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import ExerciseHint from "../feedback/ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";

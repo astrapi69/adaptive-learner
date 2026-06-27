@@ -1,10 +1,10 @@
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-import {useI18n} from "../ui/useI18n";
-import {notify} from "../../utils/notify";
+import {useI18n} from "../../ui/useI18n";
+import {notify} from "../../../utils/notify";
 import type {LessonLoadStatus} from "./useLesson";
-import type {LessonProgress} from "../../storage/types";
+import type {LessonProgress} from "../../../storage/types";
 
 /**
  * Inputs for {@link useLessonFlowControl} — the lifecycle slice of

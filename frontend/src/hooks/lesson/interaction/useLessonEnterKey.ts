@@ -18,11 +18,11 @@
 
 import {useEffect, type RefObject} from "react";
 
-import type {ExerciseHandle} from "../../components/exercises/shell/exercise-control";
+import type {ExerciseHandle} from "../../../components/exercises/shell/exercise-control";
 import {
     decideLessonEnterAction,
     type LessonEnterState,
-} from "../../lib/lesson/lessonShortcutsPref";
+} from "../../../lib/lesson/lessonShortcutsPref";
 
 /** The decision state plus the advance callback the listener needs. */
 export type LessonEnterNav = LessonEnterState & {goNext: () => void};

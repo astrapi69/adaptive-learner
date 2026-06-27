@@ -32,12 +32,12 @@ import {
     resume as resumeRaw,
     speak as speakRaw,
     stop as stopRaw,
-} from "../../lib/voice/speech-synthesis";
+} from "../../../lib/voice/speech-synthesis";
 import {
     readVoicePrefs,
     writeLessonAutoRead as writeLessonAutoReadPref,
     writeLessonSpeed as writeLessonSpeedPref,
-} from "../../lib/voice/voicePref";
+} from "../../../lib/voice/voicePref";
 
 /** Inline speed multipliers offered during playback (C4). */
 export const READ_ALOUD_SPEEDS = [0.5, 0.75, 1, 1.25] as const;
