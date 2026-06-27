@@ -766,6 +766,11 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Frontend npm run test (vitest) ==="
 	@cd frontend && npm run test
 	@echo ""
+	@echo "=== Theme/token gate (verify-theme, Python-only; #1185) ==="
+	@echo "Vitest theme guards already ran via 'make test' + 'npm run test' above;"
+	@echo "here we only run the unique stdlib token-matrix + WCAG gate."
+	@python3 scripts/verify_theme.py --enforce
+	@echo ""
 	@echo "=== Documentation drift gate (verify-docs-discipline) ==="
 	@$(MAKE) verify-docs-discipline
 	@echo ""
