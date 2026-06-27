@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "Cevabın:",
-    "correct_answer": "Doğru:",
     "summary_corrected": "{total} hatadan {corrected} tanesi düzeltildi",
     "summary_trend": "Güzel — zayıf noktaların güçleniyor.",
     "summary_next": "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner.",
@@ -1936,6 +1935,11 @@
         "sentence_label": "Boşluk doldurma cümlesi",
         "blank_label": "Boşluk {n}",
         "select_placeholder": "Seç…",
+        "multi_group_label": "Geçerli olanların tümünü seçin",
+        "multi_result_wrong": "Tam değil. Vurgulanan seçenekleri kontrol et.",
+        "multi_badge_correct": "Doğru",
+        "multi_badge_wrong": "Yanlış",
+        "multi_badge_missed": "Atlandı",
         "result_correct": "Hepsi doğru!",
         "result_partial": "{correct} / {total} doğru.",
         "empty": "Bu boşluk doldurma alıştırmasının boşluğu yok."
@@ -2029,7 +2033,6 @@
         "question": "Soru",
         "your_answer": "Senin cevabın",
         "no_answer": "(yok)",
-        "correct_answer": "Doğru",
         "weak_areas": "Zayıf alanlar"
       },
       "mark_complete": "Tamamlandı olarak işaretle",

@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "Η απάντησή σου:",
-    "correct_answer": "Σωστό:",
     "summary_corrected": "{corrected} από {total} διορθώθηκαν",
     "summary_trend": "Ωραία — τα αδύναμα σημεία σου δυναμώνουν.",
     "summary_next": "Τα κατακτημένα στοιχεία φεύγουν· τα υπόλοιπα επιστρέφουν σύντομα για επανάληψη.",
@@ -1936,6 +1935,11 @@
         "sentence_label": "Πρόταση με κενά",
         "blank_label": "Κενό {n}",
         "select_placeholder": "Επίλεξε…",
+        "multi_group_label": "Επιλέξτε όλα όσα ισχύουν",
+        "multi_result_wrong": "Όχι ακριβώς. Δες τις επισημασμένες επιλογές.",
+        "multi_badge_correct": "Σωστό",
+        "multi_badge_wrong": "Λάθος",
+        "multi_badge_missed": "Παραλείφθηκε",
         "result_correct": "Όλα σωστά!",
         "result_partial": "{correct} από {total} σωστά.",
         "empty": "Αυτή η άσκηση συμπλήρωσης κενών δεν έχει κενά."
@@ -2029,7 +2033,6 @@
         "question": "Ερώτηση",
         "your_answer": "Η απάντησή σου",
         "no_answer": "(καμία)",
-        "correct_answer": "Σωστό",
         "weak_areas": "Αδύναμα σημεία"
       },
       "mark_complete": "Σήμανση ως ολοκληρωμένο",

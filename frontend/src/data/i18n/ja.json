@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "あなたの回答:",
-    "correct_answer": "正解:",
     "summary_corrected": "{total}問中{corrected}問を修正",
     "summary_trend": "いいですね — 弱点が強くなっています。",
     "summary_next": "習得した項目は外れ、残りはまもなく復習に戻ります。",
@@ -1936,6 +1935,11 @@
         "sentence_label": "穴埋め文",
         "blank_label": "空欄 {n}",
         "select_placeholder": "選んでください…",
+        "multi_group_label": "当てはまるものをすべて選択",
+        "multi_result_wrong": "惜しい。ハイライトされた選択肢を確認してください。",
+        "multi_badge_correct": "正解",
+        "multi_badge_wrong": "不正解",
+        "multi_badge_missed": "見落とし",
         "result_correct": "すべて正解！",
         "result_partial": "{total}個中{correct}個正解。",
         "empty": "この穴埋め演習には空欄がありません。"
@@ -2029,7 +2033,6 @@
         "question": "問題",
         "your_answer": "あなたの回答",
         "no_answer": "(なし)",
-        "correct_answer": "正解",
         "weak_areas": "弱点"
       },
       "mark_complete": "完了としてマーク",

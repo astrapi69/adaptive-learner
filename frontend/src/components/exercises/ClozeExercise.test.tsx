@@ -309,6 +309,40 @@ describe("ClozeExercise: select mode", () => {
     });
 });
 
+describe("ClozeExercise: multiselect dispatch (#1195)", () => {
+    const MULTISELECT: ContentLessonExercise = {
+        id: "ex-cloze-ms",
+        type: "cloze",
+        cloze_mode: "multiselect",
+        prompt: "Select all that apply.",
+        card_ids: [],
+        sentence: "Which cities are in Germany?",
+        accept: ["Berlin", "Hamburg"],
+        distractors: ["Vienna", "Zurich"],
+    };
+
+    it("routes a multiselect cloze to the checkbox renderer, not the blank one", () => {
+        render(<ClozeExercise exercise={MULTISELECT} onComplete={vi.fn()} />);
+        expect(
+            screen.getByTestId("cloze-multiselect-exercise"),
+        ).toBeInTheDocument();
+        // The blank-based renderer must NOT mount for multiselect.
+        expect(screen.queryByTestId("cloze-exercise")).not.toBeInTheDocument();
+        expect(screen.getAllByRole("checkbox")).toHaveLength(4);
+    });
+
+    it("scores the dispatched multiselect end to end", () => {
+        const onComplete = vi.fn();
+        render(<ClozeExercise exercise={MULTISELECT} onComplete={onComplete} />);
+        fireEvent.click(screen.getByRole("checkbox", {name: "Berlin"}));
+        fireEvent.click(screen.getByRole("checkbox", {name: "Hamburg"}));
+        fireEvent.click(screen.getByTestId("cloze-multiselect-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 1}),
+        );
+    });
+});
+
 describe("ClozeExercise: attempts fan-out", () => {
     it("emits one ElementAttempt per blank with the per-blank canonical", () => {
         const onComplete = vi.fn();

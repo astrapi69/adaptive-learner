@@ -361,6 +361,16 @@ the loader checks `sentence.count("___") == len(blanks)`).
   the exercise's `distractors`, shuffled per blank with a stable
   seed. **Requires non-empty `distractors`** — the schema
   validator rejects `cloze_mode: "select"` without them.
+- `"multiselect"` (#1195): a "select all that apply" question. No
+  `___` markers and no `blanks` — the `sentence` is the question
+  stem, rendered above a checkbox group. Reuses `accept` and
+  `distractors` with a mode-specific meaning: **every** `accept`
+  entry is a correct option (not just `accept[0]`), and
+  `distractors` are the wrong options. Graded by **exact-set**
+  match — the learner must check every correct option and no
+  distractor. **Requires** non-empty `accept`, non-empty
+  `distractors`, and the two lists must be **disjoint** (the same
+  option may not be both correct and a distractor).
 
 **Multiple choice is authored this way** — there is no separate
 `multiple_choice` exercise type (by design, see EXP-036 §4.3). A
@@ -369,8 +379,20 @@ single-answer multiple-choice question is a one-blank cloze in
 blank's `accept[0]` is the correct option, and `distractors` are the
 wrong options. Example: `"sentence": "The capital of France is ___."`,
 `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
-`"distractors": ["Berlin", "Madrid", "Rome"]`. ("Select all that
-apply" / multi-answer is not yet supported — tracked in #1195.)
+`"distractors": ["Berlin", "Madrid", "Rome"]`.
+
+**"Select all that apply"** (two or more correct answers, e.g. a
+driving-licence exam question) uses `cloze_mode: "multiselect"`:
+
+```json
+{
+  "type": "cloze",
+  "cloze_mode": "multiselect",
+  "sentence": "Which cities are in Germany?",
+  "accept": ["Berlin", "Hamburg"],
+  "distractors": ["Vienna", "Zurich"]
+}
+```
 
 **Multiple blanks per cloze** are supported: each `___` in the
 sentence is mapped in order to the next entry in `blanks`. Each

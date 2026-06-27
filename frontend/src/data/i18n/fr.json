@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "Votre réponse :",
-    "correct_answer": "Correct :",
     "summary_corrected": "{corrected} sur {total} corrigés",
     "summary_trend": "Bien — vos points faibles se renforcent.",
     "summary_next": "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision.",
@@ -1936,6 +1935,11 @@
         "sentence_label": "Phrase à trous",
         "blank_label": "Trou {n}",
         "select_placeholder": "Choisir…",
+        "multi_group_label": "Sélectionnez toutes les réponses correctes",
+        "multi_result_wrong": "Pas tout à fait. Vérifiez les options en surbrillance.",
+        "multi_badge_correct": "Correct",
+        "multi_badge_wrong": "Incorrect",
+        "multi_badge_missed": "Manquée",
         "result_correct": "Tout est correct !",
         "result_partial": "{correct} sur {total} corrects.",
         "empty": "Cet exercice à trous n'a pas de trous."
@@ -2029,7 +2033,6 @@
         "question": "Question",
         "your_answer": "Ta réponse",
         "no_answer": "(aucune)",
-        "correct_answer": "Correct",
         "weak_areas": "Points faibles"
       },
       "mark_complete": "Marquer comme terminée",

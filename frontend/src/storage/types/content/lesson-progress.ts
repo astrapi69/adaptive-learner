@@ -10,7 +10,11 @@ export type RawAnswer =
   | { kind: "picture_choice"; selected: number }
   | { kind: "free_text"; input: string }
   | { kind: "word_tiles"; placed: number[] }
-  | { kind: "cloze"; inputs: string[] };
+  | { kind: "cloze"; inputs: string[] }
+  /** #1195 — cloze ``multiselect`` ("select all that apply"): the
+   *  chosen option set. Persisted so a revisited, locked question
+   *  restores its exact checkbox state. */
+  | { kind: "cloze_multiselect"; selected: string[] };
 
 export interface LessonStepResult {
   step_id: string;

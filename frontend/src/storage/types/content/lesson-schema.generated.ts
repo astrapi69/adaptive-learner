@@ -140,7 +140,7 @@ export type ExampleLabel = string | null;
  */
 export type ExampleUrl = string | null;
 /**
- * FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt.
+ * FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.
  */
 export type Accept = string[] | null;
 /**
@@ -148,7 +148,7 @@ export type Accept = string[] | null;
  */
 export type AcceptOrderings = number[][] | null;
 /**
- * CLOZE: per-marker metadata in left-to-right order. ``len(blanks) == sentence.count('___')`` enforced at validation time. Phase 52D / v1.35.0.
+ * CLOZE: per-marker metadata in left-to-right order. ``len(blanks) == sentence.count('___')`` enforced at validation time. Phase 52D / v1.35.0. Not used in ``multiselect`` mode (#1195).
  */
 export type Blanks = ClozeBlank[] | null;
 /**
@@ -168,9 +168,9 @@ export type Placeholder = string | null;
  */
 export type CardIds = string[];
 /**
- * CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a ``<select>`` per blank with options from ``distractors``. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.
+ * CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a single-answer ``<select>`` per blank with options from ``distractors``, ``multiselect`` (#1195) renders a checkbox group of ``accept`` (all correct) + ``distractors`` for a 'select all that apply' question. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.
  */
-export type ClozeMode = ("type" | "select") | null;
+export type ClozeMode = ("type" | "select" | "multiselect") | null;
 /**
  * EXP-018 / Phase 62 / v1.46.0: which way the card is drilled. ``target_to_source`` (default) shows the target language and asks the learner to recognise the source language (RECEPTIVE, easier). ``source_to_target`` shows the source and asks the learner to produce the target (PRODUCTIVE, harder). ``both`` / ``random`` let the renderer or the adaptive generator pick per attempt. Additive + optional; schema_version stays 1.2. Cloze ignores it (in-context).
  */
@@ -220,7 +220,7 @@ export type Right = string;
  */
 export type Prompt = string;
 /**
- * CLOZE: the cloze sentence with visible ``___`` markers at each blank position. The renderer splits on the markers + interleaves the per-blank input control. Phase 52D / v1.35.0.
+ * CLOZE: the cloze sentence with visible ``___`` markers at each blank position. The renderer splits on the markers + interleaves the per-blank input control. Phase 52D / v1.35.0. In ``multiselect`` mode (#1195) this is instead the question stem (no ``___`` markers, no ``blanks``).
  */
 export type Sentence = string | null;
 /**

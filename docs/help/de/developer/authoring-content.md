@@ -372,6 +372,16 @@ len(blanks)`).
   stabilem Seed gemischt. **Erfordert nicht-leere
   `distractors`** — der Schema-Validator weist
   `cloze_mode: "select"` ohne sie ab.
+- `"multiselect"` (#1195): eine "Alle zutreffenden auswählen"-
+  Frage. Keine `___`-Marker und keine `blanks` — der `sentence`
+  ist die Frage, darunter eine Checkbox-Gruppe. Nutzt `accept`
+  und `distractors` mit modusspezifischer Bedeutung: **jeder**
+  `accept`-Eintrag ist eine richtige Option (nicht nur
+  `accept[0]`), `distractors` sind die falschen. Bewertet als
+  **exakte Mengenübereinstimmung** — alle richtigen Optionen
+  müssen gewählt sein, keine falsche. **Erfordert** nicht-leeres
+  `accept`, nicht-leeres `distractors`, und beide Listen müssen
+  **disjunkt** sein (dieselbe Option darf nicht in beiden stehen).
 
 **Multiple Choice wird so erstellt** — es gibt bewusst keinen
 eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3). Eine
@@ -380,9 +390,21 @@ der `sentence` (endet auf `___`) ist die Frage, `accept[0]` der
 Lücke ist die richtige Option, und `distractors` sind die falschen
 Optionen. Beispiel: `"sentence": "Die Hauptstadt von Frankreich ist
 ___."`, `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode":
-"select"`, `"distractors": ["Berlin", "Madrid", "Rom"]`. ("Alle
-zutreffenden auswählen" / Mehrfachauswahl ist noch nicht
-unterstützt — siehe #1195.)
+"select"`, `"distractors": ["Berlin", "Madrid", "Rom"]`.
+
+**"Alle zutreffenden auswählen"** (zwei oder mehr richtige
+Antworten, z. B. eine Führerscheinprüfungs-Frage) nutzt
+`cloze_mode: "multiselect"`:
+
+```json
+{
+  "type": "cloze",
+  "cloze_mode": "multiselect",
+  "sentence": "Welche Städte liegen in Deutschland?",
+  "accept": ["Berlin", "Hamburg"],
+  "distractors": ["Wien", "Zürich"]
+}
+```
 
 **Mehrere Lücken pro Cloze** sind unterstützt: jeder `___` im
 Satz wird der Reihe nach auf den nächsten Eintrag in `blanks`

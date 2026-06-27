@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "आपका उत्तर:",
-    "correct_answer": "सही:",
     "summary_corrected": "{total} में से {corrected} सुधारे गए",
     "summary_trend": "बढ़िया — आपके कमज़ोर बिंदु मज़बूत हो रहे हैं।",
     "summary_next": "महारत प्राप्त तत्व हट जाते हैं; बाकी जल्द ही समीक्षा के लिए लौटते हैं।",
@@ -1936,6 +1935,11 @@
         "sentence_label": "रिक्त-स्थान वाक्य",
         "blank_label": "रिक्त स्थान {n}",
         "select_placeholder": "चुनें…",
+        "multi_group_label": "लागू होने वाले सभी चुनें",
+        "multi_result_wrong": "बिलकुल सही नहीं। हाइलाइट किए गए विकल्प देखें।",
+        "multi_badge_correct": "सही",
+        "multi_badge_wrong": "गलत",
+        "multi_badge_missed": "छूट गया",
         "result_correct": "सभी सही!",
         "result_partial": "{total} में से {correct} सही।",
         "empty": "इस रिक्त-स्थान अभ्यास में कोई रिक्त स्थान नहीं हैं।"
@@ -1991,7 +1995,6 @@
         "question": "प्रश्न",
         "your_answer": "आपका उत्तर",
         "no_answer": "(कोई नहीं)",
-        "correct_answer": "सही",
         "weak_areas": "कमज़ोर क्षेत्र"
       },
       "mark_complete": "पूर्ण के रूप में चिह्नित करें",

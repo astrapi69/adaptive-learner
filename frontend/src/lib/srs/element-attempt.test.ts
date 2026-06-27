@@ -13,6 +13,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     deriveClozeAttempts,
+    deriveClozeMultiSelectAttempt,
     deriveFreeTextAttempt,
     deriveMatchingAttempts,
     derivePictureChoiceAttempt,
@@ -347,5 +348,47 @@ describe("deriveClozeAttempts", () => {
         );
         expect(attempts[1].user_answer).toBe("");
         expect(attempts[1].correct).toBe(false);
+    });
+});
+
+// --- CLOZE MULTISELECT (#1195) ---------------------------------------------
+
+describe("deriveClozeMultiSelectAttempt", () => {
+    const exercise: ContentLessonExercise = {
+        id: "ex-ms",
+        type: "cloze",
+        cloze_mode: "multiselect",
+        prompt: "Select all that apply.",
+        card_ids: [],
+        sentence: "Which cities are in Germany?",
+        accept: ["Berlin", "Hamburg"],
+        distractors: ["Vienna", "Zurich"],
+    };
+
+    it("uses the sorted accept set as canonical element_key + correct_answer", () => {
+        const attempt = deriveClozeMultiSelectAttempt(
+            exercise,
+            CTX,
+            ["Hamburg", "Berlin"],
+            true,
+        );
+        expect(attempt.element_key).toBe("Berlin, Hamburg");
+        expect(attempt.correct_answer).toBe("Berlin, Hamburg");
+        // user_answer is the chosen set, sorted for a stable string.
+        expect(attempt.user_answer).toBe("Berlin, Hamburg");
+        expect(attempt.correct).toBe(true);
+        expect(attempt.set_id).toBe("language-fr-a1");
+        expect(attempt.exercise_id).toBe("ex-ms");
+    });
+
+    it("records the chosen set verbatim (sorted) on a wrong attempt", () => {
+        const attempt = deriveClozeMultiSelectAttempt(
+            exercise,
+            CTX,
+            ["Vienna"],
+            false,
+        );
+        expect(attempt.user_answer).toBe("Vienna");
+        expect(attempt.correct).toBe(false);
     });
 });
