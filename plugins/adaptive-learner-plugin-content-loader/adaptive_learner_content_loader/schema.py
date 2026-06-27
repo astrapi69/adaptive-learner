@@ -622,6 +622,49 @@ class Exercise(BaseModel):
             raise ValueError("CLOZE with cloze_mode='select' requires non-empty 'distractors'")
 
 
+class LessonResource(BaseModel):
+    """One lesson-level supplementary-media entry (EXP-029 / MED-05).
+
+    Mirrors a ``media.yaml`` resource minus ``domain`` (inherited
+    from the parent set). Surfaced in the "Vertiefe das Thema"
+    section after the lesson summary. Optional + additive, so
+    pre-EXP-029 lessons load unchanged. Added to the authoritative
+    schema (EXP-039) so the JSON-Schema / generated TS types cover
+    it — previously this shape lived only in the frontend
+    ``ContentLessonResource`` interface, and a lesson carrying
+    ``resources`` was rejected by ``extra="forbid"`` here.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    type: str = Field(
+        ...,
+        description="Resource kind ('video', 'podcast', 'article', ...).",
+        min_length=1,
+        max_length=40,
+    )
+    title: str = Field(
+        ...,
+        description="Human-readable title shown in the media list.",
+        min_length=1,
+        max_length=300,
+    )
+    url: str = Field(
+        ...,
+        description="Link to the resource.",
+        min_length=1,
+        max_length=2000,
+    )
+    language: str | None = Field(default=None, max_length=35)
+    level: str | None = Field(default=None, max_length=10)
+    duration: str | None = Field(default=None, max_length=40)
+    description: str | None = Field(default=None, max_length=2000)
+    author: str | None = Field(default=None, max_length=300)
+    free: bool | None = Field(default=None)
+    partnership: bool | None = Field(default=None)
+    tags: list[str] | None = Field(default=None, max_length=20)
+
+
 class LessonStep(BaseModel):
     """One step in the lesson sequence.
 
@@ -687,6 +730,17 @@ class LessonStep(BaseModel):
             "title. The viewer's 'Re-read theory' backlink resolves it "
             "exactly, falling back to the term-overlap heuristic when "
             "absent or unresolvable (additive, #709)."
+        ),
+        max_length=200,
+    )
+    review_lesson_id: str | None = Field(
+        default=None,
+        description=(
+            "Set ONLY on synthesised SRS review steps (#673). Carries the "
+            "source lesson_id the reviewed element belongs to, so the review "
+            "recorder can address the exact stored ElementError row. Absent on "
+            "real content lessons. Modeled here (EXP-039) so the schema covers "
+            "the synthesised-review shape the frontend already emits."
         ),
         max_length=200,
     )
@@ -809,6 +863,44 @@ class Lesson(BaseModel):
             "Ordered sequence of theory + exercise steps. Must contain at least one step."
         ),
         min_length=1,
+    )
+    variation_of: str | None = Field(
+        default=None,
+        description=(
+            "Phase 64B / schema 1.3 (additive). When set, this lesson is a "
+            "community VARIATION of another lesson (same topic, different "
+            "exercises or perspective); holds the original lesson's id. Absent "
+            "for ordinary lessons. Modeled here (EXP-039) so a shared variation "
+            "lesson is no longer rejected by ``extra='forbid'``."
+        ),
+        max_length=120,
+    )
+    variation_note: str | None = Field(
+        default=None,
+        description="Phase 64B. Author's short note on how this variation differs.",
+        max_length=500,
+    )
+    contributed_by: str | None = Field(
+        default=None,
+        description=(
+            "Phase 64C-2 / schema 1.3 (additive). Optional author credit set "
+            "when the learner opts in while sharing. Shown as a subtle viewer "
+            "credit line + in the GitHub submission."
+        ),
+        max_length=200,
+    )
+    contributed_at: str | None = Field(
+        default=None,
+        description="ISO-8601 timestamp the lesson was contributed.",
+        max_length=40,
+    )
+    resources: list[LessonResource] | None = Field(
+        default=None,
+        description=(
+            "EXP-029 / MED-05 (additive). Optional lesson-specific supplementary "
+            "media (videos / podcasts / articles), surfaced in the 'Vertiefe das "
+            "Thema' section after the lesson summary."
+        ),
     )
 
     @field_validator("id")

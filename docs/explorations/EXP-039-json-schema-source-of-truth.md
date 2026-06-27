@@ -5,7 +5,10 @@
 **Prioritaet:** Hoch
 **Abhaengig von:** EXP-002 (Content-Repository), EXP-003 (Lektionsformat), EXP-004 (GitHub-Organisation)
 **Issue:** astrapi69/adaptive-learner#1193
-**Status:** Design — wartet auf Architekten-Freigabe (Cross-Repo-Architekturentscheidung)
+**Status:** Freigegeben (Richtung A). **App-Seite implementiert** — Pydantic ist
+SoT; `schema/lesson.schema.json` + `schema/quality-rules.json` + generierte
+TS-Typen + Referenz-Doku werden via `make sync-schema` erzeugt, Drift-Gate via
+`make sync-schema-check`. Cross-Repo-Mirror (Content-Repo) ist der CCWc-Folgeschritt.
 
 > Dieses Dokument ist **reines Design**. Es liefert **keinen** Code, **kein**
 > fertiges JSON-Schema, **keine** Typ- oder Validator-Aenderung. Es entwirft den

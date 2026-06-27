@@ -1,0 +1,11 @@
+{
+  "$schema-version": "1.4",
+  "_comment": "GENERATED from scripts/generate_lesson_schema.py (EXP-039). Do not edit. Shared quality minimums for the content quality gate (app + content repo).",
+  "rules": {
+    "minExerciseTypes": 2,
+    "minExercisesPerLesson": 5,
+    "minFreeTextAccepts": 2,
+    "minMatchingPairs": 3,
+    "minTheorySteps": 1
+  }
+}
