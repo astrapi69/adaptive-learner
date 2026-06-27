@@ -1,0 +1,226 @@
+{
+  "$defs": {
+    "CardTokenRole": {
+      "additionalProperties": false,
+      "description": "One ``token \u2192 role`` annotation on a card.\n\nPhase 52I / v1.35.0 / P-130. The cloze generator looks up\nits target blank by matching ``token`` against the\n``ElementError.element_key`` \u2014 when a role is present, the\ngenerator can pick a same-role distractor pool instead of\na position-based heuristic.\n\nThe ``token`` is a verbatim slice of the card's ``front``;\nno whitespace normalisation, so authors can annotate even\nsub-word morphemes (an accent-bearing letter, an article\ncontraction) if a future generator needs it.",
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/TokenRole",
+          "description": "Grammatical role of this token in the card."
+        },
+        "token": {
+          "description": "Verbatim slice of the card's ``front``. The generator matches this against the wrong-answer key recorded by the SRS layer.",
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "role"
+      ],
+      "title": "CardTokenRole",
+      "type": "object"
+    },
+    "TokenRole": {
+      "description": "Closed enum of grammatical roles a card token can carry.\n\nPhase 52I / v1.35.0 / P-130. Annotates individual tokens\ninside a card's ``front`` so the v1.35.0+ cloze generator\ncan pick a semantically-meaningful blank instead of a\nposition-based one. Optional field on Card \u2014 old content\nwithout token_roles still validates and the generator\nfalls back to a positional heuristic.\n\nClosed enum to keep author input disciplined. Adding a\nrole (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)\nis a minor schema_version bump \u2014 extending an open enum\nsilently would let typos masquerade as valid roles and\nthe generator would skip them without warning.",
+      "enum": [
+        "article",
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "gender_marker",
+        "tense_marker"
+      ],
+      "title": "TokenRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://astrapi69.github.io/adaptive-learner/schema/card.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The smallest learnable unit (Phase 43 / 2B-lesson).\n\nA card carries a single term / concept / fact in a single\ndirection. SRS (Phase 46) tracks one card at a time;\nindividual exercises reference cards by id so a single\n'Bonjour = Hello' card can drive a matching exercise, a\nfree-text drill, and a summary review without\nduplication.\n\nConvention: ``card.id`` is unique within the lesson, not\nglobally. Cross-lesson card sharing happens via a\nseparate ``shared/`` directory inside the set (P-111\nterritory \u2014 not yet implemented).",
+  "properties": {
+    "audio": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional relative path inside ``assets/`` for TTS-recorded pronunciation. The voice plugin already supports playback (v1.18.0).",
+      "title": "Audio"
+    },
+    "back": {
+      "description": "What the learner is being TAUGHT to recall. Typically the translation / definition / answer (e.g. 'Hello').",
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Back",
+      "type": "string"
+    },
+    "code_language": {
+      "anyOf": [
+        {
+          "maxLength": 30,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Highlighter language hint for ``code_snippet`` ('python', 'javascript', 'sql', 'excel', ...). Free string; the viewer maps unknown values to plain text.",
+      "title": "Code Language"
+    },
+    "code_snippet": {
+      "anyOf": [
+        {
+          "maxLength": 5000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional code / formula the card teaches (e.g. a Python snippet or an Excel formula). Rendered as a monospace, syntax-highlighted block in the viewer.",
+      "title": "Code Snippet"
+    },
+    "difficulty": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional 1-5 difficulty scale (1 = easiest).",
+      "title": "Difficulty"
+    },
+    "expected_output": {
+      "anyOf": [
+        {
+          "maxLength": 2000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "What ``code_snippet`` produces, shown in an 'Output:' block.",
+      "title": "Expected Output"
+    },
+    "front": {
+      "description": "What the learner sees first. Typically the target-language term (e.g. 'Bonjour').",
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Front",
+      "type": "string"
+    },
+    "hint": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Progressive hint, revealed on request during an exercise.",
+      "title": "Hint"
+    },
+    "id": {
+      "description": "Slug-safe id. Unique within the parent lesson. SRS reviews this id, not the surface term.",
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "image": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional relative path inside the set's ``assets/`` directory ('assets/img/bonjour.png'). Resolved by the asset loader.",
+      "title": "Image"
+    },
+    "media_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Card content kind: 'text' (default when null), 'code', 'formula', or 'diagram'. Drives code-aware rendering + exercise input (monospace editor for code/formula).",
+      "title": "Media Type"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "maxLength": 2000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings \u2014 anything that helps long-term retention.",
+      "title": "Notes"
+    },
+    "tags": {
+      "description": "Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Tags",
+      "type": "array"
+    },
+    "token_roles": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CardTokenRole"
+          },
+          "maxItems": 10,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Phase 52I / v1.35.0 / P-130. Optional list of ``{token, role}`` annotations on the card's ``front``. The cloze generator (52E) uses these to pick a semantically-meaningful blank when available; absent annotations fall through to a position-based heuristic so old content keeps working unchanged.",
+      "title": "Token Roles"
+    }
+  },
+  "required": [
+    "id",
+    "front",
+    "back"
+  ],
+  "title": "Card",
+  "type": "object",
+  "x-schema-version": "1.4"
+}

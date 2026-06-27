@@ -33,6 +33,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
        verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
+       sync-schema sync-schema-check sync-lesson-types \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -535,6 +536,17 @@ sync-i18n: ## Regenerate frontend/src/data/i18n/*.json from backend YAML catalog
 sync-plugin-config: ## Regenerate frontend/src/data/plugin-config/*.json from backend/config/plugins/*.yaml (Phase 49 / v1.32.0)
 	@python3 scripts/sync_plugin_config_to_frontend.py
 
+sync-lesson-types: ## Regenerate the TS lesson types from schema/lesson.schema.json (EXP-039)
+	@cd frontend && node scripts/generate-lesson-types.mjs
+
+sync-schema: ## Regenerate the lesson JSON-Schema + quality-rules + doc + TS types from the Pydantic models (EXP-039, Direction A)
+	@cd backend && poetry run python ../scripts/generate_lesson_schema.py
+	@cd frontend && node scripts/generate-lesson-types.mjs
+
+sync-schema-check: ## Exit non-zero if any generated lesson-schema artefact drifts from the Pydantic models (EXP-039)
+	@cd backend && poetry run python ../scripts/generate_lesson_schema.py --check
+	@cd frontend && node scripts/generate-lesson-types.mjs --check
+
 sync-help: ## Regenerate frontend/src/data/help/*.json from backend/config/help YAML files (Phase 38)
 	@python3 scripts/sync_help_to_frontend.py
 
@@ -776,6 +788,9 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo ""
 	@echo "=== Subsystem lock-step (sync-versions --check) ==="
 	@$(MAKE) sync-versions-check
+	@echo ""
+	@echo "=== Lesson-schema drift gate (sync-schema --check, EXP-039) ==="
+	@$(MAKE) sync-schema-check
 	@echo ""
 	@echo "=== Plugin lockfile drift (verify-plugin-locks) ==="
 	@$(MAKE) verify-plugin-locks

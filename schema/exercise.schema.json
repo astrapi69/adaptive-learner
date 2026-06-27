@@ -1,0 +1,276 @@
+{
+  "$defs": {
+    "ClozeBlank": {
+      "additionalProperties": false,
+      "description": "One blank inside a cloze exercise's ``sentence`` (Phase 52D /\nv1.35.0 / P-127).\n\nMarker-based convention: the sentence carries visible ``___``\ntokens; ``blanks[i]`` provides the metadata for the i-th\nmarker (left-to-right). The validator enforces\n``sentence.count(\"___\") == len(blanks)`` so the i\u2194i mapping\nis unambiguous at render time.\n\n``accept`` carries the per-blank canonical + acceptable\nvariants \u2014 the renderer reuses FreeText's ``isFreeTextCorrect``\nmatcher (NFC-normalised + Levenshtein <= 1) so authors only\nneed to enumerate semantic variants (gendered article,\ncapitalisation, et cetera), not typos.",
+      "properties": {
+        "accept": {
+          "description": "Accepted answers for this blank. First entry is the canonical (shown after a wrong attempt). Same shape as FREE_TEXT.accept.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Accept",
+          "type": "array"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional per-blank hint. Surfaced inline next to this specific blank, not lesson-wide.",
+          "title": "Hint"
+        },
+        "placeholder": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional placeholder text shown inside the input (``type`` mode) before the user starts typing.",
+          "title": "Placeholder"
+        }
+      },
+      "required": [
+        "accept"
+      ],
+      "title": "ClozeBlank",
+      "type": "object"
+    },
+    "ExerciseType": {
+      "description": "Closed enum of exercise types the loader knows about.\n\nEXP-001 + EXP-006: the four base types ship in Phase 43-45.\nPhase 52D / v1.35.0 added CLOZE (fill-in-the-blank with\n``___`` markers) \u2014 see the schema_version bump in\n``models.py``. Adding a sixth type (ordering, drag-image-\npair, etc.) requires a minor schema_version bump and a new\nenum value plus its renderer.",
+      "enum": [
+        "matching",
+        "picture_choice",
+        "free_text",
+        "word_tiles",
+        "cloze"
+      ],
+      "title": "ExerciseType",
+      "type": "string"
+    }
+  },
+  "$id": "https://astrapi69.github.io/adaptive-learner/schema/exercise.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One exercise step. Type-tagged via ``type``.\n\nThe fields are kept in a single flat shape per\n``type`` rather than per-type discriminated unions\nbecause the JSON manifests are author-edited; flat\nshapes are easier to read and to diff in PRs. The\nvalidator enforces type-specific requirements via\nmodel_validator instead.",
+  "properties": {
+    "accept": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt.",
+      "title": "Accept"
+    },
+    "accept_orderings": {
+      "anyOf": [
+        {
+          "items": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "WORD_TILES: optional list of accepted tile-index orderings (each is a permutation of [0..len-1]). If omitted, only the canonical order in ``tiles`` is accepted.",
+      "title": "Accept Orderings"
+    },
+    "blanks": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/ClozeBlank"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "CLOZE: per-marker metadata in left-to-right order. ``len(blanks) == sentence.count('___')`` enforced at validation time. Phase 52D / v1.35.0.",
+      "title": "Blanks"
+    },
+    "card_ids": {
+      "description": "Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 50,
+      "title": "Card Ids",
+      "type": "array"
+    },
+    "cloze_mode": {
+      "anyOf": [
+        {
+          "enum": [
+            "type",
+            "select"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a ``<select>`` per blank with options from ``distractors``. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.",
+      "title": "Cloze Mode"
+    },
+    "direction": {
+      "default": "target_to_source",
+      "description": "EXP-018 / Phase 62 / v1.46.0: which way the card is drilled. ``target_to_source`` (default) shows the target language and asks the learner to recognise the source language (RECEPTIVE, easier). ``source_to_target`` shows the source and asks the learner to produce the target (PRODUCTIVE, harder). ``both`` / ``random`` let the renderer or the adaptive generator pick per attempt. Additive + optional; schema_version stays 1.2. Cloze ignores it (in-context).",
+      "enum": [
+        "source_to_target",
+        "target_to_source",
+        "both",
+        "random"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "distractors": {
+      "description": "Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Distractors",
+      "type": "array"
+    },
+    "hint": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional Markdown hint shown on demand. The viewer renders this behind a 'Need a hint?' button.",
+      "title": "Hint"
+    },
+    "id": {
+      "description": "Slug-safe id, unique within the lesson.",
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "images": {
+      "anyOf": [
+        {
+          "items": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "PICTURE_CHOICE: list of {src, label} dicts. Exactly one entry MUST also include 'is_correct': 'true'. ``src`` is a relative path inside the set's ``assets/`` directory.",
+      "title": "Images"
+    },
+    "pairs": {
+      "anyOf": [
+        {
+          "items": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "MATCHING: list of {left, right} dicts to pair up. Each dict has exactly two keys: 'left' and 'right'. The renderer shuffles before display.",
+      "title": "Pairs"
+    },
+    "prompt": {
+      "description": "The question text shown to the learner.",
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+    },
+    "sentence": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "CLOZE: the cloze sentence with visible ``___`` markers at each blank position. The renderer splits on the markers + interleaves the per-blank input control. Phase 52D / v1.35.0.",
+      "title": "Sentence"
+    },
+    "tiles": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "WORD_TILES: ordered list of tile labels. The renderer shuffles before display. Multiple correct orderings are configured via ``accept_orderings`` below.",
+      "title": "Tiles"
+    },
+    "type": {
+      "$ref": "#/$defs/ExerciseType",
+      "description": "Which exercise renderer handles this step."
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "prompt"
+  ],
+  "title": "Exercise",
+  "type": "object",
+  "x-schema-version": "1.4"
+}

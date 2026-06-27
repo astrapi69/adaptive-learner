@@ -14,6 +14,7 @@
  */
 
 import type { ContentLesson } from "../../../storage/types";
+import { QUALITY } from "./quality-rules.generated";
 
 export interface ValidationMeta {
   title: string;
@@ -54,14 +55,13 @@ export interface ValidationResult {
   warnings: ValidationIssue[];
 }
 
-/** Quality minimums. Below any of these = cannot share. */
-export const QUALITY = {
-  minExercisesPerLesson: 5,
-  minExerciseTypes: 2,
-  minFreeTextAccepts: 2,
-  minMatchingPairs: 3,
-  minTheorySteps: 1,
-} as const;
+/** Quality minimums. Below any of these = cannot share.
+ *  The values are the single source of truth in
+ *  ``quality-rules.generated.ts`` (generated from the Pydantic models by
+ *  ``make sync-schema``; mirrored to ``schema/quality-rules.json`` for the
+ *  content repo). Imported at the top + re-exported here so existing
+ *  importers keep working. */
+export { QUALITY };
 
 // ISO 639-1 base subtag: exactly two lowercase letters. The
 // schema is more permissive (BCP-47), but community language sets

@@ -9,11 +9,16 @@
  * reply back into validated cards.
  *
  * Library-grade: pure string building, no app-state / network imports.
- * The five exercise types mirror the ``ExerciseType`` enum
- * (``storage/types/content.ts`` / ``schema.py``) — there is deliberately
- * no ``multiple_choice`` (it is not a schema type; MC is expressed via a
- * ``cloze`` in select mode). See EXP-036 §4.3.
+ * The exercise types are bound to the App-authoritative schema: the
+ * ``ALLOWED_EXERCISE_TYPES`` list below is checked at compile time against
+ * the generated ``ExerciseType`` (``schema/lesson.schema.json`` ->
+ * ``lesson-schema.generated.ts``, EXP-039 Direction A), so a new schema type
+ * fails this file until the prompt is updated. There is deliberately no
+ * ``multiple_choice`` (it is not a schema type; MC is expressed via a
+ * ``cloze`` in select mode). See EXP-036 §4.3 + EXP-039.
  */
+
+import type { ExerciseType as SchemaExerciseType } from "../../../storage/types/content/lesson-schema.generated";
 
 /** A single theory step fed to the generator as context. */
 export interface TheoryStep {
@@ -51,6 +56,18 @@ export const ALLOWED_EXERCISE_TYPES = [
 ] as const;
 
 export type GeneratedExerciseType = (typeof ALLOWED_EXERCISE_TYPES)[number];
+
+/** Compile-time guard (EXP-039): the prompt's exercise-type list and the
+ *  schema-generated ``ExerciseType`` must be mutually exhaustive. If the
+ *  Pydantic ``ExerciseType`` enum gains/loses a value (and the schema +
+ *  generated types are re-synced), this assignment stops compiling until
+ *  ``ALLOWED_EXERCISE_TYPES`` is updated. Erased at runtime. */
+type _ExerciseTypesInSyncWithSchema = [
+  GeneratedExerciseType extends SchemaExerciseType ? true : never,
+  SchemaExerciseType extends GeneratedExerciseType ? true : never,
+];
+const _exerciseTypesInSync: _ExerciseTypesInSyncWithSchema = [true, true];
+void _exerciseTypesInSync;
 
 const DEFAULT_MAX_CARDS = 8;
 
