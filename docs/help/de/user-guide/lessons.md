@@ -59,6 +59,16 @@ jede Karte und Übung:
    - **Lückentext** — fülle eine Lücke im Satz (entsteht
      gezielt aus deinen Fehlern, siehe unten).
 
+Eine **Lückentext**-Lücke gibt es in drei Spielarten: Antwort
+*eintippen*, eine Option aus einer Liste *auswählen*, oder — wenn
+mehrere Antworten richtig sind — **„Alle zutreffenden
+auswählen"** (eine Mehrfachauswahl-/Checkbox-Lücke, die nur dann
+als richtig gewertet wird, wenn du genau die korrekte Menge
+ankreuzt — nicht mehr und nicht weniger). Mit der
+Mehrfach-Antwort-Variante können Autoren Fragen wie *„Welche davon
+sind Primzahlen? 2, 4, 5, 9"* schreiben, ohne einen eigenen
+„Multiple-Choice"-Übungstyp.
+
 Eine Fortschrittsanzeige oben verfolgt, wie weit du in der
 Lektion bist. Du kannst jederzeit aufhören — dein
 Fortschritt wird pro Schritt gespeichert und setzt dort
@@ -165,6 +175,18 @@ Innerhalb der Warteschlange sortieren die Einträge sich:
 **überfällige zuerst**, dann nach **Fehleranzahl absteigend**,
 dann nach **jüngstem Fehler zuerst**. So steigen die
 Elemente, mit denen du am meisten kämpfst, nach oben.
+
+### Prüfungsmodus-Bonus
+
+Ein Element im **Prüfungsmodus** richtig zu beantworten ist ein
+stärkerer Beleg für Behalten als ein Treffer in entspanntem Üben —
+du hast es unter Druck und ohne sofortiges Feedback abgerufen.
+Daher verdient ein im Prüfungsmodus bestandenes Element ein
+**längeres nächstes Wiederholungs-Intervall** als dieselbe richtige
+Antwort im Übungsmodus. (Das ist das Spiegelbild zur Hinweis-
+Nutzung, die das Intervall *verkürzt*.) Der Bonus greift in beiden
+Speichermodi, sodass auch reine Browser-Lernende dieselbe Planung
+bekommen.
 
 ---
 

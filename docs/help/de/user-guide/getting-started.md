@@ -21,11 +21,27 @@ eigenen API-Schlüssel. Kein Backend dazwischen.
 
 ## Als Progressive Web App installieren
 
-Adaptive Learner ist installierbar. Moderne Browser zeigen beim
-ersten Besuch eine "Installieren" oder "Zum Startbildschirm
-hinzufügen"-Aufforderung. Akzeptiere sie und Adaptive Learner
-wird zu einer eigenständigen App auf deinem Smartphone oder
-Desktop, startbar ohne Browser-Tab.
+Adaptive Learner ist installierbar, und der Weg dahin hängt von
+deiner Plattform ab:
+
+- **Android & Desktop (Chrome / Edge):** Der Browser löst eine
+  Installations-Aufforderung aus, die die App in ein dezentes,
+  schließbares **„App installieren"**-Banner umwandelt (nach dem
+  Schließen erneut nach 7 Tagen angeboten). Du kannst auch
+  jederzeit über **Einstellungen → Daten → App installieren**
+  installieren.
+- **iPhone / iPad (Safari):** iOS hat keine automatische
+  Installations-Aufforderung, daher zeigt Adaptive Learner
+  stattdessen einen kleinen **„Zum Home-Bildschirm
+  hinzufügen"**-Hinweis: Tippe auf den **Teilen**-Knopf, dann auf
+  **„Zum Home-Bildschirm"**. Der Hinweis erscheint nur in iOS
+  Safari und nur, solange die App noch nicht installiert ist — nach
+  der Installation taucht er nie wieder auf.
+
+So oder so wird Adaptive Learner zu einer **eigenständigen App** auf
+deinem Smartphone oder Desktop, startbar ohne Browser-Tab. (Läuft
+sie bereits als installierte App, erscheint keiner der
+Installations-Hinweise.)
 
 Die App funktioniert offline für Dashboard und vergangene
 Sessions. Neue KI-Sessions brauchen Internet, weil der

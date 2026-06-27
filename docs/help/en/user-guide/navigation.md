@@ -27,6 +27,18 @@ Pages that are no longer top-level entries (Anki, Session) are
 still reachable: Anki via an action on *My content* (and its
 `/anki` route), Session via its kept route.
 
+### Vertical sidebar
+
+On wide desktop screens the primary navigation is presented as a
+**vertical left sidebar**. It uses the exact same grouped
+`NavGroup` model as above — no extra entries, just a left-rail
+layout that gives the grouped sections more room. The active item
+carries `aria-current`, every target is at least 44px, and it
+works across all themes. On narrow / mobile widths the sidebar
+gives way to the bottom tab bar below. (This is the *primary*
+navigation sidebar; the Settings page has its own separate sidebar
+for its own tabs.)
+
 ---
 
 ## Mobile: bottom tab bar

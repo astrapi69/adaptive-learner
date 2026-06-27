@@ -71,6 +71,13 @@ the full breakdown.
 Key inputs use a masked **secret input** (with a show/hide
 toggle) and do not trigger the browser's password manager.
 
+API keys are deliberately **excluded** from the normal backup
+(`.alb`). To carry your keys to another device or browser, use the
+dedicated **encrypted key export (`.alk`)** — there is a
+**reference button** here in the AI tab that jumps straight to it
+on the **Data tab** (see *Encrypted key export* under
+[Backup](#backup)).
+
 ## Configured providers
 
 A **configured-providers overview** lists the AI providers you
@@ -124,6 +131,38 @@ block: rolling ring of 3 snapshots in a separate IndexedDB
 DB, runs every 10 sessions OR every 7 days (whichever
 fires first). Each snapshot has its own Restore + Delete +
 Compare-as-A/B buttons.
+
+### Encrypted key export (.alk)
+
+The normal backup strips your API keys, which is safe but means a
+device or browser switch otherwise forces you to re-enter every
+key by hand. The **encrypted key export** closes that gap with a
+separate, passphrase-protected file:
+
+- It carries **only** the sensitive credentials — your **API keys**
+  plus the provider settings (active provider, model overrides). It
+  does NOT contain the rest of your app data (that stays in the
+  `.alb` backup).
+- **Export** asks for a passphrase (plus confirmation) and
+  downloads a dedicated **`.alk`** file. The keys inside are
+  encrypted with **AES-GCM-256**, with the key derived from your
+  passphrase via **PBKDF2** — the file never contains a key in
+  plaintext.
+- **Import** reads an `.alk`, asks for the passphrase, decrypts and
+  writes the keys + provider settings back into the same secure
+  storage manual entry uses (present providers are overwritten,
+  absent ones left alone).
+- A **wrong passphrase or a tampered file** is rejected cleanly
+  with a single message and **no partial import** — nothing is
+  half-written.
+
+This export lives on the **Data tab**, next to the normal backup;
+the **AI tab** only carries a reference button that brings you
+here. In **Local (browser) mode** the keys live in IndexedDB, so
+the export is fully available (and is the main use case). In
+**Server mode** the keys are held server-side and the client never
+sees the plaintext, so the entry is **disabled with a hint**. The
+export is also disabled when no exportable key is configured yet.
 
 ## Voice
 
@@ -196,11 +235,35 @@ In Local mode the panel hides the rows that only make sense
 for a running backend (Python version, FastAPI /
 SQLAlchemy / Pydantic / PluginForge versions, DB path).
 
+### Build strand: Main vs Latest
+
+Adaptive Learner runs on two deployment strands, and the About tab
+now tells you which one you are on:
+
+- **Main** — the stable production site
+  (`https://astrapi69.github.io/adaptive-learner/`). Shown as a
+  discreet badge, no warning styling.
+- **Latest** — the preview/staging site built from `develop`
+  (`https://astrapi69.github.io/adaptive-learner-content-test/`).
+  Shown as a clear **test-version** badge so you know it may
+  contain bugs.
+
+The badge shows the strand together with the branch and the short
+commit hash. It is driven by the build info baked in at build time;
+a URL heuristic is only a clearly-marked fallback, and missing
+info reads as "unknown" rather than guessing.
+
 ### Share the app
 
 The About tab has a **Share the app** entry that shows a scannable
 **QR code** of the public app URL, with copy / download-PNG /
 native-share actions — handy for getting the app onto a phone.
+
+When you are on the **Latest** strand, sharing offers the preview
+URL as a **link only — no QR code** — together with an
+instability warning, so a scanned code can never silently send
+someone to the unstable test version. On **Main**, sharing works
+as before with the QR code for the production URL.
 
 ### Check for updates
 

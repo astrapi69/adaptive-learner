@@ -22,8 +22,9 @@ Ein Set hat drei Ebenen:
    des Root-Manifests, listet die Lektions-Dateien des konkreten
    Sets.
 3. **Lektionsdateien** (`sets/{set-id}/lessons/NN-slug.json`) —
-   eine JSON-Datei pro Lektion, bei jedem Download gegen Schema
-   v1.0 validiert.
+   eine JSON-Datei pro Lektion, bei jedem Download gegen das
+   Lektions-Schema validiert (siehe *Das Schema ist die alleinige
+   Wahrheitsquelle* weiter unten).
 
 Die mit Adaptive Learner ausgelieferten Sets liegen im separaten
 Content-Repo [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
@@ -36,6 +37,35 @@ ist der CONTENT-STATS-Block in der Projekt-[`README.md`](https://github.com/astr
 dieser Block ist die alleinige Wahrheitsquelle, aus einem frischen
 Content-Checkout generiert, daher dupliziert dieser Leitfaden die
 Zahlen nicht.
+
+## Das Schema ist die alleinige Wahrheitsquelle (EXP-039)
+
+Das Lektions-/Übungsformat hat **eine maßgebliche Definition**: die
+Pydantic-Modelle im Content-Loader-Plugin
+(`adaptive_learner_content_loader.schema`). Jedes andere Artefakt
+wird daraus per `make sync-schema` **generiert**, sodass die
+Stellen, die früher auseinanderdrifteten, das nicht mehr können:
+
+- `schema/lesson.schema.json` (+ Geschwisterdateien) — das
+  maschinenlesbare JSON-Schema (Draft 2020-12). Referenziere es aus
+  einer Lektions-`.json` über einen `"$schema"`-Schlüssel auf
+  oberster Ebene, um IDE-Autovervollständigung und Inline-
+  Validierung zu bekommen.
+- `schema/quality-rules.json` — die geteilten Qualitäts-Minima
+  (z. B. Übungsanzahl, Anzahl akzeptierter Freitext-Antworten), die
+  der client-seitige Content-Validator nutzt statt einer zweiten,
+  von Hand gepflegten Kopie.
+- Die Frontend-TypeScript-Lektionstypen und die MkDocs-Seite
+  [Lektionsformat-Referenz](lesson-format-reference.md) werden
+  ebenfalls generiert — **nicht von Hand bearbeiten**; bearbeite die
+  Modelle und führe den Generator erneut aus.
+
+Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
+plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
+schlägt fehl, wenn ein generiertes Artefakt von den Modellen
+abweicht. Das Content-Repo spiegelt `schema/lesson.schema.json` +
+`schema/quality-rules.json` (die App ist die Quelle) und validiert
+die Struktur in seiner eigenen CI dagegen.
 
 ## Sprachpaare (v1.44.0)
 

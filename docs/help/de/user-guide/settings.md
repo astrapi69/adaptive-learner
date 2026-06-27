@@ -77,6 +77,14 @@ Schlüssel-Eingaben nutzen ein maskiertes **Secret-Eingabefeld**
 (mit Anzeigen/Verbergen-Umschalter) und lösen den Passwort-Manager
 des Browsers nicht aus.
 
+API-Schlüssel sind aus dem normalen Backup (`.alb`) bewusst
+**ausgeschlossen**. Um deine Schlüssel auf ein anderes Gerät oder
+einen anderen Browser zu übertragen, nutze den dedizierten
+**verschlüsselten Schlüssel-Export (`.alk`)** — hier im KI-Tab
+findest du dazu einen **Verweis-Knopf**, der direkt zum Export im
+**Daten-Tab** springt (siehe *Verschlüsselter Schlüssel-Export*
+unter [Backup](#backup)).
+
 ## Konfigurierte Anbieter
 
 Eine **Anbieter-Übersicht** listet die eingerichteten KI-Anbieter,
@@ -135,6 +143,40 @@ einer separaten IndexedDB-DB, läuft alle 10 Sessions ODER
 alle 7 Tage (je nachdem, was zuerst eintritt). Jeder Snapshot
 hat eigene Wiederherstellen- + Löschen- + Vergleich-als-A/B-
 Knöpfe.
+
+### Verschlüsselter Schlüssel-Export (.alk)
+
+Das normale Backup entfernt deine API-Schlüssel — sicher, aber bei
+einem Geräte- oder Browser-Wechsel müsstest du sonst jeden
+Schlüssel von Hand neu eingeben. Der **verschlüsselte
+Schlüssel-Export** schließt diese Lücke mit einer separaten,
+passphrasen-geschützten Datei:
+
+- Sie enthält **nur** die sensiblen Zugangsdaten — deine
+  **API-Schlüssel** plus die Anbieter-Einstellungen (aktiver
+  Anbieter, Modell-Overrides). NICHT den Rest deiner App-Daten (der
+  bleibt im `.alb`-Backup).
+- **Export** fragt nach einer Passphrase (plus Bestätigung) und
+  lädt eine dedizierte **`.alk`**-Datei herunter. Die Schlüssel
+  darin werden mit **AES-GCM-256** verschlüsselt, der Schlüssel
+  dazu via **PBKDF2** aus deiner Passphrase abgeleitet — die Datei
+  enthält nie einen Schlüssel im Klartext.
+- **Import** liest eine `.alk`, fragt die Passphrase, entschlüsselt
+  und schreibt die Schlüssel + Anbieter-Einstellungen in denselben
+  sicheren Speicher wie die manuelle Eingabe (vorhandene Anbieter
+  werden überschrieben, fehlende bleiben unangetastet).
+- Eine **falsche Passphrase oder eine manipulierte Datei** wird
+  sauber mit einer einzigen Meldung abgewiesen — **kein
+  Teil-Import**, nichts wird halb geschrieben.
+
+Dieser Export lebt im **Daten-Tab**, neben dem normalen Backup; der
+**KI-Tab** trägt nur einen Verweis-Knopf, der hierher führt. Im
+**Lokal-Modus (Browser)** liegen die Schlüssel in IndexedDB, der
+Export ist also voll verfügbar (und der Hauptanwendungsfall). Im
+**Server-Modus** liegen die Schlüssel serverseitig und der Client
+sieht den Klartext nie, daher ist der Eintrag **deaktiviert mit
+einem Hinweis**. Der Export ist außerdem deaktiviert, solange kein
+exportierbarer Schlüssel konfiguriert ist.
 
 ## Stimme
 
@@ -211,12 +253,38 @@ laufendem Backend Sinn ergeben (Python-Version,
 FastAPI / SQLAlchemy / Pydantic / PluginForge-Versionen,
 DB-Pfad).
 
+### Build-Strang: Haupt vs. Latest
+
+Adaptive Learner läuft auf zwei Deployment-Strängen, und der
+Über-Tab sagt dir jetzt, auf welchem du bist:
+
+- **Haupt** — die stabile Production-Seite
+  (`https://astrapi69.github.io/adaptive-learner/`). Als dezentes
+  Badge dargestellt, ohne Warnoptik.
+- **Latest** — die Preview-/Staging-Seite, gebaut aus `develop`
+  (`https://astrapi69.github.io/adaptive-learner-content-test/`).
+  Als deutliches **Testversion**-Badge dargestellt, damit du weißt,
+  dass sie Fehler enthalten kann.
+
+Das Badge zeigt den Strang zusammen mit dem Branch und dem kurzen
+Commit-Hash. Es speist sich aus der zur Build-Zeit eingebackenen
+Build-Info; eine URL-Heuristik ist nur ein klar markierter
+Fallback, und fehlende Info liest sich als „unbekannt" statt zu
+raten.
+
 ### App teilen
 
 Der Über-Tab hat einen **App teilen**-Eintrag, der einen scannbaren
 **QR-Code** der öffentlichen App-URL zeigt, mit Kopieren- /
 PNG-Laden- / Nativ-Teilen-Aktionen — praktisch, um die App aufs
 Handy zu bringen.
+
+Bist du auf dem **Latest**-Strang, bietet das Teilen die
+Preview-URL **nur als Link an — keinen QR-Code** — zusammen mit
+einer Instabilitäts-Warnung, damit ein gescannter Code niemand
+unbemerkt auf die instabile Testversion schicken kann. Auf
+**Haupt** funktioniert das Teilen wie bisher mit QR-Code für die
+Production-URL.
 
 ### Nach Updates suchen
 

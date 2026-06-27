@@ -20,8 +20,9 @@ A set has three levels:
 2. **Set manifest** (`sets/{set-id}/manifest.yaml`) — sibling of
    the root manifest, lists the lesson files of the specific set.
 3. **Lesson files** (`sets/{set-id}/lessons/NN-slug.json`) — one
-   JSON file per lesson, validated against schema v1.0 on every
-   download.
+   JSON file per lesson, validated against the lesson schema on
+   every download (see *The schema is the single source of truth*
+   below).
 
 The sets shipped with Adaptive Learner live in the separate
 content repo [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
@@ -33,6 +34,33 @@ counts, the per-set table, and the active domains) is the
 CONTENT-STATS block in the project [`README.md`](https://github.com/astrapi69/adaptive-learner#readme) —
 that block is the single source of truth, generated from a fresh
 content checkout, so this guide does not duplicate the numbers.
+
+## The schema is the single source of truth (EXP-039)
+
+The lesson/exercise format has **one authoritative definition**: the
+Pydantic models in the content-loader plugin
+(`adaptive_learner_content_loader.schema`). Every other artefact is
+**generated** from them via `make sync-schema`, so the places that
+used to drift can no longer:
+
+- `schema/lesson.schema.json` (+ siblings) — the machine-readable
+  JSON Schema (Draft 2020-12). Reference it from a lesson `.json`
+  via a top-level `"$schema"` key to get IDE autocomplete and
+  inline validation.
+- `schema/quality-rules.json` — the shared quality minimums (e.g.
+  exercise counts, free-text accept counts), consumed by the
+  client-side content validator instead of a second hand-kept copy.
+- The frontend TypeScript lesson types and the
+  [Lesson format reference](lesson-format-reference.md) MkDocs page
+  are generated too — **do not hand-edit them**; edit the models and
+  re-run the generator.
+
+A drift gate (`make sync-schema-check`, part of `release-test`,
+plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
+fails if any generated artefact diverges from the models. The
+content repo mirrors `schema/lesson.schema.json` +
+`schema/quality-rules.json` (the app is the source) and validates
+structure against them in its own CI.
 
 ## Language pairs (v1.44.0)
 

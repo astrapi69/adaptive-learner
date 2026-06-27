@@ -95,6 +95,10 @@ Full documentation (German default at `/docs/`, English at
 - **Backup / restore** — JSON export + import, automatic
   rotation, side-by-side compare UI with field-level diffs.
   API keys stripped from exports.
+- **Encrypted key export (`.alk`)** — a separate,
+  passphrase-protected export (PBKDF2 + AES-GCM-256) that carries
+  just the API keys + provider settings to another device/browser,
+  kept distinct from the key-free `.alb` backup.
 
 ### Import + analysis
 
@@ -124,16 +128,22 @@ Full documentation (German default at `/docs/`, English at
 - **Downloadable lesson sets** from public GitHub content repos,
   cached locally (filesystem in server mode, IndexedDB in local
   mode); a source/trust badge per set; connect your own repos,
-  plus a recommended-repos discovery section.
+  plus a recommended-repos discovery section. A **deep-link route**
+  (`/content/set/:setId`) opens a single set directly (both storage
+  modes), enabling per-set share links / QR codes.
 - **Five exercise types** — Matching, Picture-Choice, Free-Text,
   Cloze (fill-in-the-blank), Word-Tiles — with token-level diff
   feedback. **Matching is bidirectional** (start a pair from
-  either column, not only A → B).
+  either column, not only A → B). Cloze covers type / select /
+  **"select all that apply"** multi-answer choices, so multiple
+  choice needs no separate exercise type.
 - **Auto-splitting** of oversized imported lessons into parts,
   with localized part titles ("… - Teil 2" / "… - Part 2").
 - **Adaptive lessons** (rule-based, client-side) synthesised from
   your per-element error history + **SRS review** queue
-  (1d/3d/7d), with 0-3 star ratings and an error-replay round.
+  (1d/3d/7d, with an **exam-mode interval boost** — a card answered
+  correctly under exam pressure earns a longer next-review interval),
+  with 0-3 star ratings and an error-replay round.
 - **Lesson Creator** — a standalone, no-API-key wizard to build
   and share a complete lesson (card editor + auto-generated
   exercises + CSV import).
@@ -178,8 +188,14 @@ Full documentation (German default at `/docs/`, English at
 
 ### Mobile / PWA
 
-- **Installable** on Chrome / Edge / Safari — "Add to home
-  screen" prompt, standalone display, no browser tab.
+- **Installable** as a standalone app — an "Install app" banner +
+  Settings → Data button on Chrome / Edge (Android / desktop), and
+  a dedicated **"Add to Home Screen" hint on iOS Safari** (Share →
+  Add to Home Screen) where there is no automatic prompt. Hints
+  only show before install.
+- **Responsive primary navigation** — grouped entries as a vertical
+  desktop sidebar on wide screens, a thumb-friendly bottom tab bar
+  on mobile.
 - **Offline** for past sessions + Dashboard + Progress via the
   service worker (24h LRU on GET `/api/`); new sessions need
   network for the AI call.
