@@ -1910,6 +1910,14 @@ lesson:
     action_resume: जारी रखें
     action_restart: फिर से शुरू करें
 content:
+  set_link:
+    loading: "सेट लोड हो रहा है…"
+    not_found_title: "सेट नहीं मिला"
+    not_found_body: "यह सेट उपलब्ध नहीं है — हो सकता है इसे अभी डाउनलोड न किया गया हो या यह मौजूद न हो।"
+    go_discover: "सामग्री खोजें"
+    start: "सीखना शुरू करें"
+    download_start: "डाउनलोड करें और शुरू करें"
+    lessons: "{n} पाठ"
   repo_export:
     button: "रिपॉज़िटरी के रूप में साझा करें"
     title: "रिपॉज़िटरी के रूप में साझा करें"

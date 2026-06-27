@@ -1917,6 +1917,14 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  set_link:
+    loading: "Cargando el conjunto…"
+    not_found_title: "Conjunto no encontrado"
+    not_found_body: "Este conjunto no está disponible: puede que aún no se haya descargado o que no exista."
+    go_discover: "Descubrir contenido"
+    start: "Empezar a aprender"
+    download_start: "Descargar y empezar"
+    lessons: "{n} lecciones"
   repo_export:
     button: "Compartir como repositorio"
     title: "Compartir como repositorio"

@@ -41,6 +41,8 @@ const Assessment = lazyWithReload(() => import("./pages/onboarding/Assessment"))
 const ContentHub = lazyWithReload(() => import("./pages/content/ContentHub"));
 // #1149 — "Beitragen": the community-gaps block moved out of Meine Inhalte.
 const Contribute = lazyWithReload(() => import("./pages/content/Contribute"));
+// #892 — deep-link to a single content set (prerequisite for set-level QR).
+const SetDeepLink = lazyWithReload(() => import("./pages/content/SetDeepLink"));
 const AddRepo = lazyWithReload(() => import("./pages/content/AddRepo"));
 const RedeemInvite = lazyWithReload(() => import("./pages/content/RedeemInvite"));
 const CreateLesson = lazyWithReload(() => import("./pages/lesson/CreateLesson"));
@@ -190,6 +192,8 @@ export default function App() {
                   element={<Navigate to="/content?tab=discover" replace />}
                 />
                 <Route path="/content" element={<ContentHub />} />
+                {/* #892 — deep-link to a single set (set-level QR / share). */}
+                <Route path="/content/set/:setId" element={<SetDeepLink />} />
                 <Route path="/contribute" element={<Contribute />} />
                 <Route path="/content/import/:conversationId" element={<ImportDetail />} />
                 {/* Old import-detail link kept alive for existing bookmarks. */}

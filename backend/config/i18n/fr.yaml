@@ -1917,6 +1917,14 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  set_link:
+    loading: "Chargement du jeu…"
+    not_found_title: "Jeu introuvable"
+    not_found_body: "Ce jeu n’est pas disponible : il n’est peut-être pas encore téléchargé ou il n’existe pas."
+    go_discover: "Découvrir du contenu"
+    start: "Commencer à apprendre"
+    download_start: "Télécharger et commencer"
+    lessons: "{n} leçons"
   repo_export:
     button: "Partager comme dépôt"
     title: "Partager comme dépôt"

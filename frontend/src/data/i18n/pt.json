@@ -2077,6 +2077,15 @@
     }
   },
   "content": {
+    "set_link": {
+      "loading": "Carregando o conjunto…",
+      "not_found_title": "Conjunto não encontrado",
+      "not_found_body": "Este conjunto não está disponível — pode ainda não ter sido baixado ou não existir.",
+      "go_discover": "Descobrir conteúdo",
+      "start": "Começar a aprender",
+      "download_start": "Baixar e começar",
+      "lessons": "{n} lições"
+    },
     "repo_export": {
       "button": "Partilhar como repositório",
       "title": "Partilhar como repositório",
