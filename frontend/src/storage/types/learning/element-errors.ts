@@ -33,6 +33,12 @@ export interface ElementAttempt {
    *  hint-assisted answer is weaker) and feeds the "answers with hint"
    *  statistic. Omitted = no hint used (the default). */
   hint_used?: boolean;
+  /** #1040 Exam-Mode SRS boost (Phase 2 of #1007) — true when this attempt
+   *  was made in exam mode. A correct exam answer is stronger retention
+   *  evidence, so the SRS layer lengthens the review interval (the inverse
+   *  of {@link hint_used}). The recorder stores the boost only when the
+   *  attempt is also correct. Omitted = not exam mode (the default). */
+  exam?: boolean;
 }
 
 /**
@@ -68,6 +74,9 @@ export interface ElementError {
    *  were answered with a hint revealed. Feeds the "answers with hint"
    *  statistic. Monotonic. */
   hint_used_count?: number;
+  /** #1040 Exam-Mode SRS boost — whether the MOST RECENT attempt was a
+   *  correct exam answer. Lengthens the SRS review interval. */
+  last_attempt_exam?: boolean;
   /** #603 Smart Review Queue — total attempts (correct or wrong). */
   attempt_count?: number;
   /** #603 Smart Review Queue — the last 10 attempts (ring buffer). */

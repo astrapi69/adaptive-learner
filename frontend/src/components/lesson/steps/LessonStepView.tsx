@@ -24,6 +24,7 @@ import type { ReadAloudController } from "../../../hooks/lesson/useReadAloud";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { useLessonMode } from "../../../hooks/lesson/useLessonMode";
 import { stampHintUsage, wasHintUsed } from "../../../lib/hints/hint-usage";
+import { stampExamAttempts } from "../../../lib/srs/exam-attempt";
 import { formatUserAnswer } from "../../../lib/lesson/result-export";
 import { rewriteAnchors } from "../../../lib/lesson/lesson-anchors";
 import { getStorage } from "../../../storage";
@@ -81,7 +82,9 @@ export default function LessonStepView({
 }: LessonStepViewProps) {
   const { t } = useI18n();
   // Exam mode (#1007): "Re-read theory" is a scaffolding aid — hidden.
-  const { showTheoryRecap } = useLessonMode();
+  // #1040 — ``mode`` also flags exam-mode attempts so the SRS layer
+  // lengthens the review interval for a correct answer under pressure.
+  const { showTheoryRecap, mode } = useLessonMode();
 
   const handleComplete = async (scored: ExerciseScored) => {
     if (!step.exercise) return;
@@ -121,7 +124,10 @@ export default function LessonStepView({
       try {
         await getStorage().elementErrors.recordBulk(
           learnerUserId,
-          stampHintUsage(scored.attempts),
+          // #594 stamp hints, then #1040 stamp the exam flag — the SRS
+          // layer shortens hint-assisted intervals and lengthens correct
+          // exam intervals.
+          stampExamAttempts(stampHintUsage(scored.attempts), mode === "exam"),
         );
       } catch (err) {
         console.warn("elementErrors.recordBulk failed:", err);

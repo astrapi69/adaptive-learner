@@ -129,6 +129,9 @@ def record_attempt(
             # #594 Hint Economy — latest hint flag + lifetime count.
             hint_used=attempt.hint_used,
             hint_used_count=1 if attempt.hint_used else 0,
+            # #1040 Exam-Mode SRS boost — only a CORRECT exam answer is
+            # stronger evidence; a wrong exam answer must not be delayed.
+            last_attempt_exam=attempt.exam and attempt.correct,
             # #603 Smart Review Queue — first attempt + history seed.
             attempt_count=1,
             attempt_history=_append_attempt_history(
@@ -154,6 +157,9 @@ def record_attempt(
     row.hint_used = attempt.hint_used
     if attempt.hint_used:
         row.hint_used_count = int(row.hint_used_count) + 1
+    # #1040 Exam-Mode SRS boost — the latest attempt drives the flag; only
+    # a CORRECT exam answer earns the lengthened interval.
+    row.last_attempt_exam = attempt.exam and attempt.correct
     # #603 Smart Review Queue — bump the attempt count + ring buffer.
     row.attempt_count = int(row.attempt_count) + 1
     row.attempt_history = _append_attempt_history(

@@ -1622,6 +1622,19 @@ class ElementError(Base):
         default=0,
         server_default=text("0"),
     )
+    # #1040 Exam-Mode SRS boost (Phase 2 of #1007) — whether the MOST
+    # RECENT attempt was a CORRECT answer in exam mode. Retrieving
+    # correctly under exam pressure is stronger retention evidence than a
+    # practice-mode correct answer, so the SRS layer LENGTHENS the next
+    # review interval (the inverse of the #594 hint factor, which shortens
+    # it). Only set true when the latest attempt was exam AND correct — a
+    # wrong exam answer is not stronger evidence and must not be delayed.
+    last_attempt_exam: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default=text("0"),
+    )
     # #603 Smart Review Queue — total attempts on this element (every
     # submit, correct or wrong; monotonic) and a JSON ring buffer of the
     # last 10 attempts (``[{"correct": bool, "hint_used": bool, "at":
