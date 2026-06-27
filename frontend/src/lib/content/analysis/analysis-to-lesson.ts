@@ -594,6 +594,39 @@ function validateSteps(
   }
 }
 
+type ExerciseCheck = (
+  exercise: ContentLessonExercise,
+  fail: (msg: string) => never,
+) => void;
+
+/** Per-type imperative checks (the semantics ajv/JSON-Schema can't express).
+ *  Dispatched by ``exercise.type`` so ``validateExercise`` stays flat. */
+const EXERCISE_TYPE_CHECKS: Record<string, ExerciseCheck> = {
+  matching: (exercise, fail) => {
+    if (!exercise.pairs || exercise.pairs.length === 0)
+      fail(`matching '${exercise.id}' needs pairs`);
+  },
+  free_text: (exercise, fail) => {
+    if (!exercise.accept || exercise.accept.length === 0)
+      fail(`free_text '${exercise.id}' needs accept[]`);
+  },
+  word_tiles: (exercise, fail) => {
+    if (!exercise.tiles || exercise.tiles.length < 2)
+      fail(`word_tiles '${exercise.id}' needs >= 2 tiles`);
+    validateAcceptOrderings(exercise, fail);
+  },
+  picture_choice: (exercise, fail) => {
+    const correct = (exercise.images ?? []).filter(
+      (image) => image.is_correct === "true",
+    ).length;
+    if (correct !== 1)
+      fail(
+        `picture_choice '${exercise.id}' needs exactly one correct image (has ${correct})`,
+      );
+  },
+  cloze: validateCloze,
+};
+
 function validateExercise(
   exercise: ContentLessonExercise,
   cardIds: Set<string>,
@@ -606,38 +639,23 @@ function validateExercise(
     if (!cardIds.has(cid))
       fail(`exercise '${exercise.id}' references missing card '${cid}'`);
   }
-  if (exercise.type === "matching") {
-    if (!exercise.pairs || exercise.pairs.length === 0) {
-      fail(`matching '${exercise.id}' needs pairs`);
-    }
-  } else if (exercise.type === "free_text") {
-    if (!exercise.accept || exercise.accept.length === 0) {
-      fail(`free_text '${exercise.id}' needs accept[]`);
-    }
-  } else if (exercise.type === "word_tiles") {
-    if (!exercise.tiles || exercise.tiles.length < 2) {
-      fail(`word_tiles '${exercise.id}' needs >= 2 tiles`);
-    }
-    validateAcceptOrderings(exercise, fail);
-  } else if (exercise.type === "picture_choice") {
-    const correct = (exercise.images ?? []).filter(
-      (image) => image.is_correct === "true",
-    ).length;
-    if (correct !== 1) {
-      fail(
-        `picture_choice '${exercise.id}' needs exactly one correct image (has ${correct})`,
-      );
-    }
-  } else if (exercise.type === "cloze") {
-    if (!exercise.sentence) fail(`cloze '${exercise.id}' needs a sentence`);
-    const markers = (exercise.sentence.match(/___/g) ?? []).length;
-    const blanks = exercise.blanks?.length ?? 0;
-    if (markers !== blanks) {
-      fail(
-        `cloze '${exercise.id}' marker/blank mismatch (${markers} vs ${blanks})`,
-      );
-    }
-  }
+  EXERCISE_TYPE_CHECKS[exercise.type]?.(exercise, fail);
+}
+
+/** CLOZE: ``___`` marker count must equal ``blanks`` length. In ``multiselect``
+ *  mode (#1195) the sentence is a stem with no markers and no blanks, so the
+ *  0 === 0 check passes by construction. */
+function validateCloze(
+  exercise: ContentLessonExercise,
+  fail: (msg: string) => never,
+): void {
+  if (!exercise.sentence) fail(`cloze '${exercise.id}' needs a sentence`);
+  const markers = (exercise.sentence?.match(/___/g) ?? []).length;
+  const blanks = exercise.blanks?.length ?? 0;
+  if (markers !== blanks)
+    fail(
+      `cloze '${exercise.id}' marker/blank mismatch (${markers} vs ${blanks})`,
+    );
 }
 
 /** WORD_TILES: every entry in ``accept_orderings`` must be a true permutation
@@ -653,11 +671,12 @@ function validateAcceptOrderings(
     const isPermutation =
       ordering.length === tileCount &&
       new Set(ordering).size === tileCount &&
-      ordering.every((index) => Number.isInteger(index) && index >= 0 && index < tileCount);
-    if (!isPermutation) {
+      ordering.every(
+        (index) => Number.isInteger(index) && index >= 0 && index < tileCount,
+      );
+    if (!isPermutation)
       fail(
         `word_tiles '${exercise.id}' accept_orderings entry is not a permutation of [0..${tileCount - 1}]`,
       );
-    }
   }
 }

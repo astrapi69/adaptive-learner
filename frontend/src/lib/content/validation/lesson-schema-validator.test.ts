@@ -336,11 +336,16 @@ describe("#1205 — cloze_mode is schema-validated", () => {
     expect(validateLessonShape(clozeLesson("select")).ok).toBe(true);
   });
 
-  it("rejects an unknown cloze_mode (whatever the current enum is)", () => {
-    // The accepted set is read from schema/lesson.schema.json — when a new
-    // mode (e.g. #1195 'multiselect') is added to the Pydantic model and
-    // `make sync-schema` regenerates the schema, ajv accepts it with NO
-    // change here. That automatic follow-through is the anti-drift payoff.
+  it("accepts cloze_mode 'multiselect' (#1195) — read from the schema, not hard-coded", () => {
+    // multiselect entered the schema via #1195; ajv accepts it with NO change
+    // to this validator because the allowed set is read from
+    // schema/lesson.schema.json. That automatic follow-through is the
+    // anti-drift payoff (change the Pydantic model -> make sync-schema -> ajv
+    // validates the new shape).
+    expect(validateLessonShape(clozeLesson("multiselect")).ok).toBe(true);
+  });
+
+  it("rejects an unknown cloze_mode", () => {
     expect(validateLessonShape(clozeLesson("not-a-real-mode")).ok).toBe(false);
   });
 });
