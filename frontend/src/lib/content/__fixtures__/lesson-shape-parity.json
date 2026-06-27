@@ -1,0 +1,131 @@
+{
+  "_comment": "Shared shape-validation parity fixture (#1205 / #699). Each input carries the expected accept/reject verdict for the App-authoritative lesson SHAPE (schema/lesson.schema.json). The app-side ajv validator is pinned against it here; the content-repo's validator is to be wired against the SAME file once it adopts jsonschema validation (EXP-039 step 8, CCWc follow-up). 'reason' documents intent; the test asserts only the boolean verdict.",
+  "cases": [
+    {
+      "name": "minimal-valid",
+      "expectValid": true,
+      "reason": "smallest schema-valid lesson",
+      "lesson": {
+        "id": "01-greetings",
+        "title": "Greetings",
+        "estimated_minutes": 5,
+        "cards": [{ "id": "card-01", "front": "Bonjour", "back": "Hello", "tags": [] }],
+        "steps": [{ "id": "theory-intro", "type": "theory", "body": "Some theory." }]
+      }
+    },
+    {
+      "name": "cloze-select-valid",
+      "expectValid": true,
+      "reason": "cloze_mode 'select' is an allowed enum value",
+      "lesson": {
+        "id": "02-cloze",
+        "title": "Cloze",
+        "estimated_minutes": 5,
+        "cards": [{ "id": "card-01", "front": "le chat", "back": "the cat", "tags": [] }],
+        "steps": [
+          {
+            "id": "ex-cloze",
+            "type": "exercise",
+            "exercise": {
+              "id": "ex-cloze",
+              "type": "cloze",
+              "prompt": "Fill in.",
+              "card_ids": ["card-01"],
+              "distractors": [],
+              "cloze_mode": "select",
+              "sentence": "Le ___.",
+              "blanks": [{ "accept": ["chat"] }]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "foreign-top-level-field",
+      "expectValid": false,
+      "reason": "additionalProperties:false rejects unknown 'bogus'",
+      "lesson": {
+        "id": "03-bad",
+        "title": "Bad",
+        "estimated_minutes": 5,
+        "cards": [],
+        "steps": [{ "id": "t", "type": "theory", "body": "x" }],
+        "bogus": 1
+      }
+    },
+    {
+      "name": "unknown-exercise-type",
+      "expectValid": false,
+      "reason": "closed ExerciseType enum rejects multiple_choice",
+      "lesson": {
+        "id": "04-bad-type",
+        "title": "Bad type",
+        "estimated_minutes": 5,
+        "cards": [{ "id": "card-01", "front": "a", "back": "b", "tags": [] }],
+        "steps": [
+          {
+            "id": "ex",
+            "type": "exercise",
+            "exercise": {
+              "id": "ex",
+              "type": "multiple_choice",
+              "prompt": "p",
+              "card_ids": ["card-01"],
+              "distractors": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "unknown-cloze-mode",
+      "expectValid": false,
+      "reason": "cloze_mode enum is ['type','select'] on this schema version",
+      "lesson": {
+        "id": "05-bad-cloze-mode",
+        "title": "Bad cloze mode",
+        "estimated_minutes": 5,
+        "cards": [{ "id": "card-01", "front": "a", "back": "b", "tags": [] }],
+        "steps": [
+          {
+            "id": "ex",
+            "type": "exercise",
+            "exercise": {
+              "id": "ex",
+              "type": "cloze",
+              "prompt": "p",
+              "card_ids": ["card-01"],
+              "distractors": [],
+              "cloze_mode": "totally-not-a-mode",
+              "sentence": "___",
+              "blanks": [{ "accept": ["x"] }]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "estimated-minutes-out-of-range",
+      "expectValid": false,
+      "reason": "estimated_minutes maximum is 240",
+      "lesson": {
+        "id": "06-too-long",
+        "title": "Too long",
+        "estimated_minutes": 9999,
+        "cards": [],
+        "steps": [{ "id": "t", "type": "theory", "body": "x" }]
+      }
+    },
+    {
+      "name": "missing-required-title",
+      "expectValid": false,
+      "reason": "title is required",
+      "lesson": {
+        "id": "07-no-title",
+        "estimated_minutes": 5,
+        "cards": [],
+        "steps": [{ "id": "t", "type": "theory", "body": "x" }]
+      }
+    }
+  ]
+}

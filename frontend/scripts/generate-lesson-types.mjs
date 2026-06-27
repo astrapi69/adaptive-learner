@@ -26,6 +26,21 @@ const OUT_PATH = join(
   "frontend/src/storage/types/content/lesson-schema.generated.ts",
 );
 
+/**
+ * Bundle-local verbatim copy of the canonical lesson JSON-Schema (#1205).
+ *
+ * The runtime ajv validator (``lesson-schema-validator.ts``) cannot read the
+ * repo-root ``schema/lesson.schema.json`` from inside the browser bundle, so
+ * this mirror lives under ``src/`` and is imported directly. It is written
+ * BYTE-IDENTICAL to the SoT artefact and gated by ``--check`` (run from
+ * ``make sync-schema-check``), so it cannot drift — exactly the EXP-039
+ * mirror + drift-check pattern. Do NOT edit by hand.
+ */
+const SCHEMA_MIRROR_PATH = join(
+  REPO_ROOT,
+  "frontend/src/lib/content/validation/lesson.schema.generated.json",
+);
+
 const BANNER = `/**
  * GENERATED from schema/lesson.schema.json via
  * scripts/generate_lesson_types.mjs (EXP-039). DO NOT EDIT.
@@ -74,24 +89,35 @@ async function build() {
   return ts;
 }
 
+/** Read a file, returning "" when it does not exist yet. */
+function readOrEmpty(path) {
+  try {
+    return readFileSync(path, "utf-8");
+  } catch {
+    return "";
+  }
+}
+
 const check = process.argv.includes("--check");
 const generated = await build();
+// The ajv mirror is the SoT schema verbatim (bounds + x-schema-version kept).
+const schemaText = readFileSync(SCHEMA_PATH, "utf-8");
 
 if (check) {
-  let current = "";
-  try {
-    current = readFileSync(OUT_PATH, "utf-8");
-  } catch {
-    current = "";
+  if (readOrEmpty(OUT_PATH) !== generated) {
+    console.error("Lesson TS types out of date. Run `make sync-lesson-types`.");
+    process.exit(1);
   }
-  if (current !== generated) {
+  if (readOrEmpty(SCHEMA_MIRROR_PATH) !== schemaText) {
     console.error(
-      "Lesson TS types out of date. Run `make sync-lesson-types`.",
+      "Bundle-local lesson schema mirror out of date. Run `make sync-lesson-types`.",
     );
     process.exit(1);
   }
-  console.log("Lesson TS types up to date.");
+  console.log("Lesson TS types + schema mirror up to date.");
 } else {
   writeFileSync(OUT_PATH, generated, "utf-8");
   console.log(`Wrote ${OUT_PATH}`);
+  writeFileSync(SCHEMA_MIRROR_PATH, schemaText, "utf-8");
+  console.log(`Wrote ${SCHEMA_MIRROR_PATH}`);
 }
