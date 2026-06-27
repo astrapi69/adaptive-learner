@@ -32,11 +32,11 @@ import {
 import {
     ExerciseDispatcher,
     SUPPORTED_EXERCISE_TYPES,
-} from "../../components/exercises/ExerciseDispatcher";
+} from "../../components/exercises";
 import type {
     ExerciseHandle,
     ExerciseScored,
-} from "../../components/exercises/exercise-control";
+} from "../../components/exercises";
 import {Button} from "@/components/ui/button";
 import ProgressBar from "../../shared/data-display/ProgressBar";
 import LessonStepNav from "../../shared/layout/LessonStepNav";

@@ -18,7 +18,7 @@
 
 import {useEffect, type RefObject} from "react";
 
-import type {ExerciseHandle} from "../../components/exercises/exercise-control";
+import type {ExerciseHandle} from "../../components/exercises/shell/exercise-control";
 import {
     decideLessonEnterAction,
     type LessonEnterState,

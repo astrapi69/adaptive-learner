@@ -355,6 +355,6 @@ export interface SaveUserSetInput {
  * (BUG P1 / Problem 2). Discriminated by exercise type.
  *
  * Lives in the storage layer because it is a persistence shape;
- * ``components/exercises/exercise-control`` re-exports it for the
+ * ``components/exercises/shell/exercise-control`` re-exports it for the
  * renderers.
  */

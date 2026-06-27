@@ -26,9 +26,9 @@ vi.mock("../../hooks/lesson/useReviewLesson", () => ({
 }));
 
 // Minimal controlled exercise: answerable on mount, grades on submit().
-vi.mock("../../components/exercises/ExerciseDispatcher", async (orig) => {
+vi.mock("../../components/exercises/shell/ExerciseDispatcher", async (orig) => {
     const actual =
-        await orig<typeof import("../../components/exercises/ExerciseDispatcher")>();
+        await orig<typeof import("../../components/exercises/shell/ExerciseDispatcher")>();
     type Props = {
         onInteraction?: (a: boolean) => void;
         onComplete: (r: {
