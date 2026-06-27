@@ -4051,6 +4051,26 @@ select:focus {
   }
 }
 
+/* EXP-037 §7 Q1 (#891) — vertical desktop sidebar. At >= lg (1024px) the
+   fixed left sidebar (``DesktopSidebar``, w-60 = 15rem) takes over the
+   primary navigation: reserve left space on the app scroll container and on
+   the top bar, and hide the top bar's brand + inline links so the two never
+   duplicate (the top bar keeps the right-hand utility cluster). Gated by the
+   ``lg`` media query so the ``has-desktop-sidebar`` body class is harmless on
+   smaller viewports, where the sidebar itself is ``hidden``. */
+@media (min-width: 1024px) {
+  body.has-desktop-sidebar #root {
+    padding-left: 15rem;
+  }
+  body.has-desktop-sidebar .app-nav {
+    padding-left: calc(15rem + var(--space-5));
+  }
+  body.has-desktop-sidebar .app-nav .nav-brand,
+  body.has-desktop-sidebar .app-nav .nav-links {
+    display: none;
+  }
+}
+
 .nav-theme-toggle {
   background: transparent;
   border: 1px solid var(--border-strong);

@@ -22,6 +22,7 @@ import InstallPrompt from "./components/pwa/InstallPrompt";
 import IosInstallHint from "./components/pwa/IosInstallHint";
 import ReminderScheduler from "./components/settings/controls/ReminderScheduler";
 import Navigation from "./components/nav/Navigation";
+import DesktopSidebar from "./components/nav/DesktopSidebar";
 import BottomTabBar from "./components/nav/BottomTabBar";
 import OfflineIndicator from "./components/pwa/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
@@ -159,6 +160,7 @@ export default function App() {
             <UpdatePromptHost />
             <DesktopUpdateHost />
             <Navigation />
+            <DesktopSidebar />
             <OfflineIndicator />
             <Suspense fallback={null}>
               <Routes>
