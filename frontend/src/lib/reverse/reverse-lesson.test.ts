@@ -23,7 +23,7 @@ import type {
 
 function matching(
     id: string,
-    direction: ContentLessonExercise["direction"] = null,
+    direction: ContentLessonExercise["direction"] = undefined,
 ): ContentLessonExercise {
     return {
         id,

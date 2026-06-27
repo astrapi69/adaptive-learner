@@ -164,6 +164,12 @@
     "media_type": {
       "anyOf": [
         {
+          "enum": [
+            "text",
+            "code",
+            "formula",
+            "diagram"
+          ],
           "type": "string"
         },
         {
@@ -171,7 +177,7 @@
         }
       ],
       "default": null,
-      "description": "Card content kind: 'text' (default when null), 'code', 'formula', or 'diagram'. Drives code-aware rendering + exercise input (monospace editor for code/formula).",
+      "description": "Card content kind: 'text' (default when null), 'code', 'formula', or 'diagram'. Drives code-aware rendering + exercise input (monospace editor for code/formula). EXP-039: a closed ``Literal`` so the generated JSON-Schema / TS types carry the exact union (was a free ``str`` gated by a runtime validator).",
       "title": "Media Type"
     },
     "notes": {
