@@ -3,7 +3,7 @@
  * LessonPage for the complexity burn-down #417).
  */
 
-import { SUPPORTED_EXERCISE_TYPES } from "../../components/exercises/ExerciseDispatcher";
+import { SUPPORTED_EXERCISE_TYPES } from "../../components/exercises";
 import type {
   ContentLesson,
   ContentLessonStep,

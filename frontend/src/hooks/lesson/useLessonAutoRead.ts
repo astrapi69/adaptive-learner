@@ -19,7 +19,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { resolveCodeContext } from "../../components/exercises/ExerciseDispatcher";
+import { resolveCodeContext } from "../../components/exercises";
 import {
   readLessonAutoRead,
   useReadAloud,

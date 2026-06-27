@@ -15,11 +15,11 @@ import { BookOpen, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TheoryStep from "./TheoryStep";
 import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
-import { ExerciseDispatcher } from "../../exercises/ExerciseDispatcher";
+import { ExerciseDispatcher } from "../../exercises";
 import type {
   ExerciseHandle,
   ExerciseScored,
-} from "../../exercises/exercise-control";
+} from "../../exercises";
 import type { ReadAloudController } from "../../../hooks/lesson/useReadAloud";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { useLessonMode } from "../../../hooks/lesson/useLessonMode";

@@ -50,7 +50,7 @@ import {
 } from "./repos/content-repos";
 import {getStorage} from "../../storage";
 import {_resetDbForTests} from "../../storage/dexie/db";
-import {SUPPORTED_EXERCISE_TYPES} from "../../components/exercises/ExerciseDispatcher";
+import {SUPPORTED_EXERCISE_TYPES} from "../../components/exercises";
 
 // --- real fixtures captured from the test repo -----------------------------
 
