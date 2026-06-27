@@ -40,21 +40,21 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {stampHintUsage} from "../../lib/hints/hint-usage";
-import {analyzeErrors} from "../../lib/adaptive/error-analyzer";
-import {buildExercisePool} from "../../lib/adaptive/exercise-pool";
-import {focusAreaTags} from "../../lib/adaptive/error-classifier";
-import {generateAdaptiveLesson} from "../../lib/adaptive/lesson-generator";
-import type {ErrorTag} from "../../lib/adaptive/error-classifier";
-import type {ErrorAnalysis} from "../../lib/adaptive/types";
-import {readDirectionStrategy} from "../../lib/learning/directionPref";
-import {readLearnerState} from "../../lib/learning/learnerState";
-import {getStorage} from "../../storage";
+import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {analyzeErrors} from "../../../lib/adaptive/error-analyzer";
+import {buildExercisePool} from "../../../lib/adaptive/exercise-pool";
+import {focusAreaTags} from "../../../lib/adaptive/error-classifier";
+import {generateAdaptiveLesson} from "../../../lib/adaptive/lesson-generator";
+import type {ErrorTag} from "../../../lib/adaptive/error-classifier";
+import type {ErrorAnalysis} from "../../../lib/adaptive/types";
+import {readDirectionStrategy} from "../../../lib/learning/directionPref";
+import {readLearnerState} from "../../../lib/learning/learnerState";
+import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
     ElementAttempt,
     ElementError,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 export type AdaptiveLessonStatus =
     | "loading"

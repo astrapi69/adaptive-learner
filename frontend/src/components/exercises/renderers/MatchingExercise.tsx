@@ -28,7 +28,7 @@ import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import type {Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {useLessonMode} from "../../../hooks/lesson/useLessonMode";
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import ExerciseHint from "../feedback/ExerciseHint";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../../lib/srs/element-attempt";

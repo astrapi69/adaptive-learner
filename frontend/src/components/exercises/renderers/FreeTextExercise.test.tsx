@@ -27,7 +27,7 @@ import FreeTextExercise, {
     isFreeTextCorrect,
     isFreeTextNearMiss,
 } from "./FreeTextExercise";
-import {LessonModeProvider} from "../../../hooks/lesson/useLessonMode";
+import {LessonModeProvider} from "../../../hooks/lesson/modes/useLessonMode";
 import type {ContentLessonExercise} from "../../../storage/types";
 
 const EXERCISE: ContentLessonExercise = {

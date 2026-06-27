@@ -15,7 +15,7 @@
 
 import {useCallback, useEffect, useRef, useState} from "react";
 
-import {storedStepResult} from "../../lib/lesson/lesson-step-state";
+import {storedStepResult} from "../../../lib/lesson/lesson-step-state";
 import {
     summarizeTimedRun,
     TIMED_BONUS_SECONDS,
@@ -26,13 +26,13 @@ import {
     type TimedDifficulty,
     type TimedQuestionRecord,
     type TimedRunStats,
-} from "../../lib/learning/timedMode";
+} from "../../../lib/learning/timedMode";
 import type {
     ContentLesson,
     ContentLessonExercise,
     LessonProgress,
     LessonStepResult,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 /** Wrong-answer ``total`` for a timed-out question (mirrors each renderer's
  *  own scoring): matching counts pairs, cloze counts blanks, the rest are

@@ -9,7 +9,7 @@
 
 import {beforeEach, describe, expect, it} from "vitest";
 
-import {VOICE_PREF_BLOCK_KEY} from "../../lib/voice/voicePref";
+import {VOICE_PREF_BLOCK_KEY} from "../../../lib/voice/voicePref";
 import {
     READ_ALOUD_SPEEDS,
     readLessonSpeed,

@@ -35,19 +35,19 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {readLearnerState} from "../../lib/learning/learnerState";
+import {readLearnerState} from "../../../lib/learning/learnerState";
 import {
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,
-} from "../../lib/review/review-lesson";
-import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
-import {stampHintUsage} from "../../lib/hints/hint-usage";
-import {getStorage} from "../../storage";
+} from "../../../lib/review/review-lesson";
+import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
+import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
     ElementAttempt,
     ReviewQueueItem,
-} from "../../storage/types";
+} from "../../../storage/types";
 
 export type ReviewLessonStatus =
     | "loading"

@@ -20,9 +20,9 @@ import type {
   ExerciseHandle,
   ExerciseScored,
 } from "../../exercises";
-import type { ReadAloudController } from "../../../hooks/lesson/useReadAloud";
+import type { ReadAloudController } from "../../../hooks/lesson/audio/useReadAloud";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { useLessonMode } from "../../../hooks/lesson/useLessonMode";
+import { useLessonMode } from "../../../hooks/lesson/modes/useLessonMode";
 import { stampHintUsage, wasHintUsed } from "../../../lib/hints/hint-usage";
 import { stampExamAttempts } from "../../../lib/srs/exam-attempt";
 import { formatUserAnswer } from "../../../lib/lesson/result-export";

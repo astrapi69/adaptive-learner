@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {findRelatedTheoryIndex} from "../../lib/lesson/theory-link";
-import type {ContentLesson} from "../../storage/types";
+import {findRelatedTheoryIndex} from "../../../lib/lesson/theory-link";
+import type {ContentLesson} from "../../../storage/types";
 
 /**
  * Inputs for {@link useLessonNavigation}: the loaded lesson, the

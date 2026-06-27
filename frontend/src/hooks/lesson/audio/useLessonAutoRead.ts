@@ -19,7 +19,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { resolveCodeContext } from "../../components/exercises";
+import { resolveCodeContext } from "../../../components/exercises";
 import {
   readLessonAutoRead,
   useReadAloud,
@@ -31,8 +31,8 @@ import {
   runStepForChar,
   theoryBlockAround,
   type TheoryRun,
-} from "../../lib/lesson/tts-text";
-import type { ContentLesson } from "../../storage/types";
+} from "../../../lib/lesson/tts-text";
+import type { ContentLesson } from "../../../storage/types";
 
 interface UseLessonAutoReadDeps {
   lesson: ContentLesson | null;

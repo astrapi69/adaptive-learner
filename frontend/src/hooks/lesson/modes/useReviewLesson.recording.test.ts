@@ -12,11 +12,11 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 const recordBulkMock = vi.fn().mockResolvedValue([]);
 const reviewQueueMock = vi.fn().mockResolvedValue([]);
 
-vi.mock("../../lib/learning/learnerState", () => ({
+vi.mock("../../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "user-1"}),
 }));
 
-vi.mock("../../storage", () => ({
+vi.mock("../../../storage", () => ({
     getStorage: () => ({
         elementErrors: {
             recordBulk: recordBulkMock,
@@ -27,8 +27,8 @@ vi.mock("../../storage", () => ({
 }));
 
 import {useReviewLesson} from "./useReviewLesson";
-import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
-import type {ElementAttempt} from "../../storage/types";
+import {REVIEWS_CHANGED_EVENT} from "../../../lib/review/reviewsChanged";
+import type {ElementAttempt} from "../../../storage/types";
 
 beforeEach(() => {
     recordBulkMock.mockClear();

@@ -33,11 +33,11 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {useLessonShortcuts} from "../../../hooks/lesson/useLessonShortcuts";
+import {useLessonShortcuts} from "../../../hooks/lesson/interaction/useLessonShortcuts";
 import {
     useLessonEnterKey,
     type LessonEnterNav,
-} from "../../../hooks/lesson/useLessonEnterKey";
+} from "../../../hooks/lesson/interaction/useLessonEnterKey";
 import {generateClozeFromError} from "../../../lib/exercises/cloze-generator";
 import {getStorage} from "../../../storage";
 import type {

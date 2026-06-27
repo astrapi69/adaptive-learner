@@ -41,12 +41,12 @@ import {Button} from "@/components/ui/button";
 import ProgressBar from "../../shared/data-display/ProgressBar";
 import LessonStepNav from "../../shared/layout/LessonStepNav";
 import {useI18n} from "../../hooks/ui/useI18n";
-import {useLessonShortcuts} from "../../hooks/lesson/useLessonShortcuts";
+import {useLessonShortcuts} from "../../hooks/lesson/interaction/useLessonShortcuts";
 import {
     useLessonEnterKey,
     type LessonEnterNav,
-} from "../../hooks/lesson/useLessonEnterKey";
-import {useShuffleLesson} from "../../hooks/lesson/useShuffleLesson";
+} from "../../hooks/lesson/interaction/useLessonEnterKey";
+import {useShuffleLesson} from "../../hooks/lesson/modes/useShuffleLesson";
 import {DEFAULT_SHUFFLE_LIMIT} from "../../lib/shuffle/shuffle-lesson";
 import type {
     ContentLesson,

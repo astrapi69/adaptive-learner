@@ -15,15 +15,15 @@ import {renderHook} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import {useLessonFlowControl} from "./useLessonFlowControl";
-import type {LessonProgress} from "../../storage/types";
+import type {LessonProgress} from "../../../storage/types";
 
 vi.mock("react-router-dom", () => ({
     useNavigate: () => vi.fn(),
 }));
-vi.mock("../ui/useI18n", () => ({
+vi.mock("../../ui/useI18n", () => ({
     useI18n: () => ({t: (_key: string, fallback: string) => fallback}),
 }));
-vi.mock("../../utils/notify", () => ({
+vi.mock("../../../utils/notify", () => ({
     notify: {info: vi.fn(), error: vi.fn(), success: vi.fn()},
 }));
 

@@ -18,8 +18,8 @@ import {
     configForMode,
     MODE_CONFIGS,
     type LessonModeConfig,
-} from "../../lib/learning/lessonModeConfig";
-import type {LessonMode} from "../../lib/learning/lessonModePref";
+} from "../../../lib/learning/lessonModeConfig";
+import type {LessonMode} from "../../../lib/learning/lessonModePref";
 
 const LessonModeContext = createContext<LessonModeConfig>(
     MODE_CONFIGS.practice,

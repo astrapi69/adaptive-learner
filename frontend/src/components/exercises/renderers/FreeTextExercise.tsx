@@ -32,7 +32,7 @@ import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useRef, useState} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {useLessonMode} from "../../../hooks/lesson/useLessonMode";
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ExercisePromptRow from "../shell/ExercisePromptRow";
