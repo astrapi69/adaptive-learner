@@ -12,6 +12,11 @@ import {act, fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
+import {
+    readLessonAutoRead,
+    readLessonSpeed,
+} from "../../hooks/lesson/useReadAloud";
+
 const useLessonMock = vi.fn();
 const listLessonsMock = vi.fn();
 
@@ -216,9 +221,7 @@ describe("Lesson auto-read (C3)", () => {
         expect(toggle.getAttribute("aria-pressed")).toBe("false");
         fireEvent.click(toggle);
         expect(toggle.getAttribute("aria-pressed")).toBe("true");
-        expect(
-            localStorage.getItem("adaptive-learner.voice.lesson_autoread"),
-        ).toBe("true");
+        expect(readLessonAutoRead()).toBe(true);
     });
 
     // --- C4: inline speed controls ---------------------------------
@@ -254,9 +257,7 @@ describe("Lesson auto-read (C3)", () => {
         renderPage();
         const before = speakCalls.length;
         fireEvent.click(screen.getByTestId("lesson-tts-speed-1.25"));
-        expect(
-            localStorage.getItem("adaptive-learner.voice.lesson_speed"),
-        ).toBe("1.25");
+        expect(readLessonSpeed()).toBe(1.25);
         // Restarted at the new rate (one extra utterance).
         expect(speakCalls.length).toBe(before + 1);
         const restarted = speakCalls[speakCalls.length - 1];

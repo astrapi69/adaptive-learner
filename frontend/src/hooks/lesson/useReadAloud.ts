@@ -33,13 +33,16 @@ import {
     speak as speakRaw,
     stop as stopRaw,
 } from "../../lib/voice/speech-synthesis";
-import {readVoicePrefs} from "../../lib/voice/voicePref";
+import {
+    readVoicePrefs,
+    writeLessonAutoRead as writeLessonAutoReadPref,
+    writeLessonSpeed as writeLessonSpeedPref,
+} from "../../lib/voice/voicePref";
 
 /** Inline speed multipliers offered during playback (C4). */
 export const READ_ALOUD_SPEEDS = [0.5, 0.75, 1, 1.25] as const;
 export type ReadAloudSpeed = (typeof READ_ALOUD_SPEEDS)[number];
 
-const SPEED_KEY = "adaptive-learner.voice.lesson_speed";
 const DEFAULT_SPEED: ReadAloudSpeed = 1;
 
 function isSpeed(value: number): value is ReadAloudSpeed {
@@ -47,42 +50,26 @@ function isSpeed(value: number): value is ReadAloudSpeed {
 }
 
 /** Last inline speed the learner chose; 1x default. Clamped to the
- *  offered set so a stale/garbage value can never break playback. */
+ *  offered set so a stale/garbage value can never break playback. Stored in
+ *  the consolidated voice-prefs block (#893). */
 export function readLessonSpeed(): ReadAloudSpeed {
-    try {
-        const raw = Number(localStorage.getItem(SPEED_KEY));
-        return isSpeed(raw) ? raw : DEFAULT_SPEED;
-    } catch {
-        return DEFAULT_SPEED;
-    }
+    const raw = readVoicePrefs().lessonSpeed;
+    return isSpeed(raw) ? raw : DEFAULT_SPEED;
 }
 
 export function writeLessonSpeed(speed: ReadAloudSpeed): void {
-    try {
-        localStorage.setItem(SPEED_KEY, String(speed));
-    } catch {
-        /* private mode / quota — speed just won't persist. */
-    }
+    writeLessonSpeedPref(speed);
 }
 
-const AUTO_READ_KEY = "adaptive-learner.voice.lesson_autoread";
-
 /** Whether the lesson auto-reads each step on display (C3). Off by
- *  default — manual button clicks are the baseline. */
+ *  default — manual button clicks are the baseline. Stored in the
+ *  consolidated voice-prefs block (#893). */
 export function readLessonAutoRead(): boolean {
-    try {
-        return localStorage.getItem(AUTO_READ_KEY) === "true";
-    } catch {
-        return false;
-    }
+    return readVoicePrefs().lessonAutoRead;
 }
 
 export function writeLessonAutoRead(on: boolean): void {
-    try {
-        localStorage.setItem(AUTO_READ_KEY, on ? "true" : "false");
-    } catch {
-        /* private mode / quota — preference just won't persist. */
-    }
+    writeLessonAutoReadPref(on);
 }
 
 export interface SpeakRequest {
