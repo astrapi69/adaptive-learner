@@ -1940,6 +1940,18 @@
         "result_partial": "{correct} de {total} correctos.",
         "empty": "Este ejercicio de huecos no tiene huecos."
       },
+      "multiple_choice": {
+        "submit": "Comprobar respuesta",
+        "retry": "Intentar de nuevo",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "Casi — la(s) opción(es) resaltada(s) es/son la respuesta correcta.",
+        "empty": "Este ejercicio de opción múltiple no tiene opciones.",
+        "instructions_single": "Selecciona la respuesta correcta.",
+        "instructions_multi": "Selecciona todas las respuestas correctas.",
+        "options_label": "Opciones de respuesta",
+        "correct_label": "Correcto",
+        "wrong_label": "Incorrecto"
+      },
       "instruction": {
         "matching": {
           "receptive": "Une las parejas (Reconocer)",
@@ -2321,6 +2333,8 @@
       "free_text_too_few_accepts": "Lección '{lesson}': el ejercicio de texto libre '{exercise}' necesita al menos {min} respuestas aceptadas.",
       "matching_too_few_pairs": "Lección '{lesson}': el ejercicio de emparejar '{exercise}' necesita al menos {min} pares.",
       "missing_distractors": "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas).",
+      "multiple_choice_too_few_options": "Lección '{lesson}': el ejercicio de opción múltiple '{exercise}' necesita al menos {min} opciones.",
+      "multiple_choice_no_correct_option": "Lección '{lesson}': el ejercicio de opción múltiple '{exercise}' necesita al menos una opción correcta.",
       "non_cefr_level": "El nivel '{level}' no es una banda CEFR (A1-C2).",
       "level_too_complex": "Lección '{lesson}': el texto promedia {avg} palabras por lado, alto para el nivel {level} (se esperan unas {cap}).",
       "source_language_heuristic": "Los reversos contienen caracteres propios de {found}, pero el idioma de origen es '{lang}'.",

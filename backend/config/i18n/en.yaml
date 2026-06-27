@@ -1804,6 +1804,17 @@ lesson:
       result_correct: "All correct!"
       result_partial: "{correct} of {total} correct."
       empty: "This cloze exercise has no blanks."
+    multiple_choice:
+      submit: "Check answer"
+      retry: "Try again"
+      result_correct: "Correct!"
+      result_wrong: "Not quite — the highlighted option(s) are the right answer."
+      empty: "This multiple-choice exercise has no options."
+      instructions_single: "Select the correct answer."
+      instructions_multi: "Select all correct answers."
+      options_label: "Answer options"
+      correct_label: "Correct"
+      wrong_label: "Wrong"
     instruction:
       matching:
         receptive: Match the pairs (Recognition)
@@ -2146,6 +2157,8 @@ content:
     free_text_too_few_accepts: "Lesson '{lesson}': free-text exercise '{exercise}' needs at least {min} accepted answers."
     matching_too_few_pairs: "Lesson '{lesson}': matching exercise '{exercise}' needs at least {min} pairs."
     missing_distractors: "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options)."
+    multiple_choice_too_few_options: "Lesson '{lesson}': multiple-choice exercise '{exercise}' needs at least {min} options."
+    multiple_choice_no_correct_option: "Lesson '{lesson}': multiple-choice exercise '{exercise}' needs at least one correct option."
     non_cefr_level: Level '{level}' is not a CEFR band (A1-C2).
     level_too_complex: "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected)."
     source_language_heuristic: Card backs contain {found}-specific characters but the source language is '{lang}'.

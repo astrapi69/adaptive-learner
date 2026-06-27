@@ -205,6 +205,50 @@ describe("validateSetForSharing", () => {
     expect(codes(META, [l])).toContain("matching_too_few_pairs");
   });
 
+  it("accepts a valid multiple_choice exercise (#890)", () => {
+    const l = goodLesson();
+    l.steps[4].exercise = {
+      id: "e5",
+      type: "multiple_choice",
+      prompt: "Welche Stadt ist die Hauptstadt von Frankreich?",
+      card_ids: ["c2"],
+      options: ["Berlin", "Paris", "Madrid"],
+      correct_options: [1],
+      distractors: [],
+    };
+    const all = codes(META, [l]);
+    expect(all).not.toContain("multiple_choice_too_few_options");
+    expect(all).not.toContain("multiple_choice_no_correct_option");
+  });
+
+  it("flags a multiple_choice with < 2 options (#890)", () => {
+    const l = goodLesson();
+    l.steps[4].exercise = {
+      id: "e5",
+      type: "multiple_choice",
+      prompt: "Frage",
+      card_ids: ["c2"],
+      options: ["Paris"],
+      correct_options: [0],
+      distractors: [],
+    };
+    expect(codes(META, [l])).toContain("multiple_choice_too_few_options");
+  });
+
+  it("flags a multiple_choice with no in-range correct option (#890)", () => {
+    const l = goodLesson();
+    l.steps[4].exercise = {
+      id: "e5",
+      type: "multiple_choice",
+      prompt: "Frage",
+      card_ids: ["c2"],
+      options: ["Berlin", "Paris"],
+      correct_options: [5],
+      distractors: [],
+    };
+    expect(codes(META, [l])).toContain("multiple_choice_no_correct_option");
+  });
+
   it("flags empty card front/back", () => {
     const l = goodLesson();
     l.cards[0].back = "";

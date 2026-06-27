@@ -1793,6 +1793,17 @@ lesson:
       result_correct: "Hepsi doğru!"
       result_partial: "{correct} / {total} doğru."
       empty: "Bu boşluk doldurma alıştırmasının boşluğu yok."
+    multiple_choice:
+      submit: "Cevabı kontrol et"
+      retry: "Tekrar dene"
+      result_correct: "Doğru!"
+      result_wrong: "Pek değil — vurgulanan seçenek(ler) doğru cevap."
+      empty: "Bu çoktan seçmeli alıştırmada seçenek yok."
+      instructions_single: "Doğru cevabı seç."
+      instructions_multi: "Tüm doğru cevapları seç."
+      options_label: "Cevap seçenekleri"
+      correct_label: "Doğru"
+      wrong_label: "Yanlış"
     instruction:
       matching:
         receptive: Çiftleri eşleştir (Tanıma)
@@ -2135,6 +2146,8 @@ content:
     free_text_too_few_accepts: "'{lesson}' dersi: serbest metin alıştırması '{exercise}' en az {min} kabul edilen yanıt gerektirir."
     matching_too_few_pairs: "'{lesson}' dersi: eşleştirme alıştırması '{exercise}' en az {min} çift gerektirir."
     missing_distractors: "'{lesson}' dersi: '{exercise}' alıştırması çeldirici (yanlış seçenek) gerektirir."
+    multiple_choice_too_few_options: "Ders '{lesson}': çoktan seçmeli alıştırma '{exercise}' en az {min} seçenek gerektirir."
+    multiple_choice_no_correct_option: "Ders '{lesson}': çoktan seçmeli alıştırma '{exercise}' en az bir doğru seçenek gerektirir."
     non_cefr_level: "'{level}' seviyesi bir CEFR bandı değil (A1-C2)."
     level_too_complex: "'{lesson}' dersi: metin yüzde ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir)."
     source_language_heuristic: Kart arka yüzleri {found} diline özgü karakterler içeriyor, ancak kaynak dil '{lang}'.

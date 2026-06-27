@@ -61,6 +61,8 @@ export const QUALITY = {
   minFreeTextAccepts: 2,
   minMatchingPairs: 3,
   minTheorySteps: 1,
+  /** #890 — a multiple-choice exercise needs at least this many options. */
+  minMultipleChoiceOptions: 2,
 } as const;
 
 // ISO 639-1 base subtag: exactly two lowercase letters. The
@@ -396,6 +398,27 @@ function checkLessonExercises(
       if (ex.distractors.length === 0)
         issues.push({
           code: "missing_distractors",
+          params: { lesson: id, exercise: ex.id },
+        });
+    }
+    if (ex.type === "multiple_choice") {
+      const options = ex.options ?? [];
+      const correct = ex.correct_options ?? [];
+      if (options.length < QUALITY.minMultipleChoiceOptions)
+        issues.push({
+          code: "multiple_choice_too_few_options",
+          params: {
+            lesson: id,
+            exercise: ex.id,
+            min: QUALITY.minMultipleChoiceOptions,
+          },
+        });
+      const inRange =
+        correct.length > 0 &&
+        correct.every((i) => Number.isInteger(i) && i >= 0 && i < options.length);
+      if (!inRange)
+        issues.push({
+          code: "multiple_choice_no_correct_option",
           params: { lesson: id, exercise: ex.id },
         });
     }

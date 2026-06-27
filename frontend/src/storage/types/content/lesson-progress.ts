@@ -10,7 +10,8 @@ export type RawAnswer =
   | { kind: "picture_choice"; selected: number }
   | { kind: "free_text"; input: string }
   | { kind: "word_tiles"; placed: number[] }
-  | { kind: "cloze"; inputs: string[] };
+  | { kind: "cloze"; inputs: string[] }
+  | { kind: "multiple_choice"; selected: number[] };
 
 export interface LessonStepResult {
   step_id: string;

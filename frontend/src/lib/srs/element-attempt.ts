@@ -10,11 +10,13 @@
  *
  * D2 (Phase 46 plan) — element_key derivation rules:
  *
- *   matching       → one attempt per pair; key = pair.left
- *   picture_choice → one attempt; key = correct image's label
- *   free_text      → one attempt; key = accept[0] canonical
- *   word_tiles     → one attempt; key = tiles.join(" ")
- *                    canonical
+ *   matching        → one attempt per pair; key = pair.left
+ *   picture_choice  → one attempt; key = correct image's label
+ *   free_text       → one attempt; key = accept[0] canonical
+ *   word_tiles      → one attempt; key = tiles.join(" ")
+ *                     canonical
+ *   multiple_choice → one attempt; key = correct option text
+ *                     (joined by " | " for multi-correct)
  *
  * Lesson-scoped uniqueness lives in the composite
  * ``(user_id, set_id, lesson_id, exercise_id, element_key)``
@@ -155,6 +157,36 @@ export function deriveWordTilesAttempt(
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,
         element_type: tiles.length > 1 ? "grammar_rule" : "vocabulary",
+        user_answer: userAnswer,
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}
+
+/** MULTIPLE_CHOICE: single attempt (#890). element_key = the
+ *  canonical correct-options text (joined by " | " for the
+ *  multi-correct case) so reviews on this element re-target the
+ *  same question regardless of which wrong option(s) the user
+ *  picked. ``correct`` is computed by the renderer (exact set
+ *  match) and passed in; the deriver does not re-grade. */
+export function deriveMultipleChoiceAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    selectedIndices: readonly number[],
+    isCorrect: boolean,
+): ElementAttempt {
+    const options = exercise.options ?? [];
+    const correctIndices = exercise.correct_options ?? [];
+    const labelOf = (i: number): string => options[i] ?? "";
+    const canonical = correctIndices.map(labelOf).join(" | ");
+    const userAnswer = [...selectedIndices]
+        .sort((a, b) => a - b)
+        .map(labelOf)
+        .join(" | ");
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "vocabulary",
         user_answer: userAnswer,
         correct_answer: canonical,
         correct: isCorrect,

@@ -22,6 +22,7 @@ Checks, per the content-authoring contract:
       - free_text: >= 2 accepted answers + distractors
       - matching: >= 3 pairs
       - picture_choice: distractors present
+      - multiple_choice: >= 2 options + >= 1 in-range correct index
       - no empty card front/back
       - non-Latin source scripts: card backs use that script
 
@@ -47,6 +48,7 @@ MIN_TYPES = 2
 MIN_THEORY = 1
 MIN_FREE_TEXT_ACCEPTS = 2
 MIN_MATCHING_PAIRS = 3
+MIN_MULTIPLE_CHOICE_OPTIONS = 2
 
 # Scripts we can distinguish from Latin (mirror the TS validator).
 SCRIPT_RANGES = {
@@ -160,6 +162,28 @@ def validate_lesson(lesson: dict, source: str, label: str, errors: list[str]) ->
         elif ex.get("type") == "picture_choice":
             if not ex.get("distractors"):
                 errors.append(f"{label}: picture_choice '{eid}' needs distractors")
+        elif ex.get("type") == "multiple_choice":
+            options = ex.get("options") or []
+            correct = ex.get("correct_options") or []
+            if len(options) < MIN_MULTIPLE_CHOICE_OPTIONS:
+                errors.append(
+                    f"{label}: multiple_choice '{eid}' needs >= "
+                    f"{MIN_MULTIPLE_CHOICE_OPTIONS} options"
+                )
+            if not correct:
+                errors.append(
+                    f"{label}: multiple_choice '{eid}' needs >= 1 correct option"
+                )
+            elif any(not isinstance(i, int) or i < 0 or i >= len(options) for i in correct):
+                errors.append(
+                    f"{label}: multiple_choice '{eid}' has an out-of-range "
+                    f"correct_options index"
+                )
+            elif len(set(correct)) != len(correct):
+                errors.append(
+                    f"{label}: multiple_choice '{eid}' has duplicate "
+                    f"correct_options indices"
+                )
 
 
 def validate_set_dir(content_set: dict, errors: list[str]) -> None:

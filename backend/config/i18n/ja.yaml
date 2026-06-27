@@ -1793,6 +1793,17 @@ lesson:
       result_correct: "すべて正解！"
       result_partial: "{total}個中{correct}個正解。"
       empty: "この穴埋め演習には空欄がありません。"
+    multiple_choice:
+      submit: "答えを確認"
+      retry: "もう一度"
+      result_correct: "正解です！"
+      result_wrong: "惜しい — 強調された選択肢が正解です。"
+      empty: "この多肢選択演習には選択肢がありません。"
+      instructions_single: "正しい答えを選んでください。"
+      instructions_multi: "正しい答えをすべて選んでください。"
+      options_label: "回答の選択肢"
+      correct_label: "正解"
+      wrong_label: "不正解"
     instruction:
       matching:
         receptive: ペアを結ぶ（認識）
@@ -2135,6 +2146,8 @@ content:
     free_text_too_few_accepts: "レッスン '{lesson}': 自由記述演習 '{exercise}' には最低 {min} 個の正解が必要です。"
     matching_too_few_pairs: "レッスン '{lesson}': マッチング演習 '{exercise}' には最低 {min} 組必要です。"
     missing_distractors: "レッスン '{lesson}': 演習 '{exercise}' には誤答選択肢が必要です。"
+    multiple_choice_too_few_options: "レッスン「{lesson}」: 多肢選択演習「{exercise}」には少なくとも {min} 個の選択肢が必要です。"
+    multiple_choice_no_correct_option: "レッスン「{lesson}」: 多肢選択演習「{exercise}」には少なくとも 1 つの正解が必要です。"
     non_cefr_level: レベル '{level}' は CEFR の区分（A1〜C2）ではありません。
     level_too_complex: "レッスン '{lesson}': 片面あたり平均 {avg} 語で、レベル {level} には多めです（目安は約 {cap} 語）。"
     source_language_heuristic: カードの裏面に {found} 特有の文字が含まれていますが、出発言語は '{lang}' です。

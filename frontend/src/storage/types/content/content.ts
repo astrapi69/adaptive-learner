@@ -127,7 +127,13 @@ export type ContentExerciseDirection = "source_to_target" | "target_to_source" |
 
 export interface ContentLessonExercise {
   id: string;
-  type: "matching" | "picture_choice" | "free_text" | "word_tiles" | "cloze";
+  type:
+    | "matching"
+    | "picture_choice"
+    | "free_text"
+    | "word_tiles"
+    | "cloze"
+    | "multiple_choice";
   prompt: string;
   card_ids: string[];
   /** EXP-018 / Phase 62 — drill direction; defaults to
@@ -151,6 +157,15 @@ export interface ContentLessonExercise {
    *  ``"type"`` when omitted. ``"select"`` requires
    *  non-empty ``distractors``. */
   cloze_mode?: "type" | "select" | null;
+  /** Schema v1.5 / #890 — MULTIPLE_CHOICE: the answer options shown
+   *  to the learner (>= 2), in authored order. */
+  options?: string[] | null;
+  /** Schema v1.5 / #890 — MULTIPLE_CHOICE: 0-based indices into
+   *  ``options`` that are correct (>= 1, in range, no duplicates).
+   *  Exactly one => single-select (radio); two or more =>
+   *  multi-select (checkboxes). The renderer derives the select mode
+   *  from the count. */
+  correct_options?: number[] | null;
 }
 
 /** Phase 52I / v1.35.0 / P-130 — closed grammatical-role enum

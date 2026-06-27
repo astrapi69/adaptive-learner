@@ -39,7 +39,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-CURRENT_SCHEMA_VERSION = "1.4"
+CURRENT_SCHEMA_VERSION = "1.5"
 # v1.2 → v1.3 (technical / programming content):
 #   - ``Card`` gained optional code fields: ``code_snippet``,
 #     ``code_language``, ``expected_output``, ``hint``,
@@ -69,6 +69,13 @@ CURRENT_SCHEMA_VERSION = "1.4"
 #     a pre-v1.2 manifest omits it (the pilot content was all
 #     authored with English explanations). A ``language`` read
 #     property keeps existing ``set.language`` call sites green.
+# v1.4 → v1.5 (#890):
+#   - ExerciseType gained the MULTIPLE_CHOICE = "multiple_choice"
+#     variant + the ``options`` / ``correct_options`` fields on
+#     ``Exercise`` to back it. Exactly one correct index renders as
+#     single-select (radio); two or more as multi-select
+#     (checkboxes). Additive + optional, so pre-v1.5 lessons
+#     validate unchanged.
 # Bump is MINOR — ``is_supported_schema_version`` does a major-
 # version match so v1.x lessons still load on older v1.x apps at
 # the manifest level. Failure surfaces per-exercise when a 1.0 app

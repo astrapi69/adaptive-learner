@@ -76,6 +76,14 @@ export function formatUserAnswer(
     });
     return parts.join(", ");
   }
+  if (rawAnswer.kind === "multiple_choice") {
+    const options = exercise.options ?? [];
+    const labels = [...rawAnswer.selected]
+      .sort((a, b) => a - b)
+      .map((i) => options[i]?.trim())
+      .filter((label): label is string => Boolean(label));
+    return labels.length ? labels.join(", ") : null;
+  }
   return null;
 }
 

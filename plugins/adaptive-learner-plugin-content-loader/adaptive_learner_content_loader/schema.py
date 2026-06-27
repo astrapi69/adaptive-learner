@@ -68,10 +68,12 @@ class ExerciseType(str, Enum):
 
     EXP-001 + EXP-006: the four base types ship in Phase 43-45.
     Phase 52D / v1.35.0 added CLOZE (fill-in-the-blank with
-    ``___`` markers) — see the schema_version bump in
-    ``models.py``. Adding a sixth type (ordering, drag-image-
-    pair, etc.) requires a minor schema_version bump and a new
-    enum value plus its renderer.
+    ``___`` markers). #890 / v1.5 added MULTIPLE_CHOICE (a
+    question with ``options`` + ``correct_options``; one correct
+    index => single-select, two or more => multi-select) — see the
+    schema_version bump in ``models.py``. Adding a further type
+    (ordering, drag-image-pair, etc.) requires a minor
+    schema_version bump and a new enum value plus its renderer.
     """
 
     MATCHING = "matching"
@@ -79,6 +81,7 @@ class ExerciseType(str, Enum):
     FREE_TEXT = "free_text"
     WORD_TILES = "word_tiles"
     CLOZE = "cloze"
+    MULTIPLE_CHOICE = "multiple_choice"
 
 
 class StepType(str, Enum):
@@ -512,6 +515,27 @@ class Exercise(BaseModel):
             "Phase 52D / v1.35.0."
         ),
     )
+    options: list[str] | None = Field(
+        default=None,
+        description=(
+            "MULTIPLE_CHOICE: the answer options shown to the "
+            "learner (>= 2). The renderer presents them in the "
+            "authored order. ``correct_options`` marks which "
+            "are right. Schema v1.5 / #890."
+        ),
+        max_length=12,
+    )
+    correct_options: list[int] | None = Field(
+        default=None,
+        description=(
+            "MULTIPLE_CHOICE: 0-based indices into ``options`` "
+            "that are correct (>= 1, in range, no duplicates). "
+            "Exactly one correct index => single-select (radio); "
+            "two or more => multi-select (checkboxes). The "
+            "renderer derives the select mode from the count. "
+            "Schema v1.5 / #890."
+        ),
+    )
 
     @field_validator("id")
     @classmethod
@@ -544,6 +568,7 @@ class Exercise(BaseModel):
             ExerciseType.FREE_TEXT: self._validate_free_text_fields,
             ExerciseType.WORD_TILES: self._validate_word_tiles_fields,
             ExerciseType.CLOZE: self._validate_cloze_fields,
+            ExerciseType.MULTIPLE_CHOICE: self._validate_multiple_choice_fields,
         }
         validate = validators.get(self.type)
         if validate is not None:
@@ -620,6 +645,25 @@ class Exercise(BaseModel):
         # per-blank ``<select>`` options.
         if self.cloze_mode == "select" and not self.distractors:
             raise ValueError("CLOZE with cloze_mode='select' requires non-empty 'distractors'")
+
+    def _validate_multiple_choice_fields(self) -> None:
+        """MULTIPLE_CHOICE (#890) requires >= 2 'options' and a non-empty
+        'correct_options' of in-range, unique 0-based indices."""
+        if not self.options or len(self.options) < 2:
+            raise ValueError("MULTIPLE_CHOICE requires at least 2 'options'")
+        if not self.correct_options:
+            raise ValueError(
+                "MULTIPLE_CHOICE requires at least one entry in 'correct_options'"
+            )
+        option_count = len(self.options)
+        for index in self.correct_options:
+            if index < 0 or index >= option_count:
+                raise ValueError(
+                    f"MULTIPLE_CHOICE correct_options index {index} is out of "
+                    f"range [0..{option_count - 1}]"
+                )
+        if len(set(self.correct_options)) != len(self.correct_options):
+            raise ValueError("MULTIPLE_CHOICE correct_options must not contain duplicates")
 
 
 class LessonStep(BaseModel):

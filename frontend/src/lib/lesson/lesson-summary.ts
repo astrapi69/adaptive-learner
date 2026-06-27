@@ -82,6 +82,8 @@ export function computeStars(correct: number, total: number): StarRating {
  *    cloze          → sentence with each ``___`` filled by
  *                     the blank's canonical accept[0]
  *                     (Phase 52D / v1.35.0)
+ *    multiple_choice→ the correct option(s), joined by ", "
+ *                     (#890)
  *
  *  Returns "" when the type-specific content is missing
  *  (defensive — the schema validator already rejects this
@@ -124,6 +126,16 @@ export function deriveCanonicalAnswer(
                 out += segments[i + 1] ?? "";
             }
             return out;
+        }
+        case "multiple_choice": {
+            // #890 — the canonical answer is the correct option(s),
+            // joined by ", " for the multi-correct case.
+            const options = exercise.options ?? [];
+            const correct = exercise.correct_options ?? [];
+            return correct
+                .map((i) => options[i] ?? "")
+                .filter((label) => label !== "")
+                .join(", ");
         }
     }
 }

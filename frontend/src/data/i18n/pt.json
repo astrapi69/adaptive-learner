@@ -1940,6 +1940,18 @@
         "result_partial": "{correct} de {total} corretas.",
         "empty": "Este exercício de lacunas não tem lacunas."
       },
+      "multiple_choice": {
+        "submit": "Verificar resposta",
+        "retry": "Tentar de novo",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase — a(s) opção(ões) destacada(s) é/são a resposta certa.",
+        "empty": "Este exercício de múltipla escolha não tem opções.",
+        "instructions_single": "Selecione a resposta correta.",
+        "instructions_multi": "Selecione todas as respostas corretas.",
+        "options_label": "Opções de resposta",
+        "correct_label": "Correto",
+        "wrong_label": "Errado"
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",
@@ -2321,6 +2333,8 @@
       "free_text_too_few_accepts": "Lição '{lesson}': o exercício de texto livre '{exercise}' precisa de pelo menos {min} respostas aceites.",
       "matching_too_few_pairs": "Lição '{lesson}': o exercício de correspondência '{exercise}' precisa de pelo menos {min} pares.",
       "missing_distractors": "Lição '{lesson}': o exercício '{exercise}' precisa de distratores (opções erradas).",
+      "multiple_choice_too_few_options": "Lição '{lesson}': o exercício de múltipla escolha '{exercise}' precisa de pelo menos {min} opções.",
+      "multiple_choice_no_correct_option": "Lição '{lesson}': o exercício de múltipla escolha '{exercise}' precisa de pelo menos uma opção correta.",
       "non_cefr_level": "O nível '{level}' não é uma faixa CEFR (A1-C2).",
       "level_too_complex": "Lição '{lesson}': o texto tem em média {avg} palavras por lado, alto para o nível {level} (cerca de {cap} esperadas).",
       "source_language_heuristic": "Os versos contêm caracteres próprios de {found}, mas o idioma de origem é '{lang}'.",

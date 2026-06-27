@@ -31,6 +31,7 @@ import type {
 } from "./exercise-control";
 import FreeTextExercise from "./FreeTextExercise";
 import MatchingExercise from "./MatchingExercise";
+import MultipleChoiceExercise from "./MultipleChoiceExercise";
 import PictureChoiceExercise from "./PictureChoiceExercise";
 import WordTilesExercise from "./WordTilesExercise";
 
@@ -40,6 +41,7 @@ export const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "free_text",
     "word_tiles",
     "cloze",
+    "multiple_choice",
 ]);
 
 export interface ExerciseDispatcherProps extends ControlledExerciseProps {
@@ -184,6 +186,17 @@ function ExerciseDispatcher(
     if (ex.type === "cloze") {
         return (
             <ClozeExercise
+                ref={ref}
+                exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
+                {...shared}
+            />
+        );
+    }
+    if (ex.type === "multiple_choice") {
+        return (
+            <MultipleChoiceExercise
                 ref={ref}
                 exercise={ex}
                 setId={setId}

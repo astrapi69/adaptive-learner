@@ -1795,6 +1795,17 @@ lesson:
       result_correct: "Όλα σωστά!"
       result_partial: "{correct} από {total} σωστά."
       empty: "Αυτή η άσκηση συμπλήρωσης κενών δεν έχει κενά."
+    multiple_choice:
+      submit: "Έλεγχος απάντησης"
+      retry: "Δοκίμασε ξανά"
+      result_correct: "Σωστά!"
+      result_wrong: "Όχι ακριβώς — η επισημασμένη επιλογή είναι η σωστή απάντηση."
+      empty: "Αυτή η άσκηση πολλαπλής επιλογής δεν έχει επιλογές."
+      instructions_single: "Διάλεξε τη σωστή απάντηση."
+      instructions_multi: "Διάλεξε όλες τις σωστές απαντήσεις."
+      options_label: "Επιλογές απάντησης"
+      correct_label: "Σωστή"
+      wrong_label: "Λάθος"
     instruction:
       matching:
         receptive: Αντιστοιχίστε τα ζεύγη (Αναγνώριση)
@@ -2137,6 +2148,8 @@ content:
     free_text_too_few_accepts: "Μάθημα '{lesson}': η άσκηση ελεύθερου κειμένου '{exercise}' χρειάζεται τουλάχιστον {min} αποδεκτές απαντήσεις."
     matching_too_few_pairs: "Μάθημα '{lesson}': η άσκηση αντιστοίχισης '{exercise}' χρειάζεται τουλάχιστον {min} ζεύγη."
     missing_distractors: "Μάθημα '{lesson}': η άσκηση '{exercise}' χρειάζεται περισπαστικά (λάθος επιλογές)."
+    multiple_choice_too_few_options: "Μάθημα '{lesson}': η άσκηση πολλαπλής επιλογής '{exercise}' χρειάζεται τουλάχιστον {min} επιλογές."
+    multiple_choice_no_correct_option: "Μάθημα '{lesson}': η άσκηση πολλαπλής επιλογής '{exercise}' χρειάζεται τουλάχιστον μία σωστή επιλογή."
     non_cefr_level: Το επίπεδο '{level}' δεν είναι κλίμακα CEFR (A1-C2).
     level_too_complex: "Μάθημα '{lesson}': το κείμενο έχει κατά μέσο όρο {avg} λέξεις ανά πλευρά, πολλές για το επίπεδο {level} (αναμένονται περίπου {cap})."
     source_language_heuristic: Οι πίσω όψεις περιέχουν χαρακτήρες της {found}, αλλά η γλώσσα προέλευσης είναι '{lang}'.

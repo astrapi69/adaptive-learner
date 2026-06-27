@@ -15,6 +15,7 @@ import {
     deriveClozeAttempts,
     deriveFreeTextAttempt,
     deriveMatchingAttempts,
+    deriveMultipleChoiceAttempt,
     derivePictureChoiceAttempt,
     deriveWordTilesAttempt,
     type AttemptContext,
@@ -167,6 +168,53 @@ describe("derivePictureChoiceAttempt", () => {
         const attempt = derivePictureChoiceAttempt(broken, CTX, 0);
         expect(attempt.element_key).toBe("");
         expect(attempt.correct).toBe(false);
+    });
+});
+
+// --- MULTIPLE_CHOICE -------------------------------------------------------
+
+describe("deriveMultipleChoiceAttempt", () => {
+    const single: ContentLessonExercise = {
+        id: "ex-mc",
+        type: "multiple_choice",
+        prompt: "Capital of France?",
+        card_ids: [],
+        options: ["Berlin", "Paris", "Madrid"],
+        correct_options: [1],
+        distractors: [],
+    };
+    const multi: ContentLessonExercise = {
+        id: "ex-mc-multi",
+        type: "multiple_choice",
+        prompt: "Primes?",
+        card_ids: [],
+        options: ["2", "4", "5", "9"],
+        correct_options: [0, 2],
+        distractors: [],
+    };
+
+    it("element_key is the canonical correct-option text", () => {
+        const attempt = deriveMultipleChoiceAttempt(single, CTX, [1], true);
+        expect(attempt.element_key).toBe("Paris");
+        expect(attempt.correct_answer).toBe("Paris");
+        expect(attempt.correct).toBe(true);
+        expect(attempt.user_answer).toBe("Paris");
+    });
+
+    it("records the user's pick + correct=false on a wrong answer", () => {
+        const attempt = deriveMultipleChoiceAttempt(single, CTX, [0], false);
+        expect(attempt.correct).toBe(false);
+        expect(attempt.user_answer).toBe("Berlin");
+        // element_key still points at the correct answer so reviews
+        // re-target the same question.
+        expect(attempt.element_key).toBe("Paris");
+    });
+
+    it("joins multi-correct labels (sorted) for the canonical + user answer", () => {
+        const attempt = deriveMultipleChoiceAttempt(multi, CTX, [2, 0], true);
+        expect(attempt.correct_answer).toBe("2 | 5");
+        expect(attempt.user_answer).toBe("2 | 5");
+        expect(attempt.element_type).toBe("vocabulary");
     });
 });
 

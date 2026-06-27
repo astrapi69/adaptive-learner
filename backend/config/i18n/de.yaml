@@ -1798,6 +1798,17 @@ lesson:
       result_correct: "Alles richtig!"
       result_partial: "{correct} von {total} richtig."
       empty: "Diese Lückentext-Übung hat keine Lücken."
+    multiple_choice:
+      submit: "Antwort prüfen"
+      retry: "Erneut versuchen"
+      result_correct: "Richtig!"
+      result_wrong: "Nicht ganz — die markierte(n) Option(en) ist/sind die richtige Antwort."
+      empty: "Diese Multiple-Choice-Übung enthält keine Optionen."
+      instructions_single: "Wähle die richtige Antwort."
+      instructions_multi: "Wähle alle richtigen Antworten."
+      options_label: "Antwortoptionen"
+      correct_label: "Richtig"
+      wrong_label: "Falsch"
     instruction:
       matching:
         receptive: Paare verbinden (Erkennen)
@@ -2140,6 +2151,8 @@ content:
     free_text_too_few_accepts: "Lektion '{lesson}': Freitext-Übung '{exercise}' braucht mindestens {min} akzeptierte Antworten."
     matching_too_few_pairs: "Lektion '{lesson}': Zuordnungsübung '{exercise}' braucht mindestens {min} Paare."
     missing_distractors: "Lektion '{lesson}': Übung '{exercise}' braucht Ablenker (falsche Optionen)."
+    multiple_choice_too_few_options: "Lektion '{lesson}': Multiple-Choice-Übung '{exercise}' benötigt mindestens {min} Optionen."
+    multiple_choice_no_correct_option: "Lektion '{lesson}': Multiple-Choice-Übung '{exercise}' benötigt mindestens eine richtige Option."
     non_cefr_level: Niveau '{level}' ist keine CEFR-Stufe (A1-C2).
     level_too_complex: "Lektion '{lesson}': Text hat im Schnitt {avg} Wörter pro Seite, viel für Niveau {level} (etwa {cap} erwartet)."
     source_language_heuristic: Kartenrückseiten enthalten {found}-typische Zeichen, aber die Ausgangssprache ist '{lang}'.

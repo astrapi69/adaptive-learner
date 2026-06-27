@@ -68,11 +68,14 @@ class TestExerciseTypeEnum:
         assert ExerciseType("word_tiles") is ExerciseType.WORD_TILES
         # Phase 52D / v1.35.0 — schema 1.0 → 1.1 added CLOZE.
         assert ExerciseType("cloze") is ExerciseType.CLOZE
+        # #890 — schema 1.4 → 1.5 added MULTIPLE_CHOICE.
+        assert ExerciseType("multiple_choice") is ExerciseType.MULTIPLE_CHOICE
 
     def test_unknown_value_rejected(self) -> None:
         # Future-release candidates that have NOT yet landed.
-        # Phase 52D ships CLOZE; ``ordering`` and
-        # ``drag_image_pair`` would each be a future minor bump.
+        # Phase 52D ships CLOZE, #890 ships MULTIPLE_CHOICE;
+        # ``ordering`` / ``drag_image_pair`` would each be a future
+        # minor bump.
         with pytest.raises(ValueError):
             ExerciseType("ordering")
 
@@ -594,6 +597,70 @@ class TestClozeExercise:
         assert rebuilt == ex
 
 
+def _exercise_multiple_choice(**overrides: object) -> Exercise:
+    defaults: dict[str, object] = {
+        "id": "ex-mc-1",
+        "type": ExerciseType.MULTIPLE_CHOICE,
+        "prompt": "What is the capital of France?",
+        "options": ["Berlin", "Paris", "Madrid"],
+        "correct_options": [1],
+    }
+    defaults.update(overrides)
+    return Exercise(**defaults)
+
+
+class TestMultipleChoiceExercise:
+    """Pin the v1.5 MULTIPLE_CHOICE exercise type (#890)."""
+
+    def test_valid_single_correct(self) -> None:
+        ex = _exercise_multiple_choice()
+        assert ex.type is ExerciseType.MULTIPLE_CHOICE
+        assert ex.options == ["Berlin", "Paris", "Madrid"]
+        assert ex.correct_options == [1]
+
+    def test_valid_multi_correct(self) -> None:
+        ex = _exercise_multiple_choice(
+            options=["2", "4", "5", "9"],
+            correct_options=[0, 2],
+        )
+        assert ex.correct_options == [0, 2]
+
+    def test_options_required_min_two(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_multiple_choice(options=None)
+        with pytest.raises(ValidationError):
+            _exercise_multiple_choice(options=["Paris"], correct_options=[0])
+
+    def test_correct_options_required(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_multiple_choice(correct_options=None)
+        with pytest.raises(ValidationError):
+            _exercise_multiple_choice(correct_options=[])
+
+    def test_correct_options_must_be_in_range(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_multiple_choice(correct_options=[5])
+        with pytest.raises(ValidationError):
+            _exercise_multiple_choice(correct_options=[-1])
+
+    def test_correct_options_must_be_unique(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_multiple_choice(
+                options=["a", "b", "c"],
+                correct_options=[1, 1],
+            )
+
+    def test_json_roundtrip(self) -> None:
+        ex = _exercise_multiple_choice(
+            options=["2", "4", "5", "9"],
+            correct_options=[0, 2],
+            hint="A prime has exactly two divisors.",
+        )
+        payload = ex.model_dump(mode="json")
+        rebuilt = Exercise.model_validate(payload)
+        assert rebuilt == ex
+
+
 class TestExerciseCommon:
     def test_id_must_be_slug(self) -> None:
         with pytest.raises(ValidationError):
@@ -885,7 +952,7 @@ class TestLessonSchemaExport:
         schema = exercise_schema()
         # The type field discriminates the ExerciseType values;
         # the JSON schema surfaces them as an enum. Phase 52D /
-        # v1.35.0 added CLOZE.
+        # v1.35.0 added CLOZE; #890 / v1.5 added MULTIPLE_CHOICE.
         type_schema = schema["properties"]["type"]
         if "$ref" in type_schema:
             ref_name = type_schema["$ref"].rsplit("/", 1)[-1]
@@ -896,6 +963,7 @@ class TestLessonSchemaExport:
             "free_text",
             "word_tiles",
             "cloze",
+            "multiple_choice",
         }
 
     def test_lesson_step_schema_lists_step_type_enum(self) -> None:

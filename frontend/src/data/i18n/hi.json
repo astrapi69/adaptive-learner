@@ -1940,6 +1940,18 @@
         "result_partial": "{total} में से {correct} सही।",
         "empty": "इस रिक्त-स्थान अभ्यास में कोई रिक्त स्थान नहीं हैं।"
       },
+      "multiple_choice": {
+        "submit": "उत्तर जाँचें",
+        "retry": "फिर से कोशिश करें",
+        "result_correct": "सही!",
+        "result_wrong": "बिल्कुल नहीं — हाइलाइट किया गया विकल्प सही उत्तर है।",
+        "empty": "इस बहुविकल्पीय अभ्यास में कोई विकल्प नहीं हैं।",
+        "instructions_single": "सही उत्तर चुनें।",
+        "instructions_multi": "सभी सही उत्तर चुनें।",
+        "options_label": "उत्तर विकल्प",
+        "correct_label": "सही",
+        "wrong_label": "गलत"
+      },
       "instruction": {
         "matching": {
           "receptive": "जोड़े मिलाएँ (पहचान)",
@@ -2321,6 +2333,8 @@
       "free_text_too_few_accepts": "पाठ '{lesson}': मुक्त-पाठ अभ्यास '{exercise}' को कम से कम {min} स्वीकृत उत्तर चाहिए।",
       "matching_too_few_pairs": "पाठ '{lesson}': मिलान अभ्यास '{exercise}' को कम से कम {min} जोड़े चाहिए।",
       "missing_distractors": "पाठ '{lesson}': अभ्यास '{exercise}' को विकर्षक (गलत विकल्प) चाहिए।",
+      "multiple_choice_too_few_options": "पाठ '{lesson}': बहुविकल्पीय अभ्यास '{exercise}' के लिए कम से कम {min} विकल्प आवश्यक हैं।",
+      "multiple_choice_no_correct_option": "पाठ '{lesson}': बहुविकल्पीय अभ्यास '{exercise}' के लिए कम से कम एक सही विकल्प आवश्यक है।",
       "non_cefr_level": "स्तर '{level}' एक CEFR बैंड (A1-C2) नहीं है।",
       "level_too_complex": "पाठ '{lesson}': पाठ्य प्रति पक्ष औसतन {avg} शब्द है, जो स्तर {level} के लिए अधिक है (लगभग {cap} अपेक्षित)।",
       "source_language_heuristic": "कार्ड के पिछले भागों में {found}-विशिष्ट अक्षर हैं लेकिन स्रोत भाषा '{lang}' है।",

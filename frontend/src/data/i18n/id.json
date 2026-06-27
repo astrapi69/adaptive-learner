@@ -1940,6 +1940,18 @@
         "result_partial": "{correct} dari {total} benar.",
         "empty": "Latihan isian rumpang ini tidak memiliki rumpang."
       },
+      "multiple_choice": {
+        "submit": "Periksa jawaban",
+        "retry": "Coba lagi",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat — opsi yang disorot adalah jawaban yang benar.",
+        "empty": "Latihan pilihan ganda ini tidak memiliki opsi.",
+        "instructions_single": "Pilih jawaban yang benar.",
+        "instructions_multi": "Pilih semua jawaban yang benar.",
+        "options_label": "Opsi jawaban",
+        "correct_label": "Benar",
+        "wrong_label": "Salah"
+      },
       "instruction": {
         "matching": {
           "receptive": "Cocokkan pasangannya (Pengenalan)",
@@ -2321,6 +2333,8 @@
       "free_text_too_few_accepts": "Pelajaran '{lesson}': latihan teks bebas '{exercise}' memerlukan setidaknya {min} jawaban yang diterima.",
       "matching_too_few_pairs": "Pelajaran '{lesson}': latihan pencocokan '{exercise}' memerlukan setidaknya {min} pasangan.",
       "missing_distractors": "Pelajaran '{lesson}': latihan '{exercise}' memerlukan pengecoh (pilihan salah).",
+      "multiple_choice_too_few_options": "Pelajaran '{lesson}': latihan pilihan ganda '{exercise}' memerlukan minimal {min} opsi.",
+      "multiple_choice_no_correct_option": "Pelajaran '{lesson}': latihan pilihan ganda '{exercise}' memerlukan minimal satu opsi yang benar.",
       "non_cefr_level": "Tingkat '{level}' bukan jenjang CEFR (A1-C2).",
       "level_too_complex": "Pelajaran '{lesson}': teks rata-rata {avg} kata per sisi, tinggi untuk tingkat {level} (sekitar {cap} diharapkan).",
       "source_language_heuristic": "Sisi belakang kartu mengandung karakter khas {found} tetapi bahasa sumbernya '{lang}'.",
