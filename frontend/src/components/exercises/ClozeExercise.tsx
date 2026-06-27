@@ -38,9 +38,11 @@ import ReadAloudButton from "../lesson/tts/ReadAloudButton";
 import InlineMarkdown from "../../shared/data-display/InlineMarkdown";
 import {deriveClozeAttempts} from "../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../lib/exercises/useControlledExercise";
+import {seededShuffle} from "../../lib/exercises/seeded-shuffle";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
+import ClozeMultiSelect from "./ClozeMultiSelect";
 import DiffHighlight from "./DiffHighlight";
 import ExerciseFooter from "./ExerciseFooter";
 import type {
@@ -70,20 +72,6 @@ export interface ClozeExerciseProps extends ControlledExerciseProps {
  *  blank sits between segment i and segment i+1. */
 function _splitOnMarkers(sentence: string): string[] {
     return sentence.split("___");
-}
-
-/** Deterministic seeded shuffle so the select-mode options
- *  stay stable across re-renders. Same seed → same order. */
-function _shuffle<T>(items: readonly T[], seed: string): T[] {
-    const out = [...items];
-    let acc = 0;
-    for (const ch of seed) acc = (acc * 31 + ch.charCodeAt(0)) | 0;
-    for (let i = out.length - 1; i > 0; i--) {
-        acc = (acc * 1103515245 + 12345) & 0x7fffffff;
-        const j = acc % (i + 1);
-        [out[i], out[j]] = [out[j], out[i]];
-    }
-    return out;
 }
 
 /** One blank's authored metadata (accept list, hint, placeholder). */
@@ -450,7 +438,10 @@ function ClozeExercise(
     const {t} = useI18n();
     const sentence = exercise.sentence ?? "";
     const blanks = useMemo(() => exercise.blanks ?? [], [exercise.blanks]);
-    const mode: "type" | "select" = exercise.cloze_mode ?? "type";
+    // ``multiselect`` is handled by the dispatch wrapper before reaching
+    // this blank-based renderer, so only type/select arrive here.
+    const mode: "type" | "select" =
+        exercise.cloze_mode === "select" ? "select" : "type";
     const reviewedCloze = reviewed?.kind === "cloze" ? reviewed : null;
 
     const [inputs, setInputs] = useState<string[]>(() =>
@@ -473,7 +464,7 @@ function ClozeExercise(
                 blank.accept[0] ?? "",
                 ...(exercise.distractors ?? []),
             ];
-            return _shuffle(pool, seed);
+            return seededShuffle(pool, seed);
         });
     }, [exercise.id, exercise.distractors, blanks, mode]);
 
@@ -642,4 +633,32 @@ function ClozeExercise(
     );
 }
 
-export default forwardRef(ClozeExercise);
+const ClozeBlankExercise = forwardRef(ClozeExercise);
+
+/** Dispatch on ``cloze_mode``: the #1195 ``multiselect`` ("select all
+ *  that apply") question renders via the dedicated checkbox component;
+ *  every other mode (``type`` / ``select``) uses the blank-based
+ *  renderer. Both forward the same {@link ExerciseHandle} ref. */
+function ClozeExerciseDispatch(
+    props: ClozeExerciseProps,
+    ref: Ref<ExerciseHandle>,
+) {
+    if (props.exercise.cloze_mode === "multiselect") {
+        return (
+            <ClozeMultiSelect
+                ref={ref}
+                exercise={props.exercise}
+                setId={props.setId}
+                lessonId={props.lessonId}
+                onComplete={props.onComplete}
+                controlled={props.controlled}
+                onInteraction={props.onInteraction}
+                reviewed={props.reviewed}
+                ttsLang={props.ttsLang}
+            />
+        );
+    }
+    return <ClozeBlankExercise ref={ref} {...props} />;
+}
+
+export default forwardRef(ClozeExerciseDispatch);

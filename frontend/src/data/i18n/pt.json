@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "A sua resposta:",
-    "correct_answer": "Correto:",
     "summary_corrected": "{corrected} de {total} corrigidos",
     "summary_trend": "Boa — os seus pontos fracos estão a melhorar.",
     "summary_next": "Os elementos dominados saem; os restantes voltam em breve para revisão.",
@@ -1936,6 +1935,11 @@
         "sentence_label": "Frase com lacunas",
         "blank_label": "Lacuna {n}",
         "select_placeholder": "Escolher…",
+        "multi_group_label": "Selecione todas as que se aplicam",
+        "multi_result_wrong": "Quase. Reveja as opções destacadas.",
+        "multi_badge_correct": "Correto",
+        "multi_badge_wrong": "Errado",
+        "multi_badge_missed": "Omitida",
         "result_correct": "Tudo certo!",
         "result_partial": "{correct} de {total} corretas.",
         "empty": "Este exercício de lacunas não tem lacunas."
@@ -2029,7 +2033,6 @@
         "question": "Pergunta",
         "your_answer": "Sua resposta",
         "no_answer": "(nenhuma)",
-        "correct_answer": "Correto",
         "weak_areas": "Áreas fracas"
       },
       "mark_complete": "Marcar como concluída",

@@ -390,7 +390,6 @@
     "summary_remaining": "Masih ada {n} yang jatuh tempo. Lanjutkan?",
     "another_round": "Putaran lagi",
     "your_answer": "Jawaban Anda:",
-    "correct_answer": "Benar:",
     "summary_corrected": "{corrected} dari {total} diperbaiki",
     "summary_trend": "Bagus — titik lemah Anda semakin kuat.",
     "summary_next": "Item yang dikuasai keluar; sisanya akan kembali untuk ditinjau segera.",
@@ -1936,6 +1935,11 @@
         "sentence_label": "Kalimat isian rumpang",
         "blank_label": "Rumpang {n}",
         "select_placeholder": "Pilih…",
+        "multi_group_label": "Pilih semua yang sesuai",
+        "multi_result_wrong": "Belum tepat. Periksa opsi yang disorot.",
+        "multi_badge_correct": "Benar",
+        "multi_badge_wrong": "Salah",
+        "multi_badge_missed": "Terlewat",
         "result_correct": "Semua benar!",
         "result_partial": "{correct} dari {total} benar.",
         "empty": "Latihan isian rumpang ini tidak memiliki rumpang."
@@ -1991,7 +1995,6 @@
         "question": "Pertanyaan",
         "your_answer": "Jawaban Anda",
         "no_answer": "(tidak ada)",
-        "correct_answer": "Benar",
         "weak_areas": "Area lemah"
       },
       "mark_complete": "Tandai sebagai selesai",

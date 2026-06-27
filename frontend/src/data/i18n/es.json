@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "Tu respuesta:",
-    "correct_answer": "Correcto:",
     "summary_corrected": "{corrected} de {total} corregidos",
     "summary_trend": "Bien: tus puntos débiles van mejorando.",
     "summary_next": "Los elementos dominados desaparecen; el resto vuelve pronto para repaso.",
@@ -1936,6 +1935,11 @@
         "sentence_label": "Frase con huecos",
         "blank_label": "Hueco {n}",
         "select_placeholder": "Elegir…",
+        "multi_group_label": "Selecciona todas las que correspondan",
+        "multi_result_wrong": "Casi. Revisa las opciones resaltadas.",
+        "multi_badge_correct": "Correcto",
+        "multi_badge_wrong": "Incorrecto",
+        "multi_badge_missed": "Omitida",
         "result_correct": "¡Todo correcto!",
         "result_partial": "{correct} de {total} correctos.",
         "empty": "Este ejercicio de huecos no tiene huecos."
@@ -2029,7 +2033,6 @@
         "question": "Pregunta",
         "your_answer": "Tu respuesta",
         "no_answer": "(ninguna)",
-        "correct_answer": "Correcta",
         "weak_areas": "Áreas débiles"
       },
       "mark_complete": "Marcar como completada",
