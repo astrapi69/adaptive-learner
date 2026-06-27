@@ -1,0 +1,498 @@
+# EXP-039: JSON-Schema als Single Source of Truth fuer das Lesson-/Exercise-Format
+
+**Kategorie:** Querschnitt (Schema-Governance, Cross-Repo-Koordination)
+**Phase:** laufend / Fundament
+**Prioritaet:** Hoch
+**Abhaengig von:** EXP-002 (Content-Repository), EXP-003 (Lektionsformat), EXP-004 (GitHub-Organisation)
+**Issue:** astrapi69/adaptive-learner#1193
+**Status:** Design — wartet auf Architekten-Freigabe (Cross-Repo-Architekturentscheidung)
+
+> Dieses Dokument ist **reines Design**. Es liefert **keinen** Code, **kein**
+> fertiges JSON-Schema, **keine** Typ- oder Validator-Aenderung. Es entwirft den
+> Weg zu einem formalen JSON-Schema als autoritative, maschinen- und
+> menschenlesbare Quelle des Aufgaben-/Lesson-Formats. Nach diesem Dokument:
+> **STOPP** zur Freigabe.
+
+---
+
+## Grundprinzip (nicht verhandelbar): App gewinnt
+
+Die App ist die autoritative Definition des Schemas. Das galt fuer
+`accept_orderings` (App-Format hat gewonnen, Content musste nachziehen), das gilt
+fuer die Ausdrucksweise von Multiple-Choice (App definiert, Content folgt) und es
+gilt auch hier: Das JSON-Schema-SoT-Projekt macht die **App-Seite zur Quelle**,
+aus der das maschinenlesbare JSON-Schema abgeleitet/gepflegt wird. Der
+Python-Validator und die Doku im Content-Repo **richten sich danach** — nicht
+umgekehrt. Das Schema gehoert NICHT primaer ins Content-Repo.
+
+Diese Richtung ist im gesamten Dokument fix. Offen ist nur, *welches* App-seitige
+Artefakt die Quelle ist und *wie* das abgeleitete Schema ins Content-Repo gelangt.
+
+---
+
+## Kontext und Motivation
+
+Das Lesson-/Exercise-Format ist das Herzstueck der Plattform: Menschen, KI und
+Tools schreiben, editieren und lesen Aufgaben gegen dieses Format. Genau deshalb
+ist Schema-Drift hier besonders teuer — eine Abweichung bricht entweder das
+Laden bestehender Sets oder laesst korrupte Inhalte durch die Validierung.
+
+Der konkrete Ausloeser ist die `accept_orderings`-Episode: Die App-Seite
+definierte das Feld als `accept_orderings` (eine Liste akzeptierter
+Tile-Index-Permutationen), das Content-Repo verwendete `accepted_orders`. Die
+beiden Definitionen liefen auseinander, weil es **keine geteilte, autoritative
+Quelle** gibt, gegen die beide Seiten pruefen. Die App-Seite war korrekt; das
+Content-Repo musste manuell nachziehen. Dieselbe Klasse Cross-Repo-Koordination
+kann jederzeit erneut zuschlagen, solange das Schema an mehreren Stellen
+parallel von Hand gepflegt wird.
+
+Ziel: **EINE** autoritative Quelle in der App, aus der alle anderen Artefakte
+abgeleitet oder gegen die sie geprueft werden — sodass Drift entweder
+strukturell unmoeglich (generiert) oder im CI sofort sichtbar (drift-checked)
+wird.
+
+---
+
+## 1. Ist-Aufnahme (Verify-First)
+
+Verifiziert gegen den Code-Stand auf `develop` (Branch
+`claude/json-schema-sot-design-4jy6ve`, Stand 2026-06-27). Das Schema lebt heute
+an **sieben** Stellen — vier mehr als die naive Annahme "TS-Typen + Validator +
+Doku". Jede Stelle ist eine potenzielle Drift-Quelle.
+
+### 1.1 Wo das Schema heute definiert ist
+
+| # | Artefakt | Repo | Art | Vollstaendigkeit | Pflege |
+|---|----------|------|-----|------------------|--------|
+| 1 | `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py` | App | Pydantic v2 Modelle (`Lesson`/`LessonStep`/`Exercise`/`Card`/`ClozeBlank`/`CardTokenRole`), `extra="forbid"`, feldweise + typ-spezifische Validatoren | **Feldvollstaendig + Runtime-erzwingend** | Hand |
+| 2 | `frontend/src/storage/types/content/content.ts` | App | TS-Interfaces (`ContentLesson*`) | Typ-Ebene, **kein** Runtime-Check; explizit "mirrored from `schema.Lesson`" | Hand |
+| 3 | `frontend/src/lib/content/content-validator.ts` (~445 LOC) | App | TS-Runtime-Validator: Schema-Shape **+** Quality-Minimums; Dexie-Modus + Community-Share-Gate | Shape + Quality; **Paritaets-Vertrag** mit #4 | Hand |
+| 4 | `docs/ci/adaptive-learner-content/scripts/validate_content.py` (291 LOC, Mirror des Content-Repo-CI) | App (Mirror) / Content | stdlib + PyYAML Re-Implementierung: Quality/Struktur/Sprachpaar | **NICHT feldvollstaendig** (kennt z. B. `accept_orderings`/Cloze-Regeln nicht) | Hand |
+| 5 | `plugins/.../models.py` `CURRENT_SCHEMA_VERSION = "1.4"` + `is_supported_schema_version` | App | Versions-Konstante (Major-Match `v1.x`) | Versions-Gate | Hand |
+| 6 | `frontend/src/lib/ai/generation/exercise-generation-prompt.ts` | App | KI-Prompt, kodiert "die fuenf Typen" + erlaubte Felder fuer die Generierung | Generierungs-Kontext | Hand |
+| 7 | `LESSON-FORMAT.md` | Content | Menschenlesbare Autoren-Doku | Prosa | Hand |
+
+Beobachtung: Die im Auftrag genannten "TS-Typen / Validator / Doku" sind nur
+drei von sieben Flaechen. Insbesondere ist die **faktisch fuehrende** Definition
+NICHT die TS-Typen, sondern das Pydantic-Modell (#1) — es ist das einzige
+Artefakt, das das Format zur Download-/Lade-Zeit *erzwingt* (`extra="forbid"`,
+typ-spezifische `model_validator`-Regeln). Die TS-Typen (#2) sind ausdruecklich
+ein handgepflegter Spiegel davon.
+
+### 1.2 Was jede Stelle abdeckt (und was nicht)
+
+- **#1 Pydantic `schema.py`** — die Wahrheit zur Ladezeit. `ExerciseType`-Enum
+  mit fuenf Werten (`matching`, `picture_choice`, `free_text`, `word_tiles`,
+  `cloze`). Pro Typ erzwingen `model_validator`-Methoden die Pflichtfelder
+  (MATCHING braucht `pairs`; PICTURE_CHOICE genau ein `is_correct: "true"`;
+  WORD_TILES `accept_orderings` als echte Permutation; CLOZE `sentence`-Marker ==
+  `len(blanks)`). Referenzielle Integritaet: jede `exercise.card_ids`-Referenz
+  muss in `cards` existieren. Slug-Regex auf allen IDs.
+- **#2 TS-Interfaces** — exakt dieselbe Form als TypeScript, aber **nur statisch**
+  (TS-Interfaces validieren zur Laufzeit nichts). Subtile Form-Kopplung von Hand:
+  z. B. `images: Array<{ src; label; is_correct?: string }>` — `is_correct` ist
+  ein *string-getyptes* Boolean (`"true"`), das beide Seiten unabhaengig so
+  kodieren muessen.
+- **#3 TS-Runtime-Validator** — der eigentliche Laufzeit-Check im Dexie-Modus +
+  das Gate vor dem Community-Share. Deckt Schema-Shape **und** Quality-Minimums
+  ab (>= 5 Uebungen, >= 2 Typen, Distractor-Regeln, keine leeren Karten). Steht
+  laut #699 in einem "byte-for-byte"-Paritaets-Vertrag mit #4.
+- **#4 Content-Repo `validate_content.py`** — die zweite, **separate**
+  Validierungs-Ebene (stdlib-only, damit das Content-CI ohne App-Installation
+  laeuft). Prueft Quality-Minimums + Verzeichnisstruktur (`sets/{source}/
+  {target-level}`) + Sprachpaar + Skript-Heuristik. Prueft **nicht**: `extra=
+  "forbid"`, Feldtypen, `accept_orderings`-Permutationen, Cloze-Marker-Anzahl,
+  das Picture-Choice-Single-Correct-Invariant. D. h. #1 und #4 pruefen
+  **verschiedene** Dinge: ein Lesson, das #1 ablehnt, kann das Content-CI
+  bestehen — und das Content-CI erzwingt Quality-Schwellen, die #1 gar nicht
+  kennt.
+- **#5 `CURRENT_SCHEMA_VERSION = "1.4"`** — die Versionsnummer + die
+  Major-Match-Logik (`v1.x` wird akzeptiert). Eine additive Feld-Erweiterung ist
+  ein Minor-Bump; ein neuer Exercise-Typ ist ein Minor-Bump.
+- **#6 KI-Generierungs-Prompt** — eine vierte Stelle, die "die fuenf Typen" und
+  ihre erlaubten Felder von Hand auffuehrt. Heute *bewusst* synchron gehalten
+  (siehe Multiple-Choice unten), aber strukturell ungebunden.
+- **#7 `LESSON-FORMAT.md`** — die Autoren-Doku im Content-Repo. Reine Prosa, kein
+  maschineller Drift-Check gegen irgendeine der sechs Code-Stellen.
+
+### 1.3 Welche Stelle heute faktisch fuehrt
+
+**Pydantic `schema.py` (#1) fuehrt** — es ist das einzige feldvollstaendige,
+Runtime-erzwingende Artefakt, und alle anderen Code-Stellen sind als Spiegel/
+Teilmengen davon dokumentiert (#2 explizit "mirrored from `schema.Lesson`"). Der
+Auftrag nominiert die TS-Typen (#2) als App-Master; die Verifikation zeigt aber,
+dass die **eigentliche** Autoritaet das Pydantic-Modell ist. Das ist eine
+relevante Korrektur fuer die Richtungsentscheidung in Abschnitt 3 (die
+App-interne Quelle ist selbst gespalten — Pydantic vs. TS — und das ist die
+*erste* zu treffende Entscheidung, noch vor der Cross-Repo-Frage).
+
+### 1.4 Gefundene bzw. latente Drift
+
+- **`accept_orderings` vs. `accepted_orders`** (historisch, der Ausloeser): App =
+  `accept_orderings` (bestaetigt in #1 `schema.py:458` und #2 `content.ts:140`).
+  Content verwendete `accepted_orders` und musste auf die App-Form korrigiert
+  werden.
+- **Multiple-Choice — eine *vermiedene* Drift, kein gemergter Typ.** Der Auftrag
+  nahm an, `multiple_choice` (#890) sei "schon gemergt, Content zieht nach". Die
+  Verifikation widerlegt das: `multiple_choice` ist **kein** Schema-Typ. Weder
+  `schema.py` (#1) noch `content.ts` (#2) kennen ihn; der KI-Prompt (#6) sagt
+  ausdruecklich "there is deliberately no `multiple_choice` (it is not a schema
+  type; MC is expressed via a `cloze` in select mode). See EXP-036 §4.3." Das ist
+  ein Beispiel fuer eine Entscheidung, die *heute nur in Prosa-Kommentaren* lebt
+  und die ein formales Schema explizit machen wuerde (geschlossenes
+  `ExerciseType`-Enum => `multiple_choice` ist strukturell ungueltig, nicht nur
+  per Kommentar).
+- **#1 vs. #4 pruefen disjunkte Regelmengen** (siehe 1.2): Feld-Schema lebt nur
+  in #1/#2/#3; Quality-Minimums nur in #3/#4. Es gibt **keine** Stelle, die beide
+  Mengen zusammen autoritativ haelt. Das ist die strukturelle Wurzel der
+  Drift-Anfaelligkeit.
+- **string-getyptes Boolean** `is_correct: "true"` (#2 vs. #1) — eine
+  handkodierte Form-Kopplung, die ein generiertes Schema vereinheitlichen wuerde.
+- **#6 (KI-Prompt) und #7 (Doku)** haengen an **keiner** maschinellen
+  Pruefung — sie driften lautlos, bis ein Mensch es bemerkt.
+
+---
+
+## 2. Zielbild
+
+Eine autoritative, **maschinenlesbare** JSON-Schema-Definition aller Lesson-/
+Exercise-Strukturen, **verankert auf der App-Seite**.
+
+- **Draft:** JSON Schema **2020-12** (aktueller, breit unterstuetzter Draft;
+  `$defs`, `unevaluatedProperties`, `prefixItems` fuer Tupel wie
+  `accept_orderings`-Permutationen, discriminator-faehiges `oneOf`/`if-then` fuer
+  typ-spezifische Exercise-Formen).
+- **Ein kanonisches Artefakt**, z. B. `schema/lesson.schema.json` im App-Repo, mit
+  `$id` und `$schema`, versioniert parallel zu `CURRENT_SCHEMA_VERSION`.
+- **Eigenschaften:**
+  - **IDE-Autocomplete:** Autoren bekommen per `$schema`-Verweis (oder
+    `.vscode/settings.json` `json.schemas`-Mapping auf `lessons/*.json`)
+    Vervollstaendigung + Inline-Fehler beim Editieren.
+  - **KI-Kontext:** das JSON-Schema ist ein kompakter, vollstaendiger
+    Format-Kontext, den der Generierungs-Prompt (#6) referenzieren oder einbetten
+    kann — statt die Typliste erneut von Hand zu pflegen.
+  - **Maschinell validierbar:** ein Standard-Validator (Python `jsonschema`, JS
+    `ajv`) prueft jede Lesson-Datei gegen genau dieselbe Definition — App-Seite,
+    Content-CI und lokales Autoren-Tooling.
+- **Grenze (bewusst benannt):** Vanilla-JSON-Schema deckt **Struktur** ab
+  (Felder, Typen, Enums, Pflicht/Optional, typ-spezifische Form via
+  `if/then`/`oneOf`). Es deckt **nicht** alle *semantischen* Querbezuege ab, die
+  heute imperativ in Pydantic-`model_validator` und im TS-Validator leben:
+  referenzielle Integritaet (`card_ids` -> `cards`), `sentence.count("___") ==
+  len(blanks)`, die Quality-Minimums (>= 5 Uebungen ...). Das Zielbild ist
+  deshalb **zweischichtig**: JSON-Schema fuer die Struktur (autoritativ,
+  generiert/geteilt) **+** eine duenne, klar abgegrenzte Semantik-/Quality-Schicht
+  obendrauf, die ebenfalls aus der App-Quelle stammt. Wichtig ist, dass die
+  *Struktur*-Schicht nicht mehr an mehreren Stellen von Hand gepflegt wird.
+
+---
+
+## 3. Konsistenz-Strategie (der Kern: keine vierte driftende Quelle)
+
+Die zentrale Gefahr ist, ein JSON-Schema einfach *zusaetzlich* zu den heutigen
+sieben Flaechen zu legen — dann gibt es eine achte Stelle, die driften kann. Das
+JSON-Schema muss **gebunden** sein: entweder generiert (Drift strukturell
+unmoeglich) oder per CI-Drift-Check (Drift sofort sichtbar). Alle Optionen unten
+halten die autoritative Definition **im App-Repo** (App gewinnt).
+
+### 3.1 TS-Typen <-> JSON-Schema: Richtung
+
+Der Auftrag rahmt zwei Optionen:
+
+- **Option A — Typcode ist die Quelle, JSON-Schema wird generiert.**
+  Tooling: `ts-json-schema-generator` (aus TS-Typen) bzw. — und das ist die
+  entscheidende Verifikations-Erkenntnis — **Pydantic v2 `model_json_schema()`**
+  (aus den Pydantic-Modellen). Pydantic emittiert Draft-2020-12-JSON-Schema
+  **nativ**, ohne Zusatz-Dependency.
+- **Option B — JSON-Schema ist die Quelle, Typcode wird generiert.**
+  Tooling: `json-schema-to-typescript` (-> TS-Interfaces);
+  `datamodel-code-generator` (-> Pydantic).
+
+In **beiden** Faellen liegt die autoritative Definition im App-Repo.
+
+**Empfehlung: Option A, mit Pydantic `schema.py` als Quelle** (eine Praezisierung
+der A/B-Rahmung — der getypte Quell-Code ist Pydantic, nicht TS):
+
+```
+schema.py  (Pydantic v2, HAND-gepflegt, autoritativ, App gewinnt)
+   |  model_json_schema()  (nativ, keine Extra-Dependency)
+   v
+lesson.schema.json  (Draft 2020-12, GENERIERT, eingecheckt)
+   |  json-schema-to-typescript
+   v
+content.ts  (TS-Interfaces, GENERIERT statt handgepflegt)
+```
+
+Begruendung:
+
+1. **Pydantic ist heute schon die faktische Autoritaet** (Abschnitt 1.3) und das
+   einzige feldvollstaendige Runtime-Artefakt. Es zur Quelle zu machen, formalisiert
+   den Ist-Zustand, statt die Autoritaet kuenstlich zu den (gespiegelten,
+   nicht-erzwingenden) TS-Typen zu verschieben.
+2. **`model_json_schema()` ist kostenlos** — kein `ts-json-schema-generator`,
+   keine zweite Toolchain. Ein `make sync-schema`-Target (analog zu den
+   bestehenden `sync-*`-Targets) ruft es auf und schreibt `lesson.schema.json`.
+3. **Der handgepflegte TS-Spiegel (#2) wird generiert** — die Drift-anfaelligste
+   Flaeche verschwindet als Hand-Arbeit (`json-schema-to-typescript`).
+4. **Wer editiert?** Schema-Aenderungen sind Pydantic-Aenderungen — also dort, wo
+   die typ-spezifischen `model_validator`-Regeln ohnehin schon leben. Ein Autor,
+   der einen Exercise-Typ erweitert, fasst genau eine Datei an; die anderen drei
+   Artefakte (JSON-Schema, TS-Typen, Content-Mirror) fallen daraus ab.
+
+Gegen Option B (JSON-Schema von Hand als Quelle): JSON-Schema von Hand zu pflegen
+ist fehleranfaelliger als Pydantic (kein Typchecker, kein Test-Harness am Schema
+selbst), und die imperative Semantik-Schicht (`model_validator`) bleibt ohnehin in
+Pydantic — zwei Quellen statt einer. Gegen "TS als Quelle": die TS-Interfaces
+erzwingen nichts zur Laufzeit; sie zur Autoritaet zu erheben verschoebe die
+Wahrheit weg vom einzigen erzwingenden Artefakt.
+
+> Offene Entscheidung fuer die Freigabe: A (Pydantic-Quelle, empfohlen) vs. B
+> (JSON-Schema-Quelle). Beide App-autoritativ. Siehe Abschnitt 7.
+
+### 3.2 Python-Validator (Content-Repo) folgt dem App-Schema
+
+Heute ist `validate_content.py` (#4) eine **eigenstaendige Re-Implementierung**.
+Zielbild: der Content-Validator validiert die *Struktur* kuenftig **gegen das aus
+der App stammende `lesson.schema.json`** (via stdlib-naher `jsonschema`-Bibliothek)
+statt die Feldregeln zu duplizieren. Seine Daseinsberechtigung bleibt die
+**Quality-/Semantik-Schicht** (>= 5 Uebungen, >= 2 Typen, Sprachpaar-/Skript-
+Heuristik) — diese Schicht ist content-politisch, nicht Format-strukturell, und
+darf im Content-Repo bleiben, solange sie ebenfalls aus einer App-Quelle gespeist
+wird (siehe 3.3).
+
+Der Validator **folgt** dem App-Schema, er **definiert** es nicht. Falls
+`jsonschema` als Dependency im Content-CI unerwuenscht ist (heute bewusst
+stdlib-only), ist die Alternative ein CI-Job, der das Content-Repo gegen das
+gespiegelte App-Schema prueft — die Pruefung bleibt App-autoritativ, nur der
+Validator-Standort variiert.
+
+### 3.3 Quality-/Semantik-Regeln: ebenfalls aus der App
+
+Die Quality-Minimums leben heute doppelt (#3 TS-Validator `content-validator.ts`
+und #4 Python-Validator) mit einem "byte-for-byte"-Paritaets-Vertrag (#699). Das
+ist dieselbe Drift-Klasse eine Ebene hoeher. Zwei Wege:
+
+- **(a)** Die Quality-Schwellen als **maschinenlesbare Config** (z. B.
+  `schema/quality-rules.json`: `min_exercises: 5`, `min_types: 2`, ...) aus der
+  App exportieren; beide Validatoren lesen dieselbe Config statt sie zu
+  hardcoden. Klein, sofort umsetzbar, beseitigt die Zahlen-Drift.
+- **(b)** Laengerfristig die *strukturell ausdrueckbaren* Quality-Regeln ins
+  JSON-Schema heben (`minItems`, `minContains`, `oneOf`), nur die wirklich
+  imperativen (Skript-Heuristik, "zwei *distinct* Typen") in Code lassen.
+
+Empfehlung: (a) als Teil dieses Projekts (es ist die zweite Haelfte der "keine
+vierte Quelle"-Disziplin); (b) als Folge-Option benennen, nicht erzwingen.
+
+### 3.4 LESSON-FORMAT.md (Content-Repo): generiert oder drift-gecheckt
+
+Zwei Optionen, beide binden die Doku an das App-Schema:
+
+- **Generiert:** ein Doc-Generator rendert `LESSON-FORMAT.md` aus
+  `lesson.schema.json` (`description`-Felder + Beispiele) — die Doku kann nicht
+  driften, weil sie ein Build-Artefakt ist.
+- **Manuell + CI-Drift-Check:** die Prosa bleibt von Hand, ein CI-Job prueft, dass
+  jeder im Schema definierte Typ/jedes Feld in der Doku erwaehnt ist (analog zum
+  bestehenden `verify-docs.py`-Muster der App).
+
+Empfehlung: **generiert** fuer den Feld-/Typ-Referenzteil (Tabelle aller Felder),
+**manuell** fuer den erklaerenden Prosa-Teil (Beispiele, Best Practices) mit einem
+leichten Drift-Check, dass kein Typ fehlt. Pydantics `Field(description=...)` ist
+bereits reich befuellt (siehe `schema.py`) — der Referenzteil faellt nahezu
+kostenlos ab.
+
+### 3.5 KI-Generierungs-Prompt (#6) bindet ans Schema
+
+Der Prompt fuehrt heute "die fuenf Typen" von Hand auf. Zielbild: er liest die
+erlaubten Typen/Felder aus `lesson.schema.json` (oder bettet das Schema als
+Kontext ein), statt sie zu duplizieren — so kann die KI nie einen Typ erzeugen,
+den das Schema nicht kennt, und ein neuer Typ wird der KI automatisch bekannt.
+
+### 3.6 Zielbild der Bindungen (Uebersicht)
+
+```
+                         schema.py (Pydantic, HAND, App gewinnt)
+                                  |
+                    model_json_schema() / make sync-schema
+                                  |
+                                  v
+                    schema/lesson.schema.json  (Draft 2020-12, GENERIERT)
+        ________________________|________________________________
+       |                |                |              |          |
+       v                v                v              v          v
+  content.ts       TS-Validator     KI-Prompt    LESSON-FORMAT   Content-Repo
+ (GENERIERT)     (Struktur ←        (liest        (Referenz       validate_content.py
+                  Schema; Quality    Schema)       generiert)     (Struktur ← Schema,
+                  ← quality-rules)                                 Quality ← quality-rules)
+```
+
+Statt sieben handgepflegter Parallel-Definitionen: **eine** handgepflegte Quelle
+(Pydantic) + **eine** maschinenlesbare Ableitung (JSON-Schema) + lauter
+generierte/geprueete Sekundaerartefakte.
+
+---
+
+## 4. Cross-Repo-Strategie (App -> Content)
+
+Das App-autoritative `lesson.schema.json` muss dem Content-Repo verfuegbar sein,
+damit dessen Validator + Doku darauf aufsetzen. Richtung ist fix: **App ist
+Quelle, Content konsumiert.** Optionen:
+
+| Option | Mechanik | Pro | Contra |
+|--------|----------|-----|--------|
+| **A. Mirror + CI-Drift-Check** | App-Repo haelt die kanonische `lesson.schema.json`; Content-Repo haelt eine eingecheckte Kopie; ein CI-Job im Content-Repo (und/oder App-Release-Gate) schlaegt fehl, wenn die Kopie abweicht | Kein Package-Infra; deterministisch; **exakt das bereits etablierte Muster** (`docs/ci/adaptive-learner-content/` spiegelt heute schon den Content-Validator ins App-Repo); offline-tauglich | Kopie muss aktiv synchron gehalten werden (vom Drift-Check erzwungen) |
+| **B. Publiziertes Artefakt (npm/PyPI)** | App publiziert das Schema als versioniertes Paket; Content zieht es als Dependency | Saubere Versionierung; Standard-Toolchain | Neue Release-/Publish-Pipeline; Latenz zwischen App-Aenderung und Content-Verfuegbarkeit; Overkill fuer eine JSON-Datei |
+| **C. git-Referenz (Submodule / Raw-URL)** | Content liest das Schema per Submodule oder GitHub-Raw-URL aus dem App-Repo | Eine Quelle physisch, kein Kopieren | Submodule sind operativ fragil; Raw-URL-Fetch im CI ist nicht-deterministisch/netzabhaengig (vgl. lessons-learned zu Raw-Fetch-Bruechen) |
+| **D. Build-time-Copy** | Ein Build-Schritt kopiert das Schema beim Content-Build aus dem App-Repo | Kein eingecheckter Duplikat | Setzt einen gemeinsamen Build-Kontext voraus, den die Repos nicht teilen |
+
+**Empfehlung: Option A (Mirror + CI-Drift-Check).**
+
+Begruendung — es ist **kein neues Muster, sondern das vorhandene**: Das App-Repo
+spiegelt heute bereits `validate_content.py` + `validate-content.yml` unter
+`docs/ci/adaptive-learner-content/` als kanonische Kopie, die das Content-Repo
+uebernimmt. Denselben Mechanismus auf `lesson.schema.json` auszudehnen ist die
+geringste neue Komplexitaet, ist deterministisch (kein Netz-Fetch im CI) und hat
+mit dem `verify_version_pins.sh`/`sync-*`-Apparat der App schon die passende
+Werkzeugklasse (generieren + `--check`-Drift-Gate). Die `accept_orderings`-Episode
+war genau diese Cross-Repo-Koordination ohne Master-Richtung — Option A loest sie
+mit klarer App->Content-Richtung und einem CI-Gate, das die Abweichung sichtbar
+macht, bevor sie Inhalte bricht.
+
+Option B bleibt der spaetere Pfad, falls ein dritter Konsument (mehrere
+Content-Repos, externe Tools) das Schema braucht — dann lohnt die Package-Infra.
+
+---
+
+## 5. Beitragenden-Workflow (Mensch / KI / Tool)
+
+Wo das Schema liegt: **kanonisch im App-Repo** (`schema/lesson.schema.json`,
+generiert aus Pydantic), **gespiegelt im Content-Repo** (fuer Content-Autoren, die
+nur das Content-Repo ausgecheckt haben).
+
+### 5.1 Mensch (Content-Autor)
+
+1. Editiert `lessons/NN-slug.json` im Content-Repo.
+2. Die Datei traegt `"$schema": "./.schema/lesson.schema.json"` (oder ein
+   `.vscode/settings.json`-Mapping auf `lessons/*.json`) — die IDE liefert
+   Autocomplete + Inline-Validierung gegen das gespiegelte App-Schema.
+3. Lokal: `python -m jsonschema` / ein `make validate`-Target prueft Struktur
+   (Schema) **+** Quality (quality-rules) vor dem Commit.
+4. CI: `validate_content.py` prueft beides erneut serverseitig.
+
+### 5.2 KI
+
+- Erhaelt `lesson.schema.json` als Kontext (kompakt, vollstaendig) und generiert
+  strukturell gueltige Lessons; der Generierungs-Prompt (#6) referenziert das
+  Schema statt einer handgepflegten Typliste.
+- Dieselbe Schema-Datei dient als Validierungs-Gate fuer KI-Output, bevor er
+  gespeichert/geteilt wird.
+
+### 5.3 Tool (Lesson Creator, Importer, Adaptive-Snapshot)
+
+- App-interne Generatoren (Lesson Creator EXP-021, Analyse->Lesson, Adaptive-
+  Snapshot) validieren ihren Output gegen dasselbe Pydantic-Modell (heute schon)
+  — nach diesem Projekt ist klar, dass dieses Modell *die* Quelle ist, aus der das
+  JSON-Schema faellt, sodass app-interne und externe Tools garantiert dieselbe
+  Definition sehen.
+
+### 5.4 Autocomplete-Quelle
+
+`$schema`-Verweis in der Lesson-Datei **oder** `json.schemas`-Mapping in
+`.vscode/settings.json` — beide zeigen auf die (gespiegelte) `lesson.schema.json`.
+Kein Plugin noetig; VS Code / die meisten Editoren validieren JSON gegen ein
+verlinktes Schema nativ.
+
+---
+
+## 6. Migration (abwaertskompatibel, ohne bestehende Sets zu brechen)
+
+Leitplanke: **keine** bestehende Lesson darf nach der Migration ungueltig werden.
+Das JSON-Schema muss anfangs exakt das beschreiben, was Pydantic heute akzeptiert
+(inkl. aller optionalen/additiven Felder bis `CURRENT_SCHEMA_VERSION = 1.4`).
+
+Schrittfolge (Reihenfolge so, dass jeder Schritt fuer sich gruen ist):
+
+1. **(App / CCW) Schema-Generierung verdrahten, read-only.** `make sync-schema`
+   ruft `model_json_schema()` und schreibt `schema/lesson.schema.json`. Noch kein
+   Konsument; reine Erzeugung + ein Test, dass das Schema jede gebuendelte
+   Beispiel-Lesson akzeptiert (Abwaertskompatibilitaets-Beweis gegen `sample-
+   content/` + die ausgelieferten Sets).
+2. **(App / CCW) TS-Typen aus dem Schema generieren.** `content.ts` wird zum
+   Build-Artefakt (`json-schema-to-typescript`); ein Test pinnt, dass die
+   generierten Typen die heutigen Interfaces formgleich ersetzen (kein
+   Verhaltens-/Compile-Bruch).
+3. **(App / CCW) quality-rules.json exportieren** und den TS-Validator (#3) +
+   spaeter den Content-Validator (#4) daraus lesen lassen (Zahlen-Drift beseitigt).
+4. **(App / CCW) Drift-Gate.** `make sync-schema --check` ins Release-Gate
+   (analog `sync-versions-check`): ein nicht regeneriertes Schema blockt den Tag.
+5. **(App / CCW) KI-Prompt + LESSON-FORMAT-Referenzteil ans Schema binden.**
+6. **(Content / CCWc) Schema-Mirror + Drift-Check.** `lesson.schema.json` ins
+   Content-Repo spiegeln; CI-Job, der gegen die App-Kopie prueft (Option A).
+7. **(Content / CCWc) `validate_content.py` auf Schema-Validierung umstellen**
+   (Struktur via `jsonschema`/Mirror; Quality via quality-rules), unter Erhalt des
+   bestehenden Paritaets-Vertrags, bis die geteilte Quelle ihn ersetzt.
+8. **(Content / CCWc) `$schema`-Verweis / `.vscode`-Mapping** in den
+   Lesson-Dateien + Autoren-Doku, damit Autoren Autocomplete bekommen.
+
+Versionierung: das Schema traegt `CURRENT_SCHEMA_VERSION`; additive Felder bleiben
+Minor-Bumps (Major-Match-Gate unveraendert), sodass aeltere Sets weiter laden.
+
+Aufteilung: Schritte 1-5 sind **App-Repo (CCW)**, 6-8 sind **Content-Repo (CCWc)**.
+Die App-Seite kann vollstaendig zuerst landen (sie bricht nichts, solange das
+Schema nur generiert + getestet wird); das Content-Repo zieht nach.
+
+---
+
+## 7. Offene Fragen / Entscheidungen fuer die Freigabe
+
+1. **TS <-> JSON-Schema-Richtung (Abschnitt 3.1).** Empfehlung: **Option A mit
+   Pydantic als Quelle** (App-autoritativ, `model_json_schema()` nativ, TS +
+   Schema generiert). Alternative: Option B (JSON-Schema von Hand als Quelle, TS +
+   Pydantic generiert). Beide App-autoritativ. **Entscheidung des Architekten.**
+   Nuance: der Auftrag nominierte die *TS-Typen* als App-Master; die Verifikation
+   zeigt, dass das *Pydantic-Modell* faktisch fuehrt — die Empfehlung folgt dem
+   Ist-Zustand.
+2. **Cross-Repo-Sync-Methode (Abschnitt 4).** Empfehlung: **Option A (Mirror +
+   CI-Drift-Check)** — deckt sich mit dem bereits etablierten
+   `docs/ci/adaptive-learner-content/`-Muster. Alternativen B/C/D benannt.
+3. **Semantik-/Quality-Schicht (Abschnitt 3.3).** Geteilte `quality-rules.json`
+   jetzt (empfohlen) vs. Quality-Regeln spaeter strukturell ins JSON-Schema heben.
+4. **LESSON-FORMAT.md (Abschnitt 3.4):** Referenzteil generieren (empfohlen) vs.
+   vollstaendig manuell mit Drift-Check.
+5. **`jsonschema` als Content-CI-Dependency** (Abschnitt 3.2): das bewusst
+   stdlib-only gehaltene Content-CI um `jsonschema` erweitern vs. Struktur-Check
+   als App-Release-Gate gegen die Content-Sets fuehren.
+6. **Multiple-Choice (Abschnitt 1.4):** bestaetigen, dass MC bewusst **kein**
+   eigener Schema-Typ bleibt (Ausdruck via `cloze`-select, EXP-036 §4.3) — das
+   geschlossene `ExerciseType`-Enum macht diese Entscheidung im Schema explizit.
+7. **Implementierungs-Aufteilung:** CCW (App: Schema-Generierung, TS-Typen,
+   quality-rules, Drift-Gate, KI-Prompt) vs. CCWc (Content: Mirror, Validator-
+   Umstellung, Autoren-Doku/Autocomplete). Schritte gemaess Abschnitt 6.
+
+---
+
+## Questions and assumptions
+
+- **Annahme (konservativ):** Der Auftrag nennt die TS-Typen als App-Master; die
+  Code-Verifikation zeigt, dass das Pydantic-Modell `schema.py` faktisch fuehrt
+  (einziges feldvollstaendiges Runtime-Artefakt, TS explizit als Mirror
+  dokumentiert). Das Dokument folgt dem verifizierten Ist-Zustand und legt die
+  Richtungsfrage als offene Entscheidung 7.1 vor — statt die Auftrags-Annahme
+  ungeprueft zu uebernehmen.
+- **Korrektur der Auftrags-Praemisse:** `multiple_choice` (#890) ist **nicht**
+  als Schema-Typ gemergt; er ist bewusst kein Typ (Ausdruck via `cloze`-select,
+  belegt im KI-Prompt-Kommentar + EXP-036 §4.3). Im Sinne von GITHUB-ISSUE-PFLICHT
+  Punkt 4 wurde dies als Befund festgehalten, nicht als gemergter Typ behandelt.
+- **Nicht eingesehen:** der Inhalt des Content-Repos selbst (`LESSON-FORMAT.md`,
+  die echten `lessons/*.json`) — der GitHub-Zugriff dieser Session ist auf
+  `astrapi69/adaptive-learner` beschraenkt. Aussagen ueber das Content-Repo
+  stuetzen sich auf den App-internen Mirror (`docs/ci/adaptive-learner-content/`)
+  und die dokumentierten Konventionen. Fuer die Content-Repo-Schritte (CCWc) ist
+  eine Verifikation im Content-Repo Teil der Umsetzung.
+- **Keine STOP-blockierende Frage** ist aufgetreten; der Auftrag war als
+  autonomes Design formuliert. Alle Richtungsentscheidungen sind als Abschnitt 7
+  zur Freigabe vorgelegt.
+
+---
+
+*EXP-039, erstellt 2026-06-27. Reines Design — wartet auf Architekten-Freigabe
+vor jeder Umsetzung. Issue: astrapi69/adaptive-learner#1193.*
