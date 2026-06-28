@@ -2845,6 +2845,14 @@
     }
   },
   "share": {
+    "menu": {
+      "heading": "共有",
+      "facebook": "Facebookで共有",
+      "linkedin": "LinkedInで共有",
+      "x": "Xで共有",
+      "whatsapp": "WhatsAppで共有",
+      "copy": "クリップボードにコピー"
+    },
     "app": {
       "heading": "アプリを共有",
       "qr_intro": "QRコードでアプリを共有し、他の人がすぐに開けるようにします。",

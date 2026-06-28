@@ -2845,6 +2845,14 @@
     }
   },
   "share": {
+    "menu": {
+      "heading": "Partager",
+      "facebook": "Partager sur Facebook",
+      "linkedin": "Partager sur LinkedIn",
+      "x": "Partager sur X",
+      "whatsapp": "Partager sur WhatsApp",
+      "copy": "Copier dans le presse-papiers"
+    },
     "app": {
       "heading": "Partager l'application",
       "qr_intro": "Partage l'application par code QR pour que d'autres puissent l'ouvrir.",

@@ -51,6 +51,14 @@ export default function ShareResultButton({
             label={shareCtaLabel(result, t)}
             variant={variant}
             iconOnly={iconOnly}
+            menuLabels={{
+                heading: t("share.menu.heading", "Share"),
+                facebook: t("share.menu.facebook", "Share on Facebook"),
+                linkedin: t("share.menu.linkedin", "Share on LinkedIn"),
+                x: t("share.menu.x", "Share on X"),
+                whatsapp: t("share.menu.whatsapp", "Share on WhatsApp"),
+                copy: t("share.menu.copy", "Copy to clipboard"),
+            }}
             getFiles={async () => {
                 const blob = await renderLessonShareImage(result, t);
                 if (!blob) return null;
