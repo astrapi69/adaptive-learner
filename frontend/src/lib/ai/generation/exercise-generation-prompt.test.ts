@@ -64,6 +64,36 @@ describe("buildExerciseGenerationPrompt", () => {
     expect(prompt).toMatch(/Invent nothing/i);
   });
 
+  it("couples type choice to learning goal (suitability beats variety) — EXP-041", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toMatch(/TYPE SELECTION/i);
+    expect(prompt).toMatch(/suitability beats variety/i);
+  });
+
+  it("restricts word_tiles to fixed-order sentences and forbids it for free definitions — EXP-041", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toMatch(/word_tiles ONLY for a sentence with ONE fixed/i);
+    expect(prompt).toMatch(/NEVER for free definitions/i);
+  });
+
+  it("routes single-answer definitions to cloze or picture_choice, not word_tiles — EXP-041", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toMatch(/definition or fact with ONE correct answer -> cloze/i);
+    expect(prompt).toMatch(/Do NOT model it as\s+word_tiles/i);
+  });
+
+  it("forbids exact-match types for free explanations / 'in your own words' goals — EXP-041", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toMatch(/in your own words/i);
+    expect(prompt).toMatch(/do NOT create an exact-match type/i);
+  });
+
+  it("keeps the variety floor while subordinating it to suitability — EXP-041", () => {
+    const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
+    expect(prompt).toMatch(/at least 3 DIFFERENT exercise types/i);
+    expect(prompt).toMatch(/suitability beats variety/i);
+  });
+
   it("derives the language from the theory (German here) and states it", () => {
     const prompt = buildExerciseGenerationPrompt(ANSIBLE_STEPS);
     expect(prompt).toContain("(de)");

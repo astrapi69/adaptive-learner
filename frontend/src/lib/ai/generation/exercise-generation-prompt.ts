@@ -16,6 +16,11 @@
  * fails this file until the prompt is updated. There is deliberately no
  * ``multiple_choice`` (it is not a schema type; MC is expressed via a
  * ``cloze`` in select mode). See EXP-036 §4.3 + EXP-039.
+ *
+ * EXP-041 (Refs #1222): the prompt couples exercise type to learning goal
+ * ("suitability beats variety") so the model stops choosing an exact-match
+ * type (``word_tiles``) for free definitions/explanations, which would mark
+ * a correct-but-differently-worded learner answer as wrong.
  */
 
 import type { ExerciseType as SchemaExerciseType } from "../../../storage/types/content/lesson-schema.generated";
@@ -140,13 +145,31 @@ export function buildExerciseGenerationPrompt(
     `- Write every exercise in the same language as the theory (${language}).`,
     "- Use ONLY content that appears in the theory. Invent nothing; do not",
     "  add facts, terms, or modules the text does not mention.",
-    "- Produce at least 3 DIFFERENT exercise types across the set.",
+    "- Produce at least 3 DIFFERENT exercise types across the set — but only",
+    "  types that suit each concept (suitability beats variety; see TYPE",
+    "  SELECTION below).",
     "- Allowed types ONLY: matching, picture_choice, free_text, word_tiles,",
     "  cloze. There is no multiple_choice type.",
     "- No trivial questions, no verbatim quotes as the answer, and every",
     "  distractor must be plausible but unambiguously wrong.",
     "- A cloze sentence marks its single blank with ___ and has exactly one",
     "  correct answer.",
+    "",
+    "TYPE SELECTION (pick the type by learning goal, not just for variety)",
+    "- SUITABILITY BEATS VARIETY: choose the type that fairly tests the",
+    "  concept. Prefer repeating a fitting type over picking an unfitting one",
+    "  only to add variety.",
+    "- word_tiles ONLY for a sentence with ONE fixed, unambiguous word order",
+    "  (sentence-building / translation drills). NEVER for free definitions or",
+    "  explanations of abstract concepts: those have many correct wordings, so",
+    "  the exact-match check would mark a correct learner answer as wrong.",
+    "- A definition or fact with ONE correct answer -> cloze (blank the key",
+    "  term) or picture_choice (recognise the concept). Do NOT model it as",
+    "  word_tiles.",
+    "- A free explanation, an 'in your own words' task, or a transfer/",
+    "  comparison -> do NOT create an exact-match type (no word_tiles, no",
+    "  free_text expecting a full free-form text). Model such goals as cloze",
+    "  or picture_choice instead.",
     "",
     "TYPE FIELDS",
     "- matching:       question, pairs[] (>= 3 of {left, right})",
