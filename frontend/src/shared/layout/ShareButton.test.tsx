@@ -99,7 +99,7 @@ describe("ShareButton", () => {
             );
             expect(screen.getByTestId("share-button-x")).toHaveAttribute(
                 "href",
-                `https://twitter.com/intent/tweet?text=${encodeURIComponent(PROPS.text)}&url=${encodeURIComponent(PROPS.url)}`,
+                `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${PROPS.text} ${PROPS.url}`)}`,
             );
             expect(screen.getByTestId("share-button-whatsapp")).toHaveAttribute(
                 "href",

@@ -24,11 +24,19 @@ describe("buildShareIntentUrls", () => {
         );
     });
 
-    it("builds an X intent URL with the encoded text and url", () => {
+    it("puts the result text AND the link into the X intent's text param (#1227)", () => {
         const x = buildShareIntentUrls(TEXT, URL).find((i) => i.platform === "x");
+        // The link must travel inside `text`, not a separate &url= param,
+        // which the twitter.com -> x.com compose flow drops in practice.
         expect(x?.url).toBe(
-            `https://twitter.com/intent/tweet?text=${encodeURIComponent(TEXT)}&url=${encodeURIComponent(URL)}`,
+            `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${TEXT} ${URL}`)}`,
         );
+        const params = new URLSearchParams(x!.url.split("?")[1]);
+        expect(params.get("text")).toBe(`${TEXT} ${URL}`);
+        expect(params.has("url")).toBe(false);
+        // The prefilled tweet body really does carry both the result and link.
+        expect(params.get("text")).toContain(TEXT);
+        expect(params.get("text")).toContain(URL);
     });
 
     it("builds a WhatsApp URL with the encoded text+url combined", () => {
@@ -38,6 +46,32 @@ describe("buildShareIntentUrls", () => {
         expect(wa?.url).toBe(
             `https://wa.me/?text=${encodeURIComponent(`${TEXT} ${URL}`)}`,
         );
+    });
+
+    it("round-trips the X text param through decodeURIComponent (umlauts/emoji/#)", () => {
+        const text = 'Ich habe "Zählen 1-10" mit 90%! 🎓 9/10 #AdaptiveLernen';
+        const x = buildShareIntentUrls(text, URL).find((i) => i.platform === "x");
+        const raw = x!.url.split("text=")[1];
+        expect(decodeURIComponent(raw)).toBe(`${text} ${URL}`);
+    });
+
+    it("keeps Facebook and LinkedIn link-only — no text param added (#1227)", () => {
+        const intents = buildShareIntentUrls(TEXT, URL);
+        for (const platform of ["facebook", "linkedin"] as const) {
+            const intent = intents.find((i) => i.platform === platform)!;
+            const params = new URLSearchParams(intent.url.split("?")[1]);
+            expect(params.has("text")).toBe(false);
+            expect(intent.url).not.toContain(encodeURIComponent(TEXT));
+        }
+    });
+
+    it("stays valid for an empty and a very long title", () => {
+        for (const text of ["", "x".repeat(5000)]) {
+            const intents = buildShareIntentUrls(text, URL);
+            for (const intent of intents) {
+                expect(() => new globalThis.URL(intent.url)).not.toThrow();
+            }
+        }
     });
 
     it("URL-encodes special characters (spaces, #, quotes, emoji)", () => {

@@ -7,6 +7,17 @@
  * the desktop fallback of {@link ShareButton} (the popover shown when the
  * native `navigator.share` sheet is unavailable).
  *
+ * Per-platform prefill support (#1227):
+ * - X and WhatsApp carry the full prefilled body — the result text AND the
+ *   link folded into the SINGLE `text` parameter. For X this is deliberate:
+ *   the legacy `text=…&url=…` two-parameter form is unreliable on the
+ *   twitter.com -> x.com compose redirect (the composer can come up with the
+ *   URL only, dropping the prefilled text), so the link travels inside
+ *   `text` instead of a separate `&url=`.
+ * - Facebook and LinkedIn carry the link ONLY (`u=` / `url=`). Both strip
+ *   prefilled text by platform design; the shared content surfaces via the
+ *   target page's Open-Graph tags, not an intent text parameter.
+ *
  * Instagram is deliberately absent: it has NO public web-intent URL to
  * pre-fill a post with a link/text, so it can only be reached through the
  * native share sheet (`navigator.share`) when the app is installed — never
@@ -39,7 +50,6 @@ export function buildShareIntentUrls(
     shareUrl: string,
 ): ShareIntent[] {
     const u = encodeURIComponent(shareUrl);
-    const t = encodeURIComponent(text);
     const textAndUrl = encodeURIComponent(`${text} ${shareUrl}`);
     return [
         {
@@ -52,7 +62,7 @@ export function buildShareIntentUrls(
         },
         {
             platform: "x",
-            url: `https://twitter.com/intent/tweet?text=${t}&url=${u}`,
+            url: `https://twitter.com/intent/tweet?text=${textAndUrl}`,
         },
         {
             platform: "whatsapp",
