@@ -1,0 +1,129 @@
+name: Release — prepare (gate)
+
+# One-click PRE-RELEASE gate for FUTURE releases, run from the Actions tab.
+#
+# This is the SAFE half of the two-step release flow (the architect's
+# deliberate "prepare, then finalize after review" pattern, #334): it runs the
+# full pre-tag gate against an already-prepared `release/<version>` branch and
+# STOPS. It never merges to main, never tags, never publishes — that is
+# `release-finish.yml`, triggered separately after review.
+#
+# It CALLS the existing Make targets (`make release-test`, `make
+# test-e2e-smoke`) rather than re-implementing any release logic, so it cannot
+# drift from the Makefile.
+#
+# IMPORTANT — what this workflow does NOT do (verified against the Makefile):
+#   `make release-prepare` only cuts the branch and prints manual instructions;
+#   it does NOT bump the version, finalize the changelog, or update the doc
+#   headers. Those are human-authored. So this workflow VERIFIES a
+#   human-prepared `release/<version>` branch — it does not generate it. Before
+#   dispatching: bump `backend/pyproject.toml`, run `make sync-versions`, write
+#   `changelog/releases/v<version>.md`, refresh the doc version headers, commit
+#   on `release/<version>`, and push. Then dispatch this workflow FROM that
+#   branch.
+#
+# NOT used for v1.97.0 (finalized manually); effective from the next release.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, e.g. 1.98.0 (no leading v). Must match backend/pyproject.toml on the dispatched branch."
+        required: true
+        type: string
+      skip_e2e:
+        description: "Skip the extra Playwright smoke (make test-e2e-smoke) — for hotfix speed. The dexie + manual-plan E2E gates inside release-test still run."
+        required: false
+        type: boolean
+        default: false
+
+# Read-only: the gate never writes to the repository.
+permissions:
+  contents: read
+
+# Defensive opt-in: coerce any Node-20 JavaScript action to Node 24 (see the
+# note in launcher-linux.yml). All actions we use already run on Node 24.
+# VERSION is bound here so shell steps read it from the environment instead of
+# interpolating the dispatch input directly (avoids shell-injection).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  VERSION: ${{ inputs.version }}
+
+jobs:
+  gate:
+    name: Release gate (release-test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      # Checks out the dispatched ref — i.e. the prepared `release/<version>`
+      # branch. fetch-depth 0 keeps the gate's git-history-aware checks honest.
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install backend (+ path-installed plugins)
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Install docs env (verify-mkdocs-nav needs PyYAML)
+        working-directory: docs
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Install e2e deps
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install Playwright browsers
+        # release-test runs the dexie + manual-plan Playwright gates; the
+        # e2e package owns @playwright/test, so install the browsers there.
+        working-directory: e2e
+        run: npx playwright install --with-deps
+
+      - name: Verify the dispatched branch matches the requested version
+        # Fail fast if this workflow was dispatched from the wrong branch /
+        # with a mismatched version, before spending the full gate.
+        run: |
+          canonical="$(grep -m1 '^version' backend/pyproject.toml | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')"
+          if [ "$canonical" != "$VERSION" ]; then
+            echo "::error::backend/pyproject.toml version ($canonical) != requested version ($VERSION). Dispatch this workflow FROM the prepared release/$VERSION branch."
+            exit 1
+          fi
+          if [ ! -f "changelog/releases/v$VERSION.md" ]; then
+            echo "::error::changelog/releases/v$VERSION.md is missing. Draft the per-release notes before the gate."
+            exit 1
+          fi
+          echo "Version $canonical confirmed; changelog present."
+
+      - name: Release gate (make release-test)
+        # The full pre-tag aggregate (make test + npm build + vitest +
+        # verify-theme + verify-docs-discipline + sync-versions-check +
+        # sync-schema-check + verify-plugin-locks + test-dexie-smoke +
+        # test-manual-automation). Calls the Make target verbatim — no drift.
+        run: make release-test
+
+      - name: Extra Playwright smoke (make test-e2e-smoke)
+        # Intentionally outside release-test (it auto-starts the dev servers);
+        # skippable for hotfix speed via the skip_e2e input.
+        if: ${{ !inputs.skip_e2e }}
+        run: make test-e2e-smoke
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Release-prepare gate finished for v$VERSION."
+          echo "On green: review, then dispatch 'Release — finish (merge + tag + publish)' with the same version."
