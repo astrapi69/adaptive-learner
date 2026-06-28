@@ -1,0 +1,87 @@
+name: Release — finish (merge + tag + publish)
+
+# The MUTATING half of the two-step release flow, run from the Actions tab
+# AFTER `release-prepare.yml` is green and the release has been reviewed.
+#
+# It CALLS the existing Make targets — `make release-finish` (merge
+# release/<version> → main no-ff, tag, push main + tag, merge back into
+# develop, delete the release branch) and `make release-publish` (create the
+# GitHub Release from changelog/releases/v<version>.md). No release logic is
+# re-implemented in YAML, so it cannot drift from the Makefile.
+#
+# Launcher binaries are NOT built here: launcher-{linux,macos,windows}.yml
+# already fire on `release: created` and attach the per-OS binaries +
+# checksums to the Release this workflow publishes.
+#
+# Run this FROM the `release/<version>` branch (the same branch the prepare
+# gate validated). NOT used for v1.97.0 (finalized manually); effective from
+# the next release.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, e.g. 1.98.0 (no leading v). The release/<version> branch must exist and be green."
+        required: true
+        type: string
+
+# Needs write: pushes main + develop, creates the tag, and publishes the
+# GitHub Release.
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  # gh (used by `make release-publish`) authenticates via this token.
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # Bound here so shell steps read it from the environment instead of
+  # interpolating the dispatch input directly (avoids shell-injection).
+  VERSION: ${{ inputs.version }}
+
+jobs:
+  finish:
+    name: Finish release (merge + tag + publish)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # fetch-depth 0 + default persisted credentials so the Make target's
+      # git merges/pushes use the workflow token.
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Materialize local branches for the merge
+        # `make release-finish` checks out main/develop and merges
+        # release/<version> by NAME. Create the local tracking branches first
+        # so those refs resolve in the CI checkout (which starts detached).
+        run: |
+          git fetch origin --prune
+          git checkout main
+          git checkout develop
+          git checkout "release/$VERSION"
+
+      - name: Finish release (make release-finish)
+        # Merge release/<version> → main (no-ff) + tag + push main + tag +
+        # merge back into develop + delete the release branch. Verbatim target.
+        run: make release-finish VERSION="$VERSION"
+
+      - name: Publish GitHub Release (make release-publish)
+        # `gh release create` from changelog/releases/v<version>.md. Creating
+        # the Release triggers the launcher-* workflows (release: created) to
+        # attach the per-OS binaries + checksums.
+        run: make release-publish VERSION="$VERSION"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "release-finish for v$VERSION done."
+          echo "The launcher-{linux,macos,windows} workflows now attach binaries to the Release on 'release: created'."
