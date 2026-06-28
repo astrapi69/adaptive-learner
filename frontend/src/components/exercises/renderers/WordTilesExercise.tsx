@@ -79,6 +79,7 @@ export {isWordTilesCorrect} from "../../../lib/exercises/word-tiles-equivalence"
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import DirectionInstruction from "../feedback/DirectionInstruction";
 import ExerciseAnswerToggle, {type AnswerView} from "../feedback/ExerciseAnswerToggle";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import ExerciseFooter from "../shell/ExerciseFooter";
 import type {
     ControlledExerciseProps,
@@ -659,6 +660,74 @@ function WordTilesEditor({
     );
 }
 
+/** Post-check reveal: on a fully-correct answer the success-merge (badge
+ *  + "Continue", #1218); otherwise the My-answer / Solution toggle and the
+ *  chosen view. Extracted so the main renderer stays under the complexity
+ *  gate. Renders nothing pre-check or when the toggle is mode-hidden. */
+function WordTilesReveal({
+    submitted,
+    showAnswerToggle,
+    isCorrect,
+    onAdvance,
+    advanceLabel,
+    view,
+    onShowMyAnswer,
+    onShowSolution,
+    myAnswerLabels,
+    myAnswerCorrectness,
+    tiles,
+    t,
+}: {
+    submitted: boolean;
+    showAnswerToggle: boolean;
+    isCorrect: boolean;
+    onAdvance?: () => void;
+    advanceLabel?: string;
+    view: AnswerView;
+    onShowMyAnswer: () => void;
+    onShowSolution: () => void;
+    myAnswerLabels: string[];
+    myAnswerCorrectness: boolean[];
+    tiles: string[];
+    t: Translate;
+}) {
+    if (!submitted || !showAnswerToggle) return null;
+    if (isCorrect && onAdvance) {
+        return (
+            <ExerciseSuccessAdvance
+                onAdvance={onAdvance}
+                label={advanceLabel}
+                testIdPrefix="word-tiles"
+            />
+        );
+    }
+    return (
+        <>
+            <ExerciseAnswerToggle
+                view={view}
+                onShowMyAnswer={onShowMyAnswer}
+                onShowSolution={onShowSolution}
+                testIdPrefix="word-tiles"
+            />
+            {view === "my-answer" ? (
+                <WordTilesAnswerView
+                    labels={myAnswerLabels}
+                    correctness={myAnswerCorrectness}
+                    testId="word-tiles-my-answer-view"
+                    ariaLabel={t("lesson.exercise.toggle.my_answer", "My answer")}
+                />
+            ) : (
+                <WordTilesAnswerView
+                    labels={tiles}
+                    correctness={null}
+                    testId="word-tiles-solution-view"
+                    ariaLabel={t("lesson.exercise.toggle.solution", "Solution")}
+                />
+            )}
+        </>
+    );
+}
+
 function WordTilesExercise(
     {
         exercise,
@@ -670,6 +739,8 @@ function WordTilesExercise(
         reviewed = null,
         ttsLang = null,
         codeMode = false,
+        onAdvance,
+        advanceLabel,
     }: WordTilesExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -895,37 +966,20 @@ function WordTilesExercise(
                 onShowHint={() => setShowHint(true)}
             />
 
-            {submitted && showAnswerToggle && (
-                <>
-                    <ExerciseAnswerToggle
-                        view={view}
-                        onShowMyAnswer={() => setView("my-answer")}
-                        onShowSolution={() => setView("solution")}
-                        testIdPrefix="word-tiles"
-                    />
-                    {view === "my-answer" ? (
-                        <WordTilesAnswerView
-                            labels={myAnswerLabels}
-                            correctness={myAnswerCorrectness}
-                            testId="word-tiles-my-answer-view"
-                            ariaLabel={t(
-                                "lesson.exercise.toggle.my_answer",
-                                "My answer",
-                            )}
-                        />
-                    ) : (
-                        <WordTilesAnswerView
-                            labels={tiles}
-                            correctness={null}
-                            testId="word-tiles-solution-view"
-                            ariaLabel={t(
-                                "lesson.exercise.toggle.solution",
-                                "Solution",
-                            )}
-                        />
-                    )}
-                </>
-            )}
+            <WordTilesReveal
+                submitted={submitted}
+                showAnswerToggle={showAnswerToggle}
+                isCorrect={isCorrect}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
+                view={view}
+                onShowMyAnswer={() => setView("my-answer")}
+                onShowSolution={() => setView("solution")}
+                myAnswerLabels={myAnswerLabels}
+                myAnswerCorrectness={myAnswerCorrectness}
+                tiles={tiles}
+                t={t}
+            />
 
             <WordTilesResult
                 submitted={submitted}

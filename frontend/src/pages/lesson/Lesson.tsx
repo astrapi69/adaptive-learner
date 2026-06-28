@@ -639,6 +639,16 @@ export default function LessonPage() {
           onInteraction={setAnswerable}
           onChecked={() => setChecked(true)}
           recordStepResult={recordStepResult}
+          // #1218 — a fully-correct answer offers an in-context
+          // "Continue" (the success-merge) that calls the SAME forward
+          // navigation as the two-phase footer; the label matches the
+          // footer's Next / Finish wording.
+          onAdvance={goNext}
+          advanceLabel={
+            isLastStep
+              ? t("lesson.action.finish", "Finish lesson")
+              : t("lesson.button.next", "Continue")
+          }
         />
         </>
       )}

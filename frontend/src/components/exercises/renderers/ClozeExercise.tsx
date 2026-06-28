@@ -46,6 +46,7 @@ import {seededShuffle} from "../../../lib/exercises/seeded-shuffle";
 import {tokenDiff} from "../../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import ClozeMultiSelect from "./ClozeMultiSelect";
 import DiffHighlight from "../feedback/DiffHighlight";
 import ExerciseFooter from "../shell/ExerciseFooter";
@@ -446,6 +447,8 @@ function ClozeResult({
     canCheck,
     onCheck,
     onRetry,
+    onAdvance,
+    advanceLabel,
 }: {
     submitted: boolean;
     isAllCorrect: boolean;
@@ -458,6 +461,8 @@ function ClozeResult({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
+    onAdvance?: () => void;
+    advanceLabel?: string;
 }) {
     const {t} = useI18n();
     // #1005/#1011 — after a miss, toggle between "My answer" (the per-blank
@@ -465,6 +470,11 @@ function ClozeResult({
     // ``showAnswerToggle`` (hidden in exam mode), matching free-text +
     // word-tiles so cloze isn't the odd one out (#1216).
     const {showAnswerToggle} = useLessonMode();
+    // #1218 — an all-correct answer makes the My-answer / Solution toggle
+    // redundant; merge it into a success badge + "Continue" (lesson flow
+    // only, when onAdvance is set).
+    const showSuccessAdvance =
+        isAllCorrect && showAnswerToggle && !!onAdvance;
     return (
         <div className="flex flex-wrap items-center gap-2">
             {submitted && (
@@ -499,6 +509,13 @@ function ClozeResult({
                             </>
                         )}
                     </p>
+                    {showSuccessAdvance && onAdvance && (
+                        <ExerciseSuccessAdvance
+                            onAdvance={onAdvance}
+                            label={advanceLabel}
+                            testIdPrefix="cloze"
+                        />
+                    )}
                     {!isAllCorrect && (
                         <ClozeReveal
                             showAnswerToggle={showAnswerToggle}
@@ -535,6 +552,8 @@ function ClozeExercise(
         onInteraction,
         reviewed = null,
         ttsLang = null,
+        onAdvance,
+        advanceLabel,
     }: ClozeExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -731,6 +750,8 @@ function ClozeExercise(
                 canCheck={allFilled}
                 onCheck={submit}
                 onRetry={reset}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
             />
         </section>
     );
@@ -758,6 +779,8 @@ function ClozeExerciseDispatch(
                 onInteraction={props.onInteraction}
                 reviewed={props.reviewed}
                 ttsLang={props.ttsLang}
+                onAdvance={props.onAdvance}
+                advanceLabel={props.advanceLabel}
             />
         );
     }

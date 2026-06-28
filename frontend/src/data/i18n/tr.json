@@ -1862,6 +1862,9 @@
         "my_answer": "Cevabım",
         "solution": "Çözüm"
       },
+      "success": {
+        "badge": "Doğru!"
+      },
       "reread_theory": "Teoriyi tekrar oku",
       "back_to_exercise": "Alıştırmaya dön",
       "loading": "Alıştırma yükleniyor…",

@@ -1722,6 +1722,8 @@ lesson:
     toggle:
       my_answer: "Η απάντησή μου"
       solution: "Λύση"
+    success:
+      badge: "Σωστά!"
     reread_theory: "Ξαναδιάβασε τη θεωρία"
     back_to_exercise: "Επιστροφή στην άσκηση"
     loading: "Φόρτωση άσκησης…"

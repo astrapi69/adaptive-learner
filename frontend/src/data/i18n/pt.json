@@ -1862,6 +1862,9 @@
         "my_answer": "Minha resposta",
         "solution": "Solução"
       },
+      "success": {
+        "badge": "Correto!"
+      },
       "reread_theory": "Reler a teoria",
       "back_to_exercise": "Voltar ao exercício",
       "loading": "A carregar o exercício…",

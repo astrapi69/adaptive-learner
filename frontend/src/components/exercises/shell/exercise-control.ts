@@ -72,4 +72,15 @@ export interface ControlledExerciseProps {
      *  content; renderers suppress read-aloud (reading code aloud is
      *  useless). Also set independently by the code-aware renderers. */
     codeMode?: boolean;
+    /** #1218 — Lesson two-phase flow only: advance to the next step
+     *  (the lesson's ``goNext``). When provided AND the answer is fully
+     *  correct, the redundant My-answer / Solution toggle is replaced by
+     *  a success badge + a single "Continue" action that calls this.
+     *  Uncontrolled callers (Review / Adaptive — no in-renderer "next")
+     *  omit it and keep the plain toggle. */
+    onAdvance?: () => void;
+    /** #1218 — localised label for the success "Continue" button. The
+     *  lesson passes "Next" / "Finish lesson"; renderers default to the
+     *  shared "Continue" string when absent. */
+    advanceLabel?: string;
 }

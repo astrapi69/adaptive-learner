@@ -1725,6 +1725,8 @@ lesson:
     toggle:
       my_answer: "Meine Antwort"
       solution: "Auflösung"
+    success:
+      badge: "Richtig!"
     reread_theory: "Theorie nochmal lesen"
     back_to_exercise: "Zurück zur Übung"
     loading: "Übung wird geladen…"

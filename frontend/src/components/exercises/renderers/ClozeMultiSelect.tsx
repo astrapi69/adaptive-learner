@@ -23,6 +23,7 @@ import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import {cn} from "@/lib/utils";
 import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
 import ReadAloudButton from "../../lesson/tts/ReadAloudButton";
@@ -31,6 +32,7 @@ import {useControlledExercise} from "../../../lib/exercises/useControlledExercis
 import {seededShuffle} from "../../../lib/exercises/seeded-shuffle";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import ExerciseFooter from "../shell/ExerciseFooter";
 import ExerciseHint from "../feedback/ExerciseHint";
 import type {
@@ -90,10 +92,13 @@ function ClozeMultiSelect(
         onInteraction,
         reviewed = null,
         ttsLang = null,
+        onAdvance,
+        advanceLabel,
     }: ClozeMultiSelectProps,
     ref: Ref<ExerciseHandle>,
 ) {
     const {t} = useI18n();
+    const {showAnswerToggle} = useLessonMode();
     const question = exercise.sentence ?? "";
     const accept = useMemo(() => exercise.accept ?? [], [exercise.accept]);
     const acceptSet = useMemo(
@@ -306,55 +311,99 @@ function ClozeMultiSelect(
                 })}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-                {submitted && (
-                    <>
-                        <p
-                            className={cn(
-                                "answer-feedback m-0 inline-flex items-center gap-1 font-medium",
-                                isCorrect
-                                    ? "is-correct text-[var(--success)]"
-                                    : "is-wrong text-[var(--danger)]",
-                            )}
-                            data-testid="cloze-multiselect-result"
-                            data-result={isCorrect ? "correct" : "wrong"}
-                        >
-                            {isCorrect ? (
-                                <>
-                                    <Check size={14} aria-hidden="true" />
-                                    {t(
-                                        "lesson.exercise.cloze.result_correct",
-                                        "All correct!",
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    <X size={14} aria-hidden="true" />
-                                    {t(
-                                        "lesson.exercise.cloze.multi_result_wrong",
-                                        "Not quite. Review the highlighted options.",
-                                    )}
-                                </>
-                            )}
-                        </p>
-                        <AnswerCelebration isCorrect={isCorrect} />
-                    </>
-                )}
-                <ExerciseFooter
-                    testidPrefix="cloze-multiselect"
-                    controlled={controlled}
-                    submitted={submitted}
-                    canCheck={canCheck}
-                    onCheck={submit}
-                    onRetry={reset}
-                    checkLabel={t(
-                        "lesson.exercise.cloze.submit",
-                        "Check answers",
-                    )}
-                    retryLabel={t("lesson.exercise.cloze.retry", "Try again")}
-                />
-            </div>
+            <ClozeMultiSelectResult
+                submitted={submitted}
+                isCorrect={isCorrect}
+                showAnswerToggle={showAnswerToggle}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
+                controlled={controlled}
+                canCheck={canCheck}
+                onCheck={submit}
+                onRetry={reset}
+            />
         </section>
+    );
+}
+
+/** Post-check feedback (correct/wrong line, #1218 success-merge on a
+ *  correct answer, celebration) + the shared check/retry footer. Extracted
+ *  so the main renderer stays under the complexity gate. */
+function ClozeMultiSelectResult({
+    submitted,
+    isCorrect,
+    showAnswerToggle,
+    onAdvance,
+    advanceLabel,
+    controlled,
+    canCheck,
+    onCheck,
+    onRetry,
+}: {
+    submitted: boolean;
+    isCorrect: boolean;
+    showAnswerToggle: boolean;
+    onAdvance?: () => void;
+    advanceLabel?: string;
+    controlled: boolean;
+    canCheck: boolean;
+    onCheck: () => void;
+    onRetry: () => void;
+}) {
+    const {t} = useI18n();
+    return (
+        <div className="flex flex-wrap items-center gap-2">
+            {submitted && (
+                <>
+                    <p
+                        className={cn(
+                            "answer-feedback m-0 inline-flex items-center gap-1 font-medium",
+                            isCorrect
+                                ? "is-correct text-[var(--success)]"
+                                : "is-wrong text-[var(--danger)]",
+                        )}
+                        data-testid="cloze-multiselect-result"
+                        data-result={isCorrect ? "correct" : "wrong"}
+                    >
+                        {isCorrect ? (
+                            <>
+                                <Check size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.cloze.result_correct",
+                                    "All correct!",
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <X size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.cloze.multi_result_wrong",
+                                    "Not quite. Review the highlighted options.",
+                                )}
+                            </>
+                        )}
+                    </p>
+                    {isCorrect && showAnswerToggle && onAdvance && (
+                        <ExerciseSuccessAdvance
+                            onAdvance={onAdvance}
+                            label={advanceLabel}
+                            testIdPrefix="cloze-multiselect"
+                        />
+                    )}
+                    <AnswerCelebration isCorrect={isCorrect} />
+                </>
+            )}
+            <ExerciseFooter
+                testidPrefix="cloze-multiselect"
+                controlled={controlled}
+                submitted={submitted}
+                canCheck={canCheck}
+                onCheck={onCheck}
+                onRetry={onRetry}
+                checkLabel={t("lesson.exercise.cloze.submit", "Check answers")}
+                retryLabel={t("lesson.exercise.cloze.retry", "Try again")}
+            />
+        </div>
     );
 }
 

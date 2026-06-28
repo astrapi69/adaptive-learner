@@ -30,6 +30,7 @@ import type {Ref} from "react";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import ExerciseHint from "../feedback/ExerciseHint";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../../lib/srs/element-attempt";
 import {prefersReducedMotion} from "../../../lib/feedback/feedbackPref";
@@ -146,6 +147,50 @@ function _shuffle<T>(items: readonly T[], seed: string): T[] {
     return out;
 }
 
+/** Post-check toggle row: on a fully-correct match the #1218 success-merge
+ *  (badge + "Continue"); otherwise the My-answers / Solve view toggle.
+ *  Renders nothing pre-check or when the toggle is mode-hidden. Extracted
+ *  so the main renderer stays under the complexity gate. */
+function MatchingPostCheckToggle({
+    submitted,
+    showAnswerToggle,
+    isAllCorrect,
+    onAdvance,
+    advanceLabel,
+    view,
+    onShowUserAnswers,
+    onShowSolution,
+}: {
+    submitted: boolean;
+    showAnswerToggle: boolean;
+    isAllCorrect: boolean;
+    onAdvance?: () => void;
+    advanceLabel?: string;
+    view: "user-answers" | "solution";
+    onShowUserAnswers: () => void;
+    onShowSolution: () => void;
+}) {
+    const {t} = useI18n();
+    if (!submitted || !showAnswerToggle) return null;
+    if (isAllCorrect && onAdvance) {
+        return (
+            <ExerciseSuccessAdvance
+                onAdvance={onAdvance}
+                label={advanceLabel}
+                testIdPrefix="matching"
+            />
+        );
+    }
+    return (
+        <MatchingViewToggle
+            view={view}
+            onShowUserAnswers={onShowUserAnswers}
+            onShowSolution={onShowSolution}
+            myAnswersLabel={t("lesson.exercise.matching.my_answers", "My answers")}
+            solveLabel={t("lesson.exercise.matching.resolve", "Solve")}
+        />
+    );
+}
 
 function MatchingExercise(
     {
@@ -161,6 +206,8 @@ function MatchingExercise(
         domain = null,
         ttsLang = null,
         codeMode = false,
+        onAdvance,
+        advanceLabel,
     }: MatchingExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -499,18 +546,16 @@ function MatchingExercise(
                 testId="matching-hint-button"
             />
 
-            {submitted && showAnswerToggle && (
-                <MatchingViewToggle
-                    view={view}
-                    onShowUserAnswers={showUserAnswers}
-                    onShowSolution={showSolution}
-                    myAnswersLabel={t(
-                        "lesson.exercise.matching.my_answers",
-                        "My answers",
-                    )}
-                    solveLabel={t("lesson.exercise.matching.resolve", "Solve")}
-                />
-            )}
+            <MatchingPostCheckToggle
+                submitted={submitted}
+                showAnswerToggle={showAnswerToggle}
+                isAllCorrect={result !== null && result.correct === pairs.length}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
+                view={view}
+                onShowUserAnswers={showUserAnswers}
+                onShowSolution={showSolution}
+            />
 
             {view === "user-answers" && (
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
