@@ -182,6 +182,9 @@ function ExerciseDispatcher(
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
+                targetLanguage={targetLanguage}
+                sourceLanguage={sourceLanguage}
+                domain={domain}
                 {...shared}
             />
         );

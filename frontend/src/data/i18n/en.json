@@ -1958,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "Build the translation",
-          "productive": "Build the sentence"
+          "productive": "Build the sentence",
+          "knowledge": "Build the sentence"
         },
         "picture_choice": {
           "receptive": "Pick the matching meaning",

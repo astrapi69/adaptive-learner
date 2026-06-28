@@ -93,6 +93,13 @@ export interface WordTilesExerciseProps extends ControlledExerciseProps {
      *  Optional in unit tests; required in production. */
     setId?: string;
     lessonId?: string;
+    /** #1226 — the lesson's language pair + domain, forwarded to
+     *  DirectionInstruction so a knowledge / same-language lesson shows a
+     *  sentence-building instruction instead of "Build the translation".
+     *  Optional; absent = language behaviour. */
+    targetLanguage?: string | null;
+    sourceLanguage?: string | null;
+    domain?: string | null;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
     onComplete: (result: ExerciseScored) => void;
@@ -741,6 +748,9 @@ function WordTilesExercise(
         codeMode = false,
         onAdvance,
         advanceLabel,
+        targetLanguage = null,
+        sourceLanguage = null,
+        domain = null,
     }: WordTilesExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -937,7 +947,12 @@ function WordTilesExercise(
                 testId="word-tiles-hint-button"
             />
 
-            <DirectionInstruction exercise={exercise} />
+            <DirectionInstruction
+                exercise={exercise}
+                domain={domain}
+                sourceLanguage={sourceLanguage}
+                targetLanguage={targetLanguage}
+            />
 
             <WordTilesEditor
                 submitted={submitted}

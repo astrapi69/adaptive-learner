@@ -19,6 +19,7 @@ import {
     instructionKey,
     resolveConcreteDirection,
 } from "../../../lib/exercises/direction";
+import {isKnowledgeDomain} from "../../../lib/exercises/knowledge-domain";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import ExerciseFooter from "../shell/ExerciseFooter";
@@ -170,9 +171,7 @@ export function computeMatchingLabels(
     const {uiLang, targetLanguage, sourceLanguage, domain, t} = opts;
     const direction = resolveConcreteDirection(exercise.direction, exercise.id);
     const productive = direction === "source_to_target";
-    const isKnowledge =
-        (domain != null && domain !== "language") ||
-        (!!targetLanguage && targetLanguage === sourceLanguage);
+    const isKnowledge = isKnowledgeDomain(domain, sourceLanguage, targetLanguage);
     const targetName = _languageName(targetLanguage, uiLang);
     const sourceName = _languageName(sourceLanguage, uiLang);
     const leftLangName = productive ? sourceName : targetName;

@@ -1811,6 +1811,7 @@ lesson:
       word_tiles:
         receptive: Composez la traduction
         productive: Composez la phrase
+        knowledge: Composez la phrase
       picture_choice:
         receptive: Choisissez le sens correct
         productive: Choisissez la bonne image

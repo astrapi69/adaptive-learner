@@ -1958,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "訳を組み立てる",
-          "productive": "文を組み立てる"
+          "productive": "文を組み立てる",
+          "knowledge": "文を組み立てる"
         },
         "picture_choice": {
           "receptive": "正しい意味を選ぶ",

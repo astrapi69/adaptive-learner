@@ -1809,6 +1809,7 @@ lesson:
       word_tiles:
         receptive: Monte a tradução
         productive: Monte a frase
+        knowledge: Monte a frase
       picture_choice:
         receptive: Escolha o significado correto
         productive: Escolha a imagem correta
