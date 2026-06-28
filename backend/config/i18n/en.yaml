@@ -2602,6 +2602,13 @@ pwa:
     action: "Update"
     later: "Later"
 share:
+  menu:
+    heading: "Share"
+    facebook: "Share on Facebook"
+    linkedin: "Share on LinkedIn"
+    x: "Share on X"
+    whatsapp: "Share on WhatsApp"
+    copy: "Copy to clipboard"
   app:
     heading: "Share the app"
     qr_intro: "Share the app via QR code so others can open it."

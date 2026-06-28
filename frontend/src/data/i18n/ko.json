@@ -2845,6 +2845,14 @@
     }
   },
   "share": {
+    "menu": {
+      "heading": "공유",
+      "facebook": "Facebook에 공유",
+      "linkedin": "LinkedIn에 공유",
+      "x": "X에 공유",
+      "whatsapp": "WhatsApp으로 공유",
+      "copy": "클립보드에 복사"
+    },
     "app": {
       "heading": "앱 공유",
       "qr_intro": "QR 코드로 앱을 공유해 다른 사람이 바로 열 수 있게 하세요.",

@@ -2602,6 +2602,13 @@ pwa:
     action: "Perbarui"
     later: "Nanti"
 share:
+  menu:
+    heading: "Bagikan"
+    facebook: "Bagikan ke Facebook"
+    linkedin: "Bagikan ke LinkedIn"
+    x: "Bagikan ke X"
+    whatsapp: "Bagikan via WhatsApp"
+    copy: "Salin ke papan klip"
   app:
     heading: "Bagikan aplikasi"
     qr_intro: "Bagikan aplikasi lewat kode QR agar orang lain bisa membukanya langsung."

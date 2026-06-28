@@ -2596,6 +2596,13 @@ pwa:
     action: "Aktualisieren"
     later: "Später"
 share:
+  menu:
+    heading: "Teilen"
+    facebook: "Auf Facebook teilen"
+    linkedin: "Auf LinkedIn teilen"
+    x: "Auf X teilen"
+    whatsapp: "Per WhatsApp teilen"
+    copy: "In die Zwischenablage kopieren"
   app:
     heading: "Die App teilen"
     qr_intro: "Teile die App per QR-Code, damit andere sie direkt öffnen können."
