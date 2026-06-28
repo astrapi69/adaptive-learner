@@ -23,6 +23,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-plugin-session test-plugin-tracking \
        test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
+       test-one test-watch tdd-help \
        stryker stryker-quick \
        verify-theme verify-theme-baseline-update \
        check-types check-types-backend check-types-frontend check-file-sizes check-complexity check-complexity-gate check-complexity-gate-update \
@@ -364,6 +365,66 @@ test-coverage-frontend: ## Frontend coverage report (coverage/)
 	@echo ""
 	@echo "=== Frontend Coverage ==="
 	cd frontend && npm run test:coverage
+
+# --- TDD inner-loop helpers (.claude/rules/tdd.md) ---
+# Support the Red-Green-Refactor loop. The bundled lint+type+test GREEN
+# gate already exists as `test-fast` (backend ruff+mypy+pytest, frontend
+# tsc+vitest) — these only add what it does not cover: a targeted
+# single-test run and a Vitest watch loop. Coverage lives in
+# test-coverage-{backend,frontend}; a backend watch is intentionally
+# omitted (no pytest-watch/ptw in the venv, and adding one is a separate
+# Library-First decision).
+
+test-one: ## Run ONE test by path with the real exit code (TDD). Usage: make test-one TEST=backend/tests/test_x.py | frontend/src/x.test.tsx | plugins/<pkg>/tests/test_y.py | e2e/<spec>
+ifndef TEST
+	$(error TEST= is required, e.g. make test-one TEST=backend/tests/test_users.py (also: frontend/src/foo.test.tsx, plugins/<pkg>/tests/test_y.py, e2e/<spec>))
+endif
+	@t='$(TEST)'; \
+	case "$$t" in \
+	  e2e/*) \
+	    rel="$${t#e2e/}"; \
+	    case "$$t" in \
+	      e2e/manual-automation/*) cfg=playwright.manual.config.ts ;; \
+	      e2e/dexie/*)             cfg=playwright.dexie.config.ts ;; \
+	      e2e/visual/*)            cfg=playwright.visual.config.ts ;; \
+	      *)                       cfg=playwright.config.ts ;; \
+	    esac; \
+	    echo "=== playwright ($$cfg): $$rel ==="; \
+	    cd e2e && npx playwright test --config="$$cfg" "$$rel" ;; \
+	  backend/*) \
+	    echo "=== pytest: $$t ==="; \
+	    cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run pytest "$${t#backend/}" ;; \
+	  plugins/*) \
+	    d="$$(printf '%s' "$$t" | cut -d/ -f1-2)"; f="$${t#*/*/}"; \
+	    echo "=== pytest (plugin $$d): $$f ==="; \
+	    cd "$$d" && $(PLUGIN_PYTHON) -m pytest "$$f" ;; \
+	  frontend/*) \
+	    echo "=== vitest: $$t ==="; \
+	    cd frontend && npx vitest run "$${t#frontend/}" ;; \
+	  src/*|*.test.ts|*.test.tsx) \
+	    echo "=== vitest: $$t ==="; \
+	    cd frontend && npx vitest run "$$t" ;; \
+	  *) \
+	    echo "Cannot route TEST=$$t"; \
+	    echo "Expected: backend/<path> | frontend/<path> | src/<path> | *.test.ts(x) | plugins/<pkg>/<path> | e2e/<spec>"; \
+	    exit 2 ;; \
+	esac
+
+test-watch: ## Frontend Vitest in watch mode (TDD inner loop). Optional TEST= to scope, e.g. make test-watch TEST=src/lib/x.test.ts
+	cd frontend && npx vitest $(TEST)
+
+tdd-help: ## Print the Red-Green-Refactor workflow (.claude/rules/tdd.md) + which targets to use
+	@echo "TDD — Red-Green-Refactor (.claude/rules/tdd.md)"
+	@echo ""
+	@echo "  1. RED       write the failing test FIRST, watch it fail:"
+	@echo "                 make test-one TEST=<path>    # one test, real exit code"
+	@echo "                 make test-watch              # or keep Vitest watching"
+	@echo "  2. GREEN     minimal code until that test passes:"
+	@echo "                 make test-one TEST=<path>"
+	@echo "  3. REFACTOR  clean up, keep it green:"
+	@echo "                 make test-fast               # backend ruff+mypy+pytest + frontend tsc+vitest"
+	@echo ""
+	@echo "  Full suite before pushing: make test    (CI-mirror gate: make test-fast)"
 
 # --- Mutation testing (Stryker) ---
 
