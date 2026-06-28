@@ -254,6 +254,30 @@ Or an exercise:
 }
 ```
 
+## Which exercise type for which learning goal
+
+Pick the exercise type by the **learning goal**, not by variety. Word-by-word
+exact-match grading — a whole-sentence `word_tiles`, or a full-sentence
+`free_text` — fails for **free production**: a concept can be phrased many
+correct ways, so a content-correct learner gets marked wrong word by word. That
+is the most demotivating moment an authored lesson can produce. Match the type
+to the goal instead:
+
+| Learning goal | Right type |
+|---|---|
+| A fact with one answer | `cloze` (a blank) |
+| Recognise a concept | multiple choice (`cloze` in `select` mode) / `matching` |
+| Define a concept | `cloze` with key-term blanks |
+| Free explanation / transfer / comparison | no exact-match type yet — use `cloze` / multiple choice for now; self-assessment is planned |
+| Sentence with one unambiguous word order (language learning) | `word_tiles` |
+
+Rule of thumb: reserve `word_tiles` for sentences whose word order is genuinely
+unique (a translation drill), and author definitions and facts as `cloze` (or
+multiple choice via `cloze` `select` mode). Never put a free-form definition
+into `word_tiles` or full-sentence `free_text` — there is no fair exact-match
+grading for it. Full analysis: see EXP-041
+(`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
+
 ## Exercise type reference
 
 ### matching
