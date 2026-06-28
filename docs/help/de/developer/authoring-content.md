@@ -264,6 +264,31 @@ Oder eine Übung:
 }
 ```
 
+## Welcher Aufgabentyp für welches Lernziel
+
+Wähle den Aufgabentyp nach dem **Lernziel**, nicht nach Abwechslung.
+Wort-für-Wort-Bewertung per exact-match — ein ganzer Satz als `word_tiles`
+oder ein Volltext-`free_text` — versagt bei **freier Produktion**: ein Konzept
+lässt sich auf viele richtige Weisen formulieren, sodass ein inhaltlich
+richtiger Lernender Wort für Wort als falsch markiert wird. Das ist der
+demotivierendste Moment, den eine Lektion erzeugen kann. Koppele den Typ
+stattdessen an das Ziel:
+
+| Lernziel | Richtiger Typ |
+|---|---|
+| Faktenwissen mit einer Antwort | `cloze` (Lücke) |
+| Konzept wiedererkennen | Multiple-Choice (`cloze` im `select`-Modus) / `matching` |
+| Definition eines Konzepts | `cloze` mit Schlüsselbegriff-Lücken |
+| Freie Erklärung / Transfer / Vergleich | noch kein exact-match-Typ — vorerst `cloze` / Multiple-Choice; Self-Assessment ist geplant |
+| Satz mit eindeutiger Wortreihenfolge (Sprachenlernen) | `word_tiles` |
+
+Faustregel: `word_tiles` nur für Sätze mit wirklich eindeutiger Wortreihenfolge
+(eine Übersetzungsübung), und Definitionen sowie Faktenwissen als `cloze` (oder
+Multiple-Choice via `cloze` `select`-Modus). Eine freie Definition gehört nie
+in `word_tiles` oder Volltext-`free_text` — dafür gibt es keine faire
+exact-match-Bewertung. Vollständige Analyse: siehe EXP-041
+(`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
+
 ## Übungstyp-Referenz
 
 ### matching
