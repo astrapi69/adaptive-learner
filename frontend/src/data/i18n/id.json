@@ -1958,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "Bangun terjemahannya",
-          "productive": "Bangun kalimatnya"
+          "productive": "Bangun kalimatnya",
+          "knowledge": "Bangun kalimatnya"
         },
         "picture_choice": {
           "receptive": "Pilih makna yang cocok",

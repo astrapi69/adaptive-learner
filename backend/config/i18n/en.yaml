@@ -1820,6 +1820,7 @@ lesson:
       word_tiles:
         receptive: Build the translation
         productive: Build the sentence
+        knowledge: Build the sentence
       picture_choice:
         receptive: Pick the matching meaning
         productive: Pick the matching picture

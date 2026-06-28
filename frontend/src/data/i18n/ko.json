@@ -1958,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "번역을 만드세요",
-          "productive": "문장을 만드세요"
+          "productive": "문장을 만드세요",
+          "knowledge": "문장을 만드세요"
         },
         "picture_choice": {
           "receptive": "일치하는 의미를 고르세요",

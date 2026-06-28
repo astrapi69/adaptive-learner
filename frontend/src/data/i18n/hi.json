@@ -1958,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "अनुवाद बनाएँ",
-          "productive": "वाक्य बनाएँ"
+          "productive": "वाक्य बनाएँ",
+          "knowledge": "वाक्य बनाएँ"
         },
         "picture_choice": {
           "receptive": "मिलता-जुलता अर्थ चुनें",

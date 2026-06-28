@@ -71,6 +71,11 @@ import ExerciseHint from "../feedback/ExerciseHint";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ExercisePromptRow from "../shell/ExercisePromptRow";
+import {
+    WORD_TILE_BASE,
+    WORD_TILE_PLACED,
+    WordTilesAnswerView,
+} from "./word-tiles-parts";
 import {deriveWordTilesAttempt} from "../../../lib/srs/element-attempt";
 import {isWordTilesCorrect} from "../../../lib/exercises/word-tiles-equivalence";
 import type {ContentLessonExercise} from "../../../storage/types";
@@ -93,18 +98,17 @@ export interface WordTilesExerciseProps extends ControlledExerciseProps {
      *  Optional in unit tests; required in production. */
     setId?: string;
     lessonId?: string;
+    /** #1226 — the lesson's language pair + domain, forwarded to
+     *  DirectionInstruction so a knowledge / same-language lesson shows a
+     *  sentence-building instruction instead of "Build the translation".
+     *  Optional; absent = language behaviour. */
+    targetLanguage?: string | null;
+    sourceLanguage?: string | null;
+    domain?: string | null;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
     onComplete: (result: ExerciseScored) => void;
 }
-
-/** Shared tile box styling (was .word-tile / .word-tile-placed).
- *  Reused by the scrambled tile, the placed tile, and the floating
- *  DragOverlay copy so they render identically. 44px min touch target. */
-const WORD_TILE_BASE =
-    "inline-flex min-h-11 items-center justify-center cursor-pointer rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2 text-[0.9375rem] font-medium text-[var(--fg)] transition-[background,border-color] duration-150 enabled:hover:bg-[var(--surface-2)] disabled:cursor-not-allowed";
-const WORD_TILE_PLACED =
-    "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_12%,var(--surface))]";
 
 /** Deterministic Fisher-Yates shuffle keyed by ``seed`` so
  *  reshuffling on every render does NOT move tiles under the
@@ -133,53 +137,6 @@ export function wordTilesPerTileCorrect(
 ): boolean[] {
     if (isCorrect) return placed.map(() => true);
     return placed.map((tileIndex, slot) => tileIndex === slot);
-}
-
-/** Read-only tile row shown after checking. Each tile carries enough
- *  spacing (flex gap) to read as a sentence — replacing the old squished
- *  token-diff line (#1005). ``correctness === null`` paints every tile
- *  green (the all-correct solution view); otherwise per-position. */
-function WordTilesAnswerView({
-    labels,
-    correctness,
-    testId,
-    ariaLabel,
-}: {
-    labels: string[];
-    correctness: boolean[] | null;
-    testId: string;
-    ariaLabel: string;
-}) {
-    return (
-        <div
-            className="rounded-sm border border-border bg-[var(--surface)] p-2"
-            data-testid={testId}
-            aria-label={ariaLabel}
-        >
-            <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
-                {labels.map((label, i) => {
-                    const ok = correctness ? correctness[i] : true;
-                    return (
-                        <li key={i}>
-                            <span
-                                className={cn(
-                                    WORD_TILE_BASE,
-                                    "cursor-default",
-                                    ok
-                                        ? "border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]"
-                                        : "border-[var(--exercise-wrong)] bg-[color-mix(in_srgb,var(--exercise-wrong)_12%,var(--surface))]",
-                                )}
-                                data-testid={`${testId}-tile-${i}`}
-                                data-correct={ok}
-                            >
-                                {label}
-                            </span>
-                        </li>
-                    );
-                })}
-            </ul>
-        </div>
-    );
 }
 
 /** Apply a @dnd-kit drag-end to the placed-index sequence.
@@ -741,6 +698,9 @@ function WordTilesExercise(
         codeMode = false,
         onAdvance,
         advanceLabel,
+        targetLanguage = null,
+        sourceLanguage = null,
+        domain = null,
     }: WordTilesExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -937,7 +897,12 @@ function WordTilesExercise(
                 testId="word-tiles-hint-button"
             />
 
-            <DirectionInstruction exercise={exercise} />
+            <DirectionInstruction
+                exercise={exercise}
+                domain={domain}
+                sourceLanguage={sourceLanguage}
+                targetLanguage={targetLanguage}
+            />
 
             <WordTilesEditor
                 submitted={submitted}

@@ -655,3 +655,38 @@ describe("WordTilesExercise: @dnd-kit sortable rendering", () => {
         ).toBeInTheDocument();
     });
 });
+
+describe("WordTilesExercise: domain-aware instruction (#1226)", () => {
+    it("shows a sentence-building instruction for a same-language lesson", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                domain="psychology"
+                sourceLanguage="de"
+                targetLanguage="de"
+            />,
+        );
+        const text =
+            screen.getByTestId("direction-instruction-word_tiles")
+                .textContent ?? "";
+        expect(text).toMatch(/Build the sentence/i);
+        expect(text).not.toMatch(/translation/i);
+    });
+
+    it("keeps the translation instruction for a real language pair", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                domain="language"
+                sourceLanguage="de"
+                targetLanguage="fr"
+            />,
+        );
+        expect(
+            screen.getByTestId("direction-instruction-word_tiles")
+                .textContent ?? "",
+        ).toMatch(/Build the translation/i);
+    });
+});

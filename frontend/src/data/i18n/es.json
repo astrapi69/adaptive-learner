@@ -1958,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "Construye la traducción",
-          "productive": "Construye la frase"
+          "productive": "Construye la frase",
+          "knowledge": "Construye la frase"
         },
         "picture_choice": {
           "receptive": "Elige el significado correcto",

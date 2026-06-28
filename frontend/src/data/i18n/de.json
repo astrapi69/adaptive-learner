@@ -1958,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "Bilde die Übersetzung",
-          "productive": "Bilde den Satz"
+          "productive": "Bilde den Satz",
+          "knowledge": "Bilde den Satz"
         },
         "picture_choice": {
           "receptive": "Wähle die passende Bedeutung",

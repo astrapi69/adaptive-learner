@@ -1820,6 +1820,7 @@ lesson:
       word_tiles:
         receptive: Bangun terjemahannya
         productive: Bangun kalimatnya
+        knowledge: Bangun kalimatnya
       picture_choice:
         receptive: Pilih makna yang cocok
         productive: Pilih gambar yang cocok
