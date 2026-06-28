@@ -343,6 +343,84 @@ describe("ClozeExercise: multiselect dispatch (#1195)", () => {
     });
 });
 
+describe("ClozeExercise: My-answer / Solution toggle (#1216)", () => {
+    /** Submit ``TWO_BLANKS`` with blank 1 correct, blank 2 wrong, so the
+     *  result is partial (1 of 2) and the post-check answer toggle shows. */
+    function renderPartialTwoBlank() {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {
+            target: {value: "un"},
+        });
+        fireEvent.change(screen.getByTestId("cloze-input-1"), {
+            target: {value: "le"},
+        });
+        fireEvent.click(screen.getByTestId("cloze-submit"));
+    }
+
+    it("RED: multi-blank cloze shows the answer toggle after a partial submit", () => {
+        renderPartialTwoBlank();
+        // The same My-answer / Solution toggle free-text + word-tiles show.
+        expect(
+            screen.getByTestId("cloze-answer-toggle"),
+        ).toBeInTheDocument();
+        expect(screen.getByTestId("cloze-my-answer")).toBeInTheDocument();
+        expect(screen.getByTestId("cloze-solution")).toBeInTheDocument();
+    });
+
+    it("the toggle is absent before the answer is checked", () => {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        expect(
+            screen.queryByTestId("cloze-answer-toggle"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("an all-correct submit shows NO toggle (nothing to reveal)", () => {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {
+            target: {value: "un"},
+        });
+        fireEvent.change(screen.getByTestId("cloze-input-1"), {
+            target: {value: "une"},
+        });
+        fireEvent.click(screen.getByTestId("cloze-submit"));
+        expect(
+            screen.queryByTestId("cloze-answer-toggle"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("single-blank cloze shows the toggle after a wrong submit (same path)", () => {
+        render(<ClozeExercise exercise={SINGLE_BLANK} onComplete={vi.fn()} />);
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {
+            target: {value: "le"},
+        });
+        fireEvent.click(screen.getByTestId("cloze-submit"));
+        expect(
+            screen.getByTestId("cloze-answer-toggle"),
+        ).toBeInTheDocument();
+    });
+
+    it("My answer view shows the per-blank diff; Solution view reveals the accepted answers", () => {
+        renderPartialTwoBlank();
+        // Default view is "my answer": the token diff row is shown.
+        expect(screen.getByTestId("cloze-diff-row")).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("cloze-solution-view"),
+        ).not.toBeInTheDocument();
+        // Switch to the Solution view → accepted answers revealed.
+        fireEvent.click(screen.getByTestId("cloze-solution"));
+        const solution = screen.getByTestId("cloze-solution-view");
+        expect(solution).toBeInTheDocument();
+        expect(solution).toHaveTextContent("un");
+        expect(solution).toHaveTextContent("une");
+        expect(
+            screen.queryByTestId("cloze-diff-row"),
+        ).not.toBeInTheDocument();
+        // And back to My answer.
+        fireEvent.click(screen.getByTestId("cloze-my-answer"));
+        expect(screen.getByTestId("cloze-diff-row")).toBeInTheDocument();
+    });
+});
+
 describe("ClozeExercise: attempts fan-out", () => {
     it("emits one ElementAttempt per blank with the per-blank canonical", () => {
         const onComplete = vi.fn();

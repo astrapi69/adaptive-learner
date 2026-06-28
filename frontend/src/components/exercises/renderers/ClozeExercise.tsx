@@ -31,7 +31,11 @@ import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import ExerciseHint from "../feedback/ExerciseHint";
+import ExerciseAnswerToggle, {
+    type AnswerView,
+} from "../feedback/ExerciseAnswerToggle";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../../lesson/tts/ReadAloudButton";
@@ -323,8 +327,113 @@ function ClozeHint({
     );
 }
 
-/** Post-check feedback (all-correct vs N-of-M), the per-blank token
- *  diff on a miss, the celebration, and the shared exercise footer. */
+/** The "My answer" view: one token diff per WRONG blank (the learner's
+ *  input struck through against the canonical answer). */
+function ClozeDiffRow({
+    blanks,
+    perBlankCorrect,
+    inputs,
+}: {
+    blanks: readonly ClozeBlank[];
+    perBlankCorrect: boolean[];
+    inputs: string[];
+}) {
+    return (
+        <div
+            className="flex basis-full flex-col gap-1"
+            data-testid="cloze-diff-row"
+        >
+            {blanks.map((blank, idx) =>
+                perBlankCorrect[idx] ? null : (
+                    <DiffHighlight
+                        key={idx}
+                        tokens={tokenDiff(inputs[idx], blank.accept[0] ?? "")}
+                        className="cloze-blank-diff"
+                    />
+                ),
+            )}
+        </div>
+    );
+}
+
+/** The "Solution" view: every blank's accepted answer(s), labelled by the
+ *  blank's hint (or "Blank n"). Mirrors the free-text solution panel. */
+function ClozeSolutionView({blanks}: {blanks: readonly ClozeBlank[]}) {
+    const {t} = useI18n();
+    return (
+        <div
+            className="basis-full rounded-sm border border-[var(--success)] bg-[color-mix(in_srgb,var(--success)_12%,var(--surface))] px-3 py-2"
+            data-testid="cloze-solution-view"
+        >
+            <span className="block text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]">
+                {t("lesson.exercise.free_text.accepted", "Accepted answers")}
+            </span>
+            <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+                {blanks.map((blank, idx) => (
+                    <li key={idx} className="text-[var(--fg)]">
+                        <span className="text-[var(--fg-muted)]">
+                            {blank.hint ??
+                                t(
+                                    "lesson.exercise.cloze.blank_label",
+                                    "Blank {n}",
+                                ).replace("{n}", String(idx + 1))}
+                            {": "}
+                        </span>
+                        {blank.accept.join(" · ")}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+/** The post-check reveal: in a toggle-enabled mode (#1005/#1011, hidden in
+ *  exam) the learner switches between their graded answer (the per-blank
+ *  diff) and the revealed solution; otherwise the diff shows directly. */
+function ClozeReveal({
+    showAnswerToggle,
+    blanks,
+    perBlankCorrect,
+    inputs,
+}: {
+    showAnswerToggle: boolean;
+    blanks: readonly ClozeBlank[];
+    perBlankCorrect: boolean[];
+    inputs: string[];
+}) {
+    const [view, setView] = useState<AnswerView>("my-answer");
+    if (!showAnswerToggle) {
+        return (
+            <ClozeDiffRow
+                blanks={blanks}
+                perBlankCorrect={perBlankCorrect}
+                inputs={inputs}
+            />
+        );
+    }
+    return (
+        <div className="flex basis-full flex-col gap-2">
+            <ExerciseAnswerToggle
+                view={view}
+                onShowMyAnswer={() => setView("my-answer")}
+                onShowSolution={() => setView("solution")}
+                testIdPrefix="cloze"
+            />
+            {view === "my-answer" ? (
+                <ClozeDiffRow
+                    blanks={blanks}
+                    perBlankCorrect={perBlankCorrect}
+                    inputs={inputs}
+                />
+            ) : (
+                <ClozeSolutionView blanks={blanks} />
+            )}
+        </div>
+    );
+}
+
+/** Post-check feedback (all-correct vs N-of-M), the My-answer/Solution
+ *  reveal on a miss, the celebration, and the shared exercise footer. */
 function ClozeResult({
     submitted,
     isAllCorrect,
@@ -351,6 +460,11 @@ function ClozeResult({
     onRetry: () => void;
 }) {
     const {t} = useI18n();
+    // #1005/#1011 — after a miss, toggle between "My answer" (the per-blank
+    // diff) and "Solution" (the accepted answers). Gated on the mode's
+    // ``showAnswerToggle`` (hidden in exam mode), matching free-text +
+    // word-tiles so cloze isn't the odd one out (#1216).
+    const {showAnswerToggle} = useLessonMode();
     return (
         <div className="flex flex-wrap items-center gap-2">
             {submitted && (
@@ -386,23 +500,12 @@ function ClozeResult({
                         )}
                     </p>
                     {!isAllCorrect && (
-                        <div
-                            className="flex basis-full flex-col gap-1"
-                            data-testid="cloze-diff-row"
-                        >
-                            {blanks.map((blank, idx) =>
-                                perBlankCorrect[idx] ? null : (
-                                    <DiffHighlight
-                                        key={idx}
-                                        tokens={tokenDiff(
-                                            inputs[idx],
-                                            blank.accept[0] ?? "",
-                                        )}
-                                        className="cloze-blank-diff"
-                                    />
-                                ),
-                            )}
-                        </div>
+                        <ClozeReveal
+                            showAnswerToggle={showAnswerToggle}
+                            blanks={blanks}
+                            perBlankCorrect={perBlankCorrect}
+                            inputs={inputs}
+                        />
                     )}
                     <AnswerCelebration isCorrect={isAllCorrect} />
                 </>
