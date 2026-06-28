@@ -1,0 +1,220 @@
+name: Release
+
+# One-click, workflow_dispatch-only release driver for FUTURE releases.
+# v1.97.0 is released manually (make release-finish); this workflow is
+# infrastructure from the next release onward.
+#
+# Two dispatchable stages (the deliberate "prepare -> review -> finish"
+# pattern). Dispatch once with stage=prepare, review the release branch + its
+# CI, then dispatch again with stage=finish:
+#
+#   stage=prepare -> cut release/<version> from develop (make release-prepare,
+#                    which only cuts the branch), then SELF-bump the version
+#                    (release-prepare does NOT bump): set backend/pyproject.toml
+#                    -> make sync-versions -> sync-versions-check ->
+#                    verify_version_pins.sh; fix the doc headers / version
+#                    badges via scripts/verify_docs.py --fix; commit + push the
+#                    release branch; run the full gate (make release-test, plus
+#                    make test-e2e-smoke unless skip_e2e). Then STOP for review.
+#   stage=finish  -> make release-finish (merge to main no-ff + tag v<version> +
+#                    back-merge develop + delete the branch) and
+#                    make release-publish (GitHub Release from the changelog).
+#
+# Launcher binaries are NOT built or attached here: launcher-{linux,macos,
+# windows}.yml trigger on `release: created` and attach the binaries
+# automatically once release-publish creates the GitHub Release. Keep that
+# division — building them here would duplicate and drift.
+#
+# The per-release changelog changelog/releases/v<version>.md MUST already exist
+# (written by the author). The prepare stage fails fast if it is missing; this
+# workflow never invents changelog content.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, X.Y.Z (no leading v)"
+        required: true
+        type: string
+      stage:
+        description: "prepare (bump + gate on release/<version>, then review) | finish (merge + tag + publish)"
+        required: true
+        type: choice
+        options:
+          - prepare
+          - finish
+        default: prepare
+      skip_e2e:
+        description: "prepare only: skip the extra Playwright smoke (make test-e2e-smoke)"
+        required: false
+        type: boolean
+        default: false
+
+# Only the standard token scope is needed: pushing the release branch, main,
+# develop + tags, and creating the GitHub Release. Anything beyond this would
+# require an explicit grant — none is used here.
+permissions:
+  contents: write
+
+env:
+  # Safety net: coerce any straggler JavaScript action still declaring Node 20
+  # onto Node 24 (mirrors the other workflows).
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  prepare:
+    name: Prepare release branch (bump + gate, then review)
+    if: ${{ inputs.stage == 'prepare' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Validate version input
+        run: |
+          echo "${{ inputs.version }}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            || { echo "::error::version must be X.Y.Z (no leading v), got '${{ inputs.version }}'"; exit 1; }
+
+      - uses: actions/checkout@v6
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Changelog precondition (this action never invents a changelog)
+        run: |
+          f="changelog/releases/v${{ inputs.version }}.md"
+          if [ ! -f "$f" ]; then
+            echo "::error::$f is missing. Write the per-release changelog first, then re-dispatch."
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Backend + plugin deps
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Frontend deps
+        working-directory: frontend
+        # --legacy-peer-deps: eslint@10 vs eslint-plugin-react peer cap (#266).
+        run: npm ci --legacy-peer-deps
+
+      - name: E2E deps
+        working-directory: e2e
+        run: npm ci
+
+      - name: Docs deps (verify-docs-discipline runs the mkdocs nav check)
+        working-directory: docs
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Playwright browsers (release-test runs the dexie + manual gates)
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Cut release branch from develop
+        # release-prepare ONLY cuts release/<version> from develop; it does not
+        # bump the version, finalize the changelog, or touch doc headers.
+        run: make release-prepare VERSION=${{ inputs.version }}
+
+      - name: Bump version (release-prepare does not do this)
+        run: |
+          python3 - "${{ inputs.version }}" <<'PY'
+          import pathlib, re, sys
+          version = sys.argv[1]
+          path = pathlib.Path("backend/pyproject.toml")
+          text = path.read_text(encoding="utf-8")
+          text, n = re.subn(r'(?m)^version = ".*"$', f'version = "{version}"', text, count=1)
+          if n != 1:
+              sys.exit("could not rewrite the canonical version in backend/pyproject.toml")
+          path.write_text(text, encoding="utf-8")
+          print(f"canonical version set to {version}")
+          PY
+          make sync-versions
+          make sync-versions-check
+          ./scripts/verify_version_pins.sh ${{ inputs.version }}
+
+      - name: Fix doc headers + version badges (the 5 gated files)
+        # Best-effort, stdlib-only; aligns README / README-de / CLAUDE.md /
+        # ROADMAP / backlog version badges + headers to the canonical version.
+        run: python3 scripts/verify_docs.py --fix
+
+      - name: Commit + push the release branch
+        run: |
+          git add -A
+          git commit -m "chore(release): prepare v${{ inputs.version }}" || echo "nothing to commit"
+          git push -u origin release/${{ inputs.version }}
+
+      - name: Full release gate (make release-test)
+        run: make release-test
+
+      - name: Extra Playwright smoke
+        if: ${{ inputs.skip_e2e == false }}
+        run: make test-e2e-smoke
+
+      - name: Next step
+        run: |
+          echo "release/${{ inputs.version }} prepared + gated."
+          echo "Review the branch and its CI, then re-dispatch this workflow with stage=finish."
+
+  finish:
+    name: Finish release (merge + tag + publish)
+    if: ${{ inputs.stage == 'finish' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Validate version input
+        run: |
+          echo "${{ inputs.version }}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            || { echo "::error::version must be X.Y.Z (no leading v), got '${{ inputs.version }}'"; exit 1; }
+
+      - uses: actions/checkout@v6
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Changelog precondition (release-publish needs it)
+        run: |
+          f="changelog/releases/v${{ inputs.version }}.md"
+          if [ ! -f "$f" ]; then
+            echo "::error::$f is missing on develop. The prepare stage should have added it."
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Finish (merge main no-ff + tag + back-merge develop + delete branch)
+        run: make release-finish VERSION=${{ inputs.version }}
+
+      - name: Publish GitHub Release from the changelog
+        # Launcher binaries are NOT attached here: launcher-{linux,macos,windows}.yml
+        # trigger on `release: created` and attach them automatically.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make release-publish VERSION=${{ inputs.version }}
+
+      - name: Deploy note
+        run: |
+          echo "GitHub Pages deploys from main via its own workflow."
+          echo "Launcher binaries attach via launcher-*.yml on the release-created event."
