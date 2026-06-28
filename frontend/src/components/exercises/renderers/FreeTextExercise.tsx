@@ -38,6 +38,7 @@ import {cn} from "@/lib/utils";
 import ExercisePromptRow from "../shell/ExercisePromptRow";
 import ExerciseHint from "../feedback/ExerciseHint";
 import ExerciseAnswerToggle, {type AnswerView} from "../feedback/ExerciseAnswerToggle";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import {deriveFreeTextAttempt} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../../lib/exercises/token-diff";
@@ -316,6 +317,8 @@ function FreeTextResult({
     canCheck,
     onCheck,
     onRetry,
+    onAdvance,
+    advanceLabel,
     t,
 }: {
     submitted: boolean;
@@ -328,6 +331,8 @@ function FreeTextResult({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
+    onAdvance?: () => void;
+    advanceLabel?: string;
     t: Translate;
 }) {
     // #627 — a wrong-but-close answer (within 2 edits) gets encouraging
@@ -340,6 +345,10 @@ function FreeTextResult({
     const {showAnswerToggle} = useLessonMode();
     const [view, setView] = useState<AnswerView>("my-answer");
     const showReveal = submitted && !isCorrect && showAnswerToggle;
+    // #1218 — a fully-correct answer replaces the redundant toggle with a
+    // success badge + "Continue" (lesson flow only, when onAdvance is set).
+    const showSuccessAdvance =
+        submitted && isCorrect && showAnswerToggle && !!onAdvance;
     return (
         <div className="flex flex-wrap items-center gap-3">
             {submitted && (
@@ -377,6 +386,13 @@ function FreeTextResult({
                             </>
                         )}
                     </p>
+                    {showSuccessAdvance && onAdvance && (
+                        <ExerciseSuccessAdvance
+                            onAdvance={onAdvance}
+                            label={advanceLabel}
+                            testIdPrefix="free-text"
+                        />
+                    )}
                     {showReveal && (
                         <div className="flex w-full flex-col gap-2">
                             <ExerciseAnswerToggle
@@ -442,6 +458,8 @@ function FreeTextExercise(
         onInteraction,
         reviewed = null,
         ttsLang = null,
+        onAdvance,
+        advanceLabel,
     }: FreeTextExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -567,6 +585,8 @@ function FreeTextExercise(
                 canCheck={!isInputEmpty}
                 onCheck={submit}
                 onRetry={reset}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
                 t={t}
             />
         </section>

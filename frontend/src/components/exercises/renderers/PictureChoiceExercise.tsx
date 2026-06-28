@@ -53,6 +53,8 @@ import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import DirectionInstruction from "../feedback/DirectionInstruction";
 import ExerciseFooter from "../shell/ExerciseFooter";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -132,6 +134,8 @@ function PictureResult({
     canCheck,
     onCheck,
     onRetry,
+    onAdvance,
+    advanceLabel,
     t,
 }: {
     submitted: boolean;
@@ -140,8 +144,11 @@ function PictureResult({
     canCheck: boolean;
     onCheck: () => void;
     onRetry: () => void;
+    onAdvance?: () => void;
+    advanceLabel?: string;
     t: Translate;
 }) {
+    const {showAnswerToggle} = useLessonMode();
     return (
         <div className="flex flex-wrap items-center gap-3">
             {submitted && (
@@ -163,6 +170,13 @@ function PictureResult({
                                   "Not quite — the highlighted tile is the right answer.",
                               )}
                     </p>
+                    {isCorrect && showAnswerToggle && onAdvance && (
+                        <ExerciseSuccessAdvance
+                            onAdvance={onAdvance}
+                            label={advanceLabel}
+                            testIdPrefix="picture"
+                        />
+                    )}
                     <AnswerCelebration isCorrect={isCorrect} />
                 </>
             )}
@@ -245,6 +259,8 @@ function PictureChoiceExercise(
         reviewed = null,
         ttsLang = null,
         codeMode = false,
+        onAdvance,
+        advanceLabel,
     }: PictureChoiceExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -384,6 +400,8 @@ function PictureChoiceExercise(
                 canCheck={selected !== null}
                 onCheck={submit}
                 onRetry={reset}
+                onAdvance={onAdvance}
+                advanceLabel={advanceLabel}
                 t={t}
             />
         </section>

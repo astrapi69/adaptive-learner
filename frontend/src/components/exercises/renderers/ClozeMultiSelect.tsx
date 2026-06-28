@@ -23,6 +23,7 @@ import type {Ref} from "react";
 import {forwardRef, useMemo, useState} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import {cn} from "@/lib/utils";
 import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
 import ReadAloudButton from "../../lesson/tts/ReadAloudButton";
@@ -31,6 +32,7 @@ import {useControlledExercise} from "../../../lib/exercises/useControlledExercis
 import {seededShuffle} from "../../../lib/exercises/seeded-shuffle";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import ExerciseFooter from "../shell/ExerciseFooter";
 import ExerciseHint from "../feedback/ExerciseHint";
 import type {
@@ -90,10 +92,13 @@ function ClozeMultiSelect(
         onInteraction,
         reviewed = null,
         ttsLang = null,
+        onAdvance,
+        advanceLabel,
     }: ClozeMultiSelectProps,
     ref: Ref<ExerciseHandle>,
 ) {
     const {t} = useI18n();
+    const {showAnswerToggle} = useLessonMode();
     const question = exercise.sentence ?? "";
     const accept = useMemo(() => exercise.accept ?? [], [exercise.accept]);
     const acceptSet = useMemo(
@@ -337,6 +342,13 @@ function ClozeMultiSelect(
                                 </>
                             )}
                         </p>
+                        {isCorrect && showAnswerToggle && onAdvance && (
+                            <ExerciseSuccessAdvance
+                                onAdvance={onAdvance}
+                                label={advanceLabel}
+                                testIdPrefix="cloze-multiselect"
+                            />
+                        )}
                         <AnswerCelebration isCorrect={isCorrect} />
                     </>
                 )}

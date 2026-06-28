@@ -56,6 +56,13 @@ interface LessonStepViewProps {
   onInteraction: (answerable: boolean) => void;
   onChecked: () => void;
   recordStepResult: (result: LessonStepResult) => Promise<void>;
+  /** #1218 — advance to the next step (the lesson's ``goNext``). Threaded
+   *  to the exercise so a fully-correct answer can offer an in-context
+   *  "Continue" via the success-merge. */
+  onAdvance: () => void;
+  /** #1218 — localised label for that "Continue" button ("Next" /
+   *  "Finish lesson"). */
+  advanceLabel: string;
 }
 
 /** The active lesson step: theory, reviewed-fallback, or exercise. */
@@ -79,6 +86,8 @@ export default function LessonStepView({
   onInteraction,
   onChecked,
   recordStepResult,
+  onAdvance,
+  advanceLabel,
 }: LessonStepViewProps) {
   const { t } = useI18n();
   // Exam mode (#1007): "Re-read theory" is a scaffolding aid — hidden.
@@ -212,6 +221,8 @@ export default function LessonStepView({
           domain={lesson.domain}
           cards={lesson.cards}
           onComplete={handleComplete}
+          onAdvance={onAdvance}
+          advanceLabel={advanceLabel}
         />
       )}
     </article>

@@ -1862,6 +1862,9 @@
         "my_answer": "Jawaban saya",
         "solution": "Solusi"
       },
+      "success": {
+        "badge": "Benar!"
+      },
       "reread_theory": "Baca ulang teori",
       "back_to_exercise": "Kembali ke latihan",
       "loading": "Latihan sedang memuat…",

@@ -1862,6 +1862,9 @@
         "my_answer": "मेरा उत्तर",
         "solution": "समाधान"
       },
+      "success": {
+        "badge": "सही!"
+      },
       "reread_theory": "सिद्धांत फिर से पढ़ें",
       "back_to_exercise": "अभ्यास पर वापस",
       "loading": "अभ्यास लोड हो रहा है…",

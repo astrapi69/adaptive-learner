@@ -30,6 +30,7 @@ import type {Ref} from "react";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import ExerciseHint from "../feedback/ExerciseHint";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
 import {deriveMatchingAttempts} from "../../../lib/srs/element-attempt";
 import {prefersReducedMotion} from "../../../lib/feedback/feedbackPref";
@@ -161,6 +162,8 @@ function MatchingExercise(
         domain = null,
         ttsLang = null,
         codeMode = false,
+        onAdvance,
+        advanceLabel,
     }: MatchingExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -499,18 +502,34 @@ function MatchingExercise(
                 testId="matching-hint-button"
             />
 
-            {submitted && showAnswerToggle && (
-                <MatchingViewToggle
-                    view={view}
-                    onShowUserAnswers={showUserAnswers}
-                    onShowSolution={showSolution}
-                    myAnswersLabel={t(
-                        "lesson.exercise.matching.my_answers",
-                        "My answers",
-                    )}
-                    solveLabel={t("lesson.exercise.matching.resolve", "Solve")}
-                />
-            )}
+            {submitted &&
+                showAnswerToggle &&
+                (result !== null &&
+                result.correct === pairs.length &&
+                onAdvance ? (
+                    // #1218 — a fully-correct match makes the My-answers /
+                    // Solve toggle redundant; merge it into a success badge
+                    // + "Continue".
+                    <ExerciseSuccessAdvance
+                        onAdvance={onAdvance}
+                        label={advanceLabel}
+                        testIdPrefix="matching"
+                    />
+                ) : (
+                    <MatchingViewToggle
+                        view={view}
+                        onShowUserAnswers={showUserAnswers}
+                        onShowSolution={showSolution}
+                        myAnswersLabel={t(
+                            "lesson.exercise.matching.my_answers",
+                            "My answers",
+                        )}
+                        solveLabel={t(
+                            "lesson.exercise.matching.resolve",
+                            "Solve",
+                        )}
+                    />
+                ))}
 
             {view === "user-answers" && (
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">

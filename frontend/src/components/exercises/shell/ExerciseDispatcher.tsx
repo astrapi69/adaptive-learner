@@ -109,6 +109,8 @@ function ExerciseDispatcher(
         controlled = false,
         onInteraction,
         reviewed = null,
+        onAdvance,
+        advanceLabel,
     }: ExerciseDispatcherProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -123,6 +125,9 @@ function ExerciseDispatcher(
         controlled,
         onInteraction,
         reviewed,
+        // #1218 — the success-merge "Continue" wiring (lesson only).
+        onAdvance,
+        advanceLabel,
         // TTS feature C2 — language used to read the prompt aloud, and
         // a flag so renderers suppress read-aloud on code/formula
         // content (reading code aloud is useless).

@@ -1731,6 +1731,8 @@ lesson:
     toggle:
       my_answer: "My answer"
       solution: "Solution"
+    success:
+      badge: "Correct!"
     reread_theory: "Re-read theory"
     back_to_exercise: "Back to exercise"
     loading: "Exercise loading…"

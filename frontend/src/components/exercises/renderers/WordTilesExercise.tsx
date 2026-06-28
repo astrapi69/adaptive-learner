@@ -79,6 +79,7 @@ export {isWordTilesCorrect} from "../../../lib/exercises/word-tiles-equivalence"
 import AnswerCelebration from "../feedback/AnswerCelebration";
 import DirectionInstruction from "../feedback/DirectionInstruction";
 import ExerciseAnswerToggle, {type AnswerView} from "../feedback/ExerciseAnswerToggle";
+import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
 import ExerciseFooter from "../shell/ExerciseFooter";
 import type {
     ControlledExerciseProps,
@@ -670,6 +671,8 @@ function WordTilesExercise(
         reviewed = null,
         ttsLang = null,
         codeMode = false,
+        onAdvance,
+        advanceLabel,
     }: WordTilesExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -895,7 +898,17 @@ function WordTilesExercise(
                 onShowHint={() => setShowHint(true)}
             />
 
-            {submitted && showAnswerToggle && (
+            {submitted && showAnswerToggle && isCorrect && onAdvance ? (
+                // #1218 — a fully-correct answer makes the My-answer /
+                // Solution toggle redundant; merge it into a success
+                // badge + "Continue".
+                <ExerciseSuccessAdvance
+                    onAdvance={onAdvance}
+                    label={advanceLabel}
+                    testIdPrefix="word-tiles"
+                />
+            ) : (
+                submitted && showAnswerToggle && (
                 <>
                     <ExerciseAnswerToggle
                         view={view}
@@ -925,6 +938,7 @@ function WordTilesExercise(
                         />
                     )}
                 </>
+                )
             )}
 
             <WordTilesResult
