@@ -7,11 +7,20 @@
  * grid (no longer editable), and ``prefers-reduced-motion`` drops every
  * animation utility.
  *
- * Three slices:
+ * Since #1218 the post-check My-answers / Solve toggle only appears on a
+ * WRONG / partial answer — a fully-correct match shows a success "Continue"
+ * (``ExerciseSuccessAdvance``) instead, since there is nothing to "solve".
+ * The Solve/resolution slices therefore drive a deliberately-wrong match.
+ *
+ * Four slices:
  *  1. Settings: the effect select offers exactly the four options + persists.
- *  2. Lesson: the Solve button appears after Check, and resolving locks the
- *     grid (the interactive tiles are gone, the resolution is shown).
- *  3. Reduced motion: the resolved tiles carry no ``animate-[...]`` utility.
+ *  2. Lesson (wrong answer): the Solve button appears after Check, and
+ *     resolving locks the grid (the interactive tiles are gone, the
+ *     resolution is shown).
+ *  3. Reduced motion (wrong answer): the resolved tiles carry no
+ *     ``animate-[...]`` utility.
+ *  4. #1218: a fully-correct match shows the success "Continue", not the
+ *     My-answers / Solve toggle.
  *
  * Dexie build, no backend, mocked content fixture (its first exercise is a
  * 3-pair Matching).
@@ -28,17 +37,24 @@ import { seedLearner } from "./helpers/setup";
 const RESOLVE_EFFECT_KEY = "adaptive-learner.matching.resolve_effect";
 const EFFECTS = ["slide", "color", "connect", "stack"] as const;
 
-/** Drive the mocked lesson to the Matching exercise and check it, leaving the
- *  Solve ("Auflösen") button on screen. Returns false if no Matching reached. */
+/** Drive the mocked lesson to the Matching exercise and check it. Pairs the
+ *  match either WRONG (default — leaves the Solve / "Auflösen" toggle on
+ *  screen, the post-#1218 path) or fully correct (``correct: true`` — leaves
+ *  the success "Continue"). Returns false if no Matching reached. */
 async function reachCheckedMatching(
   content: ContentPage,
   lesson: LessonRunner,
+  opts: { correct?: boolean } = {},
 ): Promise<boolean> {
   await content.goto();
   await content.openBundledLesson();
   const reached = await lesson.advanceUntil("matching");
   if (!reached) return false;
-  await lesson.pairAllMatching();
+  if (opts.correct) {
+    await lesson.pairAllMatching();
+  } else {
+    await lesson.pairAllMatchingIncorrect();
+  }
   await expect(lesson.check).toBeEnabled();
   await lesson.check.click();
   return true;
@@ -65,12 +81,14 @@ test.describe("Matching resolution (#824/#825)", () => {
       .toBe("stack");
   });
 
-  test("the Solve button appears after Check and locks the grid", async ({
+  test("the Solve button appears after a wrong Check and locks the grid", async ({
     page,
   }) => {
     await mockContent(page);
     const content = new ContentPage(page);
     const lesson = new LessonRunner(page);
+    // A wrong/partial answer keeps the My-answers / Solve toggle (a correct
+    // answer would show the #1218 success "Continue" instead).
     const reached = await reachCheckedMatching(content, lesson);
     test.skip(!reached, "no matching exercise reached in this lesson");
 
@@ -108,5 +126,23 @@ test.describe("Matching resolution (#824/#825)", () => {
     await expect(tile).toBeVisible();
     const cls = (await tile.getAttribute("class")) ?? "";
     expect(cls).not.toContain("animate-[");
+  });
+
+  test("#1218 — a fully-correct match shows the success Continue, not the toggle", async ({
+    page,
+  }) => {
+    await mockContent(page);
+    const content = new ContentPage(page);
+    const lesson = new LessonRunner(page);
+    const reached = await reachCheckedMatching(content, lesson, { correct: true });
+    test.skip(!reached, "no matching exercise reached in this lesson");
+
+    // On a fully-correct answer the post-check toggle is replaced by the
+    // shared success badge + "Continue" (drives goNext) — the Solve /
+    // My-answers toggle is not offered (there is nothing to solve).
+    await expect(page.getByTestId("matching-success-advance")).toBeVisible();
+    await expect(page.getByTestId("matching-advance")).toBeVisible();
+    await expect(page.getByTestId("matching-view-toggle")).toHaveCount(0);
+    await expect(page.getByTestId("matching-resolve")).toHaveCount(0);
   });
 });

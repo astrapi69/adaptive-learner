@@ -5,10 +5,21 @@
  * EXP-037 (#850) restructured the nav into a small grouped primary bar
  * (Nielsen-Norman 5-7) plus a mobile ``BottomTabBar`` (4 tabs + a "More"
  * sheet), and KEPT several pages reachable by URL after dropping them from the
- * nav (``/session``, ``/anki``, ``/pronunciation``, ``/create-lesson``). The
- * redirects spec proves the moved routes redirect; this spec proves:
+ * nav (``/session``, ``/anki``, ``/pronunciation``, ``/create-lesson``).
  *
- *   - the desktop primary bar shows its grouped entries,
+ * #891 added a vertical desktop sidebar (``DesktopSidebar``, ``sidebar-*``
+ * testids). Three navigation surfaces now coexist, each owning one viewport
+ * band:
+ *   - ``>= lg`` (>= 1024px): the fixed ``DesktopSidebar`` is the primary nav;
+ *     the top bar's inline links are CSS-hidden (``body.has-desktop-sidebar``).
+ *   - ``md .. lg`` (768-1023px): the inline top bar (``nav-*``) is the primary
+ *     nav; the sidebar is ``hidden`` and the bottom bar is ``md:hidden``.
+ *   - ``< md`` (< 768px): the ``BottomTabBar``.
+ *
+ * The redirects spec proves the moved routes redirect; this spec proves:
+ *
+ *   - the desktop sidebar shows its grouped entries (>= lg),
+ *   - the tablet-width top bar shows its grouped entries (md..lg),
  *   - the mobile bottom bar shows exactly its 4 tabs + the More sheet,
  *   - the still-reachable (un-redirected) routes render, not the 404 page.
  *
@@ -22,7 +33,9 @@ import { installErrorCollectors } from "./helpers/collectors";
 import { mockContent } from "./helpers/mock-content";
 import { seedLearner } from "./helpers/setup";
 
-/** The primary top-bar entries that survive the EXP-037 grouping. */
+/** The primary entries that survive the EXP-037 grouping. Both the desktop
+ *  sidebar (``sidebar-*``, #891) and the tablet-width top bar (``nav-*``)
+ *  render this same set. */
 const PRIMARY_NAV = [
   "dashboard",
   "learning-path",
@@ -33,8 +46,29 @@ const PRIMARY_NAV = [
 ] as const;
 
 test.describe("Navigation structure", () => {
-  test("desktop primary bar shows the grouped entries", async ({ page }) => {
+  test("desktop sidebar shows the grouped entries (>= lg)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
+    await mockContent(page);
+    const errors = installErrorCollectors(page);
+    await seedLearner(page);
+
+    // #891 — at >= lg the fixed DesktopSidebar is the primary navigation.
+    for (const entry of PRIMARY_NAV) {
+      await expect(page.getByTestId(`sidebar-${entry}`)).toBeVisible();
+    }
+    // The top bar's inline links are CSS-hidden (body.has-desktop-sidebar) so
+    // the two never duplicate; the mobile bottom bar is md:hidden.
+    await expect(page.getByTestId("nav-dashboard")).toBeHidden();
+    await expect(page.getByTestId("bottom-tab-bar")).toBeHidden();
+    expect(errors.pageErrors()).toEqual([]);
+  });
+
+  test("tablet-width top bar shows the grouped entries (md..lg)", async ({
+    page,
+  }) => {
+    // Between md (768) and lg (1024) the DesktopSidebar is hidden and the
+    // BottomTabBar is md:hidden, so the inline top bar is the primary nav.
+    await page.setViewportSize({ width: 900, height: 800 });
     await mockContent(page);
     const errors = installErrorCollectors(page);
     await seedLearner(page);
@@ -42,7 +76,7 @@ test.describe("Navigation structure", () => {
     for (const entry of PRIMARY_NAV) {
       await expect(page.getByTestId(`nav-${entry}`)).toBeVisible();
     }
-    // The mobile bottom bar is md:hidden — absent on a desktop viewport.
+    await expect(page.getByTestId("sidebar-dashboard")).toBeHidden();
     await expect(page.getByTestId("bottom-tab-bar")).toBeHidden();
     expect(errors.pageErrors()).toEqual([]);
   });
