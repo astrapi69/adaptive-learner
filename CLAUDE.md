@@ -9,7 +9,30 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.96.0** (release - imported-chat **backend/API-mode
+- **Current state:** **v1.97.0** (schema + tooling release - the lesson
+  **JSON-Schema becomes the App-authoritative single source of truth**
+  (EXP-039): the schema, quality rules, doc, and TS types are generated from
+  the App's Pydantic models (#1197), the TS lesson types consume that generated
+  schema directly (#1200), and the structural validator is **ajv-hardened**
+  against it (#1205), guarded by a `make sync-schema-check` drift gate; **cloze
+  multiselect** ("select all that apply", #1195); an **exam-mode SRS interval
+  boost** for correct exam answers (#1040); **passphrase-encrypted `.alk`
+  export** of AI keys + provider settings (#1165, surfaced on the Settings AI
+  tab #1181/#1183); a **vertical desktop sidebar** for primary nav (#891); a
+  **single-set deep link** `/content/set/:setId` (#892); the **native Web Share
+  sheet** with a desktop social-link fallback for "Share result" (#1219);
+  **Latest strand** visibility + About-tab badge (#1172); **iOS
+  Add-to-Home-Screen** guidance + testable manifest (#1167); an **EXP-041**
+  generation rule coupling exercise type to learning goal (#1225); plus device
+  fixes (cloze My-answer/Solution toggle #1216, success-Continue merge #1218,
+  X-share text #1227, domain-aware word_tiles instruction #1228,
+  download-date sorting #1211), two **#809** god-folder splits
+  (`components/exercises` #1206, `hooks/lesson` #1210), a `lib/ai` split
+  (#917/#1190), a `verify-theme` token/contrast gate (#1169), and a docs sweep
+  (#1215). No schema/API/data-model change (additive generation pipeline over
+  the existing Pydantic models; Alembic/Dexie unchanged). See
+  changelog/releases/v1.97.0.md.)
+  Prior **v1.96.0** = (release - imported-chat **backend/API-mode
   parity** (#1154) so desktop/server mode no longer drifts off an imported
   chat's topic, plus the **tutor-session key gate** (#1158: the
   "Continue/Start session" entry on an import is disabled with a tooltip when
