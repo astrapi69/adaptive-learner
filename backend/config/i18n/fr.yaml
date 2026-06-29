@@ -476,11 +476,9 @@ settings:
     import_button: "Importer le fichier de clés"
     success_export: "Fichier de clés chiffré téléchargé."
     success_import: "Clés importées. Les fonctions d'IA sont à nouveau prêtes."
-    error_too_short: "La phrase secrète doit comporter au moins {n} caractères."
+    min_length: "Au moins {n} caractères."
     error_mismatch: "Les phrases secrètes ne correspondent pas."
     error_export: "Impossible de créer l'export."
-    error_no_file: "Choisissez d'abord un fichier de clés."
-    error_no_passphrase: "Saisissez la phrase secrète utilisée lors de l'export."
     error_decrypt: "Phrase secrète incorrecte ou fichier endommagé."
     error_import: "Impossible d'importer le fichier de clés."
   lesson_mode:
