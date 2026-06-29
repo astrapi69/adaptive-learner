@@ -51,20 +51,20 @@ import SaveAdaptiveLessonButton from "../../components/content/lessons/SaveAdapt
 import {
   ExerciseDispatcher,
   SUPPORTED_EXERCISE_TYPES,
-} from "../../components/exercises/ExerciseDispatcher";
-import type { ExerciseHandle } from "../../components/exercises/exercise-control";
+} from "../../components/exercises";
+import type { ExerciseHandle } from "../../components/exercises";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "../../shared/data-display/ProgressBar";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { useAdaptiveLesson } from "../../hooks/lesson/useAdaptiveLesson";
+import { useAdaptiveLesson } from "../../hooks/lesson/modes/useAdaptiveLesson";
 import type { ErrorTag } from "../../lib/adaptive/error-classifier";
-import type { AdaptiveTransparency } from "../../hooks/lesson/useAdaptiveLesson";
+import type { AdaptiveTransparency } from "../../hooks/lesson/modes/useAdaptiveLesson";
 import type {
   ContentLesson,
   ContentLessonStep,
   ElementAttempt,
 } from "../../storage/types";
-import type { ExerciseScored } from "../../components/exercises/exercise-control";
+import type { ExerciseScored } from "../../components/exercises";
 
 type Translate = (key: string, fallback?: string) => string;
 

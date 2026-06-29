@@ -28,9 +28,11 @@ Each downloaded set is **one row**:
 | Action button | **Resume** / **Start** / **Next level available** / **Completed** |
 
 Sets are sorted by last activity (most recent first). Untouched
-downloaded sets sink to the bottom. When you finish every lesson of a
-course and the next CEFR level exists, the row offers **Next level
-available**.
+downloaded sets sink to the bottom — and among those, the **most
+recently downloaded set comes first**, so a set you just downloaded
+is right at the top of the not-yet-started group instead of buried.
+When you finish every lesson of a course and the next CEFR level
+exists, the row offers **Next level available**.
 
 ### Level 2 — lesson detail
 

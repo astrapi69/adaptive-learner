@@ -363,7 +363,6 @@ adaptive:
     load_failed: अनुकूली पाठ तैयार नहीं हो सका।
 review:
   your_answer: "आपका उत्तर:"
-  correct_answer: "सही:"
   summary_corrected: "{total} में से {corrected} सुधारे गए"
   summary_trend: "बढ़िया — आपके कमज़ोर बिंदु मज़बूत हो रहे हैं।"
   summary_next: "महारत प्राप्त तत्व हट जाते हैं; बाकी जल्द ही समीक्षा के लिए लौटते हैं।"
@@ -460,6 +459,32 @@ progress:
   commit_notes_aria: सत्र नोट्स
   session_count: सत्र
 settings:
+  key_export_link:
+    heading: "AI कुंजियाँ — एन्क्रिप्टेड निर्यात"
+    hint: "अपनी AI कुंजियों को एक एन्क्रिप्टेड फ़ाइल के रूप में निर्यात या आयात करें। यह डेटा टैब में अन्य बैकअप के साथ मौजूद है।"
+    button: "कुंजी निर्यात पर जाएँ (डेटा टैब)"
+  key_vault:
+    title: "AI कुंजियाँ — एन्क्रिप्टेड निर्यात"
+    intro: "अपनी AI कुंजियाँ एक एन्क्रिप्टेड फ़ाइल में दूसरे डिवाइस पर ले जाएँ, सामान्य बैकअप से अलग (जिसमें कभी कुंजियाँ नहीं होतीं)।"
+    api_disabled: "सर्वर मोड में आपकी कुंजियाँ सर्वर द्वारा प्रबंधित होती हैं, इसलिए यहाँ निर्यात करने के लिए कुछ नहीं है।"
+    export_heading: "निर्यात"
+    passphrase_hint: "एक मज़बूत पासफ़्रेज़ चुनें। इसे पुनर्प्राप्त नहीं किया जा सकता — इसके बिना फ़ाइल नहीं खुलेगी।"
+    passphrase_label: "पासफ़्रेज़"
+    confirm_label: "पासफ़्रेज़ की पुष्टि करें"
+    no_keys: "अभी निर्यात करने के लिए कोई AI कुंजी नहीं है।"
+    busy: "काम जारी है…"
+    export_button: "एन्क्रिप्टेड फ़ाइल निर्यात करें"
+    import_heading: "आयात"
+    import_button: "कुंजी फ़ाइल आयात करें"
+    success_export: "एन्क्रिप्टेड कुंजी फ़ाइल डाउनलोड हो गई।"
+    success_import: "कुंजियाँ आयात हो गईं। AI सुविधाएँ फिर से तैयार हैं।"
+    error_too_short: "पासफ़्रेज़ कम से कम {n} वर्णों का होना चाहिए।"
+    error_mismatch: "पासफ़्रेज़ मेल नहीं खाते।"
+    error_export: "निर्यात नहीं बनाया जा सका।"
+    error_no_file: "पहले एक कुंजी फ़ाइल चुनें।"
+    error_no_passphrase: "निर्यात में उपयोग किया गया पासफ़्रेज़ दर्ज करें।"
+    error_decrypt: "पासफ़्रेज़ गलत है या फ़ाइल क्षतिग्रस्त है।"
+    error_import: "कुंजी फ़ाइल आयात नहीं की जा सकी।"
   lesson_mode:
     title: "पाठ मोड"
     hint: "अभ्यास मोड में सभी सहायताएँ चालू रहती हैं। परीक्षा मोड संकेत, सिद्धांत पुनरावलोकन, स्वतः वाचन और समाधान छिपा देता है ताकि आप वास्तविक परिस्थितियों में याद करें।"
@@ -845,6 +870,11 @@ toast:
   api_key_deleted: API key हटाई गई।
   method_switched: विधि बदली गई।
 install:
+  ios:
+    title: "ऐप के रूप में इंस्टॉल करें"
+    steps: "शेयर आइकन पर टैप करें, फिर «होम स्क्रीन में जोड़ें» — यह Safari बार के बिना खुलता है।"
+    aria_label: "अपने iPhone पर इंस्टॉल करें"
+    dismiss: "बंद करें"
   title: होम स्क्रीन पर जोड़ें
   subtitle: बेहतर ऑफ़लाइन उपयोग के लिए Adaptive Learner को ऐप के रूप में इंस्टॉल करें।
   install: इंस्टॉल करें
@@ -863,6 +893,14 @@ about:
   app_label: अडैप्टिव लर्नर
   build_hash_label: बिल्ड
   build_date_label: बिल्ड दिनांक
+  strang:
+    haupt: "मुख्य संस्करण (स्थिर)"
+    latest: "Latest संस्करण (परीक्षण)"
+    unknown: "अज्ञात चैनल"
+    latest_warning: "आप एक पूर्वावलोकन/परीक्षण बिल्ड का उपयोग कर रहे हैं। यह स्थिर नहीं है और इसमें त्रुटियाँ हो सकती हैं।"
+    branch_label: "ब्रांच"
+    commit_label: "कमिट"
+    fallback_note: "चैनल अनुमानित (कोई स्पष्ट बिल्ड मार्कर नहीं)।"
   check_update: "अपडेट जांचें"
   checking: "जांच हो रही है…"
   update_available: "संस्करण {version} उपलब्ध है!"
@@ -1678,6 +1716,8 @@ lesson:
     toggle:
       my_answer: "मेरा उत्तर"
       solution: "समाधान"
+    success:
+      badge: "सही!"
     reread_theory: सिद्धांत फिर से पढ़ें
     back_to_exercise: अभ्यास पर वापस
     loading: अभ्यास लोड हो रहा है…
@@ -1747,6 +1787,11 @@ lesson:
       sentence_label: रिक्त-स्थान वाक्य
       blank_label: रिक्त स्थान {n}
       select_placeholder: चुनें…
+      multi_group_label: "लागू होने वाले सभी चुनें"
+      multi_result_wrong: "बिलकुल सही नहीं। हाइलाइट किए गए विकल्प देखें।"
+      multi_badge_correct: "सही"
+      multi_badge_wrong: "गलत"
+      multi_badge_missed: "छूट गया"
       result_correct: सभी सही!
       result_partial: '{total} में से {correct} सही।'
       empty: इस रिक्त-स्थान अभ्यास में कोई रिक्त स्थान नहीं हैं।
@@ -1760,6 +1805,7 @@ lesson:
       word_tiles:
         receptive: अनुवाद बनाएँ
         productive: वाक्य बनाएँ
+        knowledge: वाक्य बनाएँ
       picture_choice:
         receptive: मिलता-जुलता अर्थ चुनें
         productive: मिलता-जुलता चित्र चुनें
@@ -1794,7 +1840,6 @@ lesson:
       question: प्रश्न
       your_answer: आपका उत्तर
       no_answer: (कोई नहीं)
-      correct_answer: सही
       weak_areas: कमज़ोर क्षेत्र
     mark_complete: पूर्ण के रूप में चिह्नित करें
     next_lesson: अगला पाठ
@@ -1871,6 +1916,14 @@ lesson:
     action_resume: जारी रखें
     action_restart: फिर से शुरू करें
 content:
+  set_link:
+    loading: "सेट लोड हो रहा है…"
+    not_found_title: "सेट नहीं मिला"
+    not_found_body: "यह सेट उपलब्ध नहीं है — हो सकता है इसे अभी डाउनलोड न किया गया हो या यह मौजूद न हो।"
+    go_discover: "सामग्री खोजें"
+    start: "सीखना शुरू करें"
+    download_start: "डाउनलोड करें और शुरू करें"
+    lessons: "{n} पाठ"
   repo_export:
     button: "रिपॉज़िटरी के रूप में साझा करें"
     title: "रिपॉज़िटरी के रूप में साझा करें"
@@ -2534,6 +2587,13 @@ pwa:
     action: "अपडेट करें"
     later: "बाद में"
 share:
+  menu:
+    heading: "साझा करें"
+    facebook: "Facebook पर साझा करें"
+    linkedin: "LinkedIn पर साझा करें"
+    x: "X पर साझा करें"
+    whatsapp: "WhatsApp पर साझा करें"
+    copy: "क्लिपबोर्ड पर कॉपी करें"
   app:
     heading: "ऐप साझा करें"
     qr_intro: "ऐप को QR कोड के ज़रिए साझा करें ताकि दूसरे इसे सीधे खोल सकें।"
@@ -2543,6 +2603,11 @@ share:
     copied: "कॉपी किया गया"
     share: "साझा करें"
     qr_alt: "ऐप से जुड़ा QR कोड"
+    haupt_label: "मुख्य संस्करण (स्थिर)"
+    haupt_intro: "स्थिर ऐप को QR कोड के माध्यम से साझा करें ताकि अन्य लोग इसे खोल सकें।"
+    latest_label: "Latest संस्करण (परीक्षण)"
+    latest_warning: "यह एक पूर्वावलोकन/परीक्षण संस्करण है। यह स्थिर नहीं है और इसमें त्रुटियाँ हो सकती हैं। इसे केवल परीक्षकों के साथ साझा करें।"
+    open_link: "लिंक खोलें"
   result:
     text: 'मैंने "{title}" को {pct}% के साथ पूरा किया! 🎓 {total} में से {correct} सही.'
     cta_record: 'अपने दोस्तों को दिखाएं!'

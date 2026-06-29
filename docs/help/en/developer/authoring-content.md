@@ -20,8 +20,9 @@ A set has three levels:
 2. **Set manifest** (`sets/{set-id}/manifest.yaml`) — sibling of
    the root manifest, lists the lesson files of the specific set.
 3. **Lesson files** (`sets/{set-id}/lessons/NN-slug.json`) — one
-   JSON file per lesson, validated against schema v1.0 on every
-   download.
+   JSON file per lesson, validated against the lesson schema on
+   every download (see *The schema is the single source of truth*
+   below).
 
 The sets shipped with Adaptive Learner live in the separate
 content repo [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
@@ -33,6 +34,33 @@ counts, the per-set table, and the active domains) is the
 CONTENT-STATS block in the project [`README.md`](https://github.com/astrapi69/adaptive-learner#readme) —
 that block is the single source of truth, generated from a fresh
 content checkout, so this guide does not duplicate the numbers.
+
+## The schema is the single source of truth (EXP-039)
+
+The lesson/exercise format has **one authoritative definition**: the
+Pydantic models in the content-loader plugin
+(`adaptive_learner_content_loader.schema`). Every other artefact is
+**generated** from them via `make sync-schema`, so the places that
+used to drift can no longer:
+
+- `schema/lesson.schema.json` (+ siblings) — the machine-readable
+  JSON Schema (Draft 2020-12). Reference it from a lesson `.json`
+  via a top-level `"$schema"` key to get IDE autocomplete and
+  inline validation.
+- `schema/quality-rules.json` — the shared quality minimums (e.g.
+  exercise counts, free-text accept counts), consumed by the
+  client-side content validator instead of a second hand-kept copy.
+- The frontend TypeScript lesson types and the
+  [Lesson format reference](lesson-format-reference.md) MkDocs page
+  are generated too — **do not hand-edit them**; edit the models and
+  re-run the generator.
+
+A drift gate (`make sync-schema-check`, part of `release-test`,
+plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
+fails if any generated artefact diverges from the models. The
+content repo mirrors `schema/lesson.schema.json` +
+`schema/quality-rules.json` (the app is the source) and validates
+structure against them in its own CI.
 
 ## Language pairs (v1.44.0)
 
@@ -226,6 +254,30 @@ Or an exercise:
 }
 ```
 
+## Which exercise type for which learning goal
+
+Pick the exercise type by the **learning goal**, not by variety. Word-by-word
+exact-match grading — a whole-sentence `word_tiles`, or a full-sentence
+`free_text` — fails for **free production**: a concept can be phrased many
+correct ways, so a content-correct learner gets marked wrong word by word. That
+is the most demotivating moment an authored lesson can produce. Match the type
+to the goal instead:
+
+| Learning goal | Right type |
+|---|---|
+| A fact with one answer | `cloze` (a blank) |
+| Recognise a concept | multiple choice (`cloze` in `select` mode) / `matching` |
+| Define a concept | `cloze` with key-term blanks |
+| Free explanation / transfer / comparison | no exact-match type yet — use `cloze` / multiple choice for now; self-assessment is planned |
+| Sentence with one unambiguous word order (language learning) | `word_tiles` |
+
+Rule of thumb: reserve `word_tiles` for sentences whose word order is genuinely
+unique (a translation drill), and author definitions and facts as `cloze` (or
+multiple choice via `cloze` `select` mode). Never put a free-form definition
+into `word_tiles` or full-sentence `free_text` — there is no fair exact-match
+grading for it. Full analysis: see EXP-041
+(`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
+
 ## Exercise type reference
 
 ### matching
@@ -361,6 +413,38 @@ the loader checks `sentence.count("___") == len(blanks)`).
   the exercise's `distractors`, shuffled per blank with a stable
   seed. **Requires non-empty `distractors`** — the schema
   validator rejects `cloze_mode: "select"` without them.
+- `"multiselect"` (#1195): a "select all that apply" question. No
+  `___` markers and no `blanks` — the `sentence` is the question
+  stem, rendered above a checkbox group. Reuses `accept` and
+  `distractors` with a mode-specific meaning: **every** `accept`
+  entry is a correct option (not just `accept[0]`), and
+  `distractors` are the wrong options. Graded by **exact-set**
+  match — the learner must check every correct option and no
+  distractor. **Requires** non-empty `accept`, non-empty
+  `distractors`, and the two lists must be **disjoint** (the same
+  option may not be both correct and a distractor).
+
+**Multiple choice is authored this way** — there is no separate
+`multiple_choice` exercise type (by design, see EXP-036 §4.3). A
+single-answer multiple-choice question is a one-blank cloze in
+`select` mode: the `sentence` (ending in `___`) is the question, the
+blank's `accept[0]` is the correct option, and `distractors` are the
+wrong options. Example: `"sentence": "The capital of France is ___."`,
+`"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
+`"distractors": ["Berlin", "Madrid", "Rome"]`.
+
+**"Select all that apply"** (two or more correct answers, e.g. a
+driving-licence exam question) uses `cloze_mode: "multiselect"`:
+
+```json
+{
+  "type": "cloze",
+  "cloze_mode": "multiselect",
+  "sentence": "Which cities are in Germany?",
+  "accept": ["Berlin", "Hamburg"],
+  "distractors": ["Vienna", "Zurich"]
+}
+```
 
 **Multiple blanks per cloze** are supported: each `___` in the
 sentence is mapped in order to the next entry in `blanks`. Each

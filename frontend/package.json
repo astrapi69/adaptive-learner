@@ -1,7 +1,7 @@
 {
   "name": "adaptive-learner-frontend",
   "private": true,
-  "version": "1.96.0",
+  "version": "1.97.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -61,6 +61,8 @@
     "@tiptap/starter-kit": "3.27.1",
     "@types/dagre": "^0.7.54",
     "@xyflow/react": "^12.11.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dagre": "^0.8.5",
@@ -109,6 +111,7 @@
     "eslint-plugin-security": "^4.0.1",
     "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.10.6",
+    "json-schema-to-typescript": "^15.0.4",
     "png-to-ico": "^3.0.1",
     "prettier": "^3.8.4",
     "rollup-plugin-visualizer": "^7.0.1",

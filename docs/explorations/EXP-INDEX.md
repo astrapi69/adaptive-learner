@@ -55,6 +55,7 @@
 | 035 | Vercel AI Elements Integration (AI-UI)      | Feature      | Zukunft | Niedrig | shadcn/ui, Session |
 | 036 | KI-Übungsgenerierung aus Theorie-Content    | Feature      | 2     | Hoch      | 013, 021, 033, 018 |
 | 037 | Navigation Restructuring (12 → 7 Einträge)  | Querschnitt  | 2     | Hoch      | 022, 034, 032/033  |
+| 039 | JSON-Schema als Single Source of Truth      | Querschnitt  | laufend | Hoch    | 002, 003, 004      |
 
 ## Umsetzungsstand (Stand v1.85.0)
 

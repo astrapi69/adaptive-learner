@@ -361,7 +361,6 @@ adaptive:
     load_failed: "Impossible de générer la leçon adaptative."
 review:
   your_answer: "Votre réponse :"
-  correct_answer: "Correct :"
   summary_corrected: "{corrected} sur {total} corrigés"
   summary_trend: "Bien — vos points faibles se renforcent."
   summary_next: "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision."
@@ -458,6 +457,32 @@ progress:
   commit_notes_aria: "Notes de session"
   session_count: "Sessions"
 settings:
+  key_export_link:
+    heading: "Clés IA — export chiffré"
+    hint: "Exportez ou importez vos clés IA dans un seul fichier chiffré. Il se trouve avec les autres sauvegardes dans l'onglet Données."
+    button: "Aller à l'export des clés (onglet Données)"
+  key_vault:
+    title: "Clés d'IA — export chiffré"
+    intro: "Transférez vos clés d'IA vers un autre appareil dans un seul fichier chiffré, séparé de la sauvegarde normale (qui ne contient jamais de clés)."
+    api_disabled: "En mode serveur, vos clés sont gérées par le serveur ; il n'y a donc rien à exporter ici."
+    export_heading: "Exporter"
+    passphrase_hint: "Choisissez une phrase secrète forte. Elle ne peut pas être récupérée : sans elle, le fichier ne peut pas être ouvert."
+    passphrase_label: "Phrase secrète"
+    confirm_label: "Confirmer la phrase secrète"
+    no_keys: "Aucune clé d'IA à exporter pour le moment."
+    busy: "Traitement…"
+    export_button: "Exporter le fichier chiffré"
+    import_heading: "Importer"
+    import_button: "Importer le fichier de clés"
+    success_export: "Fichier de clés chiffré téléchargé."
+    success_import: "Clés importées. Les fonctions d'IA sont à nouveau prêtes."
+    error_too_short: "La phrase secrète doit comporter au moins {n} caractères."
+    error_mismatch: "Les phrases secrètes ne correspondent pas."
+    error_export: "Impossible de créer l'export."
+    error_no_file: "Choisissez d'abord un fichier de clés."
+    error_no_passphrase: "Saisissez la phrase secrète utilisée lors de l'export."
+    error_decrypt: "Phrase secrète incorrecte ou fichier endommagé."
+    error_import: "Impossible d'importer le fichier de clés."
   lesson_mode:
     title: "Mode de leçon"
     hint: "Le mode entraînement garde toutes les aides. Le mode examen masque les indices, le rappel de théorie, la lecture automatique et la solution pour réviser dans des conditions réalistes."
@@ -844,6 +869,11 @@ toast:
   api_key_deleted: Cle API supprimee.
   method_switched: Methode changee.
 install:
+  ios:
+    title: "Installer comme une app"
+    steps: "Touchez l’icône Partager, puis « Sur l’écran d’accueil » — l’app s’ouvre sans la barre de Safari."
+    aria_label: "Installer sur votre iPhone"
+    dismiss: "Fermer"
   title: Ajouter a l'ecran d'accueil
   subtitle: "Installez Adaptive Learner comme une app pour une meilleure utilisation hors ligne."
   install: Installer
@@ -862,6 +892,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Build
   build_date_label: Date de build
+  strang:
+    haupt: "Version principale (stable)"
+    latest: "Version Latest (test)"
+    unknown: "Canal inconnu"
+    latest_warning: "Vous utilisez une version d'aperçu/de test. Elle n'est pas stable et peut contenir des erreurs."
+    branch_label: "Branche"
+    commit_label: "Commit"
+    fallback_note: "Canal déduit (aucun marqueur de build explicite)."
   check_update: "Rechercher des mises à jour"
   checking: "Vérification…"
   update_available: "La version {version} est disponible !"
@@ -1684,6 +1722,8 @@ lesson:
     toggle:
       my_answer: "Ma réponse"
       solution: "Solution"
+    success:
+      badge: "Correct !"
     reread_theory: "Relire la théorie"
     back_to_exercise: "Retour à l'exercice"
     loading: "Chargement de l'exercice…"
@@ -1753,6 +1793,11 @@ lesson:
       sentence_label: "Phrase à trous"
       blank_label: "Trou {n}"
       select_placeholder: "Choisir…"
+      multi_group_label: "Sélectionnez toutes les réponses correctes"
+      multi_result_wrong: "Pas tout à fait. Vérifiez les options en surbrillance."
+      multi_badge_correct: "Correct"
+      multi_badge_wrong: "Incorrect"
+      multi_badge_missed: "Manquée"
       result_correct: "Tout est correct !"
       result_partial: "{correct} sur {total} corrects."
       empty: "Cet exercice à trous n'a pas de trous."
@@ -1766,6 +1811,7 @@ lesson:
       word_tiles:
         receptive: Composez la traduction
         productive: Composez la phrase
+        knowledge: Composez la phrase
       picture_choice:
         receptive: Choisissez le sens correct
         productive: Choisissez la bonne image
@@ -1835,7 +1881,6 @@ lesson:
       question: "Question"
       your_answer: "Ta réponse"
       no_answer: "(aucune)"
-      correct_answer: "Correct"
       weak_areas: "Points faibles"
     mark_complete: "Marquer comme terminée"
     next_lesson: "Leçon suivante"
@@ -1878,6 +1923,14 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  set_link:
+    loading: "Chargement du jeu…"
+    not_found_title: "Jeu introuvable"
+    not_found_body: "Ce jeu n’est pas disponible : il n’est peut-être pas encore téléchargé ou il n’existe pas."
+    go_discover: "Découvrir du contenu"
+    start: "Commencer à apprendre"
+    download_start: "Télécharger et commencer"
+    lessons: "{n} leçons"
   repo_export:
     button: "Partager comme dépôt"
     title: "Partager comme dépôt"
@@ -2544,6 +2597,13 @@ pwa:
     action: "Mettre à jour"
     later: "Plus tard"
 share:
+  menu:
+    heading: "Partager"
+    facebook: "Partager sur Facebook"
+    linkedin: "Partager sur LinkedIn"
+    x: "Partager sur X"
+    whatsapp: "Partager sur WhatsApp"
+    copy: "Copier dans le presse-papiers"
   app:
     heading: "Partager l'application"
     qr_intro: "Partage l'application par code QR pour que d'autres puissent l'ouvrir."
@@ -2553,6 +2613,11 @@ share:
     copied: "Copié"
     share: "Partager"
     qr_alt: "Code QR menant à l'application"
+    haupt_label: "Version principale (stable)"
+    haupt_intro: "Partage l'application stable via un code QR pour que d'autres puissent l'ouvrir."
+    latest_label: "Version Latest (test)"
+    latest_warning: "Ceci est une version d'aperçu/de test. Elle n'est pas stable et peut contenir des erreurs. Ne la partage qu'avec des testeurs."
+    open_link: "Ouvrir le lien"
   result:
     text: 'J''ai terminé "{title}" avec {pct}% ! 🎓 {correct} sur {total} correctes.'
     cta_record: 'Montre-le à tes amis !'

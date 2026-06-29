@@ -47,6 +47,23 @@ Der Katalog teilt sich in zwei Bäume:
 
 ---
 
+## Direktlink zu einem einzelnen Satz
+
+Jeder Satz hat einen eigenen **Deep-Link** unter
+`/content/set/:setId`, der diesen Satz direkt öffnet und den
+Katalog-Baum überspringt. Öffnest du den Link, landest du direkt
+beim Satz — in beiden Speichermodi. Genau das ermöglicht das
+**Teilen einzelner Sätze**: ein QR-Code oder Teilen-Link auf
+Satz-Ebene kann jetzt auf einen bestimmten Satz zeigen, nicht nur
+auf die App-Startseite.
+
+Verweist der Link auf einen Satz, der nicht existiert (oder den du
+noch nicht heruntergeladen hast), zeigt die Seite einen
+freundlichen **Nicht-gefunden-Zustand** mit einem Weg zurück zum
+Katalog statt eines Fehlers.
+
+---
+
 ## Quell-Badges und Quell-Filter
 
 Jeder heruntergeladene Satz trägt ein **Quell-Badge**, das zeigt,

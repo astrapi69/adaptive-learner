@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "Tu respuesta:",
-    "correct_answer": "Correcto:",
     "summary_corrected": "{corrected} de {total} corregidos",
     "summary_trend": "Bien: tus puntos débiles van mejorando.",
     "summary_next": "Los elementos dominados desaparecen; el resto vuelve pronto para repaso.",
@@ -491,6 +490,34 @@
     "session_count": "Sesiones"
   },
   "settings": {
+    "key_export_link": {
+      "heading": "Claves de IA: exportación cifrada",
+      "hint": "Exporta o importa tus claves de IA en un único archivo cifrado. Está junto a las demás copias de seguridad en la pestaña Datos.",
+      "button": "Ir a la exportación de claves (pestaña Datos)"
+    },
+    "key_vault": {
+      "title": "Claves de IA — exportación cifrada",
+      "intro": "Lleva tus claves de IA a otro dispositivo en un único archivo cifrado, separado de la copia de seguridad normal (que nunca contiene claves).",
+      "api_disabled": "En modo servidor tus claves las gestiona el servidor, así que aquí no hay nada que exportar.",
+      "export_heading": "Exportar",
+      "passphrase_hint": "Elige una frase de contraseña fuerte. No se puede recuperar: sin ella no se puede abrir el archivo.",
+      "passphrase_label": "Frase de contraseña",
+      "confirm_label": "Confirmar frase de contraseña",
+      "no_keys": "Todavía no hay claves de IA para exportar.",
+      "busy": "Procesando…",
+      "export_button": "Exportar archivo cifrado",
+      "import_heading": "Importar",
+      "import_button": "Importar archivo de claves",
+      "success_export": "Archivo de claves cifrado descargado.",
+      "success_import": "Claves importadas. Las funciones de IA están listas de nuevo.",
+      "error_too_short": "La frase de contraseña debe tener al menos {n} caracteres.",
+      "error_mismatch": "Las frases de contraseña no coinciden.",
+      "error_export": "No se pudo crear la exportación.",
+      "error_no_file": "Elige primero un archivo de claves.",
+      "error_no_passphrase": "Introduce la frase de contraseña usada al exportar.",
+      "error_decrypt": "Frase de contraseña incorrecta o archivo dañado.",
+      "error_import": "No se pudo importar el archivo de claves."
+    },
     "lesson_mode": {
       "title": "Modo de lección",
       "hint": "El modo práctica mantiene todas las ayudas. El modo examen oculta las pistas, el repaso de teoría, la lectura automática y la solución para que recuperes en condiciones realistas.",
@@ -908,6 +935,12 @@
     "method_switched": "Metodo cambiado."
   },
   "install": {
+    "ios": {
+      "title": "Instalar como app",
+      "steps": "Toca el icono Compartir y luego «Añadir a pantalla de inicio»: se abre sin la barra de Safari.",
+      "aria_label": "Instalar en tu iPhone",
+      "dismiss": "Cerrar"
+    },
     "title": "Anadir a la pantalla de inicio",
     "subtitle": "Instala Adaptive Learner como app para un mejor uso sin conexión.",
     "install": "Instalar",
@@ -928,6 +961,15 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "Build",
     "build_date_label": "Fecha de build",
+    "strang": {
+      "haupt": "Versión principal (estable)",
+      "latest": "Versión Latest (prueba)",
+      "unknown": "Canal desconocido",
+      "latest_warning": "Estás usando una compilación de vista previa/prueba. No es estable y puede contener errores.",
+      "branch_label": "Rama",
+      "commit_label": "Commit",
+      "fallback_note": "Canal deducido (sin marcador de compilación explícito)."
+    },
     "check_update": "Buscar actualizaciones",
     "checking": "Comprobando…",
     "update_available": "¡La versión {version} está disponible!",
@@ -1820,6 +1862,9 @@
         "my_answer": "Mi respuesta",
         "solution": "Solución"
       },
+      "success": {
+        "badge": "¡Correcto!"
+      },
       "reread_theory": "Releer la teoría",
       "back_to_exercise": "Volver al ejercicio",
       "loading": "Cargando ejercicio…",
@@ -1893,6 +1938,11 @@
         "sentence_label": "Frase con huecos",
         "blank_label": "Hueco {n}",
         "select_placeholder": "Elegir…",
+        "multi_group_label": "Selecciona todas las que correspondan",
+        "multi_result_wrong": "Casi. Revisa las opciones resaltadas.",
+        "multi_badge_correct": "Correcto",
+        "multi_badge_wrong": "Incorrecto",
+        "multi_badge_missed": "Omitida",
         "result_correct": "¡Todo correcto!",
         "result_partial": "{correct} de {total} correctos.",
         "empty": "Este ejercicio de huecos no tiene huecos."
@@ -1908,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "Construye la traducción",
-          "productive": "Construye la frase"
+          "productive": "Construye la frase",
+          "knowledge": "Construye la frase"
         },
         "picture_choice": {
           "receptive": "Elige el significado correcto",
@@ -1986,7 +2037,6 @@
         "question": "Pregunta",
         "your_answer": "Tu respuesta",
         "no_answer": "(ninguna)",
-        "correct_answer": "Correcta",
         "weak_areas": "Áreas débiles"
       },
       "mark_complete": "Marcar como completada",
@@ -2034,6 +2084,15 @@
     }
   },
   "content": {
+    "set_link": {
+      "loading": "Cargando el conjunto…",
+      "not_found_title": "Conjunto no encontrado",
+      "not_found_body": "Este conjunto no está disponible: puede que aún no se haya descargado o que no exista.",
+      "go_discover": "Descubrir contenido",
+      "start": "Empezar a aprender",
+      "download_start": "Descargar y empezar",
+      "lessons": "{n} lecciones"
+    },
     "repo_export": {
       "button": "Compartir como repositorio",
       "title": "Compartir como repositorio",
@@ -2790,6 +2849,14 @@
     }
   },
   "share": {
+    "menu": {
+      "heading": "Compartir",
+      "facebook": "Compartir en Facebook",
+      "linkedin": "Compartir en LinkedIn",
+      "x": "Compartir en X",
+      "whatsapp": "Compartir por WhatsApp",
+      "copy": "Copiar al portapapeles"
+    },
     "app": {
       "heading": "Compartir la app",
       "qr_intro": "Comparte la app mediante un código QR para que otros puedan abrirla.",
@@ -2798,7 +2865,12 @@
       "copy_url": "Copiar URL",
       "copied": "Copiado",
       "share": "Compartir",
-      "qr_alt": "Código QR que enlaza a la app"
+      "qr_alt": "Código QR que enlaza a la app",
+      "haupt_label": "Versión principal (estable)",
+      "haupt_intro": "Comparte la aplicación estable mediante un código QR para que otros puedan abrirla.",
+      "latest_label": "Versión Latest (prueba)",
+      "latest_warning": "Esta es una versión de vista previa/prueba. No es estable y puede contener errores. Compártela solo con probadores.",
+      "open_link": "Abrir enlace"
     },
     "result": {
       "text": "¡Completé \"{title}\" con un {pct}%! 🎓 {correct} de {total} correctas.",

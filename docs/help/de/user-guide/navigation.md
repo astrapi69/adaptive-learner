@@ -28,6 +28,20 @@ Seiten, die keine Top-Level-Einträge mehr sind (Anki, Session),
 bleiben erreichbar: Anki über eine Aktion auf *Meine Inhalte* (und
 seine `/anki`-Route), Session über seine erhaltene Route.
 
+### Vertikale Seitenleiste
+
+Auf breiten Desktop-Bildschirmen wird die Hauptnavigation als
+**vertikale linke Seitenleiste** dargestellt. Sie nutzt exakt
+dasselbe gruppierte `NavGroup`-Modell wie oben — keine zusätzlichen
+Einträge, nur ein Layout als linke Leiste, das den gruppierten
+Abschnitten mehr Platz gibt. Der aktive Eintrag trägt
+`aria-current`, jedes Ziel ist mindestens 44px groß, und sie
+funktioniert über alle Themes hinweg. Auf schmalen / mobilen
+Breiten weicht die Seitenleiste der Bottom-Tab-Leiste weiter unten.
+(Dies ist die Seitenleiste der *Haupt*navigation; die
+Settings-Seite hat ihre eigene, separate Seitenleiste für ihre
+Tabs.)
+
 ---
 
 ## Mobil: Bottom-Tab-Leiste

@@ -27,6 +27,17 @@ plugins/adaptive-learner-plugin-assessment/adaptive_learner_assessment/questions
 # Prompt-Strings, kein Code. Kohäsiv nach Domain.
 plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py
 
+# --- Content-Loader: Lektions-Schema (Single-Concern Datenmodell) ---
+# Alle Pydantic-Modelle des Lektionsformats (Lesson -> LessonStep ->
+# Exercise -> Pair/PictureImage/Card/ClozeBlank, mit Forward-Refs) in
+# einer Datei. Seit EXP-039 die App-autoritative Single Source of Truth,
+# aus der JSON-Schema + die generierten TS-Typen abgeleitet werden. Reine
+# Datenstruktur + die zugehoerigen Pydantic-Validatoren (kein IO, kein
+# Rendering, keine Business-Logik). Die Modelle sind eng verzahnt; ein
+# Split zerstreute das eine Schema ueber mehrere Dateien und verschlechterte
+# die Kohaesion. Gleiche Kategorie wie backend/app/models + schemas.
+plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py
+
 # --- Frontend: Dexie-Row-Shapes (Single-File Datenmodell) ---
 # Die 33 Row-Interfaces spiegeln die SQLAlchemy-Modelle 1:1; reine
 # Datenstruktur (keine Logik/IO/Rendering), das Frontend-Pendant zu

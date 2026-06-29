@@ -20,10 +20,24 @@ between.
 
 ## Install as a Progressive Web App
 
-Adaptive Learner is installable. Modern browsers show an "Install"
-or "Add to home screen" prompt on your first visit. Accept it and
-Adaptive Learner becomes a standalone app on your phone or
-desktop, launchable without a browser tab.
+Adaptive Learner is installable, and the way you install it depends
+on your platform:
+
+- **Android & desktop (Chrome / Edge):** the browser fires an
+  install prompt, which the app turns into a discreet, dismissable
+  **"Install app"** banner (re-offered after 7 days if you dismiss
+  it). You can also install any time from **Settings → Data →
+  Install app**.
+- **iPhone / iPad (Safari):** iOS has no automatic install prompt,
+  so Adaptive Learner shows a small **"Add to Home Screen"** hint
+  instead: tap the **Share** button, then **"Add to Home Screen"**.
+  The hint appears only on iOS Safari and only while the app is not
+  yet installed — once installed it never shows again.
+
+Either way, Adaptive Learner becomes a **standalone app** on your
+phone or desktop, launchable without a browser tab. (When it is
+already running as an installed app, none of the install hints
+appear.)
 
 The app works offline for the Dashboard and past sessions. New AI
 sessions need the internet, because the AI provider lives outside

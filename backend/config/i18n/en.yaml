@@ -361,7 +361,6 @@ adaptive:
     load_failed: "Could not generate adaptive lesson."
 review:
   your_answer: "Your answer:"
-  correct_answer: "Correct:"
   summary_corrected: "{corrected} of {total} corrected"
   summary_trend: "Nice — your weak spots are getting stronger."
   summary_next: "Mastered items drop out; the rest return for review soon."
@@ -458,6 +457,32 @@ progress:
   commit_notes_aria: "Session notes"
   session_count: "Sessions"
 settings:
+  key_export_link:
+    heading: "AI keys — encrypted export"
+    hint: "Export or import your AI keys as a single encrypted file. It lives with the other backups in the Data tab."
+    button: "Go to key export (Data tab)"
+  key_vault:
+    title: "AI keys — encrypted export"
+    intro: "Move your AI keys to another device in one encrypted file, separate from the normal backup (which never contains keys)."
+    api_disabled: "In server mode your keys are managed by the server, so there is nothing to export here."
+    export_heading: "Export"
+    passphrase_hint: "Choose a strong passphrase. It cannot be recovered — without it the file cannot be opened."
+    passphrase_label: "Passphrase"
+    confirm_label: "Confirm passphrase"
+    no_keys: "There are no AI keys to export yet."
+    busy: "Working…"
+    export_button: "Export encrypted file"
+    import_heading: "Import"
+    import_button: "Import key file"
+    success_export: "Encrypted key file downloaded."
+    success_import: "Keys imported. AI features are ready again."
+    error_too_short: "The passphrase must be at least {n} characters."
+    error_mismatch: "The passphrases do not match."
+    error_export: "Could not create the export."
+    error_no_file: "Choose a key file first."
+    error_no_passphrase: "Enter the passphrase used at export."
+    error_decrypt: "Passphrase incorrect or file corrupted."
+    error_import: "Could not import the key file."
   lesson_mode:
     title: "Lesson mode"
     hint: "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions."
@@ -844,6 +869,11 @@ toast:
   api_key_deleted: API key removed.
   method_switched: Method switched.
 install:
+  ios:
+    title: "Install as an app"
+    steps: "Tap the Share icon, then “Add to Home Screen” — it opens without the Safari bar."
+    aria_label: "Install on your iPhone"
+    dismiss: "Dismiss"
   title: Add to home screen
   subtitle: "Install Adaptive Learner as an app for better offline use."
   install: Install
@@ -862,6 +892,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Build
   build_date_label: Build date
+  strang:
+    haupt: "Main version (stable)"
+    latest: "Latest version (test)"
+    unknown: "Unknown strand"
+    latest_warning: "You are using a preview/test build. It is not stable and may contain errors."
+    branch_label: "Branch"
+    commit_label: "Commit"
+    fallback_note: "Strand inferred (no explicit build marker)."
   check_update: "Check for updates"
   checking: "Checking…"
   update_available: "Version {version} is available!"
@@ -1693,6 +1731,8 @@ lesson:
     toggle:
       my_answer: "My answer"
       solution: "Solution"
+    success:
+      badge: "Correct!"
     reread_theory: "Re-read theory"
     back_to_exercise: "Back to exercise"
     loading: "Exercise loading…"
@@ -1762,6 +1802,11 @@ lesson:
       sentence_label: "Cloze sentence"
       blank_label: "Blank {n}"
       select_placeholder: "Choose…"
+      multi_group_label: "Select all that apply"
+      multi_result_wrong: "Not quite. Review the highlighted options."
+      multi_badge_correct: "Correct"
+      multi_badge_wrong: "Wrong"
+      multi_badge_missed: "Missed"
       result_correct: "All correct!"
       result_partial: "{correct} of {total} correct."
       empty: "This cloze exercise has no blanks."
@@ -1775,6 +1820,7 @@ lesson:
       word_tiles:
         receptive: Build the translation
         productive: Build the sentence
+        knowledge: Build the sentence
       picture_choice:
         receptive: Pick the matching meaning
         productive: Pick the matching picture
@@ -1809,7 +1855,6 @@ lesson:
       question: "Question"
       your_answer: "Your answer"
       no_answer: "(none)"
-      correct_answer: "Correct"
       weak_areas: "Weak areas"
     mark_complete: "Mark as complete"
     next_lesson: "Next lesson"
@@ -1887,6 +1932,14 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  set_link:
+    loading: "Loading set…"
+    not_found_title: "Set not found"
+    not_found_body: "This set isn’t available — it may not be downloaded yet, or it doesn’t exist."
+    go_discover: "Discover content"
+    start: "Start learning"
+    download_start: "Download & start"
+    lessons: "{n} lessons"
   repo_export:
     button: "Share as repository"
     title: "Share as repository"
@@ -2552,6 +2605,13 @@ pwa:
     action: "Update"
     later: "Later"
 share:
+  menu:
+    heading: "Share"
+    facebook: "Share on Facebook"
+    linkedin: "Share on LinkedIn"
+    x: "Share on X"
+    whatsapp: "Share on WhatsApp"
+    copy: "Copy to clipboard"
   app:
     heading: "Share the app"
     qr_intro: "Share the app via QR code so others can open it."
@@ -2561,6 +2621,11 @@ share:
     copied: "Copied"
     share: "Share"
     qr_alt: "QR code linking to the app"
+    haupt_label: "Main version (stable)"
+    haupt_intro: "Share the stable app via QR code so others can open it."
+    latest_label: "Latest version (test)"
+    latest_warning: "This is a preview/test version. It is not stable and may contain errors. Share it only with testers."
+    open_link: "Open link"
   result:
     text: 'I completed "{title}" with {pct}%! 🎓 {correct} of {total} correct.'
     cta_record: 'Show your friends!'

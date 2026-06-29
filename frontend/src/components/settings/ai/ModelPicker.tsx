@@ -32,7 +32,7 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../../api/client";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import type {AIProvider} from "../../../lib/constants";
-import {partitionModels} from "../../../lib/ai/model-recommendations";
+import {partitionModels} from "../../../lib/ai/providers/model-recommendations";
 import {getStorage} from "../../../storage";
 import type {AvailableModel} from "../../../storage/types";
 

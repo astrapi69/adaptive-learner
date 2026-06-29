@@ -16,14 +16,15 @@ FRONTEND_PORT ?= $(or $(ADAPTIVE_LEARNER_FRONTEND_PORT),15174)
 # this file is dev-only.
 ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 
-.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret stop restart fix-watchers \
+.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret dev-lan build-frontend stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
-       test test-backend test-frontend test-plugins test-plugin-assessment \
+       test test-fast test-changed test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
-       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke test-manual-automation \
+       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-e2e-smoke test-e2e-smoke-retries test-dexie-smoke test-manual-automation \
        test-coverage test-coverage-backend test-coverage-frontend \
        stryker stryker-quick \
+       verify-theme verify-theme-baseline-update \
        check-types check-types-backend check-types-frontend check-file-sizes check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
@@ -32,7 +33,9 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
        verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
+       sync-schema sync-schema-check sync-lesson-types \
        lock-all-plugins verify-plugin-locks \
+       audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
        clean prod prod-down prod-logs \
@@ -84,6 +87,28 @@ dev: dev-secret ## Start backend + frontend (backend first, then frontend)
 		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
 		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
 		npm run dev
+
+build-frontend: ## Build frontend/dist. Default API mode; STORAGE_MODE=dexie for the GH-Pages shape.
+	@echo "Building frontend/dist (storage mode: $(or $(STORAGE_MODE),api))..."
+	@cd frontend && $(if $(filter dexie,$(STORAGE_MODE)),VITE_STORAGE_MODE=dexie ,)npm run build
+
+dev-lan: dev-secret build-frontend ## LAN device test: serve built frontend + API on ONE origin at 0.0.0.0:$(BACKEND_PORT), no --reload
+	@LAN_IP=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
+		echo ""; \
+		echo "Adaptive Learner — LAN device-test mode (single origin, API mode, no reload)"; \
+		echo "  On this machine:  http://localhost:$(BACKEND_PORT)"; \
+		if [ -n "$$LAN_IP" ]; then \
+			echo "  On your phone:    http://$$LAN_IP:$(BACKEND_PORT)   (same WLAN, open in Safari/Chrome)"; \
+		else \
+			echo "  (Could not detect a LAN IP via 'hostname -I'; find it manually with 'ip addr'.)"; \
+		fi; \
+		echo "  This is a dev build, NOT the installed PWA. Press Ctrl+C to stop."; \
+		echo ""
+	@cd backend && poetry env use python3.12 -q 2>/dev/null; \
+		. ../$(ADAPTIVE_LEARNER_DEV_SECRET_FILE) && \
+		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
+		ADAPTIVE_LEARNER_SERVE_FRONTEND=1 \
+		poetry run uvicorn app.main:app --host 0.0.0.0 --port $(BACKEND_PORT)
 
 DEV_LOG_DIR ?= /tmp/adaptive-learner-logs
 
@@ -190,6 +215,47 @@ install-plugins:
 test: test-backend test-plugins test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI)
 	@echo ""
 	@echo "=== All tests complete ==="
+
+# Fast local PR-mirror gate (#1174). Mirrors the merge-blocking checks the
+# PR CI runs (ci.yml: backend-tests pytest + lint-and-type-check ruff/mypy +
+# frontend-tests tsc/vitest), MINUS the slow/heavy bits (no coverage, no
+# plugins, no build/eslint/stylelint/audit). Runtime budget roughly < 15 min.
+# Needs no running backend -- pytest uses the in-memory TestClient.
+test-fast: ## Fast PR-mirror gate: backend ruff+mypy+pytest, frontend tsc+vitest (no coverage, no plugins) (#1174)
+	@echo ""
+	@echo "=== test-fast: backend ruff check app/ ==="
+	cd backend && poetry run ruff check app/
+	@echo ""
+	@echo "=== test-fast: backend mypy app/ ==="
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mypy app/
+	@echo ""
+	@echo "=== test-fast: backend pytest tests/ ==="
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -q
+	@echo ""
+	@echo "=== test-fast: frontend tsc --noEmit ==="
+	cd frontend && npx tsc --noEmit
+	@echo ""
+	@echo "=== test-fast: frontend vitest run ==="
+	cd frontend && npx vitest run
+	@echo ""
+	@echo "test-fast mirrors the PR gate (ci.yml). Full suite incl. plugins: 'make test'."
+
+# Test Impact Analysis (#615/#1174): run ONLY the tests whose covered code
+# changed vs origin/develop -- the local counterpart of the PR-CI selective
+# runs. Frontend uses vitest --changed; backend uses pytest-testmon (installed
+# inline if absent, mirroring CI). With no relevant changes the frontend run
+# passes with no tests and testmon selects nothing (pytest exit 5), both
+# treated as success -- never an error.
+test-changed: ## Test Impact Analysis: only tests affected vs origin/develop (vitest --changed + pytest --testmon) (#1174)
+	@echo ""
+	@echo "=== test-changed: frontend Vitest --changed origin/develop ==="
+	cd frontend && npx vitest run --changed origin/develop --passWithNoTests
+	@echo ""
+	@echo "=== test-changed: backend pytest --testmon (vs .testmondata) ==="
+	cd backend && poetry run pip install -q pytest-testmon
+	cd backend && { poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --testmon -q; code=$$?; [ $$code -eq 5 ] && exit 0; exit $$code; }
+	@echo ""
+	@echo "test-changed runs only impacted tests. Full run: 'make test' (nightly/CI run the full suite)."
 
 test-frontend: ## Run frontend unit tests (Vitest)
 	@echo ""
@@ -359,6 +425,17 @@ check-complexity-gate: ## Complexity ratchet gate (#407): fail on new/regressed 
 check-complexity-gate-update: ## Regenerate .complexity-baseline from current offenders (ratchet may only shrink)
 	bash scripts/check-complexity.sh --update-baseline
 
+verify-theme: ## Theme/token gate: Python token-matrix + WCAG contrast gate, then the Vitest no-hardcoded-colors / parity / contrast guards (#1169)
+	@echo ""
+	@echo "=== verify-theme: token completeness + undefined refs + WCAG contrast (Python, stdlib) ==="
+	python3 scripts/verify_theme.py --enforce
+	@echo ""
+	@echo "=== verify-theme: no-hardcoded-colors + token-parity + contrast (Vitest guards) ==="
+	cd frontend && npx vitest run src/styles/no-hardcoded-colors.test.ts src/styles/contrast.test.ts src/styles/themes/themes.test.ts
+
+verify-theme-baseline-update: ## Re-record .theme-baseline.json from current violations (ratchet only shrinks unless --allow-baseline-growth)
+	python3 scripts/verify_theme.py --update-baseline
+
 check-types: check-types-backend check-types-frontend ## Run all type checks
 
 check-types-backend: ## Run mypy on backend
@@ -378,6 +455,19 @@ test-e2e: ## Run Playwright e2e tests (starts servers automatically)
 
 test-e2e-ui: ## Run e2e tests with Playwright UI
 	cd e2e && npx playwright test --ui
+
+# Critical-flow smoke (#1177): the ``smoke`` Playwright project
+# (e2e/smoke/, defined in e2e/playwright.config.ts) covering the core
+# user journeys. It uses the default config's webServer, which
+# auto-starts the backend (uvicorn) + frontend (npm run dev) in API mode
+# — no build step (distinct from the Dexie-mode ``test-dexie-smoke``
+# gate, which builds VITE_STORAGE_MODE=dexie). This is the command the
+# release-test gate references.
+test-e2e-smoke: ## Playwright smoke project — critical user flows (auto-starts backend+frontend dev servers)
+	cd e2e && npx playwright test --project=smoke
+
+test-e2e-smoke-retries: ## Smoke project in CI mode (--retries=1, against flake)
+	cd e2e && npx playwright test --project=smoke --retries=1
 
 # DEXIE-MODE-RELEASE-GATE-01 — builds the frontend in
 # ``VITE_STORAGE_MODE=dexie`` (matching the GitHub Pages
@@ -445,6 +535,17 @@ sync-i18n: ## Regenerate frontend/src/data/i18n/*.json from backend YAML catalog
 
 sync-plugin-config: ## Regenerate frontend/src/data/plugin-config/*.json from backend/config/plugins/*.yaml (Phase 49 / v1.32.0)
 	@python3 scripts/sync_plugin_config_to_frontend.py
+
+sync-lesson-types: ## Regenerate the TS lesson types from schema/lesson.schema.json (EXP-039)
+	@cd frontend && node scripts/generate-lesson-types.mjs
+
+sync-schema: ## Regenerate the lesson JSON-Schema + quality-rules + doc + TS types from the Pydantic models (EXP-039, Direction A)
+	@cd backend && poetry run python ../scripts/generate_lesson_schema.py
+	@cd frontend && node scripts/generate-lesson-types.mjs
+
+sync-schema-check: ## Exit non-zero if any generated lesson-schema artefact drifts from the Pydantic models (EXP-039)
+	@cd backend && poetry run python ../scripts/generate_lesson_schema.py --check
+	@cd frontend && node scripts/generate-lesson-types.mjs --check
 
 sync-help: ## Regenerate frontend/src/data/help/*.json from backend/config/help YAML files (Phase 38)
 	@python3 scripts/sync_help_to_frontend.py
@@ -594,6 +695,42 @@ verify-plugin-locks: ## Detect drift between each plugin's pyproject.toml and it
 	fi; \
 	echo "OK: all plugin pyproject.toml/poetry.lock pairs in sync."
 
+# --- Security (local pre-PR checks; mirror the nightly Security Scan) ---
+# These targets mirror .github/workflows/security-scan.yml so a green local
+# run predicts a green nightly scan. The CI workflow stays the source of
+# truth (warn-only there); these are the convenient local pre-flight. No
+# accepted-advisory / ignore list exists in CI, so none is applied here.
+# pip-audit is already a backend dev-dep; bandit is installed inline into
+# the backend venv (mirrors CI's `pip install bandit`), no lockfile change.
+
+audit-backend: ## pip-audit the backend venv (incl. plugin path-deps), mirrors the nightly scan (warn-only)
+	@echo "=== pip-audit (backend venv, incl. plugin path-deps) ==="
+	@cd backend && poetry run pip-audit --skip-editable --progress-spinner=off || true
+
+audit-frontend: ## npm audit the frontend lockfile, mirrors the nightly scan (warn-only)
+	@echo "=== npm audit (frontend) ==="
+	@cd frontend && npm audit --package-lock-only || true
+
+bandit-backend: ## bandit SAST over app + plugins + scripts (MEDIUM+ severity & confidence), mirrors the nightly scan (warn-only)
+	@echo "=== bandit (app + plugins + scripts; MEDIUM+ severity & confidence) ==="
+	@cd backend && poetry run python -m pip install -q bandit >/dev/null 2>&1 || \
+		echo "WARN: could not install bandit (offline?); skipping the bandit run."
+	@cd backend && poetry run bandit -r app ../plugins ../scripts -ll -ii \
+		-x '*/tests/*,*/test_*.py' || true
+
+security-backend: bandit-backend audit-backend ## Backend security sweep: bandit SAST + pip-audit deps (warn-only, mirrors the nightly scan)
+	@echo "Backend security sweep complete (warn-only). The nightly Security Scan is the source of truth."
+
+check-security: ## Blocking dependency gate: pip-audit + npm audit fail on HIGH/CRITICAL (local pre-PR check)
+	@echo "=== check-security: pip-audit (backend, fails on any known vuln) ==="
+	@cd backend && poetry run pip-audit --skip-editable --progress-spinner=off
+	@echo "=== check-security: npm audit --audit-level=high (frontend) ==="
+	@cd frontend && npm audit --package-lock-only --audit-level=high
+	@echo "check-security passed: no high/critical dependency vulnerabilities."
+
+circular-deps: ## Circular-dependency check over frontend/src (madge via the existing check:circular script)
+	@cd frontend && npm run check:circular
+
 # --- Release ---
 # Aggregate Makefile targets for the release-workflow.md mechanical
 # steps (Step 1 state capture, Step 4b dep currency, Step 5 test
@@ -641,11 +778,19 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Frontend npm run test (vitest) ==="
 	@cd frontend && npm run test
 	@echo ""
+	@echo "=== Theme/token gate (verify-theme, Python-only; #1185) ==="
+	@echo "Vitest theme guards already ran via 'make test' + 'npm run test' above;"
+	@echo "here we only run the unique stdlib token-matrix + WCAG gate."
+	@python3 scripts/verify_theme.py --enforce
+	@echo ""
 	@echo "=== Documentation drift gate (verify-docs-discipline) ==="
 	@$(MAKE) verify-docs-discipline
 	@echo ""
 	@echo "=== Subsystem lock-step (sync-versions --check) ==="
 	@$(MAKE) sync-versions-check
+	@echo ""
+	@echo "=== Lesson-schema drift gate (sync-schema --check, EXP-039) ==="
+	@$(MAKE) sync-schema-check
 	@echo ""
 	@echo "=== Plugin lockfile drift (verify-plugin-locks) ==="
 	@$(MAKE) verify-plugin-locks
@@ -656,7 +801,7 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Manual-test-plan automation (#616) ==="
 	@$(MAKE) test-manual-automation
 	@echo ""
-	@echo "Release test gate green. Run full Playwright smoke separately: cd e2e && npx playwright test --project=smoke"
+	@echo "Release test gate green. Run the full Playwright smoke separately: make test-e2e-smoke"
 
 release-build: ## Build release artifacts (release-workflow.md Step 6)
 	@PACKAGE_MODE=$$(grep "^package-mode" backend/pyproject.toml | head -1 | awk '{print $$3}' | tr -d ' '); \
@@ -765,7 +910,7 @@ clean: ## Remove build artifacts and caches
 # --- Help ---
 
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -vE '^launcher-' | \
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | grep -vE '^launcher-' | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-25s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "=== Launcher ==="

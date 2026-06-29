@@ -15,14 +15,14 @@ import { useCallback, useRef, useState } from "react";
 import type {
   ValidationCard,
   ValidationResult,
-} from "../../lib/ai/content-validator";
+} from "../../lib/ai/validation/content-validator";
 import {
   estimateValidationCost,
   type CostEstimate,
-} from "../../lib/ai/validation-cost";
-import { MAX_CARDS_PER_RUN } from "../../lib/ai/validation-runner";
-import { computeContentHash } from "../../lib/ai/content-hash";
-import { buildSignature } from "../../lib/ai/validation-signature";
+} from "../../lib/ai/validation/validation-cost";
+import { MAX_CARDS_PER_RUN } from "../../lib/ai/validation/validation-runner";
+import { computeContentHash } from "../../lib/ai/validation/content-hash";
+import { buildSignature } from "../../lib/ai/validation/validation-signature";
 import { resolveModel } from "../../storage/ai/ai-providers";
 import { getStorage } from "../../storage";
 import { readLearnerState } from "../../lib/learning/learnerState";

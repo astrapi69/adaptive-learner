@@ -86,6 +86,9 @@ export interface PersonalPathSet {
     /** ISO ``updated_at`` of the most-recently-touched lesson, null
      *  when the set has no progress at all. */
     lastActivity: string | null;
+    /** ISO timestamp of when the set was downloaded, or null when unknown
+     *  (API mode). Orders the untouched-downloaded sets newest-first (#1211). */
+    downloadedAt: string | null;
     /** The lesson to act on (resume/next/start); null when complete. */
     currentLesson: PersonalPathLesson | null;
     mode: SetActionMode;
@@ -268,6 +271,7 @@ function buildSet(
                 ? Math.round((completedCount / totalCount) * 100)
                 : 0,
         lastActivity,
+        downloadedAt: entry.downloaded_at ?? null,
         currentLesson: current,
         mode,
         errorCount,
@@ -344,8 +348,18 @@ export function buildPersonalPath(
         .map((s) => buildSet(s, input.progress, input.errors))
         .sort((a, b) =>
             compareByDownloadPriority(
-                {downloaded: true, lastActivity: a.lastActivity, title: a.title},
-                {downloaded: true, lastActivity: b.lastActivity, title: b.title},
+                {
+                    downloaded: true,
+                    lastActivity: a.lastActivity,
+                    downloadedAt: a.downloadedAt,
+                    title: a.title,
+                },
+                {
+                    downloaded: true,
+                    lastActivity: b.lastActivity,
+                    downloadedAt: b.downloadedAt,
+                    title: b.title,
+                },
             ),
         );
 

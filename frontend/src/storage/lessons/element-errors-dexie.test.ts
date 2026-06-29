@@ -18,6 +18,7 @@ import {beforeEach, describe, expect, it} from "vitest";
 
 import {_resetDbForTests, getDb} from "../dexie/db";
 import {
+    EXAM_INTERVAL_FACTOR,
     HINT_INTERVAL_FACTOR,
     MASTERY_THRESHOLD,
     computeReviewQueueDexie,
@@ -95,6 +96,81 @@ describe("Dexie elementErrors: #594 hint economy", () => {
         const suggested = new Date(queue[0].suggested_review_at).getTime();
         // streak 0 → 1d band, halved → 0.5d = 12h.
         expect(suggested - last).toBeCloseTo(0.5 * 86_400_000, -3);
+    });
+});
+
+describe("Dexie elementErrors: #1040 exam-mode SRS boost", () => {
+    it("is the mathematical inverse of the hint factor", () => {
+        expect(EXAM_INTERVAL_FACTOR).toBe(2.0);
+        expect(EXAM_INTERVAL_FACTOR).toBeCloseTo(1 / HINT_INTERVAL_FACTOR);
+    });
+
+    it("sets last_attempt_exam only on a CORRECT exam answer", async () => {
+        // Wrong exam answer → not stronger evidence → flag stays false.
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: false, exam: true}),
+        ]);
+        let rows = await listElementErrorsDexie(USER);
+        expect(rows[0].last_attempt_exam).toBe(false);
+
+        // Correct exam answer → flag set.
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: true, exam: true}),
+        ]);
+        rows = await listElementErrorsDexie(USER);
+        expect(rows[0].last_attempt_exam).toBe(true);
+
+        // A later correct PRACTICE answer clears the flag (no boost).
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: true, exam: false}),
+        ]);
+        rows = await listElementErrorsDexie(USER);
+        expect(rows[0].last_attempt_exam).toBe(false);
+    });
+
+    it("doubles the review interval for a correct exam answer", async () => {
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: true, exam: true}),
+        ]);
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue).toHaveLength(1);
+        const last = new Date(queue[0].last_attempt_at).getTime();
+        const suggested = new Date(queue[0].suggested_review_at).getTime();
+        // streak 1 → 3d band, doubled → 6d.
+        expect(suggested - last).toBeCloseTo(6 * 86_400_000, -3);
+    });
+
+    it("does NOT lengthen a wrong exam answer", async () => {
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: false, exam: true}),
+        ]);
+        const queue = await computeReviewQueueDexie(USER);
+        const last = new Date(queue[0].last_attempt_at).getTime();
+        const suggested = new Date(queue[0].suggested_review_at).getTime();
+        // streak 0 → 1d band, NOT boosted.
+        expect(suggested - last).toBeCloseTo(1 * 86_400_000, -3);
+    });
+
+    it("caps the boost at the longest band and masters out (no runaway)", async () => {
+        // Two correct exam answers → streak 2 → 7d band → 14d (max).
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: true, exam: true}),
+        ]);
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: true, exam: true}),
+        ]);
+        let queue = await computeReviewQueueDexie(USER);
+        expect(queue).toHaveLength(1);
+        expect(queue[0].correct_streak).toBe(2);
+        const last = new Date(queue[0].last_attempt_at).getTime();
+        const suggested = new Date(queue[0].suggested_review_at).getTime();
+        expect(suggested - last).toBeCloseTo(14 * 86_400_000, -3);
+        // Third correct exam answer masters the card → excluded.
+        await recordElementAttemptsDexie(USER, [
+            attempt({correct: true, exam: true}),
+        ]);
+        queue = await computeReviewQueueDexie(USER);
+        expect(queue).toHaveLength(0);
     });
 });
 

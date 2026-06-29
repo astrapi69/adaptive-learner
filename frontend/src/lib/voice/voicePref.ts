@@ -1,25 +1,48 @@
 /**
- * Voice preferences (Phase 31 / v1.18.0).
+ * Voice preferences (Phase 31 / v1.18.0; consolidated #893).
  *
- * Persists user-toggleable voice settings in localStorage.
- * These are presentation-only — the SpeechButton + MicButton
- * read them to decide visibility + rate/pitch/voice; the apps's
- * core flow doesn't care.
+ * Persists user-toggleable voice settings in localStorage. These are
+ * presentation-only — the SpeechButton + MicButton + read-aloud engine read
+ * them to decide visibility + rate/pitch/voice/speed; the app's core flow
+ * doesn't care.
+ *
+ * Storage layout (#893): a SINGLE consolidated key
+ * (``adaptive-learner.voice.prefs``) holding a JSON object, instead of the
+ * 10 loose per-setting keys the Offline audit flagged. The legacy keys are
+ * migrated into the block on first access and then cleaned up (see
+ * ``loadBlock`` / ``LEGACY_KEYS``). Reads are pure for a clean install (no
+ * write side effect); a write only happens when there is legacy data to
+ * migrate or a setter is called.
+ *
+ * Both storage modes use the same block: voice prefs are purely client-side
+ * (localStorage), with no Dexie / backend mirror. The ``.alb`` backup picks
+ * the block up automatically because it lives under the ``adaptive-learner.``
+ * namespace that ``captureLocalStorageSnapshot`` snapshots wholesale.
  *
  * Defaults:
- *   - tts_enabled: true (speech buttons render when the browser
- *     supports speechSynthesis)
- *   - stt_enabled: true
- *   - auto_play_ai: false (don't surprise the user with sound)
- *   - tts_rate: 1.0  (Web Speech default)
- *   - tts_pitch: 1.0
- *   - tts_voice_name: ""  (empty = use ``pickVoice(lang)`` default)
- *   - stt_lang_override: ""  (empty = use project / user lang)
- *   - pronunciation_enabled: true (the page hides anyway if the
- *     project isn't a language project)
+ *   - ttsEnabled: true (speech buttons render when the browser supports
+ *     speechSynthesis)
+ *   - sttEnabled: true
+ *   - autoPlayAi: false (don't surprise the user with sound)
+ *   - ttsRate: 1.0  (Web Speech default)
+ *   - ttsPitch: 1.0
+ *   - ttsVoiceName: ""  (empty = use ``pickVoice(lang)`` default)
+ *   - sttLangOverride: ""  (empty = use project / user lang)
+ *   - pronunciationEnabled: true (the page hides anyway if the project
+ *     isn't a language project)
+ *   - lessonSpeed: 1.0  (inline read-aloud speed multiplier)
+ *   - lessonAutoRead: false (manual button clicks are the baseline)
  */
 
-const K = {
+/** The single consolidated localStorage key (#893). */
+export const VOICE_PREF_BLOCK_KEY = "adaptive-learner.voice.prefs";
+
+/**
+ * Legacy per-setting keys, kept ONLY for the one-time migration into
+ * {@link VOICE_PREF_BLOCK_KEY}. Exported as ``VOICE_PREF_KEYS`` for
+ * backwards compatibility with callers/tests that seed a legacy value.
+ */
+const LEGACY_KEYS = {
     ttsEnabled: "adaptive-learner.voice.tts_enabled",
     sttEnabled: "adaptive-learner.voice.stt_enabled",
     autoPlay: "adaptive-learner.voice.auto_play_ai",
@@ -28,6 +51,8 @@ const K = {
     voiceName: "adaptive-learner.voice.tts_voice_name",
     sttLang: "adaptive-learner.voice.stt_lang_override",
     pronunciation: "adaptive-learner.voice.pronunciation_enabled",
+    lessonSpeed: "adaptive-learner.voice.lesson_speed",
+    lessonAutoRead: "adaptive-learner.voice.lesson_autoread",
 } as const;
 
 export interface VoicePrefs {
@@ -39,104 +64,199 @@ export interface VoicePrefs {
     ttsVoiceName: string;
     sttLangOverride: string;
     pronunciationEnabled: boolean;
+    lessonSpeed: number;
+    lessonAutoRead: boolean;
 }
 
-function readBool(key: string, fallback: boolean): boolean {
-    try {
-        const raw = localStorage.getItem(key);
-        if (raw === "true") return true;
-        if (raw === "false") return false;
-    } catch {
-        /* no-op */
-    }
-    return fallback;
-}
-
-function readNumber(key: string, fallback: number, min: number, max: number): number {
-    try {
-        const raw = localStorage.getItem(key);
-        if (raw === null) return fallback;
-        const parsed = Number.parseFloat(raw);
-        if (Number.isFinite(parsed) && parsed >= min && parsed <= max) {
-            return parsed;
-        }
-    } catch {
-        /* no-op */
-    }
-    return fallback;
-}
-
-function readString(key: string, fallback: string): string {
-    try {
-        const raw = localStorage.getItem(key);
-        if (raw !== null) return raw;
-    } catch {
-        /* no-op */
-    }
-    return fallback;
-}
-
-/** Read all voice preferences from localStorage, falling back to the
- *  documented defaults for any unset / invalid key. */
-export function readVoicePrefs(): VoicePrefs {
+function defaults(): VoicePrefs {
     return {
-        ttsEnabled: readBool(K.ttsEnabled, true),
-        sttEnabled: readBool(K.sttEnabled, true),
-        autoPlayAi: readBool(K.autoPlay, false),
-        ttsRate: readNumber(K.rate, 1.0, 0.5, 2.0),
-        ttsPitch: readNumber(K.pitch, 1.0, 0.5, 2.0),
-        ttsVoiceName: readString(K.voiceName, ""),
-        sttLangOverride: readString(K.sttLang, ""),
-        pronunciationEnabled: readBool(K.pronunciation, true),
+        ttsEnabled: true,
+        sttEnabled: true,
+        autoPlayAi: false,
+        ttsRate: 1.0,
+        ttsPitch: 1.0,
+        ttsVoiceName: "",
+        sttLangOverride: "",
+        pronunciationEnabled: true,
+        lessonSpeed: 1.0,
+        lessonAutoRead: false,
     };
 }
 
-/** Persist whether TTS (read-aloud) is enabled. */
+function coerceBool(value: unknown, fallback: boolean): boolean {
+    if (value === true || value === "true") return true;
+    if (value === false || value === "false") return false;
+    return fallback;
+}
+
+function coerceNumber(
+    value: unknown,
+    fallback: number,
+    min: number,
+    max: number,
+): number {
+    const parsed = typeof value === "number" ? value : Number.parseFloat(String(value));
+    if (Number.isFinite(parsed) && parsed >= min && parsed <= max) {
+        return parsed;
+    }
+    return fallback;
+}
+
+function coerceString(value: unknown, fallback: string): string {
+    return typeof value === "string" ? value : fallback;
+}
+
 /**
- * Best-effort localStorage write: persists ``value`` under ``key`` and
- * silently ignores failures (private-mode / quota / disabled storage). Shared
- * by every voice-preference writer so the try/catch is not repeated per key.
+ * Validate an arbitrary record into a complete {@link VoicePrefs}, falling
+ * back to the documented default for any missing / out-of-range / malformed
+ * field. Shared by the block parser and the legacy migration so both apply
+ * identical validation.
  */
-function safeSet(key: string, value: string): void {
+function coercePrefs(raw: Record<string, unknown>): VoicePrefs {
+    const base = defaults();
+    return {
+        ttsEnabled: coerceBool(raw.ttsEnabled, base.ttsEnabled),
+        sttEnabled: coerceBool(raw.sttEnabled, base.sttEnabled),
+        autoPlayAi: coerceBool(raw.autoPlayAi, base.autoPlayAi),
+        ttsRate: coerceNumber(raw.ttsRate, base.ttsRate, 0.5, 2.0),
+        ttsPitch: coerceNumber(raw.ttsPitch, base.ttsPitch, 0.5, 2.0),
+        ttsVoiceName: coerceString(raw.ttsVoiceName, base.ttsVoiceName),
+        sttLangOverride: coerceString(raw.sttLangOverride, base.sttLangOverride),
+        pronunciationEnabled: coerceBool(
+            raw.pronunciationEnabled,
+            base.pronunciationEnabled,
+        ),
+        lessonSpeed: coerceNumber(raw.lessonSpeed, base.lessonSpeed, 0.1, 4.0),
+        lessonAutoRead: coerceBool(raw.lessonAutoRead, base.lessonAutoRead),
+    };
+}
+
+/**
+ * Read the legacy per-setting keys into a {@link VoicePrefs}. Returns the
+ * built prefs plus whether ANY legacy key was present (so the caller knows
+ * if there is something to migrate + clean up).
+ */
+function readLegacyPrefs(): {prefs: VoicePrefs; found: boolean} {
+    let found = false;
+    const raw: Record<string, unknown> = {};
+    const pick = (field: keyof VoicePrefs, key: string) => {
+        const value = localStorage.getItem(key);
+        if (value !== null) {
+            found = true;
+            raw[field] = value;
+        }
+    };
+    pick("ttsEnabled", LEGACY_KEYS.ttsEnabled);
+    pick("sttEnabled", LEGACY_KEYS.sttEnabled);
+    pick("autoPlayAi", LEGACY_KEYS.autoPlay);
+    pick("ttsRate", LEGACY_KEYS.rate);
+    pick("ttsPitch", LEGACY_KEYS.pitch);
+    pick("ttsVoiceName", LEGACY_KEYS.voiceName);
+    pick("sttLangOverride", LEGACY_KEYS.sttLang);
+    pick("pronunciationEnabled", LEGACY_KEYS.pronunciation);
+    pick("lessonSpeed", LEGACY_KEYS.lessonSpeed);
+    pick("lessonAutoRead", LEGACY_KEYS.lessonAutoRead);
+    return {prefs: coercePrefs(raw), found};
+}
+
+function removeLegacyKeys(): void {
+    for (const key of Object.values(LEGACY_KEYS)) {
+        localStorage.removeItem(key);
+    }
+}
+
+function persistBlock(prefs: VoicePrefs): void {
     try {
-        localStorage.setItem(key, value);
+        localStorage.setItem(VOICE_PREF_BLOCK_KEY, JSON.stringify(prefs));
     } catch {
         /* localStorage unavailable — best effort */
     }
 }
 
+/**
+ * Load the consolidated voice-prefs block, migrating the legacy keys on
+ * first access. The migration is idempotent: once the block exists the
+ * legacy keys are gone and never consulted again; a clean install (no block,
+ * no legacy keys) returns the defaults WITHOUT writing. Never throws.
+ */
+function loadBlock(): VoicePrefs {
+    try {
+        const rawBlock = localStorage.getItem(VOICE_PREF_BLOCK_KEY);
+        if (rawBlock !== null) {
+            const parsed = JSON.parse(rawBlock) as Record<string, unknown>;
+            return coercePrefs(parsed ?? {});
+        }
+        const {prefs, found} = readLegacyPrefs();
+        if (found) {
+            persistBlock(prefs);
+            removeLegacyKeys();
+        }
+        return prefs;
+    } catch {
+        return defaults();
+    }
+}
+
+/**
+ * Read all voice preferences, falling back to the documented defaults for
+ * any unset / invalid field. Migrates the legacy per-setting keys into the
+ * consolidated block on first access.
+ */
+export function readVoicePrefs(): VoicePrefs {
+    return loadBlock();
+}
+
+/** Update a single field in the consolidated block (read-merge-write). */
+function patch<K extends keyof VoicePrefs>(field: K, value: VoicePrefs[K]): void {
+    const block = loadBlock();
+    block[field] = value;
+    persistBlock(block);
+}
+
 export function writeTtsEnabled(v: boolean): void {
-    safeSet(K.ttsEnabled, v ? "true" : "false");
+    patch("ttsEnabled", v);
 }
 /** Persist whether STT (voice dictation) is enabled. */
 export function writeSttEnabled(v: boolean): void {
-    safeSet(K.sttEnabled, v ? "true" : "false");
+    patch("sttEnabled", v);
 }
 /** Persist whether AI replies are auto-played aloud. */
 export function writeAutoPlayAi(v: boolean): void {
-    safeSet(K.autoPlay, v ? "true" : "false");
+    patch("autoPlayAi", v);
 }
 /** Persist the TTS speaking rate (clamped to 0.5..2.0). */
 export function writeTtsRate(v: number): void {
-    const clamped = Math.max(0.5, Math.min(2.0, v));
-    safeSet(K.rate, String(clamped));
+    patch("ttsRate", Math.max(0.5, Math.min(2.0, v)));
 }
 /** Persist the TTS pitch (clamped to 0.5..2.0). */
 export function writeTtsPitch(v: number): void {
-    const clamped = Math.max(0.5, Math.min(2.0, v));
-    safeSet(K.pitch, String(clamped));
+    patch("ttsPitch", Math.max(0.5, Math.min(2.0, v)));
 }
 /** Persist the preferred TTS voice name ("" = pick a default by lang). */
 export function writeTtsVoiceName(v: string): void {
-    safeSet(K.voiceName, v);
+    patch("ttsVoiceName", v);
 }
 /** Persist the STT language override ("" = use the project / user lang). */
 export function writeSttLangOverride(v: string): void {
-    safeSet(K.sttLang, v);
+    patch("sttLangOverride", v);
 }
 /** Persist whether the pronunciation page is enabled. */
 export function writePronunciationEnabled(v: boolean): void {
-    safeSet(K.pronunciation, v ? "true" : "false");
+    patch("pronunciationEnabled", v);
+}
+/** Persist the inline lesson read-aloud speed multiplier. The read-aloud
+ *  engine clamps the value to its offered set; this stores it verbatim. */
+export function writeLessonSpeed(v: number): void {
+    patch("lessonSpeed", v);
+}
+/** Persist whether the lesson auto-reads each step on display. */
+export function writeLessonAutoRead(v: boolean): void {
+    patch("lessonAutoRead", v);
 }
 
-export const VOICE_PREF_KEYS = K;
+/**
+ * Legacy per-setting key map. Retained for backwards compatibility (callers
+ * that seed a value under an old key; the migration in {@link loadBlock}
+ * picks it up). New code should use {@link VOICE_PREF_BLOCK_KEY}.
+ */
+export const VOICE_PREF_KEYS = LEGACY_KEYS;

@@ -361,7 +361,6 @@ adaptive:
     load_failed: "Não foi possível gerar a lição adaptativa."
 review:
   your_answer: "A sua resposta:"
-  correct_answer: "Correto:"
   summary_corrected: "{corrected} de {total} corrigidos"
   summary_trend: "Boa — os seus pontos fracos estão a melhorar."
   summary_next: "Os elementos dominados saem; os restantes voltam em breve para revisão."
@@ -458,6 +457,32 @@ progress:
   commit_notes_aria: "Notas da sessão"
   session_count: "Sessões"
 settings:
+  key_export_link:
+    heading: "Chaves de IA — exportação cifrada"
+    hint: "Exporte ou importe as suas chaves de IA num único ficheiro cifrado. Fica junto das outras cópias de segurança no separador Dados."
+    button: "Ir para a exportação de chaves (separador Dados)"
+  key_vault:
+    title: "Chaves de IA — exportação criptografada"
+    intro: "Leve suas chaves de IA para outro dispositivo em um único arquivo criptografado, separado do backup normal (que nunca contém chaves)."
+    api_disabled: "No modo servidor, suas chaves são gerenciadas pelo servidor, então não há nada para exportar aqui."
+    export_heading: "Exportar"
+    passphrase_hint: "Escolha uma frase-senha forte. Ela não pode ser recuperada — sem ela o arquivo não pode ser aberto."
+    passphrase_label: "Frase-senha"
+    confirm_label: "Confirmar frase-senha"
+    no_keys: "Ainda não há chaves de IA para exportar."
+    busy: "Processando…"
+    export_button: "Exportar arquivo criptografado"
+    import_heading: "Importar"
+    import_button: "Importar arquivo de chaves"
+    success_export: "Arquivo de chaves criptografado baixado."
+    success_import: "Chaves importadas. Os recursos de IA estão prontos novamente."
+    error_too_short: "A frase-senha deve ter pelo menos {n} caracteres."
+    error_mismatch: "As frases-senha não coincidem."
+    error_export: "Não foi possível criar a exportação."
+    error_no_file: "Escolha primeiro um arquivo de chaves."
+    error_no_passphrase: "Digite a frase-senha usada na exportação."
+    error_decrypt: "Frase-senha incorreta ou arquivo corrompido."
+    error_import: "Não foi possível importar o arquivo de chaves."
   lesson_mode:
     title: "Modo de lição"
     hint: "O modo prática mantém todas as ajudas. O modo exame oculta dicas, revisão de teoria, leitura automática e a solução para que você recupere em condições realistas."
@@ -844,6 +869,11 @@ toast:
   api_key_deleted: Chave de API removida.
   method_switched: Método trocado.
 install:
+  ios:
+    title: "Instalar como app"
+    steps: "Toque no ícone Compartilhar e em «Adicionar à Tela de Início» — abre sem a barra do Safari."
+    aria_label: "Instalar no seu iPhone"
+    dismiss: "Fechar"
   title: Adicionar à tela inicial
   subtitle: "Instale o Adaptive Learner como app para melhor uso off-line."
   install: Instalar
@@ -862,6 +892,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Build
   build_date_label: Data do build
+  strang:
+    haupt: "Versão principal (estável)"
+    latest: "Versão Latest (teste)"
+    unknown: "Canal desconhecido"
+    latest_warning: "Você está usando uma versão de pré-visualização/teste. Não é estável e pode conter erros."
+    branch_label: "Ramo"
+    commit_label: "Commit"
+    fallback_note: "Canal inferido (sem marcador de build explícito)."
   check_update: "Procurar atualizações"
   checking: "A verificar…"
   update_available: "A versão {version} está disponível!"
@@ -1682,6 +1720,8 @@ lesson:
     toggle:
       my_answer: "Minha resposta"
       solution: "Solução"
+    success:
+      badge: "Correto!"
     reread_theory: "Reler a teoria"
     back_to_exercise: "Voltar ao exercício"
     loading: "A carregar o exercício…"
@@ -1751,6 +1791,11 @@ lesson:
       sentence_label: "Frase com lacunas"
       blank_label: "Lacuna {n}"
       select_placeholder: "Escolher…"
+      multi_group_label: "Selecione todas as que se aplicam"
+      multi_result_wrong: "Quase. Reveja as opções destacadas."
+      multi_badge_correct: "Correto"
+      multi_badge_wrong: "Errado"
+      multi_badge_missed: "Omitida"
       result_correct: "Tudo certo!"
       result_partial: "{correct} de {total} corretas."
       empty: "Este exercício de lacunas não tem lacunas."
@@ -1764,6 +1809,7 @@ lesson:
       word_tiles:
         receptive: Monte a tradução
         productive: Monte a frase
+        knowledge: Monte a frase
       picture_choice:
         receptive: Escolha o significado correto
         productive: Escolha a imagem correta
@@ -1833,7 +1879,6 @@ lesson:
       question: "Pergunta"
       your_answer: "Sua resposta"
       no_answer: "(nenhuma)"
-      correct_answer: "Correto"
       weak_areas: "Áreas fracas"
     mark_complete: "Marcar como concluída"
     next_lesson: "Próxima lição"
@@ -1876,6 +1921,14 @@ lesson:
     action_restart: "Recomeçar"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  set_link:
+    loading: "Carregando o conjunto…"
+    not_found_title: "Conjunto não encontrado"
+    not_found_body: "Este conjunto não está disponível — pode ainda não ter sido baixado ou não existir."
+    go_discover: "Descobrir conteúdo"
+    start: "Começar a aprender"
+    download_start: "Baixar e começar"
+    lessons: "{n} lições"
   repo_export:
     button: "Partilhar como repositório"
     title: "Partilhar como repositório"
@@ -2542,6 +2595,13 @@ pwa:
     action: "Atualizar"
     later: "Mais tarde"
 share:
+  menu:
+    heading: "Compartilhar"
+    facebook: "Compartilhar no Facebook"
+    linkedin: "Compartilhar no LinkedIn"
+    x: "Compartilhar no X"
+    whatsapp: "Compartilhar no WhatsApp"
+    copy: "Copiar para a área de transferência"
   app:
     heading: "Compartilhar o app"
     qr_intro: "Compartilhe o app por código QR para que outros possam abri-lo."
@@ -2551,6 +2611,11 @@ share:
     copied: "Copiado"
     share: "Compartilhar"
     qr_alt: "Código QR que leva ao app"
+    haupt_label: "Versão principal (estável)"
+    haupt_intro: "Compartilhe o app estável por código QR para que outras pessoas possam abri-lo."
+    latest_label: "Versão Latest (teste)"
+    latest_warning: "Esta é uma versão de pré-visualização/teste. Não é estável e pode conter erros. Compartilhe apenas com testadores."
+    open_link: "Abrir link"
   result:
     text: 'Concluí "{title}" com {pct}%! 🎓 {correct} de {total} corretas.'
     cta_record: 'Mostre aos seus amigos!'

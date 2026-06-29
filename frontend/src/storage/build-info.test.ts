@@ -28,6 +28,22 @@ describe("build provenance (#66)", () => {
     expect(workflow).toContain("git rev-parse --short HEAD");
   });
 
+  it("both deploy workflows inject the strand provenance (#1172)", () => {
+    const prod = readFileSync(
+      resolve(process.cwd(), "../.github/workflows/deploy-gh-pages.yml"),
+      "utf-8",
+    );
+    const preview = readFileSync(
+      resolve(process.cwd(), "../.github/workflows/deploy-preview.yml"),
+      "utf-8",
+    );
+    // Production is the stable Haupt strand; preview is Latest.
+    expect(prod).toContain("VITE_BUILD_BRANCH");
+    expect(prod).toContain("VITE_BUILD_STRANG=haupt");
+    expect(preview).toContain("VITE_BUILD_BRANCH");
+    expect(preview).toContain("VITE_BUILD_STRANG=latest");
+  });
+
   it("Dexie system info reads the injected build literals, not a hardcoded 'unknown'", async () => {
     const info = await dexieStorage.system.info();
     expect(info.app.build_hash).toBe(__BUILD_HASH__);

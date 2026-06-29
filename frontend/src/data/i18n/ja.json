@@ -388,7 +388,6 @@
   },
   "review": {
     "your_answer": "あなたの回答:",
-    "correct_answer": "正解:",
     "summary_corrected": "{total}問中{corrected}問を修正",
     "summary_trend": "いいですね — 弱点が強くなっています。",
     "summary_next": "習得した項目は外れ、残りはまもなく復習に戻ります。",
@@ -491,6 +490,34 @@
     "session_count": "セッション"
   },
   "settings": {
+    "key_export_link": {
+      "heading": "AIキー — 暗号化エクスポート",
+      "hint": "AIキーを1つの暗号化ファイルとしてエクスポートまたはインポートします。データタブの他のバックアップと同じ場所にあります。",
+      "button": "キーのエクスポートへ移動（データタブ）"
+    },
+    "key_vault": {
+      "title": "AIキー — 暗号化エクスポート",
+      "intro": "AIキーを1つの暗号化ファイルで別のデバイスに移行します。通常のバックアップ（キーを含みません）とは別です。",
+      "api_disabled": "サーバーモードではキーはサーバーで管理されるため、ここにエクスポートするものはありません。",
+      "export_heading": "エクスポート",
+      "passphrase_hint": "強力なパスフレーズを選んでください。復元できません。これがないとファイルを開けません。",
+      "passphrase_label": "パスフレーズ",
+      "confirm_label": "パスフレーズの確認",
+      "no_keys": "エクスポートするAIキーはまだありません。",
+      "busy": "処理中…",
+      "export_button": "暗号化ファイルをエクスポート",
+      "import_heading": "インポート",
+      "import_button": "キーファイルをインポート",
+      "success_export": "暗号化キーファイルをダウンロードしました。",
+      "success_import": "キーをインポートしました。AI機能が再び利用可能です。",
+      "error_too_short": "パスフレーズは{n}文字以上にしてください。",
+      "error_mismatch": "パスフレーズが一致しません。",
+      "error_export": "エクスポートを作成できませんでした。",
+      "error_no_file": "先にキーファイルを選択してください。",
+      "error_no_passphrase": "エクスポート時に使用したパスフレーズを入力してください。",
+      "error_decrypt": "パスフレーズが間違っているか、ファイルが破損しています。",
+      "error_import": "キーファイルをインポートできませんでした。"
+    },
     "lesson_mode": {
       "title": "レッスンモード",
       "hint": "練習モードではすべての補助が有効です。試験モードではヒント、理論の復習、自動読み上げ、解答の表示を隠し、現実的な条件で思い出せるようにします。",
@@ -908,6 +935,12 @@
     "method_switched": "方法を切り替えました。"
   },
   "install": {
+    "ios": {
+      "title": "アプリとしてインストール",
+      "steps": "共有アイコンをタップし、「ホーム画面に追加」を選ぶと、Safari のバーなしで開きます。",
+      "aria_label": "iPhone にインストール",
+      "dismiss": "閉じる"
+    },
     "title": "ホーム画面に追加",
     "subtitle": "オフラインでより快適に使うには、Adaptive Learner をアプリとしてインストールしてください。",
     "install": "インストール",
@@ -928,6 +961,15 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "ビルド",
     "build_date_label": "ビルド日",
+    "strang": {
+      "haupt": "メイン版（安定）",
+      "latest": "Latest版（テスト）",
+      "unknown": "不明なチャネル",
+      "latest_warning": "プレビュー/テストビルドを使用しています。安定しておらず、エラーが含まれる可能性があります。",
+      "branch_label": "ブランチ",
+      "commit_label": "コミット",
+      "fallback_note": "チャネルは推定されました（明示的なビルドマーカーなし）。"
+    },
     "check_update": "更新を確認",
     "checking": "確認中…",
     "update_available": "バージョン {version} が利用可能です！",
@@ -1820,6 +1862,9 @@
         "my_answer": "自分の回答",
         "solution": "解答"
       },
+      "success": {
+        "badge": "正解！"
+      },
       "reread_theory": "理論をもう一度読む",
       "back_to_exercise": "練習に戻る",
       "loading": "演習を読み込み中…",
@@ -1893,6 +1938,11 @@
         "sentence_label": "穴埋め文",
         "blank_label": "空欄 {n}",
         "select_placeholder": "選んでください…",
+        "multi_group_label": "当てはまるものをすべて選択",
+        "multi_result_wrong": "惜しい。ハイライトされた選択肢を確認してください。",
+        "multi_badge_correct": "正解",
+        "multi_badge_wrong": "不正解",
+        "multi_badge_missed": "見落とし",
         "result_correct": "すべて正解！",
         "result_partial": "{total}個中{correct}個正解。",
         "empty": "この穴埋め演習には空欄がありません。"
@@ -1908,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "訳を組み立てる",
-          "productive": "文を組み立てる"
+          "productive": "文を組み立てる",
+          "knowledge": "文を組み立てる"
         },
         "picture_choice": {
           "receptive": "正しい意味を選ぶ",
@@ -1986,7 +2037,6 @@
         "question": "問題",
         "your_answer": "あなたの回答",
         "no_answer": "(なし)",
-        "correct_answer": "正解",
         "weak_areas": "弱点"
       },
       "mark_complete": "完了としてマーク",
@@ -2034,6 +2084,15 @@
     }
   },
   "content": {
+    "set_link": {
+      "loading": "セットを読み込んでいます…",
+      "not_found_title": "セットが見つかりません",
+      "not_found_body": "このセットは利用できません。まだダウンロードされていないか、存在しない可能性があります。",
+      "go_discover": "コンテンツを探す",
+      "start": "学習を始める",
+      "download_start": "ダウンロードして開始",
+      "lessons": "{n} レッスン"
+    },
     "repo_export": {
       "button": "リポジトリとして共有",
       "title": "リポジトリとして共有",
@@ -2790,6 +2849,14 @@
     }
   },
   "share": {
+    "menu": {
+      "heading": "共有",
+      "facebook": "Facebookで共有",
+      "linkedin": "LinkedInで共有",
+      "x": "Xで共有",
+      "whatsapp": "WhatsAppで共有",
+      "copy": "クリップボードにコピー"
+    },
     "app": {
       "heading": "アプリを共有",
       "qr_intro": "QRコードでアプリを共有し、他の人がすぐに開けるようにします。",
@@ -2798,7 +2865,12 @@
       "copy_url": "URLをコピー",
       "copied": "コピーしました",
       "share": "共有",
-      "qr_alt": "アプリへのリンクのQRコード"
+      "qr_alt": "アプリへのリンクのQRコード",
+      "haupt_label": "メイン版（安定）",
+      "haupt_intro": "安定版アプリをQRコードで共有して、他の人が開けるようにします。",
+      "latest_label": "Latest版（テスト）",
+      "latest_warning": "これはプレビュー/テスト版です。安定しておらず、エラーが含まれる可能性があります。テスターとのみ共有してください。",
+      "open_link": "リンクを開く"
     },
     "result": {
       "text": "「{title}」を{pct}%で完了しました！🎓 {total}問中{correct}問正解。",

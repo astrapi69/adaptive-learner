@@ -130,6 +130,12 @@ Go through this checklist before committing:
 
 ## Test strategy
 
+> **Workflow first:** this section is the test *strategy* (what + how
+> much to test). The *order* of work - test first (RED), minimal code
+> (GREEN), cleanup (REFACTOR) - is the Test-Driven Development rule in
+> [`tdd.md`](tdd.md). Read it alongside this file: TDD is mandatory for
+> code changes with logic, with the exceptions listed there.
+
 ### Test pyramid
 
 ```
@@ -172,8 +178,11 @@ def test_streak_caps_at_seven_days():
 **Naming convention:** `test_{what_is_tested}.py`, functions: `test_{scenario}()`
 
 **When to write new tests:**
-- New service or new function: at least a happy path + one error case.
-- Bug fix: failing test first, then fix.
+- New service or new function: at least a happy path + one error case
+  (the minimal floor; the target for a real feature/fix is the four-test
+  breakdown in `tdd.md` - reproduction, happy-path, edge, boundary).
+- Bug fix: failing test first, then fix (the Red step of the
+  Red-Green-Refactor cycle - see `tdd.md`).
 - Import/export logic: test roundtrips (input -> transformation -> output -> compare).
 
 ### Unit tests (Frontend - Vitest)

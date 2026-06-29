@@ -16,7 +16,7 @@ import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 const useLessonMock = vi.fn();
-vi.mock("../../hooks/lesson/useLesson", () => ({
+vi.mock("../../hooks/lesson/session/useLesson", () => ({
     useLesson: () => useLessonMock(),
 }));
 

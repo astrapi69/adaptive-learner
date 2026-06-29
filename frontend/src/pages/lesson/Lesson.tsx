@@ -28,8 +28,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
 import LessonModeToggle from "../../components/lesson/chrome/LessonModeToggle";
 import LessonTimedStatus from "../../components/lesson/chrome/LessonTimedStatus";
-import { LessonModeProvider } from "../../hooks/lesson/useLessonMode";
-import { useTimedLesson } from "../../hooks/lesson/useTimedLesson";
+import { LessonModeProvider } from "../../hooks/lesson/modes/useLessonMode";
+import { useTimedLesson } from "../../hooks/lesson/modes/useTimedLesson";
 import {
   readDefaultLessonMode,
   type LessonMode,
@@ -49,21 +49,21 @@ import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPl
 import LessonStatusView, {
   resolveLessonStatusKind,
 } from "../../components/lesson/steps/LessonStatusView";
-import { useLessonAutoRead } from "../../hooks/lesson/useLessonAutoRead";
-import type { ExerciseHandle } from "../../components/exercises/exercise-control";
+import { useLessonAutoRead } from "../../hooks/lesson/audio/useLessonAutoRead";
+import type { ExerciseHandle } from "../../components/exercises";
 import {
   isPlayableExerciseStep,
   storedStepResult,
 } from "../../lib/lesson/lesson-step-state";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { useLesson } from "../../hooks/lesson/useLesson";
-import { useLessonFlowControl } from "../../hooks/lesson/useLessonFlowControl";
-import { useLessonNavigation } from "../../hooks/lesson/useLessonNavigation";
+import { useLesson } from "../../hooks/lesson/session/useLesson";
+import { useLessonFlowControl } from "../../hooks/lesson/session/useLessonFlowControl";
+import { useLessonNavigation } from "../../hooks/lesson/session/useLessonNavigation";
 import {
   useLessonEnterKey,
   type LessonEnterNav,
-} from "../../hooks/lesson/useLessonEnterKey";
-import { useLessonShortcuts } from "../../hooks/lesson/useLessonShortcuts";
+} from "../../hooks/lesson/interaction/useLessonEnterKey";
+import { useLessonShortcuts } from "../../hooks/lesson/interaction/useLessonShortcuts";
 import {
   captureCelebrationSnapshot,
   celebrateProgressSince,
@@ -639,6 +639,16 @@ export default function LessonPage() {
           onInteraction={setAnswerable}
           onChecked={() => setChecked(true)}
           recordStepResult={recordStepResult}
+          // #1218 — a fully-correct answer offers an in-context
+          // "Continue" (the success-merge) that calls the SAME forward
+          // navigation as the two-phase footer; the label matches the
+          // footer's Next / Finish wording.
+          onAdvance={goNext}
+          advanceLabel={
+            isLastStep
+              ? t("lesson.action.finish", "Finish lesson")
+              : t("lesson.button.next", "Continue")
+          }
         />
         </>
       )}

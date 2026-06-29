@@ -52,7 +52,7 @@ import { detectLearningLanguage } from "../../lib/content/language/detect-chat-l
 import {
   resolveActiveAiProvider,
   type ResolvedAiProvider,
-} from "../../lib/ai/resolve-provider";
+} from "../../lib/ai/providers/resolve-provider";
 import { useTheoryExercises } from "../../hooks/content/useTheoryExercises";
 import { notify } from "../../utils/notify";
 import type { AIProvider } from "../../lib/constants";

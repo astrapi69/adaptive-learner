@@ -61,6 +61,10 @@ export const apiStorage: IStorageService = {
     setApiKey: (userId, body) => api.settings.setApiKey(userId, body),
     deleteApiKey: (userId, provider) =>
       api.settings.deleteApiKey(userId, provider),
+    // EXP-038 — keys live server-side (Fernet-encrypted) in API mode and never
+    // reach the client as plaintext, so there is nothing to export here. The
+    // empty result gates the encrypted-key-export entry off in API mode.
+    exportApiKeys: async () => ({}),
     getApp: () => api.settings.getApp(),
     getAvailableModels: (userId, provider) =>
       api.settings.getAvailableModels(userId, provider),

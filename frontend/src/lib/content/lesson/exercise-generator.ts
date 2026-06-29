@@ -322,6 +322,6 @@ export function generateExercises(
         // Slug-safe id (the lesson schema requires ``[a-z0-9-]`` step
         // + exercise ids), so the type's underscore becomes a hyphen.
         id: `ex-${i + 1}-${ex.type.replace(/_/g, "-")}`,
-        direction: directionFor(config.direction, i) ?? ex.direction ?? null,
+        direction: directionFor(config.direction, i) ?? ex.direction,
     }));
 }

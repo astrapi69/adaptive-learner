@@ -19,9 +19,9 @@ import {
   estimateBatchTokens,
   generateExercisesForSet as defaultRunBatch,
   type SetBatchDeps,
-} from "../../../lib/ai/generate-exercises-for-set";
-import { buildSetBatchDeps } from "../../../lib/ai/set-batch-deps";
-import { resolveActiveAiProvider } from "../../../lib/ai/resolve-provider";
+} from "../../../lib/ai/generation/generate-exercises-for-set";
+import { buildSetBatchDeps } from "../../../lib/ai/generation/set-batch-deps";
+import { resolveActiveAiProvider } from "../../../lib/ai/providers/resolve-provider";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import type { ContentSetEntry } from "../../../storage/types";
 import { notify } from "../../../utils/notify";

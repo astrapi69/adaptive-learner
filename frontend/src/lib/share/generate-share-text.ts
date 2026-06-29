@@ -20,6 +20,22 @@
 /** The public deployment learners point their friends at. */
 export const SHARE_URL = "https://astrapi69.github.io/adaptive-learner/";
 
+/**
+ * The stable production strand (Haupt). Alias of {@link SHARE_URL} kept as
+ * a named export so the strand-aware share UI (#1172) reads symmetrically
+ * alongside {@link LATEST_APP_URL}.
+ */
+export const HAUPT_APP_URL = SHARE_URL;
+
+/**
+ * The Latest/preview strand (#1172) — the staging deployment built from
+ * develop/feature/fix branches. Intentionally NOT offered as a QR code:
+ * it is unstable (a test version that can contain bugs), so the UI shares
+ * it as a plain, explicitly-warned link only.
+ */
+export const LATEST_APP_URL =
+    "https://astrapi69.github.io/adaptive-learner-content-test/";
+
 /** Minimal ``t`` shape so this module stays free of the i18n hook type. */
 type Translate = (key: string, fallback?: string) => string;
 

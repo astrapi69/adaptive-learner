@@ -11,6 +11,7 @@ import InstallAppSection from "../../components/settings/data/InstallAppSection"
 import ContentRepoSettingsSection from "../../components/settings/integrations/ContentRepoSettingsSection";
 import DangerZoneSection from "../../components/settings/data/DangerZoneSection";
 import ExportSection from "../../components/settings/data/ExportSection";
+import KeyVaultSection from "../../components/settings/data/KeyVaultSection";
 import GitHubIntegrationSection from "../../components/settings/integrations/GitHubIntegrationSection";
 import FeedbackIntensityControl from "../../components/settings/controls/FeedbackIntensityControl";
 import GamificationSettingsSection from "../../components/settings/controls/GamificationSettingsSection";
@@ -136,6 +137,19 @@ export default function Settings() {
       },
       { replace: true },
     );
+  };
+
+  // The encrypted key export (.alk) lives on the Data tab (#1183); the AI
+  // tab only links to it. Switch tabs, then bring the section into view —
+  // panels stay mounted (hidden), so the node already exists in the DOM.
+  // ``scrollIntoView`` is guarded for happy-dom.
+  const openKeyExport = () => {
+    setActiveTab("data");
+    requestAnimationFrame(() => {
+      document
+        .querySelector('[data-testid="key-vault-section"]')
+        ?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+    });
   };
 
   // Shared nav model for both the desktop sidebar and the mobile menu
@@ -553,6 +567,7 @@ export default function Settings() {
         settings={settings}
         onSettingsChange={setSettings}
         active={activeTab === "ai"}
+        onOpenKeyExport={openKeyExport}
       />
 
       <section
@@ -750,6 +765,7 @@ export default function Settings() {
           <SyncSection />
         </Feature>
         <BackupSection />
+        <KeyVaultSection />
         <Feature id={FEATURES.SELECTIVE_EXPORT}>
           <SelectiveExportSection />
         </Feature>

@@ -22,8 +22,9 @@ Ein Set hat drei Ebenen:
    des Root-Manifests, listet die Lektions-Dateien des konkreten
    Sets.
 3. **Lektionsdateien** (`sets/{set-id}/lessons/NN-slug.json`) —
-   eine JSON-Datei pro Lektion, bei jedem Download gegen Schema
-   v1.0 validiert.
+   eine JSON-Datei pro Lektion, bei jedem Download gegen das
+   Lektions-Schema validiert (siehe *Das Schema ist die alleinige
+   Wahrheitsquelle* weiter unten).
 
 Die mit Adaptive Learner ausgelieferten Sets liegen im separaten
 Content-Repo [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
@@ -36,6 +37,35 @@ ist der CONTENT-STATS-Block in der Projekt-[`README.md`](https://github.com/astr
 dieser Block ist die alleinige Wahrheitsquelle, aus einem frischen
 Content-Checkout generiert, daher dupliziert dieser Leitfaden die
 Zahlen nicht.
+
+## Das Schema ist die alleinige Wahrheitsquelle (EXP-039)
+
+Das Lektions-/Übungsformat hat **eine maßgebliche Definition**: die
+Pydantic-Modelle im Content-Loader-Plugin
+(`adaptive_learner_content_loader.schema`). Jedes andere Artefakt
+wird daraus per `make sync-schema` **generiert**, sodass die
+Stellen, die früher auseinanderdrifteten, das nicht mehr können:
+
+- `schema/lesson.schema.json` (+ Geschwisterdateien) — das
+  maschinenlesbare JSON-Schema (Draft 2020-12). Referenziere es aus
+  einer Lektions-`.json` über einen `"$schema"`-Schlüssel auf
+  oberster Ebene, um IDE-Autovervollständigung und Inline-
+  Validierung zu bekommen.
+- `schema/quality-rules.json` — die geteilten Qualitäts-Minima
+  (z. B. Übungsanzahl, Anzahl akzeptierter Freitext-Antworten), die
+  der client-seitige Content-Validator nutzt statt einer zweiten,
+  von Hand gepflegten Kopie.
+- Die Frontend-TypeScript-Lektionstypen und die MkDocs-Seite
+  [Lektionsformat-Referenz](lesson-format-reference.md) werden
+  ebenfalls generiert — **nicht von Hand bearbeiten**; bearbeite die
+  Modelle und führe den Generator erneut aus.
+
+Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
+plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
+schlägt fehl, wenn ein generiertes Artefakt von den Modellen
+abweicht. Das Content-Repo spiegelt `schema/lesson.schema.json` +
+`schema/quality-rules.json` (die App ist die Quelle) und validiert
+die Struktur in seiner eigenen CI dagegen.
 
 ## Sprachpaare (v1.44.0)
 
@@ -234,6 +264,31 @@ Oder eine Übung:
 }
 ```
 
+## Welcher Aufgabentyp für welches Lernziel
+
+Wähle den Aufgabentyp nach dem **Lernziel**, nicht nach Abwechslung.
+Wort-für-Wort-Bewertung per exact-match — ein ganzer Satz als `word_tiles`
+oder ein Volltext-`free_text` — versagt bei **freier Produktion**: ein Konzept
+lässt sich auf viele richtige Weisen formulieren, sodass ein inhaltlich
+richtiger Lernender Wort für Wort als falsch markiert wird. Das ist der
+demotivierendste Moment, den eine Lektion erzeugen kann. Koppele den Typ
+stattdessen an das Ziel:
+
+| Lernziel | Richtiger Typ |
+|---|---|
+| Faktenwissen mit einer Antwort | `cloze` (Lücke) |
+| Konzept wiedererkennen | Multiple-Choice (`cloze` im `select`-Modus) / `matching` |
+| Definition eines Konzepts | `cloze` mit Schlüsselbegriff-Lücken |
+| Freie Erklärung / Transfer / Vergleich | noch kein exact-match-Typ — vorerst `cloze` / Multiple-Choice; Self-Assessment ist geplant |
+| Satz mit eindeutiger Wortreihenfolge (Sprachenlernen) | `word_tiles` |
+
+Faustregel: `word_tiles` nur für Sätze mit wirklich eindeutiger Wortreihenfolge
+(eine Übersetzungsübung), und Definitionen sowie Faktenwissen als `cloze` (oder
+Multiple-Choice via `cloze` `select`-Modus). Eine freie Definition gehört nie
+in `word_tiles` oder Volltext-`free_text` — dafür gibt es keine faire
+exact-match-Bewertung. Vollständige Analyse: siehe EXP-041
+(`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
+
 ## Übungstyp-Referenz
 
 ### matching
@@ -372,6 +427,39 @@ len(blanks)`).
   stabilem Seed gemischt. **Erfordert nicht-leere
   `distractors`** — der Schema-Validator weist
   `cloze_mode: "select"` ohne sie ab.
+- `"multiselect"` (#1195): eine "Alle zutreffenden auswählen"-
+  Frage. Keine `___`-Marker und keine `blanks` — der `sentence`
+  ist die Frage, darunter eine Checkbox-Gruppe. Nutzt `accept`
+  und `distractors` mit modusspezifischer Bedeutung: **jeder**
+  `accept`-Eintrag ist eine richtige Option (nicht nur
+  `accept[0]`), `distractors` sind die falschen. Bewertet als
+  **exakte Mengenübereinstimmung** — alle richtigen Optionen
+  müssen gewählt sein, keine falsche. **Erfordert** nicht-leeres
+  `accept`, nicht-leeres `distractors`, und beide Listen müssen
+  **disjunkt** sein (dieselbe Option darf nicht in beiden stehen).
+
+**Multiple Choice wird so erstellt** — es gibt bewusst keinen
+eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3). Eine
+Single-Choice-Frage ist ein Cloze mit einer Lücke im `select`-Modus:
+der `sentence` (endet auf `___`) ist die Frage, `accept[0]` der
+Lücke ist die richtige Option, und `distractors` sind die falschen
+Optionen. Beispiel: `"sentence": "Die Hauptstadt von Frankreich ist
+___."`, `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode":
+"select"`, `"distractors": ["Berlin", "Madrid", "Rom"]`.
+
+**"Alle zutreffenden auswählen"** (zwei oder mehr richtige
+Antworten, z. B. eine Führerscheinprüfungs-Frage) nutzt
+`cloze_mode: "multiselect"`:
+
+```json
+{
+  "type": "cloze",
+  "cloze_mode": "multiselect",
+  "sentence": "Welche Städte liegen in Deutschland?",
+  "accept": ["Berlin", "Hamburg"],
+  "distractors": ["Wien", "Zürich"]
+}
+```
 
 **Mehrere Lücken pro Cloze** sind unterstützt: jeder `___` im
 Satz wird der Reihe nach auf den nächsten Eintrag in `blanks`

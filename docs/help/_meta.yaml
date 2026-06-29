@@ -496,6 +496,16 @@ navigation:
           ja: レッスンコンテンツの作成
         slug: developer/authoring-content
       - title:
+          de: Lektionsformat-Referenz
+          en: Lesson format reference
+          es: Referencia del formato de lección
+          fr: Référence du format de leçon
+          el: Αναφορά μορφής μαθήματος
+          pt: Referência do formato de lição
+          tr: Ders biçimi başvurusu
+          ja: レッスン形式リファレンス
+        slug: developer/lesson-format-reference
+      - title:
           de: Release-Prozess
           en: Release workflow
           es: Flujo de publicación

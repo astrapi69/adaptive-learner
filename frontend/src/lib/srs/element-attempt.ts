@@ -189,3 +189,25 @@ export function deriveClozeAttempts(
         };
     });
 }
+
+/** CLOZE multiselect (#1195): a single attempt for the whole
+ *  'select all that apply' question. element_key + correct_answer are
+ *  the canonical correct set (sorted, joined) so reviews re-target the
+ *  same question; ``correct`` is the exact-set verdict from the
+ *  component (no re-validation here). */
+export function deriveClozeMultiSelectAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    selected: readonly string[],
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical = [...(exercise.accept ?? [])].sort().join(", ");
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "vocabulary",
+        user_answer: [...selected].sort().join(", "),
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}

@@ -21,14 +21,14 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 const submitSpy = vi.fn();
 
 const useReviewLessonMock = vi.fn();
-vi.mock("../../hooks/lesson/useReviewLesson", () => ({
+vi.mock("../../hooks/lesson/modes/useReviewLesson", () => ({
     useReviewLesson: () => useReviewLessonMock(),
 }));
 
 // Minimal controlled exercise: answerable on mount, grades on submit().
-vi.mock("../../components/exercises/ExerciseDispatcher", async (orig) => {
+vi.mock("../../components/exercises/shell/ExerciseDispatcher", async (orig) => {
     const actual =
-        await orig<typeof import("../../components/exercises/ExerciseDispatcher")>();
+        await orig<typeof import("../../components/exercises/shell/ExerciseDispatcher")>();
     type Props = {
         onInteraction?: (a: boolean) => void;
         onComplete: (r: {

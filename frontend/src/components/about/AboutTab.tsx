@@ -21,6 +21,7 @@ import DonationSection from "./DonationSection";
 import ShareAppSection from "./ShareAppSection";
 import LicenseResourcesSection from "./LicenseResourcesSection";
 import SupportSection from "./SupportSection";
+import StrangBadge from "./StrangBadge";
 import SystemInfoSection from "./SystemInfoSection";
 import VersionSection from "./VersionSection";
 
@@ -83,6 +84,7 @@ export default function AboutTab() {
           data-testid="about-content"
           style={{ display: "flex", flexDirection: "column", gap: 16 }}
         >
+          <StrangBadge t={t} />
           <VersionSection info={info} t={t} />
           <SystemInfoSection info={info} storageMode={storageMode} t={t} />
           <CreditsSection t={t} />

@@ -5,6 +5,18 @@
  */
 
 import type { AiValidationResult } from "../../../lib/content/validation/content-validation-types";
+import type {
+  Card as GeneratedCard,
+  CardTokenRole as GeneratedCardTokenRole,
+  ClozeBlank as GeneratedClozeBlank,
+  Direction as GeneratedDirection,
+  Exercise as GeneratedExercise,
+  Lesson as GeneratedLesson,
+  LessonResource as GeneratedLessonResource,
+  LessonStep as GeneratedLessonStep,
+  MediaType as GeneratedMediaType,
+  TokenRole as GeneratedTokenRole,
+} from "./lesson-schema.generated";
 
 export interface ContentSetEntry {
   source: string;
@@ -35,6 +47,12 @@ export interface ContentSetEntry {
   cover_image: string | null;
   cached_version: string | null;
   update_available: boolean;
+  /** ISO-8601 timestamp of when this set was downloaded/cached, or ``null``
+   *  when not downloaded or unknown. Drives the "most recently downloaded
+   *  first" ordering of the personal Learning Path (#1211). Surfaced in
+   *  Dexie mode (from ``ContentSetRow.downloaded_at``); API mode has no
+   *  per-set download time, so it stays ``null`` there. */
+  downloaded_at?: string | null;
   /** Optional set-level book (#769). When present, the lesson's "Vertiefe
    *  das Thema" section auto-inserts it as the first media item. */
   book?: ContentSetBook | null;
@@ -74,194 +92,85 @@ export interface ContentLessonList {
 }
 
 /**
- * Lesson shape mirrored from the backend's
- * ``adaptive_learner_content_loader.schema.Lesson``. The
- * viewer (Phase 44) renders these directly. Optional fields
- * stay nullable / optional so the type-checker matches the
- * Pydantic JSON output exactly.
+ * Lesson content types — the consumer-facing surface (``Content*``)
+ * for the App-authoritative lesson schema (EXP-039).
+ *
+ * SINGLE SOURCE OF TRUTH: the Pydantic models in
+ * ``adaptive_learner_content_loader.schema``. ``make sync-schema``
+ * derives ``schema/lesson.schema.json`` and, from it,
+ * ``lesson-schema.generated.ts``. The ``Content*`` names below are
+ * thin aliases of those generated types so the ~147 consumers keep
+ * their import names while the field SHAPES come entirely from the
+ * generated artefact — there is no parallel hand-maintained mirror
+ * that can drift.
+ *
+ * The only adaptation is nullability: several collection fields have a
+ * Pydantic default (``cards`` / ``card_ids`` / ``distractors`` /
+ * ``tags`` = ``default_factory=list``; ``estimated_minutes`` = 10), so
+ * in the VALIDATION JSON-Schema — and therefore in the generated TS —
+ * they are optional. But ``Lesson.model_dump`` always emits them, so a
+ * parsed lesson (every lesson the viewer ever sees) always carries
+ * them. ``RequireKeys`` re-marks exactly those fields required for the
+ * consumer view; it derives the value type from the generated type via
+ * indexed access, so a field rename in the model surfaces as a compile
+ * error here rather than drifting silently.
  */
-export interface ContentLessonStep {
-  id: string;
-  type: "theory" | "exercise";
-  title?: string | null;
-  body?: string | null;
-  exercise?: ContentLessonExercise | null;
-  /** Schema v1.4 (#139) — optional external example link rendered under
-   *  a theory step's content (article / video / visualisation). */
-  example_url?: string | null;
-  /** Display text for {@link example_url}; the viewer falls back to a
-   *  localized "View example" label when empty. */
-  example_label?: string | null;
-  /** #709 — EXERCISE steps only: an explicit reference to the theory step
-   *  this exercise practices, by the theory step's id (preferred) or
-   *  title. The "Re-read theory" backlink resolves it exactly, falling
-   *  back to the term-overlap heuristic (#634/#635) when absent or
-   *  unresolvable. Additive; old lessons omit it. */
-  theory_ref?: string | null;
-  /** #673 — set ONLY on synthesised SRS review steps
-   *  ({@link synthesizeReviewLesson}). Carries the source lesson_id the
-   *  reviewed element belongs to, so the review recorder can address the
-   *  exact stored ``ElementError`` row. Without it the lesson_id had to be
-   *  parsed back out of the hyphen-joined step id, which mangled it for any
-   *  exercise_id / element_key containing a hyphen or space (almost all of
-   *  them) — producing a phantom row instead of rescheduling the real one,
-   *  so the "N due" badge never dropped. Absent on real content lessons. */
-  review_lesson_id?: string | null;
-}
 
-/** Phase 52D / v1.35.0 / P-127 — one blank inside a CLOZE
- * exercise's ``sentence``. Mirror of ``schema.ClozeBlank``. */
-export interface ContentLessonClozeBlank {
-  accept: string[];
-  hint?: string | null;
-  placeholder?: string | null;
-}
-
-/** EXP-018 / Phase 62 / v1.46.0 — drill direction. Mirror of the
- *  Python ``Exercise.direction`` Literal. ``target_to_source``
- *  (default) is receptive (show target, recognise source);
- *  ``source_to_target`` is productive (show source, produce
- *  target). ``both`` / ``random`` defer the choice to the
- *  renderer / adaptive generator. */
-export type ContentExerciseDirection = "source_to_target" | "target_to_source" | "both" | "random";
-
-export interface ContentLessonExercise {
-  id: string;
-  type: "matching" | "picture_choice" | "free_text" | "word_tiles" | "cloze";
-  prompt: string;
-  card_ids: string[];
-  /** EXP-018 / Phase 62 — drill direction; defaults to
-   *  ``"target_to_source"`` (receptive) when omitted. */
-  direction?: ContentExerciseDirection | null;
-  pairs?: Array<{ left: string; right: string }> | null;
-  images?: Array<{ src: string; label: string; is_correct?: string }> | null;
-  accept?: string[] | null;
-  tiles?: string[] | null;
-  accept_orderings?: number[][] | null;
-  distractors: string[];
-  hint?: string | null;
-  /** Phase 52D / v1.35.0 — CLOZE: sentence with visible ``___``
-   *  markers at each blank position. */
-  sentence?: string | null;
-  /** Phase 52D / v1.35.0 — CLOZE: per-marker metadata in
-   *  left-to-right order. ``blanks.length === sentence
-   *  .count("___")`` enforced upstream. */
-  blanks?: ContentLessonClozeBlank[] | null;
-  /** Phase 52D / v1.35.0 — CLOZE: render mode. Default
-   *  ``"type"`` when omitted. ``"select"`` requires
-   *  non-empty ``distractors``. */
-  cloze_mode?: "type" | "select" | null;
-}
-
-/** Phase 52I / v1.35.0 / P-130 — closed grammatical-role enum
- * mirror. Annotates tokens inside a card's ``front`` so the
- * cloze generator can pick a semantically-meaningful blank.
- * Adding a role is a minor schema bump. */
-export type ContentLessonCardTokenRoleName =
-  | "article"
-  | "verb"
-  | "noun"
-  | "adjective"
-  | "preposition"
-  | "gender_marker"
-  | "tense_marker";
-
-export interface ContentLessonCardTokenRole {
-  token: string;
-  role: ContentLessonCardTokenRoleName;
-}
-
-export interface ContentLessonCard {
-  id: string;
-  front: string;
-  back: string;
-  notes?: string | null;
-  image?: string | null;
-  audio?: string | null;
-  tags: string[];
-  /** Phase 52I / v1.35.0 / P-130 — optional token-role
-   * annotations on ``front``. Absent → cloze generator
-   * falls back to a positional heuristic. */
-  token_roles?: ContentLessonCardTokenRole[] | null;
-  // --- Schema v1.2 -> v1.3: technical / programming content. All
-  // optional + backward compatible. media_type "code"/"formula" drives
-  // syntax-highlighted rendering + a monospace exercise input.
-  /** Code / formula the card teaches (Python snippet, Excel formula …). */
-  code_snippet?: string | null;
-  /** Highlighter language hint ("python", "sql", "excel", …). */
-  code_language?: string | null;
-  /** What ``code_snippet`` produces, shown in an "Output:" block. */
-  expected_output?: string | null;
-  /** Progressive hint revealed on request. */
-  hint?: string | null;
-  /** Optional 1-5 difficulty scale. */
-  difficulty?: number | null;
-  /** "text" (default when null) | "code" | "formula" | "diagram". */
-  media_type?: ContentCardMediaType | null;
-}
+/** Make the keys ``K`` of ``T`` required + non-null, deriving each value
+ *  type from ``T`` (drift-safe: ``K extends keyof T``). */
+type RequireKeys<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]-?: NonNullable<T[P]>;
+};
 
 /** Card content kind (schema v1.3). Null/absent is treated as "text". */
-export type ContentCardMediaType = "text" | "code" | "formula" | "diagram";
+export type ContentCardMediaType = NonNullable<GeneratedMediaType>;
+
+/** EXP-018 / Phase 62 / v1.46.0 — drill direction. ``target_to_source``
+ *  (default) is receptive (show target, recognise source);
+ *  ``source_to_target`` is productive. ``both`` / ``random`` defer the
+ *  choice to the renderer / adaptive generator. */
+export type ContentExerciseDirection = GeneratedDirection;
+
+/** Phase 52I / v1.35.0 / P-130 — closed grammatical-role enum.
+ *  Annotates tokens inside a card's ``front`` so the cloze generator can
+ *  pick a semantically-meaningful blank. */
+export type ContentLessonCardTokenRoleName = GeneratedTokenRole;
+
+/** Phase 52I / v1.35.0 / P-130 — one ``{token, role}`` annotation. */
+export type ContentLessonCardTokenRole = GeneratedCardTokenRole;
+
+/** Phase 52D / v1.35.0 / P-127 — one blank inside a CLOZE exercise's
+ *  ``sentence``. */
+export type ContentLessonClozeBlank = GeneratedClozeBlank;
 
 /** EXP-029 / MED-05 — one lesson-level supplementary-media entry (the raw
- *  shape stored in the content JSON). Mirrors a ``media.yaml`` resource minus
- *  ``domain`` (inherited from the parent set). Optional + additive, so
- *  pre-EXP-029 lessons load unchanged. Validated by ``parseLessonResources``
- *  before display. */
-export interface ContentLessonResource {
-  type: string;
-  title: string;
-  url: string;
-  language?: string | null;
-  level?: string | null;
-  duration?: string | null;
-  description?: string | null;
-  author?: string | null;
-  free?: boolean | null;
-  partnership?: boolean | null;
-  tags?: string[] | null;
-}
+ *  shape stored in the content JSON). Optional + additive, so pre-EXP-029
+ *  lessons load unchanged. Validated by ``parseLessonResources`` before
+ *  display. */
+export type ContentLessonResource = GeneratedLessonResource;
 
-export interface ContentLesson {
-  id: string;
-  title: string;
-  description?: string | null;
-  /** Optional BCP-47 code of the language taught (Phase 60 /
-   *  v1.44.0). The parent set is authoritative; this lets an
-   *  exported standalone lesson carry its own pair. */
-  target_language?: string | null;
-  /** Optional BCP-47 code of the language the learner already
-   *  speaks (the language the card backs / notes / theory are
-   *  written in). */
-  source_language?: string | null;
-  /** Optional content domain (schema v1.3). Mirrors the parent
-   *  set's ``domain`` ("language" default, or "psychology" /
-   *  "programming" / ...). The parent set is authoritative. */
-  domain?: string | null;
-  estimated_minutes: number;
+/** The smallest learnable unit. ``tags`` is always present at runtime
+ *  (``default_factory=list``). */
+export type ContentLessonCard = RequireKeys<GeneratedCard, "tags">;
+
+/** One exercise step. ``card_ids`` + ``distractors`` are always present at
+ *  runtime (``default_factory=list``). */
+export type ContentLessonExercise = RequireKeys<GeneratedExercise, "card_ids" | "distractors">;
+
+/** One step in the lesson sequence. Re-wires ``exercise`` to the
+ *  consumer-facing {@link ContentLessonExercise}. */
+export type ContentLessonStep = Omit<GeneratedLessonStep, "exercise"> & {
+  exercise?: ContentLessonExercise | null;
+};
+
+/** One lesson in a content set. ``estimated_minutes`` (default 10),
+ *  ``cards`` + ``steps`` are always present at runtime; ``cards`` /
+ *  ``steps`` are re-wired to the consumer-facing element types. */
+export type ContentLesson = Omit<GeneratedLesson, "cards" | "steps" | "estimated_minutes"> & {
   cards: ContentLessonCard[];
+  estimated_minutes: NonNullable<GeneratedLesson["estimated_minutes"]>;
   steps: ContentLessonStep[];
-  /** Phase 64B / content schema 1.3 (additive) — when set, this
-   *  lesson is a community VARIATION of another lesson (same topic,
-   *  different exercises or perspective). Holds the original
-   *  lesson's id. Absent for ordinary lessons. */
-  variation_of?: string | null;
-  /** Phase 64B — the author's short note on how this variation
-   *  differs from the original ("Mehr Übungen zum Präteritum"). */
-  variation_note?: string | null;
-  /** Phase 64C-2 (schema 1.3, additive) — optional author credit set
-   *  when the learner opts in while sharing. Shown as a subtle credit
-   *  line in the viewer + in the GitHub submission. */
-  contributed_by?: string | null;
-  /** ISO-8601 timestamp the lesson was contributed. */
-  contributed_at?: string | null;
-  /** EXP-029 / MED-05 (additive) — optional lesson-specific supplementary
-   *  media (videos / podcasts / articles / …). Surfaced in the
-   *  "Vertiefe das Thema" section after the lesson summary, above the
-   *  broader domain-level media from ``media.yaml``. Validated by
-   *  ``parseLessonResources``. */
-  resources?: ContentLessonResource[] | null;
-}
+};
 
 /**
  * Content-Loader namespace. ApiStorage delegates to
@@ -355,7 +264,7 @@ export interface AiValidationCacheRecord {
   set_version: string | null;
   /** AIV-09 content hash of the checked cards (null until AIV-08/09). */
   content_hash: string | null;
-  results: import("../../../lib/ai/content-validator").ValidationResult[];
+  results: import("../../../lib/ai/validation/content-validator").ValidationResult[];
   response_ids: string[];
   provider: string;
   model: string;
@@ -364,7 +273,7 @@ export interface AiValidationCacheRecord {
   /** ISO timestamp the check completed. */
   checked_at: string;
   /** EXP-033 / AIV-09 signature, or null for pre-signature caches. */
-  signature?: import("../../../lib/ai/validation-signature").AiValidationSignature | null;
+  signature?: import("../../../lib/ai/validation/validation-signature").AiValidationSignature | null;
 }
 
 /** Input for the EXP-033 set-wide per-card AI check (AIV-02). */
@@ -377,7 +286,7 @@ export interface AiValidateCardsInput {
   /** Flattened cards to check (caller flattens across the set's lessons
    *  and applies the 500-card cap). Each item needs at least
    *  ``{id, front, back}``; ``notes`` is optional. */
-  cards: import("../../../lib/ai/content-validator").ValidationCard[];
+  cards: import("../../../lib/ai/validation/content-validator").ValidationCard[];
   /** Per-batch progress callback (Dexie, client-side). */
   onProgress?: (progress: { current: number; total: number }) => void;
   /** Abort the run mid-batch. */
@@ -386,7 +295,7 @@ export interface AiValidateCardsInput {
 
 /** Result of the EXP-033 set-wide per-card AI check (AIV-02). */
 export interface AiValidateCardsResult {
-  results: import("../../../lib/ai/content-validator").ValidationResult[];
+  results: import("../../../lib/ai/validation/content-validator").ValidationResult[];
   /** Provider response ids, gathered across batches (AIV-09 signature). */
   response_ids: string[];
   /** Provider slug ("openai" | "anthropic" | "gemini"). */
@@ -452,6 +361,6 @@ export interface SaveUserSetInput {
  * (BUG P1 / Problem 2). Discriminated by exercise type.
  *
  * Lives in the storage layer because it is a persistence shape;
- * ``components/exercises/exercise-control`` re-exports it for the
+ * ``components/exercises/shell/exercise-control`` re-exports it for the
  * renderers.
  */

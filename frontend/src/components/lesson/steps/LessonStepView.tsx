@@ -15,15 +15,16 @@ import { BookOpen, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TheoryStep from "./TheoryStep";
 import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
-import { ExerciseDispatcher } from "../../exercises/ExerciseDispatcher";
+import { ExerciseDispatcher } from "../../exercises";
 import type {
   ExerciseHandle,
   ExerciseScored,
-} from "../../exercises/exercise-control";
-import type { ReadAloudController } from "../../../hooks/lesson/useReadAloud";
+} from "../../exercises";
+import type { ReadAloudController } from "../../../hooks/lesson/audio/useReadAloud";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { useLessonMode } from "../../../hooks/lesson/useLessonMode";
+import { useLessonMode } from "../../../hooks/lesson/modes/useLessonMode";
 import { stampHintUsage, wasHintUsed } from "../../../lib/hints/hint-usage";
+import { stampExamAttempts } from "../../../lib/srs/exam-attempt";
 import { formatUserAnswer } from "../../../lib/lesson/result-export";
 import { rewriteAnchors } from "../../../lib/lesson/lesson-anchors";
 import { getStorage } from "../../../storage";
@@ -55,6 +56,13 @@ interface LessonStepViewProps {
   onInteraction: (answerable: boolean) => void;
   onChecked: () => void;
   recordStepResult: (result: LessonStepResult) => Promise<void>;
+  /** #1218 — advance to the next step (the lesson's ``goNext``). Threaded
+   *  to the exercise so a fully-correct answer can offer an in-context
+   *  "Continue" via the success-merge. */
+  onAdvance: () => void;
+  /** #1218 — localised label for that "Continue" button ("Next" /
+   *  "Finish lesson"). */
+  advanceLabel: string;
 }
 
 /** The active lesson step: theory, reviewed-fallback, or exercise. */
@@ -78,10 +86,14 @@ export default function LessonStepView({
   onInteraction,
   onChecked,
   recordStepResult,
+  onAdvance,
+  advanceLabel,
 }: LessonStepViewProps) {
   const { t } = useI18n();
   // Exam mode (#1007): "Re-read theory" is a scaffolding aid — hidden.
-  const { showTheoryRecap } = useLessonMode();
+  // #1040 — ``mode`` also flags exam-mode attempts so the SRS layer
+  // lengthens the review interval for a correct answer under pressure.
+  const { showTheoryRecap, mode } = useLessonMode();
 
   const handleComplete = async (scored: ExerciseScored) => {
     if (!step.exercise) return;
@@ -121,7 +133,10 @@ export default function LessonStepView({
       try {
         await getStorage().elementErrors.recordBulk(
           learnerUserId,
-          stampHintUsage(scored.attempts),
+          // #594 stamp hints, then #1040 stamp the exam flag — the SRS
+          // layer shortens hint-assisted intervals and lengthens correct
+          // exam intervals.
+          stampExamAttempts(stampHintUsage(scored.attempts), mode === "exam"),
         );
       } catch (err) {
         console.warn("elementErrors.recordBulk failed:", err);
@@ -206,6 +221,8 @@ export default function LessonStepView({
           domain={lesson.domain}
           cards={lesson.cards}
           onComplete={handleComplete}
+          onAdvance={onAdvance}
+          advanceLabel={advanceLabel}
         />
       )}
     </article>

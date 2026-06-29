@@ -361,7 +361,6 @@ adaptive:
     load_failed: "Uyarlanabilir ders oluşturulamadı."
 review:
   your_answer: "Cevabın:"
-  correct_answer: "Doğru:"
   summary_corrected: "{total} hatadan {corrected} tanesi düzeltildi"
   summary_trend: "Güzel — zayıf noktaların güçleniyor."
   summary_next: "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner."
@@ -458,6 +457,32 @@ progress:
   commit_notes_aria: "Oturum notları"
   session_count: "Oturumlar"
 settings:
+  key_export_link:
+    heading: "Yapay zeka anahtarları — şifreli dışa aktarma"
+    hint: "Yapay zeka anahtarlarınızı tek bir şifreli dosya olarak dışa veya içe aktarın. Veri sekmesindeki diğer yedeklerle birlikte bulunur."
+    button: "Anahtar dışa aktarmaya git (Veri sekmesi)"
+  key_vault:
+    title: "Yapay zekâ anahtarları — şifreli dışa aktarma"
+    intro: "Yapay zekâ anahtarlarınızı tek bir şifreli dosyada başka bir cihaza taşıyın; normal yedekten (anahtar içermez) ayrıdır."
+    api_disabled: "Sunucu modunda anahtarlarınız sunucu tarafından yönetilir, bu yüzden burada dışa aktarılacak bir şey yok."
+    export_heading: "Dışa aktar"
+    passphrase_hint: "Güçlü bir parola ifadesi seçin. Kurtarılamaz — onsuz dosya açılamaz."
+    passphrase_label: "Parola ifadesi"
+    confirm_label: "Parola ifadesini onayla"
+    no_keys: "Henüz dışa aktarılacak yapay zekâ anahtarı yok."
+    busy: "İşleniyor…"
+    export_button: "Şifreli dosyayı dışa aktar"
+    import_heading: "İçe aktar"
+    import_button: "Anahtar dosyasını içe aktar"
+    success_export: "Şifreli anahtar dosyası indirildi."
+    success_import: "Anahtarlar içe aktarıldı. Yapay zekâ özellikleri yeniden hazır."
+    error_too_short: "Parola ifadesi en az {n} karakter olmalıdır."
+    error_mismatch: "Parola ifadeleri eşleşmiyor."
+    error_export: "Dışa aktarma oluşturulamadı."
+    error_no_file: "Önce bir anahtar dosyası seçin."
+    error_no_passphrase: "Dışa aktarmada kullanılan parola ifadesini girin."
+    error_decrypt: "Parola ifadesi yanlış veya dosya bozuk."
+    error_import: "Anahtar dosyası içe aktarılamadı."
   lesson_mode:
     title: "Ders modu"
     hint: "Alıştırma modu tüm yardımları açık tutar. Sınav modu ipuçlarını, teori tekrarını, otomatik okumayı ve çözümü gizler; böylece gerçekçi koşullarda hatırlarsın."
@@ -844,6 +869,11 @@ toast:
   api_key_deleted: API anahtarı kaldırıldı.
   method_switched: Yöntem değiştirildi.
 install:
+  ios:
+    title: "Uygulama olarak yükle"
+    steps: "Paylaş simgesine, ardından «Ana Ekrana Ekle» seçeneğine dokunun — Safari çubuğu olmadan açılır."
+    aria_label: "iPhone’unuza yükleyin"
+    dismiss: "Kapat"
   title: Ana ekrana ekle
   subtitle: "Daha iyi çevrimdışı kullanım için Adaptive Learner'ı uygulama olarak yükleyin."
   install: Yükle
@@ -862,6 +892,14 @@ about:
   app_label: Adaptive Learner
   build_hash_label: Yapı
   build_date_label: Yapı tarihi
+  strang:
+    haupt: "Ana sürüm (kararlı)"
+    latest: "Latest sürüm (test)"
+    unknown: "Bilinmeyen kanal"
+    latest_warning: "Bir önizleme/test derlemesi kullanıyorsunuz. Kararlı değildir ve hatalar içerebilir."
+    branch_label: "Dal"
+    commit_label: "Commit"
+    fallback_note: "Kanal çıkarıldı (açık derleme işareti yok)."
   check_update: "Güncellemeleri denetle"
   checking: "Denetleniyor…"
   update_available: "{version} sürümü mevcut!"
@@ -1682,6 +1720,8 @@ lesson:
     toggle:
       my_answer: "Cevabım"
       solution: "Çözüm"
+    success:
+      badge: "Doğru!"
     reread_theory: "Teoriyi tekrar oku"
     back_to_exercise: "Alıştırmaya dön"
     loading: "Alıştırma yükleniyor…"
@@ -1751,6 +1791,11 @@ lesson:
       sentence_label: "Boşluk doldurma cümlesi"
       blank_label: "Boşluk {n}"
       select_placeholder: "Seç…"
+      multi_group_label: "Geçerli olanların tümünü seçin"
+      multi_result_wrong: "Tam değil. Vurgulanan seçenekleri kontrol et."
+      multi_badge_correct: "Doğru"
+      multi_badge_wrong: "Yanlış"
+      multi_badge_missed: "Atlandı"
       result_correct: "Hepsi doğru!"
       result_partial: "{correct} / {total} doğru."
       empty: "Bu boşluk doldurma alıştırmasının boşluğu yok."
@@ -1764,6 +1809,7 @@ lesson:
       word_tiles:
         receptive: Çeviriyi oluştur
         productive: Cümleyi oluştur
+        knowledge: Cümleyi oluştur
       picture_choice:
         receptive: Doğru anlamı seç
         productive: Doğru resmi seç
@@ -1833,7 +1879,6 @@ lesson:
       question: "Soru"
       your_answer: "Senin cevabın"
       no_answer: "(yok)"
-      correct_answer: "Doğru"
       weak_areas: "Zayıf alanlar"
     mark_complete: "Tamamlandı olarak işaretle"
     next_lesson: "Sonraki ders"
@@ -1876,6 +1921,14 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  set_link:
+    loading: "Set yükleniyor…"
+    not_found_title: "Set bulunamadı"
+    not_found_body: "Bu set kullanılamıyor — henüz indirilmemiş ya da mevcut olmayabilir."
+    go_discover: "İçerik keşfet"
+    start: "Öğrenmeye başla"
+    download_start: "İndir ve başla"
+    lessons: "{n} ders"
   repo_export:
     button: "Depo olarak paylaş"
     title: "Depo olarak paylaş"
@@ -2542,6 +2595,13 @@ pwa:
     action: "Güncelle"
     later: "Sonra"
 share:
+  menu:
+    heading: "Paylaş"
+    facebook: "Facebook'ta paylaş"
+    linkedin: "LinkedIn'de paylaş"
+    x: "X'te paylaş"
+    whatsapp: "WhatsApp'ta paylaş"
+    copy: "Panoya kopyala"
   app:
     heading: "Uygulamayı paylaş"
     qr_intro: "Başkalarının doğrudan açabilmesi için uygulamayı QR koduyla paylaş."
@@ -2551,6 +2611,11 @@ share:
     copied: "Kopyalandı"
     share: "Paylaş"
     qr_alt: "Uygulamaya bağlanan QR kodu"
+    haupt_label: "Ana sürüm (kararlı)"
+    haupt_intro: "Kararlı uygulamayı QR kod ile paylaşın, böylece başkaları açabilir."
+    latest_label: "Latest sürüm (test)"
+    latest_warning: "Bu bir önizleme/test sürümüdür. Kararlı değildir ve hatalar içerebilir. Yalnızca test edenlerle paylaşın."
+    open_link: "Bağlantıyı aç"
   result:
     text: '"{title}" dersini %{pct} ile tamamladım! 🎓 {total} sorudan {correct} doğru.'
     cta_record: 'Arkadaşlarına göster!'

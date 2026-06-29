@@ -73,6 +73,20 @@ _INTERVAL_DAYS_BY_STREAK: dict[int, int] = {
 # scheduler (``element-errors-dexie.ts``).
 HINT_INTERVAL_FACTOR: float = 0.5
 
+# #1040 Exam-Mode SRS boost (Phase 2 of #1007) — a card answered CORRECTLY
+# under exam pressure is stronger retention evidence, so the next review
+# comes LATER. The base interval is multiplied by this factor when the
+# element's most recent attempt was a correct exam answer
+# (``last_attempt_exam``). Chosen as the mathematical inverse of
+# HINT_INTERVAL_FACTOR (0.5 -> 2.0): the issue specifies it "mirrors the
+# inverse of the #594 hint-economy factor". The effect is naturally
+# bounded — the flag is only ever set on a correct answer (streak >= 1),
+# so the longest band it can stretch is the 7-day (streak 2) band -> 14
+# days, exactly the longer interval the module docstring reserves for a
+# strong element; a mastered element (streak 3) leaves the queue, so there
+# is no runaway. Mirrored in the Dexie scheduler.
+EXAM_INTERVAL_FACTOR: float = 2.0
+
 
 def interval_days_for_streak(correct_streak: int) -> int:
     """Map a correct-streak count to the next-review
@@ -133,9 +147,14 @@ def _parse_attempt_history(raw: str | None) -> list[dict]:
 def _project(row: ElementError, now: datetime) -> ReviewQueueItem:
     interval = interval_days_for_streak(row.correct_streak)
     # #594 Hint Economy — shorten the interval for a hint-assisted answer.
-    effective_interval = interval * (
-        HINT_INTERVAL_FACTOR if getattr(row, "hint_used", False) else 1.0
-    )
+    # #1040 Exam-Mode boost — lengthen it for a correct exam answer. The
+    # two factors compose multiplicatively; in practice they never both
+    # apply (exam mode disables hints), but the composition is well-defined.
+    effective_interval: float = interval
+    if getattr(row, "hint_used", False):
+        effective_interval *= HINT_INTERVAL_FACTOR
+    if getattr(row, "last_attempt_exam", False):
+        effective_interval *= EXAM_INTERVAL_FACTOR
     last = _ensure_utc(row.last_attempt_at)
     suggested = last + timedelta(days=effective_interval)
     return ReviewQueueItem(

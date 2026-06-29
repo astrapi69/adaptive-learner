@@ -324,24 +324,17 @@ class Card(BaseModel):
         ge=1,
         le=5,
     )
-    media_type: str | None = Field(
+    media_type: Literal["text", "code", "formula", "diagram"] | None = Field(
         default=None,
         description=(
             "Card content kind: 'text' (default when null), 'code', "
             "'formula', or 'diagram'. Drives code-aware rendering + "
-            "exercise input (monospace editor for code/formula)."
+            "exercise input (monospace editor for code/formula). "
+            "EXP-039: a closed ``Literal`` so the generated JSON-Schema / "
+            "TS types carry the exact union (was a free ``str`` gated by "
+            "a runtime validator)."
         ),
     )
-
-    @field_validator("media_type")
-    @classmethod
-    def _known_media_type(cls, value: str | None) -> str | None:
-        if value is None:
-            return None
-        allowed = {"text", "code", "formula", "diagram"}
-        if value not in allowed:
-            raise ValueError(f"media_type must be one of {sorted(allowed)}; got {value!r}.")
-        return value
 
     @field_validator("id")
     @classmethod
@@ -361,6 +354,75 @@ class Card(BaseModel):
             if not _SLUG_RE.fullmatch(tag):
                 raise ValueError(f"tag '{tag}' must be slug-safe")
         return value
+
+
+class Pair(BaseModel):
+    """One left↔right pair in a MATCHING exercise.
+
+    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
+    so the generated JSON-Schema / TS types carry the structured
+    ``{left, right}`` shape instead of a loose string map. The
+    ``extra="forbid"`` config + the two required fields replace the
+    former per-pair key check in ``_validate_matching_fields``;
+    validation semantics are unchanged (a pair must have exactly
+    ``left`` and ``right``).
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    left: str = Field(
+        ...,
+        description="The left-column item. The renderer shuffles before display.",
+        min_length=1,
+        max_length=500,
+    )
+    right: str = Field(
+        ...,
+        description="The right-column item this pairs with.",
+        min_length=1,
+        max_length=500,
+    )
+
+
+class PictureImage(BaseModel):
+    """One image option in a PICTURE_CHOICE exercise.
+
+    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
+    so the generated JSON-Schema / TS types carry the structured
+    ``{src, label, is_correct?}`` shape instead of a loose string
+    map. ``extra="forbid"`` + the two required fields replace the
+    former key-subset / src+label-present checks; the
+    "exactly one correct" rule stays in ``_validate_picture_choice_fields``.
+
+    ``is_correct`` stays a ``str`` (``"true"`` marks the answer) for
+    backward compatibility with authored content, not a ``bool``.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    src: str = Field(
+        ...,
+        description=(
+            "Relative path inside the set's ``assets/`` directory "
+            "('assets/img/cat.png'). Resolved by the asset loader."
+        ),
+        min_length=1,
+        max_length=500,
+    )
+    label: str = Field(
+        ...,
+        description="Accessible label / alt text for the image option.",
+        min_length=1,
+        max_length=500,
+    )
+    is_correct: str | None = Field(
+        default=None,
+        description=(
+            "Set to the string ``'true'`` on exactly one image to mark "
+            "it the correct choice. Absent on the distractor images."
+        ),
+        max_length=10,
+    )
 
 
 class Exercise(BaseModel):
@@ -420,19 +482,18 @@ class Exercise(BaseModel):
     # for types that don't use them keeps the JSON files
     # consistent (no per-type field renaming).
 
-    pairs: list[dict[str, str]] | None = Field(
+    pairs: list[Pair] | None = Field(
         default=None,
         description=(
-            "MATCHING: list of {left, right} dicts to pair up. "
-            "Each dict has exactly two keys: 'left' and "
-            "'right'. The renderer shuffles before display."
+            "MATCHING: list of {left, right} pairs to match up. "
+            "The renderer shuffles before display."
         ),
     )
-    images: list[dict[str, str]] | None = Field(
+    images: list[PictureImage] | None = Field(
         default=None,
         description=(
-            "PICTURE_CHOICE: list of {src, label} dicts. "
-            "Exactly one entry MUST also include "
+            "PICTURE_CHOICE: list of {src, label, is_correct?} "
+            "options. Exactly one entry MUST include "
             "'is_correct': 'true'. ``src`` is a relative path "
             "inside the set's ``assets/`` directory."
         ),
@@ -443,7 +504,12 @@ class Exercise(BaseModel):
             "FREE_TEXT: list of accepted answers. Exact-match "
             "first, Levenshtein-tolerant fallback in the "
             "renderer. The first entry is the canonical "
-            "answer shown after a wrong attempt."
+            "answer shown after a wrong attempt. CLOZE "
+            "``multiselect`` (#1195) reuses this field with a "
+            "mode-specific meaning: EVERY entry is a correct "
+            "option (not just the first), rendered as a checkbox "
+            "group with ``distractors`` and graded by exact-set "
+            "match; the two lists must be disjoint."
         ),
     )
     tiles: list[str] | None = Field(
@@ -490,7 +556,9 @@ class Exercise(BaseModel):
             "CLOZE: the cloze sentence with visible ``___`` "
             "markers at each blank position. The renderer "
             "splits on the markers + interleaves the per-blank "
-            "input control. Phase 52D / v1.35.0."
+            "input control. Phase 52D / v1.35.0. In "
+            "``multiselect`` mode (#1195) this is instead the "
+            "question stem (no ``___`` markers, no ``blanks``)."
         ),
         max_length=1000,
     )
@@ -499,17 +567,20 @@ class Exercise(BaseModel):
         description=(
             "CLOZE: per-marker metadata in left-to-right order. "
             "``len(blanks) == sentence.count('___')`` enforced "
-            "at validation time. Phase 52D / v1.35.0."
+            "at validation time. Phase 52D / v1.35.0. Not used "
+            "in ``multiselect`` mode (#1195)."
         ),
     )
-    cloze_mode: Literal["type", "select"] | None = Field(
+    cloze_mode: Literal["type", "select", "multiselect"] | None = Field(
         default=None,
         description=(
             "CLOZE: ``type`` renders an ``<input>`` per blank, "
-            "``select`` renders a ``<select>`` per blank with "
-            "options from ``distractors``. Defaults to "
-            "``type`` when omitted on a CLOZE exercise. "
-            "Phase 52D / v1.35.0."
+            "``select`` renders a single-answer ``<select>`` per "
+            "blank with options from ``distractors``, "
+            "``multiselect`` (#1195) renders a checkbox group of "
+            "``accept`` (all correct) + ``distractors`` for a "
+            "'select all that apply' question. Defaults to ``type`` when "
+            "omitted on a CLOZE exercise. Phase 52D / v1.35.0."
         ),
     )
 
@@ -551,30 +622,30 @@ class Exercise(BaseModel):
         return self
 
     def _validate_matching_fields(self) -> None:
-        """MATCHING requires non-empty 'pairs', each with exactly left+right keys."""
+        """MATCHING requires non-empty 'pairs'.
+
+        Each pair's exact ``{left, right}`` shape is enforced by the
+        ``Pair`` model (required fields + ``extra="forbid"``)
+        (EXP-039), so only the non-empty count is checked here.
+        """
         if not self.pairs:
             raise ValueError("MATCHING exercise requires non-empty 'pairs'")
-        for pair in self.pairs:
-            if set(pair.keys()) != {"left", "right"}:
-                raise ValueError("MATCHING pair must have exactly 'left' and 'right' keys")
 
     def _validate_picture_choice_fields(self) -> None:
-        """PICTURE_CHOICE requires >= 2 images, exactly one correct, allowed keys only."""
+        """PICTURE_CHOICE requires >= 2 images, exactly one correct.
+
+        Each image's ``{src, label, is_correct?}`` shape (required
+        src+label, no extra keys) is enforced by the ``PictureImage``
+        model (EXP-039); only the cross-image rules — at least two
+        options and exactly one marked correct — live here.
+        """
         if not self.images or len(self.images) < 2:
             raise ValueError("PICTURE_CHOICE requires at least 2 'images'")
-        correct_count = sum(1 for img in self.images if img.get("is_correct") == "true")
+        correct_count = sum(1 for img in self.images if img.is_correct == "true")
         if correct_count != 1:
             raise ValueError(
                 "PICTURE_CHOICE must have exactly one image marked 'is_correct': 'true'"
             )
-        for img in self.images:
-            allowed = {"src", "label", "is_correct"}
-            if not set(img.keys()) <= allowed:
-                raise ValueError(
-                    "PICTURE_CHOICE image keys must be a subset of {src, label, is_correct}"
-                )
-            if "src" not in img or "label" not in img:
-                raise ValueError("PICTURE_CHOICE image requires 'src' and 'label'")
 
     def _validate_free_text_fields(self) -> None:
         """FREE_TEXT requires a non-empty 'accept' list."""
@@ -598,13 +669,17 @@ class Exercise(BaseModel):
                     f"permutation of [0..{tile_count - 1}]"
                 )
             if set(ordering) != valid_indices:
-                raise ValueError(
-                    "accept_orderings entries must use every tile index exactly once"
-                )
+                raise ValueError("accept_orderings entries must use every tile index exactly once")
 
     def _validate_cloze_fields(self) -> None:
-        """CLOZE (Phase 52D / P-127) requires sentence+blanks with matching '___'
-        marker count; 'select' mode also needs a non-empty distractor pool."""
+        """CLOZE (Phase 52D / P-127). The ``multiselect`` mode (#1195) is a
+        whole-question 'select all that apply' shape (sentence = question,
+        ``correct_answers`` + ``distractors``); the blank-based ``type`` /
+        ``select`` modes require sentence + blanks with a matching '___'
+        marker count, and ``select`` also needs a non-empty distractor pool."""
+        if self.cloze_mode == "multiselect":
+            self._validate_cloze_multiselect_fields()
+            return
         if not self.sentence:
             raise ValueError("CLOZE exercise requires non-empty 'sentence'")
         if not self.blanks:
@@ -620,6 +695,67 @@ class Exercise(BaseModel):
         # per-blank ``<select>`` options.
         if self.cloze_mode == "select" and not self.distractors:
             raise ValueError("CLOZE with cloze_mode='select' requires non-empty 'distractors'")
+
+    def _validate_cloze_multiselect_fields(self) -> None:
+        """CLOZE ``multiselect`` (#1195): a question stem + two disjoint,
+        non-empty option lists. Reuses ``accept`` (EVERY entry is a correct
+        option in this mode) + ``distractors`` (the wrong options). No
+        blanks/markers."""
+        if not self.sentence:
+            raise ValueError("CLOZE multiselect requires a non-empty 'sentence' (the question)")
+        if not self.accept:
+            raise ValueError("CLOZE multiselect requires non-empty 'accept' (the correct options)")
+        if not self.distractors:
+            raise ValueError("CLOZE multiselect requires non-empty 'distractors'")
+        overlap = set(self.accept) & set(self.distractors)
+        if overlap:
+            raise ValueError(
+                "CLOZE multiselect 'accept' and 'distractors' must be "
+                f"disjoint; shared option(s): {sorted(overlap)}"
+            )
+
+
+class LessonResource(BaseModel):
+    """One lesson-level supplementary-media entry (EXP-029 / MED-05).
+
+    Mirrors a ``media.yaml`` resource minus ``domain`` (inherited
+    from the parent set). Surfaced in the "Vertiefe das Thema"
+    section after the lesson summary. Optional + additive, so
+    pre-EXP-029 lessons load unchanged. Added to the authoritative
+    schema (EXP-039) so the JSON-Schema / generated TS types cover
+    it — previously this shape lived only in the frontend
+    ``ContentLessonResource`` interface, and a lesson carrying
+    ``resources`` was rejected by ``extra="forbid"`` here.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    type: str = Field(
+        ...,
+        description="Resource kind ('video', 'podcast', 'article', ...).",
+        min_length=1,
+        max_length=40,
+    )
+    title: str = Field(
+        ...,
+        description="Human-readable title shown in the media list.",
+        min_length=1,
+        max_length=300,
+    )
+    url: str = Field(
+        ...,
+        description="Link to the resource.",
+        min_length=1,
+        max_length=2000,
+    )
+    language: str | None = Field(default=None, max_length=35)
+    level: str | None = Field(default=None, max_length=10)
+    duration: str | None = Field(default=None, max_length=40)
+    description: str | None = Field(default=None, max_length=2000)
+    author: str | None = Field(default=None, max_length=300)
+    free: bool | None = Field(default=None)
+    partnership: bool | None = Field(default=None)
+    tags: list[str] | None = Field(default=None, max_length=20)
 
 
 class LessonStep(BaseModel):
@@ -687,6 +823,17 @@ class LessonStep(BaseModel):
             "title. The viewer's 'Re-read theory' backlink resolves it "
             "exactly, falling back to the term-overlap heuristic when "
             "absent or unresolvable (additive, #709)."
+        ),
+        max_length=200,
+    )
+    review_lesson_id: str | None = Field(
+        default=None,
+        description=(
+            "Set ONLY on synthesised SRS review steps (#673). Carries the "
+            "source lesson_id the reviewed element belongs to, so the review "
+            "recorder can address the exact stored ElementError row. Absent on "
+            "real content lessons. Modeled here (EXP-039) so the schema covers "
+            "the synthesised-review shape the frontend already emits."
         ),
         max_length=200,
     )
@@ -809,6 +956,44 @@ class Lesson(BaseModel):
             "Ordered sequence of theory + exercise steps. Must contain at least one step."
         ),
         min_length=1,
+    )
+    variation_of: str | None = Field(
+        default=None,
+        description=(
+            "Phase 64B / schema 1.3 (additive). When set, this lesson is a "
+            "community VARIATION of another lesson (same topic, different "
+            "exercises or perspective); holds the original lesson's id. Absent "
+            "for ordinary lessons. Modeled here (EXP-039) so a shared variation "
+            "lesson is no longer rejected by ``extra='forbid'``."
+        ),
+        max_length=120,
+    )
+    variation_note: str | None = Field(
+        default=None,
+        description="Phase 64B. Author's short note on how this variation differs.",
+        max_length=500,
+    )
+    contributed_by: str | None = Field(
+        default=None,
+        description=(
+            "Phase 64C-2 / schema 1.3 (additive). Optional author credit set "
+            "when the learner opts in while sharing. Shown as a subtle viewer "
+            "credit line + in the GitHub submission."
+        ),
+        max_length=200,
+    )
+    contributed_at: str | None = Field(
+        default=None,
+        description="ISO-8601 timestamp the lesson was contributed.",
+        max_length=40,
+    )
+    resources: list[LessonResource] | None = Field(
+        default=None,
+        description=(
+            "EXP-029 / MED-05 (additive). Optional lesson-specific supplementary "
+            "media (videos / podcasts / articles), surfaced in the 'Vertiefe das "
+            "Thema' section after the lesson summary."
+        ),
     )
 
     @field_validator("id")

@@ -24,7 +24,7 @@ import {
   parseAiValidationResult,
   type AiValidationResult,
 } from "../../lib/content/validation/ai-content-validator";
-import { runCardValidation } from "../../lib/ai/validation-runner";
+import { runCardValidation } from "../../lib/ai/validation/validation-runner";
 import { slugifySource } from "./content-loader-dexie";
 
 /** Dexie-mode AI validation: resolve the user's provider + key from

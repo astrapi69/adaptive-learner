@@ -46,6 +46,12 @@ interface AiSettingsPanelProps {
   onSettingsChange: (next: UserSettings) => void;
   /** Whether the AI tab is the active tab (drives ``hidden``). */
   active: boolean;
+  /**
+   * Navigate to the encrypted key export/import, which lives on the Data
+   * tab next to the other backups (#1183). The AI tab only links there —
+   * the single export entry point stays on the Data tab.
+   */
+  onOpenKeyExport: () => void;
 }
 
 /** Provider / model-override / API-key sections of the Settings AI tab. */
@@ -53,6 +59,7 @@ export default function AiSettingsPanel({
   settings,
   onSettingsChange,
   active,
+  onOpenKeyExport,
 }: AiSettingsPanelProps) {
   const { t } = useI18n();
   const mode = resolveStorageMode();
@@ -221,6 +228,30 @@ export default function AiSettingsPanel({
             onRestoreBackup={() => handleRestoreBackup(provider)}
           />
         ))}
+      </section>
+
+      {/* Discoverability bridge (#1183): the encrypted key export/import
+          (EXP-038, .alk) lives on the Data tab next to the other backups —
+          a single export entry point. This is only a link there, never a
+          second export form. */}
+      <section className="settings-section" hidden={!active}>
+        <h2 className="settings-section-title">
+          {t("settings.key_export_link.heading", "AI keys — encrypted export")}
+        </h2>
+        <p className="muted">
+          {t(
+            "settings.key_export_link.hint",
+            "Export or import your AI keys as a single encrypted file. It lives with the other backups in the Data tab.",
+          )}
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onOpenKeyExport}
+          data-testid="ai-key-export-link"
+        >
+          {t("settings.key_export_link.button", "Go to key export (Data tab)")}
+        </Button>
       </section>
     </>
   );

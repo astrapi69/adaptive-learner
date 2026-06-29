@@ -390,7 +390,6 @@
     "summary_remaining": "아직 {n}개 남았어요. 계속할까요?",
     "another_round": "한 번 더",
     "your_answer": "당신의 답변:",
-    "correct_answer": "정답:",
     "summary_corrected": "{total}개 중 {corrected}개 교정됨",
     "summary_trend": "좋아요 — 약한 부분이 점점 강해지고 있어요.",
     "summary_next": "숙달한 항목은 제외되고, 나머지는 곧 복습으로 돌아옵니다.",
@@ -491,6 +490,34 @@
     "session_count": "세션"
   },
   "settings": {
+    "key_export_link": {
+      "heading": "AI 키 — 암호화 내보내기",
+      "hint": "AI 키를 하나의 암호화된 파일로 내보내거나 가져옵니다. 데이터 탭의 다른 백업과 함께 있습니다.",
+      "button": "키 내보내기로 이동 (데이터 탭)"
+    },
+    "key_vault": {
+      "title": "AI 키 — 암호화 내보내기",
+      "intro": "AI 키를 하나의 암호화 파일로 다른 기기로 옮기세요. 일반 백업(키를 포함하지 않음)과는 별개입니다.",
+      "api_disabled": "서버 모드에서는 키가 서버에서 관리되므로 여기서 내보낼 것이 없습니다.",
+      "export_heading": "내보내기",
+      "passphrase_hint": "강력한 암호문구를 선택하세요. 복구할 수 없으며, 없으면 파일을 열 수 없습니다.",
+      "passphrase_label": "암호문구",
+      "confirm_label": "암호문구 확인",
+      "no_keys": "아직 내보낼 AI 키가 없습니다.",
+      "busy": "처리 중…",
+      "export_button": "암호화 파일 내보내기",
+      "import_heading": "가져오기",
+      "import_button": "키 파일 가져오기",
+      "success_export": "암호화된 키 파일을 다운로드했습니다.",
+      "success_import": "키를 가져왔습니다. AI 기능을 다시 사용할 수 있습니다.",
+      "error_too_short": "암호문구는 최소 {n}자 이상이어야 합니다.",
+      "error_mismatch": "암호문구가 일치하지 않습니다.",
+      "error_export": "내보내기를 만들 수 없습니다.",
+      "error_no_file": "먼저 키 파일을 선택하세요.",
+      "error_no_passphrase": "내보낼 때 사용한 암호문구를 입력하세요.",
+      "error_decrypt": "암호문구가 틀렸거나 파일이 손상되었습니다.",
+      "error_import": "키 파일을 가져올 수 없습니다."
+    },
     "lesson_mode": {
       "title": "레슨 모드",
       "hint": "연습 모드는 모든 학습 보조 기능을 유지합니다. 시험 모드는 힌트, 이론 복습, 자동 읽기, 정답 표시를 숨겨 현실적인 조건에서 회상하도록 합니다.",
@@ -908,6 +935,12 @@
     "method_switched": "학습법이 전환되었습니다."
   },
   "install": {
+    "ios": {
+      "title": "앱으로 설치",
+      "steps": "공유 아이콘을 누른 다음 «홈 화면에 추가»를 선택하면 Safari 막대 없이 열립니다.",
+      "aria_label": "iPhone에 설치",
+      "dismiss": "닫기"
+    },
     "title": "홈 화면에 추가",
     "subtitle": "더 나은 오프라인 사용을 위해 Adaptive Learner를 앱으로 설치하세요.",
     "install": "설치",
@@ -928,6 +961,15 @@
     "app_label": "Adaptive Learner",
     "build_hash_label": "빌드",
     "build_date_label": "빌드 날짜",
+    "strang": {
+      "haupt": "메인 버전 (안정)",
+      "latest": "Latest 버전 (테스트)",
+      "unknown": "알 수 없는 채널",
+      "latest_warning": "미리보기/테스트 빌드를 사용 중입니다. 안정적이지 않으며 오류가 포함될 수 있습니다.",
+      "branch_label": "브랜치",
+      "commit_label": "커밋",
+      "fallback_note": "채널 추론됨 (명시적 빌드 마커 없음)."
+    },
     "check_update": "업데이트 확인",
     "checking": "확인 중…",
     "update_available": "버전 {version}을(를) 사용할 수 있습니다!",
@@ -1820,6 +1862,9 @@
         "my_answer": "내 답변",
         "solution": "정답"
       },
+      "success": {
+        "badge": "정답!"
+      },
       "reread_theory": "이론 다시 읽기",
       "back_to_exercise": "연습으로 돌아가기",
       "loading": "연습을 불러오는 중…",
@@ -1893,6 +1938,11 @@
         "sentence_label": "빈칸 채우기 문장",
         "blank_label": "빈칸 {n}",
         "select_placeholder": "선택하세요…",
+        "multi_group_label": "해당하는 항목을 모두 선택하세요",
+        "multi_result_wrong": "아쉬워요. 강조된 선택지를 확인하세요.",
+        "multi_badge_correct": "정답",
+        "multi_badge_wrong": "오답",
+        "multi_badge_missed": "놓침",
         "result_correct": "모두 정답입니다!",
         "result_partial": "{total}개 중 {correct}개 정답.",
         "empty": "이 빈칸 채우기 연습에는 빈칸이 없습니다."
@@ -1908,7 +1958,8 @@
         },
         "word_tiles": {
           "receptive": "번역을 만드세요",
-          "productive": "문장을 만드세요"
+          "productive": "문장을 만드세요",
+          "knowledge": "문장을 만드세요"
         },
         "picture_choice": {
           "receptive": "일치하는 의미를 고르세요",
@@ -1948,7 +1999,6 @@
         "question": "질문",
         "your_answer": "당신의 답변",
         "no_answer": "(없음)",
-        "correct_answer": "정답",
         "weak_areas": "약한 영역"
       },
       "mark_complete": "완료로 표시",
@@ -2034,6 +2084,15 @@
     }
   },
   "content": {
+    "set_link": {
+      "loading": "세트를 불러오는 중…",
+      "not_found_title": "세트를 찾을 수 없습니다",
+      "not_found_body": "이 세트를 사용할 수 없습니다. 아직 다운로드되지 않았거나 존재하지 않을 수 있습니다.",
+      "go_discover": "콘텐츠 둘러보기",
+      "start": "학습 시작",
+      "download_start": "다운로드 후 시작",
+      "lessons": "{n}개 레슨"
+    },
     "repo_export": {
       "button": "저장소로 공유",
       "title": "저장소로 공유",
@@ -2790,6 +2849,14 @@
     }
   },
   "share": {
+    "menu": {
+      "heading": "공유",
+      "facebook": "Facebook에 공유",
+      "linkedin": "LinkedIn에 공유",
+      "x": "X에 공유",
+      "whatsapp": "WhatsApp으로 공유",
+      "copy": "클립보드에 복사"
+    },
     "app": {
       "heading": "앱 공유",
       "qr_intro": "QR 코드로 앱을 공유해 다른 사람이 바로 열 수 있게 하세요.",
@@ -2798,7 +2865,12 @@
       "copy_url": "URL 복사",
       "copied": "복사됨",
       "share": "공유",
-      "qr_alt": "앱으로 연결되는 QR 코드"
+      "qr_alt": "앱으로 연결되는 QR 코드",
+      "haupt_label": "메인 버전 (안정)",
+      "haupt_intro": "안정 버전 앱을 QR 코드로 공유하여 다른 사람들이 열 수 있도록 합니다.",
+      "latest_label": "Latest 버전 (테스트)",
+      "latest_warning": "이것은 미리보기/테스트 버전입니다. 안정적이지 않으며 오류가 포함될 수 있습니다. 테스터와만 공유하세요.",
+      "open_link": "링크 열기"
     },
     "result": {
       "text": "\"{title}\"을(를) {pct}%로 완료했어요! 🎓 {total}개 중 {correct}개 정답.",

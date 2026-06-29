@@ -9,7 +9,44 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.96.0** (learning-modes release - a full
+- **Current state:** **v1.97.0** (schema + tooling release - the lesson
+  **JSON-Schema becomes the App-authoritative single source of truth**
+  (EXP-039): the schema, quality rules, doc, and TS types are generated from
+  the App's Pydantic models (#1197), the TS lesson types consume that generated
+  schema directly (#1200), and the structural validator is **ajv-hardened**
+  against it (#1205), guarded by a `make sync-schema-check` drift gate; **cloze
+  multiselect** ("select all that apply", #1195); an **exam-mode SRS interval
+  boost** for correct exam answers (#1040); **passphrase-encrypted `.alk`
+  export** of AI keys + provider settings (#1165, surfaced on the Settings AI
+  tab #1181/#1183); a **vertical desktop sidebar** for primary nav (#891); a
+  **single-set deep link** `/content/set/:setId` (#892); the **native Web Share
+  sheet** with a desktop social-link fallback for "Share result" (#1219);
+  **Latest strand** visibility + About-tab badge (#1172); **iOS
+  Add-to-Home-Screen** guidance + testable manifest (#1167); an **EXP-041**
+  generation rule coupling exercise type to learning goal (#1225); plus device
+  fixes (cloze My-answer/Solution toggle #1216, success-Continue merge #1218,
+  X-share text #1227, domain-aware word_tiles instruction #1228,
+  download-date sorting #1211), two **#809** god-folder splits
+  (`components/exercises` #1206, `hooks/lesson` #1210), a `lib/ai` split
+  (#917/#1190), a `verify-theme` token/contrast gate (#1169), and a docs sweep
+  (#1215). No schema/API/data-model change (additive generation pipeline over
+  the existing Pydantic models; Alembic/Dexie unchanged). See
+  changelog/releases/v1.97.0.md.)
+  Prior **v1.96.0** = (release - imported-chat **backend/API-mode
+  parity** (#1154) so desktop/server mode no longer drifts off an imported
+  chat's topic, plus the **tutor-session key gate** (#1158: the
+  "Continue/Start session" entry on an import is disabled with a tooltip when
+  no AI key is set, and `/session` shows a no-key empty state linking to the AI
+  settings tab instead of a dead chat); **Reverse** (#1013) + **Endless**
+  (#1015) lesson modes; **invitation-code content sharing** for coaches/teachers
+  (#1094); **online-to-local data migration** (#1099); the launcher moves onto
+  the standalone **`docker-app-launcher`** engine (#1064, 0.2.0 -> 0.12.1);
+  **SEO** meta/OG/sitemap (#1108); an auto-deploying **preview site** on
+  adaptive-learner-content-test (#1135); plus "Missing Lessons" -> `/contribute`
+  (#1149), Continue-Learning titles/UUID (#729), word-tile equivalence (#1160),
+  and the complexity burn-down (#1047). No schema/API/data change. See
+  changelog/releases/v1.96.0.md.)
+  Prior **v1.95.0** = (learning-modes release - a full
   **lesson-mode system**: a lesson (or whole set) plays as **Practice**,
   **Exam**, **Timed (Auf Zeit)**, or **Zufall (interleaved shuffle)**, plus
   gated **"Fehler trainieren"** entry points, on a pure config-object
@@ -1491,6 +1528,7 @@ Detailed rules in `.claude/rules/`:
 - `design-tokens.md` — design-token architecture (no hardcoded colors; see `docs/DESIGN-TOKENS.md`)
 - `lessons-learned.md` — known pitfalls
 - `quality-checks.md` — test strategy, pre-commit checklists
+- `tdd.md` — Test-Driven Development workflow (Red-Green-Refactor, four tests per feature/fix)
 - `ai-workflow.md` — feature/plugin order, docs protocol
 - `release-workflow.md` — `make sync-versions` chain, tag pattern
 

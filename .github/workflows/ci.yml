@@ -207,6 +207,14 @@ jobs:
         working-directory: frontend
         run: npx tsc --noEmit
 
+      # EXP-039 drift gate (frontend half): the TS lesson types are generated
+      # from schema/lesson.schema.json. Fails if they are stale vs the committed
+      # schema. The Python half (schema/quality-rules/doc) is covered by
+      # backend test_lesson_schema_drift.py.
+      - name: Lesson TS types drift check
+        working-directory: frontend
+        run: node scripts/generate-lesson-types.mjs --check
+
       # ESLint (#222, #220). The ratchet reached zero: the suite is clean,
       # so the ceiling is 0 — any new warning fails CI. Blocking errors
       # (react-hooks/rules-of-hooks, react/jsx-key) also have zero violations.

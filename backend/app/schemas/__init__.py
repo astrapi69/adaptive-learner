@@ -1654,6 +1654,16 @@ class ElementAttemptIn(BaseModel):
             "feeds the 'answers with hint' statistic."
         ),
     )
+    exam: bool = Field(
+        default=False,
+        description=(
+            "#1040 Exam-Mode SRS boost (Phase 2 of #1007): true when this "
+            "attempt was made in exam mode. A correct exam answer is "
+            "stronger retention evidence, so the SRS layer LENGTHENS the "
+            "review interval (the inverse of the hint factor). The service "
+            "stores the boost only when the attempt is also correct."
+        ),
+    )
 
 
 class ElementAttemptsIn(BaseModel):
@@ -1700,6 +1710,9 @@ class ElementErrorOut(BaseModel):
     mastered_at: datetime | None = None
     hint_used: bool = False
     hint_used_count: int = 0
+    # #1040 — most recent attempt was a correct exam answer (lengthens the
+    # SRS interval). Defaulted so pre-#1040 rows read back as false.
+    last_attempt_exam: bool = False
     # #603 Smart Review Queue — total attempts + the last-10 ring buffer.
     attempt_count: int = 0
     attempt_history: list[AttemptRecordOut] = Field(default_factory=list)

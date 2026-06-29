@@ -1,0 +1,305 @@
+{
+  "$defs": {
+    "ContentSet": {
+      "additionalProperties": false,
+      "description": "One downloadable lesson set inside a ContentManifest.\n\nA set is the unit of versioning: re-publishing a single\nlesson bumps the set's ``version`` and triggers a\nre-download (see the cache layer in commit 5).",
+      "properties": {
+        "assets": {
+          "description": "Phase 54 / v1.37.0 \u2014 optional list of binary assets (images, audio) the set bundles. Each entry declares a relative path inside ``assets/`` and the expected size in KiB. The downloader fetches every declared asset alongside the lesson JSON; the cache stores them under ``{cache_root}/.../v{version}/assets/{path}``. The manifest validator rejects assets exceeding the per-file size limit (default 500 KiB).",
+          "items": {
+            "$ref": "#/$defs/ContentSetAsset"
+          },
+          "maxItems": 500,
+          "title": "Assets",
+          "type": "array"
+        },
+        "book": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContentSetBook"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "#769 \u2014 optional set-level book block (title/author/url/asin). When present, the lesson's 'Vertiefe das Thema' section auto-inserts it as the first media item."
+        },
+        "cover_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional relative path inside the set ('assets/cover.png'). Resolved against the set's base URL by the GitHub adapter.",
+          "title": "Cover Image"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional long-form description.",
+          "title": "Description"
+        },
+        "domain": {
+          "default": "language",
+          "description": "Free-form domain tag ('language', 'math', 'programming', ...). Reserved for the EXP-005 domain-plugin interface; the loader treats it as opaque metadata.",
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "domain_label": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional human-readable label for the domain shown in the Set Browser (e.g. 'Psychologie' for domain='psychology'). Additive, authored in the content repo; the loader treats it as opaque display metadata.",
+          "title": "Domain Label"
+        },
+        "id": {
+          "description": "Slug-safe identifier, unique within the manifest. Convention (Phase 60 / v1.44.0): ``{target}-{level}-from-{source}`` for language sets (e.g. ``fr-a1-from-de``). Pre-v1.2 ids like ``language-fr-a1`` still load \u2014 the loader does NOT parse this, it's free-form per the EXP-005 domain-agnostic stance.",
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "lesson_count": {
+          "description": "Number of lessons the set ships.",
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Lesson Count",
+          "type": "integer"
+        },
+        "level": {
+          "description": "Difficulty / proficiency marker. CEFR (A1..C2) for languages, free-form for other domains.",
+          "maxLength": 20,
+          "minLength": 1,
+          "title": "Level",
+          "type": "string"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phase 60 / v1.44.0 \u2014 repo-relative directory where the set's own ``manifest.yaml`` + ``lessons/`` + ``assets/`` live. Enables the source-language tree (e.g. ``sets/de/fr-a1`` for a French-for-German set while the id stays the flat slug ``fr-a1-from-de``). When omitted the loader falls back to the legacy ``sets/{id}`` convention. No leading/trailing slash, no ``..`` segments.",
+          "title": "Path"
+        },
+        "source_language": {
+          "default": "en",
+          "description": "BCP-47 code of the language the learner ALREADY SPEAKS \u2014 the language the card ``back`` fields, notes and theory text are written in. A 'French A1 for German speakers' set has ``target_language: fr`` + ``source_language: de``. Defaults to ``en`` for pre-v1.2 content (the pilot sets were authored with English explanations).",
+          "title": "Source Language",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Free-form tags ('beginner', 'travel', 'business'). Surfaced in the Set Browser as filter chips.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Tags",
+          "type": "array"
+        },
+        "target_language": {
+          "description": "BCP-47 code of the language the learner is LEARNING (the set's CONTENT language). Renamed from ``language`` in v1.2; the old key is still accepted as a read alias. The UI language stays under user control via the existing i18n system.",
+          "title": "Target Language",
+          "type": "string"
+        },
+        "title": {
+          "description": "Human-readable title shown in the Set Browser, in the learner's SOURCE language (e.g. 'Franz\u00f6sisch A1 f\u00fcr Deutschsprachige' for a fr-from-de set).",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "title_native": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phase 60 / v1.44.0 \u2014 optional title in the TARGET language (e.g. 'Fran\u00e7ais A1' for a French set). Shown as a secondary native-script label alongside ``title``. The community-share validator requires it for shareable sets; bundled/legacy sets may omit it.",
+          "title": "Title Native"
+        },
+        "version": {
+          "description": "Semver-style version. Bumped whenever ANY lesson or asset inside the set changes; drives cache invalidation.",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "target_language",
+        "level",
+        "version",
+        "lesson_count"
+      ],
+      "title": "ContentSet",
+      "type": "object"
+    },
+    "ContentSetAsset": {
+      "additionalProperties": false,
+      "description": "One bundled binary asset (image, audio) declared in the\nset manifest (Phase 54 / v1.37.0).\n\nThe declaration drives:\n  - the downloader (fetch_asset per ``path`` alongside the\n    lesson JSON)\n  - the cache writer (store under ``assets/{path}``)\n  - the size validator (reject ``size_kb > MAX_ASSET_SIZE_KB``)\n\nOptional everywhere \u2014 sets without any assets simply\nomit the ``assets`` list. The current PictureChoice\ncomponent falls back to text-only when the resolver\ncan't produce a blob URL, so authored content without\nassets stays playable.",
+      "properties": {
+        "path": {
+          "description": "Relative path inside the set's ``assets/`` directory. Example: ``img/sunrise.png`` resolves to ``{cache_root}/.../assets/img/sunrise.png``. No leading slash, no ``..`` segments \u2014 the path is appended to a Path() and any upward navigation would escape the cache isolation.",
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "size_kb": {
+          "description": "Declared file size in KiB (used by the validator + the downloader's progress reporting). The downloader rejects assets whose actual byte length exceeds ``size_kb * 1024`` by more than 10 percent \u2014 keeps content authors honest.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Size Kb",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "size_kb"
+      ],
+      "title": "ContentSetAsset",
+      "type": "object"
+    },
+    "ContentSetBook": {
+      "description": "#769 \u2014 optional set-level book block (manifest ``sets[].book``).\n\nSurfaced to the lesson's \"Vertiefe das Thema\" section as the first\nmedia item. ``extra=\"ignore\"`` tolerates future fields (e.g. ``isbn``,\n``year``) the media card doesn't consume.",
+      "properties": {
+        "asin": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asin"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        },
+        "title": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "ContentSetBook",
+      "type": "object"
+    }
+  },
+  "$id": "https://astrapi69.github.io/adaptive-learner/schema/content-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Top-level manifest a content repo publishes at its root.\n\nA repo CAN ship multiple sets in one manifest (the canonical\npilot ``astrapi69/adaptive-learner-content`` is structured\nthat way). The manifest itself is small (~one entry per\nset) so the Set Browser can list everything without\ndownloading any lesson content.\n\n``schema_version`` is the LOADER's contract, not the\ncontent authors' choice. A future bump (e.g. v1.1\nintroducing a new mandatory field on ``ContentSet``)\nmeans older app versions reject the manifest with a\n'please upgrade' message rather than silently miss the\nnew field.",
+  "properties": {
+    "description": {
+      "anyOf": [
+        {
+          "maxLength": 2000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional long-form repo description.",
+      "title": "Description"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "description": "Free-form repo-level metadata (license, author, homepage URL, contact). The loader does not interpret these fields \u2014 they surface as-is in the Set Browser's 'About this source' panel.",
+      "title": "Metadata",
+      "type": "object"
+    },
+    "name": {
+      "description": "Human-readable repo name shown in the Set Browser.",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": "1.4",
+      "description": "Manifest schema version. The Content-Loader currently understands '1.0'; later versions will be rejected with a friendly upgrade hint.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sets": {
+      "description": "Every downloadable set this repo publishes.",
+      "items": {
+        "$ref": "#/$defs/ContentSet"
+      },
+      "title": "Sets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "ContentManifest",
+  "type": "object",
+  "x-schema-version": "1.4"
+}
