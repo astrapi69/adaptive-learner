@@ -53,6 +53,22 @@ jobs:
   gate:
     name: Release gate (release-test)
     runs-on: ubuntu-latest
+    # Run inside the official Playwright image so Chromium + the headless shell
+    # are PRE-BAKED — no cdn.playwright.dev download (the #317 failure mode: the
+    # CDN was unreachable from the runner, so `npx playwright install` hung at
+    # zero bytes; actions/cache could not help because the first download never
+    # succeeded). The image is pulled from mcr.microsoft.com, which the runner
+    # reaches fine, and is the established fix already used by dexie-smoke.yml +
+    # manual-automation.yml. Pin the tag to the @playwright/test version in
+    # e2e/package-lock.json (1.59.1); bump both together. Refs #317, #1248.
+    #
+    # Unlike those two pure-Playwright jobs (which run as `--user 1001` to keep
+    # artifact-upload perms and therefore inline the commands because the noble
+    # image has no `make`), this gate is `make release-test`-orchestrated and
+    # uploads no artifacts, so it runs as the default root user and apt-installs
+    # `make` below.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
     timeout-minutes: 60
     steps:
       # Checks out the dispatched ref — i.e. the prepared `release/<version>`
@@ -60,6 +76,12 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Install make (the Playwright noble image has none)
+        # The gate is driven by `make release-test`; the image ships no make and
+        # we run as root here, so apt-get it. Browsers are baked in — no
+        # Playwright download step follows.
+        run: apt-get update && apt-get install -y --no-install-recommends make
 
       - uses: actions/setup-python@v6
         with:
@@ -70,7 +92,10 @@ jobs:
           node-version: "24"
 
       - name: Install Poetry
-        run: pip install poetry
+        # `python -m pip`, not bare `pip`: in the Playwright container the
+        # setup-python `pip` shim is not on PATH (works on ubuntu-latest, 127s
+        # here). `python` is always on PATH via setup-python's pythonLocation.
+        run: python -m pip install poetry
 
       - name: Install backend (+ path-installed plugins)
         working-directory: backend
@@ -88,11 +113,10 @@ jobs:
         working-directory: e2e
         run: npm ci
 
-      - name: Install Playwright browsers
-        # release-test runs the dexie + manual-plan Playwright gates; the
-        # e2e package owns @playwright/test, so install the browsers there.
-        working-directory: e2e
-        run: npx playwright install --with-deps
+      # NO `playwright install` step: the browsers are baked into the container
+      # (mcr.microsoft.com/playwright:v1.59.1-noble). release-test's dexie +
+      # manual-plan Playwright gates and the extra e2e smoke use the pre-baked
+      # browsers via the image's default browser path.
 
       - name: Verify the dispatched branch matches the requested version
         # Fail fast if this workflow was dispatched from the wrong branch /

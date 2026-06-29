@@ -66,6 +66,14 @@ jobs:
     name: Prepare release branch (bump + gate, then review)
     if: ${{ inputs.stage == 'prepare' }}
     runs-on: ubuntu-latest
+    # Pre-baked Playwright browsers (mcr.microsoft.com image) instead of the
+    # flaky cdn.playwright.dev download — the established #317 fix, same as the
+    # release-prepare gate + dexie-smoke/manual-automation. This job is
+    # `make release-test`-driven and uploads no artifacts, so it runs as root
+    # and apt-installs make below. Pin the tag to e2e/package-lock.json's
+    # @playwright/test version (1.59.1); bump together. Refs #317, #1248.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
     timeout-minutes: 60
     steps:
       - name: Validate version input
@@ -77,6 +85,9 @@ jobs:
         with:
           ref: develop
           fetch-depth: 0
+
+      - name: Install make (the Playwright noble image has none)
+        run: apt-get update && apt-get install -y --no-install-recommends make
 
       - name: Changelog precondition (this action never invents a changelog)
         run: |
@@ -91,7 +102,10 @@ jobs:
           python-version: "3.12"
 
       - name: Install Poetry
-        run: pip install poetry
+        # `python -m pip`, not bare `pip`: in the Playwright container the
+        # setup-python `pip` shim is not on PATH (works on ubuntu-latest, 127s
+        # here). `python` is always on PATH via setup-python's pythonLocation.
+        run: python -m pip install poetry
 
       - uses: actions/setup-node@v6
         with:
@@ -119,9 +133,9 @@ jobs:
         working-directory: docs
         run: poetry install --no-interaction --no-ansi
 
-      - name: Playwright browsers (release-test runs the dexie + manual gates)
-        working-directory: e2e
-        run: npx playwright install --with-deps chromium
+      # NO `playwright install` step: the browsers are baked into the container.
+      # release-test's dexie + manual-plan gates and the extra e2e smoke use the
+      # pre-baked browsers via the image's default browser path.
 
       - name: Cut release branch from develop
         # release-prepare ONLY cuts release/<version> from develop; it does not
@@ -197,7 +211,8 @@ jobs:
           python-version: "3.12"
 
       - name: Install Poetry
-        run: pip install poetry
+        # `python -m pip` for parity with the prepare job (robust everywhere).
+        run: python -m pip install poetry
 
       - name: Configure git identity
         run: |
