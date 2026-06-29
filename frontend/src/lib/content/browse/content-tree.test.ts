@@ -139,4 +139,90 @@ describe("buildContentTree", () => {
     expect(tree.knowledge).toEqual([]);
     expect(tree.primary).toHaveLength(1);
   });
+
+  // --- #1241: freshly downloaded set first within a level / domain group ---
+  // The #1211/#1212 fix surfaced ``downloaded_at`` and the shared comparator
+  // but only wired it into buildPersonalPath. The Content browser renders
+  // buildContentTree, which must apply the same "fresh download first"
+  // ordering WITHIN each level group and each knowledge domain group while
+  // keeping the structural source -> target -> level grouping intact.
+
+  it("orders a level group by download time (newest first), not alphabetically (#1241)", () => {
+    const sameLevel = [
+      entry({
+        id: "alpha",
+        source_language: "de",
+        target_language: "fr",
+        level: "A1",
+        title: "Alpha", // alphabetically first
+        downloaded_at: "2026-06-01T00:00:00.000Z", // older download
+      }),
+      entry({
+        id: "zeta",
+        source_language: "de",
+        target_language: "fr",
+        level: "A1",
+        title: "Zeta", // alphabetically last
+        downloaded_at: "2026-06-28T00:00:00.000Z", // freshest download
+      }),
+    ];
+    const tree = buildContentTree(sameLevel, ["de"]);
+    const level = tree.primary[0].targets[0].levels[0];
+    // Freshly downloaded "Zeta" must surface above the older "Alpha".
+    expect(level.sets.map((s) => s.id)).toEqual(["zeta", "alpha"]);
+  });
+
+  it("orders a knowledge domain group by download time (newest first) (#1241)", () => {
+    const sameDomain = [
+      entry({
+        id: "aardvark",
+        source_language: "de",
+        target_language: "de",
+        level: "intro",
+        domain: "psychology",
+        title: "Aardvark",
+        downloaded_at: "2026-06-01T00:00:00.000Z",
+      }),
+      entry({
+        id: "yak",
+        source_language: "de",
+        target_language: "de",
+        level: "intro",
+        domain: "psychology",
+        title: "Yak",
+        downloaded_at: "2026-06-28T00:00:00.000Z",
+      }),
+    ];
+    const tree = buildContentTree(sameDomain, ["de"]);
+    expect(tree.knowledge[0].sets.map((s) => s.id)).toEqual(["yak", "aardvark"]);
+  });
+
+  it("falls back to a stable title sort when download times are missing/equal (#1241)", () => {
+    const noTimestamps = [
+      entry({ id: "zeta", source_language: "de", level: "A1", title: "Zeta" }),
+      entry({ id: "alpha", source_language: "de", level: "A1", title: "Alpha" }),
+      entry({
+        id: "beta",
+        source_language: "de",
+        level: "A1",
+        title: "Beta",
+        downloaded_at: null,
+      }),
+    ];
+    const tree = buildContentTree(noTimestamps, ["de"]);
+    const level = tree.primary[0].targets[0].levels[0];
+    // No timestamps anywhere -> deterministic alphabetical title order.
+    expect(level.sets.map((s) => s.title)).toEqual(["Alpha", "Beta", "Zeta"]);
+  });
+
+  it("API mode (no downloaded_at on any set) sorts by title without crashing (#1241)", () => {
+    const apiSets = [
+      entry({ id: "fr-z", source_language: "de", level: "A1", title: "Zebra" }),
+      entry({ id: "fr-a", source_language: "de", level: "A1", title: "Apple" }),
+    ];
+    expect(() => buildContentTree(apiSets, ["de"])).not.toThrow();
+    const tree = buildContentTree(apiSets, ["de"]);
+    const level = tree.primary[0].targets[0].levels[0];
+    expect(level.sets.map((s) => s.title)).toEqual(["Apple", "Zebra"]);
+  });
 });

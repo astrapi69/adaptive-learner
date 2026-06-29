@@ -23,6 +23,26 @@
 import type { ContentSetEntry } from "../../../storage/types";
 import { baseLanguage, domainOf } from "../language/language-utils";
 import { resolveTreePlacement } from "../placement/tree-placement";
+import { compareByDownloadPriority } from "./download-priority";
+
+/**
+ * Order two downloaded content sets "freshest download first" via the
+ * shared {@link compareByDownloadPriority} comparator (#1241, DRY with the
+ * personal Learning Path #1211). The Content browser only lists downloaded
+ * sets and tracks no per-set progress here, so every set maps to the
+ * untouched-downloaded tier: most-recent ``downloaded_at`` first, then a
+ * stable title sort. In API mode ``downloaded_at`` is absent, so the
+ * comparator falls back to title only (no crash, no regression).
+ */
+function compareSetsByDownloadPriority(
+  a: ContentSetEntry,
+  b: ContentSetEntry,
+): number {
+  return compareByDownloadPriority(
+    { downloaded: true, lastActivity: null, downloadedAt: a.downloaded_at ?? null, title: a.title },
+    { downloaded: true, lastActivity: null, downloadedAt: b.downloaded_at ?? null, title: b.title },
+  );
+}
 
 // Re-exported for existing consumers that import these from
 // content-tree; the definitions live in language-utils (#540, to break
@@ -91,7 +111,7 @@ export interface SourceGroup {
 export interface DomainGroup {
   /** Normalised domain tag ("psychology", "programming", ...). */
   domain: string;
-  /** Sets in this domain, sorted by title. */
+  /** Sets in this domain, ordered freshest-download-first, then title (#1241). */
   sets: ContentSetEntry[];
   setCount: number;
   /** User-generated lessons folded into this domain (EXP-026). */
@@ -136,7 +156,7 @@ function groupLevels(sets: ContentSetEntry[]): LevelGroup[] {
     .sort(([a], [b]) => compareLevels(a, b))
     .map(([level, levelSets]) => ({
       level,
-      sets: [...levelSets].sort((x, y) => x.title.localeCompare(y.title)),
+      sets: [...levelSets].sort(compareSetsByDownloadPriority),
       userLessons: [] as FoldedUserLesson[],
     }));
 }
@@ -234,7 +254,7 @@ export function buildContentTree(
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([domain, domainSets]) => ({
       domain,
-      sets: [...domainSets].sort((x, y) => x.title.localeCompare(y.title)),
+      sets: [...domainSets].sort(compareSetsByDownloadPriority),
       setCount: domainSets.length,
       userLessons: [] as FoldedUserLesson[],
     }));
