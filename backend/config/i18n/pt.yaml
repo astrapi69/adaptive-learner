@@ -1365,6 +1365,8 @@ feature:
   api_key_required: "Chave de API necessária. Configure um provedor nas configurações."
   desktop_only: "Disponível apenas com o aplicativo para desktop."
 ui:
+  info:
+    show: "Mostrar informações"
   themes:
     "catppuccin-latte": "Catppuccin Latte"
     "supabase": "Supabase"

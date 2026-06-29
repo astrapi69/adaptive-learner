@@ -37,6 +37,7 @@ import {
   fetchAllIndices,
   type SearchableSet,
 } from "../../lib/content/repos/search-index-loader";
+import InfoHint from "../../shared/feedback/InfoHint";
 import { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchFilterBar from "../../shared/forms/SearchFilterBar";
 import SetDiscoveryCard, {
@@ -271,12 +272,17 @@ export default function Discover() {
     <main id="main" className="page" data-testid="discover-page">
       <header className="mb-4 flex items-center gap-2">
         <Compass className="size-6 text-accent" aria-hidden="true" />
-        <div>
-          <h1 className="text-xl font-semibold">{t("discover.title", "Discover content")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("discover.subtitle", "Find learning material before you download it.")}
-          </p>
-        </div>
+        <h1 className="text-xl font-semibold">{t("discover.title", "Discover content")}</h1>
+        {/* #1251 — the permanent subtitle is replaced by an info button that
+            expands the explanation inline on demand (blinks gently for a
+            first-time visitor, then bows out). */}
+        <InfoHint
+          storageId="content_discover"
+          text={t("discover.subtitle", "Find learning material before you download it.")}
+          label={t("ui.info.show", "Show information")}
+          className="mb-0"
+          testId="discover-info"
+        />
       </header>
 
       {hasDownloaded && (

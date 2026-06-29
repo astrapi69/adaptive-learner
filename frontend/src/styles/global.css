@@ -2583,12 +2583,6 @@ select:focus {
   cursor: not-allowed;
 }
 
-.content-intro {
-  color: var(--fg-muted);
-  font-size: 0.9375rem;
-  margin-bottom: var(--space-4);
-}
-
 .content-sources {
   font-size: 0.8125rem;
   color: var(--fg-muted);
@@ -3960,6 +3954,26 @@ select:focus {
   }
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+/* #1251 — gentle, fading blink for the ContentHub info button. The
+   InfoHint component references it via the
+   `motion-safe:animate-[info-hint-blink_1.4s_ease-in-out_3]` utility:
+   three iterations then it rests (a single visit's blink "decays"),
+   and the visit/seen logic stops it across visits. Tailwind ships no
+   plugin for this @keyframe; it is global (not @layer-scoped) so the
+   utility resolves it. `motion-safe:` already drops the animation
+   under prefers-reduced-motion (the button stays fully usable). */
+@keyframes info-hint-blink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.12);
   }
 }
 

@@ -1478,6 +1478,9 @@
     "desktop_only": "Yalnızca masaüstü uygulamasıyla kullanılabilir."
   },
   "ui": {
+    "info": {
+      "show": "Bilgileri göster"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",
