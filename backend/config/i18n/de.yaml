@@ -476,11 +476,9 @@ settings:
     import_button: "Schlüsseldatei importieren"
     success_export: "Verschlüsselte Schlüsseldatei heruntergeladen."
     success_import: "Schlüssel importiert. KI-Funktionen sind wieder bereit."
-    error_too_short: "Die Passphrase muss mindestens {n} Zeichen lang sein."
+    min_length: "Mindestens {n} Zeichen."
     error_mismatch: "Die Passphrasen stimmen nicht überein."
     error_export: "Export konnte nicht erstellt werden."
-    error_no_file: "Wähle zuerst eine Schlüsseldatei."
-    error_no_passphrase: "Gib die beim Export verwendete Passphrase ein."
     error_decrypt: "Passphrase falsch oder Datei beschädigt."
     error_import: "Schlüsseldatei konnte nicht importiert werden."
   lesson_mode:

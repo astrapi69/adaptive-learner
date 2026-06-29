@@ -75,26 +75,20 @@ export default function KeyVaultSection() {
         };
     }, [mode, userId]);
 
+    // Input validation (not error handling): a too-short or non-matching
+    // passphrase is normal user input, surfaced inline with the submit
+    // disabled — never as a red "Report Issue" error toast.
+    const exportTooShort =
+        exportPass.length > 0 && exportPass.length < MIN_PASSPHRASE_LENGTH;
+    const exportMismatch =
+        exportConfirm.length > 0 && exportConfirm !== exportPass;
+    const exportValid =
+        exportPass.length >= MIN_PASSPHRASE_LENGTH &&
+        exportConfirm === exportPass;
+    const importValid = importFile !== null && importPass.length > 0;
+
     async function handleExport(): Promise<void> {
-        if (!userId) return;
-        if (exportPass.length < MIN_PASSPHRASE_LENGTH) {
-            notify.error(
-                t(
-                    "settings.key_vault.error_too_short",
-                    "The passphrase must be at least {n} characters.",
-                ).replace("{n}", String(MIN_PASSPHRASE_LENGTH)),
-            );
-            return;
-        }
-        if (exportPass !== exportConfirm) {
-            notify.error(
-                t(
-                    "settings.key_vault.error_mismatch",
-                    "The passphrases do not match.",
-                ),
-            );
-            return;
-        }
+        if (!userId || !exportValid) return;
         setBusy("export");
         try {
             const envelope = await buildEncryptedKeyVault(
@@ -103,7 +97,9 @@ export default function KeyVaultSection() {
                 exportPass,
             );
             if (envelope === null) {
-                notify.error(
+                // State condition, not a defect (the button is already
+                // disabled without keys) — warn rather than error-report.
+                notify.warning(
                     t(
                         "settings.key_vault.no_keys",
                         "There are no AI keys to export yet.",
@@ -133,22 +129,7 @@ export default function KeyVaultSection() {
     }
 
     async function handleImport(): Promise<void> {
-        if (!userId) return;
-        if (!importFile) {
-            notify.error(
-                t("settings.key_vault.error_no_file", "Choose a key file first."),
-            );
-            return;
-        }
-        if (importPass.length === 0) {
-            notify.error(
-                t(
-                    "settings.key_vault.error_no_passphrase",
-                    "Enter the passphrase used at export.",
-                ),
-            );
-            return;
-        }
+        if (!userId || !importFile || !importValid) return;
         setBusy("import");
         try {
             const text = await importFile.text();
@@ -169,19 +150,25 @@ export default function KeyVaultSection() {
                 ),
             );
         } catch (err) {
-            // Wrong passphrase / corrupt / foreign file — one friendly,
-            // non-leaking message (no partial import, no stack trace).
-            const msg =
-                err instanceof VaultDecryptError
-                    ? t(
-                          "settings.key_vault.error_decrypt",
-                          "Passphrase incorrect or file corrupted.",
-                      )
-                    : t(
-                          "settings.key_vault.error_import",
-                          "Could not import the key file.",
-                      );
-            notify.error(msg);
+            if (err instanceof VaultDecryptError) {
+                // Expected, user-correctable outcome (wrong passphrase or a
+                // corrupt/foreign file): a plain warning, NOT a red error
+                // toast with a "Report Issue" button — it is not a defect.
+                notify.warning(
+                    t(
+                        "settings.key_vault.error_decrypt",
+                        "Passphrase incorrect or file corrupted.",
+                    ),
+                );
+            } else {
+                // Genuinely unexpected failure — a real error worth reporting.
+                notify.error(
+                    t(
+                        "settings.key_vault.error_import",
+                        "Could not import the key file.",
+                    ),
+                );
+            }
         } finally {
             setBusy(null);
         }
@@ -240,8 +227,26 @@ export default function KeyVaultSection() {
                                 "settings.key_vault.passphrase_label",
                                 "Passphrase",
                             )}
+                            aria-invalid={exportTooShort || undefined}
+                            aria-describedby={
+                                exportTooShort
+                                    ? "key-vault-export-pass-hint"
+                                    : undefined
+                            }
                             data-testid="key-vault-export-pass"
                         />
+                        {exportTooShort && (
+                            <p
+                                id="key-vault-export-pass-hint"
+                                className="text-xs text-destructive"
+                                data-testid="key-vault-export-pass-hint"
+                            >
+                                {t(
+                                    "settings.key_vault.min_length",
+                                    "At least {n} characters.",
+                                ).replace("{n}", String(MIN_PASSPHRASE_LENGTH))}
+                            </p>
+                        )}
                         <SecretInput
                             value={exportConfirm}
                             onChange={(e) => setExportConfirm(e.target.value)}
@@ -253,8 +258,26 @@ export default function KeyVaultSection() {
                                 "settings.key_vault.confirm_label",
                                 "Confirm passphrase",
                             )}
+                            aria-invalid={exportMismatch || undefined}
+                            aria-describedby={
+                                exportMismatch
+                                    ? "key-vault-export-confirm-hint"
+                                    : undefined
+                            }
                             data-testid="key-vault-export-confirm"
                         />
+                        {exportMismatch && (
+                            <p
+                                id="key-vault-export-confirm-hint"
+                                className="text-xs text-destructive"
+                                data-testid="key-vault-export-confirm-hint"
+                            >
+                                {t(
+                                    "settings.key_vault.error_mismatch",
+                                    "The passphrases do not match.",
+                                )}
+                            </p>
+                        )}
                         {hasKeys === false && (
                             <p
                                 className="text-xs text-muted-foreground"
@@ -270,7 +293,11 @@ export default function KeyVaultSection() {
                             <Button
                                 type="button"
                                 onClick={() => void handleExport()}
-                                disabled={busy !== null || hasKeys !== true}
+                                disabled={
+                                    busy !== null ||
+                                    hasKeys !== true ||
+                                    !exportValid
+                                }
                                 data-testid="key-vault-export-button"
                             >
                                 {busy === "export"
@@ -316,7 +343,7 @@ export default function KeyVaultSection() {
                                 type="button"
                                 variant="outline"
                                 onClick={() => void handleImport()}
-                                disabled={busy !== null}
+                                disabled={busy !== null || !importValid}
                                 data-testid="key-vault-import-button"
                             >
                                 {busy === "import"

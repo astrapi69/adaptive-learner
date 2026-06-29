@@ -510,11 +510,9 @@
       "import_button": "Import key file",
       "success_export": "Encrypted key file downloaded.",
       "success_import": "Keys imported. AI features are ready again.",
-      "error_too_short": "The passphrase must be at least {n} characters.",
+      "min_length": "At least {n} characters.",
       "error_mismatch": "The passphrases do not match.",
       "error_export": "Could not create the export.",
-      "error_no_file": "Choose a key file first.",
-      "error_no_passphrase": "Enter the passphrase used at export.",
       "error_decrypt": "Passphrase incorrect or file corrupted.",
       "error_import": "Could not import the key file."
     },

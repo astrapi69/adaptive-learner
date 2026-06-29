@@ -476,11 +476,9 @@ settings:
     import_button: "키 파일 가져오기"
     success_export: "암호화된 키 파일을 다운로드했습니다."
     success_import: "키를 가져왔습니다. AI 기능을 다시 사용할 수 있습니다."
-    error_too_short: "암호문구는 최소 {n}자 이상이어야 합니다."
+    min_length: "최소 {n}자 이상이어야 합니다."
     error_mismatch: "암호문구가 일치하지 않습니다."
     error_export: "내보내기를 만들 수 없습니다."
-    error_no_file: "먼저 키 파일을 선택하세요."
-    error_no_passphrase: "내보낼 때 사용한 암호문구를 입력하세요."
     error_decrypt: "암호문구가 틀렸거나 파일이 손상되었습니다."
     error_import: "키 파일을 가져올 수 없습니다."
   lesson_mode:

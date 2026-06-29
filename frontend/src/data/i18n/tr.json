@@ -510,11 +510,9 @@
       "import_button": "Anahtar dosyasını içe aktar",
       "success_export": "Şifreli anahtar dosyası indirildi.",
       "success_import": "Anahtarlar içe aktarıldı. Yapay zekâ özellikleri yeniden hazır.",
-      "error_too_short": "Parola ifadesi en az {n} karakter olmalıdır.",
+      "min_length": "En az {n} karakter.",
       "error_mismatch": "Parola ifadeleri eşleşmiyor.",
       "error_export": "Dışa aktarma oluşturulamadı.",
-      "error_no_file": "Önce bir anahtar dosyası seçin.",
-      "error_no_passphrase": "Dışa aktarmada kullanılan parola ifadesini girin.",
       "error_decrypt": "Parola ifadesi yanlış veya dosya bozuk.",
       "error_import": "Anahtar dosyası içe aktarılamadı."
     },

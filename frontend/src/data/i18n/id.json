@@ -510,11 +510,9 @@
       "import_button": "Impor berkas kunci",
       "success_export": "Berkas kunci terenkripsi diunduh.",
       "success_import": "Kunci diimpor. Fitur AI siap kembali.",
-      "error_too_short": "Frasa sandi harus minimal {n} karakter.",
+      "min_length": "Minimal {n} karakter.",
       "error_mismatch": "Frasa sandi tidak cocok.",
       "error_export": "Tidak dapat membuat ekspor.",
-      "error_no_file": "Pilih berkas kunci terlebih dahulu.",
-      "error_no_passphrase": "Masukkan frasa sandi yang digunakan saat ekspor.",
       "error_decrypt": "Frasa sandi salah atau berkas rusak.",
       "error_import": "Tidak dapat mengimpor berkas kunci."
     },
