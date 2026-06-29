@@ -37,8 +37,8 @@ import {
   fetchAllIndices,
   type SearchableSet,
 } from "../../lib/content/repos/search-index-loader";
-import FilterBar, { type FilterDef } from "../../shared/forms/FilterBar";
-import SearchField from "../../shared/forms/SearchField";
+import { type FilterDef } from "../../shared/forms/FilterBar";
+import SearchFilterBar from "../../shared/forms/SearchFilterBar";
 import SetDiscoveryCard, {
   type SetDiscoveryCardLabels,
   type SetDiscoveryDownloadState,
@@ -290,21 +290,20 @@ export default function Discover() {
         </p>
       )}
 
-      <SearchField
-        value={rawQuery}
-        onChange={setRawQuery}
-        placeholder={t("discover.search_placeholder", "Spanisch, KI, Psychologie…")}
-        ariaLabel={t("discover.search_aria", "Search available content")}
-        clearLabel={t("discover.search_clear", "Clear search")}
-        className="mb-3"
-        testId="discover-search"
-      />
-
-      <FilterBar
+      <SearchFilterBar
+        searchValue={rawQuery}
+        onSearchChange={setRawQuery}
+        searchPlaceholder={t("discover.search_placeholder", "Spanisch, KI, Psychologie…")}
+        searchAriaLabel={t("discover.search_aria", "Search available content")}
+        searchClearLabel={t("discover.search_clear", "Clear search")}
+        searchTestId="discover-search"
         filters={filterDefs}
-        onChange={handleFilterChange}
+        onFilterChange={handleFilterChange}
+        filtersTestId="discover-filters"
+        searchButtonLabel={t("discover.bar.search", "Search")}
+        filterButtonLabel={t("discover.bar.filter", "Filter")}
         className="mb-4"
-        testId="discover-filters"
+        testId="discover-search-filter"
       />
 
       <p className="mb-3 text-sm text-muted-foreground" data-testid="discover-count">

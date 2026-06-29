@@ -3252,6 +3252,10 @@
     "search_placeholder": "स्पेनिश, एआई, मनोविज्ञान…",
     "search_aria": "उपलब्ध सामग्री खोजें",
     "search_clear": "खोज साफ़ करें",
+    "bar": {
+      "search": "खोजें",
+      "filter": "फ़िल्टर करें"
+    },
     "filter": {
       "all": "सभी",
       "language": "भाषा",

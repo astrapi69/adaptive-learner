@@ -2984,6 +2984,9 @@ discover:
   search_placeholder: "스페인어, AI, 심리학…"
   search_aria: "사용 가능한 콘텐츠 검색"
   search_clear: "검색 지우기"
+  bar:
+    search: "검색"
+    filter: "필터"
   filter:
     all: "전체"
     language: "언어"

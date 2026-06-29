@@ -2978,6 +2978,9 @@ discover:
   search_placeholder: "Spanisch, KI, Psychologie…"
   search_aria: "Verfügbare Inhalte durchsuchen"
   search_clear: "Suche zurücksetzen"
+  bar:
+    search: "Suchen"
+    filter: "Filtern"
   filter:
     all: "Alle"
     language: "Sprache"

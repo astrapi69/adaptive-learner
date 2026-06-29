@@ -7,4 +7,6 @@ export * from "./LessonPicker";
 export {default as LessonPicker} from "./LessonPicker";
 export * from "./SearchField";
 export {default as SearchField} from "./SearchField";
+export * from "./SearchFilterBar";
+export {default as SearchFilterBar} from "./SearchFilterBar";
 export * from "./SecretInput";
