@@ -3254,6 +3254,10 @@
     "search_placeholder": "スペイン語、AI、心理学…",
     "search_aria": "利用可能なコンテンツを検索",
     "search_clear": "検索をクリア",
+    "bar": {
+      "search": "検索",
+      "filter": "フィルター"
+    },
     "filter": {
       "all": "すべて",
       "language": "言語",

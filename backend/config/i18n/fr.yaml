@@ -2978,6 +2978,9 @@ discover:
   search_placeholder: "Espagnol, IA, psychologie…"
   search_aria: "Rechercher dans le contenu disponible"
   search_clear: "Effacer la recherche"
+  bar:
+    search: "Rechercher"
+    filter: "Filtrer"
   filter:
     all: "Tous"
     language: "Langue"

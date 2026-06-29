@@ -3254,6 +3254,10 @@
     "search_placeholder": "İspanyolca, yapay zeka, psikoloji…",
     "search_aria": "Kullanılabilir içerikte ara",
     "search_clear": "Aramayı temizle",
+    "bar": {
+      "search": "Ara",
+      "filter": "Filtrele"
+    },
     "filter": {
       "all": "Tümü",
       "language": "Dil",

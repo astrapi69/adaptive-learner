@@ -3254,6 +3254,10 @@
     "search_placeholder": "Spanish, AI, psychology…",
     "search_aria": "Search available content",
     "search_clear": "Clear search",
+    "bar": {
+      "search": "Search",
+      "filter": "Filter"
+    },
     "filter": {
       "all": "All",
       "language": "Language",

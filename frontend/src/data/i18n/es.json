@@ -3254,6 +3254,10 @@
     "search_placeholder": "Español, IA, psicología…",
     "search_aria": "Buscar contenido disponible",
     "search_clear": "Borrar búsqueda",
+    "bar": {
+      "search": "Buscar",
+      "filter": "Filtrar"
+    },
     "filter": {
       "all": "Todos",
       "language": "Idioma",

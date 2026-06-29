@@ -2986,6 +2986,9 @@ discover:
   search_placeholder: "Spanyol, AI, psikologi…"
   search_aria: "Cari konten yang tersedia"
   search_clear: "Hapus pencarian"
+  bar:
+    search: "Cari"
+    filter: "Filter"
   filter:
     all: "Semua"
     language: "Bahasa"
