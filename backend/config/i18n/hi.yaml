@@ -1916,6 +1916,10 @@ lesson:
     action_resume: जारी रखें
     action_restart: फिर से शुरू करें
 content:
+  view:
+    grid: "ग्रिड दृश्य"
+    list: "सूची दृश्य"
+    aria: "दृश्य चुनें"
   set_link:
     loading: "सेट लोड हो रहा है…"
     not_found_title: "सेट नहीं मिला"

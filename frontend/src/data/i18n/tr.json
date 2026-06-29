@@ -2084,6 +2084,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "Izgara görünümü",
+      "list": "Liste görünümü",
+      "aria": "Görünümü seç"
+    },
     "set_link": {
       "loading": "Set yükleniyor…",
       "not_found_title": "Set bulunamadı",

@@ -2084,6 +2084,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "Kachelansicht",
+      "list": "Listenansicht",
+      "aria": "Ansicht wählen"
+    },
     "set_link": {
       "loading": "Set wird geladen…",
       "not_found_title": "Set nicht gefunden",

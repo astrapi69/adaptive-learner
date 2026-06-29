@@ -1921,6 +1921,10 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Izgara görünümü"
+    list: "Liste görünümü"
+    aria: "Görünümü seç"
   set_link:
     loading: "Set yükleniyor…"
     not_found_title: "Set bulunamadı"

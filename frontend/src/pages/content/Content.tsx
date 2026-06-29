@@ -36,11 +36,14 @@ import ContentBookCompanions from "../../components/content/media/ContentBookCom
 import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
 import ContentToolbar from "../../components/content/browser/ContentToolbar";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
+import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
+import ContentSetListView from "../../components/content/browser/ContentSetListView";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
 import { useContentSetActions } from "../../hooks/content/useContentSetActions";
+import { useContentViewMode } from "../../hooks/content/useContentViewMode";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
 import { useSourceLanguages } from "../../hooks/settings/useSourceLanguages";
@@ -118,6 +121,9 @@ export default function ContentPage() {
   // EXP-023 Phase B — source filter: "all" / "official" / a specific
   // user-repo source ("owner/repo").
   const [sourceFilter, setSourceFilter] = useState<string>("all");
+  // #1240 — grid (rich tree) ⇄ list (compact) view. Default grid;
+  // persisted across navigation/reload.
+  const [viewMode, setViewMode] = useContentViewMode();
 
   const { hasKey, activeProvider } = useApiKeyStatus();
   const userId = readLearnerState().userId;
@@ -314,9 +320,14 @@ export default function ContentPage() {
           {/* #1149 — the "Missing Lessons" gap-suggestion block moved out
               of "Meine Inhalte" (consumption) into the dedicated
               /contribute area (production). */}
-          <h2 className="content-section-title">
-            {t("content.my_lessons.downloaded_title", "Downloaded sets")}
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="content-section-title">
+              {t("content.my_lessons.downloaded_title", "Downloaded sets")}
+            </h2>
+            {downloadedSets.length > 0 && (
+              <ContentViewToggle mode={viewMode} onChange={setViewMode} />
+            )}
+          </div>
           {hasUserRepoSets && (
             <div
               className="mb-3 flex flex-wrap items-center gap-1"
@@ -351,6 +362,8 @@ export default function ContentPage() {
                 "No content sets available yet. Check your network connection and refresh, or configure a source in Settings.",
               )}
             </p>
+          ) : viewMode === "list" ? (
+            <ContentSetListView sets={visibleSets} />
           ) : (
             <ContentTree
               tree={tree}

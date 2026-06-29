@@ -1921,6 +1921,10 @@ lesson:
     action_restart: "最初からやり直す"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "グリッド表示"
+    list: "リスト表示"
+    aria: "表示を選択"
   set_link:
     loading: "セットを読み込んでいます…"
     not_found_title: "セットが見つかりません"

@@ -2084,6 +2084,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "Tampilan kisi",
+      "list": "Tampilan daftar",
+      "aria": "Pilih tampilan"
+    },
     "set_link": {
       "loading": "Memuat set…",
       "not_found_title": "Set tidak ditemukan",

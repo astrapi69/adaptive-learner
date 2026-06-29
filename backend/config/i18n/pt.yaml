@@ -1921,6 +1921,10 @@ lesson:
     action_restart: "Recomeçar"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Visão em grade"
+    list: "Visão em lista"
+    aria: "Escolher visualização"
   set_link:
     loading: "Carregando o conjunto…"
     not_found_title: "Conjunto não encontrado"
