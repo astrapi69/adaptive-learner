@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
 import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
+import ImportActionsPanel from "../../components/content/ImportActionsPanel";
 import { FEATURES } from "../../features/featureConfig";
 import { useFeatureAvailable } from "../../features/useFeatureAvailable";
 import HelpLink from "../../components/help/HelpLink";
@@ -424,6 +425,12 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
           )}
         </p>
       </header>
+
+      {/* #1253 — import/creation action buttons + the standalone
+          "My Lessons" section, relocated here from "Meine Inhalte". */}
+      <div className="max-w-3xl mx-auto mb-8 px-6">
+        <ImportActionsPanel />
+      </div>
 
       <section
         className="max-w-3xl mx-auto mb-8 p-6 border-2 border-accent rounded-xl bg-card"

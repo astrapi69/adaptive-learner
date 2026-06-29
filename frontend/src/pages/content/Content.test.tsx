@@ -134,6 +134,7 @@ vi.mock("../../utils/notify", () => ({
 }));
 
 import ContentPage from "./Content";
+import { recordContribution } from "../../lib/content/placement/contribution-history";
 
 // source_language "de" matches the i18n fallback app language
 // (the test renders without an I18nProvider, so useI18n().lang is
@@ -458,233 +459,28 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(screen.queryByTestId("content-my-lessons")).not.toBeInTheDocument();
   });
 
-  it("lists a user lesson (play/edit/delete), separate from downloaded sets", async () => {
-    listSetsMock.mockResolvedValue({
-      sets: [
-        USER_ENTRY,
-        { ...SAMPLE_ENTRY, cached_version: "1.0.0", update_available: false },
-      ],
-      sources: [],
-    });
-    renderPage();
-    await screen.findByTestId("content-page");
-    expect(screen.getByTestId("my-lesson-analysis-conv-1")).toBeInTheDocument();
-    expect(
-      screen.getByTestId("my-lesson-analysis-conv-1-play"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("my-lesson-analysis-conv-1-edit"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("my-lesson-analysis-conv-1-delete"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("my-lesson-analysis-conv-1-export"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("my-lesson-analysis-conv-1-export-set"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("my-lesson-analysis-conv-1-share"),
-    ).toBeInTheDocument();
-    // The downloaded set renders in the other section.
-    expect(
-      screen.getByTestId("content-set-language-fr-a1"),
-    ).toBeInTheDocument();
-    // The user set is NOT duplicated as a downloaded content-set row.
-    expect(
-      screen.queryByTestId("content-set-analysis-conv-1"),
-    ).not.toBeInTheDocument();
-  });
-
-  it("hides Edit for non-analysis (adaptive) lessons", async () => {
-    listSetsMock.mockResolvedValue({
-      sets: [{ ...USER_ENTRY, id: "adaptive-x", domain: "adaptive" }],
-      sources: [],
-    });
-    renderPage();
-    await screen.findByTestId("content-page");
-    expect(
-      screen.queryByTestId("my-lesson-adaptive-x-edit"),
-    ).not.toBeInTheDocument();
-    expect(screen.getByTestId("my-lesson-adaptive-x-play")).toBeInTheDocument();
-  });
-
-  it("deletes a user lesson after confirmation", async () => {
+  it("#1253 — no longer renders the action buttons or the standalone My Lessons section (moved to Import)", async () => {
     listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
-    deleteSetMock.mockResolvedValue(undefined);
     renderPage();
     await screen.findByTestId("content-page");
-    fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-delete"));
-    expect(screen.getByTestId("my-lesson-delete-modal")).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("my-lesson-delete-confirm"));
-    });
-    await waitFor(() =>
-      expect(deleteSetMock).toHaveBeenCalledWith(
-        "user-generated",
-        "analysis-conv-1",
-      ),
-    );
-  });
-
-  it("opens the import-lesson modal from the Import button", async () => {
-    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
-    renderPage();
-    await screen.findByTestId("content-page");
-    expect(screen.queryByTestId("import-lesson-modal")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("content-import-lesson"));
-    expect(screen.getByTestId("import-lesson-modal")).toBeInTheDocument();
-  });
-
-  it("renders the search bar before the action toolbar (search-first)", async () => {
-    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
-    renderPage();
-    await screen.findByTestId("content-page");
-    const search = screen.getByTestId("content-search-bar");
-    const importBtn = screen.getByTestId("content-import-lesson");
-    // Search sits before the action buttons in document order.
-    expect(
-      search.compareDocumentPosition(importBtn) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-  });
-
-  it("toolbar action buttons are icon-only on mobile (label hidden below md)", async () => {
-    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
-    renderPage();
-    await screen.findByTestId("content-page");
-    const importBtn = screen.getByTestId("content-import-lesson");
-    // Icon always present (an inline svg).
-    expect(importBtn.querySelector("svg")).toBeInTheDocument();
-    // The text label is rendered but CSS-hidden until md.
-    const label = importBtn.querySelector("span.hidden");
-    expect(label).not.toBeNull();
-    expect(label).toHaveClass("md:inline");
-    expect(label).toHaveTextContent(/Import Lesson/i);
-    // Accessible name survives even when the label is visually hidden.
-    expect(importBtn).toHaveAccessibleName(/Import Lesson/i);
-  });
-
-  it("secondary toolbar actions use the outline variant so they stay visible in dark themes (#177)", async () => {
-    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
-    renderPage();
-    await screen.findByTestId("content-page");
-    // The surface-less ghost variant read as nearly invisible in dark
-    // themes; outline gives a bordered surface (border-input +
-    // bg-background) while keeping AA text-foreground.
+    // The search bar stays in "Meine Inhalte"...
+    expect(screen.getByTestId("content-search-input")).toBeInTheDocument();
+    // ...but the action buttons moved to the Import tab.
     for (const testId of [
       "content-import-lesson",
       "content-import-chat",
+      "content-anki-export",
       "content-learning-path",
+      "content-create-lesson",
     ]) {
-      const btn = screen.getByTestId(testId);
-      expect(btn.className).toContain("border");
-      expect(btn.className).toContain("text-foreground");
+      expect(screen.queryByTestId(testId)).not.toBeInTheDocument();
     }
-    // The primary CTA stays dominant (no border-* surface utility).
+    // The standalone My Lessons section is gone (an unmatched user set
+    // no longer renders here; it lives on the Import tab now).
+    expect(screen.queryByTestId("content-my-lessons")).not.toBeInTheDocument();
     expect(
-      screen.getByTestId("content-create-lesson").className,
-    ).toContain("bg-primary");
-  });
-
-  it("walks the wizard and shares a flagged lesson anyway", async () => {
-    // USER_ENTRY: no title_native + a trivial lesson -> rule check
-    // flags issues. The wizard's quality step is informational; the
-    // user can still reach the share step, and the findings land in
-    // the pull-request body (the create-file ``description`` param).
-    listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
-    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
-    getLessonMock.mockResolvedValue({
-      id: "01",
-      title: "x",
-      estimated_minutes: 10,
-      cards: [{ id: "c", front: "a", back: "b", tags: [] }],
-      // One exercise so it clears the new empty-lesson gate, but a
-      // single exercise / type still fails the quality minimums -> the
-      // share-anyway path stays exercised.
-      steps: [
-        { id: "s", type: "theory", body: "x" },
-        {
-          id: "ex",
-          type: "exercise",
-          exercise: {
-            id: "ex",
-            type: "free_text",
-            prompt: "p",
-            card_ids: ["c"],
-            accept: ["a"],
-            distractors: [],
-          },
-        },
-      ],
-    });
-    const openSpy = vi.fn();
-    vi.stubGlobal("open", openSpy);
-    renderPage();
-    await screen.findByTestId("content-page");
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
-    });
-    await screen.findByTestId("share-wizard-step-1");
-    // Step 1 -> 2: no published set in this pair -> unique.
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    await screen.findByTestId("share-wizard-unique");
-    // Step 2 -> 3: quality issues, but share-anyway is allowed.
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    expect(screen.getByTestId("share-wizard-quality-issues")).toBeInTheDocument();
-    // Step 3 -> 4 -> share.
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    fireEvent.click(screen.getByTestId("share-wizard-share"));
-    expect(openSpy).toHaveBeenCalled();
-    const url = openSpy.mock.calls[0][0] as string;
-    // Small flagged lesson still uses the PR fast lane; the findings
-    // ride in the pre-filled PR body (``description`` param), not an
-    // issue body.
-    expect(url).toContain("/new/main?");
-    const body = new URL(url).searchParams.get("description") ?? "";
-    expect(body).toContain("⚠ shared with warnings");
-    expect(body).toContain("Quality-check findings");
-    // Celebration shown after sharing.
-    expect(screen.getByTestId("share-wizard-celebration")).toBeInTheDocument();
-    vi.unstubAllGlobals();
-  });
-
-  it("auto-computes placement and opens the PR fast lane for a clean lesson", async () => {
-    const valid = { ...USER_ENTRY, title_native: "Español A1" };
-    listSetsMock.mockResolvedValue({ sets: [valid], sources: [] });
-    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
-    getLessonMock.mockResolvedValue(shareableLesson());
-    const openSpy = vi.fn();
-    vi.stubGlobal("open", openSpy);
-    renderPage();
-    await screen.findByTestId("content-page");
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
-    });
-    await screen.findByTestId("share-wizard-step-1");
-    // Step 1 shows the auto-computed placement. The saved non-CEFR
-    // "beginner" level is corrected to a CEFR estimate (A1) by the
-    // editable Step-1 form (BUG C), so the placement lands under es-a1.
-    expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
-      "sets/de/es-a1",
-    );
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    await screen.findByTestId("share-wizard-unique");
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    expect(screen.getByTestId("share-wizard-quality-ok")).toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    fireEvent.click(screen.getByTestId("share-wizard-share"));
-    const url = openSpy.mock.calls[0][0] as string;
-    expect(url).toMatch(
-      /github\.com\/astrapi69\/adaptive-learner-content\/new\/main\?/,
-    );
-    const qs = new URL(url).searchParams;
-    expect(qs.get("filename")).toContain("sets/de/es-a1/lessons/");
-    const value = qs.get("value") ?? "";
-    expect(value).toContain('"title"');
-    expect(value).toContain('"cards"');
-    vi.unstubAllGlobals();
+      screen.queryByTestId("my-lesson-analysis-conv-1"),
+    ).not.toBeInTheDocument();
   });
 
   it("detects a near-duplicate lesson during the wizard scan", async () => {
@@ -739,86 +535,26 @@ describe("Content — My Lessons (Phase 59C)", () => {
     ).toBeInTheDocument();
   });
 
-  it("offers opt-in AI validation in the quality step", async () => {
-    apiKeyStatusMock.mockReturnValue({
-      ready: true,
-      hasKey: true,
-      activeProvider: "anthropic",
-      refresh: vi.fn(),
-    });
-    const valid = { ...USER_ENTRY, title_native: "Español A1" };
-    listSetsMock.mockResolvedValue({ sets: [valid], sources: [] });
-    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
-    getLessonMock.mockResolvedValue(shareableLesson());
-    aiValidateMock.mockResolvedValue({
-      overall: "review_needed",
-      translation_issues: [
-        { card_id: "c1", issue: "schould be Guten Morgen", suggestion: "Guten Morgen" },
-      ],
-      distractor_issues: [],
-      grammar_issues: [],
-      level_issues: [],
-      cultural_flags: [],
-      quality_score: 0.78,
-    });
-    renderPage();
-    await screen.findByTestId("content-page");
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
-    });
-    await screen.findByTestId("share-wizard-step-1");
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    await screen.findByTestId("share-wizard-unique");
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    // AI section lives in the quality step (key present).
-    expect(screen.getByTestId("content-ai-validation")).toBeInTheDocument();
-    const runBtn = screen.getByTestId("content-ai-run");
-    expect(runBtn).toBeDisabled();
-    fireEvent.click(screen.getByTestId("content-ai-consent"));
-    expect(runBtn).not.toBeDisabled();
-    await act(async () => {
-      fireEvent.click(runBtn);
-    });
-    await screen.findByTestId("content-ai-result");
-    expect(aiValidateMock).toHaveBeenCalled();
-    expect(screen.getByTestId("content-ai-issues")).toHaveTextContent(
-      "Guten Morgen",
-    );
-    apiKeyStatusMock.mockReturnValue({
-      ready: true,
-      hasKey: false,
-      activeProvider: null,
-      refresh: vi.fn(),
-    });
-  });
-
-  it("records a contribution and shows My Contributions after sharing", async () => {
+  it("shows My Contributions from the local sharing history", async () => {
+    // #1253 — the actual sharing happens on the Import tab now; the
+    // "My Contributions" display stays here and reads the local history.
     localStorage.clear();
-    const valid = { ...USER_ENTRY, title_native: "Español A1" };
-    listSetsMock.mockResolvedValue({ sets: [valid], sources: [] });
-    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
-    getLessonMock.mockResolvedValue(shareableLesson());
-    const openSpy = vi.fn();
-    vi.stubGlobal("open", openSpy);
+    recordContribution({
+      lesson_id: "analysis-conv-1",
+      title: "My Spanish lesson",
+      shared_at: new Date().toISOString(),
+      github_url: "https://github.com/x/y/pull/1",
+      status: "submitted",
+    });
+    listSetsMock.mockResolvedValue({ sets: [SAMPLE_ENTRY], sources: [] });
     renderPage();
     await screen.findByTestId("content-page");
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
-    });
-    await screen.findByTestId("share-wizard-step-1");
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    await screen.findByTestId("share-wizard-unique");
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    fireEvent.click(screen.getByTestId("share-wizard-share"));
-    // The page now shows the local contribution history.
     expect(
       await screen.findByTestId("content-my-contributions"),
     ).toBeInTheDocument();
     expect(
       screen.getByTestId("content-contributions-count"),
     ).toHaveTextContent("1");
-    vi.unstubAllGlobals();
     localStorage.clear();
   });
 

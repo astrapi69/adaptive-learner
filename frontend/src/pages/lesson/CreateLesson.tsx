@@ -417,7 +417,9 @@ export default function CreateLesson() {
                             type="button"
                             variant="secondary"
                             data-testid="create-lesson-to-browser"
-                            onClick={() => navigate("/content?tab=my")}
+                            // #1253 — "My Lessons" lives on the Import tab now,
+                            // so land the just-created lesson there.
+                            onClick={() => navigate("/content?tab=import")}
                         >
                             {t(
                                 "create_lesson.save.to_browser",
