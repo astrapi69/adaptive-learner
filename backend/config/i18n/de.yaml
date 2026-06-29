@@ -90,6 +90,8 @@ nav:
   offline: Offline
   anki: Anki
   contribute: "Beitragen"
+  sidebar_open: "Seitenleiste öffnen"
+  sidebar_close: "Seitenleiste schließen"
   dev_badge: DEV
   dev_badge_tooltip: "Entwicklermodus aktiv — Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar."
   content: "Meine Inhalte"

@@ -98,6 +98,8 @@
     "offline": "オフライン",
     "anki": "Anki",
     "contribute": "貢献",
+    "sidebar_open": "サイドバーを開く",
+    "sidebar_close": "サイドバーを閉じる",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。",
     "content": "マイコンテンツ",

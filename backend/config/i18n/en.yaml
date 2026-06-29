@@ -90,6 +90,8 @@ nav:
   offline: Offline
   anki: Anki
   contribute: "Contribute"
+  sidebar_open: "Open sidebar"
+  sidebar_close: "Close sidebar"
   dev_badge: DEV
   dev_badge_tooltip: "Developer Mode is on — error toasts show full technical detail. Toggle in Settings."
   content: "My content"

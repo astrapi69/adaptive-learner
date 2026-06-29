@@ -98,6 +98,8 @@
     "offline": "Çevrimdışı",
     "anki": "Anki",
     "contribute": "Katkıda bulun",
+    "sidebar_open": "Kenar çubuğunu aç",
+    "sidebar_close": "Kenar çubuğunu kapat",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın.",
     "content": "İçeriğim",

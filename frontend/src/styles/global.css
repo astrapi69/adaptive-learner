@@ -4083,6 +4083,22 @@ select:focus {
   body.has-desktop-sidebar .app-nav .nav-links {
     display: none;
   }
+  /* #1260 — animate the content reflow when the sidebar opens/closes so the
+     width change is dezent rather than a hard jump. The padding-left is what
+     reserves / releases the sidebar's column, so transitioning it (on #root
+     and the top bar) covers the whole reflow. */
+  #root,
+  .app-nav {
+    transition: padding-left 200ms ease;
+  }
+}
+
+/* Respect reduced-motion: no sliding reflow, the layout snaps. */
+@media (prefers-reduced-motion: reduce) {
+  #root,
+  .app-nav {
+    transition: none;
+  }
 }
 
 .nav-theme-toggle {
