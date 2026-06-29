@@ -1478,6 +1478,9 @@
     "desktop_only": "Solo disponible con la aplicación de escritorio."
   },
   "ui": {
+    "info": {
+      "show": "Mostrar información"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",

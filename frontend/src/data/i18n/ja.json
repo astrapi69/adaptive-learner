@@ -1478,6 +1478,9 @@
     "desktop_only": "デスクトップアプリでのみ利用できます。"
   },
   "ui": {
+    "info": {
+      "show": "情報を表示"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",

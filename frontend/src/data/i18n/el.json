@@ -1478,6 +1478,9 @@
     "desktop_only": "Διαθέσιμο μόνο με την εφαρμογή για υπολογιστή."
   },
   "ui": {
+    "info": {
+      "show": "Εμφάνιση πληροφοριών"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",

@@ -1478,6 +1478,9 @@
     "desktop_only": "Only available with the desktop app."
   },
   "ui": {
+    "info": {
+      "show": "Show information"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",

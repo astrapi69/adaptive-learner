@@ -1365,6 +1365,8 @@ feature:
   api_key_required: API कुंजी आवश्यक। सेटिंग्स में एक प्रदाता कॉन्फ़िगर करें।
   desktop_only: केवल डेस्कटॉप ऐप के साथ उपलब्ध।
 ui:
+  info:
+    show: "जानकारी दिखाएं"
   themes:
     catppuccin-latte: Catppuccin Latte
     supabase: Supabase

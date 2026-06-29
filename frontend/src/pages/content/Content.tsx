@@ -27,6 +27,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import InfoHint from "../../shared/feedback/InfoHint";
 import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import ImportLessonModal from "../../components/content/lessons/ImportLessonModal";
 import MyLessonsSection from "../../components/content/lessons/MyLessonsSection";
@@ -236,12 +237,19 @@ export default function ContentPage() {
             : t("content.action.refresh", "Refresh")}
         </button>
       </header>
-      <p className="content-intro">
-        {t(
+      {/* #1251 — the permanent intro prose is replaced by an info button
+          that expands the text inline on demand (it blinks gently for a
+          first-time visitor, then bows out). Saves vertical space at the
+          top for users already in the content area. */}
+      <InfoHint
+        storageId="content_my"
+        text={t(
           "content.intro",
           "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
         )}
-      </p>
+        label={t("ui.info.show", "Show information")}
+        testId="content-info"
+      />
 
       {sources.length > 0 && (
         <p className="content-sources" data-testid="content-sources">

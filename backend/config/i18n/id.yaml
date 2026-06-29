@@ -1365,6 +1365,8 @@ feature:
   api_key_required: "Kunci API diperlukan. Konfigurasikan penyedia di Pengaturan."
   desktop_only: "Hanya tersedia dengan aplikasi desktop."
 ui:
+  info:
+    show: "Tampilkan informasi"
   themes:
     "catppuccin-latte": "Catppuccin Latte"
     "supabase": "Supabase"

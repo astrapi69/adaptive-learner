@@ -1365,6 +1365,8 @@ feature:
   api_key_required: "Απαιτείται κλειδί API. Ρυθμίστε έναν πάροχο στις Ρυθμίσεις."
   desktop_only: "Διαθέσιμο μόνο με την εφαρμογή για υπολογιστή."
 ui:
+  info:
+    show: "Εμφάνιση πληροφοριών"
   themes:
     "catppuccin-latte": "Catppuccin Latte"
     "supabase": "Supabase"

@@ -1478,6 +1478,9 @@
     "desktop_only": "केवल डेस्कटॉप ऐप के साथ उपलब्ध।"
   },
   "ui": {
+    "info": {
+      "show": "जानकारी दिखाएं"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",

@@ -244,4 +244,26 @@ describe("Discover page", () => {
       { timeout: 1000 },
     );
   });
+
+  // --- #1251: info button replaces the permanent subtitle ---
+
+  it("hides the subtitle behind an info button and reveals the Discover-specific text on click", async () => {
+    localStorage.clear();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // The explanatory subtitle is NOT permanently shown.
+    expect(screen.queryByTestId("discover-info-text")).toBeNull();
+    const button = screen.getByTestId("discover-info-button");
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    // A fresh visitor sees the gentle blink.
+    expect(button).toHaveAttribute("data-blink", "true");
+    // Click -> the Discover-specific text expands inline.
+    fireEvent.click(button);
+    expect(screen.getByTestId("discover-info-text")).toHaveTextContent(
+      "Find learning material before you download it.",
+    );
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(button).not.toHaveAttribute("data-blink", "true");
+    localStorage.clear();
+  });
 });
