@@ -648,7 +648,9 @@ export default function ImportDetail({
           onCancel={() => setShowSaveLesson(false)}
           onSaved={() => {
             setShowSaveLesson(false);
-            go("/content?tab=my");
+            // #1253 — the saved lesson appears in "My Lessons", which moved
+            // to the Import tab.
+            go("/content?tab=import");
           }}
         />
       )}

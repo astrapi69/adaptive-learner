@@ -15,11 +15,16 @@
  * This page is the layout shell: it loads the sets (via
  * {@link useContentSetsData}), owns the search + Continue Learning +
  * contributions, and composes the extracted sections — the
- * {@link ContentToolbar}, {@link ContentSearchResults},
- * {@link MyLessonsSection},
+ * {@link ContentSearchBar}, {@link ContentSearchResults},
  * {@link ContentTree}, {@link DeleteLessonModal}, and
  * {@link ContentShareDialog} (backed by {@link useContentSharing}).
  * Set-level handlers live in {@link useContentSetActions}.
+ *
+ * #1253 — the import/creation action buttons and the standalone
+ * "My Lessons" section moved to the Import tab
+ * ({@link ImportActionsPanel}); this page keeps the search, the
+ * downloaded-set tree (with EXP-026 folded user lessons), and
+ * Continue Learning.
  */
 
 import { RefreshCw } from "lucide-react";
@@ -29,13 +34,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import InfoHint from "../../shared/feedback/InfoHint";
 import ContinueLearning from "../../components/dashboard/ContinueLearning";
-import ImportLessonModal from "../../components/content/lessons/ImportLessonModal";
-import MyLessonsSection from "../../components/content/lessons/MyLessonsSection";
 import ContentTree from "../../components/content/browser/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
 import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
-import ContentToolbar from "../../components/content/browser/ContentToolbar";
+import ContentSearchBar from "../../components/content/browser/ContentSearchBar";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
 import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
 import ContentSetListView from "../../components/content/browser/ContentSetListView";
@@ -91,7 +94,6 @@ export default function ContentPage() {
     sources,
     loading,
     refreshing,
-    loadSets,
     handleRefresh,
     bookRecs,
     media,
@@ -106,8 +108,6 @@ export default function ContentPage() {
     aiBadgeBySet,
   } = data;
 
-  // Phase 59E — import-lesson modal.
-  const [showImport, setShowImport] = useState(false);
   // Phase 60 — source-language tree: the learner's active source
   // languages (app language + opted-in extras) rank the tree.
   const { active: activeSources } = useSourceLanguages();
@@ -209,7 +209,7 @@ export default function ContentPage() {
   // published node (pure helper extracted in #541 to keep this component
   // under the complexity gate). Matched sets leave the My Lessons
   // fallback (decision E4); unmatched ones stay.
-  const { matchedFold, unmatchedUserSets, userSetsByKey } = computeUserFold(
+  const { matchedFold, userSetsByKey } = computeUserFold(
     userSets,
     visibleSets,
     userLessonsBySet,
@@ -262,15 +262,13 @@ export default function ContentPage() {
           that accompany a published book. Hidden while searching. */}
       {!searchResult.active && <ContentBookCompanions companions={bookCompanions} />}
 
-      {/* UX overhaul C1 — compact toolbar: search FIRST (full width),
-          then icon-only action buttons (icon + label from md up). */}
-      <ContentToolbar
+      {/* #1253 — search bar only. The import/creation action buttons
+          moved to the Import tab (ImportActionsPanel). */}
+      <ContentSearchBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         activateSearch={activateSearch}
         searchInputRef={searchInputRef}
-        onImportLesson={() => setShowImport(true)}
-        navigate={navigate}
       />
 
       {/* #772 — the Content Browser is "Meine Inhalte": only locally
@@ -295,22 +293,10 @@ export default function ContentPage() {
         </div>
       )}
 
-      {/* Phase 59C — My Lessons (user-generated sets). Hidden while a
-          search is active (results replace the browse view). EXP-026 /
-          UGC-04: only the sets that did NOT fold into the tree remain
-          here, and the section hides entirely when none do (E4). */}
-      {!searchResult.active && unmatchedUserSets.length > 0 && (
-        <MyLessonsSection
-          userSets={unmatchedUserSets}
-          communitySharingEnabled={COMMUNITY_SHARING_ENABLED}
-          onOpen={(e) => void handleOpenLesson(e)}
-          onEdit={handleEditUserSet}
-          onExportJson={(e) => void handleExportJson(e)}
-          onExportSet={(e) => void handleExportSet(e)}
-          onShare={(e) => void share.handleShare(e)}
-          onDelete={setDeleteTarget}
-        />
-      )}
+      {/* #1253 — the standalone "My Lessons" section (unmatched
+          user-generated sets) moved to the Import tab
+          (ImportActionsPanel). EXP-026 folded user lessons stay in the
+          downloaded-set tree below. */}
 
       {/* Phase 64D — My Contributions (local sharing history). */}
       {!searchResult.active && (
@@ -421,15 +407,6 @@ export default function ContentPage() {
       <QualityCheckDialog
         entry={qualityCheckTarget}
         onClose={() => setQualityCheckTarget(null)}
-      />
-
-      <ImportLessonModal
-        open={showImport}
-        onCancel={() => setShowImport(false)}
-        onImported={() => {
-          setShowImport(false);
-          void loadSets();
-        }}
       />
 
       <ContentShareDialog
