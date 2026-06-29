@@ -476,11 +476,9 @@ settings:
     import_button: "Εισαγωγή αρχείου κλειδιών"
     success_export: "Το κρυπτογραφημένο αρχείο κλειδιών λήφθηκε."
     success_import: "Τα κλειδιά εισήχθησαν. Οι λειτουργίες AI είναι ξανά έτοιμες."
-    error_too_short: "Η φράση πρόσβασης πρέπει να έχει τουλάχιστον {n} χαρακτήρες."
+    min_length: "Τουλάχιστον {n} χαρακτήρες."
     error_mismatch: "Οι φράσεις πρόσβασης δεν ταιριάζουν."
     error_export: "Δεν ήταν δυνατή η δημιουργία της εξαγωγής."
-    error_no_file: "Επιλέξτε πρώτα ένα αρχείο κλειδιών."
-    error_no_passphrase: "Εισαγάγετε τη φράση πρόσβασης που χρησιμοποιήθηκε κατά την εξαγωγή."
     error_decrypt: "Λάθος φράση πρόσβασης ή κατεστραμμένο αρχείο."
     error_import: "Δεν ήταν δυνατή η εισαγωγή του αρχείου κλειδιών."
   lesson_mode:
@@ -1367,6 +1365,8 @@ feature:
   api_key_required: "Απαιτείται κλειδί API. Ρυθμίστε έναν πάροχο στις Ρυθμίσεις."
   desktop_only: "Διαθέσιμο μόνο με την εφαρμογή για υπολογιστή."
 ui:
+  info:
+    show: "Εμφάνιση πληροφοριών"
   themes:
     "catppuccin-latte": "Catppuccin Latte"
     "supabase": "Supabase"
@@ -1923,6 +1923,10 @@ lesson:
     action_restart: "Επανεκκίνηση"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Προβολή πλακιδίων"
+    list: "Προβολή λίστας"
+    aria: "Επιλογή προβολής"
   set_link:
     loading: "Φόρτωση σετ…"
     not_found_title: "Το σετ δεν βρέθηκε"
@@ -2974,6 +2978,9 @@ discover:
   search_placeholder: "Ισπανικά, ΤΝ, ψυχολογία…"
   search_aria: "Αναζήτηση στο διαθέσιμο περιεχόμενο"
   search_clear: "Καθαρισμός αναζήτησης"
+  bar:
+    search: "Αναζήτηση"
+    filter: "Φιλτράρισμα"
   filter:
     all: "Όλα"
     language: "Γλώσσα"

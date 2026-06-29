@@ -510,11 +510,9 @@
       "import_button": "Impor berkas kunci",
       "success_export": "Berkas kunci terenkripsi diunduh.",
       "success_import": "Kunci diimpor. Fitur AI siap kembali.",
-      "error_too_short": "Frasa sandi harus minimal {n} karakter.",
+      "min_length": "Minimal {n} karakter.",
       "error_mismatch": "Frasa sandi tidak cocok.",
       "error_export": "Tidak dapat membuat ekspor.",
-      "error_no_file": "Pilih berkas kunci terlebih dahulu.",
-      "error_no_passphrase": "Masukkan frasa sandi yang digunakan saat ekspor.",
       "error_decrypt": "Frasa sandi salah atau berkas rusak.",
       "error_import": "Tidak dapat mengimpor berkas kunci."
     },
@@ -1480,6 +1478,9 @@
     "desktop_only": "Hanya tersedia dengan aplikasi desktop."
   },
   "ui": {
+    "info": {
+      "show": "Tampilkan informasi"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",
@@ -2084,6 +2085,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "Tampilan kisi",
+      "list": "Tampilan daftar",
+      "aria": "Pilih tampilan"
+    },
     "set_link": {
       "loading": "Memuat set…",
       "not_found_title": "Set tidak ditemukan",
@@ -3249,6 +3255,10 @@
     "search_placeholder": "Spanyol, AI, psikologi…",
     "search_aria": "Cari konten yang tersedia",
     "search_clear": "Hapus pencarian",
+    "bar": {
+      "search": "Cari",
+      "filter": "Filter"
+    },
     "filter": {
       "all": "Semua",
       "language": "Bahasa",

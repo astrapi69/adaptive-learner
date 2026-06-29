@@ -78,13 +78,32 @@ export class LessonRunner {
     return "theory";
   }
 
-  /** Pair every left tile with the right of the same index (A → B). */
+  /** Pair every left tile with the right of the same index (A → B). The
+   *  right tile's testid carries its ORIGINAL (pre-shuffle) index, so
+   *  ``matching-right-i`` is the correct partner of ``matching-left-i`` —
+   *  this produces a fully-correct answer. */
   async pairAllMatching(): Promise<void> {
     const lefts = this.page.getByTestId(/^matching-left-\d+$/);
     const n = await lefts.count();
     for (let i = 0; i < n; i++) {
       await this.page.getByTestId(`matching-left-${i}`).click();
       await this.page.getByTestId(`matching-right-${i}`).click();
+    }
+  }
+
+  /** Pair every left tile DELIBERATELY WRONG (rotate the right column by one:
+   *  ``left-i`` → ``right-((i+1) % n)``) so the answer is fully paired but
+   *  scores 0 correct. Needed since #1218: a fully-correct match replaces the
+   *  post-check My-answers / Solve toggle with a success "Continue", so the
+   *  Solve (resolution) flow is only reachable from a wrong/partial answer.
+   *  Requires >= 2 pairs with distinct values (the fixture's 3-pair matching
+   *  qualifies). */
+  async pairAllMatchingIncorrect(): Promise<void> {
+    const lefts = this.page.getByTestId(/^matching-left-\d+$/);
+    const n = await lefts.count();
+    for (let i = 0; i < n; i++) {
+      await this.page.getByTestId(`matching-left-${i}`).click();
+      await this.page.getByTestId(`matching-right-${(i + 1) % n}`).click();
     }
   }
 

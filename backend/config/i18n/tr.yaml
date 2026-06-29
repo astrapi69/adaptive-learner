@@ -476,11 +476,9 @@ settings:
     import_button: "Anahtar dosyasını içe aktar"
     success_export: "Şifreli anahtar dosyası indirildi."
     success_import: "Anahtarlar içe aktarıldı. Yapay zekâ özellikleri yeniden hazır."
-    error_too_short: "Parola ifadesi en az {n} karakter olmalıdır."
+    min_length: "En az {n} karakter."
     error_mismatch: "Parola ifadeleri eşleşmiyor."
     error_export: "Dışa aktarma oluşturulamadı."
-    error_no_file: "Önce bir anahtar dosyası seçin."
-    error_no_passphrase: "Dışa aktarmada kullanılan parola ifadesini girin."
     error_decrypt: "Parola ifadesi yanlış veya dosya bozuk."
     error_import: "Anahtar dosyası içe aktarılamadı."
   lesson_mode:
@@ -1367,6 +1365,8 @@ feature:
   api_key_required: "API anahtarı gerekli. Ayarlardan bir sağlayıcı yapılandırın."
   desktop_only: "Yalnızca masaüstü uygulamasıyla kullanılabilir."
 ui:
+  info:
+    show: "Bilgileri göster"
   themes:
     "catppuccin-latte": "Catppuccin Latte"
     "supabase": "Supabase"
@@ -1921,6 +1921,10 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Izgara görünümü"
+    list: "Liste görünümü"
+    aria: "Görünümü seç"
   set_link:
     loading: "Set yükleniyor…"
     not_found_title: "Set bulunamadı"
@@ -2972,6 +2976,9 @@ discover:
   search_placeholder: "İspanyolca, yapay zeka, psikoloji…"
   search_aria: "Kullanılabilir içerikte ara"
   search_clear: "Aramayı temizle"
+  bar:
+    search: "Ara"
+    filter: "Filtrele"
   filter:
     all: "Tümü"
     language: "Dil"

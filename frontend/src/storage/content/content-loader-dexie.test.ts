@@ -500,6 +500,50 @@ describe("Dexie content-loader: listLessons + getLesson", () => {
       getLessonDexie(SOURCE, SET_ID, "no-such.json"),
     ).rejects.toThrow(/not found/);
   });
+
+  // #1195 regression: a multiselect cloze must survive the real
+  // download → cache → read cycle (the GH-Pages / iPhone Dexie path).
+  // The renderer dispatches on ``exercise.cloze_mode === "multiselect"``,
+  // so if the load path ever dropped that field (the verify-first
+  // "field dropped in mapping" concern) the renderer would silently fall
+  // back to the blank-based dropdown. This pins the field through.
+  it("preserves cloze_mode='multiselect' + accept/distractors on read-back", async () => {
+    const MULTISELECT_LESSON = JSON.stringify({
+      id: "01-influence",
+      title: "Influence",
+      cards: [],
+      steps: [
+        {
+          id: "ms",
+          type: "exercise",
+          exercise: {
+            id: "ex-ms",
+            type: "cloze",
+            cloze_mode: "multiselect",
+            prompt: "Select all that apply.",
+            card_ids: [],
+            sentence: "Which are persuasion principles?",
+            accept: ["Reciprocity", "Scarcity"],
+            distractors: ["Gravity", "Entropy"],
+          },
+        },
+      ],
+    });
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        MULTISELECT_LESSON,
+    });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    const lesson = await getLessonDexie(SOURCE, SET_ID, "01-greetings.json");
+    const exercise = lesson.steps[0].exercise;
+    expect(exercise?.cloze_mode).toBe("multiselect");
+    expect(exercise?.accept).toEqual(["Reciprocity", "Scarcity"]);
+    expect(exercise?.distractors).toEqual(["Gravity", "Entropy"]);
+  });
 });
 
 describe("mimeTypeForAssetPath", () => {

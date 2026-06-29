@@ -510,11 +510,9 @@
       "import_button": "키 파일 가져오기",
       "success_export": "암호화된 키 파일을 다운로드했습니다.",
       "success_import": "키를 가져왔습니다. AI 기능을 다시 사용할 수 있습니다.",
-      "error_too_short": "암호문구는 최소 {n}자 이상이어야 합니다.",
+      "min_length": "최소 {n}자 이상이어야 합니다.",
       "error_mismatch": "암호문구가 일치하지 않습니다.",
       "error_export": "내보내기를 만들 수 없습니다.",
-      "error_no_file": "먼저 키 파일을 선택하세요.",
-      "error_no_passphrase": "내보낼 때 사용한 암호문구를 입력하세요.",
       "error_decrypt": "암호문구가 틀렸거나 파일이 손상되었습니다.",
       "error_import": "키 파일을 가져올 수 없습니다."
     },
@@ -1480,6 +1478,9 @@
     "desktop_only": "데스크톱 앱에서만 사용할 수 있습니다."
   },
   "ui": {
+    "info": {
+      "show": "정보 표시"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",
@@ -2084,6 +2085,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "그리드 보기",
+      "list": "목록 보기",
+      "aria": "보기 선택"
+    },
     "set_link": {
       "loading": "세트를 불러오는 중…",
       "not_found_title": "세트를 찾을 수 없습니다",
@@ -3249,6 +3255,10 @@
     "search_placeholder": "스페인어, AI, 심리학…",
     "search_aria": "사용 가능한 콘텐츠 검색",
     "search_clear": "검색 지우기",
+    "bar": {
+      "search": "검색",
+      "filter": "필터"
+    },
     "filter": {
       "all": "전체",
       "language": "언어",

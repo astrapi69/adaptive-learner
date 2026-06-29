@@ -510,11 +510,9 @@
       "import_button": "Importar arquivo de chaves",
       "success_export": "Arquivo de chaves criptografado baixado.",
       "success_import": "Chaves importadas. Os recursos de IA estão prontos novamente.",
-      "error_too_short": "A frase-senha deve ter pelo menos {n} caracteres.",
+      "min_length": "Pelo menos {n} caracteres.",
       "error_mismatch": "As frases-senha não coincidem.",
       "error_export": "Não foi possível criar a exportação.",
-      "error_no_file": "Escolha primeiro um arquivo de chaves.",
-      "error_no_passphrase": "Digite a frase-senha usada na exportação.",
       "error_decrypt": "Frase-senha incorreta ou arquivo corrompido.",
       "error_import": "Não foi possível importar o arquivo de chaves."
     },
@@ -1480,6 +1478,9 @@
     "desktop_only": "Disponível apenas com o aplicativo para desktop."
   },
   "ui": {
+    "info": {
+      "show": "Mostrar informações"
+    },
     "themes": {
       "catppuccin-latte": "Catppuccin Latte",
       "supabase": "Supabase",
@@ -2084,6 +2085,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "Visão em grade",
+      "list": "Visão em lista",
+      "aria": "Escolher visualização"
+    },
     "set_link": {
       "loading": "Carregando o conjunto…",
       "not_found_title": "Conjunto não encontrado",
@@ -3249,6 +3255,10 @@
     "search_placeholder": "Espanhol, IA, psicologia…",
     "search_aria": "Pesquisar conteúdo disponível",
     "search_clear": "Limpar pesquisa",
+    "bar": {
+      "search": "Pesquisar",
+      "filter": "Filtrar"
+    },
     "filter": {
       "all": "Todos",
       "language": "Idioma",

@@ -193,4 +193,77 @@ describe("Discover page", () => {
     renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-empty-none")).toBeInTheDocument());
   });
+
+  // --- #1246: compact Search/Filter toggle bar ---
+
+  it("keeps the filters collapsed by default, showing only the search field", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // Both toggle buttons + the search field are present.
+    expect(screen.getByTestId("discover-search-filter-search-btn")).toBeInTheDocument();
+    expect(screen.getByTestId("discover-search-filter-filter-btn")).toBeInTheDocument();
+    expect(screen.getByTestId("discover-search")).toBeInTheDocument();
+    // The filter dropdowns take no space until requested.
+    expect(screen.queryByTestId("discover-filters")).toBeNull();
+    expect(screen.getByTestId("discover-search-filter-filter-btn")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  it("opens the filters with their current values when 'Filter' is clicked", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    // Filters now visible; defaults reflect the active (empty = All) values.
+    expect(screen.getByTestId("discover-filters")).toBeInTheDocument();
+    expect(screen.getByTestId("discover-filters-language")).toHaveValue("");
+    // Mutual exclusion: the search field is hidden while filtering.
+    expect(screen.queryByTestId("discover-search")).toBeNull();
+  });
+
+  it("a chosen filter keeps narrowing the list after the panel collapses", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
+    // Open filters and narrow to Spanish (target=es).
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-language"), {
+      target: { value: "es" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    // Collapse the panel via 'Search' — the filter stays applied.
+    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
+    expect(screen.queryByTestId("discover-filters")).toBeNull();
+    expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets");
+    expect(screen.getByText("Spanish A1")).toBeInTheDocument();
+    expect(screen.queryByText("French A1")).toBeNull();
+    // The search field is back and still runs prompt (debounced) search.
+    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "zzzznomatch" } });
+    await waitFor(
+      () => expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
+      { timeout: 1000 },
+    );
+  });
+
+  // --- #1251: info button replaces the permanent subtitle ---
+
+  it("hides the subtitle behind an info button and reveals the Discover-specific text on click", async () => {
+    localStorage.clear();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // The explanatory subtitle is NOT permanently shown.
+    expect(screen.queryByTestId("discover-info-text")).toBeNull();
+    const button = screen.getByTestId("discover-info-button");
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    // A fresh visitor sees the gentle blink.
+    expect(button).toHaveAttribute("data-blink", "true");
+    // Click -> the Discover-specific text expands inline.
+    fireEvent.click(button);
+    expect(screen.getByTestId("discover-info-text")).toHaveTextContent(
+      "Find learning material before you download it.",
+    );
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(button).not.toHaveAttribute("data-blink", "true");
+    localStorage.clear();
+  });
 });

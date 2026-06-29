@@ -476,11 +476,9 @@ settings:
     import_button: "Importar archivo de claves"
     success_export: "Archivo de claves cifrado descargado."
     success_import: "Claves importadas. Las funciones de IA están listas de nuevo."
-    error_too_short: "La frase de contraseña debe tener al menos {n} caracteres."
+    min_length: "Al menos {n} caracteres."
     error_mismatch: "Las frases de contraseña no coinciden."
     error_export: "No se pudo crear la exportación."
-    error_no_file: "Elige primero un archivo de claves."
-    error_no_passphrase: "Introduce la frase de contraseña usada al exportar."
     error_decrypt: "Frase de contraseña incorrecta o archivo dañado."
     error_import: "No se pudo importar el archivo de claves."
   lesson_mode:
@@ -1367,6 +1365,8 @@ feature:
   api_key_required: "Se requiere una clave de API. Configura un proveedor en los ajustes."
   desktop_only: "Solo disponible con la aplicación de escritorio."
 ui:
+  info:
+    show: "Mostrar información"
   themes:
     "catppuccin-latte": "Catppuccin Latte"
     "supabase": "Supabase"
@@ -1923,6 +1923,10 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Vista de cuadrícula"
+    list: "Vista de lista"
+    aria: "Elegir vista"
   set_link:
     loading: "Cargando el conjunto…"
     not_found_title: "Conjunto no encontrado"
@@ -2974,6 +2978,9 @@ discover:
   search_placeholder: "Español, IA, psicología…"
   search_aria: "Buscar contenido disponible"
   search_clear: "Borrar búsqueda"
+  bar:
+    search: "Buscar"
+    filter: "Filtrar"
   filter:
     all: "Todos"
     language: "Idioma"
