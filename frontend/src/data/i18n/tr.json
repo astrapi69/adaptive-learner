@@ -607,6 +607,8 @@
     "section_danger": "Hesap",
     "section_ui": "Arayüz",
     "section_appearance": "Gorunum",
+    "content_view": "İçerik görünümü",
+    "content_view_description": "İndirilen içeriğin içerik sekmelerinde nasıl gösterileceği. İçerik görünümündeki hızlı geçiş aynı ayarı değiştirir.",
     "section_profile": "Profil",
     "username_label": "Görünen ad",
     "username_placeholder": "Adınız",

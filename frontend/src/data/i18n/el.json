@@ -607,6 +607,8 @@
     "section_danger": "Λογαριασμός",
     "section_ui": "Διεπαφή",
     "section_appearance": "Εμφάνιση",
+    "content_view": "Προβολή περιεχομένου",
+    "content_view_description": "Πώς εμφανίζεται το ληφθέν περιεχόμενο στις καρτέλες περιεχομένου. Η γρήγορη εναλλαγή στην προβολή περιεχομένου αλλάζει την ίδια ρύθμιση.",
     "section_profile": "Προφίλ",
     "username_label": "Εμφανιζόμενο όνομα",
     "username_placeholder": "Το όνομά σου",

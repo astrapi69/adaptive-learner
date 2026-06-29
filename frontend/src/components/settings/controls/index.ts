@@ -1,3 +1,5 @@
+export * from "./ContentViewControl";
+export { default as ContentViewControl } from "./ContentViewControl";
 export * from "./DailyRemindersControl";
 export { default as DailyRemindersControl } from "./DailyRemindersControl";
 export * from "./DirectionStrategyControl";

@@ -1,10 +1,11 @@
 /**
- * Content-view-mode preference (grid ⇄ list, #1240).
+ * Content-view-mode preference (grid ⇄ list, #1240 + #1257).
  *
- * Pins the persistence contract: default is "grid" (existing tree
- * view — no break for current users), writes round-trip through
- * localStorage, and a write dispatches the change event so the
- * Content page re-reads live.
+ * Pins the persistence contract: default is "list" (#1257 — deliberate
+ * reversal of the #1240 grid default), an explicitly-stored "grid" is
+ * preserved (existing-user migration keeps their choice), writes
+ * round-trip through localStorage, and a write dispatches the change
+ * event so consumers re-read live.
  */
 
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -21,7 +22,12 @@ afterEach(() => {
 });
 
 describe("content view-mode preference", () => {
-  it("defaults to grid when nothing is stored", () => {
+  it("defaults to list when nothing is stored (#1257)", () => {
+    expect(readContentViewMode()).toBe("list");
+  });
+
+  it("preserves an explicitly stored grid choice (existing-user migration)", () => {
+    localStorage.setItem(CONTENT_VIEW_MODE_KEY, "grid");
     expect(readContentViewMode()).toBe("grid");
   });
 
@@ -33,9 +39,9 @@ describe("content view-mode preference", () => {
     expect(readContentViewMode()).toBe("grid");
   });
 
-  it("falls back to grid on an unrecognised stored value", () => {
+  it("falls back to list on an unrecognised stored value (#1257)", () => {
     localStorage.setItem(CONTENT_VIEW_MODE_KEY, "bogus");
-    expect(readContentViewMode()).toBe("grid");
+    expect(readContentViewMode()).toBe("list");
   });
 
   it("dispatches the change event on write so subscribers re-read", () => {

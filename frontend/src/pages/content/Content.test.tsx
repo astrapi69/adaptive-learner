@@ -162,6 +162,10 @@ const SAMPLE_ENTRY = {
 beforeEach(() => {
   listSetsMock.mockReset();
   downloadSetMock.mockReset();
+  // #1257 — the global content-view default is now "list". These tests
+  // assert the source→target→level TREE (grid view), so pin grid here.
+  // The list default itself is covered by Content.viewmode.test.tsx.
+  localStorage.setItem("adaptive-learner.content_view_mode", "grid");
 });
 
 function renderPage() {

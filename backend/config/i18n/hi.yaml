@@ -569,6 +569,8 @@ settings:
   section_danger: खाता
   section_ui: इंटरफ़ेस
   section_appearance: रूप-रंग
+  content_view: "सामग्री दृश्य"
+  content_view_description: "डाउनलोड की गई सामग्री को सामग्री टैब में कैसे दिखाया जाए। सामग्री दृश्य में त्वरित टॉगल वही सेटिंग बदलता है।"
   section_profile: प्रोफ़ाइल
   username_label: "प्रदर्शित नाम"
   username_placeholder: "आपका नाम"

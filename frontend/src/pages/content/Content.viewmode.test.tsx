@@ -101,25 +101,17 @@ function renderPage() {
 }
 
 describe("Content page view-mode switch", () => {
-  it("defaults to the grid/tree view", async () => {
+  it("defaults to the list view (#1257)", async () => {
     renderPage();
     await screen.findByTestId("content-page");
-    expect(screen.getByTestId("content-tree")).toBeInTheDocument();
-    expect(screen.queryByTestId("content-list-view")).not.toBeInTheDocument();
-    expect(screen.getByTestId("content-view-grid")).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByTestId("content-list-view")).toBeInTheDocument();
+    expect(screen.queryByTestId("content-tree")).not.toBeInTheDocument();
+    expect(screen.getByTestId("content-view-list")).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("renders the list view instead of the tree when list is selected", async () => {
+  it("renders the tree when grid is selected, and back to list", async () => {
     renderPage();
     await screen.findByTestId("content-page");
-
-    act(() => {
-      fireEvent.click(screen.getByTestId("content-view-list"));
-    });
-    await waitFor(() => {
-      expect(screen.getByTestId("content-list-view")).toBeInTheDocument();
-    });
-    expect(screen.queryByTestId("content-tree")).not.toBeInTheDocument();
 
     act(() => {
       fireEvent.click(screen.getByTestId("content-view-grid"));
@@ -128,5 +120,13 @@ describe("Content page view-mode switch", () => {
       expect(screen.getByTestId("content-tree")).toBeInTheDocument();
     });
     expect(screen.queryByTestId("content-list-view")).not.toBeInTheDocument();
+
+    act(() => {
+      fireEvent.click(screen.getByTestId("content-view-list"));
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId("content-list-view")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("content-tree")).not.toBeInTheDocument();
   });
 });

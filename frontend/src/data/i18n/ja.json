@@ -607,6 +607,8 @@
     "section_danger": "アカウント",
     "section_ui": "インターフェース",
     "section_appearance": "外観",
+    "content_view": "コンテンツの表示",
+    "content_view_description": "ダウンロードしたコンテンツをコンテンツタブでどのように表示するか。コンテンツ表示内のクイック切り替えも同じ設定を変更します。",
     "section_profile": "プロフィール",
     "username_label": "表示名",
     "username_placeholder": "あなたの名前",

@@ -54,6 +54,22 @@ export default defineConfig({
         // i18n text and local timestamps render identically on every machine.
         locale: "de-DE",
         timezoneId: "Europe/Berlin",
+        // #1257 — the global content-view default flipped to "list"; the
+        // visual baselines capture the grid/tree view, so seed grid.
+        storageState: {
+            cookies: [],
+            origins: [
+                {
+                    origin: `http://localhost:${PREVIEW_PORT}`,
+                    localStorage: [
+                        {
+                            name: "adaptive-learner.content_view_mode",
+                            value: "grid",
+                        },
+                    ],
+                },
+            ],
+        },
     },
     webServer: [
         {
