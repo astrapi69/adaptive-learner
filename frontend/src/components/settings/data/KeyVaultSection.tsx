@@ -17,7 +17,7 @@ import { KeyRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SecretInput } from "../../../shared/forms/SecretInput";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import { KEY_VAULT_EXTENSION } from "../../../lib/keys/key-vault";
@@ -229,9 +229,7 @@ export default function KeyVaultSection() {
                                 "Choose a strong passphrase. It cannot be recovered — without it the file cannot be opened.",
                             )}
                         </p>
-                        <Input
-                            type="password"
-                            autoComplete="new-password"
+                        <SecretInput
                             value={exportPass}
                             onChange={(e) => setExportPass(e.target.value)}
                             placeholder={t(
@@ -244,9 +242,7 @@ export default function KeyVaultSection() {
                             )}
                             data-testid="key-vault-export-pass"
                         />
-                        <Input
-                            type="password"
-                            autoComplete="new-password"
+                        <SecretInput
                             value={exportConfirm}
                             onChange={(e) => setExportConfirm(e.target.value)}
                             placeholder={t(
@@ -302,9 +298,7 @@ export default function KeyVaultSection() {
                             className="text-sm text-foreground file:mr-3 file:rounded-app file:border file:border-border file:bg-muted file:px-3 file:py-1.5 file:text-sm file:text-foreground hover:file:bg-accent/10"
                             data-testid="key-vault-import-file"
                         />
-                        <Input
-                            type="password"
-                            autoComplete="off"
+                        <SecretInput
                             value={importPass}
                             onChange={(e) => setImportPass(e.target.value)}
                             placeholder={t(

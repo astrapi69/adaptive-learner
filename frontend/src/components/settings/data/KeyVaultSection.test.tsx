@@ -4,7 +4,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import KeyVaultSection from "./KeyVaultSection";
@@ -68,5 +68,61 @@ describe("KeyVaultSection gating", () => {
             ).not.toBeDisabled(),
         );
         expect(screen.queryByTestId("key-vault-no-keys")).not.toBeInTheDocument();
+    });
+});
+
+describe("KeyVaultSection passphrase fields do not trigger the password manager (#1238)", () => {
+    const PASSPHRASE_FIELDS = [
+        "key-vault-export-pass",
+        "key-vault-export-confirm",
+        "key-vault-import-pass",
+    ] as const;
+
+    it.each(PASSPHRASE_FIELDS)(
+        "%s is a text input, never a password field",
+        async (testid) => {
+            render(<KeyVaultSection />);
+            const input = await screen.findByTestId(testid);
+            expect(input).toHaveAttribute("type", "text");
+            expect(input).not.toHaveAttribute("type", "password");
+        },
+    );
+
+    it.each(PASSPHRASE_FIELDS)(
+        "%s opts out of every common password manager",
+        async (testid) => {
+            render(<KeyVaultSection />);
+            const input = await screen.findByTestId(testid);
+            expect(input).toHaveAttribute("autocomplete", "off");
+            expect(input).toHaveAttribute("autocorrect", "off");
+            expect(input).toHaveAttribute("autocapitalize", "off");
+            expect(input).toHaveAttribute("spellcheck", "false");
+            expect(input).toHaveAttribute("data-1p-ignore"); // 1Password
+            expect(input).toHaveAttribute("data-lpignore", "true"); // LastPass
+            expect(input).toHaveAttribute("data-bwignore", "true"); // Bitwarden
+            expect(input).toHaveAttribute("data-form-type", "other"); // Dashlane
+        },
+    );
+
+    it.each(PASSPHRASE_FIELDS)(
+        "%s masks its value by default",
+        async (testid) => {
+            render(<KeyVaultSection />);
+            const input = await screen.findByTestId(testid);
+            expect(input.className).toContain("[-webkit-text-security:disc]");
+        },
+    );
+
+    it("reveals the export passphrase on the toggle", async () => {
+        render(<KeyVaultSection />);
+        const input = await screen.findByTestId("key-vault-export-pass");
+        fireEvent.change(input, { target: { value: "correct horse" } });
+        expect((input as HTMLInputElement).value).toBe("correct horse");
+
+        const toggles = screen.getAllByRole("button", { name: "Show value" });
+        fireEvent.click(toggles[0]);
+        expect(
+            (await screen.findByTestId("key-vault-export-pass")).className,
+        ).not.toContain("[-webkit-text-security:disc]");
     });
 });
