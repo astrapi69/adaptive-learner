@@ -10,6 +10,7 @@ repo + a temp README, so the exit-code contract is pinned end-to-end:
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -54,12 +55,17 @@ def _make_content_repo(root: Path) -> None:
 
 
 def _run(mode: str, *, content_dir: Path | None, readme: Path) -> int:
-    env = {
-        "PATH": __import__("os").environ["PATH"],
-        "VALIDATE_BUNDLED_CONTENT_README": str(readme),
-    }
+    # Inherit the real environment and override only the two vars the script's
+    # resolution depends on. Building a minimal env from scratch dropped the
+    # interpreter's loader vars (e.g. LD_LIBRARY_PATH), which a relocatable
+    # setup-python CPython needs to exec — it 127s without them inside the
+    # Playwright CI container (#1250).
+    env = os.environ.copy()
+    env["VALIDATE_BUNDLED_CONTENT_README"] = str(readme)
     if content_dir is not None:
         env["ADAPTIVE_LEARNER_CONTENT_DIR"] = str(content_dir)
+    else:
+        env.pop("ADAPTIVE_LEARNER_CONTENT_DIR", None)
     return subprocess.run(
         [sys.executable, str(SCRIPT), mode],
         env=env,
