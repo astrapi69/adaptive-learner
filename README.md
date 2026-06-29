@@ -219,7 +219,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**452 lessons · 30 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**460 lessons · 31 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -244,6 +244,7 @@ Full documentation (German default at `/docs/`, English at
 | Englisch A2 — Grundlagen | de | en | A2 | 15 |
 | Englisch B1 — Mittelstufe | de | en | B1 | 15 |
 | Psychologie — Grundlagen | de | de | A1 | 112 |
+| Psychologie der Beeinflussung | de | de | A2 | 8 |
 | Python — Grundlagen | de | de | A1 | 15 |
 | KI für Einsteiger | de | de | A1 | 12 |
 | Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 |
