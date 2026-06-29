@@ -1923,6 +1923,10 @@ lesson:
     action_restart: "Επανεκκίνηση"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Προβολή πλακιδίων"
+    list: "Προβολή λίστας"
+    aria: "Επιλογή προβολής"
   set_link:
     loading: "Φόρτωση σετ…"
     not_found_title: "Το σετ δεν βρέθηκε"

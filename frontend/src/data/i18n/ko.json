@@ -2084,6 +2084,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "그리드 보기",
+      "list": "목록 보기",
+      "aria": "보기 선택"
+    },
     "set_link": {
       "loading": "세트를 불러오는 중…",
       "not_found_title": "세트를 찾을 수 없습니다",

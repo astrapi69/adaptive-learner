@@ -1923,6 +1923,10 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Vista de cuadrícula"
+    list: "Vista de lista"
+    aria: "Elegir vista"
   set_link:
     loading: "Cargando el conjunto…"
     not_found_title: "Conjunto no encontrado"

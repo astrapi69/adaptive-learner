@@ -1932,6 +1932,10 @@ lesson:
     action_restart: "Mulai dari awal"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Tampilan kisi"
+    list: "Tampilan daftar"
+    aria: "Pilih tampilan"
   set_link:
     loading: "Memuat set…"
     not_found_title: "Set tidak ditemukan"

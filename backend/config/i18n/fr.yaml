@@ -1923,6 +1923,10 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Vue en grille"
+    list: "Vue en liste"
+    aria: "Choisir la vue"
   set_link:
     loading: "Chargement du jeu…"
     not_found_title: "Jeu introuvable"

@@ -2084,6 +2084,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "Vista de cuadrícula",
+      "list": "Vista de lista",
+      "aria": "Elegir vista"
+    },
     "set_link": {
       "loading": "Cargando el conjunto…",
       "not_found_title": "Conjunto no encontrado",

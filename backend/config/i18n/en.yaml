@@ -1932,6 +1932,10 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  view:
+    grid: "Grid view"
+    list: "List view"
+    aria: "Choose view"
   set_link:
     loading: "Loading set…"
     not_found_title: "Set not found"

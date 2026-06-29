@@ -2084,6 +2084,11 @@
     }
   },
   "content": {
+    "view": {
+      "grid": "グリッド表示",
+      "list": "リスト表示",
+      "aria": "表示を選択"
+    },
     "set_link": {
       "loading": "セットを読み込んでいます…",
       "not_found_title": "セットが見つかりません",
