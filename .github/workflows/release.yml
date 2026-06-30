@@ -173,14 +173,81 @@ jobs:
       - name: Full release gate (make release-test)
         run: make release-test
 
-      - name: Extra Playwright smoke
-        if: ${{ inputs.skip_e2e == false }}
-        run: make test-e2e-smoke
+      # The extra API-mode Playwright smoke runs in its OWN job
+      # (extra-smoke, below) on a fresh runner instead of being appended
+      # here: appended to this heavy release-test job it was flaky under
+      # container resource contention (#1254). release-test above is the
+      # mandatory gate (it covers Playwright via the dexie + manual-plan
+      # gates); the extra smoke is the skippable (skip_e2e) advisory.
 
       - name: Next step
         run: |
           echo "release/${{ inputs.version }} prepared + gated."
-          echo "Review the branch and its CI, then re-dispatch this workflow with stage=finish."
+          echo "Review this job AND the 'extra-smoke' job (unless skip_e2e), then re-dispatch with stage=finish."
+
+  extra-smoke:
+    name: Extra Playwright smoke (API mode)
+    # The skippable, advisory API-mode smoke. Runs in its OWN job on a fresh
+    # runner (not appended to the heavy `prepare`/release-test job) so it no
+    # longer flakes under container resource contention (#1254). Gated by
+    # skip_e2e exactly as before. `make release-test` in `prepare` remains the
+    # mandatory gate; a red extra-smoke is reviewed before stage=finish.
+    if: ${{ inputs.stage == 'prepare' && inputs.skip_e2e == false }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    # Same pre-baked-browser image as prepare (#317/#1248); runs the smoke
+    # against the release/<version> branch prepare just pushed.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+    timeout-minutes: 40
+    steps:
+      - name: Validate version input
+        run: |
+          echo "${{ inputs.version }}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            || { echo "::error::version must be X.Y.Z (no leading v), got '${{ inputs.version }}'"; exit 1; }
+
+      - uses: actions/checkout@v6
+        with:
+          ref: release/${{ inputs.version }}
+          fetch-depth: 0
+
+      - name: Install make (the Playwright noble image has none)
+        run: apt-get update && apt-get install -y --no-install-recommends make
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        # `python -m pip`, not bare `pip`: the setup-python pip shim is not on
+        # PATH in the Playwright container (mirrors the prepare job).
+        run: python -m pip install poetry
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Backend + plugin deps
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Frontend deps
+        working-directory: frontend
+        # --legacy-peer-deps: eslint@10 vs eslint-plugin-react peer cap (#266).
+        run: npm ci --legacy-peer-deps
+
+      - name: E2E deps
+        working-directory: e2e
+        run: npm ci
+
+      # NO `playwright install` step: the browsers are baked into the container.
+
+      - name: Extra Playwright smoke (retries against container flake)
+        # --retries=1 (test-e2e-smoke-retries) absorbs the occasional slow
+        # cold-start of the auto-started uvicorn + vite dev servers in the
+        # container; the raised webServer/per-test CI timeouts (#1254, see
+        # e2e/playwright.config.ts) give that startup headroom.
+        run: make test-e2e-smoke-retries
 
   finish:
     name: Finish release (merge + tag + publish)
