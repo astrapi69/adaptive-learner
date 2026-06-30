@@ -30,6 +30,40 @@ for the current catalog.
 
 ---
 
+## Lesson modes
+
+You can play a single lesson — or a whole set — in different
+**modes**. The chosen mode is remembered as your default and is
+stored on the attempt, so progress and statistics know how you
+practised:
+
+- **Practice** — the relaxed default. Every learning aid stays on:
+  hints, the theory recap, auto-read, and the solution reveal.
+- **Exam** — retrieval under realistic conditions. Hints, theory
+  recap, auto-read, and the solution reveal are hidden; feedback is
+  delayed to the end, where you get a dedicated **result view** with
+  a **pass/fail verdict** against a configurable **pass threshold**
+  and a **bonus XP** reward for passing.
+- **Timed ("Auf Zeit")** — a countdown per exercise. Difficulty is
+  selectable: **Relaxed** (2× time), **Normal**, or **Fast**
+  (0.7× time). When time runs out the answer locks; at the end you
+  get timing stats (answered in time, average / fastest / slowest).
+- **Train errors ("Fehler trainieren")** — replays only the
+  exercises you previously got wrong. The entry point is gated and
+  appears once you have mistakes to train.
+- **Reverse** — flips the exercise direction (e.g. produce instead
+  of recognise). Exercise types that cannot be reversed are shown in
+  their original format.
+- **Shuffle ("Zufall")** — interleaves and shuffles the order so you
+  cannot rely on pure muscle memory.
+- **Endless** — keeps serving exercises continuously for an
+  open-ended practice run.
+
+You can set a **default mode** (and the exam pass threshold and
+timed difficulty) under **Settings → Learning**.
+
+---
+
 ## The lesson flow
 
 Open a set, choose a lesson, and the **lesson viewer** guides you
@@ -37,7 +71,7 @@ step by step through each card and exercise:
 
 1. **Cards** present material to read. Click "Next" when you are
    ready.
-2. **Exercises** test what you remembered. Four types are
+2. **Exercises** test what you remembered. Five types are
    available:
    - **Matching** — drag pairs (word ↔ translation). Both tiles of
      a found pair share a **distinct color** and a **number

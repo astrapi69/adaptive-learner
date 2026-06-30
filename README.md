@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.97.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.98.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -125,12 +125,24 @@ Full documentation (German default at `/docs/`, English at
 
 ### Content Browser + interactive lessons
 
+- **Content hub** at `/content` with three tabs — **Discover**
+  (browse + download the catalog, **the default tab**), **My content**
+  (your downloaded sets), and **Import** (chat import + your own
+  lessons + the create/import actions). A global **list ⇄ grid view
+  toggle** (default **list**) applies across both content tabs, and
+  Discover carries a compact **search/filter bar** (language / level /
+  domain / trust / AI-checked).
 - **Downloadable lesson sets** from public GitHub content repos,
   cached locally (filesystem in server mode, IndexedDB in local
   mode); a source/trust badge per set; connect your own repos,
   plus a recommended-repos discovery section. A **deep-link route**
   (`/content/set/:setId`) opens a single set directly (both storage
   modes), enabling per-set share links / QR codes.
+- **Lesson modes** — play a lesson or a whole set as **Practice**,
+  **Exam** (delayed feedback + pass/fail verdict + XP bonus),
+  **Timed** (relaxed / normal / fast countdown), **Reverse**,
+  **Shuffle** (interleaved), or **Endless**, plus a gated
+  **"train errors"** entry that replays only what you got wrong.
 - **Five exercise types** — Matching, Picture-Choice, Free-Text,
   Cloze (fill-in-the-blank), Word-Tiles — with token-level diff
   feedback. **Matching is bidirectional** (start a pair from
@@ -266,7 +278,7 @@ share the exact same format, so a validating repo is a first-class
 content source.
 
 Want to create your own lessons? See the
-[Content-Repo Guide](docs/CONTENT-REPO-GUIDE.md) — what a content repo
+[Content-Repo Guide](docs/reference/CONTENT-REPO-GUIDE.md) — what a content repo
 is, the directory layout, local validation, trust levels, and the
 ready-made [starter kit](https://github.com/astrapi69/adaptive-learner-content-test).
 
@@ -461,11 +473,18 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. **v1.79.0 was released 2026-06-14** with
-visible XP, bidirectional matching, and a completed
-architecture thread (god-file decomposition, R-M-W
-data-integrity remediation, and complexity burn-down all done;
-both ratchet baselines empty). Per-release notes in
+Active development. The current release is **v1.97.1**, a schema +
+tooling release in which the lesson **JSON-Schema is the
+app-authoritative single source of truth** (schema, quality rules,
+docs, and TS types are generated from the App's Pydantic models, and
+the structural validator is ajv-hardened against it). Recent feature
+work includes the **Content hub** redesign (Discover / My content /
+Import tabs, a global list ⇄ grid view toggle, and a compact
+search/filter bar), the full **lesson-mode system** (Practice / Exam /
+Timed / Reverse / Shuffle / Endless + train-errors), **cloze
+multiselect** "select all that apply", an exam-mode SRS interval
+boost, **passphrase-encrypted `.alk`** export of AI keys, and a
+vertical desktop sidebar. Per-release notes in
 [`changelog/releases/`](changelog/releases/).
 
 ## Origin

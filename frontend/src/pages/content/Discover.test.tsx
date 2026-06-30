@@ -75,6 +75,11 @@ function makeSet(over: Partial<SearchableSet>): SearchableSet {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
+  // #1262 — the global content-view default is now "list" (#1257). These
+  // tests assert the card GRID, so pin grid; the list view + default are
+  // covered by the dedicated tests below.
+  localStorage.setItem("adaptive-learner.content_view_mode", "grid");
   fetchAllIndicesMock.mockResolvedValue([
     makeSet({ id: "es-a1", name: "Spanish A1", target_language: "es" }),
     makeSet({ id: "fr-a1", name: "French A1", target_language: "fr", lesson_count: 10 }),
@@ -265,5 +270,71 @@ describe("Discover page", () => {
     expect(button).toHaveAttribute("aria-expanded", "true");
     expect(button).not.toHaveAttribute("data-blink", "true");
     localStorage.clear();
+  });
+
+  // --- #1262: grid/list view toggle (global preference) ---
+
+  it("renders the grid/list toggle and switches between grid and list", async () => {
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    // Seeded grid (beforeEach): the card grid is shown.
+    expect(screen.getByTestId("discover-results")).toBeInTheDocument();
+    expect(screen.getByTestId("content-view-toggle")).toBeInTheDocument();
+
+    // Switch to the list view.
+    fireEvent.click(screen.getByTestId("content-view-list"));
+    await waitFor(() => expect(screen.getByTestId("discover-list-view")).toBeInTheDocument());
+    expect(screen.queryByTestId("discover-results")).toBeNull();
+    // The toggle writes the shared global preference.
+    expect(localStorage.getItem("adaptive-learner.content_view_mode")).toBe("list");
+
+    // ...and back to grid.
+    fireEvent.click(screen.getByTestId("content-view-grid"));
+    await waitFor(() => expect(screen.getByTestId("discover-results")).toBeInTheDocument());
+    expect(screen.queryByTestId("discover-list-view")).toBeNull();
+  });
+
+  it("defaults to the list view for a fresh user (#1257)", async () => {
+    localStorage.clear();
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    expect(screen.getByTestId("discover-list-view")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-results")).toBeNull();
+    expect(screen.getByTestId("content-view-list")).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("list rows show the language code for a language set, only the title for a knowledge set", async () => {
+    localStorage.setItem("adaptive-learner.content_view_mode", "list");
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "es-a1", name: "Spanish A1", source_language: "de", target_language: "es" }),
+      makeSet({
+        id: "psy-1",
+        name: "Psychology 101",
+        domain: "psychology",
+        source_language: "de",
+        target_language: "de",
+      }),
+    ]);
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-list-view")).toBeInTheDocument());
+    // Language set: shows the de→es code.
+    expect(screen.getByTestId("discover-list-es-a1-langs")).toHaveTextContent("de→es");
+    // Knowledge set: title only, no language code.
+    expect(screen.getByText("Psychology 101")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-list-psy-1-langs")).toBeNull();
+  });
+
+  it("downloads a set from the list row", async () => {
+    localStorage.setItem("adaptive-learner.content_view_mode", "list");
+    downloadSetMock.mockResolvedValue({});
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-list-view")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-list-fr-a1-download"));
+    await waitFor(() =>
+      expect(downloadSetMock).toHaveBeenCalledWith("owner/repo", "fr-a1", expect.any(Function)),
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-list-fr-a1-downloaded")).toBeInTheDocument(),
+    );
   });
 });

@@ -36,6 +36,11 @@ repos:
       - id: check-json
       - id: check-added-large-files
         args: [--maxkb=1000]
+        # docs/review/ holds deliberately large, generated review artifacts
+        # (e.g. the combined i18n export 100-all.md, ~1.4 MB). They are text,
+        # reviewed once, and exempt from the accidental-large-blob guard. CI's
+        # file-size-check only scans source (py/ts/js), so .md is unaffected there.
+        exclude: ^docs/review/.*\.md$
       - id: check-merge-conflict
 
   - repo: https://github.com/astral-sh/ruff-pre-commit

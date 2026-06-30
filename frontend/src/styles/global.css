@@ -2555,14 +2555,13 @@ select:focus {
 .content-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-3);
+  align-items: center;
+  gap: var(--space-2);
   margin-bottom: var(--space-3);
 }
 
 .content-header h1 {
   margin: 0;
-  flex-grow: 1;
 }
 
 .content-refresh-btn {
@@ -4082,6 +4081,22 @@ select:focus {
   body.has-desktop-sidebar .app-nav .nav-brand,
   body.has-desktop-sidebar .app-nav .nav-links {
     display: none;
+  }
+  /* #1260 — animate the content reflow when the sidebar opens/closes so the
+     width change is dezent rather than a hard jump. The padding-left is what
+     reserves / releases the sidebar's column, so transitioning it (on #root
+     and the top bar) covers the whole reflow. */
+  #root,
+  .app-nav {
+    transition: padding-left 200ms ease;
+  }
+}
+
+/* Respect reduced-motion: no sliding reflow, the layout snaps. */
+@media (prefers-reduced-motion: reduce) {
+  #root,
+  .app-nav {
+    transition: none;
   }
 }
 

@@ -89,7 +89,7 @@ Done so far: `build_analysis_context`, `LessonPage`, `ImportDetail`, `previewRow
 
 ## 4. Next tasks by the priority hierarchy
 
-Per `.claude/rules/vibe-coding.md` (and `docs/VIBE-CODING-POLICY.md` §Priority
+Per `.claude/rules/vibe-coding.md` (and `docs/policies/VIBE-CODING-POLICY.md` §Priority
 Hierarchy): **merge open PRs → P0/P1 bugs → infrastructure → UI fixes →
 cleanup/refactoring → features → release.**
 
@@ -158,7 +158,7 @@ When idle / told "weiter": work the GitHub issue tracker as the queue
   - `quality-checks.md` — test strategy, BACKUP-AKZEPTANZTEST gate.
   - `release-workflow.md` — the full release procedure.
   - `ai-workflow.md` — GITHUB-ISSUE-PFLICHT, issues-as-queue, docs protocol.
-- `docs/VIBE-CODING-POLICY.md` — the human-facing policy (prompt precision, layer
+- `docs/policies/VIBE-CODING-POLICY.md` — the human-facing policy (prompt precision, layer
   discipline, test verification, security/deps, refactoring, git hygiene, priority
   hierarchy, **Release Freeze**, agent roles).
 - `CLAUDE.md` — project overview, current state (v1.77.0), data model, plugins,

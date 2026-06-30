@@ -90,6 +90,8 @@ nav:
   offline: Çevrimdışı
   anki: Anki
   contribute: "Katkıda bulun"
+  sidebar_open: "Kenar çubuğunu aç"
+  sidebar_close: "Kenar çubuğunu kapat"
   dev_badge: DEV
   dev_badge_tooltip: "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın."
   content: "İçeriğim"
@@ -567,6 +569,8 @@ settings:
   section_danger: Hesap
   section_ui: Arayüz
   section_appearance: "Gorunum"
+  content_view: "İçerik görünümü"
+  content_view_description: "İndirilen içeriğin içerik sekmelerinde nasıl gösterileceği. İçerik görünümündeki hızlı geçiş aynı ayarı değiştirir."
   section_profile: "Profil"
   username_label: "Görünen ad"
   username_placeholder: "Adınız"
@@ -2009,6 +2013,23 @@ content:
     delete_confirm: "Bu ders silinsin mi? Bu geri alınamaz."
     deleted: "Ders silindi."
     delete_failed: "Ders silinemedi."
+  set_status:
+    all: "Tümü"
+    active: "Etkin"
+    deferred: "Ertelendi"
+    completed: "Tamamlandı"
+    filter_aria: "Duruma göre filtrele"
+    menu_aria: "Set eylemleri"
+    changed: "Durum güncellendi."
+    change_failed: "Durum güncellenemedi."
+    deleted: "Set kaldırıldı."
+    delete_failed: "Set kaldırılamadı."
+    delete_confirm: "İndirilen set ve dersleri İçeriklerim'den kaldırılacak. Öğrenme ilerlemen korunur ve seti istediğin zaman yeniden indirebilirsin."
+    action:
+      activate: "Yeniden etkinleştir"
+      defer: "Ertele"
+      complete: "Tamamlandı olarak işaretle"
+      delete: "Sil"
   ai_exercises:
     batch:
       button: "Tüm dersler için oluştur"
@@ -2075,7 +2096,7 @@ content:
     free_prompt: "Çevir: {word}"
     cloze_prompt: "Eksik kelimeyi doldur."
     tiles_prompt: "Kelimeleri cümle oluşturacak şekilde sırala ({word})."
-  page_title: "İçerik setleri"
+  page_title: "İçeriklerim"
   intro: "API anahtarı olmadan kullanabileceğiniz hazır ders setleri. İndirmeler yerel olarak önbelleğe alınır ve ilk indirmeden sonra çevrimdışı çalışır."
   sources: "Kaynaklar"
   lessons: "ders"
@@ -2986,8 +3007,6 @@ discover:
     domain: "Alan"
     trust: "Güven"
     ai_checked: "Yapay zeka kontrollü"
-    "yes": "Evet"
-    "no": "Hayır"
   trust:
     official: "Resmi olarak önerilen"
     verified: "Doğrulanmış"

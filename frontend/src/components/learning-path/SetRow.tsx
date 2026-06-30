@@ -30,6 +30,7 @@ import {Link} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {cn} from "../../lib/utils";
+import DownloadedAtReadout from "../dev/DownloadedAtReadout";
 import {lessonRoute} from "../../lib/content/browse/continue-learning";
 import {relativeTime} from "../../lib/utils/relative-time";
 import type {PersonalPathSet} from "../../lib/learning-path/personal-path";
@@ -235,6 +236,15 @@ export default function SetRow({
                                 </span>
                             )}
                         </span>
+                        {/* #1211 follow-up / #1298 — a Dev-Mode-only readout
+                            of the set's download timestamp (the field that
+                            drives the untouched-tier ordering). Shared with the
+                            "Meine Inhalte" downloaded-set views so the surfaces
+                            cannot drift. */}
+                        <DownloadedAtReadout
+                            downloadedAt={set.downloadedAt}
+                            testId={`set-downloaded-at-${set.setId}`}
+                        />
                     </span>
                 </button>
                 <div className="flex shrink-0 items-center">

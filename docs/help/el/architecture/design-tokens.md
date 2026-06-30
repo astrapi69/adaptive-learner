@@ -5,7 +5,7 @@
 φτιάξει ένα νέο theme, επεξεργάζεται ένα μόνο αρχείο `theme-*.css` και
 δεν αγγίζει καμία component. Αυτός ο κανόνας επιβάλλεται από tests, όχι
 απλώς από σύμβαση. Η πλήρης αναφορά token βρίσκεται στο
-[`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md).
+[`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md).
 
 ---
 
@@ -69,4 +69,4 @@ Tailwind-Utilities με σταθερή παλέτα (πρέπει να είνα�
 ## Σχετικές σελίδες
 
 - [Σύστημα Theme](../developer/themes.md) — τα παρεχόμενα themes + picker
-- [`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md) — πλήρης λίστα token
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — πλήρης λίστα token

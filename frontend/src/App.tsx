@@ -20,12 +20,13 @@ import DesktopUpdateHost from "./components/pwa/DesktopUpdateHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/pwa/InstallPrompt";
 import IosInstallHint from "./components/pwa/IosInstallHint";
-import ReminderScheduler from "./components/settings/controls/ReminderScheduler";
+import ReminderScheduler from "./components/settings/controls/reminders/ReminderScheduler";
 import Navigation from "./components/nav/Navigation";
 import DesktopSidebar from "./components/nav/DesktopSidebar";
 import BottomTabBar from "./components/nav/BottomTabBar";
 import OfflineIndicator from "./components/pwa/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
+import { DesktopSidebarProvider } from "./contexts/DesktopSidebarContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
 import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
@@ -158,6 +159,7 @@ export default function App() {
         <FeatureProvider registry={featureRegistry} context={featureContext}>
           <HelpProvider>
             <ConfirmProvider>
+            <DesktopSidebarProvider>
             <SkipToContent />
             <UpdatePromptHost />
             <DesktopUpdateHost />
@@ -251,6 +253,7 @@ export default function App() {
               pauseOnHover
               theme="colored"
             />
+            </DesktopSidebarProvider>
             </ConfirmProvider>
           </HelpProvider>
         </FeatureProvider>

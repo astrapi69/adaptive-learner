@@ -57,6 +57,33 @@ def test_no_bool_keys_anywhere(lang: str):
     walk(doc)
 
 
+@pytest.mark.parametrize("lang", [REFERENCE, *TRANSLATIONS])
+def test_no_bool_values_anywhere(lang: str):
+    """YAML 1.1 parses ``yes``/``no``/``true``/``false``/``on``/``off`` as
+    booleans. A translation VALUE written unquoted that way (e.g.
+    ``'yes': true`` in en/hi/id/ko, #1286) resolves to a Python bool and the
+    UI renders ``true``/``false`` instead of a label. Every leaf value must be
+    a string (or number) — never a bool. Quote it: ``'yes': "Yes"``.
+    """
+    doc = _load(lang)
+
+    def walk(node, path=""):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                walk(v, f"{path}.{k}" if path else str(k))
+        elif isinstance(node, list):
+            for i, v in enumerate(node):
+                walk(v, f"{path}[{i}]")
+        else:
+            assert not isinstance(node, bool), (
+                f"{lang}.yaml has a bool YAML value at {path}: {node!r}. "
+                f"A YAML 1.1 bric (yes/no/true/false/on/off) was left unquoted; "
+                f'quote it as a string, e.g. \'yes\': "Yes".'
+            )
+
+    walk(doc)
+
+
 @pytest.mark.parametrize("lang", TRANSLATIONS)
 def test_top_level_sections_match_reference(lang: str):
     """Every top-level section in EN must exist in every translation."""

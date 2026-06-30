@@ -44,6 +44,9 @@ import SetDiscoveryCard, {
   type SetDiscoveryCardLabels,
   type SetDiscoveryDownloadState,
 } from "../../shared/media/SetDiscoveryCard";
+import DiscoverSetListView from "../../shared/media/DiscoverSetListView";
+import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
+import { useContentViewMode } from "../../hooks/content/useContentViewMode";
 import { getStorage } from "../../storage";
 import { notify } from "../../utils/notify";
 
@@ -72,6 +75,9 @@ export default function Discover() {
   const [downloadProgress, setDownloadProgress] = useState<
     Record<string, { current: number; total: number }>
   >({});
+  // #1262 — grid (card) ⇄ list view, fed by the GLOBAL content-view
+  // preference (#1257, default list) shared with "Meine Inhalte".
+  const [viewMode, setViewMode] = useContentViewMode();
 
   // Debounce the search field into the active query filter.
   useEffect(() => {
@@ -174,8 +180,8 @@ export default function Discover() {
         value: filters.aiChecked,
         options: [
           all,
-          { value: "yes", label: t("discover.filter.yes", "Yes") },
-          { value: "no", label: t("discover.filter.no", "No") },
+          { value: "yes", label: t("common.yes", "Yes") },
+          { value: "no", label: t("common.no", "No") },
         ],
       },
       {
@@ -312,9 +318,16 @@ export default function Discover() {
         testId="discover-search-filter"
       />
 
-      <p className="mb-3 text-sm text-muted-foreground" data-testid="discover-count">
-        {t("discover.result.count", "{n} sets").replace("{n}", String(results.length))}
-      </p>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground" data-testid="discover-count">
+          {t("discover.result.count", "{n} sets").replace("{n}", String(results.length))}
+        </p>
+        {/* #1262 — grid/list toggle, sharing the global view preference.
+            Shown once there is content to view. */}
+        {allSets.length > 0 && (
+          <ContentViewToggle mode={viewMode} onChange={setViewMode} />
+        )}
+      </div>
 
       {allSets.length === 0 ? (
         <p className="text-muted-foreground" data-testid="discover-empty-none">
@@ -327,6 +340,25 @@ export default function Discover() {
             filters.query,
           )}
         </p>
+      ) : viewMode === "list" ? (
+        <DiscoverSetListView
+          sets={results}
+          keyFor={discoverSetKey}
+          isDownloaded={(set) => downloadedKeys.has(discoverSetKey(set))}
+          stateFor={(set) => downloadState[discoverSetKey(set)] ?? "idle"}
+          canRemove={(set) => !isOfficialSource(set.repo_url)}
+          onDownload={handleDownload}
+          onRemove={handleRemove}
+          labels={{
+            download: cardLabels.download,
+            downloading: cardLabels.downloading,
+            retry: cardLabels.retry,
+            downloaded: cardLabels.downloaded,
+            remove: cardLabels.remove,
+            lessons: (count) =>
+              t("discover.card.lessons", "{n} lessons").replace("{n}", String(count)),
+          }}
+        />
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="discover-results">
           {results.map((set) => {

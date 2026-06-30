@@ -5,7 +5,7 @@ Adaptive Learner はローカルファーストです。サーバーモード（
 IndexedDB に保持します。**同期**は、これらのデバイスをローカル
 ネットワーク経由で接続することを目的としています。完全な
 リファレンスは
-[`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+[`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)
 にあります。
 
 ---
@@ -42,4 +42,4 @@ PWA のみのデプロイで機能しない操作要素が生まれないよう�
 
 - [ストレージレイヤー](../developer/storage-layer.md) — デュアルストレージの抽象化
 - [バックアップと復元](../features/backup.md) — 同期なしの手動データ転送
-- [`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+- [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

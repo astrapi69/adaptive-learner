@@ -98,6 +98,8 @@
     "offline": "Offline",
     "anki": "Anki",
     "contribute": "Beitragen",
+    "sidebar_open": "Seitenleiste öffnen",
+    "sidebar_close": "Seitenleiste schließen",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Entwicklermodus aktiv — Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar.",
     "content": "Meine Inhalte",
@@ -607,6 +609,8 @@
     "section_danger": "Konto",
     "section_ui": "Oberfläche",
     "section_appearance": "Darstellung",
+    "content_view": "Ansicht der Inhalte",
+    "content_view_description": "Wie heruntergeladene Inhalte in den Inhalte-Tabs angezeigt werden. Der Schnellumschalter in der Inhalte-Ansicht ändert dieselbe Einstellung.",
     "section_profile": "Profil",
     "username_label": "Anzeigename",
     "username_placeholder": "Dein Name",
@@ -2186,6 +2190,25 @@
       "deleted": "Lektion gelöscht.",
       "delete_failed": "Die Lektion konnte nicht gelöscht werden."
     },
+    "set_status": {
+      "all": "Alle",
+      "active": "Aktiv",
+      "deferred": "Zurückgestellt",
+      "completed": "Abgeschlossen",
+      "filter_aria": "Nach Status filtern",
+      "menu_aria": "Aktionen für dieses Set",
+      "changed": "Status aktualisiert.",
+      "change_failed": "Status konnte nicht aktualisiert werden.",
+      "deleted": "Set entfernt.",
+      "delete_failed": "Set konnte nicht entfernt werden.",
+      "delete_confirm": "Das heruntergeladene Set und seine Lektionen werden aus „Meine Inhalte“ entfernt. Dein Lernfortschritt bleibt erhalten, und du kannst das Set jederzeit erneut herunterladen.",
+      "action": {
+        "activate": "Wieder aktivieren",
+        "defer": "Zurückstellen",
+        "complete": "Als abgeschlossen markieren",
+        "delete": "Löschen"
+      }
+    },
     "ai_exercises": {
       "batch": {
         "button": "Übungen für alle Lektionen generieren",
@@ -2257,7 +2280,7 @@
       "cloze_prompt": "Fülle das fehlende Wort ein.",
       "tiles_prompt": "Bringe die Wörter in die richtige Reihenfolge ({word})."
     },
-    "page_title": "Inhalte",
+    "page_title": "Meine Inhalte",
     "intro": "Vorgefertigte Lektionssets, die ohne API-Schlüssel nutzbar sind. Heruntergeladene Sets werden lokal gespeichert und sind nach dem ersten Abruf offline verfügbar.",
     "sources": "Quellen",
     "lessons": "Lektionen",
@@ -3265,9 +3288,7 @@
       "level": "Niveau",
       "domain": "Bereich",
       "trust": "Vertrauen",
-      "ai_checked": "KI-geprüft",
-      "yes": "Ja",
-      "no": "Nein"
+      "ai_checked": "KI-geprüft"
     },
     "trust": {
       "official": "Offiziell empfohlen",

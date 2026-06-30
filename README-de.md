@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.97.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.98.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
@@ -126,14 +126,31 @@ Englisch unter `/docs/en/`):
 
 ### Inhalts-Browser + interaktive Lektionen
 
+- **Content-Hub** unter `/content` mit drei Tabs — **Entdecken**
+  (Katalog durchsuchen + herunterladen, **der Standard-Tab**),
+  **Meine Inhalte** (deine heruntergeladenen Sätze) und **Import**
+  (Chat-Import + eigene Lektionen + die Erstellen/Importieren-
+  Aktionen). Ein globaler **Listen- ⇄ Kachel-Umschalter** (Standard
+  **Liste**) gilt für beide Inhalts-Tabs, und Entdecken trägt eine
+  kompakte **Such-/Filter-Leiste** (Sprache / Niveau / Domäne /
+  Trust / KI-geprüft).
 - **Herunterladbare Lektions-Sets** aus öffentlichen GitHub-Repos,
   lokal gecacht (Dateisystem im Server-Modus, IndexedDB im
   Lokal-Modus); Quell-/Trust-Badge pro Set; eigene Repos
-  verbindbar + ein Bereich für empfohlene Repos.
+  verbindbar + ein Bereich für empfohlene Repos. Eine
+  **Deep-Link-Route** (`/content/set/:setId`) öffnet einen
+  einzelnen Satz direkt (beide Speichermodi).
+- **Lernmodi** — eine Lektion oder einen ganzen Satz als **Üben**,
+  **Prüfung** (verzögertes Feedback + Bestanden/Nicht-bestanden-
+  Urteil + XP-Bonus), **Auf Zeit** (Countdown entspannt / normal /
+  schnell), **Reverse**, **Zufall** (verschachtelt) oder **Endlos**
+  spielen, plus einen gesperrten **„Fehler trainieren"**-Einstieg,
+  der nur das Falsche wiederholt.
 - **Fünf Übungstypen** — Matching, Picture-Choice, Freitext,
   Cloze (Lückentext), Word-Tiles — mit Token-Diff-Feedback.
   **Matching ist bidirektional** (Paar von beiden Spalten aus
-  startbar, nicht nur A → B).
+  startbar, nicht nur A → B). Cloze deckt Tippen / Auswählen /
+  **„alle zutreffenden auswählen"** (Mehrfachauswahl) ab.
 - **Auto-Splitting** zu großer importierter Lektionen in Teile,
   mit lokalisierten Teil-Titeln ("… - Teil 2" / "… - Part 2").
 - **Adaptive Lektionen** (regelbasiert, clientseitig) aus der
@@ -382,11 +399,19 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. **v1.79.0 wurde am 2026-06-14
-veröffentlicht** mit sichtbarem XP, bidirektionalem Matching und
-einem abgeschlossenen Architektur-Strang (God-File-Zerlegung,
-R-M-W-Datenintegritäts-Sanierung und Komplexitäts-Burn-down alle
-erledigt; beide Ratchet-Baselines leer). Per-Release-Notes in
+Aktive Entwicklung. Das aktuelle Release ist **v1.97.1**, ein
+Schema- + Tooling-Release, in dem das **Lektions-JSON-Schema die
+App-autoritative einzige Quelle der Wahrheit** ist (Schema,
+Qualitätsregeln, Doku und TS-Typen werden aus den Pydantic-Modellen
+der App generiert, der Strukturvalidator ist ajv-gehärtet). Jüngere
+Feature-Arbeit umfasst den **Content-Hub**-Umbau (Tabs Entdecken /
+Meine Inhalte / Import, einen globalen Listen- ⇄ Kachel-Umschalter
+und eine kompakte Such-/Filter-Leiste), das vollständige
+**Lernmodus-System** (Üben / Prüfung / Auf Zeit / Reverse / Zufall /
+Endlos + Fehler trainieren), **Cloze-Mehrfachauswahl** „alle
+zutreffenden auswählen", einen Prüfungsmodus-SRS-Intervallbonus, den
+passphrase-verschlüsselten **`.alk`**-Export der KI-Schlüssel und
+eine vertikale Desktop-Seitenleiste. Per-Release-Notes in
 [`changelog/releases/`](changelog/releases/).
 
 ## Herkunft

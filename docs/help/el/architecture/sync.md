@@ -4,7 +4,7 @@
 δεδομένα στο σύστημα αρχείων, ο αμιγής τρόπος Browser (Dexie) στο
 IndexedDB. Ο **συγχρονισμός** προορίζεται να συνδέει αυτές τις
 συσκευές μέσω του τοπικού δικτύου. Η πλήρης αναφορά βρίσκεται στο
-[`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md).
+[`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md).
 
 ---
 
@@ -41,4 +41,4 @@ pairing **δεν** επανενεργοποιείται από πριν στον
 
 - [Storage-Layer](../developer/storage-layer.md) — η διπλή αφαίρεση αποθήκευσης
 - [Backup και επαναφορά](../features/backup.md) — χειροκίνητη μεταφορά δεδομένων χωρίς Sync
-- [`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+- [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

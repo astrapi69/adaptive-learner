@@ -333,7 +333,7 @@ different slice of the UI (or none):
   tooltip. `hidden` is reserved for dev-only feature flags and the
   registry's fail-closed handling of unknown ids.
 
-Full reference: [docs/SYNC-ARCHITECTURE.md](../../docs/SYNC-ARCHITECTURE.md).
+Full reference: [docs/policies/SYNC-ARCHITECTURE.md](../../docs/policies/SYNC-ARCHITECTURE.md).
 Origin: issue #51; state policy revised in #335.
 
 ## Data flow

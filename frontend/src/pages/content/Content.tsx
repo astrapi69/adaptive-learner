@@ -32,8 +32,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import InfoHint from "../../shared/feedback/InfoHint";
-import ContinueLearning from "../../components/dashboard/ContinueLearning";
+import InfoHintButton from "../../shared/feedback/InfoHintButton";
+import { useInfoHint } from "../../shared/feedback/useInfoHint";
 import ContentTree from "../../components/content/browser/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
@@ -42,6 +42,7 @@ import ContentSearchBar from "../../components/content/browser/ContentSearchBar"
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
 import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
 import ContentSetListView from "../../components/content/browser/ContentSetListView";
+import DeleteSetModal from "../../components/content/browser/DeleteSetModal";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
@@ -62,13 +63,17 @@ import {
   recordContribution,
 } from "../../lib/content/placement/contribution-history";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
-import { readLearnerState } from "../../lib/learning/learnerState";
 import { resolveStorageMode } from "../../storage";
 import AiValidationDialog from "../../components/content/quality/AiValidationDialog";
 import QualityCheckDialog from "../../components/content/quality/QualityCheckDialog";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
 import { isOfficialSource } from "../../lib/content/repos/content-repos";
+import {
+  STATUS_FILTER_ORDER,
+  matchesStatusFilter,
+  type StatusFilter,
+} from "../../lib/content/browse/set-status-filter";
 import type { ContentSetEntry } from "../../storage/types";
 
 /** Community contribution target repo (manual maintainer review). */
@@ -122,12 +127,19 @@ export default function ContentPage() {
   // EXP-023 Phase B — source filter: "all" / "official" / a specific
   // user-repo source ("owner/repo").
   const [sourceFilter, setSourceFilter] = useState<string>("all");
+  // #1300 — lifecycle status filter. Default "active" so "Meine Inhalte"
+  // opens on the clean working list; deferred/completed/all reachable here.
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("active");
   // #1240 — grid (rich tree) ⇄ list (compact) view. Default grid;
   // persisted across navigation/reload.
   const [viewMode, setViewMode] = useContentViewMode();
 
   const { hasKey, activeProvider } = useApiKeyStatus();
-  const userId = readLearnerState().userId;
+
+  // #1272 — the header info button reveals the intro prose AND the
+  // (dynamic) configured-sources line in one expandable panel below the
+  // header, instead of a permanent sources line.
+  const headerInfo = useInfoHint("content_my");
 
   // EXP-033 / AIV-02 — set-wide AI content check. The trigger is gated to
   // Dexie mode (browser-direct provider call; no server route) + a
@@ -152,6 +164,11 @@ export default function ContentPage() {
     deleteTarget,
     setDeleteTarget,
     deleting,
+    deleteSetTarget,
+    setDeleteSetTarget,
+    deletingSet,
+    handleSetStatus,
+    handleConfirmDeleteSet,
     openLessonFile,
     handleOpenLesson,
     handleEditUserSet,
@@ -200,6 +217,8 @@ export default function ContentPage() {
   ];
   const hasUserRepoSets = userRepoSources.length > 0;
   const visibleSets = downloadedSets.filter((s) => {
+    // #1300 — status filter (default "active"); "all" passes every status.
+    if (!matchesStatusFilter(s, statusFilter)) return false;
     if (sourceFilter === "all") return true;
     if (sourceFilter === "official") return isOfficialSource(s.source);
     return s.source === sourceFilter;
@@ -221,11 +240,23 @@ export default function ContentPage() {
 
   return (
     <main id="main" className="page content-page" data-testid="content-page">
-      <header className="content-header">
-        <h1>{t("content.page_title", "Content sets")}</h1>
+      <header className="content-header" data-testid="content-header">
+        <h1>{t("content.page_title", "Meine Inhalte")}</h1>
+        {/* #1272 — the info button sits inline, right after the title;
+            it reveals the intro prose + the (dynamic) sources line below
+            the header on demand. */}
+        <InfoHintButton
+          expanded={headerInfo.expanded}
+          blink={headerInfo.blink}
+          label={t("ui.info.show", "Show information")}
+          controls="content-info-text"
+          onClick={headerInfo.toggle}
+          testId="content-info-button"
+          className="self-center"
+        />
         <button
           type="button"
-          className="content-refresh-btn"
+          className="content-refresh-btn ml-auto"
           onClick={handleRefresh}
           disabled={refreshing}
           data-testid="content-refresh"
@@ -237,25 +268,29 @@ export default function ContentPage() {
             : t("content.action.refresh", "Refresh")}
         </button>
       </header>
-      {/* #1251 — the permanent intro prose is replaced by an info button
-          that expands the text inline on demand (it blinks gently for a
-          first-time visitor, then bows out). Saves vertical space at the
-          top for users already in the content area. */}
-      <InfoHint
-        storageId="content_my"
-        text={t(
-          "content.intro",
-          "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
-        )}
-        label={t("ui.info.show", "Show information")}
-        testId="content-info"
-      />
-
-      {sources.length > 0 && (
-        <p className="content-sources" data-testid="content-sources">
-          {t("content.sources", "Sources")}:{" "}
-          {sources.map((src) => `${src.source} @ ${src.branch}`).join(", ")}
-        </p>
+      {/* #1251 / #1272 — the permanent intro prose AND the sources line are
+          replaced by the header info button above, which expands both here
+          on demand (saving vertical space). The sources stay dynamic — the
+          actually-configured sources from listSets(). */}
+      {headerInfo.expanded && (
+        <div
+          id="content-info-text"
+          data-testid="content-info-text"
+          className="mb-4 text-sm text-muted-foreground"
+        >
+          <p>
+            {t(
+              "content.intro",
+              "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
+            )}
+          </p>
+          {sources.length > 0 && (
+            <p className="content-sources mt-1" data-testid="content-sources">
+              {t("content.sources", "Sources")}:{" "}
+              {sources.map((src) => `${src.source} @ ${src.branch}`).join(", ")}
+            </p>
+          )}
+        </div>
       )}
 
       {/* EXP-025 / AUTH-02 — book-companion headers for connected repos
@@ -282,16 +317,10 @@ export default function ContentPage() {
         </p>
       )}
 
-      {/* UX overhaul C3 — Continue Learning: the learner's recent
-          activity, directly below the search, above the tree. Hidden
-          while a search is active (results replace the browse view)
-          and when there is no recent activity (the tree covers
-          discovery). */}
-      {!searchResult.active && userId && (
-        <div className="mb-4">
-          <ContinueLearning userId={userId} maxItems={5} showWhenEmpty={false} />
-        </div>
-      )}
+      {/* #1269 — Continue Learning ("Weitermachen") removed from the
+          content tab: it displaced the downloaded sets and duplicated the
+          Dashboard, which is its home. The component itself stays for the
+          Dashboard; only this embedding is gone. */}
 
       {/* #1253 — the standalone "My Lessons" section (unmatched
           user-generated sets) moved to the Import tab
@@ -322,6 +351,42 @@ export default function ContentPage() {
               <ContentViewToggle mode={viewMode} onChange={setViewMode} />
             )}
           </div>
+          {/* #1300 — lifecycle status filter (Aktiv / Zurückgestellt /
+              Abgeschlossen / Alle). Same toggle-group pattern as the source
+              filter; default "active" so the working list stays clean. */}
+          {downloadedSets.length > 0 && (
+            <div
+              className="mb-3 flex flex-wrap items-center gap-1"
+              role="group"
+              aria-label={t("content.set_status.filter_aria", "Filter by status")}
+              data-testid="content-status-filter"
+            >
+              {STATUS_FILTER_ORDER.map((value) => {
+                const label =
+                  value === "all"
+                    ? t("content.set_status.all", "All")
+                    : value === "active"
+                      ? t("content.set_status.active", "Active")
+                      : value === "deferred"
+                        ? t("content.set_status.deferred", "Deferred")
+                        : t("content.set_status.completed", "Completed");
+                return (
+                  <Button
+                    key={value}
+                    type="button"
+                    size="sm"
+                    variant={statusFilter === value ? "default" : "outline"}
+                    className="min-h-11"
+                    aria-pressed={statusFilter === value}
+                    onClick={() => setStatusFilter(value)}
+                    data-testid={`content-status-filter-${value}`}
+                  >
+                    {label}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
           {hasUserRepoSets && (
             <div
               className="mb-3 flex flex-wrap items-center gap-1"
@@ -357,7 +422,11 @@ export default function ContentPage() {
               )}
             </p>
           ) : viewMode === "list" ? (
-            <ContentSetListView sets={visibleSets} />
+            <ContentSetListView
+              sets={visibleSets}
+              onSetStatus={(e, status) => void handleSetStatus(e, status)}
+              onDelete={setDeleteSetTarget}
+            />
           ) : (
             <ContentTree
               tree={tree}
@@ -382,6 +451,8 @@ export default function ContentPage() {
                 onQualityCheck: (e) => setQualityCheckTarget(e),
                 aiBadgeStatusFor: (e): AiCheckBadgeStatus =>
                   aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
+                onSetStatus: (e, status) => void handleSetStatus(e, status),
+                onDelete: setDeleteSetTarget,
               }}
               folded={{
                 setsByKey: userSetsByKey,
@@ -426,6 +497,14 @@ export default function ContentPage() {
         deleting={deleting}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDeleteUserSet}
+      />
+
+      {/* #1300 — destructive confirmation for removing a downloaded set. */}
+      <DeleteSetModal
+        target={deleteSetTarget}
+        deleting={deletingSet}
+        onCancel={() => setDeleteSetTarget(null)}
+        onConfirm={() => void handleConfirmDeleteSet()}
       />
     </main>
   );

@@ -24,6 +24,7 @@ import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
 import { createTestUser } from "../helpers/onboarding";
+import { currentStepTestId, waitForStepAdvance } from "./_step-flow";
 
 const OWNER_REPO = "jane/import-demo";
 const SET_ID = "importdemo";
@@ -248,8 +249,9 @@ test.describe("EXP-023 — external repo import: errors + playthrough", () => {
       }
       const next = page.getByTestId("lesson-next");
       await expect(next).toBeVisible({ timeout: 5000 });
+      const beforeStep = await currentStepTestId(page);
       await next.click();
-      await page.waitForTimeout(80);
+      await waitForStepAdvance(page, beforeStep);
     }
 
     await expect(page.getByTestId("lesson-summary")).toBeVisible({

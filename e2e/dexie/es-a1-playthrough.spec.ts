@@ -15,6 +15,7 @@
  */
 
 import { expect, test, type Page } from "@playwright/test";
+import { currentStepTestId, waitForStepAdvance } from "./_step-flow";
 
 const SET_ID = "es-a1-from-en";
 const NEW_LESSON = "06-ar-verbs.json";
@@ -100,8 +101,9 @@ test.describe("Spanish A1 — new lesson playthrough (es-a1-from-en, lesson 06)"
       }
       const next = page.getByTestId("lesson-next");
       await expect(next).toBeVisible({ timeout: 5000 });
+      const beforeStep = await currentStepTestId(page);
       await next.click();
-      await page.waitForTimeout(80);
+      await waitForStepAdvance(page, beforeStep);
     }
 
     // Reached the scored summary.

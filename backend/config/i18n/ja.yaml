@@ -90,6 +90,8 @@ nav:
   offline: オフライン
   anki: Anki
   contribute: "貢献"
+  sidebar_open: "サイドバーを開く"
+  sidebar_close: "サイドバーを閉じる"
   dev_badge: DEV
   dev_badge_tooltip: "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
   content: "マイコンテンツ"
@@ -428,7 +430,7 @@ session:
   cycles_completed: 完了したサイクル
   next_topic: '次のトピック:'
   step_reason_tooltip: なぜこのステップ?
-  offline_start_blocked: オフラインです。新しいセッションにはネットワーク接続が必要です — 過去の セッションはダッシュボードから読み続けられます。
+  offline_start_blocked: オフラインです。新しいセッションにはネットワーク接続が必要です — 過去のセッションはダッシュボードから読み続けられます。
   peek_step_prefix: "ステップ"
   rating_notes_aria: "セッションのメモ"
   rating_notes_placeholder: "うまくいったこと、いかなかったこと、次に試すこと…"
@@ -448,7 +450,7 @@ progress:
   commit_date: 日付
   no_commits: まだ完了したセッションはありません。
   step_eval_title: AI ステップ評価のインサイト
-  step_eval_empty: まだ AI ステップ評価データがありません — セッションを開始してここに インサイトを表示しましょう。
+  step_eval_empty: まだ AI ステップ評価データがありません — セッションを開始してここにインサイトを表示しましょう。
   step_eval_avg_confidence: AI の平均信頼度
   step_eval_repeats: AI が「まだ準備ができていない」と言った回数
   step_eval_advances: ステップ前進
@@ -567,6 +569,8 @@ settings:
   section_danger: アカウント
   section_ui: インターフェース
   section_appearance: "外観"
+  content_view: "コンテンツの表示"
+  content_view_description: "ダウンロードしたコンテンツをコンテンツタブでどのように表示するか。コンテンツ表示内のクイック切り替えも同じ設定を変更します。"
   section_profile: "プロフィール"
   username_label: "表示名"
   username_placeholder: "あなたの名前"
@@ -2009,6 +2013,23 @@ content:
     delete_confirm: "このレッスンを削除しますか？元に戻せません。"
     deleted: "レッスンを削除しました。"
     delete_failed: "レッスンを削除できませんでした。"
+  set_status:
+    all: "すべて"
+    active: "アクティブ"
+    deferred: "保留"
+    completed: "完了"
+    filter_aria: "ステータスで絞り込む"
+    menu_aria: "セットの操作"
+    changed: "ステータスを更新しました。"
+    change_failed: "ステータスを更新できませんでした。"
+    deleted: "セットを削除しました。"
+    delete_failed: "セットを削除できませんでした。"
+    delete_confirm: "ダウンロードしたセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。"
+    action:
+      activate: "再アクティブ化"
+      defer: "保留にする"
+      complete: "完了としてマーク"
+      delete: "削除"
   ai_exercises:
     batch:
       button: "すべてのレッスンに生成"
@@ -2075,7 +2096,7 @@ content:
     free_prompt: "翻訳してください: {word}"
     cloze_prompt: "抜けている単語を入力してください。"
     tiles_prompt: "単語を並べ替えて文を作ってください（{word}）。"
-  page_title: "コンテンツセット"
+  page_title: "マイコンテンツ"
   intro: "API キーがなくても使える既製のレッスンセットです。ダウンロードはローカルにキャッシュされ、初回取得後はオフラインでも動作します。"
   sources: "ソース"
   lessons: "レッスン"
@@ -2986,8 +3007,6 @@ discover:
     domain: "分野"
     trust: "信頼度"
     ai_checked: "AIチェック済み"
-    "yes": "はい"
-    "no": "いいえ"
   trust:
     official: "公式推奨"
     verified: "検証済み"

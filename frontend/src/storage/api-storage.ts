@@ -344,6 +344,10 @@ export const apiStorage: IStorageService = {
      *  sets). */
     saveUserSet: (input) => api.contentLoader.saveUserSet(input),
     deleteSet: (source, setId) => api.contentLoader.deleteSet(source, setId),
+    /** #1300 — set status is a browser-local Dexie concept; API mode has
+     *  no per-set status column, so this is a no-op (every set reads back
+     *  as "active"). Keeps the feature working without a backend route. */
+    setSetStatus: () => Promise.resolve(),
     /** Phase 60 / v1.44.0 — opt-in AI content review (backend
      *  resolves the AI key server-side). */
     aiValidate: (input) => api.contentLoader.aiValidate(input),

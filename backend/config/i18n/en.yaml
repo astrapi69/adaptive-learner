@@ -19,8 +19,8 @@ common:
   delete: Delete
   edit: Edit
   confirm: Confirm
-  'yes': true
-  'no': false
+  'yes': "Yes"
+  'no': "No"
   optional: optional
   required: required
   minutes: minutes
@@ -90,6 +90,8 @@ nav:
   offline: Offline
   anki: Anki
   contribute: "Contribute"
+  sidebar_open: "Open sidebar"
+  sidebar_close: "Close sidebar"
   dev_badge: DEV
   dev_badge_tooltip: "Developer Mode is on — error toasts show full technical detail. Toggle in Settings."
   content: "My content"
@@ -567,6 +569,8 @@ settings:
   section_danger: Account
   section_ui: Interface
   section_appearance: "Appearance"
+  content_view: "Content view"
+  content_view_description: "How downloaded content is shown across the content tabs. The quick toggle in the content view changes the same setting."
   section_profile: "Profile"
   username_label: "Display name"
   username_placeholder: "Your name"
@@ -2020,6 +2024,23 @@ content:
     delete_confirm: "Delete this lesson? This cannot be undone."
     deleted: "Lesson deleted."
     delete_failed: "Could not delete the lesson."
+  set_status:
+    all: "All"
+    active: "Active"
+    deferred: "Deferred"
+    completed: "Completed"
+    filter_aria: "Filter by status"
+    menu_aria: "Set actions"
+    changed: "Status updated."
+    change_failed: "Could not update the status."
+    deleted: "Set removed."
+    delete_failed: "Could not remove the set."
+    delete_confirm: "The downloaded set and its lessons will be removed from My Content. Your learning progress is kept, and you can download the set again anytime."
+    action:
+      activate: "Reactivate"
+      defer: "Defer"
+      complete: "Mark as completed"
+      delete: "Delete"
   ai_exercises:
     batch:
       button: "Generate for all lessons"
@@ -2086,7 +2107,7 @@ content:
     free_prompt: "Translate: {word}"
     cloze_prompt: "Fill in the missing word."
     tiles_prompt: "Arrange the words into the sentence ({word})."
-  page_title: "Content sets"
+  page_title: "My content"
   intro: "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch."
   sources: "Sources"
   lessons: "lessons"
@@ -2996,8 +3017,6 @@ discover:
     domain: "Domain"
     trust: "Trust"
     ai_checked: "AI-checked"
-    "yes": "Yes"
-    "no": "No"
   trust:
     official: "Officially recommended"
     verified: "Verified"

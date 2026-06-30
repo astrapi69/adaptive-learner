@@ -10,6 +10,8 @@ import NavReviewsBadge from "./NavReviewsBadge";
 import NavAvatar from "./NavAvatar";
 import { NavModeBadge, NavThemeToggle } from "./NavIndicators";
 
+import { DESKTOP_SIDEBAR_ID } from "./DesktopSidebar";
+import { useDesktopSidebar } from "../../contexts/DesktopSidebarContext";
 import { useHelp } from "../../contexts/HelpContext";
 import { helpKeyForPath } from "../../lib/help/help-routes";
 import { useAppMode } from "../../hooks/settings/useAppMode";
@@ -41,6 +43,10 @@ export default function Navigation() {
   const { ready: modeReady, mode } = useAppMode();
   const { theme, toggle } = useTheme();
   const { openHelp } = useHelp();
+  // #1260 — desktop sidebar (#891) open/close. The "open" affordance lives
+  // in the top bar (the "close" one lives inside the sidebar); it is shown
+  // only at ``lg+`` and only while the sidebar is collapsed.
+  const { open: sidebarOpen, toggle: toggleSidebar } = useDesktopSidebar();
   const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
   const { pathname } = useLocation();
   // During an active lesson the nav collapses to a minimal
@@ -124,6 +130,22 @@ export default function Navigation() {
                 makes the Tailwind utility win). The show/hide across
                 mobile / lesson-compact / landscape stays driven by the
                 existing global.css media rules. */}
+      {/* #1260 — desktop sidebar OPEN toggle. Desktop-only (``hidden
+          lg:inline-flex``) and rendered only while the sidebar is collapsed;
+          the close affordance lives inside the sidebar. Reuses the same
+          MenuToggleButton mechanism as the mobile hamburger — one toggle
+          building block, not a second mechanism. */}
+      {!sidebarOpen && (
+        <MenuToggleButton
+          open={false}
+          onToggle={toggleSidebar}
+          label={t("nav.sidebar_open", "Open sidebar")}
+          tooltip={tooltipsOn}
+          controlsId={DESKTOP_SIDEBAR_ID}
+          className="hidden ml-0! lg:inline-flex"
+          testId="sidebar-open-toggle"
+        />
+      )}
       <MenuToggleButton
         open={menuOpen}
         onToggle={() => setMenuOpen((v) => !v)}

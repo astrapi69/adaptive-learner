@@ -12,6 +12,7 @@
  */
 
 import { expect, test, type Page } from "@playwright/test";
+import { currentStepTestId, waitForStepAdvance } from "./_step-flow";
 
 const SET_ID = "fr-a1-from-de"; // German-source set: in the primary tree
 
@@ -49,10 +50,13 @@ async function answerWrongAndAdvance(page: Page, maxSteps: number): Promise<void
       await check.click();
     }
     const next = page.getByTestId("lesson-next");
+    const beforeStep = await currentStepTestId(page);
+    let advanced = false;
     if ((await next.count()) && (await next.isEnabled().catch(() => false))) {
       await next.click();
+      advanced = true;
     }
-    await page.waitForTimeout(80);
+    await waitForStepAdvance(page, advanced ? beforeStep : null);
   }
 }
 
@@ -85,10 +89,13 @@ async function playAdaptive(page: Page, maxSteps: number): Promise<void> {
       await check.click();
     }
     const next = page.getByTestId("adaptive-lesson-next");
+    const beforeStep = await currentStepTestId(page);
+    let advanced = false;
     if ((await next.count()) && (await next.isEnabled().catch(() => false))) {
       await next.click();
+      advanced = true;
     }
-    await page.waitForTimeout(120);
+    await waitForStepAdvance(page, advanced ? beforeStep : null);
   }
 }
 

@@ -173,20 +173,33 @@ jobs:
       - name: Full release gate (make release-test)
         run: make release-test
 
-      - name: Extra Playwright smoke
-        if: ${{ inputs.skip_e2e == false }}
-        run: make test-e2e-smoke
+      # The extra API-mode Playwright smoke runs in its OWN job
+      # (extra-smoke, below) on a fresh runner instead of being appended
+      # here: appended to this heavy release-test job it was flaky under
+      # container resource contention (#1254). release-test above is the
+      # mandatory gate (it covers Playwright via the dexie + manual-plan
+      # gates); the extra smoke is the skippable (skip_e2e) advisory.
 
       - name: Next step
         run: |
           echo "release/${{ inputs.version }} prepared + gated."
-          echo "Review the branch and its CI, then re-dispatch this workflow with stage=finish."
+          echo "Review this job AND the 'extra-smoke' job (unless skip_e2e), then re-dispatch with stage=finish."
 
-  finish:
-    name: Finish release (merge + tag + publish)
-    if: ${{ inputs.stage == 'finish' }}
+  extra-smoke:
+    name: Extra Playwright smoke (API mode)
+    # The skippable, advisory API-mode smoke. Runs in its OWN job on a fresh
+    # runner (not appended to the heavy `prepare`/release-test job) so it no
+    # longer flakes under container resource contention (#1254). Gated by
+    # skip_e2e exactly as before. `make release-test` in `prepare` remains the
+    # mandatory gate; a red extra-smoke is reviewed before stage=finish.
+    if: ${{ inputs.stage == 'prepare' && inputs.skip_e2e == false }}
+    needs: prepare
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Same pre-baked-browser image as prepare (#317/#1248); runs the smoke
+    # against the release/<version> branch prepare just pushed.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+    timeout-minutes: 40
     steps:
       - name: Validate version input
         run: |
@@ -195,8 +208,87 @@ jobs:
 
       - uses: actions/checkout@v6
         with:
+          ref: release/${{ inputs.version }}
+          fetch-depth: 0
+
+      - name: Install make (the Playwright noble image has none)
+        run: apt-get update && apt-get install -y --no-install-recommends make
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        # `python -m pip`, not bare `pip`: the setup-python pip shim is not on
+        # PATH in the Playwright container (mirrors the prepare job).
+        run: python -m pip install poetry
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Backend + plugin deps
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Frontend deps
+        working-directory: frontend
+        # --legacy-peer-deps: eslint@10 vs eslint-plugin-react peer cap (#266).
+        run: npm ci --legacy-peer-deps
+
+      - name: E2E deps
+        working-directory: e2e
+        run: npm ci
+
+      # NO `playwright install` step: the browsers are baked into the container.
+
+      - name: Extra Playwright smoke (retries against container flake)
+        # --retries=1 (test-e2e-smoke-retries) absorbs the occasional slow
+        # cold-start of the auto-started uvicorn + vite dev servers in the
+        # container; the raised webServer/per-test CI timeouts (#1254, see
+        # e2e/playwright.config.ts) give that startup headroom.
+        run: make test-e2e-smoke-retries
+
+  finish:
+    name: Finish release (merge + tag + publish)
+    if: ${{ inputs.stage == 'finish' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Whether a personal access token is configured. Used only to print a
+      # clear up-front notice; the token expressions below fall back on their
+      # own. Secrets cannot be referenced directly in `if:`, so surface the
+      # boolean through the job env.
+      HAS_RELEASE_PAT: ${{ secrets.RELEASE_PAT != '' }}
+    steps:
+      - name: Validate version input
+        run: |
+          echo "${{ inputs.version }}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            || { echo "::error::version must be X.Y.Z (no leading v), got '${{ inputs.version }}'"; exit 1; }
+
+      - name: PAT availability notice
+        # The release ALWAYS completes; this only documents whether the
+        # downstream GH-Pages deploy + launcher-binary attach will fire on
+        # their own (PAT) or need a manual trigger (GITHUB_TOKEN fallback).
+        run: |
+          if [ "$HAS_RELEASE_PAT" = "true" ]; then
+            echo "RELEASE_PAT is set: the main push fires deploy-gh-pages.yml and the published Release fires launcher-*.yml automatically."
+          else
+            echo "::warning::RELEASE_PAT secret is NOT set. The release will still complete, but GitHub will not fire downstream workflows from GITHUB_TOKEN events (#1265). After this run you must MANUALLY: (1) dispatch deploy-gh-pages.yml on main, and (2) attach the launcher binaries to the Release (re-publish via PAT or upload manually)."
+          fi
+
+      - uses: actions/checkout@v6
+        with:
           ref: develop
           fetch-depth: 0
+          # Persist a PAT (not GITHUB_TOKEN) as the git credential so the
+          # `make release-finish` push to main fires deploy-gh-pages.yml.
+          # GitHub deliberately does NOT fire downstream workflows from
+          # GITHUB_TOKEN-originated pushes/events (recursion guard, #1265).
+          # Falls back to GITHUB_TOKEN when RELEASE_PAT is unset: the release
+          # still completes, but the GH-Pages deploy + launcher-binary attach
+          # then need a manual trigger (the v1.97.0/v1.97.1 situation).
+          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Changelog precondition (release-publish needs it)
         run: |
@@ -224,12 +316,19 @@ jobs:
 
       - name: Publish GitHub Release from the changelog
         # Launcher binaries are NOT attached here: launcher-{linux,macos,windows}.yml
-        # trigger on `release: created` and attach them automatically.
+        # trigger on `release: created` and attach them automatically — but ONLY
+        # when the Release is created by a PAT. `gh release create` authenticates
+        # via GH_TOKEN, so it must carry the PAT for the launcher attach to fire.
+        # Falls back to GITHUB_TOKEN when RELEASE_PAT is unset (release publishes,
+        # launcher attach then needs a manual trigger).
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
         run: make release-publish VERSION=${{ inputs.version }}
 
       - name: Deploy note
         run: |
-          echo "GitHub Pages deploys from main via its own workflow."
-          echo "Launcher binaries attach via launcher-*.yml on the release-created event."
+          if [ "$HAS_RELEASE_PAT" = "true" ]; then
+            echo "Done. The PAT push to main fired deploy-gh-pages.yml; the PAT-published Release fired launcher-*.yml (binaries attach automatically)."
+          else
+            echo "::warning::Published with GITHUB_TOKEN (no RELEASE_PAT). Now MANUALLY: dispatch deploy-gh-pages.yml on main, and attach the launcher binaries to the Release."
+          fi

@@ -2,7 +2,7 @@
 
 > Architektur-Entscheidung. Stand: 2026-06-25. Tracking: #1126.
 > Regel: [reusability.md](../../.claude/rules/reusability.md) Implementierungs-
-> Hierarchie + [docs/VIBE-CODING-POLICY.md](../VIBE-CODING-POLICY.md) §7.
+> Hierarchie + [docs/policies/VIBE-CODING-POLICY.md](../policies/VIBE-CODING-POLICY.md) §7.
 > Worked Example der Methodik: [2026-06-17-library-first-audit.md](2026-06-17-library-first-audit.md).
 > **Status: Plan. Noch kein Code.** Umsetzung erst nach Freigabe + `npm audit`-Gate.
 

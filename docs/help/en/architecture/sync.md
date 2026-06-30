@@ -4,7 +4,7 @@ Adaptive Learner is local-first: server mode (API) keeps the data
 in the filesystem, browser-only mode (Dexie) in IndexedDB.
 **Syncing** is meant to connect these devices over the local
 network. The full reference is in
-[`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md).
+[`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md).
 
 ---
 
@@ -40,4 +40,4 @@ control appears on the PWA-only deployment.
 
 - [Storage layer](../developer/storage-layer.md) — the dual storage abstraction
 - [Backup and restore](../features/backup.md) — manual data transfer without sync
-- [`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+- [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

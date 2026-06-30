@@ -16,6 +16,7 @@
 import {expect, test, type Page} from "@playwright/test";
 
 import {createTestUser} from "../helpers/onboarding";
+import {currentStepTestId, waitForStepAdvance} from "./_step-flow";
 
 const SET_ID = "fr-a1-from-en";
 
@@ -67,8 +68,9 @@ async function advance(page: Page): Promise<void> {
     }
     const next = page.getByTestId("lesson-next");
     await expect(next).toBeVisible({timeout: 5000});
+    const beforeStep = await currentStepTestId(page);
     await next.click();
-    await page.waitForTimeout(80);
+    await waitForStepAdvance(page, beforeStep);
 }
 
 async function downloadAndOpen(page: Page): Promise<void> {
@@ -129,8 +131,9 @@ test.describe("Error Replay — retry only failed exercises", () => {
             }
             const next = page.getByTestId("error-replay-next");
             await expect(next).toBeVisible({timeout: 5000});
+            const beforeStep = await currentStepTestId(page);
             await next.click();
-            await page.waitForTimeout(80);
+            await waitForStepAdvance(page, beforeStep);
         }
 
         await expect(page.getByTestId("error-replay-summary")).toBeVisible({

@@ -5,7 +5,7 @@ Content-System ist offen: Du kannst dein **eigenes Content-Repository**
 auf GitHub betreiben, es in der App verbinden und es anderen Lernenden
 zur Verfuegung stellen. Diese Seite gibt den Ueberblick; die
 ausfuehrliche Schritt-fuer-Schritt-Anleitung steht im
-**[Content-Repo-Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/CONTENT-REPO-GUIDE.md)**.
+**[Content-Repo-Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/CONTENT-REPO-GUIDE.md)**.
 
 ---
 
@@ -136,6 +136,6 @@ validiere und verbinde das Repo in der App.
 
 ## Weiterfuehrend
 
-- **[Vollstaendiger Content-Repo-Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/CONTENT-REPO-GUIDE.md)**
+- **[Vollstaendiger Content-Repo-Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/CONTENT-REPO-GUIDE.md)**
 - [Lektionen erstellen — Ueberblick](overview.md)
 - [Buchempfehlungen](books.md)

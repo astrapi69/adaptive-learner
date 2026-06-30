@@ -21,8 +21,8 @@
     "delete": "삭제",
     "edit": "편집",
     "confirm": "확인",
-    "yes": true,
-    "no": false,
+    "yes": "네",
+    "no": "아니요",
     "optional": "선택",
     "required": "필수",
     "minutes": "분",
@@ -98,6 +98,8 @@
     "offline": "오프라인",
     "anki": "Anki",
     "contribute": "기여",
+    "sidebar_open": "사이드바 열기",
+    "sidebar_close": "사이드바 닫기",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "개발자 모드가 켜져 있습니다 — 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요.",
     "content": "내 콘텐츠",
@@ -611,6 +613,8 @@
     "section_danger": "계정",
     "section_ui": "인터페이스",
     "section_appearance": "외관",
+    "content_view": "콘텐츠 보기",
+    "content_view_description": "다운로드한 콘텐츠를 콘텐츠 탭에서 표시하는 방식입니다. 콘텐츠 보기의 빠른 전환도 동일한 설정을 변경합니다.",
     "section_profile": "프로필",
     "username_label": "표시 이름",
     "username_placeholder": "이름",
@@ -2186,6 +2190,25 @@
       "deleted": "레슨이 삭제되었습니다.",
       "delete_failed": "레슨을 삭제할 수 없었습니다."
     },
+    "set_status": {
+      "all": "전체",
+      "active": "활성",
+      "deferred": "보류",
+      "completed": "완료",
+      "filter_aria": "상태별 필터",
+      "menu_aria": "세트 작업",
+      "changed": "상태가 업데이트되었습니다.",
+      "change_failed": "상태를 업데이트할 수 없습니다.",
+      "deleted": "세트가 제거되었습니다.",
+      "delete_failed": "세트를 제거할 수 없습니다.",
+      "delete_confirm": "다운로드한 세트와 해당 레슨이 내 콘텐츠에서 제거됩니다. 학습 진행 상황은 유지되며 언제든지 세트를 다시 다운로드할 수 있습니다.",
+      "action": {
+        "activate": "다시 활성화",
+        "defer": "보류",
+        "complete": "완료로 표시",
+        "delete": "삭제"
+      }
+    },
     "ai_exercises": {
       "batch": {
         "button": "모든 레슨에 대해 생성",
@@ -2257,7 +2280,7 @@
       "cloze_prompt": "빠진 단어를 채우세요.",
       "tiles_prompt": "단어를 문장으로 배열하세요 ({word})."
     },
-    "page_title": "콘텐츠 세트",
+    "page_title": "내 콘텐츠",
     "intro": "API 키 없이 사용할 수 있는 사전 제작 레슨 세트입니다. 다운로드한 항목은 로컬에 캐시되며 첫 다운로드 후에는 오프라인에서도 작동합니다.",
     "sources": "출처",
     "lessons": "레슨",
@@ -3265,9 +3288,7 @@
       "level": "수준",
       "domain": "분야",
       "trust": "신뢰도",
-      "ai_checked": "AI 검증됨",
-      "yes": "예",
-      "no": "아니요"
+      "ai_checked": "AI 검증됨"
     },
     "trust": {
       "official": "공식 추천",

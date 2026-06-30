@@ -34,6 +34,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
        verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
+       i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        sync-schema sync-schema-check sync-lesson-types \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
@@ -593,6 +594,18 @@ sync-versions-check: ## Exit non-zero if any subsystem version drifts from canon
 
 sync-i18n: ## Regenerate frontend/src/data/i18n/*.json from backend YAML catalogs
 	@python3 scripts/sync_i18n_to_frontend.py
+
+i18n-quality-check: ## LLM translation quality-check over the 8 machine-translated catalogs (#1296; needs an Anthropic key). Pass args via ARGS="--langs ja --limit 50"
+	@cd backend && poetry run python ../scripts/i18n_quality_check.py $(ARGS)
+
+i18n-quality-check-dry: ## i18n quality-check coverage/cache stats only, no API calls (#1296). ARGS="--langs ja"
+	@cd backend && poetry run python ../scripts/i18n_quality_check.py --dry-run $(ARGS)
+
+i18n-csv-export: ## Per-language CSV review export: de | target | LLM verdict | correction (#1296). ARGS="--langs ja --flagged-only"
+	@cd backend && poetry run python ../scripts/export_i18n_csv.py $(ARGS)
+
+i18n-import-corrections: ## Surgically write i18n corrections back into the YAML (#1296). Diacritics-only from cache: ARGS="--langs fr es --source cache --verdict missing_diacritics". Run make sync-i18n after.
+	@cd backend && poetry run python ../scripts/import_i18n_corrections.py $(ARGS)
 
 sync-plugin-config: ## Regenerate frontend/src/data/plugin-config/*.json from backend/config/plugins/*.yaml (Phase 49 / v1.32.0)
 	@python3 scripts/sync_plugin_config_to_frontend.py

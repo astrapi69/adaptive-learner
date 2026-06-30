@@ -1,12 +1,26 @@
-import {describe, it, expect, vi} from "vitest";
+import {afterEach, beforeEach, describe, it, expect, vi} from "vitest";
 import {render, screen, fireEvent} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 import SetRow from "./SetRow";
+import {setDevModeEnabled} from "../../hooks/settings/useDevMode";
+import {getBuildInfo} from "../../lib/provenance/build-info";
 import type {
     PersonalPathLesson,
     PersonalPathSet,
 } from "../../lib/learning-path/personal-path";
+
+vi.mock("../../lib/provenance/build-info", () => ({
+    getBuildInfo: vi.fn(() => ({strang: "unknown"})),
+}));
+
+const mockedGetBuildInfo = vi.mocked(getBuildInfo);
+
+function setStrang(strang: "latest" | "haupt" | "unknown") {
+    mockedGetBuildInfo.mockReturnValue({strang} as ReturnType<
+        typeof getBuildInfo
+    >);
+}
 
 function lesson(
     n: number,
@@ -72,6 +86,10 @@ function renderRow(set: PersonalPathSet, isExpanded = false, onToggle = vi.fn())
 }
 
 describe("SetRow", () => {
+    beforeEach(() => {
+        setStrang("unknown");
+    });
+
     it("renders the percentage and one dot per lesson", () => {
         renderRow(setFixture());
         expect(screen.getByTestId("set-percent-psych")).toHaveTextContent(
@@ -172,6 +190,65 @@ describe("SetRow", () => {
         const action = screen.getByTestId("set-action-psych");
         expect(action.getAttribute("data-mode")).toBe("next_level");
         expect(action).toHaveAttribute("href", "/content");
+    });
+
+    // ZUSATZ (#1211 follow-up) — Dev-Mode-only download-date readout, a
+    // built-in on-device check that ``downloaded_at`` actually reaches the
+    // Persönlich list. Must never leak to normal users.
+    describe("Dev-Mode download-date readout", () => {
+        afterEach(() => setDevModeEnabled(false));
+
+        it("shows downloaded_at when Dev Mode is ON", () => {
+            setDevModeEnabled(true);
+            renderRow(
+                setFixture({downloadedAt: "2026-06-20T00:00:00.000Z"}),
+            );
+            const el = screen.getByTestId("set-downloaded-at-psych");
+            expect(el).toHaveTextContent("downloaded_at: 2026-06-20T00:00:00.000Z");
+        });
+
+        it("renders 'null' when downloaded_at is missing (the diagnostic signal)", () => {
+            setDevModeEnabled(true);
+            renderRow(setFixture({downloadedAt: null}));
+            expect(
+                screen.getByTestId("set-downloaded-at-psych"),
+            ).toHaveTextContent("downloaded_at: null");
+        });
+
+        it("does NOT show downloaded_at when Dev Mode is OFF (no leak)", () => {
+            setDevModeEnabled(false);
+            renderRow(
+                setFixture({downloadedAt: "2026-06-20T00:00:00.000Z"}),
+            );
+            expect(
+                screen.queryByTestId("set-downloaded-at-psych"),
+            ).toBeNull();
+        });
+
+        // #1271 — the readout follows the environment default when the user
+        // made no explicit choice: visible per default in Staging (Latest),
+        // hidden per default in Production (Haupt).
+        it("shows downloaded_at per default in the Latest strand (no explicit choice)", () => {
+            localStorage.clear();
+            setStrang("latest");
+            renderRow(
+                setFixture({downloadedAt: "2026-06-20T00:00:00.000Z"}),
+            );
+            expect(
+                screen.getByTestId("set-downloaded-at-psych"),
+            ).toHaveTextContent("downloaded_at: 2026-06-20T00:00:00.000Z");
+        });
+
+        it("hides downloaded_at per default in the Haupt strand (no explicit choice)", () => {
+            localStorage.clear();
+            setStrang("haupt");
+            renderRow(
+                setFixture({downloadedAt: "2026-06-20T00:00:00.000Z"}),
+            );
+            expect(
+                screen.queryByTestId("set-downloaded-at-psych"),
+            ).toBeNull();
+        });
     });
 
     it("toggles on row click and reveals children when expanded", () => {

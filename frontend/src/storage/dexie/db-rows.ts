@@ -12,7 +12,7 @@
 
 import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../../lib/constants";
 import type {AttemptRecord} from "../types/learning/element-errors";
-import type {ContentSetBook} from "../types/content/content";
+import type {ContentSetBook, SetStatus} from "../types/content/content";
 
 // ---- Row shapes (mirror backend Pydantic Out-schemas) -----------------
 
@@ -430,6 +430,10 @@ export interface ContentSetRow {
     cover_image: string | null;
     /** ISO-8601 timestamp of the most recent download. */
     downloaded_at: string;
+    /** #1300 — lifecycle status in "Meine Inhalte" (active / deferred /
+     *  completed). Backfilled to ``"active"`` for rows written before the
+     *  schema-v30 upgrade; non-indexed (the status filter runs in memory). */
+    status?: SetStatus;
     /** Cached repo-level manifest YAML (verbatim, for
      *  re-parsing after a schema upgrade). */
     manifest_yaml: string;

@@ -6,7 +6,7 @@
 編集するだけで、コンポーネントには一切手を加えません。この規則は
 単なる慣例ではなく、テストによって強制されています。完全な
 トークンリファレンスは
-[`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md)
+[`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md)
 にあります。
 
 ---
@@ -74,4 +74,4 @@
 ## 関連ページ
 
 - [テーマシステム](../developer/themes.md) — 同梱テーマ + ピッカー
-- [`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md) — 完全なトークンリスト
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — 完全なトークンリスト

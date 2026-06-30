@@ -1,6 +1,6 @@
 # CC-Prompt: Clean Code Refactoring — God-Files + Tech Debt
 
-Basiert auf dem Clean Code Audit (docs/CLEAN-CODE-AUDIT.md, 7.5/10).
+Basiert auf dem Clean Code Audit (docs/audits/CLEAN-CODE-AUDIT.md, 7.5/10).
 Geschaetzte technische Schuld: 65-80h. Phasenweise abarbeiten.
 
 Fuer JEDEN Block: GitHub Issue ZUERST erstellen. Closes #XX im Commit.

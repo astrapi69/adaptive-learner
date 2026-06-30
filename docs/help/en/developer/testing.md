@@ -242,4 +242,4 @@ artifacts are up to date.
 What automation cannot cover (layout, readability, touch
 interaction, theme contrast) is checked by a manual checklist
 before every larger release:
-[MANUAL-TESTPLAN.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/MANUAL-TESTPLAN.md).
+[MANUAL-TESTPLAN.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/MANUAL-TESTPLAN.md).

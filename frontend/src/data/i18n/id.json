@@ -21,8 +21,8 @@
     "delete": "Hapus",
     "edit": "Edit",
     "confirm": "Konfirmasi",
-    "yes": true,
-    "no": false,
+    "yes": "Ya",
+    "no": "Tidak",
     "optional": "opsional",
     "required": "wajib",
     "minutes": "menit",
@@ -98,6 +98,8 @@
     "offline": "Luring",
     "anki": "Anki",
     "contribute": "Berkontribusi",
+    "sidebar_open": "Buka bilah sisi",
+    "sidebar_close": "Tutup bilah sisi",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode Pengembang aktif — pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan.",
     "content": "Konten saya",
@@ -611,6 +613,8 @@
     "section_danger": "Akun",
     "section_ui": "Antarmuka",
     "section_appearance": "Tampilan",
+    "content_view": "Tampilan konten",
+    "content_view_description": "Bagaimana konten yang diunduh ditampilkan di seluruh tab konten. Sakelar cepat di tampilan konten mengubah pengaturan yang sama.",
     "section_profile": "Profil",
     "username_label": "Nama tampilan",
     "username_placeholder": "Nama Anda",
@@ -2186,6 +2190,25 @@
       "deleted": "Pelajaran dihapus.",
       "delete_failed": "Tidak dapat menghapus pelajaran."
     },
+    "set_status": {
+      "all": "Semua",
+      "active": "Aktif",
+      "deferred": "Ditunda",
+      "completed": "Selesai",
+      "filter_aria": "Filter menurut status",
+      "menu_aria": "Tindakan set",
+      "changed": "Status diperbarui.",
+      "change_failed": "Tidak dapat memperbarui status.",
+      "deleted": "Set dihapus.",
+      "delete_failed": "Tidak dapat menghapus set.",
+      "delete_confirm": "Set yang diunduh dan pelajarannya akan dihapus dari Konten Saya. Progres belajarmu tetap tersimpan, dan kamu dapat mengunduh set lagi kapan saja.",
+      "action": {
+        "activate": "Aktifkan kembali",
+        "defer": "Tunda",
+        "complete": "Tandai sebagai selesai",
+        "delete": "Hapus"
+      }
+    },
     "ai_exercises": {
       "batch": {
         "button": "Buat untuk semua pelajaran",
@@ -2257,7 +2280,7 @@
       "cloze_prompt": "Isi kata yang hilang.",
       "tiles_prompt": "Susun kata-kata menjadi kalimat ({word})."
     },
-    "page_title": "Set konten",
+    "page_title": "Konten saya",
     "intro": "Set pelajaran siap pakai yang dapat kamu gunakan tanpa kunci API. Unduhan disimpan secara lokal dan dapat digunakan secara luring setelah pengambilan pertama.",
     "sources": "Sumber",
     "lessons": "pelajaran",
@@ -3265,9 +3288,7 @@
       "level": "Tingkat",
       "domain": "Bidang",
       "trust": "Kepercayaan",
-      "ai_checked": "Diperiksa AI",
-      "yes": "Ya",
-      "no": "Tidak"
+      "ai_checked": "Diperiksa AI"
     },
     "trust": {
       "official": "Direkomendasikan secara resmi",

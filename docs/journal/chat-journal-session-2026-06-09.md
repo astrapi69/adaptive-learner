@@ -164,7 +164,7 @@ order, and released as v1.70.0.
   Premise check found the MkDocs deploy + About/Landing docs link
   already existed, so the issue was scoped to the real gaps. Backend +
   frontend glossary count pins updated 22 -> 31.
-- **Manual test plan (PR #162):** `docs/MANUAL-TESTPLAN.md`, a
+- **Manual test plan (PR #162):** `docs/reference/MANUAL-TESTPLAN.md`, a
   pre-release QA checklist (Sessions 1-7 + bug template); linked from
   the Testing developer page.
 

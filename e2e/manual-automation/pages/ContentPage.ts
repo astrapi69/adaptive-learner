@@ -49,6 +49,17 @@ export class ContentPage {
   }
 
   async goto(): Promise<void> {
+    // #1257 — the global content-view default is now "list". This page
+    // object drives the source→target→level TREE (grid view), so seed the
+    // grid pref before the first navigation so the tree renders.
+    await this.page.addInitScript(() => {
+      try {
+        localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+      } catch {
+        /* localStorage unavailable; the tree still renders if grid is the
+           resolved default elsewhere */
+      }
+    });
     await this.page.goto(this.url);
     await expect(this.tree).toBeVisible({ timeout: 15_000 });
   }

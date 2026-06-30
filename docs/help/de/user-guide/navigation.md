@@ -17,16 +17,18 @@ Die Desktop-Navigation ist über eine wiederverwendbare
 `NavGroup`-Komponente in beschriftete Gruppen gegliedert:
 
 - **Lernen** — Dashboard und Lernpfad.
-- **Inhalte** — der **Content-Hub** (`/content`), der deine
-  heruntergeladenen *Meine Inhalte*, den *Entdecken*-Katalog und
-  *Import* als Tabs enthält.
+- **Inhalte** — der **Content-Hub** (`/content`), der den
+  *Entdecken*-Katalog, deine heruntergeladenen *Meine Inhalte* und
+  *Import* als Tabs enthält (in dieser Reihenfolge). **Entdecken ist
+  der Standard-Tab**, beim Öffnen des Hubs landest du also im
+  Katalog.
 - **Fortschritt** — der **ProgressHub** (`/progress`), mit
   Übersicht, Statistik und Meine Pfade als Tabs.
 - **Settings** und **Help** runden die Leiste ab.
 
 Seiten, die keine Top-Level-Einträge mehr sind (Anki, Session),
-bleiben erreichbar: Anki über eine Aktion auf *Meine Inhalte* (und
-seine `/anki`-Route), Session über seine erhaltene Route.
+bleiben erreichbar: Anki über seine `/anki`-Route, Session über
+seine erhaltene Route.
 
 ### Vertikale Seitenleiste
 
@@ -41,6 +43,11 @@ Breiten weicht die Seitenleiste der Bottom-Tab-Leiste weiter unten.
 (Dies ist die Seitenleiste der *Haupt*navigation; die
 Settings-Seite hat ihre eigene, separate Seitenleiste für ihre
 Tabs.)
+
+Die Seitenleiste hat einen **Auf-/Zuklapp-Umschalter**: Klappe sie
+zu einer schmalen Leiste ein, um der Seite mehr horizontalen Platz
+zu geben, oder wieder zur vollen beschrifteten Leiste auf. Deine
+Wahl wird gemerkt.
 
 ---
 
@@ -62,8 +69,8 @@ einhängen:
 
 - **ProgressHub** (`/progress`) bettet Fortschritt + Lern-
   Statistik + Curriculum ein.
-- **Content-Hub** (`/content`) bettet Meine Inhalte + Entdecken +
-  Import ein.
+- **Content-Hub** (`/content`) bettet Entdecken + Meine Inhalte +
+  Import ein (Entdecken ist der Standard-Tab).
 
 Alte URLs bleiben über Redirects erhalten, z.B. `/statistics` →
 `/progress?tab=stats`, `/curriculum` → `/progress?tab=paths`,
