@@ -6,7 +6,7 @@
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
 A complete adaptive-learning platform built on the six-method
-learning model (Asterios Raptis, *Von Theorie zur Praxis*, Medium
+learning model (Asterios Raptis, *From Theory to Practice: The Series*, Medium
 series). Pick the method that fits the learner — deductive,
 inductive, error-based, dialogic, contextual, or AI-adaptive —
 walk through a seven-step cycle on every session, and let a
@@ -231,17 +231,21 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**432 lessons · 26 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**460 lessons · 31 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
 | अंग्रेज़ी A1 (हिंदी भाषियों के लिए) | hi | en | A1 | 10 |
+| अंग्रेज़ी A2 (हिंदी भाषियों के लिए) | hi | en | A2 | 5 |
 | French A1 (for English speakers) | en | fr | A1 | 15 |
 | Spanish A1 (for English speakers) | en | es | A1 | 15 |
 | Spanish A2 — Elementary | en | es | A2 | 15 |
 | Spanish B1 — Intermediate | en | es | B1 | 15 |
+| Spanish B2 (for English speakers) | en | es | B2 | 5 |
 | German A1 (for English speakers) | en | de | A1 | 5 |
+| German A2 (for English speakers) | en | de | A2 | 5 |
 | French A2 — Elementary | en | fr | A2 | 15 |
+| French B1 (for English speakers) | en | fr | B1 | 5 |
 | Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 |
 | Französisch A2 — Grundlagen | de | fr | A2 | 15 |
 | Französisch B1 — Mittelstufe | de | fr | B1 | 15 |
@@ -252,6 +256,7 @@ Full documentation (German default at `/docs/`, English at
 | Englisch A2 — Grundlagen | de | en | A2 | 15 |
 | Englisch B1 — Mittelstufe | de | en | B1 | 15 |
 | Psychologie — Grundlagen | de | de | A1 | 112 |
+| Psychologie der Beeinflussung | de | de | A2 | 8 |
 | Python — Grundlagen | de | de | A1 | 15 |
 | KI für Einsteiger | de | de | A1 | 12 |
 | Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 |

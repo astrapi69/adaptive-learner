@@ -1,7 +1,7 @@
 # Adaptive Learner
 
 Adaptive learning platform implementing the six-method learning
-model (Asterios Raptis, *Von Theorie zur Praxis*, Medium series).
+model (Asterios Raptis, *From Theory to Practice: The Series*, Medium series).
 A complete, plugin-driven application: assessment, 7-step learning
 sessions across 6 methods, streaming AI replies via 3 providers,
 chat-history import + analysis, multi-cycle auto-loop, dual storage
