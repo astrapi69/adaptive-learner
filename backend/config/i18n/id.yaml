@@ -2024,6 +2024,23 @@ content:
     delete_confirm: "Hapus pelajaran ini? Tindakan ini tidak dapat dibatalkan."
     deleted: "Pelajaran dihapus."
     delete_failed: "Tidak dapat menghapus pelajaran."
+  set_status:
+    all: "Semua"
+    active: "Aktif"
+    deferred: "Ditunda"
+    completed: "Selesai"
+    filter_aria: "Filter menurut status"
+    menu_aria: "Tindakan set"
+    changed: "Status diperbarui."
+    change_failed: "Tidak dapat memperbarui status."
+    deleted: "Set dihapus."
+    delete_failed: "Tidak dapat menghapus set."
+    delete_confirm: "Set yang diunduh dan pelajarannya akan dihapus dari Konten Saya. Progres belajarmu tetap tersimpan, dan kamu dapat mengunduh set lagi kapan saja."
+    action:
+      activate: "Aktifkan kembali"
+      defer: "Tunda"
+      complete: "Tandai sebagai selesai"
+      delete: "Hapus"
   ai_exercises:
     batch:
       button: "Buat untuk semua pelajaran"

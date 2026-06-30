@@ -19,40 +19,66 @@ import { Link } from "react-router-dom";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { isKnowledgeDomain } from "../../../lib/exercises/knowledge-domain";
 import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
-import type { ContentSetEntry } from "../../../storage/types";
+import SetActionsMenu from "./SetActionsMenu";
+import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 
 interface ContentSetListViewProps {
   sets: ContentSetEntry[];
+  /** #1300 — change a set's lifecycle status. Omit to hide the
+   *  per-set overflow menu (e.g. search results). */
+  onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
+  /** #1300 — open the delete-confirm dialog for a set. */
+  onDelete?: (entry: ContentSetEntry) => void;
 }
 
-function ContentSetListRow({ entry }: { entry: ContentSetEntry }) {
+function ContentSetListRow({
+  entry,
+  onSetStatus,
+  onDelete,
+}: {
+  entry: ContentSetEntry;
+  onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
+  onDelete?: (entry: ContentSetEntry) => void;
+}) {
   const { t } = useI18n();
   const knowledge = isKnowledgeDomain(entry.domain, entry.source_language, entry.target_language);
   return (
     <li>
-      <Link
-        to={`/content/set/${entry.id}`}
-        className="flex min-h-11 items-center gap-2 rounded-md px-2 py-1.5 text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        data-testid={`content-list-set-${entry.id}`}
-      >
-        <span className="flex-1 truncate font-medium">{entry.title}</span>
-        {!knowledge && (
-          <span
-            className="shrink-0 text-xs font-semibold uppercase text-muted-foreground"
-            data-testid={`content-list-set-${entry.id}-langs`}
-          >
-            {entry.source_language.toLowerCase()}
-            {"→"}
-            {entry.target_language.toLowerCase()}
+      <div className="flex items-center gap-1">
+        <Link
+          to={`/content/set/${entry.id}`}
+          className="flex min-h-11 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          data-testid={`content-list-set-${entry.id}`}
+        >
+          <span className="flex-1 truncate font-medium">{entry.title}</span>
+          {!knowledge && (
+            <span
+              className="shrink-0 text-xs font-semibold uppercase text-muted-foreground"
+              data-testid={`content-list-set-${entry.id}-langs`}
+            >
+              {entry.source_language.toLowerCase()}
+              {"→"}
+              {entry.target_language.toLowerCase()}
+            </span>
+          )}
+          {/* Desktop-only extra context; mobile stays minimal. */}
+          <span className="hidden shrink-0 text-xs text-muted-foreground md:inline">
+            {entry.level}
+            {" · "}
+            {entry.lesson_count} {t("content.lessons", "lessons")}
           </span>
+        </Link>
+        {/* #1300 — per-set status + delete overflow menu (same component
+            as the grid view, so the actions can never drift). */}
+        {onSetStatus && onDelete && (
+          <SetActionsMenu
+            entry={entry}
+            status={entry.status ?? "active"}
+            onSetStatus={(status) => onSetStatus(entry, status)}
+            onDelete={() => onDelete(entry)}
+          />
         )}
-        {/* Desktop-only extra context; mobile stays minimal. */}
-        <span className="hidden shrink-0 text-xs text-muted-foreground md:inline">
-          {entry.level}
-          {" · "}
-          {entry.lesson_count} {t("content.lessons", "lessons")}
-        </span>
-      </Link>
+      </div>
       {/* #1298 — the Dev-Mode download-date diagnostic (the #1259 readout,
           extended from the Learning Path SetRow to "Meine Inhalte"). */}
       <DownloadedAtReadout
@@ -64,11 +90,20 @@ function ContentSetListRow({ entry }: { entry: ContentSetEntry }) {
   );
 }
 
-export default function ContentSetListView({ sets }: ContentSetListViewProps) {
+export default function ContentSetListView({
+  sets,
+  onSetStatus,
+  onDelete,
+}: ContentSetListViewProps) {
   return (
     <ul className="flex flex-col gap-0.5" data-testid="content-list-view">
       {sets.map((entry) => (
-        <ContentSetListRow key={`${entry.source}#${entry.id}`} entry={entry} />
+        <ContentSetListRow
+          key={`${entry.source}#${entry.id}`}
+          entry={entry}
+          onSetStatus={onSetStatus}
+          onDelete={onDelete}
+        />
       ))}
     </ul>
   );

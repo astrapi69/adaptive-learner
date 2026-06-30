@@ -18,6 +18,16 @@ import type {
   TokenRole as GeneratedTokenRole,
 } from "./lesson-schema.generated";
 
+/**
+ * Lifecycle status of a downloaded set in "Meine Inhalte" (#1300).
+ * ``active`` is the default (clean working list); ``deferred`` parks a
+ * set for later; ``completed`` marks it done. A destructive delete is a
+ * separate action, not a status. Stored per-set in Dexie (see
+ * ``ContentSetRow.status``); in API mode it is not persisted and every
+ * set reads back as ``active``.
+ */
+export type SetStatus = "active" | "deferred" | "completed";
+
 export interface ContentSetEntry {
   source: string;
   branch: string;
@@ -53,6 +63,10 @@ export interface ContentSetEntry {
    *  Dexie mode (from ``ContentSetRow.downloaded_at``); API mode has no
    *  per-set download time, so it stays ``null`` there. */
   downloaded_at?: string | null;
+  /** #1300 — lifecycle status in "Meine Inhalte" (active / deferred /
+   *  completed). Absent on pre-#1300 cached rows and in API mode; the
+   *  storage layer + UI treat a missing value as ``"active"``. */
+  status?: SetStatus;
   /** Optional set-level book (#769). When present, the lesson's "Vertiefe
    *  das Thema" section auto-inserts it as the first media item. */
   book?: ContentSetBook | null;
@@ -223,6 +237,11 @@ export interface IContentLoaderNamespace {
   /** Phase 59C / v1.42.0 — delete a cached set (used by My Lessons
    *  to remove a user-generated lesson). Idempotent. */
   deleteSet(source: string, setId: string): Promise<void>;
+  /** #1300 — set the lifecycle status of a downloaded set
+   *  (active / deferred / completed) in "Meine Inhalte". Dexie mode
+   *  persists it on the cached row(s); API mode is a no-op (the field
+   *  is browser-local). Idempotent. */
+  setSetStatus(source: string, setId: string, status: SetStatus): Promise<void>;
   /** Phase 60 / v1.44.0 — OPT-IN AI content validation. Sends the
    *  lesson content to the user's configured AI provider and
    *  returns a structured review (translation / distractor /

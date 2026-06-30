@@ -594,6 +594,22 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(29).stores({
             userData: "key",
         });
+        // Schema v30 — #1300: lifecycle ``status`` on ``contentSets``
+        // (active / deferred / completed) for "Meine Inhalte". Non-indexed
+        // additive field (the status filter runs in memory), so no index
+        // change. Backfill existing downloaded / user-generated set rows to
+        // ``"active"`` so they keep showing in the default active view.
+        // No dynamic import in the upgrade (the v21 DatabaseClosedError trap).
+        this.version(30)
+            .stores({})
+            .upgrade(async (tx) => {
+                await tx
+                    .table("contentSets")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        if (!row.status) row.status = "active";
+                    });
+            });
     }
 }
 

@@ -77,6 +77,7 @@ import {
 } from "./content/content-loader-dexie-ai";
 import {
   deleteSetDexie,
+  setSetStatusDexie,
   activeSourcesDexie,
   downloadSetDexie,
   getAssetDexie,
@@ -450,6 +451,9 @@ export const dexieStorage: IStorageService = {
      *  downloaded sets. */
     saveUserSet: (input) => saveUserSetDexie(input, new Date().toISOString()),
     deleteSet: (source, setId) => deleteSetDexie(source, setId),
+    /** #1300 — persist the set's lifecycle status on the cached row(s). */
+    setSetStatus: (source, setId, status) =>
+      setSetStatusDexie(source, setId, status),
     aiValidate: (input) => aiValidateDexie(input),
     aiValidateCards: (input) => aiValidateCardsDexie(input),
     getAiValidationCache: (source, setId) =>

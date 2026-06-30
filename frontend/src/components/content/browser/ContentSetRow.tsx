@@ -19,8 +19,9 @@ import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../../shared/status/
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { isOfficialSource } from "../../../lib/content/repos/content-repos";
 import type { MediaResource } from "../../../lib/content/media/media-loader";
-import type { ContentSetEntry } from "../../../storage/types";
+import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
+import SetActionsMenu from "./SetActionsMenu";
 import SetMediaBadges from "../media/SetMediaBadges";
 
 export type DownloadState = "idle" | "downloading" | "done" | "error";
@@ -54,6 +55,11 @@ interface ContentSetRowProps {
   /** EXP-033 / AIV-11 — "AI-checked" signature badge status for this set.
    *  Defaults to "none" (no badge). */
   aiBadgeStatus?: AiCheckBadgeStatus;
+  /** #1300 — change the set's lifecycle status. Omit (with onDelete) to
+   *  hide the per-set overflow menu. */
+  onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
+  /** #1300 — open the delete-confirm dialog for the set. */
+  onDelete?: (entry: ContentSetEntry) => void;
 }
 
 /** Origin / trust / recommended badges for a non-official source. */
@@ -327,6 +333,8 @@ export default function ContentSetRow({
   aiCheckDisabledReason,
   onQualityCheck,
   aiBadgeStatus = "none",
+  onSetStatus,
+  onDelete,
 }: ContentSetRowProps) {
   const { t } = useI18n();
   const isCached = entry.cached_version !== null;
@@ -378,17 +386,29 @@ export default function ContentSetRow({
         </>
       }
       actions={
-        <ContentSetActions
-          entry={entry}
-          downloadState={downloadState}
-          online={online}
-          isCached={isCached}
-          onOpen={onOpen}
-          onDownload={onDownload}
-          onAiCheck={onAiCheck}
-          aiCheckDisabledReason={aiCheckDisabledReason}
-          onQualityCheck={onQualityCheck}
-        />
+        <>
+          <ContentSetActions
+            entry={entry}
+            downloadState={downloadState}
+            online={online}
+            isCached={isCached}
+            onOpen={onOpen}
+            onDownload={onDownload}
+            onAiCheck={onAiCheck}
+            aiCheckDisabledReason={aiCheckDisabledReason}
+            onQualityCheck={onQualityCheck}
+          />
+          {/* #1300 — per-set status + delete overflow menu (cached sets
+              only; same component as the list view). */}
+          {isCached && onSetStatus && onDelete && (
+            <SetActionsMenu
+              entry={entry}
+              status={entry.status ?? "active"}
+              onSetStatus={(status) => onSetStatus(entry, status)}
+              onDelete={() => onDelete(entry)}
+            />
+          )}
+        </>
       }
     />
   );

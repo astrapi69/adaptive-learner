@@ -32,6 +32,7 @@ import type {
   ContentSetSource,
   ContentSetsList,
   SaveUserSetInput,
+  SetStatus,
 } from "../types";
 import { USER_GENERATED_SOURCE } from "../types";
 import { isDevMode } from "../../hooks/settings/useDevMode";
@@ -358,6 +359,7 @@ function asContentSetEntry(
   parsed: ParsedSet,
   cachedVersion: string | null,
   downloadedAt: string | null = null,
+  status: SetStatus = "active",
 ): ContentSetEntry {
   const updateAvailable =
     cachedVersion !== null && cachedVersion !== parsed.version;
@@ -381,6 +383,7 @@ function asContentSetEntry(
     cached_version: cachedVersion,
     update_available: updateAvailable,
     downloaded_at: downloadedAt,
+    status,
     book: asContentSetBook(parsed.book),
   };
 }
@@ -486,6 +489,7 @@ async function rowToCachedEntry(row: ContentSetRow): Promise<ContentSetEntry> {
     cached_version: row.version,
     update_available: false,
     downloaded_at: row.downloaded_at ?? null,
+    status: row.status ?? "active",
     book: row.book ?? null,
   };
 }
@@ -553,6 +557,7 @@ export async function listSetsDexie(
           parsed,
           cached ? cached.version : null,
           cached ? (cached.downloaded_at ?? null) : null,
+          cached?.status ?? "active",
         ),
       );
     }
@@ -611,6 +616,7 @@ export async function downloadSetDexie(
       target,
       cached.version,
       cached.downloaded_at ?? null,
+      cached.status ?? "active",
     );
   }
 
@@ -682,6 +688,13 @@ export async function downloadSetDexie(
   const pair = resolveLanguagePair(target);
   const downloadedAt = new Date().toISOString();
   await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
+    // #1300 — preserve the user's lifecycle status across a re-download /
+    // version update; a fresh set defaults to "active".
+    const prior = await db.contentSets
+      .where("set_id")
+      .equals(setId)
+      .filter((r) => r.source === source)
+      .first();
     const row: ContentSetRow = {
       id: setPk,
       source,
@@ -700,6 +713,7 @@ export async function downloadSetDexie(
       tags: JSON.stringify(target.tags ?? []),
       cover_image: target.cover_image ?? null,
       downloaded_at: downloadedAt,
+      status: prior?.status ?? "active",
       manifest_yaml: setManifestText,
       book: asContentSetBook(target.book),
     };
@@ -905,6 +919,7 @@ export async function saveUserSetDexie(
     tags: "[]",
     cover_image: null,
     downloaded_at: now,
+    status: "active",
     manifest_yaml: "",
   };
   const files: ContentSetFileRow[] = input.lessons.map((lesson) => ({
@@ -920,6 +935,24 @@ export async function saveUserSetDexie(
     await db.contentSetFiles.bulkPut(files);
   });
   return rowToCachedEntry(row);
+}
+
+/**
+ * #1300 — set the lifecycle status (active / deferred / completed) on
+ * every cached row for a source/set_id pair. Idempotent; a no-op when
+ * the set isn't cached. Drives the "Meine Inhalte" status filter.
+ */
+export async function setSetStatusDexie(
+  source: string,
+  setId: string,
+  status: SetStatus,
+): Promise<void> {
+  const db = getDb();
+  await db.contentSets
+    .where("set_id")
+    .equals(setId)
+    .filter((r) => r.source === source)
+    .modify({ status });
 }
 
 /** Delete every cached row (set + files) for a source/set_id pair. */

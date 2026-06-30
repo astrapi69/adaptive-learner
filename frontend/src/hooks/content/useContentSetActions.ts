@@ -20,7 +20,7 @@ import {
   type ExportSetMeta,
 } from "../../lib/content/lesson/lesson-export";
 import { getStorage } from "../../storage";
-import type { ContentLesson, ContentSetEntry } from "../../storage/types";
+import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
 import { useI18n } from "../ui/useI18n";
 import { notify } from "../../utils/notify";
 
@@ -44,8 +44,54 @@ export function useContentSetActions({
   // Phase 59C — My Lessons delete-confirm modal target.
   const [deleteTarget, setDeleteTarget] = useState<ContentSetEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
+  // #1300 — downloaded-set delete-confirm modal target + status flow.
+  const [deleteSetTarget, setDeleteSetTarget] = useState<ContentSetEntry | null>(null);
+  const [deletingSet, setDeletingSet] = useState(false);
 
   const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
+
+  // #1300 — move a downloaded set between lifecycle statuses. Optimistic:
+  // the list updates immediately, then persists (Dexie row; API no-op).
+  const handleSetStatus = async (entry: ContentSetEntry, status: SetStatus) => {
+    setSets((prev) =>
+      prev.map((row) =>
+        row.source === entry.source && row.id === entry.id ? { ...row, status } : row,
+      ),
+    );
+    try {
+      await getStorage().contentLoader.setSetStatus(entry.source, entry.id, status);
+      notify.success(t("content.set_status.changed", "Status updated."));
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.set_status.change_failed", "Could not update the status.")} ${detail}`,
+      );
+    }
+  };
+
+  // #1300 — confirm-delete a downloaded set (purges the cached set + its
+  // lessons from IndexedDB; learning progress is not touched).
+  const handleConfirmDeleteSet = async () => {
+    if (!deleteSetTarget) return;
+    setDeletingSet(true);
+    try {
+      await getStorage().contentLoader.deleteSet(deleteSetTarget.source, deleteSetTarget.id);
+      setSets((prev) =>
+        prev.filter(
+          (row) => !(row.source === deleteSetTarget.source && row.id === deleteSetTarget.id),
+        ),
+      );
+      notify.success(t("content.set_status.deleted", "Set removed."));
+      setDeleteSetTarget(null);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.set_status.delete_failed", "Could not remove the set.")} ${detail}`,
+      );
+    } finally {
+      setDeletingSet(false);
+    }
+  };
 
   /** Navigate to a specific lesson file (used by search results). */
   const openLessonFile = (source: string, id: string, filename: string) => {
@@ -179,6 +225,11 @@ export function useContentSetActions({
     deleteTarget,
     setDeleteTarget,
     deleting,
+    deleteSetTarget,
+    setDeleteSetTarget,
+    deletingSet,
+    handleSetStatus,
+    handleConfirmDeleteSet,
     openLessonFile,
     handleOpenLesson,
     handleEditUserSet,

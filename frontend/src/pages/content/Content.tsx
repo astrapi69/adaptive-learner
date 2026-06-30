@@ -42,6 +42,7 @@ import ContentSearchBar from "../../components/content/browser/ContentSearchBar"
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
 import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
 import ContentSetListView from "../../components/content/browser/ContentSetListView";
+import DeleteSetModal from "../../components/content/browser/DeleteSetModal";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
@@ -68,6 +69,11 @@ import QualityCheckDialog from "../../components/content/quality/QualityCheckDia
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
 import { isOfficialSource } from "../../lib/content/repos/content-repos";
+import {
+  STATUS_FILTER_ORDER,
+  matchesStatusFilter,
+  type StatusFilter,
+} from "../../lib/content/browse/set-status-filter";
 import type { ContentSetEntry } from "../../storage/types";
 
 /** Community contribution target repo (manual maintainer review). */
@@ -121,6 +127,9 @@ export default function ContentPage() {
   // EXP-023 Phase B — source filter: "all" / "official" / a specific
   // user-repo source ("owner/repo").
   const [sourceFilter, setSourceFilter] = useState<string>("all");
+  // #1300 — lifecycle status filter. Default "active" so "Meine Inhalte"
+  // opens on the clean working list; deferred/completed/all reachable here.
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("active");
   // #1240 — grid (rich tree) ⇄ list (compact) view. Default grid;
   // persisted across navigation/reload.
   const [viewMode, setViewMode] = useContentViewMode();
@@ -155,6 +164,11 @@ export default function ContentPage() {
     deleteTarget,
     setDeleteTarget,
     deleting,
+    deleteSetTarget,
+    setDeleteSetTarget,
+    deletingSet,
+    handleSetStatus,
+    handleConfirmDeleteSet,
     openLessonFile,
     handleOpenLesson,
     handleEditUserSet,
@@ -203,6 +217,8 @@ export default function ContentPage() {
   ];
   const hasUserRepoSets = userRepoSources.length > 0;
   const visibleSets = downloadedSets.filter((s) => {
+    // #1300 — status filter (default "active"); "all" passes every status.
+    if (!matchesStatusFilter(s, statusFilter)) return false;
     if (sourceFilter === "all") return true;
     if (sourceFilter === "official") return isOfficialSource(s.source);
     return s.source === sourceFilter;
@@ -335,6 +351,42 @@ export default function ContentPage() {
               <ContentViewToggle mode={viewMode} onChange={setViewMode} />
             )}
           </div>
+          {/* #1300 — lifecycle status filter (Aktiv / Zurückgestellt /
+              Abgeschlossen / Alle). Same toggle-group pattern as the source
+              filter; default "active" so the working list stays clean. */}
+          {downloadedSets.length > 0 && (
+            <div
+              className="mb-3 flex flex-wrap items-center gap-1"
+              role="group"
+              aria-label={t("content.set_status.filter_aria", "Filter by status")}
+              data-testid="content-status-filter"
+            >
+              {STATUS_FILTER_ORDER.map((value) => {
+                const label =
+                  value === "all"
+                    ? t("content.set_status.all", "All")
+                    : value === "active"
+                      ? t("content.set_status.active", "Active")
+                      : value === "deferred"
+                        ? t("content.set_status.deferred", "Deferred")
+                        : t("content.set_status.completed", "Completed");
+                return (
+                  <Button
+                    key={value}
+                    type="button"
+                    size="sm"
+                    variant={statusFilter === value ? "default" : "outline"}
+                    className="min-h-11"
+                    aria-pressed={statusFilter === value}
+                    onClick={() => setStatusFilter(value)}
+                    data-testid={`content-status-filter-${value}`}
+                  >
+                    {label}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
           {hasUserRepoSets && (
             <div
               className="mb-3 flex flex-wrap items-center gap-1"
@@ -370,7 +422,11 @@ export default function ContentPage() {
               )}
             </p>
           ) : viewMode === "list" ? (
-            <ContentSetListView sets={visibleSets} />
+            <ContentSetListView
+              sets={visibleSets}
+              onSetStatus={(e, status) => void handleSetStatus(e, status)}
+              onDelete={setDeleteSetTarget}
+            />
           ) : (
             <ContentTree
               tree={tree}
@@ -395,6 +451,8 @@ export default function ContentPage() {
                 onQualityCheck: (e) => setQualityCheckTarget(e),
                 aiBadgeStatusFor: (e): AiCheckBadgeStatus =>
                   aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
+                onSetStatus: (e, status) => void handleSetStatus(e, status),
+                onDelete: setDeleteSetTarget,
               }}
               folded={{
                 setsByKey: userSetsByKey,
@@ -439,6 +497,14 @@ export default function ContentPage() {
         deleting={deleting}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDeleteUserSet}
+      />
+
+      {/* #1300 — destructive confirmation for removing a downloaded set. */}
+      <DeleteSetModal
+        target={deleteSetTarget}
+        deleting={deletingSet}
+        onCancel={() => setDeleteSetTarget(null)}
+        onConfirm={() => void handleConfirmDeleteSet()}
       />
     </main>
   );

@@ -2013,6 +2013,23 @@ content:
     delete_confirm: "Bu ders silinsin mi? Bu geri alınamaz."
     deleted: "Ders silindi."
     delete_failed: "Ders silinemedi."
+  set_status:
+    all: "Tümü"
+    active: "Etkin"
+    deferred: "Ertelendi"
+    completed: "Tamamlandı"
+    filter_aria: "Duruma göre filtrele"
+    menu_aria: "Set eylemleri"
+    changed: "Durum güncellendi."
+    change_failed: "Durum güncellenemedi."
+    deleted: "Set kaldırıldı."
+    delete_failed: "Set kaldırılamadı."
+    delete_confirm: "İndirilen set ve dersleri İçeriklerim'den kaldırılacak. Öğrenme ilerlemen korunur ve seti istediğin zaman yeniden indirebilirsin."
+    action:
+      activate: "Yeniden etkinleştir"
+      defer: "Ertele"
+      complete: "Tamamlandı olarak işaretle"
+      delete: "Sil"
   ai_exercises:
     batch:
       button: "Tüm dersler için oluştur"
