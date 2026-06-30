@@ -94,7 +94,7 @@
     "help": "Ayuda",
     "home": "Inicio",
     "menu": "Menú",
-    "online": "En linea",
+    "online": "En línea",
     "offline": "Sin conexión",
     "anki": "Anki",
     "contribute": "Contribuir",
@@ -167,7 +167,7 @@
     "load_error": "No se pudo cargar la conversación.",
     "messages": "mensajes",
     "no_api_key": "Configura una clave API para el proveedor de IA activo en Ajustes para activar el análisis.",
-    "no_lessons": "El análisis no sugirio ninguna lección.",
+    "no_lessons": "El análisis no sugirió ninguna lección.",
     "no_user": "Completa la incorporación antes de importar conversaciones.",
     "parse_error": "No se pudo reconocer el formato de entrada.",
     "priority": "prioridad",
@@ -241,7 +241,7 @@
   },
   "onboarding": {
     "title": "Crear un proyecto de aprendizaje",
-    "intro": "Cuentanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un método inicial.",
+    "intro": "Cuéntanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un método inicial.",
     "concepts_explainer_prefix": "Definirás un ",
     "concepts_explainer_mid1": ", y luego completas una breve evaluación para construir tu ",
     "concepts_explainer_mid2": " — que guía cada ",
@@ -627,7 +627,7 @@
     "avatar_change": "Cambiar foto",
     "avatar_button_label": "Ver o cambiar la foto de perfil",
     "theme": "Tema",
-    "theme_description": "Elige el aspecto de la aplicacion. Automático sigue la configuración clara/oscura del sistema.",
+    "theme_description": "Elige el aspecto de la aplicación. Automático sigue la configuración clara/oscura del sistema.",
     "theme_group_recommended": "Recomendados",
     "theme_group_classic": "Clásicos",
     "theme_groups": "Grupos de temas",
@@ -687,12 +687,12 @@
     "sounds_volume": "Volumen",
     "sounds_test": "Probar",
     "section_storage_mode": "Modo de almacenamiento",
-    "storage_mode_help": "Elige donde viven tus datos. El modo local guarda todo en este navegador; el modo Servidor habla con el backend de AdaptiveLearner.",
+    "storage_mode_help": "Elige dónde viven tus datos. El modo local guarda todo en este navegador; el modo Servidor habla con el backend de AdaptiveLearner.",
     "storage_mode_api": "Servidor",
-    "storage_mode_api_hint": "Requiere un backend de AdaptiveLearner en ejecucion.",
+    "storage_mode_api_hint": "Requiere un backend de AdaptiveLearner en ejecución.",
     "storage_mode_dexie": "Local (Navegador)",
     "storage_mode_dexie_hint": "Datos y claves API viven en este navegador; las llamadas de IA salen directamente desde la página.",
-    "storage_mode_warning": "Los datos NO se sincronizan entre modos. La sincronizacion esta planeada para una version futura.",
+    "storage_mode_warning": "Los datos NO se sincronizan entre modos. La sincronización está planeada para una versión futura.",
     "storage_mode_switch_notice": "Modo de almacenamiento guardado. Recarga la página para activarlo.",
     "language_label": "Idioma de la interfaz",
     "language_search_placeholder": "Buscar idiomas…",
@@ -759,9 +759,9 @@
     "api_key_external_hint_file": "Guardada en ~/.config/adaptive_learner/secrets.yaml. Guardar aquí la sobrescribe.",
     "api_key_external_hint_env": "Esta clave se configura mediante la variable de entorno ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.",
     "section_model_overrides": "Modelos personalizados",
-    "model_overrides_hint": "Deja en blanco para usar el modelo predeterminado por proveedor. Un valor no vacio reemplaza el predeterminado al chatear.",
+    "model_overrides_hint": "Deja en blanco para usar el modelo predeterminado por proveedor. Un valor no vacío reemplaza el predeterminado al chatear.",
     "model_override_placeholder": "Identificador del modelo (p. ej. claude-3-5-haiku-latest)",
-    "model_override_set": "Anulacion activa",
+    "model_override_set": "Anulación activa",
     "model_override_default": "Modelo predeterminado",
     "model_override_save": "Guardar modelo",
     "model_override_clear": "Usar predeterminado",
@@ -873,11 +873,11 @@
     },
     "error_based": {
       "label": "Basado en errores",
-      "summary": "Aprender de los errores — correccion con explicacion."
+      "summary": "Aprender de los errores — corrección con explicación."
     },
     "dialogic": {
-      "label": "Dialogico",
-      "summary": "Pensar en conversación — bajar el estrés, construir motivacion."
+      "label": "Dialógico",
+      "summary": "Pensar en conversación — bajar el estrés, construir motivación."
     },
     "contextual": {
       "label": "Contextual",
@@ -891,11 +891,11 @@
   "cycle_steps": {
     "input": {
       "label": "Entrada",
-      "description": "Se presenta informacion, ejemplo o tarea."
+      "description": "Se presenta información, ejemplo o tarea."
     },
     "attempt": {
       "label": "Intento",
-      "description": "Primera aplicacion sin red de seguridad."
+      "description": "Primera aplicación sin red de seguridad."
     },
     "error": {
       "label": "Error",
@@ -903,7 +903,7 @@
     },
     "feedback": {
       "label": "Comentarios",
-      "description": "Correccion con explicacion."
+      "description": "Corrección con explicación."
     },
     "adapt": {
       "label": "Adaptar",
@@ -915,13 +915,13 @@
     },
     "integrate": {
       "label": "Integrar",
-      "description": "El conocimiento queda a traves de la experiencia."
+      "description": "El conocimiento queda a través de la experiencia."
     }
   },
   "errors": {
     "network": "No se pudo conectar con el servidor.",
     "not_found": "No encontrado.",
-    "validation": "Entrada invalida.",
+    "validation": "Entrada inválida.",
     "conflict": "El elemento ya existe.",
     "server": "Error del servidor — inténtalo más tarde."
   },
@@ -995,8 +995,8 @@
     "identity_status_label": "Estado",
     "identity_status_active": "Activo",
     "identity_status_missing": "No encontrado",
-    "identity_last_seen_label": "Última actualizacion",
-    "identity_explainer": "Este archivo es gestionado automaticamente por Adaptive Learner. Permite que la aplicacion recupere tu identidad de usuario después de borrar los datos del navegador. No lo edites manualmente.",
+    "identity_last_seen_label": "Última actualización",
+    "identity_explainer": "Este archivo es gestionado automáticamente por Adaptive Learner. Permite que la aplicación recupere tu identidad de usuario después de borrar los datos del navegador. No lo edites manualmente.",
     "credits_heading": "Créditos",
     "author_label": "Autor",
     "dependencies_label": "Construido con",
@@ -1494,7 +1494,7 @@
       "amethyst-haze": "Amethyst Haze",
       "light": "Claro",
       "dark": "Oscuro",
-      "ocean": "Oceano",
+      "ocean": "Océano",
       "forest": "Bosque",
       "high-contrast": "Alto contraste",
       "sepia": "Sepia",
@@ -2381,10 +2381,10 @@
     "ai_check": {
       "badge": {
         "verified": "Revisado por IA",
-        "stale": "Revision IA desactualizada",
-        "invalid": "Revision IA no valida"
+        "stale": "Revisión IA desactualizada",
+        "invalid": "Revisión IA no válida"
       },
-      "last_checked": "Última revision: {when}",
+      "last_checked": "Última revisión: {when}",
       "checked_with": "Verificado con",
       "date": "Fecha",
       "recheck": "Revisar de nuevo",
@@ -2395,14 +2395,14 @@
         "field": "Campo"
       },
       "button": "Revisar con IA",
-      "title": "Revision de contenido con IA",
+      "title": "Revisión de contenido con IA",
       "loading": "Preparando tarjetas...",
       "cost_estimate": "~{cards} tarjetas, ~{tokens} tokens, ~{usd}.",
-      "privacy": "Tus tarjetas se enviaran a tu proveedor de IA configurado para su revision. No se transmiten datos personales.",
+      "privacy": "Tus tarjetas se enviarán a tu proveedor de IA configurado para su revisión. No se transmiten datos personales.",
       "confirm": "Revisar",
       "progress": "Revisando lote {current} de {total}...",
       "rate_limited": "Espera un momento antes de ejecutar otra revision.",
-      "failed": "Revision con IA no disponible.",
+      "failed": "Revisión con IA no disponible.",
       "unavailable_mode": "Solo disponible en modo de almacenamiento del navegador.",
       "report": {
         "summary": "{cards} tarjetas revisadas en {lessons} lecciones",

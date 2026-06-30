@@ -604,6 +604,9 @@ i18n-quality-check-dry: ## i18n quality-check coverage/cache stats only, no API 
 i18n-csv-export: ## Per-language CSV review export: de | target | LLM verdict | correction (#1296). ARGS="--langs ja --flagged-only"
 	@cd backend && poetry run python ../scripts/export_i18n_csv.py $(ARGS)
 
+i18n-import-corrections: ## Surgically write i18n corrections back into the YAML (#1296). Diacritics-only from cache: ARGS="--langs fr es --source cache --verdict missing_diacritics". Run make sync-i18n after.
+	@cd backend && poetry run python ../scripts/import_i18n_corrections.py $(ARGS)
+
 sync-plugin-config: ## Regenerate frontend/src/data/plugin-config/*.json from backend/config/plugins/*.yaml (Phase 49 / v1.32.0)
 	@python3 scripts/sync_plugin_config_to_frontend.py
 

@@ -241,19 +241,6 @@
     "target_hash": "b0acb12a7268",
     "checked_at": "fr+es full run"
   },
-  "about.identity_explainer": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "missing accents in 'gestionado' should be ok but 'automaticamente' and 'aplicacion' need accents",
-    "suggestion": "Este archivo es gestionado automáticamente por Adaptive Learner. Permite que la aplicación recupere tu identidad de usuario después de borrar los datos del navegador. No lo edites manualmente.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "4a4f1c2863b0",
-    "target_hash": "36cbd838e20f",
-    "checked_at": "fr+es full run"
-  },
   "about.identity_heading": {
     "verdict": "ok",
     "severity": "low",
@@ -263,19 +250,6 @@
     "tier1_verdict": "ok",
     "de_hash": "299a72c83511",
     "target_hash": "68d113049fe4",
-    "checked_at": "fr+es full run"
-  },
-  "about.identity_last_seen_label": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "missing accent in 'actualización'",
-    "suggestion": "Última actualización",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "2e9547909468",
-    "target_hash": "65b86326c20a",
     "checked_at": "fr+es full run"
   },
   "about.identity_loading": {
@@ -2548,28 +2522,6 @@
     "target_hash": "fe5f6628c7b5",
     "checked_at": "fr+es full run"
   },
-  "content.ai_check.badge.invalid": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "\"Revision\" missing accent (→ \"Revisión\"); \"valida\" missing accent (→ \"válida\").",
-    "suggestion": "Revisión IA no válida",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "6f5e07df41ba",
-    "target_hash": "025777b205d6",
-    "checked_at": "fr+es full run"
-  },
-  "content.ai_check.badge.stale": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "\"Revision\" is missing the accent on the í; should be \"Revisión\".",
-    "suggestion": "Revisión IA desactualizada",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "2ebb3afe8769",
-    "target_hash": "5b6d79db5547",
-    "checked_at": "fr+es full run"
-  },
   "content.ai_check.badge.verified": {
     "verdict": "ok",
     "severity": "low",
@@ -2680,30 +2632,6 @@
     "target_hash": "e208448ce00e",
     "checked_at": "fr+es full run"
   },
-  "content.ai_check.failed": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "revision->revisión",
-    "suggestion": "Revisión con IA no disponible.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "c2ae6becf585",
-    "target_hash": "cb3d4b548a54",
-    "checked_at": "fr+es full run"
-  },
-  "content.ai_check.last_checked": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "\"revision\" is missing the accent; should be \"revisión\". Placeholder {when} is correctly retained.",
-    "suggestion": "Última revisión: {when}",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "af175dd6e635",
-    "target_hash": "6d50d79bde96",
-    "checked_at": "fr+es full run"
-  },
   "content.ai_check.loading": {
     "verdict": "ok",
     "severity": "low",
@@ -2713,19 +2641,6 @@
     "tier1_verdict": "ok",
     "de_hash": "31450f9f147f",
     "target_hash": "b92d6dd7487d",
-    "checked_at": "fr+es full run"
-  },
-  "content.ai_check.privacy": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "enviaran->enviarán, revision->revisión",
-    "suggestion": "Tus tarjetas se enviarán a tu proveedor de IA configurado para su revisión. No se transmiten datos personales.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "cc96e0240594",
-    "target_hash": "3a843f2f0017",
     "checked_at": "fr+es full run"
   },
   "content.ai_check.progress": {
@@ -2827,19 +2742,6 @@
     "tier1_verdict": "ok",
     "de_hash": "7eb0ce02fa2f",
     "target_hash": "93077eaf221c",
-    "checked_at": "fr+es full run"
-  },
-  "content.ai_check.title": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Revision needs accent: Revisión",
-    "suggestion": "Revisión de contenido con IA",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "fa59112691fd",
-    "target_hash": "aa3bc79066a7",
     "checked_at": "fr+es full run"
   },
   "content.ai_check.unavailable_mode": {
@@ -8155,19 +8057,6 @@
     "target_hash": "bed7ac4333fe",
     "checked_at": "fr+es full run"
   },
-  "cycle_steps.attempt.description": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing accent: aplicacion->aplicación",
-    "suggestion": "Primera aplicación sin red de seguridad.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "458c6eec0ae0",
-    "target_hash": "f74bb5daed6f",
-    "checked_at": "fr+es full run"
-  },
   "cycle_steps.attempt.label": {
     "verdict": "ok",
     "severity": "low",
@@ -8201,19 +8090,6 @@
     "target_hash": "54a0e8c17ebb",
     "checked_at": "fr+es full run"
   },
-  "cycle_steps.feedback.description": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing accents: Correccion->Corrección, explicacion->explicación",
-    "suggestion": "Corrección con explicación.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "985902c48bdf",
-    "target_hash": "a95efbf0a640",
-    "checked_at": "fr+es full run"
-  },
   "cycle_steps.feedback.label": {
     "verdict": "ok",
     "severity": "low",
@@ -8227,19 +8103,6 @@
     "target_hash": "b144e59660fc",
     "checked_at": "fr+es full run"
   },
-  "cycle_steps.input.description": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing accent: informacion->información",
-    "suggestion": "Se presenta información, ejemplo o tarea.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "54ca5375990c",
-    "target_hash": "f45249b97f33",
-    "checked_at": "fr+es full run"
-  },
   "cycle_steps.input.label": {
     "verdict": "ok",
     "severity": "low",
@@ -8249,17 +8112,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a5ce7b5d4230",
     "target_hash": "b40b2944d0e8",
-    "checked_at": "fr+es full run"
-  },
-  "cycle_steps.integrate.description": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'a traves' is missing the accent on 'través'.",
-    "suggestion": "El conocimiento queda a través de la experiencia.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "11eb5d45a5e9",
-    "target_hash": "a928a7f99e99",
     "checked_at": "fr+es full run"
   },
   "cycle_steps.integrate.label": {
@@ -10411,17 +10263,6 @@
     "tier1_verdict": "ok",
     "de_hash": "0e2fbabc9bc0",
     "target_hash": "19a63c047b88",
-    "checked_at": "fr+es full run"
-  },
-  "errors.validation": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'invalida' is missing the accent; correct form is 'inválida'.",
-    "suggestion": "Entrada inválida.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "8f4b64f0b158",
-    "target_hash": "f8677e2f5115",
     "checked_at": "fr+es full run"
   },
   "export.busy": {
@@ -12908,17 +12749,6 @@
     "tier1_verdict": "ok",
     "de_hash": "73961e302cc6",
     "target_hash": "94eb08f88c2a",
-    "checked_at": "fr+es full run"
-  },
-  "import.no_lessons": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'sugirio' is missing the accent; correct form is 'sugirió'.",
-    "suggestion": "El análisis no sugirió ninguna lección.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "1dfafa5cc701",
-    "target_hash": "b971ec1a839e",
     "checked_at": "fr+es full run"
   },
   "import.no_user": {
@@ -17666,32 +17496,6 @@
     "target_hash": "39c222d75404",
     "checked_at": "fr+es full run"
   },
-  "methods.dialogic.label": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing accent: Dialogico->Dialógico",
-    "suggestion": "Dialógico",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "d535bdded007",
-    "target_hash": "33bcd7e892c0",
-    "checked_at": "fr+es full run"
-  },
-  "methods.dialogic.summary": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing accent: motivacion->motivación",
-    "suggestion": "Pensar en conversación — bajar el estrés, construir motivación.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "2adae1c5dbfa",
-    "target_hash": "d74bfaba9165",
-    "checked_at": "fr+es full run"
-  },
   "methods.error_based.label": {
     "verdict": "ok",
     "severity": "low",
@@ -17701,19 +17505,6 @@
     "tier1_verdict": "ok",
     "de_hash": "3d7008277b5f",
     "target_hash": "0bcc6d17265b",
-    "checked_at": "fr+es full run"
-  },
-  "methods.error_based.summary": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing accents: correccion->corrección, explicacion->explicación",
-    "suggestion": "Aprender de los errores — corrección con explicación.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "f2352c875eb9",
-    "target_hash": "e64a96465cd0",
     "checked_at": "fr+es full run"
   },
   "methods.inductive.label": {
@@ -18675,19 +18466,6 @@
     "target_hash": "4f6a27a50dea",
     "checked_at": "fr+es full run"
   },
-  "nav.online": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing accent on 'línea'",
-    "suggestion": "En línea",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "0d21bd52022c",
-    "target_hash": "27c9a7d92058",
-    "checked_at": "fr+es full run"
-  },
   "nav.primary": {
     "verdict": "ok",
     "severity": "low",
@@ -19253,19 +19031,6 @@
     "tier1_verdict": "ok",
     "de_hash": "d097d99af3d1",
     "target_hash": "f7199544c130",
-    "checked_at": "fr+es full run"
-  },
-  "onboarding.intro": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'Cuentanos' missing accent; should be 'Cuéntanos'",
-    "suggestion": "Cuéntanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un método inicial.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "d42177c4c666",
-    "target_hash": "317bccdee3ae",
     "checked_at": "fr+es full run"
   },
   "onboarding.invite_setup_profile": {
@@ -24081,28 +23846,6 @@
     "target_hash": "cb6be924ffc7",
     "checked_at": "fr+es full run"
   },
-  "settings.model_override_set": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'Anulacion' is missing accent → 'Anulación'.",
-    "suggestion": "Anulación activa",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "983d91108d31",
-    "target_hash": "e1e91d845752",
-    "checked_at": "fr+es full run"
-  },
-  "settings.model_overrides_hint": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'vacio' is missing accent → 'vacío'.",
-    "suggestion": "Deja en blanco para usar el modelo predeterminado por proveedor. Un valor no vacío reemplaza el predeterminado al chatear.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "748238f7a0ee",
-    "target_hash": "1bb87754d882",
-    "checked_at": "fr+es full run"
-  },
   "settings.model_picker_all": {
     "verdict": "ok",
     "severity": "low",
@@ -25082,17 +24825,6 @@
     "target_hash": "05e427a291c2",
     "checked_at": "fr+es full run"
   },
-  "settings.storage_mode_api_hint": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'ejecucion' is missing accent: should be 'ejecución'.",
-    "suggestion": "Requiere un backend de AdaptiveLearner en ejecución.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "3e831867edf7",
-    "target_hash": "157414791c67",
-    "checked_at": "fr+es full run"
-  },
   "settings.storage_mode_dexie": {
     "verdict": "ok",
     "severity": "low",
@@ -25115,17 +24847,6 @@
     "target_hash": "58010aebfd7b",
     "checked_at": "fr+es full run"
   },
-  "settings.storage_mode_help": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'donde' should be 'dónde' (interrogative/indirect question context requires accent).",
-    "suggestion": "Elige dónde viven tus datos. El modo local guarda todo en este navegador; el modo Servidor habla con el backend de AdaptiveLearner.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "a10c5170b7e0",
-    "target_hash": "13eacf4f1c53",
-    "checked_at": "fr+es full run"
-  },
   "settings.storage_mode_switch_notice": {
     "verdict": "ok",
     "severity": "low",
@@ -25135,19 +24856,6 @@
     "tier1_verdict": "ok",
     "de_hash": "3dfcb62d7ade",
     "target_hash": "36241be0854b",
-    "checked_at": "fr+es full run"
-  },
-  "settings.storage_mode_warning": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing accents: sincronizacion, esta, version",
-    "suggestion": "Los datos NO se sincronizan entre modos. La sincronización está planeada para una versión futura.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "c5d163430bac",
-    "target_hash": "66bb0e0e316a",
     "checked_at": "fr+es full run"
   },
   "settings.support.create_report": {
@@ -25291,19 +24999,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a95c93a836cd",
     "target_hash": "d5df3708bc68",
-    "checked_at": "fr+es full run"
-  },
-  "settings.theme_description": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'aplicacion' missing accent: should be 'aplicación'",
-    "suggestion": "Elige el aspecto de la aplicación. Automático sigue la configuración clara/oscura del sistema.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "1c71f2fb169a",
-    "target_hash": "4be0471b493f",
     "checked_at": "fr+es full run"
   },
   "settings.theme_group_classic": {
@@ -29644,17 +29339,6 @@
     "tier1_verdict": "ok",
     "de_hash": "8d586f8b60df",
     "target_hash": "2f3e8dcc2464",
-    "checked_at": "fr+es full run"
-  },
-  "ui.themes.ocean": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'Oceano' is missing the accent on the first 'e'; correct Spanish spelling is 'Océano'.",
-    "suggestion": "Océano",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "1c109023f192",
-    "target_hash": "50384cacfbdd",
     "checked_at": "fr+es full run"
   },
   "ui.themes.sepia": {
