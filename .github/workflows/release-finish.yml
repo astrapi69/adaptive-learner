@@ -32,11 +32,19 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-  # gh (used by `make release-publish`) authenticates via this token.
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # gh (used by `make release-publish`) authenticates via this token. Use a
+  # PAT (not GITHUB_TOKEN) so the published Release fires launcher-*.yml:
+  # GitHub deliberately does NOT fire downstream workflows from GITHUB_TOKEN
+  # events (recursion guard, #1265). Falls back to GITHUB_TOKEN when
+  # RELEASE_PAT is unset (release publishes, launcher attach then needs a
+  # manual trigger).
+  GH_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
   # Bound here so shell steps read it from the environment instead of
   # interpolating the dispatch input directly (avoids shell-injection).
   VERSION: ${{ inputs.version }}
+  # Surface "is the PAT configured?" as a boolean for the notice steps;
+  # secrets cannot be referenced directly in `if:` / shell conditionals.
+  HAS_RELEASE_PAT: ${{ secrets.RELEASE_PAT != '' }}
 
 jobs:
   finish:
@@ -44,11 +52,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      # fetch-depth 0 + default persisted credentials so the Make target's
-      # git merges/pushes use the workflow token.
+      - name: PAT availability notice
+        # The release ALWAYS completes; this only documents whether the
+        # downstream GH-Pages deploy + launcher-binary attach fire on their
+        # own (PAT) or need a manual trigger (GITHUB_TOKEN fallback).
+        run: |
+          if [ "$HAS_RELEASE_PAT" = "true" ]; then
+            echo "RELEASE_PAT is set: the main push fires deploy-gh-pages.yml and the published Release fires launcher-*.yml automatically."
+          else
+            echo "::warning::RELEASE_PAT secret is NOT set. The release will still complete, but GitHub will not fire downstream workflows from GITHUB_TOKEN events (#1265). After this run you must MANUALLY: (1) dispatch deploy-gh-pages.yml on main, and (2) attach the launcher binaries to the Release (re-publish via PAT or upload manually)."
+          fi
+
+      # fetch-depth 0 + a persisted PAT (not GITHUB_TOKEN) so the Make
+      # target's git push to main fires deploy-gh-pages.yml (#1265). Falls
+      # back to GITHUB_TOKEN when RELEASE_PAT is unset (release completes, the
+      # deploy then needs a manual trigger).
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v6
         with:
@@ -84,4 +106,8 @@ jobs:
         if: always()
         run: |
           echo "release-finish for v$VERSION done."
-          echo "The launcher-{linux,macos,windows} workflows now attach binaries to the Release on 'release: created'."
+          if [ "$HAS_RELEASE_PAT" = "true" ]; then
+            echo "PAT push to main fired deploy-gh-pages.yml; the PAT-published Release fired launcher-{linux,macos,windows}.yml (binaries attach on 'release: created')."
+          else
+            echo "::warning::Published with GITHUB_TOKEN (no RELEASE_PAT). Now MANUALLY: dispatch deploy-gh-pages.yml on main, and attach the launcher binaries to the Release."
+          fi
