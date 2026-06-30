@@ -20,6 +20,7 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 import { isOfficialSource } from "../../../lib/content/repos/content-repos";
 import type { MediaResource } from "../../../lib/content/media/media-loader";
 import type { ContentSetEntry } from "../../../storage/types";
+import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
 import SetMediaBadges from "../media/SetMediaBadges";
 
 export type DownloadState = "idle" | "downloading" | "done" | "error";
@@ -353,7 +354,16 @@ export default function ContentSetRow({
         </span>
       }
       description={
-        entry.description ? <p className="content-set-desc">{entry.description}</p> : undefined
+        <>
+          {entry.description && <p className="content-set-desc">{entry.description}</p>}
+          {/* #1298 — the Dev-Mode download-date diagnostic (the #1259 readout,
+              extended from the Learning Path SetRow to "Meine Inhalte"). */}
+          <DownloadedAtReadout
+            downloadedAt={entry.downloaded_at}
+            testId={`content-set-${entry.id}-downloaded-at`}
+            className="block"
+          />
+        </>
       }
       status={
         <>

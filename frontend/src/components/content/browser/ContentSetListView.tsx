@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { isKnowledgeDomain } from "../../../lib/exercises/knowledge-domain";
+import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
 import type { ContentSetEntry } from "../../../storage/types";
 
 interface ContentSetListViewProps {
@@ -52,6 +53,13 @@ function ContentSetListRow({ entry }: { entry: ContentSetEntry }) {
           {entry.lesson_count} {t("content.lessons", "lessons")}
         </span>
       </Link>
+      {/* #1298 — the Dev-Mode download-date diagnostic (the #1259 readout,
+          extended from the Learning Path SetRow to "Meine Inhalte"). */}
+      <DownloadedAtReadout
+        downloadedAt={entry.downloaded_at}
+        testId={`content-list-set-${entry.id}-downloaded-at`}
+        className="block px-2 pb-1"
+      />
     </li>
   );
 }
