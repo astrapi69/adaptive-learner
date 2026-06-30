@@ -9,14 +9,14 @@
 
 import {useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
-import {playSound} from "../../../lib/audio/sound-effects";
+import {useI18n} from "../../../../hooks/ui/useI18n";
+import {playSound} from "../../../../lib/audio/sound-effects";
 import {
     readSoundEnabled,
     readSoundVolume,
     setSoundEnabled,
     setSoundVolume,
-} from "../../../lib/feedback/feedbackPref";
+} from "../../../../lib/feedback/feedbackPref";
 
 export default function SoundSettingsControl() {
     const {t} = useI18n();

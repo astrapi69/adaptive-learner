@@ -7,10 +7,10 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import SoundSettingsControl from "./SoundSettingsControl";
-import {readSoundEnabled, readSoundVolume} from "../../../lib/feedback/feedbackPref";
+import {readSoundEnabled, readSoundVolume} from "../../../../lib/feedback/feedbackPref";
 
 const playSound = vi.fn();
-vi.mock("../../../lib/audio/sound-effects", () => ({
+vi.mock("../../../../lib/audio/sound-effects", () => ({
     playSound: (name: string) => playSound(name),
 }));
 

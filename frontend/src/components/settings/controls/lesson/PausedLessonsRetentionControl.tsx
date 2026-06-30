@@ -9,12 +9,12 @@
 
 import {useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 import {
     RETENTION_OPTIONS,
     readRetentionDays,
     writeRetentionDays,
-} from "../../../lib/learning/pausedRetentionPref";
+} from "../../../../lib/learning/pausedRetentionPref";
 
 export default function PausedLessonsRetentionControl() {
     const {t} = useI18n();

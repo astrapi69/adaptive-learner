@@ -16,9 +16,8 @@
  * <InfoHint storageId="content_my" text={t("content.intro", "…")} label={t("ui.info.show", "Show information")} />
  */
 
-import { Info } from "lucide-react";
-
 import { cn } from "@/lib/utils";
+import InfoHintButton from "./InfoHintButton";
 import { useInfoHint } from "./useInfoHint";
 
 export interface InfoHintProps {
@@ -47,24 +46,14 @@ export default function InfoHint({
 
   return (
     <div className={cn("mb-4", className)} data-testid={testId}>
-      <button
-        type="button"
+      <InfoHintButton
+        expanded={expanded}
+        blink={blink}
+        label={label}
+        controls={textId}
         onClick={toggle}
-        aria-expanded={expanded}
-        aria-controls={textId}
-        aria-label={label}
-        title={label}
-        data-testid={`${testId}-button`}
-        data-blink={blink ? "true" : undefined}
-        className={cn(
-          "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-fg-muted",
-          "hover:text-fg-primary focus-visible:outline-none focus-visible:ring-2",
-          "focus-visible:ring-accent focus-visible:ring-offset-2",
-          blink && "motion-safe:animate-[info-hint-blink_1.4s_ease-in-out_3]",
-        )}
-      >
-        <Info size={18} aria-hidden="true" />
-      </button>
+        testId={`${testId}-button`}
+      />
       {expanded && (
         <p
           id={textId}

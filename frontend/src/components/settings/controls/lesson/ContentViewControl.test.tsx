@@ -14,11 +14,11 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import ContentViewControl from "./ContentViewControl";
-import { useContentViewMode } from "../../../hooks/content/useContentViewMode";
+import { useContentViewMode } from "../../../../hooks/content/useContentViewMode";
 import {
   readContentViewMode,
   writeContentViewMode,
-} from "../../../lib/content/browse/viewModePref";
+} from "../../../../lib/content/browse/viewModePref";
 
 afterEach(() => {
   localStorage.clear();

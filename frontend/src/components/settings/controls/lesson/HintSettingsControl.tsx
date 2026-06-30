@@ -10,7 +10,7 @@
 
 import {useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 import {
     MAX_HINT_XP_COST,
     clampHintXpCost,
@@ -18,7 +18,7 @@ import {
     readHintsEnabled,
     setHintXpCost,
     setHintsEnabled,
-} from "../../../lib/hints/hintPref";
+} from "../../../../lib/hints/hintPref";
 
 export default function HintSettingsControl() {
     const {t} = useI18n();

@@ -17,18 +17,18 @@
 import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 import {
     readGamificationPrefs,
     setBadgeNotifications,
     setDailySessionGoal,
     setXpNotifications,
-} from "../../../lib/gamification/gamificationPref";
-import {readLearnerState} from "../../../lib/learning/learnerState";
-import {getStorage} from "../../../storage";
-import type {BadgeWithProgress} from "../../../storage/types";
-import {notify} from "../../../utils/notify";
-import BadgeGallery from "../../badges/BadgeGallery";
+} from "../../../../lib/gamification/gamificationPref";
+import {readLearnerState} from "../../../../lib/learning/learnerState";
+import {getStorage} from "../../../../storage";
+import type {BadgeWithProgress} from "../../../../storage/types";
+import {notify} from "../../../../utils/notify";
+import BadgeGallery from "../../../badges/BadgeGallery";
 
 export default function GamificationSettingsSection() {
     const {t} = useI18n();

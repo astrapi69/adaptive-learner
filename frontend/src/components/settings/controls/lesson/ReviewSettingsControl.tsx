@@ -6,16 +6,16 @@
 
 import {useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 import {
     readExplanationsEnabled,
     setExplanationsEnabled,
-} from "../../../lib/review/reviewPref";
+} from "../../../../lib/review/reviewPref";
 import {
     readReviewLimit,
     REVIEW_LIMIT_OPTIONS,
     writeReviewLimit,
-} from "../../../lib/learning/reviewLimitPref";
+} from "../../../../lib/learning/reviewLimitPref";
 
 export default function ReviewSettingsControl() {
     const {t} = useI18n();

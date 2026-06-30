@@ -9,9 +9,9 @@
  * default is list (#1257).
  */
 
-import { useContentViewMode } from "../../../hooks/content/useContentViewMode";
-import type { ContentViewMode } from "../../../lib/content/browse/viewModePref";
-import { useI18n } from "../../../hooks/ui/useI18n";
+import { useContentViewMode } from "../../../../hooks/content/useContentViewMode";
+import type { ContentViewMode } from "../../../../lib/content/browse/viewModePref";
+import { useI18n } from "../../../../hooks/ui/useI18n";
 
 const MODES: ContentViewMode[] = ["list", "grid"];
 
