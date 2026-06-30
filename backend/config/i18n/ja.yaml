@@ -430,7 +430,7 @@ session:
   cycles_completed: 完了したサイクル
   next_topic: '次のトピック:'
   step_reason_tooltip: なぜこのステップ?
-  offline_start_blocked: オフラインです。新しいセッションにはネットワーク接続が必要です — 過去の セッションはダッシュボードから読み続けられます。
+  offline_start_blocked: オフラインです。新しいセッションにはネットワーク接続が必要です — 過去のセッションはダッシュボードから読み続けられます。
   peek_step_prefix: "ステップ"
   rating_notes_aria: "セッションのメモ"
   rating_notes_placeholder: "うまくいったこと、いかなかったこと、次に試すこと…"
@@ -450,7 +450,7 @@ progress:
   commit_date: 日付
   no_commits: まだ完了したセッションはありません。
   step_eval_title: AI ステップ評価のインサイト
-  step_eval_empty: まだ AI ステップ評価データがありません — セッションを開始してここに インサイトを表示しましょう。
+  step_eval_empty: まだ AI ステップ評価データがありません — セッションを開始してここにインサイトを表示しましょう。
   step_eval_avg_confidence: AI の平均信頼度
   step_eval_repeats: AI が「まだ準備ができていない」と言った回数
   step_eval_advances: ステップ前進

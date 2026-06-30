@@ -87,7 +87,7 @@ nav:
   home: Inicio
   menu: "Menú"
   online: En linea
-  offline: Sin conexion
+  offline: Sin conexión
   anki: Anki
   contribute: "Contribuir"
   sidebar_open: "Abrir barra lateral"
@@ -198,7 +198,7 @@ curriculum:
   topic_title: Título
   no_topics: Todavia no hay temas — añade el primero para empezar.
   no_curriculum: Crea un currículo para empezar a construir un árbol de temas.
-  delete_confirm: Eliminar este tema? Sus hijos quedaran como raíces propias.
+  delete_confirm: ¿Eliminar este tema? Sus hijos quedarán como raíces propias.
   lessons_title: "Lecciones"
   add_lesson: "Añadir lección"
   new_lesson_placeholder: "Título de la nueva lección…"
@@ -238,12 +238,12 @@ onboarding:
   field_topic: Tema
   field_topic_hint: p. ej. Español B1, álgebra lineal.
   field_goal: Objetivo
-  field_goal_hint: Que quieres ser capaz de hacer?
+  field_goal_hint: ¿Qué quieres ser capaz de hacer?
   field_timeframe: Plazo
   field_timeframe_hint: p. ej. 4 semanas, un semestre.
   field_daily_minutes: Minutos por día
   field_current_problem: Problema actual
-  field_current_problem_hint: opcional — que te bloquea ahora mismo?
+  field_current_problem_hint: opcional — ¿qué te bloquea ahora mismo?
   submit: Crear proyecto e iniciar evaluación
   creating: Creando proyecto...
   subject_suggestions: "Materias sugeridas (toca para asignar):"
@@ -412,25 +412,25 @@ session:
   no_api_key: "No hay clave de IA configurada. Añade una clave para tu proveedor de IA en Ajustes para chatear con el tutor. Las lecciones y los repasos funcionan sin clave."
   welcome_empty: "¡Listo para aprender! Escribe tu primer mensaje."
   end_session: Terminar sesión
-  end_session_confirm: Seguro? Cerraremos la sesión y pediremos una valoracion.
+  end_session_confirm: ¿Seguro? Cerraremos la sesión y pediremos una valoración.
   switch_recommended: Se recomienda cambiar de método
-  switch_recommended_subtitle: Tus ultimas valoraciones sugieren que otro método podria encajar mejor.
+  switch_recommended_subtitle: Tus últimas valoraciones sugieren que otro método podría encajar mejor.
   switch_accept: Cambiar método
   switch_dismiss: Mantener el método actual
-  rating_title: Como fue la sesión?
-  rating_understanding: Lo entendiste bien?
-  rating_stress: Cuanto estrés tuviste?
-  rating_method_fit: Como te encajo el método?
+  rating_title: ¿Cómo fue la sesión?
+  rating_understanding: ¿Lo entendiste bien?
+  rating_stress: ¿Cuánto estrés tuviste?
+  rating_method_fit: ¿Cómo te encajó el método?
   rating_notes: Notas (opcional)
-  rating_submit: Enviar valoracion
+  rating_submit: Enviar valoración
   step_progress: Paso {current} de {total}
   step_advance_toast: 'Avanzando a: {step}'
   cycle_label: "Ciclo {n}"
   cycle_advanced: "Ciclo {n} iniciado"
   cycles_completed: "Ciclos completados"
   next_topic: "Siguiente tema:"
-  step_reason_tooltip: Por que este paso?
-  offline_start_blocked: Estas sin conexion. Las nuevas sesiones necesitan red — las anteriores siguen siendo legibles desde el Dashboard.
+  step_reason_tooltip: ¿Por qué este paso?
+  offline_start_blocked: Estás sin conexión. Las nuevas sesiones necesitan red — las anteriores siguen siendo legibles desde el Dashboard.
   peek_step_prefix: "Paso"
   rating_notes_aria: "Notas de la sesión"
   rating_notes_placeholder: "Qué funcionó, qué no, qué probar la próxima vez…"
@@ -446,7 +446,7 @@ progress:
   commit_method: Método
   commit_understanding: Comprensión
   commit_stress: Estrés
-  commit_duration: Duracion
+  commit_duration: Duración
   commit_date: Fecha
   no_commits: Todavia no hay sesiones completadas.
   step_eval_title: Análisis de evaluación IA por paso
@@ -865,7 +865,7 @@ toast:
   assessment_saved: Perfil guardado.
   session_started: Sesión iniciada.
   session_ended: Sesión terminada.
-  rating_saved: Valoracion guardada.
+  rating_saved: Valoración guardada.
   api_key_saved: Clave API guardada.
   api_key_restored: "Se restauró la última clave que funcionó."
   api_key_deleted: Clave API eliminada.

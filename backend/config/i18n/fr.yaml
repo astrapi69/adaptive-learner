@@ -15,7 +15,7 @@ common:
   start: Commencer
   submit: Envoyer
   continue: Continuer
-  done: Termine
+  done: Terminé
   delete: Supprimer
   edit: Modifier
   confirm: Confirmer
@@ -80,9 +80,9 @@ nav:
   dashboard: Tableau de bord
   session: Session
   curriculum: Programme
-  progress: Progres
+  progress: Progrès
   import: "Importer"
-  settings: Parametres
+  settings: Paramètres
   help: Aide
   home: Accueil
   menu: Menu
@@ -105,27 +105,27 @@ nav:
   sync_unpaired: "Sync : non appairé (Paramètres > Sync)"
 import:
   title: Importer une conversation
-  subtitle: Colle ou televerse une conversation avec ChatGPT, Claude ou Gemini et obtiens des insights d'apprentissage immediats.
+  subtitle: Colle ou téléverse une conversation avec ChatGPT, Claude ou Gemini et obtiens des insights d'apprentissage immédiats.
   quick:
     title: Analyse rapide
-    hint: Colle ici une conversation. Nous la sauvegardons et l'analysons en une etape.
+    hint: Colle ici une conversation. Nous la sauvegardons et l'analysons en une étape.
     placeholder: Colle ici une conversation ChatGPT, Claude, Gemini ou Markdown...
   file:
     title: Televerser un fichier
     hint: Glisse ici un fichier .json, .md ou .txt ou clique pour le choisir.
-    formats: ChatGPT conversations.json - Export Claude - Markdown - JSON generique
+    formats: ChatGPT conversations.json - Export Claude - Markdown - JSON générique
   list:
-    title: Tes conversations importees
-    empty: Pas encore de conversations. Utilise Analyse rapide ou televerse un fichier.
+    title: Tes conversations importées
+    empty: Pas encore de conversations. Utilise Analyse rapide ou téléverse un fichier.
   detected_format: Format detecte
   analyze: Analyser
   reanalyze: Reanalyser
   analyzing: Analyse en cours...
-  analyzed: Analysee
+  analyzed: Analysée
   analysis_title: Analyse
-  analysis_ready: Analyse prete.
-  analysis_fallback: L'analyse s'est executee mais la reponse de l'IA n'a pas pu etre analysee proprement.
-  analysis_fallback_long: La reponse de l'IA n'a pas pu etre parsee comme JSON structure. Le resume ci-dessous est un fallback.
+  analysis_ready: Analyse prête.
+  analysis_fallback: L'analyse s'est exécutée mais la réponse de l'IA n'a pas pu être analysée proprement.
+  analysis_fallback_long: La réponse de l'IA n'a pas pu être parsée comme JSON structure. Le resume ci-dessous est un fallback.
   analysis_error: Impossible d'analyser la conversation.
   analysis_phase_reading: "Étape 1/3 : Lecture du chat…"
   analysis_phase_analyzing: "Étape 2/3 : Analyse du contenu…"
@@ -134,27 +134,27 @@ import:
   analysis_done: "Terminé !"
   analysis_cancel: "Annuler"
   analysis_failed_inline: "L'analyse a échoué. Veuillez réessayer."
-  analysis_save_error: Impossible de sauvegarder le resultat de l'analyse.
+  analysis_save_error: Impossible de sauvegarder le résultat de l'analyse.
   back_to_list: Retour aux imports
   create_curriculum: Creer un programme
   go_to_curriculum: Aller au programme
   curriculum_created: Programme cree a partir de l'analyse.
   curriculum_error: Impossible de creer le programme.
-  curriculum_description: Genere a partir d'une conversation importee.
+  curriculum_description: Genere a partir d'une conversation importée.
   default_curriculum_title: Programme importe
   field_topic: Sujet
-  field_method: Methode recommandee
+  field_method: Méthode recommandee
   field_strengths: Forces
   field_weaknesses: Faiblesses
   field_errors: Schemas d'erreur
   field_subtopics: Sous-sujets
   field_curriculum: Programme suggere
-  file_imported_one: Conversation importee. Clique sur Analyser sur la page de detail.
-  file_imported_many: '{count} conversations importees.'
-  list_error: Impossible de charger les conversations importees.
+  file_imported_one: Conversation importée. Clique sur Analyser sur la page de detail.
+  file_imported_many: '{count} conversations importées.'
+  list_error: Impossible de charger les conversations importées.
   load_error: Impossible de charger la conversation.
   messages: messages
-  no_api_key: Configure une cle API pour le fournisseur IA actif dans Parametres pour activer l'analyse.
+  no_api_key: Configure une clé API pour le fournisseur IA actif dans Paramètres pour activer l'analyse.
   no_lessons: L'analyse n'a suggere aucune lecon.
   no_user: Termine l'integration avant d'importer des conversations.
   parse_error: Format d'entree non reconnu.
@@ -163,8 +163,8 @@ import:
   role_system: Systeme
   role_user: Toi
   save_error: Impossible de sauvegarder la conversation.
-  settings_error: Impossible de lire les parametres IA.
-  start_session: Demarrer une session
+  settings_error: Impossible de lire les paramètres IA.
+  start_session: Démarrer une session
   continue_session: Continuer la session
   session_start_error: Impossible de démarrer la session.
   transcript: Transcription
@@ -222,11 +222,11 @@ landing:
   start_button: Commencer ton parcours d'apprentissage
   docs_link: Lire la documentation
   checking_session: Bon retour...
-  recovered_toast: Bon retour ! Tes donnees d'apprentissage sont toujours la.
-  intro: Adaptive Learner trouve la methode qui te convient le mieux parmi six approches basees sur la recherche et t'accompagne dans un cycle en sept etapes a chaque session.
+  recovered_toast: Bon retour ! Tes données d'apprentissage sont toujours la.
+  intro: Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basees sur la recherche et t'accompagne dans un cycle en sept étapes a chaque session.
 onboarding:
   title: Creer un projet d'apprentissage
-  intro: Decris ton objectif. Adaptive Learner utilise ces informations pour construire ton profil et te recommander une methode de depart.
+  intro: Decris ton objectif. Adaptive Learner utilise ces informations pour construire ton profil et te recommander une méthode de depart.
   concepts_explainer_prefix: "Vous définirez un "
   concepts_explainer_mid1: ", puis vous passez une brève évaluation pour construire votre "
   concepts_explainer_mid2: " — qui guide chaque "
@@ -239,13 +239,13 @@ onboarding:
   field_topic_hint: ex. Espagnol B1, algebre lineaire.
   field_goal: Objectif
   field_goal_hint: Que veux-tu pouvoir faire ?
-  field_timeframe: Echeance
+  field_timeframe: Échéance
   field_timeframe_hint: ex. 4 semaines, un semestre.
   field_daily_minutes: Minutes par jour
-  field_current_problem: Probleme actuel
+  field_current_problem: Problème actuel
   field_current_problem_hint: optionnel — qu'est-ce qui te bloque ?
-  submit: Creer le projet et lancer l'evaluation
-  creating: Creation du projet...
+  submit: Creer le projet et lancer l'évaluation
+  creating: Création du projet...
   subject_suggestions: "Matières suggérées (touchez pour attribuer) :"
   default_goal: "Apprendre {topic}"
   invite_title: "Vous voulez configurer votre profil d'apprentissage plus en détail ?"
@@ -274,16 +274,16 @@ onboarding:
     start_assessment: "Oui, commencer"
     later: "Plus tard"
 assessment:
-  title: Evaluation du type d'apprentissage
-  intro: Douze courtes questions determinent ton profil. Il n'y a ni bonne ni mauvaise reponse — repond a l'instinct.
+  title: Évaluation du type d'apprentissage
+  intro: Douze courtes questions déterminent ton profil. Il n'y a ni bonne ni mauvaise réponse — répond a l'instinct.
   question_progress: Question {current} sur {total}
   next_question: Question suivante
   prev_question: Question precedente
   continue_later: Continuer plus tard
   submit: Evaluer
-  evaluating: Evaluation en cours...
+  evaluating: Évaluation en cours...
   result_title: Ton profil d'apprentissage
-  dominant_method: Methode preferee
+  dominant_method: Méthode préférée
   continue_to_dashboard: Continuer vers le tableau de bord
   read_summary: Lire le résumé
   swipe_hint: "Balayez vers la gauche / droite (ou utilisez les flèches) pour naviguer."
@@ -295,18 +295,18 @@ dashboard:
   no_data: "Pas encore de données."
   title: Tableau de bord
   welcome: Bon retour
-  quick_start: Demarrer une nouvelle session
-  quick_start_subtitle: Methode choisie depuis ton profil.
+  quick_start: Démarrer une nouvelle session
+  quick_start_subtitle: Méthode choisie depuis ton profil.
   card_profile: Profil d'apprentissage
   profile_incomplete: "Profil d'apprentissage incomplet."
   profile_resume: "Continuer le profil d'apprentissage"
   profile_start: "Créer le profil d'apprentissage"
-  card_progress: Progres
-  card_distribution: Distribution des methodes
+  card_progress: Progrès
+  card_distribution: Distribution des méthodes
   card_counter: Sessions
   card_tools: Recommandations d'outils
   card_recent_sessions: "Sessions récentes"
-  card_spaced: Pratique espacee
+  card_spaced: Pratique espacée
   card_review_queue: À réviser
   card_focus_areas: Points d'attention
   card_paused_lessons: Continuer à apprendre
@@ -392,45 +392,45 @@ review:
     load_failed: "Impossible de charger la session de révision."
   spaced_empty: Rien a reviser pour l'instant. Bon rythme !
   spaced_interval_label: Revoir dans
-  spaced_start: Demarrer
+  spaced_start: Démarrer
   spaced_dismiss: Ignorer
   metric_total_sessions: Sessions totales
   metric_total_minutes: "Minutes totales"
-  metric_mean_understanding: Comprehension moyenne
+  metric_mean_understanding: Compréhension moyenne
   metric_mean_stress: Stress moyen
   metric_streak: Serie de jours
-  no_data: Aucune session pour l'instant — lance ta premiere pour voir les tendances.
+  no_data: Aucune session pour l'instant — lance ta première pour voir les tendances.
   pronunciation_quick_start: Pratique de Prononciation
 session:
   title: Session d'apprentissage
   topic_label: "Sujet"
   in_progress: Session en cours
   send_message: Envoyer le message
-  message_placeholder: Ecris ta reponse...
-  ai_thinking: Reflexion...
-  ai_error: Le fournisseur IA n'a pas pu repondre.
+  message_placeholder: Ecris ta réponse...
+  ai_thinking: Réflexion...
+  ai_error: Le fournisseur IA n'a pas pu répondre.
   no_api_key: "Aucune clé IA définie. Ajoute une clé pour ton fournisseur IA dans Paramètres pour discuter avec le tuteur. Les leçons et révisions fonctionnent sans clé."
   welcome_empty: "Prêt à apprendre ! Écrivez votre premier message."
   end_session: Terminer la session
-  end_session_confirm: Sur ? Nous allons fermer la session et demander une evaluation.
-  switch_recommended: Changement de methode recommande
-  switch_recommended_subtitle: Tes dernieres evaluations suggerent qu'une autre methode pourrait mieux te convenir.
-  switch_accept: Changer de methode
-  switch_dismiss: Garder la methode actuelle
-  rating_title: Comment s'est passee la session ?
+  end_session_confirm: Sûr ? Nous allons fermer la session et demander une évaluation.
+  switch_recommended: Changement de méthode recommande
+  switch_recommended_subtitle: Tes dernières évaluations suggèrent qu'une autre méthode pourrait mieux te convenir.
+  switch_accept: Changer de méthode
+  switch_dismiss: Garder la méthode actuelle
+  rating_title: Comment s'est passée la session ?
   rating_understanding: As-tu bien compris ?
   rating_stress: Quel niveau de stress ?
-  rating_method_fit: La methode te convenait-elle ?
+  rating_method_fit: La méthode te convenait-elle ?
   rating_notes: Notes (optionnel)
-  rating_submit: Envoyer l'evaluation
-  step_progress: Etape {current} sur {total}
+  rating_submit: Envoyer l'évaluation
+  step_progress: Étape {current} sur {total}
   step_advance_toast: 'Passage a : {step}'
   cycle_label: Cycle {n}
   cycle_advanced: "Cycle {n} démarré"
   cycles_completed: "Cycles terminés"
   next_topic: "Sujet suivant :"
-  step_reason_tooltip: Pourquoi cette etape ?
-  offline_start_blocked: Tu es hors ligne. Les nouvelles sessions necessitent une connexion — les sessions passees restent lisibles depuis le Dashboard.
+  step_reason_tooltip: Pourquoi cette étape ?
+  offline_start_blocked: Tu es hors ligne. Les nouvelles sessions necessitent une connexion — les sessions passées restent lisibles depuis le Dashboard.
   peek_step_prefix: "Étape"
   rating_notes_aria: "Notes de session"
   rating_notes_placeholder: "Ce qui a marché, ce qui n'a pas marché, à essayer la prochaine fois…"
@@ -439,22 +439,22 @@ progress:
     overview: "Aperçu"
     stats: "Statistiques"
     paths: "Mes parcours"
-  title: Progres
-  chart_timeline: Comprehension et stress au fil du temps
-  chart_methods: Distribution des methodes
+  title: Progrès
+  chart_timeline: Compréhension et stress au fil du temps
+  chart_methods: Distribution des méthodes
   commit_history: Historique des sessions
-  commit_method: Methode
-  commit_understanding: Comprehension
+  commit_method: Méthode
+  commit_understanding: Compréhension
   commit_stress: Stress
-  commit_duration: Duree
+  commit_duration: Durée
   commit_date: Date
-  no_commits: Aucune session terminee pour l'instant.
-  step_eval_title: Analyses d'evaluation IA par etape
-  step_eval_empty: Pas encore de donnees d'evaluation — lance une session pour voir l'analyse.
+  no_commits: Aucune session terminée pour l'instant.
+  step_eval_title: Analyses d'évaluation IA par étape
+  step_eval_empty: Pas encore de données d'évaluation — lance une session pour voir l'analyse.
   step_eval_avg_confidence: Confiance IA moyenne
   step_eval_repeats: Fois ou l'IA a dit 'pas encore'
-  step_eval_advances: Progressions d'etape
-  step_eval_backward: Retours en arriere
+  step_eval_advances: Progressions d'étape
+  step_eval_backward: Retours en arrière
   step_eval_stickiest_label: 'Plus de temps sur :'
   commit_notes_aria: "Notes de session"
   session_count: "Sessions"
@@ -555,7 +555,7 @@ settings:
     source_file: "Enregistré dans secrets.yaml"
     source_env: "Géré par variable d'environnement"
     source_browser: "Enregistré dans ce navigateur"
-  title: Parametres
+  title: Paramètres
   help_intro: "Parcourez et recherchez dans le glossaire intégré. Cliquez sur une entrée pour l’article complet."
   section_language: Langue
   mode_title: "Mode"
@@ -565,7 +565,7 @@ settings:
   mode_multiplayer_desc: "Classements, tournois, amis. À venir dans une version future."
   mode_coming_soon: "Bientôt"
   section_provider: Fournisseur IA
-  section_api_keys: Cles API
+  section_api_keys: Clés API
   section_danger: Compte
   section_ui: Interface
   section_appearance: "Apparence"
@@ -647,12 +647,12 @@ settings:
   sounds_volume: "Volume"
   sounds_test: "Tester"
   section_storage_mode: Mode de stockage
-  storage_mode_help: Choisis ou tes donnees vivent. Le mode Local garde tout dans ce navigateur ; le mode Serveur parle au backend AdaptiveLearner.
+  storage_mode_help: Choisis ou tes données vivent. Le mode Local garde tout dans ce navigateur ; le mode Serveur parle au backend AdaptiveLearner.
   storage_mode_api: Serveur
   storage_mode_api_hint: Necessite un backend AdaptiveLearner actif.
   storage_mode_dexie: Local (Navigateur)
-  storage_mode_dexie_hint: Donnees et cles API vivent dans ce navigateur ; les appels IA partent directement depuis la page.
-  storage_mode_warning: Les donnees ne sont PAS synchronisees entre les modes. La synchronisation est prevue pour une future version.
+  storage_mode_dexie_hint: Données et clés API vivent dans ce navigateur ; les appels IA partent directement depuis la page.
+  storage_mode_warning: Les données ne sont PAS synchronisees entre les modes. La synchronisation est prevue pour une future version.
   storage_mode_switch_notice: Mode de stockage enregistre. Recharge la page pour activer le nouveau backend.
   language_label: Langue d'affichage
   language_search_placeholder: "Rechercher des langues…"
@@ -679,44 +679,44 @@ settings:
     test_key_invalid: Clé invalide
     test_network_error: Erreur réseau
     test_backend_only: Testable uniquement avec le backend
-  api_key_label: Cle API
+  api_key_label: Clé API
   api_key_placeholder: Coller ici...
-  api_key_placeholder_replace: "Colle une nouvelle cle pour remplacer celle enregistree…"
+  api_key_placeholder_replace: "Colle une nouvelle clé pour remplacer celle enregistrée…"
   api_key:
     test: "Tester"
     testing: "Test en cours…"
-    test_success: "La cle fonctionne !"
-    test_invalid: "Cle invalide ou expiree."
+    test_success: "La clé fonctionne !"
+    test_invalid: "Clé invalide ou expirée."
     test_network: "Connexion echouee. Verifie ta connexion internet."
     test_error: "Échec du test. Le fournisseur a rejeté la requête."
     test_rate_limit: "Limite de debit atteinte. Reessaie plus tard."
-    test_no_key: "Aucune cle a tester."
+    test_no_key: "Aucune clé a tester."
     format_invalid: "Format invalide."
-    rollback_warning: "La nouvelle cle ne fonctionne pas. Garder l'ancienne ?"
+    rollback_warning: "La nouvelle clé ne fonctionne pas. Garder l'ancienne ?"
     rollback_keep_old: "Garder l'ancienne"
     rollback_save_anyway: "Enregistrer quand meme"
     rollback_cancel: "Annuler"
-    rollback_restore: "Restaurer la derniere cle fonctionnelle"
+    rollback_restore: "Restaurer la dernière clé fonctionnelle"
     format_hint:
       anthropic: "Commence par sk-ant-"
       openai: "Commence par sk-"
       gemini: "Au moins 20 caractères"
-  api_key_saved: Cle enregistree
+  api_key_saved: Clé enregistrée
   api_key_missing: Non definie
-  api_key_set: Enregistrer la cle
-  api_key_delete: Supprimer la cle
-  api_key_confirm_delete: Vraiment supprimer cette cle API ?
+  api_key_set: Enregistrer la clé
+  api_key_delete: Supprimer la clé
+  api_key_confirm_delete: Vraiment supprimer cette clé API ?
   saved: Enregistre.
   save_failed: Echec de l'enregistrement.
   provider_active: Actif
-  active_provider_missing_key: C'est ton fournisseur actif mais aucune cle API n'est enregistree. Les reponses IA seront ignorees jusqu'a ce qu'une cle soit enregistree.
+  active_provider_missing_key: C'est ton fournisseur actif mais aucune clé API n'est enregistrée. Les reponses IA seront ignorees jusqu'a ce qu'une clé soit enregistrée.
   # Phase 34 (v1.20.0) — per-provider key-source badges.
-  api_key_source_file: "Cle depuis: secrets.yaml"
-  api_key_source_env: "Cle depuis: variable d'environnement"
-  api_key_source_settings: "Cle depuis: Parametres"
-  api_key_source_none: Aucune cle configuree
-  api_key_external_hint_file: "Enregistree dans ~/.config/adaptive_learner/secrets.yaml. Enregistrer ici la remplace."
-  api_key_external_hint_env: Cette cle est configuree via la variable d'environnement ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.
+  api_key_source_file: "Clé depuis: secrets.yaml"
+  api_key_source_env: "Clé depuis: variable d'environnement"
+  api_key_source_settings: "Clé depuis: Paramètres"
+  api_key_source_none: Aucune clé configuree
+  api_key_external_hint_file: "Enregistrée dans ~/.config/adaptive_learner/secrets.yaml. Enregistrer ici la remplace."
+  api_key_external_hint_env: Cette clé est configuree via la variable d'environnement ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.
   section_model_overrides: Surcharges de modele
   model_overrides_hint: Laisse vide pour utiliser le modele par defaut de chaque fournisseur. Une valeur non vide remplace la valeur par defaut lors du chat.
   model_override_placeholder: Identifiant du modele (p. ex. claude-3-5-haiku-latest)
@@ -831,23 +831,23 @@ methods:
     summary: Appliquer en contexte reel — pratiquer le transfert.
   ai_adaptive:
     label: IA adaptative
-    summary: L'IA choisit la methode qui te convient le mieux.
+    summary: L'IA choisit la méthode qui te convient le mieux.
 cycle_steps:
   input:
     label: Entree
     description: Information, exemple ou tache presentes.
   attempt:
     label: Tentative
-    description: Premiere application sans filet.
+    description: Première application sans filet.
   error:
     label: Erreur
-    description: Ecart entre attente et resultat.
+    description: Ecart entre attente et résultat.
   feedback:
     label: Retour
     description: Correction avec explication.
   adapt:
     label: Adapter
-    description: Ajuster methode, rythme ou focus.
+    description: Ajuster méthode, rythme ou focus.
   repeat:
     label: Repeter
     description: Reessayer.
@@ -864,12 +864,12 @@ toast:
   project_created: Projet cree.
   assessment_saved: Profil enregistre.
   session_started: Session demarree.
-  session_ended: Session terminee.
-  rating_saved: Evaluation enregistree.
-  api_key_saved: Cle API enregistree.
-  api_key_restored: "La derniere cle fonctionnelle a ete restauree."
-  api_key_deleted: Cle API supprimee.
-  method_switched: Methode changee.
+  session_ended: Session terminée.
+  rating_saved: Évaluation enregistrée.
+  api_key_saved: Clé API enregistrée.
+  api_key_restored: "La dernière clé fonctionnelle a ete restauree."
+  api_key_deleted: Clé API supprimee.
+  method_switched: Méthode changee.
 install:
   ios:
     title: "Installer comme une app"
@@ -925,8 +925,8 @@ about:
   identity_status_label: Statut
   identity_status_active: Actif
   identity_status_missing: Introuvable
-  identity_last_seen_label: Derniere mise a jour
-  identity_explainer: Ce fichier est gere automatiquement par Adaptive Learner. Il permet a l'application de recuperer ton identite apres un effacement des donnees du navigateur. Ne pas modifier manuellement.
+  identity_last_seen_label: Dernière mise a jour
+  identity_explainer: Ce fichier est gere automatiquement par Adaptive Learner. Il permet a l'application de recuperer ton identite apres un effacement des données du navigateur. Ne pas modifier manuellement.
   credits_heading: Crédits
   author_label: Auteur
   dependencies_label: Construit avec
@@ -2175,7 +2175,7 @@ content:
       verified: "Verifie par IA"
       stale: "Verification IA obsolete"
       invalid: "Verification IA invalide"
-    last_checked: "Derniere verification : {when}"
+    last_checked: "Dernière verification : {when}"
     checked_with: "Vérifié avec"
     date: "Date"
     recheck: "Reverifier"
@@ -2197,9 +2197,9 @@ content:
     report:
       summary: "{cards} cartes verifiees dans {lessons} lecons"
       ok: "{count} cartes correctes"
-      issues: "{count} cartes avec problemes"
-      all_ok: "Toutes les cartes sont valides. Aucun probleme trouve."
-      problem: "Probleme"
+      issues: "{count} cartes avec problèmes"
+      all_ok: "Toutes les cartes sont valides. Aucun problème trouve."
+      problem: "Problème"
       suggestion: "Suggestion"
   quality:
     button: "Contrôle qualité"
