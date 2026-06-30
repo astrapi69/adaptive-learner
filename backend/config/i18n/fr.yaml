@@ -180,7 +180,7 @@ import:
   delete_success: Conversation supprimée.
   delete_error: Impossible de supprimer la conversation.
   duplicate_detected: Cette conversation a déjà été importée. L'entrée existante est affichée.
-  chat_language: "Langue du chat (que vous parlez)"
+  chat_language: "Langue du chat (que tu parles)"
   learning_language: "Langue d'apprentissage"
   select_language: "Sélectionnez une langue…"
 curriculum:
@@ -227,7 +227,7 @@ landing:
 onboarding:
   title: Creer un projet d'apprentissage
   intro: Decris ton objectif. Adaptive Learner utilise ces informations pour construire ton profil et te recommander une méthode de depart.
-  concepts_explainer_prefix: "Vous définirez un "
+  concepts_explainer_prefix: "Tu définiras un "
   concepts_explainer_mid1: ", puis vous passez une brève évaluation pour construire votre "
   concepts_explainer_mid2: " — qui guide chaque "
   concepts_explainer_suffix: " à venir."
@@ -248,11 +248,11 @@ onboarding:
   creating: Création du projet...
   subject_suggestions: "Matières suggérées (touchez pour attribuer) :"
   default_goal: "Apprendre {topic}"
-  invite_title: "Vous voulez configurer votre profil d'apprentissage plus en détail ?"
-  invite_subtitle: "Cela prend une minute et adapte vos sessions — vous pouvez aussi le faire plus tard."
+  invite_title: "Tu veux configurer ton profil d'apprentissage plus en détail ?"
+  invite_subtitle: "Cela prend une minute et adapte tes sessions — tu peux aussi le faire plus tard."
   invite_start_now: "Commencer tout de suite"
   invite_setup_profile: "Configurer le profil"
-  restore_hint: "Vous utilisez déjà Adaptive Learner ? Restaurez depuis une sauvegarde."
+  restore_hint: "Tu utilises déjà Adaptive Learner ? Restaure depuis une sauvegarde."
   restore_backup: "Restaurer depuis une sauvegarde existante"
   restoring: "Restauration…"
   restore_success: "Sauvegarde restaurée. Bon retour !"
@@ -260,17 +260,17 @@ onboarding:
     step_label: "Étape {current} sur {total}"
     next: "Suivant"
     back: "Retour"
-    goal_title: "Quel est votre objectif d'apprentissage ?"
-    timeframe_title: "De combien de temps disposez-vous ?"
+    goal_title: "Quel est ton objectif d'apprentissage ?"
+    timeframe_title: "De combien de temps disposes-tu ?"
     timeframe_4w: "4 semaines"
     timeframe_3m: "3 mois"
     timeframe_semester: "1 semestre"
     timeframe_flexible: "Flexible"
     minutes_title: "Combien de minutes par jour ?"
     minutes_value: "{n} min/jour"
-    problem_title: "Qu'est-ce qui vous bloque en ce moment ?"
+    problem_title: "Qu'est-ce qui te bloque en ce moment ?"
     done_title: "C'est prêt ! Commencer l'évaluation ?"
-    done_subtitle: "L'évaluation de 12 questions construit votre profil d'apprentissage."
+    done_subtitle: "L'évaluation de 12 questions construit ton profil d'apprentissage."
     start_assessment: "Oui, commencer"
     later: "Plus tard"
 assessment:
@@ -362,18 +362,18 @@ adaptive:
     missing_params: "Aucun ensemble de contenu sélectionné."
     load_failed: "Impossible de générer la leçon adaptative."
 review:
-  your_answer: "Votre réponse :"
+  your_answer: "Ta réponse :"
   summary_corrected: "{corrected} sur {total} corrigés"
-  summary_trend: "Bien — vos points faibles se renforcent."
+  summary_trend: "Bien — tes points faibles se renforcent."
   summary_next: "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision."
   summary_remaining: "Encore {n} à revoir. On continue ?"
   another_round: "Encore un tour"
-  summary_repeat: "Revenez dans environ 2 jours pour garder cela en mémoire."
-  explain_heading: "Pourquoi vous les avez ratés"
+  summary_repeat: "Reviens dans environ 2 jours pour garder cela en mémoire."
+  explain_heading: "Pourquoi tu les as ratés"
   explain_article_gender: "Attention au genre : les noms en -o sont souvent masculins (el/un), en -a féminins (la/una). L'article suit la terminaison."
-  explain_spelling_accent: "Vérifiez l'orthographe exacte et les accents — une petite différence change le mot."
-  explain_verb_conjugation: "Accordez le verbe avec son sujet et son temps avant de répondre."
-  explain_word_order: "Soignez l'ordre des mots de cette structure."
+  explain_spelling_accent: "Vérifie l'orthographe exacte et les accents — une petite différence change le mot."
+  explain_verb_conjugation: "Accorde le verbe avec son sujet et son temps avant de répondre."
+  explain_word_order: "Soigne l'ordre des mots de cette structure."
   page_title: "Révision"
   session_title: "Session de révision"
   subtitle: "{n} élément(s) à réviser"
@@ -410,7 +410,7 @@ session:
   ai_thinking: Réflexion...
   ai_error: Le fournisseur IA n'a pas pu répondre.
   no_api_key: "Aucune clé IA définie. Ajoute une clé pour ton fournisseur IA dans Paramètres pour discuter avec le tuteur. Les leçons et révisions fonctionnent sans clé."
-  welcome_empty: "Prêt à apprendre ! Écrivez votre premier message."
+  welcome_empty: "Prêt à apprendre ! Écris ton premier message."
   end_session: Terminer la session
   end_session_confirm: Sûr ? Nous allons fermer la session et demander une évaluation.
   switch_recommended: Changement de méthode recommande
@@ -764,7 +764,7 @@ settings:
     pronunciation_enabled_help: Affiche un bouton sur les projets de langues.
   source_languages:
     title: Langues source supplémentaires
-    hint: Langues que vous parlez aussi. Les leçons écrites pour ces langues source apparaissent dans votre liste principale.
+    hint: Langues que tu parles aussi. Les leçons écrites pour ces langues source apparaissent dans votre liste principale.
     app_language: langue de l'app
   direction:
     title: Direction d'exercice préférée
@@ -2227,7 +2227,7 @@ content:
     title: Partager avec la communauté
     metadata_intro: Vérifiez et corrigez les détails de la leçon avant de partager.
     edit_title: Titre
-    edit_source: Langue source (que vous parlez)
+    edit_source: Langue source (que tu parles)
     edit_target: Langue cible (que vous apprenez)
     edit_level: Niveau (CECR)
     select_language: Choisissez une langue…
@@ -2863,11 +2863,11 @@ srs:
   element_scheduled: "Planifié"
   element_meta: "Série {streak} · {errors} erreurs"
   element_meta_review: "Série {streak} · {errors} erreurs · révision dans {days}j"
-  last_answer: "Votre réponse :"
+  last_answer: "Ta réponse :"
   correct: "Correct :"
   no_elements: "Aucun élément suivi pour l'instant."
   settings_title: "Répétition espacée"
-  settings_intro: "Ce que vous ratez revient pour révision selon un calendrier qui s'allonge à mesure que vous réussissez, vous travaillez donc vos points faibles plus souvent que ce que vous maîtrisez."
+  settings_intro: "Ce que vous ratez revient pour révision selon un calendrier qui s'allonge à mesure que vous réussissez, vous travaillez donc tes points faibles plus souvent que ce que vous maîtrisez."
   schedule_streak: "{n} bonnes réponses d'affilée"
   schedule_streak_plus: "{n}+ bonnes réponses d'affilée"
   schedule_days: "révision dans {d} jour(s)"
