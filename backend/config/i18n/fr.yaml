@@ -2992,8 +2992,6 @@ discover:
     domain: "Domaine"
     trust: "Confiance"
     ai_checked: "Vérifié par IA"
-    "yes": "Oui"
-    "no": "Non"
   trust:
     official: "Officiellement recommandé"
     verified: "Vérifié"

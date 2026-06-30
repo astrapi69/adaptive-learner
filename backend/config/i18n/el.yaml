@@ -2992,8 +2992,6 @@ discover:
     domain: "Τομέας"
     trust: "Εμπιστοσύνη"
     ai_checked: "Ελεγμένο από ΤΝ"
-    "yes": "Ναι"
-    "no": "Όχι"
   trust:
     official: "Επίσημα προτεινόμενο"
     verified: "Επαληθευμένο"

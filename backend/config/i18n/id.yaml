@@ -3000,8 +3000,6 @@ discover:
     domain: "Bidang"
     trust: "Kepercayaan"
     ai_checked: "Diperiksa AI"
-    "yes": "Ya"
-    "no": "Tidak"
   trust:
     official: "Direkomendasikan secara resmi"
     verified: "Terverifikasi"

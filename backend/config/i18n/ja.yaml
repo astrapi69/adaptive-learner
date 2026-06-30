@@ -2990,8 +2990,6 @@ discover:
     domain: "分野"
     trust: "信頼度"
     ai_checked: "AIチェック済み"
-    "yes": "はい"
-    "no": "いいえ"
   trust:
     official: "公式推奨"
     verified: "検証済み"

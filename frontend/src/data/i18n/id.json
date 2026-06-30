@@ -3269,9 +3269,7 @@
       "level": "Tingkat",
       "domain": "Bidang",
       "trust": "Kepercayaan",
-      "ai_checked": "Diperiksa AI",
-      "yes": "Ya",
-      "no": "Tidak"
+      "ai_checked": "Diperiksa AI"
     },
     "trust": {
       "official": "Direkomendasikan secara resmi",
