@@ -47,15 +47,22 @@ CSV_DIR = REPO / "docs" / "review" / "i18n-csv"
 
 
 def strip_accents(value: str) -> str:
-    """Drop combining diacritical marks, leaving the base letters.
+    """Drop **Latin** combining diacritical marks (U+0300–U+036F), leaving the
+    base letters.
 
-    Uses NFD (canonical) decomposition, NOT NFKD: NFKD would also fold
-    compatibility characters (… -> ..., ﬁ -> fi, non-breaking space ->
-    space), which would let punctuation/typography changes pass the
-    diacritics-only guard. NFD touches accents only.
+    NFD (canonical), NOT NFKD: NFKD would fold compatibility characters
+    (… -> ..., ﬁ -> fi, NBSP -> space), letting typography changes pass.
+
+    Latin-only on purpose: only the Latin combining-diacritics block is
+    removed. Indic/other combining marks (Devanagari matras/anusvara/nukta,
+    etc.) are KEPT, because in those scripts a "missing diacritic" usually
+    changes the vowel/word (स्पेनिश 'spenish' vs स्पैनिश 'spainish'), so it is
+    NOT a cosmetic accent and must never be auto-applied. The diacritics-only
+    auto-apply path is therefore safe only for Latin-script catalogs; non-Latin
+    findings fall through to human native review.
     """
     decomposed = unicodedata.normalize("NFD", value)
-    return "".join(c for c in decomposed if not unicodedata.combining(c))
+    return "".join(c for c in decomposed if not 0x0300 <= ord(c) <= 0x036F)
 
 
 def is_diacritics_only(old: str, new: str) -> bool:
