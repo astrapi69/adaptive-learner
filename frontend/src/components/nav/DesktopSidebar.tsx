@@ -24,7 +24,7 @@
  * ``aria-current`` on the active item (set by ``NavLink``), all themes.
  */
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   BarChart3,
@@ -37,13 +37,19 @@ import {
   Settings as SettingsIcon,
 } from "lucide-react";
 
+import MenuToggleButton from "../../shared/layout/MenuToggleButton";
 import NavGroup from "./NavGroup";
+import { useDesktopSidebar } from "../../contexts/DesktopSidebarContext";
 import { useHelp } from "../../contexts/HelpContext";
 import { helpKeyForPath } from "../../lib/help/help-routes";
+import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useIsLessonActive } from "../../hooks/lesson/session/useIsLessonActive";
 import { useTheme } from "../../hooks/ui/useTheme";
 import { isDarkTheme } from "../../lib/theme/themes";
+
+/** id of the sidebar nav — referenced by both toggles' ``aria-controls``. */
+export const DESKTOP_SIDEBAR_ID = "desktop-sidebar";
 
 const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
 
@@ -58,20 +64,66 @@ function entryClass(isActive: boolean): string {
 
 export default function DesktopSidebar() {
   const { t } = useI18n();
+  const tooltipsOn = useButtonTooltips();
   const { pathname } = useLocation();
   const lessonActive = useIsLessonActive();
   const { openHelp } = useHelp();
   const { theme } = useTheme();
+  const { open, toggle, collapse } = useDesktopSidebar();
 
-  const hide = HIDE_ON.includes(pathname) || lessonActive;
+  // ``hide`` folds the structural reasons (funnel / lesson) together with the
+  // user's collapse state: the sidebar renders only when shown AND open.
+  const hide = HIDE_ON.includes(pathname) || lessonActive || !open;
+
+  const navRef = useRef<HTMLElement>(null);
+  const wasShown = useRef(false);
+  const initialized = useRef(false);
 
   // Reserve left space on #root + the top bar while the sidebar is shown.
   // The reservation is gated by the ``lg`` media query in global.css, so the
   // class is harmless on mobile (where the sidebar itself is ``hidden``).
+  // Removed while collapsed so the content reclaims the full width.
   useEffect(() => {
     if (hide) return;
     document.body.classList.add("has-desktop-sidebar");
     return () => document.body.classList.remove("has-desktop-sidebar");
+  }, [hide]);
+
+  // Drawer-style dismissal while open: an outside pointerdown or Escape
+  // collapses the sidebar (transient — does not persist). Mirrors the #666
+  // top-bar drawer pattern (``pointerdown`` for iOS-reliable touch). A
+  // pointerdown INSIDE the sidebar is ignored (the close button + links own
+  // their own handlers).
+  useEffect(() => {
+    if (hide) return;
+    function onPointerDown(e: Event) {
+      if (!navRef.current?.contains(e.target as Node)) collapse();
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") collapse();
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [hide, collapse]);
+
+  // Move focus into the sidebar when it is OPENED by the user (a false->true
+  // transition of the shown state), not on the initial page load — autofocus
+  // on every mount would steal focus from the page. The ``initialized`` guard
+  // skips the very first render so an already-open sidebar never grabs focus.
+  // Lands on the close toggle.
+  useEffect(() => {
+    const shown = !hide;
+    if (initialized.current && shown && !wasShown.current) {
+      navRef.current
+        ?.querySelector<HTMLElement>('[data-testid="sidebar-toggle"]')
+        ?.focus();
+    }
+    wasShown.current = shown;
+    initialized.current = true;
   }, [hide]);
 
   if (hide) return null;
@@ -79,32 +131,53 @@ export default function DesktopSidebar() {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     entryClass(isActive);
 
+  // Collapse on a nav-link tap (the link still navigates — no preventDefault).
+  // Delegated so every current + future anchor inherits it; the close button
+  // and the Help button are ``<button>``s, so ``closest("a")`` skips them.
+  function collapseOnLinkTap(e: React.MouseEvent<HTMLElement>) {
+    if ((e.target as HTMLElement).closest("a")) collapse();
+  }
+
   return (
     <nav
+      ref={navRef}
+      id={DESKTOP_SIDEBAR_ID}
       className="fixed inset-y-0 left-0 z-50 hidden w-60 flex-col overflow-y-auto border-r border-border bg-bg-surface lg:flex"
       data-testid="desktop-sidebar"
       aria-label={t("nav.primary", "Primary navigation")}
+      onClick={collapseOnLinkTap}
     >
       {/* Brand header — the sidebar owns the brand at ``lg+`` (the top bar's
-          brand is hidden there to avoid duplication). */}
-      <NavLink
-        to="/dashboard"
-        className="flex min-h-[44px] items-center gap-2 px-4 py-3 font-semibold text-fg-primary"
-        aria-label={t("app.name", "Adaptive Learner")}
-        data-testid="sidebar-brand"
-      >
-        <img
-          src={`${import.meta.env.BASE_URL}${
-            isDarkTheme(theme) ? "icon-192-dark.png" : "icon-192.png"
-          }`}
-          alt=""
-          aria-hidden="true"
-          width={28}
-          height={28}
-          className="rounded-sm"
+          brand is hidden there to avoid duplication). The close toggle sits
+          beside it; clicking it collapses the sidebar (full-width content). */}
+      <div className="flex items-center justify-between gap-2 pr-2">
+        <NavLink
+          to="/dashboard"
+          className="flex min-h-[44px] flex-1 items-center gap-2 px-4 py-3 font-semibold text-fg-primary"
+          aria-label={t("app.name", "Adaptive Learner")}
+          data-testid="sidebar-brand"
+        >
+          <img
+            src={`${import.meta.env.BASE_URL}${
+              isDarkTheme(theme) ? "icon-192-dark.png" : "icon-192.png"
+            }`}
+            alt=""
+            aria-hidden="true"
+            width={28}
+            height={28}
+            className="rounded-sm"
+          />
+          <span className="truncate">{t("app.name", "Adaptive Learner")}</span>
+        </NavLink>
+        <MenuToggleButton
+          open
+          onToggle={toggle}
+          label={t("nav.sidebar_close", "Close sidebar")}
+          tooltip={tooltipsOn}
+          controlsId={DESKTOP_SIDEBAR_ID}
+          testId="sidebar-toggle"
         />
-        <span className="truncate">{t("app.name", "Adaptive Learner")}</span>
-      </NavLink>
+      </div>
 
       <div className="flex flex-1 flex-col gap-1 px-2 pb-4">
         <NavGroup label={t("nav.group.learn", "LEARN")} testId="sidebar-group-learn">

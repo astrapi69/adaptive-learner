@@ -90,6 +90,8 @@ nav:
   offline: Sin conexion
   anki: Anki
   contribute: "Contribuir"
+  sidebar_open: "Abrir barra lateral"
+  sidebar_close: "Cerrar barra lateral"
   dev_badge: DEV
   dev_badge_tooltip: "Modo Desarrollador activo — los avisos de error muestran detalles técnicos. Cámbialo en Ajustes."
   content: "Mi contenido"
