@@ -2090,7 +2090,7 @@ content:
     free_prompt: "Translate: {word}"
     cloze_prompt: "Fill in the missing word."
     tiles_prompt: "Arrange the words into the sentence ({word})."
-  page_title: "Content sets"
+  page_title: "My content"
   intro: "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch."
   sources: "Sources"
   lessons: "lessons"
