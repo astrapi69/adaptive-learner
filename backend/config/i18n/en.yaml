@@ -19,8 +19,8 @@ common:
   delete: Delete
   edit: Edit
   confirm: Confirm
-  'yes': true
-  'no': false
+  'yes': "Yes"
+  'no': "No"
   optional: optional
   required: required
   minutes: minutes
