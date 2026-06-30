@@ -1,28 +1,12 @@
-export * from "./ContentViewControl";
-export { default as ContentViewControl } from "./ContentViewControl";
-export * from "./DailyRemindersControl";
-export { default as DailyRemindersControl } from "./DailyRemindersControl";
-export * from "./DirectionStrategyControl";
-export { default as DirectionStrategyControl } from "./DirectionStrategyControl";
-export * from "./FeedbackIntensityControl";
-export { default as FeedbackIntensityControl } from "./FeedbackIntensityControl";
-export * from "./GamificationSettingsSection";
-export { default as GamificationSettingsSection } from "./GamificationSettingsSection";
-export * from "./HintSettingsControl";
-export { default as HintSettingsControl } from "./HintSettingsControl";
-export * from "./MatchingResolveControl";
-export { default as MatchingResolveControl } from "./MatchingResolveControl";
-export * from "./MaxLessonSizeControl";
-export { default as MaxLessonSizeControl } from "./MaxLessonSizeControl";
-export * from "./MissionSettingsControl";
-export { default as MissionSettingsControl } from "./MissionSettingsControl";
-export * from "./PausedLessonsRetentionControl";
-export { default as PausedLessonsRetentionControl } from "./PausedLessonsRetentionControl";
-export * from "./ReminderScheduler";
-export { default as ReminderScheduler } from "./ReminderScheduler";
-export * from "./ReviewSettingsControl";
-export { default as ReviewSettingsControl } from "./ReviewSettingsControl";
-export * from "./SoundSettingsControl";
-export { default as SoundSettingsControl } from "./SoundSettingsControl";
-export * from "./SourceLanguagesControl";
-export { default as SourceLanguagesControl } from "./SourceLanguagesControl";
+/**
+ * Barrel for the Settings controls, grouped by concern (#1275
+ * god-folder split): `lesson` (lesson-playthrough + content
+ * settings), `motivation` (gamification, missions, feedback,
+ * sound), and `reminders` (daily reminder + headless scheduler).
+ * Re-exports every control so existing `controls`-barrel consumers
+ * keep working unchanged.
+ */
+
+export * from "./lesson";
+export * from "./motivation";
+export * from "./reminders";

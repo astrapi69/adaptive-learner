@@ -20,7 +20,7 @@ import DesktopUpdateHost from "./components/pwa/DesktopUpdateHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/pwa/InstallPrompt";
 import IosInstallHint from "./components/pwa/IosInstallHint";
-import ReminderScheduler from "./components/settings/controls/ReminderScheduler";
+import ReminderScheduler from "./components/settings/controls/reminders/ReminderScheduler";
 import Navigation from "./components/nav/Navigation";
 import DesktopSidebar from "./components/nav/DesktopSidebar";
 import BottomTabBar from "./components/nav/BottomTabBar";

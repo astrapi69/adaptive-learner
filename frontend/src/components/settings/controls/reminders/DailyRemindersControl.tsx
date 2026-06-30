@@ -12,14 +12,14 @@
 
 import {useMemo, useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
-import {useNotificationPermission} from "../../../hooks/system/useNotificationPermission";
+import {useI18n} from "../../../../hooks/ui/useI18n";
+import {useNotificationPermission} from "../../../../hooks/system/useNotificationPermission";
 import {
     readReminderSettings,
     setReminderTime,
     setReminderWeekdays,
     setRemindersEnabled,
-} from "../../../lib/notifications/reminderPref";
+} from "../../../../lib/notifications/reminderPref";
 
 /** Localized short weekday labels indexed by JS getDay() (0 = Sunday). */
 function useWeekdayLabels(lang: string): string[] {
