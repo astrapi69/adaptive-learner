@@ -125,3 +125,10 @@ docs/audits/coverage/
 # Launcher --debug log: written to the CWD on each run; the launcher chdirs
 # into the repo so it can land here (#1084).
 /launcher-debug.log
+
+# i18n LLM quality-check (#1296): generated, regenerable artifacts. The
+# provenance cache under docs/review/i18n-status/ IS committed (it tracks
+# what was checked, keyed by a DE-source hash); the report + CSV exports
+# are not.
+docs/review/i18n-quality/
+docs/review/i18n-csv/
