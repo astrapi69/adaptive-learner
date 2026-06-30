@@ -33,7 +33,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import InfoHint from "../../shared/feedback/InfoHint";
-import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import ContentTree from "../../components/content/browser/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
@@ -62,7 +61,6 @@ import {
   recordContribution,
 } from "../../lib/content/placement/contribution-history";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
-import { readLearnerState } from "../../lib/learning/learnerState";
 import { resolveStorageMode } from "../../storage";
 import AiValidationDialog from "../../components/content/quality/AiValidationDialog";
 import QualityCheckDialog from "../../components/content/quality/QualityCheckDialog";
@@ -127,7 +125,6 @@ export default function ContentPage() {
   const [viewMode, setViewMode] = useContentViewMode();
 
   const { hasKey, activeProvider } = useApiKeyStatus();
-  const userId = readLearnerState().userId;
 
   // EXP-033 / AIV-02 — set-wide AI content check. The trigger is gated to
   // Dexie mode (browser-direct provider call; no server route) + a
@@ -282,16 +279,10 @@ export default function ContentPage() {
         </p>
       )}
 
-      {/* UX overhaul C3 — Continue Learning: the learner's recent
-          activity, directly below the search, above the tree. Hidden
-          while a search is active (results replace the browse view)
-          and when there is no recent activity (the tree covers
-          discovery). */}
-      {!searchResult.active && userId && (
-        <div className="mb-4">
-          <ContinueLearning userId={userId} maxItems={5} showWhenEmpty={false} />
-        </div>
-      )}
+      {/* #1269 — Continue Learning ("Weitermachen") removed from the
+          content tab: it displaced the downloaded sets and duplicated the
+          Dashboard, which is its home. The component itself stays for the
+          Dashboard; only this embedding is gone. */}
 
       {/* #1253 — the standalone "My Lessons" section (unmatched
           user-generated sets) moved to the Import tab
