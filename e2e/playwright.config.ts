@@ -46,7 +46,11 @@ export default defineConfig({
     fullyParallel: false,
     workers: 1,
     retries: process.env.CI ? 1 : 0,
-    timeout: 30_000,
+    // CI headroom: the smoke auto-starts uvicorn + the vite DEV server inside
+    // the Playwright container, whose cold first-load (on-the-fly transpile)
+    // can push a test past 30s under container load (#1254). Local runs reuse
+    // an already-running dev server, so 30s stays the bar there.
+    timeout: process.env.CI ? 60_000 : 30_000,
     use: {
         baseURL: `http://localhost:${FRONTEND_PORT}`,
         actionTimeout: 10_000,
@@ -59,13 +63,17 @@ export default defineConfig({
                 `cd ../backend && ${BACKEND_ENV} poetry run uvicorn app.main:app --port ${BACKEND_PORT}`,
             url: `http://localhost:${BACKEND_PORT}/api/health`,
             reuseExistingServer: !process.env.CI,
-            timeout: 30_000,
+            // Startup headroom for a cold uvicorn in the contended CI
+            // container (#1254); only applies when Playwright starts the
+            // server (CI), not when a local dev server is reused.
+            timeout: 120_000,
         },
         {
             command: `cd ../frontend && ADAPTIVE_LEARNER_PORT=${BACKEND_PORT} ADAPTIVE_LEARNER_FRONTEND_PORT=${FRONTEND_PORT} npm run dev`,
             url: `http://localhost:${FRONTEND_PORT}`,
             reuseExistingServer: !process.env.CI,
-            timeout: 30_000,
+            // Startup headroom for a cold vite dev server in CI (#1254).
+            timeout: 120_000,
         },
     ],
     projects: [
