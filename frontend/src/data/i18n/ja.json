@@ -3269,9 +3269,7 @@
       "level": "レベル",
       "domain": "分野",
       "trust": "信頼度",
-      "ai_checked": "AIチェック済み",
-      "yes": "はい",
-      "no": "いいえ"
+      "ai_checked": "AIチェック済み"
     },
     "trust": {
       "official": "公式推奨",

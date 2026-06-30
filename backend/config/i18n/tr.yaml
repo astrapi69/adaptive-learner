@@ -2990,8 +2990,6 @@ discover:
     domain: "Alan"
     trust: "Güven"
     ai_checked: "Yapay zeka kontrollü"
-    "yes": "Evet"
-    "no": "Hayır"
   trust:
     official: "Resmi olarak önerilen"
     verified: "Doğrulanmış"

@@ -3269,9 +3269,7 @@
       "level": "Seviye",
       "domain": "Alan",
       "trust": "Güven",
-      "ai_checked": "Yapay zeka kontrollü",
-      "yes": "Evet",
-      "no": "Hayır"
+      "ai_checked": "Yapay zeka kontrollü"
     },
     "trust": {
       "official": "Resmi olarak önerilen",

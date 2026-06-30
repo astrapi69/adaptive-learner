@@ -3269,9 +3269,7 @@
       "level": "Nível",
       "domain": "Área",
       "trust": "Confiança",
-      "ai_checked": "Verificado por IA",
-      "yes": "Sim",
-      "no": "Não"
+      "ai_checked": "Verificado por IA"
     },
     "trust": {
       "official": "Oficialmente recomendado",

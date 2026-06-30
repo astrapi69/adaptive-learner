@@ -3000,8 +3000,6 @@ discover:
     domain: "Domain"
     trust: "Trust"
     ai_checked: "AI-checked"
-    "yes": "Yes"
-    "no": "No"
   trust:
     official: "Officially recommended"
     verified: "Verified"

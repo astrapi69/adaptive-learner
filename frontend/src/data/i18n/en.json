@@ -3269,9 +3269,7 @@
       "level": "Level",
       "domain": "Domain",
       "trust": "Trust",
-      "ai_checked": "AI-checked",
-      "yes": "Yes",
-      "no": "No"
+      "ai_checked": "AI-checked"
     },
     "trust": {
       "official": "Officially recommended",

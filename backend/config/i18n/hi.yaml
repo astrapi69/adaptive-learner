@@ -2976,8 +2976,6 @@ discover:
     domain: "क्षेत्र"
     trust: "विश्वास"
     ai_checked: "एआई-जाँचित"
-    "yes": "हाँ"
-    "no": "नहीं"
   trust:
     official: "आधिकारिक रूप से अनुशंसित"
     verified: "सत्यापित"

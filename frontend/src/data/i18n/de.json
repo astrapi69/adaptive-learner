@@ -3269,9 +3269,7 @@
       "level": "Niveau",
       "domain": "Bereich",
       "trust": "Vertrauen",
-      "ai_checked": "KI-geprüft",
-      "yes": "Ja",
-      "no": "Nein"
+      "ai_checked": "KI-geprüft"
     },
     "trust": {
       "official": "Offiziell empfohlen",

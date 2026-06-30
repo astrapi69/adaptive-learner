@@ -2992,8 +2992,6 @@ discover:
     domain: "Área"
     trust: "Confianza"
     ai_checked: "Verificado por IA"
-    "yes": "Sí"
-    "no": "No"
   trust:
     official: "Recomendado oficialmente"
     verified: "Verificado"

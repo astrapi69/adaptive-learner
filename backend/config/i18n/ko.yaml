@@ -3000,8 +3000,6 @@ discover:
     domain: "분야"
     trust: "신뢰도"
     ai_checked: "AI 검증됨"
-    "yes": "예"
-    "no": "아니요"
   trust:
     official: "공식 추천"
     verified: "검증됨"

@@ -180,8 +180,8 @@ export default function Discover() {
         value: filters.aiChecked,
         options: [
           all,
-          { value: "yes", label: t("discover.filter.yes", "Yes") },
-          { value: "no", label: t("discover.filter.no", "No") },
+          { value: "yes", label: t("common.yes", "Yes") },
+          { value: "no", label: t("common.no", "No") },
         ],
       },
       {
