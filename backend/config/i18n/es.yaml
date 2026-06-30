@@ -2015,6 +2015,23 @@ content:
     delete_confirm: "¿Eliminar esta lección? Esto no se puede deshacer."
     deleted: "Lección eliminada."
     delete_failed: "No se pudo eliminar la lección."
+  set_status:
+    all: "Todos"
+    active: "Activo"
+    deferred: "Aplazado"
+    completed: "Completado"
+    filter_aria: "Filtrar por estado"
+    menu_aria: "Acciones del conjunto"
+    changed: "Estado actualizado."
+    change_failed: "No se pudo actualizar el estado."
+    deleted: "Conjunto eliminado."
+    delete_failed: "No se pudo eliminar el conjunto."
+    delete_confirm: "El conjunto descargado y sus lecciones se eliminarán de Mis contenidos. Tu progreso de aprendizaje se conserva y puedes volver a descargar el conjunto cuando quieras."
+    action:
+      activate: "Reactivar"
+      defer: "Aplazar"
+      complete: "Marcar como completado"
+      delete: "Eliminar"
   ai_exercises:
     batch:
       button: "Generar para todas las lecciones"

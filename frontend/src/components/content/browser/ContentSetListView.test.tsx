@@ -6,7 +6,7 @@
  *  - a knowledge-domain set row shows ONLY the title (no codes).
  */
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -131,6 +131,35 @@ describe("ContentSetListView", () => {
       expect(
         screen.getByTestId("content-list-set-a-downloaded-at"),
       ).toBeInTheDocument();
+    });
+  });
+
+  // #1300 — the per-set overflow menu (status + delete) appears in the list
+  // view when handlers are supplied, and never otherwise.
+  describe("status/delete overflow menu (#1300)", () => {
+    it("hides the menu when no handlers are supplied", () => {
+      renderList([entry({ id: "a", status: "active" })]);
+      expect(screen.queryByTestId("set-actions-a")).toBeNull();
+    });
+
+    it("renders the menu and wires the status action", () => {
+      const onSetStatus = vi.fn();
+      const onDelete = vi.fn();
+      render(
+        <MemoryRouter>
+          <ContentSetListView
+            sets={[entry({ id: "a", status: "active" })]}
+            onSetStatus={onSetStatus}
+            onDelete={onDelete}
+          />
+        </MemoryRouter>,
+      );
+      fireEvent.click(screen.getByTestId("set-actions-a"));
+      fireEvent.click(screen.getByTestId("set-action-a-completed"));
+      expect(onSetStatus).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "a" }),
+        "completed",
+      );
     });
   });
 });

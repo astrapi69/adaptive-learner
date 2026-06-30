@@ -2013,6 +2013,23 @@ content:
     delete_confirm: "このレッスンを削除しますか？元に戻せません。"
     deleted: "レッスンを削除しました。"
     delete_failed: "レッスンを削除できませんでした。"
+  set_status:
+    all: "すべて"
+    active: "アクティブ"
+    deferred: "保留"
+    completed: "完了"
+    filter_aria: "ステータスで絞り込む"
+    menu_aria: "セットの操作"
+    changed: "ステータスを更新しました。"
+    change_failed: "ステータスを更新できませんでした。"
+    deleted: "セットを削除しました。"
+    delete_failed: "セットを削除できませんでした。"
+    delete_confirm: "ダウンロードしたセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。"
+    action:
+      activate: "再アクティブ化"
+      defer: "保留にする"
+      complete: "完了としてマーク"
+      delete: "削除"
   ai_exercises:
     batch:
       button: "すべてのレッスンに生成"

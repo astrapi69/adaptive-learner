@@ -2190,6 +2190,25 @@
       "deleted": "Lektion gelöscht.",
       "delete_failed": "Die Lektion konnte nicht gelöscht werden."
     },
+    "set_status": {
+      "all": "Alle",
+      "active": "Aktiv",
+      "deferred": "Zurückgestellt",
+      "completed": "Abgeschlossen",
+      "filter_aria": "Nach Status filtern",
+      "menu_aria": "Aktionen für dieses Set",
+      "changed": "Status aktualisiert.",
+      "change_failed": "Status konnte nicht aktualisiert werden.",
+      "deleted": "Set entfernt.",
+      "delete_failed": "Set konnte nicht entfernt werden.",
+      "delete_confirm": "Das heruntergeladene Set und seine Lektionen werden aus „Meine Inhalte“ entfernt. Dein Lernfortschritt bleibt erhalten, und du kannst das Set jederzeit erneut herunterladen.",
+      "action": {
+        "activate": "Wieder aktivieren",
+        "defer": "Zurückstellen",
+        "complete": "Als abgeschlossen markieren",
+        "delete": "Löschen"
+      }
+    },
     "ai_exercises": {
       "batch": {
         "button": "Übungen für alle Lektionen generieren",

@@ -2024,6 +2024,23 @@ content:
     delete_confirm: "이 레슨을 삭제하시겠습니까? 되돌릴 수 없습니다."
     deleted: "레슨이 삭제되었습니다."
     delete_failed: "레슨을 삭제할 수 없었습니다."
+  set_status:
+    all: "전체"
+    active: "활성"
+    deferred: "보류"
+    completed: "완료"
+    filter_aria: "상태별 필터"
+    menu_aria: "세트 작업"
+    changed: "상태가 업데이트되었습니다."
+    change_failed: "상태를 업데이트할 수 없습니다."
+    deleted: "세트가 제거되었습니다."
+    delete_failed: "세트를 제거할 수 없습니다."
+    delete_confirm: "다운로드한 세트와 해당 레슨이 내 콘텐츠에서 제거됩니다. 학습 진행 상황은 유지되며 언제든지 세트를 다시 다운로드할 수 있습니다."
+    action:
+      activate: "다시 활성화"
+      defer: "보류"
+      complete: "완료로 표시"
+      delete: "삭제"
   ai_exercises:
     batch:
       button: "모든 레슨에 대해 생성"

@@ -2015,6 +2015,23 @@ content:
     delete_confirm: "Supprimer cette leçon ? Cette action est irréversible."
     deleted: "Leçon supprimée."
     delete_failed: "Impossible de supprimer la leçon."
+  set_status:
+    all: "Tous"
+    active: "Actif"
+    deferred: "Reporté"
+    completed: "Terminé"
+    filter_aria: "Filtrer par statut"
+    menu_aria: "Actions de l'ensemble"
+    changed: "Statut mis à jour."
+    change_failed: "Impossible de mettre à jour le statut."
+    deleted: "Ensemble supprimé."
+    delete_failed: "Impossible de supprimer l'ensemble."
+    delete_confirm: "L'ensemble téléchargé et ses leçons seront retirés de Mes contenus. Ta progression est conservée et tu peux télécharger l'ensemble à nouveau à tout moment."
+    action:
+      activate: "Réactiver"
+      defer: "Reporter"
+      complete: "Marquer comme terminé"
+      delete: "Supprimer"
   ai_exercises:
     batch:
       button: "Générer pour toutes les leçons"

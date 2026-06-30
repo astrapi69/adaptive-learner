@@ -61,7 +61,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
         await db.open();
         // verno tracks the latest declared schema version; bump
         // this when a new this.version(N) is added to db.ts.
-        expect(db.verno).toBe(29);
+        expect(db.verno).toBe(30);
 
         const badge = (await db.table("badges").get("b1")) as Record<string, unknown>;
         expect(badge.base_tier).toBeTruthy();
@@ -105,7 +105,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
         const db = new AdaptiveLearnerDB(PAIR_NAME);
         await db.open();
-        expect(db.verno).toBe(29);
+        expect(db.verno).toBe(30);
         const row = (await db
             .table("contentSets")
             .get("src/language-fr-a1/1.0.0")) as Record<string, unknown>;
@@ -149,7 +149,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
         const db = new AdaptiveLearnerDB(DIR_NAME);
         await db.open();
-        expect(db.verno).toBe(29);
+        expect(db.verno).toBe(30);
         // Old id is gone; the row was re-keyed under the new id.
         const oldRow = await db
             .table("elementErrors")
@@ -165,6 +165,45 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
         expect(newRow.direction).toBe("target_to_source");
         // History preserved across the re-key.
         expect(newRow.error_count).toBe(2);
+        db.close();
+    });
+
+    it("backfills status='active' on contentSets during the v30 upgrade (#1300)", async () => {
+        const STATUS_NAME = "adaptive-learner-status-upgrade";
+        const legacy = new Dexie(STATUS_NAME);
+        // A pre-#1300 schema row carries no ``status`` field.
+        legacy.version(29).stores({
+            contentSets: "id, source, set_id, version, downloaded_at",
+        });
+        await legacy.open();
+        await legacy.table("contentSets").put({
+            id: "src/language-fr-a1/1.0.0",
+            source: "astrapi69/adaptive-learner-content",
+            branch: "main",
+            set_id: "language-fr-a1",
+            version: "1.0.0",
+            title: "French A1",
+            language: "fr",
+            target_language: "fr",
+            source_language: "en",
+            level: "A1",
+            domain: "language",
+            lesson_count: 10,
+            description: null,
+            tags: "[]",
+            cover_image: null,
+            downloaded_at: "2026-05-30T00:00:00Z",
+            manifest_yaml: "",
+        });
+        legacy.close();
+
+        const db = new AdaptiveLearnerDB(STATUS_NAME);
+        await db.open();
+        expect(db.verno).toBe(30);
+        const row = (await db
+            .table("contentSets")
+            .get("src/language-fr-a1/1.0.0")) as Record<string, unknown>;
+        expect(row.status).toBe("active");
         db.close();
     });
 

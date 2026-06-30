@@ -2013,6 +2013,23 @@ content:
     delete_confirm: "Excluir esta lição? Isso não pode ser desfeito."
     deleted: "Lição excluída."
     delete_failed: "Não foi possível excluir a lição."
+  set_status:
+    all: "Todos"
+    active: "Ativo"
+    deferred: "Adiado"
+    completed: "Concluído"
+    filter_aria: "Filtrar por status"
+    menu_aria: "Ações do conjunto"
+    changed: "Status atualizado."
+    change_failed: "Não foi possível atualizar o status."
+    deleted: "Conjunto removido."
+    delete_failed: "Não foi possível remover o conjunto."
+    delete_confirm: "O conjunto baixado e suas lições serão removidos de Meus conteúdos. Seu progresso de aprendizagem é mantido, e você pode baixar o conjunto novamente quando quiser."
+    action:
+      activate: "Reativar"
+      defer: "Adiar"
+      complete: "Marcar como concluído"
+      delete: "Excluir"
   ai_exercises:
     batch:
       button: "Gerar para todas as lições"

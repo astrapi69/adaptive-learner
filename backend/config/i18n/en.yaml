@@ -2024,6 +2024,23 @@ content:
     delete_confirm: "Delete this lesson? This cannot be undone."
     deleted: "Lesson deleted."
     delete_failed: "Could not delete the lesson."
+  set_status:
+    all: "All"
+    active: "Active"
+    deferred: "Deferred"
+    completed: "Completed"
+    filter_aria: "Filter by status"
+    menu_aria: "Set actions"
+    changed: "Status updated."
+    change_failed: "Could not update the status."
+    deleted: "Set removed."
+    delete_failed: "Could not remove the set."
+    delete_confirm: "The downloaded set and its lessons will be removed from My Content. Your learning progress is kept, and you can download the set again anytime."
+    action:
+      activate: "Reactivate"
+      defer: "Defer"
+      complete: "Mark as completed"
+      delete: "Delete"
   ai_exercises:
     batch:
       button: "Generate for all lessons"

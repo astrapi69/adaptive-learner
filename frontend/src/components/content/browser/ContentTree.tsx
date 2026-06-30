@@ -22,7 +22,7 @@ import {
 import { languageDisplayName } from "../../../lib/content/language/language-names";
 import { booksForDomain, type BookRecommendations } from "../../../lib/content/media/book-recommendations";
 import { mediaForDomain, type MediaResource } from "../../../lib/content/media/media-loader";
-import type { ContentSetEntry } from "../../../storage/types";
+import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 import BookRecommendationsSection from "../media/BookRecommendations";
 import ContentSetRow, { type DownloadState } from "./ContentSetRow";
 import type { AiCheckBadgeStatus } from "../../../shared/status/AiCheckedBadge";
@@ -53,6 +53,10 @@ export interface ContentSetRowActions {
   onQualityCheck?: (entry: ContentSetEntry) => void;
   /** EXP-033 / AIV-11 — resolve the "AI-checked" badge status per set. */
   aiBadgeStatusFor?: (entry: ContentSetEntry) => AiCheckBadgeStatus;
+  /** #1300 — change a set's lifecycle status (overflow menu). */
+  onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
+  /** #1300 — open the delete-confirm dialog for a set (overflow menu). */
+  onDelete?: (entry: ContentSetEntry) => void;
 }
 
 /** Actions + lookup for the user lessons folded into tree nodes
@@ -125,6 +129,8 @@ export default function ContentTree({
       aiCheckDisabledReason={setRow.aiCheckDisabledReason}
       onQualityCheck={setRow.onQualityCheck}
       aiBadgeStatus={setRow.aiBadgeStatusFor?.(entry) ?? "none"}
+      onSetStatus={setRow.onSetStatus}
+      onDelete={setRow.onDelete}
     />
   );
 
