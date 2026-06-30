@@ -11,7 +11,7 @@
  * view-model and derives the render-time values from it.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { DownloadState } from "../../components/content/browser/ContentSetRow";
 import {
@@ -257,18 +257,37 @@ export function useContentSetsData(): ContentSetsData {
     };
   }, [sets]);
 
+  // Guards every async setState below against a resolve that lands AFTER
+  // the component unmounts (or, in the test env, after the happy-dom
+  // window is torn down) — React's ``dispatchSetState`` touches ``window``
+  // and throws "window is not defined", which Vitest surfaces as a fatal
+  // unhandled rejection. The other effects in this hook already use a
+  // per-effect ``cancelled`` flag; ``loadSets`` is shared by the mount
+  // effect + ``handleRefresh``, so it uses this mounted ref instead.
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   const loadSets = useCallback(async () => {
     try {
       const data = await getStorage().contentLoader.listSets();
+      if (!mountedRef.current) return;
       setSets(data.sets);
       setSources(data.sources);
     } catch (err) {
+      if (!mountedRef.current) return;
       notify.error(t("content.error.list_failed", "Could not load content sets."), {
         apiError: err instanceof Error ? undefined : undefined,
       });
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (mountedRef.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   }, [t]);
 
