@@ -44,6 +44,10 @@ import {
 } from "../../hooks/lesson/interaction/useLessonEnterKey";
 import {useLessonShortcuts} from "../../hooks/lesson/interaction/useLessonShortcuts";
 import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
+import {stampHintUsage} from "../../lib/hints/hint-usage";
+import {readLearnerState} from "../../lib/learning/learnerState";
+import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
+import {getStorage} from "../../storage";
 import type {
     ContentLessonCard,
     ContentLessonExercise,
@@ -77,6 +81,9 @@ export default function ErrorReplayLesson() {
     const state = location.state as ReplayState | null;
     const cards = state?.cards ?? [];
     const lessonTitle = state?.lessonTitle ?? "";
+    // #1304 — the learner whose SRS error list this round trains. Read
+    // once; absent only on an unconfigured install (recording skips).
+    const userId = useMemo(() => readLearnerState().userId, []);
 
     // The exercises to replay THIS round + the running per-exercise
     // result (true = answered fully correct this round). A "Try again"
@@ -158,6 +165,24 @@ export default function ErrorReplayLesson() {
         );
     }
 
+    // #1304 — merge each graded attempt back into the SRS error list
+    // through the SAME path the main viewer / review / correction-block
+    // use: a fully-correct answer advances mastery (eventually removing
+    // the element from the error/review surfaces), a wrong one keeps it.
+    // Failure-tolerant: a recording error must never block the round.
+    const recordAttempts = async (scored: ExerciseScored) => {
+        if (scored.attempts.length === 0 || !userId) return;
+        try {
+            await getStorage().elementErrors.recordBulk(
+                userId,
+                stampHintUsage(scored.attempts),
+            );
+            notifyReviewsChanged();
+        } catch (err) {
+            console.warn("elementErrors.recordBulk failed:", err);
+        }
+    };
+
     const correctNow = Object.values(results).filter(Boolean).length;
     const stillWrong = round.filter((ex) => results[ex.id] !== true);
 
@@ -236,6 +261,7 @@ export default function ErrorReplayLesson() {
                     onResult={(exerciseId, correct) =>
                         setResults((prev) => ({...prev, [exerciseId]: correct}))
                     }
+                    onRecord={recordAttempts}
                 />
             )}
 
@@ -262,6 +288,8 @@ interface ErrorReplayExerciseProps {
     onInteraction: (answerable: boolean) => void;
     onChecked: () => void;
     onResult: (exerciseId: string, correct: boolean) => void;
+    /** #1304 — persist the graded attempts into the SRS error list. */
+    onRecord: (scored: ExerciseScored) => Promise<void>;
 }
 
 /** The active replay exercise step: the controlled ExerciseDispatcher
@@ -277,6 +305,7 @@ function ErrorReplayExercise({
     onInteraction,
     onChecked,
     onResult,
+    onRecord,
 }: ErrorReplayExerciseProps) {
     return (
         <article
@@ -296,6 +325,7 @@ function ErrorReplayExercise({
                 onComplete={async (scored: ExerciseScored) => {
                     onChecked();
                     onResult(step.exercise!.id, scored.correct === scored.total);
+                    await onRecord(scored);
                 }}
             />
         </article>
