@@ -42,6 +42,10 @@ def test_is_diacritics_only_false_for_content_change():
     # case change is not a diacritic -> must NOT auto-apply
     assert not imp.is_diacritics_only("errores", "Errores")
     assert not imp.is_diacritics_only("Práctica de Pronunciación", "Práctica de pronunciación")
+    # Latin-only guard: Devanagari matra/anusvara changes the vowel/word, NOT a
+    # cosmetic accent -> must NOT auto-apply (route to native review).
+    assert not imp.is_diacritics_only("स्पेनिश", "स्पैनिश")  # spenish -> spainish (े->ै)
+    assert not imp.is_diacritics_only("बनाएं", "बनाएँ")  # anusvara -> chandrabindu
 
 
 def test_get_set_by_path():
