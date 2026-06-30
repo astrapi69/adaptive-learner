@@ -2,13 +2,20 @@
 
 Der **Content Browser** („Meine Inhalte") ist der **Meine-Inhalte-
 Tab des Content-Hubs** unter `/content`. Er zeigt nur die
-Lektionssätze, die du bereits heruntergeladen hast, rund um den
-Lernfluss aufgebaut: zuerst Suche, dann Weitermachen, dann dein
-lokaler Katalog. Um *neue* Sätze zu finden und herunterzuladen,
-nutze den **Entdecken**-Tab — siehe
-[Inhalte entdecken](discover.md).
+Lektionssätze, die du bereits heruntergeladen hast, mit dem Suchfeld
+oben und deinem lokalen Katalog darunter. Um *neue* Sätze zu finden
+und herunterzuladen, nutze den **Entdecken**-Tab — siehe
+[Inhalte entdecken](discover.md). Entdecken ist der **Standard-Tab**,
+beim Öffnen von `/content` landest du also im Katalog; wechsle zu
+*Meine Inhalte*, sobald du etwas heruntergeladen hast.
 
-<!-- TODO: Screenshot — Content Browser mit Suchfeld, Continue-Learning-Bereich und Set-Baum -->
+Die Seitenkopfzeile trägt den Titel **Meine Inhalte** und einen
+kleinen **Info-Button** (das ⓘ-Symbol). Der Einleitungstext wird
+nicht mehr dauerhaft angezeigt — klicke auf den Info-Button, um zu
+lesen, wofür dieser Tab da ist (deine heruntergeladenen Inhalte,
+samt ihrer Quellen), ohne dass er die übrige Zeit Platz wegnimmt.
+
+<!-- TODO: Screenshot — Content Browser mit Titel, Info-Button, Ansicht-Umschalter und Set-Baum -->
 
 ---
 
@@ -25,13 +32,31 @@ Katalog-Baum, mit Hervorhebung, Trefferzahl und Leerzustand.
 
 ---
 
-## Weitermachen
+## Listen- und Kachelansicht
 
-Direkt unter der Suche zeigt **Weitermachen** die zuletzt
-berührte Lektion pro Satz, jeweils mit genau einer Aktion:
-**fortsetzen** (laufende/pausierte Lektion, Schritt n von gesamt),
-**nächste** Lektion samt Sternen nach einem Abschluss, oder
-**Satz abgeschlossen**.
+Ein **Ansicht-Umschalter** ändert, wie deine heruntergeladenen
+Sätze dargestellt werden:
+
+- **Liste** — eine kompakte, flache Liste, die sich schnell
+  scrollen lässt, besonders auf dem Handy. Das ist die
+  **Voreinstellung**.
+- **Kacheln (Grid)** — die reichere Baumansicht
+  *Quellsprache → Zielsprache → Niveau*.
+
+Deine Wahl ist eine **globale Ansicht-Einstellung**: Sie gilt für
+*Meine Inhalte* und *Entdecken* gleichermaßen und wird über Besuche
+hinweg gemerkt. Du kannst sie auch unter **Einstellungen → Lernen**
+setzen. (Hattest du zuvor Kacheln gewählt, bleibt diese Wahl
+erhalten; nur neue Nutzer starten in der Liste.)
+
+Die heruntergeladenen Sätze sind nach **Download-Zeit** sortiert
+(zuletzt heruntergeladen zuerst), nicht alphabetisch — so findest du
+das gerade Geladene leicht wieder.
+
+> **Weitermachen ist umgezogen.** Das „Weitermachen"-Panel
+> (Continue Learning) ist nicht mehr in diesem Tab — es lebt jetzt
+> im **Dashboard**, der einzigen Stelle, die es besitzt. Siehe
+> [Dashboard](../user-guide/dashboard.md).
 
 ---
 
@@ -100,12 +125,18 @@ Einträgen nach Kategorie gruppiert.
 
 ---
 
-## Meine Lektionen
+## Meine Lektionen (jetzt im Importieren-Tab)
 
-Selbst erstellte oder importierte Lektionen erscheinen im Abschnitt
-**Meine Lektionen** mit Aktionen zum Abspielen, Bearbeiten,
-Löschen, Exportieren und Teilen. Wie du eigene Lektionen baust,
-steht unter [Lektionen erstellen](../content-creation/overview.md).
+Selbst erstellte oder importierte Lektionen — zusammen mit den
+**Aktionsbuttons** zum Importieren/Erstellen — sind in den
+**Importieren-Tab** des Content-Hubs umgezogen. Dort stehen sie
+neben dem Chat-Import als eine gemeinsame Fläche „eigene Inhalte
+mitbringen", mit denselben Aktionen zum Abspielen, Bearbeiten,
+Löschen, Exportieren und Teilen. Der *Meine-Inhalte*-Tab behält den
+Baum der heruntergeladenen Sätze (mit deinen eigenen Lektionen, in
+den passenden veröffentlichten Knoten eingefaltet, samt „(+N
+eigene)"-Zähler). Wie du eigene Lektionen baust, steht unter
+[Lektionen erstellen](../content-creation/overview.md).
 
 ---
 

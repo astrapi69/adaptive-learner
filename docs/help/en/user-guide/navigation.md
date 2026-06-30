@@ -17,15 +17,16 @@ reusable `NavGroup` component:
 
 - **Learn** — Dashboard and Learning Path.
 - **Content** — the **Content hub** (`/content`), which holds your
-  downloaded *My content*, the *Discover* catalog, and *Import* as
-  tabs.
+  *Discover* catalog, your downloaded *My content*, and *Import* as
+  tabs (in that order). **Discover is the default tab**, so opening
+  the hub lands on the catalog.
 - **Progress** — the **ProgressHub** (`/progress`), with Overview,
   Statistics and My paths as tabs.
 - **Settings** and **Help** round out the bar.
 
 Pages that are no longer top-level entries (Anki, Session) are
-still reachable: Anki via an action on *My content* (and its
-`/anki` route), Session via its kept route.
+still reachable: Anki via its `/anki` route, Session via its kept
+route.
 
 ### Vertical sidebar
 
@@ -38,6 +39,10 @@ works across all themes. On narrow / mobile widths the sidebar
 gives way to the bottom tab bar below. (This is the *primary*
 navigation sidebar; the Settings page has its own separate sidebar
 for its own tabs.)
+
+The sidebar has an **open/close toggle**: collapse it to a slim
+drawer to give the page more horizontal room, or expand it back to
+the full labelled rail. Your preference is remembered.
 
 ---
 
@@ -57,8 +62,8 @@ Two pages became **tabbed hubs**, mounting only the active tab:
 
 - **ProgressHub** (`/progress`) embeds Progress + Learning
   Statistics + Curriculum.
-- **Content hub** (`/content`) embeds My content + Discover +
-  Import.
+- **Content hub** (`/content`) embeds Discover + My content +
+  Import (Discover is the default tab).
 
 Old URLs are preserved by redirects, e.g. `/statistics` →
 `/progress?tab=stats`, `/curriculum` → `/progress?tab=paths`,

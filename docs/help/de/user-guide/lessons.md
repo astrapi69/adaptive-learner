@@ -34,6 +34,49 @@ für den aktuellen Katalog.
 
 ---
 
+## Lernmodi
+
+Du kannst eine einzelne Lektion — oder einen ganzen Satz —
+in verschiedenen **Modi** spielen. Der gewählte Modus wird
+als deine Voreinstellung gemerkt und auf dem Versuch
+gespeichert, sodass Fortschritt und Statistik wissen, wie
+du geübt hast:
+
+- **Üben (Practice)** — der entspannte Standardmodus. Alle
+  Lernhilfen bleiben an: Hinweise, die Theorie-Wiederholung,
+  das Vorlesen und das Aufdecken der Lösung.
+- **Prüfung (Exam)** — Abruf unter realistischen
+  Bedingungen. Hinweise, Theorie-Wiederholung, Vorlesen und
+  das Aufdecken der Lösung sind ausgeblendet; das Feedback
+  kommt gebündelt am Ende, mit einer eigenen
+  **Ergebnisansicht**, einem **Bestanden/Nicht-bestanden-
+  Urteil** gegen eine konfigurierbare **Bestehensschwelle**
+  und einem **Bonus-XP** für das Bestehen.
+- **Auf Zeit (Timed)** — ein Countdown pro Übung. Die
+  Schwierigkeit ist wählbar: **Entspannt** (2× Zeit),
+  **Normal** oder **Schnell** (0,7× Zeit). Läuft die Zeit
+  ab, wird die Antwort gesperrt; am Ende erhältst du
+  Zeit-Statistiken (in der Zeit beantwortet, Durchschnitt /
+  schnellste / langsamste).
+- **Fehler trainieren** — wiederholt nur die Übungen, die
+  du zuvor falsch hattest. Der Einstieg ist gesperrt und
+  erscheint, sobald du Fehler zum Trainieren hast.
+- **Reverse (Umgekehrt)** — dreht die Übungsrichtung um
+  (z. B. produzieren statt erkennen). Übungstypen, die sich
+  nicht umkehren lassen, werden in ihrem Originalformat
+  gezeigt.
+- **Zufall (Shuffle)** — mischt und verschachtelt die
+  Reihenfolge, damit du dich nicht auf reines
+  Muskelgedächtnis verlassen kannst.
+- **Endlos (Endless)** — liefert fortlaufend Übungen für
+  einen offenen Übungslauf.
+
+Einen **Standardmodus** (samt Bestehensschwelle der Prüfung
+und Zeit-Schwierigkeit) kannst du unter
+**Einstellungen → Lernen** festlegen.
+
+---
+
 ## Der Lektionsablauf
 
 Öffne einen Satz, wähle eine Lektion, und der
@@ -42,7 +85,7 @@ jede Karte und Übung:
 
 1. **Karten** präsentieren Material zum Lesen. Klick auf
    "Weiter", wenn du bereit bist.
-2. **Übungen** prüfen, was du dir gemerkt hast. Vier Typen
+2. **Übungen** prüfen, was du dir gemerkt hast. Fünf Typen
    sind verfügbar:
    - **Zuordnen** — ziehe Paare (Wort ↔ Übersetzung). Beide
      Kacheln eines gefundenen Paares teilen sich eine
