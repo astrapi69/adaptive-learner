@@ -6,7 +6,7 @@ ya da yeni bir tema oluşturmak isteyen tek bir `theme-*.css`
 dosyasını düzenler ve hiçbir bileşene dokunmaz. Bu kural sadece bir
 konvansiyon değil, testlerle zorunlu kılınmıştır. Eksiksiz Token
 referansı
-[`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md)
+[`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md)
 içinde bulunur.
 
 ---
@@ -70,4 +70,4 @@ zorundadır). Buna ek olarak `themes.test.ts` (Token eşliği) ve
 ## İlgili sayfalar
 
 - [Tema sistemi](../developer/themes.md) — gönderilen temalar + seçici
-- [`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md) — eksiksiz Token listesi
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — eksiksiz Token listesi

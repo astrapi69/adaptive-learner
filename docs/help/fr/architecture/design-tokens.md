@@ -6,7 +6,7 @@ l'application ou construire un nouveau thème modifie un seul
 fichier `theme-*.css` et ne touche à aucun composant. Cette règle
 est imposée par des tests, pas seulement par convention. La
 référence complète des jetons se trouve dans
-[`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md).
+[`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md).
 
 ---
 
@@ -76,4 +76,4 @@ thèmes).
 ## Pages connexes
 
 - [Système de thèmes](../developer/themes.md) — les thèmes livrés + le sélecteur
-- [`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md) — liste complète des jetons
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — liste complète des jetons

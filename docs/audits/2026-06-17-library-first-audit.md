@@ -36,7 +36,7 @@ implementation hierarchy **Language → Framework → Library → Build** applie
 before any new utility — not retroactive churn. Many "reinventions" here are
 already at the top tier (Tier 1, native: `content-hash.ts` → `crypto.subtle`;
 no `semver` needed in `version-check.ts`). That hierarchy is now codified in
-`docs/VIBE-CODING-POLICY.md` §7 (full 4-tier form), `docs/REUSABILITY-POLICY.md`
+`docs/policies/VIBE-CODING-POLICY.md` §7 (full 4-tier form), `docs/policies/REUSABILITY-POLICY.md`
 §1.7, and `.claude/rules/reusability.md`.
 
 ### The codified hierarchy (walk top-down, stop at the first that fits)

@@ -475,7 +475,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   terms (content repository, trust level, streak, assessment + the
   Dashboard/Content-Browser/Lesson/Settings views + backup) ship in all
   8 languages. **Manual test plan:** a pre-release QA checklist at
-  ``docs/MANUAL-TESTPLAN.md``. v1.69.0 = minor — **theory example links +
+  ``docs/reference/MANUAL-TESTPLAN.md``. v1.69.0 = minor — **theory example links +
   per-domain book recommendations + Error-Replay Enter shortcut +
   backup-restore title fix**. **Example links (#139, via Sprint 2 /
   #153):** a theory step can carry an optional ``example_url`` (+
@@ -562,7 +562,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   ``global.css`` (danger text, highlighter mark, highlight.js palette,
   toast shadow) route through tokens; the ``no-hardcoded-colors`` guard
   now also covers non-theme CSS + fixed-palette Tailwind classes; new
-  ``docs/DESIGN-TOKENS.md`` + ``.claude`` rule. **Matching distinction
+  ``docs/policies/DESIGN-TOKENS.md`` + ``.claude`` rule. **Matching distinction
   (#108):** the term/definition columns get theme-derived blue/green
   tints + an aria-hidden A/B chip (not colour-only), via ``color-mix()``
   tokens across all 12 themes, AA-verified. **Fix:** the assessment
@@ -1525,7 +1525,7 @@ Detailed rules in `.claude/rules/`:
 
 **On demand:**
 - `code-hygiene.md` — linting, error handling, API conventions
-- `design-tokens.md` — design-token architecture (no hardcoded colors; see `docs/DESIGN-TOKENS.md`)
+- `design-tokens.md` — design-token architecture (no hardcoded colors; see `docs/policies/DESIGN-TOKENS.md`)
 - `lessons-learned.md` — known pitfalls
 - `quality-checks.md` — test strategy, pre-commit checklists
 - `tdd.md` — Test-Driven Development workflow (Red-Green-Refactor, four tests per feature/fix)

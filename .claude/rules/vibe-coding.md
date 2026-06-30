@@ -1,6 +1,6 @@
 # Vibe Coding Rules
 
-Vollstaendige Policy: docs/VIBE-CODING-POLICY.md
+Vollstaendige Policy: docs/policies/VIBE-CODING-POLICY.md
 
 ## Kurzregeln fuer jeden Task
 

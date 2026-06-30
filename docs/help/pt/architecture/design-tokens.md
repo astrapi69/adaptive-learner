@@ -5,7 +5,7 @@ Todas as propriedades visuais da aplicação são controladas por
 ou construir um novo tema edita um único ficheiro `theme-*.css` e
 não toca em nenhum componente. Esta regra é imposta por testes, não
 é apenas uma convenção. A referência completa de tokens está em
-[`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md).
+[`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md).
 
 ---
 
@@ -69,4 +69,4 @@ todos os temas).
 ## Páginas relacionadas
 
 - [Sistema de temas](../developer/themes.md) — os temas fornecidos + seletor
-- [`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md) — lista completa de tokens
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — lista completa de tokens

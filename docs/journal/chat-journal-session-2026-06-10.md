@@ -118,7 +118,7 @@ release.
 - Each fix followed GITHUB-ISSUE-PFLICHT: issue first (#169, #171,
   #173, #175, #177), scoped branch, regression test in the same commit,
   conventional commit citing the issue, PR with `Closes #NN`.
-- The pre-existing `docs/MANUAL-TESTPLAN.md` working-tree change
+- The pre-existing `docs/reference/MANUAL-TESTPLAN.md` working-tree change
   (present at session start) was deliberately kept out of every commit.
 - `#172` and `#176` both touched `Onboarding.tsx` / `Onboarding.test.tsx`
   but in non-overlapping regions, so #176 merged cleanly after #172
@@ -217,7 +217,7 @@ one-issue-one-PR fixes, then merged and released as a patch.
 
 ### Clean-code audit + P0
 
-- `docs/CLEAN-CODE-AUDIT.md` (PR #196, merged) — full audit of
+- `docs/audits/CLEAN-CODE-AUDIT.md` (PR #196, merged) — full audit of
   `backend/app` + `plugins` + `frontend/src` + `e2e` via four parallel
   deep-dive agents. Overall 7.5/10; the strictest rules hold with zero
   violations. One P0 (silent `app.yaml` swallow) fixed in #198 (#197):

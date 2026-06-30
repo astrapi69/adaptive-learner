@@ -273,7 +273,7 @@ share the exact same format, so a validating repo is a first-class
 content source.
 
 Want to create your own lessons? See the
-[Content-Repo Guide](docs/CONTENT-REPO-GUIDE.md) — what a content repo
+[Content-Repo Guide](docs/reference/CONTENT-REPO-GUIDE.md) — what a content repo
 is, the directory layout, local validation, trust levels, and the
 ready-made [starter kit](https://github.com/astrapi69/adaptive-learner-content-test).
 

@@ -656,7 +656,7 @@ In scope:
 - `docs/help/_meta.yaml` (display labels are German prose)
 - `docs/help/de/**/*.md`, `docs/journal/**/*.md`,
   `docs/explorations/**/*.md`
-- `docs/CHANGELOG.md`, `docs/CONCEPT.md`, `docs/ROADMAP.md`,
+- `docs/CHANGELOG.md`, `docs/reference/CONCEPT.md`, `docs/ROADMAP.md`,
   `docs/backlog.md`
 - `plugins/*/content/de/**/*.md`,
   `plugins/*/adaptive_learner_*/content/de/**/*.md`

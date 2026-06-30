@@ -1,7 +1,7 @@
 # Reusability audit — `frontend/src/shared/` (2026-06-22, #1021)
 
 Dedicated audit of every component under `frontend/src/shared/` against the
-reusability policy (`docs/REUSABILITY-POLICY.md` / `.claude/rules/reusability.md`):
+reusability policy (`docs/policies/REUSABILITY-POLICY.md` / `.claude/rules/reusability.md`):
 props-driven, no app-specific imports, no import-time side effects, TSDoc
 present, app-agnostic.
 

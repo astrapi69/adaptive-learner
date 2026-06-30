@@ -220,7 +220,7 @@ new literals.
 
 ### Conditional documentation updates (manual, only when needed)
 
-- [ ] `docs/CONCEPT.md` (if the version is mentioned in prose)
+- [ ] `docs/reference/CONCEPT.md` (if the version is mentioned in prose)
 - [ ] `README.md` (if the version is mentioned in prose)
 
 ### External Adaptive Learner-owned dependencies

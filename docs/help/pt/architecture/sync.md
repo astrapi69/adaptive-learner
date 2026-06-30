@@ -4,7 +4,7 @@ O Adaptive Learner é local-first: o modo servidor (API) mantém os
 dados no sistema de ficheiros, o modo apenas browser (Dexie) no
 IndexedDB. A **sincronização** destina-se a ligar estes
 dispositivos através da rede local. A referência completa está em
-[`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md).
+[`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md).
 
 ---
 
@@ -41,4 +41,4 @@ no deployment apenas-PWA não surja nenhum elemento de controlo morto.
 
 - [Camada de armazenamento](../developer/storage-layer.md) — a abstração dupla de armazenamento
 - [Backup e restauro](../features/backup.md) — transferência manual de dados sem sync
-- [`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+- [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

@@ -82,7 +82,7 @@ gate (the user pre-authorized "Wenn gruen: Freigabe erteilt").
 
 ## 6. Documentation ecosystem (PRs #670/#671/#677/#681/#703)
 
-- **Content-Repo Guide** (`docs/CONTENT-REPO-GUIDE.md`) + a MkDocs help page
+- **Content-Repo Guide** (`docs/reference/CONTENT-REPO-GUIDE.md`) + a MkDocs help page
   (de + en) + `content_repo.trust_*` i18n in all 9 langs (#670).
 - **EXP-033** design doc (#671), the **exploration-status audit** across all 32
   EXPs (#677), the **roadmap/backlog restructure** (#681), and a

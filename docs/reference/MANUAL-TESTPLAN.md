@@ -301,7 +301,7 @@ baselinen. Vollständige Anleitung: `e2e/visual/README.md`.
 
 ## Verwandte Dokumente
 
-- [Testen (Entwickler-Dokumentation)](help/de/developer/testing.md)
+- [Testen (Entwickler-Dokumentation)](../help/de/developer/testing.md)
   — automatisierte Teststrategie
-- [Erste Schritte](help/de/user-guide/getting-started.md)
-- [Was ist neu (Changelog)](help/de/changelog.md)
+- [Erste Schritte](../help/de/user-guide/getting-started.md)
+- [Was ist neu (Changelog)](../help/de/changelog.md)

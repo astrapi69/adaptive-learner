@@ -5,7 +5,7 @@ Alle visuellen Eigenschaften der App werden über **Design-Tokens**
 Theme bauen will, bearbeitet eine einzige `theme-*.css`-Datei und
 fasst keine Komponente an. Diese Regel ist durch Tests erzwungen,
 nicht nur Konvention. Die vollständige Token-Referenz steht in
-[`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md).
+[`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md).
 
 ---
 
@@ -69,4 +69,4 @@ alle Themes).
 ## Verwandte Seiten
 
 - [Theme-System](../developer/themes.md) — die ausgelieferten Themes + Picker
-- [`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md) — vollständige Token-Liste
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — vollständige Token-Liste

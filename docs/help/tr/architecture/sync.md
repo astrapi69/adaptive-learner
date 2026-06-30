@@ -4,7 +4,7 @@ Adaptive Learner yerel-öncelikidir: sunucu modu (API) verileri dosya
 sisteminde, yalnızca tarayıcı modu (Dexie) IndexedDB'de tutar.
 **Senkronizasyon**, bu cihazları yerel ağ üzerinden bağlamayı
 amaçlar. Eksiksiz referans
-[`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+[`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)
 içinde bulunur.
 
 ---
@@ -41,4 +41,4 @@ Dexie modunda **önceden** yeniden etkinleştirilmez.
 
 - [Storage katmanı](../developer/storage-layer.md) — ikili depolama soyutlaması
 - [Yedekleme ve geri yükleme](../features/backup.md) — Sync olmadan manuel veri aktarımı
-- [`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+- [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

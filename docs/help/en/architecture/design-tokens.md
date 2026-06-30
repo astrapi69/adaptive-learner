@@ -5,7 +5,7 @@ All visual properties of the app are driven by **design tokens**
 new theme edits a single `theme-*.css` file and touches no
 component. This rule is enforced by tests, not just convention.
 The full token reference is in
-[`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md).
+[`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md).
 
 ---
 
@@ -69,4 +69,4 @@ addition, `themes.test.ts` (token parity) and `contrast.test.ts`
 ## Related pages
 
 - [Theme system](../developer/themes.md) — the shipped themes + picker
-- [`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md) — full token list
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — full token list
