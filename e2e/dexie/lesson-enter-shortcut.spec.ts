@@ -15,6 +15,7 @@
  */
 
 import { expect, test, type Page } from "@playwright/test";
+import { currentStepTestId, waitForStepAdvance } from "./_step-flow";
 
 const SET_ID = "fr-a1-from-en";
 
@@ -51,8 +52,9 @@ test.describe("#103 — Enter-key lesson shortcut", () => {
         break;
       }
       await page.locator("body").click();
+      const beforeStep = await currentStepTestId(page);
       await page.keyboard.press("Enter");
-      await page.waitForTimeout(120);
+      await waitForStepAdvance(page, beforeStep);
     }
 
     expect(
@@ -120,8 +122,9 @@ test.describe("#103 — Enter-key lesson shortcut", () => {
       const next = page.getByTestId("lesson-next");
       if (await next.count()) {
         await next.focus();
+        const beforeStep = await currentStepTestId(page);
         await page.keyboard.press("Enter"); // Next via native button activation
-        await page.waitForTimeout(100);
+        await waitForStepAdvance(page, beforeStep);
       }
     }
 

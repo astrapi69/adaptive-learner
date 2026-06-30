@@ -101,6 +101,10 @@ test.describe("#43 — sticky lesson footer stays pinned across steps", () => {
       const next = page.getByTestId("lesson-next");
       await expect(next).toBeVisible({ timeout: 5000 });
       await next.click();
+      // Intentionally a fixed settle, NOT waitForStepAdvance (#1189): this
+      // test measures the footer's resting bottom position, so it must wait
+      // for the NEXT step to render + lay out, not merely for the old step to
+      // unmount. A detach-only wait could measure mid-layout.
       await page.waitForTimeout(80);
     }
 

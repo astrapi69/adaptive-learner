@@ -28,6 +28,7 @@
 
 import { expect, test, type Page } from "@playwright/test";
 import { createTestUser } from "../helpers/onboarding";
+import { currentStepTestId, waitForStepAdvance } from "./_step-flow";
 
 const WIDTHS = [320, 375, 414];
 
@@ -261,8 +262,9 @@ test.describe("No horizontal scroll — real lesson content", () => {
       }
       const next = page.getByTestId("lesson-next");
       await expect(next, `next button should appear on step ${i}`).toBeVisible({ timeout: 5000 });
+      const beforeStep = await currentStepTestId(page);
       await next.click();
-      await page.waitForTimeout(80);
+      await waitForStepAdvance(page, beforeStep);
     }
 
     // The lesson exercised at least 3 distinct renderers on mobile.
