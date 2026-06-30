@@ -78,8 +78,8 @@ nav:
   profile: "Tu perfil"
   learning_path: "Ruta de aprendizaje"
   dashboard: Panel
-  session: Sesion
-  curriculum: Curriculo
+  session: Sesión
+  curriculum: Currículo
   progress: Progreso
   import: Importar
   settings: Ajustes
@@ -104,29 +104,29 @@ nav:
   sync_paired: "Sinc.: emparejado (Ajustes > Sinc.)"
   sync_unpaired: "Sinc.: sin emparejar (Ajustes > Sinc.)"
 import:
-  title: Importar una conversacion
-  subtitle: Pega o sube una conversacion con ChatGPT, Claude o Gemini y obten al instante ideas de aprendizaje.
+  title: Importar una conversación
+  subtitle: Pega o sube una conversación con ChatGPT, Claude o Gemini y obtén al instante ideas de aprendizaje.
   quick:
-    title: Analisis rapido
-    hint: Pega aqui una conversacion. La guardaremos y analizaremos en un paso.
-    placeholder: Pega aqui una conversacion de ChatGPT, Claude, Gemini o Markdown...
+    title: Análisis rápido
+    hint: Pega aquí una conversación. La guardaremos y analizaremos en un paso.
+    placeholder: Pega aquí una conversación de ChatGPT, Claude, Gemini o Markdown...
   file:
     title: Subir un archivo
-    hint: Arrastra un archivo .json, .md o .txt aqui o haz clic para elegir.
-    formats: ChatGPT conversations.json - Exportacion Claude - Markdown - JSON generico
+    hint: Arrastra un archivo .json, .md o .txt aquí o haz clic para elegir.
+    formats: ChatGPT conversations.json - Exportación Claude - Markdown - JSON genérico
   list:
     title: Tus conversaciones importadas
-    empty: Aun no hay conversaciones. Usa Analisis rapido o sube un archivo.
+    empty: Aún no hay conversaciones. Usa Análisis rápido o sube un archivo.
   detected_format: Formato detectado
   analyze: Analizar
   reanalyze: Reanalizar
   analyzing: Analizando...
   analyzed: Analizada
-  analysis_title: Analisis
-  analysis_ready: Analisis listo.
-  analysis_fallback: El analisis se ejecuto, pero la respuesta de la IA no se pudo analizar correctamente.
-  analysis_fallback_long: La respuesta de la IA no se pudo parsear como JSON estructurado. El resumen a continuacion es un fallback.
-  analysis_error: No se pudo analizar la conversacion.
+  analysis_title: Análisis
+  analysis_ready: Análisis listo.
+  analysis_fallback: El análisis se ejecuto, pero la respuesta de la IA no se pudo analizar correctamente.
+  analysis_fallback_long: La respuesta de la IA no se pudo parsear como JSON estructurado. El resumen a continuación es un fallback.
+  analysis_error: No se pudo analizar la conversación.
   analysis_phase_reading: "Paso 1/3: Leyendo el chat…"
   analysis_phase_analyzing: "Paso 2/3: Analizando el contenido…"
   analysis_phase_preparing: "Paso 3/3: Preparando los resultados…"
@@ -134,40 +134,40 @@ import:
   analysis_done: "¡Listo!"
   analysis_cancel: "Cancelar"
   analysis_failed_inline: "El análisis falló. Inténtalo de nuevo."
-  analysis_save_error: No se pudo guardar el resultado del analisis.
+  analysis_save_error: No se pudo guardar el resultado del análisis.
   back_to_list: Volver a las importaciones
-  create_curriculum: Crear curriculo
+  create_curriculum: Crear currículo
   go_to_curriculum: Ir al currículo
-  curriculum_created: Curriculo creado a partir del analisis.
-  curriculum_error: No se pudo crear el curriculo.
-  curriculum_description: Generado a partir de una conversacion importada.
-  default_curriculum_title: Curriculo importado
+  curriculum_created: Currículo creado a partir del análisis.
+  curriculum_error: No se pudo crear el currículo.
+  curriculum_description: Generado a partir de una conversación importada.
+  default_curriculum_title: Currículo importado
   field_topic: Tema
-  field_method: Metodo recomendado
+  field_method: Método recomendado
   field_strengths: Fortalezas
   field_weaknesses: Debilidades
   field_errors: Patrones de error
   field_subtopics: Subtemas
-  field_curriculum: Curriculo sugerido
-  file_imported_one: Conversacion importada. Haz clic en Analizar en la pagina de detalle.
+  field_curriculum: Currículo sugerido
+  file_imported_one: Conversación importada. Haz clic en Analizar en la página de detalle.
   file_imported_many: '{count} conversaciones importadas.'
   list_error: No se pudieron cargar las conversaciones importadas.
-  load_error: No se pudo cargar la conversacion.
+  load_error: No se pudo cargar la conversación.
   messages: mensajes
-  no_api_key: Configura una clave API para el proveedor de IA activo en Ajustes para activar el analisis.
-  no_lessons: El analisis no sugirio ninguna leccion.
-  no_user: Completa la incorporacion antes de importar conversaciones.
+  no_api_key: Configura una clave API para el proveedor de IA activo en Ajustes para activar el análisis.
+  no_lessons: El análisis no sugirio ninguna lección.
+  no_user: Completa la incorporación antes de importar conversaciones.
   parse_error: No se pudo reconocer el formato de entrada.
   priority: prioridad
   role_assistant: IA
   role_system: Sistema
   role_user: Tu
-  save_error: No se pudo guardar la conversacion.
+  save_error: No se pudo guardar la conversación.
   settings_error: No se pudieron leer los ajustes de IA.
-  start_session: Iniciar sesion
-  continue_session: Continuar sesion
+  start_session: Iniciar sesión
+  continue_session: Continuar sesión
   session_start_error: No se pudo iniciar la sesión.
-  transcript: Transcripcion
+  transcript: Transcripción
   show_transcript: Mostrar transcripción
   anki_extract: Extraer tarjetas Anki
   anki_extracting: Extrayendo tarjetas…
@@ -184,21 +184,21 @@ import:
   learning_language: "Idioma de aprendizaje"
   select_language: "Selecciona un idioma…"
 curriculum:
-  title: Curriculo
-  active: Curriculo activo
-  new_placeholder: Titulo del nuevo curriculo...
-  create: Crear curriculo
-  created: Curriculo creado.
+  title: Currículo
+  active: Currículo activo
+  new_placeholder: Título del nuevo currículo...
+  create: Crear currículo
+  created: Currículo creado.
   saved: Guardado.
   deleted: Tema eliminado.
-  add_topic: Anadir tema
-  add_root_topic: Anadir tema raiz
-  add_subtopic: Anadir subtema
+  add_topic: Añadir tema
+  add_root_topic: Añadir tema raíz
+  add_subtopic: Añadir subtema
   rename_topic: Renombrar tema
-  topic_title: Titulo
-  no_topics: Todavia no hay temas — anade el primero para empezar.
-  no_curriculum: Crea un curriculo para empezar a construir un arbol de temas.
-  delete_confirm: Eliminar este tema? Sus hijos quedaran como raices propias.
+  topic_title: Título
+  no_topics: Todavia no hay temas — añade el primero para empezar.
+  no_curriculum: Crea un currículo para empezar a construir un árbol de temas.
+  delete_confirm: Eliminar este tema? Sus hijos quedaran como raíces propias.
   lessons_title: "Lecciones"
   add_lesson: "Añadir lección"
   new_lesson_placeholder: "Título de la nueva lección…"
@@ -222,11 +222,11 @@ landing:
   start_button: Comienza tu viaje de aprendizaje
   docs_link: Leer la documentación
   checking_session: Bienvenido de nuevo...
-  recovered_toast: Bienvenido de nuevo. Tus datos de aprendizaje siguen aqui.
-  intro: Adaptive Learner encuentra el metodo que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigacion, y te acompana en un ciclo de siete pasos en cada sesion.
+  recovered_toast: Bienvenido de nuevo. Tus datos de aprendizaje siguen aquí.
+  intro: Adaptive Learner encuentra el método que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigación, y te acompaña en un ciclo de siete pasos en cada sesión.
 onboarding:
   title: Crear un proyecto de aprendizaje
-  intro: Cuentanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un metodo inicial.
+  intro: Cuentanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un método inicial.
   concepts_explainer_prefix: "Definirás un "
   concepts_explainer_mid1: ", y luego completas una breve evaluación para construir tu "
   concepts_explainer_mid2: " — que guía cada "
@@ -236,15 +236,15 @@ onboarding:
   term_learning_session: "sesión de aprendizaje"
   field_name: Tu nombre
   field_topic: Tema
-  field_topic_hint: p. ej. Espanol B1, algebra lineal.
+  field_topic_hint: p. ej. Español B1, álgebra lineal.
   field_goal: Objetivo
   field_goal_hint: Que quieres ser capaz de hacer?
   field_timeframe: Plazo
   field_timeframe_hint: p. ej. 4 semanas, un semestre.
-  field_daily_minutes: Minutos por dia
+  field_daily_minutes: Minutos por día
   field_current_problem: Problema actual
   field_current_problem_hint: opcional — que te bloquea ahora mismo?
-  submit: Crear proyecto e iniciar evaluacion
+  submit: Crear proyecto e iniciar evaluación
   creating: Creando proyecto...
   subject_suggestions: "Materias sugeridas (toca para asignar):"
   default_goal: "Aprender {topic}"
@@ -274,8 +274,8 @@ onboarding:
     start_assessment: "Sí, empezar"
     later: "Más tarde"
 assessment:
-  title: Evaluacion del tipo de aprendizaje
-  intro: Doce preguntas cortas determinan tu perfil de aprendizaje. No hay respuestas correctas o incorrectas — responde por intuicion.
+  title: Evaluación del tipo de aprendizaje
+  intro: Doce preguntas cortas determinan tu perfil de aprendizaje. No hay respuestas correctas o incorrectas — responde por intuición.
   question_progress: Pregunta {current} de {total}
   next_question: Siguiente pregunta
   prev_question: Pregunta anterior
@@ -283,7 +283,7 @@ assessment:
   submit: Evaluar
   evaluating: Evaluando...
   result_title: Tu perfil de aprendizaje
-  dominant_method: Metodo preferido
+  dominant_method: Método preferido
   continue_to_dashboard: Continuar al panel
   read_summary: Leer resumen
   swipe_hint: "Desliza a la izquierda / derecha (o usa las teclas de flecha) para navegar."
@@ -295,14 +295,14 @@ dashboard:
   no_data: "Aún no hay datos."
   title: Panel
   welcome: Bienvenido de nuevo
-  quick_start: Empezar una nueva sesion
-  quick_start_subtitle: Metodo elegido a partir de tu perfil.
+  quick_start: Empezar una nueva sesión
+  quick_start_subtitle: Método elegido a partir de tu perfil.
   card_profile: Perfil de aprendizaje
   profile_incomplete: "Perfil de aprendizaje incompleto."
   profile_resume: "Continuar perfil de aprendizaje"
   profile_start: "Crear perfil de aprendizaje"
   card_progress: Progreso
-  card_distribution: Distribucion de metodos
+  card_distribution: Distribución de métodos
   card_counter: Sesiones
   card_tools: Recomendaciones de herramientas
   card_recent_sessions: "Sesiones recientes"
@@ -396,31 +396,31 @@ review:
   spaced_dismiss: Descartar
   metric_total_sessions: Sesiones totales
   metric_total_minutes: "Minutos totales"
-  metric_mean_understanding: Comprension media
-  metric_mean_stress: Estres medio
-  metric_streak: Racha de dias
+  metric_mean_understanding: Comprensión media
+  metric_mean_stress: Estrés medio
+  metric_streak: Racha de días
   no_data: Todavia no hay sesiones — comienza la primera para ver las tendencias.
   pronunciation_quick_start: Práctica de Pronunciación
 session:
-  title: Sesion de aprendizaje
+  title: Sesión de aprendizaje
   topic_label: "Tema"
-  in_progress: Sesion en curso
+  in_progress: Sesión en curso
   send_message: Enviar mensaje
   message_placeholder: Escribe tu respuesta...
   ai_thinking: Pensando...
   ai_error: El proveedor de IA no pudo responder.
   no_api_key: "No hay clave de IA configurada. Añade una clave para tu proveedor de IA en Ajustes para chatear con el tutor. Las lecciones y los repasos funcionan sin clave."
   welcome_empty: "¡Listo para aprender! Escribe tu primer mensaje."
-  end_session: Terminar sesion
-  end_session_confirm: Seguro? Cerraremos la sesion y pediremos una valoracion.
-  switch_recommended: Se recomienda cambiar de metodo
-  switch_recommended_subtitle: Tus ultimas valoraciones sugieren que otro metodo podria encajar mejor.
-  switch_accept: Cambiar metodo
-  switch_dismiss: Mantener el metodo actual
-  rating_title: Como fue la sesion?
+  end_session: Terminar sesión
+  end_session_confirm: Seguro? Cerraremos la sesión y pediremos una valoracion.
+  switch_recommended: Se recomienda cambiar de método
+  switch_recommended_subtitle: Tus ultimas valoraciones sugieren que otro método podria encajar mejor.
+  switch_accept: Cambiar método
+  switch_dismiss: Mantener el método actual
+  rating_title: Como fue la sesión?
   rating_understanding: Lo entendiste bien?
-  rating_stress: Cuanto estres tuviste?
-  rating_method_fit: Como te encajo el metodo?
+  rating_stress: Cuanto estrés tuviste?
+  rating_method_fit: Como te encajo el método?
   rating_notes: Notas (opcional)
   rating_submit: Enviar valoracion
   step_progress: Paso {current} de {total}
@@ -440,22 +440,22 @@ progress:
     stats: "Estadísticas"
     paths: "Mis rutas"
   title: Progreso
-  chart_timeline: Comprension y estres a lo largo del tiempo
-  chart_methods: Distribucion de metodos
+  chart_timeline: Comprensión y estrés a lo largo del tiempo
+  chart_methods: Distribución de métodos
   commit_history: Historial de sesiones
-  commit_method: Metodo
-  commit_understanding: Comprension
-  commit_stress: Estres
+  commit_method: Método
+  commit_understanding: Comprensión
+  commit_stress: Estrés
   commit_duration: Duracion
   commit_date: Fecha
   no_commits: Todavia no hay sesiones completadas.
-  step_eval_title: Analisis de evaluacion IA por paso
-  step_eval_empty: Aun no hay datos de evaluacion — inicia una sesion para ver el analisis.
+  step_eval_title: Análisis de evaluación IA por paso
+  step_eval_empty: Aún no hay datos de evaluación — inicia una sesión para ver el análisis.
   step_eval_avg_confidence: Confianza IA media
-  step_eval_repeats: Veces que la IA dijo 'aun no'
+  step_eval_repeats: Veces que la IA dijo 'aún no'
   step_eval_advances: Avances de paso
   step_eval_backward: Retrocesos
-  step_eval_stickiest_label: 'Mas tiempo en:'
+  step_eval_stickiest_label: 'Más tiempo en:'
   commit_notes_aria: "Notas de la sesión"
   session_count: "Sesiones"
 settings:
@@ -587,7 +587,7 @@ settings:
   avatar_change: "Cambiar foto"
   avatar_button_label: "Ver o cambiar la foto de perfil"
   theme: "Tema"
-  theme_description: "Elige el aspecto de la aplicacion. Automatico sigue la configuracion clara/oscura del sistema."
+  theme_description: "Elige el aspecto de la aplicacion. Automático sigue la configuración clara/oscura del sistema."
   theme_group_recommended: "Recomendados"
   theme_group_classic: "Clásicos"
   theme_groups: "Grupos de temas"
@@ -651,9 +651,9 @@ settings:
   storage_mode_api: Servidor
   storage_mode_api_hint: Requiere un backend de AdaptiveLearner en ejecucion.
   storage_mode_dexie: Local (Navegador)
-  storage_mode_dexie_hint: Datos y claves API viven en este navegador; las llamadas de IA salen directamente desde la pagina.
+  storage_mode_dexie_hint: Datos y claves API viven en este navegador; las llamadas de IA salen directamente desde la página.
   storage_mode_warning: Los datos NO se sincronizan entre modos. La sincronizacion esta planeada para una version futura.
-  storage_mode_switch_notice: Modo de almacenamiento guardado. Recarga la pagina para activarlo.
+  storage_mode_switch_notice: Modo de almacenamiento guardado. Recarga la página para activarlo.
   language_label: Idioma de la interfaz
   language_search_placeholder: "Buscar idiomas…"
   language_no_results: "No se encontraron idiomas"
@@ -680,7 +680,7 @@ settings:
     test_network_error: Error de red
     test_backend_only: Solo se puede probar con el backend
   api_key_label: Clave API
-  api_key_placeholder: Pegar aqui...
+  api_key_placeholder: Pegar aquí...
   api_key_placeholder_replace: "Pega una clave nueva para reemplazar la guardada…"
   api_key:
     test: "Probar"
@@ -825,13 +825,13 @@ methods:
     summary: Aprender de los errores — correccion con explicacion.
   dialogic:
     label: Dialogico
-    summary: Pensar en conversacion — bajar el estres, construir motivacion.
+    summary: Pensar en conversación — bajar el estrés, construir motivacion.
   contextual:
     label: Contextual
     summary: Aplicar en contexto real — practicar la transferencia.
   ai_adaptive:
     label: IA adaptativa
-    summary: La IA elige el metodo que mejor te encaja.
+    summary: La IA elige el método que mejor te encaja.
 cycle_steps:
   input:
     label: Entrada
@@ -847,7 +847,7 @@ cycle_steps:
     description: Correccion con explicacion.
   adapt:
     label: Adaptar
-    description: Ajustar metodo, ritmo o foco.
+    description: Ajustar método, ritmo o foco.
   repeat:
     label: Repetir
     description: Intentar de nuevo.
@@ -859,24 +859,24 @@ errors:
   not_found: No encontrado.
   validation: Entrada invalida.
   conflict: El elemento ya existe.
-  server: Error del servidor — intentalo mas tarde.
+  server: Error del servidor — inténtalo más tarde.
 toast:
   project_created: Proyecto creado.
   assessment_saved: Perfil guardado.
-  session_started: Sesion iniciada.
-  session_ended: Sesion terminada.
+  session_started: Sesión iniciada.
+  session_ended: Sesión terminada.
   rating_saved: Valoracion guardada.
   api_key_saved: Clave API guardada.
   api_key_restored: "Se restauró la última clave que funcionó."
   api_key_deleted: Clave API eliminada.
-  method_switched: Metodo cambiado.
+  method_switched: Método cambiado.
 install:
   ios:
     title: "Instalar como app"
     steps: "Toca el icono Compartir y luego «Añadir a pantalla de inicio»: se abre sin la barra de Safari."
     aria_label: "Instalar en tu iPhone"
     dismiss: "Cerrar"
-  title: Anadir a la pantalla de inicio
+  title: Añadir a la pantalla de inicio
   subtitle: "Instala Adaptive Learner como app para un mejor uso sin conexión."
   install: Instalar
   dismiss: Ahora no
@@ -925,8 +925,8 @@ about:
   identity_status_label: Estado
   identity_status_active: Activo
   identity_status_missing: No encontrado
-  identity_last_seen_label: Ultima actualizacion
-  identity_explainer: Este archivo es gestionado automaticamente por Adaptive Learner. Permite que la aplicacion recupere tu identidad de usuario despues de borrar los datos del navegador. No lo edites manualmente.
+  identity_last_seen_label: Última actualizacion
+  identity_explainer: Este archivo es gestionado automaticamente por Adaptive Learner. Permite que la aplicacion recupere tu identidad de usuario después de borrar los datos del navegador. No lo edites manualmente.
   credits_heading: Créditos
   author_label: Autor
   dependencies_label: Construido con
@@ -1384,7 +1384,7 @@ ui:
     forest: "Bosque"
     high-contrast: "Alto contraste"
     sepia: "Sepia"
-    auto: "Automatico (sistema)"
+    auto: "Automático (sistema)"
   errors:
     bad_request: "No se pudo procesar la solicitud."
     forbidden: "Acceso denegado. Comprueba tus ajustes."
@@ -2175,13 +2175,13 @@ content:
       verified: "Revisado por IA"
       stale: "Revision IA desactualizada"
       invalid: "Revision IA no valida"
-    last_checked: "Ultima revision: {when}"
+    last_checked: "Última revision: {when}"
     checked_with: "Verificado con"
     date: "Fecha"
     recheck: "Revisar de nuevo"
     export:
       button: "Exportar informe como Markdown"
-      lesson: "Leccion"
+      lesson: "Lección"
       card: "Tarjeta"
       field: "Campo"
     button: "Revisar con IA"
