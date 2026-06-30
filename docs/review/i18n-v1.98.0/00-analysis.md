@@ -1,10 +1,7 @@
-# i18n consistency analysis (machine) — pre v1.98.0
+# i18n consistency analysis (machine)
 
-> Stand: `develop` @ 58bc4f20 (2026-06-30). Generated for the pre-v1.98.0 four-eyes review.
-
-
-- Languages: 11 (de, en, el, es, fr, hi, id, ja, ko, pt, tr)
-- Key reference (parity): `en` — 2788 leaf keys
+- Languages (11): de, en, el, es, fr, hi, id, ja, ko, pt, tr
+- Key reference: `en` — 2788 leaf keys
 - Translation source of truth: `de` (assumed correct)
 
 ## Key parity (vs EN)
@@ -17,7 +14,7 @@
 - No empty or null values in any catalog.
 
 ## Untranslated suspects (value identical to DE source)
-(short tokens, brand names, numbers, and pure-placeholder values are excluded; a non-trivial value equal to the German source likely means a forgotten translation)
+(short tokens, brand names, numbers and pure-placeholder values excluded; most remaining hits are loanwords/cognates — verify in context)
 
 - **en**: 90 non-trivial value(s) identical to DE
 - **el**: 24 non-trivial value(s) identical to DE
@@ -45,10 +42,8 @@
 
 </details>
 
-## Suspiciously identical across languages
-(same non-trivial value shared by >= 6 of the 10 target languages — possible forgotten translation; brand/UI tokens may legitimately coincide)
-
-- 23 key(s):
+## Suspiciously identical across languages (>= 6 target langs)
+- 23 key(s) (brand/UI tokens may legitimately coincide):
     - `app.name` — 9 langs: de,el,es,fr,id,ja,ko,pt,tr
     - `nav.anki` — 10 langs: de,el,es,fr,hi,id,ja,ko,pt,tr
     - `landing.title` — 9 langs: de,el,es,fr,id,ja,ko,pt,tr
@@ -75,4 +70,3 @@
 
 ## UTF-8 / mojibake scan
 - No replacement chars or common mojibake sequences found.
-- DE values containing real umlauts (ä/ö/ü/ß): 803 (sanity: should be > 0).
