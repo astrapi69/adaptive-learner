@@ -8,10 +8,22 @@
 
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { ContentSetEntry } from "../../../storage/types";
 import ContentSetListView from "./ContentSetListView";
+import { setDevModeEnabled } from "../../../hooks/settings/useDevMode";
+import { getBuildInfo } from "../../../lib/provenance/build-info";
+
+vi.mock("../../../lib/provenance/build-info", () => ({
+  getBuildInfo: vi.fn(() => ({ strang: "unknown" })),
+}));
+
+const mockedGetBuildInfo = vi.mocked(getBuildInfo);
+
+function setStrang(strang: "latest" | "haupt" | "unknown") {
+  mockedGetBuildInfo.mockReturnValue({ strang } as ReturnType<typeof getBuildInfo>);
+}
 
 function entry(over: Partial<ContentSetEntry>): ContentSetEntry {
   return {
@@ -78,5 +90,47 @@ describe("ContentSetListView", () => {
       "href",
       "/content/set/deep",
     );
+  });
+
+  // #1298 — the Dev-Mode download-date readout (the #1259 diagnostic, which
+  // only landed on the Learning Path SetRow) must ALSO show here, the list
+  // view of "Meine Inhalte" → Heruntergeladene Sets.
+  describe("Dev-Mode download-date readout (#1298)", () => {
+    afterEach(() => {
+      setDevModeEnabled(false);
+      setStrang("unknown");
+      localStorage.clear();
+    });
+
+    it("shows downloaded_at when Dev Mode is ON", () => {
+      setDevModeEnabled(true);
+      renderList([entry({ id: "a", downloaded_at: "2026-06-20T00:00:00.000Z" })]);
+      expect(screen.getByTestId("content-list-set-a-downloaded-at")).toHaveTextContent(
+        "downloaded_at: 2026-06-20T00:00:00.000Z",
+      );
+    });
+
+    it("does NOT show downloaded_at when Dev Mode is OFF (no leak)", () => {
+      setDevModeEnabled(false);
+      renderList([entry({ id: "a", downloaded_at: "2026-06-20T00:00:00.000Z" })]);
+      expect(screen.queryByTestId("content-list-set-a-downloaded-at")).toBeNull();
+    });
+
+    it("renders 'null' when downloaded_at is missing (old set, no crash)", () => {
+      setDevModeEnabled(true);
+      renderList([entry({ id: "a" })]);
+      expect(screen.getByTestId("content-list-set-a-downloaded-at")).toHaveTextContent(
+        "downloaded_at: null",
+      );
+    });
+
+    it("shows downloaded_at per default in the Latest strand (#1273)", () => {
+      localStorage.clear();
+      setStrang("latest");
+      renderList([entry({ id: "a", downloaded_at: "2026-06-20T00:00:00.000Z" })]);
+      expect(
+        screen.getByTestId("content-list-set-a-downloaded-at"),
+      ).toBeInTheDocument();
+    });
   });
 });
