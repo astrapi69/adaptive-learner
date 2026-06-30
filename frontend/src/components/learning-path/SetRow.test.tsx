@@ -1,8 +1,9 @@
-import {describe, it, expect, vi} from "vitest";
+import {afterEach, describe, it, expect, vi} from "vitest";
 import {render, screen, fireEvent} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 import SetRow from "./SetRow";
+import {setDevModeEnabled} from "../../hooks/settings/useDevMode";
 import type {
     PersonalPathLesson,
     PersonalPathSet,
@@ -172,6 +173,40 @@ describe("SetRow", () => {
         const action = screen.getByTestId("set-action-psych");
         expect(action.getAttribute("data-mode")).toBe("next_level");
         expect(action).toHaveAttribute("href", "/content");
+    });
+
+    // ZUSATZ (#1211 follow-up) — Dev-Mode-only download-date readout, a
+    // built-in on-device check that ``downloaded_at`` actually reaches the
+    // Persönlich list. Must never leak to normal users.
+    describe("Dev-Mode download-date readout", () => {
+        afterEach(() => setDevModeEnabled(false));
+
+        it("shows downloaded_at when Dev Mode is ON", () => {
+            setDevModeEnabled(true);
+            renderRow(
+                setFixture({downloadedAt: "2026-06-20T00:00:00.000Z"}),
+            );
+            const el = screen.getByTestId("set-downloaded-at-psych");
+            expect(el).toHaveTextContent("downloaded_at: 2026-06-20T00:00:00.000Z");
+        });
+
+        it("renders 'null' when downloaded_at is missing (the diagnostic signal)", () => {
+            setDevModeEnabled(true);
+            renderRow(setFixture({downloadedAt: null}));
+            expect(
+                screen.getByTestId("set-downloaded-at-psych"),
+            ).toHaveTextContent("downloaded_at: null");
+        });
+
+        it("does NOT show downloaded_at when Dev Mode is OFF (no leak)", () => {
+            setDevModeEnabled(false);
+            renderRow(
+                setFixture({downloadedAt: "2026-06-20T00:00:00.000Z"}),
+            );
+            expect(
+                screen.queryByTestId("set-downloaded-at-psych"),
+            ).toBeNull();
+        });
     });
 
     it("toggles on row click and reveals children when expanded", () => {
