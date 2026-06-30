@@ -48,7 +48,7 @@ must be verified against the layer architecture.
 **Enforcement:**
 
 - `.claude/rules/architecture.md` — agents read this before every task.
-- Cohesion Audit (`docs/COHESION-AUDIT.md`) — periodic measurement.
+- Cohesion Audit (`docs/audits/COHESION-AUDIT.md`) — periodic measurement.
 - Cohesion Watcher (`scripts/check-file-sizes.sh`, #371) — CI gate, WARN >500
   lines, ERROR >1000 lines (blocks merge).
 - Ratchet Baseline (`.filesize-baseline`) — now **EMPTY**: the god-file

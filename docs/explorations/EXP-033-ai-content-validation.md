@@ -303,7 +303,7 @@ ist. Einordnung **zwischen "Validated" (Trust 1) und "Verified"
 menschlich verifiziert. Das reduziert den manuellen Review-Aufwand für
 Maintainer — sie müssen nur die KI-Ergebnisse sichten, nicht jede Karte
 einzeln. (Trust-Level-Definitionen: siehe
-[CONTENT-REPO-GUIDE.md](../CONTENT-REPO-GUIDE.md), §6.)
+[CONTENT-REPO-GUIDE.md](../reference/CONTENT-REPO-GUIDE.md), §6.)
 
 ---
 
@@ -349,7 +349,7 @@ einzeln. (Trust-Level-Definitionen: siehe
 
 - [EXP-032 — Inhaltliche Content-Validierung](EXP-032-content-quality-validation.md)
   (die deterministische Vorstufe)
-- [CONTENT-REPO-GUIDE.md](../CONTENT-REPO-GUIDE.md) (Trust-Levels,
+- [CONTENT-REPO-GUIDE.md](../reference/CONTENT-REPO-GUIDE.md) (Trust-Levels,
   Qualitätsanforderungen)
 - [EXP-023 — Multi-Content-Repository](EXP-023-multi-content-repository.md)
 - [EXP-028 — User-Event-Recording](EXP-028-user-event-recording.md)

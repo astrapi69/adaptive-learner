@@ -5,7 +5,7 @@ datos en el sistema de archivos, y el modo navegador puro (Dexie)
 en IndexedDB. La **sincronización** pretende conectar estos
 dispositivos a través de la red local. La referencia completa está
 en
-[`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md).
+[`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md).
 
 ---
 
@@ -43,4 +43,4 @@ muerto.
 
 - [Capa de almacenamiento](../developer/storage-layer.md) — la abstracción de almacenamiento dual
 - [Copia de seguridad y restauración](../features/backup.md) — transferencia manual de datos sin sincronización
-- [`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+- [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

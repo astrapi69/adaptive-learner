@@ -79,7 +79,7 @@ oder Google-Style Docstring (Backend) mit mindestens:
 
 Vor jeder neuen Utility/Komponente die Hierarchie **von oben nach
 unten** durchgehen und bei der ersten Stufe stoppen, die das Problem
-loest. Vollstaendige Fassung: `docs/VIBE-CODING-POLICY.md` §7.
+loest. Vollstaendige Fassung: `docs/policies/VIBE-CODING-POLICY.md` §7.
 
 **Stufe 1 -- Sprache/Runtime zuerst (native APIs).** Keine
 Bundle-Kosten, keine Wartung.

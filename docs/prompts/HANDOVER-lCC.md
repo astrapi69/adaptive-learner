@@ -34,7 +34,7 @@ Repo: `/home/astrapi69/dev/git/hub/astrapi69/adaptive-learner`. Gitflow:
   consolidation → `app/services/ai_caller.py`).
 - Block 3 #341: decomposed `session/routes.py` `append_message` god-handler →
   `session_runner.py` (#342–#344 + recovery #352). routes.py 2031→1156.
-- Non-functional UI audit #350/#351 (`docs/NON-FUNCTIONAL-AUDIT.md`; app was
+- Non-functional UI audit #350/#351 (`docs/audits/NON-FUNCTIONAL-AUDIT.md`; app was
   already clean; SPA-404 already implemented).
 - **Backend god-file splits (#353), all merged:** content-loader
   `service.py`→`sources.py` (#355); `main.py`→`config.py` (#359);

@@ -251,4 +251,4 @@ Artefakte aktuell sind.
 Was Automatisierung nicht abdeckt (Layout, Lesbarkeit,
 Touch-Bedienung, Theme-Kontraste), prüft eine manuelle
 Checkliste vor jedem größeren Release:
-[MANUAL-TESTPLAN.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/MANUAL-TESTPLAN.md).
+[MANUAL-TESTPLAN.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/MANUAL-TESTPLAN.md).

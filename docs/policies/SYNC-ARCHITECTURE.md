@@ -3,7 +3,7 @@
 How the local-network sync feature is exposed in the UI, why the Sync
 section is currently API-mode-only, and what has to change when Phase 1
 LAN Mode lands. This document is the reference for the `SYNC-UI-GATE`
-rule in [`.claude/rules/architecture.md`](../.claude/rules/architecture.md).
+rule in [`.claude/rules/architecture.md`](../../.claude/rules/architecture.md).
 
 ## Three roles in the sync system
 
@@ -26,7 +26,7 @@ The current code cannot yet tell them apart (see below).
 ## How the storage mode is resolved
 
 `resolveStorageMode()` in
-[`frontend/src/storage/index.ts`](../frontend/src/storage/index.ts)
+[`frontend/src/storage/index.ts`](../../frontend/src/storage/index.ts)
 returns `"api"` or `"dexie"`, picked from, in order:
 
 1. `localStorage["adaptive-learner.storage_mode"]` — the user's explicit
@@ -43,7 +43,7 @@ to a desktop" from "PWA-only with no backend in reach".
 - **Phase 1 LAN Mode is not implemented yet.** There is no
   production-ready pairing/coupling flow.
 - Therefore the entire Sync section is behind a single API gate in
-  [`frontend/src/pages/Settings.tsx`](../frontend/src/pages/Settings.tsx):
+  [`frontend/src/pages/Settings.tsx`](../../frontend/src/pages/Settings.tsx):
 
   ```tsx
   {resolveStorageMode() === "api" && <SyncSection />}
@@ -51,7 +51,7 @@ to a desktop" from "PWA-only with no backend in reach".
 
 - This is **correct for now**: without a working LAN Mode, the
   Mobile-client pairing UI (`PhoneUnpairedView` in
-  [`SyncSection.tsx`](../frontend/src/components/SyncSection.tsx)) would
+  [`SyncSection.tsx`](../../frontend/src/components/SyncSection.tsx)) would
   run into nothing — a QR scanner that can never reach a live desktop,
   a pairing field that can never complete. A control that cannot
   function must not be shown (see the rule below).
@@ -86,7 +86,7 @@ reintroduce the pairing UI in Dexie mode — it would be a dead control
 on the PWA-only deployment, which is exactly what issue #51 removed.
 
 See the Phase 1 proposal in
-[`docs/explorations/ROADMAP-PHASE-1-VORSCHLAG.md`](explorations/ROADMAP-PHASE-1-VORSCHLAG.md).
+[`docs/explorations/ROADMAP-PHASE-1-VORSCHLAG.md`](../explorations/ROADMAP-PHASE-1-VORSCHLAG.md).
 
 ## The governing rule
 
@@ -95,6 +95,6 @@ no greyed-out placeholders, no "not available" hints. If the function
 does not work for this role, the UI for it does not exist.
 
 This is the same rule as "Dexie-mode is part of the contract" in
-[`.claude/rules/lessons-learned.md`](../.claude/rules/lessons-learned.md),
+[`.claude/rules/lessons-learned.md`](../../.claude/rules/lessons-learned.md),
 applied at the UI-surface level: the correct way to "support" a feature
 that a role cannot use is to not render it, not to render it broken.

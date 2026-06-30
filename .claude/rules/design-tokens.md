@@ -4,7 +4,7 @@ All visual properties are driven by design tokens (CSS variables).
 A contributor re-themes the app by editing one `theme-*.css` file and
 touching no component. This rule is enforced by tests, not just
 convention. Full catalogue + "how to build a theme":
-[docs/DESIGN-TOKENS.md](../../docs/DESIGN-TOKENS.md).
+[docs/policies/DESIGN-TOKENS.md](../../docs/policies/DESIGN-TOKENS.md).
 
 ## The token layers
 
@@ -75,7 +75,7 @@ Standalone CLI gate (#1169): `make verify-theme` runs
 `var()`-reference + WCAG-contrast + semantic-badge-contrast matrix gate,
 with a `.theme-baseline.json` ratchet) and then calls the three Vitest
 guards above. Use it as a single theme gate where the node toolchain is
-not available; see `docs/DESIGN-TOKENS.md` § Enforcement.
+not available; see `docs/policies/DESIGN-TOKENS.md` § Enforcement.
 
 When adding a setting/feature that needs a new color: add a token, do
 not inline a value. If it varies by theme, add it to all 12

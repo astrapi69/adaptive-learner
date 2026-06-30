@@ -5,7 +5,7 @@ les données dans le système de fichiers, le mode purement
 navigateur (Dexie) dans IndexedDB. La **synchronisation** vise à
 relier ces appareils via le réseau local. La référence complète se
 trouve dans
-[`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md).
+[`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md).
 
 ---
 
@@ -43,4 +43,4 @@ n'apparaisse sur le déploiement PWA seule.
 
 - [Couche de stockage](../developer/storage-layer.md) — l'abstraction de stockage double
 - [Sauvegarde et restauration](../features/backup.md) — transfert manuel des données sans sync
-- [`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+- [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

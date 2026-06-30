@@ -1,6 +1,6 @@
 # Reusability Rules
 
-Vollstaendige Policy: docs/REUSABILITY-POLICY.md
+Vollstaendige Policy: docs/policies/REUSABILITY-POLICY.md
 
 - Props-driven: alle Daten/Callbacks ueber Props oder Seams
 - Keine Seiteneffekte beim Import
@@ -30,5 +30,5 @@ ersten passenden Stufe stoppen:
    < 500 Zeilen / ein Concern, Complexity cc < 20, eigene Tests, PR
    dokumentiert WARUM selbst gebaut (welche Stufe, welcher Grund).
 
-Vollstaendige Policy: docs/VIBE-CODING-POLICY.md §7. Worked reference:
+Vollstaendige Policy: docs/policies/VIBE-CODING-POLICY.md §7. Worked reference:
 docs/audits/2026-06-17-library-first-audit.md.

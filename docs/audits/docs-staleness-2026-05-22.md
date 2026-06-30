@@ -35,7 +35,7 @@ fixes in Phase 35B–35I.
   voice), 32 (v1.19.0 NotebookLM), 33 (v1.19.x import
   parser audit), 34 (v1.20.0 secrets.yaml) are entirely
   missing from the table.
-- **docs/CONCEPT.md (2.4K)** mentions v1.5.0 as the most
+- **docs/reference/CONCEPT.md (2.4K)** mentions v1.5.0 as the most
   recent reference. Misses v1.6.0+ entirely (streaming, sync,
   model picker, backup compare, native i18n, TipTap, E2E,
   gamification, Anki, voice, NotebookLM, secrets.yaml).
@@ -77,7 +77,7 @@ fixes in Phase 35B–35I.
 | `README.md` | 10,971 | "Active development. v0.8.1 ... 2026-05-19"; feature list stops at v0.7.0; references BISAC (Bibliogon) | **Full rewrite** (35C). All shipped features. Installation paths × 4. |
 | `README-de.md` | 11,532 | Same as README.md, German | **Full rewrite** (35C) — keep DE/EN structure aligned |
 | `docs/configuration.md` | 12,606 | Already refreshed in v1.20.0 | **No action** — verify only |
-| `docs/CONCEPT.md` | 2,435 | Stops at v1.5.0 | **Append** post-v1.5.0 milestones in 35G or 35H |
+| `docs/reference/CONCEPT.md` | 2,435 | Stops at v1.5.0 | **Append** post-v1.5.0 milestones in 35G or 35H |
 | `docs/ROADMAP.md` | 8,679 | Stops at Phase 26 / v1.13.0. "State: post v1.8.0" header | **Append** Phases 27–34 to the table; update "Current state" header (35H) |
 | `docs/backlog.md` | 11,464 | "State: post v1.8.0 (Phase 21)" header is stale; the closed-item entries are current | **Minor** — refresh the State header in 35H |
 | `docs/adaptive-learner-project-reference.md` | 19,982 | "Aktueller Tag: v0.0.0-template"; describes Phase 1–2 only; no gamification/voice/anki/notebooklm/secrets.yaml sections | **Major append** in 35H. Add "Shipped architecture (v1.20.0)" section that diverges from the original plan. |

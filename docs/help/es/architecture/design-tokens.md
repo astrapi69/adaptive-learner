@@ -6,7 +6,7 @@ app o construir un tema nuevo edita un único archivo
 `theme-*.css` y no toca ningún componente. Esta regla la imponen
 los tests, no es solo una convención. La referencia completa de
 tokens está en
-[`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md).
+[`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md).
 
 ---
 
@@ -73,4 +73,4 @@ todos los temas).
 ## Páginas relacionadas
 
 - [Sistema de temas](../developer/themes.md) — los temas incluidos + el selector
-- [`docs/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/DESIGN-TOKENS.md) — lista completa de tokens
+- [`docs/policies/DESIGN-TOKENS.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/DESIGN-TOKENS.md) — lista completa de tokens

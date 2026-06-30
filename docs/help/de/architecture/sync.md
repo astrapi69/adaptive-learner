@@ -4,7 +4,7 @@ Adaptive Learner ist lokal-first: Server-Modus (API) hält die
 Daten im Dateisystem, reiner Browser-Modus (Dexie) in IndexedDB.
 Die **Synchronisierung** soll diese Geräte über das lokale Netz
 verbinden. Die vollständige Referenz steht in
-[`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md).
+[`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md).
 
 ---
 
@@ -41,4 +41,4 @@ Nur-PWA-Deployment kein totes Bedienelement entsteht.
 
 - [Storage-Layer](../developer/storage-layer.md) — die duale Speicher-Abstraktion
 - [Backup und Wiederherstellung](../features/backup.md) — manueller Datentransfer ohne Sync
-- [`docs/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/SYNC-ARCHITECTURE.md)
+- [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md)

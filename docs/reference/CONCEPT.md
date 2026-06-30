@@ -102,4 +102,4 @@ from `secrets.yaml` while preserving the Fernet
 
 The full architecture, domain model, plugin catalogue, hook
 specifications, mobile/PWA decisions, and roadmap live in
-[adaptive-learner-project-reference.md](adaptive-learner-project-reference.md).
+[adaptive-learner-project-reference.md](../adaptive-learner-project-reference.md).

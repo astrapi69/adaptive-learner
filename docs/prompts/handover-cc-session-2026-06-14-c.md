@@ -171,13 +171,13 @@ Always-relevant rules in `.claude/rules/`:
 - `coding-standards.md` — naming, function design (≤40 lines, single concern),
   gitflow + Git rules (no-amend), tests, deps.
 - `reusability.md` — `shared/` primitives must be props-driven + app-agnostic
-  (full policy: `docs/REUSABILITY-POLICY.md`).
+  (full policy: `docs/policies/REUSABILITY-POLICY.md`).
 - `design-tokens.md` — no hardcoded colors; token-backed Tailwind only
-  (`docs/DESIGN-TOKENS.md`).
+  (`docs/policies/DESIGN-TOKENS.md`).
 
 On-demand:
 - `vibe-coding.md` — priority order + **release freeze** (full:
-  `docs/VIBE-CODING-POLICY.md`).
+  `docs/policies/VIBE-CODING-POLICY.md`).
 - `ai-workflow.md` — GITHUB-ISSUE-PFLICHT, ISSUE-LIFECYCLE, issues-as-queue,
   docs protocol, numeric-claims verification, self-clarification.
 - `quality-checks.md` — test strategy, BACKUP-AKZEPTANZTEST gate, pre-commit

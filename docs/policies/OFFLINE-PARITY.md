@@ -1,7 +1,7 @@
 # Offline parity & data portability
 
 Adaptive Learner runs in two storage modes (see
-[architecture.md](../.claude/rules/architecture.md) → *Dual storage*):
+[architecture.md](../../.claude/rules/architecture.md) → *Dual storage*):
 
 - **API mode** — FastAPI + SQLite (the desktop/server app).
 - **Dexie mode** — IndexedDB in the browser (the GitHub Pages PWA).

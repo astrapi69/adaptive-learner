@@ -4,7 +4,7 @@ Adaptive Learner ships an official content library, but the content
 system is open: you can run your **own content repository** on GitHub,
 connect it in the app, and make it available to other learners. This
 page is the overview; the full step-by-step instructions are in the
-**[Content-Repo Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/CONTENT-REPO-GUIDE.md)**.
+**[Content-Repo Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/CONTENT-REPO-GUIDE.md)**.
 
 ---
 
@@ -131,6 +131,6 @@ app.
 
 ## See also
 
-- **[Full Content-Repo Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/CONTENT-REPO-GUIDE.md)**
+- **[Full Content-Repo Guide](https://github.com/astrapi69/adaptive-learner/blob/main/docs/reference/CONTENT-REPO-GUIDE.md)**
 - [Creating lessons — overview](overview.md)
 - [Book recommendations](books.md)

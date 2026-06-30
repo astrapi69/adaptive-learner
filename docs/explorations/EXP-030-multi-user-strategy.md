@@ -5,7 +5,7 @@ Phase 2, Stufe 3 Cloud ab Phase 4) · **Priorität:** P3 (Vision; Stufe 1 ist
 ein kleiner, additiver Schritt, Stufe 3 ist ein großes Cloud-Thema) ·
 **Abhängig von:** dem bestehenden Single-User-Modell (`learnerState.ts`,
 `User`-Tabelle), EXP-009 (Cloud/Social), der Sync-Architektur
-([docs/SYNC-ARCHITECTURE.md](../SYNC-ARCHITECTURE.md)) · **Issue:** —
+([docs/policies/SYNC-ARCHITECTURE.md](../policies/SYNC-ARCHITECTURE.md)) · **Issue:** —
 
 > Design-Dokument. Kein Code. Es beschreibt, **wie** Adaptive Learner vom
 > heutigen Ein-Nutzer-Modell zu mehreren Nutzern wächst — und vor allem, in
@@ -27,7 +27,7 @@ Die App ist heute bewusst **Single-User, Local-First**:
 | `User`-Tabelle (mehrere Zeilen technisch möglich) | `backend/app/models/__init__.py` (`User`) | **da** — das Datenmodell ist NICHT auf einen Nutzer beschränkt |
 | Wiederherstellung des „zuletzt aktiven" Nutzers | `users.findMostRecent()` (Api + Dexie) | **da** — sortiert bereits über mehrere `users`-Zeilen |
 | Duale Speicherung (Server / Browser-IndexedDB) | `IStorageService` (`ApiStorage` / `DexieStorage`) | **da** |
-| LAN-Sync-Architektur (Geräte-Pairing per QR) | [docs/SYNC-ARCHITECTURE.md](../SYNC-ARCHITECTURE.md), `SYNC-UI-GATE` | **konzipiert** (Phase-1-LAN noch nicht implementiert) |
+| LAN-Sync-Architektur (Geräte-Pairing per QR) | [docs/policies/SYNC-ARCHITECTURE.md](../policies/SYNC-ARCHITECTURE.md), `SYNC-UI-GATE` | **konzipiert** (Phase-1-LAN noch nicht implementiert) |
 | Editierbarer Anzeigename + Profilbild | Settings > Profil (#508, #560, #579) | **da** |
 
 Schlüsselbeobachtung: **Das Datenmodell ist bereits mehr-nutzer-fähig.**
@@ -115,7 +115,7 @@ Absicht.
 
 EIN Mensch, Desktop + Handy. Das ist **kein** neues Multi-User-Thema, sondern
 die Umsetzung der bereits konzipierten **LAN-Sync-Architektur**
-([docs/SYNC-ARCHITECTURE.md](../SYNC-ARCHITECTURE.md)): Desktop (API-Modus)
+([docs/policies/SYNC-ARCHITECTURE.md](../policies/SYNC-ARCHITECTURE.md)): Desktop (API-Modus)
 erzeugt einen QR-Code, das Handy (Dexie-Modus) scannt ihn, danach gleichen die
 Geräte das `user_id`-ge-scopte Sync-Surface ab.
 
