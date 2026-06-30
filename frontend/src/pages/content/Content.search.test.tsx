@@ -115,6 +115,9 @@ function lessonFor(filename: string) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // #1257 — the global content-view default is now "list"; these tests
+  // assert the TREE (grid) when not searching, so pin grid.
+  localStorage.setItem("adaptive-learner.content_view_mode", "grid");
   listSetsMock.mockResolvedValue({
     sets: [FR_SET, PY_SET],
     sources: [{ source: FR_SET.source, branch: "main" }],

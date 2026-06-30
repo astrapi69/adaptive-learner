@@ -570,6 +570,8 @@ settings:
   section_danger: Akun
   section_ui: Antarmuka
   section_appearance: "Tampilan"
+  content_view: "Tampilan konten"
+  content_view_description: "Bagaimana konten yang diunduh ditampilkan di seluruh tab konten. Sakelar cepat di tampilan konten mengubah pengaturan yang sama."
   section_profile: "Profil"
   username_label: "Nama tampilan"
   username_placeholder: "Nama Anda"

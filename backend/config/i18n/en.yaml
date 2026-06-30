@@ -567,6 +567,8 @@ settings:
   section_danger: Account
   section_ui: Interface
   section_appearance: "Appearance"
+  content_view: "Content view"
+  content_view_description: "How downloaded content is shown across the content tabs. The quick toggle in the content view changes the same setting."
   section_profile: "Profile"
   username_label: "Display name"
   username_placeholder: "Your name"

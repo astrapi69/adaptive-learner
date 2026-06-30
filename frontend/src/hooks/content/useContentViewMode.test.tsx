@@ -21,28 +21,28 @@ function Probe() {
   return (
     <div>
       <span data-testid="mode">{mode}</span>
-      <button type="button" onClick={() => setMode("list")} data-testid="to-list">
-        list
+      <button type="button" onClick={() => setMode("grid")} data-testid="to-grid">
+        grid
       </button>
     </div>
   );
 }
 
 describe("useContentViewMode", () => {
-  it("defaults to grid", () => {
+  it("defaults to list (#1257)", () => {
     render(<Probe />);
-    expect(screen.getByTestId("mode")).toHaveTextContent("grid");
+    expect(screen.getByTestId("mode")).toHaveTextContent("list");
   });
 
   it("persists across a fresh mount", () => {
     const first = render(<Probe />);
     act(() => {
-      screen.getByTestId("to-list").click();
+      screen.getByTestId("to-grid").click();
     });
-    expect(screen.getByTestId("mode")).toHaveTextContent("list");
+    expect(screen.getByTestId("mode")).toHaveTextContent("grid");
     first.unmount();
 
     render(<Probe />);
-    expect(screen.getByTestId("mode")).toHaveTextContent("list");
+    expect(screen.getByTestId("mode")).toHaveTextContent("grid");
   });
 });

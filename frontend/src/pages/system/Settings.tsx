@@ -13,6 +13,7 @@ import DangerZoneSection from "../../components/settings/data/DangerZoneSection"
 import ExportSection from "../../components/settings/data/ExportSection";
 import KeyVaultSection from "../../components/settings/data/KeyVaultSection";
 import GitHubIntegrationSection from "../../components/settings/integrations/GitHubIntegrationSection";
+import ContentViewControl from "../../components/settings/controls/ContentViewControl";
 import FeedbackIntensityControl from "../../components/settings/controls/FeedbackIntensityControl";
 import GamificationSettingsSection from "../../components/settings/controls/GamificationSettingsSection";
 import DirectionStrategyControl from "../../components/settings/controls/DirectionStrategyControl";
@@ -492,6 +493,9 @@ export default function Settings() {
       >
         <h2 className="settings-section-title">{t("settings.section_appearance", "Appearance")}</h2>
         <ThemePicker />
+        {/* #1257 — global content-view preference (list/grid). Shares the
+            same source as the in-tab quick-toggle. */}
+        <ContentViewControl />
       </section>
 
       <section className="settings-section" hidden={activeTab !== "general"}>

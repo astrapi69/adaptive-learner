@@ -1,15 +1,22 @@
 /**
- * Content-view-mode preference (grid ⇄ list, #1240).
+ * Content-view-mode preference (grid ⇄ list, #1240 + #1257).
  *
- * The /content browser can render either the rich source→target→level
- * tree ("grid"/Kacheln, the default — no break for existing users) or a
- * compact flat list ("list"/Liste, opt-in, fast to scroll on mobile).
+ * The GLOBAL view preference for every content tab: the browser can
+ * render either the rich source→target→level tree ("grid"/Kacheln) or a
+ * compact flat list ("list"/Liste, fast to scroll on mobile).
+ *
+ * #1257 — the default is now **list**. This deliberately reverses #1240's
+ * grid default; existing users keep their explicit choice (migration: a
+ * stored "grid" still reads back as grid), only new/unset users default
+ * to list.
  *
  * Persisted under a single key in localStorage — the same lightweight
  * UI-pref pattern the app already uses for ``sourceLanguagePref`` and
- * ``useButtonTooltips``. A custom event lets the Content page re-read
- * live when the toggle flips in this tab; the native ``storage`` event
- * covers other tabs. Library-grade: pure read/write, no React imports.
+ * ``useButtonTooltips``. It is the single source for BOTH the in-tab
+ * quick-toggle and the Settings control. A custom event lets every
+ * consumer re-read live when the value flips in this tab; the native
+ * ``storage`` event covers other tabs. Library-grade: pure read/write,
+ * no React imports.
  */
 
 export type ContentViewMode = "grid" | "list";
@@ -20,13 +27,15 @@ export const CONTENT_VIEW_MODE_KEY = KEY;
 
 export const CONTENT_VIEW_MODE_CHANGE_EVENT = "adaptive-learner:content-view-mode-change";
 
-/** Read the stored view mode. Defaults to "grid" (the tree view) on a
- *  missing/unrecognised value or any storage error. */
+/** Read the stored view mode. Defaults to "list" (#1257) on a
+ *  missing/unrecognised value or any storage error. An explicit "grid"
+ *  is preserved (existing-user migration), so only new/unset users get
+ *  the new list default. */
 export function readContentViewMode(): ContentViewMode {
   try {
-    return localStorage.getItem(KEY) === "list" ? "list" : "grid";
+    return localStorage.getItem(KEY) === "grid" ? "grid" : "list";
   } catch {
-    return "grid";
+    return "list";
   }
 }
 

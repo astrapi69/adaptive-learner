@@ -607,6 +607,8 @@
     "section_danger": "Conta",
     "section_ui": "Interface",
     "section_appearance": "Aparencia",
+    "content_view": "Visualização de conteúdo",
+    "content_view_description": "Como o conteúdo baixado é exibido nas abas de conteúdo. O alternador rápido na visualização de conteúdo altera a mesma configuração.",
     "section_profile": "Perfil",
     "username_label": "Nome de exibição",
     "username_placeholder": "O teu nome",

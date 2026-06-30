@@ -34,6 +34,21 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
+    // #1257 — the global content-view default flipped to "list". These
+    // manual-automation journeys assert the grid/tree view, so seed the
+    // pref to "grid" for the whole config. The list default is covered by
+    // the frontend unit tests.
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: `http://localhost:${PREVIEW_PORT}`,
+          localStorage: [
+            { name: "adaptive-learner.content_view_mode", value: "grid" },
+          ],
+        },
+      ],
+    },
   },
   webServer: [
     {

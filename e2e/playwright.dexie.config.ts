@@ -29,6 +29,26 @@ export default defineConfig({
         baseURL: `http://localhost:${PREVIEW_PORT}`,
         actionTimeout: 10_000,
         trace: "on-first-retry",
+        // #1257 — the global content-view default flipped to "list". The
+        // tree-based journeys below assert the grid/tree view, so seed the
+        // pref to "grid" for the whole gate. The list default itself is
+        // covered by the frontend unit tests (Content.viewmode.test +
+        // viewModePref.test); the e2e gate is about per-route crash-safety
+        // and tree functionality, not the default.
+        storageState: {
+            cookies: [],
+            origins: [
+                {
+                    origin: `http://localhost:${PREVIEW_PORT}`,
+                    localStorage: [
+                        {
+                            name: "adaptive-learner.content_view_mode",
+                            value: "grid",
+                        },
+                    ],
+                },
+            ],
+        },
     },
     webServer: [
         {
