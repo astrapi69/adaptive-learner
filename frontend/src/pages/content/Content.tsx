@@ -32,7 +32,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import InfoHint from "../../shared/feedback/InfoHint";
+import InfoHintButton from "../../shared/feedback/InfoHintButton";
+import { useInfoHint } from "../../shared/feedback/useInfoHint";
 import ContentTree from "../../components/content/browser/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
@@ -126,6 +127,11 @@ export default function ContentPage() {
 
   const { hasKey, activeProvider } = useApiKeyStatus();
 
+  // #1272 — the header info button reveals the intro prose AND the
+  // (dynamic) configured-sources line in one expandable panel below the
+  // header, instead of a permanent sources line.
+  const headerInfo = useInfoHint("content_my");
+
   // EXP-033 / AIV-02 — set-wide AI content check. The trigger is gated to
   // Dexie mode (browser-direct provider call; no server route) + a
   // configured key; the button stays visible-but-disabled otherwise.
@@ -218,11 +224,23 @@ export default function ContentPage() {
 
   return (
     <main id="main" className="page content-page" data-testid="content-page">
-      <header className="content-header">
-        <h1>{t("content.page_title", "Content sets")}</h1>
+      <header className="content-header" data-testid="content-header">
+        <h1>{t("content.page_title", "Meine Inhalte")}</h1>
+        {/* #1272 — the info button sits inline, right after the title;
+            it reveals the intro prose + the (dynamic) sources line below
+            the header on demand. */}
+        <InfoHintButton
+          expanded={headerInfo.expanded}
+          blink={headerInfo.blink}
+          label={t("ui.info.show", "Show information")}
+          controls="content-info-text"
+          onClick={headerInfo.toggle}
+          testId="content-info-button"
+          className="self-center"
+        />
         <button
           type="button"
-          className="content-refresh-btn"
+          className="content-refresh-btn ml-auto"
           onClick={handleRefresh}
           disabled={refreshing}
           data-testid="content-refresh"
@@ -234,25 +252,29 @@ export default function ContentPage() {
             : t("content.action.refresh", "Refresh")}
         </button>
       </header>
-      {/* #1251 — the permanent intro prose is replaced by an info button
-          that expands the text inline on demand (it blinks gently for a
-          first-time visitor, then bows out). Saves vertical space at the
-          top for users already in the content area. */}
-      <InfoHint
-        storageId="content_my"
-        text={t(
-          "content.intro",
-          "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
-        )}
-        label={t("ui.info.show", "Show information")}
-        testId="content-info"
-      />
-
-      {sources.length > 0 && (
-        <p className="content-sources" data-testid="content-sources">
-          {t("content.sources", "Sources")}:{" "}
-          {sources.map((src) => `${src.source} @ ${src.branch}`).join(", ")}
-        </p>
+      {/* #1251 / #1272 — the permanent intro prose AND the sources line are
+          replaced by the header info button above, which expands both here
+          on demand (saving vertical space). The sources stay dynamic — the
+          actually-configured sources from listSets(). */}
+      {headerInfo.expanded && (
+        <div
+          id="content-info-text"
+          data-testid="content-info-text"
+          className="mb-4 text-sm text-muted-foreground"
+        >
+          <p>
+            {t(
+              "content.intro",
+              "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
+            )}
+          </p>
+          {sources.length > 0 && (
+            <p className="content-sources mt-1" data-testid="content-sources">
+              {t("content.sources", "Sources")}:{" "}
+              {sources.map((src) => `${src.source} @ ${src.branch}`).join(", ")}
+            </p>
+          )}
+        </div>
       )}
 
       {/* EXP-025 / AUTH-02 — book-companion headers for connected repos

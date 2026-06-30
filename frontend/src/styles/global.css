@@ -2555,14 +2555,13 @@ select:focus {
 .content-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-3);
+  align-items: center;
+  gap: var(--space-2);
   margin-bottom: var(--space-3);
 }
 
 .content-header h1 {
   margin: 0;
-  flex-grow: 1;
 }
 
 .content-refresh-btn {

@@ -2261,7 +2261,7 @@
       "cloze_prompt": "Complétez le mot manquant.",
       "tiles_prompt": "Remettez les mots dans l'ordre pour former la phrase ({word})."
     },
-    "page_title": "Sets de contenu",
+    "page_title": "Mes contenus",
     "intro": "Sets de leçons préfabriqués utilisables sans clé API. Les téléchargements sont mis en cache localement et fonctionnent hors-ligne après la première récupération.",
     "sources": "Sources",
     "lessons": "leçons",

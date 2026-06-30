@@ -2261,7 +2261,7 @@
       "cloze_prompt": "Completa la palabra que falta.",
       "tiles_prompt": "Ordena las palabras para formar la frase ({word})."
     },
-    "page_title": "Sets de contenido",
+    "page_title": "Mis contenidos",
     "intro": "Sets de lecciones prediseñados que puedes usar sin clave API. Las descargas se almacenan localmente y funcionan sin conexión tras la primera descarga.",
     "sources": "Fuentes",
     "lessons": "lecciones",
