@@ -19,7 +19,7 @@ common:
   delete: Eliminar
   edit: Editar
   confirm: Confirmar
-  'yes': Si
+  'yes': "Sí"
   'no': 'No'
   optional: opcional
   required: obligatorio

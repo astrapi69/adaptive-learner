@@ -19,8 +19,8 @@ common:
   delete: Hapus
   edit: Edit
   confirm: Konfirmasi
-  'yes': true
-  'no': false
+  'yes': "Ya"
+  'no': "Tidak"
   optional: opsional
   required: wajib
   minutes: menit
