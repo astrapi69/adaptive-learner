@@ -15,6 +15,7 @@
  */
 
 import {expect, test, type Page} from "@playwright/test";
+import {currentStepTestId, waitForStepAdvance} from "./_step-flow";
 
 const SET_ID = "fr-a1-from-en";
 
@@ -61,8 +62,9 @@ async function playFirstLesson(page: Page): Promise<void> {
         }
         const next = page.getByTestId("lesson-next");
         await expect(next).toBeVisible({timeout: 5000});
+        const beforeStep = await currentStepTestId(page);
         await next.click();
-        await page.waitForTimeout(80);
+        await waitForStepAdvance(page, beforeStep);
     }
     await expect(page.getByTestId("lesson-summary")).toBeVisible({timeout: 15000});
 }
