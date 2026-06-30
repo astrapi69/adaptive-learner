@@ -12,7 +12,7 @@ import DailyRemindersControl from "./DailyRemindersControl";
 import {
     readReminderSettings,
     setRemindersEnabled,
-} from "../../../lib/notifications/reminderPref";
+} from "../../../../lib/notifications/reminderPref";
 
 const requestPermission = vi.fn().mockResolvedValue("granted");
 

@@ -5,7 +5,7 @@
  * ``App`` alongside the other headless hosts (MilestoneHost, etc.).
  */
 
-import {useReminderScheduler} from "../../../hooks/system/useReminderScheduler";
+import {useReminderScheduler} from "../../../../hooks/system/useReminderScheduler";
 
 export default function ReminderScheduler() {
     useReminderScheduler();

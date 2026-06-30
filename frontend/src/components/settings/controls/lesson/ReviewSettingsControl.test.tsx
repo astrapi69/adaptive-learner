@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import ReviewSettingsControl from "./ReviewSettingsControl";
-import { readReviewLimit } from "../../../lib/learning/reviewLimitPref";
+import { readReviewLimit } from "../../../../lib/learning/reviewLimitPref";
 
 afterEach(() => localStorage.clear());
 

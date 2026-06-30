@@ -12,7 +12,7 @@
 
 import {useEffect, useState} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 import {
     EXAM_PASS_THRESHOLD_OPTIONS,
     LESSON_MODE_PREF_CHANGE_EVENT,
@@ -22,13 +22,13 @@ import {
     writeExamPassThreshold,
     type ExamPassThreshold,
     type LessonMode,
-} from "../../../lib/learning/lessonModePref";
+} from "../../../../lib/learning/lessonModePref";
 import {
     readTimedDifficulty,
     TIMED_DIFFICULTY_OPTIONS,
     writeTimedDifficulty,
     type TimedDifficulty,
-} from "../../../lib/learning/timedMode";
+} from "../../../../lib/learning/timedMode";
 
 const MODE_LABELS: Record<LessonMode, {key: string; fallback: string}> = {
     practice: {key: "lesson.mode.practice", fallback: "Practice"},
