@@ -2,7 +2,7 @@
   "app": {
     "name": "Adaptive Learner",
     "tagline": "Un apprentissage qui s'adapte a toi.",
-    "skeleton_notice": "Etat squelette. Les modeles de domaine, plugins et pages arrivent dans les phases suivantes — voir docs/adaptive-learner-project-reference.md."
+    "skeleton_notice": "État squelette. Les modèles de domaine, plugins et pages arrivent dans les phases suivantes — voir docs/adaptive-learner-project-reference.md."
   },
   "common": {
     "ok": "OK",
@@ -121,7 +121,7 @@
       "placeholder": "Colle ici une conversation ChatGPT, Claude, Gemini ou Markdown..."
     },
     "file": {
-      "title": "Televerser un fichier",
+      "title": "Téléverser un fichier",
       "hint": "Glisse ici un fichier .json, .md ou .txt ou clique pour le choisir.",
       "formats": "ChatGPT conversations.json - Export Claude - Markdown - JSON générique"
     },
@@ -131,7 +131,7 @@
     },
     "detected_format": "Format détecté",
     "analyze": "Analyser",
-    "reanalyze": "Reanalyser",
+    "reanalyze": "Réanalyser",
     "analyzing": "Analyse en cours...",
     "analyzed": "Analysée",
     "analysis_title": "Analyse",
@@ -152,27 +152,27 @@
     "go_to_curriculum": "Aller au programme",
     "curriculum_created": "Programme créé à partir de l'analyse.",
     "curriculum_error": "Impossible de créer le programme.",
-    "curriculum_description": "Genere a partir d'une conversation importée.",
-    "default_curriculum_title": "Programme importe",
+    "curriculum_description": "Généré à partir d'une conversation importée.",
+    "default_curriculum_title": "Programme importé",
     "field_topic": "Sujet",
-    "field_method": "Méthode recommandee",
+    "field_method": "Méthode recommandée",
     "field_strengths": "Forces",
     "field_weaknesses": "Faiblesses",
-    "field_errors": "Schemas d'erreur",
+    "field_errors": "Schémas d'erreur",
     "field_subtopics": "Sous-sujets",
     "field_curriculum": "Programme suggéré",
-    "file_imported_one": "Conversation importée. Clique sur Analyser sur la page de detail.",
+    "file_imported_one": "Conversation importée. Clique sur Analyser sur la page de détail.",
     "file_imported_many": "{count} conversations importées.",
     "list_error": "Impossible de charger les conversations importées.",
     "load_error": "Impossible de charger la conversation.",
     "messages": "messages",
     "no_api_key": "Configure une clé API pour le fournisseur IA actif dans Paramètres pour activer l'analyse.",
     "no_lessons": "L'analyse n'a suggéré aucune leçon.",
-    "no_user": "Termine l'integration avant d'importer des conversations.",
-    "parse_error": "Format d'entree non reconnu.",
+    "no_user": "Termine l'intégration avant d'importer des conversations.",
+    "parse_error": "Format d'entrée non reconnu.",
     "priority": "priorite",
     "role_assistant": "IA",
-    "role_system": "Systeme",
+    "role_system": "Système",
     "role_user": "Toi",
     "save_error": "Impossible de sauvegarder la conversation.",
     "settings_error": "Impossible de lire les paramètres IA.",
@@ -231,13 +231,13 @@
   },
   "landing": {
     "title": "Adaptive Learner",
-    "subtitle": "Un apprentissage qui s'adapte a toi.",
+    "subtitle": "Un apprentissage qui s'adapte à toi.",
     "choose_language": "Choisis ta langue",
     "start_button": "Commencer ton parcours d'apprentissage",
     "docs_link": "Lire la documentation",
     "checking_session": "Bon retour...",
-    "recovered_toast": "Bon retour ! Tes données d'apprentissage sont toujours la.",
-    "intro": "Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basees sur la recherche et t'accompagne dans un cycle en sept étapes a chaque session."
+    "recovered_toast": "Bon retour ! Tes données d'apprentissage sont toujours là.",
+    "intro": "Adaptive Learner trouve la méthode qui te convient le mieux parmi six approches basées sur la recherche et t'accompagne dans un cycle en sept étapes à chaque session."
   },
   "onboarding": {
     "title": "Créer un projet d'apprentissage",
@@ -251,7 +251,7 @@
     "term_learning_session": "session d’apprentissage",
     "field_name": "Ton nom",
     "field_topic": "Sujet",
-    "field_topic_hint": "ex. Espagnol B1, algebre lineaire.",
+    "field_topic_hint": "ex. Espagnol B1, algèbre linéaire.",
     "field_goal": "Objectif",
     "field_goal_hint": "Que veux-tu pouvoir faire ?",
     "field_timeframe": "Échéance",
@@ -295,9 +295,9 @@
     "intro": "Douze courtes questions déterminent ton profil. Il n'y a ni bonne ni mauvaise réponse — répond a l'instinct.",
     "question_progress": "Question {current} sur {total}",
     "next_question": "Question suivante",
-    "prev_question": "Question precedente",
+    "prev_question": "Question précédente",
     "continue_later": "Continuer plus tard",
-    "submit": "Evaluer",
+    "submit": "Évaluer",
     "evaluating": "Évaluation en cours...",
     "result_title": "Ton profil d'apprentissage",
     "dominant_method": "Méthode préférée",
@@ -419,7 +419,7 @@
       "missing_params": "Aucun ensemble de contenu sélectionné.",
       "load_failed": "Impossible de charger la session de révision."
     },
-    "spaced_empty": "Rien a reviser pour l'instant. Bon rythme !",
+    "spaced_empty": "Rien à réviser pour l'instant. Bon rythme !",
     "spaced_interval_label": "Revoir dans",
     "spaced_start": "Démarrer",
     "spaced_dismiss": "Ignorer",
@@ -443,7 +443,7 @@
     "welcome_empty": "Prêt à apprendre ! Écris ton premier message.",
     "end_session": "Terminer la session",
     "end_session_confirm": "Sûr ? Nous allons fermer la session et demander une évaluation.",
-    "switch_recommended": "Changement de méthode recommande",
+    "switch_recommended": "Changement de méthode recommandé",
     "switch_recommended_subtitle": "Tes dernières évaluations suggèrent qu'une autre méthode pourrait mieux te convenir.",
     "switch_accept": "Changer de méthode",
     "switch_dismiss": "Garder la méthode actuelle",
@@ -454,7 +454,7 @@
     "rating_notes": "Notes (optionnel)",
     "rating_submit": "Envoyer l'évaluation",
     "step_progress": "Étape {current} sur {total}",
-    "step_advance_toast": "Passage a : {step}",
+    "step_advance_toast": "Passage à : {step}",
     "cycle_label": "Cycle {n}",
     "cycle_advanced": "Cycle {n} démarré",
     "cycles_completed": "Cycles terminés",
@@ -484,7 +484,7 @@
     "step_eval_title": "Analyses d'évaluation IA par étape",
     "step_eval_empty": "Pas encore de données d'évaluation — lance une session pour voir l'analyse.",
     "step_eval_avg_confidence": "Confiance IA moyenne",
-    "step_eval_repeats": "Fois ou l'IA a dit 'pas encore'",
+    "step_eval_repeats": "Fois où l'IA a dit 'pas encore'",
     "step_eval_advances": "Progressions d'étape",
     "step_eval_backward": "Retours en arrière",
     "step_eval_stickiest_label": "Plus de temps sur :",
@@ -687,12 +687,12 @@
     "sounds_volume": "Volume",
     "sounds_test": "Tester",
     "section_storage_mode": "Mode de stockage",
-    "storage_mode_help": "Choisis ou tes données vivent. Le mode Local garde tout dans ce navigateur ; le mode Serveur parle au backend AdaptiveLearner.",
+    "storage_mode_help": "Choisis où tes données vivent. Le mode Local garde tout dans ce navigateur ; le mode Serveur parle au backend AdaptiveLearner.",
     "storage_mode_api": "Serveur",
-    "storage_mode_api_hint": "Necessite un backend AdaptiveLearner actif.",
+    "storage_mode_api_hint": "Nécessite un backend AdaptiveLearner actif.",
     "storage_mode_dexie": "Local (Navigateur)",
     "storage_mode_dexie_hint": "Données et clés API vivent dans ce navigateur ; les appels IA partent directement depuis la page.",
-    "storage_mode_warning": "Les données ne sont PAS synchronisees entre les modes. La synchronisation est prevue pour une future version.",
+    "storage_mode_warning": "Les données ne sont PAS synchronisées entre les modes. La synchronisation est prévue pour une future version.",
     "storage_mode_switch_notice": "Mode de stockage enregistré. Recharge la page pour activer le nouveau backend.",
     "language_label": "Langue d'affichage",
     "language_search_placeholder": "Rechercher des langues…",
@@ -730,11 +730,11 @@
       "test_network": "Connexion échouée. Vérifie ta connexion internet.",
       "test_error": "Échec du test. Le fournisseur a rejeté la requête.",
       "test_rate_limit": "Limite de débit atteinte. Réessaie plus tard.",
-      "test_no_key": "Aucune clé a tester.",
+      "test_no_key": "Aucune clé à tester.",
       "format_invalid": "Format invalide.",
       "rollback_warning": "La nouvelle clé ne fonctionne pas. Garder l'ancienne ?",
       "rollback_keep_old": "Garder l'ancienne",
-      "rollback_save_anyway": "Enregistrer quand meme",
+      "rollback_save_anyway": "Enregistrer quand même",
       "rollback_cancel": "Annuler",
       "rollback_restore": "Restaurer la dernière clé fonctionnelle",
       "format_hint": {
@@ -744,27 +744,27 @@
       }
     },
     "api_key_saved": "Clé enregistrée",
-    "api_key_missing": "Non definie",
+    "api_key_missing": "Non définie",
     "api_key_set": "Enregistrer la clé",
     "api_key_delete": "Supprimer la clé",
     "api_key_confirm_delete": "Vraiment supprimer cette clé API ?",
     "saved": "Enregistré.",
-    "save_failed": "Echec de l'enregistrement.",
+    "save_failed": "Échec de l'enregistrement.",
     "provider_active": "Actif",
-    "active_provider_missing_key": "C'est ton fournisseur actif mais aucune clé API n'est enregistrée. Les reponses IA seront ignorees jusqu'a ce qu'une clé soit enregistrée.",
+    "active_provider_missing_key": "C'est ton fournisseur actif mais aucune clé API n'est enregistrée. Les réponses IA seront ignorées jusqu'à ce qu'une clé soit enregistrée.",
     "api_key_source_file": "Clé depuis: secrets.yaml",
     "api_key_source_env": "Clé depuis: variable d'environnement",
     "api_key_source_settings": "Clé depuis: Paramètres",
-    "api_key_source_none": "Aucune clé configuree",
+    "api_key_source_none": "Aucune clé configurée",
     "api_key_external_hint_file": "Enregistrée dans ~/.config/adaptive_learner/secrets.yaml. Enregistrer ici la remplace.",
-    "api_key_external_hint_env": "Cette clé est configuree via la variable d'environnement ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.",
-    "section_model_overrides": "Surcharges de modele",
-    "model_overrides_hint": "Laisse vide pour utiliser le modele par defaut de chaque fournisseur. Une valeur non vide remplace la valeur par defaut lors du chat.",
-    "model_override_placeholder": "Identifiant du modele (p. ex. claude-3-5-haiku-latest)",
+    "api_key_external_hint_env": "Cette clé est configurée via la variable d'environnement ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.",
+    "section_model_overrides": "Surcharges de modèle",
+    "model_overrides_hint": "Laisse vide pour utiliser le modèle par défaut de chaque fournisseur. Une valeur non vide remplace la valeur par défaut lors du chat.",
+    "model_override_placeholder": "Identifiant du modèle (p. ex. claude-3-5-haiku-latest)",
     "model_override_set": "Surcharge active",
-    "model_override_default": "Modele par defaut",
-    "model_override_save": "Enregistrer le modele",
-    "model_override_clear": "Utiliser la valeur par defaut",
+    "model_override_default": "Modèle par défaut",
+    "model_override_save": "Enregistrer le modèle",
+    "model_override_clear": "Utiliser la valeur par défaut",
     "model_picker_placeholder": "Sélectionne ou saisis un identifiant de modèle",
     "model_picker_open": "Ouvrir la liste des modèles",
     "model_picker_default_hint": "Utilise la valeur par défaut :",
@@ -864,15 +864,15 @@
   },
   "methods": {
     "deductive": {
-      "label": "Deductif",
-      "summary": "Du general au particulier — d'abord les regles, puis les exemples."
+      "label": "Déductif",
+      "summary": "Du général au particulier — d'abord les règles, puis les exemples."
     },
     "inductive": {
       "label": "Inductif",
-      "summary": "Du particulier au general — d'abord les exemples, puis la regle."
+      "summary": "Du particulier au général — d'abord les exemples, puis la règle."
     },
     "error_based": {
-      "label": "Centre sur l'erreur",
+      "label": "Centré sur l'erreur",
       "summary": "Apprendre des erreurs — correction avec explication."
     },
     "dialogic": {
@@ -881,7 +881,7 @@
     },
     "contextual": {
       "label": "Contextuel",
-      "summary": "Appliquer en contexte reel — pratiquer le transfert."
+      "summary": "Appliquer en contexte réel — pratiquer le transfert."
     },
     "ai_adaptive": {
       "label": "IA adaptative",
@@ -890,8 +890,8 @@
   },
   "cycle_steps": {
     "input": {
-      "label": "Entree",
-      "description": "Information, exemple ou tache presentes."
+      "label": "Entrée",
+      "description": "Information, exemple ou tâche présentés."
     },
     "attempt": {
       "label": "Tentative",
@@ -899,7 +899,7 @@
     },
     "error": {
       "label": "Erreur",
-      "description": "Ecart entre attente et résultat."
+      "description": "Écart entre attente et résultat."
     },
     "feedback": {
       "label": "Retour",
@@ -911,30 +911,30 @@
     },
     "repeat": {
       "label": "Repeter",
-      "description": "Reessayer."
+      "description": "Réessayer."
     },
     "integrate": {
       "label": "Integrer",
-      "description": "Le savoir reste par l'experience."
+      "description": "Le savoir reste par l'expérience."
     }
   },
   "errors": {
     "network": "Impossible de joindre le serveur.",
     "not_found": "Non trouve.",
-    "validation": "Entree invalide.",
+    "validation": "Entrée invalide.",
     "conflict": "L'élément existe déjà.",
     "server": "Erreur serveur — réessaie plus tard."
   },
   "toast": {
     "project_created": "Projet créé.",
     "assessment_saved": "Profil enregistré.",
-    "session_started": "Session demarree.",
+    "session_started": "Session démarrée.",
     "session_ended": "Session terminée.",
     "rating_saved": "Évaluation enregistrée.",
     "api_key_saved": "Clé API enregistrée.",
     "api_key_restored": "La dernière clé fonctionnelle a été restaurée.",
     "api_key_deleted": "Clé API supprimée.",
-    "method_switched": "Méthode changee."
+    "method_switched": "Méthode changée."
   },
   "install": {
     "ios": {
@@ -943,7 +943,7 @@
       "aria_label": "Installer sur ton iPhone",
       "dismiss": "Fermer"
     },
-    "title": "Ajouter a l'ecran d'accueil",
+    "title": "Ajouter à l'écran d'accueil",
     "subtitle": "Installe Adaptive Learner comme une app pour une meilleure utilisation hors ligne.",
     "install": "Installer",
     "dismiss": "Plus tard",
@@ -995,7 +995,7 @@
     "identity_status_label": "Statut",
     "identity_status_active": "Actif",
     "identity_status_missing": "Introuvable",
-    "identity_last_seen_label": "Dernière mise a jour",
+    "identity_last_seen_label": "Dernière mise à jour",
     "identity_explainer": "Ce fichier est géré automatiquement par Adaptive Learner. Il permet à l'application de récupérer ton identité après un effacement des données du navigateur. Ne pas modifier manuellement.",
     "credits_heading": "Crédits",
     "author_label": "Auteur",
@@ -1495,10 +1495,10 @@
       "light": "Clair",
       "dark": "Sombre",
       "ocean": "Océan",
-      "forest": "Foret",
-      "high-contrast": "Contraste eleve",
+      "forest": "Forêt",
+      "high-contrast": "Contraste élevé",
       "sepia": "Sépia",
-      "auto": "Auto (systeme)"
+      "auto": "Auto (système)"
     },
     "errors": {
       "bad_request": "La requête n'a pas pu être traitée.",
@@ -2381,34 +2381,34 @@
     "ai_check": {
       "badge": {
         "verified": "Vérifié par IA",
-        "stale": "Verification IA obsolete",
-        "invalid": "Verification IA invalide"
+        "stale": "Vérification IA obsolète",
+        "invalid": "Vérification IA invalide"
       },
-      "last_checked": "Dernière verification : {when}",
+      "last_checked": "Dernière vérification : {when}",
       "checked_with": "Vérifié avec",
       "date": "Date",
-      "recheck": "Reverifier",
+      "recheck": "Revérifier",
       "export": {
         "button": "Exporter le rapport en Markdown",
         "lesson": "Leçon",
         "card": "Carte",
         "field": "Champ"
       },
-      "button": "Verifier avec l'IA",
-      "title": "Verification du contenu par l'IA",
-      "loading": "Preparation des cartes...",
+      "button": "Vérifier avec l'IA",
+      "title": "Vérification du contenu par l'IA",
+      "loading": "Préparation des cartes...",
       "cost_estimate": "~{cards} cartes, ~{tokens} tokens, ~{usd}.",
       "privacy": "Tes cartes seront envoyées à ton fournisseur d'IA configuré pour vérification. Aucune donnée personnelle n'est transmise.",
-      "confirm": "Verifier",
-      "progress": "Verification du lot {current} sur {total}...",
+      "confirm": "Vérifier",
+      "progress": "Vérification du lot {current} sur {total}...",
       "rate_limited": "Patiente avant de lancer une autre vérification.",
-      "failed": "Verification par l'IA indisponible.",
+      "failed": "Vérification par l'IA indisponible.",
       "unavailable_mode": "Disponible uniquement en mode stockage navigateur.",
       "report": {
         "summary": "{cards} cartes vérifiées dans {lessons} leçons",
         "ok": "{count} cartes correctes",
         "issues": "{count} cartes avec problèmes",
-        "all_ok": "Toutes les cartes sont valides. Aucun problème trouve.",
+        "all_ok": "Toutes les cartes sont valides. Aucun problème trouvé.",
         "problem": "Problème",
         "suggestion": "Suggestion"
       }
@@ -2483,7 +2483,7 @@
       "submitted": "Une pull request a été ouverte sur GitHub avec ta leçon pré-remplie. Vérifie-la et clique sur « Create pull request » - la CI du dépôt de contenu la valide automatiquement.",
       "view_submission": "Ouvrir la pull request sur GitHub",
       "view_upload": "Ouvrir la page d'envoi GitHub",
-      "popup_blocked": "Ton navigateur a bloque l'onglet GitHub. Clique sur le lien ci-dessous pour l'ouvrir manuellement.",
+      "popup_blocked": "Ton navigateur a bloqué l'onglet GitHub. Clique sur le lien ci-dessous pour l'ouvrir manuellement.",
       "upload_instructions": "Le fichier de ta leçon a été téléchargé. Sur la page GitHub qui vient de s'ouvrir, glisse le fichier dans la zone d'envoi et clique sur « Propose changes » - GitHub crée la pull request pour toi.",
       "paste_instructions": "Le fichier de ta leçon a été téléchargé et l'éditeur de nouveau fichier GitHub s'est ouvert au bon emplacement. Ouvre le fichier téléchargé, colle son contenu dans l'éditeur, puis clique sur « Propose new file » - le titre et la description sont déjà remplis.",
       "copy_pr_body": "Copier la description de la pull request",
