@@ -1,13 +1,21 @@
 # Content Browser
 
-The **Content Browser** ("My content") is the **My content tab of
-the Content hub** at `/content`. It shows only the lesson sets you
-have already downloaded, built around the learning flow: search
-first, then Continue Learning, then your local catalog. To find
-and download *new* sets, use the **Discover** tab —
-see [Discover content](discover.md).
+The **Content Browser** ("Meine Inhalte" / "My content") is the
+**My content tab of the Content hub** at `/content`. It shows only
+the lesson sets you have already downloaded, with the search field
+on top and your local catalog below. To find and download *new*
+sets, use the **Discover** tab — see
+[Discover content](discover.md). Discover is the **default tab**, so
+opening `/content` lands you on the catalog; switch to *My content*
+once you have downloaded something.
 
-<!-- TODO: Screenshot — Content Browser with search field, Continue Learning section and set tree -->
+The page header carries the title **Meine Inhalte** and a small
+**info button** (the ⓘ icon). The intro text is no longer shown
+permanently — click the info button to read what this tab is for
+(your downloaded content, with its sources) without it taking up
+space the rest of the time.
+
+<!-- TODO: Screenshot — Content Browser with title, info button, view toggle and set tree -->
 
 ---
 
@@ -23,13 +31,30 @@ catalog tree, with highlighting, a match count and an empty state.
 
 ---
 
-## Continue Learning
+## List and grid view
 
-Right below the search, **Continue Learning** shows the most
-recently touched lesson per set, each with exactly one action:
-**resume** (in-progress/paused lesson, step n of total),
-**next** lesson plus stars after a completion, or
-**set complete**.
+A **view toggle** lets you switch how your downloaded sets are
+shown:
+
+- **List** — a compact, flat list that is fast to scroll,
+  especially on mobile. This is the **default**.
+- **Grid (tiles)** — the richer *source → target → level* tree
+  view.
+
+Your choice is a **global content-view preference**: it applies to
+both the *My content* and *Discover* tabs and is remembered across
+visits. You can also set it from **Settings → Learning**. (If you
+had previously picked grid, that choice is kept; only new users
+start on list.)
+
+The downloaded sets are ordered by **download time** (most recently
+downloaded first), not alphabetically, so what you just pulled in is
+easy to find.
+
+> **Continue Learning moved.** The "Weitermachen" (Continue
+> Learning) panel is no longer on this tab — it lives on the
+> **Dashboard**, which is the one place that owns it. See
+> [Dashboard](../user-guide/dashboard.md).
 
 ---
 
@@ -95,11 +120,16 @@ first and grouped by category above five entries.
 
 ---
 
-## My Lessons
+## My Lessons (now on the Import tab)
 
-Lessons you created or imported yourself appear in the
-**My Lessons** section with actions to play, edit, delete, export
-and share. How to build your own lessons is described under
+Lessons you created or imported yourself — together with the
+import/creation **action buttons** — moved to the **Import tab** of
+the Content hub. There they sit next to chat import as one "bring
+your own content" surface, with the same actions to play, edit,
+delete, export and share. The *My content* tab keeps the
+downloaded-set tree (with your user lessons folded into the matching
+published node and a "(+N own)" count). How to build your own
+lessons is described under
 [Creating lessons](../content-creation/overview.md).
 
 ---

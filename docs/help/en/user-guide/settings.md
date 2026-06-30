@@ -155,6 +155,12 @@ separate, passphrase-protected file:
 - A **wrong passphrase or a tampered file** is rejected cleanly
   with a single message and **no partial import** — nothing is
   half-written.
+- The passphrase fields validate **inline** as you type — a
+  too-short passphrase or a mismatched confirmation is shown right at
+  the field (and the submit button stays disabled) instead of firing
+  an error toast after you click. Like the API-key inputs, these
+  passphrase fields do **not** trigger the browser's password
+  manager.
 
 This export lives on the **Data tab**, next to the normal backup;
 the **AI tab** only carries a reference button that brings you
@@ -211,6 +217,25 @@ The **Gestures toggle** (since v1.10.0, default ON for touch-capable
 devices) covers Assessment swipe navigation, Curriculum topic
 swipe-to-reveal, and Session cycle peek. Also here: button tooltips and
 Developer Mode.
+
+**Developer Mode** default depends on the build strand: it is **ON by
+default on the Latest (preview) strand** and **OFF on Main**, so
+preview testers see full technical error detail while production users
+get friendly messages. You can flip it either way.
+
+## Learning
+
+The **Learning** tab collects how lessons play: the **default lesson
+mode** (Practice / Exam / Timed / Reverse / Shuffle / Endless), the
+exam pass threshold, timed-mode difficulty (see
+[Lessons and reviews](lessons.md)), hints, reminders, the Enter-key
+shortcut, the preferred exercise direction, and the source languages
+shown in the content tree.
+
+It also holds the **content view** control — the global *list ⇄ grid*
+preference for the Content hub (default **list**). It is the same
+preference as the in-tab view toggle on *My content* / *Discover*, so
+changing it in either place keeps both in sync.
 
 ## Gamification
 

@@ -168,6 +168,12 @@ passphrasen-geschützten Datei:
 - Eine **falsche Passphrase oder eine manipulierte Datei** wird
   sauber mit einer einzigen Meldung abgewiesen — **kein
   Teil-Import**, nichts wird halb geschrieben.
+- Die Passphrase-Felder prüfen sich **direkt beim Tippen** — eine
+  zu kurze Passphrase oder eine nicht passende Bestätigung wird
+  gleich am Feld angezeigt (und der Absende-Knopf bleibt
+  deaktiviert) statt nach dem Klick als Fehler-Toast. Wie die
+  API-Schlüssel-Felder lösen diese Passphrase-Felder **nicht** den
+  Passwort-Manager des Browsers aus.
 
 Dieser Export lebt im **Daten-Tab**, neben dem normalen Backup; der
 **KI-Tab** trägt nur einen Verweis-Knopf, der hierher führt. Im
@@ -227,6 +233,27 @@ Der **Gesten-Toggle** (seit v1.10.0, Standard EIN auf touch-fähigen
 Geräten) umfasst Assessment-Swipe-Navigation,
 Curriculum-Topic-Swipe-to-Reveal und Sitzungs-Zyklus-Peek. Ebenfalls
 hier: Button-Tooltips und der Entwicklermodus.
+
+Der Standard des **Entwicklermodus** hängt vom Build-Strang ab: Er
+ist **standardmäßig EIN auf dem Latest-Strang (Vorschau)** und **AUS
+auf Haupt**, damit Vorschau-Tester volle technische Fehlerdetails
+sehen, während Produktionsnutzer freundliche Meldungen bekommen. Du
+kannst ihn jederzeit umschalten.
+
+## Lernen
+
+Der **Lernen**-Tab bündelt, wie Lektionen ablaufen: den
+**Standard-Lernmodus** (Üben / Prüfung / Auf Zeit / Reverse / Zufall
+/ Endlos), die Bestehensschwelle der Prüfung, die Zeit-Schwierigkeit
+(siehe [Lektionen und Wiederholungen](lessons.md)), Hinweise,
+Erinnerungen, das Enter-Tastenkürzel, die bevorzugte Übungsrichtung
+und die im Inhaltsbaum gezeigten Quellsprachen.
+
+Hier liegt auch die **Inhalts-Ansicht** — die globale Einstellung
+*Liste ⇄ Kacheln* für den Content-Hub (Standard **Liste**). Es ist
+dieselbe Einstellung wie der Ansicht-Umschalter in den Tabs *Meine
+Inhalte* / *Entdecken*, eine Änderung an einer Stelle hält also
+beide synchron.
 
 ## Gamification
 
