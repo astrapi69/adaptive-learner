@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-20
-**Anzahl EXPs:** 36
+**Stand:** 2026-06-30
+**Anzahl EXPs:** 37
 
 > Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
 > [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
@@ -56,6 +56,8 @@
 | 036 | KI-Übungsgenerierung aus Theorie-Content    | Feature      | 2     | Hoch      | 013, 021, 033, 018 |
 | 037 | Navigation Restructuring (12 → 7 Einträge)  | Querschnitt  | 2     | Hoch      | 022, 034, 032/033  |
 | 039 | JSON-Schema als Single Source of Truth      | Querschnitt  | laufend | Hoch    | 002, 003, 004      |
+| 040 | Directory-Restrukturierung (God-Folders)    | Querschnitt  | abgeschlossen | Mittel | 024 (verwandt)  |
+| 041 | Aufgabentyp-Eignung + faire Bewertung       | Querschnitt  | Analyse | Mittel-Hoch | 002, 007, 013, 036 |
 
 ## Umsetzungsstand (Stand v1.85.0)
 
