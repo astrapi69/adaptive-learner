@@ -16,8 +16,17 @@
  * friendly toast text never leaks into the submitted report.
  *
  * Storage: ``localStorage`` under
- * ``adaptive-learner.developer_mode``. Default OFF (matching the
- * "users see no technical errors" production posture).
+ * ``adaptive-learner.developer_mode``. The default depends on the
+ * deployment strand (#1271): in the **Latest** (staging /
+ * content-test) strand Dev Mode is ON by default so testers see
+ * the diagnostic readouts without flipping a switch; in the
+ * **Haupt** (production) strand — and in any unknown/local strand —
+ * it is OFF by default, matching the "users see no technical
+ * errors" production posture. The strand comes from the same
+ * build-time provenance the StrangBadge uses
+ * (lib/provenance/build-info), so the two cannot drift. An explicit
+ * stored choice ("true"/"false") always wins over the environment
+ * default, in both directions.
  *
  * Updates: a custom ``adaptive-learner:developer-mode-changed``
  * event fires when the Settings toggle flips so every subscribed
@@ -31,16 +40,36 @@
 
 import {useEffect, useState} from "react";
 
+import {getBuildInfo} from "../../lib/provenance/build-info";
+
 const STORAGE_KEY = "adaptive-learner.developer_mode";
 const EVENT_NAME = "adaptive-learner:developer-mode-changed";
 
-function readPreference(): boolean {
-    if (typeof localStorage === "undefined") return false;
+/**
+ * The default Developer Mode value for the current deployment strand
+ * when the user has made no explicit choice (#1271). ON in the Latest
+ * (staging) strand; OFF in Haupt (production) and in any
+ * unknown/local strand — production-safe by construction. Reads the
+ * strand from the build-time provenance; any failure falls back to
+ * OFF.
+ */
+function environmentDefault(): boolean {
     try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw === "true";
+        return getBuildInfo().strang === "latest";
     } catch {
         return false;
+    }
+}
+
+function readPreference(): boolean {
+    if (typeof localStorage === "undefined") return environmentDefault();
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw === "true") return true;
+        if (raw === "false") return false;
+        return environmentDefault();
+    } catch {
+        return environmentDefault();
     }
 }
 
