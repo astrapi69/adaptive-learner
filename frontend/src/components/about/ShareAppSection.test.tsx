@@ -1,9 +1,10 @@
 /**
- * Tests for ShareAppSection (#774, extended #1172) — the About-tab share
- * entry point. Mocks ``qrcode`` (no canvas) and ``notify``; pins that the
- * Haupt (stable) strand offers a QR code + link to the production URL,
- * that the Latest (test) strand offers a warned link to the preview URL
- * with NO QR code, and that copying inside the QR modal raises a toast.
+ * Tests for ShareAppSection (#774, extended #1172, #1316) — the About-tab
+ * share entry point. Mocks ``qrcode`` (no canvas) and ``notify``; pins that
+ * the Haupt (stable) strand offers a QR code + link to the production URL,
+ * that the Latest (test) strand offers a warned link to the preview URL AND
+ * (since #1316) a QR code pointed at the preview URL with the warning kept,
+ * and that copying inside the QR modal raises a toast.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -63,7 +64,7 @@ describe("ShareAppSection", () => {
         expect(link).toHaveAttribute("rel", expect.stringContaining("noopener"));
     });
 
-    it("Latest: offers a warned link to the preview URL and NO QR code", () => {
+    it("Latest: offers a warned link to the preview URL", () => {
         render(<ShareAppSection t={t} />);
         const link = screen.getByTestId("about-share-latest-link");
         expect(link).toHaveAttribute("href", LATEST_APP_URL);
@@ -71,12 +72,30 @@ describe("ShareAppSection", () => {
         expect(
             screen.getByTestId("about-share-latest-warning"),
         ).toBeInTheDocument();
-        // The Latest strand must NOT carry its own QR trigger.
+    });
+
+    it("Latest: exposes its own QR trigger while keeping the warning (#1316)", () => {
+        render(<ShareAppSection t={t} />);
+        const latest = screen.getByTestId("about-share-latest");
         expect(
-            screen
-                .getByTestId("about-share-latest")
-                .querySelector('[data-testid="about-share-show-qr"]'),
-        ).toBeNull();
+            latest.querySelector('[data-testid="about-share-latest-show-qr"]'),
+        ).not.toBeNull();
+        // The instability warning stays alongside the QR (no bare scan-and-go).
+        expect(
+            screen.getByTestId("about-share-latest-warning"),
+        ).toBeInTheDocument();
+    });
+
+    it("Latest: opens the QR modal pointed at the preview URL (#1316)", async () => {
+        render(<ShareAppSection t={t} />);
+        fireEvent.click(screen.getByTestId("about-share-latest-show-qr"));
+        expect(screen.getByTestId("qr-code-modal")).toBeInTheDocument();
+        await waitFor(() =>
+            expect(screen.getByTestId("qr-code-modal-image")).toBeInTheDocument(),
+        );
+        expect(screen.getByTestId("qr-code-modal-url")).toHaveTextContent(
+            LATEST_APP_URL,
+        );
     });
 
     it("raises a success toast when the URL is copied", async () => {
