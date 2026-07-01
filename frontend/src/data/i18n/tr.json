@@ -3170,6 +3170,13 @@
     "save_prompt": "Bu dersi favorilerine kaydet"
   },
   "content_repo": {
+    "qr": {
+      "upload": "QR görüntüsü yükle",
+      "decoding": "QR okunuyor…",
+      "no_qr": "Görüntüde QR kodu bulunamadı.",
+      "invalid": "QR kodu geçerli bir \"depo ekle\" bağlantısı değil.",
+      "filled": "Depo bilgileri QR kodundan dolduruldu."
+    },
     "title": "İçerik depoları",
     "last_sync": "Son eşitleme: {when}",
     "added": "Depo eklendi.",

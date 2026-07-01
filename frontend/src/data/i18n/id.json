@@ -3170,6 +3170,13 @@
     "save_prompt": "Simpan pelajaran ini ke favoritmu"
   },
   "content_repo": {
+    "qr": {
+      "upload": "Unggah gambar QR",
+      "decoding": "Membaca QR…",
+      "no_qr": "Tidak ada kode QR yang ditemukan dalam gambar.",
+      "invalid": "Kode QR bukan tautan \"tambah repositori\" yang valid.",
+      "filled": "Detail repositori diisi dari kode QR."
+    },
     "title": "Repositori konten",
     "last_sync": "Sinkronisasi terakhir: {when}",
     "added": "Repositori ditambahkan.",
