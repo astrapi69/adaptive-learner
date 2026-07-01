@@ -1648,6 +1648,15 @@ repo:
     description: "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git."
     enable_git: "Ativar persistência git"
 lesson:
+  ask_ai:
+    button: "Perguntar à IA"
+    title: "Pergunte à IA sobre isto"
+    placeholder: "ex.: Explique com um exemplo"
+    ask: "Perguntar"
+    asking: "Perguntando…"
+    no_key: "Configure uma chave de IA para perguntar - veja as configurações de IA."
+    open_settings: "Configurações de IA"
+    error: "A solicitação de IA falhou. Tente novamente."
   mode:
     label: "Modo de lição"
     practice: "Prática"

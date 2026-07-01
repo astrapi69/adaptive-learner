@@ -1778,6 +1778,16 @@
     }
   },
   "lesson": {
+    "ask_ai": {
+      "button": "Tanya AI",
+      "title": "Tanya AI tentang ini",
+      "placeholder": "mis. Jelaskan dengan contoh",
+      "ask": "Tanya",
+      "asking": "Menanyakan…",
+      "no_key": "Setel kunci AI untuk bertanya - lihat pengaturan AI.",
+      "open_settings": "Pengaturan AI",
+      "error": "Permintaan AI gagal. Silakan coba lagi."
+    },
     "mode": {
       "label": "Mode pelajaran",
       "practice": "Latihan",

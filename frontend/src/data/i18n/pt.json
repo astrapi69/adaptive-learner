@@ -1778,6 +1778,16 @@
     }
   },
   "lesson": {
+    "ask_ai": {
+      "button": "Perguntar à IA",
+      "title": "Pergunte à IA sobre isto",
+      "placeholder": "ex.: Explique com um exemplo",
+      "ask": "Perguntar",
+      "asking": "Perguntando…",
+      "no_key": "Configure uma chave de IA para perguntar - veja as configurações de IA.",
+      "open_settings": "Configurações de IA",
+      "error": "A solicitação de IA falhou. Tente novamente."
+    },
     "mode": {
       "label": "Modo de lição",
       "practice": "Prática",

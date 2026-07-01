@@ -1778,6 +1778,16 @@
     }
   },
   "lesson": {
+    "ask_ai": {
+      "button": "Yapay zekâya sor",
+      "title": "Bunu yapay zekâya sor",
+      "placeholder": "ör. Bunu bir örnekle açıkla",
+      "ask": "Sor",
+      "asking": "Soruluyor…",
+      "no_key": "Soru sormak için bir yapay zekâ anahtarı ayarla - yapay zekâ ayarlarına bak.",
+      "open_settings": "Yapay zekâ ayarları",
+      "error": "Yapay zekâ isteği başarısız oldu. Lütfen tekrar dene."
+    },
     "mode": {
       "label": "Ders modu",
       "practice": "Alıştırma",
