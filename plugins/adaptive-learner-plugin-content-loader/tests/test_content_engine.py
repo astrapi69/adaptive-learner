@@ -90,7 +90,7 @@ class TestParseLesson:
         sentinel = single_json_lesson_adapter(VALID_LESSON)
 
         def fake_multi_file_adapter(_raw: str) -> Lesson:
-            """A stand-in for the future multi-file adapter (EXP-042 §6)."""
+            """A stand-in for the future multi-file adapter (EXP-042 section 6)."""
             return sentinel
 
         result = parse_lesson("ignored raw source", adapter=fake_multi_file_adapter)

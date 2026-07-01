@@ -4,9 +4,10 @@
  * The **canonical internal format** is the single-JSON lesson object
  * ({@link ContentLesson}, schema_version 1.4, EXP-039). A **source adapter**
  * turns raw source data into that canonical object; today exactly one adapter
- * exists (single-JSON). A future multi-file adapter (lesson.yaml + theory.md +
- * cards.yaml + exercises.yaml) plugs in at this same boundary without touching
- * fetch, Dexie, or the UI.
+ * exists (single-JSON). The boundary is drawn so that a future, newly-defined
+ * multi-file source format COULD plug in here as an additional adapter without
+ * touching fetch, Dexie, or the UI — but that is deferred (it comes only on
+ * concrete project/user demand and does not reference any removed template).
  *
  * This module is **library-grade**: it imports only content *types*, never the
  * GitHub fetcher, the Dexie DB, or React. That import boundary IS the
@@ -99,7 +100,7 @@ export interface LessonSetContext {
 /**
  * A source adapter: raw source text + set context → canonical {@link ContentLesson}.
  * Today the only implementation is {@link singleJsonLessonAdapter}; a multi-file
- * adapter (EXP-042 §6) would satisfy the same signature.
+ * adapter (EXP-042 section 6) would satisfy the same signature.
  */
 export type LessonSourceAdapter = (
   rawText: string,

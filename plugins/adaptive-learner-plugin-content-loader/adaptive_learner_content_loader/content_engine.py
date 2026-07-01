@@ -3,9 +3,10 @@
 The **canonical internal format** is the single-JSON lesson object
 (``schema.Lesson``, ``schema_version`` 1.4, EXP-039). A **source adapter**
 turns raw source data into that canonical object; today exactly one adapter
-exists (single-JSON). A future multi-file adapter (``lesson.yaml`` +
-``theory.md`` + ``cards.yaml`` + ``exercises.yaml``) plugs in at this same
-boundary without touching fetch, cache, or routes.
+exists (single-JSON). The boundary is drawn so that a future, newly-defined
+multi-file source format COULD plug in here as an additional adapter without
+touching fetch, cache, or routes -- but that is deferred (it comes only on
+concrete project/user demand and does not reference any removed template).
 
 This module is the named boundary; the field-level parsing/validation lives in
 ``manifest_parser`` + ``schema`` + ``models`` (kept as the low-level parsers so
@@ -35,7 +36,7 @@ from .schema import Lesson
 
 #: A source adapter: raw source text → canonical :class:`~.schema.Lesson`.
 #: Today the only implementation is :func:`single_json_lesson_adapter`; a
-#: multi-file adapter (EXP-042 §6) would satisfy the same signature.
+#: multi-file adapter (EXP-042 section 6) would satisfy the same signature.
 LessonSourceAdapter = Callable[[str], Lesson]
 
 

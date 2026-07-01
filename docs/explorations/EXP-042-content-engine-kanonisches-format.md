@@ -8,8 +8,10 @@
 **Issue:** astrapi69/adaptive-learner#1309
 **Status:** Design **+** erste Abgrenzung umgesetzt. Dieses Dokument haelt die
 Architektur-Entscheidung fest; der begleitende PR zieht die Engine-Grenze
-**verhaltensgleich** (kein Feature). Der Mehrdatei-Adapter und die echte
-Library-Extraktion sind Folge-Arbeit (Abschnitt 7).
+**verhaltensgleich** (kein Feature). Ein Mehrdatei-Adapter ist **zurueckgestellt**
+(kommt nur bei konkretem Projekt-/Nutzer-Bedarf, dann als neu definiertes Format —
+kein Bezug auf das bereits entfernte `v1.4-preview`-Template); die echte
+Library-Extraktion ist ebenfalls Folge-Arbeit (Abschnitt 7).
 
 > Dieses Dokument definiert die **Content-Engine-Grenze**: ein kanonisches
 > internes Format, ein Source-Adapter-Muster, und die Naht, an der die Engine
@@ -104,12 +106,15 @@ Felder hinzu; er transformiert nur die Quelle in die kanonische Form (heute:
 parse + Sprach-/Domaenen-Normalisierung aus dem Set-Kontext, weil eine Lektion
 ihr Sprachpaar vom Set erbt).
 
-**Warum Single-JSON kanonisch bleibt (nicht das Mehrdatei-Format):** Single-JSON
-ist bereits das, was Viewer/Renderer/SRS/Generatoren konsumieren, es ist das
-EXP-039-Schema, und es ist selbst-enthaltend (ein Objekt, keine Datei-Joins). Ein
-Mehrdatei-Format ist ein **Autoren-Komfort** an der Quelle, kein besseres
-internes Modell — deshalb transformiert der kuenftige Mehrdatei-Adapter **nach**
-Single-JSON, nicht umgekehrt.
+**Warum Single-JSON kanonisch bleibt (auch falls je ein Mehrdatei-Format
+kommt):** Single-JSON ist bereits das, was Viewer/Renderer/SRS/Generatoren
+konsumieren, es ist das EXP-039-Schema, und es ist selbst-enthaltend (ein Objekt,
+keine Datei-Joins). Ein Mehrdatei-Format waere ein **Autoren-Komfort** an der
+Quelle, kein besseres internes Modell — deshalb wuerde ein kuenftiger
+Mehrdatei-Adapter **nach** Single-JSON transformieren, nicht umgekehrt. Ein
+solches Format ist derzeit **zurueckgestellt** (Abschnitt 6): es gibt kein
+aktuelles Mehrdatei-Template im Content-Repo, und die Engine bezieht sich auf
+keines — sie haelt nur die Naht offen.
 
 ---
 
@@ -119,11 +124,10 @@ Single-JSON, nicht umgekehrt.
    Quelle (roh)                Source-Adapter               kanonisch
    ------------                --------------               ---------
    NN.json (Text)      ──►  single-json Adapter    ──►  ContentLesson / Lesson
-   [kuenftig]
-   lesson.yaml +
-   theory.md +         ──►  multi-file Adapter     ──►  ContentLesson / Lesson
-   cards.yaml +             (Folge-Arbeit)
-   exercises.yaml
+
+   [zurueckgestellt: ein
+    kuenftig NEU definiertes ──►  multi-file Adapter ──►  ContentLesson / Lesson
+    Mehrdatei-Format]            (nur bei Bedarf)
 ```
 
 - **Ein Adapter = eine Quelle → kanonisches Lesson.** Signatur (konzeptionell,
@@ -154,8 +158,9 @@ extrahiert werden kann. **Jetzt NICHT extrahieren** — nur die Naht ziehen.
 - Parsing + Validierung: `parse_lesson_json` / `parse_manifest_yaml` (BE), die
   neuen `content/engine`-Transformationen (FE).
 - Die Source-Adapter (heute: single-json) + die Adapter-Signatur.
-- Kuenftig: das Merging des Mehrdatei-Adapters (4 Dateien → kanonisches
-  Single-JSON).
+- Kuenftig (zurueckgestellt): das Merging eines Mehrdatei-Adapters (mehrere
+  Quelldateien → kanonisches Single-JSON), falls je ein solches Format definiert
+  wird.
 
 **Was ausserhalb der Lib bleibt (der Host):**
 
@@ -164,7 +169,7 @@ extrahiert werden kann. **Jetzt NICHT extrahieren** — nur die Naht ziehen.
 - HTTP-Routen (`routes.py`), Storage-Namespaces, UI.
 
 **Die Lib-Grenze als Schnittstelle:** *Input = rohe Quell-Daten (heute:
-JSON-Text; kuenftig: die 4 Mehrdatei-Bytes) + Set-Kontext (Sprachpaar/Domaene,
+JSON-Text; kuenftig ggf. mehrere Quelldateien) + Set-Kontext (Sprachpaar/Domaene,
 die eine Lektion vom Set erbt). Output = validiertes kanonisches Lesson-Objekt.*
 Alles, was fuer diese Transformation noetig ist, gehoert in die Lib; alles, was
 die rohen Daten *beschafft* oder das Ergebnis *speichert*, bleibt aussen.
@@ -201,21 +206,32 @@ Verhaltens-Beweis.
 
 ---
 
-## 6. Mehrdatei-Format als kuenftiger Adapter (NICHT dieser PR)
+## 6. Mehrdatei-Format als zurueckgestellter kuenftiger Adapter
 
-Skizze, wie der Mehrdatei-Adapter spaeter andockt, **ohne** die Engine-Grenze zu
-aendern:
+**Status: zurueckgestellt (nicht verworfen), kein aktueller Plan, kein Bezug auf
+ein bestehendes Template.** Ein frueheres `v1.4-preview`-Mehrdatei-Template wurde
+bereits aus den Content-Repos **entfernt**; dieses EXP und die Engine beziehen
+sich **nicht** darauf. Ein Mehrdatei-Format kommt nur, **wenn das Projekt oder
+konkrete Nutzer es verlangen** — und dann als **neu definiertes** Format, nicht
+als Wiederbelebung des entfernten Previews. Bis dahin ist Single-JSON die einzige
+Quelle.
 
-1. Der Adapter liest die vier Quell-Dateien (`lesson.yaml`, `theory.md`,
-   `cards.yaml`, `exercises.yaml`).
-2. Er merged sie zu **einem** kanonischen Single-JSON-Lesson-Objekt (Theory aus
-   `theory.md`, Karten aus `cards.yaml`, Uebungen aus `exercises.yaml`, Metadaten
-   aus `lesson.yaml`).
+Was dieses EXP festhaelt, ist ausschliesslich, dass die Engine-Grenze **so
+beschaffen ist**, dass ein solches kuenftiges Format als **weiterer
+Source-Adapter** andocken koennte, **ohne** die Engine-Grenze zu aendern. Die
+Naht bleibt offen, mehr nicht.
+
+Wenn ein Mehrdatei-Format je definiert wird, saehe der Adapter konzeptionell so
+aus (illustrativ, KEINE Festlegung auf konkrete Dateinamen/Struktur):
+
+1. Er liest die dann definierten Quelldateien (Metadaten / Theorie / Karten /
+   Uebungen — die konkrete Aufteilung ist Teil der spaeteren Format-Definition).
+2. Er merged sie zu **einem** kanonischen Single-JSON-Lesson-Objekt.
 3. Er validiert das Ergebnis gegen **dasselbe** kanonische Schema (EXP-039).
 4. Der Rest der App bleibt unveraendert — der Viewer sieht nur das kanonische
    Objekt.
 
-Der einzige Punkt, der sich aendert, ist die **Adapter-Auswahl** an der
+Der einzige Punkt, der sich aendert, ist dann die **Adapter-Auswahl** an der
 Engine-Grenze (welcher Adapter fuer welche Quell-Form) — heute trivial (nur
 single-json), dann eine kleine Fallunterscheidung. Fetch/Cache/Routen/UI bleiben
 unberuehrt. Das ist der Beweis, dass die Naht richtig gezogen ist.
@@ -241,7 +257,8 @@ unberuehrt. Das ist der Beweis, dass die Naht richtig gezogen ist.
 
 **Spaeter (Folge-Arbeit, nicht dieser PR):**
 
-- Der Mehrdatei-Adapter (Abschnitt 6).
+- Ein Mehrdatei-Adapter (Abschnitt 6) — **zurueckgestellt**, nur bei konkretem
+  Projekt-/Nutzer-Bedarf, dann als neu definiertes Format.
 - Die echte Library-Extraktion (Abschnitt 4) in ein eigenes Paket.
 - Ein Cross-Language-Parse/Merge-Parity-Golden (Abschnitt 5).
 - Eine Adapter-Auswahl/Dispatch, sobald der zweite Adapter existiert.
