@@ -35,7 +35,7 @@ jobs:
           python-version: "3.12"
 
       - name: Cache Poetry virtualenv (backend)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}

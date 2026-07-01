@@ -36,7 +36,7 @@ jobs:
       # The frontend job already does this via setup-node's
       # ``cache: "npm"``; backend was the asymmetry.
       - name: Cache Poetry virtualenv (backend)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
@@ -60,7 +60,7 @@ jobs:
       # develop/main + nightly + release always run the full suite (below).
       - name: Restore testmon data (PR only)
         if: github.event_name == 'pull_request'
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: backend/.testmondata
           key: testmon-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}-${{ github.run_id }}
@@ -127,7 +127,7 @@ jobs:
       # Same cache key as backend-tests: make test-plugins reuses the backend
       # venv, so the two jobs share the warmed virtualenv cache.
       - name: Cache Poetry virtualenv (backend)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
@@ -164,7 +164,7 @@ jobs:
   #       with:
   #         python-version: "3.12"
   #     - name: Cache Poetry virtualenv (${{ matrix.plugin }})
-  #       uses: actions/cache@v5
+  #       uses: actions/cache@v6
   #       with:
   #         path: ~/.cache/pypoetry/virtualenvs
   #         key: poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-${{ hashFiles(format('plugins/{0}/poetry.lock', matrix.plugin)) }}
@@ -320,7 +320,7 @@ jobs:
       # (same key). Mypy needs the SQLAlchemy + Pydantic
       # stub-bearing venv that ``poetry install`` produces.
       - name: Cache Poetry virtualenv (backend)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
