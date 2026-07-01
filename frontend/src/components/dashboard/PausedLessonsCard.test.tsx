@@ -17,6 +17,7 @@ import {MemoryRouter} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import PausedLessonsCard from "./PausedLessonsCard";
+import {RETENTION_PREF_KEY} from "../../lib/learning/pausedRetentionPref";
 import type {LessonProgress} from "../../storage/types";
 
 const listMock = vi.fn();
@@ -42,6 +43,11 @@ beforeEach(() => {
     // back to filename-derived labels (or the opaque-id guard).
     listSetsMock.mockReset().mockResolvedValue({sets: []});
     getLessonMock.mockReset().mockResolvedValue(null);
+    // #1312 — disable the age-based retention cutoff so the fixtures' absolute
+    // paused_at dates never straddle ``Date.now() - DEFAULT_RETENTION_DAYS`` and
+    // get auto-abandoned. Without this the fixed 2026-06-01 dates rot into a
+    // non-deterministic failure once real time passes the 30-day window.
+    localStorage.setItem(RETENTION_PREF_KEY, "0");
 });
 
 function _progress(
