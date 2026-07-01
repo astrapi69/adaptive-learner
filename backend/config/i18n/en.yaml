@@ -2962,6 +2962,7 @@ content_repo:
     sync: "Sync now"
   badge:
     coach: "Coach"
+    private: "Private"
     official: "Official"
   trust:
     dropped: "Synced, but validation failed — this repository is now marked Unverified."

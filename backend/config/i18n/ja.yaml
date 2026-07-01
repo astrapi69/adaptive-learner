@@ -2952,6 +2952,7 @@ content_repo:
     sync: "今すぐ同期"
   badge:
     coach: "コーチ"
+    private: "プライベート"
     official: "公式"
   trust:
     dropped: "同期しましたが検証に失敗しました。このリポジトリは未検証としてマークされました。"

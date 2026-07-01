@@ -2962,6 +2962,7 @@ content_repo:
     sync: "Sinkronkan sekarang"
   badge:
     coach: "Pelatih"
+    private: "Pribadi"
     official: "Resmi"
   trust:
     dropped: "Tersinkronkan, tetapi validasi gagal — repositori ini sekarang ditandai Belum diverifikasi."

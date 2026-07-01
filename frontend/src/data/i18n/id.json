@@ -3223,6 +3223,7 @@
     },
     "badge": {
       "coach": "Pelatih",
+      "private": "Pribadi",
       "official": "Resmi"
     },
     "trust": {

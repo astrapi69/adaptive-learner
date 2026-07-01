@@ -2954,6 +2954,7 @@ content_repo:
     sync: "Sincronizar ahora"
   badge:
     coach: "Tutor"
+    private: "Privado"
     official: "Oficial"
   trust:
     dropped: "Sincronizado, pero la validación falló: este repositorio ahora está marcado como no verificado."

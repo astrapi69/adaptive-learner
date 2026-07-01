@@ -2956,6 +2956,7 @@ content_repo:
     sync: "Jetzt synchronisieren"
   badge:
     coach: "Coach"
+    private: "Privat"
     official: "Offiziell"
   trust:
     dropped: "Synchronisiert, aber die Validierung schlug fehl — dieses Repository ist jetzt als nicht verifiziert markiert."

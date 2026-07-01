@@ -2962,6 +2962,7 @@ content_repo:
     sync: "지금 동기화"
   badge:
     coach: "코치"
+    private: "비공개"
     official: "공식"
   trust:
     dropped: "동기화되었지만 검증에 실패했습니다 — 이 저장소는 이제 미검증으로 표시됩니다."
