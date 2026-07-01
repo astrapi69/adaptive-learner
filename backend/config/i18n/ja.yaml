@@ -2907,6 +2907,12 @@ favorites:
   empty: "お気に入りはまだありません。レッスンの星をタップして保存しましょう。"
   save_prompt: "このレッスンをお気に入りに保存"
 content_repo:
+  qr:
+    upload: "QR画像をアップロード"
+    decoding: "QRを読み取り中…"
+    no_qr: "画像にQRコードが見つかりませんでした。"
+    invalid: "このQRコードは有効な「リポジトリを追加」リンクではありません。"
+    filled: "QRコードからリポジトリ情報を入力しました。"
   title: "コンテンツリポジトリ"
   last_sync: "最終同期: {when}"
   added: "リポジトリを追加しました。"

@@ -2909,6 +2909,12 @@ favorites:
   empty: "Aucun favori pour l'instant — touche l'étoile d'une leçon."
   save_prompt: "Enregistrer cette leçon dans tes favoris"
 content_repo:
+  qr:
+    upload: "Téléverser une image QR"
+    decoding: "Lecture du QR…"
+    no_qr: "Aucun code QR trouvé dans l'image."
+    invalid: "Le code QR n'est pas un lien « ajouter un dépôt » valide."
+    filled: "Détails du dépôt remplis à partir du code QR."
   title: "Dépôts de contenu"
   last_sync: "Dernière synchronisation : {when}"
   added: "Dépôt ajouté."

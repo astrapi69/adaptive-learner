@@ -3170,6 +3170,13 @@
     "save_prompt": "Guardar esta lição nos seus favoritos"
   },
   "content_repo": {
+    "qr": {
+      "upload": "Enviar imagem QR",
+      "decoding": "Lendo QR…",
+      "no_qr": "Nenhum código QR encontrado na imagem.",
+      "invalid": "O código QR não é um link válido de \"adicionar repositório\".",
+      "filled": "Dados do repositório preenchidos a partir do código QR."
+    },
     "title": "Repositórios de conteúdo",
     "last_sync": "Última sincronização: {when}",
     "added": "Repositório adicionado.",

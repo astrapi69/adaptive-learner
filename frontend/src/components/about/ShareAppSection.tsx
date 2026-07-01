@@ -7,10 +7,11 @@
  *   - **Haupt** (production, stable): a "Show QR code" button opens the
  *     reusable {@link QrCodeModal} (copy / download PNG / native share)
  *     pointed at the production URL.
- *   - **Latest** (preview/staging, unstable): a plain link to the
- *     content-test URL plus an explicit instability warning — NO QR code,
- *     because a test build that can contain bugs should not be spread via
- *     a scan-and-go QR.
+ *   - **Latest** (preview/staging, unstable): a link to the content-test URL
+ *     plus an explicit instability warning AND a "Show QR code" button (#1316).
+ *     Testers can share the test build via QR too; the instability warning
+ *     stays visible so the QR is never a bare scan-and-go (the concern behind
+ *     #1172, addressed by keeping the warning rather than hiding the QR).
  *
  * Works in both storage modes: the URLs are static GitHub-Pages addresses,
  * no backend or Dexie call involved. Token-backed Tailwind only.
@@ -33,7 +34,8 @@ const sectionStyle: React.CSSProperties = {
 };
 
 export default function ShareAppSection({ t }: Props) {
-  const [open, setOpen] = useState(false);
+  /** Which strand's QR modal is open (``null`` = closed). */
+  const [qrStrand, setQrStrand] = useState<"haupt" | "latest" | null>(null);
 
   return (
     <article data-testid="about-share-section" style={sectionStyle}>
@@ -58,7 +60,7 @@ export default function ShareAppSection({ t }: Props) {
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
-            onClick={() => setOpen(true)}
+            onClick={() => setQrStrand("haupt")}
             className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-fg-secondary hover:bg-muted"
             data-testid="about-share-show-qr"
           >
@@ -101,26 +103,45 @@ export default function ShareAppSection({ t }: Props) {
             "This is a preview/test version. It is not stable and may contain errors. Share it only with testers.",
           )}
         </p>
-        <a
-          href={LATEST_APP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-border bg-[var(--bg-surface)] px-3 text-sm font-medium text-fg-secondary hover:bg-muted"
-          data-testid="about-share-latest-link"
-        >
-          <ExternalLink size={16} aria-hidden="true" />
-          {t("share.app.open_link", "Open link")}
-        </a>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setQrStrand("latest")}
+            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-border bg-[var(--bg-surface)] px-3 text-sm font-medium text-fg-secondary hover:bg-muted"
+            data-testid="about-share-latest-show-qr"
+          >
+            <QrCode size={16} aria-hidden="true" />
+            {t("share.app.show_qr", "Show QR code")}
+          </button>
+          <a
+            href={LATEST_APP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-border bg-[var(--bg-surface)] px-3 text-sm font-medium text-fg-secondary hover:bg-muted"
+            data-testid="about-share-latest-link"
+          >
+            <ExternalLink size={16} aria-hidden="true" />
+            {t("share.app.open_link", "Open link")}
+          </a>
+        </div>
       </div>
 
-      {open && (
+      {qrStrand && (
         <QrCodeModal
-          url={HAUPT_APP_URL}
-          title={t(
-            "share.app.haupt_intro",
-            "Share the stable app via QR code so others can open it.",
-          )}
-          fileName="adaptive-learner-qr.png"
+          url={qrStrand === "haupt" ? HAUPT_APP_URL : LATEST_APP_URL}
+          title={
+            qrStrand === "haupt"
+              ? t(
+                  "share.app.haupt_intro",
+                  "Share the stable app via QR code so others can open it.",
+                )
+              : t("share.app.latest_label", "Latest version (test)")
+          }
+          fileName={
+            qrStrand === "haupt"
+              ? "adaptive-learner-qr.png"
+              : "adaptive-learner-latest-qr.png"
+          }
           labels={{
             close: t("common.close", "Close"),
             copy: t("share.app.copy_url", "Copy URL"),
@@ -130,7 +151,7 @@ export default function ShareAppSection({ t }: Props) {
             imageAlt: t("share.app.qr_alt", "QR code linking to the app"),
           }}
           onCopied={() => notify.success(t("share.app.copied", "Copied"))}
-          onClose={() => setOpen(false)}
+          onClose={() => setQrStrand(null)}
         />
       )}
     </article>

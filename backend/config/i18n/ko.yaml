@@ -2917,6 +2917,12 @@ favorites:
   empty: "아직 즐겨찾기가 없습니다 — 레슨의 별을 탭하여 저장하세요."
   save_prompt: "이 레슨을 즐겨찾기에 저장"
 content_repo:
+  qr:
+    upload: "QR 이미지 업로드"
+    decoding: "QR 읽는 중…"
+    no_qr: "이미지에서 QR 코드를 찾을 수 없습니다."
+    invalid: "QR 코드가 유효한 '저장소 추가' 링크가 아닙니다."
+    filled: "QR 코드에서 저장소 정보를 채웠습니다."
   title: "콘텐츠 저장소"
   last_sync: "마지막 동기화: {when}"
   added: "저장소가 추가되었습니다."

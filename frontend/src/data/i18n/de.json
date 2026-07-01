@@ -3173,6 +3173,13 @@
     "title": "Inhalts-Repositories",
     "last_sync": "Letzte Synchronisierung: {when}",
     "added": "Repository hinzugefügt.",
+    "qr": {
+      "upload": "QR-Bild hochladen",
+      "decoding": "QR wird gelesen…",
+      "no_qr": "Im Bild wurde kein QR-Code gefunden.",
+      "invalid": "Der QR-Code ist kein gültiger \"Repository hinzufügen\"-Link.",
+      "filled": "Repository-Daten aus dem QR-Code übernommen."
+    },
     "synced": "Synchronisiert: {sets} Sets, {lessons} Lektionen.",
     "token_hint": "Private Repositories benötigen ein Token — füge unten eines ein oder hinterlege ein gemeinsames Token unter Einstellungen → Integrationen.",
     "trust_official": "Offiziell: Vom Projektteam kuratierter, qualitätsgesicherter Inhalt.",
