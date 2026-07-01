@@ -6,6 +6,13 @@ typisch. Der "Session starten"-Button im Dashboard legt eine
 neue an; die App wählt die Lernmethode (deine dominante aus
 dem Test) und den Startschritt (meist 1 = Input).
 
+Eine *Session* ist nicht dasselbe wie eine *Lesson*: Eine
+Session ist dieses KI-Gespräch durch den 7-Schritt-Zyklus,
+während eine Lesson eine Reihe von 8-12 Übungen aus einem
+heruntergeladenen Content-Set ist, gespielt in ihrem eigenen
+Viewer ohne KI-Chat. Siehe
+[Inhaltslektionen und Wiederholungen](lessons.md).
+
 ## Die sieben Schritte
 
 | # | Schritt | Was passiert |
