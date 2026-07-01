@@ -14,6 +14,7 @@ import { BookOpen, ChevronLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import TheoryStep from "./TheoryStep";
+import AskAiPanel from "../ask/AskAiPanel";
 import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
 import { ExerciseDispatcher } from "../../exercises";
 import type {
@@ -207,23 +208,39 @@ export default function LessonStepView({
           stored={progress?.step_results?.[step.id]}
         />
       ) : (
-        <ExerciseDispatcher
-          ref={exerciseRef}
-          controlled
-          onInteraction={onInteraction}
-          reviewed={reviewedRaw}
-          step={step}
-          setId={setId}
-          lessonId={lessonFilename}
-          source={source}
-          targetLanguage={lesson.target_language}
-          sourceLanguage={lesson.source_language}
-          domain={lesson.domain}
-          cards={lesson.cards}
-          onComplete={handleComplete}
-          onAdvance={onAdvance}
-          advanceLabel={advanceLabel}
-        />
+        <>
+          <ExerciseDispatcher
+            ref={exerciseRef}
+            controlled
+            onInteraction={onInteraction}
+            reviewed={reviewedRaw}
+            step={step}
+            setId={setId}
+            lessonId={lessonFilename}
+            source={source}
+            targetLanguage={lesson.target_language}
+            sourceLanguage={lesson.source_language}
+            domain={lesson.domain}
+            cards={lesson.cards}
+            onComplete={handleComplete}
+            onAdvance={onAdvance}
+            advanceLabel={advanceLabel}
+          />
+          {/* #1321 — deepen the current exercise via the existing BYOK AI
+                    path. Self-gating (no key → discreet hint). */}
+          {step.exercise && (
+            <AskAiPanel
+              context={{
+                kind: "exercise",
+                blockText: step.exercise.prompt ?? "",
+                targetLanguage: lesson.target_language,
+                sourceLanguage: lesson.source_language,
+                domain: lesson.domain,
+              }}
+              testId="ask-ai-exercise"
+            />
+          )}
+        </>
       )}
     </article>
   );

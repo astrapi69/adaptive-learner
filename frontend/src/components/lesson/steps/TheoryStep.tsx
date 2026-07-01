@@ -19,6 +19,7 @@ import { ExternalLink, Square, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import CodeBlock from "../../content/browser/CodeBlock";
+import AskAiPanel from "../ask/AskAiPanel";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import type { ReadAloudController } from "../../../hooks/lesson/audio/useReadAloud";
 import { parseStepAnchor } from "../../../lib/lesson/lesson-anchors";
@@ -178,6 +179,12 @@ export default function TheoryStep({
           </Button>
         </div>
       ) : null}
+      {/* #1321 — deepen this theory block via the existing BYOK AI path.
+                Self-gating: only shown with an AI key, discreet hint otherwise. */}
+      <AskAiPanel
+        context={{ kind: "theory", blockText: body, targetLanguage: ttsLang }}
+        testId="ask-ai-theory"
+      />
     </div>
   );
 }

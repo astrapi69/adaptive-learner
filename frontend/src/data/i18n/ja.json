@@ -1778,6 +1778,16 @@
     }
   },
   "lesson": {
+    "ask_ai": {
+      "button": "AIに質問",
+      "title": "このブロックについてAIに質問",
+      "placeholder": "例: 例を挙げて説明して",
+      "ask": "質問",
+      "asking": "質問中…",
+      "no_key": "質問するにはAIキーを設定してください（AI設定を参照）。",
+      "open_settings": "AI設定",
+      "error": "AIリクエストに失敗しました。もう一度お試しください。"
+    },
     "mode": {
       "label": "レッスンモード",
       "practice": "練習",

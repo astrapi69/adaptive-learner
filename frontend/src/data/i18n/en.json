@@ -1778,6 +1778,16 @@
     }
   },
   "lesson": {
+    "ask_ai": {
+      "button": "Ask AI",
+      "title": "Ask AI about this",
+      "placeholder": "e.g. Explain this with an example",
+      "ask": "Ask",
+      "asking": "Asking…",
+      "no_key": "Set an AI key to ask about this - see AI settings.",
+      "open_settings": "AI settings",
+      "error": "The AI request failed. Please try again."
+    },
     "mode": {
       "label": "Lesson mode",
       "practice": "Practice",
