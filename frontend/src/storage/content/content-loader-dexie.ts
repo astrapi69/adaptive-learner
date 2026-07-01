@@ -22,12 +22,19 @@
  * deployment reads from the bundled default.
  */
 
-import { parse as parseYaml } from "yaml";
+import {
+  asContentSetBook,
+  asContentSetEntry,
+  parseLesson,
+  parseManifest,
+  resolveLanguagePair,
+  setBasePath,
+} from "../../lib/content/engine";
+import type { ParsedManifest } from "../../lib/content/engine";
 
 import type {
   ContentLesson,
   ContentLessonList,
-  ContentSetBook,
   ContentSetEntry,
   ContentSetSource,
   ContentSetsList,
@@ -270,123 +277,12 @@ export function mimeTypeForAssetPath(path: string): string {
   }
 }
 
-interface ParsedSetAsset {
-  path: string;
-  size_kb: number;
-}
-
-interface ParsedSet {
-  id: string;
-  title: string;
-  /** Optional title in the target language (native script). */
-  title_native?: string;
-  /** Legacy pre-v1.2 key — the target language. Accepted as an
-   *  alias for ``target_language``. */
-  language?: string;
-  /** Phase 60 / v1.44.0 — the language the learner is LEARNING. */
-  target_language?: string;
-  /** Phase 60 / v1.44.0 — the language the learner already
-   *  SPEAKS (card backs / notes / theory). Defaults to "en". */
-  source_language?: string;
-  level: string;
-  version: string;
-  lesson_count: number;
-  domain?: string;
-  description?: string | null;
-  tags?: string[];
-  cover_image?: string | null;
-  /** Phase 54 / v1.37.0 — declared assets bundled with the set. */
-  assets?: ParsedSetAsset[];
-  /** Phase 60 / v1.44.0 — repo-relative dir for the set's files
-   *  (source-language tree, e.g. ``sets/de/fr-a1``). Falls back
-   *  to ``sets/{id}`` when omitted. */
-  path?: string;
-  /** #769 — optional set-level book block (title/author/url/asin). */
-  book?: ParsedSetBook;
-}
-
-/** Manifest \`sets[].book\` block (#769). */
-interface ParsedSetBook {
-  title?: string;
-  author?: string | null;
-  url?: string | null;
-  asin?: string | null;
-}
-
-/** Project a raw manifest book block into a {@link ContentSetBook}, or
- *  ``null`` when it has no title (#769). */
-function asContentSetBook(book: ParsedSetBook | undefined): ContentSetBook | null {
-  if (!book || typeof book.title !== "string" || !book.title.trim()) return null;
-  return {
-    title: book.title,
-    author: typeof book.author === "string" ? book.author : null,
-    url: typeof book.url === "string" ? book.url : null,
-    asin: typeof book.asin === "string" ? book.asin : null,
-  };
-}
-
-/** Repo-relative base dir for a set's manifest / lessons /
- *  assets. Mirrors the backend ``ContentSet.base_path``. */
-function setBasePath(parsed: { id: string; path?: string }): string {
-  return parsed.path ?? `sets/${parsed.id}`;
-}
-
-/** Resolve the language pair from a parsed manifest set,
- *  honouring the pre-v1.2 ``language`` alias and the "en"
- *  default for ``source_language`` (mirrors the backend
- *  ContentSet model). */
-function resolveLanguagePair(parsed: {
-  language?: string;
-  target_language?: string;
-  source_language?: string;
-}): { target: string; source: string } {
-  return {
-    target: parsed.target_language ?? parsed.language ?? "",
-    source: parsed.source_language ?? "en",
-  };
-}
-
-interface ParsedManifest {
-  schema_version?: string;
-  name?: string;
-  description?: string | null;
-  sets?: ParsedSet[];
-  metadata?: Record<string, unknown>;
-}
-
-function asContentSetEntry(
-  src: ContentSetSource,
-  parsed: ParsedSet,
-  cachedVersion: string | null,
-  downloadedAt: string | null = null,
-  status: SetStatus = "active",
-): ContentSetEntry {
-  const updateAvailable =
-    cachedVersion !== null && cachedVersion !== parsed.version;
-  const { target, source } = resolveLanguagePair(parsed);
-  return {
-    source: src.source,
-    branch: src.branch,
-    id: parsed.id,
-    title: parsed.title,
-    title_native: parsed.title_native ?? null,
-    language: target,
-    target_language: target,
-    source_language: source,
-    level: parsed.level,
-    domain: parsed.domain ?? "language",
-    version: parsed.version,
-    lesson_count: parsed.lesson_count,
-    description: parsed.description ?? null,
-    tags: parsed.tags ?? [],
-    cover_image: parsed.cover_image ?? null,
-    cached_version: cachedVersion,
-    update_available: updateAvailable,
-    downloaded_at: downloadedAt,
-    status,
-    book: asContentSetBook(parsed.book),
-  };
-}
+// The canonical parse/transform of raw manifests + lessons lives in the
+// Content-Engine (EXP-042): ``ParsedManifest`` / ``ParsedSet`` and the
+// projections ``asContentSetEntry`` / ``resolveLanguagePair`` / ``setBasePath``
+// / ``asContentSetBook`` / ``parseManifest`` / ``parseLesson`` are imported from
+// ``lib/content/engine``. This file keeps only fetch + Dexie + source
+// reconciliation.
 
 /** Numeric semver compare. Returns >0 if a>b, <0 if a<b, 0 if equal. */
 function compareVersions(a: string, b: string): number {
@@ -523,7 +419,7 @@ export async function listSetsDexie(
         "manifest.yaml",
         token,
       );
-      manifest = (parseYaml(text) ?? null) as ParsedManifest | null;
+      manifest = parseManifest(text);
     } catch (err) {
       // Upstream offline / 404 / network failure: fall
       // back to whatever this source has cached so the
@@ -598,7 +494,7 @@ export async function downloadSetDexie(
     "manifest.yaml",
     token,
   );
-  const repoManifest = parseYaml(repoText) as ParsedManifest;
+  const repoManifest = parseManifest(repoText) as ParsedManifest;
   const target = (repoManifest.sets ?? []).find((s) => s.id === setId);
   if (!target) {
     const err: Error & { status?: number } = new Error(
@@ -629,7 +525,7 @@ export async function downloadSetDexie(
     `${basePath}/manifest.yaml`,
     token,
   );
-  const setManifest = parseYaml(setManifestText) as ParsedManifest;
+  const setManifest = parseManifest(setManifestText) as ParsedManifest;
   let lessonFilenames: string[];
   const metaLessons = setManifest.metadata?.lessons;
   if (
@@ -823,20 +719,13 @@ export async function getLessonDexie(
     err.status = 404;
     throw err;
   }
-  const parsed = JSON.parse(file.body) as ContentLesson;
-  // Lessons don't carry the language pair / domain — the parent set is
-  // authoritative (see ContentLesson docs). Inject them from the cached
-  // set row so consumers that gate on them work; notably the per-theory
-  // read-aloud button (canRead requires lesson.target_language), which
-  // was silently absent in Dexie mode without this. A lesson that
-  // declares its own (e.g. an exported standalone) keeps it.
-  return {
-    ...parsed,
-    target_language:
-      parsed.target_language ?? cached.target_language ?? cached.language,
-    source_language: parsed.source_language ?? cached.source_language,
-    domain: parsed.domain ?? cached.domain,
-  };
+  // The single-JSON source adapter (Content-Engine, EXP-042) parses the raw
+  // lesson JSON and injects the set-inherited language pair / domain: a lesson
+  // file doesn't carry them (the parent set is authoritative), and consumers
+  // that gate on them need them — notably the per-theory read-aloud button
+  // (canRead requires lesson.target_language). A lesson that declares its own
+  // (e.g. an exported standalone) keeps it.
+  return parseLesson(file.body, cached);
 }
 
 /** Phase 54 / v1.37.0 — read a cached asset by relative path

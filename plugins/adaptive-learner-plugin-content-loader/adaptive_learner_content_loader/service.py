@@ -40,8 +40,8 @@ from .exceptions import (
     ContentNotFoundError,
     ContentSchemaError,
 )
+from .content_engine import parse_manifest
 from .github_adapter import GitHubRawAdapter
-from .manifest_parser import parse_manifest_yaml
 from .models import (
     CURRENT_SCHEMA_VERSION,
     ContentManifest,
@@ -216,7 +216,7 @@ class ContentLoaderService:
             MANIFEST_FILENAME,
             client=client,
         )
-        return parse_manifest_yaml(text)
+        return parse_manifest(text)
 
     async def list_sets(self) -> list[SetEntry]:
         """Return one ``SetEntry`` per (source, set) pair.
@@ -420,7 +420,7 @@ class ContentLoaderService:
                 f"{base_path}/manifest.yaml",
                 client=client,
             )
-            set_manifest = parse_manifest_yaml(set_manifest_text)
+            set_manifest = parse_manifest(set_manifest_text)
             lesson_filenames = _lesson_filenames_for_set(
                 set_manifest,
                 set_id,
