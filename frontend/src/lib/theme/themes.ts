@@ -29,6 +29,15 @@ export type ThemeId =
 /** The user's selectable choice: a concrete theme or OS-follow. */
 export type ThemeChoice = ThemeId | "auto";
 
+/**
+ * Default theme choice for a user with NO saved preference (new users, or
+ * anyone who never picked a theme). Existing users keep their stored choice —
+ * this only fills the empty case. ``soft-pop`` is the architect-selected
+ * default (best-tested). Single source of truth for the TS side; the pre-paint
+ * script in ``index.html`` mirrors this value.
+ */
+export const DEFAULT_THEME_CHOICE: ThemeChoice = "soft-pop";
+
 export interface ThemeMeta {
     id: ThemeId;
     /** English fallback label (i18n key is ``ui.themes.<id>``). */

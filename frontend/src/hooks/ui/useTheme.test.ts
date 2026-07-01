@@ -1,9 +1,10 @@
 /**
  * Tests for the useTheme hook (Phase 58E — 6 themes + auto).
  *
- * Covers: dotted-key persistence, legacy-key migration, system-
- * preference auto fallback, the 6 valid themes, invalid-value
- * rejection, the light/dark quick-toggle, and DOM data-theme syncing.
+ * Covers: dotted-key persistence, legacy-key migration, the Soft Pop
+ * default for users without a saved choice, explicit auto -> OS,
+ * invalid-value rejection, the light/dark quick-toggle, and DOM
+ * data-theme syncing.
  * happy-dom's matchMedia returns matches=false, so auto resolves light.
  */
 
@@ -22,9 +23,24 @@ beforeEach(() => {
 
 describe("useTheme", () => {
   describe("initial theme", () => {
-    it("defaults to auto -> light when no stored preference (system not dark)", () => {
+    it("defaults to Soft Pop when no stored preference", () => {
+      const {result} = renderHook(() => useTheme())
+      expect(result.current.choice).toBe("soft-pop")
+      expect(result.current.theme).toBe("soft-pop")
+    })
+
+    it("keeps an existing user's saved choice over the Soft Pop default", () => {
+      localStorage.setItem(KEY, "sepia")
+      const {result} = renderHook(() => useTheme())
+      expect(result.current.choice).toBe("sepia")
+      expect(result.current.theme).toBe("sepia")
+    })
+
+    it("still honours an explicit auto choice (follows the OS)", () => {
+      localStorage.setItem(KEY, "auto")
       const {result} = renderHook(() => useTheme())
       expect(result.current.choice).toBe("auto")
+      // auto -> light under happy-dom (matchMedia matches=false)
       expect(result.current.theme).toBe("light")
     })
 
@@ -50,11 +66,11 @@ describe("useTheme", () => {
       expect(localStorage.getItem(LEGACY)).toBeNull()
     })
 
-    it("ignores invalid stored values and falls back to auto", () => {
+    it("ignores invalid stored values and falls back to the Soft Pop default", () => {
       localStorage.setItem(KEY, "rainbow")
       const {result} = renderHook(() => useTheme())
-      expect(result.current.choice).toBe("auto")
-      expect(result.current.theme).toBe("light")
+      expect(result.current.choice).toBe("soft-pop")
+      expect(result.current.theme).toBe("soft-pop")
     })
   })
 
@@ -79,6 +95,7 @@ describe("useTheme", () => {
 
   describe("toggle (nav quick light/dark flip)", () => {
     it("flips from a light-family theme to dark", () => {
+      localStorage.setItem(KEY, "light")
       const {result} = renderHook(() => useTheme())
       act(() => result.current.toggle())
       expect(result.current.theme).toBe("dark")
@@ -92,6 +109,7 @@ describe("useTheme", () => {
     })
 
     it("sets the data-theme attribute on the document element", () => {
+      localStorage.setItem(KEY, "light")
       const {result} = renderHook(() => useTheme())
       act(() => result.current.toggle())
       expect(document.documentElement.getAttribute("data-theme")).toBe("dark")
