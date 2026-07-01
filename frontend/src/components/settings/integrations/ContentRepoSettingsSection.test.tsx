@@ -125,7 +125,7 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(token.closest("form")).toBeNull();
   });
 
-  it("lists connected repos with trust badge", async () => {
+  it("lists connected repos with a unified category badge (#1319)", async () => {
     pluginGet.mockResolvedValue({
       plugin: "content-loader",
       settings: { user_repos: [REPO] },
@@ -135,9 +135,19 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(
       screen.getByTestId("content-repo-item-jane-deck"),
     ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("content-repo-trust-jane-deck"),
-    ).toBeInTheDocument();
+    // REPO carries trust: 1 with no coach/recommended → "validated".
+    const badge = screen.getByTestId("content-repo-category-jane-deck");
+    expect(badge).toHaveAttribute("data-category", "validated");
+  });
+
+  it("badges a coach (private-token) repo as private (#1319)", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [{ ...REPO, coach: true }] },
+    });
+    render(<ContentRepoSettingsSection />);
+    const badge = await screen.findByTestId("content-repo-category-jane-deck");
+    expect(badge).toHaveAttribute("data-category", "private");
   });
 
   it("rejects an invalid URL without writing", async () => {

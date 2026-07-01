@@ -27,8 +27,6 @@ import {
   Loader2,
   RefreshCw,
   Share2,
-  Shield,
-  ShieldQuestion,
   Star,
   Trash2,
 } from "lucide-react";
@@ -39,6 +37,7 @@ import DownloadProgress from "../../../shared/feedback/DownloadProgress";
 import { SecretInput } from "../../../shared/forms/SecretInput";
 import { buildAddRepoLink, parseAddRepoQr } from "../../../lib/content/placement/share-link";
 import { QrImageUpload } from "../../../shared/qr";
+import RepoCategoryBadge from "../../content/RepoCategoryBadge";
 import InviteCodesPanel from "../../content/invites/InviteCodesPanel";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
@@ -50,6 +49,7 @@ import {
   parseGitHubRepoUrl,
   readUserRepos,
   removeUserRepo,
+  resolveRepoCategory,
   syncUserRepo,
   syncPhaseI18n,
   userRepoSource,
@@ -476,37 +476,19 @@ export default function ContentRepoSettingsSection() {
                   <span className="text-xs text-[var(--fg-muted)]">
                     @{repo.branch}
                   </span>
-                  {repo.trust === 1 ? (
-                    <span
-                      className="inline-flex items-center gap-1 rounded-sm bg-[var(--success-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--success)]"
-                      data-testid={`content-repo-trust-${repo.owner}-${repo.repo}`}
-                    >
-                      <Shield className="h-3 w-3" aria-hidden="true" />
-                      {t("content_repo.trust.validated", "Validated")}
-                    </span>
-                  ) : (
-                    <span
-                      className="inline-flex items-center gap-1 rounded-sm bg-[var(--warning-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--warning)]"
-                      data-testid={`content-repo-trust-${repo.owner}-${repo.repo}`}
-                    >
-                      <ShieldQuestion className="h-3 w-3" aria-hidden="true" />
-                      {t("content_repo.trust.unknown", "Unverified")}
-                    </span>
-                  )}
-                  {repo.coach && (
-                    <span className="rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]">
-                      {t("content_repo.badge.coach", "Coach")}
-                    </span>
-                  )}
-                  {isRecommendedSource(source, recommended) && (
-                    <span
-                      className="inline-flex items-center gap-1 rounded-sm bg-[color-mix(in_srgb,var(--accent)_16%,var(--bg-surface))] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent-text)]"
-                      data-testid={`content-repo-recommended-badge-${repo.owner}-${repo.repo}`}
-                    >
-                      <Star className="h-3 w-3" aria-hidden="true" />
-                      {t("content_repo.trust.recommended", "Officially recommended")}
-                    </span>
-                  )}
+                  {/* #1319 — one unified, typed category badge (official /
+                      private / validated / unverified) replaces the previously
+                      scattered trust + coach + recommended inline badges. */}
+                  <RepoCategoryBadge
+                    category={resolveRepoCategory({
+                      source,
+                      trust: repo.trust,
+                      coach: repo.coach,
+                      recommended: isRecommendedSource(source, recommended),
+                    })}
+                    t={t}
+                    testId={`content-repo-category-${repo.owner}-${repo.repo}`}
+                  />
                 </div>
                 <p className="m-0 mt-1 text-sm text-[var(--fg-muted)]">
                   {repo.last_synced

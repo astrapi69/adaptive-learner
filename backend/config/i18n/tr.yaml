@@ -2952,6 +2952,7 @@ content_repo:
     sync: "Şimdi eşitle"
   badge:
     coach: "Koç"
+    private: "Özel"
     official: "Resmî"
   trust:
     dropped: "Eşitlendi, ancak doğrulama başarısız oldu — bu depo artık doğrulanmamış olarak işaretlendi."

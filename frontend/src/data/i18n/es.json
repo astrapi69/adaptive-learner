@@ -3223,6 +3223,7 @@
     },
     "badge": {
       "coach": "Tutor",
+      "private": "Privado",
       "official": "Oficial"
     },
     "trust": {

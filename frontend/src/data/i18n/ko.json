@@ -3223,6 +3223,7 @@
     },
     "badge": {
       "coach": "코치",
+      "private": "비공개",
       "official": "공식"
     },
     "trust": {

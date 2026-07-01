@@ -3223,6 +3223,7 @@
     },
     "badge": {
       "coach": "कोच",
+      "private": "निजी",
       "official": "आधिकारिक"
     },
     "trust": {

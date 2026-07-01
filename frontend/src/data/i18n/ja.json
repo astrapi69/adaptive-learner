@@ -3223,6 +3223,7 @@
     },
     "badge": {
       "coach": "コーチ",
+      "private": "プライベート",
       "official": "公式"
     },
     "trust": {
