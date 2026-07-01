@@ -1133,19 +1133,6 @@
     "target_hash": "f81a58adbcf2",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "app.tagline": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing 'Sechs-Methoden-Modell' (six-method model) part of source",
-    "suggestion": "6단계 방법론 모델에 따른 적응형 학습.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "5e0c96bb035b",
-    "target_hash": "a1a5b19f6c65",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "assessment.continue_later": {
     "verdict": "ok",
     "severity": "low",
@@ -5254,19 +5241,6 @@
     "target_hash": "f4299b4056b2",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "content.tree.i_speak": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "This is a UI label for language selection ('I speak'); overly literal/verbose rendering",
-    "suggestion": "내가 구사하는 언어",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "21a3a07000ed",
-    "target_hash": "2bf53bfc062b",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "content.tree.knowledge": {
     "verdict": "ok",
     "severity": "low",
@@ -5573,19 +5547,6 @@
     "tier1_verdict": "ok",
     "de_hash": "94b7fcb47f4f",
     "target_hash": "4f0cb2637264",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "content.validation.missing_target_language": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'die gelernte Sprache' means learned/studied language, not '가르치는 언어' (taught language).",
-    "suggestion": "목표어(학습 중인 언어)가 누락되었습니다.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "4df1048047ee",
-    "target_hash": "e62de7a2c70f",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "content.validation.missing_title": {
@@ -8817,19 +8778,6 @@
     "target_hash": "49973aae8bf3",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "dashboard.review_queue.elements": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German means 'element(s) for review'; ko adds unwarranted counter '개' and reorders awkwardly",
-    "suggestion": "복습할 요소",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "7f07f82fab7d",
-    "target_hash": "9b972f72131b",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "dashboard.review_queue.loading": {
     "verdict": "ok",
     "severity": "low",
@@ -9026,19 +8974,6 @@
     "tier1_verdict": "ok",
     "de_hash": "aeba36b952b9",
     "target_hash": "e3feffe121ae",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "data_export.cat_progress": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Lernfortschritt' means learning progress, not lesson (Lektion) progress",
-    "suggestion": "학습 진행도 (오답 / SRS 포함)",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "03d9a02dab12",
-    "target_hash": "e22f09cb6615",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "data_export.cat_projects": {
@@ -11120,19 +11055,6 @@
     "target_hash": "0a365d375124",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "gamification.badges.first_assessment.description": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German says 'Selbsteinschätzung' (self-assessment), not 'learning type assessment'",
-    "suggestion": "자기 평가를 완료하세요.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "f070eba3dc16",
-    "target_hash": "8d10e749a0be",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "gamification.badges.first_assessment.name": {
     "verdict": "ok",
     "severity": "low",
@@ -11780,19 +11702,6 @@
     "tier1_verdict": "ok",
     "de_hash": "7ef2fad58d1f",
     "target_hash": "7ef2fad58d1f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "gamification.danger_zone_intro": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Lerndaten' means learning data, not 'learner status' (학습자 상태); also lost 'unwiderruflich' (irreversibly) nuance is ok but noun wrong",
-    "suggestion": "이 기기의 모든 학습 데이터를 영구히 삭제합니다.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "7f688886349b",
-    "target_hash": "9b87ae252f48",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "gamification.danger_zone_reset_button": {
@@ -13228,19 +13137,6 @@
     "tier1_verdict": "ok",
     "de_hash": "85412b314547",
     "target_hash": "8e1bccb12d00",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "import.show_transcript": {
-    "verdict": "wrong",
-    "severity": "low",
-    "note": "'Roh-Daten' means 'raw data', not 'transcript' (대화 기록)",
-    "suggestion": "원본 데이터 보기",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "ddb1904e0dc8",
-    "target_hash": "90d170661a3b",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "import.start_session": {
@@ -19264,19 +19160,6 @@
     "target_hash": "c2135fb00b50",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "onboarding.concepts_explainer_prefix": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "Missing verb '정의' and trailing '하나의' before object; incomplete meaning",
-    "suggestion": "당신은 ",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "44c516f0e673",
-    "target_hash": "00ce9f6a24c7",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "onboarding.concepts_explainer_suffix": {
     "verdict": "ok",
     "severity": "low",
@@ -19904,19 +19787,6 @@
     "target_hash": "3d1da76d02db",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "progress.step_eval_backward": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Schritt-Rückwärts' means step backward, not '전환' (switch)",
-    "suggestion": "단계 뒤로",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "4e439ece6dd8",
-    "target_hash": "760efa9c428a",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "progress.step_eval_empty": {
     "verdict": "ok",
     "severity": "low",
@@ -19948,19 +19818,6 @@
     "tier1_verdict": "ok",
     "de_hash": "b6d749902a8e",
     "target_hash": "2ed825813966",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "progress.step_eval_title": {
-    "verdict": "wrong",
-    "severity": "low",
-    "note": "'인사이트' (insights) added; source has no such word",
-    "suggestion": "AI 단계 평가",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "460bc65522c3",
-    "target_hash": "f81e00e54ad3",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "progress.tab.overview": {
@@ -21811,19 +21668,6 @@
     "target_hash": "8efe7d8c598e",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "session.ai_error": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'제공자'(provider) added; source says just 'die KI'",
-    "suggestion": "AI가 응답할 수 없었습니다.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "7651116461a2",
-    "target_hash": "8a9975ee9051",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "session.ai_thinking": {
     "verdict": "ok",
     "severity": "low",
@@ -21877,19 +21721,6 @@
     "tier1_verdict": "ok",
     "de_hash": "7a453afb3675",
     "target_hash": "8ec2cbebcc9c",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "session.end_session_confirm": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'beenden und bewerten' means end and evaluate; 'closing and requesting' inaccurate",
-    "suggestion": "정말이신가요? 세션을 종료하고 평가할 수 있습니다.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "dc2a2c12fd71",
-    "target_hash": "4a08daacaec3",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "session.in_progress": {
@@ -23003,19 +22834,6 @@
     "tier1_verdict": "minor",
     "de_hash": "13469907e2dc",
     "target_hash": "f53bc28897c9",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.feedback_intensity_enthusiastic": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German 'Ausführlich' means detailed/comprehensive, not enthusiastic",
-    "suggestion": "상세하게",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "bdc7a21d00e0",
-    "target_hash": "faf96dab3dde",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.feedback_intensity_enthusiastic_desc": {
@@ -24261,19 +24079,6 @@
     "target_hash": "1120d9866792",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "settings.model_picker_default_hint": {
-    "verdict": "wrong",
-    "severity": "low",
-    "note": "German is a label 'Standard:', not '기본값 사용:' (use default)",
-    "suggestion": "기본값:",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "a99574a8529c",
-    "target_hash": "315df9c2e2a8",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "settings.model_picker_error": {
     "verdict": "ok",
     "severity": "low",
@@ -25275,19 +25080,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a10c5170b7e0",
     "target_hash": "1d4a6559a10b",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.storage_mode_switch_notice": {
-    "verdict": "wrong",
-    "severity": "low",
-    "note": "'새 백엔드' should be '새 모드' per source 'neuen Modus'",
-    "suggestion": "저장소 모드가 저장되었습니다. 새 모드를 활성화하려면 페이지를 새로고침하세요.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3dfcb62d7ade",
-    "target_hash": "372f1d7d5837",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.storage_mode_warning": {
@@ -27757,19 +27549,6 @@
     "target_hash": "d562a91b0baa",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "subjects.public_speaking": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Rhetorik' means rhetoric/public speaking; '발표' means presentation, a narrower term.",
-    "suggestion": "화술",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "e8c97b7911b6",
-    "target_hash": "662fbb8d7bde",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "subjects.sciences": {
     "verdict": "ok",
     "severity": "low",
@@ -27845,19 +27624,6 @@
     "tier1_verdict": "ok",
     "de_hash": "6789eb281506",
     "target_hash": "5b4903cc3310",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "subjects.theory": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Musiktheorie' means 'music theory'; translation omits 'music'",
-    "suggestion": "음악 이론",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "329093e526ef",
-    "target_hash": "51c70939de72",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "subjects.trigonometry": {
@@ -30803,19 +30569,6 @@
     "tier1_verdict": "ok",
     "de_hash": "11a1d1619cf3",
     "target_hash": "c204af5496ad",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "voice.stop_listening": {
-    "verdict": "wrong",
-    "severity": "low",
-    "note": "'Diktat' means dictation, not listening",
-    "suggestion": "받아쓰기 중지",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "e5c174ecc176",
-    "target_hash": "8ccce0bb4fb7",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "voice.stop_speaking": {

@@ -1123,19 +1123,6 @@
     "target_hash": "6c88fd1e14a3",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "app.tagline": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Omits 'Sechs-Methoden-Modell' (six-method model); meaning incomplete.",
-    "suggestion": "6メソッドモデルに基づく適応学習。",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "5e0c96bb035b",
-    "target_hash": "45a4c07ab428",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "assessment.continue_later": {
     "verdict": "ok",
     "severity": "low",
@@ -1565,19 +1552,6 @@
     "target_hash": "db132d621cb1",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "backup.compare_field_changes": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Includes extraneous counter '件の'; source is just 'field changes'",
-    "suggestion": "フィールド変更",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "07b18836d327",
-    "target_hash": "d9e0274eb577",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "backup.compare_help": {
     "verdict": "minor",
     "severity": "low",
@@ -1686,19 +1660,6 @@
     "tier1_verdict": "ok",
     "de_hash": "60df18187e0b",
     "target_hash": "c7d4c02617fe",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "backup.compare_records": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "Source means 'records/datasets'; ja only has counter '件' with no noun",
-    "suggestion": "レコード",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "b0f5ce1bc0f6",
-    "target_hash": "7c0025557708",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "backup.compare_section_added": {
@@ -2843,19 +2804,6 @@
     "tier1_verdict": "ok",
     "de_hash": "66ffe0fb8a07",
     "target_hash": "a433838a3410",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "content.ai_exercises.batch.button": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing 'Übungen' (exercises); source means 'generate exercises for all lessons'",
-    "suggestion": "すべてのレッスンの練習問題を生成",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "d6b0c92196fe",
-    "target_hash": "b2b7918eb882",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "content.ai_exercises.batch.cancel": {
@@ -8454,19 +8402,6 @@
     "target_hash": "c57aae4012a9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "dashboard.card_spaced": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Geplante Übung' means scheduled/planned practice, not spaced practice",
-    "suggestion": "予定された練習",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3f058200f7df",
-    "target_hash": "3117e105ba6a",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "dashboard.card_tools": {
     "verdict": "ok",
     "severity": "low",
@@ -8742,19 +8677,6 @@
     "tier1_verdict": "ok",
     "de_hash": "054ee4102d2f",
     "target_hash": "4524f08b7f39",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "dashboard.quick_start_subtitle": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source states method comes from profile, not 'selected'; also nuance differs",
-    "suggestion": "方法はプロフィールに基づいています。",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "78ced6fa51e3",
-    "target_hash": "7b0de1132bfd",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "dashboard.review_queue.elements": {
@@ -19134,45 +19056,6 @@
     "target_hash": "73c8e49717fc",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "onboarding.concepts_explainer_mid1": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German says 'take the assessment test for your', not 'create ... simple assessment'; meaning altered",
-    "suggestion": "、それから評価テストを受けて、あなたの",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "785c49aed7a2",
-    "target_hash": "73ca08d53bd6",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "onboarding.concepts_explainer_mid2": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'—das jede deiner' = 'that each of your'; 'を構築します' (build) not in source, meaning distorted",
-    "suggestion": " — これはあなたの各",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "8d78784e0e18",
-    "target_hash": "595527d19a6e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "onboarding.concepts_explainer_prefix": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German means 'You define a '; ja 'まず' (first) misses meaning and article fragment",
-    "suggestion": "あなたは",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "44c516f0e673",
-    "target_hash": "2cf9e21f8ca6",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "onboarding.concepts_explainer_suffix": {
     "verdict": "ok",
     "severity": "low",
@@ -19842,19 +19725,6 @@
     "tier1_verdict": "ok",
     "de_hash": "b6d749902a8e",
     "target_hash": "c577673d3362",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "progress.step_eval_title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Added 'インサイト' (insight) not in source; source is just 'AI step evaluation'",
-    "suggestion": "AI ステップ評価",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "460bc65522c3",
-    "target_hash": "4bee10589746",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "progress.tab.overview": {
@@ -24155,19 +24025,6 @@
     "target_hash": "c5c2b36c5913",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "settings.model_picker_default_hint": {
-    "verdict": "wrong",
-    "severity": "low",
-    "note": "Source is just 'Standard:' (label), not 'Use default:'",
-    "suggestion": "デフォルト:",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "a99574a8529c",
-    "target_hash": "625486195518",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "settings.model_picker_error": {
     "verdict": "ok",
     "severity": "low",
@@ -25167,19 +25024,6 @@
     "tier1_verdict": "minor",
     "de_hash": "a10c5170b7e0",
     "target_hash": "15f2fa4d7d1e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.storage_mode_switch_notice": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'neuen Modus' translated as 'バックエンド' (backend); should be 'モード' (mode)",
-    "suggestion": "ストレージモードを保存しました。新しいモードを有効にするにはページを再読み込みしてください。",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3dfcb62d7ade",
-    "target_hash": "8620c67583c8",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.storage_mode_warning": {
@@ -26579,19 +26423,6 @@
     "target_hash": "11172ff7e763",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "srs.due_badge": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing 'due/fällig' meaning; only shows count",
-    "suggestion": "{n}件が期限",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "612cd39c1697",
-    "target_hash": "d6b508214c69",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "srs.due_badge_aria": {
     "verdict": "ok",
     "severity": "low",
@@ -26920,19 +26751,6 @@
     "tier1_verdict": "ok",
     "de_hash": "8c28a8b06dcd",
     "target_hash": "829f53878e33",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "statistics.errors": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German 'Fehler' means 'Errors/Mistakes'; translation adds counter '回の' implying 'X times', mismatched",
-    "suggestion": "間違い",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "f6cc01cb7edb",
-    "target_hash": "16793bf959d9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "statistics.last_answer": {

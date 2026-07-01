@@ -98,19 +98,6 @@
     "target_hash": "d60e765f12c0",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "about.credits_heading": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Mitwirkende' means contributors, not 'Kredit' (credits/financial).",
-    "suggestion": "Kontributor",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "07c5512e2bb3",
-    "target_hash": "a4457bef8106",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "about.data_dir_label": {
     "verdict": "ok",
     "severity": "low",
@@ -1135,19 +1122,6 @@
     "target_hash": "8285a399ee6f",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "app.tagline": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing 'Sechs-Methoden-Modell' (six-method model) concept",
-    "suggestion": "Pembelajaran adaptif berdasarkan Model Enam Metode.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "5e0c96bb035b",
-    "target_hash": "84ac779052cc",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "assessment.continue_later": {
     "verdict": "ok",
     "severity": "low",
@@ -1234,19 +1208,6 @@
     "tier1_verdict": "ok",
     "de_hash": "ab2ea1036c55",
     "target_hash": "23ac2865beb6",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "assessment.read_summary": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'vorlesen' means read aloud, not just read",
-    "suggestion": "Bacakan ringkasan dengan suara",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "c131c89fb859",
-    "target_hash": "93ded086e002",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "assessment.result_title": {
@@ -5543,19 +5504,6 @@
     "target_hash": "4752acf95d49",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "content.validation.level_too_complex": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'pro Seite' = 'per halaman', not 'per sisi' (side); mistranslation",
-    "suggestion": "Pelajaran '{lesson}': teks rata-rata {avg} kata per halaman, tinggi untuk tingkat {level} (sekitar {cap} diharapkan).",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "bf22119db286",
-    "target_hash": "6f1eaca7e02d",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "content.validation.matching_too_few_pairs": {
     "verdict": "ok",
     "severity": "low",
@@ -5589,19 +5537,6 @@
     "target_hash": "1c80d954cba5",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "content.validation.missing_target_language": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'die gelernte Sprache' = 'bahasa yang dipelajari', not 'diajarkan' (taught)",
-    "suggestion": "Bahasa target tidak ada (bahasa yang dipelajari).",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "4df1048047ee",
-    "target_hash": "4c6c8d62f378",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "content.validation.missing_title": {
     "verdict": "ok",
     "severity": "low",
@@ -5611,19 +5546,6 @@
     "tier1_verdict": "ok",
     "de_hash": "5d5f5a2f657d",
     "target_hash": "a99bdcf9a22c",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "content.validation.missing_title_native": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source says title in target language; id says 'judul asli' (native) then contradicts",
-    "suggestion": "Judul dalam bahasa target tidak ada.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "1c96881f30d9",
-    "target_hash": "669032cf5b7b",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "content.validation.no_lessons": {
@@ -9233,19 +9155,6 @@
     "target_hash": "6cc371c4a938",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "data_export.select_all": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'tidak ada' means 'none', not 'deselect all'.",
-    "suggestion": "Pilih semua / batalkan semua",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "4cfb37a5c3be",
-    "target_hash": "2387791ea1f0",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "data_export.selective_button": {
     "verdict": "ok",
     "severity": "low",
@@ -9255,19 +9164,6 @@
     "tier1_verdict": "ok",
     "de_hash": "25f3b5ae60f7",
     "target_hash": "4be070192b33",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "data_export.selective_done": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Should be past tense 'exported', not present 'exporting'.",
-    "suggestion": "{n} catatan diekspor.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "7b82be465f21",
-    "target_hash": "10425ad31c3b",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "data_export.selective_intro": {
@@ -9378,19 +9274,6 @@
     "tier1_verdict": "ok",
     "de_hash": "e3df2180f378",
     "target_hash": "8211ae699743",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "discover.card.progress": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'werden geladen' means loading, not downloading (mengunduh)",
-    "suggestion": "Memuat pelajaran",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3f97d77228d5",
-    "target_hash": "b13a815f07ca",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "discover.card.remove": {
@@ -11142,19 +11025,6 @@
     "target_hash": "422e8fe2d143",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "gamification.badges.first_assessment.description": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German says self-assessment, not learning-type assessment",
-    "suggestion": "Selesaikan penilaian diri.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "f070eba3dc16",
-    "target_hash": "64ea20309f2f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "gamification.badges.first_assessment.name": {
     "verdict": "ok",
     "severity": "low",
@@ -11810,19 +11680,6 @@
     "tier1_verdict": "ok",
     "de_hash": "7ef2fad58d1f",
     "target_hash": "7ef2fad58d1f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "gamification.danger_zone_intro": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'setiap bagian keadaan pelajar' is awkward/incorrect for 'alle Lerndaten' (all learning data)",
-    "suggestion": "Hapus secara permanen semua data pembelajaran di perangkat ini.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "7f688886349b",
-    "target_hash": "8cd325e3f9d9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "gamification.danger_zone_reset_button": {
@@ -12705,19 +12562,6 @@
     "tier1_verdict": "ok",
     "de_hash": "c51fce55bda4",
     "target_hash": "c4d1b744686a",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "import.anki_extracted": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Bewerte sie' means rate/evaluate them, not just review; 'Tinjau' is closer to review",
-    "suggestion": "Mengekstrak {n} kartu Anki. Nilai di halaman Anki.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "4da7be233992",
-    "target_hash": "f6ba7a1b3bfb",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "import.anki_extracting": {
@@ -15358,19 +15202,6 @@
     "target_hash": "2f360a14b654",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "lesson.correction.subtitle": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'verwechselt' = confused/mixed up, not 'lewatkan' (missed); tone inconsistent (Anda vs elsewhere informal).",
-    "suggestion": "Beberapa latihan cepat pada kata-kata yang kamu tertukar.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "4ae18e51d023",
-    "target_hash": "8d67ea786fbe",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "lesson.correction.title": {
     "verdict": "minor",
     "severity": "low",
@@ -17370,19 +17201,6 @@
     "target_hash": "f7a1f97db32e",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "lesson.summary.heading": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Geschafft' means 'Done/Completed' as exclamation, not 'Anda telah menyelesaikan' (You have completed).",
-    "suggestion": "Selesai",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "d7649e36c067",
-    "target_hash": "f3ded853af3a",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "lesson.summary.hints_used": {
     "verdict": "ok",
     "severity": "low",
@@ -18845,19 +18663,6 @@
     "target_hash": "5fabb1f4871e",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "nav.mode_badge_label_content": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "'Modus' mistranslated as 'Mode'; 'Inhalte' rendered as 'Konten' (accounts), should be 'Konten'->'Konten' wrong meaning",
-    "suggestion": "Mode: Hanya konten",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "cd4095033630",
-    "target_hash": "4e9d8b291f59",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "nav.mode_badge_tooltip_ai": {
     "verdict": "ok",
     "severity": "low",
@@ -19276,19 +19081,6 @@
     "target_hash": "cd965c137323",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "notebooklm.zip_exported": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German is past tense (exported), Indonesian uses ongoing 'Mengekspor'",
-    "suggestion": "{n} file diekspor ke {filename}.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "629f1d056391",
-    "target_hash": "a81f54fdc40d",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "notebooklm.zip_failed": {
     "verdict": "ok",
     "severity": "low",
@@ -19298,19 +19090,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a2d6e643601d",
     "target_hash": "34a77e8132e1",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "onboarding.concepts_explainer_mid1": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "Source means 'take the assessment test for your'; id says 'complete a short assessment to build'",
-    "suggestion": ", lalu mengerjakan tes penilaian untuk ",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "785c49aed7a2",
-    "target_hash": "598c9165db6f",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "onboarding.concepts_explainer_mid2": {
@@ -19333,19 +19112,6 @@
     "tier1_verdict": "ok",
     "de_hash": "44c516f0e673",
     "target_hash": "6c798dd8745a",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "onboarding.concepts_explainer_suffix": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source 'leitet' (guides/leads); id 'ke depannya' means 'going forward'",
-    "suggestion": " memandu.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "7db4e7ef3120",
-    "target_hash": "f7bfc0b0079f",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "onboarding.creating": {
@@ -20012,19 +19778,6 @@
     "target_hash": "d88b065fc3a6",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "progress.step_eval_title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Adds 'Wawasan' (insight) not in source; should be 'Evaluasi Langkah AI'",
-    "suggestion": "Evaluasi Langkah AI",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "460bc65522c3",
-    "target_hash": "0963d771aaf0",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "progress.tab.overview": {
     "verdict": "ok",
     "severity": "low",
@@ -20331,19 +20084,6 @@
     "tier1_verdict": "minor",
     "de_hash": "9a8e35520777",
     "target_hash": "52ebe149657d",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "pwa.cache_heading": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "'luring' is nonsensical/wrong; should mean offline cache",
-    "suggestion": "Cache Offline",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "64035c822a38",
-    "target_hash": "6a1fffcc22dc",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "pwa.cache_summary": {
@@ -21757,32 +21497,6 @@
     "target_hash": "bc692f0398d9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "review.subtitle": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Adds 'SRS' not in source; 'Meninjau' overinterprets simple noun phrase",
-    "suggestion": "{n} elemen untuk ditinjau",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "2bd2d9a250ba",
-    "target_hash": "b82933f1f291",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "review.subtitle_capped": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Adds 'SRS' not in source",
-    "suggestion": "{shown} dari {due} elemen untuk ditinjau",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "7e4793bd6004",
-    "target_hash": "9b6efe617cdb",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "review.summary.aria_label": {
     "verdict": "ok",
     "severity": "low",
@@ -22557,19 +22271,6 @@
     "target_hash": "d24bab610ba1",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "settings.api_key_source_env": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Umgebungsvariable' means 'environment variable', not just 'environment'",
-    "suggestion": "Kunci dari: variabel lingkungan",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "9590660d9f20",
-    "target_hash": "8e4069c7f4d8",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "settings.api_key_source_file": {
     "verdict": "ok",
     "severity": "low",
@@ -23085,19 +22786,6 @@
     "tier1_verdict": "ok",
     "de_hash": "13469907e2dc",
     "target_hash": "5e77887ee952",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.feedback_intensity_enthusiastic": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "'Ausführlich' means detailed/thorough, not 'Antusias' (enthusiastic)",
-    "suggestion": "Terperinci",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "bdc7a21d00e0",
-    "target_hash": "395bc98f6ff1",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.feedback_intensity_enthusiastic_desc": {
@@ -24017,19 +23705,6 @@
     "target_hash": "5cfabbd21e05",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "settings.matching_resolve.title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Effekt' means effect, not 'animasi' (animation); 'Auflösung' here means resolution/reveal",
-    "suggestion": "Efek penyelesaian",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "a1e4d47cbff2",
-    "target_hash": "d0a6e01ab18e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "settings.max_lesson_size.hint": {
     "verdict": "ok",
     "severity": "low",
@@ -24138,19 +23813,6 @@
     "tier1_verdict": "ok",
     "de_hash": "7a1be3b54b94",
     "target_hash": "6a6670b84b3a",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.missions_enabled_hint": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'bekerja sama' means 'cooperate'; should be 'tetap berfungsi/bekerja tanpanya'",
-    "suggestion": "Tampilkan beberapa sasaran yang dapat dicapai di Beranda setiap hari. Opsional - aplikasi tetap berfungsi tanpanya.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "5b4dc466008b",
-    "target_hash": "786b56add02f",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.missions_reset": {
@@ -24406,19 +24068,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a775dd1ad19d",
     "target_hash": "1b91c121771c",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.model_picker_placeholder": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Added 'id' not in source; should be 'Pilih atau ketik model'",
-    "suggestion": "Pilih atau ketik model",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "1c62b41c6ea0",
-    "target_hash": "fe8e19e3f187",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.model_picker_recommended": {
@@ -27891,19 +27540,6 @@
     "target_hash": "592e761c0f69",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "subjects.theory": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German means 'music theory', not just 'theory'",
-    "suggestion": "Teori Musik",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "329093e526ef",
-    "target_hash": "855e642b63a2",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "subjects.trigonometry": {
     "verdict": "ok",
     "severity": "low",
@@ -29169,19 +28805,6 @@
     "target_hash": "2c6dcf74b093",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "ui.api_key.skip_banner_dismiss": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Verstanden' means 'Understood', not 'Close' (Tutup)",
-    "suggestion": "Mengerti",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "0fba1695ff72",
-    "target_hash": "c2321fe2ff9c",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "ui.common.close": {
     "verdict": "ok",
     "severity": "low",
@@ -29950,19 +29573,6 @@
     "tier1_verdict": "ok",
     "de_hash": "02203c004031",
     "target_hash": "48c644cdd806",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "ui.tooltips.add_root_topic": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Hauptthema' means main topic, not root topic ('akar')",
-    "suggestion": "Tambah topik utama",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "76f23f8ca9f9",
-    "target_hash": "665eabc16923",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "ui.tooltips.add_subtopic": {

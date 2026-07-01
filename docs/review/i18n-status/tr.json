@@ -892,19 +892,6 @@
     "target_hash": "e8c1f8974f1d",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "anki.empty": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "Second sentence mistranslated; 'çıkarsa' is nonsensical and imperative meaning lost",
-    "suggestion": "Henüz kart yok. Kartları bir oturumdan ya da içe aktarılmış bir konuşmadan çıkart veya elle oluştur.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3a505238e991",
-    "target_hash": "4810662ec801",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "anki.empty_body": {
     "verdict": "minor",
     "severity": "low",
@@ -1123,19 +1110,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a304f201892c",
     "target_hash": "dbd395774ece",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "app.tagline": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing 'Sechs-Methoden-Modell' reference; incomplete meaning",
-    "suggestion": "Altı Yöntemli Modele göre uyarlanabilir öğrenme.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "5e0c96bb035b",
-    "target_hash": "86524f2a42b2",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "assessment.continue_later": {
@@ -1492,19 +1466,6 @@
     "target_hash": "e5b32f351a14",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "backup.col_skipped": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source is abbreviated past participle 'skipped', not imperative 'skip'",
-    "suggestion": "Atlandı",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "e067fd723074",
-    "target_hash": "d74e88c16bd7",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "backup.col_updated": {
     "verdict": "ok",
     "severity": "low",
@@ -1569,19 +1530,6 @@
     "tier1_verdict": "ok",
     "de_hash": "1dbe99d0e423",
     "target_hash": "0059bfc57922",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "backup.compare_field_changes": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German is plural 'Feldänderungen'; tr should be plural",
-    "suggestion": "alan değişiklikleri",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "07b18836d327",
-    "target_hash": "23d8314745fe",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "backup.compare_help": {
@@ -1692,19 +1640,6 @@
     "tier1_verdict": "ok",
     "de_hash": "60df18187e0b",
     "target_hash": "cba7c1b61c4d",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "backup.compare_records": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German is plural 'Datensätze'; tr should be plural",
-    "suggestion": "kayıtlar",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "b0f5ce1bc0f6",
-    "target_hash": "2100a9fbe962",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "backup.compare_section_added": {
@@ -2314,19 +2249,6 @@
     "target_hash": "8f2e0d241da2",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "common.confirm_title": {
-    "verdict": "wrong",
-    "severity": "low",
-    "note": "'Bitte bestätigen' is polite request, not imperative 'Onayla'",
-    "suggestion": "Lütfen onaylayın",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "8e48ddcad71e",
-    "target_hash": "8f2e0d241da2",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "common.continue": {
     "verdict": "ok",
     "severity": "low",
@@ -2602,17 +2524,6 @@
     "target_hash": "6ff8021ebc21",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "content.ai_check.export.button": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'disa' missing cedilla on 's' (dışa); 'aktar' is acceptable but 'dışa aktar' needs correct spelling.",
-    "suggestion": "Raporu Markdown olarak dışa aktar",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "c8db48d4738f",
-    "target_hash": "16ea9069824f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "content.ai_check.export.card": {
     "verdict": "ok",
     "severity": "low",
@@ -2646,17 +2557,6 @@
     "target_hash": "136935360f24",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "content.ai_check.failed": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'zeka' missing circumflex (zekâ); 'kullanilamiyor'→'kullanılamıyor'.",
-    "suggestion": "Yapay zekâ denetimi kullanılamıyor.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "c2ae6becf585",
-    "target_hash": "54ba606ce476",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "content.ai_check.last_checked": {
     "verdict": "ok",
     "severity": "low",
@@ -2666,30 +2566,6 @@
     "tier1_verdict": "ok",
     "de_hash": "af175dd6e635",
     "target_hash": "f566145a0c79",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "content.ai_check.loading": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'hazirlaniyor' missing circumflex on 'a' (hazırlanıyor) — dotless ı and circumflex missing.",
-    "suggestion": "Kartlar hazırlanıyor...",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "31450f9f147f",
-    "target_hash": "8a2156b78365",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "content.ai_check.privacy": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing Turkish diacritics: Kartlariniz, denetim icin, saglayiciniza, gonderilir, Kisisel, aktarilmaz",
-    "suggestion": "Kartlarınız denetim için yapılandırılmış yapay zeka sağlayıcınıza gönderilir. Kişisel veri aktarılmaz.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "cc96e0240594",
-    "target_hash": "8a83f104b5e3",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "content.ai_check.progress": {
@@ -2703,19 +2579,6 @@
     "target_hash": "7501a97d4a16",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "content.ai_check.rate_limited": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing Turkish diacritics: calistirmadan, once, lutfen",
-    "suggestion": "Yeni bir denetim çalıştırmadan önce lütfen biraz bekleyin.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "2b3ab071dc69",
-    "target_hash": "11d330f5124e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "content.ai_check.recheck": {
     "verdict": "ok",
     "severity": "low",
@@ -2725,19 +2588,6 @@
     "tier1_verdict": "ok",
     "de_hash": "1b11a2f31e23",
     "target_hash": "8de950c7204f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "content.ai_check.report.all_ok": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing diacritics: Tum->Tüm, gecti->geçti, bulunamadi->bulunamadı",
-    "suggestion": "Tüm kartlar geçti. Sorun bulunamadı.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "699806e71a2b",
-    "target_hash": "38f59f65f8db",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "content.ai_check.report.issues": {
@@ -2782,17 +2632,6 @@
     "tier1_verdict": "ok",
     "de_hash": "7eb0ce02fa2f",
     "target_hash": "8ceae3919e76",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "content.ai_check.unavailable_mode": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'Yalnizca'→'Yalnızca', 'kullanilabilir'→'kullanılabilir'.",
-    "suggestion": "Yalnızca tarayıcı depolama modunda kullanılabilir.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "66ffe0fb8a07",
-    "target_hash": "2c187d89e81b",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "content.ai_exercises.batch.button": {
@@ -3505,19 +3344,6 @@
     "tier1_verdict": "ok",
     "de_hash": "d00f826d2c97",
     "target_hash": "af1318f6b73e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "content.continue_learning.progress": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "\"Aufgabe\" means task/exercise, not \"Adım\" (step)",
-    "suggestion": "Görev {n}/{total}",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "c36e703d32ce",
-    "target_hash": "40bfed281b8a",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "content.continue_learning.resume": {
@@ -5543,19 +5369,6 @@
     "target_hash": "10fc46cde5ff",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "content.validation.level_too_complex": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'im Schnitt ... pro Seite' = 'per page on average'; 'yüzde' (percent) is wrong term",
-    "suggestion": "'{lesson}' dersi: metin sayfa başına ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir).",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "bf22119db286",
-    "target_hash": "74696dc0fe39",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "content.validation.matching_too_few_pairs": {
     "verdict": "ok",
     "severity": "low",
@@ -6978,32 +6791,6 @@
     "target_hash": "dfb27dadcf27",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "create_lesson.cancel_confirm_title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'verwerfen' means discard, not cancel; also 'iptal' inconsistent with intent",
-    "suggestion": "Ders iptal edilsin mi?",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "da4c4082010d",
-    "target_hash": "17a299ffc712",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "create_lesson.cancel_discard": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Verwerfen' means Discard, not Cancel",
-    "suggestion": "Vazgeç",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "594ca889c442",
-    "target_hash": "3f6920a9ead3",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "create_lesson.cancel_keep": {
     "verdict": "ok",
     "severity": "low",
@@ -8313,19 +8100,6 @@
     "target_hash": "41489184c25a",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "cycle_steps.adapt.label": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source is noun 'Anpassung' (adaptation); tr uses verb 'Uyarla' (adapt!)",
-    "suggestion": "Uyarlama",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "abcb0560b7eb",
-    "target_hash": "3f04fd183da6",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "cycle_steps.attempt.description": {
     "verdict": "ok",
     "severity": "low",
@@ -8425,19 +8199,6 @@
     "target_hash": "162546085204",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "cycle_steps.integrate.label": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source is noun 'Integration'; tr uses verb 'Bütünleştir' (integrate!)",
-    "suggestion": "Bütünleştirme",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "9a42d40a3f31",
-    "target_hash": "8202d22b0652",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "cycle_steps.repeat.description": {
     "verdict": "ok",
     "severity": "low",
@@ -8447,19 +8208,6 @@
     "tier1_verdict": "ok",
     "de_hash": "0e1e548bf12a",
     "target_hash": "b529ed77a5df",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "cycle_steps.repeat.label": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source is noun 'Wiederholung' (repetition); tr uses verb 'Tekrarla' (repeat!)",
-    "suggestion": "Tekrar",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "899f808d595f",
-    "target_hash": "20ee897ddf4d",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "dashboard.card_counter": {
@@ -8658,19 +8406,6 @@
     "tier1_verdict": "ok",
     "de_hash": "0f9702cedd47",
     "target_hash": "54835b4e20a9",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "dashboard.focus_areas.tag.article_gender": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German 'Artikel' means grammatical article, not the loanword; parenthetical format lost",
-    "suggestion": "Artikel (cinsiyet)",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "e0c767d6a380",
-    "target_hash": "c8f22177b8f9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "dashboard.focus_areas.tag.spelling_accent": {
@@ -8924,19 +8659,6 @@
     "tier1_verdict": "ok",
     "de_hash": "44fed137f353",
     "target_hash": "c17f0bd36659",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "dashboard.spaced_interval_label": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source means 'Repetition in' (time until next review), not just 'Repetition:'",
-    "suggestion": "Tekrar süresi:",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "ba8b75ff7a9e",
-    "target_hash": "1138b6bfdc3c",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "dashboard.spaced_start": {
@@ -13240,17 +12962,6 @@
     "target_hash": "600d6853614e",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "import.settings_error": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'YZ' is an uncommon abbreviation for 'yapay zekâ'; the source says 'KI-Einstellungen'. Should use 'Yapay zekâ ayarları' for clarity and correct diacritics.",
-    "suggestion": "Yapay zekâ ayarları okunamadı.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "85412b314547",
-    "target_hash": "61815f724004",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "import.show_transcript": {
     "verdict": "minor",
     "severity": "low",
@@ -14063,32 +13774,6 @@
     "tier1_verdict": "ok",
     "de_hash": "b24ee4c36aca",
     "target_hash": "d1c1072052d1",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "languages.script.arabic": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Arap means 'Arab' (person); script/language should be 'Arapça'",
-    "suggestion": "Arapça",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "2faf42fd0256",
-    "target_hash": "500a5bd7d6d8",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "languages.script.bengali": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Bengal is the region; language should be 'Bengalce'",
-    "suggestion": "Bengalce",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "6a0130d49886",
-    "target_hash": "b8b11aef2bb1",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "languages.script.cyrillic": {
@@ -18046,19 +17731,6 @@
     "target_hash": "85d6921dc4b7",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "milestone.mastery": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Awkward phrasing; should be 'öğede ustalaşıldı' or 'öğe öğrenildi'",
-    "suggestion": "{n} öğede ustalaşıldı!",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "5df96f4298b3",
-    "target_hash": "dc7d1a7a2007",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "milestone.streak": {
     "verdict": "ok",
     "severity": "low",
@@ -18314,19 +17986,6 @@
     "target_hash": "4153e47f73f9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "missions.templates.master-1-element.title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Grammatically incorrect; 'ustalaşmak' is intransitive, needs -de case",
-    "suggestion": "Bir öğede ustalaş",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "d89398c1c45b",
-    "target_hash": "9306bd75a5a3",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "missions.templates.master-3-elements.description": {
     "verdict": "ok",
     "severity": "low",
@@ -18338,19 +17997,6 @@
     "target_hash": "8c1d1f2c83b9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "missions.templates.master-3-elements.title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Grammatically incorrect case usage",
-    "suggestion": "Üç öğede ustalaş",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "e12b8d7cd7ca",
-    "target_hash": "09df808d74db",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "missions.templates.master-5-elements.description": {
     "verdict": "ok",
     "severity": "low",
@@ -18360,19 +18006,6 @@
     "tier1_verdict": "ok",
     "de_hash": "bf952c0572a9",
     "target_hash": "deab10fff60e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "missions.templates.master-5-elements.title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Grammatically incorrect case usage",
-    "suggestion": "Beş öğede ustalaş",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "983d4b8af9d8",
-    "target_hash": "632fdc1ac69f",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "missions.templates.review-10-elements.description": {
@@ -19299,19 +18932,6 @@
     "target_hash": "2336223b5d01",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "onboarding.concepts_explainer_prefix": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing verb 'definierst'; 'Önce'=first, not in source. Should convey 'You define a'",
-    "suggestion": "Bir ",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "44c516f0e673",
-    "target_hash": "167c99b22a09",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "onboarding.concepts_explainer_suffix": {
     "verdict": "ok",
     "severity": "low",
@@ -19376,19 +18996,6 @@
     "tier1_verdict": "ok",
     "de_hash": "c9edf18f7a48",
     "target_hash": "c18e6ac2a17f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "onboarding.field_goal": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Hedef' means 'goal'; source specifies learning goal",
-    "suggestion": "Öğrenme hedefi",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "ad587df9e2a3",
-    "target_hash": "a3973f7cd7c0",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "onboarding.field_goal_hint": {
@@ -19961,45 +19568,6 @@
     "tier1_verdict": "ok",
     "de_hash": "17f9221e10d1",
     "target_hash": "d82c724e012b",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "progress.step_eval_repeats": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source means count of times AI said 'not ready yet'; 'Mal' = times/count, not fully rendered",
-    "suggestion": "YZ'nin 'henüz hazır değil' dediği kez sayısı",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "51d798a6e6ba",
-    "target_hash": "da15671fcd6f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "progress.step_eval_stickiest_label": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'bei:' (spent on) missing; means 'most time on:'",
-    "suggestion": "En çok zaman harcanan:",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "b6d749902a8e",
-    "target_hash": "dafda4fa814b",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "progress.step_eval_title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Added 'içgörüleri' (insights) not in source; also missing hyphenated 'değerlendirmesi' possessive",
-    "suggestion": "YZ adım değerlendirmesi",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "460bc65522c3",
-    "target_hash": "34e02e89703c",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "progress.tab.overview": {
@@ -21062,19 +20630,6 @@
     "target_hash": "722b373c96a0",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "repo.stats_intro": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Sitzungsmetriken' = session metrics, not 'per session'; 'Bewertungen + Auswertungen' (two terms) reduced to one",
-    "suggestion": "Oturum metrikleri, puanlamalar + değerlendirmelerden otomatik olarak üretilir. Elle düzenlemeyin.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "c33bd19bdfa6",
-    "target_hash": "7bb9b6acc80e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "repo.stats_method_switches_heading": {
     "verdict": "ok",
     "severity": "low",
@@ -21183,19 +20738,6 @@
     "tier1_verdict": "ok",
     "de_hash": "2319cd90fbab",
     "target_hash": "122d4ab0a38e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "repo.stats_table_to": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Nach' as table column header means 'To/After', not recipient 'Kime'",
-    "suggestion": "Bitiş",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "0ea77701f68c",
-    "target_hash": "4838fe52de68",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "repo.stats_table_transfer": {
@@ -21712,19 +21254,6 @@
     "target_hash": "c9a58e2a28fe",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "review.spaced_interval_label": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Wiederholung in' means 'Next review in'; 'Tekrar' loses the 'in' sense.",
-    "suggestion": "Tekrar süresi",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "ba8b75ff7a9e",
-    "target_hash": "5da57b457b37",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "review.spaced_start": {
     "verdict": "ok",
     "severity": "low",
@@ -21800,19 +21329,6 @@
     "tier1_verdict": "ok",
     "de_hash": "163182e7e7d6",
     "target_hash": "63da5e101298",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "review.summary_corrected": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'total' means total count, not 'errors' (hatadan). Adds meaning not in source.",
-    "suggestion": "{total} işlemden {corrected} tanesi düzeltildi",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "6ca56670ac66",
-    "target_hash": "71ee6028ddd4",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "review.summary_next": {
@@ -24133,19 +23649,6 @@
     "target_hash": "5780e85ae505",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "settings.missions_reset_confirm": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source means 'Confirm reset'; translation only says 'Confirm', omitting reset.",
-    "suggestion": "Sıfırlamayı onayla",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "d93f46900e8b",
-    "target_hash": "8f2e0d241da2",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "settings.missions_reset_done": {
     "verdict": "ok",
     "severity": "low",
@@ -25180,19 +24683,6 @@
     "target_hash": "016008ab8f15",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "settings.section_voice": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "'Sprache' means language/speech section, not 'Ses' (sound/voice)",
-    "suggestion": "Dil",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "f2a1cc71fa59",
-    "target_hash": "9ab936ba64af",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "settings.sounds": {
     "verdict": "ok",
     "severity": "low",
@@ -25325,19 +24815,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a10c5170b7e0",
     "target_hash": "70ad84f1ddb4",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.storage_mode_switch_notice": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'neuen Modus' translated as 'yeni arka uca' (new backend) instead of new mode",
-    "suggestion": "Depolama modu kaydedildi. Yeni modu etkinleştirmek için sayfayı yeniden yükle.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3dfcb62d7ade",
-    "target_hash": "5cf8881a51c8",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.storage_mode_warning": {
@@ -25492,19 +24969,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a95c93a836cd",
     "target_hash": "d5df3708bc68",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.theme_description": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Missing Turkish diacritics: uygulamanın, görüneceğini seçin, sisteminizin, açık.",
-    "suggestion": "Uygulamanın nasıl görüneceğini seçin. Otomatik, sisteminizin açık/koyu ayarını izler.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "1c71f2fb169a",
-    "target_hash": "3b406151682b",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.theme_group_classic": {
@@ -25824,19 +25288,6 @@
     "tier1_verdict": "ok",
     "de_hash": "214b5b846cf3",
     "target_hash": "78cc179f1956",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "settings.voice.tts_voice": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Stimme' means voice as in TTS voice; 'Ses' is sound, better 'Ses tonu'/'Konuşma sesi'",
-    "suggestion": "Konuşma sesi",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "b4d8672df1d6",
-    "target_hash": "9ab936ba64af",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "settings.voice.tts_voice_help": {
@@ -26382,19 +25833,6 @@
     "target_hash": "46a138cfe3dd",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "share.result.cta_record": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Zeig es deinen Freunden!' means 'Show it to your friends!', not just 'Show your friends!'",
-    "suggestion": "Arkadaşlarına göster onu!",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "needs_recheck",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "162607a73fd8",
-    "target_hash": "bc25356933ed",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "share.result.image_complete": {
     "verdict": "ok",
     "severity": "low",
@@ -26830,19 +26268,6 @@
     "tier1_verdict": "minor",
     "de_hash": "65786b2009a5",
     "target_hash": "3de66f26e717",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "srs.element_due": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Şimdi zamanı' means 'now the time'; should convey 'due now'",
-    "suggestion": "Şimdi zamanı geldi",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "needs_recheck",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "dfbf394345dc",
-    "target_hash": "8079d52dd875",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "srs.element_mastered": {
@@ -28417,19 +27842,6 @@
     "target_hash": "5b0883fe8458",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "sync.phone_hint_v17": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source says 'im Sync-Bereich der Desktop-App'; tr adds 'Ayarlar >' path not in source",
-    "suggestion": "Masaüstü uygulamasının Senkronizasyon bölümündeki QR kodu tara. Telefonunun arka kamerası eşleştirme bağlantısını otomatik okur.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "04d879ecdd99",
-    "target_hash": "7ca587fd1b20",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "sync.port": {
     "verdict": "ok",
     "severity": "low",
@@ -29177,19 +28589,6 @@
     "target_hash": "a5783ad63d3e",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "ui.api_key.skip_banner_dismiss": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Verstanden' means 'Understood'; 'Kapat' means 'Close'",
-    "suggestion": "Anladım",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "0fba1695ff72",
-    "target_hash": "7b31a9fc4816",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "ui.common.close": {
     "verdict": "ok",
     "severity": "low",
@@ -29861,19 +29260,6 @@
     "tier1_verdict": "ok",
     "de_hash": "1d261a8554d2",
     "target_hash": "1d261a8554d2",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "ui.themes.light": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Should be 'Açık' with proper diacritics",
-    "suggestion": "Açık",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "missing_diacritics",
-    "de_hash": "8d586f8b60df",
-    "target_hash": "1324d6942e1a",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "ui.themes.ocean": {

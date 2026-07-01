@@ -1129,19 +1129,6 @@
     "target_hash": "fae8648d0256",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "app.tagline": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Omits 'Sechs-Methoden-Modell' (six-method model); meaning altered/simplified",
-    "suggestion": "Προσαρμοστική μάθηση βάσει του μοντέλου των έξι μεθόδων.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "5e0c96bb035b",
-    "target_hash": "21f95da1075f",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "assessment.continue_later": {
     "verdict": "ok",
     "severity": "low",
@@ -2372,17 +2359,6 @@
     "tier1_verdict": "ok",
     "de_hash": "49f4ea3472e8",
     "target_hash": "24148eed63d7",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "common.loading": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "Ellipsis in source is '…' (U+2026); translation uses three separate dots. Also missing trailing ellipsis style consistency.",
-    "suggestion": "Φόρτωση…",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "c8ebc99b4344",
-    "target_hash": "890f52acc144",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "common.minutes": {
@@ -7427,17 +7403,6 @@
     "target_hash": "cb081c705feb",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "create_lesson.meta.description_label": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'περιγραφή' should be capitalised consistently: 'Θέμα / Περιγραφή' to match title-case of source 'Thema / Beschreibung'.",
-    "suggestion": "Θέμα / Περιγραφή",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "ece8f8e8f22a",
-    "target_hash": "e8d12cae15e8",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "create_lesson.meta.heading": {
     "verdict": "ok",
     "severity": "low",
@@ -8472,19 +8437,6 @@
     "target_hash": "22d81d2dde87",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "dashboard.card_spaced": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German means 'scheduled exercise', not 'distributed'; likely refers to spaced repetition",
-    "suggestion": "Προγραμματισμένη εξάσκηση",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3f058200f7df",
-    "target_hash": "ceac582c75e1",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "dashboard.card_tools": {
     "verdict": "ok",
     "severity": "low",
@@ -8773,17 +8725,6 @@
     "target_hash": "d0cbc8eb2b26",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "dashboard.review_queue.elements": {
-    "verdict": "missing_diacritics",
-    "severity": "medium",
-    "note": "'στοιχείο(α)' starts lowercase; as a standalone UI label it should be capitalised like the German.",
-    "suggestion": "Στοιχείο(α) προς επανάληψη",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "missing_diacritics",
-    "de_hash": "7f07f82fab7d",
-    "target_hash": "52bacffed753",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "dashboard.review_queue.loading": {
     "verdict": "ok",
     "severity": "low",
@@ -8826,19 +8767,6 @@
     "tier1_verdict": "ok",
     "de_hash": "d0b4b0173a4e",
     "target_hash": "7ff82d324d1e",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "dashboard.spaced_dismiss": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Ausblenden' means hide/dismiss from view, not reject/discard",
-    "suggestion": "Απόκρυψη",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "042fae8a9e4a",
-    "target_hash": "c49ab3dbb1d4",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "dashboard.spaced_empty": {
@@ -10985,45 +10913,6 @@
     "tier1_verdict": "ok",
     "de_hash": "dce45d031ad2",
     "target_hash": "0ca0baf3529c",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "gamification.badges.contextual_10.name": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Συγκείμενα' means 'texts/contexts' (noun); should be adjective 'Contextual'",
-    "suggestion": "Με βάση τα συμφραζόμενα 10",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3a1724693801",
-    "target_hash": "4fbe5a1abb71",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "gamification.badges.deductive_10.description": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'παραγωγικές' means 'productive', not 'deductive' (απαγωγικές)",
-    "suggestion": "Ολοκλήρωσε 10 απαγωγικές συνεδρίες.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "d75c612100d2",
-    "target_hash": "e284862659e4",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "gamification.badges.deductive_10.name": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Παραγωγικά' means 'productively', not 'deductive'",
-    "suggestion": "Παραγωγικό 10",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "b5958edabd21",
-    "target_hash": "b97e33bf7953",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "gamification.badges.dialogic_10.description": {
@@ -16717,19 +16606,6 @@
     "target_hash": "d098dbcef2f9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "lesson.next_step.resume_detail": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "German 'Aufgabe' means 'task/exercise', not 'Βήμα' (step)",
-    "suggestion": "Άσκηση {step} από {total}",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "aca9fc4f2a52",
-    "target_hash": "7c0297760c27",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "lesson.next_step.review": {
     "verdict": "ok",
     "severity": "low",
@@ -19022,19 +18898,6 @@
     "target_hash": "056eb4b48809",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "notebooklm.generate_failed": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing 'Lern-' (study/learning questions) and 'could not be' nuance weakened",
-    "suggestion": "Δεν ήταν δυνατή η δημιουργία ερωτήσεων μελέτης.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "f6fa3c5a0e98",
-    "target_hash": "c0fa3fc1ba73",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "notebooklm.generate_questions": {
     "verdict": "ok",
     "severity": "low",
@@ -19167,32 +19030,6 @@
     "tier1_verdict": "ok",
     "de_hash": "a2d6e643601d",
     "target_hash": "0db487411174",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "onboarding.concepts_explainer_mid1": {
-    "verdict": "wrong",
-    "severity": "high",
-    "note": "Source says 'take the assessment test for your'; translation says 'complete a short assessment to build the'",
-    "suggestion": ", και στη συνέχεια κάνετε το τεστ αξιολόγησης για το ",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "785c49aed7a2",
-    "target_hash": "1dbb543f7f1d",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "onboarding.concepts_explainer_mid2": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Source 'that each of your'; translation 'that guides each' loses meaning",
-    "suggestion": " — που κάθε ",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "8d78784e0e18",
-    "target_hash": "743e9e104f1c",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "onboarding.concepts_explainer_prefix": {
@@ -19887,19 +19724,6 @@
     "target_hash": "4afdf1149a37",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "progress.step_eval_title": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Awkward/mistranslated; should be 'Αξιολόγηση βημάτων AI'.",
-    "suggestion": "Αξιολόγηση βημάτων AI",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "460bc65522c3",
-    "target_hash": "b36d343f3cb3",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "progress.tab.overview": {
     "verdict": "ok",
     "severity": "low",
@@ -19986,19 +19810,6 @@
     "tier1_verdict": "ok",
     "de_hash": "4bbd60c9f07d",
     "target_hash": "bc3054aff6e4",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "pronunciation.ineligible": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing translation of 'zu deinem Projekt hinzu, um es zu aktivieren'; 'Fach' better as 'μάθημα'",
-    "suggestion": "Η εξάσκηση προφοράς διατίθεται για έργα εκμάθησης γλωσσών. Πρόσθεσε ένα μάθημα κάτω από 'Γλώσσες' στο έργο σου για να την ενεργοποιήσεις.",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "b6c15d49d178",
-    "target_hash": "1c457e9819a1",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "pronunciation.intro": {
@@ -20804,19 +20615,6 @@
     "tier1_verdict": "minor",
     "de_hash": "76f1f7cf70a1",
     "target_hash": "64d89e2dd464",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "repo.settings.enable_git": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'εμμονής' means obsession; Persistenz here is data persistence (μονιμότητα/διατήρηση).",
-    "suggestion": "Ενεργοποίηση διατήρησης Git",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "3b00a07d1527",
-    "target_hash": "38f3b151308e",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "repo.settings.error.load": {
@@ -27720,19 +27518,6 @@
     "target_hash": "414b7f168d29",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "subjects.theory": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "Missing 'Musik' (music); source is 'music theory'",
-    "suggestion": "Θεωρία μουσικής",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "329093e526ef",
-    "target_hash": "fbc423cf7916",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "subjects.trigonometry": {
     "verdict": "ok",
     "severity": "low",
@@ -28813,19 +28598,6 @@
     "target_hash": "2567a5ab76d9",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
-  "ui.a11y.chart_timeline_trend_up": {
-    "verdict": "untranslated",
-    "severity": "high",
-    "note": "English 'up' left untranslated; should be Greek.",
-    "suggestion": "αυξανόμενη",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "untranslated",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "untranslated",
-    "de_hash": "35be96983bf6",
-    "target_hash": "75a288c0d689",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
   "ui.a11y.skip_to_content": {
     "verdict": "ok",
     "severity": "low",
@@ -28978,19 +28750,6 @@
     "tier1_verdict": "ok",
     "de_hash": "6ff25d8437ed",
     "target_hash": "880c853613cd",
-    "checked_at": "2026-07-01T08:28:44.909998+00:00"
-  },
-  "ui.api_key.skip_banner_dismiss": {
-    "verdict": "wrong",
-    "severity": "medium",
-    "note": "'Verstanden' means 'Understood', not 'Παράβλεψη' (Skip/Ignore)",
-    "suggestion": "Κατανοητό",
-    "tier1_model": "claude-sonnet-4-6",
-    "tier1_verdict": "wrong",
-    "tier2_model": "claude-opus-4-8",
-    "tier2_verdict": "wrong",
-    "de_hash": "0fba1695ff72",
-    "target_hash": "59a5a2308629",
     "checked_at": "2026-07-01T08:28:44.909998+00:00"
   },
   "ui.common.close": {
