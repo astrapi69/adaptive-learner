@@ -608,7 +608,7 @@
     "section_api_keys": "API anahtarları",
     "section_danger": "Hesap",
     "section_ui": "Arayüz",
-    "section_appearance": "Gorunum",
+    "section_appearance": "Görünüm",
     "content_view": "İçerik görünümü",
     "content_view_description": "İndirilen içeriğin içerik sekmelerinde nasıl gösterileceği. İçerik görünümündeki hızlı geçiş aynı ayarı değiştirir.",
     "section_profile": "Profil",
@@ -1291,7 +1291,7 @@
         "description": "100 gün üst üste pratik yap."
       },
       "all_six_methods": {
-        "name": "Yöntem Kâşifi",
+        "name": "Yöntem Kaşifi",
         "description": "Altı yöntemin hepsinde birer oturum tamamla."
       },
       "deductive_10": {
@@ -1496,7 +1496,7 @@
       "dark": "Koyu",
       "ocean": "Okyanus",
       "forest": "Orman",
-      "high-contrast": "Yuksek Kontrast",
+      "high-contrast": "Yüksek Kontrast",
       "sepia": "Sepya",
       "auto": "Otomatik (Sistem)"
     },
@@ -2380,9 +2380,9 @@
     },
     "ai_check": {
       "badge": {
-        "verified": "Yapay zeka denetimli",
-        "stale": "Yapay zeka denetimi eskimis",
-        "invalid": "Yapay zeka denetimi gecersiz"
+        "verified": "Yapay zekâ denetimli",
+        "stale": "Yapay zekâ denetimi eskimiş",
+        "invalid": "Yapay zekâ denetimi geçersiz"
       },
       "last_checked": "Son denetim: {when}",
       "checked_with": "Şununla denetlendi",
@@ -2394,8 +2394,8 @@
         "card": "Kart",
         "field": "Alan"
       },
-      "button": "Yapay zeka ile denetle",
-      "title": "Yapay zeka icerik denetimi",
+      "button": "Yapay zekâ ile denetle",
+      "title": "Yapay zekâ içerik denetimi",
       "loading": "Kartlar hazirlaniyor...",
       "cost_estimate": "~{cards} kart, ~{tokens} token, ~{usd}.",
       "privacy": "Kartlariniz denetim icin yapilandirilmis yapay zeka saglayiciniza gonderilir. Kisisel veri aktarilmaz.",
@@ -2410,7 +2410,7 @@
         "issues": "{count} kartta sorun var",
         "all_ok": "Tum kartlar gecti. Sorun bulunamadi.",
         "problem": "Sorun",
-        "suggestion": "Oneri"
+        "suggestion": "Öneri"
       }
     },
     "quality": {
