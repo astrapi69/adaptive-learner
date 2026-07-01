@@ -37,7 +37,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DownloadProgress from "../../../shared/feedback/DownloadProgress";
 import { SecretInput } from "../../../shared/forms/SecretInput";
-import { buildAddRepoLink } from "../../../lib/content/placement/share-link";
+import { buildAddRepoLink, parseAddRepoQr } from "../../../lib/content/placement/share-link";
+import { QrImageUpload } from "../../../shared/qr";
 import InviteCodesPanel from "../../content/invites/InviteCodesPanel";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
@@ -93,6 +94,10 @@ export default function ContentRepoSettingsSection() {
   const [url, setUrl] = useState("");
   const [branch, setBranch] = useState("main");
   const [token, setToken] = useState("");
+  /** Feedback for the QR-image-upload prefill (#1317). */
+  const [qrNotice, setQrNotice] = useState<
+    { kind: "filled" | "invalid" } | null
+  >(null);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<RepoProgress | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
@@ -830,6 +835,57 @@ export default function ContentRepoSettingsSection() {
               />
             </label>
           </div>
+        </div>
+        {/* #1317 — upload a QR image of a shared /add-repo link to prefill the
+            form, so a coach's QR can be added without a second camera device. */}
+        <div className="mt-3 flex flex-col gap-1">
+          <QrImageUpload
+            testId="content-repo-qr-upload"
+            onResult={(raw) => {
+              const parsed = parseAddRepoQr(raw);
+              if (!parsed) {
+                setQrNotice({ kind: "invalid" });
+                return;
+              }
+              setUrl(parsed.url);
+              setBranch(parsed.branch);
+              setQrNotice({ kind: "filled" });
+            }}
+            labels={{
+              upload: t("content_repo.qr.upload", "Upload QR image"),
+              decoding: t("content_repo.qr.decoding", "Reading QR…"),
+              decodeError: t(
+                "content_repo.qr.no_qr",
+                "No QR code found in the image.",
+              ),
+            }}
+          />
+          {qrNotice?.kind === "filled" && (
+            <p
+              className="text-sm text-fg-secondary"
+              role="status"
+              aria-live="polite"
+              data-testid="content-repo-qr-filled"
+            >
+              {t(
+                "content_repo.qr.filled",
+                "Repository details filled from the QR code.",
+              )}
+            </p>
+          )}
+          {qrNotice?.kind === "invalid" && (
+            <p
+              className="text-sm text-[var(--danger)]"
+              role="status"
+              aria-live="polite"
+              data-testid="content-repo-qr-invalid"
+            >
+              {t(
+                "content_repo.qr.invalid",
+                "The QR code is not a valid 'add repository' link.",
+              )}
+            </p>
+          )}
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button

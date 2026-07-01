@@ -26,11 +26,9 @@
  */
 
 import {useRef, useState} from "react";
-import {Html5Qrcode} from "html5-qrcode";
 
+import {decodeQrImage} from "../../shared/qr";
 import {parsePairingUri} from "../../storage/sync/sync-engine";
-
-const SCAN_FILE_REGION_ID = "qr-scanner-file-region";
 
 export interface QRImageUploadProps {
     /** Fires with the raw pairing URI on a successful scan. */
@@ -54,14 +52,10 @@ export default function QRImageUpload({
 
     async function handleFile(file: File) {
         setStatus({kind: "decoding"});
-        // ``scanFile`` is a static-style method on a fresh
-        // Html5Qrcode instance; the library requires a DOM
-        // element id to mount its internal canvas. We mount
-        // off-screen because we never want to show this canvas
-        // to the user.
-        const scanner = new Html5Qrcode(SCAN_FILE_REGION_ID);
+        // Decode via the shared ``html5-qrcode`` helper (it manages its own
+        // off-screen mount); sync-specific validation stays here.
         try {
-            const decoded = await scanner.scanFile(file, /* showImage */ false);
+            const decoded = await decodeQrImage(file);
             const payload = parsePairingUri(decoded);
             if (payload === null) {
                 setStatus({
@@ -117,21 +111,6 @@ export default function QRImageUpload({
                 onChange={onChange}
                 style={{display: "none"}}
                 data-testid="qr-image-upload-input"
-            />
-            {/* Off-screen mount target the library needs. We never
-                show it to the user; ``showImage=false`` on scanFile
-                further suppresses the library's preview attempt. */}
-            <div
-                id={SCAN_FILE_REGION_ID}
-                style={{
-                    position: "absolute",
-                    left: -9999,
-                    top: -9999,
-                    width: 1,
-                    height: 1,
-                    overflow: "hidden",
-                }}
-                aria-hidden="true"
             />
             {status.kind === "invalid" && (
                 <p

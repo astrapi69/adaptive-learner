@@ -3173,6 +3173,13 @@
     "title": "Content repositories",
     "last_sync": "Last sync: {when}",
     "added": "Repository added.",
+    "qr": {
+      "upload": "Upload QR image",
+      "decoding": "Reading QR…",
+      "no_qr": "No QR code found in the image.",
+      "invalid": "The QR code is not a valid 'add repository' link.",
+      "filled": "Repository details filled from the QR code."
+    },
     "synced": "Synced: {sets} sets, {lessons} lessons.",
     "token_hint": "Private repositories need a token — paste one below, or set a shared token in Settings → Integrations.",
     "trust_official": "Official: Curated and quality-assured by the project team.",
