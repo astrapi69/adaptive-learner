@@ -83,26 +83,45 @@
     <!-- Fonts are bundled locally in public/fonts/ (no CDN dependency) -->
     <!-- Phase 58E: apply the saved theme BEFORE first paint to avoid a
          flash of the wrong theme. Mirrors the resolution in
-         src/hooks/useTheme.ts (dotted key + legacy migration + auto). -->
+         src/hooks/ui/useTheme.ts (dotted key + legacy migration + auto)
+         and DEFAULT_THEME_CHOICE ("soft-pop") in src/lib/theme/themes.ts. -->
     <script>
       (function () {
+        // Concrete, selectable themes (keep in sync with THEME_IDS in
+        // src/lib/theme/themes.ts). "auto" is handled separately below.
+        var valid = [
+          "light", "dark", "ocean", "forest", "high-contrast", "sepia",
+          "catppuccin-latte", "supabase", "graphite", "catppuccin-mocha",
+          "soft-pop", "amethyst-haze"
+        ];
+        // Default for users WITHOUT a saved choice (mirrors
+        // DEFAULT_THEME_CHOICE in src/lib/theme/themes.ts).
+        var DEFAULT_THEME = "soft-pop";
         try {
-          var valid = ["light", "dark", "ocean", "forest", "high-contrast", "sepia"];
           var choice = localStorage.getItem("adaptive-learner.theme");
           if (choice === null) {
             var legacy = localStorage.getItem("adaptive-learner-theme");
             if (legacy === "light" || legacy === "dark") choice = legacy;
           }
-          var resolved =
-            choice && valid.indexOf(choice) !== -1
-              ? choice
-              : window.matchMedia &&
-                  window.matchMedia("(prefers-color-scheme: dark)").matches
+          var resolved;
+          if (choice === "auto") {
+            // Explicit OS-follow: resolve live to light/dark.
+            resolved =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches
                 ? "dark"
                 : "light";
+          } else if (choice && valid.indexOf(choice) !== -1) {
+            // Existing user's saved concrete theme wins.
+            resolved = choice;
+          } else {
+            // No saved / invalid choice -> the Soft Pop default.
+            resolved = DEFAULT_THEME;
+          }
           document.documentElement.setAttribute("data-theme", resolved);
         } catch (e) {
-          /* localStorage blocked -> fall through to the default light theme */
+          /* localStorage blocked -> apply the Soft Pop default */
+          document.documentElement.setAttribute("data-theme", DEFAULT_THEME);
         }
       })();
     </script>

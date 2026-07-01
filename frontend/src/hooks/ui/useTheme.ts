@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 
 import {
+    DEFAULT_THEME_CHOICE,
     isThemeChoice,
     resolveTheme,
     THEMES,
@@ -34,8 +35,10 @@ function getInitialChoice(): ThemeChoice {
         localStorage.removeItem(LEGACY_KEY);
         return legacy;
     }
-    // No stored preference -> follow the OS.
-    return "auto";
+    // No stored preference -> the Soft Pop default (new users). Existing
+    // users are handled by the stored-choice + legacy-migration paths above,
+    // so their saved choice always wins over this default.
+    return DEFAULT_THEME_CHOICE;
 }
 
 function systemPrefersDark(): boolean {
