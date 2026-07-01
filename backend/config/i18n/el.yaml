@@ -1,6 +1,6 @@
 app:
   name: Adaptive Learner
-  tagline: Μάθηση που προσαρμόζεται σε σένα.
+  tagline: Προσαρμοστική μάθηση βάσει του μοντέλου των έξι μεθόδων.
   skeleton_notice: Σκελετική κατάσταση. Τα μοντέλα του τομέα, τα plugins και οι σελίδες έρχονται στις επόμενες φάσεις — δες docs/adaptive-learner-project-reference.md.
 common:
   ok: "Εντάξει"
@@ -8,7 +8,7 @@ common:
   confirm_title: "Επιβεβαίωση"
   save: Αποθήκευση
   cancel: Άκυρο
-  loading: Φόρτωση...
+  loading: Φόρτωση…
   error: Κάτι πήγε στραβά.
   back: Πίσω
   next: Επόμενο
@@ -228,8 +228,8 @@ onboarding:
   title: Δημιουργία έργου μάθησης
   intro: Πες μας για τον στόχο μάθησής σου. Το Adaptive Learner το χρησιμοποιεί για να χτίσει το προφίλ σου και να προτείνει μέθοδο εκκίνησης.
   concepts_explainer_prefix: "Θα ορίσετε ένα "
-  concepts_explainer_mid1: ", και στη συνέχεια ολοκληρώνετε μια σύντομη αξιολόγηση για να χτίσετε το "
-  concepts_explainer_mid2: " — που καθοδηγεί κάθε "
+  concepts_explainer_mid1: ", και στη συνέχεια κάνετε το τεστ αξιολόγησης για το"
+  concepts_explainer_mid2: "— που κάθε"
   concepts_explainer_suffix: " που ακολουθεί."
   term_learning_project: "μαθησιακό έργο"
   term_learning_profile: "μαθησιακό προφίλ"
@@ -306,13 +306,13 @@ dashboard:
   card_counter: Συνεδρίες
   card_tools: Συστάσεις εργαλείων
   card_recent_sessions: "Πρόσφατες συνεδρίες"
-  card_spaced: Διανεμημένη εξάσκηση
+  card_spaced: Προγραμματισμένη εξάσκηση
   card_review_queue: Προς επανάληψη
   card_focus_areas: Σημεία εστίασης
   card_paused_lessons: Συνέχεια εκμάθησης
   review_queue:
     loading: "Φόρτωση…"
-    elements: "στοιχείο(α) προς επανάληψη"
+    elements: "Στοιχείο(α) προς επανάληψη"
     overdue: "εκπρόθεσμα — ξεκίνα από εδώ"
     open: "Άνοιγμα συνεδρίας επανάληψης"
     quick: "Γρήγορη επανάληψη"
@@ -337,7 +337,7 @@ dashboard:
   metric_total_minutes: "Συνολικά λεπτά"
   metric_total_sessions: "Συνολικές συνεδρίες"
   pronunciation_quick_start: "Εξάσκηση προφοράς"
-  spaced_dismiss: "Απόρριψη"
+  spaced_dismiss: "Απόκρυψη"
   spaced_empty: "Τίποτα για ανανέωση αυτή τη στιγμή. Τέλειος ρυθμός!"
   spaced_interval_label: "Επανάληψη σε"
   spaced_start: "Έναρξη"
@@ -449,7 +449,7 @@ progress:
   commit_duration: Διάρκεια
   commit_date: Ημερομηνία
   no_commits: Δεν υπάρχουν ολοκληρωμένες συνεδρίες ακόμα.
-  step_eval_title: Αναλυτικά αξιολόγησης AI ανά βήμα
+  step_eval_title: Αξιολόγηση βημάτων AI
   step_eval_empty: Δεν υπάρχουν ακόμα δεδομένα — ξεκίνα μια συνεδρία για να δεις στοιχεία.
   step_eval_avg_confidence: Μέση εμπιστοσύνη AI
   step_eval_repeats: Φορές που η AI είπε 'όχι ακόμα'
@@ -1208,8 +1208,8 @@ gamification:
       name: Εξερευνητής Μεθόδων
       description: Ολοκλήρωσε μια συνεδρία σε όλες τις έξι μεθόδους.
     deductive_10:
-      name: Παραγωγικά 10
-      description: Ολοκλήρωσε 10 παραγωγικές συνεδρίες.
+      name: Παραγωγικό 10
+      description: Ολοκλήρωσε 10 απαγωγικές συνεδρίες.
     inductive_10:
       name: Επαγωγικά 10
       description: Ολοκλήρωσε 10 επαγωγικές συνεδρίες.
@@ -1220,7 +1220,7 @@ gamification:
       name: Διαλογικά 10
       description: Ολοκλήρωσε 10 διαλογικές συνεδρίες.
     contextual_10:
-      name: Συγκείμενα 10
+      name: Με βάση τα συμφραζόμενα 10
       description: Ολοκλήρωσε 10 συγκειμενικές συνεδρίες.
     ai_adaptive_10:
       name: Προσαρμοστικό AI 10
@@ -1343,7 +1343,7 @@ pronunciation:
   focus_on: 'Εστίαση σε:'
   phrase_failed: Δεν δημιουργήθηκε φράση.
   judge_failed: Δεν αξιολογήθηκε η προσπάθεια.
-  ineligible: Η εξάσκηση προφοράς διατίθεται για έργα εκμάθησης γλωσσών. Πρόσθεσε θέμα κάτω από 'Γλώσσες'.
+  ineligible: Η εξάσκηση προφοράς διατίθεται για έργα εκμάθησης γλωσσών. Πρόσθεσε ένα μάθημα κάτω από 'Γλώσσες' στο έργο σου για να την ενεργοποιήσεις.
 notebooklm:
   section_title: Υλικό μελέτης (έτοιμο για NotebookLM)
   generate_questions: Δημιουργία ερωτήσεων μελέτης
@@ -1359,7 +1359,7 @@ notebooklm:
   questions_load_failed: Δεν φορτώθηκαν οι ερωτήσεις.
   questions_generated: Δημιουργήθηκαν {n} νέες ερωτήσεις.
   no_questions_generated: Δεν εξήχθησαν ερωτήσεις. Δοκίμασε μετά από λίγες συνεδρίες ακόμα.
-  generate_failed: Δεν δημιουργήθηκαν ερωτήσεις.
+  generate_failed: Δεν ήταν δυνατή η δημιουργία ερωτήσεων μελέτης.
   zip_exported: Εξήχθησαν {n} αρχεία στο {filename}.
   zip_failed: Η εξαγωγή ZIP απέτυχε.
   guide_ready: Ο οδηγός μελέτης λήφθηκε.
@@ -1447,7 +1447,7 @@ ui:
     required_long: "Ρυθμίστε ένα κλειδί παρόχου στις Ρυθμίσεις για να ενεργοποιήσετε αυτή την ενέργεια."
     open_settings: "Άνοιγμα ρυθμίσεων"
     skip_banner: "Ρυθμίστε ένα κλειδί API στις Ρυθμίσεις για να χρησιμοποιήσετε λειτουργίες AI."
-    skip_banner_dismiss: "Παράβλεψη"
+    skip_banner_dismiss: "Κατανοητό"
     feature_analyze: "για ανάλυση συνομιλιών"
     feature_session: "για να ξεκινήσετε μια συνεδρία"
     feature_anki: "για εξαγωγή καρτών Anki"
@@ -1466,7 +1466,7 @@ ui:
     chart_radar_summary: "Η πιο δυνατή σας μέθοδος μάθησης: {method} ({value})"
     chart_timeline_label: "Χρονολόγιο προόδου των τελευταίων {n} συνεδριών"
     chart_timeline_summary: "{n} συνεδρίες· η κατανόηση τείνει προς τα {trend}"
-    chart_timeline_trend_up: "up"
+    chart_timeline_trend_up: "αυξανόμενη"
     chart_timeline_trend_down: "κάτω"
     chart_timeline_trend_flat: "σταθερή"
     chart_distribution_label: "Ραβδόγραμμα κατανομής μεθόδων"
@@ -1648,7 +1648,7 @@ repo:
       save: "Αδυναμία αποθήκευσης ρυθμίσεων"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
-    enable_git: "Ενεργοποίηση εμμονής git"
+    enable_git: "Ενεργοποίηση διατήρησης Git"
 lesson:
   mode:
     label: "Λειτουργία μαθήματος"
@@ -1834,7 +1834,7 @@ lesson:
     next_lesson: "Επόμενο μάθημα"
     start: "Έναρξη"
     resume: "Συνέχεια"
-    resume_detail: "Βήμα {step} από {total}"
+    resume_detail: "Άσκηση {step} από {total}"
     adaptive: "Προσαρμοστικό μάθημα"
     adaptive_focus: "Εστίαση σε: {topic}"
     adaptive_errors: "{count} λάθη σε αυτό το μάθημα"
@@ -2416,7 +2416,7 @@ create_lesson:
     source_lang_label: "Η γλώσσα σας"
     level_label: "Επίπεδο"
     same_language: "Η γλώσσα που μαθαίνετε πρέπει να διαφέρει από τη γλώσσα σας."
-    description_label: "Θέμα / περιγραφή"
+    description_label: "Θέμα / Περιγραφή"
     author_label: "Όνομα συγγραφέα"
   cards:
     heading: "Προσθήκη καρτών λεξιλογίου"
@@ -2601,7 +2601,7 @@ learning_path:
     add_lesson: "Προσθήκη μαθήματος"
     search_lessons: "Αναζήτηση μαθημάτων…"
     no_lessons: "Δεν βρέθηκαν μαθήματα."
-    done_adding: "Ετοιμο"
+    done_adding: "Έτοιμο"
     move_up: "Μετακίνηση πάνω"
     move_down: "Μετακίνηση κάτω"
     remove_lesson: "Αφαίρεση μαθήματος"
@@ -2733,7 +2733,7 @@ subjects:
   biology: "Βιολογία"
   astronomy: "Αστρονομία"
   earth_sciences: "Γεωεπιστήμες"
-  theory: "Θεωρία"
+  theory: "Θεωρία μουσικής"
   piano: "Πιάνο"
   guitar: "Κιθάρα"
   violin: "Βιολί"
