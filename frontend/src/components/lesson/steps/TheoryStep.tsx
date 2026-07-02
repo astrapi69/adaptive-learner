@@ -20,8 +20,10 @@ import { Button } from "@/components/ui/button";
 
 import CodeBlock from "../../content/browser/CodeBlock";
 import AskAiPanel from "../ask/AskAiPanel";
+import StepExamples from "./StepExamples";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import type { ReadAloudController } from "../../../hooks/lesson/audio/useReadAloud";
+import type { ContentLessonExample } from "../../../storage/types";
 import { parseStepAnchor } from "../../../lib/lesson/lesson-anchors";
 import { markdownToSpeech } from "../../../lib/lesson/tts-text";
 
@@ -40,6 +42,10 @@ interface TheoryStepProps {
   /** Schema v1.4 (#139) — optional external example link. */
   exampleUrl?: string | null;
   exampleLabel?: string | null;
+  /** Schema v1.5 (#1326) — optional inline worked examples rendered under
+   *  the body (text or syntax-highlighted code). Distinct from the
+   *  ``example_url`` external-link variant; the two may coexist. */
+  examples?: ContentLessonExample[] | null;
 }
 
 export default function TheoryStep({
@@ -51,6 +57,7 @@ export default function TheoryStep({
   onAnchorClick,
   exampleUrl = null,
   exampleLabel = null,
+  examples = null,
 }: TheoryStepProps) {
   const { t } = useI18n();
   const rewritten = useMemo(
@@ -154,6 +161,11 @@ export default function TheoryStep({
       >
         {rewritten}
       </Markdown>
+      {/* #1326 — optional inline worked examples (text or code) under the
+                theory body, distinct from the external example link below. */}
+      {examples && examples.length > 0 ? (
+        <StepExamples examples={examples} context="theory" />
+      ) : null}
       {/* #139 — optional external example link under the theory
                 content. Rendered only when the author supplied one
                 (rule: a function not available is not offered). */}

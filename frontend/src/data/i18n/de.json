@@ -1788,6 +1788,9 @@
       "open_settings": "KI-Einstellungen",
       "error": "Die KI-Anfrage ist fehlgeschlagen. Bitte versuche es erneut."
     },
+    "example": {
+      "label": "Beispiel"
+    },
     "mode": {
       "label": "Lektionsmodus",
       "practice": "Üben",

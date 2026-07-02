@@ -2,7 +2,7 @@
 
 > **Generated** from the authoritative Pydantic models (`adaptive_learner_content_loader.schema`) via `make sync-schema` (EXP-039). Do not edit by hand — edit the models and re-run the generator.
 
-Schema version: **1.4** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
+Schema version: **1.5** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
 
 Field descriptions below come verbatim from the model definitions.
 
@@ -87,6 +87,7 @@ One exercise step. Type-tagged via ``type``.
 | `cloze_mode` | `"type" | "select" | "multiselect" | null` | no | - |
 | `direction` | `"source_to_target" | "target_to_source" | "both" | "random"` | no | - |
 | `distractors` | `string[]` | no | maxItems=20 |
+| `examples` | `InlineExample[] | null` | no | - |
 | `hint` | `string | null` | no | - |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
 | `images` | `PictureImage[] | null` | no | - |
@@ -100,6 +101,17 @@ One exercise step. Type-tagged via ``type``.
 ### `ExerciseType` (enum)
 
 `matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze`
+
+### `InlineExample`
+
+One inline worked example on a theory step or exercise (schema v1.5).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `content` | `string` | yes | minLen=1, maxLen=5000 |
+| `language` | `string | null` | no | - |
+| `title` | `string | null` | no | - |
+
 
 ### `LessonResource`
 
@@ -129,6 +141,7 @@ One step in the lesson sequence.
 | `body` | `string | null` | no | - |
 | `example_label` | `string | null` | no | - |
 | `example_url` | `string | null` | no | - |
+| `examples` | `InlineExample[] | null` | no | - |
 | `exercise` | `Exercise | null` | no | - |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
 | `review_lesson_id` | `string | null` | no | - |

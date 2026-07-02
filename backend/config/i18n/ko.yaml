@@ -1668,6 +1668,8 @@ lesson:
     no_key: "질문하려면 AI 키를 설정하세요 - AI 설정을 확인하세요."
     open_settings: "AI 설정"
     error: "AI 요청이 실패했습니다. 다시 시도해 주세요."
+  example:
+    label: "예시"
   mode:
     label: "레슨 모드"
     practice: "연습"

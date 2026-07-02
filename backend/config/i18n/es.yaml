@@ -1659,6 +1659,8 @@ lesson:
     no_key: "Configura una clave de IA para preguntar - consulta los ajustes de IA."
     open_settings: "Ajustes de IA"
     error: "La solicitud de IA falló. Inténtalo de nuevo."
+  example:
+    label: "Ejemplo"
   mode:
     label: "Modo de lección"
     practice: "Práctica"

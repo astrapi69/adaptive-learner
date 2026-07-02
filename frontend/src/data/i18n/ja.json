@@ -1788,6 +1788,9 @@
       "open_settings": "AI設定",
       "error": "AIリクエストに失敗しました。もう一度お試しください。"
     },
+    "example": {
+      "label": "例"
+    },
     "mode": {
       "label": "レッスンモード",
       "practice": "練習",
