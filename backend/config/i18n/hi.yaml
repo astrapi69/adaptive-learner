@@ -1653,6 +1653,8 @@ lesson:
     no_key: "पूछने के लिए एक AI कुंजी सेट करें - AI सेटिंग्स देखें।"
     open_settings: "AI सेटिंग्स"
     error: "AI अनुरोध विफल रहा। कृपया पुनः प्रयास करें।"
+  example:
+    label: "उदाहरण"
   mode:
     label: "पाठ मोड"
     practice: "अभ्यास"

@@ -1668,6 +1668,8 @@ lesson:
     no_key: "Set an AI key to ask about this - see AI settings."
     open_settings: "AI settings"
     error: "The AI request failed. Please try again."
+  example:
+    label: "Example"
   mode:
     label: "Lesson mode"
     practice: "Practice"

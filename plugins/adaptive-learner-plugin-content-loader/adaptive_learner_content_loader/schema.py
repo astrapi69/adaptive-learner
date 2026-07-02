@@ -425,6 +425,54 @@ class PictureImage(BaseModel):
     )
 
 
+class InlineExample(BaseModel):
+    """One inline worked example on a theory step or exercise (schema v1.5).
+
+    An inline example carries REAL content the learner reads in place —
+    a sample sentence (language lessons) or a code snippet with syntax
+    highlighting (programming lessons). This is DISTINCT from
+    ``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an
+    external illustration: ``example_url`` is the LINK variant,
+    ``examples`` is the INLINE-CONTENT variant. The two are complementary
+    and may coexist on the same theory step.
+
+    When ``language`` is set, ``content`` is treated as source code in
+    that language and rendered as a syntax-highlighted block (the same
+    ``CodeBlock`` the theory Markdown + code cards use); when it is
+    absent, ``content`` is plain text. Additive + optional, so content
+    without ``examples`` validates unchanged.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    content: str = Field(
+        ...,
+        description=(
+            "The example's content. Plain text (e.g. a sample sentence) "
+            "when ``language`` is absent; source code in ``language`` "
+            "when it is set."
+        ),
+        min_length=1,
+        max_length=5000,
+    )
+    language: str | None = Field(
+        default=None,
+        description=(
+            "Optional highlighter language hint ('jsx', 'python', 'sql', "
+            "...). When set, ``content`` is rendered as a syntax-"
+            "highlighted code block; when null, ``content`` is plain "
+            "text. Free string; the viewer maps unknown values to plain "
+            "text (same convention as ``Card.code_language``)."
+        ),
+        max_length=30,
+    )
+    title: str | None = Field(
+        default=None,
+        description="Optional short heading shown above the example.",
+        max_length=200,
+    )
+
+
 class Exercise(BaseModel):
     """One exercise step. Type-tagged via ``type``.
 
@@ -549,6 +597,18 @@ class Exercise(BaseModel):
             "button."
         ),
         max_length=1000,
+    )
+    examples: list[InlineExample] | None = Field(
+        default=None,
+        description=(
+            "Optional inline worked examples shown BEFORE the answer "
+            "controls, to help the learner understand the task (schema "
+            "v1.5, additive). Each is plain text or a syntax-highlighted "
+            "code snippet (see ``InlineExample.language``). Author "
+            "responsibility not to spoil the answer. Independent of the "
+            "per-type fields; absent on exercises that need no example."
+        ),
+        max_length=20,
     )
     sentence: str | None = Field(
         default=None,
@@ -814,6 +874,20 @@ class LessonStep(BaseModel):
             "falls back to a localized 'View example' label when empty."
         ),
         max_length=200,
+    )
+    examples: list[InlineExample] | None = Field(
+        default=None,
+        description=(
+            "THEORY: optional inline worked examples rendered under the "
+            "step body (schema v1.5, additive). DISTINCT from "
+            "``example_url``: that links OUT to an external illustration, "
+            "``examples`` carries the example content INLINE (a sample "
+            "sentence, or a syntax-highlighted code snippet — see "
+            "``InlineExample.language``). The two may coexist on one "
+            "step. Additive + optional; steps without ``examples`` "
+            "validate unchanged."
+        ),
+        max_length=20,
     )
     theory_ref: str | None = Field(
         default=None,

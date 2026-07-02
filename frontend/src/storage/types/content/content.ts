@@ -11,6 +11,7 @@ import type {
   ClozeBlank as GeneratedClozeBlank,
   Direction as GeneratedDirection,
   Exercise as GeneratedExercise,
+  InlineExample as GeneratedInlineExample,
   Lesson as GeneratedLesson,
   LessonResource as GeneratedLessonResource,
   LessonStep as GeneratedLessonStep,
@@ -156,6 +157,12 @@ export type ContentLessonCardTokenRole = GeneratedCardTokenRole;
 /** Phase 52D / v1.35.0 / P-127 — one blank inside a CLOZE exercise's
  *  ``sentence``. */
 export type ContentLessonClozeBlank = GeneratedClozeBlank;
+
+/** Schema v1.5 (#1326) — one inline worked example on a theory step or an
+ *  exercise. ``content`` is plain text, or syntax-highlighted code when
+ *  ``language`` is set. Distinct from the ``example_url`` external-link
+ *  variant (#139). */
+export type ContentLessonExample = GeneratedInlineExample;
 
 /** EXP-029 / MED-05 — one lesson-level supplementary-media entry (the raw
  *  shape stored in the content JSON). Optional + additive, so pre-EXP-029

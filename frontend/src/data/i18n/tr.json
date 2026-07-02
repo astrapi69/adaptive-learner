@@ -1788,6 +1788,9 @@
       "open_settings": "Yapay zekâ ayarları",
       "error": "Yapay zekâ isteği başarısız oldu. Lütfen tekrar dene."
     },
+    "example": {
+      "label": "Örnek"
+    },
     "mode": {
       "label": "Ders modu",
       "practice": "Alıştırma",

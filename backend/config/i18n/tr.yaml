@@ -1657,6 +1657,8 @@ lesson:
     no_key: "Soru sormak için bir yapay zekâ anahtarı ayarla - yapay zekâ ayarlarına bak."
     open_settings: "Yapay zekâ ayarları"
     error: "Yapay zekâ isteği başarısız oldu. Lütfen tekrar dene."
+  example:
+    label: "Örnek"
   mode:
     label: "Ders modu"
     practice: "Alıştırma"

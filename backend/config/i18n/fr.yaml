@@ -1659,6 +1659,8 @@ lesson:
     no_key: "Ajoute une clé IA pour poser une question - voir les réglages IA."
     open_settings: "Réglages IA"
     error: "La requête IA a échoué. Réessaie."
+  example:
+    label: "Exemple"
   mode:
     label: "Mode de leçon"
     practice: "Entraînement"

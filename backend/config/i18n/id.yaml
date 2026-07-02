@@ -1668,6 +1668,8 @@ lesson:
     no_key: "Setel kunci AI untuk bertanya - lihat pengaturan AI."
     open_settings: "Pengaturan AI"
     error: "Permintaan AI gagal. Silakan coba lagi."
+  example:
+    label: "Contoh"
   mode:
     label: "Mode pelajaran"
     practice: "Latihan"
