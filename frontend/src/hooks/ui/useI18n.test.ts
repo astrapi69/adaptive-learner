@@ -1,4 +1,6 @@
-import {describe, it, expect} from "vitest";
+import {afterEach, describe, it, expect} from "vitest";
+
+import {isUiLanguage, readSavedLang, resolveInitialUiLanguage} from "./useI18n";
 
 // Test the t() function logic directly (without React hooks)
 function createT(strings: Record<string, unknown>) {
@@ -50,5 +52,76 @@ describe("i18n t() function", () => {
 
     it("handles empty strings", () => {
         expect(t("", "Fallback")).toBe("Fallback");
+    });
+});
+
+describe("resolveInitialUiLanguage — persisted UI language survives a reload (#1333)", () => {
+    it("returns the saved choice (the reported el regression)", () => {
+        // A Greek choice persisted before an update must be honoured, not
+        // dropped to the "de" default.
+        expect(resolveInitialUiLanguage({saved: "el"})).toBe("el");
+    });
+
+    it("lets the saved choice WIN over the app-config default", () => {
+        // Dexie getApp() is empty, but even an explicit app default must not
+        // overwrite the user's stored choice.
+        expect(
+            resolveInitialUiLanguage({saved: "el", appDefault: "de"}),
+        ).toBe("el");
+    });
+
+    it("falls back to the app default when nothing is saved", () => {
+        expect(resolveInitialUiLanguage({saved: null, appDefault: "fr"})).toBe("fr");
+    });
+
+    it("falls back to the browser locale when no saved choice or app default", () => {
+        expect(
+            resolveInitialUiLanguage({navigatorLang: "el-GR"}),
+        ).toBe("el");
+        expect(
+            resolveInitialUiLanguage({navigatorLang: "pt-BR"}),
+        ).toBe("pt");
+    });
+
+    it("defaults to 'de' when nothing resolves", () => {
+        expect(resolveInitialUiLanguage({})).toBe("de");
+        expect(
+            resolveInitialUiLanguage({saved: "xx", navigatorLang: "zz-ZZ"}),
+        ).toBe("de");
+    });
+
+    it("accepts every shipped UI language, not just the legacy five", () => {
+        // Regression guard: the old ``isSupportedLang`` constant listed only
+        // de/en/es/fr/el, which would have rejected these saved choices.
+        for (const code of ["ko", "ja", "hi", "id", "pt", "tr", "el"]) {
+            expect(isUiLanguage(code)).toBe(true);
+            expect(resolveInitialUiLanguage({saved: code})).toBe(code);
+        }
+    });
+
+    it("ignores an unsupported saved value", () => {
+        expect(isUiLanguage("xx")).toBe(false);
+        expect(isUiLanguage(null)).toBe(false);
+        expect(
+            resolveInitialUiLanguage({saved: "xx", appDefault: "es"}),
+        ).toBe("es");
+    });
+});
+
+describe("readSavedLang — the persisted localStorage read seam (#1333)", () => {
+    afterEach(() => localStorage.clear());
+
+    it("reads a valid stored UI language (Greek survives the update)", () => {
+        localStorage.setItem("adaptive-learner.language", "el");
+        expect(readSavedLang()).toBe("el");
+    });
+
+    it("returns null when nothing is stored (fresh install)", () => {
+        expect(readSavedLang()).toBeNull();
+    });
+
+    it("returns null for a stored value that is not a shipped UI language", () => {
+        localStorage.setItem("adaptive-learner.language", "xx");
+        expect(readSavedLang()).toBeNull();
     });
 });
