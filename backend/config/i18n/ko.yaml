@@ -632,6 +632,8 @@ settings:
   profile_create_hint: "짧은 평가를 받아 개인 맞춤 학습 프로필을 얻으세요."
   lesson_shortcuts: "레슨 키보드 단축키"
   lesson_shortcuts_description: "Enter를 눌러 답을 확인하고, 다시 Enter를 눌러 다음 단계로 이동하세요."
+  lesson_auto_advance: "정답 시 자동으로 다음으로 이동"
+  lesson_auto_advance_description: "정답이면 자동으로 다음 문제로 이동합니다. 오답일 때는 항상 멈춰 정답을 확인할 수 있습니다."
   button_tooltips: 버튼 툴팁 표시
   button_tooltips_description: "아이콘 버튼 위에 마우스를 올리면 기능을 설명하는 툴팁을 표시합니다. 화면 낭독기 레이블은 관계없이 항상 유지됩니다."
   developer_mode: 개발자 모드

@@ -669,6 +669,8 @@
     "profile_create_hint": "Haz una breve evaluación para obtener un perfil de aprendizaje personalizado.",
     "lesson_shortcuts": "Atajos de teclado en las lecciones",
     "lesson_shortcuts_description": "Pulsa Enter para comprobar tu respuesta y Enter de nuevo para ir al siguiente paso.",
+    "lesson_auto_advance": "Avanzar automáticamente al acertar",
+    "lesson_auto_advance_description": "Tras una respuesta correcta, pasa automáticamente al siguiente ejercicio. Una respuesta incorrecta siempre espera para que puedas revisar la solución.",
     "button_tooltips": "Mostrar descripciones de botones",
     "button_tooltips_description": "Muestra una descripción al pasar el cursor sobre los botones de iconos. Las etiquetas para lectores de pantalla siguen activas igualmente.",
     "developer_mode": "Modo Desarrollador",

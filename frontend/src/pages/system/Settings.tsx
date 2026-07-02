@@ -54,6 +54,10 @@ import {
   readLessonShortcutsEnabled,
   setLessonShortcutsEnabled,
 } from "../../lib/lesson/lessonShortcutsPref";
+import {
+  readLessonAutoAdvanceEnabled,
+  setLessonAutoAdvanceEnabled,
+} from "../../hooks/settings/useLessonAutoAdvance";
 import { readLearnerState, setLanguage } from "../../lib/learning/learnerState";
 import { notifyProfileUpdated } from "../../lib/learning/profileSignal";
 import { Button } from "@/components/ui/button";
@@ -211,6 +215,18 @@ export default function Settings() {
   const handleLessonShortcutsToggle = (next: boolean) => {
     setLessonShortcutsOn(next);
     setLessonShortcutsEnabled(next);
+  };
+
+  // Auto-advance after a correct answer (#1330). localStorage-backed so the
+  // lesson exercise flow (``useLessonAutoAdvance``) reads the same flag.
+  // Default OFF (opt-in).
+  const [autoAdvanceOn, setAutoAdvanceOn] = useState<boolean>(() =>
+    readLessonAutoAdvanceEnabled(),
+  );
+
+  const handleAutoAdvanceToggle = (next: boolean) => {
+    setAutoAdvanceOn(next);
+    setLessonAutoAdvanceEnabled(next);
   };
 
   // Phase 38 — button-tooltip preference. ``useButtonTooltips``
@@ -721,6 +737,28 @@ export default function Settings() {
               data-testid="settings-lesson-shortcuts-toggle"
               checked={lessonShortcutsOn}
               onChange={(e) => handleLessonShortcutsToggle(e.target.checked)}
+            />
+          </label>
+          <label className="form-row form-row-toggle">
+            <span className="form-label-stack">
+              <span className="form-label">
+                {t(
+                  "settings.lesson_auto_advance",
+                  "Auto-advance on a correct answer",
+                )}
+              </span>
+              <span className="form-hint">
+                {t(
+                  "settings.lesson_auto_advance_description",
+                  "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution.",
+                )}
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              data-testid="settings-lesson-auto-advance-toggle"
+              checked={autoAdvanceOn}
+              onChange={(e) => handleAutoAdvanceToggle(e.target.checked)}
             />
           </label>
         </section>
