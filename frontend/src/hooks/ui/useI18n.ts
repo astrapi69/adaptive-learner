@@ -34,22 +34,19 @@ export function isUiLanguage(code: string | null | undefined): code is string {
  * Resolve the initial UI language, persisted-choice-first (#1333).
  *
  * The user's saved choice ALWAYS wins — it is never overwritten by the
- * app-config default or the browser locale (same principle as the Soft-Pop
- * theme default). Only when NO valid choice is stored do we derive one from
- * the app config, then the browser locale, then ``"de"``.
+ * app-config default (same principle as the Soft-Pop theme default). Only
+ * when NO valid choice is stored do we fall back to the app-config default,
+ * then ``"de"`` — deliberately the SAME no-choice default as before this fix
+ * (the bug was the persisted choice being ignored, not the default itself).
  *
  * Pure + exported so the priority is unit-tested without React.
  */
 export function resolveInitialUiLanguage(inputs: {
     saved?: string | null;
     appDefault?: string | null;
-    navigatorLang?: string | null;
 }): string {
     if (isUiLanguage(inputs.saved)) return inputs.saved;
     if (isUiLanguage(inputs.appDefault)) return inputs.appDefault;
-    // ``el-GR`` / ``pt-BR`` -> primary subtag.
-    const navPrimary = inputs.navigatorLang?.slice(0, 2);
-    if (isUiLanguage(navPrimary)) return navPrimary;
     return "de";
 }
 
@@ -119,11 +116,7 @@ export function I18nProvider({children}: {children: ReactNode}) {
             .then((config) => {
                 const appLang = (config.app as Record<string, unknown>)
                     ?.default_language as string | undefined;
-                const navigatorLang =
-                    typeof navigator !== "undefined" ? navigator.language : null;
-                setLangState(
-                    resolveInitialUiLanguage({appDefault: appLang, navigatorLang}),
-                );
+                setLangState(resolveInitialUiLanguage({appDefault: appLang}));
             })
             .catch(() => {});
     }, []);

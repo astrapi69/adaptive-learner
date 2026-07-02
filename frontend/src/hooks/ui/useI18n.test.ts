@@ -74,20 +74,11 @@ describe("resolveInitialUiLanguage — persisted UI language survives a reload (
         expect(resolveInitialUiLanguage({saved: null, appDefault: "fr"})).toBe("fr");
     });
 
-    it("falls back to the browser locale when no saved choice or app default", () => {
-        expect(
-            resolveInitialUiLanguage({navigatorLang: "el-GR"}),
-        ).toBe("el");
-        expect(
-            resolveInitialUiLanguage({navigatorLang: "pt-BR"}),
-        ).toBe("pt");
-    });
-
-    it("defaults to 'de' when nothing resolves", () => {
+    it("defaults to 'de' when nothing resolves (unchanged no-choice default)", () => {
         expect(resolveInitialUiLanguage({})).toBe("de");
-        expect(
-            resolveInitialUiLanguage({saved: "xx", navigatorLang: "zz-ZZ"}),
-        ).toBe("de");
+        expect(resolveInitialUiLanguage({saved: "xx"})).toBe("de");
+        // A non-UI app default is ignored rather than used verbatim.
+        expect(resolveInitialUiLanguage({appDefault: "zz"})).toBe("de");
     });
 
     it("accepts every shipped UI language, not just the legacy five", () => {
