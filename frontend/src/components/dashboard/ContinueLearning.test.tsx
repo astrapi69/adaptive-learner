@@ -174,6 +174,99 @@ describe("ContinueLearning", () => {
         expect(link.textContent).not.toContain(legacyId);
     });
 
+    // #1328 — long titles must stay inside the card on narrow viewports.
+    // happy-dom has no layout engine, so we pin the structural containment
+    // classes (min-w-0 + truncate) that prevent the horizontal overflow,
+    // plus the native `title` tooltip that preserves the full name.
+    const LONG =
+        "Psychologie der Beeinflussung - Wiederholung und Vertiefung der Prinzipien";
+
+    it("truncates a long resume-row title and keeps the row shrinkable", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({set_id: "psy", lesson_filename: "02.json", updated_at: "2026-06-03T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "psy", title: LONG}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json", "03.json"]});
+        getLessonMock.mockResolvedValue({id: "02", title: LONG, steps: [{}, {}], cards: []});
+
+        renderSection({});
+        const link = await screen.findByTestId("continue-learning-link-psy");
+        // The row link must be allowed to shrink below its content width.
+        expect(link.className).toContain("min-w-0");
+        // The title line truncates and exposes the full text via `title`.
+        const title = screen.getByTitle(`${LONG} — ${LONG}`);
+        expect(title.className).toContain("truncate");
+    });
+
+    it("truncates a long next-lesson title while keeping the stars", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "psy",
+                lesson_filename: "01.json",
+                updated_at: "2026-06-03T10:00:00Z",
+                status: "completed",
+                score_correct: 10,
+                score_total: 10,
+            }),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "psy", title: "Psychologie"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json"]});
+        getLessonMock.mockResolvedValue({id: "x", title: LONG, steps: [], cards: []});
+
+        renderSection({});
+        await screen.findByTestId("continue-learning-next-psy");
+        const nextTitle = screen.getByTitle(`Next Lesson: ${LONG}`);
+        expect(nextTitle.className).toContain("truncate");
+        expect(nextTitle.className).toContain("min-w-0");
+    });
+
+    it("leaves a short title fully rendered (no regression)", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({set_id: "fr-a1", lesson_filename: "02.json", updated_at: "2026-06-03T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json"]});
+        getLessonMock.mockResolvedValue({id: "02", title: "Greetings", steps: [{}], cards: []});
+
+        renderSection({});
+        await screen.findByTestId("continue-learning-link-fr-a1");
+        expect(screen.getByText(/French A1/)).toBeInTheDocument();
+        expect(screen.getByTitle("French A1 — Greetings")).toBeInTheDocument();
+    });
+
+    it("keeps every row shrinkable when several cards are shown", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({set_id: "a", lesson_filename: "01.json", updated_at: "2026-06-01T10:00:00Z"}),
+            progress({set_id: "b", lesson_filename: "01.json", updated_at: "2026-06-03T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {source: "owner/repo", id: "a", title: LONG},
+                {source: "owner/repo", id: "b", title: LONG},
+            ],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json"]});
+        getLessonMock.mockResolvedValue({id: "01", title: LONG, steps: [{}], cards: []});
+
+        renderSection({maxItems: 3});
+        await screen.findByTestId("continue-learning-list");
+        const links = screen.getAllByTestId(/^continue-learning-link-/);
+        expect(links.length).toBe(2);
+        for (const link of links) {
+            expect(link.className).toContain("min-w-0");
+        }
+    });
+
     it("lists one row per set, newest-first, capped at maxItems", async () => {
         listProgressMock.mockResolvedValue([
             progress({set_id: "a", lesson_filename: "01.json", updated_at: "2026-06-01T10:00:00Z"}),
