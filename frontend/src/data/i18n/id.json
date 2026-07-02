@@ -673,6 +673,8 @@
     "profile_create_hint": "Ikuti asesmen singkat untuk mendapatkan profil pembelajaran yang dipersonalisasi.",
     "lesson_shortcuts": "Pintasan papan ketik pelajaran",
     "lesson_shortcuts_description": "Tekan Enter untuk memeriksa jawaban Anda, lalu Enter lagi untuk ke langkah berikutnya.",
+    "lesson_auto_advance": "Lanjut otomatis setelah jawaban benar",
+    "lesson_auto_advance_description": "Setelah jawaban benar, otomatis lanjut ke latihan berikutnya. Jawaban salah selalu menunggu agar kamu bisa meninjau solusinya.",
     "button_tooltips": "Tampilkan tooltip tombol",
     "button_tooltips_description": "Tampilkan tooltip arahkan kursor pada tombol ikon yang menjelaskan fungsinya. Label pembaca layar tetap aktif terlepas dari ini.",
     "developer_mode": "Mode Pengembang",

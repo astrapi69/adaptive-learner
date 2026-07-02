@@ -629,6 +629,8 @@ settings:
   profile_create_hint: "Fais une courte évaluation pour obtenir un profil d'apprentissage personnalisé."
   lesson_shortcuts: "Raccourcis clavier dans les leçons"
   lesson_shortcuts_description: "Appuie sur Entrée pour vérifier ta réponse, puis à nouveau pour passer à l'étape suivante."
+  lesson_auto_advance: "Passer automatiquement après une bonne réponse"
+  lesson_auto_advance_description: "Après une bonne réponse, passe automatiquement à l'exercice suivant. Une mauvaise réponse attend toujours pour que tu puisses revoir la solution."
   button_tooltips: "Afficher les infobulles des boutons"
   button_tooltips_description: "Affiche une infobulle au survol des boutons à icône. Les libellés pour lecteurs d’écran restent actifs quoi qu’il arrive."
   developer_mode: Mode développeur

@@ -629,6 +629,8 @@ settings:
   profile_create_hint: "Mach eine kurze Einstufung für ein persönliches Lernprofil."
   lesson_shortcuts: "Tastenkürzel in Lektionen"
   lesson_shortcuts_description: "Drücke die Eingabetaste, um deine Antwort zu prüfen, und erneut, um zum nächsten Schritt zu gehen."
+  lesson_auto_advance: "Bei richtiger Antwort automatisch weiter"
+  lesson_auto_advance_description: "Nach einer richtigen Antwort automatisch zur nächsten Aufgabe. Bei einer falschen Antwort wird immer gewartet, damit du die Lösung ansehen kannst."
   button_tooltips: Button-Tooltips anzeigen
   button_tooltips_description: "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv."
   developer_mode: Entwicklermodus

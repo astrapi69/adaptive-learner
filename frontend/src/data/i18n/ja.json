@@ -669,6 +669,8 @@
     "profile_create_hint": "短い診断を受けて、パーソナライズされた学習プロファイルを取得しましょう。",
     "lesson_shortcuts": "レッスンのキーボードショートカット",
     "lesson_shortcuts_description": "Enterキーで回答を確認し、もう一度Enterキーで次のステップに進みます。",
+    "lesson_auto_advance": "正解したら自動で次へ進む",
+    "lesson_auto_advance_description": "正解すると自動的に次の問題へ進みます。不正解のときは常に停止し、解答を確認できます。",
     "button_tooltips": "ボタンのツールチップを表示",
     "button_tooltips_description": "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。",
     "developer_mode": "開発者モード",

@@ -21,12 +21,16 @@
 
 import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen} from "@testing-library/react";
-import {describe, expect, it, vi} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import FreeTextExercise, {
     isFreeTextCorrect,
     isFreeTextNearMiss,
 } from "./FreeTextExercise";
+import {
+    AUTO_ADVANCE_DELAY_MS,
+    setLessonAutoAdvanceEnabled,
+} from "../../../hooks/settings/useLessonAutoAdvance";
 import {LessonModeProvider} from "../../../hooks/lesson/modes/useLessonMode";
 import type {ContentLessonExercise} from "../../../storage/types";
 
@@ -567,5 +571,70 @@ describe("FreeTextExercise: near-miss feedback (#627)", () => {
         const result = screen.getByTestId("free-text-result");
         expect(result).toHaveAttribute("data-result", "wrong");
         expect(result).toHaveTextContent("Not quite.");
+    });
+});
+
+describe("FreeTextExercise auto-advance integration (#1330)", () => {
+    beforeEach(() => {
+        localStorage.clear();
+        vi.useFakeTimers();
+        setLessonAutoAdvanceEnabled(true);
+    });
+    afterEach(() => {
+        vi.runOnlyPendingTimers();
+        vi.useRealTimers();
+        localStorage.clear();
+    });
+
+    function submit(value: string) {
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value},
+        });
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+    }
+
+    it("records the attempt AND auto-advances on a correct answer", () => {
+        const onComplete = vi.fn();
+        const onAdvance = vi.fn();
+        render(
+            <FreeTextExercise
+                exercise={EXERCISE}
+                onComplete={onComplete}
+                onAdvance={onAdvance}
+                advanceLabel="Next"
+            />,
+        );
+        submit("Merci");
+        // SRS/XP/progress recording path is untouched — onComplete still fires
+        // (with a correct score) before any advance.
+        expect(onComplete).toHaveBeenCalledTimes(1);
+        expect(onComplete.mock.calls[0][0]).toMatchObject({correct: 1, total: 1});
+        // The success surface mounted; auto-advance fires after the delay.
+        expect(screen.getByTestId("free-text-success-advance")).toBeInTheDocument();
+        expect(onAdvance).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(AUTO_ADVANCE_DELAY_MS);
+        expect(onAdvance).toHaveBeenCalledTimes(1);
+    });
+
+    it("records the attempt but does NOT auto-advance on a wrong answer", () => {
+        const onComplete = vi.fn();
+        const onAdvance = vi.fn();
+        render(
+            <FreeTextExercise
+                exercise={EXERCISE}
+                onComplete={onComplete}
+                onAdvance={onAdvance}
+                advanceLabel="Next"
+            />,
+        );
+        submit("banana");
+        expect(onComplete).toHaveBeenCalledTimes(1);
+        expect(onComplete.mock.calls[0][0]).toMatchObject({correct: 0});
+        // No success surface on a wrong answer → nothing auto-advances.
+        expect(
+            screen.queryByTestId("free-text-success-advance"),
+        ).not.toBeInTheDocument();
+        vi.advanceTimersByTime(AUTO_ADVANCE_DELAY_MS * 3);
+        expect(onAdvance).not.toHaveBeenCalled();
     });
 });

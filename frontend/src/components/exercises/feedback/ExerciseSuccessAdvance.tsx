@@ -40,6 +40,10 @@ import {Check, ChevronRight} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {useI18n} from "../../../hooks/ui/useI18n";
+import {
+    AUTO_ADVANCE_DELAY_MS,
+    useLessonAutoAdvance,
+} from "../../../hooks/settings/useLessonAutoAdvance";
 
 export interface ExerciseSuccessAdvanceProps {
     /** Advance to the next step (the lesson's ``goNext``). */
@@ -68,6 +72,15 @@ export default function ExerciseSuccessAdvance({
 }: ExerciseSuccessAdvanceProps) {
     const {t} = useI18n();
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const autoAdvance = useLessonAutoAdvance();
+    // Guard so ``onAdvance`` runs at most once even if the auto-advance
+    // timer and a manual Continue click race in the same tick.
+    const firedRef = useRef(false);
+    const fire = () => {
+        if (firedRef.current) return;
+        firedRef.current = true;
+        onAdvance();
+    };
 
     useEffect(() => {
         if (!autoFocus) return;
@@ -75,6 +88,19 @@ export default function ExerciseSuccessAdvance({
         // we only want keyboard reach, not a competing scroll jump.
         buttonRef.current?.focus({preventScroll: true});
     }, [autoFocus]);
+
+    // #1330 — auto-advance ONLY fires here, which mounts exclusively on a
+    // fully-correct answer AND only after ``onComplete`` has recorded the
+    // attempt (SRS / XP / progress). So a wrong answer never auto-advances
+    // and no recording is skipped — this only replaces the manual click.
+    // The timer is cleared on unmount (the step change from a manual click
+    // unmounts this component), so the two paths can't double-advance.
+    useEffect(() => {
+        if (!autoAdvance) return;
+        const timer = window.setTimeout(fire, AUTO_ADVANCE_DELAY_MS);
+        return () => window.clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoAdvance]);
 
     return (
         <div
@@ -98,7 +124,7 @@ export default function ExerciseSuccessAdvance({
                 type="button"
                 size="sm"
                 className="ml-auto"
-                onClick={onAdvance}
+                onClick={fire}
                 data-testid={`${testIdPrefix}-advance`}
             >
                 {label ?? t("lesson.button.next", "Continue")}
