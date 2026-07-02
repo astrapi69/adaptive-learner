@@ -270,7 +270,7 @@ export default function ContinueLearning({
                     >
                         <Link
                             to={item.targetRoute}
-                            className="flex min-h-[44px] flex-1 items-center gap-3 rounded-app border border-transparent bg-background p-2 hover:border-border hover:bg-muted"
+                            className="flex min-h-[44px] min-w-0 flex-1 items-center gap-3 rounded-app border border-transparent bg-background p-2 hover:border-border hover:bg-muted"
                             data-testid={`continue-learning-link-${item.setId}`}
                         >
                             <span className="text-accent" aria-hidden="true">
@@ -283,16 +283,22 @@ export default function ContinueLearning({
                                 )}
                             </span>
                             <span className="flex min-w-0 flex-1 flex-col">
-                                <span className="truncate font-medium text-foreground">
+                                <span
+                                    className="truncate font-medium text-foreground"
+                                    title={`${item.setTitle} — ${item.lessonTitle}`}
+                                >
                                     {item.setTitle}
                                     <span className="text-muted-foreground">
                                         {" — "}
                                         {item.lessonTitle}
                                     </span>
                                 </span>
-                                <span className="text-sm text-muted-foreground">
+                                <span className="flex min-w-0 text-sm text-muted-foreground">
                                     {item.mode === "resume" && (
-                                        <span data-testid={`continue-learning-resume-${item.setId}`}>
+                                        <span
+                                            className="min-w-0 truncate"
+                                            data-testid={`continue-learning-resume-${item.setId}`}
+                                        >
                                             {t(
                                                 "content.continue_learning.resume",
                                                 "Resume",
@@ -316,27 +322,41 @@ export default function ContinueLearning({
                                     )}
                                     {item.mode === "next" && (
                                         <span
-                                            className="inline-flex items-center gap-1"
+                                            className="flex min-w-0 items-center gap-1"
                                             data-testid={`continue-learning-next-${item.setId}`}
                                         >
-                                            <StarRow stars={item.stars ?? 0} />
-                                            {t(
-                                                "content.continue_learning.next",
-                                                "Next Lesson",
-                                            )}
-                                            {`: ${item.nextTitle}`}
+                                            <span className="shrink-0">
+                                                <StarRow stars={item.stars ?? 0} />
+                                            </span>
+                                            <span
+                                                className="min-w-0 truncate"
+                                                title={`${t(
+                                                    "content.continue_learning.next",
+                                                    "Next Lesson",
+                                                )}: ${item.nextTitle}`}
+                                            >
+                                                {t(
+                                                    "content.continue_learning.next",
+                                                    "Next Lesson",
+                                                )}
+                                                {`: ${item.nextTitle}`}
+                                            </span>
                                         </span>
                                     )}
                                     {item.mode === "set_complete" && (
                                         <span
-                                            className="inline-flex items-center gap-1"
+                                            className="flex min-w-0 items-center gap-1"
                                             data-testid={`continue-learning-complete-${item.setId}`}
                                         >
-                                            <StarRow stars={item.stars ?? 0} />
-                                            {t(
-                                                "content.continue_learning.completed",
-                                                "Set completed",
-                                            )}
+                                            <span className="shrink-0">
+                                                <StarRow stars={item.stars ?? 0} />
+                                            </span>
+                                            <span className="min-w-0 truncate">
+                                                {t(
+                                                    "content.continue_learning.completed",
+                                                    "Set completed",
+                                                )}
+                                            </span>
                                         </span>
                                     )}
                                 </span>
