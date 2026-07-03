@@ -3308,6 +3308,7 @@
     "filter": {
       "all": "Semua",
       "language": "Bahasa",
+      "all_languages": "Semua bahasa",
       "level": "Tingkat",
       "domain": "Bidang",
       "trust": "Kepercayaan",
@@ -3335,7 +3336,8 @@
     },
     "empty": {
       "no_sets": "Belum ada konten tersedia.",
-      "no_results": "Tidak ada hasil untuk “{query}”."
+      "no_results": "Tidak ada hasil untuk “{query}”.",
+      "language_hint": "Belum ada apa pun dalam bahasa ini."
     },
     "card": {
       "download": "Unduh",
@@ -3356,12 +3358,6 @@
       "download_failed": "Tidak dapat mengunduh set.",
       "remove_failed": "Tidak dapat menghapus set.",
       "load_failed": "Tidak dapat memuat konten yang tersedia."
-    },
-    "badge": {
-      "new": "Baru"
-    },
-    "new": {
-      "count": "{n} baru"
     }
   },
   "update": {

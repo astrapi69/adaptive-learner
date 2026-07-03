@@ -3023,6 +3023,7 @@ discover:
   filter:
     all: "すべて"
     language: "言語"
+    all_languages: "すべての言語"
     level: "レベル"
     domain: "分野"
     trust: "信頼度"
@@ -3046,6 +3047,7 @@ discover:
   empty:
     no_sets: "まだ利用可能なコンテンツはありません。"
     no_results: "「{query}」の結果はありません。"
+    language_hint: "この言語のコンテンツはまだありません。"
   card:
     download: "ダウンロード"
     downloading: "ダウンロード中…"

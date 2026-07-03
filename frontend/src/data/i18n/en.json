@@ -3308,6 +3308,7 @@
     "filter": {
       "all": "All",
       "language": "Language",
+      "all_languages": "All languages",
       "level": "Level",
       "domain": "Domain",
       "trust": "Trust",
@@ -3335,7 +3336,8 @@
     },
     "empty": {
       "no_sets": "No content available yet.",
-      "no_results": "No results for “{query}”."
+      "no_results": "No results for “{query}”.",
+      "language_hint": "Nothing in this language yet."
     },
     "card": {
       "download": "Download",
@@ -3356,12 +3358,6 @@
       "download_failed": "Could not download the set.",
       "remove_failed": "Could not remove the set.",
       "load_failed": "Could not load available content."
-    },
-    "badge": {
-      "new": "New"
-    },
-    "new": {
-      "count": "{n} new"
     }
   },
   "update": {

@@ -3308,6 +3308,7 @@
     "filter": {
       "all": "すべて",
       "language": "言語",
+      "all_languages": "すべての言語",
       "level": "レベル",
       "domain": "分野",
       "trust": "信頼度",
@@ -3335,7 +3336,8 @@
     },
     "empty": {
       "no_sets": "まだ利用可能なコンテンツはありません。",
-      "no_results": "「{query}」の結果はありません。"
+      "no_results": "「{query}」の結果はありません。",
+      "language_hint": "この言語のコンテンツはまだありません。"
     },
     "card": {
       "download": "ダウンロード",
@@ -3356,12 +3358,6 @@
       "download_failed": "セットをダウンロードできませんでした。",
       "remove_failed": "セットを削除できませんでした。",
       "load_failed": "利用可能なコンテンツを読み込めませんでした。"
-    },
-    "badge": {
-      "new": "新着"
-    },
-    "new": {
-      "count": "新着 {n} 件"
     }
   },
   "update": {

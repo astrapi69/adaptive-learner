@@ -3033,6 +3033,7 @@ discover:
   filter:
     all: "Semua"
     language: "Bahasa"
+    all_languages: "Semua bahasa"
     level: "Tingkat"
     domain: "Bidang"
     trust: "Kepercayaan"
@@ -3056,6 +3057,7 @@ discover:
   empty:
     no_sets: "Belum ada konten tersedia."
     no_results: "Tidak ada hasil untuk “{query}”."
+    language_hint: "Belum ada apa pun dalam bahasa ini."
   card:
     download: "Unduh"
     downloading: "Mengunduh…"

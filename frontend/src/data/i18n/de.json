@@ -3308,6 +3308,7 @@
     "filter": {
       "all": "Alle",
       "language": "Sprache",
+      "all_languages": "Alle Sprachen",
       "level": "Niveau",
       "domain": "Bereich",
       "trust": "Vertrauen",
@@ -3335,7 +3336,8 @@
     },
     "empty": {
       "no_sets": "Noch keine Inhalte verfügbar.",
-      "no_results": "Keine Ergebnisse für „{query}“."
+      "no_results": "Keine Ergebnisse für „{query}“.",
+      "language_hint": "In dieser Sprache gibt es noch nichts."
     },
     "card": {
       "download": "Herunterladen",
@@ -3356,12 +3358,6 @@
       "download_failed": "Set konnte nicht heruntergeladen werden.",
       "remove_failed": "Set konnte nicht entfernt werden.",
       "load_failed": "Verfügbare Inhalte konnten nicht geladen werden."
-    },
-    "badge": {
-      "new": "Neu"
-    },
-    "new": {
-      "count": "{n} neu"
     }
   },
   "update": {

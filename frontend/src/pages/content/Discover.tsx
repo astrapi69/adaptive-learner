@@ -23,15 +23,17 @@ import { isOfficialSource } from "../../lib/content/repos/content-repos";
 import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,
-  availableLanguages,
+  availableSourceLanguages,
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
   isSetDownloaded,
   queryDiscoverSets,
+  sourceLanguageCounts,
   type DiscoverFilters,
   type DiscoverSort,
 } from "../../lib/content/repos/discover-index";
+import { useDiscoverSourceLanguage } from "../../hooks/content/useDiscoverSourceLanguage";
 import { collectDiscoveryRepos } from "../../lib/content/repos/discover-repos";
 import {
   fetchAllIndices,
@@ -75,6 +77,11 @@ export default function Discover() {
   const [rawQuery, setRawQuery] = useState("");
   const [filters, setFilters] = useState<DiscoverFilters>(EMPTY_FILTERS);
   const [sort, setSort] = useState<DiscoverSort>("relevance");
+  // Source-language filter (#1343). The stored value is the EXPLICIT choice,
+  // or null when unset — in which case the default follows the UI locale
+  // (and moves when the learner switches UI language). An explicit choice
+  // ("" = all languages) always wins over the locale default.
+  const [langChoice, setLangChoice] = useDiscoverSourceLanguage();
   const [downloadState, setDownloadState] = useState<
     Record<string, SetDiscoveryDownloadState>
   >({});
@@ -148,9 +155,23 @@ export default function Discover() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // The instruction language the list is filtered to: the explicit choice
+  // when set, else the UI-locale default (base subtag, e.g. "de-AT" → "de").
+  const localeDefaultLanguage = useMemo(
+    () => (lang || "").split("-")[0],
+    [lang],
+  );
+  const effectiveSourceLanguage =
+    langChoice ?? localeDefaultLanguage;
+
+  const activeFilters = useMemo<DiscoverFilters>(
+    () => ({ ...filters, sourceLanguage: effectiveSourceLanguage }),
+    [filters, effectiveSourceLanguage],
+  );
+
   const results = useMemo(
-    () => queryDiscoverSets(allSets, filters, sort),
-    [allSets, filters, sort],
+    () => queryDiscoverSets(allSets, activeFilters, sort),
+    [allSets, activeFilters, sort],
   );
 
   // #772 — once the learner has downloaded a set this session, point them
@@ -162,9 +183,12 @@ export default function Discover() {
 
   const filterDefs: FilterDef[] = useMemo(() => {
     const all = { value: "", label: t("discover.filter.all", "All") };
-    const languages = availableLanguages(allSets).map((code) => ({
+    // Source-language facet (#1343): the instruction languages actually
+    // present, each with its set count, plus an explicit "All languages".
+    const counts = sourceLanguageCounts(allSets);
+    const sourceLanguages = availableSourceLanguages(allSets).map((code) => ({
       value: code,
-      label: languageDisplayName(code, lang),
+      label: `${languageDisplayName(code, lang)} (${counts[code] ?? 0})`,
     }));
     const levels = availableLevels(allSets).map((level) => ({
       value: level,
@@ -175,7 +199,15 @@ export default function Discover() {
       label: t(`discover.domain.${domain}`, domain),
     }));
     return [
-      { id: "language", label: t("discover.filter.language", "Language"), value: filters.language, options: [all, ...languages] },
+      {
+        id: "sourceLanguage",
+        label: t("discover.filter.language", "Language"),
+        value: effectiveSourceLanguage,
+        options: [
+          { value: "", label: t("discover.filter.all_languages", "All languages") },
+          ...sourceLanguages,
+        ],
+      },
       { id: "level", label: t("discover.filter.level", "Level"), value: filters.level, options: [all, ...levels] },
       { id: "domain", label: t("discover.filter.domain", "Domain"), value: filters.domain, options: [all, ...domains] },
       {
@@ -210,11 +242,16 @@ export default function Discover() {
         ],
       },
     ];
-  }, [allSets, filters, sort, t, lang]);
+  }, [allSets, filters, sort, t, lang, effectiveSourceLanguage]);
 
   function handleFilterChange(id: string, value: string) {
     if (id === "sort") {
       setSort(value as DiscoverSort);
+      return;
+    }
+    if (id === "sourceLanguage") {
+      // Persist as an explicit choice (wins over the locale default).
+      setLangChoice(value);
       return;
     }
     setFilters((prev) => ({ ...prev, [id]: value }));
@@ -356,12 +393,32 @@ export default function Discover() {
           {t("discover.empty.no_sets", "No content available yet.")}
         </p>
       ) : results.length === 0 ? (
-        <p className="text-muted-foreground" data-testid="discover-empty-results">
-          {t("discover.empty.no_results", "No results for “{query}”.").replace(
-            "{query}",
-            filters.query,
+        <div className="text-muted-foreground" data-testid="discover-empty-results">
+          <p>
+            {t("discover.empty.no_results", "No results for “{query}”.").replace(
+              "{query}",
+              filters.query,
+            )}
+          </p>
+          {/* Never a dead end: when a source-language filter is active, offer a
+              one-tap escape to "All languages" (#1343). */}
+          {effectiveSourceLanguage !== "" && (
+            <p className="mt-2" data-testid="discover-empty-language">
+              {t(
+                "discover.empty.language_hint",
+                "Nothing in this language yet.",
+              )}{" "}
+              <button
+                type="button"
+                className="text-accent hover:underline"
+                onClick={() => setLangChoice("")}
+                data-testid="discover-show-all-languages"
+              >
+                {t("discover.filter.all_languages", "All languages")}
+              </button>
+            </p>
           )}
-        </p>
+        </div>
       ) : viewMode === "list" ? (
         <DiscoverSetListView
           sets={results}
