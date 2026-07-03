@@ -14,12 +14,16 @@ import type { ContentSetEntry } from "../../storage/types";
 
 const deleteSetMock = vi.fn();
 const setSetStatusMock = vi.fn();
+const deleteSetsMock = vi.fn();
+const setSetsStatusMock = vi.fn();
 
 vi.mock("../../storage", () => ({
   getStorage: () => ({
     contentLoader: {
       deleteSet: (...a: unknown[]) => deleteSetMock(...a),
       setSetStatus: (...a: unknown[]) => setSetStatusMock(...a),
+      deleteSets: (...a: unknown[]) => deleteSetsMock(...a),
+      setSetsStatus: (...a: unknown[]) => setSetsStatusMock(...a),
     },
   }),
 }));
@@ -115,3 +119,54 @@ describe("handleConfirmDeleteSet (#1349)", () => {
     );
   });
 });
+
+describe("bulk actions (#1351)", () => {
+  it("handleBulkSetStatus persists ALL selected in ONE batched call + optimistic map", async () => {
+    setSetsStatusMock.mockResolvedValue(undefined);
+    const a = entry({ id: "a" });
+    const b = entry({ id: "b" });
+    const c = entry({ id: "c" });
+    const { hook, getSets } = setup([a, b, c]);
+    await act(async () => {
+      await hook.result.current.handleBulkSetStatus([a, b], "completed");
+    });
+    // One batched round-trip with both pairs (not N single calls).
+    expect(setSetSetStatusCallCount()).toBe(0); // single API untouched
+    expect(setSetsStatusMock).toHaveBeenCalledTimes(1);
+    expect(setSetsStatusMock).toHaveBeenCalledWith(
+      [
+        { source: "owner/repo", setId: "a" },
+        { source: "owner/repo", setId: "b" },
+      ],
+      "completed",
+    );
+    // Optimistic: only the selected rows changed status.
+    const byId = Object.fromEntries(getSets().map((s) => [s.id, s.status]));
+    expect(byId.a).toBe("completed");
+    expect(byId.b).toBe("completed");
+    expect(byId.c).not.toBe("completed");
+  });
+
+  it("handleConfirmBulkDelete deletes ALL targets in ONE batched call + removes them", async () => {
+    deleteSetsMock.mockResolvedValue(undefined);
+    const a = entry({ id: "a" });
+    const b = entry({ id: "b" });
+    const c = entry({ id: "c" });
+    const { hook, getSets } = setup([a, b, c]);
+    act(() => hook.result.current.setBulkDeleteTargets([a, c]));
+    await act(async () => {
+      await hook.result.current.handleConfirmBulkDelete();
+    });
+    expect(deleteSetsMock).toHaveBeenCalledTimes(1);
+    expect(deleteSetsMock).toHaveBeenCalledWith([
+      { source: "owner/repo", setId: "a" },
+      { source: "owner/repo", setId: "c" },
+    ]);
+    // Both removed; the unselected one is kept (progress lives elsewhere).
+    expect(getSets().map((s) => s.id)).toEqual(["b"]);
+  });
+});
+
+function setSetSetStatusCallCount(): number {
+  return setSetStatusMock.mock.calls.length;
+}

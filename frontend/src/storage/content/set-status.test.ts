@@ -13,9 +13,11 @@ import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
 import {
+  deleteSetsDexie,
   downloadSetDexie,
   listSetsDexie,
   setSetStatusDexie,
+  setSetsStatusDexie,
 } from "./content-loader-dexie";
 import { _resetDbForTests, getDb } from "../dexie/db";
 
@@ -138,5 +140,44 @@ describe("set status (Dexie cache, #1300)", () => {
     await expect(
       setSetStatusDexie(SOURCE, "does-not-exist", "deferred"),
     ).resolves.toBeUndefined();
+  });
+});
+
+describe("bulk set operations (Dexie batch, #1351)", () => {
+  /** Download the pilot set, then clone its row into a second cached set so
+   *  the batch helpers have two real rows to operate on. */
+  async function twoSets() {
+    await download();
+    const db = getDb();
+    const [row] = await db.contentSets.toArray();
+    await db.contentSets.add({ ...row, id: `${row.id}-2`, set_id: "second-set" });
+    return db;
+  }
+
+  const refs = [
+    { source: SOURCE, setId: SET_ID },
+    { source: SOURCE, setId: "second-set" },
+  ];
+
+  it("setSetsStatusDexie updates EVERY referenced set in one transaction", async () => {
+    const db = await twoSets();
+    await setSetsStatusDexie(refs, "completed");
+    const rows = await db.contentSets.toArray();
+    expect(rows.map((r) => r.status)).toEqual(["completed", "completed"]);
+  });
+
+  it("deleteSetsDexie removes every referenced set (and its files) in one transaction", async () => {
+    const db = await twoSets();
+    expect(await db.contentSets.count()).toBe(2);
+    await deleteSetsDexie(refs);
+    expect(await db.contentSets.count()).toBe(0);
+    // The pilot set had one cached lesson file — it is purged too.
+    const orphanFiles = await db.contentSetFiles.count();
+    expect(orphanFiles).toBe(0);
+  });
+
+  it("both batch helpers are a no-op for an empty list", async () => {
+    await expect(setSetsStatusDexie([], "deferred")).resolves.toBeUndefined();
+    await expect(deleteSetsDexie([])).resolves.toBeUndefined();
   });
 });

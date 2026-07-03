@@ -855,6 +855,42 @@ export async function deleteSetDexie(
   });
 }
 
+/** #1351 — a source/set_id pair, the unit of a bulk set operation. */
+export interface SetRef {
+  source: string;
+  setId: string;
+}
+
+/** #1351 — delete many sets in ONE ``rw`` transaction (set rows + their
+ *  files), not N separate round-trips. Idempotent per pair. */
+export async function deleteSetsDexie(refs: SetRef[]): Promise<void> {
+  if (refs.length === 0) return;
+  const db = getDb();
+  await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
+    for (const { source, setId } of refs) {
+      await _purgeSetRows(source, setId);
+    }
+  });
+}
+
+/** #1351 — set the lifecycle status on many sets in ONE ``rw`` transaction. */
+export async function setSetsStatusDexie(
+  refs: SetRef[],
+  status: SetStatus,
+): Promise<void> {
+  if (refs.length === 0) return;
+  const db = getDb();
+  await db.transaction("rw", db.contentSets, async () => {
+    for (const { source, setId } of refs) {
+      await db.contentSets
+        .where("set_id")
+        .equals(setId)
+        .filter((r) => r.source === source)
+        .modify({ status });
+    }
+  });
+}
+
 /** Internal: remove the set rows + their files. Must run inside an
  *  existing ``rw`` transaction on both tables. */
 async function _purgeSetRows(source: string, setId: string): Promise<void> {

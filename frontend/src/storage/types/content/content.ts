@@ -249,6 +249,15 @@ export interface IContentLoaderNamespace {
    *  persists it on the cached row(s); API mode is a no-op (the field
    *  is browser-local). Idempotent. */
   setSetStatus(source: string, setId: string, status: SetStatus): Promise<void>;
+  /** #1351 — bulk variants for the "Meine Inhalte" multi-select bar.
+   *  Dexie mode runs them as ONE transaction (batch, not N round-trips);
+   *  API mode deletes sequentially and treats status as a no-op (the
+   *  status field is browser-local). Idempotent. */
+  deleteSets(refs: { source: string; setId: string }[]): Promise<void>;
+  setSetsStatus(
+    refs: { source: string; setId: string }[],
+    status: SetStatus,
+  ): Promise<void>;
   /** Phase 60 / v1.44.0 — OPT-IN AI content validation. Sends the
    *  lesson content to the user's configured AI provider and
    *  returns a structured review (translation / distractor /
