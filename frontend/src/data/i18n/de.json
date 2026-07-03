@@ -3356,6 +3356,12 @@
       "download_failed": "Set konnte nicht heruntergeladen werden.",
       "remove_failed": "Set konnte nicht entfernt werden.",
       "load_failed": "Verfügbare Inhalte konnten nicht geladen werden."
+    },
+    "badge": {
+      "new": "Neu"
+    },
+    "new": {
+      "count": "{n} neu"
     }
   },
   "update": {

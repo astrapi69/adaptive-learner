@@ -37,6 +37,10 @@ import {
   fetchAllIndices,
   type SearchableSet,
 } from "../../lib/content/repos/search-index-loader";
+import {
+  markCatalogSeen,
+  newKeysAgainstSeen,
+} from "../../lib/content/browse/seen-catalog";
 import InfoHint from "../../shared/feedback/InfoHint";
 import { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchFilterBar from "../../shared/forms/SearchFilterBar";
@@ -65,6 +69,8 @@ export default function Discover() {
   const { t, lang } = useI18n();
   const [allSets, setAllSets] = useState<SearchableSet[]>([]);
   const [downloadedKeys, setDownloadedKeys] = useState<Set<string>>(new Set());
+  // Keys of sets newly added to the catalogue since the user last saw it (#1337 f/u).
+  const [newKeys, setNewKeys] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [rawQuery, setRawQuery] = useState("");
   const [filters, setFilters] = useState<DiscoverFilters>(EMPTY_FILTERS);
@@ -115,7 +121,14 @@ export default function Discover() {
         //    language) appears on reopen without waiting out the 24h TTL,
         //    and after a content sync. A failed refresh keeps the cached
         //    list (#1337).
-        applySets(await fetchAllIndices(repos, { forceRefresh: true }));
+        const fresh = await fetchAllIndices(repos, { forceRefresh: true });
+        applySets(fresh);
+        if (cancelled) return;
+        // New-content indicator: flag sets not in the last-seen anchor, then
+        // update the anchor so they are no longer "New" next time (#1337 f/u).
+        const freshKeys = fresh.map(discoverSetKey);
+        setNewKeys(newKeysAgainstSeen(freshKeys));
+        markCatalogSeen(freshKeys);
       } catch (err) {
         if (!cancelled) {
           notify.error(
@@ -261,6 +274,8 @@ export default function Discover() {
     progress: t("discover.card.progress", "Downloading lessons"),
   };
 
+  const newBadgeLabel = t("discover.badge.new", "New");
+
   function trustLabel(level: number): string {
     if (level >= 3) return t("discover.trust.official", "Officially recommended");
     if (level >= 2) return t("discover.trust.verified", "Verified");
@@ -323,6 +338,11 @@ export default function Discover() {
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground" data-testid="discover-count">
           {t("discover.result.count", "{n} sets").replace("{n}", String(results.length))}
+          {newKeys.size > 0 && (
+            <span className="ml-2 text-accent" data-testid="discover-new-count">
+              {t("discover.new.count", "{n} new").replace("{n}", String(newKeys.size))}
+            </span>
+          )}
         </p>
         {/* #1262 — grid/list toggle, sharing the global view preference.
             Shown once there is content to view. */}
@@ -349,6 +369,7 @@ export default function Discover() {
           isDownloaded={(set) => downloadedKeys.has(discoverSetKey(set))}
           stateFor={(set) => downloadState[discoverSetKey(set)] ?? "idle"}
           canRemove={(set) => !isOfficialSource(set.repo_url)}
+          isNew={(set) => newKeys.has(discoverSetKey(set))}
           onDownload={handleDownload}
           onRemove={handleRemove}
           labels={{
@@ -359,6 +380,7 @@ export default function Discover() {
             remove: cardLabels.remove,
             lessons: (count) =>
               t("discover.card.lessons", "{n} lessons").replace("{n}", String(count)),
+            newBadge: newBadgeLabel,
           }}
         />
       ) : (
@@ -372,6 +394,8 @@ export default function Discover() {
                   isDownloaded={downloadedKeys.has(key)}
                   state={downloadState[key] ?? "idle"}
                   progress={downloadProgress[key]}
+                  isNew={newKeys.has(key)}
+                  newLabel={newBadgeLabel}
                   onDownload={handleDownload}
                   onRemove={isOfficialSource(set.repo_url) ? undefined : handleRemove}
                   languageLabel={languageBadge(set)}

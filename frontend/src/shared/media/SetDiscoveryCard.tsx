@@ -78,6 +78,11 @@ export interface SetDiscoveryCardProps<T extends DiscoverableSet = DiscoverableS
   /** Pre-formatted language badge text, e.g. "DE → ES". */
   languageLabel: string;
   labels: SetDiscoveryCardLabels;
+  /** #1337-follow-up — flag this set as newly added to the catalogue since the
+   *  user last saw it. Renders a prominent "New" badge. Default false. */
+  isNew?: boolean;
+  /** Label for the "New" badge (rendered only when ``isNew``). */
+  newLabel?: string;
   testId?: string;
 }
 
@@ -90,6 +95,8 @@ export default function SetDiscoveryCard<T extends DiscoverableSet>({
   onRemove,
   languageLabel,
   labels,
+  isNew = false,
+  newLabel,
   testId = "set-discovery-card",
 }: SetDiscoveryCardProps<T>) {
   const downloading = state === "downloading";
@@ -100,6 +107,18 @@ export default function SetDiscoveryCard<T extends DiscoverableSet>({
     <Card className="flex flex-col gap-2 p-3" data-testid={testId} data-set-id={set.id}>
       <div className="flex items-start gap-2">
         <p className="grow font-medium leading-snug">{set.name}</p>
+        {isNew && newLabel ? (
+          <Badge
+            variant="default"
+            className="shrink-0 gap-1"
+            data-testid={`${testId}-new`}
+            data-new="true"
+            title={newLabel}
+          >
+            <Sparkles className="size-3" aria-hidden="true" />
+            {newLabel}
+          </Badge>
+        ) : null}
         {set.trust_level > 0 && labels.trust ? (
           <Badge variant="secondary" className="shrink-0" data-testid={`${testId}-trust`}>
             <ShieldCheck className="mr-1 size-3" aria-hidden="true" />

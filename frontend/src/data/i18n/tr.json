@@ -3356,6 +3356,12 @@
       "download_failed": "Set indirilemedi.",
       "remove_failed": "Set kaldırılamadı.",
       "load_failed": "Kullanılabilir içerik yüklenemedi."
+    },
+    "badge": {
+      "new": "Yeni"
+    },
+    "new": {
+      "count": "{n} yeni"
     }
   },
   "update": {
