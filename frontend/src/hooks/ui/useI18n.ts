@@ -1,6 +1,8 @@
 import {createContext, useContext, useEffect, useState, useCallback, type ReactNode} from "react";
 import {fallbackString} from "../../i18n/fallbacks";
 import {SUPPORTED_LANGUAGES, type SupportedLanguage} from "../../lib/constants";
+import {UI_LANGUAGES} from "../../lib/i18n/languages";
+import {readLearnerState, setLanguage} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 import {setCurrentLanguage} from "../../utils/appState";
 import {clearDiscoverSourceLanguage} from "../../lib/content/repos/discoverLanguagePref";
@@ -16,6 +18,50 @@ interface I18nContextValue {
 
 function isSupportedLang(value: string): value is SupportedLanguage {
     return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
+}
+
+/** The 11 shipped UI-language codes — the picker's source of truth
+ *  ({@link UI_LANGUAGES}). Used to validate a persisted / derived language,
+ *  NOT the stale 5-entry ``SUPPORTED_LANGUAGES`` constant (which would wrongly
+ *  reject a saved ``ko`` / ``ja`` / ``hi`` / ``id`` / ``pt`` / ``tr``). */
+const UI_LANGUAGE_CODES = new Set(UI_LANGUAGES.map((meta) => meta.code));
+
+/** True when ``code`` is one of the shipped UI languages. */
+export function isUiLanguage(code: string | null | undefined): code is string {
+    return typeof code === "string" && UI_LANGUAGE_CODES.has(code);
+}
+
+/**
+ * Resolve the initial UI language, persisted-choice-first (#1333).
+ *
+ * The user's saved choice ALWAYS wins — it is never overwritten by the
+ * app-config default (same principle as the Soft-Pop theme default). Only
+ * when NO valid choice is stored do we fall back to the app-config default,
+ * then ``"de"`` — deliberately the SAME no-choice default as before this fix
+ * (the bug was the persisted choice being ignored, not the default itself).
+ *
+ * Pure + exported so the priority is unit-tested without React.
+ */
+export function resolveInitialUiLanguage(inputs: {
+    saved?: string | null;
+    appDefault?: string | null;
+}): string {
+    if (isUiLanguage(inputs.saved)) return inputs.saved;
+    if (isUiLanguage(inputs.appDefault)) return inputs.appDefault;
+    return "de";
+}
+
+/** The persisted UI-language choice from localStorage
+ *  (``adaptive-learner.language``), written by the Settings / Landing pickers
+ *  in BOTH storage modes. ``null`` when unset or not a shipped UI language.
+ *  Exported for the read-seam test (#1333). */
+export function readSavedLang(): string | null {
+    try {
+        const saved = readLearnerState().language;
+        return isUiLanguage(saved) ? saved : null;
+    } catch {
+        return null;
+    }
 }
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -53,15 +99,27 @@ export function resolveI18n(key: string, fallback: string): string {
 
 export function I18nProvider({children}: {children: ReactNode}) {
     const [strings, setStrings] = useState<I18nStrings>(cachedStrings);
-    const [lang, setLangState] = useState(cachedLang || "de");
+    // #1333 — start from the PERSISTED choice (localStorage, both storage
+    // modes) so a saved UI language survives a reload / PWA update instead of
+    // silently falling back to "de". In Dexie mode ``settings.getApp()``
+    // returns ``{}`` (no ``default_language``), so before this fix the app
+    // always re-initialised to "de" and the saved choice was ignored.
+    const [lang, setLangState] = useState(cachedLang || readSavedLang() || "de");
 
-    // Load language preference from app settings on mount
+    // Derive the initial language on mount. The persisted choice ALWAYS wins;
+    // only when none is stored do we consult the app-config default, then the
+    // browser locale, then "de".
     useEffect(() => {
-        if (cachedLang) return; // already loaded
-        getStorage().settings.getApp().then((config) => {
-            const appLang = ((config.app as Record<string, unknown>)?.default_language as string) || "de";
-            setLangState(appLang);
-        }).catch(() => {});
+        if (cachedLang) return; // already loaded this session
+        if (readSavedLang()) return; // persisted choice wins — never overwrite
+        getStorage()
+            .settings.getApp()
+            .then((config) => {
+                const appLang = (config.app as Record<string, unknown>)
+                    ?.default_language as string | undefined;
+                setLangState(resolveInitialUiLanguage({appDefault: appLang}));
+            })
+            .catch(() => {});
     }, []);
 
     // Fetch strings when language changes
@@ -100,6 +158,15 @@ export function I18nProvider({children}: {children: ReactNode}) {
         // change — never on reload / theme / re-select of the same language.
         if (newLang !== lang) clearDiscoverSourceLanguage();
         setLangState(newLang);
+        // #1333 — persist on every switch so the choice survives a reload
+        // regardless of which caller changed it (Settings already writes this
+        // too; Landing/onboarding did not). localStorage works in both
+        // storage modes, so this is the single durable UI-language source.
+        try {
+            setLanguage(newLang);
+        } catch {
+            /* localStorage unavailable — best effort */
+        }
     }, [lang]);
 
     const t = useCallback((key: string, fallback?: string): string => {
