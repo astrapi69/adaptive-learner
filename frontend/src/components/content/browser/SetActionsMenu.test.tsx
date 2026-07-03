@@ -112,4 +112,36 @@ describe("SetActionsMenu", () => {
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByTestId("set-actions-menu-psych")).toBeNull();
   });
+
+  // #1349 — the open menu must escape the row's DOM subtree (portal to
+  // document.body), so ``#root``'s clipping/overflow context can't hide it on
+  // iOS. RED against the old inline ``<ul>`` (rendered inside the trigger's
+  // container); GREEN once portalled.
+  it("renders the open menu in a portal outside the row container", () => {
+    const wrapper = document.createElement("div");
+    wrapper.setAttribute("data-testid", "row-wrapper");
+    document.body.appendChild(wrapper);
+    render(
+      <SetActionsMenu entry={entry()} status="active" onSetStatus={vi.fn()} onDelete={vi.fn()} />,
+      { container: wrapper },
+    );
+    fireEvent.click(screen.getByTestId("set-actions-psych"));
+    const menu = screen.getByTestId("set-actions-menu-psych");
+    // Present + fixed-positioned on the top layer…
+    expect(menu).toBeInTheDocument();
+    expect(menu.style.position).toBe("fixed");
+    // …but NOT a descendant of the row wrapper (it lives under document.body).
+    expect(wrapper.contains(menu)).toBe(false);
+    document.body.removeChild(wrapper);
+  });
+
+  it("keeps the menu open when a menu item is pointed at (portal is inside-dismiss)", () => {
+    const { onDelete } = renderMenu("active");
+    fireEvent.click(screen.getByTestId("set-actions-psych"));
+    // A mousedown on the portalled item must NOT be treated as an outside click.
+    fireEvent.mouseDown(screen.getByTestId("set-action-psych-delete"));
+    expect(screen.getByTestId("set-actions-menu-psych")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("set-action-psych-delete"));
+    expect(onDelete).toHaveBeenCalledTimes(1);
+  });
 });
