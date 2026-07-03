@@ -55,3 +55,22 @@ export function writeDiscoverSourceLanguage(value: string): void {
     /* window unavailable (SSR / tests without jsdom) */
   }
 }
+
+/**
+ * Drop the explicit choice, returning to the unset state (`null` → the caller
+ * falls back to the UI-locale default). Called when the UI language changes so
+ * the content-language filter follows the new language, overriding even an
+ * explicit "All languages" (#1347). A choice made afterwards persists again.
+ */
+export function clearDiscoverSourceLanguage(): void {
+  try {
+    localStorage.removeItem(KEY);
+  } catch {
+    /* localStorage unavailable; no-op */
+  }
+  try {
+    window.dispatchEvent(new Event(DISCOVER_SOURCE_LANGUAGE_CHANGE_EVENT));
+  } catch {
+    /* window unavailable (SSR / tests without jsdom) */
+  }
+}

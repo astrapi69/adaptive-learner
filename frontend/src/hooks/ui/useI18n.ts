@@ -3,6 +3,7 @@ import {fallbackString} from "../../i18n/fallbacks";
 import {SUPPORTED_LANGUAGES, type SupportedLanguage} from "../../lib/constants";
 import {getStorage} from "../../storage";
 import {setCurrentLanguage} from "../../utils/appState";
+import {clearDiscoverSourceLanguage} from "../../lib/content/repos/discoverLanguagePref";
 import React from "react";
 
 type I18nStrings = Record<string, unknown>;
@@ -93,8 +94,13 @@ export function I18nProvider({children}: {children: ReactNode}) {
     }, [lang]);
 
     const setLang = useCallback((newLang: string) => {
+        // A UI-language change resets the Discover content-language filter to the
+        // new language (it follows the switch, overriding even an explicit "All");
+        // a choice made afterwards persists again (#1347). Only on an actual
+        // change — never on reload / theme / re-select of the same language.
+        if (newLang !== lang) clearDiscoverSourceLanguage();
         setLangState(newLang);
-    }, []);
+    }, [lang]);
 
     const t = useCallback((key: string, fallback?: string): string => {
         // 1) Backend catalog (live strings from

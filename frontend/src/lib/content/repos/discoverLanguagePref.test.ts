@@ -3,6 +3,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
+  clearDiscoverSourceLanguage,
   DISCOVER_SOURCE_LANGUAGE_CHANGE_EVENT,
   DISCOVER_SOURCE_LANGUAGE_KEY,
   readDiscoverSourceLanguage,
@@ -42,5 +43,24 @@ describe("writeDiscoverSourceLanguage", () => {
   it("persists an explicit empty string (all languages)", () => {
     writeDiscoverSourceLanguage("");
     expect(readDiscoverSourceLanguage()).toBe("");
+  });
+});
+
+describe("clearDiscoverSourceLanguage (#1347)", () => {
+  it("removes the explicit choice, returning to the unset (null) state", () => {
+    writeDiscoverSourceLanguage(""); // explicit "All"
+    expect(readDiscoverSourceLanguage()).toBe("");
+    clearDiscoverSourceLanguage();
+    expect(readDiscoverSourceLanguage()).toBeNull();
+    expect(localStorage.getItem(DISCOVER_SOURCE_LANGUAGE_KEY)).toBeNull();
+  });
+
+  it("notifies same-tab listeners", () => {
+    writeDiscoverSourceLanguage("de");
+    const spy = vi.fn();
+    window.addEventListener(DISCOVER_SOURCE_LANGUAGE_CHANGE_EVENT, spy);
+    clearDiscoverSourceLanguage();
+    expect(spy).toHaveBeenCalledTimes(1);
+    window.removeEventListener(DISCOVER_SOURCE_LANGUAGE_CHANGE_EVENT, spy);
   });
 });
