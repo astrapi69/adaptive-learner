@@ -3356,6 +3356,12 @@
       "download_failed": "No se pudo descargar el set.",
       "remove_failed": "No se pudo eliminar el set.",
       "load_failed": "No se pudo cargar el contenido disponible."
+    },
+    "badge": {
+      "new": "Nuevo"
+    },
+    "new": {
+      "count": "{n} nuevos"
     }
   },
   "update": {

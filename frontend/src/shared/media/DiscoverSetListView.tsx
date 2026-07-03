@@ -29,6 +29,8 @@ export interface DiscoverListLabels {
   remove: string;
   /** Builder for "{n} lessons" (desktop-only context). */
   lessons: (count: number) => string;
+  /** "New" badge label, rendered when a set is new since last seen. */
+  newBadge: string;
 }
 
 interface DiscoverSetListViewProps {
@@ -38,6 +40,8 @@ interface DiscoverSetListViewProps {
   stateFor: (set: SearchableSet) => SetDiscoveryDownloadState;
   /** Whether this set's repo allows removal (official repos do not). */
   canRemove: (set: SearchableSet) => boolean;
+  /** Whether this set is newly added to the catalogue since last seen (#1337). */
+  isNew: (set: SearchableSet) => boolean;
   onDownload: (set: SearchableSet) => void;
   onRemove: (set: SearchableSet) => void;
   labels: DiscoverListLabels;
@@ -59,6 +63,7 @@ function DiscoverSetListRow({
   downloaded,
   state,
   canRemove,
+  isNew,
   onDownload,
   onRemove,
   labels,
@@ -68,6 +73,7 @@ function DiscoverSetListRow({
   downloaded: boolean;
   state: SetDiscoveryDownloadState;
   canRemove: boolean;
+  isNew: boolean;
   onDownload: (set: SearchableSet) => void;
   onRemove: (set: SearchableSet) => void;
   labels: DiscoverListLabels;
@@ -81,6 +87,16 @@ function DiscoverSetListRow({
       data-testid={`discover-list-${set.id}`}
     >
       <span className="flex-1 truncate font-medium text-fg-primary">{set.name}</span>
+      {isNew && (
+        <span
+          className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold uppercase text-primary-foreground"
+          data-testid={`discover-list-${set.id}-new`}
+          data-new="true"
+          title={labels.newBadge}
+        >
+          {labels.newBadge}
+        </span>
+      )}
       {pair && (
         <span
           className="shrink-0 text-xs font-semibold uppercase text-muted-foreground"
@@ -140,6 +156,7 @@ export default function DiscoverSetListView({
   isDownloaded,
   stateFor,
   canRemove,
+  isNew,
   onDownload,
   onRemove,
   labels,
@@ -154,6 +171,7 @@ export default function DiscoverSetListView({
           downloaded={isDownloaded(set)}
           state={stateFor(set)}
           canRemove={canRemove(set)}
+          isNew={isNew(set)}
           onDownload={onDownload}
           onRemove={onRemove}
           labels={labels}

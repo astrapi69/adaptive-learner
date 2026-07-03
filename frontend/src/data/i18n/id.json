@@ -3356,6 +3356,12 @@
       "download_failed": "Tidak dapat mengunduh set.",
       "remove_failed": "Tidak dapat menghapus set.",
       "load_failed": "Tidak dapat memuat konten yang tersedia."
+    },
+    "badge": {
+      "new": "Baru"
+    },
+    "new": {
+      "count": "{n} baru"
     }
   },
   "update": {
