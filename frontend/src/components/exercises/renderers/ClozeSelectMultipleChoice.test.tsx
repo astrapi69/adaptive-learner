@@ -1,17 +1,16 @@
 /**
- * Canonical single-answer multiple-choice = a one-blank ``cloze`` in
- * ``select`` mode (astrapi69/adaptive-learner#890 / EXP-036 §4.3): the
- * options are the correct answer + ``distractors``, rendered as one
- * ``<select>``, graded and recorded through ``ClozeExercise``.
+ * Canonical single-answer multiple-choice = a one-blank `cloze` in `select`
+ * mode (astrapi69/adaptive-learner#890 / EXP-036 §4.3). The options are the
+ * correct answer + `distractors`; the data model is unchanged.
  *
- * These tests lock the full MC flow — render options, grade correct, grade
- * wrong (feedback), report the SRS attempt, advance — after the
- * React-Grundlagen set was corrected from ``picture_choice`` (an image
- * picker whose missing assets rendered as placeholders) to this canonical
- * MC form (astrapi69/adaptive-learner-content-test#10).
+ * Presentation (#1341): the options render as a tappable **button
+ * radiogroup** (`ChoiceButtonGroup`), NOT a native `<select>` — the dropdown
+ * mis-hit taps on iOS. These tests lock the full MC flow on the button UI:
+ * render options / tap-select / grade correct / grade wrong + feedback / SRS
+ * attempt / advance / lock after submit / long-text wrap.
  */
 import "@testing-library/jest-dom/vitest";
-import {act, fireEvent, render, screen} from "@testing-library/react";
+import {act, fireEvent, render, screen, within} from "@testing-library/react";
 import {createRef} from "react";
 import {describe, expect, it, vi} from "vitest";
 
@@ -30,31 +29,46 @@ const MC: ContentLessonExercise = {
     distractors: ["useEffect", "useContext", "useRef"],
 };
 
-describe("multiple-choice via cloze-select — full flow", () => {
-    it("renders one select whose options are the correct answer + distractors (single answer)", () => {
+function pick(name: string) {
+    fireEvent.click(screen.getByRole("radio", {name}));
+}
+
+describe("multiple-choice via cloze-select — button radiogroup (#1341)", () => {
+    it("renders the options as buttons (correct + distractors), one radiogroup, no native <select>", () => {
         render(<ClozeExercise exercise={MC} onComplete={vi.fn()} />);
         expect(screen.getByTestId("cloze-exercise")).toHaveAttribute(
             "data-cloze-mode",
             "select",
         );
-        // Single-answer MC: exactly one blank / one <select>.
-        expect(screen.getByTestId("cloze-select-0")).toBeInTheDocument();
-        expect(screen.queryByTestId("cloze-select-1")).not.toBeInTheDocument();
-        const values = Array.from(
-            (screen.getByTestId("cloze-select-0") as HTMLSelectElement).options,
-        ).map((o) => o.value);
-        expect(values).toContain("useState");
+        // No native <select> anymore.
+        expect(screen.queryByTestId("cloze-select-0")).not.toBeInTheDocument();
+        // Exactly one radiogroup for the single blank.
+        const group = screen.getByTestId("cloze-choices-0");
+        expect(group).toHaveAttribute("role", "radiogroup");
+        expect(screen.queryByTestId("cloze-choices-1")).not.toBeInTheDocument();
+        const names = within(group)
+            .getAllByRole("radio")
+            .map((b) => b.textContent);
+        expect(names).toContain("useState");
         for (const distractor of MC.distractors ?? []) {
-            expect(values).toContain(distractor);
+            expect(names).toContain(distractor);
         }
+        expect(names).toHaveLength(4);
     });
 
-    it("grades the correct option as correct", () => {
+    it("tapping an option selects it (visible selected state)", () => {
+        render(<ClozeExercise exercise={MC} onComplete={vi.fn()} />);
+        const btn = screen.getByRole("radio", {name: "useEffect"});
+        expect(btn).toHaveAttribute("aria-checked", "false");
+        fireEvent.click(btn);
+        expect(btn).toHaveAttribute("aria-checked", "true");
+        expect(btn).toHaveAttribute("data-selected", "true");
+    });
+
+    it("grades the correct option as correct (button shows the correct state)", () => {
         const onComplete = vi.fn();
         render(<ClozeExercise exercise={MC} onComplete={onComplete} />);
-        fireEvent.change(screen.getByTestId("cloze-select-0"), {
-            target: {value: "useState"},
-        });
+        pick("useState");
         fireEvent.click(screen.getByTestId("cloze-submit"));
         expect(onComplete).toHaveBeenCalledWith(
             expect.objectContaining({correct: 1, total: 1}),
@@ -63,14 +77,16 @@ describe("multiple-choice via cloze-select — full flow", () => {
             "data-result",
             "correct",
         );
+        expect(screen.getByRole("radio", {name: "useState"})).toHaveAttribute(
+            "data-state",
+            "correct",
+        );
     });
 
-    it("grades a wrong option as wrong and shows feedback", () => {
+    it("grades a wrong option as wrong, marks it, and reveals the correct one", () => {
         const onComplete = vi.fn();
         render(<ClozeExercise exercise={MC} onComplete={onComplete} />);
-        fireEvent.change(screen.getByTestId("cloze-select-0"), {
-            target: {value: "useEffect"},
-        });
+        pick("useEffect");
         fireEvent.click(screen.getByTestId("cloze-submit"));
         expect(onComplete).toHaveBeenCalledWith(
             expect.objectContaining({correct: 0, total: 1}),
@@ -79,14 +95,20 @@ describe("multiple-choice via cloze-select — full flow", () => {
             "data-result",
             "wrong",
         );
+        expect(screen.getByRole("radio", {name: "useEffect"})).toHaveAttribute(
+            "data-state",
+            "wrong",
+        );
+        expect(screen.getByRole("radio", {name: "useState"})).toHaveAttribute(
+            "data-state",
+            "correct",
+        );
     });
 
     it("reports an SRS element-attempt for the pick (recording)", () => {
         const onComplete = vi.fn();
         render(<ClozeExercise exercise={MC} onComplete={onComplete} />);
-        fireEvent.change(screen.getByTestId("cloze-select-0"), {
-            target: {value: "useState"},
-        });
+        pick("useState");
         fireEvent.click(screen.getByTestId("cloze-submit"));
         const scored = onComplete.mock.calls[0][0];
         expect(Array.isArray(scored.attempts)).toBe(true);
@@ -105,11 +127,40 @@ describe("multiple-choice via cloze-select — full flow", () => {
                 onComplete={vi.fn()}
             />,
         );
-        fireEvent.change(screen.getByTestId("cloze-select-0"), {
-            target: {value: "useState"},
-        });
+        pick("useState");
         act(() => ref.current!.submit());
         fireEvent.click(screen.getByTestId("cloze-advance"));
         expect(onAdvance).toHaveBeenCalledTimes(1);
+    });
+
+    it("locks the options after submit (a later tap cannot change the grade)", () => {
+        render(<ClozeExercise exercise={MC} onComplete={vi.fn()} />);
+        pick("useEffect");
+        fireEvent.click(screen.getByTestId("cloze-submit"));
+        // Tapping the correct option after submit must not re-grade.
+        fireEvent.click(screen.getByRole("radio", {name: "useState"}));
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "wrong",
+        );
+    });
+
+    it("wraps a long option instead of truncating it", () => {
+        const longMC: ContentLessonExercise = {
+            ...MC,
+            id: "ex-mc-long",
+            blanks: [
+                {
+                    accept: [
+                        "Ein sehr langer Antworttext, der über mehrere Zeilen umbrechen muss und nicht abgeschnitten werden darf",
+                    ],
+                },
+            ],
+            distractors: ["kurz", "auch kurz", "noch kürzer"],
+        };
+        render(<ClozeExercise exercise={longMC} onComplete={vi.fn()} />);
+        const long = screen.getByRole("radio", {name: /sehr langer Antworttext/});
+        expect(long.className).toMatch(/break-words/);
+        expect(long.className).toMatch(/whitespace-normal/);
     });
 });

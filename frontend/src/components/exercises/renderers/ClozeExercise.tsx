@@ -43,6 +43,7 @@ import InlineMarkdown from "../../../shared/data-display/InlineMarkdown";
 import {deriveClozeAttempts} from "../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../lib/exercises/useControlledExercise";
 import {seededShuffle} from "../../../lib/exercises/seeded-shuffle";
+import ChoiceButtonGroup from "../../../shared/forms/ChoiceButtonGroup";
 import {tokenDiff} from "../../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../../storage/types";
 import AnswerCelebration from "../feedback/AnswerCelebration";
@@ -284,6 +285,88 @@ function ClozeSentence({
                 </span>
             ))}
         </p>
+    );
+}
+
+/** Select-mode (multiple-choice) rendering: the answer options as a tappable
+ *  button radiogroup per blank (replaces the native `<select>`, which mis-hits
+ *  on iOS — #1341). One group per blank; a non-empty surrounding sentence is
+ *  shown above with the current pick chipped into the blank. The data model
+ *  (accept[0] + distractors, seeded shuffle) is unchanged. */
+function ClozeSelectChoices({
+    segments,
+    blanks,
+    submitted,
+    inputs,
+    selectOptions,
+    perBlankCorrect,
+    onChange,
+}: {
+    segments: string[];
+    blanks: readonly ClozeBlank[];
+    submitted: boolean;
+    inputs: string[];
+    selectOptions: string[][];
+    perBlankCorrect: boolean[];
+    onChange: (idx: number, value: string) => void;
+}) {
+    const {t} = useI18n();
+    const hasText = segments.some((s) => s.trim() !== "");
+    return (
+        <div className="flex flex-col gap-3" data-testid="cloze-choices">
+            {hasText && (
+                <p
+                    className="m-0 rounded-sm bg-[var(--surface-2)] p-3 text-[1.0625rem] leading-[1.8]"
+                    data-testid="cloze-sentence"
+                >
+                    {segments.map((segment, segIdx) => (
+                        <span key={`seg-${segIdx}`} className="inline">
+                            <InlineMarkdown>{segment}</InlineMarkdown>
+                            {segIdx < blanks.length && (
+                                <span
+                                    className="mx-1 rounded-sm bg-[var(--surface)] px-2 py-0.5 font-semibold"
+                                    data-testid={`cloze-selected-${segIdx}`}
+                                >
+                                    {inputs[segIdx] || "___"}
+                                </span>
+                            )}
+                        </span>
+                    ))}
+                </p>
+            )}
+            {blanks.map((blank, idx) => {
+                const correct = blank.accept[0] ?? "";
+                const picked = inputs[idx] ?? "";
+                return (
+                    <ChoiceButtonGroup
+                        key={`choices-${idx}`}
+                        options={selectOptions[idx] ?? []}
+                        value={picked || null}
+                        onChange={(value) => onChange(idx, value)}
+                        ariaLabel={
+                            blank.hint ??
+                            t(
+                                "lesson.exercise.cloze.blank_label",
+                                "Blank {n}",
+                            ).replace("{n}", String(idx + 1))
+                        }
+                        locked={submitted}
+                        stateFor={
+                            submitted
+                                ? (opt) =>
+                                      opt === correct
+                                          ? "correct"
+                                          : opt === picked && !perBlankCorrect[idx]
+                                            ? "wrong"
+                                            : undefined
+                                : undefined
+                        }
+                        testIdPrefix={`cloze-option-${idx}`}
+                        groupTestId={`cloze-choices-${idx}`}
+                    />
+                );
+            })}
+        </div>
     );
 }
 
@@ -716,20 +799,32 @@ function ClozeExercise(
                 testId="cloze-hint-button"
             />
 
-            <ClozeSentence
-                segments={segments}
-                blanks={blanks}
-                mode={mode}
-                submitted={submitted}
-                perBlankCorrect={perBlankCorrect}
-                inputs={inputs}
-                selectOptions={selectOptions}
-                onChange={handleChange}
-                onKeyDown={handleBlankKeyDown}
-                blankBase={blankBase}
-                blankState={blankState}
-                codeMode={codeMode}
-            />
+            {mode === "select" ? (
+                <ClozeSelectChoices
+                    segments={segments}
+                    blanks={blanks}
+                    submitted={submitted}
+                    inputs={inputs}
+                    selectOptions={selectOptions}
+                    perBlankCorrect={perBlankCorrect}
+                    onChange={handleChange}
+                />
+            ) : (
+                <ClozeSentence
+                    segments={segments}
+                    blanks={blanks}
+                    mode={mode}
+                    submitted={submitted}
+                    perBlankCorrect={perBlankCorrect}
+                    inputs={inputs}
+                    selectOptions={selectOptions}
+                    onChange={handleChange}
+                    onKeyDown={handleBlankKeyDown}
+                    blankBase={blankBase}
+                    blankState={blankState}
+                    codeMode={codeMode}
+                />
+            )}
 
             <ClozeHint
                 hint={exercise.hint}

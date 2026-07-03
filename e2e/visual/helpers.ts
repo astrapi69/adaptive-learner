@@ -209,6 +209,14 @@ export async function answerCurrentStep(page: Page): Promise<void> {
             await page.getByTestId(`matching-left-${j}`).click();
             await page.getByTestId(`matching-right-${j}`).click();
         }
+    } else if (await page.locator('[data-testid^="cloze-choices-"]').count()) {
+        // Cloze select-mode (canonical multiple-choice, #1341) renders each
+        // blank as a tappable button radiogroup — pick the first option.
+        const groups = page.locator('[data-testid^="cloze-choices-"]');
+        const n = await groups.count();
+        for (let j = 0; j < n; j++) {
+            await groups.nth(j).getByRole("radio").first().click();
+        }
     } else {
         const blanks = page.locator('[data-testid^="cloze-input-"]');
         const n = await blanks.count();
