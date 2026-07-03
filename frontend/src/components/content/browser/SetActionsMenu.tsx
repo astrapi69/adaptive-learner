@@ -15,6 +15,15 @@
  * restores focus to the trigger, Arrow keys move between items, and an
  * outside click dismisses. Tailwind + design tokens only.
  *
+ * The dropdown is rendered through a **portal to ``document.body``**,
+ * positioned ``fixed`` at the trigger's rect (#1349). ``#root`` is a
+ * deliberate clipping + scroll container (``overflow-x: hidden`` +
+ * ``overflow-y: auto``, see global.css / #42); a non-portal
+ * ``position: absolute`` overlay inside it is clipped / mis-positioned on
+ * iOS and overlaps the row's navigation ``<Link>`` — so the Delete item
+ * could not be reliably tapped on iPhone. The portal escapes that context
+ * and puts the menu on the top layer.
+ *
  * @example
  * <SetActionsMenu
  *   entry={entry}
@@ -24,7 +33,8 @@
  * />
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { MoreVertical, Trash2 } from "lucide-react";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
@@ -56,15 +66,34 @@ export default function SetActionsMenu({
 }: SetActionsMenuProps) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLUListElement>(null);
+
+  /** Anchor the fixed, portalled menu to the trigger's current rect. */
+  const reposition = useCallback(() => {
+    const rect = triggerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setPos({
+      top: rect.bottom + 4,
+      right: Math.max(8, window.innerWidth - rect.right),
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (open) reposition();
+  }, [open, reposition]);
 
   useEffect(() => {
     if (!open) return;
+    // Dismiss on a pointer outside BOTH the trigger and the portalled menu
+    // (the menu is no longer a DOM descendant of the trigger's container).
     const onDocPointer = (e: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      const target = e.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (menuRef.current?.contains(target)) return;
+      setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -72,13 +101,19 @@ export default function SetActionsMenu({
         triggerRef.current?.focus();
       }
     };
+    // Keep the menu anchored to the trigger while the page scrolls/resizes.
+    const onReflow = () => reposition();
     document.addEventListener("mousedown", onDocPointer);
     document.addEventListener("keydown", onKey);
+    window.addEventListener("scroll", onReflow, true);
+    window.addEventListener("resize", onReflow);
     return () => {
       document.removeEventListener("mousedown", onDocPointer);
       document.removeEventListener("keydown", onKey);
+      window.removeEventListener("scroll", onReflow, true);
+      window.removeEventListener("resize", onReflow);
     };
-  }, [open]);
+  }, [open, reposition]);
 
   /** The localized verb for transitioning INTO ``next``. */
   const transitionLabel = (next: SetStatus): string => {
@@ -112,7 +147,7 @@ export default function SetActionsMenu({
   };
 
   return (
-    <div ref={rootRef} className="relative shrink-0">
+    <div ref={rootRef} className="shrink-0">
       <button
         ref={triggerRef}
         type="button"
@@ -120,16 +155,24 @@ export default function SetActionsMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t("content.set_status.menu_aria", "Set actions")}
-        onClick={() => setOpen((v) => !v)}
+        onClick={(e) => {
+          // Never let the tap bubble to a row-level navigation target.
+          e.stopPropagation();
+          setOpen((v) => !v);
+        }}
         data-testid={`set-actions-${entry.id}`}
       >
         <MoreVertical size={18} aria-hidden="true" />
       </button>
-      {open && (
+      {open &&
+        pos &&
+        createPortal(
         <ul
+          ref={menuRef}
           role="menu"
           aria-label={t("content.set_status.menu_aria", "Set actions")}
-          className="absolute right-0 z-20 mt-1 min-w-48 rounded-app border border-border bg-card py-1 shadow-elevated"
+          style={{ position: "fixed", top: pos.top, right: pos.right }}
+          className="z-50 min-w-48 max-w-[calc(100vw-1rem)] rounded-app border border-border bg-card py-1 shadow-elevated"
           data-testid={`set-actions-menu-${entry.id}`}
         >
           {TRANSITIONS[status].map((next) => (
@@ -159,8 +202,9 @@ export default function SetActionsMenu({
               {t("content.set_status.action.delete", "Delete")}
             </button>
           </li>
-        </ul>
-      )}
+        </ul>,
+          document.body,
+        )}
     </div>
   );
 }
