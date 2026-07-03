@@ -336,6 +336,14 @@ Zeigt der `src`-Pfad auf eine nicht vorhandene Datei, fällt der
 Renderer auf das `label` zurück — picture_choice funktioniert
 also auch ohne Illustrations-Assets.
 
+> **Verwende `picture_choice` NICHT für reines Text-Multiple-Choice.** Es
+> ist nur für echte Bild-Auswahl mit **real existierenden** Bild-Assets.
+> Für Text-Optionen rendert es Platzhalter-Kacheln statt einer nutzbaren
+> Multiple-Choice-Kontrolle — das war der Bug in
+> astrapi69/adaptive-learner-content-test#10. Text-Multiple-Choice wird
+> stattdessen als `cloze` `select`-Modus erstellt — siehe
+> [Multiple Choice erstellen](#multiple-choice-erstellen).
+
 ### free_text
 
 Antwort eintippen. Der Renderer matched erst exakt, dann
@@ -438,14 +446,40 @@ len(blanks)`).
   `accept`, nicht-leeres `distractors`, und beide Listen müssen
   **disjunkt** sein (dieselbe Option darf nicht in beiden stehen).
 
+#### Multiple Choice erstellen
+
 **Multiple Choice wird so erstellt** — es gibt bewusst keinen
-eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3). Eine
+eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3 und #890). Eine
 Single-Choice-Frage ist ein Cloze mit einer Lücke im `select`-Modus:
 der `sentence` (endet auf `___`) ist die Frage, `accept[0]` der
 Lücke ist die richtige Option, und `distractors` sind die falschen
 Optionen. Beispiel: `"sentence": "Die Hauptstadt von Frankreich ist
 ___."`, `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode":
 "select"`, `"distractors": ["Berlin", "Madrid", "Rom"]`.
+
+Du kannst die ganze Frage auch in `prompt` schreiben und einen bloßen
+`"sentence": "___"` verwenden — der Renderer zeigt ein `<select>` aus
+richtiger Antwort + Distraktoren, bewertet die Auswahl, gibt Feedback
+und speist das SRS:
+
+```json
+{
+  "id": "ex-hook-state",
+  "type": "cloze",
+  "prompt": "Welcher Hook verwaltet lokalen State in einer Funktionskomponente?",
+  "card_ids": ["card-usestate"],
+  "sentence": "___",
+  "blanks": [{"accept": ["useState"]}],
+  "cloze_mode": "select",
+  "distractors": ["useEffect", "useContext", "useRef"]
+}
+```
+
+> **Erstelle Text-Multiple-Choice niemals als `picture_choice`.** Dieser
+> Typ ist nur für echte Bild-Assets; für Text-Optionen rendert er
+> Platzhalter-Kacheln statt einer nutzbaren Kontrolle (vgl.
+> astrapi69/adaptive-learner-content-test#10). Text-MC ist immer
+> `cloze` `select`-Modus, wie oben.
 
 **"Alle zutreffenden auswählen"** (zwei oder mehr richtige
 Antworten, z. B. eine Führerscheinprüfungs-Frage) nutzt

@@ -326,6 +326,14 @@ If the `src` path points to a non-existent file, the renderer
 falls back to the `label` — so picture_choice also works without
 illustration assets.
 
+> **Do not use `picture_choice` for text-only multiple choice.** It is
+> for genuine image selection with **real, existing** image assets. Used
+> for text options it renders placeholder tiles instead of a usable
+> multiple-choice control — that was the bug in
+> astrapi69/adaptive-learner-content-test#10. Author text multiple choice
+> as `cloze` `select` mode instead — see
+> [Multiple Choice authoring](#multiple-choice-authoring).
+
 ### free_text
 
 Type the answer. The renderer matches exactly first, then
@@ -424,14 +432,39 @@ the loader checks `sentence.count("___") == len(blanks)`).
   `distractors`, and the two lists must be **disjoint** (the same
   option may not be both correct and a distractor).
 
+#### Multiple Choice authoring
+
 **Multiple choice is authored this way** — there is no separate
-`multiple_choice` exercise type (by design, see EXP-036 §4.3). A
+`multiple_choice` exercise type (by design, see EXP-036 §4.3 and #890). A
 single-answer multiple-choice question is a one-blank cloze in
 `select` mode: the `sentence` (ending in `___`) is the question, the
 blank's `accept[0]` is the correct option, and `distractors` are the
 wrong options. Example: `"sentence": "The capital of France is ___."`,
 `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
 `"distractors": ["Berlin", "Madrid", "Rome"]`.
+
+You can also put the whole question in `prompt` and use a bare
+`"sentence": "___"` — the renderer shows a `<select>` of the correct
+answer + distractors, grades the pick, gives feedback and feeds the SRS:
+
+```json
+{
+  "id": "ex-hook-state",
+  "type": "cloze",
+  "prompt": "Which hook manages local state in a function component?",
+  "card_ids": ["card-usestate"],
+  "sentence": "___",
+  "blanks": [{"accept": ["useState"]}],
+  "cloze_mode": "select",
+  "distractors": ["useEffect", "useContext", "useRef"]
+}
+```
+
+> **Never author text multiple choice as `picture_choice`.** That type is
+> for real image assets only; for text options it renders placeholder
+> tiles, not a usable control (cf.
+> astrapi69/adaptive-learner-content-test#10). Text MC is always
+> `cloze` `select` mode, as above.
 
 **"Select all that apply"** (two or more correct answers, e.g. a
 driving-licence exam question) uses `cloze_mode: "multiselect"`:
