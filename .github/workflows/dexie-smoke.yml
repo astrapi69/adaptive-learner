@@ -47,7 +47,7 @@ jobs:
     # cold browser download that no longer happens.
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # The image ships Node 22; install 24 to match the repo's engines
       # (frontend + e2e both require >=24) so CI runs the same runtime as local.

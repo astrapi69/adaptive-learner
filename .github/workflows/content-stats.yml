@@ -28,9 +28,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check out content repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: astrapi69/adaptive-learner-content
           path: adaptive-learner-content

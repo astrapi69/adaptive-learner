@@ -67,7 +67,7 @@ jobs:
       # target's git push to main fires deploy-gh-pages.yml (#1265). Falls
       # back to GITHUB_TOKEN when RELEASE_PAT is unset (release completes, the
       # deploy then needs a manual trigger).
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}

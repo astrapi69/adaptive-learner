@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # full history for git-revision-date plugin in mkdocs
 
@@ -55,7 +55,7 @@ jobs:
       # (offline-first). Without this step the build fails open and the
       # deployed site ships with no bundled content.
       - name: Check out content repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: astrapi69/adaptive-learner-content
           path: adaptive-learner-content

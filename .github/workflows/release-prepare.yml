@@ -73,7 +73,7 @@ jobs:
     steps:
       # Checks out the dispatched ref — i.e. the prepared `release/<version>`
       # branch. fetch-depth 0 keeps the gate's git-history-aware checks honest.
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
