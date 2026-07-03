@@ -97,18 +97,25 @@ export default function Discover() {
         const local = await getStorage()
           .contentLoader.listSets()
           .catch(() => ({ sets: [], sources: [] }));
-        const sets = await fetchAllIndices(repos, {
-          onRevalidated: () => {
-            if (!cancelled) void refresh();
-          },
-        });
+        const applySets = (sets: SearchableSet[]) => {
+          if (cancelled) return;
+          setAllSets(sets);
+          const keys = new Set<string>();
+          for (const set of sets) {
+            if (isSetDownloaded(set, local.sets)) keys.add(discoverSetKey(set));
+          }
+          setDownloadedKeys(keys);
+        };
+        // 1) Instant paint from the TTL cache (stale-while-revalidate).
+        applySets(await fetchAllIndices(repos));
         if (cancelled) return;
-        setAllSets(sets);
-        const keys = new Set<string>();
-        for (const set of sets) {
-          if (isSetDownloaded(set, local.sets)) keys.add(discoverSetKey(set));
-        }
-        setDownloadedKeys(keys);
+        setLoading(false);
+        // 2) Always force-refresh the catalogue from the live repo so a
+        //    newly-published set (e.g. the first set in a new source
+        //    language) appears on reopen without waiting out the 24h TTL,
+        //    and after a content sync. A failed refresh keeps the cached
+        //    list (#1337).
+        applySets(await fetchAllIndices(repos, { forceRefresh: true }));
       } catch (err) {
         if (!cancelled) {
           notify.error(
@@ -119,11 +126,6 @@ export default function Discover() {
       } finally {
         if (!cancelled) setLoading(false);
       }
-    }
-    async function refresh() {
-      const repos = await collectDiscoveryRepos();
-      const sets = await fetchAllIndices(repos);
-      if (!cancelled) setAllSets(sets);
     }
     void load();
     return () => {
