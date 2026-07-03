@@ -16,13 +16,25 @@
 
 import { Link } from "react-router-dom";
 
+import { Checkbox } from "@/components/ui/checkbox";
+
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { isKnowledgeDomain } from "../../../lib/exercises/knowledge-domain";
 import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
 import SetActionsMenu from "./SetActionsMenu";
 import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 
-interface ContentSetListViewProps {
+/** #1351 — the multi-select wiring, forwarded to every row. */
+interface SelectionProps {
+  /** When true, each row shows a selection checkbox. */
+  selectable?: boolean;
+  /** Selected keys (``${source}#${id}``). */
+  selectedKeys?: Set<string>;
+  /** Toggle a row's selection. */
+  onToggleSelect?: (entry: ContentSetEntry) => void;
+}
+
+interface ContentSetListViewProps extends SelectionProps {
   sets: ContentSetEntry[];
   /** #1300 — change a set's lifecycle status. Omit to hide the
    *  per-set overflow menu (e.g. search results). */
@@ -31,20 +43,50 @@ interface ContentSetListViewProps {
   onDelete?: (entry: ContentSetEntry) => void;
 }
 
+/** Stable selection key for a set (source + id). */
+export function setSelectionKey(entry: {
+  source: string;
+  id: string;
+}): string {
+  return `${entry.source}#${entry.id}`;
+}
+
 function ContentSetListRow({
   entry,
   onSetStatus,
   onDelete,
+  selectable,
+  selectedKeys,
+  onToggleSelect,
 }: {
   entry: ContentSetEntry;
   onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
   onDelete?: (entry: ContentSetEntry) => void;
-}) {
+} & SelectionProps) {
   const { t } = useI18n();
   const knowledge = isKnowledgeDomain(entry.domain, entry.source_language, entry.target_language);
   return (
     <li>
       <div className="flex items-center gap-1">
+        {selectable && (
+          <label className="inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center">
+            <span className="sr-only">
+              {t("content.set_status.select_set", "Select {title}").replace(
+                "{title}",
+                entry.title,
+              )}
+            </span>
+            <Checkbox
+              checked={selectedKeys?.has(setSelectionKey(entry)) ?? false}
+              onCheckedChange={() => onToggleSelect?.(entry)}
+              aria-label={t("content.set_status.select_set", "Select {title}").replace(
+                "{title}",
+                entry.title,
+              )}
+              data-testid={`content-select-${entry.id}`}
+            />
+          </label>
+        )}
         <Link
           to={`/content/set/${entry.id}`}
           className="flex min-h-11 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -94,6 +136,9 @@ export default function ContentSetListView({
   sets,
   onSetStatus,
   onDelete,
+  selectable,
+  selectedKeys,
+  onToggleSelect,
 }: ContentSetListViewProps) {
   return (
     <ul className="flex flex-col gap-0.5" data-testid="content-list-view">
@@ -103,6 +148,9 @@ export default function ContentSetListView({
           entry={entry}
           onSetStatus={onSetStatus}
           onDelete={onDelete}
+          selectable={selectable}
+          selectedKeys={selectedKeys}
+          onToggleSelect={onToggleSelect}
         />
       ))}
     </ul>

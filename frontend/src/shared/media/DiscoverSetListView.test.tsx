@@ -42,6 +42,7 @@ const LABELS: DiscoverListLabels = {
   downloaded: "Already present",
   remove: "Remove",
   lessons: (n) => `${n} lessons`,
+  newBadge: "New",
 };
 
 function renderList(
@@ -50,6 +51,7 @@ function renderList(
     isDownloaded: (s: SearchableSet) => boolean;
     stateFor: (s: SearchableSet) => SetDiscoveryDownloadState;
     canRemove: (s: SearchableSet) => boolean;
+    isNew: (s: SearchableSet) => boolean;
     onDownload: (s: SearchableSet) => void;
     onRemove: (s: SearchableSet) => void;
   }> = {},
@@ -63,6 +65,7 @@ function renderList(
       isDownloaded={opts.isDownloaded ?? (() => false)}
       stateFor={opts.stateFor ?? (() => "idle")}
       canRemove={opts.canRemove ?? (() => true)}
+      isNew={opts.isNew ?? (() => false)}
       onDownload={onDownload}
       onRemove={onRemove}
       labels={LABELS}
@@ -126,5 +129,15 @@ describe("DiscoverSetListView", () => {
     });
     expect(screen.getByTestId("discover-list-es-a1-downloaded")).toBeInTheDocument();
     expect(screen.queryByTestId("discover-list-es-a1-remove")).toBeNull();
+  });
+
+  it("renders a New badge for a set flagged new, and none otherwise (#1337 f/u)", () => {
+    renderList([makeSet({ id: "fr-a1-from-el" }), makeSet({ id: "es-a1" })], {
+      isNew: (s) => s.id === "fr-a1-from-el",
+    });
+    const badge = screen.getByTestId("discover-list-fr-a1-from-el-new");
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveTextContent("New");
+    expect(screen.queryByTestId("discover-list-es-a1-new")).toBeNull();
   });
 });

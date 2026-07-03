@@ -41,13 +41,18 @@ import ContentContributionsSection from "../../components/content/contributions/
 import ContentSearchBar from "../../components/content/browser/ContentSearchBar";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
 import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
-import ContentSetListView from "../../components/content/browser/ContentSetListView";
+import ContentSetListView, {
+  setSelectionKey,
+} from "../../components/content/browser/ContentSetListView";
 import DeleteSetModal from "../../components/content/browser/DeleteSetModal";
+import BulkActionBar from "../../components/content/browser/BulkActionBar";
+import BulkDeleteSetsModal from "../../components/content/browser/BulkDeleteSetsModal";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
 import { useContentSetActions } from "../../hooks/content/useContentSetActions";
+import { useSetSelection } from "../../hooks/content/useSetSelection";
 import { useContentViewMode } from "../../hooks/content/useContentViewMode";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
@@ -74,7 +79,8 @@ import {
   matchesStatusFilter,
   type StatusFilter,
 } from "../../lib/content/browse/set-status-filter";
-import type { ContentSetEntry } from "../../storage/types";
+import type { ContentSetEntry, SetStatus } from "../../storage/types";
+import { Checkbox } from "@/components/ui/checkbox";
 
 /** Community contribution target repo (manual maintainer review). */
 const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
@@ -169,6 +175,11 @@ export default function ContentPage() {
     deletingSet,
     handleSetStatus,
     handleConfirmDeleteSet,
+    bulkDeleteTargets,
+    setBulkDeleteTargets,
+    bulkDeleting,
+    handleBulkSetStatus,
+    handleConfirmBulkDelete,
     openLessonFile,
     handleOpenLesson,
     handleEditUserSet,
@@ -178,6 +189,9 @@ export default function ContentPage() {
     fetchSetLessons,
     handleDownload,
   } = useContentSetActions({ navigate, setSets, setPerSetState });
+
+  // #1351 — multi-select state for the bulk-action bar.
+  const selection = useSetSelection();
 
   // Phase 60 — community-share + opt-in AI validation (extracted to
   // useContentSharing). The page keeps the contribution history.
@@ -223,6 +237,19 @@ export default function ContentPage() {
     if (sourceFilter === "official") return isOfficialSource(s.source);
     return s.source === sourceFilter;
   });
+
+  // #1351 — multi-select derives from the currently VISIBLE (filtered) sets:
+  // "select all" only ever covers what the learner can see, never silently
+  // more. The selected entries drive the bulk actions.
+  const visibleKeys = visibleSets.map(setSelectionKey);
+  const selectedEntries = visibleSets.filter((s) =>
+    selection.isSelected(setSelectionKey(s)),
+  );
+  const bulkStatus = (status: SetStatus) => {
+    void handleBulkSetStatus(selectedEntries, status);
+    selection.clear();
+  };
+  const bulkDeleteCount = bulkDeleteTargets?.length ?? 0;
 
   // EXP-026 / UGC-04 — fold user-generated sets into the matching
   // published node (pure helper extracted in #541 to keep this component
@@ -421,11 +448,45 @@ export default function ContentPage() {
                 "No content sets available yet. Check your network connection and refresh, or configure a source in Settings.",
               )}
             </p>
-          ) : viewMode === "list" ? (
+          ) : (
+            <>
+              {/* #1351 — multi-select: select-all over the VISIBLE (filtered)
+                  sets + the bulk-action bar (shown once ≥1 is selected). */}
+              {visibleSets.length > 0 && (
+                <div
+                  className="mb-2 flex items-center gap-2"
+                  data-testid="content-select-all-row"
+                >
+                  <label className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center">
+                    <span className="sr-only">
+                      {t("content.set_status.select_all", "Select all")}
+                    </span>
+                    <Checkbox
+                      checked={selection.masterState(visibleKeys)}
+                      onCheckedChange={() => selection.selectAll(visibleKeys)}
+                      aria-label={t("content.set_status.select_all", "Select all")}
+                      data-testid="content-select-all"
+                    />
+                  </label>
+                  <span className="text-sm text-muted-foreground">
+                    {t("content.set_status.select_all", "Select all")}
+                  </span>
+                </div>
+              )}
+              <BulkActionBar
+                count={selection.count}
+                onSetStatus={bulkStatus}
+                onDelete={() => setBulkDeleteTargets(selectedEntries)}
+                onClear={selection.clear}
+              />
+              {viewMode === "list" ? (
             <ContentSetListView
               sets={visibleSets}
               onSetStatus={(e, status) => void handleSetStatus(e, status)}
               onDelete={setDeleteSetTarget}
+              selectable
+              selectedKeys={selection.selected}
+              onToggleSelect={(e) => selection.toggle(setSelectionKey(e))}
             />
           ) : (
             <ContentTree
@@ -453,6 +514,9 @@ export default function ContentPage() {
                   aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
                 onSetStatus: (e, status) => void handleSetStatus(e, status),
                 onDelete: setDeleteSetTarget,
+                selectable: true,
+                selectedKeys: selection.selected,
+                onToggleSelect: (e) => selection.toggle(setSelectionKey(e)),
               }}
               folded={{
                 setsByKey: userSetsByKey,
@@ -465,6 +529,8 @@ export default function ContentPage() {
                 onDelete: setDeleteTarget,
               }}
             />
+              )}
+            </>
           )}
         </>
       )}
@@ -505,6 +571,16 @@ export default function ContentPage() {
         deleting={deletingSet}
         onCancel={() => setDeleteSetTarget(null)}
         onConfirm={() => void handleConfirmDeleteSet()}
+      />
+
+      {/* #1351 — destructive confirmation for removing several sets at once. */}
+      <BulkDeleteSetsModal
+        count={bulkDeleteCount}
+        deleting={bulkDeleting}
+        onCancel={() => setBulkDeleteTargets(null)}
+        onConfirm={() =>
+          void handleConfirmBulkDelete().then(() => selection.clear())
+        }
       />
     </main>
   );

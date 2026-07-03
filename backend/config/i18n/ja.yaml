@@ -2038,6 +2038,15 @@ content:
     deleted: "セットを削除しました。"
     delete_failed: "セットを削除できませんでした。"
     delete_confirm: "ダウンロードしたセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。"
+    select_all: "すべて選択"
+    select_set: "{title} を選択"
+    bulk_selected: "{n} 件選択中"
+    bulk_bar_aria: "一括操作"
+    bulk_clear: "選択を解除"
+    bulk_changed: "{n} 個のセットのステータスを更新しました。"
+    bulk_deleted: "{n} 個のセットを削除しました。"
+    bulk_delete_title: "{n} 個のセットを削除しますか？"
+    bulk_delete_confirm: "選択したセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。"
     action:
       activate: "再アクティブ化"
       defer: "保留にする"
@@ -3023,6 +3032,7 @@ discover:
   filter:
     all: "すべて"
     language: "言語"
+    all_languages: "すべての言語"
     level: "レベル"
     domain: "分野"
     trust: "信頼度"
@@ -3046,6 +3056,7 @@ discover:
   empty:
     no_sets: "まだ利用可能なコンテンツはありません。"
     no_results: "「{query}」の結果はありません。"
+    language_hint: "この言語のコンテンツはまだありません。"
   card:
     download: "ダウンロード"
     downloading: "ダウンロード中…"

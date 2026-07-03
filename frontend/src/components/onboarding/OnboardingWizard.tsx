@@ -3,6 +3,7 @@ import {useMemo, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Progress} from "@/components/ui/progress";
 import {useI18n} from "../../hooks/ui/useI18n";
+import ChoiceButtonGroup from "../../shared/forms/ChoiceButtonGroup";
 
 /** The profile fields the wizard collects, ready for projects.update. */
 export interface WizardValues {
@@ -129,33 +130,21 @@ export default function OnboardingWizard({
                     <span className="form-label">
                         {t("onboarding.wizard.timeframe_title", "How much time do you have?")}
                     </span>
-                    <div
-                        className="grid grid-cols-1 gap-2 sm:grid-cols-2"
-                        role="radiogroup"
-                        aria-label={t(
+                    <ChoiceButtonGroup
+                        options={timeframeOptions.map((opt) => ({
+                            value: opt.label,
+                            testId: `onboarding-wizard-timeframe-${opt.key}`,
+                        }))}
+                        value={timeframe}
+                        onChange={setTimeframe}
+                        ariaLabel={t(
                             "onboarding.wizard.timeframe_title",
                             "How much time do you have?",
                         )}
-                    >
-                        {timeframeOptions.map((opt) => {
-                            const selected = timeframe === opt.label;
-                            return (
-                                <Button
-                                    key={opt.key}
-                                    type="button"
-                                    variant={selected ? "default" : "outline"}
-                                    role="radio"
-                                    aria-checked={selected}
-                                    data-testid={`onboarding-wizard-timeframe-${opt.key}`}
-                                    onClick={() => setTimeframe(opt.label)}
-                                    disabled={busy}
-                                    className="w-full justify-center"
-                                >
-                                    {opt.label}
-                                </Button>
-                            );
-                        })}
-                    </div>
+                        disabled={busy}
+                        columns={2}
+                        align="center"
+                    />
                 </div>
             )}
 

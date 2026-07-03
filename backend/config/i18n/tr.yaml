@@ -2038,6 +2038,15 @@ content:
     deleted: "Set kaldırıldı."
     delete_failed: "Set kaldırılamadı."
     delete_confirm: "İndirilen set ve dersleri İçeriklerim'den kaldırılacak. Öğrenme ilerlemen korunur ve seti istediğin zaman yeniden indirebilirsin."
+    select_all: "Tümünü seç"
+    select_set: "{title} öğesini seç"
+    bulk_selected: "{n} seçildi"
+    bulk_bar_aria: "Toplu işlemler"
+    bulk_clear: "Seçimi temizle"
+    bulk_changed: "{n} set için durum güncellendi."
+    bulk_deleted: "{n} set kaldırıldı."
+    bulk_delete_title: "{n} set silinsin mi?"
+    bulk_delete_confirm: "Seçilen setler ve dersleri İçeriğim'den kaldırılacak. Öğrenme ilerlemeniz korunur ve setleri istediğiniz zaman yeniden indirebilirsiniz."
     action:
       activate: "Yeniden etkinleştir"
       defer: "Ertele"
@@ -3023,6 +3032,7 @@ discover:
   filter:
     all: "Tümü"
     language: "Dil"
+    all_languages: "Tüm diller"
     level: "Seviye"
     domain: "Alan"
     trust: "Güven"
@@ -3046,6 +3056,7 @@ discover:
   empty:
     no_sets: "Henüz içerik yok."
     no_results: "“{query}” için sonuç yok."
+    language_hint: "Bu dilde henüz bir şey yok."
   card:
     download: "İndir"
     downloading: "İndiriliyor…"

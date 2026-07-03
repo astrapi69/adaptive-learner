@@ -257,6 +257,12 @@ export interface FetchSearchIndexOptions {
   /** Fired when a stale-while-revalidate background refresh completes with
    *  fresh sets, so the UI can update after returning the cached index. */
   onRevalidated?: (sets: SearchableSet[]) => void;
+  /** Force a network refetch, IGNORING the TTL cache (used when the catalogue
+   *  must reflect the live repo now — e.g. a user-triggered sync or a Discover
+   *  reopen after new content was published). The fresh result replaces the
+   *  cache; on a network failure the cached sets are returned instead of an
+   *  empty list, so a failed refresh never blanks the catalogue (#1337). */
+  forceRefresh?: boolean;
 }
 
 async function revalidate(
@@ -277,6 +283,9 @@ async function revalidate(
 /**
  * Load one repo's search index with stale-while-revalidate caching.
  *
+ *  - ``forceRefresh``: skip the cache entirely and refetch from the network,
+ *    updating the cache. On a network failure the cached sets (if any) are
+ *    returned, so a failed forced refresh never blanks the catalogue (#1337).
  *  - Fresh cache (within {@link SEARCH_INDEX_TTL_MS}): returned with NO network.
  *  - Stale cache: returned immediately; a background refresh updates the cache
  *    and calls {@link FetchSearchIndexOptions.onRevalidated} on success.
@@ -293,6 +302,20 @@ export async function fetchSearchIndex(
   const now = opts.now ?? Date.now();
   const resolved = resolveRepo(repo);
   if (!resolved) return [];
+
+  if (opts.forceRefresh) {
+    // Catalogue must reflect the live repo now: ignore the TTL cache and
+    // refetch. A failed refetch falls back to the cache so the catalogue
+    // never blanks (#1337).
+    try {
+      const sets = await fetchSearchIndexFromNetwork(repo);
+      writeSearchIndexCache(resolved.source, sets, now);
+      opts.onRevalidated?.(sets);
+      return sets;
+    } catch {
+      return readSearchIndexCache(resolved.source, now)?.sets ?? [];
+    }
+  }
 
   const cached = readSearchIndexCache(resolved.source, now);
   if (cached && !cached.stale) {

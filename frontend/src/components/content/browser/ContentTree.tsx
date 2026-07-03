@@ -57,6 +57,12 @@ export interface ContentSetRowActions {
   onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
   /** #1300 — open the delete-confirm dialog for a set (overflow menu). */
   onDelete?: (entry: ContentSetEntry) => void;
+  /** #1351 — multi-select: show a per-tile selection checkbox. */
+  selectable?: boolean;
+  /** #1351 — the selected keys (``${source}#${id}``). */
+  selectedKeys?: Set<string>;
+  /** #1351 — toggle a tile's selection. */
+  onToggleSelect?: (entry: ContentSetEntry) => void;
 }
 
 /** Actions + lookup for the user lessons folded into tree nodes
@@ -131,6 +137,9 @@ export default function ContentTree({
       aiBadgeStatus={setRow.aiBadgeStatusFor?.(entry) ?? "none"}
       onSetStatus={setRow.onSetStatus}
       onDelete={setRow.onDelete}
+      selectable={setRow.selectable}
+      selected={setRow.selectedKeys?.has(`${entry.source}#${entry.id}`) ?? false}
+      onToggleSelect={setRow.onToggleSelect}
     />
   );
 

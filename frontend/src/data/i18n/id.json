@@ -2217,6 +2217,15 @@
       "deleted": "Set dihapus.",
       "delete_failed": "Tidak dapat menghapus set.",
       "delete_confirm": "Set yang diunduh dan pelajarannya akan dihapus dari Konten Saya. Progres belajarmu tetap tersimpan, dan kamu dapat mengunduh set lagi kapan saja.",
+      "select_all": "Pilih semua",
+      "select_set": "Pilih {title}",
+      "bulk_selected": "{n} dipilih",
+      "bulk_bar_aria": "Tindakan massal",
+      "bulk_clear": "Hapus pilihan",
+      "bulk_changed": "Status diperbarui untuk {n} set.",
+      "bulk_deleted": "{n} set dihapus.",
+      "bulk_delete_title": "Hapus {n} set?",
+      "bulk_delete_confirm": "Set yang dipilih beserta pelajarannya akan dihapus dari Konten Saya. Progres belajar Anda tetap tersimpan, dan Anda dapat mengunduh set lagi kapan saja.",
       "action": {
         "activate": "Aktifkan kembali",
         "defer": "Tunda",
@@ -3308,6 +3317,7 @@
     "filter": {
       "all": "Semua",
       "language": "Bahasa",
+      "all_languages": "Semua bahasa",
       "level": "Tingkat",
       "domain": "Bidang",
       "trust": "Kepercayaan",
@@ -3335,7 +3345,8 @@
     },
     "empty": {
       "no_sets": "Belum ada konten tersedia.",
-      "no_results": "Tidak ada hasil untuk “{query}”."
+      "no_results": "Tidak ada hasil untuk “{query}”.",
+      "language_hint": "Belum ada apa pun dalam bahasa ini."
     },
     "card": {
       "download": "Unduh",

@@ -2217,6 +2217,15 @@
       "deleted": "Conjunto eliminado.",
       "delete_failed": "No se pudo eliminar el conjunto.",
       "delete_confirm": "El conjunto descargado y sus lecciones se eliminarán de Mis contenidos. Tu progreso de aprendizaje se conserva y puedes volver a descargar el conjunto cuando quieras.",
+      "select_all": "Seleccionar todo",
+      "select_set": "Seleccionar {title}",
+      "bulk_selected": "{n} seleccionados",
+      "bulk_bar_aria": "Acciones en lote",
+      "bulk_clear": "Borrar selección",
+      "bulk_changed": "Estado actualizado para {n} conjuntos.",
+      "bulk_deleted": "{n} conjuntos eliminados.",
+      "bulk_delete_title": "¿Eliminar {n} conjuntos?",
+      "bulk_delete_confirm": "Los conjuntos seleccionados y sus lecciones se eliminarán de Mi contenido. Tu progreso de aprendizaje se conserva y puedes volver a descargar los conjuntos en cualquier momento.",
       "action": {
         "activate": "Reactivar",
         "defer": "Aplazar",
@@ -3308,6 +3317,7 @@
     "filter": {
       "all": "Todos",
       "language": "Idioma",
+      "all_languages": "Todos los idiomas",
       "level": "Nivel",
       "domain": "Área",
       "trust": "Confianza",
@@ -3335,7 +3345,8 @@
     },
     "empty": {
       "no_sets": "Aún no hay contenido disponible.",
-      "no_results": "Sin resultados para «{query}»."
+      "no_results": "Sin resultados para «{query}».",
+      "language_hint": "Todavía no hay nada en este idioma."
     },
     "card": {
       "download": "Descargar",

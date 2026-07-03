@@ -77,7 +77,9 @@ import {
 } from "./content/content-loader-dexie-ai";
 import {
   deleteSetDexie,
+  deleteSetsDexie,
   setSetStatusDexie,
+  setSetsStatusDexie,
   activeSourcesDexie,
   downloadSetDexie,
   getAssetDexie,
@@ -451,6 +453,9 @@ export const dexieStorage: IStorageService = {
      *  downloaded sets. */
     saveUserSet: (input) => saveUserSetDexie(input, new Date().toISOString()),
     deleteSet: (source, setId) => deleteSetDexie(source, setId),
+    /** #1351 — bulk delete + bulk status in one transaction. */
+    deleteSets: (refs) => deleteSetsDexie(refs),
+    setSetsStatus: (refs, status) => setSetsStatusDexie(refs, status),
     /** #1300 — persist the set's lifecycle status on the cached row(s). */
     setSetStatus: (source, setId, status) =>
       setSetStatusDexie(source, setId, status),
