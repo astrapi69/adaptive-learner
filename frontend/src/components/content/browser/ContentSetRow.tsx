@@ -13,6 +13,7 @@
 import { BookOpen, Download, FolderOpen, ListChecks, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import ListRow from "../../../shared/layout/ListRow";
 import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../../shared/status/AiCheckedBadge";
@@ -60,6 +61,12 @@ interface ContentSetRowProps {
   onSetStatus?: (entry: ContentSetEntry, status: SetStatus) => void;
   /** #1300 — open the delete-confirm dialog for the set. */
   onDelete?: (entry: ContentSetEntry) => void;
+  /** #1351 — multi-select: show a selection checkbox on the tile. */
+  selectable?: boolean;
+  /** #1351 — whether this tile is currently selected. */
+  selected?: boolean;
+  /** #1351 — toggle this tile's selection. */
+  onToggleSelect?: (entry: ContentSetEntry) => void;
 }
 
 /** Origin / trust / recommended badges for a non-official source. */
@@ -335,6 +342,9 @@ export default function ContentSetRow({
   aiBadgeStatus = "none",
   onSetStatus,
   onDelete,
+  selectable,
+  selected = false,
+  onToggleSelect,
 }: ContentSetRowProps) {
   const { t } = useI18n();
   const isCached = entry.cached_version !== null;
@@ -345,11 +355,32 @@ export default function ContentSetRow({
       actionsClassName="content-set-action"
       testId={`content-set-${entry.id}`}
       title={
-        <ContentSetHeading
-          entry={entry}
-          repoMeta={repoMeta}
-          recommendedSources={recommendedSources}
-        />
+        <span className="flex items-center gap-1">
+          {selectable && (
+            <label className="inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center">
+              <span className="sr-only">
+                {t("content.set_status.select_set", "Select {title}").replace(
+                  "{title}",
+                  entry.title,
+                )}
+              </span>
+              <Checkbox
+                checked={selected}
+                onCheckedChange={() => onToggleSelect?.(entry)}
+                aria-label={t("content.set_status.select_set", "Select {title}").replace(
+                  "{title}",
+                  entry.title,
+                )}
+                data-testid={`content-select-${entry.id}`}
+              />
+            </label>
+          )}
+          <ContentSetHeading
+            entry={entry}
+            repoMeta={repoMeta}
+            recommendedSources={recommendedSources}
+          />
+        </span>
       }
       tags={
         <span className="inline-flex flex-wrap items-center">
