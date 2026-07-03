@@ -439,27 +439,45 @@ describe("Discover source-language filter (#1343)", () => {
     expect(localStorage.getItem(KEY)).toBe("");
   });
 
-  it("moves the default when the UI language changes, but only without an explicit choice", async () => {
+  it("follows the new UI language after a switch — the switch clears any explicit choice (#1347)", async () => {
+    // NEW RULE (#1347, supersedes the prior "explicit choice survives a
+    // language switch"): a UI-language change resets the content-language
+    // filter to the new language, overriding even an explicit "All". The reset
+    // itself lives in the single language choke point (`setLang` in `useI18n`,
+    // covered by its own test); here we assert Discover's half — it follows the
+    // new locale once that override has been cleared.
     seedTwoSourceLanguages();
-    // No explicit choice: default follows the locale.
+    // Pre-switch: the user had explicitly chosen "All languages".
+    localStorage.setItem(KEY, "");
+    i18n.lang = "de";
+    const first = renderDiscover();
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"),
+    );
+    first.unmount();
+
+    // UI switches to English: setLang clears the override (emulated here), so
+    // Discover follows the new locale — English — not the old "All".
+    localStorage.removeItem(KEY);
+    i18n.lang = "en";
+    renderDiscover();
+    await waitFor(() => expect(screen.getByText("French (en)")).toBeInTheDocument());
+    expect(screen.queryByText("Spanisch (de)")).toBeNull();
+    // The override was cleared, so nothing is persisted until a new choice.
+    expect(localStorage.getItem(KEY)).toBeNull();
+  });
+
+  it("without a UI-language change, an explicit choice is untouched", async () => {
+    seedTwoSourceLanguages();
+    localStorage.setItem(KEY, "de");
     i18n.lang = "de";
     const first = renderDiscover();
     await waitFor(() => expect(screen.getByText("Spanisch (de)")).toBeInTheDocument());
     expect(screen.queryByText("French (en)")).toBeNull();
     first.unmount();
-
-    // UI switches to English → the default now follows "en".
-    i18n.lang = "en";
-    const second = renderDiscover();
-    await waitFor(() => expect(screen.getByText("French (en)")).toBeInTheDocument());
-    expect(screen.queryByText("Spanisch (de)")).toBeNull();
-    second.unmount();
-
-    // With an EXPLICIT choice stored, a locale change must NOT move it.
-    localStorage.setItem(KEY, "de");
-    i18n.lang = "en";
+    // Reload (no language change): the stored choice still applies.
     renderDiscover();
     await waitFor(() => expect(screen.getByText("Spanisch (de)")).toBeInTheDocument());
-    expect(screen.queryByText("French (en)")).toBeNull();
+    expect(localStorage.getItem(KEY)).toBe("de");
   });
 });
