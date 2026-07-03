@@ -107,18 +107,7 @@ export default function SetDiscoveryCard<T extends DiscoverableSet>({
     <Card className="flex flex-col gap-2 p-3" data-testid={testId} data-set-id={set.id}>
       <div className="flex items-start gap-2">
         <p className="grow font-medium leading-snug">{set.name}</p>
-        {isNew && newLabel ? (
-          <Badge
-            variant="default"
-            className="shrink-0 gap-1"
-            data-testid={`${testId}-new`}
-            data-new="true"
-            title={newLabel}
-          >
-            <Sparkles className="size-3" aria-hidden="true" />
-            {newLabel}
-          </Badge>
-        ) : null}
+        <CardNewBadge isNew={isNew} label={newLabel} testId={`${testId}-new`} />
         {set.trust_level > 0 && labels.trust ? (
           <Badge variant="secondary" className="shrink-0" data-testid={`${testId}-trust`}>
             <ShieldCheck className="mr-1 size-3" aria-hidden="true" />
@@ -212,5 +201,32 @@ export default function SetDiscoveryCard<T extends DiscoverableSet>({
         )}
       </div>
     </Card>
+  );
+}
+
+/** "New" badge for a set added to the catalogue since the user last saw it
+ *  (#1339). Renders nothing unless flagged + labelled. Extracted so the card's
+ *  main render stays under the complexity gate. */
+function CardNewBadge({
+  isNew,
+  label,
+  testId,
+}: {
+  isNew: boolean;
+  label?: string;
+  testId: string;
+}) {
+  if (!isNew || !label) return null;
+  return (
+    <Badge
+      variant="default"
+      className="shrink-0 gap-1"
+      data-testid={testId}
+      data-new="true"
+      title={label}
+    >
+      <Sparkles className="size-3" aria-hidden="true" />
+      {label}
+    </Badge>
   );
 }
