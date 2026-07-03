@@ -3025,6 +3025,7 @@ discover:
   filter:
     all: "Όλα"
     language: "Γλώσσα"
+    all_languages: "Όλες οι γλώσσες"
     level: "Επίπεδο"
     domain: "Τομέας"
     trust: "Εμπιστοσύνη"
@@ -3048,6 +3049,7 @@ discover:
   empty:
     no_sets: "Δεν υπάρχει ακόμη διαθέσιμο περιεχόμενο."
     no_results: "Κανένα αποτέλεσμα για «{query}»."
+    language_hint: "Δεν υπάρχει ακόμη τίποτα σε αυτή τη γλώσσα."
   card:
     download: "Λήψη"
     downloading: "Γίνεται λήψη…"

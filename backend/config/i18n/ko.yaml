@@ -3033,6 +3033,7 @@ discover:
   filter:
     all: "전체"
     language: "언어"
+    all_languages: "모든 언어"
     level: "수준"
     domain: "분야"
     trust: "신뢰도"
@@ -3056,6 +3057,7 @@ discover:
   empty:
     no_sets: "아직 사용 가능한 콘텐츠가 없습니다."
     no_results: "“{query}”에 대한 결과가 없습니다."
+    language_hint: "이 언어로 된 콘텐츠가 아직 없습니다."
   card:
     download: "다운로드"
     downloading: "다운로드 중…"

@@ -50,8 +50,9 @@ export type DiscoverSort = "relevance" | "newest" | "lessons";
 export interface DiscoverFilters {
   /** Free-text query (matched against name + description + tags). */
   query: string;
-  /** BCP-47 code matched against source OR target language. */
-  language: string;
+  /** BCP-47 code matched against the set's SOURCE (instruction) language.
+   *  The visible, locale-defaulted, persisted language facet (#1343). */
+  sourceLanguage: string;
   /** CEFR level (a1..c2), exact match. */
   level: string;
   /** Content domain (language / ai / psychology / …), exact match. */
@@ -65,7 +66,7 @@ export interface DiscoverFilters {
 /** A blank filter set (everything = all). */
 export const EMPTY_FILTERS: DiscoverFilters = {
   query: "",
-  language: "",
+  sourceLanguage: "",
   level: "",
   domain: "",
   trust: "",
@@ -85,11 +86,7 @@ export function matchesQuery(set: SearchableSet, normalizedQuery: string): boole
 
 /** True when the set passes every active (non-empty) facet of ``filters``. */
 export function passesFilters(set: SearchableSet, filters: DiscoverFilters): boolean {
-  if (
-    filters.language &&
-    set.source_language !== filters.language &&
-    set.target_language !== filters.language
-  ) {
+  if (filters.sourceLanguage && set.source_language !== filters.sourceLanguage) {
     return false;
   }
   if (filters.level && set.level !== filters.level) return false;
@@ -158,14 +155,24 @@ export function queryDiscoverSets(
   return sortDiscoverSets(filtered, sort, filters.query);
 }
 
-/** Distinct BCP-47 codes present across all sets (source + target), sorted. */
-export function availableLanguages(sets: SearchableSet[]): string[] {
+/** Distinct non-empty SOURCE (instruction) language codes present, sorted.
+ *  Drives the visible source-language facet (#1343). */
+export function availableSourceLanguages(sets: SearchableSet[]): string[] {
   const codes = new Set<string>();
-  for (const set of sets) {
-    if (set.source_language) codes.add(set.source_language);
-    if (set.target_language) codes.add(set.target_language);
-  }
+  for (const set of sets) if (set.source_language) codes.add(set.source_language);
   return [...codes].sort();
+}
+
+/** How many sets carry each SOURCE language code (for "Deutsch (12)" labels). */
+export function sourceLanguageCounts(
+  sets: SearchableSet[],
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const set of sets) {
+    if (!set.source_language) continue;
+    counts[set.source_language] = (counts[set.source_language] ?? 0) + 1;
+  }
+  return counts;
 }
 
 /** Distinct CEFR levels present, sorted (a1, a2, b1, …). */

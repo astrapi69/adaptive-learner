@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   availableDomains,
-  availableLanguages,
+  availableSourceLanguages,
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
@@ -13,6 +13,7 @@ import {
   passesFilters,
   queryDiscoverSets,
   sortDiscoverSets,
+  sourceLanguageCounts,
   type DiscoverFilters,
 } from "./discover-index";
 import { normalizeSearchText } from "../browse/content-search";
@@ -60,11 +61,14 @@ describe("matchesQuery", () => {
 });
 
 describe("passesFilters", () => {
-  it("language matches source OR target", () => {
+  it("sourceLanguage matches the source (instruction) language only", () => {
     const set = makeSet({ source_language: "de", target_language: "es" });
-    expect(passesFilters(set, { ...EMPTY_FILTERS, language: "de" })).toBe(true);
-    expect(passesFilters(set, { ...EMPTY_FILTERS, language: "es" })).toBe(true);
-    expect(passesFilters(set, { ...EMPTY_FILTERS, language: "fr" })).toBe(false);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, sourceLanguage: "de" })).toBe(true);
+    // The target language must NOT satisfy the source-language facet.
+    expect(passesFilters(set, { ...EMPTY_FILTERS, sourceLanguage: "es" })).toBe(false);
+    expect(passesFilters(set, { ...EMPTY_FILTERS, sourceLanguage: "fr" })).toBe(false);
+    // Empty = all languages.
+    expect(passesFilters(set, { ...EMPTY_FILTERS, sourceLanguage: "" })).toBe(true);
   });
 
   it("level + domain are exact", () => {
@@ -152,8 +156,23 @@ describe("available* option helpers", () => {
     makeSet({ source_language: "de", target_language: "es", level: "a1", domain: "language" }),
     makeSet({ source_language: "en", target_language: "es", level: "b1", domain: "ai" }),
   ];
-  it("languages: distinct source + target, sorted", () => {
-    expect(availableLanguages(sets)).toEqual(["de", "en", "es"]);
+  it("source languages: distinct SOURCE codes only, sorted (target ignored)", () => {
+    expect(availableSourceLanguages(sets)).toEqual(["de", "en"]);
+  });
+  it("ignores sets with an empty source language", () => {
+    expect(availableSourceLanguages([...sets, makeSet({ source_language: "" })])).toEqual([
+      "de",
+      "en",
+    ]);
+  });
+  it("counts sets per source language", () => {
+    const counted = [
+      makeSet({ source_language: "de" }),
+      makeSet({ source_language: "de" }),
+      makeSet({ source_language: "el" }),
+      makeSet({ source_language: "" }),
+    ];
+    expect(sourceLanguageCounts(counted)).toEqual({ de: 2, el: 1 });
   });
   it("levels sorted", () => {
     expect(availableLevels(sets)).toEqual(["a1", "b1"]);

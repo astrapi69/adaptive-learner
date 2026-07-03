@@ -3308,6 +3308,7 @@
     "filter": {
       "all": "Tümü",
       "language": "Dil",
+      "all_languages": "Tüm diller",
       "level": "Seviye",
       "domain": "Alan",
       "trust": "Güven",
@@ -3335,7 +3336,8 @@
     },
     "empty": {
       "no_sets": "Henüz içerik yok.",
-      "no_results": "“{query}” için sonuç yok."
+      "no_results": "“{query}” için sonuç yok.",
+      "language_hint": "Bu dilde henüz bir şey yok."
     },
     "card": {
       "download": "İndir",
@@ -3356,12 +3358,6 @@
       "download_failed": "Set indirilemedi.",
       "remove_failed": "Set kaldırılamadı.",
       "load_failed": "Kullanılabilir içerik yüklenemedi."
-    },
-    "badge": {
-      "new": "Yeni"
-    },
-    "new": {
-      "count": "{n} yeni"
     }
   },
   "update": {

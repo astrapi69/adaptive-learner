@@ -3308,6 +3308,7 @@
     "filter": {
       "all": "전체",
       "language": "언어",
+      "all_languages": "모든 언어",
       "level": "수준",
       "domain": "분야",
       "trust": "신뢰도",
@@ -3335,7 +3336,8 @@
     },
     "empty": {
       "no_sets": "아직 사용 가능한 콘텐츠가 없습니다.",
-      "no_results": "“{query}”에 대한 결과가 없습니다."
+      "no_results": "“{query}”에 대한 결과가 없습니다.",
+      "language_hint": "이 언어로 된 콘텐츠가 아직 없습니다."
     },
     "card": {
       "download": "다운로드",
@@ -3356,12 +3358,6 @@
       "download_failed": "세트를 다운로드할 수 없습니다.",
       "remove_failed": "세트를 삭제할 수 없습니다.",
       "load_failed": "사용 가능한 콘텐츠를 불러올 수 없습니다."
-    },
-    "badge": {
-      "new": "신규"
-    },
-    "new": {
-      "count": "{n}개 신규"
     }
   },
   "update": {

@@ -3023,6 +3023,7 @@ discover:
   filter:
     all: "Tümü"
     language: "Dil"
+    all_languages: "Tüm diller"
     level: "Seviye"
     domain: "Alan"
     trust: "Güven"
@@ -3046,6 +3047,7 @@ discover:
   empty:
     no_sets: "Henüz içerik yok."
     no_results: "“{query}” için sonuç yok."
+    language_hint: "Bu dilde henüz bir şey yok."
   card:
     download: "İndir"
     downloading: "İndiriliyor…"

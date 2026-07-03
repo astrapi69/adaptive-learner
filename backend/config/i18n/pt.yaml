@@ -3023,6 +3023,7 @@ discover:
   filter:
     all: "Todos"
     language: "Idioma"
+    all_languages: "Todos os idiomas"
     level: "Nível"
     domain: "Área"
     trust: "Confiança"
@@ -3046,6 +3047,7 @@ discover:
   empty:
     no_sets: "Ainda não há conteúdo disponível."
     no_results: "Nenhum resultado para “{query}”."
+    language_hint: "Ainda não há nada neste idioma."
   card:
     download: "Baixar"
     downloading: "Baixando…"

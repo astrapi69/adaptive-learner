@@ -3308,6 +3308,7 @@
     "filter": {
       "all": "Todos",
       "language": "Idioma",
+      "all_languages": "Todos os idiomas",
       "level": "Nível",
       "domain": "Área",
       "trust": "Confiança",
@@ -3335,7 +3336,8 @@
     },
     "empty": {
       "no_sets": "Ainda não há conteúdo disponível.",
-      "no_results": "Nenhum resultado para “{query}”."
+      "no_results": "Nenhum resultado para “{query}”.",
+      "language_hint": "Ainda não há nada neste idioma."
     },
     "card": {
       "download": "Baixar",
@@ -3356,12 +3358,6 @@
       "download_failed": "Não foi possível baixar o set.",
       "remove_failed": "Não foi possível remover o set.",
       "load_failed": "Não foi possível carregar o conteúdo disponível."
-    },
-    "badge": {
-      "new": "Novo"
-    },
-    "new": {
-      "count": "{n} novos"
     }
   },
   "update": {
