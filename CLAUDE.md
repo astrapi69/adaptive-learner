@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.98.0** (schema + tooling release - the lesson
+- **Current state:** **v1.99.0** (schema + tooling release - the lesson
   **JSON-Schema becomes the App-authoritative single source of truth**
   (EXP-039): the schema, quality rules, doc, and TS types are generated from
   the App's Pydantic models (#1197), the TS lesson types consume that generated
