@@ -44,12 +44,13 @@ import type {ErrorReplayPayload} from "./NextStepSuggestions";
 function renderCard(
     suggestions: Suggestions,
     errorReplay?: ErrorReplayPayload,
+    setId = "fr-a1",
 ) {
     return render(
         <MemoryRouter>
             <NextStepSuggestions
                 suggestions={suggestions}
-                setId="fr-a1"
+                setId={setId}
                 setSlug="bundled:adaptive-learner-content"
                 lessonFilename="03-ser-estar.json"
                 errorReplay={errorReplay}
@@ -162,7 +163,10 @@ describe("NextStepSuggestions", () => {
         );
     });
 
-    it("renders the set-complete card with a suggested set link", () => {
+    it("set-complete 'View Set' links to the COMPLETED set's detail (#1370)", () => {
+        // Even with a "How about …" suggestion for a *different* set, the
+        // "View Set" CTA opens the just-completed set's detail page, not the
+        // generic Discover overview and not the suggested set.
         renderCard(
             makeSuggestions({
                 setComplete: true,
@@ -178,8 +182,42 @@ describe("NextStepSuggestions", () => {
         expect(card).toHaveTextContent("Spanish A1");
         expect(screen.getByTestId("next-step-cta-view-set")).toHaveAttribute(
             "href",
-            "/content",
+            "/content/set/fr-a1",
         );
+    });
+
+    it("'View Set' uses the set-id from the completed-lesson context (#1370)", () => {
+        renderCard(
+            makeSuggestions({
+                setComplete: true,
+                setTitle: "Python Grundlagen",
+                lessonCount: 3,
+            }),
+            undefined,
+            "de/python-basics",
+        );
+        expect(screen.getByTestId("next-step-cta-view-set")).toHaveAttribute(
+            "href",
+            "/content/set/de%2Fpython-basics",
+        );
+    });
+
+    it("'View Set' is shown even without a suggested set (#1370)", () => {
+        // The CTA is about the completed set, so it no longer depends on the
+        // optional "How about …" next-set suggestion.
+        renderCard(
+            makeSuggestions({
+                setComplete: true,
+                setTitle: "French A1",
+                lessonCount: 5,
+            }),
+        );
+        const cta = screen.getByTestId("next-step-cta-view-set");
+        expect(cta).toHaveAttribute("href", "/content/set/fr-a1");
+        // No suggestion text when there is no suggested set.
+        expect(
+            screen.getByTestId("next-step-card-complete"),
+        ).not.toHaveTextContent("How about");
     });
 
     it("marks the primary card and leaves others secondary", () => {
