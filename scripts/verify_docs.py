@@ -168,8 +168,21 @@ def check_version(report: Report, fix: bool) -> None:
                 path.write_text(new_text, encoding="utf-8")
                 report.fail("version", f"{label}: {found} -> {canonical} (auto-fixed)", fixed=True)
                 continue
-        hint = "" if fixable else " (dated prose -- fix by hand, --fix will not touch it)"
-        report.fail("version", f"{label}: says v{found}, canonical is v{canonical}{hint}")
+        if fixable:
+            report.fail("version", f"{label}: says v{found}, canonical is v{canonical}")
+        else:
+            # Dated-prose headers (ROADMAP.md / backlog.md) carry the version
+            # inside a hand-written "Current state" narrative, so --fix must
+            # not naively rewrite them. release-workflow.md Step 11 updates
+            # these as post-release documentation, so a mismatch during the
+            # release cut is a reminder (WARN), not a release-blocking FAIL --
+            # the version is still hard-gated on the README/CLAUDE badges and
+            # the required changelog file.
+            report.warn(
+                "version",
+                f"{label}: says v{found}, canonical is v{canonical} "
+                "(dated-prose header -- refresh by hand as post-release documentation)",
+            )
 
 
 # ---------------------------------------------------------------------------
