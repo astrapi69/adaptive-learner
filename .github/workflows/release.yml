@@ -111,10 +111,19 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Configure git identity
+      - name: Configure git identity + trust the workspace
+        # This job runs as root inside the Playwright container while the
+        # checked-out tree is owned by the runner user, so git rejects every
+        # working-tree command ("fatal: not in a git directory").
+        # actions/checkout sets safe.directory only in its own ephemeral HOME,
+        # so it does not carry over to later steps. Trust the workspace
+        # persistently and set a --global identity: a local-scope config write
+        # needs a recognised repo (exactly what fails here), and the downstream
+        # release-prepare / commit / push git operations need the same trust.
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Backend + plugin deps
         working-directory: backend
