@@ -568,7 +568,7 @@ settings:
   section_api_keys: Chaves de API
   section_danger: Conta
   section_ui: Interface
-  section_appearance: "Aparencia"
+  section_appearance: "Aparência"
   content_view: "Visualização de conteúdo"
   content_view_description: "Como o conteúdo baixado é exibido nas abas de conteúdo. O alternador rápido na visualização de conteúdo altera a mesma configuração."
   section_profile: "Perfil"
@@ -587,7 +587,7 @@ settings:
   avatar_change: "Alterar foto"
   avatar_button_label: "Ver ou alterar a foto de perfil"
   theme: "Tema"
-  theme_description: "Escolha a aparencia do aplicativo. Automatico segue a configuracao clara/escura do sistema."
+  theme_description: "Escolha a aparência do aplicativo. Automático segue a configuração clara/escura do sistema."
   theme_group_recommended: "Recomendados"
   theme_group_classic: "Clássicos"
   theme_groups: "Grupos de temas"
@@ -629,6 +629,8 @@ settings:
   profile_create_hint: "Faça uma breve avaliação para obter um perfil de aprendizagem personalizado."
   lesson_shortcuts: "Atalhos de teclado nas lições"
   lesson_shortcuts_description: "Pressione Enter para verificar a sua resposta e Enter novamente para ir para o próximo passo."
+  lesson_auto_advance: "Avançar automaticamente após uma resposta correta"
+  lesson_auto_advance_description: "Após uma resposta correta, avança automaticamente para o próximo exercício. Uma resposta errada sempre espera para você revisar a solução."
   button_tooltips: Mostrar dicas dos botões
   button_tooltips_description: "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de ecrã permanecem ativas independentemente."
   developer_mode: Modo desenvolvedor
@@ -1648,6 +1650,17 @@ repo:
     description: "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git."
     enable_git: "Ativar persistência git"
 lesson:
+  ask_ai:
+    button: "Perguntar à IA"
+    title: "Pergunte à IA sobre isto"
+    placeholder: "ex.: Explique com um exemplo"
+    ask: "Perguntar"
+    asking: "Perguntando…"
+    no_key: "Configure uma chave de IA para perguntar - veja as configurações de IA."
+    open_settings: "Configurações de IA"
+    error: "A solicitação de IA falhou. Tente novamente."
+  example:
+    label: "Exemplo"
   mode:
     label: "Modo de lição"
     practice: "Prática"
@@ -2025,6 +2038,15 @@ content:
     deleted: "Conjunto removido."
     delete_failed: "Não foi possível remover o conjunto."
     delete_confirm: "O conjunto baixado e suas lições serão removidos de Meus conteúdos. Seu progresso de aprendizagem é mantido, e você pode baixar o conjunto novamente quando quiser."
+    select_all: "Selecionar tudo"
+    select_set: "Selecionar {title}"
+    bulk_selected: "{n} selecionados"
+    bulk_bar_aria: "Ações em massa"
+    bulk_clear: "Limpar seleção"
+    bulk_changed: "Estado atualizado para {n} conjuntos."
+    bulk_deleted: "{n} conjuntos removidos."
+    bulk_delete_title: "Excluir {n} conjuntos?"
+    bulk_delete_confirm: "Os conjuntos selecionados e suas lições serão removidos de Meu conteúdo. Seu progresso de aprendizagem é mantido, e você pode baixar os conjuntos novamente a qualquer momento."
     action:
       activate: "Reativar"
       defer: "Adiar"
@@ -2188,34 +2210,34 @@ content:
   ai_check:
     badge:
       verified: "Verificado por IA"
-      stale: "Verificacao IA desatualizada"
-      invalid: "Verificacao IA invalida"
-    last_checked: "Ultima verificacao: {when}"
+      stale: "Verificação IA desatualizada"
+      invalid: "Verificação IA inválida"
+    last_checked: "Última verificação: {when}"
     checked_with: "Verificado com"
     date: "Data"
     recheck: "Verificar novamente"
     export:
-      button: "Exportar relatorio como Markdown"
-      lesson: "Licao"
-      card: "Cartao"
+      button: "Exportar relatório como Markdown"
+      lesson: "Lição"
+      card: "Cartão"
       field: "Campo"
     button: "Verificar com IA"
-    title: "Verificacao de conteudo com IA"
-    loading: "Preparando cartoes..."
-    cost_estimate: "~{cards} cartoes, ~{tokens} tokens, ~{usd}."
-    privacy: "Seus cartoes serao enviados ao provedor de IA configurado para revisao. Nenhum dado pessoal e transmitido."
+    title: "Verificação de conteúdo com IA"
+    loading: "Preparando cartões..."
+    cost_estimate: "~{cards} cartões, ~{tokens} tokens, ~{usd}."
+    privacy: "Seus cartões serão enviados ao provedor de IA configurado para revisão. Nenhum dado pessoal é transmitido."
     confirm: "Verificar"
     progress: "Verificando lote {current} de {total}..."
-    rate_limited: "Aguarde um momento antes de executar outra verificacao."
-    failed: "Verificacao com IA indisponivel."
-    unavailable_mode: "Disponivel apenas no modo de armazenamento do navegador."
+    rate_limited: "Aguarde um momento antes de executar outra verificação."
+    failed: "Verificação com IA indisponível."
+    unavailable_mode: "Disponível apenas no modo de armazenamento do navegador."
     report:
-      summary: "{cards} cartoes verificados em {lessons} licoes"
-      ok: "{count} cartoes OK"
-      issues: "{count} cartoes com problemas"
-      all_ok: "Todos os cartoes passaram. Nenhum problema encontrado."
+      summary: "{cards} cartões verificados em {lessons} lições"
+      ok: "{count} cartões OK"
+      issues: "{count} cartões com problemas"
+      all_ok: "Todos os cartões passaram. Nenhum problema encontrado."
       problem: "Problema"
-      suggestion: "Sugestao"
+      suggestion: "Sugestão"
   quality:
     button: "Verificação de qualidade"
     title: "Verificação de qualidade"
@@ -2907,6 +2929,12 @@ favorites:
   empty: "Ainda não há favoritos — toque na estrela de uma lição."
   save_prompt: "Guardar esta lição nos seus favoritos"
 content_repo:
+  qr:
+    upload: "Enviar imagem QR"
+    decoding: "Lendo QR…"
+    no_qr: "Nenhum código QR encontrado na imagem."
+    invalid: "O código QR não é um link válido de \"adicionar repositório\"."
+    filled: "Dados do repositório preenchidos a partir do código QR."
   title: "Repositórios de conteúdo"
   last_sync: "Última sincronização: {when}"
   added: "Repositório adicionado."
@@ -2946,6 +2974,7 @@ content_repo:
     sync: "Sincronizar agora"
   badge:
     coach: "Treinador"
+    private: "Privado"
     official: "Oficial"
   trust:
     dropped: "Sincronizado, mas a validação falhou — este repositório está agora marcado como não verificado."
@@ -3003,6 +3032,7 @@ discover:
   filter:
     all: "Todos"
     language: "Idioma"
+    all_languages: "Todos os idiomas"
     level: "Nível"
     domain: "Área"
     trust: "Confiança"
@@ -3026,6 +3056,7 @@ discover:
   empty:
     no_sets: "Ainda não há conteúdo disponível."
     no_results: "Nenhum resultado para “{query}”."
+    language_hint: "Ainda não há nada neste idioma."
   card:
     download: "Baixar"
     downloading: "Baixando…"

@@ -1,4 +1,26 @@
-import {describe, it, expect} from "vitest";
+import {createElement} from "react";
+import {act, fireEvent, render, screen} from "@testing-library/react";
+import {afterEach, beforeEach, describe, it, expect, vi} from "vitest";
+
+import {
+    I18nProvider,
+    isUiLanguage,
+    readSavedLang,
+    resolveInitialUiLanguage,
+    useI18n,
+} from "./useI18n";
+import {
+    DISCOVER_SOURCE_LANGUAGE_KEY,
+    readDiscoverSourceLanguage,
+    writeDiscoverSourceLanguage,
+} from "../../lib/content/repos/discoverLanguagePref";
+
+vi.mock("../../storage", () => ({
+    getStorage: () => ({
+        settings: {getApp: vi.fn().mockResolvedValue({app: {default_language: "de"}})},
+        i18n: {get: vi.fn().mockResolvedValue({})},
+    }),
+}));
 
 // Test the t() function logic directly (without React hooks)
 function createT(strings: Record<string, unknown>) {
@@ -50,5 +72,161 @@ describe("i18n t() function", () => {
 
     it("handles empty strings", () => {
         expect(t("", "Fallback")).toBe("Fallback");
+    });
+});
+
+describe("resolveInitialUiLanguage — persisted UI language survives a reload (#1333)", () => {
+    it("returns the saved choice (the reported el regression)", () => {
+        // A Greek choice persisted before an update must be honoured, not
+        // dropped to the "de" default.
+        expect(resolveInitialUiLanguage({saved: "el"})).toBe("el");
+    });
+
+    it("lets the saved choice WIN over the app-config default", () => {
+        // Dexie getApp() is empty, but even an explicit app default must not
+        // overwrite the user's stored choice.
+        expect(
+            resolveInitialUiLanguage({saved: "el", appDefault: "de"}),
+        ).toBe("el");
+    });
+
+    it("falls back to the app default when nothing is saved", () => {
+        expect(resolveInitialUiLanguage({saved: null, appDefault: "fr"})).toBe("fr");
+    });
+
+    it("defaults to 'de' when nothing resolves (unchanged no-choice default)", () => {
+        expect(resolveInitialUiLanguage({})).toBe("de");
+        expect(resolveInitialUiLanguage({saved: "xx"})).toBe("de");
+        // A non-UI app default is ignored rather than used verbatim.
+        expect(resolveInitialUiLanguage({appDefault: "zz"})).toBe("de");
+    });
+
+    it("accepts every shipped UI language, not just the legacy five", () => {
+        // Regression guard: the old ``isSupportedLang`` constant listed only
+        // de/en/es/fr/el, which would have rejected these saved choices.
+        for (const code of ["ko", "ja", "hi", "id", "pt", "tr", "el"]) {
+            expect(isUiLanguage(code)).toBe(true);
+            expect(resolveInitialUiLanguage({saved: code})).toBe(code);
+        }
+    });
+
+    it("ignores an unsupported saved value", () => {
+        expect(isUiLanguage("xx")).toBe(false);
+        expect(isUiLanguage(null)).toBe(false);
+        expect(
+            resolveInitialUiLanguage({saved: "xx", appDefault: "es"}),
+        ).toBe("es");
+    });
+});
+
+describe("readSavedLang — the persisted localStorage read seam (#1333)", () => {
+    afterEach(() => localStorage.clear());
+
+    it("reads a valid stored UI language (Greek survives the update)", () => {
+        localStorage.setItem("adaptive-learner.language", "el");
+        expect(readSavedLang()).toBe("el");
+    });
+
+    it("returns null when nothing is stored (fresh install)", () => {
+        expect(readSavedLang()).toBeNull();
+    });
+
+    it("returns null for a stored value that is not a shipped UI language", () => {
+        localStorage.setItem("adaptive-learner.language", "xx");
+        expect(readSavedLang()).toBeNull();
+    });
+});
+
+// A UI-language switch resets the Discover content-language filter to the new
+// language, overriding even an explicit choice (#1347).
+describe("setLang resets the Discover content-language filter (#1347)", () => {
+    function LangHarness() {
+        const {lang, setLang} = useI18n();
+        return createElement(
+            "div",
+            null,
+            createElement("span", {"data-testid": "lang"}, lang),
+            createElement(
+                "button",
+                {"data-testid": "to-en", onClick: () => setLang("en")},
+                "en",
+            ),
+            createElement(
+                "button",
+                {"data-testid": "to-fr", onClick: () => setLang("fr")},
+                "fr",
+            ),
+            createElement(
+                "button",
+                {"data-testid": "to-de", onClick: () => setLang("de")},
+                "de",
+            ),
+        );
+    }
+
+    function renderHarness() {
+        return render(createElement(I18nProvider, null, createElement(LangHarness)));
+    }
+
+    beforeEach(() => localStorage.clear());
+    afterEach(() => localStorage.clear());
+
+    // A module-level language cache persists across tests, so each test first
+    // drives the UI to a known "de" baseline (a no-op reset while no pref is
+    // stored), then seeds the pref, then exercises the switch under test.
+    async function baselineDe() {
+        renderHarness();
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("to-de"));
+        });
+    }
+
+    it("switching de→en clears an explicit 'All languages' choice (filter follows the switch)", async () => {
+        await baselineDe();
+        writeDiscoverSourceLanguage(""); // explicit "All"
+        expect(readDiscoverSourceLanguage()).toBe("");
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("to-en"));
+        });
+        expect(screen.getByTestId("lang").textContent).toBe("en");
+        // Override dropped → filter falls back to the new UI-locale default.
+        expect(readDiscoverSourceLanguage()).toBeNull();
+    });
+
+    it("clears an explicit language choice too, not only 'All'", async () => {
+        await baselineDe();
+        writeDiscoverSourceLanguage("de"); // explicit German
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("to-en"));
+        });
+        expect(readDiscoverSourceLanguage()).toBeNull();
+    });
+
+    it("a further UI switch resets again to the new language", async () => {
+        await baselineDe();
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("to-en"));
+        });
+        // A fresh choice made after the switch persists…
+        writeDiscoverSourceLanguage("");
+        expect(readDiscoverSourceLanguage()).toBe("");
+        // …until the next UI-language switch, which resets it again.
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("to-fr"));
+        });
+        expect(screen.getByTestId("lang").textContent).toBe("fr");
+        expect(readDiscoverSourceLanguage()).toBeNull();
+    });
+
+    it("re-selecting the SAME language does not touch the choice", async () => {
+        await baselineDe();
+        // UI language is now "de"; choosing "de" again is a no-op → no reset.
+        writeDiscoverSourceLanguage("");
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("to-de"));
+        });
+        expect(screen.getByTestId("lang").textContent).toBe("de");
+        expect(readDiscoverSourceLanguage()).toBe("");
+        expect(localStorage.getItem(DISCOVER_SOURCE_LANGUAGE_KEY)).toBe("");
     });
 });

@@ -20,8 +20,12 @@ const listSetsMock = vi.fn();
 const downloadSetMock = vi.fn();
 const deleteSetMock = vi.fn();
 
+// Mutable UI locale so a test can simulate the learner switching UI language
+// (the source-language default follows it — #1343).
+const i18n = vi.hoisted(() => ({ lang: "de" }));
+
 vi.mock("../../hooks/ui/useI18n", () => ({
-  useI18n: () => ({ t: (_k: string, fallback: string) => fallback, lang: "en" }),
+  useI18n: () => ({ t: (_k: string, fallback: string) => fallback, lang: i18n.lang }),
 }));
 
 vi.mock("../../lib/content/language/language-names", () => ({
@@ -76,6 +80,8 @@ function makeSet(over: Partial<SearchableSet>): SearchableSet {
 beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
+  i18n.lang = "de"; // reset the mutable UI locale between tests
+
   // #1262 — the global content-view default is now "list" (#1257). These
   // tests assert the card GRID, so pin grid; the list view + default are
   // covered by the dedicated tests below.
@@ -220,34 +226,37 @@ describe("Discover page", () => {
     renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
-    // Filters now visible; defaults reflect the active (empty = All) values.
+    // Filters now visible; the source-language facet reflects the active value
+    // (the UI-locale default "de" here — #1343).
     expect(screen.getByTestId("discover-filters")).toBeInTheDocument();
-    expect(screen.getByTestId("discover-filters-language")).toHaveValue("");
+    expect(screen.getByTestId("discover-filters-sourceLanguage")).toHaveValue("de");
     // Mutual exclusion: the search field is hidden while filtering.
     expect(screen.queryByTestId("discover-search")).toBeNull();
   });
 
-  it("a chosen filter keeps narrowing the list after the panel collapses", async () => {
+  it("a chosen source-language filter keeps narrowing after the panel collapses", async () => {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "de-es", name: "Spanish A1", source_language: "de", target_language: "es" }),
+      makeSet({ id: "en-fr", name: "French A1", source_language: "en", target_language: "fr" }),
+    ]);
     renderDiscover();
-    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"));
-    // Open filters and narrow to Spanish (target=es).
-    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
-    fireEvent.change(screen.getByTestId("discover-filters-language"), {
-      target: { value: "es" },
-    });
+    // Default = UI locale "de" → only the de-source set is shown.
     await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
-    // Collapse the panel via 'Search' — the filter stays applied.
-    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
-    expect(screen.queryByTestId("discover-filters")).toBeNull();
-    expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets");
     expect(screen.getByText("Spanish A1")).toBeInTheDocument();
     expect(screen.queryByText("French A1")).toBeNull();
-    // The search field is back and still runs prompt (debounced) search.
-    fireEvent.change(screen.getByTestId("discover-search"), { target: { value: "zzzznomatch" } });
-    await waitFor(
-      () => expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
-      { timeout: 1000 },
-    );
+    // Open filters and switch the language facet to "en".
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-sourceLanguage"), {
+      target: { value: "en" },
+    });
+    await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
+    expect(screen.getByText("French A1")).toBeInTheDocument();
+    expect(screen.queryByText("Spanish A1")).toBeNull();
+    // Collapse the panel via 'Search' — the filter stays applied and is persisted.
+    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
+    expect(screen.queryByTestId("discover-filters")).toBeNull();
+    expect(screen.getByText("French A1")).toBeInTheDocument();
+    expect(localStorage.getItem("adaptive-learner.discover_source_language")).toBe("en");
   });
 
   // --- #1251: info button replaces the permanent subtitle ---
@@ -336,5 +345,139 @@ describe("Discover page", () => {
     await waitFor(() =>
       expect(screen.getByTestId("discover-list-fr-a1-downloaded")).toBeInTheDocument(),
     );
+  });
+});
+
+// --- #1343: visible source-language filter (default = UI locale, persisted) ---
+
+describe("Discover source-language filter (#1343)", () => {
+  const KEY = "adaptive-learner.discover_source_language";
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+    localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+    i18n.lang = "de";
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+  });
+
+  function seedTwoSourceLanguages() {
+    fetchAllIndicesMock.mockResolvedValue([
+      makeSet({ id: "de-es", name: "Spanisch (de)", source_language: "de", target_language: "es" }),
+      makeSet({ id: "en-fr", name: "French (en)", source_language: "en", target_language: "fr" }),
+    ]);
+  }
+
+  it("defaults to the UI locale and shows only sets in that source language", async () => {
+    i18n.lang = "de";
+    seedTwoSourceLanguages();
+    renderDiscover();
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+    );
+    expect(screen.getByText("Spanisch (de)")).toBeInTheDocument();
+    expect(screen.queryByText("French (en)")).toBeNull();
+    // The locale default is NOT an explicit choice, so nothing is persisted.
+    expect(localStorage.getItem(KEY)).toBeNull();
+  });
+
+  it("an explicit choice overrides the default and persists across a reload", async () => {
+    i18n.lang = "de";
+    seedTwoSourceLanguages();
+    const first = renderDiscover();
+    await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-sourceLanguage"), {
+      target: { value: "en" },
+    });
+    await waitFor(() => expect(screen.getByText("French (en)")).toBeInTheDocument());
+    expect(localStorage.getItem(KEY)).toBe("en");
+    first.unmount();
+
+    // Reload: a fresh mount applies the persisted choice, not the locale default.
+    renderDiscover();
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+    );
+    expect(screen.getByText("French (en)")).toBeInTheDocument();
+    expect(screen.queryByText("Spanisch (de)")).toBeNull();
+  });
+
+  it('"All languages" shows every set regardless of source language', async () => {
+    i18n.lang = "de";
+    seedTwoSourceLanguages();
+    renderDiscover();
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
+    );
+    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
+    fireEvent.change(screen.getByTestId("discover-filters-sourceLanguage"), {
+      target: { value: "" },
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"),
+    );
+    expect(screen.getByText("Spanisch (de)")).toBeInTheDocument();
+    expect(screen.getByText("French (en)")).toBeInTheDocument();
+    // "All languages" is an explicit choice too (empty string, not null).
+    expect(localStorage.getItem(KEY)).toBe("");
+  });
+
+  it("offers an escape link to All languages when the locale default is empty", async () => {
+    i18n.lang = "ja"; // no ja-source set exists
+    seedTwoSourceLanguages();
+    renderDiscover();
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-empty-results")).toBeInTheDocument(),
+    );
+    // The escape hint + link are shown, not a dead empty page.
+    expect(screen.getByTestId("discover-empty-language")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("discover-show-all-languages"));
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"),
+    );
+    expect(localStorage.getItem(KEY)).toBe("");
+  });
+
+  it("follows the new UI language after a switch — the switch clears any explicit choice (#1347)", async () => {
+    // NEW RULE (#1347, supersedes the prior "explicit choice survives a
+    // language switch"): a UI-language change resets the content-language
+    // filter to the new language, overriding even an explicit "All". The reset
+    // itself lives in the single language choke point (`setLang` in `useI18n`,
+    // covered by its own test); here we assert Discover's half — it follows the
+    // new locale once that override has been cleared.
+    seedTwoSourceLanguages();
+    // Pre-switch: the user had explicitly chosen "All languages".
+    localStorage.setItem(KEY, "");
+    i18n.lang = "de";
+    const first = renderDiscover();
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"),
+    );
+    first.unmount();
+
+    // UI switches to English: setLang clears the override (emulated here), so
+    // Discover follows the new locale — English — not the old "All".
+    localStorage.removeItem(KEY);
+    i18n.lang = "en";
+    renderDiscover();
+    await waitFor(() => expect(screen.getByText("French (en)")).toBeInTheDocument());
+    expect(screen.queryByText("Spanisch (de)")).toBeNull();
+    // The override was cleared, so nothing is persisted until a new choice.
+    expect(localStorage.getItem(KEY)).toBeNull();
+  });
+
+  it("without a UI-language change, an explicit choice is untouched", async () => {
+    seedTwoSourceLanguages();
+    localStorage.setItem(KEY, "de");
+    i18n.lang = "de";
+    const first = renderDiscover();
+    await waitFor(() => expect(screen.getByText("Spanisch (de)")).toBeInTheDocument());
+    expect(screen.queryByText("French (en)")).toBeNull();
+    first.unmount();
+    // Reload (no language change): the stored choice still applies.
+    renderDiscover();
+    await waitFor(() => expect(screen.getByText("Spanisch (de)")).toBeInTheDocument());
+    expect(localStorage.getItem(KEY)).toBe("de");
   });
 });

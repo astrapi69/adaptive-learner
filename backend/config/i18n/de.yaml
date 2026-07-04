@@ -629,6 +629,8 @@ settings:
   profile_create_hint: "Mach eine kurze Einstufung für ein persönliches Lernprofil."
   lesson_shortcuts: "Tastenkürzel in Lektionen"
   lesson_shortcuts_description: "Drücke die Eingabetaste, um deine Antwort zu prüfen, und erneut, um zum nächsten Schritt zu gehen."
+  lesson_auto_advance: "Bei richtiger Antwort automatisch weiter"
+  lesson_auto_advance_description: "Nach einer richtigen Antwort automatisch zur nächsten Aufgabe. Bei einer falschen Antwort wird immer gewartet, damit du die Lösung ansehen kannst."
   button_tooltips: Button-Tooltips anzeigen
   button_tooltips_description: "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv."
   developer_mode: Entwicklermodus
@@ -1653,6 +1655,17 @@ repo:
     description: "Erzeugt automatisch Markdown-Artefakte (README, STATS, CHEATSHEET, ROADMAP) pro Projekt aus deinen Sitzungsdaten. Die optionale Git-Integration committet jede Erzeugung, sodass du den Verlauf mit jedem Git-Client durchsehen kannst."
     enable_git: "Git-Persistenz aktivieren"
 lesson:
+  ask_ai:
+    button: "KI fragen"
+    title: "KI zu diesem Block fragen"
+    placeholder: "z. B. Erkläre das mit einem Beispiel"
+    ask: "Fragen"
+    asking: "Wird gefragt…"
+    no_key: "Hinterlege einen KI-Schlüssel, um nachzufragen - siehe KI-Einstellungen."
+    open_settings: "KI-Einstellungen"
+    error: "Die KI-Anfrage ist fehlgeschlagen. Bitte versuche es erneut."
+  example:
+    label: "Beispiel"
   mode:
     label: "Lektionsmodus"
     practice: "Üben"
@@ -2030,6 +2043,15 @@ content:
     deleted: "Set entfernt."
     delete_failed: "Set konnte nicht entfernt werden."
     delete_confirm: "Das heruntergeladene Set und seine Lektionen werden aus „Meine Inhalte“ entfernt. Dein Lernfortschritt bleibt erhalten, und du kannst das Set jederzeit erneut herunterladen."
+    select_all: "Alle auswählen"
+    select_set: "{title} auswählen"
+    bulk_selected: "{n} ausgewählt"
+    bulk_bar_aria: "Sammelaktionen"
+    bulk_clear: "Auswahl aufheben"
+    bulk_changed: "Status für {n} Sets aktualisiert."
+    bulk_deleted: "{n} Sets entfernt."
+    bulk_delete_title: "{n} Sets löschen?"
+    bulk_delete_confirm: "Die ausgewählten Sets und ihre Lektionen werden aus „Meine Inhalte“ entfernt. Dein Lernfortschritt bleibt erhalten, und du kannst die Sets jederzeit erneut herunterladen."
     action:
       activate: "Wieder aktivieren"
       defer: "Zurückstellen"
@@ -2914,6 +2936,12 @@ content_repo:
   title: "Inhalts-Repositories"
   last_sync: "Letzte Synchronisierung: {when}"
   added: "Repository hinzugefügt."
+  qr:
+    upload: "QR-Bild hochladen"
+    decoding: "QR wird gelesen…"
+    no_qr: "Im Bild wurde kein QR-Code gefunden."
+    invalid: "Der QR-Code ist kein gültiger \"Repository hinzufügen\"-Link."
+    filled: "Repository-Daten aus dem QR-Code übernommen."
   synced: "Synchronisiert: {sets} Sets, {lessons} Lektionen."
   token_hint: "Private Repositories benötigen ein Token — füge unten eines ein oder hinterlege ein gemeinsames Token unter Einstellungen → Integrationen."
   trust_official: "Offiziell: Vom Projektteam kuratierter, qualitätsgesicherter Inhalt."
@@ -2950,6 +2978,7 @@ content_repo:
     sync: "Jetzt synchronisieren"
   badge:
     coach: "Coach"
+    private: "Privat"
     official: "Offiziell"
   trust:
     dropped: "Synchronisiert, aber die Validierung schlug fehl — dieses Repository ist jetzt als nicht verifiziert markiert."
@@ -3007,6 +3036,7 @@ discover:
   filter:
     all: "Alle"
     language: "Sprache"
+    all_languages: "Alle Sprachen"
     level: "Niveau"
     domain: "Bereich"
     trust: "Vertrauen"
@@ -3030,6 +3060,7 @@ discover:
   empty:
     no_sets: "Noch keine Inhalte verfügbar."
     no_results: "Keine Ergebnisse für „{query}“."
+    language_hint: "In dieser Sprache gibt es noch nichts."
   card:
     download: "Herunterladen"
     downloading: "Wird geladen…"

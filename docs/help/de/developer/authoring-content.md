@@ -289,6 +289,58 @@ in `word_tiles` oder Volltext-`free_text` — dafür gibt es keine faire
 exact-match-Bewertung. Vollständige Analyse: siehe EXP-041
 (`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
 
+## Aufgabentyp-Katalog (Status)
+
+Eine Referenz über jeden Aufgabentyp: was ausgeliefert wird, was ohne neuen
+Typ abbildbar ist, was Kandidat ist und was bewusst ausgeschlossen bleibt. Das
+kanonische Modell wird **nicht** auf Vorrat erweitert — ein Typ wird nur
+zusammen mit seinem Renderer ausgeliefert (die `SUPPORTED_EXERCISE_TYPES`-
+Registry muss dem `ExerciseType`-Enum entsprechen; ein Paritätstest erzwingt
+das, die Lehre aus dem v1.4-preview- und dem `picture_choice`-Fall). Neue Typen
+kommen bei konkretem Content-Bedarf über das Rezept
+[Neuen Aufgabentyp hinzufügen](adding-exercise-type.md).
+
+### Implementiert (das `ExerciseType`-Enum)
+
+| Typ | Wofür (Lernziel, EXP-041) | Hinweis |
+|-----|---------------------------|---------|
+| `matching` | Konzepte erkennen / zuordnen | Paar-Zuordnung, ≥ 3 Paare. |
+| `picture_choice` | Aus einem echten **Bild** erkennen | ≥ 2 Bilder, genau eins korrekt. Nicht für Text-MC. |
+| `free_text` | Kurze, faktenförmige Antwort produzieren | Exakt-Match, dann Levenshtein ≤ 1. |
+| `word_tiles` | Eine eindeutige Wortreihenfolge (Sprache) | Kacheln gemischt; `accept_orderings` für Varianten. |
+| `cloze` (`type`) | Ein Fakt mit einer Antwort | Ein `<input>` pro Lücke. |
+| `cloze` (`select`) | **Single Multiple Choice** | Das MC-Mittel — rendert als tappbare Buttons (#1342). `accept[0]` korrekt + `distractors`. |
+| `cloze` (`multiselect`) | „Alles Zutreffende auswählen" | Exakt-Mengen-Abgleich über `accept` (alle korrekt) + `distractors` (#1195). |
+
+Es gibt **keinen** `multiple_choice`-/`choice`-Aufgabentyp — Text-Multiple-
+Choice ist per Design `cloze` `select`-Modus (EXP-036 §4.3, #890; Button-
+Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
+
+### Ohne neuen Typ abbildbar (Konventionen, keine Typen)
+
+| Konzept | Wie |
+|---------|-----|
+| Single Multiple Choice | `cloze` `select`-Modus |
+| Wahr/Falsch, Ja/Nein | Zwei-Optionen-`cloze`-`select` (z. B. `distractors: ["Falsch"]`) |
+| Dropdown / Radio / Checkbox | Darstellung eines `cloze` select / multiselect — keine eigenen Typen |
+
+### Geplant bei Bedarf (Kandidaten — KEINE Zusage)
+
+| Kandidat | Nah an | Wann |
+|----------|--------|------|
+| Reihenfolge festlegen / Sortieren | `word_tiles` | Nur bei konkretem Content-Bedarf, dann über das Rezept. |
+| Zahlenfeld (numerischer Vergleich) | `free_text` | Nur bei konkretem Content-Bedarf, dann über das Rezept. |
+
+### Bewusst nicht
+
+| Ausgeschlossen | Warum (ein Satz) |
+|----------------|------------------|
+| Essay / Langtext / Zeichnen / Formel / Peer-Review / freie Selbstbewertung | Nicht binär SRS-bewertbar; Selbstbewertung zurückgestellt (#1268). |
+| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. |
+| Hotspot / Simulation / Memory / Kreuzworträtsel | Aufwand ohne SRS-Mehrwert (später ggf. eigene Entscheidung). |
+| Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
+| Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |
+
 ## Übungstyp-Referenz
 
 ### matching
@@ -335,6 +387,14 @@ Wichtig: `is_correct` ist ein **String** `"true"`, kein JSON-Boolean.
 Zeigt der `src`-Pfad auf eine nicht vorhandene Datei, fällt der
 Renderer auf das `label` zurück — picture_choice funktioniert
 also auch ohne Illustrations-Assets.
+
+> **Verwende `picture_choice` NICHT für reines Text-Multiple-Choice.** Es
+> ist nur für echte Bild-Auswahl mit **real existierenden** Bild-Assets.
+> Für Text-Optionen rendert es Platzhalter-Kacheln statt einer nutzbaren
+> Multiple-Choice-Kontrolle — das war der Bug in
+> astrapi69/adaptive-learner-content-test#10. Text-Multiple-Choice wird
+> stattdessen als `cloze` `select`-Modus erstellt — siehe
+> [Multiple Choice erstellen](#multiple-choice-erstellen).
 
 ### free_text
 
@@ -438,14 +498,40 @@ len(blanks)`).
   `accept`, nicht-leeres `distractors`, und beide Listen müssen
   **disjunkt** sein (dieselbe Option darf nicht in beiden stehen).
 
+#### Multiple Choice erstellen
+
 **Multiple Choice wird so erstellt** — es gibt bewusst keinen
-eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3). Eine
+eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3 und #890). Eine
 Single-Choice-Frage ist ein Cloze mit einer Lücke im `select`-Modus:
 der `sentence` (endet auf `___`) ist die Frage, `accept[0]` der
 Lücke ist die richtige Option, und `distractors` sind die falschen
 Optionen. Beispiel: `"sentence": "Die Hauptstadt von Frankreich ist
 ___."`, `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode":
 "select"`, `"distractors": ["Berlin", "Madrid", "Rom"]`.
+
+Du kannst die ganze Frage auch in `prompt` schreiben und einen bloßen
+`"sentence": "___"` verwenden — der Renderer zeigt ein `<select>` aus
+richtiger Antwort + Distraktoren, bewertet die Auswahl, gibt Feedback
+und speist das SRS:
+
+```json
+{
+  "id": "ex-hook-state",
+  "type": "cloze",
+  "prompt": "Welcher Hook verwaltet lokalen State in einer Funktionskomponente?",
+  "card_ids": ["card-usestate"],
+  "sentence": "___",
+  "blanks": [{"accept": ["useState"]}],
+  "cloze_mode": "select",
+  "distractors": ["useEffect", "useContext", "useRef"]
+}
+```
+
+> **Erstelle Text-Multiple-Choice niemals als `picture_choice`.** Dieser
+> Typ ist nur für echte Bild-Assets; für Text-Optionen rendert er
+> Platzhalter-Kacheln statt einer nutzbaren Kontrolle (vgl.
+> astrapi69/adaptive-learner-content-test#10). Text-MC ist immer
+> `cloze` `select`-Modus, wie oben.
 
 **"Alle zutreffenden auswählen"** (zwei oder mehr richtige
 Antworten, z. B. eine Führerscheinprüfungs-Frage) nutzt

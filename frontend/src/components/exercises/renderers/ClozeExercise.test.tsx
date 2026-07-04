@@ -9,7 +9,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {fireEvent, render, screen} from "@testing-library/react";
+import {fireEvent, render, screen, within} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import ClozeExercise from "./ClozeExercise";
@@ -90,9 +90,25 @@ describe("ClozeExercise: render (type mode default)", () => {
         expect(screen.getByTestId("cloze-input-1")).not.toHaveFocus();
     });
 
-    it("#692 does not auto-focus a select-mode blank", () => {
+    it("#692 does not auto-focus a select-mode option group", () => {
         render(<ClozeExercise exercise={SELECT_MODE} onComplete={vi.fn()} />);
-        expect(screen.getByTestId("cloze-select-0")).not.toHaveFocus();
+        // No native <select>; the button options are not auto-focused (#1341).
+        expect(screen.queryByTestId("cloze-select-0")).not.toBeInTheDocument();
+        expect(screen.getByRole("radio", {name: "un"})).not.toHaveFocus();
+    });
+
+    it("#1353 renders blank controls at 16px (text-base), never text-sm", () => {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        const input = screen.getByTestId("cloze-input-0");
+        expect(input.className).toContain("text-base");
+        expect(input.className).not.toContain("text-sm");
+    });
+
+    it("#1353 focuses the first blank with preventScroll (no competing scroll)", () => {
+        const focusSpy = vi.spyOn(HTMLInputElement.prototype, "focus");
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        expect(focusSpy).toHaveBeenCalledWith({preventScroll: true});
+        focusSpy.mockRestore();
     });
 
     it("applies the monospace code class in code mode (schema v1.3)", () => {
@@ -268,8 +284,8 @@ describe("ClozeExercise: scoring", () => {
     });
 });
 
-describe("ClozeExercise: select mode", () => {
-    it("renders a <select> per blank with options drawn from accept + distractors", () => {
+describe("ClozeExercise: select mode (button radiogroup)", () => {
+    it("renders the options as buttons (accept + distractors), no native <select>", () => {
         render(
             <ClozeExercise
                 exercise={SELECT_MODE}
@@ -279,16 +295,16 @@ describe("ClozeExercise: select mode", () => {
         expect(
             screen.getByTestId("cloze-exercise"),
         ).toHaveAttribute("data-cloze-mode", "select");
-        const sel = screen.getByTestId(
-            "cloze-select-0",
-        ) as HTMLSelectElement;
-        // Canonical + 3 distractors + 1 placeholder = 5 options.
-        expect(sel.options.length).toBe(5);
-        const values = Array.from(sel.options).map((o) => o.value);
-        expect(values).toContain("un");
-        expect(values).toContain("le");
-        expect(values).toContain("la");
-        expect(values).toContain("les");
+        expect(screen.queryByTestId("cloze-select-0")).not.toBeInTheDocument();
+        const group = screen.getByTestId("cloze-choices-0");
+        const names = within(group)
+            .getAllByRole("radio")
+            .map((b) => b.textContent);
+        // Canonical + 3 distractors = 4 options (no placeholder).
+        expect(names).toHaveLength(4);
+        for (const value of ["un", "le", "la", "les"]) {
+            expect(names).toContain(value);
+        }
     });
 
     it("select-mode submit scores against the chosen option", () => {
@@ -299,9 +315,7 @@ describe("ClozeExercise: select mode", () => {
                 onComplete={onComplete}
             />,
         );
-        fireEvent.change(screen.getByTestId("cloze-select-0"), {
-            target: {value: "un"},
-        });
+        fireEvent.click(screen.getByRole("radio", {name: "un"}));
         fireEvent.click(screen.getByTestId("cloze-submit"));
         expect(onComplete).toHaveBeenCalledWith(
             expect.objectContaining({correct: 1, total: 1}),

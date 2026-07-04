@@ -1,6 +1,6 @@
 app:
   name: Adaptive Learner
-  tagline: 당신에게 맞춰 적응하는 학습.
+  tagline: 6단계 방법론 모델에 따른 적응형 학습.
   skeleton_notice: 스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 — docs/adaptive-learner-project-reference.md를 참고하세요.
 common:
   ok: "확인"
@@ -49,7 +49,7 @@ data_export:
   group_config: "설정"
   cat_projects: "학습 프로젝트 (세션, 평가, 메모 포함)"
   cat_curricula: "커리큘럼 (주제 및 레슨 포함)"
-  cat_progress: "레슨 진행도 (오답 / SRS 포함)"
+  cat_progress: "학습 진행도 (오답 / SRS 포함)"
   cat_subjects: "과목"
   cat_tags: "태그"
   cat_imports: "채팅 가져오기 (메시지 포함)"
@@ -168,7 +168,7 @@ import:
   continue_session: 세션 계속
   session_start_error: 세션을 시작할 수 없었습니다.
   transcript: 대화 기록
-  show_transcript: 원본 대화 기록 보기
+  show_transcript: 원본 데이터 보기
   anki_extract: Anki 카드 추출
   anki_extracting: 카드 추출 중…
   anki_extracted: Anki 카드 {n}개를 추출했습니다. Anki 페이지에서 확인하세요.
@@ -227,7 +227,7 @@ landing:
 onboarding:
   title: 학습 프로젝트 만들기
   intro: 학습 목표를 알려주세요. Adaptive Learner는 이를 바탕으로 프로필을 구성하고 시작 학습법을 추천합니다.
-  concepts_explainer_prefix: "당신은 "
+  concepts_explainer_prefix: "당신은"
   concepts_explainer_mid1: "를 정의한 다음, 간단한 평가를 완료해 "
   concepts_explainer_mid2: "을 구성합니다 — 이는 앞으로의 모든 "
   concepts_explainer_suffix: "을 안내합니다."
@@ -312,7 +312,7 @@ dashboard:
   card_paused_lessons: 학습 이어가기
   review_queue:
     loading: "불러오는 중…"
-    elements: "개 요소 복습 예정"
+    elements: "복습할 요소"
     overdue: "기한 초과 — 여기서 시작하세요"
     open: "복습 세션 열기"
     quick: "빠른 복습"
@@ -408,11 +408,11 @@ session:
   send_message: 메시지 보내기
   message_placeholder: 답변을 작성하세요…
   ai_thinking: 생각하는 중…
-  ai_error: AI 제공자가 응답할 수 없었습니다.
+  ai_error: AI가 응답할 수 없었습니다.
   no_api_key: "AI 키가 설정되지 않았습니다. 튜터와 대화하려면 설정에서 AI 제공자의 키를 추가하세요. 레슨과 복습은 키 없이도 작동합니다."
   welcome_empty: "학습할 준비가 되었습니다! 첫 메시지를 작성하세요."
   end_session: 세션 종료
-  end_session_confirm: 정말이신가요? 세션을 닫고 평가를 요청합니다.
+  end_session_confirm: 정말이신가요? 세션을 종료하고 평가할 수 있습니다.
   switch_recommended: 학습법 전환 추천
   switch_recommended_subtitle: 최근 평가를 보면 다른 학습법이 더 잘 맞을 수 있습니다.
   switch_accept: 학습법 전환
@@ -449,12 +449,12 @@ progress:
   commit_duration: 소요 시간
   commit_date: 날짜
   no_commits: 아직 완료된 세션이 없습니다.
-  step_eval_title: AI 단계 평가 인사이트
+  step_eval_title: AI 단계 평가
   step_eval_empty: 아직 AI 단계 평가 데이터가 없습니다 — 세션을 시작하면 여기에 인사이트가 표시됩니다.
   step_eval_avg_confidence: 평균 AI 신뢰도
   step_eval_repeats: AI가 '아직 준비되지 않음'이라고 한 횟수
   step_eval_advances: 단계 진행
-  step_eval_backward: 뒤로 전환
+  step_eval_backward: 단계 뒤로
   step_eval_stickiest_label: '가장 오래 머문 단계:'
   commit_notes_aria: "세션 메모"
   session_count: "세션"
@@ -632,6 +632,8 @@ settings:
   profile_create_hint: "짧은 평가를 받아 개인 맞춤 학습 프로필을 얻으세요."
   lesson_shortcuts: "레슨 키보드 단축키"
   lesson_shortcuts_description: "Enter를 눌러 답을 확인하고, 다시 Enter를 눌러 다음 단계로 이동하세요."
+  lesson_auto_advance: "정답 시 자동으로 다음으로 이동"
+  lesson_auto_advance_description: "정답이면 자동으로 다음 문제로 이동합니다. 오답일 때는 항상 멈춰 정답을 확인할 수 있습니다."
   button_tooltips: 버튼 툴팁 표시
   button_tooltips_description: "아이콘 버튼 위에 마우스를 올리면 기능을 설명하는 툴팁을 표시합니다. 화면 낭독기 레이블은 관계없이 항상 유지됩니다."
   developer_mode: 개발자 모드
@@ -642,7 +644,7 @@ settings:
   feedback_intensity_subtle_desc: "정답/오답 색상만 표시합니다. 문구, 컨페티, 마일스톤 오버레이는 없습니다."
   feedback_intensity_normal: "보통"
   feedback_intensity_normal_desc: "애니메이션, 칭찬 문구, 만점 시 컨페티를 표시합니다."
-  feedback_intensity_enthusiastic: "열정적으로"
+  feedback_intensity_enthusiastic: "상세하게"
   feedback_intensity_enthusiastic_desc: "모든 것에 더해 마일스톤 오버레이와 모든 정답 시 칭찬을 표시합니다."
   feedback_intensity_reduced_motion_hint: "시스템에서 모션 줄이기가 켜져 있어, 이 설정과 관계없이 피드백이 은은하게 유지됩니다."
   sounds: "소리"
@@ -656,7 +658,7 @@ settings:
   storage_mode_dexie: 로컬 (브라우저)
   storage_mode_dexie_hint: 데이터와 API 키가 이 브라우저에 저장되며, AI 호출은 페이지에서 직접 이루어집니다.
   storage_mode_warning: 데이터는 모드 간에 동기화되지 않습니다. 동기화는 향후 버전에 계획되어 있습니다.
-  storage_mode_switch_notice: 저장소 모드가 저장되었습니다. 새 백엔드로 전환하려면 페이지를 새로고침하세요.
+  storage_mode_switch_notice: 저장소 모드가 저장되었습니다. 새 모드를 활성화하려면 페이지를 새로고침하세요.
   language_label: 표시 언어
   language_search_placeholder: "언어 검색…"
   language_no_results: "언어를 찾을 수 없습니다"
@@ -729,7 +731,7 @@ settings:
   model_override_clear: 기본값 사용
   model_picker_placeholder: 모델 ID를 선택하거나 입력하세요
   model_picker_open: 모델 목록 열기
-  model_picker_default_hint: '기본값 사용:'
+  model_picker_default_hint: '기본값:'
   model_picker_loading: 모델 불러오는 중...
   model_picker_error: 모델을 불러올 수 없었습니다. API 키를 확인하세요.
   model_picker_retry: 다시 시도
@@ -1188,7 +1190,7 @@ gamification:
       description: 첫 학습 세션을 완료하세요.
     first_assessment:
       name: 첫 평가
-      description: 학습 유형 평가를 완료하세요.
+      description: 자기 평가를 완료하세요.
     first_import:
       name: 첫 가져오기
       description: 첫 대화를 가져오세요.
@@ -1279,7 +1281,7 @@ gamification:
   reset_failed: 진행도를 초기화할 수 없었습니다.
   weekend_mode_save_failed: 주말 모드 설정을 저장할 수 없었습니다.
   danger_zone_heading: 위험 구역
-  danger_zone_intro: 이 기기의 모든 학습자 상태를 영구히 삭제합니다.
+  danger_zone_intro: 이 기기의 모든 학습 데이터를 영구히 삭제합니다.
   danger_zone_reset_button: 전체 초기화
   danger_zone_warning: 이 작업은 모든 학습 데이터 — 세션, 진행도, 프로필, 커리큘럼, 가져오기, Anki 카드, 설정, API 키 —를 영구히 삭제합니다. 이 작업은 되돌릴 수 없습니다.
   danger_zone_confirm_prompt: '확인하려면 RESET을 입력하세요'
@@ -1320,7 +1322,7 @@ voice:
   speak: 소리 내어 읽기
   stop_speaking: 읽기 중지
   start_listening: 받아쓰기 시작
-  stop_listening: 듣기 중지
+  stop_listening: 받아쓰기 중지
   mic_permission_denied: 마이크 접근이 거부되었습니다.
   mic_error: 음성 인식 오류입니다.
   mic_no_device: "마이크를 찾을 수 없습니다. 마이크를 연결하고 다시 시도하세요."
@@ -1659,6 +1661,17 @@ repo:
     description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
     enable_git: "git 영속화 활성화"
 lesson:
+  ask_ai:
+    button: "AI에게 질문"
+    title: "이 내용에 대해 AI에게 질문"
+    placeholder: "예: 예시를 들어 설명해 줘"
+    ask: "질문"
+    asking: "질문 중…"
+    no_key: "질문하려면 AI 키를 설정하세요 - AI 설정을 확인하세요."
+    open_settings: "AI 설정"
+    error: "AI 요청이 실패했습니다. 다시 시도해 주세요."
+  example:
+    label: "예시"
   mode:
     label: "레슨 모드"
     practice: "연습"
@@ -2036,6 +2049,15 @@ content:
     deleted: "세트가 제거되었습니다."
     delete_failed: "세트를 제거할 수 없습니다."
     delete_confirm: "다운로드한 세트와 해당 레슨이 내 콘텐츠에서 제거됩니다. 학습 진행 상황은 유지되며 언제든지 세트를 다시 다운로드할 수 있습니다."
+    select_all: "모두 선택"
+    select_set: "{title} 선택"
+    bulk_selected: "{n}개 선택됨"
+    bulk_bar_aria: "일괄 작업"
+    bulk_clear: "선택 해제"
+    bulk_changed: "{n}개 세트의 상태를 업데이트했습니다."
+    bulk_deleted: "{n}개 세트를 제거했습니다."
+    bulk_delete_title: "{n}개 세트를 삭제하시겠습니까?"
+    bulk_delete_confirm: "선택한 세트와 해당 레슨이 내 콘텐츠에서 제거됩니다. 학습 진행 상황은 유지되며 언제든지 세트를 다시 다운로드할 수 있습니다."
     action:
       activate: "다시 활성화"
       defer: "보류"
@@ -2136,7 +2158,7 @@ content:
     download_failed: "세트를 다운로드할 수 없었습니다."
     open_failed: "레슨을 열 수 없었습니다."
   tree:
-    i_speak: 나는 다음을 말합니다
+    i_speak: 내가 구사하는 언어
     learn: "{lang} 학습"
     sets: 세트
     other_sources: 다른 출처 언어
@@ -2161,7 +2183,7 @@ content:
     continue: GitHub로 계속
     cancel: 닫기
     no_lessons: 세트에 레슨이 없습니다.
-    missing_target_language: 목표어(가르치는 언어)가 누락되었습니다.
+    missing_target_language: 목표어(학습 중인 언어)가 누락되었습니다.
     missing_source_language: 출처 언어(설명을 작성하는 언어)가 누락되었습니다.
     invalid_target_language: 목표어 '{code}'은(는) 2글자 ISO 코드가 아닙니다.
     invalid_source_language: 출처 언어 '{code}'은(는) 2글자 ISO 코드가 아닙니다.
@@ -2741,7 +2763,7 @@ subjects:
   biology: "생물학"
   astronomy: "천문학"
   earth_sciences: "지구과학"
-  theory: "이론"
+  theory: "음악 이론"
   piano: "피아노"
   guitar: "기타"
   violin: "바이올린"
@@ -2756,7 +2778,7 @@ subjects:
   sociology: "사회학"
   political_science: "정치학"
   writing: "글쓰기"
-  public_speaking: "발표"
+  public_speaking: "화술"
   photography: "사진"
   design: "디자인"
   cooking: "요리"
@@ -2917,6 +2939,12 @@ favorites:
   empty: "아직 즐겨찾기가 없습니다 — 레슨의 별을 탭하여 저장하세요."
   save_prompt: "이 레슨을 즐겨찾기에 저장"
 content_repo:
+  qr:
+    upload: "QR 이미지 업로드"
+    decoding: "QR 읽는 중…"
+    no_qr: "이미지에서 QR 코드를 찾을 수 없습니다."
+    invalid: "QR 코드가 유효한 '저장소 추가' 링크가 아닙니다."
+    filled: "QR 코드에서 저장소 정보를 채웠습니다."
   title: "콘텐츠 저장소"
   last_sync: "마지막 동기화: {when}"
   added: "저장소가 추가되었습니다."
@@ -2956,6 +2984,7 @@ content_repo:
     sync: "지금 동기화"
   badge:
     coach: "코치"
+    private: "비공개"
     official: "공식"
   trust:
     dropped: "동기화되었지만 검증에 실패했습니다 — 이 저장소는 이제 미검증으로 표시됩니다."
@@ -3013,6 +3042,7 @@ discover:
   filter:
     all: "전체"
     language: "언어"
+    all_languages: "모든 언어"
     level: "수준"
     domain: "분야"
     trust: "신뢰도"
@@ -3036,6 +3066,7 @@ discover:
   empty:
     no_sets: "아직 사용 가능한 콘텐츠가 없습니다."
     no_results: "“{query}”에 대한 결과가 없습니다."
+    language_hint: "이 언어로 된 콘텐츠가 아직 없습니다."
   card:
     download: "다운로드"
     downloading: "다운로드 중…"

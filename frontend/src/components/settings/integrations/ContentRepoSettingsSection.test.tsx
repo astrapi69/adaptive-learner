@@ -45,6 +45,8 @@ vi.mock("../../../lib/content/repos/repo-token", () => ({
   writeRepoToken: vi.fn(),
   clearRepoToken: vi.fn(),
 }));
+const { decodeQrImage } = vi.hoisted(() => ({ decodeQrImage: vi.fn() }));
+vi.mock("../../../shared/qr/decode-qr-image", () => ({ decodeQrImage }));
 
 import ContentRepoSettingsSection from "./ContentRepoSettingsSection";
 
@@ -69,6 +71,7 @@ beforeEach(() => {
   notifyError.mockReset();
   notifySuccess.mockReset();
   validateUserRepo.mockReset();
+  decodeQrImage.mockReset();
   fetchRecommendedRepos.mockReset();
   fetchRecommendedRepos.mockResolvedValue([]);
   validateUserRepo.mockResolvedValue({ ok: true, setCount: 1, lessonCount: 4 });
@@ -122,7 +125,7 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(token.closest("form")).toBeNull();
   });
 
-  it("lists connected repos with trust badge", async () => {
+  it("lists connected repos with a unified category badge (#1319)", async () => {
     pluginGet.mockResolvedValue({
       plugin: "content-loader",
       settings: { user_repos: [REPO] },
@@ -132,9 +135,19 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(
       screen.getByTestId("content-repo-item-jane-deck"),
     ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("content-repo-trust-jane-deck"),
-    ).toBeInTheDocument();
+    // REPO carries trust: 1 with no coach/recommended → "validated".
+    const badge = screen.getByTestId("content-repo-category-jane-deck");
+    expect(badge).toHaveAttribute("data-category", "validated");
+  });
+
+  it("badges a coach (private-token) repo as private (#1319)", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [{ ...REPO, coach: true }] },
+    });
+    render(<ContentRepoSettingsSection />);
+    const badge = await screen.findByTestId("content-repo-category-jane-deck");
+    expect(badge).toHaveAttribute("data-category", "private");
   });
 
   it("rejects an invalid URL without writing", async () => {
@@ -145,6 +158,39 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     fireEvent.click(screen.getByTestId("content-repo-connect"));
     await waitFor(() => expect(notifyError).toHaveBeenCalled());
     expect(pluginUpdate).not.toHaveBeenCalled();
+  });
+
+  it("prefills the add-repo form from an uploaded QR image (#1317)", async () => {
+    decodeQrImage.mockResolvedValue(
+      "https://x.dev/app/add-repo?url=owner%2Frepo&branch=feat",
+    );
+    render(<ContentRepoSettingsSection />);
+    const input = await screen.findByTestId("content-repo-qr-upload-input");
+    Object.defineProperty(input, "files", {
+      value: [new File(["x"], "qr.png", { type: "image/png" })],
+      configurable: true,
+    });
+    fireEvent.change(input);
+    await waitFor(() =>
+      expect(screen.getByTestId("content-repo-url")).toHaveValue("owner/repo"),
+    );
+    expect(screen.getByTestId("content-repo-branch")).toHaveValue("feat");
+    expect(screen.getByTestId("content-repo-qr-filled")).toBeInTheDocument();
+  });
+
+  it("warns when an uploaded QR is not an add-repo link (#1317)", async () => {
+    decodeQrImage.mockResolvedValue("just some scanned text");
+    render(<ContentRepoSettingsSection />);
+    const input = await screen.findByTestId("content-repo-qr-upload-input");
+    Object.defineProperty(input, "files", {
+      value: [new File(["x"], "qr.png", { type: "image/png" })],
+      configurable: true,
+    });
+    fireEvent.change(input);
+    await waitFor(() =>
+      expect(screen.getByTestId("content-repo-qr-invalid")).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("content-repo-url")).toHaveValue("");
   });
 
   it("validates, adds (appends to user_repos), and syncs", async () => {

@@ -80,6 +80,46 @@ export function isOfficialSource(source: string): boolean {
   return source === OFFICIAL_SOURCE || source.startsWith(BUNDLED_PREFIX);
 }
 
+/**
+ * Unified, typed trust-/origin category for an imported content source (#1319).
+ * Consolidates the previously-scattered signals (official source, recommended,
+ * coach token, technical trust) into one value so the UI shows a single,
+ * consistent badge instead of ad-hoc inline conditionals:
+ *
+ *   - ``official``   — provided/endorsed by us (the canonical or bundled repo,
+ *                      or an officially-recommended repo).
+ *   - ``private``    — the user's own / a coach repo, added with a private token.
+ *   - ``validated``  — a community repo that passed the technical validation.
+ *   - ``unverified`` — a community repo not yet validated (freshly added).
+ */
+export type RepoCategory = "official" | "private" | "validated" | "unverified";
+
+/** Signals {@link resolveRepoCategory} derives the category from. All optional
+ *  except ``source`` so callers can pass a bare source or a full repo. */
+export interface RepoCategoryInputs {
+  /** The cached-set / repo ``source`` (``owner/repo`` or ``bundled:…``). */
+  source: string;
+  /** Technical trust level (``UserContentRepo.trust``). */
+  trust?: TrustLevel;
+  /** Whether a private (coach) token was supplied (``UserContentRepo.coach``). */
+  coach?: boolean;
+  /** Whether the source is officially recommended (``isRecommendedSource``). */
+  recommended?: boolean;
+}
+
+/**
+ * Derive the {@link RepoCategory} for a source. Pure + precedence-ordered so a
+ * source maps to exactly one category: official (origin) wins over private
+ * (origin) wins over the trust axis (validated / unverified). App-agnostic —
+ * no storage/i18n; the caller passes the already-known signals.
+ */
+export function resolveRepoCategory(inputs: RepoCategoryInputs): RepoCategory {
+  if (isOfficialSource(inputs.source) || inputs.recommended) return "official";
+  if (inputs.coach) return "private";
+  if (inputs.trust === 1) return "validated";
+  return "unverified";
+}
+
 /** Parsed ``{owner, repo}`` from a GitHub repository reference. */
 export interface ParsedRepo {
   owner: string;

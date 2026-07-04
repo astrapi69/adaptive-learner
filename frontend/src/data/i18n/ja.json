@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "Adaptive Learner",
-    "tagline": "あなたに合わせて適応する学習。",
+    "tagline": "6メソッドモデルに基づく適応学習。",
     "skeleton_notice": "スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます — docs/adaptive-learner-project-reference.md を参照してください。"
   },
   "common": {
@@ -242,9 +242,9 @@
   "onboarding": {
     "title": "学習プロジェクトを作成",
     "intro": "学習目標について教えてください。Adaptive Learner はこれをもとに プロフィールを構築し、開始する方法を推奨します。",
-    "concepts_explainer_prefix": "まず",
-    "concepts_explainer_mid1": "を作成し、簡単な評価で",
-    "concepts_explainer_mid2": "を構築します。これが今後の各",
+    "concepts_explainer_prefix": "あなたは",
+    "concepts_explainer_mid1": "、それから評価テストを受けて、あなたの",
+    "concepts_explainer_mid2": "— これはあなたの各",
     "concepts_explainer_suffix": "の指針になります。",
     "term_learning_project": "学習プロジェクト",
     "term_learning_profile": "学習プロフィール",
@@ -315,7 +315,7 @@
     "title": "ダッシュボード",
     "welcome": "おかえりなさい",
     "quick_start": "新しいセッションを開始",
-    "quick_start_subtitle": "プロフィールから方法を選択しました。",
+    "quick_start_subtitle": "方法はプロフィールに基づいています。",
     "card_profile": "学習プロフィール",
     "profile_incomplete": "学習プロファイルが未完了です。",
     "profile_resume": "学習プロファイルを続ける",
@@ -325,7 +325,7 @@
     "card_counter": "セッション",
     "card_tools": "ツールの推奨",
     "card_recent_sessions": "最近のセッション",
-    "card_spaced": "間隔練習",
+    "card_spaced": "予定された練習",
     "card_review_queue": "復習する要素",
     "card_focus_areas": "重点学習エリア",
     "card_paused_lessons": "学習を続ける",
@@ -481,7 +481,7 @@
     "commit_duration": "時間",
     "commit_date": "日付",
     "no_commits": "まだ完了したセッションはありません。",
-    "step_eval_title": "AI ステップ評価のインサイト",
+    "step_eval_title": "AI ステップ評価",
     "step_eval_empty": "まだ AI ステップ評価データがありません — セッションを開始してここにインサイトを表示しましょう。",
     "step_eval_avg_confidence": "AI の平均信頼度",
     "step_eval_repeats": "AI が「まだ準備ができていない」と言った回数",
@@ -669,6 +669,8 @@
     "profile_create_hint": "短い診断を受けて、パーソナライズされた学習プロファイルを取得しましょう。",
     "lesson_shortcuts": "レッスンのキーボードショートカット",
     "lesson_shortcuts_description": "Enterキーで回答を確認し、もう一度Enterキーで次のステップに進みます。",
+    "lesson_auto_advance": "正解したら自動で次へ進む",
+    "lesson_auto_advance_description": "正解すると自動的に次の問題へ進みます。不正解のときは常に停止し、解答を確認できます。",
     "button_tooltips": "ボタンのツールチップを表示",
     "button_tooltips_description": "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。",
     "developer_mode": "開発者モード",
@@ -693,7 +695,7 @@
     "storage_mode_dexie": "ローカル (ブラウザ)",
     "storage_mode_dexie_hint": "データと API キーはこのブラウザに保存され、AI 呼び出しはこのページから 直接実行されます。",
     "storage_mode_warning": "データはモード間で同期されません。同期は将来のバージョンで予定されて います。",
-    "storage_mode_switch_notice": "ストレージモードを保存しました。新しいバックエンドに切り替えるには ページを再読み込みしてください。",
+    "storage_mode_switch_notice": "ストレージモードを保存しました。新しいモードを有効にするにはページを再読み込みしてください。",
     "language_label": "表示言語",
     "language_search_placeholder": "言語を検索…",
     "language_no_results": "言語が見つかりません",
@@ -767,7 +769,7 @@
     "model_override_clear": "デフォルトを使用",
     "model_picker_placeholder": "モデル ID を選択または入力",
     "model_picker_open": "モデル一覧を開く",
-    "model_picker_default_hint": "デフォルトを使用:",
+    "model_picker_default_hint": "デフォルト:",
     "model_picker_loading": "モデルを読み込み中...",
     "model_picker_error": "モデルを読み込めませんでした。API キーを確認してください。",
     "model_picker_retry": "再試行",
@@ -1084,7 +1086,7 @@
     "compare_clear": "クリア",
     "compare_label_a": "バックアップ A",
     "compare_label_b": "バックアップ B",
-    "compare_records": "件",
+    "compare_records": "レコード",
     "compare_loading": "バックアップを比較中…",
     "compare_progress": "比較中…",
     "compare_hide_unchanged": "変更のないテーブルを非表示",
@@ -1098,7 +1100,7 @@
     "compare_field": "フィールド",
     "compare_old": "旧",
     "compare_new": "新",
-    "compare_field_changes": "件のフィールド変更",
+    "compare_field_changes": "フィールド変更",
     "compare_high_volume_hint": "大量レコードのテーブル — レコード単位のプレビューは要約表示されます。",
     "compare_export_md": "Markdown としてエクスポート",
     "compare_markdown_downloaded": "差分をエクスポートしました。",
@@ -1778,6 +1780,19 @@
     }
   },
   "lesson": {
+    "ask_ai": {
+      "button": "AIに質問",
+      "title": "このブロックについてAIに質問",
+      "placeholder": "例: 例を挙げて説明して",
+      "ask": "質問",
+      "asking": "質問中…",
+      "no_key": "質問するにはAIキーを設定してください（AI設定を参照）。",
+      "open_settings": "AI設定",
+      "error": "AIリクエストに失敗しました。もう一度お試しください。"
+    },
+    "example": {
+      "label": "例"
+    },
     "mode": {
       "label": "レッスンモード",
       "practice": "練習",
@@ -2202,6 +2217,15 @@
       "deleted": "セットを削除しました。",
       "delete_failed": "セットを削除できませんでした。",
       "delete_confirm": "ダウンロードしたセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。",
+      "select_all": "すべて選択",
+      "select_set": "{title} を選択",
+      "bulk_selected": "{n} 件選択中",
+      "bulk_bar_aria": "一括操作",
+      "bulk_clear": "選択を解除",
+      "bulk_changed": "{n} 個のセットのステータスを更新しました。",
+      "bulk_deleted": "{n} 個のセットを削除しました。",
+      "bulk_delete_title": "{n} 個のセットを削除しますか？",
+      "bulk_delete_confirm": "選択したセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。",
       "action": {
         "activate": "再アクティブ化",
         "defer": "保留にする",
@@ -2211,7 +2235,7 @@
     },
     "ai_exercises": {
       "batch": {
-        "button": "すべてのレッスンに生成",
+        "button": "すべてのレッスンの練習問題を生成",
         "running": "生成中…",
         "none": "すべてのレッスンにすでに演習があります。",
         "cost_confirm": "{n} 件のレッスンに演習を生成します（約 {tokens} トークン）。続行しますか？",
@@ -3092,7 +3116,7 @@
     "weak_areas_title": "改善すべき分野",
     "weak_areas_empty": "まだ間違いの記録はありません。この調子で続けましょう！",
     "practice": "練習する",
-    "errors": "回の間違い",
+    "errors": "間違い",
     "last_answer": "前回の回答:",
     "activity_title": "アクティビティ（過去90日間）",
     "activity_aria": "過去90日間の1日あたりの完了レッスン数",
@@ -3120,7 +3144,7 @@
     "lesson_undo_match": "直前のマッチを取り消す"
   },
   "srs": {
-    "due_badge": "{n}件",
+    "due_badge": "{n}件が期限",
     "due_badge_tooltip": "復習あり",
     "due_badge_aria": "復習が{n}件",
     "status_new": "新規",
@@ -3170,6 +3194,13 @@
     "save_prompt": "このレッスンをお気に入りに保存"
   },
   "content_repo": {
+    "qr": {
+      "upload": "QR画像をアップロード",
+      "decoding": "QRを読み取り中…",
+      "no_qr": "画像にQRコードが見つかりませんでした。",
+      "invalid": "このQRコードは有効な「リポジトリを追加」リンクではありません。",
+      "filled": "QRコードからリポジトリ情報を入力しました。"
+    },
     "title": "コンテンツリポジトリ",
     "last_sync": "最終同期: {when}",
     "added": "リポジトリを追加しました。",
@@ -3216,6 +3247,7 @@
     },
     "badge": {
       "coach": "コーチ",
+      "private": "プライベート",
       "official": "公式"
     },
     "trust": {
@@ -3285,6 +3317,7 @@
     "filter": {
       "all": "すべて",
       "language": "言語",
+      "all_languages": "すべての言語",
       "level": "レベル",
       "domain": "分野",
       "trust": "信頼度",
@@ -3312,7 +3345,8 @@
     },
     "empty": {
       "no_sets": "まだ利用可能なコンテンツはありません。",
-      "no_results": "「{query}」の結果はありません。"
+      "no_results": "「{query}」の結果はありません。",
+      "language_hint": "この言語のコンテンツはまだありません。"
     },
     "card": {
       "download": "ダウンロード",

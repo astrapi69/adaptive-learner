@@ -81,7 +81,7 @@ jobs:
           echo "${{ inputs.version }}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
             || { echo "::error::version must be X.Y.Z (no leading v), got '${{ inputs.version }}'"; exit 1; }
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: develop
           fetch-depth: 0
@@ -111,10 +111,19 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Configure git identity
+      - name: Configure git identity + trust the workspace
+        # This job runs as root inside the Playwright container while the
+        # checked-out tree is owned by the runner user, so git rejects every
+        # working-tree command ("fatal: not in a git directory").
+        # actions/checkout sets safe.directory only in its own ephemeral HOME,
+        # so it does not carry over to later steps. Trust the workspace
+        # persistently and set a --global identity: a local-scope config write
+        # needs a recognised repo (exactly what fails here), and the downstream
+        # release-prepare / commit / push git operations need the same trust.
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Backend + plugin deps
         working-directory: backend
@@ -165,10 +174,18 @@ jobs:
         run: python3 scripts/verify_docs.py --fix
 
       - name: Commit + push the release branch
+        # --force: the release branch is ephemeral and always regenerated from
+        # develop by this job. A prepare run that failed AFTER this push (e.g.
+        # in the gate below) leaves a stale release/<version> on origin; a
+        # re-dispatch cuts a fresh branch that diverges from it, so a plain
+        # push would be rejected non-fast-forward and permanently block retry.
+        # Force lets a re-dispatch overwrite the stale branch. Safe because
+        # releases are single-flight (release-freeze) and the branch carries no
+        # work that is not reproduced from develop.
         run: |
           git add -A
           git commit -m "chore(release): prepare v${{ inputs.version }}" || echo "nothing to commit"
-          git push -u origin release/${{ inputs.version }}
+          git push -u --force origin release/${{ inputs.version }}
 
       - name: Full release gate (make release-test)
         run: make release-test
@@ -206,7 +223,7 @@ jobs:
           echo "${{ inputs.version }}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
             || { echo "::error::version must be X.Y.Z (no leading v), got '${{ inputs.version }}'"; exit 1; }
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: release/${{ inputs.version }}
           fetch-depth: 0
@@ -277,7 +294,7 @@ jobs:
             echo "::warning::RELEASE_PAT secret is NOT set. The release will still complete, but GitHub will not fire downstream workflows from GITHUB_TOKEN events (#1265). After this run you must MANUALLY: (1) dispatch deploy-gh-pages.yml on main, and (2) attach the launcher binaries to the Release (re-publish via PAT or upload manually)."
           fi
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: develop
           fetch-depth: 0

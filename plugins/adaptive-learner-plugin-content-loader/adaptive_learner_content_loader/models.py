@@ -39,7 +39,19 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-CURRENT_SCHEMA_VERSION = "1.4"
+CURRENT_SCHEMA_VERSION = "1.5"
+# v1.4 → v1.5 (inline examples):
+#   - New optional ``InlineExample`` list ``examples`` on BOTH the
+#     theory step (``LessonStep``) and the ``Exercise``. An example
+#     carries real inline content (a sample sentence, or a syntax-
+#     highlighted code snippet when ``language`` is set) — distinct
+#     from the ``example_url`` LINK variant added in v1.4. All optional,
+#     so pre-v1.5 lessons validate unchanged.
+#   Still a MINOR bump — major-version match means older v1.x readers
+#   load v1.5 content (they ignore the new optional fields).
+# v1.3 → v1.4 (external example link, #139):
+#   - ``LessonStep`` gained the optional ``example_url`` + ``example_label``
+#     fields (a link button under a THEORY step's content). Additive.
 # v1.2 → v1.3 (technical / programming content):
 #   - ``Card`` gained optional code fields: ``code_snippet``,
 #     ``code_language``, ``expected_output``, ``hint``,

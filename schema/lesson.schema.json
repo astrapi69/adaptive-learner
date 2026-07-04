@@ -364,6 +364,23 @@
           "title": "Distractors",
           "type": "array"
         },
+        "examples": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/InlineExample"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inline worked examples shown BEFORE the answer controls, to help the learner understand the task (schema v1.5, additive). Each is plain text or a syntax-highlighted code snippet (see ``InlineExample.language``). Author responsibility not to spoil the answer. Independent of the per-type fields; absent on exercises that need no example.",
+          "title": "Examples"
+        },
         "hint": {
           "anyOf": [
             {
@@ -478,6 +495,52 @@
       ],
       "title": "ExerciseType",
       "type": "string"
+    },
+    "InlineExample": {
+      "additionalProperties": false,
+      "description": "One inline worked example on a theory step or exercise (schema v1.5).\n\nAn inline example carries REAL content the learner reads in place \u2014\na sample sentence (language lessons) or a code snippet with syntax\nhighlighting (programming lessons). This is DISTINCT from\n``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an\nexternal illustration: ``example_url`` is the LINK variant,\n``examples`` is the INLINE-CONTENT variant. The two are complementary\nand may coexist on the same theory step.\n\nWhen ``language`` is set, ``content`` is treated as source code in\nthat language and rendered as a syntax-highlighted block (the same\n``CodeBlock`` the theory Markdown + code cards use); when it is\nabsent, ``content`` is plain text. Additive + optional, so content\nwithout ``examples`` validates unchanged.",
+      "properties": {
+        "content": {
+          "description": "The example's content. Plain text (e.g. a sample sentence) when ``language`` is absent; source code in ``language`` when it is set.",
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional highlighter language hint ('jsx', 'python', 'sql', ...). When set, ``content`` is rendered as a syntax-highlighted code block; when null, ``content`` is plain text. Free string; the viewer maps unknown values to plain text (same convention as ``Card.code_language``).",
+          "title": "Language"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional short heading shown above the example.",
+          "title": "Title"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "InlineExample",
+      "type": "object"
     },
     "LessonResource": {
       "additionalProperties": false,
@@ -662,6 +725,23 @@
           "default": null,
           "description": "Optional URL to an external example that illustrates the theory (article / video / interactive visualisation). Rendered as a link button under a THEORY step's content (schema v1.4, additive). Must be an http(s) URL.",
           "title": "Example Url"
+        },
+        "examples": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/InlineExample"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet \u2014 see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.",
+          "title": "Examples"
         },
         "exercise": {
           "anyOf": [
@@ -1003,5 +1083,5 @@
   ],
   "title": "Lesson",
   "type": "object",
-  "x-schema-version": "1.4"
+  "x-schema-version": "1.5"
 }

@@ -179,4 +179,35 @@ describe("SetDiscoveryCard", () => {
     expect(screen.queryByTestId("set-discovery-card-trust")).toBeNull();
     expect(screen.queryByTestId("set-discovery-card-ai")).toBeNull();
   });
+
+  it("renders the New badge when isNew + newLabel are given (#1337 f/u)", () => {
+    render(
+      <SetDiscoveryCard
+        set={makeSet({ id: "fr-a1-from-el" })}
+        isDownloaded={false}
+        onDownload={() => {}}
+        languageLabel="EL → FR"
+        labels={LABELS}
+        isNew
+        newLabel="New"
+      />,
+    );
+    const badge = screen.getByTestId("set-discovery-card-new");
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveTextContent("New");
+  });
+
+  it("hides the New badge when isNew is false", () => {
+    render(
+      <SetDiscoveryCard
+        set={makeSet()}
+        isDownloaded={false}
+        onDownload={() => {}}
+        languageLabel="DE → ES"
+        labels={LABELS}
+        newLabel="New"
+      />,
+    );
+    expect(screen.queryByTestId("set-discovery-card-new")).toBeNull();
+  });
 });

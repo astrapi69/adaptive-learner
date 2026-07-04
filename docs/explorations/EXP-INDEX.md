@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-30
-**Anzahl EXPs:** 37
+**Stand:** 2026-07-01
+**Anzahl EXPs:** 38
 
 > Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
 > [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
@@ -58,6 +58,7 @@
 | 039 | JSON-Schema als Single Source of Truth      | Querschnitt  | laufend | Hoch    | 002, 003, 004      |
 | 040 | Directory-Restrukturierung (God-Folders)    | Querschnitt  | abgeschlossen | Mittel | 024 (verwandt)  |
 | 041 | Aufgabentyp-Eignung + faire Bewertung       | Querschnitt  | Analyse | Mittel-Hoch | 002, 007, 013, 036 |
+| 042 | Content-Engine (kanonisches Format + Adapter) | Querschnitt | laufend | Mittel-Hoch | 039, 002, 003     |
 
 ## Umsetzungsstand (Stand v1.85.0)
 

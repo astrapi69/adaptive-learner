@@ -669,6 +669,8 @@
     "profile_create_hint": "Haz una breve evaluación para obtener un perfil de aprendizaje personalizado.",
     "lesson_shortcuts": "Atajos de teclado en las lecciones",
     "lesson_shortcuts_description": "Pulsa Enter para comprobar tu respuesta y Enter de nuevo para ir al siguiente paso.",
+    "lesson_auto_advance": "Avanzar automáticamente al acertar",
+    "lesson_auto_advance_description": "Tras una respuesta correcta, pasa automáticamente al siguiente ejercicio. Una respuesta incorrecta siempre espera para que puedas revisar la solución.",
     "button_tooltips": "Mostrar descripciones de botones",
     "button_tooltips_description": "Muestra una descripción al pasar el cursor sobre los botones de iconos. Las etiquetas para lectores de pantalla siguen activas igualmente.",
     "developer_mode": "Modo Desarrollador",
@@ -1778,6 +1780,19 @@
     }
   },
   "lesson": {
+    "ask_ai": {
+      "button": "Preguntar a la IA",
+      "title": "Pregunta a la IA sobre esto",
+      "placeholder": "p. ej. Explícalo con un ejemplo",
+      "ask": "Preguntar",
+      "asking": "Preguntando…",
+      "no_key": "Configura una clave de IA para preguntar - consulta los ajustes de IA.",
+      "open_settings": "Ajustes de IA",
+      "error": "La solicitud de IA falló. Inténtalo de nuevo."
+    },
+    "example": {
+      "label": "Ejemplo"
+    },
     "mode": {
       "label": "Modo de lección",
       "practice": "Práctica",
@@ -2202,6 +2217,15 @@
       "deleted": "Conjunto eliminado.",
       "delete_failed": "No se pudo eliminar el conjunto.",
       "delete_confirm": "El conjunto descargado y sus lecciones se eliminarán de Mis contenidos. Tu progreso de aprendizaje se conserva y puedes volver a descargar el conjunto cuando quieras.",
+      "select_all": "Seleccionar todo",
+      "select_set": "Seleccionar {title}",
+      "bulk_selected": "{n} seleccionados",
+      "bulk_bar_aria": "Acciones en lote",
+      "bulk_clear": "Borrar selección",
+      "bulk_changed": "Estado actualizado para {n} conjuntos.",
+      "bulk_deleted": "{n} conjuntos eliminados.",
+      "bulk_delete_title": "¿Eliminar {n} conjuntos?",
+      "bulk_delete_confirm": "Los conjuntos seleccionados y sus lecciones se eliminarán de Mi contenido. Tu progreso de aprendizaje se conserva y puedes volver a descargar los conjuntos en cualquier momento.",
       "action": {
         "activate": "Reactivar",
         "defer": "Aplazar",
@@ -3170,6 +3194,13 @@
     "save_prompt": "Guardar esta lección en tus favoritos"
   },
   "content_repo": {
+    "qr": {
+      "upload": "Subir imagen QR",
+      "decoding": "Leyendo QR…",
+      "no_qr": "No se encontró ningún código QR en la imagen.",
+      "invalid": "El código QR no es un enlace válido para \"añadir repositorio\".",
+      "filled": "Datos del repositorio rellenados desde el código QR."
+    },
     "title": "Repositorios de contenido",
     "last_sync": "Última sincronización: {when}",
     "added": "Repositorio añadido.",
@@ -3216,6 +3247,7 @@
     },
     "badge": {
       "coach": "Tutor",
+      "private": "Privado",
       "official": "Oficial"
     },
     "trust": {
@@ -3285,6 +3317,7 @@
     "filter": {
       "all": "Todos",
       "language": "Idioma",
+      "all_languages": "Todos los idiomas",
       "level": "Nivel",
       "domain": "Área",
       "trust": "Confianza",
@@ -3312,7 +3345,8 @@
     },
     "empty": {
       "no_sets": "Aún no hay contenido disponible.",
-      "no_results": "Sin resultados para «{query}»."
+      "no_results": "Sin resultados para «{query}».",
+      "language_hint": "Todavía no hay nada en este idioma."
     },
     "card": {
       "download": "Descargar",

@@ -140,6 +140,22 @@ export type ExampleLabel = string | null;
  */
 export type ExampleUrl = string | null;
 /**
+ * THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet — see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.
+ */
+export type Examples = InlineExample[] | null;
+/**
+ * The example's content. Plain text (e.g. a sample sentence) when ``language`` is absent; source code in ``language`` when it is set.
+ */
+export type Content = string;
+/**
+ * Optional highlighter language hint ('jsx', 'python', 'sql', ...). When set, ``content`` is rendered as a syntax-highlighted code block; when null, ``content`` is plain text. Free string; the viewer maps unknown values to plain text (same convention as ``Card.code_language``).
+ */
+export type Language1 = string | null;
+/**
+ * Optional short heading shown above the example.
+ */
+export type Title1 = string | null;
+/**
  * FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.
  */
 export type Accept = string[] | null;
@@ -179,6 +195,10 @@ export type Direction = "source_to_target" | "target_to_source" | "both" | "rand
  * Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.
  */
 export type Distractors = string[];
+/**
+ * Optional inline worked examples shown BEFORE the answer controls, to help the learner understand the task (schema v1.5, additive). Each is plain text or a syntax-highlighted code snippet (see ``InlineExample.language``). Author responsibility not to spoil the answer. Independent of the per-type fields; absent on exercises that need no example.
+ */
+export type Examples1 = InlineExample[] | null;
 /**
  * Optional Markdown hint shown on demand. The viewer renders this behind a 'Need a hint?' button.
  */
@@ -246,7 +266,7 @@ export type TheoryRef = string | null;
 /**
  * Optional step title. Shown in the progress bar / step list (Phase 44 viewer).
  */
-export type Title1 = string | null;
+export type Title2 = string | null;
 /**
  * THEORY or EXERCISE.
  */
@@ -262,7 +282,7 @@ export type TargetLanguage = string | null;
 /**
  * Human-readable title shown in the lesson list.
  */
-export type Title2 = string;
+export type Title3 = string;
 /**
  * Phase 64B. Author's short note on how this variation differs.
  */
@@ -297,7 +317,7 @@ export interface Lesson {
   source_language?: SourceLanguage;
   steps: Steps;
   target_language?: TargetLanguage;
-  title: Title2;
+  title: Title3;
   variation_note?: VariationNote;
   variation_of?: VariationOf;
 }
@@ -387,6 +407,7 @@ export interface LessonStep {
   body?: Body;
   example_label?: ExampleLabel;
   example_url?: ExampleUrl;
+  examples?: Examples;
   /**
    * EXERCISE: the exercise payload.
    */
@@ -394,8 +415,30 @@ export interface LessonStep {
   id: Id3;
   review_lesson_id?: ReviewLessonId;
   theory_ref?: TheoryRef;
-  title?: Title1;
+  title?: Title2;
   type: StepType;
+}
+/**
+ * One inline worked example on a theory step or exercise (schema v1.5).
+ *
+ * An inline example carries REAL content the learner reads in place —
+ * a sample sentence (language lessons) or a code snippet with syntax
+ * highlighting (programming lessons). This is DISTINCT from
+ * ``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an
+ * external illustration: ``example_url`` is the LINK variant,
+ * ``examples`` is the INLINE-CONTENT variant. The two are complementary
+ * and may coexist on the same theory step.
+ *
+ * When ``language`` is set, ``content`` is treated as source code in
+ * that language and rendered as a syntax-highlighted block (the same
+ * ``CodeBlock`` the theory Markdown + code cards use); when it is
+ * absent, ``content`` is plain text. Additive + optional, so content
+ * without ``examples`` validates unchanged.
+ */
+export interface InlineExample {
+  content: Content;
+  language?: Language1;
+  title?: Title1;
 }
 /**
  * One exercise step. Type-tagged via ``type``.
@@ -415,6 +458,7 @@ export interface Exercise {
   cloze_mode?: ClozeMode;
   direction?: Direction;
   distractors?: Distractors;
+  examples?: Examples1;
   hint?: Hint2;
   id: Id2;
   images?: Images;

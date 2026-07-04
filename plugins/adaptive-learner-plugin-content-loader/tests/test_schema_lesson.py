@@ -17,6 +17,7 @@ from adaptive_learner_content_loader.schema import (
     ClozeBlank,
     Exercise,
     ExerciseType,
+    InlineExample,
     Lesson,
     LessonStep,
     StepType,
@@ -1007,3 +1008,113 @@ class TestLessonSchemaExport:
         for path in written.values():
             assert path.exists()
             assert path.read_text(encoding="utf-8").startswith("{")
+
+
+class TestInlineExamples:
+    """Schema v1.5 — inline ``examples`` on theory steps + exercises (#1326).
+
+    Additive + optional: an example carries real inline content (a sample
+    sentence, or a syntax-highlighted code snippet when ``language`` is
+    set), distinct from the ``example_url`` LINK variant (#139 / v1.4).
+    """
+
+    def test_theory_step_accepts_text_and_code_examples(self) -> None:
+        step = LessonStep(
+            id="s-theory",
+            type=StepType.THEORY,
+            body="A component returns JSX.",
+            examples=[
+                InlineExample(content="Bonjour tout le monde !", title="Greeting"),
+                InlineExample(
+                    content="function App() {\n  return <h1>Hi</h1>;\n}",
+                    language="jsx",
+                    title="A React component",
+                ),
+            ],
+        )
+        assert step.examples is not None
+        assert len(step.examples) == 2
+        # Text example: no language.
+        assert step.examples[0].language is None
+        assert step.examples[0].content.startswith("Bonjour")
+        # Code example: language drives syntax highlighting downstream.
+        assert step.examples[1].language == "jsx"
+
+    def test_exercise_accepts_examples(self) -> None:
+        exercise = _exercise_free(
+            examples=[InlineExample(content="Merci = Thank you")]
+        )
+        assert exercise.examples is not None
+        assert exercise.examples[0].content == "Merci = Thank you"
+        assert exercise.examples[0].language is None
+        assert exercise.examples[0].title is None
+
+    def test_content_without_examples_stays_valid(self) -> None:
+        """Backward compatibility: pre-v1.5 content omits ``examples``."""
+        step = LessonStep(id="s1", type=StepType.THEORY, body="x")
+        assert step.examples is None
+        exercise = _exercise_free()
+        assert exercise.examples is None
+
+    def test_example_requires_content(self) -> None:
+        with pytest.raises(ValidationError):
+            InlineExample(language="python")  # type: ignore[call-arg]
+        with pytest.raises(ValidationError):
+            InlineExample(content="")
+
+    def test_example_rejects_unknown_field(self) -> None:
+        """``extra='forbid'`` guards against typo'd keys."""
+        with pytest.raises(ValidationError):
+            InlineExample(content="ok", lang="python")  # type: ignore[call-arg]
+
+    def test_examples_coexist_with_example_url(self) -> None:
+        """Inline ``examples`` and the external ``example_url`` link are
+        complementary, not mutually exclusive."""
+        step = LessonStep(
+            id="s-both",
+            type=StepType.THEORY,
+            body="x",
+            example_url="https://example.com/demo",
+            examples=[InlineExample(content="inline sample")],
+        )
+        assert step.example_url == "https://example.com/demo"
+        assert step.examples is not None and len(step.examples) == 1
+
+    def test_examples_survive_round_trip(self) -> None:
+        """``lesson_to_dict`` → ``dict_to_lesson`` preserves examples."""
+        lesson = Lesson(
+            id="l1",
+            title="Examples",
+            steps=[
+                LessonStep(
+                    id="s1",
+                    type=StepType.THEORY,
+                    body="x",
+                    examples=[InlineExample(content="print('hi')", language="python")],
+                ),
+                LessonStep(
+                    id="s2",
+                    type=StepType.EXERCISE,
+                    exercise=_exercise_free(
+                        id="ex1",
+                        examples=[InlineExample(content="Bonjour", title="hint")],
+                    ),
+                ),
+            ],
+        )
+        restored = dict_to_lesson(lesson_to_dict(lesson))
+        theory = restored.get_step("s1")
+        assert theory is not None and theory.examples is not None
+        assert theory.examples[0].language == "python"
+        exercise_step = restored.get_step("s2")
+        assert exercise_step is not None and exercise_step.exercise is not None
+        assert exercise_step.exercise.examples is not None
+        assert exercise_step.exercise.examples[0].title == "hint"
+
+    def test_lesson_schema_defines_inline_example(self) -> None:
+        """The generated JSON-Schema carries the InlineExample shape."""
+        schema = lesson_schema()
+        assert "InlineExample" in schema.get("$defs", {})
+        node = schema["$defs"]["InlineExample"]
+        assert "content" in node["properties"]
+        assert node.get("required") == ["content"]

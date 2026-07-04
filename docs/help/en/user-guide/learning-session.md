@@ -6,6 +6,12 @@ is typical. The Dashboard's "Start session" button creates a
 new one; the app picks the learning method (your dominant from
 the assessment) and the cycle's starting step (usually 1 = Input).
 
+A *session* is not the same as a *lesson*: a session is this AI
+conversation through the seven-step cycle, whereas a lesson is a
+set of 8-12 exercises from a downloaded content set, played in
+its own viewer with no AI chat. See
+[Content lessons and reviews](lessons.md).
+
 ## The seven steps
 
 | # | Step | What happens |

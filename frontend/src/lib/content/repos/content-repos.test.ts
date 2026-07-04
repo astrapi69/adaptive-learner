@@ -30,9 +30,11 @@ import {
   parseGitHubRepoUrl,
   readUserRepos,
   removeUserRepo,
+  resolveRepoCategory,
   syncUserRepo,
   userRepoSource,
   writeUserRepos,
+  OFFICIAL_SOURCE,
   type UserContentRepo,
 } from "./content-repos";
 
@@ -206,5 +208,48 @@ describe("syncUserRepo(source)", () => {
   it("throws when the source is not connected", async () => {
     get.mockResolvedValue({ plugin: "content-loader", settings: {} });
     await expect(syncUserRepo("jane/a")).rejects.toThrow();
+  });
+});
+
+describe("resolveRepoCategory (#1319)", () => {
+  it("classifies the official + bundled sources as official", () => {
+    expect(resolveRepoCategory({ source: OFFICIAL_SOURCE })).toBe("official");
+    expect(resolveRepoCategory({ source: "bundled:fr-a1" })).toBe("official");
+  });
+
+  it("classifies an officially-recommended user repo as official", () => {
+    expect(
+      resolveRepoCategory({ source: "jane/deck", recommended: true, trust: 1 }),
+    ).toBe("official");
+  });
+
+  it("classifies a coach (private-token) repo as private", () => {
+    expect(
+      resolveRepoCategory({ source: "jane/deck", coach: true, trust: 1 }),
+    ).toBe("private");
+  });
+
+  it("classifies a validated community repo as validated", () => {
+    expect(resolveRepoCategory({ source: "jane/deck", trust: 1 })).toBe(
+      "validated",
+    );
+  });
+
+  it("classifies a freshly-added community repo as unverified", () => {
+    expect(resolveRepoCategory({ source: "jane/deck", trust: 0 })).toBe(
+      "unverified",
+    );
+    expect(resolveRepoCategory({ source: "jane/deck" })).toBe("unverified");
+  });
+
+  it("gives origin (official/private) precedence over the trust axis", () => {
+    // A bundled/official source stays official even at trust 0.
+    expect(resolveRepoCategory({ source: OFFICIAL_SOURCE, trust: 0 })).toBe(
+      "official",
+    );
+    // A coach repo stays private even when unvalidated.
+    expect(
+      resolveRepoCategory({ source: "jane/deck", coach: true, trust: 0 }),
+    ).toBe("private");
   });
 });

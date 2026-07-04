@@ -629,6 +629,8 @@ settings:
   profile_create_hint: "Fais une courte évaluation pour obtenir un profil d'apprentissage personnalisé."
   lesson_shortcuts: "Raccourcis clavier dans les leçons"
   lesson_shortcuts_description: "Appuie sur Entrée pour vérifier ta réponse, puis à nouveau pour passer à l'étape suivante."
+  lesson_auto_advance: "Passer automatiquement après une bonne réponse"
+  lesson_auto_advance_description: "Après une bonne réponse, passe automatiquement à l'exercice suivant. Une mauvaise réponse attend toujours pour que tu puisses revoir la solution."
   button_tooltips: "Afficher les infobulles des boutons"
   button_tooltips_description: "Affiche une infobulle au survol des boutons à icône. Les libellés pour lecteurs d’écran restent actifs quoi qu’il arrive."
   developer_mode: Mode développeur
@@ -1650,6 +1652,17 @@ repo:
     description: "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de tes données de session. L'intégration git facultative valide chaque génération pour que tu puisses parcourir l'historique avec n'importe quel client git."
     enable_git: "Activer la persistance git"
 lesson:
+  ask_ai:
+    button: "Demander à l'IA"
+    title: "Interroger l'IA sur ce bloc"
+    placeholder: "p. ex. Explique avec un exemple"
+    ask: "Demander"
+    asking: "Demande en cours…"
+    no_key: "Ajoute une clé IA pour poser une question - voir les réglages IA."
+    open_settings: "Réglages IA"
+    error: "La requête IA a échoué. Réessaie."
+  example:
+    label: "Exemple"
   mode:
     label: "Mode de leçon"
     practice: "Entraînement"
@@ -2027,6 +2040,15 @@ content:
     deleted: "Ensemble supprimé."
     delete_failed: "Impossible de supprimer l'ensemble."
     delete_confirm: "L'ensemble téléchargé et ses leçons seront retirés de Mes contenus. Ta progression est conservée et tu peux télécharger l'ensemble à nouveau à tout moment."
+    select_all: "Tout sélectionner"
+    select_set: "Sélectionner {title}"
+    bulk_selected: "{n} sélectionnés"
+    bulk_bar_aria: "Actions groupées"
+    bulk_clear: "Effacer la sélection"
+    bulk_changed: "Statut mis à jour pour {n} ensembles."
+    bulk_deleted: "{n} ensembles supprimés."
+    bulk_delete_title: "Supprimer {n} ensembles ?"
+    bulk_delete_confirm: "Les ensembles sélectionnés et leurs leçons seront retirés de Mon contenu. Votre progression est conservée et vous pouvez les retélécharger à tout moment."
     action:
       activate: "Réactiver"
       defer: "Reporter"
@@ -2909,6 +2931,12 @@ favorites:
   empty: "Aucun favori pour l'instant — touche l'étoile d'une leçon."
   save_prompt: "Enregistrer cette leçon dans tes favoris"
 content_repo:
+  qr:
+    upload: "Téléverser une image QR"
+    decoding: "Lecture du QR…"
+    no_qr: "Aucun code QR trouvé dans l'image."
+    invalid: "Le code QR n'est pas un lien « ajouter un dépôt » valide."
+    filled: "Détails du dépôt remplis à partir du code QR."
   title: "Dépôts de contenu"
   last_sync: "Dernière synchronisation : {when}"
   added: "Dépôt ajouté."
@@ -2948,6 +2976,7 @@ content_repo:
     sync: "Synchroniser maintenant"
   badge:
     coach: "Coach"
+    private: "Privé"
     official: "Officiel"
   trust:
     dropped: "Synchronisé, mais la validation a échoué — ce dépôt est désormais marqué comme non vérifié."
@@ -3005,6 +3034,7 @@ discover:
   filter:
     all: "Tous"
     language: "Langue"
+    all_languages: "Toutes les langues"
     level: "Niveau"
     domain: "Domaine"
     trust: "Confiance"
@@ -3028,6 +3058,7 @@ discover:
   empty:
     no_sets: "Aucun contenu disponible pour l'instant."
     no_results: "Aucun résultat pour « {query} »."
+    language_hint: "Rien dans cette langue pour le moment."
   card:
     download: "Télécharger"
     downloading: "Téléchargement…"

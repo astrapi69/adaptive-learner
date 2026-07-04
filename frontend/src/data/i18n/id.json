@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "Adaptive Learner",
-    "tagline": "Pembelajaran yang menyesuaikan dengan Anda.",
+    "tagline": "Pembelajaran adaptif berdasarkan Model Enam Metode.",
     "skeleton_notice": "Status kerangka. Model domain, plugin, dan halaman akan hadir pada fase mendatang — lihat docs/adaptive-learner-project-reference.md."
   },
   "common": {
@@ -42,9 +42,9 @@
     "full_done": "Cadangan penuh dibuat.",
     "exporting": "Mengekspor…",
     "selective_intro": "Atau pilih persis apa yang ingin disertakan. Berkas diimpor dengan cara yang sama.",
-    "select_all": "Pilih semua / tidak ada",
+    "select_all": "Pilih semua / batalkan semua",
     "selective_button": "Ekspor data terpilih",
-    "selective_done": "Mengekspor {n} catatan.",
+    "selective_done": "{n} catatan diekspor.",
     "includes_hint": "diekspor otomatis bersama kategori ini",
     "failed": "Ekspor gagal: {detail}",
     "group_content": "Konten",
@@ -107,7 +107,7 @@
     "mode_badge_ai": "AI+Konten",
     "mode_badge_tooltip_content": "Tidak ada kunci API yang dikonfigurasi — hanya menggunakan konten siap pakai. Tambahkan kunci di Pengaturan untuk mengaktifkan fitur AI.",
     "mode_badge_tooltip_ai": "Penyedia AI dikonfigurasi — latihan menggunakan AI untuk pengecoh + petunjuk. Ketuk untuk menjelajahi set konten.",
-    "mode_badge_label_content": "Mode: Konten saja",
+    "mode_badge_label_content": "Mode: Hanya konten",
     "mode_badge_label_ai": "Mode: AI + Konten",
     "sync_paired": "Sinkron: terpasang (Pengaturan > Sinkron)",
     "sync_unpaired": "Sinkron: tidak terpasang (Pengaturan > Sinkron)"
@@ -183,7 +183,7 @@
     "show_transcript": "Tampilkan transkrip mentah",
     "anki_extract": "Ekstrak kartu Anki",
     "anki_extracting": "Mengekstrak kartu…",
-    "anki_extracted": "Mengekstrak {n} kartu Anki. Tinjau di halaman Anki.",
+    "anki_extracted": "Mengekstrak {n} kartu Anki. Nilai di halaman Anki.",
     "anki_no_cards": "Tidak ada kartu Anki yang diekstrak.",
     "anki_extract_failed": "Tidak dapat mengekstrak kartu Anki.",
     "delete": "Hapus",
@@ -243,9 +243,9 @@
     "title": "Buat proyek belajar",
     "intro": "Ceritakan tentang tujuan belajar Anda. Adaptive Learner menggunakan ini untuk membangun profil Anda dan merekomendasikan metode awal.",
     "concepts_explainer_prefix": "Anda akan menentukan sebuah ",
-    "concepts_explainer_mid1": ", lalu menyelesaikan penilaian singkat untuk membangun ",
+    "concepts_explainer_mid1": ", lalu mengerjakan tes penilaian untuk",
     "concepts_explainer_mid2": " — yang memandu setiap ",
-    "concepts_explainer_suffix": " ke depannya.",
+    "concepts_explainer_suffix": "memandu.",
     "term_learning_project": "proyek belajar",
     "term_learning_profile": "profil belajar",
     "term_learning_session": "sesi belajar",
@@ -302,7 +302,7 @@
     "result_title": "Profil belajar Anda",
     "dominant_method": "Metode pilihan",
     "continue_to_dashboard": "Lanjutkan ke dasbor",
-    "read_summary": "Baca ringkasan",
+    "read_summary": "Bacakan ringkasan dengan suara",
     "swipe_hint": "Geser kiri / kanan (atau gunakan tombol panah) untuk menavigasi."
   },
   "dashboard": {
@@ -403,8 +403,8 @@
     "explain_word_order": "Perhatikan urutan kata untuk struktur ini.",
     "page_title": "Ulasan",
     "session_title": "Sesi ulasan",
-    "subtitle": "Meninjau {n} elemen yang jatuh tempo untuk SRS",
-    "subtitle_capped": "Meninjau {shown} dari {due} elemen yang jatuh tempo untuk SRS",
+    "subtitle": "{n} elemen untuk ditinjau",
+    "subtitle_capped": "{shown} dari {due} elemen untuk ditinjau",
     "loading": "Memuat sesi ulasan…",
     "empty_body": "Semua sudah selesai! Tidak ada elemen yang perlu ditinjau di set ini.",
     "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu.",
@@ -481,7 +481,7 @@
     "commit_duration": "Durasi",
     "commit_date": "Tanggal",
     "no_commits": "Belum ada sesi yang selesai.",
-    "step_eval_title": "Wawasan evaluasi langkah AI",
+    "step_eval_title": "Evaluasi Langkah AI",
     "step_eval_empty": "Belum ada data evaluasi langkah AI — mulai sesi untuk melihat wawasan di sini.",
     "step_eval_avg_confidence": "Rata-rata keyakinan AI",
     "step_eval_repeats": "Berapa kali AI berkata 'belum siap'",
@@ -652,7 +652,7 @@
     "section_interaction": "Interaksi",
     "missions_title": "Misi Harian",
     "missions_enabled": "Misi harian",
-    "missions_enabled_hint": "Tampilkan beberapa sasaran yang dapat dicapai di Dasbor setiap hari. Opsional - aplikasi bekerja sama tanpanya.",
+    "missions_enabled_hint": "Tampilkan beberapa sasaran yang dapat dicapai di Beranda setiap hari. Opsional - aplikasi tetap berfungsi tanpanya.",
     "missions_count": "Misi per hari",
     "missions_difficulty": "Campuran kesulitan",
     "missions_difficulty_balanced": "Seimbang",
@@ -673,6 +673,8 @@
     "profile_create_hint": "Ikuti asesmen singkat untuk mendapatkan profil pembelajaran yang dipersonalisasi.",
     "lesson_shortcuts": "Pintasan papan ketik pelajaran",
     "lesson_shortcuts_description": "Tekan Enter untuk memeriksa jawaban Anda, lalu Enter lagi untuk ke langkah berikutnya.",
+    "lesson_auto_advance": "Lanjut otomatis setelah jawaban benar",
+    "lesson_auto_advance_description": "Setelah jawaban benar, otomatis lanjut ke latihan berikutnya. Jawaban salah selalu menunggu agar kamu bisa meninjau solusinya.",
     "button_tooltips": "Tampilkan tooltip tombol",
     "button_tooltips_description": "Tampilkan tooltip arahkan kursor pada tombol ikon yang menjelaskan fungsinya. Label pembaca layar tetap aktif terlepas dari ini.",
     "developer_mode": "Mode Pengembang",
@@ -683,7 +685,7 @@
     "feedback_intensity_subtle_desc": "Hanya warna benar/salah. Tanpa frasa, konfeti, atau hamparan tonggak pencapaian.",
     "feedback_intensity_normal": "Normal",
     "feedback_intensity_normal_desc": "Animasi, frasa pujian, dan konfeti pada skor sempurna.",
-    "feedback_intensity_enthusiastic": "Antusias",
+    "feedback_intensity_enthusiastic": "Terperinci",
     "feedback_intensity_enthusiastic_desc": "Semuanya, ditambah hamparan tonggak pencapaian dan pujian pada setiap jawaban benar.",
     "feedback_intensity_reduced_motion_hint": "Gerakan-tereduksi aktif di sistem Anda, jadi umpan balik tetap halus terlepas dari pengaturan ini.",
     "sounds": "Suara",
@@ -757,7 +759,7 @@
     "provider_active": "Aktif",
     "active_provider_missing_key": "Ini adalah penyedia aktif Anda tetapi tidak ada kunci API yang tersimpan. Balasan AI akan dilewati hingga kunci disimpan.",
     "api_key_source_file": "Kunci dari: secrets.yaml",
-    "api_key_source_env": "Kunci dari: lingkungan",
+    "api_key_source_env": "Kunci dari: variabel lingkungan",
     "api_key_source_settings": "Kunci dari: Pengaturan",
     "api_key_source_none": "Tidak ada kunci dikonfigurasi",
     "api_key_external_hint_file": "Disimpan di ~/.config/adaptive_learner/secrets.yaml. Menyimpan di sini akan menimpanya.",
@@ -769,7 +771,7 @@
     "model_override_default": "Model bawaan",
     "model_override_save": "Simpan model",
     "model_override_clear": "Gunakan bawaan",
-    "model_picker_placeholder": "Pilih atau ketik id model",
+    "model_picker_placeholder": "Pilih atau ketik model",
     "model_picker_open": "Buka daftar model",
     "model_picker_default_hint": "Menggunakan bawaan:",
     "model_picker_loading": "Memuat model...",
@@ -823,7 +825,7 @@
       "balanced": "Seimbang"
     },
     "matching_resolve": {
-      "title": "Animasi penyelesaian",
+      "title": "Efek penyelesaian",
       "hint": "Cara latihan menjodohkan menampilkan pasangan yang benar saat Anda menekan 'Selesaikan' setelah memeriksa.",
       "label": "Efek",
       "slide": "Geser",
@@ -997,7 +999,7 @@
     "identity_status_missing": "Tidak ditemukan",
     "identity_last_seen_label": "Terakhir diperbarui",
     "identity_explainer": "File ini dikelola otomatis oleh Adaptive Learner. File ini memungkinkan aplikasi memulihkan identitas pengguna Anda setelah data peramban terhapus. Jangan mengeditnya secara manual.",
-    "credits_heading": "Kredit",
+    "credits_heading": "Kontributor",
     "author_label": "Penulis",
     "dependencies_label": "Dibuat dengan",
     "ai_assistance_label": "Bantuan AI",
@@ -1268,7 +1270,7 @@
       },
       "first_assessment": {
         "name": "Asesmen Pertama",
-        "description": "Selesaikan asesmen tipe belajar."
+        "description": "Selesaikan penilaian diri."
       },
       "first_import": {
         "name": "Impor Pertama",
@@ -1387,7 +1389,7 @@
     "reset_failed": "Tidak dapat mengatur ulang kemajuan.",
     "weekend_mode_save_failed": "Tidak dapat menyimpan pengaturan mode akhir pekan.",
     "danger_zone_heading": "Zona Bahaya",
-    "danger_zone_intro": "Hapus secara permanen setiap bagian keadaan pelajar di perangkat ini.",
+    "danger_zone_intro": "Hapus secara permanen semua data pembelajaran di perangkat ini.",
     "danger_zone_reset_button": "Atur Ulang Semuanya",
     "danger_zone_warning": "Ini menghapus SEMUA data belajar Anda secara permanen — sesi, kemajuan, profil, kurikulum, impor, kartu Anki, pengaturan, dan kunci API. Tindakan ini TIDAK DAPAT dibatalkan.",
     "danger_zone_confirm_prompt": "Ketik RESET untuk mengonfirmasi",
@@ -1472,7 +1474,7 @@
     "questions_generated": "Menghasilkan {n} pertanyaan belajar baru.",
     "no_questions_generated": "Tidak ada pertanyaan belajar yang diekstrak. Coba setelah satu atau dua sesi lagi.",
     "generate_failed": "Tidak dapat menghasilkan pertanyaan belajar.",
-    "zip_exported": "Mengekspor {n} file ke {filename}.",
+    "zip_exported": "{n} file diekspor ke {filename}.",
     "zip_failed": "Ekspor ZIP gagal.",
     "guide_ready": "Panduan belajar diunduh.",
     "guide_failed": "Tidak dapat menghasilkan panduan belajar."
@@ -1567,7 +1569,7 @@
       "required_long": "Konfigurasikan kunci penyedia di Pengaturan untuk mengaktifkan tindakan ini.",
       "open_settings": "Buka Pengaturan",
       "skip_banner": "Konfigurasikan kunci API di Pengaturan untuk menggunakan fitur AI.",
-      "skip_banner_dismiss": "Tutup",
+      "skip_banner_dismiss": "Mengerti",
       "feature_analyze": "untuk menganalisis percakapan",
       "feature_session": "untuk memulai sesi",
       "feature_anki": "untuk mengekstrak kartu Anki",
@@ -1632,7 +1634,7 @@
       "add_topic": "Tambah topik",
       "add_subtopic": "Tambah subtopik",
       "add_lesson": "Tambah pelajaran",
-      "add_root_topic": "Tambah topik akar",
+      "add_root_topic": "Tambah topik utama",
       "rename": "Ganti nama",
       "select": "Pilih",
       "select_all": "Pilih semua",
@@ -1778,6 +1780,19 @@
     }
   },
   "lesson": {
+    "ask_ai": {
+      "button": "Tanya AI",
+      "title": "Tanya AI tentang ini",
+      "placeholder": "mis. Jelaskan dengan contoh",
+      "ask": "Tanya",
+      "asking": "Menanyakan…",
+      "no_key": "Setel kunci AI untuk bertanya - lihat pengaturan AI.",
+      "open_settings": "Pengaturan AI",
+      "error": "Permintaan AI gagal. Silakan coba lagi."
+    },
+    "example": {
+      "label": "Contoh"
+    },
     "mode": {
       "label": "Mode pelajaran",
       "practice": "Latihan",
@@ -1977,7 +1992,7 @@
       }
     },
     "summary": {
-      "heading": "Anda telah menyelesaikan",
+      "heading": "Selesai",
       "aria_label": "Ringkasan pelajaran",
       "score": "Skor",
       "score_bar_aria": "Skor: {pct} persen",
@@ -2057,7 +2072,7 @@
     },
     "correction": {
       "title": "Babak koreksi",
-      "subtitle": "Beberapa latihan cepat pada kata-kata yang Anda lewatkan.",
+      "subtitle": "Beberapa latihan cepat pada kata-kata yang kamu tertukar.",
       "skip": "Lewati",
       "next": "Berikutnya",
       "complete_heading": "Babak koreksi selesai",
@@ -2202,6 +2217,15 @@
       "deleted": "Set dihapus.",
       "delete_failed": "Tidak dapat menghapus set.",
       "delete_confirm": "Set yang diunduh dan pelajarannya akan dihapus dari Konten Saya. Progres belajarmu tetap tersimpan, dan kamu dapat mengunduh set lagi kapan saja.",
+      "select_all": "Pilih semua",
+      "select_set": "Pilih {title}",
+      "bulk_selected": "{n} dipilih",
+      "bulk_bar_aria": "Tindakan massal",
+      "bulk_clear": "Hapus pilihan",
+      "bulk_changed": "Status diperbarui untuk {n} set.",
+      "bulk_deleted": "{n} set dihapus.",
+      "bulk_delete_title": "Hapus {n} set?",
+      "bulk_delete_confirm": "Set yang dipilih beserta pelajarannya akan dihapus dari Konten Saya. Progres belajar Anda tetap tersimpan, dan Anda dapat mengunduh set lagi kapan saja.",
       "action": {
         "activate": "Aktifkan kembali",
         "defer": "Tunda",
@@ -2341,13 +2365,13 @@
       "continue": "Lanjut ke GitHub",
       "cancel": "Tutup",
       "no_lessons": "Set ini tidak memiliki pelajaran.",
-      "missing_target_language": "Bahasa target tidak ada (bahasa yang diajarkan).",
+      "missing_target_language": "Bahasa target tidak ada (bahasa yang dipelajari).",
       "missing_source_language": "Bahasa sumber tidak ada (bahasa penjelasan).",
       "invalid_target_language": "Bahasa target '{code}' bukan kode ISO 2 huruf.",
       "invalid_source_language": "Bahasa sumber '{code}' bukan kode ISO 2 huruf.",
       "same_source_target": "Bahasa sumber dan target sama ('{code}').",
       "missing_title": "Judul tidak ada.",
-      "missing_title_native": "Judul asli tidak ada (judul dalam bahasa target).",
+      "missing_title_native": "Judul dalam bahasa target tidak ada.",
       "lesson_too_few_exercises": "Pelajaran '{lesson}' memiliki {count} latihan; setidaknya {min} diperlukan.",
       "lesson_too_few_types": "Pelajaran '{lesson}' menggunakan {count} jenis latihan; setidaknya {min} diperlukan.",
       "lesson_no_theory": "Pelajaran '{lesson}' tidak memiliki langkah teori.",
@@ -2358,7 +2382,7 @@
       "matching_too_few_pairs": "Pelajaran '{lesson}': latihan pencocokan '{exercise}' memerlukan setidaknya {min} pasangan.",
       "missing_distractors": "Pelajaran '{lesson}': latihan '{exercise}' memerlukan pengecoh (pilihan salah).",
       "non_cefr_level": "Tingkat '{level}' bukan jenjang CEFR (A1-C2).",
-      "level_too_complex": "Pelajaran '{lesson}': teks rata-rata {avg} kata per sisi, tinggi untuk tingkat {level} (sekitar {cap} diharapkan).",
+      "level_too_complex": "Pelajaran '{lesson}': teks rata-rata {avg} kata per halaman, tinggi untuk tingkat {level} (sekitar {cap} diharapkan).",
       "source_language_heuristic": "Sisi belakang kartu mengandung karakter khas {found} tetapi bahasa sumbernya '{lang}'.",
       "target_language_heuristic": "Sisi depan kartu mengandung karakter khas {found} tetapi bahasa targetnya '{lang}'.",
       "failed_share_anyway": "Pemeriksaan kualitas menemukan masalah. Kamu tetap dapat membagikannya — peninjau akan melihat temuan yang dicatat dalam pull request."
@@ -2864,7 +2888,7 @@
     "online_message": "Kembali daring!",
     "offline_dismiss": "Tutup",
     "action_unavailable": "Tidak tersedia saat luring",
-    "cache_heading": "Cache luring",
+    "cache_heading": "Cache Offline",
     "cache_summary": "{size} MB · {count} pelajaran di-cache",
     "cache_empty": "Belum ada konten luring yang di-cache.",
     "cache_clear": "Hapus cache",
@@ -2990,7 +3014,7 @@
     "biology": "Biologi",
     "astronomy": "Astronomi",
     "earth_sciences": "Ilmu Kebumian",
-    "theory": "Teori",
+    "theory": "Teori Musik",
     "piano": "Piano",
     "guitar": "Gitar",
     "violin": "Biola",
@@ -3170,6 +3194,13 @@
     "save_prompt": "Simpan pelajaran ini ke favoritmu"
   },
   "content_repo": {
+    "qr": {
+      "upload": "Unggah gambar QR",
+      "decoding": "Membaca QR…",
+      "no_qr": "Tidak ada kode QR yang ditemukan dalam gambar.",
+      "invalid": "Kode QR bukan tautan \"tambah repositori\" yang valid.",
+      "filled": "Detail repositori diisi dari kode QR."
+    },
     "title": "Repositori konten",
     "last_sync": "Sinkronisasi terakhir: {when}",
     "added": "Repositori ditambahkan.",
@@ -3216,6 +3247,7 @@
     },
     "badge": {
       "coach": "Pelatih",
+      "private": "Pribadi",
       "official": "Resmi"
     },
     "trust": {
@@ -3285,6 +3317,7 @@
     "filter": {
       "all": "Semua",
       "language": "Bahasa",
+      "all_languages": "Semua bahasa",
       "level": "Tingkat",
       "domain": "Bidang",
       "trust": "Kepercayaan",
@@ -3312,7 +3345,8 @@
     },
     "empty": {
       "no_sets": "Belum ada konten tersedia.",
-      "no_results": "Tidak ada hasil untuk “{query}”."
+      "no_results": "Tidak ada hasil untuk “{query}”.",
+      "language_hint": "Belum ada apa pun dalam bahasa ini."
     },
     "card": {
       "download": "Unduh",
@@ -3323,7 +3357,7 @@
       "cards": "{n} kartu",
       "ai_checked": "Diperiksa AI",
       "remove": "Hapus",
-      "progress": "Mengunduh pelajaran"
+      "progress": "Memuat pelajaran"
     },
     "toast": {
       "downloaded": "Set diunduh dan siap digunakan.",

@@ -23,20 +23,26 @@ import { isOfficialSource } from "../../lib/content/repos/content-repos";
 import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,
-  availableLanguages,
+  availableSourceLanguages,
   availableLevels,
   discoverSetKey,
   EMPTY_FILTERS,
   isSetDownloaded,
   queryDiscoverSets,
+  sourceLanguageCounts,
   type DiscoverFilters,
   type DiscoverSort,
 } from "../../lib/content/repos/discover-index";
+import { useDiscoverSourceLanguage } from "../../hooks/content/useDiscoverSourceLanguage";
 import { collectDiscoveryRepos } from "../../lib/content/repos/discover-repos";
 import {
   fetchAllIndices,
   type SearchableSet,
 } from "../../lib/content/repos/search-index-loader";
+import {
+  markCatalogSeen,
+  newKeysAgainstSeen,
+} from "../../lib/content/browse/seen-catalog";
 import InfoHint from "../../shared/feedback/InfoHint";
 import { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchFilterBar from "../../shared/forms/SearchFilterBar";
@@ -65,10 +71,17 @@ export default function Discover() {
   const { t, lang } = useI18n();
   const [allSets, setAllSets] = useState<SearchableSet[]>([]);
   const [downloadedKeys, setDownloadedKeys] = useState<Set<string>>(new Set());
+  // Keys of sets newly added to the catalogue since the user last saw it (#1337 f/u).
+  const [newKeys, setNewKeys] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [rawQuery, setRawQuery] = useState("");
   const [filters, setFilters] = useState<DiscoverFilters>(EMPTY_FILTERS);
   const [sort, setSort] = useState<DiscoverSort>("relevance");
+  // Source-language filter (#1343). The stored value is the EXPLICIT choice,
+  // or null when unset — in which case the default follows the UI locale
+  // (and moves when the learner switches UI language). An explicit choice
+  // ("" = all languages) always wins over the locale default.
+  const [langChoice, setLangChoice] = useDiscoverSourceLanguage();
   const [downloadState, setDownloadState] = useState<
     Record<string, SetDiscoveryDownloadState>
   >({});
@@ -97,18 +110,32 @@ export default function Discover() {
         const local = await getStorage()
           .contentLoader.listSets()
           .catch(() => ({ sets: [], sources: [] }));
-        const sets = await fetchAllIndices(repos, {
-          onRevalidated: () => {
-            if (!cancelled) void refresh();
-          },
-        });
+        const applySets = (sets: SearchableSet[]) => {
+          if (cancelled) return;
+          setAllSets(sets);
+          const keys = new Set<string>();
+          for (const set of sets) {
+            if (isSetDownloaded(set, local.sets)) keys.add(discoverSetKey(set));
+          }
+          setDownloadedKeys(keys);
+        };
+        // 1) Instant paint from the TTL cache (stale-while-revalidate).
+        applySets(await fetchAllIndices(repos));
         if (cancelled) return;
-        setAllSets(sets);
-        const keys = new Set<string>();
-        for (const set of sets) {
-          if (isSetDownloaded(set, local.sets)) keys.add(discoverSetKey(set));
-        }
-        setDownloadedKeys(keys);
+        setLoading(false);
+        // 2) Always force-refresh the catalogue from the live repo so a
+        //    newly-published set (e.g. the first set in a new source
+        //    language) appears on reopen without waiting out the 24h TTL,
+        //    and after a content sync. A failed refresh keeps the cached
+        //    list (#1337).
+        const fresh = await fetchAllIndices(repos, { forceRefresh: true });
+        applySets(fresh);
+        if (cancelled) return;
+        // New-content indicator: flag sets not in the last-seen anchor, then
+        // update the anchor so they are no longer "New" next time (#1337 f/u).
+        const freshKeys = fresh.map(discoverSetKey);
+        setNewKeys(newKeysAgainstSeen(freshKeys));
+        markCatalogSeen(freshKeys);
       } catch (err) {
         if (!cancelled) {
           notify.error(
@@ -120,11 +147,6 @@ export default function Discover() {
         if (!cancelled) setLoading(false);
       }
     }
-    async function refresh() {
-      const repos = await collectDiscoveryRepos();
-      const sets = await fetchAllIndices(repos);
-      if (!cancelled) setAllSets(sets);
-    }
     void load();
     return () => {
       cancelled = true;
@@ -133,9 +155,23 @@ export default function Discover() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // The instruction language the list is filtered to: the explicit choice
+  // when set, else the UI-locale default (base subtag, e.g. "de-AT" → "de").
+  const localeDefaultLanguage = useMemo(
+    () => (lang || "").split("-")[0],
+    [lang],
+  );
+  const effectiveSourceLanguage =
+    langChoice ?? localeDefaultLanguage;
+
+  const activeFilters = useMemo<DiscoverFilters>(
+    () => ({ ...filters, sourceLanguage: effectiveSourceLanguage }),
+    [filters, effectiveSourceLanguage],
+  );
+
   const results = useMemo(
-    () => queryDiscoverSets(allSets, filters, sort),
-    [allSets, filters, sort],
+    () => queryDiscoverSets(allSets, activeFilters, sort),
+    [allSets, activeFilters, sort],
   );
 
   // #772 — once the learner has downloaded a set this session, point them
@@ -147,9 +183,12 @@ export default function Discover() {
 
   const filterDefs: FilterDef[] = useMemo(() => {
     const all = { value: "", label: t("discover.filter.all", "All") };
-    const languages = availableLanguages(allSets).map((code) => ({
+    // Source-language facet (#1343): the instruction languages actually
+    // present, each with its set count, plus an explicit "All languages".
+    const counts = sourceLanguageCounts(allSets);
+    const sourceLanguages = availableSourceLanguages(allSets).map((code) => ({
       value: code,
-      label: languageDisplayName(code, lang),
+      label: `${languageDisplayName(code, lang)} (${counts[code] ?? 0})`,
     }));
     const levels = availableLevels(allSets).map((level) => ({
       value: level,
@@ -160,7 +199,15 @@ export default function Discover() {
       label: t(`discover.domain.${domain}`, domain),
     }));
     return [
-      { id: "language", label: t("discover.filter.language", "Language"), value: filters.language, options: [all, ...languages] },
+      {
+        id: "sourceLanguage",
+        label: t("discover.filter.language", "Language"),
+        value: effectiveSourceLanguage,
+        options: [
+          { value: "", label: t("discover.filter.all_languages", "All languages") },
+          ...sourceLanguages,
+        ],
+      },
       { id: "level", label: t("discover.filter.level", "Level"), value: filters.level, options: [all, ...levels] },
       { id: "domain", label: t("discover.filter.domain", "Domain"), value: filters.domain, options: [all, ...domains] },
       {
@@ -195,11 +242,16 @@ export default function Discover() {
         ],
       },
     ];
-  }, [allSets, filters, sort, t, lang]);
+  }, [allSets, filters, sort, t, lang, effectiveSourceLanguage]);
 
   function handleFilterChange(id: string, value: string) {
     if (id === "sort") {
       setSort(value as DiscoverSort);
+      return;
+    }
+    if (id === "sourceLanguage") {
+      // Persist as an explicit choice (wins over the locale default).
+      setLangChoice(value);
       return;
     }
     setFilters((prev) => ({ ...prev, [id]: value }));
@@ -258,6 +310,8 @@ export default function Discover() {
     remove: t("discover.card.remove", "Remove"),
     progress: t("discover.card.progress", "Downloading lessons"),
   };
+
+  const newBadgeLabel = t("discover.badge.new", "New");
 
   function trustLabel(level: number): string {
     if (level >= 3) return t("discover.trust.official", "Officially recommended");
@@ -321,6 +375,11 @@ export default function Discover() {
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground" data-testid="discover-count">
           {t("discover.result.count", "{n} sets").replace("{n}", String(results.length))}
+          {newKeys.size > 0 && (
+            <span className="ml-2 text-accent" data-testid="discover-new-count">
+              {t("discover.new.count", "{n} new").replace("{n}", String(newKeys.size))}
+            </span>
+          )}
         </p>
         {/* #1262 — grid/list toggle, sharing the global view preference.
             Shown once there is content to view. */}
@@ -334,12 +393,32 @@ export default function Discover() {
           {t("discover.empty.no_sets", "No content available yet.")}
         </p>
       ) : results.length === 0 ? (
-        <p className="text-muted-foreground" data-testid="discover-empty-results">
-          {t("discover.empty.no_results", "No results for “{query}”.").replace(
-            "{query}",
-            filters.query,
+        <div className="text-muted-foreground" data-testid="discover-empty-results">
+          <p>
+            {t("discover.empty.no_results", "No results for “{query}”.").replace(
+              "{query}",
+              filters.query,
+            )}
+          </p>
+          {/* Never a dead end: when a source-language filter is active, offer a
+              one-tap escape to "All languages" (#1343). */}
+          {effectiveSourceLanguage !== "" && (
+            <p className="mt-2" data-testid="discover-empty-language">
+              {t(
+                "discover.empty.language_hint",
+                "Nothing in this language yet.",
+              )}{" "}
+              <button
+                type="button"
+                className="text-accent hover:underline"
+                onClick={() => setLangChoice("")}
+                data-testid="discover-show-all-languages"
+              >
+                {t("discover.filter.all_languages", "All languages")}
+              </button>
+            </p>
           )}
-        </p>
+        </div>
       ) : viewMode === "list" ? (
         <DiscoverSetListView
           sets={results}
@@ -347,6 +426,7 @@ export default function Discover() {
           isDownloaded={(set) => downloadedKeys.has(discoverSetKey(set))}
           stateFor={(set) => downloadState[discoverSetKey(set)] ?? "idle"}
           canRemove={(set) => !isOfficialSource(set.repo_url)}
+          isNew={(set) => newKeys.has(discoverSetKey(set))}
           onDownload={handleDownload}
           onRemove={handleRemove}
           labels={{
@@ -357,6 +437,7 @@ export default function Discover() {
             remove: cardLabels.remove,
             lessons: (count) =>
               t("discover.card.lessons", "{n} lessons").replace("{n}", String(count)),
+            newBadge: newBadgeLabel,
           }}
         />
       ) : (
@@ -370,6 +451,8 @@ export default function Discover() {
                   isDownloaded={downloadedKeys.has(key)}
                   state={downloadState[key] ?? "idle"}
                   progress={downloadProgress[key]}
+                  isNew={newKeys.has(key)}
+                  newLabel={newBadgeLabel}
                   onDownload={handleDownload}
                   onRemove={isOfficialSource(set.repo_url) ? undefined : handleRemove}
                   languageLabel={languageBadge(set)}

@@ -1,12 +1,12 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.98.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.99.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
 A complete adaptive-learning platform built on the six-method
-learning model (Asterios Raptis, *Von Theorie zur Praxis*, Medium
+learning model (Asterios Raptis, *From Theory to Practice: The Series*, Medium
 series). Pick the method that fits the learner — deductive,
 inductive, error-based, dialogic, contextual, or AI-adaptive —
 walk through a seven-step cycle on every session, and let a

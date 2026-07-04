@@ -26,13 +26,12 @@ NEVER appear as cached.
 
 from __future__ import annotations
 
-import json
 import shutil
 from pathlib import Path
 from typing import Iterable
 
 from .exceptions import ContentNotFoundError
-from .manifest_parser import parse_manifest_yaml, parse_lesson_json
+from .content_engine import parse_lesson, parse_manifest
 from .models import ContentManifest
 from .schema import Lesson
 from .version import needs_update
@@ -220,7 +219,7 @@ def read_manifest(
             f"No cached manifest for {source}/{set_id}@v{version}",
             detail=f"Looked at: {manifest_path}",
         )
-    return parse_manifest_yaml(manifest_path.read_text(encoding="utf-8"))
+    return parse_manifest(manifest_path.read_text(encoding="utf-8"))
 
 
 def read_lesson(
@@ -262,7 +261,7 @@ def read_lesson(
             ),
             detail=f"Looked at: {lesson_path}",
         )
-    return parse_lesson_json(lesson_path.read_text(encoding="utf-8"))
+    return parse_lesson(lesson_path.read_text(encoding="utf-8"))
 
 
 def read_asset(

@@ -290,3 +290,83 @@ describe("fetchAllIndices", () => {
     expect(sets[0].repo_url).toBe("owner/repo-good");
   });
 });
+
+// A live index that has gained a newly-published set (the first with a new
+// source language, el) on top of the fresh-cached one.
+const NEW_INDEX = {
+  ...SAMPLE_INDEX,
+  sets: [
+    ...SAMPLE_INDEX.sets,
+    {
+      id: "fr-a1-from-el",
+      name: "Γαλλικά A1",
+      description: "Γαλλικά για ελληνόφωνους",
+      source_language: "el",
+      target_language: "fr",
+      level: "a1",
+      domain: "language",
+      lesson_count: 8,
+      card_count: 65,
+      tags: [],
+      ai_validated: false,
+      trust_level: 3,
+      book: null,
+      updated_at: "2026-07-03T00:00:00Z",
+    },
+  ],
+};
+
+function seedFreshCacheWithoutNewSet(): void {
+  writeSearchIndexCache(
+    "jane/content",
+    parseSearchIndex(SAMPLE_INDEX, "jane/content", "jane/content"),
+  );
+}
+
+describe("fetchSearchIndex — forceRefresh (#1337)", () => {
+  it("WITHOUT forceRefresh a fresh cache hides a newly-published set (the bug)", async () => {
+    seedFreshCacheWithoutNewSet();
+    const fetchMock = vi.fn().mockResolvedValue(jsonRes(200, NEW_INDEX));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const sets = await fetchSearchIndex({ url: "jane/content" });
+
+    // Fresh cache → no network → the new el-fr set stays invisible.
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(sets.map((s) => s.id)).not.toContain("fr-a1-from-el");
+  });
+
+  it("forceRefresh ignores the fresh cache, refetches, and surfaces the new set", async () => {
+    seedFreshCacheWithoutNewSet();
+    const fetchMock = vi.fn().mockResolvedValue(jsonRes(200, NEW_INDEX));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const sets = await fetchSearchIndex({ url: "jane/content" }, { forceRefresh: true });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(sets.map((s) => s.id)).toContain("fr-a1-from-el");
+    // The refreshed catalogue is written back to the cache.
+    expect(
+      readSearchIndexCache("jane/content")?.sets.map((s) => s.id),
+    ).toContain("fr-a1-from-el");
+  });
+
+  it("forceRefresh falls back to the cached sets on a network error (never blanks)", async () => {
+    seedFreshCacheWithoutNewSet();
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+
+    const sets = await fetchSearchIndex({ url: "jane/content" }, { forceRefresh: true });
+
+    expect(sets.map((s) => s.id)).toEqual(["es-a1-from-de"]);
+  });
+
+  it("fetchAllIndices forwards forceRefresh so a synced repo shows new sets", async () => {
+    seedFreshCacheWithoutNewSet();
+    const fetchMock = vi.fn().mockResolvedValue(jsonRes(200, NEW_INDEX));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const sets = await fetchAllIndices([{ url: "jane/content" }], { forceRefresh: true });
+
+    expect(sets.map((s) => s.id)).toContain("fr-a1-from-el");
+  });
+});

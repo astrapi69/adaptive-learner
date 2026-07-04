@@ -72,7 +72,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out the chosen branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # On workflow_dispatch this is the picked branch; on a push to
           # develop github.event.inputs.branch is empty, so fall back to
@@ -87,7 +87,7 @@ jobs:
       # (set below) to find this checkout; without that it fails open
       # and the preview ships with no bundled lessons.
       - name: Check out content-test repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: astrapi69/adaptive-learner-content-test
           path: content-repo

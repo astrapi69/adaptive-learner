@@ -629,6 +629,8 @@ settings:
   profile_create_hint: "Take a short assessment to get a personalised learning profile."
   lesson_shortcuts: "Lesson keyboard shortcuts"
   lesson_shortcuts_description: "Press Enter to check your answer, then Enter again to go to the next step."
+  lesson_auto_advance: "Auto-advance on a correct answer"
+  lesson_auto_advance_description: "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution."
   button_tooltips: Show button tooltips
   button_tooltips_description: "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless."
   developer_mode: Developer Mode
@@ -1659,6 +1661,17 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  ask_ai:
+    button: "Ask AI"
+    title: "Ask AI about this"
+    placeholder: "e.g. Explain this with an example"
+    ask: "Ask"
+    asking: "Asking…"
+    no_key: "Set an AI key to ask about this - see AI settings."
+    open_settings: "AI settings"
+    error: "The AI request failed. Please try again."
+  example:
+    label: "Example"
   mode:
     label: "Lesson mode"
     practice: "Practice"
@@ -2036,6 +2049,15 @@ content:
     deleted: "Set removed."
     delete_failed: "Could not remove the set."
     delete_confirm: "The downloaded set and its lessons will be removed from My Content. Your learning progress is kept, and you can download the set again anytime."
+    select_all: "Select all"
+    select_set: "Select {title}"
+    bulk_selected: "{n} selected"
+    bulk_bar_aria: "Bulk actions"
+    bulk_clear: "Clear selection"
+    bulk_changed: "Status updated for {n} sets."
+    bulk_deleted: "{n} sets removed."
+    bulk_delete_title: "Delete {n} sets?"
+    bulk_delete_confirm: "The selected sets and their lessons will be removed from My Content. Your learning progress is kept, and you can download the sets again anytime."
     action:
       activate: "Reactivate"
       defer: "Defer"
@@ -2920,6 +2942,12 @@ content_repo:
   title: "Content repositories"
   last_sync: "Last sync: {when}"
   added: "Repository added."
+  qr:
+    upload: "Upload QR image"
+    decoding: "Reading QR…"
+    no_qr: "No QR code found in the image."
+    invalid: "The QR code is not a valid 'add repository' link."
+    filled: "Repository details filled from the QR code."
   synced: "Synced: {sets} sets, {lessons} lessons."
   token_hint: "Private repositories need a token — paste one below, or set a shared token in Settings → Integrations."
   trust_official: "Official: Curated and quality-assured by the project team."
@@ -2956,6 +2984,7 @@ content_repo:
     sync: "Sync now"
   badge:
     coach: "Coach"
+    private: "Private"
     official: "Official"
   trust:
     dropped: "Synced, but validation failed — this repository is now marked Unverified."
@@ -3013,6 +3042,7 @@ discover:
   filter:
     all: "All"
     language: "Language"
+    all_languages: "All languages"
     level: "Level"
     domain: "Domain"
     trust: "Trust"
@@ -3036,6 +3066,7 @@ discover:
   empty:
     no_sets: "No content available yet."
     no_results: "No results for “{query}”."
+    language_hint: "Nothing in this language yet."
   card:
     download: "Download"
     downloading: "Downloading…"

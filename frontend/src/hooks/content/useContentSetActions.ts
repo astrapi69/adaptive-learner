@@ -47,6 +47,9 @@ export function useContentSetActions({
   // #1300 — downloaded-set delete-confirm modal target + status flow.
   const [deleteSetTarget, setDeleteSetTarget] = useState<ContentSetEntry | null>(null);
   const [deletingSet, setDeletingSet] = useState(false);
+  // #1351 — multi-select bulk delete-confirm targets + in-flight flag.
+  const [bulkDeleteTargets, setBulkDeleteTargets] = useState<ContentSetEntry[] | null>(null);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const setKey = (entry: ContentSetEntry): string => `${entry.source}#${entry.id}`;
 
@@ -90,6 +93,66 @@ export function useContentSetActions({
       );
     } finally {
       setDeletingSet(false);
+    }
+  };
+
+  // #1351 — bulk status change over the selected sets. One batched storage
+  // call (Dexie transaction), one optimistic list update. On success the
+  // caller clears the selection; a short toast confirms.
+  const handleBulkSetStatus = async (
+    entries: ContentSetEntry[],
+    status: SetStatus,
+  ) => {
+    if (entries.length === 0) return;
+    const keys = new Set(entries.map(setKey));
+    setSets((prev) =>
+      prev.map((row) => (keys.has(setKey(row)) ? { ...row, status } : row)),
+    );
+    try {
+      await getStorage().contentLoader.setSetsStatus(
+        entries.map((e) => ({ source: e.source, setId: e.id })),
+        status,
+      );
+      notify.success(
+        t("content.set_status.bulk_changed", "Status updated for {n} sets.").replace(
+          "{n}",
+          String(entries.length),
+        ),
+      );
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.set_status.change_failed", "Could not update the status.")} ${detail}`,
+      );
+    }
+  };
+
+  // #1351 — confirm-delete the selected sets. One batched Dexie transaction
+  // (set rows + lessons); learning progress is untouched.
+  const handleConfirmBulkDelete = async () => {
+    const targets = bulkDeleteTargets;
+    if (!targets || targets.length === 0) return;
+    setBulkDeleting(true);
+    const keys = new Set(targets.map(setKey));
+    try {
+      await getStorage().contentLoader.deleteSets(
+        targets.map((e) => ({ source: e.source, setId: e.id })),
+      );
+      setSets((prev) => prev.filter((row) => !keys.has(setKey(row))));
+      notify.success(
+        t("content.set_status.bulk_deleted", "{n} sets removed.").replace(
+          "{n}",
+          String(targets.length),
+        ),
+      );
+      setBulkDeleteTargets(null);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.set_status.delete_failed", "Could not remove the set.")} ${detail}`,
+      );
+    } finally {
+      setBulkDeleting(false);
     }
   };
 
@@ -230,6 +293,12 @@ export function useContentSetActions({
     deletingSet,
     handleSetStatus,
     handleConfirmDeleteSet,
+    // #1351 — bulk multi-select actions.
+    bulkDeleteTargets,
+    setBulkDeleteTargets,
+    bulkDeleting,
+    handleBulkSetStatus,
+    handleConfirmBulkDelete,
     openLessonFile,
     handleOpenLesson,
     handleEditUserSet,

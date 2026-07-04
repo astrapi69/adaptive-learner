@@ -14,6 +14,8 @@ import { BookOpen, ChevronLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import TheoryStep from "./TheoryStep";
+import StepExamples from "./StepExamples";
+import AskAiPanel from "../ask/AskAiPanel";
 import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
 import { ExerciseDispatcher } from "../../exercises";
 import type {
@@ -196,6 +198,7 @@ export default function LessonStepView({
             onAnchorClick={goToStepById}
             exampleUrl={step.example_url}
             exampleLabel={step.example_label}
+            examples={step.examples}
           />
         </>
       ) : enteredReviewed && reviewedRaw === null && step.exercise != null ? (
@@ -207,23 +210,47 @@ export default function LessonStepView({
           stored={progress?.step_results?.[step.id]}
         />
       ) : (
-        <ExerciseDispatcher
-          ref={exerciseRef}
-          controlled
-          onInteraction={onInteraction}
-          reviewed={reviewedRaw}
-          step={step}
-          setId={setId}
-          lessonId={lessonFilename}
-          source={source}
-          targetLanguage={lesson.target_language}
-          sourceLanguage={lesson.source_language}
-          domain={lesson.domain}
-          cards={lesson.cards}
-          onComplete={handleComplete}
-          onAdvance={onAdvance}
-          advanceLabel={advanceLabel}
-        />
+        <>
+          {/* #1326 — inline worked examples shown BEFORE the answer
+                    controls, to help the learner understand the task. */}
+          {step.exercise?.examples && step.exercise.examples.length > 0 ? (
+            <StepExamples
+              examples={step.exercise.examples}
+              context="exercise"
+            />
+          ) : null}
+          <ExerciseDispatcher
+            ref={exerciseRef}
+            controlled
+            onInteraction={onInteraction}
+            reviewed={reviewedRaw}
+            step={step}
+            setId={setId}
+            lessonId={lessonFilename}
+            source={source}
+            targetLanguage={lesson.target_language}
+            sourceLanguage={lesson.source_language}
+            domain={lesson.domain}
+            cards={lesson.cards}
+            onComplete={handleComplete}
+            onAdvance={onAdvance}
+            advanceLabel={advanceLabel}
+          />
+          {/* #1321 — deepen the current exercise via the existing BYOK AI
+                    path. Self-gating (no key → discreet hint). */}
+          {step.exercise && (
+            <AskAiPanel
+              context={{
+                kind: "exercise",
+                blockText: step.exercise.prompt ?? "",
+                targetLanguage: lesson.target_language,
+                sourceLanguage: lesson.source_language,
+                domain: lesson.domain,
+              }}
+              testId="ask-ai-exercise"
+            />
+          )}
+        </>
       )}
     </article>
   );

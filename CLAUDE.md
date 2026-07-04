@@ -1,7 +1,7 @@
 # Adaptive Learner
 
 Adaptive learning platform implementing the six-method learning
-model (Asterios Raptis, *Von Theorie zur Praxis*, Medium series).
+model (Asterios Raptis, *From Theory to Practice: The Series*, Medium series).
 A complete, plugin-driven application: assessment, 7-step learning
 sessions across 6 methods, streaming AI replies via 3 providers,
 chat-history import + analysis, multi-cycle auto-loop, dual storage
@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.98.0** (schema + tooling release - the lesson
+- **Current state:** **v1.99.0** (schema + tooling release - the lesson
   **JSON-Schema becomes the App-authoritative single source of truth**
   (EXP-039): the schema, quality rules, doc, and TS types are generated from
   the App's Pydantic models (#1197), the TS lesson types consume that generated
