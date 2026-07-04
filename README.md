@@ -231,7 +231,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**460 lessons · 31 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**477 lessons · 33 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -247,6 +247,7 @@ Full documentation (German default at `/docs/`, English at
 | French A2 — Elementary | en | fr | A2 | 15 |
 | French B1 (for English speakers) | en | fr | B1 | 5 |
 | Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 |
+| Γαλλικά A1 (για ελληνόφωνους) | el | fr | A1 | 8 |
 | Französisch A2 — Grundlagen | de | fr | A2 | 15 |
 | Französisch B1 — Mittelstufe | de | fr | B1 | 15 |
 | Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 |
@@ -266,6 +267,7 @@ Full documentation (German default at `/docs/`, English at
 | Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 |
 | IT-Grundlagen | de | de | A1 | 10 |
 | Ansible-Grundlagen für Quality Engineering | de | de | B1 | 8 |
+| Data Science und KI | de | de | A2 | 9 |
 <!-- CONTENT-STATS:END -->
 
 ### Content repos
