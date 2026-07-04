@@ -84,6 +84,7 @@ plugins:
             Testen: Testing
             Belohnungs-Schicht: Celebration layer
             Lektionsinhalte erstellen: Authoring lesson content
+            Neuen Aufgabentyp hinzufügen: Adding a new exercise type
             Lektionsformat-Referenz: Lesson format reference
             Release-Prozess: Release workflow
             Für Content-Ersteller: For content creators
@@ -143,6 +144,7 @@ plugins:
             Belohnungs-Schicht: Capa de celebración
             Deployment: Despliegue
             Lektionsinhalte erstellen: Crear contenido de lecciones
+            Neuen Aufgabentyp hinzufügen: Añadir un tipo de ejercicio
             Lektionsformat-Referenz: Referencia del formato de lección
             Release-Prozess: Flujo de publicación
             Für Content-Ersteller: Para creadores de contenido
@@ -198,6 +200,7 @@ plugins:
             Belohnungs-Schicht: Couche de célébration
             Deployment: Déploiement
             Lektionsinhalte erstellen: Création de contenu de leçon
+            Neuen Aufgabentyp hinzufügen: Ajouter un type d'exercice
             Lektionsformat-Referenz: Référence du format de leçon
             Release-Prozess: Processus de publication
             Für Content-Ersteller: Pour les créateurs de contenu
@@ -258,6 +261,7 @@ plugins:
             Belohnungs-Schicht: Επίπεδο γιορτής
             Deployment: Ανάπτυξη
             Lektionsinhalte erstellen: Δημιουργία περιεχομένου μαθημάτων
+            Neuen Aufgabentyp hinzufügen: Προσθήκη νέου τύπου άσκησης
             Lektionsformat-Referenz: Αναφορά μορφής μαθήματος
             Release-Prozess: Ροή έκδοσης
             Für Content-Ersteller: Για δημιουργούς περιεχομένου
@@ -318,6 +322,7 @@ plugins:
             Belohnungs-Schicht: Camada de celebração
             Deployment: Implantação
             Lektionsinhalte erstellen: Criar conteúdo de lições
+            Neuen Aufgabentyp hinzufügen: Adicionar um tipo de exercício
             Lektionsformat-Referenz: Referência do formato de lição
             Release-Prozess: Fluxo de lançamento
             Für Content-Ersteller: Para criadores de conteúdo
@@ -378,6 +383,7 @@ plugins:
             Belohnungs-Schicht: Kutlama katmanı
             Deployment: Dağıtım
             Lektionsinhalte erstellen: Ders içeriği oluşturma
+            Neuen Aufgabentyp hinzufügen: Yeni alıştırma türü ekleme
             Lektionsformat-Referenz: Ders biçimi başvurusu
             Release-Prozess: Yayın süreci
             Für Content-Ersteller: İçerik oluşturanlar için
@@ -438,6 +444,7 @@ plugins:
             Belohnungs-Schicht: お祝いレイヤー
             Deployment: デプロイ
             Lektionsinhalte erstellen: レッスンコンテンツの作成
+            Neuen Aufgabentyp hinzufügen: 新しい演習タイプの追加
             Lektionsformat-Referenz: レッスン形式リファレンス
             Release-Prozess: リリースワークフロー
             Für Content-Ersteller: コンテンツ作成者向け
@@ -521,6 +528,7 @@ nav:
   - Deployment: de/developer/deployment.md
   - i18n: de/developer/i18n.md
   - Lektionsinhalte erstellen: de/developer/authoring-content.md
+  - Neuen Aufgabentyp hinzufügen: de/developer/adding-exercise-type.md
   - Lektionsformat-Referenz: de/developer/lesson-format-reference.md
   - Release-Prozess: de/developer/release.md
 - Für Content-Ersteller:

@@ -194,3 +194,32 @@ Dieser Fund ist ein starkes Argument für den gestaffelten Launch mit Inhalts- u
 Native-Speaker-Review vor breitem Publikum. Ein Nutzer, der inhaltlich richtig liegt und
 trotzdem alles rot sieht, ist genau der Nutzer, den eine closed Beta abfangen soll, bevor
 er bei einem öffentlichen Launch verloren geht.
+
+---
+
+## 7. Entscheidung: kein Vorrats-Schema, Katalog + Rezept (Nachtrag)
+
+Getroffene Architektur-Entscheidung nach der cloze-select-Multiple-Choice-Arbeit
+(#1341/#1342): Das kanonische Modell wird **nicht** auf Vorrat um ungenutzte
+Aufgabentypen erweitert. Erweiterbarkeit wird stattdessen durch zwei Doku-
+Artefakte garantiert, ohne totes Schema zu erzeugen:
+
+- **Typ-Katalog mit Status** in der Authoring-Referenz
+  (`docs/help/{en,de}/developer/authoring-content.md`): implementiert /
+  ohne neuen Typ abbildbar / geplant-bei-Bedarf / bewusst nicht.
+- **Erweiterungs-Rezept** als Entwickler-Doku
+  (`docs/help/{en,de}/developer/adding-exercise-type.md`): die verbindliche
+  Ein-PR-Schrittfolge (Pydantic-Modell → EXP-039-Generierung → Renderer im
+  Dispatcher → SRS-Anschluss → Doku → Tests).
+
+**Invariante als Begründung:** Ein Typ wird nur zusammen mit seinem Renderer
+ausgeliefert — die `SUPPORTED_EXERCISE_TYPES`-Registry muss dem
+`ExerciseType`-Enum entsprechen, erzwungen durch einen Paritätstest im
+Dispatcher. Ein Enum-Wert ohne Renderer bricht die CI.
+
+**Präzedenz:** Der v1.4-preview-Vorstoß und der `picture_choice`-Vorfall
+(Text-MC auf einem Bild-Typ → Platzhalter-Kacheln statt bedienbarer Kontrolle,
+`astrapi69/adaptive-learner-content-test#10`) sind die konkreten Lehren: ein
+Typ ohne (passenden) Renderer schadet mehr, als er nutzt. Daher: kein
+`multiple_choice`-/`choice`-Typ — Text-MC ist `cloze` `select`-Modus; ein
+neuer Typ kommt nur bei konkretem Content-Bedarf über das Rezept.
