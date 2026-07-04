@@ -174,10 +174,18 @@ jobs:
         run: python3 scripts/verify_docs.py --fix
 
       - name: Commit + push the release branch
+        # --force: the release branch is ephemeral and always regenerated from
+        # develop by this job. A prepare run that failed AFTER this push (e.g.
+        # in the gate below) leaves a stale release/<version> on origin; a
+        # re-dispatch cuts a fresh branch that diverges from it, so a plain
+        # push would be rejected non-fast-forward and permanently block retry.
+        # Force lets a re-dispatch overwrite the stale branch. Safe because
+        # releases are single-flight (release-freeze) and the branch carries no
+        # work that is not reproduced from develop.
         run: |
           git add -A
           git commit -m "chore(release): prepare v${{ inputs.version }}" || echo "nothing to commit"
-          git push -u origin release/${{ inputs.version }}
+          git push -u --force origin release/${{ inputs.version }}
 
       - name: Full release gate (make release-test)
         run: make release-test
