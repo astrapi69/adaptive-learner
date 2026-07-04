@@ -235,6 +235,20 @@ describe("FreeTextExercise: render", () => {
         expect(field).toHaveFocus();
     });
 
+    it("#1353 renders the input at 16px (text-base), never text-sm (iOS zoom)", () => {
+        render(<FreeTextExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        const input = screen.getByTestId("free-text-input");
+        expect(input.className).toContain("text-base");
+        expect(input.className).not.toContain("text-sm");
+    });
+
+    it("#1353 focuses on mount with preventScroll (no competing scroll)", () => {
+        const focusSpy = vi.spyOn(HTMLInputElement.prototype, "focus");
+        render(<FreeTextExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(focusSpy).toHaveBeenCalledWith({preventScroll: true});
+        focusSpy.mockRestore();
+    });
+
     it("#692 focuses the new input on step change (keyed remount)", () => {
         const second: ContentLessonExercise = {...EXERCISE, id: "ex-2"};
         const {rerender} = render(

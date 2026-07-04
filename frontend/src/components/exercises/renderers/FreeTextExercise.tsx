@@ -200,7 +200,10 @@ function FreeTextInput({
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     useEffect(() => {
         if (submitted) return;
-        (inputRef.current ?? textareaRef.current)?.focus();
+        // #1353 — preventScroll so the mount focus doesn't fight the step's
+        // own ``scrollIntoView`` (Lesson.tsx). The keyboard still opens; we
+        // just don't add a second competing scroll on every step change.
+        (inputRef.current ?? textareaRef.current)?.focus({preventScroll: true});
         // Mount-only: the component remounts per step (keyed by step id).
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
