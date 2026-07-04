@@ -496,6 +496,16 @@ navigation:
           ja: レッスンコンテンツの作成
         slug: developer/authoring-content
       - title:
+          de: Neuen Aufgabentyp hinzufügen
+          en: Adding a new exercise type
+          es: Añadir un tipo de ejercicio
+          fr: Ajouter un type d'exercice
+          el: Προσθήκη νέου τύπου άσκησης
+          pt: Adicionar um tipo de exercício
+          tr: Yeni alıştırma türü ekleme
+          ja: 新しい演習タイプの追加
+        slug: developer/adding-exercise-type
+      - title:
           de: Lektionsformat-Referenz
           en: Lesson format reference
           es: Referencia del formato de lección

@@ -278,6 +278,57 @@ into `word_tiles` or full-sentence `free_text` — there is no fair exact-match
 grading for it. Full analysis: see EXP-041
 (`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
 
+## Exercise type catalog (status)
+
+One reference of every exercise type: what ships, what is expressible without
+a new type, what is a candidate, and what is deliberately excluded. The
+canonical model is **not** extended on spec — a type ships only with its
+renderer (the `SUPPORTED_EXERCISE_TYPES` registry must equal the
+`ExerciseType` enum; a parity test enforces it, the lesson learned from the
+v1.4-preview / `picture_choice` cases). New types are added on concrete content
+demand via the [Adding a new exercise type](adding-exercise-type.md) recipe.
+
+### Implemented (the `ExerciseType` enum)
+
+| Type | For what (learning goal, EXP-041) | Note |
+|------|-----------------------------------|------|
+| `matching` | Recognise / pair concepts | Drag-pair, ≥ 3 pairs. |
+| `picture_choice` | Recognise from a real **image** | ≥ 2 images, exactly one correct. Not for text MC. |
+| `free_text` | Produce a short, fact-shaped answer | Exact-match, then Levenshtein ≤ 1. |
+| `word_tiles` | One unambiguous word order (language) | Tiles shuffled; `accept_orderings` for variants. |
+| `cloze` (`type`) | A fact with one answer | One `<input>` per blank. |
+| `cloze` (`select`) | **Single multiple choice** | The MC vehicle — renders as tappable buttons (#1342). `accept[0]` correct + `distractors`. |
+| `cloze` (`multiselect`) | "Select all that apply" | Exact-set match over `accept` (all correct) + `distractors` (#1195). |
+
+There is **no** `multiple_choice` / `choice` exercise type — text multiple
+choice is `cloze` `select` mode by design (EXP-036 §4.3, #890; button renderer
+#1342). See [Multiple Choice authoring](#multiple-choice-authoring).
+
+### Expressible without a new type (conventions, not types)
+
+| Concept | How |
+|---------|-----|
+| Single multiple choice | `cloze` `select` mode |
+| True/False, Yes/No | Two-option `cloze` `select` (e.g. `distractors: ["False"]`) |
+| Dropdown / radio / checkbox | Presentation of a `cloze` select / multiselect — not separate types |
+
+### Planned if needed (candidates — NOT a commitment)
+
+| Candidate | Near | When |
+|-----------|------|------|
+| Ordering / sorting | `word_tiles` | Only on concrete content demand, then via the recipe. |
+| Number field (numeric compare) | `free_text` | Only on concrete content demand, then via the recipe. |
+
+### Deliberately excluded
+
+| Excluded | Why (one line) |
+|----------|----------------|
+| Essay / long text / drawing / formula / peer review / free self-assessment | Not binary SRS-gradable; self-assessment deferred (#1268). |
+| Audio / video / file upload | Storage + infrastructure; conflicts with offline-first. |
+| Hotspot / simulation / memory / crossword | Build effort without SRS value (a later, separate decision if ever). |
+| Matrix / Likert / slider | Survey types, not learning types. |
+| Date / time pickers | Form types, not learning types. |
+
 ## Exercise type reference
 
 ### matching

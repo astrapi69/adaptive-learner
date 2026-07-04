@@ -289,6 +289,58 @@ in `word_tiles` oder Volltext-`free_text` — dafür gibt es keine faire
 exact-match-Bewertung. Vollständige Analyse: siehe EXP-041
 (`docs/explorations/EXP-041-aufgabentyp-eignung-und-faire-bewertung.md`).
 
+## Aufgabentyp-Katalog (Status)
+
+Eine Referenz über jeden Aufgabentyp: was ausgeliefert wird, was ohne neuen
+Typ abbildbar ist, was Kandidat ist und was bewusst ausgeschlossen bleibt. Das
+kanonische Modell wird **nicht** auf Vorrat erweitert — ein Typ wird nur
+zusammen mit seinem Renderer ausgeliefert (die `SUPPORTED_EXERCISE_TYPES`-
+Registry muss dem `ExerciseType`-Enum entsprechen; ein Paritätstest erzwingt
+das, die Lehre aus dem v1.4-preview- und dem `picture_choice`-Fall). Neue Typen
+kommen bei konkretem Content-Bedarf über das Rezept
+[Neuen Aufgabentyp hinzufügen](adding-exercise-type.md).
+
+### Implementiert (das `ExerciseType`-Enum)
+
+| Typ | Wofür (Lernziel, EXP-041) | Hinweis |
+|-----|---------------------------|---------|
+| `matching` | Konzepte erkennen / zuordnen | Paar-Zuordnung, ≥ 3 Paare. |
+| `picture_choice` | Aus einem echten **Bild** erkennen | ≥ 2 Bilder, genau eins korrekt. Nicht für Text-MC. |
+| `free_text` | Kurze, faktenförmige Antwort produzieren | Exakt-Match, dann Levenshtein ≤ 1. |
+| `word_tiles` | Eine eindeutige Wortreihenfolge (Sprache) | Kacheln gemischt; `accept_orderings` für Varianten. |
+| `cloze` (`type`) | Ein Fakt mit einer Antwort | Ein `<input>` pro Lücke. |
+| `cloze` (`select`) | **Single Multiple Choice** | Das MC-Mittel — rendert als tappbare Buttons (#1342). `accept[0]` korrekt + `distractors`. |
+| `cloze` (`multiselect`) | „Alles Zutreffende auswählen" | Exakt-Mengen-Abgleich über `accept` (alle korrekt) + `distractors` (#1195). |
+
+Es gibt **keinen** `multiple_choice`-/`choice`-Aufgabentyp — Text-Multiple-
+Choice ist per Design `cloze` `select`-Modus (EXP-036 §4.3, #890; Button-
+Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
+
+### Ohne neuen Typ abbildbar (Konventionen, keine Typen)
+
+| Konzept | Wie |
+|---------|-----|
+| Single Multiple Choice | `cloze` `select`-Modus |
+| Wahr/Falsch, Ja/Nein | Zwei-Optionen-`cloze`-`select` (z. B. `distractors: ["Falsch"]`) |
+| Dropdown / Radio / Checkbox | Darstellung eines `cloze` select / multiselect — keine eigenen Typen |
+
+### Geplant bei Bedarf (Kandidaten — KEINE Zusage)
+
+| Kandidat | Nah an | Wann |
+|----------|--------|------|
+| Reihenfolge festlegen / Sortieren | `word_tiles` | Nur bei konkretem Content-Bedarf, dann über das Rezept. |
+| Zahlenfeld (numerischer Vergleich) | `free_text` | Nur bei konkretem Content-Bedarf, dann über das Rezept. |
+
+### Bewusst nicht
+
+| Ausgeschlossen | Warum (ein Satz) |
+|----------------|------------------|
+| Essay / Langtext / Zeichnen / Formel / Peer-Review / freie Selbstbewertung | Nicht binär SRS-bewertbar; Selbstbewertung zurückgestellt (#1268). |
+| Audio / Video / Datei-Upload | Storage + Infrastruktur; widerspricht Offline-First. |
+| Hotspot / Simulation / Memory / Kreuzworträtsel | Aufwand ohne SRS-Mehrwert (später ggf. eigene Entscheidung). |
+| Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
+| Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |
+
 ## Übungstyp-Referenz
 
 ### matching
