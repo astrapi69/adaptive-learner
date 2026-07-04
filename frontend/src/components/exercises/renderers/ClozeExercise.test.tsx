@@ -97,6 +97,20 @@ describe("ClozeExercise: render (type mode default)", () => {
         expect(screen.getByRole("radio", {name: "un"})).not.toHaveFocus();
     });
 
+    it("#1353 renders blank controls at 16px (text-base), never text-sm", () => {
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        const input = screen.getByTestId("cloze-input-0");
+        expect(input.className).toContain("text-base");
+        expect(input.className).not.toContain("text-sm");
+    });
+
+    it("#1353 focuses the first blank with preventScroll (no competing scroll)", () => {
+        const focusSpy = vi.spyOn(HTMLInputElement.prototype, "focus");
+        render(<ClozeExercise exercise={TWO_BLANKS} onComplete={vi.fn()} />);
+        expect(focusSpy).toHaveBeenCalledWith({preventScroll: true});
+        focusSpy.mockRestore();
+    });
+
     it("applies the monospace code class in code mode (schema v1.3)", () => {
         render(
             <ClozeExercise

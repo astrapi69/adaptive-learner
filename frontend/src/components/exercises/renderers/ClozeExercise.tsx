@@ -747,9 +747,11 @@ function ClozeExercise(
     // not a text field). Mobile keyboard opening is the desired behaviour.
     useEffect(() => {
         if (submitted || mode !== "type") return;
+        // #1353 — preventScroll so the mount focus doesn't add a second
+        // competing scroll on top of the step's own ``scrollIntoView``.
         sectionRef.current
             ?.querySelector<HTMLElement>('[data-testid="cloze-input-0"]')
-            ?.focus();
+            ?.focus({preventScroll: true});
         // Mount-only: the component remounts per step (keyed by step id).
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

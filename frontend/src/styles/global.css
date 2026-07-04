@@ -4807,6 +4807,30 @@ select:focus {
   }
 }
 
+/* ----- iOS focus-zoom guard (#1353) -----------------------------
+   iOS Safari zooms IN when a focused text control has an effective
+   font-size < 16px, and does NOT zoom back on blur / step change —
+   the "size keeps jumping" symptom in the lesson flow. Floor every
+   focusable text control at 16px on ANY touch device via
+   ``pointer: coarse`` (covers iPhone AND iPad in every orientation,
+   independent of a width breakpoint — the old ``max-width: 768px``
+   guard below missed iPad portrait > 768px and only listed a few
+   ``type=`` values). Excludes non-text controls (checkbox / radio /
+   range / color / the button-type inputs) which never zoom. Desktop
+   (fine pointer) is untouched, so its optical sizing (``text-sm`` etc.)
+   is preserved. This is the single app-wide anchor — do NOT drop back
+   below 16px on a focusable field, and NEVER fix zoom via
+   ``maximum-scale`` / ``user-scalable=no`` (breaks pinch-zoom / WCAG). */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+      [type="color"]
+    ):not([type="button"]):not([type="submit"]):not([type="reset"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 @media (max-width: 768px) {
   /* ----- Navigation: hamburger-controlled drawer -------------- */
 
