@@ -334,12 +334,14 @@ function ReviewCard({
 }
 
 function SetCompleteCard({
+    setIdEnc,
     setTitle,
     lessonCount,
     suggestedSet,
     animate,
     idx,
 }: {
+    setIdEnc: string;
     setTitle: Suggestions["setTitle"];
     lessonCount: Suggestions["lessonCount"];
     suggestedSet: Suggestions["suggestedSet"];
@@ -379,14 +381,19 @@ function SetCompleteCard({
                     </span>
                 )}
             </span>
-            {suggestedSet && (
-                <Button asChild variant="secondary">
-                    <Link to="/content" data-testid="next-step-cta-view-set">
-                        {t("lesson.next_step.view_set", "View Set")}
-                        <ArrowRight aria-hidden="true" />
-                    </Link>
-                </Button>
-            )}
+            {/* "View Set" opens the just-completed set's detail page (its
+                lesson list), NOT the generic Discover overview — the card is
+                about this set, so the CTA shows whenever the set is complete,
+                independent of the optional "How about …" suggestion above. */}
+            <Button asChild variant="secondary">
+                <Link
+                    to={`/content/set/${setIdEnc}`}
+                    data-testid="next-step-cta-view-set"
+                >
+                    {t("lesson.next_step.view_set", "View Set")}
+                    <ArrowRight aria-hidden="true" />
+                </Link>
+            </Button>
         </div>
     );
 }
@@ -487,6 +494,7 @@ export default function NextStepSuggestions({
         cards.push(
             <SetCompleteCard
                 key="complete"
+                setIdEnc={setIdEnc}
                 setTitle={setTitle}
                 lessonCount={lessonCount}
                 suggestedSet={suggestedSet}
