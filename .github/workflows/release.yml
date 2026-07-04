@@ -296,7 +296,13 @@ jobs:
 
       - uses: actions/checkout@v7
         with:
-          ref: develop
+          # Check out the prepared release branch (tree already at <version>),
+          # NOT develop: `make release-finish` first runs
+          # `verify_version_pins.sh <version>`, which checks the WORKING TREE.
+          # develop is still at the prior version, so that pre-tag gate fails
+          # before any merge/tag. release-finish then switches to main/develop
+          # itself; fetch-depth 0 provides both plus the local release branch.
+          ref: release/${{ inputs.version }}
           fetch-depth: 0
           # Persist a PAT (not GITHUB_TOKEN) as the git credential so the
           # `make release-finish` push to main fires deploy-gh-pages.yml.
