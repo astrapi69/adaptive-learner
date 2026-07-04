@@ -104,9 +104,11 @@ test.describe("EXP-023 Phase C — recommended repos + local ratings", () => {
     // --- One-click add connects it. ---------------------------------
     await page.getByTestId("content-repo-recommended-add-jane/alpha").click();
     await expect(page.getByTestId("content-repo-item-jane-alpha")).toBeVisible();
+    // #1319/#1320 consolidated the per-repo trust/recommended badges into one
+    // RepoCategoryBadge; a recommended repo resolves to the "official" category.
     await expect(
-      page.getByTestId("content-repo-recommended-badge-jane-alpha"),
-    ).toBeVisible();
+      page.getByTestId("content-repo-category-jane-alpha"),
+    ).toHaveAttribute("data-category", "official");
     // Once connected, it leaves the discovery list.
     await expect(page.getByTestId("content-repo-recommended")).toHaveCount(0);
 

@@ -107,7 +107,11 @@ test.describe("EXP-023 Phase B — multi content repository", () => {
 
     await expect(page.getByTestId("content-repo-item-jane-alpha")).toBeVisible();
     await expect(page.getByTestId("content-repo-item-bob-beta")).toBeVisible();
-    await expect(page.getByTestId("content-repo-trust-jane-alpha")).toBeVisible();
+    // #1319/#1320 replaced the per-repo trust badge with the unified
+    // RepoCategoryBadge (testid content-repo-category-<owner>-<repo>).
+    await expect(
+      page.getByTestId("content-repo-category-jane-alpha"),
+    ).toBeVisible();
 
     // --- Content Browser: per-repo filter chips + badges. -----------
     await page.goto("/content?tab=my");
