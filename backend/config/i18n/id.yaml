@@ -1958,6 +1958,14 @@ lesson:
     action_restart: "Mulai dari awal"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  filter:
+    all_sources: "Semua sumber"
+    official: "Resmi"
+  filter_menu:
+    status: "Status"
+    source: "Sumber"
+  filter_empty: "Tidak ada set yang cocok dengan filter aktif."
+  filter_reset: "Atur ulang filter"
   view:
     grid: "Tampilan kisi"
     list: "Tampilan daftar"

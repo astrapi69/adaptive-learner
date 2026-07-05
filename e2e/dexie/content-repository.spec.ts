@@ -124,8 +124,9 @@ test.describe("EXP-023 Phase A — user content repository", () => {
     });
     await expect(page.getByTestId("content-set-demo-origin")).toBeVisible();
 
-    // The source filter appears and narrows to the user repo.
+    // The source filter (a menu button since #1386) narrows to the user repo.
     await expect(page.getByTestId("content-source-filter")).toBeVisible();
+    await page.getByTestId("content-source-filter").click();
     await page.getByTestId(`content-source-filter-${OWNER_REPO}`).click();
     await expect(page.getByTestId("content-set-demo")).toBeVisible();
 

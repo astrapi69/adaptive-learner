@@ -2113,6 +2113,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "Todas las fuentes",
+      "official": "Oficial"
+    },
+    "filter_menu": {
+      "status": "Estado",
+      "source": "Fuente"
+    },
+    "filter_empty": "Ningún set coincide con los filtros activos.",
+    "filter_reset": "Restablecer filtros",
     "view": {
       "grid": "Vista de cuadrícula",
       "list": "Vista de lista",

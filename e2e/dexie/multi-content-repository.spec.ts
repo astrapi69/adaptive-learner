@@ -118,7 +118,10 @@ test.describe("EXP-023 Phase B — multi content repository", () => {
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });
+    // #1386 — the source filter is a menu button: open it to see the
+    // per-repo options, selecting one applies + closes the menu.
     await expect(page.getByTestId("content-source-filter")).toBeVisible();
+    await page.getByTestId("content-source-filter").click();
     await expect(
       page.getByTestId("content-source-filter-jane/alpha"),
     ).toBeVisible();

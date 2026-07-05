@@ -2113,6 +2113,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "Alle Quellen",
+      "official": "Offiziell"
+    },
+    "filter_menu": {
+      "status": "Status",
+      "source": "Quelle"
+    },
+    "filter_empty": "Keine Sets entsprechen den aktiven Filtern.",
+    "filter_reset": "Filter zurücksetzen",
     "view": {
       "grid": "Kachelansicht",
       "list": "Listenansicht",

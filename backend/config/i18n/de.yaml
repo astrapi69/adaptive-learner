@@ -1952,6 +1952,14 @@ lesson:
     action_restart: "Neu starten"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  filter:
+    all_sources: "Alle Quellen"
+    official: "Offiziell"
+  filter_menu:
+    status: "Status"
+    source: "Quelle"
+  filter_empty: "Keine Sets entsprechen den aktiven Filtern."
+  filter_reset: "Filter zurücksetzen"
   view:
     grid: "Kachelansicht"
     list: "Listenansicht"

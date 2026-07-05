@@ -1,6 +1,8 @@
 // Barrel for shared/forms (grouped by concern, #809). Re-export only.
 export * from "./FilterBar";
 export {default as FilterBar} from "./FilterBar";
+export * from "./FilterMenuButton";
+export {default as FilterMenuButton} from "./FilterMenuButton";
 export * from "./LanguagePicker";
 export {default as LanguagePicker} from "./LanguagePicker";
 export * from "./LessonPicker";

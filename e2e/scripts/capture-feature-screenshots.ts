@@ -236,6 +236,21 @@ const FEATURES: FeatureShot[] = [
     {path: "dashboard-tabs/missionen", setup: (p) => gotoDashboardTab(p, "missions")},
     {path: "content-hub/entdecken", setup: (p) => gotoContentTab(p, "discover")},
     {path: "content-hub/meine-inhalte", setup: (p) => gotoContentTab(p, "my")},
+    // #1386 — the status/source filter menu buttons (closed state is part of
+    // the meine-inhalte shot above; this captures the OPEN status menu).
+    {
+        path: "content-hub/meine-inhalte-filter-open",
+        setup: async (p) => {
+            await gotoContentTab(p, "my");
+            const trigger = p.getByTestId("content-status-filter");
+            if (!(await trigger.count())) return false;
+            await trigger.click();
+            await expect(p.getByTestId("content-status-filter-menu")).toBeVisible({
+                timeout: 10_000,
+            });
+            return true;
+        },
+    },
     {path: "content-hub/import", setup: (p) => gotoContentTab(p, "import")},
     {path: "progress-hub/uebersicht", setup: (p) => gotoProgressTab(p, "overview")},
     {path: "progress-hub/statistik", setup: (p) => gotoProgressTab(p, "stats")},

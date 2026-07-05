@@ -2113,6 +2113,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "모든 소스",
+      "official": "공식"
+    },
+    "filter_menu": {
+      "status": "상태",
+      "source": "소스"
+    },
+    "filter_empty": "활성 필터와 일치하는 세트가 없습니다.",
+    "filter_reset": "필터 초기화",
     "view": {
       "grid": "그리드 보기",
       "list": "목록 보기",
