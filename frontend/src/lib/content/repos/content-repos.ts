@@ -19,7 +19,7 @@
  */
 
 import { getStorage } from "../../../storage";
-import { validateUserRepo } from "./content-repo-validate";
+import { listRepoManifestSets, validateUserRepo } from "./content-repo-validate";
 import { resolveRepoToken } from "./repo-token";
 
 /** Plugin whose settings hold the content sources + the user repos. */
@@ -354,18 +354,25 @@ export async function syncUserRepo(
   const target = repos[index];
   const storage = getStorage();
   report("manifest", 0, 0);
-  const { sets } = await storage.contentLoader.listSets();
-  const repoSets = sets.filter((entry) => entry.source === source);
-  report("sets", 0, repoSets.length);
+  // #1388 — read the set list from the TARGET repo's own manifest.yaml.
+  // The previous listSets() walk fetched the manifests of EVERY configured
+  // source over the network, so one row's sync effectively synced all
+  // repos. An unreachable target repo throws here — the caller reports it
+  // at the affected row; nothing has been written yet.
+  const manifestSets = await listRepoManifestSets(
+    { owner: target.owner, repo: target.repo, branch: target.branch },
+    resolveRepoToken(source),
+  );
+  report("sets", 0, manifestSets.length);
   let lessonCount = 0;
   let done = 0;
-  for (const entry of repoSets) {
-    await storage.contentLoader.downloadSet(entry.source, entry.id);
-    lessonCount += entry.lesson_count ?? 0;
+  for (const manifestSet of manifestSets) {
+    await storage.contentLoader.downloadSet(source, manifestSet.id);
+    lessonCount += manifestSet.lessonCount;
     done += 1;
-    report("lessons", done, repoSets.length);
+    report("lessons", done, manifestSets.length);
   }
-  report("validate", repoSets.length, repoSets.length);
+  report("validate", manifestSets.length, manifestSets.length);
   const validation = await validateUserRepo(
     { owner: target.owner, repo: target.repo, branch: target.branch },
     resolveRepoToken(source),
@@ -375,10 +382,10 @@ export async function syncUserRepo(
     ...target,
     connected: true,
     last_synced: new Date().toISOString(),
-    set_count: repoSets.length,
+    set_count: manifestSets.length,
     lesson_count: lessonCount,
     trust,
   };
   await writeUserRepos(repos);
-  return { setCount: repoSets.length, lessonCount, trust };
+  return { setCount: manifestSets.length, lessonCount, trust };
 }

@@ -3213,6 +3213,10 @@
     "save_prompt": "このレッスンをお気に入りに保存"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{total}件中{ok}件のリポジトリを同期しました。",
+      "failed": "{total}件中{ok}件を同期しました。失敗: {repos}"
+    },
     "qr": {
       "upload": "QR画像をアップロード",
       "decoding": "QRを読み取り中…",
@@ -3254,6 +3258,7 @@
       "token": "トークン（プライベートリポジトリ、任意）"
     },
     "action": {
+      "sync_all": "すべて同期",
       "add": "リポジトリを追加",
       "cancel": "キャンセル",
       "confirm_remove": "削除を確認",
@@ -3291,6 +3296,7 @@
       "qr_alt": "共有リンクの QR コード"
     },
     "progress": {
+      "syncing": "同期中…",
       "validating": "リポジトリを検証中…",
       "manifest": "マニフェストを読み込み中…",
       "sets": "セットを読み込み中…",

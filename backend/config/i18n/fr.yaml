@@ -2948,6 +2948,9 @@ favorites:
   empty: "Aucun favori pour l'instant — touche l'étoile d'une leçon."
   save_prompt: "Enregistrer cette leçon dans tes favoris"
 content_repo:
+  sync_all:
+    done: "{ok} sur {total} dépôts synchronisés."
+    failed: "{ok} sur {total} synchronisés. Échec : {repos}"
   qr:
     upload: "Téléverser une image QR"
     decoding: "Lecture du QR…"
@@ -2982,6 +2985,7 @@ content_repo:
     branch: "Branche"
     token: "Jeton (dépôts privés, facultatif)"
   action:
+    sync_all: "Tout synchroniser"
     add: "Ajouter le dépôt"
     cancel: "Annuler"
     confirm_remove: "Confirmer la suppression"
@@ -3013,6 +3017,7 @@ content_repo:
     hint: "Partage ce lien pour que d'autres puissent ajouter ce dépôt PUBLIC. Pour un dépôt privé, envoie l'URL et un jeton en lecture seule séparément."
     qr_alt: "QR code du lien de partage"
   progress:
+    syncing: "Synchronisation…"
     validating: "Validation du dépôt…"
     manifest: "Chargement du manifeste…"
     sets: "Chargement des ensembles…"

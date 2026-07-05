@@ -3213,6 +3213,10 @@
     "save_prompt": "Bu dersi favorilerine kaydet"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{total} depodan {ok} tanesi eşitlendi.",
+      "failed": "{total} depodan {ok} tanesi eşitlendi. Başarısız: {repos}"
+    },
     "qr": {
       "upload": "QR görüntüsü yükle",
       "decoding": "QR okunuyor…",
@@ -3254,6 +3258,7 @@
       "token": "Belirteç (özel depolar, isteğe bağlı)"
     },
     "action": {
+      "sync_all": "Tümünü eşitle",
       "add": "Depo ekle",
       "cancel": "İptal",
       "confirm_remove": "Kaldırmayı onayla",
@@ -3291,6 +3296,7 @@
       "qr_alt": "Paylaşım bağlantısı için QR kodu"
     },
     "progress": {
+      "syncing": "Eşitleniyor…",
       "validating": "Depo doğrulanıyor…",
       "manifest": "Manifest yükleniyor…",
       "sets": "Setler yükleniyor…",

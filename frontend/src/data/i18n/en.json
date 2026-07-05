@@ -3213,6 +3213,10 @@
     "save_prompt": "Save this lesson to your favorites"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "Synced {ok} of {total} repositories.",
+      "failed": "Synced {ok} of {total}. Failed: {repos}"
+    },
     "title": "Content repositories",
     "last_sync": "Last sync: {when}",
     "added": "Repository added.",
@@ -3254,6 +3258,7 @@
       "token": "Token (private repos, optional)"
     },
     "action": {
+      "sync_all": "Sync all",
       "add": "Add repository",
       "cancel": "Cancel",
       "confirm_remove": "Confirm remove",
@@ -3291,6 +3296,7 @@
       "qr_alt": "QR code for the share link"
     },
     "progress": {
+      "syncing": "Syncing…",
       "validating": "Validating repository…",
       "manifest": "Loading manifest…",
       "sets": "Loading sets…",

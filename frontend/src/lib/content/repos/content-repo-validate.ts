@@ -141,6 +141,37 @@ function firstLessonFilename(setManifest: ParsedManifest): string {
   return "01.json";
 }
 
+/** One set advertised by a repo's own ``manifest.yaml`` (#1388). */
+export interface RepoManifestSet {
+  id: string;
+  lessonCount: number;
+}
+
+/**
+ * Read the set list from ONE repository's own ``manifest.yaml`` (#1388).
+ *
+ * This is the source-isolated counterpart to ``listSets()``: it touches
+ * exactly the given repo (same CORS-safe fetch {@link validateUserRepo}
+ * uses in both storage modes), so a per-repo sync generates no network
+ * traffic to any other configured source. THROWS when the repo is
+ * unreachable / has no manifest — the caller reports the failure at the
+ * affected row and other repos stay untouched.
+ */
+export async function listRepoManifestSets(
+  ref: RepoRef,
+  token: string = readBrowserGitHubToken(),
+): Promise<RepoManifestSet[]> {
+  const text = await fetchRepoText(ref, "manifest.yaml", token);
+  const manifest = (parseYaml(text) ?? {}) as ParsedManifest;
+  const sets = Array.isArray(manifest.sets) ? manifest.sets : [];
+  return sets
+    .filter(
+      (set): set is ParsedSet & { id: string } =>
+        typeof set.id === "string" && set.id.trim() !== "",
+    )
+    .map((set) => ({ id: set.id, lessonCount: set.lesson_count ?? 0 }));
+}
+
 /**
  * Fetch + validate a GitHub content repository. Never throws — every
  * failure mode resolves to ``{ok: false, reason}`` so the caller can show

@@ -27,7 +27,11 @@ localStorage.setItem("adaptive-learner.storage_mode", "dexie");
 
 // Stub the two non-content concerns (network-isolated, mirrors
 // content-repos.test.ts): the validator passes, no per-repo token.
-vi.mock("./repos/content-repo-validate", () => ({
+vi.mock("./repos/content-repo-validate", async (orig) => ({
+    // #1388 — keep the REAL listRepoManifestSets: the per-repo sync now
+    // reads the target repo's own manifest through the fetch mock, which
+    // is exactly the end-to-end path this test exists to exercise.
+    ...(await orig<typeof import("./repos/content-repo-validate")>()),
     validateUserRepo: vi.fn(async () => ({
         ok: true,
         setCount: 1,

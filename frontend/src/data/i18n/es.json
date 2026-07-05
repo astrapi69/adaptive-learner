@@ -3213,6 +3213,10 @@
     "save_prompt": "Guardar esta lección en tus favoritos"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "Se sincronizaron {ok} de {total} repositorios.",
+      "failed": "Se sincronizaron {ok} de {total}. Fallaron: {repos}"
+    },
     "qr": {
       "upload": "Subir imagen QR",
       "decoding": "Leyendo QR…",
@@ -3254,6 +3258,7 @@
       "token": "Token (repos privados, opcional)"
     },
     "action": {
+      "sync_all": "Sincronizar todo",
       "add": "Añadir repositorio",
       "cancel": "Cancelar",
       "confirm_remove": "Confirmar eliminación",
@@ -3291,6 +3296,7 @@
       "qr_alt": "Código QR del enlace para compartir"
     },
     "progress": {
+      "syncing": "Sincronizando…",
       "validating": "Validando repositorio…",
       "manifest": "Cargando manifiesto…",
       "sets": "Cargando conjuntos…",
