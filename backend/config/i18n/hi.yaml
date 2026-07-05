@@ -1942,6 +1942,14 @@ lesson:
     action_resume: जारी रखें
     action_restart: फिर से शुरू करें
 content:
+  filter:
+    all_sources: "सभी स्रोत"
+    official: "आधिकारिक"
+  filter_menu:
+    status: "स्थिति"
+    source: "स्रोत"
+  filter_empty: "कोई भी सेट सक्रिय फ़िल्टर से मेल नहीं खाता।"
+  filter_reset: "फ़िल्टर रीसेट करें"
   view:
     grid: "ग्रिड दृश्य"
     list: "सूची दृश्य"

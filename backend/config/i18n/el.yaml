@@ -1949,6 +1949,14 @@ lesson:
     action_restart: "Επανεκκίνηση"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  filter:
+    all_sources: "Όλες οι πηγές"
+    official: "Επίσημο"
+  filter_menu:
+    status: "Κατάσταση"
+    source: "Πηγή"
+  filter_empty: "Κανένα σετ δεν ταιριάζει με τα ενεργά φίλτρα."
+  filter_reset: "Επαναφορά φίλτρων"
   view:
     grid: "Προβολή πλακιδίων"
     list: "Προβολή λίστας"

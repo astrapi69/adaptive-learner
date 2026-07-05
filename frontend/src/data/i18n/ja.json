@@ -2113,6 +2113,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "すべてのソース",
+      "official": "公式"
+    },
+    "filter_menu": {
+      "status": "ステータス",
+      "source": "ソース"
+    },
+    "filter_empty": "有効なフィルターに一致するセットはありません。",
+    "filter_reset": "フィルターをリセット",
     "view": {
       "grid": "グリッド表示",
       "list": "リスト表示",

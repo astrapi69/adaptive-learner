@@ -1947,6 +1947,14 @@ lesson:
     action_restart: "Recomeçar"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  filter:
+    all_sources: "Todas as fontes"
+    official: "Oficial"
+  filter_menu:
+    status: "Estado"
+    source: "Fonte"
+  filter_empty: "Nenhum conjunto corresponde aos filtros ativos."
+  filter_reset: "Repor filtros"
   view:
     grid: "Visão em grade"
     list: "Visão em lista"

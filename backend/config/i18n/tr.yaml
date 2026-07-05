@@ -1947,6 +1947,14 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  filter:
+    all_sources: "Tüm kaynaklar"
+    official: "Resmî"
+  filter_menu:
+    status: "Durum"
+    source: "Kaynak"
+  filter_empty: "Etkin filtrelerle eşleşen set yok."
+  filter_reset: "Filtreleri sıfırla"
   view:
     grid: "Izgara görünümü"
     list: "Liste görünümü"
