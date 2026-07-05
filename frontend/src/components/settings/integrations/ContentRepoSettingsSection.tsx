@@ -100,6 +100,10 @@ export default function ContentRepoSettingsSection() {
   >(null);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<RepoProgress | null>(null);
+  // #1388 — per-row sync state: the source currently syncing (also the
+  // double-start guard) and per-row error messages, reported at the row.
+  const [syncing, setSyncing] = useState<string | null>(null);
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [result, setResult] = useState<
     { ok: boolean; message: string } | null
@@ -291,15 +295,24 @@ export default function ContentRepoSettingsSection() {
     });
   }, []);
 
-  const handleSync = useCallback(
-    async (source: string) => {
-      setBusy(true);
+  /**
+   * Sync ONE source with row-scoped state (#1388): marks the row as
+   * running, reports success/failure AT the row, and returns whether it
+   * succeeded so the sync-all loop can aggregate without aborting.
+   */
+  const syncOne = useCallback(
+    async (source: string, options: { quiet?: boolean } = {}): Promise<boolean> => {
+      setSyncing(source);
+      setRowErrors((prev) => {
+        const next = { ...prev };
+        delete next[source];
+        return next;
+      });
       try {
         const { setCount, lessonCount, trust } = await syncUserRepo(
           source,
           reportProgress,
         );
-        await refresh();
         if (trust === 0) {
           notify.error(
             t(
@@ -307,24 +320,70 @@ export default function ContentRepoSettingsSection() {
               "Synced, but validation failed — this repository is now marked Unverified.",
             ),
           );
-        } else {
+        } else if (!options.quiet) {
           notify.success(
             t("content_repo.synced", "Synced: {sets} sets, {lessons} lessons.")
               .replace("{sets}", String(setCount))
               .replace("{lessons}", String(lessonCount)),
           );
         }
+        return true;
       } catch {
-        notify.error(
-          t("content_repo.error.sync_failed", "Sync failed. Try again."),
-        );
+        setRowErrors((prev) => ({
+          ...prev,
+          [source]: t(
+            "content_repo.error.sync_failed",
+            "Sync failed. Try again.",
+          ),
+        }));
+        return false;
       } finally {
-        setBusy(false);
+        setSyncing(null);
         setProgress(null);
       }
     },
-    [refresh, reportProgress, t],
+    [reportProgress, t],
   );
+
+  const handleSync = useCallback(
+    async (source: string) => {
+      if (syncing !== null) return; // double-start guard
+      await syncOne(source);
+      await refresh();
+    },
+    [syncing, syncOne, refresh],
+  );
+
+  /**
+   * Sync EVERY connected repo sequentially with per-repo error isolation
+   * (#1388): a failing repo is recorded at its row and the loop continues;
+   * the summary reports "X of Y" and names the failures.
+   */
+  const handleSyncAll = useCallback(async () => {
+    if (syncing !== null) return; // double-start guard
+    const failed: string[] = [];
+    let ok = 0;
+    for (const repo of repos) {
+      const source = userRepoSource(repo.owner, repo.repo);
+      if (await syncOne(source, { quiet: true })) ok += 1;
+      else failed.push(source);
+    }
+    await refresh();
+    if (failed.length > 0) {
+      notify.error(
+        t("content_repo.sync_all.failed", "Synced {ok} of {total}. Failed: {repos}")
+          .replace("{ok}", String(ok))
+          .replace("{total}", String(repos.length))
+          .replace("{repos}", failed.join(", ")),
+      );
+    } else {
+      notify.success(
+        t("content_repo.sync_all.done", "Synced {ok} of {total} repositories.")
+          .replace("{ok}", String(ok))
+          .replace("{total}", String(repos.length)),
+      );
+    }
+  }, [syncing, repos, syncOne, refresh, t]);
 
   const handleRemove = useCallback(
     async (source: string) => {
@@ -441,9 +500,27 @@ export default function ContentRepoSettingsSection() {
       </div>
 
       {/* Connected user repos. */}
-      <h3 className="mb-2 text-base font-semibold">
-        {t("content_repo.user.list_title", "Your content repositories")}
-      </h3>
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <h3 className="m-0 text-base font-semibold">
+          {t("content_repo.user.list_title", "Your content repositories")}
+        </h3>
+        {/* #1388 — the explicit, honestly-labelled all-repos sync. The
+            per-row button syncs ONLY its own source. */}
+        {repos.length > 0 && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="ml-auto min-h-11 gap-2"
+            onClick={() => void handleSyncAll()}
+            disabled={busy || syncing !== null}
+            data-testid="content-repo-sync-all"
+          >
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+            {t("content_repo.action.sync_all", "Sync all")}
+          </Button>
+        )}
+      </div>
       {repos.length === 0 ? (
         <p
           className="m-0 mb-3 text-sm text-[var(--fg-muted)]"
@@ -536,6 +613,28 @@ export default function ContentRepoSettingsSection() {
                     );
                   })}
                 </div>
+                {/* #1388 — running state + failure feedback AT the row. */}
+                {syncing === source && (
+                  <p
+                    className="m-0 mt-1 flex items-center gap-2 text-sm text-[var(--fg-muted)]"
+                    role="status"
+                    aria-live="polite"
+                    data-testid={`content-repo-syncing-${repo.owner}-${repo.repo}`}
+                  >
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    {progress?.label ??
+                      t("content_repo.progress.syncing", "Syncing…")}
+                  </p>
+                )}
+                {rowErrors[source] && syncing !== source && (
+                  <p
+                    className="m-0 mt-1 text-sm font-medium text-[var(--error)]"
+                    role="alert"
+                    data-testid={`content-repo-sync-error-${repo.owner}-${repo.repo}`}
+                  >
+                    {rowErrors[source]}
+                  </p>
+                )}
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Button
                     type="button"
@@ -543,10 +642,14 @@ export default function ContentRepoSettingsSection() {
                     size="sm"
                     className="min-h-11 gap-2"
                     onClick={() => handleSync(source)}
-                    disabled={busy}
+                    disabled={busy || syncing !== null}
                     data-testid={`content-repo-sync-${repo.owner}-${repo.repo}`}
                   >
-                    <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                    {syncing === source ? (
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                    )}
                     {t("content_repo.action.sync", "Sync now")}
                   </Button>
                   <Button

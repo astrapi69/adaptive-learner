@@ -3213,6 +3213,10 @@
     "save_prompt": "Diese Lektion zu deinen Favoriten hinzufügen"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{ok} von {total} Repositories synchronisiert.",
+      "failed": "{ok} von {total} synchronisiert. Fehlgeschlagen: {repos}"
+    },
     "title": "Inhalts-Repositories",
     "last_sync": "Letzte Synchronisierung: {when}",
     "added": "Repository hinzugefügt.",
@@ -3254,6 +3258,7 @@
       "token": "Token (private Repos, optional)"
     },
     "action": {
+      "sync_all": "Alle synchronisieren",
       "add": "Repository hinzufügen",
       "cancel": "Abbrechen",
       "confirm_remove": "Entfernen bestätigen",
@@ -3291,6 +3296,7 @@
       "qr_alt": "QR-Code für den Teilen-Link"
     },
     "progress": {
+      "syncing": "Synchronisiere…",
       "validating": "Repository wird validiert…",
       "manifest": "Manifest wird geladen…",
       "sets": "Sets werden geladen…",

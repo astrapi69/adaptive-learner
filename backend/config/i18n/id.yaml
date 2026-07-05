@@ -2956,6 +2956,9 @@ favorites:
   empty: "Belum ada favorit — ketuk bintang pada sebuah pelajaran untuk menyimpannya."
   save_prompt: "Simpan pelajaran ini ke favoritmu"
 content_repo:
+  sync_all:
+    done: "{ok} dari {total} repositori disinkronkan."
+    failed: "{ok} dari {total} disinkronkan. Gagal: {repos}"
   qr:
     upload: "Unggah gambar QR"
     decoding: "Membaca QR…"
@@ -2990,6 +2993,7 @@ content_repo:
     branch: "Branch"
     token: "Token (repo privat, opsional)"
   action:
+    sync_all: "Sinkronkan semua"
     add: "Tambah repositori"
     cancel: "Batal"
     confirm_remove: "Konfirmasi hapus"
@@ -3021,6 +3025,7 @@ content_repo:
     hint: "Bagikan tautan ini agar orang lain dapat menambahkan repo PUBLIK ini. Untuk repo privat, kirimkan URL + token hanya-baca secara terpisah."
     qr_alt: "Kode QR untuk tautan berbagi"
   progress:
+    syncing: "Menyinkronkan…"
     validating: "Memvalidasi repositori…"
     manifest: "Memuat manifes…"
     sets: "Memuat set…"

@@ -21,15 +21,20 @@ vi.mock("../../../storage", () => ({
   }),
 }));
 
-const { notifyError, notifySuccess, validateUserRepo } = vi.hoisted(() => ({
-  notifyError: vi.fn(),
-  notifySuccess: vi.fn(),
-  validateUserRepo: vi.fn(),
-}));
+const { notifyError, notifySuccess, validateUserRepo, listRepoManifestSets } =
+  vi.hoisted(() => ({
+    notifyError: vi.fn(),
+    notifySuccess: vi.fn(),
+    validateUserRepo: vi.fn(),
+    listRepoManifestSets: vi.fn(),
+  }));
 vi.mock("../../../utils/notify", () => ({
   notify: { error: notifyError, success: notifySuccess },
 }));
-vi.mock("../../../lib/content/repos/content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("../../../lib/content/repos/content-repo-validate", () => ({
+  validateUserRepo,
+  listRepoManifestSets,
+}));
 vi.mock("qrcode", () => ({
   default: { toDataURL: vi.fn(async () => "data:image/png;base64,QR") },
 }));
@@ -75,6 +80,8 @@ beforeEach(() => {
   fetchRecommendedRepos.mockReset();
   fetchRecommendedRepos.mockResolvedValue([]);
   validateUserRepo.mockResolvedValue({ ok: true, setCount: 1, lessonCount: 4 });
+  listRepoManifestSets.mockReset();
+  listRepoManifestSets.mockResolvedValue([{ id: "d1", lessonCount: 4 }]);
   downloadSet.mockResolvedValue({});
   githubGetStatus.mockResolvedValue({ configured: true, source: "browser" });
   // Stateful settings so read-modify-write (add -> sync) reflects writes.
@@ -315,5 +322,109 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     const link = screen.getByTestId("content-repo-share-link") as HTMLInputElement;
     expect(link.value).toContain("/add-repo?url=jane%2Fdeck");
     expect(await screen.findByTestId("content-repo-share-qr")).toBeInTheDocument();
+  });
+});
+
+describe("per-repo sync + sync-all with error isolation (#1388)", () => {
+  const REPO2 = {
+    ...REPO,
+    url: "https://github.com/bob/deck2",
+    owner: "bob",
+    repo: "deck2",
+  };
+
+  function seedTwoRepos() {
+    let settings: Record<string, unknown> = {
+      default_sources: [{ source: "official", branch: "main" }],
+      user_repos: [REPO, REPO2],
+    };
+    pluginGet.mockImplementation(async () => ({
+      plugin: "content-loader",
+      settings,
+    }));
+    pluginUpdate.mockImplementation(async (_name, body) => {
+      settings = body.settings as Record<string, unknown>;
+      return { plugin: "content-loader", settings };
+    });
+  }
+
+  it("offers an explicit 'Sync all' button next to the per-row sync", async () => {
+    seedTwoRepos();
+    render(<ContentRepoSettingsSection />);
+    const all = await screen.findByTestId("content-repo-sync-all");
+    expect(all).toHaveTextContent("Sync all");
+    expect(screen.getByTestId("content-repo-sync-jane-deck")).toBeInTheDocument();
+    expect(screen.getByTestId("content-repo-sync-bob-deck2")).toBeInTheDocument();
+  });
+
+  it("a failing single sync shows feedback at ITS row and leaves the other repo untouched", async () => {
+    seedTwoRepos();
+    listRepoManifestSets.mockImplementation(async (ref: { owner: string }) => {
+      if (ref.owner === "jane") throw new Error("404");
+      return [{ id: "d1", lessonCount: 4 }];
+    });
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-sync-jane-deck"));
+    const rowError = await screen.findByTestId("content-repo-sync-error-jane-deck");
+    expect(rowError).toBeInTheDocument();
+    // The sibling row carries no error and was not synced.
+    expect(
+      screen.queryByTestId("content-repo-sync-error-bob-deck2"),
+    ).toBeNull();
+    expect(listRepoManifestSets).toHaveBeenCalledTimes(1);
+  });
+
+  it("'Sync all' isolates a failing repo: the rest still sync and the summary names it", async () => {
+    seedTwoRepos();
+    listRepoManifestSets.mockImplementation(async (ref: { owner: string }) => {
+      if (ref.owner === "jane") throw new Error("offline");
+      return [{ id: "d1", lessonCount: 4 }];
+    });
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-sync-all"));
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("content-repo-sync-error-jane-deck"),
+      ).toBeInTheDocument(),
+    );
+    // BOTH repos were attempted (no first-error abort)…
+    expect(listRepoManifestSets).toHaveBeenCalledTimes(2);
+    // …and the summary reports 1 of 2 + names the failure.
+    expect(notifyError).toHaveBeenCalledWith(
+      expect.stringContaining("jane/deck"),
+    );
+  });
+
+  it("guards against a double start while a sync is running", async () => {
+    seedTwoRepos();
+    let release!: (v: { id: string; lessonCount: number }[]) => void;
+    listRepoManifestSets.mockReturnValue(
+      new Promise((r) => {
+        release = r;
+      }),
+    );
+    render(<ContentRepoSettingsSection />);
+    const sync = await screen.findByTestId("content-repo-sync-jane-deck");
+    fireEvent.click(sync);
+    await waitFor(() => expect(sync).toBeDisabled());
+    fireEvent.click(sync);
+    expect(listRepoManifestSets).toHaveBeenCalledTimes(1);
+    release([]);
+  });
+
+  it("shows the running state on the RIGHT row", async () => {
+    seedTwoRepos();
+    let release!: (v: { id: string; lessonCount: number }[]) => void;
+    listRepoManifestSets.mockReturnValue(
+      new Promise((r) => {
+        release = r;
+      }),
+    );
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-sync-jane-deck"));
+    const running = await screen.findByTestId("content-repo-syncing-jane-deck");
+    expect(running).toBeInTheDocument();
+    expect(screen.queryByTestId("content-repo-syncing-bob-deck2")).toBeNull();
+    release([]);
   });
 });

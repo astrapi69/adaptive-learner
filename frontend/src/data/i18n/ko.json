@@ -3213,6 +3213,10 @@
     "save_prompt": "이 레슨을 즐겨찾기에 저장"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{total}개 중 {ok}개 리포지토리를 동기화했습니다.",
+      "failed": "{total}개 중 {ok}개 동기화됨. 실패: {repos}"
+    },
     "qr": {
       "upload": "QR 이미지 업로드",
       "decoding": "QR 읽는 중…",
@@ -3254,6 +3258,7 @@
       "token": "토큰 (비공개 저장소, 선택)"
     },
     "action": {
+      "sync_all": "모두 동기화",
       "add": "저장소 추가",
       "cancel": "취소",
       "confirm_remove": "제거 확인",
@@ -3291,6 +3296,7 @@
       "qr_alt": "공유 링크용 QR 코드"
     },
     "progress": {
+      "syncing": "동기화 중…",
       "validating": "저장소를 검증하는 중…",
       "manifest": "매니페스트를 불러오는 중…",
       "sets": "세트를 불러오는 중…",

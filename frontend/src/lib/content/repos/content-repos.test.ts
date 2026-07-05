@@ -18,8 +18,11 @@ vi.mock("../../../storage", () => ({
   }),
 }));
 
-const { validateUserRepo } = vi.hoisted(() => ({ validateUserRepo: vi.fn() }));
-vi.mock("./content-repo-validate", () => ({ validateUserRepo }));
+const { validateUserRepo, listRepoManifestSets } = vi.hoisted(() => ({
+  validateUserRepo: vi.fn(),
+  listRepoManifestSets: vi.fn(),
+}));
+vi.mock("./content-repo-validate", () => ({ validateUserRepo, listRepoManifestSets }));
 vi.mock("./repo-token", () => ({ resolveRepoToken: () => "" }));
 
 import {
@@ -58,6 +61,8 @@ beforeEach(() => {
   downloadSet.mockReset();
   validateUserRepo.mockReset();
   validateUserRepo.mockResolvedValue({ ok: true, setCount: 0, lessonCount: 0 });
+  listRepoManifestSets.mockReset();
+  listRepoManifestSets.mockResolvedValue([]);
   update.mockResolvedValue({ plugin: "content-loader", settings: {} });
 });
 
@@ -165,25 +170,26 @@ describe("addUserRepo / removeUserRepo / moveUserRepo", () => {
 });
 
 describe("syncUserRepo(source)", () => {
-  it("downloads only that repo's sets and persists fresh counts", async () => {
+  it("reads the set list from the TARGET repo's own manifest and downloads only its sets (#1388)", async () => {
     get.mockResolvedValue({
       plugin: "content-loader",
       settings: { user_repos: [repo("jane", "a"), repo("bob", "b")] },
     });
-    listSets.mockResolvedValue({
-      sets: [
-        { source: "astrapi69/adaptive-learner-content", id: "fr", lesson_count: 10 },
-        { source: "jane/a", id: "deck-1", lesson_count: 7 },
-        { source: "jane/a", id: "deck-2", lesson_count: 5 },
-        { source: "bob/b", id: "other", lesson_count: 9 },
-      ],
-    });
+    listRepoManifestSets.mockResolvedValue([
+      { id: "deck-1", lessonCount: 7 },
+      { id: "deck-2", lessonCount: 5 },
+    ]);
     downloadSet.mockResolvedValue({});
 
     const res = await syncUserRepo("jane/a");
     expect(res).toEqual({ setCount: 2, lessonCount: 12, trust: 1 });
+    expect(listRepoManifestSets).toHaveBeenCalledWith(
+      { owner: "jane", repo: "a", branch: "main" },
+      "",
+    );
     expect(downloadSet).toHaveBeenCalledTimes(2);
     expect(downloadSet).toHaveBeenCalledWith("jane/a", "deck-1");
+    expect(downloadSet).toHaveBeenCalledWith("jane/a", "deck-2");
 
     const [, body] = update.mock.calls[0];
     const jane = body.settings.user_repos.find(
@@ -193,16 +199,47 @@ describe("syncUserRepo(source)", () => {
     expect(jane.last_synced).toEqual(expect.any(String));
   });
 
+  it("touches ONLY the target source — no listSets over all sources, no other-repo writes (#1388)", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a"), repo("bob", "b")] },
+    });
+    listRepoManifestSets.mockResolvedValue([{ id: "deck-1", lessonCount: 7 }]);
+    downloadSet.mockResolvedValue({});
+
+    await syncUserRepo("jane/a");
+    // The all-source catalogue walk is what made one row's sync hit every
+    // configured repo's network endpoint — it must not run at all.
+    expect(listSets).not.toHaveBeenCalled();
+    // The sibling repo's stored row is byte-identical.
+    const [, body] = update.mock.calls[0];
+    const bob = body.settings.user_repos.find(
+      (r: UserContentRepo) => r.repo === "b",
+    );
+    expect(bob).toEqual(repo("bob", "b"));
+  });
+
   it("re-validation failure drops trust to 0", async () => {
     get.mockResolvedValue({
       plugin: "content-loader",
       settings: { user_repos: [repo("jane", "a")] },
     });
-    listSets.mockResolvedValue({ sets: [{ source: "jane/a", id: "d", lesson_count: 1 }] });
+    listRepoManifestSets.mockResolvedValue([{ id: "d", lessonCount: 1 }]);
     downloadSet.mockResolvedValue({});
     validateUserRepo.mockResolvedValue({ ok: false, reason: "bad" });
     const res = await syncUserRepo("jane/a");
     expect(res.trust).toBe(0);
+  });
+
+  it("propagates an unreachable-repo failure (row feedback) without writing anything", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a")] },
+    });
+    listRepoManifestSets.mockRejectedValue(new Error("404"));
+    await expect(syncUserRepo("jane/a")).rejects.toThrow();
+    expect(update).not.toHaveBeenCalled();
+    expect(downloadSet).not.toHaveBeenCalled();
   });
 
   it("throws when the source is not connected", async () => {

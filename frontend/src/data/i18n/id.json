@@ -3213,6 +3213,10 @@
     "save_prompt": "Simpan pelajaran ini ke favoritmu"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{ok} dari {total} repositori disinkronkan.",
+      "failed": "{ok} dari {total} disinkronkan. Gagal: {repos}"
+    },
     "qr": {
       "upload": "Unggah gambar QR",
       "decoding": "Membaca QR…",
@@ -3254,6 +3258,7 @@
       "token": "Token (repo privat, opsional)"
     },
     "action": {
+      "sync_all": "Sinkronkan semua",
       "add": "Tambah repositori",
       "cancel": "Batal",
       "confirm_remove": "Konfirmasi hapus",
@@ -3291,6 +3296,7 @@
       "qr_alt": "Kode QR untuk tautan berbagi"
     },
     "progress": {
+      "syncing": "Menyinkronkan…",
       "validating": "Memvalidasi repositori…",
       "manifest": "Memuat manifes…",
       "sets": "Memuat set…",

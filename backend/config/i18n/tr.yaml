@@ -2946,6 +2946,9 @@ favorites:
   empty: "Henüz favori yok — bir dersteki yıldıza dokun."
   save_prompt: "Bu dersi favorilerine kaydet"
 content_repo:
+  sync_all:
+    done: "{total} depodan {ok} tanesi eşitlendi."
+    failed: "{total} depodan {ok} tanesi eşitlendi. Başarısız: {repos}"
   qr:
     upload: "QR görüntüsü yükle"
     decoding: "QR okunuyor…"
@@ -2980,6 +2983,7 @@ content_repo:
     branch: "Dal"
     token: "Belirteç (özel depolar, isteğe bağlı)"
   action:
+    sync_all: "Tümünü eşitle"
     add: "Depo ekle"
     cancel: "İptal"
     confirm_remove: "Kaldırmayı onayla"
@@ -3011,6 +3015,7 @@ content_repo:
     hint: "Başkalarının bu HERKESE AÇIK depoyu ekleyebilmesi için bu bağlantıyı paylaş. Özel bir depo için URL'yi ve salt okunur bir belirteci ayrı ayrı gönder."
     qr_alt: "Paylaşım bağlantısı için QR kodu"
   progress:
+    syncing: "Eşitleniyor…"
     validating: "Depo doğrulanıyor…"
     manifest: "Manifest yükleniyor…"
     sets: "Setler yükleniyor…"

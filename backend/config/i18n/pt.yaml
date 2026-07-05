@@ -2946,6 +2946,9 @@ favorites:
   empty: "Ainda não há favoritos — toque na estrela de uma lição."
   save_prompt: "Guardar esta lição nos seus favoritos"
 content_repo:
+  sync_all:
+    done: "{ok} de {total} repositórios sincronizados."
+    failed: "{ok} de {total} sincronizados. Falharam: {repos}"
   qr:
     upload: "Enviar imagem QR"
     decoding: "Lendo QR…"
@@ -2980,6 +2983,7 @@ content_repo:
     branch: "Ramo"
     token: "Token (repos privados, opcional)"
   action:
+    sync_all: "Sincronizar tudo"
     add: "Adicionar repositório"
     cancel: "Cancelar"
     confirm_remove: "Confirmar remoção"
@@ -3011,6 +3015,7 @@ content_repo:
     hint: "Partilha este link para que outros possam adicionar este repositório PÚBLICO. Para um repositório privado, envia o URL e um token apenas de leitura separadamente."
     qr_alt: "Código QR do link de partilha"
   progress:
+    syncing: "A sincronizar…"
     validating: "A validar o repositório…"
     manifest: "A carregar o manifesto…"
     sets: "A carregar os conjuntos…"
