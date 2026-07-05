@@ -2545,13 +2545,9 @@ select:focus {
 
 /* Phase 43 / EXP-002 — Set Browser page. Mobile-first, the
    action button stays full-width below 600px so touch
-   targets stay above 44px. */
-.content-page {
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: var(--space-4);
-}
-
+   targets stay above 44px. The former .content-page container
+   rule moved into the shared PageContainer component (#1380),
+   which all three Content-hub tabs render. */
 .content-header {
   display: flex;
   flex-wrap: wrap;

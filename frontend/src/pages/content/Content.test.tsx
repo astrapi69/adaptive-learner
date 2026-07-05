@@ -26,6 +26,8 @@ import {
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
+import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
+
 const listSetsMock = vi.fn();
 const downloadSetMock = vi.fn();
 const deleteSetMock = vi.fn();
@@ -624,5 +626,29 @@ describe("ContentPage — source filter + origin badge (#118)", () => {
       expect(screen.queryByTestId("content-set-language-fr-a1")).toBeNull();
     });
     expect(screen.getByTestId("content-set-jane-deck")).toBeInTheDocument();
+  });
+});
+
+describe("shared page container (#1380)", () => {
+  it("renders the page inside the shared PageContainer, with no deviating wrapper", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY],
+      sources: [{ source: SAMPLE_ENTRY.source, branch: "main" }],
+    });
+    renderPage();
+    const main = await screen.findByTestId("content-page");
+    expect(main.tagName).toBe("MAIN");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    // Exact match: the canonical container set only — no per-tab
+    // special widths and no legacy dead classes (page/content-page).
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
+  });
+
+  it("renders the loading state inside the same shared container", () => {
+    listSetsMock.mockImplementation(() => new Promise(() => {}));
+    renderPage();
+    const main = screen.getByTestId("content-loading");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
   });
 });

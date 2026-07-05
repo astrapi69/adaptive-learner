@@ -13,6 +13,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import Discover from "./Discover";
+import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
 import type { SearchableSet } from "../../lib/content/repos/search-index-loader";
 
 const fetchAllIndicesMock = vi.fn();
@@ -479,5 +480,25 @@ describe("Discover source-language filter (#1343)", () => {
     renderDiscover();
     await waitFor(() => expect(screen.getByText("Spanisch (de)")).toBeInTheDocument());
     expect(localStorage.getItem(KEY)).toBe("de");
+  });
+});
+
+describe("shared page container (#1380)", () => {
+  it("renders the page inside the shared PageContainer, with no deviating wrapper", async () => {
+    renderDiscover();
+    const main = await screen.findByTestId("discover-page");
+    expect(main.tagName).toBe("MAIN");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    // Exact match: the canonical container set only — Discover no
+    // longer runs full-viewport-width (the dead ``page`` class).
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
+  });
+
+  it("renders the loading state inside the same shared container", () => {
+    fetchAllIndicesMock.mockImplementation(() => new Promise(() => {}));
+    renderDiscover();
+    const main = screen.getByTestId("discover-loading");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
   });
 });

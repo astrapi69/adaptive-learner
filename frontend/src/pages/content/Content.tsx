@@ -33,6 +33,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import InfoHintButton from "../../shared/feedback/InfoHintButton";
+import PageContainer from "../../shared/layout/PageContainer";
 import { useInfoHint } from "../../shared/feedback/useInfoHint";
 import ContentTree from "../../components/content/browser/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
@@ -211,9 +212,9 @@ export default function ContentPage() {
 
   if (loading) {
     return (
-      <main id="main" className="page content-page" data-testid="content-loading">
+      <PageContainer testId="content-loading">
         <p>{t("content.loading", "Loading content sets…")}</p>
-      </main>
+      </PageContainer>
     );
   }
 
@@ -266,7 +267,7 @@ export default function ContentPage() {
     openLessonFile(lesson.setSource, lesson.setId, lesson.filename);
 
   return (
-    <main id="main" className="page content-page" data-testid="content-page">
+    <PageContainer testId="content-page">
       <header className="content-header" data-testid="content-header">
         <h1>{t("content.page_title", "Meine Inhalte")}</h1>
         {/* #1272 — the info button sits inline, right after the title;
@@ -582,6 +583,6 @@ export default function ContentPage() {
           void handleConfirmBulkDelete().then(() => selection.clear())
         }
       />
-    </main>
+    </PageContainer>
   );
 }

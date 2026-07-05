@@ -1,7 +1,7 @@
 /**
  * Critical-surfaces visual-regression matrix (#705, Phase 1).
  *
- * 14 critical user-facing surfaces × 3 responsive viewports (desktop
+ * 16 critical user-facing surfaces × 3 responsive viewports (desktop
  * 1920×1080, tablet 768×1024, mobile 375×667) in the DEFAULT theme. Each
  * test pins the viewport + a deterministic default theme before first
  * paint, seeds the surface into a stable state (dexie build, no backend),

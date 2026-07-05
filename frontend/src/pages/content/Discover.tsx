@@ -44,6 +44,7 @@ import {
   newKeysAgainstSeen,
 } from "../../lib/content/browse/seen-catalog";
 import InfoHint from "../../shared/feedback/InfoHint";
+import PageContainer from "../../shared/layout/PageContainer";
 import { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchFilterBar from "../../shared/forms/SearchFilterBar";
 import SetDiscoveryCard, {
@@ -322,14 +323,14 @@ export default function Discover() {
 
   if (loading) {
     return (
-      <main id="main" className="page" data-testid="discover-loading">
+      <PageContainer testId="discover-loading">
         <p>{t("discover.loading", "Loading available content…")}</p>
-      </main>
+      </PageContainer>
     );
   }
 
   return (
-    <main id="main" className="page" data-testid="discover-page">
+    <PageContainer testId="discover-page">
       <header className="mb-4 flex items-center gap-2">
         <Compass className="size-6 text-accent" aria-hidden="true" />
         <h1 className="text-xl font-semibold">{t("discover.title", "Discover content")}</h1>
@@ -475,6 +476,6 @@ export default function Discover() {
           })}
         </ul>
       )}
-    </main>
+    </PageContainer>
   );
 }
