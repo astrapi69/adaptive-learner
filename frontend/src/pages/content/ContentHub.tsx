@@ -18,41 +18,52 @@
  *
  * Reuses existing, fully-translated i18n keys (no new keys): the tab labels are
  * ``discover.tab.discover`` / ``nav.content`` / ``discover.tab.import``.
+ *
+ * The tab ORDER is user-configurable (#1378, Settings → General). The FIRST
+ * configured tab is the initial active tab when ``/content`` is opened with no
+ * ``?tab`` param; an explicit ``?tab=<id>`` deep link always wins over that.
  */
 
 import { Suspense, lazy } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { useI18n } from "../../hooks/ui/useI18n";
+import { useContentTabOrder } from "../../hooks/content/useContentTabOrder";
+import type { ContentTabId } from "../../lib/content/contentTabOrderPref";
 
 const Discover = lazy(() => import("./Discover"));
 const Content = lazy(() => import("./Content"));
 const Import = lazy(() => import("./Import"));
 
-type TabId = "discover" | "my" | "import";
+type TabId = ContentTabId;
 
-const TAB_ORDER: TabId[] = ["discover", "my", "import"];
+const KNOWN_TABS: readonly TabId[] = ["discover", "my", "import"];
 
-function normalizeTab(raw: string | null): TabId {
-  return TAB_ORDER.includes(raw as TabId) ? (raw as TabId) : "discover";
+/** The explicit ``?tab`` value when it names a known tab; else null. */
+function tabFromParam(raw: string | null): TabId | null {
+  return KNOWN_TABS.includes(raw as TabId) ? (raw as TabId) : null;
 }
 
 export default function ContentHub() {
   const { t } = useI18n();
   const [params, setParams] = useSearchParams();
-  const active = normalizeTab(params.get("tab"));
+  const order = useContentTabOrder();
 
-  const tabs: { id: TabId; label: string }[] = [
-    { id: "discover", label: t("discover.tab.discover", "Discover") },
-    { id: "my", label: t("nav.content", "My content") },
-    { id: "import", label: t("discover.tab.import", "Import") },
-  ];
+  // Deep link wins; otherwise the first configured tab is the start tab.
+  const active = tabFromParam(params.get("tab")) ?? order[0];
+
+  const labels: Record<TabId, string> = {
+    discover: t("discover.tab.discover", "Discover"),
+    my: t("nav.content", "My content"),
+    import: t("discover.tab.import", "Import"),
+  };
+  const tabs = order.map((id) => ({ id, label: labels[id] }));
 
   function selectTab(id: TabId) {
     const next = new URLSearchParams(params);
-    // Default tab carries no param so ``/content`` is the canonical
-    // Entdecken URL.
-    if (id === "discover") next.delete("tab");
+    // The first configured tab is the canonical ``/content`` URL, so it
+    // carries no ``?tab`` param.
+    if (id === order[0]) next.delete("tab");
     else next.set("tab", id);
     setParams(next, { replace: true });
   }

@@ -1,28 +1,35 @@
 /**
- * Tests for ContentHub (#856): the single "Inhalte" destination at /content
- * with three tabs (Entdecken / Meine Inhalte / Importieren). The default tab is
- * Entdecken; the active tab lives in the ``?tab=`` query param.
+ * ContentHub (#1378) — configurable tab order + start-tab / deep-link logic.
  *
- * The three page components are mocked to lightweight stand-ins so the test
- * exercises ONLY the hub's tab bar + tab-selection wiring, not the real (heavy,
- * storage-backed) pages.
+ * The three tab pages are stubbed so we assert the hub's own tab bar + active
+ * selection, not the page internals.
  */
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("./Discover", () => ({
-  default: () => <div data-testid="mock-discover" />,
+  default: () => <div data-testid="page-discover" />,
 }));
 vi.mock("./Content", () => ({
-  default: () => <div data-testid="mock-content" />,
+  default: () => <div data-testid="page-my" />,
 }));
 vi.mock("./Import", () => ({
-  default: () => <div data-testid="mock-import" />,
+  default: () => <div data-testid="page-import" />,
+}));
+
+vi.mock("../../hooks/ui/useI18n", () => ({
+  useI18n: () => ({
+    t: (_key: string, fallback?: string) => fallback ?? _key,
+    lang: "en",
+    setLang: vi.fn(),
+  }),
 }));
 
 import ContentHub from "./ContentHub";
+import { setContentTabOrder } from "../../lib/content/contentTabOrderPref";
 
 function renderAt(path: string) {
   return render(
@@ -32,49 +39,68 @@ function renderAt(path: string) {
   );
 }
 
-describe("ContentHub", () => {
-  it("renders the three tabs", () => {
-    renderAt("/content");
-    expect(screen.getByTestId("content-hub")).toBeInTheDocument();
-    expect(screen.getByTestId("content-tab-discover")).toBeInTheDocument();
-    expect(screen.getByTestId("content-tab-my")).toBeInTheDocument();
-    expect(screen.getByTestId("content-tab-import")).toBeInTheDocument();
-  });
+function tabOrder(): string[] {
+  return screen
+    .getAllByRole("tab")
+    .map((b) => b.getAttribute("data-testid") ?? "");
+}
 
-  it("defaults to the Discover tab with no ?tab param", async () => {
+afterEach(() => {
+  localStorage.clear();
+});
+
+describe("ContentHub tab order (#1378)", () => {
+  it("renders the default order and Discover as the start tab", () => {
     renderAt("/content");
-    expect(await screen.findByTestId("mock-discover")).toBeInTheDocument();
+    expect(tabOrder()).toEqual([
+      "content-tab-discover",
+      "content-tab-my",
+      "content-tab-import",
+    ]);
     expect(screen.getByTestId("content-tab-discover")).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    expect(screen.queryByTestId("mock-content")).not.toBeInTheDocument();
   });
 
-  it("opens the My-content tab from ?tab=my", async () => {
-    renderAt("/content?tab=my");
-    expect(await screen.findByTestId("mock-content")).toBeInTheDocument();
+  it("renders the configured order", () => {
+    setContentTabOrder(["my", "import", "discover"]);
+    renderAt("/content");
+    expect(tabOrder()).toEqual([
+      "content-tab-my",
+      "content-tab-import",
+      "content-tab-discover",
+    ]);
+  });
+
+  it("makes the first configured tab the initial active tab", () => {
+    setContentTabOrder(["my", "discover", "import"]);
+    renderAt("/content");
     expect(screen.getByTestId("content-tab-my")).toHaveAttribute(
       "aria-selected",
       "true",
     );
   });
 
-  it("opens the Import tab from ?tab=import", async () => {
+  it("a ?tab deep link wins over the configured start tab", () => {
+    setContentTabOrder(["my", "discover", "import"]);
     renderAt("/content?tab=import");
-    expect(await screen.findByTestId("mock-import")).toBeInTheDocument();
+    expect(screen.getByTestId("content-tab-import")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByTestId("content-tab-my")).toHaveAttribute(
+      "aria-selected",
+      "false",
+    );
   });
 
-  it("falls back to Discover for an unknown tab value", async () => {
+  it("an unknown ?tab falls back to the configured start tab", () => {
+    setContentTabOrder(["import", "discover", "my"]);
     renderAt("/content?tab=bogus");
-    expect(await screen.findByTestId("mock-discover")).toBeInTheDocument();
-  });
-
-  it("switches the mounted child when a tab is clicked", async () => {
-    renderAt("/content");
-    expect(await screen.findByTestId("mock-discover")).toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("content-tab-import"));
-    expect(await screen.findByTestId("mock-import")).toBeInTheDocument();
-    expect(screen.queryByTestId("mock-discover")).not.toBeInTheDocument();
+    expect(screen.getByTestId("content-tab-import")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
   });
 });

@@ -575,6 +575,8 @@ settings:
   section_danger: 계정
   section_ui: 인터페이스
   section_appearance: "외관"
+  section_content_tabs: "콘텐츠 탭 순서"
+  content_tabs_desc: "콘텐츠 영역의 탭 순서를 선택하세요. 첫 번째 탭이 기본으로 열립니다."
   content_view: "콘텐츠 보기"
   content_view_description: "다운로드한 콘텐츠를 콘텐츠 탭에서 표시하는 방식입니다. 콘텐츠 보기의 빠른 전환도 동일한 설정을 변경합니다."
   section_profile: "프로필"

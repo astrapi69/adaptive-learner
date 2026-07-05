@@ -24,6 +24,7 @@ import HintSettingsControl from "../../components/settings/controls/lesson/HintS
 import LessonModeControl from "../../components/settings/controls/lesson/LessonModeControl";
 import ReviewSettingsControl from "../../components/settings/controls/lesson/ReviewSettingsControl";
 import CorrectionRoundControl from "../../components/settings/controls/lesson/CorrectionRoundControl";
+import ContentTabsOrderControl from "../../components/settings/controls/content/ContentTabsOrderControl";
 import LearningProfileControl from "../../components/assessment/LearningProfileControl";
 import MaxLessonSizeControl from "../../components/settings/controls/lesson/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../../components/settings/controls/lesson/PausedLessonsRetentionControl";
@@ -514,6 +515,11 @@ export default function Settings() {
             same source as the in-tab quick-toggle. */}
         <ContentViewControl />
       </section>
+
+      <div hidden={activeTab !== "general"}>
+        {/* #1378 — configurable order of the Content-area tabs. */}
+        <ContentTabsOrderControl />
+      </div>
 
       <section className="settings-section" hidden={activeTab !== "general"}>
         <h2 className="settings-section-title">{t("settings.section_language", "Language")}</h2>
