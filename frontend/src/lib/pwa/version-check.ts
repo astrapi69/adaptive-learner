@@ -16,6 +16,8 @@
 export interface VersionManifest {
   version: string;
   buildHash: string;
+  /** ISO build timestamp, when the deploy wrote one (#1382). */
+  buildDate?: string;
 }
 
 /** A version string we treat as "unknown" — never triggers an update. */
@@ -62,7 +64,16 @@ export function parseVersionManifest(value: unknown): VersionManifest | null {
   return {
     version: v.version,
     buildHash: typeof v.buildHash === "string" ? v.buildHash : UNKNOWN,
+    ...(typeof v.buildDate === "string" ? { buildDate: v.buildDate } : {}),
   };
+}
+
+/** A manifest hash normalised for comparison — ``null`` when unknown. */
+export function knownBuildHash(
+  manifest: VersionManifest | null | undefined,
+): string | null {
+  const hash = (manifest?.buildHash ?? "").trim();
+  return hash === "" || hash === UNKNOWN ? null : hash;
 }
 
 /**
@@ -70,14 +81,24 @@ export function parseVersionManifest(value: unknown): VersionManifest | null {
  * failure (offline, 404, malformed) — the caller treats "couldn't check"
  * as "no update", never as an error surfaced to the user.
  *
+ * The request carries BOTH ``cache: "no-store"`` and a cache-buster query
+ * param (#1382): ``no-store`` only bypasses the browser HTTP cache and the
+ * service worker, NOT a CDN edge cache (GitHub Pages serves with
+ * ``max-age=600``, so right after a deploy the edge can answer with the
+ * PREVIOUS manifest — the check then wrongly reported "up to date"). A
+ * unique query string makes the edge treat it as a fresh resource.
+ *
  * ``fetchImpl`` is injectable for tests; defaults to the global fetch.
+ * ``now`` seeds the cache-buster (injectable for tests).
  */
 export async function fetchLatestVersion(
   url: string,
   fetchImpl: typeof fetch = fetch,
+  now: () => number = Date.now,
 ): Promise<VersionManifest | null> {
   try {
-    const res = await fetchImpl(url, { cache: "no-store" });
+    const busted = `${url}${url.includes("?") ? "&" : "?"}cb=${now()}`;
+    const res = await fetchImpl(busted, { cache: "no-store" });
     if (!res.ok) return null;
     return parseVersionManifest(await res.json());
   } catch {

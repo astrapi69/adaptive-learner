@@ -913,6 +913,7 @@ about:
   checking: "確認中…"
   update_available: "バージョン {version} が利用可能です！"
   up_to_date: "最新バージョンを使用しています。"
+  update_preparing: "新しいビルドが利用可能で、準備中です。しばらくしてからもう一度確認してください。"
   check_failed: "確認に失敗しました。オンラインですか？"
   last_checked: "前回の確認: {when}"
   never_checked: "未確認"

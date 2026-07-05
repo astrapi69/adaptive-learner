@@ -913,6 +913,7 @@ about:
   checking: "A verificar…"
   update_available: "A versão {version} está disponível!"
   up_to_date: "Está a usar a versão mais recente."
+  update_preparing: "Está disponível uma nova compilação, que está a ser preparada. Verifique novamente dentro de momentos."
   check_failed: "Falha na verificação. Está online?"
   last_checked: "Última verificação: {when}"
   never_checked: "Nunca verificado"

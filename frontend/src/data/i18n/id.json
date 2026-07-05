@@ -983,6 +983,7 @@
     "checking": "Memeriksa…",
     "update_available": "Versi {version} tersedia!",
     "up_to_date": "Anda menggunakan versi terbaru.",
+    "update_preparing": "Build baru tersedia dan sedang disiapkan. Periksa lagi sebentar lagi.",
     "check_failed": "Pemeriksaan gagal. Apakah Anda online?",
     "last_checked": "Terakhir diperiksa: {when}",
     "never_checked": "Belum pernah diperiksa",

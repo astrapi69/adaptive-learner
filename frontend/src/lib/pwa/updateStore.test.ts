@@ -92,6 +92,23 @@ describe("checkUpdateNow (one-pass explicit check)", () => {
   });
 });
 
+describe("checkUpdateNow — preparing state (#1382)", () => {
+  it("maps 'preparing' to an honest phase (never 'current') and keeps the update flagged", async () => {
+    checkForUpdateReliable.mockResolvedValue({
+      status: "preparing",
+      latestVersion: "1.99.0",
+      latestHash: "bbb2222",
+    });
+    await checkUpdateNow();
+    const s = getUpdateSnapshot();
+    expect(s.phase).toBe("preparing");
+    expect(s.updateAvailable).toBe(true);
+    expect(s.latestVersion).toBe("1.99.0");
+    expect(s.latestHash).toBe("bbb2222");
+    expect(s.lastCheckedAt).not.toBeNull();
+  });
+});
+
 describe("ensureUpdateStoreInit (passive detection)", () => {
   it("flags updateAvailable when version.json is newer (shown on About without a click)", async () => {
     mockFetchVersion("999.0.0");
@@ -133,6 +150,21 @@ describe("applyUpdateNow (clears both indicators)", () => {
     expect(activateInBackground).toHaveBeenCalledTimes(1);
     // Banner stays suppressed even if a stale reload re-flags the version.
     expect(bannerVisible()).toBe(false);
+  });
+
+  // #1382 — Latest strand: acceptance is recorded with the build HASH, so a
+  // LATER deploy of the same version (new hash) can re-offer the banner.
+  it("records the accepted build hash so a newer same-version deploy is not muted forever", async () => {
+    checkForUpdateReliable.mockResolvedValue({
+      status: "available",
+      latestVersion: "1.99.0",
+      latestHash: "bbb2222",
+    });
+    await checkUpdateNow();
+    applyUpdateNow();
+    expect(
+      localStorage.getItem("adaptive-learner.update.accepted_hash"),
+    ).toBe("bbb2222");
   });
 });
 

@@ -11,6 +11,7 @@
 import {
   fetchLatestVersion,
   isUpdateAvailable,
+  knownBuildHash,
   type VersionManifest,
 } from "./version-check";
 
@@ -187,13 +188,24 @@ export async function activateInBackground(
   // Silent give-up: no reload, no banner. The next app start picks it up.
 }
 
-/** Outcome of an explicit user-triggered update check (#664). */
-export type UpdateCheckStatus = "available" | "current" | "error";
+/**
+ * Outcome of an explicit user-triggered update check (#664).
+ *
+ * ``preparing`` (#1382): the deployed manifest is NEWER (the build hash is
+ * the truth — on the Latest strand the version string never changes between
+ * deploys) but the service-worker cycle has not produced a waiting worker
+ * yet (typically the GH-Pages edge still serves the previous ``sw.js`` for
+ * up to ~10 minutes). Never reported as "current"; the UI shows an honest
+ * "new build available, being prepared — check again shortly" state.
+ */
+export type UpdateCheckStatus = "available" | "preparing" | "current" | "error";
 
 export interface UpdateCheckOutcome {
   status: UpdateCheckStatus;
   /** The deployed version (from version.json), when it could be read. */
   latestVersion: string | null;
+  /** The deployed build hash (from version.json), when known (#1382). */
+  latestHash: string | null;
 }
 
 /**
@@ -222,7 +234,7 @@ export async function checkForUpdate(
 ): Promise<UpdateCheckOutcome> {
   const latest = await fetchLatestVersion(url, fetchImpl);
   if (!latest) {
-    return { status: "error", latestVersion: null };
+    return { status: "error", latestVersion: null, latestHash: null };
   }
   // Best-effort: nudge a registered SW to fetch the new build so a following
   // ``activateAndReload`` can skip-waiting into it. Never gates the result.
@@ -235,9 +247,17 @@ export async function checkForUpdate(
     }
   }
   if (isUpdateAvailable(current, latest)) {
-    return { status: "available", latestVersion: latest.version };
+    return {
+      status: "available",
+      latestVersion: latest.version,
+      latestHash: knownBuildHash(latest),
+    };
   }
-  return { status: "current", latestVersion: latest.version };
+  return {
+    status: "current",
+    latestVersion: latest.version,
+    latestHash: knownBuildHash(latest),
+  };
 }
 
 /** Injectable seams for {@link checkForUpdateReliable} (defaults for prod). */
@@ -276,13 +296,24 @@ function defaultHasController(): boolean {
 }
 
 /**
+ * How the service-worker side of a check resolved (#1382):
+ *  - ``waiting`` — a fresh worker is (or became) parked and can be activated.
+ *  - ``quiet`` — a SW exists but the update cycle produced no new worker
+ *    (either genuinely up to date, or the edge cache still serves the old
+ *    ``sw.js`` — the manifest comparison disambiguates).
+ *  - ``unavailable`` — no SW support / no registration (plain reloads serve
+ *    fresh builds, so there is nothing to "prepare").
+ */
+type SwCycleResult = "waiting" | "quiet" | "unavailable";
+
+/**
  * Await the service-worker update cycle and report whether a fresh worker is
  * (or becomes) ready — the piece missing from {@link checkForUpdate} that made
  * the About check need several clicks (#1374).
  *
- * Resolves ``true`` when a worker is already ``waiting`` or an ``installing``
+ * Resolves ``waiting`` when a worker is already ``waiting`` or an ``installing``
  * worker reaches ``installed`` while the page is controlled (a real update, not
- * the first install). Resolves ``false`` when ``reg.update()`` completes with no
+ * the first install). Resolves ``quiet`` when ``reg.update()`` completes with no
  * new worker parked, or the install goes ``redundant``. A timeout resolves with
  * the current ``reg.waiting`` state so a slow/absent cycle never hangs the UI.
  */
@@ -292,17 +323,17 @@ async function awaitServiceWorkerUpdate(
   >,
   hasController: () => boolean,
   timeoutMs: number,
-): Promise<boolean> {
+): Promise<SwCycleResult> {
   let reg: ServiceWorkerRegistration | null | undefined;
   try {
     reg = await getRegistration();
   } catch {
-    return false;
+    return "unavailable";
   }
-  if (!reg) return false;
-  if (reg.waiting) return true;
+  if (!reg) return "unavailable";
+  if (reg.waiting) return "waiting";
 
-  return await new Promise<boolean>((resolve) => {
+  const found = await new Promise<boolean>((resolve) => {
     let settled = false;
     const finish = (result: boolean) => {
       if (settled) return;
@@ -342,6 +373,7 @@ async function awaitServiceWorkerUpdate(
       })
       .catch(() => finish(!!reg?.waiting));
   });
+  return found ? "waiting" : "quiet";
 }
 
 /**
@@ -354,8 +386,12 @@ async function awaitServiceWorkerUpdate(
  * fired ``reg.update()`` fire-and-forget, so the first click saw a stale SW
  * state.
  *
- * Outcome:
- *  - ``available`` — a waiting/fresh worker OR a newer ``version.json``.
+ * Outcome (#1382 — the build HASH is the truth; on the Latest strand the
+ * version string never changes between deploys):
+ *  - ``available`` — a waiting/fresh worker; or a newer manifest with no SW
+ *    at all (a plain reload serves the new build, so applying is honest).
+ *  - ``preparing`` — the manifest is newer but the SW cycle produced no
+ *    waiting worker yet (edge cache window on ``sw.js``). NEVER "current".
  *  - ``error`` — version.json unreadable AND no waiting worker (offline/timeout).
  *  - ``current`` — deployed build matches and no worker is waiting.
  */
@@ -369,19 +405,32 @@ export async function checkForUpdateReliable(
   const hasController = deps.hasController ?? defaultHasController;
   const timeoutMs = deps.timeoutMs ?? 8000;
 
-  const [latest, swWaiting] = await Promise.all([
+  const [latest, swCycle] = await Promise.all([
     fetchLatestVersion(url, fetchImpl),
     awaitServiceWorkerUpdate(getRegistration, hasController, timeoutMs),
   ]);
+  const latestHash = knownBuildHash(latest);
 
-  if (swWaiting || isUpdateAvailable(current, latest)) {
+  if (swCycle === "waiting") {
     return {
       status: "available",
       latestVersion: latest?.version ?? current.version,
+      latestHash,
+    };
+  }
+  if (isUpdateAvailable(current, latest)) {
+    // A newer build is deployed. With a SW whose cycle stayed quiet the new
+    // worker is not fetchable yet (sw.js edge-cache window) — report the
+    // honest "preparing" state instead of a dead apply action. Without any
+    // SW a plain reload gets the new build, so "available" is truthful.
+    return {
+      status: swCycle === "quiet" ? "preparing" : "available",
+      latestVersion: latest?.version ?? current.version,
+      latestHash,
     };
   }
   if (!latest) {
-    return { status: "error", latestVersion: null };
+    return { status: "error", latestVersion: null, latestHash: null };
   }
-  return { status: "current", latestVersion: latest.version };
+  return { status: "current", latestVersion: latest.version, latestHash };
 }

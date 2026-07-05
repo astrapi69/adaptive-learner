@@ -913,6 +913,7 @@ about:
   checking: "확인 중…"
   update_available: "버전 {version}을(를) 사용할 수 있습니다!"
   up_to_date: "최신 버전을 사용하고 있습니다."
+  update_preparing: "새 빌드를 사용할 수 있으며 준비 중입니다. 잠시 후 다시 확인하세요."
   check_failed: "확인에 실패했습니다. 온라인 상태인가요?"
   last_checked: "마지막 확인: {when}"
   never_checked: "확인한 적 없음"

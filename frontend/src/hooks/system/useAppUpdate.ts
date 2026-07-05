@@ -52,7 +52,10 @@ export function useAppUpdate(): AppUpdateState {
   // Suppress the banner once the user has accepted an update — within the quiet
   // window or for the already-accepted version (#846). Read per-render so the
   // suppression survives a reload (the in-memory ``dismissed`` does not).
-  const suppressed = !shouldShowUpdateBanner(snapshot.latestVersion);
+  const suppressed = !shouldShowUpdateBanner(
+    snapshot.latestVersion,
+    snapshot.latestHash,
+  );
 
   return {
     updateAvailable:

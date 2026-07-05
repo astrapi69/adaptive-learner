@@ -983,6 +983,7 @@
     "checking": "Checking…",
     "update_available": "Version {version} is available!",
     "up_to_date": "You're using the latest version.",
+    "update_preparing": "A new build is available and is being prepared. Check again in a moment.",
     "check_failed": "Check failed. Are you online?",
     "last_checked": "Last checked: {when}",
     "never_checked": "Never checked",

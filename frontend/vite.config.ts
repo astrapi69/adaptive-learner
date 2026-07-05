@@ -43,6 +43,7 @@ function emitVersionJson() {
                 source: JSON.stringify({
                     version: pkg.version,
                     buildHash: process.env.VITE_BUILD_HASH || "unknown",
+                    buildDate: process.env.VITE_BUILD_DATE || "unknown",
                 }),
             });
         },
