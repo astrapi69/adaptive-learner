@@ -4,10 +4,15 @@
 
 import {describe, expect, it} from "vitest";
 
-import {collectFailedExercises, failedExerciseCount} from "./error-replay";
+import {
+    collectFailedExercises,
+    failedExerciseCount,
+    openFailedExercises,
+} from "./error-replay";
 import type {
     ContentLesson,
     ContentLessonExercise,
+    ElementError,
     LessonProgress,
 } from "../../storage/types";
 
@@ -107,5 +112,88 @@ describe("collectFailedExercises", () => {
             "ex-c": {correct: 1, total: 1},
         });
         expect(failedExerciseCount(LESSON, p)).toBe(2);
+    });
+});
+
+function err(
+    exercise_id: string,
+    overrides: Partial<ElementError> = {},
+): ElementError {
+    return {
+        id: `${exercise_id}#e`,
+        user_id: "u",
+        set_id: "set",
+        lesson_id: "01.json",
+        exercise_id,
+        element_key: "k",
+        element_type: "text",
+        user_answer: "",
+        correct_answer: "",
+        error_count: 1,
+        correct_streak: 0,
+        last_error_at: "2026-06-02T00:00:00Z",
+        last_attempt_at: "2026-06-02T00:00:00Z",
+        mastered: false,
+        mastered_at: null,
+        created_at: "2026-06-02T00:00:00Z",
+        updated_at: "2026-06-02T00:00:00Z",
+        ...overrides,
+    };
+}
+
+describe("openFailedExercises (#1372)", () => {
+    const FAILED = [ex("ex-a"), ex("ex-c")];
+
+    it("keeps a failure whose element is still open (streak 0, not mastered)", () => {
+        const errors = [err("ex-a"), err("ex-c")];
+        expect(openFailedExercises(FAILED, errors).map((e) => e.id)).toEqual([
+            "ex-a",
+            "ex-c",
+        ]);
+    });
+
+    it("drops a failure corrected in a replay (streak advanced)", () => {
+        // ex-a answered correctly once → correct_streak 1 → resolved.
+        const errors = [err("ex-a", {correct_streak: 1}), err("ex-c")];
+        expect(openFailedExercises(FAILED, errors).map((e) => e.id)).toEqual([
+            "ex-c",
+        ]);
+    });
+
+    it("drops a failure whose element became mastered", () => {
+        const errors = [
+            err("ex-a", {mastered: true, correct_streak: 3}),
+            err("ex-c"),
+        ];
+        expect(openFailedExercises(FAILED, errors).map((e) => e.id)).toEqual([
+            "ex-c",
+        ]);
+    });
+
+    it("returns empty when every failure is corrected (→ all-corrected)", () => {
+        const errors = [
+            err("ex-a", {correct_streak: 2}),
+            err("ex-c", {mastered: true, correct_streak: 3}),
+        ];
+        expect(openFailedExercises(FAILED, errors)).toEqual([]);
+    });
+
+    it("keeps an exercise with a still-open element even if another is fixed", () => {
+        // ex-c has two element rows: one corrected, one still open → keep.
+        const errors = [
+            err("ex-a", {correct_streak: 1}),
+            err("ex-c", {element_key: "k1", correct_streak: 2}),
+            err("ex-c", {element_key: "k2", correct_streak: 0}),
+        ];
+        expect(openFailedExercises(FAILED, errors).map((e) => e.id)).toEqual([
+            "ex-c",
+        ]);
+    });
+
+    it("keeps a failure with no element rows yet (conservative)", () => {
+        expect(openFailedExercises(FAILED, []).map((e) => e.id)).toEqual([
+            "ex-a",
+            "ex-c",
+        ]);
     });
 });

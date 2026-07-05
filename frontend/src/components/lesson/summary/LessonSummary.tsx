@@ -31,7 +31,11 @@ import { useFeedbackIntensity } from "../../../hooks/settings/useFeedbackIntensi
 import { useI18n } from "../../../hooks/ui/useI18n";
 import LessonFavoriteToggle from "../chrome/LessonFavoriteToggle";
 import { useNextStepSuggestions } from "../../../hooks/learning/useNextStepSuggestions";
-import { collectFailedExercises } from "../../../lib/lesson/error-replay";
+import {
+  collectFailedExercises,
+  openFailedExercises,
+} from "../../../lib/lesson/error-replay";
+import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSessionErrors";
 import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
 import {
   buildExerciseBreakdown,
@@ -58,7 +62,6 @@ import { nextPraise } from "../../../lib/praise/phrase-picker";
 import { getStorage } from "../../../storage";
 import type {
   ContentLesson,
-  ElementError,
   LessonAttempt,
   LessonProgress,
 } from "../../../storage/types";
@@ -186,7 +189,7 @@ export default function LessonSummary({
   // derive the full suggestion set. Reads are guarded so the
   // summary still renders if storage is unreachable; the
   // demoted action links below remain a working exit.
-  const [sessionErrors, setSessionErrors] = useState<ElementError[]>([]);
+  const sessionErrors = useLessonSessionErrors(userId, setId, lessonFilename);
 
   // #505 — the XP this run is worth. Computed with the same pure,
   // parity-tested gamification calculator the award path uses
@@ -255,33 +258,21 @@ export default function LessonSummary({
     (configForMode(lessonMode).xpMultiplier - 1) * 100,
   );
 
-  useEffect(() => {
-    if (!userId) {
-      setSessionErrors([]);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      try {
-        const errs = await getStorage().elementErrors.list(userId, {
-          setId,
-        });
-        if (cancelled) return;
-        setSessionErrors(errs.filter((e) => e.lesson_id === lessonFilename));
-      } catch {
-        if (!cancelled) setSessionErrors([]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [userId, setId, lessonFilename]);
 
   // The exact exercises failed in THIS run — drives the
   // "Retry Errors" card + the ErrorReplay page (via router state).
   const failedExercises = useMemo(
     () => collectFailedExercises(lesson, progress),
     [lesson, progress],
+  );
+
+  // #1372 — of the exercises failed in this run, the ones STILL open in
+  // the live SRS state (a correct error-replay attempt drops one out).
+  // Drives the replay CTA + payload; the historical count (failedExercises)
+  // is left intact for the statistics.
+  const openFailed = useMemo(
+    () => openFailedExercises(failedExercises, sessionErrors),
+    [failedExercises, sessionErrors],
   );
 
   const suggestions = useNextStepSuggestions({
@@ -291,7 +282,8 @@ export default function LessonSummary({
     userId,
     stars,
     sessionErrors,
-    failedExerciseCount: failedExercises.length,
+    failedExerciseCount: openFailed.length,
+    correctedExerciseCount: failedExercises.length - openFailed.length,
   });
 
   // #138 — export the result (score + mistakes + weak areas) as
@@ -652,9 +644,9 @@ export default function LessonSummary({
         setSlug={setSlug}
         lessonFilename={lessonFilename}
         errorReplay={
-          failedExercises.length > 0
+          openFailed.length > 0
             ? {
-                exercises: failedExercises,
+                exercises: openFailed,
                 cards: lesson.cards,
                 lessonTitle: lesson.title,
               }

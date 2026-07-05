@@ -30,7 +30,7 @@ function makeSuggestions(
     return {
         loading: false,
         nextLesson: {available: false, isPaused: false},
-        errorReplay: {available: false, errorCount: 0},
+        errorReplay: {available: false, errorCount: 0, correctedCount: 0, allCorrected: false},
         adaptiveLesson: {available: false, focusTag: null, errorCount: 0},
         reviewSession: {available: false, dueCount: 0},
         setComplete: false,
@@ -283,7 +283,7 @@ describe("NextStepSuggestions", () => {
     it("shows the error-replay card when available + a payload is given", () => {
         renderCard(
             makeSuggestions({
-                errorReplay: {available: true, errorCount: 3},
+                errorReplay: {available: true, errorCount: 3, correctedCount: 0, allCorrected: false},
             }),
             PAYLOAD,
         );
@@ -298,10 +298,51 @@ describe("NextStepSuggestions", () => {
         );
     });
 
+    it("shows the corrected progress on the replay card (#1372)", () => {
+        // 2 still open, 3 already corrected in a replay → "3 of 5 corrected".
+        renderCard(
+            makeSuggestions({
+                errorReplay: {
+                    available: true,
+                    errorCount: 2,
+                    correctedCount: 3,
+                    allCorrected: false,
+                },
+            }),
+            PAYLOAD,
+        );
+        expect(screen.getByTestId("next-step-card-error-replay")).toBeInTheDocument();
+        const corrected = screen.getByTestId(
+            "next-step-error-replay-corrected",
+        );
+        expect(corrected.textContent).toMatch(/3/);
+        expect(corrected.textContent).toMatch(/5/);
+    });
+
+    it("all corrected: replaces the replay card with a success card (#1372)", () => {
+        renderCard(
+            makeSuggestions({
+                errorReplay: {
+                    available: false,
+                    errorCount: 0,
+                    correctedCount: 4,
+                    allCorrected: true,
+                },
+            }),
+            // no payload — nothing left to replay
+        );
+        expect(
+            screen.queryByTestId("next-step-card-error-replay"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId("next-step-card-all-corrected"),
+        ).toBeInTheDocument();
+    });
+
     it("hides the error-replay card when there's no payload (no errors)", () => {
         renderCard(
             makeSuggestions({
-                errorReplay: {available: true, errorCount: 3},
+                errorReplay: {available: true, errorCount: 3, correctedCount: 0, allCorrected: false},
             }),
             // no payload
         );
@@ -314,7 +355,7 @@ describe("NextStepSuggestions", () => {
         renderCard(
             makeSuggestions({
                 nextLesson: {available: true, isPaused: false, title: "x"},
-                errorReplay: {available: false, errorCount: 0},
+                errorReplay: {available: false, errorCount: 0, correctedCount: 0, allCorrected: false},
             }),
             PAYLOAD,
         );
@@ -327,7 +368,7 @@ describe("NextStepSuggestions", () => {
         renderCard(
             makeSuggestions({
                 nextLesson: {available: true, isPaused: false, title: "x"},
-                errorReplay: {available: true, errorCount: 2},
+                errorReplay: {available: true, errorCount: 2, correctedCount: 0, allCorrected: false},
                 primaryAction: "error_replay",
             }),
             PAYLOAD,
