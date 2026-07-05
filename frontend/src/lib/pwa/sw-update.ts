@@ -239,3 +239,149 @@ export async function checkForUpdate(
   }
   return { status: "current", latestVersion: latest.version };
 }
+
+/** Injectable seams for {@link checkForUpdateReliable} (defaults for prod). */
+export interface ReliableCheckDeps {
+  /** The running build (defaults to {@link CURRENT_BUILD}). */
+  current?: VersionManifest;
+  /** version.json URL (defaults to {@link versionJsonUrl}). */
+  url?: string;
+  /** Injectable fetch (defaults to the global fetch). */
+  fetchImpl?: typeof fetch;
+  /** Resolve the current SW registration (default: navigator.serviceWorker). */
+  getRegistration?: () => Promise<
+    ServiceWorkerRegistration | null | undefined
+  >;
+  /** Whether a SW currently controls the page (default: reads controller). */
+  hasController?: () => boolean;
+  /** Max time to await the SW install cycle before resolving. Default 8000. */
+  timeoutMs?: number;
+}
+
+function defaultGetRegistration(): Promise<
+  ServiceWorkerRegistration | null | undefined
+> {
+  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
+    return Promise.resolve(undefined);
+  }
+  return navigator.serviceWorker.getRegistration();
+}
+
+function defaultHasController(): boolean {
+  return (
+    typeof navigator !== "undefined" &&
+    "serviceWorker" in navigator &&
+    !!navigator.serviceWorker.controller
+  );
+}
+
+/**
+ * Await the service-worker update cycle and report whether a fresh worker is
+ * (or becomes) ready — the piece missing from {@link checkForUpdate} that made
+ * the About check need several clicks (#1374).
+ *
+ * Resolves ``true`` when a worker is already ``waiting`` or an ``installing``
+ * worker reaches ``installed`` while the page is controlled (a real update, not
+ * the first install). Resolves ``false`` when ``reg.update()`` completes with no
+ * new worker parked, or the install goes ``redundant``. A timeout resolves with
+ * the current ``reg.waiting`` state so a slow/absent cycle never hangs the UI.
+ */
+async function awaitServiceWorkerUpdate(
+  getRegistration: () => Promise<
+    ServiceWorkerRegistration | null | undefined
+  >,
+  hasController: () => boolean,
+  timeoutMs: number,
+): Promise<boolean> {
+  let reg: ServiceWorkerRegistration | null | undefined;
+  try {
+    reg = await getRegistration();
+  } catch {
+    return false;
+  }
+  if (!reg) return false;
+  if (reg.waiting) return true;
+
+  return await new Promise<boolean>((resolve) => {
+    let settled = false;
+    const finish = (result: boolean) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(result);
+    };
+    const timer = setTimeout(() => finish(!!reg?.waiting), timeoutMs);
+
+    const watchInstalling = (installing: ServiceWorker | null | undefined) => {
+      if (!installing) return;
+      const onState = () => {
+        if (installing.state === "installed" && hasController()) {
+          finish(true);
+        } else if (installing.state === "redundant") {
+          finish(!!reg?.waiting);
+        }
+      };
+      installing.addEventListener("statechange", onState);
+      // In case the worker already reached its terminal state synchronously.
+      onState();
+    };
+
+    reg.addEventListener("updatefound", () =>
+      watchInstalling(reg?.installing),
+    );
+
+    // Kick the SW to look for a new build. When the check resolves with no
+    // installing/waiting worker, there is nothing new — resolve fast so an
+    // up-to-date app does not wait the full timeout.
+    void reg
+      .update()
+      .then(() => {
+        if (reg?.waiting) return finish(true);
+        if (reg?.installing) return watchInstalling(reg.installing);
+        finish(false);
+      })
+      .catch(() => finish(!!reg?.waiting));
+  });
+}
+
+/**
+ * Reliable, one-pass update check for the About control (#1374).
+ *
+ * Runs BOTH signals concurrently and awaits them: it fetches ``version.json``
+ * AND awaits the service-worker install cycle ({@link awaitServiceWorkerUpdate})
+ * with a timeout. This is what makes a single click on the About page resolve
+ * correctly — the old {@link checkForUpdate} only compared version.json and
+ * fired ``reg.update()`` fire-and-forget, so the first click saw a stale SW
+ * state.
+ *
+ * Outcome:
+ *  - ``available`` — a waiting/fresh worker OR a newer ``version.json``.
+ *  - ``error`` — version.json unreadable AND no waiting worker (offline/timeout).
+ *  - ``current`` — deployed build matches and no worker is waiting.
+ */
+export async function checkForUpdateReliable(
+  deps: ReliableCheckDeps = {},
+): Promise<UpdateCheckOutcome> {
+  const current = deps.current ?? CURRENT_BUILD;
+  const url = deps.url ?? versionJsonUrl();
+  const fetchImpl = deps.fetchImpl ?? fetch;
+  const getRegistration = deps.getRegistration ?? defaultGetRegistration;
+  const hasController = deps.hasController ?? defaultHasController;
+  const timeoutMs = deps.timeoutMs ?? 8000;
+
+  const [latest, swWaiting] = await Promise.all([
+    fetchLatestVersion(url, fetchImpl),
+    awaitServiceWorkerUpdate(getRegistration, hasController, timeoutMs),
+  ]);
+
+  if (swWaiting || isUpdateAvailable(current, latest)) {
+    return {
+      status: "available",
+      latestVersion: latest?.version ?? current.version,
+    };
+  }
+  if (!latest) {
+    return { status: "error", latestVersion: null };
+  }
+  return { status: "current", latestVersion: latest.version };
+}
