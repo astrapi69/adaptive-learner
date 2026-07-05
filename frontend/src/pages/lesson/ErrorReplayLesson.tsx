@@ -140,7 +140,7 @@ export default function ErrorReplayLesson() {
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="lesson-page"
                 data-testid="error-replay-empty"
             >
                 <header className="lesson-header">
@@ -201,7 +201,7 @@ export default function ErrorReplayLesson() {
     return (
         <main
             id="main"
-            className="page lesson-page"
+            className="lesson-page"
             data-testid="error-replay-page"
         >
             <header className="lesson-header">

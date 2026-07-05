@@ -23,6 +23,7 @@ vi.mock("../../utils/notify", () => ({
 }));
 
 import AddRepo from "./AddRepo";
+import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
 
 function renderAt(search: string) {
   return render(
@@ -78,5 +79,15 @@ describe("AddRepo", () => {
   it("rejects a link with no valid repo", () => {
     renderAt("?url=not-a-repo");
     expect(screen.getByTestId("add-repo-invalid")).toBeInTheDocument();
+  });
+});
+
+describe("shared page container (#1384)", () => {
+  it("renders inside the shared PageContainer, with no deviating wrapper", async () => {
+    renderAt("?repo=jane%2Fmy-content");
+    const main = await screen.findByTestId("add-repo-page");
+    expect(main.tagName).toBe("MAIN");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
   });
 });

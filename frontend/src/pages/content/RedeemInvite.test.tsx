@@ -9,6 +9,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import RedeemInvite from "./RedeemInvite";
+import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
 
 const navigate = vi.fn();
 let params = new URLSearchParams();
@@ -76,5 +77,15 @@ describe("RedeemInvite", () => {
   it("disables submit with an empty field", () => {
     render(<RedeemInvite />);
     expect(screen.getByTestId("redeem-invite-submit")).toBeDisabled();
+  });
+});
+
+describe("shared page container (#1384)", () => {
+  it("renders inside the shared PageContainer, with no deviating wrapper", () => {
+    render(<RedeemInvite />);
+    const main = screen.getByTestId("redeem-invite-page");
+    expect(main.tagName).toBe("MAIN");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
   });
 });

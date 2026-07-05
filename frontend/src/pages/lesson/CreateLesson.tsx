@@ -21,6 +21,7 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import PageContainer from "../../shared/layout/PageContainer";
 import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
 import {Button} from "@/components/ui/button";
@@ -291,11 +292,7 @@ export default function CreateLesson() {
     }
 
     return (
-        <main
-            id="main"
-            className="page create-lesson-page"
-            data-testid="create-lesson-page"
-        >
+        <PageContainer testId="create-lesson-page">
             <header className="create-lesson-header">
                 <h1>{t("create_lesson.title", "Create a lesson")}</h1>
                 <p
@@ -568,6 +565,6 @@ export default function CreateLesson() {
                     </div>
                 </div>
             )}
-        </main>
+        </PageContainer>
     );
 }

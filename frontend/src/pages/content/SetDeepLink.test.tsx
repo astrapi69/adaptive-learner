@@ -46,6 +46,7 @@ vi.mock("../../utils/notify", () => ({
 }));
 
 import SetDeepLink from "./SetDeepLink";
+import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
 
 function makeEntry(over: Partial<ContentSetEntry> & { id: string }): ContentSetEntry {
   return {
@@ -151,5 +152,16 @@ describe("SetDeepLink (#892)", () => {
 
     await screen.findByTestId("set-deep-link-not-found");
     expect(notifyError).not.toHaveBeenCalled();
+  });
+});
+
+describe("shared page container (#1384)", () => {
+  it("renders inside the shared PageContainer, with no deviating wrapper", async () => {
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+    renderAt("unknown-set");
+    const main = await screen.findByTestId("set-deep-link-page");
+    expect(main.tagName).toBe("MAIN");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
   });
 });

@@ -30,6 +30,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
+import PageContainer from "../../shared/layout/PageContainer";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import { notify } from "../../utils/notify";
@@ -119,7 +120,7 @@ export default function SetDeepLink() {
   const goDiscover = useCallback(() => navigate("/content?tab=discover"), [navigate]);
 
   return (
-    <main id="main" className="page" data-testid="set-deep-link-page">
+    <PageContainer testId="set-deep-link-page">
       <div className="mx-auto mt-10 max-w-md rounded-md border border-[var(--border)] bg-[var(--surface)] p-6">
         {resolution === "loading" && (
           <p
@@ -223,6 +224,6 @@ export default function SetDeepLink() {
           </div>
         )}
       </div>
-    </main>
+    </PageContainer>
   );
 }

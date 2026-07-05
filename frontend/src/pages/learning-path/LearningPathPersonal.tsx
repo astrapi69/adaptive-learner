@@ -234,7 +234,7 @@ export default function LearningPathPersonal() {
         return (
             <main
                 id="main"
-                className="page learning-path-page"
+                className="learning-path-page"
                 data-testid="learning-path-page"
             >
                 <header className="mb-4 flex flex-col gap-2">
@@ -262,7 +262,7 @@ export default function LearningPathPersonal() {
     return (
         <main
             id="main"
-            className="page learning-path-page"
+            className="learning-path-page"
             data-testid="learning-path-page"
         >
             <header className="mb-4 flex flex-col gap-2">

@@ -30,6 +30,7 @@ import { Feature } from "@astrapi69/feature-strategy-react";
 import { api, ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
+import PageContainer from "../../shared/layout/PageContainer";
 import { getStorage } from "../../storage";
 import { notify } from "../../utils/notify";
 
@@ -118,24 +119,24 @@ export default function LearningRepoPage() {
 
   if (!projectId) {
     return (
-      <main className="page" data-testid="learning-repo-page-missing-id">
+      <PageContainer testId="learning-repo-page-missing-id">
         <p>{t("repo.error.missing_project", "No project selected.")}</p>
-      </main>
+      </PageContainer>
     );
   }
 
   if (loading || state === null) {
     return (
-      <main className="page" data-testid="learning-repo-page-loading">
+      <PageContainer testId="learning-repo-page-loading">
         <p>{t("repo.loading", "Rendering repository…")}</p>
-      </main>
+      </PageContainer>
     );
   }
 
   const activeContent = state.files[activeFile] ?? "";
 
   return (
-    <main className="page learning-repo-page" data-testid="learning-repo-page">
+    <PageContainer testId="learning-repo-page">
       <header className="learning-repo-header">
         <h1>{t("repo.page.title", "Learning Repository")}</h1>
         <div className="learning-repo-actions">
@@ -242,7 +243,7 @@ export default function LearningRepoPage() {
           </Markdown>
         </article>
       </div>
-    </main>
+    </PageContainer>
   );
 }
 
