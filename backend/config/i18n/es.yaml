@@ -572,6 +572,8 @@ settings:
   section_danger: Cuenta
   section_ui: "Interfaz"
   section_appearance: "Apariencia"
+  section_content_tabs: "Orden de las pestañas de Contenido"
+  content_tabs_desc: "Elige el orden de las pestañas en el área de Contenido. La primera pestaña se abre por defecto."
   content_view: "Vista de contenidos"
   content_view_description: "Cómo se muestra el contenido descargado en las pestañas de contenido. El conmutador rápido de la vista de contenido cambia la misma opción."
   section_profile: "Perfil"

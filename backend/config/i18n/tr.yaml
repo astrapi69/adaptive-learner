@@ -572,6 +572,8 @@ settings:
   section_danger: Hesap
   section_ui: Arayüz
   section_appearance: "Görünüm"
+  section_content_tabs: "İçerik sekmeleri sırası"
+  content_tabs_desc: "İçerik alanındaki sekmelerin sırasını seç. İlk sekme varsayılan olarak açılır."
   content_view: "İçerik görünümü"
   content_view_description: "İndirilen içeriğin içerik sekmelerinde nasıl gösterileceği. İçerik görünümündeki hızlı geçiş aynı ayarı değiştirir."
   section_profile: "Profil"

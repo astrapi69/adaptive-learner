@@ -612,6 +612,8 @@
     "section_danger": "Konto",
     "section_ui": "Oberfläche",
     "section_appearance": "Darstellung",
+    "section_content_tabs": "Reihenfolge der Inhalte-Tabs",
+    "content_tabs_desc": "Wähle die Reihenfolge der Tabs im Inhalte-Bereich. Der erste Tab ist beim Öffnen aktiv.",
     "content_view": "Ansicht der Inhalte",
     "content_view_description": "Wie heruntergeladene Inhalte in den Inhalte-Tabs angezeigt werden. Der Schnellumschalter in der Inhalte-Ansicht ändert dieselbe Einstellung.",
     "section_profile": "Profil",

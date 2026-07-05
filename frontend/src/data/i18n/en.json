@@ -612,6 +612,8 @@
     "section_danger": "Account",
     "section_ui": "Interface",
     "section_appearance": "Appearance",
+    "section_content_tabs": "Content tabs order",
+    "content_tabs_desc": "Choose the order of the tabs in the Content area. The first tab opens by default.",
     "content_view": "Content view",
     "content_view_description": "How downloaded content is shown across the content tabs. The quick toggle in the content view changes the same setting.",
     "section_profile": "Profile",

@@ -572,6 +572,8 @@ settings:
   section_danger: アカウント
   section_ui: インターフェース
   section_appearance: "外観"
+  section_content_tabs: "コンテンツタブの順序"
+  content_tabs_desc: "コンテンツ画面のタブの順序を選びます。最初のタブが既定で開きます。"
   content_view: "コンテンツの表示"
   content_view_description: "ダウンロードしたコンテンツをコンテンツタブでどのように表示するか。コンテンツ表示内のクイック切り替えも同じ設定を変更します。"
   section_profile: "プロフィール"

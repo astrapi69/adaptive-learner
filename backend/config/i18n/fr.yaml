@@ -572,6 +572,8 @@ settings:
   section_danger: Compte
   section_ui: Interface
   section_appearance: "Apparence"
+  section_content_tabs: "Ordre des onglets Contenu"
+  content_tabs_desc: "Choisis l'ordre des onglets dans la zone Contenu. Le premier onglet s'ouvre par défaut."
   content_view: "Affichage du contenu"
   content_view_description: "Comment le contenu téléchargé est affiché dans les onglets de contenu. Le commutateur rapide de la vue de contenu modifie le même réglage."
   section_profile: "Profil"
