@@ -28,6 +28,7 @@ import {
 import ShareResultButton from "../../share/ShareResultButton";
 import { useCountUp } from "../../../hooks/ui/useCountUp";
 import { useFeedbackIntensity } from "../../../hooks/settings/useFeedbackIntensity";
+import { useCorrectionRoundEnabled } from "../../../hooks/settings/useCorrectionRoundEnabled";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import LessonFavoriteToggle from "../chrome/LessonFavoriteToggle";
 import { useNextStepSuggestions } from "../../../hooks/learning/useNextStepSuggestions";
@@ -258,6 +259,11 @@ export default function LessonSummary({
     (configForMode(lessonMode).xpMultiplier - 1) * 100,
   );
 
+
+  // #1376 — whether the correction round is shown in the summary (default on;
+  // toggled in Settings → Learning). Disabling it only hides it here; the same
+  // errors stay reachable through the "Fehler wiederholen" / SRS review path.
+  const correctionRoundEnabled = useCorrectionRoundEnabled();
 
   // The exact exercises failed in THIS run — drives the
   // "Retry Errors" card + the ErrorReplay page (via router state).
@@ -593,31 +599,6 @@ export default function LessonSummary({
         onDownloadJson={handleDownloadJson}
       />
 
-      {/* Phase 52F / v1.35.0 — correction round. Self-hides
-                when the lesson was a perfect score, when no
-                ElementError rows exist for it, OR when no cloze
-                can be generated from the available errors. Users
-                can skip; the Next-lesson button below stays
-                visible throughout. */}
-      {progress && userId && (
-        <CorrectionBlock
-          lesson={lesson}
-          progress={progress}
-          userId={userId}
-          setId={setId}
-          lessonFilename={lessonFilename}
-          onComplete={() => {
-            // Best-effort improvement counter is rendered
-            // inside CorrectionBlock's "complete" surface;
-            // nothing further needed at the parent level.
-          }}
-          onSkip={() => {
-            // Skip is purely a UI dismissal — the action
-            // row below was always visible.
-          }}
-        />
-      )}
-
       {/* Completion is a distinct action from navigation, so
                 it keeps its own prominent button above the smart
                 suggestion cards. */}
@@ -693,6 +674,31 @@ export default function LessonSummary({
           {t("lesson.summary.back_to_browser", "Back to content browser")}
         </Button>
       </div>
+
+      {/* Phase 52F / v1.35.0 — correction round, now optional (#1376) and
+                placed LAST, below the whole "next steps" area. Self-hides when
+                the lesson was a perfect score, when no ElementError rows exist,
+                OR when no cloze can be generated. Disabled via Settings →
+                Learning; the same errors stay reachable through "Fehler
+                wiederholen" / SRS review either way. */}
+      {correctionRoundEnabled && progress && userId && (
+        <CorrectionBlock
+          lesson={lesson}
+          progress={progress}
+          userId={userId}
+          setId={setId}
+          lessonFilename={lessonFilename}
+          onComplete={() => {
+            // Best-effort improvement counter is rendered
+            // inside CorrectionBlock's "complete" surface;
+            // nothing further needed at the parent level.
+          }}
+          onSkip={() => {
+            // Skip is purely a UI dismissal — the action
+            // row above was always visible.
+          }}
+        />
+      )}
     </section>
   );
 }

@@ -6,6 +6,8 @@
 
 export * from "./ContentViewControl";
 export { default as ContentViewControl } from "./ContentViewControl";
+export * from "./CorrectionRoundControl";
+export { default as CorrectionRoundControl } from "./CorrectionRoundControl";
 export * from "./DirectionStrategyControl";
 export { default as DirectionStrategyControl } from "./DirectionStrategyControl";
 export * from "./HintSettingsControl";
