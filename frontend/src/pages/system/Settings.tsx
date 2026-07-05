@@ -23,6 +23,7 @@ import DailyRemindersControl from "../../components/settings/controls/reminders/
 import HintSettingsControl from "../../components/settings/controls/lesson/HintSettingsControl";
 import LessonModeControl from "../../components/settings/controls/lesson/LessonModeControl";
 import ReviewSettingsControl from "../../components/settings/controls/lesson/ReviewSettingsControl";
+import CorrectionRoundControl from "../../components/settings/controls/lesson/CorrectionRoundControl";
 import LearningProfileControl from "../../components/assessment/LearningProfileControl";
 import MaxLessonSizeControl from "../../components/settings/controls/lesson/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../../components/settings/controls/lesson/PausedLessonsRetentionControl";
@@ -694,6 +695,7 @@ export default function Settings() {
         <MatchingResolveControl />
         <HintSettingsControl />
         <ReviewSettingsControl />
+        <CorrectionRoundControl />
         <SrsTransparencySection />
         <DailyRemindersControl />
         <PausedLessonsRetentionControl />
