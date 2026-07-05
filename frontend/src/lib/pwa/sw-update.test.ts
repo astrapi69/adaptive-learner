@@ -10,6 +10,7 @@ import {
   activateAndReload,
   activateInBackground,
   checkForUpdate,
+  checkForUpdateReliable,
 } from "./sw-update";
 import type { VersionManifest } from "./version-check";
 
@@ -68,6 +69,119 @@ describe("checkForUpdate", () => {
       jsonFetch({ version: "1.85.0", buildHash: "ccccccc" }),
     );
     expect(r.status).toBe("available");
+  });
+});
+
+describe("checkForUpdateReliable (#1374 — awaits the SW cycle)", () => {
+  interface FakeWorker {
+    state: string;
+    addEventListener: (ev: string, cb: () => void) => void;
+    emitStateChange: () => void;
+  }
+  function makeWorker(state = "installing"): FakeWorker {
+    const cbs: Array<() => void> = [];
+    return {
+      state,
+      addEventListener: (_ev, cb) => cbs.push(cb),
+      emitStateChange: () => cbs.forEach((c) => c()),
+    };
+  }
+  function makeReg(opts: {
+    waiting?: unknown;
+    installing?: FakeWorker | null;
+  }): ServiceWorkerRegistration {
+    return {
+      waiting: opts.waiting,
+      installing: opts.installing ?? null,
+      addEventListener: vi.fn(),
+      update: vi.fn(async () => {}),
+    } as unknown as ServiceWorkerRegistration;
+  }
+  const currentJson = jsonFetch({ version: "1.85.0", buildHash: "aaaaaaa" });
+
+  it("'available' immediately when a worker is already waiting (wins over a matching version.json)", async () => {
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: currentJson,
+      getRegistration: async () => makeReg({ waiting: {} }),
+      hasController: () => true,
+      timeoutMs: 100,
+    });
+    expect(r.status).toBe("available");
+  });
+
+  it("'available' on a newer version.json with no service worker", async () => {
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: jsonFetch({ version: "1.86.0", buildHash: "bbbbbbb" }),
+      getRegistration: async () => null,
+      hasController: () => false,
+      timeoutMs: 100,
+    });
+    expect(r.status).toBe("available");
+    expect(r.latestVersion).toBe("1.86.0");
+  });
+
+  it("'available' when an installing worker reaches 'installed' under a controller", async () => {
+    const worker = makeWorker("installing");
+    const reg = makeReg({ installing: worker });
+    const p = checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: currentJson,
+      getRegistration: async () => reg,
+      hasController: () => true,
+      timeoutMs: 1000,
+    });
+    // Let reg.update() resolve and the installing-watcher attach.
+    await Promise.resolve();
+    await Promise.resolve();
+    worker.state = "installed";
+    worker.emitStateChange();
+    expect((await p).status).toBe("available");
+  });
+
+  it("'current' fast-path when reg.update() yields no new worker (no timeout wait)", async () => {
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: currentJson,
+      getRegistration: async () => makeReg({}),
+      hasController: () => false,
+      timeoutMs: 5000,
+    });
+    expect(r.status).toBe("current");
+  });
+
+  it("'error' when version.json is unreadable and no worker is waiting", async () => {
+    const offline = vi.fn(async () => {
+      throw new Error("down");
+    }) as unknown as typeof fetch;
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: offline,
+      getRegistration: async () => null,
+      hasController: () => false,
+      timeoutMs: 100,
+    });
+    expect(r.status).toBe("error");
+    expect(r.latestVersion).toBeNull();
+  });
+
+  it("times out to a non-blocking result when the SW cycle stalls", async () => {
+    const worker = makeWorker("installing"); // never advances
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: currentJson,
+      getRegistration: async () => makeReg({ installing: worker }),
+      hasController: () => true,
+      timeoutMs: 20,
+    });
+    expect(r.status).toBe("current");
   });
 });
 
