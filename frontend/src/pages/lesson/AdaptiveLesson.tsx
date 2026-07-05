@@ -150,7 +150,7 @@ export default function AdaptiveLessonPage() {
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-error"
       >
         <p>
@@ -184,7 +184,7 @@ export default function AdaptiveLessonPage() {
   return (
     <main
       id="main"
-      className="page lesson-page"
+      className="lesson-page"
       data-testid="adaptive-lesson-page"
     >
       <header className="lesson-header">
@@ -279,7 +279,7 @@ function renderAdaptiveLessonStatus(
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-missing-params"
       >
         <h1>{t("adaptive.page_title", "Adaptive Lesson")}</h1>
@@ -291,7 +291,7 @@ function renderAdaptiveLessonStatus(
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-loading"
       >
         <p>{t("adaptive.loading", "Analyzing your errors…")}</p>
@@ -302,7 +302,7 @@ function renderAdaptiveLessonStatus(
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-empty"
       >
         <header className="lesson-header">
@@ -332,7 +332,7 @@ function renderAdaptiveLessonStatus(
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-not-cached"
       >
         <header className="lesson-header">

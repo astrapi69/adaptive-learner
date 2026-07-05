@@ -441,7 +441,7 @@ export default function LessonPage() {
   return (
     <main
       id="main"
-      className="page lesson-page flex flex-col min-h-full"
+      className="lesson-page flex flex-col min-h-full"
       data-testid="lesson-page"
     >
       <LessonHeader

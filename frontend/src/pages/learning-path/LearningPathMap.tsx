@@ -196,7 +196,7 @@ export default function LearningPathMap({headerExtra}: LearningPathMapProps) {
     return (
         <main
             id="main"
-            className="page learning-path-page"
+            className="learning-path-page"
             data-testid="learning-path-page"
         >
             <header className="mb-4 flex flex-wrap items-center justify-between gap-2">

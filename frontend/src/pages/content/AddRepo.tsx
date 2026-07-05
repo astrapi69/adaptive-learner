@@ -25,6 +25,7 @@ import {
   type SyncProgress,
 } from "../../lib/content/repos/content-repos";
 import { validateUserRepo } from "../../lib/content/repos/content-repo-validate";
+import PageContainer from "../../shared/layout/PageContainer";
 import { notify } from "../../utils/notify";
 
 export default function AddRepo() {
@@ -98,7 +99,7 @@ export default function AddRepo() {
   }, [parsed, branch, url, navigate, t]);
 
   return (
-    <main id="main" className="page" data-testid="add-repo-page">
+    <PageContainer testId="add-repo-page">
       <div className="mx-auto mt-10 max-w-md rounded-md border border-[var(--border)] bg-[var(--surface)] p-6">
         <h1 className="m-0 text-xl font-semibold">
           {t("content_repo.add_link.title", "Add this content repository?")}
@@ -192,6 +193,6 @@ export default function AddRepo() {
           </>
         )}
       </div>
-    </main>
+    </PageContainer>
   );
 }
