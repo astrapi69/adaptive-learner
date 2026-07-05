@@ -162,6 +162,30 @@ describe("UpdateCheckControl", () => {
     );
   });
 
+  it("shows the honest 'preparing' state — never 'up to date' — when the new build's SW is not ready yet (#1382)", async () => {
+    stubNoNetwork();
+    checkForUpdateReliable.mockResolvedValue({
+      status: "preparing",
+      latestVersion: "1.99.0",
+      latestHash: "bbb2222",
+    });
+    render(<UpdateCheckControl />);
+    fireEvent.click(screen.getByTestId("update-check-button"));
+    await waitFor(() =>
+      expect(screen.getByTestId("update-check-status")).toHaveAttribute(
+        "data-status",
+        "preparing",
+      ),
+    );
+    // Honest wording, no dead apply CTA, and the check button stays one
+    // click away ("gleich erneut pruefen").
+    expect(screen.getByTestId("update-check-status")).toHaveTextContent(
+      /being prepared/i,
+    );
+    expect(screen.queryByTestId("update-check-apply")).toBeNull();
+    expect(screen.getByTestId("update-check-button")).toBeEnabled();
+  });
+
   it("shows a friendly error when the check fails (offline/timeout)", async () => {
     stubNoNetwork();
     checkForUpdateReliable.mockResolvedValue({

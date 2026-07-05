@@ -95,7 +95,7 @@ describe("useAppUpdate", () => {
   // re-offers the banner.
   it("re-shows the banner for a newer version once the quiet window passed (#846)", async () => {
     const { recordUpdateAccepted } = await import("../../lib/pwa/update-accept");
-    recordUpdateAccepted("999.0.0", Date.now() - 2 * 60 * 60 * 1000);
+    recordUpdateAccepted("999.0.0", null, Date.now() - 2 * 60 * 60 * 1000);
     // New browser session: the in-session guard does not carry over.
     sessionStorage.clear();
 

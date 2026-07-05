@@ -65,7 +65,11 @@ export default function UpdateCheckControl() {
   }, [online]);
 
   const busy = phase === "checking";
-  const showAvailable = updateAvailable && !busy;
+  // #1382 — "preparing": a newer build is deployed but its service worker is
+  // not fetchable yet (edge-cache window). No apply CTA (it would be dead);
+  // the check button stays so "check again shortly" is one click away.
+  const preparing = phase === "preparing";
+  const showAvailable = updateAvailable && !busy && !preparing;
 
   return (
     <div data-testid="update-check" className="mt-3 flex flex-col gap-2">
@@ -118,6 +122,20 @@ export default function UpdateCheckControl() {
             ? t("about.checking", "Checking…")
             : t("about.check_update", "Check for updates")}
         </Button>
+      )}
+
+      {preparing && (
+        <p
+          data-testid="update-check-status"
+          data-status="preparing"
+          role="status"
+          className="m-0 text-sm font-medium text-fg-primary"
+        >
+          {t(
+            "about.update_preparing",
+            "A new build is available and is being prepared. Check again in a moment.",
+          )}
+        </p>
       )}
 
       {!showAvailable && phase === "current" && (

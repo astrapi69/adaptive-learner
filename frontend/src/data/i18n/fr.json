@@ -983,6 +983,7 @@
     "checking": "Vérification…",
     "update_available": "La version {version} est disponible !",
     "up_to_date": "Tu utilises la dernière version.",
+    "update_preparing": "Un nouveau build est disponible et en cours de préparation. Vérifie à nouveau dans un instant.",
     "check_failed": "Échec de la vérification. Es-tu en ligne ?",
     "last_checked": "Dernière vérification : {when}",
     "never_checked": "Jamais vérifié",

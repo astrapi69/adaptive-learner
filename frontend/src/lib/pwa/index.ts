@@ -6,6 +6,6 @@ export { CURRENT_BUILD, activateAndReload, activateInBackground, checkForUpdate,
 export type { BackgroundActivateOptions, UpdateCheckOutcome, UpdateCheckStatus } from "./sw-update";
 export { SYNC_QUEUE_CHANGED_EVENT, clearSyncQueue, enqueueRequest, getSyncQueue, initSyncQueueReplay, replaySyncQueue, syncQueueSize } from "./sync-queue";
 export type { SyncQueueItem } from "./sync-queue";
-export { ACCEPTED_AT_KEY, ACCEPTED_SESSION_KEY, ACCEPTED_VERSION_KEY, ACCEPT_QUIET_MS, readAcceptedAt, readAcceptedThisSession, readAcceptedVersion, recordUpdateAccepted, shouldShowUpdateBanner } from "./update-accept";
-export { fetchLatestVersion, isUpdateAvailable, parseVersionManifest } from "./version-check";
+export { ACCEPTED_AT_KEY, ACCEPTED_HASH_KEY, ACCEPTED_SESSION_KEY, ACCEPTED_VERSION_KEY, ACCEPT_QUIET_MS, readAcceptedAt, readAcceptedHash, readAcceptedThisSession, readAcceptedVersion, recordUpdateAccepted, shouldShowUpdateBanner } from "./update-accept";
+export { fetchLatestVersion, isUpdateAvailable, knownBuildHash, parseVersionManifest } from "./version-check";
 export type { VersionManifest } from "./version-check";

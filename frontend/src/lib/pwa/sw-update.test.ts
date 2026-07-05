@@ -171,6 +171,63 @@ describe("checkForUpdateReliable (#1374 — awaits the SW cycle)", () => {
     expect(r.latestVersion).toBeNull();
   });
 
+  // #1382 — the explicit Latest case: the version NEVER changes between
+  // Latest deploys, only the build hash moves. A newer hash must never be
+  // classified "current".
+  it("'preparing' when the manifest carries a newer hash (same version) but the SW cycle yields no waiting worker (#1382)", async () => {
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: jsonFetch({ version: "1.85.0", buildHash: "ddd4444" }),
+      getRegistration: async () => makeReg({}),
+      hasController: () => true,
+      timeoutMs: 100,
+    });
+    expect(r.status).toBe("preparing");
+    expect(r.latestVersion).toBe("1.85.0");
+    expect(r.latestHash).toBe("ddd4444");
+  });
+
+  it("'available' when the manifest is newer AND a worker is waiting (#1382)", async () => {
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: jsonFetch({ version: "1.85.0", buildHash: "ddd4444" }),
+      getRegistration: async () => makeReg({ waiting: {} }),
+      hasController: () => true,
+      timeoutMs: 100,
+    });
+    expect(r.status).toBe("available");
+    expect(r.latestHash).toBe("ddd4444");
+  });
+
+  it("'available' (not preparing) on a newer manifest when there is NO service worker at all (#1382)", async () => {
+    // Without a SW there is nothing to "prepare" — a plain reload serves the
+    // new build, so the apply CTA is honest.
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: jsonFetch({ version: "1.85.0", buildHash: "ddd4444" }),
+      getRegistration: async () => null,
+      hasController: () => false,
+      timeoutMs: 100,
+    });
+    expect(r.status).toBe("available");
+  });
+
+  it("'current' carries the deployed hash when it matches (#1382)", async () => {
+    const r = await checkForUpdateReliable({
+      current,
+      url: "/v.json",
+      fetchImpl: currentJson,
+      getRegistration: async () => makeReg({}),
+      hasController: () => false,
+      timeoutMs: 100,
+    });
+    expect(r.status).toBe("current");
+    expect(r.latestHash).toBe("aaaaaaa");
+  });
+
   it("times out to a non-blocking result when the SW cycle stalls", async () => {
     const worker = makeWorker("installing"); // never advances
     const r = await checkForUpdateReliable({

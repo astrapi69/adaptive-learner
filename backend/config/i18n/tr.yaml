@@ -913,6 +913,7 @@ about:
   checking: "Denetleniyor…"
   update_available: "{version} sürümü mevcut!"
   up_to_date: "En son sürümü kullanıyorsunuz."
+  update_preparing: "Yeni bir derleme mevcut ve hazırlanıyor. Birazdan tekrar kontrol edin."
   check_failed: "Denetleme başarısız. Çevrimiçi misiniz?"
   last_checked: "Son denetleme: {when}"
   never_checked: "Hiç denetlenmedi"

@@ -983,6 +983,7 @@
     "checking": "Prüfe…",
     "update_available": "Version {version} ist verfügbar!",
     "up_to_date": "Du hast die neueste Version.",
+    "update_preparing": "Ein neuer Build ist verfügbar und wird vorbereitet. Prüfe gleich noch einmal.",
     "check_failed": "Prüfung fehlgeschlagen. Bist du online?",
     "last_checked": "Letzte Prüfung: {when}",
     "never_checked": "Noch nie geprüft",

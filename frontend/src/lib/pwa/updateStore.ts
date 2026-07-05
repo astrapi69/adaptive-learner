@@ -29,7 +29,11 @@ import {
   recordUpdateAccepted,
   shouldShowUpdateBanner,
 } from "./update-accept";
-import { fetchLatestVersion, isUpdateAvailable } from "./version-check";
+import {
+  fetchLatestVersion,
+  isUpdateAvailable,
+  knownBuildHash,
+} from "./version-check";
 
 const LAST_CHECKED_KEY = "adaptive-learner.update.lastCheckedAt";
 
@@ -43,6 +47,8 @@ export interface UpdateStoreState {
   updateAvailable: boolean;
   /** The deployed version (from version.json / a check), when known. */
   latestVersion: string | null;
+  /** The deployed build hash (from version.json / a check), when known (#1382). */
+  latestHash: string | null;
   /** In-memory banner dismiss ("Später"/X) for the current app session. */
   dismissed: boolean;
   /** Epoch-ms of the last completed explicit check, or ``null``. */
@@ -73,6 +79,7 @@ function initialState(): UpdateStoreState {
     phase: "idle",
     updateAvailable: false,
     latestVersion: null,
+    latestHash: null,
     dismissed: false,
     lastCheckedAt: readLastChecked(),
   };
@@ -114,7 +121,12 @@ export function ensureUpdateStoreInit(online: boolean): void {
 
   void (async () => {
     const latest = await fetchLatestVersion(versionJsonUrl());
-    if (latest) setState({ latestVersion: latest.version });
+    if (latest) {
+      setState({
+        latestVersion: latest.version,
+        latestHash: knownBuildHash(latest),
+      });
+    }
     if (isUpdateAvailable(CURRENT_BUILD, latest)) {
       setState({ updateAvailable: true });
     }
@@ -159,11 +171,15 @@ export async function checkUpdateNow(): Promise<void> {
   const outcome = await checkForUpdateReliable();
   const now = Date.now();
   writeLastChecked(now);
-  if (outcome.status === "available") {
+  if (outcome.status === "available" || outcome.status === "preparing") {
+    // preparing (#1382): a newer build IS deployed (the hash is the truth),
+    // only the fresh service worker is not fetchable yet — keep the update
+    // flagged and let the UI show the honest "being prepared" state.
     setState({
-      phase: "available",
+      phase: outcome.status,
       updateAvailable: true,
       latestVersion: outcome.latestVersion,
+      latestHash: outcome.latestHash,
       lastCheckedAt: now,
     });
   } else if (outcome.status === "current") {
@@ -171,6 +187,7 @@ export async function checkUpdateNow(): Promise<void> {
       phase: "current",
       updateAvailable: false,
       latestVersion: outcome.latestVersion,
+      latestHash: outcome.latestHash,
       lastCheckedAt: now,
     });
   } else {
@@ -185,7 +202,7 @@ export async function checkUpdateNow(): Promise<void> {
  * in the background (reloads only when a fresh worker takes control).
  */
 export function applyUpdateNow(): void {
-  recordUpdateAccepted(state.latestVersion);
+  recordUpdateAccepted(state.latestVersion, state.latestHash);
   setState({ updateAvailable: false, dismissed: true, phase: "idle" });
   void activateInBackground();
 }
@@ -204,7 +221,7 @@ export function bannerVisible(): boolean {
   return (
     state.updateAvailable &&
     !state.dismissed &&
-    shouldShowUpdateBanner(state.latestVersion)
+    shouldShowUpdateBanner(state.latestVersion, state.latestHash)
   );
 }
 
