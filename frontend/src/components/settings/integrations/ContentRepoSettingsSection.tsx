@@ -17,19 +17,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import QRCode from "qrcode";
-import {
-  ArrowDown,
-  ArrowUp,
-  BookOpen,
-  Copy,
-  FolderGit2,
-  Link2,
-  Loader2,
-  RefreshCw,
-  Share2,
-  Star,
-  Trash2,
-} from "lucide-react";
+import { BookOpen, Link2, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,8 +25,7 @@ import DownloadProgress from "../../../shared/feedback/DownloadProgress";
 import { SecretInput } from "../../../shared/forms/SecretInput";
 import { buildAddRepoLink, parseAddRepoQr } from "../../../lib/content/placement/share-link";
 import { QrImageUpload } from "../../../shared/qr";
-import RepoCategoryBadge from "../../content/RepoCategoryBadge";
-import InviteCodesPanel from "../../content/invites/InviteCodesPanel";
+import ContentRepoRow from "./ContentRepoRow";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
 import {
@@ -49,7 +36,6 @@ import {
   parseGitHubRepoUrl,
   readUserRepos,
   removeUserRepo,
-  resolveRepoCategory,
   syncUserRepo,
   syncPhaseI18n,
   userRepoSource,
@@ -539,262 +525,29 @@ export default function ContentRepoSettingsSection() {
           {repos.map((repo, index) => {
             const source = userRepoSource(repo.owner, repo.repo);
             return (
-              <li
+              <ContentRepoRow
                 key={source}
-                className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-3"
-                data-testid={`content-repo-item-${repo.owner}-${repo.repo}`}
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <FolderGit2
-                    className="h-5 w-5 text-[var(--fg-muted)]"
-                    aria-hidden="true"
-                  />
-                  <span className="font-medium">{source}</span>
-                  <span className="text-xs text-[var(--fg-muted)]">
-                    @{repo.branch}
-                  </span>
-                  {/* #1319 — one unified, typed category badge (official /
-                      private / validated / unverified) replaces the previously
-                      scattered trust + coach + recommended inline badges. */}
-                  <RepoCategoryBadge
-                    category={resolveRepoCategory({
-                      source,
-                      trust: repo.trust,
-                      coach: repo.coach,
-                      recommended: isRecommendedSource(source, recommended),
-                    })}
-                    t={t}
-                    testId={`content-repo-category-${repo.owner}-${repo.repo}`}
-                  />
-                </div>
-                <p className="m-0 mt-1 text-sm text-[var(--fg-muted)]">
-                  {repo.last_synced
-                    ? t("content_repo.last_sync", "Last sync: {when}").replace(
-                        "{when}",
-                        new Date(repo.last_synced).toLocaleString(),
-                      )
-                    : t("content_repo.status.never_synced", "Not synced yet")}
-                  {" · "}
-                  {t("content_repo.user.counts", "{sets} sets · {lessons} lessons")
-                    .replace("{sets}", String(repo.set_count))
-                    .replace("{lessons}", String(repo.lesson_count))}
-                </p>
-                <div
-                  className="mt-2 flex items-center gap-1"
-                  role="radiogroup"
-                  aria-label={t("content_repo.rating.aria", "Your rating")}
-                  data-testid={`content-repo-rating-${repo.owner}-${repo.repo}`}
-                >
-                  <span className="mr-1 text-xs text-[var(--fg-muted)]">
-                    {t("content_repo.rating.label", "Your rating")}
-                  </span>
-                  {[1, 2, 3, 4, 5].map((n) => {
-                    const rated = (ratings[source] ?? 0) >= n;
-                    return (
-                      <button
-                        key={n}
-                        type="button"
-                        className="inline-flex h-11 w-7 items-center justify-center text-[var(--star)]"
-                        onClick={() => handleRate(source, n)}
-                        role="radio"
-                        aria-checked={(ratings[source] ?? 0) === n}
-                        aria-label={t(
-                          "content_repo.rating.star",
-                          "Rate {n} of 5",
-                        ).replace("{n}", String(n))}
-                        data-testid={`content-repo-rating-${repo.owner}-${repo.repo}-star-${n}`}
-                      >
-                        <Star
-                          className="h-4 w-4"
-                          aria-hidden="true"
-                          fill={rated ? "currentColor" : "none"}
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* #1388 — running state + failure feedback AT the row. */}
-                {syncing === source && (
-                  <p
-                    className="m-0 mt-1 flex items-center gap-2 text-sm text-[var(--fg-muted)]"
-                    role="status"
-                    aria-live="polite"
-                    data-testid={`content-repo-syncing-${repo.owner}-${repo.repo}`}
-                  >
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                    {progress?.label ??
-                      t("content_repo.progress.syncing", "Syncing…")}
-                  </p>
-                )}
-                {rowErrors[source] && syncing !== source && (
-                  <p
-                    className="m-0 mt-1 text-sm font-medium text-[var(--error)]"
-                    role="alert"
-                    data-testid={`content-repo-sync-error-${repo.owner}-${repo.repo}`}
-                  >
-                    {rowErrors[source]}
-                  </p>
-                )}
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    className="min-h-11 gap-2"
-                    onClick={() => handleSync(source)}
-                    disabled={busy || syncing !== null}
-                    data-testid={`content-repo-sync-${repo.owner}-${repo.repo}`}
-                  >
-                    {syncing === source ? (
-                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                    ) : (
-                      <RefreshCw className="h-4 w-4" aria-hidden="true" />
-                    )}
-                    {t("content_repo.action.sync", "Sync now")}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="min-h-11"
-                    onClick={() => handleMove(source, -1)}
-                    disabled={busy || index === 0}
-                    aria-label={t("content_repo.action.move_up", "Move up")}
-                    title={t("content_repo.action.move_up", "Move up")}
-                    data-testid={`content-repo-up-${repo.owner}-${repo.repo}`}
-                  >
-                    <ArrowUp className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="min-h-11"
-                    onClick={() => handleMove(source, 1)}
-                    disabled={busy || index === repos.length - 1}
-                    aria-label={t("content_repo.action.move_down", "Move down")}
-                    title={t("content_repo.action.move_down", "Move down")}
-                    data-testid={`content-repo-down-${repo.owner}-${repo.repo}`}
-                  >
-                    <ArrowDown className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  {/* #1093 — owner-only Teilen: a repo added by redeeming an
-                      invitation code is a guest copy, so it offers no re-share. */}
-                  {!repo.shared_via_invite && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="min-h-11 gap-2"
-                      onClick={() => handleShare(repo)}
-                      disabled={busy}
-                      data-testid={`content-repo-share-${repo.owner}-${repo.repo}`}
-                    >
-                      <Share2 className="h-4 w-4" aria-hidden="true" />
-                      {t("content_repo.action.share", "Share")}
-                    </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant={confirmRemove === source ? "destructive" : "outline"}
-                    size="sm"
-                    className="min-h-11 gap-2"
-                    onClick={() => handleRemove(source)}
-                    disabled={busy}
-                    data-testid={`content-repo-remove-${repo.owner}-${repo.repo}`}
-                  >
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    {confirmRemove === source
-                      ? t("content_repo.action.confirm_remove", "Confirm remove")
-                      : t("content_repo.action.remove", "Remove")}
-                  </Button>
-                </div>
-                {share?.source === source && (
-                  <div
-                    className="mt-3 rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] p-3"
-                    data-testid={`content-repo-share-panel-${repo.owner}-${repo.repo}`}
-                  >
-                    {/* #1093 — Teilen splits into Link sharing + Invitation codes. */}
-                    <div
-                      className="mb-3 flex gap-1"
-                      role="tablist"
-                      aria-label={t("content_repo.action.share", "Share")}
-                    >
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant={shareTab === "link" ? "default" : "outline"}
-                        className="min-h-9"
-                        role="tab"
-                        aria-selected={shareTab === "link"}
-                        onClick={() => setShareTab("link")}
-                        data-testid="content-repo-share-tab-link"
-                      >
-                        {t("content_repo.share.tab_link", "Link")}
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant={shareTab === "codes" ? "default" : "outline"}
-                        className="min-h-9"
-                        role="tab"
-                        aria-selected={shareTab === "codes"}
-                        onClick={() => setShareTab("codes")}
-                        data-testid="content-repo-share-tab-codes"
-                      >
-                        {t("invitation_code.title", "Invitation codes")}
-                      </Button>
-                    </div>
-
-                    {shareTab === "link" ? (
-                      <>
-                        <p className="m-0 text-sm text-[var(--fg-muted)]">
-                          {t(
-                            "content_repo.share.hint",
-                            "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately.",
-                          )}
-                        </p>
-                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                          <Input
-                            type="text"
-                            readOnly
-                            value={share.link}
-                            className="min-w-[16rem] flex-1"
-                            data-testid="content-repo-share-link"
-                            onFocus={(e) => e.currentTarget.select()}
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="min-h-11 gap-2"
-                            onClick={() => handleCopyLink(share.link)}
-                            data-testid="content-repo-share-copy"
-                          >
-                            <Copy className="h-4 w-4" aria-hidden="true" />
-                            {t("content_repo.share.copy", "Copy")}
-                          </Button>
-                        </div>
-                        {share.qr && (
-                          <img
-                            src={share.qr}
-                            alt={t("content_repo.share.qr_alt", "QR code for the share link")}
-                            className="mt-3 rounded-sm"
-                            width={180}
-                            height={180}
-                            data-testid="content-repo-share-qr"
-                          />
-                        )}
-                      </>
-                    ) : (
-                      <InviteCodesPanel
-                        source={source}
-                        branch={repo.branch}
-                        token={resolveRepoToken(source)}
-                      />
-                    )}
-                  </div>
-                )}
-              </li>
+                repo={repo}
+                recommended={isRecommendedSource(source, recommended)}
+                rating={ratings[source] ?? 0}
+                onRate={(n) => handleRate(source, n)}
+                isSyncing={syncing === source}
+                rowError={rowErrors[source]}
+                progressLabel={progress?.label}
+                actionsDisabled={busy || syncing !== null}
+                confirmRemove={confirmRemove === source}
+                isFirst={index === 0}
+                isLast={index === repos.length - 1}
+                share={share?.source === source ? share : null}
+                shareTab={shareTab}
+                setShareTab={setShareTab}
+                token={resolveRepoToken(source)}
+                onSync={() => handleSync(source)}
+                onMove={(direction) => handleMove(source, direction)}
+                onToggleShare={() => handleShare(repo)}
+                onRemove={() => handleRemove(source)}
+                onCopyLink={handleCopyLink}
+              />
             );
           })}
         </ul>
