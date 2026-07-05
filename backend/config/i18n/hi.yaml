@@ -1895,6 +1895,9 @@ lesson:
     adaptive_errors: 'इस पाठ में {count} गलतियाँ'
     error_replay: गलतियाँ दोहराएँ
     error_replay_detail: '{count} अभ्यास फिर से'
+    error_replay_corrected: "{total} में से {corrected} ठीक किए गए"
+    all_corrected: "सभी गलतियाँ ठीक कर दी गईं!"
+    all_corrected_detail: "बढ़िया, कोई बाकी गलती नहीं।"
     errors_corrected: सभी गलतियाँ सुधार ली गईं!
     still_errors: अभी भी {count} गलतियाँ। फिर से कोशिश करें?
     review: पुनरावलोकन

@@ -26,7 +26,15 @@
  * suppresses the animation (no ``is-animated`` class, no delay).
  */
 
-import {ArrowRight, Play, RefreshCw, RotateCcw, Target, Trophy} from "lucide-react";
+import {
+    ArrowRight,
+    CheckCircle2,
+    Play,
+    RefreshCw,
+    RotateCcw,
+    Target,
+    Trophy,
+} from "lucide-react";
 import {Link} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
@@ -206,6 +214,22 @@ function ErrorReplayCard({
                         "{count} exercises again",
                     ).replace("{count}", String(data.errorCount))}
                 </span>
+                {data.correctedCount > 0 && (
+                    <span
+                        className="lesson-next-step-card-sub"
+                        data-testid="next-step-error-replay-corrected"
+                    >
+                        {t(
+                            "lesson.next_step.error_replay_corrected",
+                            "{corrected} of {total} corrected",
+                        )
+                            .replace("{corrected}", String(data.correctedCount))
+                            .replace(
+                                "{total}",
+                                String(data.errorCount + data.correctedCount),
+                            )}
+                    </span>
+                )}
             </span>
             <Button asChild variant={isPrimary ? "default" : "secondary"}>
                 <Link
@@ -217,6 +241,43 @@ function ErrorReplayCard({
                     <ArrowRight aria-hidden="true" />
                 </Link>
             </Button>
+        </div>
+    );
+}
+
+/** Shown when EVERY originally-failed exercise has been corrected in a
+ *  replay: the "Retry Errors" CTA is gone, replaced by a short success
+ *  note so the learner sees the corrected state land. */
+function AllCorrectedCard({
+    correctedCount,
+    animate,
+    idx,
+}: {
+    correctedCount: number;
+    animate: boolean;
+    idx: number;
+}) {
+    const {t} = useI18n();
+    return (
+        <div
+            className={cardClassName("all-corrected", "is-complete", animate)}
+            style={cardStyle(animate, idx)}
+            data-testid="next-step-card-all-corrected"
+        >
+            <span className="lesson-next-step-card-icon" aria-hidden="true">
+                <CheckCircle2 size={20} />
+            </span>
+            <span className="lesson-next-step-card-body">
+                <span className="lesson-next-step-card-kicker">
+                    {t("lesson.next_step.all_corrected", "All errors corrected!")}
+                </span>
+                <span className="lesson-next-step-card-title">
+                    {t(
+                        "lesson.next_step.all_corrected_detail",
+                        "Nice - no open errors left.",
+                    ).replace("{count}", String(correctedCount))}
+                </span>
+            </span>
         </div>
     );
 }
@@ -427,6 +488,7 @@ export default function NextStepSuggestions({
     const anything =
         nextLesson.available ||
         showErrorReplay ||
+        errorReplay.allCorrected ||
         adaptiveLesson.available ||
         reviewSession.available ||
         setComplete;
@@ -461,6 +523,15 @@ export default function NextStepSuggestions({
                 setId={setId}
                 lessonFilename={lessonFilename}
                 primaryAction={primaryAction}
+                animate={animate}
+                idx={cards.length}
+            />,
+        );
+    } else if (errorReplay.allCorrected) {
+        cards.push(
+            <AllCorrectedCard
+                key="all-corrected"
+                correctedCount={errorReplay.correctedCount}
                 animate={animate}
                 idx={cards.length}
             />,
