@@ -26,6 +26,9 @@ export interface RepoCategoryBadgeProps {
   /** Localiser; defaults to the English fallback (identity on the fallback). */
   t?: (key: string, fallback?: string) => string;
   testId?: string;
+  /** Extra layout classes appended by the host (e.g. ``ml-1 shrink-0`` in a
+   *  flex heading row); the badge's own look stays token-backed inside. */
+  className?: string;
 }
 
 interface Style {
@@ -68,12 +71,13 @@ export default function RepoCategoryBadge({
   category,
   t = (_key, fallback) => fallback ?? "",
   testId = "repo-category-badge",
+  className,
 }: RepoCategoryBadgeProps) {
   const style = STYLES[category];
   const Icon = style.icon;
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-xs font-semibold ${style.className}`}
+      className={`inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-xs font-semibold ${style.className}${className ? ` ${className}` : ""}`}
       data-testid={testId}
       data-category={category}
     >

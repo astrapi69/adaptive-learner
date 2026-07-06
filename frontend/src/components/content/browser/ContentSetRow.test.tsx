@@ -67,6 +67,32 @@ function renderRow(over: Partial<ContentSetEntry> = {}) {
   );
 }
 
+function renderUserRepoRow({
+  entry: over,
+  repoMeta = {},
+  recommendedSources = new Set<string>(),
+}: {
+  entry: Partial<ContentSetEntry>;
+  repoMeta?: Record<string, { trust: number; coach: boolean }>;
+  recommendedSources?: Set<string>;
+}) {
+  render(
+    <MemoryRouter>
+      <ul>
+        <ContentSetRow
+          entry={entry(over)}
+          downloadState="done"
+          online={true}
+          repoMeta={repoMeta}
+          recommendedSources={recommendedSources}
+          onOpen={vi.fn()}
+          onDownload={vi.fn()}
+        />
+      </ul>
+    </MemoryRouter>,
+  );
+}
+
 describe("ContentSetRow Dev-Mode download-date readout (#1298)", () => {
   afterEach(() => {
     setDevModeEnabled(false);
@@ -129,29 +155,73 @@ describe("ContentSetRow long-title containment (#1392)", () => {
     expect(source.className).toContain("shrink-0");
   });
 
-  it("keeps the origin/trust badges non-shrinking for a user-repo set", () => {
-    render(
-      <MemoryRouter>
-        <ul>
-          <ContentSetRow
-            entry={entry({ id: "pt-br", title: LONG, source: "coach/repo" })}
-            downloadState="done"
-            online={true}
-            repoMeta={{ "coach/repo": { trust: 1, coach: true } }}
-            recommendedSources={new Set()}
-            onOpen={vi.fn()}
-            onDownload={vi.fn()}
-          />
-        </ul>
-      </MemoryRouter>,
-    );
-    expect(screen.getByTestId("content-set-pt-br-origin").className).toContain("shrink-0");
-    expect(screen.getByTestId("content-set-pt-br-trust").className).toContain("shrink-0");
+  it("keeps the category badge non-shrinking for a user-repo set", () => {
+    renderUserRepoRow({
+      entry: { id: "pt-br", title: LONG, source: "coach/repo" },
+      repoMeta: { "coach/repo": { trust: 1, coach: true } },
+    });
+    expect(screen.getByTestId("content-set-pt-br-category").className).toContain("shrink-0");
   });
 
   it("leaves a short title fully rendered (no regression)", () => {
     renderRow({ id: "short", title: "Psychologie" });
     expect(screen.getByText("Psychologie")).toBeInTheDocument();
     expect(screen.getByTitle("Psychologie")).toBeInTheDocument();
+  });
+});
+
+// #1405 — rest of #1319/#1320: the row renders the SHARED RepoCategoryBadge
+// (one unified, typed category pill) instead of the pre-#1319 inline
+// origin/trust/recommended spans. Pins all four categories from the row.
+describe("ContentSetRow unified category badge (#1405)", () => {
+  const SOURCE = "jane/deck";
+
+  function badge(id: string) {
+    return screen.getByTestId(`content-set-${id}-category`);
+  }
+
+  it("renders 'private' for a coach repo", () => {
+    renderUserRepoRow({
+      entry: { id: "deck", source: SOURCE },
+      repoMeta: { [SOURCE]: { trust: 1, coach: true } },
+    });
+    expect(badge("deck")).toHaveAttribute("data-category", "private");
+  });
+
+  it("renders 'validated' for a technically validated community repo", () => {
+    renderUserRepoRow({
+      entry: { id: "deck", source: SOURCE },
+      repoMeta: { [SOURCE]: { trust: 1, coach: false } },
+    });
+    expect(badge("deck")).toHaveAttribute("data-category", "validated");
+  });
+
+  it("renders 'unverified' for a not-yet-validated repo (incl. missing meta)", () => {
+    renderUserRepoRow({ entry: { id: "deck", source: SOURCE } });
+    expect(badge("deck")).toHaveAttribute("data-category", "unverified");
+  });
+
+  it("renders 'official' for an officially recommended repo", () => {
+    renderUserRepoRow({
+      entry: { id: "deck", source: SOURCE },
+      recommendedSources: new Set([SOURCE]),
+    });
+    expect(badge("deck")).toHaveAttribute("data-category", "official");
+  });
+
+  it("keeps official-source sets badge-free (they carry the source tag)", () => {
+    renderRow({ id: "psych" });
+    expect(screen.queryByTestId("content-set-psych-category")).toBeNull();
+  });
+
+  it("does not render the retired origin/trust/recommended spans", () => {
+    renderUserRepoRow({
+      entry: { id: "deck", source: SOURCE },
+      repoMeta: { [SOURCE]: { trust: 1, coach: true } },
+      recommendedSources: new Set([SOURCE]),
+    });
+    expect(screen.queryByTestId("content-set-deck-origin")).toBeNull();
+    expect(screen.queryByTestId("content-set-deck-trust")).toBeNull();
+    expect(screen.queryByTestId("content-set-deck-recommended")).toBeNull();
   });
 });
