@@ -11,7 +11,7 @@ import {
   singleJsonLessonAdapter,
   type LessonSetContext,
   type LessonSourceAdapter,
-} from "./content-engine";
+} from "./index";
 
 const SET_CONTEXT: LessonSetContext = {
   language: "fr",

@@ -18,8 +18,12 @@
  * concern).
  */
 
-import { parse as parseYaml } from "yaml";
-
+import {
+  parseManifest,
+  setBasePath,
+  type ParsedManifest,
+  type ParsedSet,
+} from "../engine";
 import { fetchGitHubFileText } from "./github-fetch";
 
 /** The exercise types the lesson schema (v1.3) knows about. */
@@ -78,19 +82,6 @@ export interface RepoValidationResult {
   reason?: string;
 }
 
-interface ParsedSet {
-  id?: string;
-  version?: string;
-  lesson_count?: number;
-  path?: string;
-}
-
-interface ParsedManifest {
-  schema_version?: string;
-  sets?: ParsedSet[];
-  metadata?: { lessons?: unknown };
-}
-
 interface ParsedExercise {
   type?: string;
 }
@@ -111,12 +102,6 @@ function fetchRepoText(
   token: string,
 ): Promise<string> {
   return fetchGitHubFileText(refSource(ref), ref.branch, path, token);
-}
-
-/** Repo-relative base dir for a set (honours the optional ``path``). */
-function setBasePath(set: ParsedSet): string {
-  if (set.path && set.path.trim()) return set.path.replace(/\/+$/, "");
-  return `sets/${set.id}`;
 }
 
 /** Collect every exercise's ``type`` from a lesson (flat or stepped). */
@@ -162,7 +147,7 @@ export async function listRepoManifestSets(
   token: string = readBrowserGitHubToken(),
 ): Promise<RepoManifestSet[]> {
   const text = await fetchRepoText(ref, "manifest.yaml", token);
-  const manifest = (parseYaml(text) ?? {}) as ParsedManifest;
+  const manifest = parseManifest(text) ?? {};
   const sets = Array.isArray(manifest.sets) ? manifest.sets : [];
   return sets
     .filter(
@@ -184,7 +169,7 @@ export async function validateUserRepo(
   let manifest: ParsedManifest;
   try {
     const text = await fetchRepoText(ref, "manifest.yaml", token);
-    manifest = (parseYaml(text) ?? {}) as ParsedManifest;
+    manifest = parseManifest(text) ?? {};
   } catch (error) {
     const status = (error as { status?: number }).status;
     const reason =
@@ -238,7 +223,7 @@ export async function validateUserRepo(
       `${base}/manifest.yaml`,
       token,
     );
-    const setManifest = (parseYaml(setManifestText) ?? {}) as ParsedManifest;
+    const setManifest = parseManifest(setManifestText) ?? {};
     const lessonText = await fetchRepoText(
       ref,
       `${base}/lessons/${firstLessonFilename(setManifest)}`,
