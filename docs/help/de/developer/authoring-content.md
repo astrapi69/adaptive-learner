@@ -63,9 +63,14 @@ Stellen, die früher auseinanderdrifteten, das nicht mehr können:
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
 schlägt fehl, wenn ein generiertes Artefakt von den Modellen
-abweicht. Das Content-Repo spiegelt `schema/lesson.schema.json` +
-`schema/quality-rules.json` (die App ist die Quelle) und validiert
-die Struktur in seiner eigenen CI dagegen.
+abweicht. Nachgelagert übernimmt
+[**learn-content-engine**](https://github.com/astrapi69/learn-content-engine)
+die generierten Schemas per dokumentierter Sync-Prozedur, und die
+Content-Repos spiegeln die ENGINE, gepinnt auf deren npm-Release — der
+App-gegen-Engine-Paritätstest
+(`frontend/src/lib/content/validation/engine-schema-parity.test.ts`)
+hält die Kette geschlossen: generiertes Schema == gepinntes
+Engine-Schema.
 
 ## Sprachpaare (v1.44.0)
 
@@ -175,94 +180,29 @@ Der Content-Loader iteriert `metadata.lessons` in der gegebenen
 Reihenfolge; die Dateinamen auf der Festplatte sind irrelevant —
 nur die Manifest-Reihenfolge zählt.
 
-## Lektionsschema (v1.0)
+## Lektionsformat (kanonische Referenz)
 
-Jede Lektion ist eine einzelne JSON-Datei. Top-Level-Struktur:
+Jede Lektion ist eine einzelne JSON-Datei, die bei jedem Download
+gegen das kanonische Lektionsschema validiert wird. Die vollständige
+Feld-für-Feld-Formatreferenz — Karten, Theorie-Schritte (inkl.
+`example_url` / `example_label` und Inline-`examples`) und jeder
+Aufgabentyp mit einem getesteten JSON-Beispiel pro Typ und Modus —
+liegt bei **learn-content-engine**, das das generierte Schema
+übernimmt:
 
-```json
-{
-  "id": "01-greetings",
-  "title": "Begrüßungen",
-  "description": "Optionale 1-2-Satz-Zusammenfassung.",
-  "estimated_minutes": 12,
-  "cards": [ ... ],
-  "steps": [ ... ]
-}
-```
+- **Formatreferenz:**
+  [`learn-content-engine/docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+- **Maschinenlesbares Schema (im npm-Paket gebündelt):**
+  `learn-content-engine/schema/lesson.schema.json` — per Top-Level-Key
+  `"$schema"` aus einer Lektion referenzieren für IDE-Autocomplete und
+  Inline-Validierung.
+- **In-App generierte Referenz:** die Seite
+  [Lektionsformat-Referenz](lesson-format-reference.md) wird per
+  `make sync-schema` aus denselben Pydantic-Modellen generiert.
 
-### Cards
-
-Eine Card ist die kleinste lernbare Einheit — typischerweise ein
-einzelner Begriff oder ein Konzept. Jede Card hat eine stabile
-id (aus Übungen referenziert) und ein front/back-Paar:
-
-```json
-{
-  "id": "art-le",
-  "front": "le",
-  "back": "der (männlich Singular)",
-  "notes": "Vor konsonantenanfangenden männlichen Substantiven. **le chat**, **le livre**.",
-  "tags": ["article", "definite"]
-}
-```
-
-`notes` akzeptiert Markdown. Nutze sie für Ausspracheregeln,
-Falsche-Freunde-Warnungen, Ausnahme-Hinweise — alles, was die
-Langzeitspeicherung verbessert. `tags` steuern das SRS-Filtering.
-
-### Steps
-
-Eine Lektion ist eine Schritt-für-Schritt-Sequenz, jeder Schritt
-entweder THEORY (ein Markdown-Block) oder EXERCISE (eine der vier
-Übungstypen):
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "title": "Warum Artikel wichtig sind",
-  "body": "# Artikel im Französischen\n\nJedes französische Nomen hat ein Geschlecht..."
-}
-```
-
-Ein Theorie-Step kann optional einen **Beispiel-Link** tragen (Schema
-v1.4, additiv — bestehende Lektionen bleiben ohne ihn gültig). Wenn
-vorhanden, rendert der Viewer darunter einen Button zum Öffnen des
-Beispiels:
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "body": "Die Korrelation misst den Zusammenhang...",
-  "example_url": "https://example.com/correlation-visualizer",
-  "example_label": "Interaktive Visualisierung"
-}
-```
-
-- `example_url` (optional): muss eine `http(s)`-URL sein.
-- `example_label` (optional): der Link-Text; leer wird zu einem
-  lokalisierten „Beispiel ansehen".
-
-Oder eine Übung:
-
-```json
-{
-  "id": "ex-match-greetings",
-  "type": "exercise",
-  "title": "Begrüßungen zuordnen",
-  "exercise": {
-    "id": "ex-match-greetings",
-    "type": "matching",
-    "prompt": "Ordne jede Begrüßung ihrer Übersetzung zu.",
-    "card_ids": ["bonjour", "salut"],
-    "pairs": [
-      {"left": "Bonjour", "right": "Hallo"},
-      {"left": "Salut", "right": "Hi"}
-    ]
-  }
-}
-```
+Die Content-Repos spiegeln die Engine-Schemas gepinnt auf deren
+Release (`schema/engine-version.txt` dort), Content-Autoren und
+Dritt-Validatoren brauchen also nur die Engine — nie dieses App-Repo.
 
 ## Welcher Aufgabentyp für welches Lernziel
 
@@ -341,164 +281,18 @@ Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
 | Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
 | Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |
 
-## Übungstyp-Referenz
+## Übungstyp-Referenz (in die Engine umgezogen)
 
-### matching
+Die Feld-Referenz pro Typ — `matching`, `picture_choice`, `free_text`,
+`word_tiles` und `cloze` inkl. der Render-Modi `type` / `select` /
+`multiselect`, jeweils mit einem getesteten JSON-Beispiel — liegt in
+der Engine-Formatreferenz:
+[`learn-content-engine/docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+Der App-spezifische Rendering-Status jedes Typs steht weiter im
+[Katalog](#aufgabentyp-katalog-status) oben; die Autoren-Konventionen
+darunter bleiben auf dieser Seite.
 
-Drag-pair-Übung. Der Renderer mischt vor der Anzeige.
-
-```json
-{
-  "id": "ex-id",
-  "type": "matching",
-  "prompt": "Ordne jedem französischen Nomen seinen Artikel zu.",
-  "card_ids": ["noun-1", "noun-2"],
-  "pairs": [
-    {"left": "chat", "right": "le"},
-    {"left": "chaise", "right": "la"}
-  ]
-}
-```
-
-Jedes Pair muss genau zwei Schlüssel haben: `left` + `right`.
-
-### picture_choice
-
-Multiple-Choice mit Bildern. ≥ 2 Bilder, genau eines als richtig
-markiert.
-
-```json
-{
-  "id": "ex-id",
-  "type": "picture_choice",
-  "prompt": "Welche Begrüßung passt zum Abend?",
-  "card_ids": ["card-1"],
-  "images": [
-    {"src": "assets/img/morning.png", "label": "Bonjour"},
-    {"src": "assets/img/evening.png", "label": "Bonsoir", "is_correct": "true"}
-  ],
-  "hint": "Optionaler Markdown-Tipp auf Knopfdruck.",
-  "distractors": ["Bonjour"]
-}
-```
-
-Wichtig: `is_correct` ist ein **String** `"true"`, kein JSON-Boolean.
-
-Zeigt der `src`-Pfad auf eine nicht vorhandene Datei, fällt der
-Renderer auf das `label` zurück — picture_choice funktioniert
-also auch ohne Illustrations-Assets.
-
-> **Verwende `picture_choice` NICHT für reines Text-Multiple-Choice.** Es
-> ist nur für echte Bild-Auswahl mit **real existierenden** Bild-Assets.
-> Für Text-Optionen rendert es Platzhalter-Kacheln statt einer nutzbaren
-> Multiple-Choice-Kontrolle — das war der Bug in
-> astrapi69/adaptive-learner-content-test#10. Text-Multiple-Choice wird
-> stattdessen als `cloze` `select`-Modus erstellt — siehe
-> [Multiple Choice erstellen](#multiple-choice-erstellen).
-
-### free_text
-
-Antwort eintippen. Der Renderer matched erst exakt, dann
-Levenshtein-tolerant.
-
-```json
-{
-  "id": "ex-id",
-  "type": "free_text",
-  "prompt": "Wie sagt man 'Danke' auf Französisch?",
-  "card_ids": ["card-merci"],
-  "accept": ["Merci", "merci", "MERCI"],
-  "hint": "Beginnt mit M.",
-  "distractors": ["Bonjour", "Salut"]
-}
-```
-
-`accept[0]` ist die kanonische Antwort, die bei einem falschen
-Versuch angezeigt wird. Liste ≥ 3 Varianten auf, um Groß/Klein-
-schreibung + Interpunktion abzudecken; Whitespace wird vom
-Renderer normalisiert.
-
-### word_tiles
-
-Kacheln in die richtige Reihenfolge bringen. Der Renderer mischt
-vor der Anzeige.
-
-```json
-{
-  "id": "ex-id",
-  "type": "word_tiles",
-  "prompt": "Bring die Kacheln in die Reihenfolge: Ich sehe eine Katze.",
-  "card_ids": ["card-1"],
-  "tiles": ["Je", "vois", "un", "chat"],
-  "hint": "Gleiche Wortreihenfolge wie im Deutschen."
-}
-```
-
-Falls mehrere Wortreihenfolgen korrekt sind, ergänze
-`accept_orderings`:
-
-```json
-{
-  "tiles": ["Je", "vois", "un", "chat"],
-  "accept_orderings": [
-    [0, 1, 2, 3],
-    [0, 1, 3, 2]
-  ]
-}
-```
-
-Jede Reihenfolge ist eine Permutation der Tile-Indizes.
-
-### cloze (Phase 52 / v1.35.0 — Schema 1.1)
-
-Lückentext mit sichtbaren `___`-Markern im Satz. Jeder `___`
-entspricht einem Eintrag in `blanks[]` (Zuordnung von links nach
-rechts; der Loader prüft `sentence.count("___") ==
-len(blanks)`).
-
-```json
-{
-  "id": "ex-id",
-  "type": "cloze",
-  "prompt": "Setze den unbestimmten Artikel ein.",
-  "card_ids": ["art-un", "noun-chat"],
-  "sentence": "Je vois ___ chat dans le jardin.",
-  "blanks": [
-    {
-      "accept": ["un"],
-      "hint": "männlicher unbestimmter Artikel",
-      "placeholder": "?"
-    }
-  ],
-  "cloze_mode": "type",
-  "distractors": ["le", "la", "les"],
-  "hint": "*un* ist der männliche unbestimmte Artikel."
-}
-```
-
-**Render-Modi** — pro Übung über `cloze_mode` gesetzt:
-
-- `"type"` (Standard, wenn nicht gesetzt): pro Lücke ein
-  `<input>`. Validiert mit demselben NFC + Levenshtein-≤-1-
-  Matcher wie free-text, sodass Autorinnen nur semantische
-  Varianten auflisten müssen (keine Tippfehler).
-- `"select"`: pro Lücke ein `<select>`. Optionen aus
-  `accept[0]` + `distractors` der Übung, pro Lücke mit
-  stabilem Seed gemischt. **Erfordert nicht-leere
-  `distractors`** — der Schema-Validator weist
-  `cloze_mode: "select"` ohne sie ab.
-- `"multiselect"` (#1195): eine "Alle zutreffenden auswählen"-
-  Frage. Keine `___`-Marker und keine `blanks` — der `sentence`
-  ist die Frage, darunter eine Checkbox-Gruppe. Nutzt `accept`
-  und `distractors` mit modusspezifischer Bedeutung: **jeder**
-  `accept`-Eintrag ist eine richtige Option (nicht nur
-  `accept[0]`), `distractors` sind die falschen. Bewertet als
-  **exakte Mengenübereinstimmung** — alle richtigen Optionen
-  müssen gewählt sein, keine falsche. **Erfordert** nicht-leeres
-  `accept`, nicht-leeres `distractors`, und beide Listen müssen
-  **disjunkt** sein (dieselbe Option darf nicht in beiden stehen).
-
-#### Multiple Choice erstellen
+### Multiple Choice erstellen
 
 **Multiple Choice wird so erstellt** — es gibt bewusst keinen
 eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3 und #890). Eine
