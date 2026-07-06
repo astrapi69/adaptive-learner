@@ -10,7 +10,8 @@ Outputs (all under ``<repo>/schema/``):
 
 * ``lesson.schema.json``       -- JSON Schema 2020-12 for a whole lesson
 * ``content-manifest.schema.json`` / ``content-set.schema.json`` -- the
-  set/manifest schemas (used by the content repo's CI)
+  set/manifest schemas (bundled by learn-content-engine, which the content
+  repos mirror from)
 * ``card.schema.json`` / ``exercise.schema.json`` / ``lesson-step.schema.json``
 * ``quality-rules.json``       -- the shared quality minimums (content
   repo + app read the same numbers)
@@ -20,10 +21,15 @@ The JSON is emitted with ``sort_keys=True`` so re-generation is byte-stable;
 failing (exit 1) on drift. This is the App-internal drift gate (analogous to
 ``make sync-versions-check``).
 
-The lesson schema is the artefact the content repo mirrors (EXP-039 §4,
-Option A). Its ``$id`` + ``$schema`` + ``x-schema-version`` make it
-self-describing for IDE autocomplete (``$schema`` reference in a lesson .json)
-and for ``jsonschema``/``ajv`` validation.
+Downstream chain (mirror decoupling, #1393): the generated schema is adopted
+by the ``learn-content-engine`` package (its documented "Schema sync from
+adaptive-learner" procedure) and BUNDLED in every engine release; the content
+repos mirror the PINNED engine release, not this repo. The app-side gate
+closing that chain is ``scripts/check_engine_schema_parity.py`` (app schema ==
+pinned engine bundle; pin in ``schema/engine-pin.json``). The schema's ``$id``
++ ``$schema`` + ``x-schema-version`` make it self-describing for IDE
+autocomplete (``$schema`` reference in a lesson .json) and for
+``jsonschema``/``ajv`` validation.
 """
 
 from __future__ import annotations

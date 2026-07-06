@@ -1,27 +1,39 @@
-# Content-repo CI (mirror)
+# Content-repo CI (app-side reference copy — retired as source of truth)
 
-These files are the source of truth for the **content** repository's
-CI, kept here so the validation contract lives alongside the app
-that produces and consumes the content. They are deployed to the
-separate [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
-repository (committed there; the maintainer pushes).
+> **Ownership moved (mirror decoupling, #1393).** The
+> [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
+> repository now **owns its CI**: an engine-pinned schema-mirror drift gate
+> plus an engine-conformance gate that run against the
+> [`learn-content-engine`](https://github.com/astrapi69/learn-content-engine)
+> npm release pinned there — the content repo no longer reads this app
+> repo. This directory is **no longer deployed anywhere**; it stays only as
+> the app-side reference copy of the shared validator logic, so
+> `scripts/validate_bundled_content.py` (the app's bundled-content check)
+> has a comparable twin in-tree.
+>
+> Source-of-truth chain for the lesson format: **adaptive-learner Pydantic
+> (`make sync-schema`) → learn-content-engine (documented schema-sync
+> procedure, bundles the schema) → content repos (pinned mirror)**. The
+> app-side gate closing the chain is
+> `scripts/check_engine_schema_parity.py`.
 
 ```
-.github/workflows/validate-content.yml   # PR + push-to-main gate
-scripts/validate_content.py               # self-contained validator
+.github/workflows/validate-content.yml   # reference copy of the content repo's structural gate
+scripts/validate_content.py               # reference copy of the self-contained validator
 ```
 
 `validate_content.py` is the **second of the two validation layers**
 (Phase 60 / v1.44.0, D-108). The Adaptive Learner app runs the same
 schema + language-pair + quality checks client-side before a
 community share (`frontend/src/lib/content/content-validator.ts`);
-this script re-checks every set on a content-repo pull request so
-manual PRs can't bypass the app's gate.
+the content repo re-checks every set on a pull request so manual PRs
+can't bypass the app's gate.
 
 It is deliberately self-contained (Python stdlib + PyYAML only) so
-the content repo needs no install of the application. When the
-shared rules change, update **both** layers (the TS validator and
-this script) and keep their thresholds in sync.
+the content repo needs no install of the application. When the shared
+rules change, the canonical copy to update is **in the content repo**;
+refresh this reference copy afterwards so the TS validator comparison
+stays honest.
 
 ## Optional book companion (EXP-025 / AUTH-01)
 
