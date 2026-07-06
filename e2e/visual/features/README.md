@@ -41,7 +41,9 @@ Baseline zu committen.
 | Dashboard Tabs — Aktivität | `dashboard-tabs/aktivitaet.png` | `dashboard-tabs/aktivitaet.mobile.png` | v1.94.1 |
 | Dashboard Tabs — Missionen | `dashboard-tabs/missionen.png` | `dashboard-tabs/missionen.mobile.png` | v1.94.1 |
 | Content Hub — Entdecken | `content-hub/entdecken.png` | `content-hub/entdecken.mobile.png` | v1.94.1 |
-| Content Hub — Meine Inhalte | `content-hub/meine-inhalte.png` | `content-hub/meine-inhalte.mobile.png` | v1.94.1 |
+| Content Hub — Meine Inhalte | `content-hub/meine-inhalte.png` | `content-hub/meine-inhalte.mobile.png` | v1.99.0 |
+| Content Hub — Meine Inhalte, Status-Filter offen (#1386) | `content-hub/meine-inhalte-filter-open.png` | `content-hub/meine-inhalte-filter-open.mobile.png` | v1.99.0 |
+| Content Hub — Meine Inhalte, Liste mit Langtitel (#1392) | `content-hub/meine-inhalte-liste-langtitel.png` | `content-hub/meine-inhalte-liste-langtitel.mobile.png` | v1.99.0 |
 | Content Hub — Import | `content-hub/import.png` | `content-hub/import.mobile.png` | v1.94.1 |
 | Progress Hub — Übersicht | `progress-hub/uebersicht.png` | `progress-hub/uebersicht.mobile.png` | v1.94.1 |
 | Progress Hub — Statistik | `progress-hub/statistik.png` | `progress-hub/statistik.mobile.png` | v1.94.1 |

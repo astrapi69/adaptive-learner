@@ -235,7 +235,25 @@ const FEATURES: FeatureShot[] = [
     {path: "dashboard-tabs/aktivitaet", setup: (p) => gotoDashboardTab(p, "activity")},
     {path: "dashboard-tabs/missionen", setup: (p) => gotoDashboardTab(p, "missions")},
     {path: "content-hub/entdecken", setup: (p) => gotoContentTab(p, "discover")},
-    {path: "content-hub/meine-inhalte", setup: (p) => gotoContentTab(p, "my")},
+    {
+        path: "content-hub/meine-inhalte",
+        // Wait for the (async) set catalogue, not just the hub shell —
+        // otherwise the shot captures the "Inhalte werden geladen…" state.
+        // The default view is the LIST (#1257); an explicit "grid" pref
+        // renders the tree instead, so accept either surface.
+        setup: async (p) => {
+            await gotoContentTab(p, "my");
+            const catalogue = p
+                .getByTestId("content-list-view")
+                .or(p.getByTestId("content-tree"));
+            try {
+                await catalogue.first().waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            return true;
+        },
+    },
     // #1386 — the status/source filter menu buttons (closed state is part of
     // the meine-inhalte shot above; this captures the OPEN status menu).
     {
@@ -243,11 +261,47 @@ const FEATURES: FeatureShot[] = [
         setup: async (p) => {
             await gotoContentTab(p, "my");
             const trigger = p.getByTestId("content-status-filter");
-            if (!(await trigger.count())) return false;
+            try {
+                await trigger.waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
             await trigger.click();
             await expect(p.getByTestId("content-status-filter-menu")).toBeVisible({
                 timeout: 10_000,
             });
+            return true;
+        },
+    },
+    // #1392 — the LIST view with the longest catalogue title
+    // ("Portugiesisch (Brasilianisch) A1 (für Deutschsprachige)"): the
+    // mobile shot pins that the title truncates and the language badge +
+    // three-dot actions menu stay inside the viewport, flush-aligned.
+    {
+        path: "content-hub/meine-inhalte-liste-langtitel",
+        setup: async (p) => {
+            await gotoContentTab(p, "my");
+            // The view toggle appears once the (async) set catalogue is in.
+            const toggle = p.getByTestId("content-view-list");
+            try {
+                await toggle.waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            await toggle.click();
+            await expect(p.getByTestId("content-list-view")).toBeVisible({
+                timeout: 10_000,
+            });
+            const longRow = p.getByTestId("content-list-set-pt-br-a1-from-de");
+            try {
+                await longRow.waitFor({timeout: 10_000});
+            } catch {
+                return false;
+            }
+            // #root is the app's scroll container (html/body are locked), so
+            // a fullPage shot cannot reach below the fold — bring the
+            // long-title row into the visible fold instead.
+            await longRow.scrollIntoViewIfNeeded();
             return true;
         },
     },
