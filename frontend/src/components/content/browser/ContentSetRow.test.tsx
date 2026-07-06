@@ -103,3 +103,55 @@ describe("ContentSetRow Dev-Mode download-date readout (#1298)", () => {
     expect(screen.getByTestId("content-set-psych-downloaded-at")).toBeInTheDocument();
   });
 });
+
+// #1392 — the grid (tile) heading must contain long titles the same way the
+// list view does: the title text truncates (ellipsis + native tooltip) while
+// the inline source/origin badges stay visible and non-shrinking. happy-dom
+// has no layout engine, so we pin the structural containment classes.
+describe("ContentSetRow long-title containment (#1392)", () => {
+  const LONG = "Portugiesisch (Brasilianisch) A1 (für Deutschsprachige)";
+
+  it("truncates a long title with a native tooltip and keeps the heading shrinkable", () => {
+    renderRow({ id: "pt-br", title: LONG });
+    const title = screen.getByTitle(LONG);
+    expect(title.className).toContain("truncate");
+    expect(title.className).toContain("min-w-0");
+    // The heading itself must be allowed to shrink inside the flex title row.
+    const heading = title.closest("h4") as HTMLElement;
+    expect(heading).not.toBeNull();
+    expect(heading.className).toContain("min-w-0");
+  });
+
+  it("keeps the source badge visible and non-shrinking on a long title", () => {
+    renderRow({ id: "pt-br", title: LONG });
+    const source = screen.getByTestId("content-set-pt-br-source");
+    expect(source).toBeInTheDocument();
+    expect(source.className).toContain("shrink-0");
+  });
+
+  it("keeps the origin/trust badges non-shrinking for a user-repo set", () => {
+    render(
+      <MemoryRouter>
+        <ul>
+          <ContentSetRow
+            entry={entry({ id: "pt-br", title: LONG, source: "coach/repo" })}
+            downloadState="done"
+            online={true}
+            repoMeta={{ "coach/repo": { trust: 1, coach: true } }}
+            recommendedSources={new Set()}
+            onOpen={vi.fn()}
+            onDownload={vi.fn()}
+          />
+        </ul>
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId("content-set-pt-br-origin").className).toContain("shrink-0");
+    expect(screen.getByTestId("content-set-pt-br-trust").className).toContain("shrink-0");
+  });
+
+  it("leaves a short title fully rendered (no regression)", () => {
+    renderRow({ id: "short", title: "Psychologie" });
+    expect(screen.getByText("Psychologie")).toBeInTheDocument();
+    expect(screen.getByTitle("Psychologie")).toBeInTheDocument();
+  });
+});

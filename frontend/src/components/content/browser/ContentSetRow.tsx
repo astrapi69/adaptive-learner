@@ -85,7 +85,7 @@ function ContentSetOriginBadges({
   return (
     <>
       <span
-        className="ml-1 rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]"
+        className="ml-1 shrink-0 rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]"
         data-testid={`content-set-${entry.id}-origin`}
       >
         {repoMeta[entry.source]?.coach
@@ -95,8 +95,8 @@ function ContentSetOriginBadges({
       <span
         className={
           trusted
-            ? "ml-1 rounded-sm bg-[var(--success-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--success)]"
-            : "ml-1 rounded-sm bg-[var(--warning-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--warning)]"
+            ? "ml-1 shrink-0 rounded-sm bg-[var(--success-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--success)]"
+            : "ml-1 shrink-0 rounded-sm bg-[var(--warning-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--warning)]"
         }
         data-testid={`content-set-${entry.id}-trust`}
       >
@@ -106,7 +106,7 @@ function ContentSetOriginBadges({
       </span>
       {recommendedSources.has(entry.source) && (
         <span
-          className="ml-1 rounded-sm bg-[color-mix(in_srgb,var(--accent)_16%,var(--bg-surface))] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent-text)]"
+          className="ml-1 shrink-0 rounded-sm bg-[color-mix(in_srgb,var(--accent)_16%,var(--bg-surface))] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent-text)]"
           data-testid={`content-set-${entry.id}-recommended`}
         >
           {t("content.trust.recommended", "Recommended")}
@@ -116,7 +116,13 @@ function ContentSetOriginBadges({
   );
 }
 
-/** The row heading: title (+ native title) + source/origin badges. */
+/** The row heading: title (+ native title) + source/origin badges.
+ *
+ *  #1392 — the heading is a shrinkable (``min-w-0``) flex row: the title
+ *  text truncates with an ellipsis (full name via native tooltip) while
+ *  the badges stay ``shrink-0`` (wrapping to the next line when the tile
+ *  is too narrow for all of them), so no title length can push a badge
+ *  or the actions column out of the tile. */
 function ContentSetHeading({
   entry,
   repoMeta,
@@ -128,12 +134,17 @@ function ContentSetHeading({
 }) {
   const { t } = useI18n();
   return (
-    <h4>
-      {entry.title}
-      {entry.title_native && entry.title_native !== entry.title && (
-        <span className="content-set-native"> · {entry.title_native}</span>
-      )}
-      <span className="content-set-source" data-testid={`content-set-${entry.id}-source`}>
+    <h4 className="flex min-w-0 flex-wrap items-center">
+      <span className="min-w-0 truncate" title={entry.title}>
+        {entry.title}
+        {entry.title_native && entry.title_native !== entry.title && (
+          <span className="content-set-native"> · {entry.title_native}</span>
+        )}
+      </span>
+      <span
+        className="content-set-source shrink-0"
+        data-testid={`content-set-${entry.id}-source`}
+      >
         {entry.source.startsWith("bundled:")
           ? t("content.source.bundled", "Bundled")
           : t("content.source.github", "GitHub")}
