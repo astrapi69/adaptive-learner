@@ -63,9 +63,16 @@ Stellen, die früher auseinanderdrifteten, das nicht mehr können:
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
 schlägt fehl, wenn ein generiertes Artefakt von den Modellen
-abweicht. Das Content-Repo spiegelt `schema/lesson.schema.json` +
-`schema/quality-rules.json` (die App ist die Quelle) und validiert
-die Struktur in seiner eigenen CI dagegen.
+abweicht.
+
+Nachgelagert wird das generierte Schema von der
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+(npm-Paket) übernommen und **gebündelt ausgeliefert** (deren
+dokumentierte Prozedur "Schema sync from adaptive-learner"); die
+Content-Repos spiegeln das **gepinnte Engine-Release**, nicht mehr
+dieses App-Repo. Das App-seitige Gate, das diese Kette schließt, ist
+`scripts/check_engine_schema_parity.py` (App-Schema == gepinntes
+Engine-Bundle; Pin in `schema/engine-pin.json`).
 
 ## Sprachpaare (v1.44.0)
 
@@ -175,94 +182,38 @@ Der Content-Loader iteriert `metadata.lessons` in der gegebenen
 Reihenfolge; die Dateinamen auf der Festplatte sind irrelevant —
 nur die Manifest-Reihenfolge zählt.
 
-## Lektionsschema (v1.0)
+## Lektionsformat: die Engine-Referenz ist die Feld-Spezifikation
 
-Jede Lektion ist eine einzelne JSON-Datei. Top-Level-Struktur:
+Jede Lektion ist eine einzelne JSON-Datei — `id` + `title` (+
+optional `description` / `estimated_minutes`), ein `cards`-Array
+(die kleinsten lernbaren Einheiten, jede mit einer stabilen `id`,
+die Übungen referenzieren) und ein `steps`-Array aus THEORIE-
+(Markdown) und ÜBUNGS-Schritten.
 
-```json
-{
-  "id": "01-greetings",
-  "title": "Begrüßungen",
-  "description": "Optionale 1-2-Satz-Zusammenfassung.",
-  "estimated_minutes": 12,
-  "cards": [ ... ],
-  "steps": [ ... ]
-}
-```
+Die **vollständige Feld-Referenz des Formats** — Lektions-
+Metafelder, Cards (inkl. `notes`, `tags`, `token_roles`,
+Code-Felder), Theorie-Schritte, Inline-Beispiele + Beispiel-Links,
+jeder Übungstyp mit seinen typspezifischen Feldern und Regeln sowie
+das Manifest-Format — liegt beim Distributionspaket des Schemas:
 
-### Cards
+- **[learn-content-engine — Lesson format reference](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)**
+  — jedes JSON-Beispiel dort wird von der Test-Suite der Engine
+  extrahiert und validiert; die Referenz kann also nicht vom Schema
+  abdriften.
+- Das **gebündelte JSON-Schema**
+  (`learn-content-engine/schema/lesson.schema.json`, in diesem Repo
+  ebenfalls generiert unter `schema/lesson.schema.json`) —
+  referenziere es aus einer Lektions-`.json` über einen Top-Level-
+  `"$schema"`-Key für IDE-Autovervollständigung und Inline-
+  Validierung.
+- Die generierte In-App-Seite
+  [Lektionsformat-Referenz](lesson-format-reference.md) spiegelt
+  dieselbe Pydantic-Quelle.
 
-Eine Card ist die kleinste lernbare Einheit — typischerweise ein
-einzelner Begriff oder ein Konzept. Jede Card hat eine stabile
-id (aus Übungen referenziert) und ein front/back-Paar:
-
-```json
-{
-  "id": "art-le",
-  "front": "le",
-  "back": "der (männlich Singular)",
-  "notes": "Vor konsonantenanfangenden männlichen Substantiven. **le chat**, **le livre**.",
-  "tags": ["article", "definite"]
-}
-```
-
-`notes` akzeptiert Markdown. Nutze sie für Ausspracheregeln,
-Falsche-Freunde-Warnungen, Ausnahme-Hinweise — alles, was die
-Langzeitspeicherung verbessert. `tags` steuern das SRS-Filtering.
-
-### Steps
-
-Eine Lektion ist eine Schritt-für-Schritt-Sequenz, jeder Schritt
-entweder THEORY (ein Markdown-Block) oder EXERCISE (eine der vier
-Übungstypen):
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "title": "Warum Artikel wichtig sind",
-  "body": "# Artikel im Französischen\n\nJedes französische Nomen hat ein Geschlecht..."
-}
-```
-
-Ein Theorie-Step kann optional einen **Beispiel-Link** tragen (Schema
-v1.4, additiv — bestehende Lektionen bleiben ohne ihn gültig). Wenn
-vorhanden, rendert der Viewer darunter einen Button zum Öffnen des
-Beispiels:
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "body": "Die Korrelation misst den Zusammenhang...",
-  "example_url": "https://example.com/correlation-visualizer",
-  "example_label": "Interaktive Visualisierung"
-}
-```
-
-- `example_url` (optional): muss eine `http(s)`-URL sein.
-- `example_label` (optional): der Link-Text; leer wird zu einem
-  lokalisierten „Beispiel ansehen".
-
-Oder eine Übung:
-
-```json
-{
-  "id": "ex-match-greetings",
-  "type": "exercise",
-  "title": "Begrüßungen zuordnen",
-  "exercise": {
-    "id": "ex-match-greetings",
-    "type": "matching",
-    "prompt": "Ordne jede Begrüßung ihrer Übersetzung zu.",
-    "card_ids": ["bonjour", "salut"],
-    "pairs": [
-      {"left": "Bonjour", "right": "Hallo"},
-      {"left": "Salut", "right": "Hi"}
-    ]
-  }
-}
-```
+Die folgenden Abschnitte bleiben App-spezifisch: welcher Typ
+welchem Lernziel dient, Multiple-Choice-Erstellungs-Konventionen,
+Übungsrichtung, Annotationen für den adaptiven Generator, Assets,
+Qualitäts-Gates und der Beitrags-Workflow.
 
 ## Welcher Aufgabentyp für welches Lernziel
 
@@ -314,7 +265,7 @@ kommen bei konkretem Content-Bedarf über das Rezept
 
 Es gibt **keinen** `multiple_choice`-/`choice`-Aufgabentyp — Text-Multiple-
 Choice ist per Design `cloze` `select`-Modus (EXP-036 §4.3, #890; Button-
-Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
+Renderer #1342). Siehe [Multiple Choice erstellen](#multiple-choice-erstellen).
 
 ### Ohne neuen Typ abbildbar (Konventionen, keine Typen)
 
@@ -343,162 +294,15 @@ Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
 
 ## Übungstyp-Referenz
 
-### matching
+Die typspezifische Feld-Referenz (`matching`, `picture_choice`,
+`free_text`, `word_tiles`, `cloze` inkl. der Modi `type` / `select` /
+`multiselect`) ist in die
+**[Lesson-Format-Referenz der Engine](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#exercises)**
+umgezogen; dort wird jedes Beispiel per Test gegen das gebündelte
+Schema validiert. Hier folgen die App-seitigen Erstellungs-
+Konventionen oberhalb des Formats.
 
-Drag-pair-Übung. Der Renderer mischt vor der Anzeige.
-
-```json
-{
-  "id": "ex-id",
-  "type": "matching",
-  "prompt": "Ordne jedem französischen Nomen seinen Artikel zu.",
-  "card_ids": ["noun-1", "noun-2"],
-  "pairs": [
-    {"left": "chat", "right": "le"},
-    {"left": "chaise", "right": "la"}
-  ]
-}
-```
-
-Jedes Pair muss genau zwei Schlüssel haben: `left` + `right`.
-
-### picture_choice
-
-Multiple-Choice mit Bildern. ≥ 2 Bilder, genau eines als richtig
-markiert.
-
-```json
-{
-  "id": "ex-id",
-  "type": "picture_choice",
-  "prompt": "Welche Begrüßung passt zum Abend?",
-  "card_ids": ["card-1"],
-  "images": [
-    {"src": "assets/img/morning.png", "label": "Bonjour"},
-    {"src": "assets/img/evening.png", "label": "Bonsoir", "is_correct": "true"}
-  ],
-  "hint": "Optionaler Markdown-Tipp auf Knopfdruck.",
-  "distractors": ["Bonjour"]
-}
-```
-
-Wichtig: `is_correct` ist ein **String** `"true"`, kein JSON-Boolean.
-
-Zeigt der `src`-Pfad auf eine nicht vorhandene Datei, fällt der
-Renderer auf das `label` zurück — picture_choice funktioniert
-also auch ohne Illustrations-Assets.
-
-> **Verwende `picture_choice` NICHT für reines Text-Multiple-Choice.** Es
-> ist nur für echte Bild-Auswahl mit **real existierenden** Bild-Assets.
-> Für Text-Optionen rendert es Platzhalter-Kacheln statt einer nutzbaren
-> Multiple-Choice-Kontrolle — das war der Bug in
-> astrapi69/adaptive-learner-content-test#10. Text-Multiple-Choice wird
-> stattdessen als `cloze` `select`-Modus erstellt — siehe
-> [Multiple Choice erstellen](#multiple-choice-erstellen).
-
-### free_text
-
-Antwort eintippen. Der Renderer matched erst exakt, dann
-Levenshtein-tolerant.
-
-```json
-{
-  "id": "ex-id",
-  "type": "free_text",
-  "prompt": "Wie sagt man 'Danke' auf Französisch?",
-  "card_ids": ["card-merci"],
-  "accept": ["Merci", "merci", "MERCI"],
-  "hint": "Beginnt mit M.",
-  "distractors": ["Bonjour", "Salut"]
-}
-```
-
-`accept[0]` ist die kanonische Antwort, die bei einem falschen
-Versuch angezeigt wird. Liste ≥ 3 Varianten auf, um Groß/Klein-
-schreibung + Interpunktion abzudecken; Whitespace wird vom
-Renderer normalisiert.
-
-### word_tiles
-
-Kacheln in die richtige Reihenfolge bringen. Der Renderer mischt
-vor der Anzeige.
-
-```json
-{
-  "id": "ex-id",
-  "type": "word_tiles",
-  "prompt": "Bring die Kacheln in die Reihenfolge: Ich sehe eine Katze.",
-  "card_ids": ["card-1"],
-  "tiles": ["Je", "vois", "un", "chat"],
-  "hint": "Gleiche Wortreihenfolge wie im Deutschen."
-}
-```
-
-Falls mehrere Wortreihenfolgen korrekt sind, ergänze
-`accept_orderings`:
-
-```json
-{
-  "tiles": ["Je", "vois", "un", "chat"],
-  "accept_orderings": [
-    [0, 1, 2, 3],
-    [0, 1, 3, 2]
-  ]
-}
-```
-
-Jede Reihenfolge ist eine Permutation der Tile-Indizes.
-
-### cloze (Phase 52 / v1.35.0 — Schema 1.1)
-
-Lückentext mit sichtbaren `___`-Markern im Satz. Jeder `___`
-entspricht einem Eintrag in `blanks[]` (Zuordnung von links nach
-rechts; der Loader prüft `sentence.count("___") ==
-len(blanks)`).
-
-```json
-{
-  "id": "ex-id",
-  "type": "cloze",
-  "prompt": "Setze den unbestimmten Artikel ein.",
-  "card_ids": ["art-un", "noun-chat"],
-  "sentence": "Je vois ___ chat dans le jardin.",
-  "blanks": [
-    {
-      "accept": ["un"],
-      "hint": "männlicher unbestimmter Artikel",
-      "placeholder": "?"
-    }
-  ],
-  "cloze_mode": "type",
-  "distractors": ["le", "la", "les"],
-  "hint": "*un* ist der männliche unbestimmte Artikel."
-}
-```
-
-**Render-Modi** — pro Übung über `cloze_mode` gesetzt:
-
-- `"type"` (Standard, wenn nicht gesetzt): pro Lücke ein
-  `<input>`. Validiert mit demselben NFC + Levenshtein-≤-1-
-  Matcher wie free-text, sodass Autorinnen nur semantische
-  Varianten auflisten müssen (keine Tippfehler).
-- `"select"`: pro Lücke ein `<select>`. Optionen aus
-  `accept[0]` + `distractors` der Übung, pro Lücke mit
-  stabilem Seed gemischt. **Erfordert nicht-leere
-  `distractors`** — der Schema-Validator weist
-  `cloze_mode: "select"` ohne sie ab.
-- `"multiselect"` (#1195): eine "Alle zutreffenden auswählen"-
-  Frage. Keine `___`-Marker und keine `blanks` — der `sentence`
-  ist die Frage, darunter eine Checkbox-Gruppe. Nutzt `accept`
-  und `distractors` mit modusspezifischer Bedeutung: **jeder**
-  `accept`-Eintrag ist eine richtige Option (nicht nur
-  `accept[0]`), `distractors` sind die falschen. Bewertet als
-  **exakte Mengenübereinstimmung** — alle richtigen Optionen
-  müssen gewählt sein, keine falsche. **Erfordert** nicht-leeres
-  `accept`, nicht-leeres `distractors`, und beide Listen müssen
-  **disjunkt** sein (dieselbe Option darf nicht in beiden stehen).
-
-#### Multiple Choice erstellen
+## Multiple Choice erstellen
 
 **Multiple Choice wird so erstellt** — es gibt bewusst keinen
 eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3 und #890). Eine
@@ -549,33 +353,11 @@ Antworten, z. B. eine Führerscheinprüfungs-Frage) nutzt
 
 **Mehrere Lücken pro Cloze** sind unterstützt: jeder `___` im
 Satz wird der Reihe nach auf den nächsten Eintrag in `blanks`
-abgebildet. Jede Lücke kann eigenen Hint + Placeholder +
-Accept-Liste haben. Das Element-SRS fächert pro Lücke einen
-ElementAttempt auf — wer Lücke A fließend füllt, aber Lücke B
-ständig verfehlt, bekommt eine lückengranulare Mastery-
-Verfolgung.
-
-**Token-Rollen auf Cards (Phase 52I / v1.35.0)** — optionale
-Card-Metadaten, mit denen der Cloze-Generator zur Laufzeit
-(Review-Sessions + die Korrektur-Runde am Lektionsende) eine
-semantisch bedeutsame Lücke wählen kann:
-
-```json
-{
-  "id": "art-un",
-  "front": "un chat",
-  "back": "eine Katze",
-  "tags": ["article"],
-  "token_roles": [
-    {"token": "un", "role": "article"}
-  ]
-}
-```
-
-Geschlossene Enum von Rollen: `article` / `verb` / `noun` /
-`adjective` / `preposition` / `gender_marker` / `tense_marker`.
-Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump —
-nicht inline erweitern.
+abgebildet (der Validator erzwingt `Marker == blanks`). Jede Lücke
+kann eigenen Hint + Placeholder + Accept-Liste haben. Das
+Element-SRS fächert pro Lücke einen ElementAttempt auf — wer Lücke
+A fließend füllt, aber Lücke B ständig verfehlt, bekommt eine
+lückengranulare Mastery-Verfolgung.
 
 ## Übungsrichtung (v1.46.0 / EXP-018)
 
@@ -807,10 +589,12 @@ Prüfungen abgesichert:
    Lektionsinhalt wird an den konfigurierten Anbieter gesendet) und
    blockiert das Teilen nie — die regelbasierte Prüfung ist das Tor.
 2. **In der CI des Content-Repos.** Ein Pull Request an
-   `astrapi69/adaptive-learner-content` führt
-   `scripts/validate_content.py` aus (gespiegelt unter
-   `docs/ci/adaptive-learner-content/`) und prüft jedes Set mit
-   denselben Regeln, damit ein manueller PR das Tor nicht umgeht.
+   `astrapi69/adaptive-learner-content` führt dessen eigenes
+   `scripts/validate_content.py` aus (Struktur gegen den vendored,
+   Engine-gepinnten Schema-Spiegel + Qualitäts-Mindestwerte) plus
+   ein Engine-Konformitäts-Gate (`learn-content-engine`
+   `validate()` über jede Lektion), damit ein manueller PR das Tor
+   nicht umgeht.
 
 **Qualitäts-Mindestwerte (hartes Tor):** ≥ 5 Übungen pro Lektion,
 ≥ 2 Übungstypen, ≥ 1 Theorie-Schritt, Free-Text ≥ 2 akzeptierte
