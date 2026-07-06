@@ -16,6 +16,7 @@ import { helpKeyForPath } from "../../lib/help/help-routes";
 import { useAppMode } from "../../hooks/settings/useAppMode";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useDevMode } from "../../hooks/settings/useDevMode";
+import { useDialogFocus } from "../../hooks/ui/useDialogFocus";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useIsLessonActive } from "../../hooks/lesson/session/useIsLessonActive";
 import { useMediaQuery } from "../../hooks/ui/useMediaQuery";
@@ -129,6 +130,15 @@ export default function Navigation() {
     if ((e.target as HTMLElement).closest("a, button")) setMenuOpen(false);
   }
 
+  // #1400 — while the drawer is open it is modal for the keyboard: the
+  // shared useDialogFocus hook (#515, same pattern as the Settings mobile
+  // menu #546) moves focus to the first drawer entry on open, cycles
+  // Tab / Shift+Tab inside the drawer, and restores focus to the burger
+  // on close. Gated on drawer mode so the inline desktop row (same DOM
+  // node) never traps.
+  const linksRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(linksRef, { open: menuOpen && drawerNav });
+
   if (HIDE_ON.includes(pathname)) return null;
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -215,6 +225,7 @@ export default function Navigation() {
           utility entries (EXP-037 #850 / #856 / #1129 / #1149). */}
       <div
         id="app-nav-links"
+        ref={linksRef}
         className={`nav-links${menuOpen ? " is-open" : ""}`}
         data-testid="nav-links"
         data-variant={drawerNav ? "drawer" : "inline"}
