@@ -1,26 +1,21 @@
-# App-vs-engine schema-parity gate (#1393, mirror-decoupling stage).
+# App-vs-engine schema parity gate (mirror decoupling).
 #
-# The content repos mirror the lesson schema from the learn-content-engine
-# npm release (pinned there), no longer from this app repo. The chain that
-# keeps everyone honest is: Pydantic models (SoT, make sync-schema) ->
-# engine (documented schema-sync procedure, bundles the schema) -> content
-# repos (pinned mirror). This job closes the chain on the app side: the
-# committed, app-generated schema/lesson.schema.json +
-# schema/content-manifest.schema.json must be byte-identical to the
-# artifacts bundled by the engine release pinned in schema/engine-pin.json.
+# The content repos mirror schema/ from the learn-content-engine npm
+# release (pinned there), not from this app; the app's only sync target
+# is the engine. This job compares the committed, generated
+# schema/lesson.schema.json + schema/content-manifest.schema.json
+# byte-for-byte against the npm tarball of the PINNED engine version
+# (schema/engine-version.txt). Red = the app schema moved and the
+# engine follow-up (engine schema-sync + release + pin bumps) is still
+# missing — a visible, defined step instead of silent drift.
 #
-# A red run is the DEFINED signal that the app schema moved ahead of the
-# pinned engine release: do the engine follow-up release, then bump the pin
-# in a deliberate PR. The gate's mechanics are unit-tested offline in
-# backend/tests/test_engine_schema_parity.py; this job does the networked
-# comparison against the npm registry tarball (immutable per version).
+# Deliberately NOT a per-PR gate: an app schema bump necessarily lands
+# BEFORE the engine can sync from it, so blocking the bump PR on engine
+# parity would deadlock the chain. Instead this runs on pushes to
+# develop/main that touch schema/, on a daily heartbeat, and on
+# demand.
 name: Engine schema parity
 
-# Deliberately NOT a pull_request gate: an app schema bump necessarily
-# lands BEFORE the engine can sync from it, so a per-PR parity check
-# would deadlock the chain (the PR could never go green). The gate runs
-# post-merge + as a daily heartbeat instead — red there is the expected
-# to-do signal, not a merge blocker (night-shift rule, #575).
 on:
   push:
     branches: [develop, main]
@@ -28,14 +23,10 @@ on:
       - "schema/**"
       - "scripts/check_engine_schema_parity.py"
       - ".github/workflows/engine-schema-parity.yml"
-  # Manual trigger + a daily heartbeat so an engine-release mismatch is
-  # surfaced even without an app-side schema push.
   workflow_dispatch:
   schedule:
-    - cron: "30 6 * * *"
+    - cron: "0 6 * * *"
 
-# Coerce Node-runtime actions onto Node 24 as a safety net for any
-# action still defaulting to the deprecated Node 20 runtime.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
@@ -43,9 +34,13 @@ jobs:
   parity:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Compare app schemas against the pinned engine release
-        run: python scripts/check_engine_schema_parity.py
+      - name: Install test dependencies
+        run: pip install "pytest>=8,<9"
+      - name: Parity-gate unit tests (pin mechanics, offline)
+        run: python -m pytest backend/tests/test_engine_schema_parity.py --noconftest -q
+      - name: App schema vs pinned engine release
+        run: python3 scripts/check_engine_schema_parity.py

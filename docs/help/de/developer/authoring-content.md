@@ -63,16 +63,14 @@ Stellen, die früher auseinanderdrifteten, das nicht mehr können:
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
 schlägt fehl, wenn ein generiertes Artefakt von den Modellen
-abweicht.
-
-Nachgelagert wird das generierte Schema von der
+abweicht. Stromabwärts übernimmt die
 [learn-content-engine](https://github.com/astrapi69/learn-content-engine)
-(npm-Paket) übernommen und **gebündelt ausgeliefert** (deren
-dokumentierte Prozedur "Schema sync from adaptive-learner"); die
-Content-Repos spiegeln das **gepinnte Engine-Release**, nicht mehr
-dieses App-Repo. Das App-seitige Gate, das diese Kette schließt, ist
-`scripts/check_engine_schema_parity.py` (App-Schema == gepinntes
-Engine-Bundle; Pin in `schema/engine-pin.json`).
+das generierte Schema über ihre dokumentierte Schema-Sync-Prozedur
+und liefert es mit jedem npm-Release aus; die Content-Repos spiegeln
+**das gepinnte Engine-Release** (nicht dieses Repo) und validieren in
+ihrer eigenen CI gegen diesen Spiegel. `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`) hält das hier generierte
+Schema sichtbar in Parität mit dem gepinnten Engine-Release.
 
 ## Sprachpaare (v1.44.0)
 
@@ -182,38 +180,32 @@ Der Content-Loader iteriert `metadata.lessons` in der gegebenen
 Reihenfolge; die Dateinamen auf der Festplatte sind irrelevant —
 nur die Manifest-Reihenfolge zählt.
 
-## Lektionsformat: die Engine-Referenz ist die Feld-Spezifikation
+## Lektionsschema
 
-Jede Lektion ist eine einzelne JSON-Datei — `id` + `title` (+
-optional `description` / `estimated_minutes`), ein `cards`-Array
-(die kleinsten lernbaren Einheiten, jede mit einer stabilen `id`,
-die Übungen referenzieren) und ein `steps`-Array aus THEORIE-
-(Markdown) und ÜBUNGS-Schritten.
+Jede Lektion ist eine einzelne JSON-Datei: Top-Level-Metadaten (`id`,
+`title`, `description`, `estimated_minutes`), eine Liste von **Cards**
+(die kleinsten lernbaren Einheiten — stabile Ids, Front/Back-Paare,
+Markdown-`notes`, `tags` für das SRS) und eine Liste von **Steps**,
+jeder entweder ein THEORY-Step (ein Markdown-`body`, optional ein
+`example_url`-Link oder inline `examples`) oder ein EXERCISE-Step
+(genau eine Übung).
 
-Die **vollständige Feld-Referenz des Formats** — Lektions-
-Metafelder, Cards (inkl. `notes`, `tags`, `token_roles`,
-Code-Felder), Theorie-Schritte, Inline-Beispiele + Beispiel-Links,
-jeder Übungstyp mit seinen typspezifischen Feldern und Regeln sowie
-das Manifest-Format — liegt beim Distributionspaket des Schemas:
+Die vollständige Feld-für-Feld-Formatreferenz — jedes Feld, jeder
+Aufgabentyp, jeder Cloze-Modus, mit JSON-Beispielen, die von der
+Engine-Testsuite validiert werden — lebt in der **Engine-Referenz**:
 
-- **[learn-content-engine — Lesson format reference](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)**
-  — jedes JSON-Beispiel dort wird von der Test-Suite der Engine
-  extrahiert und validiert; die Referenz kann also nicht vom Schema
-  abdriften.
-- Das **gebündelte JSON-Schema**
-  (`learn-content-engine/schema/lesson.schema.json`, in diesem Repo
-  ebenfalls generiert unter `schema/lesson.schema.json`) —
-  referenziere es aus einer Lektions-`.json` über einen Top-Level-
-  `"$schema"`-Key für IDE-Autovervollständigung und Inline-
-  Validierung.
-- Die generierte In-App-Seite
-  [Lektionsformat-Referenz](lesson-format-reference.md) spiegelt
-  dieselbe Pydantic-Quelle.
+- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  — die kanonische Lektionsformat-Referenz für Autoren und
+  Dritt-Validatoren (kein App-Checkout nötig)
+- das maschinenlesbare Schema, das jedem Engine-Release beiliegt:
+  `import schema from "learn-content-engine/schema/lesson.schema.json"`
+- der In-App-Zwilling: die generierte
+  [Lektionsformat-Referenz](lesson-format-reference.md)
 
-Die folgenden Abschnitte bleiben App-spezifisch: welcher Typ
-welchem Lernziel dient, Multiple-Choice-Erstellungs-Konventionen,
-Übungsrichtung, Annotationen für den adaptiven Generator, Assets,
-Qualitäts-Gates und der Beitrags-Workflow.
+Das gebündelte Schema der Engine ist byte-identisch mit dem hier
+generierten `schema/lesson.schema.json` (erzwungen durch
+`make engine-parity-check`) — "validiert gegen die Engine" und
+"validiert in der App" sind dieselbe Aussage.
 
 ## Welcher Aufgabentyp für welches Lernziel
 
@@ -294,15 +286,18 @@ Renderer #1342). Siehe [Multiple Choice erstellen](#multiple-choice-erstellen).
 
 ## Übungstyp-Referenz
 
-Die typspezifische Feld-Referenz (`matching`, `picture_choice`,
-`free_text`, `word_tiles`, `cloze` inkl. der Modi `type` / `select` /
-`multiselect`) ist in die
-**[Lesson-Format-Referenz der Engine](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#exercises)**
-umgezogen; dort wird jedes Beispiel per Test gegen das gebündelte
-Schema validiert. Hier folgen die App-seitigen Erstellungs-
-Konventionen oberhalb des Formats.
+Die Feld-Referenz je Typ — `matching`, `picture_choice`, `free_text`,
+`word_tiles` und `cloze` mit seinen Modi `type` / `select` /
+`multiselect`: Pflichtfelder, JSON-Beispiele und die semantischen
+Regeln (Cloze-`___`-Marker == `blanks`, referenzielle Integrität der
+`card_ids`, Disjunktheit von accept/distractors bei multiselect,
+exactly-one-correct bei picture_choice) — lebt in der Engine-Referenz:
+[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+Jedes JSON-Beispiel dort wird von der Engine-Testsuite extrahiert und
+validiert, die Referenz kann also nicht veralten. Die App-spezifischen
+Autoren-Konventionen unten bleiben hier.
 
-## Multiple Choice erstellen
+### Multiple Choice erstellen
 
 **Multiple Choice wird so erstellt** — es gibt bewusst keinen
 eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3 und #890). Eine
@@ -353,11 +348,33 @@ Antworten, z. B. eine Führerscheinprüfungs-Frage) nutzt
 
 **Mehrere Lücken pro Cloze** sind unterstützt: jeder `___` im
 Satz wird der Reihe nach auf den nächsten Eintrag in `blanks`
-abgebildet (der Validator erzwingt `Marker == blanks`). Jede Lücke
-kann eigenen Hint + Placeholder + Accept-Liste haben. Das
-Element-SRS fächert pro Lücke einen ElementAttempt auf — wer Lücke
-A fließend füllt, aber Lücke B ständig verfehlt, bekommt eine
-lückengranulare Mastery-Verfolgung.
+abgebildet. Jede Lücke kann eigenen Hint + Placeholder +
+Accept-Liste haben. Das Element-SRS fächert pro Lücke einen
+ElementAttempt auf — wer Lücke A fließend füllt, aber Lücke B
+ständig verfehlt, bekommt eine lückengranulare Mastery-
+Verfolgung.
+
+**Token-Rollen auf Cards (Phase 52I / v1.35.0)** — optionale
+Card-Metadaten, mit denen der Cloze-Generator zur Laufzeit
+(Review-Sessions + die Korrektur-Runde am Lektionsende) eine
+semantisch bedeutsame Lücke wählen kann:
+
+```json
+{
+  "id": "art-un",
+  "front": "un chat",
+  "back": "eine Katze",
+  "tags": ["article"],
+  "token_roles": [
+    {"token": "un", "role": "article"}
+  ]
+}
+```
+
+Geschlossene Enum von Rollen: `article` / `verb` / `noun` /
+`adjective` / `preposition` / `gender_marker` / `tense_marker`.
+Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump —
+nicht inline erweitern.
 
 ## Übungsrichtung (v1.46.0 / EXP-018)
 

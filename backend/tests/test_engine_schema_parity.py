@@ -1,25 +1,28 @@
-"""Offline tests for the app-vs-engine schema-parity gate (#1393).
+"""App-vs-engine schema parity gate (mirror decoupling).
 
-The mirror-decoupling stage moved the content repos' schema mirror off this
-app repo and onto the ``learn-content-engine`` npm release (pinned there).
-The chain-closing check on the APP side is
-``scripts/check_engine_schema_parity.py``: the app-generated, committed
-schema artefacts must be byte-identical to the artifacts BUNDLED by the
-engine release pinned in ``schema/engine-pin.json`` — a red gate is the
-defined, visible signal that an app schema bump still needs its engine
-follow-up release + pin bump.
+The content repos no longer mirror ``schema/`` from this app — they
+mirror the ``learn-content-engine`` npm release, pinned to
+``schema/engine-version.txt``. This app therefore syncs its generated
+schema ONLY to the engine (the engine's documented schema-sync
+procedure), and this test closes the chain: the app-generated
+``schema/lesson.schema.json`` + ``schema/content-manifest.schema.json``
+must equal the schema bundled in the PINNED engine release, or the gate
+goes red — the visible signal that an app schema bump needs its engine
+follow-up (engine sync + release + pin bump here).
 
-These tests exercise the gate's mechanics fully OFFLINE: a fake npm tarball
-is built locally and injected via the ``ENGINE_TARBALL`` override (the same
-pattern the content repos' drift-gate tests use). The real network fetch
-happens only in the CI workflow.
+Like the content repos' drift gate, the comparison target is the npm
+tarball of the pinned version (immutable, exactly what consumers
+install). These tests exercise the mechanics OFFLINE against a locally
+built fake tarball; the real-network comparison runs in the dedicated
+workflow (and here only when ``ENGINE_TARBALL`` provides a cached
+tarball).
 """
 
 from __future__ import annotations
 
-import importlib.util
 import io
 import json
+import os
 import sys
 import tarfile
 from pathlib import Path
@@ -27,122 +30,77 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = REPO_ROOT / "scripts" / "check_engine_schema_parity.py"
+SCRIPTS_DIR = REPO_ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+import check_engine_schema_parity as parity  # noqa: E402
+
+LESSON_BYTES = json.dumps({"title": "Lesson", "x-schema-version": "9.9"}).encode()
+MANIFEST_BYTES = json.dumps({"title": "ContentManifest"}).encode()
 
 
-def _load_module():
-    spec = importlib.util.spec_from_file_location("check_engine_schema_parity", SCRIPT)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-def _build_tarball(path: Path, members: dict[str, bytes]) -> Path:
-    """Write a gzipped npm-style tarball (``package/...`` members)."""
+def make_tarball(path: Path, lesson: bytes = LESSON_BYTES, manifest: bytes = MANIFEST_BYTES) -> Path:
+    """Write an npm-layout engine tarball (package/schema/*.json)."""
     with tarfile.open(path, "w:gz") as tar:
-        for name, payload in members.items():
-            info = tarfile.TarInfo(name=name)
+        for member, payload in (
+            ("package/schema/lesson.schema.json", lesson),
+            ("package/schema/content-manifest.schema.json", manifest),
+        ):
+            info = tarfile.TarInfo(member)
             info.size = len(payload)
             tar.addfile(info, io.BytesIO(payload))
     return path
 
 
-def _fake_repo(tmp_path: Path, lesson: bytes, manifest: bytes) -> Path:
-    repo = tmp_path / "repo"
-    (repo / "schema").mkdir(parents=True)
-    (repo / "schema" / "lesson.schema.json").write_bytes(lesson)
-    (repo / "schema" / "content-manifest.schema.json").write_bytes(manifest)
-    (repo / "schema" / "engine-pin.json").write_text(
-        json.dumps({"package": "learn-content-engine", "version": "0.3.1"}),
-        encoding="utf-8",
+def write_app_schema(root: Path, lesson: bytes = LESSON_BYTES, manifest: bytes = MANIFEST_BYTES) -> None:
+    (root / "schema").mkdir(parents=True)
+    (root / "schema" / "lesson.schema.json").write_bytes(lesson)
+    (root / "schema" / "content-manifest.schema.json").write_bytes(manifest)
+
+
+def test_pin_file_exists_and_is_semver() -> None:
+    pin = parity.read_pin()
+    parts = pin.split(".")
+    assert len(parts) == 3 and all(p.isdigit() for p in parts), pin
+
+
+def test_pin_resolves_to_registry_tarball_url() -> None:
+    assert parity.tarball_url("0.3.1") == (
+        "https://registry.npmjs.org/learn-content-engine/-/"
+        "learn-content-engine-0.3.1.tgz"
     )
-    return repo
 
 
-def _run(
-    module,
-    monkeypatch: pytest.MonkeyPatch,
-    tmp_path: Path,
-    repo: Path,
-    engine_members: dict[str, bytes],
-) -> int:
-    tgz = _build_tarball(tmp_path / "engine.tgz", engine_members)
-    monkeypatch.setenv("ENGINE_TARBALL", str(tgz))
-    monkeypatch.setattr(module, "REPO_ROOT", repo)
-    monkeypatch.setattr(sys, "argv", ["check_engine_schema_parity.py"])
-    return module.main()
+def test_parity_passes_on_identical_schemas(tmp_path: Path) -> None:
+    tarball = make_tarball(tmp_path / "engine.tgz")
+    app_root = tmp_path / "app"
+    write_app_schema(app_root)
+    assert parity.run_check(tarball_source=str(tarball), repo_root=app_root) == 0
 
 
-def test_pin_file_is_valid_and_pins_the_engine() -> None:
-    """The committed pin names the engine package with a concrete version."""
-    pin = json.loads((REPO_ROOT / "schema" / "engine-pin.json").read_text("utf-8"))
-    assert pin["package"] == "learn-content-engine"
-    assert pin["version"].count(".") == 2
-
-
-def test_mapping_covers_the_engine_bundled_artifacts() -> None:
-    module = _load_module()
-    assert module.MIRRORED == {
-        "schema/lesson.schema.json": "package/schema/lesson.schema.json",
-        "schema/content-manifest.schema.json": ("package/schema/content-manifest.schema.json"),
-    }
-
-
-def test_parity_green(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    module = _load_module()
-    lesson, manifest = b'{"a": 1}\n', b'{"b": 2}\n'
-    repo = _fake_repo(tmp_path, lesson, manifest)
-    rc = _run(
-        module,
-        monkeypatch,
-        tmp_path,
-        repo,
-        {
-            "package/schema/lesson.schema.json": lesson,
-            "package/schema/content-manifest.schema.json": manifest,
-        },
+def test_app_schema_bump_without_engine_followup_is_red(tmp_path: Path) -> None:
+    tarball = make_tarball(tmp_path / "engine.tgz")
+    app_root = tmp_path / "app"
+    write_app_schema(
+        app_root,
+        lesson=json.dumps({"title": "Lesson", "x-schema-version": "10.0"}).encode(),
     )
-    assert rc == 0
+    assert parity.run_check(tarball_source=str(tarball), repo_root=app_root) == 1
 
 
-def test_mismatch_red(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """An app schema that moved ahead of the pinned engine release fails (1)."""
-    module = _load_module()
-    repo = _fake_repo(tmp_path, b'{"x-schema-version": "1.6"}\n', b'{"b": 2}\n')
-    rc = _run(
-        module,
-        monkeypatch,
-        tmp_path,
-        repo,
-        {
-            "package/schema/lesson.schema.json": b'{"x-schema-version": "1.5"}\n',
-            "package/schema/content-manifest.schema.json": b'{"b": 2}\n',
-        },
-    )
-    assert rc == 1
+def test_manifest_schema_is_also_gated(tmp_path: Path) -> None:
+    tarball = make_tarball(tmp_path / "engine.tgz")
+    app_root = tmp_path / "app"
+    write_app_schema(app_root, manifest=b'{"title": "Changed"}')
+    assert parity.run_check(tarball_source=str(tarball), repo_root=app_root) == 1
 
 
-def test_missing_engine_artifact_is_fetch_error(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """A tarball without the expected members is a packaging error (2), not drift."""
-    module = _load_module()
-    repo = _fake_repo(tmp_path, b"{}", b"{}")
-    rc = _run(module, monkeypatch, tmp_path, repo, {"package/README.md": b"hi"})
-    assert rc == 2
-
-
-def test_committed_schemas_match_pinned_engine_bundle() -> None:
-    """The REAL committed app schemas equal the REAL pinned engine artifacts.
-
-    Runs offline against the engine tarball vendored into the test run via
-    ``ENGINE_TARBALL`` if set; otherwise SKIPS (the CI workflow does the
-    networked run)."""
-    import os
-
-    if not os.environ.get("ENGINE_TARBALL"):
-        pytest.skip("no local engine tarball; the CI workflow runs the networked gate")
-    module = _load_module()
-    assert module.main() == 0
+def test_real_parity_against_pinned_engine_when_cached() -> None:
+    """Full parity of the committed app schema against the real pinned
+    tarball — only when a cached tarball is provided (the dedicated
+    workflow downloads it; offline runs skip)."""
+    cached = os.environ.get("ENGINE_TARBALL")
+    if not cached or not Path(cached).is_file():
+        pytest.skip("no cached engine tarball (offline run)")
+    assert parity.run_check(tarball_source=cached, repo_root=REPO_ROOT) == 0

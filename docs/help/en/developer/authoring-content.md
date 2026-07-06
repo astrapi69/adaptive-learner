@@ -57,15 +57,14 @@ used to drift can no longer:
 
 A drift gate (`make sync-schema-check`, part of `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
-fails if any generated artefact diverges from the models.
-
-Downstream, the generated schema is adopted and **bundled by the
-[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
-npm package** (its documented "Schema sync from adaptive-learner"
-procedure); the content repos mirror the **pinned engine release**,
-not this app repo. The app-side gate closing that chain is
-`scripts/check_engine_schema_parity.py` (app schema == pinned engine
-bundle; pin in `schema/engine-pin.json`).
+fails if any generated artefact diverges from the models. Downstream,
+the [learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+vendors the generated schema via its documented schema-sync procedure
+and ships it with every npm release; the content repos mirror **the
+pinned engine release** (not this repo) and validate against that
+mirror in their own CI. `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`) keeps the generated schema
+here in visible parity with the pinned engine release.
 
 ## Language pairs (v1.44.0)
 
@@ -172,35 +171,31 @@ The content loader iterates `metadata.lessons` in the given order;
 the file names on disk are irrelevant — only the manifest order
 counts.
 
-## Lesson format: the engine reference is the field-level spec
+## Lesson schema
 
-Each lesson is a single JSON file — an `id` + `title` (+ optional
-`description` / `estimated_minutes`), a `cards` array (the smallest
-learnable units, each with a stable `id` that exercises reference),
-and a `steps` array mixing THEORY (Markdown) and EXERCISE steps.
+Each lesson is a single JSON file: top-level metadata (`id`, `title`,
+`description`, `estimated_minutes`), a list of **cards** (the smallest
+learnable units — stable ids, front/back pairs, Markdown `notes`,
+`tags` for the SRS) and a list of **steps**, each either a THEORY step
+(a Markdown `body`, optionally an `example_url` link or inline
+`examples`) or an EXERCISE step (exactly one exercise).
 
-The **complete field-level format reference** — lesson meta fields,
-cards (incl. `notes`, `tags`, `token_roles`, code fields), theory
-steps, inline examples + example links, every exercise type with its
-per-type fields and rules, and the manifest format — lives with the
-schema's distribution package:
+The complete, field-by-field format reference — every field, every
+exercise type, every cloze mode, with JSON examples that are validated
+by the engine's test suite — lives in the **engine reference**:
 
-- **[learn-content-engine — Lesson format reference](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)**
-  — every JSON example there is extracted and validated by the
-  engine's test suite, so the reference cannot drift from the schema.
-- The **bundled JSON Schema**
-  (`learn-content-engine/schema/lesson.schema.json`, also generated
-  into this repo at `schema/lesson.schema.json`) — reference it from
-  a lesson `.json` via a top-level `"$schema"` key for IDE
-  autocomplete and inline validation.
-- The generated in-app
-  [Lesson format reference](lesson-format-reference.md) page mirrors
-  the same Pydantic source.
+- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  — the canonical lesson-format reference for authors and third-party
+  validators (no app checkout needed)
+- the machine-readable schema bundled with every engine release:
+  `import schema from "learn-content-engine/schema/lesson.schema.json"`
+- the in-app twin: the generated
+  [Lesson format reference](lesson-format-reference.md)
 
-The sections below stay app-specific: which type serves which
-learning goal, multiple-choice authoring conventions, exercise
-direction, adaptive-generator annotations, assets, quality gates and
-the contribution workflow.
+The engine's bundled schema is byte-identical to this repo's generated
+`schema/lesson.schema.json` (enforced by `make engine-parity-check`),
+so "validates against the engine" and "validates in the app" are the
+same statement.
 
 ## Which exercise type for which learning goal
 
@@ -279,15 +274,18 @@ choice is `cloze` `select` mode by design (EXP-036 §4.3, #890; button renderer
 
 ## Exercise type reference
 
-The per-type field reference (`matching`, `picture_choice`,
-`free_text`, `word_tiles`, `cloze` incl. its `type` / `select` /
-`multiselect` modes) moved to the
-**[engine's lesson-format reference](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#exercises)**,
-where every example is validated by tests against the bundled schema.
-What follows here are the app's authoring conventions on top of the
-format.
+The per-type field reference — `matching`, `picture_choice`,
+`free_text`, `word_tiles` and `cloze` with its `type` / `select` /
+`multiselect` modes: required fields, JSON examples and the semantic
+rules (cloze `___` markers == `blanks`, `card_ids` referential
+integrity, multiselect accept/distractor disjointness, picture-choice
+exactly-one-correct) — lives in the engine reference:
+[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+Every JSON example there is extracted and validated by the engine's
+test suite, so the reference cannot rot. The app-specific authoring
+conventions below stay here.
 
-## Multiple Choice authoring
+### Multiple Choice authoring
 
 **Multiple choice is authored this way** — there is no separate
 `multiple_choice` exercise type (by design, see EXP-036 §4.3 and #890). A
@@ -335,11 +333,33 @@ driving-licence exam question) uses `cloze_mode: "multiselect"`:
 ```
 
 **Multiple blanks per cloze** are supported: each `___` in the
-sentence is mapped in order to the next entry in `blanks` (the
-validator enforces `markers == blanks`). Each blank can have its own
-hint + placeholder + accept list. The element SRS fans out one
-ElementAttempt per blank — someone who fills blank A fluently but
-constantly misses blank B gets blank-granular mastery tracking.
+sentence is mapped in order to the next entry in `blanks`. Each
+blank can have its own hint + placeholder + accept list. The
+element SRS fans out one ElementAttempt per blank — someone who
+fills blank A fluently but constantly misses blank B gets
+blank-granular mastery tracking.
+
+**Token roles on cards (Phase 52I / v1.35.0)** — optional card
+metadata that lets the cloze generator at runtime (review sessions
++ the end-of-lesson correction round) choose a semantically
+meaningful blank:
+
+```json
+{
+  "id": "art-un",
+  "front": "un chat",
+  "back": "eine Katze",
+  "tags": ["article"],
+  "token_roles": [
+    {"token": "un", "role": "article"}
+  ]
+}
+```
+
+Closed enum of roles: `article` / `verb` / `noun` /
+`adjective` / `preposition` / `gender_marker` / `tense_marker`.
+Adding a role is a minor schema version bump — do not extend it
+inline.
 
 ## Exercise direction (v1.46.0 / EXP-018)
 

@@ -621,7 +621,7 @@ sync-schema-check: ## Exit non-zero if any generated lesson-schema artefact drif
 	@cd backend && poetry run python ../scripts/generate_lesson_schema.py --check
 	@cd frontend && node scripts/generate-lesson-types.mjs --check
 
-engine-parity-check: ## Compare the committed app schemas against the pinned learn-content-engine release (network; #1393)
+engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)
 	@python3 scripts/check_engine_schema_parity.py
 
 sync-help: ## Regenerate frontend/src/data/help/*.json from backend/config/help YAML files (Phase 38)
