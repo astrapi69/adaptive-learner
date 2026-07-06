@@ -16,12 +16,12 @@
 # comparison against the npm registry tarball (immutable per version).
 name: Engine schema parity
 
+# Deliberately NOT a pull_request gate: an app schema bump necessarily
+# lands BEFORE the engine can sync from it, so a per-PR parity check
+# would deadlock the chain (the PR could never go green). The gate runs
+# post-merge + as a daily heartbeat instead — red there is the expected
+# to-do signal, not a merge blocker (night-shift rule, #575).
 on:
-  pull_request:
-    paths:
-      - "schema/**"
-      - "scripts/check_engine_schema_parity.py"
-      - ".github/workflows/engine-schema-parity.yml"
   push:
     branches: [develop, main]
     paths:
