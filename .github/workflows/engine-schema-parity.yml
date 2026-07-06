@@ -12,12 +12,13 @@
 # Deliberately NOT a per-PR gate: an app schema bump necessarily lands
 # BEFORE the engine can sync from it, so blocking the bump PR on engine
 # parity would deadlock the chain. Instead this runs on pushes to
-# master that touch schema/, on a daily heartbeat, and on demand.
+# develop/master that touch schema/, on a daily heartbeat, and on
+# demand.
 name: Engine schema parity
 
 on:
   push:
-    branches: [master]
+    branches: [develop, master]
     paths:
       - "schema/**"
       - "scripts/check_engine_schema_parity.py"
