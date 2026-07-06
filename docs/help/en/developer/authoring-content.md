@@ -57,10 +57,14 @@ used to drift can no longer:
 
 A drift gate (`make sync-schema-check`, part of `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
-fails if any generated artefact diverges from the models. The
-content repo mirrors `schema/lesson.schema.json` +
-`schema/quality-rules.json` (the app is the source) and validates
-structure against them in its own CI.
+fails if any generated artefact diverges from the models. Downstream,
+the [learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+vendors the generated schema via its documented schema-sync procedure
+and ships it with every npm release; the content repos mirror **the
+pinned engine release** (not this repo) and validate against that
+mirror in their own CI. `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`) keeps the generated schema
+here in visible parity with the pinned engine release.
 
 ## Language pairs (v1.44.0)
 
@@ -167,92 +171,31 @@ The content loader iterates `metadata.lessons` in the given order;
 the file names on disk are irrelevant — only the manifest order
 counts.
 
-## Lesson schema (v1.0)
+## Lesson schema
 
-Each lesson is a single JSON file. Top-level structure:
+Each lesson is a single JSON file: top-level metadata (`id`, `title`,
+`description`, `estimated_minutes`), a list of **cards** (the smallest
+learnable units — stable ids, front/back pairs, Markdown `notes`,
+`tags` for the SRS) and a list of **steps**, each either a THEORY step
+(a Markdown `body`, optionally an `example_url` link or inline
+`examples`) or an EXERCISE step (exactly one exercise).
 
-```json
-{
-  "id": "01-greetings",
-  "title": "Begrüßungen",
-  "description": "Optionale 1-2-Satz-Zusammenfassung.",
-  "estimated_minutes": 12,
-  "cards": [ ... ],
-  "steps": [ ... ]
-}
-```
+The complete, field-by-field format reference — every field, every
+exercise type, every cloze mode, with JSON examples that are validated
+by the engine's test suite — lives in the **engine reference**:
 
-### Cards
+- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  — the canonical lesson-format reference for authors and third-party
+  validators (no app checkout needed)
+- the machine-readable schema bundled with every engine release:
+  `import schema from "learn-content-engine/schema/lesson.schema.json"`
+- the in-app twin: the generated
+  [Lesson format reference](lesson-format-reference.md)
 
-A card is the smallest learnable unit — typically a single term or
-concept. Every card has a stable id (referenced from exercises)
-and a front/back pair:
-
-```json
-{
-  "id": "art-le",
-  "front": "le",
-  "back": "der (männlich Singular)",
-  "notes": "Vor konsonantenanfangenden männlichen Substantiven. **le chat**, **le livre**.",
-  "tags": ["article", "definite"]
-}
-```
-
-`notes` accepts Markdown. Use it for pronunciation rules,
-false-friend warnings, exception hints — anything that improves
-long-term retention. `tags` drive the SRS filtering.
-
-### Steps
-
-A lesson is a step-by-step sequence, each step either THEORY (a
-Markdown block) or EXERCISE (one of the four exercise types):
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "title": "Warum Artikel wichtig sind",
-  "body": "# Artikel im Französischen\n\nJedes französische Nomen hat ein Geschlecht..."
-}
-```
-
-A theory step can optionally carry an **example link** (schema
-v1.4, additive — existing lessons stay valid without it). If
-present, the viewer renders a button below it to open the example:
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "body": "Die Korrelation misst den Zusammenhang...",
-  "example_url": "https://example.com/correlation-visualizer",
-  "example_label": "Interaktive Visualisierung"
-}
-```
-
-- `example_url` (optional): must be an `http(s)` URL.
-- `example_label` (optional): the link text; empty becomes a
-  localized "View example".
-
-Or an exercise:
-
-```json
-{
-  "id": "ex-match-greetings",
-  "type": "exercise",
-  "title": "Begrüßungen zuordnen",
-  "exercise": {
-    "id": "ex-match-greetings",
-    "type": "matching",
-    "prompt": "Ordne jede Begrüßung ihrer Übersetzung zu.",
-    "card_ids": ["bonjour", "salut"],
-    "pairs": [
-      {"left": "Bonjour", "right": "Hallo"},
-      {"left": "Salut", "right": "Hi"}
-    ]
-  }
-}
-```
+The engine's bundled schema is byte-identical to this repo's generated
+`schema/lesson.schema.json` (enforced by `make engine-parity-check`),
+so "validates against the engine" and "validates in the app" are the
+same statement.
 
 ## Which exercise type for which learning goal
 
@@ -331,159 +274,18 @@ choice is `cloze` `select` mode by design (EXP-036 §4.3, #890; button renderer
 
 ## Exercise type reference
 
-### matching
+The per-type field reference — `matching`, `picture_choice`,
+`free_text`, `word_tiles` and `cloze` with its `type` / `select` /
+`multiselect` modes: required fields, JSON examples and the semantic
+rules (cloze `___` markers == `blanks`, `card_ids` referential
+integrity, multiselect accept/distractor disjointness, picture-choice
+exactly-one-correct) — lives in the engine reference:
+[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+Every JSON example there is extracted and validated by the engine's
+test suite, so the reference cannot rot. The app-specific authoring
+conventions below stay here.
 
-Drag-pair exercise. The renderer shuffles before display.
-
-```json
-{
-  "id": "ex-id",
-  "type": "matching",
-  "prompt": "Ordne jedem französischen Nomen seinen Artikel zu.",
-  "card_ids": ["noun-1", "noun-2"],
-  "pairs": [
-    {"left": "chat", "right": "le"},
-    {"left": "chaise", "right": "la"}
-  ]
-}
-```
-
-Each pair must have exactly two keys: `left` + `right`.
-
-### picture_choice
-
-Multiple choice with images. ≥ 2 images, exactly one marked
-correct.
-
-```json
-{
-  "id": "ex-id",
-  "type": "picture_choice",
-  "prompt": "Welche Begrüßung passt zum Abend?",
-  "card_ids": ["card-1"],
-  "images": [
-    {"src": "assets/img/morning.png", "label": "Bonjour"},
-    {"src": "assets/img/evening.png", "label": "Bonsoir", "is_correct": "true"}
-  ],
-  "hint": "Optionaler Markdown-Tipp auf Knopfdruck.",
-  "distractors": ["Bonjour"]
-}
-```
-
-Important: `is_correct` is a **string** `"true"`, not a JSON
-boolean.
-
-If the `src` path points to a non-existent file, the renderer
-falls back to the `label` — so picture_choice also works without
-illustration assets.
-
-> **Do not use `picture_choice` for text-only multiple choice.** It is
-> for genuine image selection with **real, existing** image assets. Used
-> for text options it renders placeholder tiles instead of a usable
-> multiple-choice control — that was the bug in
-> astrapi69/adaptive-learner-content-test#10. Author text multiple choice
-> as `cloze` `select` mode instead — see
-> [Multiple Choice authoring](#multiple-choice-authoring).
-
-### free_text
-
-Type the answer. The renderer matches exactly first, then
-Levenshtein-tolerant.
-
-```json
-{
-  "id": "ex-id",
-  "type": "free_text",
-  "prompt": "Wie sagt man 'Danke' auf Französisch?",
-  "card_ids": ["card-merci"],
-  "accept": ["Merci", "merci", "MERCI"],
-  "hint": "Beginnt mit M.",
-  "distractors": ["Bonjour", "Salut"]
-}
-```
-
-`accept[0]` is the canonical answer shown after a wrong attempt.
-List ≥ 3 variants to cover case + punctuation; whitespace is
-normalized by the renderer.
-
-### word_tiles
-
-Put the tiles in the correct order. The renderer shuffles before
-display.
-
-```json
-{
-  "id": "ex-id",
-  "type": "word_tiles",
-  "prompt": "Bring die Kacheln in die Reihenfolge: Ich sehe eine Katze.",
-  "card_ids": ["card-1"],
-  "tiles": ["Je", "vois", "un", "chat"],
-  "hint": "Gleiche Wortreihenfolge wie im Deutschen."
-}
-```
-
-If several word orderings are correct, add `accept_orderings`:
-
-```json
-{
-  "tiles": ["Je", "vois", "un", "chat"],
-  "accept_orderings": [
-    [0, 1, 2, 3],
-    [0, 1, 3, 2]
-  ]
-}
-```
-
-Each ordering is a permutation of the tile indices.
-
-### cloze (Phase 52 / v1.35.0 — schema 1.1)
-
-Fill-in-the-blank with visible `___` markers in the sentence. Each
-`___` corresponds to an entry in `blanks[]` (mapped left to right;
-the loader checks `sentence.count("___") == len(blanks)`).
-
-```json
-{
-  "id": "ex-id",
-  "type": "cloze",
-  "prompt": "Setze den unbestimmten Artikel ein.",
-  "card_ids": ["art-un", "noun-chat"],
-  "sentence": "Je vois ___ chat dans le jardin.",
-  "blanks": [
-    {
-      "accept": ["un"],
-      "hint": "männlicher unbestimmter Artikel",
-      "placeholder": "?"
-    }
-  ],
-  "cloze_mode": "type",
-  "distractors": ["le", "la", "les"],
-  "hint": "*un* ist der männliche unbestimmte Artikel."
-}
-```
-
-**Render modes** — set per exercise via `cloze_mode`:
-
-- `"type"` (default when not set): one `<input>` per blank.
-  Validated with the same NFC + Levenshtein-≤-1 matcher as
-  free-text, so authors only need to list semantic variants (no
-  typos).
-- `"select"`: one `<select>` per blank. Options from `accept[0]` +
-  the exercise's `distractors`, shuffled per blank with a stable
-  seed. **Requires non-empty `distractors`** — the schema
-  validator rejects `cloze_mode: "select"` without them.
-- `"multiselect"` (#1195): a "select all that apply" question. No
-  `___` markers and no `blanks` — the `sentence` is the question
-  stem, rendered above a checkbox group. Reuses `accept` and
-  `distractors` with a mode-specific meaning: **every** `accept`
-  entry is a correct option (not just `accept[0]`), and
-  `distractors` are the wrong options. Graded by **exact-set**
-  match — the learner must check every correct option and no
-  distractor. **Requires** non-empty `accept`, non-empty
-  `distractors`, and the two lists must be **disjoint** (the same
-  option may not be both correct and a distractor).
-
-#### Multiple Choice authoring
+### Multiple Choice authoring
 
 **Multiple choice is authored this way** — there is no separate
 `multiple_choice` exercise type (by design, see EXP-036 §4.3 and #890). A
