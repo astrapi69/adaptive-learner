@@ -44,7 +44,8 @@ draws.
 7. **Content-repo validation.** Extend the client validator
    (`frontend/src/lib/content/validation/content-validator.ts`) and, if the
    type affects the quality minimums, the shared `QUALITY_RULES` in
-   `scripts/generate_lesson_schema.py` (mirrored to the content repo).
+   `scripts/generate_lesson_schema.py` (vendored by learn-content-engine,
+   which the content repos mirror pinned to its release).
 8. **Authoring docs.** Add the type to the
    [catalog table](authoring-content.md#exercise-type-catalog-status) and a
    `### <type>` reference block with a JSON example (EN + DE).

@@ -20,8 +20,13 @@ The JSON is emitted with ``sort_keys=True`` so re-generation is byte-stable;
 failing (exit 1) on drift. This is the App-internal drift gate (analogous to
 ``make sync-versions-check``).
 
-The lesson schema is the artefact the content repo mirrors (EXP-039 §4,
-Option A). Its ``$id`` + ``$schema`` + ``x-schema-version`` make it
+The lesson schema is the artefact learn-content-engine vendors via its
+documented schema-sync procedure; the content repos mirror the ENGINE,
+pinned to its release — not this repo (mirror decoupling, #1394). The
+app-vs-engine parity test
+(``frontend/src/lib/content/validation/engine-schema-parity.test.ts``)
+keeps this generator's output byte-identical to the pinned engine
+release. The schema's ``$id`` + ``$schema`` + ``x-schema-version`` make it
 self-describing for IDE autocomplete (``$schema`` reference in a lesson .json)
 and for ``jsonschema``/``ajv`` validation.
 """
