@@ -12,9 +12,15 @@
 
 import {act, fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter, Route, Routes, useNavigate} from "react-router-dom";
-import {describe, expect, it} from "vitest";
+import {afterAll, describe, expect, it} from "vitest";
 
+import {stubMatchMedia} from "../../test-utils/match-media-stub";
 import Navigation from "./Navigation";
+
+// #1390 — the drawer exists only below the breakpoint; run on a stubbed
+// mobile viewport.
+const media = stubMatchMedia(true);
+afterAll(() => media.restore());
 
 function renderAt(path: string) {
     return render(

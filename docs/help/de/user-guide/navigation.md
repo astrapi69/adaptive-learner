@@ -30,24 +30,20 @@ Seiten, die keine Top-Level-Einträge mehr sind (Anki, Session),
 bleiben erreichbar: Anki über seine `/anki`-Route, Session über
 seine erhaltene Route.
 
-### Vertikale Seitenleiste
+### Eine Hauptnavigation pro Viewport
 
-Auf breiten Desktop-Bildschirmen wird die Hauptnavigation als
-**vertikale linke Seitenleiste** dargestellt. Sie nutzt exakt
-dasselbe gruppierte `NavGroup`-Modell wie oben — keine zusätzlichen
-Einträge, nur ein Layout als linke Leiste, das den gruppierten
-Abschnitten mehr Platz gibt. Der aktive Eintrag trägt
-`aria-current`, jedes Ziel ist mindestens 44px groß, und sie
-funktioniert über alle Themes hinweg. Auf schmalen / mobilen
-Breiten weicht die Seitenleiste der Bottom-Tab-Leiste weiter unten.
-(Dies ist die Seitenleiste der *Haupt*navigation; die
-Settings-Seite hat ihre eigene, separate Seitenleiste für ihre
-Tabs.)
-
-Die Seitenleiste hat einen **Auf-/Zuklapp-Umschalter**: Klappe sie
-zu einer schmalen Leiste ein, um der Seite mehr horizontalen Platz
-zu geben, oder wieder zur vollen beschrifteten Leiste auf. Deine
-Wahl wird gemerkt.
+Auf Desktop-Breiten ist die horizontale obere Leiste die
+**einzige** Hauptnavigation — es gibt keinen Burger-Button und
+keinen Drawer. Auf schmalen / mobilen Breiten wandern die Links
+der oberen Leiste hinter einen **Hamburger-Drawer** (dieselben
+gruppierten Einträge), und die Bottom-Tab-Leiste weiter unten
+liefert die primären Tabs. Beide Darstellungen rendern aus einer
+gemeinsamen Ziel-Liste und führen deshalb immer zu denselben
+Seiten. Der aktive Eintrag trägt `aria-current`, jedes Ziel ist
+mindestens 44px groß, und alles funktioniert über alle Themes
+hinweg. (Die Settings-Seite hat ihre eigene, separate
+Sektions-Seitenleiste für ihre Tabs — sie gehört nicht zur
+Hauptnavigation.)
 
 ---
 

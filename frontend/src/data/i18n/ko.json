@@ -98,8 +98,6 @@
     "offline": "오프라인",
     "anki": "Anki",
     "contribute": "기여",
-    "sidebar_open": "사이드바 열기",
-    "sidebar_close": "사이드바 닫기",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "개발자 모드가 켜져 있습니다 — 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요.",
     "content": "내 콘텐츠",
