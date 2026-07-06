@@ -16,7 +16,7 @@ script reads the content-repo manifests DIRECTLY (the same source
 
 It never walks the ephemeral ``frontend/public/content/`` bundle, never
 runs the bundler, never mutates the content repo, and does not collide
-with the content-repo-side ``docs/ci/.../validate_content.py`` (which
+with the content repo's own ``scripts/validate_content.py`` (which
 validates lesson SCHEMA inside the content repo).
 
 Modes::

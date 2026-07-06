@@ -23,7 +23,9 @@ failing (exit 1) on drift. This is the App-internal drift gate (analogous to
 The lesson schema is the artefact the learn-content-engine vendors via its
 documented schema-sync procedure and ships in every npm release; the content
 repos mirror THE ENGINE RELEASE (pinned), not this repo (mirror decoupling —
-the app-side chain closure is ``scripts/check_engine_schema_parity.py``).
+the app-side chain closure is ``scripts/check_engine_schema_parity.py``, plus
+the offline parity pin
+``frontend/src/lib/content/validation/engine-schema-parity.test.ts``).
 Its ``$id`` + ``$schema`` + ``x-schema-version`` make it self-describing for
 IDE autocomplete (``$schema`` reference in a lesson .json) and for
 ``jsonschema``/``ajv`` validation.

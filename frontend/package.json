@@ -112,6 +112,7 @@
     "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.10.6",
     "json-schema-to-typescript": "^15.0.4",
+    "learn-content-engine": "0.3.1",
     "png-to-ico": "^3.0.1",
     "prettier": "^3.9.4",
     "rollup-plugin-visualizer": "^7.0.1",

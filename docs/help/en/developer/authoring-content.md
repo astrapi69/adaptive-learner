@@ -578,10 +578,11 @@ Content is secured by two validation layers with the SAME checks:
    sent to the configured provider) and never blocks sharing — the
    rule-based check is the gate.
 2. **In the content repo's CI.** A pull request to
-   `astrapi69/adaptive-learner-content` runs
-   `scripts/validate_content.py` (mirrored under
-   `docs/ci/adaptive-learner-content/`) and checks every set with
-   the same rules, so a manual PR cannot bypass the gate.
+   `astrapi69/adaptive-learner-content` runs its own
+   `scripts/validate_content.py` (structure against the vendored,
+   engine-pinned schema mirror + quality minimums) plus an
+   engine-conformance gate (`learn-content-engine` `validate()` over
+   every lesson), so a manual PR cannot bypass the gate.
 
 **Quality minimums (hard gate):** ≥ 5 exercises per lesson, ≥ 2
 exercise types, ≥ 1 theory step, free-text ≥ 2 accepted answers +

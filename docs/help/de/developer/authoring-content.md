@@ -606,10 +606,12 @@ Prüfungen abgesichert:
    Lektionsinhalt wird an den konfigurierten Anbieter gesendet) und
    blockiert das Teilen nie — die regelbasierte Prüfung ist das Tor.
 2. **In der CI des Content-Repos.** Ein Pull Request an
-   `astrapi69/adaptive-learner-content` führt
-   `scripts/validate_content.py` aus (gespiegelt unter
-   `docs/ci/adaptive-learner-content/`) und prüft jedes Set mit
-   denselben Regeln, damit ein manueller PR das Tor nicht umgeht.
+   `astrapi69/adaptive-learner-content` führt dessen eigenes
+   `scripts/validate_content.py` aus (Struktur gegen den vendored,
+   Engine-gepinnten Schema-Spiegel + Qualitäts-Mindestwerte) plus
+   ein Engine-Konformitäts-Gate (`learn-content-engine`
+   `validate()` über jede Lektion), damit ein manueller PR das Tor
+   nicht umgeht.
 
 **Qualitäts-Mindestwerte (hartes Tor):** ≥ 5 Übungen pro Lektion,
 ≥ 2 Übungstypen, ≥ 1 Theorie-Schritt, Free-Text ≥ 2 akzeptierte
