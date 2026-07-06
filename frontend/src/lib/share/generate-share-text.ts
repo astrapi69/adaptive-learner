@@ -29,9 +29,10 @@ export const HAUPT_APP_URL = SHARE_URL;
 
 /**
  * The Latest/preview strand (#1172) — the staging deployment built from
- * develop/feature/fix branches. Intentionally NOT offered as a QR code:
- * it is unstable (a test version that can contain bugs), so the UI shares
- * it as a plain, explicitly-warned link only.
+ * develop/feature/fix branches. It is unstable (a test version that can
+ * contain bugs), so the share UI pairs BOTH share paths — the plain link
+ * and, since #1316, a QR code too — with an always-visible instability
+ * warning; the QR is never a bare scan-and-go.
  */
 export const LATEST_APP_URL =
     "https://astrapi69.github.io/adaptive-learner-content-test/";
