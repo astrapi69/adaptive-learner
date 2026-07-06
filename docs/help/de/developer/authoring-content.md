@@ -63,14 +63,14 @@ Stellen, die früher auseinanderdrifteten, das nicht mehr können:
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
 schlägt fehl, wenn ein generiertes Artefakt von den Modellen
-abweicht. Nachgelagert übernimmt
-[**learn-content-engine**](https://github.com/astrapi69/learn-content-engine)
-die generierten Schemas per dokumentierter Sync-Prozedur, und die
-Content-Repos spiegeln die ENGINE, gepinnt auf deren npm-Release — der
-App-gegen-Engine-Paritätstest
-(`frontend/src/lib/content/validation/engine-schema-parity.test.ts`)
-hält die Kette geschlossen: generiertes Schema == gepinntes
-Engine-Schema.
+abweicht. Stromabwärts übernimmt die
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+das generierte Schema über ihre dokumentierte Schema-Sync-Prozedur
+und liefert es mit jedem npm-Release aus; die Content-Repos spiegeln
+**das gepinnte Engine-Release** (nicht dieses Repo) und validieren in
+ihrer eigenen CI gegen diesen Spiegel. `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`) hält das hier generierte
+Schema sichtbar in Parität mit dem gepinnten Engine-Release.
 
 ## Sprachpaare (v1.44.0)
 
@@ -180,29 +180,32 @@ Der Content-Loader iteriert `metadata.lessons` in der gegebenen
 Reihenfolge; die Dateinamen auf der Festplatte sind irrelevant —
 nur die Manifest-Reihenfolge zählt.
 
-## Lektionsformat (kanonische Referenz)
+## Lektionsschema
 
-Jede Lektion ist eine einzelne JSON-Datei, die bei jedem Download
-gegen das kanonische Lektionsschema validiert wird. Die vollständige
-Feld-für-Feld-Formatreferenz — Karten, Theorie-Schritte (inkl.
-`example_url` / `example_label` und Inline-`examples`) und jeder
-Aufgabentyp mit einem getesteten JSON-Beispiel pro Typ und Modus —
-liegt bei **learn-content-engine**, das das generierte Schema
-übernimmt:
+Jede Lektion ist eine einzelne JSON-Datei: Top-Level-Metadaten (`id`,
+`title`, `description`, `estimated_minutes`), eine Liste von **Cards**
+(die kleinsten lernbaren Einheiten — stabile Ids, Front/Back-Paare,
+Markdown-`notes`, `tags` für das SRS) und eine Liste von **Steps**,
+jeder entweder ein THEORY-Step (ein Markdown-`body`, optional ein
+`example_url`-Link oder inline `examples`) oder ein EXERCISE-Step
+(genau eine Übung).
 
-- **Formatreferenz:**
-  [`learn-content-engine/docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
-- **Maschinenlesbares Schema (im npm-Paket gebündelt):**
-  `learn-content-engine/schema/lesson.schema.json` — per Top-Level-Key
-  `"$schema"` aus einer Lektion referenzieren für IDE-Autocomplete und
-  Inline-Validierung.
-- **In-App generierte Referenz:** die Seite
-  [Lektionsformat-Referenz](lesson-format-reference.md) wird per
-  `make sync-schema` aus denselben Pydantic-Modellen generiert.
+Die vollständige Feld-für-Feld-Formatreferenz — jedes Feld, jeder
+Aufgabentyp, jeder Cloze-Modus, mit JSON-Beispielen, die von der
+Engine-Testsuite validiert werden — lebt in der **Engine-Referenz**:
 
-Die Content-Repos spiegeln die Engine-Schemas gepinnt auf deren
-Release (`schema/engine-version.txt` dort), Content-Autoren und
-Dritt-Validatoren brauchen also nur die Engine — nie dieses App-Repo.
+- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  — die kanonische Lektionsformat-Referenz für Autoren und
+  Dritt-Validatoren (kein App-Checkout nötig)
+- das maschinenlesbare Schema, das jedem Engine-Release beiliegt:
+  `import schema from "learn-content-engine/schema/lesson.schema.json"`
+- der In-App-Zwilling: die generierte
+  [Lektionsformat-Referenz](lesson-format-reference.md)
+
+Das gebündelte Schema der Engine ist byte-identisch mit dem hier
+generierten `schema/lesson.schema.json` (erzwungen durch
+`make engine-parity-check`) — "validiert gegen die Engine" und
+"validiert in der App" sind dieselbe Aussage.
 
 ## Welcher Aufgabentyp für welches Lernziel
 
@@ -281,16 +284,18 @@ Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
 | Matrix / Likert / Slider | Umfrage-Typen, keine Lern-Typen. |
 | Datum / Uhrzeit-Auswahl | Formular-Typen, keine Lern-Typen. |
 
-## Übungstyp-Referenz (in die Engine umgezogen)
+## Übungstyp-Referenz
 
-Die Feld-Referenz pro Typ — `matching`, `picture_choice`, `free_text`,
-`word_tiles` und `cloze` inkl. der Render-Modi `type` / `select` /
-`multiselect`, jeweils mit einem getesteten JSON-Beispiel — liegt in
-der Engine-Formatreferenz:
-[`learn-content-engine/docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
-Der App-spezifische Rendering-Status jedes Typs steht weiter im
-[Katalog](#aufgabentyp-katalog-status) oben; die Autoren-Konventionen
-darunter bleiben auf dieser Seite.
+Die Feld-Referenz je Typ — `matching`, `picture_choice`, `free_text`,
+`word_tiles` und `cloze` mit seinen Modi `type` / `select` /
+`multiselect`: Pflichtfelder, JSON-Beispiele und die semantischen
+Regeln (Cloze-`___`-Marker == `blanks`, referenzielle Integrität der
+`card_ids`, Disjunktheit von accept/distractors bei multiselect,
+exactly-one-correct bei picture_choice) — lebt in der Engine-Referenz:
+[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+Jedes JSON-Beispiel dort wird von der Engine-Testsuite extrahiert und
+validiert, die Referenz kann also nicht veralten. Die App-spezifischen
+Autoren-Konventionen unten bleiben hier.
 
 ### Multiple Choice erstellen
 
@@ -601,10 +606,12 @@ Prüfungen abgesichert:
    Lektionsinhalt wird an den konfigurierten Anbieter gesendet) und
    blockiert das Teilen nie — die regelbasierte Prüfung ist das Tor.
 2. **In der CI des Content-Repos.** Ein Pull Request an
-   `astrapi69/adaptive-learner-content` führt
-   `scripts/validate_content.py` aus (gespiegelt unter
-   `docs/ci/adaptive-learner-content/`) und prüft jedes Set mit
-   denselben Regeln, damit ein manueller PR das Tor nicht umgeht.
+   `astrapi69/adaptive-learner-content` führt dessen eigenes
+   `scripts/validate_content.py` aus (Struktur gegen den vendored,
+   Engine-gepinnten Schema-Spiegel + Qualitäts-Mindestwerte) plus
+   ein Engine-Konformitäts-Gate (`learn-content-engine`
+   `validate()` über jede Lektion), damit ein manueller PR das Tor
+   nicht umgeht.
 
 **Qualitäts-Mindestwerte (hartes Tor):** ≥ 5 Übungen pro Lektion,
 ≥ 2 Übungstypen, ≥ 1 Theorie-Schritt, Free-Text ≥ 2 akzeptierte

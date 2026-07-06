@@ -35,7 +35,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
-       sync-schema sync-schema-check sync-lesson-types \
+       sync-schema sync-schema-check sync-lesson-types engine-parity-check \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -620,6 +620,9 @@ sync-schema: ## Regenerate the lesson JSON-Schema + quality-rules + doc + TS typ
 sync-schema-check: ## Exit non-zero if any generated lesson-schema artefact drifts from the Pydantic models (EXP-039)
 	@cd backend && poetry run python ../scripts/generate_lesson_schema.py --check
 	@cd frontend && node scripts/generate-lesson-types.mjs --check
+
+engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)
+	@python3 scripts/check_engine_schema_parity.py
 
 sync-help: ## Regenerate frontend/src/data/help/*.json from backend/config/help YAML files (Phase 38)
 	@python3 scripts/sync_help_to_frontend.py

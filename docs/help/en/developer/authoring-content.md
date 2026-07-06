@@ -58,12 +58,13 @@ used to drift can no longer:
 A drift gate (`make sync-schema-check`, part of `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
 fails if any generated artefact diverges from the models. Downstream,
-[**learn-content-engine**](https://github.com/astrapi69/learn-content-engine)
-vendors the generated schemas via its documented sync procedure, and the
-content repos mirror the ENGINE pinned to its npm release — the
-app-vs-engine parity test
-(`frontend/src/lib/content/validation/engine-schema-parity.test.ts`)
-keeps the chain closed: generated schema == pinned engine schema.
+the [learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+vendors the generated schema via its documented schema-sync procedure
+and ships it with every npm release; the content repos mirror **the
+pinned engine release** (not this repo) and validate against that
+mirror in their own CI. `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`) keeps the generated schema
+here in visible parity with the pinned engine release.
 
 ## Language pairs (v1.44.0)
 
@@ -170,28 +171,31 @@ The content loader iterates `metadata.lessons` in the given order;
 the file names on disk are irrelevant — only the manifest order
 counts.
 
-## Lesson format (canonical reference)
+## Lesson schema
 
-Each lesson is a single JSON file, validated against the canonical
-lesson schema on every download. The full field-by-field format
-reference — cards, theory steps (incl. `example_url` /
-`example_label` and inline `examples`), and every exercise type with
-a tested JSON example per type and mode — lives with
-**learn-content-engine**, which vendors the generated schema:
+Each lesson is a single JSON file: top-level metadata (`id`, `title`,
+`description`, `estimated_minutes`), a list of **cards** (the smallest
+learnable units — stable ids, front/back pairs, Markdown `notes`,
+`tags` for the SRS) and a list of **steps**, each either a THEORY step
+(a Markdown `body`, optionally an `example_url` link or inline
+`examples`) or an EXERCISE step (exactly one exercise).
 
-- **Format reference:**
-  [`learn-content-engine/docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
-- **Machine-readable schema (bundled with the npm package):**
-  `learn-content-engine/schema/lesson.schema.json` — reference it from
-  a lesson `.json` via a top-level `"$schema"` key for IDE
-  autocomplete and inline validation.
-- **In-app generated reference:** the
-  [Lesson format reference](lesson-format-reference.md) page is
-  generated from the same Pydantic models by `make sync-schema`.
+The complete, field-by-field format reference — every field, every
+exercise type, every cloze mode, with JSON examples that are validated
+by the engine's test suite — lives in the **engine reference**:
 
-The content repos mirror the engine's schemas pinned to its release
-(`schema/engine-version.txt` over there), so content authors and
-third-party validators need only the engine — never this app repo.
+- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  — the canonical lesson-format reference for authors and third-party
+  validators (no app checkout needed)
+- the machine-readable schema bundled with every engine release:
+  `import schema from "learn-content-engine/schema/lesson.schema.json"`
+- the in-app twin: the generated
+  [Lesson format reference](lesson-format-reference.md)
+
+The engine's bundled schema is byte-identical to this repo's generated
+`schema/lesson.schema.json` (enforced by `make engine-parity-check`),
+so "validates against the engine" and "validates in the app" are the
+same statement.
 
 ## Which exercise type for which learning goal
 
@@ -268,16 +272,18 @@ choice is `cloze` `select` mode by design (EXP-036 §4.3, #890; button renderer
 | Matrix / Likert / slider | Survey types, not learning types. |
 | Date / time pickers | Form types, not learning types. |
 
-## Exercise type reference (moved to the engine)
+## Exercise type reference
 
 The per-type field reference — `matching`, `picture_choice`,
-`free_text`, `word_tiles` and `cloze` incl. its `type` / `select` /
-`multiselect` render modes, each with a tested JSON example — lives in
-the engine format reference:
-[`learn-content-engine/docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
-The app-specific rendering status of every type stays in the
-[catalog](#exercise-type-catalog-status) above; the authoring
-conventions below stay on this page.
+`free_text`, `word_tiles` and `cloze` with its `type` / `select` /
+`multiselect` modes: required fields, JSON examples and the semantic
+rules (cloze `___` markers == `blanks`, `card_ids` referential
+integrity, multiselect accept/distractor disjointness, picture-choice
+exactly-one-correct) — lives in the engine reference:
+[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+Every JSON example there is extracted and validated by the engine's
+test suite, so the reference cannot rot. The app-specific authoring
+conventions below stay here.
 
 ### Multiple Choice authoring
 
@@ -572,10 +578,11 @@ Content is secured by two validation layers with the SAME checks:
    sent to the configured provider) and never blocks sharing — the
    rule-based check is the gate.
 2. **In the content repo's CI.** A pull request to
-   `astrapi69/adaptive-learner-content` runs
-   `scripts/validate_content.py` (mirrored under
-   `docs/ci/adaptive-learner-content/`) and checks every set with
-   the same rules, so a manual PR cannot bypass the gate.
+   `astrapi69/adaptive-learner-content` runs its own
+   `scripts/validate_content.py` (structure against the vendored,
+   engine-pinned schema mirror + quality minimums) plus an
+   engine-conformance gate (`learn-content-engine` `validate()` over
+   every lesson), so a manual PR cannot bypass the gate.
 
 **Quality minimums (hard gate):** ≥ 5 exercises per lesson, ≥ 2
 exercise types, ≥ 1 theory step, free-text ≥ 2 accepted answers +
