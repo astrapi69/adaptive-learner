@@ -257,7 +257,7 @@ kommen bei konkretem Content-Bedarf über das Rezept
 
 Es gibt **keinen** `multiple_choice`-/`choice`-Aufgabentyp — Text-Multiple-
 Choice ist per Design `cloze` `select`-Modus (EXP-036 §4.3, #890; Button-
-Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
+Renderer #1342). Siehe [Multiple Choice erstellen](#multiple-choice-erstellen).
 
 ### Ohne neuen Typ abbildbar (Konventionen, keine Typen)
 
