@@ -12,6 +12,10 @@
  * RED here means the generated schema and the pinned engine release have
  * diverged: run the engine schema-sync + release, then bump the pin here
  * AND in the content repos (schema/engine-version.txt over there).
+ *
+ * Since #1401 the engine is a RUNTIME dependency (the app consumes its
+ * parse/projection logic); the pin-equality with the repo-level
+ * ``schema/engine-version.txt`` is covered by ``engine-pin.test.ts``.
  */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -34,9 +38,9 @@ describe("app-generated schemas match the pinned learn-content-engine release", 
   it("pins learn-content-engine to an exact version (no range)", () => {
     const pkg = JSON.parse(
       readFileSync(join(HERE, "..", "..", "..", "..", "package.json"), "utf-8"),
-    ) as { devDependencies?: Record<string, string> };
-    const pin = pkg.devDependencies?.["learn-content-engine"];
-    expect(pin, "learn-content-engine must be a devDependency").toBeTruthy();
+    ) as { dependencies?: Record<string, string> };
+    const pin = pkg.dependencies?.["learn-content-engine"];
+    expect(pin, "learn-content-engine must be a runtime dependency").toBeTruthy();
     expect(pin).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
