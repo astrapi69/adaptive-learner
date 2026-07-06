@@ -120,12 +120,17 @@ test.describe("EXP-023 Phase C — recommended repos + local ratings", () => {
       page.getByTestId("content-repo-rating-jane-alpha-star-4"),
     ).toHaveAttribute("aria-checked", "true");
 
-    // --- Content Browser shows the recommended badge. ---------------
+    // --- Content Browser shows the unified category badge: an
+    // officially recommended repo resolves to the "official" category
+    // (#1405 — the shared RepoCategoryBadge replaced the old
+    // recommended span). ----------------------------------------------
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });
-    await expect(page.getByTestId("content-set-alpha-recommended")).toBeVisible();
+    const categoryBadge = page.getByTestId("content-set-alpha-category");
+    await expect(categoryBadge).toBeVisible();
+    await expect(categoryBadge).toHaveAttribute("data-category", "official");
 
     expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
   });

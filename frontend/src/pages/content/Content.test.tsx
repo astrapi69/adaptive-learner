@@ -596,8 +596,8 @@ describe("ContentPage — source filter + origin badge (#118)", () => {
     fireEvent.click(screen.getByTestId("content-source-filter"));
     expect(screen.getByTestId("content-source-filter-all")).toBeInTheDocument();
     expect(screen.getByTestId("content-source-filter-official")).toBeInTheDocument();
-    // Official sets carry no "Your repo" origin badge.
-    expect(screen.queryByTestId("content-set-language-fr-a1-origin")).toBeNull();
+    // Official sets carry no category badge (#1405).
+    expect(screen.queryByTestId("content-set-language-fr-a1-category")).toBeNull();
   });
 
   it("badges a user-repo set and filters by source", async () => {
@@ -611,8 +611,9 @@ describe("ContentPage — source filter + origin badge (#118)", () => {
     renderPage();
     await screen.findByTestId("content-page");
 
-    // The user-repo set carries the origin badge; the official one does not.
-    expect(screen.getByTestId("content-set-jane-deck-origin")).toBeInTheDocument();
+    // The user-repo set carries the unified category badge (#1405); the
+    // official one does not.
+    expect(screen.getByTestId("content-set-jane-deck-category")).toBeInTheDocument();
 
     // Filtering to "Official" (via the menu button, #1386) drops the
     // user-repo row from the tree.
