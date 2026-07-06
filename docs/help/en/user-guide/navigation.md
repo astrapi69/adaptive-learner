@@ -28,21 +28,18 @@ Pages that are no longer top-level entries (Anki, Session) are
 still reachable: Anki via its `/anki` route, Session via its kept
 route.
 
-### Vertical sidebar
+### One primary navigation per viewport
 
-On wide desktop screens the primary navigation is presented as a
-**vertical left sidebar**. It uses the exact same grouped
-`NavGroup` model as above — no extra entries, just a left-rail
-layout that gives the grouped sections more room. The active item
-carries `aria-current`, every target is at least 44px, and it
-works across all themes. On narrow / mobile widths the sidebar
-gives way to the bottom tab bar below. (This is the *primary*
-navigation sidebar; the Settings page has its own separate sidebar
-for its own tabs.)
-
-The sidebar has an **open/close toggle**: collapse it to a slim
-drawer to give the page more horizontal room, or expand it back to
-the full labelled rail. Your preference is remembered.
+On desktop widths the horizontal top bar is the **only** primary
+navigation — there is no hamburger button and no drawer. On narrow
+/ mobile widths the top-bar links move behind a **hamburger
+drawer** (same grouped entries), and the bottom tab bar below
+provides the primary tabs. Both presentations render from one
+shared list of destinations, so they always lead to the same
+pages. The active item carries `aria-current`, every target is at
+least 44px, and it works across all themes. (The Settings page has
+its own separate section sidebar for its own tabs — that one is
+unrelated to the primary navigation.)
 
 ---
 

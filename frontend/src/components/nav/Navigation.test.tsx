@@ -1,8 +1,16 @@
 import {act, fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
-import {afterEach, beforeEach, describe, expect, it} from "vitest";
+import {afterAll, afterEach, beforeEach, describe, expect, it} from "vitest";
 
+import {stubMatchMedia} from "../../test-utils/match-media-stub";
 import Navigation from "./Navigation";
+
+// #1390 — the hamburger + drawer only exist in the DOM below the breakpoint
+// (or in lesson-compact mode). These suites exercise the drawer, so run them
+// on a stubbed MOBILE viewport; the desktop variant is pinned by
+// Navigation.viewport.test.tsx.
+const media = stubMatchMedia(true);
+afterAll(() => media.restore());
 
 function renderAt(path: string) {
     return render(

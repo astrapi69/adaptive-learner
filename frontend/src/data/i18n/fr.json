@@ -98,8 +98,6 @@
     "offline": "Hors ligne",
     "anki": "Anki",
     "contribute": "Contribuer",
-    "sidebar_open": "Ouvrir la barre latérale",
-    "sidebar_close": "Fermer la barre latérale",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactive-le dans les Paramètres.",
     "content": "Mon contenu",
