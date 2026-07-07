@@ -140,45 +140,34 @@ regeneriert sie.
 
 ## Manifest-Format
 
-Beide Manifest-Dateien (Root + Set) verwenden die gleiche Form
-mit `schema_version: '1.0'`. Pflichtfelder:
+Das Feld-Schema des Manifests, also das Root-`manifest.yaml`, das die
+Sets des Repos auflistet, mit jedem Pflicht- und optionalen Feld
+(`schema_version`, `name` sowie pro Set `id`, `title`, `title_native`,
+`target_language`, `source_language`, `level`, `version`,
+`lesson_count`, `path`, `domain`, `tags`, `book`), steht in der
+Engine-Referenz:
+[learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
+Das strikte Schema der Engine (unbekannte Felder werden abgelehnt)
+validiert es, sodass die obige Feldliste nicht driften kann. Die
+Sprachpaar-Felder (`target_language` / `source_language`) werden wie
+unter [Sprachpaare](#sprachpaare-v1440) beschrieben angegeben; der
+Vor-v1.2-Alias `language` lädt weiterhin, ist für neue Sets aber
+nicht empfohlen.
 
-```yaml
-schema_version: '1.0'
-name: Mein Englisch-B1-Set
-description: >-
-  Optionale Langbeschreibung.
-sets:
-  - id: language-en-b1        # slug-sicher, eindeutig
-    title: Englisch B1 (Fortgeschrittene)
-    language: en              # BCP-47 (z.B. en, fr, zh-Hans)
-    level: B1                 # CEFR für Sprachen, frei für andere Domänen
-    version: '1.0.0'          # Semver — pro Set-Release erhöht
-    lesson_count: 12
-    domain: language          # aktive Domänen: ai / language / programming / psychology / technology
-    description: >-
-      Optionale Set-Beschreibung.
-    tags:
-      - intermediate
-      - business
-metadata:
-  author: Dein Name
-  license: CC-BY-SA-4.0       # oder die Lizenz deiner Wahl
-```
+App-spezifisches Loader-Verhalten, das zu beachten ist:
 
-Das Set-Manifest listet zusätzlich jede Lektionsdatei:
+- Das Set-Manifest listet jede Lektionsdatei unter `metadata.lessons`,
+  und der Content-Loader iteriert diese Liste **in der gegebenen
+  Reihenfolge**. Die Dateinamen auf der Festplatte sind irrelevant, nur
+  die Manifest-Reihenfolge zählt:
 
-```yaml
-metadata:
-  lessons:
-    - 01-intro.json
-    - 02-articles.json
-    - ...
-```
-
-Der Content-Loader iteriert `metadata.lessons` in der gegebenen
-Reihenfolge; die Dateinamen auf der Festplatte sind irrelevant —
-nur die Manifest-Reihenfolge zählt.
+  ```yaml
+  metadata:
+    lessons:
+      - 01-intro.json
+      - 02-articles.json
+      - ...
+  ```
 
 ## Lektionsschema
 

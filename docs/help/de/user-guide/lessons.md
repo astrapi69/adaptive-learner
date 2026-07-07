@@ -160,6 +160,15 @@ kleine Feieranimation. (Wenn du die OS-Einstellung
 "Bewegungen reduzieren" aktiviert hast, respektiert die
 Animation das.)
 
+### Die Zusammenfassung anpassen
+
+Wähle, welche Bereiche die Abschluss-Zusammenfassung zeigt und in
+welcher Reihenfolge, unter **Einstellungen → Lernen**. Die Bereiche
+sind: Ergebnis und Statistik, XP-Belohnung, Favoriten-Hinweis,
+Ergebnis teilen, Antwort-Übersicht, Ergebnis-Export und
+Nächste-Schritte-Vorschläge. Die „Weiter"-Aktionen bleiben stets
+sichtbar.
+
 ### Ergebnis exportieren
 
 Die Zusammenfassung bietet **„Ergebnis kopieren"** und

@@ -78,6 +78,15 @@ the browser.
    result as Markdown or save it as a file, and under
    **Settings → Data** create a [backup](../features/backup.md).
 
+## Bring your own AI key
+
+Adaptive Learner is **bring-your-own-key (BYOK)**. When no key is
+set, the Dashboard shows a single inviting **"add your AI key"** card
+that leads to the AI settings. Add a key for Claude, OpenAI or Gemini
+to unlock the AI-powered features (tutor session, chat analysis,
+exercise generation). Your keys are stored **locally** on your
+device.
+
 ## Where to go next
 
 - [Lessons and reviews](lessons.md) — the lesson flow in detail

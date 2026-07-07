@@ -1,24 +1,23 @@
 # Settings
 
 The Settings page collects everything you can tweak without
-touching code or YAML. Sections, top to bottom:
+touching code or YAML. It is organized as a **tabbed page**: pick a
+tab and its panel opens, so you are not scrolling one long list top
+to bottom. The tab groups are:
 
-1. **Language** — UI language (DE / EL / EN / ES / FR / HI /
-   ID / JA / KO / PT / TR, all fully translated).
-2. **AI provider + model picker** — which provider sees your
-   messages, and which model to use.
-3. **API keys** — per-provider keys with source attribution
-   (env / `secrets.yaml` / Settings).
-4. **Storage mode** — Server (FastAPI + SQLite) vs Local
-   (browser IndexedDB).
-5. **Sync** — pair this device with another over local
-   network.
-6. **Backup** — export / import / compare.
-7. **Voice** — TTS + STT + pronunciation toggles.
-8. **Interface** — gestures + theme + density.
-9. **Gamification** — XP / badge notifications + weekend mode.
-10. **About** — version, system info, credits, donations,
-    license.
+- **General**: UI language, appearance / theme, and interface
+  options (gestures, tooltips, Developer Mode).
+- **AI**: provider + model picker, per-provider API keys with
+  source attribution, and the configured-providers overview.
+- **Learning**: how lessons play (default mode, exam threshold,
+  timed difficulty, hints, reminders, the Enter shortcut, exercise
+  direction), the content view, and the Content-hub tab order.
+- **Data**: storage mode, sync, backup (export / import / compare),
+  and the encrypted key export.
+- **Voice**: TTS / STT / pronunciation toggles.
+- **Gamification**: XP / badge notifications, weekend mode, daily
+  goal, and reset progress.
+- **About**: version, system info, credits, donations, license.
 
 ## Language
 
@@ -236,6 +235,9 @@ It also holds the **content view** control — the global *list ⇄ grid*
 preference for the Content hub (default **list**). It is the same
 preference as the in-tab view toggle on *My content* / *Discover*, so
 changing it in either place keeps both in sync.
+
+You can also set the **order of the Content-hub tabs** (Discover /
+My content / Import) here, so the hub opens on the tab you use most.
 
 ## Gamification
 

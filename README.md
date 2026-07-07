@@ -205,9 +205,9 @@ Full documentation (German default at `/docs/`, English at
   a dedicated **"Add to Home Screen" hint on iOS Safari** (Share →
   Add to Home Screen) where there is no automatic prompt. Hints
   only show before install.
-- **Responsive primary navigation** — grouped entries as a vertical
-  desktop sidebar on wide screens, a thumb-friendly bottom tab bar
-  on mobile.
+- **Responsive primary navigation** — grouped entries in a horizontal
+  top bar on desktop, a thumb-friendly bottom tab bar on mobile (one
+  primary navigation per viewport).
 - **Offline** for past sessions + Dashboard + Progress via the
   service worker (24h LRU on GET `/api/`); new sessions need
   network for the AI call.
@@ -231,7 +231,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**460 lessons · 31 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**487 lessons · 34 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -247,6 +247,7 @@ Full documentation (German default at `/docs/`, English at
 | French A2 — Elementary | en | fr | A2 | 15 |
 | French B1 (for English speakers) | en | fr | B1 | 5 |
 | Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 |
+| Γαλλικά A1 (για ελληνόφωνους) | el | fr | A1 | 8 |
 | Französisch A2 — Grundlagen | de | fr | A2 | 15 |
 | Französisch B1 — Mittelstufe | de | fr | B1 | 15 |
 | Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 |
@@ -259,6 +260,7 @@ Full documentation (German default at `/docs/`, English at
 | Psychologie der Beeinflussung | de | de | A2 | 8 |
 | Python — Grundlagen | de | de | A1 | 15 |
 | KI für Einsteiger | de | de | A1 | 12 |
+| Japanisch Schrift: Hiragana (Vorstufe) | de | ja | A0 | 10 |
 | Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 |
 | Koreanisch A1 (für Deutschsprachige) | de | ko | A1 | 10 |
 | Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 |
@@ -266,6 +268,7 @@ Full documentation (German default at `/docs/`, English at
 | Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 |
 | IT-Grundlagen | de | de | A1 | 10 |
 | Ansible-Grundlagen für Quality Engineering | de | de | B1 | 8 |
+| Data Science und KI | de | de | A2 | 9 |
 <!-- CONTENT-STATS:END -->
 
 ### Content repos
@@ -473,7 +476,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v1.97.1**, a schema +
+Active development. The current release is **v1.99.0**, a schema +
 tooling release in which the lesson **JSON-Schema is the
 app-authoritative single source of truth** (schema, quality rules,
 docs, and TS types are generated from the App's Pydantic models, and
@@ -484,7 +487,8 @@ search/filter bar), the full **lesson-mode system** (Practice / Exam /
 Timed / Reverse / Shuffle / Endless + train-errors), **cloze
 multiselect** "select all that apply", an exam-mode SRS interval
 boost, **passphrase-encrypted `.alk`** export of AI keys, and a
-vertical desktop sidebar. Per-release notes in
+single-primary-navigation cleanup (one nav per viewport: horizontal
+top bar on desktop, bottom tab bar on mobile). Per-release notes in
 [`changelog/releases/`](changelog/releases/).
 
 ## Origin

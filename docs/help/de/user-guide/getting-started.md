@@ -85,6 +85,16 @@ KI-Anbieter außerhalb des Browsers sitzt.
    speichern, und unter **Einstellungen → Daten** ein
    [Backup](../features/backup.md) erstellen.
 
+## Eigenen KI-Schlüssel mitbringen
+
+Adaptive Learner ist **Bring-your-own-Key (BYOK)**. Ist kein
+Schlüssel gesetzt, zeigt das Dashboard eine einzelne einladende
+**„KI-Schlüssel hinzufügen"**-Karte, die zu den KI-Einstellungen
+führt. Hinterlege einen Schlüssel für Claude, OpenAI oder Gemini, um
+die KI-Funktionen freizuschalten (Tutor-Session, Chat-Analyse,
+Übungsgenerierung). Deine Schlüssel werden **lokal** auf deinem
+Gerät gespeichert.
+
 ## Wie es weitergeht
 
 - [Lektionen und Wiederholungen](lessons.md) — der Lektionsablauf im Detail

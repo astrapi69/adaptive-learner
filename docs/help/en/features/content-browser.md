@@ -58,6 +58,14 @@ easy to find.
 
 ---
 
+## Select and manage downloaded sets
+
+In *My content* you can **multi-select** downloaded sets and
+**delete them in bulk** in one action. You can also **filter** the
+list, including **by source**, to narrow it down to what you want.
+
+---
+
 ## Languages and Knowledge
 
 The catalog splits into two trees:
@@ -98,6 +106,16 @@ it came from:
 A **source filter** lets you show only sets from a specific source
 when needed. More on this under
 [Multiple content repositories](content-repos.md).
+
+---
+
+## Invitation-code sharing
+
+If you own a **private content repository** and have set a per-repo
+token for it, you can generate an **invitation code** (with a QR
+code and link) that shares access to that repo. A learner **redeems
+an invitation code** to add the repository to their own sources.
+See [Multiple content repositories](content-repos.md).
 
 ---
 

@@ -131,45 +131,32 @@ PR to the official repo regenerates it.
 
 ## Manifest format
 
-Both manifest files (root + set) use the same shape with
-`schema_version: '1.0'`. Required fields:
+The manifest field schema (the root `manifest.yaml` that lists the
+repo's sets, and every required and optional field: `schema_version`,
+`name`, and per set `id`, `title`, `title_native`, `target_language`,
+`source_language`, `level`, `version`, `lesson_count`, `path`,
+`domain`, `tags`, `book`) lives in the engine reference:
+[learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
+The engine's strict schema (unknown fields are rejected) validates it,
+so the field list above cannot drift. Author the language-pair fields
+(`target_language` / `source_language`) as described under
+[Language pairs](#language-pairs-v1440); the pre-v1.2 `language` alias
+still loads but is discouraged for new sets.
 
-```yaml
-schema_version: '1.0'
-name: Mein Englisch-B1-Set
-description: >-
-  Optionale Langbeschreibung.
-sets:
-  - id: language-en-b1        # slug-sicher, eindeutig
-    title: Englisch B1 (Fortgeschrittene)
-    language: en              # BCP-47 (z.B. en, fr, zh-Hans)
-    level: B1                 # CEFR für Sprachen, frei für andere Domänen
-    version: '1.0.0'          # Semver — pro Set-Release erhöht
-    lesson_count: 12
-    domain: language          # active domains: ai / language / programming / psychology / technology
-    description: >-
-      Optionale Set-Beschreibung.
-    tags:
-      - intermediate
-      - business
-metadata:
-  author: Dein Name
-  license: CC-BY-SA-4.0       # oder die Lizenz deiner Wahl
-```
+App-specific loader behaviour to keep in mind:
 
-The set manifest additionally lists every lesson file:
+- The set manifest lists every lesson file under `metadata.lessons`,
+  and the content loader iterates that list **in the given order**:
+  the file names on disk are irrelevant, only the manifest order
+  counts:
 
-```yaml
-metadata:
-  lessons:
-    - 01-intro.json
-    - 02-articles.json
-    - ...
-```
-
-The content loader iterates `metadata.lessons` in the given order;
-the file names on disk are irrelevant — only the manifest order
-counts.
+  ```yaml
+  metadata:
+    lessons:
+      - 01-intro.json
+      - 02-articles.json
+      - ...
+  ```
 
 ## Lesson schema
 

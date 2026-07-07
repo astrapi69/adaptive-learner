@@ -140,6 +140,7 @@ def replace_group(text: str, pattern: str, value: str) -> tuple[str, int]:
 # embedded in dated/phase prose that --fix must not naively rewrite.
 VERSION_TARGETS = [
     ("README.md", r"badge/version-v(\d+\.\d+\.\d+)-blue", "README version badge", True),
+    ("README.md", r"current release is \*\*v(\d+\.\d+\.\d+)\*\*", "README status release", True),
     ("README-de.md", r"badge/version-v(\d+\.\d+\.\d+)-blue", "README-de version badge", True),
     ("CLAUDE.md", r"\*\*Current state:\*\* \*\*v(\d+\.\d+\.\d+)\*\*", "CLAUDE.md current state", True),
     ("docs/ROADMAP.md", r"Current state: \*\*v(\d+\.\d+\.\d+)", "ROADMAP.md header", False),
