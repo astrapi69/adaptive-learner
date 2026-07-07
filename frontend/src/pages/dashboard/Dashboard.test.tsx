@@ -280,22 +280,53 @@ describe("Dashboard page", () => {
     expect(await screen.findByTestId("spaced-recs-empty")).toBeInTheDocument();
   });
 
-  // --- Issue 4: API-key gating + dismissible skip banner --------------
+  // --- #1417: ONE inviting AI card instead of two API-key messages ----
 
-  it("disables Quick Start and shows the skip banner in Dexie mode without a key", async () => {
+  /** Settings response for the "fresh learner, no key configured" branch. */
+  function mockNoKeySettings() {
+    apiSettingsGet.mockResolvedValue({
+      user_id: "u-1",
+      active_provider: "anthropic",
+      has_anthropic_key: false,
+      has_openai_key: false,
+      has_gemini_key: false,
+    });
+  }
+
+  /** The forbidden legacy wording must not appear on the Dashboard in ANY
+   *  render branch — the term "API key" stays in Settings where it is
+   *  accurate (#1417). */
+  function expectNoApiKeyWording() {
+    const text = screen.getByTestId("dashboard").textContent ?? "";
+    expect(text).not.toMatch(/api[- ]?(key|schl)/i);
+    expect(text).not.toMatch(/erforderlich|required/i);
+  }
+
+  it("no key: exactly ONE inviting card, neither legacy message renders (RED repro of the stacked pair)", async () => {
     apiProfile.mockResolvedValue(PROFILE);
     apiProgress.mockResolvedValue(SUMMARY);
     apiTools.mockResolvedValue(TOOLS);
-    renderDashboard(NO_AI_CONTEXT);
+    mockNoKeySettings();
+    const { container } = renderDashboard(NO_AI_CONTEXT);
     await screen.findByTestId("dashboard");
-    await waitFor(() => {
-      expect(screen.getByTestId("api-key-skip-banner")).toBeInTheDocument();
-    });
+    await screen.findByTestId("ai-invite-card", undefined, { timeout: 5000 });
+    expect(screen.getAllByTestId("ai-invite-card")).toHaveLength(1);
+    // Pre-#1417 the blue skip banner AND the yellow warning rendered
+    // simultaneously. Both are gone — structurally, not just re-styled.
+    expect(screen.queryByTestId("api-key-skip-banner")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("api-key-required-notice")).not.toBeInTheDocument();
+    expect(
+      container.querySelector(
+        ".api-key-skip-banner, .api-key-required-notice, .api-key-required-compact",
+      ),
+    ).toBeNull();
+    expectNoApiKeyWording();
+    // Quick Start stays feature-gated (disabled in Dexie mode without a key).
     const quickStart = screen.getByTestId("quick-start");
     expect((quickStart as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it("hides the skip banner + enables Quick Start once a key is configured", async () => {
+  it("key configured: no invite card, Quick Start enabled, no API-key wording", async () => {
     apiProfile.mockResolvedValue(PROFILE);
     apiProgress.mockResolvedValue(SUMMARY);
     apiTools.mockResolvedValue(TOOLS);
@@ -305,28 +336,36 @@ describe("Dashboard page", () => {
       const quickStart = screen.getByTestId("quick-start");
       expect((quickStart as HTMLButtonElement).disabled).toBe(false);
     });
-    expect(screen.queryByTestId("api-key-skip-banner")).not.toBeInTheDocument();
+    // The overview tab is lazy; wait for it before asserting absence.
+    await screen.findByTestId("dashboard-tab-overview-panel", undefined, {
+      timeout: 5000,
+    });
+    expect(screen.queryByTestId("ai-invite-card")).not.toBeInTheDocument();
+    expectNoApiKeyWording();
   });
 
-  it("Dismiss button persists the choice across remounts", async () => {
+  it("'Later' persists the dismissal across remounts (reload) and leaves no API-key wording", async () => {
     apiProfile.mockResolvedValue(PROFILE);
     apiProgress.mockResolvedValue(SUMMARY);
     apiTools.mockResolvedValue(TOOLS);
+    mockNoKeySettings();
     const first = renderDashboard(NO_AI_CONTEXT);
     await first.findByTestId("dashboard");
+    await first.findByTestId("ai-invite-card", undefined, { timeout: 5000 });
+    first.getByTestId("ai-invite-later").click();
     await waitFor(() => {
-      expect(first.getByTestId("api-key-skip-banner")).toBeInTheDocument();
-    });
-    first.getByTestId("api-key-skip-banner-dismiss").click();
-    await waitFor(() => {
-      expect(first.queryByTestId("api-key-skip-banner")).not.toBeInTheDocument();
+      expect(first.queryByTestId("ai-invite-card")).not.toBeInTheDocument();
     });
     first.unmount();
-    // Re-mount in the same gated context; the dismissal must persist
-    // via localStorage (the banner would otherwise show again).
+    // Re-mount in the same no-key context; the dismissal must persist
+    // via localStorage (the card would otherwise show again).
     const second = renderDashboard(NO_AI_CONTEXT);
     await second.findByTestId("dashboard");
-    expect(second.queryByTestId("api-key-skip-banner")).not.toBeInTheDocument();
+    await second.findByTestId("dashboard-tab-overview-panel", undefined, {
+      timeout: 5000,
+    });
+    expect(second.queryByTestId("ai-invite-card")).not.toBeInTheDocument();
+    expectNoApiKeyWording();
   });
 
   // --- Bug 6 (regression): HelpTooltip rendered on key terms ----------

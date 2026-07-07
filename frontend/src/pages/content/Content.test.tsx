@@ -26,6 +26,8 @@ import {
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
+import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
+
 const listSetsMock = vi.fn();
 const downloadSetMock = vi.fn();
 const deleteSetMock = vi.fn();
@@ -581,16 +583,21 @@ describe("ContentPage — source filter + origin badge (#118)", () => {
     cached_version: "1.0.0",
   };
 
-  it("hides the source filter when only official sets exist", async () => {
+  it("shows the source menu button even when only official sets exist (#1386)", async () => {
     listSetsMock.mockResolvedValue({
       sets: [SAMPLE_ENTRY],
       sources: [{ source: SAMPLE_ENTRY.source, branch: "main" }],
     });
     renderPage();
     await screen.findByTestId("content-page");
-    expect(screen.queryByTestId("content-source-filter")).toBeNull();
-    // Official sets carry no "Your repo" origin badge.
-    expect(screen.queryByTestId("content-set-language-fr-a1-origin")).toBeNull();
+    // #1386 — the source filter is always visible as a menu button; with
+    // only official content it offers "All sources" + "Official".
+    expect(screen.getByTestId("content-source-filter")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("content-source-filter"));
+    expect(screen.getByTestId("content-source-filter-all")).toBeInTheDocument();
+    expect(screen.getByTestId("content-source-filter-official")).toBeInTheDocument();
+    // Official sets carry no category badge (#1405).
+    expect(screen.queryByTestId("content-set-language-fr-a1-category")).toBeNull();
   });
 
   it("badges a user-repo set and filters by source", async () => {
@@ -604,10 +611,13 @@ describe("ContentPage — source filter + origin badge (#118)", () => {
     renderPage();
     await screen.findByTestId("content-page");
 
-    // The user-repo set carries the origin badge; the official one does not.
-    expect(screen.getByTestId("content-set-jane-deck-origin")).toBeInTheDocument();
+    // The user-repo set carries the unified category badge (#1405); the
+    // official one does not.
+    expect(screen.getByTestId("content-set-jane-deck-category")).toBeInTheDocument();
 
-    // Filtering to "Official" drops the user-repo row from the tree.
+    // Filtering to "Official" (via the menu button, #1386) drops the
+    // user-repo row from the tree.
+    fireEvent.click(screen.getByTestId("content-source-filter"));
     fireEvent.click(screen.getByTestId("content-source-filter-official"));
     await waitFor(() => {
       expect(screen.queryByTestId("content-set-jane-deck")).toBeNull();
@@ -617,6 +627,7 @@ describe("ContentPage — source filter + origin badge (#118)", () => {
     ).toBeInTheDocument();
 
     // Filtering to the specific user repo drops the official row instead.
+    fireEvent.click(screen.getByTestId("content-source-filter"));
     fireEvent.click(
       screen.getByTestId("content-source-filter-jane/my-content"),
     );
@@ -624,5 +635,192 @@ describe("ContentPage — source filter + origin badge (#118)", () => {
       expect(screen.queryByTestId("content-set-language-fr-a1")).toBeNull();
     });
     expect(screen.getByTestId("content-set-jane-deck")).toBeInTheDocument();
+  });
+});
+
+describe("filter menu buttons (#1386)", () => {
+  const USER_ENTRY = {
+    ...SAMPLE_ENTRY,
+    source: "jane/my-content",
+    id: "jane-deck",
+    title: "Jane's Deck",
+    cached_version: "1.0.0",
+  };
+  const COMPLETED_ENTRY = {
+    ...SAMPLE_ENTRY,
+    id: "language-es-a1",
+    title: "Spanish A1",
+    status: "completed",
+    cached_version: "1.0.0",
+  };
+
+  it("status selection filters per option and 'all' restores everything", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY, COMPLETED_ENTRY],
+      sources: [{ source: SAMPLE_ENTRY.source, branch: "main" }],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    // Default "active": the completed set is filtered out.
+    expect(screen.getByTestId("content-set-language-fr-a1")).toBeInTheDocument();
+    expect(screen.queryByTestId("content-set-language-es-a1")).toBeNull();
+
+    // Completed: only the completed set remains.
+    fireEvent.click(screen.getByTestId("content-status-filter"));
+    fireEvent.click(screen.getByTestId("content-status-filter-completed"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("content-set-language-fr-a1")).toBeNull();
+    });
+    expect(screen.getByTestId("content-set-language-es-a1")).toBeInTheDocument();
+
+    // All: both sets show.
+    fireEvent.click(screen.getByTestId("content-status-filter"));
+    fireEvent.click(screen.getByTestId("content-status-filter-all"));
+    await waitFor(() => {
+      expect(screen.getByTestId("content-set-language-fr-a1")).toBeInTheDocument();
+    });
+    expect(screen.getByTestId("content-set-language-es-a1")).toBeInTheDocument();
+  });
+
+  it("the button labels show the active selection", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY],
+      sources: [{ source: SAMPLE_ENTRY.source, branch: "main" }],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(screen.getByTestId("content-status-filter-label")).toHaveTextContent(
+      "Active",
+    );
+    expect(screen.getByTestId("content-source-filter-label")).toHaveTextContent(
+      "All sources",
+    );
+    fireEvent.click(screen.getByTestId("content-status-filter"));
+    fireEvent.click(screen.getByTestId("content-status-filter-completed"));
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("content-status-filter-label"),
+      ).toHaveTextContent("Completed"),
+    );
+  });
+
+  it("status + source + search text combine as AND (#1386)", async () => {
+    // Two French sets: an active official one and a completed user-repo one.
+    const frenchUser = {
+      ...USER_ENTRY,
+      title: "French B1",
+      status: "completed",
+    };
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY, frenchUser],
+      sources: [
+        { source: SAMPLE_ENTRY.source, branch: "main" },
+        { source: frenchUser.source, branch: "main" },
+      ],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+
+    // Search "French" — with the DEFAULT status filter (active) only the
+    // active official set may appear in the results.
+    fireEvent.change(screen.getByTestId("content-search-input"), {
+      target: { value: "French" },
+    });
+    await waitFor(
+      () =>
+        expect(
+          screen.getByTestId("content-search-results"),
+        ).toBeInTheDocument(),
+      { timeout: 2000 },
+    );
+    expect(
+      screen.getByTestId("content-search-set-language-fr-a1"),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId("content-search-set-jane-deck")).toBeNull();
+
+    // Status "completed" + source "jane/my-content": only the user set.
+    fireEvent.click(screen.getByTestId("content-status-filter"));
+    fireEvent.click(screen.getByTestId("content-status-filter-completed"));
+    fireEvent.click(screen.getByTestId("content-source-filter"));
+    fireEvent.click(
+      screen.getByTestId("content-source-filter-jane/my-content"),
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("content-search-set-jane-deck"),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByTestId("content-search-set-language-fr-a1"),
+    ).toBeNull();
+  });
+
+  it("shows the empty-filter state with a one-tap reset — no dead end", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [COMPLETED_ENTRY],
+      sources: [{ source: COMPLETED_ENTRY.source, branch: "main" }],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    // Default filter "active" matches nothing — the empty state offers reset.
+    const empty = await screen.findByTestId("content-filter-empty");
+    expect(empty).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("content-filter-reset"));
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("content-set-language-es-a1"),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("content-status-filter-label")).toHaveTextContent(
+      "All",
+    );
+  });
+
+  it("select-all (bulk) acts on the FILTERED set (#1351 interplay)", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY, USER_ENTRY],
+      sources: [
+        { source: SAMPLE_ENTRY.source, branch: "main" },
+        { source: USER_ENTRY.source, branch: "main" },
+      ],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    // Filter to the user repo (1 of 2 sets), then select all.
+    fireEvent.click(screen.getByTestId("content-source-filter"));
+    fireEvent.click(
+      screen.getByTestId("content-source-filter-jane/my-content"),
+    );
+    await waitFor(() =>
+      expect(screen.queryByTestId("content-set-language-fr-a1")).toBeNull(),
+    );
+    fireEvent.click(screen.getByTestId("content-select-all"));
+    await waitFor(() =>
+      expect(screen.getByTestId("content-bulk-count")).toHaveTextContent("1"),
+    );
+  });
+});
+
+describe("shared page container (#1380)", () => {
+  it("renders the page inside the shared PageContainer, with no deviating wrapper", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY],
+      sources: [{ source: SAMPLE_ENTRY.source, branch: "main" }],
+    });
+    renderPage();
+    const main = await screen.findByTestId("content-page");
+    expect(main.tagName).toBe("MAIN");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    // Exact match: the canonical container set only — no per-tab
+    // special widths and no legacy dead classes (page/content-page).
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
+  });
+
+  it("renders the loading state inside the same shared container", () => {
+    listSetsMock.mockImplementation(() => new Promise(() => {}));
+    renderPage();
+    const main = screen.getByTestId("content-loading");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
   });
 });

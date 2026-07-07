@@ -69,7 +69,15 @@ export interface NextStepSuggestions {
      *  exercise; hidden on a clean run. */
     errorReplay: {
         available: boolean;
+        /** Exercises STILL open (not yet corrected in a replay). */
         errorCount: number;
+        /** Exercises already corrected in a replay (of the original
+         *  failed set) — drives the "{corrected} von {total}" progress. */
+        correctedCount: number;
+        /** True when every originally-failed exercise is now corrected
+         *  (``errorCount === 0`` with ``correctedCount > 0``): the replay
+         *  CTA is replaced by a short success card. */
+        allCorrected: boolean;
     };
     adaptiveLesson: {
         available: boolean;
@@ -115,6 +123,10 @@ export interface UseNextStepArgs {
      *  ``collectFailedExercises``). Drives the error-replay card +
      *  its priority. Defaults to 0 (no replay) when omitted. */
     failedExerciseCount?: number;
+    /** Of the originally-failed exercises, how many are already
+     *  corrected in a replay (live SRS). Drives the "{corrected} von
+     *  {total}" progress + the all-corrected success card. Defaults 0. */
+    correctedExerciseCount?: number;
 }
 
 /** The portion of the suggestions derived from async storage
@@ -324,6 +336,7 @@ export function useNextStepSuggestions(
         stars,
         sessionErrors,
         failedExerciseCount = 0,
+        correctedExerciseCount = 0,
     } = args;
     const [fetched, setFetched] = useState<FetchedState>(INITIAL_FETCHED);
 
@@ -414,8 +427,11 @@ export function useNextStepSuggestions(
         () => ({
             available: failedExerciseCount > 0,
             errorCount: failedExerciseCount,
+            correctedCount: correctedExerciseCount,
+            allCorrected:
+                failedExerciseCount === 0 && correctedExerciseCount > 0,
         }),
-        [failedExerciseCount],
+        [failedExerciseCount, correctedExerciseCount],
     );
 
     return useMemo<NextStepSuggestions>(

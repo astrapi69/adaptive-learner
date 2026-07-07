@@ -18,6 +18,7 @@
 import type {
     ContentLesson,
     ContentLessonExercise,
+    ElementError,
     LessonProgress,
 } from "../../storage/types";
 
@@ -48,4 +49,39 @@ export function failedExerciseCount(
     progress: LessonProgress | null,
 ): number {
     return collectFailedExercises(lesson, progress).length;
+}
+
+/**
+ * Of the originally-failed exercises, the ones STILL unresolved in the
+ * live SRS error state — what the summary's "Fehler wiederholen" CTA
+ * should offer, since the static ``step_results`` never change after a
+ * replay (#1305), only ``elementErrors`` do.
+ *
+ * An exercise is still "open" while any of its ``ElementError`` rows was
+ * last answered wrong (``correct_streak === 0``) and is not ``mastered``;
+ * a correct error-replay attempt advances the streak, so the exercise
+ * drops out. Conservative on missing signal: an exercise with no element
+ * rows yet (e.g. before its first recorded attempt) stays open rather
+ * than being hidden as resolved.
+ *
+ * @param failed - the originally-failed exercises (from ``step_results``).
+ * @param sessionErrors - live ``ElementError`` rows for this lesson.
+ */
+export function openFailedExercises(
+    failed: readonly ContentLessonExercise[],
+    sessionErrors: readonly ElementError[],
+): ContentLessonExercise[] {
+    const rowsByExercise = new Map<string, ElementError[]>();
+    for (const row of sessionErrors) {
+        const list = rowsByExercise.get(row.exercise_id) ?? [];
+        list.push(row);
+        rowsByExercise.set(row.exercise_id, list);
+    }
+    return failed.filter((exercise) => {
+        const rows = rowsByExercise.get(exercise.id);
+        if (!rows || rows.length === 0) return true; // no live signal → keep
+        return rows.some(
+            (row) => !row.mastered && (row.correct_streak ?? 0) === 0,
+        );
+    });
 }

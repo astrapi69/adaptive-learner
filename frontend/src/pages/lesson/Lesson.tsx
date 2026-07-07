@@ -64,6 +64,7 @@ import {
   type LessonEnterNav,
 } from "../../hooks/lesson/interaction/useLessonEnterKey";
 import { useLessonShortcuts } from "../../hooks/lesson/interaction/useLessonShortcuts";
+import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrientationReanchor";
 import {
   captureCelebrationSnapshot,
   celebrateProgressSince,
@@ -309,6 +310,12 @@ export default function LessonPage() {
     });
   }, [currentStepIndex, showResumePrompt]);
 
+  // #1422 — after a device ROTATION, re-anchor the same step anchor: iOS
+  // leaves stale scroll offsets / sticky positions after an orientation
+  // change until the next scroll, which can strand the task + the sticky
+  // footer outside the freshly-sized viewport.
+  useOrientationReanchor(stepScrollRef, !showResumePrompt);
+
   // Keyboard shortcut (#103): Enter drives the two-phase Check / Next
   // button. The listener (shared with the Error-Replay runner via
   // ``useLessonEnterKey``) reads the latest step state through
@@ -441,7 +448,7 @@ export default function LessonPage() {
   return (
     <main
       id="main"
-      className="page lesson-page flex flex-col min-h-full"
+      className="lesson-page flex flex-col min-h-full"
       data-testid="lesson-page"
     >
       <LessonHeader

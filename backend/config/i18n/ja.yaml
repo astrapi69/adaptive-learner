@@ -90,8 +90,6 @@ nav:
   offline: オフライン
   anki: Anki
   contribute: "貢献"
-  sidebar_open: "サイドバーを開く"
-  sidebar_close: "サイドバーを閉じる"
   dev_badge: DEV
   dev_badge_tooltip: "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
   content: "マイコンテンツ"
@@ -288,6 +286,12 @@ assessment:
   read_summary: サマリーを読み上げ
   swipe_hint: "スワイプで左右に移動（または矢印キーを使用）。"
 dashboard:
+  # 1417 — the one inviting BYOK card on the Dashboard.
+  ai_invite:
+    title: "AIサポートを有効にする（任意）"
+    body: "自分のAIプロバイダー（Claude、OpenAI、Gemini）を接続すると、レッスン内で直接説明やサポートを受けられます。接続しなくてもアプリはそのまま使えます。"
+    connect: "今すぐ接続"
+    later: "あとで"
   tab:
     overview: "概要"
     activity: "アクティビティ"
@@ -514,6 +518,17 @@ settings:
   explanations_enabled: "エラーの説明を表示"
   explanations_enabled_desc: "レッスン後に各間違いへ短いルールのヒントを表示します。"
   section_hints: "ヒント"
+  section_lesson_summary: "レッスン後のまとめ"
+  summary_sections_desc: "レッスン終了時のまとめに表示するセクションと、その順序を選択します。続行するための操作は常に表示されます。"
+  summary_section_result: "結果と統計"
+  summary_section_xp: "XP報酬"
+  summary_section_favorite: "お気に入りのヒント"
+  summary_section_share: "結果を共有"
+  summary_section_answers: "解答の一覧"
+  summary_section_export: "結果のエクスポート"
+  summary_section_next_steps: "次のステップの提案"
+  correction_round_enabled: "レッスン後に訂正ラウンドを表示"
+  correction_round_enabled_desc: "レッスンの最後に、間違いをその場で修正できるようにします。オフの場合も、復習／「間違いを練習」モードで利用できます。"
   hints_enabled: "練習中にヒントを表示"
   hints_enabled_desc: "各練習で段階的なヒントボタンを表示します。"
   hint_xp_cost: "ヒント1回あたりのXPコスト"
@@ -569,6 +584,8 @@ settings:
   section_danger: アカウント
   section_ui: インターフェース
   section_appearance: "外観"
+  section_content_tabs: "コンテンツタブの順序"
+  content_tabs_desc: "コンテンツ画面のタブの順序を選びます。最初のタブが既定で開きます。"
   content_view: "コンテンツの表示"
   content_view_description: "ダウンロードしたコンテンツをコンテンツタブでどのように表示するか。コンテンツ表示内のクイック切り替えも同じ設定を変更します。"
   section_profile: "プロフィール"
@@ -908,6 +925,7 @@ about:
   checking: "確認中…"
   update_available: "バージョン {version} が利用可能です！"
   up_to_date: "最新バージョンを使用しています。"
+  update_preparing: "新しいビルドが利用可能で、準備中です。しばらくしてからもう一度確認してください。"
   check_failed: "確認に失敗しました。オンラインですか？"
   last_checked: "前回の確認: {when}"
   never_checked: "未確認"
@@ -1448,10 +1466,7 @@ ui:
     required_with_feature: "{feature}にはAPIキーが必要です。"
     required_long: "この操作を有効にするには、設定でプロバイダーのキーを構成してください。"
     open_settings: "設定を開く"
-    skip_banner: "AI機能を使うには、設定でAPIキーを構成してください。"
-    skip_banner_dismiss: "閉じる"
     feature_analyze: "会話を分析するため"
-    feature_session: "セッションを開始するには"
     feature_anki: "Ankiカードを抽出するため"
     feature_study_guide: "学習ガイドを生成するため"
     feature_study_questions: "学習問題を生成するため"
@@ -1851,6 +1866,9 @@ lesson:
     adaptive_errors: "このレッスンで {count} 件の誤り"
     error_replay: "間違いをやり直す"
     error_replay_detail: "{count}問をもう一度"
+    error_replay_corrected: "{total} 件中 {corrected} 件を修正"
+    all_corrected: "すべての間違いを修正しました！"
+    all_corrected_detail: "お見事、未修正の間違いはありません。"
     errors_corrected: "すべての間違いを修正しました！"
     still_errors: "まだ{count}個の間違い。もう一度？"
     review: "復習"
@@ -1938,6 +1956,14 @@ lesson:
     action_restart: "最初からやり直す"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  filter:
+    all_sources: "すべてのソース"
+    official: "公式"
+  filter_menu:
+    status: "ステータス"
+    source: "ソース"
+  filter_empty: "有効なフィルターに一致するセットはありません。"
+  filter_reset: "フィルターをリセット"
   view:
     grid: "グリッド表示"
     list: "リスト表示"
@@ -2641,6 +2667,7 @@ pwa:
     message: "新しいバージョンが利用可能です。"
     action: "更新"
     later: "後で"
+    ios_restart_hint: "変化がなければ、アプリを閉じて再度開いてください。"
 share:
   menu:
     heading: "共有"
@@ -2929,6 +2956,9 @@ favorites:
   empty: "お気に入りはまだありません。レッスンの星をタップして保存しましょう。"
   save_prompt: "このレッスンをお気に入りに保存"
 content_repo:
+  sync_all:
+    done: "{total}件中{ok}件のリポジトリを同期しました。"
+    failed: "{total}件中{ok}件を同期しました。失敗: {repos}"
   qr:
     upload: "QR画像をアップロード"
     decoding: "QRを読み取り中…"
@@ -2963,6 +2993,7 @@ content_repo:
     branch: "ブランチ"
     token: "トークン（プライベートリポジトリ、任意）"
   action:
+    sync_all: "すべて同期"
     add: "リポジトリを追加"
     cancel: "キャンセル"
     confirm_remove: "削除を確認"
@@ -2994,6 +3025,7 @@ content_repo:
     hint: "このリンクを共有すると、他の人がこの公開リポジトリを追加できます。プライベートリポジトリの場合は、URL と読み取り専用トークンを別々に送ってください。"
     qr_alt: "共有リンクの QR コード"
   progress:
+    syncing: "同期中…"
     validating: "リポジトリを検証中…"
     manifest: "マニフェストを読み込み中…"
     sets: "セットを読み込み中…"

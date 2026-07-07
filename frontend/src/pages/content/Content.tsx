@@ -33,12 +33,14 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import InfoHintButton from "../../shared/feedback/InfoHintButton";
+import PageContainer from "../../shared/layout/PageContainer";
 import { useInfoHint } from "../../shared/feedback/useInfoHint";
 import ContentTree from "../../components/content/browser/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
 import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
 import ContentSearchBar from "../../components/content/browser/ContentSearchBar";
+import FilterMenuButton from "../../shared/forms/FilterMenuButton";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
 import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
 import ContentSetListView, {
@@ -211,9 +213,9 @@ export default function ContentPage() {
 
   if (loading) {
     return (
-      <main id="main" className="page content-page" data-testid="content-loading">
+      <PageContainer testId="content-loading">
         <p>{t("content.loading", "Loading content sets…")}</p>
-      </main>
+      </PageContainer>
     );
   }
 
@@ -229,7 +231,6 @@ export default function ContentPage() {
   const userRepoSources = [
     ...new Set(downloadedSets.filter((s) => !isOfficialSource(s.source)).map((s) => s.source)),
   ];
-  const hasUserRepoSets = userRepoSources.length > 0;
   const visibleSets = downloadedSets.filter((s) => {
     // #1300 — status filter (default "active"); "all" passes every status.
     if (!matchesStatusFilter(s, statusFilter)) return false;
@@ -237,6 +238,56 @@ export default function ContentPage() {
     if (sourceFilter === "official") return isOfficialSource(s.source);
     return s.source === sourceFilter;
   });
+
+  // #1386 — the status + source filters render as two menu buttons (the
+  // SetActionsMenu pattern; never a native select). Options are derived
+  // dynamically; the source button is ALWAYS visible so the learner can
+  // see what the list is (not) filtered to.
+  const statusOptions = STATUS_FILTER_ORDER.map((value) => ({
+    value,
+    label:
+      value === "all"
+        ? t("content.set_status.all", "All")
+        : value === "active"
+          ? t("content.set_status.active", "Active")
+          : value === "deferred"
+            ? t("content.set_status.deferred", "Deferred")
+            : t("content.set_status.completed", "Completed"),
+  }));
+  const hasOfficialSets = downloadedSets.some((s) => isOfficialSource(s.source));
+  const sourceOptions = [
+    { value: "all", label: t("content.filter.all_sources", "All sources") },
+    ...(hasOfficialSets
+      ? [{ value: "official", label: t("content.filter.official", "Official") }]
+      : []),
+    ...userRepoSources.map((src) => ({ value: src, label: src })),
+  ];
+  const passesSourceFilter = (entry: ContentSetEntry) =>
+    sourceFilter === "all"
+      ? true
+      : sourceFilter === "official"
+        ? isOfficialSource(entry.source)
+        : entry.source === sourceFilter;
+
+  // #1386 — search combines with the filters as AND (never filter silently:
+  // the filter row stays visible while searching). Matches whose set fails
+  // the active status/source filters are dropped from the result list.
+  const filterPassKeys = new Set(
+    sets
+      .filter((s) => matchesStatusFilter(s, statusFilter) && passesSourceFilter(s))
+      .map((s) => `${s.source}#${s.id}`),
+  );
+  const filteredMatches = searchResult.matches.filter((m) =>
+    filterPassKeys.has(`${m.source}#${m.setId}`),
+  );
+  const filteredSearchResult = {
+    ...searchResult,
+    matches: filteredMatches,
+    lessonCount: filteredMatches.reduce(
+      (n, m) => n + m.matchedLessons.length,
+      0,
+    ),
+  };
 
   // #1351 — multi-select derives from the currently VISIBLE (filtered) sets:
   // "select all" only ever covers what the learner can see, never silently
@@ -266,7 +317,7 @@ export default function ContentPage() {
     openLessonFile(lesson.setSource, lesson.setId, lesson.filename);
 
   return (
-    <main id="main" className="page content-page" data-testid="content-page">
+    <PageContainer testId="content-page">
       <header className="content-header" data-testid="content-header">
         <h1>{t("content.page_title", "Meine Inhalte")}</h1>
         {/* #1272 — the info button sits inline, right after the title;
@@ -333,6 +384,32 @@ export default function ContentPage() {
         searchInputRef={searchInputRef}
       />
 
+      {/* #1386 — status + source as two compact menu buttons (the
+          SetActionsMenu pattern; never a native select). Rendered above
+          BOTH the browse tree and the search results, because the search
+          combines with the filters as AND — never filter silently. */}
+      {downloadedSets.length > 0 && (
+        <div
+          className="mb-3 flex flex-wrap items-center gap-2"
+          data-testid="content-filter-bar"
+        >
+          <FilterMenuButton
+            label={t("content.filter_menu.status", "Status")}
+            options={statusOptions}
+            value={statusFilter}
+            onChange={(value) => setStatusFilter(value as StatusFilter)}
+            testId="content-status-filter"
+          />
+          <FilterMenuButton
+            label={t("content.filter_menu.source", "Source")}
+            options={sourceOptions}
+            value={sourceFilter}
+            onChange={setSourceFilter}
+            testId="content-source-filter"
+          />
+        </div>
+      )}
+
       {/* #772 — the Content Browser is "Meine Inhalte": only locally
           downloaded sets. Discovering new (not-downloaded) content happens on
           /discover; a persistent hint points there while browsing. */}
@@ -361,7 +438,7 @@ export default function ContentPage() {
 
       {searchResult.active ? (
         <ContentSearchResults
-          searchResult={searchResult}
+          searchResult={filteredSearchResult}
           downloadedSets={downloadedSets}
           openLessonFile={openLessonFile}
         />
@@ -378,69 +455,6 @@ export default function ContentPage() {
               <ContentViewToggle mode={viewMode} onChange={setViewMode} />
             )}
           </div>
-          {/* #1300 — lifecycle status filter (Aktiv / Zurückgestellt /
-              Abgeschlossen / Alle). Same toggle-group pattern as the source
-              filter; default "active" so the working list stays clean. */}
-          {downloadedSets.length > 0 && (
-            <div
-              className="mb-3 flex flex-wrap items-center gap-1"
-              role="group"
-              aria-label={t("content.set_status.filter_aria", "Filter by status")}
-              data-testid="content-status-filter"
-            >
-              {STATUS_FILTER_ORDER.map((value) => {
-                const label =
-                  value === "all"
-                    ? t("content.set_status.all", "All")
-                    : value === "active"
-                      ? t("content.set_status.active", "Active")
-                      : value === "deferred"
-                        ? t("content.set_status.deferred", "Deferred")
-                        : t("content.set_status.completed", "Completed");
-                return (
-                  <Button
-                    key={value}
-                    type="button"
-                    size="sm"
-                    variant={statusFilter === value ? "default" : "outline"}
-                    className="min-h-11"
-                    aria-pressed={statusFilter === value}
-                    onClick={() => setStatusFilter(value)}
-                    data-testid={`content-status-filter-${value}`}
-                  >
-                    {label}
-                  </Button>
-                );
-              })}
-            </div>
-          )}
-          {hasUserRepoSets && (
-            <div
-              className="mb-3 flex flex-wrap items-center gap-1"
-              role="group"
-              aria-label={t("content.filter.aria", "Filter by source")}
-              data-testid="content-source-filter"
-            >
-              {[
-                ["all", t("content.filter.all", "All")] as [string, string],
-                ["official", t("content.filter.official", "Official")] as [string, string],
-                ...userRepoSources.map((src) => [src, src] as [string, string]),
-              ].map(([value, label]) => (
-                <Button
-                  key={value}
-                  type="button"
-                  size="sm"
-                  variant={sourceFilter === value ? "default" : "outline"}
-                  className="min-h-11"
-                  aria-pressed={sourceFilter === value}
-                  onClick={() => setSourceFilter(value)}
-                  data-testid={`content-source-filter-${value}`}
-                >
-                  {label}
-                </Button>
-              ))}
-            </div>
-          )}
           {downloadedSets.length === 0 ? (
             <p className="content-empty" data-testid="content-empty">
               {t(
@@ -448,6 +462,29 @@ export default function ContentPage() {
                 "No content sets available yet. Check your network connection and refresh, or configure a source in Settings.",
               )}
             </p>
+          ) : visibleSets.length === 0 ? (
+            /* #1386 — the active filters match nothing: say so and offer a
+               one-tap reset instead of a dead-end blank list. */
+            <div className="content-empty" data-testid="content-filter-empty">
+              <p>
+                {t(
+                  "content.filter_empty",
+                  "No sets match the active filters.",
+                )}
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-2 min-h-11"
+                onClick={() => {
+                  setStatusFilter("all");
+                  setSourceFilter("all");
+                }}
+                data-testid="content-filter-reset"
+              >
+                {t("content.filter_reset", "Reset filters")}
+              </Button>
+            </div>
           ) : (
             <>
               {/* #1351 — multi-select: select-all over the VISIBLE (filtered)
@@ -582,6 +619,6 @@ export default function ContentPage() {
           void handleConfirmBulkDelete().then(() => selection.clear())
         }
       />
-    </main>
+    </PageContainer>
   );
 }

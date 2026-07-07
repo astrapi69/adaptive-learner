@@ -1,0 +1,46 @@
+# App-vs-engine schema parity gate (mirror decoupling).
+#
+# The content repos mirror schema/ from the learn-content-engine npm
+# release (pinned there), not from this app; the app's only sync target
+# is the engine. This job compares the committed, generated
+# schema/lesson.schema.json + schema/content-manifest.schema.json
+# byte-for-byte against the npm tarball of the PINNED engine version
+# (schema/engine-version.txt). Red = the app schema moved and the
+# engine follow-up (engine schema-sync + release + pin bumps) is still
+# missing — a visible, defined step instead of silent drift.
+#
+# Deliberately NOT a per-PR gate: an app schema bump necessarily lands
+# BEFORE the engine can sync from it, so blocking the bump PR on engine
+# parity would deadlock the chain. Instead this runs on pushes to
+# develop/main that touch schema/, on a daily heartbeat, and on
+# demand.
+name: Engine schema parity
+
+on:
+  push:
+    branches: [develop, main]
+    paths:
+      - "schema/**"
+      - "scripts/check_engine_schema_parity.py"
+      - ".github/workflows/engine-schema-parity.yml"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: pip install "pytest>=8,<9"
+      - name: Parity-gate unit tests (pin mechanics, offline)
+        run: python -m pytest backend/tests/test_engine_schema_parity.py --noconftest -q
+      - name: App schema vs pinned engine release
+        run: python3 scripts/check_engine_schema_parity.py

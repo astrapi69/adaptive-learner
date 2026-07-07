@@ -11,8 +11,9 @@ nach **Feature** organisiert.
 ```
 e2e/visual/features/
   <feature-name>/
-    <shot>.png          Desktop, 1280×720
-    <shot>.mobile.png   Mobile,  375×812
+    <shot>.png            Desktop, 1280×720
+    <shot>.mobile.png     Mobile,  375×812
+    <shot>.landscape.png  iPhone-Landscape, 812×375 (opt-in, #1410)
 ```
 
 - **Ordner + Dateien sind kebab-case.** Ein Ordner pro Feature, ein PNG pro
@@ -23,6 +24,9 @@ e2e/visual/features/
 - **Viewports:** Desktop `1280×720` (`<shot>.png`) + Mobile `375×812`
   (`<shot>.mobile.png`). Eine desktop-verankerte Flaeche (z.B. ein Dialog) wird
   via `desktopOnly: true` in der `FEATURES`-Map nur als Desktop erfasst.
+  Flaechen mit einer unteren Aktions-Leiste (Aufgaben-Modus) erhalten via
+  `landscape: true` zusaetzlich eine iPhone-Landscape-Baseline `812×375`
+  (`<shot>.landscape.png`, #1410).
 
 ## Source of truth
 
@@ -40,13 +44,16 @@ Baseline zu committen.
 | Dashboard Tabs — Übersicht | `dashboard-tabs/uebersicht.png` | `dashboard-tabs/uebersicht.mobile.png` | v1.94.1 |
 | Dashboard Tabs — Aktivität | `dashboard-tabs/aktivitaet.png` | `dashboard-tabs/aktivitaet.mobile.png` | v1.94.1 |
 | Dashboard Tabs — Missionen | `dashboard-tabs/missionen.png` | `dashboard-tabs/missionen.mobile.png` | v1.94.1 |
+| Dashboard — KI-Einladung ohne Schlüssel (#1417) | `dashboard-tabs/ki-einladung.png` | `dashboard-tabs/ki-einladung.mobile.png` | ausstehend (`make capture-screenshots`) |
 | Content Hub — Entdecken | `content-hub/entdecken.png` | `content-hub/entdecken.mobile.png` | v1.94.1 |
-| Content Hub — Meine Inhalte | `content-hub/meine-inhalte.png` | `content-hub/meine-inhalte.mobile.png` | v1.94.1 |
+| Content Hub — Meine Inhalte | `content-hub/meine-inhalte.png` | `content-hub/meine-inhalte.mobile.png` | v1.99.0 |
+| Content Hub — Meine Inhalte, Status-Filter offen (#1386) | `content-hub/meine-inhalte-filter-open.png` | `content-hub/meine-inhalte-filter-open.mobile.png` | v1.99.0 |
+| Content Hub — Meine Inhalte, Liste mit Langtitel (#1392) | `content-hub/meine-inhalte-liste-langtitel.png` | `content-hub/meine-inhalte-liste-langtitel.mobile.png` | v1.99.0 |
 | Content Hub — Import | `content-hub/import.png` | `content-hub/import.mobile.png` | v1.94.1 |
 | Progress Hub — Übersicht | `progress-hub/uebersicht.png` | `progress-hub/uebersicht.mobile.png` | v1.94.1 |
 | Progress Hub — Statistik | `progress-hub/statistik.png` | `progress-hub/statistik.mobile.png` | v1.94.1 |
 | Progress Hub — Meine Pfade | `progress-hub/meine-pfade.png` | `progress-hub/meine-pfade.mobile.png` | v1.94.1 |
-| Matching — Paarung | `matching-animation/matching-pairing.png` | `matching-animation/matching-pairing.mobile.png` | v1.94.1 |
+| Matching — Paarung (+ Landscape `matching-pairing.landscape.png`, #1410) | `matching-animation/matching-pairing.png` | `matching-animation/matching-pairing.mobile.png` | v1.94.1 |
 | Matching — Auflösung | `matching-animation/matching-resolved.png` | `matching-animation/matching-resolved.mobile.png` | v1.94.1 |
 | Lektions-Modi — Übung | `lesson-modes/practice.png` | `lesson-modes/practice.mobile.png` | v1.94.1 |
 | Lektions-Modi — Prüfung | `lesson-modes/exam.png` | `lesson-modes/exam.mobile.png` | v1.94.1 |
@@ -55,6 +62,7 @@ Baseline zu committen.
 | Antwort-Umschalter — Auflösung | `answer-toggle/aufloesung.png` | `answer-toggle/aufloesung.mobile.png` | v1.94.1 |
 | GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 |
 | QR-Code — App teilen | `qr-code/share-app.png` | — (Desktop-Dialog) | v1.94.1 |
+| Zusammenfassungs-Sektionen — Settings-Unterbereich (#1411) | `summary-sections/settings.png` | `summary-sections/settings.mobile.png` | ausstehend |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
 > konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.

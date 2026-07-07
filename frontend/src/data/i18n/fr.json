@@ -98,8 +98,6 @@
     "offline": "Hors ligne",
     "anki": "Anki",
     "contribute": "Contribuer",
-    "sidebar_open": "Ouvrir la barre latérale",
-    "sidebar_close": "Fermer la barre latérale",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactive-le dans les Paramètres.",
     "content": "Mon contenu",
@@ -306,6 +304,12 @@
     "swipe_hint": "Balaie vers la gauche / droite (ou utilise les flèches) pour naviguer."
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "Activer l'aide IA (optionnel)",
+      "body": "Connecte ton propre fournisseur d'IA (Claude, OpenAI ou Gemini) et reçois des explications et de l'aide directement dans les leçons. L'application fonctionne aussi sans.",
+      "connect": "Connecter maintenant",
+      "later": "Plus tard"
+    },
     "tab": {
       "overview": "Aperçu",
       "activity": "Activité",
@@ -552,6 +556,17 @@
     "explanations_enabled": "Afficher les explications d'erreur",
     "explanations_enabled_desc": "Après une leçon, affiche un court conseil de règle pour chaque erreur.",
     "section_hints": "Indices",
+    "section_lesson_summary": "Résumé après les leçons",
+    "summary_sections_desc": "Choisis quelles sections le résumé de fin de leçon affiche et dans quel ordre. Les actions pour continuer restent toujours visibles.",
+    "summary_section_result": "Résultat et statistiques",
+    "summary_section_xp": "Récompense d'XP",
+    "summary_section_favorite": "Rappel des favoris",
+    "summary_section_share": "Partager le résultat",
+    "summary_section_answers": "Aperçu des réponses",
+    "summary_section_export": "Export du résultat",
+    "summary_section_next_steps": "Suggestions d'étapes suivantes",
+    "correction_round_enabled": "Afficher le tour de correction après les leçons",
+    "correction_round_enabled_desc": "À la fin d'une leçon, propose de corriger tes erreurs immédiatement. Désactivé, elles restent accessibles en mode révision / « S'exercer sur les erreurs ».",
     "hints_enabled": "Afficher des indices pendant les exercices",
     "hints_enabled_desc": "Propose un bouton d'indice par paliers sur chaque exercice.",
     "hint_xp_cost": "Coût en XP par indice",
@@ -609,6 +624,8 @@
     "section_danger": "Compte",
     "section_ui": "Interface",
     "section_appearance": "Apparence",
+    "section_content_tabs": "Ordre des onglets Contenu",
+    "content_tabs_desc": "Choisis l'ordre des onglets dans la zone Contenu. Le premier onglet s'ouvre par défaut.",
     "content_view": "Affichage du contenu",
     "content_view_description": "Comment le contenu téléchargé est affiché dans les onglets de contenu. Le commutateur rapide de la vue de contenu modifie le même réglage.",
     "section_profile": "Profil",
@@ -978,6 +995,7 @@
     "checking": "Vérification…",
     "update_available": "La version {version} est disponible !",
     "up_to_date": "Tu utilises la dernière version.",
+    "update_preparing": "Un nouveau build est disponible et en cours de préparation. Vérifie à nouveau dans un instant.",
     "check_failed": "Échec de la vérification. Es-tu en ligne ?",
     "last_checked": "Dernière vérification : {when}",
     "never_checked": "Jamais vérifié",
@@ -1568,10 +1586,7 @@
       "required_with_feature": "Clé API requise {feature}.",
       "required_long": "Configure une clé de fournisseur dans les Paramètres pour activer cette action.",
       "open_settings": "Ouvrir les paramètres",
-      "skip_banner": "Configure une clé API dans les Paramètres pour utiliser les fonctions d’IA.",
-      "skip_banner_dismiss": "Ignorer",
       "feature_analyze": "pour analyser les conversations",
-      "feature_session": "pour démarrer une session",
       "feature_anki": "pour extraire des cartes Anki",
       "feature_study_guide": "pour générer un guide d’étude",
       "feature_study_questions": "pour générer des questions d’étude",
@@ -2010,6 +2025,9 @@
       "adaptive_errors": "{count} erreurs dans cette leçon",
       "error_replay": "Refaire les erreurs",
       "error_replay_detail": "{count} exercices à refaire",
+      "error_replay_corrected": "{corrected} sur {total} corrigés",
+      "all_corrected": "Toutes les erreurs corrigées !",
+      "all_corrected_detail": "Bravo - plus aucune erreur en attente.",
       "errors_corrected": "Toutes les erreurs corrigées !",
       "still_errors": "Encore {count} erreurs. Réessayer ?",
       "review": "Révision",
@@ -2104,6 +2122,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "Toutes les sources",
+      "official": "Officiel"
+    },
+    "filter_menu": {
+      "status": "Statut",
+      "source": "Source"
+    },
+    "filter_empty": "Aucun set ne correspond aux filtres actifs.",
+    "filter_reset": "Réinitialiser les filtres",
     "view": {
       "grid": "Vue en grille",
       "list": "Vue en liste",
@@ -2898,7 +2926,8 @@
     "update": {
       "message": "Une nouvelle version est disponible.",
       "action": "Mettre à jour",
-      "later": "Plus tard"
+      "later": "Plus tard",
+      "ios_restart_hint": "Si rien ne change, ferme l'application et rouvre-la."
     }
   },
   "share": {
@@ -3194,6 +3223,10 @@
     "save_prompt": "Enregistrer cette leçon dans tes favoris"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{ok} sur {total} dépôts synchronisés.",
+      "failed": "{ok} sur {total} synchronisés. Échec : {repos}"
+    },
     "qr": {
       "upload": "Téléverser une image QR",
       "decoding": "Lecture du QR…",
@@ -3235,6 +3268,7 @@
       "token": "Jeton (dépôts privés, facultatif)"
     },
     "action": {
+      "sync_all": "Tout synchroniser",
       "add": "Ajouter le dépôt",
       "cancel": "Annuler",
       "confirm_remove": "Confirmer la suppression",
@@ -3272,6 +3306,7 @@
       "qr_alt": "QR code du lien de partage"
     },
     "progress": {
+      "syncing": "Synchronisation…",
       "validating": "Validation du dépôt…",
       "manifest": "Chargement du manifeste…",
       "sets": "Chargement des ensembles…",

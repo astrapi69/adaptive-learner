@@ -63,9 +63,14 @@ Stellen, die früher auseinanderdrifteten, das nicht mehr können:
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
 schlägt fehl, wenn ein generiertes Artefakt von den Modellen
-abweicht. Das Content-Repo spiegelt `schema/lesson.schema.json` +
-`schema/quality-rules.json` (die App ist die Quelle) und validiert
-die Struktur in seiner eigenen CI dagegen.
+abweicht. Stromabwärts übernimmt die
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+das generierte Schema über ihre dokumentierte Schema-Sync-Prozedur
+und liefert es mit jedem npm-Release aus; die Content-Repos spiegeln
+**das gepinnte Engine-Release** (nicht dieses Repo) und validieren in
+ihrer eigenen CI gegen diesen Spiegel. `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`) hält das hier generierte
+Schema sichtbar in Parität mit dem gepinnten Engine-Release.
 
 ## Sprachpaare (v1.44.0)
 
@@ -135,134 +140,61 @@ regeneriert sie.
 
 ## Manifest-Format
 
-Beide Manifest-Dateien (Root + Set) verwenden die gleiche Form
-mit `schema_version: '1.0'`. Pflichtfelder:
+Das Feld-Schema des Manifests, also das Root-`manifest.yaml`, das die
+Sets des Repos auflistet, mit jedem Pflicht- und optionalen Feld
+(`schema_version`, `name` sowie pro Set `id`, `title`, `title_native`,
+`target_language`, `source_language`, `level`, `version`,
+`lesson_count`, `path`, `domain`, `tags`, `book`), steht in der
+Engine-Referenz:
+[learn-content-engine, Manifest format](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#manifest-format).
+Das strikte Schema der Engine (unbekannte Felder werden abgelehnt)
+validiert es, sodass die obige Feldliste nicht driften kann. Die
+Sprachpaar-Felder (`target_language` / `source_language`) werden wie
+unter [Sprachpaare](#sprachpaare-v1440) beschrieben angegeben; der
+Vor-v1.2-Alias `language` lädt weiterhin, ist für neue Sets aber
+nicht empfohlen.
 
-```yaml
-schema_version: '1.0'
-name: Mein Englisch-B1-Set
-description: >-
-  Optionale Langbeschreibung.
-sets:
-  - id: language-en-b1        # slug-sicher, eindeutig
-    title: Englisch B1 (Fortgeschrittene)
-    language: en              # BCP-47 (z.B. en, fr, zh-Hans)
-    level: B1                 # CEFR für Sprachen, frei für andere Domänen
-    version: '1.0.0'          # Semver — pro Set-Release erhöht
-    lesson_count: 12
-    domain: language          # aktive Domänen: ai / language / programming / psychology / technology
-    description: >-
-      Optionale Set-Beschreibung.
-    tags:
-      - intermediate
-      - business
-metadata:
-  author: Dein Name
-  license: CC-BY-SA-4.0       # oder die Lizenz deiner Wahl
-```
+App-spezifisches Loader-Verhalten, das zu beachten ist:
 
-Das Set-Manifest listet zusätzlich jede Lektionsdatei:
+- Das Set-Manifest listet jede Lektionsdatei unter `metadata.lessons`,
+  und der Content-Loader iteriert diese Liste **in der gegebenen
+  Reihenfolge**. Die Dateinamen auf der Festplatte sind irrelevant, nur
+  die Manifest-Reihenfolge zählt:
 
-```yaml
-metadata:
-  lessons:
-    - 01-intro.json
-    - 02-articles.json
-    - ...
-```
+  ```yaml
+  metadata:
+    lessons:
+      - 01-intro.json
+      - 02-articles.json
+      - ...
+  ```
 
-Der Content-Loader iteriert `metadata.lessons` in der gegebenen
-Reihenfolge; die Dateinamen auf der Festplatte sind irrelevant —
-nur die Manifest-Reihenfolge zählt.
+## Lektionsschema
 
-## Lektionsschema (v1.0)
+Jede Lektion ist eine einzelne JSON-Datei: Top-Level-Metadaten (`id`,
+`title`, `description`, `estimated_minutes`), eine Liste von **Cards**
+(die kleinsten lernbaren Einheiten — stabile Ids, Front/Back-Paare,
+Markdown-`notes`, `tags` für das SRS) und eine Liste von **Steps**,
+jeder entweder ein THEORY-Step (ein Markdown-`body`, optional ein
+`example_url`-Link oder inline `examples`) oder ein EXERCISE-Step
+(genau eine Übung).
 
-Jede Lektion ist eine einzelne JSON-Datei. Top-Level-Struktur:
+Die vollständige Feld-für-Feld-Formatreferenz — jedes Feld, jeder
+Aufgabentyp, jeder Cloze-Modus, mit JSON-Beispielen, die von der
+Engine-Testsuite validiert werden — lebt in der **Engine-Referenz**:
 
-```json
-{
-  "id": "01-greetings",
-  "title": "Begrüßungen",
-  "description": "Optionale 1-2-Satz-Zusammenfassung.",
-  "estimated_minutes": 12,
-  "cards": [ ... ],
-  "steps": [ ... ]
-}
-```
+- [learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
+  — die kanonische Lektionsformat-Referenz für Autoren und
+  Dritt-Validatoren (kein App-Checkout nötig)
+- das maschinenlesbare Schema, das jedem Engine-Release beiliegt:
+  `import schema from "learn-content-engine/schema/lesson.schema.json"`
+- der In-App-Zwilling: die generierte
+  [Lektionsformat-Referenz](lesson-format-reference.md)
 
-### Cards
-
-Eine Card ist die kleinste lernbare Einheit — typischerweise ein
-einzelner Begriff oder ein Konzept. Jede Card hat eine stabile
-id (aus Übungen referenziert) und ein front/back-Paar:
-
-```json
-{
-  "id": "art-le",
-  "front": "le",
-  "back": "der (männlich Singular)",
-  "notes": "Vor konsonantenanfangenden männlichen Substantiven. **le chat**, **le livre**.",
-  "tags": ["article", "definite"]
-}
-```
-
-`notes` akzeptiert Markdown. Nutze sie für Ausspracheregeln,
-Falsche-Freunde-Warnungen, Ausnahme-Hinweise — alles, was die
-Langzeitspeicherung verbessert. `tags` steuern das SRS-Filtering.
-
-### Steps
-
-Eine Lektion ist eine Schritt-für-Schritt-Sequenz, jeder Schritt
-entweder THEORY (ein Markdown-Block) oder EXERCISE (eine der vier
-Übungstypen):
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "title": "Warum Artikel wichtig sind",
-  "body": "# Artikel im Französischen\n\nJedes französische Nomen hat ein Geschlecht..."
-}
-```
-
-Ein Theorie-Step kann optional einen **Beispiel-Link** tragen (Schema
-v1.4, additiv — bestehende Lektionen bleiben ohne ihn gültig). Wenn
-vorhanden, rendert der Viewer darunter einen Button zum Öffnen des
-Beispiels:
-
-```json
-{
-  "id": "intro",
-  "type": "theory",
-  "body": "Die Korrelation misst den Zusammenhang...",
-  "example_url": "https://example.com/correlation-visualizer",
-  "example_label": "Interaktive Visualisierung"
-}
-```
-
-- `example_url` (optional): muss eine `http(s)`-URL sein.
-- `example_label` (optional): der Link-Text; leer wird zu einem
-  lokalisierten „Beispiel ansehen".
-
-Oder eine Übung:
-
-```json
-{
-  "id": "ex-match-greetings",
-  "type": "exercise",
-  "title": "Begrüßungen zuordnen",
-  "exercise": {
-    "id": "ex-match-greetings",
-    "type": "matching",
-    "prompt": "Ordne jede Begrüßung ihrer Übersetzung zu.",
-    "card_ids": ["bonjour", "salut"],
-    "pairs": [
-      {"left": "Bonjour", "right": "Hallo"},
-      {"left": "Salut", "right": "Hi"}
-    ]
-  }
-}
-```
+Das gebündelte Schema der Engine ist byte-identisch mit dem hier
+generierten `schema/lesson.schema.json` (erzwungen durch
+`make engine-parity-check`) — "validiert gegen die Engine" und
+"validiert in der App" sind dieselbe Aussage.
 
 ## Welcher Aufgabentyp für welches Lernziel
 
@@ -314,7 +246,7 @@ kommen bei konkretem Content-Bedarf über das Rezept
 
 Es gibt **keinen** `multiple_choice`-/`choice`-Aufgabentyp — Text-Multiple-
 Choice ist per Design `cloze` `select`-Modus (EXP-036 §4.3, #890; Button-
-Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
+Renderer #1342). Siehe [Multiple Choice erstellen](#multiple-choice-erstellen).
 
 ### Ohne neuen Typ abbildbar (Konventionen, keine Typen)
 
@@ -343,162 +275,18 @@ Renderer #1342). Siehe [Multiple-Choice-Authoring](#multiple-choice-authoring).
 
 ## Übungstyp-Referenz
 
-### matching
+Die Feld-Referenz je Typ — `matching`, `picture_choice`, `free_text`,
+`word_tiles` und `cloze` mit seinen Modi `type` / `select` /
+`multiselect`: Pflichtfelder, JSON-Beispiele und die semantischen
+Regeln (Cloze-`___`-Marker == `blanks`, referenzielle Integrität der
+`card_ids`, Disjunktheit von accept/distractors bei multiselect,
+exactly-one-correct bei picture_choice) — lebt in der Engine-Referenz:
+[learn-content-engine — `docs/lesson-format.md`](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md).
+Jedes JSON-Beispiel dort wird von der Engine-Testsuite extrahiert und
+validiert, die Referenz kann also nicht veralten. Die App-spezifischen
+Autoren-Konventionen unten bleiben hier.
 
-Drag-pair-Übung. Der Renderer mischt vor der Anzeige.
-
-```json
-{
-  "id": "ex-id",
-  "type": "matching",
-  "prompt": "Ordne jedem französischen Nomen seinen Artikel zu.",
-  "card_ids": ["noun-1", "noun-2"],
-  "pairs": [
-    {"left": "chat", "right": "le"},
-    {"left": "chaise", "right": "la"}
-  ]
-}
-```
-
-Jedes Pair muss genau zwei Schlüssel haben: `left` + `right`.
-
-### picture_choice
-
-Multiple-Choice mit Bildern. ≥ 2 Bilder, genau eines als richtig
-markiert.
-
-```json
-{
-  "id": "ex-id",
-  "type": "picture_choice",
-  "prompt": "Welche Begrüßung passt zum Abend?",
-  "card_ids": ["card-1"],
-  "images": [
-    {"src": "assets/img/morning.png", "label": "Bonjour"},
-    {"src": "assets/img/evening.png", "label": "Bonsoir", "is_correct": "true"}
-  ],
-  "hint": "Optionaler Markdown-Tipp auf Knopfdruck.",
-  "distractors": ["Bonjour"]
-}
-```
-
-Wichtig: `is_correct` ist ein **String** `"true"`, kein JSON-Boolean.
-
-Zeigt der `src`-Pfad auf eine nicht vorhandene Datei, fällt der
-Renderer auf das `label` zurück — picture_choice funktioniert
-also auch ohne Illustrations-Assets.
-
-> **Verwende `picture_choice` NICHT für reines Text-Multiple-Choice.** Es
-> ist nur für echte Bild-Auswahl mit **real existierenden** Bild-Assets.
-> Für Text-Optionen rendert es Platzhalter-Kacheln statt einer nutzbaren
-> Multiple-Choice-Kontrolle — das war der Bug in
-> astrapi69/adaptive-learner-content-test#10. Text-Multiple-Choice wird
-> stattdessen als `cloze` `select`-Modus erstellt — siehe
-> [Multiple Choice erstellen](#multiple-choice-erstellen).
-
-### free_text
-
-Antwort eintippen. Der Renderer matched erst exakt, dann
-Levenshtein-tolerant.
-
-```json
-{
-  "id": "ex-id",
-  "type": "free_text",
-  "prompt": "Wie sagt man 'Danke' auf Französisch?",
-  "card_ids": ["card-merci"],
-  "accept": ["Merci", "merci", "MERCI"],
-  "hint": "Beginnt mit M.",
-  "distractors": ["Bonjour", "Salut"]
-}
-```
-
-`accept[0]` ist die kanonische Antwort, die bei einem falschen
-Versuch angezeigt wird. Liste ≥ 3 Varianten auf, um Groß/Klein-
-schreibung + Interpunktion abzudecken; Whitespace wird vom
-Renderer normalisiert.
-
-### word_tiles
-
-Kacheln in die richtige Reihenfolge bringen. Der Renderer mischt
-vor der Anzeige.
-
-```json
-{
-  "id": "ex-id",
-  "type": "word_tiles",
-  "prompt": "Bring die Kacheln in die Reihenfolge: Ich sehe eine Katze.",
-  "card_ids": ["card-1"],
-  "tiles": ["Je", "vois", "un", "chat"],
-  "hint": "Gleiche Wortreihenfolge wie im Deutschen."
-}
-```
-
-Falls mehrere Wortreihenfolgen korrekt sind, ergänze
-`accept_orderings`:
-
-```json
-{
-  "tiles": ["Je", "vois", "un", "chat"],
-  "accept_orderings": [
-    [0, 1, 2, 3],
-    [0, 1, 3, 2]
-  ]
-}
-```
-
-Jede Reihenfolge ist eine Permutation der Tile-Indizes.
-
-### cloze (Phase 52 / v1.35.0 — Schema 1.1)
-
-Lückentext mit sichtbaren `___`-Markern im Satz. Jeder `___`
-entspricht einem Eintrag in `blanks[]` (Zuordnung von links nach
-rechts; der Loader prüft `sentence.count("___") ==
-len(blanks)`).
-
-```json
-{
-  "id": "ex-id",
-  "type": "cloze",
-  "prompt": "Setze den unbestimmten Artikel ein.",
-  "card_ids": ["art-un", "noun-chat"],
-  "sentence": "Je vois ___ chat dans le jardin.",
-  "blanks": [
-    {
-      "accept": ["un"],
-      "hint": "männlicher unbestimmter Artikel",
-      "placeholder": "?"
-    }
-  ],
-  "cloze_mode": "type",
-  "distractors": ["le", "la", "les"],
-  "hint": "*un* ist der männliche unbestimmte Artikel."
-}
-```
-
-**Render-Modi** — pro Übung über `cloze_mode` gesetzt:
-
-- `"type"` (Standard, wenn nicht gesetzt): pro Lücke ein
-  `<input>`. Validiert mit demselben NFC + Levenshtein-≤-1-
-  Matcher wie free-text, sodass Autorinnen nur semantische
-  Varianten auflisten müssen (keine Tippfehler).
-- `"select"`: pro Lücke ein `<select>`. Optionen aus
-  `accept[0]` + `distractors` der Übung, pro Lücke mit
-  stabilem Seed gemischt. **Erfordert nicht-leere
-  `distractors`** — der Schema-Validator weist
-  `cloze_mode: "select"` ohne sie ab.
-- `"multiselect"` (#1195): eine "Alle zutreffenden auswählen"-
-  Frage. Keine `___`-Marker und keine `blanks` — der `sentence`
-  ist die Frage, darunter eine Checkbox-Gruppe. Nutzt `accept`
-  und `distractors` mit modusspezifischer Bedeutung: **jeder**
-  `accept`-Eintrag ist eine richtige Option (nicht nur
-  `accept[0]`), `distractors` sind die falschen. Bewertet als
-  **exakte Mengenübereinstimmung** — alle richtigen Optionen
-  müssen gewählt sein, keine falsche. **Erfordert** nicht-leeres
-  `accept`, nicht-leeres `distractors`, und beide Listen müssen
-  **disjunkt** sein (dieselbe Option darf nicht in beiden stehen).
-
-#### Multiple Choice erstellen
+### Multiple Choice erstellen
 
 **Multiple Choice wird so erstellt** — es gibt bewusst keinen
 eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3 und #890). Eine
@@ -576,6 +364,58 @@ Geschlossene Enum von Rollen: `article` / `verb` / `noun` /
 `adjective` / `preposition` / `gender_marker` / `tense_marker`.
 Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump —
 nicht inline erweitern.
+
+## Nicht-lateinische Schriften: Umschrift-Konvention
+
+Verbindliche Regeln für Sets, deren Zielsprache eine nicht-lateinische
+Schrift verwendet (Japanisch, Chinesisch, Koreanisch, Griechisch,
+Hindi, ...). Im Content-Repo etabliert und angewendet — Präzedenzen:
+[content#90](https://github.com/astrapi69/adaptive-learner-content/issues/90),
+[content#91](https://github.com/astrapi69/adaptive-learner-content/issues/91);
+Restlücken-Sweeps:
+[content#106](https://github.com/astrapi69/adaptive-learner-content/issues/106),
+[content#107](https://github.com/astrapi69/adaptive-learner-content/issues/107).
+
+**1. Richtungs-Regel.** Umschrift gibt es nur für die nicht-lateinische
+**Ziel**sprache bei lateinisch schreibender Quellsprache (de→ja, de→zh,
+de→ko, ...). Eine nicht-lateinische **Quell**sprache mit lateinischem
+Ziel (hi→en, el→fr) bekommt keine Umschrift — die Lernenden lesen ihre
+eigene Schrift bereits.
+
+**2. Format.** Runde Klammern direkt hinter dem Original:
+こんにちは (konnichiwa). In Theorie-Schritten immer; in Optionen und
+Prompts nur, wo es unschädlich ist (siehe Verrats-Regel).
+
+**3. Verrats-Regel (der Kern).** Die Umschrift darf nie die Lösung
+verraten. Schrift-Lese-Aufgaben, Ton-Erkennung, `word_tiles`-Kacheln
+und Cloze-Satzkontexte bleiben OHNE Umschrift am abgefragten Element;
+Bedeutungs-Aufgaben bekommen sie. Im Zweifel weglassen.
+
+- Positiv-Beispiel (Bedeutungs-Matching, content#91): das Matching-Paar
+  `{"left": "妈 (mā)", "right": "Mama / Mutter"}` — abgefragt wird die
+  Bedeutung, die Lesehilfe verrät also nichts.
+- Negativ-Beispiel (Schrift-Lesen, content#91): die Schrift-Lese-Aufgaben
+  in `ko-a1/01-hangul-lesen` bleiben ohne Umschrift, weil die
+  Romanisierung selbst die Antwort IST (Zeichen → Laut); `가 (ga)` im
+  Prompt würde den Lernenden die Lösung in die Hand geben.
+
+**4. Standard-Romanisierung je Sprache, konsistent pro Set:**
+Japanisch Hepburn, Chinesisch Pinyin MIT Tonzeichen, Koreanisch
+Revidierte Romanisierung, Griechisch/Hindi eine gängige vereinfachte
+Umschrift. Nie Systeme innerhalb eines Sets mischen.
+
+**5. Tipp-Aufgaben** (`free_text` / Cloze-Modus `type`): `accept[0]`
+ist die kanonische romanisierte Form; gängige Varianten zusätzlich
+akzeptieren — Japanisch: Kunrei-Schreibungen (si/ti/tu/hu/zi, z. B.
+`konnitiwa` neben `konnichiwa`); Chinesisch: tonloses Pinyin (`nihao`
+neben `nǐ hǎo`); Koreanisch: verbreitete Alternativen (z. B.
+`annyeong haseyo`). Merksatz: **Eine Aufgabe darf nie an der Tastatur
+der Lernenden scheitern.** Präzedenz (IME-Blocker, content#107): ein
+Cloze, das nur 가 akzeptierte, war ohne koreanisches IME unlösbar —
+das romanisierte `ga` musste zusätzlich akzeptiert werden.
+
+Welcher Typ welches Lernziel trägt: siehe
+[Aufgabentyp-Katalog](#aufgabentyp-katalog-status).
 
 ## Übungsrichtung (v1.46.0 / EXP-018)
 
@@ -807,10 +647,12 @@ Prüfungen abgesichert:
    Lektionsinhalt wird an den konfigurierten Anbieter gesendet) und
    blockiert das Teilen nie — die regelbasierte Prüfung ist das Tor.
 2. **In der CI des Content-Repos.** Ein Pull Request an
-   `astrapi69/adaptive-learner-content` führt
-   `scripts/validate_content.py` aus (gespiegelt unter
-   `docs/ci/adaptive-learner-content/`) und prüft jedes Set mit
-   denselben Regeln, damit ein manueller PR das Tor nicht umgeht.
+   `astrapi69/adaptive-learner-content` führt dessen eigenes
+   `scripts/validate_content.py` aus (Struktur gegen den vendored,
+   Engine-gepinnten Schema-Spiegel + Qualitäts-Mindestwerte) plus
+   ein Engine-Konformitäts-Gate (`learn-content-engine`
+   `validate()` über jede Lektion), damit ein manueller PR das Tor
+   nicht umgeht.
 
 **Qualitäts-Mindestwerte (hartes Tor):** ≥ 5 Übungen pro Lektion,
 ≥ 2 Übungstypen, ≥ 1 Theorie-Schritt, Free-Text ≥ 2 akzeptierte

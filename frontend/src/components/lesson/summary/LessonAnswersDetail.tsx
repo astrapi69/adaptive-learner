@@ -20,6 +20,8 @@ import {tokenDiff} from "../../../lib/exercises/token-diff";
 import type {ExerciseBreakdownEntry} from "../../../lib/lesson/lesson-summary";
 
 export interface LessonAnswersDetailProps {
+    /** #1411 — the "Answers overview" section toggle; defaults ON. */
+    enabled?: boolean;
     /** One entry per exercise step of the run (from ``buildExerciseBreakdown``). */
     breakdown: ExerciseBreakdownEntry[];
 }
@@ -92,10 +94,11 @@ function AnswerRow({
  * @param props - See {@link LessonAnswersDetailProps}.
  */
 export default function LessonAnswersDetail({
+    enabled = true,
     breakdown,
 }: LessonAnswersDetailProps) {
     const {t} = useI18n();
-    if (breakdown.length === 0) return null;
+    if (!enabled || breakdown.length === 0) return null;
     return (
         <details
             className="lesson-summary-breakdown"

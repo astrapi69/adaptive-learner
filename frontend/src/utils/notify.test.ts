@@ -202,4 +202,15 @@ describe("notify.warning / info / success", () => {
         notify.success("done");
         expect(toast.success).toHaveBeenCalledWith("done", {autoClose: 5000});
     });
+
+    it("success passThrough makes the toast click-through (#1410, same shape as #589)", () => {
+        notify.success("downloaded", {passThrough: true});
+        expect(toast.success).toHaveBeenCalledWith("downloaded", {
+            autoClose: 5000,
+            style: {pointerEvents: "none"},
+            closeOnClick: false,
+            closeButton: false,
+            draggable: false,
+        });
+    });
 });

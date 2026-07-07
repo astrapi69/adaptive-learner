@@ -140,7 +140,7 @@ export default function ErrorReplayLesson() {
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="lesson-page"
                 data-testid="error-replay-empty"
             >
                 <header className="lesson-header">
@@ -201,7 +201,7 @@ export default function ErrorReplayLesson() {
     return (
         <main
             id="main"
-            className="page lesson-page"
+            className="lesson-page"
             data-testid="error-replay-page"
         >
             <header className="lesson-header">
@@ -358,13 +358,16 @@ function ErrorReplayNav({
     if (isSummary) return null;
     return (
         <nav
-            className="lesson-nav"
+            // #1419 — same sticky-footer pattern as LessonFooterNav
+            // (#43/#1410); the old .lesson-nav* CSS was removed in the
+            // Phase B migration.
+            className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
             aria-label={t("lesson.nav.aria_label", "Step navigation")}
         >
             {isExerciseStep && !checked ? (
                 <Button
                     type="button"
-                    className="lesson-nav-check"
+                    className="ml-auto"
                     onClick={onCheck}
                     disabled={!answerable}
                     title={
@@ -382,7 +385,7 @@ function ErrorReplayNav({
             ) : (
                 <Button
                     type="button"
-                    className="lesson-nav-next"
+                    className="ml-auto"
                     onClick={onNext}
                     data-testid="error-replay-next"
                 >

@@ -23,6 +23,8 @@ import DailyRemindersControl from "../../components/settings/controls/reminders/
 import HintSettingsControl from "../../components/settings/controls/lesson/HintSettingsControl";
 import LessonModeControl from "../../components/settings/controls/lesson/LessonModeControl";
 import ReviewSettingsControl from "../../components/settings/controls/lesson/ReviewSettingsControl";
+import SummarySectionsControl from "../../components/settings/controls/lesson/SummarySectionsControl";
+import ContentTabsOrderControl from "../../components/settings/controls/content/ContentTabsOrderControl";
 import LearningProfileControl from "../../components/assessment/LearningProfileControl";
 import MaxLessonSizeControl from "../../components/settings/controls/lesson/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../../components/settings/controls/lesson/PausedLessonsRetentionControl";
@@ -514,6 +516,11 @@ export default function Settings() {
         <ContentViewControl />
       </section>
 
+      <div hidden={activeTab !== "general"}>
+        {/* #1378 — configurable order of the Content-area tabs. */}
+        <ContentTabsOrderControl />
+      </div>
+
       <section className="settings-section" hidden={activeTab !== "general"}>
         <h2 className="settings-section-title">{t("settings.section_language", "Language")}</h2>
         <div className="form-row">
@@ -694,6 +701,7 @@ export default function Settings() {
         <MatchingResolveControl />
         <HintSettingsControl />
         <ReviewSettingsControl />
+        <SummarySectionsControl />
         <SrsTransparencySection />
         <DailyRemindersControl />
         <PausedLessonsRetentionControl />

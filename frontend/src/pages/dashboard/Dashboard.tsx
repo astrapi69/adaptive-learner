@@ -2,7 +2,6 @@ import { Map as MapIcon, Mic, Pencil } from "lucide-react";
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import DashboardFilterBar from "../../components/dashboard/DashboardFilterBar";
 import QuickStartButton from "../../components/dashboard/QuickStartButton";
 import { Button } from "@/components/ui/button";
@@ -67,18 +66,6 @@ export default function Dashboard() {
   // #931 — the project filter (subjects + tags) is hidden until multi-project
   // exists; useless with a single project and no project-creation UI.
   const advancedDashboard = useFeature(FEATURES.ADVANCED_DASHBOARD);
-  const [apiKeyBannerDismissed, setApiKeyBannerDismissed] = useState<boolean>(
-    () => localStorage.getItem("adaptive-learner.api_key_banner_dismissed") === "true",
-  );
-  const showApiKeyBanner = sessionFeature.isDisabled && !apiKeyBannerDismissed;
-  function dismissApiKeyBanner() {
-    try {
-      localStorage.setItem("adaptive-learner.api_key_banner_dismissed", "true");
-    } catch {
-      /* localStorage unavailable — silent no-op */
-    }
-    setApiKeyBannerDismissed(true);
-  }
 
   const [profile, setProfile] = useState<LearningProfile | null>(null);
   // #106 — when no profile yet, offer to resume an abandoned
@@ -210,51 +197,10 @@ export default function Dashboard() {
         )}
       </header>
 
-      {showApiKeyBanner && (
-        <div
-          className="api-key-skip-banner"
-          data-testid="api-key-skip-banner"
-          role="status"
-          style={{
-            margin: "0 0 1rem 0",
-            padding: "0.75rem 1rem",
-            background: "var(--info-bg)",
-            color: "var(--info)",
-            border: "1px solid var(--info)",
-            borderRadius: "var(--radius-md, 6px)",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            flexWrap: "wrap",
-          }}
-        >
-          <span style={{ flex: 1, minWidth: 220 }}>
-            {t("ui.api_key.skip_banner", "Configure an API key in Settings to use AI features.")}
-          </span>
-          <Button
-            type="button"
-            variant="default"
-            onClick={() => navigate("/settings#api-keys")}
-            data-testid="api-key-skip-banner-settings"
-          >
-            {t("ui.api_key.open_settings", "Open Settings")} →
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={dismissApiKeyBanner}
-            data-testid="api-key-skip-banner-dismiss"
-          >
-            {t("ui.api_key.skip_banner_dismiss", "Dismiss")}
-          </Button>
-        </div>
-      )}
-      {sessionFeature.isDisabled && (
-        <ApiKeyRequiredNotice
-          compact
-          feature={t("ui.api_key.feature_session", "to start a session")}
-        />
-      )}
+      {/* #1417 — the two stacked API-key messages (blue skip banner + yellow
+          ApiKeyRequiredNotice) were consolidated into the single inviting
+          AiInviteCard on the Übersicht tab, below Weitermachen. The session-
+          specific "key required" hint lives contextually on /session (#1158). */}
 
       {/* #931 — project filter hidden until multi-project exists. */}
       {userId && advancedDashboard.isActive && (

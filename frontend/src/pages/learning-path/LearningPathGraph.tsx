@@ -161,7 +161,7 @@ export default function LearningPathGraph({
     return (
         <main
             id="main"
-            className="page learning-path-page"
+            className="learning-path-page"
             data-testid="learning-path-page"
         >
             <header className="learning-path-header">

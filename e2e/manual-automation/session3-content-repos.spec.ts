@@ -59,14 +59,18 @@ test.describe("Session 3 — Content + repositories", () => {
   test("source filter narrows the tree (if present)", async ({ page }) => {
     const content = new ContentPage(page);
     await content.goto();
+    // #1386 — the source filter is an always-visible menu button; open it,
+    // pick "Official", and the trigger label reflects the choice.
     const filter = page.getByTestId("content-source-filter");
     test.skip(
       (await filter.count()) === 0,
-      "source filter only renders with multiple sources",
+      "source filter only renders once sets are downloaded",
     );
-    const official = page.getByTestId("content-source-filter-official");
-    await official.click();
-    await expect(official).toHaveAttribute("aria-pressed", "true");
+    await filter.click();
+    await page.getByTestId("content-source-filter-official").click();
+    await expect(
+      page.getByTestId("content-source-filter-label"),
+    ).toContainText(/Offiziell|Official/);
     await expect(content.tree).toBeVisible();
   });
 

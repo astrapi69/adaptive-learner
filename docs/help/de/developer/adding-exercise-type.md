@@ -47,7 +47,8 @@ korrekt/falsch-Ergebnis pro Element) — das ist die Grenze, die die
 7. **Content-Repo-Validierung.** Den Client-Validator
    (`frontend/src/lib/content/validation/content-validator.ts`) erweitern und,
    falls der Typ die Qualitätsminima berührt, die geteilten `QUALITY_RULES` in
-   `scripts/generate_lesson_schema.py` (ins Content-Repo gespiegelt).
+   `scripts/generate_lesson_schema.py` (von learn-content-engine
+   übernommen; die Content-Repos spiegeln die Engine, auf deren Release gepinnt).
 8. **Authoring-Doku.** Den Typ in die
    [Katalog-Tabelle](authoring-content.md#aufgabentyp-katalog-status) und einen
    `### <typ>`-Referenzblock mit JSON-Beispiel aufnehmen (EN + DE).

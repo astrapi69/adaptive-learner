@@ -26,7 +26,15 @@
  * suppresses the animation (no ``is-animated`` class, no delay).
  */
 
-import {ArrowRight, Play, RefreshCw, RotateCcw, Target, Trophy} from "lucide-react";
+import {
+    ArrowRight,
+    CheckCircle2,
+    Play,
+    RefreshCw,
+    RotateCcw,
+    Target,
+    Trophy,
+} from "lucide-react";
 import {Link} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
@@ -64,6 +72,10 @@ const TAG_I18N_KEYS: Record<ErrorTag, [string, string]> = {
 };
 
 export interface NextStepSuggestionsProps {
+    /** #1411 — the "Next-step suggestions" section toggle; defaults ON.
+     *  When disabled, the summary's secondary actions keep a plain
+     *  "Next lesson" fallback so forward navigation never disappears. */
+    enabled?: boolean;
     suggestions: Suggestions;
     setId: string;
     /** The raw set slug from the route (``--``-encoded source),
@@ -206,6 +218,22 @@ function ErrorReplayCard({
                         "{count} exercises again",
                     ).replace("{count}", String(data.errorCount))}
                 </span>
+                {data.correctedCount > 0 && (
+                    <span
+                        className="lesson-next-step-card-sub"
+                        data-testid="next-step-error-replay-corrected"
+                    >
+                        {t(
+                            "lesson.next_step.error_replay_corrected",
+                            "{corrected} of {total} corrected",
+                        )
+                            .replace("{corrected}", String(data.correctedCount))
+                            .replace(
+                                "{total}",
+                                String(data.errorCount + data.correctedCount),
+                            )}
+                    </span>
+                )}
             </span>
             <Button asChild variant={isPrimary ? "default" : "secondary"}>
                 <Link
@@ -217,6 +245,43 @@ function ErrorReplayCard({
                     <ArrowRight aria-hidden="true" />
                 </Link>
             </Button>
+        </div>
+    );
+}
+
+/** Shown when EVERY originally-failed exercise has been corrected in a
+ *  replay: the "Retry Errors" CTA is gone, replaced by a short success
+ *  note so the learner sees the corrected state land. */
+function AllCorrectedCard({
+    correctedCount,
+    animate,
+    idx,
+}: {
+    correctedCount: number;
+    animate: boolean;
+    idx: number;
+}) {
+    const {t} = useI18n();
+    return (
+        <div
+            className={cardClassName("all-corrected", "is-complete", animate)}
+            style={cardStyle(animate, idx)}
+            data-testid="next-step-card-all-corrected"
+        >
+            <span className="lesson-next-step-card-icon" aria-hidden="true">
+                <CheckCircle2 size={20} />
+            </span>
+            <span className="lesson-next-step-card-body">
+                <span className="lesson-next-step-card-kicker">
+                    {t("lesson.next_step.all_corrected", "All errors corrected!")}
+                </span>
+                <span className="lesson-next-step-card-title">
+                    {t(
+                        "lesson.next_step.all_corrected_detail",
+                        "Nice - no open errors left.",
+                    ).replace("{count}", String(correctedCount))}
+                </span>
+            </span>
         </div>
     );
 }
@@ -334,12 +399,14 @@ function ReviewCard({
 }
 
 function SetCompleteCard({
+    setIdEnc,
     setTitle,
     lessonCount,
     suggestedSet,
     animate,
     idx,
 }: {
+    setIdEnc: string;
     setTitle: Suggestions["setTitle"];
     lessonCount: Suggestions["lessonCount"];
     suggestedSet: Suggestions["suggestedSet"];
@@ -379,19 +446,25 @@ function SetCompleteCard({
                     </span>
                 )}
             </span>
-            {suggestedSet && (
-                <Button asChild variant="secondary">
-                    <Link to="/content" data-testid="next-step-cta-view-set">
-                        {t("lesson.next_step.view_set", "View Set")}
-                        <ArrowRight aria-hidden="true" />
-                    </Link>
-                </Button>
-            )}
+            {/* "View Set" opens the just-completed set's detail page (its
+                lesson list), NOT the generic Discover overview — the card is
+                about this set, so the CTA shows whenever the set is complete,
+                independent of the optional "How about …" suggestion above. */}
+            <Button asChild variant="secondary">
+                <Link
+                    to={`/content/set/${setIdEnc}`}
+                    data-testid="next-step-cta-view-set"
+                >
+                    {t("lesson.next_step.view_set", "View Set")}
+                    <ArrowRight aria-hidden="true" />
+                </Link>
+            </Button>
         </div>
     );
 }
 
 export default function NextStepSuggestions({
+    enabled = true,
     suggestions,
     setId,
     setSlug,
@@ -400,7 +473,7 @@ export default function NextStepSuggestions({
 }: NextStepSuggestionsProps) {
     const {t} = useI18n();
 
-    if (suggestions.loading) return null;
+    if (!enabled || suggestions.loading) return null;
 
     const {
         nextLesson,
@@ -420,6 +493,7 @@ export default function NextStepSuggestions({
     const anything =
         nextLesson.available ||
         showErrorReplay ||
+        errorReplay.allCorrected ||
         adaptiveLesson.available ||
         reviewSession.available ||
         setComplete;
@@ -458,6 +532,15 @@ export default function NextStepSuggestions({
                 idx={cards.length}
             />,
         );
+    } else if (errorReplay.allCorrected) {
+        cards.push(
+            <AllCorrectedCard
+                key="all-corrected"
+                correctedCount={errorReplay.correctedCount}
+                animate={animate}
+                idx={cards.length}
+            />,
+        );
     }
     if (adaptiveLesson.available) {
         cards.push(
@@ -487,6 +570,7 @@ export default function NextStepSuggestions({
         cards.push(
             <SetCompleteCard
                 key="complete"
+                setIdEnc={setIdEnc}
                 setTitle={setTitle}
                 lessonCount={lessonCount}
                 suggestedSet={suggestedSet}

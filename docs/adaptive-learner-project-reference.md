@@ -1,9 +1,14 @@
 # Adaptive Learner - Projekt-Referenz
 
 **Repository:** https://github.com/astrapi69/adaptive-learner
-**Aktueller Stand:** v1.20.0, ausgeliefert 2026-05-22
-(Phase 34 / `secrets.yaml`-API-Key-Storage).
-**Tests:** 786 Backend + 615 Plugins + 1233 Vitest = 2634 grün.
+**Aktueller Stand:** siehe die kanonische Version in
+`backend/pyproject.toml` sowie den Release-Verlauf in
+[`changelog/releases/`](../changelog/releases/) und den Ist-Stand oben
+in [ROADMAP.md](ROADMAP.md). Dieses Dokument beschreibt die dauerhafte
+Projekt-Referenz, keinen einzelnen Release-Stand.
+**Tests:** aktuelle Zählung siehe
+[docs/audits/current-coverage.md](audits/current-coverage.md) (nicht hier
+duplizieren, sonst driftet die Zahl).
 **Original-Tag:** v0.0.0-template (Skeleton aus
 Bibliogon v0.33.0, März 2026).
 

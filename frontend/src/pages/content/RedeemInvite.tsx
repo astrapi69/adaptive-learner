@@ -26,6 +26,7 @@ import {
   redeemInviteInput,
   type RedeemFailReason,
 } from "../../lib/content/invites/redeem-invite";
+import PageContainer from "../../shared/layout/PageContainer";
 import { notify } from "../../utils/notify";
 
 export default function RedeemInvite() {
@@ -105,7 +106,7 @@ export default function RedeemInvite() {
   };
 
   return (
-    <main id="main" className="page" data-testid="redeem-invite-page">
+    <PageContainer testId="redeem-invite-page">
       <div className="mx-auto mt-10 max-w-md rounded-md border border-[var(--border)] bg-[var(--surface)] p-6">
         <h1 className="m-0 text-xl font-semibold">
           {t("invitation_code.redeem.title", "Redeem an invitation code")}
@@ -184,6 +185,6 @@ export default function RedeemInvite() {
           </Button>
         </div>
       </div>
-    </main>
+    </PageContainer>
   );
 }

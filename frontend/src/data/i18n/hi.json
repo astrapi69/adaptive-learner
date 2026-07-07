@@ -98,8 +98,6 @@
     "offline": "ऑफ़लाइन",
     "anki": "Anki",
     "contribute": "योगदान",
-    "sidebar_open": "साइडबार खोलें",
-    "sidebar_close": "साइडबार बंद करें",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "डेवलपर मोड चालू है — त्रुटि टोस्ट पूरी तकनीकी जानकारी दिखाते हैं। सेटिंग्स में टॉगल करें।",
     "content": "मेरी सामग्री",
@@ -306,6 +304,12 @@
     "swipe_hint": "नेविगेट करने के लिए बाएँ / दाएँ स्वाइप करें (या ऐरो कुंजियाँ इस्तेमाल करें)।"
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "AI सहायता चालू करें (वैकल्पिक)",
+      "body": "अपना खुद का AI प्रदाता (Claude, OpenAI या Gemini) जोड़ें और पाठों में सीधे व्याख्या और सहायता पाएं। ऐप इसके बिना भी अच्छी तरह काम करता है।",
+      "connect": "अभी जोड़ें",
+      "later": "बाद में"
+    },
     "tab": {
       "overview": "अवलोकन",
       "activity": "गतिविधि",
@@ -552,6 +556,17 @@
     "explanations_enabled": "त्रुटि स्पष्टीकरण दिखाएँ",
     "explanations_enabled_desc": "पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।",
     "section_hints": "संकेत",
+    "section_lesson_summary": "पाठ के बाद सारांश",
+    "summary_sections_desc": "चुनें कि पाठ के अंत में सारांश कौन से खंड और किस क्रम में दिखाए। आगे बढ़ने की क्रियाएँ हमेशा दिखाई देती हैं।",
+    "summary_section_result": "परिणाम और आँकड़े",
+    "summary_section_xp": "XP इनाम",
+    "summary_section_favorite": "पसंदीदा संकेत",
+    "summary_section_share": "परिणाम साझा करें",
+    "summary_section_answers": "उत्तरों का अवलोकन",
+    "summary_section_export": "परिणाम निर्यात",
+    "summary_section_next_steps": "अगले कदम के सुझाव",
+    "correction_round_enabled": "पाठों के बाद सुधार चरण दिखाएं",
+    "correction_round_enabled_desc": "पाठ के अंत में, अपनी गलतियों को तुरंत ठीक करने का विकल्प दें। बंद होने पर, वे समीक्षा / \"गलतियाँ अभ्यास\" मोड में उपलब्ध रहती हैं।",
     "hints_enabled": "अभ्यास के दौरान संकेत दिखाएँ",
     "hints_enabled_desc": "हर अभ्यास पर एक क्रमिक संकेत बटन देता है।",
     "hint_xp_cost": "प्रति संकेत XP लागत",
@@ -609,6 +624,8 @@
     "section_danger": "खाता",
     "section_ui": "इंटरफ़ेस",
     "section_appearance": "रूप-रंग",
+    "section_content_tabs": "सामग्री टैब क्रम",
+    "content_tabs_desc": "सामग्री क्षेत्र में टैब का क्रम चुनें। पहला टैब डिफ़ॉल्ट रूप से खुलता है।",
     "content_view": "सामग्री दृश्य",
     "content_view_description": "डाउनलोड की गई सामग्री को सामग्री टैब में कैसे दिखाया जाए। सामग्री दृश्य में त्वरित टॉगल वही सेटिंग बदलता है।",
     "section_profile": "प्रोफ़ाइल",
@@ -978,6 +995,7 @@
     "checking": "जांच हो रही है…",
     "update_available": "संस्करण {version} उपलब्ध है!",
     "up_to_date": "आप नवीनतम संस्करण का उपयोग कर रहे हैं।",
+    "update_preparing": "एक नया बिल्ड उपलब्ध है और तैयार किया जा रहा है। कुछ क्षण बाद फिर से जाँचें।",
     "check_failed": "जांच विफल। क्या आप ऑनलाइन हैं?",
     "last_checked": "पिछली जांच: {when}",
     "never_checked": "कभी जांच नहीं की गई",
@@ -1568,10 +1586,7 @@
       "required_with_feature": "API कुंजी आवश्यक {feature}।",
       "required_long": "इस कार्रवाई को सक्षम करने के लिए सेटिंग्स में एक प्रदाता कुंजी कॉन्फ़िगर करें।",
       "open_settings": "सेटिंग्स खोलें",
-      "skip_banner": "AI सुविधाओं का उपयोग करने के लिए सेटिंग्स में एक API कुंजी कॉन्फ़िगर करें।",
-      "skip_banner_dismiss": "खारिज करें",
       "feature_analyze": "बातचीत का विश्लेषण करने के लिए",
-      "feature_session": "एक सत्र शुरू करने के लिए",
       "feature_anki": "Anki कार्ड निकालने के लिए",
       "feature_study_guide": "एक अध्ययन गाइड बनाने के लिए",
       "feature_study_questions": "अध्ययन प्रश्न बनाने के लिए",
@@ -2060,6 +2075,9 @@
       "adaptive_errors": "इस पाठ में {count} गलतियाँ",
       "error_replay": "गलतियाँ दोहराएँ",
       "error_replay_detail": "{count} अभ्यास फिर से",
+      "error_replay_corrected": "{total} में से {corrected} ठीक किए गए",
+      "all_corrected": "सभी गलतियाँ ठीक कर दी गईं!",
+      "all_corrected_detail": "बढ़िया, कोई बाकी गलती नहीं।",
       "errors_corrected": "सभी गलतियाँ सुधार ली गईं!",
       "still_errors": "अभी भी {count} गलतियाँ। फिर से कोशिश करें?",
       "review": "पुनरावलोकन",
@@ -2104,6 +2122,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "सभी स्रोत",
+      "official": "आधिकारिक"
+    },
+    "filter_menu": {
+      "status": "स्थिति",
+      "source": "स्रोत"
+    },
+    "filter_empty": "कोई भी सेट सक्रिय फ़िल्टर से मेल नहीं खाता।",
+    "filter_reset": "फ़िल्टर रीसेट करें",
     "view": {
       "grid": "ग्रिड दृश्य",
       "list": "सूची दृश्य",
@@ -2898,7 +2926,8 @@
     "update": {
       "message": "एक नया संस्करण उपलब्ध है।",
       "action": "अपडेट करें",
-      "later": "बाद में"
+      "later": "बाद में",
+      "ios_restart_hint": "अगर कुछ नहीं बदलता, तो ऐप बंद करके फिर से खोलें।"
     }
   },
   "share": {
@@ -3194,6 +3223,10 @@
     "save_prompt": "इस पाठ को अपने पसंदीदा में सहेजें"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{total} में से {ok} रिपॉज़िटरी सिंक हुईं।",
+      "failed": "{total} में से {ok} सिंक हुईं। विफल: {repos}"
+    },
     "qr": {
       "upload": "QR छवि अपलोड करें",
       "decoding": "QR पढ़ा जा रहा है…",
@@ -3235,6 +3268,7 @@
       "token": "टोकन (निजी रिपॉज़, वैकल्पिक)"
     },
     "action": {
+      "sync_all": "सभी को सिंक करें",
       "add": "रिपॉज़िटरी जोड़ें",
       "cancel": "रद्द करें",
       "confirm_remove": "हटाने की पुष्टि करें",
@@ -3272,6 +3306,7 @@
       "qr_alt": "साझा लिंक के लिए QR कोड"
     },
     "progress": {
+      "syncing": "सिंक हो रहा है…",
       "validating": "रिपॉज़िटरी सत्यापित की जा रही है…",
       "manifest": "मैनिफ़ेस्ट लोड हो रहा है…",
       "sets": "सेट लोड हो रहे हैं…",

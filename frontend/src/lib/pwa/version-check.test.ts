@@ -60,6 +60,20 @@ describe("parseVersionManifest", () => {
     });
   });
 
+  it("passes a build date through when present (#1382)", () => {
+    expect(
+      parseVersionManifest({
+        version: "1.0.0",
+        buildHash: "h",
+        buildDate: "2026-07-05T12:00:00Z",
+      }),
+    ).toEqual({
+      version: "1.0.0",
+      buildHash: "h",
+      buildDate: "2026-07-05T12:00:00Z",
+    });
+  });
+
   it("defaults a missing buildHash to unknown", () => {
     expect(parseVersionManifest({ version: "1.0.0" })).toEqual({
       version: "1.0.0",
@@ -75,14 +89,27 @@ describe("parseVersionManifest", () => {
 });
 
 describe("fetchLatestVersion", () => {
-  it("fetches no-store and parses the manifest", async () => {
+  it("fetches no-store WITH a cache-buster query and parses the manifest (#1382)", async () => {
     const fetchImpl = vi.fn(async () => ({
       ok: true,
       json: async () => ({ version: "2.0.0", buildHash: "z" }),
     })) as unknown as typeof fetch;
-    const result = await fetchLatestVersion("/version.json", fetchImpl);
+    const result = await fetchLatestVersion("/version.json", fetchImpl, () => 1234);
     expect(result).toEqual({ version: "2.0.0", buildHash: "z" });
-    expect(fetchImpl).toHaveBeenCalledWith("/version.json", {
+    // ``no-store`` only bypasses the browser/SW caches; the cache-buster
+    // param is what defeats the GH-Pages edge cache (#1382).
+    expect(fetchImpl).toHaveBeenCalledWith("/version.json?cb=1234", {
+      cache: "no-store",
+    });
+  });
+
+  it("appends the cache-buster with & when the URL already has a query", async () => {
+    const fetchImpl = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ version: "2.0.0", buildHash: "z" }),
+    })) as unknown as typeof fetch;
+    await fetchLatestVersion("/version.json?x=1", fetchImpl, () => 99);
+    expect(fetchImpl).toHaveBeenCalledWith("/version.json?x=1&cb=99", {
       cache: "no-store",
     });
   });

@@ -28,6 +28,7 @@ vi.mock("../../utils/notify", () => ({
 }));
 
 import Contribute from "./Contribute";
+import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
 
 // de-source A1 set with no A2 -> detectGaps reports a next-level gap.
 const SAMPLE_ENTRY = {
@@ -101,5 +102,24 @@ describe("Contribute page", () => {
       expect(screen.getByTestId("contribute-empty")).toBeInTheDocument();
     });
     expect(screen.queryByTestId("content-gaps")).not.toBeInTheDocument();
+  });
+});
+
+describe("shared page container (#1384)", () => {
+  it("renders inside the shared PageContainer, with no deviating wrapper", async () => {
+    listSetsMock.mockResolvedValue({ sets: [SAMPLE_ENTRY], sources: [] });
+    renderPage();
+    const main = await screen.findByTestId("contribute-page");
+    expect(main.tagName).toBe("MAIN");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
+  });
+
+  it("renders the loading state inside the same shared container (no width jump)", () => {
+    listSetsMock.mockImplementation(() => new Promise(() => {}));
+    renderPage();
+    const main = screen.getByTestId("contribute-loading");
+    expect(main).toHaveAttribute("data-slot", "page-container");
+    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
   });
 });

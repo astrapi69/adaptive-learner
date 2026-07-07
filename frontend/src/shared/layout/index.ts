@@ -7,5 +7,7 @@ export * from "./ListRow";
 export {default as ListRow} from "./ListRow";
 export * from "./MenuToggleButton";
 export {default as MenuToggleButton} from "./MenuToggleButton";
+export * from "./PageContainer";
+export {default as PageContainer} from "./PageContainer";
 export * from "./ShareButton";
 export {default as ShareButton} from "./ShareButton";

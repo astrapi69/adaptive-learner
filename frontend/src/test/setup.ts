@@ -27,3 +27,35 @@ if (typeof globalThis.ResizeObserver === "undefined") {
         disconnect() {}
     }
 }
+
+// #1345: break happy-dom's synchronous focus-event recursion.
+//
+// happy-dom dispatches "focus"/"blur" events *synchronously* inside
+// .focus()/.blur(); real browsers queue them on a task and coalesce.
+// Radix focus-scope (>=1.1.11, pulled by @radix-ui/react-select 2.3.2+)
+// added a focus-guard that re-focuses on focusout, so under happy-dom two
+// guard sentinels re-focus each other without bound -> "RangeError:
+// Maximum call stack size exceeded", crashing <SelectContentImpl> so a
+// Select never renders its options. This is a synchronous-dispatch test
+// artifact only; a real browser never exhibits it.
+//
+// Fix: within ONE synchronous focus cascade, ignore a repeat .focus() on an
+// element already visited in that cascade -- exactly the pathological
+// A -> B -> A ping-pong. Linear focus moves inside a handler (A -> B -> C,
+// no repeats) are untouched, so legitimate focus management is unaffected.
+if (typeof HTMLElement !== "undefined") {
+    const proto = HTMLElement.prototype
+    const nativeFocus = proto.focus
+    let cascade: Set<Element> | null = null
+    proto.focus = function focusNoSyncCycle(this: HTMLElement, options?: FocusOptions): void {
+        const isTop = cascade === null
+        if (cascade === null) cascade = new Set<Element>()
+        if (cascade.has(this)) return // cyclic re-focus within one cascade
+        cascade.add(this)
+        try {
+            nativeFocus.call(this, options)
+        } finally {
+            if (isTop) cascade = null
+        }
+    }
+}

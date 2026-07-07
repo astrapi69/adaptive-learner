@@ -7,6 +7,7 @@
  * lazy-loaded wrapper, the data is fetched once by the Dashboard and passed in.
  */
 
+import AiInviteCard from "../../components/dashboard/AiInviteCard";
 import ContinueLearning from "../../components/dashboard/ContinueLearning";
 import FavoritesCard from "../../components/dashboard/FavoritesCard";
 import FocusAreasCard from "../../components/dashboard/FocusAreasCard";
@@ -40,6 +41,11 @@ export default function DashboardOverviewTab({
           <ContinueLearning userId={userId} maxItems={3} />
         </div>
       )}
+
+      {/* #1417 — the optional BYOK invitation sits BELOW Weitermachen: for a
+          fresh learner "start your first lesson" is the primary message, the
+          AI invite is secondary. Self-gating (no key + not dismissed). */}
+      <AiInviteCard />
 
       {userId && (
         <div className="mb-4">

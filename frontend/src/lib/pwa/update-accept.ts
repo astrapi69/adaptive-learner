@@ -22,6 +22,14 @@ export const ACCEPTED_AT_KEY = "adaptive-learner.update.last_accepted_at";
 /** The version string the user accepted (banner stays hidden for it). */
 export const ACCEPTED_VERSION_KEY = "adaptive-learner.update.accepted_version";
 /**
+ * The build hash the user accepted (#1382). On the Latest strand the version
+ * string never changes between deploys — only the hash moves — so a purely
+ * version-keyed suppression muted the banner FOREVER after one accepted
+ * update. With the hash recorded, a same-version deploy with a NEWER hash
+ * re-offers the banner once the quiet window has passed.
+ */
+export const ACCEPTED_HASH_KEY = "adaptive-learner.update.accepted_hash";
+/**
  * sessionStorage flag: set the instant the user clicks "Aktualisieren". This is
  * the HARD in-session guard (#845) — once set, the banner stays suppressed for
  * the rest of the browser session no matter what (survives reloads, independent
@@ -78,17 +86,24 @@ export function readAcceptedVersion(): string | null {
   return readKey(ACCEPTED_VERSION_KEY);
 }
 
+/** The build hash the user last accepted, or ``null`` when never / unknown. */
+export function readAcceptedHash(): string | null {
+  return readKey(ACCEPTED_HASH_KEY);
+}
+
 /**
- * Record that the user clicked "Aktualisieren": stamp the current time and the
- * accepted version. ``version`` may be ``null`` (a SW-only update with no known
- * version string) — the timestamp alone then carries the quiet-window
- * suppression.
+ * Record that the user clicked "Aktualisieren": stamp the current time, the
+ * accepted version, and the accepted build hash (#1382). ``version`` /
+ * ``hash`` may be ``null`` (a SW-only update with no known manifest) — the
+ * timestamp alone then carries the quiet-window suppression.
  *
  * @param version - The version being accepted, or ``null`` when unknown.
+ * @param hash - The build hash being accepted, or ``null`` when unknown.
  * @param now - Current epoch ms (injectable for tests).
  */
 export function recordUpdateAccepted(
   version: string | null,
+  hash: string | null = null,
   now: number = Date.now(),
 ): void {
   // Hard in-session guard first: even if both localStorage writes below fail
@@ -96,21 +111,30 @@ export function recordUpdateAccepted(
   markAcceptedThisSession();
   writeKey(ACCEPTED_AT_KEY, new Date(now).toISOString());
   if (version) writeKey(ACCEPTED_VERSION_KEY, version);
+  if (hash) writeKey(ACCEPTED_HASH_KEY, hash);
 }
 
 /**
- * Whether the update banner should be shown for ``newVersion``.
+ * Whether the update banner should be shown for ``newVersion`` / ``newHash``.
  *
  * Returns ``false`` (suppress) when the user recently accepted an update — within
- * the {@link ACCEPT_QUIET_MS} quiet window, OR for the exact version already
- * accepted. Returns ``true`` otherwise, so a genuinely newer version (after the
+ * the {@link ACCEPT_QUIET_MS} quiet window, OR for the exact BUILD already
+ * accepted. Returns ``true`` otherwise, so a genuinely newer build (after the
  * quiet window) re-offers the banner.
  *
+ * "Exact build" is version + hash (#1382): when both the candidate's and the
+ * accepted hash are known and DIFFER, the deploy is a newer build of the same
+ * version (the Latest strand) and the banner comes back. When either hash is
+ * unknown the check conservatively falls back to the version-only rule, so
+ * pre-#1382 acceptances and hash-less manifests keep their suppression.
+ *
  * @param newVersion - The candidate deployed version, or ``null`` when unknown.
+ * @param newHash - The candidate deployed build hash, or ``null`` when unknown.
  * @param now - Current epoch ms (injectable for tests).
  */
 export function shouldShowUpdateBanner(
   newVersion: string | null,
+  newHash: string | null = null,
   now: number = Date.now(),
 ): boolean {
   // Hard in-session guard: once the user clicked "Aktualisieren" this session,
@@ -128,7 +152,11 @@ export function shouldShowUpdateBanner(
 
   const acceptedVersion = readAcceptedVersion();
   if (newVersion && acceptedVersion === newVersion) {
-    return false; // this exact version was already accepted
+    const acceptedHash = readAcceptedHash();
+    if (newHash && acceptedHash && acceptedHash !== newHash) {
+      return true; // same version but a NEWER build hash — a fresh Latest deploy
+    }
+    return false; // this exact build was already accepted
   }
 
   return true;

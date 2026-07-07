@@ -139,6 +139,13 @@ export async function seedLearner(page: Page): Promise<void> {
  * capture script (#1023).
  */
 export async function openFirstBundledLesson(page: Page): Promise<void> {
+    // #1257 flipped the global content-view default to "list"; this opener
+    // navigates through the grid/tree surface, so pin the pref to "grid"
+    // for this page before the navigation (#1414). Idempotent under the
+    // visual/dexie configs, which already seed the same value globally.
+    await page.addInitScript(() => {
+        localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+    });
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 20_000});
     await page.getByTestId("content-other-toggle").click();
@@ -323,6 +330,8 @@ export const SURFACE_NAMES = [
     "dashboard-empty",
     "dashboard-populated",
     "content-browser",
+    "content-discover",
+    "content-import",
     "set-detail",
     "lesson-theory",
     "lesson-cloze",
@@ -463,6 +472,24 @@ export async function gotoSurface(
             await seedLearner(page);
             await page.goto("/content?tab=my");
             await expect(page.getByTestId("content-tree")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "content-discover":
+            // #1380 — the Discover tab shares the Content-hub PageContainer;
+            // the desktop viewport is where a missing container shows (rows
+            // spanning the full viewport width).
+            await seedLearner(page);
+            await page.goto("/content?tab=discover");
+            await expect(page.getByTestId("discover-page")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "content-import":
+            // #1380 — same shared container on the Import tab.
+            await seedLearner(page);
+            await page.goto("/content?tab=import");
+            await expect(page.getByTestId("page-import")).toBeVisible({
                 timeout: 20_000,
             });
             return true;

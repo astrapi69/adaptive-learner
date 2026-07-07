@@ -9,19 +9,31 @@ import NavXpBadge from "./NavXpBadge";
 import NavReviewsBadge from "./NavReviewsBadge";
 import NavAvatar from "./NavAvatar";
 import { NavModeBadge, NavThemeToggle } from "./NavIndicators";
+import { HELP_TARGET, NAV_GROUPS, navTargetsByGroup } from "./nav-targets";
 
-import { DESKTOP_SIDEBAR_ID } from "./DesktopSidebar";
-import { useDesktopSidebar } from "../../contexts/DesktopSidebarContext";
 import { useHelp } from "../../contexts/HelpContext";
 import { helpKeyForPath } from "../../lib/help/help-routes";
 import { useAppMode } from "../../hooks/settings/useAppMode";
 import { useButtonTooltips } from "../../hooks/settings/useButtonTooltips";
 import { useDevMode } from "../../hooks/settings/useDevMode";
+import { useDialogFocus } from "../../hooks/ui/useDialogFocus";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useIsLessonActive } from "../../hooks/lesson/session/useIsLessonActive";
+import { useMediaQuery } from "../../hooks/ui/useMediaQuery";
 import { useScrollDirection } from "../../hooks/ui/useScrollDirection";
 import { useTheme } from "../../hooks/ui/useTheme";
 import { isDarkTheme } from "../../lib/theme/themes";
+
+/**
+ * The media conditions under which the top bar collapses behind the
+ * hamburger drawer (#1390). Mirrors the two global.css blocks that style the
+ * drawer: the mobile breakpoint (``max-width: 768px`` — the established
+ * top-bar pattern; the BottomTabBar's ``md`` boundary) and the
+ * short-landscape phone case. Lesson-compact mode ORs in separately via
+ * ``useIsLessonActive`` (any width). Keep in sync with global.css.
+ */
+export const COMPACT_NAV_MEDIA_QUERY =
+  "(max-width: 768px), (orientation: landscape) and (max-height: 600px)";
 
 /**
  * Top navigation bar. Rendered on every authenticated page
@@ -29,12 +41,17 @@ import { isDarkTheme } from "../../lib/theme/themes";
  * pre-onboarding routes (Landing, Onboarding, Assessment) so the
  * funnel stays focused.
  *
- * v0.6.0 — mobile responsive. Desktop keeps the horizontal nav
- * exactly as before. On viewports <=768px the links collapse
- * behind a hamburger toggle that opens a drawer-style menu;
- * the brand + theme toggle stay visible. Drawer closes on
- * route change so a tap on a link doesn't leave a half-open
- * menu behind.
+ * One primary navigation per viewport class (#1390, Option A):
+ * - Desktop (above the breakpoint): the horizontal link row is the
+ *   primary nav; NO hamburger and NO drawer exist in the DOM.
+ * - Mobile (at/below the breakpoint) + lesson-compact + short-landscape:
+ *   the hamburger + drawer is the primary nav; the SAME links container
+ *   renders as the drawer (CSS drives the layout).
+ * Both variants render from the shared {@link NAV_TARGETS} model, so the
+ * route set can never diverge (pinned by the parity test).
+ *
+ * The #891/#1260 desktop sidebar (a second desktop primary nav behind a
+ * burger) was removed with #1390 — do not reintroduce a desktop drawer.
  */
 export default function Navigation() {
   const { t } = useI18n();
@@ -43,10 +60,6 @@ export default function Navigation() {
   const { ready: modeReady, mode } = useAppMode();
   const { theme, toggle } = useTheme();
   const { openHelp } = useHelp();
-  // #1260 — desktop sidebar (#891) open/close. The "open" affordance lives
-  // in the top bar (the "close" one lives inside the sidebar); it is shown
-  // only at ``lg+`` and only while the sidebar is collapsed.
-  const { open: sidebarOpen, toggle: toggleSidebar } = useDesktopSidebar();
   const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
   const { pathname } = useLocation();
   // During an active lesson the nav collapses to a minimal
@@ -54,6 +67,11 @@ export default function Navigation() {
   // lesson reclaims vertical space. CSS drives the actual layout
   // off the ``is-lesson-compact`` modifier.
   const lessonActive = useIsLessonActive();
+  // #1390 — drawer mode is a RENDER gate, not just CSS: at desktop widths
+  // (outside lesson-compact) the hamburger + drawer are not in the DOM at
+  // all, so the top bar is the only primary navigation.
+  const compactViewport = useMediaQuery(COMPACT_NAV_MEDIA_QUERY);
+  const drawerNav = compactViewport || lessonActive;
   // Auto-hide the sticky nav while reading a lesson: scrolling DOWN
   // slides it up out of view (more content space), scrolling UP (or
   // reaching the top) reveals it again. Only during active lessons,
@@ -72,6 +90,12 @@ export default function Navigation() {
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
+
+  // #1390 — leaving drawer mode (viewport grows / lesson ends) resets the
+  // open state so it can't leak into the inline variant or a later drawer.
+  useEffect(() => {
+    if (!drawerNav) setMenuOpen(false);
+  }, [drawerNav]);
 
   // #666 — close the drawer on Escape + outside click while it is open.
   // Uses ``pointerdown`` (not ``mousedown``): iOS Safari fires pointer
@@ -106,6 +130,15 @@ export default function Navigation() {
     if ((e.target as HTMLElement).closest("a, button")) setMenuOpen(false);
   }
 
+  // #1400 — while the drawer is open it is modal for the keyboard: the
+  // shared useDialogFocus hook (#515, same pattern as the Settings mobile
+  // menu #546) moves focus to the first drawer entry on open, cycles
+  // Tab / Shift+Tab inside the drawer, and restores focus to the burger
+  // on close. Gated on drawer mode so the inline desktop row (same DOM
+  // node) never traps.
+  const linksRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(linksRef, { open: menuOpen && drawerNav });
+
   if (HIDE_ON.includes(pathname)) return null;
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -127,34 +160,19 @@ export default function Navigation() {
                 mobile (primary nav action, thumb-reachable). `ml-0!`
                 overrides the global.css `.nav-hamburger { margin-left:
                 auto }` (unlayered, so the important modifier is what
-                makes the Tailwind utility win). The show/hide across
-                mobile / lesson-compact / landscape stays driven by the
-                existing global.css media rules. */}
-      {/* #1260 — desktop sidebar OPEN toggle. Desktop-only (``hidden
-          lg:inline-flex``) and rendered only while the sidebar is collapsed;
-          the close affordance lives inside the sidebar. Reuses the same
-          MenuToggleButton mechanism as the mobile hamburger — one toggle
-          building block, not a second mechanism. */}
-      {!sidebarOpen && (
+                makes the Tailwind utility win). Rendered ONLY in drawer
+                mode (#1390) — on desktop it does not exist in the DOM. */}
+      {drawerNav && (
         <MenuToggleButton
-          open={false}
-          onToggle={toggleSidebar}
-          label={t("nav.sidebar_open", "Open sidebar")}
+          open={menuOpen}
+          onToggle={() => setMenuOpen((v) => !v)}
+          label={t("nav.menu", "Menu")}
           tooltip={tooltipsOn}
-          controlsId={DESKTOP_SIDEBAR_ID}
-          className="hidden ml-0! lg:inline-flex"
-          testId="sidebar-open-toggle"
+          controlsId="app-nav-links"
+          className="nav-hamburger ml-0!"
+          testId="nav-hamburger"
         />
       )}
-      <MenuToggleButton
-        open={menuOpen}
-        onToggle={() => setMenuOpen((v) => !v)}
-        label={t("nav.menu", "Menu")}
-        tooltip={tooltipsOn}
-        controlsId="app-nav-links"
-        className="nav-hamburger ml-0!"
-        testId="nav-hamburger"
-      />
       {/* Brand grows + centres on mobile (between the hamburger and
                 the right-hand cluster), reverts to left-aligned and
                 natural width from md up. */}
@@ -199,74 +217,48 @@ export default function Navigation() {
         </NavLink>
       )}
       {modeReady && <NavModeBadge mode={mode} />}
+      {/* One links container, two presentations: inline row on desktop,
+          hamburger drawer in drawer mode (CSS keys off the media queries /
+          ``is-lesson-compact``; ``data-variant`` exposes the mode to tests).
+          The entries come from the shared NAV_TARGETS model — group order
+          LERNEN, INHALTE, FORTSCHRITT, then the flat Settings + Help
+          utility entries (EXP-037 #850 / #856 / #1129 / #1149). */}
       <div
         id="app-nav-links"
+        ref={linksRef}
         className={`nav-links${menuOpen ? " is-open" : ""}`}
         data-testid="nav-links"
+        data-variant={drawerNav ? "drawer" : "inline"}
         onClick={closeMenuOnLinkTap}
       >
-        {/* EXP-037 (#850) reduced the bar to grouped-order entries. Session
-            was removed then, but re-added (#1129) — the session chat had no
-            menu entry and was hard to reach. Still removed from the bar
-            (reachable elsewhere): Curriculum + Statistics (tabs in /progress),
-            Import (tab in /discover), Anki (action on /content). Group order:
-            LERNEN, INHALTE, FORTSCHRITT, then the Settings + Help utility
-            entries. */}
-        <NavGroup label={t("nav.group.learn", "LEARN")} testId="nav-group-learn">
-          <NavLink
-            to="/dashboard"
-            className={linkClass}
-            data-testid="nav-dashboard"
+        {NAV_GROUPS.map((group) => (
+          <NavGroup
+            key={group.id}
+            label={t(group.labelKey, group.labelFallback)}
+            testId={`nav-group-${group.id}`}
           >
-            {t("nav.dashboard", "Dashboard")}
-          </NavLink>
+            {navTargetsByGroup(group.id).map((target) => (
+              <NavLink
+                key={target.to}
+                to={target.to}
+                className={linkClass}
+                data-testid={target.testId}
+              >
+                {t(target.labelKey, target.labelFallback)}
+              </NavLink>
+            ))}
+          </NavGroup>
+        ))}
+        {navTargetsByGroup("utility").map((target) => (
           <NavLink
-            to="/learning-path"
+            key={target.to}
+            to={target.to}
             className={linkClass}
-            data-testid="nav-learning-path"
+            data-testid={target.testId}
           >
-            {t("nav.learning_path", "Learning Path")}
+            {t(target.labelKey, target.labelFallback)}
           </NavLink>
-          {/* #1129 — re-added. ``/session`` start-mode begins a session for
-              the active project (routes to onboarding when none). */}
-          <NavLink
-            to="/session"
-            className={linkClass}
-            data-testid="nav-session"
-          >
-            {t("nav.session", "Session")}
-          </NavLink>
-        </NavGroup>
-        <NavGroup label={t("nav.group.content", "CONTENT")} testId="nav-group-content">
-          {/* #856 — "My content" + "Discover" merged into one entry; the
-              tabs (Entdecken / Meine Inhalte / Importieren) live in the
-              ContentHub at /content. */}
-          <NavLink to="/content" className={linkClass} data-testid="nav-content">
-            {t("nav.tab.content", "Content")}
-          </NavLink>
-          {/* #1149 — "Beitragen": the community-gaps block, kept distinct
-              from "Meine Inhalte" (consumption) and Discover (find +
-              download). */}
-          <NavLink
-            to="/contribute"
-            className={linkClass}
-            data-testid="nav-contribute"
-          >
-            {t("nav.contribute", "Contribute")}
-          </NavLink>
-        </NavGroup>
-        <NavGroup label={t("nav.group.progress", "PROGRESS")} testId="nav-group-progress">
-          <NavLink to="/progress" className={linkClass} data-testid="nav-progress">
-            {t("nav.progress", "Progress")}
-          </NavLink>
-        </NavGroup>
-        <NavLink
-          to="/settings"
-          className={linkClass}
-          data-testid="nav-settings"
-        >
-          {t("nav.settings", "Settings")}
-        </NavLink>
+        ))}
         {/* Help menu entry. Opens the HelpDrawer
                     in-place (no route change) on the glossary
                     entry that describes the CURRENT view
@@ -279,7 +271,7 @@ export default function Navigation() {
           variant="ghost"
           type="button"
           className="nav-link nav-link-button"
-          data-testid="nav-help"
+          data-testid={HELP_TARGET.testId}
           onClick={() => {
             openHelp(helpKeyForPath(pathname));
             setMenuOpen(false);
@@ -293,7 +285,7 @@ export default function Navigation() {
               marginRight: 6,
             }}
           />
-          {t("nav.help", "Help")}
+          {t(HELP_TARGET.labelKey, HELP_TARGET.labelFallback)}
         </Button>
       </div>
       <NavReviewsBadge />

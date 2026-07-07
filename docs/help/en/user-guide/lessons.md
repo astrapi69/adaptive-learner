@@ -134,6 +134,14 @@ If you get 3 stars on the first attempt, a small celebration
 animation plays. (If you have the OS setting "reduce motion"
 enabled, the animation respects that.)
 
+### Configuring the summary
+
+You choose which sections the end-of-lesson summary shows and in
+which order, under **Settings → Learning**. The sections are:
+Result and statistics, XP reward, Favorites hint, Share result,
+Answers overview, Result export, and Next-step suggestions. The
+"continue" actions stay visible at all times.
+
 ### Exporting the result
 
 The summary offers **"Copy result"** and **"Save as file"**. Both

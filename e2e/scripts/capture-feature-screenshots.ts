@@ -51,6 +51,15 @@ const VIEWPORTS = [
     {key: "mobile", size: {width: 375, height: 812}, suffix: ".mobile"},
 ] as const;
 
+/** iPhone-landscape capture size (#1410) — opt-in per feature via
+ *  ``landscape: true`` for surfaces whose bottom action bar must stay
+ *  reachable in landscape (the lesson runner). */
+const LANDSCAPE_VIEWPORT = {
+    key: "landscape",
+    size: {width: 812, height: 375},
+    suffix: ".landscape",
+} as const;
+
 /** One capturable feature state. */
 interface FeatureShot {
     /** ``<feature-folder>/<shot>`` — kebab-case, no extension, no viewport
@@ -60,6 +69,8 @@ interface FeatureShot {
     setup: (page: Page) => Promise<boolean>;
     /** Capture desktop only (e.g. a desktop-anchored dialog). Default: both. */
     desktopOnly?: boolean;
+    /** ALSO capture an iPhone-landscape (812×375) baseline (#1410). */
+    landscape?: boolean;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -225,6 +236,20 @@ async function gotoQrModal(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning scrolled to the "Lesson summary" sub-area
+ *  (#1426 — a reorder list: each summary section has an in-row visibility
+ *  checkbox plus Up/Down buttons; generalises the #1411 toggles). */
+async function gotoSummarySections(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const section = page.getByTestId("settings-section-summary-sections");
+    if (!(await section.count())) return false;
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 /**
  * Every per-feature baseline. Kebab-case ``<feature-folder>/<shot>`` paths;
  * the test loop appends the viewport suffix + ``.png``.
@@ -234,15 +259,104 @@ const FEATURES: FeatureShot[] = [
     {path: "dashboard-tabs/uebersicht", setup: (p) => gotoDashboardTab(p, "overview")},
     {path: "dashboard-tabs/aktivitaet", setup: (p) => gotoDashboardTab(p, "activity")},
     {path: "dashboard-tabs/missionen", setup: (p) => gotoDashboardTab(p, "missions")},
+    // #1417 — fresh learner without an AI key: the ONE inviting BYOK card
+    // below Weitermachen (replaces the pre-#1417 stacked API-key banner +
+    // warning). The dexie preview build has no key, so the card renders.
+    {
+        path: "dashboard-tabs/ki-einladung",
+        setup: async (p) => {
+            await gotoDashboardTab(p, "overview");
+            const card = p.getByTestId("ai-invite-card");
+            try {
+                await card.waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            await card.scrollIntoViewIfNeeded();
+            return true;
+        },
+    },
     {path: "content-hub/entdecken", setup: (p) => gotoContentTab(p, "discover")},
-    {path: "content-hub/meine-inhalte", setup: (p) => gotoContentTab(p, "my")},
+    {
+        path: "content-hub/meine-inhalte",
+        // Wait for the (async) set catalogue, not just the hub shell —
+        // otherwise the shot captures the "Inhalte werden geladen…" state.
+        // The default view is the LIST (#1257); an explicit "grid" pref
+        // renders the tree instead, so accept either surface.
+        setup: async (p) => {
+            await gotoContentTab(p, "my");
+            const catalogue = p
+                .getByTestId("content-list-view")
+                .or(p.getByTestId("content-tree"));
+            try {
+                await catalogue.first().waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            return true;
+        },
+    },
+    // #1386 — the status/source filter menu buttons (closed state is part of
+    // the meine-inhalte shot above; this captures the OPEN status menu).
+    {
+        path: "content-hub/meine-inhalte-filter-open",
+        setup: async (p) => {
+            await gotoContentTab(p, "my");
+            const trigger = p.getByTestId("content-status-filter");
+            try {
+                await trigger.waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            await trigger.click();
+            await expect(p.getByTestId("content-status-filter-menu")).toBeVisible({
+                timeout: 10_000,
+            });
+            return true;
+        },
+    },
+    // #1392 — the LIST view with the longest catalogue title
+    // ("Portugiesisch (Brasilianisch) A1 (für Deutschsprachige)"): the
+    // mobile shot pins that the title truncates and the language badge +
+    // three-dot actions menu stay inside the viewport, flush-aligned.
+    {
+        path: "content-hub/meine-inhalte-liste-langtitel",
+        setup: async (p) => {
+            await gotoContentTab(p, "my");
+            // The view toggle appears once the (async) set catalogue is in.
+            const toggle = p.getByTestId("content-view-list");
+            try {
+                await toggle.waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            await toggle.click();
+            await expect(p.getByTestId("content-list-view")).toBeVisible({
+                timeout: 10_000,
+            });
+            const longRow = p.getByTestId("content-list-set-pt-br-a1-from-de");
+            try {
+                await longRow.waitFor({timeout: 10_000});
+            } catch {
+                return false;
+            }
+            // #root is the app's scroll container (html/body are locked), so
+            // a fullPage shot cannot reach below the fold — bring the
+            // long-title row into the visible fold instead.
+            await longRow.scrollIntoViewIfNeeded();
+            return true;
+        },
+    },
     {path: "content-hub/import", setup: (p) => gotoContentTab(p, "import")},
     {path: "progress-hub/uebersicht", setup: (p) => gotoProgressTab(p, "overview")},
     {path: "progress-hub/statistik", setup: (p) => gotoProgressTab(p, "stats")},
     {path: "progress-hub/meine-pfade", setup: (p) => gotoProgressTab(p, "paths")},
 
     // --- Matching animation / resolution --------------------------------
-    {path: "matching-animation/matching-pairing", setup: gotoLessonMatching},
+    // ``landscape: true`` (#1410): the exercise mask incl. the sticky
+    // Prüfen/Weiter footer gets an iPhone-landscape baseline on top of the
+    // portrait one.
+    {path: "matching-animation/matching-pairing", setup: gotoLessonMatching, landscape: true},
     {path: "matching-animation/matching-resolved", setup: gotoLessonMatchingResolved},
 
     // --- Lesson modes (practice / exam / timed) -------------------------
@@ -259,10 +373,16 @@ const FEATURES: FeatureShot[] = [
 
     // --- QR-code app sharing --------------------------------------------
     {path: "qr-code/share-app", setup: gotoQrModal, desktopOnly: true},
+
+    // --- Lesson-summary section toggles (#1411) --------------------------
+    {path: "summary-sections/settings", setup: gotoSummarySections},
 ];
 
 for (const feature of FEATURES) {
-    for (const vp of VIEWPORTS) {
+    const viewports = feature.landscape
+        ? [...VIEWPORTS, LANDSCAPE_VIEWPORT]
+        : [...VIEWPORTS];
+    for (const vp of viewports) {
         if (feature.desktopOnly && vp.key !== "desktop") continue;
         test(`${feature.path} @ ${vp.key}`, async ({page}) => {
             await page.setViewportSize(vp.size);

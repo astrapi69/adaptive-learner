@@ -1,57 +1,38 @@
 /**
  * UpdateCheckControl — an active "check for updates" control for the
- * Settings → About version card (#664).
+ * Settings → About version card (#664), now reading the SHARED update store
+ * (#1374).
  *
- * The PWA update banner ({@link useAppUpdate}) is PASSIVE: it only appears
- * when a service worker happens to detect a new build, and a bottom-anchored
- * banner can be missed. This control is the reliable, user-initiated path,
- * visible on every device/browser: it forces a ``version.json`` check and,
- * when a newer build is found, applies it with the SAME skip-waiting + reload
- * logic the banner uses ({@link activateAndReload}). It is the user's escape
- * hatch from a stale service-worker cache.
+ * The PWA update banner ({@link useAppUpdate}) is PASSIVE and can be missed;
+ * this control is the reliable, user-initiated path visible on every
+ * device/browser. Both surfaces now read the same {@link useUpdateStore}
+ * snapshot, so:
  *
- * States: idle → checking (spinner) → one of available / current / error.
- * "Available" swaps in a prominent Update button; the last-check time is
- * shown (persisted in ``sessionStorage``) so a repeat visit has context.
+ *  - **One click resolves in one pass.** The click sets a visible "checking"
+ *    state immediately, then the store awaits the service-worker cycle +
+ *    version.json ({@link checkUpdateNow}) and lands on available / current /
+ *    a friendly error — no more "click two or three times" (#1374).
+ *  - **A waiting update is shown without a click.** If the passive detection
+ *    already found one, this control shows the Update action on open.
+ *  - **Applying clears both.** {@link applyUpdateNow} records the acceptance,
+ *    clears the banner and this control, and drives skip-waiting + reload.
  *
  * Token-backed Tailwind (theme-correct across all themes); no hardcoded
- * colours. Works in both storage modes (the update mechanism is pure
- * frontend).
+ * colours. Works in both storage modes (the update mechanism is pure frontend).
  */
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { Loader2, RefreshCw, Zap } from "lucide-react";
 
 import { useI18n } from "../../hooks/ui/useI18n";
+import { useOnlineStatus } from "../../hooks/system/useOnlineStatus";
+import { useUpdateStore } from "../../hooks/system/useUpdateStore";
 import { Button } from "@/components/ui/button";
 import {
-  activateAndReload,
-  checkForUpdate,
-  type UpdateCheckStatus,
-} from "../../lib/pwa/sw-update";
-
-const LAST_CHECKED_KEY = "adaptive-learner.update.lastCheckedAt";
-
-type ViewState = "idle" | "checking" | UpdateCheckStatus;
-
-function readLastChecked(): number | null {
-  try {
-    const raw = sessionStorage.getItem(LAST_CHECKED_KEY);
-    if (!raw) return null;
-    const n = Number(raw);
-    return Number.isFinite(n) ? n : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeLastChecked(ts: number): void {
-  try {
-    sessionStorage.setItem(LAST_CHECKED_KEY, String(ts));
-  } catch {
-    /* sessionStorage unavailable (private mode) — non-fatal */
-  }
-}
+  applyUpdateNow,
+  checkUpdateNow,
+  ensureUpdateStoreInit,
+} from "../../lib/pwa/updateStore";
 
 /** Human-friendly "x ago" using the built-in Intl.RelativeTimeFormat. */
 function relativeTime(ts: number, lang: string): string {
@@ -71,30 +52,28 @@ function relativeTime(ts: number, lang: string): string {
   return rtf.format(Math.round(hr / 24), "day");
 }
 
-/** Active update-check button + result + apply action (#664). */
+/** Active update-check button + result + apply action (#664, shared store #1374). */
 export default function UpdateCheckControl() {
   const { t, lang } = useI18n();
-  const [state, setState] = useState<ViewState>("idle");
-  const [latestVersion, setLatestVersion] = useState<string | null>(null);
-  const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(() =>
-    readLastChecked(),
-  );
+  const online = useOnlineStatus();
+  const { phase, updateAvailable, latestVersion, lastCheckedAt } =
+    useUpdateStore();
 
-  const busy = state === "checking";
+  // A waiting update found passively should show here without a click.
+  useEffect(() => {
+    ensureUpdateStoreInit(online);
+  }, [online]);
 
-  async function handleCheck() {
-    setState("checking");
-    const outcome = await checkForUpdate();
-    setLatestVersion(outcome.latestVersion);
-    setState(outcome.status);
-    const now = Date.now();
-    setLastCheckedAt(now);
-    writeLastChecked(now);
-  }
+  const busy = phase === "checking";
+  // #1382 — "preparing": a newer build is deployed but its service worker is
+  // not fetchable yet (edge-cache window). No apply CTA (it would be dead);
+  // the check button stays so "check again shortly" is one click away.
+  const preparing = phase === "preparing";
+  const showAvailable = updateAvailable && !busy && !preparing;
 
   return (
     <div data-testid="update-check" className="mt-3 flex flex-col gap-2">
-      {state === "available" ? (
+      {showAvailable ? (
         // Update found: a prominent call-to-action replaces the check button.
         <div className="flex flex-wrap items-center gap-2">
           <span
@@ -114,7 +93,7 @@ export default function UpdateCheckControl() {
             size="sm"
             className="min-h-11"
             data-testid="update-check-apply"
-            onClick={() => void activateAndReload()}
+            onClick={() => applyUpdateNow()}
           >
             {t("about.update_now", "Update now")}
           </Button>
@@ -126,7 +105,7 @@ export default function UpdateCheckControl() {
           size="sm"
           className="min-h-11 self-start"
           data-testid="update-check-button"
-          onClick={() => void handleCheck()}
+          onClick={() => void checkUpdateNow()}
           disabled={busy}
           aria-busy={busy}
         >
@@ -145,7 +124,21 @@ export default function UpdateCheckControl() {
         </Button>
       )}
 
-      {state === "current" && (
+      {preparing && (
+        <p
+          data-testid="update-check-status"
+          data-status="preparing"
+          role="status"
+          className="m-0 text-sm font-medium text-fg-primary"
+        >
+          {t(
+            "about.update_preparing",
+            "A new build is available and is being prepared. Check again in a moment.",
+          )}
+        </p>
+      )}
+
+      {!showAvailable && phase === "current" && (
         <p
           data-testid="update-check-status"
           data-status="current"
@@ -156,7 +149,7 @@ export default function UpdateCheckControl() {
         </p>
       )}
 
-      {state === "error" && (
+      {!showAvailable && phase === "error" && (
         <p
           data-testid="update-check-status"
           data-status="error"

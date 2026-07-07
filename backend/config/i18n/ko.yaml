@@ -90,8 +90,6 @@ nav:
   offline: 오프라인
   anki: Anki
   contribute: "기여"
-  sidebar_open: "사이드바 열기"
-  sidebar_close: "사이드바 닫기"
   dev_badge: DEV
   dev_badge_tooltip: "개발자 모드가 켜져 있습니다 — 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요."
   content: "내 콘텐츠"
@@ -288,6 +286,12 @@ assessment:
   read_summary: 요약 읽기
   swipe_hint: "왼쪽 / 오른쪽으로 스와이프 (또는 방향키 사용)하여 이동하세요."
 dashboard:
+  # 1417 — the one inviting BYOK card on the Dashboard.
+  ai_invite:
+    title: "AI 도움 활성화 (선택 사항)"
+    body: "자신의 AI 제공자(Claude, OpenAI 또는 Gemini)를 연결하면 레슨에서 바로 설명과 도움을 받을 수 있습니다. 연결하지 않아도 앱은 그대로 사용할 수 있습니다."
+    connect: "지금 연결"
+    later: "나중에"
   tab:
     overview: "개요"
     activity: "활동"
@@ -517,6 +521,17 @@ settings:
   explanations_enabled: "오류 설명 표시"
   explanations_enabled_desc: "레슨 후 각 오답에 대해 짧은 규칙 팁을 표시합니다."
   section_hints: "힌트"
+  section_lesson_summary: "레슨 후 요약"
+  summary_sections_desc: "레슨이 끝날 때 요약에 표시할 섹션과 그 순서를 선택하세요. 계속 진행하기 위한 동작은 항상 표시됩니다."
+  summary_section_result: "결과 및 통계"
+  summary_section_xp: "XP 보상"
+  summary_section_favorite: "즐겨찾기 안내"
+  summary_section_share: "결과 공유"
+  summary_section_answers: "답변 개요"
+  summary_section_export: "결과 내보내기"
+  summary_section_next_steps: "다음 단계 제안"
+  correction_round_enabled: "레슨 후 교정 라운드 표시"
+  correction_round_enabled_desc: "레슨이 끝나면 실수를 바로 수정할 수 있도록 제안합니다. 끄면 복습 / \"오답 연습\" 모드에서 계속 이용할 수 있습니다."
   hints_enabled: "연습 중 힌트 표시"
   hints_enabled_desc: "각 연습 문제에 단계별 힌트 버튼을 제공합니다."
   hint_xp_cost: "힌트당 XP 비용"
@@ -572,6 +587,8 @@ settings:
   section_danger: 계정
   section_ui: 인터페이스
   section_appearance: "외관"
+  section_content_tabs: "콘텐츠 탭 순서"
+  content_tabs_desc: "콘텐츠 영역의 탭 순서를 선택하세요. 첫 번째 탭이 기본으로 열립니다."
   content_view: "콘텐츠 보기"
   content_view_description: "다운로드한 콘텐츠를 콘텐츠 탭에서 표시하는 방식입니다. 콘텐츠 보기의 빠른 전환도 동일한 설정을 변경합니다."
   section_profile: "프로필"
@@ -908,6 +925,7 @@ about:
   checking: "확인 중…"
   update_available: "버전 {version}을(를) 사용할 수 있습니다!"
   up_to_date: "최신 버전을 사용하고 있습니다."
+  update_preparing: "새 빌드를 사용할 수 있으며 준비 중입니다. 잠시 후 다시 확인하세요."
   check_failed: "확인에 실패했습니다. 온라인 상태인가요?"
   last_checked: "마지막 확인: {when}"
   never_checked: "확인한 적 없음"
@@ -1452,10 +1470,7 @@ ui:
     required_with_feature: "API 키가 필요합니다 {feature}."
     required_long: "이 작업을 사용하려면 설정에서 제공자 키를 설정하세요."
     open_settings: "설정 열기"
-    skip_banner: "AI 기능을 사용하려면 설정에서 API 키를 설정하세요."
-    skip_banner_dismiss: "닫기"
     feature_analyze: "대화를 분석하려면"
-    feature_session: "세션을 시작하려면"
     feature_anki: "Anki 카드를 추출하려면"
     feature_study_guide: "학습 가이드를 생성하려면"
     feature_study_questions: "학습 질문을 생성하려면"
@@ -1910,6 +1925,9 @@ lesson:
     adaptive_errors: "이 레슨의 오류 {count}개"
     error_replay: "오답 다시 풀기"
     error_replay_detail: "연습 {count}개 다시"
+    error_replay_corrected: "{total}개 중 {corrected}개 수정됨"
+    all_corrected: "모든 오류를 수정했습니다!"
+    all_corrected_detail: "훌륭해요, 남은 오류가 없습니다."
     errors_corrected: "모든 오류가 교정되었습니다!"
     still_errors: "아직 오류 {count}개. 다시 시도할까요?"
     review: "복습"
@@ -1949,6 +1967,14 @@ lesson:
     action_restart: "처음부터 다시"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  filter:
+    all_sources: "모든 소스"
+    official: "공식"
+  filter_menu:
+    status: "상태"
+    source: "소스"
+  filter_empty: "활성 필터와 일치하는 세트가 없습니다."
+  filter_reset: "필터 초기화"
   view:
     grid: "그리드 보기"
     list: "목록 보기"
@@ -2651,6 +2677,7 @@ pwa:
     message: "새 버전을 사용할 수 있습니다."
     action: "업데이트"
     later: "나중에"
+    ios_restart_hint: "변화가 없으면 앱을 닫았다가 다시 여세요."
 share:
   menu:
     heading: "공유"
@@ -2939,6 +2966,9 @@ favorites:
   empty: "아직 즐겨찾기가 없습니다 — 레슨의 별을 탭하여 저장하세요."
   save_prompt: "이 레슨을 즐겨찾기에 저장"
 content_repo:
+  sync_all:
+    done: "{total}개 중 {ok}개 리포지토리를 동기화했습니다."
+    failed: "{total}개 중 {ok}개 동기화됨. 실패: {repos}"
   qr:
     upload: "QR 이미지 업로드"
     decoding: "QR 읽는 중…"
@@ -2973,6 +3003,7 @@ content_repo:
     branch: "브랜치"
     token: "토큰 (비공개 저장소, 선택)"
   action:
+    sync_all: "모두 동기화"
     add: "저장소 추가"
     cancel: "취소"
     confirm_remove: "제거 확인"
@@ -3004,6 +3035,7 @@ content_repo:
     hint: "다른 사람이 이 공개 저장소를 추가할 수 있도록 이 링크를 공유하세요. 비공개 저장소의 경우 URL과 읽기 전용 토큰을 따로 보내세요."
     qr_alt: "공유 링크용 QR 코드"
   progress:
+    syncing: "동기화 중…"
     validating: "저장소를 검증하는 중…"
     manifest: "매니페스트를 불러오는 중…"
     sets: "세트를 불러오는 중…"

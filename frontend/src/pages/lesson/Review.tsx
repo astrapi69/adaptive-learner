@@ -142,7 +142,7 @@ export default function ReviewPage() {
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="lesson-page"
                 data-testid="review-error"
             >
                 <p>
@@ -190,7 +190,7 @@ export default function ReviewPage() {
     return (
         <main
             id="main"
-            className="page lesson-page"
+            className="lesson-page"
             data-testid="review-page"
         >
             <header className="lesson-header">
@@ -307,7 +307,7 @@ function renderReviewStatus(
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="lesson-page"
                 data-testid="review-missing-params"
             >
                 <h1>{t("review.page_title", "Review")}</h1>
@@ -324,7 +324,7 @@ function renderReviewStatus(
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="lesson-page"
                 data-testid="review-loading"
             >
                 <p>{t("review.loading", "Loading review session…")}</p>
@@ -335,7 +335,7 @@ function renderReviewStatus(
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="lesson-page"
                 data-testid="review-empty"
             >
                 <header className="lesson-header">
@@ -365,7 +365,7 @@ function renderReviewStatus(
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="lesson-page"
                 data-testid="review-not-cached"
             >
                 <header className="lesson-header">

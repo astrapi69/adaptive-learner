@@ -126,3 +126,18 @@
    * self-referential ``--font-sans: var(--font-sans)``.
    */
 }
+
+/*
+ * Safe-area utilities (#1410).
+ *
+ * ``pb-safe`` is THE one place bottom-anchored action bars get their iOS
+ * home-indicator clearance from: ``max()`` keeps the regular ``--space-3``
+ * token padding wherever ``env(safe-area-inset-bottom)`` is 0 (desktop,
+ * Android, iOS with no inset) and grows to the inset on notched iPhones —
+ * landscape (~21px) AND portrait (~34px) — so the bar's controls are never
+ * half-buried under the system home-indicator band. Prefer this utility
+ * over ad-hoc ``pb-[max(...,env(...))]`` arbitrary values in new code.
+ */
+@utility pb-safe {
+  padding-bottom: max(var(--space-3), env(safe-area-inset-bottom, 0px));
+}

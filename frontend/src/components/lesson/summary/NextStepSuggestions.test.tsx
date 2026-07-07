@@ -30,7 +30,7 @@ function makeSuggestions(
     return {
         loading: false,
         nextLesson: {available: false, isPaused: false},
-        errorReplay: {available: false, errorCount: 0},
+        errorReplay: {available: false, errorCount: 0, correctedCount: 0, allCorrected: false},
         adaptiveLesson: {available: false, focusTag: null, errorCount: 0},
         reviewSession: {available: false, dueCount: 0},
         setComplete: false,
@@ -44,12 +44,13 @@ import type {ErrorReplayPayload} from "./NextStepSuggestions";
 function renderCard(
     suggestions: Suggestions,
     errorReplay?: ErrorReplayPayload,
+    setId = "fr-a1",
 ) {
     return render(
         <MemoryRouter>
             <NextStepSuggestions
                 suggestions={suggestions}
-                setId="fr-a1"
+                setId={setId}
                 setSlug="bundled:adaptive-learner-content"
                 lessonFilename="03-ser-estar.json"
                 errorReplay={errorReplay}
@@ -162,7 +163,10 @@ describe("NextStepSuggestions", () => {
         );
     });
 
-    it("renders the set-complete card with a suggested set link", () => {
+    it("set-complete 'View Set' links to the COMPLETED set's detail (#1370)", () => {
+        // Even with a "How about …" suggestion for a *different* set, the
+        // "View Set" CTA opens the just-completed set's detail page, not the
+        // generic Discover overview and not the suggested set.
         renderCard(
             makeSuggestions({
                 setComplete: true,
@@ -178,8 +182,42 @@ describe("NextStepSuggestions", () => {
         expect(card).toHaveTextContent("Spanish A1");
         expect(screen.getByTestId("next-step-cta-view-set")).toHaveAttribute(
             "href",
-            "/content",
+            "/content/set/fr-a1",
         );
+    });
+
+    it("'View Set' uses the set-id from the completed-lesson context (#1370)", () => {
+        renderCard(
+            makeSuggestions({
+                setComplete: true,
+                setTitle: "Python Grundlagen",
+                lessonCount: 3,
+            }),
+            undefined,
+            "de/python-basics",
+        );
+        expect(screen.getByTestId("next-step-cta-view-set")).toHaveAttribute(
+            "href",
+            "/content/set/de%2Fpython-basics",
+        );
+    });
+
+    it("'View Set' is shown even without a suggested set (#1370)", () => {
+        // The CTA is about the completed set, so it no longer depends on the
+        // optional "How about …" next-set suggestion.
+        renderCard(
+            makeSuggestions({
+                setComplete: true,
+                setTitle: "French A1",
+                lessonCount: 5,
+            }),
+        );
+        const cta = screen.getByTestId("next-step-cta-view-set");
+        expect(cta).toHaveAttribute("href", "/content/set/fr-a1");
+        // No suggestion text when there is no suggested set.
+        expect(
+            screen.getByTestId("next-step-card-complete"),
+        ).not.toHaveTextContent("How about");
     });
 
     it("marks the primary card and leaves others secondary", () => {
@@ -245,7 +283,7 @@ describe("NextStepSuggestions", () => {
     it("shows the error-replay card when available + a payload is given", () => {
         renderCard(
             makeSuggestions({
-                errorReplay: {available: true, errorCount: 3},
+                errorReplay: {available: true, errorCount: 3, correctedCount: 0, allCorrected: false},
             }),
             PAYLOAD,
         );
@@ -260,10 +298,51 @@ describe("NextStepSuggestions", () => {
         );
     });
 
+    it("shows the corrected progress on the replay card (#1372)", () => {
+        // 2 still open, 3 already corrected in a replay → "3 of 5 corrected".
+        renderCard(
+            makeSuggestions({
+                errorReplay: {
+                    available: true,
+                    errorCount: 2,
+                    correctedCount: 3,
+                    allCorrected: false,
+                },
+            }),
+            PAYLOAD,
+        );
+        expect(screen.getByTestId("next-step-card-error-replay")).toBeInTheDocument();
+        const corrected = screen.getByTestId(
+            "next-step-error-replay-corrected",
+        );
+        expect(corrected.textContent).toMatch(/3/);
+        expect(corrected.textContent).toMatch(/5/);
+    });
+
+    it("all corrected: replaces the replay card with a success card (#1372)", () => {
+        renderCard(
+            makeSuggestions({
+                errorReplay: {
+                    available: false,
+                    errorCount: 0,
+                    correctedCount: 4,
+                    allCorrected: true,
+                },
+            }),
+            // no payload — nothing left to replay
+        );
+        expect(
+            screen.queryByTestId("next-step-card-error-replay"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId("next-step-card-all-corrected"),
+        ).toBeInTheDocument();
+    });
+
     it("hides the error-replay card when there's no payload (no errors)", () => {
         renderCard(
             makeSuggestions({
-                errorReplay: {available: true, errorCount: 3},
+                errorReplay: {available: true, errorCount: 3, correctedCount: 0, allCorrected: false},
             }),
             // no payload
         );
@@ -276,7 +355,7 @@ describe("NextStepSuggestions", () => {
         renderCard(
             makeSuggestions({
                 nextLesson: {available: true, isPaused: false, title: "x"},
-                errorReplay: {available: false, errorCount: 0},
+                errorReplay: {available: false, errorCount: 0, correctedCount: 0, allCorrected: false},
             }),
             PAYLOAD,
         );
@@ -289,7 +368,7 @@ describe("NextStepSuggestions", () => {
         renderCard(
             makeSuggestions({
                 nextLesson: {available: true, isPaused: false, title: "x"},
-                errorReplay: {available: true, errorCount: 2},
+                errorReplay: {available: true, errorCount: 2, correctedCount: 0, allCorrected: false},
                 primaryAction: "error_replay",
             }),
             PAYLOAD,

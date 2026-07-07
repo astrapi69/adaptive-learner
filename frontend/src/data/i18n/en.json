@@ -98,8 +98,6 @@
     "offline": "Offline",
     "anki": "Anki",
     "contribute": "Contribute",
-    "sidebar_open": "Open sidebar",
-    "sidebar_close": "Close sidebar",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Developer Mode is on — error toasts show full technical detail. Toggle in Settings.",
     "content": "My content",
@@ -306,6 +304,12 @@
     "swipe_hint": "Swipe left / right (or use arrow keys) to navigate."
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "Unlock AI help (optional)",
+      "body": "Connect your own AI provider (Claude, OpenAI or Gemini) to get explanations and help right inside your lessons. The app works fine without it.",
+      "connect": "Connect now",
+      "later": "Later"
+    },
     "tab": {
       "overview": "Overview",
       "activity": "Activity",
@@ -552,6 +556,17 @@
     "explanations_enabled": "Show error explanations",
     "explanations_enabled_desc": "After a lesson, show a short rule tip for each mistake.",
     "section_hints": "Hints",
+    "section_lesson_summary": "Lesson summary",
+    "summary_sections_desc": "Choose which sections the summary at the end of a lesson shows and in which order. The actions for continuing are always visible.",
+    "summary_section_result": "Result and statistics",
+    "summary_section_xp": "XP reward",
+    "summary_section_favorite": "Favorites hint",
+    "summary_section_share": "Share result",
+    "summary_section_answers": "Answers overview",
+    "summary_section_export": "Result export",
+    "summary_section_next_steps": "Next-step suggestions",
+    "correction_round_enabled": "Show the correction round after lessons",
+    "correction_round_enabled_desc": "At the end of a lesson, offer to fix your mistakes right away. When off, they stay available in the review / \"Practice errors\" mode.",
     "hints_enabled": "Show hints during exercises",
     "hints_enabled_desc": "Offer a staged hint button on each exercise.",
     "hint_xp_cost": "XP cost per hint",
@@ -609,6 +624,8 @@
     "section_danger": "Account",
     "section_ui": "Interface",
     "section_appearance": "Appearance",
+    "section_content_tabs": "Content tabs order",
+    "content_tabs_desc": "Choose the order of the tabs in the Content area. The first tab opens by default.",
     "content_view": "Content view",
     "content_view_description": "How downloaded content is shown across the content tabs. The quick toggle in the content view changes the same setting.",
     "section_profile": "Profile",
@@ -978,6 +995,7 @@
     "checking": "Checking…",
     "update_available": "Version {version} is available!",
     "up_to_date": "You're using the latest version.",
+    "update_preparing": "A new build is available and is being prepared. Check again in a moment.",
     "check_failed": "Check failed. Are you online?",
     "last_checked": "Last checked: {when}",
     "never_checked": "Never checked",
@@ -1568,10 +1586,7 @@
       "required_with_feature": "API key required {feature}.",
       "required_long": "Configure a provider key in Settings to enable this action.",
       "open_settings": "Open Settings",
-      "skip_banner": "Configure an API key in Settings to use AI features.",
-      "skip_banner_dismiss": "Dismiss",
       "feature_analyze": "to analyze conversations",
-      "feature_session": "to start a session",
       "feature_anki": "to extract Anki cards",
       "feature_study_guide": "to generate a study guide",
       "feature_study_questions": "to generate study questions",
@@ -2060,6 +2075,9 @@
       "adaptive_errors": "{count} errors in this lesson",
       "error_replay": "Retry Errors",
       "error_replay_detail": "{count} exercises again",
+      "error_replay_corrected": "{corrected} of {total} corrected",
+      "all_corrected": "All errors corrected!",
+      "all_corrected_detail": "Nice - no open errors left.",
       "errors_corrected": "All errors corrected!",
       "still_errors": "Still {count} errors. Try again?",
       "review": "Review",
@@ -2104,6 +2122,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "All sources",
+      "official": "Official"
+    },
+    "filter_menu": {
+      "status": "Status",
+      "source": "Source"
+    },
+    "filter_empty": "No sets match the active filters.",
+    "filter_reset": "Reset filters",
     "view": {
       "grid": "Grid view",
       "list": "List view",
@@ -2898,7 +2926,8 @@
     "update": {
       "message": "A new version is available.",
       "action": "Update",
-      "later": "Later"
+      "later": "Later",
+      "ios_restart_hint": "If nothing changes, close the app and reopen it."
     }
   },
   "share": {
@@ -3194,6 +3223,10 @@
     "save_prompt": "Save this lesson to your favorites"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "Synced {ok} of {total} repositories.",
+      "failed": "Synced {ok} of {total}. Failed: {repos}"
+    },
     "title": "Content repositories",
     "last_sync": "Last sync: {when}",
     "added": "Repository added.",
@@ -3235,6 +3268,7 @@
       "token": "Token (private repos, optional)"
     },
     "action": {
+      "sync_all": "Sync all",
       "add": "Add repository",
       "cancel": "Cancel",
       "confirm_remove": "Confirm remove",
@@ -3272,6 +3306,7 @@
       "qr_alt": "QR code for the share link"
     },
     "progress": {
+      "syncing": "Syncing…",
       "validating": "Validating repository…",
       "manifest": "Loading manifest…",
       "sets": "Loading sets…",

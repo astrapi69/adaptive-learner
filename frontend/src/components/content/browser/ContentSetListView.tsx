@@ -87,12 +87,17 @@ function ContentSetListRow({
             />
           </label>
         )}
+        {/* #1392 — min-w-0 lets the flex-1 link shrink below its content
+            width, so the nested truncate can act and the badge + actions
+            menu stay inside the viewport for EVERY title length. */}
         <Link
           to={`/content/set/${entry.id}`}
-          className="flex min-h-11 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           data-testid={`content-list-set-${entry.id}`}
         >
-          <span className="flex-1 truncate font-medium">{entry.title}</span>
+          <span className="min-w-0 flex-1 truncate font-medium" title={entry.title}>
+            {entry.title}
+          </span>
           {!knowledge && (
             <span
               className="shrink-0 text-xs font-semibold uppercase text-muted-foreground"

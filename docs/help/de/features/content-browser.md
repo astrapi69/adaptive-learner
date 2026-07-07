@@ -60,6 +60,15 @@ das gerade Geladene leicht wieder.
 
 ---
 
+## Heruntergeladene Sätze auswählen und verwalten
+
+In *Meine Inhalte* kannst du heruntergeladene Sätze **mehrfach
+auswählen** und in einem Schritt **stapelweise löschen**. Du kannst
+die Liste außerdem **filtern**, auch **nach Quelle**, um sie auf das
+Gewünschte einzugrenzen.
+
+---
+
 ## Sprachen und Wissen
 
 Der Katalog teilt sich in zwei Bäume:
@@ -101,6 +110,17 @@ woher er stammt:
 
 Ein **Quell-Filter** blendet bei Bedarf nur Sätze einer
 bestimmten Quelle ein. Mehr dazu unter
+[Mehrere Content-Repositories](content-repos.md).
+
+---
+
+## Teilen per Einladungscode
+
+Besitzt du ein **privates Content-Repository** und hast dafür ein
+Repo-Token gesetzt, kannst du einen **Einladungscode** (mit QR-Code
+und Link) erzeugen, der den Zugang zu diesem Repo teilt. Eine
+lernende Person **löst einen Einladungscode ein**, um das Repository
+zu ihren eigenen Quellen hinzuzufügen. Siehe
 [Mehrere Content-Repositories](content-repos.md).
 
 ---

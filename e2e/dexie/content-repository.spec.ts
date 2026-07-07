@@ -117,15 +117,18 @@ test.describe("EXP-023 Phase A — user content repository", () => {
       page.getByTestId("content-repo-item-jane-test-content"),
     ).toBeVisible();
 
-    // --- Browse: the user set carries the "Your repo" badge. ---------
+    // --- Browse: the user set carries the unified category badge
+    // (#1405 — the shared RepoCategoryBadge replaced the old origin/
+    // trust spans). ---------------------------------------------------
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({
       timeout: 15000,
     });
-    await expect(page.getByTestId("content-set-demo-origin")).toBeVisible();
+    await expect(page.getByTestId("content-set-demo-category")).toBeVisible();
 
-    // The source filter appears and narrows to the user repo.
+    // The source filter (a menu button since #1386) narrows to the user repo.
     await expect(page.getByTestId("content-source-filter")).toBeVisible();
+    await page.getByTestId("content-source-filter").click();
     await page.getByTestId(`content-source-filter-${OWNER_REPO}`).click();
     await expect(page.getByTestId("content-set-demo")).toBeVisible();
 

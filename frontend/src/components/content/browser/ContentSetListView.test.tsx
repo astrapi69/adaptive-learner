@@ -134,6 +134,75 @@ describe("ContentSetListView", () => {
     });
   });
 
+  // #1392 — long titles must not push the language badge / actions menu out
+  // of the viewport (same class as #1328/#1329: a flex-1 item without
+  // min-w-0 can never shrink below its content, so the nested truncate is
+  // inert). happy-dom has no layout engine, so we pin the structural
+  // containment classes + the sibling structure that keeps the menu button
+  // in one flush right-hand column.
+  describe("long-title overflow containment (#1392)", () => {
+    const LONG = "Portugiesisch (Brasilianisch) A1 (für Deutschsprachige)";
+
+    function renderLongRowWithMenu(over: Partial<ContentSetEntry> = {}) {
+      render(
+        <MemoryRouter>
+          <ContentSetListView
+            sets={[entry({ id: "pt-br", title: LONG, ...over })]}
+            onSetStatus={vi.fn()}
+            onDelete={vi.fn()}
+          />
+        </MemoryRouter>,
+      );
+    }
+
+    it("keeps the row link shrinkable (min-w-0) and truncates the title", () => {
+      renderLongRowWithMenu();
+      const link = screen.getByTestId("content-list-set-pt-br");
+      expect(link.className).toContain("min-w-0");
+      const title = screen.getByText(LONG);
+      expect(title.className).toContain("truncate");
+    });
+
+    it("exposes the full title via a native tooltip", () => {
+      renderLongRowWithMenu();
+      expect(screen.getByTitle(LONG)).toBeInTheDocument();
+    });
+
+    it("keeps the language badge visible and non-shrinking on a long title", () => {
+      renderLongRowWithMenu({ source_language: "de", target_language: "pt" });
+      const langs = screen.getByTestId("content-list-set-pt-br-langs");
+      expect(langs).toBeInTheDocument();
+      expect(langs.className).toContain("shrink-0");
+    });
+
+    it("keeps the actions menu a non-shrinking sibling of the link (one flush column)", () => {
+      renderLongRowWithMenu();
+      const link = screen.getByTestId("content-list-set-pt-br");
+      const trigger = screen.getByTestId("set-actions-pt-br");
+      // The menu wrapper sits NEXT TO the link in the same flex row (not
+      // inside it), so with a shrinkable link every row's menu lands at the
+      // same right edge regardless of title length.
+      const menuWrapper = trigger.parentElement as HTMLElement;
+      expect(menuWrapper.className).toContain("shrink-0");
+      expect(menuWrapper.parentElement).toBe(link.parentElement);
+      expect((link.parentElement as HTMLElement).className).toContain("flex");
+    });
+
+    it("leaves a short title fully rendered (no regression)", () => {
+      render(
+        <MemoryRouter>
+          <ContentSetListView
+            sets={[entry({ id: "short", title: "Spanish A2" })]}
+            onSetStatus={vi.fn()}
+            onDelete={vi.fn()}
+          />
+        </MemoryRouter>,
+      );
+      expect(screen.getByText("Spanish A2")).toBeInTheDocument();
+      expect(screen.getByTestId("content-list-set-short").className).toContain("min-w-0");
+    });
+  });
+
   // #1300 — the per-set overflow menu (status + delete) appears in the list
   // view when handlers are supplied, and never otherwise.
   describe("status/delete overflow menu (#1300)", () => {

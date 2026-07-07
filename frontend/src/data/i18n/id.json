@@ -98,8 +98,6 @@
     "offline": "Luring",
     "anki": "Anki",
     "contribute": "Berkontribusi",
-    "sidebar_open": "Buka bilah sisi",
-    "sidebar_close": "Tutup bilah sisi",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode Pengembang aktif — pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan.",
     "content": "Konten saya",
@@ -306,6 +304,12 @@
     "swipe_hint": "Geser kiri / kanan (atau gunakan tombol panah) untuk menavigasi."
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "Aktifkan bantuan AI (opsional)",
+      "body": "Hubungkan penyedia AI milikmu sendiri (Claude, OpenAI, atau Gemini) dan dapatkan penjelasan serta bantuan langsung di dalam pelajaran. Aplikasi tetap berfungsi tanpanya.",
+      "connect": "Hubungkan sekarang",
+      "later": "Nanti"
+    },
     "tab": {
       "overview": "Ringkasan",
       "activity": "Aktivitas",
@@ -556,6 +560,17 @@
     "explanations_enabled": "Tampilkan penjelasan kesalahan",
     "explanations_enabled_desc": "Setelah pelajaran, tampilkan kiat aturan singkat untuk setiap kesalahan.",
     "section_hints": "Petunjuk",
+    "section_lesson_summary": "Ringkasan setelah pelajaran",
+    "summary_sections_desc": "Pilih bagian mana yang ditampilkan ringkasan di akhir pelajaran dan dalam urutan apa. Tindakan untuk melanjutkan selalu terlihat.",
+    "summary_section_result": "Hasil dan statistik",
+    "summary_section_xp": "Hadiah XP",
+    "summary_section_favorite": "Petunjuk favorit",
+    "summary_section_share": "Bagikan hasil",
+    "summary_section_answers": "Ikhtisar jawaban",
+    "summary_section_export": "Ekspor hasil",
+    "summary_section_next_steps": "Saran langkah berikutnya",
+    "correction_round_enabled": "Tampilkan ronde koreksi setelah pelajaran",
+    "correction_round_enabled_desc": "Di akhir pelajaran, tawarkan untuk memperbaiki kesalahanmu langsung. Jika mati, kesalahan tetap tersedia di mode ulasan / \"Latih kesalahan\".",
     "hints_enabled": "Tampilkan petunjuk selama latihan",
     "hints_enabled_desc": "Tawarkan tombol petunjuk bertahap pada setiap latihan.",
     "hint_xp_cost": "Biaya XP per petunjuk",
@@ -613,6 +628,8 @@
     "section_danger": "Akun",
     "section_ui": "Antarmuka",
     "section_appearance": "Tampilan",
+    "section_content_tabs": "Urutan tab Konten",
+    "content_tabs_desc": "Pilih urutan tab di area Konten. Tab pertama terbuka secara default.",
     "content_view": "Tampilan konten",
     "content_view_description": "Bagaimana konten yang diunduh ditampilkan di seluruh tab konten. Sakelar cepat di tampilan konten mengubah pengaturan yang sama.",
     "section_profile": "Profil",
@@ -978,6 +995,7 @@
     "checking": "Memeriksa…",
     "update_available": "Versi {version} tersedia!",
     "up_to_date": "Anda menggunakan versi terbaru.",
+    "update_preparing": "Build baru tersedia dan sedang disiapkan. Periksa lagi sebentar lagi.",
     "check_failed": "Pemeriksaan gagal. Apakah Anda online?",
     "last_checked": "Terakhir diperiksa: {when}",
     "never_checked": "Belum pernah diperiksa",
@@ -1568,10 +1586,7 @@
       "required_with_feature": "Kunci API diperlukan {feature}.",
       "required_long": "Konfigurasikan kunci penyedia di Pengaturan untuk mengaktifkan tindakan ini.",
       "open_settings": "Buka Pengaturan",
-      "skip_banner": "Konfigurasikan kunci API di Pengaturan untuk menggunakan fitur AI.",
-      "skip_banner_dismiss": "Mengerti",
       "feature_analyze": "untuk menganalisis percakapan",
-      "feature_session": "untuk memulai sesi",
       "feature_anki": "untuk mengekstrak kartu Anki",
       "feature_study_guide": "untuk menghasilkan panduan belajar",
       "feature_study_questions": "untuk menghasilkan pertanyaan belajar",
@@ -2060,6 +2075,9 @@
       "adaptive_errors": "{count} kesalahan dalam pelajaran ini",
       "error_replay": "Ulangi Kesalahan",
       "error_replay_detail": "{count} latihan lagi",
+      "error_replay_corrected": "{corrected} dari {total} diperbaiki",
+      "all_corrected": "Semua kesalahan diperbaiki!",
+      "all_corrected_detail": "Bagus, tidak ada kesalahan tersisa.",
       "errors_corrected": "Semua kesalahan telah diperbaiki!",
       "still_errors": "Masih ada {count} kesalahan. Coba lagi?",
       "review": "Tinjau",
@@ -2104,6 +2122,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "Semua sumber",
+      "official": "Resmi"
+    },
+    "filter_menu": {
+      "status": "Status",
+      "source": "Sumber"
+    },
+    "filter_empty": "Tidak ada set yang cocok dengan filter aktif.",
+    "filter_reset": "Atur ulang filter",
     "view": {
       "grid": "Tampilan kisi",
       "list": "Tampilan daftar",
@@ -2898,7 +2926,8 @@
     "update": {
       "message": "Versi baru telah tersedia.",
       "action": "Perbarui",
-      "later": "Nanti"
+      "later": "Nanti",
+      "ios_restart_hint": "Jika tidak ada perubahan, tutup aplikasi lalu buka lagi."
     }
   },
   "share": {
@@ -3194,6 +3223,10 @@
     "save_prompt": "Simpan pelajaran ini ke favoritmu"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{ok} dari {total} repositori disinkronkan.",
+      "failed": "{ok} dari {total} disinkronkan. Gagal: {repos}"
+    },
     "qr": {
       "upload": "Unggah gambar QR",
       "decoding": "Membaca QR…",
@@ -3235,6 +3268,7 @@
       "token": "Token (repo privat, opsional)"
     },
     "action": {
+      "sync_all": "Sinkronkan semua",
       "add": "Tambah repositori",
       "cancel": "Batal",
       "confirm_remove": "Konfirmasi hapus",
@@ -3272,6 +3306,7 @@
       "qr_alt": "Kode QR untuk tautan berbagi"
     },
     "progress": {
+      "syncing": "Menyinkronkan…",
       "validating": "Memvalidasi repositori…",
       "manifest": "Memuat manifes…",
       "sets": "Memuat set…",

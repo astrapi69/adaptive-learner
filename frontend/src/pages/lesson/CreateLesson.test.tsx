@@ -31,6 +31,7 @@ vi.mock("../../utils/notify", () => ({
 }));
 
 import CreateLesson from "./CreateLesson";
+import {PAGE_CONTAINER_CLASSES} from "../../shared/layout/PageContainer";
 
 function renderPage() {
     return render(
@@ -279,5 +280,17 @@ describe("CreateLesson — card step gate + draft", () => {
         expect(
             screen.queryByTestId("create-lesson-same-language-error"),
         ).not.toBeInTheDocument();
+    });
+});
+
+describe("shared page container (#1384)", () => {
+    it("renders inside the shared PageContainer, with no deviating wrapper", () => {
+        renderPage();
+        const main = screen.getByTestId("create-lesson-page");
+        expect(main.tagName).toBe("MAIN");
+        expect(main.getAttribute("data-slot")).toBe("page-container");
+        // page + create-lesson-page were BOTH undefined CSS classes, so the
+        // wizard silently ran full-width (#1384).
+        expect(main.className).toBe(PAGE_CONTAINER_CLASSES);
     });
 });

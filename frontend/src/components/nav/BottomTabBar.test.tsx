@@ -77,4 +77,17 @@ describe("BottomTabBar", () => {
     renderAt("/dashboard");
     expect(document.body.classList.contains("has-bottom-nav")).toBe(true);
   });
+
+  it("does NOT reserve scroll space while hidden during a lesson (#1410)", () => {
+    // The bar hides by rendering null WITHOUT unmounting; a mount-scoped
+    // reservation left 4rem of dead bottom padding on #root, floating the
+    // sticky lesson footer above the viewport bottom on ≤767px phones.
+    renderAt("/lesson/astrapi69--content/es-a1/01.json");
+    expect(document.body.classList.contains("has-bottom-nav")).toBe(false);
+  });
+
+  it("does NOT reserve scroll space on the funnel (#1410)", () => {
+    renderAt("/onboarding");
+    expect(document.body.classList.contains("has-bottom-nav")).toBe(false);
+  });
 });

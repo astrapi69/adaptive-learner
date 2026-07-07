@@ -147,7 +147,17 @@ body,
 #root {
   margin: 0;
   padding: 0;
+  /* #1410 — size the shell off the DYNAMIC viewport, not the initial
+     containing block. ``height: 100%`` resolves against the ICB, which iOS
+     does not reliably re-derive across a standalone-PWA orientation change:
+     after rotating to landscape the shell (and the sticky lesson footer
+     pinned to #root's bottom) can stay portrait-sized, pushing the action
+     button below the visible screen. ``100dvh`` tracks every rotation /
+     browser-UI change; the ``100%`` line stays as the fallback for engines
+     without dvh (declaration order IS the fallback mechanism — keep it
+     first). */
   height: 100%;
+  height: 100dvh;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
@@ -2545,13 +2555,9 @@ select:focus {
 
 /* Phase 43 / EXP-002 — Set Browser page. Mobile-first, the
    action button stays full-width below 600px so touch
-   targets stay above 44px. */
-.content-page {
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: var(--space-4);
-}
-
+   targets stay above 44px. The former .content-page container
+   rule moved into the shared PageContainer component (#1380),
+   which all three Content-hub tabs render. */
 .content-header {
   display: flex;
   flex-wrap: wrap;
@@ -4061,42 +4067,6 @@ select:focus {
 @media (max-width: 767px) {
   body.has-bottom-nav #root {
     padding-bottom: 4rem;
-  }
-}
-
-/* EXP-037 §7 Q1 (#891) — vertical desktop sidebar. At >= lg (1024px) the
-   fixed left sidebar (``DesktopSidebar``, w-60 = 15rem) takes over the
-   primary navigation: reserve left space on the app scroll container and on
-   the top bar, and hide the top bar's brand + inline links so the two never
-   duplicate (the top bar keeps the right-hand utility cluster). Gated by the
-   ``lg`` media query so the ``has-desktop-sidebar`` body class is harmless on
-   smaller viewports, where the sidebar itself is ``hidden``. */
-@media (min-width: 1024px) {
-  body.has-desktop-sidebar #root {
-    padding-left: 15rem;
-  }
-  body.has-desktop-sidebar .app-nav {
-    padding-left: calc(15rem + var(--space-5));
-  }
-  body.has-desktop-sidebar .app-nav .nav-brand,
-  body.has-desktop-sidebar .app-nav .nav-links {
-    display: none;
-  }
-  /* #1260 — animate the content reflow when the sidebar opens/closes so the
-     width change is dezent rather than a hard jump. The padding-left is what
-     reserves / releases the sidebar's column, so transitioning it (on #root
-     and the top bar) covers the whole reflow. */
-  #root,
-  .app-nav {
-    transition: padding-left 200ms ease;
-  }
-}
-
-/* Respect reduced-motion: no sliding reflow, the layout snaps. */
-@media (prefers-reduced-motion: reduce) {
-  #root,
-  .app-nav {
-    transition: none;
   }
 }
 

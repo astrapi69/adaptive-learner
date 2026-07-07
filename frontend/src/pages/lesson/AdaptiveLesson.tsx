@@ -150,7 +150,7 @@ export default function AdaptiveLessonPage() {
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-error"
       >
         <p>
@@ -184,7 +184,7 @@ export default function AdaptiveLessonPage() {
   return (
     <main
       id="main"
-      className="page lesson-page"
+      className="lesson-page"
       data-testid="adaptive-lesson-page"
     >
       <header className="lesson-header">
@@ -279,7 +279,7 @@ function renderAdaptiveLessonStatus(
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-missing-params"
       >
         <h1>{t("adaptive.page_title", "Adaptive Lesson")}</h1>
@@ -291,7 +291,7 @@ function renderAdaptiveLessonStatus(
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-loading"
       >
         <p>{t("adaptive.loading", "Analyzing your errors…")}</p>
@@ -302,7 +302,7 @@ function renderAdaptiveLessonStatus(
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-empty"
       >
         <header className="lesson-header">
@@ -332,7 +332,7 @@ function renderAdaptiveLessonStatus(
     return (
       <main
         id="main"
-        className="page lesson-page"
+        className="lesson-page"
         data-testid="adaptive-lesson-not-cached"
       >
         <header className="lesson-header">
@@ -437,13 +437,15 @@ function AdaptiveLessonNav({
 }: AdaptiveLessonNavProps) {
   return (
     <nav
-      className="lesson-nav"
+      // #1419 — same sticky-footer pattern as LessonFooterNav (#43/#1410);
+      // the old .lesson-nav* CSS was removed in the Phase B migration.
+      className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
       aria-label={t("lesson.nav.aria_label", "Step navigation")}
     >
       <Button
         type="button"
         variant="outline"
-        className="lesson-nav-prev"
+        className="min-w-[44px]"
         onClick={onPrev}
         disabled={isFirstStep}
         data-testid="adaptive-lesson-prev"
@@ -455,7 +457,7 @@ function AdaptiveLessonNav({
         (isExerciseStep && !checked ? (
           <Button
             type="button"
-            className="lesson-nav-check"
+            className="ml-auto"
             onClick={onCheck}
             disabled={!answerable}
             title={
@@ -473,7 +475,7 @@ function AdaptiveLessonNav({
         ) : (
           <Button
             type="button"
-            className="lesson-nav-next"
+            className="ml-auto"
             onClick={onNext}
             data-testid="adaptive-lesson-next"
           >

@@ -140,4 +140,23 @@ describe("DiscoverSetListView", () => {
     expect(badge).toHaveTextContent("New");
     expect(screen.queryByTestId("discover-list-es-a1-new")).toBeNull();
   });
+
+  it("keeps a long title truncating instead of overflowing the row (#1380)", () => {
+    const longTitle =
+      "Ein extrem langer Set-Titel der auf schmalen Containern niemals " +
+      "über den Rand laufen darf sondern mit Ellipsis abgeschnitten wird";
+    renderList([makeSet({ id: "long", name: longTitle })]);
+    const row = screen.getByTestId("discover-list-long");
+    const title = screen.getByText(longTitle);
+    // The title is the single flexible column and truncates (overflow-
+    // hidden + ellipsis + nowrap — implies min-width:0 on a flex child);
+    // every trailing meta/action element refuses to shrink.
+    expect(title).toHaveClass("flex-1");
+    expect(title).toHaveClass("truncate");
+    const trailing = Array.from(row.children).filter((el) => el !== title);
+    expect(trailing.length).toBeGreaterThan(0);
+    for (const el of trailing) {
+      expect(el.className).toContain("shrink-0");
+    }
+  });
 });

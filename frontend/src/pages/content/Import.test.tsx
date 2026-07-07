@@ -13,6 +13,7 @@ import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 import Import from "./Import";
+import {PAGE_CONTAINER_CLASSES} from "../../shared/layout/PageContainer";
 import {I18nProvider} from "../../hooks/ui/useI18n";
 import {TestFeatureProvider} from "../../features/testFeatureProvider";
 import {_resetDbForTests} from "../../storage/dexie/db";
@@ -321,5 +322,20 @@ describe("Import page", () => {
         );
         // Backend /analyze MUST NOT be called in Dexie mode.
         expect(dexieAnalyzeSpy).not.toHaveBeenCalled();
+    });
+});
+
+describe("shared page container (#1380)", () => {
+    it("renders the page inside the shared PageContainer, with no deviating wrapper", async () => {
+        renderImport();
+        await waitFor(() => {
+            expect(screen.getByTestId("page-import")).toBeTruthy();
+        });
+        const main = screen.getByTestId("page-import");
+        expect(main.tagName).toBe("MAIN");
+        expect(main.getAttribute("data-slot")).toBe("page-container");
+        // Exact match: the canonical container set only — Import no
+        // longer relies on the dead ``page-import`` class.
+        expect(main.className).toBe(PAGE_CONTAINER_CLASSES);
     });
 });

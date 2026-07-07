@@ -226,14 +226,13 @@ History sauber bleibt und der Back-Button nicht auf der alten URL hängt.
 
 ## 7. Offene Fragen
 
-- **Q1 (vertikale Sidebar vs. Top-Bar):** Der Endzustand sieht eine
-  gruppierte **vertikale Sidebar** auf Desktop vor. Der Ist-Zustand ist eine
-  **horizontale Top-Bar** mit umfangreicher CSS (sticky, lesson-compact,
-  auto-hide) und Visual-Baselines. Ein vollständiger Shell-Umbau (nav + main
-  als Flex-Layout) ist hoch-regressionsträchtig. **Entscheidung für Phase 2:**
-  Top-Bar auf 7 Einträge reduzieren + Bottom-Tab-Bar (Mobile) + gruppierter
-  Drawer; die vollständige vertikale Sidebar wird als eigener Folge-Increment
-  geführt (geringeres Risiko, inkrementell).
+- **Q1 (vertikale Sidebar vs. Top-Bar): GELÖST (#1391).** Der Endzustand ist
+  die **horizontale Top-Bar** als einzige primäre Desktop-Navigation, plus
+  Bottom-Tab-Bar und gruppierter Drawer auf Mobile (eine primäre Navigation
+  pro Viewport). Die früher angedachte vollständige **vertikale Desktop-Sidebar
+  wurde verworfen** und nicht dauerhaft umgesetzt (der kurzlebige
+  Sidebar-Prototyp aus #1260 wurde in #1391 wieder entfernt). Der historische
+  Kontext unten bleibt zur Nachvollziehbarkeit stehen.
 - **Q2 (Tablet-Doppelung):** Bei 640–1024px sowohl Top-Bar als auch
   Bottom-Bar zu zeigen, kann redundant wirken. Vorschlag: Bottom-Bar nur
   `< 768px`, Top-Bar ab `>= 768px` — eindeutige Grenze, keine Doppelung.

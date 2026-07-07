@@ -1,6 +1,6 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-07-01
+**Stand:** 2026-07-07 (v1.99.0)
 **Anzahl EXPs:** 38
 
 > Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
@@ -58,9 +58,9 @@
 | 039 | JSON-Schema als Single Source of Truth      | Querschnitt  | laufend | Hoch    | 002, 003, 004      |
 | 040 | Directory-Restrukturierung (God-Folders)    | Querschnitt  | abgeschlossen | Mittel | 024 (verwandt)  |
 | 041 | Aufgabentyp-Eignung + faire Bewertung       | Querschnitt  | Analyse | Mittel-Hoch | 002, 007, 013, 036 |
-| 042 | Content-Engine (kanonisches Format + Adapter) | Querschnitt | laufend | Mittel-Hoch | 039, 002, 003     |
+| 042 | Content-Engine (kanonisches Format + Adapter) | Querschnitt | ausgeliefert (Boundary + Extraktion) | Mittel-Hoch | 039, 002, 003     |
 
-## Umsetzungsstand (Stand v1.85.0)
+## Umsetzungsstand (Stand v1.99.0)
 
 Die Tabelle oben ist ein **Planungs**-Index (Kategorie / Phase / Priorität /
 Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
@@ -83,7 +83,12 @@ Abhängigkeiten), kein Status-Tracker. Realisierungsstand zum aktuellen Release
   MED-01..07 ausgeliefert — `media.yaml`-Parser + Reziprozitäts-Gate,
   Lektions-Medien-Sektion + `ResourceCard`, Set-Verfügbarkeits-Badges,
   offline-fähige YouTube-Thumbnails, #678/#680/#684/#685/#688; MED-10
-  Partner-Onboarding-Doku offen).
+  Partner-Onboarding-Doku offen),
+  **042 Boundary + Extraktion** (Content-Engine ausgelagert, publiziert und
+  konsumiert: `learn-content-engine@0.4.0` in `frontend/package.json`, App-vs-
+  Engine-Paritätstest; Content-Repos spiegeln den gepinnten Engine-Release;
+  Schema-Hoheit bleibt vorerst in der App-Pydantic; #1311/#1396/#1397; der
+  Mehrdatei-Adapter aus Abschnitt 4/7 bleibt Folge-Arbeit).
 - **Teilweise (Code begonnen):** **033** (KI-gestützte Content-Validierung:
   AIV-01..05 set-weite Batch-Prüfung + Report-UI + Kosten-Bestätigung,
   AIV-08..11 Content-Hash + Signatur + "AI-Checked"-Badge ausgeliefert,

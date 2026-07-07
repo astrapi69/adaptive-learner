@@ -25,6 +25,7 @@ import { ApiError } from "../../api/client";
 import ContentGapsSection from "../../components/content/contributions/ContentGapsSection";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { detectGaps } from "../../lib/content/validation/gap-detector";
+import PageContainer from "../../shared/layout/PageContainer";
 import { getStorage } from "../../storage";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
 import type { ContentSetEntry } from "../../storage/types";
@@ -71,16 +72,16 @@ export default function Contribute() {
 
   if (loading) {
     return (
-      <main id="main" className="page" data-testid="contribute-loading">
+      <PageContainer testId="contribute-loading">
         <p className="text-fg-muted">
           {t("contribute.loading", "Loading…")}
         </p>
-      </main>
+      </PageContainer>
     );
   }
 
   return (
-    <main id="main" className="page" data-testid="contribute-page">
+    <PageContainer testId="contribute-page">
       <header className="mb-4 flex items-center gap-2">
         <HeartHandshake className="size-6 text-accent" aria-hidden="true" />
         <div>
@@ -110,6 +111,6 @@ export default function Contribute() {
           )}
         </p>
       )}
-    </main>
+    </PageContainer>
   );
 }

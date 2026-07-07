@@ -6,10 +6,24 @@
  * export (Markdown / file / JSON), the SRS correction round, the smart
  * next-step suggestions, and the secondary next / repeat / exit actions.
  * Fires the lesson-complete celebration once on mount.
+ *
+ * #1411 — every non-essential section is individually toggleable via the
+ * Settings → Learning "Lesson summary" sub-area (``summarySectionsPref``,
+ * all default ON). The heading, the mark-as-complete action and the
+ * secondary next / repeat / exit actions are always rendered so the panel
+ * never becomes a dead end.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, ChevronRight, RotateCcw, Star } from "lucide-react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { CheckCircle2, ChevronRight, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -22,16 +36,27 @@ import {
   SummaryExamPanel,
   SummaryExplanations,
   SummaryExportActions,
+  SummaryFavorite,
+  SummaryScoreboard,
+  SummaryShare,
+  SummaryStatsList,
   SummaryTimedStats,
   SummaryXp,
 } from "./LessonSummarySections";
-import ShareResultButton from "../../share/ShareResultButton";
 import { useCountUp } from "../../../hooks/ui/useCountUp";
 import { useFeedbackIntensity } from "../../../hooks/settings/useFeedbackIntensity";
+import { useSummarySections } from "../../../hooks/settings/useSummarySections";
+import {
+  isSummarySectionEnabled,
+  type SummarySectionKey,
+} from "../../../lib/learning/summarySectionsPref";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import LessonFavoriteToggle from "../chrome/LessonFavoriteToggle";
 import { useNextStepSuggestions } from "../../../hooks/learning/useNextStepSuggestions";
-import { collectFailedExercises } from "../../../lib/lesson/error-replay";
+import {
+  collectFailedExercises,
+  openFailedExercises,
+} from "../../../lib/lesson/error-replay";
+import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSessionErrors";
 import { allowsConfetti } from "../../../lib/feedback/feedbackPref";
 import {
   buildExerciseBreakdown,
@@ -58,7 +83,6 @@ import { nextPraise } from "../../../lib/praise/phrase-picker";
 import { getStorage } from "../../../storage";
 import type {
   ContentLesson,
-  ElementError,
   LessonAttempt,
   LessonProgress,
 } from "../../../storage/types";
@@ -186,7 +210,7 @@ export default function LessonSummary({
   // derive the full suggestion set. Reads are guarded so the
   // summary still renders if storage is unreachable; the
   // demoted action links below remain a working exit.
-  const [sessionErrors, setSessionErrors] = useState<ElementError[]>([]);
+  const sessionErrors = useLessonSessionErrors(userId, setId, lessonFilename);
 
   // #505 — the XP this run is worth. Computed with the same pure,
   // parity-tested gamification calculator the award path uses
@@ -255,33 +279,28 @@ export default function LessonSummary({
     (configForMode(lessonMode).xpMultiplier - 1) * 100,
   );
 
-  useEffect(() => {
-    if (!userId) {
-      setSessionErrors([]);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      try {
-        const errs = await getStorage().elementErrors.list(userId, {
-          setId,
-        });
-        if (cancelled) return;
-        setSessionErrors(errs.filter((e) => e.lesson_id === lessonFilename));
-      } catch {
-        if (!cancelled) setSessionErrors([]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [userId, setId, lessonFilename]);
+
+  // #1426 (generalises #1411 / #1376) — which summary sections are shown AND
+  // in which order, from the Settings → Learning "Lesson summary" sub-area.
+  // Everything defaults ON in today's order; the essential completion
+  // navigation below is never gated and stays pinned at the bottom.
+  const sections = useSummarySections();
+  const nextStepsEnabled = isSummarySectionEnabled(sections, "next_steps");
 
   // The exact exercises failed in THIS run — drives the
   // "Retry Errors" card + the ErrorReplay page (via router state).
   const failedExercises = useMemo(
     () => collectFailedExercises(lesson, progress),
     [lesson, progress],
+  );
+
+  // #1372 — of the exercises failed in this run, the ones STILL open in
+  // the live SRS state (a correct error-replay attempt drops one out).
+  // Drives the replay CTA + payload; the historical count (failedExercises)
+  // is left intact for the statistics.
+  const openFailed = useMemo(
+    () => openFailedExercises(failedExercises, sessionErrors),
+    [failedExercises, sessionErrors],
   );
 
   const suggestions = useNextStepSuggestions({
@@ -291,7 +310,8 @@ export default function LessonSummary({
     userId,
     stars,
     sessionErrors,
-    failedExerciseCount: failedExercises.length,
+    failedExerciseCount: openFailed.length,
+    correctedExerciseCount: failedExercises.length - openFailed.length,
   });
 
   // #138 — export the result (score + mistakes + weak areas) as
@@ -407,6 +427,157 @@ export default function LessonSummary({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // #1426 — each configurable section as a self-contained render node, keyed
+  // by its stable id. The panel renders them in the user-configured order
+  // (below); a node that maps to several sub-components (``result``) groups
+  // them so the section moves as one unit. ``enabled`` is passed literally
+  // true because the order loop only renders sections the config marks ON;
+  // each node still self-gates on its own data (zero XP, wrong mode, ...).
+  const sectionNodes: Record<SummarySectionKey, ReactNode> = {
+    favorite: (
+      <SummaryFavorite
+        enabled
+        userId={userId}
+        source={source}
+        setId={setId}
+        filename={lessonFilename}
+        title={lesson.title}
+        t={t}
+      />
+    ),
+    // "Result and statistics": stars + message + score bar, the exam / timed
+    // result panels, the retry comparison and the time / hints stat list — all
+    // one toggle (#1411), rendered as one contiguous block (#1426).
+    result: (
+      <>
+        <SummaryScoreboard
+          enabled
+          stars={stars}
+          message={celebrateMessage}
+          animatedPct={animatedPct}
+          scorePct={scorePct}
+          correct={correct}
+          total={total}
+          t={t}
+        />
+        {/* #1007 Phase 2 — dedicated exam result panel (verdict + score +
+            time + XP incl. bonus + retry). */}
+        <SummaryExamPanel
+          enabled
+          lessonMode={lessonMode}
+          total={total}
+          examPass={examPass}
+          examThreshold={examThreshold}
+          correct={correct}
+          scorePct={scorePct}
+          minutes={minutes}
+          xpGain={xpGain}
+          bonusPct={modeBonusPct}
+          onRetry={onRepeat}
+        />
+        {/* #1009 — timed-mode timing stats. */}
+        <SummaryTimedStats
+          enabled
+          lessonMode={lessonMode}
+          timedStats={timedStats}
+          t={t}
+        />
+        {/* #983 — improvement vs the previous run + best score. */}
+        <RetryResultComparison
+          enabled
+          attempts={attempts}
+          attemptHistory={attemptHistory}
+          bestCorrect={bestCorrect}
+          bestTotal={bestTotal}
+        />
+        <SummaryStatsList
+          enabled
+          minutes={minutes}
+          hintsUsed={hintsUsed}
+          t={t}
+        />
+      </>
+    ),
+    xp: (
+      <SummaryXp enabled xpGain={xpGain} animate={intensity !== "subtle"} t={t} />
+    ),
+    // #1073 — share the result (lesson title + score).
+    share: (
+      <SummaryShare
+        enabled
+        total={total}
+        result={{
+          lessonTitle: lesson.title,
+          correct,
+          total,
+          scorePct,
+          stars,
+          level,
+          xp: totalXp,
+          streakDays,
+        }}
+      />
+    ),
+    // #1007 Phase 2 — the collected-answers "View all answers" detail.
+    answers: <LessonAnswersDetail enabled breakdown={breakdown} />,
+    // #138 — export the result for AI-assisted practice.
+    export: (
+      <SummaryExportActions
+        enabled
+        lesson={lesson}
+        t={t}
+        onCopy={() => {
+          void handleCopyResult();
+        }}
+        onDownload={handleDownloadResult}
+        onDownloadJson={handleDownloadJson}
+      />
+    ),
+    // Phase 64 — Smart Next-Step Suggestions. The primary navigation surface;
+    // the standalone Next fallback in the pinned continue-actions below covers
+    // the case where this card is off or not surfacing a successor.
+    next_steps: (
+      <NextStepSuggestions
+        enabled
+        suggestions={suggestions}
+        setId={setId}
+        setSlug={setSlug}
+        lessonFilename={lessonFilename}
+        errorReplay={
+          openFailed.length > 0
+            ? {
+                exercises: openFailed,
+                cards: lesson.cards,
+                lessonTitle: lesson.title,
+              }
+            : undefined
+        }
+      />
+    ),
+    // Phase 52F / v1.35.0 — correction round (#1376/#1411). Self-hides on a
+    // perfect score, with no ElementError rows, or when no cloze can be
+    // generated. The same errors stay reachable through "Fehler wiederholen"
+    // / SRS review when the section is off or hidden.
+    correction:
+      progress && userId ? (
+        <CorrectionBlock
+          lesson={lesson}
+          progress={progress}
+          userId={userId}
+          setId={setId}
+          lessonFilename={lessonFilename}
+          onComplete={() => {
+            // Best-effort improvement counter is rendered inside
+            // CorrectionBlock's "complete" surface; nothing further needed.
+          }}
+          onSkip={() => {
+            // Skip is purely a UI dismissal — the pinned action row is always
+            // visible below.
+          }}
+        />
+      ) : null,
+  };
+
   return (
     <section
       className={`lesson-summary${stars === 3 ? " is-celebrating" : ""}`}
@@ -420,215 +591,41 @@ export default function LessonSummary({
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
       </h2>
 
-      {userId && (
-        <div
-          className="flex items-center gap-1"
-          data-testid="lesson-summary-favorite"
-        >
-          <LessonFavoriteToggle
-            userId={userId}
-            source={source}
-            setId={setId}
-            filename={lessonFilename}
-            title={lesson.title}
-            setTitle=""
-            size={16}
-          />
-          <span className="text-sm text-fg-muted">
-            {t("favorites.save_prompt", "Save this lesson to your favorites")}
-          </span>
-        </div>
-      )}
+      {/* #1426 — the configurable sections, in the user-configured order.
+          Only sections the config marks ON are rendered; each keeps its own
+          data self-gate.
 
-      <div
-        className="lesson-summary-stars"
-        data-testid="lesson-summary-stars"
-        role="img"
-        aria-label={t("lesson.summary.stars_aria", "{n} of 3 stars").replace(
-          "{n}",
-          String(stars),
-        )}
-      >
-        {[1, 2, 3].map((n) => {
-          const earned = n <= stars;
+          #1432 — the #599 "why you missed these" mistake review renders
+          immediately ABOVE the correction round (following it wherever the user
+          reorders it), so the review and the drill that fixes those mistakes
+          stay adjacent and ``correction`` is the last content section by
+          default. It is not one of the reorderable sections (its own shared
+          Settings toggle, ``review/reviewPref``), so it is spliced in here
+          rather than added to the order block. */}
+      {sections.map(({ id, enabled }) => {
+        if (!enabled) return null;
+        if (id === "correction") {
           return (
-            <Star
-              key={n}
-              size={28}
-              aria-hidden="true"
-              className={`lesson-summary-star${earned ? " is-earned" : ""}`}
-              fill={earned ? "currentColor" : "none"}
-              data-earned={earned ? "true" : "false"}
-              data-testid={`lesson-summary-star-${n}`}
-            />
+            <Fragment key={id}>
+              <SummaryExplanations sessionErrors={sessionErrors} t={t} />
+              {sectionNodes[id]}
+            </Fragment>
           );
-        })}
-      </div>
+        }
+        return <Fragment key={id}>{sectionNodes[id]}</Fragment>;
+      })}
 
-      <p
-        className="lesson-summary-message"
-        data-testid="lesson-summary-message"
-        data-stars={String(stars)}
-      >
-        {celebrateMessage}
-      </p>
-
-      <div
-        className="lesson-summary-score-bar"
-        role="progressbar"
-        aria-valuenow={scorePct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={t(
-          "lesson.summary.score_bar_aria",
-          "Score: {pct} percent",
-        ).replace("{pct}", String(scorePct))}
-        data-testid="lesson-summary-score-bar"
-      >
-        <div
-          className="lesson-summary-score-fill"
-          style={{ width: `${animatedPct}%` }}
-        />
-        <span className="lesson-summary-score-label">
-          <strong>{t("lesson.summary.score", "Score")}:</strong>{" "}
-          <span data-testid="lesson-summary-score">
-            {correct} / {total}
-          </span>{" "}
-          (<span data-testid="lesson-summary-score-pct">{animatedPct}</span>
-          %)
-        </span>
-      </div>
-
-      {/* #1007 Phase 2 — dedicated exam result panel (verdict + score +
-          time + XP incl. bonus + retry). Replaces the inline pass/fail
-          line; the per-exercise breakdown below is the "view all
-          answers" detail. */}
-      <SummaryExamPanel
-        lessonMode={lessonMode}
-        total={total}
-        examPass={examPass}
-        examThreshold={examThreshold}
-        correct={correct}
-        scorePct={scorePct}
-        minutes={minutes}
-        xpGain={xpGain}
-        bonusPct={modeBonusPct}
-        onRetry={onRepeat}
-      />
-
-      {/* #1009 — timed-mode timing stats. */}
-      <SummaryTimedStats
-        lessonMode={lessonMode}
-        timedStats={timedStats}
-        t={t}
-      />
-
-      {/* #983 — after a re-attempt, show the improvement vs the previous
-          run + the best score. Self-hides on a first run (attempts < 2). */}
-      <RetryResultComparison
-        attempts={attempts}
-        attemptHistory={attemptHistory}
-        bestCorrect={bestCorrect}
-        bestTotal={bestTotal}
-      />
-
-      <SummaryXp xpGain={xpGain} animate={intensity !== "subtle"} t={t} />
-
-      {/* #1073 — share the result (lesson title + score). Shown for every
-          scored run; the CTA copy is louder on a great score / streak and
-          stays quiet (never hidden) on a low one. */}
-      {total > 0 && (
-        <div
-          className="lesson-summary-share flex justify-center"
-          data-testid="lesson-summary-share"
-        >
-          <ShareResultButton
-            result={{
-              lessonTitle: lesson.title,
-              correct,
-              total,
-              scorePct,
-              stars,
-              level,
-              xp: totalXp,
-              streakDays,
-            }}
-          />
-        </div>
+      {/* When the correction section is disabled it is not rendered above, so
+          the mistake review (#599) falls back to just above the continue-actions
+          — it is gated by its own toggle and must never be lost with correction
+          off. */}
+      {!isSummarySectionEnabled(sections, "correction") && (
+        <SummaryExplanations sessionErrors={sessionErrors} t={t} />
       )}
 
-      <ul className="lesson-summary-stats">
-        <li>
-          <strong>{t("lesson.summary.time", "Time")}:</strong>{" "}
-          <span data-testid="lesson-summary-time">
-            {t("lesson.summary.minutes", "{n} min").replace(
-              "{n}",
-              String(minutes),
-            )}
-          </span>
-        </li>
-        {hintsUsed > 0 && (
-          <li>
-            <strong>{t("lesson.summary.hints_used", "Hints used")}:</strong>{" "}
-            <span data-testid="lesson-summary-hints-used">
-              {String(hintsUsed)}
-            </span>
-          </li>
-        )}
-      </ul>
-
-      {/* #1007 Phase 2 — the collected-answers "View all answers" detail
-          (collapsed by default). In exam mode this is where the learner
-          finally sees every per-question result; in practice mode it
-          declutters the summary. */}
-      <LessonAnswersDetail breakdown={breakdown} />
-
-      {/* #599 — auto-generated explanations + your-vs-correct diff for
-                the run's still-weak text mistakes, gated by the
-                Settings toggle. */}
-      <SummaryExplanations sessionErrors={sessionErrors} t={t} />
-
-      {/* #138 — export the result for AI-assisted practice.
-                Copy to clipboard or download as a .md file. Sits
-                directly under the breakdown it summarizes. */}
-      <SummaryExportActions
-        lesson={lesson}
-        t={t}
-        onCopy={() => {
-          void handleCopyResult();
-        }}
-        onDownload={handleDownloadResult}
-        onDownloadJson={handleDownloadJson}
-      />
-
-      {/* Phase 52F / v1.35.0 — correction round. Self-hides
-                when the lesson was a perfect score, when no
-                ElementError rows exist for it, OR when no cloze
-                can be generated from the available errors. Users
-                can skip; the Next-lesson button below stays
-                visible throughout. */}
-      {progress && userId && (
-        <CorrectionBlock
-          lesson={lesson}
-          progress={progress}
-          userId={userId}
-          setId={setId}
-          lessonFilename={lessonFilename}
-          onComplete={() => {
-            // Best-effort improvement counter is rendered
-            // inside CorrectionBlock's "complete" surface;
-            // nothing further needed at the parent level.
-          }}
-          onSkip={() => {
-            // Skip is purely a UI dismissal — the action
-            // row below was always visible.
-          }}
-        />
-      )}
-
-      {/* Completion is a distinct action from navigation, so
-                it keeps its own prominent button above the smart
-                suggestion cards. */}
+      {/* Essential completion navigation — never toggleable, never in the
+          reorder list, always pinned at the bottom so the panel can never
+          become a dead end (#1426, "Weitermachen-Aktionen bleiben fix"). */}
       {!isCompleted && (
         <div className="lesson-summary-actions">
           <Button
@@ -643,44 +640,27 @@ export default function LessonSummary({
         </div>
       )}
 
-      {/* Phase 64 — Smart Next-Step Suggestions. The primary
-                navigation surface; the standalone Next button below
-                is only a graceful-degradation fallback. */}
-      <NextStepSuggestions
-        suggestions={suggestions}
-        setId={setId}
-        setSlug={setSlug}
-        lessonFilename={lessonFilename}
-        errorReplay={
-          failedExercises.length > 0
-            ? {
-                exercises: failedExercises,
-                cards: lesson.cards,
-                lessonTitle: lesson.title,
-              }
-            : undefined
-        }
-      />
-
       <div className="lesson-summary-secondary-actions">
-        {/* Fallback Next link — only when the smart card is
-                    not surfacing a successor (hook still loading or a
-                    storage read failed) but one exists. */}
+        {/* Fallback Next link — when the smart card is not surfacing a
+            successor (hook still loading, a storage read failed, or the
+            next-steps section is disabled, #1426) but one exists, so forward
+            navigation never disappears. */}
         {/* #230 — outline, not ghost: ghost has no border/background so on
             the dark summary surface these read as faint text rather than
             buttons. Outline gives a visible border + keeps readable text. */}
-        {!suggestions.nextLesson.available && nextLessonFilename && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onNextLesson}
-            data-testid="lesson-summary-next"
-          >
-            {t("lesson.summary.next_lesson", "Next lesson")}
-            <ChevronRight aria-hidden="true" />
-          </Button>
-        )}
+        {(!nextStepsEnabled || !suggestions.nextLesson.available) &&
+          nextLessonFilename && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onNextLesson}
+              data-testid="lesson-summary-next"
+            >
+              {t("lesson.summary.next_lesson", "Next lesson")}
+              <ChevronRight aria-hidden="true" />
+            </Button>
+          )}
         <Button
           type="button"
           variant="outline"

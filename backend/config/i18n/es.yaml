@@ -90,8 +90,6 @@ nav:
   offline: Sin conexión
   anki: Anki
   contribute: "Contribuir"
-  sidebar_open: "Abrir barra lateral"
-  sidebar_close: "Cerrar barra lateral"
   dev_badge: DEV
   dev_badge_tooltip: "Modo Desarrollador activo — los avisos de error muestran detalles técnicos. Cámbialo en Ajustes."
   content: "Mi contenido"
@@ -288,6 +286,12 @@ assessment:
   read_summary: Leer resumen
   swipe_hint: "Desliza a la izquierda / derecha (o usa las teclas de flecha) para navegar."
 dashboard:
+  # 1417 — the one inviting BYOK card on the Dashboard.
+  ai_invite:
+    title: "Activa la ayuda de IA (opcional)"
+    body: "Conecta tu propio proveedor de IA (Claude, OpenAI o Gemini) y recibe explicaciones y ayuda directamente en las lecciones. La aplicación también funciona sin ello."
+    connect: "Conectar ahora"
+    later: "Más tarde"
   tab:
     overview: "Resumen"
     activity: "Actividad"
@@ -514,6 +518,17 @@ settings:
   explanations_enabled: "Mostrar explicaciones de errores"
   explanations_enabled_desc: "Tras una lección, muestra un breve consejo de regla por cada error."
   section_hints: "Pistas"
+  section_lesson_summary: "Resumen tras las lecciones"
+  summary_sections_desc: "Elige qué secciones muestra el resumen al final de una lección y en qué orden. Las acciones para continuar siempre están visibles."
+  summary_section_result: "Resultado y estadísticas"
+  summary_section_xp: "Recompensa de XP"
+  summary_section_favorite: "Aviso de favoritos"
+  summary_section_share: "Compartir resultado"
+  summary_section_answers: "Resumen de respuestas"
+  summary_section_export: "Exportar resultado"
+  summary_section_next_steps: "Sugerencias de próximos pasos"
+  correction_round_enabled: "Mostrar la ronda de corrección después de las lecciones"
+  correction_round_enabled_desc: "Al final de una lección, ofrece corregir tus errores de inmediato. Si está desactivada, siguen disponibles en el modo de repaso / \"Practicar errores\"."
   hints_enabled: "Mostrar pistas en los ejercicios"
   hints_enabled_desc: "Ofrece un botón de pista por niveles en cada ejercicio."
   hint_xp_cost: "Coste de XP por pista"
@@ -569,6 +584,8 @@ settings:
   section_danger: Cuenta
   section_ui: "Interfaz"
   section_appearance: "Apariencia"
+  section_content_tabs: "Orden de las pestañas de Contenido"
+  content_tabs_desc: "Elige el orden de las pestañas en el área de Contenido. La primera pestaña se abre por defecto."
   content_view: "Vista de contenidos"
   content_view_description: "Cómo se muestra el contenido descargado en las pestañas de contenido. El conmutador rápido de la vista de contenido cambia la misma opción."
   section_profile: "Perfil"
@@ -908,6 +925,7 @@ about:
   checking: "Comprobando…"
   update_available: "¡La versión {version} está disponible!"
   up_to_date: "Estás usando la última versión."
+  update_preparing: "Hay una nueva compilación disponible y se está preparando. Comprueba de nuevo en un momento."
   check_failed: "La comprobación falló. ¿Estás conectado?"
   last_checked: "Última comprobación: {when}"
   never_checked: "Nunca comprobado"
@@ -1448,10 +1466,7 @@ ui:
     required_with_feature: "Se requiere una clave de API {feature}."
     required_long: "Configura una clave de proveedor en Configuración para habilitar esta acción."
     open_settings: "Abrir configuración"
-    skip_banner: "Configura una clave de API en Configuración para usar las funciones de IA."
-    skip_banner_dismiss: "Descartar"
     feature_analyze: "para analizar conversaciones"
-    feature_session: "para iniciar una sesión"
     feature_anki: "para extraer tarjetas de Anki"
     feature_study_guide: "para generar una guía de estudio"
     feature_study_questions: "para generar preguntas de estudio"
@@ -1853,6 +1868,9 @@ lesson:
     adaptive_errors: "{count} errores en esta lección"
     error_replay: "Repetir errores"
     error_replay_detail: "{count} ejercicios otra vez"
+    error_replay_corrected: "{corrected} de {total} corregidos"
+    all_corrected: "¡Todos los errores corregidos!"
+    all_corrected_detail: "Bien: ya no quedan errores abiertos."
     errors_corrected: "¡Todos los errores corregidos!"
     still_errors: "Aún {count} errores. ¿Otra vez?"
     review: "Repaso"
@@ -1940,6 +1958,14 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  filter:
+    all_sources: "Todas las fuentes"
+    official: "Oficial"
+  filter_menu:
+    status: "Estado"
+    source: "Fuente"
+  filter_empty: "Ningún set coincide con los filtros activos."
+  filter_reset: "Restablecer filtros"
   view:
     grid: "Vista de cuadrícula"
     list: "Vista de lista"
@@ -2643,6 +2669,7 @@ pwa:
     message: "Hay una nueva versión disponible."
     action: "Actualizar"
     later: "Más tarde"
+    ios_restart_hint: "Si no cambia nada, cierra la app y vuelve a abrirla."
 share:
   menu:
     heading: "Compartir"
@@ -2931,6 +2958,9 @@ favorites:
   empty: "Aún no hay favoritos: toca la estrella de una lección."
   save_prompt: "Guardar esta lección en tus favoritos"
 content_repo:
+  sync_all:
+    done: "Se sincronizaron {ok} de {total} repositorios."
+    failed: "Se sincronizaron {ok} de {total}. Fallaron: {repos}"
   qr:
     upload: "Subir imagen QR"
     decoding: "Leyendo QR…"
@@ -2965,6 +2995,7 @@ content_repo:
     branch: "Rama"
     token: "Token (repos privados, opcional)"
   action:
+    sync_all: "Sincronizar todo"
     add: "Añadir repositorio"
     cancel: "Cancelar"
     confirm_remove: "Confirmar eliminación"
@@ -2996,6 +3027,7 @@ content_repo:
     hint: "Comparte este enlace para que otros puedan añadir este repositorio PÚBLICO. Para un repositorio privado, envía la URL y un token de solo lectura por separado."
     qr_alt: "Código QR del enlace para compartir"
   progress:
+    syncing: "Sincronizando…"
     validating: "Validando repositorio…"
     manifest: "Cargando manifiesto…"
     sets: "Cargando conjuntos…"

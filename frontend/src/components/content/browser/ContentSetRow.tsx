@@ -18,7 +18,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import ListRow from "../../../shared/layout/ListRow";
 import AiCheckedBadge, { type AiCheckBadgeStatus } from "../../../shared/status/AiCheckedBadge";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { isOfficialSource } from "../../../lib/content/repos/content-repos";
+import {
+  isOfficialSource,
+  resolveRepoCategory,
+} from "../../../lib/content/repos/content-repos";
+import RepoCategoryBadge from "../RepoCategoryBadge";
 import type { MediaResource } from "../../../lib/content/media/media-loader";
 import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
@@ -69,7 +73,11 @@ interface ContentSetRowProps {
   onToggleSelect?: (entry: ContentSetEntry) => void;
 }
 
-/** Origin / trust / recommended badges for a non-official source. */
+/** Unified category badge for a non-official source (#1405, rest of #1319):
+ *  ONE shared {@link RepoCategoryBadge} (official / private / validated /
+ *  unverified via ``resolveRepoCategory``) replaces the pre-#1319 inline
+ *  origin/trust/recommended spans. Official-source sets stay badge-free —
+ *  they already carry the Bundled/GitHub source tag. */
 function ContentSetOriginBadges({
   entry,
   repoMeta,
@@ -81,42 +89,29 @@ function ContentSetOriginBadges({
 }) {
   const { t } = useI18n();
   if (isOfficialSource(entry.source)) return null;
-  const trusted = repoMeta[entry.source]?.trust === 1;
+  const meta = repoMeta[entry.source];
   return (
-    <>
-      <span
-        className="ml-1 rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]"
-        data-testid={`content-set-${entry.id}-origin`}
-      >
-        {repoMeta[entry.source]?.coach
-          ? t("content.origin.coach", "Coach")
-          : t("content.origin.user", "Your repo")}
-      </span>
-      <span
-        className={
-          trusted
-            ? "ml-1 rounded-sm bg-[var(--success-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--success)]"
-            : "ml-1 rounded-sm bg-[var(--warning-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--warning)]"
-        }
-        data-testid={`content-set-${entry.id}-trust`}
-      >
-        {trusted
-          ? t("content.trust.validated", "Validated")
-          : t("content.trust.unknown", "Unverified")}
-      </span>
-      {recommendedSources.has(entry.source) && (
-        <span
-          className="ml-1 rounded-sm bg-[color-mix(in_srgb,var(--accent)_16%,var(--bg-surface))] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent-text)]"
-          data-testid={`content-set-${entry.id}-recommended`}
-        >
-          {t("content.trust.recommended", "Recommended")}
-        </span>
-      )}
-    </>
+    <RepoCategoryBadge
+      category={resolveRepoCategory({
+        source: entry.source,
+        trust: meta?.trust === 1 ? 1 : 0,
+        coach: meta?.coach,
+        recommended: recommendedSources.has(entry.source),
+      })}
+      t={t}
+      testId={`content-set-${entry.id}-category`}
+      className="ml-1 shrink-0"
+    />
   );
 }
 
-/** The row heading: title (+ native title) + source/origin badges. */
+/** The row heading: title (+ native title) + source/origin badges.
+ *
+ *  #1392 — the heading is a shrinkable (``min-w-0``) flex row: the title
+ *  text truncates with an ellipsis (full name via native tooltip) while
+ *  the badges stay ``shrink-0`` (wrapping to the next line when the tile
+ *  is too narrow for all of them), so no title length can push a badge
+ *  or the actions column out of the tile. */
 function ContentSetHeading({
   entry,
   repoMeta,
@@ -128,12 +123,17 @@ function ContentSetHeading({
 }) {
   const { t } = useI18n();
   return (
-    <h4>
-      {entry.title}
-      {entry.title_native && entry.title_native !== entry.title && (
-        <span className="content-set-native"> · {entry.title_native}</span>
-      )}
-      <span className="content-set-source" data-testid={`content-set-${entry.id}-source`}>
+    <h4 className="flex min-w-0 flex-wrap items-center">
+      <span className="min-w-0 truncate" title={entry.title}>
+        {entry.title}
+        {entry.title_native && entry.title_native !== entry.title && (
+          <span className="content-set-native"> · {entry.title_native}</span>
+        )}
+      </span>
+      <span
+        className="content-set-source shrink-0"
+        data-testid={`content-set-${entry.id}-source`}
+      >
         {entry.source.startsWith("bundled:")
           ? t("content.source.bundled", "Bundled")
           : t("content.source.github", "GitHub")}

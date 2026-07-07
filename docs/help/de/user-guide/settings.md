@@ -1,24 +1,24 @@
 # Einstellungen
 
 Die Einstellungen-Seite sammelt alles, was du ohne Code- oder
-YAML-Eingriff anpassen kannst. Abschnitte, von oben nach unten:
+YAML-Eingriff anpassen kannst. Sie ist als **Tab-Seite** aufgebaut:
+Wähle einen Tab und sein Panel öffnet sich, du scrollst also nicht
+eine lange Liste von oben nach unten. Die Tab-Gruppen sind:
 
-1. **Sprache** — UI-Sprache (DE / EL / EN / ES / FR / HI /
-   ID / JA / KO / PT / TR, alle voll übersetzt).
-2. **KI-Anbieter + Modell-Picker** — welcher Anbieter deine
-   Nachrichten sieht und welches Modell zum Einsatz kommt.
-3. **API-Schlüssel** — pro Anbieter mit Quellen-Attribution
-   (Umgebung / `secrets.yaml` / Einstellungen).
-4. **Speichermodus** — Server (FastAPI + SQLite) vs. Lokal
-   (Browser-IndexedDB).
-5. **Sync** — dieses Gerät über lokales Netz mit einem
-   anderen koppeln.
-6. **Backup** — Export / Import / Vergleich.
-7. **Stimme** — TTS + STT + Aussprache-Toggles.
-8. **Oberfläche** — Gesten + Theme + Dichte.
-9. **Gamification** — XP- / Abzeichen-Benachrichtigungen +
-   Wochenend-Modus.
-10. **Über** — Version, Systeminfo, Credits, Spenden, Lizenz.
+- **Allgemein**: UI-Sprache, Darstellung / Theme und
+  Oberflächen-Optionen (Gesten, Tooltips, Entwicklermodus).
+- **KI**: Anbieter- + Modell-Picker, API-Schlüssel pro Anbieter mit
+  Quellen-Attribution und die Anbieter-Übersicht.
+- **Lernen**: wie Lektionen ablaufen (Standardmodus,
+  Bestehensschwelle, Zeit-Schwierigkeit, Hinweise, Erinnerungen,
+  Enter-Kürzel, Übungsrichtung), die Inhalts-Ansicht und die
+  Reihenfolge der Inhalte-Tabs.
+- **Daten**: Speichermodus, Sync, Backup (Export / Import /
+  Vergleich) und der verschlüsselte Schlüssel-Export.
+- **Stimme**: TTS- / STT- / Aussprache-Toggles.
+- **Gamification**: XP- / Abzeichen-Benachrichtigungen,
+  Wochenend-Modus, Tagesziel und Fortschritt zurücksetzen.
+- **Über**: Version, Systeminfo, Credits, Spenden, Lizenz.
 
 ## Sprache
 
@@ -254,6 +254,10 @@ Hier liegt auch die **Inhalts-Ansicht** — die globale Einstellung
 dieselbe Einstellung wie der Ansicht-Umschalter in den Tabs *Meine
 Inhalte* / *Entdecken*, eine Änderung an einer Stelle hält also
 beide synchron.
+
+Außerdem lässt sich hier die **Reihenfolge der Inhalte-Tabs**
+(Entdecken / Meine Inhalte / Importieren) festlegen, sodass der Hub
+auf dem von dir am häufigsten genutzten Tab öffnet.
 
 ## Gamification
 

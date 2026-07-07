@@ -22,6 +22,7 @@ import { ApiError } from "../../api/client";
 import { Button } from "@/components/ui/button";
 import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import ImportActionsPanel from "../../components/content/ImportActionsPanel";
+import PageContainer from "../../shared/layout/PageContainer";
 import { FEATURES } from "../../features/featureConfig";
 import { useFeatureAvailable } from "../../features/useFeatureAvailable";
 import HelpLink from "../../components/help/HelpLink";
@@ -412,8 +413,8 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
   }
 
   return (
-    <main id="main" className="page-import" data-testid="page-import">
-      <header className="p-6 text-center">
+    <PageContainer testId="page-import">
+      <header className="py-6 text-center">
         <h1 className="m-0">
           {t("import.title", "Import a conversation")}
           <HelpLink glossaryKey="feature_conversation_analysis" size={18} />
@@ -428,7 +429,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
 
       {/* #1253 — import/creation action buttons + the standalone
           "My Lessons" section, relocated here from "Meine Inhalte". */}
-      <div className="max-w-3xl mx-auto mb-8 px-6">
+      <div className="max-w-3xl mx-auto mb-8">
         <ImportActionsPanel />
       </div>
 
@@ -481,7 +482,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         </div>
       </section>
 
-      <section className="max-w-3xl mx-auto mb-8 px-6" data-testid="file-upload">
+      <section className="max-w-3xl mx-auto mb-8" data-testid="file-upload">
         <h3>{t("import.file.title", "Upload a file")}</h3>
         <div
           onDragOver={(e) => e.preventDefault()}
@@ -518,7 +519,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         />
       </section>
 
-      <section className="max-w-3xl mx-auto mb-8 px-6" data-testid="invite-redeem">
+      <section className="max-w-3xl mx-auto mb-8" data-testid="invite-redeem">
         <h3>{t("invitation_code.redeem.title", "Redeem an invitation code")}</h3>
         <div className="border border-border rounded-lg p-6 text-center bg-card">
           <p className="m-0 text-fg-muted">
@@ -539,7 +540,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         </div>
       </section>
 
-      <section className="max-w-3xl mx-auto mb-12 px-6" data-testid="imports-list">
+      <section className="max-w-3xl mx-auto mb-12" data-testid="imports-list">
         <h3>
           {t("import.list.title", "Your imported conversations")} ({conversations.length})
         </h3>
@@ -596,7 +597,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
           </ul>
         )}
       </section>
-    </main>
+    </PageContainer>
   );
 }
 

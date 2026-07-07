@@ -22,12 +22,18 @@ import { installErrorCollectors } from "./helpers/collectors";
 const ACCEPTED_VERSION_KEY = "adaptive-learner.update.accepted_version";
 const ACCEPTED_AT_KEY = "adaptive-learner.update.last_accepted_at";
 
-/** Route ``version.json`` to whatever ``current()`` returns at fetch time. */
+/** Route ``version.json`` to whatever ``current()`` returns at fetch time.
+ *
+ * The glob ends in ``*`` on purpose: the app fetches ``version.json`` with a
+ * cache-buster query string (``?cb=<ts>``, #1382, to defeat the GitHub-Pages
+ * edge cache). A bare ``**​/version.json`` glob is ``$``-anchored and would NOT
+ * match ``version.json?cb=123``, so the mock would never intercept the real
+ * request and every assertion below would run against the deployed manifest. */
 async function routeVersionJson(
   page: Page,
   current: () => { version: string; buildHash: string },
 ): Promise<void> {
-  await page.route("**/version.json", (route) =>
+  await page.route("**/version.json*", (route) =>
     route.fulfill({
       status: 200,
       contentType: "application/json",

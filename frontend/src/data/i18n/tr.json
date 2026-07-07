@@ -98,8 +98,6 @@
     "offline": "Çevrimdışı",
     "anki": "Anki",
     "contribute": "Katkıda bulun",
-    "sidebar_open": "Kenar çubuğunu aç",
-    "sidebar_close": "Kenar çubuğunu kapat",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın.",
     "content": "İçeriğim",
@@ -306,6 +304,12 @@
     "swipe_hint": "Gezinmek için sola / sağa kaydırın (veya ok tuşlarını kullanın)."
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "Yapay zeka yardımını etkinleştir (isteğe bağlı)",
+      "body": "Kendi yapay zeka sağlayıcını (Claude, OpenAI veya Gemini) bağla ve derslerde doğrudan açıklamalar ve yardım al. Uygulama onsuz da çalışır.",
+      "connect": "Şimdi bağlan",
+      "later": "Daha sonra"
+    },
     "tab": {
       "overview": "Genel Bakış",
       "activity": "Etkinlik",
@@ -552,6 +556,17 @@
     "explanations_enabled": "Hata açıklamalarını göster",
     "explanations_enabled_desc": "Bir dersten sonra her hata için kısa bir kural ipucu gösterir.",
     "section_hints": "İpuçları",
+    "section_lesson_summary": "Ders sonrası özet",
+    "summary_sections_desc": "Bir dersin sonunda özetin hangi bölümleri ve hangi sırayla göstereceğini seç. Devam etme eylemleri her zaman görünür.",
+    "summary_section_result": "Sonuç ve istatistikler",
+    "summary_section_xp": "XP ödülü",
+    "summary_section_favorite": "Favori hatırlatması",
+    "summary_section_share": "Sonucu paylaş",
+    "summary_section_answers": "Cevaplara genel bakış",
+    "summary_section_export": "Sonucu dışa aktarma",
+    "summary_section_next_steps": "Sonraki adım önerileri",
+    "correction_round_enabled": "Derslerden sonra düzeltme turunu göster",
+    "correction_round_enabled_desc": "Bir dersin sonunda, hatalarını hemen düzeltmeni önerir. Kapalıyken, tekrar / \"Hataları çalış\" modunda erişilebilir kalırlar.",
     "hints_enabled": "Alıştırmalarda ipucu göster",
     "hints_enabled_desc": "Her alıştırmada kademeli bir ipucu düğmesi sunar.",
     "hint_xp_cost": "İpucu başına XP maliyeti",
@@ -609,6 +624,8 @@
     "section_danger": "Hesap",
     "section_ui": "Arayüz",
     "section_appearance": "Görünüm",
+    "section_content_tabs": "İçerik sekmeleri sırası",
+    "content_tabs_desc": "İçerik alanındaki sekmelerin sırasını seç. İlk sekme varsayılan olarak açılır.",
     "content_view": "İçerik görünümü",
     "content_view_description": "İndirilen içeriğin içerik sekmelerinde nasıl gösterileceği. İçerik görünümündeki hızlı geçiş aynı ayarı değiştirir.",
     "section_profile": "Profil",
@@ -978,6 +995,7 @@
     "checking": "Denetleniyor…",
     "update_available": "{version} sürümü mevcut!",
     "up_to_date": "En son sürümü kullanıyorsunuz.",
+    "update_preparing": "Yeni bir derleme mevcut ve hazırlanıyor. Birazdan tekrar kontrol edin.",
     "check_failed": "Denetleme başarısız. Çevrimiçi misiniz?",
     "last_checked": "Son denetleme: {when}",
     "never_checked": "Hiç denetlenmedi",
@@ -1568,10 +1586,7 @@
       "required_with_feature": "API anahtarı gerekli {feature}.",
       "required_long": "Bu eylemi etkinleştirmek için Ayarlar’da bir sağlayıcı anahtarı yapılandırın.",
       "open_settings": "Ayarları aç",
-      "skip_banner": "Yapay zeka özelliklerini kullanmak için Ayarlar’da bir API anahtarı yapılandırın.",
-      "skip_banner_dismiss": "Anladım",
       "feature_analyze": "konuşmaları analiz etmek için",
-      "feature_session": "bir oturum başlatmak için",
       "feature_anki": "Anki kartları çıkarmak için",
       "feature_study_guide": "bir çalışma kılavuzu oluşturmak için",
       "feature_study_questions": "çalışma soruları oluşturmak için",
@@ -2010,6 +2025,9 @@
       "adaptive_errors": "Bu derste {count} hata",
       "error_replay": "Hataları tekrar et",
       "error_replay_detail": "{count} alıştırma tekrar",
+      "error_replay_corrected": "{total} hatadan {corrected} tanesi düzeltildi",
+      "all_corrected": "Tüm hatalar düzeltildi!",
+      "all_corrected_detail": "Harika - açık hata kalmadı.",
       "errors_corrected": "Tüm hatalar düzeltildi!",
       "still_errors": "Hâlâ {count} hata. Tekrar?",
       "review": "Tekrar",
@@ -2104,6 +2122,16 @@
     }
   },
   "content": {
+    "filter": {
+      "all_sources": "Tüm kaynaklar",
+      "official": "Resmî"
+    },
+    "filter_menu": {
+      "status": "Durum",
+      "source": "Kaynak"
+    },
+    "filter_empty": "Etkin filtrelerle eşleşen set yok.",
+    "filter_reset": "Filtreleri sıfırla",
     "view": {
       "grid": "Izgara görünümü",
       "list": "Liste görünümü",
@@ -2898,7 +2926,8 @@
     "update": {
       "message": "Yeni bir sürüm mevcut.",
       "action": "Güncelle",
-      "later": "Sonra"
+      "later": "Sonra",
+      "ios_restart_hint": "Bir şey değişmezse, uygulamayı kapatıp yeniden açın."
     }
   },
   "share": {
@@ -3194,6 +3223,10 @@
     "save_prompt": "Bu dersi favorilerine kaydet"
   },
   "content_repo": {
+    "sync_all": {
+      "done": "{total} depodan {ok} tanesi eşitlendi.",
+      "failed": "{total} depodan {ok} tanesi eşitlendi. Başarısız: {repos}"
+    },
     "qr": {
       "upload": "QR görüntüsü yükle",
       "decoding": "QR okunuyor…",
@@ -3235,6 +3268,7 @@
       "token": "Belirteç (özel depolar, isteğe bağlı)"
     },
     "action": {
+      "sync_all": "Tümünü eşitle",
       "add": "Depo ekle",
       "cancel": "İptal",
       "confirm_remove": "Kaldırmayı onayla",
@@ -3272,6 +3306,7 @@
       "qr_alt": "Paylaşım bağlantısı için QR kodu"
     },
     "progress": {
+      "syncing": "Eşitleniyor…",
       "validating": "Depo doğrulanıyor…",
       "manifest": "Manifest yükleniyor…",
       "sets": "Setler yükleniyor…",
