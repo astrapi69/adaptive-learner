@@ -59,6 +59,10 @@ export default defineConfig({
         // timestamps render identically on every machine.
         locale: "de-DE",
         timezoneId: "Europe/Berlin",
+        // NOTE (#1414): deliberately NO global content_view_mode seed here —
+        // the content-hub shots document the #1257 LIST default. The
+        // lesson-launching flows seed "grid" per-page inside
+        // ``openFirstBundledLesson`` (e2e/visual/helpers.ts) instead.
     },
     webServer: [
         {
