@@ -304,6 +304,12 @@
     "swipe_hint": "Geser kiri / kanan (atau gunakan tombol panah) untuk menavigasi."
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "Aktifkan bantuan AI (opsional)",
+      "body": "Hubungkan penyedia AI milikmu sendiri (Claude, OpenAI, atau Gemini) dan dapatkan penjelasan serta bantuan langsung di dalam pelajaran. Aplikasi tetap berfungsi tanpanya.",
+      "connect": "Hubungkan sekarang",
+      "later": "Nanti"
+    },
     "tab": {
       "overview": "Ringkasan",
       "activity": "Aktivitas",
@@ -1580,10 +1586,7 @@
       "required_with_feature": "Kunci API diperlukan {feature}.",
       "required_long": "Konfigurasikan kunci penyedia di Pengaturan untuk mengaktifkan tindakan ini.",
       "open_settings": "Buka Pengaturan",
-      "skip_banner": "Konfigurasikan kunci API di Pengaturan untuk menggunakan fitur AI.",
-      "skip_banner_dismiss": "Mengerti",
       "feature_analyze": "untuk menganalisis percakapan",
-      "feature_session": "untuk memulai sesi",
       "feature_anki": "untuk mengekstrak kartu Anki",
       "feature_study_guide": "untuk menghasilkan panduan belajar",
       "feature_study_questions": "untuk menghasilkan pertanyaan belajar",

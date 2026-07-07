@@ -304,6 +304,12 @@
     "swipe_hint": "Nach links / rechts wischen (oder Pfeiltasten verwenden) zum Navigieren."
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "KI-Hilfe freischalten (optional)",
+      "body": "Verbinde deinen eigenen KI-Anbieter (Claude, OpenAI oder Gemini) und erhalte Erklärungen und Hilfe direkt in den Lektionen. Die App funktioniert auch ohne.",
+      "connect": "Jetzt verbinden",
+      "later": "Später"
+    },
     "tab": {
       "overview": "Übersicht",
       "activity": "Aktivität",
@@ -1580,10 +1586,7 @@
       "required_with_feature": "API-Schlüssel erforderlich {feature}.",
       "required_long": "Konfiguriere einen Provider-Schlüssel in den Einstellungen, um diese Aktion zu aktivieren.",
       "open_settings": "Einstellungen öffnen",
-      "skip_banner": "Konfiguriere einen API-Schlüssel in den Einstellungen, um KI-Features zu nutzen.",
-      "skip_banner_dismiss": "Verstanden",
       "feature_analyze": "um Konversationen zu analysieren",
-      "feature_session": "um eine Session zu starten",
       "feature_anki": "um Anki-Karten zu extrahieren",
       "feature_study_guide": "um einen Lernleitfaden zu generieren",
       "feature_study_questions": "um Lernfragen zu generieren",

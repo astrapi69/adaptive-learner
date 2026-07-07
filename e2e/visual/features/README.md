@@ -40,6 +40,7 @@ Baseline zu committen.
 | Dashboard Tabs — Übersicht | `dashboard-tabs/uebersicht.png` | `dashboard-tabs/uebersicht.mobile.png` | v1.94.1 |
 | Dashboard Tabs — Aktivität | `dashboard-tabs/aktivitaet.png` | `dashboard-tabs/aktivitaet.mobile.png` | v1.94.1 |
 | Dashboard Tabs — Missionen | `dashboard-tabs/missionen.png` | `dashboard-tabs/missionen.mobile.png` | v1.94.1 |
+| Dashboard — KI-Einladung ohne Schlüssel (#1417) | `dashboard-tabs/ki-einladung.png` | `dashboard-tabs/ki-einladung.mobile.png` | ausstehend (`make capture-screenshots`) |
 | Content Hub — Entdecken | `content-hub/entdecken.png` | `content-hub/entdecken.mobile.png` | v1.94.1 |
 | Content Hub — Meine Inhalte | `content-hub/meine-inhalte.png` | `content-hub/meine-inhalte.mobile.png` | v1.99.0 |
 | Content Hub — Meine Inhalte, Status-Filter offen (#1386) | `content-hub/meine-inhalte-filter-open.png` | `content-hub/meine-inhalte-filter-open.mobile.png` | v1.99.0 |

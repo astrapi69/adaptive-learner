@@ -286,6 +286,12 @@ assessment:
   read_summary: Özeti oku
   swipe_hint: "Gezinmek için sola / sağa kaydırın (veya ok tuşlarını kullanın)."
 dashboard:
+  # 1417 — the one inviting BYOK card on the Dashboard.
+  ai_invite:
+    title: "Yapay zeka yardımını etkinleştir (isteğe bağlı)"
+    body: "Kendi yapay zeka sağlayıcını (Claude, OpenAI veya Gemini) bağla ve derslerde doğrudan açıklamalar ve yardım al. Uygulama onsuz da çalışır."
+    connect: "Şimdi bağlan"
+    later: "Daha sonra"
   tab:
     overview: "Genel Bakış"
     activity: "Etkinlik"
@@ -1460,10 +1466,7 @@ ui:
     required_with_feature: "API anahtarı gerekli {feature}."
     required_long: "Bu eylemi etkinleştirmek için Ayarlar’da bir sağlayıcı anahtarı yapılandırın."
     open_settings: "Ayarları aç"
-    skip_banner: "Yapay zeka özelliklerini kullanmak için Ayarlar’da bir API anahtarı yapılandırın."
-    skip_banner_dismiss: "Anladım"
     feature_analyze: "konuşmaları analiz etmek için"
-    feature_session: "bir oturum başlatmak için"
     feature_anki: "Anki kartları çıkarmak için"
     feature_study_guide: "bir çalışma kılavuzu oluşturmak için"
     feature_study_questions: "çalışma soruları oluşturmak için"
