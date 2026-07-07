@@ -44,11 +44,19 @@ export default function BottomTabBar() {
   const { openHelp } = useHelp();
   const [moreOpen, setMoreOpen] = useState(false);
 
-  // Reserve scroll space for the fixed bar while it is mounted.
+  // #1410 — the bar hides during a lesson / on the funnel by rendering
+  // null WITHOUT unmounting, so the reservation must track visibility,
+  // not mount: a mount-scoped class left 4rem of dead bottom padding on
+  // #root during every lesson (≤767px), floating the sticky lesson
+  // footer 64px above the viewport bottom.
+  const hidden = HIDE_ON.includes(pathname) || lessonActive;
+
+  // Reserve scroll space for the fixed bar while it is shown.
   useEffect(() => {
+    if (hidden) return;
     document.body.classList.add("has-bottom-nav");
     return () => document.body.classList.remove("has-bottom-nav");
-  }, []);
+  }, [hidden]);
 
   // Close the sheet on route change.
   useEffect(() => setMoreOpen(false), [pathname]);
@@ -63,7 +71,7 @@ export default function BottomTabBar() {
     return () => document.removeEventListener("keydown", onKey);
   }, [moreOpen]);
 
-  if (HIDE_ON.includes(pathname) || lessonActive) return null;
+  if (hidden) return null;
 
   // #856 — "Inhalte" + "Entdecken" merged into one Content tab (the
   // ContentHub at /content opens on its Entdecken tab). The freed slot

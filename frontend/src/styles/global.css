@@ -147,7 +147,17 @@ body,
 #root {
   margin: 0;
   padding: 0;
+  /* #1410 — size the shell off the DYNAMIC viewport, not the initial
+     containing block. ``height: 100%`` resolves against the ICB, which iOS
+     does not reliably re-derive across a standalone-PWA orientation change:
+     after rotating to landscape the shell (and the sticky lesson footer
+     pinned to #root's bottom) can stay portrait-sized, pushing the action
+     button below the visible screen. ``100dvh`` tracks every rotation /
+     browser-UI change; the ``100%`` line stays as the fallback for engines
+     without dvh (declaration order IS the fallback mechanism — keep it
+     first). */
   height: 100%;
+  height: 100dvh;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
