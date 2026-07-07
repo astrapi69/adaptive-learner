@@ -376,6 +376,58 @@ Geschlossene Enum von Rollen: `article` / `verb` / `noun` /
 Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump —
 nicht inline erweitern.
 
+## Nicht-lateinische Schriften: Umschrift-Konvention
+
+Verbindliche Regeln für Sets, deren Zielsprache eine nicht-lateinische
+Schrift verwendet (Japanisch, Chinesisch, Koreanisch, Griechisch,
+Hindi, ...). Im Content-Repo etabliert und angewendet — Präzedenzen:
+[content#90](https://github.com/astrapi69/adaptive-learner-content/issues/90),
+[content#91](https://github.com/astrapi69/adaptive-learner-content/issues/91);
+Restlücken-Sweeps:
+[content#106](https://github.com/astrapi69/adaptive-learner-content/issues/106),
+[content#107](https://github.com/astrapi69/adaptive-learner-content/issues/107).
+
+**1. Richtungs-Regel.** Umschrift gibt es nur für die nicht-lateinische
+**Ziel**sprache bei lateinisch schreibender Quellsprache (de→ja, de→zh,
+de→ko, ...). Eine nicht-lateinische **Quell**sprache mit lateinischem
+Ziel (hi→en, el→fr) bekommt keine Umschrift — die Lernenden lesen ihre
+eigene Schrift bereits.
+
+**2. Format.** Runde Klammern direkt hinter dem Original:
+こんにちは (konnichiwa). In Theorie-Schritten immer; in Optionen und
+Prompts nur, wo es unschädlich ist (siehe Verrats-Regel).
+
+**3. Verrats-Regel (der Kern).** Die Umschrift darf nie die Lösung
+verraten. Schrift-Lese-Aufgaben, Ton-Erkennung, `word_tiles`-Kacheln
+und Cloze-Satzkontexte bleiben OHNE Umschrift am abgefragten Element;
+Bedeutungs-Aufgaben bekommen sie. Im Zweifel weglassen.
+
+- Positiv-Beispiel (Bedeutungs-Matching, content#91): das Matching-Paar
+  `{"left": "妈 (mā)", "right": "Mama / Mutter"}` — abgefragt wird die
+  Bedeutung, die Lesehilfe verrät also nichts.
+- Negativ-Beispiel (Schrift-Lesen, content#91): die Schrift-Lese-Aufgaben
+  in `ko-a1/01-hangul-lesen` bleiben ohne Umschrift, weil die
+  Romanisierung selbst die Antwort IST (Zeichen → Laut); `가 (ga)` im
+  Prompt würde den Lernenden die Lösung in die Hand geben.
+
+**4. Standard-Romanisierung je Sprache, konsistent pro Set:**
+Japanisch Hepburn, Chinesisch Pinyin MIT Tonzeichen, Koreanisch
+Revidierte Romanisierung, Griechisch/Hindi eine gängige vereinfachte
+Umschrift. Nie Systeme innerhalb eines Sets mischen.
+
+**5. Tipp-Aufgaben** (`free_text` / Cloze-Modus `type`): `accept[0]`
+ist die kanonische romanisierte Form; gängige Varianten zusätzlich
+akzeptieren — Japanisch: Kunrei-Schreibungen (si/ti/tu/hu/zi, z. B.
+`konnitiwa` neben `konnichiwa`); Chinesisch: tonloses Pinyin (`nihao`
+neben `nǐ hǎo`); Koreanisch: verbreitete Alternativen (z. B.
+`annyeong haseyo`). Merksatz: **Eine Aufgabe darf nie an der Tastatur
+der Lernenden scheitern.** Präzedenz (IME-Blocker, content#107): ein
+Cloze, das nur 가 akzeptierte, war ohne koreanisches IME unlösbar —
+das romanisierte `ga` musste zusätzlich akzeptiert werden.
+
+Welcher Typ welches Lernziel trägt: siehe
+[Aufgabentyp-Katalog](#aufgabentyp-katalog-status).
+
 ## Übungsrichtung (v1.46.0 / EXP-018)
 
 Jede Übung akzeptiert ein optionales Feld `direction`, das angibt,
