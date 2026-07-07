@@ -29,6 +29,24 @@ export function isIosSafari(userAgent: string): boolean {
     return !/\b(crios|fxios|edgios|opios|mercury|gsa)\b/i.test(userAgent);
 }
 
+/**
+ * True for an installed iOS PWA running standalone (#1357). On iOS/WKWebView a
+ * new service worker often does not take control on ``skipWaiting`` + reload —
+ * it activates reliably only after the app is fully closed and reopened. The
+ * update banner surfaces that clear-text step ONLY in this exact situation, so
+ * the hint never appears where the normal reload would have worked.
+ */
+export function isIosStandalone(
+    userAgent: string,
+    platform: string,
+    maxTouchPoints: number,
+    standalone: boolean,
+): boolean {
+    return (
+        standalone && isIosDevice(userAgent, platform, maxTouchPoints)
+    );
+}
+
 export interface IosHintInputs {
     userAgent: string;
     platform: string;

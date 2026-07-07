@@ -7,6 +7,7 @@ import { describe, expect, it } from "vitest";
 import {
     isIosDevice,
     isIosSafari,
+    isIosStandalone,
     shouldShowIosInstallHint,
 } from "./ios-install";
 
@@ -36,6 +37,20 @@ describe("isIosSafari", () => {
     it("true for Safari, false for Chrome/Firefox on iOS", () => {
         expect(isIosSafari(IPHONE_SAFARI)).toBe(true);
         expect(isIosSafari(IPHONE_CHROME)).toBe(false);
+    });
+});
+
+describe("isIosStandalone (#1357 update-restart hint gate)", () => {
+    it("true only for an installed (standalone) iOS device", () => {
+        expect(isIosStandalone(IPHONE_SAFARI, "iPhone", 5, true)).toBe(true);
+    });
+    it("false for iOS in a browser tab (not standalone)", () => {
+        expect(isIosStandalone(IPHONE_SAFARI, "iPhone", 5, false)).toBe(false);
+    });
+    it("false for a standalone non-iOS (Android) PWA", () => {
+        expect(
+            isIosStandalone(ANDROID_CHROME, "Linux armv8l", 5, true),
+        ).toBe(false);
     });
 });
 

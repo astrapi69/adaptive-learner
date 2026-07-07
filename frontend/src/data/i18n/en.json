@@ -2926,7 +2926,8 @@
     "update": {
       "message": "A new version is available.",
       "action": "Update",
-      "later": "Later"
+      "later": "Later",
+      "ios_restart_hint": "If nothing changes, close the app and reopen it."
     }
   },
   "share": {

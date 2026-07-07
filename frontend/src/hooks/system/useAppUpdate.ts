@@ -26,6 +26,7 @@ import {
   applyUpdateNow,
   dismissUpdate,
   ensureUpdateStoreInit,
+  maybeRecheckForUpdate,
 } from "../../lib/pwa/updateStore";
 
 export interface AppUpdateState {
@@ -48,6 +49,23 @@ export function useAppUpdate(): AppUpdateState {
   useEffect(() => {
     ensureUpdateStoreInit(online);
   }, [online]);
+
+  // Re-check when the app returns to the foreground (#1357). A backgrounded iOS
+  // standalone PWA suspends the version.json poll + the service worker, so a
+  // returning user would otherwise stay on a stale build until a full relaunch.
+  // The store throttles the poll, and reads ``navigator.onLine`` fresh at call
+  // time so a stale ``online`` closure never blocks a genuine re-check.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      const isOnline =
+        typeof navigator === "undefined" || navigator.onLine !== false;
+      maybeRecheckForUpdate(isOnline);
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, []);
 
   // Suppress the banner once the user has accepted an update — within the quiet
   // window or for the already-accepted version (#846). Read per-render so the

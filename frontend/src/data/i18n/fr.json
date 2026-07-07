@@ -2926,7 +2926,8 @@
     "update": {
       "message": "Une nouvelle version est disponible.",
       "action": "Mettre à jour",
-      "later": "Plus tard"
+      "later": "Plus tard",
+      "ios_restart_hint": "Si rien ne change, ferme l'application et rouvre-la."
     }
   },
   "share": {

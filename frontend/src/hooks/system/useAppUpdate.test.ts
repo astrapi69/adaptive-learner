@@ -26,7 +26,17 @@ vi.mock("../../lib/pwa/sw-update", async (importOriginal) => {
 });
 
 import { useAppUpdate } from "./useAppUpdate";
-import { resetUpdateStore } from "../../lib/pwa/updateStore";
+import {
+  getUpdateSnapshot,
+  resetUpdateStore,
+} from "../../lib/pwa/updateStore";
+
+function setVisibility(state: "visible" | "hidden") {
+  Object.defineProperty(document, "visibilityState", {
+    value: state,
+    configurable: true,
+  });
+}
 
 function mockFetchVersion(version: string) {
   globalThis.fetch = vi.fn(async () => ({
@@ -37,6 +47,7 @@ function mockFetchVersion(version: string) {
 
 afterEach(() => {
   online = true;
+  setVisibility("visible");
   activateInBackground.mockClear();
   resetUpdateStore();
   localStorage.clear();
@@ -121,6 +132,39 @@ describe("useAppUpdate", () => {
     const { result } = renderHook(() => useAppUpdate());
     expect(result.current.updateAvailable).toBe(false);
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  // #1357: a backgrounded iOS PWA suspends the poll; returning to the
+  // foreground re-runs detection. Here the mount check is skipped offline, and
+  // the visibilitychange handler (reading navigator.onLine) runs it.
+  it("re-checks for updates on foreground when the mount check was skipped offline (#1357)", async () => {
+    online = false; // mount offline → no init poll
+    const fetchSpy = vi.fn();
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    const { result } = renderHook(() => useAppUpdate());
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    // Foregrounded and online again: the handler runs passive detection.
+    mockFetchVersion("999.0.0");
+    setVisibility("visible");
+    act(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await waitFor(() => expect(result.current.updateAvailable).toBe(true));
+  });
+
+  it("does not re-check while the app is still hidden (#1357)", () => {
+    online = false;
+    const fetchSpy = vi.fn();
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    renderHook(() => useAppUpdate());
+
+    setVisibility("hidden");
+    act(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(getUpdateSnapshot().updateAvailable).toBe(false);
   });
 
   // Regression pin (#663): the banner is persistent — no auto-dismiss timer.

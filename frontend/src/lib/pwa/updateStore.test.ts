@@ -24,9 +24,12 @@ import {
   checkUpdateNow,
   dismissUpdate,
   ensureUpdateStoreInit,
+  FOREGROUND_RECHECK_THROTTLE_MS,
   getUpdateSnapshot,
+  maybeRecheckForUpdate,
   resetUpdateStore,
 } from "./updateStore";
+import { CURRENT_BUILD } from "./sw-update";
 
 function mockFetchVersion(version: string) {
   globalThis.fetch = vi.fn(async () => ({
@@ -165,6 +168,80 @@ describe("applyUpdateNow (clears both indicators)", () => {
     expect(
       localStorage.getItem("adaptive-learner.update.accepted_hash"),
     ).toBe("bbb2222");
+  });
+});
+
+describe("maybeRecheckForUpdate (foreground re-check #1357)", () => {
+  it("runs detection on the first foreground before init started", async () => {
+    mockFetchVersion("999.0.0");
+    maybeRecheckForUpdate(true, 1000);
+    await vi.waitFor(() =>
+      expect(getUpdateSnapshot().updateAvailable).toBe(true),
+    );
+  });
+
+  it("flags a newly-deployed build on foreground — no explicit About check needed", async () => {
+    // App started up to date (deployed version == running build).
+    mockFetchVersion(CURRENT_BUILD.version);
+    ensureUpdateStoreInit(true, 0);
+    await vi.waitFor(() =>
+      expect(getUpdateSnapshot().latestVersion).toBe(CURRENT_BUILD.version),
+    );
+    expect(getUpdateSnapshot().updateAvailable).toBe(false);
+
+    // A newer build lands; the user returns past the throttle window.
+    mockFetchVersion("999.0.0");
+    maybeRecheckForUpdate(true, FOREGROUND_RECHECK_THROTTLE_MS + 1);
+    await vi.waitFor(() =>
+      expect(getUpdateSnapshot().updateAvailable).toBe(true),
+    );
+    expect(getUpdateSnapshot().phase).toBe("idle"); // passive, not an explicit check
+  });
+
+  it("does not re-flag when the same build is still deployed", async () => {
+    mockFetchVersion(CURRENT_BUILD.version);
+    ensureUpdateStoreInit(true, 0);
+    await vi.waitFor(() =>
+      expect(getUpdateSnapshot().latestVersion).toBe(CURRENT_BUILD.version),
+    );
+    mockFetchVersion(CURRENT_BUILD.version);
+    maybeRecheckForUpdate(true, FOREGROUND_RECHECK_THROTTLE_MS + 1);
+    // Give the async poll a tick, then assert it stayed false.
+    await new Promise((r) => setTimeout(r, 0));
+    expect(getUpdateSnapshot().updateAvailable).toBe(false);
+  });
+
+  it("throttles: a second foreground within the window does not poll", async () => {
+    mockFetchVersion(CURRENT_BUILD.version);
+    ensureUpdateStoreInit(true, 1000);
+    await vi.waitFor(() =>
+      expect(getUpdateSnapshot().latestVersion).toBe(CURRENT_BUILD.version),
+    );
+
+    const fetchSpy = vi.fn();
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    maybeRecheckForUpdate(true, 1000 + FOREGROUND_RECHECK_THROTTLE_MS - 1);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("polls again once the throttle window has elapsed", async () => {
+    mockFetchVersion(CURRENT_BUILD.version);
+    ensureUpdateStoreInit(true, 1000);
+    await vi.waitFor(() =>
+      expect(getUpdateSnapshot().latestVersion).toBe(CURRENT_BUILD.version),
+    );
+    mockFetchVersion("999.0.0");
+    maybeRecheckForUpdate(true, 1000 + FOREGROUND_RECHECK_THROTTLE_MS);
+    await vi.waitFor(() =>
+      expect(getUpdateSnapshot().updateAvailable).toBe(true),
+    );
+  });
+
+  it("does not poll while offline", () => {
+    const fetchSpy = vi.fn();
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    maybeRecheckForUpdate(false, 5000);
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
 
