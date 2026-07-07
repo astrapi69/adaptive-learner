@@ -1,17 +1,22 @@
 # EXP-042: Content-Engine — kanonisches internes Format + Source-Adapter-Grenze
 
 **Kategorie:** Querschnitt (Architektur-Grenze, Lib-Extraktions-Vorbereitung)
-**Phase:** laufend / Fundament
+**Phase:** ausgeliefert (Boundary + Extraktion) / Fundament
 **Prioritaet:** Mittel-Hoch
 **Abhaengig von:** EXP-039 (JSON-Schema als Single Source of Truth), EXP-002
 (Content-Repository), EXP-003 (Lektionsformat)
 **Issue:** astrapi69/adaptive-learner#1309
-**Status:** Design **+** erste Abgrenzung umgesetzt. Dieses Dokument haelt die
-Architektur-Entscheidung fest; der begleitende PR zieht die Engine-Grenze
-**verhaltensgleich** (kein Feature). Ein Mehrdatei-Adapter ist **zurueckgestellt**
-(kommt nur bei konkretem Projekt-/Nutzer-Bedarf, dann als neu definiertes Format —
-kein Bezug auf das bereits entfernte `v1.4-preview`-Template); die echte
-Library-Extraktion ist ebenfalls Folge-Arbeit (Abschnitt 7).
+**Status:** Boundary UND Library-Extraktion **ausgeliefert**. Die Engine ist als
+eigenständiges npm-Paket [`learn-content-engine`](https://github.com/astrapi69/learn-content-engine)
+extrahiert, publiziert und wird von der App konsumiert
+(`learn-content-engine@0.4.0`, gepinnt in `frontend/package.json`, App-vs-Engine-
+Paritätstest); die Content-Repos spiegeln denselben gepinnten Engine-Release. Die
+**Schema-Hoheit bleibt vorerst in der App-Pydantic** (`schema.py`, EXP-039); sie
+kann später zur Engine wandern. Ein Mehrdatei-Adapter ist weiterhin
+**zurückgestellt** (kommt nur bei konkretem Projekt-/Nutzer-Bedarf, dann als neu
+definiertes Format). Dieses Dokument hält die ursprüngliche Architektur-
+Entscheidung fest; der Abschnitt-4/7-Wortlaut unten beschreibt den Stand VOR der
+Extraktion und bleibt zur Nachvollziehbarkeit stehen.
 
 > Dieses Dokument definiert die **Content-Engine-Grenze**: ein kanonisches
 > internes Format, ein Source-Adapter-Muster, und die Naht, an der die Engine
