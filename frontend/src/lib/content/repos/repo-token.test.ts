@@ -1,6 +1,8 @@
 /**
  * Tests for the per-repo token store (EXP-023 Phase B). Tokens live in
- * localStorage, one entry per source, falling back to the shared token.
+ * localStorage, one entry per source. The shared community-PR PAT is NOT a
+ * content-read fallback (#1438): a repo without its own per-repo token is
+ * public and resolves an empty token (→ ``raw``).
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -39,9 +41,10 @@ describe("per-repo token store", () => {
     expect(hasRepoToken("jane/a")).toBe(false);
   });
 
-  it("falls back to the shared github token when no per-repo token", () => {
+  it("does NOT fall back to the shared github token; a per-repo token wins (#1438)", () => {
     store.set("adaptive-learner.github_token", "shared");
-    expect(resolveRepoToken("jane/a")).toBe("shared");
+    // No per-repo token → public → empty (read via raw), never the shared PAT.
+    expect(resolveRepoToken("jane/a")).toBe("");
     writeRepoToken("jane/a", "specific");
     expect(resolveRepoToken("jane/a")).toBe("specific");
   });
@@ -65,9 +68,14 @@ describe("official/public source never resolves the shared PAT (#1429)", () => {
     expect(resolveRepoToken("bundled:fr-a1")).toBe("");
   });
 
-  it("still applies the shared token to a genuine user repo", () => {
+  it("never applies the shared PAT to a user repo without its own token (#1438)", () => {
     store.set("adaptive-learner.github_token", "shared");
-    expect(resolveRepoToken("jane/private-content")).toBe("shared");
+    // A public user repo (no per-repo token) reads via raw, not via the shared
+    // authoring PAT on the throttled contents API.
+    expect(resolveRepoToken("jane/public-content")).toBe("");
+    // A genuinely private repo carries its OWN per-repo token.
+    writeRepoToken("coach/private-content", "coach_token");
+    expect(resolveRepoToken("coach/private-content")).toBe("coach_token");
   });
 
   it("honours an explicit per-repo token on the official source (opt-in)", () => {

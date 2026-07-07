@@ -4,27 +4,25 @@
  * Each connected private/coach repo can carry its own read-only token. To
  * keep secrets OUT of the exportable plugin settings (where the repo list
  * lives), tokens are stored separately — one localStorage entry per repo
- * source, mirroring the existing shared-token pattern
- * (``adaptive-learner.github_token``). A repo with no per-repo token falls
- * back to that shared token, so public repos need nothing.
+ * source. A repo with no per-repo token is treated as public.
  *
  * This is the browser (Dexie-mode) store. In API mode the shared
- * server-side token (secrets.yaml) remains the fallback; per-repo
+ * server-side token (secrets.yaml) is the authoring credential; per-repo
  * server-side secrets are a Phase C concern.
  *
- * Public-vs-private weiche (#1429): the official/bundled source is public and
- * MUST resolve NO token, so the CORS-safe fetcher always reads it from
- * ``raw.githubusercontent.com`` (ungedrosselt) instead of forcing the shared
- * PAT onto the ``api.github.com`` contents endpoint (60/h unauthenticated →
- * 401/403, or 401 on an expired PAT). Only a genuinely private/coach repo (its
- * OWN per-repo token, or the shared PAT as its explicit read credential) uses
- * the authenticated contents API.
+ * Public-vs-private weiche (#1429/#1438): the weiche is by repo TYPE, not by
+ * "is any token configured". Only a repo with its OWN per-repo token (a
+ * private/coach repo) resolves a token and reads via the authenticated
+ * ``api.github.com`` contents endpoint. Everything without a per-repo token —
+ * the official/bundled source AND public user repos — resolves NO token, so
+ * the CORS-safe fetcher reads from ``raw.githubusercontent.com`` (ungedrosselt,
+ * no preflight). The shared ``adaptive-learner.github_token`` is the
+ * community-PR authoring credential ONLY; it is never a content-read fallback,
+ * so it can no longer be forced onto a public repo's ``contents`` endpoint
+ * (60/h unauthenticated → 401/403, or 401 on an expired PAT).
  */
 
-import { isOfficialSource } from "./source-identity";
-
 const PREFIX = "adaptive-learner.content_repo_token::";
-const SHARED_KEY = "adaptive-learner.github_token";
 
 function safeGet(key: string): string {
   try {
@@ -60,17 +58,24 @@ export function hasRepoToken(source: string): boolean {
 }
 
 /**
- * The token to use for ``source``: the per-repo token if present, else the
- * shared GitHub token, else an empty string (public access).
+ * The read token to use for ``source``: its own per-repo token if present,
+ * else an empty string (public access → ``raw``).
  *
- * The official/bundled source is public and always resolves an empty string
- * (#1429), so it is read from ``raw`` and never carries the shared PAT onto
- * the throttled ``contents`` API. A per-repo token set directly on the
- * official source is still honoured (an explicit opt-in), but the shared-PAT
- * fallback never applies to it.
+ * The weiche is by repo TYPE, not by "is any token configured" (#1429/#1438):
+ * a private/coach repo carries its OWN per-repo token (entered in the add
+ * form, or embedded in the invitation code — {@link writeRepoToken}) and reads
+ * via the authenticated ``contents`` API. Everything without a per-repo token
+ * — the official/bundled source AND public user repos alike — resolves an
+ * empty string and reads from ``raw`` (ungedrosselt, no CORS preflight).
+ *
+ * The shared ``adaptive-learner.github_token`` is the community-PR *authoring*
+ * credential (consumed directly by ``github-api.ts``); it is deliberately NOT
+ * a content-READ fallback. Falling it onto a public user repo forced that repo
+ * onto the throttled ``contents`` endpoint (60/h unauthenticated → 401/403, or
+ * 401 on an expired PAT) — the "Access denied" seen when adding a public repo
+ * (#1438). Private repos never depend on it: they always carry a per-repo
+ * token, so dropping the fallback loses no legitimate access.
  */
 export function resolveRepoToken(source: string): string {
-  const perRepo = safeGet(PREFIX + source);
-  if (perRepo) return perRepo;
-  return isOfficialSource(source) ? "" : safeGet(SHARED_KEY);
+  return safeGet(PREFIX + source);
 }
