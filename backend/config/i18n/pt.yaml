@@ -2667,6 +2667,7 @@ pwa:
     message: "Há uma nova versão disponível."
     action: "Atualizar"
     later: "Mais tarde"
+    ios_restart_hint: "Se nada mudar, feche o app e abra novamente."
 share:
   menu:
     heading: "Compartilhar"

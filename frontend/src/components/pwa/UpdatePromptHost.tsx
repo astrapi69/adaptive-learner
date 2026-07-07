@@ -12,7 +12,20 @@
 import UpdatePrompt from "../../shared/feedback/UpdatePrompt";
 import { useAppUpdate } from "../../hooks/system/useAppUpdate";
 import { useI18n } from "../../hooks/ui/useI18n";
+import { isStandalone } from "../../lib/pwa/install";
+import { isIosStandalone } from "../../lib/pwa/ios-install";
 import { resolveStorageMode } from "../../storage";
+
+/** Whether this tab is an installed iOS PWA (standalone display-mode). */
+function detectIosStandalone(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return isIosStandalone(
+    navigator.userAgent,
+    navigator.platform,
+    navigator.maxTouchPoints ?? 0,
+    isStandalone(),
+  );
+}
 
 export default function UpdatePromptHost() {
   const { t } = useI18n();
@@ -22,6 +35,16 @@ export default function UpdatePromptHost() {
   if (resolveStorageMode() === "api") return null;
   if (!updateAvailable) return null;
 
+  // #1357 — on an installed iOS PWA, skip-waiting + reload often does not
+  // activate the new worker; offer the clear-text "close and reopen" step so a
+  // no-op reload never leaves the user stranded on the stale build.
+  const iosHint = detectIosStandalone()
+    ? t(
+        "pwa.update.ios_restart_hint",
+        "If nothing changes, close the app and reopen it.",
+      )
+    : undefined;
+
   return (
     <UpdatePrompt
       message={t("pwa.update.message", "A new version is available.")}
@@ -29,6 +52,7 @@ export default function UpdatePromptHost() {
       dismissLabel={t("pwa.update.later", "Later")}
       onUpdate={applyUpdate}
       onDismiss={dismiss}
+      hint={iosHint}
     />
   );
 }

@@ -37,6 +37,20 @@ import {
 
 const LAST_CHECKED_KEY = "adaptive-learner.update.lastCheckedAt";
 
+/**
+ * Minimum gap between two PASSIVE foreground re-checks (#1357). A backgrounded
+ * iOS standalone PWA suspends its version.json poll and its service worker, so
+ * the ONLY reliable moment to re-detect a new build is when the user brings the
+ * app back to the foreground. We re-check on ``visibilitychange`` — but not on
+ * every focus flip: 15 minutes is chosen because GitHub Pages serves
+ * ``version.json`` with ``max-age=600`` (10 min, see version-check.ts), so
+ * checking more often than the edge-cache TTL yields no new signal, while a user
+ * genuinely returning after a break (the common iOS case) is always past the
+ * window and gets an immediate check. Rapid tab-switching costs at most ~4
+ * network round-trips per hour.
+ */
+export const FOREGROUND_RECHECK_THROTTLE_MS = 15 * 60 * 1000;
+
 /** Result phase of the last EXPLICIT check (About page). */
 export type CheckPhase = "idle" | "checking" | UpdateCheckStatus;
 
@@ -87,6 +101,14 @@ function initialState(): UpdateStoreState {
 
 let state: UpdateStoreState = initialState();
 let initStarted = false;
+/**
+ * Epoch-ms of the last PASSIVE poll (init or foreground re-check), in memory
+ * only. On iOS the PWA is suspended, not reloaded, when backgrounded, so this
+ * value survives the background→foreground round-trip that a reload-based
+ * tracker would lose; a genuine app relaunch runs {@link ensureUpdateStoreInit}
+ * afresh anyway. Used solely to throttle {@link maybeRecheckForUpdate}.
+ */
+let lastPassiveCheckAt: number | null = null;
 const listeners = new Set<() => void>();
 
 function emit(): void {
@@ -110,54 +132,106 @@ export function getUpdateSnapshot(): UpdateStoreState {
 }
 
 /**
- * Passive one-time detection: fetch version.json and wire the service-worker
- * waiting-worker detection. Only ever RAISES ``updateAvailable`` — an explicit
- * check is what can clear it. Kicks in once; skipped while offline so a later
- * online start still runs it.
+ * Repeatable passive poll (#1357): fetch version.json, ask the service worker
+ * to re-check for a new build, and raise ``updateAvailable`` on a newer
+ * version/hash or a waiting worker. Only ever RAISES the flag — an explicit
+ * check is what can clear it. Records the poll time so the foreground re-check
+ * can throttle itself. ``now`` is injectable for tests.
  */
-export function ensureUpdateStoreInit(online: boolean): void {
-  if (initStarted || !online) return;
-  initStarted = true;
+async function runPassivePoll(online: boolean, now: number): Promise<void> {
+  if (!online) return;
+  lastPassiveCheckAt = now;
 
-  void (async () => {
-    const latest = await fetchLatestVersion(versionJsonUrl());
-    if (latest) {
-      setState({
-        latestVersion: latest.version,
-        latestHash: knownBuildHash(latest),
-      });
-    }
-    if (isUpdateAvailable(CURRENT_BUILD, latest)) {
-      setState({ updateAvailable: true });
-    }
-  })();
+  const latest = await fetchLatestVersion(versionJsonUrl());
+  if (latest) {
+    setState({
+      latestVersion: latest.version,
+      latestHash: knownBuildHash(latest),
+    });
+  }
+  if (isUpdateAvailable(CURRENT_BUILD, latest)) {
+    setState({ updateAvailable: true });
+  }
 
   if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
-    void navigator.serviceWorker
-      .getRegistration()
-      .then((reg) => {
-        if (!reg) return;
-        if (reg.waiting) setState({ updateAvailable: true });
-        reg.addEventListener("updatefound", () => {
-          const installing = reg.installing;
-          if (!installing) return;
-          installing.addEventListener("statechange", () => {
-            if (
-              installing.state === "installed" &&
-              navigator.serviceWorker.controller
-            ) {
-              setState({ updateAvailable: true });
-            }
-          });
-        });
-        void reg.update().catch(() => {
-          /* best-effort */
-        });
-      })
-      .catch(() => {
-        /* no SW — version.json path still covers it */
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) return;
+      if (reg.waiting) setState({ updateAvailable: true });
+      await reg.update().catch(() => {
+        /* best-effort — version.json path still covers it */
       });
+      if (reg.waiting) setState({ updateAvailable: true });
+    } catch {
+      /* no SW — version.json path already ran */
+    }
   }
+}
+
+/**
+ * Wire the one-time service-worker ``updatefound`` listener so a new worker that
+ * finishes installing AFTER a poll returns still raises ``updateAvailable``.
+ * Attached once (from {@link ensureUpdateStoreInit}); the repeatable
+ * {@link runPassivePoll} covers the already-waiting case on every foreground.
+ */
+function wireServiceWorkerListener(): void {
+  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
+    return;
+  }
+  void navigator.serviceWorker
+    .getRegistration()
+    .then((reg) => {
+      if (!reg) return;
+      reg.addEventListener("updatefound", () => {
+        const installing = reg.installing;
+        if (!installing) return;
+        installing.addEventListener("statechange", () => {
+          if (
+            installing.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            setState({ updateAvailable: true });
+          }
+        });
+      });
+    })
+    .catch(() => {
+      /* no SW — version.json path covers it */
+    });
+}
+
+/**
+ * Passive detection at app start: run the first poll and wire the SW listener.
+ * Kicks in once; skipped while offline so a later online start still runs it.
+ * ``now`` is injectable for tests.
+ */
+export function ensureUpdateStoreInit(online: boolean, now = Date.now()): void {
+  if (initStarted || !online) return;
+  initStarted = true;
+  wireServiceWorkerListener();
+  void runPassivePoll(online, now);
+}
+
+/**
+ * Re-run passive detection when the app returns to the foreground (#1357).
+ * Bound to ``visibilitychange`` by {@link useAppUpdate}. Throttled to at most
+ * one poll per {@link FOREGROUND_RECHECK_THROTTLE_MS}; skipped while offline.
+ * If detection never started (a first foreground before mount effects ran), it
+ * defers to {@link ensureUpdateStoreInit}. ``now`` is injectable for tests.
+ */
+export function maybeRecheckForUpdate(online: boolean, now = Date.now()): void {
+  if (!online) return;
+  if (!initStarted) {
+    ensureUpdateStoreInit(online, now);
+    return;
+  }
+  if (
+    lastPassiveCheckAt !== null &&
+    now - lastPassiveCheckAt < FOREGROUND_RECHECK_THROTTLE_MS
+  ) {
+    return;
+  }
+  void runPassivePoll(online, now);
 }
 
 /**
@@ -229,5 +303,6 @@ export function bannerVisible(): boolean {
 export function resetUpdateStore(): void {
   state = initialState();
   initStarted = false;
+  lastPassiveCheckAt = null;
   listeners.clear();
 }

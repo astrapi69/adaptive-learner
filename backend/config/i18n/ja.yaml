@@ -2667,6 +2667,7 @@ pwa:
     message: "新しいバージョンが利用可能です。"
     action: "更新"
     later: "後で"
+    ios_restart_hint: "変化がなければ、アプリを閉じて再度開いてください。"
 share:
   menu:
     heading: "共有"

@@ -2667,6 +2667,7 @@ pwa:
     message: "Yeni bir sürüm mevcut."
     action: "Güncelle"
     later: "Sonra"
+    ios_restart_hint: "Bir şey değişmezse, uygulamayı kapatıp yeniden açın."
 share:
   menu:
     heading: "Paylaş"

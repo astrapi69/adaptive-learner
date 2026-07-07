@@ -2677,6 +2677,7 @@ pwa:
     message: "Versi baru telah tersedia."
     action: "Perbarui"
     later: "Nanti"
+    ios_restart_hint: "Jika tidak ada perubahan, tutup aplikasi lalu buka lagi."
 share:
   menu:
     heading: "Bagikan"

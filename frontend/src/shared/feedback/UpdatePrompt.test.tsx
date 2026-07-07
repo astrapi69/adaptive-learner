@@ -49,6 +49,27 @@ describe("UpdatePrompt", () => {
     expect(message.textContent?.trim()).not.toBe("");
   });
 
+  it("renders no hint line by default", () => {
+    setup();
+    expect(screen.queryByTestId("update-prompt-hint")).toBeNull();
+  });
+
+  it("renders the iOS restart hint when provided (#1357)", () => {
+    render(
+      <UpdatePrompt
+        message="A new version is available."
+        updateLabel="Update"
+        dismissLabel="Later"
+        onUpdate={vi.fn()}
+        onDismiss={vi.fn()}
+        hint="If nothing changes, close the app and reopen it."
+      />,
+    );
+    expect(screen.getByTestId("update-prompt-hint")).toHaveTextContent(
+      "If nothing changes, close the app and reopen it.",
+    );
+  });
+
   it("fires onUpdate / onDismiss", () => {
     const { onUpdate, onDismiss } = setup();
     fireEvent.click(screen.getByTestId("update-prompt-apply"));

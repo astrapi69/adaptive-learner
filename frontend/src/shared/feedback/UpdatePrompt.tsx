@@ -50,6 +50,12 @@ export interface UpdatePromptProps {
   dismissLabel: string;
   onUpdate: () => void;
   onDismiss: () => void;
+  /**
+   * Optional secondary line under the message (#1357). Used for the iOS
+   * standalone clear-text fallback ("close the app and reopen it") when
+   * skip-waiting + reload does not reliably activate a new worker on WKWebView.
+   */
+  hint?: string;
   testId?: string;
 }
 
@@ -60,6 +66,7 @@ export default function UpdatePrompt({
   dismissLabel,
   onUpdate,
   onDismiss,
+  hint,
   testId,
 }: UpdatePromptProps) {
   return (
@@ -69,13 +76,23 @@ export default function UpdatePrompt({
       data-testid={testId ?? "update-prompt"}
       className="fixed inset-x-0 bottom-0 z-[9999] flex items-center justify-between gap-3 border-t border-border bg-bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-sm text-fg-primary shadow-md"
     >
-      <div className="flex min-w-0 items-center gap-2">
-        <RefreshCw
-          size={16}
-          aria-hidden="true"
-          className="shrink-0 text-fg-secondary"
-        />
-        <span className="truncate text-fg-primary">{message}</span>
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <RefreshCw
+            size={16}
+            aria-hidden="true"
+            className="shrink-0 text-fg-secondary"
+          />
+          <span className="truncate text-fg-primary">{message}</span>
+        </div>
+        {hint ? (
+          <span
+            data-testid="update-prompt-hint"
+            className="pl-6 text-xs text-fg-secondary"
+          >
+            {hint}
+          </span>
+        ) : null}
       </div>
       <div className="flex shrink-0 items-center gap-2">
         <button
