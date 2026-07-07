@@ -57,6 +57,7 @@ Baseline zu committen.
 | Antwort-Umschalter — Auflösung | `answer-toggle/aufloesung.png` | `answer-toggle/aufloesung.mobile.png` | v1.94.1 |
 | GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 |
 | QR-Code — App teilen | `qr-code/share-app.png` | — (Desktop-Dialog) | v1.94.1 |
+| Zusammenfassungs-Sektionen — Settings-Unterbereich (#1411) | `summary-sections/settings.png` | `summary-sections/settings.mobile.png` | ausstehend |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
 > konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.

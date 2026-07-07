@@ -225,6 +225,19 @@ async function gotoQrModal(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Learning scrolled to the "Lesson summary" sub-area
+ *  (#1411 — one toggle per summary section). */
+async function gotoSummarySections(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const section = page.getByTestId("settings-section-summary-sections");
+    if (!(await section.count())) return false;
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 /**
  * Every per-feature baseline. Kebab-case ``<feature-folder>/<shot>`` paths;
  * the test loop appends the viewport suffix + ``.png``.
@@ -328,6 +341,9 @@ const FEATURES: FeatureShot[] = [
 
     // --- QR-code app sharing --------------------------------------------
     {path: "qr-code/share-app", setup: gotoQrModal, desktopOnly: true},
+
+    // --- Lesson-summary section toggles (#1411) --------------------------
+    {path: "summary-sections/settings", setup: gotoSummarySections},
 ];
 
 for (const feature of FEATURES) {
