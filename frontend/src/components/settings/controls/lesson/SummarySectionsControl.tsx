@@ -102,18 +102,20 @@ export default function SummarySectionsControl() {
                 enabled ? "" : " opacity-60"
               }`}
             >
-              <label className="flex min-h-11 flex-1 items-center gap-2 text-sm font-medium text-fg-primary">
+              <label className="flex min-h-11 min-w-0 flex-1 items-center gap-2 text-sm font-medium text-fg-primary">
                 <input
                   type="checkbox"
-                  className="h-5 w-5"
+                  className="h-5 w-5 shrink-0"
                   data-testid={`settings-summary-section-${id}`}
                   checked={enabled}
                   onChange={(e) => toggle(id, e.target.checked)}
                 />
-                <span className="mr-1 text-fg-muted">{index + 1}.</span>
-                {t(label.key, label.fallback)}
+                <span className="mr-1 shrink-0 text-fg-muted">{index + 1}.</span>
+                <span className="min-w-0 break-words">
+                  {t(label.key, label.fallback)}
+                </span>
               </label>
-              <span className="flex gap-1">
+              <span className="flex shrink-0 gap-1">
                 <Button
                   type="button"
                   variant="outline"
