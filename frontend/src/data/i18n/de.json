@@ -557,7 +557,7 @@
     "explanations_enabled_desc": "Zeigt nach einer Lektion zu jedem Fehler einen kurzen Regeltipp.",
     "section_hints": "Tipps",
     "section_lesson_summary": "Zusammenfassung nach Lektionen",
-    "summary_sections_desc": "Wähle, welche Bereiche die Abschluss-Zusammenfassung einer Lektion zeigt. Die Aktionen zum Weitermachen sind immer sichtbar.",
+    "summary_sections_desc": "Wähle, welche Bereiche die Abschluss-Zusammenfassung einer Lektion zeigt und in welcher Reihenfolge. Die Aktionen zum Weitermachen sind immer sichtbar.",
     "summary_section_result": "Ergebnis und Statistik",
     "summary_section_xp": "XP-Belohnung",
     "summary_section_favorite": "Favoriten-Hinweis",

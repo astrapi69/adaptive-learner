@@ -557,7 +557,7 @@
     "explanations_enabled_desc": "Tras una lección, muestra un breve consejo de regla por cada error.",
     "section_hints": "Pistas",
     "section_lesson_summary": "Resumen tras las lecciones",
-    "summary_sections_desc": "Elige qué secciones muestra el resumen al final de una lección. Las acciones para continuar siempre están visibles.",
+    "summary_sections_desc": "Elige qué secciones muestra el resumen al final de una lección y en qué orden. Las acciones para continuar siempre están visibles.",
     "summary_section_result": "Resultado y estadísticas",
     "summary_section_xp": "Recompensa de XP",
     "summary_section_favorite": "Aviso de favoritos",

@@ -1,11 +1,10 @@
 /**
- * useSummarySections (#1411).
+ * useSummarySections (#1426, generalises #1411).
  *
- * Live-reads which lesson-summary sections are enabled. Re-reads when the
- * preference changes in this tab (``SUMMARY_SECTIONS_CHANGE_EVENT``) or in
- * another tab (native ``storage`` event), so the Settings toggles take effect
- * without a reload. Same pattern as the former ``useCorrectionRoundEnabled``
- * (#1376), which this supersedes.
+ * Live-reads the ordered lesson-summary sections config (which sections are
+ * shown AND in which order). Re-reads when the preference changes in this tab
+ * (``SUMMARY_SECTIONS_CHANGE_EVENT``) or in another tab (native ``storage``
+ * event), so the Settings reorder / toggles take effect without a reload.
  */
 
 import { useEffect, useState } from "react";
@@ -13,11 +12,11 @@ import { useEffect, useState } from "react";
 import {
   SUMMARY_SECTIONS_CHANGE_EVENT,
   readSummarySections,
-  type SummarySectionsPref,
+  type SummarySectionsConfig,
 } from "../../lib/learning/summarySectionsPref";
 
-export function useSummarySections(): SummarySectionsPref {
-  const [sections, setSections] = useState<SummarySectionsPref>(() =>
+export function useSummarySections(): SummarySectionsConfig {
+  const [sections, setSections] = useState<SummarySectionsConfig>(() =>
     readSummarySections(),
   );
 

@@ -521,7 +521,7 @@ settings:
   explanations_enabled_desc: "पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।"
   section_hints: "संकेत"
   section_lesson_summary: "पाठ के बाद सारांश"
-  summary_sections_desc: "चुनें कि पाठ के अंत में सारांश कौन से खंड दिखाए। आगे बढ़ने की क्रियाएँ हमेशा दिखाई देती हैं।"
+  summary_sections_desc: "चुनें कि पाठ के अंत में सारांश कौन से खंड और किस क्रम में दिखाए। आगे बढ़ने की क्रियाएँ हमेशा दिखाई देती हैं।"
   summary_section_result: "परिणाम और आँकड़े"
   summary_section_xp: "XP इनाम"
   summary_section_favorite: "पसंदीदा संकेत"

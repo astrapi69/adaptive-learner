@@ -522,7 +522,7 @@ settings:
   explanations_enabled_desc: "레슨 후 각 오답에 대해 짧은 규칙 팁을 표시합니다."
   section_hints: "힌트"
   section_lesson_summary: "레슨 후 요약"
-  summary_sections_desc: "레슨이 끝날 때 요약에 표시할 섹션을 선택하세요. 계속 진행하기 위한 동작은 항상 표시됩니다."
+  summary_sections_desc: "레슨이 끝날 때 요약에 표시할 섹션과 그 순서를 선택하세요. 계속 진행하기 위한 동작은 항상 표시됩니다."
   summary_section_result: "결과 및 통계"
   summary_section_xp: "XP 보상"
   summary_section_favorite: "즐겨찾기 안내"

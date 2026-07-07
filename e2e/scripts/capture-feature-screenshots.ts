@@ -237,7 +237,8 @@ async function gotoQrModal(page: Page): Promise<boolean> {
 }
 
 /** Open Settings → Learning scrolled to the "Lesson summary" sub-area
- *  (#1411 — one toggle per summary section). */
+ *  (#1426 — a reorder list: each summary section has an in-row visibility
+ *  checkbox plus Up/Down buttons; generalises the #1411 toggles). */
 async function gotoSummarySections(page: Page): Promise<boolean> {
     await seedLearner(page);
     await page.goto("/settings?tab=learning");
