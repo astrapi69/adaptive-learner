@@ -10,6 +10,11 @@
  * shared Button primitive + Lucide icons. Reusable across every
  * lesson / review / error-replay player.
  *
+ * #1419: renders the same sticky-bottom footer pattern as the main lesson
+ * viewer's `LessonFooterNav` (#43/#1410) — pinned to the scrollport bottom
+ * with `pb-safe` clearing the iOS home-indicator band — replacing the
+ * `.lesson-nav*` classes whose CSS the Tailwind Phase B migration removed.
+ *
  * @example
  * <LessonStepNav
  *   testIdPrefix="review"
@@ -88,11 +93,14 @@ export default function LessonStepNav({
   labels,
 }: LessonStepNavProps) {
   return (
-    <nav className="lesson-nav" aria-label={labels.navAria}>
+    <nav
+      className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
+      aria-label={labels.navAria}
+    >
       <Button
         type="button"
         variant="outline"
-        className="lesson-nav-prev"
+        className="min-w-[44px]"
         onClick={onPrev}
         disabled={isFirstStep}
         data-testid={`${testIdPrefix}-prev`}
@@ -104,7 +112,7 @@ export default function LessonStepNav({
         (isExerciseStep && !checked ? (
           <Button
             type="button"
-            className="lesson-nav-check"
+            className="ml-auto"
             onClick={onCheck}
             disabled={!answerable}
             title={!answerable ? labels.checkDisabledHint : undefined}
@@ -115,7 +123,7 @@ export default function LessonStepNav({
         ) : (
           <Button
             type="button"
-            className="lesson-nav-next"
+            className="ml-auto"
             onClick={onNext}
             data-testid={`${testIdPrefix}-next`}
           >
