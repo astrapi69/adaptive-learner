@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-anki"
-version = "1.99.0"
+version = "2.0.0"
 description = "Adaptive Learner: AI-extracted Anki flashcard suggestions (Phase 30)."
 authors = ["Asterios Raptis"]
 license = "MIT"
