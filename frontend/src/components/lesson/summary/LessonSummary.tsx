@@ -593,16 +593,35 @@ export default function LessonSummary({
 
       {/* #1426 — the configurable sections, in the user-configured order.
           Only sections the config marks ON are rendered; each keeps its own
-          data self-gate. */}
-      {sections.map(({ id, enabled }) =>
-        enabled ? <Fragment key={id}>{sectionNodes[id]}</Fragment> : null,
-      )}
+          data self-gate.
 
-      {/* #599 — auto-generated explanations + your-vs-correct diff for the
-          run's still-weak text mistakes, gated by its own Settings toggle
-          ("Show error explanations"). Not part of the reorderable set; pinned
-          just above the continue-actions. */}
-      <SummaryExplanations sessionErrors={sessionErrors} t={t} />
+          #1432 — the #599 "why you missed these" mistake review renders
+          immediately ABOVE the correction round (following it wherever the user
+          reorders it), so the review and the drill that fixes those mistakes
+          stay adjacent and ``correction`` is the last content section by
+          default. It is not one of the reorderable sections (its own shared
+          Settings toggle, ``review/reviewPref``), so it is spliced in here
+          rather than added to the order block. */}
+      {sections.map(({ id, enabled }) => {
+        if (!enabled) return null;
+        if (id === "correction") {
+          return (
+            <Fragment key={id}>
+              <SummaryExplanations sessionErrors={sessionErrors} t={t} />
+              {sectionNodes[id]}
+            </Fragment>
+          );
+        }
+        return <Fragment key={id}>{sectionNodes[id]}</Fragment>;
+      })}
+
+      {/* When the correction section is disabled it is not rendered above, so
+          the mistake review (#599) falls back to just above the continue-actions
+          — it is gated by its own toggle and must never be lost with correction
+          off. */}
+      {!isSummarySectionEnabled(sections, "correction") && (
+        <SummaryExplanations sessionErrors={sessionErrors} t={t} />
+      )}
 
       {/* Essential completion navigation — never toggleable, never in the
           reorder list, always pinned at the bottom so the panel can never
