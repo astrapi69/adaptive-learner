@@ -361,6 +361,60 @@ Closed enum of roles: `article` / `verb` / `noun` /
 Adding a role is a minor schema version bump — do not extend it
 inline.
 
+## Non-Latin scripts: transliteration convention
+
+Binding rules for sets whose target language uses a non-Latin script
+(Japanese, Chinese, Korean, Greek, Hindi, ...). Established and applied
+in the content repo — precedents:
+[content#90](https://github.com/astrapi69/adaptive-learner-content/issues/90),
+[content#91](https://github.com/astrapi69/adaptive-learner-content/issues/91);
+remaining-gap sweeps:
+[content#106](https://github.com/astrapi69/adaptive-learner-content/issues/106),
+[content#107](https://github.com/astrapi69/adaptive-learner-content/issues/107).
+
+**1. Direction rule.** Transliteration is only for the non-Latin
+**target** language when the source language writes Latin script
+(de→ja, de→zh, de→ko, ...). A non-Latin **source** language with a
+Latin-script target (hi→en, el→fr) gets no transliteration — the
+learner already reads their own script.
+
+**2. Format.** Round parentheses directly after the original:
+こんにちは (konnichiwa). In theory steps always; in options and
+prompts only where it is harmless (see the non-betrayal rule).
+
+**3. Non-betrayal rule (the core).** The transliteration must never
+give away the solution. Script-reading tasks, tone recognition,
+`word_tiles` tiles and cloze sentence contexts stay WITHOUT
+transliteration on the queried element; meaning tasks get it. When in
+doubt, leave it out.
+
+- Positive example (meaning matching, content#91): the matching pair
+  `{"left": "妈 (mā)", "right": "Mama / Mutter"}` — the queried
+  knowledge is the meaning, so the reading aid betrays nothing.
+- Negative example (script reading, content#91): the
+  `ko-a1/01-hangul-lesen` script-reading exercises stay without
+  transliteration, because the romanization IS the answer
+  (character → sound); `가 (ga)` in the prompt would hand the
+  learner the solution.
+
+**4. Standard romanization per language, consistent within a set:**
+Japanese Hepburn, Chinese Pinyin WITH tone marks, Korean Revised
+Romanization, Greek/Hindi a common simplified transliteration. Never
+mix systems inside one set.
+
+**5. Typing tasks** (`free_text` / cloze `type` mode): `accept[0]` is
+the canonical romanized form; additionally accept common variants —
+Japanese: Kunrei spellings (si/ti/tu/hu/zi, e.g. `konnitiwa` next to
+`konnichiwa`); Chinese: toneless Pinyin (`nihao` next to `nǐ hǎo`);
+Korean: widespread alternatives (e.g. `annyeong haseyo`). Memory
+hook: **an exercise must never fail on the learner's keyboard.**
+Precedent (IME blocker, content#107): a cloze that accepted only 가
+was unsolvable without a Korean IME — the romanized `ga` had to be
+accepted as well.
+
+Which type carries which learning goal: see the
+[exercise type catalog](#exercise-type-catalog-status).
+
 ## Exercise direction (v1.46.0 / EXP-018)
 
 Every exercise accepts an optional `direction` field that
