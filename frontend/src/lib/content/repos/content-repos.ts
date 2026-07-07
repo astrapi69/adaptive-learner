@@ -21,15 +21,19 @@
 import { getStorage } from "../../../storage";
 import { listRepoManifestSets, validateUserRepo } from "./content-repo-validate";
 import { resolveRepoToken } from "./repo-token";
+import {
+  BUNDLED_PREFIX,
+  isOfficialSource,
+  OFFICIAL_SOURCE,
+} from "./source-identity";
+
+/** Re-exported from {@link ./source-identity} so existing importers of
+ *  ``./content-repos`` keep working; the canonical definitions live in the
+ *  cycle-free leaf module shared with ``repo-token``. */
+export { BUNDLED_PREFIX, isOfficialSource, OFFICIAL_SOURCE };
 
 /** Plugin whose settings hold the content sources + the user repos. */
 export const CONTENT_LOADER_PLUGIN = "content-loader";
-
-/** Canonical identifier of the official content repository. */
-export const OFFICIAL_SOURCE = "astrapi69/adaptive-learner-content";
-
-/** Prefix marking a build-time bundled source (also "official"). */
-export const BUNDLED_PREFIX = "bundled:";
 
 /**
  * Technical trust level (EXP-023 Phase B): 0 = unknown (freshly added,
@@ -69,15 +73,6 @@ export interface UserContentRepo {
    *  The learner is a guest, not the owner: re-share / Teilen controls are
    *  hidden for invite-added repos (only the owner shares). */
   shared_via_invite?: boolean;
-}
-
-/**
- * True when a cached set's ``source`` belongs to the official content
- * (the canonical repo or any bundled source). Everything else — a user
- * repo — is user content for badges + filtering.
- */
-export function isOfficialSource(source: string): boolean {
-  return source === OFFICIAL_SOURCE || source.startsWith(BUNDLED_PREFIX);
 }
 
 /**

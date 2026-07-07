@@ -19,6 +19,8 @@ import {
   writeSearchIndexCache,
   type SearchableSet,
 } from "./search-index-loader";
+import { resolveRepoToken } from "./repo-token";
+import { OFFICIAL_SOURCE } from "./source-identity";
 
 function jsonRes(status: number, body: unknown): Response {
   return {
@@ -176,6 +178,31 @@ describe("fetchSearchIndex — caching", () => {
 
     expect(sets).toEqual([]);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("official source: shared PAT set → raw fetch, and cache-fallback intact (#1429)", async () => {
+    localStorage.setItem("adaptive-learner.github_token", "ghp_shared");
+    // The official/public source resolves NO token → raw host, no contents API.
+    const token = resolveRepoToken(OFFICIAL_SOURCE);
+    expect(token).toBe("");
+
+    const fetchMock = vi.fn().mockResolvedValue(jsonRes(200, SAMPLE_INDEX));
+    vi.stubGlobal("fetch", fetchMock);
+    await fetchSearchIndex({ url: OFFICIAL_SOURCE, token });
+    const calledUrl = fetchMock.mock.calls[0][0] as string;
+    expect(calledUrl).toContain("raw.githubusercontent.com");
+    expect(calledUrl).not.toContain("api.github.com");
+
+    // A later network error falls back to the cached index (never blanks).
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new TypeError("Failed to fetch")),
+    );
+    const sets = await fetchSearchIndex(
+      { url: OFFICIAL_SOURCE, token },
+      { forceRefresh: true },
+    );
+    expect(sets).toHaveLength(1);
   });
 });
 

@@ -11,7 +11,17 @@
  * This is the browser (Dexie-mode) store. In API mode the shared
  * server-side token (secrets.yaml) remains the fallback; per-repo
  * server-side secrets are a Phase C concern.
+ *
+ * Public-vs-private weiche (#1429): the official/bundled source is public and
+ * MUST resolve NO token, so the CORS-safe fetcher always reads it from
+ * ``raw.githubusercontent.com`` (ungedrosselt) instead of forcing the shared
+ * PAT onto the ``api.github.com`` contents endpoint (60/h unauthenticated →
+ * 401/403, or 401 on an expired PAT). Only a genuinely private/coach repo (its
+ * OWN per-repo token, or the shared PAT as its explicit read credential) uses
+ * the authenticated contents API.
  */
+
+import { isOfficialSource } from "./source-identity";
 
 const PREFIX = "adaptive-learner.content_repo_token::";
 const SHARED_KEY = "adaptive-learner.github_token";
@@ -52,7 +62,15 @@ export function hasRepoToken(source: string): boolean {
 /**
  * The token to use for ``source``: the per-repo token if present, else the
  * shared GitHub token, else an empty string (public access).
+ *
+ * The official/bundled source is public and always resolves an empty string
+ * (#1429), so it is read from ``raw`` and never carries the shared PAT onto
+ * the throttled ``contents`` API. A per-repo token set directly on the
+ * official source is still honoured (an explicit opt-in), but the shared-PAT
+ * fallback never applies to it.
  */
 export function resolveRepoToken(source: string): string {
-  return safeGet(PREFIX + source) || safeGet(SHARED_KEY);
+  const perRepo = safeGet(PREFIX + source);
+  if (perRepo) return perRepo;
+  return isOfficialSource(source) ? "" : safeGet(SHARED_KEY);
 }

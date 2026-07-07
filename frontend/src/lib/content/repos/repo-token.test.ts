@@ -53,3 +53,28 @@ describe("per-repo token store", () => {
     expect(resolveRepoToken("bob/b")).toBe("tb");
   });
 });
+
+describe("official/public source never resolves the shared PAT (#1429)", () => {
+  it("resolves empty for the official repo even with a shared token set", () => {
+    store.set("adaptive-learner.github_token", "shared");
+    expect(resolveRepoToken("astrapi69/adaptive-learner-content")).toBe("");
+  });
+
+  it("resolves empty for a bundled source even with a shared token set", () => {
+    store.set("adaptive-learner.github_token", "shared");
+    expect(resolveRepoToken("bundled:fr-a1")).toBe("");
+  });
+
+  it("still applies the shared token to a genuine user repo", () => {
+    store.set("adaptive-learner.github_token", "shared");
+    expect(resolveRepoToken("jane/private-content")).toBe("shared");
+  });
+
+  it("honours an explicit per-repo token on the official source (opt-in)", () => {
+    store.set("adaptive-learner.github_token", "shared");
+    writeRepoToken("astrapi69/adaptive-learner-content", "explicit");
+    expect(resolveRepoToken("astrapi69/adaptive-learner-content")).toBe(
+      "explicit",
+    );
+  });
+});
