@@ -275,7 +275,14 @@ export function useContentSetActions({
         prev.map((row) => (row.source === entry.source && row.id === entry.id ? updated : row)),
       );
       setPerSetState((prev) => ({ ...prev, [key]: "done" }));
-      notify.success(t("content.toast.downloaded", "Set downloaded and ready to use."));
+      // #1410 — click-through: this toast sits bottom-right over the lesson
+      // footer's action button when the user opens the set right away
+      // (fully covering it in landscape); passThrough keeps the button
+      // tappable for the toast's whole lifetime.
+      notify.success(
+        t("content.toast.downloaded", "Set downloaded and ready to use."),
+        { passThrough: true },
+      );
     } catch (err) {
       setPerSetState((prev) => ({ ...prev, [key]: "error" }));
       notify.error(t("content.error.download_failed", "Could not download the set."), {

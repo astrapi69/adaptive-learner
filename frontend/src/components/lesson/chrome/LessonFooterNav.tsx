@@ -65,7 +65,7 @@ export default function LessonFooterNav({
       isExerciseStep && onSubmitAndAdvance ? onSubmitAndAdvance : goNext;
     return (
       <nav
-        className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary py-3"
+        className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
         data-testid="lesson-footer"
         aria-label={t("lesson.nav.aria_label", "Step navigation")}
       >
@@ -95,7 +95,7 @@ export default function LessonFooterNav({
 
   return (
     <nav
-      className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary py-3"
+      className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
       data-testid="lesson-footer"
       aria-label={t("lesson.nav.aria_label", "Step navigation")}
     >

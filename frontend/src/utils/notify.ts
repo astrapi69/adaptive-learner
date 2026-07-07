@@ -65,6 +65,24 @@ function truncateForDisplay(message: string): string {
     return message.slice(0, MAX_DISPLAY_LENGTH) + "...";
 }
 
+/**
+ * react-toastify options rendering a toast click-through
+ * (``pointer-events: none``) so it never intercepts a control beneath it —
+ * e.g. the sticky lesson footer's Check/Next buttons, which the bottom-right
+ * toasts overlap (#589 motivation toast; #1410 download-success toast in
+ * landscape). Returns an empty object when not enabled.
+ */
+function passThroughOptions(enabled: boolean | undefined) {
+    return enabled
+        ? {
+              style: {pointerEvents: "none" as const},
+              closeOnClick: false,
+              closeButton: false,
+              draggable: false,
+          }
+        : {};
+}
+
 function ErrorContent({
     displayMessage,
     originalMessage,
@@ -223,23 +241,14 @@ export const notify = {
         recordToast("info", message);
         return toast.info(message, {
             autoClose: opts?.autoClose ?? 8000,
-            // ``passThrough`` makes a purely-informational toast
-            // click-through (pointer-events: none) so it never
-            // intercepts a button beneath it — e.g. the mid-lesson
-            // motivation toast that overlaps the sticky lesson footer
-            // (it blocked the Check/Next buttons; #589 regression).
-            ...(opts?.passThrough
-                ? {
-                      style: {pointerEvents: "none"},
-                      closeOnClick: false,
-                      closeButton: false,
-                      draggable: false,
-                  }
-                : {}),
+            ...passThroughOptions(opts?.passThrough),
         });
     },
-    success: (message: string) => {
+    success: (message: string, opts?: Pick<InfoOptions, "passThrough">) => {
         recordToast("success", message);
-        return toast.success(message, {autoClose: 5000});
+        return toast.success(message, {
+            autoClose: 5000,
+            ...passThroughOptions(opts?.passThrough),
+        });
     },
 };

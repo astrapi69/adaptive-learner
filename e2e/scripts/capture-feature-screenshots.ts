@@ -51,6 +51,15 @@ const VIEWPORTS = [
     {key: "mobile", size: {width: 375, height: 812}, suffix: ".mobile"},
 ] as const;
 
+/** iPhone-landscape capture size (#1410) — opt-in per feature via
+ *  ``landscape: true`` for surfaces whose bottom action bar must stay
+ *  reachable in landscape (the lesson runner). */
+const LANDSCAPE_VIEWPORT = {
+    key: "landscape",
+    size: {width: 812, height: 375},
+    suffix: ".landscape",
+} as const;
+
 /** One capturable feature state. */
 interface FeatureShot {
     /** ``<feature-folder>/<shot>`` — kebab-case, no extension, no viewport
@@ -60,6 +69,8 @@ interface FeatureShot {
     setup: (page: Page) => Promise<boolean>;
     /** Capture desktop only (e.g. a desktop-anchored dialog). Default: both. */
     desktopOnly?: boolean;
+    /** ALSO capture an iPhone-landscape (812×375) baseline (#1410). */
+    landscape?: boolean;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -324,7 +335,10 @@ const FEATURES: FeatureShot[] = [
     {path: "progress-hub/meine-pfade", setup: (p) => gotoProgressTab(p, "paths")},
 
     // --- Matching animation / resolution --------------------------------
-    {path: "matching-animation/matching-pairing", setup: gotoLessonMatching},
+    // ``landscape: true`` (#1410): the exercise mask incl. the sticky
+    // Prüfen/Weiter footer gets an iPhone-landscape baseline on top of the
+    // portrait one.
+    {path: "matching-animation/matching-pairing", setup: gotoLessonMatching, landscape: true},
     {path: "matching-animation/matching-resolved", setup: gotoLessonMatchingResolved},
 
     // --- Lesson modes (practice / exam / timed) -------------------------
@@ -347,7 +361,10 @@ const FEATURES: FeatureShot[] = [
 ];
 
 for (const feature of FEATURES) {
-    for (const vp of VIEWPORTS) {
+    const viewports = feature.landscape
+        ? [...VIEWPORTS, LANDSCAPE_VIEWPORT]
+        : [...VIEWPORTS];
+    for (const vp of viewports) {
         if (feature.desktopOnly && vp.key !== "desktop") continue;
         test(`${feature.path} @ ${vp.key}`, async ({page}) => {
             await page.setViewportSize(vp.size);

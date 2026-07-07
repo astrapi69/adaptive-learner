@@ -29,9 +29,32 @@
  * Persistent error toasts (#126) do not auto-dismiss, so several
  * failures can stack at once. Cap the container height to the
  * viewport and let it scroll instead of pushing toasts off-screen
- * where the user can neither read nor close them.
+ * where the user can neither read nor close them. The cap uses the
+ * DYNAMIC viewport (dvh) so the bottom-anchored container never
+ * exceeds what is actually visible on iOS; 100vh stays as the
+ * fallback for engines without dvh (#1410).
  */
 .Toastify__toast-container {
     max-height: 100vh;
+    max-height: 100dvh;
     overflow-y: auto;
+}
+
+/*
+ * #1410 — the container box itself must never swallow taps. Without
+ * this, the fixed bottom-right container (which spans the whole toast
+ * stack area) intercepts pointer events even when the toast inside is
+ * click-through (``passThrough`` sets ``pointer-events: none`` inline
+ * on the TOAST, #589), so the lesson footer's Prüfen/Weiter button
+ * under it stayed untappable — fully covered in iPhone landscape.
+ * Toasts re-enable their own pointer events, so close buttons,
+ * closeOnClick, and the #126 scroll-over-toast behaviour keep working;
+ * a passThrough toast's inline ``pointer-events: none`` still wins
+ * over this stylesheet rule.
+ */
+.Toastify__toast-container {
+    pointer-events: none;
+}
+.Toastify__toast {
+    pointer-events: auto;
 }
