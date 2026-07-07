@@ -7,16 +7,24 @@
  * matching ``&&`` / ``?:`` guard (which is what drove LessonSummary's
  * cyclomatic complexity). No storage reads here; the only state is the
  * confetti's own self-dismissal.
+ *
+ * #1411 — the configurable sections additionally take an ``enabled`` flag
+ * (from the ``summarySectionsPref`` settings object) and self-gate on it,
+ * so the parent stays flat while every section is user-toggleable.
  */
 
 import { useState } from "react";
-import { ClipboardCopy, Download, FileJson, Zap } from "lucide-react";
+import { ClipboardCopy, Download, FileJson, Star, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import AnswerDiff from "../../../shared/data-display/AnswerDiff";
 import Confetti from "../../feedback/Confetti";
 import LessonExamResult from "./LessonExamResult";
+import LessonFavoriteToggle from "../chrome/LessonFavoriteToggle";
+import ShareResultButton, {
+  type ShareResultButtonProps,
+} from "../../share/ShareResultButton";
 import {
   downloadAnkiDeck,
   lessonCardsToAnki,
@@ -25,6 +33,7 @@ import { explainError } from "../../../lib/review/explain-error";
 import { readExplanationsEnabled } from "../../../lib/review/reviewPref";
 import type { LessonMode } from "../../../lib/learning/lessonModePref";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
+import type { StarRating } from "../../../lib/lesson/lesson-summary";
 import type { ContentLesson, ElementError } from "../../../storage/types";
 
 /** The i18n lookup signature the parent passes down. */
@@ -43,10 +52,206 @@ export function SummaryConfetti({ active }: { active: boolean }) {
 }
 
 /**
+ * The save-to-favorites hint row (#1411 toggleable). Renders ``null`` when
+ * the section is disabled or the run is anonymous.
+ */
+export function SummaryFavorite({
+  enabled,
+  userId,
+  source,
+  setId,
+  filename,
+  title,
+  t,
+}: {
+  enabled: boolean;
+  userId: string;
+  source: string;
+  setId: string;
+  filename: string;
+  title: string;
+  t: TFn;
+}) {
+  if (!enabled || !userId) return null;
+  return (
+    <div
+      className="flex items-center gap-1"
+      data-testid="lesson-summary-favorite"
+    >
+      <LessonFavoriteToggle
+        userId={userId}
+        source={source}
+        setId={setId}
+        filename={filename}
+        title={title}
+        setTitle=""
+        size={16}
+      />
+      <span className="text-sm text-fg-muted">
+        {t("favorites.save_prompt", "Save this lesson to your favorites")}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * The result scoreboard: the 0-3 star row, the encouraging headline message
+ * and the count-up score bar (#1411 toggleable, part of "Result and
+ * statistics" together with {@link SummaryStatsList}).
+ */
+export function SummaryScoreboard({
+  enabled,
+  stars,
+  message,
+  animatedPct,
+  scorePct,
+  correct,
+  total,
+  t,
+}: {
+  enabled: boolean;
+  stars: StarRating;
+  message: string;
+  animatedPct: number;
+  scorePct: number;
+  correct: number;
+  total: number;
+  t: TFn;
+}) {
+  if (!enabled) return null;
+  return (
+    <>
+      <div
+        className="lesson-summary-stars"
+        data-testid="lesson-summary-stars"
+        role="img"
+        aria-label={t("lesson.summary.stars_aria", "{n} of 3 stars").replace(
+          "{n}",
+          String(stars),
+        )}
+      >
+        {[1, 2, 3].map((n) => {
+          const earned = n <= stars;
+          return (
+            <Star
+              key={n}
+              size={28}
+              aria-hidden="true"
+              className={`lesson-summary-star${earned ? " is-earned" : ""}`}
+              fill={earned ? "currentColor" : "none"}
+              data-earned={earned ? "true" : "false"}
+              data-testid={`lesson-summary-star-${n}`}
+            />
+          );
+        })}
+      </div>
+
+      <p
+        className="lesson-summary-message"
+        data-testid="lesson-summary-message"
+        data-stars={String(stars)}
+      >
+        {message}
+      </p>
+
+      <div
+        className="lesson-summary-score-bar"
+        role="progressbar"
+        aria-valuenow={scorePct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={t(
+          "lesson.summary.score_bar_aria",
+          "Score: {pct} percent",
+        ).replace("{pct}", String(scorePct))}
+        data-testid="lesson-summary-score-bar"
+      >
+        <div
+          className="lesson-summary-score-fill"
+          style={{ width: `${animatedPct}%` }}
+        />
+        <span className="lesson-summary-score-label">
+          <strong>{t("lesson.summary.score", "Score")}:</strong>{" "}
+          <span data-testid="lesson-summary-score">
+            {correct} / {total}
+          </span>{" "}
+          (<span data-testid="lesson-summary-score-pct">{animatedPct}</span>
+          %)
+        </span>
+      </div>
+    </>
+  );
+}
+
+/**
+ * The time / hints-used stat list (#1411 toggleable, the second half of
+ * "Result and statistics").
+ */
+export function SummaryStatsList({
+  enabled,
+  minutes,
+  hintsUsed,
+  t,
+}: {
+  enabled: boolean;
+  minutes: number;
+  hintsUsed: number;
+  t: TFn;
+}) {
+  if (!enabled) return null;
+  return (
+    <ul className="lesson-summary-stats">
+      <li>
+        <strong>{t("lesson.summary.time", "Time")}:</strong>{" "}
+        <span data-testid="lesson-summary-time">
+          {t("lesson.summary.minutes", "{n} min").replace(
+            "{n}",
+            String(minutes),
+          )}
+        </span>
+      </li>
+      {hintsUsed > 0 && (
+        <li>
+          <strong>{t("lesson.summary.hints_used", "Hints used")}:</strong>{" "}
+          <span data-testid="lesson-summary-hints-used">
+            {String(hintsUsed)}
+          </span>
+        </li>
+      )}
+    </ul>
+  );
+}
+
+/**
+ * The "Share result" row (#1073, #1411 toggleable). Renders ``null`` when
+ * the section is disabled or the run is unscored.
+ */
+export function SummaryShare({
+  enabled,
+  total,
+  result,
+}: {
+  enabled: boolean;
+  total: number;
+  result: ShareResultButtonProps["result"];
+}) {
+  if (!enabled || total <= 0) return null;
+  return (
+    <div
+      className="lesson-summary-share flex justify-center"
+      data-testid="lesson-summary-share"
+    >
+      <ShareResultButton result={result} />
+    </div>
+  );
+}
+
+/**
  * The exam-mode result panel (verdict + score + time + XP + retry). Renders
- * ``null`` outside exam mode or on an unscored run.
+ * ``null`` when disabled (#1411), outside exam mode or on an unscored run.
  */
 export function SummaryExamPanel({
+  enabled,
   lessonMode,
   total,
   examPass,
@@ -58,6 +263,7 @@ export function SummaryExamPanel({
   bonusPct,
   onRetry,
 }: {
+  enabled: boolean;
   lessonMode: LessonMode;
   total: number;
   examPass: boolean;
@@ -69,7 +275,7 @@ export function SummaryExamPanel({
   bonusPct: number;
   onRetry: () => void;
 }) {
-  if (lessonMode !== "exam" || total <= 0) return null;
+  if (!enabled || lessonMode !== "exam" || total <= 0) return null;
   return (
     <LessonExamResult
       examPass={examPass}
@@ -91,15 +297,17 @@ export function SummaryExamPanel({
  * recorded questions.
  */
 export function SummaryTimedStats({
+  enabled,
   lessonMode,
   timedStats,
   t,
 }: {
+  enabled: boolean;
   lessonMode: LessonMode;
   timedStats: TimedRunStats | null;
   t: TFn;
 }) {
-  if (lessonMode !== "timed" || !timedStats || timedStats.total <= 0)
+  if (!enabled || lessonMode !== "timed" || !timedStats || timedStats.total <= 0)
     return null;
   return (
     <ul
@@ -153,15 +361,17 @@ export function SummaryTimedStats({
  * @param animate - Count the value up (false under the "subtle" intensity).
  */
 export function SummaryXp({
+  enabled,
   xpGain,
   animate,
   t,
 }: {
+  enabled: boolean;
   xpGain: number;
   animate: boolean;
   t: TFn;
 }) {
-  if (xpGain <= 0) return null;
+  if (!enabled || xpGain <= 0) return null;
   return (
     <div
       className="lesson-summary-xp"
@@ -250,18 +460,21 @@ export function SummaryExplanations({
  * here. (Social sharing moved to the dedicated ShareResultButton row, #1073.)
  */
 export function SummaryExportActions({
+  enabled,
   lesson,
   t,
   onCopy,
   onDownload,
   onDownloadJson,
 }: {
+  enabled: boolean;
   lesson: ContentLesson;
   t: TFn;
   onCopy: () => void;
   onDownload: () => void;
   onDownloadJson: () => void;
 }) {
+  if (!enabled) return null;
   return (
     <div
       className="lesson-summary-export-actions flex flex-wrap gap-2"

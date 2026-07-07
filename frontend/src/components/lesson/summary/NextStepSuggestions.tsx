@@ -72,6 +72,10 @@ const TAG_I18N_KEYS: Record<ErrorTag, [string, string]> = {
 };
 
 export interface NextStepSuggestionsProps {
+    /** #1411 — the "Next-step suggestions" section toggle; defaults ON.
+     *  When disabled, the summary's secondary actions keep a plain
+     *  "Next lesson" fallback so forward navigation never disappears. */
+    enabled?: boolean;
     suggestions: Suggestions;
     setId: string;
     /** The raw set slug from the route (``--``-encoded source),
@@ -460,6 +464,7 @@ function SetCompleteCard({
 }
 
 export default function NextStepSuggestions({
+    enabled = true,
     suggestions,
     setId,
     setSlug,
@@ -468,7 +473,7 @@ export default function NextStepSuggestions({
 }: NextStepSuggestionsProps) {
     const {t} = useI18n();
 
-    if (suggestions.loading) return null;
+    if (!enabled || suggestions.loading) return null;
 
     const {
         nextLesson,

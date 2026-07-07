@@ -23,6 +23,8 @@ import {useI18n} from "../../../hooks/ui/useI18n";
 import type {LessonAttempt} from "../../../storage/types";
 
 interface RetryResultComparisonProps {
+    /** #1411 — the "Result and statistics" section toggle; defaults ON. */
+    enabled?: boolean;
     attempts: number;
     attemptHistory: LessonAttempt[];
     bestCorrect: number;
@@ -43,13 +45,14 @@ function bestAttemptNumber(
 }
 
 export default function RetryResultComparison({
+    enabled = true,
     attempts,
     attemptHistory,
     bestCorrect,
     bestTotal,
 }: RetryResultComparisonProps) {
     const {t} = useI18n();
-    if (attempts < 2 || attemptHistory.length < 2) return null;
+    if (!enabled || attempts < 2 || attemptHistory.length < 2) return null;
 
     const current = attemptHistory[attemptHistory.length - 1];
     const previous = attemptHistory[attemptHistory.length - 2];
