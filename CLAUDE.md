@@ -9,7 +9,25 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.99.0** (schema + tooling release - the lesson
+- **Current state:** **v2.0.0** (**first public launch release** - a launch
+  caesura, NOT a breaking change against v1.99.0. Adaptive Learner is an
+  offline-first, account-free, BYOK-AI, spaced-repetition learning app you run
+  yourself, PWA + MIT. Highlights since v1.99.0: **configurable learning**
+  (summary section visibility + ORDER #1426/#1411, optional last-place
+  correction round #1376/#1432, content-tab order #1378, opt-in auto-advance);
+  **one inviting BYOK AI card** #1417; **content hub** filters-as-menu-buttons
+  #1386 + per-repo sync isolation + explicit "Sync all" #1388; **one primary
+  navigation per viewport** - the desktop sidebar is dropped for the horizontal
+  top bar, burger/drawer gated to mobile #1390; **iOS PWA hardening**
+  (foreground new-build self-detect #1428, rotation-transition survival #1422,
+  safe-area step nav #1419, landscape action button #1410); the **content
+  engine consumed as a published runtime dependency**
+  (`learn-content-engine@0.4.0`, #1401) with an app-vs-engine schema-parity
+  gate #1396/#1398; public content-repo reads over raw URLs, never the shared
+  PAT #1429; and a 4-repo docs sweep resolving the format-doc double source
+  #1435. No schema/API/data-model change against v1.99.0. See
+  changelog/releases/v2.0.0.md.)
+  Prior **v1.99.0** = (schema + tooling release - the lesson
   **JSON-Schema becomes the App-authoritative single source of truth**
   (EXP-039): the schema, quality rules, doc, and TS types are generated from
   the App's Pydantic models (#1197), the TS lesson types consume that generated
@@ -17,21 +35,12 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   against it (#1205), guarded by a `make sync-schema-check` drift gate; **cloze
   multiselect** ("select all that apply", #1195); an **exam-mode SRS interval
   boost** for correct exam answers (#1040); **passphrase-encrypted `.alk`
-  export** of AI keys + provider settings (#1165, surfaced on the Settings AI
-  tab #1181/#1183); a **vertical desktop sidebar** for primary nav (#891); a
-  **single-set deep link** `/content/set/:setId` (#892); the **native Web Share
-  sheet** with a desktop social-link fallback for "Share result" (#1219);
-  **Latest strand** visibility + About-tab badge (#1172); **iOS
-  Add-to-Home-Screen** guidance + testable manifest (#1167); an **EXP-041**
-  generation rule coupling exercise type to learning goal (#1225); plus device
-  fixes (cloze My-answer/Solution toggle #1216, success-Continue merge #1218,
-  X-share text #1227, domain-aware word_tiles instruction #1228,
-  download-date sorting #1211), two **#809** god-folder splits
-  (`components/exercises` #1206, `hooks/lesson` #1210), a `lib/ai` split
-  (#917/#1190), a `verify-theme` token/contrast gate (#1169), and a docs sweep
-  (#1215). No schema/API/data-model change (additive generation pipeline over
-  the existing Pydantic models; Alembic/Dexie unchanged). See
-  changelog/releases/v1.97.0.md.)
+  export** of AI keys + provider settings (#1165); a **single-set deep link**
+  `/content/set/:setId` (#892); the **native Web Share sheet** for "Share
+  result" (#1219); **Latest strand** visibility + About-tab badge (#1172);
+  **iOS Add-to-Home-Screen** guidance + testable manifest (#1167); an
+  **EXP-041** generation rule coupling exercise type to learning goal (#1225).
+  No schema/API/data-model change. See changelog/releases/v1.99.0.md.)
   Prior **v1.96.0** = (release - imported-chat **backend/API-mode
   parity** (#1154) so desktop/server mode no longer drifts off an imported
   chat's topic, plus the **tutor-session key gate** (#1158: the
