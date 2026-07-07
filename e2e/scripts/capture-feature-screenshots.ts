@@ -258,6 +258,23 @@ const FEATURES: FeatureShot[] = [
     {path: "dashboard-tabs/uebersicht", setup: (p) => gotoDashboardTab(p, "overview")},
     {path: "dashboard-tabs/aktivitaet", setup: (p) => gotoDashboardTab(p, "activity")},
     {path: "dashboard-tabs/missionen", setup: (p) => gotoDashboardTab(p, "missions")},
+    // #1417 — fresh learner without an AI key: the ONE inviting BYOK card
+    // below Weitermachen (replaces the pre-#1417 stacked API-key banner +
+    // warning). The dexie preview build has no key, so the card renders.
+    {
+        path: "dashboard-tabs/ki-einladung",
+        setup: async (p) => {
+            await gotoDashboardTab(p, "overview");
+            const card = p.getByTestId("ai-invite-card");
+            try {
+                await card.waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            await card.scrollIntoViewIfNeeded();
+            return true;
+        },
+    },
     {path: "content-hub/entdecken", setup: (p) => gotoContentTab(p, "discover")},
     {
         path: "content-hub/meine-inhalte",

@@ -304,6 +304,12 @@
     "swipe_hint": "スワイプで左右に移動（または矢印キーを使用）。"
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "AIサポートを有効にする（任意）",
+      "body": "自分のAIプロバイダー（Claude、OpenAI、Gemini）を接続すると、レッスン内で直接説明やサポートを受けられます。接続しなくてもアプリはそのまま使えます。",
+      "connect": "今すぐ接続",
+      "later": "あとで"
+    },
     "tab": {
       "overview": "概要",
       "activity": "アクティビティ",
@@ -1580,10 +1586,7 @@
       "required_with_feature": "{feature}にはAPIキーが必要です。",
       "required_long": "この操作を有効にするには、設定でプロバイダーのキーを構成してください。",
       "open_settings": "設定を開く",
-      "skip_banner": "AI機能を使うには、設定でAPIキーを構成してください。",
-      "skip_banner_dismiss": "閉じる",
       "feature_analyze": "会話を分析するため",
-      "feature_session": "セッションを開始するには",
       "feature_anki": "Ankiカードを抽出するため",
       "feature_study_guide": "学習ガイドを生成するため",
       "feature_study_questions": "学習問題を生成するため",

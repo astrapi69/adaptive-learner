@@ -286,6 +286,12 @@ assessment:
   read_summary: Ανάγνωση περίληψης
   swipe_hint: "Σύρετε αριστερά / δεξιά (ή χρησιμοποιήστε τα βέλη) για πλοήγηση."
 dashboard:
+  # 1417 — the one inviting BYOK card on the Dashboard.
+  ai_invite:
+    title: "Ενεργοποίησε τη βοήθεια ΤΝ (προαιρετικό)"
+    body: "Σύνδεσε τον δικό σου πάροχο ΤΝ (Claude, OpenAI ή Gemini) και λάβε εξηγήσεις και βοήθεια απευθείας μέσα στα μαθήματα. Η εφαρμογή λειτουργεί και χωρίς αυτό."
+    connect: "Σύνδεση τώρα"
+    later: "Αργότερα"
   tab:
     overview: "Επισκόπηση"
     activity: "Δραστηριότητα"
@@ -1460,10 +1466,7 @@ ui:
     required_with_feature: "Απαιτείται κλειδί API {feature}."
     required_long: "Ρυθμίστε ένα κλειδί παρόχου στις Ρυθμίσεις για να ενεργοποιήσετε αυτή την ενέργεια."
     open_settings: "Άνοιγμα ρυθμίσεων"
-    skip_banner: "Ρυθμίστε ένα κλειδί API στις Ρυθμίσεις για να χρησιμοποιήσετε λειτουργίες AI."
-    skip_banner_dismiss: "Κατανοητό"
     feature_analyze: "για ανάλυση συνομιλιών"
-    feature_session: "για να ξεκινήσετε μια συνεδρία"
     feature_anki: "για εξαγωγή καρτών Anki"
     feature_study_guide: "για δημιουργία οδηγού μελέτης"
     feature_study_questions: "για δημιουργία ερωτήσεων μελέτης"

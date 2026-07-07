@@ -288,6 +288,12 @@ assessment:
   read_summary: सारांश पढ़ें
   swipe_hint: नेविगेट करने के लिए बाएँ / दाएँ स्वाइप करें (या ऐरो कुंजियाँ इस्तेमाल करें)।
 dashboard:
+  # 1417 — the one inviting BYOK card on the Dashboard.
+  ai_invite:
+    title: "AI सहायता चालू करें (वैकल्पिक)"
+    body: "अपना खुद का AI प्रदाता (Claude, OpenAI या Gemini) जोड़ें और पाठों में सीधे व्याख्या और सहायता पाएं। ऐप इसके बिना भी अच्छी तरह काम करता है।"
+    connect: "अभी जोड़ें"
+    later: "बाद में"
   tab:
     overview: "अवलोकन"
     activity: "गतिविधि"
@@ -1460,10 +1466,7 @@ ui:
     required_with_feature: API कुंजी आवश्यक {feature}।
     required_long: इस कार्रवाई को सक्षम करने के लिए सेटिंग्स में एक प्रदाता कुंजी कॉन्फ़िगर करें।
     open_settings: सेटिंग्स खोलें
-    skip_banner: AI सुविधाओं का उपयोग करने के लिए सेटिंग्स में एक API कुंजी कॉन्फ़िगर करें।
-    skip_banner_dismiss: खारिज करें
     feature_analyze: बातचीत का विश्लेषण करने के लिए
-    feature_session: एक सत्र शुरू करने के लिए
     feature_anki: Anki कार्ड निकालने के लिए
     feature_study_guide: एक अध्ययन गाइड बनाने के लिए
     feature_study_questions: अध्ययन प्रश्न बनाने के लिए

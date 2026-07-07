@@ -304,6 +304,12 @@
     "swipe_hint": "Swipe left / right (or use arrow keys) to navigate."
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "Unlock AI help (optional)",
+      "body": "Connect your own AI provider (Claude, OpenAI or Gemini) to get explanations and help right inside your lessons. The app works fine without it.",
+      "connect": "Connect now",
+      "later": "Later"
+    },
     "tab": {
       "overview": "Overview",
       "activity": "Activity",
@@ -1580,10 +1586,7 @@
       "required_with_feature": "API key required {feature}.",
       "required_long": "Configure a provider key in Settings to enable this action.",
       "open_settings": "Open Settings",
-      "skip_banner": "Configure an API key in Settings to use AI features.",
-      "skip_banner_dismiss": "Dismiss",
       "feature_analyze": "to analyze conversations",
-      "feature_session": "to start a session",
       "feature_anki": "to extract Anki cards",
       "feature_study_guide": "to generate a study guide",
       "feature_study_questions": "to generate study questions",

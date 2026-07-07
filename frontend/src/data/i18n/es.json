@@ -304,6 +304,12 @@
     "swipe_hint": "Desliza a la izquierda / derecha (o usa las teclas de flecha) para navegar."
   },
   "dashboard": {
+    "ai_invite": {
+      "title": "Activa la ayuda de IA (opcional)",
+      "body": "Conecta tu propio proveedor de IA (Claude, OpenAI o Gemini) y recibe explicaciones y ayuda directamente en las lecciones. La aplicación también funciona sin ello.",
+      "connect": "Conectar ahora",
+      "later": "Más tarde"
+    },
     "tab": {
       "overview": "Resumen",
       "activity": "Actividad",
@@ -1580,10 +1586,7 @@
       "required_with_feature": "Se requiere una clave de API {feature}.",
       "required_long": "Configura una clave de proveedor en Configuración para habilitar esta acción.",
       "open_settings": "Abrir configuración",
-      "skip_banner": "Configura una clave de API en Configuración para usar las funciones de IA.",
-      "skip_banner_dismiss": "Descartar",
       "feature_analyze": "para analizar conversaciones",
-      "feature_session": "para iniciar una sesión",
       "feature_anki": "para extraer tarjetas de Anki",
       "feature_study_guide": "para generar una guía de estudio",
       "feature_study_questions": "para generar preguntas de estudio",

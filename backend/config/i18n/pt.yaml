@@ -286,6 +286,12 @@ assessment:
   read_summary: Ler resumo
   swipe_hint: "Deslize para a esquerda / direita (ou use as setas) para navegar."
 dashboard:
+  # 1417 — the one inviting BYOK card on the Dashboard.
+  ai_invite:
+    title: "Ativar ajuda de IA (opcional)"
+    body: "Conecte o seu próprio provedor de IA (Claude, OpenAI ou Gemini) e receba explicações e ajuda diretamente nas lições. O aplicativo também funciona sem isso."
+    connect: "Conectar agora"
+    later: "Mais tarde"
   tab:
     overview: "Visão geral"
     activity: "Atividade"
@@ -1460,10 +1466,7 @@ ui:
     required_with_feature: "Chave de API necessária {feature}."
     required_long: "Configure uma chave de provedor nas Configurações para ativar esta ação."
     open_settings: "Abrir definições"
-    skip_banner: "Configure uma chave de API nas Configurações para usar os recursos de IA."
-    skip_banner_dismiss: "Dispensar"
     feature_analyze: "para analisar conversas"
-    feature_session: "para iniciar uma sessão"
     feature_anki: "para extrair cartões Anki"
     feature_study_guide: "para gerar um guia de estudo"
     feature_study_questions: "para gerar perguntas de estudo"
