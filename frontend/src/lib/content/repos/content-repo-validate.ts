@@ -25,6 +25,7 @@ import {
   type ParsedSet,
 } from "../engine";
 import { fetchGitHubFileText } from "./github-fetch";
+import { resolveRepoToken } from "./repo-token";
 
 /** The exercise types the lesson schema (v1.3) knows about. */
 export const KNOWN_EXERCISE_TYPES = [
@@ -54,18 +55,6 @@ const SUSPICIOUS_PATTERNS: RegExp[] = [
 /** True when ``text`` contains a suspicious (executable) pattern. */
 export function hasSuspiciousContent(text: string): boolean {
   return SUSPICIOUS_PATTERNS.some((pattern) => pattern.test(text));
-}
-
-/** localStorage key holding the GitHub PAT in Dexie (GH-Pages) mode. */
-const GITHUB_TOKEN_KEY = "adaptive-learner.github_token";
-
-/** Read the browser-stored GitHub token, or empty string when none. */
-export function readBrowserGitHubToken(): string {
-  try {
-    return localStorage.getItem(GITHUB_TOKEN_KEY) ?? "";
-  } catch {
-    return "";
-  }
 }
 
 export interface RepoRef {
@@ -144,7 +133,7 @@ export interface RepoManifestSet {
  */
 export async function listRepoManifestSets(
   ref: RepoRef,
-  token: string = readBrowserGitHubToken(),
+  token: string = resolveRepoToken(refSource(ref)),
 ): Promise<RepoManifestSet[]> {
   const text = await fetchRepoText(ref, "manifest.yaml", token);
   const manifest = parseManifest(text) ?? {};
@@ -164,7 +153,7 @@ export async function listRepoManifestSets(
  */
 export async function validateUserRepo(
   ref: RepoRef,
-  token: string = readBrowserGitHubToken(),
+  token: string = resolveRepoToken(refSource(ref)),
 ): Promise<RepoValidationResult> {
   let manifest: ParsedManifest;
   try {
