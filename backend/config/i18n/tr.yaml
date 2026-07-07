@@ -519,7 +519,7 @@ settings:
   explanations_enabled_desc: "Bir dersten sonra her hata için kısa bir kural ipucu gösterir."
   section_hints: "İpuçları"
   section_lesson_summary: "Ders sonrası özet"
-  summary_sections_desc: "Bir dersin sonunda özetin hangi bölümleri göstereceğini seç. Devam etme eylemleri her zaman görünür."
+  summary_sections_desc: "Bir dersin sonunda özetin hangi bölümleri ve hangi sırayla göstereceğini seç. Devam etme eylemleri her zaman görünür."
   summary_section_result: "Sonuç ve istatistikler"
   summary_section_xp: "XP ödülü"
   summary_section_favorite: "Favori hatırlatması"

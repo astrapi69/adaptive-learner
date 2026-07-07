@@ -522,7 +522,7 @@ settings:
   explanations_enabled_desc: "Setelah pelajaran, tampilkan kiat aturan singkat untuk setiap kesalahan."
   section_hints: "Petunjuk"
   section_lesson_summary: "Ringkasan setelah pelajaran"
-  summary_sections_desc: "Pilih bagian mana yang ditampilkan ringkasan di akhir pelajaran. Tindakan untuk melanjutkan selalu terlihat."
+  summary_sections_desc: "Pilih bagian mana yang ditampilkan ringkasan di akhir pelajaran dan dalam urutan apa. Tindakan untuk melanjutkan selalu terlihat."
   summary_section_result: "Hasil dan statistik"
   summary_section_xp: "Hadiah XP"
   summary_section_favorite: "Petunjuk favorit"

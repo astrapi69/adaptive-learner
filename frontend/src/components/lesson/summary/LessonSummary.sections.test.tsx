@@ -1,12 +1,15 @@
 /**
- * LessonSummary configurable sections (#1411, generalises #1376).
+ * LessonSummary configurable + reorderable sections (#1426, generalises
+ * #1411 / #1376).
  *
  * Every non-essential section of the completion panel is individually
- * toggleable via the ``summarySectionsPref`` settings object. These pin:
- * defaults (all ON), each section disabling exactly itself, the essential
- * navigation surviving EVERY combination (including all-off), the migrated
- * #1376 correction choice, the stable order, and the next-lesson fallback
- * appearing when the next-steps section is off.
+ * toggleable AND reorderable via the ``summarySectionsPref`` ordered config.
+ * These pin: defaults (all ON, default order), each section disabling exactly
+ * itself, the panel following a CUSTOM order, a disabled section keeping its
+ * slot (re-enabling brings it back there), the essential navigation surviving
+ * EVERY combination (including all-off) and staying pinned last, the migrated
+ * #1376 correction choice, and the next-lesson fallback appearing when the
+ * next-steps section is off.
  *
  * CorrectionBlock + NextStepSuggestions are stubbed so we assert
  * LessonSummary's own layout, not their internals.
@@ -69,11 +72,12 @@ vi.mock("../../../hooks/learning/useLessonSessionErrors", () => ({
 
 import LessonSummary from "./LessonSummary";
 import {
+  DEFAULT_SUMMARY_SECTION_ORDER,
   SUMMARY_SECTION_KEYS,
-  defaultSummarySections,
   setSummarySectionEnabled,
   writeSummarySections,
   type SummarySectionKey,
+  type SummarySectionsConfig,
 } from "../../../lib/learning/summarySectionsPref";
 import type { ContentLesson, LessonProgress } from "../../../storage/types";
 
@@ -119,6 +123,15 @@ function makeProgress(): LessonProgress {
   } as unknown as LessonProgress;
 }
 
+/** Build a full ordered config from an explicit id order (disabled ids OFF). */
+function configFrom(
+  order: SummarySectionKey[],
+  disabled: SummarySectionKey[] = [],
+): SummarySectionsConfig {
+  const off = new Set(disabled);
+  return order.map((id) => ({ id, enabled: !off.has(id) }));
+}
+
 function renderSummary() {
   return render(
     <MemoryRouter>
@@ -154,7 +167,7 @@ const SECTION_PROBES: Record<SummarySectionKey, string> = {
   correction: "correction-block-stub",
 };
 
-/** The essential surface that must survive every combination. */
+/** The essential surface that must survive every combination, pinned last. */
 const ESSENTIAL_TESTIDS = [
   "lesson-summary-repeat",
   "lesson-summary-exit",
@@ -173,11 +186,24 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("LessonSummary configurable sections (#1411)", () => {
+describe("LessonSummary configurable + reorderable sections (#1426)", () => {
   it("defaults ON — renders every configurable section", () => {
     renderSummary();
     for (const key of SUMMARY_SECTION_KEYS) {
       expect(screen.getByTestId(SECTION_PROBES[key]), key).toBeInTheDocument();
+    }
+  });
+
+  it("default order renders sections in today's fixed top-to-bottom sequence", () => {
+    renderSummary();
+    const probes = [...DEFAULT_SUMMARY_SECTION_ORDER].map((key) =>
+      screen.getByTestId(SECTION_PROBES[key]),
+    );
+    for (let i = 0; i < probes.length - 1; i++) {
+      expect(
+        precedes(probes[i], probes[i + 1]),
+        `${DEFAULT_SUMMARY_SECTION_ORDER[i]} before ${DEFAULT_SUMMARY_SECTION_ORDER[i + 1]}`,
+      ).toBe(true);
     }
   });
 
@@ -187,9 +213,6 @@ describe("LessonSummary configurable sections (#1411)", () => {
       setSummarySectionEnabled(disabledKey, false);
       renderSummary();
       for (const key of SUMMARY_SECTION_KEYS) {
-        // The fixture is a scored run with a next lesson, so with the smart
-        // next-lesson card available the fallback assertion below covers
-        // navigation; every section probe is independent of the others.
         if (key === disabledKey) {
           expect(
             screen.queryByTestId(SECTION_PROBES[key]),
@@ -202,17 +225,68 @@ describe("LessonSummary configurable sections (#1411)", () => {
           ).toBeInTheDocument();
         }
       }
-      // The essential navigation is untouched by any single toggle.
       for (const testid of ESSENTIAL_TESTIDS) {
         expect(screen.getByTestId(testid)).toBeInTheDocument();
       }
     },
   );
 
+  it("renders the sections in a CUSTOM configured order (correction first)", () => {
+    // Move correction to the very front, next_steps second.
+    writeSummarySections(
+      configFrom([
+        "correction",
+        "next_steps",
+        "favorite",
+        "result",
+        "xp",
+        "share",
+        "answers",
+        "export",
+      ]),
+    );
+    renderSummary();
+    const correction = screen.getByTestId("correction-block-stub");
+    const nextSteps = screen.getByTestId("next-steps-stub");
+    const stars = screen.getByTestId("lesson-summary-stars");
+    expect(precedes(correction, nextSteps)).toBe(true);
+    expect(precedes(nextSteps, stars)).toBe(true);
+    // The essential navigation is still pinned AFTER every reordered section.
+    const exit = screen.getByTestId("lesson-summary-exit");
+    expect(precedes(stars, exit)).toBe(true);
+  });
+
+  it("a disabled section keeps its slot: re-enabling brings it back there", () => {
+    // Custom order with xp between share and answers; disable it.
+    const order: SummarySectionKey[] = [
+      "favorite",
+      "result",
+      "share",
+      "xp",
+      "answers",
+      "export",
+      "next_steps",
+      "correction",
+    ];
+    writeSummarySections(configFrom(order, ["xp"]));
+    const first = renderSummary();
+    expect(screen.queryByTestId("lesson-summary-xp")).not.toBeInTheDocument();
+    first.unmount();
+
+    // Re-enable xp at the SAME stored slot (between share and answers).
+    writeSummarySections(configFrom(order));
+    renderSummary();
+    const share = screen.getByTestId("lesson-summary-share");
+    const xp = screen.getByTestId("lesson-summary-xp");
+    const answers = screen.getByTestId("lesson-summary-breakdown");
+    expect(precedes(share, xp)).toBe(true);
+    expect(precedes(xp, answers)).toBe(true);
+  });
+
   it("all sections OFF — minimal panel keeps heading + essential navigation", () => {
-    const allOff = defaultSummarySections();
-    for (const key of SUMMARY_SECTION_KEYS) allOff[key] = false;
-    writeSummarySections(allOff);
+    writeSummarySections(configFrom([...SUMMARY_SECTION_KEYS], [
+      ...SUMMARY_SECTION_KEYS,
+    ]));
     renderSummary();
 
     for (const key of SUMMARY_SECTION_KEYS) {
@@ -221,7 +295,6 @@ describe("LessonSummary configurable sections (#1411)", () => {
         key,
       ).not.toBeInTheDocument();
     }
-    // The panel identity + the exits stay.
     expect(screen.getByTestId("lesson-summary")).toBeInTheDocument();
     expect(screen.getByText(/Greetings/)).toBeInTheDocument();
     for (const testid of ESSENTIAL_TESTIDS) {
@@ -232,35 +305,44 @@ describe("LessonSummary configurable sections (#1411)", () => {
     expect(screen.getByTestId("lesson-summary-next")).toBeInTheDocument();
   });
 
+  it("the continue-actions stay pinned last, independent of any section config", () => {
+    // A wild reorder + several sections off must not move the exits.
+    writeSummarySections(
+      configFrom(
+        [
+          "correction",
+          "export",
+          "answers",
+          "next_steps",
+          "share",
+          "xp",
+          "result",
+          "favorite",
+        ],
+        ["result", "xp", "favorite"],
+      ),
+    );
+    renderSummary();
+    const section = screen.getByTestId("lesson-summary");
+    const exit = screen.getByTestId("lesson-summary-exit");
+    const repeat = screen.getByTestId("lesson-summary-repeat");
+    // Both exits are in the LAST child block of the panel.
+    expect(section.lastElementChild).toContainElement(exit);
+    expect(section.lastElementChild).toContainElement(repeat);
+    // Everything still-enabled precedes the exits.
+    for (const testid of [
+      "correction-block-stub",
+      "lesson-summary-export",
+      "next-steps-stub",
+    ]) {
+      expect(precedes(screen.getByTestId(testid), exit)).toBe(true);
+    }
+  });
+
   it("next-steps ON + smart card available — no duplicate fallback button", () => {
     renderSummary();
     expect(screen.getByTestId("next-steps-stub")).toBeInTheDocument();
     expect(screen.queryByTestId("lesson-summary-next")).not.toBeInTheDocument();
-  });
-
-  it("keeps the panel order stable: result → next-steps → secondary actions → correction last", () => {
-    renderSummary();
-    const stars = screen.getByTestId("lesson-summary-stars");
-    const nextSteps = screen.getByTestId("next-steps-stub");
-    const exit = screen.getByTestId("lesson-summary-exit");
-    const correction = screen.getByTestId("correction-block-stub");
-    const section = screen.getByTestId("lesson-summary");
-
-    expect(precedes(stars, nextSteps)).toBe(true);
-    expect(precedes(nextSteps, exit)).toBe(true);
-    expect(precedes(exit, correction)).toBe(true);
-    expect(section.lastElementChild).toContainElement(correction);
-  });
-
-  it("order stays stable when middle sections are disabled", () => {
-    setSummarySectionEnabled("xp", false);
-    setSummarySectionEnabled("share", false);
-    renderSummary();
-    const stars = screen.getByTestId("lesson-summary-stars");
-    const answers = screen.getByTestId("lesson-summary-breakdown");
-    const correction = screen.getByTestId("correction-block-stub");
-    expect(precedes(stars, answers)).toBe(true);
-    expect(precedes(answers, correction)).toBe(true);
   });
 
   it("honours the migrated #1376 correction-round OFF choice (no silent reset)", () => {

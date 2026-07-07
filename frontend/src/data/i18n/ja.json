@@ -557,7 +557,7 @@
     "explanations_enabled_desc": "レッスン後に各間違いへ短いルールのヒントを表示します。",
     "section_hints": "ヒント",
     "section_lesson_summary": "レッスン後のまとめ",
-    "summary_sections_desc": "レッスン終了時のまとめに表示するセクションを選択します。続行するための操作は常に表示されます。",
+    "summary_sections_desc": "レッスン終了時のまとめに表示するセクションと、その順序を選択します。続行するための操作は常に表示されます。",
     "summary_section_result": "結果と統計",
     "summary_section_xp": "XP報酬",
     "summary_section_favorite": "お気に入りのヒント",

@@ -557,7 +557,7 @@
     "explanations_enabled_desc": "After a lesson, show a short rule tip for each mistake.",
     "section_hints": "Hints",
     "section_lesson_summary": "Lesson summary",
-    "summary_sections_desc": "Choose which sections the summary at the end of a lesson shows. The actions for continuing are always visible.",
+    "summary_sections_desc": "Choose which sections the summary at the end of a lesson shows and in which order. The actions for continuing are always visible.",
     "summary_section_result": "Result and statistics",
     "summary_section_xp": "XP reward",
     "summary_section_favorite": "Favorites hint",
