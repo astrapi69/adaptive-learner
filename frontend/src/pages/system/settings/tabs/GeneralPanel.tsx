@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ApiError } from "../../../../api/client";
 import ContentViewControl from "../../../../components/settings/controls/lesson/ContentViewControl";
 import ContentTabsOrderControl from "../../../../components/settings/controls/content/ContentTabsOrderControl";
+import InstallAppSection from "../../../../components/settings/data/InstallAppSection";
 import ModeIndicator from "../../../../components/pwa/ModeIndicator";
 import UpdatesSettingsSection from "../../../../components/settings/UpdatesSettingsSection";
 import ThemePicker from "../../../../components/settings/appearance/ThemePicker";
@@ -457,6 +458,15 @@ export default function GeneralPanel({
           <UpdatesSettingsSection />
         </div>
       )}
+
+      {/* #1455 - installing the PWA configures HOW the app runs
+          (standalone window, homescreen, starts without network), so it
+          belongs with the app-wide options here, not in the Data tab
+          (which governs WHAT the app stores). Part of the PWA cluster:
+          storage mode -> updates -> install -> mode indicator. */}
+      <div hidden={!active}>
+        <InstallAppSection />
+      </div>
 
       <div hidden={!active}>
         <ModeIndicator />

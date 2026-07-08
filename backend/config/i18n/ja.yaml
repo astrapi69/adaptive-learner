@@ -516,7 +516,7 @@ settings:
     current_version: "現在のバージョン: v{version}"
   install:
     heading: "アプリをインストール"
-    description: "オフラインアクセスと全画面表示のために Adaptive Learner をアプリとしてインストールします。"
+    description: "Adaptive Learner を独立したアプリとしてインストールします。専用ウィンドウ、ホーム画面のアイコン、ネットワークがなくても起動できます。学習コンテンツには影響しません。"
     button: "アプリをインストール"
     already: "インストール済み"
     unavailable: "ブラウザがまだインストールを提案していません。"

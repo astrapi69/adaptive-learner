@@ -516,7 +516,7 @@ settings:
     current_version: "Geçerli sürüm: v{version}"
   install:
     heading: "Uygulamayı yükle"
-    description: "Çevrimdışı erişim ve tam ekran deneyimi için Adaptive Learner'ı uygulama olarak yükleyin."
+    description: "Adaptive Learner'ı bağımsız bir uygulama olarak yükle: kendi penceresi, ana ekranda simge ve ağ olmadan bile başlar. Öğrenme içeriğin bundan etkilenmez."
     button: "Uygulamayı yükle"
     already: "Zaten yüklü"
     unavailable: "Tarayıcınız henüz kurulum sunmadı."
