@@ -17,6 +17,7 @@ import {MemoryRouter, useLocation} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const reviewQueueMock = vi.fn();
+const listSetsMock = vi.fn();
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
@@ -24,6 +25,9 @@ vi.mock("../../storage", () => ({
             list: vi.fn(),
             recordBulk: vi.fn(),
             reviewQueue: reviewQueueMock,
+        },
+        contentLoader: {
+            listSets: listSetsMock,
         },
     }),
 }));
@@ -69,6 +73,15 @@ function renderCard(userId: string) {
 
 beforeEach(() => {
     reviewQueueMock.mockReset();
+    listSetsMock.mockReset();
+    // By default every referenced set is loadable, so availability filtering
+    // (#1445) is a no-op unless a test overrides the set list.
+    listSetsMock.mockResolvedValue({
+        sets: [
+            {source: "astrapi69/adaptive-learner-content", id: "language-fr-a1"},
+            {source: "astrapi69/adaptive-learner-content", id: "other-set"},
+        ],
+    });
 });
 
 describe("ReviewQueueCard: empty + loading", () => {
@@ -162,6 +175,44 @@ describe("ReviewQueueCard: populated queue", () => {
         expect(screen.getByTestId("location-probe")).toHaveTextContent(
             "/review/language-fr-a1?quick=1",
         );
+    });
+
+    it("hides review items whose set is no longer loadable (#1445)", async () => {
+        // The repo providing "orphan-set" was removed → listSets omits it.
+        reviewQueueMock.mockResolvedValue([
+            item({id: "keep", set_id: "language-fr-a1", overdue: true}),
+            item({id: "drop", set_id: "orphan-set", overdue: true}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {
+                    source: "astrapi69/adaptive-learner-content",
+                    id: "language-fr-a1",
+                },
+            ],
+        });
+        renderCard("user-1");
+        // Only the loadable item is counted; the CTA points at it, never the
+        // orphaned set.
+        const cta = await screen.findByTestId("review-queue-start");
+        fireEvent.click(cta);
+        expect(screen.getByTestId("location-probe")).toHaveTextContent(
+            "/review/language-fr-a1",
+        );
+    });
+
+    it("renders nothing when every review item is orphaned (#1445)", async () => {
+        reviewQueueMock.mockResolvedValue([
+            item({id: "a", set_id: "orphan-set", overdue: true}),
+        ]);
+        listSetsMock.mockResolvedValue({sets: []});
+        renderCard("user-1");
+        await waitFor(() =>
+            expect(reviewQueueMock).toHaveBeenCalled(),
+        );
+        expect(
+            screen.queryByTestId("review-queue-card"),
+        ).not.toBeInTheDocument();
     });
 });
 

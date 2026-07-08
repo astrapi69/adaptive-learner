@@ -16,6 +16,7 @@ import {MemoryRouter} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const listMock = vi.fn();
+const listSetsMock = vi.fn();
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
@@ -24,6 +25,7 @@ vi.mock("../../storage", () => ({
             recordBulk: vi.fn(),
             reviewQueue: vi.fn(),
         },
+        contentLoader: {listSets: listSetsMock},
     }),
 }));
 
@@ -64,6 +66,14 @@ function renderCard(userId: string) {
 
 beforeEach(() => {
     listMock.mockReset();
+    // Default: the sets behind the test errors are loadable, so the #1445
+    // availability filter is a no-op unless a test removes them.
+    listSetsMock.mockReset().mockResolvedValue({
+        sets: [
+            {source: "astrapi69/adaptive-learner-content", id: "language-fr-a1"},
+            {source: "astrapi69/adaptive-learner-content", id: "language-es-a1"},
+        ],
+    });
 });
 
 describe("FocusAreasCard", () => {
@@ -161,5 +171,26 @@ describe("FocusAreasCard", () => {
             "href",
             "/adaptive-lesson/language-es-a1",
         );
+    });
+
+    it("ignores errors whose set is no longer loadable (#1445)", async () => {
+        listMock.mockResolvedValue([
+            makeError({element_key: "gone", set_id: "orphan-set", error_count: 9}),
+            makeError({element_key: "keep", set_id: "language-fr-a1", error_count: 2}),
+        ]);
+        // Only language-fr-a1 remains loadable; orphan-set's repo was removed.
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {
+                    source: "astrapi69/adaptive-learner-content",
+                    id: "language-fr-a1",
+                },
+            ],
+        });
+        renderCard("user-1");
+        const cta = await screen.findByTestId("focus-areas-cta");
+        // The high-error orphaned set is ignored; the CTA targets the loadable
+        // set instead of leading into a removed repo.
+        expect(cta).toHaveAttribute("href", "/adaptive-lesson/language-fr-a1");
     });
 });

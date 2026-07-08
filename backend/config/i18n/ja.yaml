@@ -463,6 +463,13 @@ progress:
   commit_notes_aria: "セッションのメモ"
   session_count: "セッション"
 settings:
+  orphaned:
+    heading: "未接続のコンテンツ"
+    summary: "接続されていないソースからの {lessons} 個のレッスンと {cards} 枚の復習カード。"
+    delete: "未接続の進捗を削除"
+    confirm_title: "未接続の進捗を削除"
+    confirm_message: "{lessons} 個のレッスンと {cards} 枚の復習カードが完全に削除されます。この操作は元に戻せません。"
+    deleted: "{lessons} 個のレッスンと {cards} 枚の復習カードを削除しました。"
   key_export_link:
     heading: "AIキー — 暗号化エクスポート"
     hint: "AIキーを1つの暗号化ファイルとしてエクスポートまたはインポートします。データタブの他のバックアップと同じ場所にあります。"
@@ -2956,6 +2963,13 @@ favorites:
   empty: "お気に入りはまだありません。レッスンの星をタップして保存しましょう。"
   save_prompt: "このレッスンをお気に入りに保存"
 content_repo:
+  remove:
+    title: "リポジトリを削除"
+    message: "{source} を削除しますか？ダウンロード済みのコンテンツがこのデバイスから削除されます。"
+    delete_progress: "このコンテンツの学習進捗も削除する。"
+    consequence: "{lessons} 個のレッスンと {cards} 枚の復習カードが削除されます。この操作は元に戻せません。"
+    counting: "進捗を集計しています…"
+    deleted: "削除しました。{lessons} 個のレッスンと {cards} 枚の復習カードを削除しました。"
   sync_all:
     done: "{total}件中{ok}件のリポジトリを同期しました。"
     failed: "{total}件中{ok}件を同期しました。失敗: {repos}"

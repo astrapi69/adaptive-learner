@@ -99,6 +99,7 @@ import {
   listElementErrorsDexie,
   recordElementAttemptsDexie,
 } from "./lessons/element-errors-dexie";
+import { deleteLearningDataDexie } from "./lessons/orphan-data-dexie";
 import type {
   IStorageService,
 } from "./types";
@@ -420,6 +421,12 @@ export const dexieStorage: IStorageService = {
     recordBulk: (userId, attempts) =>
       recordElementAttemptsDexie(userId, attempts),
     reviewQueue: (userId, opts) => computeReviewQueueDexie(userId, opts),
+  },
+
+  // --- Learner-data maintenance (#1445) --------------------------------
+  learningData: {
+    deleteLearningData: (userId, deletion) =>
+      deleteLearningDataDexie(userId, deletion),
   },
 
   // --- Daily missions (EXP-010 / Phase 56) -----------------------------

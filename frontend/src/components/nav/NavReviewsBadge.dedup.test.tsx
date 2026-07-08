@@ -13,6 +13,7 @@ import {MemoryRouter} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const reviewQueueMock = vi.fn();
+const listSetsMock = vi.fn();
 
 vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({
@@ -28,6 +29,7 @@ vi.mock("../../lib/learning/learnerState", () => ({
 vi.mock("../../storage", () => ({
     getStorage: () => ({
         elementErrors: {reviewQueue: reviewQueueMock},
+        contentLoader: {listSets: listSetsMock},
     }),
 }));
 
@@ -52,6 +54,13 @@ function row(over: Partial<QRow>): QRow {
 
 beforeEach(() => {
     reviewQueueMock.mockReset();
+    // Every set the tests reference is loadable → #1445 filter is a no-op.
+    listSetsMock.mockReset().mockResolvedValue({
+        sets: [
+            {source: "owner/repo", id: "es-a1"},
+            {source: "owner/repo", id: "fr-a1"},
+        ],
+    });
 });
 
 function renderBadge() {

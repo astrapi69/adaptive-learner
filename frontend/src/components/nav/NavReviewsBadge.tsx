@@ -15,6 +15,10 @@ import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import {
+    buildContentAvailability,
+    filterAvailableSetId,
+} from "../../lib/content/browse/content-availability";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {subscribeCelebration} from "../../lib/praise/celebration-bus";
@@ -45,16 +49,23 @@ export default function NavReviewsBadge() {
         let cancelled = false;
         async function refresh() {
             try {
-                const queue =
-                    await getStorage().elementErrors.reviewQueue(userId!);
+                const [queue, setsRes] = await Promise.all([
+                    getStorage().elementErrors.reviewQueue(userId!),
+                    getStorage().contentLoader.listSets(),
+                ]);
                 if (cancelled) return;
+                // #1445 Part A — never badge a review whose set is no longer
+                // loadable (its source repo was removed); the SRS rows stay in
+                // Dexie but must not lead into a dead review.
+                const availability = buildContentAvailability(setsRes.sets);
+                const loadable = filterAvailableSetId(queue, availability);
                 // #664 — dedup by element_key so the badge counts UNIQUE due
                 // elements, consistent with the session. Without this, the
                 // per-direction EXP-018 rows (receptive + productive of one
                 // card = 2 rows, same element_key) double-count and inflate
                 // the badge far past what a session can ever present.
                 const overdueItems = dedupeReviewQueueByElement(
-                    queue.filter((q) => q.overdue),
+                    loadable.filter((q) => q.overdue),
                 );
                 setState({
                     overdue: overdueItems.length,

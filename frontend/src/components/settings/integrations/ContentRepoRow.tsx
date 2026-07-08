@@ -255,9 +255,9 @@ export default function ContentRepoRow({
           data-testid={`content-repo-remove-${repo.owner}-${repo.repo}`}
         >
           <Trash2 className="h-4 w-4" aria-hidden="true" />
-          {confirmRemove
-            ? t("content_repo.action.confirm_remove", "Confirm remove")
-            : t("content_repo.action.remove", "Remove")}
+          {/* #1445 — the confirmation (incl. the opt-in progress delete) now
+              lives in RemoveRepoDialog; this button just opens it. */}
+          {t("content_repo.action.remove", "Remove")}
         </Button>
       </div>
       {share !== null && (

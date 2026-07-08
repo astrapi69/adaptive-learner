@@ -19,6 +19,7 @@ vi.mock("../../../storage", () => ({
     contentLoader: { listSets, downloadSet },
     github: { getStatus: githubGetStatus },
   }),
+  resolveStorageMode: () => "api",
 }));
 
 const { notifyError, notifySuccess, validateUserRepo, listRepoManifestSets } =
@@ -242,8 +243,11 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     render(<ContentRepoSettingsSection />);
     const remove = await screen.findByTestId("content-repo-remove-jane-deck");
     fireEvent.click(remove);
-    expect(pluginUpdate).not.toHaveBeenCalled(); // first click = arm confirm
-    fireEvent.click(screen.getByTestId("content-repo-remove-jane-deck"));
+    expect(pluginUpdate).not.toHaveBeenCalled(); // opens the confirm dialog
+    // #1445 — confirmation now lives in the RemoveRepoDialog.
+    fireEvent.click(
+      await screen.findByTestId("content-repo-remove-dialog-confirm"),
+    );
     await waitFor(() => expect(pluginUpdate).toHaveBeenCalled());
     const [, body] = pluginUpdate.mock.calls[0];
     expect(body.settings.user_repos).toEqual([]);

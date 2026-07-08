@@ -24,9 +24,12 @@ vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "user-1"}),
 }));
 
+const listSetsMock = vi.fn();
+
 vi.mock("../../storage", () => ({
     getStorage: () => ({
         elementErrors: {reviewQueue: reviewQueueMock},
+        contentLoader: {listSets: listSetsMock},
     }),
 }));
 
@@ -43,6 +46,10 @@ function overdue(n: number) {
 
 beforeEach(() => {
     reviewQueueMock.mockReset();
+    // fr-a1 is loadable by default → #1445 availability filter is a no-op.
+    listSetsMock
+        .mockReset()
+        .mockResolvedValue({sets: [{source: "owner/repo", id: "fr-a1"}]});
 });
 
 describe("NavReviewsBadge: reviews-changed live recompute (#629)", () => {

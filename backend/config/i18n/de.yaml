@@ -463,6 +463,13 @@ progress:
   commit_notes_aria: "Sitzungsnotizen"
   session_count: "Sitzungen"
 settings:
+  orphaned:
+    heading: "Nicht verbundene Inhalte"
+    summary: "{lessons} Lektionen und {cards} Wiederholungskarten aus Quellen, mit denen du nicht mehr verbunden bist."
+    delete: "Nicht verbundenen Fortschritt löschen"
+    confirm_title: "Nicht verbundenen Fortschritt löschen"
+    confirm_message: "{lessons} Lektionen und {cards} Wiederholungskarten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden."
+    deleted: "{lessons} Lektionen und {cards} Wiederholungskarten gelöscht."
   key_export_link:
     heading: "KI-Schlüssel — verschlüsselter Export"
     hint: "Exportiere oder importiere deine KI-Schlüssel als eine verschlüsselte Datei. Sie liegt bei den anderen Backups im Daten-Tab."
@@ -2960,6 +2967,13 @@ favorites:
   empty: "Noch keine Favoriten — tippe auf den Stern einer Lektion."
   save_prompt: "Diese Lektion zu deinen Favoriten hinzufügen"
 content_repo:
+  remove:
+    title: "Repository entfernen"
+    message: "{source} entfernen? Die heruntergeladenen Inhalte werden von diesem Gerät entfernt."
+    delete_progress: "Auch meinen Lernfortschritt für diese Inhalte löschen."
+    consequence: "{lessons} Lektionen und {cards} Wiederholungskarten werden gelöscht. Das kann nicht rückgängig gemacht werden."
+    counting: "Fortschritt wird gezählt…"
+    deleted: "Entfernt. {lessons} Lektionen und {cards} Wiederholungskarten gelöscht."
   sync_all:
     done: "{ok} von {total} Repositories synchronisiert."
     failed: "{ok} von {total} synchronisiert. Fehlgeschlagen: {repos}"

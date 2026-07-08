@@ -496,6 +496,14 @@
     "session_count": "Oturumlar"
   },
   "settings": {
+    "orphaned": {
+      "heading": "Bağlantısı kesilen içerik",
+      "summary": "Artık bağlı olmadığınız kaynaklardan {lessons} ders ve {cards} tekrar kartı.",
+      "delete": "Bağlantısı kesilen ilerlemeyi sil",
+      "confirm_title": "Bağlantısı kesilen ilerlemeyi sil",
+      "confirm_message": "{lessons} ders ve {cards} tekrar kartı kalıcı olarak silinecek. Bu geri alınamaz.",
+      "deleted": "{lessons} ders ve {cards} tekrar kartı silindi."
+    },
     "key_export_link": {
       "heading": "Yapay zeka anahtarları — şifreli dışa aktarma",
       "hint": "Yapay zeka anahtarlarınızı tek bir şifreli dosya olarak dışa veya içe aktarın. Veri sekmesindeki diğer yedeklerle birlikte bulunur.",
@@ -3223,6 +3231,14 @@
     "save_prompt": "Bu dersi favorilerine kaydet"
   },
   "content_repo": {
+    "remove": {
+      "title": "Depoyu kaldır",
+      "message": "{source} kaldırılsın mı? İndirilen içeriği bu cihazdan kaldırılacak.",
+      "delete_progress": "Bu içerik için öğrenme ilerlememi de sil.",
+      "consequence": "{lessons} ders ve {cards} tekrar kartı silinecek. Bu geri alınamaz.",
+      "counting": "İlerlemeniz sayılıyor…",
+      "deleted": "Kaldırıldı. {lessons} ders ve {cards} tekrar kartı silindi."
+    },
     "sync_all": {
       "done": "{total} depodan {ok} tanesi eşitlendi.",
       "failed": "{total} depodan {ok} tanesi eşitlendi. Başarısız: {repos}"

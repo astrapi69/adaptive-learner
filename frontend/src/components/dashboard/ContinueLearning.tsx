@@ -40,6 +40,10 @@ import {
     rowStars,
     type ContinueMode,
 } from "../../lib/content/browse/continue-learning";
+import {
+    buildContentAvailability,
+    filterAvailableProgress,
+} from "../../lib/content/browse/content-availability";
 import {getStorage} from "../../storage";
 import ShareResultButton from "../share/ShareResultButton";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
@@ -134,7 +138,12 @@ export default function ContinueLearning({
             if (cancelled) return;
             const sets: ContentSetEntry[] = setsRes?.sets ?? [];
 
-            const groups = groupRecentProgress(progress ?? [], maxItems);
+            // #1445 Part A — hide progress whose content can no longer be
+            // loaded (its source repo was removed). The Dexie rows are left
+            // untouched; re-adding the repo brings the cards back.
+            const availability = buildContentAvailability(sets);
+            const loadable = filterAvailableProgress(progress ?? [], availability);
+            const groups = groupRecentProgress(loadable, maxItems);
             const resolved = await Promise.all(
                 groups.map(async (group) => {
                     const listing = await safe(() =>

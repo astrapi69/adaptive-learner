@@ -463,6 +463,13 @@ progress:
   commit_notes_aria: "Notas de la sesión"
   session_count: "Sesiones"
 settings:
+  orphaned:
+    heading: "Contenido desconectado"
+    summary: "{lessons} lecciones y {cards} tarjetas de repaso de fuentes a las que ya no estás conectado."
+    delete: "Eliminar progreso desconectado"
+    confirm_title: "Eliminar progreso desconectado"
+    confirm_message: "Se eliminarán permanentemente {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer."
+    deleted: "Se borraron {lessons} lecciones y {cards} tarjetas de repaso."
   key_export_link:
     heading: "Claves de IA: exportación cifrada"
     hint: "Exporta o importa tus claves de IA en un único archivo cifrado. Está junto a las demás copias de seguridad en la pestaña Datos."
@@ -2958,6 +2965,13 @@ favorites:
   empty: "Aún no hay favoritos: toca la estrella de una lección."
   save_prompt: "Guardar esta lección en tus favoritos"
 content_repo:
+  remove:
+    title: "Eliminar repositorio"
+    message: "¿Eliminar {source}? Su contenido descargado se eliminará de este dispositivo."
+    delete_progress: "Eliminar también mi progreso de aprendizaje de este contenido."
+    consequence: "Se eliminarán {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer."
+    counting: "Contando tu progreso…"
+    deleted: "Eliminado. Se borraron {lessons} lecciones y {cards} tarjetas de repaso."
   sync_all:
     done: "Se sincronizaron {ok} de {total} repositorios."
     failed: "Se sincronizaron {ok} de {total}. Fallaron: {repos}"
