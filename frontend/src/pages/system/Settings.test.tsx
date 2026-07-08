@@ -173,6 +173,47 @@ describe("Settings page", () => {
     expect(notice).toHaveTextContent("Sync");
   });
 
+  // #1451 — the Data tab sections follow a FIXED causal order:
+  // source (content repos) -> sync -> what results (cache/install) ->
+  // securing (backup/export) -> reversible cleanup (orphaned data) ->
+  // irreversible danger zone LAST. Pinned by relative DOM order so a
+  // future edit cannot silently regress it (e.g. put the danger zone
+  // above Sync).
+  it("orders the Data-tab sections causally (content repos first, danger zone last) (#1451)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-data");
+    // Section-root testids in their intended causal order.
+    const CAUSAL_ORDER = [
+      "content-repo-section",
+      "settings-sync",
+      "settings-section-cache",
+      "settings-install-section",
+      "settings-backup",
+      "key-vault-section",
+      "export-section",
+      "settings-section-orphaned",
+      "settings-danger-zone",
+    ];
+    // Collect the section roots present, in DOM order (de-duped: a
+    // section root's own testid, not the nested ones it contains).
+    const seen = new Set<string>();
+    const domOrder = Array.from(panel.querySelectorAll("[data-testid]"))
+      .map((el) => el.getAttribute("data-testid"))
+      .filter((id): id is string => id !== null && CAUSAL_ORDER.includes(id))
+      .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+    const expected = CAUSAL_ORDER.filter((id) => domOrder.includes(id));
+    expect(domOrder).toEqual(expected);
+    // Headline invariants (causality + safety).
+    expect(domOrder[0]).toBe("content-repo-section");
+    expect(domOrder[domOrder.length - 1]).toBe("settings-danger-zone");
+    expect(domOrder.indexOf("content-repo-section")).toBeLessThan(
+      domOrder.indexOf("settings-sync"),
+    );
+  });
+
   it("redirects to /onboarding when user_id is missing", async () => {
     localStorage.removeItem("adaptive-learner.user_id");
     renderSettings();
