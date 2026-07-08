@@ -2658,6 +2658,7 @@ learning_path:
     delete: "Pfad löschen"
     next_hint: "Nächste: {lesson}"
     add_lesson: "Lektion hinzufügen"
+    add_first_lesson: "Füge deine erste Lektion hinzu"
     search_lessons: "Lektionen suchen…"
     no_lessons: "Keine Lektionen gefunden."
     done_adding: "Fertig"

@@ -11,7 +11,11 @@
  * 44px touch targets, stable testIds.
  *
  * Continue is disabled (and shows no next-lesson hint) when there is
- * no unfinished lesson — an empty or fully-completed path.
+ * no unfinished lesson — an empty or fully-completed path. A path with
+ * ZERO lessons has nothing to continue at all (#1458): when the host
+ * wires ``emptyActionLabel`` + ``onEmptyAction``, the card replaces the
+ * dead Continue with that active action (e.g. "Add your first lesson")
+ * and drops the meaningless 0-of-0 progress block.
  *
  * @example
  * <CurriculumCard
@@ -24,12 +28,14 @@
  *   continueLabel="Continue"
  *   deleteLabel="Delete"
  *   nextHintLabel="Next: 03 articles"
+ *   emptyActionLabel="Add your first lesson"
+ *   onEmptyAction={() => openPicker(id)}
  *   onContinue={() => navigate(routeForNext)}
  *   onDelete={() => removePath(id)}
  * />
  */
 
-import {Play, Trash2} from "lucide-react";
+import {Play, Plus, Trash2} from "lucide-react";
 
 export interface CurriculumCardProps {
     /** The path's display name. */
@@ -52,6 +58,12 @@ export interface CurriculumCardProps {
     /** "Next: <lesson>" hint (already includes the lesson label).
      *  Shown only when ``nextLabel`` is set. */
     nextHintLabel?: string;
+    /** Label for the empty-path action ("Add your first lesson").
+     *  When set together with ``onEmptyAction`` and the path has zero
+     *  lessons, this ACTIVE action replaces the dead Continue (#1458). */
+    emptyActionLabel?: string;
+    /** Fired when the empty-path action is pressed. */
+    onEmptyAction?: () => void;
     /** Fired when Continue is pressed (only when enabled). */
     onContinue?: () => void;
     /** Fired when Delete is pressed. */
@@ -70,12 +82,19 @@ export default function CurriculumCard({
     continueLabel,
     deleteLabel,
     nextHintLabel,
+    emptyActionLabel,
+    onEmptyAction,
     onContinue,
     onDelete,
     testId,
 }: CurriculumCardProps) {
     const percent = total > 0 ? Math.round((done / total) * 100) : 0;
     const canContinue = !!nextLabel;
+    // #1458 - an empty path has nothing to continue AND no progress to
+    // show. With the empty action wired, the CTA replaces Continue; the
+    // 0-of-0 progress block is dead information either way.
+    const isEmpty = total === 0;
+    const showEmptyAction = isEmpty && !!emptyActionLabel && !!onEmptyAction;
 
     return (
         <div
@@ -105,22 +124,24 @@ export default function CurriculumCard({
                 </button>
             </div>
 
-            <div className="flex flex-col gap-1">
-                <div
-                    className="h-2 w-full overflow-hidden rounded-full bg-bg-secondary"
-                    role="progressbar"
-                    aria-valuemin={0}
-                    aria-valuemax={total}
-                    aria-valuenow={done}
-                    aria-label={progressLabel}
-                >
+            {!isEmpty && (
+                <div className="flex flex-col gap-1">
                     <div
-                        className="h-full rounded-full bg-accent"
-                        style={{width: `${percent}%`}}
-                    />
+                        className="h-2 w-full overflow-hidden rounded-full bg-bg-secondary"
+                        role="progressbar"
+                        aria-valuemin={0}
+                        aria-valuemax={total}
+                        aria-valuenow={done}
+                        aria-label={progressLabel}
+                    >
+                        <div
+                            className="h-full rounded-full bg-accent"
+                            style={{width: `${percent}%`}}
+                        />
+                    </div>
+                    <p className="text-xs text-fg-muted">{progressLabel}</p>
                 </div>
-                <p className="text-xs text-fg-muted">{progressLabel}</p>
-            </div>
+            )}
 
             {canContinue && nextHintLabel && (
                 <p
@@ -131,16 +152,28 @@ export default function CurriculumCard({
                 </p>
             )}
 
-            <button
-                type="button"
-                onClick={onContinue}
-                disabled={!canContinue}
-                className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-md bg-accent px-4 text-sm font-medium text-accent-fg hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                data-testid={testId ? `${testId}-continue` : undefined}
-            >
-                <Play size={16} aria-hidden="true" />
-                {continueLabel}
-            </button>
+            {showEmptyAction ? (
+                <button
+                    type="button"
+                    onClick={onEmptyAction}
+                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-md bg-accent px-4 text-sm font-medium text-accent-fg hover:opacity-90"
+                    data-testid={testId ? `${testId}-add-lessons` : undefined}
+                >
+                    <Plus size={16} aria-hidden="true" />
+                    {emptyActionLabel}
+                </button>
+            ) : (
+                <button
+                    type="button"
+                    onClick={onContinue}
+                    disabled={!canContinue}
+                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-md bg-accent px-4 text-sm font-medium text-accent-fg hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                    data-testid={testId ? `${testId}-continue` : undefined}
+                >
+                    <Play size={16} aria-hidden="true" />
+                    {continueLabel}
+                </button>
+            )}
         </div>
     );
 }

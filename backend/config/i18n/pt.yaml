@@ -2654,6 +2654,7 @@ learning_path:
     delete: "Excluir caminho"
     next_hint: "Próxima: {lesson}"
     add_lesson: "Adicionar uma lição"
+    add_first_lesson: "Adicione sua primeira lição"
     search_lessons: "Pesquisar lições…"
     no_lessons: "Nenhuma lição encontrada."
     done_adding: "Concluído"

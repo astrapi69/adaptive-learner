@@ -2913,6 +2913,7 @@
       "delete": "Hapus jalur",
       "next_hint": "Berikutnya: {lesson}",
       "add_lesson": "Tambah pelajaran",
+      "add_first_lesson": "Tambahkan pelajaran pertamamu",
       "search_lessons": "Cari pelajaran…",
       "no_lessons": "Tidak ada pelajaran ditemukan.",
       "done_adding": "Selesai",

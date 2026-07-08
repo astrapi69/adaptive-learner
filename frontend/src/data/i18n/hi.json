@@ -2913,6 +2913,7 @@
       "delete": "पथ हटाएं",
       "next_hint": "अगला: {lesson}",
       "add_lesson": "एक पाठ जोड़ें",
+      "add_first_lesson": "अपना पहला पाठ जोड़ें",
       "search_lessons": "पाठ खोजें…",
       "no_lessons": "कोई पाठ नहीं मिला।",
       "done_adding": "हो गया",

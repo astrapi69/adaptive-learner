@@ -91,4 +91,18 @@ describe("LessonPicker", () => {
             "No lessons found",
         );
     });
+
+    // #1458 - the search input must reserve left padding for the
+    // magnifier icon (pl-9 > icon at left-3 + 16px), and the icon must
+    // be click-through + decorative so a click on it focuses the field.
+    // The companion style guard (input-padding-layer.test.ts) ensures
+    // the utility is not defeated by an unlayered global input rule.
+    it("reserves left padding for the search icon and keeps the icon decorative (#1458)", () => {
+        const {container} = renderPicker();
+        const input = screen.getByTestId("picker-search");
+        expect(input.className).toMatch(/\bpl-9\b/);
+        const icon = container.querySelector("svg.pointer-events-none");
+        expect(icon).not.toBeNull();
+        expect(icon).toHaveAttribute("aria-hidden", "true");
+    });
 });
