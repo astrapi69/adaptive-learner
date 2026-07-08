@@ -22,11 +22,25 @@ interface DataPanelProps {
 }
 
 /**
- * Data tab of the Settings page: sync, backup, key vault, selective +
- * full export, identity, content repositories, orphaned-data cleanup,
- * cache management, install, and the danger zone. Extracted verbatim from
- * the Settings god-file (#1447); the panel stays mounted (``hidden`` when
- * inactive) so deep links and ``data-testid`` assertions keep working.
+ * Data tab of the Settings page.
+ *
+ * The sections follow a FIXED causal order (#1451), not the historical
+ * grab-bag: source -> what happens with it -> what results -> securing ->
+ * reversible cleanup -> irreversible danger zone:
+ *
+ * 1. Content repositories (the source that everything else acts on)
+ * 2. Sync (belongs with the sources it synchronizes)
+ * 3. Offline cache + app install (what results from the sources)
+ * 4. Backup / export (securing the work, incl. the read-only identity
+ *    recovery-file diagnostic, a recovery concern)
+ * 5. Orphaned-data cleanup (#1445, reversible: only unusable data)
+ * 6. Danger zone (delete everything) - irreversible, ALWAYS last, with a
+ *    visual top-separation so its severity is obvious.
+ *
+ * The order is deliberately not configurable: a fixed position is what
+ * makes a settings page citable, and a movable danger zone would be a
+ * safety hazard. The panel stays mounted (``hidden`` when inactive) so
+ * deep links and ``data-testid`` assertions keep working (#1447).
  *
  * @example
  * <DataPanel active={activeTab === "data"} />
@@ -40,11 +54,15 @@ export default function DataPanel({ active }: DataPanelProps) {
       hidden={!active}
       data-testid="settings-panel-data"
     >
-      {/* Sync needs a reachable backend (pairing token + sync
-          endpoints). In Dexie mode (GitHub Pages / PWA-only) there
-          is none, so the controls are replaced by a notice that the
-          desktop app carries the feature — visible, not hidden, per
-          the feature-state policy (#335, supersedes #51). */}
+      {/* 1. Source: the content repositories everything else acts on. */}
+      <ContentRepoSettingsSection />
+
+      {/* 2. Sync belongs with the sources it synchronizes. Needs a
+          reachable backend (pairing token + sync endpoints); in Dexie
+          mode (GitHub Pages / PWA-only) there is none, so the controls
+          are replaced by a notice that the desktop app carries the
+          feature - visible, not hidden, per the feature-state policy
+          (#335, supersedes #51). */}
       <Feature
         id={FEATURES.SYNC}
         whenDisabled={
@@ -64,18 +82,30 @@ export default function DataPanel({ active }: DataPanelProps) {
       >
         <SyncSection />
       </Feature>
+
+      {/* 3. What results from the sources: offline cache + app install. */}
+      <CacheManagementSection />
+      <InstallAppSection />
+
+      {/* 4. Securing the work: backup, the identity recovery-file
+          diagnostic (a recovery concern, API-mode only), key export,
+          selective + full export. */}
       <BackupSection />
+      {resolveStorageMode() === "api" && <IdentitySection t={t} />}
       <KeyVaultSection />
       <Feature id={FEATURES.SELECTIVE_EXPORT}>
         <SelectiveExportSection />
       </Feature>
       <ExportSection />
-      {resolveStorageMode() === "api" && <IdentitySection t={t} />}
-      <ContentRepoSettingsSection />
+
+      {/* 5. Reversible cleanup: orphaned progress from removed repos (#1445). */}
       <OrphanedDataSection />
-      <CacheManagementSection />
-      <InstallAppSection />
-      <DangerZoneSection />
+
+      {/* 6. Irreversible danger zone, always last, visually separated so
+          its severity is unmistakable. */}
+      <div className="mt-8 border-t-2 border-border pt-8">
+        <DangerZoneSection />
+      </div>
     </div>
   );
 }
