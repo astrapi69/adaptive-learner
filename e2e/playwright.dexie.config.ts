@@ -35,6 +35,18 @@ export default defineConfig({
         // covered by the frontend unit tests (Content.viewmode.test +
         // viewModePref.test); the e2e gate is about per-route crash-safety
         // and tree functionality, not the default.
+        //
+        // #1469 — the whole dexie-smoke suite assumes the app default is
+        // German (e.g. content-tree.spec: German-source sets in the primary
+        // "I speak" section, English-source under the collapsed "other"
+        // section). #1464 made the fresh-install UI language follow
+        // navigator.language, which is "en-US" in headless Chromium, so the
+        // German fixtures fell into the collapsed "other" section and their
+        // content-set rows became invisible. Seed a saved "de" choice (which
+        // always wins over navigator.language) so the gate runs in German
+        // exactly as the specs were written, independent of the CI browser
+        // locale. #1464's browser-locale default is unchanged for real users
+        // and is covered by the frontend unit tests (useI18n / languages).
         storageState: {
             cookies: [],
             origins: [
@@ -44,6 +56,10 @@ export default defineConfig({
                         {
                             name: "adaptive-learner.content_view_mode",
                             value: "grid",
+                        },
+                        {
+                            name: "adaptive-learner.language",
+                            value: "de",
                         },
                     ],
                 },
