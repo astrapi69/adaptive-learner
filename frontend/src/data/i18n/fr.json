@@ -1801,7 +1801,7 @@
       "placeholder": "p. ex. Explique avec un exemple",
       "ask": "Demander",
       "asking": "Demande en cours…",
-      "no_key": "Ajoute une clé IA pour poser une question - voir les réglages IA.",
+      "no_key": "Les questions à l'IA nécessitent ta propre clé IA (BYOK). Optionnel, l'app fonctionne très bien sans.",
       "open_settings": "Réglages IA",
       "error": "La requête IA a échoué. Réessaie."
     },

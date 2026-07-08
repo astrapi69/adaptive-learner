@@ -1801,7 +1801,7 @@
       "placeholder": "ör. Bunu bir örnekle açıkla",
       "ask": "Sor",
       "asking": "Soruluyor…",
-      "no_key": "Soru sormak için bir yapay zekâ anahtarı ayarla - yapay zekâ ayarlarına bak.",
+      "no_key": "Yapay zekâ soruları kendi yapay zekâ anahtarını (BYOK) gerektirir. İsteğe bağlı, uygulama onsuz da sorunsuz çalışır.",
       "open_settings": "Yapay zekâ ayarları",
       "error": "Yapay zekâ isteği başarısız oldu. Lütfen tekrar dene."
     },

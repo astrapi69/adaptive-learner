@@ -1801,7 +1801,7 @@
       "placeholder": "z. B. Erkläre das mit einem Beispiel",
       "ask": "Fragen",
       "asking": "Wird gefragt…",
-      "no_key": "Hinterlege einen KI-Schlüssel, um nachzufragen - siehe KI-Einstellungen.",
+      "no_key": "Für KI-Nachfragen brauchst du einen eigenen KI-Schlüssel (BYOK). Optional, die App funktioniert auch ohne.",
       "open_settings": "KI-Einstellungen",
       "error": "Die KI-Anfrage ist fehlgeschlagen. Bitte versuche es erneut."
     },

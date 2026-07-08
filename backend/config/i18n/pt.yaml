@@ -1671,7 +1671,7 @@ lesson:
     placeholder: "ex.: Explique com um exemplo"
     ask: "Perguntar"
     asking: "Perguntando…"
-    no_key: "Configure uma chave de IA para perguntar - veja as configurações de IA."
+    no_key: "Perguntas à IA exigem a sua própria chave de IA (BYOK). Opcional, o app funciona bem sem ela."
     open_settings: "Configurações de IA"
     error: "A solicitação de IA falhou. Tente novamente."
   example:

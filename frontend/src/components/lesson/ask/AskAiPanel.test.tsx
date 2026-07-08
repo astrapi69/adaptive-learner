@@ -1,8 +1,13 @@
 /**
- * Tests for AskAiPanel (#1321). The AI call is mocked (no real provider hit).
- * Pins: no key → discreet hint + no call; with key → the block context +
- * question reach aiComplete and the answer renders; provider-resolution and
- * API errors are handled without crashing.
+ * Tests for AskAiPanel (#1321, #1443). The AI call is mocked (no real provider
+ * hit). Pins:
+ *  - No key → the "Ask AI" button is STILL shown, greyed-out via
+ *    ``aria-disabled`` (NOT the ``disabled`` attribute, which would swallow
+ *    touch events), wired to a hint popover with a settings link; clicking it
+ *    fires NO AI call and does not open the ask panel; the old standalone
+ *    fliesstext hint is gone.
+ *  - With key → the block context + question reach aiComplete and the answer
+ *    renders; provider-resolution and API errors are handled without crashing.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -65,21 +70,58 @@ describe("AskAiPanel", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("shows a discreet hint + link and makes no call when no key is set", () => {
-    keyStatus.mockReturnValue({ ready: true, hasKey: false });
-    renderPanel();
-    expect(screen.getByTestId("ask-ai-no-key")).toBeInTheDocument();
-    expect(screen.getByTestId("ask-ai-settings-link")).toHaveAttribute(
-      "href",
-      "/settings?tab=ai",
-    );
-    expect(screen.queryByTestId("ask-ai-open")).toBeNull();
-    expect(aiComplete).not.toHaveBeenCalled();
+  describe("without an AI key", () => {
+    beforeEach(() => keyStatus.mockReturnValue({ ready: true, hasKey: false }));
+
+    it("still shows the Ask AI button, greyed via aria-disabled (not the disabled attribute)", () => {
+      renderPanel();
+      const button = screen.getByTestId("ask-ai-disabled");
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveAttribute("aria-disabled", "true");
+      // A real `disabled` button swallows touch events -> dead tap-target.
+      expect(button).not.toBeDisabled();
+      expect(button.tagName).toBe("BUTTON");
+    });
+
+    it("wires the button to the hint popover via aria-describedby and hosts the settings link", () => {
+      renderPanel();
+      const button = screen.getByTestId("ask-ai-disabled");
+      const hint = screen.getByTestId("ask-ai-no-key");
+      expect(button.getAttribute("aria-describedby")).toBe(hint.getAttribute("id"));
+      expect(hint).toBeInTheDocument();
+      expect(screen.getByTestId("ask-ai-settings-link")).toHaveAttribute(
+        "href",
+        "/settings?tab=ai",
+      );
+    });
+
+    it("keeps the popover hidden until the trigger is engaged, then reveals it", async () => {
+      renderPanel();
+      const hint = screen.getByTestId("ask-ai-no-key");
+      expect(hint).not.toBeVisible();
+      fireEvent.focus(screen.getByTestId("ask-ai-disabled"));
+      await waitFor(() => expect(hint).toBeVisible());
+    });
+
+    it("no longer renders the old standalone paragraph hint", () => {
+      renderPanel();
+      // The hint now lives inside the button's popover, not as a loose <p>.
+      const hint = screen.getByTestId("ask-ai-no-key");
+      expect(hint.tagName).not.toBe("P");
+    });
+
+    it("does not fire an AI call or open the ask panel when the greyed button is clicked", () => {
+      renderPanel();
+      fireEvent.click(screen.getByTestId("ask-ai-disabled"));
+      expect(aiComplete).not.toHaveBeenCalled();
+      expect(screen.queryByTestId("ask-ai-panel")).toBeNull();
+      expect(screen.queryByTestId("ask-ai-input")).toBeNull();
+    });
   });
 
   it("passes the block context + question to aiComplete and renders the answer", async () => {
     keyStatus.mockReturnValue({ ready: true, hasKey: true });
-    aiComplete.mockResolvedValue("Sure — for example: J'ai mangé.");
+    aiComplete.mockResolvedValue("Sure, for example: J'ai mangé.");
     renderPanel();
 
     fireEvent.click(screen.getByTestId("ask-ai-open"));

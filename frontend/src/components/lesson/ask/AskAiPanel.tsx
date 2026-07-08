@@ -1,11 +1,20 @@
 /**
  * AskAiPanel — "KI fragen" / "Vertiefen" for a single lesson block (#1321).
  *
- * Sits under a theory block or an exercise. When the active AI provider has a
- * key (BYOK), it shows a discreet toggle that opens a small ask panel: the
- * learner types a question and gets an answer scoped to THIS block (explain /
- * deepen / example), with follow-ups. Without a key it shows a discreet hint
- * linking to the AI settings — never blocking the reading flow.
+ * Sits under a theory block or an exercise. The "Ask AI" button is ALWAYS
+ * visible so the feature is discoverable. When the active AI provider has a
+ * key (BYOK), it opens a small ask panel: the learner types a question and
+ * gets an answer scoped to THIS block (explain / deepen / example), with
+ * follow-ups. Without a key the SAME button renders greyed-out
+ * (``aria-disabled``, NOT the ``disabled`` attribute, because a ``disabled``
+ * button receives no touch events, so the hint would be a dead tap-target on
+ * iPhone/iPad). Tapping, hovering or focusing it reveals a small popover with
+ * a BYOK hint and a link to the AI settings, never blocking the reading flow
+ * (#1443).
+ *
+ * The popover reuses the project's Radix ``HoverCard`` primitive (the same one
+ * ``HelpTooltip`` uses): hover on desktop, tap/focus on touch, and it can host
+ * the interactive settings link. Library-first, no new tooltip dependency.
  *
  * Reuses the existing browser-direct AI path (``resolveActiveAiProvider`` +
  * ``aiComplete``, the same one the exercise-generation feature uses) — no
@@ -13,6 +22,7 @@
  * ({@link buildAskAiMessages}). Token-backed Tailwind only.
  */
 
+import * as HoverCard from "@radix-ui/react-hover-card";
 import { Bot, Loader2, Send, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -48,6 +58,7 @@ export default function AskAiPanel({
   const { t, lang } = useI18n();
   const { ready, hasKey } = useApiKeyStatus();
   const [open, setOpen] = useState(false);
+  const [hintOpen, setHintOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
@@ -56,25 +67,60 @@ export default function AskAiPanel({
   // Still resolving the key status — render nothing to avoid a flash.
   if (!ready) return null;
 
-  // No AI key: a discreet, non-blocking hint pointing at the AI settings.
+  // No AI key: the SAME "Ask AI" button, rendered greyed-out. It stays
+  // focusable and tappable (aria-disabled, not the disabled attribute) so a
+  // tap/hover/focus reveals the BYOK hint popover instead of a dead
+  // tap-target. Clicking it never fires an AI request.
   if (!hasKey) {
+    const hintId = `${testId}-hint`;
     return (
-      <p
-        className="mt-3 text-xs text-fg-muted"
-        data-testid={`${testId}-no-key`}
-      >
-        {t(
-          "lesson.ask_ai.no_key",
-          "Set an AI key to ask about this — see AI settings.",
-        )}{" "}
-        <Link
-          to="/settings?tab=ai"
-          className="underline hover:text-fg-secondary"
-          data-testid={`${testId}-settings-link`}
+      <div className="mt-3">
+        <HoverCard.Root
+          open={hintOpen}
+          onOpenChange={setHintOpen}
+          openDelay={120}
+          closeDelay={150}
         >
-          {t("lesson.ask_ai.open_settings", "AI settings")}
-        </Link>
-      </p>
+          <HoverCard.Trigger asChild>
+            <button
+              type="button"
+              aria-disabled="true"
+              aria-describedby={hintId}
+              onClick={(event) => event.preventDefault()}
+              className="inline-flex min-h-11 cursor-help items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-fg-muted hover:bg-muted"
+              data-testid={`${testId}-disabled`}
+            >
+              <Sparkles size={16} aria-hidden="true" />
+              {t("lesson.ask_ai.button", "Ask AI")}
+            </button>
+          </HoverCard.Trigger>
+          <HoverCard.Portal forceMount>
+            <HoverCard.Content
+              forceMount
+              hidden={!hintOpen}
+              id={hintId}
+              sideOffset={6}
+              align="start"
+              className="z-[1100] max-w-xs rounded-md border border-border bg-[var(--bg-surface)] p-3 text-sm shadow-[var(--shadow-elevated)]"
+              data-testid={`${testId}-no-key`}
+            >
+              <p className="m-0 text-fg-primary">
+                {t(
+                  "lesson.ask_ai.no_key",
+                  "AI questions need your own AI key (BYOK). Optional, the app works fine without it.",
+                )}
+              </p>
+              <Link
+                to="/settings?tab=ai"
+                className="mt-2 inline-block font-medium text-accent underline hover:opacity-90"
+                data-testid={`${testId}-settings-link`}
+              >
+                {t("lesson.ask_ai.open_settings", "AI settings")}
+              </Link>
+            </HoverCard.Content>
+          </HoverCard.Portal>
+        </HoverCard.Root>
+      </div>
     );
   }
 
@@ -90,7 +136,7 @@ export default function AskAiPanel({
         setError(
           t(
             "lesson.ask_ai.no_key",
-            "Set an AI key to ask about this — see AI settings.",
+            "AI questions need your own AI key (BYOK). Optional, the app works fine without it.",
           ),
         );
         return;
