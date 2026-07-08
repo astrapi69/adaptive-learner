@@ -39,14 +39,14 @@ export default function InstallAppSection() {
           );
 
     return (
-        <div
-            className="settings-subsection mt-6"
+        <section
+            className="settings-section"
             data-testid="settings-install-section"
         >
-            <h3 className="mb-1 mt-0 text-base font-semibold">
+            <h2 className="settings-section-title">
                 {t("settings.install.heading", "Install app")}
-            </h3>
-            <p className="mb-3 mt-0 text-sm text-fg-muted">
+            </h2>
+            <p className="m-0 text-sm text-fg-muted">
                 {t(
                     "settings.install.description",
                     "Install Adaptive Learner as its own application: a standalone window, an icon on your home screen, and it starts even without a network. Your learning content is not affected.",
@@ -65,6 +65,6 @@ export default function InstallAppSection() {
                     ? t("settings.install.already", "Already installed")
                     : t("settings.install.button", "Install app")}
             </Button>
-        </div>
+        </section>
     );
 }

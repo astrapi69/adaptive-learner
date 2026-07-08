@@ -98,15 +98,18 @@ export default function LearningRepoSettingsSection() {
 
   if (loading || settings === null) {
     return (
-      <section data-testid="learning-repo-settings-loading">
+      <section
+        className="settings-section"
+        data-testid="learning-repo-settings-loading"
+      >
         <p>{t("repo.settings.loading", "Loading…")}</p>
       </section>
     );
   }
 
   return (
-    <section className="flex flex-col gap-4" data-testid="learning-repo-settings">
-      <h2 className="m-0 text-lg font-semibold text-[var(--fg-primary)]">
+    <section className="settings-section" data-testid="learning-repo-settings">
+      <h2 className="settings-section-title">
         {t("repo.settings.title", "Learning Repository")}
       </h2>
       <p className="m-0 text-sm text-[var(--fg-muted)]">
