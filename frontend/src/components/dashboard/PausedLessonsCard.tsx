@@ -36,6 +36,10 @@ import {
     resolveSetTitle,
 } from "../../lib/content/browse/continue-learning";
 import {
+    buildContentAvailability,
+    filterAvailableProgress,
+} from "../../lib/content/browse/content-availability";
+import {
     MAX_PAUSED,
     readRetentionDays,
 } from "../../lib/learning/pausedRetentionPref";
@@ -118,8 +122,20 @@ export default function PausedLessonsCard({
         let cancelled = false;
         void (async () => {
             try {
-                const all = await getStorage().lessonProgress.list(userId);
+                const [allRaw, setsRes] = await Promise.all([
+                    getStorage().lessonProgress.list(userId),
+                    safe(() => getStorage().contentLoader.listSets()),
+                ]);
                 if (cancelled) return;
+
+                // #1445 Part A — ignore progress whose content can no longer
+                // be loaded (its source repo was removed). Orphaned rows are
+                // neither shown NOR auto-abandoned here, so the Dexie state is
+                // left untouched until the learner decides (Part B/C).
+                const availability = buildContentAvailability(
+                    setsRes?.sets ?? [],
+                );
+                const all = filterAvailableProgress(allRaw, availability);
 
                 // Phase 63F — auto-abandon stale / excess paused
                 // lessons. Fire-and-forget; failures don't block
@@ -175,9 +191,7 @@ export default function PausedLessonsCard({
 
                 // Resolve a readable title per row, never leaking a raw id.
                 const storage = getStorage();
-                const sets =
-                    (await safe(() => storage.contentLoader.listSets()))?.sets ??
-                    [];
+                const sets = setsRes?.sets ?? [];
                 const partLabel = (part: number): string =>
                     lessonPartTemplate
                         .replace("{label}", lessonFallbackLabel)

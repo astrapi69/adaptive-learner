@@ -496,6 +496,14 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "orphaned": {
+      "heading": "Contenu déconnecté",
+      "summary": "{lessons} leçons et {cards} cartes de révision provenant de sources auxquelles vous n'êtes plus connecté.",
+      "delete": "Supprimer la progression déconnectée",
+      "confirm_title": "Supprimer la progression déconnectée",
+      "confirm_message": "{lessons} leçons et {cards} cartes de révision seront définitivement supprimées. Cette action est irréversible.",
+      "deleted": "{lessons} leçons et {cards} cartes de révision supprimées."
+    },
     "key_export_link": {
       "heading": "Clés IA — export chiffré",
       "hint": "Exporte ou importe tes clés IA dans un seul fichier chiffré. Il se trouve avec les autres sauvegardes dans l'onglet Données.",
@@ -3223,6 +3231,14 @@
     "save_prompt": "Enregistrer cette leçon dans tes favoris"
   },
   "content_repo": {
+    "remove": {
+      "title": "Supprimer le dépôt",
+      "message": "Supprimer {source} ? Son contenu téléchargé sera retiré de cet appareil.",
+      "delete_progress": "Supprimer aussi ma progression pour ce contenu.",
+      "consequence": "{lessons} leçons et {cards} cartes de révision seront supprimées. Cette action est irréversible.",
+      "counting": "Comptage de votre progression…",
+      "deleted": "Supprimé. {lessons} leçons et {cards} cartes de révision supprimées."
+    },
     "sync_all": {
       "done": "{ok} sur {total} dépôts synchronisés.",
       "failed": "{ok} sur {total} synchronisés. Échec : {repos}"

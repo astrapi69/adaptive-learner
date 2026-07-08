@@ -27,7 +27,13 @@ import { buildAddRepoLink, parseAddRepoQr } from "../../../lib/content/placement
 import { QrImageUpload } from "../../../shared/qr";
 import ContentRepoRow from "./ContentRepoRow";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { getStorage } from "../../../storage";
+import { getStorage, resolveStorageMode } from "../../../storage";
+import { readLearnerState } from "../../../lib/learning/learnerState";
+import {
+  planRepoDataDeletion,
+  type DeletionPlan,
+} from "../../../lib/content/browse/orphan-cleanup";
+import RemoveRepoDialog from "./RemoveRepoDialog";
 import {
   OFFICIAL_SOURCE,
   addUserRepo,
@@ -90,7 +96,13 @@ export default function ContentRepoSettingsSection() {
   // double-start guard) and per-row error messages, reported at the row.
   const [syncing, setSyncing] = useState<string | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
-  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  // #1445 Part B — the remove flow is a dialog with an opt-in
+  // "also delete my progress" choice. ``removeTarget`` is the repo being
+  // removed; ``removePlan`` carries the real counts (null while loading).
+  const [removeTarget, setRemoveTarget] = useState<UserContentRepo | null>(
+    null,
+  );
+  const [removePlan, setRemovePlan] = useState<DeletionPlan | null>(null);
   const [result, setResult] = useState<
     { ok: boolean; message: string } | null
   >(null);
@@ -371,24 +383,69 @@ export default function ContentRepoSettingsSection() {
     }
   }, [syncing, repos, syncOne, refresh, t]);
 
-  const handleRemove = useCallback(
-    async (source: string) => {
-      if (confirmRemove !== source) {
-        setConfirmRemove(source);
-        return;
-      }
+  // Open the remove dialog and compute the real "would delete" counts for the
+  // opt-in progress-delete choice (#1445 Part B). Counts come from live Dexie
+  // queries, never estimates; the dialog shows "Counting…" until they land.
+  const handleRemove = useCallback(async (repo: UserContentRepo) => {
+    const source = userRepoSource(repo.owner, repo.repo);
+    setRemoveTarget(repo);
+    setRemovePlan(null);
+    if (resolveStorageMode() !== "dexie") return; // no local delete in API mode
+    const userId = readLearnerState().userId;
+    if (!userId) return;
+    try {
+      const storage = getStorage();
+      const [progress, cards, setsRes] = await Promise.all([
+        storage.lessonProgress.list(userId),
+        storage.elementErrors.list(userId, { includeMastered: true }),
+        storage.contentLoader.listSets(),
+      ]);
+      setRemovePlan(
+        planRepoDataDeletion(source, progress, cards, setsRes.sets),
+      );
+    } catch {
+      // Counts unavailable → the dialog keeps the checkbox but shows no
+      // number (Numeric-Claims discipline: never invent a count).
+      setRemovePlan(null);
+    }
+  }, []);
+
+  const confirmRemove = useCallback(
+    async (deleteProgress: boolean) => {
+      const repo = removeTarget;
+      if (!repo) return;
+      const source = userRepoSource(repo.owner, repo.repo);
       setBusy(true);
       try {
         await removeUserRepo(source);
         clearRepoToken(source);
         clearRepoRating(source);
-        setConfirmRemove(null);
+        if (deleteProgress && removePlan) {
+          const userId = readLearnerState().userId;
+          if (userId) {
+            const { lessonsDeleted, cardsDeleted } =
+              await getStorage().learningData.deleteLearningData(userId, {
+                lessonProgressIds: removePlan.lessonProgressIds,
+                setIds: removePlan.orphanedSetIds,
+              });
+            notify.success(
+              t(
+                "content_repo.remove.deleted",
+                "Removed. Deleted {lessons} lessons and {cards} review cards.",
+              )
+                .replace("{lessons}", String(lessonsDeleted))
+                .replace("{cards}", String(cardsDeleted)),
+            );
+          }
+        }
+        setRemoveTarget(null);
+        setRemovePlan(null);
         await refresh();
       } finally {
         setBusy(false);
       }
     },
-    [confirmRemove, refresh],
+    [removeTarget, removePlan, refresh, t],
   );
 
   const handleShare = useCallback(
@@ -535,7 +592,8 @@ export default function ContentRepoSettingsSection() {
                 rowError={rowErrors[source]}
                 progressLabel={progress?.label}
                 actionsDisabled={busy || syncing !== null}
-                confirmRemove={confirmRemove === source}
+                confirmRemove={removeTarget !== null &&
+                  userRepoSource(removeTarget.owner, removeTarget.repo) === source}
                 isFirst={index === 0}
                 isLast={index === repos.length - 1}
                 share={share?.source === source ? share : null}
@@ -545,7 +603,7 @@ export default function ContentRepoSettingsSection() {
                 onSync={() => handleSync(source)}
                 onMove={(direction) => handleMove(source, direction)}
                 onToggleShare={() => handleShare(repo)}
-                onRemove={() => handleRemove(source)}
+                onRemove={() => handleRemove(repo)}
                 onCopyLink={handleCopyLink}
               />
             );
@@ -774,6 +832,24 @@ export default function ContentRepoSettingsSection() {
           </p>
         )}
       </div>
+
+      {/* #1445 Part B — remove confirmation with the opt-in progress delete. */}
+      <RemoveRepoDialog
+        open={removeTarget !== null}
+        source={
+          removeTarget
+            ? userRepoSource(removeTarget.owner, removeTarget.repo)
+            : ""
+        }
+        lessonCount={removePlan?.lessonCount ?? null}
+        cardCount={removePlan?.cardCount ?? null}
+        canDeleteProgress={resolveStorageMode() === "dexie"}
+        onConfirm={confirmRemove}
+        onCancel={() => {
+          setRemoveTarget(null);
+          setRemovePlan(null);
+        }}
+      />
     </section>
   );
 }

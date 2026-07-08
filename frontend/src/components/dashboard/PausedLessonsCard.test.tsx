@@ -41,7 +41,11 @@ beforeEach(() => {
     upsertMock.mockReset().mockResolvedValue(undefined);
     // Default: no cached set titles, no cached lesson detail — rows then fall
     // back to filename-derived labels (or the opaque-id guard).
-    listSetsMock.mockReset().mockResolvedValue({sets: []});
+    // Default: the set behind the ``_progress`` helper is loadable, so the
+    // #1445 availability filter is a no-op unless a test removes it.
+    listSetsMock
+        .mockReset()
+        .mockResolvedValue({sets: [{source: "owner/repo", id: "fr-a1"}]});
     getLessonMock.mockReset().mockResolvedValue(null);
     // #1312 — disable the age-based retention cutoff so the fixtures' absolute
     // paused_at dates never straddle ``Date.now() - DEFAULT_RETENTION_DAYS`` and
@@ -235,5 +239,23 @@ describe("PausedLessonsCard", () => {
         // Readable fallbacks, with the part number preserved.
         expect(title).toHaveTextContent("Imported analysis");
         expect(title).toHaveTextContent("Part 3");
+    });
+
+    it("hides a paused lesson whose source repo was removed (#1445)", async () => {
+        listMock.mockResolvedValue([_progress("01.json", "paused")]);
+        // The repo behind owner/repo#fr-a1 is gone from listSets.
+        listSetsMock.mockResolvedValue({sets: []});
+        render(
+            <MemoryRouter>
+                <PausedLessonsCard userId="user-1" />
+            </MemoryRouter>,
+        );
+        await waitFor(() => expect(listMock).toHaveBeenCalled());
+        // Nothing to show, and the row must NOT be auto-abandoned (Dexie
+        // progress stays untouched — only hidden).
+        expect(
+            screen.queryByTestId("paused-lessons-card"),
+        ).not.toBeInTheDocument();
+        expect(upsertMock).not.toHaveBeenCalled();
     });
 });

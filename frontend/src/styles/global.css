@@ -1112,7 +1112,11 @@ select:focus {
 }
 
 .chart-summary-caption {
-  margin: var(--space-2) 0 0;
+  /* Token-based top gap toward the chart above. NEVER a negative margin
+     (e.g. margin-top: -10px): it pulls the caption up onto the chart and
+     lets the "Daten als Tabelle anzeigen" <summary> below overlap it, both
+     collapsed and once the table is open. */
+  margin: var(--space-1) 0 var(--space-2);
   color: var(--fg-muted);
   font-style: italic;
 }
@@ -2125,6 +2129,11 @@ select:focus {
   /* Safety net (#555): let the card shrink inside the sidebar grid and
      keep wide children (selects, long tokens) from overflowing it. */
   min-width: 0;
+  /* Horizontal breathing room from the content-column edges. Vertical
+     spacing between cards is owned by the parent ``.settings-tabpanel``
+     ``gap`` (var(--space-5)); a full ``margin`` here would compound with
+     that gap and make the inter-card spacing uneven vs. the panel ends. */
+  margin-inline: var(--space-3);
 }
 
 /* No form control inside a settings card may exceed the card width

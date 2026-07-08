@@ -27,7 +27,7 @@
  * />
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 export type ConfirmVariant = "danger" | "default";
 
@@ -41,6 +41,11 @@ export interface ConfirmDialogProps {
     cancelLabel?: string;
     /** ``danger`` renders a red confirm button for destructive actions. */
     variant?: ConfirmVariant;
+    /** Disable the confirm button (e.g. while counts load). */
+    confirmDisabled?: boolean;
+    /** Optional extra content rendered between the message and the buttons
+     *  (e.g. an opt-in checkbox). Kept inside the focus trap. */
+    children?: ReactNode;
     onConfirm: () => void;
     onCancel: () => void;
     testId?: string;
@@ -53,6 +58,8 @@ export default function ConfirmDialog({
     confirmLabel = "OK",
     cancelLabel = "Cancel",
     variant = "default",
+    confirmDisabled = false,
+    children,
     onConfirm,
     onCancel,
     testId = "confirm-dialog",
@@ -133,10 +140,11 @@ export default function ConfirmDialog({
                 </h2>
                 <p
                     id={`${testId}-message`}
-                    className="mb-5 text-sm text-fg-secondary"
+                    className="mb-4 text-sm text-fg-secondary"
                 >
                     {message}
                 </p>
+                {children != null && <div className="mb-5">{children}</div>}
                 <div className="flex justify-end gap-2">
                     <button
                         ref={cancelRef}
@@ -150,7 +158,8 @@ export default function ConfirmDialog({
                     <button
                         type="button"
                         onClick={onConfirm}
-                        className={`inline-flex min-h-[44px] items-center rounded-md px-4 text-sm font-medium ${confirmClass}`}
+                        disabled={confirmDisabled}
+                        className={`inline-flex min-h-[44px] items-center rounded-md px-4 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 ${confirmClass}`}
                         data-testid={`${testId}-confirm`}
                     >
                         {confirmLabel}

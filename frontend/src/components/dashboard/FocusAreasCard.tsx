@@ -32,6 +32,10 @@ import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 
 import {analyzeErrors} from "../../lib/adaptive/error-analyzer";
+import {
+    buildContentAvailability,
+    filterAvailableSetId,
+} from "../../lib/content/browse/content-availability";
 import {focusAreaTags} from "../../lib/adaptive/error-classifier";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
 import {masteryCounts, type MasteryCounts} from "../../lib/srs/mastery";
@@ -89,10 +93,18 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
         let cancelled = false;
         void (async () => {
             try {
-                const errors = await getStorage().elementErrors.list(userId, {
-                    includeMastered: true,
-                });
+                const [allErrors, setsRes] = await Promise.all([
+                    getStorage().elementErrors.list(userId, {
+                        includeMastered: true,
+                    }),
+                    getStorage().contentLoader.listSets(),
+                ]);
                 if (cancelled) return;
+                // #1445 Part A — only analyze errors whose set is still
+                // loadable; an adaptive lesson for a removed repo's set would
+                // lead nowhere. The SRS rows stay in Dexie.
+                const availability = buildContentAvailability(setsRes.sets);
+                const errors = filterAvailableSetId(allErrors, availability);
                 const analysis = analyzeErrors(errors);
                 if (analysis.suggested_focus.length === 0) {
                     setState("empty");

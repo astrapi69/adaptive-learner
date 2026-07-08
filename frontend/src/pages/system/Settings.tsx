@@ -7,6 +7,7 @@ import AboutTab from "../../components/about/AboutTab";
 import IdentitySection from "../../components/about/IdentitySection";
 import BackupSection from "../../components/settings/backup/BackupSection";
 import CacheManagementSection from "../../components/settings/data/CacheManagementSection";
+import OrphanedDataSection from "../../components/settings/data/OrphanedDataSection";
 import InstallAppSection from "../../components/settings/data/InstallAppSection";
 import ContentRepoSettingsSection from "../../components/settings/integrations/ContentRepoSettingsSection";
 import DangerZoneSection from "../../components/settings/data/DangerZoneSection";
@@ -822,6 +823,7 @@ export default function Settings() {
         <ExportSection />
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
         <ContentRepoSettingsSection />
+        <OrphanedDataSection />
         <CacheManagementSection />
         <InstallAppSection />
         <DangerZoneSection />

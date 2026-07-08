@@ -496,6 +496,14 @@
     "session_count": "Sessões"
   },
   "settings": {
+    "orphaned": {
+      "heading": "Conteúdo desconectado",
+      "summary": "{lessons} lições e {cards} cartões de revisão de fontes às quais você não está mais conectado.",
+      "delete": "Excluir progresso desconectado",
+      "confirm_title": "Excluir progresso desconectado",
+      "confirm_message": "{lessons} lições e {cards} cartões de revisão serão excluídos permanentemente. Isso não pode ser desfeito.",
+      "deleted": "{lessons} lições e {cards} cartões de revisão excluídos."
+    },
     "key_export_link": {
       "heading": "Chaves de IA — exportação cifrada",
       "hint": "Exporte ou importe as suas chaves de IA num único ficheiro cifrado. Fica junto das outras cópias de segurança no separador Dados.",
@@ -3223,6 +3231,14 @@
     "save_prompt": "Guardar esta lição nos seus favoritos"
   },
   "content_repo": {
+    "remove": {
+      "title": "Remover repositório",
+      "message": "Remover {source}? O conteúdo baixado será removido deste dispositivo.",
+      "delete_progress": "Excluir também meu progresso de aprendizagem deste conteúdo.",
+      "consequence": "{lessons} lições e {cards} cartões de revisão serão excluídos. Isso não pode ser desfeito.",
+      "counting": "Contando seu progresso…",
+      "deleted": "Removido. {lessons} lições e {cards} cartões de revisão excluídos."
+    },
     "sync_all": {
       "done": "{ok} de {total} repositórios sincronizados.",
       "failed": "{ok} de {total} sincronizados. Falharam: {repos}"

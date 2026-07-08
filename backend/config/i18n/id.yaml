@@ -463,6 +463,13 @@ progress:
   commit_notes_aria: "Catatan sesi"
   session_count: "Sesi"
 settings:
+  orphaned:
+    heading: "Konten terputus"
+    summary: "{lessons} pelajaran dan {cards} kartu ulasan dari sumber yang tidak lagi terhubung dengan Anda."
+    delete: "Hapus progres yang terputus"
+    confirm_title: "Hapus progres yang terputus"
+    confirm_message: "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus permanen. Ini tidak dapat dibatalkan."
+    deleted: "{lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
   key_export_link:
     heading: "Kunci AI — ekspor terenkripsi"
     hint: "Ekspor atau impor kunci AI Anda sebagai satu berkas terenkripsi. Berada bersama cadangan lain di tab Data."
@@ -2966,6 +2973,13 @@ favorites:
   empty: "Belum ada favorit — ketuk bintang pada sebuah pelajaran untuk menyimpannya."
   save_prompt: "Simpan pelajaran ini ke favoritmu"
 content_repo:
+  remove:
+    title: "Hapus repositori"
+    message: "Hapus {source}? Konten yang diunduhnya akan dihapus dari perangkat ini."
+    delete_progress: "Hapus juga progres belajar saya untuk konten ini."
+    consequence: "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus. Ini tidak dapat dibatalkan."
+    counting: "Menghitung progres Anda…"
+    deleted: "Dihapus. {lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
   sync_all:
     done: "{ok} dari {total} repositori disinkronkan."
     failed: "{ok} dari {total} disinkronkan. Gagal: {repos}"
