@@ -15,16 +15,30 @@ vi.mock("../../../hooks/ui/useI18n", () => ({
 }));
 
 import RemoveRepoDialog from "./RemoveRepoDialog";
+import type { DeletionPlan } from "../../../lib/content/browse/orphan-cleanup";
+
+const REPO = {
+  url: "https://github.com/jane/repo",
+  owner: "jane",
+  repo: "repo",
+  branch: "main",
+  connected: true,
+  last_synced: null,
+  set_count: 1,
+  lesson_count: 3,
+};
+
+function planWith(lessonCount: number, cardCount: number): DeletionPlan {
+  return { lessonProgressIds: [], orphanedSetIds: [], lessonCount, cardCount };
+}
 
 function setup(overrides: Partial<React.ComponentProps<typeof RemoveRepoDialog>> = {}) {
   const onConfirm = vi.fn();
   const onCancel = vi.fn();
   render(
     <RemoveRepoDialog
-      open
-      source="jane/repo"
-      lessonCount={3}
-      cardCount={7}
+      repo={REPO}
+      plan={planWith(3, 7)}
       canDeleteProgress
       onConfirm={onConfirm}
       onCancel={onCancel}
@@ -64,14 +78,14 @@ describe("RemoveRepoDialog", () => {
   });
 
   it("hides the delete choice when there is no progress to delete", () => {
-    setup({ lessonCount: 0, cardCount: 0 });
+    setup({ plan: planWith(0, 0) });
     expect(
       screen.queryByTestId("content-repo-remove-delete-progress"),
     ).not.toBeInTheDocument();
   });
 
   it("blocks confirm while opted-in but counts are still loading", () => {
-    const { onConfirm } = setup({ lessonCount: null, cardCount: null });
+    const { onConfirm } = setup({ plan: null });
     // The choice is shown (counts unknown yet); ticking it must not allow a
     // delete against unknown numbers.
     fireEvent.click(screen.getByTestId("content-repo-remove-delete-progress"));

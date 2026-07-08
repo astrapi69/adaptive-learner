@@ -19,15 +19,17 @@ import { useEffect, useId, useState } from "react";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import ConfirmDialog from "../../../shared/feedback/ConfirmDialog";
+import type { DeletionPlan } from "../../../lib/content/browse/orphan-cleanup";
+import {
+  userRepoSource,
+  type UserContentRepo,
+} from "../../../lib/content/repos/content-repos";
 
 export interface RemoveRepoDialogProps {
-  open: boolean;
-  /** ``owner/repo`` shown in the prompt. */
-  source: string;
-  /** Lessons that WOULD be deleted (null while counts load). */
-  lessonCount: number | null;
-  /** Review cards that WOULD be deleted (null while counts load). */
-  cardCount: number | null;
+  /** The repo being removed, or ``null`` when the dialog is closed. */
+  repo: UserContentRepo | null;
+  /** The would-delete plan with real counts (null while it loads). */
+  plan: DeletionPlan | null;
   /** Whether the local progress delete is available (Dexie mode). */
   canDeleteProgress: boolean;
   /** Called with whether to also delete progress. */
@@ -36,10 +38,8 @@ export interface RemoveRepoDialogProps {
 }
 
 export default function RemoveRepoDialog({
-  open,
-  source,
-  lessonCount,
-  cardCount,
+  repo,
+  plan,
   canDeleteProgress,
   onConfirm,
   onCancel,
@@ -47,6 +47,11 @@ export default function RemoveRepoDialog({
   const { t } = useI18n();
   const [deleteProgress, setDeleteProgress] = useState(false);
   const checkboxId = useId();
+
+  const open = repo !== null;
+  const source = repo ? userRepoSource(repo.owner, repo.repo) : "";
+  const lessonCount = plan?.lessonCount ?? null;
+  const cardCount = plan?.cardCount ?? null;
 
   // Never carry a ticked box across opens — the safe default is keep.
   useEffect(() => {

@@ -448,6 +448,11 @@ export default function ContentRepoSettingsSection() {
     [removeTarget, removePlan, refresh, t],
   );
 
+  const cancelRemove = useCallback(() => {
+    setRemoveTarget(null);
+    setRemovePlan(null);
+  }, []);
+
   const handleShare = useCallback(
     async (repo: UserContentRepo) => {
       const source = userRepoSource(repo.owner, repo.repo);
@@ -592,8 +597,7 @@ export default function ContentRepoSettingsSection() {
                 rowError={rowErrors[source]}
                 progressLabel={progress?.label}
                 actionsDisabled={busy || syncing !== null}
-                confirmRemove={removeTarget !== null &&
-                  userRepoSource(removeTarget.owner, removeTarget.repo) === source}
+                confirmRemove={false}
                 isFirst={index === 0}
                 isLast={index === repos.length - 1}
                 share={share?.source === source ? share : null}
@@ -833,22 +837,15 @@ export default function ContentRepoSettingsSection() {
         )}
       </div>
 
-      {/* #1445 Part B — remove confirmation with the opt-in progress delete. */}
+      {/* #1445 Part B — remove confirmation with the opt-in progress delete.
+          The dialog derives the source + counts from repo/plan, keeping this
+          component's JSX free of extra branches. */}
       <RemoveRepoDialog
-        open={removeTarget !== null}
-        source={
-          removeTarget
-            ? userRepoSource(removeTarget.owner, removeTarget.repo)
-            : ""
-        }
-        lessonCount={removePlan?.lessonCount ?? null}
-        cardCount={removePlan?.cardCount ?? null}
+        repo={removeTarget}
+        plan={removePlan}
         canDeleteProgress={resolveStorageMode() === "dexie"}
         onConfirm={confirmRemove}
-        onCancel={() => {
-          setRemoveTarget(null);
-          setRemovePlan(null);
-        }}
+        onCancel={cancelRemove}
       />
     </section>
   );
