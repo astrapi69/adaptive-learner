@@ -2574,6 +2574,8 @@ learning_path:
   endless: "Sans fin"
   personal:
     title: "Ton parcours d'apprentissage"
+    progress: "Au total : {n}% terminé"
+    none_started: "Vous n'avez pas encore commencé d'ensemble. Passez à Tous les ensembles pour voir vos ensembles téléchargés."
     empty: "Télécharge un ensemble de leçons pour commencer."
     all_done: "Les {n} leçons terminées !"
     downloaded: "Téléchargé"
@@ -2588,7 +2590,7 @@ learning_path:
   map:
     languages: "Langues"
     knowledge: "Connaissances"
-    total: "Total : {n}% terminé"
+    title: "Tout le contenu"
   mastery:
     receptive: "réceptif"
     productive: "productif"

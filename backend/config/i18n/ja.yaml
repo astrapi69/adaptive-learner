@@ -2572,6 +2572,8 @@ learning_path:
   endless: "エンドレス"
   personal:
     title: "あなたの学習パス"
+    progress: "全体: {n}% 完了"
+    none_started: "まだセットを開始していません。ダウンロード済みのセットを表示するには「すべてのセット」に切り替えてください。"
     empty: "始めるにはレッスンセットをダウンロードしてください。"
     all_done: "{n}件のレッスンすべて完了！"
     downloaded: "ダウンロード済み"
@@ -2586,7 +2588,7 @@ learning_path:
   map:
     languages: "言語"
     knowledge: "知識"
-    total: "合計: {n}% 完了"
+    title: "すべてのコンテンツ"
   mastery:
     receptive: "受容"
     productive: "産出"

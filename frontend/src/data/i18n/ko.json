@@ -2822,6 +2822,8 @@
     "endless": "무한",
     "personal": {
       "title": "당신의 학습 경로",
+      "progress": "전체: {n}% 완료",
+      "none_started": "아직 시작한 세트가 없습니다. 다운로드한 세트를 보려면 모든 세트로 전환하세요.",
       "empty": "시작하려면 레슨 세트를 다운로드하세요.",
       "all_done": "레슨 {n}개를 모두 완료했습니다!",
       "downloaded": "다운로드됨",
@@ -2838,7 +2840,7 @@
     "map": {
       "languages": "언어",
       "knowledge": "지식",
-      "total": "전체: {n}% 완료"
+      "title": "모든 콘텐츠"
     },
     "mastery": {
       "receptive": "수용",

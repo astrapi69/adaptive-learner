@@ -2822,6 +2822,8 @@
     "endless": "Tanpa henti",
     "personal": {
       "title": "Jalur Pembelajaranmu",
+      "progress": "Keseluruhan: {n}% selesai",
+      "none_started": "Kamu belum memulai set apa pun. Beralih ke Semua set untuk melihat set yang telah diunduh.",
       "empty": "Unduh sebuah set pelajaran untuk memulai.",
       "all_done": "Semua {n} pelajaran selesai!",
       "downloaded": "Diunduh",
@@ -2838,7 +2840,7 @@
     "map": {
       "languages": "Bahasa",
       "knowledge": "Pengetahuan",
-      "total": "Total: {n}% selesai"
+      "title": "Semua konten"
     },
     "mastery": {
       "receptive": "reseptif",
