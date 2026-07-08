@@ -117,6 +117,92 @@ describe("resolveInitialUiLanguage — persisted UI language survives a reload (
             resolveInitialUiLanguage({saved: "xx", appDefault: "es"}),
         ).toBe("es");
     });
+
+    // --- navigator.language fallback (no-saved-value path) ---------------
+    // The fallback chain is saved -> navigator.language -> app default ->
+    // "de". It is NEVER a language-list index (that would resolve to English
+    // at position 0, never Greek). The architect's German browser therefore
+    // yields German, never Greek, on a fresh install.
+    it("follows the browser locale when nothing is saved", () => {
+        expect(
+            resolveInitialUiLanguage({saved: null, browserLocale: "fr-FR"}),
+        ).toBe("fr");
+    });
+
+    it("normalises a region-tagged browser locale to its base subtag", () => {
+        // A German browser (de-DE / de-AT) resolves to "de", never Greek.
+        expect(resolveInitialUiLanguage({browserLocale: "de-DE"})).toBe("de");
+        expect(resolveInitialUiLanguage({browserLocale: "de-AT"})).toBe("de");
+        // A Greek browser legitimately resolves to Greek — that is a real
+        // signal, not the reported bug.
+        expect(resolveInitialUiLanguage({browserLocale: "el-GR"})).toBe("el");
+    });
+
+    it("prefers the saved choice over the browser locale", () => {
+        expect(
+            resolveInitialUiLanguage({saved: "el", browserLocale: "de-DE"}),
+        ).toBe("el");
+    });
+
+    it("prefers the browser locale over the app default", () => {
+        // The per-person browser locale beats a config default (the prompt's
+        // ordering: saved -> navigator -> project default).
+        expect(
+            resolveInitialUiLanguage({
+                saved: null,
+                browserLocale: "fr-FR",
+                appDefault: "de",
+            }),
+        ).toBe("fr");
+    });
+
+    it("ignores an unsupported browser locale and falls through", () => {
+        expect(
+            resolveInitialUiLanguage({
+                saved: null,
+                browserLocale: "sv-SE",
+                appDefault: "es",
+            }),
+        ).toBe("es");
+        // Nothing resolvable at all -> the "de" project default, not a list index.
+        expect(resolveInitialUiLanguage({browserLocale: "sv-SE"})).toBe("de");
+    });
+
+    it("is a pure, idempotent resolver (repeat calls do not drift)", () => {
+        const inputs = {saved: null, browserLocale: "fr-FR", appDefault: "de"};
+        expect(resolveInitialUiLanguage(inputs)).toBe(
+            resolveInitialUiLanguage(inputs),
+        );
+    });
+});
+
+describe("readSavedLang — no silent data loss on an unreadable value (#language-reset)", () => {
+    afterEach(() => {
+        localStorage.clear();
+        vi.restoreAllMocks();
+    });
+
+    it("warns (does not silently drop) when the stored value is not a UI language", () => {
+        const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+        localStorage.setItem("adaptive-learner.language", "xx");
+        expect(readSavedLang()).toBeNull();
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(String(warn.mock.calls[0][0])).toContain("xx");
+    });
+
+    it("does not warn when nothing is stored (fresh install is normal)", () => {
+        const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+        expect(readSavedLang()).toBeNull();
+        expect(warn).not.toHaveBeenCalled();
+    });
+
+    it("never rewrites a valid saved preference (read is side-effect-free)", () => {
+        // Regression pin for principle: an update must NEVER overwrite a
+        // valid saved UI language. Reading it leaves the stored value intact.
+        localStorage.setItem("adaptive-learner.language", "el");
+        expect(readSavedLang()).toBe("el");
+        expect(localStorage.getItem("adaptive-learner.language")).toBe("el");
+    });
 });
 
 describe("readSavedLang — the persisted localStorage read seam (#1333)", () => {
@@ -168,8 +254,19 @@ describe("setLang resets the Discover content-language filter (#1347)", () => {
         return render(createElement(I18nProvider, null, createElement(LangHarness)));
     }
 
-    beforeEach(() => localStorage.clear());
-    afterEach(() => localStorage.clear());
+    beforeEach(() => {
+        localStorage.clear();
+        // Pin the mount default to "de" (#1457 added a navigator.language
+        // fallback for the no-saved-value path; happy-dom's default
+        // "en-US" would otherwise make the mount resolve to "en" and turn a
+        // later "to-en" click into a no-op). These tests exercise the
+        // Discover-filter reset, not the default-language resolution.
+        vi.spyOn(navigator, "language", "get").mockReturnValue("de-DE");
+    });
+    afterEach(() => {
+        localStorage.clear();
+        vi.restoreAllMocks();
+    });
 
     // A module-level language cache persists across tests, so each test first
     // drives the UI to a known "de" baseline (a no-op reset while no pref is

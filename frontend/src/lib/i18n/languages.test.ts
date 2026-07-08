@@ -4,7 +4,37 @@
 
 import {describe, it, expect} from "vitest";
 
-import {UI_LANGUAGES, buildLanguageOptions} from "./languages";
+import {UI_LANGUAGES, SCRIPT_ORDER, buildLanguageOptions} from "./languages";
+
+describe("UI_LANGUAGES — no fallback can ever resolve to Greek (#language-reset)", () => {
+    // The architect's "UI jumped to Greek after an update" report raised the
+    // hypothesis of an index-0 language fallback landing on Greek. These pins
+    // prove that is IMPOSSIBLE: under BOTH orderings the app uses, position 0
+    // is a Latin language (English), never Greek. So any Greek the user sees
+    // is a stored/read "el" value (a prior explicit choice), NOT a fallback.
+    it("leads the flat list with English, not Greek", () => {
+        expect(UI_LANGUAGES[0].code).toBe("en");
+        expect(UI_LANGUAGES[0].code).not.toBe("el");
+    });
+
+    it("leads the script-grouped ordering with a Latin language (English)", () => {
+        const scriptSorted = [...UI_LANGUAGES].sort(
+            (a, b) =>
+                SCRIPT_ORDER.indexOf(a.script) - SCRIPT_ORDER.indexOf(b.script),
+        );
+        expect(scriptSorted[0].script).toBe("latin");
+        expect(scriptSorted[0].code).toBe("en");
+        expect(scriptSorted[0].code).not.toBe("el");
+    });
+
+    it("places Greek behind the Latin block (never at position 0)", () => {
+        const greekIndex = UI_LANGUAGES.findIndex((l) => l.code === "el");
+        expect(greekIndex).toBeGreaterThan(0);
+        expect(SCRIPT_ORDER.indexOf("greek")).toBeGreaterThan(
+            SCRIPT_ORDER.indexOf("latin"),
+        );
+    });
+});
 
 describe("UI_LANGUAGES", () => {
     it("registers Hindi with the Devanagari script", () => {
