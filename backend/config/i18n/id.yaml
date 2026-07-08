@@ -1682,7 +1682,7 @@ lesson:
     placeholder: "mis. Jelaskan dengan contoh"
     ask: "Tanya"
     asking: "Menanyakan…"
-    no_key: "Setel kunci AI untuk bertanya - lihat pengaturan AI."
+    no_key: "Pertanyaan AI memerlukan kunci AI milikmu sendiri (BYOK). Opsional, aplikasi tetap berfungsi tanpanya."
     open_settings: "Pengaturan AI"
     error: "Permintaan AI gagal. Silakan coba lagi."
   example:

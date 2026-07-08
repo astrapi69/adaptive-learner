@@ -1801,7 +1801,7 @@
       "placeholder": "e.g. Explain this with an example",
       "ask": "Ask",
       "asking": "Asking…",
-      "no_key": "Set an AI key to ask about this - see AI settings.",
+      "no_key": "AI questions need your own AI key (BYOK). Optional, the app works fine without it.",
       "open_settings": "AI settings",
       "error": "The AI request failed. Please try again."
     },
