@@ -4,7 +4,6 @@ import IdentitySection from "../../../../components/about/IdentitySection";
 import BackupSection from "../../../../components/settings/backup/BackupSection";
 import CacheManagementSection from "../../../../components/settings/data/CacheManagementSection";
 import OrphanedDataSection from "../../../../components/settings/data/OrphanedDataSection";
-import InstallAppSection from "../../../../components/settings/data/InstallAppSection";
 import ContentRepoSettingsSection from "../../../../components/settings/integrations/ContentRepoSettingsSection";
 import DangerZoneSection from "../../../../components/settings/data/DangerZoneSection";
 import ExportSection from "../../../../components/settings/data/ExportSection";
@@ -30,7 +29,9 @@ interface DataPanelProps {
  *
  * 1. Content repositories (the source that everything else acts on)
  * 2. Sync (belongs with the sources it synchronizes)
- * 3. Offline cache + app install (what results from the sources)
+ * 3. Offline cache (what results from the sources; "Install app" moved
+ *    to the General tab in #1455 - it configures HOW the app runs, not
+ *    WHAT it stores)
  * 4. Backup / export (securing the work, incl. the read-only identity
  *    recovery-file diagnostic, a recovery concern)
  * 5. Orphaned-data cleanup (#1445, reversible: only unusable data)
@@ -83,9 +84,9 @@ export default function DataPanel({ active }: DataPanelProps) {
         <SyncSection />
       </Feature>
 
-      {/* 3. What results from the sources: offline cache + app install. */}
+      {/* 3. What results from the sources: the offline content cache.
+          ("Install app" lives in the General tab, #1455.) */}
       <CacheManagementSection />
-      <InstallAppSection />
 
       {/* 4. Securing the work: backup, the identity recovery-file
           diagnostic (a recovery concern, API-mode only), key export,

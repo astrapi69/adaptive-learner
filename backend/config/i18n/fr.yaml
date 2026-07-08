@@ -516,7 +516,7 @@ settings:
     current_version: "Version actuelle : v{version}"
   install:
     heading: "Installer l'application"
-    description: "Installe Adaptive Learner comme application pour un accès hors ligne et un mode plein écran."
+    description: "Installe Adaptive Learner comme application autonome : fenêtre dédiée, icône sur l'écran d'accueil et démarrage même sans réseau. Ton contenu d'apprentissage n'est pas affecté."
     button: "Installer l'application"
     already: "Déjà installée"
     unavailable: "Ton navigateur n'a pas encore proposé l'installation."

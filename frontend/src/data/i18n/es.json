@@ -554,7 +554,7 @@
     },
     "install": {
       "heading": "Instalar aplicación",
-      "description": "Instala Adaptive Learner como app para acceso sin conexión y pantalla completa.",
+      "description": "Instala Adaptive Learner como aplicación independiente: ventana propia, icono en la pantalla de inicio y arranque incluso sin red. Tu contenido de aprendizaje no se ve afectado.",
       "button": "Instalar aplicación",
       "already": "Ya instalada",
       "unavailable": "Tu navegador aún no ha ofrecido la instalación.",
