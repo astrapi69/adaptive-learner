@@ -219,15 +219,54 @@ describe("syncUserRepo(source)", () => {
     expect(bob).toEqual(repo("bob", "b"));
   });
 
-  it("re-validation failure drops trust to 0", async () => {
+  it("a STRUCTURAL re-validation failure drops trust to 0", async () => {
     get.mockResolvedValue({
       plugin: "content-loader",
-      settings: { user_repos: [repo("jane", "a")] },
+      settings: { user_repos: [{ ...repo("jane", "a"), trust: 1 }] },
     });
     listRepoManifestSets.mockResolvedValue([{ id: "d", lessonCount: 1 }]);
     downloadSet.mockResolvedValue({});
+    // No `transient` flag → a genuine content problem (bad schema, unknown
+    // exercise type, …) → the repo really is unverified.
     validateUserRepo.mockResolvedValue({ ok: false, reason: "bad" });
     const res = await syncUserRepo("jane/a");
+    expect(res.trust).toBe(0);
+  });
+
+  it("a TRANSIENT re-validation I/O failure PRESERVES the existing trust (#1441)", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [{ ...repo("jane", "a"), trust: 1 }] },
+    });
+    listRepoManifestSets.mockResolvedValue([{ id: "d", lessonCount: 7 }]);
+    downloadSet.mockResolvedValue({});
+    // The download succeeded; validation could not COMPLETE (rate-limit /
+    // network under a sync-all burst). A blip must not demote a good repo.
+    validateUserRepo.mockResolvedValue({
+      ok: false,
+      transient: true,
+      reason: "Repository unreachable.",
+    });
+    const res = await syncUserRepo("jane/a");
+    expect(res.trust).toBe(1);
+    const [, body] = update.mock.calls[0];
+    const jane = body.settings.user_repos.find(
+      (r: UserContentRepo) => r.repo === "a",
+    );
+    // Counts still refresh from the successful download; trust is kept.
+    expect(jane).toMatchObject({ lesson_count: 7, trust: 1 });
+  });
+
+  it("a transient failure on a never-validated repo (no prior trust) stays untrusted", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a")] }, // trust undefined
+    });
+    listRepoManifestSets.mockResolvedValue([{ id: "d", lessonCount: 1 }]);
+    downloadSet.mockResolvedValue({});
+    validateUserRepo.mockResolvedValue({ ok: false, transient: true });
+    const res = await syncUserRepo("jane/a");
+    // Nothing to preserve → default to untrusted (0), never inventing trust.
     expect(res.trust).toBe(0);
   });
 
