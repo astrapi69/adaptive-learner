@@ -2913,6 +2913,7 @@
       "delete": "Yolu sil",
       "next_hint": "Sonraki: {lesson}",
       "add_lesson": "Ders ekle",
+      "add_first_lesson": "İlk dersini ekle",
       "search_lessons": "Ders ara…",
       "no_lessons": "Ders bulunamadı.",
       "done_adding": "Bitti",

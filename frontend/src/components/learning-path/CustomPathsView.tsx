@@ -247,6 +247,13 @@ export default function CustomPathsView({userId}: CustomPathsViewProps) {
                                         "learning_path.custom.delete",
                                         "Delete path",
                                     )}
+                                    emptyActionLabel={t(
+                                        "learning_path.custom.add_first_lesson",
+                                        "Add your first lesson",
+                                    )}
+                                    onEmptyAction={() =>
+                                        setPickerForPath(path.id)
+                                    }
                                     nextHintLabel={
                                         nextLabel
                                             ? t(

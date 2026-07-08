@@ -2654,6 +2654,7 @@ learning_path:
     delete: "パスを削除"
     next_hint: "次: {lesson}"
     add_lesson: "レッスンを追加"
+    add_first_lesson: "最初のレッスンを追加"
     search_lessons: "レッスンを検索…"
     no_lessons: "レッスンが見つかりません。"
     done_adding: "完了"

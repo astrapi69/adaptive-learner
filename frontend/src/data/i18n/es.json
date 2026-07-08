@@ -2913,6 +2913,7 @@
       "delete": "Eliminar ruta",
       "next_hint": "Siguiente: {lesson}",
       "add_lesson": "Añadir una lección",
+      "add_first_lesson": "Añade tu primera lección",
       "search_lessons": "Buscar lecciones…",
       "no_lessons": "No se encontraron lecciones.",
       "done_adding": "Listo",

@@ -2664,6 +2664,7 @@ learning_path:
     delete: "Delete path"
     next_hint: "Next: {lesson}"
     add_lesson: "Add a lesson"
+    add_first_lesson: "Add your first lesson"
     search_lessons: "Search lessons…"
     no_lessons: "No lessons found."
     done_adding: "Done"

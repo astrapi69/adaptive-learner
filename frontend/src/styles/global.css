@@ -455,7 +455,23 @@ select {
   background: var(--surface);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-3);
+}
+
+/* The default form-control padding lives in @layer base so explicit
+   Tailwind padding utilities can win: unlayered author CSS beats every
+   layered declaration, and an unlayered `input { padding }` silently
+   defeated pl-9/pr-10 on the icon-carrying search fields (LessonPicker,
+   SearchField, ContentSearchBar) - the icon overlapped the placeholder
+   (#1458). Same cascade class as the #185 button reset. Controls
+   without authored padding utilities are unaffected: @layer base still
+   applies where nothing else overrides it. Guarded by
+   input-padding-layer.test.ts. */
+@layer base {
+  input,
+  textarea,
+  select {
+    padding: var(--space-2) var(--space-3);
+  }
 }
 
 input:focus,
