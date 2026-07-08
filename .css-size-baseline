@@ -1,0 +1,10 @@
+# Zufluss-Stopp fuer frontend/src/styles/global.css (#1467).
+#
+# Eingefrorene Zeilen-Obergrenze. global.css darf nur SCHRUMPFEN.
+# Nach einer Reduktions-Tranche
+# (docs/audits/global-css-analysis-2026-07-08.md) diese Zahl senken.
+# Legitime Token-/Fundament-Erweiterung: mit begruendetem Kommentar
+# minimal anheben (Escape-Hatch wie .filesize-baseline).
+#
+# Erste nicht-Kommentar-Zeile = die Baseline-Zahl.
+7591

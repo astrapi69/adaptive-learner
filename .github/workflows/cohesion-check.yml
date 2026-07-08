@@ -8,8 +8,10 @@ on:
       - "**.tsx"
       - "**.js"
       - "**.jsx"
+      - "**.css"
       - ".filesize-whitelist"
       - ".filesize-baseline"
+      - ".css-size-baseline"
 
 jobs:
   file-size-check:
@@ -21,3 +23,8 @@ jobs:
         run: |
           chmod +x scripts/check-file-sizes.sh
           scripts/check-file-sizes.sh
+
+      - name: CSS-Zufluss-Stopp (global.css darf nicht wachsen, #1467)
+        run: |
+          chmod +x scripts/check-css-size.sh
+          scripts/check-css-size.sh
