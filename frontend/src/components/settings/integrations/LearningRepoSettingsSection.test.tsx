@@ -142,3 +142,16 @@ describe("LearningRepoSettingsSection — git toggle (API mode)", () => {
     expect(row?.settings).toMatchObject({ enable_git: true });
   });
 });
+
+describe("LearningRepoSettingsSection — card container", () => {
+  // #1017-follow-up: the section must sit in the same ``settings-section``
+  // card as its neighbours (Gamification above it in the Plugins tab), not
+  // float on the page background. Heading uses the shared card-title class.
+  it("renders inside a settings-section card with a settings-section-title", async () => {
+    renderSection("api");
+    const section = await screen.findByTestId("learning-repo-settings");
+    expect(section.classList.contains("settings-section")).toBe(true);
+    const heading = screen.getByRole("heading", { level: 2 });
+    expect(heading.classList.contains("settings-section-title")).toBe(true);
+  });
+});
