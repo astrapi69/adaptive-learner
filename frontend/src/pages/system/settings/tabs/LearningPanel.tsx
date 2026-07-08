@@ -33,13 +33,16 @@ interface LearningPanelProps {
 }
 
 /**
- * Learning tab of the Settings page: source languages, learning profile,
- * feedback + sound, missions, lesson-mode / SRS / review controls, voice,
- * and the interaction toggles (swipe gestures, Enter-key shortcut,
- * auto-advance). Extracted verbatim from the Settings god-file (#1447),
- * carrying the three interaction-toggle states with it; the panel stays
- * mounted (``hidden`` when inactive) so deep links and ``data-testid``
- * assertions keep working.
+ * Learning tab of the Settings page. The sections follow a FIXED causal
+ * order (#1459, mirroring the #1451 Data-tab principle): foundation
+ * (learning profile, source languages) -> in-lesson flow (lesson mode,
+ * direction, hints, matching effect, interaction toggles, voice) ->
+ * practice & follow-up (review, SRS, lesson summary) -> motivation
+ * (feedback + sound, missions) -> reminders -> rare housekeeping LAST
+ * (paused-lesson retention, max lesson size). The order is pinned by a
+ * Settings.test.tsx regression test; the panel stays mounted (``hidden``
+ * when inactive) so deep links and ``data-testid`` assertions keep
+ * working.
  *
  * @example
  * <LearningPanel active={activeTab === "learning"} />
@@ -87,26 +90,13 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       hidden={!active}
       data-testid="settings-panel-learning"
     >
-      <SourceLanguagesControl />
       <LearningProfileControl />
-      <section className="settings-section" data-testid="settings-section-feedback">
-        <h2 className="settings-section-title">{t("settings.section_feedback", "Feedback")}</h2>
-        <FeedbackIntensityControl />
-        <SoundSettingsControl />
-      </section>
-      <MissionSettingsControl />
+      <SourceLanguagesControl />
       <LessonModeControl />
       <DirectionStrategyControl />
-      <MatchingResolveControl />
       <HintSettingsControl />
-      <ReviewSettingsControl />
-      <SummarySectionsControl />
-      <SrsTransparencySection />
-      <DailyRemindersControl />
-      <PausedLessonsRetentionControl />
-      <MaxLessonSizeControl />
-      <VoiceSettingsSection />
-      <section className="settings-section">
+      <MatchingResolveControl />
+      <section className="settings-section" data-testid="settings-section-interaction">
         <h2 className="settings-section-title">
           {t("settings.section_interaction", "Interaction")}
         </h2>
@@ -169,6 +159,19 @@ export default function LearningPanel({ active }: LearningPanelProps) {
           />
         </label>
       </section>
+      <VoiceSettingsSection />
+      <ReviewSettingsControl />
+      <SrsTransparencySection />
+      <SummarySectionsControl />
+      <section className="settings-section" data-testid="settings-section-feedback">
+        <h2 className="settings-section-title">{t("settings.section_feedback", "Feedback")}</h2>
+        <FeedbackIntensityControl />
+        <SoundSettingsControl />
+      </section>
+      <MissionSettingsControl />
+      <DailyRemindersControl />
+      <PausedLessonsRetentionControl />
+      <MaxLessonSizeControl />
     </div>
   );
 }
