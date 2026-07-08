@@ -214,6 +214,65 @@ describe("Settings page", () => {
     );
   });
 
+  // #1459 — the Learning tab sections follow a FIXED causal order
+  // (same principle as the #1451 Data-tab pin): foundation (profile,
+  // source languages) -> in-lesson flow (mode, direction, hints,
+  // matching effect, interaction toggles, voice) -> practice &
+  // follow-up (review, SRS, summary) -> motivation (feedback,
+  // missions) -> reminders -> rare housekeeping LAST (paused
+  // retention, max lesson size). Pinned by relative DOM order so a
+  // future edit cannot silently regress it.
+  it("orders the Learning-tab sections causally (profile first, housekeeping last) (#1459)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-learning");
+    // Section-root testids in their intended causal order.
+    const CAUSAL_ORDER = [
+      "settings-section-profile",
+      "settings-section-source-languages",
+      "settings-section-lesson-mode",
+      "settings-section-direction-strategy",
+      "settings-section-hints",
+      "settings-section-matching-resolve",
+      "settings-section-interaction",
+      "settings-section-voice",
+      "settings-section-review",
+      "settings-section-srs",
+      "settings-section-summary-sections",
+      "settings-section-feedback",
+      "settings-section-missions",
+      "settings-section-reminders",
+      "settings-section-paused-retention",
+      "settings-section-max-lesson-size",
+    ];
+    // Collect the section roots present, in DOM order (de-duped: a
+    // section root's own testid, not the nested ones it contains).
+    const seen = new Set<string>();
+    const domOrder = Array.from(panel.querySelectorAll("[data-testid]"))
+      .map((el) => el.getAttribute("data-testid"))
+      .filter((id): id is string => id !== null && CAUSAL_ORDER.includes(id))
+      .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+    // Voice hides itself when the environment supports neither TTS nor
+    // STT (happy-dom does not), so compare against the present subset —
+    // but require every other section explicitly, so a silently dropped
+    // section cannot make the relative-order assertion vacuously pass.
+    const ALWAYS_PRESENT = CAUSAL_ORDER.filter((id) => id !== "settings-section-voice");
+    ALWAYS_PRESENT.forEach((id) => expect(domOrder).toContain(id));
+    expect(domOrder).toEqual(CAUSAL_ORDER.filter((id) => domOrder.includes(id)));
+    // Headline invariants: the in-lesson interaction toggles sit with
+    // the lesson-flow block (before Review), review and SRS are
+    // adjacent, and housekeeping is last.
+    expect(domOrder.indexOf("settings-section-interaction")).toBeLessThan(
+      domOrder.indexOf("settings-section-review"),
+    );
+    expect(domOrder.indexOf("settings-section-srs")).toBe(
+      domOrder.indexOf("settings-section-review") + 1,
+    );
+    expect(domOrder[domOrder.length - 1]).toBe("settings-section-max-lesson-size");
+  });
+
   // #1455 — "Install app" lives in the GENERAL tab (it configures HOW
   // the app runs: standalone window, homescreen, starts without network),
   // not in Data (WHAT the app stores). The section stays mounted on both
