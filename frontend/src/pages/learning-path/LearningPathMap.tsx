@@ -1,13 +1,14 @@
 /**
  * /learning-path — Achievement Map view (Ansatz 4).
  *
- * The third view option alongside Personal (default) and Graph. Where
- * the Personal view answers "Wo bin ich? Was kommt als Nächstes?", the
- * Map answers "Wie viel habe ich INSGESAMT geschafft?" — a compact,
- * motivational, domain-grouped progress overview:
+ * The third view option alongside Personal (default) and Graph. It is a
+ * CATALOG of the learner's downloaded sets, grouped by domain, with a
+ * per-set progress bar each. It carries NO catalog-wide total (a catalog
+ * has no "progress"; that number fell whenever the app gained a set,
+ * measuring nothing, #1453):
  *
  *   ┌────────────────────────────────────┐
- *   │ Gesamt: 42% abgeschlossen   ███░░░  │
+ *   │ Alle Inhalte                        │
  *   │ SPRACHEN                            │
  *   │  🏳  Französisch  ████████░░  60%   │
  *   │  🏳  Spanisch     ██████░░░░  45%   │
@@ -180,28 +181,22 @@ export default function LearningPathMap({headerExtra}: LearningPathMapProps) {
     const languageSets = sets.filter((s) => s.domain === "language");
     const knowledgeSets = sets.filter((s) => s.domain !== "language");
 
-    // Total = completed lessons / total lessons across all active sets
-    // (lesson-weighted, more honest than averaging per-set percentages).
-    const totals = sets.reduce(
-        (acc, s) => {
-            acc.done += s.completedCount;
-            acc.total += s.totalCount;
-            return acc;
-        },
-        {done: 0, total: 0},
-    );
-    const totalPercent =
-        totals.total > 0 ? Math.round((100 * totals.done) / totals.total) : 0;
-
     return (
         <main
             id="main"
             className="learning-path-page"
             data-testid="learning-path-page"
         >
+            {/* #1453 - the Map is a CATALOG of downloaded sets, not the
+                personal path. It uses a catalog heading and no catalog-wide
+                progress bar: a catalog has no "progress", and the old total
+                fell whenever the app gained a set, measuring nothing. */}
             <header className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                <h1 className="text-2xl font-bold text-foreground">
-                    {t("learning_path.personal.title", "Your Learning Path")}
+                <h1
+                    className="text-2xl font-bold text-foreground"
+                    data-testid="learning-path-map-title"
+                >
+                    {t("learning_path.map.title", "All content")}
                 </h1>
                 {headerExtra}
             </header>
@@ -255,28 +250,6 @@ export default function LearningPathMap({headerExtra}: LearningPathMapProps) {
 
             {state === "ready" && data && (
                 <div data-testid="learning-path-map">
-                    <div
-                        className="rounded-app border border-border bg-card p-4"
-                        data-testid="map-total"
-                    >
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-foreground">
-                                {t(
-                                    "learning_path.map.total",
-                                    "Total: {n}% complete",
-                                ).replace("{n}", String(totalPercent))}
-                            </span>
-                            <span className="text-lg font-bold tabular-nums text-foreground">
-                                {totalPercent}%
-                            </span>
-                        </div>
-                        <Progress
-                            value={totalPercent}
-                            className="mt-2 h-3"
-                            data-testid="map-total-progress"
-                        />
-                    </div>
-
                     <DomainGroup
                         titleKey="learning_path.map.languages"
                         fallback="Languages"

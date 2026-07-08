@@ -2822,6 +2822,8 @@
     "endless": "Sonsuz",
     "personal": {
       "title": "Öğrenme yolun",
+      "progress": "Genel: %{n} tamamlandı",
+      "none_started": "Henüz hiçbir set başlatmadın. İndirilen setleri görmek için Tüm setler seçeneğine geç.",
       "empty": "Başlamak için bir ders seti indir.",
       "all_done": "{n} dersin tümü tamamlandı!",
       "downloaded": "İndirildi",
@@ -2838,7 +2840,7 @@
     "map": {
       "languages": "Diller",
       "knowledge": "Bilgi",
-      "total": "Toplam: %{n} tamamlandı"
+      "title": "Tüm içerik"
     },
     "mastery": {
       "receptive": "alımlayıcı",

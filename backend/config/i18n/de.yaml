@@ -2576,6 +2576,8 @@ learning_path:
   endless: "Endlos"
   personal:
     title: "Dein Lernpfad"
+    progress: "Insgesamt: {n}% abgeschlossen"
+    none_started: "Du hast noch kein Set begonnen. Wechsle zu Alle Sets, um deine heruntergeladenen Sets zu sehen."
     empty: "Lade ein Lektionsset herunter, um zu beginnen."
     all_done: "Alle {n} Lektionen abgeschlossen!"
     downloaded: "Heruntergeladen"
@@ -2590,7 +2592,7 @@ learning_path:
   map:
     languages: "Sprachen"
     knowledge: "Wissen"
-    total: "Gesamt: {n}% abgeschlossen"
+    title: "Alle Inhalte"
   mastery:
     receptive: "rezeptiv"
     productive: "produktiv"

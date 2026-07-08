@@ -2822,6 +2822,8 @@
     "endless": "Endless",
     "personal": {
       "title": "Your Learning Path",
+      "progress": "Overall: {n}% complete",
+      "none_started": "You have not started any set yet. Switch to All sets to see your downloaded sets.",
       "empty": "Download a lesson set to begin.",
       "all_done": "All {n} lessons completed!",
       "downloaded": "Downloaded",
@@ -2838,7 +2840,7 @@
     "map": {
       "languages": "Languages",
       "knowledge": "Knowledge",
-      "total": "Total: {n}% complete"
+      "title": "All content"
     },
     "mastery": {
       "receptive": "receptive",
