@@ -31,22 +31,42 @@ export function isUiLanguage(code: string | null | undefined): code is string {
     return typeof code === "string" && UI_LANGUAGE_CODES.has(code);
 }
 
+/** Normalise a BCP-47 tag (``"de-DE"``, ``"el-GR"``) to its base language
+ *  subtag (``"de"``, ``"el"``), lower-cased. ``null`` for an empty/absent
+ *  value. Keeps the resolver tolerant of the region-tagged strings
+ *  ``navigator.language`` returns. */
+function baseLanguageSubtag(locale: string | null | undefined): string | null {
+    if (typeof locale !== "string" || locale.length === 0) return null;
+    return locale.split("-")[0].toLowerCase();
+}
+
 /**
- * Resolve the initial UI language, persisted-choice-first (#1333).
+ * Resolve the initial UI language, persisted-choice-first (#1333, #1457).
  *
- * The user's saved choice ALWAYS wins — it is never overwritten by the
- * app-config default (same principle as the Soft-Pop theme default). Only
- * when NO valid choice is stored do we fall back to the app-config default,
- * then ``"de"`` — deliberately the SAME no-choice default as before this fix
- * (the bug was the persisted choice being ignored, not the default itself).
+ * Fallback chain — the user's saved choice ALWAYS wins and is never
+ * overwritten (same principle as the Soft-Pop theme default). Only when NO
+ * valid choice is stored do we consult, in order:
+ *   1. ``saved`` — the persisted UI-language choice.
+ *   2. ``browserLocale`` — ``navigator.language`` (base subtag), when it maps
+ *      to a shipped UI language. A per-person signal, stronger than a config
+ *      default.
+ *   3. ``appDefault`` — the explicitly-configured app default (API mode;
+ *      Dexie mode carries none).
+ *   4. ``"de"`` — the project default.
+ *
+ * The fallback is NEVER a language-list index: even if it were, position 0
+ * of every ordering the app uses is English/German, never Greek (#1457).
  *
  * Pure + exported so the priority is unit-tested without React.
  */
 export function resolveInitialUiLanguage(inputs: {
     saved?: string | null;
+    browserLocale?: string | null;
     appDefault?: string | null;
 }): string {
     if (isUiLanguage(inputs.saved)) return inputs.saved;
+    const browser = baseLanguageSubtag(inputs.browserLocale);
+    if (isUiLanguage(browser)) return browser;
     if (isUiLanguage(inputs.appDefault)) return inputs.appDefault;
     return "de";
 }
@@ -58,7 +78,16 @@ export function resolveInitialUiLanguage(inputs: {
 export function readSavedLang(): string | null {
     try {
         const saved = readLearnerState().language;
-        return isUiLanguage(saved) ? saved : null;
+        if (saved === null) return null;
+        if (isUiLanguage(saved)) return saved;
+        // #1457 — no silent data loss: a stored value that is not a shipped
+        // UI language is ignored (the fallback chain takes over), but the
+        // drop is surfaced for debugging rather than swallowed. Never a crash,
+        // never a silent swap to another language.
+        console.warn(
+            `[i18n] Ignoring stored UI language "${saved}" — not a shipped UI language; using the fallback chain.`,
+        );
+        return null;
     } catch {
         return null;
     }
@@ -107,19 +136,26 @@ export function I18nProvider({children}: {children: ReactNode}) {
     const [lang, setLangState] = useState(cachedLang || readSavedLang() || "de");
 
     // Derive the initial language on mount. The persisted choice ALWAYS wins;
-    // only when none is stored do we consult the app-config default, then the
-    // browser locale, then "de".
+    // only when none is stored do we consult the browser locale
+    // (navigator.language), then the app-config default, then "de" (#1457).
     useEffect(() => {
         if (cachedLang) return; // already loaded this session
         if (readSavedLang()) return; // persisted choice wins — never overwrite
+        const browserLocale =
+            typeof navigator !== "undefined" ? navigator.language : null;
         getStorage()
             .settings.getApp()
             .then((config) => {
                 const appLang = (config.app as Record<string, unknown>)
                     ?.default_language as string | undefined;
-                setLangState(resolveInitialUiLanguage({appDefault: appLang}));
+                setLangState(
+                    resolveInitialUiLanguage({browserLocale, appDefault: appLang}),
+                );
             })
-            .catch(() => {});
+            .catch(() => {
+                // App-config unreachable — still honour the browser locale.
+                setLangState(resolveInitialUiLanguage({browserLocale}));
+            });
     }, []);
 
     // Fetch strings when language changes
