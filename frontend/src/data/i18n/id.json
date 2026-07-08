@@ -558,7 +558,7 @@
     },
     "install": {
       "heading": "Pasang aplikasi",
-      "description": "Pasang Adaptive Learner sebagai aplikasi untuk akses luring dan pengalaman layar penuh.",
+      "description": "Pasang Adaptive Learner sebagai aplikasi mandiri: jendela sendiri, ikon di layar utama, dan dapat dijalankan bahkan tanpa jaringan. Konten belajarmu tidak terpengaruh.",
       "button": "Pasang aplikasi",
       "already": "Sudah terpasang",
       "unavailable": "Peramban Anda belum menawarkan pemasangan.",

@@ -174,11 +174,12 @@ describe("Settings page", () => {
   });
 
   // #1451 — the Data tab sections follow a FIXED causal order:
-  // source (content repos) -> sync -> what results (cache/install) ->
+  // source (content repos) -> sync -> what results (cache) ->
   // securing (backup/export) -> reversible cleanup (orphaned data) ->
   // irreversible danger zone LAST. Pinned by relative DOM order so a
   // future edit cannot silently regress it (e.g. put the danger zone
-  // above Sync).
+  // above Sync). "Install app" moved to the General tab in #1455 (it
+  // configures HOW the app runs, not WHAT it stores).
   it("orders the Data-tab sections causally (content repos first, danger zone last) (#1451)", async () => {
     storageState.mode = "api";
     apiGet.mockResolvedValue(BASE);
@@ -190,7 +191,6 @@ describe("Settings page", () => {
       "content-repo-section",
       "settings-sync",
       "settings-section-cache",
-      "settings-install-section",
       "settings-backup",
       "key-vault-section",
       "export-section",
@@ -271,6 +271,35 @@ describe("Settings page", () => {
       domOrder.indexOf("settings-section-review") + 1,
     );
     expect(domOrder[domOrder.length - 1]).toBe("settings-section-max-lesson-size");
+  });
+
+  // #1455 — "Install app" lives in the GENERAL tab (it configures HOW
+  // the app runs: standalone window, homescreen, starts without network),
+  // not in Data (WHAT the app stores). The section stays mounted on both
+  // tabs' URLs (panels are hidden, not unmounted), so the assertions
+  // check containment + visibility, not existence.
+  it("hosts the Install-app section in the General tab, not in Data (#1455)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=general");
+    await screen.findByTestId("settings");
+    const install = screen.getByTestId("settings-install-section");
+    // Not a descendant of the Data panel anymore.
+    expect(
+      screen.getByTestId("settings-panel-data").contains(install),
+    ).toBe(false);
+    // Visible on the General tab...
+    expect(install).toBeVisible();
+    // ...hidden when another tab is active.
+    fireEvent.click(screen.getByTestId("settings-tab-data"));
+    expect(screen.getByTestId("settings-install-section")).not.toBeVisible();
+    // The install button keeps its visible-but-disabled behavior at the
+    // new mount point (no browser install offer in happy-dom -> disabled).
+    fireEvent.click(screen.getByTestId("settings-tab-general"));
+    const button = screen.getByTestId(
+      "settings-install-button",
+    ) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
   });
 
   it("redirects to /onboarding when user_id is missing", async () => {

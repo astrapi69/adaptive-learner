@@ -519,7 +519,7 @@ settings:
     desc: "복습 세션이 끝나기 전에 제시하는 요소 수입니다. 남은 항목은 다음 회차로 넘어갑니다."
   install:
     heading: "앱 설치"
-    description: "Adaptive Learner를 앱으로 설치하여 오프라인 접근과 전체 화면 환경을 누리세요."
+    description: "Adaptive Learner를 독립 실행형 앱으로 설치하세요: 전용 창, 홈 화면 아이콘, 네트워크 없이도 시작됩니다. 학습 콘텐츠에는 영향이 없습니다."
     button: "앱 설치"
     already: "이미 설치됨"
     unavailable: "브라우저가 아직 설치를 제안하지 않았습니다."
