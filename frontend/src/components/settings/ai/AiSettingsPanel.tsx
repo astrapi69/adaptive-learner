@@ -89,8 +89,13 @@ export default function AiSettingsPanel({
   };
 
   return (
-    <>
-      <div ref={overviewRef} hidden={!active}>
+    <div
+      className="settings-tabpanel"
+      role="tabpanel"
+      hidden={!active}
+      data-testid="settings-panel-ai"
+    >
+      <div ref={overviewRef}>
         <ConfiguredProvidersTable
           settings={settings}
           mode={mode}
@@ -103,7 +108,7 @@ export default function AiSettingsPanel({
         />
       </div>
 
-      <section className="settings-section" hidden={!active}>
+      <section className="settings-section">
         <h2 className="settings-section-title">{t("settings.section_provider", "AI provider")}</h2>
         <label className="form-row">
           <span className="form-label">{t("settings.provider_label", "Active provider")}</span>
@@ -125,7 +130,6 @@ export default function AiSettingsPanel({
       <section
         className="settings-section"
         data-testid="settings-model-overrides"
-        hidden={!active}
       >
         <h2 className="settings-section-title">
           {t("settings.section_model_overrides", "Model overrides")}
@@ -208,7 +212,7 @@ export default function AiSettingsPanel({
         })}
       </section>
 
-      <section className="settings-section" hidden={!active}>
+      <section className="settings-section">
         <h2 className="settings-section-title">{t("settings.section_api_keys", "API keys")}</h2>
         {AI_PROVIDERS.map((provider) => (
           <ApiKeyRow
@@ -234,7 +238,7 @@ export default function AiSettingsPanel({
           (EXP-038, .alk) lives on the Data tab next to the other backups —
           a single export entry point. This is only a link there, never a
           second export form. */}
-      <section className="settings-section" hidden={!active}>
+      <section className="settings-section">
         <h2 className="settings-section-title">
           {t("settings.key_export_link.heading", "AI keys — encrypted export")}
         </h2>
@@ -253,6 +257,6 @@ export default function AiSettingsPanel({
           {t("settings.key_export_link.button", "Go to key export (Data tab)")}
         </Button>
       </section>
-    </>
+    </div>
   );
 }

@@ -273,6 +273,32 @@ describe("Settings page", () => {
     expect(domOrder[domOrder.length - 1]).toBe("settings-section-max-lesson-size");
   });
 
+  // #1484 — the General + AI tabs wrap their sections in a
+  // .settings-tabpanel container, like every other tab. The wrapper's
+  // flex gap is the ONLY source of vertical spacing between cards
+  // (.settings-section deliberately has no vertical margin), so the
+  // pre-#1484 fragment shape rendered the General/AI cards with no
+  // spacing at all.
+  it("wraps the General and AI sections in a settings-tabpanel container (#1484)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=general");
+    await screen.findByTestId("settings");
+    const general = screen.getByTestId("settings-panel-general");
+    expect(general.classList.contains("settings-tabpanel")).toBe(true);
+    expect(
+      general.querySelector('[data-testid="settings-section-profile"]'),
+    ).not.toBeNull();
+    expect(
+      general.querySelector('[data-testid="settings-install-section"]'),
+    ).not.toBeNull();
+    const ai = screen.getByTestId("settings-panel-ai");
+    expect(ai.classList.contains("settings-tabpanel")).toBe(true);
+    expect(
+      ai.querySelector('[data-testid="settings-provider"]'),
+    ).not.toBeNull();
+  });
+
   // #1455 — "Install app" lives in the GENERAL tab (it configures HOW
   // the app runs: standalone window, homescreen, starts without network),
   // not in Data (WHAT the app stores). The section stays mounted on both
