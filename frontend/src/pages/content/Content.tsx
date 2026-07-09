@@ -39,6 +39,7 @@ import ContentTree from "../../components/content/browser/ContentTree";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
 import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
+import ContentGapsSection from "../../components/content/contributions/ContentGapsSection";
 import ContentSearchBar from "../../components/content/browser/ContentSearchBar";
 import FilterMenuButton from "../../shared/forms/FilterMenuButton";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
@@ -431,9 +432,22 @@ export default function ContentPage() {
           (ImportActionsPanel). EXP-026 folded user lessons stay in the
           downloaded-set tree below. */}
 
-      {/* Phase 64D — My Contributions (local sharing history). */}
+      {/* Phase 64D — My Contributions (local sharing history) + #1494 the
+          "Missing Lessons" gap-suggestion block, rendered in context with
+          the downloaded sets the gaps are derived from (the dedicated
+          /contribute page + nav entry were dropped; /contribute now
+          redirects here). ContentGapsSection renders nothing when there are
+          no gaps, so no empty-state shows. Both share the one
+          !searchResult.active guard. */}
       {!searchResult.active && (
-        <ContentContributionsSection contributions={contributions} />
+        <>
+          <ContentContributionsSection contributions={contributions} />
+          <ContentGapsSection
+            downloadedSets={downloadedSets}
+            lang={lang}
+            communityRepo={COMMUNITY_REPO}
+          />
+        </>
       )}
 
       {searchResult.active ? (
@@ -444,9 +458,6 @@ export default function ContentPage() {
         />
       ) : (
         <>
-          {/* #1149 — the "Missing Lessons" gap-suggestion block moved out
-              of "Meine Inhalte" (consumption) into the dedicated
-              /contribute area (production). */}
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="content-section-title">
               {t("content.my_lessons.downloaded_title", "Downloaded sets")}

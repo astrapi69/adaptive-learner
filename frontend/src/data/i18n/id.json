@@ -97,7 +97,6 @@
     "online": "Daring",
     "offline": "Luring",
     "anki": "Anki",
-    "contribute": "Berkontribusi",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode Pengembang aktif — pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan.",
     "content": "Konten saya",
@@ -2574,12 +2573,6 @@
       "show_name": "Tampilkan nama di pelajaran",
       "privacy": "Namamu akan ditampilkan di pelajaran dan pull request."
     }
-  },
-  "contribute": {
-    "title": "Berkontribusi",
-    "intro": "Bantu memperbesar perpustakaan komunitas dengan mengisi celahnya.",
-    "loading": "Memuat…",
-    "empty": "Tidak ada celah saat ini — perpustakaan komunitas mencakup set yang kamu unduh. Terima kasih!"
   },
   "milestone": {
     "streak": "Rentetan {n} Hari!",

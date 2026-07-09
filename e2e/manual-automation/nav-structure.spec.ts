@@ -41,7 +41,6 @@ const PRIMARY_NAV = [
   "learning-path",
   "session",
   "content",
-  "contribute",
   "progress",
   "settings",
   "help",
