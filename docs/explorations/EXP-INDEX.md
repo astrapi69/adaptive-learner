@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-07-07 (v1.99.0)
-**Anzahl EXPs:** 38
+**Stand:** 2026-07-09 (v2.1.0)
+**Anzahl EXPs:** 39
 
 > Vollstaendiger Umsetzungs-Audit (Task-fuer-Task, gegen Code verifiziert):
 > [docs/journal/exploration-status-audit.md](../journal/exploration-status-audit.md)
@@ -59,6 +59,7 @@
 | 040 | Directory-Restrukturierung (God-Folders)    | Querschnitt  | abgeschlossen | Mittel | 024 (verwandt)  |
 | 041 | Aufgabentyp-Eignung + faire Bewertung       | Querschnitt  | Analyse | Mittel-Hoch | 002, 007, 013, 036 |
 | 042 | Content-Engine (kanonisches Format + Adapter) | Querschnitt | ausgeliefert (Boundary + Extraktion) | Mittel-Hoch | 039, 002, 003     |
+| 044 | CSS-Vereinheitlichung (Kaskaden-Reparatur + Komponenten-Migration) | Querschnitt | laufend | Sehr hoch | 016, #1467 |
 
 ## Umsetzungsstand (Stand v1.99.0)
 
