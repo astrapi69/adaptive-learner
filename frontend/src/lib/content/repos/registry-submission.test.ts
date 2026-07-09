@@ -14,9 +14,9 @@ import {
   registryEditUrl,
   registryEntryJson,
   upsertRegistryEntry,
-  type RegistryEntry,
   type RegistrySubmissionInput,
 } from "./registry-submission";
+import type { RegistryEntry } from "./registry-types";
 
 const BASE: RegistrySubmissionInput = {
   owner: "jane",

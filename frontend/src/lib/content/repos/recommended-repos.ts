@@ -12,6 +12,7 @@
  */
 
 import { parseGitHubRepoUrl, userRepoSource } from "./content-repos";
+import type { RepoValidation } from "./registry-types";
 
 const OFFICIAL_OWNER_REPO = "astrapi69/adaptive-learner-content";
 const RECOMMENDED_URL = `https://raw.githubusercontent.com/${OFFICIAL_OWNER_REPO}/main/recommended-repos.json`;
@@ -25,24 +26,6 @@ const RECOMMENDED_URL = `https://raw.githubusercontent.com/${OFFICIAL_OWNER_REPO
  * touching {@link fetchRecommendedRepos}.
  */
 const CATALOGUE_PUBLISHED = true;
-
-/**
- * Validation block carried by every EXTERNAL registry entry (the federated
- * search only serves a snapshot whose ``status`` is ``"validated"``). The
- * official ``self`` entry is exempt — its own CI validates every push.
- */
-export interface RepoValidation {
-  /** ``pending`` = submitted, not yet green; ``validated`` = the pinned
-   *  commit passed; ``rejected`` = failed, kept for the record. */
-  status: "pending" | "validated" | "rejected";
-  /** ISO-8601 timestamp of when the pinned commit was validated. */
-  validated_at: string;
-  /** ``learn-content-engine`` version the snapshot was validated against. */
-  engine_version?: string;
-  /** ``schema_version`` of the repo's ``search-index.json`` at the pin. */
-  index_schema_version?: string;
-  notes?: string;
-}
 
 /**
  * One entry in the federated content-repo registry (``recommended-repos.json``).

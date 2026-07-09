@@ -49,8 +49,8 @@ import {
   registryBranchName,
   registryEditUrl,
   registryEntryJson,
-  type RegistryEntry,
 } from "../../../lib/content/repos/registry-submission";
+import type { RegistryEntry } from "../../../lib/content/repos/registry-types";
 import { SEARCH_INDEX_FILE } from "../../../lib/content/repos/search-index-loader";
 import { notify } from "../../../utils/notify";
 
@@ -396,7 +396,12 @@ export default function RegistrySubmitSection() {
         </div>
       </div>
 
-      {prepared && (
+      {prepared && (() => {
+        // Hoist the status comparison out of any className expression: the
+        // dead-classname detector scrapes string literals from className={…},
+        // so a bare "validated" literal inside it reads as a phantom class.
+        const isValidated = prepared.status === "validated";
+        return (
         <div
           className="mt-4 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
           data-testid="registry-result"
@@ -407,18 +412,18 @@ export default function RegistrySubmitSection() {
             </h3>
             <span
               className={
-                prepared.status === "validated"
+                isValidated
                   ? "rounded-sm bg-[var(--success-bg)] px-2 py-0.5 text-xs font-semibold text-[var(--success)]"
                   : "rounded-sm bg-[var(--warning-bg)] px-2 py-0.5 text-xs font-semibold text-[var(--warning)]"
               }
               data-testid="registry-status"
             >
-              {prepared.status === "validated"
+              {isValidated
                 ? t("registry.status.validated", "Validated locally")
                 : t("registry.status.pending", "Pending — CI will validate")}
             </span>
           </div>
-          {prepared.status === "pending" && prepared.reason && (
+          {!isValidated && prepared.reason && (
             <p
               className="m-0 mb-2 text-sm text-[var(--warning)]"
               data-testid="registry-reason"
@@ -496,7 +501,8 @@ export default function RegistrySubmitSection() {
             </p>
           )}
         </div>
-      )}
+        );
+      })()}
     </section>
   );
 }

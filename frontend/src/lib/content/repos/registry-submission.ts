@@ -15,7 +15,7 @@
  * GitHub client without pulling in storage.
  */
 
-import type { RepoValidation } from "./recommended-repos";
+import type { RegistryEntry, RepoValidation } from "./registry-types";
 import { OFFICIAL_SOURCE } from "./source-identity";
 
 /** The registry file at the official content repo's root. */
@@ -47,18 +47,6 @@ export interface RegistrySubmissionInput {
   indexSchemaVersion?: string;
   engineVersion?: string;
   notes?: string;
-}
-
-/** A ready-to-commit registry entry (field order mirrors the schema doc). */
-export interface RegistryEntry {
-  url: string;
-  branch: string;
-  commit: string;
-  title: string;
-  description?: string;
-  trust_level: number;
-  languages: string[];
-  validation: RepoValidation;
 }
 
 /** Canonical ``https://github.com/owner/repo`` URL (no trailing slash). */

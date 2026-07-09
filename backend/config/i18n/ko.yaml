@@ -3238,38 +3238,38 @@ migration:
     body: "Adaptive Learner를 온라인에서 사용하셨나요? 거기서 백업을 만든 다음 위의 가져오기로 데이터를 옮기세요."
 
 registry:
-  title: "Register your repository"
-  intro: "Propose your own content repository for the cross-repo search. This prepares a pull request against the official content directory; a maintainer reviews and merges it after CI validates your pinned commit."
-  copied: "Entry copied to the clipboard."
-  copy_failed: "Could not copy - select the text manually."
+  title: 리포지토리 등록
+  intro: 자신의 콘텐츠 리포지토리를 리포지토리 간 검색에 제안합니다. 이 작업은 공식 콘텐츠 디렉터리에 대한 풀 리퀘스트를 준비합니다. CI가 고정된 커밋을 검증한 후 관리자가 검토하고 병합합니다.
+  copied: 항목을 클립보드에 복사했습니다.
+  copy_failed: 복사할 수 없습니다. 텍스트를 수동으로 선택하세요.
   error:
-    invalid_url: "Enter a valid GitHub repository URL (e.g. owner/repo)."
-    no_title: "Add a short title for your repository."
-    no_commit: "Could not resolve the latest commit - check the repository URL and branch."
-    prepare_failed: "Could not prepare the submission."
+    invalid_url: '유효한 GitHub 리포지토리 URL을 입력하세요(예: owner/repo).'
+    no_title: 리포지토리의 짧은 제목을 입력하세요.
+    no_commit: 최신 커밋을 확인할 수 없습니다. 리포지토리 URL과 브랜치를 확인하세요.
+    prepare_failed: 제출을 준비할 수 없습니다.
   field:
-    pick: "Pick a connected repository"
-    pick_placeholder: "- choose or enter below -"
-    url: "GitHub repository URL"
-    branch: "Branch"
-    title: "Title"
-    title_ph: "Your set collection"
-    description: "Description (optional)"
-    description_ph: "One line about what's inside"
+    pick: 연결된 리포지토리 선택
+    pick_placeholder: — 선택하거나 아래에 입력 —
+    url: GitHub 리포지토리 URL
+    branch: 브랜치
+    title: 제목
+    title_ph: 내 세트 모음
+    description: 설명(선택 사항)
+    description_ph: 내용을 한 줄로
   action:
-    prepare: "Prepare submission"
-    copy: "Copy entry"
-    copied: "Copied"
-    propose: "Open the directory to propose"
-    create_pr: "Create pull request"
+    prepare: 제출 준비
+    copy: 항목 복사
+    copied: 복사됨
+    propose: 디렉터리를 열어 제안
+    create_pr: 풀 리퀘스트 만들기
   result:
-    title: "Your registry entry"
-    reason: "Local check: {reason}"
-    instructions: "Add this entry to the {file} array of the official content directory:"
+    title: 레지스트리 항목
+    reason: '로컬 확인: {reason}'
+    instructions: '이 항목을 공식 콘텐츠 디렉터리의 {file} 배열에 추가하세요:'
   status:
-    validated: "Validated locally"
-    pending: "Pending - CI will validate"
+    validated: 로컬에서 검증됨
+    pending: 대기 중 — CI가 검증합니다
   pr:
-    created: "Pull request opened."
-    failed: "Could not open the pull request."
-    view: "View your pull request"
+    created: 풀 리퀘스트를 열었습니다.
+    failed: 풀 리퀘스트를 열 수 없습니다.
+    view: 풀 리퀘스트 보기

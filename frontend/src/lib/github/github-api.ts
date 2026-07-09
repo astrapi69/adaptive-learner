@@ -30,10 +30,8 @@
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
 import { ApiError } from "../../api/client";
-import {
-  upsertRegistryEntry,
-  type RegistryEntry,
-} from "../content/repos/registry-submission";
+import { upsertRegistryEntry } from "../content/repos/registry-submission";
+import type { RegistryEntry } from "../content/repos/registry-types";
 
 const GITHUB_API_BASE = "https://api.github.com";
 

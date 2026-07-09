@@ -4,7 +4,7 @@
  * Split out of the former ``storage/types.ts`` god-file (#354).
  */
 
-import type { RegistryEntry } from "../../../lib/content/repos/registry-submission";
+import type { RegistryEntry } from "../../../lib/content/repos/registry-types";
 
 
 export interface GitHubTokenStatus {
