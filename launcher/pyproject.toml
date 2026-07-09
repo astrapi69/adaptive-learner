@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-launcher"
-version = "2.0.0"
+version = "2.1.0"
 description = "Windows Simple Launcher for AdaptiveLearner. Starts the Docker stack, opens the browser, stops the stack on exit."
 authors = ["Asterios Raptis"]
 license = "MIT"
