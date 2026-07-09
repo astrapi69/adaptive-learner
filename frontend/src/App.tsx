@@ -22,7 +22,6 @@ import InstallPrompt from "./components/pwa/InstallPrompt";
 import IosInstallHint from "./components/pwa/IosInstallHint";
 import ReminderScheduler from "./components/settings/controls/reminders/ReminderScheduler";
 import Navigation from "./components/nav/Navigation";
-import BottomTabBar from "./components/nav/BottomTabBar";
 import OfflineIndicator from "./components/pwa/OfflineIndicator";
 import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
@@ -218,7 +217,6 @@ export default function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
-            <BottomTabBar />
             <InstallPrompt />
             <IosInstallHint />
             <MilestoneHost />

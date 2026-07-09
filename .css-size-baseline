@@ -11,4 +11,7 @@
 # 7591 -> 7506 (EXP-044 Tranche 1, #1485): 8 tote Selektoren aus dem
 # #1467-Audit geloescht (Layer 5), jeder vorab per git grep gegen
 # frontend/src als ungenutzt bestaetigt.
-7506
+#
+# 7506 -> 7497 (#1512): body.has-bottom-nav-Reservierung entfernt mit der
+# mobilen BottomTabBar.
+7497
