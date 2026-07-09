@@ -45,10 +45,10 @@ on:
           - finish
         default: prepare
       skip_e2e:
-        description: "prepare only: skip the extra Playwright smoke (make test-e2e-smoke)"
+        description: "prepare only: skip the advisory extra Playwright smoke (make test-e2e-smoke). Default true — it is API-mode and flakes on container dev-server cold-start (#1254); the mandatory make release-test gate already covers Playwright. Set false to run it."
         required: false
         type: boolean
-        default: false
+        default: true
 
 # Only the standard token scope is needed: pushing the release branch, main,
 # develop + tags, and creating the GitHub Release. Anything beyond this would
