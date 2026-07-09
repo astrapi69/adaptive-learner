@@ -162,7 +162,7 @@ export default function DangerZoneSection() {
 
     return (
         <section
-            className="settings-section"
+            className="settings-section mt-8"
             data-testid="settings-danger-zone"
             style={dangerSectionStyle}
         >
@@ -172,7 +172,7 @@ export default function DangerZoneSection() {
             >
                 {t("settings.danger_zone_heading", "Danger Zone")}
             </h2>
-            <p className="muted" style={{marginTop: 0}}>
+            <p className="muted mt-0">
                 {t(
                     "settings.danger_zone_intro",
                     "Permanently delete every piece of learner state on this device.",
@@ -234,8 +234,7 @@ export default function DangerZoneSection() {
                     >
                         <h3
                             id="danger-zone-modal-title"
-                            className="modal-title"
-                            style={{color: "var(--danger)"}}
+                            className="modal-title text-destructive"
                         >
                             ⚠️{" "}
                             {t(
@@ -245,7 +244,7 @@ export default function DangerZoneSection() {
                         </h3>
                         <p
                             data-testid="danger-zone-warning"
-                            style={{lineHeight: 1.5}}
+                            className="leading-normal"
                         >
                             {t(
                                 "settings.danger_zone_warning",
@@ -253,10 +252,10 @@ export default function DangerZoneSection() {
                             )}
                         </p>
                         {step === "typed" && (
-                            <div style={{marginTop: 16}}>
+                            <div className="mt-4">
                                 <label
                                     htmlFor="danger-zone-typed-input"
-                                    style={{display: "block", marginBottom: 4}}
+                                    className="mb-1 block"
                                 >
                                     {t(
                                         "settings.danger_zone_confirm_prompt",
@@ -278,16 +277,12 @@ export default function DangerZoneSection() {
                                     )}
                                     onChange={(e) => setTyped(e.target.value)}
                                     disabled={busy === "reset"}
-                                    style={{
-                                        width: "100%",
-                                        padding: "0.5rem",
-                                        fontSize: "1rem",
-                                        fontFamily: "monospace",
-                                    }}
+                                    className="w-full p-2"
+                                    style={{fontFamily: "var(--font-mono)"}}
                                 />
                             </div>
                         )}
-                        <div className="form-actions" style={{marginTop: 24}}>
+                        <div className="form-actions mt-6">
                             <Button
                                 type="button"
                                 variant="secondary"
@@ -337,9 +332,18 @@ export default function DangerZoneSection() {
     );
 }
 
+/**
+ * Kept as an inline style on purpose: ``.settings-section`` sets
+ * ``border`` / ``border-radius`` / ``padding`` UNLAYERED in global.css,
+ * so layered Tailwind utilities (``border-2`` / ``rounded-app`` /
+ * ``p-4``) would lose the cascade. Same for the two
+ * ``color: var(--danger)`` reads against the unlayered
+ * ``.settings-section-title`` color and the modal's 540px override of
+ * the unlayered ``.modal-card`` ``max-width: 32rem``. All values are
+ * token-backed; only the delivery stays inline (#1476).
+ */
 const dangerSectionStyle: React.CSSProperties = {
     border: "2px solid var(--danger)",
-    borderRadius: 8,
-    padding: 16,
-    marginTop: "2rem",
+    borderRadius: "var(--radius-md)",
+    padding: "var(--space-4)",
 };

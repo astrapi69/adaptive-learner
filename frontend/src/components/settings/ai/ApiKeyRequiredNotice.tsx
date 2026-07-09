@@ -61,26 +61,15 @@ export default function ApiKeyRequiredNotice({
     if (compact) {
         return (
             <p
-                className="api-key-required-compact"
+                className="api-key-required-compact m-0 mb-2 flex items-center gap-[0.4rem] text-sm text-warning"
                 data-testid="api-key-required-notice"
-                style={{
-                    margin: "0 0 0.5rem 0",
-                    fontSize: "0.875rem",
-                    color: "var(--warning)",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                }}
             >
                 <AlertTriangle size={16} aria-hidden="true" />
                 <span>{body}</span>
                 <Link
                     to={settingsHref}
                     data-testid="api-key-required-link"
-                    style={{
-                        marginLeft: "auto",
-                        color: "var(--accent)",
-                    }}
+                    className="ml-auto text-accent"
                 >
                     {settingsLabel} →
                 </Link>
@@ -89,28 +78,16 @@ export default function ApiKeyRequiredNotice({
     }
     return (
         <div
-            className="api-key-required-notice"
+            className="api-key-required-notice mb-3 flex items-start gap-2 rounded-app border border-warning bg-[var(--warning-bg)] px-[0.9rem] py-[0.6rem] text-[0.9rem] text-warning"
             data-testid="api-key-required-notice"
             role="status"
-            style={{
-                margin: "0 0 0.75rem 0",
-                padding: "0.6rem 0.9rem",
-                background: "var(--warning-bg)",
-                color: "var(--warning)",
-                border: "1px solid var(--warning)",
-                borderRadius: "var(--radius-md, 6px)",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "0.5rem",
-                fontSize: "0.9rem",
-            }}
         >
             <AlertTriangle
                 size={18}
                 aria-hidden="true"
-                style={{flexShrink: 0, marginTop: 2}}
+                className="mt-0.5 shrink-0"
             />
-            <div style={{flex: 1}}>
+            <div className="flex-1">
                 <strong>{body}</strong>{" "}
                 <span>
                     {t(
@@ -118,15 +95,11 @@ export default function ApiKeyRequiredNotice({
                         "Configure a provider key in Settings to enable this action.",
                     )}
                 </span>
-                <div style={{marginTop: "0.4rem"}}>
+                <div className="mt-[0.4rem]">
                     <Link
                         to={settingsHref}
                         data-testid="api-key-required-link"
-                        style={{
-                            color: "var(--accent)",
-                            fontWeight: 600,
-                            textDecoration: "underline",
-                        }}
+                        className="font-semibold text-accent underline"
                     >
                         {settingsLabel} →
                     </Link>

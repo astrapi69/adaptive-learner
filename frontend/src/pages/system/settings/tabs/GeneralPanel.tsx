@@ -316,7 +316,7 @@ export default function GeneralPanel({
           <span className="form-label" id="settings-language-label">
             {t("settings.language_label", "Display language")}
           </span>
-          <div style={{ minWidth: "16rem", flex: 1 }}>
+          <div className="min-w-64 flex-1">
             <LanguagePicker
               testId="settings-language"
               languages={buildLanguageOptions(t)}
