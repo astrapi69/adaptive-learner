@@ -114,7 +114,7 @@
     "happy-dom": "^20.10.6",
     "json-schema-to-typescript": "^15.0.4",
     "png-to-ico": "^3.0.2",
-    "prettier": "^3.9.4",
+    "prettier": "^3.9.5",
     "rollup-plugin-visualizer": "^7.0.1",
     "sharp": "^0.35.3",
     "stylelint": "^17.14.0",
