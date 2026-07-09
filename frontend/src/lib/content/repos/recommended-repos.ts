@@ -12,6 +12,7 @@
  */
 
 import { parseGitHubRepoUrl, userRepoSource } from "./content-repos";
+import type { RepoValidation } from "./registry-types";
 
 const OFFICIAL_OWNER_REPO = "astrapi69/adaptive-learner-content";
 const RECOMMENDED_URL = `https://raw.githubusercontent.com/${OFFICIAL_OWNER_REPO}/main/recommended-repos.json`;
@@ -26,15 +27,62 @@ const RECOMMENDED_URL = `https://raw.githubusercontent.com/${OFFICIAL_OWNER_REPO
  */
 const CATALOGUE_PUBLISHED = true;
 
-/** One entry in the curated recommended-repos catalogue. */
+/**
+ * One entry in the federated content-repo registry (``recommended-repos.json``).
+ *
+ * The single ``self`` entry describes the official repo (branch-tracked, no
+ * commit / validation — validated by its own CI). Every OTHER entry is an
+ * external repo that MUST pin the exact validated ``commit`` and carry a
+ * {@link RepoValidation} block; the federated search reads that repo's
+ * ``search-index.json`` at the pinned commit, and only when its status is
+ * ``"validated"``.
+ */
 export interface RecommendedRepo {
-  /** ``owner/repo`` or a full GitHub URL. */
+  /** Canonical ``https://github.com/owner/repo`` URL (also accepts an
+   *  ``owner/repo`` shorthand for backward-compat with the pre-governance
+   *  catalogue). */
   url: string;
-  /** Branch to read from. Defaults to ``main``. */
+  /** Branch the pinned commit must be reachable from. Defaults to ``main``. */
   branch: string;
-  /** Optional display title + description for the discovery card. */
+  /** Optional display title + description for the discovery / add card. */
   title?: string;
   description?: string;
+  /** Curation trust: 1 = community/unverified, 2 = reviewed, 3 = official.
+   *  External repos start at 1; the official ``self`` entry is 3. */
+  trust_level?: number;
+  /** Language pairs the repo advertises, e.g. ``["de-fr", "de-es"]``. */
+  languages?: string[];
+  /** True ONLY on the official ``self`` entry — branch-tracked, exempt from
+   *  the pinned-commit + validation requirement. */
+  self?: boolean;
+  /** Full 40-char git SHA of the validated snapshot (external entries).
+   *  The federated search reads ``search-index.json`` AT this commit. */
+  commit?: string;
+  /** Validation block (external entries). */
+  validation?: RepoValidation;
+}
+
+/**
+ * Whether an entry participates in the FEDERATED SEARCH. The official ``self``
+ * entry always does (branch-tracked, CI-validated); every external entry does
+ * only once its pinned commit has passed validation
+ * (``validation.status === "validated"``). Pre-governance entries (no ``self``,
+ * no ``validation``) are NOT searchable — they may still be listed as
+ * "recommended" to add, but the search only ever serves a validated snapshot.
+ */
+export function isValidatedForSearch(rec: RecommendedRepo): boolean {
+  if (rec.self === true) return true;
+  return rec.validation?.status === "validated";
+}
+
+/**
+ * The git ref to read a registry entry's content at: the branch for the
+ * branch-tracked ``self`` entry, else the pinned ``commit`` (falling back to
+ * the branch only when — against the contract — no commit was pinned).
+ */
+export function recommendedRef(rec: RecommendedRepo): string {
+  if (rec.self) return rec.branch || "main";
+  return rec.commit || rec.branch || "main";
 }
 
 /** The ``owner/repo`` source identifier for a recommended entry, or null. */

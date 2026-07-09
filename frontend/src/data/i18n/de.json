@@ -3543,5 +3543,48 @@
       "title": "Aus der Online-Version importieren",
       "body": "Adaptive Learner online genutzt? Erstelle dort ein Backup und nutze oben Importieren, um deine Daten zu übernehmen."
     }
+  },
+  "registry": {
+    "title": "Eigenes Repository registrieren",
+    "intro": "Schlage dein eigenes Inhalts-Repository für die repo-übergreifende Suche vor. Dies bereitet einen Pull Request gegen das offizielle Inhaltsverzeichnis vor; ein Betreuer prüft und merged ihn, nachdem die CI deinen gepinnten Commit validiert hat.",
+    "copied": "Eintrag in die Zwischenablage kopiert.",
+    "copy_failed": "Kopieren nicht möglich - bitte den Text manuell markieren.",
+    "error": {
+      "invalid_url": "Gib eine gültige GitHub-Repository-URL ein (z. B. owner/repo).",
+      "no_title": "Gib einen kurzen Titel für dein Repository an.",
+      "no_commit": "Der neueste Commit konnte nicht ermittelt werden - prüfe URL und Branch.",
+      "prepare_failed": "Die Einreichung konnte nicht vorbereitet werden."
+    },
+    "field": {
+      "pick": "Verbundenes Repository wählen",
+      "pick_placeholder": "- wählen oder unten eingeben -",
+      "url": "GitHub-Repository-URL",
+      "branch": "Branch",
+      "title": "Titel",
+      "title_ph": "Deine Set-Sammlung",
+      "description": "Beschreibung (optional)",
+      "description_ph": "Eine Zeile darüber, was enthalten ist"
+    },
+    "action": {
+      "prepare": "Einreichung vorbereiten",
+      "copy": "Eintrag kopieren",
+      "copied": "Kopiert",
+      "propose": "Verzeichnis öffnen und vorschlagen",
+      "create_pr": "Pull Request erstellen"
+    },
+    "result": {
+      "title": "Dein Registry-Eintrag",
+      "reason": "Lokale Prüfung: {reason}",
+      "instructions": "Füge diesen Eintrag zum {file}-Array des offiziellen Inhaltsverzeichnisses hinzu:"
+    },
+    "status": {
+      "validated": "Lokal validiert",
+      "pending": "Ausstehend - CI validiert"
+    },
+    "pr": {
+      "created": "Pull Request geöffnet.",
+      "failed": "Pull Request konnte nicht geöffnet werden.",
+      "view": "Deinen Pull Request ansehen"
+    }
   }
 }

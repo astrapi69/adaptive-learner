@@ -3226,3 +3226,40 @@ migration:
   settings:
     title: "Importar da versão online"
     body: "Usou o Adaptive Learner online? Crie um backup lá e use Importar acima para trazer seus dados."
+
+registry:
+  title: Registe o seu repositório
+  intro: Proponha o seu próprio repositório de conteúdos para a pesquisa entre repositórios. Isto prepara um pedido de integração no diretório oficial de conteúdos; um responsável revê-o e integra-o depois de a CI validar o seu commit fixado.
+  copied: Entrada copiada para a área de transferência.
+  copy_failed: Não foi possível copiar; selecione o texto manualmente.
+  error:
+    invalid_url: Introduza um URL de repositório do GitHub válido (por exemplo, owner/repo).
+    no_title: Adicione um título curto para o seu repositório.
+    no_commit: Não foi possível determinar o commit mais recente; verifique o URL do repositório e o ramo.
+    prepare_failed: Não foi possível preparar o envio.
+  field:
+    pick: Escolha um repositório ligado
+    pick_placeholder: — escolha ou escreva abaixo —
+    url: URL do repositório do GitHub
+    branch: Ramo
+    title: Título
+    title_ph: A sua coleção de conjuntos
+    description: Descrição (opcional)
+    description_ph: Uma linha sobre o que contém
+  action:
+    prepare: Preparar envio
+    copy: Copiar entrada
+    copied: Copiado
+    propose: Abrir o diretório para propor
+    create_pr: Criar pedido de integração
+  result:
+    title: A sua entrada de registo
+    reason: 'Verificação local: {reason}'
+    instructions: 'Adicione esta entrada ao array {file} do diretório oficial de conteúdos:'
+  status:
+    validated: Validado localmente
+    pending: Pendente; a CI vai validar
+  pr:
+    created: Pedido de integração aberto.
+    failed: Não foi possível abrir o pedido de integração.
+    view: Ver o seu pedido de integração

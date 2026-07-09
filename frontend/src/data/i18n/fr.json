@@ -3543,5 +3543,48 @@
       "title": "Importer depuis la version en ligne",
       "body": "Tu as utilisé Adaptive Learner en ligne ? Crées-y une sauvegarde, puis utilise Importer ci-dessus pour récupérer tes données."
     }
+  },
+  "registry": {
+    "title": "Enregistrez votre dépôt",
+    "intro": "Proposez votre propre dépôt de contenus pour la recherche multi-dépôts. Cela prépare une demande de fusion vers le répertoire officiel des contenus ; un mainteneur la relit et la fusionne une fois que la CI a validé votre commit épinglé.",
+    "copied": "Entrée copiée dans le presse-papiers.",
+    "copy_failed": "Copie impossible ; sélectionnez le texte manuellement.",
+    "error": {
+      "invalid_url": "Saisissez une URL de dépôt GitHub valide (p. ex. owner/repo).",
+      "no_title": "Ajoutez un titre court pour votre dépôt.",
+      "no_commit": "Impossible de déterminer le dernier commit ; vérifiez l'URL du dépôt et la branche.",
+      "prepare_failed": "Impossible de préparer la soumission."
+    },
+    "field": {
+      "pick": "Choisissez un dépôt connecté",
+      "pick_placeholder": "— choisissez ou saisissez ci-dessous —",
+      "url": "URL du dépôt GitHub",
+      "branch": "Branche",
+      "title": "Titre",
+      "title_ph": "Votre collection d'ensembles",
+      "description": "Description (facultatif)",
+      "description_ph": "Une ligne sur son contenu"
+    },
+    "action": {
+      "prepare": "Préparer la soumission",
+      "copy": "Copier l'entrée",
+      "copied": "Copié",
+      "propose": "Ouvrir le répertoire pour proposer",
+      "create_pr": "Créer une demande de fusion"
+    },
+    "result": {
+      "title": "Votre entrée de registre",
+      "reason": "Vérification locale : {reason}",
+      "instructions": "Ajoutez cette entrée au tableau {file} du répertoire officiel des contenus :"
+    },
+    "status": {
+      "validated": "Validé localement",
+      "pending": "En attente ; la CI validera"
+    },
+    "pr": {
+      "created": "Demande de fusion ouverte.",
+      "failed": "Impossible d'ouvrir la demande de fusion.",
+      "view": "Voir votre demande de fusion"
+    }
   }
 }

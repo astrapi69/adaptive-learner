@@ -3543,5 +3543,48 @@
       "title": "Çevrimiçi sürümden içe aktar",
       "body": "Adaptive Learner'ı çevrimiçi kullandınız mı? Orada bir yedek oluşturun ve verilerinizi getirmek için yukarıdaki İçe Aktar'ı kullanın."
     }
+  },
+  "registry": {
+    "title": "Deponuzu kaydedin",
+    "intro": "Kendi içerik deponuzu depolar arası arama için önerin. Bu, resmi içerik dizinine bir çekme isteği hazırlar; bir bakımcı, CI sabitlenmiş işlemenizi doğruladıktan sonra onu inceler ve birleştirir.",
+    "copied": "Giriş panoya kopyalandı.",
+    "copy_failed": "Kopyalanamadı; metni elle seçin.",
+    "error": {
+      "invalid_url": "Geçerli bir GitHub depo URL'si girin (örn. owner/repo).",
+      "no_title": "Deponuz için kısa bir başlık ekleyin.",
+      "no_commit": "En son işleme belirlenemedi; depo URL'sini ve dalı denetleyin.",
+      "prepare_failed": "Gönderim hazırlanamadı."
+    },
+    "field": {
+      "pick": "Bağlı bir depo seçin",
+      "pick_placeholder": "— seçin veya aşağıya yazın —",
+      "url": "GitHub depo URL'si",
+      "branch": "Dal",
+      "title": "Başlık",
+      "title_ph": "Set koleksiyonunuz",
+      "description": "Açıklama (isteğe bağlı)",
+      "description_ph": "İçeriği hakkında bir satır"
+    },
+    "action": {
+      "prepare": "Gönderimi hazırla",
+      "copy": "Girişi kopyala",
+      "copied": "Kopyalandı",
+      "propose": "Önermek için dizini aç",
+      "create_pr": "Çekme isteği oluştur"
+    },
+    "result": {
+      "title": "Kayıt girişiniz",
+      "reason": "Yerel denetim: {reason}",
+      "instructions": "Bu girişi resmi içerik dizinindeki {file} dizisine ekleyin:"
+    },
+    "status": {
+      "validated": "Yerel olarak doğrulandı",
+      "pending": "Beklemede; CI doğrulayacak"
+    },
+    "pr": {
+      "created": "Çekme isteği açıldı.",
+      "failed": "Çekme isteği açılamadı.",
+      "view": "Çekme isteğinizi görüntüleyin"
+    }
   }
 }

@@ -459,6 +459,15 @@ export const apiStorage: IStorageService = {
         "Exporting a set to a GitHub repository is currently available in browser (Dexie) mode.",
       );
     },
+    // Registering a repo needs the browser-direct fork -> commit -> PR flow;
+    // the server-mode (token server-side) path is a follow-up. Fall back to
+    // the manual copy-JSON + edit-link flow the UI offers everywhere.
+    createRegistryPr: async () => {
+      throw new ApiError(
+        501,
+        "Submitting a repository to the directory is currently available in browser (Dexie) mode. Use the copy-and-propose flow instead.",
+      );
+    },
   },
 
   // Phase 41F Danger Zone: typed-confirm reset. ApiStorage hands

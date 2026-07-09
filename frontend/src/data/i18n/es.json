@@ -3543,5 +3543,48 @@
       "title": "Importar desde la versión online",
       "body": "¿Usaste Adaptive Learner online? Crea allí una copia de seguridad y usa Importar arriba para traer tus datos."
     }
+  },
+  "registry": {
+    "title": "Registra tu repositorio",
+    "intro": "Propón tu propio repositorio de contenidos para la búsqueda entre repositorios. Esto prepara una solicitud de incorporación al directorio oficial de contenidos; un responsable la revisa y la fusiona después de que la CI valide tu commit fijado.",
+    "copied": "Entrada copiada al portapapeles.",
+    "copy_failed": "No se pudo copiar; marca el texto manualmente.",
+    "error": {
+      "invalid_url": "Introduce una URL válida de repositorio de GitHub (p. ej. owner/repo).",
+      "no_title": "Añade un título breve para tu repositorio.",
+      "no_commit": "No se pudo determinar el último commit; revisa la URL del repositorio y la rama.",
+      "prepare_failed": "No se pudo preparar el envío."
+    },
+    "field": {
+      "pick": "Elige un repositorio conectado",
+      "pick_placeholder": "— elige o escribe abajo —",
+      "url": "URL del repositorio de GitHub",
+      "branch": "Rama",
+      "title": "Título",
+      "title_ph": "Tu colección de conjuntos",
+      "description": "Descripción (opcional)",
+      "description_ph": "Una línea sobre lo que contiene"
+    },
+    "action": {
+      "prepare": "Preparar envío",
+      "copy": "Copiar entrada",
+      "copied": "Copiado",
+      "propose": "Abrir el directorio para proponer",
+      "create_pr": "Crear solicitud de incorporación"
+    },
+    "result": {
+      "title": "Tu entrada del registro",
+      "reason": "Comprobación local: {reason}",
+      "instructions": "Añade esta entrada al array {file} del directorio oficial de contenidos:"
+    },
+    "status": {
+      "validated": "Validado localmente",
+      "pending": "Pendiente; la CI validará"
+    },
+    "pr": {
+      "created": "Solicitud de incorporación abierta.",
+      "failed": "No se pudo abrir la solicitud de incorporación.",
+      "view": "Ver tu solicitud de incorporación"
+    }
   }
 }

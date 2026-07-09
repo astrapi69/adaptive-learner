@@ -3543,5 +3543,48 @@
       "title": "Impor dari versi online",
       "body": "Pernah memakai Adaptive Learner online? Buat cadangan di sana, lalu gunakan Impor di atas untuk membawa data Anda."
     }
+  },
+  "registry": {
+    "title": "Daftarkan repositori Anda",
+    "intro": "Ajukan repositori konten Anda sendiri untuk pencarian lintas repositori. Ini menyiapkan permintaan tarik ke direktori konten resmi; seorang pengelola meninjau dan menggabungkannya setelah CI memvalidasi commit tersemat Anda.",
+    "copied": "Entri disalin ke papan klip.",
+    "copy_failed": "Tidak dapat menyalin; pilih teks secara manual.",
+    "error": {
+      "invalid_url": "Masukkan URL repositori GitHub yang valid (mis. owner/repo).",
+      "no_title": "Tambahkan judul singkat untuk repositori Anda.",
+      "no_commit": "Tidak dapat menentukan commit terbaru; periksa URL repositori dan cabang.",
+      "prepare_failed": "Tidak dapat menyiapkan pengiriman."
+    },
+    "field": {
+      "pick": "Pilih repositori yang terhubung",
+      "pick_placeholder": "— pilih atau ketik di bawah —",
+      "url": "URL repositori GitHub",
+      "branch": "Cabang",
+      "title": "Judul",
+      "title_ph": "Koleksi set Anda",
+      "description": "Deskripsi (opsional)",
+      "description_ph": "Satu baris tentang isinya"
+    },
+    "action": {
+      "prepare": "Siapkan pengiriman",
+      "copy": "Salin entri",
+      "copied": "Disalin",
+      "propose": "Buka direktori untuk mengusulkan",
+      "create_pr": "Buat permintaan tarik"
+    },
+    "result": {
+      "title": "Entri registri Anda",
+      "reason": "Pemeriksaan lokal: {reason}",
+      "instructions": "Tambahkan entri ini ke array {file} pada direktori konten resmi:"
+    },
+    "status": {
+      "validated": "Divalidasi secara lokal",
+      "pending": "Menunggu — CI akan memvalidasi"
+    },
+    "pr": {
+      "created": "Permintaan tarik dibuka.",
+      "failed": "Tidak dapat membuka permintaan tarik.",
+      "view": "Lihat permintaan tarik Anda"
+    }
   }
 }

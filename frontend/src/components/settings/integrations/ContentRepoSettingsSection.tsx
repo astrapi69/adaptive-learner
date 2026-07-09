@@ -621,8 +621,12 @@ export default function ContentRepoSettingsSection() {
           repos.map((r) => userRepoSource(r.owner, r.repo)),
         );
         const available = recommended.filter((rec) => {
+          // The official ``self`` registry entry is the always-present base
+          // repo, not an addable recommendation — skip it (and any official
+          // source) so it never shows up as an "Add repository" card.
+          if (rec.self || isOfficialSource(rec.url)) return false;
           const s = recommendedSource(rec);
-          return s !== null && !connected.has(s);
+          return s !== null && !connected.has(s) && !isOfficialSource(s);
         });
         if (available.length === 0) return null;
         return (

@@ -5,6 +5,7 @@ import BackupSection from "../../../../components/settings/backup/BackupSection"
 import CacheManagementSection from "../../../../components/settings/data/CacheManagementSection";
 import OrphanedDataSection from "../../../../components/settings/data/OrphanedDataSection";
 import ContentRepoSettingsSection from "../../../../components/settings/integrations/ContentRepoSettingsSection";
+import RegistrySubmitSection from "../../../../components/settings/integrations/RegistrySubmitSection";
 import DangerZoneSection from "../../../../components/settings/data/DangerZoneSection";
 import ExportSection from "../../../../components/settings/data/ExportSection";
 import KeyVaultSection from "../../../../components/settings/data/KeyVaultSection";
@@ -57,6 +58,10 @@ export default function DataPanel({ active }: DataPanelProps) {
     >
       {/* 1. Source: the content repositories everything else acts on. */}
       <ContentRepoSettingsSection />
+
+      {/* 1b. Register your OWN repo for the federated cross-repo search
+          (proposes a PR against the official content directory). */}
+      <RegistrySubmitSection />
 
       {/* 2. Sync belongs with the sources it synchronizes. Needs a
           reachable backend (pairing token + sync endpoints); in Dexie
