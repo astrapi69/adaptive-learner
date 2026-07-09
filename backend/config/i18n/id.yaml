@@ -962,6 +962,10 @@ about:
   donations_heading: Dukung pengembangan
   donations_intro: Adaptive Learner gratis dan open-source. Jika ini membantu Anda, pertimbangkan untuk berkontribusi.
   donations_primary: disukai
+  contribute_heading: "Berkontribusi konten"
+  contribute_intro: "Perpustakaan konten tumbuh berkat kontribusi komunitas. Jika Anda ingin menambahkan pelajaran, mulai di sini."
+  contribute_repo: "Repositori konten"
+  contribute_template: "Templat set konten"
   donations:
     liberapay_desc: Donasi berulang. Open-source, tanpa potongan biaya dari platform.
     github_desc: Beri sponsor melalui akun GitHub yang sudah Anda miliki.
@@ -2361,12 +2365,6 @@ content:
     status_submitted: dikirim
     status_accepted: diterima
     status_rejected: ditolak
-  gaps:
-    title: Pelajaran yang Hilang
-    intro: Pustaka komunitas memiliki beberapa celah. Bisakah kamu membantu mengisi salah satunya?
-    next_level: '{target} untuk penutur {source} sudah memiliki pelajaran, tetapi {level} belum ada.'
-    missing_pair: '{target} {level} untuk penutur {source} belum ada.'
-    help: Bisakah kamu membantu?
   credit:
     name_label: Namamu (opsional)
     name_placeholder: mis. Maria S.

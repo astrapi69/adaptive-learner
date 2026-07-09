@@ -1033,6 +1033,10 @@
     "donations_heading": "開発を支援する",
     "donations_intro": "Adaptive Learner は無料でオープンソースです。役に立ったら、ぜひ 支援を検討してください。",
     "donations_primary": "推奨",
+    "contribute_heading": "コンテンツに貢献する",
+    "contribute_intro": "コンテンツライブラリはコミュニティの貢献によって成長します。レッスンを追加したい場合は、ここから始めましょう。",
+    "contribute_repo": "コンテンツリポジトリ",
+    "contribute_template": "コンテンツセットのテンプレート",
     "donations": {
       "liberapay_desc": "定期的な寄付。オープンソース、プラットフォーム手数料なし。",
       "github_desc": "既存の GitHub アカウントでスポンサーになります。",
@@ -2559,13 +2563,6 @@
       "status_submitted": "送信済み",
       "status_accepted": "承認済み",
       "status_rejected": "却下"
-    },
-    "gaps": {
-      "title": "不足しているレッスン",
-      "intro": "コミュニティライブラリにはいくつかの空白があります。一つを埋めるのを手伝ってもらえますか?",
-      "next_level": "{source}話者向けの{target}にはレッスンがありますが、{level}はまだ存在しません。",
-      "missing_pair": "{source}話者向けの{target} {level}はまだ存在しません。",
-      "help": "手伝ってもらえますか?"
     },
     "credit": {
       "name_label": "あなたの名前 (任意)",

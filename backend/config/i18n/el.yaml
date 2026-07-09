@@ -962,6 +962,10 @@ about:
   donations_heading: Υποστηρίξτε την ανάπτυξη
   donations_intro: Το Adaptive Learner είναι δωρεάν και ανοιχτού κώδικα. Εάν σας βοηθάει, σκεφτείτε να συμβάλλετε.
   donations_primary: προτιμώμενο
+  contribute_heading: "Συνεισφορά περιεχομένου"
+  contribute_intro: "Η βιβλιοθήκη περιεχομένου μεγαλώνει χάρη στις συνεισφορές της κοινότητας. Αν θέλεις να προσθέσεις μαθήματα, ξεκίνα εδώ."
+  contribute_repo: "Αποθετήριο περιεχομένου"
+  contribute_template: "Πρότυπο συνόλου περιεχομένου"
   donations:
     liberapay_desc: Επαναλαμβανόμενες δωρεές. Ανοιχτού κώδικα, χωρίς προμήθειες πλατφόρμας.
     github_desc: Χρηματοδοτήστε μέσω του υπάρχοντος λογαριασμού GitHub σας.
@@ -2352,12 +2356,6 @@ content:
     status_submitted: υποβλήθηκε
     status_accepted: έγινε δεκτό
     status_rejected: απορρίφθηκε
-  gaps:
-    title: Μαθήματα που λείπουν
-    intro: Η βιβλιοθήκη της κοινότητας έχει μερικά κενά. Μπορείτε να βοηθήσετε να καλυφθεί ένα;
-    next_level: '{target} για ομιλητές {source} έχει μαθήματα, αλλά το {level} δεν υπάρχει ακόμη.'
-    missing_pair: '{target} {level} για ομιλητές {source} δεν υπάρχει ακόμη.'
-    help: Μπορείτε να βοηθήσετε;
   credit:
     name_label: Το όνομά σας (προαιρετικό)
     name_placeholder: π.χ. Μαρία Σ.

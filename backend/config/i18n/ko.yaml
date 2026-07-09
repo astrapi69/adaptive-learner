@@ -962,6 +962,10 @@ about:
   donations_heading: 개발 지원
   donations_intro: Adaptive Learner는 무료이자 오픈 소스입니다. 도움이 되셨다면 후원을 고려해 주세요.
   donations_primary: 선호
+  contribute_heading: "콘텐츠 기여하기"
+  contribute_intro: "콘텐츠 라이브러리는 커뮤니티의 기여로 성장합니다. 레슨을 추가하고 싶다면 여기에서 시작하세요."
+  contribute_repo: "콘텐츠 저장소"
+  contribute_template: "콘텐츠 세트 템플릿"
   donations:
     liberapay_desc: 정기 후원. 오픈 소스이며 플랫폼이 수수료를 가져가지 않습니다.
     github_desc: 기존 GitHub 계정으로 후원하세요.
@@ -2361,12 +2365,6 @@ content:
     status_submitted: 제출됨
     status_accepted: 수락됨
     status_rejected: 거부됨
-  gaps:
-    title: 누락된 레슨
-    intro: 커뮤니티 라이브러리에 몇 가지 공백이 있습니다. 하나를 채우는 데 도움을 주시겠어요?
-    next_level: '{source} 사용자를 위한 {target}에는 레슨이 있지만, {level}은(는) 아직 존재하지 않습니다.'
-    missing_pair: '{source} 사용자를 위한 {target} {level}은(는) 아직 존재하지 않습니다.'
-    help: 도와주시겠어요?
   credit:
     name_label: 이름 (선택)
     name_placeholder: "예: 김민지"

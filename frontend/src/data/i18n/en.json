@@ -1033,6 +1033,10 @@
     "donations_heading": "Support development",
     "donations_intro": "Adaptive Learner is free and open-source. If it helps you, consider chipping in.",
     "donations_primary": "preferred",
+    "contribute_heading": "Contribute content",
+    "contribute_intro": "The content library grows through community contributions. If you would like to add lessons, start here.",
+    "contribute_repo": "Content repository",
+    "contribute_template": "Content set template",
     "donations": {
       "liberapay_desc": "Recurring donations. Open-source, no fees taken by the platform.",
       "github_desc": "Sponsor via your existing GitHub account.",
@@ -2559,13 +2563,6 @@
       "status_submitted": "submitted",
       "status_accepted": "accepted",
       "status_rejected": "rejected"
-    },
-    "gaps": {
-      "title": "Missing Lessons",
-      "intro": "The community library has a few gaps. Can you help fill one?",
-      "next_level": "{target} for {source} speakers has lessons, but {level} doesn't exist yet.",
-      "missing_pair": "{target} {level} for {source} speakers doesn't exist yet.",
-      "help": "Can you help?"
     },
     "credit": {
       "name_label": "Your name (optional)",

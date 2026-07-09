@@ -962,6 +962,10 @@ about:
   donations_heading: Entwicklung unterstützen
   donations_intro: Adaptive Learner ist kostenlos und Open Source. Wenn es dir hilft, freuen wir uns über deine Unterstützung.
   donations_primary: bevorzugt
+  contribute_heading: "Inhalte beitragen"
+  contribute_intro: "Die Inhalte-Bibliothek wächst durch Beiträge der Community. Wenn du Lektionen ergänzen möchtest, fang hier an."
+  contribute_repo: "Inhalte-Repository"
+  contribute_template: "Vorlage für Inhalte-Sets"
   donations:
     liberapay_desc: Wiederkehrende Spenden. Open Source, keine Plattform-Gebühren.
     github_desc: Spende über dein bestehendes GitHub-Konto.
@@ -2355,12 +2359,6 @@ content:
     status_submitted: eingereicht
     status_accepted: aufgenommen
     status_rejected: abgelehnt
-  gaps:
-    title: Fehlende Lektionen
-    intro: In der Community-Bibliothek gibt es ein paar Lücken. Kannst du eine füllen?
-    next_level: '{target} für {source}-Sprechende hat Lektionen, aber {level} fehlt noch.'
-    missing_pair: '{target} {level} für {source}-Sprechende gibt es noch nicht.'
-    help: Kannst du helfen?
   credit:
     name_label: Dein Name (optional)
     name_placeholder: z.B. Maria S.
