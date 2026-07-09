@@ -176,17 +176,17 @@ export default function KeyVaultSection() {
 
     return (
         <section
-            className="rounded-app border border-border bg-card p-4"
+            className="settings-section"
             data-testid="key-vault-section"
         >
-            <h2 className="mb-1 inline-flex items-center gap-2 text-lg font-semibold text-foreground">
+            <h2 className="settings-section-title inline-flex items-center gap-2">
                 <KeyRound size={18} aria-hidden="true" />
                 {t(
                     "settings.key_vault.title",
                     "AI keys — encrypted export",
                 )}
             </h2>
-            <p className="mb-3 text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
                 {t(
                     "settings.key_vault.intro",
                     "Move your AI keys to another device in one encrypted file, separate from the normal backup (which never contains keys).",
