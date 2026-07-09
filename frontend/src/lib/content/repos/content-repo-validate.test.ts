@@ -158,3 +158,79 @@ describe("validateUserRepo", () => {
     });
   });
 });
+
+describe("failure classification: transient (I/O) vs structural (#1441)", () => {
+  function rateLimited(): Response {
+    return { ok: false, status: 429, text: async () => "" } as Response;
+  }
+
+  it("a manifest fetch that could not complete is transient (404)", async () => {
+    mockFetchSequence(() => notFound());
+    const res = await validateUserRepo(REF, "");
+    expect(res.ok).toBe(false);
+    expect(res.transient).toBe(true);
+  });
+
+  it("a rate-limited manifest fetch is transient (429)", async () => {
+    mockFetchSequence(() => rateLimited());
+    const res = await validateUserRepo(REF, "");
+    expect(res.ok).toBe(false);
+    expect(res.transient).toBe(true);
+  });
+
+  it("a rate-limited SAMPLE lesson fetch is transient (manifest read OK)", async () => {
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      // The lesson fetch is throttled under a burst → transient, not invalid.
+      return rateLimited();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res.ok).toBe(false);
+    expect(res.transient).toBe(true);
+  });
+
+  it("a malformed-JSON lesson (fetched OK) is STRUCTURAL, not transient", async () => {
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok("{ not json");
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res.ok).toBe(false);
+    expect(res.transient).toBeFalsy();
+  });
+
+  it("structural content failures are NOT transient (no sets / unknown type)", async () => {
+    mockFetchSequence((url) =>
+      url.endsWith("manifest.yaml") ? ok(`schema_version: "1.3"\nsets: []\n`) : notFound(),
+    );
+    const noSets = await validateUserRepo(REF, "");
+    expect(noSets.ok).toBe(false);
+    expect(noSets.transient).toBeFalsy();
+
+    const badLesson = JSON.stringify({ exercises: [{ type: "mystery" }] });
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(badLesson);
+      return notFound();
+    });
+    const unknownType = await validateUserRepo(REF, "");
+    expect(unknownType.ok).toBe(false);
+    expect(unknownType.transient).toBeFalsy();
+  });
+
+  it("success carries no transient flag", async () => {
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(GOOD_LESSON);
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res.ok).toBe(true);
+    expect(res.transient).toBeFalsy();
+  });
+});

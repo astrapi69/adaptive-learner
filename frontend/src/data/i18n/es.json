@@ -496,6 +496,14 @@
     "session_count": "Sesiones"
   },
   "settings": {
+    "orphaned": {
+      "heading": "Contenido desconectado",
+      "summary": "{lessons} lecciones y {cards} tarjetas de repaso de fuentes a las que ya no estás conectado.",
+      "delete": "Eliminar progreso desconectado",
+      "confirm_title": "Eliminar progreso desconectado",
+      "confirm_message": "Se eliminarán permanentemente {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer.",
+      "deleted": "Se borraron {lessons} lecciones y {cards} tarjetas de repaso."
+    },
     "key_export_link": {
       "heading": "Claves de IA: exportación cifrada",
       "hint": "Exporta o importa tus claves de IA en un único archivo cifrado. Está junto a las demás copias de seguridad en la pestaña Datos.",
@@ -546,7 +554,7 @@
     },
     "install": {
       "heading": "Instalar aplicación",
-      "description": "Instala Adaptive Learner como app para acceso sin conexión y pantalla completa.",
+      "description": "Instala Adaptive Learner como aplicación independiente: ventana propia, icono en la pantalla de inicio y arranque incluso sin red. Tu contenido de aprendizaje no se ve afectado.",
       "button": "Instalar aplicación",
       "already": "Ya instalada",
       "unavailable": "Tu navegador aún no ha ofrecido la instalación.",
@@ -1801,7 +1809,7 @@
       "placeholder": "p. ej. Explícalo con un ejemplo",
       "ask": "Preguntar",
       "asking": "Preguntando…",
-      "no_key": "Configura una clave de IA para preguntar - consulta los ajustes de IA.",
+      "no_key": "Las preguntas a la IA requieren tu propia clave de IA (BYOK). Opcional, la app funciona igual sin ella.",
       "open_settings": "Ajustes de IA",
       "error": "La solicitud de IA falló. Inténtalo de nuevo."
     },
@@ -2814,6 +2822,8 @@
     "endless": "Sin fin",
     "personal": {
       "title": "Tu ruta de aprendizaje",
+      "progress": "En total: {n}% completado",
+      "none_started": "Aún no has empezado ningún set. Cambia a Todos los sets para ver tus sets descargados.",
       "empty": "Descarga un conjunto de lecciones para empezar.",
       "all_done": "¡Las {n} lecciones completadas!",
       "downloaded": "Descargado",
@@ -2830,7 +2840,7 @@
     "map": {
       "languages": "Idiomas",
       "knowledge": "Conocimiento",
-      "total": "Total: {n}% completado"
+      "title": "Todo el contenido"
     },
     "mastery": {
       "receptive": "receptivo",
@@ -2903,6 +2913,7 @@
       "delete": "Eliminar ruta",
       "next_hint": "Siguiente: {lesson}",
       "add_lesson": "Añadir una lección",
+      "add_first_lesson": "Añade tu primera lección",
       "search_lessons": "Buscar lecciones…",
       "no_lessons": "No se encontraron lecciones.",
       "done_adding": "Listo",
@@ -3223,6 +3234,14 @@
     "save_prompt": "Guardar esta lección en tus favoritos"
   },
   "content_repo": {
+    "remove": {
+      "title": "Eliminar repositorio",
+      "message": "¿Eliminar {source}? Su contenido descargado se eliminará de este dispositivo.",
+      "delete_progress": "Eliminar también mi progreso de aprendizaje de este contenido.",
+      "consequence": "Se eliminarán {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer.",
+      "counting": "Contando tu progreso…",
+      "deleted": "Eliminado. Se borraron {lessons} lecciones y {cards} tarjetas de repaso."
+    },
     "sync_all": {
       "done": "Se sincronizaron {ok} de {total} repositorios.",
       "failed": "Se sincronizaron {ok} de {total}. Fallaron: {repos}"

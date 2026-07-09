@@ -41,6 +41,12 @@ beforeEach(async () => {
   mockAiComplete.mockReset();
   localStorage.clear();
   localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+  // Pin the app/UI language to German for the whole file. These tests assume
+  // a German app default (source = app language). #1457 added a
+  // navigator.language fallback for the no-saved-value path; happy-dom's
+  // default "en-US" would otherwise flip the mount default to English (and
+  // pollute the module-level i18n cache across tests).
+  vi.spyOn(navigator, "language", "get").mockReturnValue("de-DE");
   const { IDBFactory } = await import("fake-indexeddb");
   (globalThis as unknown as { indexedDB: IDBFactory }).indexedDB = new IDBFactory();
 });

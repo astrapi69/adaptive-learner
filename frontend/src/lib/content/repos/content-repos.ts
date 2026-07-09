@@ -372,7 +372,16 @@ export async function syncUserRepo(
     { owner: target.owner, repo: target.repo, branch: target.branch },
     resolveRepoToken(source),
   );
-  const trust: TrustLevel = validation.ok ? 1 : 0;
+  // A structural failure (bad content) demotes to trust 0. A TRANSIENT I/O
+  // failure — the re-validation fetch could not complete (rate-limit / network,
+  // common under a "Sync all" burst) — must NOT demote a repo whose sets just
+  // downloaded fine: keep the existing trust so a blip is not a permanent
+  // "Unverified" mark (#1441). A never-validated repo has no trust to keep → 0.
+  const trust: TrustLevel = validation.ok
+    ? 1
+    : validation.transient
+      ? (target.trust ?? 0)
+      : 0;
   repos[index] = {
     ...target,
     connected: true,

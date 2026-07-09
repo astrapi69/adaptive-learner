@@ -273,6 +273,14 @@ describe("ContinueLearning", () => {
             progress({set_id: "b", lesson_filename: "01.json", updated_at: "2026-06-03T10:00:00Z"}),
             progress({set_id: "c", lesson_filename: "01.json", updated_at: "2026-06-02T10:00:00Z"}),
         ]);
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {source: "owner/repo", id: "a", title: "A"},
+                {source: "owner/repo", id: "b", title: "B"},
+                {source: "owner/repo", id: "c", title: "C"},
+            ],
+            sources: [],
+        });
         renderSection({maxItems: 2});
         await screen.findByTestId("continue-learning-list");
         const items = screen.getAllByTestId(/^continue-learning-item-/);
@@ -280,5 +288,27 @@ describe("ContinueLearning", () => {
         // Newest (b) first, then (c). "a" is dropped by the cap.
         expect(items[0]).toHaveAttribute("data-testid", "continue-learning-item-b");
         expect(items[1]).toHaveAttribute("data-testid", "continue-learning-item-c");
+    });
+
+    it("hides progress whose source repo was removed (#1445)", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({source: "owner/repo", set_id: "fr-a1", lesson_filename: "01.json", updated_at: "2026-06-03T10:00:00Z"}),
+            progress({source: "jane/removed", set_id: "orphan", lesson_filename: "01.json", updated_at: "2026-06-04T10:00:00Z"}),
+        ]);
+        // Only owner/repo is still loadable; jane/removed is gone from listSets.
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json"]});
+        getLessonMock.mockResolvedValue({id: "01", title: "Greetings", steps: [{}], cards: []});
+
+        renderSection({});
+        await screen.findByTestId("continue-learning-list");
+        const items = screen.getAllByTestId(/^continue-learning-item-/);
+        // Only the loadable set survives; the orphaned "jane/removed" row is
+        // hidden even though it is newer.
+        expect(items).toHaveLength(1);
+        expect(items[0]).toHaveAttribute("data-testid", "continue-learning-item-fr-a1");
     });
 });

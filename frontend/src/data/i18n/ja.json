@@ -496,6 +496,14 @@
     "session_count": "セッション"
   },
   "settings": {
+    "orphaned": {
+      "heading": "未接続のコンテンツ",
+      "summary": "接続されていないソースからの {lessons} 個のレッスンと {cards} 枚の復習カード。",
+      "delete": "未接続の進捗を削除",
+      "confirm_title": "未接続の進捗を削除",
+      "confirm_message": "{lessons} 個のレッスンと {cards} 枚の復習カードが完全に削除されます。この操作は元に戻せません。",
+      "deleted": "{lessons} 個のレッスンと {cards} 枚の復習カードを削除しました。"
+    },
     "key_export_link": {
       "heading": "AIキー — 暗号化エクスポート",
       "hint": "AIキーを1つの暗号化ファイルとしてエクスポートまたはインポートします。データタブの他のバックアップと同じ場所にあります。",
@@ -546,7 +554,7 @@
     },
     "install": {
       "heading": "アプリをインストール",
-      "description": "オフラインアクセスと全画面表示のために Adaptive Learner をアプリとしてインストールします。",
+      "description": "Adaptive Learner を独立したアプリとしてインストールします。専用ウィンドウ、ホーム画面のアイコン、ネットワークがなくても起動できます。学習コンテンツには影響しません。",
       "button": "アプリをインストール",
       "already": "インストール済み",
       "unavailable": "ブラウザがまだインストールを提案していません。",
@@ -1801,7 +1809,7 @@
       "placeholder": "例: 例を挙げて説明して",
       "ask": "質問",
       "asking": "質問中…",
-      "no_key": "質問するにはAIキーを設定してください（AI設定を参照）。",
+      "no_key": "AIへの質問には自分のAIキー（BYOK）が必要です。任意で、なくてもアプリは問題なく使えます。",
       "open_settings": "AI設定",
       "error": "AIリクエストに失敗しました。もう一度お試しください。"
     },
@@ -2814,6 +2822,8 @@
     "endless": "エンドレス",
     "personal": {
       "title": "あなたの学習パス",
+      "progress": "全体: {n}% 完了",
+      "none_started": "まだセットを開始していません。ダウンロード済みのセットを表示するには「すべてのセット」に切り替えてください。",
       "empty": "始めるにはレッスンセットをダウンロードしてください。",
       "all_done": "{n}件のレッスンすべて完了！",
       "downloaded": "ダウンロード済み",
@@ -2830,7 +2840,7 @@
     "map": {
       "languages": "言語",
       "knowledge": "知識",
-      "total": "合計: {n}% 完了"
+      "title": "すべてのコンテンツ"
     },
     "mastery": {
       "receptive": "受容",
@@ -2903,6 +2913,7 @@
       "delete": "パスを削除",
       "next_hint": "次: {lesson}",
       "add_lesson": "レッスンを追加",
+      "add_first_lesson": "最初のレッスンを追加",
       "search_lessons": "レッスンを検索…",
       "no_lessons": "レッスンが見つかりません。",
       "done_adding": "完了",
@@ -3223,6 +3234,14 @@
     "save_prompt": "このレッスンをお気に入りに保存"
   },
   "content_repo": {
+    "remove": {
+      "title": "リポジトリを削除",
+      "message": "{source} を削除しますか？ダウンロード済みのコンテンツがこのデバイスから削除されます。",
+      "delete_progress": "このコンテンツの学習進捗も削除する。",
+      "consequence": "{lessons} 個のレッスンと {cards} 枚の復習カードが削除されます。この操作は元に戻せません。",
+      "counting": "進捗を集計しています…",
+      "deleted": "削除しました。{lessons} 個のレッスンと {cards} 枚の復習カードを削除しました。"
+    },
     "sync_all": {
       "done": "{total}件中{ok}件のリポジトリを同期しました。",
       "failed": "{total}件中{ok}件を同期しました。失敗: {repos}"

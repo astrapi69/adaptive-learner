@@ -1,11 +1,14 @@
 /**
- * Settings > Data "Install app" entry (#604).
+ * Settings > General "Install app" entry (#604; moved from the Data tab
+ * in #1455 - installing configures HOW the app runs, not WHAT it stores).
  *
  * A manual install button (visible-but-disabled per the feature-state
  * policy): enabled only when the browser has offered installation and
  * the app isn't already installed. Independent of the timed
  * ``InstallPrompt`` banner — this is the "I want to install it now"
- * affordance.
+ * affordance. The offline-content cache in the Data tab is a different
+ * thing: it stores learning content; installing makes the PWA a
+ * standalone application.
  */
 
 import {Download} from "lucide-react";
@@ -36,24 +39,17 @@ export default function InstallAppSection() {
           );
 
     return (
-        <div
-            className="settings-subsection"
+        <section
+            className="settings-section"
             data-testid="settings-install-section"
-            style={{marginTop: "1.5rem"}}
         >
-            <h3 style={{margin: "0 0 0.25rem", fontSize: "1rem"}}>
+            <h2 className="settings-section-title">
                 {t("settings.install.heading", "Install app")}
-            </h3>
-            <p
-                style={{
-                    margin: "0 0 0.75rem",
-                    fontSize: "0.875rem",
-                    color: "var(--fg-muted)",
-                }}
-            >
+            </h2>
+            <p className="m-0 text-sm text-fg-muted">
                 {t(
                     "settings.install.description",
-                    "Install Adaptive Learner as an app for offline access and a full-screen experience.",
+                    "Install Adaptive Learner as its own application: a standalone window, an icon on your home screen, and it starts even without a network. Your learning content is not affected.",
                 )}
             </p>
             <Button
@@ -62,13 +58,13 @@ export default function InstallAppSection() {
                 disabled={!available}
                 data-testid="settings-install-button"
                 title={available ? undefined : reason}
-                style={{gap: 6}}
+                className="gap-1.5"
             >
                 <Download size={16} />
                 {installed
                     ? t("settings.install.already", "Already installed")
                     : t("settings.install.button", "Install app")}
             </Button>
-        </div>
+        </section>
     );
 }

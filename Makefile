@@ -26,7 +26,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-one test-watch tdd-help \
        stryker stryker-quick \
        verify-theme verify-theme-baseline-update \
-       check-types check-types-backend check-types-frontend check-file-sizes check-complexity check-complexity-gate check-complexity-gate-update \
+       check-types check-types-backend check-types-frontend check-file-sizes check-css-size check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -464,6 +464,9 @@ install-hooks: ## Install scripts/git-hooks/* into .git/hooks
 
 check-file-sizes: ## Cohesion watcher: warn >500, error >1000 lines (ratchet via .filesize-baseline)
 	bash scripts/check-file-sizes.sh
+
+check-css-size: ## CSS inflow-stop: global.css may only shrink (ratchet via .css-size-baseline, #1467)
+	bash scripts/check-css-size.sh
 
 check-complexity: ## Complexity watcher (warn-only): radon (Python) + eslint complexity (TS)
 	bash scripts/check-complexity.sh

@@ -12,8 +12,8 @@
  *
  * The old graph is kept as an ALTERNATIVE view (LearningPathGraph),
  * lazy-loaded only when the user switches to it — so xyflow (~100 KB)
- * stays out of the default bundle. The chosen view persists in
- * localStorage.
+ * stays out of the default bundle. The chosen view is NOT persisted:
+ * the page always opens on Personal ("where am I?", #1453).
  *
  * Storage-mode-agnostic via usePersonalPath → getStorage(); renders
  * nothing user-hostile in Dexie mode (no raw API errors).
@@ -28,11 +28,14 @@ import {useFeature} from "@astrapi69/feature-strategy-react";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {FEATURES} from "../../features/featureConfig";
 import {usePersonalPath} from "../../hooks/learning/usePersonalPath";
+import type {PersonalPathState} from "../../hooks/learning/usePersonalPath";
+import type {PersonalPathData} from "../../lib/learning-path/personal-path";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import SetRow from "../../components/learning-path/SetRow";
 import SetDetail from "../../components/learning-path/SetDetail";
 import NotDownloadedSection from "../../components/learning-path/NotDownloadedSection";
 import CustomPathsView from "../../components/learning-path/CustomPathsView";
+import {Progress} from "../../components/ui/progress";
 import {Button} from "@/components/ui/button";
 import {cn} from "../../lib/utils";
 
@@ -41,20 +44,12 @@ const LearningPathMap = lazy(() => import("./LearningPathMap"));
 
 type ViewMode = "personal" | "graph" | "map" | "paths";
 type FilterMode = "mine" | "all";
-const VIEW_KEY = "adaptive-learner.learning-path-view";
 const FILTER_KEY = "adaptive-learner.learning-path-filter";
 
-function loadView(): ViewMode {
-    try {
-        const v = localStorage.getItem(VIEW_KEY);
-        if (v === "graph") return "graph";
-        if (v === "map") return "map";
-        if (v === "paths") return "paths";
-        return "personal";
-    } catch {
-        return "personal";
-    }
-}
+// #1453 - the active view is deliberately NOT persisted. Opening the
+// Learning Path always starts on "Personal" (the learner's "where am I?"
+// question), never the last-visited tab. The prior localStorage-backed
+// ``loadView`` is gone on purpose.
 
 function loadFilter(): FilterMode {
     try {
@@ -171,17 +166,13 @@ export default function LearningPathPersonal() {
     const userId = useMemo(() => readLearnerState().userId ?? "", []);
     const {state, data, reload} = usePersonalPath(userId);
     const graphEnabled = useFeature(FEATURES.LEARNING_PATH_GRAPH).isActive;
-    const [view, setView] = useState<ViewMode>(loadView);
+    // #1453 - always start on "personal"; the view is not persisted.
+    const [view, setView] = useState<ViewMode>("personal");
     const [filter, setFilter] = useState<FilterMode>(loadFilter);
     const [expanded, setExpanded] = useState<string | null>(null);
 
     const changeView = (v: ViewMode) => {
         setView(v);
-        try {
-            localStorage.setItem(VIEW_KEY, v);
-        } catch {
-            /* private mode — view simply doesn't persist */
-        }
     };
 
     const changeFilter = (f: FilterMode) => {
@@ -260,6 +251,75 @@ export default function LearningPathPersonal() {
     }
 
     return (
+        <PersonalListView
+            state={state}
+            data={data}
+            filter={filter}
+            onChangeFilter={changeFilter}
+            expanded={expanded}
+            onToggleExpand={setExpanded}
+            switcher={switcher}
+            reload={reload}
+        />
+    );
+}
+
+interface PersonalListViewProps {
+    state: PersonalPathState;
+    data: PersonalPathData | null;
+    filter: FilterMode;
+    onChangeFilter: (f: FilterMode) => void;
+    expanded: string | null;
+    onToggleExpand: (updater: (prev: string | null) => string | null) => void;
+    switcher: React.ReactNode;
+    reload: () => void;
+}
+
+/**
+ * The default (personal) list view: header + overall progress (computed
+ * over started sets) + the filtered set rows + the not-downloaded
+ * section. Split out of {@link LearningPathPersonal} so each function's
+ * cyclomatic complexity stays under the gate (#1453).
+ */
+function PersonalListView({
+    state,
+    data,
+    filter,
+    onChangeFilter,
+    expanded,
+    onToggleExpand,
+    switcher,
+    reload,
+}: PersonalListViewProps) {
+    const {t} = useI18n();
+    // #1453 - a set counts as "started" once the learner has touched any of
+    // its lessons (a progress row exists → ``lastActivity`` is set).
+    const activeSets = data?.activeSets ?? [];
+    const startedSets = activeSets.filter((s) => s.lastActivity !== null);
+    // BEFUND 1: "Only mine" shows started sets; "All sets" adds the
+    // downloaded-but-never-started ones. The filter finally drives the list.
+    const visibleSets = filter === "mine" ? startedSets : activeSets;
+    // BEFUND 2: overall progress is lesson-weighted over STARTED sets only, so
+    // a never-started set (or a new set added to the app) cannot move it.
+    const startedTotals = startedSets.reduce(
+        (acc, set) => {
+            acc.done += set.completedCount;
+            acc.total += set.totalCount;
+            return acc;
+        },
+        {done: 0, total: 0},
+    );
+    const personalPercent =
+        startedTotals.total > 0
+            ? Math.round((100 * startedTotals.done) / startedTotals.total)
+            : 0;
+    const noneStartedButDownloaded =
+        state === "ready" &&
+        filter === "mine" &&
+        visibleSets.length === 0 &&
+        activeSets.length > 0;
+
+    return (
         <main
             id="main"
             className="learning-path-page"
@@ -279,9 +339,33 @@ export default function LearningPathPersonal() {
                             "Where you are and what comes next.",
                         )}
                     </p>
-                    <FilterToggle filter={filter} onChange={changeFilter} />
+                    <FilterToggle filter={filter} onChange={onChangeFilter} />
                 </div>
             </header>
+
+            {state === "ready" && startedSets.length > 0 && (
+                <div
+                    className="mb-4 rounded-app border border-border bg-card p-4"
+                    data-testid="learning-path-personal-progress"
+                >
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="font-medium text-foreground">
+                            {t(
+                                "learning_path.personal.progress",
+                                "Overall: {n}% complete",
+                            ).replace("{n}", String(personalPercent))}
+                        </span>
+                        <span className="text-lg font-bold tabular-nums text-foreground">
+                            {personalPercent}%
+                        </span>
+                    </div>
+                    <Progress
+                        value={personalPercent}
+                        className="mt-2 h-3"
+                        data-testid="learning-path-personal-progress-bar"
+                    />
+                </div>
+            )}
 
             {state === "loading" && (
                 <p
@@ -335,13 +419,13 @@ export default function LearningPathPersonal() {
                     className="flex flex-col gap-3"
                     data-testid="learning-path-sets"
                 >
-                    {data.activeSets.map((set) => (
+                    {visibleSets.map((set) => (
                         <li key={`${set.source}#${set.setId}`}>
                             <SetRow
                                 set={set}
                                 isExpanded={expanded === set.setId}
                                 onToggle={() =>
-                                    setExpanded((e) =>
+                                    onToggleExpand((e) =>
                                         e === set.setId ? null : set.setId,
                                     )
                                 }
@@ -351,6 +435,18 @@ export default function LearningPathPersonal() {
                         </li>
                     ))}
                 </ul>
+            )}
+
+            {noneStartedButDownloaded && (
+                <p
+                    className="rounded-app border border-border bg-card p-4 text-sm text-fg-muted"
+                    data-testid="learning-path-none-started"
+                >
+                    {t(
+                        "learning_path.personal.none_started",
+                        'You have not started any set yet. Switch to "All sets" to see your downloaded sets.',
+                    )}
+                </p>
             )}
 
             {(state === "ready" || state === "empty") && data && (

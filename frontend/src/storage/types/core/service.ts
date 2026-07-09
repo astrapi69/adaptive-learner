@@ -14,6 +14,7 @@ import type {
   ITopicsNamespace,
 } from "../content/curricula";
 import type { IElementErrorsNamespace } from "../learning/element-errors";
+import type { ILearningDataNamespace } from "../learning/learning-data";
 import type { IGamificationNamespace } from "../learning/gamification";
 import type { IGitHubNamespace } from "../integrations/github";
 import type { IImportsNamespace } from "../content/imports";
@@ -85,6 +86,7 @@ export interface IStorageService {
   contentLoader: IContentLoaderNamespace;
   lessonProgress: ILessonProgressNamespace;
   elementErrors: IElementErrorsNamespace;
+  learningData: ILearningDataNamespace;
   pluginSettings: IPluginSettingsNamespace;
   learningRepo: ILearningRepoNamespace;
   missions: IMissionsNamespace;

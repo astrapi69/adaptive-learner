@@ -463,6 +463,13 @@ progress:
   commit_notes_aria: "Catatan sesi"
   session_count: "Sesi"
 settings:
+  orphaned:
+    heading: "Konten terputus"
+    summary: "{lessons} pelajaran dan {cards} kartu ulasan dari sumber yang tidak lagi terhubung dengan Anda."
+    delete: "Hapus progres yang terputus"
+    confirm_title: "Hapus progres yang terputus"
+    confirm_message: "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus permanen. Ini tidak dapat dibatalkan."
+    deleted: "{lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
   key_export_link:
     heading: "Kunci AI — ekspor terenkripsi"
     hint: "Ekspor atau impor kunci AI Anda sebagai satu berkas terenkripsi. Berada bersama cadangan lain di tab Data."
@@ -512,7 +519,7 @@ settings:
     desc: "Berapa banyak elemen yang ditampilkan satu sesi ulasan sebelum berakhir. Item jatuh tempo lainnya dialihkan ke putaran berikutnya."
   install:
     heading: "Pasang aplikasi"
-    description: "Pasang Adaptive Learner sebagai aplikasi untuk akses luring dan pengalaman layar penuh."
+    description: "Pasang Adaptive Learner sebagai aplikasi mandiri: jendela sendiri, ikon di layar utama, dan dapat dijalankan bahkan tanpa jaringan. Konten belajarmu tidak terpengaruh."
     button: "Pasang aplikasi"
     already: "Sudah terpasang"
     unavailable: "Peramban Anda belum menawarkan pemasangan."
@@ -1682,7 +1689,7 @@ lesson:
     placeholder: "mis. Jelaskan dengan contoh"
     ask: "Tanya"
     asking: "Menanyakan…"
-    no_key: "Setel kunci AI untuk bertanya - lihat pengaturan AI."
+    no_key: "Pertanyaan AI memerlukan kunci AI milikmu sendiri (BYOK). Opsional, aplikasi tetap berfungsi tanpanya."
     open_settings: "Pengaturan AI"
     error: "Permintaan AI gagal. Silakan coba lagi."
   example:
@@ -2575,6 +2582,8 @@ learning_path:
   endless: "Tanpa henti"
   personal:
     title: "Jalur Pembelajaranmu"
+    progress: "Keseluruhan: {n}% selesai"
+    none_started: "Kamu belum memulai set apa pun. Beralih ke Semua set untuk melihat set yang telah diunduh."
     empty: "Unduh sebuah set pelajaran untuk memulai."
     all_done: "Semua {n} pelajaran selesai!"
     downloaded: "Diunduh"
@@ -2589,7 +2598,7 @@ learning_path:
   map:
     languages: "Bahasa"
     knowledge: "Pengetahuan"
-    total: "Total: {n}% selesai"
+    title: "Semua konten"
   mastery:
     receptive: "reseptif"
     productive: "produktif"
@@ -2655,6 +2664,7 @@ learning_path:
     delete: "Hapus jalur"
     next_hint: "Berikutnya: {lesson}"
     add_lesson: "Tambah pelajaran"
+    add_first_lesson: "Tambahkan pelajaran pertamamu"
     search_lessons: "Cari pelajaran…"
     no_lessons: "Tidak ada pelajaran ditemukan."
     done_adding: "Selesai"
@@ -2966,6 +2976,13 @@ favorites:
   empty: "Belum ada favorit — ketuk bintang pada sebuah pelajaran untuk menyimpannya."
   save_prompt: "Simpan pelajaran ini ke favoritmu"
 content_repo:
+  remove:
+    title: "Hapus repositori"
+    message: "Hapus {source}? Konten yang diunduhnya akan dihapus dari perangkat ini."
+    delete_progress: "Hapus juga progres belajar saya untuk konten ini."
+    consequence: "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus. Ini tidak dapat dibatalkan."
+    counting: "Menghitung progres Anda…"
+    deleted: "Dihapus. {lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
   sync_all:
     done: "{ok} dari {total} repositori disinkronkan."
     failed: "{ok} dari {total} disinkronkan. Gagal: {repos}"

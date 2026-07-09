@@ -496,6 +496,14 @@
     "session_count": "Sessions"
   },
   "settings": {
+    "orphaned": {
+      "heading": "Disconnected content",
+      "summary": "{lessons} lessons and {cards} review cards from sources you are no longer connected to.",
+      "delete": "Delete disconnected progress",
+      "confirm_title": "Delete disconnected progress",
+      "confirm_message": "{lessons} lessons and {cards} review cards will be permanently deleted. This cannot be undone.",
+      "deleted": "Deleted {lessons} lessons and {cards} review cards."
+    },
     "key_export_link": {
       "heading": "AI keys — encrypted export",
       "hint": "Export or import your AI keys as a single encrypted file. It lives with the other backups in the Data tab.",
@@ -546,7 +554,7 @@
     },
     "install": {
       "heading": "Install app",
-      "description": "Install Adaptive Learner as an app for offline access and a full-screen experience.",
+      "description": "Install Adaptive Learner as its own application: a standalone window, an icon on your home screen, and it starts even without a network. Your learning content is not affected.",
       "button": "Install app",
       "already": "Already installed",
       "unavailable": "Your browser hasn't offered installation yet.",
@@ -1801,7 +1809,7 @@
       "placeholder": "e.g. Explain this with an example",
       "ask": "Ask",
       "asking": "Asking…",
-      "no_key": "Set an AI key to ask about this - see AI settings.",
+      "no_key": "AI questions need your own AI key (BYOK). Optional, the app works fine without it.",
       "open_settings": "AI settings",
       "error": "The AI request failed. Please try again."
     },
@@ -2814,6 +2822,8 @@
     "endless": "Endless",
     "personal": {
       "title": "Your Learning Path",
+      "progress": "Overall: {n}% complete",
+      "none_started": "You have not started any set yet. Switch to All sets to see your downloaded sets.",
       "empty": "Download a lesson set to begin.",
       "all_done": "All {n} lessons completed!",
       "downloaded": "Downloaded",
@@ -2830,7 +2840,7 @@
     "map": {
       "languages": "Languages",
       "knowledge": "Knowledge",
-      "total": "Total: {n}% complete"
+      "title": "All content"
     },
     "mastery": {
       "receptive": "receptive",
@@ -2903,6 +2913,7 @@
       "delete": "Delete path",
       "next_hint": "Next: {lesson}",
       "add_lesson": "Add a lesson",
+      "add_first_lesson": "Add your first lesson",
       "search_lessons": "Search lessons…",
       "no_lessons": "No lessons found.",
       "done_adding": "Done",
@@ -3223,6 +3234,14 @@
     "save_prompt": "Save this lesson to your favorites"
   },
   "content_repo": {
+    "remove": {
+      "title": "Remove repository",
+      "message": "Remove {source}? Its downloaded content will be removed from this device.",
+      "delete_progress": "Also delete my learning progress for this content.",
+      "consequence": "{lessons} lessons and {cards} review cards will be deleted. This cannot be undone.",
+      "counting": "Counting your progress…",
+      "deleted": "Removed. Deleted {lessons} lessons and {cards} review cards."
+    },
     "sync_all": {
       "done": "Synced {ok} of {total} repositories.",
       "failed": "Synced {ok} of {total}. Failed: {repos}"

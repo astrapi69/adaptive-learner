@@ -20,6 +20,10 @@ import {useNavigate} from "react-router-dom";
 
 import DueReviewCard from "../../shared/gamification/DueReviewCard";
 import {useI18n} from "../../hooks/ui/useI18n";
+import {
+    buildContentAvailability,
+    filterAvailableSetId,
+} from "../../lib/content/browse/content-availability";
 import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";
 import type {ReviewQueueItem} from "../../storage/types";
@@ -41,10 +45,16 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
         let cancelled = false;
         async function refresh() {
             try {
-                const queue = await getStorage().elementErrors.reviewQueue(
-                    userId,
-                );
-                if (!cancelled) setItems(queue);
+                const [queue, setsRes] = await Promise.all([
+                    getStorage().elementErrors.reviewQueue(userId),
+                    getStorage().contentLoader.listSets(),
+                ]);
+                // #1445 Part A — drop review items whose set is no longer
+                // loadable (its source repo was removed). The SRS rows stay
+                // in Dexie; they just aren't offered until re-connected.
+                const availability = buildContentAvailability(setsRes.sets);
+                const loadable = filterAvailableSetId(queue, availability);
+                if (!cancelled) setItems(loadable);
             } catch {
                 if (!cancelled) setItems([]);
             }

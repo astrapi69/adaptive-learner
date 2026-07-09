@@ -25,6 +25,7 @@ import {
   type ParsedSet,
 } from "../engine";
 import { fetchGitHubFileText } from "./github-fetch";
+import { resolveRepoToken } from "./repo-token";
 
 /** The exercise types the lesson schema (v1.3) knows about. */
 export const KNOWN_EXERCISE_TYPES = [
@@ -56,18 +57,6 @@ export function hasSuspiciousContent(text: string): boolean {
   return SUSPICIOUS_PATTERNS.some((pattern) => pattern.test(text));
 }
 
-/** localStorage key holding the GitHub PAT in Dexie (GH-Pages) mode. */
-const GITHUB_TOKEN_KEY = "adaptive-learner.github_token";
-
-/** Read the browser-stored GitHub token, or empty string when none. */
-export function readBrowserGitHubToken(): string {
-  try {
-    return localStorage.getItem(GITHUB_TOKEN_KEY) ?? "";
-  } catch {
-    return "";
-  }
-}
-
 export interface RepoRef {
   owner: string;
   repo: string;
@@ -80,6 +69,16 @@ export interface RepoValidationResult {
   lessonCount: number;
   /** Present when ``ok`` is false: a human-readable failure reason. */
   reason?: string;
+  /**
+   * ``true`` when the failure was an I/O one — the manifest / sample lesson
+   * could not be FETCHED (network, unreachable, rate-limit, 4xx/5xx) — rather
+   * than a STRUCTURAL content problem (bad schema, no sets, no lessons,
+   * executable content, unknown exercise type). A transient failure means the
+   * repo could not be re-validated, NOT that it is invalid, so a caller must
+   * not demote a previously-good repo on it (#1441). Absent/false on a
+   * structural failure and on success.
+   */
+  transient?: boolean;
 }
 
 interface ParsedExercise {
@@ -144,7 +143,7 @@ export interface RepoManifestSet {
  */
 export async function listRepoManifestSets(
   ref: RepoRef,
-  token: string = readBrowserGitHubToken(),
+  token: string = resolveRepoToken(refSource(ref)),
 ): Promise<RepoManifestSet[]> {
   const text = await fetchRepoText(ref, "manifest.yaml", token);
   const manifest = parseManifest(text) ?? {};
@@ -164,7 +163,7 @@ export async function listRepoManifestSets(
  */
 export async function validateUserRepo(
   ref: RepoRef,
-  token: string = readBrowserGitHubToken(),
+  token: string = resolveRepoToken(refSource(ref)),
 ): Promise<RepoValidationResult> {
   let manifest: ParsedManifest;
   try {
@@ -178,7 +177,8 @@ export async function validateUserRepo(
         : status === 401 || status === 403
           ? "Access denied — check the repository and your GitHub token."
           : "Repository unreachable.";
-    return { ok: false, setCount: 0, lessonCount: 0, reason };
+    // Could not FETCH the manifest → transient I/O, not a content verdict.
+    return { ok: false, setCount: 0, lessonCount: 0, reason, transient: true };
   }
 
   if (manifest.schema_version) {
@@ -249,12 +249,20 @@ export async function validateUserRepo(
         };
       }
     }
-  } catch {
+  } catch (error) {
+    // An HttpError carries a ``status`` — the fetch could not complete
+    // (transient I/O). A ``JSON.parse`` SyntaxError has no status — the lesson
+    // WAS read but is malformed content (structural). Only the former must
+    // preserve a good repo's trust (#1441).
+    const transient = typeof (error as { status?: number }).status === "number";
     return {
       ok: false,
       setCount: sets.length,
       lessonCount,
-      reason: "Could not read the first set's lessons.",
+      reason: transient
+        ? "Could not read the first set's lessons."
+        : "The first set's first lesson is not valid JSON.",
+      transient,
     };
   }
 

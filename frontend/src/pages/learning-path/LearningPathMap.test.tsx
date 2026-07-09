@@ -107,8 +107,7 @@ describe("LearningPathMap", () => {
         expect(screen.getByTestId("map-group-knowledge")).toBeInTheDocument();
     });
 
-    it("shows per-set percentage and a lesson-weighted total", () => {
-        // FR 3/5 + Psych 1/2 → total = (3+1)/(5+2) = 4/7 = 57%.
+    it("shows per-set percentage but NO catalog-wide total bar (#1453)", () => {
         useHookMock.mockReturnValue({
             state: "ready",
             data: {
@@ -132,6 +131,7 @@ describe("LearningPathMap", () => {
             },
         });
         renderMap();
+        // Per-set progress stays (honest, per downloaded set).
         expect(screen.getByTestId("map-set-percent-fra1")).toHaveTextContent(
             "60%",
         );
@@ -139,7 +139,28 @@ describe("LearningPathMap", () => {
             "aria-valuenow",
             "60",
         );
-        expect(screen.getByTestId("map-total")).toHaveTextContent("57%");
+        // #1453 BEFUND 2 - the catalog-wide "Total: X%" bar is gone. A
+        // catalog has no progress; that number fell whenever the app gained
+        // a new set, measuring nothing.
+        expect(screen.queryByTestId("map-total")).toBeNull();
+        expect(screen.queryByTestId("map-total-progress")).toBeNull();
+    });
+
+    it("uses a catalog heading, not the personal 'Your Learning Path' (#1453)", () => {
+        useHookMock.mockReturnValue({
+            state: "ready",
+            data: {
+                activeSets: [set({setId: "fra1", domain: "language"})],
+                notDownloadedSets: [],
+            },
+        });
+        renderMap();
+        expect(
+            screen.queryByText("Your Learning Path"),
+        ).not.toBeInTheDocument();
+        expect(screen.getByTestId("learning-path-map-title")).toHaveTextContent(
+            /content|Inhalte/i,
+        );
     });
 
     it("expands a set to its lessons on click", () => {

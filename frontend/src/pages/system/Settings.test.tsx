@@ -173,6 +173,135 @@ describe("Settings page", () => {
     expect(notice).toHaveTextContent("Sync");
   });
 
+  // #1451 — the Data tab sections follow a FIXED causal order:
+  // source (content repos) -> sync -> what results (cache) ->
+  // securing (backup/export) -> reversible cleanup (orphaned data) ->
+  // irreversible danger zone LAST. Pinned by relative DOM order so a
+  // future edit cannot silently regress it (e.g. put the danger zone
+  // above Sync). "Install app" moved to the General tab in #1455 (it
+  // configures HOW the app runs, not WHAT it stores).
+  it("orders the Data-tab sections causally (content repos first, danger zone last) (#1451)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-data");
+    // Section-root testids in their intended causal order.
+    const CAUSAL_ORDER = [
+      "content-repo-section",
+      "settings-sync",
+      "settings-section-cache",
+      "settings-backup",
+      "key-vault-section",
+      "export-section",
+      "settings-section-orphaned",
+      "settings-danger-zone",
+    ];
+    // Collect the section roots present, in DOM order (de-duped: a
+    // section root's own testid, not the nested ones it contains).
+    const seen = new Set<string>();
+    const domOrder = Array.from(panel.querySelectorAll("[data-testid]"))
+      .map((el) => el.getAttribute("data-testid"))
+      .filter((id): id is string => id !== null && CAUSAL_ORDER.includes(id))
+      .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+    const expected = CAUSAL_ORDER.filter((id) => domOrder.includes(id));
+    expect(domOrder).toEqual(expected);
+    // Headline invariants (causality + safety).
+    expect(domOrder[0]).toBe("content-repo-section");
+    expect(domOrder[domOrder.length - 1]).toBe("settings-danger-zone");
+    expect(domOrder.indexOf("content-repo-section")).toBeLessThan(
+      domOrder.indexOf("settings-sync"),
+    );
+  });
+
+  // #1459 — the Learning tab sections follow a FIXED causal order
+  // (same principle as the #1451 Data-tab pin): foundation (profile,
+  // source languages) -> in-lesson flow (mode, direction, hints,
+  // matching effect, interaction toggles, voice) -> practice &
+  // follow-up (review, SRS, summary) -> motivation (feedback,
+  // missions) -> reminders -> rare housekeeping LAST (paused
+  // retention, max lesson size). Pinned by relative DOM order so a
+  // future edit cannot silently regress it.
+  it("orders the Learning-tab sections causally (profile first, housekeeping last) (#1459)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-learning");
+    // Section-root testids in their intended causal order.
+    const CAUSAL_ORDER = [
+      "settings-section-profile",
+      "settings-section-source-languages",
+      "settings-section-lesson-mode",
+      "settings-section-direction-strategy",
+      "settings-section-hints",
+      "settings-section-matching-resolve",
+      "settings-section-interaction",
+      "settings-section-voice",
+      "settings-section-review",
+      "settings-section-srs",
+      "settings-section-summary-sections",
+      "settings-section-feedback",
+      "settings-section-missions",
+      "settings-section-reminders",
+      "settings-section-paused-retention",
+      "settings-section-max-lesson-size",
+    ];
+    // Collect the section roots present, in DOM order (de-duped: a
+    // section root's own testid, not the nested ones it contains).
+    const seen = new Set<string>();
+    const domOrder = Array.from(panel.querySelectorAll("[data-testid]"))
+      .map((el) => el.getAttribute("data-testid"))
+      .filter((id): id is string => id !== null && CAUSAL_ORDER.includes(id))
+      .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+    // Voice hides itself when the environment supports neither TTS nor
+    // STT (happy-dom does not), so compare against the present subset —
+    // but require every other section explicitly, so a silently dropped
+    // section cannot make the relative-order assertion vacuously pass.
+    const ALWAYS_PRESENT = CAUSAL_ORDER.filter((id) => id !== "settings-section-voice");
+    ALWAYS_PRESENT.forEach((id) => expect(domOrder).toContain(id));
+    expect(domOrder).toEqual(CAUSAL_ORDER.filter((id) => domOrder.includes(id)));
+    // Headline invariants: the in-lesson interaction toggles sit with
+    // the lesson-flow block (before Review), review and SRS are
+    // adjacent, and housekeeping is last.
+    expect(domOrder.indexOf("settings-section-interaction")).toBeLessThan(
+      domOrder.indexOf("settings-section-review"),
+    );
+    expect(domOrder.indexOf("settings-section-srs")).toBe(
+      domOrder.indexOf("settings-section-review") + 1,
+    );
+    expect(domOrder[domOrder.length - 1]).toBe("settings-section-max-lesson-size");
+  });
+
+  // #1455 — "Install app" lives in the GENERAL tab (it configures HOW
+  // the app runs: standalone window, homescreen, starts without network),
+  // not in Data (WHAT the app stores). The section stays mounted on both
+  // tabs' URLs (panels are hidden, not unmounted), so the assertions
+  // check containment + visibility, not existence.
+  it("hosts the Install-app section in the General tab, not in Data (#1455)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=general");
+    await screen.findByTestId("settings");
+    const install = screen.getByTestId("settings-install-section");
+    // Not a descendant of the Data panel anymore.
+    expect(
+      screen.getByTestId("settings-panel-data").contains(install),
+    ).toBe(false);
+    // Visible on the General tab...
+    expect(install).toBeVisible();
+    // ...hidden when another tab is active.
+    fireEvent.click(screen.getByTestId("settings-tab-data"));
+    expect(screen.getByTestId("settings-install-section")).not.toBeVisible();
+    // The install button keeps its visible-but-disabled behavior at the
+    // new mount point (no browser install offer in happy-dom -> disabled).
+    fireEvent.click(screen.getByTestId("settings-tab-general"));
+    const button = screen.getByTestId(
+      "settings-install-button",
+    ) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
+  });
+
   it("redirects to /onboarding when user_id is missing", async () => {
     localStorage.removeItem("adaptive-learner.user_id");
     renderSettings();

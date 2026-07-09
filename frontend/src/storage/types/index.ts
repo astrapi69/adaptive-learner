@@ -28,6 +28,7 @@ export * from "./core/session";
 export * from "./content/content";
 export * from "./content/lesson-progress";
 export * from "./learning/element-errors";
+export * from "./learning/learning-data";
 export * from "./learning/missions";
 export * from "./content/curricula";
 export * from "./integrations/learning-repo";

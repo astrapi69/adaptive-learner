@@ -496,6 +496,14 @@
     "session_count": "세션"
   },
   "settings": {
+    "orphaned": {
+      "heading": "연결 해제된 콘텐츠",
+      "summary": "더 이상 연결되지 않은 소스의 {lessons}개 레슨과 {cards}개 복습 카드.",
+      "delete": "연결 해제된 진행 상황 삭제",
+      "confirm_title": "연결 해제된 진행 상황 삭제",
+      "confirm_message": "{lessons}개 레슨과 {cards}개 복습 카드가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "deleted": "{lessons}개 레슨과 {cards}개 복습 카드를 삭제했습니다."
+    },
     "key_export_link": {
       "heading": "AI 키 — 암호화 내보내기",
       "hint": "AI 키를 하나의 암호화된 파일로 내보내거나 가져옵니다. 데이터 탭의 다른 백업과 함께 있습니다.",
@@ -550,7 +558,7 @@
     },
     "install": {
       "heading": "앱 설치",
-      "description": "Adaptive Learner를 앱으로 설치하여 오프라인 접근과 전체 화면 환경을 누리세요.",
+      "description": "Adaptive Learner를 독립 실행형 앱으로 설치하세요: 전용 창, 홈 화면 아이콘, 네트워크 없이도 시작됩니다. 학습 콘텐츠에는 영향이 없습니다.",
       "button": "앱 설치",
       "already": "이미 설치됨",
       "unavailable": "브라우저가 아직 설치를 제안하지 않았습니다.",
@@ -1801,7 +1809,7 @@
       "placeholder": "예: 예시를 들어 설명해 줘",
       "ask": "질문",
       "asking": "질문 중…",
-      "no_key": "질문하려면 AI 키를 설정하세요 - AI 설정을 확인하세요.",
+      "no_key": "AI에게 질문하려면 본인의 AI 키(BYOK)가 필요합니다. 선택 사항이며, 없어도 앱은 잘 작동합니다.",
       "open_settings": "AI 설정",
       "error": "AI 요청이 실패했습니다. 다시 시도해 주세요."
     },
@@ -2814,6 +2822,8 @@
     "endless": "무한",
     "personal": {
       "title": "당신의 학습 경로",
+      "progress": "전체: {n}% 완료",
+      "none_started": "아직 시작한 세트가 없습니다. 다운로드한 세트를 보려면 모든 세트로 전환하세요.",
       "empty": "시작하려면 레슨 세트를 다운로드하세요.",
       "all_done": "레슨 {n}개를 모두 완료했습니다!",
       "downloaded": "다운로드됨",
@@ -2830,7 +2840,7 @@
     "map": {
       "languages": "언어",
       "knowledge": "지식",
-      "total": "전체: {n}% 완료"
+      "title": "모든 콘텐츠"
     },
     "mastery": {
       "receptive": "수용",
@@ -2903,6 +2913,7 @@
       "delete": "경로 삭제",
       "next_hint": "다음: {lesson}",
       "add_lesson": "레슨 추가",
+      "add_first_lesson": "첫 레슨을 추가하세요",
       "search_lessons": "레슨 검색…",
       "no_lessons": "레슨을 찾을 수 없습니다.",
       "done_adding": "완료",
@@ -3223,6 +3234,14 @@
     "save_prompt": "이 레슨을 즐겨찾기에 저장"
   },
   "content_repo": {
+    "remove": {
+      "title": "저장소 제거",
+      "message": "{source}을(를) 제거하시겠습니까? 다운로드된 콘텐츠가 이 기기에서 제거됩니다.",
+      "delete_progress": "이 콘텐츠에 대한 내 학습 진행 상황도 삭제합니다.",
+      "consequence": "{lessons}개 레슨과 {cards}개 복습 카드가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "counting": "진행 상황을 집계하는 중…",
+      "deleted": "제거되었습니다. {lessons}개 레슨과 {cards}개 복습 카드를 삭제했습니다."
+    },
     "sync_all": {
       "done": "{total}개 중 {ok}개 리포지토리를 동기화했습니다.",
       "failed": "{total}개 중 {ok}개 동기화됨. 실패: {repos}"

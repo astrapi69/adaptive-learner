@@ -463,6 +463,13 @@ progress:
   commit_notes_aria: "Notas da sessão"
   session_count: "Sessões"
 settings:
+  orphaned:
+    heading: "Conteúdo desconectado"
+    summary: "{lessons} lições e {cards} cartões de revisão de fontes às quais você não está mais conectado."
+    delete: "Excluir progresso desconectado"
+    confirm_title: "Excluir progresso desconectado"
+    confirm_message: "{lessons} lições e {cards} cartões de revisão serão excluídos permanentemente. Isso não pode ser desfeito."
+    deleted: "{lessons} lições e {cards} cartões de revisão excluídos."
   key_export_link:
     heading: "Chaves de IA — exportação cifrada"
     hint: "Exporte ou importe as suas chaves de IA num único ficheiro cifrado. Fica junto das outras cópias de segurança no separador Dados."
@@ -509,7 +516,7 @@ settings:
     current_version: "Versão atual: v{version}"
   install:
     heading: "Instalar aplicativo"
-    description: "Instale o Adaptive Learner como app para acesso offline e tela cheia."
+    description: "Instale o Adaptive Learner como aplicativo independente: janela própria, ícone na tela inicial e abre mesmo sem rede. Seu conteúdo de aprendizado não é afetado."
     button: "Instalar aplicativo"
     already: "Já instalado"
     unavailable: "Seu navegador ainda não ofereceu a instalação."
@@ -1671,7 +1678,7 @@ lesson:
     placeholder: "ex.: Explique com um exemplo"
     ask: "Perguntar"
     asking: "Perguntando…"
-    no_key: "Configure uma chave de IA para perguntar - veja as configurações de IA."
+    no_key: "Perguntas à IA exigem a sua própria chave de IA (BYOK). Opcional, o app funciona bem sem ela."
     open_settings: "Configurações de IA"
     error: "A solicitação de IA falhou. Tente novamente."
   example:
@@ -2565,6 +2572,8 @@ learning_path:
   endless: "Sem fim"
   personal:
     title: "O teu percurso de aprendizagem"
+    progress: "No total: {n}% concluído"
+    none_started: "Você ainda não começou nenhum conjunto. Mude para Todos os conjuntos para ver seus conjuntos baixados."
     empty: "Baixa um conjunto de lições para começar."
     all_done: "Todas as {n} lições concluídas!"
     downloaded: "Baixado"
@@ -2579,7 +2588,7 @@ learning_path:
   map:
     languages: "Idiomas"
     knowledge: "Conhecimento"
-    total: "Total: {n}% concluído"
+    title: "Todo o conteúdo"
   mastery:
     receptive: "receptivo"
     productive: "produtivo"
@@ -2645,6 +2654,7 @@ learning_path:
     delete: "Excluir caminho"
     next_hint: "Próxima: {lesson}"
     add_lesson: "Adicionar uma lição"
+    add_first_lesson: "Adicione sua primeira lição"
     search_lessons: "Pesquisar lições…"
     no_lessons: "Nenhuma lição encontrada."
     done_adding: "Concluído"
@@ -2956,6 +2966,13 @@ favorites:
   empty: "Ainda não há favoritos — toque na estrela de uma lição."
   save_prompt: "Guardar esta lição nos seus favoritos"
 content_repo:
+  remove:
+    title: "Remover repositório"
+    message: "Remover {source}? O conteúdo baixado será removido deste dispositivo."
+    delete_progress: "Excluir também meu progresso de aprendizagem deste conteúdo."
+    consequence: "{lessons} lições e {cards} cartões de revisão serão excluídos. Isso não pode ser desfeito."
+    counting: "Contando seu progresso…"
+    deleted: "Removido. {lessons} lições e {cards} cartões de revisão excluídos."
   sync_all:
     done: "{ok} de {total} repositórios sincronizados."
     failed: "{ok} de {total} sincronizados. Falharam: {repos}"

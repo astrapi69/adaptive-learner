@@ -496,6 +496,14 @@
     "session_count": "Oturumlar"
   },
   "settings": {
+    "orphaned": {
+      "heading": "Bağlantısı kesilen içerik",
+      "summary": "Artık bağlı olmadığınız kaynaklardan {lessons} ders ve {cards} tekrar kartı.",
+      "delete": "Bağlantısı kesilen ilerlemeyi sil",
+      "confirm_title": "Bağlantısı kesilen ilerlemeyi sil",
+      "confirm_message": "{lessons} ders ve {cards} tekrar kartı kalıcı olarak silinecek. Bu geri alınamaz.",
+      "deleted": "{lessons} ders ve {cards} tekrar kartı silindi."
+    },
     "key_export_link": {
       "heading": "Yapay zeka anahtarları — şifreli dışa aktarma",
       "hint": "Yapay zeka anahtarlarınızı tek bir şifreli dosya olarak dışa veya içe aktarın. Veri sekmesindeki diğer yedeklerle birlikte bulunur.",
@@ -546,7 +554,7 @@
     },
     "install": {
       "heading": "Uygulamayı yükle",
-      "description": "Çevrimdışı erişim ve tam ekran deneyimi için Adaptive Learner'ı uygulama olarak yükleyin.",
+      "description": "Adaptive Learner'ı bağımsız bir uygulama olarak yükle: kendi penceresi, ana ekranda simge ve ağ olmadan bile başlar. Öğrenme içeriğin bundan etkilenmez.",
       "button": "Uygulamayı yükle",
       "already": "Zaten yüklü",
       "unavailable": "Tarayıcınız henüz kurulum sunmadı.",
@@ -1801,7 +1809,7 @@
       "placeholder": "ör. Bunu bir örnekle açıkla",
       "ask": "Sor",
       "asking": "Soruluyor…",
-      "no_key": "Soru sormak için bir yapay zekâ anahtarı ayarla - yapay zekâ ayarlarına bak.",
+      "no_key": "Yapay zekâ soruları kendi yapay zekâ anahtarını (BYOK) gerektirir. İsteğe bağlı, uygulama onsuz da sorunsuz çalışır.",
       "open_settings": "Yapay zekâ ayarları",
       "error": "Yapay zekâ isteği başarısız oldu. Lütfen tekrar dene."
     },
@@ -2814,6 +2822,8 @@
     "endless": "Sonsuz",
     "personal": {
       "title": "Öğrenme yolun",
+      "progress": "Genel: %{n} tamamlandı",
+      "none_started": "Henüz hiçbir set başlatmadın. İndirilen setleri görmek için Tüm setler seçeneğine geç.",
       "empty": "Başlamak için bir ders seti indir.",
       "all_done": "{n} dersin tümü tamamlandı!",
       "downloaded": "İndirildi",
@@ -2830,7 +2840,7 @@
     "map": {
       "languages": "Diller",
       "knowledge": "Bilgi",
-      "total": "Toplam: %{n} tamamlandı"
+      "title": "Tüm içerik"
     },
     "mastery": {
       "receptive": "alımlayıcı",
@@ -2903,6 +2913,7 @@
       "delete": "Yolu sil",
       "next_hint": "Sonraki: {lesson}",
       "add_lesson": "Ders ekle",
+      "add_first_lesson": "İlk dersini ekle",
       "search_lessons": "Ders ara…",
       "no_lessons": "Ders bulunamadı.",
       "done_adding": "Bitti",
@@ -3223,6 +3234,14 @@
     "save_prompt": "Bu dersi favorilerine kaydet"
   },
   "content_repo": {
+    "remove": {
+      "title": "Depoyu kaldır",
+      "message": "{source} kaldırılsın mı? İndirilen içeriği bu cihazdan kaldırılacak.",
+      "delete_progress": "Bu içerik için öğrenme ilerlememi de sil.",
+      "consequence": "{lessons} ders ve {cards} tekrar kartı silinecek. Bu geri alınamaz.",
+      "counting": "İlerlemeniz sayılıyor…",
+      "deleted": "Kaldırıldı. {lessons} ders ve {cards} tekrar kartı silindi."
+    },
     "sync_all": {
       "done": "{total} depodan {ok} tanesi eşitlendi.",
       "failed": "{total} depodan {ok} tanesi eşitlendi. Başarısız: {repos}"
