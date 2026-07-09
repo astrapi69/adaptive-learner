@@ -66,7 +66,7 @@ export function BackupCompareSection({compare}: BackupCompareSectionProps) {
                         type="file"
                         accept=".alb,.json,application/zip,application/json"
                         onChange={(e) => void handleCompareFilePick("a", e)}
-                        style={{display: "none"}}
+                        className="hidden"
                         data-testid="backup-compare-input-a"
                     />
                 </div>
@@ -101,7 +101,7 @@ export function BackupCompareSection({compare}: BackupCompareSectionProps) {
                         type="file"
                         accept=".alb,.json,application/zip,application/json"
                         onChange={(e) => void handleCompareFilePick("b", e)}
-                        style={{display: "none"}}
+                        className="hidden"
                         data-testid="backup-compare-input-b"
                     />
                 </div>

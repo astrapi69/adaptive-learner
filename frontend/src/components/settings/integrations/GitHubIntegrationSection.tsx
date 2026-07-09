@@ -162,9 +162,8 @@ export default function GitHubIntegrationSection() {
 
   return (
     <section
-      className="settings-section"
+      className="settings-section mt-6"
       data-testid="settings-github"
-      style={{ marginTop: "1.5rem" }}
     >
       <h2 className="settings-section-title">
         {t("settings.github.title", "GitHub Integration")}
