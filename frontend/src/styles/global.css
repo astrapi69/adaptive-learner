@@ -106,6 +106,19 @@
    * saturated red in every theme. Mirrors --accent-fg for --accent. */
   --danger-fg: #ffffff;
 
+  /* Colored-toast backgrounds (#1474). react-toastify runs theme="colored"
+   * with WHITE toast text, so the toast background must clear WCAG AA 4.5:1
+   * against white. The per-theme --success/--error/... accents cannot (Soft
+   * Pop --success is #4ade80, ~1.7:1; warning/info accents fail too), so the
+   * toast backgrounds are fixed, semantic, AA-with-white status colours,
+   * theme-agnostic by design (a success toast is the same green in every
+   * theme). Verified vs #ffffff: success 7.1:1, error 6.5:1, warning 5.0:1,
+   * info 6.7:1. The small status icon still tracks the theme accent. */
+  --toast-bg-success: #166534;
+  --toast-bg-error: #b91c1c;
+  --toast-bg-warning: #b45309;
+  --toast-bg-info: #1d4ed8;
+
   /* Matching exercise result feedback (#183). After checking, a
    * correctly matched pair is tinted GREEN and a wrong pair RED (red as
    * error feedback is correct here; red as a PAIR color stays forbidden,

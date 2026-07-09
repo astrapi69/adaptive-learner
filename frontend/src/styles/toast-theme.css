@@ -26,6 +26,31 @@
 }
 
 /*
+ * #1474 — WCAG AA toast contrast. The colored theme renders each toast with
+ * WHITE text on ``var(--toastify-color-*)``. Mapping those to the per-theme
+ * --success/--error/... accents (above) does NOT clear 4.5:1 against white
+ * (Soft Pop --success #4ade80 is ~1.7:1; warning/info fail too), and the
+ * :root override for the *background* can also lose to react-toastify's own
+ * :root default in the production bundle. So pin the toast BACKGROUND to the
+ * fixed, AA-with-white --toast-bg-* tokens via a 3-class selector that wins
+ * over react-toastify's 2-class ``.Toastify__toast-theme--colored.Toastify__
+ * toast--success`` regardless of bundle order. White text stays; only the
+ * background changes. Icons + progress keep tracking the theme accent.
+ */
+.Toastify__toast-container .Toastify__toast-theme--colored.Toastify__toast--success {
+    background: var(--toast-bg-success);
+}
+.Toastify__toast-container .Toastify__toast-theme--colored.Toastify__toast--error {
+    background: var(--toast-bg-error);
+}
+.Toastify__toast-container .Toastify__toast-theme--colored.Toastify__toast--warning {
+    background: var(--toast-bg-warning);
+}
+.Toastify__toast-container .Toastify__toast-theme--colored.Toastify__toast--info {
+    background: var(--toast-bg-info);
+}
+
+/*
  * Persistent error toasts (#126) do not auto-dismiss, so several
  * failures can stack at once. Cap the container height to the
  * viewport and let it scroll instead of pushing toasts off-screen
