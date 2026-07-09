@@ -1033,6 +1033,10 @@
     "donations_heading": "Geliştirmeyi destekle",
     "donations_intro": "Adaptive Learner ücretsiz ve açık kaynaktır. Sana yardımcı olduysa katkıda bulunmayı düşün.",
     "donations_primary": "tercih edilen",
+    "contribute_heading": "İçeriğe katkıda bulun",
+    "contribute_intro": "İçerik kütüphanesi topluluğun katkılarıyla büyür. Ders eklemek istersen buradan başla.",
+    "contribute_repo": "İçerik deposu",
+    "contribute_template": "İçerik seti şablonu",
     "donations": {
       "liberapay_desc": "Tekrarlayan bağışlar. Açık kaynak, platform ücreti alınmıyor.",
       "github_desc": "Mevcut GitHub hesabınla sponsor ol.",
@@ -2559,13 +2563,6 @@
       "status_submitted": "gönderildi",
       "status_accepted": "kabul edildi",
       "status_rejected": "reddedildi"
-    },
-    "gaps": {
-      "title": "Eksik Dersler",
-      "intro": "Topluluk kütüphanesinde birkaç boşluk var. Birini doldurmaya yardım eder misiniz?",
-      "next_level": "{source} konuşanlar için {target} dersleri var, ancak {level} henüz yok.",
-      "missing_pair": "{source} konuşanlar için {target} {level} henüz yok.",
-      "help": "Yardım edebilir misiniz?"
     },
     "credit": {
       "name_label": "Adınız (isteğe bağlı)",

@@ -16,6 +16,7 @@ import { useI18n } from "../../hooks/ui/useI18n";
 import { getStorage, resolveStorageMode } from "../../storage";
 import type { SystemInfo } from "../../types/domain";
 
+import ContributeSection from "./ContributeSection";
 import CreditsSection from "./CreditsSection";
 import DonationSection from "./DonationSection";
 import ShareAppSection from "./ShareAppSection";
@@ -90,6 +91,7 @@ export default function AboutTab() {
           <CreditsSection t={t} />
           <ShareAppSection t={t} />
           <DonationSection t={t} />
+          <ContributeSection t={t} />
           <LicenseResourcesSection info={info} t={t} lang={lang} />
         </div>
       )}

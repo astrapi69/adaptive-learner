@@ -963,6 +963,10 @@ about:
   donations_heading: विकास का समर्थन करें
   donations_intro: Adaptive Learner मुफ़्त और ओपन-सोर्स है। अगर यह आपके काम आता है, तो योगदान देने पर विचार करें।
   donations_primary: पसंदीदा
+  contribute_heading: "सामग्री में योगदान करें"
+  contribute_intro: "सामग्री पुस्तकालय समुदाय के योगदान से बढ़ता है। यदि आप पाठ जोड़ना चाहते हैं, तो यहाँ से शुरू करें।"
+  contribute_repo: "सामग्री रिपॉज़िटरी"
+  contribute_template: "सामग्री सेट टेम्पलेट"
   donations:
     liberapay_desc: आवर्ती दान। ओपन-सोर्स, प्लेटफ़ॉर्म कोई शुल्क नहीं लेता।
     github_desc: अपने मौजूदा GitHub खाते से प्रायोजित करें।
@@ -2345,12 +2349,6 @@ content:
     status_submitted: प्रस्तुत किया गया
     status_accepted: स्वीकृत
     status_rejected: अस्वीकृत
-  gaps:
-    title: अनुपलब्ध पाठ
-    intro: समुदाय लाइब्रेरी में कुछ कमियाँ हैं। क्या आप किसी एक को भरने में मदद कर सकते हैं?
-    next_level: '{source} बोलने वालों के लिए {target} के पाठ हैं, लेकिन {level} अभी मौजूद नहीं है।'
-    missing_pair: '{source} बोलने वालों के लिए {target} {level} अभी मौजूद नहीं है।'
-    help: क्या आप मदद कर सकते हैं?
   credit:
     name_label: आपका नाम (वैकल्पिक)
     name_placeholder: जैसे Maria S.

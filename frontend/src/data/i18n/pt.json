@@ -1033,6 +1033,10 @@
     "donations_heading": "Apoie o desenvolvimento",
     "donations_intro": "O Adaptive Learner é gratuito e de código aberto. Se ele te ajuda, considere contribuir.",
     "donations_primary": "preferido",
+    "contribute_heading": "Contribuir com conteúdo",
+    "contribute_intro": "A biblioteca de conteúdos cresce com as contribuições da comunidade. Se quiseres adicionar lições, começa aqui.",
+    "contribute_repo": "Repositório de conteúdos",
+    "contribute_template": "Modelo de conjunto de conteúdos",
     "donations": {
       "liberapay_desc": "Doações recorrentes. Código aberto, sem taxas cobradas pela plataforma.",
       "github_desc": "Patrocine pela sua conta existente do GitHub.",
@@ -2559,13 +2563,6 @@
       "status_submitted": "submetida",
       "status_accepted": "aceite",
       "status_rejected": "rejeitada"
-    },
-    "gaps": {
-      "title": "Lições em Falta",
-      "intro": "A biblioteca da comunidade tem algumas lacunas. Pode ajudar a preencher uma?",
-      "next_level": "{target} para falantes de {source} tem lições, mas {level} ainda não existe.",
-      "missing_pair": "{target} {level} para falantes de {source} ainda não existe.",
-      "help": "Pode ajudar?"
     },
     "credit": {
       "name_label": "O seu nome (opcional)",
