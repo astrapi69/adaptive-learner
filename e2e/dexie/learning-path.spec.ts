@@ -102,6 +102,12 @@ test.describe("Learning Path — personal view + graph", () => {
         await expect(page.getByTestId("learning-path-page")).toBeVisible({
             timeout: 15000,
         });
+        // #1454 fixed the "Only mine" filter (default) to show only sets with
+        // recorded activity; before #1454 it was broken and showed every
+        // downloaded set. This journey verifies the row expands + a lesson
+        // opens, not the filter, so select "All sets" to render the downloaded
+        // set regardless of the runtime-fetch activity attribution (#1472).
+        await page.getByTestId("learning-path-filter-all").click();
         const row = page.getByTestId(`set-row-${SET_ID}`);
         await expect(row).toBeVisible({timeout: 15000});
 
@@ -124,6 +130,12 @@ test.describe("Learning Path — personal view + graph", () => {
         await page.setViewportSize({width: 375, height: 800});
         await playFirstLesson(page);
         await page.goto("/learning-path");
+        await expect(page.getByTestId("learning-path-page")).toBeVisible({
+            timeout: 15000,
+        });
+        // "All sets" so the downloaded set renders regardless of the "Only
+        // mine" activity attribution (#1454 / #1472).
+        await page.getByTestId("learning-path-filter-all").click();
         await expect(page.getByTestId(`set-row-${SET_ID}`)).toBeVisible({
             timeout: 15000,
         });

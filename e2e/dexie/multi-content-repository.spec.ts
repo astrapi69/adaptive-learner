@@ -142,11 +142,15 @@ test.describe("EXP-023 Phase B — multi content repository", () => {
       timeout: 15000,
     });
 
-    // --- Remove a repo (two-step confirm). --------------------------
+    // --- Remove a repo (confirm dialog, #1446 / #1471). -------------
+    // #1446 replaced the old inline two-click remove with a RemoveRepoDialog:
+    // the remove button opens the dialog; the dialog's confirm button does the
+    // actual removal. Clicking the remove button twice no longer works — the
+    // second click lands on the button now covered by the dialog overlay.
     await page.goto("/settings?tab=data");
     await expect(page.getByTestId("content-repo-item-jane-alpha")).toBeVisible();
-    await page.getByTestId("content-repo-remove-jane-alpha").click(); // arm
-    await page.getByTestId("content-repo-remove-jane-alpha").click(); // confirm
+    await page.getByTestId("content-repo-remove-jane-alpha").click(); // open dialog
+    await page.getByTestId("content-repo-remove-dialog-confirm").click(); // confirm
     await expect(page.getByTestId("content-repo-item-jane-alpha")).toHaveCount(0);
     await expect(page.getByTestId("content-repo-item-bob-beta")).toBeVisible();
 
