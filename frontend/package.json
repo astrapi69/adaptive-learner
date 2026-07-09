@@ -11,7 +11,7 @@
     "dev": "vite",
     "prebuild": "node scripts/copy-bundled-content.mjs",
     "build": "tsc -b && vite build",
-    "build:analyze": "ANALYZE=true npm run build",
+    "build:analyze": "ANALYZE=true bun run build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

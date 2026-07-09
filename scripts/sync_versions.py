@@ -6,7 +6,6 @@ This script reads its version and writes the same value to every
 derived location:
 
 - ``frontend/package.json`` (top-level "version" key)
-- ``frontend/package-lock.json`` (top-level + ``packages[""]`` version)
 - ``launcher/pyproject.toml`` (Poetry version)
 - ``launcher/adaptive_learner_launcher/__init__.py`` (``__version__`` literal)
 - ``launcher/adaptive-learner-launcher.spec`` (CFBundleVersion +
@@ -85,72 +84,6 @@ def update_package_json_version(
             json.dumps(data, indent=2) + "\n", encoding="utf-8"
         )
     print(f"  {path.relative_to(REPO)}: {old} -> {new_version}")
-    return True
-
-
-def update_package_lock_version(
-    path: Path, new_version: str, dry_run: bool
-) -> bool:
-    """Update package-lock.json's TWO top-level version fields.
-
-    npm-generated locks carry the host project's version in two
-    places at the top of the file:
-
-    - top-level ``"version": "..."`` (document-root metadata)
-    - ``packages[""]["version"]`` (the root package entry)
-
-    Both must match ``package.json``'s version. npm only re-syncs
-    them when ``npm install`` runs; a sync-versions invocation that
-    edits ``package.json`` directly leaves the lock-file out of sync
-    until the next ``npm install``. Closing the loop here keeps the
-    lock-file under release-tooling control instead of relying on a
-    follow-up developer step.
-
-    Surgical regex on the first 2 occurrences of ``"version": "..."``
-    in the file. In npm-generated locks the top-level + packages[""]
-    entries are always the first two ``"version":`` lines; every
-    subsequent occurrence is a nested dependency entry that MUST
-    NOT be touched.
-    """
-    if not path.is_file():
-        return False
-    content = path.read_text(encoding="utf-8")
-    # Validate via JSON parse that the file is well-formed and that
-    # the two expected fields exist. If the lock-file shape ever
-    # changes, fail loud rather than mangle the file.
-    data = json.loads(content)
-    top_version = data.get("version")
-    root_pkg_version = data.get("packages", {}).get("", {}).get("version")
-    if top_version is None or root_pkg_version is None:
-        print(
-            f"WARN: {_display_path(path)} missing top-level or "
-            f"packages[''] version field; skipping",
-            file=sys.stderr,
-        )
-        return False
-    if top_version == new_version and root_pkg_version == new_version:
-        return False
-    # Surgical regex: anchor on `"version":` with whitespace prefix
-    # then quoted value. count=2 hits the two top-level locations
-    # without touching the hundreds of nested dependency `"version":`
-    # entries that follow.
-    pattern = re.compile(r'^(\s*"version":\s*)"[^"]+"', re.MULTILINE)
-    new_content, n = pattern.subn(
-        rf'\g<1>"{new_version}"', content, count=2
-    )
-    if n != 2:
-        print(
-            f"WARN: {_display_path(path)} expected 2 version "
-            f"matches, got {n}; skipping",
-            file=sys.stderr,
-        )
-        return False
-    if not dry_run:
-        path.write_text(new_content, encoding="utf-8")
-    old = top_version if top_version == root_pkg_version else (
-        f"top={top_version},root={root_pkg_version}"
-    )
-    print(f"  {_display_path(path)}: {old} -> {new_version}")
     return True
 
 
@@ -356,13 +289,12 @@ def regenerate_install_sh(dry_run: bool) -> bool:
 
 def collect_targets() -> list[tuple[Path, str]]:
     """Return list of (file, kind). Kinds: pyproject, package_json,
-    package_lock, spec, init_literal."""
+    spec, init_literal."""
     targets: list[tuple[Path, str]] = []
 
     targets.append((REPO / "frontend" / "package.json", "package_json"))
-    targets.append(
-        (REPO / "frontend" / "package-lock.json", "package_lock")
-    )
+    # frontend/bun.lock carries NO app version (unlike npm's package-lock.json,
+    # which duplicated it in two fields), so there is nothing to sync there.
 
     targets.append((REPO / "launcher" / "pyproject.toml", "pyproject"))
     targets.append(
@@ -391,7 +323,6 @@ def collect_targets() -> list[tuple[Path, str]]:
 HANDLERS = {
     "pyproject": update_pyproject_version,
     "package_json": update_package_json_version,
-    "package_lock": update_package_lock_version,
     "spec": update_spec_plist,
     "init_literal": update_init_version_literal,
     "launcher_json": update_launcher_json_app_version,

@@ -20,3 +20,8 @@ install.sh   text eol=lf
 # Visual-regression baseline screenshots (#244): treat as binary so git
 # never CRLF-mangles them and diffs stay clean.
 *.png        binary
+
+# Bun lockfile (#1492): mark generated so GitHub collapses its diff in the
+# PR view (as it does for npm's package-lock.json). It is committed and
+# reviewed via `bun install` output, not by hand.
+frontend/bun.lock linguist-generated=true

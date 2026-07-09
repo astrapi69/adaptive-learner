@@ -7,7 +7,12 @@
 # own dedicated review (matching the release-workflow dep policy).
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  # frontend/ is managed by Bun as of #1492 (this PR removed package-lock.json
+  # for bun.lock). Dependabot supports bun.lock version updates (GA 2025-02-13,
+  # verified in the Phase 0 gate); on "npm" it would look for the now-absent
+  # package-lock.json and stop updating the frontend until Phase 2. e2e/ has no
+  # entry here and stays on npm.
+  - package-ecosystem: "bun"
     directory: "/frontend"
     # Gitflow (#334): open update PRs against develop, not main.
     target-branch: "develop"

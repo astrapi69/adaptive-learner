@@ -191,21 +191,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Node 24 stays the RUNTIME (Vite build, Vitest, tsc); Bun is only the
+      # package manager + script runner (#1492 Phase 1). No npm cache on
+      # setup-node — the bun install cache below replaces it.
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v5
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
 
       - name: Install dependencies
         working-directory: frontend
-        # --legacy-peer-deps: #266 eslint@10 vs eslint-plugin-react ^9.7 peer
-        # cap (matches local dev); remove once the plugin supports eslint 10.
-        run: npm ci --legacy-peer-deps
+        # --frozen-lockfile is the bun equivalent of `npm ci` (no lockfile
+        # mutation). No --legacy-peer-deps needed: bun resolves the tree
+        # without npm's peer-dep strictness (#1492).
+        run: bun install --frozen-lockfile
 
       - name: TypeScript type check
         working-directory: frontend
-        run: npx tsc --noEmit
+        run: bunx tsc --noEmit
 
       # EXP-039 drift gate (frontend half): the TS lesson types are generated
       # from schema/lesson.schema.json. Fails if they are stale vs the committed
@@ -220,7 +233,7 @@ jobs:
       # (react-hooks/rules-of-hooks, react/jsx-key) also have zero violations.
       - name: ESLint
         working-directory: frontend
-        run: npx eslint src/ --max-warnings 0
+        run: bunx eslint src/ --max-warnings 0
 
       # Circular-dependency guard (#251). Fails only when import cycles
       # EXCEED the documented baseline, so a NEW cycle is a hard error while
@@ -228,7 +241,7 @@ jobs:
       # (peer-incompatible with TS 6 as a devDependency; CI-only tool).
       - name: Circular dependency check
         working-directory: frontend
-        run: npm run check:circular
+        run: bun run check:circular
 
       # Prettier (#254, step 1 — non-blocking). Reports formatting drift in
       # the log without failing the build; the repo-wide reformat is a
@@ -236,7 +249,7 @@ jobs:
       # formatted and the format-on-touch hook has caught up.
       - name: Prettier check (non-blocking)
         working-directory: frontend
-        run: npm run format:check
+        run: bun run format:check
         continue-on-error: true
 
       # Stylelint (#257). Focused config: color-no-invalid-hex is a hard
@@ -245,7 +258,7 @@ jobs:
       # (36 pre-existing, reported not blocked — drive to zero then promote).
       - name: Stylelint
         working-directory: frontend
-        run: npm run lint:css
+        run: bun run lint:css
 
       # Test Impact Analysis (#615): on a PR run only the Vitest files related
       # to files changed since the base branch (`--changed origin/<base>`).
@@ -261,26 +274,26 @@ jobs:
             git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
             if git rev-parse --verify "$BASE" >/dev/null 2>&1; then
               echo "::notice::PR detected — Vitest --changed against $BASE"
-              npx vitest run --changed "$BASE"
+              bunx vitest run --changed "$BASE"
             else
               echo "::warning::base ref $BASE unresolved — running FULL Vitest suite"
-              npx vitest run
+              bunx vitest run
             fi
           else
             echo "::notice::Push to ${{ github.ref_name }} — FULL Vitest suite"
-            npx vitest run
+            bunx vitest run
           fi
 
       - name: Build
         working-directory: frontend
-        run: npx vite build
+        run: bunx vite build
 
       # Dependency vulnerability scan (#224). --audit-level=high so
       # moderate/low advisories surface in the log without blocking the
       # build; a high/critical advisory fails CI for immediate triage.
       - name: npm audit (high+)
         working-directory: frontend
-        run: npm audit --audit-level=high
+        run: bun audit --audit-level=high
 
   pre-commit:
     name: Pre-commit hooks
