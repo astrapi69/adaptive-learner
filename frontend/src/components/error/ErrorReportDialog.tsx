@@ -357,6 +357,7 @@ export default function ErrorReportDialog({
                                 <Button
                                     type="button"
                                     variant="secondary"
+                                    data-testid="error-report-history-view"
                                     onClick={() =>
                                         setShowHistory(!showHistory)
                                     }
