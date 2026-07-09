@@ -88,11 +88,11 @@ dev: dev-secret ## Start backend + frontend (backend first, then frontend)
 	@cd frontend && \
 		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
 		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
-		npm run dev
+		bun run dev
 
 build-frontend: ## Build frontend/dist. Default API mode; STORAGE_MODE=dexie for the GH-Pages shape.
 	@echo "Building frontend/dist (storage mode: $(or $(STORAGE_MODE),api))..."
-	@cd frontend && $(if $(filter dexie,$(STORAGE_MODE)),VITE_STORAGE_MODE=dexie ,)npm run build
+	@cd frontend && $(if $(filter dexie,$(STORAGE_MODE)),VITE_STORAGE_MODE=dexie ,)bun run build
 
 dev-lan: dev-secret build-frontend ## LAN device test: serve built frontend + API on ONE origin at 0.0.0.0:$(BACKEND_PORT), no --reload
 	@LAN_IP=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
@@ -128,7 +128,7 @@ dev-bg: dev-secret ## Start in background, logs to $(DEV_LOG_DIR) (stop with: ma
 	@cd frontend && \
 		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
 		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
-		setsid npm run dev \
+		setsid bun run dev \
 			< /dev/null > $(DEV_LOG_DIR)/frontend.log 2>&1 & \
 		echo $$! > .pid-frontend
 	@sleep 2
@@ -189,7 +189,7 @@ dev-frontend:
 	cd frontend && \
 		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
 		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
-		npm run dev
+		bun run dev
 
 # --- Install ---
 
@@ -199,7 +199,7 @@ install-backend:
 	cd backend && poetry install
 
 install-frontend:
-	cd frontend && npm install
+	cd frontend && bun install
 
 install-e2e:
 	cd e2e && npm install && npx playwright install chromium
@@ -235,10 +235,10 @@ test-fast: ## Fast PR-mirror gate: backend ruff+mypy+pytest, frontend tsc+vitest
 	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -q
 	@echo ""
 	@echo "=== test-fast: frontend tsc --noEmit ==="
-	cd frontend && npx tsc --noEmit
+	cd frontend && bunx tsc --noEmit
 	@echo ""
 	@echo "=== test-fast: frontend vitest run ==="
-	cd frontend && npx vitest run
+	cd frontend && bunx vitest run
 	@echo ""
 	@echo "test-fast mirrors the PR gate (ci.yml). Full suite incl. plugins: 'make test'."
 
@@ -251,7 +251,7 @@ test-fast: ## Fast PR-mirror gate: backend ruff+mypy+pytest, frontend tsc+vitest
 test-changed: ## Test Impact Analysis: only tests affected vs origin/develop (vitest --changed + pytest --testmon) (#1174)
 	@echo ""
 	@echo "=== test-changed: frontend Vitest --changed origin/develop ==="
-	cd frontend && npx vitest run --changed origin/develop --passWithNoTests
+	cd frontend && bunx vitest run --changed origin/develop --passWithNoTests
 	@echo ""
 	@echo "=== test-changed: backend pytest --testmon (vs .testmondata) ==="
 	cd backend && poetry run pip install -q pytest-testmon
@@ -262,7 +262,7 @@ test-changed: ## Test Impact Analysis: only tests affected vs origin/develop (vi
 test-frontend: ## Run frontend unit tests (Vitest)
 	@echo ""
 	@echo "=== Frontend Tests ==="
-	cd frontend && npx vitest run
+	cd frontend && bunx vitest run
 
 test-backend: ## Run backend tests
 	@echo ""
@@ -365,7 +365,7 @@ test-coverage-backend: ## Backend coverage report (htmlcov/)
 test-coverage-frontend: ## Frontend coverage report (coverage/)
 	@echo ""
 	@echo "=== Frontend Coverage ==="
-	cd frontend && npm run test:coverage
+	cd frontend && bun run test:coverage
 
 # --- TDD inner-loop helpers (.claude/rules/tdd.md) ---
 # Support the Red-Green-Refactor loop. The bundled lint+type+test GREEN
@@ -401,10 +401,10 @@ endif
 	    cd "$$d" && $(PLUGIN_PYTHON) -m pytest "$$f" ;; \
 	  frontend/*) \
 	    echo "=== vitest: $$t ==="; \
-	    cd frontend && npx vitest run "$${t#frontend/}" ;; \
+	    cd frontend && bunx vitest run "$${t#frontend/}" ;; \
 	  src/*|*.test.ts|*.test.tsx) \
 	    echo "=== vitest: $$t ==="; \
-	    cd frontend && npx vitest run "$$t" ;; \
+	    cd frontend && bunx vitest run "$$t" ;; \
 	  *) \
 	    echo "Cannot route TEST=$$t"; \
 	    echo "Expected: backend/<path> | frontend/<path> | src/<path> | *.test.ts(x) | plugins/<pkg>/<path> | e2e/<spec>"; \
@@ -412,7 +412,7 @@ endif
 	esac
 
 test-watch: ## Frontend Vitest in watch mode (TDD inner loop). Optional TEST= to scope, e.g. make test-watch TEST=src/lib/x.test.ts
-	cd frontend && npx vitest $(TEST)
+	cd frontend && bunx vitest $(TEST)
 
 tdd-help: ## Print the Red-Green-Refactor workflow (.claude/rules/tdd.md) + which targets to use
 	@echo "TDD — Red-Green-Refactor (.claude/rules/tdd.md)"
@@ -432,12 +432,12 @@ tdd-help: ## Print the Red-Green-Refactor workflow (.claude/rules/tdd.md) + whic
 stryker: ## Frontend mutation testing — full src/lib + src/hooks + src/api (slow; nightly/manual)
 	@echo ""
 	@echo "=== Frontend Mutation Testing (Stryker) ==="
-	cd frontend && npx stryker run
+	cd frontend && bunx stryker run
 
 stryker-quick: ## Scoped Stryker run, e.g. make stryker-quick MUTATE="src/lib/token-diff.ts"
 	@echo ""
 	@echo "=== Frontend Mutation Testing (Stryker, scoped: $(MUTATE)) ==="
-	cd frontend && npx stryker run --mutate "$(MUTATE)"
+	cd frontend && bunx stryker run --mutate "$(MUTATE)"
 
 # --- Blocker / archival ---
 
@@ -496,7 +496,7 @@ verify-theme: ## Theme/token gate: Python token-matrix + WCAG contrast gate, the
 	python3 scripts/verify_theme.py --enforce
 	@echo ""
 	@echo "=== verify-theme: no-hardcoded-colors + token-parity + contrast (Vitest guards) ==="
-	cd frontend && npx vitest run src/styles/no-hardcoded-colors.test.ts src/styles/contrast.test.ts src/styles/themes/themes.test.ts
+	cd frontend && bunx vitest run src/styles/no-hardcoded-colors.test.ts src/styles/contrast.test.ts src/styles/themes/themes.test.ts
 
 verify-theme-baseline-update: ## Re-record .theme-baseline.json from current violations (ratchet only shrinks unless --allow-baseline-growth)
 	python3 scripts/verify_theme.py --update-baseline
@@ -511,7 +511,7 @@ check-types-backend: ## Run mypy on backend
 check-types-frontend: ## Run tsc --noEmit on frontend
 	@echo ""
 	@echo "=== TypeScript Frontend ==="
-	cd frontend && npx tsc --noEmit
+	cd frontend && bunx tsc --noEmit
 
 # --- E2E Tests ---
 
@@ -524,7 +524,7 @@ test-e2e-ui: ## Run e2e tests with Playwright UI
 # Critical-flow smoke (#1177): the ``smoke`` Playwright project
 # (e2e/smoke/, defined in e2e/playwright.config.ts) covering the core
 # user journeys. It uses the default config's webServer, which
-# auto-starts the backend (uvicorn) + frontend (npm run dev) in API mode
+# auto-starts the backend (uvicorn) + frontend (bun run dev) in API mode
 # — no build step (distinct from the Dexie-mode ``test-dexie-smoke``
 # gate, which builds VITE_STORAGE_MODE=dexie). This is the command the
 # release-test gate references.
@@ -544,42 +544,42 @@ test-e2e-smoke-retries: ## Smoke project in CI mode (--retries=1, against flake)
 # crashes on its primary content render.
 test-dexie-smoke: ## Dexie-mode release gate (build + Playwright preview-mode smoke)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
-	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	@echo "=== Running Dexie-mode Playwright smoke ==="
 	cd e2e && npx playwright test --config=playwright.dexie.config.ts
 
 test-manual-automation: ## Automated manual-test-plan suite (#616; build dexie + Playwright)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
-	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	@echo "=== Running manual-test-plan automation (#616) ==="
 	cd e2e && npx playwright test --config=playwright.manual.config.ts
 
 test-visual: ## Visual regression (build dexie + Playwright screenshot matrix)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
-	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	@echo "=== Running visual-regression screenshots ==="
 	cd e2e && npx playwright test --config=playwright.visual.config.ts
 
 test-visual-update: ## Regenerate the visual baseline (REVIEW the diff before committing)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
-	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	@echo "=== Updating visual-regression baseline (review before committing!) ==="
 	cd e2e && npx playwright test --config=playwright.visual.config.ts --update-snapshots
 
 capture-screenshots: ## Capture/update per-feature screenshot baselines (REVIEW the diff before committing)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
-	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	@echo "=== Capturing per-feature screenshots (review before committing!) ==="
 	cd e2e && npx playwright test --config=playwright.features.config.ts --update-snapshots
 
 verify-screenshots: ## Verify per-feature screenshots against the committed baselines
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
-	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	@echo "=== Verifying per-feature screenshots ==="
 	cd e2e && npx playwright test --config=playwright.features.config.ts
@@ -787,9 +787,9 @@ audit-backend: ## pip-audit the backend venv (incl. plugin path-deps), mirrors t
 	@echo "=== pip-audit (backend venv, incl. plugin path-deps) ==="
 	@cd backend && poetry run pip-audit --skip-editable --progress-spinner=off || true
 
-audit-frontend: ## npm audit the frontend lockfile, mirrors the nightly scan (warn-only)
-	@echo "=== npm audit (frontend) ==="
-	@cd frontend && npm audit --package-lock-only || true
+audit-frontend: ## bun audit the frontend dependencies, mirrors the nightly scan (warn-only)
+	@echo "=== bun audit (frontend) ==="
+	@cd frontend && bun audit || true
 
 bandit-backend: ## bandit SAST over app + plugins + scripts (MEDIUM+ severity & confidence), mirrors the nightly scan (warn-only)
 	@echo "=== bandit (app + plugins + scripts; MEDIUM+ severity & confidence) ==="
@@ -801,15 +801,15 @@ bandit-backend: ## bandit SAST over app + plugins + scripts (MEDIUM+ severity & 
 security-backend: bandit-backend audit-backend ## Backend security sweep: bandit SAST + pip-audit deps (warn-only, mirrors the nightly scan)
 	@echo "Backend security sweep complete (warn-only). The nightly Security Scan is the source of truth."
 
-check-security: ## Blocking dependency gate: pip-audit + npm audit fail on HIGH/CRITICAL (local pre-PR check)
+check-security: ## Blocking dependency gate: pip-audit + bun audit fail on HIGH/CRITICAL (local pre-PR check)
 	@echo "=== check-security: pip-audit (backend, fails on any known vuln) ==="
 	@cd backend && poetry run pip-audit --skip-editable --progress-spinner=off
-	@echo "=== check-security: npm audit --audit-level=high (frontend) ==="
-	@cd frontend && npm audit --package-lock-only --audit-level=high
+	@echo "=== check-security: bun audit --audit-level=high (frontend) ==="
+	@cd frontend && bun audit --audit-level=high
 	@echo "check-security passed: no high/critical dependency vulnerabilities."
 
 circular-deps: ## Circular-dependency check over frontend/src (madge via the existing check:circular script)
-	@cd frontend && npm run check:circular
+	@cd frontend && bun run check:circular
 
 # --- Release ---
 # Aggregate Makefile targets for the release-workflow.md mechanical
@@ -844,22 +844,22 @@ release-outdated: ## Dependency currency check across all surfaces (release-work
 	@echo "=== Launcher (poetry show --outdated) ==="
 	@cd launcher && COLUMNS=200 poetry show --outdated --no-ansi 2>&1 || true
 	@echo ""
-	@echo "=== Frontend (npm outdated) ==="
-	@cd frontend && npm outdated --no-color 2>&1 || true
+	@echo "=== Frontend (bun outdated) ==="
+	@cd frontend && bun outdated 2>&1 || true
 	@echo ""
 	@echo "Reminder: apply routine bumps (patch+minor within same major) via 'poetry update <allowlist>' (never bare)."
 
 release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@$(MAKE) test
 	@echo ""
-	@echo "=== Frontend npm run build ==="
-	@cd frontend && npm run build
+	@echo "=== Frontend bun run build ==="
+	@cd frontend && bun run build
 	@echo ""
-	@echo "=== Frontend npm run test (vitest) ==="
-	@cd frontend && npm run test
+	@echo "=== Frontend bun run test (vitest) ==="
+	@cd frontend && bun run test
 	@echo ""
 	@echo "=== Theme/token gate (verify-theme, Python-only; #1185) ==="
-	@echo "Vitest theme guards already ran via 'make test' + 'npm run test' above;"
+	@echo "Vitest theme guards already ran via 'make test' + 'bun run test' above;"
 	@echo "here we only run the unique stdlib token-matrix + WCAG gate."
 	@python3 scripts/verify_theme.py --enforce
 	@echo ""
@@ -892,8 +892,8 @@ release-build: ## Build release artifacts (release-workflow.md Step 6)
 			cd backend && poetry build; \
 		fi
 	@echo ""
-	@echo "=== Frontend npm run build ==="
-	@cd frontend && npm run build
+	@echo "=== Frontend bun run build ==="
+	@cd frontend && bun run build
 
 release-discover: ## Discover version-shape literals outside the sync-versions target list (advisory)
 	@echo "=== Version-literal discovery ==="

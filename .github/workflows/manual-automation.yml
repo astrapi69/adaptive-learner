@@ -39,9 +39,20 @@ jobs:
         with:
           node-version: "24"
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v5
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
       - name: Install frontend deps
         working-directory: frontend
-        run: npm ci --legacy-peer-deps
+        run: bun install --frozen-lockfile
 
       - name: Install e2e deps
         working-directory: e2e
@@ -52,7 +63,7 @@ jobs:
       # (the noble image has no `make`); keep them in lock-step with the target.
       - name: Build dexie frontend
         working-directory: frontend
-        run: VITE_STORAGE_MODE=dexie npm run build
+        run: VITE_STORAGE_MODE=dexie bun run build
 
       - name: Manual-plan automation
         working-directory: e2e
