@@ -12,6 +12,7 @@ on:
       - ".filesize-whitelist"
       - ".filesize-baseline"
       - ".css-size-baseline"
+      - ".dead-classnames-baseline"
 
 jobs:
   file-size-check:
@@ -28,3 +29,29 @@ jobs:
         run: |
           chmod +x scripts/check-css-size.sh
           scripts/check-css-size.sh
+
+  # Usage-side referential-integrity gate (#1491): classNames used in TSX
+  # but defined nowhere (no CSS rule, no emitted Tailwind utility). Needs
+  # the generated build CSS as the Tailwind oracle, so this job sets up
+  # node + builds the frontend before running the check.
+  dead-classnames-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Build frontend (Tailwind oracle)
+        working-directory: frontend
+        run: VITE_STORAGE_MODE=dexie npm run build
+
+      - name: Tote Klassennamen prüfen (#1491)
+        run: python3 scripts/check-dead-classnames.py

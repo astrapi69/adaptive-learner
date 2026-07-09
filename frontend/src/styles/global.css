@@ -529,15 +529,6 @@ select:focus {
   background: var(--surface-2);
 }
 
-.btn-danger {
-  background: var(--danger);
-  color: var(--danger-fg);
-}
-
-.btn-danger:hover:not(:disabled) {
-  filter: brightness(1.08);
-}
-
 /* --- Landing page ----------------------------------------------- */
 
 .landing-page {
@@ -670,15 +661,6 @@ select:focus {
   gap: var(--space-5);
 }
 
-.onboarding-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-2);
-}
-
 .onboarding-header h1 {
   margin: 0;
   font-size: 1.75rem;
@@ -736,12 +718,6 @@ select:focus {
 .form-required {
   color: var(--danger);
   margin-left: var(--space-1);
-}
-
-.form-optional {
-  color: var(--fg-muted);
-  font-weight: 400;
-  font-size: 0.85em;
 }
 
 .form-hint {
@@ -2678,12 +2654,6 @@ select:focus {
   color: var(--fg-muted);
 }
 
-.content-source-native {
-  color: var(--fg-muted);
-  font-weight: 400;
-  font-size: 0.9rem;
-}
-
 .content-tree-toggle {
   display: flex;
   align-items: center;
@@ -2817,22 +2787,6 @@ select:focus {
 }
 
 /* Phase 61 — share placement preview + warnings. */
-.content-share-extra {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border);
-}
-
-.content-share-placement-path {
-  display: inline-block;
-  margin: var(--space-1) 0;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm, 4px);
-  background: var(--surface-hover, var(--surface));
-  color: var(--fg-muted);
-  font-size: 0.8125rem;
-}
-
 .content-share-warning {
   color: var(--status-warning-fg, var(--fg));
   font-size: 0.875rem;
@@ -3296,24 +3250,6 @@ select:focus {
   align-items: center;
   gap: var(--space-3);
   margin-top: var(--space-3);
-}
-
-.lesson-summary-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 44px;
-  padding: 6px 4px;
-  border: none;
-  background: none;
-  color: var(--fg-muted);
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.lesson-summary-link:hover {
-  color: var(--fg);
-  text-decoration: underline;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4920,12 +4856,6 @@ select:focus {
     width: 100%;
   }
 
-  /* ----- Onboarding header: skip button slides under title ---- */
-  .onboarding-header-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-2);
-  }
   .onboarding-skip-top {
     width: 100%;
     min-height: 44px;
@@ -7179,21 +7109,6 @@ select:focus {
   margin: 0.75rem 0 0;
   font-size: 0.85rem;
   color: var(--fg-muted);
-}
-
-.analysis-cancel-link {
-  margin-top: 0.5rem;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--accent);
-  font-size: 0.9rem;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.analysis-cancel-link:hover {
-  color: var(--accent-hover);
 }
 
 .analysis-error-inline {

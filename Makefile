@@ -26,7 +26,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-one test-watch tdd-help \
        stryker stryker-quick \
        verify-theme verify-theme-baseline-update \
-       check-types check-types-backend check-types-frontend check-file-sizes check-css-size check-complexity check-complexity-gate check-complexity-gate-update \
+       check-types check-types-backend check-types-frontend check-file-sizes check-css-size check-dead-classnames check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -467,6 +467,12 @@ check-file-sizes: ## Cohesion watcher: warn >500, error >1000 lines (ratchet via
 
 check-css-size: ## CSS inflow-stop: global.css may only shrink (ratchet via .css-size-baseline, #1467)
 	bash scripts/check-css-size.sh
+
+check-dead-classnames: ## Usage-side gate: classNames used in TSX but defined nowhere (ratchet via .dead-classnames-baseline, #1491)
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
+	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	@echo ""
+	python3 scripts/check-dead-classnames.py
 
 check-complexity: ## Complexity watcher (warn-only): radon (Python) + eslint complexity (TS)
 	bash scripts/check-complexity.sh
