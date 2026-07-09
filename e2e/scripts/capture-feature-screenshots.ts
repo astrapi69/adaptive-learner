@@ -188,6 +188,17 @@ async function gotoAnswerToggle(
     } else {
         await page.getByTestId("free-text-my-answer").click();
     }
+    // The check click smooth-scrolls the feedback into view and where
+    // that scroll settles varies by 1-2px between runs, shifting the
+    // WHOLE content column against the baseline (#1493). Pin the scroll
+    // deterministically instead: an INSTANT scroll that centers the
+    // toggle (the feature under documentation) — same layout, same
+    // geometry, same pixels on every run.
+    await page.evaluate(() =>
+        document
+            .querySelector('[data-testid="free-text-answer-toggle"]')
+            ?.scrollIntoView({block: "center", behavior: "instant"}),
+    );
     return true;
 }
 
@@ -353,7 +364,25 @@ const FEATURES: FeatureShot[] = [
             return true;
         },
     },
-    {path: "content-hub/entdecken", setup: (p) => gotoContentTab(p, "discover")},
+    // Wait for the LOADED catalogue ("N Sets" count or an explicit empty
+    // state), not just the hub shell — otherwise the shot races the async
+    // index load and sometimes freezes the "Verfügbare Inhalte werden
+    // geladen…" spinner as the baseline (#1493).
+    {
+        path: "content-hub/entdecken",
+        setup: async (p) => {
+            await gotoContentTab(p, "discover");
+            const loaded = p
+                .getByTestId("discover-count")
+                .or(p.getByTestId("discover-empty-none"));
+            try {
+                await loaded.first().waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            return true;
+        },
+    },
     {
         path: "content-hub/meine-inhalte",
         // Wait for the (async) set catalogue, not just the hub shell —
