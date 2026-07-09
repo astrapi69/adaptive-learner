@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.0.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.1.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -476,7 +476,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.0.0**, a schema +
+Active development. The current release is **v2.1.0**, a schema +
 tooling release in which the lesson **JSON-Schema is the
 app-authoritative single source of truth** (schema, quality rules,
 docs, and TS types are generated from the App's Pydantic models, and

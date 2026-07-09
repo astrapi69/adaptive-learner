@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.0.0** (**first public launch release** - a launch
+- **Current state:** **v2.1.0** (**first public launch release** - a launch
   caesura, NOT a breaking change against v1.99.0. Adaptive Learner is an
   offline-first, account-free, BYOK-AI, spaced-repetition learning app you run
   yourself, PWA + MIT. Highlights since v1.99.0: **configurable learning**
