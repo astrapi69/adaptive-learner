@@ -26,6 +26,15 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      # DEP-TS7 (#1507): hold the TypeScript 6 -> 7 major. TS 7 (the native
+      # compiler) is blocked upstream — no typescript-eslint release supports
+      # it yet (peer `typescript >=4.8.4 <6.1.0`), so the ESLint gate crashes.
+      # Minor/patch within TS 6 still flow. Remove this entry when a
+      # TS-7-compatible typescript-eslint ships and the migration is done.
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
 
   - package-ecosystem: "pip"
     directory: "/backend"

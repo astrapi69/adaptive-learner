@@ -365,6 +365,33 @@ above for the release each landed in.
 
 ---
 
+## Blocked / Upstream Wait
+
+Items waiting on an external trigger (npm publish, upstream release,
+paid-API access). NOT P0 even when otherwise valuable.
+
+- **DEP-TS7 — TypeScript 6 → 7 (native compiler).** `typescript@7.0.2`
+  is published and `tsc --noEmit` passes on our code under TS 7, but the
+  ESLint gate crashes: `typescript-eslint`'s `typescript-estree` reads a
+  `typescript` internal (`ScriptKind.Cjs`) that TS 7's rewritten native
+  compiler no longer exposes
+  (`TypeError: Cannot read properties of undefined (reading 'Cjs')`).
+  **No released `typescript-eslint` supports TS 7** — `latest` (8.63.0),
+  `canary` (8.63.1-alpha.8) and `@typescript-eslint/parser` all peer-cap
+  `typescript` at `>=4.8.4 <6.1.0`; there is no v9 / `next` tag. Forcing
+  it would mean disabling type-aware ESLint (the `--max-warnings 0` gate
+  exists to prevent exactly that) — not acceptable.
+  **Trigger:** a `typescript-eslint` release whose `typescript` peer
+  allows `>=7.0`. Re-check with
+  `npm view typescript-eslint@latest peerDependencies` +
+  `npm view typescript-eslint dist-tags`. Then bump `typescript` +
+  `typescript-eslint` in lockstep in a dedicated migration PR (tsc +
+  eslint + full Vitest; expect the usual TS-major `lib` / `@types/node`
+  cascade). Tracked: issue #1507; supersedes the closed Dependabot bump
+  #1503. (Verified 2026-07-09.)
+
+---
+
 ## Open backlog
 
 See [backlog.md](backlog.md) for the granular daily-planning view.
