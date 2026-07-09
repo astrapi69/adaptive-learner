@@ -9,7 +9,27 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.1.0** (**first public launch release** - a launch
+- **Current state:** **v2.1.0** (**polish release** on top of the v2.0.0
+  public launch, NO schema/API/data-model change against v2.0.0. Highlights:
+  **removing a content repo no longer leaves ghost progress** - only loadable
+  content is surfaced (Dashboard/review/paused filtered by an availability
+  oracle), the orphaned progress is hidden not deleted, and removal offers an
+  opt-in delete #1446; the **Settings page split into per-tab panels** #1448
+  and reordered around a clear causal sequence (Data #1452, Learning #1462,
+  Install moved to General #1456), plus a card-container fix for two sections
+  #1466; **Learning Path** fixes - the set filter is wired + the progress
+  metric fixed + defaults to Personal #1454, search-icon overlap + empty-path
+  add-lesson #1463; a **discoverable greyed "Ask AI" button** with a BYOK hint
+  #1444; **content-sync robustness** - add-repo validation reads public repos
+  over raw URLs (never the throttled contents API / shared PAT) #1440 and a
+  transient re-validation blip no longer marks a synced repo Unverified #1442;
+  a **hardened UI-language fallback** (navigator.language, no silent loss)
+  #1464; and **WCAG-AA-contrast status toasts** #1474. Also: refactor-candidates
+  audit #1449, global.css growth guard #1468, and a dexie-smoke +
+  manual-automation release-gate stabilisation sweep (#1469-#1474) after several
+  PRs merged without the nightly/release-only gates. See
+  changelog/releases/v2.1.0.md.)
+  Prior **v2.0.0** = (**first public launch release** - a launch
   caesura, NOT a breaking change against v1.99.0. Adaptive Learner is an
   offline-first, account-free, BYOK-AI, spaced-repetition learning app you run
   yourself, PWA + MIT. Highlights since v1.99.0: **configurable learning**
