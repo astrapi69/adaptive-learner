@@ -41,11 +41,11 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
-| Dashboard Tabs — Übersicht | `dashboard-tabs/uebersicht.png` | `dashboard-tabs/uebersicht.mobile.png` | v1.94.1 |
-| Dashboard Tabs — Aktivität | `dashboard-tabs/aktivitaet.png` | `dashboard-tabs/aktivitaet.mobile.png` | v1.94.1 |
-| Dashboard Tabs — Missionen | `dashboard-tabs/missionen.png` | `dashboard-tabs/missionen.mobile.png` | v1.94.1 |
-| Dashboard — KI-Einladung ohne Schlüssel (#1417) | `dashboard-tabs/ki-einladung.png` | `dashboard-tabs/ki-einladung.mobile.png` | ausstehend (`make capture-screenshots`) |
-| Content Hub — Entdecken | `content-hub/entdecken.png` | `content-hub/entdecken.mobile.png` | v1.94.1 |
+| Dashboard Tabs — Übersicht | `dashboard-tabs/uebersicht.png` | `dashboard-tabs/uebersicht.mobile.png` | v2.1.0 |
+| Dashboard Tabs — Aktivität | `dashboard-tabs/aktivitaet.png` | `dashboard-tabs/aktivitaet.mobile.png` | v2.1.0 |
+| Dashboard Tabs — Missionen | `dashboard-tabs/missionen.png` | `dashboard-tabs/missionen.mobile.png` | v2.1.0 |
+| Dashboard — KI-Einladung ohne Schlüssel (#1417) | `dashboard-tabs/ki-einladung.png` | `dashboard-tabs/ki-einladung.mobile.png` | v2.1.0 |
+| Content Hub — Entdecken | `content-hub/entdecken.png` | `content-hub/entdecken.mobile.png` | v2.1.0 |
 | Content Hub — Meine Inhalte | `content-hub/meine-inhalte.png` | `content-hub/meine-inhalte.mobile.png` | v1.99.0 |
 | Content Hub — Meine Inhalte, Status-Filter offen (#1386) | `content-hub/meine-inhalte-filter-open.png` | `content-hub/meine-inhalte-filter-open.mobile.png` | v1.99.0 |
 | Content Hub — Meine Inhalte, Liste mit Langtitel (#1392) | `content-hub/meine-inhalte-liste-langtitel.png` | `content-hub/meine-inhalte-liste-langtitel.mobile.png` | v1.99.0 |
@@ -53,16 +53,16 @@ Baseline zu committen.
 | Progress Hub — Übersicht | `progress-hub/uebersicht.png` | `progress-hub/uebersicht.mobile.png` | v1.94.1 |
 | Progress Hub — Statistik | `progress-hub/statistik.png` | `progress-hub/statistik.mobile.png` | v1.94.1 |
 | Progress Hub — Meine Pfade | `progress-hub/meine-pfade.png` | `progress-hub/meine-pfade.mobile.png` | v1.94.1 |
-| Matching — Paarung (+ Landscape `matching-pairing.landscape.png`, #1410) | `matching-animation/matching-pairing.png` | `matching-animation/matching-pairing.mobile.png` | v1.94.1 |
-| Matching — Auflösung | `matching-animation/matching-resolved.png` | `matching-animation/matching-resolved.mobile.png` | v1.94.1 |
-| Lektions-Modi — Übung | `lesson-modes/practice.png` | `lesson-modes/practice.mobile.png` | v1.94.1 |
-| Lektions-Modi — Prüfung | `lesson-modes/exam.png` | `lesson-modes/exam.mobile.png` | v1.94.1 |
-| Lektions-Modi — Zeit | `lesson-modes/timed.png` | `lesson-modes/timed.mobile.png` | v1.94.1 |
-| Antwort-Umschalter — Meine Antwort | `answer-toggle/meine-antwort.png` | `answer-toggle/meine-antwort.mobile.png` | v1.94.1 |
-| Antwort-Umschalter — Auflösung | `answer-toggle/aufloesung.png` | `answer-toggle/aufloesung.mobile.png` | v1.94.1 |
+| Matching — Paarung (+ Landscape `matching-pairing.landscape.png`, #1410) | `matching-animation/matching-pairing.png` | `matching-animation/matching-pairing.mobile.png` | v2.1.0 |
+| Matching — Auflösung | `matching-animation/matching-resolved.png` | `matching-animation/matching-resolved.mobile.png` | v2.1.0 |
+| Lektions-Modi — Übung | `lesson-modes/practice.png` | `lesson-modes/practice.mobile.png` | v2.1.0 |
+| Lektions-Modi — Prüfung | `lesson-modes/exam.png` | `lesson-modes/exam.mobile.png` | v2.1.0 |
+| Lektions-Modi — Zeit | `lesson-modes/timed.png` | `lesson-modes/timed.mobile.png` | v2.1.0 |
+| Antwort-Umschalter — Meine Antwort | `answer-toggle/meine-antwort.png` | `answer-toggle/meine-antwort.mobile.png` | v2.1.0 |
+| Antwort-Umschalter — Auflösung | `answer-toggle/aufloesung.png` | `answer-toggle/aufloesung.mobile.png` | v2.1.0 |
 | GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 |
 | QR-Code — App teilen | `qr-code/share-app.png` | — (Desktop-Dialog) | v1.94.1 |
-| Zusammenfassungs-Sektionen — Settings-Unterbereich (#1411) | `summary-sections/settings.png` | `summary-sections/settings.mobile.png` | ausstehend |
+| Zusammenfassungs-Sektionen — Settings-Unterbereich (#1411) | `summary-sections/settings.png` | `summary-sections/settings.mobile.png` | v2.1.0 |
 | Fehlerbericht — Dialog (#1480) | `error-report/dialog.png` | `error-report/dialog.mobile.png` | v2.1.0 |
 | Fehlerbericht — Aktionsverlauf geöffnet (#1480) | `error-report/verlauf.png` | `error-report/verlauf.mobile.png` | v2.1.0 |
 | Fehlerbericht — Vollvorschau (#1480) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | v2.1.0 |
