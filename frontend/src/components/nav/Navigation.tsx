@@ -28,7 +28,7 @@ import { isDarkTheme } from "../../lib/theme/themes";
  * The media conditions under which the top bar collapses behind the
  * hamburger drawer (#1390). Mirrors the two global.css blocks that style the
  * drawer: the mobile breakpoint (``max-width: 768px`` — the established
- * top-bar pattern; the BottomTabBar's ``md`` boundary) and the
+ * top-bar collapse boundary) and the
  * short-landscape phone case. Lesson-compact mode ORs in separately via
  * ``useIsLessonActive`` (any width). Keep in sync with global.css.
  */

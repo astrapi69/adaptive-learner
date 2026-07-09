@@ -1,5 +1,3 @@
-export * from "./BottomTabBar";
-export { default as BottomTabBar } from "./BottomTabBar";
 export * from "./NavAvatar";
 export { default as NavAvatar } from "./NavAvatar";
 export * from "./NavGroup";

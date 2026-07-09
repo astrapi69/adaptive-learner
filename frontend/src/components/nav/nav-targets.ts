@@ -3,8 +3,7 @@
  *
  * ONE typed list of primary destinations (route, label key, icon, group)
  * drives EVERY renderer of the primary navigation — the desktop top bar and
- * the mobile hamburger drawer ({@link ../nav/Navigation}) as well as the
- * icon lookups of the mobile {@link ../nav/BottomTabBar} — so the surfaces
+ * the mobile hamburger drawer ({@link ../nav/Navigation}) — so the surfaces
  * can never drift (same pattern as ``lib/settings/sidebar-model.ts`` for the
  * Settings section nav). A parity test derives both nav variants from this
  * constant and breaks on divergence.
