@@ -432,22 +432,22 @@ export default function ContentPage() {
           (ImportActionsPanel). EXP-026 folded user lessons stay in the
           downloaded-set tree below. */}
 
-      {/* Phase 64D — My Contributions (local sharing history). */}
+      {/* Phase 64D — My Contributions (local sharing history) + #1494 the
+          "Missing Lessons" gap-suggestion block, rendered in context with
+          the downloaded sets the gaps are derived from (the dedicated
+          /contribute page + nav entry were dropped; /contribute now
+          redirects here). ContentGapsSection renders nothing when there are
+          no gaps, so no empty-state shows. Both share the one
+          !searchResult.active guard. */}
       {!searchResult.active && (
-        <ContentContributionsSection contributions={contributions} />
-      )}
-
-      {/* #1494 — the "Missing Lessons" gap-suggestion block lives here, in
-          context with the downloaded sets the gaps are derived from (the
-          dedicated /contribute page + nav entry were dropped; /contribute
-          now redirects here). Renders nothing when there are no gaps, so
-          there is no empty-state to show. */}
-      {!searchResult.active && (
-        <ContentGapsSection
-          downloadedSets={downloadedSets}
-          lang={lang}
-          communityRepo={COMMUNITY_REPO}
-        />
+        <>
+          <ContentContributionsSection contributions={contributions} />
+          <ContentGapsSection
+            downloadedSets={downloadedSets}
+            lang={lang}
+            communityRepo={COMMUNITY_REPO}
+          />
+        </>
       )}
 
       {searchResult.active ? (
