@@ -211,11 +211,15 @@ export default function GeneralPanel({
   };
 
   return (
-    <>
+    <div
+      className="settings-tabpanel"
+      role="tabpanel"
+      hidden={!active}
+      data-testid="settings-panel-general"
+    >
       <section
         className="settings-section"
         data-testid="settings-section-profile"
-        hidden={!active}
       >
         <h2 className="settings-section-title">{t("settings.section_profile", "Profile")}</h2>
         <div className="form-row" data-testid="settings-username-row">
@@ -296,7 +300,6 @@ export default function GeneralPanel({
       <section
         className="settings-section"
         data-testid="settings-section-appearance"
-        hidden={!active}
       >
         <h2 className="settings-section-title">{t("settings.section_appearance", "Appearance")}</h2>
         <ThemePicker />
@@ -305,12 +308,12 @@ export default function GeneralPanel({
         <ContentViewControl />
       </section>
 
-      <div hidden={!active}>
+      <div>
         {/* #1378 — configurable order of the Content-area tabs. */}
         <ContentTabsOrderControl />
       </div>
 
-      <section className="settings-section" hidden={!active}>
+      <section className="settings-section">
         <h2 className="settings-section-title">{t("settings.section_language", "Language")}</h2>
         <div className="form-row">
           <span className="form-label" id="settings-language-label">
@@ -338,7 +341,6 @@ export default function GeneralPanel({
       <section
         className="settings-section"
         data-testid="settings-section-ui"
-        hidden={!active}
       >
         <h2 className="settings-section-title">{t("settings.section_ui", "Interface")}</h2>
         <label className="form-row form-row-toggle">
@@ -385,7 +387,7 @@ export default function GeneralPanel({
         // Hidden on a Dexie-only build (GH Pages / installed PWA): there is no
         // backend, so the Server option does not exist and the mode is forced
         // to Dexie (#907).
-        hidden={!active || isDexieOnlyBuild()}
+        hidden={isDexieOnlyBuild()}
       >
         <h2 className="settings-section-title">
           {t("settings.section_storage_mode", "Storage mode")}
@@ -454,7 +456,7 @@ export default function GeneralPanel({
       {/* #840 — desktop/API-mode update preferences. Hidden in Dexie/PWA
           mode (that path uses the service worker, no GitHub check). */}
       {currentMode === "api" && (
-        <div hidden={!active}>
+        <div>
           <UpdatesSettingsSection />
         </div>
       )}
@@ -464,13 +466,13 @@ export default function GeneralPanel({
           belongs with the app-wide options here, not in the Data tab
           (which governs WHAT the app stores). Part of the PWA cluster:
           storage mode -> updates -> install -> mode indicator. */}
-      <div hidden={!active}>
+      <div>
         <InstallAppSection />
       </div>
 
-      <div hidden={!active}>
+      <div>
         <ModeIndicator />
       </div>
-    </>
+    </div>
   );
 }
