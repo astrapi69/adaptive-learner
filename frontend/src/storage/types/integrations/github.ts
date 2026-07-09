@@ -4,6 +4,8 @@
  * Split out of the former ``storage/types.ts`` god-file (#354).
  */
 
+import type { RegistryEntry } from "../../../lib/content/repos/registry-submission";
+
 
 export interface GitHubTokenStatus {
   configured: boolean;
@@ -71,6 +73,33 @@ export interface IGitHubNamespace {
    *  (#1017): ensure the repo exists, then push all files in one commit.
    *  Throws ``ApiError`` on any GitHub failure. */
   exportSetToRepo(args: ExportSetToRepoArgs): Promise<ExportSetToRepoResult>;
+  /** Propose a content repo for the federated search by opening a PR that
+   *  adds its entry to the official registry (``recommended-repos.json``).
+   *  Browser (Dexie) mode only for now; API mode throws a friendly 501.
+   *  Throws ``ApiError`` on any GitHub failure. */
+  createRegistryPr(
+    args: CreateRegistryPrArgs,
+  ): Promise<CreateRegistryPrResult>;
+}
+
+export interface CreateRegistryPrArgs {
+  /** ``owner/repo`` of the official content repo hosting the registry. */
+  upstream: string;
+  /** Base branch to fork from + target with the PR (usually ``main``). */
+  baseBranch: string;
+  /** Unique branch name to create on the fork. */
+  branchName: string;
+  /** The registry file to edit, e.g. ``recommended-repos.json``. */
+  registryFile: string;
+  /** The registry entry to add / update. */
+  entry: RegistryEntry;
+  prTitle: string;
+  prBody: string;
+}
+
+export interface CreateRegistryPrResult {
+  url: string;
+  number: number;
 }
 
 export interface ExportSetToRepoArgs {

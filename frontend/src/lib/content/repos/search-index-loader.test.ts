@@ -110,6 +110,42 @@ describe("parseSearchIndex", () => {
     );
     expect(sets[0].book).toEqual({ title: "Clean Code", author: "Martin" });
   });
+
+  it("applies the registry trust floor as a minimum (governance ranking)", () => {
+    // A repo the registry marks trust 2, whose set omits its own trust_level.
+    const sets = parseSearchIndex({ sets: [{ id: "x" }] }, "a/b", "a/b", 2);
+    expect(sets[0].trust_level).toBe(2);
+    // A set that already ranks higher keeps its own trust.
+    const higher = parseSearchIndex(
+      { sets: [{ id: "y", trust_level: 3 }] },
+      "a/b",
+      "a/b",
+      2,
+    );
+    expect(higher[0].trust_level).toBe(3);
+  });
+});
+
+describe("fetchSearchIndex — pinned ref + trust floor", () => {
+  it("reads the index at the pinned commit ref, not the branch", async () => {
+    const commit = "a".repeat(40);
+    const fetchMock = vi.fn().mockResolvedValue(jsonRes(200, SAMPLE_INDEX));
+    vi.stubGlobal("fetch", fetchMock);
+    await fetchSearchIndex({ url: "jane/content", branch: "main", ref: commit });
+    const calledUrl = fetchMock.mock.calls[0][0] as string;
+    expect(calledUrl).toBe(
+      `https://raw.githubusercontent.com/jane/content/${commit}/search-index.json`,
+    );
+  });
+
+  it("floors every fetched set's trust at the repo's registry trustLevel", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonRes(200, { sets: [{ id: "x" }] }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const sets = await fetchSearchIndex({ url: "jane/content", trustLevel: 2 });
+    expect(sets[0].trust_level).toBe(2);
+  });
 });
 
 describe("fetchSearchIndex — caching", () => {

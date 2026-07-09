@@ -3228,3 +3228,40 @@ migration:
   settings:
     title: "Importer depuis la version en ligne"
     body: "Tu as utilisé Adaptive Learner en ligne ? Crées-y une sauvegarde, puis utilise Importer ci-dessus pour récupérer tes données."
+
+registry:
+  title: "Register your repository"
+  intro: "Propose your own content repository for the cross-repo search. This prepares a pull request against the official content directory; a maintainer reviews and merges it after CI validates your pinned commit."
+  copied: "Entry copied to the clipboard."
+  copy_failed: "Could not copy - select the text manually."
+  error:
+    invalid_url: "Enter a valid GitHub repository URL (e.g. owner/repo)."
+    no_title: "Add a short title for your repository."
+    no_commit: "Could not resolve the latest commit - check the repository URL and branch."
+    prepare_failed: "Could not prepare the submission."
+  field:
+    pick: "Pick a connected repository"
+    pick_placeholder: "- choose or enter below -"
+    url: "GitHub repository URL"
+    branch: "Branch"
+    title: "Title"
+    title_ph: "Your set collection"
+    description: "Description (optional)"
+    description_ph: "One line about what's inside"
+  action:
+    prepare: "Prepare submission"
+    copy: "Copy entry"
+    copied: "Copied"
+    propose: "Open the directory to propose"
+    create_pr: "Create pull request"
+  result:
+    title: "Your registry entry"
+    reason: "Local check: {reason}"
+    instructions: "Add this entry to the {file} array of the official content directory:"
+  status:
+    validated: "Validated locally"
+    pending: "Pending - CI will validate"
+  pr:
+    created: "Pull request opened."
+    failed: "Could not open the pull request."
+    view: "View your pull request"

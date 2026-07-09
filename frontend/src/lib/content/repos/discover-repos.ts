@@ -13,7 +13,12 @@
  */
 
 import { OFFICIAL_SOURCE, readUserRepos } from "./content-repos";
-import { fetchRecommendedRepos, recommendedSource } from "./recommended-repos";
+import {
+  fetchRecommendedRepos,
+  isValidatedForSearch,
+  recommendedRef,
+  recommendedSource,
+} from "./recommended-repos";
 import { resolveRepoToken } from "./repo-token";
 import type { SearchIndexRepo } from "./search-index-loader";
 
@@ -21,23 +26,38 @@ import type { SearchIndexRepo } from "./search-index-loader";
  * Build the de-duplicated {@link SearchIndexRepo}[] for discovery. Never
  * throws — a failed recommended-repos fetch or user-repo read degrades to
  * whatever resolved (at minimum the official repo).
+ *
+ * Registry (``recommended-repos.json``) entries are honoured per the
+ * federated-search contract: only a repo whose snapshot is validated
+ * ({@link isValidatedForSearch}) is searched, and every EXTERNAL repo is read
+ * at its pinned ``commit`` — never the moving branch HEAD (the official
+ * ``self`` entry stays branch-tracked). The registry ``trust_level`` seeds the
+ * repo's ranking floor.
  */
 export async function collectDiscoveryRepos(): Promise<SearchIndexRepo[]> {
   const repos: SearchIndexRepo[] = [
-    { url: OFFICIAL_SOURCE, branch: "main", name: OFFICIAL_SOURCE },
+    { url: OFFICIAL_SOURCE, branch: "main", name: OFFICIAL_SOURCE, trustLevel: 3 },
   ];
   const seen = new Set<string>([OFFICIAL_SOURCE]);
 
   const recommended = await fetchRecommendedRepos().catch(() => []);
   for (const rec of recommended) {
+    // Only a validated snapshot is federated; a pending/rejected/pre-governance
+    // entry is skipped (it may still be listed as "recommended to add").
+    if (!isValidatedForSearch(rec)) continue;
     const source = recommendedSource(rec);
     if (!source || seen.has(source)) continue;
+    // An external (non-self) entry MUST pin a commit — the search never serves
+    // an unpinned external snapshot.
+    if (!rec.self && !rec.commit) continue;
     seen.add(source);
     repos.push({
       url: rec.url,
       branch: rec.branch || "main",
+      ref: recommendedRef(rec),
       name: rec.title || source,
       token: resolveRepoToken(source),
+      trustLevel: rec.trust_level,
     });
   }
 

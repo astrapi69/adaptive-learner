@@ -3543,5 +3543,48 @@
       "title": "온라인 버전에서 가져오기",
       "body": "Adaptive Learner를 온라인에서 사용하셨나요? 거기서 백업을 만든 다음 위의 가져오기로 데이터를 옮기세요."
     }
+  },
+  "registry": {
+    "title": "Register your repository",
+    "intro": "Propose your own content repository for the cross-repo search. This prepares a pull request against the official content directory; a maintainer reviews and merges it after CI validates your pinned commit.",
+    "copied": "Entry copied to the clipboard.",
+    "copy_failed": "Could not copy - select the text manually.",
+    "error": {
+      "invalid_url": "Enter a valid GitHub repository URL (e.g. owner/repo).",
+      "no_title": "Add a short title for your repository.",
+      "no_commit": "Could not resolve the latest commit - check the repository URL and branch.",
+      "prepare_failed": "Could not prepare the submission."
+    },
+    "field": {
+      "pick": "Pick a connected repository",
+      "pick_placeholder": "- choose or enter below -",
+      "url": "GitHub repository URL",
+      "branch": "Branch",
+      "title": "Title",
+      "title_ph": "Your set collection",
+      "description": "Description (optional)",
+      "description_ph": "One line about what's inside"
+    },
+    "action": {
+      "prepare": "Prepare submission",
+      "copy": "Copy entry",
+      "copied": "Copied",
+      "propose": "Open the directory to propose",
+      "create_pr": "Create pull request"
+    },
+    "result": {
+      "title": "Your registry entry",
+      "reason": "Local check: {reason}",
+      "instructions": "Add this entry to the {file} array of the official content directory:"
+    },
+    "status": {
+      "validated": "Validated locally",
+      "pending": "Pending - CI will validate"
+    },
+    "pr": {
+      "created": "Pull request opened.",
+      "failed": "Could not open the pull request.",
+      "view": "View your pull request"
+    }
   }
 }

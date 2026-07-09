@@ -626,6 +626,14 @@ export const dexieStorage: IStorageService = {
         repoUrl: `https://github.com/${args.ownerRepo}`,
       };
     },
+    createRegistryPr: async (args) => {
+      const token = readGitHubToken().trim();
+      if (!token) {
+        throw new ApiError(401, "No GitHub token configured.");
+      }
+      const { GitHubApi } = await import("../lib/github/github-api");
+      return new GitHubApi(token).createRegistryPr(args);
+    },
   },
 
   // Phase 41F Danger Zone: typed-confirm reset for Dexie mode.

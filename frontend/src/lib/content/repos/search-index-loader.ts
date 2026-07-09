@@ -78,17 +78,28 @@ export interface SearchIndexRepo {
   url: string;
   /** Branch to read from. Defaults to ``main``. */
   branch?: string;
+  /** Exact git ref (a pinned commit SHA) to read the index at, overriding
+   *  ``branch``. The federated registry pins every EXTERNAL repo to its
+   *  validated commit; the branch-tracked official repo omits it. */
+  ref?: string;
   /** Optional display name for {@link SearchableSet.repo_name}. */
   name?: string;
   /** Optional read token for a private / coach repo (empty = public). */
   token?: string;
+  /** Registry-declared repo trust level (1 community .. 3 official) used as a
+   *  FLOOR for the trust of every set in this repo, so the governance trust
+   *  drives ranking even when a set's own index omits it. */
+  trustLevel?: number;
 }
 
 interface ResolvedRepo {
   source: string;
-  branch: string;
+  /** The ref the index is read at (pinned commit, else branch). */
+  ref: string;
   name: string;
   token: string;
+  /** Minimum trust applied to every set from this repo. */
+  trustFloor: number;
 }
 
 interface CachedIndex {
@@ -127,6 +138,7 @@ function normalizeSet(
   raw: Record<string, unknown>,
   repoSource: string,
   repoName: string,
+  trustFloor: number,
 ): SearchableSet | null {
   const id = asString(raw.id);
   if (!id) return null;
@@ -142,7 +154,9 @@ function normalizeSet(
     card_count: asNumber(raw.card_count),
     tags: asStringArray(raw.tags),
     ai_validated: raw.ai_validated === true,
-    trust_level: asNumber(raw.trust_level),
+    // The registry's repo-level trust is a floor: a set never ranks below
+    // the governance trust of the repo it came from.
+    trust_level: Math.max(asNumber(raw.trust_level), trustFloor),
     book: asBook(raw.book),
     updated_at: typeof raw.updated_at === "string" ? raw.updated_at : null,
     repo_url: repoSource,
@@ -153,18 +167,20 @@ function normalizeSet(
 /**
  * Parse a ``search-index.json`` payload into validated {@link SearchableSet}s.
  * Pure + never throws: a non-array ``sets`` field resolves to ``[]`` and any
- * entry without a string ``id`` is dropped.
+ * entry without a string ``id`` is dropped. ``trustFloor`` (default 0) is the
+ * registry-declared repo trust applied as a minimum to every set.
  */
 export function parseSearchIndex(
   data: unknown,
   repoSource: string,
   repoName: string,
+  trustFloor = 0,
 ): SearchableSet[] {
   const sets = (data as { sets?: unknown } | null | undefined)?.sets;
   if (!Array.isArray(sets)) return [];
   return sets
     .filter((s): s is Record<string, unknown> => !!s && typeof s === "object")
-    .map((s) => normalizeSet(s, repoSource, repoName))
+    .map((s) => normalizeSet(s, repoSource, repoName, trustFloor))
     .filter((s): s is SearchableSet => s !== null);
 }
 
@@ -174,9 +190,13 @@ function resolveRepo(repo: SearchIndexRepo): ResolvedRepo | null {
   const source = `${parsed.owner}/${parsed.repo}`;
   return {
     source,
-    branch: repo.branch || "main",
+    // A pinned commit (``ref``) wins over the branch so the federated search
+    // always reads the exact validated snapshot; the official repo omits it
+    // and stays branch-tracked.
+    ref: repo.ref || repo.branch || "main",
     name: repo.name || source,
     token: repo.token || "",
+    trustFloor: repo.trustLevel ?? 0,
   };
 }
 
@@ -238,7 +258,7 @@ export async function fetchSearchIndexFromNetwork(
   if (!resolved) return [];
   const { url, init } = buildFileRequest(
     resolved.source,
-    resolved.branch,
+    resolved.ref,
     SEARCH_INDEX_FILE,
     resolved.token,
   );
@@ -247,7 +267,7 @@ export async function fetchSearchIndexFromNetwork(
     throw new Error(`search-index.json HTTP ${response.status} for ${resolved.source}`);
   }
   const data = await response.json();
-  return parseSearchIndex(data, resolved.source, resolved.name);
+  return parseSearchIndex(data, resolved.source, resolved.name, resolved.trustFloor);
 }
 
 /** Options for {@link fetchSearchIndex} / {@link fetchAllIndices}. */
