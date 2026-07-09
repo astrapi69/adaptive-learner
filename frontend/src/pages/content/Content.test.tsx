@@ -564,10 +564,28 @@ describe("Content — My Lessons (Phase 59C)", () => {
     localStorage.clear();
   });
 
-  it("no longer renders the 'Missing Lessons' gap block (#1149 — moved to /contribute)", async () => {
-    // A published de->fr A1 set with no A2 would be a next-level gap, but
-    // the gap block now lives in the dedicated /contribute area, not here.
+  it("renders the 'Missing Lessons' gap block when there are gaps (#1494 — moved back from /contribute)", async () => {
+    // A published de->fr A1 set with no A2 is a next-level gap. The gap
+    // block now lives here again, in context with the downloaded sets.
     listSetsMock.mockResolvedValue({ sets: [SAMPLE_ENTRY], sources: [] });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(await screen.findByTestId("content-gaps")).toBeInTheDocument();
+    expect(screen.getByTestId("content-gaps-list")).toBeInTheDocument();
+  });
+
+  it("renders no gap block when there are no gaps (#1494 — no empty state)", async () => {
+    // A full A1..C2 ladder for the one pair leaves no next-level gap and,
+    // with a single source, no missing-pair gap. The section renders
+    // nothing (no empty-state sentence).
+    const ladder = ["A1", "A2", "B1", "B2", "C1", "C2"].map((level, i) => ({
+      ...SAMPLE_ENTRY,
+      id: `language-fr-${level.toLowerCase()}`,
+      level,
+      // Distinct cache keys so the sets are treated as separate rows.
+      version: `1.0.${i}`,
+    }));
+    listSetsMock.mockResolvedValue({ sets: ladder, sources: [] });
     renderPage();
     await screen.findByTestId("content-page");
     expect(screen.queryByTestId("content-gaps")).not.toBeInTheDocument();

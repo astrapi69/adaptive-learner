@@ -97,7 +97,6 @@
     "online": "En ligne",
     "offline": "Hors ligne",
     "anki": "Anki",
-    "contribute": "Contribuer",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactive-le dans les Paramètres.",
     "content": "Mon contenu",
@@ -2574,12 +2573,6 @@
       "show_name": "Afficher le nom dans la leçon",
       "privacy": "Ton nom sera affiché dans la leçon et dans la pull request."
     }
-  },
-  "contribute": {
-    "title": "Contribuer",
-    "intro": "Aide à enrichir la bibliothèque communautaire en comblant ses lacunes.",
-    "loading": "Chargement…",
-    "empty": "Aucune lacune pour l'instant — la bibliothèque communautaire couvre tes ensembles téléchargés. Merci !"
   },
   "milestone": {
     "streak": "Série de {n} jours !",

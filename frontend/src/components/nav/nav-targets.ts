@@ -11,15 +11,16 @@
  *
  * History of the entry set: EXP-037 (#850) reduced the bar to grouped-order
  * entries; #856 merged "My content" + "Discover" into one Content entry;
- * #1129 re-added Session; #1149 added Contribute. Removed from the bar but
- * reachable elsewhere: Curriculum + Statistics (tabs in /progress), Import
- * (tab in /content), Anki (action on /content).
+ * #1129 re-added Session; #1149 added Contribute, #1494 dropped it again
+ * (the gap-suggestion section moved into /content, /contribute redirects
+ * there). Removed from the bar but reachable elsewhere: Curriculum +
+ * Statistics (tabs in /progress), Import (tab in /content), Anki (action on
+ * /content).
  */
 
 import {
   BarChart3,
   BookOpen,
-  FilePlus,
   HelpCircle,
   Home,
   Map as MapIcon,
@@ -110,14 +111,6 @@ export const NAV_TARGETS: readonly NavTarget[] = [
     icon: BookOpen,
     group: "content",
     testId: "nav-content",
-  },
-  {
-    to: "/contribute",
-    labelKey: "nav.contribute",
-    labelFallback: "Contribute",
-    icon: FilePlus,
-    group: "content",
-    testId: "nav-contribute",
   },
   {
     to: "/progress",
