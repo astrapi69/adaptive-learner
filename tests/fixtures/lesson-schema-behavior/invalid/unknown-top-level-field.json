@@ -1,0 +1,8 @@
+{
+  "id": "12-invalid-extra-field",
+  "title": "Invalid fixture: unknown top-level field",
+  "unexpected_field": "additionalProperties is false / extra='forbid'",
+  "steps": [
+    {"id": "step-01-theory", "type": "theory", "body": "Carries a field the schema forbids."}
+  ]
+}
