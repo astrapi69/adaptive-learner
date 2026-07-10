@@ -1,14 +1,14 @@
-"""App-vs-engine schema parity gate (mirror decoupling).
+"""App-vs-engine schema parity gate (engine = reference, #1517).
 
-The content repos no longer mirror ``schema/`` from this app — they
-mirror the ``learn-content-engine`` npm release, pinned to
-``schema/engine-version.txt``. This app therefore syncs its generated
-schema ONLY to the engine (the engine's documented schema-sync
-procedure), and this test closes the chain: the app-generated
-``schema/lesson.schema.json`` + ``schema/content-manifest.schema.json``
-must equal the schema bundled in the PINNED engine release, or the gate
-goes red — the visible signal that an app schema bump needs its engine
-follow-up (engine sync + release + pin bump here).
+The ``learn-content-engine`` npm package is the CANONICAL home of the
+lesson schema; this app generates conforming artefacts from its Pydantic
+models, and the content repos mirror the ENGINE release, pinned to
+``schema/engine-version.txt``. This test proves the app conforms: the
+app-generated ``schema/lesson.schema.json`` +
+``schema/content-manifest.schema.json`` must equal the schema bundled in
+the PINNED engine release, or the gate goes red — the visible signal
+that the Pydantic models moved without the engine-first procedure
+(engine PR + release first, then pin bump + ``make sync-schema`` here).
 
 Like the content repos' drift gate, the comparison target is the npm
 tarball of the pinned version (immutable, exactly what consumers
@@ -40,7 +40,9 @@ LESSON_BYTES = json.dumps({"title": "Lesson", "x-schema-version": "9.9"}).encode
 MANIFEST_BYTES = json.dumps({"title": "ContentManifest"}).encode()
 
 
-def make_tarball(path: Path, lesson: bytes = LESSON_BYTES, manifest: bytes = MANIFEST_BYTES) -> Path:
+def make_tarball(
+    path: Path, lesson: bytes = LESSON_BYTES, manifest: bytes = MANIFEST_BYTES
+) -> Path:
     """Write an npm-layout engine tarball (package/schema/*.json)."""
     with tarfile.open(path, "w:gz") as tar:
         for member, payload in (
@@ -53,7 +55,9 @@ def make_tarball(path: Path, lesson: bytes = LESSON_BYTES, manifest: bytes = MAN
     return path
 
 
-def write_app_schema(root: Path, lesson: bytes = LESSON_BYTES, manifest: bytes = MANIFEST_BYTES) -> None:
+def write_app_schema(
+    root: Path, lesson: bytes = LESSON_BYTES, manifest: bytes = MANIFEST_BYTES
+) -> None:
     (root / "schema").mkdir(parents=True)
     (root / "schema" / "lesson.schema.json").write_bytes(lesson)
     (root / "schema" / "content-manifest.schema.json").write_bytes(manifest)
@@ -67,8 +71,7 @@ def test_pin_file_exists_and_is_semver() -> None:
 
 def test_pin_resolves_to_registry_tarball_url() -> None:
     assert parity.tarball_url("0.3.1") == (
-        "https://registry.npmjs.org/learn-content-engine/-/"
-        "learn-content-engine-0.3.1.tgz"
+        "https://registry.npmjs.org/learn-content-engine/-/learn-content-engine-0.3.1.tgz"
     )
 
 

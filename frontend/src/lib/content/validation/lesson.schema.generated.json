@@ -906,7 +906,7 @@
       "type": "string"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/lesson.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/lesson.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "One lesson in a content set (Phase 43 / 2B-lesson).\n\nA lesson is the unit a user works through end-to-end \u2014\ntypically 5-15 minutes of content. The viewer (Phase 44)\nwalks the steps in order; SRS (Phase 46) tracks the\ncards referenced by each exercise.\n\nReferential integrity: every ``card_id`` referenced by\nany exercise step MUST exist in the lesson's ``cards``\nlist. Enforced by the model validator so the viewer can\ntrust the references later.",

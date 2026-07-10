@@ -405,7 +405,7 @@
       "type": "string"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/lesson-step.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/lesson-step.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "One step in the lesson sequence.\n\nTheory steps carry a Markdown body. Exercise steps carry\na fully-validated ``Exercise``. The viewer renders these\nin order; ``id`` lets deep-linking land on a specific\nstep.",

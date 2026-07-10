@@ -1,15 +1,18 @@
 /**
- * Structural lesson-shape validation via ajv against the App-authoritative
- * JSON-Schema (EXP-039 / #1205).
+ * Structural lesson-shape validation via ajv against the lesson
+ * JSON-Schema (EXP-039 / #1205; canonical schema home in
+ * learn-content-engine since #1517).
  *
  * The shape (fields, types, closed enums, length/range bounds,
  * ``additionalProperties: false``) is validated against
- * ``schema/lesson.schema.json`` — the single source of truth generated from
- * the Pydantic models by ``make sync-schema``. The schema is consumed here
- * via its bundle-local, drift-gated mirror (``lesson.schema.generated.json``),
- * so this runtime check can never drift from the Pydantic definition: change
- * the model, run ``make sync-schema``, and ajv automatically validates the new
- * shape — no hand-maintained mirror.
+ * ``schema/lesson.schema.json`` — generated from the app's Pydantic models
+ * by ``make sync-schema`` and byte-parity-gated against the pinned
+ * learn-content-engine release (the canonical schema source). The schema is
+ * consumed here via its bundle-local, drift-gated mirror
+ * (``lesson.schema.generated.json``), so this runtime check can never drift
+ * from the Pydantic definition: change the model (after the engine-first
+ * procedure), run ``make sync-schema``, and ajv automatically validates the
+ * new shape — no hand-maintained mirror.
  *
  * This module covers ONLY the structural shape. Imperative cross-field /
  * semantic rules JSON-Schema cannot express (referential integrity

@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
- * Generate TypeScript interfaces from the App-authoritative lesson JSON
- * Schema (EXP-039, Direction A).
+ * Generate TypeScript interfaces from the lesson JSON Schema (EXP-039;
+ * canonical schema home in learn-content-engine since #1517).
  *
- * Source of truth: schema/lesson.schema.json (itself generated from the
- * Pydantic models by `make sync-schema`). This script derives TS types from
- * that schema via json-schema-to-typescript, so the type definitions cannot
- * drift from the runtime validator.
+ * Input: schema/lesson.schema.json (generated from the app's Pydantic
+ * models by `make sync-schema` and byte-parity-gated against the pinned
+ * learn-content-engine release, the canonical schema source). This script
+ * derives TS types from that schema via json-schema-to-typescript, so the
+ * type definitions cannot drift from the runtime validator.
  *
  * Output: frontend/src/storage/types/content/lesson-schema.generated.ts
  *

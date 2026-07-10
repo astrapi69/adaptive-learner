@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
-"""Generate the App-authoritative lesson-format artefacts (EXP-039).
+"""Generate the app's lesson-format artefacts, conform to the canonical
+engine schema (EXP-039; schema authority in the engine since #1517).
 
-Single source of truth: the Pydantic models in
-``adaptive_learner_content_loader.schema`` (Direction A). Everything this
-script writes is a DERIVED artefact — never hand-edit the outputs; edit the
-Pydantic models and re-run ``make sync-schema``.
+Source-of-truth chain: the `learn-content-engine
+<https://github.com/astrapi69/learn-content-engine>`_ npm package is the
+CANONICAL home of the lesson schema (immutable per published release);
+this app generates conforming artefacts from its Pydantic models in
+``adaptive_learner_content_loader.schema`` (Pydantic is the app's
+editorial + runtime tool, not the authority); the content repos mirror
+THE ENGINE RELEASE (pinned). Everything this script writes is a DERIVED
+artefact — never hand-edit the outputs; a format change starts in the
+engine (or is ratified there), then the Pydantic models follow and this
+generator re-runs via ``make sync-schema``.
 
 Outputs (all under ``<repo>/schema/``):
 
@@ -20,14 +27,14 @@ The JSON is emitted with ``sort_keys=True`` so re-generation is byte-stable;
 failing (exit 1) on drift. This is the App-internal drift gate (analogous to
 ``make sync-versions-check``).
 
-The lesson schema is the artefact the learn-content-engine vendors via its
-documented schema-sync procedure and ships in every npm release; the content
-repos mirror THE ENGINE RELEASE (pinned), not this repo (mirror decoupling —
-the app-side chain closure is ``scripts/check_engine_schema_parity.py``, plus
-the offline parity pin
-``frontend/src/lib/content/validation/engine-schema-parity.test.ts``).
-Its ``$id`` + ``$schema`` + ``x-schema-version`` make it self-describing for
-IDE autocomplete (``$schema`` reference in a lesson .json) and for
+The byte-parity gates prove the app-generated artefacts equal the pinned
+engine release: ``scripts/check_engine_schema_parity.py`` plus the
+offline parity pin
+``frontend/src/lib/content/validation/engine-schema-parity.test.ts``.
+Red there means the Pydantic models moved without the engine-first
+procedure. The ``$id`` points at the engine's schema URL; together with
+``$schema`` + ``x-schema-version`` it makes the artefact self-describing
+for IDE autocomplete (``$schema`` reference in a lesson .json) and for
 ``jsonschema``/``ajv`` validation.
 """
 
@@ -59,7 +66,7 @@ DOC_REL = {
 FRONTEND_QUALITY_REL = "frontend/src/lib/content/validation/quality-rules.generated.ts"
 
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
-SCHEMA_ID_BASE = "https://astrapi69.github.io/adaptive-learner/schema"
+SCHEMA_ID_BASE = "https://astrapi69.github.io/learn-content-engine/schema"
 
 # The shared quality minimums. THIS is the canonical definition; the
 # frontend quality gate (content-validator.ts) and the content repo's
@@ -141,9 +148,7 @@ def _model_section(name: str, node: dict[str, Any], required: list[str]) -> str:
     for field in sorted(props):
         prop = props[field]
         req = "yes" if field in required else "no"
-        lines.append(
-            f"| `{field}` | `{_ts_type(prop)}` | {req} | {_constraints(prop) or '-'} |"
-        )
+        lines.append(f"| `{field}` | `{_ts_type(prop)}` | {req} | {_constraints(prop) or '-'} |")
     lines.append("")
     return "\n".join(lines) + "\n"
 
@@ -154,26 +159,31 @@ def build_doc(lang: str) -> str:
     intro = {
         "en": (
             "# Lesson format reference\n\n"
-            "> **Generated** from the authoritative Pydantic models "
+            "> **Generated** from the app's Pydantic models "
             "(`adaptive_learner_content_loader.schema`) via "
-            "`make sync-schema` (EXP-039). Do not edit by hand — edit the models "
-            "and re-run the generator.\n\n"
+            "`make sync-schema` (EXP-039). The canonical schema home is the "
+            "`learn-content-engine` npm package; the models conform to it "
+            "(byte-parity gated). Do not edit by hand — a format change starts "
+            "in the engine, then the models follow and the generator re-runs.\n\n"
             f"Schema version: **{CURRENT_SCHEMA_VERSION}** "
             "(JSON Schema 2020-12). The machine-readable schema lives at "
             "`schema/lesson.schema.json`; reference it from a lesson `.json` via "
-            "`\"$schema\"` for IDE autocomplete + validation.\n\n"
+            '`"$schema"` for IDE autocomplete + validation.\n\n'
             "Field descriptions below come verbatim from the model definitions.\n"
         ),
         "de": (
             "# Lektionsformat-Referenz\n\n"
-            "> **Generiert** aus den autoritativen Pydantic-Modellen "
+            "> **Generiert** aus den Pydantic-Modellen der App "
             "(`adaptive_learner_content_loader.schema`) via "
-            "`make sync-schema` (EXP-039). Nicht von Hand editieren — die Modelle "
-            "aendern und den Generator erneut laufen lassen.\n\n"
+            "`make sync-schema` (EXP-039). Die kanonische Heimat des Schemas ist "
+            "das npm-Paket `learn-content-engine`; die Modelle sind dazu konform "
+            "(byte-genau gegated). Nicht von Hand editieren — eine "
+            "Formatänderung beginnt in der Engine, dann folgen die Modelle und "
+            "der Generator läuft erneut.\n\n"
             f"Schema-Version: **{CURRENT_SCHEMA_VERSION}** "
             "(JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter "
             "`schema/lesson.schema.json`; referenziere es aus einer Lektions-"
-            "`.json` via `\"$schema\"` fuer IDE-Autocomplete + Validierung.\n\n"
+            '`.json` via `"$schema"` fuer IDE-Autocomplete + Validierung.\n\n'
             "Die Feldbeschreibungen stammen woertlich aus den Modelldefinitionen "
             "(englisch).\n"
         ),
