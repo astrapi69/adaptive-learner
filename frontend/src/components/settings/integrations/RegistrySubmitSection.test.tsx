@@ -9,6 +9,8 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ApiError } from "../../../api/client";
+
 const {
   notifyError,
   notifySuccess,
@@ -136,6 +138,19 @@ describe("RegistrySubmitSection", () => {
       registryFile: "recommended-repos.json",
     });
     expect(await screen.findByTestId("registry-pr-url")).toBeInTheDocument();
+  });
+
+  it("shows an actionable token message when the PR flow 401s (#1514)", async () => {
+    createRegistryPr.mockRejectedValue(new ApiError(401, "Bad credentials"));
+    await prepare();
+    fireEvent.click(await screen.findByTestId("registry-create-pr"));
+    await waitFor(() => expect(notifyError).toHaveBeenCalled());
+    // The message names the token + where to fix it, NOT a generic failure.
+    const message = String(notifyError.mock.calls.at(-1)?.[0] ?? "");
+    expect(message).toMatch(/token was rejected|Settings/i);
+    expect(message).not.toMatch(/Could not open the pull request/i);
+    // No PR URL is shown on failure.
+    expect(screen.queryByTestId("registry-pr-url")).toBeNull();
   });
 
   it("hides the programmatic PR button without a configured token", async () => {
