@@ -79,6 +79,7 @@ class ExerciseType(str, Enum):
     FREE_TEXT = "free_text"
     WORD_TILES = "word_tiles"
     CLOZE = "cloze"
+    MULTIPLE_CHOICE = "multiple_choice"
 
 
 class StepType(str, Enum):
@@ -473,6 +474,39 @@ class InlineExample(BaseModel):
     )
 
 
+class MultipleChoiceOption(BaseModel):
+    """One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
+
+    Correctness is a per-option flag, so the type needs no separate
+    accept/distractor lists and no disjointness rule - the structure
+    makes that class of authoring error impossible. Grading contract:
+    with ``multiple: false`` exactly one option carries ``correct``
+    and a single pick is graded; with ``multiple: true`` the learner
+    must select the exact set of correct options (no partial credit,
+    mirroring the cloze multiselect grading).
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    text: str = Field(
+        ...,
+        description=(
+            "The option text shown to the learner. Unique within the "
+            "exercise - the text IS the option, so a duplicate would be "
+            "ambiguous."
+        ),
+        min_length=1,
+        max_length=500,
+    )
+    correct: bool = Field(
+        default=False,
+        description=(
+            "Set to true on the correct option(s). Exactly one with "
+            "``multiple: false``; at least one with ``multiple: true``."
+        ),
+    )
+
+
 class Exercise(BaseModel):
     """One exercise step. Type-tagged via ``type``.
 
@@ -544,6 +578,27 @@ class Exercise(BaseModel):
             "options. Exactly one entry MUST include "
             "'is_correct': 'true'. ``src`` is a relative path "
             "inside the set's ``assets/`` directory."
+        ),
+    )
+    options: list[MultipleChoiceOption] | None = Field(
+        default=None,
+        description=(
+            "MULTIPLE_CHOICE: list of {text, correct?} answer options "
+            "(schema v1.6). At least two options; ``multiple`` controls "
+            "whether exactly one or at least one must be marked correct. "
+            "Correctness is a per-option flag, so no separate "
+            "accept/distractor lists (and no disjointness rule) are "
+            "needed. The renderer shuffles before display."
+        ),
+        max_length=20,
+    )
+    multiple: bool = Field(
+        default=False,
+        description=(
+            "MULTIPLE_CHOICE: when false (default) exactly one option is "
+            "correct (single choice); when true the learner selects ALL "
+            "correct options ('select all that apply', graded by "
+            "exact-set match). Ignored by the other exercise types."
         ),
     )
     accept: list[str] | None = Field(
@@ -687,11 +742,42 @@ class Exercise(BaseModel):
             ExerciseType.FREE_TEXT: self._validate_free_text_fields,
             ExerciseType.WORD_TILES: self._validate_word_tiles_fields,
             ExerciseType.CLOZE: self._validate_cloze_fields,
+            ExerciseType.MULTIPLE_CHOICE: self._validate_multiple_choice_fields,
         }
         validate = validators.get(self.type)
         if validate is not None:
             validate()
         return self
+
+    def _validate_multiple_choice_fields(self) -> None:
+        """MULTIPLE_CHOICE (schema v1.6): >= 2 unique options; single mode
+        needs exactly one correct, multi mode at least one.
+
+        Mirrors the engine's ``checkMultipleChoice`` (learn-content-engine
+        0.8.0). Option shape ({text, correct?}) is enforced by the
+        ``MultipleChoiceOption`` model (``extra="forbid"``); only the
+        cross-option rules live here.
+        """
+        if not self.options or len(self.options) < 2:
+            raise ValueError("MULTIPLE_CHOICE requires at least 2 'options'")
+        correct_count = sum(1 for option in self.options if option.correct)
+        if self.multiple:
+            if correct_count == 0:
+                raise ValueError(
+                    "MULTIPLE_CHOICE with 'multiple' requires at least one "
+                    "option marked 'correct'"
+                )
+        elif correct_count != 1:
+            raise ValueError(
+                "MULTIPLE_CHOICE (single) must have exactly one option "
+                "marked 'correct'"
+            )
+        texts = [option.text for option in self.options]
+        if len(set(texts)) != len(texts):
+            raise ValueError(
+                "MULTIPLE_CHOICE option texts must be unique "
+                "(the text IS the option)"
+            )
 
     def _validate_matching_fields(self) -> None:
         """MATCHING requires non-empty 'pairs', unless ``from_cards`` derives

@@ -7,7 +7,7 @@
       "type": "exercise",
       "exercise": {
         "id": "ex-unknown",
-        "type": "multiple_choice",
+        "type": "ordering",
         "prompt": "This exercise type does not exist in the closed ExerciseType enum."
       }
     }

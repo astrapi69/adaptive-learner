@@ -413,6 +413,82 @@ class TestMatchingFromCards:
             _exercise_matching(from_cards=False, pairs=None)
 
 
+class TestMultipleChoiceExercise:
+    """Native multiple_choice (schema v1.6); parity with the engine
+    (learn-content-engine 0.8.0). Coexists with cloze select/multiselect."""
+
+    @staticmethod
+    def _exercise(**overrides: object) -> Exercise:
+        defaults: dict[str, object] = {
+            "id": "ex-mc-1",
+            "type": ExerciseType.MULTIPLE_CHOICE,
+            "prompt": "Wer hat an einer Kreuzung ohne Zeichen Vorfahrt?",
+            "options": [
+                {"text": "Wer von rechts kommt", "correct": True},
+                {"text": "Wer von links kommt"},
+                {"text": "Das groessere Fahrzeug"},
+            ],
+        }
+        defaults.update(overrides)
+        return Exercise(**defaults)
+
+    def test_single_valid(self) -> None:
+        ex = self._exercise()
+        assert ex.type is ExerciseType.MULTIPLE_CHOICE
+        assert ex.multiple is False
+        assert len(ex.options or []) == 3
+
+    def test_multi_valid(self) -> None:
+        ex = self._exercise(
+            multiple=True,
+            options=[
+                {"text": "2", "correct": True},
+                {"text": "3", "correct": True},
+                {"text": "4"},
+            ],
+        )
+        assert ex.multiple is True
+
+    def test_requires_two_options(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(options=[{"text": "only", "correct": True}])
+        with pytest.raises(ValidationError):
+            self._exercise(options=None)
+
+    def test_single_requires_exactly_one_correct(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(options=[{"text": "a"}, {"text": "b"}])
+        with pytest.raises(ValidationError):
+            self._exercise(
+                options=[
+                    {"text": "a", "correct": True},
+                    {"text": "b", "correct": True},
+                ]
+            )
+
+    def test_multi_requires_at_least_one_correct(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(multiple=True, options=[{"text": "a"}, {"text": "b"}])
+
+    def test_option_texts_must_be_unique(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(
+                options=[
+                    {"text": "same", "correct": True},
+                    {"text": "same"},
+                ]
+            )
+
+    def test_option_shape_strict(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(
+                options=[
+                    {"text": "a", "correct": True, "hint": "no"},
+                    {"text": "b"},
+                ]
+            )
+
+
 class TestPictureChoiceExercise:
     def test_valid(self) -> None:
         ex = _exercise_picture()
@@ -1012,6 +1088,7 @@ class TestLessonSchemaExport:
             "free_text",
             "word_tiles",
             "cloze",
+            "multiple_choice",
         }
 
     def test_lesson_step_schema_lists_step_type_enum(self) -> None:

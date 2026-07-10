@@ -1993,6 +1993,18 @@
         "result_partial": "{correct} dari {total} benar.",
         "empty": "Latihan isian rumpang ini tidak memiliki rumpang."
       },
+      "multiple_choice": {
+        "single_group_label": "Pilih satu jawaban",
+        "multi_group_label": "Pilih semua yang sesuai",
+        "badge_correct": "Benar",
+        "badge_wrong": "Salah",
+        "badge_missed": "Terlewat",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat. Periksa opsi yang ditandai.",
+        "submit": "Periksa jawaban",
+        "retry": "Coba lagi",
+        "empty": "Latihan pilihan ganda ini tidak memiliki opsi."
+      },
       "instruction": {
         "matching": {
           "receptive": "Cocokkan pasangannya (Pengenalan)",

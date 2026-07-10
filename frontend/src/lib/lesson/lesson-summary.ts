@@ -125,6 +125,14 @@ export function deriveCanonicalAnswer(
             }
             return out;
         }
+        case "multiple_choice": {
+            // #1525 — the correct option text(s), comma-joined in
+            // authored order (one text in single mode).
+            return (exercise.options ?? [])
+                .filter((option) => option.correct === true)
+                .map((option) => option.text)
+                .join(", ");
+        }
     }
 }
 

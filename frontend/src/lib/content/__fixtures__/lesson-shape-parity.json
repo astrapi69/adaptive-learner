@@ -56,7 +56,7 @@
     {
       "name": "unknown-exercise-type",
       "expectValid": false,
-      "reason": "closed ExerciseType enum rejects multiple_choice",
+      "reason": "closed ExerciseType enum rejects an unknown type (ordering)",
       "lesson": {
         "id": "04-bad-type",
         "title": "Bad type",
@@ -68,7 +68,7 @@
             "type": "exercise",
             "exercise": {
               "id": "ex",
-              "type": "multiple_choice",
+              "type": "ordering",
               "prompt": "p",
               "card_ids": ["card-01"],
               "distractors": []

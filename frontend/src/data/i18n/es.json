@@ -1993,6 +1993,18 @@
         "result_partial": "{correct} de {total} correctos.",
         "empty": "Este ejercicio de huecos no tiene huecos."
       },
+      "multiple_choice": {
+        "single_group_label": "Elige una respuesta",
+        "multi_group_label": "Selecciona todo lo que corresponda",
+        "badge_correct": "Correcto",
+        "badge_wrong": "Incorrecto",
+        "badge_missed": "Omitida",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo. Revisa las opciones marcadas.",
+        "submit": "Comprobar respuesta",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este ejercicio de opción múltiple no tiene opciones."
+      },
       "instruction": {
         "matching": {
           "receptive": "Une las parejas (Reconocer)",

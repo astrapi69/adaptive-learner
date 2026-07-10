@@ -1843,6 +1843,17 @@ lesson:
       result_correct: "Tout est correct !"
       result_partial: "{correct} sur {total} corrects."
       empty: "Cet exercice à trous n'a pas de trous."
+    multiple_choice:
+      single_group_label: "Choisis une réponse"
+      multi_group_label: "Sélectionne tout ce qui s'applique"
+      badge_correct: "Correct"
+      badge_wrong: "Faux"
+      badge_missed: "Manquée"
+      result_correct: "Correct !"
+      result_wrong: "Pas tout à fait. Regarde les options marquées."
+      submit: "Vérifier la réponse"
+      retry: "Réessayer"
+      empty: "Cet exercice à choix multiple n'a pas d'options."
     instruction:
       matching:
         receptive: Associe les paires (Reconnaître)

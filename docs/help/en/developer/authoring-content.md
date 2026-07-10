@@ -240,20 +240,23 @@ demand via the [Adding a new exercise type](adding-exercise-type.md) recipe.
 | `free_text` | Produce a short, fact-shaped answer | Exact-match, then Levenshtein ≤ 1. |
 | `word_tiles` | One unambiguous word order (language) | Tiles shuffled; `accept_orderings` for variants. |
 | `cloze` (`type`) | A fact with one answer | One `<input>` per blank. |
-| `cloze` (`select`) | **Single multiple choice** | The MC vehicle — renders as tappable buttons (#1342). `accept[0]` correct + `distractors`. |
-| `cloze` (`multiselect`) | "Select all that apply" | Exact-set match over `accept` (all correct) + `distractors` (#1195). |
+| `cloze` (`select`) | Single multiple choice (legacy vehicle) | Renders as tappable buttons (#1342). `accept[0]` correct + `distractors`. |
+| `cloze` (`multiselect`) | "Select all that apply" (legacy vehicle) | Exact-set match over `accept` (all correct) + `distractors` (#1195). |
+| `multiple_choice` | **Native text multiple choice** (schema v1.6, #1525) | `options` (`{text, correct?}`, unique texts) + `multiple`. Single = exactly one correct; multi = exact-set match, no partial credit. |
 
-There is **no** `multiple_choice` / `choice` exercise type — text multiple
-choice is `cloze` `select` mode by design (EXP-036 §4.3, #890; button renderer
-#1342). See [Multiple Choice authoring](#multiple-choice-authoring).
+Since schema v1.6 there is a native `multiple_choice` type. It **coexists**
+with the `cloze` `select`/`multiselect` vehicle (EXP-036 §4.3, #890) — existing
+cloze-based MC stays valid, nothing is deprecated. Prefer `multiple_choice` for
+new text-MC content: correctness is a per-option flag, so the
+accept/distractor-disjointness pitfall cannot happen. See
+[Multiple Choice authoring](#multiple-choice-authoring).
 
 ### Expressible without a new type (conventions, not types)
 
 | Concept | How |
 |---------|-----|
-| Single multiple choice | `cloze` `select` mode |
-| True/False, Yes/No | Two-option `cloze` `select` (e.g. `distractors: ["False"]`) |
-| Dropdown / radio / checkbox | Presentation of a `cloze` select / multiselect — not separate types |
+| True/False, Yes/No | Two-option `multiple_choice` (or a two-option `cloze` `select`) |
+| Dropdown / radio / checkbox | Presentation of `multiple_choice` / cloze select — not separate types |
 
 ### Planned if needed (candidates — NOT a commitment)
 
@@ -287,12 +290,33 @@ conventions below stay here.
 
 ### Multiple Choice authoring
 
-**Multiple choice is authored this way** — there is no separate
-`multiple_choice` exercise type (by design, see EXP-036 §4.3 and #890). A
-single-answer multiple-choice question is a one-blank cloze in
-`select` mode: the `sentence` (ending in `___`) is the question, the
-blank's `accept[0]` is the correct option, and `distractors` are the
-wrong options. Example: `"sentence": "The capital of France is ___."`,
+**Preferred (schema v1.6+, #1525): the native `multiple_choice` type.**
+Options carry their own `correct` flag, so there are no separate
+accept/distractor lists to keep disjoint. `multiple: false` (default) is
+single choice (exactly one correct); `multiple: true` is "select all
+that apply" (exact-set grading, no partial credit):
+
+```json
+{
+  "id": "ex-capital",
+  "type": "multiple_choice",
+  "prompt": "What is the capital of France?",
+  "card_ids": ["card-paris"],
+  "options": [
+    {"text": "Paris", "correct": true},
+    {"text": "Berlin"},
+    {"text": "Madrid"},
+    {"text": "Rome"}
+  ]
+}
+```
+
+**Legacy vehicle (still fully valid — coexistence, nothing deprecated):**
+before v1.6, text MC was authored as `cloze` `select` mode (EXP-036
+§4.3, #890). A single-answer question is a one-blank cloze: the
+`sentence` (ending in `___`) is the question, the blank's `accept[0]` is
+the correct option, and `distractors` are the wrong options. Example:
+`"sentence": "The capital of France is ___."`,
 `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
 `"distractors": ["Berlin", "Madrid", "Rome"]`.
 
@@ -316,8 +340,8 @@ answer + distractors, grades the pick, gives feedback and feeds the SRS:
 > **Never author text multiple choice as `picture_choice`.** That type is
 > for real image assets only; for text options it renders placeholder
 > tiles, not a usable control (cf.
-> astrapi69/adaptive-learner-content-test#10). Text MC is always
-> `cloze` `select` mode, as above.
+> astrapi69/adaptive-learner-content-test#10). Text MC is
+> `multiple_choice` (preferred) or `cloze` `select` mode, as above.
 
 **"Select all that apply"** (two or more correct answers, e.g. a
 driving-licence exam question) uses `cloze_mode: "multiselect"`:

@@ -1993,6 +1993,18 @@
         "result_partial": "{total} में से {correct} सही।",
         "empty": "इस रिक्त-स्थान अभ्यास में कोई रिक्त स्थान नहीं हैं।"
       },
+      "multiple_choice": {
+        "single_group_label": "एक उत्तर चुनें",
+        "multi_group_label": "जो भी लागू हो सब चुनें",
+        "badge_correct": "सही",
+        "badge_wrong": "गलत",
+        "badge_missed": "छूट गया",
+        "result_correct": "सही!",
+        "result_wrong": "बिल्कुल नहीं। चिह्नित विकल्प देखें।",
+        "submit": "उत्तर जांचें",
+        "retry": "फिर से कोशिश करें",
+        "empty": "इस बहुविकल्पीय अभ्यास में कोई विकल्प नहीं है।"
+      },
       "instruction": {
         "matching": {
           "receptive": "जोड़े मिलाएँ (पहचान)",

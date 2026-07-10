@@ -281,10 +281,10 @@ describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
 // Fixture 8 — closed ExerciseType enum (ajv).
 // ---------------------------------------------------------------------------
 describe("#1205 fixture 8 — closed exercise.type enum (ajv)", () => {
-  it("rejects an unknown exercise type (e.g. multiple_choice)", () => {
+  it("rejects an unknown exercise type (e.g. ordering)", () => {
     const lesson = makeLesson();
     (lesson.steps[1].exercise as Record<string, unknown>).type =
-      "multiple_choice";
+      "ordering";
     const result = validateLessonShape(lesson);
     expect(result.ok).toBe(false);
     expect(() => validateGeneratedLesson(lesson)).toThrow(/generated lesson invalid/);
@@ -299,7 +299,7 @@ describe("#1205 fixture 8 — closed exercise.type enum (ajv)", () => {
   it("names the field path of the bad enum value", () => {
     const lesson = makeLesson();
     (lesson.steps[1].exercise as Record<string, unknown>).type =
-      "multiple_choice";
+      "ordering";
     const [first] = validateLessonShape(lesson).errors;
     // The instancePath points at the offending field, not the whole object.
     expect(first).toMatch(/steps\/1\/exercise\/type/);
