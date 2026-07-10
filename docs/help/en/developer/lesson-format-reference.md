@@ -1,6 +1,6 @@
 # Lesson format reference
 
-> **Generated** from the app's Pydantic models (`adaptive_learner_content_loader.schema`) via `make sync-schema` (EXP-039). The canonical schema home is the `learn-content-engine` npm package; the models conform to it (byte-parity gated). Do not edit by hand — a format change starts in the engine, then the models follow and the generator re-runs.
+> **Generated** from the canonical `learn-content-engine` schema mirror (`schema/lesson.schema.json`, a byte mirror of the pinned engine release) via `make sync-schema` (EXP-039). The app's structural Pydantic layer is regenerated from that mirror; only the semantic validators are hand-written. Do not edit by hand; a format change starts in the engine, then the pin is bumped and the generator re-runs.
 
 Schema version: **1.6** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
 

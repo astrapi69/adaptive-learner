@@ -3,20 +3,19 @@
 
 The `learn-content-engine <https://github.com/astrapi69/learn-content-engine>`_
 npm package is the CANONICAL home of the lesson schema (immutable per
-published release). This app generates conforming artefacts from its
-Pydantic models (``make sync-schema``, Pydantic as the app's editorial +
-runtime tool); the content repos mirror THE ENGINE RELEASE (pinned
-there), NOT this app. A format change starts in the engine (or is
-ratified there): engine PR + release first, then pin bump +
+published release). This app MIRRORS the pinned engine release in
+``schema/*.json`` and regenerates its structural Pydantic layer from that
+mirror (``make sync-schema``); the content repos mirror THE ENGINE
+RELEASE (pinned there), NOT this app. A format change starts in the
+engine (or is ratified there): engine PR + release first, then pin bump +
 ``make sync-schema`` here, then the content repos re-pin.
 
-This gate proves the app conforms: the committed, generated
+This gate proves the mirror is faithful: the committed
 ``schema/lesson.schema.json`` + ``schema/content-manifest.schema.json``
 must be byte-identical to the schema bundled in the PINNED engine
-release (``schema/engine-version.txt``). Red means: the app's Pydantic
-models moved without the engine-first procedure, or the pin bump after
-an engine release is still missing — a visible, defined step instead of
-silent drift.
+release (``schema/engine-version.txt``). Red means: the mirror was
+hand-edited, or the pin bump after an engine release is still missing;
+a visible, defined step instead of silent drift.
 
 The comparison target is the npm tarball of the pinned engine version —
 immutable (published npm versions cannot be replaced), exactly the

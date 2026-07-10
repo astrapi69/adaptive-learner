@@ -41,11 +41,13 @@ The lesson/exercise format has **one canonical definition**: the
 lesson JSON Schema shipped by the
 [learn-content-engine](https://github.com/astrapi69/learn-content-engine)
 npm package (immutable per published release). Inside this app the
-Pydantic models in the content-loader plugin
-(`adaptive_learner_content_loader.schema`) are the editorial and
-runtime tool: they generate **conforming** artefacts via
-`make sync-schema`, and byte-parity gates prove the result equals the
-pinned engine release. The places that used to drift can no longer:
+**structural** Pydantic layer in the content-loader plugin
+(`adaptive_learner_content_loader.schema`) is **regenerated** from that
+mirror (`scripts/generate_pydantic_models.py`); only the semantic
+cross-field validators are hand-written. `make sync-schema` refreshes the
+mirror and re-emits the derived artefacts, and byte-parity gates prove
+`schema/*.json` equals the pinned engine release. The places that used to
+drift can no longer:
 
 - `schema/lesson.schema.json` (+ siblings) — the machine-readable
   JSON Schema (Draft 2020-12). Reference it from a lesson `.json`
@@ -56,12 +58,12 @@ pinned engine release. The places that used to drift can no longer:
   client-side content validator instead of a second hand-kept copy.
 - The frontend TypeScript lesson types and the
   [Lesson format reference](lesson-format-reference.md) MkDocs page
-  are generated too — **do not hand-edit them**; edit the models and
-  re-run the generator.
+  are generated too (**do not hand-edit them**); they follow the engine
+  mirror, so re-run the generator after a re-pin.
 
 A drift gate (`make sync-schema-check`, part of `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
-fails if any generated artefact diverges from the models. The chain
+fails if any generated artefact diverges from the pinned engine mirror. The chain
 closure is the app-vs-engine byte-parity gate: `make
 engine-parity-check` (`scripts/check_engine_schema_parity.py`), the
 offline pin `engine-schema-parity.test.ts`, and the pin-coherence
@@ -73,11 +75,12 @@ their own CI.
 **Format-change procedure (schema authority in the engine):** a
 change to the lesson format starts in the engine, or is ratified
 there — engine PR + npm release first; then this app bumps the engine
-pin (`frontend/package.json` + `schema/engine-version.txt`), adapts
-its Pydantic models and re-runs `make sync-schema`; then the content
-repos re-pin `engine-version.txt`. A Pydantic change without the
-engine step turns the byte-parity gates red — the forgotten step is
-visible, never silent drift.
+pin (`frontend/package.json` + `schema/engine-version.txt`) and re-runs
+`make sync-schema`, which refreshes the mirror and regenerates the
+structural Pydantic layer; only new semantic validators are written by
+hand; then the content repos re-pin `engine-version.txt`. A hand-edit to
+the mirror (or a stale pin) turns the byte-parity gates red; the
+forgotten step is visible, never silent drift.
 
 ## Language pairs (v1.44.0)
 
