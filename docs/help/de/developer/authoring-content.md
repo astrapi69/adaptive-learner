@@ -44,10 +44,12 @@ Das Lektions-/Übungsformat hat **eine kanonische Definition**: das
 Lektions-JSON-Schema, das das npm-Paket
 [learn-content-engine](https://github.com/astrapi69/learn-content-engine)
 ausliefert (unveränderlich pro veröffentlichtem Release). Innerhalb
-dieser App sind die Pydantic-Modelle im Content-Loader-Plugin
-(`adaptive_learner_content_loader.schema`) das Redaktions- und
-Laufzeitwerkzeug: sie generieren per `make sync-schema` **konforme**
-Artefakte, und Byte-Paritäts-Gates beweisen, dass das Ergebnis dem
+dieser App wird die **strukturelle** Pydantic-Schicht im Content-Loader-
+Plugin (`adaptive_learner_content_loader.schema`) aus diesem Spiegel
+**regeneriert** (`scripts/generate_pydantic_models.py`); nur die
+semantischen feldübergreifenden Validatoren sind handgeschrieben.
+`make sync-schema` frischt den Spiegel auf und emittiert die abgeleiteten
+Artefakte neu, und Byte-Paritäts-Gates beweisen, dass `schema/*.json` dem
 gepinnten Engine-Release gleicht. Die Stellen, die früher
 auseinanderdrifteten, können das nicht mehr:
 
@@ -62,13 +64,13 @@ auseinanderdrifteten, können das nicht mehr:
   von Hand gepflegten Kopie.
 - Die Frontend-TypeScript-Lektionstypen und die MkDocs-Seite
   [Lektionsformat-Referenz](lesson-format-reference.md) werden
-  ebenfalls generiert — **nicht von Hand bearbeiten**; bearbeite die
-  Modelle und führe den Generator erneut aus.
+  ebenfalls generiert (**nicht von Hand bearbeiten**); sie folgen dem
+  Engine-Spiegel, führe also nach einem Re-Pin den Generator erneut aus.
 
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
-schlägt fehl, wenn ein generiertes Artefakt von den Modellen
-abweicht. Den Kettenschluss bildet das App-vs-Engine-Byte-Paritäts-
+schlägt fehl, wenn ein generiertes Artefakt vom gepinnten Engine-
+Spiegel abweicht. Den Kettenschluss bildet das App-vs-Engine-Byte-Paritäts-
 Gate: `make engine-parity-check`
 (`scripts/check_engine_schema_parity.py`), der Offline-Pin
 `engine-schema-parity.test.ts` und der Pin-Kohärenz-Test
@@ -80,12 +82,13 @@ eigenen CI gegen diesen Spiegel.
 **Prozedur für Formatänderungen (Schema-Autorität in der Engine):**
 eine Änderung am Lektionsformat beginnt in der Engine oder wird dort
 ratifiziert — zuerst Engine-PR + npm-Release; dann bumpt diese App
-den Engine-Pin (`frontend/package.json` + `schema/engine-version.txt`),
-passt ihre Pydantic-Modelle an und führt `make sync-schema` erneut
-aus; danach ziehen die Content-Repos ihren `engine-version.txt`-Pin
-nach. Eine Pydantic-Änderung ohne den Engine-Schritt macht die
-Byte-Paritäts-Gates rot — der vergessene Schritt ist sichtbar, nie
-stiller Drift.
+den Engine-Pin (`frontend/package.json` + `schema/engine-version.txt`)
+und führt `make sync-schema` erneut aus, was den Spiegel auffrischt und
+die strukturelle Pydantic-Schicht regeneriert; nur neue semantische
+Validatoren werden von Hand geschrieben; danach ziehen die Content-Repos
+ihren `engine-version.txt`-Pin nach. Ein Hand-Edit am Spiegel (oder ein
+veralteter Pin) macht die Byte-Paritäts-Gates rot; der vergessene
+Schritt ist sichtbar, nie stiller Drift.
 
 ## Sprachpaare (v1.44.0)
 

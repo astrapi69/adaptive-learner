@@ -622,12 +622,16 @@ sync-plugin-config: ## Regenerate frontend/src/data/plugin-config/*.json from ba
 sync-schema-mirror: ## Refresh the bundle-local ajv schema mirror (TS types now come from learn-content-engine, D1b #1521)
 	@cd frontend && node scripts/sync-schema-mirror.mjs
 
-sync-schema: ## Regenerate the lesson JSON-Schema + quality-rules + doc from the Pydantic models, then the ajv mirror (EXP-039, Direction A)
+sync-schema: ## Refresh the engine schema mirror, then regenerate the derived artefacts + structural Pydantic layer + ajv mirror (EXP-039 / D3b, engine-canonical)
+	@python3 scripts/sync_schema_mirror_from_engine.py
 	@cd backend && poetry run python ../scripts/generate_lesson_schema.py
+	@cd backend && poetry run python ../scripts/generate_pydantic_models.py
 	@cd frontend && node scripts/sync-schema-mirror.mjs
 
-sync-schema-check: ## Exit non-zero if any generated lesson-schema artefact drifts from the Pydantic models (EXP-039)
+sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or structural Pydantic layer drift from the pinned engine (EXP-039 / D3b)
+	@python3 scripts/sync_schema_mirror_from_engine.py --check
 	@cd backend && poetry run python ../scripts/generate_lesson_schema.py --check
+	@cd backend && poetry run python ../scripts/generate_pydantic_models.py --check
 	@cd frontend && node scripts/sync-schema-mirror.mjs --check
 
 engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)

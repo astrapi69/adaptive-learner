@@ -349,12 +349,14 @@ class TestExerciseDirection:
         )
         assert ex.direction == "source_to_target"
 
-    def test_direction_in_exported_json_schema(self) -> None:
-        """The dynamically-derived JSON Schema includes direction."""
-        schema = Exercise.model_json_schema()
-        assert "direction" in schema["properties"]
-        enum = schema["properties"]["direction"].get("enum")
-        assert set(enum or []) == {
+    def test_direction_enum_carries_the_four_drill_modes(self) -> None:
+        """The Direction enum (generated from the canonical engine schema)
+        carries exactly the four drill modes. Post-D3b the JSON Schema is
+        the mirrored engine artefact, not a Pydantic export - its content
+        is byte-gated by check_engine_schema_parity.py."""
+        from adaptive_learner_content_loader.schema import Direction
+
+        assert {member.value for member in Direction} == {
             "source_to_target",
             "target_to_source",
             "both",

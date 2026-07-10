@@ -255,6 +255,7 @@
       "title": "Blanks"
     },
     "card_ids": {
+      "default": [],
       "description": "Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.",
       "items": {
         "type": "string"
@@ -294,6 +295,7 @@
       "type": "string"
     },
     "distractors": {
+      "default": [],
       "description": "Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.",
       "items": {
         "type": "string"

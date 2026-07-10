@@ -195,6 +195,7 @@
       "title": "Notes"
     },
     "tags": {
+      "default": [],
       "description": "Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').",
       "items": {
         "type": "string"

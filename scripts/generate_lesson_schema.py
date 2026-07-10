@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""Generate the app's lesson-format artefacts, conform to the canonical
-engine schema (EXP-039; schema authority in the engine since #1517).
+"""Generate the app's lesson-format artefacts from the canonical engine
+schema mirror (EXP-039 / D3b #1528; schema authority in the engine).
 
 Source-of-truth chain: the `learn-content-engine
 <https://github.com/astrapi69/learn-content-engine>`_ npm package is the
 CANONICAL home of the lesson schema (immutable per published release);
-this app generates conforming artefacts from its Pydantic models in
-``adaptive_learner_content_loader.schema`` (Pydantic is the app's
-editorial + runtime tool, not the authority); the content repos mirror
-THE ENGINE RELEASE (pinned). Everything this script writes is a DERIVED
-artefact — never hand-edit the outputs; a format change starts in the
-engine (or is ratified there), then the Pydantic models follow and this
-generator re-runs via ``make sync-schema``.
+``schema/lesson.schema.json`` + ``schema/content-manifest.schema.json``
+in this repo are a BYTE MIRROR of the pinned engine release; the
+structural Pydantic layer is REGENERATED from that mirror
+(``scripts/generate_pydantic_models.py``) and only the semantic
+cross-field validators are hand-written. This generator reads the mirror
+(via ``adaptive_learner_content_loader.schema_export``) and emits the
+derived artefacts. Everything it writes is a DERIVED artefact; never
+hand-edit the outputs. A format change starts in the engine (or is
+ratified there), then the pin is bumped and ``make sync-schema`` refreshes
+the mirror and regenerates.
 
 Outputs (all under ``<repo>/schema/``):
 
@@ -20,21 +23,22 @@ Outputs (all under ``<repo>/schema/``):
   set/manifest schemas (used by the content repo's CI)
 * ``card.schema.json`` / ``exercise.schema.json`` / ``lesson-step.schema.json``
 * ``quality-rules.json``       -- the shared quality minimums (content
-  repo + app read the same numbers)
+  repo + app read the same numbers; the engine ships this file, so the
+  numbers are READ from the mirror, not hard-coded here)
 
 The JSON is emitted with ``sort_keys=True`` so re-generation is byte-stable;
 ``--check`` re-generates into memory and diffs against the committed files,
 failing (exit 1) on drift. This is the App-internal drift gate (analogous to
 ``make sync-versions-check``).
 
-The byte-parity gates prove the app-generated artefacts equal the pinned
+The byte-parity gates prove the app's ``schema/*.json`` equal the pinned
 engine release: ``scripts/check_engine_schema_parity.py`` plus the
 offline parity pin
 ``frontend/src/lib/content/validation/engine-schema-parity.test.ts``.
-Red there means the Pydantic models moved without the engine-first
-procedure. The ``$id`` points at the engine's schema URL; together with
-``$schema`` + ``x-schema-version`` it makes the artefact self-describing
-for IDE autocomplete (``$schema`` reference in a lesson .json) and for
+Red there means the mirror was hand-edited or the pin bump is stale. The
+``$id`` points at the engine's schema URL; together with ``$schema`` +
+``x-schema-version`` it makes the artefact self-describing for IDE
+autocomplete (``$schema`` reference in a lesson .json) and for
 ``jsonschema``/``ajv`` validation.
 """
 
@@ -68,21 +72,29 @@ FRONTEND_QUALITY_REL = "frontend/src/lib/content/validation/quality-rules.genera
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 SCHEMA_ID_BASE = "https://astrapi69.github.io/learn-content-engine/schema"
 
-# The shared quality minimums. THIS is the canonical definition; the
-# frontend quality gate (content-validator.ts) and the content repo's
-# validate_content.py both consume the emitted quality-rules.json so the
-# numbers cannot drift across the three places they used to be hard-coded.
-QUALITY_RULES: dict[str, int] = {
-    "minExercisesPerLesson": 5,
-    "minExerciseTypes": 2,
-    "minFreeTextAccepts": 2,
-    "minMatchingPairs": 3,
-    "minTheorySteps": 1,
-}
+
+# The shared quality minimums. The engine ships ``schema/quality-rules.json``
+# (the mirror), so the ENGINE is canonical here too: read the numbers from
+# the mirror rather than hard-coding a second copy. The frontend quality
+# gate (content-validator.ts) and the content repo's validate_content.py
+# both consume the same emitted quality-rules.json, so the numbers cannot
+# drift across the places they used to be hard-coded.
+def _load_quality_rules() -> dict[str, int]:
+    data = json.loads((SCHEMA_DIR / "quality-rules.json").read_text(encoding="utf-8"))
+    return data["rules"]
+
+
+QUALITY_RULES: dict[str, int] = _load_quality_rules()
 
 
 def _decorate(schema: dict[str, Any], slug: str) -> dict[str, Any]:
-    """Add the 2020-12 ``$schema`` / ``$id`` / version header to a model schema."""
+    """Add the 2020-12 ``$schema`` / ``$id`` / version header to a schema.
+
+    The defaults come first and the mirror ``schema`` is spread LAST, so any
+    ``$schema`` / ``$id`` / ``x-schema-version`` the mirror already carries
+    WINS, so the emitted lesson/manifest schema stays byte-identical to the
+    pinned engine release (``engine-parity-check``).
+    """
     decorated = {
         "$schema": DRAFT_2020_12,
         "$id": f"{SCHEMA_ID_BASE}/{slug}",
@@ -159,12 +171,13 @@ def build_doc(lang: str) -> str:
     intro = {
         "en": (
             "# Lesson format reference\n\n"
-            "> **Generated** from the app's Pydantic models "
-            "(`adaptive_learner_content_loader.schema`) via "
-            "`make sync-schema` (EXP-039). The canonical schema home is the "
-            "`learn-content-engine` npm package; the models conform to it "
-            "(byte-parity gated). Do not edit by hand — a format change starts "
-            "in the engine, then the models follow and the generator re-runs.\n\n"
+            "> **Generated** from the canonical `learn-content-engine` schema "
+            "mirror (`schema/lesson.schema.json`, a byte mirror of the pinned "
+            "engine release) via `make sync-schema` (EXP-039). The app's "
+            "structural Pydantic layer is regenerated from that mirror; only "
+            "the semantic validators are hand-written. Do not edit by hand; a "
+            "format change starts in the engine, then the pin is bumped and the "
+            "generator re-runs.\n\n"
             f"Schema version: **{CURRENT_SCHEMA_VERSION}** "
             "(JSON Schema 2020-12). The machine-readable schema lives at "
             "`schema/lesson.schema.json`; reference it from a lesson `.json` via "
@@ -173,13 +186,13 @@ def build_doc(lang: str) -> str:
         ),
         "de": (
             "# Lektionsformat-Referenz\n\n"
-            "> **Generiert** aus den Pydantic-Modellen der App "
-            "(`adaptive_learner_content_loader.schema`) via "
-            "`make sync-schema` (EXP-039). Die kanonische Heimat des Schemas ist "
-            "das npm-Paket `learn-content-engine`; die Modelle sind dazu konform "
-            "(byte-genau gegated). Nicht von Hand editieren — eine "
-            "Formatänderung beginnt in der Engine, dann folgen die Modelle und "
-            "der Generator läuft erneut.\n\n"
+            "> **Generiert** aus dem kanonischen `learn-content-engine`-"
+            "Schemaspiegel (`schema/lesson.schema.json`, ein Byte-Spiegel des "
+            "gepinnten Engine-Release) via `make sync-schema` (EXP-039). Die "
+            "strukturelle Pydantic-Schicht der App wird aus diesem Spiegel "
+            "regeneriert; nur die semantischen Validatoren sind handgeschrieben. "
+            "Nicht von Hand editieren; eine Formatänderung beginnt in der "
+            "Engine, dann wird der Pin erhöht und der Generator läuft erneut.\n\n"
             f"Schema-Version: **{CURRENT_SCHEMA_VERSION}** "
             "(JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter "
             "`schema/lesson.schema.json`; referenziere es aus einer Lektions-"
@@ -202,12 +215,12 @@ def build_doc(lang: str) -> str:
 
 
 def build_frontend_quality_rules() -> str:
-    body = ",\n".join(f"  {k}: {v}" for k, v in QUALITY_RULES.items())
+    body = ",\n".join(f"  {k}: {v}" for k, v in sorted(QUALITY_RULES.items()))
     return (
         "// GENERATED from scripts/generate_lesson_schema.py (EXP-039). DO NOT EDIT.\n"
-        "// Shared content quality minimums — the single source is the Python\n"
-        "// generator; schema/quality-rules.json carries the same numbers for the\n"
-        "// content repo. Edit the generator + run `make sync-schema`.\n\n"
+        "// Shared content quality minimums. The numbers come from the engine\n"
+        "// mirror schema/quality-rules.json, re-emitted here for the frontend and\n"
+        "// carried by the content repo too. Refresh via `make sync-schema`.\n\n"
         "/** Quality minimums. Below any of these = cannot share. */\n"
         f"export const QUALITY = {{\n{body},\n}} as const;\n"
     )
