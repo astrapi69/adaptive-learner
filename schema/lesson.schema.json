@@ -156,6 +156,7 @@
           "title": "Notes"
         },
         "tags": {
+          "default": [],
           "description": "Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').",
           "items": {
             "type": "string"
@@ -317,6 +318,7 @@
           "title": "Blanks"
         },
         "card_ids": {
+          "default": [],
           "description": "Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.",
           "items": {
             "type": "string"
@@ -356,6 +358,7 @@
           "type": "string"
         },
         "distractors": {
+          "default": [],
           "description": "Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.",
           "items": {
             "type": "string"
@@ -966,6 +969,7 @@
   "description": "One lesson in a content set (Phase 43 / 2B-lesson).\n\nA lesson is the unit a user works through end-to-end \u2014\ntypically 5-15 minutes of content. The viewer (Phase 44)\nwalks the steps in order; SRS (Phase 46) tracks the\ncards referenced by each exercise.\n\nReferential integrity: every ``card_id`` referenced by\nany exercise step MUST exist in the lesson's ``cards``\nlist. Enforced by the model validator so the viewer can\ntrust the references later.",
   "properties": {
     "cards": {
+      "default": [],
       "description": "Every card the lesson teaches.",
       "items": {
         "$ref": "#/$defs/Card"
