@@ -1,0 +1,20 @@
+{
+  "id": "22-semantic-unknown-card-reference",
+  "title": "Semantic fixture: exercise references a card that does not exist",
+  "cards": [
+    {"id": "card-known", "front": "hola", "back": "hallo"}
+  ],
+  "steps": [
+    {
+      "id": "step-01-free-text",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-free-text",
+        "type": "free_text",
+        "prompt": "How do you say 'hallo'?",
+        "card_ids": ["card-does-not-exist"],
+        "accept": ["hola"]
+      }
+    }
+  ]
+}

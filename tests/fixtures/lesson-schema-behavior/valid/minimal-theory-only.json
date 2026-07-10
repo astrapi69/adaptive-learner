@@ -1,0 +1,11 @@
+{
+  "id": "02-behaviour-fixture-minimal",
+  "title": "Behaviour fixture: minimal theory-only lesson",
+  "steps": [
+    {
+      "id": "step-01-theory",
+      "type": "theory",
+      "body": "A lesson is valid with nothing but the three required fields and one theory step."
+    }
+  ]
+}

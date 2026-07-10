@@ -1,0 +1,15 @@
+{
+  "id": "20-semantic-matching-without-pairs",
+  "title": "Semantic fixture: matching exercise without pairs",
+  "steps": [
+    {
+      "id": "step-01-matching",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-matching-empty",
+        "type": "matching",
+        "prompt": "Structurally fine, but MATCHING requires non-empty 'pairs'."
+      }
+    }
+  ]
+}

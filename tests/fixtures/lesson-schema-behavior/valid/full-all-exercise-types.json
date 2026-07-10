@@ -1,0 +1,95 @@
+{
+  "id": "01-behaviour-fixture-full",
+  "title": "Behaviour fixture: all five exercise types",
+  "description": "Pinned pre-flip lesson exercising every ExerciseType plus a theory step (schema-authority migration Phase 0).",
+  "target_language": "es",
+  "source_language": "de",
+  "domain": "language",
+  "estimated_minutes": 10,
+  "cards": [
+    {
+      "id": "card-hola",
+      "front": "hola",
+      "back": "hallo",
+      "tags": ["greeting"]
+    },
+    {
+      "id": "card-adios",
+      "front": "adiós",
+      "back": "tschüss",
+      "tags": ["greeting"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "step-01-theory",
+      "type": "theory",
+      "title": "Begruessungen",
+      "body": "**hola** bedeutet *hallo*, **adiós** bedeutet *tschüss*."
+    },
+    {
+      "id": "step-02-matching",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-matching",
+        "type": "matching",
+        "prompt": "Ordne die Begruessungen zu.",
+        "card_ids": ["card-hola", "card-adios"],
+        "pairs": [
+          {"left": "hola", "right": "hallo"},
+          {"left": "adiós", "right": "tschüss"}
+        ]
+      }
+    },
+    {
+      "id": "step-03-picture-choice",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-picture-choice",
+        "type": "picture_choice",
+        "prompt": "Welches Bild zeigt eine Begruessung?",
+        "images": [
+          {"src": "assets/img/wave.svg", "label": "hola", "is_correct": "true"},
+          {"src": "assets/img/door.svg", "label": "puerta"}
+        ]
+      }
+    },
+    {
+      "id": "step-04-free-text",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-free-text",
+        "type": "free_text",
+        "prompt": "Wie sagt man 'hallo' auf Spanisch?",
+        "card_ids": ["card-hola"],
+        "accept": ["hola", "¡hola!"],
+        "distractors": ["adiós", "gracias"]
+      }
+    },
+    {
+      "id": "step-05-word-tiles",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-word-tiles",
+        "type": "word_tiles",
+        "prompt": "Bilde den Satz: 'hola, buenos dias'.",
+        "tiles": ["hola", "buenos", "dias"],
+        "accept_orderings": [[0, 1, 2]]
+      }
+    },
+    {
+      "id": "step-06-cloze",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-cloze",
+        "type": "cloze",
+        "prompt": "Fuelle die Luecken.",
+        "sentence": "___ significa hallo, ___ significa tschüss.",
+        "blanks": [
+          {"accept": ["hola"]},
+          {"accept": ["adiós", "adios"]}
+        ]
+      }
+    }
+  ]
+}
