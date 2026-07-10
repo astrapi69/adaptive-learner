@@ -385,6 +385,34 @@ class TestMatchingExercise:
             )
 
 
+class TestMatchingFromCards:
+    """``from_cards`` derives pairs from the referenced cards; parity with the
+    engine (learn-content-engine 0.7.0)."""
+
+    def test_from_cards_without_pairs_is_valid(self) -> None:
+        ex = _exercise_matching(
+            from_cards=True, card_ids=["bonjour", "merci"], pairs=None
+        )
+        assert ex.from_cards is True
+        assert ex.pairs is None
+
+    def test_from_cards_requires_card_ids(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_matching(from_cards=True, card_ids=[], pairs=None)
+
+    def test_from_cards_forbids_explicit_pairs(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_matching(
+                from_cards=True,
+                card_ids=["bonjour"],
+                pairs=[{"left": "Bonjour", "right": "Hello"}],
+            )
+
+    def test_plain_matching_still_requires_pairs(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_matching(from_cards=False, pairs=None)
+
+
 class TestPictureChoiceExercise:
     def test_valid(self) -> None:
         ex = _exercise_picture()
