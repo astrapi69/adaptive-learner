@@ -35,7 +35,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
-       sync-schema sync-schema-check sync-lesson-types engine-parity-check \
+       sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -619,16 +619,16 @@ i18n-import-corrections: ## Surgically write i18n corrections back into the YAML
 sync-plugin-config: ## Regenerate frontend/src/data/plugin-config/*.json from backend/config/plugins/*.yaml (Phase 49 / v1.32.0)
 	@python3 scripts/sync_plugin_config_to_frontend.py
 
-sync-lesson-types: ## Regenerate the TS lesson types from schema/lesson.schema.json (EXP-039)
-	@cd frontend && node scripts/generate-lesson-types.mjs
+sync-schema-mirror: ## Refresh the bundle-local ajv schema mirror (TS types now come from learn-content-engine, D1b #1521)
+	@cd frontend && node scripts/sync-schema-mirror.mjs
 
-sync-schema: ## Regenerate the lesson JSON-Schema + quality-rules + doc + TS types from the Pydantic models (EXP-039, Direction A)
+sync-schema: ## Regenerate the lesson JSON-Schema + quality-rules + doc from the Pydantic models, then the ajv mirror (EXP-039, Direction A)
 	@cd backend && poetry run python ../scripts/generate_lesson_schema.py
-	@cd frontend && node scripts/generate-lesson-types.mjs
+	@cd frontend && node scripts/sync-schema-mirror.mjs
 
 sync-schema-check: ## Exit non-zero if any generated lesson-schema artefact drifts from the Pydantic models (EXP-039)
 	@cd backend && poetry run python ../scripts/generate_lesson_schema.py --check
-	@cd frontend && node scripts/generate-lesson-types.mjs --check
+	@cd frontend && node scripts/sync-schema-mirror.mjs --check
 
 engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)
 	@python3 scripts/check_engine_schema_parity.py
