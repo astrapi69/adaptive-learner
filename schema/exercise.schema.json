@@ -173,7 +173,7 @@
       "type": "object"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/exercise.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/exercise.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "One exercise step. Type-tagged via ``type``.\n\nThe fields are kept in a single flat shape per\n``type`` rather than per-type discriminated unions\nbecause the JSON manifests are author-edited; flat\nshapes are easier to read and to diff in PRs. The\nvalidator enforces type-specific requirements via\nmodel_validator instead.",

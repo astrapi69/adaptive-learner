@@ -82,7 +82,7 @@
       "type": "object"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/content-set.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/content-set.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "One downloadable lesson set inside a ContentManifest.\n\nA set is the unit of versioning: re-publishing a single\nlesson bumps the set's ``version`` and triggers a\nre-download (see the cache layer in commit 5).",

@@ -40,11 +40,16 @@ Zahlen nicht.
 
 ## Das Schema ist die alleinige Wahrheitsquelle (EXP-039)
 
-Das Lektions-/Übungsformat hat **eine maßgebliche Definition**: die
-Pydantic-Modelle im Content-Loader-Plugin
-(`adaptive_learner_content_loader.schema`). Jedes andere Artefakt
-wird daraus per `make sync-schema` **generiert**, sodass die
-Stellen, die früher auseinanderdrifteten, das nicht mehr können:
+Das Lektions-/Übungsformat hat **eine kanonische Definition**: das
+Lektions-JSON-Schema, das das npm-Paket
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+ausliefert (unveränderlich pro veröffentlichtem Release). Innerhalb
+dieser App sind die Pydantic-Modelle im Content-Loader-Plugin
+(`adaptive_learner_content_loader.schema`) das Redaktions- und
+Laufzeitwerkzeug: sie generieren per `make sync-schema` **konforme**
+Artefakte, und Byte-Paritäts-Gates beweisen, dass das Ergebnis dem
+gepinnten Engine-Release gleicht. Die Stellen, die früher
+auseinanderdrifteten, können das nicht mehr:
 
 - `schema/lesson.schema.json` (+ Geschwisterdateien) — das
   maschinenlesbare JSON-Schema (Draft 2020-12). Referenziere es aus
@@ -63,14 +68,24 @@ Stellen, die früher auseinanderdrifteten, das nicht mehr können:
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
 schlägt fehl, wenn ein generiertes Artefakt von den Modellen
-abweicht. Stromabwärts übernimmt die
-[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
-das generierte Schema über ihre dokumentierte Schema-Sync-Prozedur
-und liefert es mit jedem npm-Release aus; die Content-Repos spiegeln
-**das gepinnte Engine-Release** (nicht dieses Repo) und validieren in
-ihrer eigenen CI gegen diesen Spiegel. `make engine-parity-check`
-(`scripts/check_engine_schema_parity.py`) hält das hier generierte
-Schema sichtbar in Parität mit dem gepinnten Engine-Release.
+abweicht. Den Kettenschluss bildet das App-vs-Engine-Byte-Paritäts-
+Gate: `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`), der Offline-Pin
+`engine-schema-parity.test.ts` und der Pin-Kohärenz-Test
+`engine-pin.test.ts` (`frontend/package.json`-Dependency ==
+`schema/engine-version.txt`). Die Content-Repos spiegeln **das
+gepinnte Engine-Release** (nicht dieses Repo) und validieren in ihrer
+eigenen CI gegen diesen Spiegel.
+
+**Prozedur für Formatänderungen (Schema-Autorität in der Engine):**
+eine Änderung am Lektionsformat beginnt in der Engine oder wird dort
+ratifiziert — zuerst Engine-PR + npm-Release; dann bumpt diese App
+den Engine-Pin (`frontend/package.json` + `schema/engine-version.txt`),
+passt ihre Pydantic-Modelle an und führt `make sync-schema` erneut
+aus; danach ziehen die Content-Repos ihren `engine-version.txt`-Pin
+nach. Eine Pydantic-Änderung ohne den Engine-Schritt macht die
+Byte-Paritäts-Gates rot — der vergessene Schritt ist sichtbar, nie
+stiller Drift.
 
 ## Sprachpaare (v1.44.0)
 

@@ -249,7 +249,7 @@
       "type": "object"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/content-manifest.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/content-manifest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "Top-level manifest a content repo publishes at its root.\n\nA repo CAN ship multiple sets in one manifest (the canonical\npilot ``astrapi69/adaptive-learner-content`` is structured\nthat way). The manifest itself is small (~one entry per\nset) so the Set Browser can list everything without\ndownloading any lesson content.\n\n``schema_version`` is the LOADER's contract, not the\ncontent authors' choice. A future bump (e.g. v1.1\nintroducing a new mandatory field on ``ContentSet``)\nmeans older app versions reject the manifest with a\n'please upgrade' message rather than silently miss the\nnew field.",
