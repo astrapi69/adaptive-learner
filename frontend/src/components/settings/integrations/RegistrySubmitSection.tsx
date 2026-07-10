@@ -54,6 +54,41 @@ import type { RegistryEntry } from "../../../lib/content/repos/registry-types";
 import { SEARCH_INDEX_FILE } from "../../../lib/content/repos/search-index-loader";
 import { notify } from "../../../utils/notify";
 
+/**
+ * Map a programmatic registry-PR failure to an actionable message, reusing the
+ * ShareWizard's already-translated ``share.pr.err_*`` keys. A configured token
+ * can still be invalid or lack ``repo`` scope, so a 401/403 at submit time
+ * means "token rejected" — point the user at where to fix it (#1514) instead
+ * of a generic "could not open" toast.
+ */
+function registryPrErrorMessage(
+  err: unknown,
+  t: (key: string, fallback?: string) => string,
+): string {
+  if (err instanceof ApiError) {
+    if (err.status === 401 || err.status === 403) {
+      return t(
+        "share.pr.err_auth",
+        "Your GitHub token was rejected. Check it in Settings > Integrations.",
+      );
+    }
+    if (err.status === 429) {
+      return t(
+        "share.pr.err_rate",
+        "GitHub rate limit reached. Please try again later.",
+      );
+    }
+    return t(
+      "share.pr.err_github",
+      "GitHub rejected the request: {detail}",
+    ).replace("{detail}", err.detail);
+  }
+  return t(
+    "share.pr.err_network",
+    "Could not reach GitHub. Check your connection and try again.",
+  );
+}
+
 /** The prepared submission, ready to copy or push. */
 interface Prepared {
   entry: RegistryEntry;
@@ -262,10 +297,9 @@ export default function RegistrySubmitSection() {
       setPrUrl(result.url);
       notify.success(t("registry.pr.created", "Pull request opened."));
     } catch (err) {
-      notify.error(
-        t("registry.pr.failed", "Could not open the pull request."),
-        { apiError: err instanceof ApiError ? err : undefined },
-      );
+      notify.error(registryPrErrorMessage(err, t), {
+        apiError: err instanceof ApiError ? err : undefined,
+      });
     } finally {
       setBusy(false);
     }
