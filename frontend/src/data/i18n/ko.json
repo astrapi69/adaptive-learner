@@ -1993,6 +1993,18 @@
         "result_partial": "{total}개 중 {correct}개 정답.",
         "empty": "이 빈칸 채우기 연습에는 빈칸이 없습니다."
       },
+      "multiple_choice": {
+        "single_group_label": "정답을 하나 고르세요",
+        "multi_group_label": "해당하는 것을 모두 고르세요",
+        "badge_correct": "정답",
+        "badge_wrong": "오답",
+        "badge_missed": "놓침",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 표시된 선택지를 확인하세요.",
+        "submit": "정답 확인",
+        "retry": "다시 시도",
+        "empty": "이 선택형 문제에는 선택지가 없습니다."
+      },
       "instruction": {
         "matching": {
           "receptive": "짝을 맞추세요 (인식)",

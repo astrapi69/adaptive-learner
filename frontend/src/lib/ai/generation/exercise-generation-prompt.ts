@@ -58,6 +58,7 @@ export const ALLOWED_EXERCISE_TYPES = [
   "free_text",
   "word_tiles",
   "cloze",
+  "multiple_choice",
 ] as const;
 
 export type GeneratedExerciseType = (typeof ALLOWED_EXERCISE_TYPES)[number];

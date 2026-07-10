@@ -1841,6 +1841,17 @@ lesson:
       result_correct: "Hepsi doğru!"
       result_partial: "{correct} / {total} doğru."
       empty: "Bu boşluk doldurma alıştırmasının boşluğu yok."
+    multiple_choice:
+      single_group_label: "Bir cevap seç"
+      multi_group_label: "Uyanların hepsini seç"
+      badge_correct: "Doğru"
+      badge_wrong: "Yanlış"
+      badge_missed: "Atlandı"
+      result_correct: "Doğru!"
+      result_wrong: "Tam değil. İşaretli seçeneklere bak."
+      submit: "Cevabı kontrol et"
+      retry: "Tekrar dene"
+      empty: "Bu çoktan seçmeli alıştırmada seçenek yok."
     instruction:
       matching:
         receptive: Çiftleri eşleştir (Tanıma)

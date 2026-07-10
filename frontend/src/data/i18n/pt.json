@@ -1993,6 +1993,18 @@
         "result_partial": "{correct} de {total} corretas.",
         "empty": "Este exercício de lacunas não tem lacunas."
       },
+      "multiple_choice": {
+        "single_group_label": "Escolha uma resposta",
+        "multi_group_label": "Selecione tudo que se aplica",
+        "badge_correct": "Correto",
+        "badge_wrong": "Errado",
+        "badge_missed": "Perdida",
+        "result_correct": "Correto!",
+        "result_wrong": "Quase. Revise as opções destacadas.",
+        "submit": "Verificar resposta",
+        "retry": "Tentar novamente",
+        "empty": "Este exercício de múltipla escolha não tem opções."
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",

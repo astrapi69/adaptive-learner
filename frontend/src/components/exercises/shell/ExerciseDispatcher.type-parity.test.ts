@@ -16,9 +16,10 @@ import {SUPPORTED_EXERCISE_TYPES} from "./ExerciseDispatcher";
  * renderer key drifts from the enum), this goes RED — catching exactly the
  * "the canonical format allows a type the app can't render" class. That is
  * the root cause behind the React-Grundlagen MC report
- * (astrapi69/adaptive-learner-content-test#10): single-answer multiple-choice
- * is the ``cloze`` select-mode renderer (#890), not a missing type — and this
- * test proves the catalogue is fully rendered.
+ * (astrapi69/adaptive-learner-content-test#10). Since schema v1.6 (#1525)
+ * text multiple-choice has a native ``multiple_choice`` type which COEXISTS
+ * with the ``cloze`` select/multiselect vehicle (#890/#1195) — both stay
+ * rendered, and this test proves the catalogue is fully rendered.
  */
 const CANONICAL_EXERCISE_TYPES: readonly string[] = (
     schema as unknown as {$defs: {ExerciseType: {enum: string[]}}}
@@ -39,10 +40,15 @@ describe("ExerciseDispatcher — canonical exercise-type parity", () => {
         expect(extra).toEqual([]);
     });
 
-    it("covers cloze — the canonical single-answer multiple-choice renderer (#890)", () => {
-        // MC is authored as cloze `select` mode, not a separate
-        // multiple_choice type; the renderer for it must exist.
+    it("covers cloze — the legacy multiple-choice vehicle stays rendered (#890)", () => {
+        // Coexistence (#1525): cloze select/multiselect remains a fully
+        // valid MC authoring form next to the native type.
         expect(CANONICAL_EXERCISE_TYPES).toContain("cloze");
         expect(SUPPORTED_EXERCISE_TYPES.has("cloze")).toBe(true);
+    });
+
+    it("covers multiple_choice — the native MC type (schema v1.6, #1525)", () => {
+        expect(CANONICAL_EXERCISE_TYPES).toContain("multiple_choice");
+        expect(SUPPORTED_EXERCISE_TYPES.has("multiple_choice")).toBe(true);
     });
 });

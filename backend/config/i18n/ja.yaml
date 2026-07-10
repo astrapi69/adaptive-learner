@@ -1841,6 +1841,17 @@ lesson:
       result_correct: "すべて正解！"
       result_partial: "{total}個中{correct}個正解。"
       empty: "この穴埋め演習には空欄がありません。"
+    multiple_choice:
+      single_group_label: "答えを1つ選んでください"
+      multi_group_label: "当てはまるものをすべて選んでください"
+      badge_correct: "正解"
+      badge_wrong: "不正解"
+      badge_missed: "見落とし"
+      result_correct: "正解！"
+      result_wrong: "惜しい。ハイライトされた選択肢を確認してください。"
+      submit: "答えを確認"
+      retry: "もう一度"
+      empty: "この選択問題には選択肢がありません。"
     instruction:
       matching:
         receptive: ペアを結ぶ（認識）

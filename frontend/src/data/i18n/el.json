@@ -1993,6 +1993,18 @@
         "result_partial": "{correct} από {total} σωστά.",
         "empty": "Αυτή η άσκηση συμπλήρωσης κενών δεν έχει κενά."
       },
+      "multiple_choice": {
+        "single_group_label": "Διάλεξε μία απάντηση",
+        "multi_group_label": "Επίλεξε όλα όσα ισχύουν",
+        "badge_correct": "Σωστό",
+        "badge_wrong": "Λάθος",
+        "badge_missed": "Παραλείφθηκε",
+        "result_correct": "Σωστά!",
+        "result_wrong": "Όχι ακριβώς. Δες τις επισημασμένες επιλογές.",
+        "submit": "Έλεγχος απάντησης",
+        "retry": "Δοκίμασε ξανά",
+        "empty": "Αυτή η άσκηση πολλαπλής επιλογής δεν έχει επιλογές."
+      },
       "instruction": {
         "matching": {
           "receptive": "Αντιστοιχίστε τα ζεύγη (Αναγνώριση)",

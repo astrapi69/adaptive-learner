@@ -211,3 +211,29 @@ export function deriveClozeMultiSelectAttempt(
         correct: isCorrect,
     };
 }
+
+/** Native multiple_choice (#1525, schema v1.6): a single attempt for the
+ *  question. element_key + correct_answer are the canonical correct
+ *  option texts (sorted, joined) so reviews re-target the same question;
+ *  ``correct`` is the verdict from the grading module (single pick or
+ *  exact-set, no re-validation here). */
+export function deriveMultipleChoiceAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    selected: readonly string[],
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical = (exercise.options ?? [])
+        .filter((option) => option.correct === true)
+        .map((option) => option.text)
+        .sort()
+        .join(", ");
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "vocabulary",
+        user_answer: [...selected].sort().join(", "),
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}

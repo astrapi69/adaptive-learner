@@ -424,6 +424,29 @@
           "description": "PICTURE_CHOICE: list of {src, label, is_correct?} options. Exactly one entry MUST include 'is_correct': 'true'. ``src`` is a relative path inside the set's ``assets/`` directory.",
           "title": "Images"
         },
+        "multiple": {
+          "default": false,
+          "description": "MULTIPLE_CHOICE: when false (default) exactly one option is correct (single choice); when true the learner selects ALL correct options ('select all that apply', graded by exact-set match). Ignored by the other exercise types.",
+          "title": "Multiple",
+          "type": "boolean"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MultipleChoiceOption"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MULTIPLE_CHOICE: list of {text, correct?} answer options (schema v1.6). At least two options; ``multiple`` controls whether exactly one or at least one must be marked correct. Correctness is a per-option flag, so no separate accept/distractor lists (and no disjointness rule) are needed. The renderer shuffles before display.",
+          "title": "Options"
+        },
         "pairs": {
           "anyOf": [
             {
@@ -497,7 +520,8 @@
         "picture_choice",
         "free_text",
         "word_tiles",
-        "cloze"
+        "cloze",
+        "multiple_choice"
       ],
       "title": "ExerciseType",
       "type": "string"
@@ -822,6 +846,30 @@
       "title": "LessonStep",
       "type": "object"
     },
+    "MultipleChoiceOption": {
+      "additionalProperties": false,
+      "description": "One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).\n\nCorrectness is a per-option flag, so the type needs no separate\naccept/distractor lists and no disjointness rule - the structure\nmakes that class of authoring error impossible. Grading contract:\nwith ``multiple: false`` exactly one option carries ``correct``\nand a single pick is graded; with ``multiple: true`` the learner\nmust select the exact set of correct options (no partial credit,\nmirroring the cloze multiselect grading).",
+      "properties": {
+        "correct": {
+          "default": false,
+          "description": "Set to true on the correct option(s). Exactly one with ``multiple: false``; at least one with ``multiple: true``.",
+          "title": "Correct",
+          "type": "boolean"
+        },
+        "text": {
+          "description": "The option text shown to the learner. Unique within the exercise - the text IS the option, so a duplicate would be ambiguous.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "MultipleChoiceOption",
+      "type": "object"
+    },
     "Pair": {
       "additionalProperties": false,
       "description": "One left\u2194right pair in a MATCHING exercise.\n\nEXP-039: modeled explicitly (was an inline ``dict[str, str]``)\nso the generated JSON-Schema / TS types carry the structured\n``{left, right}`` shape instead of a loose string map. The\n``extra=\"forbid\"`` config + the two required fields replace the\nformer per-pair key check in ``_validate_matching_fields``;\nvalidation semantics are unchanged (a pair must have exactly\n``left`` and ``right``).",
@@ -1089,5 +1137,5 @@
   ],
   "title": "Lesson",
   "type": "object",
-  "x-schema-version": "1.5"
+  "x-schema-version": "1.6"
 }

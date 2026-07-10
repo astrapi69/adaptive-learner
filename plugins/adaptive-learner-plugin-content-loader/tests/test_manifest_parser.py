@@ -20,13 +20,14 @@ from adaptive_learner_content_loader.models import (
 
 
 class TestSchemaVersion:
-    def test_current_is_1_5(self) -> None:
-        # #1326: schema bumped 1.4 -> 1.5 for inline examples on theory
-        # steps + exercises (additive; #139 kept the example_url link).
-        assert CURRENT_SCHEMA_VERSION == "1.5"
+    def test_current_is_1_6(self) -> None:
+        # #1525: schema bumped 1.5 -> 1.6 for the native multiple_choice
+        # exercise type (additive; the cloze select/multiselect vehicle
+        # stays valid - coexistence).
+        assert CURRENT_SCHEMA_VERSION == "1.6"
 
     def test_every_1x_minor_is_supported(self) -> None:
-        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.0.0", "1.3.2"]:
+        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.0.0", "1.3.2"]:
             assert is_supported_schema_version(v), v
 
     def test_other_majors_rejected(self) -> None:

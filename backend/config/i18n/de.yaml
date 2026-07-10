@@ -1846,6 +1846,17 @@ lesson:
       result_correct: "Alles richtig!"
       result_partial: "{correct} von {total} richtig."
       empty: "Diese Lückentext-Übung hat keine Lücken."
+    multiple_choice:
+      single_group_label: "Wähle eine Antwort"
+      multi_group_label: "Wähle alles Zutreffende"
+      badge_correct: "Richtig"
+      badge_wrong: "Falsch"
+      badge_missed: "Übersehen"
+      result_correct: "Richtig!"
+      result_wrong: "Nicht ganz. Sieh dir die markierten Optionen an."
+      submit: "Antwort prüfen"
+      retry: "Nochmal versuchen"
+      empty: "Diese Multiple-Choice-Aufgabe hat keine Optionen."
     instruction:
       matching:
         receptive: Paare verbinden (Erkennen)

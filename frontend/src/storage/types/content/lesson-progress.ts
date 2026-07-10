@@ -14,7 +14,11 @@ export type RawAnswer =
   /** #1195 — cloze ``multiselect`` ("select all that apply"): the
    *  chosen option set. Persisted so a revisited, locked question
    *  restores its exact checkbox state. */
-  | { kind: "cloze_multiselect"; selected: string[] };
+  | { kind: "cloze_multiselect"; selected: string[] }
+  /** #1525 — native ``multiple_choice`` (schema v1.6): the chosen
+   *  option texts (one entry in single mode, the chosen set in
+   *  ``multiple`` mode). */
+  | { kind: "multiple_choice"; selected: string[] };
 
 export interface LessonStepResult {
   step_id: string;

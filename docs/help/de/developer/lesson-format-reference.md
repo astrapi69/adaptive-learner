@@ -2,7 +2,7 @@
 
 > **Generiert** aus den Pydantic-Modellen der App (`adaptive_learner_content_loader.schema`) via `make sync-schema` (EXP-039). Die kanonische Heimat des Schemas ist das npm-Paket `learn-content-engine`; die Modelle sind dazu konform (byte-genau gegated). Nicht von Hand editieren — eine Formatänderung beginnt in der Engine, dann folgen die Modelle und der Generator läuft erneut.
 
-Schema-Version: **1.5** (JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter `schema/lesson.schema.json`; referenziere es aus einer Lektions-`.json` via `"$schema"` fuer IDE-Autocomplete + Validierung.
+Schema-Version: **1.6** (JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter `schema/lesson.schema.json`; referenziere es aus einer Lektions-`.json` via `"$schema"` fuer IDE-Autocomplete + Validierung.
 
 Die Feldbeschreibungen stammen woertlich aus den Modelldefinitionen (englisch).
 
@@ -92,6 +92,8 @@ One exercise step. Type-tagged via ``type``.
 | `hint` | `string | null` | no | - |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
 | `images` | `PictureImage[] | null` | no | - |
+| `multiple` | `boolean` | no | - |
+| `options` | `MultipleChoiceOption[] | null` | no | - |
 | `pairs` | `Pair[] | null` | no | - |
 | `prompt` | `string` | yes | minLen=1, maxLen=1000 |
 | `sentence` | `string | null` | no | - |
@@ -101,7 +103,7 @@ One exercise step. Type-tagged via ``type``.
 
 ### `ExerciseType` (enum)
 
-`matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze`
+`matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze` · `multiple_choice`
 
 ### `InlineExample`
 
@@ -149,6 +151,16 @@ One step in the lesson sequence.
 | `theory_ref` | `string | null` | no | - |
 | `title` | `string | null` | no | - |
 | `type` | `StepType` | yes | - |
+
+
+### `MultipleChoiceOption`
+
+One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `correct` | `boolean` | no | - |
+| `text` | `string` | yes | minLen=1, maxLen=500 |
 
 
 ### `Pair`

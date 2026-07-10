@@ -82,6 +82,12 @@ export function formatUserAnswer(
       ? [...rawAnswer.selected].join(", ")
       : null;
   }
+  // #1525 — native multiple_choice: the chosen option text(s).
+  if (rawAnswer.kind === "multiple_choice") {
+    return rawAnswer.selected.length > 0
+      ? [...rawAnswer.selected].join(", ")
+      : null;
+  }
   return null;
 }
 

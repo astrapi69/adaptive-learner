@@ -2,7 +2,7 @@
 
 > **Generated** from the app's Pydantic models (`adaptive_learner_content_loader.schema`) via `make sync-schema` (EXP-039). The canonical schema home is the `learn-content-engine` npm package; the models conform to it (byte-parity gated). Do not edit by hand — a format change starts in the engine, then the models follow and the generator re-runs.
 
-Schema version: **1.5** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
+Schema version: **1.6** (JSON Schema 2020-12). The machine-readable schema lives at `schema/lesson.schema.json`; reference it from a lesson `.json` via `"$schema"` for IDE autocomplete + validation.
 
 Field descriptions below come verbatim from the model definitions.
 
@@ -92,6 +92,8 @@ One exercise step. Type-tagged via ``type``.
 | `hint` | `string | null` | no | - |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
 | `images` | `PictureImage[] | null` | no | - |
+| `multiple` | `boolean` | no | - |
+| `options` | `MultipleChoiceOption[] | null` | no | - |
 | `pairs` | `Pair[] | null` | no | - |
 | `prompt` | `string` | yes | minLen=1, maxLen=1000 |
 | `sentence` | `string | null` | no | - |
@@ -101,7 +103,7 @@ One exercise step. Type-tagged via ``type``.
 
 ### `ExerciseType` (enum)
 
-`matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze`
+`matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze` · `multiple_choice`
 
 ### `InlineExample`
 
@@ -149,6 +151,16 @@ One step in the lesson sequence.
 | `theory_ref` | `string | null` | no | - |
 | `title` | `string | null` | no | - |
 | `type` | `StepType` | yes | - |
+
+
+### `MultipleChoiceOption`
+
+One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `correct` | `boolean` | no | - |
+| `text` | `string` | yes | minLen=1, maxLen=500 |
 
 
 ### `Pair`

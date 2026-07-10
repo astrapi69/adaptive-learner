@@ -39,7 +39,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-CURRENT_SCHEMA_VERSION = "1.5"
+CURRENT_SCHEMA_VERSION = "1.6"
 # v1.4 → v1.5 (inline examples):
 #   - New optional ``InlineExample`` list ``examples`` on BOTH the
 #     theory step (``LessonStep``) and the ``Exercise``. An example

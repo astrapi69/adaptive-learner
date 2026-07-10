@@ -282,7 +282,7 @@
       "type": "string"
     },
     "schema_version": {
-      "default": "1.5",
+      "default": "1.6",
       "description": "Manifest schema version. The Content-Loader currently understands '1.0'; later versions will be rejected with a friendly upgrade hint.",
       "title": "Schema Version",
       "type": "string"
@@ -301,5 +301,5 @@
   ],
   "title": "ContentManifest",
   "type": "object",
-  "x-schema-version": "1.5"
+  "x-schema-version": "1.6"
 }

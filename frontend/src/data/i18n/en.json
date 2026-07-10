@@ -1993,6 +1993,18 @@
         "result_partial": "{correct} of {total} correct.",
         "empty": "This cloze exercise has no blanks."
       },
+      "multiple_choice": {
+        "single_group_label": "Select one answer",
+        "multi_group_label": "Select all that apply",
+        "badge_correct": "Correct",
+        "badge_wrong": "Wrong",
+        "badge_missed": "Missed",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite. Review the highlighted options.",
+        "submit": "Check answer",
+        "retry": "Try again",
+        "empty": "This multiple-choice exercise has no options."
+      },
       "instruction": {
         "matching": {
           "receptive": "Match the pairs (Recognition)",
