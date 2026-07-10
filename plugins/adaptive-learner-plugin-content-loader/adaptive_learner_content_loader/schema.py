@@ -610,6 +610,18 @@ class Exercise(BaseModel):
         ),
         max_length=20,
     )
+    from_cards: bool = Field(
+        default=False,
+        description=(
+            "MATCHING: when true, the exercise derives its ``pairs`` from "
+            "the referenced cards (left = card ``front``, right = card "
+            "``back``) instead of listing them explicitly, so a definition "
+            "lives in one place. Requires non-empty ``card_ids`` and forbids "
+            "an explicit ``pairs`` list. The engine resolves it to concrete "
+            "``pairs`` at parse time. Additive + optional; schema_version "
+            "stays 1.5."
+        ),
+    )
     sentence: str | None = Field(
         default=None,
         description=(
@@ -682,12 +694,25 @@ class Exercise(BaseModel):
         return self
 
     def _validate_matching_fields(self) -> None:
-        """MATCHING requires non-empty 'pairs'.
+        """MATCHING requires non-empty 'pairs', unless ``from_cards`` derives
+        them from the referenced cards.
 
         Each pair's exact ``{left, right}`` shape is enforced by the
         ``Pair`` model (required fields + ``extra="forbid"``)
-        (EXP-039), so only the non-empty count is checked here.
+        (EXP-039), so only the non-empty count is checked here. ``from_cards``
+        mirrors the engine (learn-content-engine 0.7.0): it requires non-empty
+        ``card_ids`` and forbids an explicit ``pairs`` list.
         """
+        if self.from_cards:
+            if not self.card_ids:
+                raise ValueError(
+                    "MATCHING with 'from_cards' requires non-empty 'card_ids'"
+                )
+            if self.pairs:
+                raise ValueError(
+                    "MATCHING with 'from_cards' must not also list explicit 'pairs'"
+                )
+            return
         if not self.pairs:
             raise ValueError("MATCHING exercise requires non-empty 'pairs'")
 
