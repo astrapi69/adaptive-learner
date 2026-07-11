@@ -13,6 +13,19 @@ Weil es ein **Inhaltssatz** ist (kein KI-Chat), brauchst du dafür
 eingebaut, also sofort verfügbar — auch in der öffentlichen
 Online-Version.
 
+## Direkt öffnen
+
+Der Satz ist gebündelt, also brauchst du kein Repository zu
+verbinden — dieser Link öffnet das Tutorial direkt:
+
+[**App-Tutorial öffnen**](https://astrapi69.github.io/adaptive-learner/content/set/adaptive-learner-app-from-de){ .md-button .md-button--primary }
+
+Der Link führt auf die Set-Seite des Tutorials (nicht mehr nur aufs
+Dashboard). Ist der Satz noch nicht heruntergeladen, bietet die Seite
+**„Herunterladen & starten"** an; danach beginnst du sofort mit
+Lektion 1. Teilen kannst du genau diesen Link auch über den
+**Teilen**-Knopf am Satz (Link kopieren oder QR-Code).
+
 ## Warum zuerst das App-Tutorial?
 
 - **Du übst, während du lernst.** Statt eine Anleitung zu lesen,
@@ -27,6 +40,9 @@ Online-Version.
   überschaubaren Einheiten.
 
 ## So startest du es
+
+Am schnellsten über den Direkt-Link im Abschnitt **Direkt öffnen**
+oben. Alternativ über den Content Browser:
 
 1. Öffne den [Content Browser](../features/content-browser.md) unter
    `/content` (oder **Entdecken** unter `/discover`).

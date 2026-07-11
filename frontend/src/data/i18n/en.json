@@ -1048,6 +1048,8 @@
     "license_text_link": "(text)",
     "repo_label": "Repository",
     "docs_label": "Documentation",
+    "tutorial_label": "App tutorial",
+    "tutorial_link": "Open the tutorial directly",
     "issues_label": "Issues"
   },
   "backup": {

@@ -7,8 +7,11 @@
  * same payload so they stay aligned with the deployment target.
  */
 
+import {Link} from "react-router-dom";
+
 import type {SystemInfo} from "../../types/domain";
 import {docsHomeUrl} from "../../lib/help/help-routes";
+import {APP_TUTORIAL_PATH} from "../../lib/content/app-tutorial";
 
 interface Props {
     info: SystemInfo;
@@ -68,6 +71,17 @@ export default function LicenseResourcesSection({info, t, lang}: Props) {
                     >
                         {docsUrl.replace(/^https?:\/\//, "")}
                     </a>
+                </dd>
+                <dt>
+                    <strong>{t("about.tutorial_label", "App tutorial")}</strong>
+                </dt>
+                <dd data-testid="about-tutorial" style={ddStyle}>
+                    <Link
+                        to={APP_TUTORIAL_PATH}
+                        data-testid="about-tutorial-link"
+                    >
+                        {t("about.tutorial_link", "Open the tutorial")}
+                    </Link>
                 </dd>
                 <dt>
                     <strong>{t("about.issues_label", "Issues")}</strong>

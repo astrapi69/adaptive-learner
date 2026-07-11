@@ -1048,6 +1048,8 @@
     "license_text_link": "(texte)",
     "repo_label": "Dépôt",
     "docs_label": "Documentation",
+    "tutorial_label": "Tutoriel de l'app",
+    "tutorial_link": "Ouvrir le tutoriel directement",
     "issues_label": "Issues"
   },
   "backup": {

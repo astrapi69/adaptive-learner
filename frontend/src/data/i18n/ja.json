@@ -1048,6 +1048,8 @@
     "license_text_link": "(テキスト)",
     "repo_label": "リポジトリ",
     "docs_label": "ドキュメント",
+    "tutorial_label": "アプリチュートリアル",
+    "tutorial_link": "チュートリアルを直接開く",
     "issues_label": "課題"
   },
   "backup": {

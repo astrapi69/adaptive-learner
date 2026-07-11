@@ -976,6 +976,8 @@ about:
   license_text_link: (texto)
   repo_label: Repositorio
   docs_label: Documentación
+  tutorial_label: "Tutorial de la app"
+  tutorial_link: "Abrir el tutorial directamente"
   issues_label: Issues
 backup:
   section_title: "Copia de seguridad"

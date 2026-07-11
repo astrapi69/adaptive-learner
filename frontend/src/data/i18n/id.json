@@ -1048,6 +1048,8 @@
     "license_text_link": "(teks)",
     "repo_label": "Repositori",
     "docs_label": "Dokumentasi",
+    "tutorial_label": "Tutorial aplikasi",
+    "tutorial_link": "Buka tutorial langsung",
     "issues_label": "Isu"
   },
   "backup": {

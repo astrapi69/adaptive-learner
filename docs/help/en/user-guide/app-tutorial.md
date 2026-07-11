@@ -11,6 +11,19 @@ Because it is a **content set** (not an AI chat), it needs **no AI API
 key**. The set is bundled offline into the app, so it is available
 right away — including in the public online version.
 
+## Open it directly
+
+The set is bundled, so you do not need to connect a repository — this
+link opens the tutorial directly:
+
+[**Open the app tutorial**](https://astrapi69.github.io/adaptive-learner/content/set/adaptive-learner-app-from-de){ .md-button .md-button--primary }
+
+The link goes to the tutorial's set page (no longer just the
+Dashboard). If the set is not downloaded yet, the page offers
+**"Download & start"**; then you begin with lesson 1 right away. You
+can share this exact link from the set's **Share** button too (copy the
+link or a QR code).
+
 ## Why start with the app tutorial?
 
 - **You practice while you learn.** Instead of reading instructions,
@@ -22,6 +35,9 @@ right away — including in the public online version.
   dashboard, progress and reviews — in short, manageable units.
 
 ## How to start it
+
+Fastest via the direct link in the **Open it directly** section above.
+Alternatively, via the Content Browser:
 
 1. Open the [Content Browser](../features/content-browser.md) at
    `/content` (or **Discover** at `/discover`).
