@@ -231,7 +231,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**487 lessons · 34 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**499 lessons · 35 sets · 6 domain(s)** (ai, language, programming, psychology, software, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -269,6 +269,7 @@ Full documentation (German default at `/docs/`, English at
 | IT-Grundlagen | de | de | A1 | 10 |
 | Ansible-Grundlagen für Quality Engineering | de | de | B1 | 8 |
 | Data Science und KI | de | de | A2 | 9 |
+| Adaptive Learner — App-Tutorial | de | de | Einsteiger | 12 |
 <!-- CONTENT-STATS:END -->
 
 ### Content repos
