@@ -20,7 +20,7 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TestFeatureProvider } from "../../../features/testFeatureProvider";
-import { I18nProvider } from "../../../hooks/ui/useI18n";
+import { I18nProvider, useI18n } from "../../../hooks/ui/useI18n";
 import { _resetDbForTests, getDb } from "../../../storage/dexie/db";
 import { _resetStorageCacheForTests, getStorage } from "../../../storage";
 import type { StorageMode } from "../../../storage/types";
@@ -103,6 +103,59 @@ describe("LearningRepoSettingsSection — Dexie mode", () => {
     const row = await getDb().pluginSettings.get("learning-repo");
     expect(row).toBeTruthy();
     expect(row?.settings).toMatchObject({ repos_dir: "/my/custom/dir" });
+  });
+});
+
+/** Test-only control: flips the UI language so the provider's ``t``
+ *  gets a new identity mid-interaction (the #1486 trigger). */
+function LangSwitcher() {
+  const { setLang } = useI18n();
+  return (
+    <button data-testid="test-lang-switch" onClick={() => setLang("en")}>
+      switch
+    </button>
+  );
+}
+
+describe("LearningRepoSettingsSection — edit survives a t identity change (#1486)", () => {
+  // The load effect used to depend on ``t``. The provider rebuilds ``t``
+  // whenever the language catalog (re)loads, so the effect re-ran the
+  // pluginSettings fetch and OVERWROTE in-progress edits with the stored
+  // values — the race behind the flaky "persists an edit to Dexie" red.
+  // Deterministic reproduction: switch the language AFTER the edit and
+  // let the refetch (pre-fix) fully resolve before asserting.
+  it("does not clobber an in-progress edit when t changes", async () => {
+    render(
+      <TestFeatureProvider context={{ mode: "dexie" }}>
+        <I18nProvider>
+          <LearningRepoSettingsSection />
+          <LangSwitcher />
+        </I18nProvider>
+      </TestFeatureProvider>,
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("learning-repo-settings")).toBeInTheDocument();
+    });
+    const reposDir = screen.getByTestId("learning-repo-settings-repos-dir") as HTMLInputElement;
+    await act(async () => {
+      fireEvent.change(reposDir, { target: { value: "/my/custom/dir" } });
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("test-lang-switch"));
+    });
+    // Let the catalog load + any (pre-fix) refetch resolve completely.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    expect(reposDir.value).toBe("/my/custom/dir");
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("learning-repo-settings-save"));
+    });
+    const fresh = await getStorage().pluginSettings.get("learning-repo");
+    expect(fresh.settings.repos_dir).toBe("/my/custom/dir");
   });
 });
 
