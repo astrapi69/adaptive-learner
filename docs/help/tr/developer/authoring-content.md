@@ -20,7 +20,8 @@ Bir setin üç katmanı vardır:
 2. **Set manifest** (`sets/{set-id}/manifest.yaml`) — root
    manifest'in kardeşi, ilgili setin ders dosyalarını listeler.
 3. **Ders dosyaları** (`sets/{set-id}/lessons/NN-slug.json`) — ders
-   başına bir JSON dosyası, her indirmede Şema v1.0'a karşı doğrulanır.
+   başına bir JSON dosyası, her indirmede ders şemasına karşı
+   doğrulanır (aşağıdaki *Şema tek doğruluk kaynağıdır* bölümüne bak).
 
 Adaptive Learner ile gönderilen pilot setler, ayrı içerik reposunda
 [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
@@ -28,6 +29,56 @@ bulunur (kardeş checkout olarak `../adaptive-learner-content` ile
 check-out edilir ve build tarafından
 `frontend/scripts/copy-bundled-content.mjs` üzerinden paketlenir) ve
 şablon olarak iyi işe yarar.
+
+## Şema tek doğruluk kaynağıdır (EXP-039)
+
+Ders/alıştırma formatının **tek bir kanonik tanımı** vardır:
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+npm paketinin gönderdiği ders JSON Schema'sı (yayımlanan release
+başına değişmez). Bu uygulamanın içinde, içerik yükleyici eklentideki
+**yapısal** Pydantic katmanı
+(`adaptive_learner_content_loader.schema`) bu aynadan **yeniden
+üretilir** (`scripts/generate_pydantic_models.py`); yalnızca anlamsal,
+alanlar arası doğrulayıcılar elle yazılır. `make sync-schema` aynayı
+tazeler ve türetilmiş artefact'ları yeniden üretir; byte parite
+kapıları da `schema/*.json`'ın sabitlenmiş engine release'ine eşit
+olduğunu kanıtlar. Eskiden sapabilen yerler artık sapamaz:
+
+- `schema/lesson.schema.json` (+ kardeş dosyalar): makine tarafından
+  okunabilir JSON Schema (Draft 2020-12). IDE otomatik tamamlama ve
+  satır içi doğrulama için, bir ders `.json`'ından en üst düzey bir
+  `"$schema"` anahtarıyla referans ver.
+- `schema/quality-rules.json`: paylaşılan kalite alt sınırları
+  (örn. alıştırma sayıları, free-text kabul edilen yanıt sayıları);
+  elle tutulan ikinci bir kopya yerine istemci tarafındaki içerik
+  doğrulayıcısı tarafından kullanılır.
+- Frontend'in TypeScript ders tipleri ve MkDocs sayfası
+  *Lesson format reference* de üretilir (**elle düzenleme**); engine
+  aynasını takip ederler, bu yüzden her re-pin'den sonra üreteci
+  yeniden çalıştır.
+
+Bir sapma kapısı (`make sync-schema-check`, `release-test`'in
+parçası, artı `make test` içindeki
+`backend/tests/test_lesson_schema_drift.py`), üretilen herhangi bir
+artefact sabitlenmiş engine aynasından saparsa başarısız olur.
+Zinciri kapatan, uygulama-engine byte parite kapısıdır:
+`make engine-parity-check` (`scripts/check_engine_schema_parity.py`),
+çevrimdışı pin `engine-schema-parity.test.ts` ve pin tutarlılık testi
+`engine-pin.test.ts` (`frontend/package.json` bağımlılığı ==
+`schema/engine-version.txt`). İçerik repoları (bu repoyu değil)
+**sabitlenmiş engine release'ini** yansıtır ve kendi CI'larında bu
+aynaya karşı doğrular.
+
+**Format değişikliği prosedürü (şema otoritesi engine'dedir):** ders
+formatındaki bir değişiklik engine'de başlar veya orada onaylanır:
+önce engine PR'ı + npm release; sonra bu uygulama engine pin'ini
+(`frontend/package.json` + `schema/engine-version.txt`) yükseltir ve
+`make sync-schema`'yı yeniden çalıştırır; bu, aynayı tazeler ve
+yapısal Pydantic katmanını yeniden üretir; yalnızca yeni anlamsal
+doğrulayıcılar elle yazılır; ardından içerik repoları
+`engine-version.txt` pin'lerini günceller. Aynada yapılan bir el
+düzenlemesi (veya bayat bir pin) byte parite kapılarını kırmızıya
+çevirir; unutulan adım görünür olur, asla sessiz sapma olmaz.
 
 ## Dil çiftleri (v1.44.0)
 
@@ -158,7 +209,7 @@ iyileştiren her şey. `tags`, SRS filtrelemesini yönlendirir.
 ### Steps
 
 Bir ders, adım adım bir dizidir; her adım ya THEORY (bir Markdown
-bloğu) ya da EXERCISE (dört alıştırma türünden biri):
+bloğu) ya da EXERCISE (alıştırma türlerinden biri):
 
 ```json
 {
@@ -255,6 +306,13 @@ değil.
 `label`'a geri döner — yani picture_choice, illüstrasyon asset'leri
 olmadan da çalışır.
 
+> **Metin çoktan seçmeliyi asla `picture_choice` olarak yazma.** Bu
+> tür yalnızca gerçek resim asset'leri içindir; metin seçeneklerinde
+> kullanılabilir bir kontrol değil, yer tutucu karolar render eder
+> (krş. astrapi69/adaptive-learner-content-test#10). Metin çoktan
+> seçmeli, `multiple_choice` (tercih edilen) veya `select` modunda
+> `cloze`'dur; aşağıdaki cloze bölümüne bak.
+
 ### free_text
 
 Yanıtı yaz. Render eden önce tam, ardından Levenshtein-toleranslı
@@ -341,6 +399,80 @@ eşleme; yükleyici `sentence.count("___") == len(blanks)`'i denetler).
   `accept[0]` + `distractors`'ından, boşluk başına kararlı bir tohumla
   karıştırılır. **Boş olmayan `distractors` gerektirir** — şema
   doğrulayıcısı, onlar olmadan `cloze_mode: "select"`'i reddeder.
+
+**Çoktan seçmeli: Şema v1.6'dan beri yerleşik bir `multiple_choice`
+türü vardır.** Bu tür, `cloze` `select`/`multiselect` aracıyla
+(EXP-036 §4.3, #890) **bir arada yaşar**: mevcut cloze tabanlı çoktan
+seçmeli geçerli kalır, hiçbir şey deprecated olmaz. Yeni metin çoktan
+seçmeli içeriği için `multiple_choice`'u tercih et: doğruluk, seçenek
+başına bir bayraktır; böylece accept/distractors ayrıklığı tuzağı
+yaşanamaz. Doğru/Yanlış ve Evet/Hayır soruları da kendi türlerine
+ihtiyaç duymaz: iki seçenekli bir `multiple_choice` (veya iki
+seçenekli bir `cloze` `select`) bunları karşılar.
+
+**Tercih edilen (Şema v1.6+, #1525): yerleşik `multiple_choice`
+türü.** Her seçenek kendi `correct` bayrağını taşır, bu yüzden ayrık
+tutulması gereken ayrı accept/distractors listeleri yoktur.
+`multiple: false` (varsayılan) tekli seçimdir (tam olarak bir doğru);
+`multiple: true` "uyanların hepsini seç"tir (tam küme puanlama, kısmi
+puan yok):
+
+```json
+{
+  "id": "ex-capital",
+  "type": "multiple_choice",
+  "prompt": "What is the capital of France?",
+  "card_ids": ["card-paris"],
+  "options": [
+    {"text": "Paris", "correct": true},
+    {"text": "Berlin"},
+    {"text": "Madrid"},
+    {"text": "Rome"}
+  ]
+}
+```
+
+**Legacy araç (hala tamamen geçerli: bir arada yaşama, hiçbir şey
+deprecated değil):** v1.6'dan önce metin çoktan seçmeli, `select`
+modunda `cloze` olarak yazılırdı (EXP-036 §4.3, #890). Tek yanıtlı
+bir soru, tek boşluklu bir cloze'dur: `sentence` (`___` ile biter)
+sorudur, boşluğun `accept[0]`'ı doğru seçenektir ve `distractors`
+yanlış seçeneklerdir. Örnek:
+`"sentence": "The capital of France is ___."`,
+`"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
+`"distractors": ["Berlin", "Madrid", "Rome"]`.
+
+Sorunun tamamını `prompt`'a koyup yalın bir `"sentence": "___"` de
+kullanabilirsin; render eden, doğru yanıt + çeldiricilerden oluşan
+bir `<select>` gösterir, seçimi puanlar, geri bildirim verir ve
+SRS'i besler:
+
+```json
+{
+  "id": "ex-hook-state",
+  "type": "cloze",
+  "prompt": "Which hook manages local state in a function component?",
+  "card_ids": ["card-usestate"],
+  "sentence": "___",
+  "blanks": [{"accept": ["useState"]}],
+  "cloze_mode": "select",
+  "distractors": ["useEffect", "useContext", "useRef"]
+}
+```
+
+**"Uyanların hepsini seç"** (iki veya daha fazla doğru yanıt, örn.
+bir ehliyet sınavı sorusu) `cloze_mode: "multiselect"` kullanır
+(`accept` + `distractors` üzerinde tam küme eşleşmesi, #1195):
+
+```json
+{
+  "type": "cloze",
+  "cloze_mode": "multiselect",
+  "sentence": "Which cities are in Germany?",
+  "accept": ["Berlin", "Hamburg"],
+  "distractors": ["Vienna", "Zurich"]
+}
+```
 
 **Cloze başına birden çok boşluk** desteklenir: cümledeki her `___`,
 sırayla `blanks` içindeki bir sonraki girişe eşlenir. Her boşluğun
