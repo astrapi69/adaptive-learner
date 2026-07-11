@@ -12,6 +12,16 @@ name: Visual regression
 
 on:
   workflow_dispatch:
+    inputs:
+      update_baselines:
+        description: >-
+          Regenerate the baseline PNGs (--update-snapshots) in the CI
+          environment and upload them as the visual-baselines artifact
+          instead of diffing. Download, REVIEW, and commit them via PR —
+          baselines must be rendered here, not on a dev machine (font
+          anti-aliasing differs per machine). (#1532)
+        type: boolean
+        default: false
   schedule:
     # Nightly at 04:00 UTC — after the nightly test suite (#575).
     - cron: "0 4 * * *"
@@ -59,7 +69,9 @@ jobs:
 
       - name: Run visual regression
         working-directory: e2e
-        run: npx playwright test --config=playwright.visual.config.ts
+        run: >-
+          npx playwright test --config=playwright.visual.config.ts
+          ${{ inputs.update_baselines == true && '--update-snapshots' || '' }}
 
       - name: Upload report + diffs
         if: always()
@@ -69,4 +81,14 @@ jobs:
           path: |
             e2e/playwright-report
             e2e/test-results
+          retention-days: 14
+
+      # Baseline-refresh mode (#1532): the regenerated PNGs are an artifact,
+      # NEVER auto-committed — download, review every image, commit via PR.
+      - name: Upload regenerated baselines
+        if: inputs.update_baselines == true
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-baselines
+          path: e2e/visual/screenshots
           retention-days: 14
