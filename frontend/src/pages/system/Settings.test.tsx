@@ -230,7 +230,7 @@ describe("Settings page", () => {
     const panel = screen.getByTestId("settings-panel-learning");
     // Section-root testids in their intended causal order.
     const CAUSAL_ORDER = [
-      "settings-section-profile",
+      "settings-section-learning-profile",
       "settings-section-source-languages",
       "settings-section-lesson-mode",
       "settings-section-direction-strategy",
@@ -296,6 +296,30 @@ describe("Settings page", () => {
     expect(ai.classList.contains("settings-tabpanel")).toBe(true);
     expect(
       ai.querySelector('[data-testid="settings-provider"]'),
+    ).not.toBeNull();
+  });
+
+  // #1460 — settings-section-profile must stay unique to the General
+  // tab's user-profile card. All panels remain mounted (inactive ones
+  // hidden), so a second section with the same testid on the Learning
+  // tab makes every selector using it ambiguous — the same class as the
+  // "prefix testid overmatch" pitfall. The Learning tab's assessment
+  // section carries its own testid instead.
+  it("keeps settings-section-profile unique to the General panel (#1460)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=general");
+    await screen.findByTestId("settings");
+    expect(screen.getAllByTestId("settings-section-profile")).toHaveLength(1);
+    const general = screen.getByTestId("settings-panel-general");
+    expect(
+      general.querySelector('[data-testid="settings-section-profile"]'),
+    ).not.toBeNull();
+    const learning = screen.getByTestId("settings-panel-learning");
+    expect(
+      learning.querySelector(
+        '[data-testid="settings-section-learning-profile"]',
+      ),
     ).not.toBeNull();
   });
 
