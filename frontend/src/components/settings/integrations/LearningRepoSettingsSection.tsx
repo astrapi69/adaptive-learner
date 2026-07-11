@@ -75,7 +75,13 @@ export default function LearningRepoSettingsSection() {
     return () => {
       cancelled = true;
     };
-  }, [t]);
+    // ``t`` is deliberately NOT a dependency: the provider rebuilds it on
+    // every catalog (re)load, and a re-run would refetch and OVERWRITE
+    // in-progress edits with the stored values (#1486). Only the error
+    // toast reads ``t``, and a stale toast string is harmless — see
+    // lessons-learned "the t function isn't stable".
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSave = async () => {
     if (settings === null) return;
