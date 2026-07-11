@@ -20,8 +20,9 @@
  */
 
 import { getStorage } from "../../../storage";
-import { GitHubApi, base64ToUtf8 } from "../../github/github-api";
+import { GitHubApi } from "../../github/github-api";
 import { CONTENT_LOADER_PLUGIN } from "../repos/content-repos";
+import { buildFileRequest } from "../repos/github-fetch";
 import {
   INVITE_CODES_DIR,
   inviteCodeFilePath,
@@ -29,8 +30,6 @@ import {
   type InviteCodeFile,
   type InviteRedemption,
 } from "./invite-codes";
-
-const GITHUB_API_BASE = "https://api.github.com";
 
 /** Plugin-settings key holding the learner's local redemption records. */
 const REDEMPTIONS_KEY = "invite_redemptions";
@@ -146,8 +145,12 @@ export async function deactivateInviteCode(
 
 /**
  * Learner: fetch a single ``codes/<CODE>.json`` from ``repo`` (``owner/repo``)
- * on ``branch``. Unauthenticated by default (unlisted-public repo); an optional
- * ``token`` is sent when the learner already has one for the repo. Returns null
+ * on ``branch``. Routed through the CORS-safe host weiche (#1439, same class
+ * as #1429/#1438): a PUBLIC unlisted repo reads from
+ * ``raw.githubusercontent.com`` with no custom headers (a "simple" request -
+ * no CORS preflight, no unauthenticated ``api.github.com`` 60/h/IP limit);
+ * with a per-repo ``token`` the authenticated contents API serves the file
+ * bytes verbatim via ``application/vnd.github.raw`` (no base64). Returns null
  * when the code file does not exist (a wrong / unknown code).
  *
  * @param fetchImpl Injectable fetch (tests pass a scripted fake).
@@ -163,21 +166,14 @@ export async function fetchInviteCode(
   fetchImpl: typeof fetch = fetch.bind(globalThis),
 ): Promise<InviteCodeFile | null> {
   const path = inviteCodeFilePath(code);
-  const url = `${GITHUB_API_BASE}/repos/${repo}/contents/${encodeURI(path)}?ref=${encodeURIComponent(branch)}`;
-  const headers: Record<string, string> = {
-    Accept: "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-  };
-  if (token.trim()) headers.Authorization = `Bearer ${token.trim()}`;
-  const resp = await fetchImpl(url, { headers });
+  const { url, init } = buildFileRequest(repo, branch, path, token);
+  const resp = await fetchImpl(url, init);
   if (resp.status === 404) return null;
   if (!resp.ok) {
     throw new Error(`GitHub returned ${resp.status} for the invitation code.`);
   }
-  const body = (await resp.json()) as { content?: string };
-  if (!body?.content) return null;
   try {
-    return asCodeFile(JSON.parse(base64ToUtf8(body.content)));
+    return asCodeFile(JSON.parse(await resp.text()));
   } catch {
     return null;
   }
