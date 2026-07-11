@@ -35,9 +35,13 @@ updates:
         update-types:
           - "version-update:semver-major"
 
-  # e2e/ carries the pinned @playwright/test whose version must match the
-  # mcr.microsoft.com/playwright container tags in the workflows ("bump both
-  # together"), so majors/minors surface as individual PRs for that check.
+  # e2e/ carries @playwright/test, which is TRIPLE-coupled (#1558): the
+  # mcr.microsoft.com/playwright container tags in the workflows ("bump
+  # both together"), the CI-rendered visual baselines (a new chromium can
+  # shift font AA across all 105 PNGs), and the maintainer machine's
+  # installer support (1.61 refuses ubuntu26.04). It is therefore exact-
+  # pinned in e2e/package.json and EXCLUDED from the group below - a bump
+  # must arrive as an individual, deliberately-coordinated PR.
   - package-ecosystem: "bun"
     directory: "/e2e"
     target-branch: "develop"
@@ -48,6 +52,8 @@ updates:
       - "dependencies"
     groups:
       e2e-minor-patch:
+        exclude-patterns:
+          - "@playwright/test"
         update-types:
           - "minor"
           - "patch"
