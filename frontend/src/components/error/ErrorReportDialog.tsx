@@ -278,6 +278,8 @@ export default function ErrorReportDialog({
                         style={{
                             width: "100%",
                             padding: "var(--space-2)",
+                            background: "var(--bg-primary)",
+                            color: "var(--fg-primary)",
                             borderRadius: "var(--radius-sm)",
                             border: "1px solid var(--border-strong)",
                             fontFamily: "inherit",
