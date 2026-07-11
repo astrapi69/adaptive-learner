@@ -14,4 +14,9 @@
 #
 # 7506 -> 7497 (#1512): body.has-bottom-nav-Reservierung entfernt mit der
 # mobilen BottomTabBar.
-7497
+#
+# 7497 -> 7509 (EXP-044 Tranche 2a, #1485): +12 reine Wrapper-Zeilen
+# (6x "@layer legacy {" + 6x "}") um die Bloecke Buttons/Landing/
+# Onboarding/Assessment/Dashboard/Session - Kaskaden-Reparatur, kein
+# neues CSS. Tranche 4+ loescht diese Regeln samt Wrappern wieder.
+7509
