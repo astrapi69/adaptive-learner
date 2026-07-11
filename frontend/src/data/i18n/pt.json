@@ -2145,6 +2145,11 @@
     }
   },
   "content": {
+    "share": {
+      "button": "Compartilhar",
+      "aria": "Compartilhar o conjunto '{title}'",
+      "title": "Compartilhar conjunto"
+    },
     "filter": {
       "all_sources": "Todas as fontes",
       "official": "Oficial"
@@ -3236,6 +3241,7 @@
     "save_prompt": "Guardar esta lição nos seus favoritos"
   },
   "content_repo": {
+    "set_not_found": "O conjunto '{set}' não foi encontrado neste repositório.",
     "remove": {
       "title": "Remover repositório",
       "message": "Remover {source}? O conteúdo baixado será removido deste dispositivo.",
@@ -3279,6 +3285,8 @@
       "title": "Adicionar um repositório"
     },
     "add_link": {
+      "title_set": "Conectar o repositório e abrir o conjunto?",
+      "body_set": "Conecte o repositório '{repo}' e abra o conjunto '{set}'.",
       "title": "Adicionar este repositório de conteúdo?",
       "body": "Foste convidado a adicionar um repositório de conteúdo ao Adaptive Learner.",
       "invalid": "Este link de convite não contém um repositório válido."
@@ -3289,6 +3297,7 @@
       "token": "Token (repos privados, opcional)"
     },
     "action": {
+      "connect_and_open": "Conectar e abrir",
       "sync_all": "Sincronizar tudo",
       "add": "Adicionar repositório",
       "cancel": "Cancelar",

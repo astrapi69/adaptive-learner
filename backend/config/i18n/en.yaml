@@ -1988,6 +1988,10 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "Share"
+    aria: "Share set '{title}'"
+    title: "Share set"
   filter:
     all_sources: "All sources"
     official: "Official"
@@ -2979,6 +2983,7 @@ favorites:
   empty: "No favorites yet — tap the star on a lesson to save it."
   save_prompt: "Save this lesson to your favorites"
 content_repo:
+  set_not_found: "The set '{set}' was not found in this repository."
   remove:
     title: "Remove repository"
     message: "Remove {source}? Its downloaded content will be removed from this device."
@@ -3015,6 +3020,8 @@ content_repo:
   add:
     title: "Add a repository"
   add_link:
+    title_set: "Connect repository and open set?"
+    body_set: "Connect the repository '{repo}' and open the set '{set}'."
     title: "Add this content repository?"
     body: "You were invited to add a content repository to Adaptive Learner."
     invalid: "This invite link does not contain a valid repository."
@@ -3023,6 +3030,7 @@ content_repo:
     branch: "Branch"
     token: "Token (private repos, optional)"
   action:
+    connect_and_open: "Connect and open"
     sync_all: "Sync all"
     add: "Add repository"
     cancel: "Cancel"

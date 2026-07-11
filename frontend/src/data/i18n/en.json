@@ -2145,6 +2145,11 @@
     }
   },
   "content": {
+    "share": {
+      "button": "Share",
+      "aria": "Share set '{title}'",
+      "title": "Share set"
+    },
     "filter": {
       "all_sources": "All sources",
       "official": "Official"
@@ -3236,6 +3241,7 @@
     "save_prompt": "Save this lesson to your favorites"
   },
   "content_repo": {
+    "set_not_found": "The set '{set}' was not found in this repository.",
     "remove": {
       "title": "Remove repository",
       "message": "Remove {source}? Its downloaded content will be removed from this device.",
@@ -3279,6 +3285,8 @@
       "title": "Add a repository"
     },
     "add_link": {
+      "title_set": "Connect repository and open set?",
+      "body_set": "Connect the repository '{repo}' and open the set '{set}'.",
       "title": "Add this content repository?",
       "body": "You were invited to add a content repository to Adaptive Learner.",
       "invalid": "This invite link does not contain a valid repository."
@@ -3289,6 +3297,7 @@
       "token": "Token (private repos, optional)"
     },
     "action": {
+      "connect_and_open": "Connect and open",
       "sync_all": "Sync all",
       "add": "Add repository",
       "cancel": "Cancel",

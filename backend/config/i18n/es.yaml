@@ -1979,6 +1979,10 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "Compartir"
+    aria: "Compartir el conjunto '{title}'"
+    title: "Compartir conjunto"
   filter:
     all_sources: "Todas las fuentes"
     official: "Oficial"
@@ -2971,6 +2975,7 @@ favorites:
   empty: "Aún no hay favoritos: toca la estrella de una lección."
   save_prompt: "Guardar esta lección en tus favoritos"
 content_repo:
+  set_not_found: "No se encontró el conjunto '{set}' en este repositorio."
   remove:
     title: "Eliminar repositorio"
     message: "¿Eliminar {source}? Su contenido descargado se eliminará de este dispositivo."
@@ -3007,6 +3012,8 @@ content_repo:
   add:
     title: "Añadir un repositorio"
   add_link:
+    title_set: "¿Conectar el repositorio y abrir el conjunto?"
+    body_set: "Conecta el repositorio '{repo}' y abre el conjunto '{set}'."
     title: "¿Añadir este repositorio de contenido?"
     body: "Te han invitado a añadir un repositorio de contenido a Adaptive Learner."
     invalid: "Este enlace de invitación no contiene un repositorio válido."
@@ -3015,6 +3022,7 @@ content_repo:
     branch: "Rama"
     token: "Token (repos privados, opcional)"
   action:
+    connect_and_open: "Conectar y abrir"
     sync_all: "Sincronizar todo"
     add: "Añadir repositorio"
     cancel: "Cancelar"

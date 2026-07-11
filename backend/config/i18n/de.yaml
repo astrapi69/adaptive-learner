@@ -1982,6 +1982,10 @@ lesson:
     action_restart: "Neu starten"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "Teilen"
+    aria: "Set '{title}' teilen"
+    title: "Set teilen"
   filter:
     all_sources: "Alle Quellen"
     official: "Offiziell"
@@ -2973,6 +2977,7 @@ favorites:
   empty: "Noch keine Favoriten — tippe auf den Stern einer Lektion."
   save_prompt: "Diese Lektion zu deinen Favoriten hinzufügen"
 content_repo:
+  set_not_found: "Das Set '{set}' wurde in diesem Repository nicht gefunden."
   remove:
     title: "Repository entfernen"
     message: "{source} entfernen? Die heruntergeladenen Inhalte werden von diesem Gerät entfernt."
@@ -3009,6 +3014,8 @@ content_repo:
   add:
     title: "Repository hinzufügen"
   add_link:
+    title_set: "Repository verbinden und Set öffnen?"
+    body_set: "Verbinde das Repository '{repo}' und öffne das Set '{set}'."
     title: "Dieses Inhalts-Repository hinzufügen?"
     body: "Du wurdest eingeladen, ein Inhalts-Repository zu Adaptive Learner hinzuzufügen."
     invalid: "Dieser Einladungslink enthält kein gültiges Repository."
@@ -3017,6 +3024,7 @@ content_repo:
     branch: "Branch"
     token: "Token (private Repos, optional)"
   action:
+    connect_and_open: "Verbinden und öffnen"
     sync_all: "Alle synchronisieren"
     add: "Repository hinzufügen"
     cancel: "Abbrechen"

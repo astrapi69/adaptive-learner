@@ -1977,6 +1977,10 @@ lesson:
     action_restart: "最初からやり直す"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "共有"
+    aria: "セット「{title}」を共有"
+    title: "セットを共有"
   filter:
     all_sources: "すべてのソース"
     official: "公式"
@@ -2969,6 +2973,7 @@ favorites:
   empty: "お気に入りはまだありません。レッスンの星をタップして保存しましょう。"
   save_prompt: "このレッスンをお気に入りに保存"
 content_repo:
+  set_not_found: "このリポジトリにセット「{set}」が見つかりませんでした。"
   remove:
     title: "リポジトリを削除"
     message: "{source} を削除しますか？ダウンロード済みのコンテンツがこのデバイスから削除されます。"
@@ -3005,6 +3010,8 @@ content_repo:
   add:
     title: "リポジトリを追加"
   add_link:
+    title_set: "リポジトリを接続してセットを開きますか？"
+    body_set: "リポジトリ「{repo}」を接続してセット「{set}」を開きます。"
     title: "このコンテンツリポジトリを追加しますか？"
     body: "Adaptive Learner にコンテンツリポジトリを追加するよう招待されました。"
     invalid: "この招待リンクには有効なリポジトリが含まれていません。"
@@ -3013,6 +3020,7 @@ content_repo:
     branch: "ブランチ"
     token: "トークン（プライベートリポジトリ、任意）"
   action:
+    connect_and_open: "接続して開く"
     sync_all: "すべて同期"
     add: "リポジトリを追加"
     cancel: "キャンセル"

@@ -22,6 +22,7 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 import { isKnowledgeDomain } from "../../../lib/exercises/knowledge-domain";
 import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
 import SetActionsMenu from "./SetActionsMenu";
+import SetShareButton from "../share/SetShareButton";
 import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 
 /** #1351 — the multi-select wiring, forwarded to every row. */
@@ -115,6 +116,8 @@ function ContentSetListRow({
             {entry.lesson_count} {t("content.lessons", "lessons")}
           </span>
         </Link>
+        {/* #1572 — per-set Share (deep link + QR). */}
+        <SetShareButton entry={entry} />
         {/* #1300 — per-set status + delete overflow menu (same component
             as the grid view, so the actions can never drift). */}
         {onSetStatus && onDelete && (
