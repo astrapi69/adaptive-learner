@@ -68,7 +68,10 @@ the browser.
    [Content Browser](../features/content-browser.md) at
    `/content`, choose a lesson set and start a lesson. You read
    short theory and do exercises; at the end you see your result
-   with stars. See [Lessons and reviews](lessons.md).
+   with stars. See [Lessons and reviews](lessons.md). **Tip:** the
+   best place to begin is the bundled set
+   **"Adaptive Learner — App-Tutorial"**, which teaches you the app
+   directly as lessons. See [App tutorial](app-tutorial.md).
 4. **Optional: AI sessions.** If you would rather have the guided
    six-method learning conversation, store an **API key**
    (Settings or `~/.config/adaptive-learner/secrets.yaml`), take
@@ -89,6 +92,7 @@ device.
 
 ## Where to go next
 
+- [App tutorial](app-tutorial.md) — practice the app inside the app (no AI key needed)
 - [Lessons and reviews](lessons.md) — the lesson flow in detail
 - [Content Browser](../features/content-browser.md) — find and filter lessons
 - [Multiple content repositories](../features/content-repos.md) — connect your own content sources
