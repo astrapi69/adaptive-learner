@@ -156,13 +156,10 @@ body,
      browser-UI change; the ``100%`` line stays as the fallback for engines
      without dvh (declaration order IS the fallback mechanism — keep it
      first).
-     #1569 — ``--app-shell-height`` (set by ``useVisualViewportShell`` ONLY
-     while the iOS software keyboard is open) pins the shell to the visual
-     viewport, so the layout viewport stops being taller than the visible area
-     and the caret/touch hit-test grid realigns (dvh does NOT shrink for the
-     keyboard). Unset otherwise → resolves to ``100dvh``, so the #1415 landscape
-     behaviour is preserved unchanged; the ``var()`` fallback keeps pre-var
-     engines on the dvh / ``100%`` lines above. */
+     #1569 — ``--app-shell-height`` (set by ``useVisualViewportShell`` only
+     while the iOS keyboard is open, which ``dvh`` does not track) pins the
+     shell to the visual viewport so the caret/touch hit-test grid realigns;
+     unset → ``100dvh``, so the #1415 landscape behaviour is unchanged. */
   height: 100%;
   height: 100dvh;
   height: var(--app-shell-height, 100dvh);

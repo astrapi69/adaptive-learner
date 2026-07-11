@@ -19,4 +19,12 @@
 # (6x "@layer legacy {" + 6x "}") um die Bloecke Buttons/Landing/
 # Onboarding/Assessment/Dashboard/Session - Kaskaden-Reparatur, kein
 # neues CSS. Tranche 4+ loescht diese Regeln samt Wrappern wieder.
-7509
+#
+# 7509 -> 7514 (#1569): +5 Zeilen Fundament - die iOS-Shell-Regel
+# (html,body,#root) bekommt eine dritte height-Deklaration
+# ``height: var(--app-shell-height, 100dvh)`` plus knapper Kommentar.
+# ``--app-shell-height`` wird nur bei offener iOS-Tastatur von
+# useVisualViewportShell gesetzt und richtet den Caret/Touch-Hit-Test am
+# Visual Viewport aus; unset -> 100dvh (Landscape-Fix #1415 unveraendert).
+# Kein komponentenlokaler Stil - eine Shell-weite Viewport-Grundregel.
+7514
