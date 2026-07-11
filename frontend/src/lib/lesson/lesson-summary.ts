@@ -127,6 +127,11 @@ export function deriveCanonicalAnswer(
         }
         case "multiple_choice":
             return multipleChoiceCanonicalAnswer(exercise);
+        default:
+            // ext:* extension types (schema 1.7): the core has no
+            // canonical answer for them - the registered extension
+            // owns grading/summary. Same defensive "" as above.
+            return "";
     }
 }
 
