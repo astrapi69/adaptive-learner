@@ -39,9 +39,15 @@ jobs:
         with:
           node-version: "24"
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.3.14"
+      # NOT oven-sh/setup-bun here: it unpacks the Bun zip with `unzip`,
+      # which the Playwright noble image does not ship, and the job runs as
+      # --user 1001 (no apt). The npm distribution of Bun carries the binary
+      # as a plain npm tarball (no unzip), installed to a user-writable
+      # prefix (#1530).
+      - name: Install Bun 1.3.14 (npm; image lacks unzip for setup-bun)
+        run: |
+          npm install --global --prefix "$HOME/.bun-npm" bun@1.3.14
+          echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
 
       - name: Cache bun install
         uses: actions/cache@v6
