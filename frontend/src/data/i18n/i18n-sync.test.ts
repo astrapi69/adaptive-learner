@@ -53,6 +53,33 @@ function flatten(obj: Record<string, unknown>, prefix = ""): Set<string> {
 }
 
 describe("i18n JSON catalogs — Dexie-mode bundled source of truth", () => {
+    // #1461 — Settings heading collision: the Learning tab's voice
+    // section heading (settings.section_voice) must differ from the
+    // General tab's display-language heading (settings.section_language).
+    // Pre-fix, de rendered "Sprache" for both and tr rendered "Dil" for
+    // both — three language-named H2s across two tabs.
+    it("keeps the voice heading distinct from the language heading (#1461)", () => {
+        for (const lang of LANGS) {
+            const settings = loadJson(lang).settings as Record<string, unknown>;
+            expect(settings.section_voice, `${lang}: section_voice`).toBeTruthy();
+            expect(
+                settings.section_voice,
+                `${lang}: section_voice must not equal section_language`,
+            ).not.toBe(settings.section_language);
+        }
+    });
+
+    // #1461 — every Learning-tab section heading lives in the settings.*
+    // namespace; the SRS heading was the lone outlier (srs.settings_title).
+    it("carries the SRS section heading at settings.section_srs (#1461)", () => {
+        for (const lang of LANGS) {
+            const settings = loadJson(lang).settings as Record<string, unknown>;
+            expect(typeof settings.section_srs, `${lang}: section_srs`).toBe(
+                "string",
+            );
+        }
+    });
+
     it("ships all expected languages", () => {
         const present = readdirSync(JSON_DIR)
             .filter((f) => f.endsWith(".json"))

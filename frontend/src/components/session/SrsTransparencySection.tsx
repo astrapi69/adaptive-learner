@@ -20,7 +20,7 @@ export default function SrsTransparencySection() {
             data-testid="settings-section-srs"
         >
             <h2 className="settings-section-title">
-                {t("srs.settings_title", "Spaced repetition")}
+                {t("settings.section_srs", "Spaced repetition")}
             </h2>
             <p className="form-hint">
                 {t(

@@ -560,6 +560,7 @@
       "installed": "アプリをインストールしました。"
     },
     "section_review": "復習",
+    "section_srs": "間隔反復",
     "explanations_enabled": "エラーの説明を表示",
     "explanations_enabled_desc": "レッスン後に各間違いへ短いルールのヒントを表示します。",
     "section_hints": "ヒント",
@@ -3209,7 +3210,6 @@
     "last_answer": "あなたの回答:",
     "correct": "正解:",
     "no_elements": "追跡中の要素はまだありません。",
-    "settings_title": "間隔反復",
     "settings_intro": "間違えた項目は、正解するほど間隔が延びるスケジュールで復習に戻ってくるので、すでに知っている項目より弱点を多く練習できます。",
     "schedule_streak": "連続{n}回正解",
     "schedule_streak_plus": "連続{n}回以上正解",

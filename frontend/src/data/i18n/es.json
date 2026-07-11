@@ -560,6 +560,7 @@
       "installed": "Aplicación instalada."
     },
     "section_review": "Repaso",
+    "section_srs": "Repetición espaciada",
     "explanations_enabled": "Mostrar explicaciones de errores",
     "explanations_enabled_desc": "Tras una lección, muestra un breve consejo de regla por cada error.",
     "section_hints": "Pistas",
@@ -3209,7 +3210,6 @@
     "last_answer": "Tu respuesta:",
     "correct": "Correcto:",
     "no_elements": "Aún no hay elementos registrados.",
-    "settings_title": "Repetición espaciada",
     "settings_intro": "Lo que fallas vuelve para repaso en un calendario que se alarga a medida que aciertas, así practicas más los puntos débiles que los que ya dominas.",
     "schedule_streak": "{n} aciertos seguidos",
     "schedule_streak_plus": "{n}+ aciertos seguidos",

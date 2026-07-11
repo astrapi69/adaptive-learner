@@ -560,6 +560,7 @@
       "installed": "Uygulama yüklendi."
     },
     "section_review": "Tekrar",
+    "section_srs": "Aralıklı tekrar",
     "explanations_enabled": "Hata açıklamalarını göster",
     "explanations_enabled_desc": "Bir dersten sonra her hata için kısa bir kural ipucu gösterir.",
     "section_hints": "İpuçları",
@@ -812,7 +813,7 @@
     "reset_progress_help": "XP, rozet ve seriyi kalıcı olarak siler. Geri alınamaz.",
     "reset_confirm_first": "Onaylamak için tekrar tıkla",
     "reset_confirm_second": "Kalıcı silmek için bir kez daha tıkla",
-    "section_voice": "Dil",
+    "section_voice": "Ses",
     "voice": {
       "tts_enabled": "Konuşma düğmelerini göster",
       "tts_enabled_help": "YZ yanıtlarını sesli okur.",
@@ -3209,7 +3210,6 @@
     "last_answer": "Cevabın:",
     "correct": "Doğru:",
     "no_elements": "Henüz izlenen öge yok.",
-    "settings_title": "Aralıklı tekrar",
     "settings_intro": "Yanlış yaptıkların, doğru yaptıkça uzayan bir takvimle tekrara döner; böylece zayıf noktalarını bildiklerinden daha sık çalışırsın.",
     "schedule_streak": "Üst üste {n} doğru",
     "schedule_streak_plus": "Üst üste {n}+ doğru",

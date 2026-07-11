@@ -560,6 +560,7 @@
       "installed": "Aplicativo instalado."
     },
     "section_review": "Revisão",
+    "section_srs": "Repetição espaçada",
     "explanations_enabled": "Mostrar explicações de erros",
     "explanations_enabled_desc": "Após uma lição, mostra uma breve dica de regra para cada erro.",
     "section_hints": "Dicas",
@@ -3209,7 +3210,6 @@
     "last_answer": "A sua resposta:",
     "correct": "Correto:",
     "no_elements": "Ainda não há elementos registados.",
-    "settings_title": "Repetição espaçada",
     "settings_intro": "O que erra volta para revisão num calendário que se alonga à medida que acerta, por isso pratica mais os pontos fracos do que o que já sabe.",
     "schedule_streak": "{n} acertos seguidos",
     "schedule_streak_plus": "{n}+ acertos seguidos",

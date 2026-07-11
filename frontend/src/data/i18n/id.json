@@ -564,6 +564,7 @@
       "installed": "Aplikasi terpasang."
     },
     "section_review": "Ulasan",
+    "section_srs": "Pengulangan berjarak",
     "explanations_enabled": "Tampilkan penjelasan kesalahan",
     "explanations_enabled_desc": "Setelah pelajaran, tampilkan kiat aturan singkat untuk setiap kesalahan.",
     "section_hints": "Petunjuk",
@@ -3209,7 +3210,6 @@
     "last_answer": "Jawabanmu:",
     "correct": "Benar:",
     "no_elements": "Belum ada elemen yang terlacak.",
-    "settings_title": "Pengulangan berjarak",
     "settings_intro": "Item yang kamu lewatkan akan kembali untuk ditinjau dengan jadwal yang merentang seiring kamu menjawabnya dengan benar, sehingga kamu lebih sering melatih titik lemah daripada yang sudah kamu kuasai.",
     "schedule_streak": "{n} benar berturut-turut",
     "schedule_streak_plus": "{n}+ benar berturut-turut",
