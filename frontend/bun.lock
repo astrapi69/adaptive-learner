@@ -53,7 +53,7 @@
         "highlight.js": "11.11.1",
         "html5-qrcode": "2.3.8",
         "jszip": "3.10.1",
-        "learn-content-engine": "0.9.0",
+        "learn-content-engine": "0.11.0",
         "lowlight": "3.3.0",
         "lucide-react": "^1.24.0",
         "qrcode": "1.5.4",
@@ -628,6 +628,8 @@
     "@radix-ui/rect": ["@radix-ui/rect@1.1.2", "", {}, "sha512-xnXE7wG13PI+cxieVssYXlQJuYVRhH9NBoxt3KNwzghDIA69GMm7d4wXRouHIYjE+KvS6U/MsMO73NdS2MH9ZA=="],
 
     "@reduxjs/toolkit": ["@reduxjs/toolkit@2.12.0", "", { "dependencies": { "@standard-schema/spec": "^1.0.0", "@standard-schema/utils": "^0.3.0", "immer": "^11.0.0", "redux": "^5.0.1", "redux-thunk": "^3.1.0", "reselect": "^5.1.0" }, "peerDependencies": { "react": "^16.9.0 || ^17.0.0 || ^18 || ^19", "react-redux": "^7.2.1 || ^8.1.3 || ^9.0.0" } }, "sha512-KiT+RzZbp6mQET+Mg+h2c97+9j1sNflUxQkIHI7Yuzf6Peu+OYpmkn6nbHWmLLWj+1ZODUJFwGZ7gx3L9R9EOw=="],
+
+    "@rgrove/parse-xml": ["@rgrove/parse-xml@4.2.2", "", {}, "sha512-KJpwSfVwrZ1Ab9KU4oRwG0VefGpveSt/w/j1m6YkJkB5KhdDbN/7BS0ojcLCzrG3/YGFhtfFHKVBkrms6w8Org=="],
 
     "@rolldown/binding-android-arm64": ["@rolldown/binding-android-arm64@1.1.3", "", { "os": "android", "cpu": "arm64" }, "sha512-DT6Z3PhvioeHMvxo+xHc3KtqggrI7CCTXCmC2h/5zUlp5jVitv7XEy+9q5/7v8IolhlioawpMo8Kg0EEBy7J0g=="],
 
@@ -1617,7 +1619,7 @@
 
     "kind-of": ["kind-of@6.0.3", "", {}, "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="],
 
-    "learn-content-engine": ["learn-content-engine@0.9.0", "", { "dependencies": { "ajv": "^8.20.0", "yaml": "^2.9.0" }, "bin": { "learn-content-engine": "bin/learn-content-engine.mjs" } }, "sha512-7P+7suSVkvvjnBuH9qG+w0bJZDzzu99uBAM4You4EevkNJWEALjKnbQsMZCItjRD8oZEi66Y1MauruZYgrzeLA=="],
+    "learn-content-engine": ["learn-content-engine@0.11.0", "", { "dependencies": { "@rgrove/parse-xml": "^4.2.2", "ajv": "^8.20.0", "yaml": "^2.9.0" }, "bin": { "learn-content-engine": "bin/learn-content-engine.mjs" } }, "sha512-DRx2C5Z3qaTzECxO72x6KULTbNXWlumkxp6a7/ziKxT1uUDifTWKlw3M03qa1MdtBBS1UcCknSeIQ7AKGExLDg=="],
 
     "leven": ["leven@3.1.0", "", {}, "sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A=="],
 
