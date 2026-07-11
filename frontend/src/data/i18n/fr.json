@@ -2146,6 +2146,11 @@
     }
   },
   "content": {
+    "share": {
+      "button": "Partager",
+      "aria": "Partager le set '{title}'",
+      "title": "Partager le set"
+    },
     "filter": {
       "all_sources": "Toutes les sources",
       "official": "Officiel"
@@ -3236,6 +3241,7 @@
     "save_prompt": "Enregistrer cette leçon dans tes favoris"
   },
   "content_repo": {
+    "set_not_found": "Le set '{set}' est introuvable dans ce dépôt.",
     "remove": {
       "title": "Supprimer le dépôt",
       "message": "Supprimer {source} ? Son contenu téléchargé sera retiré de cet appareil.",
@@ -3279,6 +3285,8 @@
       "title": "Ajouter un dépôt"
     },
     "add_link": {
+      "title_set": "Connecter le dépôt et ouvrir le set ?",
+      "body_set": "Connecte le dépôt '{repo}' et ouvre le set '{set}'.",
       "title": "Ajouter ce dépôt de contenu ?",
       "body": "Tu as été invité à ajouter un dépôt de contenu à Adaptive Learner.",
       "invalid": "Ce lien d'invitation ne contient pas de dépôt valide."
@@ -3289,6 +3297,7 @@
       "token": "Jeton (dépôts privés, facultatif)"
     },
     "action": {
+      "connect_and_open": "Connecter et ouvrir",
       "sync_all": "Tout synchroniser",
       "add": "Ajouter le dépôt",
       "cancel": "Annuler",

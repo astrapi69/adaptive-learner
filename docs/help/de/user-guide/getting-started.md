@@ -73,7 +73,11 @@ KI-Anbieter außerhalb des Browsers sitzt.
    `/content`, wähle einen Lektionssatz und starte eine
    Lektion. Du liest kurze Theorie und machst Übungen; am
    Ende siehst du dein Ergebnis mit Sternen. Siehe
-   [Lektionen und Wiederholungen](lessons.md).
+   [Lektionen und Wiederholungen](lessons.md). **Tipp:** Am
+   besten fängst du mit dem gebündelten Satz
+   **„Adaptive Learner — App-Tutorial"** an — er bringt dir die
+   App direkt als Lektionen bei. Siehe
+   [App-Tutorial](app-tutorial.md).
 4. **Optional: KI-Sessions.** Möchtest du stattdessen das
    geführte Sechs-Methoden-Lerngespräch, hinterlege einen
    **API-Schlüssel** (Einstellungen oder
@@ -97,6 +101,7 @@ Gerät gespeichert.
 
 ## Wie es weitergeht
 
+- [App-Tutorial](app-tutorial.md) — die App direkt im Programm üben (kein KI-Schlüssel nötig)
 - [Lektionen und Wiederholungen](lessons.md) — der Lektionsablauf im Detail
 - [Content Browser](../features/content-browser.md) — Lektionen finden und filtern
 - [Mehrere Content-Repositories](../features/content-repos.md) — eigene Inhaltsquellen verbinden

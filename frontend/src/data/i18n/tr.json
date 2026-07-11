@@ -2146,6 +2146,11 @@
     }
   },
   "content": {
+    "share": {
+      "button": "Paylaş",
+      "aria": "'{title}' setini paylaş",
+      "title": "Seti paylaş"
+    },
     "filter": {
       "all_sources": "Tüm kaynaklar",
       "official": "Resmî"
@@ -3236,6 +3241,7 @@
     "save_prompt": "Bu dersi favorilerine kaydet"
   },
   "content_repo": {
+    "set_not_found": "'{set}' seti bu depoda bulunamadı.",
     "remove": {
       "title": "Depoyu kaldır",
       "message": "{source} kaldırılsın mı? İndirilen içeriği bu cihazdan kaldırılacak.",
@@ -3279,6 +3285,8 @@
       "title": "Depo ekle"
     },
     "add_link": {
+      "title_set": "Depo bağlanıp set açılsın mı?",
+      "body_set": "'{repo}' deposunu bağla ve '{set}' setini aç.",
       "title": "Bu içerik deposu eklensin mi?",
       "body": "Adaptive Learner'a bir içerik deposu eklemeye davet edildin.",
       "invalid": "Bu davet bağlantısı geçerli bir depo içermiyor."
@@ -3289,6 +3297,7 @@
       "token": "Belirteç (özel depolar, isteğe bağlı)"
     },
     "action": {
+      "connect_and_open": "Bağla ve aç",
       "sync_all": "Tümünü eşitle",
       "add": "Depo ekle",
       "cancel": "İptal",

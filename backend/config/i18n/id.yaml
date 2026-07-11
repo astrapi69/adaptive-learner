@@ -1989,6 +1989,10 @@ lesson:
     action_restart: "Mulai dari awal"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "Bagikan"
+    aria: "Bagikan set '{title}'"
+    title: "Bagikan set"
   filter:
     all_sources: "Semua sumber"
     official: "Resmi"
@@ -2979,6 +2983,7 @@ favorites:
   empty: "Belum ada favorit — ketuk bintang pada sebuah pelajaran untuk menyimpannya."
   save_prompt: "Simpan pelajaran ini ke favoritmu"
 content_repo:
+  set_not_found: "Set '{set}' tidak ditemukan di repositori ini."
   remove:
     title: "Hapus repositori"
     message: "Hapus {source}? Konten yang diunduhnya akan dihapus dari perangkat ini."
@@ -3015,6 +3020,8 @@ content_repo:
   add:
     title: "Tambah sebuah repositori"
   add_link:
+    title_set: "Hubungkan repositori dan buka set?"
+    body_set: "Hubungkan repositori '{repo}' dan buka set '{set}'."
     title: "Tambahkan repositori konten ini?"
     body: "Kamu diundang untuk menambahkan sebuah repositori konten ke Adaptive Learner."
     invalid: "Tautan undangan ini tidak memuat repositori yang valid."
@@ -3023,6 +3030,7 @@ content_repo:
     branch: "Branch"
     token: "Token (repo privat, opsional)"
   action:
+    connect_and_open: "Hubungkan dan buka"
     sync_all: "Sinkronkan semua"
     add: "Tambah repositori"
     cancel: "Batal"
