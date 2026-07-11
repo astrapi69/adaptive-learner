@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock') }}
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
           restore-keys: bun-${{ runner.os }}-
 
       - name: Install frontend deps
@@ -61,7 +61,7 @@ jobs:
 
       - name: Install e2e deps
         working-directory: e2e
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Install Playwright browsers
         working-directory: e2e

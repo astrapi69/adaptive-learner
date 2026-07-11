@@ -36,7 +36,7 @@ jobs:
     # runner. The image is pulled from mcr.microsoft.com, which the Azure-hosted
     # runner reaches fine (the apt steps from packages.microsoft.com always
     # succeeded). Pin the tag to the @playwright/test version in
-    # e2e/package-lock.json (1.59.1); bump both together.
+    # e2e/bun.lock (1.59.1); bump both together.
     container:
       image: mcr.microsoft.com/playwright:v1.59.1-noble
       # --user 1001 = the runner user, so checkout-owned files stay writable
@@ -69,7 +69,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock') }}
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
           restore-keys: bun-${{ runner.os }}-
 
       - name: Install frontend deps
@@ -78,7 +78,7 @@ jobs:
 
       - name: Install e2e deps
         working-directory: e2e
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       # NO `playwright install` step: the browsers are baked into the container.
       # These two commands mirror the `make test-dexie-smoke` target verbatim;

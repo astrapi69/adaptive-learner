@@ -7,11 +7,10 @@
 # own dedicated review (matching the release-workflow dep policy).
 version: 2
 updates:
-  # frontend/ is managed by Bun as of #1492 (this PR removed package-lock.json
-  # for bun.lock). Dependabot supports bun.lock version updates (GA 2025-02-13,
-  # verified in the Phase 0 gate); on "npm" it would look for the now-absent
-  # package-lock.json and stop updating the frontend until Phase 2. e2e/ has no
-  # entry here and stays on npm.
+  # frontend/ (Phase 1) and e2e/ (Phase 2) are managed by Bun (#1492).
+  # Dependabot supports bun.lock version updates (GA 2025-02-13, verified in
+  # the Phase 0 gate); on "npm" it would look for the now-absent
+  # package-lock.json files and stop updating them.
   - package-ecosystem: "bun"
     directory: "/frontend"
     # Gitflow (#334): open update PRs against develop, not main.
@@ -35,6 +34,23 @@ updates:
       - dependency-name: "typescript"
         update-types:
           - "version-update:semver-major"
+
+  # e2e/ carries the pinned @playwright/test whose version must match the
+  # mcr.microsoft.com/playwright container tags in the workflows ("bump both
+  # together"), so majors/minors surface as individual PRs for that check.
+  - package-ecosystem: "bun"
+    directory: "/e2e"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    groups:
+      e2e-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/backend"
