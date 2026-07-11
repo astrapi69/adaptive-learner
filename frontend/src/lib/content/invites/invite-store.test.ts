@@ -14,19 +14,18 @@ vi.mock("../../../storage", () => ({
   }),
 }));
 
-import { utf8ToBase64 } from "../../github/github-api";
 import {
   fetchInviteCode,
   readRedemptions,
   recordRedemption,
 } from "./invite-store";
 
-/** A fetch stub returning a contents-API response for one path. */
-function githubContentsResponse(file: unknown): Response {
+/** A fetch stub returning a raw / vnd.github.raw plain-text body. */
+function rawFileResponse(file: unknown): Response {
   return {
     status: 200,
     ok: true,
-    json: async () => ({ content: utf8ToBase64(JSON.stringify(file)) }),
+    text: async () => JSON.stringify(file),
   } as unknown as Response;
 }
 
@@ -39,10 +38,10 @@ beforeEach(() => {
 });
 
 describe("fetchInviteCode", () => {
-  it("reads + normalises a code file from the contents API", async () => {
+  it("reads + normalises a code file from the raw host", async () => {
     const fetchImpl = vi.fn(
       async (_url: string | URL | Request, _init?: RequestInit) =>
-        githubContentsResponse({
+        rawFileResponse({
           code: "deutsch-8x4k",
           repo: "coach/deutsch-b1",
           max_uses: 25,
@@ -62,20 +61,47 @@ describe("fetchInviteCode", () => {
     expect(file?.code).toBe("DEUTSCH-8X4K");
     expect(file?.repo).toBe("coach/deutsch-b1");
     expect(file?.branch).toBe("main"); // defaulted
-    // Unauthenticated: no Authorization header.
-    const init = fetchImpl.mock.calls[0][1];
-    expect((init as RequestInit).headers).not.toHaveProperty("Authorization");
+    // Unauthenticated: a "simple" request - no init, no custom headers.
+    expect(fetchImpl.mock.calls[0][1]).toBeUndefined();
   });
 
-  it("sends a bearer token when one is supplied", async () => {
+  it("reads a public code from raw.githubusercontent.com without custom headers (#1439)", async () => {
+    // The CORS-safe weiche (#1429/#1438 class): a PUBLIC unlisted invite
+    // repo must be read over the raw host as a "simple" request - no
+    // custom headers (no preflight), no unauthenticated api.github.com
+    // 60/h/IP rate limit, no base64 decode.
     const fetchImpl = vi.fn(
       async (_url: string | URL | Request, _init?: RequestInit) =>
-        githubContentsResponse({ code: "AB12", repo: "a/b", max_uses: 0, expires: null, note: "", created: "" }),
+        rawFileResponse({
+          code: "AB12",
+          repo: "a/b",
+          max_uses: 0,
+          expires: null,
+          note: "",
+          created: "",
+        }),
+    );
+    await fetchInviteCode("a/b", "main", "AB12", "", fetchImpl as unknown as typeof fetch);
+    const [url, init] = fetchImpl.mock.calls[0];
+    expect(String(url)).toBe(
+      "https://raw.githubusercontent.com/a/b/main/codes/AB12.json",
+    );
+    expect(init).toBeUndefined();
+  });
+
+  it("sends a bearer token through the authenticated contents API", async () => {
+    const fetchImpl = vi.fn(
+      async (_url: string | URL | Request, _init?: RequestInit) =>
+        rawFileResponse({ code: "AB12", repo: "a/b", max_uses: 0, expires: null, note: "", created: "" }),
     );
     await fetchInviteCode("a/b", "main", "AB12", "ghp_secret", fetchImpl as unknown as typeof fetch);
-    const init = fetchImpl.mock.calls[0][1];
+    const [url, init] = fetchImpl.mock.calls[0];
+    expect(String(url)).toBe(
+      "https://api.github.com/repos/a/b/contents/codes/AB12.json?ref=main",
+    );
     expect((init as RequestInit).headers).toMatchObject({
       Authorization: "Bearer ghp_secret",
+      Accept: "application/vnd.github.raw",
     });
   });
 
@@ -109,7 +135,7 @@ describe("fetchInviteCode", () => {
       }
       calls.push(url);
       return Promise.resolve(
-        githubContentsResponse({
+        rawFileResponse({
           code: "AB12",
           repo: "a/b",
           max_uses: 0,
