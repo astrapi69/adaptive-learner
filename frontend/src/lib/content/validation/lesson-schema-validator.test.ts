@@ -387,3 +387,38 @@ describe("#1205 fixture 9 — shared shape-parity fixture (app-side)", () => {
     },
   );
 });
+
+
+describe("extension tier load guard (#1565, schema 1.7)", () => {
+  // The loud-refusal contract (engine E-EXT-UNSUPPORTED) must hold at the
+  // app's LOAD boundary too: structurally a requires_extensions lesson is
+  // valid 1.7, but this app has adopted no extensions - loading one and
+  // letting the ext exercise fall through to unknown-type rendering would
+  // be exactly the silent mis-rendering the contract forbids.
+  it("refuses a lesson declaring an extension this app has not adopted", () => {
+    const declared = makeLesson({
+      requires_extensions: ["ext:ref-ordering@1"],
+    } as Partial<ContentLesson>);
+    const result = validateLessonShape(declared);
+    expect(result.ok).toBe(false);
+    expect(result.errors.join(" ")).toContain("ext:ref-ordering@1");
+  });
+
+  it("names every declared extension in the refusal", () => {
+    const declared = makeLesson({
+      requires_extensions: ["ext:ref-ordering@1", "ext:acme-cards@2"],
+    } as Partial<ContentLesson>);
+    const joined = validateLessonShape(declared).errors.join(" ");
+    expect(joined).toContain("ext:ref-ordering@1");
+    expect(joined).toContain("ext:acme-cards@2");
+  });
+
+  it("an explicitly empty requires_extensions stays loadable (boundary)", () => {
+    const empty = makeLesson({ requires_extensions: [] } as Partial<ContentLesson>);
+    expect(validateLessonShape(empty).ok).toBe(true);
+  });
+
+  it("core lessons without the field stay loadable (regression)", () => {
+    expect(validateLessonShape(makeLesson()).ok).toBe(true);
+  });
+});
