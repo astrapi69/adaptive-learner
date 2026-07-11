@@ -976,6 +976,8 @@ about:
   license_text_link: (전문)
   repo_label: 저장소
   docs_label: 문서
+  tutorial_label: "앱 튜토리얼"
+  tutorial_link: "튜토리얼 바로 열기"
   issues_label: 이슈
 backup:
   section_title: 백업

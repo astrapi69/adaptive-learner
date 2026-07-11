@@ -1048,6 +1048,8 @@
     "license_text_link": "(κείμενο)",
     "repo_label": "Repository",
     "docs_label": "Τεκμηρίωση",
+    "tutorial_label": "Οδηγός εφαρμογής",
+    "tutorial_link": "Άνοιγμα του οδηγού απευθείας",
     "issues_label": "Issues"
   },
   "backup": {

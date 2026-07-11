@@ -977,6 +977,8 @@ about:
   license_text_link: (पाठ)
   repo_label: रिपॉज़िटरी
   docs_label: दस्तावेज़ीकरण
+  tutorial_label: "ऐप ट्यूटोरियल"
+  tutorial_link: "ट्यूटोरियल सीधे खोलें"
   issues_label: समस्याएँ
 backup:
   section_title: बैकअप

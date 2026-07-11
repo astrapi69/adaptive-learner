@@ -1048,6 +1048,8 @@
     "license_text_link": "(metin)",
     "repo_label": "Depo",
     "docs_label": "Belgeler",
+    "tutorial_label": "Uygulama eğitimi",
+    "tutorial_link": "Eğitimi doğrudan aç",
     "issues_label": "Sorunlar"
   },
   "backup": {
