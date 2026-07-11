@@ -7,3 +7,4 @@ export * from "./useI18n";
 export * from "./useScrollDirection";
 export * from "./useSwipe";
 export * from "./useTheme";
+export * from "./useVisualViewportShell";

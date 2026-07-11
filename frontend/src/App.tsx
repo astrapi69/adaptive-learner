@@ -27,6 +27,7 @@ import { HelpProvider } from "./contexts/HelpContext";
 import { ConfirmProvider } from "./contexts/ConfirmContext";
 import { I18nProvider } from "./hooks/ui/useI18n";
 import { useTheme } from "./hooks/ui/useTheme";
+import { useVisualViewportShell } from "./hooks/ui/useVisualViewportShell";
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/onboarding/Landing";
 import SkipToContent from "./components/a11y/SkipToContent";
@@ -96,6 +97,11 @@ const ErrorReportDialog = lazyWithReload(() => import("./components/error/ErrorR
  */
 export default function App() {
   useTheme();
+  // #1569 — app-global: while the iOS software keyboard is open, pin the shell
+  // to the visual viewport so the caret/touch hit-test grid realigns with the
+  // rendering (fixes the "caret/tap lands 1-2 lines below the field" desync in
+  // text fields AND MC/SC). Inert on desktop/Android and when no keyboard is up.
+  useVisualViewportShell();
   // EXP-023 Phase A — background-sync a connected user content repo on
   // app start when its cache is older than 24h.
   useContentRepoAutoSync();
