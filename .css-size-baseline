@@ -19,4 +19,10 @@
 # (6x "@layer legacy {" + 6x "}") um die Bloecke Buttons/Landing/
 # Onboarding/Assessment/Dashboard/Session - Kaskaden-Reparatur, kein
 # neues CSS. Tranche 4+ loescht diese Regeln samt Wrappern wieder.
-7509
+#
+# 7509 -> 7525 (EXP-044 Tranche 2b, #1485): +16 reine Wrapper-Zeilen
+# (8x "@layer legacy {" + 8x "}") um die Bloecke Rating/Settings/
+# Progress/Navigation/EXP-008-Celebration/Curriculum/Visual-Diff/
+# PWA-Banner - Kaskaden-Reparatur, kein neues CSS. Tranche 4+ loescht
+# diese Regeln samt Wrappern wieder.
+7525

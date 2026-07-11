@@ -1849,6 +1849,7 @@ select:focus {
 }
 
 /* --- v0.6.0 / 9C: 1-5 rating button group ---------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .rating-row {
   display: flex;
   flex-direction: column;
@@ -1898,7 +1899,9 @@ select:focus {
   cursor: not-allowed;
 }
 
+} /* @layer legacy */
 /* --- Settings page -------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .settings-page {
   /* Holds the #549 sidebar grid (max-w-[1180px], 220px + 1fr). The page
@@ -2390,7 +2393,9 @@ select:focus {
   border-left: 3px solid var(--accent);
 }
 
+} /* @layer legacy */
 /* --- Progress table -------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .commit-table-wrap {
   overflow-x: auto;
@@ -2421,7 +2426,9 @@ select:focus {
   border-bottom: none;
 }
 
+} /* @layer legacy */
 /* --- Navigation ----------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .app-nav {
   display: flex;
@@ -3443,6 +3450,7 @@ select:focus {
   }
 }
 
+} /* @layer legacy */
 /* =============================================================
    EXP-008 / Phase 55C — celebration screen: confetti + message
    -------------------------------------------------------------
@@ -3453,6 +3461,7 @@ select:focus {
    belt-and-braces guard. The headline message warms to the
    accent colour on a perfect (3-star) run.
    =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .lesson-summary {
   position: relative;
 }
@@ -4051,7 +4060,9 @@ select:focus {
   background: var(--surface-2);
 }
 
+} /* @layer legacy */
 /* --- Curriculum page ------------------------------------------ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .curriculum-toolbar {
   display: flex;
@@ -4339,6 +4350,7 @@ select:focus {
   background: var(--accent);
 }
 
+} /* @layer legacy */
 /* =============================================================
    Phase 52B / v1.35.0 / F-112 — Visual diff highlighting
    -------------------------------------------------------------
@@ -4348,6 +4360,7 @@ select:focus {
    screen-reader users (WCAG 2.1 SC 1.4.1). Theme-variable based;
    no hardcoded colours — all 10 theme variants inherit.
    ============================================================= */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .diff-highlight {
   display: inline;
@@ -4532,6 +4545,7 @@ select:focus {
   }
 }
 
+} /* @layer legacy */
 /* =============================================================
    v0.6.0 / 9B — PWA install prompt banner
    -------------------------------------------------------------
@@ -4540,6 +4554,7 @@ select:focus {
    shrinks to a centred card on desktop so it doesn't span the
    full viewport on a 1440px monitor.
    =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .install-prompt {
   position: fixed;
   left: var(--space-3);
@@ -4599,6 +4614,7 @@ select:focus {
   }
 }
 
+} /* @layer legacy */
 /* =============================================================
    v0.6.0 — Mobile responsive polish (Phase 9A)
    -------------------------------------------------------------
