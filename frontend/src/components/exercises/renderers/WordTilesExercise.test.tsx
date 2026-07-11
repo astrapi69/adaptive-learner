@@ -64,17 +64,30 @@ const EXERCISE_MULTI_ORDER: ContentLessonExercise = {
 
 describe("wordTilesPerTileCorrect (#1005)", () => {
     it("marks every position correct when the whole answer is accepted", () => {
-        expect(wordTilesPerTileCorrect([1, 0], true)).toEqual([true, true]);
+        expect(wordTilesPerTileCorrect([1, 0], ["Au", "revoir"], true)).toEqual(
+            [true, true],
+        );
     });
 
     it("marks each position by its canonical slot when wrong", () => {
         // slot 0 holds tile 0 (correct), slot 1 holds tile 0? no — [0, 2, 1]:
         // slot0=0 ✓, slot1=2 ✗, slot2=1 ✗
-        expect(wordTilesPerTileCorrect([0, 2, 1], false)).toEqual([
-            true,
-            false,
-            false,
-        ]);
+        expect(
+            wordTilesPerTileCorrect([0, 2, 1], ["x", "y", "z"], false),
+        ).toEqual([true, false, false]);
+    });
+
+    it("marks a duplicate token in its canonical-text slot correct even when the tile index differs (#1544)", () => {
+        // "die sieht Frau die" against canonical "die Frau sieht die":
+        // slots 0 and 3 hold the right WORD (the other duplicate tile),
+        // slots 1 and 2 are genuinely swapped.
+        expect(
+            wordTilesPerTileCorrect(
+                [3, 2, 1, 0],
+                ["die", "Frau", "sieht", "die"],
+                false,
+            ),
+        ).toEqual([true, false, false, true]);
     });
 });
 
@@ -356,6 +369,43 @@ describe("WordTilesExercise: submit lifecycle", () => {
             screen.getByTestId("word-tile-scrambled-1"),
         ).toBeInTheDocument();
         expect(screen.getByTestId("word-tiles-submit")).toBeDisabled();
+    });
+});
+
+describe("WordTilesExercise: duplicate tokens graded by string (#1544)", () => {
+    const EXERCISE_DUPLICATE_TILES: ContentLessonExercise = {
+        id: "ex-word-tiles-dup",
+        type: "word_tiles",
+        prompt: "Arrange the tiles into the sentence.",
+        card_ids: [],
+        // Two physically distinct but string-identical "die" tiles.
+        tiles: ["die", "Frau", "sieht", "die", "Katze"],
+        distractors: [],
+    };
+
+    it("tapping the OTHER identical tile still reports correct=1", () => {
+        const onComplete = vi.fn();
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE_DUPLICATE_TILES}
+                onComplete={onComplete}
+            />,
+        );
+        // Physical tap order [3, 1, 2, 0, 4] composes the canonical
+        // sentence "die Frau sieht die Katze" via the OTHER "die" tile.
+        for (const tileIndex of [3, 1, 2, 0, 4]) {
+            fireEvent.click(
+                screen.getByTestId(`word-tile-scrambled-${tileIndex}`),
+            );
+        }
+        fireEvent.click(screen.getByTestId("word-tiles-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 1}),
+        );
+        expect(screen.getByTestId("word-tiles-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
     });
 });
 

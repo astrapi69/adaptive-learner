@@ -100,6 +100,75 @@ describe("Mechanism B — strict boundary (NOT every permutation is green)", () 
     });
 });
 
+describe("Duplicate tokens - grade by string, not tile index (#1544)", () => {
+    // Two identical "die" tiles; canonical sentence "die Frau sieht die Katze".
+    const DUP_TILES = ["die", "Frau", "sieht", "die", "Katze"];
+
+    it("reproduction: tapping the OTHER identical tile composes a string-identical sentence and must be correct", () => {
+        // The learner used tile 3 for slot 0 and tile 0 for slot 3 - the
+        // composed sentence is byte-identical to the canonical one, only
+        // the physical tile indices differ.
+        expect(isWordTilesCorrect([3, 1, 2, 0, 4], DUP_TILES, null)).toBe(
+            true,
+        );
+    });
+
+    it("happy path: the physical canonical order keeps passing", () => {
+        expect(isWordTilesCorrect([0, 1, 2, 3, 4], DUP_TILES, null)).toBe(
+            true,
+        );
+    });
+
+    it("edge: single-tile and empty tile sets keep their behaviour", () => {
+        expect(isWordTilesCorrect([0], ["Hallo"], null)).toBe(true);
+        expect(isWordTilesCorrect([], [], null)).toBe(true);
+    });
+
+    it("boundary: a genuinely different order with duplicates stays wrong", () => {
+        // "Katze Frau sieht die die" - not the canonical sentence.
+        expect(isWordTilesCorrect([4, 1, 2, 3, 0], DUP_TILES, null)).toBe(
+            false,
+        );
+    });
+
+    it("boundary: an accept_orderings alternative also matches by string when duplicates are swapped", () => {
+        // Authored alternative: "die Katze sieht die Frau".
+        const acceptAlternative = [[0, 4, 2, 3, 1]];
+        expect(
+            isWordTilesCorrect([0, 4, 2, 3, 1], DUP_TILES, acceptAlternative),
+        ).toBe(true);
+        // Same sentence, but the learner tapped the other "die" first.
+        expect(
+            isWordTilesCorrect([3, 4, 2, 0, 1], DUP_TILES, acceptAlternative),
+        ).toBe(true);
+    });
+
+    it("boundary: an incomplete placement with duplicates stays wrong", () => {
+        expect(isWordTilesCorrect([3, 1, 2, 0], DUP_TILES, null)).toBe(false);
+    });
+
+    it("Mechanism B still fires when the learner also swapped duplicate tiles", () => {
+        // Canonical: "sie kommt, aber sie bleibt nicht".
+        const connectorTiles = [
+            "sie",
+            "kommt,",
+            "aber",
+            "sie",
+            "bleibt",
+            "nicht",
+        ];
+        // Connector move alone (accepted today):
+        // "sie kommt, sie bleibt aber nicht".
+        expect(
+            isWordTilesCorrect([0, 1, 3, 4, 2, 5], connectorTiles, null),
+        ).toBe(true);
+        // Same sentence, duplicate "sie" tiles swapped - must stay accepted.
+        expect(
+            isWordTilesCorrect([3, 1, 0, 4, 2, 5], connectorTiles, null),
+        ).toBe(true);
+    });
+});
+
 describe("Edge cases — tile-set integrity", () => {
     it("rejects an incomplete placement (missing tile)", () => {
         expect(isWordTilesCorrect([0, 1, 2, 3, 4, 5], SATZ, null)).toBe(false);

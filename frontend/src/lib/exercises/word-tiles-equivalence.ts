@@ -3,7 +3,11 @@
  * ("Setze den Kernsatz zusammen") exercise.
  *
  * The learner places tiles into an order; we score that order against the
- * canonical solution. There are THREE acceptance layers, in priority order:
+ * canonical solution. Scoring compares the composed TOKEN SEQUENCE, not the
+ * physical tile indices: duplicate tiles (two identical "die") are
+ * interchangeable, so string-identical answers always grade the same no
+ * matter which duplicate the learner tapped (#1544). There are THREE
+ * acceptance layers, in priority order:
  *
  *   1. **Exact canonical** — the placed order equals ``tiles`` order
  *      (indices ``[0, 1, …, n-1]``). Always accepted.
@@ -129,6 +133,40 @@ function arraysEqual(a: readonly number[], b: readonly number[]): boolean {
 }
 
 /**
+ * Remap the learner's physical tile indices onto ``target``'s tile indices
+ * by token text: the k-th occurrence of a token text in ``placed`` is
+ * assigned the tile index of the k-th occurrence of that text in
+ * ``target``. Duplicate tiles thus become interchangeable - the grade
+ * depends on the composed token sequence, never on WHICH of two identical
+ * tiles the learner tapped (#1544). For duplicate-free tile sets this is
+ * the identity mapping, so grading of existing content is unchanged. A
+ * placed tile whose text has no unmatched occurrence left keeps its
+ * physical index, which guarantees a mismatch downstream instead of a
+ * crash on malformed input.
+ */
+function remapPlacedByTokenText(
+    placed: readonly number[],
+    target: readonly number[],
+    tiles: readonly string[],
+): number[] {
+    const unmatchedTargetIndices = new Map<string, number[]>();
+    for (const targetTileIndex of target) {
+        const tokenText = tiles[targetTileIndex] ?? "";
+        const occurrenceQueue = unmatchedTargetIndices.get(tokenText);
+        if (occurrenceQueue) {
+            occurrenceQueue.push(targetTileIndex);
+        } else {
+            unmatchedTargetIndices.set(tokenText, [targetTileIndex]);
+        }
+    }
+    return placed.map((placedTileIndex) => {
+        const tokenText = tiles[placedTileIndex] ?? "";
+        const occurrenceQueue = unmatchedTargetIndices.get(tokenText);
+        return occurrenceQueue?.shift() ?? placedTileIndex;
+    });
+}
+
+/**
  * Mechanism B core: is ``placed`` a grammatically-licensed connector-move
  * variant of ``target``? Both are index sequences into ``tiles`` and the same
  * length. Returns true ONLY when ALL of the following hold:
@@ -196,6 +234,12 @@ export function equivalentByConnectorMove(
  * (Mechanism A), or a conservative connector-move equivalent of any of those
  * target orders (Mechanism B).
  *
+ * Grading is by COMPOSED TOKEN SEQUENCE, not by tile index (#1544): before
+ * each comparison the placed indices are remapped onto the target's indices
+ * by token text, so with duplicate tiles (two identical "die") the grade is
+ * identical no matter which physical duplicate the learner tapped. Two
+ * string-identical answers always score the same.
+ *
  * @param placed - Indices into ``tiles`` in the learner's chosen order.
  * @param tiles - The exercise's canonical ordered tile texts.
  * @param acceptOrderings - Authored alternative orderings, or null/undefined.
@@ -214,14 +258,15 @@ export function isWordTilesCorrect(
         ...(acceptOrderings ?? []).map((o) => [...o]),
     ];
 
-    // Layers 1 + 2: exact match against canonical or an authored alternative.
     for (const target of targets) {
-        if (arraysEqual(placed, target)) return true;
-    }
-    // Layer 3 (Mechanism B): conservative connector-move equivalence against
-    // any target order.
-    for (const target of targets) {
-        if (equivalentByConnectorMove(placed, target, tiles)) return true;
+        const remappedPlaced = remapPlacedByTokenText(placed, target, tiles);
+        // Layers 1 + 2: exact token sequence (canonical / authored
+        // alternative).
+        if (arraysEqual(remappedPlaced, target)) return true;
+        // Layer 3 (Mechanism B): conservative connector-move equivalence.
+        if (equivalentByConnectorMove(remappedPlaced, target, tiles)) {
+            return true;
+        }
     }
     return false;
 }

@@ -126,17 +126,20 @@ function _shuffle<T>(items: readonly T[], seed: string): T[] {
 }
 
 /** Per-position correctness of the learner's placed order, for the
- *  "My answer" view (#1005). A position is correct when its tile sits in
- *  its canonical slot (``tiles`` index === slot). When the whole answer is
- *  accepted (canonical OR an authored ``accept_orderings`` permutation),
- *  every position is marked correct so an accepted alternative shows all
- *  green. Pure + exported for unit tests. */
+ *  "My answer" view (#1005). A position is correct when its tile TEXT
+ *  matches the canonical slot's text - duplicate tiles are interchangeable
+ *  (#1544), so the marking follows the composed token sequence, not the
+ *  physical tile index. When the whole answer is accepted (canonical OR an
+ *  authored ``accept_orderings`` permutation), every position is marked
+ *  correct so an accepted alternative shows all green. Pure + exported for
+ *  unit tests. */
 export function wordTilesPerTileCorrect(
     placed: readonly number[],
+    tiles: readonly string[],
     isCorrect: boolean,
 ): boolean[] {
     if (isCorrect) return placed.map(() => true);
-    return placed.map((tileIndex, slot) => tileIndex === slot);
+    return placed.map((tileIndex, slot) => tiles[tileIndex] === tiles[slot]);
 }
 
 /** Apply a @dnd-kit drag-end to the placed-index sequence.
@@ -877,7 +880,11 @@ function WordTilesExercise(
      *  Solution shows the canonical ``tiles`` order, all green and readable
      *  (the schema guarantees the canonical order is always accepted). */
     const myAnswerLabels = placed.map((idx) => tiles[idx]);
-    const myAnswerCorrectness = wordTilesPerTileCorrect(placed, isCorrect);
+    const myAnswerCorrectness = wordTilesPerTileCorrect(
+        placed,
+        tiles,
+        isCorrect,
+    );
 
     return (
         <section
