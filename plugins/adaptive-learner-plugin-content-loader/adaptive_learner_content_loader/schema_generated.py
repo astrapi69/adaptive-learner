@@ -7,8 +7,16 @@
 
 from __future__ import annotations
 
+from pydantic import BaseModel, ConfigDict, Field, RootModel
 from enum import Enum
-from pydantic import BaseModel, ConfigDict, Field
+from typing import Any
+
+
+class RequiresExtension(RootModel[str]):
+    model_config = ConfigDict(
+        frozen=True,
+    )
+    root: str = Field(..., pattern='^ext:[a-z0-9]+-[a-z0-9-]+@\\d+$')
 
 
 class MediaType(str, Enum):
@@ -97,6 +105,18 @@ class ExerciseType(str, Enum):
     WORD_TILES = 'word_tiles'
     CLOZE = 'cloze'
     MULTIPLE_CHOICE = 'multiple_choice'
+
+
+class ExtExerciseType(RootModel[str]):
+    model_config = ConfigDict(
+        frozen=True,
+    )
+    root: str = Field(
+        ..., pattern='^ext:[a-z0-9]+-[a-z0-9-]+$', title='ExtExerciseType'
+    )
+    """
+    Extension exercise type in the ``ext:<vendor>-<name>`` namespace (e.g. ``ext:acme-ordering``). Structurally opaque here: an exercise carrying it must be declared in the lesson's ``requires_extensions`` and is validated by a registered extension, never by the core schema. Core content never uses this branch, so pre-1.7 content validates unchanged.
+    """
 
 
 class InlineExample(BaseModel):
@@ -381,6 +401,10 @@ class Exercise(BaseModel):
     """
     Optional inline worked examples shown BEFORE the answer controls, to help the learner understand the task (schema v1.5, additive). Each is plain text or a syntax-highlighted code snippet (see ``InlineExample.language``). Author responsibility not to spoil the answer. Independent of the per-type fields; absent on exercises that need no example.
     """
+    ext_payload: dict[str, Any] | None = None
+    """
+    Opaque per-exercise payload for an ``ext:`` extension type. The core engine does not interpret it; the registered extension validator does. Absent on core exercises.
+    """
     from_cards: bool = Field(False, title='From Cards')
     """
     MATCHING: when true, the exercise derives its ``pairs`` from the referenced cards (left = card ``front``, right = card ``back``) instead of listing them explicitly, so a definition lives in one place. Requires non-empty ``card_ids`` and forbids an explicit ``pairs`` list. The engine resolves it to concrete ``pairs`` at parse time. Additive + optional; schema_version stays 1.5.
@@ -421,9 +445,9 @@ class Exercise(BaseModel):
     """
     WORD_TILES: ordered list of tile labels. The renderer shuffles before display. Multiple correct orderings are configured via ``accept_orderings`` below.
     """
-    type: ExerciseType
+    type: ExerciseType | ExtExerciseType
     """
-    Which exercise renderer handles this step.
+    Which exercise renderer handles this step. A core ExerciseType value, or an ``ext:<vendor>-<name>`` extension type (ExtExerciseType) that the lesson declares in ``requires_extensions``.
     """
 
 
@@ -608,6 +632,12 @@ class Lesson(BaseModel):
     id: str = Field(..., max_length=120, min_length=1, title='Id')
     """
     Slug-safe id, unique within the parent set. Convention: ``NN-slug`` (e.g. ``01-greetings``) for deterministic ordering, though the loader does not enforce ordering — it reads the set's manifest for the lesson sequence.
+    """
+    requires_extensions: list[RequiresExtension] | None = Field(
+        None, title='Requires Extensions'
+    )
+    """
+    Extensions this lesson needs, each ``ext:<vendor>-<name>@<major>`` (e.g. ``ext:acme-ordering@1``). A consumer that has not registered a declared extension refuses the lesson loudly (E-EXT-UNSUPPORTED) rather than mis-rendering. Absent / empty on core lessons; additive, so pre-1.7 content validates unchanged.
     """
     resources: list[LessonResource] | None = Field(None, title='Resources')
     """

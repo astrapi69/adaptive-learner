@@ -384,6 +384,11 @@
           "description": "Optional inline worked examples shown BEFORE the answer controls, to help the learner understand the task (schema v1.5, additive). Each is plain text or a syntax-highlighted code snippet (see ``InlineExample.language``). Author responsibility not to spoil the answer. Independent of the per-type fields; absent on exercises that need no example.",
           "title": "Examples"
         },
+        "ext_payload": {
+          "additionalProperties": true,
+          "description": "Opaque per-exercise payload for an ``ext:`` extension type. The core engine does not interpret it; the registered extension validator does. Absent on core exercises.",
+          "type": "object"
+        },
         "from_cards": {
           "default": false,
           "description": "MATCHING: when true, the exercise derives its ``pairs`` from the referenced cards (left = card ``front``, right = card ``back``) instead of listing them explicitly, so a definition lives in one place. Requires non-empty ``card_ids`` and forbids an explicit ``pairs`` list. The engine resolves it to concrete ``pairs`` at parse time. Additive + optional; schema_version stays 1.5.",
@@ -504,8 +509,15 @@
           "title": "Tiles"
         },
         "type": {
-          "$ref": "#/$defs/ExerciseType",
-          "description": "Which exercise renderer handles this step."
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExerciseType"
+            },
+            {
+              "$ref": "#/$defs/ExtExerciseType"
+            }
+          ],
+          "description": "Which exercise renderer handles this step. A core ExerciseType value, or an ``ext:<vendor>-<name>`` extension type (ExtExerciseType) that the lesson declares in ``requires_extensions``."
         }
       },
       "required": [
@@ -527,6 +539,12 @@
         "multiple_choice"
       ],
       "title": "ExerciseType",
+      "type": "string"
+    },
+    "ExtExerciseType": {
+      "description": "Extension exercise type in the ``ext:<vendor>-<name>`` namespace (e.g. ``ext:acme-ordering``). Structurally opaque here: an exercise carrying it must be declared in the lesson's ``requires_extensions`` and is validated by a registered extension, never by the core schema. Core content never uses this branch, so pre-1.7 content validates unchanged.",
+      "pattern": "^ext:[a-z0-9]+-[a-z0-9-]+$",
+      "title": "ExtExerciseType",
       "type": "string"
     },
     "InlineExample": {
@@ -1047,6 +1065,15 @@
       "title": "Id",
       "type": "string"
     },
+    "requires_extensions": {
+      "description": "Extensions this lesson needs, each ``ext:<vendor>-<name>@<major>`` (e.g. ``ext:acme-ordering@1``). A consumer that has not registered a declared extension refuses the lesson loudly (E-EXT-UNSUPPORTED) rather than mis-rendering. Absent / empty on core lessons; additive, so pre-1.7 content validates unchanged.",
+      "items": {
+        "pattern": "^ext:[a-z0-9]+-[a-z0-9-]+@\\d+$",
+        "type": "string"
+      },
+      "title": "Requires Extensions",
+      "type": "array"
+    },
     "resources": {
       "anyOf": [
         {
@@ -1141,5 +1168,5 @@
   ],
   "title": "Lesson",
   "type": "object",
-  "x-schema-version": "1.6"
+  "x-schema-version": "1.7"
 }

@@ -22,6 +22,7 @@ One lesson in a content set (Phase 43 / 2B-lesson).
 | `domain` | `string | null` | no | - |
 | `estimated_minutes` | `number` | no | min=1, max=240 |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
+| `requires_extensions` | `string[]` | no | - |
 | `resources` | `LessonResource[] | null` | no | - |
 | `source_language` | `string | null` | no | - |
 | `steps` | `LessonStep[]` | yes | minItems=1 |
@@ -88,6 +89,7 @@ One exercise step. Type-tagged via ``type``.
 | `direction` | `"source_to_target" | "target_to_source" | "both" | "random"` | no | - |
 | `distractors` | `string[]` | no | maxItems=20 |
 | `examples` | `InlineExample[] | null` | no | - |
+| `ext_payload` | `object` | no | - |
 | `from_cards` | `boolean` | no | - |
 | `hint` | `string | null` | no | - |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
@@ -98,7 +100,7 @@ One exercise step. Type-tagged via ``type``.
 | `prompt` | `string` | yes | minLen=1, maxLen=1000 |
 | `sentence` | `string | null` | no | - |
 | `tiles` | `string[] | null` | no | - |
-| `type` | `ExerciseType` | yes | - |
+| `type` | `ExerciseType | ExtExerciseType` | yes | - |
 
 
 ### `ExerciseType` (enum)
