@@ -156,6 +156,14 @@ export async function openFirstBundledLesson(page: Page): Promise<void> {
     await expect(openBtn).toBeVisible({timeout: 25_000});
     await openBtn.click();
     await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 20_000});
+    // #1540 data anchor: the "Set: …" context line resolves via an async
+    // listSets lookup and inserts a header row when it lands - the source
+    // of the ~4px content shift on the mobile lesson shots. The bundled
+    // set is always discoverable here, so the line ALWAYS appears; wait
+    // for it instead of racing it.
+    await expect(page.getByTestId("lesson-header-set")).toBeVisible({
+        timeout: 10_000,
+    });
 }
 
 async function playBundledLesson(
@@ -424,24 +432,148 @@ async function gotoLessonMatching(page: Page): Promise<boolean> {
 }
 
 /**
+ * #1540 — the exercise flow persists SRS rows fire-and-forget
+ * (``void onComplete(scored)`` -> ``elementErrors.recordBulk``), so a
+ * cross-document navigation right after a check can kill the write
+ * mid-flight. Whether the review queue (and the dashboard cards fed by
+ * it) later saw the rows was a per-run coin flip - the bimodality behind
+ * the wandering visual failures. Before leaving the lesson document,
+ * wait until the rows the review-queue read will actually hit (this
+ * learner + the bundled set, not mastered) are non-empty (``expectRows``)
+ * and QUIET: two reads 300ms apart see the same row count.
+ */
+async function waitForSrsQuiescence(
+    page: Page,
+    opts: {expectRows: boolean},
+): Promise<void> {
+    await page.waitForFunction(
+        async ({expectRows, setId}) => {
+            const countRows = () =>
+                new Promise<number>((resolve, reject) => {
+                    const open = indexedDB.open("adaptive-learner");
+                    open.onerror = () => reject(open.error);
+                    open.onsuccess = () => {
+                        const db = open.result;
+                        try {
+                            const req = db
+                                .transaction("elementErrors", "readonly")
+                                .objectStore("elementErrors")
+                                .getAll();
+                            req.onsuccess = () => {
+                                db.close();
+                                const userId = localStorage.getItem(
+                                    "adaptive-learner.user_id",
+                                );
+                                const rows = req.result as Array<
+                                    Record<string, unknown>
+                                >;
+                                resolve(
+                                    rows.filter(
+                                        (r) =>
+                                            r.user_id === userId &&
+                                            r.set_id === setId &&
+                                            !r.mastered,
+                                    ).length,
+                                );
+                            };
+                            req.onerror = () => {
+                                db.close();
+                                reject(req.error);
+                            };
+                        } catch (err) {
+                            db.close();
+                            reject(err);
+                        }
+                    };
+                });
+            const first = await countRows();
+            if (expectRows && first === 0) return false;
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            return (await countRows()) === first;
+        },
+        {expectRows: opts.expectRows, setId: SET_ID},
+        {timeout: 15_000, polling: 500},
+    );
+}
+
+/**
+ * #1540 data anchors for the dashboard: the ``dashboard`` testid renders
+ * while the Übersicht tab is still a lazy Suspense hole and its cards are
+ * still fetching, so a shot raced whatever sections had landed. Wait until
+ * every async section is either visible or has EXPLICITLY resolved to
+ * absent before returning:
+ *   - the lazy overview chunk is mounted,
+ *   - Weitermachen rendered (its empty state also carries the testid),
+ *   - the AI invite card rendered (no key is configured in visual runs),
+ *   - the review-queue card left its loading stub (card or dropped).
+ * With ``populated`` the played lesson additionally guarantees a
+ * Weitermachen item list.
+ */
+async function settleDashboard(
+    page: Page,
+    opts: {populated: boolean},
+): Promise<void> {
+    await expect(page.getByTestId("dashboard")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("dashboard-tab-overview-panel")).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId("continue-learning")).toBeVisible({
+        timeout: 20_000,
+    });
+    if (opts.populated) {
+        await expect(page.getByTestId("continue-learning-list")).toBeVisible({
+            timeout: 20_000,
+        });
+    }
+    await expect(page.getByTestId("ai-invite-card")).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId("review-queue-card-loading")).toHaveCount(0, {
+        timeout: 20_000,
+    });
+    if (opts.populated) {
+        // waitForSrsQuiescence guaranteed error rows before we navigated
+        // here, so the due-review card is a deterministic fixture.
+        await expect(page.getByTestId("review-queue-card")).toBeVisible({
+            timeout: 20_000,
+        });
+    }
+}
+
+/**
  * Seed a learner, then drive a wrong-answer matching playthrough (which
  * writes ``ElementError`` rows) and open the set's review session.
- * Falls back to whatever review state renders (active / empty) — both are
- * valid, deterministic screenshots; only an unreachable page is skipped.
+ *
+ * #1540 data anchor: whether the review queue showed the seeded element
+ * or the empty state depended on the Dexie error-write landing before the
+ * queue read - a per-run coin flip that made the baseline unconvergeable.
+ * The wrong pair above ALWAYS produces due elements, so require the ACTIVE
+ * review session (``review-page`` + its step-count subtitle) and re-enter
+ * the route while the write is still in flight instead of accepting
+ * whichever state renders first.
  */
 async function gotoReviewSession(page: Page): Promise<boolean> {
     await seedLearner(page);
     await playBundledLesson(page, "matching-result");
-    await page.goto(`/review/${SET_ID}`);
-    const surface = page
-        .getByTestId("review-page")
-        .or(page.getByTestId("review-empty"));
-    try {
-        await expect(surface.first()).toBeVisible({timeout: 20_000});
-        return true;
-    } catch {
-        return false;
+    // The wrong pair guarantees error rows; make sure they LANDED before
+    // navigating away (the navigation would kill an in-flight write and
+    // leave the queue empty for the rest of the test).
+    await waitForSrsQuiescence(page, {expectRows: true});
+    for (let attempt = 0; attempt < 3; attempt++) {
+        await page.goto(`/review/${SET_ID}`);
+        try {
+            await expect(page.getByTestId("review-page")).toBeVisible({
+                timeout: 5_000,
+            });
+            await expect(page.getByTestId("review-subtitle")).toBeVisible({
+                timeout: 5_000,
+            });
+            return true;
+        } catch {
+            // Queue not materialised yet - re-enter the route.
+        }
     }
+    return false;
 }
 
 /**
@@ -458,17 +590,14 @@ export async function gotoSurface(
         case "dashboard-empty":
             await seedLearner(page);
             await page.goto("/dashboard");
-            await expect(page.getByTestId("dashboard")).toBeVisible({
-                timeout: 20_000,
-            });
+            await settleDashboard(page, {populated: false});
             return true;
         case "dashboard-populated":
             await seedLearner(page);
             await playBundledLesson(page, "summary");
+            await waitForSrsQuiescence(page, {expectRows: true});
             await page.goto("/dashboard");
-            await expect(page.getByTestId("dashboard")).toBeVisible({
-                timeout: 20_000,
-            });
+            await settleDashboard(page, {populated: true});
             return true;
         case "content-browser":
             await seedLearner(page);
@@ -526,6 +655,7 @@ export async function gotoSurface(
         case "statistics":
             await seedLearner(page);
             await playBundledLesson(page, "summary");
+            await waitForSrsQuiescence(page, {expectRows: true});
             await page.goto("/statistics");
             await expect(page.getByTestId("statistics")).toBeVisible({
                 timeout: 20_000,
