@@ -110,7 +110,9 @@ export async function settleForScreenshot(page: Page): Promise<void> {
             " transition-delay: 0s !important; caret-color: transparent !important; }",
     });
     await page.evaluate(() => document.fonts.ready);
-    await page.waitForTimeout(100);
+    // 250ms (was 100ms): the post-font reflow on the mobile lesson surface
+    // occasionally landed AFTER the shot, shifting the page ~4px (#1540).
+    await page.waitForTimeout(250);
 }
 
 /** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard.
