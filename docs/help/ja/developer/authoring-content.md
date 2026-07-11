@@ -24,7 +24,8 @@
    ファイルを列挙します。
 3. **レッスンファイル**（`sets/{set-id}/lessons/NN-slug.json`）—
    レッスンごとに 1 つの JSON ファイル。ダウンロードのたびに
-   スキーマ v1.0 に対して検証されます。
+   レッスンスキーマに対して検証されます（下記の
+   *スキーマは唯一の信頼できる情報源* を参照）。
 
 Adaptive Learner に同梱されるパイロットセットは、別のコンテンツ
 リポジトリ
@@ -32,6 +33,58 @@ Adaptive Learner に同梱されるパイロットセットは、別のコンテ
 にあり（兄弟チェックアウト `../adaptive-learner-content` として
 チェックアウトされ、ビルドが `frontend/scripts/copy-bundled-content.mjs`
 を介して同梱します）、テンプレートとして適しています。
+
+## スキーマは唯一の信頼できる情報源（EXP-039）
+
+レッスン/演習フォーマットには**唯一の正準的な定義**があります。
+それは npm パッケージ
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+が出荷するレッスン JSON Schema です（公開リリースごとに不変）。
+このアプリの中では、コンテンツローダープラグインの**構造的な**
+Pydantic 層（`adaptive_learner_content_loader.schema`）は、その
+ミラーから**再生成**されます
+（`scripts/generate_pydantic_models.py`）。手書きされるのは、
+意味的なフィールド横断バリデーターだけです。`make sync-schema` は
+ミラーを更新して派生アーティファクトを再出力し、バイトパリティ
+ゲートが `schema/*.json` とピン留めされたエンジンリリースの一致を
+証明します。かつてドリフトしていた場所は、もうドリフトできません。
+
+- `schema/lesson.schema.json`（+ 兄弟ファイル）：機械可読の
+  JSON Schema（Draft 2020-12）。レッスンの `.json` からトップ
+  レベルの `"$schema"` キーで参照すると、IDE の自動補完と
+  インライン検証が得られます。
+- `schema/quality-rules.json`：共有の品質最低ライン（例：演習数、
+  free-text の許容回答数）。クライアント側のコンテンツ
+  バリデーターがこれを使うので、手で維持される 2 つ目のコピーは
+  ありません。
+- フロントエンドの TypeScript レッスン型と MkDocs ページ
+  *Lesson format reference* も生成されます（**手で編集しない**）。
+  エンジンのミラーに従うので、再ピン後はジェネレーターを再実行
+  してください。
+
+ドリフトゲート（`make sync-schema-check`、`release-test` の一部、
+さらに `make test` 内の
+`backend/tests/test_lesson_schema_drift.py`）は、生成された
+アーティファクトがピン留めされたエンジンミラーから乖離すると
+失敗します。チェーンを閉じるのは、アプリ対エンジンのバイト
+パリティゲートです：`make engine-parity-check`
+（`scripts/check_engine_schema_parity.py`）、オフラインピンの
+`engine-schema-parity.test.ts`、そしてピン整合テストの
+`engine-pin.test.ts`（`frontend/package.json` の依存関係 ==
+`schema/engine-version.txt`）。コンテンツリポジトリは（この
+リポジトリではなく）**ピン留めされたエンジンリリース**をミラー
+し、自分たちの CI でそのミラーに対して検証します。
+
+**フォーマット変更の手順（スキーマの権威はエンジンにある）：**
+レッスンフォーマットの変更はエンジンで始まるか、エンジンで承認
+されます。まずエンジンの PR + npm リリース。次にこのアプリが
+エンジンのピン（`frontend/package.json` +
+`schema/engine-version.txt`）を上げて `make sync-schema` を再実行
+し、これがミラーを更新して構造的な Pydantic 層を再生成します。
+手で書くのは新しい意味的バリデーターだけです。その後、コンテンツ
+リポジトリが `engine-version.txt` のピンを更新します。ミラーへの
+手編集（や古いピン）はバイトパリティゲートを赤にします。忘れられた
+ステップは可視化され、サイレントなドリフトは起きません。
 
 ## 言語ペア（v1.44.0）
 
@@ -164,7 +217,7 @@ metadata:
 ### Steps
 
 レッスンはステップごとのシーケンスで、各ステップは THEORY
-（Markdown ブロック）または EXERCISE（4 つの演習タイプのうちの
+（Markdown ブロック）または EXERCISE（演習タイプのうちの
 1 つ）のいずれかです。
 
 ```json
@@ -265,6 +318,14 @@ v1.4、追加的 — 既存のレッスンはそれなしでも有効なまま�
 `label` にフォールバックします。つまり picture_choice は
 イラストのアセットがなくても機能します。
 
+> **テキストのマルチプルチョイスを `picture_choice` として作成
+> しないでください。** このタイプは実際の画像アセット専用です。
+> テキストの選択肢ではプレースホルダーのタイルが描画され、使える
+> コントロールにはなりません（参照：
+> astrapi69/adaptive-learner-content-test#10）。テキストの
+> マルチプルチョイスは `multiple_choice`（推奨）または `cloze` の
+> `select` モードです（下の cloze セクションを参照）。
+
 ### free_text
 
 答えを入力します。レンダラーはまず完全一致を試み、次に
@@ -354,6 +415,80 @@ Levenshtein 寛容のマッチングを行います。
   シャッフルされます。**空でない `distractors` が必須**です —
   スキーマバリデーターは、それなしの `cloze_mode: "select"` を
   拒否します。
+
+**マルチプルチョイス：スキーマ v1.6 からネイティブな
+`multiple_choice` タイプがあります。** これは `cloze` の
+`select`/`multiselect` という手段（EXP-036 §4.3、#890）と
+**共存**します。既存の cloze ベースのマルチプルチョイスは有効な
+まま、何も非推奨になりません。新しいテキスト選択問題のコンテンツ
+には `multiple_choice` を優先してください。正解はオプションごとの
+フラグなので、accept/distractors を重複なく保つという落とし穴は
+起こり得ません。True/False や Yes/No にも独自のタイプは不要です。
+2 択の `multiple_choice`（または 2 択の `cloze` `select`）で
+表現できます。
+
+**推奨（スキーマ v1.6+、#1525）：ネイティブな `multiple_choice`
+タイプ。** 各オプションが自分の `correct` フラグを持つため、
+互いに重複しないよう保つ別々の accept/distractors リストは
+ありません。`multiple: false`（デフォルト）は単一選択（正解は
+ちょうど 1 つ）、`multiple: true` は「当てはまるものをすべて
+選択」（完全一致セット採点、部分点なし）です：
+
+```json
+{
+  "id": "ex-capital",
+  "type": "multiple_choice",
+  "prompt": "What is the capital of France?",
+  "card_ids": ["card-paris"],
+  "options": [
+    {"text": "Paris", "correct": true},
+    {"text": "Berlin"},
+    {"text": "Madrid"},
+    {"text": "Rome"}
+  ]
+}
+```
+
+**レガシーの手段（引き続き完全に有効。共存であり、何も非推奨に
+なりません）：** v1.6 より前、テキストの選択問題は `cloze` の
+`select` モードとして作成していました（EXP-036 §4.3、#890）。
+単一解答の質問は空欄 1 つの cloze です。`sentence`（`___` で
+終わる）が質問、空欄の `accept[0]` が正解のオプション、
+`distractors` が誤りのオプションです。例：
+`"sentence": "The capital of France is ___."`、
+`"blanks": [{"accept": ["Paris"]}]`、`"cloze_mode": "select"`、
+`"distractors": ["Berlin", "Madrid", "Rome"]`。
+
+質問全体を `prompt` に置き、素の `"sentence": "___"` を使うことも
+できます。レンダラーは正解 + ディストラクターからなる `<select>`
+を表示し、選択を採点し、フィードバックを出して SRS に反映します：
+
+```json
+{
+  "id": "ex-hook-state",
+  "type": "cloze",
+  "prompt": "Which hook manages local state in a function component?",
+  "card_ids": ["card-usestate"],
+  "sentence": "___",
+  "blanks": [{"accept": ["useState"]}],
+  "cloze_mode": "select",
+  "distractors": ["useEffect", "useContext", "useRef"]
+}
+```
+
+**「当てはまるものをすべて選択」**（正解が 2 つ以上。例：運転
+免許試験の問題）は `cloze_mode: "multiselect"` を使います
+（`accept` + `distractors` に対する完全一致セット採点、#1195）：
+
+```json
+{
+  "type": "cloze",
+  "cloze_mode": "multiselect",
+  "sentence": "Which cities are in Germany?",
+  "accept": ["Berlin", "Hamburg"],
+  "distractors": ["Vienna", "Zurich"]
+}
+```
 
 **1 つの cloze に複数の空欄**もサポートされます。文中の各 `___`
 は、順に `blanks` の次のエントリへマッピングされます。各空欄は
