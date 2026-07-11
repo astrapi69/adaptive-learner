@@ -60,7 +60,7 @@ jobs:
     # succeeded). The image is pulled from mcr.microsoft.com, which the runner
     # reaches fine, and is the established fix already used by dexie-smoke.yml +
     # manual-automation.yml. Pin the tag to the @playwright/test version in
-    # e2e/package-lock.json (1.59.1); bump both together. Refs #317, #1248.
+    # e2e/bun.lock (1.59.1); bump both together. Refs #317, #1248.
     #
     # Unlike those two pure-Playwright jobs (which run as `--user 1001` to keep
     # artifact-upload perms and therefore inline the commands because the noble
@@ -99,7 +99,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock') }}
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
           restore-keys: bun-${{ runner.os }}-
 
       - name: Install Poetry
@@ -122,7 +122,7 @@ jobs:
 
       - name: Install e2e deps
         working-directory: e2e
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       # NO `playwright install` step: the browsers are baked into the container
       # (mcr.microsoft.com/playwright:v1.59.1-noble). release-test's dexie +

@@ -202,7 +202,7 @@ install-frontend:
 	cd frontend && bun install
 
 install-e2e:
-	cd e2e && npm install && npx playwright install chromium
+	cd e2e && bun install && npx playwright install chromium
 
 install-plugins:
 	@for dir in plugins/adaptive-learner-plugin-*; do \
@@ -470,7 +470,7 @@ check-css-size: ## CSS inflow-stop: global.css may only shrink (ratchet via .css
 
 check-dead-classnames: ## Usage-side gate: classNames used in TSX but defined nowhere (ratchet via .dead-classnames-baseline, #1491)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
-	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	cd frontend && VITE_STORAGE_MODE=dexie bun run build
 	@echo ""
 	python3 scripts/check-dead-classnames.py
 
