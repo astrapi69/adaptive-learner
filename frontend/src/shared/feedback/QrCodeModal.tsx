@@ -72,6 +72,29 @@ async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
     return new File([blob], fileName, { type: "image/png" });
 }
 
+/** Fully-resolved control labels (English fallback per field). */
+interface ResolvedLabels {
+    close: string;
+    copy: string;
+    copied: string;
+    download: string;
+    share: string;
+    imageAlt: string;
+}
+
+/** Resolve the optional label bag to concrete strings (English fallbacks).
+ *  Kept out of the component so the render function stays low-complexity. */
+function resolveLabels(labels?: QrCodeModalLabels): ResolvedLabels {
+    return {
+        close: labels?.close ?? "Close",
+        copy: labels?.copy ?? "Copy URL",
+        copied: labels?.copied ?? "Copied",
+        download: labels?.download ?? "Download",
+        share: labels?.share ?? "Share",
+        imageAlt: labels?.imageAlt ?? "QR code",
+    };
+}
+
 /**
  * Centered, dismissible QR modal. Presentational + the native
  * clipboard/share/download behaviours; all copy comes from props.
@@ -91,14 +114,7 @@ export default function QrCodeModal({
     const [copied, setCopied] = useState(false);
     const [canShareFiles, setCanShareFiles] = useState(false);
 
-    const text = {
-        close: labels?.close ?? "Close",
-        copy: labels?.copy ?? "Copy URL",
-        copied: labels?.copied ?? "Copied",
-        download: labels?.download ?? "Download",
-        share: labels?.share ?? "Share",
-        imageAlt: labels?.imageAlt ?? "QR code",
-    };
+    const text = resolveLabels(labels);
 
     useEffect(() => {
         let cancelled = false;
