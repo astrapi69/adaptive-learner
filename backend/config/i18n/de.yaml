@@ -521,6 +521,7 @@ settings:
     unavailable: "Dein Browser hat die Installation noch nicht angeboten."
     installed: "App installiert."
   section_review: "Wiederholung"
+  section_srs: "Verteilte Wiederholung"
   explanations_enabled: "Fehlererklärungen anzeigen"
   explanations_enabled_desc: "Zeigt nach einer Lektion zu jedem Fehler einen kurzen Regeltipp."
   section_hints: "Tipps"
@@ -770,7 +771,7 @@ settings:
   reset_progress_help: Löscht XP, Abzeichen und Serie unwiderruflich.
   reset_confirm_first: Erneut klicken zum Bestätigen
   reset_confirm_second: Noch einmal klicken — endgültig löschen
-  section_voice: Sprache
+  section_voice: Sprachausgabe
   voice:
     tts_enabled: Sprechschaltflächen anzeigen
     tts_enabled_help: Liest KI-Antworten vor, wenn du auf das Lautsprecher-Symbol klickst.
@@ -2947,7 +2948,6 @@ srs:
   last_answer: "Deine Antwort:"
   correct: "Richtig:"
   no_elements: "Noch keine erfassten Elemente."
-  settings_title: "Verteilte Wiederholung"
   settings_intro: "Was du falsch beantwortest, kommt nach einem Zeitplan zurück, der sich verlängert, je öfter du richtig liegst — so übst du Schwächen häufiger als bereits Bekanntes."
   schedule_streak: "{n}-mal in Folge richtig"
   schedule_streak_plus: "{n}+-mal in Folge richtig"

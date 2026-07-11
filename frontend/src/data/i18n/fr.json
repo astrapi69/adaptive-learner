@@ -560,6 +560,7 @@
       "installed": "Application installée."
     },
     "section_review": "Révision",
+    "section_srs": "Répétition espacée",
     "explanations_enabled": "Afficher les explications d'erreur",
     "explanations_enabled_desc": "Après une leçon, affiche un court conseil de règle pour chaque erreur.",
     "section_hints": "Indices",
@@ -3209,7 +3210,6 @@
     "last_answer": "Ta réponse :",
     "correct": "Correct :",
     "no_elements": "Aucun élément suivi pour l'instant.",
-    "settings_title": "Répétition espacée",
     "settings_intro": "Ce que tu rates revient pour révision selon un calendrier qui s'allonge à mesure que tu réussis, tu travailles donc tes points faibles plus souvent que ce que tu maîtrises.",
     "schedule_streak": "{n} bonnes réponses d'affilée",
     "schedule_streak_plus": "{n}+ bonnes réponses d'affilée",

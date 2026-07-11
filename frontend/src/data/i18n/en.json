@@ -560,6 +560,7 @@
       "installed": "App installed."
     },
     "section_review": "Review",
+    "section_srs": "Spaced repetition",
     "explanations_enabled": "Show error explanations",
     "explanations_enabled_desc": "After a lesson, show a short rule tip for each mistake.",
     "section_hints": "Hints",
@@ -3209,7 +3210,6 @@
     "last_answer": "Your answer:",
     "correct": "Correct:",
     "no_elements": "No tracked elements yet.",
-    "settings_title": "Spaced repetition",
     "settings_intro": "Items you miss come back for review on a schedule that stretches as you get them right, so you practise weak spots more often than ones you know.",
     "schedule_streak": "{n} correct in a row",
     "schedule_streak_plus": "{n}+ correct in a row",
