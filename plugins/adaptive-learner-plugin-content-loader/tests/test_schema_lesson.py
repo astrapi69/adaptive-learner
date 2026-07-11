@@ -1077,14 +1077,20 @@ class TestLessonSchemaExport:
 
     def test_exercise_schema_lists_type_enum(self) -> None:
         schema = exercise_schema()
-        # The type field discriminates the ExerciseType values;
-        # the JSON schema surfaces them as an enum. Phase 52D /
-        # v1.35.0 added CLOZE.
-        type_schema = schema["properties"]["type"]
-        if "$ref" in type_schema:
-            ref_name = type_schema["$ref"].rsplit("/", 1)[-1]
-            type_schema = schema["$defs"][ref_name]
-        assert set(type_schema["enum"]) == {
+
+        def resolve(node: dict) -> dict:
+            if "$ref" in node:
+                ref_name = node["$ref"].rsplit("/", 1)[-1]
+                return schema["$defs"][ref_name]
+            return node
+
+        # Since schema 1.7 the type field is anyOf(core enum, ext pattern):
+        # the CORE enum stays the closed six-type set, the second branch is
+        # the opaque ``ext:``-namespace tier (engine 0.10.0).
+        type_schema = resolve(schema["properties"]["type"])
+        branches = [resolve(branch) for branch in type_schema.get("anyOf", [type_schema])]
+        enum_branch = next(branch for branch in branches if "enum" in branch)
+        assert set(enum_branch["enum"]) == {
             "matching",
             "picture_choice",
             "free_text",
@@ -1092,6 +1098,8 @@ class TestLessonSchemaExport:
             "cloze",
             "multiple_choice",
         }
+        pattern_branch = next((branch for branch in branches if "pattern" in branch), None)
+        assert pattern_branch is not None and pattern_branch["pattern"].startswith("^ext:")
 
     def test_lesson_step_schema_lists_step_type_enum(self) -> None:
         schema = lesson_step_schema()
