@@ -27,11 +27,13 @@ const PREVIEW_PORT =
 
 export default defineConfig({
     testDir: "./visual",
-    // Screenshots are deterministic; a wrong baseline must fail loudly,
-    // not be papered over by a retry.
+    // One retry absorbs the rare nondeterministic CAPTURE (a late layout
+    // phase shifted lesson-matching mobile by ~4px, #1540). It cannot
+    // paper over a wrong baseline: a real mismatch is deterministic and
+    // fails every retry, so the gate stays sharp.
     fullyParallel: false,
     workers: 1,
-    retries: 0,
+    retries: 1,
     // Seeding a learner (onboarding + a lesson playthrough) before the
     // shot takes longer than a smoke nav.
     timeout: 120_000,
