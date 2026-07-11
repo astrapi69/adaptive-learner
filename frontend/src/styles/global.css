@@ -482,6 +482,7 @@ select:focus {
 }
 
 /* --- Buttons -------------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .btn {
   display: inline-flex;
@@ -529,7 +530,9 @@ select:focus {
   background: var(--surface-2);
 }
 
+} /* @layer legacy */
 /* --- Landing page ----------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .landing-page {
   min-height: 100%;
@@ -650,7 +653,9 @@ select:focus {
   color: var(--accent);
 }
 
+} /* @layer legacy */
 /* --- Onboarding page ------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .onboarding-page {
   max-width: 38rem;
@@ -732,7 +737,9 @@ select:focus {
   margin-top: var(--space-4);
 }
 
+} /* @layer legacy */
 /* --- Assessment page ------------------------------------------ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .assessment-page {
   max-width: 42rem;
@@ -938,7 +945,9 @@ select:focus {
   color: var(--danger);
 }
 
+} /* @layer legacy */
 /* --- Dashboard page ------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .dashboard-page {
   max-width: 76rem;
@@ -1217,7 +1226,9 @@ select:focus {
   gap: var(--space-2);
 }
 
+} /* @layer legacy */
 /* --- Session page --------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .session-page {
   max-width: 60rem;
@@ -1417,6 +1428,7 @@ select:focus {
   }
 }
 
+} /* @layer legacy */
 /* ---- v1.7.0 / Phase 20D — QR scanner viewfinder overlay ---------------
 
    The viewfinder sits on top of the camera preview region. It
