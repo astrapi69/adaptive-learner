@@ -2036,6 +2036,15 @@
         "retry": "Nochmal versuchen",
         "empty": "Diese Leseübung hat keine Fragen."
       },
+      "al_graded_quiz": {
+        "input_label": "Antwort",
+        "solution_label": "Lösung",
+        "passed": "Bestanden",
+        "failed": "Nicht bestanden",
+        "submit": "Test abgeben",
+        "retry": "Nochmal versuchen",
+        "empty": "Dieser Test hat keine Fragen."
+      },
       "instruction": {
         "matching": {
           "receptive": "Paare verbinden (Erkennen)",

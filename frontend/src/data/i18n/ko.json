@@ -2036,6 +2036,15 @@
         "retry": "다시 시도",
         "empty": "이 읽기 연습에는 질문이 없습니다."
       },
+      "al_graded_quiz": {
+        "input_label": "답",
+        "solution_label": "정답",
+        "passed": "합격",
+        "failed": "불합격",
+        "submit": "시험 제출",
+        "retry": "다시 시도",
+        "empty": "이 시험에는 문제가 없습니다."
+      },
       "instruction": {
         "matching": {
           "receptive": "짝을 맞추세요 (인식)",

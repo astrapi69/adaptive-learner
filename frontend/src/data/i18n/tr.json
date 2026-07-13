@@ -2036,6 +2036,15 @@
         "retry": "Tekrar dene",
         "empty": "Bu okuma alıştırmasında soru yok."
       },
+      "al_graded_quiz": {
+        "input_label": "Cevap",
+        "solution_label": "Çözüm",
+        "passed": "Geçti",
+        "failed": "Geçmedi",
+        "submit": "Testi gönder",
+        "retry": "Tekrar dene",
+        "empty": "Bu testte soru yok."
+      },
       "instruction": {
         "matching": {
           "receptive": "Çiftleri eşleştir (Tanıma)",

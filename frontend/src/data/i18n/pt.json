@@ -2036,6 +2036,15 @@
         "retry": "Tentar novamente",
         "empty": "Este exercício de leitura não tem perguntas."
       },
+      "al_graded_quiz": {
+        "input_label": "Resposta",
+        "solution_label": "Solução",
+        "passed": "Aprovado",
+        "failed": "Reprovado",
+        "submit": "Entregar teste",
+        "retry": "Tentar novamente",
+        "empty": "Este teste não tem perguntas."
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",

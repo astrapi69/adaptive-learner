@@ -2036,6 +2036,15 @@
         "retry": "Coba lagi",
         "empty": "Latihan membaca ini tidak memiliki pertanyaan."
       },
+      "al_graded_quiz": {
+        "input_label": "Jawaban",
+        "solution_label": "Solusi",
+        "passed": "Lulus",
+        "failed": "Tidak lulus",
+        "submit": "Kirim kuis",
+        "retry": "Coba lagi",
+        "empty": "Kuis ini tidak memiliki pertanyaan."
+      },
       "instruction": {
         "matching": {
           "receptive": "Cocokkan pasangannya (Pengenalan)",

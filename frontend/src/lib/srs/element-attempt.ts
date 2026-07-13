@@ -30,6 +30,7 @@
 import {asCategorizationPayload} from "../exercises/categorization";
 import {asErrorCorrectionPayload} from "../exercises/error-correction";
 import {asReadingComprehensionPayload, canonicalAnswer} from "../exercises/reading-comprehension";
+import {asGradedQuizPayload, canonicalAnswer as gradedQuizCanonicalAnswer} from "../exercises/graded-quiz";
 import {resolveConcreteDirection} from "../exercises/direction";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
@@ -162,6 +163,31 @@ export function deriveReadingComprehensionAttempts(
     if (!payload) return [];
     return payload.questions.map((question, index) => {
         const canonical = canonicalAnswer(question);
+        const result = results[index];
+        return {
+            ..._baseAttempt(exercise, ctx),
+            element_key: canonical || question.prompt,
+            element_type: "vocabulary" as const,
+            user_answer: result?.answer ?? "",
+            correct_answer: canonical,
+            correct: result?.correct ?? false,
+        };
+    });
+}
+
+/** GRADED-QUIZ (#1579 fourth adoption, ext:al-graded-quiz): one attempt per
+ *  question, element_key = the question's canonical answer. The renderer
+ *  supplies per-question {answer, correct} (free_text grading needs the shared
+ *  React-layer matcher, so it is not re-derived here). */
+export function deriveGradedQuizAttempts(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    results: readonly {answer: string; correct: boolean}[],
+): ElementAttempt[] {
+    const payload = asGradedQuizPayload(exercise);
+    if (!payload) return [];
+    return payload.questions.map((question, index) => {
+        const canonical = gradedQuizCanonicalAnswer(question);
         const result = results[index];
         return {
             ..._baseAttempt(exercise, ctx),

@@ -102,6 +102,28 @@ describe("ExerciseDispatcher — ext:al-categorization routing (#1579)", () => {
         ).toBeInTheDocument();
     });
 
+    it("routes ext:al-graded-quiz to its renderer (#1579 fourth adoption)", () => {
+        const step = {
+            id: "s4",
+            type: "exercise",
+            exercise: {
+                id: "ex4",
+                type: "ext:al-graded-quiz",
+                prompt: "Quiz.",
+                card_ids: [],
+                distractors: [],
+                ext_payload: {
+                    pass_threshold: 60,
+                    questions: [
+                        { prompt: "2+2?", type: "multiple_choice", options: [{ text: "4", correct: true }, { text: "5" }], points: 2 },
+                    ],
+                },
+            },
+        } as unknown as ContentLessonStep;
+        renderDispatcher(step);
+        expect(screen.getByTestId("graded-quiz-exercise")).toBeInTheDocument();
+    });
+
     it("an unadopted ext type still falls to the unsupported placeholder", () => {
         renderDispatcher(extStep("ext:acme-cards"));
         expect(
