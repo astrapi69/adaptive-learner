@@ -26,13 +26,19 @@
 # EXP-008-Milestone/Curriculum/RecentSessions/MethodBadges/VisualDiff/
 # AnswerAnims/PWA-Banner - Kaskaden-Reparatur, kein neues CSS. Tranche 4+
 # loescht diese Regeln samt Wrappern wieder.
-# 7531 -> 7559 (EXP-044 Tranche 2c, #1485): +28 reine Wrapper-Zeilen
-# (14x "@layer legacy {" + 14x "}") um die vom Konflikt-Audit
+# 7531 -> 7557 (EXP-044 Tranche 2c, #1485): +26 reine Wrapper-Zeilen
+# (13x "@layer legacy {" + 13x "}") um die vom Konflikt-Audit
 # (scripts/check-legacy-wrap-conflicts.py) als CLEAN bestaetigten Bloecke
-# LessonMode-LandscapeNav/Export/AutoLoop/MultiCycle/ModelPicker/
-# BackupCompare/Gamification/Badges/Streaks/Anki/Voice/Pronunciation/
-# NotebookLM/ApiKeyValidation - Kaskaden-Reparatur, kein neues CSS.
-# NICHT gewrappt (Konflikt-Audit): MobilePolish-9A (#1583), ReadAloudTTS
-# (#1584), ChatAnalysisLoading (#1585). Tranche 4+ loescht diese Regeln
+# Export/AutoLoop/MultiCycle/ModelPicker/BackupCompare/Gamification/
+# Badges/Streaks/Anki/Voice/Pronunciation/NotebookLM/ApiKeyValidation -
+# Kaskaden-Reparatur, kein neues CSS. Tranche 4+ loescht diese Regeln
 # samt Wrappern wieder.
-7559
+# NICHT gewrappt (Konflikt-Audit als Utility-Konflikt): MobilePolish-9A
+# (#1583), ReadAloudTTS (#1584), ChatAnalysisLoading (#1585).
+# NICHT gewrappt (Legacy-vs-unlayered-Legacy-Praezedenz, Audit-Blindfleck,
+# #1592): LessonMode-LandscapeNav - ein Kontext-Override der noch
+# ungelayerten Navigation/Nav-Rest-Basisregeln (.nav-links display:flex
+# @3997); gewrappt verliert .is-lesson-compact .nav-links display:none
+# gegen die unlayered Basis -> Nav kollabiert im Lesson-Mode nicht mehr.
+# Erst wrapbar wenn Navigation + Nav-Rest gewrappt sind.
+7557

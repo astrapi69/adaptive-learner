@@ -4666,7 +4666,6 @@ select:focus {
    The links stay in the DOM (CSS-hidden) so keyboard + tests reach
    them. Respects the existing reduced-motion catch-all.
    --------------------------------------------------------------- */
-@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 /* Trigger A — active lesson, any width. */
 .app-nav.is-lesson-compact {
@@ -4763,7 +4762,6 @@ select:focus {
     display: none;
   }
 }
-} /* @layer legacy */
 
 /* ----- iOS focus-zoom guard (#1353) -----------------------------
    iOS Safari zooms IN when a focused text control has an effective
