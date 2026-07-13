@@ -36,9 +36,7 @@ export interface CategorizationPayload {
 export function asCategorizationPayload(
     exercise: ContentLessonExercise,
 ): CategorizationPayload | null {
-    const categories = (
-        exercise.ext_payload as {categories?: unknown} | undefined
-    )?.categories;
+    const categories = exercise.ext_payload?.categories;
     if (!Array.isArray(categories)) return null;
     const shapedRight = categories.every(
         (bucket) =>

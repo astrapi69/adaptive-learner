@@ -36,9 +36,7 @@ export interface ErrorCorrectionPayload {
 export function asErrorCorrectionPayload(
     exercise: ContentLessonExercise,
 ): ErrorCorrectionPayload | null {
-    const payload = exercise.ext_payload as
-        | {tokens?: unknown; error_index?: unknown; accept?: unknown}
-        | undefined;
+    const payload = exercise.ext_payload;
     if (!payload) return null;
     const {tokens, error_index, accept} = payload;
     if (
