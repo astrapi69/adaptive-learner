@@ -2008,6 +2008,15 @@
         "retry": "Coba lagi",
         "empty": "Latihan pilihan ganda ini tidak memiliki opsi."
       },
+      "al_categorization": {
+        "instructions": "Ketuk sebuah item, lalu ketuk kategorinya.",
+        "pool_label": "Item",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat. Periksa item yang ditandai.",
+        "submit": "Periksa jawaban",
+        "retry": "Coba lagi",
+        "empty": "Latihan kategorisasi ini tidak memiliki kategori."
+      },
       "instruction": {
         "matching": {
           "receptive": "Cocokkan pasangannya (Pengenalan)",

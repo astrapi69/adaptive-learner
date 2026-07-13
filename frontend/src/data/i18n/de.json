@@ -2008,6 +2008,15 @@
         "retry": "Nochmal versuchen",
         "empty": "Diese Multiple-Choice-Aufgabe hat keine Optionen."
       },
+      "al_categorization": {
+        "instructions": "Tippe ein Element an, dann seine Kategorie.",
+        "pool_label": "Elemente",
+        "result_correct": "Richtig!",
+        "result_wrong": "Nicht ganz. Sieh dir die markierten Elemente an.",
+        "submit": "Antwort prüfen",
+        "retry": "Nochmal versuchen",
+        "empty": "Diese Zuordnungsübung hat keine Kategorien."
+      },
       "instruction": {
         "matching": {
           "receptive": "Paare verbinden (Erkennen)",

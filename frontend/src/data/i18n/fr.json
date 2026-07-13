@@ -2008,6 +2008,15 @@
         "retry": "Réessayer",
         "empty": "Cet exercice à choix multiple n'a pas d'options."
       },
+      "al_categorization": {
+        "instructions": "Touche un élément, puis sa catégorie.",
+        "pool_label": "Éléments",
+        "result_correct": "Correct !",
+        "result_wrong": "Pas tout à fait. Regarde les éléments surlignés.",
+        "submit": "Vérifier la réponse",
+        "retry": "Réessayer",
+        "empty": "Cet exercice de classement n'a pas de catégories."
+      },
       "instruction": {
         "matching": {
           "receptive": "Associe les paires (Reconnaître)",

@@ -422,3 +422,77 @@ describe("extension tier load guard (#1565, schema 1.7)", () => {
     expect(validateLessonShape(makeLesson()).ok).toBe(true);
   });
 });
+
+
+describe("adopted extension ext:al-categorization (#1579)", () => {
+  // First real adoption of the schema-1.7 extension tier: the load guard
+  // lets the adopted type through, and the semantic layer validates the
+  // ext_payload the core schema treats as opaque.
+  const categorizationExercise = {
+    id: "ex-categ-01",
+    type: "ext:al-categorization",
+    prompt: "Ordne jedes Signal der richtigen Kategorie zu.",
+    card_ids: ["card-01"],
+    distractors: [],
+    ext_payload: {
+      categories: [
+        { name: "Sichtzeichen", items: ["flache Hand", "Zeigefinger hoch"] },
+        { name: "Hoerzeichen", items: ["Sitz", "Platz"] },
+      ],
+    },
+  };
+
+  const categorizationLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-categorization@1"],
+      steps: [
+        {
+          id: "step-categ-01",
+          type: "exercise",
+          exercise: {
+            ...categorizationExercise,
+            ...(payloadOverride === undefined
+              ? {}
+              : { ext_payload: payloadOverride }),
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(categorizationLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("a lesson mixing adopted and unadopted extensions is still refused, naming only the unadopted one", () => {
+    const mixed = makeLesson({
+      requires_extensions: ["ext:al-categorization@1", "ext:ref-ordering@1"],
+    } as Partial<ContentLesson>);
+    const shape = validateLessonShape(mixed);
+    expect(shape.ok).toBe(false);
+    const joined = shape.errors.join(" ");
+    expect(joined).toContain("ext:ref-ordering@1");
+    expect(joined).not.toContain("ext:al-categorization@1");
+  });
+
+  it("validateGeneratedLesson passes a well-formed categorization exercise", () => {
+    expect(() => validateGeneratedLesson(categorizationLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses a broken ext_payload (single bucket)", () => {
+    const singleBucket = categorizationLesson({
+      categories: [{ name: "Sichtzeichen", items: ["flache Hand"] }],
+    });
+    expect(() => validateGeneratedLesson(singleBucket)).toThrow(
+      /at least 2 categories/,
+    );
+  });
+
+  it("validateGeneratedLesson refuses a malformed ext_payload shape", () => {
+    // A non-object ext_payload is already refused by the ajv layer; the
+    // semantic layer owns everything INSIDE the opaque object.
+    const malformed = categorizationLesson({categories: "nope"});
+    expect(() => validateGeneratedLesson(malformed)).toThrow(/categories/);
+  });
+});
