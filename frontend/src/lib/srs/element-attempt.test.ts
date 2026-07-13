@@ -12,6 +12,7 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    deriveCategorizationAttempts,
     deriveClozeAttempts,
     deriveClozeMultiSelectAttempt,
     deriveFreeTextAttempt,
@@ -390,5 +391,68 @@ describe("deriveClozeMultiSelectAttempt", () => {
         );
         expect(attempt.user_answer).toBe("Vienna");
         expect(attempt.correct).toBe(false);
+    });
+});
+
+
+describe("deriveCategorizationAttempts", () => {
+    // #1579 - adopted extension ext:al-categorization: one attempt per item,
+    // element_key = the item, mirrors the matching fan-out.
+    const exercise = {
+        id: "ex-categ-01",
+        type: "ext:al-categorization",
+        prompt: "Ordne zu.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            categories: [
+                {name: "Sichtzeichen", items: ["flache Hand"]},
+                {name: "Hoerzeichen", items: ["Sitz", "Platz"]},
+            ],
+        },
+    } as unknown as ContentLessonExercise;
+    const ctx = {setId: "set-1", lessonId: "lesson-1"};
+
+    it("fans out one attempt per authored item with the chosen bucket", () => {
+        const attempts = deriveCategorizationAttempts(
+            exercise,
+            ctx,
+            new Map([
+                ["flache Hand", "Sichtzeichen"],
+                ["Sitz", "Sichtzeichen"],
+                ["Platz", "Hoerzeichen"],
+            ]),
+        );
+        expect(attempts).toHaveLength(3);
+        const bySitz = attempts.find((a) => a.element_key === "Sitz");
+        expect(bySitz).toMatchObject({
+            set_id: "set-1",
+            lesson_id: "lesson-1",
+            exercise_id: "ex-categ-01",
+            element_type: "vocabulary",
+            user_answer: "Sichtzeichen",
+            correct_answer: "Hoerzeichen",
+            correct: false,
+        });
+        const byPlatz = attempts.find((a) => a.element_key === "Platz");
+        expect(byPlatz).toMatchObject({correct: true, user_answer: "Hoerzeichen"});
+    });
+
+    it("an unassigned item counts as a wrong attempt with an empty user answer", () => {
+        const attempts = deriveCategorizationAttempts(
+            exercise,
+            ctx,
+            new Map([["flache Hand", "Sichtzeichen"]]),
+        );
+        const unassigned = attempts.find((a) => a.element_key === "Sitz");
+        expect(unassigned).toMatchObject({correct: false, user_answer: ""});
+    });
+
+    it("a malformed payload yields no attempts (edge)", () => {
+        const broken = {
+            ...exercise,
+            ext_payload: {categories: "nope"},
+        } as unknown as ContentLessonExercise;
+        expect(deriveCategorizationAttempts(broken, ctx, new Map())).toEqual([]);
     });
 });

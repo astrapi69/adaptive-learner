@@ -2008,6 +2008,15 @@
         "retry": "もう一度",
         "empty": "この選択問題には選択肢がありません。"
       },
+      "al_categorization": {
+        "instructions": "項目をタップしてから、そのカテゴリーをタップしてください。",
+        "pool_label": "項目",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい！ハイライトされた項目を確認してください。",
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "empty": "この分類問題にはカテゴリーがありません。"
+      },
       "instruction": {
         "matching": {
           "receptive": "ペアを結ぶ（認識）",

@@ -27,13 +27,17 @@ import {
 import { fetchGitHubFileText } from "./github-fetch";
 import { resolveRepoToken } from "./repo-token";
 
-/** The exercise types the lesson schema (v1.3) knows about. */
+/** The exercise types this app renders: the core schema enum (v1.7) plus
+ *  the adopted extension types (#1579). multiple_choice was missing since
+ *  v1.6 - a legitimate repo sampling a native-MC lesson was rejected. */
 export const KNOWN_EXERCISE_TYPES = [
   "matching",
   "picture_choice",
   "free_text",
   "word_tiles",
   "cloze",
+  "multiple_choice",
+  "ext:al-categorization",
 ] as const;
 
 /** Schema major the app understands (CURRENT_SCHEMA_VERSION is 1.x). */

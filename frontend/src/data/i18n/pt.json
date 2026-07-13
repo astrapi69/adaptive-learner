@@ -2008,6 +2008,15 @@
         "retry": "Tentar novamente",
         "empty": "Este exercício de múltipla escolha não tem opções."
       },
+      "al_categorization": {
+        "instructions": "Toca num item e depois na sua categoria.",
+        "pool_label": "Itens",
+        "result_correct": "Correto!",
+        "result_wrong": "Não exatamente. Revê os itens destacados.",
+        "submit": "Verificar resposta",
+        "retry": "Tentar novamente",
+        "empty": "Este exercício de categorização não tem categorias."
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",

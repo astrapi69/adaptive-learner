@@ -61,6 +61,7 @@ import {
   selectExercises,
   type GeneratorCard,
 } from "../lesson/exercise-generator";
+import { categorizationPayloadErrors } from "../../exercises/categorization";
 import { validateLessonShape } from "../validation/lesson-schema-validator";
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -625,6 +626,12 @@ const EXERCISE_TYPE_CHECKS: Record<string, ExerciseCheck> = {
       );
   },
   cloze: validateCloze,
+  // #1579 - first adopted extension type: the ext_payload is opaque to the
+  // ajv layer, so the bucket rules live in the shared categorization core.
+  "ext:al-categorization": (exercise, fail) => {
+    const payloadErrors = categorizationPayloadErrors(exercise);
+    if (payloadErrors.length > 0) fail(payloadErrors[0]);
+  },
 };
 
 function validateExercise(

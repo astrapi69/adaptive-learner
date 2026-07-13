@@ -2008,6 +2008,15 @@
         "retry": "Try again",
         "empty": "This multiple-choice exercise has no options."
       },
+      "al_categorization": {
+        "instructions": "Tap an item, then tap its category.",
+        "pool_label": "Items",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite. Review the highlighted items.",
+        "submit": "Check answer",
+        "retry": "Try again",
+        "empty": "This categorization exercise has no categories."
+      },
       "instruction": {
         "matching": {
           "receptive": "Match the pairs (Recognition)",
