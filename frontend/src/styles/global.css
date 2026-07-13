@@ -4666,6 +4666,7 @@ select:focus {
    The links stay in the DOM (CSS-hidden) so keyboard + tests reach
    them. Respects the existing reduced-motion catch-all.
    --------------------------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 /* Trigger A — active lesson, any width. */
 .app-nav.is-lesson-compact {
@@ -4762,6 +4763,7 @@ select:focus {
     display: none;
   }
 }
+} /* @layer legacy */
 
 /* ----- iOS focus-zoom guard (#1353) -----------------------------
    iOS Safari zooms IN when a focused text control has an effective
@@ -5045,6 +5047,7 @@ select:focus {
 }
 
 /* ---- Export Section (Phase 16D) -------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .export-row {
   display: flex;
   flex-wrap: wrap;
@@ -5098,8 +5101,10 @@ select:focus {
   max-height: 300px;
   overflow-y: auto;
 }
+} /* @layer legacy */
 
 /* ---- Auto-loop cycle transition card (Phase 17C) ----------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .chat-transition-card {
   border: 2px dashed var(--accent);
   background: var(--surface-2, var(--surface));
@@ -5132,8 +5137,10 @@ select:focus {
   margin-top: var(--space-2);
   color: var(--text);
 }
+} /* @layer legacy */
 
 /* ---- Multi-cycle session summary (Phase 17D) -------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .cycle-counter-badge {
   display: inline-block;
   background: var(--accent);
@@ -5160,6 +5167,7 @@ select:focus {
 .rating-cycles-list li {
   margin: var(--space-1) 0;
 }
+} /* @layer legacy */
 
 /* ============================================================
    ModelPicker (v1.11.0 / Phase 24C)
@@ -5167,6 +5175,7 @@ select:focus {
    overrides with a searchable dropdown of provider-discovered
    models + an offline fallback.
    ============================================================ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .model-picker {
   position: relative;
@@ -5296,12 +5305,14 @@ select:focus {
 .model-picker-static {
   padding: 0;
 }
+} /* @layer legacy */
 
 /* ============================================================
    BackupCompare (v1.12.0 / Phase 25B)
    Per-table diff cards with added/removed/changed chips,
    expandable record list, field-level diff table on changed.
    ============================================================ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .backup-compare-section {
   margin-top: var(--space-4);
@@ -5511,6 +5522,7 @@ select:focus {
   color: var(--success);
   word-break: break-all;
 }
+} /* @layer legacy */
 
 /* === Rich-text editor (Phase 27 — v1.14.0) ============================ */
 
@@ -5925,6 +5937,7 @@ select:focus {
 }
 
 /* --- Gamification (Phase 29A) ------------------------------------ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .xp-widget {
   background: var(--bg-elevated);
@@ -5995,8 +6008,10 @@ select:focus {
     animation: none;
   }
 }
+} /* @layer legacy */
 
 /* --- Badges (Phase 29B) ----------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .badge-showcase {
   display: flex;
   flex-direction: column;
@@ -6061,8 +6076,10 @@ select:focus {
     transition: none;
   }
 }
+} /* @layer legacy */
 
 /* --- Streaks (Phase 29C) ---------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .streak-widget {
   display: flex;
   gap: 24px;
@@ -6118,8 +6135,10 @@ select:focus {
 .streak-cell--tier-4 {
   background: var(--accent);
 }
+} /* @layer legacy */
 
 /* --- Anki page (Phase 30C) -------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .anki-page {
   padding: 24px;
   max-width: 1100px;
@@ -6195,8 +6214,10 @@ select:focus {
   gap: 8px;
   margin-top: 4px;
 }
+} /* @layer legacy */
 
 /* --- Voice (Phase 31) ----------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .speech-button {
   display: inline-flex;
   align-items: center;
@@ -6225,6 +6246,7 @@ select:focus {
   font-size: 0.85rem;
   line-height: 1;
 }
+} /* @layer legacy */
 
 /* ---------------------------------------------------------------
    Lesson read-aloud (TTS) — compact speaker-icon button.
@@ -6540,6 +6562,7 @@ select:focus {
 }
 
 /* --- Pronunciation page (Phase 31C) ----------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .pronunciation-page {
   padding: 24px;
   max-width: 720px;
@@ -6609,8 +6632,10 @@ select:focus {
   margin-top: 8px;
   padding: 14px;
 }
+} /* @layer legacy */
 
 /* --- NotebookLM section (Phase 32) ------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .notebooklm-actions {
   display: flex;
   flex-wrap: wrap;
@@ -6709,6 +6734,7 @@ select:focus {
 .help-term:focus-within {
   background-color: color-mix(in srgb, var(--accent) 10%, transparent);
 }
+} /* @layer legacy */
 
 /* ============================================================
  * Phase 39 C7 — WCAG 2.1 SC 2.3.3 + 2.2.2 catch-all for users
@@ -7016,6 +7042,7 @@ select:focus {
  * red/green border + checkmark on the input, an inline format
  * hint, and the test-result line. Theme-token driven.
  * ============================================================== */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .api-key-input-wrap {
   position: relative;
@@ -7074,6 +7101,7 @@ select:focus {
 .api-key-restore-link {
   margin-top: 0.4rem;
 }
+} /* @layer legacy */
 
 /* ==============================================================
  * Chat-analysis loading indicator (import detail page).
