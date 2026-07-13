@@ -40,8 +40,15 @@ updates:
   # both together"), the CI-rendered visual baselines (a new chromium can
   # shift font AA across all 105 PNGs), and the maintainer machine's
   # installer support (1.61 refuses ubuntu26.04). It is therefore exact-
-  # pinned in e2e/package.json and EXCLUDED from the group below - a bump
-  # must arrive as an individual, deliberately-coordinated PR.
+  # pinned in e2e/package.json, EXCLUDED from the group below, and
+  # IGNORED entirely (#1582): the group exclusion alone only rerouted the
+  # bump into an individual PR, which is exactly how #1561 overrode the
+  # #1559 pin the same day. Playwright upgrades never come from
+  # Dependabot - only as a manually coordinated PR that bumps package +
+  # container tags together, regenerates the visual baselines + Feature-
+  # Shots in the same cycle, and first verifies a maintainer-machine
+  # install path. Do NOT remove these ignore entries without that
+  # coordinated upgrade (and never mid-baseline-refresh, see #1577).
   - package-ecosystem: "bun"
     directory: "/e2e"
     target-branch: "develop"
@@ -50,6 +57,14 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
+    ignore:
+      # No update-types filter = ALL updates (patch included: the mcr
+      # container tag and the browser build move per patch release too).
+      # @axe-core/playwright is an independent package and keeps flowing.
+      - dependency-name: "@playwright/test"
+      # Guards, should these ever be added as direct deps of e2e/:
+      - dependency-name: "playwright"
+      - dependency-name: "playwright-core"
     groups:
       e2e-minor-patch:
         exclude-patterns:
