@@ -57,4 +57,5 @@
 # blockiert (beide gewrappt), sondern noch durch die ungelayerten
 # .nav-hamburger @4649 (MobilePolish #1583) + .nav-links @4825 + .app-nav
 # @5046 (mobile @media). Erst wrapbar wenn auch diese gelayert sind.
-7569
+# 7569 -> 7573 (#1540): +line-height pin on .lesson-header h1.
+7573
