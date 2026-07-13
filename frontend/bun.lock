@@ -53,7 +53,7 @@
         "highlight.js": "11.11.1",
         "html5-qrcode": "2.3.8",
         "jszip": "3.10.1",
-        "learn-content-engine": "0.11.1",
+        "learn-content-engine": "0.12.0",
         "lowlight": "3.3.0",
         "lucide-react": "^1.24.0",
         "qrcode": "1.5.4",
@@ -1619,7 +1619,7 @@
 
     "kind-of": ["kind-of@6.0.3", "", {}, "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="],
 
-    "learn-content-engine": ["learn-content-engine@0.11.1", "", { "dependencies": { "@rgrove/parse-xml": "^4.2.2", "ajv": "^8.20.0", "yaml": "^2.9.0" }, "bin": { "learn-content-engine": "bin/learn-content-engine.mjs" } }, "sha512-4i8pHaWeOpwnD99IfRSMX36//FSZ5NWTue4VFvn0ZrAdxoR4yL/ORp6z/AaWYMauXvDcZg7dJBbPuE/t6aIhYQ=="],
+    "learn-content-engine": ["learn-content-engine@0.12.0", "", { "dependencies": { "@rgrove/parse-xml": "^4.2.2", "ajv": "^8.20.0", "yaml": "^2.9.0" }, "bin": { "learn-content-engine": "bin/learn-content-engine.mjs" } }, "sha512-c49CEa38zQZYjKQWcxYPb1I2wFRkHoGL8YwrX+AqrETi6UoqmQTV280pxOmNLn3LEf6e8RZIFal2rrip+MHCNg=="],
 
     "leven": ["leven@3.1.0", "", {}, "sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A=="],
 
