@@ -7,11 +7,15 @@
  * for single-edit typos). The first entry in ``accept`` is
  * the canonical answer surfaced after a wrong attempt.
  *
- * Typo tolerance (D1, Phase 45): threshold = 1 catches
- * "Mercii" / "Merc" but rejects near-miss wrong words like
- * "Marci". Authors control synonyms / case / punctuation
- * variants via additional ``accept`` entries — the renderer
- * does not infer beyond a single edit.
+ * Typo tolerance (D1, Phase 45; widened for sentences in
+ * #1580): short answers keep threshold 1 ("Mercii" / "Merc"
+ * pass, "Marci" stays wrong); sentence-length answers
+ * (>= 16 normalized chars) get threshold 2 so one typo plus
+ * one slip does not fail a correct sentence. The normalizer
+ * also unifies curly apostrophes/quotes, collapses inner
+ * whitespace, and strips terminal sentence punctuation
+ * (#1580) — authors still control true synonyms via
+ * additional ``accept`` entries.
  *
  * AI semantic validation (P-114) is OUT of scope per D2.
  * The dual-mode dispatcher belongs in Phase 46 alongside
@@ -79,11 +83,32 @@ function _levenshtein(a: string, b: string): number {
     return prev[b.length];
 }
 
-/** NFC unicode normalization + trim + locale-aware lowercase.
- *  Catches surface variants ("MERCI", "Mêrci", "merci ") that
- *  authors should not have to enumerate in ``accept``. */
+/** Plain-text grading normalization (#1580). NFC + locale-aware lowercase
+ *  as before, plus the surface variants a mobile keyboard produces and a
+ *  sentence answer should never fail on: the curly-apostrophe/quote family
+ *  is unified to ASCII, inner whitespace collapses to single spaces, and
+ *  terminal sentence punctuation (``.!?\u2026``) is stripped on both sides
+ *  of the comparison. Inner punctuation stays significant. */
 function _normalize(s: string): string {
-    return s.normalize("NFC").trim().toLocaleLowerCase();
+    return s
+        .normalize("NFC")
+        .replace(/[\u2018\u2019\u201A\u02BC\u00B4`]/g, "'")
+        .replace(/[\u201C\u201D\u201E\u00AB\u00BB]/g, '"')
+        .trim()
+        .replace(/\s+/g, " ")
+        .replace(/[.!?\u2026]+$/, "")
+        .trim()
+        .toLocaleLowerCase();
+}
+
+/** Edit budget for the fuzzy fallback (#1580). Short answers keep the
+ *  strict single-edit rule (D1: "Mercii" passes, "Marci" stays wrong);
+ *  sentence-length answers (>= 16 normalized chars) earn a second edit so
+ *  one real typo plus one small slip does not fail a correct sentence.
+ *  Measured against the AUTHORED candidate, so the learner cannot widen
+ *  the budget by padding the input. */
+function _editTolerance(normalizedCandidate: string): number {
+    return normalizedCandidate.length >= 16 ? 2 : 1;
 }
 
 /** Code-answer normalization (schema v1.3). Code is CASE-sensitive,
@@ -96,10 +121,12 @@ function _normalizeCode(s: string): string {
     return s.replace(/\s+/g, "").replace(/['"`]/g, '"');
 }
 
-/** True iff ``input`` matches any entry of ``accept``:
- *  normalized exact match first, Levenshtein <= 1 fallback.
- *  Empty input never matches. In ``codeMode`` the normalizer is
- *  whitespace-stripping + quote-unifying + case-preserving. */
+/** True iff ``input`` matches any entry of ``accept``: normalized exact
+ *  match first, Levenshtein fallback within ``_editTolerance`` (1 for short
+ *  answers, 2 for sentence-length ones, #1580). Empty input never matches.
+ *  In ``codeMode`` the normalizer is whitespace-stripping + quote-unifying +
+ *  case-preserving, and the budget stays 1 regardless of length (code must
+ *  not absorb two edits: println != print). */
 export function isFreeTextCorrect(
     input: string,
     accept: readonly string[],
@@ -111,7 +138,8 @@ export function isFreeTextCorrect(
     const normCandidates = accept.map(norm);
     if (normCandidates.includes(normInput)) return true;
     for (const cand of normCandidates) {
-        if (_levenshtein(normInput, cand) <= 1) return true;
+        const tolerance = codeMode ? 1 : _editTolerance(cand);
+        if (_levenshtein(normInput, cand) <= tolerance) return true;
     }
     return false;
 }
@@ -131,8 +159,10 @@ export function isFreeTextNearMiss(
     const normInput = norm(input);
     if (normInput === "") return false;
     return accept.some((cand) => {
-        const distance = _levenshtein(normInput, norm(cand));
-        return distance > 0 && distance <= 2;
+        const normCandidate = norm(cand);
+        const tolerance = codeMode ? 1 : _editTolerance(normCandidate);
+        const distance = _levenshtein(normInput, normCandidate);
+        return distance > 0 && distance <= tolerance + 1;
     });
 }
 

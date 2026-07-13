@@ -76,9 +76,11 @@ describe("isFreeTextCorrect (matcher)", () => {
     });
 
     it("rejects answers more than one edit away", () => {
-        expect(isFreeTextCorrect("Mercii!", accept)).toBe(false); // 2 inserts (i + !)
         expect(isFreeTextCorrect("Mer", accept)).toBe(false); // 2 deletes
         expect(isFreeTextCorrect("Marcy", accept)).toBe(false); // 2 substitutions
+        // "Mercii!" moved to the sentence-answer suite (#1580): the trailing
+        // "!" is normalized away, leaving a single accepted typo.
+        expect(isFreeTextCorrect("Mercii!", accept)).toBe(true);
     });
 
     it("rejects empty / whitespace-only input even with a permissive accept list", () => {
@@ -97,6 +99,61 @@ describe("isFreeTextCorrect (matcher)", () => {
 
     it("returns false when accept list is empty", () => {
         expect(isFreeTextCorrect("anything", [])).toBe(false);
+    });
+});
+
+describe("isFreeTextCorrect (sentence answers, #1580)", () => {
+    // Repro (#1580): sentence-length answers were graded with the same rigid
+    // 1-edit budget as single words, and the normalizer knew nothing about
+    // punctuation, curly apostrophes, or inner whitespace - so a correct
+    // sentence typed on a mobile keyboard could fail on two harmless slips.
+    const accept = ["J'ai faim."] as const;
+
+    it("repro #1580: curly apostrophe + missing final period is correct", () => {
+        // iOS/Android keyboards emit U+2019; the period is content-free.
+        expect(isFreeTextCorrect("J\u2019ai faim", accept)).toBe(true);
+    });
+
+    it("happy path: exact sentence and single-typo sentence stay correct", () => {
+        expect(isFreeTextCorrect("J'ai faim.", accept)).toBe(true);
+        expect(
+            isFreeTextCorrect("Ich gehe nach Huase", ["Ich gehe nach Hause."]),
+        ).toBe(true); // transposed u/a = 2 substitutions, within the sentence budget
+    });
+
+    it("edge: doubled inner whitespace and missing period is correct", () => {
+        expect(
+            isFreeTextCorrect("Ich gehe  nach Hause", ["Ich gehe nach Hause."]),
+        ).toBe(true);
+    });
+
+    it("edge: terminal punctuation is equivalent in both directions", () => {
+        expect(isFreeTextCorrect("Wie geht's?", ["Wie geht's"])).toBe(true);
+        expect(isFreeTextCorrect("Wie geht's", ["Wie geht's?"])).toBe(true);
+    });
+
+    it("boundary: short answers keep the strict single-edit budget", () => {
+        // The sentence budget must not leak into single words (D1 intact).
+        expect(isFreeTextCorrect("Marcy", ["Merci"])).toBe(false);
+        expect(isFreeTextCorrect("Mer", ["Merci"])).toBe(false);
+    });
+
+    it("boundary: a genuinely different sentence stays wrong", () => {
+        expect(
+            isFreeTextCorrect("Ich fahre nach Berlin", ["Ich gehe nach Hause."]),
+        ).toBe(false);
+    });
+
+    it("boundary: code mode keeps the 1-edit budget regardless of length", () => {
+        // println vs print is 2 edits - must stay wrong even though the
+        // candidate is sentence-length.
+        expect(
+            isFreeTextCorrect(
+                "println('Hallo Welt')",
+                ["print('Hallo Welt')"],
+                true,
+            ),
+        ).toBe(false);
     });
 });
 
