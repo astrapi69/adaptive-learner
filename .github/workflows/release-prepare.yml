@@ -60,7 +60,7 @@ jobs:
     # succeeded). The image is pulled from mcr.microsoft.com, which the runner
     # reaches fine, and is the established fix already used by dexie-smoke.yml +
     # manual-automation.yml. Pin the tag to the @playwright/test version in
-    # e2e/bun.lock (1.59.1); bump both together. Refs #317, #1248.
+    # e2e/bun.lock (1.61.1); bump both together. Refs #317, #1248.
     #
     # Unlike those two pure-Playwright jobs (which run as `--user 1001` to keep
     # artifact-upload perms and therefore inline the commands because the noble
@@ -68,7 +68,7 @@ jobs:
     # uploads no artifacts, so it runs as the default root user and apt-installs
     # `make` below.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     timeout-minutes: 60
     steps:
       # Checks out the dispatched ref — i.e. the prepared `release/<version>`
@@ -125,7 +125,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       # NO `playwright install` step: the browsers are baked into the container
-      # (mcr.microsoft.com/playwright:v1.59.1-noble). release-test's dexie +
+      # (mcr.microsoft.com/playwright:v1.61.1-noble). release-test's dexie +
       # manual-plan Playwright gates and the extra e2e smoke use the pre-baked
       # browsers via the image's default browser path.
 

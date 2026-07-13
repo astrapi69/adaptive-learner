@@ -71,9 +71,9 @@ jobs:
     # release-prepare gate + dexie-smoke/manual-automation. This job is
     # `make release-test`-driven and uploads no artifacts, so it runs as root
     # and apt-installs make below. Pin the tag to e2e/bun.lock's
-    # @playwright/test version (1.59.1); bump together. Refs #317, #1248.
+    # @playwright/test version (1.61.1); bump together. Refs #317, #1248.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     timeout-minutes: 60
     steps:
       - name: Validate version input
@@ -225,7 +225,7 @@ jobs:
     # Same pre-baked-browser image as prepare (#317/#1248); runs the smoke
     # against the release/<version> branch prepare just pushed.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     timeout-minutes: 40
     steps:
       - name: Validate version input
