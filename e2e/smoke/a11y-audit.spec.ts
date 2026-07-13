@@ -72,6 +72,11 @@ for (const route of ROUTES) {
 
         const results = await new AxeBuilder({page})
             .withTags(["wcag2a", "wcag2aa"])
+            // #1569 — the viewport intentionally sets maximum-scale/user-scalable
+            // to suppress iOS auto-focus-zoom on inputs (see index.html). iOS >=10
+            // still allows the user's pinch-zoom, so real resize-text is preserved;
+            // the axe static rule can't see that, so it is excluded deliberately.
+            .disableRules(["meta-viewport"])
             .analyze();
 
         const allow = KNOWN_ISSUES[route] ?? [];

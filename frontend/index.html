@@ -2,7 +2,16 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- #1569 — iOS auto-zoom-on-input-focus: suppress via maximum-scale.
+         The #1353 16px-floor is the primary (WCAG-safe) defence and stays;
+         this is a belt-and-suspenders for the reported case where focus-zoom
+         still fired + would not reset on an installed iPhone PWA. iOS >=10
+         still honours the user's pinch-zoom gesture (Safari overrides
+         user-scalable for accessibility), so manual zoom keeps working; only
+         the automatic focus-zoom is suppressed. Trade-off tracked in #1569;
+         the axe `meta-viewport` rule is deliberately excluded in the a11y
+         specs with the same reference. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <!-- The .ico fallback is the FIRST tag on purpose: browsers
          that hit /favicon.ico directly (tab restore, bookmarks,
          many crawlers) ignore the <link> tag below entirely.
