@@ -23,6 +23,7 @@ import type {
     ContentLessonExercise,
     ContentLessonStep,
 } from "../../../storage/types";
+import CategorizationExercise from "../renderers/CategorizationExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
 import type {
     ControlledExerciseProps,
@@ -42,6 +43,15 @@ export const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "word_tiles",
     "cloze",
     "multiple_choice",
+]);
+
+/** The ext: extension types this app has ADOPTED (#1579) - kept
+ *  separate from the core set because the parity gate locks
+ *  SUPPORTED_EXERCISE_TYPES to the schema's closed core enum, while
+ *  this set is locked to the load guard's SUPPORTED_EXTENSIONS
+ *  (dispatcher and guard must agree: everything loadable is renderable). */
+export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
+    "ext:al-categorization",
 ]);
 
 export interface ExerciseDispatcherProps extends ControlledExerciseProps {
@@ -118,7 +128,9 @@ function ExerciseDispatcher(
 ) {
     const ex: ContentLessonExercise | null = step.exercise ?? null;
     if (ex === null) return <ExerciseStepPlaceholder step={step} />;
-    const supported = SUPPORTED_EXERCISE_TYPES.has(ex.type);
+    const supported =
+        SUPPORTED_EXERCISE_TYPES.has(ex.type) ||
+        SUPPORTED_EXT_EXERCISE_TYPES.has(ex.type);
     if (!supported) {
         return <ExerciseStepPlaceholder step={step} />;
     }
@@ -139,6 +151,17 @@ function ExerciseDispatcher(
             void onComplete(scored);
         },
     };
+    if (ex.type === "ext:al-categorization") {
+        return (
+            <CategorizationExercise
+                ref={ref}
+                exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
+                {...shared}
+            />
+        );
+    }
     if (ex.type === "matching") {
         return (
             <MatchingExercise

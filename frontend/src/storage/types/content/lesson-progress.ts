@@ -18,7 +18,11 @@ export type RawAnswer =
   /** #1525 — native ``multiple_choice`` (schema v1.6): the chosen
    *  option texts (one entry in single mode, the chosen set in
    *  ``multiple`` mode). */
-  | { kind: "multiple_choice"; selected: string[] };
+  | { kind: "multiple_choice"; selected: string[] }
+  /** #1579 — adopted extension ext:al-categorization: the learner's
+   *  item -> bucket-name assignment, persisted so a revisited, locked
+   *  question restores its exact bucket state. */
+  | { kind: "al_categorization"; assignments: [string, string][] };
 
 export interface LessonStepResult {
   step_id: string;

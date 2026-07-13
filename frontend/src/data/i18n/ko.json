@@ -2008,6 +2008,15 @@
         "retry": "다시 시도",
         "empty": "이 선택형 문제에는 선택지가 없습니다."
       },
+      "al_categorization": {
+        "instructions": "항목을 탭한 다음 해당 카테고리를 탭하세요.",
+        "pool_label": "항목",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 강조 표시된 항목을 확인하세요.",
+        "submit": "정답 확인",
+        "retry": "다시 시도",
+        "empty": "이 분류 연습에는 카테고리가 없습니다."
+      },
       "instruction": {
         "matching": {
           "receptive": "짝을 맞추세요 (인식)",

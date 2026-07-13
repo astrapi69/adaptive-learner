@@ -2008,6 +2008,15 @@
         "retry": "Tekrar dene",
         "empty": "Bu çoktan seçmeli alıştırmada seçenek yok."
       },
+      "al_categorization": {
+        "instructions": "Bir öğeye dokun, sonra kategorisine dokun.",
+        "pool_label": "Öğeler",
+        "result_correct": "Doğru!",
+        "result_wrong": "Tam değil. İşaretli öğeleri gözden geçir.",
+        "submit": "Cevabı kontrol et",
+        "retry": "Tekrar dene",
+        "empty": "Bu sınıflandırma alıştırmasında kategori yok."
+      },
       "instruction": {
         "matching": {
           "receptive": "Çiftleri eşleştir (Tanıma)",

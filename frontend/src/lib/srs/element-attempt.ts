@@ -27,6 +27,7 @@
  *   - word_tiles with 1 tile (edge case) → "vocabulary"
  */
 
+import {asCategorizationPayload} from "../exercises/categorization";
 import {resolveConcreteDirection} from "../exercises/direction";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
@@ -88,6 +89,34 @@ export function deriveMatchingAttempts(
             correct,
         };
     });
+}
+
+/** CATEGORIZATION (#1579, adopted extension ext:al-categorization):
+ *  fan-out one attempt per authored item, mirroring the matching
+ *  fan-out. assignments maps item -> chosen bucket name; an
+ *  unassigned item is a wrong attempt with an empty user answer. A
+ *  malformed payload yields no attempts (the load-time validation
+ *  refuses it before it can reach a session). */
+export function deriveCategorizationAttempts(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    assignments: ReadonlyMap<string, string>,
+): ElementAttempt[] {
+    const payload = asCategorizationPayload(exercise);
+    if (!payload) return [];
+    return payload.categories.flatMap((bucket) =>
+        bucket.items.map((item) => {
+            const chosenBucket = assignments.get(item) ?? "";
+            return {
+                ..._baseAttempt(exercise, ctx),
+                element_key: item,
+                element_type: "vocabulary" as const,
+                user_answer: chosenBucket,
+                correct_answer: bucket.name,
+                correct: chosenBucket === bucket.name,
+            };
+        }),
+    );
 }
 
 /** PICTURE_CHOICE: single attempt. element_key = the correct
