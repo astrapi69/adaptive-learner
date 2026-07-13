@@ -57,9 +57,7 @@ function isRcQuestionShape(value: unknown): value is RcQuestion {
 export function asReadingComprehensionPayload(
     exercise: ContentLessonExercise,
 ): ReadingComprehensionPayload | null {
-    const payload = exercise.ext_payload as
-        | {passage?: unknown; questions?: unknown}
-        | undefined;
+    const payload = exercise.ext_payload;
     if (!payload) return null;
     if (typeof payload.passage !== "string") return null;
     if (!Array.isArray(payload.questions) || !payload.questions.every(isRcQuestionShape)) {
