@@ -13,6 +13,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     deriveCategorizationAttempts,
+    deriveErrorCorrectionAttempt,
     deriveClozeAttempts,
     deriveClozeMultiSelectAttempt,
     deriveFreeTextAttempt,
@@ -454,5 +455,57 @@ describe("deriveCategorizationAttempts", () => {
             ext_payload: {categories: "nope"},
         } as unknown as ContentLessonExercise;
         expect(deriveCategorizationAttempts(broken, ctx, new Map())).toEqual([]);
+    });
+});
+
+
+describe("deriveErrorCorrectionAttempt", () => {
+    // #1579 second adoption - ext:al-error-correction: one attempt per
+    // exercise (one grammar decision), element_key = the canonical
+    // correction accept[0], element_type grammar_rule.
+    const exercise = {
+        id: "ex-errcorr-01",
+        type: "ext:al-error-correction",
+        prompt: "Ein Wort ist falsch.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            tokens: ["Der", "Hund", "folgt", "das", "Kommando"],
+            error_index: 3,
+            accept: ["dem", "einem"],
+        },
+    } as unknown as ContentLessonExercise;
+    const ctx = {setId: "set-1", lessonId: "lesson-1"};
+
+    it("derives one grammar_rule attempt keyed by the canonical correction", () => {
+        const attempt = deriveErrorCorrectionAttempt(
+            exercise,
+            ctx,
+            {pickedIndex: 3, typedCorrection: "einem"},
+            true,
+        );
+        expect(attempt).toMatchObject({
+            set_id: "set-1",
+            lesson_id: "lesson-1",
+            exercise_id: "ex-errcorr-01",
+            element_key: "dem",
+            element_type: "grammar_rule",
+            user_answer: "das -> einem",
+            correct_answer: "das -> dem",
+            correct: true,
+        });
+    });
+
+    it("records a wrong pick with the picked token in the user answer", () => {
+        const attempt = deriveErrorCorrectionAttempt(
+            exercise,
+            ctx,
+            {pickedIndex: 2, typedCorrection: "dem"},
+            false,
+        );
+        expect(attempt).toMatchObject({
+            user_answer: "folgt -> dem",
+            correct: false,
+        });
     });
 });

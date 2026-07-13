@@ -28,6 +28,7 @@
  */
 
 import {asCategorizationPayload} from "../exercises/categorization";
+import {asErrorCorrectionPayload} from "../exercises/error-correction";
 import {resolveConcreteDirection} from "../exercises/direction";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
@@ -117,6 +118,32 @@ export function deriveCategorizationAttempts(
             };
         }),
     );
+}
+
+/** ERROR-CORRECTION (#1579 second adoption, ext:al-error-correction):
+ *  a single attempt - the exercise tests ONE grammar decision (find the
+ *  wrong token, fix it). element_key = the canonical correction
+ *  ``accept[0]`` so reviews re-target the same grammar point regardless
+ *  of which variant the user typed; user/correct answers carry the
+ *  "picked token -> typed correction" form for the error log. */
+export function deriveErrorCorrectionAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    answer: {pickedIndex: number; typedCorrection: string},
+    correct: boolean,
+): ElementAttempt {
+    const payload = asErrorCorrectionPayload(exercise);
+    const markedToken = payload?.tokens[payload.error_index] ?? "";
+    const pickedToken = payload?.tokens[answer.pickedIndex] ?? "";
+    const canonical = payload?.accept[0] ?? "";
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "grammar_rule",
+        user_answer: `${pickedToken} -> ${answer.typedCorrection}`,
+        correct_answer: `${markedToken} -> ${canonical}`,
+        correct,
+    };
 }
 
 /** PICTURE_CHOICE: single attempt. element_key = the correct

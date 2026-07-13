@@ -2017,6 +2017,16 @@
         "retry": "Try again",
         "empty": "This categorization exercise has no categories."
       },
+      "al_error_correction": {
+        "instructions": "Tap the wrong word, then type the correction.",
+        "input_label": "Correction",
+        "solution_label": "Solution",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite. Check the solution below.",
+        "submit": "Check answer",
+        "retry": "Try again",
+        "empty": "This error-correction exercise has no sentence."
+      },
       "instruction": {
         "matching": {
           "receptive": "Match the pairs (Recognition)",

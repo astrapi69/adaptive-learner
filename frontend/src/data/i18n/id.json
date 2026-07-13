@@ -2017,6 +2017,16 @@
         "retry": "Coba lagi",
         "empty": "Latihan kategorisasi ini tidak memiliki kategori."
       },
+      "al_error_correction": {
+        "instructions": "Ketuk kata yang salah, lalu ketik koreksinya.",
+        "input_label": "Koreksi",
+        "solution_label": "Solusi",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat. Lihat solusinya.",
+        "submit": "Periksa jawaban",
+        "retry": "Coba lagi",
+        "empty": "Latihan koreksi ini tidak memiliki kalimat."
+      },
       "instruction": {
         "matching": {
           "receptive": "Cocokkan pasangannya (Pengenalan)",

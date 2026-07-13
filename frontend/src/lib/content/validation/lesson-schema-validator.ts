@@ -69,7 +69,10 @@ function formatError(error: ErrorObject): string {
 /** Extensions this app has adopted (renderer + grader registered). Adopting
  *  one (engine 0.10.0 extension tier) means adding it here AND registering
  *  the consumer half - the load guard below refuses everything else. */
-export const SUPPORTED_EXTENSIONS: readonly string[] = ["ext:al-categorization"];
+export const SUPPORTED_EXTENSIONS: readonly string[] = [
+  "ext:al-categorization",
+  "ext:al-error-correction",
+];
 
 /** The extension-tier load guard (#1565): structurally a lesson declaring
  *  ``requires_extensions`` is valid schema 1.7, but loading it without the

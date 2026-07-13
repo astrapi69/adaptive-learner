@@ -22,7 +22,11 @@ export type RawAnswer =
   /** #1579 — adopted extension ext:al-categorization: the learner's
    *  item -> bucket-name assignment, persisted so a revisited, locked
    *  question restores its exact bucket state. */
-  | { kind: "al_categorization"; assignments: [string, string][] };
+  | { kind: "al_categorization"; assignments: [string, string][] }
+  /** #1579 — adopted extension ``ext:al-error-correction``: the tapped
+   *  token index plus the typed correction, persisted so a revisited,
+   *  locked question restores its exact state. */
+  | { kind: "al_error_correction"; picked_index: number; typed: string };
 
 export interface LessonStepResult {
   step_id: string;

@@ -2017,6 +2017,16 @@
         "retry": "Tekrar dene",
         "empty": "Bu sınıflandırma alıştırmasında kategori yok."
       },
+      "al_error_correction": {
+        "instructions": "Yanlış kelimeye dokun, sonra düzeltmeyi yaz.",
+        "input_label": "Düzeltme",
+        "solution_label": "Çözüm",
+        "result_correct": "Doğru!",
+        "result_wrong": "Tam değil. Aşağıdaki çözüme bak.",
+        "submit": "Cevabı kontrol et",
+        "retry": "Tekrar dene",
+        "empty": "Bu hata düzeltme alıştırmasında cümle yok."
+      },
       "instruction": {
         "matching": {
           "receptive": "Çiftleri eşleştir (Tanıma)",

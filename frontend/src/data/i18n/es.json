@@ -2017,6 +2017,16 @@
         "retry": "Inténtalo de nuevo",
         "empty": "Este ejercicio de clasificación no tiene categorías."
       },
+      "al_error_correction": {
+        "instructions": "Toca la palabra incorrecta y escribe la corrección.",
+        "input_label": "Corrección",
+        "solution_label": "Solución",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo. Mira la solución.",
+        "submit": "Comprobar respuesta",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este ejercicio de corrección no tiene oración."
+      },
       "instruction": {
         "matching": {
           "receptive": "Une las parejas (Reconocer)",

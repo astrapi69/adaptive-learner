@@ -2017,6 +2017,16 @@
         "retry": "Nochmal versuchen",
         "empty": "Diese Zuordnungsübung hat keine Kategorien."
       },
+      "al_error_correction": {
+        "instructions": "Tippe das falsche Wort an und gib die Korrektur ein.",
+        "input_label": "Korrektur",
+        "solution_label": "Lösung",
+        "result_correct": "Richtig!",
+        "result_wrong": "Nicht ganz. Sieh dir die Lösung an.",
+        "submit": "Antwort prüfen",
+        "retry": "Nochmal versuchen",
+        "empty": "Diese Fehlerkorrektur-Übung hat keinen Satz."
+      },
       "instruction": {
         "matching": {
           "receptive": "Paare verbinden (Erkennen)",

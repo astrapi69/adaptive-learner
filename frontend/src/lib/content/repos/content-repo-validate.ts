@@ -38,6 +38,7 @@ export const KNOWN_EXERCISE_TYPES = [
   "cloze",
   "multiple_choice",
   "ext:al-categorization",
+  "ext:al-error-correction",
 ] as const;
 
 /** Schema major the app understands (CURRENT_SCHEMA_VERSION is 1.x). */
