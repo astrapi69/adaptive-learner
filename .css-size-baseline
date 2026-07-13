@@ -46,4 +46,6 @@
 # 2-Zeilen-Kommentar - die Label-Sichtbarkeit steuert jetzt die NavGroup
 # `hideLabel`-Prop statt eines ungelayerten CSS-Kontext-Overrides, damit die
 # Region kaskaden-schuldenfrei wird. Netto -1.
-7556
+# 7556 -> 7560 (#1540): +line-height pin on .lesson-header h1 to kill the
+# bistable ~5px title height that flaked lesson-matching@mobile.
+7560
