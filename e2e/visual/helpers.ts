@@ -99,8 +99,16 @@ export async function setTheme(page: Page, theme: ThemeId): Promise<void> {
 
 /**
  * Settle the page for a deterministic screenshot: wait for web fonts, kill
- * any animation/transition durations, and allow one reflow after the
- * font-swap (the gap between fallback and loaded font is a flake source).
+ * any animation/transition durations, then wait until the page geometry stops
+ * changing before the shot.
+ *
+ * The geometry wait replaces the earlier fixed timeout (#1540). A post-render
+ * reflow on the mobile lesson surfaces landed ~4px late and occasionally AFTER
+ * a fixed 250ms wait, so the capture caught a different layout phase than the
+ * baseline; neither the visual-config retry nor the #1554 data anchors killed
+ * it, because the cause is layout TIMING, not the seeded data. Instead of
+ * racing a clock, poll the full-page geometry until it is unchanged across a
+ * run of consecutive animation frames.
  */
 export async function settleForScreenshot(page: Page): Promise<void> {
     await page.addStyleTag({
@@ -110,9 +118,55 @@ export async function settleForScreenshot(page: Page): Promise<void> {
             " transition-delay: 0s !important; caret-color: transparent !important; }",
     });
     await page.evaluate(() => document.fonts.ready);
-    // 250ms (was 100ms): the post-font reflow on the mobile lesson surface
-    // occasionally landed AFTER the shot, shifting the page ~4px (#1540).
-    await page.waitForTimeout(250);
+    await page.evaluate(
+        async ({stableFramesNeeded, maxFrames}) => {
+            // Sample scroll extent (fullPage shots compare the whole scroll
+            // height) plus the top of up to 50 landmark elements, so a pure
+            // vertical shift that does not change the total size is caught too.
+            const sample = (): string => {
+                const doc = document.documentElement;
+                const parts: number[] = [
+                    doc.scrollHeight,
+                    doc.scrollWidth,
+                    document.body.scrollHeight,
+                ];
+                const marks = document.querySelectorAll("h1, h2, main, [data-testid]");
+                const limit = Math.min(marks.length, 50);
+                for (let i = 0; i < limit; i++) {
+                    parts.push(Math.round(marks[i].getBoundingClientRect().top));
+                }
+                return parts.join(",");
+            };
+            await new Promise<void>((resolve) => {
+                let last = "";
+                let stable = 0;
+                let frames = 0;
+                const tick = () => {
+                    const now = sample();
+                    if (now === last) {
+                        if (++stable >= stableFramesNeeded) {
+                            resolve();
+                            return;
+                        }
+                    } else {
+                        stable = 0;
+                        last = now;
+                    }
+                    // Fail open: a genuinely-animating page must not hang the
+                    // capture. ~5s at 60fps, then shoot whatever is on screen.
+                    if (++frames >= maxFrames) {
+                        resolve();
+                        return;
+                    }
+                    requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+            });
+        },
+        {stableFramesNeeded: 8, maxFrames: 300},
+    );
+    // Small compositor buffer once the layout is provably stable.
+    await page.waitForTimeout(50);
 }
 
 /** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard.
