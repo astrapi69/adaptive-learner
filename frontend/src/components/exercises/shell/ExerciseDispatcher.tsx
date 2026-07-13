@@ -15,7 +15,7 @@
  */
 
 import {forwardRef} from "react";
-import type {Ref} from "react";
+import type {ReactElement, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import type {
@@ -57,6 +57,35 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-error-correction",
     "ext:al-reading-comprehension",
 ]);
+
+/** The prop bag every renderer shares (everything except the exercise, the
+ *  set/lesson ids, and any type-specific extras). */
+type SharedExerciseProps = ControlledExerciseProps & {
+    onComplete: (scored: ExerciseScored) => void;
+};
+
+/** Route an adopted ``ext:`` exercise to its renderer. The adopted extension
+ *  renderers all take the same props, so they factor into this one helper -
+ *  keeping ``ExerciseDispatcher``'s cyclomatic complexity flat as more
+ *  extensions are adopted. The type set here is kept in sync with
+ *  ``SUPPORTED_EXT_EXERCISE_TYPES`` by the dispatcher<->guard parity gate. */
+function renderAdoptedExtension(
+    ex: ContentLessonExercise,
+    ref: Ref<ExerciseHandle>,
+    ids: {setId: string; lessonId: string},
+    shared: SharedExerciseProps,
+): ReactElement | null {
+    if (ex.type === "ext:al-categorization") {
+        return <CategorizationExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-error-correction") {
+        return <ErrorCorrectionExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-reading-comprehension") {
+        return <ReadingComprehensionExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    return null;
+}
 
 export interface ExerciseDispatcherProps extends ControlledExerciseProps {
     step: ContentLessonStep;
@@ -155,39 +184,8 @@ function ExerciseDispatcher(
             void onComplete(scored);
         },
     };
-    if (ex.type === "ext:al-reading-comprehension") {
-        return (
-            <ReadingComprehensionExercise
-                ref={ref}
-                exercise={ex}
-                setId={setId}
-                lessonId={lessonId}
-                {...shared}
-            />
-        );
-    }
-    if (ex.type === "ext:al-error-correction") {
-        return (
-            <ErrorCorrectionExercise
-                ref={ref}
-                exercise={ex}
-                setId={setId}
-                lessonId={lessonId}
-                {...shared}
-            />
-        );
-    }
-    if (ex.type === "ext:al-categorization") {
-        return (
-            <CategorizationExercise
-                ref={ref}
-                exercise={ex}
-                setId={setId}
-                lessonId={lessonId}
-                {...shared}
-            />
-        );
-    }
+    const extElement = renderAdoptedExtension(ex, ref, {setId, lessonId}, shared);
+    if (extElement) return extElement;
     if (ex.type === "matching") {
         return (
             <MatchingExercise
