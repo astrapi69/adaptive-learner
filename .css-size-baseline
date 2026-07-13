@@ -41,4 +41,9 @@
 # @3997); gewrappt verliert .is-lesson-compact .nav-links display:none
 # gegen die unlayered Basis -> Nav kollabiert im Lesson-Mode nicht mehr.
 # Erst wrapbar wenn Navigation + Nav-Rest gewrappt sind.
-7557
+# 7557 -> 7556 (#1592): die tragende Regel
+# `.app-nav .nav-group-label { display: none }` (3 Zeilen) entfernt +
+# 2-Zeilen-Kommentar - die Label-Sichtbarkeit steuert jetzt die NavGroup
+# `hideLabel`-Prop statt eines ungelayerten CSS-Kontext-Overrides, damit die
+# Region kaskaden-schuldenfrei wird. Netto -1.
+7556

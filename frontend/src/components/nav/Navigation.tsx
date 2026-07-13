@@ -236,6 +236,7 @@ export default function Navigation() {
             key={group.id}
             label={t(group.labelKey, group.labelFallback)}
             testId={`nav-group-${group.id}`}
+            hideLabel
           >
             {navTargetsByGroup(group.id).map((target) => (
               <NavLink
