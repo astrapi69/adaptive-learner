@@ -26,9 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     # Official Playwright image so Chromium + the headless shell are pre-baked
     # (no cdn.playwright.dev download). Pin the tag to the @playwright/test
-    # version in e2e/bun.lock (1.59.1); bump both together.
+    # version in e2e/bun.lock (1.61.1); bump both together.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
       options: --user 1001
     timeout-minutes: 30
     steps:

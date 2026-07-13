@@ -36,9 +36,9 @@ jobs:
     # runner. The image is pulled from mcr.microsoft.com, which the Azure-hosted
     # runner reaches fine (the apt steps from packages.microsoft.com always
     # succeeded). Pin the tag to the @playwright/test version in
-    # e2e/bun.lock (1.59.1); bump both together.
+    # e2e/bun.lock (1.61.1); bump both together.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
       # --user 1001 = the runner user, so checkout-owned files stay writable
       # and actions/upload-artifact can read the report (Playwright CI docs).
       options: --user 1001
