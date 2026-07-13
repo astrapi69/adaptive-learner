@@ -2428,6 +2428,7 @@ select:focus {
 } /* @layer legacy */
 
 /* --- Navigation ----------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2c-nav (#1597): utilities must win over this block */
 
 .app-nav {
   display: flex;
@@ -2644,13 +2645,6 @@ select:focus {
 .content-set-meta {
   flex: 1 1 280px;
   min-width: 0;
-}
-
-.content-set-meta h2,
-.content-set-meta h4 {
-  margin: 0 0 4px 0;
-  font-size: 1.125rem;
-  font-weight: 600;
 }
 
 /* Phase 60 — source -> target -> level content tree. */
@@ -2911,17 +2905,6 @@ select:focus {
   margin: var(--space-2) 0 0 0;
 }
 
-.lesson-header-set {
-  margin: var(--space-2) 0 0 0;
-  font-size: 0.9rem;
-  color: var(--fg-muted);
-}
-
-.lesson-header-set-label {
-  font-weight: 500;
-  margin-right: var(--space-1);
-}
-
 .lesson-back-btn {
   display: inline-flex;
   align-items: center;
@@ -3067,15 +3050,6 @@ select:focus {
   margin-top: 0;
 }
 
-.lesson-summary-stats {
-  list-style: none;
-  padding: 0;
-  margin: var(--space-3) 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 /* Phase 52F / v1.35.0 / P-128 + F-113 — Correction round block.
    Sits between the score / breakdown section and the action button
    row. Self-hides when the lesson was a perfect score or when no
@@ -3142,13 +3116,6 @@ select:focus {
 .lesson-correction-block-complete h3 {
   margin: 0;
   font-size: 1.0625rem;
-}
-
-.lesson-summary-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
 }
 
 /* Phase 64 — Smart Next-Step Suggestions. A prioritised stack of
@@ -3448,6 +3415,50 @@ select:focus {
     transition: none;
   }
 }
+} /* @layer legacy */
+
+/* --- Lesson header / summary + content-set heading -----------
+   EXP-044 (#1597): these rules stay UNLAYERED on purpose. Each
+   currently relies on unlayered precedence to beat a Tailwind
+   utility on the same element (audit KONFLIKTE) - reconciling
+   the conflict (dropping the legacy declaration or moving it
+   into the consumer as a component default) is a visible
+   change and is deferred to a later tranche. Extracting them
+   out of the Navigation region here is what lets Navigation +
+   Nav-Rest wrap into @layer legacy. Refs #1485, #1592. */
+.content-set-meta h2,
+.content-set-meta h4 {
+  margin: 0 0 4px 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.lesson-header-set {
+  margin: var(--space-2) 0 0 0;
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+}
+
+.lesson-header-set-label {
+  font-weight: 500;
+  margin-right: var(--space-1);
+}
+
+.lesson-summary-stats {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lesson-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
 
 /* =============================================================
    EXP-008 / Phase 55C — celebration screen: confetti + message
@@ -3687,6 +3698,7 @@ select:focus {
 /* =============================================================
    EXP-008 / Phase 55E — feedback intensity control
    =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2c-nav (#1597): utilities must win over this block */
 .form-row-fieldset {
   display: flex;
   flex-direction: column;
@@ -4059,6 +4071,7 @@ select:focus {
 .nav-theme-toggle:hover {
   background: var(--surface-2);
 }
+} /* @layer legacy */
 
 /* --- Curriculum page ------------------------------------------ */
 @layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
