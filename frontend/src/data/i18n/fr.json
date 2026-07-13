@@ -2027,6 +2027,15 @@
         "retry": "Réessayer",
         "empty": "Cet exercice de correction n'a pas de phrase."
       },
+      "al_reading_comprehension": {
+        "input_label": "Réponse",
+        "solution_label": "Solution",
+        "result_correct": "Correct !",
+        "result_wrong": "Pas tout à fait. Regarde les questions surlignées.",
+        "submit": "Vérifier la réponse",
+        "retry": "Réessayer",
+        "empty": "Cet exercice de lecture n'a pas de questions."
+      },
       "instruction": {
         "matching": {
           "receptive": "Associe les paires (Reconnaître)",

@@ -14,6 +14,7 @@ import {describe, expect, it} from "vitest";
 import {
     deriveCategorizationAttempts,
     deriveErrorCorrectionAttempt,
+    deriveReadingComprehensionAttempts,
     deriveClozeAttempts,
     deriveClozeMultiSelectAttempt,
     deriveFreeTextAttempt,
@@ -507,5 +508,64 @@ describe("deriveErrorCorrectionAttempt", () => {
             user_answer: "folgt -> dem",
             correct: false,
         });
+    });
+});
+
+
+describe("deriveReadingComprehensionAttempts", () => {
+    // #1579 third adoption - one attempt per sub-question, element_key = the
+    // canonical answer, element_type vocabulary. The renderer supplies the
+    // per-question answer + graded correctness (free_text needs the shared
+    // matcher, which lives in the React layer).
+    const exercise = {
+        id: "ex-rc-01",
+        type: "ext:al-reading-comprehension",
+        prompt: "Lies und antworte.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            passage: "Rex lief in den Garten.",
+            questions: [
+                {
+                    prompt: "Wohin?",
+                    type: "multiple_choice",
+                    options: [{text: "Garten", correct: true}, {text: "Strasse"}],
+                },
+                {prompt: "Wer?", type: "free_text", accept: ["Rex"]},
+            ],
+        },
+    } as unknown as ContentLessonExercise;
+    const ctx = {setId: "set-1", lessonId: "lesson-1"};
+
+    it("fans out one attempt per sub-question keyed by the canonical answer", () => {
+        const attempts = deriveReadingComprehensionAttempts(exercise, ctx, [
+            {answer: "Garten", correct: true},
+            {answer: "Bello", correct: false},
+        ]);
+        expect(attempts).toHaveLength(2);
+        expect(attempts[0]).toMatchObject({
+            set_id: "set-1",
+            lesson_id: "lesson-1",
+            exercise_id: "ex-rc-01",
+            element_key: "Garten",
+            element_type: "vocabulary",
+            user_answer: "Garten",
+            correct_answer: "Garten",
+            correct: true,
+        });
+        expect(attempts[1]).toMatchObject({
+            element_key: "Rex",
+            user_answer: "Bello",
+            correct_answer: "Rex",
+            correct: false,
+        });
+    });
+
+    it("a malformed payload yields no attempts (edge)", () => {
+        const broken = {
+            ...exercise,
+            ext_payload: {passage: "x"},
+        } as unknown as ContentLessonExercise;
+        expect(deriveReadingComprehensionAttempts(broken, ctx, [])).toEqual([]);
     });
 });

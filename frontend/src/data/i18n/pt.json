@@ -2027,6 +2027,15 @@
         "retry": "Tentar novamente",
         "empty": "Este exercício de correção não tem frase."
       },
+      "al_reading_comprehension": {
+        "input_label": "Resposta",
+        "solution_label": "Solução",
+        "result_correct": "Correto!",
+        "result_wrong": "Não exatamente. Revê as perguntas destacadas.",
+        "submit": "Verificar resposta",
+        "retry": "Tentar novamente",
+        "empty": "Este exercício de leitura não tem perguntas."
+      },
       "instruction": {
         "matching": {
           "receptive": "Una os pares (Reconhecer)",

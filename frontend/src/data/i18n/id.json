@@ -2027,6 +2027,15 @@
         "retry": "Coba lagi",
         "empty": "Latihan koreksi ini tidak memiliki kalimat."
       },
+      "al_reading_comprehension": {
+        "input_label": "Jawaban",
+        "solution_label": "Solusi",
+        "result_correct": "Benar!",
+        "result_wrong": "Belum tepat. Periksa pertanyaan yang ditandai.",
+        "submit": "Periksa jawaban",
+        "retry": "Coba lagi",
+        "empty": "Latihan membaca ini tidak memiliki pertanyaan."
+      },
       "instruction": {
         "matching": {
           "receptive": "Cocokkan pasangannya (Pengenalan)",

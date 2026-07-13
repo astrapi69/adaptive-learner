@@ -2027,6 +2027,15 @@
         "retry": "다시 시도",
         "empty": "이 오류 수정 연습에는 문장이 없습니다."
       },
+      "al_reading_comprehension": {
+        "input_label": "답",
+        "solution_label": "정답",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 강조 표시된 질문을 확인하세요.",
+        "submit": "정답 확인",
+        "retry": "다시 시도",
+        "empty": "이 읽기 연습에는 질문이 없습니다."
+      },
       "instruction": {
         "matching": {
           "receptive": "짝을 맞추세요 (인식)",

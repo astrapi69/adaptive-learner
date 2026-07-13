@@ -2027,6 +2027,15 @@
         "retry": "Nochmal versuchen",
         "empty": "Diese Fehlerkorrektur-Übung hat keinen Satz."
       },
+      "al_reading_comprehension": {
+        "input_label": "Antwort",
+        "solution_label": "Lösung",
+        "result_correct": "Richtig!",
+        "result_wrong": "Nicht ganz. Sieh dir die markierten Fragen an.",
+        "submit": "Antwort prüfen",
+        "retry": "Nochmal versuchen",
+        "empty": "Diese Leseübung hat keine Fragen."
+      },
       "instruction": {
         "matching": {
           "receptive": "Paare verbinden (Erkennen)",

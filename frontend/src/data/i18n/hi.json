@@ -2027,6 +2027,15 @@
         "retry": "फिर से कोशिश करें",
         "empty": "इस त्रुटि-सुधार अभ्यास में कोई वाक्य नहीं है।"
       },
+      "al_reading_comprehension": {
+        "input_label": "उत्तर",
+        "solution_label": "समाधान",
+        "result_correct": "सही!",
+        "result_wrong": "बिल्कुल नहीं। हाइलाइट किए गए प्रश्न देखें।",
+        "submit": "उत्तर जांचें",
+        "retry": "फिर से कोशिश करें",
+        "empty": "इस पठन अभ्यास में कोई प्रश्न नहीं हैं।"
+      },
       "instruction": {
         "matching": {
           "receptive": "जोड़े मिलाएँ (पहचान)",

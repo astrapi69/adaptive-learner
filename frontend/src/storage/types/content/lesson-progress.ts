@@ -26,7 +26,11 @@ export type RawAnswer =
   /** #1579 — adopted extension ``ext:al-error-correction``: the tapped
    *  token index plus the typed correction, persisted so a revisited,
    *  locked question restores its exact state. */
-  | { kind: "al_error_correction"; picked_index: number; typed: string };
+  | { kind: "al_error_correction"; picked_index: number; typed: string }
+  /** #1579 — adopted extension ``ext:al-reading-comprehension``: the
+   *  learner's answer per sub-question (in order), persisted so a
+   *  revisited, locked passage restores its exact state. */
+  | { kind: "al_reading_comprehension"; answers: string[] };
 
 export interface LessonStepResult {
   step_id: string;

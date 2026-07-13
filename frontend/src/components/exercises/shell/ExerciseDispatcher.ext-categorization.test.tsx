@@ -74,6 +74,34 @@ describe("ExerciseDispatcher — ext:al-categorization routing (#1579)", () => {
         ).toBeInTheDocument();
     });
 
+    it("routes ext:al-reading-comprehension to its renderer (#1579 third adoption)", () => {
+        const step = {
+            id: "s3",
+            type: "exercise",
+            exercise: {
+                id: "ex3",
+                type: "ext:al-reading-comprehension",
+                prompt: "Lies und antworte.",
+                card_ids: [],
+                distractors: [],
+                ext_payload: {
+                    passage: "Rex lief in den Garten.",
+                    questions: [
+                        {
+                            prompt: "Wohin?",
+                            type: "multiple_choice",
+                            options: [{ text: "Garten", correct: true }, { text: "Strasse" }],
+                        },
+                    ],
+                },
+            },
+        } as unknown as ContentLessonStep;
+        renderDispatcher(step);
+        expect(
+            screen.getByTestId("reading-comprehension-exercise"),
+        ).toBeInTheDocument();
+    });
+
     it("an unadopted ext type still falls to the unsupported placeholder", () => {
         renderDispatcher(extStep("ext:acme-cards"));
         expect(
