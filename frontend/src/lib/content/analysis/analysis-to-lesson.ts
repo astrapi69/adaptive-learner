@@ -63,6 +63,7 @@ import {
 } from "../lesson/exercise-generator";
 import { categorizationPayloadErrors } from "../../exercises/categorization";
 import { errorCorrectionPayloadErrors } from "../../exercises/error-correction";
+import { readingComprehensionPayloadErrors } from "../../exercises/reading-comprehension";
 import { validateLessonShape } from "../validation/lesson-schema-validator";
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -635,6 +636,10 @@ const EXERCISE_TYPE_CHECKS: Record<string, ExerciseCheck> = {
   },
   "ext:al-error-correction": (exercise, fail) => {
     const payloadErrors = errorCorrectionPayloadErrors(exercise);
+    if (payloadErrors.length > 0) fail(payloadErrors[0]);
+  },
+  "ext:al-reading-comprehension": (exercise, fail) => {
+    const payloadErrors = readingComprehensionPayloadErrors(exercise);
     if (payloadErrors.length > 0) fail(payloadErrors[0]);
   },
 };

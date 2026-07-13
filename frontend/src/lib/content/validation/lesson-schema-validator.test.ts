@@ -561,3 +561,72 @@ describe("adopted extension ext:al-error-correction (#1579, second adoption)", (
     expect(() => validateGeneratedLesson(malformed)).toThrow(/accept/);
   });
 });
+
+
+describe("adopted extension ext:al-reading-comprehension (#1579, third adoption)", () => {
+  const rcLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-reading-comprehension@1"],
+      steps: [
+        {
+          id: "step-rc-01",
+          type: "exercise",
+          exercise: {
+            id: "ex-rc-01",
+            type: "ext:al-reading-comprehension",
+            prompt: "Lies den Text und beantworte die Fragen.",
+            card_ids: ["card-01"],
+            distractors: [],
+            ext_payload:
+              payloadOverride === undefined
+                ? {
+                    passage: "Rex lief in den Garten und kam auf 'Hier' zurueck.",
+                    questions: [
+                      {
+                        prompt: "Wohin lief Rex?",
+                        type: "multiple_choice",
+                        options: [
+                          { text: "In den Garten", correct: true },
+                          { text: "Auf die Strasse" },
+                        ],
+                      },
+                      { prompt: "Wie hiess der Hund?", type: "free_text", accept: ["Rex"] },
+                    ],
+                  }
+                : payloadOverride,
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(rcLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("all three adopted extensions load together", () => {
+    const all = makeLesson({
+      requires_extensions: [
+        "ext:al-categorization@1",
+        "ext:al-error-correction@1",
+        "ext:al-reading-comprehension@1",
+      ],
+    } as Partial<ContentLesson>);
+    expect(validateLessonShape(all).ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed reading-comprehension exercise", () => {
+    expect(() => validateGeneratedLesson(rcLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses a payload with no questions", () => {
+    const noQuestions = rcLesson({ passage: "Ein Text.", questions: [] });
+    expect(() => validateGeneratedLesson(noQuestions)).toThrow(/at least 1 question/);
+  });
+
+  it("validateGeneratedLesson refuses a malformed ext_payload shape", () => {
+    const malformed = rcLesson({ passage: "Ein Text." });
+    expect(() => validateGeneratedLesson(malformed)).toThrow(/questions/);
+  });
+});

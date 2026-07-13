@@ -2027,6 +2027,15 @@
         "retry": "Inténtalo de nuevo",
         "empty": "Este ejercicio de corrección no tiene oración."
       },
+      "al_reading_comprehension": {
+        "input_label": "Respuesta",
+        "solution_label": "Solución",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo. Revisa las preguntas marcadas.",
+        "submit": "Comprobar respuesta",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este ejercicio de lectura no tiene preguntas."
+      },
       "instruction": {
         "matching": {
           "receptive": "Une las parejas (Reconocer)",

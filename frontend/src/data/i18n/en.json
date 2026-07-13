@@ -2027,6 +2027,15 @@
         "retry": "Try again",
         "empty": "This error-correction exercise has no sentence."
       },
+      "al_reading_comprehension": {
+        "input_label": "Answer",
+        "solution_label": "Solution",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite. Review the highlighted questions.",
+        "submit": "Check answer",
+        "retry": "Try again",
+        "empty": "This reading exercise has no questions."
+      },
       "instruction": {
         "matching": {
           "receptive": "Match the pairs (Recognition)",

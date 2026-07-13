@@ -2027,6 +2027,15 @@
         "retry": "Tekrar dene",
         "empty": "Bu hata düzeltme alıştırmasında cümle yok."
       },
+      "al_reading_comprehension": {
+        "input_label": "Cevap",
+        "solution_label": "Çözüm",
+        "result_correct": "Doğru!",
+        "result_wrong": "Tam değil. İşaretli soruları gözden geçir.",
+        "submit": "Cevabı kontrol et",
+        "retry": "Tekrar dene",
+        "empty": "Bu okuma alıştırmasında soru yok."
+      },
       "instruction": {
         "matching": {
           "receptive": "Çiftleri eşleştir (Tanıma)",

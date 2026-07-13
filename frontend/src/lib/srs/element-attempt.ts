@@ -29,6 +29,7 @@
 
 import {asCategorizationPayload} from "../exercises/categorization";
 import {asErrorCorrectionPayload} from "../exercises/error-correction";
+import {asReadingComprehensionPayload, canonicalAnswer} from "../exercises/reading-comprehension";
 import {resolveConcreteDirection} from "../exercises/direction";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
@@ -144,6 +145,33 @@ export function deriveErrorCorrectionAttempt(
         correct_answer: `${markedToken} -> ${canonical}`,
         correct,
     };
+}
+
+/** READING-COMPREHENSION (#1579 third adoption,
+ *  ext:al-reading-comprehension): one attempt per sub-question, mirroring
+ *  the matching fan-out. element_key = the sub-question's canonical answer
+ *  so reviews re-target the same comprehension point. The renderer supplies
+ *  the per-question answer + graded correctness (free_text grading needs the
+ *  shared React-layer matcher, so it is not re-derived here). */
+export function deriveReadingComprehensionAttempts(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    results: readonly {answer: string; correct: boolean}[],
+): ElementAttempt[] {
+    const payload = asReadingComprehensionPayload(exercise);
+    if (!payload) return [];
+    return payload.questions.map((question, index) => {
+        const canonical = canonicalAnswer(question);
+        const result = results[index];
+        return {
+            ..._baseAttempt(exercise, ctx),
+            element_key: canonical || question.prompt,
+            element_type: "vocabulary" as const,
+            user_answer: result?.answer ?? "",
+            correct_answer: canonical,
+            correct: result?.correct ?? false,
+        };
+    });
 }
 
 /** PICTURE_CHOICE: single attempt. element_key = the correct

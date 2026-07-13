@@ -2027,6 +2027,15 @@
         "retry": "もう一度",
         "empty": "この誤り訂正問題には文がありません。"
       },
+      "al_reading_comprehension": {
+        "input_label": "解答",
+        "solution_label": "解答",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい！ハイライトされた質問を確認してください。",
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "empty": "この読解問題には質問がありません。"
+      },
       "instruction": {
         "matching": {
           "receptive": "ペアを結ぶ（認識）",
