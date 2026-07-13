@@ -35,15 +35,26 @@
 # samt Wrappern wieder.
 # NICHT gewrappt (Konflikt-Audit als Utility-Konflikt): MobilePolish-9A
 # (#1583), ReadAloudTTS (#1584), ChatAnalysisLoading (#1585).
-# NICHT gewrappt (Legacy-vs-unlayered-Legacy-Praezedenz, Audit-Blindfleck,
-# #1592): LessonMode-LandscapeNav - ein Kontext-Override der noch
-# ungelayerten Navigation/Nav-Rest-Basisregeln (.nav-links display:flex
-# @3997); gewrappt verliert .is-lesson-compact .nav-links display:none
-# gegen die unlayered Basis -> Nav kollabiert im Lesson-Mode nicht mehr.
-# Erst wrapbar wenn Navigation + Nav-Rest gewrappt sind.
 # 7557 -> 7556 (#1592): die tragende Regel
 # `.app-nav .nav-group-label { display: none }` (3 Zeilen) entfernt +
 # 2-Zeilen-Kommentar - die Label-Sichtbarkeit steuert jetzt die NavGroup
 # `hideLabel`-Prop statt eines ungelayerten CSS-Kontext-Overrides, damit die
 # Region kaskaden-schuldenfrei wird. Netto -1.
-7556
+# 7556 -> 7569 (EXP-044 Tranche 2c-nav, #1597): +4 reine Wrapper-Zeilen
+# (2x "@layer legacy {" + 2x "}") um Navigation + Nav-Rest, plus ein
+# 9-Zeilen-Begruendungskommentar fuer die neue UNGELAYERTE Sektion
+# "Lesson header / summary + content-set heading". Die 4 vom
+# Konflikt-Audit als Utility-KONFLIKT gemeldeten Regeln (.content-set-meta
+# h2/h4, .lesson-header-set, .lesson-summary-stats, .lesson-summary-actions)
+# wurden aus der Navigation-Region herausgeloest, damit Navigation +
+# Nav-Rest CLEAN wrapbar werden; sie bleiben absichtlich ungelayert
+# (Reconciliation = sichtbare Aenderung, spaetere Tranche). Kein neues CSS.
+# NICHT gewrappt (Utility-Konflikt, ungelayert): MobilePolish-9A (#1583),
+# ReadAloudTTS (#1584), ChatAnalysisLoading (#1585), und die neue
+# Lesson-header/summary-Sektion (#1597).
+# NICHT gewrappt (Legacy-vs-unlayered-Legacy-Praezedenz, #1592):
+# LessonMode-LandscapeNav - jetzt NICHT mehr durch Navigation/Nav-Rest
+# blockiert (beide gewrappt), sondern noch durch die ungelayerten
+# .nav-hamburger @4649 (MobilePolish #1583) + .nav-links @4825 + .app-nav
+# @5046 (mobile @media). Erst wrapbar wenn auch diese gelayert sind.
+7569
