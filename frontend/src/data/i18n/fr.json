@@ -2017,6 +2017,16 @@
         "retry": "Réessayer",
         "empty": "Cet exercice de classement n'a pas de catégories."
       },
+      "al_error_correction": {
+        "instructions": "Touche le mot incorrect, puis écris la correction.",
+        "input_label": "Correction",
+        "solution_label": "Solution",
+        "result_correct": "Correct !",
+        "result_wrong": "Pas tout à fait. Regarde la solution.",
+        "submit": "Vérifier la réponse",
+        "retry": "Réessayer",
+        "empty": "Cet exercice de correction n'a pas de phrase."
+      },
       "instruction": {
         "matching": {
           "receptive": "Associe les paires (Reconnaître)",

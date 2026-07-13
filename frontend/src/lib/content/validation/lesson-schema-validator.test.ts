@@ -496,3 +496,68 @@ describe("adopted extension ext:al-categorization (#1579)", () => {
     expect(() => validateGeneratedLesson(malformed)).toThrow(/categories/);
   });
 });
+
+
+describe("adopted extension ext:al-error-correction (#1579, second adoption)", () => {
+  const errorCorrectionLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-error-correction@1"],
+      steps: [
+        {
+          id: "step-errcorr-01",
+          type: "exercise",
+          exercise: {
+            id: "ex-errcorr-01",
+            type: "ext:al-error-correction",
+            prompt: "Ein Wort ist falsch - tippe es an und korrigiere es.",
+            card_ids: ["card-01"],
+            distractors: [],
+            ext_payload:
+              payloadOverride === undefined
+                ? {
+                    tokens: ["Der", "Hund", "folgt", "das", "Kommando"],
+                    error_index: 3,
+                    accept: ["dem", "einem"],
+                  }
+                : payloadOverride,
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(errorCorrectionLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("a lesson declaring BOTH adopted extensions loads", () => {
+    const both = makeLesson({
+      requires_extensions: [
+        "ext:al-categorization@1",
+        "ext:al-error-correction@1",
+      ],
+    } as Partial<ContentLesson>);
+    expect(validateLessonShape(both).ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed error-correction exercise", () => {
+    expect(() => validateGeneratedLesson(errorCorrectionLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses a no-op accept entry", () => {
+    const noop = errorCorrectionLesson({
+      tokens: ["Der", "Hund", "folgt", "das", "Kommando"],
+      error_index: 3,
+      accept: ["das"],
+    });
+    expect(() => validateGeneratedLesson(noop)).toThrow(
+      /differ from the marked token/,
+    );
+  });
+
+  it("validateGeneratedLesson refuses a malformed ext_payload shape", () => {
+    const malformed = errorCorrectionLesson({tokens: ["a", "b"]});
+    expect(() => validateGeneratedLesson(malformed)).toThrow(/accept/);
+  });
+});

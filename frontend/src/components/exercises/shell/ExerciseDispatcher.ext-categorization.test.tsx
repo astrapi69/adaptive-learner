@@ -51,6 +51,29 @@ describe("ExerciseDispatcher — ext:al-categorization routing (#1579)", () => {
         expect(screen.getByTestId("categorization-exercise")).toBeInTheDocument();
     });
 
+    it("routes ext:al-error-correction to its renderer (#1579 second adoption)", () => {
+        const step = {
+            id: "s2",
+            type: "exercise",
+            exercise: {
+                id: "ex2",
+                type: "ext:al-error-correction",
+                prompt: "Ein Wort ist falsch.",
+                card_ids: [],
+                distractors: [],
+                ext_payload: {
+                    tokens: ["Der", "Hund", "folgt", "das", "Kommando"],
+                    error_index: 3,
+                    accept: ["dem"],
+                },
+            },
+        } as unknown as ContentLessonStep;
+        renderDispatcher(step);
+        expect(
+            screen.getByTestId("error-correction-exercise"),
+        ).toBeInTheDocument();
+    });
+
     it("an unadopted ext type still falls to the unsupported placeholder", () => {
         renderDispatcher(extStep("ext:acme-cards"));
         expect(

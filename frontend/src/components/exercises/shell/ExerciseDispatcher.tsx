@@ -24,6 +24,7 @@ import type {
     ContentLessonStep,
 } from "../../../storage/types";
 import CategorizationExercise from "../renderers/CategorizationExercise";
+import ErrorCorrectionExercise from "../renderers/ErrorCorrectionExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
 import type {
     ControlledExerciseProps,
@@ -52,6 +53,7 @@ export const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
  *  (dispatcher and guard must agree: everything loadable is renderable). */
 export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-categorization",
+    "ext:al-error-correction",
 ]);
 
 export interface ExerciseDispatcherProps extends ControlledExerciseProps {
@@ -151,6 +153,17 @@ function ExerciseDispatcher(
             void onComplete(scored);
         },
     };
+    if (ex.type === "ext:al-error-correction") {
+        return (
+            <ErrorCorrectionExercise
+                ref={ref}
+                exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
+                {...shared}
+            />
+        );
+    }
     if (ex.type === "ext:al-categorization") {
         return (
             <CategorizationExercise

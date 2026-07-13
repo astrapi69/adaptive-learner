@@ -140,6 +140,20 @@ describe("validateUserRepo", () => {
     expect(res).toEqual({ ok: true, setCount: 2, lessonCount: 5 });
   });
 
+  it("accepts the adopted extension type ext:al-error-correction (#1579)", async () => {
+    const extLesson = JSON.stringify({
+      exercises: [{ type: "ext:al-error-correction" }],
+    });
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(extLesson);
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res).toEqual({ ok: true, setCount: 2, lessonCount: 5 });
+  });
+
   it("fails when no set has any lessons", async () => {
     mockFetchSequence((url) =>
       url.endsWith("manifest.yaml")
