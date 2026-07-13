@@ -4040,9 +4040,8 @@ select:focus {
 .nav-group {
   display: contents;
 }
-.app-nav .nav-group-label {
-  display: none;
-}
+/* nav-group-label visibility: NavGroup `hideLabel` prop, not a CSS context
+   override (removed #1592/#1571 - it blocked layering this region). */
 
 .nav-theme-toggle {
   background: transparent;

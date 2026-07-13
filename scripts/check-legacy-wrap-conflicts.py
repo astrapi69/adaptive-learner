@@ -2,11 +2,21 @@
 r"""check-legacy-wrap-conflicts.py - EXP-044 pre-wrap conflict audit (#1485).
 
 Analysis tool, NOT a CI gate. Before a global.css block is wrapped into
-``@layer legacy`` (Tranche 2+), this audit answers the question that sank
-Tranche 2b (PR #1571, 44 visual diffs): does the block contain rules that
-DEPEND on unlayered precedence to beat a Tailwind utility on the same
-element? Proven case: ``.app-nav .nav-group-label { display: none }`` vs
-the ``block`` utility in ``frontend/src/components/nav/NavGroup.tsx``.
+``@layer legacy`` (Tranche 2+), this audit answers two questions - a block
+must be CLEAN on BOTH to be safely wrappable:
+
+A. UTILITY conflict (the case that sank Tranche 2b, PR #1571, 44 visual
+   diffs): does the block contain rules that DEPEND on unlayered precedence
+   to beat a Tailwind UTILITY on the same element? Proven case:
+   ``.app-nav .nav-group-label { display: none }`` vs the ``block`` utility
+   in ``frontend/src/components/nav/NavGroup.tsx``.
+B. LEGACY dependency (#1592, the blind spot the visual gate caught in
+   Tranche 2c): does the block contain a rule that today wins the cascade
+   over another STILL-UNLAYERED legacy rule on the same element, and would
+   lose it once wrapped (an unlayered rule always beats a layered one)?
+   Proven case: ``.app-nav.is-lesson-compact .nav-links {display:none}``
+   over the base ``.nav-links {display:flex}`` (@3997, unlayered). This has
+   no utility involved, so check A never saw it. Reported as ``ABHAENGIG``.
 
 Method (exact instead of heuristic - reuses the extraction machinery of
 ``scripts/check-dead-classnames.py``):
@@ -432,6 +442,31 @@ class Finding:
 
 
 @dataclass
+class LegacyDep:
+    """A candidate-block rule whose precedence FLIPS once the block is
+    wrapped, because an OTHER, still-unlayered ``global.css`` rule targets
+    the same element with an intersecting property.
+
+    An unlayered rule always beats a layered one regardless of specificity
+    (CSS cascade: layer origin outranks specificity). So a block rule that
+    today wins on specificity over an unlayered rule (e.g.
+    ``.app-nav.is-lesson-compact .nav-links {display:none}`` over the base
+    ``.nav-links {display:flex}``) LOSES that fight the moment it moves into
+    ``@layer legacy`` - the utility oracle never sees this because the
+    other rule is legacy, not a utility. This is the #1592 blind spot.
+    """
+
+    block_rule: cpl.CssRule
+    block_part: str
+    block_prop: str
+    other_rule: cpl.CssRule
+    other_part: str
+    shared_atoms: frozenset[str]
+    block_spec: tuple[int, int, int]
+    other_spec: tuple[int, int, int]
+
+
+@dataclass
 class BlockReport:
     label: str
     start: int
@@ -440,6 +475,185 @@ class BlockReport:
     conflicts: list[Finding] = field(default_factory=list)
     same_value_notes: list[Finding] = field(default_factory=list)
     unmatchable: list[tuple[cpl.CssRule, str]] = field(default_factory=list)
+    legacy_deps: list[LegacyDep] = field(default_factory=list)
+
+
+# --------------------------------------------------------------------------
+# Legacy-vs-unlayered-legacy precedence (#1592)
+# --------------------------------------------------------------------------
+
+_PSEUDO_ELEMENT_TOKEN_RE = re.compile(r"::[\w-]+")
+_PSEUDO_CLASS_TOKEN_RE = re.compile(r"(?<!:):[\w-]+(?:\([^)]*\))?")
+_ID_TOKEN_RE = re.compile(r"#[\w-]+")
+_ATTR_TOKEN_RE = re.compile(r"\[[^\]]*\]")
+_CLASS_TOKEN_RE = re.compile(r"\.[\w-]+")
+_ELEMENT_TOKEN_RE = re.compile(r"(?:^|[\s>+~(])([a-zA-Z][\w-]*)")
+
+
+def selector_specificity(part: str) -> tuple[int, int, int]:
+    """Compute (a, b, c) CSS specificity for one selector part.
+
+    a = #id count; b = classes + attrs + pseudo-classes; c = element type
+    selectors + pseudo-elements. Approximate but sufficient to decide which
+    of two legacy rules currently wins (both same origin, no ``!important``).
+    ``:not(...)`` contents are counted like the compounds they contain, per
+    the CSS spec; ``:is()``/``:where()`` are approximated by their literal
+    class tokens (``:where`` should be 0 but is rare in global.css).
+    """
+    part = part.strip()
+    a = len(_ID_TOKEN_RE.findall(part))
+    pe = len(_PSEUDO_ELEMENT_TOKEN_RE.findall(part))
+    without_pe = _PSEUDO_ELEMENT_TOKEN_RE.sub(" ", part)
+    b = (
+        len(_CLASS_TOKEN_RE.findall(without_pe))
+        + len(_ATTR_TOKEN_RE.findall(without_pe))
+        + len(_PSEUDO_CLASS_TOKEN_RE.findall(without_pe))
+    )
+    c = pe + len(_ELEMENT_TOKEN_RE.findall(without_pe))
+    return (a, b, c)
+
+
+def _subjects_collide(block: SubjectInfo, other: SubjectInfo) -> bool:
+    """True when ``other`` can match the SAME element ``block`` targets.
+
+    Two conditions, both anchored on the AND-ed required classes (``:is()``
+    /``:where()`` alternatives are ignored - the required classes are the
+    reliable anchor):
+
+    1. Subject: ``other``'s subject classes must be a subset of ``block``'s,
+       so ``other`` matches the element ``block`` addresses (which carries
+       ``block``'s subject classes). A bare base rule like ``.nav-links``
+       matches ``block``'s ``.nav-links`` element (the #1592 case).
+    2. Context: every ancestor class ``other`` requires must be guaranteed
+       by ``block``'s own match (its context + subject classes). Otherwise
+       the two selectors live in different, non-overlapping component
+       contexts and can never hit the same element - e.g.
+       ``.install-prompt-actions .btn`` vs ``.lesson-next-step-card .btn``
+       both end in ``.btn`` but no element is under both ancestors.
+
+    Same pseudo-element and compatible tags are also required.
+    """
+    if (block.pseudo_element or None) != (other.pseudo_element or None):
+        return False
+    breq, oreq = block.required_classes, other.required_classes
+    if not breq or not oreq:
+        return False
+    if not (oreq <= breq):
+        return False
+    if not (other.context_classes <= (block.context_classes | block.required_classes)):
+        return False
+    if block.tag and other.tag and block.tag != other.tag:
+        return False
+    return True
+
+
+def find_legacy_dependencies(
+    block_rules: list[cpl.CssRule],
+    unlayered_rules: list[cpl.CssRule],
+) -> list[LegacyDep]:
+    """Flag block rules that would lose to a still-unlayered legacy rule.
+
+    ``unlayered_rules`` MUST already exclude the block's own rules (a rule
+    moving into the layer together with its siblings does not flip against
+    them). Pure - no oracle, no TSX scan - so it is unit-testable against
+    hand-authored CSS. Bias: rather a false positive (manual review) than a
+    false negative, matching the utility audit.
+    """
+    others: list[tuple[cpl.CssRule, str, SubjectInfo, tuple[int, int, int]]] = []
+    for orule in unlayered_rules:
+        if not any(not d.important for d in orule.decls):
+            continue
+        for opart in cpl.split_top_level(orule.selector, ","):
+            osub = analyze_selector_part(opart)
+            if osub.required_classes:
+                others.append((orule, opart, osub, selector_specificity(opart)))
+
+    deps: list[LegacyDep] = []
+    seen: set[tuple[int, str, int]] = set()
+    for rule in block_rules:
+        nonimp = [d for d in rule.decls if not d.important]
+        if not nonimp:
+            continue
+        for bpart in cpl.split_top_level(rule.selector, ","):
+            bsub = analyze_selector_part(bpart)
+            if not bsub.required_classes:
+                continue
+            bspec = selector_specificity(bpart)
+            for orule, opart, osub, ospec in others:
+                if orule.line == rule.line:
+                    continue
+                if not _subjects_collide(bsub, osub):
+                    continue
+                # A flip happens ONLY if the block rule CURRENTLY wins the
+                # cascade and would lose it to the unlayered rule after
+                # wrapping. Same origin + no !important, so the current
+                # winner is decided by specificity, then by source order at
+                # equal specificity. If the unlayered rule already wins
+                # (higher specificity, OR equal specificity but declared
+                # later - e.g. a mobile ``@media`` override of a base rule),
+                # wrapping changes nothing: it kept winning as unlayered.
+                block_wins = bspec > ospec or (bspec == ospec and rule.line > orule.line)
+                if not block_wins:
+                    continue
+                for bd in nonimp:
+                    for od in orule.decls:
+                        if od.important:
+                            continue
+                        shared = cpl.props_intersect(bd.atoms, od.atoms)
+                        if not shared:
+                            continue
+                        if (
+                            bd.prop.strip().lower() == od.prop.strip().lower()
+                            and bd.value == od.value
+                        ):
+                            continue  # wertgleich - harmless overlap
+                        key = (rule.line, bd.prop, orule.line)
+                        if key in seen:
+                            continue
+                        seen.add(key)
+                        deps.append(
+                            LegacyDep(
+                                block_rule=rule,
+                                block_part=bpart,
+                                block_prop=bd.prop,
+                                other_rule=orule,
+                                other_part=opart,
+                                shared_atoms=shared,
+                                block_spec=bspec,
+                                other_spec=ospec,
+                            )
+                        )
+    return deps
+
+
+def _layer_regions(css_text: str) -> list[tuple[str, int, int]]:
+    """Line ranges of every ``@layer <name> { ... }`` block in global.css."""
+    text = cpl.blank_css_comments(css_text)
+    regions: list[tuple[str, int, int]] = []
+    for m in re.finditer(r"@layer\s+([\w-]+)\s*\{", text):
+        depth = 1
+        j = m.end()
+        n = len(text)
+        while j < n and depth:
+            if text[j] == "{":
+                depth += 1
+            elif text[j] == "}":
+                depth -= 1
+            j += 1
+        start_line = text.count("\n", 0, m.start()) + 1
+        end_line = text.count("\n", 0, j) + 1
+        regions.append((m.group(1), start_line, end_line))
+    return regions
+
+
+def line_is_unlayered(line: int, regions: list[tuple[str, int, int]]) -> bool:
+    """True when a line sits outside EVERY ``@layer`` block (truly unlayered).
+
+    Only truly-unlayered rules outrank a ``@layer legacy`` rule; rules in
+    ``@layer base`` (or any layer) rank BELOW legacy, so wrapping never
+    flips against them.
+    """
+    return not any(s <= line <= e for _, s, e in regions)
 
 
 def _pseudo_matches(rule_pe: str | None, util_pe: str | None) -> bool:
@@ -504,11 +718,20 @@ def audit_block(
     class_index: dict[str, list[ElementUse]],
     file_classes: dict[Path, set[str]],
     oracle: dict[str, list[UtilityDecl]],
+    unlayered_rules: list[cpl.CssRule] | None = None,
 ) -> BlockReport:
-    """Audit one global.css block (line range) against the oracle."""
+    """Audit one global.css block (line range) against the oracle.
+
+    ``unlayered_rules`` (all truly-unlayered global.css rules) enables the
+    #1592 legacy-vs-unlayered-legacy precedence check; the block's own rules
+    are excluded from the comparison here.
+    """
     report = BlockReport(label=label, start=start, end=end)
     block_rules = [r for r in rules if start <= r.line <= end]
     report.rule_count = len(block_rules)
+    if unlayered_rules is not None:
+        others = [r for r in unlayered_rules if not (start <= r.line <= end)]
+        report.legacy_deps = find_legacy_dependencies(block_rules, others)
     for rule in block_rules:
         if not any(not d.important for d in rule.decls):
             continue
@@ -611,6 +834,33 @@ def _rel(path: Path) -> str:
         return str(path)
 
 
+def report_verdict(report: BlockReport) -> tuple[int, int, str]:
+    """(n_utility_conflicts, n_legacy_deps, verdict_string) for a block.
+
+    A block is CLEAN only with zero of both. Utility conflicts and
+    unlayered-legacy dependencies are distinct categories - a block can be
+    CLEAN against utilities yet still ABHAENGIG on an unlayered legacy rule
+    (the #1592 case), and MUST NOT be wrapped in that state.
+    """
+    n_conf = len(
+        {
+            (f.rule.line, f.rule_prop, f.utility, str(f.element.file), f.element.line)
+            for f in report.conflicts
+        }
+    )
+    n_dep = len({(d.block_rule.line, d.block_prop, d.other_rule.line) for d in report.legacy_deps})
+    if n_conf == 0 and n_dep == 0:
+        verdict = "CLEAN"
+    else:
+        bits = []
+        if n_conf:
+            bits.append(f"KONFLIKTE({n_conf})")
+        if n_dep:
+            bits.append(f"ABHAENGIG({n_dep})")
+        verdict = " ".join(bits)
+    return n_conf, n_dep, verdict
+
+
 def print_report(report: BlockReport) -> None:
     print(f"\n=== Block '{report.label}' (global.css {report.start}-{report.end}) ===")
     print(f"    Regeln im Bereich: {report.rule_count}")
@@ -651,18 +901,25 @@ def print_report(report: BlockReport) -> None:
         for line, selector, prop, utility, file, el_line in pairs:
             print(f"      {selector} (:{line}) {prop} == '{utility}' @ {file}:{el_line}")
 
+    if report.legacy_deps:
+        grouped_deps: dict[tuple[int, str], list[LegacyDep]] = {}
+        for dep in report.legacy_deps:
+            grouped_deps.setdefault((dep.block_rule.line, dep.block_part), []).append(dep)
+        for (line, selector), deps in sorted(grouped_deps.items()):
+            print(f"\n  ABHAENGIG  {selector}  (global.css:{line})")
+            for dep in sorted(deps, key=lambda d: (d.block_prop, d.other_rule.line)):
+                print(
+                    f"      {dep.block_prop}  verliert gegen unlayered"
+                    f"  '{dep.other_part}'  (global.css:{dep.other_rule.line})"
+                    f"  [Spezifitaet {dep.block_spec} >= {dep.other_spec}]"
+                )
+
     if report.unmatchable:
         print(f"\n  unpruefbar ({len(report.unmatchable)}):")
         for rule, reason in report.unmatchable:
             print(f"      {rule.selector} (global.css:{rule.line}) - {reason}")
 
-    n_conf = len(
-        {
-            (f.rule.line, f.rule_prop, f.utility, str(f.element.file), f.element.line)
-            for f in report.conflicts
-        }
-    )
-    verdict = "CLEAN" if n_conf == 0 else f"KONFLIKTE({n_conf})"
+    n_conf, n_dep, verdict = report_verdict(report)
     print(f"\n  URTEIL {report.label}: {verdict}")
 
 
@@ -717,6 +974,8 @@ def main() -> int:
         return 1
 
     rules = cpl.parse_css(css_text)
+    regions = _layer_regions(css_text)
+    unlayered_rules = [r for r in rules if line_is_unlayered(r.line, regions)]
     elements = scan_elements()
     class_index: dict[str, list[ElementUse]] = {}
     file_classes: dict[Path, set[str]] = {}
@@ -728,30 +987,27 @@ def main() -> int:
     print("=== EXP-044 Konflikt-Audit: @layer-legacy-Wrap-Kandidaten (#1485) ===")
     print(
         f"Oracle: {len(oracle)} Utility-Klassen aus @layer "
-        f"{'/'.join(sorted(ORACLE_LAYERS))} | global.css-Regeln: {len(rules)} | "
+        f"{'/'.join(sorted(ORACLE_LAYERS))} | global.css-Regeln: {len(rules)} "
+        f"({len(unlayered_rules)} unlayered) | "
         f"statisch lesbare className-Elemente: {len(elements)}"
     )
 
-    verdicts: list[tuple[str, int]] = []
+    verdicts: list[tuple[str, str]] = []
     for label, start, end in blocks:
-        report = audit_block(label, start, end, rules, elements, class_index, file_classes, oracle)
-        print_report(report)
-        n_conf = len(
-            {
-                (f.rule.line, f.rule_prop, f.utility, str(f.element.file), f.element.line)
-                for f in report.conflicts
-            }
+        report = audit_block(
+            label, start, end, rules, elements, class_index, file_classes, oracle, unlayered_rules
         )
-        verdicts.append((label, n_conf))
+        print_report(report)
+        _n_conf, _n_dep, verdict = report_verdict(report)
+        verdicts.append((label, verdict))
 
     print("\n=== Zusammenfassung ===")
-    for label, n_conf in verdicts:
-        verdict = "CLEAN" if n_conf == 0 else f"KONFLIKTE({n_conf})"
-        print(f"  {verdict:>14}  {label}")
+    for label, verdict in verdicts:
+        print(f"  {verdict:>22}  {label}")
     print(
         "\nHinweis: Analyse-Tool, kein Gate. Bias: lieber False Positive als"
-        " False Negative -\nKONFLIKTE-Bloecke vor einem Wrap manuell pruefen"
-        " (Refs #1485, PR #1571)."
+        " False Negative -\nKONFLIKTE (Utility) + ABHAENGIG (unlayered Legacy,"
+        " #1592) vor einem Wrap manuell pruefen (Refs #1485, PR #1571)."
     )
     return 0
 
