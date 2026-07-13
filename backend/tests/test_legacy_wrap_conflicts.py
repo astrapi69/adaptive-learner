@@ -60,11 +60,11 @@ def _split(rules, needle):
 
 
 def test_specificity_counts_classes_ids_elements(audit):
-    assert audit.selector_specificity(".nav-links") == (0, 1, 0)
-    assert audit.selector_specificity(".app-nav.is-lesson-compact .nav-links") == (0, 3, 0)
-    assert audit.selector_specificity("#main .card a") == (1, 1, 1)
-    assert audit.selector_specificity("a") == (0, 0, 1)
-    assert audit.selector_specificity(".btn:hover") == (0, 2, 0)
+    assert audit.cpl.selector_specificity(".nav-links") == (0, 1, 0)
+    assert audit.cpl.selector_specificity(".app-nav.is-lesson-compact .nav-links") == (0, 3, 0)
+    assert audit.cpl.selector_specificity("#main .card a") == (1, 1, 1)
+    assert audit.cpl.selector_specificity("a") == (0, 0, 1)
+    assert audit.cpl.selector_specificity(".btn:hover") == (0, 2, 0)
 
 
 # --------------------------------------------------------------------------
@@ -216,11 +216,11 @@ def test_line_is_unlayered(audit):
         "}\n"  # line 5
         ".after { color: green; }\n"  # line 6 - unlayered
     )
-    regions = audit._layer_regions(css)
+    regions = audit.cpl.layer_regions(css)
     assert regions == [("legacy", 3, 5)]
-    assert audit.line_is_unlayered(2, regions) is True
-    assert audit.line_is_unlayered(4, regions) is False
-    assert audit.line_is_unlayered(6, regions) is True
+    assert audit.cpl.line_is_unlayered(2, regions) is True
+    assert audit.cpl.line_is_unlayered(4, regions) is False
+    assert audit.cpl.line_is_unlayered(6, regions) is True
 
 
 # --------------------------------------------------------------------------
@@ -233,7 +233,7 @@ def test_navgroup_label_utility_conflict_still_detected(audit, cpl):
     ``block`` utility must still register as a UTILITY conflict (not a
     legacy dependency) - the new check must not cannibalise the old one."""
     rule = cpl.parse_css(".app-nav .nav-group-label { display: none; }")[0]
-    subject = audit.analyze_selector_part(".app-nav .nav-group-label")
+    subject = audit.cpl.analyze_selector_part(".app-nav .nav-group-label")
     element = audit.ElementUse(
         file=Path("NavGroup.tsx"),
         line=36,

@@ -382,3 +382,182 @@ def parse_css(text: str) -> list[CssRule]:
             )
         advance(close + 1)
     return rules
+
+
+# --------------------------------------------------------------------------
+# Selector subject analysis + specificity + @layer regions
+# (moved from check-legacy-wrap-conflicts.py to keep that tool < 1000 lines;
+#  shared by the utility-conflict and legacy-vs-unlayered-legacy audits)
+# --------------------------------------------------------------------------
+
+
+@dataclass
+class SubjectInfo:
+    selector_part: str
+    required_classes: set[str]
+    alternative_classes: set[str]
+    tag: str | None
+    context_classes: set[str]
+    pseudo_element: str | None
+    conditional: str | None
+
+    @property
+    def classes(self) -> set[str]:
+        """All subject classes (required AND alternatives), for display."""
+        return self.required_classes | self.alternative_classes
+
+    def matches(self, tokens: set[str]) -> bool:
+        """True when an element's class tokens satisfy this subject.
+
+        A compound like ``.answer-option.is-selected`` requires ALL its
+        classes on the element; classes inside ``:is()``/``:where()`` are
+        alternatives - at least one must be present.
+        """
+        if not self.required_classes <= tokens:
+            return False
+        if self.alternative_classes and not (self.alternative_classes & tokens):
+            return False
+        return True
+
+
+def _strip_not(compound: str) -> str:
+    """Remove ``:not(...)`` spans - their classes are anti-subjects."""
+    out: list[str] = []
+    i = 0
+    n = len(compound)
+    while i < n:
+        if compound[i] == ":" and compound[i : i + 5].lower() == ":not(":
+            depth = 1
+            j = i + 5
+            while j < n and depth:
+                if compound[j] == "(":
+                    depth += 1
+                elif compound[j] == ")":
+                    depth -= 1
+                j += 1
+            i = j
+            continue
+        out.append(compound[i])
+        i += 1
+    return "".join(out)
+
+
+_IS_WHERE_RE = re.compile(r":(?:is|where)\(", re.I)
+
+
+def _split_is_where(compound: str) -> tuple[str, str]:
+    """Split a compound into (outside, inside) of ``:is()``/``:where()``."""
+    outside: list[str] = []
+    inside: list[str] = []
+    i = 0
+    n = len(compound)
+    while i < n:
+        m = _IS_WHERE_RE.match(compound, i)
+        if m:
+            depth = 1
+            j = m.end()
+            while j < n and depth:
+                if compound[j] == "(":
+                    depth += 1
+                elif compound[j] == ")":
+                    depth -= 1
+                j += 1
+            inside.append(compound[m.end() : j - 1])
+            i = j
+            continue
+        outside.append(compound[i])
+        i += 1
+    return "".join(outside), " ".join(inside)
+
+
+def analyze_selector_part(part: str) -> SubjectInfo:
+    """Derive subject classes / tag / conditions for one selector part."""
+    part = part.strip()
+    compounds = [c for c in split_top_level(part, " >+~\t") if c.strip()]
+    if not compounds:
+        return SubjectInfo(part, set(), set(), None, set(), None, None)
+    rightmost = compounds[-1]
+    pseudo = PSEUDO_ELEMENT_RE.search(rightmost)
+    outside, inside = _split_is_where(_strip_not(rightmost))
+    required = {unescape_class(m.group(1)) for m in CLASS_IN_SELECTOR_RE.finditer(outside)}
+    alternatives = {unescape_class(m.group(1)) for m in CLASS_IN_SELECTOR_RE.finditer(inside)}
+    context_classes: set[str] = set()
+    for compound in compounds[:-1]:
+        context_classes |= {
+            unescape_class(m.group(1)) for m in CLASS_IN_SELECTOR_RE.finditer(compound)
+        }
+    tag = None
+    if not required and not alternatives:
+        tag_match = re.match(r"([a-zA-Z][\w-]*|\*)", outside.strip())
+        tag = tag_match.group(1).lower() if tag_match else "*"
+    cond = CONDITIONAL_PSEUDO_RE.search(part)
+    return SubjectInfo(
+        selector_part=part,
+        required_classes=required,
+        alternative_classes=alternatives,
+        tag=tag,
+        context_classes=context_classes,
+        pseudo_element=pseudo.group(1) if pseudo else None,
+        conditional=f":{cond.group(1)}" if cond else None,
+    )
+
+
+_PSEUDO_ELEMENT_TOKEN_RE = re.compile(r"::[\w-]+")
+_PSEUDO_CLASS_TOKEN_RE = re.compile(r"(?<!:):[\w-]+(?:\([^)]*\))?")
+_ID_TOKEN_RE = re.compile(r"#[\w-]+")
+_ATTR_TOKEN_RE = re.compile(r"\[[^\]]*\]")
+_CLASS_TOKEN_RE = re.compile(r"\.[\w-]+")
+_ELEMENT_TOKEN_RE = re.compile(r"(?:^|[\s>+~(])([a-zA-Z][\w-]*)")
+
+
+def selector_specificity(part: str) -> tuple[int, int, int]:
+    """Compute (a, b, c) CSS specificity for one selector part.
+
+    a = #id count; b = classes + attrs + pseudo-classes; c = element type
+    selectors + pseudo-elements. Approximate but sufficient to decide which
+    of two legacy rules currently wins (both same origin, no ``!important``).
+    ``:not(...)`` contents are counted like the compounds they contain, per
+    the CSS spec; ``:is()``/``:where()`` are approximated by their literal
+    class tokens (``:where`` should be 0 but is rare in global.css).
+    """
+    part = part.strip()
+    a = len(_ID_TOKEN_RE.findall(part))
+    pe = len(_PSEUDO_ELEMENT_TOKEN_RE.findall(part))
+    without_pe = _PSEUDO_ELEMENT_TOKEN_RE.sub(" ", part)
+    b = (
+        len(_CLASS_TOKEN_RE.findall(without_pe))
+        + len(_ATTR_TOKEN_RE.findall(without_pe))
+        + len(_PSEUDO_CLASS_TOKEN_RE.findall(without_pe))
+    )
+    c = pe + len(_ELEMENT_TOKEN_RE.findall(without_pe))
+    return (a, b, c)
+
+
+def layer_regions(css_text: str) -> list[tuple[str, int, int]]:
+    """Line ranges of every ``@layer <name> { ... }`` block in global.css."""
+    text = blank_css_comments(css_text)
+    regions: list[tuple[str, int, int]] = []
+    for m in re.finditer(r"@layer\s+([\w-]+)\s*\{", text):
+        depth = 1
+        j = m.end()
+        n = len(text)
+        while j < n and depth:
+            if text[j] == "{":
+                depth += 1
+            elif text[j] == "}":
+                depth -= 1
+            j += 1
+        start_line = text.count("\n", 0, m.start()) + 1
+        end_line = text.count("\n", 0, j) + 1
+        regions.append((m.group(1), start_line, end_line))
+    return regions
+
+
+def line_is_unlayered(line: int, regions: list[tuple[str, int, int]]) -> bool:
+    """True when a line sits outside EVERY ``@layer`` block (truly unlayered).
+
+    Only truly-unlayered rules outrank a ``@layer legacy`` rule; rules in
+    ``@layer base`` (or any layer) rank BELOW legacy, so wrapping never
+    flips against them.
+    """
+    return not any(s <= line <= e for _, s, e in regions)
