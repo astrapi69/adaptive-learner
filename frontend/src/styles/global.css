@@ -2903,6 +2903,10 @@ select:focus {
 
 .lesson-header h1 {
   margin: var(--space-2) 0 0 0;
+  /* #1540 - fixed line-height (not the font-metric ``normal``) so the title
+     box height is deterministic; ``normal`` gave a bistable title height
+     that shifted every lesson surface below and flaked lesson-matching@mobile. */
+  line-height: 1.25;
 }
 
 .lesson-back-btn {
