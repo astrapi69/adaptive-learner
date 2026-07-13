@@ -105,6 +105,16 @@ Parallel, unabhängig von den Tranchen:
 - **Dead-Classname-Detektor** (eigener Auftrag): jeder in TSX verwendete
   Klassenname, der weder eine Tailwind-Utility noch in einer CSS-Datei
   definiert ist, wird gemeldet (Ratchet mit Startbaseline).
+- **Konflikt-Audit vor jedem Tranche-2-Wrap** (Lehre aus PR #1571, 44
+  Visual-Diffs): `make audit-legacy-conflicts BLOCKS="--block A-B:Label"`
+  (Skript: `scripts/check-legacy-wrap-conflicts.py`; Default ohne
+  `BLOCKS` re-auditiert die bereits gewrappten Blöcke). Es meldet jede
+  Block-Regel, die auf unlayered Präzedenz gegen eine Tailwind-Utility
+  am selben Element angewiesen ist (bewiesener Fall: `.app-nav
+  .nav-group-label { display: none }` vs. die `block`-Utility in
+  `NavGroup.tsx`). Nur CLEAN-Blöcke werden gewrappt; Konflikt-Regeln
+  brauchen zuerst einen Komponenten-Fix oder bleiben als dokumentierte
+  "context overrides" unlayered. Analyse-Werkzeug, kein CI-Gate.
 
 ## 5. Risiko-/Netz-Matrix
 
