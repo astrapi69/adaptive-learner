@@ -19,4 +19,11 @@
 # (6x "@layer legacy {" + 6x "}") um die Bloecke Buttons/Landing/
 # Onboarding/Assessment/Dashboard/Session - Kaskaden-Reparatur, kein
 # neues CSS. Tranche 4+ loescht diese Regeln samt Wrappern wieder.
-7509
+# 7509 -> 7531 (EXP-044 Tranche 2b Re-Cut, #1485): +22 reine Wrapper-
+# Zeilen (11x "@layer legacy {" + 11x "}") um die vom Konflikt-Audit
+# (scripts/check-legacy-wrap-conflicts.py, PR #1576) als CLEAN bestaetigten
+# Bloecke Rating-Group/Storage-Toggle/Progress-Table/EXP-008-Celebration/
+# EXP-008-Milestone/Curriculum/RecentSessions/MethodBadges/VisualDiff/
+# AnswerAnims/PWA-Banner - Kaskaden-Reparatur, kein neues CSS. Tranche 4+
+# loescht diese Regeln samt Wrappern wieder.
+7531
