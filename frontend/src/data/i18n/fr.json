@@ -2036,6 +2036,15 @@
         "retry": "Réessayer",
         "empty": "Cet exercice de lecture n'a pas de questions."
       },
+      "al_graded_quiz": {
+        "input_label": "Réponse",
+        "solution_label": "Solution",
+        "passed": "Réussi",
+        "failed": "Échoué",
+        "submit": "Rendre le test",
+        "retry": "Réessayer",
+        "empty": "Ce test n'a pas de questions."
+      },
       "instruction": {
         "matching": {
           "receptive": "Associe les paires (Reconnaître)",

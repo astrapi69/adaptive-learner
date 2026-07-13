@@ -14,6 +14,7 @@ import {describe, expect, it} from "vitest";
 import {
     deriveCategorizationAttempts,
     deriveErrorCorrectionAttempt,
+    deriveGradedQuizAttempts,
     deriveReadingComprehensionAttempts,
     deriveClozeAttempts,
     deriveClozeMultiSelectAttempt,
@@ -567,5 +568,51 @@ describe("deriveReadingComprehensionAttempts", () => {
             ext_payload: {passage: "x"},
         } as unknown as ContentLessonExercise;
         expect(deriveReadingComprehensionAttempts(broken, ctx, [])).toEqual([]);
+    });
+});
+
+
+describe("deriveGradedQuizAttempts", () => {
+    // #1579 fourth adoption - ext:al-graded-quiz: one attempt per question,
+    // element_key = the canonical answer. The renderer supplies per-question
+    // {answer, correct} (free_text grading needs the React-layer matcher).
+    const exercise = {
+        id: "ex-gq-01",
+        type: "ext:al-graded-quiz",
+        prompt: "Quiz.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            pass_threshold: 60,
+            questions: [
+                {prompt: "2+2?", type: "multiple_choice", options: [{text: "4", correct: true}, {text: "5"}], points: 2},
+                {prompt: "Synonym?", type: "free_text", accept: ["rasch"], points: 3},
+            ],
+        },
+    } as unknown as ContentLessonExercise;
+    const ctx = {setId: "set-1", lessonId: "lesson-1"};
+
+    it("fans out one attempt per question keyed by the canonical answer", () => {
+        const attempts = deriveGradedQuizAttempts(exercise, ctx, [
+            {answer: "4", correct: true},
+            {answer: "flink", correct: false},
+        ]);
+        expect(attempts).toHaveLength(2);
+        expect(attempts[0]).toMatchObject({
+            set_id: "set-1",
+            lesson_id: "lesson-1",
+            exercise_id: "ex-gq-01",
+            element_key: "4",
+            element_type: "vocabulary",
+            user_answer: "4",
+            correct_answer: "4",
+            correct: true,
+        });
+        expect(attempts[1]).toMatchObject({element_key: "rasch", user_answer: "flink", correct: false});
+    });
+
+    it("a malformed payload yields no attempts (edge)", () => {
+        const broken = {...exercise, ext_payload: {questions: "x"}} as unknown as ContentLessonExercise;
+        expect(deriveGradedQuizAttempts(broken, ctx, [])).toEqual([]);
     });
 });

@@ -30,7 +30,10 @@ export type RawAnswer =
   /** #1579 — adopted extension ``ext:al-reading-comprehension``: the
    *  learner's answer per sub-question (in order), persisted so a
    *  revisited, locked passage restores its exact state. */
-  | { kind: "al_reading_comprehension"; answers: string[] };
+  | { kind: "al_reading_comprehension"; answers: string[] }
+  /** #1579 — adopted extension ``ext:al-graded-quiz``: the learner's chosen
+   *  option texts (or [typed] free-text) per question, in order. */
+  | { kind: "al_graded_quiz"; answers: string[][] };
 
 export interface LessonStepResult {
   step_id: string;

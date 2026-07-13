@@ -630,3 +630,65 @@ describe("adopted extension ext:al-reading-comprehension (#1579, third adoption)
     expect(() => validateGeneratedLesson(malformed)).toThrow(/questions/);
   });
 });
+
+
+describe("adopted extension ext:al-graded-quiz (#1579, fourth adoption)", () => {
+  const gqLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-graded-quiz@1"],
+      steps: [
+        {
+          id: "step-gq-01",
+          type: "exercise",
+          exercise: {
+            id: "ex-gq-01",
+            type: "ext:al-graded-quiz",
+            prompt: "Beantworte alle Fragen.",
+            card_ids: ["card-01"],
+            distractors: [],
+            ext_payload:
+              payloadOverride === undefined
+                ? {
+                    pass_threshold: 60,
+                    questions: [
+                      { prompt: "2+2?", type: "multiple_choice", options: [{ text: "4", correct: true }, { text: "5" }], points: 2 },
+                      { prompt: "Synonym?", type: "free_text", accept: ["rasch"], points: 3 },
+                    ],
+                  }
+                : payloadOverride,
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(gqLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("all four adopted extensions load together", () => {
+    const all = makeLesson({
+      requires_extensions: [
+        "ext:al-categorization@1",
+        "ext:al-error-correction@1",
+        "ext:al-reading-comprehension@1",
+        "ext:al-graded-quiz@1",
+      ],
+    } as Partial<ContentLesson>);
+    expect(validateLessonShape(all).ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed graded quiz", () => {
+    expect(() => validateGeneratedLesson(gqLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses a quiz with no questions", () => {
+    expect(() => validateGeneratedLesson(gqLesson({ questions: [] }))).toThrow(/at least 1 question/);
+  });
+
+  it("validateGeneratedLesson refuses a non-positive points value", () => {
+    const badPoints = gqLesson({ questions: [{ prompt: "x", type: "free_text", accept: ["a"], points: 0 }] });
+    expect(() => validateGeneratedLesson(badPoints)).toThrow(/positive points/);
+  });
+});

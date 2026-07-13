@@ -26,6 +26,7 @@ import type {
 import CategorizationExercise from "../renderers/CategorizationExercise";
 import ErrorCorrectionExercise from "../renderers/ErrorCorrectionExercise";
 import ReadingComprehensionExercise from "../renderers/ReadingComprehensionExercise";
+import GradedQuizExercise from "../renderers/GradedQuizExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
 import type {
     ControlledExerciseProps,
@@ -56,6 +57,7 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-categorization",
     "ext:al-error-correction",
     "ext:al-reading-comprehension",
+    "ext:al-graded-quiz",
 ]);
 
 /** The prop bag every renderer shares (everything except the exercise, the
@@ -83,6 +85,9 @@ function renderAdoptedExtension(
     }
     if (ex.type === "ext:al-reading-comprehension") {
         return <ReadingComprehensionExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-graded-quiz") {
+        return <GradedQuizExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
     }
     return null;
 }

@@ -2036,6 +2036,15 @@
         "retry": "Try again",
         "empty": "This reading exercise has no questions."
       },
+      "al_graded_quiz": {
+        "input_label": "Answer",
+        "solution_label": "Solution",
+        "passed": "Passed",
+        "failed": "Not passed",
+        "submit": "Submit quiz",
+        "retry": "Try again",
+        "empty": "This quiz has no questions."
+      },
       "instruction": {
         "matching": {
           "receptive": "Match the pairs (Recognition)",

@@ -2036,6 +2036,15 @@
         "retry": "Inténtalo de nuevo",
         "empty": "Este ejercicio de lectura no tiene preguntas."
       },
+      "al_graded_quiz": {
+        "input_label": "Respuesta",
+        "solution_label": "Solución",
+        "passed": "Aprobado",
+        "failed": "No aprobado",
+        "submit": "Enviar test",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este test no tiene preguntas."
+      },
       "instruction": {
         "matching": {
           "receptive": "Une las parejas (Reconocer)",
