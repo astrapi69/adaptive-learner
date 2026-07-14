@@ -3421,15 +3421,8 @@ select:focus {
 }
 } /* @layer legacy */
 
-/* --- Lesson header / summary + content-set heading -----------
-   EXP-044 (#1597): these rules stay UNLAYERED on purpose. Each
-   currently relies on unlayered precedence to beat a Tailwind
-   utility on the same element (audit KONFLIKTE) - reconciling
-   the conflict (dropping the legacy declaration or moving it
-   into the consumer as a component default) is a visible
-   change and is deferred to a later tranche. Extracting them
-   out of the Navigation region here is what lets Navigation +
-   Nav-Rest wrap into @layer legacy. Refs #1485, #1592. */
+/* --- Lesson header / summary + content-set heading --- */
+@layer legacy { /* EXP-044 Tranche 2c-lesson (#1597): utilities must win over this block. Extracted from Navigation by #1597; the 4 audit hits are reconciled/allowlisted (mt-3 dropped as a value-equal no-op; text-sm KEPT + allowlisted - it also carries a live line-height, so removal reflows every lesson surface; .content-set-meta h4 = FoldedUserLessons tag-heuristic FPs; the timed-stats m-0 is the intended activation) - see .legacy-wrap-accepted.json. Refs #1485, #1592. */
 .content-set-meta h2,
 .content-set-meta h4 {
   margin: 0 0 4px 0;
@@ -3463,6 +3456,7 @@ select:focus {
   gap: var(--space-2);
   margin-top: var(--space-3);
 }
+} /* @layer legacy */
 
 /* =============================================================
    EXP-008 / Phase 55C — celebration screen: confetti + message
