@@ -958,24 +958,25 @@ describe("LessonPage: button icons + 'Lektion pausieren' rename", () => {
     });
   }
 
-  it("the pause button is labelled 'Pause lesson' (renamed from back-to-browser)", () => {
+  it("the pause control lives in the footer, icon-only, labelled 'Pause lesson' (#1642)", () => {
     _ready(0);
     renderAtPath(VALID_PATH);
-    const pause = screen.getByTestId("lesson-back-btn");
+    // Moved out of the header.
+    expect(screen.queryByTestId("lesson-back-btn")).toBeNull();
+    const pause = screen.getByTestId("lesson-pause-btn");
     expect(pause).toHaveAttribute("aria-label", "Pause lesson");
-    // Desktop label present in the DOM (hidden on mobile via md:inline).
-    const label = pause.querySelector("span.hidden.md\\:inline");
-    expect(label).not.toBeNull();
-    expect(label).toHaveTextContent("Pause lesson");
-    // 44px touch target now via shadcn Button (min-h-11 = 44px).
-    expect(pause).toHaveClass("min-h-11");
+    // Icon-only in the footer — no visible text label, icon present.
+    expect(pause).not.toHaveTextContent("Pause");
+    expect(pause.querySelector("svg")).not.toBeNull();
+    // 44px touch target via shadcn Button size="icon" (size-11).
+    expect(pause).toHaveClass("size-11");
   });
 
-  it("clicking pause opens the exit dialog (unchanged Phase 63 behavior)", () => {
+  it("clicking the footer pause opens the exit dialog (unchanged Phase 63 behavior)", () => {
     _ready(0);
     renderAtPath(VALID_PATH);
     expect(screen.queryByTestId("lesson-exit-dialog")).toBeNull();
-    fireEvent.click(screen.getByTestId("lesson-back-btn"));
+    fireEvent.click(screen.getByTestId("lesson-pause-btn"));
     expect(screen.getByTestId("lesson-exit-dialog")).toBeInTheDocument();
   });
 

@@ -26,6 +26,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
+import LessonExitDialog from "../../components/lesson/dialogs/LessonExitDialog";
 import LessonTimedStatus from "../../components/lesson/chrome/LessonTimedStatus";
 import { LessonModeProvider } from "../../hooks/lesson/modes/useLessonMode";
 import { useTimedLesson } from "../../hooks/lesson/modes/useTimedLesson";
@@ -450,16 +451,16 @@ export default function LessonPage() {
       className="lesson-page flex flex-col min-h-full"
       data-testid="lesson-page"
     >
-      <LessonHeader
-        lesson={lesson}
-        setTitle={setTitle}
-        isInProgress={isInProgress}
-        exitOpen={exitOpen}
-        onPauseClick={() => setExitOpen(true)}
-        onExit={() => navigate("/content?tab=my")}
-        onExitContinue={() => setExitOpen(false)}
-        onExitPause={() => void handlePauseFromDialog()}
-        onExitAbandon={() => void handleAbandonFromDialog()}
+      <LessonHeader lesson={lesson} setTitle={setTitle} />
+
+      {/* #1642 — the pause control moved into the footer; the exit dialog it
+          opens is lifted here (portal, controlled by the lesson's exitOpen
+          state) so both the header and the footer stay presentational. */}
+      <LessonExitDialog
+        open={exitOpen}
+        onContinue={() => setExitOpen(false)}
+        onPause={() => void handlePauseFromDialog()}
+        onAbandon={() => void handleAbandonFromDialog()}
       />
 
       {/* #1625 — on the summary screen the favorite keeps its own
@@ -680,6 +681,9 @@ export default function LessonPage() {
         // so the renderer's correct/wrong line never paints (revealed only
         // on the end-of-exam summary).
         delayedFeedback={!modeConfig.immediateFeedback}
+        isInProgress={isInProgress}
+        onPause={() => setExitOpen(true)}
+        onExit={() => navigate("/content?tab=my")}
         goPrev={goPrev}
         goNext={goNext}
         onCheck={() => exerciseRef.current?.submit()}

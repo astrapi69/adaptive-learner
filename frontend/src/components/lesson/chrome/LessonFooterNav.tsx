@@ -13,7 +13,7 @@
  *   button is hidden on the summary screen in both flows.
  */
 
-import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Pause } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
@@ -29,9 +29,16 @@ interface LessonFooterNavProps {
   /** #1007 Phase 2 — exam delayed-feedback flow: single submit+advance
    *  button, no Previous (forward-only). */
   delayedFeedback?: boolean;
+  /** #1642 — the pause control lives centred in the footer (moved out of
+   *  the header). Pauses while the lesson is in progress; otherwise exits. */
+  isInProgress: boolean;
   goPrev: () => void;
   goNext: () => void;
   onCheck: () => void;
+  /** Open the pause/exit dialog (in-progress lesson). */
+  onPause: () => void;
+  /** Leave the lesson (completed / not in progress). */
+  onExit: () => void;
   /** #1007 Phase 2 — submit the current answer AND advance in one click
    *  (exam flow). Required when ``delayedFeedback`` is set. */
   onSubmitAndAdvance?: () => void;
@@ -48,13 +55,33 @@ export default function LessonFooterNav({
   isLastStep,
   currentStepIndex,
   delayedFeedback = false,
+  isInProgress,
   goPrev,
   goNext,
   onCheck,
+  onPause,
+  onExit,
   onSubmitAndAdvance,
 }: LessonFooterNavProps) {
   const { t } = useI18n();
   const showCheck = isExerciseStep && !checked && !enteredReviewed;
+
+  // #1642 — pause control, centred in the footer between Previous and the
+  // Check/Next action (moved out of the header). Icon-only (44px via
+  // ``size="icon"``); pauses an in-progress lesson, otherwise exits.
+  const pauseButton = (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      onClick={isInProgress ? onPause : onExit}
+      data-testid="lesson-pause-btn"
+      aria-label={t("lesson.action.pause", "Pause lesson")}
+      title={t("lesson.action.pause", "Pause lesson")}
+    >
+      <Pause aria-hidden="true" />
+    </Button>
+  );
 
   // Exam delayed-feedback flow (#1007 Phase 2): one forward button that
   // submits + advances, forward-only (no Previous). On an exercise step it
@@ -65,13 +92,13 @@ export default function LessonFooterNav({
       isExerciseStep && onSubmitAndAdvance ? onSubmitAndAdvance : goNext;
     return (
       <nav
-        className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
+        className="sticky bottom-0 z-10 mt-4 flex flex-row items-center justify-between gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
         data-testid="lesson-footer"
         aria-label={t("lesson.nav.aria_label", "Step navigation")}
       >
+        {pauseButton}
         <Button
           type="button"
-          className="ml-auto"
           onClick={advanceExam}
           disabled={isExerciseStep && !answerable}
           title={
@@ -95,7 +122,7 @@ export default function LessonFooterNav({
 
   return (
     <nav
-      className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
+      className="sticky bottom-0 z-10 mt-4 flex flex-row items-center justify-between gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
       data-testid="lesson-footer"
       aria-label={t("lesson.nav.aria_label", "Step navigation")}
     >
@@ -114,11 +141,11 @@ export default function LessonFooterNav({
           {t("lesson.action.prev", "Previous")}
         </span>
       </Button>
+      {pauseButton}
       {!isSummary &&
         (showCheck ? (
           <Button
             type="button"
-            className="ml-auto"
             onClick={onCheck}
             disabled={!answerable}
             title={
@@ -135,12 +162,7 @@ export default function LessonFooterNav({
             {t("lesson.button.check", "Check")}
           </Button>
         ) : (
-          <Button
-            type="button"
-            className="ml-auto"
-            onClick={goNext}
-            data-testid="lesson-next"
-          >
+          <Button type="button" onClick={goNext} data-testid="lesson-next">
             {isLastStep
               ? t("lesson.action.finish", "Finish lesson")
               : t("lesson.button.next", "Next")}
