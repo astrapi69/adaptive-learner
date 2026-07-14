@@ -49,9 +49,9 @@
 # wurden aus der Navigation-Region herausgeloest, damit Navigation +
 # Nav-Rest CLEAN wrapbar werden; sie bleiben absichtlich ungelayert
 # (Reconciliation = sichtbare Aenderung, spaetere Tranche). Kein neues CSS.
-# NICHT gewrappt (Utility-Konflikt, ungelayert): ReadAloudTTS (#1584) und
-# die neue Lesson-header/summary-Sektion (#1597). MobilePolish-9A (#1583)
-# + ChatAnalysisLoading (#1585) sind jetzt gewrappt (s.u.).
+# NICHT gewrappt (Utility-Konflikt, ungelayert): nur noch die neue
+# Lesson-header/summary-Sektion (#1597). MobilePolish-9A (#1583),
+# ChatAnalysisLoading (#1585) + ReadAloudTTS (#1584) sind jetzt gewrappt (s.u.).
 # NICHT gewrappt (Legacy-vs-unlayered-Legacy-Praezedenz, #1592):
 # LessonMode-LandscapeNav - jetzt NICHT mehr durch Navigation/Nav-Rest
 # noch durch .nav-hamburger blockiert (alle gewrappt), sondern nur noch
@@ -70,4 +70,12 @@
 # (`m-0 text-[var(--error)]`) an den (vorher nackten) Consumer-<p> in
 # ImportDetail.tsx verschoben - gleiches Rendering; danach Block CLEAN und
 # gewrappt (+2 Wrapper - 4 Regel-Zeilen - 1 Leerzeile = -3). Kein neues CSS.
-7572
+# 7572 -> 7571 (EXP-044 Tranche 2c, #1584): -1 netto um den Block
+# ReadAloudTTS. Die einzige Konflikt-Regel `.exercise-prompt-row > p
+# { flex:1 1 auto; margin:0 }` geloescht und als Utilities (`flex-auto m-0`)
+# an die 5 Prompt-<p>-Consumer verschoben (matching/picture-choice/cloze/
+# cloze-multiselect + shared ExercisePromptRow; alle hatten schon `m-0`,
+# `flex-auto` == `flex:1 1 auto` -> gleiches Rendering); danach Block CLEAN
+# und gewrappt (+2 Wrapper - 4 Regel-Zeilen +1 Kommentarzeile = -1). Kein
+# neues CSS.
+7571
