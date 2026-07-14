@@ -17,8 +17,10 @@ built dist oracle, no TSX scan - so they run in the ordinary backend suite.
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -255,3 +257,91 @@ def test_navgroup_label_utility_conflict_still_detected(audit, cpl):
     conflicts, notes = audit._match_element(rule, subject, element, oracle, via_tag=False)
     assert any(c.rule_prop == "display" and c.utility == "block" for c in conflicts)
     assert notes == []  # display:none vs display:block is a real flip, not wertgleich
+
+
+# --------------------------------------------------------------------------
+# Accepted-conflicts allowlist (#1623)
+# --------------------------------------------------------------------------
+
+
+def _fake_finding(selector: str, prop: str, utility: str):
+    """A duck-typed Finding: apply_allowlist only reads these three."""
+    return SimpleNamespace(
+        subject=SimpleNamespace(selector_part=selector),
+        rule_prop=prop,
+        utility=utility,
+    )
+
+
+def test_load_accepted_missing_file_returns_empty(audit, monkeypatch, tmp_path):
+    monkeypatch.setattr(audit, "ACCEPTED_FILE", tmp_path / "does-not-exist.json")
+    assert audit.load_accepted() == {}
+
+
+def test_load_accepted_parses_valid_entry(audit, monkeypatch, tmp_path):
+    path = tmp_path / "accepted.json"
+    path.write_text(
+        json.dumps(
+            {
+                "accepted": [
+                    {
+                        "block": "Onboarding page",
+                        "legacy_selector": ".form-hint",
+                        "property": "color",
+                        "override_utility": "text-warning",
+                        "reason": "intended warning hint",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(audit, "ACCEPTED_FILE", path)
+    accepted = audit.load_accepted()
+    assert accepted == {
+        ("Onboarding page", ".form-hint", "color", "text-warning"): "intended warning hint"
+    }
+
+
+def test_load_accepted_requires_reason(audit, monkeypatch, tmp_path):
+    path = tmp_path / "accepted.json"
+    path.write_text(
+        json.dumps(
+            {
+                "accepted": [
+                    {
+                        "block": "Onboarding page",
+                        "legacy_selector": ".form-hint",
+                        "property": "color",
+                        "override_utility": "text-warning",
+                        "reason": "   ",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(audit, "ACCEPTED_FILE", path)
+    with pytest.raises(ValueError, match="reason"):
+        audit.load_accepted()
+
+
+def test_apply_allowlist_downgrades_matching_conflict(audit):
+    report = audit.BlockReport(label="Onboarding page", start=0, end=0)
+    report.conflicts = [_fake_finding(".form-hint", "color", "text-warning")]
+    accepted = {("Onboarding page", ".form-hint", "color", "text-warning"): "intended"}
+    audit.apply_allowlist(report, accepted)
+    assert report.conflicts == []
+    assert len(report.accepted_notes) == 1
+    assert report.accepted_notes[0][1] == "intended"
+
+
+def test_apply_allowlist_keeps_unlisted_conflict_in_same_block(audit):
+    """A different override in the SAME block must still be a KONFLIKT (#1623 scoping)."""
+    report = audit.BlockReport(label="Onboarding page", start=0, end=0)
+    kept = _fake_finding(".form-hint", "color", "text-danger")
+    report.conflicts = [kept]
+    accepted = {("Onboarding page", ".form-hint", "color", "text-warning"): "intended"}
+    audit.apply_allowlist(report, accepted)
+    assert report.conflicts == [kept]
+    assert report.accepted_notes == []

@@ -1,0 +1,33 @@
+{
+  "_readme": "Accepted, REVIEWED legacy-vs-utility overrides for the EXP-044 @layer legacy audit (scripts/check-legacy-wrap-conflicts.py --wrapped). Refs #1623, #1485. Each entry downgrades exactly ONE (block, legacy_selector, property, override_utility) conflict from KONFLIKT to an accepted note: the utility override is DELIBERATE and already live - a wrapped legacy default that a per-instance utility correctly overrides (the layer architecture working as designed). The scope is the concrete 4-tuple, NOT the whole block: a new, unlisted conflict on the same selector in the same block still reports as KONFLIKT. Every entry MUST carry a non-empty 'reason' (the loader errors otherwise) so this file never becomes a context-free exception list. Remove an entry when the override is genuinely reconciled (default moved to the consumer / the utility dropped).",
+  "accepted": [
+    {
+      "block": "Onboarding page",
+      "legacy_selector": ".form-hint",
+      "property": "color",
+      "override_utility": "text-warning",
+      "reason": "Intended: a warning-coloured reminder hint (DailyRemindersControl.tsx:169). The .form-hint muted default (var(--fg-muted)) is deliberately overridden to the warning colour for this specific hint; other .form-hint instances keep the muted default. The utility must win, which the layer guarantees."
+    },
+    {
+      "block": "Onboarding page",
+      "legacy_selector": ".form-hint",
+      "property": "color",
+      "override_utility": "text-fg-secondary",
+      "reason": "Intended: a secondary-emphasis reminder hint (DailyRemindersControl.tsx:193). The .form-hint muted default is deliberately raised to fg-secondary for this hint; other instances keep the muted default. Utility-wins-over-default is the designed layer behaviour."
+    },
+    {
+      "block": "Onboarding page",
+      "legacy_selector": ".form-actions",
+      "property": "margin-top",
+      "override_utility": "mt-6",
+      "reason": "Intended: the Danger-Zone confirm/cancel action row wants extra top separation from the destructive controls above it (DangerZoneSection.tsx:285), so it overrides the .form-actions default margin-top (var(--space-4)) with the larger mt-6. Deliberate spacing, already live."
+    },
+    {
+      "block": "Dashboard page",
+      "legacy_selector": ".tile",
+      "property": "align-items",
+      "override_utility": "items-start",
+      "reason": "Intended: the Dashboard activity tiles are a vertical column layout (DashboardActivityTab.tsx:85/99 use 'tile flex flex-col items-start gap-2'), so they override the .tile centred-row default (align-items:center) to top-align their stacked content. The .tile centre default still applies to the many single-item tiles elsewhere."
+    }
+  ]
+}

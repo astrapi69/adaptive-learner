@@ -68,6 +68,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import json
 import re
 import sys
 from dataclasses import dataclass, field
@@ -77,6 +78,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 GLOBAL_CSS = REPO_ROOT / "frontend" / "src" / "styles" / "global.css"
 SRC_DIR = REPO_ROOT / "frontend" / "src"
 DIST_DIR = REPO_ROOT / "frontend" / "dist"
+ACCEPTED_FILE = REPO_ROOT / ".legacy-wrap-accepted.json"
 
 # Layers that are ordered AFTER ``legacy`` in styles/tailwind.css
 # (``@layer theme, base, legacy, components, utilities;``) - only their
@@ -363,6 +365,7 @@ class BlockReport:
     same_value_notes: list[Finding] = field(default_factory=list)
     unmatchable: list[tuple[cpl.CssRule, str]] = field(default_factory=list)
     legacy_deps: list[LegacyDep] = field(default_factory=list)
+    accepted_notes: list[tuple[Finding, str]] = field(default_factory=list)
 
 
 # --------------------------------------------------------------------------
@@ -661,6 +664,80 @@ def _rel(path: Path) -> str:
         return str(path)
 
 
+def load_accepted() -> dict[tuple[str, str, str, str], str]:
+    """Load reviewed, INTENDED legacy-vs-utility overrides from
+    ``.legacy-wrap-accepted.json`` (Refs #1623).
+
+    Each entry downgrades exactly ONE ``(block, legacy_selector, property,
+    override_utility)`` conflict from KONFLIKT to an accepted note - the
+    utility override is deliberate and the layered legacy default is
+    correctly overridden per-instance. The scope is the concrete 4-tuple,
+    NOT the whole block: a NEW, unlisted conflict in the same block still
+    reports as KONFLIKT.
+
+    Every entry MUST carry a non-empty ``reason``; an entry without one is a
+    hard error, so the allowlist can never become a context-free exception
+    list.
+
+    Returns:
+        Mapping ``(block, legacy_selector, property, override_utility) ->
+        reason``. Empty when the file is absent.
+
+    Raises:
+        ValueError: on malformed JSON, a missing required field, or an empty
+            ``reason``.
+    """
+    if not ACCEPTED_FILE.is_file():
+        return {}
+    try:
+        data = json.loads(ACCEPTED_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{ACCEPTED_FILE.name}: ungueltiges JSON - {exc}") from exc
+    accepted: dict[tuple[str, str, str, str], str] = {}
+    for i, entry in enumerate(data.get("accepted", [])):
+        required = ("block", "legacy_selector", "property", "override_utility", "reason")
+        missing = [k for k in required if not str(entry.get(k, "")).strip()]
+        if missing:
+            raise ValueError(
+                f"{ACCEPTED_FILE.name}: Eintrag #{i} fehlt Pflichtfeld(er): "
+                f"{', '.join(missing)} (jeder Eintrag braucht eine Begruendung)"
+            )
+        key = (
+            entry["block"],
+            entry["legacy_selector"],
+            entry["property"],
+            entry["override_utility"],
+        )
+        accepted[key] = entry["reason"]
+    return accepted
+
+
+def apply_allowlist(report: BlockReport, accepted: dict[tuple[str, str, str, str], str]) -> None:
+    """Move accepted, reviewed conflicts out of ``report.conflicts`` into
+    ``report.accepted_notes`` so they no longer count toward the verdict.
+
+    Matches on the concrete ``(block, legacy_selector, property,
+    override_utility)`` tuple, so any conflict NOT explicitly listed - even
+    on the same legacy selector in the same block - stays a KONFLIKT.
+    """
+    if not accepted:
+        return
+    kept: list[Finding] = []
+    for finding in report.conflicts:
+        key = (
+            report.label,
+            finding.subject.selector_part,
+            finding.rule_prop,
+            finding.utility,
+        )
+        reason = accepted.get(key)
+        if reason is not None:
+            report.accepted_notes.append((finding, reason))
+        else:
+            kept.append(finding)
+    report.conflicts = kept
+
+
 def report_verdict(report: BlockReport) -> tuple[int, int, str]:
     """(n_utility_conflicts, n_legacy_deps, verdict_string) for a block.
 
@@ -709,6 +786,26 @@ def print_report(report: BlockReport) -> None:
                 f"      {f.rule_prop}  vs  Utility '{f.utility}'"
                 f"  @ {_rel(f.element.file)}:{f.element.line}{cond}{tag_note}"
             )
+
+    if report.accepted_notes:
+        pairs = sorted(
+            {
+                (
+                    f.rule.line,
+                    f.subject.selector_part,
+                    f.rule_prop,
+                    f.utility,
+                    _rel(f.element.file),
+                    f.element.line,
+                    reason,
+                )
+                for f, reason in report.accepted_notes
+            }
+        )
+        print(f"\n  akzeptiert (allowlisted #1623, {len(pairs)}):")
+        for line, selector, prop, utility, file, el_line, reason in pairs:
+            print(f"      {selector} (:{line}) {prop} vs '{utility}' @ {file}:{el_line}")
+            print(f"        -> {reason}")
 
     if report.same_value_notes:
         pairs = sorted(
@@ -778,6 +875,12 @@ def main() -> int:
     css_text = GLOBAL_CSS.read_text(encoding="utf-8", errors="replace")
 
     try:
+        accepted = load_accepted()
+    except ValueError as exc:
+        print(f"FEHLER: {exc}", file=sys.stderr)
+        return 1
+
+    try:
         blocks = parse_block_specs(args.block)
     except ValueError as exc:
         print(f"FEHLER: {exc}", file=sys.stderr)
@@ -819,11 +922,18 @@ def main() -> int:
         f"statisch lesbare className-Elemente: {len(elements)}"
     )
 
+    if accepted:
+        print(
+            f"Allowlist: {len(accepted)} akzeptierte, gepruefte Overrides "
+            f"({ACCEPTED_FILE.name}, #1623)"
+        )
+
     verdicts: list[tuple[str, str]] = []
     for label, start, end in blocks:
         report = audit_block(
             label, start, end, rules, elements, class_index, file_classes, oracle, unlayered_rules
         )
+        apply_allowlist(report, accepted)
         print_report(report)
         _n_conf, _n_dep, verdict = report_verdict(report)
         verdicts.append((label, verdict))
