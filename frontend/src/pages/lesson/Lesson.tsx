@@ -39,7 +39,6 @@ import { maybeReverseLesson } from "../../lib/reverse/reverse-lesson";
 import LessonReverseNote from "../../components/lesson/chrome/LessonReverseNote";
 import LessonSummary from "../../components/lesson/summary/LessonSummary";
 import LessonResources from "../../components/lesson/steps/LessonResources";
-import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
 import LessonHeader from "../../components/lesson/chrome/LessonHeader";
 import LessonOptionsBar from "../../components/lesson/chrome/LessonOptionsBar";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
@@ -463,21 +462,11 @@ export default function LessonPage() {
         onAbandon={() => void handleAbandonFromDialog()}
       />
 
-      {/* #1625 — on the summary screen the favorite keeps its own
-          top-right slot; on the playing view it moves into the
-          collapsible options panel below the progress bar. */}
-      {isSummary && (
-        <div className="flex justify-end px-2">
-          <LessonFavoriteToggle
-            userId={learnerUserId ?? ""}
-            source={source}
-            setId={setId}
-            filename={filename}
-            title={lesson.title}
-            setTitle={setTitle ?? ""}
-          />
-        </div>
-      )}
+      {/* #1648 — the summary's favorite lives in the labelled
+          SummaryFavorite row inside LessonSummary; the old isolated
+          top-right star here was a duplicate of the same toggle and was
+          removed. During the active lesson the favorite lives in the
+          collapsible options group (#1625). */}
 
       {/* Phase 63C — resume prompt overlays the step view.
                 The user must choose before they can interact with
@@ -556,6 +545,7 @@ export default function LessonPage() {
           nextLessonFilename={nextLessonFilename}
           userId={learnerUserId ?? ""}
           setId={setId}
+          setTitle={setTitle ?? ""}
           source={source}
           setSlug={params.setSlug ?? ""}
           lessonFilename={filename}

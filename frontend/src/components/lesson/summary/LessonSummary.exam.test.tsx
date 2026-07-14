@@ -51,6 +51,7 @@ function renderSummary(mode: "practice" | "exam", correct: number, total: number
                 nextLessonFilename={null}
                 userId=""
                 setId="set1"
+                setTitle="Set One"
                 source="bundled:x"
                 setSlug="x"
                 lessonFilename="01.json"

@@ -60,6 +60,7 @@ export function SummaryFavorite({
   userId,
   source,
   setId,
+  setTitle,
   filename,
   title,
   t,
@@ -68,6 +69,7 @@ export function SummaryFavorite({
   userId: string;
   source: string;
   setId: string;
+  setTitle: string;
   filename: string;
   title: string;
   t: TFn;
@@ -84,7 +86,7 @@ export function SummaryFavorite({
         setId={setId}
         filename={filename}
         title={title}
-        setTitle=""
+        setTitle={setTitle}
         size={16}
       />
       <span className="text-sm text-fg-muted">

@@ -164,6 +164,7 @@ function renderSummary() {
         nextLessonFilename="02-numbers.json"
         userId="u1"
         setId="set1"
+        setTitle="Set One"
         source="bundled:x"
         setSlug="x"
         lessonFilename="01-greetings.json"
