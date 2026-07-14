@@ -139,7 +139,7 @@ export default function LessonHeader({
         // #959 — keep the set context compact (smaller, single line with
         // ellipsis) so it never costs more than one row.
         <p
-          className="lesson-header-set truncate"
+          className="lesson-header-set truncate text-sm"
           data-testid="lesson-header-set"
         >
           <span className="lesson-header-set-label">

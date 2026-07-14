@@ -3422,7 +3422,7 @@ select:focus {
 } /* @layer legacy */
 
 /* --- Lesson header / summary + content-set heading --- */
-@layer legacy { /* EXP-044 Tranche 2c-lesson (#1597): utilities must win over this block. Extracted from Navigation by #1597; the 4 audit hits are reconciled/allowlisted (text-sm/mt-3 dropped as 0-diff no-ops; .content-set-meta h4 = FoldedUserLessons tag-heuristic FPs; the timed-stats m-0 is the one intended activation) - see .legacy-wrap-accepted.json. Refs #1485, #1592. */
+@layer legacy { /* EXP-044 Tranche 2c-lesson (#1597): utilities must win over this block. Extracted from Navigation by #1597; the 4 audit hits are reconciled/allowlisted (mt-3 dropped as a value-equal no-op; text-sm KEPT + allowlisted - it also carries a live line-height, so removal reflows every lesson surface; .content-set-meta h4 = FoldedUserLessons tag-heuristic FPs; the timed-stats m-0 is the intended activation) - see .legacy-wrap-accepted.json. Refs #1485, #1592. */
 .content-set-meta h2,
 .content-set-meta h4 {
   margin: 0 0 4px 0;

@@ -82,9 +82,13 @@
 # Sektion "Lesson header / summary + content-set heading" gewrappt - der
 # 9-Zeilen-Begruendungskommentar (warum ungelayert) durch eine 1-Zeilen-
 # Header-Zeile ersetzt + 2 Wrapper-Zeilen (@layer legacy { / }) = -6. Die 4
-# vom Konflikt-Audit gemeldeten Hits sind reconciled/allowlisted: text-sm
-# (LessonHeader.tsx:142) + mt-3 (ReviewSummary.tsx:87) als 0-Diff-No-ops aus
-# den Consumern entfernt (text-sm ~ 0.9rem, mt-3 == var(--space-3) exakt);
+# vom Konflikt-Audit gemeldeten Hits sind reconciled/allowlisted: mt-3
+# (ReviewSummary.tsx:87) als wertgleiches No-op entfernt (mt-3 ==
+# var(--space-3) exakt, Single-Property); text-sm (LessonHeader.tsx:142)
+# BEHALTEN + allowlisted - das kompilierte Utility deklariert font-size UND
+# line-height, die line-height (fix 1.25rem) war unangefochten live, Entfernen
+# reflowte jede Lesson-Oberflaeche (Messung: run 29340479250); post-Wrap
+# gewinnt text-sm die font-size (14px statt 14.4px bei gleicher line-height);
 # .content-set-meta h4 = FoldedUserLessons.tsx:56 Tag-Heuristik-False-
 # Positives (das <h4> ist ein Geschwister der <ul>, kein .content-set-meta-
 # Nachkomme); die Timed-Stats m-0 (LessonSummarySections.tsx:314) ist die

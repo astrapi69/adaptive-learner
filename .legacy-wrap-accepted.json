@@ -52,6 +52,13 @@
     },
     {
       "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".lesson-header-set",
+      "property": "font-size",
+      "override_utility": "text-sm",
+      "reason": "Intended per-instance sizing, kept because text-sm is NOT removable as a no-op: the compiled utility declares font-size AND line-height (.text-sm{font-size:var(--text-sm);line-height:...}), and the line-height (fixed 1.25rem) was uncontested-live all along - removing the class deactivated it and reflowed EVERY lesson surface by a few px (measured via the run-29340479250 diffs: lesson-result x12 themes, lesson-summary x3 viewports, all matching themes). Reinstated + allowlisted instead: post-wrap text-sm wins font-size (0.875rem vs legacy 0.9rem = 14px vs 14.4px glyphs at the SAME fixed line-height), so the box height is identical and the activation is a ~3% glyph shrink on one muted line."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
       "legacy_selector": ".lesson-summary-stats",
       "property": "margin",
       "override_utility": "m-0",
