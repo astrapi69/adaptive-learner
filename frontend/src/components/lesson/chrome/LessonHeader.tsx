@@ -96,7 +96,7 @@ export default function LessonHeader({
           dropped from the in-lesson view (it lives on the set-detail
           surfaces). */}
       <h1
-        className="lesson-header-title truncate text-sm font-medium text-fg-secondary"
+        className="truncate text-sm font-medium text-fg-secondary"
         title={lesson.title}
         data-testid="lesson-header-title"
       >
