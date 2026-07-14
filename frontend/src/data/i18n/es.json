@@ -2414,6 +2414,12 @@
       "domain_psychology": "Psicología",
       "domain_programming": "Programación",
       "domain_math": "Matemáticas",
+      "domain_ai": "IA",
+      "domain_knowledge": "Conocimiento",
+      "domain_technology": "Tecnología",
+      "domain_software": "Software",
+      "domain_philosophy": "Filosofía",
+      "domain_language": "Idioma",
       "code_copy": "Copiar código",
       "code_output": "Salida:",
       "no_primary": "Aún no hay conjuntos para tu idioma. Explora otros idiomas de origen abajo."

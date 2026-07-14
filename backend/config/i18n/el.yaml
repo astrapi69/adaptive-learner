@@ -2218,6 +2218,12 @@ content:
     domain_psychology: Ψυχολογία
     domain_programming: Προγραμματισμός
     domain_math: Μαθηματικά
+    domain_ai: Τεχνητή νοημοσύνη
+    domain_knowledge: Γνώση
+    domain_technology: Τεχνολογία
+    domain_software: Λογισμικό
+    domain_philosophy: Φιλοσοφία
+    domain_language: Γλώσσα
     code_copy: "Αντιγραφή κώδικα"
     code_output: "Έξοδος:"
     no_primary: Δεν υπάρχουν ακόμη σύνολα για τη γλώσσα σου. Δες άλλες γλώσσες προέλευσης παρακάτω.

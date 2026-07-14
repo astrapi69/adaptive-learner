@@ -2218,6 +2218,12 @@ content:
     domain_psychology: Psychologie
     domain_programming: Programmation
     domain_math: Mathématiques
+    domain_ai: IA
+    domain_knowledge: Connaissances
+    domain_technology: Technologie
+    domain_software: Logiciel
+    domain_philosophy: Philosophie
+    domain_language: Langue
     code_copy: "Copier le code"
     code_output: "Sortie :"
     no_primary: Pas encore d'ensembles pour ta langue. Parcours d'autres langues source ci-dessous.
