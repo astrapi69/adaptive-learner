@@ -1709,6 +1709,8 @@ lesson:
     reverse: "Terbalik"
     shuffle: "Acak"
     endless: "Tanpa henti"
+  options:
+    title: "Opsi"
   exam:
     passed: "Lulus"
     not_passed: "Tidak lulus"

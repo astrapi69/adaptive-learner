@@ -1709,6 +1709,8 @@ lesson:
     reverse: "Reverse"
     shuffle: "Shuffle"
     endless: "Endless"
+  options:
+    title: "Options"
   exam:
     passed: "Passed"
     not_passed: "Not passed"

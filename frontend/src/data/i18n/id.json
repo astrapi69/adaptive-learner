@@ -1832,6 +1832,9 @@
       "shuffle": "Acak",
       "endless": "Tanpa henti"
     },
+    "options": {
+      "title": "Opsi"
+    },
     "exam": {
       "passed": "Lulus",
       "not_passed": "Tidak lulus",
@@ -2007,43 +2010,6 @@
         "submit": "Periksa jawaban",
         "retry": "Coba lagi",
         "empty": "Latihan pilihan ganda ini tidak memiliki opsi."
-      },
-      "al_categorization": {
-        "instructions": "Ketuk sebuah item, lalu ketuk kategorinya.",
-        "pool_label": "Item",
-        "result_correct": "Benar!",
-        "result_wrong": "Belum tepat. Periksa item yang ditandai.",
-        "submit": "Periksa jawaban",
-        "retry": "Coba lagi",
-        "empty": "Latihan kategorisasi ini tidak memiliki kategori."
-      },
-      "al_error_correction": {
-        "instructions": "Ketuk kata yang salah, lalu ketik koreksinya.",
-        "input_label": "Koreksi",
-        "solution_label": "Solusi",
-        "result_correct": "Benar!",
-        "result_wrong": "Belum tepat. Lihat solusinya.",
-        "submit": "Periksa jawaban",
-        "retry": "Coba lagi",
-        "empty": "Latihan koreksi ini tidak memiliki kalimat."
-      },
-      "al_reading_comprehension": {
-        "input_label": "Jawaban",
-        "solution_label": "Solusi",
-        "result_correct": "Benar!",
-        "result_wrong": "Belum tepat. Periksa pertanyaan yang ditandai.",
-        "submit": "Periksa jawaban",
-        "retry": "Coba lagi",
-        "empty": "Latihan membaca ini tidak memiliki pertanyaan."
-      },
-      "al_graded_quiz": {
-        "input_label": "Jawaban",
-        "solution_label": "Solusi",
-        "passed": "Lulus",
-        "failed": "Tidak lulus",
-        "submit": "Kirim kuis",
-        "retry": "Coba lagi",
-        "empty": "Kuis ini tidak memiliki pertanyaan."
       },
       "instruction": {
         "matching": {

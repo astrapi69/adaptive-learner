@@ -1709,6 +1709,8 @@ lesson:
     reverse: "역방향"
     shuffle: "셔플"
     endless: "무한"
+  options:
+    title: "옵션"
   exam:
     passed: "합격"
     not_passed: "불합격"

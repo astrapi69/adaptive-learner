@@ -1694,6 +1694,8 @@ lesson:
     reverse: "उल्टा"
     shuffle: "यादृच्छिक"
     endless: "अंतहीन"
+  options:
+    title: "विकल्प"
   exam:
     passed: "उत्तीर्ण"
     not_passed: "अनुत्तीर्ण"

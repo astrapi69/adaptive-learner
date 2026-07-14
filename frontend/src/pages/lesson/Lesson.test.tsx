@@ -215,6 +215,34 @@ describe("LessonPage: ready state rendering", () => {
     expect(screen.getByTestId("matching-empty")).toBeInTheDocument();
   });
 
+  // #1625 — the mode/display settings are bundled into a collapsible
+  // group; it starts collapsed so the exercise sits higher on mobile,
+  // while the progress indicator stays visible regardless.
+  it("bundles the mode settings into a collapsed options panel by default", () => {
+    _ready(0);
+    renderAtPath(VALID_PATH);
+    const toggle = screen.getByTestId("lesson-options-toggle");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    // The mode toggle is mounted (state preserved) but not shown while
+    // the group is collapsed.
+    expect(screen.getByTestId("lesson-mode-toggle")).not.toBeVisible();
+    // "Step n of m" stays visible in the collapsed state.
+    expect(screen.getByTestId("lesson-progress-bar")).toBeVisible();
+  });
+
+  it("reveals the mode controls when the options panel is expanded", () => {
+    _ready(0);
+    renderAtPath(VALID_PATH);
+    fireEvent.click(screen.getByTestId("lesson-options-toggle"));
+    expect(screen.getByTestId("lesson-options-toggle")).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(screen.getByTestId("lesson-mode-toggle")).toBeVisible();
+    // The progress bar remains visible in the expanded state too.
+    expect(screen.getByTestId("lesson-progress-bar")).toBeVisible();
+  });
+
   function _renderWithStep(exercise: ContentLessonExercise) {
     const lesson = {
       ...LESSON,

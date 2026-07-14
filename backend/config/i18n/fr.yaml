@@ -1700,6 +1700,8 @@ lesson:
     reverse: "Inversé"
     shuffle: "Aléatoire"
     endless: "Infini"
+  options:
+    title: "Options"
   exam:
     passed: "Réussi"
     not_passed: "Échoué"
