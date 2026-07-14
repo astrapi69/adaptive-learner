@@ -32,7 +32,7 @@ export default function ExercisePromptRow({
 }: ExercisePromptRowProps) {
     return (
         <div className="exercise-prompt-row">
-            <p className="m-0 font-medium" data-testid={testId}>
+            <p className="m-0 flex-auto font-medium" data-testid={testId}>
                 <InlineMarkdown>{prompt}</InlineMarkdown>
             </p>
             {ttsLang && !codeMode && (

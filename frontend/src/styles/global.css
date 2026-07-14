@@ -6272,6 +6272,7 @@ select:focus {
    is disabled under prefers-reduced-motion (the accent fill alone
    still signals the active state).
    --------------------------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2c (#1584): utilities must win over this block */
 .read-aloud-button {
   display: inline-flex;
   align-items: center;
@@ -6327,15 +6328,12 @@ select:focus {
   }
 }
 
-/* Prompt + its read-aloud button on one row (C2). */
+/* Prompt + its read-aloud button on one row (C2). The prompt <p>'s
+   flex/margin moved to the consumers as `flex-auto m-0` utilities (#1584). */
 .exercise-prompt-row {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-}
-.exercise-prompt-row > p {
-  flex: 1 1 auto;
-  margin: 0;
 }
 .exercise-prompt-row .read-aloud-button {
   flex: 0 0 auto;
@@ -6520,6 +6518,7 @@ select:focus {
 .lesson-tts-player-stop {
   color: var(--text-muted);
 }
+} /* @layer legacy */
 .chat-message-actions {
   display: flex;
   justify-content: flex-end;
