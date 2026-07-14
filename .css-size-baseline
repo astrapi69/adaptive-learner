@@ -49,9 +49,9 @@
 # wurden aus der Navigation-Region herausgeloest, damit Navigation +
 # Nav-Rest CLEAN wrapbar werden; sie bleiben absichtlich ungelayert
 # (Reconciliation = sichtbare Aenderung, spaetere Tranche). Kein neues CSS.
-# NICHT gewrappt (Utility-Konflikt, ungelayert): ReadAloudTTS (#1584),
-# ChatAnalysisLoading (#1585), und die neue Lesson-header/summary-Sektion
-# (#1597). MobilePolish-9A (#1583) ist jetzt gewrappt (s.u.).
+# NICHT gewrappt (Utility-Konflikt, ungelayert): ReadAloudTTS (#1584) und
+# die neue Lesson-header/summary-Sektion (#1597). MobilePolish-9A (#1583)
+# + ChatAnalysisLoading (#1585) sind jetzt gewrappt (s.u.).
 # NICHT gewrappt (Legacy-vs-unlayered-Legacy-Praezedenz, #1592):
 # LessonMode-LandscapeNav - jetzt NICHT mehr durch Navigation/Nav-Rest
 # noch durch .nav-hamburger blockiert (alle gewrappt), sondern nur noch
@@ -64,4 +64,10 @@
 # margin-left-Regel war tot: Navigation.tsx rendert den Hamburger immer mit
 # dem wichtigen `ml-0!`-Utility, das gewinnt - Loeschen raeumt den einzigen
 # Wrap-Konflikt weg (Konflikt-Audit: CLEAN). Kein neues CSS.
-7575
+# 7575 -> 7572 (EXP-044 Tranche 2c, #1585): -3 netto um den Block
+# ChatAnalysisLoading. Die einzige Konflikt-Regel `.analysis-error-inline p
+# { margin:0; color:var(--error) }` geloescht und als token-Utilities
+# (`m-0 text-[var(--error)]`) an den (vorher nackten) Consumer-<p> in
+# ImportDetail.tsx verschoben - gleiches Rendering; danach Block CLEAN und
+# gewrappt (+2 Wrapper - 4 Regel-Zeilen - 1 Leerzeile = -3). Kein neues CSS.
+7572

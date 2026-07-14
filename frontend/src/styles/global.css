@@ -7128,6 +7128,7 @@ select:focus {
  * only the text label changes).
  * ============================================================== */
 
+@layer legacy { /* EXP-044 Tranche 2c (#1585): utilities must win over this block */
 @keyframes btn-spin {
   to {
     transform: rotate(360deg);
@@ -7187,11 +7188,7 @@ select:focus {
   border-radius: 8px;
   background: var(--error-bg);
 }
-
-.analysis-error-inline p {
-  margin: 0;
-  color: var(--error);
-}
+} /* @layer legacy */
 
 @keyframes analysis-results-in {
   from {
