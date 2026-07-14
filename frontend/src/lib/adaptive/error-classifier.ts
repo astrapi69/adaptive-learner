@@ -177,7 +177,9 @@ function _findSourceCard(
     let sourceExerciseCardIds: string[] | null = null;
     for (const step of lesson.steps) {
         if (step.exercise && step.exercise.id === error.exercise_id) {
-            sourceExerciseCardIds = step.exercise.card_ids;
+            // card_ids is optional at runtime (card-less types omit it, #1636);
+            // a card-less source exercise has no cards to inspect -> null below.
+            sourceExerciseCardIds = step.exercise.card_ids ?? null;
             break;
         }
     }
