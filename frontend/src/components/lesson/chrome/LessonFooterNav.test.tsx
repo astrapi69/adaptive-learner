@@ -17,9 +17,12 @@ const BASE = {
   answerable: true,
   isLastStep: false,
   currentStepIndex: 1,
+  isInProgress: true,
   goPrev: () => {},
   goNext: () => {},
   onCheck: () => {},
+  onPause: () => {},
+  onExit: () => {},
 };
 
 describe("LessonFooterNav — practice flow", () => {
@@ -132,5 +135,73 @@ describe("LessonFooterNav — landscape / safe-area reachability (#1410)", () =>
     expect(nav.className).toContain("bottom-0");
     expect(nav.className).toContain("pb-safe");
     expect(nav.className).toContain("pt-3");
+  });
+});
+
+describe("LessonFooterNav — footer pause control (#1642)", () => {
+  it("renders the icon-only pause button with a 44px target in the practice flow", () => {
+    render(<LessonFooterNav {...BASE} />);
+    const pause = screen.getByTestId("lesson-pause-btn");
+    expect(pause).toHaveAttribute("aria-label", "Pause lesson");
+    // Icon-only: no visible text label, but the icon is present.
+    expect(pause).not.toHaveTextContent("Pause");
+    expect(pause.querySelector("svg")).not.toBeNull();
+    // 44px touch target via shadcn Button size="icon" (size-11).
+    expect(pause).toHaveClass("size-11");
+  });
+
+  it("is also present in the exam delayed-feedback flow", () => {
+    render(
+      <LessonFooterNav {...BASE} delayedFeedback onSubmitAndAdvance={() => {}} />,
+    );
+    expect(screen.getByTestId("lesson-pause-btn")).toBeInTheDocument();
+  });
+
+  it("pauses (not exits) while the lesson is in progress", () => {
+    const onPause = vi.fn();
+    const onExit = vi.fn();
+    render(
+      <LessonFooterNav {...BASE} isInProgress onPause={onPause} onExit={onExit} />,
+    );
+    fireEvent.click(screen.getByTestId("lesson-pause-btn"));
+    expect(onPause).toHaveBeenCalledTimes(1);
+    expect(onExit).not.toHaveBeenCalled();
+  });
+
+  it("exits (not pauses) when the lesson is no longer in progress", () => {
+    const onPause = vi.fn();
+    const onExit = vi.fn();
+    render(
+      <LessonFooterNav
+        {...BASE}
+        isInProgress={false}
+        onPause={onPause}
+        onExit={onExit}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("lesson-pause-btn"));
+    expect(onExit).toHaveBeenCalledTimes(1);
+    expect(onPause).not.toHaveBeenCalled();
+  });
+
+  it("orders the footer Previous -> Pause -> action for a sensible focus flow", () => {
+    render(<LessonFooterNav {...BASE} />);
+    const nav = screen.getByTestId("lesson-footer");
+    const ids = Array.from(nav.querySelectorAll("[data-testid]")).map((el) =>
+      el.getAttribute("data-testid"),
+    );
+    expect(ids).toEqual(["lesson-prev", "lesson-pause-btn", "lesson-check"]);
+    // centred distribution so pause sits between the two edges
+    expect(nav.className).toContain("justify-between");
+  });
+
+  it("keeps Previous and Check working after the layout change (no regression)", () => {
+    const goPrev = vi.fn();
+    const onCheck = vi.fn();
+    render(<LessonFooterNav {...BASE} currentStepIndex={1} goPrev={goPrev} onCheck={onCheck} />);
+    fireEvent.click(screen.getByTestId("lesson-prev"));
+    expect(goPrev).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByTestId("lesson-check"));
+    expect(onCheck).toHaveBeenCalledTimes(1);
   });
 });

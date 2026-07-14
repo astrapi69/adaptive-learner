@@ -27,13 +27,6 @@ function renderHeader(overrides: Record<string, unknown> = {}) {
     <LessonHeader
       lesson={LESSON}
       setTitle="Die Währung des Geistes"
-      isInProgress
-      exitOpen={false}
-      onPauseClick={() => {}}
-      onExit={() => {}}
-      onExitContinue={() => {}}
-      onExitPause={() => {}}
-      onExitAbandon={() => {}}
       {...overrides}
     />,
   );
@@ -67,5 +60,11 @@ describe("LessonHeader", () => {
     expect(screen.getByTestId("lesson-header-set")).toHaveTextContent(
       "Die Währung des Geistes",
     );
+  });
+
+  it("no longer renders the pause control in the header (#1642 — moved to the footer)", () => {
+    renderHeader();
+    expect(screen.queryByTestId("lesson-back-btn")).toBeNull();
+    expect(screen.queryByTestId("lesson-pause-btn")).toBeNull();
   });
 });
