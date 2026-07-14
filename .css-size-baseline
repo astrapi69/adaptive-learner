@@ -49,13 +49,19 @@
 # wurden aus der Navigation-Region herausgeloest, damit Navigation +
 # Nav-Rest CLEAN wrapbar werden; sie bleiben absichtlich ungelayert
 # (Reconciliation = sichtbare Aenderung, spaetere Tranche). Kein neues CSS.
-# NICHT gewrappt (Utility-Konflikt, ungelayert): MobilePolish-9A (#1583),
-# ReadAloudTTS (#1584), ChatAnalysisLoading (#1585), und die neue
-# Lesson-header/summary-Sektion (#1597).
+# NICHT gewrappt (Utility-Konflikt, ungelayert): ReadAloudTTS (#1584),
+# ChatAnalysisLoading (#1585), und die neue Lesson-header/summary-Sektion
+# (#1597). MobilePolish-9A (#1583) ist jetzt gewrappt (s.u.).
 # NICHT gewrappt (Legacy-vs-unlayered-Legacy-Praezedenz, #1592):
 # LessonMode-LandscapeNav - jetzt NICHT mehr durch Navigation/Nav-Rest
-# blockiert (beide gewrappt), sondern noch durch die ungelayerten
-# .nav-hamburger @4649 (MobilePolish #1583) + .nav-links @4825 + .app-nav
-# @5046 (mobile @media). Erst wrapbar wenn auch diese gelayert sind.
+# noch durch .nav-hamburger blockiert (alle gewrappt), sondern nur noch
+# durch die ungelayerten .nav-links + .app-nav (mobile @media). Erst
+# wrapbar wenn auch diese gelayert sind (naechster Schritt nach #1583).
 # 7569 -> 7573 (#1540): +line-height pin on .lesson-header h1.
-7573
+# 7573 -> 7575 (EXP-044 Tranche 2c, #1583): +2 netto um den Block
+# MobilePolish-9A (2x Wrapper-Zeile "@layer legacy {" / "}" minus die tote
+# `.nav-hamburger { margin-left: auto }`, +1 Kommentarzeile). Die
+# margin-left-Regel war tot: Navigation.tsx rendert den Hamburger immer mit
+# dem wichtigen `ml-0!`-Utility, das gewinnt - Loeschen raeumt den einzigen
+# Wrap-Konflikt weg (Konflikt-Audit: CLEAN). Kein neues CSS.
+7575

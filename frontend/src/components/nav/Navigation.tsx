@@ -158,10 +158,12 @@ export default function Navigation() {
     >
       {/* Hamburger first in the DOM so it sits on the LEFT on
                 mobile (primary nav action, thumb-reachable). `ml-0!`
-                overrides the global.css `.nav-hamburger { margin-left:
-                auto }` (unlayered, so the important modifier is what
-                makes the Tailwind utility win). Rendered ONLY in drawer
-                mode (#1390) — on desktop it does not exist in the DOM. */}
+                pins margin-left:0 explicitly. The old conflicting
+                `.nav-hamburger { margin-left: auto }` in global.css was
+                removed in #1583 (dead, since this always-present `ml-0!`
+                already won), which let that block wrap into @layer
+                legacy. Rendered ONLY in drawer mode (#1390) — on desktop
+                it does not exist in the DOM. */}
       {drawerNav && (
         <MenuToggleButton
           open={menuOpen}
