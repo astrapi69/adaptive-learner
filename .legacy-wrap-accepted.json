@@ -28,6 +28,34 @@
       "property": "align-items",
       "override_utility": "items-start",
       "reason": "Intended: the Dashboard activity tiles are a vertical column layout (DashboardActivityTab.tsx:85/99 use 'tile flex flex-col items-start gap-2'), so they override the .tile centred-row default (align-items:center) to top-align their stacked content. The .tile centre default still applies to the many single-item tiles elsewhere."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".content-set-meta h4",
+      "property": "font-weight",
+      "override_utility": "font-semibold",
+      "reason": "Tag-heuristic false positive (not a real override): the flagged <h4> is FoldedUserLessons.tsx:56, the 'Your lessons' section heading - a sibling of the lessons <ul>, NOT inside .content-set-meta - so the .content-set-meta h4 legacy rule never targets it. The audit matches coarsely on (file uses .content-set-meta) + (tag h4). The real .content-set-meta headings are <h3> (unmatched by the h2/h4 rule) or ContentSetRow's h4 (flex/min-w-0/items-center only, no font/margin utility). Wrapping is 0-diff; the h4's font-semibold is unaffected."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".content-set-meta h4",
+      "property": "margin",
+      "override_utility": "mb-1",
+      "reason": "Tag-heuristic false positive (not a real override): same FoldedUserLessons.tsx:56 'Your lessons' section heading, which is NOT inside .content-set-meta, so the .content-set-meta h4 legacy margin never applies to it. Its mb-1 is unaffected by the wrap; 0 rendering change. See the font-weight entry for the full rationale."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".content-set-meta h4",
+      "property": "font-size",
+      "override_utility": "text-sm",
+      "reason": "Tag-heuristic false positive (not a real override): same FoldedUserLessons.tsx:56 'Your lessons' section heading, which is NOT inside .content-set-meta, so the .content-set-meta h4 legacy font-size (1.125rem) never applies to it. Its text-sm is unaffected by the wrap; 0 rendering change. See the font-weight entry for the full rationale."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".lesson-summary-stats",
+      "property": "margin",
+      "override_utility": "m-0",
+      "reason": "Intended per-instance override (currently a silent no-op, activated by this wrap - the #1597 fix): the timed-mode stats list (LessonSummarySections.tsx:314, rendered only when lessonMode==='timed', data-testid lesson-summary-timed-stats) drops the .lesson-summary-stats default vertical margin (var(--space-3) 0) with m-0 because it sits inside a summary card that already provides spacing. Other .lesson-summary-stats instances (LessonSummarySections.tsx:203, AdaptiveLesson.tsx:580) keep the default. Utility-wins-over-default is the designed layer behaviour, parallel to the .tile items-start entry."
     }
   ]
 }

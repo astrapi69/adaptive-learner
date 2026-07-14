@@ -84,7 +84,7 @@ export default function ReviewSummary({
                 </p>
             )}
             {children}
-            <div className="lesson-summary-actions mt-3">
+            <div className="lesson-summary-actions">
                 <button
                     type="button"
                     onClick={onExit}
