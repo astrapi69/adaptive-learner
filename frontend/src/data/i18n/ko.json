@@ -1832,6 +1832,9 @@
       "shuffle": "셔플",
       "endless": "무한"
     },
+    "options": {
+      "title": "옵션"
+    },
     "exam": {
       "passed": "합격",
       "not_passed": "불합격",
@@ -2007,43 +2010,6 @@
         "submit": "정답 확인",
         "retry": "다시 시도",
         "empty": "이 선택형 문제에는 선택지가 없습니다."
-      },
-      "al_categorization": {
-        "instructions": "항목을 탭한 다음 해당 카테고리를 탭하세요.",
-        "pool_label": "항목",
-        "result_correct": "정답!",
-        "result_wrong": "아쉽네요. 강조 표시된 항목을 확인하세요.",
-        "submit": "정답 확인",
-        "retry": "다시 시도",
-        "empty": "이 분류 연습에는 카테고리가 없습니다."
-      },
-      "al_error_correction": {
-        "instructions": "잘못된 단어를 탭한 다음 수정 내용을 입력하세요.",
-        "input_label": "수정",
-        "solution_label": "정답",
-        "result_correct": "정답!",
-        "result_wrong": "아쉽네요. 아래 정답을 확인하세요.",
-        "submit": "정답 확인",
-        "retry": "다시 시도",
-        "empty": "이 오류 수정 연습에는 문장이 없습니다."
-      },
-      "al_reading_comprehension": {
-        "input_label": "답",
-        "solution_label": "정답",
-        "result_correct": "정답!",
-        "result_wrong": "아쉽네요. 강조 표시된 질문을 확인하세요.",
-        "submit": "정답 확인",
-        "retry": "다시 시도",
-        "empty": "이 읽기 연습에는 질문이 없습니다."
-      },
-      "al_graded_quiz": {
-        "input_label": "답",
-        "solution_label": "정답",
-        "passed": "합격",
-        "failed": "불합격",
-        "submit": "시험 제출",
-        "retry": "다시 시도",
-        "empty": "이 시험에는 문제가 없습니다."
       },
       "instruction": {
         "matching": {

@@ -1700,6 +1700,8 @@ lesson:
     reverse: "Αντίστροφα"
     shuffle: "Τυχαία"
     endless: "Ατέρμονο"
+  options:
+    title: "Επιλογές"
   exam:
     passed: "Επιτυχία"
     not_passed: "Αποτυχία"

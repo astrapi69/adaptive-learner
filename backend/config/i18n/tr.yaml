@@ -1698,6 +1698,8 @@ lesson:
     reverse: "Ters"
     shuffle: "Karışık"
     endless: "Sonsuz"
+  options:
+    title: "Seçenekler"
   exam:
     passed: "Geçti"
     not_passed: "Geçmedi"

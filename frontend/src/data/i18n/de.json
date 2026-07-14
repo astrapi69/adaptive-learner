@@ -1832,6 +1832,9 @@
       "shuffle": "Zufall",
       "endless": "Endlos"
     },
+    "options": {
+      "title": "Optionen"
+    },
     "exam": {
       "passed": "Bestanden",
       "not_passed": "Nicht bestanden",
@@ -2007,43 +2010,6 @@
         "submit": "Antwort prüfen",
         "retry": "Nochmal versuchen",
         "empty": "Diese Multiple-Choice-Aufgabe hat keine Optionen."
-      },
-      "al_categorization": {
-        "instructions": "Tippe ein Element an, dann seine Kategorie.",
-        "pool_label": "Elemente",
-        "result_correct": "Richtig!",
-        "result_wrong": "Nicht ganz. Sieh dir die markierten Elemente an.",
-        "submit": "Antwort prüfen",
-        "retry": "Nochmal versuchen",
-        "empty": "Diese Zuordnungsübung hat keine Kategorien."
-      },
-      "al_error_correction": {
-        "instructions": "Tippe das falsche Wort an und gib die Korrektur ein.",
-        "input_label": "Korrektur",
-        "solution_label": "Lösung",
-        "result_correct": "Richtig!",
-        "result_wrong": "Nicht ganz. Sieh dir die Lösung an.",
-        "submit": "Antwort prüfen",
-        "retry": "Nochmal versuchen",
-        "empty": "Diese Fehlerkorrektur-Übung hat keinen Satz."
-      },
-      "al_reading_comprehension": {
-        "input_label": "Antwort",
-        "solution_label": "Lösung",
-        "result_correct": "Richtig!",
-        "result_wrong": "Nicht ganz. Sieh dir die markierten Fragen an.",
-        "submit": "Antwort prüfen",
-        "retry": "Nochmal versuchen",
-        "empty": "Diese Leseübung hat keine Fragen."
-      },
-      "al_graded_quiz": {
-        "input_label": "Antwort",
-        "solution_label": "Lösung",
-        "passed": "Bestanden",
-        "failed": "Nicht bestanden",
-        "submit": "Test abgeben",
-        "retry": "Nochmal versuchen",
-        "empty": "Dieser Test hat keine Fragen."
       },
       "instruction": {
         "matching": {

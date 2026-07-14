@@ -1698,6 +1698,8 @@ lesson:
     reverse: "逆方向"
     shuffle: "シャッフル"
     endless: "エンドレス"
+  options:
+    title: "オプション"
   exam:
     passed: "合格"
     not_passed: "不合格"
