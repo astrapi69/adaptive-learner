@@ -1832,6 +1832,9 @@
       "shuffle": "Τυχαία",
       "endless": "Ατέρμονο"
     },
+    "options": {
+      "title": "Επιλογές"
+    },
     "exam": {
       "passed": "Επιτυχία",
       "not_passed": "Αποτυχία",
@@ -2007,43 +2010,6 @@
         "submit": "Έλεγχος απάντησης",
         "retry": "Δοκίμασε ξανά",
         "empty": "Αυτή η άσκηση πολλαπλής επιλογής δεν έχει επιλογές."
-      },
-      "al_categorization": {
-        "instructions": "Πάτησε ένα στοιχείο και μετά την κατηγορία του.",
-        "pool_label": "Στοιχεία",
-        "result_correct": "Σωστά!",
-        "result_wrong": "Όχι ακριβώς. Δες τα επισημασμένα στοιχεία.",
-        "submit": "Έλεγχος απάντησης",
-        "retry": "Δοκίμασε ξανά",
-        "empty": "Αυτή η άσκηση κατηγοριοποίησης δεν έχει κατηγορίες."
-      },
-      "al_error_correction": {
-        "instructions": "Πάτησε τη λάθος λέξη και πληκτρολόγησε τη διόρθωση.",
-        "input_label": "Διόρθωση",
-        "solution_label": "Λύση",
-        "result_correct": "Σωστά!",
-        "result_wrong": "Όχι ακριβώς. Δες τη λύση.",
-        "submit": "Έλεγχος απάντησης",
-        "retry": "Δοκίμασε ξανά",
-        "empty": "Αυτή η άσκηση διόρθωσης δεν έχει πρόταση."
-      },
-      "al_reading_comprehension": {
-        "input_label": "Απάντηση",
-        "solution_label": "Λύση",
-        "result_correct": "Σωστά!",
-        "result_wrong": "Όχι ακριβώς. Δες τις επισημασμένες ερωτήσεις.",
-        "submit": "Έλεγχος απάντησης",
-        "retry": "Δοκίμασε ξανά",
-        "empty": "Αυτή η άσκηση ανάγνωσης δεν έχει ερωτήσεις."
-      },
-      "al_graded_quiz": {
-        "input_label": "Απάντηση",
-        "solution_label": "Λύση",
-        "passed": "Επιτυχία",
-        "failed": "Αποτυχία",
-        "submit": "Υποβολή τεστ",
-        "retry": "Δοκίμασε ξανά",
-        "empty": "Αυτό το τεστ δεν έχει ερωτήσεις."
       },
       "instruction": {
         "matching": {
@@ -2448,6 +2414,12 @@
       "domain_psychology": "Ψυχολογία",
       "domain_programming": "Προγραμματισμός",
       "domain_math": "Μαθηματικά",
+      "domain_ai": "Τεχνητή νοημοσύνη",
+      "domain_knowledge": "Γνώση",
+      "domain_technology": "Τεχνολογία",
+      "domain_software": "Λογισμικό",
+      "domain_philosophy": "Φιλοσοφία",
+      "domain_language": "Γλώσσα",
       "code_copy": "Αντιγραφή κώδικα",
       "code_output": "Έξοδος:",
       "no_primary": "Δεν υπάρχουν ακόμη σύνολα για τη γλώσσα σου. Δες άλλες γλώσσες προέλευσης παρακάτω."

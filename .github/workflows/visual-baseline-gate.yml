@@ -1,0 +1,80 @@
+# Visual-baseline accompaniment gate (#1640).
+#
+# WHY: twice in one hour (2026-07-14), a lesson-header PR merged without
+# regenerating the e2e/visual/screenshots/ baselines (#1628 via #1638,
+# then #1635 fourteen minutes after the #1639 refresh), leaving develop
+# with stale baselines that fail every dispatched visual-regression run.
+# The visual workflow runs nightly + on demand only (#552) - a
+# develop-push trigger was rejected as too expensive (15-20 min per
+# push, also for non-visual pushes). This gate is the targeted
+# alternative: a PR that touches visually-critical paths must bring the
+# affected baseline PNGs IN THE SAME PR.
+#
+# The gate checks PRESENCE of baseline updates, not correctness -
+# correctness stays with the human image review (#1532: regenerated
+# baselines are an artifact, reviewed image by image, never
+# auto-committed).
+#
+# Escape hatch: the `visual-baselines-unaffected` label, for changes
+# verified visually inert (an audit-CLEAN @layer wrap with a 0-diff
+# verify run, comment-only edits, ...). `labeled`/`unlabeled` are in the
+# trigger types so toggling the label re-evaluates the gate.
+#
+# Refresh procedure (what the failure message points to):
+#   gh workflow run visual-regression.yml --ref <pr-branch> \
+#     -f update_baselines=true
+#   gh run download <run-id> --name visual-baselines --dir /tmp/vb
+#   -> review EVERY changed image, copy the changed PNGs into
+#      e2e/visual/screenshots/, commit them in this PR.
+
+name: Visual baseline gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Visual-critical changes carry baselines
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            visual_critical:
+              - 'frontend/src/components/lesson/**'
+              - 'frontend/src/pages/lesson/**'
+              - 'frontend/src/components/exercises/**'
+              - 'frontend/src/styles/global.css'
+              - 'frontend/src/styles/tailwind.css'
+              - 'frontend/src/styles/themes/**'
+            baselines:
+              - 'e2e/visual/screenshots/**'
+
+      - name: Evaluate gate
+        env:
+          VISUAL_CRITICAL: ${{ steps.filter.outputs.visual_critical }}
+          HAS_BASELINES: ${{ steps.filter.outputs.baselines }}
+          HAS_ESCAPE_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'visual-baselines-unaffected') }}
+        run: |
+          if [ "$VISUAL_CRITICAL" != "true" ]; then
+            echo "::notice::No visually-critical paths changed - gate not applicable."
+            exit 0
+          fi
+          if [ "$HAS_BASELINES" = "true" ]; then
+            echo "::notice::Visual-critical change carries baseline updates - OK. Reviewers: check the changed PNGs image by image (#1532)."
+            exit 0
+          fi
+          if [ "$HAS_ESCAPE_LABEL" = "true" ]; then
+            echo "::warning::Visual-critical change WITHOUT baseline updates, but the 'visual-baselines-unaffected' label asserts it is visually inert. The assertion is the author's responsibility - a dispatched 0-diff verify run is the expected evidence."
+            exit 0
+          fi
+          echo "::error::This PR changes visually-critical paths (lesson components/pages, exercises, global/theme CSS) but contains no e2e/visual/screenshots/ update (#1640)."
+          echo "::error::Either (a) regenerate + review + commit the affected baselines in this PR: dispatch 'visual-regression.yml' on this branch with update_baselines=true, download the 'visual-baselines' artifact, review EVERY changed image, commit the changed PNGs - or (b) if the change is verifiably 0-diff (e.g. audit-CLEAN wrap with a clean verify run), add the 'visual-baselines-unaffected' label."
+          exit 1

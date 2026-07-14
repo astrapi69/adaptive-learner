@@ -80,6 +80,34 @@ in den passenden Ordner aufgenommen. Voller Ablauf:
 [docs/developer/testing.md](../../docs/developer/testing.md) +
 [e2e/visual/features/README.md](../../e2e/visual/features/README.md).
 
+## Visual-Baseline-Pflicht fuer visuell-kritische PRs (#1640)
+
+Ein PR, der visuell-kritische Pfade aendert (Lesson-Komponenten/-Seiten,
+Exercise-Renderer, `global.css`/`tailwind.css`/Theme-Dateien), MUSS die
+betroffenen `e2e/visual/screenshots/`-Baselines im SELBEN PR mitbringen -
+nicht auf den naechsten Nightly-Lauf hoffen. Durchgesetzt von
+`.github/workflows/visual-baseline-gate.yml` (Sekunden-Gate via
+`dorny/paths-filter`, gleicher Mechanismus wie der #1617 CI-Pfad-Filter).
+
+Ablauf: `gh workflow run visual-regression.yml --ref <pr-branch>
+-f update_baselines=true`, das `visual-baselines`-Artifact herunterladen,
+JEDES geaenderte Bild einzeln reviewen (#1532: nie auto-committen), die
+geaenderten PNGs in den PR committen. Das Gate prueft nur die PRAESENZ
+der Baseline-Aenderung; die KORREKTHEIT bleibt die menschliche
+Bild-Review.
+
+Escape: das Label `visual-baselines-unaffected` fuer nachweislich
+visuell inerte Aenderungen (z. B. ein audit-CLEANer `@layer`-Wrap mit
+0-Diff-Verify-Lauf, reine Kommentar-Edits). Die Behauptung verantwortet
+der Autor; der dispatchte 0-Diff-Lauf ist der erwartete Beleg.
+
+Herkunft: zweimal binnen einer Stunde (2026-07-14) mergte ein
+Lesson-Header-PR ohne Baseline-Regenerierung (#1628 -> #1638, dann #1635
+14 Minuten NACH dem #1639-Refresh) - die Nightly-only-Kadenz (#552)
+laesst dieses Fenster offen, und es waechst mit paralleler Arbeit an
+visuellen Flaechen. Ein `develop-push`-Trigger fuer den Visual-Workflow
+wurde als zu teuer verworfen (15-20 min pro Push, auch nicht-visuell).
+
 ## Quick check after every change
 
 ### 1. Run the tests

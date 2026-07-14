@@ -1832,6 +1832,9 @@
       "shuffle": "Aleatorio",
       "endless": "Infinito"
     },
+    "options": {
+      "title": "Opciones"
+    },
     "exam": {
       "passed": "Aprobado",
       "not_passed": "No aprobado",
@@ -2007,43 +2010,6 @@
         "submit": "Comprobar respuesta",
         "retry": "Inténtalo de nuevo",
         "empty": "Este ejercicio de opción múltiple no tiene opciones."
-      },
-      "al_categorization": {
-        "instructions": "Toca un elemento y luego su categoría.",
-        "pool_label": "Elementos",
-        "result_correct": "¡Correcto!",
-        "result_wrong": "No del todo. Revisa los elementos marcados.",
-        "submit": "Comprobar respuesta",
-        "retry": "Inténtalo de nuevo",
-        "empty": "Este ejercicio de clasificación no tiene categorías."
-      },
-      "al_error_correction": {
-        "instructions": "Toca la palabra incorrecta y escribe la corrección.",
-        "input_label": "Corrección",
-        "solution_label": "Solución",
-        "result_correct": "¡Correcto!",
-        "result_wrong": "No del todo. Mira la solución.",
-        "submit": "Comprobar respuesta",
-        "retry": "Inténtalo de nuevo",
-        "empty": "Este ejercicio de corrección no tiene oración."
-      },
-      "al_reading_comprehension": {
-        "input_label": "Respuesta",
-        "solution_label": "Solución",
-        "result_correct": "¡Correcto!",
-        "result_wrong": "No del todo. Revisa las preguntas marcadas.",
-        "submit": "Comprobar respuesta",
-        "retry": "Inténtalo de nuevo",
-        "empty": "Este ejercicio de lectura no tiene preguntas."
-      },
-      "al_graded_quiz": {
-        "input_label": "Respuesta",
-        "solution_label": "Solución",
-        "passed": "Aprobado",
-        "failed": "No aprobado",
-        "submit": "Enviar test",
-        "retry": "Inténtalo de nuevo",
-        "empty": "Este test no tiene preguntas."
       },
       "instruction": {
         "matching": {
@@ -2448,6 +2414,12 @@
       "domain_psychology": "Psicología",
       "domain_programming": "Programación",
       "domain_math": "Matemáticas",
+      "domain_ai": "IA",
+      "domain_knowledge": "Conocimiento",
+      "domain_technology": "Tecnología",
+      "domain_software": "Software",
+      "domain_philosophy": "Filosofía",
+      "domain_language": "Idioma",
       "code_copy": "Copiar código",
       "code_output": "Salida:",
       "no_primary": "Aún no hay conjuntos para tu idioma. Explora otros idiomas de origen abajo."

@@ -215,6 +215,34 @@ describe("LessonPage: ready state rendering", () => {
     expect(screen.getByTestId("matching-empty")).toBeInTheDocument();
   });
 
+  // #1625 — the mode/display settings are bundled into a collapsible
+  // group; it starts collapsed so the exercise sits higher on mobile,
+  // while the progress indicator stays visible regardless.
+  it("bundles the mode settings into a collapsed options panel by default", () => {
+    _ready(0);
+    renderAtPath(VALID_PATH);
+    const toggle = screen.getByTestId("lesson-options-toggle");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    // The mode toggle is mounted (state preserved) but not shown while
+    // the group is collapsed.
+    expect(screen.getByTestId("lesson-mode-toggle")).not.toBeVisible();
+    // "Step n of m" stays visible in the collapsed state.
+    expect(screen.getByTestId("lesson-progress-bar")).toBeVisible();
+  });
+
+  it("reveals the mode controls when the options panel is expanded", () => {
+    _ready(0);
+    renderAtPath(VALID_PATH);
+    fireEvent.click(screen.getByTestId("lesson-options-toggle"));
+    expect(screen.getByTestId("lesson-options-toggle")).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(screen.getByTestId("lesson-mode-toggle")).toBeVisible();
+    // The progress bar remains visible in the expanded state too.
+    expect(screen.getByTestId("lesson-progress-bar")).toBeVisible();
+  });
+
   function _renderWithStep(exercise: ContentLessonExercise) {
     const lesson = {
       ...LESSON,
@@ -930,24 +958,25 @@ describe("LessonPage: button icons + 'Lektion pausieren' rename", () => {
     });
   }
 
-  it("the pause button is labelled 'Pause lesson' (renamed from back-to-browser)", () => {
+  it("the pause control lives in the footer, icon-only, labelled 'Pause lesson' (#1642)", () => {
     _ready(0);
     renderAtPath(VALID_PATH);
-    const pause = screen.getByTestId("lesson-back-btn");
+    // Moved out of the header.
+    expect(screen.queryByTestId("lesson-back-btn")).toBeNull();
+    const pause = screen.getByTestId("lesson-pause-btn");
     expect(pause).toHaveAttribute("aria-label", "Pause lesson");
-    // Desktop label present in the DOM (hidden on mobile via md:inline).
-    const label = pause.querySelector("span.hidden.md\\:inline");
-    expect(label).not.toBeNull();
-    expect(label).toHaveTextContent("Pause lesson");
-    // 44px touch target now via shadcn Button (min-h-11 = 44px).
-    expect(pause).toHaveClass("min-h-11");
+    // Icon-only in the footer — no visible text label, icon present.
+    expect(pause).not.toHaveTextContent("Pause");
+    expect(pause.querySelector("svg")).not.toBeNull();
+    // 44px touch target via shadcn Button size="icon" (size-11).
+    expect(pause).toHaveClass("size-11");
   });
 
-  it("clicking pause opens the exit dialog (unchanged Phase 63 behavior)", () => {
+  it("clicking the footer pause opens the exit dialog (unchanged Phase 63 behavior)", () => {
     _ready(0);
     renderAtPath(VALID_PATH);
     expect(screen.queryByTestId("lesson-exit-dialog")).toBeNull();
-    fireEvent.click(screen.getByTestId("lesson-back-btn"));
+    fireEvent.click(screen.getByTestId("lesson-pause-btn"));
     expect(screen.getByTestId("lesson-exit-dialog")).toBeInTheDocument();
   });
 

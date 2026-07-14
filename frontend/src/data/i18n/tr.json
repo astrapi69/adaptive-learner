@@ -1832,6 +1832,9 @@
       "shuffle": "Karışık",
       "endless": "Sonsuz"
     },
+    "options": {
+      "title": "Seçenekler"
+    },
     "exam": {
       "passed": "Geçti",
       "not_passed": "Geçmedi",
@@ -2007,43 +2010,6 @@
         "submit": "Cevabı kontrol et",
         "retry": "Tekrar dene",
         "empty": "Bu çoktan seçmeli alıştırmada seçenek yok."
-      },
-      "al_categorization": {
-        "instructions": "Bir öğeye dokun, sonra kategorisine dokun.",
-        "pool_label": "Öğeler",
-        "result_correct": "Doğru!",
-        "result_wrong": "Tam değil. İşaretli öğeleri gözden geçir.",
-        "submit": "Cevabı kontrol et",
-        "retry": "Tekrar dene",
-        "empty": "Bu sınıflandırma alıştırmasında kategori yok."
-      },
-      "al_error_correction": {
-        "instructions": "Yanlış kelimeye dokun, sonra düzeltmeyi yaz.",
-        "input_label": "Düzeltme",
-        "solution_label": "Çözüm",
-        "result_correct": "Doğru!",
-        "result_wrong": "Tam değil. Aşağıdaki çözüme bak.",
-        "submit": "Cevabı kontrol et",
-        "retry": "Tekrar dene",
-        "empty": "Bu hata düzeltme alıştırmasında cümle yok."
-      },
-      "al_reading_comprehension": {
-        "input_label": "Cevap",
-        "solution_label": "Çözüm",
-        "result_correct": "Doğru!",
-        "result_wrong": "Tam değil. İşaretli soruları gözden geçir.",
-        "submit": "Cevabı kontrol et",
-        "retry": "Tekrar dene",
-        "empty": "Bu okuma alıştırmasında soru yok."
-      },
-      "al_graded_quiz": {
-        "input_label": "Cevap",
-        "solution_label": "Çözüm",
-        "passed": "Geçti",
-        "failed": "Geçmedi",
-        "submit": "Testi gönder",
-        "retry": "Tekrar dene",
-        "empty": "Bu testte soru yok."
       },
       "instruction": {
         "matching": {
@@ -2448,6 +2414,12 @@
       "domain_psychology": "Psikoloji",
       "domain_programming": "Programlama",
       "domain_math": "Matematik",
+      "domain_ai": "Yapay Zekâ",
+      "domain_knowledge": "Bilgi",
+      "domain_technology": "Teknoloji",
+      "domain_software": "Yazılım",
+      "domain_philosophy": "Felsefe",
+      "domain_language": "Dil",
       "code_copy": "Kodu kopyala",
       "code_output": "Çıktı:",
       "no_primary": "Diliniz için henüz set yok. Aşağıdan diğer kaynak dillere göz atın."

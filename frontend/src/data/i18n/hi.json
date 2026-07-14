@@ -1832,6 +1832,9 @@
       "shuffle": "यादृच्छिक",
       "endless": "अंतहीन"
     },
+    "options": {
+      "title": "विकल्प"
+    },
     "exam": {
       "passed": "उत्तीर्ण",
       "not_passed": "अनुत्तीर्ण",
@@ -2007,43 +2010,6 @@
         "submit": "उत्तर जांचें",
         "retry": "फिर से कोशिश करें",
         "empty": "इस बहुविकल्पीय अभ्यास में कोई विकल्प नहीं है।"
-      },
-      "al_categorization": {
-        "instructions": "किसी आइटम पर टैप करें, फिर उसकी श्रेणी पर।",
-        "pool_label": "आइटम",
-        "result_correct": "सही!",
-        "result_wrong": "बिल्कुल नहीं। हाइलाइट किए गए आइटम देखें।",
-        "submit": "उत्तर जांचें",
-        "retry": "फिर से कोशिश करें",
-        "empty": "इस वर्गीकरण अभ्यास में कोई श्रेणियाँ नहीं हैं।"
-      },
-      "al_error_correction": {
-        "instructions": "गलत शब्द पर टैप करें, फिर सुधार टाइप करें।",
-        "input_label": "सुधार",
-        "solution_label": "समाधान",
-        "result_correct": "सही!",
-        "result_wrong": "बिल्कुल नहीं। नीचे समाधान देखें।",
-        "submit": "उत्तर जांचें",
-        "retry": "फिर से कोशिश करें",
-        "empty": "इस त्रुटि-सुधार अभ्यास में कोई वाक्य नहीं है।"
-      },
-      "al_reading_comprehension": {
-        "input_label": "उत्तर",
-        "solution_label": "समाधान",
-        "result_correct": "सही!",
-        "result_wrong": "बिल्कुल नहीं। हाइलाइट किए गए प्रश्न देखें।",
-        "submit": "उत्तर जांचें",
-        "retry": "फिर से कोशिश करें",
-        "empty": "इस पठन अभ्यास में कोई प्रश्न नहीं हैं।"
-      },
-      "al_graded_quiz": {
-        "input_label": "उत्तर",
-        "solution_label": "समाधान",
-        "passed": "उत्तीर्ण",
-        "failed": "अनुत्तीर्ण",
-        "submit": "टेस्ट जमा करें",
-        "retry": "फिर से कोशिश करें",
-        "empty": "इस टेस्ट में कोई प्रश्न नहीं हैं।"
       },
       "instruction": {
         "matching": {
@@ -2448,6 +2414,12 @@
       "domain_psychology": "मनोविज्ञान",
       "domain_programming": "प्रोग्रामिंग",
       "domain_math": "गणित",
+      "domain_ai": "एआई",
+      "domain_knowledge": "ज्ञान",
+      "domain_technology": "प्रौद्योगिकी",
+      "domain_software": "सॉफ़्टवेयर",
+      "domain_philosophy": "दर्शन",
+      "domain_language": "भाषा",
       "code_copy": "कोड कॉपी करें",
       "code_output": "आउटपुट:",
       "no_primary": "आपकी भाषा के लिए अभी कोई सेट नहीं है। नीचे अन्य स्रोत भाषाएँ ब्राउज़ करें।"

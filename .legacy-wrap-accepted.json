@@ -1,0 +1,68 @@
+{
+  "_readme": "Accepted, REVIEWED legacy-vs-utility overrides for the EXP-044 @layer legacy audit (scripts/check-legacy-wrap-conflicts.py --wrapped). Refs #1623, #1485. Each entry downgrades exactly ONE (block, legacy_selector, property, override_utility) conflict from KONFLIKT to an accepted note: the utility override is DELIBERATE and already live - a wrapped legacy default that a per-instance utility correctly overrides (the layer architecture working as designed). The scope is the concrete 4-tuple, NOT the whole block: a new, unlisted conflict on the same selector in the same block still reports as KONFLIKT. Every entry MUST carry a non-empty 'reason' (the loader errors otherwise) so this file never becomes a context-free exception list. Remove an entry when the override is genuinely reconciled (default moved to the consumer / the utility dropped).",
+  "accepted": [
+    {
+      "block": "Onboarding page",
+      "legacy_selector": ".form-hint",
+      "property": "color",
+      "override_utility": "text-warning",
+      "reason": "Intended: a warning-coloured reminder hint (DailyRemindersControl.tsx:169). The .form-hint muted default (var(--fg-muted)) is deliberately overridden to the warning colour for this specific hint; other .form-hint instances keep the muted default. The utility must win, which the layer guarantees."
+    },
+    {
+      "block": "Onboarding page",
+      "legacy_selector": ".form-hint",
+      "property": "color",
+      "override_utility": "text-fg-secondary",
+      "reason": "Intended: a secondary-emphasis reminder hint (DailyRemindersControl.tsx:193). The .form-hint muted default is deliberately raised to fg-secondary for this hint; other instances keep the muted default. Utility-wins-over-default is the designed layer behaviour."
+    },
+    {
+      "block": "Onboarding page",
+      "legacy_selector": ".form-actions",
+      "property": "margin-top",
+      "override_utility": "mt-6",
+      "reason": "Intended: the Danger-Zone confirm/cancel action row wants extra top separation from the destructive controls above it (DangerZoneSection.tsx:285), so it overrides the .form-actions default margin-top (var(--space-4)) with the larger mt-6. Deliberate spacing, already live."
+    },
+    {
+      "block": "Dashboard page",
+      "legacy_selector": ".tile",
+      "property": "align-items",
+      "override_utility": "items-start",
+      "reason": "Intended: the Dashboard activity tiles are a vertical column layout (DashboardActivityTab.tsx:85/99 use 'tile flex flex-col items-start gap-2'), so they override the .tile centred-row default (align-items:center) to top-align their stacked content. The .tile centre default still applies to the many single-item tiles elsewhere."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".content-set-meta h4",
+      "property": "font-weight",
+      "override_utility": "font-semibold",
+      "reason": "Tag-heuristic false positive (not a real override): the flagged <h4> is FoldedUserLessons.tsx:56, the 'Your lessons' section heading - a sibling of the lessons <ul>, NOT inside .content-set-meta - so the .content-set-meta h4 legacy rule never targets it. The audit matches coarsely on (file uses .content-set-meta) + (tag h4). The real .content-set-meta headings are <h3> (unmatched by the h2/h4 rule) or ContentSetRow's h4 (flex/min-w-0/items-center only, no font/margin utility). Wrapping is 0-diff; the h4's font-semibold is unaffected."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".content-set-meta h4",
+      "property": "margin",
+      "override_utility": "mb-1",
+      "reason": "Tag-heuristic false positive (not a real override): same FoldedUserLessons.tsx:56 'Your lessons' section heading, which is NOT inside .content-set-meta, so the .content-set-meta h4 legacy margin never applies to it. Its mb-1 is unaffected by the wrap; 0 rendering change. See the font-weight entry for the full rationale."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".content-set-meta h4",
+      "property": "font-size",
+      "override_utility": "text-sm",
+      "reason": "Tag-heuristic false positive (not a real override): same FoldedUserLessons.tsx:56 'Your lessons' section heading, which is NOT inside .content-set-meta, so the .content-set-meta h4 legacy font-size (1.125rem) never applies to it. Its text-sm is unaffected by the wrap; 0 rendering change. See the font-weight entry for the full rationale."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".lesson-header-set",
+      "property": "font-size",
+      "override_utility": "text-sm",
+      "reason": "Intended per-instance sizing, kept because text-sm is NOT removable as a no-op: the compiled utility declares font-size AND line-height (.text-sm{font-size:var(--text-sm);line-height:...}), and the line-height (fixed 1.25rem) was uncontested-live all along - removing the class deactivated it and reflowed EVERY lesson surface by a few px (measured via the run-29340479250 diffs: lesson-result x12 themes, lesson-summary x3 viewports, all matching themes). Reinstated + allowlisted instead: post-wrap text-sm wins font-size (0.875rem vs legacy 0.9rem = 14px vs 14.4px glyphs at the SAME fixed line-height), so the box height is identical and the activation is a ~3% glyph shrink on one muted line."
+    },
+    {
+      "block": "Lesson header / summary + content-set heading",
+      "legacy_selector": ".lesson-summary-stats",
+      "property": "margin",
+      "override_utility": "m-0",
+      "reason": "Intended per-instance override (currently a silent no-op, activated by this wrap - the #1597 fix): the timed-mode stats list (LessonSummarySections.tsx:314, rendered only when lessonMode==='timed', data-testid lesson-summary-timed-stats) drops the .lesson-summary-stats default vertical margin (var(--space-3) 0) with m-0 because it sits inside a summary card that already provides spacing. Other .lesson-summary-stats instances (LessonSummarySections.tsx:203, AdaptiveLesson.tsx:580) keep the default. Utility-wins-over-default is the designed layer behaviour, parallel to the .tile items-start entry."
+    }
+  ]
+}

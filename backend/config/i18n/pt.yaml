@@ -1698,6 +1698,8 @@ lesson:
     reverse: "Inverso"
     shuffle: "Aleatório"
     endless: "Infinito"
+  options:
+    title: "Opções"
   exam:
     passed: "Aprovado"
     not_passed: "Não aprovado"
@@ -2214,6 +2216,12 @@ content:
     domain_psychology: Psicologia
     domain_programming: Programação
     domain_math: Matemática
+    domain_ai: IA
+    domain_knowledge: Conhecimento
+    domain_technology: Tecnologia
+    domain_software: Software
+    domain_philosophy: Filosofia
+    domain_language: Idioma
     code_copy: "Copiar código"
     code_output: "Saída:"
     no_primary: Ainda não há conjuntos para o seu idioma. Veja outros idiomas de origem abaixo.

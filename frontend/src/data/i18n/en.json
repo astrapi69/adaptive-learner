@@ -1832,6 +1832,9 @@
       "shuffle": "Shuffle",
       "endless": "Endless"
     },
+    "options": {
+      "title": "Options"
+    },
     "exam": {
       "passed": "Passed",
       "not_passed": "Not passed",
@@ -2007,43 +2010,6 @@
         "submit": "Check answer",
         "retry": "Try again",
         "empty": "This multiple-choice exercise has no options."
-      },
-      "al_categorization": {
-        "instructions": "Tap an item, then tap its category.",
-        "pool_label": "Items",
-        "result_correct": "Correct!",
-        "result_wrong": "Not quite. Review the highlighted items.",
-        "submit": "Check answer",
-        "retry": "Try again",
-        "empty": "This categorization exercise has no categories."
-      },
-      "al_error_correction": {
-        "instructions": "Tap the wrong word, then type the correction.",
-        "input_label": "Correction",
-        "solution_label": "Solution",
-        "result_correct": "Correct!",
-        "result_wrong": "Not quite. Check the solution below.",
-        "submit": "Check answer",
-        "retry": "Try again",
-        "empty": "This error-correction exercise has no sentence."
-      },
-      "al_reading_comprehension": {
-        "input_label": "Answer",
-        "solution_label": "Solution",
-        "result_correct": "Correct!",
-        "result_wrong": "Not quite. Review the highlighted questions.",
-        "submit": "Check answer",
-        "retry": "Try again",
-        "empty": "This reading exercise has no questions."
-      },
-      "al_graded_quiz": {
-        "input_label": "Answer",
-        "solution_label": "Solution",
-        "passed": "Passed",
-        "failed": "Not passed",
-        "submit": "Submit quiz",
-        "retry": "Try again",
-        "empty": "This quiz has no questions."
       },
       "instruction": {
         "matching": {
@@ -2448,6 +2414,12 @@
       "domain_psychology": "Psychology",
       "domain_programming": "Programming",
       "domain_math": "Mathematics",
+      "domain_ai": "AI",
+      "domain_knowledge": "Knowledge",
+      "domain_technology": "Technology",
+      "domain_software": "Software",
+      "domain_philosophy": "Philosophy",
+      "domain_language": "Language",
       "code_copy": "Copy code",
       "code_output": "Output:",
       "no_primary": "No sets for your language yet. Browse other source languages below."

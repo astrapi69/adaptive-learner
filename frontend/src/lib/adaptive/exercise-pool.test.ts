@@ -52,6 +52,22 @@ function makeExercise(
     };
 }
 
+/**
+ * A card-less exercise whose ``card_ids`` is genuinely ``undefined`` at
+ * runtime. Simulates Dexie-mode raw content (#1636): the newer card-less
+ * exercise types (``multiple_choice`` / ``ext:al-*``) are loaded straight
+ * from JSON without a Pydantic ``model_dump``, so they can violate the
+ * ``ContentLessonExercise`` compile-time promise that ``card_ids`` is
+ * always present. The cast + delete produces that exact runtime shape.
+ */
+function makeCardlessExercise(
+    overrides: Partial<ContentLessonExercise> = {},
+): ContentLessonExercise {
+    const exercise = makeExercise(overrides);
+    delete (exercise as {card_ids?: string[]}).card_ids;
+    return exercise;
+}
+
 function makeStep(exercise: ContentLessonExercise): ContentLessonStep {
     return {
         id: `step-${exercise.id}`,
@@ -345,5 +361,86 @@ describe("buildExercisePool — determinism + dedup", () => {
             {lessons},
         );
         expect(pool).toHaveLength(1);
+    });
+});
+
+describe("buildExercisePool — card-less exercise types (#1636 regression)", () => {
+    it("does not crash scanning a cached lesson whose exercise has no card_ids", () => {
+        // The builder scans EVERY exercise in EVERY cached lesson; a single
+        // card-less multiple_choice / ext:al-* type must not throw on .some().
+        const lessons = new Map<string, ContentLesson>([
+            [
+                "01.json",
+                makeLesson(
+                    "01.json",
+                    [makeCard({id: "c1", front: "Gehirn"})],
+                    [makeCardlessExercise({id: "ex-mc", type: "multiple_choice"})],
+                ),
+            ],
+        ]);
+        expect(() =>
+            buildExercisePool([makePrioritized("Gehirn")], {lessons}),
+        ).not.toThrow();
+    });
+
+    it("excludes a card-less exercise from card-target matches", () => {
+        // No referenced cards -> the exercise cannot target the element via a
+        // card, so it is correctly not a pool candidate (empty, not a crash).
+        const lessons = new Map<string, ContentLesson>([
+            [
+                "01.json",
+                makeLesson(
+                    "01.json",
+                    [makeCard({id: "c1", front: "Gehirn"})],
+                    [makeCardlessExercise({id: "ex-mc", type: "multiple_choice"})],
+                ),
+            ],
+        ]);
+        expect(buildExercisePool([makePrioritized("Gehirn")], {lessons})).toEqual([]);
+    });
+
+    it("does not crash the generated-cloze path when the errored exercise is card-less", () => {
+        // _generatedCandidate reads sourceExercise.card_ids (.includes/.length/[0]);
+        // a free_text error recorded against a card-less exercise must not throw.
+        const lessons = new Map<string, ContentLesson>([
+            [
+                "01.json",
+                makeLesson(
+                    "01.json",
+                    [makeCard({id: "c1", front: "Gehirn"})],
+                    [makeCardlessExercise({id: "ex-ft", type: "free_text"})],
+                ),
+            ],
+        ]);
+        const errors = new Map<string, ElementError>([
+            ["Gehirn", makeError("Gehirn", {exercise_id: "ex-ft", lesson_id: "01.json"})],
+        ]);
+        expect(() =>
+            buildExercisePool([makePrioritized("Gehirn", {exercise_id: "ex-ft"})], {
+                lessons,
+                errorsByElementKey: errors,
+            }),
+        ).not.toThrow();
+    });
+
+    it("still builds a pool for a mixed history with a normal card-referencing exercise", () => {
+        // Regression baseline: a matching exercise WITH card_ids alongside a
+        // card-less one still yields the card-referencing candidate.
+        const lessons = new Map<string, ContentLesson>([
+            [
+                "01.json",
+                makeLesson(
+                    "01.json",
+                    [makeCard({id: "c1", front: "Gehirn"})],
+                    [
+                        makeCardlessExercise({id: "ex-mc", type: "multiple_choice"}),
+                        makeExercise({id: "ex-1", type: "matching", card_ids: ["c1"]}),
+                    ],
+                ),
+            ],
+        ]);
+        const pool = buildExercisePool([makePrioritized("Gehirn")], {lessons});
+        expect(pool).toHaveLength(1);
+        expect(pool[0].exercise.id).toBe("ex-1");
     });
 });

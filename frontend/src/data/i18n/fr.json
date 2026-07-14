@@ -1832,6 +1832,9 @@
       "shuffle": "Aléatoire",
       "endless": "Infini"
     },
+    "options": {
+      "title": "Options"
+    },
     "exam": {
       "passed": "Réussi",
       "not_passed": "Échoué",
@@ -2007,43 +2010,6 @@
         "submit": "Vérifier la réponse",
         "retry": "Réessayer",
         "empty": "Cet exercice à choix multiple n'a pas d'options."
-      },
-      "al_categorization": {
-        "instructions": "Touche un élément, puis sa catégorie.",
-        "pool_label": "Éléments",
-        "result_correct": "Correct !",
-        "result_wrong": "Pas tout à fait. Regarde les éléments surlignés.",
-        "submit": "Vérifier la réponse",
-        "retry": "Réessayer",
-        "empty": "Cet exercice de classement n'a pas de catégories."
-      },
-      "al_error_correction": {
-        "instructions": "Touche le mot incorrect, puis écris la correction.",
-        "input_label": "Correction",
-        "solution_label": "Solution",
-        "result_correct": "Correct !",
-        "result_wrong": "Pas tout à fait. Regarde la solution.",
-        "submit": "Vérifier la réponse",
-        "retry": "Réessayer",
-        "empty": "Cet exercice de correction n'a pas de phrase."
-      },
-      "al_reading_comprehension": {
-        "input_label": "Réponse",
-        "solution_label": "Solution",
-        "result_correct": "Correct !",
-        "result_wrong": "Pas tout à fait. Regarde les questions surlignées.",
-        "submit": "Vérifier la réponse",
-        "retry": "Réessayer",
-        "empty": "Cet exercice de lecture n'a pas de questions."
-      },
-      "al_graded_quiz": {
-        "input_label": "Réponse",
-        "solution_label": "Solution",
-        "passed": "Réussi",
-        "failed": "Échoué",
-        "submit": "Rendre le test",
-        "retry": "Réessayer",
-        "empty": "Ce test n'a pas de questions."
       },
       "instruction": {
         "matching": {
@@ -2448,6 +2414,12 @@
       "domain_psychology": "Psychologie",
       "domain_programming": "Programmation",
       "domain_math": "Mathématiques",
+      "domain_ai": "IA",
+      "domain_knowledge": "Connaissances",
+      "domain_technology": "Technologie",
+      "domain_software": "Logiciel",
+      "domain_philosophy": "Philosophie",
+      "domain_language": "Langue",
       "code_copy": "Copier le code",
       "code_output": "Sortie :",
       "no_primary": "Pas encore d'ensembles pour ta langue. Parcours d'autres langues source ci-dessous."
