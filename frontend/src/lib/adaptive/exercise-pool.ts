@@ -123,8 +123,10 @@ function _candidatesFromLesson(
     for (const step of lesson.steps) {
         const exercise = step.exercise;
         if (!exercise) continue;
-        // Check whether any referenced card targets the element.
-        const matches = exercise.card_ids.some((cid) => {
+        // card_ids is optional at runtime (Dexie loads raw content;
+        // card-less types like multiple_choice / ext:al-* omit it, #1636).
+        // No referenced cards => the exercise can't target via a card.
+        const matches = (exercise.card_ids ?? []).some((cid) => {
             const card = cardById.get(cid);
             return card ? _cardTargetsElement(card, elementKey) : false;
         });
@@ -173,23 +175,23 @@ function _generatedCandidate(
         }
     }
     if (!sourceExercise) return null;
+    // card_ids is optional at runtime (Dexie raw content; card-less
+    // types omit it, #1636). A card-less source exercise yields no
+    // source card, so the cloze generator falls back to its literal-front
+    // path or returns null.
+    const cardIds = sourceExercise.card_ids ?? [];
     // Find the source card (mirrors the review-synth helper).
     let sourceCard: ContentLessonCard | null = null;
     for (const c of lesson.cards) {
-        if (
-            sourceExercise.card_ids.includes(c.id) &&
-            _cardTargetsElement(c, error.element_key)
-        ) {
+        if (cardIds.includes(c.id) && _cardTargetsElement(c, error.element_key)) {
             sourceCard = c;
             break;
         }
     }
-    if (!sourceCard && sourceExercise.card_ids.length > 0) {
+    if (!sourceCard && cardIds.length > 0) {
         // Fall back to the first referenced card so the
         // generator's path-2 (literal front match) can still fire.
-        sourceCard = lesson.cards.find(
-            (c) => c.id === sourceExercise!.card_ids[0],
-        ) ?? null;
+        sourceCard = lesson.cards.find((c) => c.id === cardIds[0]) ?? null;
     }
     const generated = generateClozeFromError({
         error,
