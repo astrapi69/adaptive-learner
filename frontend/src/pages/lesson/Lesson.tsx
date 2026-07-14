@@ -26,7 +26,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import LessonResumeDialog from "../../components/lesson/dialogs/LessonResumeDialog";
-import LessonModeToggle from "../../components/lesson/chrome/LessonModeToggle";
 import LessonTimedStatus from "../../components/lesson/chrome/LessonTimedStatus";
 import { LessonModeProvider } from "../../hooks/lesson/modes/useLessonMode";
 import { useTimedLesson } from "../../hooks/lesson/modes/useTimedLesson";
@@ -41,9 +40,8 @@ import LessonSummary from "../../components/lesson/summary/LessonSummary";
 import LessonResources from "../../components/lesson/steps/LessonResources";
 import LessonFavoriteToggle from "../../components/lesson/chrome/LessonFavoriteToggle";
 import LessonHeader from "../../components/lesson/chrome/LessonHeader";
-import LessonOptionsPanel from "../../components/lesson/chrome/LessonOptionsPanel";
+import LessonOptionsBar from "../../components/lesson/chrome/LessonOptionsBar";
 import LessonProgressBar from "../../components/lesson/chrome/LessonProgressBar";
-import LessonTtsControls from "../../components/lesson/tts/LessonTtsControls";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
@@ -510,53 +508,31 @@ export default function LessonPage() {
 
       {/* #1625 — the lesson's mode/display SETTINGS (favorite, mode
           toggle, auto read-aloud) are bundled into one compact,
-          collapsible group so they stop eating the vertical space above
-          the exercise on mobile. Default collapsed; the `key` remounts
-          the panel per lesson so a new lesson starts collapsed while a
-          step change within the same lesson preserves the choice.
-          Hidden on the summary screen (the mode toggle is exam-locked
-          there anyway). */}
-      {!isSummary && (
-        <LessonOptionsPanel
-          key={`${setId}/${filename}`}
-          summary={t(`lesson.mode.${lessonMode}`, lessonMode)}
-        >
-          <div className="flex justify-end">
-            <LessonFavoriteToggle
-              userId={learnerUserId ?? ""}
-              source={source}
-              setId={setId}
-              filename={filename}
-              title={lesson.title}
-              setTitle={setTitle ?? ""}
-            />
-          </div>
-
-          {/* #1007 — mode toggle (Practice / Exam / Timed / Reverse).
-              Locked once the lesson is under way so a mid-run flip can't
-              change the rules. */}
-          <LessonModeToggle
-            mode={lessonMode}
-            onChange={setLessonMode}
-            disabled={isInProgress}
-          />
-
-          {/* Auto-read / read-aloud is a scaffolding aid: shown only in
-              modes whose config enables it (#1011). */}
-          {modeConfig.showReadAloud && (
-            <LessonTtsControls
-              isSummary={isSummary}
-              lesson={lesson}
-              tts={tts}
-              autoRead={autoRead}
-              toggleAutoRead={toggleAutoRead}
-              startContinuous={startContinuous}
-              isContinuous={isContinuous}
-              continuousAvailable={continuousAvailable}
-            />
-          )}
-        </LessonOptionsPanel>
-      )}
+          collapsible group (LessonOptionsBar) so they stop eating the
+          vertical space above the exercise on mobile. Default collapsed;
+          the group resets to collapsed per lesson and preserves the
+          choice across step changes. Renders nothing on the summary
+          screen. */}
+      <LessonOptionsBar
+        isSummary={isSummary}
+        userId={learnerUserId ?? ""}
+        source={source}
+        setId={setId}
+        filename={filename}
+        title={lesson.title}
+        setTitle={setTitle ?? ""}
+        lessonMode={lessonMode}
+        onModeChange={setLessonMode}
+        modeLocked={isInProgress}
+        showReadAloud={modeConfig.showReadAloud}
+        lesson={lesson}
+        tts={tts}
+        autoRead={autoRead}
+        toggleAutoRead={toggleAutoRead}
+        startContinuous={startContinuous}
+        isContinuous={isContinuous}
+        continuousAvailable={continuousAvailable}
+      />
 
       {/* #1009 — timed-mode per-question countdown + time-up notice. */}
       <LessonTimedStatus
