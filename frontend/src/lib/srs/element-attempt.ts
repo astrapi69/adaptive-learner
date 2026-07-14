@@ -27,6 +27,10 @@
  *   - word_tiles with 1 tile (edge case) → "vocabulary"
  */
 
+import {asCategorizationPayload} from "../exercises/categorization";
+import {asErrorCorrectionPayload} from "../exercises/error-correction";
+import {asReadingComprehensionPayload, canonicalAnswer} from "../exercises/reading-comprehension";
+import {asGradedQuizPayload, canonicalAnswer as gradedQuizCanonicalAnswer} from "../exercises/graded-quiz";
 import {resolveConcreteDirection} from "../exercises/direction";
 import type {ContentLessonExercise, ElementAttempt} from "../../storage/types";
 
@@ -86,6 +90,112 @@ export function deriveMatchingAttempts(
             user_answer: userPairingText,
             correct_answer: pair.right,
             correct,
+        };
+    });
+}
+
+/** CATEGORIZATION (#1579, adopted extension ext:al-categorization):
+ *  fan-out one attempt per authored item, mirroring the matching
+ *  fan-out. assignments maps item -> chosen bucket name; an
+ *  unassigned item is a wrong attempt with an empty user answer. A
+ *  malformed payload yields no attempts (the load-time validation
+ *  refuses it before it can reach a session). */
+export function deriveCategorizationAttempts(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    assignments: ReadonlyMap<string, string>,
+): ElementAttempt[] {
+    const payload = asCategorizationPayload(exercise);
+    if (!payload) return [];
+    return payload.categories.flatMap((bucket) =>
+        bucket.items.map((item) => {
+            const chosenBucket = assignments.get(item) ?? "";
+            return {
+                ..._baseAttempt(exercise, ctx),
+                element_key: item,
+                element_type: "vocabulary" as const,
+                user_answer: chosenBucket,
+                correct_answer: bucket.name,
+                correct: chosenBucket === bucket.name,
+            };
+        }),
+    );
+}
+
+/** ERROR-CORRECTION (#1579 second adoption, ext:al-error-correction):
+ *  a single attempt - the exercise tests ONE grammar decision (find the
+ *  wrong token, fix it). element_key = the canonical correction
+ *  ``accept[0]`` so reviews re-target the same grammar point regardless
+ *  of which variant the user typed; user/correct answers carry the
+ *  "picked token -> typed correction" form for the error log. */
+export function deriveErrorCorrectionAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    answer: {pickedIndex: number; typedCorrection: string},
+    correct: boolean,
+): ElementAttempt {
+    const payload = asErrorCorrectionPayload(exercise);
+    const markedToken = payload?.tokens[payload.error_index] ?? "";
+    const pickedToken = payload?.tokens[answer.pickedIndex] ?? "";
+    const canonical = payload?.accept[0] ?? "";
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "grammar_rule",
+        user_answer: `${pickedToken} -> ${answer.typedCorrection}`,
+        correct_answer: `${markedToken} -> ${canonical}`,
+        correct,
+    };
+}
+
+/** READING-COMPREHENSION (#1579 third adoption,
+ *  ext:al-reading-comprehension): one attempt per sub-question, mirroring
+ *  the matching fan-out. element_key = the sub-question's canonical answer
+ *  so reviews re-target the same comprehension point. The renderer supplies
+ *  the per-question answer + graded correctness (free_text grading needs the
+ *  shared React-layer matcher, so it is not re-derived here). */
+export function deriveReadingComprehensionAttempts(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    results: readonly {answer: string; correct: boolean}[],
+): ElementAttempt[] {
+    const payload = asReadingComprehensionPayload(exercise);
+    if (!payload) return [];
+    return payload.questions.map((question, index) => {
+        const canonical = canonicalAnswer(question);
+        const result = results[index];
+        return {
+            ..._baseAttempt(exercise, ctx),
+            element_key: canonical || question.prompt,
+            element_type: "vocabulary" as const,
+            user_answer: result?.answer ?? "",
+            correct_answer: canonical,
+            correct: result?.correct ?? false,
+        };
+    });
+}
+
+/** GRADED-QUIZ (#1579 fourth adoption, ext:al-graded-quiz): one attempt per
+ *  question, element_key = the question's canonical answer. The renderer
+ *  supplies per-question {answer, correct} (free_text grading needs the shared
+ *  React-layer matcher, so it is not re-derived here). */
+export function deriveGradedQuizAttempts(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    results: readonly {answer: string; correct: boolean}[],
+): ElementAttempt[] {
+    const payload = asGradedQuizPayload(exercise);
+    if (!payload) return [];
+    return payload.questions.map((question, index) => {
+        const canonical = gradedQuizCanonicalAnswer(question);
+        const result = results[index];
+        return {
+            ..._baseAttempt(exercise, ctx),
+            element_key: canonical || question.prompt,
+            element_type: "vocabulary" as const,
+            user_answer: result?.answer ?? "",
+            correct_answer: canonical,
+            correct: result?.correct ?? false,
         };
     });
 }
@@ -202,6 +312,32 @@ export function deriveClozeMultiSelectAttempt(
     isCorrect: boolean,
 ): ElementAttempt {
     const canonical = [...(exercise.accept ?? [])].sort().join(", ");
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "vocabulary",
+        user_answer: [...selected].sort().join(", "),
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}
+
+/** Native multiple_choice (#1525, schema v1.6): a single attempt for the
+ *  question. element_key + correct_answer are the canonical correct
+ *  option texts (sorted, joined) so reviews re-target the same question;
+ *  ``correct`` is the verdict from the grading module (single pick or
+ *  exact-set, no re-validation here). */
+export function deriveMultipleChoiceAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    selected: readonly string[],
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical = (exercise.options ?? [])
+        .filter((option) => option.correct === true)
+        .map((option) => option.text)
+        .sort()
+        .join(", ");
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,

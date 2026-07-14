@@ -131,6 +131,20 @@ describe("ErrorReportDialog rendering", () => {
         expect(history.checked).toBe(false);
     });
 
+    // #1490 — the description textarea must carry token-backed
+    // background + text colors. Without them the UA default leaks
+    // through once the field loses focus: a light (near-white) well
+    // inside a dark dialog on all 6 dark themes (same family as the
+    // #185/#271 button-background lessons, preflight off).
+    it("description textarea uses token-backed background + text color (#1490)", () => {
+        renderDialog();
+        const textarea = screen.getByTestId(
+            "error-report-description",
+        ) as HTMLTextAreaElement;
+        expect(textarea.style.background).toBe("var(--bg-primary)");
+        expect(textarea.style.color).toBe("var(--fg-primary)");
+    });
+
     it("privacy note is always visible", () => {
         renderDialog();
         expect(

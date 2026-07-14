@@ -89,7 +89,6 @@ nav:
   online: Online
   offline: Offline
   anki: Anki
-  contribute: "Contribute"
   dev_badge: DEV
   dev_badge_tooltip: "Developer Mode is on — error toasts show full technical detail. Toggle in Settings."
   content: "My content"
@@ -522,6 +521,7 @@ settings:
     unavailable: "Your browser hasn't offered installation yet."
     installed: "App installed."
   section_review: "Review"
+  section_srs: "Spaced repetition"
   explanations_enabled: "Show error explanations"
   explanations_enabled_desc: "After a lesson, show a short rule tip for each mistake."
   section_hints: "Hints"
@@ -963,6 +963,10 @@ about:
   donations_heading: Support development
   donations_intro: Adaptive Learner is free and open-source. If it helps you, consider chipping in.
   donations_primary: preferred
+  contribute_heading: "Contribute content"
+  contribute_intro: "The content library grows through community contributions. If you would like to add lessons, start here."
+  contribute_repo: "Content repository"
+  contribute_template: "Content set template"
   donations:
     liberapay_desc: Recurring donations. Open-source, no fees taken by the platform.
     github_desc: Sponsor via your existing GitHub account.
@@ -972,6 +976,8 @@ about:
   license_text_link: (text)
   repo_label: Repository
   docs_label: Documentation
+  tutorial_label: "App tutorial"
+  tutorial_link: "Open the tutorial directly"
   issues_label: Issues
 backup:
   section_title: Backup
@@ -1849,6 +1855,17 @@ lesson:
       result_correct: "All correct!"
       result_partial: "{correct} of {total} correct."
       empty: "This cloze exercise has no blanks."
+    multiple_choice:
+      single_group_label: "Select one answer"
+      multi_group_label: "Select all that apply"
+      badge_correct: "Correct"
+      badge_wrong: "Wrong"
+      badge_missed: "Missed"
+      result_correct: "Correct!"
+      result_wrong: "Not quite. Review the highlighted options."
+      submit: "Check answer"
+      retry: "Try again"
+      empty: "This multiple-choice exercise has no options."
     instruction:
       matching:
         receptive: Match the pairs (Recognition)
@@ -1974,6 +1991,10 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "Share"
+    aria: "Share set '{title}'"
+    title: "Share set"
   filter:
     all_sources: "All sources"
     official: "Official"
@@ -2362,22 +2383,11 @@ content:
     status_submitted: submitted
     status_accepted: accepted
     status_rejected: rejected
-  gaps:
-    title: Missing Lessons
-    intro: The community library has a few gaps. Can you help fill one?
-    next_level: '{target} for {source} speakers has lessons, but {level} doesn''t exist yet.'
-    missing_pair: '{target} {level} for {source} speakers doesn''t exist yet.'
-    help: Can you help?
   credit:
     name_label: Your name (optional)
     name_placeholder: e.g. Maria S.
     show_name: Show name in lesson
     privacy: "Your name will be shown in the lesson and the pull request."
-contribute:
-  title: "Contribute"
-  intro: "Help grow the community library by filling its gaps."
-  loading: "Loading…"
-  empty: "No gaps right now — the community library covers your downloaded sets. Thank you!"
 milestone:
   streak: "{n}-Day Streak!"
   level_up: "Level {n} reached!"
@@ -2950,7 +2960,6 @@ srs:
   last_answer: "Your answer:"
   correct: "Correct:"
   no_elements: "No tracked elements yet."
-  settings_title: "Spaced repetition"
   settings_intro: "Items you miss come back for review on a schedule that stretches as you get them right, so you practise weak spots more often than ones you know."
   schedule_streak: "{n} correct in a row"
   schedule_streak_plus: "{n}+ correct in a row"
@@ -2976,6 +2985,7 @@ favorites:
   empty: "No favorites yet — tap the star on a lesson to save it."
   save_prompt: "Save this lesson to your favorites"
 content_repo:
+  set_not_found: "The set '{set}' was not found in this repository."
   remove:
     title: "Remove repository"
     message: "Remove {source}? Its downloaded content will be removed from this device."
@@ -3012,6 +3022,8 @@ content_repo:
   add:
     title: "Add a repository"
   add_link:
+    title_set: "Connect repository and open set?"
+    body_set: "Connect the repository '{repo}' and open the set '{set}'."
     title: "Add this content repository?"
     body: "You were invited to add a content repository to Adaptive Learner."
     invalid: "This invite link does not contain a valid repository."
@@ -3020,6 +3032,7 @@ content_repo:
     branch: "Branch"
     token: "Token (private repos, optional)"
   action:
+    connect_and_open: "Connect and open"
     sync_all: "Sync all"
     add: "Add repository"
     cancel: "Cancel"
@@ -3244,3 +3257,40 @@ migration:
   settings:
     title: "Import from the online version"
     body: "Used Adaptive Learner online? Create a backup there, then use Import above to bring your data over."
+
+registry:
+  title: "Register your repository"
+  intro: "Propose your own content repository for the cross-repo search. This prepares a pull request against the official content directory; a maintainer reviews and merges it after CI validates your pinned commit."
+  copied: "Entry copied to the clipboard."
+  copy_failed: "Could not copy - select the text manually."
+  error:
+    invalid_url: "Enter a valid GitHub repository URL (e.g. owner/repo)."
+    no_title: "Add a short title for your repository."
+    no_commit: "Could not resolve the latest commit - check the repository URL and branch."
+    prepare_failed: "Could not prepare the submission."
+  field:
+    pick: "Pick a connected repository"
+    pick_placeholder: "- choose or enter below -"
+    url: "GitHub repository URL"
+    branch: "Branch"
+    title: "Title"
+    title_ph: "Your set collection"
+    description: "Description (optional)"
+    description_ph: "One line about what's inside"
+  action:
+    prepare: "Prepare submission"
+    copy: "Copy entry"
+    copied: "Copied"
+    propose: "Open the directory to propose"
+    create_pr: "Create pull request"
+  result:
+    title: "Your registry entry"
+    reason: "Local check: {reason}"
+    instructions: "Add this entry to the {file} array of the official content directory:"
+  status:
+    validated: "Validated locally"
+    pending: "Pending - CI will validate"
+  pr:
+    created: "Pull request opened."
+    failed: "Could not open the pull request."
+    view: "View your pull request"

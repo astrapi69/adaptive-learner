@@ -1,0 +1,20 @@
+{
+  "id": "21-semantic-cloze-marker-mismatch",
+  "title": "Semantic fixture: cloze marker count != blanks count",
+  "steps": [
+    {
+      "id": "step-01-cloze",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-cloze-mismatch",
+        "type": "cloze",
+        "prompt": "Fill the blank.",
+        "sentence": "Only one ___ marker here.",
+        "blanks": [
+          {"accept": ["uno"]},
+          {"accept": ["dos"]}
+        ]
+      }
+    }
+  ]
+}

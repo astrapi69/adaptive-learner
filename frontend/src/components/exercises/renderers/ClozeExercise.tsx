@@ -111,7 +111,7 @@ function ClozePromptRow({
 }) {
     return (
         <div className="exercise-prompt-row">
-            <p className="m-0 font-medium" data-testid="cloze-prompt">
+            <p className="m-0 flex-auto font-medium" data-testid="cloze-prompt">
                 <InlineMarkdown>{prompt ?? ""}</InlineMarkdown>
             </p>
             {ttsLang && !codeMode && (

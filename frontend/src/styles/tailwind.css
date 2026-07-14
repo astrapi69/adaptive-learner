@@ -14,13 +14,36 @@
  * without preflight.
  *
  * We therefore import ONLY the theme (design-token) and utilities
- * layers. The cascade-layer order below also guarantees that any
- * unlayered rule in global.css wins over Tailwind output, which keeps
- * existing components pixel-identical. Re-introducing a scoped
- * preflight is a deliberate Phase B+ decision, not an accident of the
- * default import. See docs/development/tailwind-migration.md.
+ * layers. Re-introducing a scoped preflight is a deliberate Phase B+
+ * decision, not an accident of the default import. See
+ * docs/development/tailwind-migration.md.
+ *
+ * CASCADE-LAYER ORDER (EXP-044 Tranche 0, #1485).
+ *
+ * Two invariants hold at once, and the order below encodes both:
+ *
+ *   1. Anything UNLAYERED in global.css still wins over every Tailwind
+ *      layer. This is the Phase-A guarantee that keeps the Foundation
+ *      block (tokens / reset / focus baseline) and the Third-Party-DOM
+ *      overrides (ProseMirror, xyflow, QR overlay, highlight.js) styling
+ *      library-rendered DOM without a utility escalation. Those blocks
+ *      stay unlayered by design and are NOT affected by the layers here.
+ *
+ *   2. The ``legacy`` layer is declared BEFORE ``components`` and
+ *      ``utilities``, so once the component-debt block in global.css is
+ *      wrapped tranche-by-tranche into ``@layer legacy { ... }`` (Tranche
+ *      2), a Tailwind utility on the SAME element wins over the wrapped
+ *      legacy rule. That is what makes "migrate when touched" safe and
+ *      lets the inline crutches (#1458/#1476/#1479) fall. Later-declared
+ *      layer = stronger; ``legacy`` is intentionally early = weakest of
+ *      the three app layers.
+ *
+ * Tranche 0 only DECLARES ``legacy`` — nothing is wrapped into it yet, so
+ * an empty layer changes no rendered pixel. The declaration must precede
+ * the first layered content (the imports below) so the order is fixed
+ * before any rule lands in a layer.
  */
-@layer theme, base, components, utilities;
+@layer theme, base, legacy, components, utilities;
 
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);

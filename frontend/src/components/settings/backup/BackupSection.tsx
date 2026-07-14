@@ -158,7 +158,7 @@ function BackupActionToolbar({
                 type="file"
                 accept=".alb,application/zip,application/json,.json"
                 onChange={onFileChange}
-                style={{display: "none"}}
+                className="hidden"
                 data-testid="backup-file-input"
             />
         </div>

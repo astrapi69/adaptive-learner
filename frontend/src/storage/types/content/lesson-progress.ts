@@ -14,7 +14,26 @@ export type RawAnswer =
   /** #1195 — cloze ``multiselect`` ("select all that apply"): the
    *  chosen option set. Persisted so a revisited, locked question
    *  restores its exact checkbox state. */
-  | { kind: "cloze_multiselect"; selected: string[] };
+  | { kind: "cloze_multiselect"; selected: string[] }
+  /** #1525 — native ``multiple_choice`` (schema v1.6): the chosen
+   *  option texts (one entry in single mode, the chosen set in
+   *  ``multiple`` mode). */
+  | { kind: "multiple_choice"; selected: string[] }
+  /** #1579 — adopted extension ext:al-categorization: the learner's
+   *  item -> bucket-name assignment, persisted so a revisited, locked
+   *  question restores its exact bucket state. */
+  | { kind: "al_categorization"; assignments: [string, string][] }
+  /** #1579 — adopted extension ``ext:al-error-correction``: the tapped
+   *  token index plus the typed correction, persisted so a revisited,
+   *  locked question restores its exact state. */
+  | { kind: "al_error_correction"; picked_index: number; typed: string }
+  /** #1579 — adopted extension ``ext:al-reading-comprehension``: the
+   *  learner's answer per sub-question (in order), persisted so a
+   *  revisited, locked passage restores its exact state. */
+  | { kind: "al_reading_comprehension"; answers: string[] }
+  /** #1579 — adopted extension ``ext:al-graded-quiz``: the learner's chosen
+   *  option texts (or [typed] free-text) per question, in order. */
+  | { kind: "al_graded_quiz"; answers: string[][] };
 
 export interface LessonStepResult {
   step_id: string;

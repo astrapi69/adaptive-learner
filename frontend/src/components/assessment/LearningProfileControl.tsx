@@ -78,7 +78,7 @@ export default function LearningProfileControl() {
     return (
         <section
             className="settings-section"
-            data-testid="settings-section-profile"
+            data-testid="settings-section-learning-profile"
         >
             <h2 className="settings-section-title">
                 {t("settings.profile_title", "Learning profile")}

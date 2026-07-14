@@ -22,7 +22,7 @@
 
 import { Copy, Download, Share2, X } from "lucide-react";
 import QRCode from "qrcode";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 /** Button + control labels (each optional; English defaults below). */
 export interface QrCodeModalLabels {
@@ -40,6 +40,8 @@ export interface QrCodeModalProps {
     url: string;
     /** Modal heading. */
     title: string;
+    /** Optional muted note under the URL (e.g. a public-repo / token hint). */
+    note?: ReactNode;
     /** Called when the modal should close (backdrop, X, or Escape). */
     onClose: () => void;
     /** Optional control labels (English fallbacks applied per field). */
@@ -70,6 +72,29 @@ async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
     return new File([blob], fileName, { type: "image/png" });
 }
 
+/** Fully-resolved control labels (English fallback per field). */
+interface ResolvedLabels {
+    close: string;
+    copy: string;
+    copied: string;
+    download: string;
+    share: string;
+    imageAlt: string;
+}
+
+/** Resolve the optional label bag to concrete strings (English fallbacks).
+ *  Kept out of the component so the render function stays low-complexity. */
+function resolveLabels(labels?: QrCodeModalLabels): ResolvedLabels {
+    return {
+        close: labels?.close ?? "Close",
+        copy: labels?.copy ?? "Copy URL",
+        copied: labels?.copied ?? "Copied",
+        download: labels?.download ?? "Download",
+        share: labels?.share ?? "Share",
+        imageAlt: labels?.imageAlt ?? "QR code",
+    };
+}
+
 /**
  * Centered, dismissible QR modal. Presentational + the native
  * clipboard/share/download behaviours; all copy comes from props.
@@ -77,6 +102,7 @@ async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
 export default function QrCodeModal({
     url,
     title,
+    note,
     onClose,
     labels,
     fileName = "adaptive-learner-qr.png",
@@ -88,14 +114,7 @@ export default function QrCodeModal({
     const [copied, setCopied] = useState(false);
     const [canShareFiles, setCanShareFiles] = useState(false);
 
-    const text = {
-        close: labels?.close ?? "Close",
-        copy: labels?.copy ?? "Copy URL",
-        copied: labels?.copied ?? "Copied",
-        download: labels?.download ?? "Download",
-        share: labels?.share ?? "Share",
-        imageAlt: labels?.imageAlt ?? "QR code",
-    };
+    const text = resolveLabels(labels);
 
     useEffect(() => {
         let cancelled = false;
@@ -225,6 +244,25 @@ export default function QrCodeModal({
                     >
                         {url}
                     </code>
+
+                    {note && (
+                        <p
+                            className="w-full text-center text-xs text-fg-muted"
+                            data-testid={`${testId}-note`}
+                        >
+                            {note}
+                        </p>
+                    )}
+
+                    {/* Screen-reader announcement for the copy action. */}
+                    <span
+                        role="status"
+                        aria-live="polite"
+                        className="sr-only"
+                        data-testid={`${testId}-copied-status`}
+                    >
+                        {copied ? text.copied : ""}
+                    </span>
 
                     <div className="flex flex-wrap items-center justify-center gap-2">
                         <button

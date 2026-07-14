@@ -348,7 +348,7 @@ function PictureChoiceExercise(
         >
             <div className="exercise-prompt-row">
                 <p
-                    className="m-0 font-medium"
+                    className="m-0 flex-auto font-medium"
                     data-testid="picture-prompt"
                 >
                     <InlineMarkdown>{exercise.prompt ?? ""}</InlineMarkdown>

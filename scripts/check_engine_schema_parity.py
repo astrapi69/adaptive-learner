@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-"""App-vs-engine schema parity gate (mirror decoupling).
+"""App-vs-engine schema parity gate (engine = reference, #1517).
 
-Since the mirror decoupling, the content repos mirror ``schema/`` from
-the `learn-content-engine <https://github.com/astrapi69/learn-content-engine>`_
-npm release (pinned there), NOT from this app. The app's only sync
-target is the engine: an app schema bump (``make sync-schema``) triggers
-the engine's documented schema-sync procedure, an engine release, and a
-pin bump in the consumers.
+The `learn-content-engine <https://github.com/astrapi69/learn-content-engine>`_
+npm package is the CANONICAL home of the lesson schema (immutable per
+published release). This app MIRRORS the pinned engine release in
+``schema/*.json`` and regenerates its structural Pydantic layer from that
+mirror (``make sync-schema``); the content repos mirror THE ENGINE
+RELEASE (pinned there), NOT this app. A format change starts in the
+engine (or is ratified there): engine PR + release first, then pin bump +
+``make sync-schema`` here, then the content repos re-pin.
 
-This gate closes the chain on the app side: the committed, generated
+This gate proves the mirror is faithful: the committed
 ``schema/lesson.schema.json`` + ``schema/content-manifest.schema.json``
 must be byte-identical to the schema bundled in the PINNED engine
-release (``schema/engine-version.txt``). Red means: the app schema moved
-and the engine follow-up (sync + release + pin bump) is still missing —
+release (``schema/engine-version.txt``). Red means: the mirror was
+hand-edited, or the pin bump after an engine release is still missing;
 a visible, defined step instead of silent drift.
 
 The comparison target is the npm tarball of the pinned engine version —
@@ -31,6 +33,7 @@ Configurable via env:
 
 Stdlib only (urllib + tarfile) — runs with a bare ``python3`` in CI.
 """
+
 from __future__ import annotations
 
 import io
@@ -49,9 +52,7 @@ REGISTRY_BASE = "https://registry.npmjs.org/learn-content-engine/-"
 # the engine npm tarball. Exactly the artifacts the engine bundles.
 COMPARED = {
     "schema/lesson.schema.json": "package/schema/lesson.schema.json",
-    "schema/content-manifest.schema.json": (
-        "package/schema/content-manifest.schema.json"
-    ),
+    "schema/content-manifest.schema.json": ("package/schema/content-manifest.schema.json"),
 }
 
 
@@ -68,9 +69,7 @@ def tarball_url(version: str) -> str:
 def load_tarball(source: str) -> bytes:
     """Fetch the tarball bytes from a URL or a local path."""
     if source.startswith(("http://", "https://")):
-        req = urllib.request.Request(
-            source, headers={"User-Agent": "engine-schema-parity-check"}
-        )
+        req = urllib.request.Request(source, headers={"User-Agent": "engine-schema-parity-check"})
         with urllib.request.urlopen(req, timeout=60) as resp:  # noqa: S310
             if resp.status != 200:
                 raise RuntimeError(f"GET {source} -> HTTP {resp.status}")

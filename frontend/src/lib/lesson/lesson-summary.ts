@@ -125,7 +125,26 @@ export function deriveCanonicalAnswer(
             }
             return out;
         }
+        case "multiple_choice":
+            return multipleChoiceCanonicalAnswer(exercise);
+        default:
+            // ext:* extension types (schema 1.7): the core has no
+            // canonical answer for them - the registered extension
+            // owns grading/summary. Same defensive "" as above.
+            return "";
     }
+}
+
+/** #1525 — the correct option text(s) of a multiple_choice exercise,
+ *  comma-joined in authored order (one text in single mode). Extracted
+ *  to keep ``deriveCanonicalAnswer`` under the complexity gate. */
+function multipleChoiceCanonicalAnswer(
+    exercise: ContentLessonExercise,
+): string {
+    return (exercise.options ?? [])
+        .filter((option) => option.correct === true)
+        .map((option) => option.text)
+        .join(", ");
 }
 
 /** Walk a lesson's exercise steps and produce a per-step

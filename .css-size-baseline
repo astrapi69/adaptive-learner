@@ -7,4 +7,75 @@
 # minimal anheben (Escape-Hatch wie .filesize-baseline).
 #
 # Erste nicht-Kommentar-Zeile = die Baseline-Zahl.
-7591
+#
+# 7591 -> 7506 (EXP-044 Tranche 1, #1485): 8 tote Selektoren aus dem
+# #1467-Audit geloescht (Layer 5), jeder vorab per git grep gegen
+# frontend/src als ungenutzt bestaetigt.
+#
+# 7506 -> 7497 (#1512): body.has-bottom-nav-Reservierung entfernt mit der
+# mobilen BottomTabBar.
+#
+# 7497 -> 7509 (EXP-044 Tranche 2a, #1485): +12 reine Wrapper-Zeilen
+# (6x "@layer legacy {" + 6x "}") um die Bloecke Buttons/Landing/
+# Onboarding/Assessment/Dashboard/Session - Kaskaden-Reparatur, kein
+# neues CSS. Tranche 4+ loescht diese Regeln samt Wrappern wieder.
+# 7509 -> 7531 (EXP-044 Tranche 2b Re-Cut, #1485): +22 reine Wrapper-
+# Zeilen (11x "@layer legacy {" + 11x "}") um die vom Konflikt-Audit
+# (scripts/check-legacy-wrap-conflicts.py, PR #1576) als CLEAN bestaetigten
+# Bloecke Rating-Group/Storage-Toggle/Progress-Table/EXP-008-Celebration/
+# EXP-008-Milestone/Curriculum/RecentSessions/MethodBadges/VisualDiff/
+# AnswerAnims/PWA-Banner - Kaskaden-Reparatur, kein neues CSS. Tranche 4+
+# loescht diese Regeln samt Wrappern wieder.
+# 7531 -> 7557 (EXP-044 Tranche 2c, #1485): +26 reine Wrapper-Zeilen
+# (13x "@layer legacy {" + 13x "}") um die vom Konflikt-Audit
+# (scripts/check-legacy-wrap-conflicts.py) als CLEAN bestaetigten Bloecke
+# Export/AutoLoop/MultiCycle/ModelPicker/BackupCompare/Gamification/
+# Badges/Streaks/Anki/Voice/Pronunciation/NotebookLM/ApiKeyValidation -
+# Kaskaden-Reparatur, kein neues CSS. Tranche 4+ loescht diese Regeln
+# samt Wrappern wieder.
+# NICHT gewrappt (Konflikt-Audit als Utility-Konflikt): MobilePolish-9A
+# (#1583), ReadAloudTTS (#1584), ChatAnalysisLoading (#1585).
+# 7557 -> 7556 (#1592): die tragende Regel
+# `.app-nav .nav-group-label { display: none }` (3 Zeilen) entfernt +
+# 2-Zeilen-Kommentar - die Label-Sichtbarkeit steuert jetzt die NavGroup
+# `hideLabel`-Prop statt eines ungelayerten CSS-Kontext-Overrides, damit die
+# Region kaskaden-schuldenfrei wird. Netto -1.
+# 7556 -> 7569 (EXP-044 Tranche 2c-nav, #1597): +4 reine Wrapper-Zeilen
+# (2x "@layer legacy {" + 2x "}") um Navigation + Nav-Rest, plus ein
+# 9-Zeilen-Begruendungskommentar fuer die neue UNGELAYERTE Sektion
+# "Lesson header / summary + content-set heading". Die 4 vom
+# Konflikt-Audit als Utility-KONFLIKT gemeldeten Regeln (.content-set-meta
+# h2/h4, .lesson-header-set, .lesson-summary-stats, .lesson-summary-actions)
+# wurden aus der Navigation-Region herausgeloest, damit Navigation +
+# Nav-Rest CLEAN wrapbar werden; sie bleiben absichtlich ungelayert
+# (Reconciliation = sichtbare Aenderung, spaetere Tranche). Kein neues CSS.
+# NICHT gewrappt (Utility-Konflikt, ungelayert): nur noch die neue
+# Lesson-header/summary-Sektion (#1597). MobilePolish-9A (#1583),
+# ChatAnalysisLoading (#1585) + ReadAloudTTS (#1584) sind jetzt gewrappt (s.u.).
+# NICHT gewrappt (Legacy-vs-unlayered-Legacy-Praezedenz, #1592):
+# LessonMode-LandscapeNav - jetzt NICHT mehr durch Navigation/Nav-Rest
+# noch durch .nav-hamburger blockiert (alle gewrappt), sondern nur noch
+# durch die ungelayerten .nav-links + .app-nav (mobile @media). Erst
+# wrapbar wenn auch diese gelayert sind (naechster Schritt nach #1583).
+# 7569 -> 7573 (#1540): +line-height pin on .lesson-header h1.
+# 7573 -> 7575 (EXP-044 Tranche 2c, #1583): +2 netto um den Block
+# MobilePolish-9A (2x Wrapper-Zeile "@layer legacy {" / "}" minus die tote
+# `.nav-hamburger { margin-left: auto }`, +1 Kommentarzeile). Die
+# margin-left-Regel war tot: Navigation.tsx rendert den Hamburger immer mit
+# dem wichtigen `ml-0!`-Utility, das gewinnt - Loeschen raeumt den einzigen
+# Wrap-Konflikt weg (Konflikt-Audit: CLEAN). Kein neues CSS.
+# 7575 -> 7572 (EXP-044 Tranche 2c, #1585): -3 netto um den Block
+# ChatAnalysisLoading. Die einzige Konflikt-Regel `.analysis-error-inline p
+# { margin:0; color:var(--error) }` geloescht und als token-Utilities
+# (`m-0 text-[var(--error)]`) an den (vorher nackten) Consumer-<p> in
+# ImportDetail.tsx verschoben - gleiches Rendering; danach Block CLEAN und
+# gewrappt (+2 Wrapper - 4 Regel-Zeilen - 1 Leerzeile = -3). Kein neues CSS.
+# 7572 -> 7571 (EXP-044 Tranche 2c, #1584): -1 netto um den Block
+# ReadAloudTTS. Die einzige Konflikt-Regel `.exercise-prompt-row > p
+# { flex:1 1 auto; margin:0 }` geloescht und als Utilities (`flex-auto m-0`)
+# an die 5 Prompt-<p>-Consumer verschoben (matching/picture-choice/cloze/
+# cloze-multiselect + shared ExercisePromptRow; alle hatten schon `m-0`,
+# `flex-auto` == `flex:1 1 auto` -> gleiches Rendering); danach Block CLEAN
+# und gewrappt (+2 Wrapper - 4 Regel-Zeilen +1 Kommentarzeile = -1). Kein
+# neues CSS.
+7571

@@ -45,10 +45,10 @@ on:
           - finish
         default: prepare
       skip_e2e:
-        description: "prepare only: skip the extra Playwright smoke (make test-e2e-smoke)"
+        description: "prepare only: skip the advisory extra Playwright smoke (make test-e2e-smoke). Default true — it is API-mode and flakes on container dev-server cold-start (#1254); the mandatory make release-test gate already covers Playwright. Set false to run it."
         required: false
         type: boolean
-        default: false
+        default: true
 
 # Only the standard token scope is needed: pushing the release branch, main,
 # develop + tags, and creating the GitHub Release. Anything beyond this would
@@ -70,10 +70,10 @@ jobs:
     # flaky cdn.playwright.dev download — the established #317 fix, same as the
     # release-prepare gate + dexie-smoke/manual-automation. This job is
     # `make release-test`-driven and uploads no artifacts, so it runs as root
-    # and apt-installs make below. Pin the tag to e2e/package-lock.json's
-    # @playwright/test version (1.59.1); bump together. Refs #317, #1248.
+    # and apt-installs make below. Pin the tag to e2e/bun.lock's
+    # @playwright/test version (1.61.1); bump together. Refs #317, #1248.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     timeout-minutes: 60
     steps:
       - name: Validate version input
@@ -111,6 +111,17 @@ jobs:
         with:
           node-version: "24"
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
       - name: Configure git identity + trust the workspace
         # This job runs as root inside the Playwright container while the
         # checked-out tree is owned by the runner user, so git rejects every
@@ -131,12 +142,11 @@ jobs:
 
       - name: Frontend deps
         working-directory: frontend
-        # --legacy-peer-deps: eslint@10 vs eslint-plugin-react peer cap (#266).
-        run: npm ci --legacy-peer-deps
+        run: bun install --frozen-lockfile
 
       - name: E2E deps
         working-directory: e2e
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Docs deps (verify-docs-discipline runs the mkdocs nav check)
         working-directory: docs
@@ -215,7 +225,7 @@ jobs:
     # Same pre-baked-browser image as prepare (#317/#1248); runs the smoke
     # against the release/<version> branch prepare just pushed.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     timeout-minutes: 40
     steps:
       - name: Validate version input
@@ -244,18 +254,28 @@ jobs:
         with:
           node-version: "24"
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
       - name: Backend + plugin deps
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
 
       - name: Frontend deps
         working-directory: frontend
-        # --legacy-peer-deps: eslint@10 vs eslint-plugin-react peer cap (#266).
-        run: npm ci --legacy-peer-deps
+        run: bun install --frozen-lockfile
 
       - name: E2E deps
         working-directory: e2e
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       # NO `playwright install` step: the browsers are baked into the container.
 

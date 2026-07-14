@@ -3,24 +3,25 @@
  * ``nav-redirects.spec.ts``).
  *
  * EXP-037 (#850) restructured the nav into a small grouped primary bar
- * (Nielsen-Norman 5-7) plus a mobile ``BottomTabBar`` (4 tabs + a "More"
- * sheet), and KEPT several pages reachable by URL after dropping them from the
- * nav (``/session``, ``/anki``, ``/pronunciation``, ``/create-lesson``).
+ * (Nielsen-Norman 5-7), and KEPT several pages reachable by URL after dropping
+ * them from the nav (``/session``, ``/anki``, ``/pronunciation``,
+ * ``/create-lesson``).
  *
  * #1390 (Option A) established ONE primary navigation per viewport class and
  * removed the #891 desktop sidebar (a second desktop primary nav behind a
- * burger):
+ * burger). #1512 then removed the mobile bottom tab bar, leaving the hamburger
+ * drawer as the single mobile navigation:
  *   - ``> 768px``: the horizontal top bar (``nav-*``) is the primary nav; the
  *     hamburger + drawer do NOT exist in the DOM.
- *   - ``<= 768px``: the hamburger + drawer own the top-bar links, and the
- *     ``BottomTabBar`` provides the primary tabs.
+ *   - ``<= 768px``: the hamburger + drawer own the top-bar links (the single
+ *     mobile primary nav); there is NO bottom tab bar.
  *
  * This spec proves:
  *
  *   - the desktop top bar shows its grouped entries with NO burger/drawer,
  *   - the tablet-width top bar behaves identically,
- *   - the mobile bottom bar shows exactly its 4 tabs + the More sheet, and
- *     the hamburger drawer carries the full primary set,
+ *   - the mobile hamburger drawer carries the full primary set, with NO bottom
+ *     tab bar present,
  *   - the still-reachable (un-redirected) routes render, not the 404 page.
  *
  * Dexie build, no backend; content is mocked so ``/content`` renders without a
@@ -41,7 +42,6 @@ const PRIMARY_NAV = [
   "learning-path",
   "session",
   "content",
-  "contribute",
   "progress",
   "settings",
   "help",
@@ -65,7 +65,7 @@ test.describe("Navigation structure", () => {
     await expect(page.getByTestId("nav-hamburger")).toHaveCount(0);
     await expect(page.getByTestId("sidebar-open-toggle")).toHaveCount(0);
     await expect(page.getByTestId("desktop-sidebar")).toHaveCount(0);
-    await expect(page.getByTestId("bottom-tab-bar")).toBeHidden();
+    await expect(page.getByTestId("bottom-tab-bar")).toHaveCount(0);
     expect(errors.pageErrors()).toEqual([]);
   });
 
@@ -82,39 +82,30 @@ test.describe("Navigation structure", () => {
     }
     await expect(page.getByTestId("nav-hamburger")).toHaveCount(0);
     await expect(page.getByTestId("desktop-sidebar")).toHaveCount(0);
-    await expect(page.getByTestId("bottom-tab-bar")).toBeHidden();
+    await expect(page.getByTestId("bottom-tab-bar")).toHaveCount(0);
     expect(errors.pageErrors()).toEqual([]);
   });
 
-  test("mobile shows the bottom bar + the hamburger drawer (<= 768px)", async ({
+  test("mobile nav is the hamburger drawer only — no bottom bar (<= 768px)", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await mockContent(page);
+    const errors = installErrorCollectors(page);
     await seedLearner(page);
 
-    const bar = page.getByTestId("bottom-tab-bar");
-    await expect(bar).toBeVisible();
-    // 4 NavLink tabs + the "More" button = 5 direct children.
-    await expect(bar.locator("> *")).toHaveCount(5);
-    for (const id of ["tab-learn", "tab-content", "tab-learning-path", "tab-progress"]) {
-      await expect(page.getByTestId(id)).toBeVisible();
-    }
+    // #1512 — the mobile bottom tab bar was removed; the hamburger drawer is
+    // the single mobile navigation.
+    await expect(page.getByTestId("bottom-tab-bar")).toHaveCount(0);
 
-    // The "More" sheet exposes the overflow entries (Settings + Help).
-    await page.getByTestId("tab-more").click();
-    await expect(page.getByTestId("more-sheet")).toBeVisible();
-    await expect(page.getByTestId("more-settings")).toBeVisible();
-    await expect(page.getByTestId("more-help")).toBeVisible();
-    await page.getByTestId("more-sheet-close").click();
-
-    // #1390 — the hamburger drawer is the mobile top-bar navigation and
-    // carries the FULL primary set (parity with the desktop top bar).
+    // The hamburger drawer is the mobile primary nav and carries the FULL
+    // primary set (parity with the desktop top bar).
     await expect(page.getByTestId("nav-hamburger")).toBeVisible();
     await page.getByTestId("nav-hamburger").click();
     for (const entry of PRIMARY_NAV) {
       await expect(page.getByTestId(`nav-${entry}`)).toBeVisible();
     }
+    expect(errors.pageErrors()).toEqual([]);
   });
 
   test("routes kept reachable after the nav drop still render (no 404)", async ({

@@ -82,12 +82,13 @@
       "type": "object"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/content-set.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/content-set.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "One downloadable lesson set inside a ContentManifest.\n\nA set is the unit of versioning: re-publishing a single\nlesson bumps the set's ``version`` and triggers a\nre-download (see the cache layer in commit 5).",
   "properties": {
     "assets": {
+      "default": [],
       "description": "Phase 54 / v1.37.0 \u2014 optional list of binary assets (images, audio) the set bundles. Each entry declares a relative path inside ``assets/`` and the expected size in KiB. The downloader fetches every declared asset alongside the lesson JSON; the cache stores them under ``{cache_root}/.../v{version}/assets/{path}``. The manifest validator rejects assets exceeding the per-file size limit (default 500 KiB).",
       "items": {
         "$ref": "#/$defs/ContentSetAsset"
@@ -199,6 +200,7 @@
       "type": "string"
     },
     "tags": {
+      "default": [],
       "description": "Free-form tags ('beginner', 'travel', 'business'). Surfaced in the Set Browser as filter chips.",
       "items": {
         "type": "string"
@@ -249,5 +251,5 @@
   ],
   "title": "ContentSet",
   "type": "object",
-  "x-schema-version": "1.5"
+  "x-schema-version": "1.6"
 }

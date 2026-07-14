@@ -19,8 +19,33 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
+  # Path-detection so a frontend-only / CSS PR skips the backend + plugin
+  # test STEPS (their poetry install + suite), which cover none of those
+  # changes. The jobs still RUN, so the required checks report success (no
+  # pending-required-check trap) - they just exit fast when nothing
+  # backend-relevant changed. Push to develop/main always runs the full
+  # suite (the merge gate) via the ``!= 'pull_request'`` half of each gate.
+  changes:
+    name: Detect changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'plugins/**'
+              - '**/*.py'
+              - 'Makefile'
+              - '.github/workflows/ci.yml'
+
   backend-tests:
     name: Backend Tests
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -44,9 +69,11 @@ jobs:
             poetry-backend-${{ runner.os }}-py3.12-
 
       - name: Install Poetry
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         run: pip install poetry
 
       - name: Install backend dependencies
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
 
@@ -59,7 +86,7 @@ jobs:
       # builds the DB — the natural fallback (no silent skip). Push to
       # develop/main + nightly + release always run the full suite (below).
       - name: Restore testmon data (PR only)
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && needs.changes.outputs.backend == 'true'
         uses: actions/cache@v6
         with:
           path: backend/.testmondata
@@ -68,6 +95,7 @@ jobs:
             testmon-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}-
 
       - name: Run backend tests (selective on PR, full on push)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         working-directory: backend
         # On PR: pytest --testmon runs only impacted tests (Test Impact
         # Analysis, #615). On push to develop/main: the FULL suite, the merge
@@ -115,6 +143,7 @@ jobs:
   # Plugins always run the full suite on every trigger.
   plugin-tests:
     name: Plugin Tests
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -135,13 +164,16 @@ jobs:
             poetry-backend-${{ runner.os }}-py3.12-
 
       - name: Install Poetry
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         run: pip install poetry
 
       - name: Install backend dependencies (path-installs every plugin)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
 
       - name: Run plugin tests (make test-plugins via the backend venv)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         run: make test-plugins
 
   # Plugin matrix job: skeleton ships zero plugins, so this job is
@@ -191,36 +223,51 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Node 24 stays the RUNTIME (Vite build, Vitest, tsc); Bun is only the
+      # package manager + script runner (#1492 Phase 1). No npm cache on
+      # setup-node — the bun install cache below replaces it.
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
 
       - name: Install dependencies
         working-directory: frontend
-        # --legacy-peer-deps: #266 eslint@10 vs eslint-plugin-react ^9.7 peer
-        # cap (matches local dev); remove once the plugin supports eslint 10.
-        run: npm ci --legacy-peer-deps
+        # --frozen-lockfile is the bun equivalent of `npm ci` (no lockfile
+        # mutation). No --legacy-peer-deps needed: bun resolves the tree
+        # without npm's peer-dep strictness (#1492).
+        run: bun install --frozen-lockfile
 
       - name: TypeScript type check
         working-directory: frontend
-        run: npx tsc --noEmit
+        run: bunx tsc --noEmit
 
-      # EXP-039 drift gate (frontend half): the TS lesson types are generated
-      # from schema/lesson.schema.json. Fails if they are stale vs the committed
-      # schema. The Python half (schema/quality-rules/doc) is covered by
-      # backend test_lesson_schema_drift.py.
-      - name: Lesson TS types drift check
+      # D1b (#1521) drift gate (frontend half): the TS lesson types now come
+      # from learn-content-engine, so this gate only keeps the bundle-local
+      # ajv schema mirror in sync with schema/lesson.schema.json. Fails if the
+      # mirror is stale vs the committed schema. The Python half
+      # (schema/quality-rules/doc) is covered by backend
+      # test_lesson_schema_drift.py.
+      - name: Lesson schema mirror drift check
         working-directory: frontend
-        run: node scripts/generate-lesson-types.mjs --check
+        run: node scripts/sync-schema-mirror.mjs --check
 
       # ESLint (#222, #220). The ratchet reached zero: the suite is clean,
       # so the ceiling is 0 — any new warning fails CI. Blocking errors
       # (react-hooks/rules-of-hooks, react/jsx-key) also have zero violations.
       - name: ESLint
         working-directory: frontend
-        run: npx eslint src/ --max-warnings 0
+        run: bunx eslint src/ --max-warnings 0
 
       # Circular-dependency guard (#251). Fails only when import cycles
       # EXCEED the documented baseline, so a NEW cycle is a hard error while
@@ -228,7 +275,7 @@ jobs:
       # (peer-incompatible with TS 6 as a devDependency; CI-only tool).
       - name: Circular dependency check
         working-directory: frontend
-        run: npm run check:circular
+        run: bun run check:circular
 
       # Prettier (#254, step 1 — non-blocking). Reports formatting drift in
       # the log without failing the build; the repo-wide reformat is a
@@ -236,7 +283,7 @@ jobs:
       # formatted and the format-on-touch hook has caught up.
       - name: Prettier check (non-blocking)
         working-directory: frontend
-        run: npm run format:check
+        run: bun run format:check
         continue-on-error: true
 
       # Stylelint (#257). Focused config: color-no-invalid-hex is a hard
@@ -245,7 +292,7 @@ jobs:
       # (36 pre-existing, reported not blocked — drive to zero then promote).
       - name: Stylelint
         working-directory: frontend
-        run: npm run lint:css
+        run: bun run lint:css
 
       # Test Impact Analysis (#615): on a PR run only the Vitest files related
       # to files changed since the base branch (`--changed origin/<base>`).
@@ -261,26 +308,26 @@ jobs:
             git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
             if git rev-parse --verify "$BASE" >/dev/null 2>&1; then
               echo "::notice::PR detected — Vitest --changed against $BASE"
-              npx vitest run --changed "$BASE"
+              bunx vitest run --changed "$BASE"
             else
               echo "::warning::base ref $BASE unresolved — running FULL Vitest suite"
-              npx vitest run
+              bunx vitest run
             fi
           else
             echo "::notice::Push to ${{ github.ref_name }} — FULL Vitest suite"
-            npx vitest run
+            bunx vitest run
           fi
 
       - name: Build
         working-directory: frontend
-        run: npx vite build
+        run: bunx vite build
 
       # Dependency vulnerability scan (#224). --audit-level=high so
       # moderate/low advisories surface in the log without blocking the
       # build; a high/critical advisory fails CI for immediate triage.
       - name: npm audit (high+)
         working-directory: frontend
-        run: npm audit --audit-level=high
+        run: bun audit --audit-level=high
 
   pre-commit:
     name: Pre-commit hooks
@@ -309,6 +356,7 @@ jobs:
 
   lint-and-type-check:
     name: Backend ruff + mypy
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -327,14 +375,18 @@ jobs:
           restore-keys: |
             poetry-backend-${{ runner.os }}-py3.12-
       - name: Install Poetry
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         run: pip install poetry
       - name: Install backend dependencies
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
       - name: ruff check
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         working-directory: backend
         run: poetry run ruff check app/
       - name: mypy
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         working-directory: backend
         run: poetry run mypy app/
       # Dependency vulnerability scan (#224). pip-audit is a backend dev
@@ -349,6 +401,7 @@ jobs:
       # A toolchain advisory with no fix yet can be parked with
       # `--ignore-vuln <ID>` (document the ID), never by dropping the gate.
       - name: pip-audit (backend deps)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
         working-directory: backend
         run: |
           poetry run pip install --quiet --upgrade pip setuptools wheel

@@ -38,7 +38,7 @@
       "type": "string"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/card.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/card.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "The smallest learnable unit (Phase 43 / 2B-lesson).\n\nA card carries a single term / concept / fact in a single\ndirection. SRS (Phase 46) tracks one card at a time;\nindividual exercises reference cards by id so a single\n'Bonjour = Hello' card can drive a matching exercise, a\nfree-text drill, and a summary review without\nduplication.\n\nConvention: ``card.id`` is unique within the lesson, not\nglobally. Cross-lesson card sharing happens via a\nseparate ``shared/`` directory inside the set (P-111\nterritory \u2014 not yet implemented).",
@@ -195,6 +195,7 @@
       "title": "Notes"
     },
     "tags": {
+      "default": [],
       "description": "Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').",
       "items": {
         "type": "string"
@@ -228,5 +229,5 @@
   ],
   "title": "Card",
   "type": "object",
-  "x-schema-version": "1.5"
+  "x-schema-version": "1.6"
 }

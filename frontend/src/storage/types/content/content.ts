@@ -17,7 +17,7 @@ import type {
   LessonStep as GeneratedLessonStep,
   MediaType as GeneratedMediaType,
   TokenRole as GeneratedTokenRole,
-} from "./lesson-schema.generated";
+} from "learn-content-engine";
 
 /**
  * Lifecycle status of a downloaded set in "Meine Inhalte" (#1300).

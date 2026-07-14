@@ -1,0 +1,5 @@
+{
+  "id": "13-invalid-steps-not-array",
+  "title": "Invalid fixture: steps has the wrong JSON type",
+  "steps": "this must be an array of LessonStep objects"
+}

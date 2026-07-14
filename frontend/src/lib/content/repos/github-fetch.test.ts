@@ -11,7 +11,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   buildFileRequest,
   fetchGitHubFileText,
+  fetchLatestCommitSha,
   fetchWithRetry,
+  isFullCommitSha,
   isTransientStatus,
 } from "./github-fetch";
 
@@ -151,5 +153,60 @@ describe("fetchGitHubFileText", () => {
     await expect(
       fetchGitHubFileText("a/b", "main", "f.txt"),
     ).rejects.toMatchObject({ status: 404 });
+  });
+});
+
+function jsonRes(status: number, body: unknown): Response {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    json: async () => body,
+  } as Response;
+}
+
+describe("isFullCommitSha", () => {
+  it("accepts a 40-char lowercase-hex SHA and rejects anything else", () => {
+    expect(isFullCommitSha("a".repeat(40))).toBe(true);
+    expect(isFullCommitSha("A".repeat(40))).toBe(false); // uppercase
+    expect(isFullCommitSha("a".repeat(39))).toBe(false); // too short
+    expect(isFullCommitSha("main")).toBe(false);
+  });
+});
+
+describe("fetchLatestCommitSha", () => {
+  it("resolves the commit SHA from the api.github.com commits endpoint", async () => {
+    const sha = "c".repeat(40);
+    const fetchSpy = vi.fn(
+      (_url: string, _init?: RequestInit) => Promise.resolve(jsonRes(200, { sha })),
+    );
+    vi.stubGlobal("fetch", fetchSpy);
+    await expect(fetchLatestCommitSha("jane/x", "main")).resolves.toBe(sha);
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      "https://api.github.com/repos/jane/x/commits/main",
+    );
+    // Public read → no custom headers (simple CORS request).
+    expect(fetchSpy.mock.calls[0][1]).toBeUndefined();
+  });
+
+  it("sends the Authorization header when a token is given", async () => {
+    const fetchSpy = vi.fn(
+      (_url: string, _init?: RequestInit) =>
+        Promise.resolve(jsonRes(200, { sha: "d".repeat(40) })),
+    );
+    vi.stubGlobal("fetch", fetchSpy);
+    await fetchLatestCommitSha("jane/x", "main", "ghp_secret");
+    const init = fetchSpy.mock.calls[0][1] as RequestInit;
+    expect((init.headers as Record<string, string>).Authorization).toBe(
+      "Bearer ghp_secret",
+    );
+  });
+
+  it("returns null on a non-OK response, a bad SHA, or a network error", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonRes(404, {})));
+    expect(await fetchLatestCommitSha("jane/x", "main")).toBeNull();
+    vi.stubGlobal("fetch", vi.fn(async () => jsonRes(200, { sha: "nope" })));
+    expect(await fetchLatestCommitSha("jane/x", "main")).toBeNull();
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("offline"); }));
+    expect(await fetchLatestCommitSha("jane/x", "main")).toBeNull();
   });
 });

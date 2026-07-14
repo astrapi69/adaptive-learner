@@ -1,0 +1,6 @@
+{
+  "id": "10-invalid-missing-title",
+  "steps": [
+    {"id": "step-01-theory", "type": "theory", "body": "The required 'title' field is absent."}
+  ]
+}

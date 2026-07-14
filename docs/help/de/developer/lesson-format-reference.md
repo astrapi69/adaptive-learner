@@ -1,8 +1,8 @@
 # Lektionsformat-Referenz
 
-> **Generiert** aus den autoritativen Pydantic-Modellen (`adaptive_learner_content_loader.schema`) via `make sync-schema` (EXP-039). Nicht von Hand editieren — die Modelle aendern und den Generator erneut laufen lassen.
+> **Generiert** aus dem kanonischen `learn-content-engine`-Schemaspiegel (`schema/lesson.schema.json`, ein Byte-Spiegel des gepinnten Engine-Release) via `make sync-schema` (EXP-039). Die strukturelle Pydantic-Schicht der App wird aus diesem Spiegel regeneriert; nur die semantischen Validatoren sind handgeschrieben. Nicht von Hand editieren; eine Formatänderung beginnt in der Engine, dann wird der Pin erhöht und der Generator läuft erneut.
 
-Schema-Version: **1.5** (JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter `schema/lesson.schema.json`; referenziere es aus einer Lektions-`.json` via `"$schema"` fuer IDE-Autocomplete + Validierung.
+Schema-Version: **1.6** (JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter `schema/lesson.schema.json`; referenziere es aus einer Lektions-`.json` via `"$schema"` fuer IDE-Autocomplete + Validierung.
 
 Die Feldbeschreibungen stammen woertlich aus den Modelldefinitionen (englisch).
 
@@ -22,6 +22,7 @@ One lesson in a content set (Phase 43 / 2B-lesson).
 | `domain` | `string | null` | no | - |
 | `estimated_minutes` | `number` | no | min=1, max=240 |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
+| `requires_extensions` | `string[]` | no | - |
 | `resources` | `LessonResource[] | null` | no | - |
 | `source_language` | `string | null` | no | - |
 | `steps` | `LessonStep[]` | yes | minItems=1 |
@@ -88,19 +89,23 @@ One exercise step. Type-tagged via ``type``.
 | `direction` | `"source_to_target" | "target_to_source" | "both" | "random"` | no | - |
 | `distractors` | `string[]` | no | maxItems=20 |
 | `examples` | `InlineExample[] | null` | no | - |
+| `ext_payload` | `object` | no | - |
+| `from_cards` | `boolean` | no | - |
 | `hint` | `string | null` | no | - |
 | `id` | `string` | yes | minLen=1, maxLen=120 |
 | `images` | `PictureImage[] | null` | no | - |
+| `multiple` | `boolean` | no | - |
+| `options` | `MultipleChoiceOption[] | null` | no | - |
 | `pairs` | `Pair[] | null` | no | - |
 | `prompt` | `string` | yes | minLen=1, maxLen=1000 |
 | `sentence` | `string | null` | no | - |
 | `tiles` | `string[] | null` | no | - |
-| `type` | `ExerciseType` | yes | - |
+| `type` | `ExerciseType | ExtExerciseType` | yes | - |
 
 
 ### `ExerciseType` (enum)
 
-`matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze`
+`matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze` · `multiple_choice`
 
 ### `InlineExample`
 
@@ -148,6 +153,16 @@ One step in the lesson sequence.
 | `theory_ref` | `string | null` | no | - |
 | `title` | `string | null` | no | - |
 | `type` | `StepType` | yes | - |
+
+
+### `MultipleChoiceOption`
+
+One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `correct` | `boolean` | no | - |
+| `text` | `string` | yes | minLen=1, maxLen=500 |
 
 
 ### `Pair`

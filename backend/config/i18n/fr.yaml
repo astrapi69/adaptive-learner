@@ -89,7 +89,6 @@ nav:
   online: En ligne
   offline: Hors ligne
   anki: Anki
-  contribute: "Contribuer"
   dev_badge: DEV
   dev_badge_tooltip: "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactive-le dans les Paramètres."
   content: "Mon contenu"
@@ -522,6 +521,7 @@ settings:
     unavailable: "Ton navigateur n'a pas encore proposé l'installation."
     installed: "Application installée."
   section_review: "Révision"
+  section_srs: "Répétition espacée"
   explanations_enabled: "Afficher les explications d'erreur"
   explanations_enabled_desc: "Après une leçon, affiche un court conseil de règle pour chaque erreur."
   section_hints: "Indices"
@@ -963,6 +963,10 @@ about:
   donations_heading: Soutenir le développement
   donations_intro: Adaptive Learner est gratuit et open-source. S'il t'aide, pense à contribuer.
   donations_primary: préféré
+  contribute_heading: "Contribuer au contenu"
+  contribute_intro: "La bibliothèque de contenus grandit grâce aux contributions de la communauté. Si tu veux ajouter des leçons, commence ici."
+  contribute_repo: "Dépôt de contenus"
+  contribute_template: "Modèle d'ensemble de contenus"
   donations:
     liberapay_desc: Dons récurrents. Open-source, aucune commission de plateforme.
     github_desc: Soutiens via ton compte GitHub existant.
@@ -972,6 +976,8 @@ about:
   license_text_link: (texte)
   repo_label: Dépôt
   docs_label: Documentation
+  tutorial_label: "Tutoriel de l'app"
+  tutorial_link: "Ouvrir le tutoriel directement"
   issues_label: Issues
 backup:
   section_title: "Sauvegarde"
@@ -1840,6 +1846,17 @@ lesson:
       result_correct: "Tout est correct !"
       result_partial: "{correct} sur {total} corrects."
       empty: "Cet exercice à trous n'a pas de trous."
+    multiple_choice:
+      single_group_label: "Choisis une réponse"
+      multi_group_label: "Sélectionne tout ce qui s'applique"
+      badge_correct: "Correct"
+      badge_wrong: "Faux"
+      badge_missed: "Manquée"
+      result_correct: "Correct !"
+      result_wrong: "Pas tout à fait. Regarde les options marquées."
+      submit: "Vérifier la réponse"
+      retry: "Réessayer"
+      empty: "Cet exercice à choix multiple n'a pas d'options."
     instruction:
       matching:
         receptive: Associe les paires (Reconnaître)
@@ -1965,6 +1982,10 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "Partager"
+    aria: "Partager le set '{title}'"
+    title: "Partager le set"
   filter:
     all_sources: "Toutes les sources"
     official: "Officiel"
@@ -2353,22 +2374,11 @@ content:
     status_submitted: soumise
     status_accepted: acceptée
     status_rejected: rejetée
-  gaps:
-    title: Leçons manquantes
-    intro: La bibliothèque communautaire présente quelques lacunes. Peux-tu aider à en combler une ?
-    next_level: '{target} pour les locuteurs de {source} a des leçons, mais {level} n''existe pas encore.'
-    missing_pair: '{target} {level} pour les locuteurs de {source} n''existe pas encore.'
-    help: Peux-tu aider ?
   credit:
     name_label: Ton nom (facultatif)
     name_placeholder: par ex. Maria S.
     show_name: Afficher le nom dans la leçon
     privacy: "Ton nom sera affiché dans la leçon et dans la pull request."
-contribute:
-  title: "Contribuer"
-  intro: "Aide à enrichir la bibliothèque communautaire en comblant ses lacunes."
-  loading: "Chargement…"
-  empty: "Aucune lacune pour l'instant — la bibliothèque communautaire couvre tes ensembles téléchargés. Merci !"
 milestone:
   streak: "Série de {n} jours !"
   level_up: "Niveau {n} atteint !"
@@ -2942,7 +2952,6 @@ srs:
   last_answer: "Ta réponse :"
   correct: "Correct :"
   no_elements: "Aucun élément suivi pour l'instant."
-  settings_title: "Répétition espacée"
   settings_intro: "Ce que tu rates revient pour révision selon un calendrier qui s'allonge à mesure que tu réussis, tu travailles donc tes points faibles plus souvent que ce que tu maîtrises."
   schedule_streak: "{n} bonnes réponses d'affilée"
   schedule_streak_plus: "{n}+ bonnes réponses d'affilée"
@@ -2968,6 +2977,7 @@ favorites:
   empty: "Aucun favori pour l'instant — touche l'étoile d'une leçon."
   save_prompt: "Enregistrer cette leçon dans tes favoris"
 content_repo:
+  set_not_found: "Le set '{set}' est introuvable dans ce dépôt."
   remove:
     title: "Supprimer le dépôt"
     message: "Supprimer {source} ? Son contenu téléchargé sera retiré de cet appareil."
@@ -3004,6 +3014,8 @@ content_repo:
   add:
     title: "Ajouter un dépôt"
   add_link:
+    title_set: "Connecter le dépôt et ouvrir le set ?"
+    body_set: "Connecte le dépôt '{repo}' et ouvre le set '{set}'."
     title: "Ajouter ce dépôt de contenu ?"
     body: "Tu as été invité à ajouter un dépôt de contenu à Adaptive Learner."
     invalid: "Ce lien d'invitation ne contient pas de dépôt valide."
@@ -3012,6 +3024,7 @@ content_repo:
     branch: "Branche"
     token: "Jeton (dépôts privés, facultatif)"
   action:
+    connect_and_open: "Connecter et ouvrir"
     sync_all: "Tout synchroniser"
     add: "Ajouter le dépôt"
     cancel: "Annuler"
@@ -3236,3 +3249,40 @@ migration:
   settings:
     title: "Importer depuis la version en ligne"
     body: "Tu as utilisé Adaptive Learner en ligne ? Crées-y une sauvegarde, puis utilise Importer ci-dessus pour récupérer tes données."
+
+registry:
+  title: Enregistrez votre dépôt
+  intro: Proposez votre propre dépôt de contenus pour la recherche multi-dépôts. Cela prépare une demande de fusion vers le répertoire officiel des contenus ; un mainteneur la relit et la fusionne une fois que la CI a validé votre commit épinglé.
+  copied: Entrée copiée dans le presse-papiers.
+  copy_failed: Copie impossible ; sélectionnez le texte manuellement.
+  error:
+    invalid_url: Saisissez une URL de dépôt GitHub valide (p. ex. owner/repo).
+    no_title: Ajoutez un titre court pour votre dépôt.
+    no_commit: Impossible de déterminer le dernier commit ; vérifiez l'URL du dépôt et la branche.
+    prepare_failed: Impossible de préparer la soumission.
+  field:
+    pick: Choisissez un dépôt connecté
+    pick_placeholder: — choisissez ou saisissez ci-dessous —
+    url: URL du dépôt GitHub
+    branch: Branche
+    title: Titre
+    title_ph: Votre collection d'ensembles
+    description: Description (facultatif)
+    description_ph: Une ligne sur son contenu
+  action:
+    prepare: Préparer la soumission
+    copy: Copier l'entrée
+    copied: Copié
+    propose: Ouvrir le répertoire pour proposer
+    create_pr: Créer une demande de fusion
+  result:
+    title: Votre entrée de registre
+    reason: 'Vérification locale : {reason}'
+    instructions: 'Ajoutez cette entrée au tableau {file} du répertoire officiel des contenus :'
+  status:
+    validated: Validé localement
+    pending: En attente ; la CI validera
+  pr:
+    created: Demande de fusion ouverte.
+    failed: Impossible d'ouvrir la demande de fusion.
+    view: Voir votre demande de fusion

@@ -5,6 +5,7 @@
       "description": "One downloadable lesson set inside a ContentManifest.\n\nA set is the unit of versioning: re-publishing a single\nlesson bumps the set's ``version`` and triggers a\nre-download (see the cache layer in commit 5).",
       "properties": {
         "assets": {
+          "default": [],
           "description": "Phase 54 / v1.37.0 \u2014 optional list of binary assets (images, audio) the set bundles. Each entry declares a relative path inside ``assets/`` and the expected size in KiB. The downloader fetches every declared asset alongside the lesson JSON; the cache stores them under ``{cache_root}/.../v{version}/assets/{path}``. The manifest validator rejects assets exceeding the per-file size limit (default 500 KiB).",
           "items": {
             "$ref": "#/$defs/ContentSetAsset"
@@ -116,6 +117,7 @@
           "type": "string"
         },
         "tags": {
+          "default": [],
           "description": "Free-form tags ('beginner', 'travel', 'business'). Surfaced in the Set Browser as filter chips.",
           "items": {
             "type": "string"
@@ -249,7 +251,7 @@
       "type": "object"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/content-manifest.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/content-manifest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "Top-level manifest a content repo publishes at its root.\n\nA repo CAN ship multiple sets in one manifest (the canonical\npilot ``astrapi69/adaptive-learner-content`` is structured\nthat way). The manifest itself is small (~one entry per\nset) so the Set Browser can list everything without\ndownloading any lesson content.\n\n``schema_version`` is the LOADER's contract, not the\ncontent authors' choice. A future bump (e.g. v1.1\nintroducing a new mandatory field on ``ContentSet``)\nmeans older app versions reject the manifest with a\n'please upgrade' message rather than silently miss the\nnew field.",
@@ -270,6 +272,7 @@
     },
     "metadata": {
       "additionalProperties": true,
+      "default": {},
       "description": "Free-form repo-level metadata (license, author, homepage URL, contact). The loader does not interpret these fields \u2014 they surface as-is in the Set Browser's 'About this source' panel.",
       "title": "Metadata",
       "type": "object"
@@ -282,12 +285,13 @@
       "type": "string"
     },
     "schema_version": {
-      "default": "1.5",
+      "default": "1.6",
       "description": "Manifest schema version. The Content-Loader currently understands '1.0'; later versions will be rejected with a friendly upgrade hint.",
       "title": "Schema Version",
       "type": "string"
     },
     "sets": {
+      "default": [],
       "description": "Every downloadable set this repo publishes.",
       "items": {
         "$ref": "#/$defs/ContentSet"
@@ -301,5 +305,5 @@
   ],
   "title": "ContentManifest",
   "type": "object",
-  "x-schema-version": "1.5"
+  "x-schema-version": "1.7"
 }

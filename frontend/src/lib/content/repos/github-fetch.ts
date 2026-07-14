@@ -140,6 +140,48 @@ export async function fetchGitHubFileText(
   return response.text();
 }
 
+/** True for a full 40-char lowercase-hex git commit SHA. */
+export function isFullCommitSha(value: string): boolean {
+  return /^[0-9a-f]{40}$/.test(value.trim());
+}
+
+/**
+ * Resolve the current HEAD commit SHA of ``source``@``branch`` via the
+ * ``api.github.com`` commits endpoint. Used by the registry-submission flow to
+ * PIN the exact commit a repo is proposed at.
+ *
+ * Public repos: a plain ``GET`` (no custom headers) is a "simple" cross-origin
+ * request the API answers with ``Access-Control-Allow-Origin: *`` — no
+ * preflight. A token adds the ``Authorization`` header (the API supports the
+ * preflight). Returns ``null`` on any failure so the caller degrades to a
+ * manual SHA entry — never throws.
+ */
+export async function fetchLatestCommitSha(
+  source: string,
+  branch: string,
+  token = "",
+): Promise<string | null> {
+  const trimmed = token.trim();
+  const url = `${API_BASE}/repos/${source}/commits/${encodeURIComponent(branch)}`;
+  const init: RequestInit | undefined = trimmed
+    ? {
+        headers: {
+          Authorization: `Bearer ${trimmed}`,
+          Accept: "application/vnd.github+json",
+        },
+      }
+    : undefined;
+  try {
+    const response = await fetchWithRetry(url, init);
+    if (!response.ok) return null;
+    const data = (await response.json()) as { sha?: unknown };
+    const sha = typeof data?.sha === "string" ? data.sha : "";
+    return isFullCommitSha(sha) ? sha : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Fetch a repo binary file. Returns ``null`` on 404 so a stale manifest
  *  asset entry doesn't fail the whole download; throws on other non-OK. */
 export async function fetchGitHubFileBytesOptional(

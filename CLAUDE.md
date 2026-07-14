@@ -9,7 +9,52 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.1.0** (**first public launch release** - a launch
+- **Current state:** **v2.2.0** (**feature release** on top of the v2.1.0
+  polish release. Highlights: the **extension-exercise tier** - four
+  AI-authored exercise types adopted from the content engine
+  (`ext:al-categorization` #1591, `-error-correction` #1593,
+  `-reading-comprehension` #1603, `-graded-quiz` #1616) + an extension-tier
+  load guard #1566; a native **multiple_choice** type (schema 1.6, #1525); the
+  app becomes a **schema CONSUMER** of `learn-content-engine` (engine-owned
+  `$id` + generated schema/TS types #1517/#1519/#1522, pin -> 0.12.0, lesson
+  schema 1.5 -> 1.6 -> 1.7, all **additive/backward-compatible**); a **federated
+  content-repo registry** + register-a-repo flow #1511; a **simpler mobile nav**
+  (bottom tab bar removed, hamburger drawer is the single mobile nav #1512;
+  Contribute entry dropped, gaps folded into `/content` #1494/#1504); **per-set
+  share link** + App-Tutorial deep link #1572/#1574; the **EXP-044 CSS-cascade
+  repair** - one `@layer legacy` declared before Tailwind utilities so utilities
+  win, a pre-wrap conflict-audit tool #1576, Tranches 0-2c wrapping the
+  audit-CLEAN component blocks #1497/#1568/#1578/#1588/#1613/#1583/#1585/#1584 +
+  the NavGroup `hideLabel` fix + audit blind-spot closure #1592/#1598 + a
+  `global.css` size ratchet #1467; **Playwright upgraded to 1.61.1** (Ubuntu
+  26.04, container tags -> `v1.61.1-noble` #1594/#1596); **Bun** adopted as the
+  package manager (frontend #1496 + e2e #1551); a CI path-gate skips backend
+  work on frontend-only PRs #1617. Fixes: word_tiles grades the composed token
+  sequence #1544, free-text tolerates punctuation/quotes #1580, the iOS #1569
+  caret-desync viewport trade-off #1610 + its guard realignment #1614, the
+  lesson-matching@mobile flake #1540. Content library at **499 lessons / 35
+  sets / 6 domains** #1531. See changelog/releases/v2.2.0.md.)
+  Prior **v2.1.0** = (**polish release** on top of the v2.0.0
+  public launch, NO schema/API/data-model change against v2.0.0. Highlights:
+  **removing a content repo no longer leaves ghost progress** - only loadable
+  content is surfaced (Dashboard/review/paused filtered by an availability
+  oracle), the orphaned progress is hidden not deleted, and removal offers an
+  opt-in delete #1446; the **Settings page split into per-tab panels** #1448
+  and reordered around a clear causal sequence (Data #1452, Learning #1462,
+  Install moved to General #1456), plus a card-container fix for two sections
+  #1466; **Learning Path** fixes - the set filter is wired + the progress
+  metric fixed + defaults to Personal #1454, search-icon overlap + empty-path
+  add-lesson #1463; a **discoverable greyed "Ask AI" button** with a BYOK hint
+  #1444; **content-sync robustness** - add-repo validation reads public repos
+  over raw URLs (never the throttled contents API / shared PAT) #1440 and a
+  transient re-validation blip no longer marks a synced repo Unverified #1442;
+  a **hardened UI-language fallback** (navigator.language, no silent loss)
+  #1464; and **WCAG-AA-contrast status toasts** #1474. Also: refactor-candidates
+  audit #1449, global.css growth guard #1468, and a dexie-smoke +
+  manual-automation release-gate stabilisation sweep (#1469-#1474) after several
+  PRs merged without the nightly/release-only gates. See
+  changelog/releases/v2.1.0.md.)
+  Prior **v2.0.0** = (**first public launch release** - a launch
   caesura, NOT a breaking change against v1.99.0. Adaptive Learner is an
   offline-first, account-free, BYOK-AI, spaced-repetition learning app you run
   yourself, PWA + MIT. Highlights since v1.99.0: **configurable learning**

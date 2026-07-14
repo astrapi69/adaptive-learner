@@ -60,7 +60,7 @@ export default function CacheManagementSection() {
       <h2 className="settings-section-title">
         {t("pwa.cache_heading", "Offline cache")}
       </h2>
-      <p className="muted" style={{ marginTop: 0 }} data-testid="cache-summary">
+      <p className="muted mt-0" data-testid="cache-summary">
         {info === null
           ? "…"
           : empty
@@ -90,7 +90,7 @@ export default function CacheManagementSection() {
         <div
           role="group"
           aria-label={t("pwa.cache_clear_confirm", "Clear the offline cache?")}
-          style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
+          className="flex items-center gap-2"
           data-testid="cache-clear-confirm"
         >
           <span className="muted">

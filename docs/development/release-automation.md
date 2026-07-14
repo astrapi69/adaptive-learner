@@ -23,7 +23,6 @@ Adaptive Learner implements the Maven-property pattern in a multi-language repo:
 | File | Mechanism |
 |---|---|
 | `frontend/package.json` | JSON edit at top-level `version` |
-| `frontend/package-lock.json` | Surgical regex on the FIRST TWO `"version":` lines (top-level + `packages[""]`) |
 | `launcher/pyproject.toml` | TOML edit at `tool.poetry.version` |
 | `launcher/adaptive_learner_launcher/__init__.py` | `__version__ = "..."` literal substitution (kept for PyInstaller frozen-binary compatibility) |
 | `launcher/adaptive-learner-launcher.spec` | `CFBundleVersion` + `CFBundleShortVersionString` (both same value) |

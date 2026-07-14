@@ -1,4 +1,6 @@
 export { default as ContentShareDialog } from "./ContentShareDialog";
+export { default as SetShareButton } from "./SetShareButton";
+export type { SetShareButtonProps } from "./SetShareButton";
 export type { ShareWizardProps } from "./ShareWizard";
 export { default as ShareWizard } from "./ShareWizard";
 export { default as ShareWizardStep1 } from "./ShareWizardStep1";

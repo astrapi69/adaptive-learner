@@ -1,0 +1,15 @@
+{
+  "id": "11-invalid-unknown-exercise-type",
+  "title": "Invalid fixture: unknown exercise type",
+  "steps": [
+    {
+      "id": "step-01-exercise",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-unknown",
+        "type": "ordering",
+        "prompt": "This exercise type does not exist in the closed ExerciseType enum."
+      }
+    }
+  ]
+}

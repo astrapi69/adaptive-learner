@@ -200,7 +200,7 @@ function ClozeMultiSelect(
 
             <div className="exercise-prompt-row">
                 <p
-                    className="m-0 rounded-sm bg-[var(--surface-2)] p-3 text-[1.0625rem] font-medium leading-relaxed"
+                    className="m-0 flex-auto rounded-sm bg-[var(--surface-2)] p-3 text-[1.0625rem] font-medium leading-relaxed"
                     data-testid="cloze-multiselect-question"
                 >
                     <InlineMarkdown>{question}</InlineMarkdown>

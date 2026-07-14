@@ -564,13 +564,17 @@ describe("Content — My Lessons (Phase 59C)", () => {
     localStorage.clear();
   });
 
-  it("no longer renders the 'Missing Lessons' gap block (#1149 — moved to /contribute)", async () => {
-    // A published de->fr A1 set with no A2 would be a next-level gap, but
-    // the gap block now lives in the dedicated /contribute area, not here.
+  it("never renders the 'Missing Lessons' gap block (#1504 — moved to Settings > About)", async () => {
+    // A published de->fr A1 set with no A2 WOULD have been a next-level gap.
+    // The dynamic gap list surfaced language pairs unrelated to the learner,
+    // so it was removed from /content entirely; helping the library grow is
+    // now a static block in Settings > About. The contributions history (the
+    // user's OWN shared lessons) is unaffected.
     listSetsMock.mockResolvedValue({ sets: [SAMPLE_ENTRY], sources: [] });
     renderPage();
     await screen.findByTestId("content-page");
     expect(screen.queryByTestId("content-gaps")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("content-gaps-list")).not.toBeInTheDocument();
   });
 });
 

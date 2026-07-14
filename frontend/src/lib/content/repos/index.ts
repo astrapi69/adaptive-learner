@@ -4,6 +4,8 @@ export * from "./discover-index";
 export * from "./discover-repos";
 export * from "./github-fetch";
 export * from "./recommended-repos";
+export * from "./registry-submission";
+export * from "./registry-types";
 export * from "./repo-rating";
 export * from "./repo-token";
 export * from "./search-index-loader";

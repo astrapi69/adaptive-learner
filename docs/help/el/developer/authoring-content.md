@@ -23,13 +23,65 @@ discovery, τη λήψη, το caching και τη σύγκριση εκδόσε
    συνόλου.
 3. **Αρχεία μαθημάτων** (`sets/{set-id}/lessons/NN-slug.json`) — ένα
    αρχείο JSON ανά μάθημα, επικυρωμένο σε κάθε λήψη έναντι του σχήματος
-   v1.0.
+   μαθήματος (βλ. *Το σχήμα είναι η μοναδική πηγή αλήθειας* παρακάτω).
 
 Τα pilot-σύνολα που αποστέλλονται με τον Adaptive Learner βρίσκονται στο
 ξεχωριστό repo περιεχομένου [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
 (ελεγμένα ως αδελφικό checkout `../adaptive-learner-content` και
 ομαδοποιημένα από το build μέσω `frontend/scripts/copy-bundled-content.mjs`)
 και είναι κατάλληλα ως πρότυπο.
+
+## Το σχήμα είναι η μοναδική πηγή αλήθειας (EXP-039)
+
+Η μορφή μαθήματος/άσκησης έχει **έναν κανονικό (canonical) ορισμό**:
+το JSON Schema μαθήματος που αποστέλλει το npm πακέτο
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+(αμετάβλητο ανά δημοσιευμένο release). Μέσα σε αυτή την εφαρμογή, το
+**δομικό** στρώμα Pydantic στο plugin Content-Loader
+(`adaptive_learner_content_loader.schema`) **αναγεννάται** από αυτόν
+τον καθρέφτη (`scripts/generate_pydantic_models.py`)· μόνο οι
+σημασιολογικοί validators πολλαπλών πεδίων γράφονται στο χέρι. Το
+`make sync-schema` ανανεώνει τον καθρέφτη και επανεκδίδει τα παράγωγα
+artefacts, και πύλες byte-ισοτιμίας αποδεικνύουν ότι το
+`schema/*.json` ισούται με το καρφιτσωμένο release του engine. Τα
+σημεία που παλιότερα απέκλιναν δεν μπορούν πλέον:
+
+- `schema/lesson.schema.json` (+ αδελφικά αρχεία): το μηχανικά
+  αναγνώσιμο JSON Schema (Draft 2020-12). Αναφέρσου σε αυτό από ένα
+  `.json` μαθήματος μέσω ενός κλειδιού `"$schema"` κορυφαίου
+  επιπέδου, για αυτόματη συμπλήρωση IDE και inline επικύρωση.
+- `schema/quality-rules.json`: τα κοινά ελάχιστα ποιότητας (π.χ.
+  αριθμός ασκήσεων, αριθμός αποδεκτών απαντήσεων free-text), που
+  καταναλώνονται από τον client-side validator περιεχομένου αντί για
+  ένα δεύτερο, χειροκίνητα συντηρούμενο αντίγραφο.
+- Οι τύποι μαθήματος TypeScript του frontend και η σελίδα MkDocs
+  *Lesson format reference* παράγονται επίσης (**μην τα επεξεργάζεσαι
+  στο χέρι**)· ακολουθούν τον καθρέφτη του engine, οπότε ξανατρέξε τη
+  γεννήτρια μετά από κάθε re-pin.
+
+Μια πύλη απόκλισης (`make sync-schema-check`, μέρος του
+`release-test`, συν το `backend/tests/test_lesson_schema_drift.py`
+στο `make test`) αποτυγχάνει αν κάποιο παραγόμενο artefact αποκλίνει
+από τον καρφιτσωμένο καθρέφτη του engine. Το κλείσιμο της αλυσίδας
+είναι η πύλη byte-ισοτιμίας εφαρμογής-έναντι-engine:
+`make engine-parity-check` (`scripts/check_engine_schema_parity.py`),
+το offline pin `engine-schema-parity.test.ts` και το τεστ συνοχής pin
+`engine-pin.test.ts` (dependency του `frontend/package.json` ==
+`schema/engine-version.txt`). Τα repos περιεχομένου καθρεφτίζουν **το
+καρφιτσωμένο release του engine** (όχι αυτό το repo) και επικυρώνουν
+έναντι αυτού του καθρέφτη στη δική τους CI.
+
+**Διαδικασία αλλαγής μορφής (η αυθεντία του σχήματος στο engine):**
+μια αλλαγή στη μορφή μαθήματος ξεκινά στο engine ή επικυρώνεται εκεί:
+πρώτα PR στο engine + npm release· μετά αυτή η εφαρμογή ανεβάζει το
+pin του engine (`frontend/package.json` + `schema/engine-version.txt`)
+και ξανατρέχει το `make sync-schema`, που ανανεώνει τον καθρέφτη και
+αναγεννά το δομικό στρώμα Pydantic· μόνο οι νέοι σημασιολογικοί
+validators γράφονται στο χέρι· έπειτα τα repos περιεχομένου
+ξανακαρφιτσώνουν το `engine-version.txt` τους. Μια χειροκίνητη
+επεξεργασία του καθρέφτη (ή ένα μπαγιάτικο pin) κάνει κόκκινες τις
+πύλες byte-ισοτιμίας· το ξεχασμένο βήμα γίνεται ορατό, ποτέ σιωπηλή
+απόκλιση.
 
 ## Ζεύγη γλωσσών (v1.44.0)
 
@@ -161,8 +213,7 @@ SRS.
 ### Steps
 
 Ένα μάθημα είναι μια ακολουθία βήμα προς βήμα, κάθε βήμα είτε THEORY
-(ένα μπλοκ Markdown) είτε EXERCISE (ένας από τους τέσσερις τύπους
-ασκήσεων):
+(ένα μπλοκ Markdown) είτε EXERCISE (ένας από τους τύπους ασκήσεων):
 
 ```json
 {
@@ -260,6 +311,14 @@ JSON.
 πίσω στο `label` — άρα το picture_choice λειτουργεί και χωρίς assets
 εικονογράφησης.
 
+> **Μη δημιουργείς ποτέ πολλαπλή επιλογή κειμένου ως
+> `picture_choice`.** Αυτός ο τύπος είναι μόνο για πραγματικά assets
+> εικόνων· για επιλογές κειμένου αποδίδει πλακίδια placeholder, όχι
+> ένα χρηστικό στοιχείο ελέγχου (πρβλ.
+> astrapi69/adaptive-learner-content-test#10). Η πολλαπλή επιλογή
+> κειμένου είναι `multiple_choice` (προτιμώμενο) ή `cloze` σε
+> λειτουργία `select`· βλ. την ενότητα cloze παρακάτω.
+
 ### free_text
 
 Πληκτρολόγηση απάντησης. Ο renderer ταιριάζει πρώτα ακριβώς, μετά με
@@ -349,16 +408,83 @@ len(blanks)`).
   σταθερό seed. **Απαιτεί μη κενά `distractors`** — ο επικυρωτής
   σχήματος απορρίπτει το `cloze_mode: "select"` χωρίς αυτά.
 
-**Οι ερωτήσεις πολλαπλής επιλογής δημιουργούνται έτσι** — δεν υπάρχει
-ξεχωριστός τύπος άσκησης `multiple_choice` (εκ σχεδιασμού, βλ. EXP-036
-§4.3). Μια ερώτηση μονής σωστής απάντησης είναι ένα cloze με ένα κενό
-σε λειτουργία `select`: η `sentence` (που τελειώνει σε `___`) είναι η
-ερώτηση, το `accept[0]` του κενού είναι η σωστή επιλογή και τα
-`distractors` είναι οι λανθασμένες. Παράδειγμα: `"sentence": "Η
-πρωτεύουσα της Γαλλίας είναι ___."`, `"blanks": [{"accept":
-["Paris"]}]`, `"cloze_mode": "select"`, `"distractors": ["Berlin",
-"Madrid", "Rome"]`. (Η «επιλογή όλων όσων ισχύουν» / πολλαπλή επιλογή
-δεν υποστηρίζεται ακόμη — βλ. #1195.)
+**Πολλαπλή επιλογή: από το σχήμα v1.6 υπάρχει εγγενής τύπος
+`multiple_choice`.** **Συνυπάρχει** με το όχημα `cloze`
+`select`/`multiselect` (EXP-036 §4.3, #890): η υπάρχουσα πολλαπλή
+επιλογή με βάση το cloze παραμένει έγκυρη, τίποτα δεν είναι
+deprecated. Προτίμησε το `multiple_choice` για νέο περιεχόμενο
+πολλαπλής επιλογής κειμένου: η ορθότητα είναι flag ανά επιλογή, οπότε
+η παγίδα της μη επικάλυψης accept/distractors δεν μπορεί να συμβεί.
+Οι ερωτήσεις Σωστό/Λάθος και Ναι/Όχι δεν χρειάζονται δικό τους τύπο:
+τις καλύπτει ένα `multiple_choice` δύο επιλογών (ή ένα `cloze`
+`select` δύο επιλογών).
+
+**Προτιμώμενο (σχήμα v1.6+, #1525): ο εγγενής τύπος
+`multiple_choice`.** Κάθε επιλογή φέρει το δικό της flag `correct`,
+οπότε δεν υπάρχουν ξεχωριστές λίστες accept/distractors που πρέπει να
+μένουν ξένες μεταξύ τους. Το `multiple: false` (προεπιλογή) είναι
+μονή επιλογή (ακριβώς μία σωστή)· το `multiple: true` είναι «επιλογή
+όλων όσων ισχύουν» (βαθμολόγηση ακριβούς συνόλου, χωρίς μερική
+πίστωση):
+
+```json
+{
+  "id": "ex-capital",
+  "type": "multiple_choice",
+  "prompt": "What is the capital of France?",
+  "card_ids": ["card-paris"],
+  "options": [
+    {"text": "Paris", "correct": true},
+    {"text": "Berlin"},
+    {"text": "Madrid"},
+    {"text": "Rome"}
+  ]
+}
+```
+
+**Όχημα legacy (παραμένει πλήρως έγκυρο: συνύπαρξη, τίποτα
+deprecated):** πριν από την v1.6, η πολλαπλή επιλογή κειμένου
+δημιουργούνταν ως `cloze` σε λειτουργία `select` (EXP-036 §4.3,
+#890). Μια ερώτηση μονής απάντησης είναι ένα cloze με ένα κενό: η
+`sentence` (που τελειώνει σε `___`) είναι η ερώτηση, το `accept[0]`
+του κενού είναι η σωστή επιλογή και τα `distractors` είναι οι
+λανθασμένες. Παράδειγμα:
+`"sentence": "The capital of France is ___."`,
+`"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
+`"distractors": ["Berlin", "Madrid", "Rome"]`.
+
+Μπορείς επίσης να βάλεις όλη την ερώτηση στο `prompt` και να
+χρησιμοποιήσεις ένα σκέτο `"sentence": "___"`· ο renderer δείχνει ένα
+`<select>` από τη σωστή απάντηση + τους distractors, βαθμολογεί την
+επιλογή, δίνει feedback και τροφοδοτεί το SRS:
+
+```json
+{
+  "id": "ex-hook-state",
+  "type": "cloze",
+  "prompt": "Which hook manages local state in a function component?",
+  "card_ids": ["card-usestate"],
+  "sentence": "___",
+  "blanks": [{"accept": ["useState"]}],
+  "cloze_mode": "select",
+  "distractors": ["useEffect", "useContext", "useRef"]
+}
+```
+
+**Η «επιλογή όλων όσων ισχύουν»** (δύο ή περισσότερες σωστές
+απαντήσεις, π.χ. μια ερώτηση εξέτασης διπλώματος οδήγησης)
+χρησιμοποιεί `cloze_mode: "multiselect"` (ακριβής αντιστοίχιση
+συνόλου πάνω σε `accept` + `distractors`, #1195):
+
+```json
+{
+  "type": "cloze",
+  "cloze_mode": "multiselect",
+  "sentence": "Which cities are in Germany?",
+  "accept": ["Berlin", "Hamburg"],
+  "distractors": ["Vienna", "Zurich"]
+}
+```
 
 **Πολλαπλά κενά ανά cloze** υποστηρίζονται: κάθε `___` στην πρόταση
 αντιστοιχίζεται με τη σειρά στην επόμενη καταχώρηση στο `blanks`. Κάθε

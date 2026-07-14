@@ -23,7 +23,7 @@
  * a correct-but-differently-worded learner answer as wrong.
  */
 
-import type { ExerciseType as SchemaExerciseType } from "../../../storage/types/content/lesson-schema.generated";
+import type { ExerciseType as SchemaExerciseType } from "learn-content-engine";
 
 /** A single theory step fed to the generator as context. */
 export interface TheoryStep {
@@ -58,6 +58,7 @@ export const ALLOWED_EXERCISE_TYPES = [
   "free_text",
   "word_tiles",
   "cloze",
+  "multiple_choice",
 ] as const;
 
 export type GeneratedExerciseType = (typeof ALLOWED_EXERCISE_TYPES)[number];

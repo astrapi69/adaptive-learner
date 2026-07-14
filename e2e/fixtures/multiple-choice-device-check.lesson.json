@@ -1,0 +1,231 @@
+{
+  "id": "05-rettungsgasse-einsatzfahrzeuge",
+  "title": "Rettungsgasse und Einsatzfahrzeuge",
+  "description": "Übungsfragen im Stil einer Führerscheinprüfung (Beispiel Deutschland): Rettungsgasse, Blaulicht mit Einsatzhorn und Busse an Haltestellen. Referenz-Lektion für den nativen multiple_choice-Typ (Schema v1.6): zwei Single-Choice-Aufgaben, eine Mehrfachauswahl (multiple: true) und zwei klassische cloze-select-Fragen. Eigene Formulierungen, keine amtlichen Fragen.",
+  "target_language": "de",
+  "source_language": "de",
+  "domain": "knowledge",
+  "estimated_minutes": 10,
+  "cards": [
+    {
+      "id": "gasse-wo",
+      "front": "Rettungsgasse - wo?",
+      "back": "Auf Autobahnen und mehrspurigen Außerortsstraßen wird die Rettungsgasse zwischen dem linken und dem unmittelbar rechts daneben liegenden Fahrstreifen gebildet.",
+      "notes": "Bei drei Spuren also zwischen der linken und der mittleren Spur.",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": [
+        "verkehrsregeln"
+      ]
+    },
+    {
+      "id": "gasse-wann",
+      "front": "Rettungsgasse - wann?",
+      "back": "Die Rettungsgasse wird gebildet, sobald der Verkehr stockt - nicht erst, wenn sich ein Einsatzfahrzeug nähert.",
+      "notes": "Im Stau lässt sich nachträglich kaum noch Platz schaffen.",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": [
+        "verkehrsregeln"
+      ]
+    },
+    {
+      "id": "gasse-missbrauch",
+      "front": "Rettungsgasse unerlaubt befahren",
+      "back": "Wer eine Rettungsgasse unerlaubt befährt, riskiert Bußgeld, Punkte und ein Fahrverbot.",
+      "notes": "Die Gasse ist ausschließlich für Einsatz- und Hilfsfahrzeuge da.",
+      "media_type": "text",
+      "difficulty": 3,
+      "tags": [
+        "verkehrsregeln"
+      ]
+    },
+    {
+      "id": "blaulicht-horn",
+      "front": "Blaulicht mit Einsatzhorn",
+      "back": "Blaues Blinklicht zusammen mit dem Einsatzhorn bedeutet: sofort freie Bahn schaffen.",
+      "notes": "Ruhig bleiben, blinken und geordnet Platz machen.",
+      "media_type": "text",
+      "difficulty": 1,
+      "tags": [
+        "verkehrsregeln"
+      ]
+    },
+    {
+      "id": "bus-warnblink",
+      "front": "Bus mit Warnblinklicht",
+      "back": "An einem Bus, der mit eingeschaltetem Warnblinklicht an einer Haltestelle steht, darf nur mit Schrittgeschwindigkeit vorbeigefahren werden.",
+      "notes": "Das gilt auch für den Gegenverkehr.",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": [
+        "verkehrsregeln"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Die Rettungsgasse",
+      "body": "# Rettungsgasse\n\nAuf **Autobahnen** und **mehrspurigen Außerortsstraßen** gilt: Sobald der Verkehr **stockt**, wird eine Rettungsgasse gebildet - nicht erst, wenn ein Einsatzfahrzeug zu sehen ist.\n\n- Die Gasse entsteht **zwischen dem linken und dem unmittelbar rechts daneben liegenden Fahrstreifen** (bei drei Spuren: zwischen links und Mitte).\n- Wer die Gasse **unerlaubt befährt**, riskiert **Bußgeld, Punkte und ein Fahrverbot**.\n\n*Übungsfragen im Stil einer Führerscheinprüfung (Beispiel Deutschland) - eigene Formulierungen.*"
+    },
+    {
+      "id": "step-einsatz",
+      "type": "theory",
+      "title": "Einsatzfahrzeuge und Busse",
+      "body": "## Blaulicht und Einsatzhorn\n\n**Blaues Blinklicht zusammen mit dem Einsatzhorn** bedeutet: **sofort freie Bahn schaffen**. Ruhig bleiben, blinken und geordnet ausweichen.\n\n## Busse an Haltestellen\n\nSteht ein Bus mit **eingeschaltetem Warnblinklicht** an einer Haltestelle, darf nur mit **Schrittgeschwindigkeit** vorbeigefahren werden - das gilt auch für den **Gegenverkehr**."
+    },
+    {
+      "id": "ex-nmc-wo",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Wo entsteht die Gasse?",
+      "exercise": {
+        "id": "ex-nmc-wo",
+        "type": "multiple_choice",
+        "prompt": "Wo wird auf einer dreispurigen Autobahn die Rettungsgasse gebildet?",
+        "card_ids": [
+          "gasse-wo"
+        ],
+        "options": [
+          {
+            "text": "Zwischen dem linken und dem mittleren Fahrstreifen",
+            "correct": true
+          },
+          {
+            "text": "Zwischen dem mittleren und dem rechten Fahrstreifen"
+          },
+          {
+            "text": "Auf dem Seitenstreifen"
+          },
+          {
+            "text": "Erst kurz vor der Unfallstelle"
+          }
+        ],
+        "hint": "Immer rechts neben dem linken Fahrstreifen."
+      }
+    },
+    {
+      "id": "ex-nmc-wann",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Wann entsteht die Gasse?",
+      "exercise": {
+        "id": "ex-nmc-wann",
+        "type": "multiple_choice",
+        "prompt": "Wann muss die Rettungsgasse gebildet werden?",
+        "card_ids": [
+          "gasse-wann"
+        ],
+        "options": [
+          {
+            "text": "Sobald der Verkehr stockt",
+            "correct": true
+          },
+          {
+            "text": "Erst wenn ein Einsatzfahrzeug sichtbar ist"
+          },
+          {
+            "text": "Nur bei einem Unfall mit Verletzten"
+          },
+          {
+            "text": "Nur bei Dunkelheit und schlechter Sicht"
+          }
+        ],
+        "hint": "Im stehenden Stau ist es zu spät."
+      }
+    },
+    {
+      "id": "ex-nmc-regeln",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Was stimmt zur Rettungsgasse?",
+      "exercise": {
+        "id": "ex-nmc-regeln",
+        "type": "multiple_choice",
+        "multiple": true,
+        "prompt": "Welche Aussagen zur Rettungsgasse treffen zu? (Mehrfachauswahl)",
+        "card_ids": [
+          "gasse-wo",
+          "gasse-missbrauch"
+        ],
+        "options": [
+          {
+            "text": "Sie entsteht zwischen dem linken und dem unmittelbar rechts daneben liegenden Fahrstreifen",
+            "correct": true
+          },
+          {
+            "text": "Unerlaubtes Befahren kann Bußgeld, Punkte und ein Fahrverbot kosten",
+            "correct": true
+          },
+          {
+            "text": "Sie wird erst gebildet, wenn ein Einsatzfahrzeug hupt"
+          },
+          {
+            "text": "Auf zweispurigen Autobahnen ist keine Rettungsgasse nötig"
+          }
+        ],
+        "hint": "Zwei Aussagen sind richtig."
+      }
+    },
+    {
+      "id": "ex-mc-blaulicht",
+      "type": "exercise",
+      "theory_ref": "step-einsatz",
+      "title": "Blaulicht und Einsatzhorn",
+      "exercise": {
+        "id": "ex-mc-blaulicht",
+        "type": "cloze",
+        "prompt": "Was bedeutet blaues Blinklicht zusammen mit dem Einsatzhorn?",
+        "card_ids": [
+          "blaulicht-horn"
+        ],
+        "sentence": "___",
+        "blanks": [
+          {
+            "accept": [
+              "Sofort freie Bahn schaffen"
+            ]
+          }
+        ],
+        "cloze_mode": "select",
+        "distractors": [
+          "Nur die Geschwindigkeit verringern",
+          "Sofort anhalten, egal wo man steht",
+          "Nichts, solange man selbst Vorfahrt hat"
+        ],
+        "hint": "Ruhig bleiben und geordnet Platz machen."
+      }
+    },
+    {
+      "id": "ex-mc-bus",
+      "type": "exercise",
+      "theory_ref": "step-einsatz",
+      "title": "Bus an der Haltestelle",
+      "exercise": {
+        "id": "ex-mc-bus",
+        "type": "cloze",
+        "prompt": "Ein Bus steht mit Warnblinklicht an der Haltestelle. Wie darf man vorbeifahren?",
+        "card_ids": [
+          "bus-warnblink"
+        ],
+        "sentence": "___",
+        "blanks": [
+          {
+            "accept": [
+              "Nur mit Schrittgeschwindigkeit"
+            ]
+          }
+        ],
+        "cloze_mode": "select",
+        "distractors": [
+          "Mit höchstens 30 km/h",
+          "Mit normaler Geschwindigkeit",
+          "Gar nicht, man muss immer warten"
+        ],
+        "hint": "Das gilt auch für den Gegenverkehr."
+      }
+    }
+  ]
+}

@@ -37,11 +37,17 @@ content checkout, so this guide does not duplicate the numbers.
 
 ## The schema is the single source of truth (EXP-039)
 
-The lesson/exercise format has **one authoritative definition**: the
-Pydantic models in the content-loader plugin
-(`adaptive_learner_content_loader.schema`). Every other artefact is
-**generated** from them via `make sync-schema`, so the places that
-used to drift can no longer:
+The lesson/exercise format has **one canonical definition**: the
+lesson JSON Schema shipped by the
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+npm package (immutable per published release). Inside this app the
+**structural** Pydantic layer in the content-loader plugin
+(`adaptive_learner_content_loader.schema`) is **regenerated** from that
+mirror (`scripts/generate_pydantic_models.py`); only the semantic
+cross-field validators are hand-written. `make sync-schema` refreshes the
+mirror and re-emits the derived artefacts, and byte-parity gates prove
+`schema/*.json` equals the pinned engine release. The places that used to
+drift can no longer:
 
 - `schema/lesson.schema.json` (+ siblings) — the machine-readable
   JSON Schema (Draft 2020-12). Reference it from a lesson `.json`
@@ -52,19 +58,29 @@ used to drift can no longer:
   client-side content validator instead of a second hand-kept copy.
 - The frontend TypeScript lesson types and the
   [Lesson format reference](lesson-format-reference.md) MkDocs page
-  are generated too — **do not hand-edit them**; edit the models and
-  re-run the generator.
+  are generated too (**do not hand-edit them**); they follow the engine
+  mirror, so re-run the generator after a re-pin.
 
 A drift gate (`make sync-schema-check`, part of `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
-fails if any generated artefact diverges from the models. Downstream,
-the [learn-content-engine](https://github.com/astrapi69/learn-content-engine)
-vendors the generated schema via its documented schema-sync procedure
-and ships it with every npm release; the content repos mirror **the
-pinned engine release** (not this repo) and validate against that
-mirror in their own CI. `make engine-parity-check`
-(`scripts/check_engine_schema_parity.py`) keeps the generated schema
-here in visible parity with the pinned engine release.
+fails if any generated artefact diverges from the pinned engine mirror. The chain
+closure is the app-vs-engine byte-parity gate: `make
+engine-parity-check` (`scripts/check_engine_schema_parity.py`), the
+offline pin `engine-schema-parity.test.ts`, and the pin-coherence
+test `engine-pin.test.ts` (`frontend/package.json` dependency ==
+`schema/engine-version.txt`). The content repos mirror **the pinned
+engine release** (not this repo) and validate against that mirror in
+their own CI.
+
+**Format-change procedure (schema authority in the engine):** a
+change to the lesson format starts in the engine, or is ratified
+there — engine PR + npm release first; then this app bumps the engine
+pin (`frontend/package.json` + `schema/engine-version.txt`) and re-runs
+`make sync-schema`, which refreshes the mirror and regenerates the
+structural Pydantic layer; only new semantic validators are written by
+hand; then the content repos re-pin `engine-version.txt`. A hand-edit to
+the mirror (or a stale pin) turns the byte-parity gates red; the
+forgotten step is visible, never silent drift.
 
 ## Language pairs (v1.44.0)
 
@@ -227,20 +243,23 @@ demand via the [Adding a new exercise type](adding-exercise-type.md) recipe.
 | `free_text` | Produce a short, fact-shaped answer | Exact-match, then Levenshtein ≤ 1. |
 | `word_tiles` | One unambiguous word order (language) | Tiles shuffled; `accept_orderings` for variants. |
 | `cloze` (`type`) | A fact with one answer | One `<input>` per blank. |
-| `cloze` (`select`) | **Single multiple choice** | The MC vehicle — renders as tappable buttons (#1342). `accept[0]` correct + `distractors`. |
-| `cloze` (`multiselect`) | "Select all that apply" | Exact-set match over `accept` (all correct) + `distractors` (#1195). |
+| `cloze` (`select`) | Single multiple choice (legacy vehicle) | Renders as tappable buttons (#1342). `accept[0]` correct + `distractors`. |
+| `cloze` (`multiselect`) | "Select all that apply" (legacy vehicle) | Exact-set match over `accept` (all correct) + `distractors` (#1195). |
+| `multiple_choice` | **Native text multiple choice** (schema v1.6, #1525) | `options` (`{text, correct?}`, unique texts) + `multiple`. Single = exactly one correct; multi = exact-set match, no partial credit. |
 
-There is **no** `multiple_choice` / `choice` exercise type — text multiple
-choice is `cloze` `select` mode by design (EXP-036 §4.3, #890; button renderer
-#1342). See [Multiple Choice authoring](#multiple-choice-authoring).
+Since schema v1.6 there is a native `multiple_choice` type. It **coexists**
+with the `cloze` `select`/`multiselect` vehicle (EXP-036 §4.3, #890) — existing
+cloze-based MC stays valid, nothing is deprecated. Prefer `multiple_choice` for
+new text-MC content: correctness is a per-option flag, so the
+accept/distractor-disjointness pitfall cannot happen. See
+[Multiple Choice authoring](#multiple-choice-authoring).
 
 ### Expressible without a new type (conventions, not types)
 
 | Concept | How |
 |---------|-----|
-| Single multiple choice | `cloze` `select` mode |
-| True/False, Yes/No | Two-option `cloze` `select` (e.g. `distractors: ["False"]`) |
-| Dropdown / radio / checkbox | Presentation of a `cloze` select / multiselect — not separate types |
+| True/False, Yes/No | Two-option `multiple_choice` (or a two-option `cloze` `select`) |
+| Dropdown / radio / checkbox | Presentation of `multiple_choice` / cloze select — not separate types |
 
 ### Planned if needed (candidates — NOT a commitment)
 
@@ -274,12 +293,33 @@ conventions below stay here.
 
 ### Multiple Choice authoring
 
-**Multiple choice is authored this way** — there is no separate
-`multiple_choice` exercise type (by design, see EXP-036 §4.3 and #890). A
-single-answer multiple-choice question is a one-blank cloze in
-`select` mode: the `sentence` (ending in `___`) is the question, the
-blank's `accept[0]` is the correct option, and `distractors` are the
-wrong options. Example: `"sentence": "The capital of France is ___."`,
+**Preferred (schema v1.6+, #1525): the native `multiple_choice` type.**
+Options carry their own `correct` flag, so there are no separate
+accept/distractor lists to keep disjoint. `multiple: false` (default) is
+single choice (exactly one correct); `multiple: true` is "select all
+that apply" (exact-set grading, no partial credit):
+
+```json
+{
+  "id": "ex-capital",
+  "type": "multiple_choice",
+  "prompt": "What is the capital of France?",
+  "card_ids": ["card-paris"],
+  "options": [
+    {"text": "Paris", "correct": true},
+    {"text": "Berlin"},
+    {"text": "Madrid"},
+    {"text": "Rome"}
+  ]
+}
+```
+
+**Legacy vehicle (still fully valid — coexistence, nothing deprecated):**
+before v1.6, text MC was authored as `cloze` `select` mode (EXP-036
+§4.3, #890). A single-answer question is a one-blank cloze: the
+`sentence` (ending in `___`) is the question, the blank's `accept[0]` is
+the correct option, and `distractors` are the wrong options. Example:
+`"sentence": "The capital of France is ___."`,
 `"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
 `"distractors": ["Berlin", "Madrid", "Rome"]`.
 
@@ -303,8 +343,8 @@ answer + distractors, grades the pick, gives feedback and feeds the SRS:
 > **Never author text multiple choice as `picture_choice`.** That type is
 > for real image assets only; for text options it renders placeholder
 > tiles, not a usable control (cf.
-> astrapi69/adaptive-learner-content-test#10). Text MC is always
-> `cloze` `select` mode, as above.
+> astrapi69/adaptive-learner-content-test#10). Text MC is
+> `multiple_choice` (preferred) or `cloze` `select` mode, as above.
 
 **"Select all that apply"** (two or more correct answers, e.g. a
 driving-licence exam question) uses `cloze_mode: "multiselect"`:

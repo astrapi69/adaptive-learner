@@ -1,55 +1,67 @@
-"""Lesson schema v1.0 (Phase 43 / EXP-002 / 2B-lesson — P-102).
+"""Lesson schema - semantic layer over the generated structural models (D3b).
 
-A Lesson is the unit a user works through end-to-end. Each
-lesson belongs to a ContentSet and is a sequence of steps:
-theory blocks (Markdown) interleaved with exercises. The
-viewer (Phase 44) renders these step-by-step; the renderer
-does NOT live here — these are pure data shapes the
-Content-Loader validates on download.
+The STRUCTURAL field definitions live in ``schema_generated.py``, derived
+from the canonical engine schema mirror (``schema/lesson.schema.json``,
+pinned learn-content-engine release) via
+``scripts/generate_pydantic_models.py``. This module layers the SEMANTIC
+cross-field rules on top as thin subclasses - the rules JSON-Schema cannot
+express (per-type required fields, cloze marker/blank count, multiselect
+correct-counts, referential integrity, slug/BCP-47 shapes). The engine
+keeps its own semantic layer hand-written in ``validate.ts`` for the same
+reason; the byte-parity gates prove the mirror equals the pinned release.
 
-Design choices, set explicitly so future phases can extend
-the schema without churn:
-
-- ``Lesson`` is opaque to the loader: it stores the JSON
-  exactly as the content author wrote it. Validation
-  happens once at download time (so corrupt content gets
-  caught early); after that the cache surfaces the validated
-  payload to the viewer.
-
-- ``ExerciseType`` is a closed enum. The four Phase 44/45
-  types ship now (matching / picture_choice / free_text /
-  word_tiles); EXP-006 exercise types extend the enum later
-  with a minor schema_version bump.
-
-- ``Card`` is the smallest learnable unit. SRS integration
-  (Phase 46) tracks cards individually; a missed exercise
-  schedules the underlying card for review, not the lesson.
-  Cards CAN be referenced by id from multiple exercises in
-  the same lesson (so 'Bonjour' as the term-of-the-week
-  shows up in the matching exercise AND the free-text drill
-  AND the summary).
-
-- Distractor pool lives on each ``Exercise`` (not on the
-  ``Card``). EXP-005 / P-114 dual-mode: when AI is
-  unavailable, the loader picks distractors from this pool;
-  when AI is available, the AI generator may use the pool
-  as a seed. The decision is made by the exercise renderer,
-  not by the schema.
-
-- Markdown is rendered by the existing react-markdown
-  pipeline (same as the help system). No new dependency.
-
-The lesson schema export is the SECOND half of P-103. The
-first half (manifest + set) shipped in commit 2.
+Public API is unchanged: import ``Lesson``, ``Exercise``, ``Card``,
+``ExerciseType`` etc. from this module as before.
 """
 
 from __future__ import annotations
 
 import re
-from enum import Enum
-from typing import Any, Literal
+from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import Field, field_validator, model_validator
+
+from .schema_generated import (
+    Card as CardBase,
+    CardTokenRole,
+    ClozeBlank,
+    ClozeMode,
+    Direction,
+    Exercise as ExerciseBase,
+    ExerciseType,
+    InlineExample,
+    Lesson as LessonBase,
+    LessonResource,
+    LessonStep as LessonStepBase,
+    MediaType,
+    MultipleChoiceOption,
+    Pair,
+    PictureImage,
+    StepType,
+    TokenRole,
+)
+
+__all__ = [
+    "Card",
+    "CardTokenRole",
+    "ClozeBlank",
+    "ClozeMode",
+    "Direction",
+    "Exercise",
+    "ExerciseType",
+    "InlineExample",
+    "Lesson",
+    "LessonResource",
+    "LessonStep",
+    "MediaType",
+    "MultipleChoiceOption",
+    "Pair",
+    "PictureImage",
+    "StepType",
+    "TokenRole",
+    "dict_to_lesson",
+    "lesson_to_dict",
+]
 
 # Slug-safe identifier — same shape as ContentSet.id /
 # ContentSet.tags. Used for lesson_id, card_id, step ids.
@@ -63,278 +75,9 @@ _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 _LANGUAGE_RE = re.compile(r"^[a-z]{2,3}(-[A-Za-z0-9]{2,8})?$")
 
 
-class ExerciseType(str, Enum):
-    """Closed enum of exercise types the loader knows about.
-
-    EXP-001 + EXP-006: the four base types ship in Phase 43-45.
-    Phase 52D / v1.35.0 added CLOZE (fill-in-the-blank with
-    ``___`` markers) — see the schema_version bump in
-    ``models.py``. Adding a sixth type (ordering, drag-image-
-    pair, etc.) requires a minor schema_version bump and a new
-    enum value plus its renderer.
-    """
-
-    MATCHING = "matching"
-    PICTURE_CHOICE = "picture_choice"
-    FREE_TEXT = "free_text"
-    WORD_TILES = "word_tiles"
-    CLOZE = "cloze"
-
-
-class StepType(str, Enum):
-    """Closed enum for top-level step kinds.
-
-    THEORY = Markdown content step. EXERCISE = one of the
-    ExerciseType variants. The viewer (Phase 44) branches
-    on this; no other step kinds are valid in v1.0.
-    """
-
-    THEORY = "theory"
-    EXERCISE = "exercise"
-
-
-class TokenRole(str, Enum):
-    """Closed enum of grammatical roles a card token can carry.
-
-    Phase 52I / v1.35.0 / P-130. Annotates individual tokens
-    inside a card's ``front`` so the v1.35.0+ cloze generator
-    can pick a semantically-meaningful blank instead of a
-    position-based one. Optional field on Card — old content
-    without token_roles still validates and the generator
-    falls back to a positional heuristic.
-
-    Closed enum to keep author input disciplined. Adding a
-    role (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)
-    is a minor schema_version bump — extending an open enum
-    silently would let typos masquerade as valid roles and
-    the generator would skip them without warning.
-    """
-
-    ARTICLE = "article"
-    VERB = "verb"
-    NOUN = "noun"
-    ADJECTIVE = "adjective"
-    PREPOSITION = "preposition"
-    GENDER_MARKER = "gender_marker"
-    TENSE_MARKER = "tense_marker"
-
-
-class CardTokenRole(BaseModel):
-    """One ``token → role`` annotation on a card.
-
-    Phase 52I / v1.35.0 / P-130. The cloze generator looks up
-    its target blank by matching ``token`` against the
-    ``ElementError.element_key`` — when a role is present, the
-    generator can pick a same-role distractor pool instead of
-    a position-based heuristic.
-
-    The ``token`` is a verbatim slice of the card's ``front``;
-    no whitespace normalisation, so authors can annotate even
-    sub-word morphemes (an accent-bearing letter, an article
-    contraction) if a future generator needs it.
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    token: str = Field(
-        ...,
-        description=(
-            "Verbatim slice of the card's ``front``. The "
-            "generator matches this against the wrong-answer "
-            "key recorded by the SRS layer."
-        ),
-        min_length=1,
-        max_length=120,
-    )
-    role: TokenRole = Field(
-        ...,
-        description="Grammatical role of this token in the card.",
-    )
-
-
-class ClozeBlank(BaseModel):
-    """One blank inside a cloze exercise's ``sentence`` (Phase 52D /
-    v1.35.0 / P-127).
-
-    Marker-based convention: the sentence carries visible ``___``
-    tokens; ``blanks[i]`` provides the metadata for the i-th
-    marker (left-to-right). The validator enforces
-    ``sentence.count("___") == len(blanks)`` so the i↔i mapping
-    is unambiguous at render time.
-
-    ``accept`` carries the per-blank canonical + acceptable
-    variants — the renderer reuses FreeText's ``isFreeTextCorrect``
-    matcher (NFC-normalised + Levenshtein <= 1) so authors only
-    need to enumerate semantic variants (gendered article,
-    capitalisation, et cetera), not typos.
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    accept: list[str] = Field(
-        ...,
-        description=(
-            "Accepted answers for this blank. First entry is the "
-            "canonical (shown after a wrong attempt). Same shape "
-            "as FREE_TEXT.accept."
-        ),
-        min_length=1,
-    )
-    hint: str | None = Field(
-        default=None,
-        description=(
-            "Optional per-blank hint. Surfaced inline next to this specific blank, not lesson-wide."
-        ),
-        max_length=200,
-    )
-    placeholder: str | None = Field(
-        default=None,
-        description=(
-            "Optional placeholder text shown inside the input "
-            "(``type`` mode) before the user starts typing."
-        ),
-        max_length=40,
-    )
-
-
-class Card(BaseModel):
-    """The smallest learnable unit (Phase 43 / 2B-lesson).
-
-    A card carries a single term / concept / fact in a single
-    direction. SRS (Phase 46) tracks one card at a time;
-    individual exercises reference cards by id so a single
-    'Bonjour = Hello' card can drive a matching exercise, a
-    free-text drill, and a summary review without
-    duplication.
-
-    Convention: ``card.id`` is unique within the lesson, not
-    globally. Cross-lesson card sharing happens via a
-    separate ``shared/`` directory inside the set (P-111
-    territory — not yet implemented).
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    id: str = Field(
-        ...,
-        description=(
-            "Slug-safe id. Unique within the parent lesson. "
-            "SRS reviews this id, not the surface term."
-        ),
-        min_length=1,
-        max_length=120,
-    )
-    front: str = Field(
-        ...,
-        description=(
-            "What the learner sees first. Typically the target-language term (e.g. 'Bonjour')."
-        ),
-        min_length=1,
-        max_length=500,
-    )
-    back: str = Field(
-        ...,
-        description=(
-            "What the learner is being TAUGHT to recall. "
-            "Typically the translation / definition / answer "
-            "(e.g. 'Hello')."
-        ),
-        min_length=1,
-        max_length=500,
-    )
-    notes: str | None = Field(
-        default=None,
-        description=(
-            "Optional Markdown footnote shown after the user "
-            "answers. Pronunciation tips, etymology, false-"
-            "friend warnings — anything that helps long-term "
-            "retention."
-        ),
-        max_length=2000,
-    )
-    image: str | None = Field(
-        default=None,
-        description=(
-            "Optional relative path inside the set's "
-            "``assets/`` directory ('assets/img/bonjour.png'). "
-            "Resolved by the asset loader."
-        ),
-    )
-    audio: str | None = Field(
-        default=None,
-        description=(
-            "Optional relative path inside ``assets/`` for "
-            "TTS-recorded pronunciation. The voice plugin "
-            "already supports playback (v1.18.0)."
-        ),
-    )
-    tags: list[str] = Field(
-        default_factory=list,
-        description=("Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular')."),
-        max_length=20,
-    )
-    token_roles: list[CardTokenRole] | None = Field(
-        default=None,
-        description=(
-            "Phase 52I / v1.35.0 / P-130. Optional list of "
-            "``{token, role}`` annotations on the card's "
-            "``front``. The cloze generator (52E) uses these to "
-            "pick a semantically-meaningful blank when "
-            "available; absent annotations fall through to a "
-            "position-based heuristic so old content keeps "
-            "working unchanged."
-        ),
-        max_length=10,
-    )
-    # --- v1.2 -> v1.3: technical / programming content (all optional,
-    # backward compatible). A card whose ``media_type`` is ``"code"`` or
-    # ``"formula"`` carries a ``code_snippet`` the viewer renders as a
-    # syntax-highlighted block with a copy button + optional output.
-    code_snippet: str | None = Field(
-        default=None,
-        description=(
-            "Optional code / formula the card teaches (e.g. a Python "
-            "snippet or an Excel formula). Rendered as a monospace, "
-            "syntax-highlighted block in the viewer."
-        ),
-        max_length=5000,
-    )
-    code_language: str | None = Field(
-        default=None,
-        description=(
-            "Highlighter language hint for ``code_snippet`` "
-            "('python', 'javascript', 'sql', 'excel', ...). Free "
-            "string; the viewer maps unknown values to plain text."
-        ),
-        max_length=30,
-    )
-    expected_output: str | None = Field(
-        default=None,
-        description="What ``code_snippet`` produces, shown in an 'Output:' block.",
-        max_length=2000,
-    )
-    hint: str | None = Field(
-        default=None,
-        description="Progressive hint, revealed on request during an exercise.",
-        max_length=1000,
-    )
-    difficulty: int | None = Field(
-        default=None,
-        description="Optional 1-5 difficulty scale (1 = easiest).",
-        ge=1,
-        le=5,
-    )
-    media_type: Literal["text", "code", "formula", "diagram"] | None = Field(
-        default=None,
-        description=(
-            "Card content kind: 'text' (default when null), 'code', "
-            "'formula', or 'diagram'. Drives code-aware rendering + "
-            "exercise input (monospace editor for code/formula). "
-            "EXP-039: a closed ``Literal`` so the generated JSON-Schema / "
-            "TS types carry the exact union (was a free ``str`` gated by "
-            "a runtime validator)."
-        ),
-    )
+class Card(CardBase):
+    """Semantic layer: slug-shaped ``id`` + ``tags`` (structure in the
+    generated base)."""
 
     @field_validator("id")
     @classmethod
@@ -356,293 +99,11 @@ class Card(BaseModel):
         return value
 
 
-class Pair(BaseModel):
-    """One left↔right pair in a MATCHING exercise.
-
-    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
-    so the generated JSON-Schema / TS types carry the structured
-    ``{left, right}`` shape instead of a loose string map. The
-    ``extra="forbid"`` config + the two required fields replace the
-    former per-pair key check in ``_validate_matching_fields``;
-    validation semantics are unchanged (a pair must have exactly
-    ``left`` and ``right``).
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    left: str = Field(
-        ...,
-        description="The left-column item. The renderer shuffles before display.",
-        min_length=1,
-        max_length=500,
-    )
-    right: str = Field(
-        ...,
-        description="The right-column item this pairs with.",
-        min_length=1,
-        max_length=500,
-    )
 
 
-class PictureImage(BaseModel):
-    """One image option in a PICTURE_CHOICE exercise.
-
-    EXP-039: modeled explicitly (was an inline ``dict[str, str]``)
-    so the generated JSON-Schema / TS types carry the structured
-    ``{src, label, is_correct?}`` shape instead of a loose string
-    map. ``extra="forbid"`` + the two required fields replace the
-    former key-subset / src+label-present checks; the
-    "exactly one correct" rule stays in ``_validate_picture_choice_fields``.
-
-    ``is_correct`` stays a ``str`` (``"true"`` marks the answer) for
-    backward compatibility with authored content, not a ``bool``.
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    src: str = Field(
-        ...,
-        description=(
-            "Relative path inside the set's ``assets/`` directory "
-            "('assets/img/cat.png'). Resolved by the asset loader."
-        ),
-        min_length=1,
-        max_length=500,
-    )
-    label: str = Field(
-        ...,
-        description="Accessible label / alt text for the image option.",
-        min_length=1,
-        max_length=500,
-    )
-    is_correct: str | None = Field(
-        default=None,
-        description=(
-            "Set to the string ``'true'`` on exactly one image to mark "
-            "it the correct choice. Absent on the distractor images."
-        ),
-        max_length=10,
-    )
-
-
-class InlineExample(BaseModel):
-    """One inline worked example on a theory step or exercise (schema v1.5).
-
-    An inline example carries REAL content the learner reads in place —
-    a sample sentence (language lessons) or a code snippet with syntax
-    highlighting (programming lessons). This is DISTINCT from
-    ``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an
-    external illustration: ``example_url`` is the LINK variant,
-    ``examples`` is the INLINE-CONTENT variant. The two are complementary
-    and may coexist on the same theory step.
-
-    When ``language`` is set, ``content`` is treated as source code in
-    that language and rendered as a syntax-highlighted block (the same
-    ``CodeBlock`` the theory Markdown + code cards use); when it is
-    absent, ``content`` is plain text. Additive + optional, so content
-    without ``examples`` validates unchanged.
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    content: str = Field(
-        ...,
-        description=(
-            "The example's content. Plain text (e.g. a sample sentence) "
-            "when ``language`` is absent; source code in ``language`` "
-            "when it is set."
-        ),
-        min_length=1,
-        max_length=5000,
-    )
-    language: str | None = Field(
-        default=None,
-        description=(
-            "Optional highlighter language hint ('jsx', 'python', 'sql', "
-            "...). When set, ``content`` is rendered as a syntax-"
-            "highlighted code block; when null, ``content`` is plain "
-            "text. Free string; the viewer maps unknown values to plain "
-            "text (same convention as ``Card.code_language``)."
-        ),
-        max_length=30,
-    )
-    title: str | None = Field(
-        default=None,
-        description="Optional short heading shown above the example.",
-        max_length=200,
-    )
-
-
-class Exercise(BaseModel):
-    """One exercise step. Type-tagged via ``type``.
-
-    The fields are kept in a single flat shape per
-    ``type`` rather than per-type discriminated unions
-    because the JSON manifests are author-edited; flat
-    shapes are easier to read and to diff in PRs. The
-    validator enforces type-specific requirements via
-    model_validator instead.
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    id: str = Field(
-        ...,
-        description="Slug-safe id, unique within the lesson.",
-        min_length=1,
-        max_length=120,
-    )
-    type: ExerciseType = Field(
-        ...,
-        description="Which exercise renderer handles this step.",
-    )
-    prompt: str = Field(
-        ...,
-        description="The question text shown to the learner.",
-        min_length=1,
-        max_length=1000,
-    )
-    card_ids: list[str] = Field(
-        default_factory=list,
-        description=(
-            "Cards this exercise drills. SRS feedback after a "
-            "wrong answer schedules these cards for review."
-        ),
-        max_length=50,
-    )
-    direction: Literal["source_to_target", "target_to_source", "both", "random"] = Field(
-        default="target_to_source",
-        description=(
-            "EXP-018 / Phase 62 / v1.46.0: which way the card is "
-            "drilled. ``target_to_source`` (default) shows the "
-            "target language and asks the learner to recognise the "
-            "source language (RECEPTIVE, easier). "
-            "``source_to_target`` shows the source and asks the "
-            "learner to produce the target (PRODUCTIVE, harder). "
-            "``both`` / ``random`` let the renderer or the adaptive "
-            "generator pick per attempt. Additive + optional; "
-            "schema_version stays 1.2. Cloze ignores it (in-context)."
-        ),
-    )
-
-    # --- Type-specific fields. Validator below enforces
-    # which fields are required per ``type``. Empty / null
-    # for types that don't use them keeps the JSON files
-    # consistent (no per-type field renaming).
-
-    pairs: list[Pair] | None = Field(
-        default=None,
-        description=(
-            "MATCHING: list of {left, right} pairs to match up. "
-            "The renderer shuffles before display."
-        ),
-    )
-    images: list[PictureImage] | None = Field(
-        default=None,
-        description=(
-            "PICTURE_CHOICE: list of {src, label, is_correct?} "
-            "options. Exactly one entry MUST include "
-            "'is_correct': 'true'. ``src`` is a relative path "
-            "inside the set's ``assets/`` directory."
-        ),
-    )
-    accept: list[str] | None = Field(
-        default=None,
-        description=(
-            "FREE_TEXT: list of accepted answers. Exact-match "
-            "first, Levenshtein-tolerant fallback in the "
-            "renderer. The first entry is the canonical "
-            "answer shown after a wrong attempt. CLOZE "
-            "``multiselect`` (#1195) reuses this field with a "
-            "mode-specific meaning: EVERY entry is a correct "
-            "option (not just the first), rendered as a checkbox "
-            "group with ``distractors`` and graded by exact-set "
-            "match; the two lists must be disjoint."
-        ),
-    )
-    tiles: list[str] | None = Field(
-        default=None,
-        description=(
-            "WORD_TILES: ordered list of tile labels. The "
-            "renderer shuffles before display. Multiple "
-            "correct orderings are configured via "
-            "``accept_orderings`` below."
-        ),
-    )
-    accept_orderings: list[list[int]] | None = Field(
-        default=None,
-        description=(
-            "WORD_TILES: optional list of accepted tile-index "
-            "orderings (each is a permutation of [0..len-1]). "
-            "If omitted, only the canonical order in ``tiles`` "
-            "is accepted."
-        ),
-    )
-    distractors: list[str] = Field(
-        default_factory=list,
-        description=(
-            "Content-only fallback distractors. The exercise "
-            "renderer picks from this pool when no AI provider "
-            "is configured (EXP-005 / P-114 dual mode). When "
-            "AI is available, the AI generator may use the "
-            "pool as a seed for harder distractors."
-        ),
-        max_length=20,
-    )
-    hint: str | None = Field(
-        default=None,
-        description=(
-            "Optional Markdown hint shown on demand. The "
-            "viewer renders this behind a 'Need a hint?' "
-            "button."
-        ),
-        max_length=1000,
-    )
-    examples: list[InlineExample] | None = Field(
-        default=None,
-        description=(
-            "Optional inline worked examples shown BEFORE the answer "
-            "controls, to help the learner understand the task (schema "
-            "v1.5, additive). Each is plain text or a syntax-highlighted "
-            "code snippet (see ``InlineExample.language``). Author "
-            "responsibility not to spoil the answer. Independent of the "
-            "per-type fields; absent on exercises that need no example."
-        ),
-        max_length=20,
-    )
-    sentence: str | None = Field(
-        default=None,
-        description=(
-            "CLOZE: the cloze sentence with visible ``___`` "
-            "markers at each blank position. The renderer "
-            "splits on the markers + interleaves the per-blank "
-            "input control. Phase 52D / v1.35.0. In "
-            "``multiselect`` mode (#1195) this is instead the "
-            "question stem (no ``___`` markers, no ``blanks``)."
-        ),
-        max_length=1000,
-    )
-    blanks: list[ClozeBlank] | None = Field(
-        default=None,
-        description=(
-            "CLOZE: per-marker metadata in left-to-right order. "
-            "``len(blanks) == sentence.count('___')`` enforced "
-            "at validation time. Phase 52D / v1.35.0. Not used "
-            "in ``multiselect`` mode (#1195)."
-        ),
-    )
-    cloze_mode: Literal["type", "select", "multiselect"] | None = Field(
-        default=None,
-        description=(
-            "CLOZE: ``type`` renders an ``<input>`` per blank, "
-            "``select`` renders a single-answer ``<select>`` per "
-            "blank with options from ``distractors``, "
-            "``multiselect`` (#1195) renders a checkbox group of "
-            "``accept`` (all correct) + ``distractors`` for a "
-            "'select all that apply' question. Defaults to ``type`` when "
-            "omitted on a CLOZE exercise. Phase 52D / v1.35.0."
-        ),
-    )
+class Exercise(ExerciseBase):
+    """Semantic layer: slug ids + the per-type cross-field rules
+    (structure in the generated base)."""
 
     @field_validator("id")
     @classmethod
@@ -675,19 +136,63 @@ class Exercise(BaseModel):
             ExerciseType.FREE_TEXT: self._validate_free_text_fields,
             ExerciseType.WORD_TILES: self._validate_word_tiles_fields,
             ExerciseType.CLOZE: self._validate_cloze_fields,
+            ExerciseType.MULTIPLE_CHOICE: self._validate_multiple_choice_fields,
         }
         validate = validators.get(self.type)
         if validate is not None:
             validate()
         return self
 
+    def _validate_multiple_choice_fields(self) -> None:
+        """MULTIPLE_CHOICE (schema v1.6): >= 2 unique options; single mode
+        needs exactly one correct, multi mode at least one.
+
+        Mirrors the engine's ``checkMultipleChoice`` (learn-content-engine
+        0.8.0). Option shape ({text, correct?}) is enforced by the
+        ``MultipleChoiceOption`` model (``extra="forbid"``); only the
+        cross-option rules live here.
+        """
+        if not self.options or len(self.options) < 2:
+            raise ValueError("MULTIPLE_CHOICE requires at least 2 'options'")
+        correct_count = sum(1 for option in self.options if option.correct)
+        if self.multiple:
+            if correct_count == 0:
+                raise ValueError(
+                    "MULTIPLE_CHOICE with 'multiple' requires at least one "
+                    "option marked 'correct'"
+                )
+        elif correct_count != 1:
+            raise ValueError(
+                "MULTIPLE_CHOICE (single) must have exactly one option "
+                "marked 'correct'"
+            )
+        texts = [option.text for option in self.options]
+        if len(set(texts)) != len(texts):
+            raise ValueError(
+                "MULTIPLE_CHOICE option texts must be unique "
+                "(the text IS the option)"
+            )
+
     def _validate_matching_fields(self) -> None:
-        """MATCHING requires non-empty 'pairs'.
+        """MATCHING requires non-empty 'pairs', unless ``from_cards`` derives
+        them from the referenced cards.
 
         Each pair's exact ``{left, right}`` shape is enforced by the
         ``Pair`` model (required fields + ``extra="forbid"``)
-        (EXP-039), so only the non-empty count is checked here.
+        (EXP-039), so only the non-empty count is checked here. ``from_cards``
+        mirrors the engine (learn-content-engine 0.7.0): it requires non-empty
+        ``card_ids`` and forbids an explicit ``pairs`` list.
         """
+        if self.from_cards:
+            if not self.card_ids:
+                raise ValueError(
+                    "MATCHING with 'from_cards' requires non-empty 'card_ids'"
+                )
+            if self.pairs:
+                raise ValueError(
+                    "MATCHING with 'from_cards' must not also list explicit 'pairs'"
+                )
+            return
         if not self.pairs:
             raise ValueError("MATCHING exercise requires non-empty 'pairs'")
 
@@ -775,142 +280,13 @@ class Exercise(BaseModel):
             )
 
 
-class LessonResource(BaseModel):
-    """One lesson-level supplementary-media entry (EXP-029 / MED-05).
 
-    Mirrors a ``media.yaml`` resource minus ``domain`` (inherited
-    from the parent set). Surfaced in the "Vertiefe das Thema"
-    section after the lesson summary. Optional + additive, so
-    pre-EXP-029 lessons load unchanged. Added to the authoritative
-    schema (EXP-039) so the JSON-Schema / generated TS types cover
-    it — previously this shape lived only in the frontend
-    ``ContentLessonResource`` interface, and a lesson carrying
-    ``resources`` was rejected by ``extra="forbid"`` here.
-    """
+class LessonStep(LessonStepBase):
+    """Semantic layer: theory/exercise payload rule + http(s) example_url
+    + slug id. ``exercise`` is retargeted to the semantic ``Exercise``
+    subclass so nested validation runs the cross-field rules."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    type: str = Field(
-        ...,
-        description="Resource kind ('video', 'podcast', 'article', ...).",
-        min_length=1,
-        max_length=40,
-    )
-    title: str = Field(
-        ...,
-        description="Human-readable title shown in the media list.",
-        min_length=1,
-        max_length=300,
-    )
-    url: str = Field(
-        ...,
-        description="Link to the resource.",
-        min_length=1,
-        max_length=2000,
-    )
-    language: str | None = Field(default=None, max_length=35)
-    level: str | None = Field(default=None, max_length=10)
-    duration: str | None = Field(default=None, max_length=40)
-    description: str | None = Field(default=None, max_length=2000)
-    author: str | None = Field(default=None, max_length=300)
-    free: bool | None = Field(default=None)
-    partnership: bool | None = Field(default=None)
-    tags: list[str] | None = Field(default=None, max_length=20)
-
-
-class LessonStep(BaseModel):
-    """One step in the lesson sequence.
-
-    Theory steps carry a Markdown body. Exercise steps carry
-    a fully-validated ``Exercise``. The viewer renders these
-    in order; ``id`` lets deep-linking land on a specific
-    step.
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    id: str = Field(
-        ...,
-        description="Slug-safe id, unique within the lesson.",
-        min_length=1,
-        max_length=120,
-    )
-    type: StepType = Field(
-        ...,
-        description="THEORY or EXERCISE.",
-    )
-    title: str | None = Field(
-        default=None,
-        description=(
-            "Optional step title. Shown in the progress bar / step list (Phase 44 viewer)."
-        ),
-        max_length=200,
-    )
-    body: str | None = Field(
-        default=None,
-        description=(
-            "THEORY: Markdown content. Rendered by the same "
-            "react-markdown pipeline the help system uses."
-        ),
-    )
-    exercise: Exercise | None = Field(
-        default=None,
-        description="EXERCISE: the exercise payload.",
-    )
-    example_url: str | None = Field(
-        default=None,
-        description=(
-            "Optional URL to an external example that illustrates the "
-            "theory (article / video / interactive visualisation). "
-            "Rendered as a link button under a THEORY step's content "
-            "(schema v1.4, additive). Must be an http(s) URL."
-        ),
-        max_length=2000,
-    )
-    example_label: str | None = Field(
-        default=None,
-        description=(
-            "Optional display text for the example link. The viewer "
-            "falls back to a localized 'View example' label when empty."
-        ),
-        max_length=200,
-    )
-    examples: list[InlineExample] | None = Field(
-        default=None,
-        description=(
-            "THEORY: optional inline worked examples rendered under the "
-            "step body (schema v1.5, additive). DISTINCT from "
-            "``example_url``: that links OUT to an external illustration, "
-            "``examples`` carries the example content INLINE (a sample "
-            "sentence, or a syntax-highlighted code snippet — see "
-            "``InlineExample.language``). The two may coexist on one "
-            "step. Additive + optional; steps without ``examples`` "
-            "validate unchanged."
-        ),
-        max_length=20,
-    )
-    theory_ref: str | None = Field(
-        default=None,
-        description=(
-            "EXERCISE: optional explicit reference to the theory step this "
-            "exercise practices, by the theory step's id (preferred) or "
-            "title. The viewer's 'Re-read theory' backlink resolves it "
-            "exactly, falling back to the term-overlap heuristic when "
-            "absent or unresolvable (additive, #709)."
-        ),
-        max_length=200,
-    )
-    review_lesson_id: str | None = Field(
-        default=None,
-        description=(
-            "Set ONLY on synthesised SRS review steps (#673). Carries the "
-            "source lesson_id the reviewed element belongs to, so the review "
-            "recorder can address the exact stored ElementError row. Absent on "
-            "real content lessons. Modeled here (EXP-039) so the schema covers "
-            "the synthesised-review shape the frontend already emits."
-        ),
-        max_length=200,
-    )
+    exercise: Exercise | None = None
 
     @field_validator("example_url")
     @classmethod
@@ -943,132 +319,17 @@ class LessonStep(BaseModel):
         return self
 
 
-class Lesson(BaseModel):
-    """One lesson in a content set (Phase 43 / 2B-lesson).
 
-    A lesson is the unit a user works through end-to-end —
-    typically 5-15 minutes of content. The viewer (Phase 44)
-    walks the steps in order; SRS (Phase 46) tracks the
-    cards referenced by each exercise.
 
-    Referential integrity: every ``card_id`` referenced by
-    any exercise step MUST exist in the lesson's ``cards``
-    list. Enforced by the model validator so the viewer can
-    trust the references later.
-    """
+class Lesson(LessonBase):
+    """Semantic layer: slug/BCP-47 shapes, unique card/step ids and
+    referential integrity. ``cards``/``steps`` are retargeted to the
+    semantic subclasses so nested validation runs their rules; the
+    structural constraints (steps non-empty, cards default empty) match
+    the generated base."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    id: str = Field(
-        ...,
-        description=(
-            "Slug-safe id, unique within the parent set. "
-            "Convention: ``NN-slug`` (e.g. ``01-greetings``) "
-            "for deterministic ordering, though the loader "
-            "does not enforce ordering — it reads the set's "
-            "manifest for the lesson sequence."
-        ),
-        min_length=1,
-        max_length=120,
-    )
-    title: str = Field(
-        ...,
-        description="Human-readable title shown in the lesson list.",
-        min_length=1,
-        max_length=200,
-    )
-    description: str | None = Field(
-        default=None,
-        description="Optional 1-2 sentence summary.",
-        max_length=500,
-    )
-    target_language: str | None = Field(
-        default=None,
-        description=(
-            "Optional BCP-47 code of the language taught "
-            "(Phase 60 / v1.44.0). Mirrors the parent set's "
-            "``target_language``; lets an exported standalone "
-            "lesson carry its own pair. Absent on pre-v1.2 "
-            "lessons — the parent set is authoritative."
-        ),
-    )
-    source_language: str | None = Field(
-        default=None,
-        description=(
-            "Optional BCP-47 code of the language the learner "
-            "already speaks (the language the card ``back`` / "
-            "notes / theory are written in). Absent on pre-v1.2 "
-            "lessons."
-        ),
-    )
-    domain: str | None = Field(
-        default=None,
-        description=(
-            "Optional content domain (schema v1.3). Mirrors the "
-            "parent set's ``domain`` ('language' default, or "
-            "'psychology' / 'programming' / ...). Absent on "
-            "language lessons; the parent set is authoritative."
-        ),
-    )
-    estimated_minutes: int = Field(
-        default=10,
-        description=(
-            "Rough wall-clock estimate. Surfaced in the "
-            "Set Browser so the user can pick a lesson that "
-            "fits the time they have."
-        ),
-        ge=1,
-        le=240,
-    )
-    cards: list[Card] = Field(
-        default_factory=list,
-        description="Every card the lesson teaches.",
-    )
-    steps: list[LessonStep] = Field(
-        ...,
-        description=(
-            "Ordered sequence of theory + exercise steps. Must contain at least one step."
-        ),
-        min_length=1,
-    )
-    variation_of: str | None = Field(
-        default=None,
-        description=(
-            "Phase 64B / schema 1.3 (additive). When set, this lesson is a "
-            "community VARIATION of another lesson (same topic, different "
-            "exercises or perspective); holds the original lesson's id. Absent "
-            "for ordinary lessons. Modeled here (EXP-039) so a shared variation "
-            "lesson is no longer rejected by ``extra='forbid'``."
-        ),
-        max_length=120,
-    )
-    variation_note: str | None = Field(
-        default=None,
-        description="Phase 64B. Author's short note on how this variation differs.",
-        max_length=500,
-    )
-    contributed_by: str | None = Field(
-        default=None,
-        description=(
-            "Phase 64C-2 / schema 1.3 (additive). Optional author credit set "
-            "when the learner opts in while sharing. Shown as a subtle viewer "
-            "credit line + in the GitHub submission."
-        ),
-        max_length=200,
-    )
-    contributed_at: str | None = Field(
-        default=None,
-        description="ISO-8601 timestamp the lesson was contributed.",
-        max_length=40,
-    )
-    resources: list[LessonResource] | None = Field(
-        default=None,
-        description=(
-            "EXP-029 / MED-05 (additive). Optional lesson-specific supplementary "
-            "media (videos / podcasts / articles), surfaced in the 'Vertiefe das "
-            "Thema' section after the lesson summary."
-        ),
-    )
+    cards: list[Card] = Field(default_factory=list)
+    steps: list[LessonStep] = Field(..., min_length=1)
 
     @field_validator("id")
     @classmethod
@@ -1135,6 +396,8 @@ class Lesson(BaseModel):
             if card.id == card_id:
                 return card
         return None
+
+
 
 
 def lesson_to_dict(lesson: Lesson) -> dict[str, Any]:

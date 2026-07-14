@@ -69,29 +69,28 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
   frontend-deps:
-    name: npm audit (frontend dependencies)
+    name: bun audit (frontend dependencies)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v6
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: "24"
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          bun-version: "1.3.14"
 
-      - name: npm audit (warn-only)
+      - name: bun audit (warn-only)
         working-directory: frontend
         run: |
-          echo "## npm audit (frontend)" >> "$GITHUB_STEP_SUMMARY"
+          echo "## bun audit (frontend)" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          # --package-lock-only: audit straight from the lockfile, no install.
-          if npm audit --package-lock-only 2>&1 | tee /tmp/npm-audit.txt; then
+          # bun audit reads bun.lock and queries the registry advisory DB
+          # directly, no install needed (like npm audit --package-lock-only).
+          if bun audit 2>&1 | tee /tmp/bun-audit.txt; then
             echo "(no known vulnerabilities)" >> "$GITHUB_STEP_SUMMARY"
           else
-            cat /tmp/npm-audit.txt >> "$GITHUB_STEP_SUMMARY"
-            echo "::warning title=npm audit::Frontend dependency vulnerabilities found (warn-only; see job summary)."
+            cat /tmp/bun-audit.txt >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning title=bun audit::Frontend dependency vulnerabilities found (warn-only; see job summary)."
           fi
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 

@@ -12,6 +12,16 @@ name: Visual regression
 
 on:
   workflow_dispatch:
+    inputs:
+      update_baselines:
+        description: >-
+          Regenerate the baseline PNGs (--update-snapshots) in the CI
+          environment and upload them as the visual-baselines artifact
+          instead of diffing. Download, REVIEW, and commit them via PR —
+          baselines must be rendered here, not on a dev machine (font
+          anti-aliasing differs per machine). (#1532)
+        type: boolean
+        default: false
   schedule:
     # Nightly at 04:00 UTC — after the nightly test suite (#575).
     - cron: "0 4 * * *"
@@ -30,18 +40,28 @@ jobs:
         with:
           node-version: "24"
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
       - name: Install frontend deps
         working-directory: frontend
-        # --legacy-peer-deps: #266 eslint@10 vs eslint-plugin-react ^9.7 peer cap.
-        run: npm ci --legacy-peer-deps
+        run: bun install --frozen-lockfile
 
       - name: Build dexie frontend
         working-directory: frontend
-        run: VITE_STORAGE_MODE=dexie npm run build
+        run: VITE_STORAGE_MODE=dexie bun run build
 
       - name: Install e2e deps
         working-directory: e2e
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Install Playwright browsers
         working-directory: e2e
@@ -49,7 +69,9 @@ jobs:
 
       - name: Run visual regression
         working-directory: e2e
-        run: npx playwright test --config=playwright.visual.config.ts
+        run: >-
+          npx playwright test --config=playwright.visual.config.ts
+          ${{ inputs.update_baselines == true && '--update-snapshots' || '' }}
 
       - name: Upload report + diffs
         if: always()
@@ -59,4 +81,14 @@ jobs:
           path: |
             e2e/playwright-report
             e2e/test-results
+          retention-days: 14
+
+      # Baseline-refresh mode (#1532): the regenerated PNGs are an artifact,
+      # NEVER auto-committed — download, review every image, commit via PR.
+      - name: Upload regenerated baselines
+        if: inputs.update_baselines == true
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-baselines
+          path: e2e/visual/screenshots
           retention-days: 14

@@ -73,6 +73,16 @@ navigation:
           ja: はじめに
         slug: user-guide/getting-started
       - title:
+          de: App-Tutorial
+          en: App tutorial
+          es: Tutorial de la app
+          fr: Tutoriel de l'app
+          el: Οδηγός εφαρμογής
+          pt: Tutorial do app
+          tr: Uygulama eğitimi
+          ja: アプリチュートリアル
+        slug: user-guide/app-tutorial
+      - title:
           de: Navigation
           en: Navigation
           es: Navegación

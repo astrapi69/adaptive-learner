@@ -91,7 +91,6 @@ nav:
   online: ऑनलाइन
   offline: ऑफ़लाइन
   anki: Anki
-  contribute: "योगदान"
   dev_badge: DEV
   dev_badge_tooltip: डेवलपर मोड चालू है — त्रुटि टोस्ट पूरी तकनीकी जानकारी दिखाते हैं। सेटिंग्स में टॉगल करें।
   content: "मेरी सामग्री"
@@ -524,6 +523,7 @@ settings:
     unavailable: "आपके ब्राउज़र ने अभी तक इंस्टॉल का विकल्प नहीं दिया है।"
     installed: "ऐप इंस्टॉल हो गया।"
   section_review: "समीक्षा"
+  section_srs: "अंतराल पुनरावृत्ति"
   explanations_enabled: "त्रुटि स्पष्टीकरण दिखाएँ"
   explanations_enabled_desc: "पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।"
   section_hints: "संकेत"
@@ -964,6 +964,10 @@ about:
   donations_heading: विकास का समर्थन करें
   donations_intro: Adaptive Learner मुफ़्त और ओपन-सोर्स है। अगर यह आपके काम आता है, तो योगदान देने पर विचार करें।
   donations_primary: पसंदीदा
+  contribute_heading: "सामग्री में योगदान करें"
+  contribute_intro: "सामग्री पुस्तकालय समुदाय के योगदान से बढ़ता है। यदि आप पाठ जोड़ना चाहते हैं, तो यहाँ से शुरू करें।"
+  contribute_repo: "सामग्री रिपॉज़िटरी"
+  contribute_template: "सामग्री सेट टेम्पलेट"
   donations:
     liberapay_desc: आवर्ती दान। ओपन-सोर्स, प्लेटफ़ॉर्म कोई शुल्क नहीं लेता।
     github_desc: अपने मौजूदा GitHub खाते से प्रायोजित करें।
@@ -973,6 +977,8 @@ about:
   license_text_link: (पाठ)
   repo_label: रिपॉज़िटरी
   docs_label: दस्तावेज़ीकरण
+  tutorial_label: "ऐप ट्यूटोरियल"
+  tutorial_link: "ट्यूटोरियल सीधे खोलें"
   issues_label: समस्याएँ
 backup:
   section_title: बैकअप
@@ -1834,6 +1840,17 @@ lesson:
       result_correct: सभी सही!
       result_partial: '{total} में से {correct} सही।'
       empty: इस रिक्त-स्थान अभ्यास में कोई रिक्त स्थान नहीं हैं।
+    multiple_choice:
+      single_group_label: "एक उत्तर चुनें"
+      multi_group_label: "जो भी लागू हो सब चुनें"
+      badge_correct: "सही"
+      badge_wrong: "गलत"
+      badge_missed: "छूट गया"
+      result_correct: "सही!"
+      result_wrong: "बिल्कुल नहीं। चिह्नित विकल्प देखें।"
+      submit: "उत्तर जांचें"
+      retry: "फिर से कोशिश करें"
+      empty: "इस बहुविकल्पीय अभ्यास में कोई विकल्प नहीं है।"
     instruction:
       matching:
         receptive: जोड़े मिलाएँ (पहचान)
@@ -1958,6 +1975,10 @@ lesson:
     action_resume: जारी रखें
     action_restart: फिर से शुरू करें
 content:
+  share:
+    button: "साझा करें"
+    aria: "सेट '{title}' साझा करें"
+    title: "सेट साझा करें"
   filter:
     all_sources: "सभी स्रोत"
     official: "आधिकारिक"
@@ -2346,22 +2367,11 @@ content:
     status_submitted: प्रस्तुत किया गया
     status_accepted: स्वीकृत
     status_rejected: अस्वीकृत
-  gaps:
-    title: अनुपलब्ध पाठ
-    intro: समुदाय लाइब्रेरी में कुछ कमियाँ हैं। क्या आप किसी एक को भरने में मदद कर सकते हैं?
-    next_level: '{source} बोलने वालों के लिए {target} के पाठ हैं, लेकिन {level} अभी मौजूद नहीं है।'
-    missing_pair: '{source} बोलने वालों के लिए {target} {level} अभी मौजूद नहीं है।'
-    help: क्या आप मदद कर सकते हैं?
   credit:
     name_label: आपका नाम (वैकल्पिक)
     name_placeholder: जैसे Maria S.
     show_name: पाठ में नाम दिखाएँ
     privacy: आपका नाम पाठ और pull request में दिखाया जाएगा।
-contribute:
-  title: "योगदान करें"
-  intro: "कमियों को भरकर समुदाय पुस्तकालय को बढ़ाने में मदद करें।"
-  loading: "लोड हो रहा है…"
-  empty: "अभी कोई कमी नहीं — समुदाय पुस्तकालय आपके डाउनलोड किए गए सेट को कवर करता है। धन्यवाद!"
 milestone:
   streak: '{n}-दिन की स्ट्रीक!'
   level_up: स्तर {n} तक पहुँचे!
@@ -2926,7 +2936,6 @@ srs:
   last_answer: "आपका उत्तर:"
   correct: "सही:"
   no_elements: "अभी तक कोई ट्रैक किया गया तत्व नहीं।"
-  settings_title: "अंतराल पुनरावृत्ति"
   settings_intro: "जो आप गलत करते हैं वह एक ऐसे शेड्यूल पर समीक्षा के लिए लौटता है जो सही होने पर बढ़ता जाता है, इसलिए आप ज्ञात चीज़ों की तुलना में कमज़ोर बिंदुओं का अधिक अभ्यास करते हैं।"
   schedule_streak: "लगातार {n} सही"
   schedule_streak_plus: "लगातार {n}+ सही"
@@ -2952,6 +2961,7 @@ favorites:
   empty: "अभी तक कोई पसंदीदा नहीं — किसी पाठ के स्टार पर टैप करें।"
   save_prompt: "इस पाठ को अपने पसंदीदा में सहेजें"
 content_repo:
+  set_not_found: "इस रिपॉज़िटरी में सेट '{set}' नहीं मिला।"
   remove:
     title: "रिपॉज़िटरी हटाएं"
     message: "{source} हटाएं? इसकी डाउनलोड की गई सामग्री इस डिवाइस से हटा दी जाएगी।"
@@ -2988,6 +2998,8 @@ content_repo:
   add:
     title: "रिपॉज़िटरी जोड़ें"
   add_link:
+    title_set: "रिपॉज़िटरी कनेक्ट करें और सेट खोलें?"
+    body_set: "रिपॉज़िटरी '{repo}' कनेक्ट करें और सेट '{set}' खोलें।"
     title: "यह सामग्री रिपॉज़िटरी जोड़ें?"
     body: "आपको Adaptive Learner में एक सामग्री रिपॉज़िटरी जोड़ने के लिए आमंत्रित किया गया है।"
     invalid: "इस आमंत्रण लिंक में कोई मान्य रिपॉज़िटरी नहीं है।"
@@ -2996,6 +3008,7 @@ content_repo:
     branch: "ब्रांच"
     token: "टोकन (निजी रिपॉज़, वैकल्पिक)"
   action:
+    connect_and_open: "कनेक्ट करें और खोलें"
     sync_all: "सभी को सिंक करें"
     add: "रिपॉज़िटरी जोड़ें"
     cancel: "रद्द करें"
@@ -3220,3 +3233,40 @@ migration:
   settings:
     title: "ऑनलाइन संस्करण से इंपोर्ट करें"
     body: "Adaptive Learner ऑनलाइन उपयोग किया? वहां बैकअप बनाएं और अपना डेटा लाने के लिए ऊपर इंपोर्ट का उपयोग करें।"
+
+registry:
+  title: अपनी रिपॉज़िटरी दर्ज करें
+  intro: क्रॉस-रिपॉज़िटरी खोज के लिए अपनी स्वयं की सामग्री रिपॉज़िटरी प्रस्तावित करें। यह आधिकारिक सामग्री निर्देशिका के विरुद्ध एक पुल रिक्वेस्ट तैयार करता है; CI द्वारा आपकी पिन की गई कमिट को सत्यापित करने के बाद एक अनुरक्षक इसकी समीक्षा करके इसे मर्ज करता है।
+  copied: प्रविष्टि क्लिपबोर्ड पर कॉपी की गई।
+  copy_failed: कॉपी नहीं किया जा सका; टेक्स्ट को मैन्युअल रूप से चुनें।
+  error:
+    invalid_url: एक मान्य GitHub रिपॉज़िटरी URL दर्ज करें (उदा. owner/repo)।
+    no_title: अपनी रिपॉज़िटरी के लिए एक छोटा शीर्षक जोड़ें।
+    no_commit: नवीनतम कमिट निर्धारित नहीं की जा सकी; रिपॉज़िटरी URL और ब्रांच जाँचें।
+    prepare_failed: प्रस्तुति तैयार नहीं की जा सकी।
+  field:
+    pick: एक कनेक्टेड रिपॉज़िटरी चुनें
+    pick_placeholder: — चुनें या नीचे लिखें —
+    url: GitHub रिपॉज़िटरी URL
+    branch: ब्रांच
+    title: शीर्षक
+    title_ph: आपका सेट संग्रह
+    description: विवरण (वैकल्पिक)
+    description_ph: इसमें क्या है, एक पंक्ति में
+  action:
+    prepare: प्रस्तुति तैयार करें
+    copy: प्रविष्टि कॉपी करें
+    copied: कॉपी किया गया
+    propose: प्रस्ताव के लिए निर्देशिका खोलें
+    create_pr: पुल रिक्वेस्ट बनाएँ
+  result:
+    title: आपकी रजिस्ट्री प्रविष्टि
+    reason: 'स्थानीय जाँच: {reason}'
+    instructions: 'इस प्रविष्टि को आधिकारिक सामग्री निर्देशिका के {file} ऐरे में जोड़ें:'
+  status:
+    validated: स्थानीय रूप से सत्यापित
+    pending: लंबित — CI सत्यापित करेगा
+  pr:
+    created: पुल रिक्वेस्ट खोली गई।
+    failed: पुल रिक्वेस्ट नहीं खोली जा सकी।
+    view: अपनी पुल रिक्वेस्ट देखें

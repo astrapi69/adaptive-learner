@@ -15,7 +15,7 @@
  */
 
 import {forwardRef} from "react";
-import type {Ref} from "react";
+import type {ReactElement, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import type {
@@ -23,6 +23,10 @@ import type {
     ContentLessonExercise,
     ContentLessonStep,
 } from "../../../storage/types";
+import CategorizationExercise from "../renderers/CategorizationExercise";
+import ErrorCorrectionExercise from "../renderers/ErrorCorrectionExercise";
+import ReadingComprehensionExercise from "../renderers/ReadingComprehensionExercise";
+import GradedQuizExercise from "../renderers/GradedQuizExercise";
 import ClozeExercise from "../renderers/ClozeExercise";
 import type {
     ControlledExerciseProps,
@@ -31,6 +35,7 @@ import type {
 } from "./exercise-control";
 import FreeTextExercise from "../renderers/FreeTextExercise";
 import MatchingExercise from "../renderers/MatchingExercise";
+import MultipleChoiceExercise from "../renderers/MultipleChoiceExercise";
 import PictureChoiceExercise from "../renderers/PictureChoiceExercise";
 import WordTilesExercise from "../renderers/WordTilesExercise";
 
@@ -40,7 +45,52 @@ export const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "free_text",
     "word_tiles",
     "cloze",
+    "multiple_choice",
 ]);
+
+/** The ext: extension types this app has ADOPTED (#1579) - kept
+ *  separate from the core set because the parity gate locks
+ *  SUPPORTED_EXERCISE_TYPES to the schema's closed core enum, while
+ *  this set is locked to the load guard's SUPPORTED_EXTENSIONS
+ *  (dispatcher and guard must agree: everything loadable is renderable). */
+export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
+    "ext:al-categorization",
+    "ext:al-error-correction",
+    "ext:al-reading-comprehension",
+    "ext:al-graded-quiz",
+]);
+
+/** The prop bag every renderer shares (everything except the exercise, the
+ *  set/lesson ids, and any type-specific extras). */
+type SharedExerciseProps = ControlledExerciseProps & {
+    onComplete: (scored: ExerciseScored) => void;
+};
+
+/** Route an adopted ``ext:`` exercise to its renderer. The adopted extension
+ *  renderers all take the same props, so they factor into this one helper -
+ *  keeping ``ExerciseDispatcher``'s cyclomatic complexity flat as more
+ *  extensions are adopted. The type set here is kept in sync with
+ *  ``SUPPORTED_EXT_EXERCISE_TYPES`` by the dispatcher<->guard parity gate. */
+function renderAdoptedExtension(
+    ex: ContentLessonExercise,
+    ref: Ref<ExerciseHandle>,
+    ids: {setId: string; lessonId: string},
+    shared: SharedExerciseProps,
+): ReactElement | null {
+    if (ex.type === "ext:al-categorization") {
+        return <CategorizationExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-error-correction") {
+        return <ErrorCorrectionExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-reading-comprehension") {
+        return <ReadingComprehensionExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-graded-quiz") {
+        return <GradedQuizExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    return null;
+}
 
 export interface ExerciseDispatcherProps extends ControlledExerciseProps {
     step: ContentLessonStep;
@@ -116,7 +166,9 @@ function ExerciseDispatcher(
 ) {
     const ex: ContentLessonExercise | null = step.exercise ?? null;
     if (ex === null) return <ExerciseStepPlaceholder step={step} />;
-    const supported = SUPPORTED_EXERCISE_TYPES.has(ex.type);
+    const supported =
+        SUPPORTED_EXERCISE_TYPES.has(ex.type) ||
+        SUPPORTED_EXT_EXERCISE_TYPES.has(ex.type);
     if (!supported) {
         return <ExerciseStepPlaceholder step={step} />;
     }
@@ -137,6 +189,8 @@ function ExerciseDispatcher(
             void onComplete(scored);
         },
     };
+    const extElement = renderAdoptedExtension(ex, ref, {setId, lessonId}, shared);
+    if (extElement) return extElement;
     if (ex.type === "matching") {
         return (
             <MatchingExercise
@@ -192,6 +246,17 @@ function ExerciseDispatcher(
     if (ex.type === "cloze") {
         return (
             <ClozeExercise
+                ref={ref}
+                exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
+                {...shared}
+            />
+        );
+    }
+    if (ex.type === "multiple_choice") {
+        return (
+            <MultipleChoiceExercise
                 ref={ref}
                 exercise={ex}
                 setId={setId}

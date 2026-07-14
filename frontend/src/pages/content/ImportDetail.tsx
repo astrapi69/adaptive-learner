@@ -618,7 +618,10 @@ export default function ImportDetail({
           data-testid="analysis-error-inline"
           aria-live="assertive"
         >
-          <p>{analysisError}</p>
+          {/* #1585: margin/color moved off the legacy `.analysis-error-inline p`
+              rule (deleted so the block wraps into @layer legacy) onto the
+              element as token-backed utilities - same rendering. */}
+          <p className="m-0 text-[var(--error)]">{analysisError}</p>
         </section>
       )}
 

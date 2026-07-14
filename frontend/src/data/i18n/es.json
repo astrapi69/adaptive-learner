@@ -97,7 +97,6 @@
     "online": "En línea",
     "offline": "Sin conexión",
     "anki": "Anki",
-    "contribute": "Contribuir",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Modo Desarrollador activo — los avisos de error muestran detalles técnicos. Cámbialo en Ajustes.",
     "content": "Mi contenido",
@@ -561,6 +560,7 @@
       "installed": "Aplicación instalada."
     },
     "section_review": "Repaso",
+    "section_srs": "Repetición espaciada",
     "explanations_enabled": "Mostrar explicaciones de errores",
     "explanations_enabled_desc": "Tras una lección, muestra un breve consejo de regla por cada error.",
     "section_hints": "Pistas",
@@ -1034,6 +1034,10 @@
     "donations_heading": "Apoya el desarrollo",
     "donations_intro": "Adaptive Learner es gratuito y de código abierto. Si te ayuda, considera contribuir.",
     "donations_primary": "preferido",
+    "contribute_heading": "Contribuir con contenido",
+    "contribute_intro": "La biblioteca de contenidos crece con las contribuciones de la comunidad. Si quieres añadir lecciones, empieza aquí.",
+    "contribute_repo": "Repositorio de contenidos",
+    "contribute_template": "Plantilla de conjunto de contenidos",
     "donations": {
       "liberapay_desc": "Donaciones recurrentes. Open-source, sin comisiones de la plataforma.",
       "github_desc": "Patrocina con tu cuenta de GitHub existente.",
@@ -1044,6 +1048,8 @@
     "license_text_link": "(texto)",
     "repo_label": "Repositorio",
     "docs_label": "Documentación",
+    "tutorial_label": "Tutorial de la app",
+    "tutorial_link": "Abrir el tutorial directamente",
     "issues_label": "Issues"
   },
   "backup": {
@@ -1990,6 +1996,55 @@
         "result_partial": "{correct} de {total} correctos.",
         "empty": "Este ejercicio de huecos no tiene huecos."
       },
+      "multiple_choice": {
+        "single_group_label": "Elige una respuesta",
+        "multi_group_label": "Selecciona todo lo que corresponda",
+        "badge_correct": "Correcto",
+        "badge_wrong": "Incorrecto",
+        "badge_missed": "Omitida",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo. Revisa las opciones marcadas.",
+        "submit": "Comprobar respuesta",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este ejercicio de opción múltiple no tiene opciones."
+      },
+      "al_categorization": {
+        "instructions": "Toca un elemento y luego su categoría.",
+        "pool_label": "Elementos",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo. Revisa los elementos marcados.",
+        "submit": "Comprobar respuesta",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este ejercicio de clasificación no tiene categorías."
+      },
+      "al_error_correction": {
+        "instructions": "Toca la palabra incorrecta y escribe la corrección.",
+        "input_label": "Corrección",
+        "solution_label": "Solución",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo. Mira la solución.",
+        "submit": "Comprobar respuesta",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este ejercicio de corrección no tiene oración."
+      },
+      "al_reading_comprehension": {
+        "input_label": "Respuesta",
+        "solution_label": "Solución",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo. Revisa las preguntas marcadas.",
+        "submit": "Comprobar respuesta",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este ejercicio de lectura no tiene preguntas."
+      },
+      "al_graded_quiz": {
+        "input_label": "Respuesta",
+        "solution_label": "Solución",
+        "passed": "Aprobado",
+        "failed": "No aprobado",
+        "submit": "Enviar test",
+        "retry": "Inténtalo de nuevo",
+        "empty": "Este test no tiene preguntas."
+      },
       "instruction": {
         "matching": {
           "receptive": "Une las parejas (Reconocer)",
@@ -2130,6 +2185,11 @@
     }
   },
   "content": {
+    "share": {
+      "button": "Compartir",
+      "aria": "Compartir el conjunto '{title}'",
+      "title": "Compartir conjunto"
+    },
     "filter": {
       "all_sources": "Todas las fuentes",
       "official": "Oficial"
@@ -2561,25 +2621,12 @@
       "status_accepted": "aceptada",
       "status_rejected": "rechazada"
     },
-    "gaps": {
-      "title": "Lecciones faltantes",
-      "intro": "La biblioteca de la comunidad tiene algunos huecos. ¿Puedes ayudar a cubrir uno?",
-      "next_level": "{target} para hablantes de {source} tiene lecciones, pero {level} aún no existe.",
-      "missing_pair": "{target} {level} para hablantes de {source} aún no existe.",
-      "help": "¿Puedes ayudar?"
-    },
     "credit": {
       "name_label": "Tu nombre (opcional)",
       "name_placeholder": "p. ej. María S.",
       "show_name": "Mostrar el nombre en la lección",
       "privacy": "Tu nombre se mostrará en la lección y en el pull request."
     }
-  },
-  "contribute": {
-    "title": "Contribuir",
-    "intro": "Ayuda a ampliar la biblioteca comunitaria llenando sus huecos.",
-    "loading": "Cargando…",
-    "empty": "No hay huecos por ahora: la biblioteca comunitaria cubre tus conjuntos descargados. ¡Gracias!"
   },
   "milestone": {
     "streak": "¡Racha de {n} días!",
@@ -3207,7 +3254,6 @@
     "last_answer": "Tu respuesta:",
     "correct": "Correcto:",
     "no_elements": "Aún no hay elementos registrados.",
-    "settings_title": "Repetición espaciada",
     "settings_intro": "Lo que fallas vuelve para repaso en un calendario que se alarga a medida que aciertas, así practicas más los puntos débiles que los que ya dominas.",
     "schedule_streak": "{n} aciertos seguidos",
     "schedule_streak_plus": "{n}+ aciertos seguidos",
@@ -3234,6 +3280,7 @@
     "save_prompt": "Guardar esta lección en tus favoritos"
   },
   "content_repo": {
+    "set_not_found": "No se encontró el conjunto '{set}' en este repositorio.",
     "remove": {
       "title": "Eliminar repositorio",
       "message": "¿Eliminar {source}? Su contenido descargado se eliminará de este dispositivo.",
@@ -3277,6 +3324,8 @@
       "title": "Añadir un repositorio"
     },
     "add_link": {
+      "title_set": "¿Conectar el repositorio y abrir el conjunto?",
+      "body_set": "Conecta el repositorio '{repo}' y abre el conjunto '{set}'.",
       "title": "¿Añadir este repositorio de contenido?",
       "body": "Te han invitado a añadir un repositorio de contenido a Adaptive Learner.",
       "invalid": "Este enlace de invitación no contiene un repositorio válido."
@@ -3287,6 +3336,7 @@
       "token": "Token (repos privados, opcional)"
     },
     "action": {
+      "connect_and_open": "Conectar y abrir",
       "sync_all": "Sincronizar todo",
       "add": "Añadir repositorio",
       "cancel": "Cancelar",
@@ -3552,6 +3602,49 @@
     "settings": {
       "title": "Importar desde la versión online",
       "body": "¿Usaste Adaptive Learner online? Crea allí una copia de seguridad y usa Importar arriba para traer tus datos."
+    }
+  },
+  "registry": {
+    "title": "Registra tu repositorio",
+    "intro": "Propón tu propio repositorio de contenidos para la búsqueda entre repositorios. Esto prepara una solicitud de incorporación al directorio oficial de contenidos; un responsable la revisa y la fusiona después de que la CI valide tu commit fijado.",
+    "copied": "Entrada copiada al portapapeles.",
+    "copy_failed": "No se pudo copiar; marca el texto manualmente.",
+    "error": {
+      "invalid_url": "Introduce una URL válida de repositorio de GitHub (p. ej. owner/repo).",
+      "no_title": "Añade un título breve para tu repositorio.",
+      "no_commit": "No se pudo determinar el último commit; revisa la URL del repositorio y la rama.",
+      "prepare_failed": "No se pudo preparar el envío."
+    },
+    "field": {
+      "pick": "Elige un repositorio conectado",
+      "pick_placeholder": "— elige o escribe abajo —",
+      "url": "URL del repositorio de GitHub",
+      "branch": "Rama",
+      "title": "Título",
+      "title_ph": "Tu colección de conjuntos",
+      "description": "Descripción (opcional)",
+      "description_ph": "Una línea sobre lo que contiene"
+    },
+    "action": {
+      "prepare": "Preparar envío",
+      "copy": "Copiar entrada",
+      "copied": "Copiado",
+      "propose": "Abrir el directorio para proponer",
+      "create_pr": "Crear solicitud de incorporación"
+    },
+    "result": {
+      "title": "Tu entrada del registro",
+      "reason": "Comprobación local: {reason}",
+      "instructions": "Añade esta entrada al array {file} del directorio oficial de contenidos:"
+    },
+    "status": {
+      "validated": "Validado localmente",
+      "pending": "Pendiente; la CI validará"
+    },
+    "pr": {
+      "created": "Solicitud de incorporación abierta.",
+      "failed": "No se pudo abrir la solicitud de incorporación.",
+      "view": "Ver tu solicitud de incorporación"
     }
   }
 }

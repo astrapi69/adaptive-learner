@@ -97,7 +97,6 @@
     "online": "オンライン",
     "offline": "オフライン",
     "anki": "Anki",
-    "contribute": "貢献",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。",
     "content": "マイコンテンツ",
@@ -561,6 +560,7 @@
       "installed": "アプリをインストールしました。"
     },
     "section_review": "復習",
+    "section_srs": "間隔反復",
     "explanations_enabled": "エラーの説明を表示",
     "explanations_enabled_desc": "レッスン後に各間違いへ短いルールのヒントを表示します。",
     "section_hints": "ヒント",
@@ -1034,6 +1034,10 @@
     "donations_heading": "開発を支援する",
     "donations_intro": "Adaptive Learner は無料でオープンソースです。役に立ったら、ぜひ 支援を検討してください。",
     "donations_primary": "推奨",
+    "contribute_heading": "コンテンツに貢献する",
+    "contribute_intro": "コンテンツライブラリはコミュニティの貢献によって成長します。レッスンを追加したい場合は、ここから始めましょう。",
+    "contribute_repo": "コンテンツリポジトリ",
+    "contribute_template": "コンテンツセットのテンプレート",
     "donations": {
       "liberapay_desc": "定期的な寄付。オープンソース、プラットフォーム手数料なし。",
       "github_desc": "既存の GitHub アカウントでスポンサーになります。",
@@ -1044,6 +1048,8 @@
     "license_text_link": "(テキスト)",
     "repo_label": "リポジトリ",
     "docs_label": "ドキュメント",
+    "tutorial_label": "アプリチュートリアル",
+    "tutorial_link": "チュートリアルを直接開く",
     "issues_label": "課題"
   },
   "backup": {
@@ -1990,6 +1996,55 @@
         "result_partial": "{total}個中{correct}個正解。",
         "empty": "この穴埋め演習には空欄がありません。"
       },
+      "multiple_choice": {
+        "single_group_label": "答えを1つ選んでください",
+        "multi_group_label": "当てはまるものをすべて選んでください",
+        "badge_correct": "正解",
+        "badge_wrong": "不正解",
+        "badge_missed": "見落とし",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい。ハイライトされた選択肢を確認してください。",
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "empty": "この選択問題には選択肢がありません。"
+      },
+      "al_categorization": {
+        "instructions": "項目をタップしてから、そのカテゴリーをタップしてください。",
+        "pool_label": "項目",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい！ハイライトされた項目を確認してください。",
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "empty": "この分類問題にはカテゴリーがありません。"
+      },
+      "al_error_correction": {
+        "instructions": "間違った単語をタップして、訂正を入力してください。",
+        "input_label": "訂正",
+        "solution_label": "解答",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい！解答を確認してください。",
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "empty": "この誤り訂正問題には文がありません。"
+      },
+      "al_reading_comprehension": {
+        "input_label": "解答",
+        "solution_label": "解答",
+        "result_correct": "正解！",
+        "result_wrong": "惜しい！ハイライトされた質問を確認してください。",
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "empty": "この読解問題には質問がありません。"
+      },
+      "al_graded_quiz": {
+        "input_label": "解答",
+        "solution_label": "解答",
+        "passed": "合格",
+        "failed": "不合格",
+        "submit": "テストを提出",
+        "retry": "もう一度",
+        "empty": "このテストには質問がありません。"
+      },
       "instruction": {
         "matching": {
           "receptive": "ペアを結ぶ（認識）",
@@ -2130,6 +2185,11 @@
     }
   },
   "content": {
+    "share": {
+      "button": "共有",
+      "aria": "セット「{title}」を共有",
+      "title": "セットを共有"
+    },
     "filter": {
       "all_sources": "すべてのソース",
       "official": "公式"
@@ -2561,25 +2621,12 @@
       "status_accepted": "承認済み",
       "status_rejected": "却下"
     },
-    "gaps": {
-      "title": "不足しているレッスン",
-      "intro": "コミュニティライブラリにはいくつかの空白があります。一つを埋めるのを手伝ってもらえますか?",
-      "next_level": "{source}話者向けの{target}にはレッスンがありますが、{level}はまだ存在しません。",
-      "missing_pair": "{source}話者向けの{target} {level}はまだ存在しません。",
-      "help": "手伝ってもらえますか?"
-    },
     "credit": {
       "name_label": "あなたの名前 (任意)",
       "name_placeholder": "例: Maria S.",
       "show_name": "レッスンに名前を表示する",
       "privacy": "あなたの名前はレッスンとプルリクエストに表示されます。"
     }
-  },
-  "contribute": {
-    "title": "貢献する",
-    "intro": "不足している部分を補って、コミュニティライブラリの拡充に協力しましょう。",
-    "loading": "読み込み中…",
-    "empty": "現在、不足はありません。コミュニティライブラリはダウンロード済みのセットをカバーしています。ありがとうございます!"
   },
   "milestone": {
     "streak": "{n}日連続記録!",
@@ -3207,7 +3254,6 @@
     "last_answer": "あなたの回答:",
     "correct": "正解:",
     "no_elements": "追跡中の要素はまだありません。",
-    "settings_title": "間隔反復",
     "settings_intro": "間違えた項目は、正解するほど間隔が延びるスケジュールで復習に戻ってくるので、すでに知っている項目より弱点を多く練習できます。",
     "schedule_streak": "連続{n}回正解",
     "schedule_streak_plus": "連続{n}回以上正解",
@@ -3234,6 +3280,7 @@
     "save_prompt": "このレッスンをお気に入りに保存"
   },
   "content_repo": {
+    "set_not_found": "このリポジトリにセット「{set}」が見つかりませんでした。",
     "remove": {
       "title": "リポジトリを削除",
       "message": "{source} を削除しますか？ダウンロード済みのコンテンツがこのデバイスから削除されます。",
@@ -3277,6 +3324,8 @@
       "title": "リポジトリを追加"
     },
     "add_link": {
+      "title_set": "リポジトリを接続してセットを開きますか？",
+      "body_set": "リポジトリ「{repo}」を接続してセット「{set}」を開きます。",
       "title": "このコンテンツリポジトリを追加しますか？",
       "body": "Adaptive Learner にコンテンツリポジトリを追加するよう招待されました。",
       "invalid": "この招待リンクには有効なリポジトリが含まれていません。"
@@ -3287,6 +3336,7 @@
       "token": "トークン（プライベートリポジトリ、任意）"
     },
     "action": {
+      "connect_and_open": "接続して開く",
       "sync_all": "すべて同期",
       "add": "リポジトリを追加",
       "cancel": "キャンセル",
@@ -3552,6 +3602,49 @@
     "settings": {
       "title": "オンライン版からインポート",
       "body": "Adaptive Learner をオンラインで使いましたか？そこでバックアップを作成し、上のインポートでデータを引き継いでください。"
+    }
+  },
+  "registry": {
+    "title": "リポジトリを登録",
+    "intro": "自分のコンテンツリポジトリをリポジトリ横断検索に提案します。これは公式コンテンツディレクトリへのプルリクエストを準備します。CI が固定したコミットを検証した後、メンテナーが確認してマージします。",
+    "copied": "エントリをクリップボードにコピーしました。",
+    "copy_failed": "コピーできませんでした。テキストを手動で選択してください。",
+    "error": {
+      "invalid_url": "有効な GitHub リポジトリ URL を入力してください（例: owner/repo）。",
+      "no_title": "リポジトリの短いタイトルを入力してください。",
+      "no_commit": "最新のコミットを取得できませんでした。リポジトリ URL とブランチを確認してください。",
+      "prepare_failed": "提出を準備できませんでした。"
+    },
+    "field": {
+      "pick": "接続済みのリポジトリを選択",
+      "pick_placeholder": "— 選択するか下に入力 —",
+      "url": "GitHub リポジトリ URL",
+      "branch": "ブランチ",
+      "title": "タイトル",
+      "title_ph": "あなたのセットコレクション",
+      "description": "説明（任意）",
+      "description_ph": "内容を一行で"
+    },
+    "action": {
+      "prepare": "提出を準備",
+      "copy": "エントリをコピー",
+      "copied": "コピーしました",
+      "propose": "ディレクトリを開いて提案",
+      "create_pr": "プルリクエストを作成"
+    },
+    "result": {
+      "title": "レジストリのエントリ",
+      "reason": "ローカルチェック: {reason}",
+      "instructions": "このエントリを公式コンテンツディレクトリの {file} 配列に追加してください:"
+    },
+    "status": {
+      "validated": "ローカルで検証済み",
+      "pending": "保留中 — CI が検証します"
+    },
+    "pr": {
+      "created": "プルリクエストを開きました。",
+      "failed": "プルリクエストを開けませんでした。",
+      "view": "プルリクエストを表示"
     }
   }
 }

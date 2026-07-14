@@ -349,12 +349,14 @@ class TestExerciseDirection:
         )
         assert ex.direction == "source_to_target"
 
-    def test_direction_in_exported_json_schema(self) -> None:
-        """The dynamically-derived JSON Schema includes direction."""
-        schema = Exercise.model_json_schema()
-        assert "direction" in schema["properties"]
-        enum = schema["properties"]["direction"].get("enum")
-        assert set(enum or []) == {
+    def test_direction_enum_carries_the_four_drill_modes(self) -> None:
+        """The Direction enum (generated from the canonical engine schema)
+        carries exactly the four drill modes. Post-D3b the JSON Schema is
+        the mirrored engine artefact, not a Pydantic export - its content
+        is byte-gated by check_engine_schema_parity.py."""
+        from adaptive_learner_content_loader.schema import Direction
+
+        assert {member.value for member in Direction} == {
             "source_to_target",
             "target_to_source",
             "both",
@@ -382,6 +384,110 @@ class TestMatchingExercise:
         with pytest.raises(ValidationError):
             _exercise_matching(
                 pairs=[{"left": "x", "right": "y", "extra": "z"}],
+            )
+
+
+class TestMatchingFromCards:
+    """``from_cards`` derives pairs from the referenced cards; parity with the
+    engine (learn-content-engine 0.7.0)."""
+
+    def test_from_cards_without_pairs_is_valid(self) -> None:
+        ex = _exercise_matching(
+            from_cards=True, card_ids=["bonjour", "merci"], pairs=None
+        )
+        assert ex.from_cards is True
+        assert ex.pairs is None
+
+    def test_from_cards_requires_card_ids(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_matching(from_cards=True, card_ids=[], pairs=None)
+
+    def test_from_cards_forbids_explicit_pairs(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_matching(
+                from_cards=True,
+                card_ids=["bonjour"],
+                pairs=[{"left": "Bonjour", "right": "Hello"}],
+            )
+
+    def test_plain_matching_still_requires_pairs(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_matching(from_cards=False, pairs=None)
+
+
+class TestMultipleChoiceExercise:
+    """Native multiple_choice (schema v1.6); parity with the engine
+    (learn-content-engine 0.8.0). Coexists with cloze select/multiselect."""
+
+    @staticmethod
+    def _exercise(**overrides: object) -> Exercise:
+        defaults: dict[str, object] = {
+            "id": "ex-mc-1",
+            "type": ExerciseType.MULTIPLE_CHOICE,
+            "prompt": "Wer hat an einer Kreuzung ohne Zeichen Vorfahrt?",
+            "options": [
+                {"text": "Wer von rechts kommt", "correct": True},
+                {"text": "Wer von links kommt"},
+                {"text": "Das groessere Fahrzeug"},
+            ],
+        }
+        defaults.update(overrides)
+        return Exercise(**defaults)
+
+    def test_single_valid(self) -> None:
+        ex = self._exercise()
+        assert ex.type is ExerciseType.MULTIPLE_CHOICE
+        assert ex.multiple is False
+        assert len(ex.options or []) == 3
+
+    def test_multi_valid(self) -> None:
+        ex = self._exercise(
+            multiple=True,
+            options=[
+                {"text": "2", "correct": True},
+                {"text": "3", "correct": True},
+                {"text": "4"},
+            ],
+        )
+        assert ex.multiple is True
+
+    def test_requires_two_options(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(options=[{"text": "only", "correct": True}])
+        with pytest.raises(ValidationError):
+            self._exercise(options=None)
+
+    def test_single_requires_exactly_one_correct(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(options=[{"text": "a"}, {"text": "b"}])
+        with pytest.raises(ValidationError):
+            self._exercise(
+                options=[
+                    {"text": "a", "correct": True},
+                    {"text": "b", "correct": True},
+                ]
+            )
+
+    def test_multi_requires_at_least_one_correct(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(multiple=True, options=[{"text": "a"}, {"text": "b"}])
+
+    def test_option_texts_must_be_unique(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(
+                options=[
+                    {"text": "same", "correct": True},
+                    {"text": "same"},
+                ]
+            )
+
+    def test_option_shape_strict(self) -> None:
+        with pytest.raises(ValidationError):
+            self._exercise(
+                options=[
+                    {"text": "a", "correct": True, "hint": "no"},
+                    {"text": "b"},
+                ]
             )
 
 
@@ -971,20 +1077,29 @@ class TestLessonSchemaExport:
 
     def test_exercise_schema_lists_type_enum(self) -> None:
         schema = exercise_schema()
-        # The type field discriminates the ExerciseType values;
-        # the JSON schema surfaces them as an enum. Phase 52D /
-        # v1.35.0 added CLOZE.
-        type_schema = schema["properties"]["type"]
-        if "$ref" in type_schema:
-            ref_name = type_schema["$ref"].rsplit("/", 1)[-1]
-            type_schema = schema["$defs"][ref_name]
-        assert set(type_schema["enum"]) == {
+
+        def resolve(node: dict) -> dict:
+            if "$ref" in node:
+                ref_name = node["$ref"].rsplit("/", 1)[-1]
+                return schema["$defs"][ref_name]
+            return node
+
+        # Since schema 1.7 the type field is anyOf(core enum, ext pattern):
+        # the CORE enum stays the closed six-type set, the second branch is
+        # the opaque ``ext:``-namespace tier (engine 0.10.0).
+        type_schema = resolve(schema["properties"]["type"])
+        branches = [resolve(branch) for branch in type_schema.get("anyOf", [type_schema])]
+        enum_branch = next(branch for branch in branches if "enum" in branch)
+        assert set(enum_branch["enum"]) == {
             "matching",
             "picture_choice",
             "free_text",
             "word_tiles",
             "cloze",
+            "multiple_choice",
         }
+        pattern_branch = next((branch for branch in branches if "pattern" in branch), None)
+        assert pattern_branch is not None and pattern_branch["pattern"].startswith("^ext:")
 
     def test_lesson_step_schema_lists_step_type_enum(self) -> None:
         schema = lesson_step_schema()

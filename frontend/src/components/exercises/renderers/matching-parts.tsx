@@ -700,7 +700,7 @@ export function MatchingPrompt({
     return (
         <>
             <div className="exercise-prompt-row">
-                <p className="m-0 font-medium" data-testid="matching-prompt">
+                <p className="m-0 flex-auto font-medium" data-testid="matching-prompt">
                     <InlineMarkdown>{prompt ?? ""}</InlineMarkdown>
                 </p>
                 {ttsLang && !codeMode && (

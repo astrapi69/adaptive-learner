@@ -230,7 +230,7 @@ describe("Settings page", () => {
     const panel = screen.getByTestId("settings-panel-learning");
     // Section-root testids in their intended causal order.
     const CAUSAL_ORDER = [
-      "settings-section-profile",
+      "settings-section-learning-profile",
       "settings-section-source-languages",
       "settings-section-lesson-mode",
       "settings-section-direction-strategy",
@@ -271,6 +271,56 @@ describe("Settings page", () => {
       domOrder.indexOf("settings-section-review") + 1,
     );
     expect(domOrder[domOrder.length - 1]).toBe("settings-section-max-lesson-size");
+  });
+
+  // #1484 — the General + AI tabs wrap their sections in a
+  // .settings-tabpanel container, like every other tab. The wrapper's
+  // flex gap is the ONLY source of vertical spacing between cards
+  // (.settings-section deliberately has no vertical margin), so the
+  // pre-#1484 fragment shape rendered the General/AI cards with no
+  // spacing at all.
+  it("wraps the General and AI sections in a settings-tabpanel container (#1484)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=general");
+    await screen.findByTestId("settings");
+    const general = screen.getByTestId("settings-panel-general");
+    expect(general.classList.contains("settings-tabpanel")).toBe(true);
+    expect(
+      general.querySelector('[data-testid="settings-section-profile"]'),
+    ).not.toBeNull();
+    expect(
+      general.querySelector('[data-testid="settings-install-section"]'),
+    ).not.toBeNull();
+    const ai = screen.getByTestId("settings-panel-ai");
+    expect(ai.classList.contains("settings-tabpanel")).toBe(true);
+    expect(
+      ai.querySelector('[data-testid="settings-provider"]'),
+    ).not.toBeNull();
+  });
+
+  // #1460 — settings-section-profile must stay unique to the General
+  // tab's user-profile card. All panels remain mounted (inactive ones
+  // hidden), so a second section with the same testid on the Learning
+  // tab makes every selector using it ambiguous — the same class as the
+  // "prefix testid overmatch" pitfall. The Learning tab's assessment
+  // section carries its own testid instead.
+  it("keeps settings-section-profile unique to the General panel (#1460)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=general");
+    await screen.findByTestId("settings");
+    expect(screen.getAllByTestId("settings-section-profile")).toHaveLength(1);
+    const general = screen.getByTestId("settings-panel-general");
+    expect(
+      general.querySelector('[data-testid="settings-section-profile"]'),
+    ).not.toBeNull();
+    const learning = screen.getByTestId("settings-panel-learning");
+    expect(
+      learning.querySelector(
+        '[data-testid="settings-section-learning-profile"]',
+      ),
+    ).not.toBeNull();
   });
 
   // #1455 — "Install app" lives in the GENERAL tab (it configures HOW

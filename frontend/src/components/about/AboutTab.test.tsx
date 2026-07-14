@@ -10,6 +10,7 @@ import "fake-indexeddb/auto";
 
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {render, screen, waitFor} from "@testing-library/react";
+import {MemoryRouter} from "react-router-dom";
 
 import AboutTab from "./AboutTab";
 import CreditsSection from "./CreditsSection";
@@ -230,7 +231,11 @@ describe("DonationSection", () => {
 
 describe("LicenseResourcesSection", () => {
     it("renders license + repo + docs + issues links", () => {
-        render(<LicenseResourcesSection info={apiInfo} t={tFn} lang="de" />);
+        render(
+            <MemoryRouter>
+                <LicenseResourcesSection info={apiInfo} t={tFn} lang="de" />
+            </MemoryRouter>,
+        );
         expect(screen.getByTestId("about-license").textContent).toContain(
             "MIT",
         );
@@ -250,15 +255,34 @@ describe("LicenseResourcesSection", () => {
         ).toBe("https://github.com/astrapi69/adaptive-learner/issues");
     });
 
+    it("links to the App-Tutorial set deep link (#1572)", () => {
+        render(
+            <MemoryRouter>
+                <LicenseResourcesSection info={apiInfo} t={tFn} lang="de" />
+            </MemoryRouter>,
+        );
+        expect(
+            screen.getByTestId("about-tutorial-link").getAttribute("href"),
+        ).toBe("/content/set/adaptive-learner-app-from-de");
+    });
+
     it("points the docs link at the active UI language (#866)", () => {
-        render(<LicenseResourcesSection info={apiInfo} t={tFn} lang="el" />);
+        render(
+            <MemoryRouter>
+                <LicenseResourcesSection info={apiInfo} t={tFn} lang="el" />
+            </MemoryRouter>,
+        );
         expect(
             screen.getByTestId("about-docs-link").getAttribute("href"),
         ).toBe("https://astrapi69.github.io/adaptive-learner/docs/el/");
     });
 
     it("falls the docs link back to English for an unbuilt locale (#866)", () => {
-        render(<LicenseResourcesSection info={apiInfo} t={tFn} lang="ko" />);
+        render(
+            <MemoryRouter>
+                <LicenseResourcesSection info={apiInfo} t={tFn} lang="ko" />
+            </MemoryRouter>,
+        );
         expect(
             screen.getByTestId("about-docs-link").getAttribute("href"),
         ).toBe("https://astrapi69.github.io/adaptive-learner/docs/en/");
@@ -272,9 +296,11 @@ describe("AboutTab", () => {
         const {getStorage} = await import("../../storage");
         vi.spyOn(getStorage().system, "info").mockResolvedValue(apiInfo);
         render(
-            <I18nProvider>
-                <AboutTab />
-            </I18nProvider>,
+            <MemoryRouter>
+                <I18nProvider>
+                    <AboutTab />
+                </I18nProvider>
+            </MemoryRouter>,
         );
         await waitFor(() => {
             expect(screen.getByTestId("about-content")).toBeTruthy();
@@ -292,9 +318,11 @@ describe("AboutTab", () => {
             new Error("backend unreachable"),
         );
         render(
-            <I18nProvider>
-                <AboutTab />
-            </I18nProvider>,
+            <MemoryRouter>
+                <I18nProvider>
+                    <AboutTab />
+                </I18nProvider>
+            </MemoryRouter>,
         );
         await waitFor(() => {
             expect(screen.getByTestId("about-error")).toBeTruthy();
@@ -310,9 +338,11 @@ describe("AboutTab", () => {
         const {getStorage} = await import("../../storage");
         vi.spyOn(getStorage().system, "info").mockResolvedValue(dexieInfo);
         render(
-            <I18nProvider>
-                <AboutTab />
-            </I18nProvider>,
+            <MemoryRouter>
+                <I18nProvider>
+                    <AboutTab />
+                </I18nProvider>
+            </MemoryRouter>,
         );
         await waitFor(() => {
             expect(screen.getByTestId("about-content")).toBeTruthy();

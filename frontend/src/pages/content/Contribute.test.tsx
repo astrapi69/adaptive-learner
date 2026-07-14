@@ -1,125 +1,43 @@
 /**
- * Tests for the /contribute page (#1149).
+ * Tests for the legacy /contribute redirect (#1494).
  *
- * The "Missing Lessons" gap block moved out of "Meine Inhalte" into this
- * dedicated contribution area. Pins:
- *   - the gap block renders here (the same ``content-gaps`` block, fed by
- *     the unchanged ``detectGaps`` detector);
- *   - the empty state shows when the library has no gaps;
- *   - user-generated sets are excluded from the gap source.
+ * The dedicated "Beitragen" page + its primary-nav entry were dropped: the
+ * "Missing Lessons" gap section now renders inline on /content (in context
+ * with the downloaded sets it is derived from) and vanishes when there are
+ * no gaps. The /contribute route is kept only so old links / bookmarks
+ * resolve — it redirects to /content (``replace``).
  */
 
 import "@testing-library/jest-dom/vitest";
-import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi, beforeEach } from "vitest";
-
-const listSetsMock = vi.fn();
-
-vi.mock("../../storage", () => ({
-  resolveStorageMode: () => "api",
-  getStorage: () => ({
-    contentLoader: { listSets: listSetsMock },
-  }),
-}));
-
-vi.mock("../../utils/notify", () => ({
-  notify: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
-}));
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { describe, expect, it } from "vitest";
 
 import Contribute from "./Contribute";
-import { PAGE_CONTAINER_CLASSES } from "../../shared/layout/PageContainer";
 
-// de-source A1 set with no A2 -> detectGaps reports a next-level gap.
-const SAMPLE_ENTRY = {
-  source: "astrapi69/adaptive-learner-content",
-  branch: "main",
-  id: "language-fr-a1",
-  title: "French A1",
-  title_native: null,
-  language: "fr",
-  target_language: "fr",
-  source_language: "de",
-  level: "A1",
-  domain: "language",
-  version: "1.0.0",
-  lesson_count: 12,
-  description: "Beginner French lessons.",
-  tags: ["beginner"],
-  cover_image: null,
-  cached_version: "1.0.0",
-  update_available: false,
-};
-
-function renderPage() {
+function renderAtContribute() {
   return render(
-    <MemoryRouter>
-      <Contribute />
+    <MemoryRouter initialEntries={["/contribute"]}>
+      <Routes>
+        <Route path="/contribute" element={<Contribute />} />
+        <Route
+          path="/content"
+          element={<div data-testid="content-landing">Content</div>}
+        />
+      </Routes>
     </MemoryRouter>,
   );
 }
 
-beforeEach(() => {
-  listSetsMock.mockReset();
-});
-
-describe("Contribute page", () => {
-  it("renders the 'Missing Lessons' gap block for a library with gaps", async () => {
-    listSetsMock.mockResolvedValue({ sets: [SAMPLE_ENTRY], sources: [] });
-    renderPage();
-    await screen.findByTestId("contribute-page");
-    expect(await screen.findByTestId("content-gaps")).toBeInTheDocument();
-    const list = screen.getByTestId("content-gaps-list");
-    // The next missing CEFR level (A2) is suggested.
-    expect(list).toHaveTextContent("A2");
-    expect(list.querySelectorAll("li").length).toBeGreaterThan(0);
+describe("/contribute redirect (#1494)", () => {
+  it("redirects to /content", () => {
+    renderAtContribute();
+    expect(screen.getByTestId("content-landing")).toBeInTheDocument();
   });
 
-  it("shows the empty state when the library has no gaps", async () => {
-    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
-    renderPage();
-    await screen.findByTestId("contribute-page");
-    expect(screen.getByTestId("contribute-empty")).toBeInTheDocument();
-    expect(screen.queryByTestId("content-gaps")).not.toBeInTheDocument();
-  });
-
-  it("excludes user-generated sets from the gap source", async () => {
-    // Only a user-generated set is present -> no community-library gaps.
-    listSetsMock.mockResolvedValue({
-      sets: [
-        {
-          ...SAMPLE_ENTRY,
-          source: "user-generated",
-          id: "analysis-mine",
-          domain: "analysis",
-        },
-      ],
-      sources: [],
-    });
-    renderPage();
-    await screen.findByTestId("contribute-page");
-    await waitFor(() => {
-      expect(screen.getByTestId("contribute-empty")).toBeInTheDocument();
-    });
-    expect(screen.queryByTestId("content-gaps")).not.toBeInTheDocument();
-  });
-});
-
-describe("shared page container (#1384)", () => {
-  it("renders inside the shared PageContainer, with no deviating wrapper", async () => {
-    listSetsMock.mockResolvedValue({ sets: [SAMPLE_ENTRY], sources: [] });
-    renderPage();
-    const main = await screen.findByTestId("contribute-page");
-    expect(main.tagName).toBe("MAIN");
-    expect(main).toHaveAttribute("data-slot", "page-container");
-    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
-  });
-
-  it("renders the loading state inside the same shared container (no width jump)", () => {
-    listSetsMock.mockImplementation(() => new Promise(() => {}));
-    renderPage();
-    const main = screen.getByTestId("contribute-loading");
-    expect(main).toHaveAttribute("data-slot", "page-container");
-    expect(main).toHaveClass(PAGE_CONTAINER_CLASSES, { exact: true });
+  it("renders no contribution page of its own", () => {
+    renderAtContribute();
+    expect(screen.queryByTestId("contribute-page")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contribute-empty")).not.toBeInTheDocument();
   });
 });

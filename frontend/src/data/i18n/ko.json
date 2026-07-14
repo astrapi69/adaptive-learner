@@ -97,7 +97,6 @@
     "online": "온라인",
     "offline": "오프라인",
     "anki": "Anki",
-    "contribute": "기여",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "개발자 모드가 켜져 있습니다 — 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요.",
     "content": "내 콘텐츠",
@@ -565,6 +564,7 @@
       "installed": "앱이 설치되었습니다."
     },
     "section_review": "복습",
+    "section_srs": "분산 반복",
     "explanations_enabled": "오류 설명 표시",
     "explanations_enabled_desc": "레슨 후 각 오답에 대해 짧은 규칙 팁을 표시합니다.",
     "section_hints": "힌트",
@@ -1034,6 +1034,10 @@
     "donations_heading": "개발 지원",
     "donations_intro": "Adaptive Learner는 무료이자 오픈 소스입니다. 도움이 되셨다면 후원을 고려해 주세요.",
     "donations_primary": "선호",
+    "contribute_heading": "콘텐츠 기여하기",
+    "contribute_intro": "콘텐츠 라이브러리는 커뮤니티의 기여로 성장합니다. 레슨을 추가하고 싶다면 여기에서 시작하세요.",
+    "contribute_repo": "콘텐츠 저장소",
+    "contribute_template": "콘텐츠 세트 템플릿",
     "donations": {
       "liberapay_desc": "정기 후원. 오픈 소스이며 플랫폼이 수수료를 가져가지 않습니다.",
       "github_desc": "기존 GitHub 계정으로 후원하세요.",
@@ -1044,6 +1048,8 @@
     "license_text_link": "(전문)",
     "repo_label": "저장소",
     "docs_label": "문서",
+    "tutorial_label": "앱 튜토리얼",
+    "tutorial_link": "튜토리얼 바로 열기",
     "issues_label": "이슈"
   },
   "backup": {
@@ -1990,6 +1996,55 @@
         "result_partial": "{total}개 중 {correct}개 정답.",
         "empty": "이 빈칸 채우기 연습에는 빈칸이 없습니다."
       },
+      "multiple_choice": {
+        "single_group_label": "정답을 하나 고르세요",
+        "multi_group_label": "해당하는 것을 모두 고르세요",
+        "badge_correct": "정답",
+        "badge_wrong": "오답",
+        "badge_missed": "놓침",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 표시된 선택지를 확인하세요.",
+        "submit": "정답 확인",
+        "retry": "다시 시도",
+        "empty": "이 선택형 문제에는 선택지가 없습니다."
+      },
+      "al_categorization": {
+        "instructions": "항목을 탭한 다음 해당 카테고리를 탭하세요.",
+        "pool_label": "항목",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 강조 표시된 항목을 확인하세요.",
+        "submit": "정답 확인",
+        "retry": "다시 시도",
+        "empty": "이 분류 연습에는 카테고리가 없습니다."
+      },
+      "al_error_correction": {
+        "instructions": "잘못된 단어를 탭한 다음 수정 내용을 입력하세요.",
+        "input_label": "수정",
+        "solution_label": "정답",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 아래 정답을 확인하세요.",
+        "submit": "정답 확인",
+        "retry": "다시 시도",
+        "empty": "이 오류 수정 연습에는 문장이 없습니다."
+      },
+      "al_reading_comprehension": {
+        "input_label": "답",
+        "solution_label": "정답",
+        "result_correct": "정답!",
+        "result_wrong": "아쉽네요. 강조 표시된 질문을 확인하세요.",
+        "submit": "정답 확인",
+        "retry": "다시 시도",
+        "empty": "이 읽기 연습에는 질문이 없습니다."
+      },
+      "al_graded_quiz": {
+        "input_label": "답",
+        "solution_label": "정답",
+        "passed": "합격",
+        "failed": "불합격",
+        "submit": "시험 제출",
+        "retry": "다시 시도",
+        "empty": "이 시험에는 문제가 없습니다."
+      },
       "instruction": {
         "matching": {
           "receptive": "짝을 맞추세요 (인식)",
@@ -2130,6 +2185,11 @@
     }
   },
   "content": {
+    "share": {
+      "button": "공유",
+      "aria": "세트 '{title}' 공유",
+      "title": "세트 공유"
+    },
     "filter": {
       "all_sources": "모든 소스",
       "official": "공식"
@@ -2561,25 +2621,12 @@
       "status_accepted": "수락됨",
       "status_rejected": "거부됨"
     },
-    "gaps": {
-      "title": "누락된 레슨",
-      "intro": "커뮤니티 라이브러리에 몇 가지 공백이 있습니다. 하나를 채우는 데 도움을 주시겠어요?",
-      "next_level": "{source} 사용자를 위한 {target}에는 레슨이 있지만, {level}은(는) 아직 존재하지 않습니다.",
-      "missing_pair": "{source} 사용자를 위한 {target} {level}은(는) 아직 존재하지 않습니다.",
-      "help": "도와주시겠어요?"
-    },
     "credit": {
       "name_label": "이름 (선택)",
       "name_placeholder": "예: 김민지",
       "show_name": "레슨에 이름 표시",
       "privacy": "당신의 이름이 레슨과 풀 리퀘스트에 표시됩니다."
     }
-  },
-  "contribute": {
-    "title": "기여하기",
-    "intro": "부족한 부분을 채워 커뮤니티 라이브러리를 키우는 데 도움을 주세요.",
-    "loading": "불러오는 중…",
-    "empty": "현재 부족한 부분이 없습니다 — 커뮤니티 라이브러리가 다운로드한 세트를 모두 포함합니다. 감사합니다!"
   },
   "milestone": {
     "streak": "{n}일 연속!",
@@ -3207,7 +3254,6 @@
     "last_answer": "당신의 답변:",
     "correct": "정답:",
     "no_elements": "아직 추적된 요소가 없습니다.",
-    "settings_title": "분산 반복",
     "settings_intro": "틀린 항목은 맞힐수록 길어지는 일정에 따라 복습으로 돌아오므로, 아는 항목보다 약한 부분을 더 자주 연습합니다.",
     "schedule_streak": "{n}회 연속 정답",
     "schedule_streak_plus": "{n}회 이상 연속 정답",
@@ -3234,6 +3280,7 @@
     "save_prompt": "이 레슨을 즐겨찾기에 저장"
   },
   "content_repo": {
+    "set_not_found": "이 저장소에서 세트 '{set}'을(를) 찾을 수 없습니다.",
     "remove": {
       "title": "저장소 제거",
       "message": "{source}을(를) 제거하시겠습니까? 다운로드된 콘텐츠가 이 기기에서 제거됩니다.",
@@ -3277,6 +3324,8 @@
       "title": "저장소 추가"
     },
     "add_link": {
+      "title_set": "저장소를 연결하고 세트를 열까요?",
+      "body_set": "저장소 '{repo}'를 연결하고 세트 '{set}'을(를) 엽니다.",
       "title": "이 콘텐츠 저장소를 추가할까요?",
       "body": "Adaptive Learner에 콘텐츠 저장소를 추가하도록 초대받았습니다.",
       "invalid": "이 초대 링크에는 유효한 저장소가 포함되어 있지 않습니다."
@@ -3287,6 +3336,7 @@
       "token": "토큰 (비공개 저장소, 선택)"
     },
     "action": {
+      "connect_and_open": "연결하고 열기",
       "sync_all": "모두 동기화",
       "add": "저장소 추가",
       "cancel": "취소",
@@ -3552,6 +3602,49 @@
     "settings": {
       "title": "온라인 버전에서 가져오기",
       "body": "Adaptive Learner를 온라인에서 사용하셨나요? 거기서 백업을 만든 다음 위의 가져오기로 데이터를 옮기세요."
+    }
+  },
+  "registry": {
+    "title": "리포지토리 등록",
+    "intro": "자신의 콘텐츠 리포지토리를 리포지토리 간 검색에 제안합니다. 이 작업은 공식 콘텐츠 디렉터리에 대한 풀 리퀘스트를 준비합니다. CI가 고정된 커밋을 검증한 후 관리자가 검토하고 병합합니다.",
+    "copied": "항목을 클립보드에 복사했습니다.",
+    "copy_failed": "복사할 수 없습니다. 텍스트를 수동으로 선택하세요.",
+    "error": {
+      "invalid_url": "유효한 GitHub 리포지토리 URL을 입력하세요(예: owner/repo).",
+      "no_title": "리포지토리의 짧은 제목을 입력하세요.",
+      "no_commit": "최신 커밋을 확인할 수 없습니다. 리포지토리 URL과 브랜치를 확인하세요.",
+      "prepare_failed": "제출을 준비할 수 없습니다."
+    },
+    "field": {
+      "pick": "연결된 리포지토리 선택",
+      "pick_placeholder": "— 선택하거나 아래에 입력 —",
+      "url": "GitHub 리포지토리 URL",
+      "branch": "브랜치",
+      "title": "제목",
+      "title_ph": "내 세트 모음",
+      "description": "설명(선택 사항)",
+      "description_ph": "내용을 한 줄로"
+    },
+    "action": {
+      "prepare": "제출 준비",
+      "copy": "항목 복사",
+      "copied": "복사됨",
+      "propose": "디렉터리를 열어 제안",
+      "create_pr": "풀 리퀘스트 만들기"
+    },
+    "result": {
+      "title": "레지스트리 항목",
+      "reason": "로컬 확인: {reason}",
+      "instructions": "이 항목을 공식 콘텐츠 디렉터리의 {file} 배열에 추가하세요:"
+    },
+    "status": {
+      "validated": "로컬에서 검증됨",
+      "pending": "대기 중 — CI가 검증합니다"
+    },
+    "pr": {
+      "created": "풀 리퀘스트를 열었습니다.",
+      "failed": "풀 리퀘스트를 열 수 없습니다.",
+      "view": "풀 리퀘스트 보기"
     }
   }
 }

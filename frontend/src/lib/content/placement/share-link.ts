@@ -7,18 +7,26 @@
  * token out of band.
  */
 
+import { isOfficialSource, OFFICIAL_SOURCE } from "../repos/source-identity";
+
 export interface ShareLinkInput {
   /** ``owner/repo`` or any GitHub URL the recipient can resolve. */
   url: string;
   branch: string;
+  /** Optional set slug (#1572). When present the recipient lands directly on
+   *  the set (``/content/set/{set}``) instead of only connecting the repo.
+   *  A token is NEVER part of the link — only the public repo coordinates. */
+  set?: string;
 }
 
 /**
- * Build an absolute ``…/add-repo?url=…&branch=…`` link.
+ * Build an absolute ``…/add-repo?url=…&branch=…[&set=…]`` link.
  *
  * ``origin`` + ``basePath`` default to the running app
  * (``window.location.origin`` + Vite ``BASE_URL``) so the link points at
- * the same deployment; both are injectable for tests.
+ * the same deployment; both are injectable for tests. The optional ``set``
+ * is appended only when non-empty, so a plain repo-share link stays byte
+ * identical (backwards compatible).
  */
 export function buildAddRepoLink(
   input: ShareLinkInput,
@@ -30,7 +38,39 @@ export function buildAddRepoLink(
     url: input.url,
     branch: input.branch || "main",
   });
+  if (input.set) params.set("set", input.set);
   return `${origin}${base}add-repo?${params.toString()}`;
+}
+
+/** Minimal, storage-agnostic view of a set needed to build its share link. */
+export interface ShareableSet {
+  /** The cached-set ``source`` (``owner/repo`` or ``bundled:…``). */
+  source: string;
+  /** The repo branch the set lives on (defaults to ``main``). */
+  branch: string;
+  /** The set id — the ``set`` slug the recipient opens. */
+  id: string;
+}
+
+/**
+ * Build a per-set share link (#1572): an ``/add-repo`` deep link that opens
+ * the given set directly. An official / bundled set maps onto the always-loaded
+ * official repo ({@link OFFICIAL_SOURCE}) so the recipient needs no repo added;
+ * a user-repo set carries that repo's ``owner/repo`` source verbatim. The link
+ * NEVER contains a token — a private repo's recipient supplies their own access
+ * out of band (consistent with {@link buildAddRepoLink}).
+ */
+export function buildSetShareLink(
+  set: ShareableSet,
+  origin?: string,
+  basePath?: string,
+): string {
+  const url = isOfficialSource(set.source) ? OFFICIAL_SOURCE : set.source;
+  return buildAddRepoLink(
+    { url, branch: set.branch || "main", set: set.id },
+    origin,
+    basePath,
+  );
 }
 
 /** A repo reference extracted from a scanned/uploaded QR code (#1317). */
@@ -39,6 +79,8 @@ export interface ParsedAddRepo {
   url: string;
   /** Branch, defaulting to ``main``. */
   branch: string;
+  /** Optional set slug (#1572) when the link is a per-set share link. */
+  set?: string;
 }
 
 /**
@@ -57,12 +99,19 @@ export function parseAddRepoQr(decoded: string): ParsedAddRepo | null {
   const raw = (decoded ?? "").trim();
   if (!raw) return null;
 
+  const withSet = (url: string, params: URLSearchParams): ParsedAddRepo => {
+    const parsed: ParsedAddRepo = { url, branch: params.get("branch") || "main" };
+    const set = params.get("set");
+    if (set) parsed.set = set;
+    return parsed;
+  };
+
   // 1) Absolute /add-repo deep link.
   try {
     const parsed = new URL(raw);
     if (parsed.pathname.includes("add-repo")) {
       const url = parsed.searchParams.get("url");
-      if (url) return { url, branch: parsed.searchParams.get("branch") || "main" };
+      if (url) return withSet(url, parsed.searchParams);
     }
   } catch {
     /* not an absolute URL — fall through */
@@ -73,7 +122,7 @@ export function parseAddRepoQr(decoded: string): ParsedAddRepo | null {
   if (marker !== -1) {
     const params = new URLSearchParams(raw.slice(marker + "add-repo?".length));
     const url = params.get("url");
-    if (url) return { url, branch: params.get("branch") || "main" };
+    if (url) return withSet(url, params);
   }
 
   // 3) A plain GitHub repo URL or an ``owner/repo`` slug.

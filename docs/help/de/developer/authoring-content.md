@@ -40,11 +40,18 @@ Zahlen nicht.
 
 ## Das Schema ist die alleinige Wahrheitsquelle (EXP-039)
 
-Das Lektions-/Übungsformat hat **eine maßgebliche Definition**: die
-Pydantic-Modelle im Content-Loader-Plugin
-(`adaptive_learner_content_loader.schema`). Jedes andere Artefakt
-wird daraus per `make sync-schema` **generiert**, sodass die
-Stellen, die früher auseinanderdrifteten, das nicht mehr können:
+Das Lektions-/Übungsformat hat **eine kanonische Definition**: das
+Lektions-JSON-Schema, das das npm-Paket
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+ausliefert (unveränderlich pro veröffentlichtem Release). Innerhalb
+dieser App wird die **strukturelle** Pydantic-Schicht im Content-Loader-
+Plugin (`adaptive_learner_content_loader.schema`) aus diesem Spiegel
+**regeneriert** (`scripts/generate_pydantic_models.py`); nur die
+semantischen feldübergreifenden Validatoren sind handgeschrieben.
+`make sync-schema` frischt den Spiegel auf und emittiert die abgeleiteten
+Artefakte neu, und Byte-Paritäts-Gates beweisen, dass `schema/*.json` dem
+gepinnten Engine-Release gleicht. Die Stellen, die früher
+auseinanderdrifteten, können das nicht mehr:
 
 - `schema/lesson.schema.json` (+ Geschwisterdateien) — das
   maschinenlesbare JSON-Schema (Draft 2020-12). Referenziere es aus
@@ -57,20 +64,31 @@ Stellen, die früher auseinanderdrifteten, das nicht mehr können:
   von Hand gepflegten Kopie.
 - Die Frontend-TypeScript-Lektionstypen und die MkDocs-Seite
   [Lektionsformat-Referenz](lesson-format-reference.md) werden
-  ebenfalls generiert — **nicht von Hand bearbeiten**; bearbeite die
-  Modelle und führe den Generator erneut aus.
+  ebenfalls generiert (**nicht von Hand bearbeiten**); sie folgen dem
+  Engine-Spiegel, führe also nach einem Re-Pin den Generator erneut aus.
 
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
 plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
-schlägt fehl, wenn ein generiertes Artefakt von den Modellen
-abweicht. Stromabwärts übernimmt die
-[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
-das generierte Schema über ihre dokumentierte Schema-Sync-Prozedur
-und liefert es mit jedem npm-Release aus; die Content-Repos spiegeln
-**das gepinnte Engine-Release** (nicht dieses Repo) und validieren in
-ihrer eigenen CI gegen diesen Spiegel. `make engine-parity-check`
-(`scripts/check_engine_schema_parity.py`) hält das hier generierte
-Schema sichtbar in Parität mit dem gepinnten Engine-Release.
+schlägt fehl, wenn ein generiertes Artefakt vom gepinnten Engine-
+Spiegel abweicht. Den Kettenschluss bildet das App-vs-Engine-Byte-Paritäts-
+Gate: `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`), der Offline-Pin
+`engine-schema-parity.test.ts` und der Pin-Kohärenz-Test
+`engine-pin.test.ts` (`frontend/package.json`-Dependency ==
+`schema/engine-version.txt`). Die Content-Repos spiegeln **das
+gepinnte Engine-Release** (nicht dieses Repo) und validieren in ihrer
+eigenen CI gegen diesen Spiegel.
+
+**Prozedur für Formatänderungen (Schema-Autorität in der Engine):**
+eine Änderung am Lektionsformat beginnt in der Engine oder wird dort
+ratifiziert — zuerst Engine-PR + npm-Release; dann bumpt diese App
+den Engine-Pin (`frontend/package.json` + `schema/engine-version.txt`)
+und führt `make sync-schema` erneut aus, was den Spiegel auffrischt und
+die strukturelle Pydantic-Schicht regeneriert; nur neue semantische
+Validatoren werden von Hand geschrieben; danach ziehen die Content-Repos
+ihren `engine-version.txt`-Pin nach. Ein Hand-Edit am Spiegel (oder ein
+veralteter Pin) macht die Byte-Paritäts-Gates rot; der vergessene
+Schritt ist sichtbar, nie stiller Drift.
 
 ## Sprachpaare (v1.44.0)
 
@@ -241,20 +259,23 @@ kommen bei konkretem Content-Bedarf über das Rezept
 | `free_text` | Kurze, faktenförmige Antwort produzieren | Exakt-Match, dann Levenshtein ≤ 1. |
 | `word_tiles` | Eine eindeutige Wortreihenfolge (Sprache) | Kacheln gemischt; `accept_orderings` für Varianten. |
 | `cloze` (`type`) | Ein Fakt mit einer Antwort | Ein `<input>` pro Lücke. |
-| `cloze` (`select`) | **Single Multiple Choice** | Das MC-Mittel — rendert als tappbare Buttons (#1342). `accept[0]` korrekt + `distractors`. |
-| `cloze` (`multiselect`) | „Alles Zutreffende auswählen" | Exakt-Mengen-Abgleich über `accept` (alle korrekt) + `distractors` (#1195). |
+| `cloze` (`select`) | Single Multiple Choice (Legacy-Mittel) | Rendert als tappbare Buttons (#1342). `accept[0]` korrekt + `distractors`. |
+| `cloze` (`multiselect`) | „Alles Zutreffende auswählen" (Legacy-Mittel) | Exakt-Mengen-Abgleich über `accept` (alle korrekt) + `distractors` (#1195). |
+| `multiple_choice` | **Nativer Text-Multiple-Choice** (Schema v1.6, #1525) | `options` (`{text, correct?}`, eindeutige Texte) + `multiple`. Single = genau eine korrekt; Multi = Exakt-Mengen-Abgleich, keine Teilpunkte. |
 
-Es gibt **keinen** `multiple_choice`-/`choice`-Aufgabentyp — Text-Multiple-
-Choice ist per Design `cloze` `select`-Modus (EXP-036 §4.3, #890; Button-
-Renderer #1342). Siehe [Multiple Choice erstellen](#multiple-choice-erstellen).
+Seit Schema v1.6 gibt es einen nativen `multiple_choice`-Typ. Er **koexistiert**
+mit dem `cloze`-`select`/`multiselect`-Mittel (EXP-036 §4.3, #890) — bestehender
+cloze-basierter MC bleibt gültig, nichts ist deprecated. Für neuen Text-MC-
+Content ist `multiple_choice` zu bevorzugen: Korrektheit ist ein Flag pro
+Option, die accept/distractor-Disjunktheits-Falle kann nicht passieren. Siehe
+[Multiple Choice erstellen](#multiple-choice-erstellen).
 
 ### Ohne neuen Typ abbildbar (Konventionen, keine Typen)
 
 | Konzept | Wie |
 |---------|-----|
-| Single Multiple Choice | `cloze` `select`-Modus |
-| Wahr/Falsch, Ja/Nein | Zwei-Optionen-`cloze`-`select` (z. B. `distractors: ["Falsch"]`) |
-| Dropdown / Radio / Checkbox | Darstellung eines `cloze` select / multiselect — keine eigenen Typen |
+| Wahr/Falsch, Ja/Nein | Zwei-Optionen-`multiple_choice` (oder Zwei-Optionen-`cloze`-`select`) |
+| Dropdown / Radio / Checkbox | Darstellung von `multiple_choice` / cloze select — keine eigenen Typen |
 
 ### Geplant bei Bedarf (Kandidaten — KEINE Zusage)
 
@@ -288,9 +309,31 @@ Autoren-Konventionen unten bleiben hier.
 
 ### Multiple Choice erstellen
 
-**Multiple Choice wird so erstellt** — es gibt bewusst keinen
-eigenen `multiple_choice`-Übungstyp (siehe EXP-036 §4.3 und #890). Eine
-Single-Choice-Frage ist ein Cloze mit einer Lücke im `select`-Modus:
+**Bevorzugt (Schema v1.6+, #1525): der native `multiple_choice`-Typ.**
+Jede Option trägt ihr eigenes `correct`-Flag, es gibt also keine
+getrennten accept/distractor-Listen, die disjunkt bleiben müssen.
+`multiple: false` (Default) ist Single Choice (genau eine korrekt);
+`multiple: true` ist „alles Zutreffende auswählen"
+(Exakt-Mengen-Bewertung, keine Teilpunkte):
+
+```json
+{
+  "id": "ex-hauptstadt",
+  "type": "multiple_choice",
+  "prompt": "Was ist die Hauptstadt von Frankreich?",
+  "card_ids": ["card-paris"],
+  "options": [
+    {"text": "Paris", "correct": true},
+    {"text": "Berlin"},
+    {"text": "Madrid"},
+    {"text": "Rom"}
+  ]
+}
+```
+
+**Legacy-Mittel (weiterhin voll gültig — Koexistenz, nichts deprecated):**
+vor v1.6 wurde Text-MC als `cloze` im `select`-Modus erstellt (EXP-036
+§4.3, #890). Eine Single-Choice-Frage ist ein Cloze mit einer Lücke:
 der `sentence` (endet auf `___`) ist die Frage, `accept[0]` der
 Lücke ist die richtige Option, und `distractors` sind die falschen
 Optionen. Beispiel: `"sentence": "Die Hauptstadt von Frankreich ist
@@ -318,8 +361,8 @@ und speist das SRS:
 > **Erstelle Text-Multiple-Choice niemals als `picture_choice`.** Dieser
 > Typ ist nur für echte Bild-Assets; für Text-Optionen rendert er
 > Platzhalter-Kacheln statt einer nutzbaren Kontrolle (vgl.
-> astrapi69/adaptive-learner-content-test#10). Text-MC ist immer
-> `cloze` `select`-Modus, wie oben.
+> astrapi69/adaptive-learner-content-test#10). Text-MC ist
+> `multiple_choice` (bevorzugt) oder `cloze` `select`-Modus, wie oben.
 
 **"Alle zutreffenden auswählen"** (zwei oder mehr richtige
 Antworten, z. B. eine Führerscheinprüfungs-Frage) nutzt

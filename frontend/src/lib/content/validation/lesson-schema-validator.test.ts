@@ -281,10 +281,10 @@ describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
 // Fixture 8 — closed ExerciseType enum (ajv).
 // ---------------------------------------------------------------------------
 describe("#1205 fixture 8 — closed exercise.type enum (ajv)", () => {
-  it("rejects an unknown exercise type (e.g. multiple_choice)", () => {
+  it("rejects an unknown exercise type (e.g. ordering)", () => {
     const lesson = makeLesson();
     (lesson.steps[1].exercise as Record<string, unknown>).type =
-      "multiple_choice";
+      "ordering";
     const result = validateLessonShape(lesson);
     expect(result.ok).toBe(false);
     expect(() => validateGeneratedLesson(lesson)).toThrow(/generated lesson invalid/);
@@ -299,7 +299,7 @@ describe("#1205 fixture 8 — closed exercise.type enum (ajv)", () => {
   it("names the field path of the bad enum value", () => {
     const lesson = makeLesson();
     (lesson.steps[1].exercise as Record<string, unknown>).type =
-      "multiple_choice";
+      "ordering";
     const [first] = validateLessonShape(lesson).errors;
     // The instancePath points at the offending field, not the whole object.
     expect(first).toMatch(/steps\/1\/exercise\/type/);
@@ -386,4 +386,309 @@ describe("#1205 fixture 9 — shared shape-parity fixture (app-side)", () => {
       expect(validateLessonShape(lesson).ok).toBe(expectValid);
     },
   );
+});
+
+
+describe("extension tier load guard (#1565, schema 1.7)", () => {
+  // The loud-refusal contract (engine E-EXT-UNSUPPORTED) must hold at the
+  // app's LOAD boundary too: structurally a requires_extensions lesson is
+  // valid 1.7, but this app has adopted no extensions - loading one and
+  // letting the ext exercise fall through to unknown-type rendering would
+  // be exactly the silent mis-rendering the contract forbids.
+  it("refuses a lesson declaring an extension this app has not adopted", () => {
+    const declared = makeLesson({
+      requires_extensions: ["ext:ref-ordering@1"],
+    } as Partial<ContentLesson>);
+    const result = validateLessonShape(declared);
+    expect(result.ok).toBe(false);
+    expect(result.errors.join(" ")).toContain("ext:ref-ordering@1");
+  });
+
+  it("names every declared extension in the refusal", () => {
+    const declared = makeLesson({
+      requires_extensions: ["ext:ref-ordering@1", "ext:acme-cards@2"],
+    } as Partial<ContentLesson>);
+    const joined = validateLessonShape(declared).errors.join(" ");
+    expect(joined).toContain("ext:ref-ordering@1");
+    expect(joined).toContain("ext:acme-cards@2");
+  });
+
+  it("an explicitly empty requires_extensions stays loadable (boundary)", () => {
+    const empty = makeLesson({ requires_extensions: [] } as Partial<ContentLesson>);
+    expect(validateLessonShape(empty).ok).toBe(true);
+  });
+
+  it("core lessons without the field stay loadable (regression)", () => {
+    expect(validateLessonShape(makeLesson()).ok).toBe(true);
+  });
+});
+
+
+describe("adopted extension ext:al-categorization (#1579)", () => {
+  // First real adoption of the schema-1.7 extension tier: the load guard
+  // lets the adopted type through, and the semantic layer validates the
+  // ext_payload the core schema treats as opaque.
+  const categorizationExercise = {
+    id: "ex-categ-01",
+    type: "ext:al-categorization",
+    prompt: "Ordne jedes Signal der richtigen Kategorie zu.",
+    card_ids: ["card-01"],
+    distractors: [],
+    ext_payload: {
+      categories: [
+        { name: "Sichtzeichen", items: ["flache Hand", "Zeigefinger hoch"] },
+        { name: "Hoerzeichen", items: ["Sitz", "Platz"] },
+      ],
+    },
+  };
+
+  const categorizationLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-categorization@1"],
+      steps: [
+        {
+          id: "step-categ-01",
+          type: "exercise",
+          exercise: {
+            ...categorizationExercise,
+            ...(payloadOverride === undefined
+              ? {}
+              : { ext_payload: payloadOverride }),
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(categorizationLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("a lesson mixing adopted and unadopted extensions is still refused, naming only the unadopted one", () => {
+    const mixed = makeLesson({
+      requires_extensions: ["ext:al-categorization@1", "ext:ref-ordering@1"],
+    } as Partial<ContentLesson>);
+    const shape = validateLessonShape(mixed);
+    expect(shape.ok).toBe(false);
+    const joined = shape.errors.join(" ");
+    expect(joined).toContain("ext:ref-ordering@1");
+    expect(joined).not.toContain("ext:al-categorization@1");
+  });
+
+  it("validateGeneratedLesson passes a well-formed categorization exercise", () => {
+    expect(() => validateGeneratedLesson(categorizationLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses a broken ext_payload (single bucket)", () => {
+    const singleBucket = categorizationLesson({
+      categories: [{ name: "Sichtzeichen", items: ["flache Hand"] }],
+    });
+    expect(() => validateGeneratedLesson(singleBucket)).toThrow(
+      /at least 2 categories/,
+    );
+  });
+
+  it("validateGeneratedLesson refuses a malformed ext_payload shape", () => {
+    // A non-object ext_payload is already refused by the ajv layer; the
+    // semantic layer owns everything INSIDE the opaque object.
+    const malformed = categorizationLesson({categories: "nope"});
+    expect(() => validateGeneratedLesson(malformed)).toThrow(/categories/);
+  });
+});
+
+
+describe("adopted extension ext:al-error-correction (#1579, second adoption)", () => {
+  const errorCorrectionLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-error-correction@1"],
+      steps: [
+        {
+          id: "step-errcorr-01",
+          type: "exercise",
+          exercise: {
+            id: "ex-errcorr-01",
+            type: "ext:al-error-correction",
+            prompt: "Ein Wort ist falsch - tippe es an und korrigiere es.",
+            card_ids: ["card-01"],
+            distractors: [],
+            ext_payload:
+              payloadOverride === undefined
+                ? {
+                    tokens: ["Der", "Hund", "folgt", "das", "Kommando"],
+                    error_index: 3,
+                    accept: ["dem", "einem"],
+                  }
+                : payloadOverride,
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(errorCorrectionLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("a lesson declaring BOTH adopted extensions loads", () => {
+    const both = makeLesson({
+      requires_extensions: [
+        "ext:al-categorization@1",
+        "ext:al-error-correction@1",
+      ],
+    } as Partial<ContentLesson>);
+    expect(validateLessonShape(both).ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed error-correction exercise", () => {
+    expect(() => validateGeneratedLesson(errorCorrectionLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses a no-op accept entry", () => {
+    const noop = errorCorrectionLesson({
+      tokens: ["Der", "Hund", "folgt", "das", "Kommando"],
+      error_index: 3,
+      accept: ["das"],
+    });
+    expect(() => validateGeneratedLesson(noop)).toThrow(
+      /differ from the marked token/,
+    );
+  });
+
+  it("validateGeneratedLesson refuses a malformed ext_payload shape", () => {
+    const malformed = errorCorrectionLesson({tokens: ["a", "b"]});
+    expect(() => validateGeneratedLesson(malformed)).toThrow(/accept/);
+  });
+});
+
+
+describe("adopted extension ext:al-reading-comprehension (#1579, third adoption)", () => {
+  const rcLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-reading-comprehension@1"],
+      steps: [
+        {
+          id: "step-rc-01",
+          type: "exercise",
+          exercise: {
+            id: "ex-rc-01",
+            type: "ext:al-reading-comprehension",
+            prompt: "Lies den Text und beantworte die Fragen.",
+            card_ids: ["card-01"],
+            distractors: [],
+            ext_payload:
+              payloadOverride === undefined
+                ? {
+                    passage: "Rex lief in den Garten und kam auf 'Hier' zurueck.",
+                    questions: [
+                      {
+                        prompt: "Wohin lief Rex?",
+                        type: "multiple_choice",
+                        options: [
+                          { text: "In den Garten", correct: true },
+                          { text: "Auf die Strasse" },
+                        ],
+                      },
+                      { prompt: "Wie hiess der Hund?", type: "free_text", accept: ["Rex"] },
+                    ],
+                  }
+                : payloadOverride,
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(rcLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("all three adopted extensions load together", () => {
+    const all = makeLesson({
+      requires_extensions: [
+        "ext:al-categorization@1",
+        "ext:al-error-correction@1",
+        "ext:al-reading-comprehension@1",
+      ],
+    } as Partial<ContentLesson>);
+    expect(validateLessonShape(all).ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed reading-comprehension exercise", () => {
+    expect(() => validateGeneratedLesson(rcLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses a payload with no questions", () => {
+    const noQuestions = rcLesson({ passage: "Ein Text.", questions: [] });
+    expect(() => validateGeneratedLesson(noQuestions)).toThrow(/at least 1 question/);
+  });
+
+  it("validateGeneratedLesson refuses a malformed ext_payload shape", () => {
+    const malformed = rcLesson({ passage: "Ein Text." });
+    expect(() => validateGeneratedLesson(malformed)).toThrow(/questions/);
+  });
+});
+
+
+describe("adopted extension ext:al-graded-quiz (#1579, fourth adoption)", () => {
+  const gqLesson = (payloadOverride?: unknown) =>
+    makeLesson({
+      requires_extensions: ["ext:al-graded-quiz@1"],
+      steps: [
+        {
+          id: "step-gq-01",
+          type: "exercise",
+          exercise: {
+            id: "ex-gq-01",
+            type: "ext:al-graded-quiz",
+            prompt: "Beantworte alle Fragen.",
+            card_ids: ["card-01"],
+            distractors: [],
+            ext_payload:
+              payloadOverride === undefined
+                ? {
+                    pass_threshold: 60,
+                    questions: [
+                      { prompt: "2+2?", type: "multiple_choice", options: [{ text: "4", correct: true }, { text: "5" }], points: 2 },
+                      { prompt: "Synonym?", type: "free_text", accept: ["rasch"], points: 3 },
+                    ],
+                  }
+                : payloadOverride,
+          },
+        },
+      ],
+    } as unknown as Partial<ContentLesson>);
+
+  it("the load guard accepts a lesson declaring the adopted extension", () => {
+    const shape = validateLessonShape(gqLesson());
+    expect(shape.errors).toEqual([]);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("all four adopted extensions load together", () => {
+    const all = makeLesson({
+      requires_extensions: [
+        "ext:al-categorization@1",
+        "ext:al-error-correction@1",
+        "ext:al-reading-comprehension@1",
+        "ext:al-graded-quiz@1",
+      ],
+    } as Partial<ContentLesson>);
+    expect(validateLessonShape(all).ok).toBe(true);
+  });
+
+  it("validateGeneratedLesson passes a well-formed graded quiz", () => {
+    expect(() => validateGeneratedLesson(gqLesson())).not.toThrow();
+  });
+
+  it("validateGeneratedLesson refuses a quiz with no questions", () => {
+    expect(() => validateGeneratedLesson(gqLesson({ questions: [] }))).toThrow(/at least 1 question/);
+  });
+
+  it("validateGeneratedLesson refuses a non-positive points value", () => {
+    const badPoints = gqLesson({ questions: [{ prompt: "x", type: "free_text", accept: ["a"], points: 0 }] });
+    expect(() => validateGeneratedLesson(badPoints)).toThrow(/positive points/);
+  });
 });

@@ -28,6 +28,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import SetShareButton from "../../components/content/share/SetShareButton";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
@@ -198,7 +199,7 @@ export default function SetDeepLink() {
               </div>
             )}
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap items-center gap-2">
               <Button
                 type="button"
                 className="min-h-11"
@@ -220,6 +221,8 @@ export default function SetDeepLink() {
               >
                 {t("content.set_link.go_discover", "Discover content")}
               </Button>
+              {/* #1572 — share this exact set as a deep link + QR. */}
+              <SetShareButton entry={entry} />
             </div>
           </div>
         )}

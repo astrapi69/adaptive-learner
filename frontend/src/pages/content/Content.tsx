@@ -431,7 +431,11 @@ export default function ContentPage() {
           (ImportActionsPanel). EXP-026 folded user lessons stay in the
           downloaded-set tree below. */}
 
-      {/* Phase 64D — My Contributions (local sharing history). */}
+      {/* Phase 64D — My Contributions (local sharing history). This shows
+          the user's OWN shared lessons (person-relevant). #1504 removed the
+          dynamic "Missing Lessons" gap block that used to sit here: it
+          surfaced language pairs unrelated to the learner. Helping the
+          library grow is now a static block in Settings > About. */}
       {!searchResult.active && (
         <ContentContributionsSection contributions={contributions} />
       )}
@@ -444,9 +448,6 @@ export default function ContentPage() {
         />
       ) : (
         <>
-          {/* #1149 — the "Missing Lessons" gap-suggestion block moved out
-              of "Meine Inhalte" (consumption) into the dedicated
-              /contribute area (production). */}
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="content-section-title">
               {t("content.my_lessons.downloaded_title", "Downloaded sets")}

@@ -12,6 +12,7 @@ on:
       - ".filesize-whitelist"
       - ".filesize-baseline"
       - ".css-size-baseline"
+      - ".dead-classnames-baseline"
 
 jobs:
   file-size-check:
@@ -28,3 +29,43 @@ jobs:
         run: |
           chmod +x scripts/check-css-size.sh
           scripts/check-css-size.sh
+
+  # Usage-side referential-integrity gate (#1491): classNames used in TSX
+  # but defined nowhere (no CSS rule, no emitted Tailwind utility). Needs
+  # the generated build CSS as the Tailwind oracle, so this job sets up
+  # node + builds the frontend before running the check.
+  dead-classnames-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Node 24 stays the RUNTIME (Vite build); Bun is the package manager +
+      # script runner (#1492 Phase 1). No npm cache on setup-node — the bun
+      # install cache below replaces it. #1506: this job still used npm +
+      # the deleted package-lock.json after the Bun migration and failed on
+      # every PR at the setup-node cache step.
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      - name: Build frontend (Tailwind oracle)
+        working-directory: frontend
+        run: VITE_STORAGE_MODE=dexie bun run build
+
+      - name: Tote Klassennamen prüfen (#1491)
+        run: python3 scripts/check-dead-classnames.py

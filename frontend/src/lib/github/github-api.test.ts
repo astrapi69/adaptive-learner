@@ -338,3 +338,64 @@ describe("GitHubApi.createLessonPr (full flow)", () => {
     expect(refCalls).toBeGreaterThanOrEqual(2);
   });
 });
+
+describe("GitHubApi.createRegistryPr (federated search)", () => {
+  const ENTRY = {
+    url: "https://github.com/jane/content",
+    branch: "main",
+    commit: "a".repeat(40),
+    title: "Jane",
+    trust_level: 1,
+    languages: ["de-fr"],
+    validation: { status: "validated" as const, validated_at: "2026-07-09T00:00:00Z" },
+  };
+
+  it("forks, branches, splices the entry into the existing registry, commits, opens the PR", async () => {
+    const existing = JSON.stringify({
+      repos: [{ url: "https://github.com/astrapi69/adaptive-learner-content", self: true }],
+    });
+    let committed: { path: string; content: string } | null = null;
+    const handlers: Record<string, (init: RequestInit) => Response> = {
+      "POST /forks": () =>
+        mkResp(202, { full_name: "octocat/content", owner: { login: "octocat" } }),
+      "GET /git/ref/heads/main": () => mkResp(200, { object: { sha: "basesha" } }),
+      "POST /git/refs": () => mkResp(201, {}),
+      "GET /contents/": () =>
+        mkResp(200, { sha: "regsha", content: utf8ToBase64(existing) }),
+      "PUT /contents/": (init) => {
+        const body = JSON.parse(init.body as string);
+        committed = { path: "recommended-repos.json", content: base64ToUtf8(body.content) };
+        return mkResp(201, { content: { sha: "newsha" } });
+      },
+      "POST /pulls": () =>
+        mkResp(201, {
+          html_url: "https://github.com/astrapi69/adaptive-learner-content/pull/9",
+          number: 9,
+        }),
+    };
+    const { impl, calls } = scriptedFetch(handlers);
+    const api = new GitHubApi("ghp_token", { fetchImpl: impl, sleep: NOOP_SLEEP });
+    const result = await api.createRegistryPr({
+      upstream: "astrapi69/adaptive-learner-content",
+      baseBranch: "main",
+      branchName: "register-jane-content-2026-07-09",
+      registryFile: "recommended-repos.json",
+      entry: ENTRY,
+      prTitle: "registry: add jane/content",
+      prBody: "body",
+    });
+    expect(result).toEqual({
+      url: "https://github.com/astrapi69/adaptive-learner-content/pull/9",
+      number: 9,
+    });
+    // The committed registry now carries BOTH the self entry and the new one.
+    const parsed = JSON.parse(committed!.content);
+    expect(parsed.repos).toHaveLength(2);
+    expect(parsed.repos[1].url).toBe("https://github.com/jane/content");
+    // PR head is forkOwner:branch upstream.
+    const prCall = calls.find((c) => c.url.includes("/pulls"));
+    expect((prCall?.body as { head: string }).head).toBe(
+      "octocat:register-jane-content-2026-07-09",
+    );
+  });
+});

@@ -28,6 +28,10 @@ export async function expectNoA11yViolations(
 ): Promise<void> {
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    // #1569 — viewport intentionally sets maximum-scale/user-scalable to
+    // suppress iOS auto-focus-zoom (see index.html). iOS >=10 keeps the user's
+    // pinch-zoom, so resize-text is preserved; exclude the static axe rule.
+    .disableRules(["meta-viewport"])
     .analyze();
 
   const allow = A11Y_KNOWN_ISSUES[route] ?? [];

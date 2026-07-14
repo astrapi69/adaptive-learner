@@ -89,7 +89,6 @@ nav:
   online: Daring
   offline: Luring
   anki: Anki
-  contribute: "Berkontribusi"
   dev_badge: DEV
   dev_badge_tooltip: "Mode Pengembang aktif — pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan."
   content: "Konten saya"
@@ -525,6 +524,7 @@ settings:
     unavailable: "Peramban Anda belum menawarkan pemasangan."
     installed: "Aplikasi terpasang."
   section_review: "Ulasan"
+  section_srs: "Pengulangan berjarak"
   explanations_enabled: "Tampilkan penjelasan kesalahan"
   explanations_enabled_desc: "Setelah pelajaran, tampilkan kiat aturan singkat untuk setiap kesalahan."
   section_hints: "Petunjuk"
@@ -963,6 +963,10 @@ about:
   donations_heading: Dukung pengembangan
   donations_intro: Adaptive Learner gratis dan open-source. Jika ini membantu Anda, pertimbangkan untuk berkontribusi.
   donations_primary: disukai
+  contribute_heading: "Berkontribusi konten"
+  contribute_intro: "Perpustakaan konten tumbuh berkat kontribusi komunitas. Jika Anda ingin menambahkan pelajaran, mulai di sini."
+  contribute_repo: "Repositori konten"
+  contribute_template: "Templat set konten"
   donations:
     liberapay_desc: Donasi berulang. Open-source, tanpa potongan biaya dari platform.
     github_desc: Beri sponsor melalui akun GitHub yang sudah Anda miliki.
@@ -972,6 +976,8 @@ about:
   license_text_link: (teks)
   repo_label: Repositori
   docs_label: Dokumentasi
+  tutorial_label: "Tutorial aplikasi"
+  tutorial_link: "Buka tutorial langsung"
   issues_label: Isu
 backup:
   section_title: Cadangan
@@ -1849,6 +1855,17 @@ lesson:
       result_correct: "Semua benar!"
       result_partial: "{correct} dari {total} benar."
       empty: "Latihan isian rumpang ini tidak memiliki rumpang."
+    multiple_choice:
+      single_group_label: "Pilih satu jawaban"
+      multi_group_label: "Pilih semua yang sesuai"
+      badge_correct: "Benar"
+      badge_wrong: "Salah"
+      badge_missed: "Terlewat"
+      result_correct: "Benar!"
+      result_wrong: "Belum tepat. Periksa opsi yang ditandai."
+      submit: "Periksa jawaban"
+      retry: "Coba lagi"
+      empty: "Latihan pilihan ganda ini tidak memiliki opsi."
     instruction:
       matching:
         receptive: Cocokkan pasangannya (Pengenalan)
@@ -1974,6 +1991,10 @@ lesson:
     action_restart: "Mulai dari awal"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "Bagikan"
+    aria: "Bagikan set '{title}'"
+    title: "Bagikan set"
   filter:
     all_sources: "Semua sumber"
     official: "Resmi"
@@ -2362,22 +2383,11 @@ content:
     status_submitted: dikirim
     status_accepted: diterima
     status_rejected: ditolak
-  gaps:
-    title: Pelajaran yang Hilang
-    intro: Pustaka komunitas memiliki beberapa celah. Bisakah kamu membantu mengisi salah satunya?
-    next_level: '{target} untuk penutur {source} sudah memiliki pelajaran, tetapi {level} belum ada.'
-    missing_pair: '{target} {level} untuk penutur {source} belum ada.'
-    help: Bisakah kamu membantu?
   credit:
     name_label: Namamu (opsional)
     name_placeholder: mis. Maria S.
     show_name: Tampilkan nama di pelajaran
     privacy: "Namamu akan ditampilkan di pelajaran dan pull request."
-contribute:
-  title: "Berkontribusi"
-  intro: "Bantu memperbesar perpustakaan komunitas dengan mengisi celahnya."
-  loading: "Memuat…"
-  empty: "Tidak ada celah saat ini — perpustakaan komunitas mencakup set yang kamu unduh. Terima kasih!"
 milestone:
   streak: "Rentetan {n} Hari!"
   level_up: "Level {n} tercapai!"
@@ -2950,7 +2960,6 @@ srs:
   last_answer: "Jawabanmu:"
   correct: "Benar:"
   no_elements: "Belum ada elemen yang terlacak."
-  settings_title: "Pengulangan berjarak"
   settings_intro: "Item yang kamu lewatkan akan kembali untuk ditinjau dengan jadwal yang merentang seiring kamu menjawabnya dengan benar, sehingga kamu lebih sering melatih titik lemah daripada yang sudah kamu kuasai."
   schedule_streak: "{n} benar berturut-turut"
   schedule_streak_plus: "{n}+ benar berturut-turut"
@@ -2976,6 +2985,7 @@ favorites:
   empty: "Belum ada favorit — ketuk bintang pada sebuah pelajaran untuk menyimpannya."
   save_prompt: "Simpan pelajaran ini ke favoritmu"
 content_repo:
+  set_not_found: "Set '{set}' tidak ditemukan di repositori ini."
   remove:
     title: "Hapus repositori"
     message: "Hapus {source}? Konten yang diunduhnya akan dihapus dari perangkat ini."
@@ -3012,6 +3022,8 @@ content_repo:
   add:
     title: "Tambah sebuah repositori"
   add_link:
+    title_set: "Hubungkan repositori dan buka set?"
+    body_set: "Hubungkan repositori '{repo}' dan buka set '{set}'."
     title: "Tambahkan repositori konten ini?"
     body: "Kamu diundang untuk menambahkan sebuah repositori konten ke Adaptive Learner."
     invalid: "Tautan undangan ini tidak memuat repositori yang valid."
@@ -3020,6 +3032,7 @@ content_repo:
     branch: "Branch"
     token: "Token (repo privat, opsional)"
   action:
+    connect_and_open: "Hubungkan dan buka"
     sync_all: "Sinkronkan semua"
     add: "Tambah repositori"
     cancel: "Batal"
@@ -3244,3 +3257,40 @@ migration:
   settings:
     title: "Impor dari versi online"
     body: "Pernah memakai Adaptive Learner online? Buat cadangan di sana, lalu gunakan Impor di atas untuk membawa data Anda."
+
+registry:
+  title: Daftarkan repositori Anda
+  intro: Ajukan repositori konten Anda sendiri untuk pencarian lintas repositori. Ini menyiapkan permintaan tarik ke direktori konten resmi; seorang pengelola meninjau dan menggabungkannya setelah CI memvalidasi commit tersemat Anda.
+  copied: Entri disalin ke papan klip.
+  copy_failed: Tidak dapat menyalin; pilih teks secara manual.
+  error:
+    invalid_url: Masukkan URL repositori GitHub yang valid (mis. owner/repo).
+    no_title: Tambahkan judul singkat untuk repositori Anda.
+    no_commit: Tidak dapat menentukan commit terbaru; periksa URL repositori dan cabang.
+    prepare_failed: Tidak dapat menyiapkan pengiriman.
+  field:
+    pick: Pilih repositori yang terhubung
+    pick_placeholder: — pilih atau ketik di bawah —
+    url: URL repositori GitHub
+    branch: Cabang
+    title: Judul
+    title_ph: Koleksi set Anda
+    description: Deskripsi (opsional)
+    description_ph: Satu baris tentang isinya
+  action:
+    prepare: Siapkan pengiriman
+    copy: Salin entri
+    copied: Disalin
+    propose: Buka direktori untuk mengusulkan
+    create_pr: Buat permintaan tarik
+  result:
+    title: Entri registri Anda
+    reason: 'Pemeriksaan lokal: {reason}'
+    instructions: 'Tambahkan entri ini ke array {file} pada direktori konten resmi:'
+  status:
+    validated: Divalidasi secara lokal
+    pending: Menunggu — CI akan memvalidasi
+  pr:
+    created: Permintaan tarik dibuka.
+    failed: Tidak dapat membuka permintaan tarik.
+    view: Lihat permintaan tarik Anda

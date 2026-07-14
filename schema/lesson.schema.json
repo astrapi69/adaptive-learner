@@ -156,6 +156,7 @@
           "title": "Notes"
         },
         "tags": {
+          "default": [],
           "description": "Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular').",
           "items": {
             "type": "string"
@@ -317,6 +318,7 @@
           "title": "Blanks"
         },
         "card_ids": {
+          "default": [],
           "description": "Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.",
           "items": {
             "type": "string"
@@ -356,6 +358,7 @@
           "type": "string"
         },
         "distractors": {
+          "default": [],
           "description": "Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.",
           "items": {
             "type": "string"
@@ -380,6 +383,17 @@
           "default": null,
           "description": "Optional inline worked examples shown BEFORE the answer controls, to help the learner understand the task (schema v1.5, additive). Each is plain text or a syntax-highlighted code snippet (see ``InlineExample.language``). Author responsibility not to spoil the answer. Independent of the per-type fields; absent on exercises that need no example.",
           "title": "Examples"
+        },
+        "ext_payload": {
+          "additionalProperties": true,
+          "description": "Opaque per-exercise payload for an ``ext:`` extension type. The core engine does not interpret it; the registered extension validator does. Absent on core exercises.",
+          "type": "object"
+        },
+        "from_cards": {
+          "default": false,
+          "description": "MATCHING: when true, the exercise derives its ``pairs`` from the referenced cards (left = card ``front``, right = card ``back``) instead of listing them explicitly, so a definition lives in one place. Requires non-empty ``card_ids`` and forbids an explicit ``pairs`` list. The engine resolves it to concrete ``pairs`` at parse time. Additive + optional; schema_version stays 1.5.",
+          "title": "From Cards",
+          "type": "boolean"
         },
         "hint": {
           "anyOf": [
@@ -417,6 +431,29 @@
           "default": null,
           "description": "PICTURE_CHOICE: list of {src, label, is_correct?} options. Exactly one entry MUST include 'is_correct': 'true'. ``src`` is a relative path inside the set's ``assets/`` directory.",
           "title": "Images"
+        },
+        "multiple": {
+          "default": false,
+          "description": "MULTIPLE_CHOICE: when false (default) exactly one option is correct (single choice); when true the learner selects ALL correct options ('select all that apply', graded by exact-set match). Ignored by the other exercise types.",
+          "title": "Multiple",
+          "type": "boolean"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MultipleChoiceOption"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MULTIPLE_CHOICE: list of {text, correct?} answer options (schema v1.6). At least two options; ``multiple`` controls whether exactly one or at least one must be marked correct. Correctness is a per-option flag, so no separate accept/distractor lists (and no disjointness rule) are needed. The renderer shuffles before display.",
+          "title": "Options"
         },
         "pairs": {
           "anyOf": [
@@ -472,8 +509,15 @@
           "title": "Tiles"
         },
         "type": {
-          "$ref": "#/$defs/ExerciseType",
-          "description": "Which exercise renderer handles this step."
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExerciseType"
+            },
+            {
+              "$ref": "#/$defs/ExtExerciseType"
+            }
+          ],
+          "description": "Which exercise renderer handles this step. A core ExerciseType value, or an ``ext:<vendor>-<name>`` extension type (ExtExerciseType) that the lesson declares in ``requires_extensions``."
         }
       },
       "required": [
@@ -491,9 +535,16 @@
         "picture_choice",
         "free_text",
         "word_tiles",
-        "cloze"
+        "cloze",
+        "multiple_choice"
       ],
       "title": "ExerciseType",
+      "type": "string"
+    },
+    "ExtExerciseType": {
+      "description": "Extension exercise type in the ``ext:<vendor>-<name>`` namespace (e.g. ``ext:acme-ordering``). Structurally opaque here: an exercise carrying it must be declared in the lesson's ``requires_extensions`` and is validated by a registered extension, never by the core schema. Core content never uses this branch, so pre-1.7 content validates unchanged.",
+      "pattern": "^ext:[a-z0-9]+-[a-z0-9-]+$",
+      "title": "ExtExerciseType",
       "type": "string"
     },
     "InlineExample": {
@@ -816,6 +867,30 @@
       "title": "LessonStep",
       "type": "object"
     },
+    "MultipleChoiceOption": {
+      "additionalProperties": false,
+      "description": "One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).\n\nCorrectness is a per-option flag, so the type needs no separate\naccept/distractor lists and no disjointness rule - the structure\nmakes that class of authoring error impossible. Grading contract:\nwith ``multiple: false`` exactly one option carries ``correct``\nand a single pick is graded; with ``multiple: true`` the learner\nmust select the exact set of correct options (no partial credit,\nmirroring the cloze multiselect grading).",
+      "properties": {
+        "correct": {
+          "default": false,
+          "description": "Set to true on the correct option(s). Exactly one with ``multiple: false``; at least one with ``multiple: true``.",
+          "title": "Correct",
+          "type": "boolean"
+        },
+        "text": {
+          "description": "The option text shown to the learner. Unique within the exercise - the text IS the option, so a duplicate would be ambiguous.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "MultipleChoiceOption",
+      "type": "object"
+    },
     "Pair": {
       "additionalProperties": false,
       "description": "One left\u2194right pair in a MATCHING exercise.\n\nEXP-039: modeled explicitly (was an inline ``dict[str, str]``)\nso the generated JSON-Schema / TS types carry the structured\n``{left, right}`` shape instead of a loose string map. The\n``extra=\"forbid\"`` config + the two required fields replace the\nformer per-pair key check in ``_validate_matching_fields``;\nvalidation semantics are unchanged (a pair must have exactly\n``left`` and ``right``).",
@@ -906,12 +981,13 @@
       "type": "string"
     }
   },
-  "$id": "https://astrapi69.github.io/adaptive-learner/schema/lesson.schema.json",
+  "$id": "https://astrapi69.github.io/learn-content-engine/schema/lesson.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "One lesson in a content set (Phase 43 / 2B-lesson).\n\nA lesson is the unit a user works through end-to-end \u2014\ntypically 5-15 minutes of content. The viewer (Phase 44)\nwalks the steps in order; SRS (Phase 46) tracks the\ncards referenced by each exercise.\n\nReferential integrity: every ``card_id`` referenced by\nany exercise step MUST exist in the lesson's ``cards``\nlist. Enforced by the model validator so the viewer can\ntrust the references later.",
   "properties": {
     "cards": {
+      "default": [],
       "description": "Every card the lesson teaches.",
       "items": {
         "$ref": "#/$defs/Card"
@@ -988,6 +1064,15 @@
       "minLength": 1,
       "title": "Id",
       "type": "string"
+    },
+    "requires_extensions": {
+      "description": "Extensions this lesson needs, each ``ext:<vendor>-<name>@<major>`` (e.g. ``ext:acme-ordering@1``). A consumer that has not registered a declared extension refuses the lesson loudly (E-EXT-UNSUPPORTED) rather than mis-rendering. Absent / empty on core lessons; additive, so pre-1.7 content validates unchanged.",
+      "items": {
+        "pattern": "^ext:[a-z0-9]+-[a-z0-9-]+@\\d+$",
+        "type": "string"
+      },
+      "title": "Requires Extensions",
+      "type": "array"
     },
     "resources": {
       "anyOf": [
@@ -1083,5 +1168,5 @@
   ],
   "title": "Lesson",
   "type": "object",
-  "x-schema-version": "1.5"
+  "x-schema-version": "1.7"
 }

@@ -89,7 +89,6 @@ nav:
   online: Çevrimiçi
   offline: Çevrimdışı
   anki: Anki
-  contribute: "Katkıda bulun"
   dev_badge: DEV
   dev_badge_tooltip: "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın."
   content: "İçeriğim"
@@ -522,6 +521,7 @@ settings:
     unavailable: "Tarayıcınız henüz kurulum sunmadı."
     installed: "Uygulama yüklendi."
   section_review: "Tekrar"
+  section_srs: "Aralıklı tekrar"
   explanations_enabled: "Hata açıklamalarını göster"
   explanations_enabled_desc: "Bir dersten sonra her hata için kısa bir kural ipucu gösterir."
   section_hints: "İpuçları"
@@ -771,7 +771,7 @@ settings:
   reset_progress_help: XP, rozet ve seriyi kalıcı olarak siler. Geri alınamaz.
   reset_confirm_first: Onaylamak için tekrar tıkla
   reset_confirm_second: Kalıcı silmek için bir kez daha tıkla
-  section_voice: Dil
+  section_voice: Ses
   voice:
     tts_enabled: Konuşma düğmelerini göster
     tts_enabled_help: YZ yanıtlarını sesli okur.
@@ -963,6 +963,10 @@ about:
   donations_heading: Geliştirmeyi destekle
   donations_intro: Adaptive Learner ücretsiz ve açık kaynaktır. Sana yardımcı olduysa katkıda bulunmayı düşün.
   donations_primary: tercih edilen
+  contribute_heading: "İçeriğe katkıda bulun"
+  contribute_intro: "İçerik kütüphanesi topluluğun katkılarıyla büyür. Ders eklemek istersen buradan başla."
+  contribute_repo: "İçerik deposu"
+  contribute_template: "İçerik seti şablonu"
   donations:
     liberapay_desc: Tekrarlayan bağışlar. Açık kaynak, platform ücreti alınmıyor.
     github_desc: Mevcut GitHub hesabınla sponsor ol.
@@ -972,6 +976,8 @@ about:
   license_text_link: (metin)
   repo_label: Depo
   docs_label: Belgeler
+  tutorial_label: "Uygulama eğitimi"
+  tutorial_link: "Eğitimi doğrudan aç"
   issues_label: Sorunlar
 backup:
   section_title: Yedek
@@ -1838,6 +1844,17 @@ lesson:
       result_correct: "Hepsi doğru!"
       result_partial: "{correct} / {total} doğru."
       empty: "Bu boşluk doldurma alıştırmasının boşluğu yok."
+    multiple_choice:
+      single_group_label: "Bir cevap seç"
+      multi_group_label: "Uyanların hepsini seç"
+      badge_correct: "Doğru"
+      badge_wrong: "Yanlış"
+      badge_missed: "Atlandı"
+      result_correct: "Doğru!"
+      result_wrong: "Tam değil. İşaretli seçeneklere bak."
+      submit: "Cevabı kontrol et"
+      retry: "Tekrar dene"
+      empty: "Bu çoktan seçmeli alıştırmada seçenek yok."
     instruction:
       matching:
         receptive: Çiftleri eşleştir (Tanıma)
@@ -1963,6 +1980,10 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  share:
+    button: "Paylaş"
+    aria: "'{title}' setini paylaş"
+    title: "Seti paylaş"
   filter:
     all_sources: "Tüm kaynaklar"
     official: "Resmî"
@@ -2351,22 +2372,11 @@ content:
     status_submitted: gönderildi
     status_accepted: kabul edildi
     status_rejected: reddedildi
-  gaps:
-    title: Eksik Dersler
-    intro: Topluluk kütüphanesinde birkaç boşluk var. Birini doldurmaya yardım eder misiniz?
-    next_level: '{source} konuşanlar için {target} dersleri var, ancak {level} henüz yok.'
-    missing_pair: '{source} konuşanlar için {target} {level} henüz yok.'
-    help: Yardım edebilir misiniz?
   credit:
     name_label: Adınız (isteğe bağlı)
     name_placeholder: ör. Maria S.
     show_name: Adı derste göster
     privacy: "Adınız derste ve pull request'te gösterilecek."
-contribute:
-  title: "Katkıda bulun"
-  intro: "Boşluklarını doldurarak topluluk kitaplığının büyümesine yardım et."
-  loading: "Yükleniyor…"
-  empty: "Şu anda boşluk yok — topluluk kitaplığı indirdiğin setleri kapsıyor. Teşekkürler!"
 milestone:
   streak: "{n} günlük seri!"
   level_up: "Seviye {n}'e ulaşıldı!"
@@ -2940,7 +2950,6 @@ srs:
   last_answer: "Cevabın:"
   correct: "Doğru:"
   no_elements: "Henüz izlenen öge yok."
-  settings_title: "Aralıklı tekrar"
   settings_intro: "Yanlış yaptıkların, doğru yaptıkça uzayan bir takvimle tekrara döner; böylece zayıf noktalarını bildiklerinden daha sık çalışırsın."
   schedule_streak: "Üst üste {n} doğru"
   schedule_streak_plus: "Üst üste {n}+ doğru"
@@ -2966,6 +2975,7 @@ favorites:
   empty: "Henüz favori yok — bir dersteki yıldıza dokun."
   save_prompt: "Bu dersi favorilerine kaydet"
 content_repo:
+  set_not_found: "'{set}' seti bu depoda bulunamadı."
   remove:
     title: "Depoyu kaldır"
     message: "{source} kaldırılsın mı? İndirilen içeriği bu cihazdan kaldırılacak."
@@ -3002,6 +3012,8 @@ content_repo:
   add:
     title: "Depo ekle"
   add_link:
+    title_set: "Depo bağlanıp set açılsın mı?"
+    body_set: "'{repo}' deposunu bağla ve '{set}' setini aç."
     title: "Bu içerik deposu eklensin mi?"
     body: "Adaptive Learner'a bir içerik deposu eklemeye davet edildin."
     invalid: "Bu davet bağlantısı geçerli bir depo içermiyor."
@@ -3010,6 +3022,7 @@ content_repo:
     branch: "Dal"
     token: "Belirteç (özel depolar, isteğe bağlı)"
   action:
+    connect_and_open: "Bağla ve aç"
     sync_all: "Tümünü eşitle"
     add: "Depo ekle"
     cancel: "İptal"
@@ -3234,3 +3247,40 @@ migration:
   settings:
     title: "Çevrimiçi sürümden içe aktar"
     body: "Adaptive Learner'ı çevrimiçi kullandınız mı? Orada bir yedek oluşturun ve verilerinizi getirmek için yukarıdaki İçe Aktar'ı kullanın."
+
+registry:
+  title: Deponuzu kaydedin
+  intro: Kendi içerik deponuzu depolar arası arama için önerin. Bu, resmi içerik dizinine bir çekme isteği hazırlar; bir bakımcı, CI sabitlenmiş işlemenizi doğruladıktan sonra onu inceler ve birleştirir.
+  copied: Giriş panoya kopyalandı.
+  copy_failed: Kopyalanamadı; metni elle seçin.
+  error:
+    invalid_url: Geçerli bir GitHub depo URL'si girin (örn. owner/repo).
+    no_title: Deponuz için kısa bir başlık ekleyin.
+    no_commit: En son işleme belirlenemedi; depo URL'sini ve dalı denetleyin.
+    prepare_failed: Gönderim hazırlanamadı.
+  field:
+    pick: Bağlı bir depo seçin
+    pick_placeholder: — seçin veya aşağıya yazın —
+    url: GitHub depo URL'si
+    branch: Dal
+    title: Başlık
+    title_ph: Set koleksiyonunuz
+    description: Açıklama (isteğe bağlı)
+    description_ph: İçeriği hakkında bir satır
+  action:
+    prepare: Gönderimi hazırla
+    copy: Girişi kopyala
+    copied: Kopyalandı
+    propose: Önermek için dizini aç
+    create_pr: Çekme isteği oluştur
+  result:
+    title: Kayıt girişiniz
+    reason: 'Yerel denetim: {reason}'
+    instructions: 'Bu girişi resmi içerik dizinindeki {file} dizisine ekleyin:'
+  status:
+    validated: Yerel olarak doğrulandı
+    pending: Beklemede; CI doğrulayacak
+  pr:
+    created: Çekme isteği açıldı.
+    failed: Çekme isteği açılamadı.
+    view: Çekme isteğinizi görüntüleyin

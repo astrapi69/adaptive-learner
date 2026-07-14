@@ -23,14 +23,67 @@ Um conjunto tem três níveis:
    irmão do manifesto raiz, lista os ficheiros de lição do conjunto
    concreto.
 3. **Ficheiros de lição** (`sets/{set-id}/lessons/NN-slug.json`) —
-   um ficheiro JSON por lição, validado contra o esquema v1.0 em
-   cada download.
+   um ficheiro JSON por lição, validado contra o esquema de lição em
+   cada download (ver *O esquema é a única fonte de verdade* mais
+   abaixo).
 
 Os conjuntos piloto fornecidos com o Adaptive Learner ficam no repo
 de conteúdo separado [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
 (checkout como irmão `../adaptive-learner-content` e empacotado pela
 build através de `frontend/scripts/copy-bundled-content.mjs`) e
 servem bem como modelo.
+
+## O esquema é a única fonte de verdade (EXP-039)
+
+O formato de lição/exercício tem **uma definição canónica**: o JSON
+Schema de lição fornecido pelo pacote npm
+[learn-content-engine](https://github.com/astrapi69/learn-content-engine)
+(imutável por release publicada). Dentro desta app, a camada Pydantic
+**estrutural** no plugin do carregador de conteúdo
+(`adaptive_learner_content_loader.schema`) é **regenerada** a partir
+desse espelho (`scripts/generate_pydantic_models.py`); apenas os
+validadores semânticos entre campos são escritos à mão.
+`make sync-schema` atualiza o espelho e volta a emitir os artefactos
+derivados, e portões de paridade de bytes provam que `schema/*.json`
+é igual à release fixada da engine. Os sítios que antes derivavam já
+não o podem fazer:
+
+- `schema/lesson.schema.json` (+ ficheiros irmãos): o JSON Schema
+  legível por máquina (Draft 2020-12). Referencia-o a partir de um
+  `.json` de lição através de uma chave `"$schema"` de nível de topo
+  para obteres autocompletar do IDE e validação inline.
+- `schema/quality-rules.json`: os mínimos de qualidade partilhados
+  (p. ex. número de exercícios, número de respostas aceites de
+  free-text), consumidos pelo validador de conteúdo do lado do
+  cliente em vez de uma segunda cópia mantida à mão.
+- Os tipos de lição TypeScript do frontend e a página MkDocs
+  *Lesson format reference* também são gerados (**não os edites à
+  mão**); seguem o espelho da engine, portanto volta a correr o
+  gerador depois de cada re-pin.
+
+Um portão contra deriva (`make sync-schema-check`, parte de
+`release-test`, mais `backend/tests/test_lesson_schema_drift.py` em
+`make test`) falha se algum artefacto gerado divergir do espelho
+fixado da engine. O fecho da cadeia é o portão de paridade de bytes
+app-contra-engine: `make engine-parity-check`
+(`scripts/check_engine_schema_parity.py`), o pin offline
+`engine-schema-parity.test.ts` e o teste de coerência do pin
+`engine-pin.test.ts` (dependência de `frontend/package.json` ==
+`schema/engine-version.txt`). Os repos de conteúdo espelham **a
+release fixada da engine** (não este repo) e validam contra esse
+espelho na sua própria CI.
+
+**Procedimento para alterações de formato (autoridade do esquema na
+engine):** uma alteração ao formato de lição começa na engine, ou é
+ratificada lá: primeiro PR na engine + release npm; depois esta app
+sobe o pin da engine (`frontend/package.json` +
+`schema/engine-version.txt`) e volta a correr `make sync-schema`, que
+atualiza o espelho e regenera a camada Pydantic estrutural; apenas os
+novos validadores semânticos são escritos à mão; depois os repos de
+conteúdo atualizam o seu pin `engine-version.txt`. Uma edição manual
+do espelho (ou um pin desatualizado) põe os portões de paridade de
+bytes a vermelho; o passo esquecido torna-se visível, nunca há deriva
+silenciosa.
 
 ## Pares de idiomas (v1.44.0)
 
@@ -162,7 +215,7 @@ longo prazo. As `tags` controlam o filtro do SRS.
 ### Steps
 
 Uma lição é uma sequência passo a passo, cada passo ou THEORY (um
-bloco Markdown) ou EXERCISE (um dos quatro tipos de exercício):
+bloco Markdown) ou EXERCISE (um dos tipos de exercício):
 
 ```json
 {
@@ -261,6 +314,13 @@ Se o caminho `src` aponta para um ficheiro inexistente, o
 renderizador recai no `label` — portanto o picture_choice funciona
 também sem assets de ilustração.
 
+> **Nunca cries escolha múltipla de texto como `picture_choice`.**
+> Esse tipo é apenas para assets de imagem reais; com opções de texto
+> renderiza mosaicos de placeholder, não um controlo utilizável (cf.
+> astrapi69/adaptive-learner-content-test#10). A escolha múltipla de
+> texto é `multiple_choice` (preferido) ou `cloze` em modo `select`;
+> ver a secção cloze mais abaixo.
+
 ### free_text
 
 Escrever a resposta. O renderizador faz primeiro correspondência
@@ -350,6 +410,81 @@ len(blanks)`).
   `accept[0]` + `distractors` do exercício, baralhadas por lacuna com
   uma seed estável. **Requer `distractors` não vazios** — o
   validador de esquema rejeita `cloze_mode: "select"` sem eles.
+
+**Escolha múltipla: desde o esquema v1.6 existe um tipo nativo
+`multiple_choice`.** **Coexiste** com o mecanismo `cloze`
+`select`/`multiselect` (EXP-036 §4.3, #890): a escolha múltipla
+baseada em cloze existente continua válida, nada fica deprecated.
+Prefere `multiple_choice` para novo conteúdo de escolha múltipla de
+texto: a correção é um flag por opção, pelo que a armadilha da
+disjunção accept/distractors não pode acontecer. Verdadeiro/Falso e
+Sim/Não também não precisam de um tipo próprio: um `multiple_choice`
+de duas opções (ou um `cloze` `select` de duas opções) cobre-os.
+
+**Preferido (esquema v1.6+, #1525): o tipo nativo
+`multiple_choice`.** Cada opção traz o seu próprio flag `correct`,
+por isso não há listas accept/distractors separadas a manter
+disjuntas. `multiple: false` (padrão) é escolha única (exatamente uma
+correta); `multiple: true` é "seleciona tudo o que se aplica"
+(avaliação por conjunto exato, sem pontos parciais):
+
+```json
+{
+  "id": "ex-capital",
+  "type": "multiple_choice",
+  "prompt": "What is the capital of France?",
+  "card_ids": ["card-paris"],
+  "options": [
+    {"text": "Paris", "correct": true},
+    {"text": "Berlin"},
+    {"text": "Madrid"},
+    {"text": "Rome"}
+  ]
+}
+```
+
+**Mecanismo legacy (continua plenamente válido: coexistência, nada
+deprecated):** antes da v1.6, a escolha múltipla de texto era criada
+como `cloze` em modo `select` (EXP-036 §4.3, #890). Uma pergunta de
+resposta única é um cloze com uma lacuna: a `sentence` (que termina
+em `___`) é a pergunta, o `accept[0]` da lacuna é a opção correta e
+os `distractors` são as opções erradas. Exemplo:
+`"sentence": "The capital of France is ___."`,
+`"blanks": [{"accept": ["Paris"]}]`, `"cloze_mode": "select"`,
+`"distractors": ["Berlin", "Madrid", "Rome"]`.
+
+Também podes pôr a pergunta inteira em `prompt` e usar um
+`"sentence": "___"` simples; o renderizador mostra um `<select>` com
+a resposta correta + os distratores, avalia a escolha, dá feedback e
+alimenta o SRS:
+
+```json
+{
+  "id": "ex-hook-state",
+  "type": "cloze",
+  "prompt": "Which hook manages local state in a function component?",
+  "card_ids": ["card-usestate"],
+  "sentence": "___",
+  "blanks": [{"accept": ["useState"]}],
+  "cloze_mode": "select",
+  "distractors": ["useEffect", "useContext", "useRef"]
+}
+```
+
+**"Seleciona tudo o que se aplica"** (duas ou mais respostas
+corretas, p. ex. uma pergunta de exame de condução) usa
+`cloze_mode: "multiselect"` (correspondência por conjunto exato sobre
+`accept` + `distractors`, #1195):
+
+```json
+{
+  "type": "cloze",
+  "cloze_mode": "multiselect",
+  "sentence": "Which cities are in Germany?",
+  "accept": ["Berlin", "Hamburg"],
+  "distractors": ["Vienna", "Zurich"]
+}
+```
 
 **Várias lacunas por cloze** são suportadas: cada `___` na frase é
 mapeado por ordem para a entrada seguinte em `blanks`. Cada lacuna

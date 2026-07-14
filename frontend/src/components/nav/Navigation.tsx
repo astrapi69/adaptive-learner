@@ -28,7 +28,7 @@ import { isDarkTheme } from "../../lib/theme/themes";
  * The media conditions under which the top bar collapses behind the
  * hamburger drawer (#1390). Mirrors the two global.css blocks that style the
  * drawer: the mobile breakpoint (``max-width: 768px`` — the established
- * top-bar pattern; the BottomTabBar's ``md`` boundary) and the
+ * top-bar collapse boundary) and the
  * short-landscape phone case. Lesson-compact mode ORs in separately via
  * ``useIsLessonActive`` (any width). Keep in sync with global.css.
  */
@@ -158,10 +158,12 @@ export default function Navigation() {
     >
       {/* Hamburger first in the DOM so it sits on the LEFT on
                 mobile (primary nav action, thumb-reachable). `ml-0!`
-                overrides the global.css `.nav-hamburger { margin-left:
-                auto }` (unlayered, so the important modifier is what
-                makes the Tailwind utility win). Rendered ONLY in drawer
-                mode (#1390) — on desktop it does not exist in the DOM. */}
+                pins margin-left:0 explicitly. The old conflicting
+                `.nav-hamburger { margin-left: auto }` in global.css was
+                removed in #1583 (dead, since this always-present `ml-0!`
+                already won), which let that block wrap into @layer
+                legacy. Rendered ONLY in drawer mode (#1390) — on desktop
+                it does not exist in the DOM. */}
       {drawerNav && (
         <MenuToggleButton
           open={menuOpen}
@@ -236,6 +238,7 @@ export default function Navigation() {
             key={group.id}
             label={t(group.labelKey, group.labelFallback)}
             testId={`nav-group-${group.id}`}
+            hideLabel
           >
             {navTargetsByGroup(group.id).map((target) => (
               <NavLink

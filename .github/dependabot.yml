@@ -7,7 +7,11 @@
 # own dedicated review (matching the release-workflow dep policy).
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  # frontend/ (Phase 1) and e2e/ (Phase 2) are managed by Bun (#1492).
+  # Dependabot supports bun.lock version updates (GA 2025-02-13, verified in
+  # the Phase 0 gate); on "npm" it would look for the now-absent
+  # package-lock.json files and stop updating them.
+  - package-ecosystem: "bun"
     directory: "/frontend"
     # Gitflow (#334): open update PRs against develop, not main.
     target-branch: "develop"
@@ -18,6 +22,53 @@ updates:
       - "dependencies"
     groups:
       frontend-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # DEP-TS7 (#1507): hold the TypeScript 6 -> 7 major. TS 7 (the native
+      # compiler) is blocked upstream — no typescript-eslint release supports
+      # it yet (peer `typescript >=4.8.4 <6.1.0`), so the ESLint gate crashes.
+      # Minor/patch within TS 6 still flow. Remove this entry when a
+      # TS-7-compatible typescript-eslint ships and the migration is done.
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+
+  # e2e/ carries @playwright/test, which is TRIPLE-coupled (#1558): the
+  # mcr.microsoft.com/playwright container tags in the workflows ("bump
+  # both together"), the CI-rendered visual baselines (a new chromium can
+  # shift font AA across all 105 PNGs), and the maintainer machine's
+  # installer support (1.61 refuses ubuntu26.04). It is therefore exact-
+  # pinned in e2e/package.json, EXCLUDED from the group below, and
+  # IGNORED entirely (#1582): the group exclusion alone only rerouted the
+  # bump into an individual PR, which is exactly how #1561 overrode the
+  # #1559 pin the same day. Playwright upgrades never come from
+  # Dependabot - only as a manually coordinated PR that bumps package +
+  # container tags together, regenerates the visual baselines + Feature-
+  # Shots in the same cycle, and first verifies a maintainer-machine
+  # install path. Do NOT remove these ignore entries without that
+  # coordinated upgrade (and never mid-baseline-refresh, see #1577).
+  - package-ecosystem: "bun"
+    directory: "/e2e"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    ignore:
+      # No update-types filter = ALL updates (patch included: the mcr
+      # container tag and the browser build move per patch release too).
+      # @axe-core/playwright is an independent package and keeps flowing.
+      - dependency-name: "@playwright/test"
+      # Guards, should these ever be added as direct deps of e2e/:
+      - dependency-name: "playwright"
+      - dependency-name: "playwright-core"
+    groups:
+      e2e-minor-patch:
+        exclude-patterns:
+          - "@playwright/test"
         update-types:
           - "minor"
           - "patch"

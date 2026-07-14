@@ -31,9 +31,10 @@ describe("Navigation", () => {
 
     // EXP-037 (#850) reduced the primary nav to grouped-order entries; #856
     // merged "My content" + "Discover" into one "Content" entry; #1129 re-added
-    // Session. The bar now carries Dashboard, Learning Path, Session, Content,
-    // Progress + Settings + Help. Curriculum/Statistics/Import/Anki/Discover
-    // are reachable via redirects/tabs/actions.
+    // Session; #1494 dropped Contribute (the gap section moved into /content).
+    // The bar now carries Dashboard, Learning Path, Session, Content,
+    // Progress + Settings + Help. Curriculum/Statistics/Import/Anki/Discover/
+    // Contribute are reachable via redirects/tabs/actions.
     it("renders the grouped-order primary entries on /dashboard", () => {
         renderAt("/dashboard");
         expect(screen.getByTestId("app-nav")).toBeInTheDocument();
@@ -43,7 +44,6 @@ describe("Navigation", () => {
             "nav-learning-path",
             "nav-session",
             "nav-content",
-            "nav-contribute",
             "nav-progress",
             "nav-settings",
             "nav-help",
@@ -57,6 +57,7 @@ describe("Navigation", () => {
             "nav-import",
             "nav-anki",
             "nav-discover",
+            "nav-contribute",
         ]) {
             expect(screen.queryByTestId(id)).not.toBeInTheDocument();
         }

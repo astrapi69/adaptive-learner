@@ -30,6 +30,8 @@
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
 import { ApiError } from "../../api/client";
+import { upsertRegistryEntry } from "../content/repos/registry-submission";
+import type { RegistryEntry } from "../content/repos/registry-types";
 
 const GITHUB_API_BASE = "https://api.github.com";
 
@@ -89,6 +91,26 @@ export interface CreateLessonPrResult {
   url: string;
   number: number;
   manifestUpdated: boolean;
+}
+
+export interface CreateRegistryPrArgs {
+  /** ``owner/repo`` of the official content repo hosting the registry. */
+  upstream: string;
+  /** Base branch to fork from + target with the PR (usually ``main``). */
+  baseBranch: string;
+  /** Unique branch name to create on the fork. */
+  branchName: string;
+  /** The registry file to edit, e.g. ``recommended-repos.json``. */
+  registryFile: string;
+  /** The registry entry to add / update. */
+  entry: RegistryEntry;
+  prTitle: string;
+  prBody: string;
+}
+
+export interface CreateRegistryPrResult {
+  url: string;
+  number: number;
 }
 
 export interface GitHubApiOptions {
@@ -403,6 +425,49 @@ export class GitHubApi {
       args.prBody,
     );
     return { url: pr.url, number: pr.number, manifestUpdated };
+  }
+
+  // --- Registry submission (federated search) ----------------------------
+
+  /**
+   * Propose a content repo for the federated search by opening a PR that adds
+   * (or updates) its entry in the official registry's ``recommended-repos.json``:
+   * fork -> branch -> read the current registry on the fork -> splice the entry
+   * -> commit -> open the PR upstream. Throws {@link ApiError} on any GitHub
+   * failure so the friendly-error mapper handles it uniformly.
+   */
+  async createRegistryPr(
+    args: CreateRegistryPrArgs,
+  ): Promise<CreateRegistryPrResult> {
+    const { forkFullName, forkOwner } = await this.ensureFork(
+      args.upstream,
+      args.baseBranch,
+    );
+    const sha = await this.baseSha(forkFullName, args.baseBranch);
+    await this.createBranch(forkFullName, args.branchName, sha);
+    const existing = await this.getFile(
+      forkFullName,
+      args.registryFile,
+      args.branchName,
+    );
+    const current = existing?.content ?? '{\n  "repos": []\n}\n';
+    const updated = upsertRegistryEntry(current, args.entry);
+    await this.commitFile(
+      forkFullName,
+      args.branchName,
+      args.registryFile,
+      updated,
+      args.prTitle,
+      existing?.sha,
+    );
+    const pr = await this.createPullRequest(
+      args.upstream,
+      `${forkOwner}:${args.branchName}`,
+      args.baseBranch,
+      args.prTitle,
+      args.prBody,
+    );
+    return { url: pr.url, number: pr.number };
   }
 
   // --- Repository export (#1017) -----------------------------------------

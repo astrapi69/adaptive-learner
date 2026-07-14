@@ -210,8 +210,9 @@ git push origin main --tags
 | `launcher/pyproject.toml:version` | `backend/pyproject.toml` | `make sync-versions` |
 | `plugins/*/pyproject.toml:version` | `backend/pyproject.toml` | `make sync-versions` (lock-step; per-plugin independent versions deferred to a future Core-vs-Third-Party decision) |
 | `plugins/adaptive-learner-plugin-git-sync/adaptive_learner_git_sync/__init__.py:__version__` | own pyproject | `importlib.metadata.version` |
-| `frontend/package-lock.json` (top-level + `packages[""]`) | `backend/pyproject.toml` | `make sync-versions` (surgical regex, first 2 `"version":` lines only - added Phase 40) |
 | `frontend/src/components/*` `__APP_VERSION__` | `frontend/package.json` | Vite `define` build-time literal |
+
+(`frontend/bun.lock` carries no app version, unlike npm's `package-lock.json` which duplicated it in two top-level fields; the `make sync-versions` surgery for it was removed when the frontend moved to Bun, #1492.)
 
 If a hardcoded version literal appears anywhere in the "DO NOT
 EDIT" list, the derivation is broken. Fix the derivation, do not

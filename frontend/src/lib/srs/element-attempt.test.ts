@@ -12,6 +12,10 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    deriveCategorizationAttempts,
+    deriveErrorCorrectionAttempt,
+    deriveGradedQuizAttempts,
+    deriveReadingComprehensionAttempts,
     deriveClozeAttempts,
     deriveClozeMultiSelectAttempt,
     deriveFreeTextAttempt,
@@ -390,5 +394,225 @@ describe("deriveClozeMultiSelectAttempt", () => {
         );
         expect(attempt.user_answer).toBe("Vienna");
         expect(attempt.correct).toBe(false);
+    });
+});
+
+
+describe("deriveCategorizationAttempts", () => {
+    // #1579 - adopted extension ext:al-categorization: one attempt per item,
+    // element_key = the item, mirrors the matching fan-out.
+    const exercise = {
+        id: "ex-categ-01",
+        type: "ext:al-categorization",
+        prompt: "Ordne zu.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            categories: [
+                {name: "Sichtzeichen", items: ["flache Hand"]},
+                {name: "Hoerzeichen", items: ["Sitz", "Platz"]},
+            ],
+        },
+    } as unknown as ContentLessonExercise;
+    const ctx = {setId: "set-1", lessonId: "lesson-1"};
+
+    it("fans out one attempt per authored item with the chosen bucket", () => {
+        const attempts = deriveCategorizationAttempts(
+            exercise,
+            ctx,
+            new Map([
+                ["flache Hand", "Sichtzeichen"],
+                ["Sitz", "Sichtzeichen"],
+                ["Platz", "Hoerzeichen"],
+            ]),
+        );
+        expect(attempts).toHaveLength(3);
+        const bySitz = attempts.find((a) => a.element_key === "Sitz");
+        expect(bySitz).toMatchObject({
+            set_id: "set-1",
+            lesson_id: "lesson-1",
+            exercise_id: "ex-categ-01",
+            element_type: "vocabulary",
+            user_answer: "Sichtzeichen",
+            correct_answer: "Hoerzeichen",
+            correct: false,
+        });
+        const byPlatz = attempts.find((a) => a.element_key === "Platz");
+        expect(byPlatz).toMatchObject({correct: true, user_answer: "Hoerzeichen"});
+    });
+
+    it("an unassigned item counts as a wrong attempt with an empty user answer", () => {
+        const attempts = deriveCategorizationAttempts(
+            exercise,
+            ctx,
+            new Map([["flache Hand", "Sichtzeichen"]]),
+        );
+        const unassigned = attempts.find((a) => a.element_key === "Sitz");
+        expect(unassigned).toMatchObject({correct: false, user_answer: ""});
+    });
+
+    it("a malformed payload yields no attempts (edge)", () => {
+        const broken = {
+            ...exercise,
+            ext_payload: {categories: "nope"},
+        } as unknown as ContentLessonExercise;
+        expect(deriveCategorizationAttempts(broken, ctx, new Map())).toEqual([]);
+    });
+});
+
+
+describe("deriveErrorCorrectionAttempt", () => {
+    // #1579 second adoption - ext:al-error-correction: one attempt per
+    // exercise (one grammar decision), element_key = the canonical
+    // correction accept[0], element_type grammar_rule.
+    const exercise = {
+        id: "ex-errcorr-01",
+        type: "ext:al-error-correction",
+        prompt: "Ein Wort ist falsch.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            tokens: ["Der", "Hund", "folgt", "das", "Kommando"],
+            error_index: 3,
+            accept: ["dem", "einem"],
+        },
+    } as unknown as ContentLessonExercise;
+    const ctx = {setId: "set-1", lessonId: "lesson-1"};
+
+    it("derives one grammar_rule attempt keyed by the canonical correction", () => {
+        const attempt = deriveErrorCorrectionAttempt(
+            exercise,
+            ctx,
+            {pickedIndex: 3, typedCorrection: "einem"},
+            true,
+        );
+        expect(attempt).toMatchObject({
+            set_id: "set-1",
+            lesson_id: "lesson-1",
+            exercise_id: "ex-errcorr-01",
+            element_key: "dem",
+            element_type: "grammar_rule",
+            user_answer: "das -> einem",
+            correct_answer: "das -> dem",
+            correct: true,
+        });
+    });
+
+    it("records a wrong pick with the picked token in the user answer", () => {
+        const attempt = deriveErrorCorrectionAttempt(
+            exercise,
+            ctx,
+            {pickedIndex: 2, typedCorrection: "dem"},
+            false,
+        );
+        expect(attempt).toMatchObject({
+            user_answer: "folgt -> dem",
+            correct: false,
+        });
+    });
+});
+
+
+describe("deriveReadingComprehensionAttempts", () => {
+    // #1579 third adoption - one attempt per sub-question, element_key = the
+    // canonical answer, element_type vocabulary. The renderer supplies the
+    // per-question answer + graded correctness (free_text needs the shared
+    // matcher, which lives in the React layer).
+    const exercise = {
+        id: "ex-rc-01",
+        type: "ext:al-reading-comprehension",
+        prompt: "Lies und antworte.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            passage: "Rex lief in den Garten.",
+            questions: [
+                {
+                    prompt: "Wohin?",
+                    type: "multiple_choice",
+                    options: [{text: "Garten", correct: true}, {text: "Strasse"}],
+                },
+                {prompt: "Wer?", type: "free_text", accept: ["Rex"]},
+            ],
+        },
+    } as unknown as ContentLessonExercise;
+    const ctx = {setId: "set-1", lessonId: "lesson-1"};
+
+    it("fans out one attempt per sub-question keyed by the canonical answer", () => {
+        const attempts = deriveReadingComprehensionAttempts(exercise, ctx, [
+            {answer: "Garten", correct: true},
+            {answer: "Bello", correct: false},
+        ]);
+        expect(attempts).toHaveLength(2);
+        expect(attempts[0]).toMatchObject({
+            set_id: "set-1",
+            lesson_id: "lesson-1",
+            exercise_id: "ex-rc-01",
+            element_key: "Garten",
+            element_type: "vocabulary",
+            user_answer: "Garten",
+            correct_answer: "Garten",
+            correct: true,
+        });
+        expect(attempts[1]).toMatchObject({
+            element_key: "Rex",
+            user_answer: "Bello",
+            correct_answer: "Rex",
+            correct: false,
+        });
+    });
+
+    it("a malformed payload yields no attempts (edge)", () => {
+        const broken = {
+            ...exercise,
+            ext_payload: {passage: "x"},
+        } as unknown as ContentLessonExercise;
+        expect(deriveReadingComprehensionAttempts(broken, ctx, [])).toEqual([]);
+    });
+});
+
+
+describe("deriveGradedQuizAttempts", () => {
+    // #1579 fourth adoption - ext:al-graded-quiz: one attempt per question,
+    // element_key = the canonical answer. The renderer supplies per-question
+    // {answer, correct} (free_text grading needs the React-layer matcher).
+    const exercise = {
+        id: "ex-gq-01",
+        type: "ext:al-graded-quiz",
+        prompt: "Quiz.",
+        card_ids: [],
+        distractors: [],
+        ext_payload: {
+            pass_threshold: 60,
+            questions: [
+                {prompt: "2+2?", type: "multiple_choice", options: [{text: "4", correct: true}, {text: "5"}], points: 2},
+                {prompt: "Synonym?", type: "free_text", accept: ["rasch"], points: 3},
+            ],
+        },
+    } as unknown as ContentLessonExercise;
+    const ctx = {setId: "set-1", lessonId: "lesson-1"};
+
+    it("fans out one attempt per question keyed by the canonical answer", () => {
+        const attempts = deriveGradedQuizAttempts(exercise, ctx, [
+            {answer: "4", correct: true},
+            {answer: "flink", correct: false},
+        ]);
+        expect(attempts).toHaveLength(2);
+        expect(attempts[0]).toMatchObject({
+            set_id: "set-1",
+            lesson_id: "lesson-1",
+            exercise_id: "ex-gq-01",
+            element_key: "4",
+            element_type: "vocabulary",
+            user_answer: "4",
+            correct_answer: "4",
+            correct: true,
+        });
+        expect(attempts[1]).toMatchObject({element_key: "rasch", user_answer: "flink", correct: false});
+    });
+
+    it("a malformed payload yields no attempts (edge)", () => {
+        const broken = {...exercise, ext_payload: {questions: "x"}} as unknown as ContentLessonExercise;
+        expect(deriveGradedQuizAttempts(broken, ctx, [])).toEqual([]);
     });
 });

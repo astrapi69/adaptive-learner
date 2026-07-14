@@ -1,5 +1,5 @@
 """JSON Schema export for the Content-Loader's data models
-(Phase 43 / EXP-002 / 2B — P-103).
+(Phase 43 / EXP-002 / 2B - P-103; mirror source since D3b, #1528).
 
 Used by:
 
@@ -12,16 +12,21 @@ Used by:
 - The Content-Loader CLI (Phase 44+) for ``adaptive-learner
   content validate <path>`` style commands.
 
-The schemas are derived from Pydantic v2's
-``model_json_schema()`` so they stay in lockstep with the
-models. The exports never duplicate validation logic; they
-are a documentation artefact + a contract for tools outside
-the Python codebase.
+Source-of-truth chain: the ``learn-content-engine`` npm package is the
+CANONICAL home of the lesson format; ``schema/lesson.schema.json`` and
+``schema/content-manifest.schema.json`` in this repo are a byte mirror of
+the pinned engine release. Since D3b (#1528) the structural Pydantic
+models are GENERATED from that mirror, so the exports below read the
+MIRROR - not ``model_json_schema()`` - to stay the one source:
 
-The export is JSON, NOT JSON-Schema-with-draft-suffix --
-Pydantic v2 emits a 2020-12-draft document by default and
-that's what we ship. External tooling (ajv, jsonschema,
-yajsv) supports the 2020-12 draft.
+- ``lesson_schema`` / ``manifest_schema`` load the mirror file directly.
+- ``card`` / ``exercise`` / ``lesson_step`` / ``set`` extract the matching
+  ``$defs`` node (plus its transitively referenced ``$defs``) out of the
+  mirror as a standalone schema.
+
+The export is JSON, NOT JSON-Schema-with-draft-suffix -- the engine emits
+a 2020-12-draft document and that's what the mirror carries. External
+tooling (ajv, jsonschema, yajsv) supports the 2020-12 draft.
 """
 
 from __future__ import annotations
@@ -30,67 +35,120 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .models import ContentManifest, ContentSet
-from .schema import Card, Exercise, Lesson, LessonStep
+# Repo-root schema mirror (``<repo>/schema``). ``parents[3]`` walks
+# schema_export.py -> adaptive_learner_content_loader ->
+# adaptive-learner-plugin-content-loader -> plugins -> repo root. Callers
+# that run against an INSTALLED package (not the repo layout) can pass an
+# explicit ``schema_dir``.
+MIRROR_DIR = Path(__file__).resolve().parents[3] / "schema"
+
+LESSON_MIRROR = "lesson.schema.json"
+MANIFEST_MIRROR = "content-manifest.schema.json"
 
 
-def manifest_schema() -> dict[str, Any]:
-    """Return the JSON Schema for ``ContentManifest``."""
-    return ContentManifest.model_json_schema()
+def _load(name: str, schema_dir: Path | None = None) -> dict[str, Any]:
+    """Load one mirror schema file as a dict."""
+    base = schema_dir if schema_dir is not None else MIRROR_DIR
+    return json.loads((base / name).read_text(encoding="utf-8"))
 
 
-def set_schema() -> dict[str, Any]:
-    """Return the JSON Schema for ``ContentSet``."""
-    return ContentSet.model_json_schema()
+def _referenced_defs(root: dict[str, Any], all_defs: dict[str, Any]) -> dict[str, Any]:
+    """Return the ``$defs`` transitively referenced from ``root``.
 
-
-def lesson_schema() -> dict[str, Any]:
-    """Return the JSON Schema for ``Lesson``.
-
-    The Lesson schema includes inline definitions for
-    ``LessonStep``, ``Exercise``, ``Card``, ``ExerciseType``,
-    and ``StepType`` — Pydantic v2's ``model_json_schema()``
-    inlines nested model refs as ``$defs``. External content
-    editors validate a whole lesson .json against this one
-    schema.
+    Walks every ``$ref: "#/$defs/X"`` reachable from ``root`` and collects
+    the referenced definitions (and the definitions THEY reference, ...)
+    so an extracted sub-schema keeps every ``$ref`` resolvable within its
+    own ``$defs``.
     """
-    return Lesson.model_json_schema()
+    needed: set[str] = set()
+
+    def visit(node: Any) -> None:
+        if isinstance(node, dict):
+            ref = node.get("$ref")
+            if isinstance(ref, str) and ref.startswith("#/$defs/"):
+                name = ref.rsplit("/", 1)[-1]
+                if name not in needed and name in all_defs:
+                    needed.add(name)
+                    visit(all_defs[name])
+            for value in node.values():
+                visit(value)
+        elif isinstance(node, list):
+            for value in node:
+                visit(value)
+
+    visit(root)
+    return {name: all_defs[name] for name in sorted(needed)}
 
 
-def card_schema() -> dict[str, Any]:
-    """Return the JSON Schema for ``Card`` in isolation.
+def _extract(source: str, def_name: str, schema_dir: Path | None = None) -> dict[str, Any]:
+    """Extract one ``$defs`` node from a mirror file as a standalone schema.
+
+    The node becomes the schema root; its transitively referenced ``$defs``
+    are carried along so the ``#/$defs/...`` pointers still resolve.
+    """
+    doc = _load(source, schema_dir)
+    all_defs = doc.get("$defs", {})
+    root = dict(all_defs[def_name])
+    sub_defs = _referenced_defs(root, all_defs)
+    sub_defs.pop(def_name, None)  # a self-ref stays a dangling #/$defs pointer at worst
+    if sub_defs:
+        root["$defs"] = sub_defs
+    return root
+
+
+def manifest_schema(schema_dir: Path | None = None) -> dict[str, Any]:
+    """Return the JSON Schema for ``ContentManifest`` (mirror file)."""
+    return _load(MANIFEST_MIRROR, schema_dir)
+
+
+def set_schema(schema_dir: Path | None = None) -> dict[str, Any]:
+    """Return the JSON Schema for ``ContentSet`` (extracted from the manifest mirror)."""
+    return _extract(MANIFEST_MIRROR, "ContentSet", schema_dir)
+
+
+def lesson_schema(schema_dir: Path | None = None) -> dict[str, Any]:
+    """Return the JSON Schema for ``Lesson`` (mirror file).
+
+    The lesson mirror inlines ``LessonStep``, ``Exercise``, ``Card``,
+    ``ExerciseType``, ``StepType`` etc. under ``$defs``. External content
+    editors validate a whole lesson .json against this one schema.
+    """
+    return _load(LESSON_MIRROR, schema_dir)
+
+
+def card_schema(schema_dir: Path | None = None) -> dict[str, Any]:
+    """Return the JSON Schema for ``Card`` in isolation (extracted from the mirror).
 
     Useful for the planned cross-lesson shared-card store
-    (P-111 territory) where individual cards live in their
-    own files.
+    (P-111 territory) where individual cards live in their own files.
     """
-    return Card.model_json_schema()
+    return _extract(LESSON_MIRROR, "Card", schema_dir)
 
 
-def exercise_schema() -> dict[str, Any]:
-    """Return the JSON Schema for ``Exercise`` in isolation.
+def exercise_schema(schema_dir: Path | None = None) -> dict[str, Any]:
+    """Return the JSON Schema for ``Exercise`` in isolation (extracted from the mirror).
 
-    Useful for content authors who want to write exercises
-    once and reference them from multiple lessons (planned
-    for the Phase 44+ shared exercise pool).
+    Useful for content authors who want to write exercises once and
+    reference them from multiple lessons (planned for the Phase 44+
+    shared exercise pool).
     """
-    return Exercise.model_json_schema()
+    return _extract(LESSON_MIRROR, "Exercise", schema_dir)
 
 
-def lesson_step_schema() -> dict[str, Any]:
-    """Return the JSON Schema for ``LessonStep`` in isolation.
+def lesson_step_schema(schema_dir: Path | None = None) -> dict[str, Any]:
+    """Return the JSON Schema for ``LessonStep`` in isolation (extracted from the mirror).
 
-    Not directly consumed by the content authoring flow, but
-    used by the Phase 44 viewer when it parses partial step
-    payloads streamed from the cache.
+    Not directly consumed by the content authoring flow, but used by the
+    Phase 44 viewer when it parses partial step payloads streamed from
+    the cache.
     """
-    return LessonStep.model_json_schema()
+    return _extract(LESSON_MIRROR, "LessonStep", schema_dir)
 
 
 def write_schemas(out_dir: Path) -> dict[str, Path]:
     """Materialise every schema as a JSON file under ``out_dir``.
 
-    Returns a mapping of schema name → written path so callers
+    Returns a mapping of schema name -> written path so callers
     (CI workflows, release scripts) can verify the file set.
     """
     out_dir.mkdir(parents=True, exist_ok=True)

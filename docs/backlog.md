@@ -267,6 +267,10 @@ These activate when a specific condition is met:
 
 ## Blocked / Upstream Wait
 
+- **DEP-TS7 — TypeScript 6 → 7** (BLOCKED): no `typescript-eslint` release
+  supports TS 7 yet (peer `typescript >=4.8.4 <6.1.0`); `tsc` passes but the
+  ESLint gate crashes. See ROADMAP > Blocked / Upstream Wait; tracked in #1507.
+
 - **AUTH-03+ — cross-repo author publishing flow** (EXP-025): the
   remaining author-companion scope beyond AUTH-01/02 (#529/#531, shipped) —
   publishing/maintaining a book companion repo across repositories. Needs

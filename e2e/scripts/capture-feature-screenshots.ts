@@ -188,6 +188,17 @@ async function gotoAnswerToggle(
     } else {
         await page.getByTestId("free-text-my-answer").click();
     }
+    // The check click smooth-scrolls the feedback into view and where
+    // that scroll settles varies by 1-2px between runs, shifting the
+    // WHOLE content column against the baseline (#1493). Pin the scroll
+    // deterministically instead: an INSTANT scroll that centers the
+    // toggle (the feature under documentation) — same layout, same
+    // geometry, same pixels on every run.
+    await page.evaluate(() =>
+        document
+            .querySelector('[data-testid="free-text-answer-toggle"]')
+            ?.scrollIntoView({block: "center", behavior: "instant"}),
+    );
     return true;
 }
 
@@ -251,6 +262,83 @@ async function gotoSummarySections(page: Page): Promise<boolean> {
 }
 
 /**
+ * Open the proactive error-report dialog from Settings → About (#1480 —
+ * baseline net for the inline-style-heavy dialog before its Tailwind
+ * migration). The Support card's button dispatches the
+ * ``adaptive-learner:open-error-report`` CustomEvent that App.tsx listens
+ * on, so this exercises the real production path.
+ */
+async function gotoErrorReportDialog(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=about");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const trigger = page.getByTestId("settings-create-error-report");
+    if (!(await trigger.count())) return false;
+    await trigger.scrollIntoViewIfNeeded();
+    await trigger.click();
+    // The dialog is lazy-loaded (App.tsx Suspense), so it appears a beat
+    // after the click — wait for it instead of an immediate count check.
+    const dialog = page.getByTestId("error-report-dialog");
+    try {
+        await dialog.waitFor({timeout: 15_000});
+    } catch {
+        return false;
+    }
+    await expect(dialog).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/**
+ * Error-report dialog with the action-history preview expanded. The
+ * "View" toggle only renders when the event recorder captured at least
+ * one event — the seed + navigation above produce some; when none were
+ * recorded the shot is skipped rather than baselining an empty state.
+ */
+async function gotoErrorReportHistory(page: Page): Promise<boolean> {
+    if (!(await gotoErrorReportDialog(page))) return false;
+    const view = page.getByTestId("error-report-history-view");
+    if (!(await view.count())) return false;
+    await view.click();
+    const preview = page.getByTestId("error-report-history-preview");
+    if (!(await preview.count())) return false;
+    await expect(preview).toBeVisible({timeout: 5_000});
+    return true;
+}
+
+/** Error-report dialog with the full report preview shown
+ *  (``error-report-toggle-preview`` → ``error-report-full-preview``). */
+async function gotoErrorReportFullPreview(page: Page): Promise<boolean> {
+    if (!(await gotoErrorReportDialog(page))) return false;
+    const toggle = page.getByTestId("error-report-toggle-preview");
+    if (!(await toggle.count())) return false;
+    await toggle.scrollIntoViewIfNeeded();
+    await toggle.click();
+    const preview = page.getByTestId("error-report-full-preview");
+    if (!(await preview.count())) return false;
+    await expect(preview).toBeVisible({timeout: 5_000});
+    return true;
+}
+
+/**
+ * Settings → Data scrolled to the Sync desktop-only notice — the state
+ * every Dexie/PWA visitor actually sees (#335: disabled-with-reason, not
+ * hidden). The TRUE sync states (desktop-unpaired, QR panel, phone
+ * pairing, QR scanner) need a backend and are NOT reachable in this
+ * dexie-preview pipeline — baselining them needs an API-mode capture
+ * project first (documented in #1480).
+ */
+async function gotoSyncDesktopOnlyNotice(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=data");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const notice = page.getByTestId("settings-sync-desktop-only");
+    if (!(await notice.count())) return false;
+    await notice.scrollIntoViewIfNeeded();
+    await expect(notice).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/**
  * Every per-feature baseline. Kebab-case ``<feature-folder>/<shot>`` paths;
  * the test loop appends the viewport suffix + ``.png``.
  */
@@ -276,7 +364,25 @@ const FEATURES: FeatureShot[] = [
             return true;
         },
     },
-    {path: "content-hub/entdecken", setup: (p) => gotoContentTab(p, "discover")},
+    // Wait for the LOADED catalogue ("N Sets" count or an explicit empty
+    // state), not just the hub shell — otherwise the shot races the async
+    // index load and sometimes freezes the "Verfügbare Inhalte werden
+    // geladen…" spinner as the baseline (#1493).
+    {
+        path: "content-hub/entdecken",
+        setup: async (p) => {
+            await gotoContentTab(p, "discover");
+            const loaded = p
+                .getByTestId("discover-count")
+                .or(p.getByTestId("discover-empty-none"));
+            try {
+                await loaded.first().waitFor({timeout: 20_000});
+            } catch {
+                return false;
+            }
+            return true;
+        },
+    },
     {
         path: "content-hub/meine-inhalte",
         // Wait for the (async) set catalogue, not just the hub shell —
@@ -376,6 +482,14 @@ const FEATURES: FeatureShot[] = [
 
     // --- Lesson-summary section toggles (#1411) --------------------------
     {path: "summary-sections/settings", setup: gotoSummarySections},
+
+    // --- Error-report dialog (#1480 — pre-migration pixel net) ----------
+    {path: "error-report/dialog", setup: gotoErrorReportDialog},
+    {path: "error-report/verlauf", setup: gotoErrorReportHistory},
+    {path: "error-report/vollvorschau", setup: gotoErrorReportFullPreview},
+
+    // --- Sync (Dexie-mode desktop-only notice, #335 / #1480) ------------
+    {path: "sync/desktop-only-hinweis", setup: gotoSyncDesktopOnlyNotice},
 ];
 
 for (const feature of FEATURES) {

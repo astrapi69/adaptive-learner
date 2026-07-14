@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.1.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.2.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -231,7 +231,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**487 lessons · 34 sets · 5 domain(s)** (ai, language, programming, psychology, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**499 lessons · 35 sets · 6 domain(s)** (ai, language, programming, psychology, software, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -269,6 +269,7 @@ Full documentation (German default at `/docs/`, English at
 | IT-Grundlagen | de | de | A1 | 10 |
 | Ansible-Grundlagen für Quality Engineering | de | de | B1 | 8 |
 | Data Science und KI | de | de | A2 | 9 |
+| Adaptive Learner — App-Tutorial | de | de | Einsteiger | 12 |
 <!-- CONTENT-STATS:END -->
 
 ### Content repos
@@ -476,11 +477,13 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.1.0**, a schema +
-tooling release in which the lesson **JSON-Schema is the
-app-authoritative single source of truth** (schema, quality rules,
-docs, and TS types are generated from the App's Pydantic models, and
-the structural validator is ajv-hardened against it). Recent feature
+Active development. The current release is **v2.2.0**, a feature
+release adding an **extension-exercise tier** (four AI-authored
+exercise types) and a native **multiple_choice** type, with the app
+now consuming the lesson schema and TypeScript types from
+**`learn-content-engine`** (additive schema 1.5 -> 1.7), a **federated
+content-repository registry**, a simpler mobile navigation, and the
+**EXP-044** CSS-cascade repair. Recent feature
 work includes the **Content hub** redesign (Discover / My content /
 Import tabs, a global list ⇄ grid view toggle, and a compact
 search/filter bar), the full **lesson-mode system** (Practice / Exam /

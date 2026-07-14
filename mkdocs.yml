@@ -54,6 +54,7 @@ plugins:
             Docker Desktop installieren: Install Docker Desktop
             Benutzerhandbuch: User Guide
             Erste Schritte: Getting started
+            App-Tutorial: App tutorial
             Lerntyp-Test: Assessment
             Lern-Session: Learning session
             Lektionen und Wiederholungen: Lessons and reviews
@@ -105,6 +106,7 @@ plugins:
             Docker Desktop installieren: Instalar Docker Desktop
             Benutzerhandbuch: Guía del usuario
             Erste Schritte: Primeros pasos
+            App-Tutorial: Tutorial de la app
             Navigation: Navegación
             Onboarding: Introducción
             Lerntyp-Test: Evaluación
@@ -165,6 +167,7 @@ plugins:
             Docker Desktop installieren: Installer Docker Desktop
             Benutzerhandbuch: Guide de l'utilisateur
             Erste Schritte: Premiers pas
+            App-Tutorial: Tutoriel de l'app
             Onboarding: Intégration
             Lerntyp-Test: Évaluation
             Lern-Session: Session d'apprentissage
@@ -222,6 +225,7 @@ plugins:
             Docker Desktop installieren: Εγκατάσταση Docker Desktop
             Benutzerhandbuch: Οδηγός χρήσης
             Erste Schritte: Ξεκινώντας
+            App-Tutorial: Οδηγός εφαρμογής
             Navigation: Πλοήγηση
             Onboarding: Εισαγωγή
             Lerntyp-Test: Αξιολόγηση
@@ -283,6 +287,7 @@ plugins:
             Docker Desktop installieren: Instalar o Docker Desktop
             Benutzerhandbuch: Guia do usuário
             Erste Schritte: Primeiros passos
+            App-Tutorial: Tutorial do app
             Navigation: Navegação
             Onboarding: Integração
             Lerntyp-Test: Avaliação
@@ -344,6 +349,7 @@ plugins:
             Docker Desktop installieren: Docker Desktop kurulumu
             Benutzerhandbuch: Kullanıcı kılavuzu
             Erste Schritte: Başlarken
+            App-Tutorial: Uygulama eğitimi
             Navigation: Gezinme
             Onboarding: Başlangıç kurulumu
             Lerntyp-Test: Değerlendirme
@@ -405,6 +411,7 @@ plugins:
             Docker Desktop installieren: Docker Desktop のインストール
             Benutzerhandbuch: ユーザーガイド
             Erste Schritte: はじめに
+            App-Tutorial: アプリチュートリアル
             Navigation: ナビゲーション
             Onboarding: オンボーディング
             Lerntyp-Test: 評価
@@ -486,6 +493,7 @@ nav:
   - Docker Desktop installieren: de/install/docker-desktop.md
 - Benutzerhandbuch:
   - Erste Schritte: de/user-guide/getting-started.md
+  - App-Tutorial: de/user-guide/app-tutorial.md
   - Navigation: de/user-guide/navigation.md
   - Onboarding: de/user-guide/onboarding.md
   - Lerntyp-Test: de/user-guide/assessment.md

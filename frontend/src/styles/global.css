@@ -482,6 +482,7 @@ select:focus {
 }
 
 /* --- Buttons -------------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .btn {
   display: inline-flex;
@@ -529,16 +530,9 @@ select:focus {
   background: var(--surface-2);
 }
 
-.btn-danger {
-  background: var(--danger);
-  color: var(--danger-fg);
-}
-
-.btn-danger:hover:not(:disabled) {
-  filter: brightness(1.08);
-}
-
+} /* @layer legacy */
 /* --- Landing page ----------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .landing-page {
   min-height: 100%;
@@ -659,7 +653,9 @@ select:focus {
   color: var(--accent);
 }
 
+} /* @layer legacy */
 /* --- Onboarding page ------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .onboarding-page {
   max-width: 38rem;
@@ -668,15 +664,6 @@ select:focus {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-}
-
-.onboarding-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-2);
 }
 
 .onboarding-header h1 {
@@ -738,12 +725,6 @@ select:focus {
   margin-left: var(--space-1);
 }
 
-.form-optional {
-  color: var(--fg-muted);
-  font-weight: 400;
-  font-size: 0.85em;
-}
-
 .form-hint {
   color: var(--fg-muted);
   font-size: 0.85rem;
@@ -756,7 +737,9 @@ select:focus {
   margin-top: var(--space-4);
 }
 
+} /* @layer legacy */
 /* --- Assessment page ------------------------------------------ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .assessment-page {
   max-width: 42rem;
@@ -962,7 +945,9 @@ select:focus {
   color: var(--danger);
 }
 
+} /* @layer legacy */
 /* --- Dashboard page ------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .dashboard-page {
   max-width: 76rem;
@@ -1241,7 +1226,9 @@ select:focus {
   gap: var(--space-2);
 }
 
+} /* @layer legacy */
 /* --- Session page --------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .session-page {
   max-width: 60rem;
@@ -1441,6 +1428,7 @@ select:focus {
   }
 }
 
+} /* @layer legacy */
 /* ---- v1.7.0 / Phase 20D — QR scanner viewfinder overlay ---------------
 
    The viewfinder sits on top of the camera preview region. It
@@ -1861,6 +1849,7 @@ select:focus {
 }
 
 /* --- v0.6.0 / 9C: 1-5 rating button group ---------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .rating-row {
   display: flex;
   flex-direction: column;
@@ -1909,6 +1898,7 @@ select:focus {
   opacity: 0.5;
   cursor: not-allowed;
 }
+} /* @layer legacy */
 
 /* --- Settings page -------------------------------------------- */
 
@@ -2170,6 +2160,7 @@ select:focus {
 }
 
 /* --- Phase 10F: storage-mode toggle --- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .storage-mode-fieldset {
   display: flex;
@@ -2401,8 +2392,10 @@ select:focus {
   padding: var(--space-2) var(--space-3);
   border-left: 3px solid var(--accent);
 }
+} /* @layer legacy */
 
 /* --- Progress table -------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .commit-table-wrap {
   overflow-x: auto;
@@ -2432,8 +2425,10 @@ select:focus {
 .commit-table tr:last-child td {
   border-bottom: none;
 }
+} /* @layer legacy */
 
 /* --- Navigation ----------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2c-nav (#1597): utilities must win over this block */
 
 .app-nav {
   display: flex;
@@ -2652,13 +2647,6 @@ select:focus {
   min-width: 0;
 }
 
-.content-set-meta h2,
-.content-set-meta h4 {
-  margin: 0 0 4px 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
 /* Phase 60 — source -> target -> level content tree. */
 .content-tree {
   display: flex;
@@ -2676,12 +2664,6 @@ select:focus {
   margin: var(--space-2) 0;
   font-size: 1rem;
   color: var(--fg-muted);
-}
-
-.content-source-native {
-  color: var(--fg-muted);
-  font-weight: 400;
-  font-size: 0.9rem;
 }
 
 .content-tree-toggle {
@@ -2817,22 +2799,6 @@ select:focus {
 }
 
 /* Phase 61 — share placement preview + warnings. */
-.content-share-extra {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border);
-}
-
-.content-share-placement-path {
-  display: inline-block;
-  margin: var(--space-1) 0;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm, 4px);
-  background: var(--surface-hover, var(--surface));
-  color: var(--fg-muted);
-  font-size: 0.8125rem;
-}
-
 .content-share-warning {
   color: var(--status-warning-fg, var(--fg));
   font-size: 0.875rem;
@@ -2937,17 +2903,10 @@ select:focus {
 
 .lesson-header h1 {
   margin: var(--space-2) 0 0 0;
-}
-
-.lesson-header-set {
-  margin: var(--space-2) 0 0 0;
-  font-size: 0.9rem;
-  color: var(--fg-muted);
-}
-
-.lesson-header-set-label {
-  font-weight: 500;
-  margin-right: var(--space-1);
+  /* #1540 - fixed line-height (not the font-metric ``normal``) so the title
+     box height is deterministic; ``normal`` gave a bistable title height
+     that shifted every lesson surface below and flaked lesson-matching@mobile. */
+  line-height: 1.25;
 }
 
 .lesson-back-btn {
@@ -3095,15 +3054,6 @@ select:focus {
   margin-top: 0;
 }
 
-.lesson-summary-stats {
-  list-style: none;
-  padding: 0;
-  margin: var(--space-3) 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 /* Phase 52F / v1.35.0 / P-128 + F-113 — Correction round block.
    Sits between the score / breakdown section and the action button
    row. Self-hides when the lesson was a perfect score or when no
@@ -3170,13 +3120,6 @@ select:focus {
 .lesson-correction-block-complete h3 {
   margin: 0;
   font-size: 1.0625rem;
-}
-
-.lesson-summary-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
 }
 
 /* Phase 64 — Smart Next-Step Suggestions. A prioritised stack of
@@ -3296,24 +3239,6 @@ select:focus {
   align-items: center;
   gap: var(--space-3);
   margin-top: var(--space-3);
-}
-
-.lesson-summary-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 44px;
-  padding: 6px 4px;
-  border: none;
-  background: none;
-  color: var(--fg-muted);
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.lesson-summary-link:hover {
-  color: var(--fg);
-  text-decoration: underline;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3494,6 +3419,50 @@ select:focus {
     transition: none;
   }
 }
+} /* @layer legacy */
+
+/* --- Lesson header / summary + content-set heading -----------
+   EXP-044 (#1597): these rules stay UNLAYERED on purpose. Each
+   currently relies on unlayered precedence to beat a Tailwind
+   utility on the same element (audit KONFLIKTE) - reconciling
+   the conflict (dropping the legacy declaration or moving it
+   into the consumer as a component default) is a visible
+   change and is deferred to a later tranche. Extracting them
+   out of the Navigation region here is what lets Navigation +
+   Nav-Rest wrap into @layer legacy. Refs #1485, #1592. */
+.content-set-meta h2,
+.content-set-meta h4 {
+  margin: 0 0 4px 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.lesson-header-set {
+  margin: var(--space-2) 0 0 0;
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+}
+
+.lesson-header-set-label {
+  font-weight: 500;
+  margin-right: var(--space-1);
+}
+
+.lesson-summary-stats {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lesson-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
 
 /* =============================================================
    EXP-008 / Phase 55C — celebration screen: confetti + message
@@ -3505,6 +3474,7 @@ select:focus {
    belt-and-braces guard. The headline message warms to the
    accent colour on a perfect (3-star) run.
    =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .lesson-summary {
   position: relative;
 }
@@ -3628,6 +3598,7 @@ select:focus {
     animation: none;
   }
 }
+} /* @layer legacy */
 
 /* =============================================================
    EXP-008 / Phase 55D — milestone overlay
@@ -3637,6 +3608,7 @@ select:focus {
    transform + opacity) and is auto-dismissed by MilestoneHost.
    The left accent stripe + icon colour key to the milestone type.
    =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .milestone-overlay {
   position: fixed;
   top: var(--space-3);
@@ -3725,10 +3697,12 @@ select:focus {
     animation: none;
   }
 }
+} /* @layer legacy */
 
 /* =============================================================
    EXP-008 / Phase 55E — feedback intensity control
    =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2c-nav (#1597): utilities must win over this block */
 .form-row-fieldset {
   display: flex;
   flex-direction: column;
@@ -4082,18 +4056,8 @@ select:focus {
 .nav-group {
   display: contents;
 }
-.app-nav .nav-group-label {
-  display: none;
-}
-
-/* Mobile: reserve scroll space at the bottom for the fixed BottomTabBar so
-   page content is never hidden behind it. The bar is md:hidden, so the
-   padding only applies on the same small viewports. */
-@media (max-width: 767px) {
-  body.has-bottom-nav #root {
-    padding-bottom: 4rem;
-  }
-}
+/* nav-group-label visibility: NavGroup `hideLabel` prop, not a CSS context
+   override (removed #1592/#1571 - it blocked layering this region). */
 
 .nav-theme-toggle {
   background: transparent;
@@ -4111,8 +4075,10 @@ select:focus {
 .nav-theme-toggle:hover {
   background: var(--surface-2);
 }
+} /* @layer legacy */
 
 /* --- Curriculum page ------------------------------------------ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .curriculum-toolbar {
   display: flex;
@@ -4327,8 +4293,10 @@ select:focus {
 .lesson-row.is-editing textarea {
   resize: vertical;
 }
+} /* @layer legacy */
 
 /* --- Recent sessions (Phase 7B) ------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .recent-sessions {
   list-style: none;
@@ -4377,8 +4345,10 @@ select:focus {
   font-size: 0.85rem;
   color: var(--fg-muted);
 }
+} /* @layer legacy */
 
 /* --- Method badges ---------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .method-badge {
   display: inline-flex;
@@ -4399,6 +4369,7 @@ select:focus {
   border-radius: 999px;
   background: var(--accent);
 }
+} /* @layer legacy */
 
 /* =============================================================
    Phase 52B / v1.35.0 / F-112 — Visual diff highlighting
@@ -4409,6 +4380,7 @@ select:focus {
    screen-reader users (WCAG 2.1 SC 1.4.1). Theme-variable based;
    no hardcoded colours — all 10 theme variants inherit.
    ============================================================= */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .diff-highlight {
   display: inline;
@@ -4472,6 +4444,7 @@ select:focus {
   font-weight: 700;
   font-size: 0.95em;
 }
+} /* @layer legacy */
 
 /* =============================================================
    EXP-008 / Phase 55B — answer micro-animations
@@ -4485,6 +4458,7 @@ select:focus {
    already forces animation/transition durations to ~0; these
    explicit rules also drop the praise fade to a static state).
    =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 @keyframes answer-correct-pulse {
   0% {
     background-color: transparent;
@@ -4592,6 +4566,7 @@ select:focus {
     opacity: 1;
   }
 }
+} /* @layer legacy */
 
 /* =============================================================
    v0.6.0 / 9B — PWA install prompt banner
@@ -4601,6 +4576,7 @@ select:focus {
    shrinks to a centred card on desktop so it doesn't span the
    full viewport on a 1440px monitor.
    =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .install-prompt {
   position: fixed;
   left: var(--space-3);
@@ -4659,6 +4635,7 @@ select:focus {
     min-height: 44px;
   }
 }
+} /* @layer legacy */
 
 /* =============================================================
    v0.6.0 — Mobile responsive polish (Phase 9A)
@@ -4670,9 +4647,11 @@ select:focus {
    `prefers-reduced-motion` etc. block conventions.
    =============================================================*/
 
+@layer legacy { /* EXP-044 Tranche 2c (#1583): utilities must win over this block */
 /* The hamburger is hidden on desktop — links + theme toggle
    render inline as before. The display:none here is the
-   default; the mobile media query below flips it to inline-flex. */
+   default; the mobile media query below flips it to inline-flex.
+   margin-left removed in #1583 (dead: Navigation.tsx `ml-0!` always won). */
 .nav-hamburger {
   display: none;
   background: transparent;
@@ -4685,12 +4664,12 @@ select:focus {
   color: var(--fg);
   font-size: 1.25rem;
   cursor: pointer;
-  margin-left: auto;
 }
 
 .nav-hamburger:hover {
   background: var(--surface-2);
 }
+} /* @layer legacy */
 
 /* ---------------------------------------------------------------
    Lesson-mode + landscape-mobile compact navigation.
@@ -4920,12 +4899,6 @@ select:focus {
     width: 100%;
   }
 
-  /* ----- Onboarding header: skip button slides under title ---- */
-  .onboarding-header-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-2);
-  }
   .onboarding-skip-top {
     width: 100%;
     min-height: 44px;
@@ -5090,6 +5063,7 @@ select:focus {
 }
 
 /* ---- Export Section (Phase 16D) -------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .export-row {
   display: flex;
   flex-wrap: wrap;
@@ -5143,8 +5117,10 @@ select:focus {
   max-height: 300px;
   overflow-y: auto;
 }
+} /* @layer legacy */
 
 /* ---- Auto-loop cycle transition card (Phase 17C) ----------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .chat-transition-card {
   border: 2px dashed var(--accent);
   background: var(--surface-2, var(--surface));
@@ -5177,8 +5153,10 @@ select:focus {
   margin-top: var(--space-2);
   color: var(--text);
 }
+} /* @layer legacy */
 
 /* ---- Multi-cycle session summary (Phase 17D) -------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .cycle-counter-badge {
   display: inline-block;
   background: var(--accent);
@@ -5205,6 +5183,7 @@ select:focus {
 .rating-cycles-list li {
   margin: var(--space-1) 0;
 }
+} /* @layer legacy */
 
 /* ============================================================
    ModelPicker (v1.11.0 / Phase 24C)
@@ -5212,6 +5191,7 @@ select:focus {
    overrides with a searchable dropdown of provider-discovered
    models + an offline fallback.
    ============================================================ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .model-picker {
   position: relative;
@@ -5341,12 +5321,14 @@ select:focus {
 .model-picker-static {
   padding: 0;
 }
+} /* @layer legacy */
 
 /* ============================================================
    BackupCompare (v1.12.0 / Phase 25B)
    Per-table diff cards with added/removed/changed chips,
    expandable record list, field-level diff table on changed.
    ============================================================ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .backup-compare-section {
   margin-top: var(--space-4);
@@ -5556,6 +5538,7 @@ select:focus {
   color: var(--success);
   word-break: break-all;
 }
+} /* @layer legacy */
 
 /* === Rich-text editor (Phase 27 — v1.14.0) ============================ */
 
@@ -5970,6 +5953,7 @@ select:focus {
 }
 
 /* --- Gamification (Phase 29A) ------------------------------------ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .xp-widget {
   background: var(--bg-elevated);
@@ -6040,8 +6024,10 @@ select:focus {
     animation: none;
   }
 }
+} /* @layer legacy */
 
 /* --- Badges (Phase 29B) ----------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .badge-showcase {
   display: flex;
   flex-direction: column;
@@ -6106,8 +6092,10 @@ select:focus {
     transition: none;
   }
 }
+} /* @layer legacy */
 
 /* --- Streaks (Phase 29C) ---------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .streak-widget {
   display: flex;
   gap: 24px;
@@ -6163,8 +6151,10 @@ select:focus {
 .streak-cell--tier-4 {
   background: var(--accent);
 }
+} /* @layer legacy */
 
 /* --- Anki page (Phase 30C) -------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .anki-page {
   padding: 24px;
   max-width: 1100px;
@@ -6240,8 +6230,10 @@ select:focus {
   gap: 8px;
   margin-top: 4px;
 }
+} /* @layer legacy */
 
 /* --- Voice (Phase 31) ----------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .speech-button {
   display: inline-flex;
   align-items: center;
@@ -6270,6 +6262,7 @@ select:focus {
   font-size: 0.85rem;
   line-height: 1;
 }
+} /* @layer legacy */
 
 /* ---------------------------------------------------------------
    Lesson read-aloud (TTS) — compact speaker-icon button.
@@ -6279,6 +6272,7 @@ select:focus {
    is disabled under prefers-reduced-motion (the accent fill alone
    still signals the active state).
    --------------------------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2c (#1584): utilities must win over this block */
 .read-aloud-button {
   display: inline-flex;
   align-items: center;
@@ -6334,15 +6328,12 @@ select:focus {
   }
 }
 
-/* Prompt + its read-aloud button on one row (C2). */
+/* Prompt + its read-aloud button on one row (C2). The prompt <p>'s
+   flex/margin moved to the consumers as `flex-auto m-0` utilities (#1584). */
 .exercise-prompt-row {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-}
-.exercise-prompt-row > p {
-  flex: 1 1 auto;
-  margin: 0;
 }
 .exercise-prompt-row .read-aloud-button {
   flex: 0 0 auto;
@@ -6527,6 +6518,7 @@ select:focus {
 .lesson-tts-player-stop {
   color: var(--text-muted);
 }
+} /* @layer legacy */
 .chat-message-actions {
   display: flex;
   justify-content: flex-end;
@@ -6585,6 +6577,7 @@ select:focus {
 }
 
 /* --- Pronunciation page (Phase 31C) ----------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .pronunciation-page {
   padding: 24px;
   max-width: 720px;
@@ -6654,8 +6647,10 @@ select:focus {
   margin-top: 8px;
   padding: 14px;
 }
+} /* @layer legacy */
 
 /* --- NotebookLM section (Phase 32) ------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 .notebooklm-actions {
   display: flex;
   flex-wrap: wrap;
@@ -6754,6 +6749,7 @@ select:focus {
 .help-term:focus-within {
   background-color: color-mix(in srgb, var(--accent) 10%, transparent);
 }
+} /* @layer legacy */
 
 /* ============================================================
  * Phase 39 C7 — WCAG 2.1 SC 2.3.3 + 2.2.2 catch-all for users
@@ -7061,6 +7057,7 @@ select:focus {
  * red/green border + checkmark on the input, an inline format
  * hint, and the test-result line. Theme-token driven.
  * ============================================================== */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
 .api-key-input-wrap {
   position: relative;
@@ -7119,6 +7116,7 @@ select:focus {
 .api-key-restore-link {
   margin-top: 0.4rem;
 }
+} /* @layer legacy */
 
 /* ==============================================================
  * Chat-analysis loading indicator (import detail page).
@@ -7129,6 +7127,7 @@ select:focus {
  * only the text label changes).
  * ============================================================== */
 
+@layer legacy { /* EXP-044 Tranche 2c (#1585): utilities must win over this block */
 @keyframes btn-spin {
   to {
     transform: rotate(360deg);
@@ -7181,21 +7180,6 @@ select:focus {
   color: var(--fg-muted);
 }
 
-.analysis-cancel-link {
-  margin-top: 0.5rem;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--accent);
-  font-size: 0.9rem;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.analysis-cancel-link:hover {
-  color: var(--accent-hover);
-}
-
 .analysis-error-inline {
   margin-bottom: 2rem;
   padding: 0.75rem 1rem;
@@ -7203,11 +7187,7 @@ select:focus {
   border-radius: 8px;
   background: var(--error-bg);
 }
-
-.analysis-error-inline p {
-  margin: 0;
-  color: var(--error);
-}
+} /* @layer legacy */
 
 @keyframes analysis-results-in {
   from {

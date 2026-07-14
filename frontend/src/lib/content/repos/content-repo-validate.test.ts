@@ -111,6 +111,75 @@ describe("validateUserRepo", () => {
     expect(res.reason).toMatch(/mystery/);
   });
 
+  it("accepts the native multiple_choice type (repro: KNOWN_EXERCISE_TYPES was stale)", async () => {
+    // Pre-existing bug: the sample gate never learned the v1.6 native type,
+    // so a legitimate repo whose first lesson uses multiple_choice was
+    // rejected as "Unknown exercise_type".
+    const mcLesson = JSON.stringify({ exercises: [{ type: "multiple_choice" }] });
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(mcLesson);
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res).toEqual({ ok: true, setCount: 2, lessonCount: 5 });
+  });
+
+  it("accepts the adopted extension type ext:al-categorization (#1579)", async () => {
+    const extLesson = JSON.stringify({
+      exercises: [{ type: "ext:al-categorization" }],
+    });
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(extLesson);
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res).toEqual({ ok: true, setCount: 2, lessonCount: 5 });
+  });
+
+  it("accepts the adopted extension type ext:al-error-correction (#1579)", async () => {
+    const extLesson = JSON.stringify({
+      exercises: [{ type: "ext:al-error-correction" }],
+    });
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(extLesson);
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res).toEqual({ ok: true, setCount: 2, lessonCount: 5 });
+  });
+
+  it("accepts the adopted extension type ext:al-reading-comprehension (#1579)", async () => {
+    const extLesson = JSON.stringify({
+      exercises: [{ type: "ext:al-reading-comprehension" }],
+    });
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(extLesson);
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res).toEqual({ ok: true, setCount: 2, lessonCount: 5 });
+  });
+
+  it("accepts the adopted extension type ext:al-graded-quiz (#1579)", async () => {
+    const extLesson = JSON.stringify({ exercises: [{ type: "ext:al-graded-quiz" }] });
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(extLesson);
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res).toEqual({ ok: true, setCount: 2, lessonCount: 5 });
+  });
+
   it("fails when no set has any lessons", async () => {
     mockFetchSequence((url) =>
       url.endsWith("manifest.yaml")

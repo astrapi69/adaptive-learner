@@ -27,6 +27,7 @@ import type { MediaResource } from "../../../lib/content/media/media-loader";
 import type { ContentSetEntry, SetStatus } from "../../../storage/types";
 import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
 import SetActionsMenu from "./SetActionsMenu";
+import SetShareButton from "../share/SetShareButton";
 import SetMediaBadges from "../media/SetMediaBadges";
 
 export type DownloadState = "idle" | "downloading" | "done" | "error";
@@ -429,6 +430,8 @@ export default function ContentSetRow({
             aiCheckDisabledReason={aiCheckDisabledReason}
             onQualityCheck={onQualityCheck}
           />
+          {/* #1572 — per-set Share (deep link + QR). */}
+          <SetShareButton entry={entry} />
           {/* #1300 — per-set status + delete overflow menu (cached sets
               only; same component as the list view). */}
           {isCached && onSetStatus && onDelete && (

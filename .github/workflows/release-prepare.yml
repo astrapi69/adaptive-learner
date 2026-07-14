@@ -60,7 +60,7 @@ jobs:
     # succeeded). The image is pulled from mcr.microsoft.com, which the runner
     # reaches fine, and is the established fix already used by dexie-smoke.yml +
     # manual-automation.yml. Pin the tag to the @playwright/test version in
-    # e2e/package-lock.json (1.59.1); bump both together. Refs #317, #1248.
+    # e2e/bun.lock (1.61.1); bump both together. Refs #317, #1248.
     #
     # Unlike those two pure-Playwright jobs (which run as `--user 1001` to keep
     # artifact-upload perms and therefore inline the commands because the noble
@@ -68,7 +68,7 @@ jobs:
     # uploads no artifacts, so it runs as the default root user and apt-installs
     # `make` below.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
     timeout-minutes: 60
     steps:
       # Checks out the dispatched ref — i.e. the prepared `release/<version>`
@@ -91,6 +91,17 @@ jobs:
         with:
           node-version: "24"
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Cache bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
       - name: Install Poetry
         # `python -m pip`, not bare `pip`: in the Playwright container the
         # setup-python `pip` shim is not on PATH (works on ubuntu-latest, 127s
@@ -107,14 +118,14 @@ jobs:
 
       - name: Install frontend deps
         working-directory: frontend
-        run: npm ci --legacy-peer-deps
+        run: bun install --frozen-lockfile
 
       - name: Install e2e deps
         working-directory: e2e
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       # NO `playwright install` step: the browsers are baked into the container
-      # (mcr.microsoft.com/playwright:v1.59.1-noble). release-test's dexie +
+      # (mcr.microsoft.com/playwright:v1.61.1-noble). release-test's dexie +
       # manual-plan Playwright gates and the extra e2e smoke use the pre-baked
       # browsers via the image's default browser path.
 
