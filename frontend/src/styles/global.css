@@ -4647,9 +4647,11 @@ select:focus {
    `prefers-reduced-motion` etc. block conventions.
    =============================================================*/
 
+@layer legacy { /* EXP-044 Tranche 2c (#1583): utilities must win over this block */
 /* The hamburger is hidden on desktop — links + theme toggle
    render inline as before. The display:none here is the
-   default; the mobile media query below flips it to inline-flex. */
+   default; the mobile media query below flips it to inline-flex.
+   margin-left removed in #1583 (dead: Navigation.tsx `ml-0!` always won). */
 .nav-hamburger {
   display: none;
   background: transparent;
@@ -4662,12 +4664,12 @@ select:focus {
   color: var(--fg);
   font-size: 1.25rem;
   cursor: pointer;
-  margin-left: auto;
 }
 
 .nav-hamburger:hover {
   background: var(--surface-2);
 }
+} /* @layer legacy */
 
 /* ---------------------------------------------------------------
    Lesson-mode + landscape-mobile compact navigation.
