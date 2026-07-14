@@ -453,7 +453,6 @@ export default function LessonPage() {
       <LessonHeader
         lesson={lesson}
         setTitle={setTitle}
-        currentStepIndex={currentStepIndex}
         isInProgress={isInProgress}
         exitOpen={exitOpen}
         onPauseClick={() => setExitOpen(true)}
