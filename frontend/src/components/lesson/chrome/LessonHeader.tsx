@@ -1,4 +1,7 @@
 /**
+ * Synthetic gate-demo marker (#1640): TSDoc-only change to a
+ * visual-critical path, used to exercise the visual-baseline gate's
+ * FAIL + label-override branches on a throwaway draft PR. Never merged.
  * Lesson viewer header (extracted from LessonPage for the complexity
  * burn-down #417).
  *
