@@ -109,6 +109,7 @@ const VALID_PATH =
 beforeEach(() => {
   useLessonMock.mockReset();
   listLessonsMock.mockReset();
+  localStorage.clear();
   // Default: single-lesson set so the "Next lesson" button
   // hides. Tests that assert the button override per-test.
   listLessonsMock.mockResolvedValue({
@@ -489,6 +490,18 @@ describe("LessonPage: ready state rendering", () => {
     expect(screen.getByTestId("lesson-reviewed-fallback")).toBeInTheDocument();
     expect(screen.queryByTestId("lesson-check")).toBeNull();
     expect(screen.getByTestId("lesson-next")).toBeInTheDocument();
+  });
+
+  it("shows exactly one favorite toggle on the summary — no duplicate (#1648)", () => {
+    // A learner id is required for LessonFavoriteToggle to render at all.
+    localStorage.setItem("adaptive-learner.user_id", "user-1");
+    _ready(2, { ...PROGRESS, score_correct: 3, score_total: 4 });
+    renderAtPath(VALID_PATH);
+    expect(screen.getByTestId("lesson-summary")).toBeInTheDocument();
+    // Only the labelled summary-favorite row remains; the isolated
+    // top-right star is gone.
+    expect(screen.getAllByTestId("lesson-favorite-toggle")).toHaveLength(1);
+    expect(screen.getByTestId("lesson-summary-favorite")).toBeInTheDocument();
   });
 
   it("renders the summary view at index past last step", () => {
