@@ -3305,3 +3305,8 @@ registry:
     created: Permintaan tarik dibuka.
     failed: Tidak dapat membuka permintaan tarik.
     view: Lihat permintaan tarik Anda
+
+exercise:
+  listen_first:
+    label: "Dengarkan dulu"
+    aria: "Putar pelafalan"

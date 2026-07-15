@@ -3621,5 +3621,11 @@
       "failed": "Não foi possível abrir o pedido de integração.",
       "view": "Ver o seu pedido de integração"
     }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Ouça primeiro",
+      "aria": "Reproduzir pronúncia"
+    }
   }
 }
