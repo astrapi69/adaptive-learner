@@ -127,4 +127,10 @@
 # @layer-legacy-Block) verbatim nach styles/legacy/04-onboarding.css
 # (-84 +1 in global.css, +84 in der Datei). Byte-identitaets-Beweis
 # im PR. Kein neues CSS.
-7569
+# 7569 -> 7572 (Concern-Split Batch A / Peel 6, #1655): +3 reine
+# Manifest-Zeilen. Drei gewrappte Bloecke verbatim ausgelagert:
+# Assessment (Z. 6-214) -> 05-assessment.css, Dashboard (inkl.
+# Chart-Alternativen + Step-Eval-Insights, Z. 215-495) ->
+# 06-dashboard.css, Session (Z. 496-697) -> 07-session.css.
+# Byte-identitaets-Beweis im PR. Kein neues CSS.
+7572
