@@ -183,3 +183,46 @@ Auftrag laut Handover: #1663/#1664 mergen, dann Peel 2 (Base-Resets).
 - **#1629**: God-Class-Abbau per-Datei.
 - Parallel offen: #1567 FeatureShots, #1653
   settings-data-Determinismus.
+
+## 10. #1592 geloest: Co-Wrap 08+24, EXP-044-Kaskadenreparatur komplett (Nachmittag)
+
+- Original prompt: "ja dann weiter" + Vorschlag, #1592 zuerst zu nehmen.
+- Optimized prompt: "Wrappe die #1592-Zone (24-lesson-mode-nav.css) in
+  @layer legacy - Audit-gestuetzt, mit Co-Wrap der Basis-Zone
+  (08-qr-scanner.css), bewussten unlayered-Ausnahmen fuer die
+  Schutzbloecke und Visual-Verify-Beleg."
+- Goal: die seit #1571/#1588 offene Wrap-Blockade aufloesen.
+- Ergebnis (PR #1695, Closes #1592): 08-qr-scanner.css (QR +
+  Cycle-Steps + Session-Chat-BASIS) und 24-lesson-mode-nav.css
+  (LessonMode/Landscape/Mobile-Polish) in @layer legacy. Der
+  Audit-Lauf hatte fuer 24 ABHAENGIG(6) gemeldet - alle sechs
+  gegen die unlayered Basis in 08; der Co-Wrap (Basis + Override
+  im selben Layer, Source-Order 08 vor 24) loest sie auf: CLEAN.
+- Bewusst UNLAYERED bleiben (muessen Utilities schlagen, jetzt
+  mit erklaerenden Kommentaren): der iOS-Focus-Zoom-Guard #1353
+  (shadcn Select rendert text-sm = 14px - layered wuerde die
+  Utility gewinnen und den Zoom-Bug wieder oeffnen) und der
+  Mobile-Input-Floor 44px/16px (aus dem gewrappten @media-Block
+  in einen eigenen unlayered Block gezogen).
+- Eine dokumentierte Aktivierung (.legacy-wrap-accepted.json):
+  .lesson-header h1 landscape font-size 1.1rem verliert an
+  text-sm - die Legacy-Regel stammt von VOR dem #1628-Rework und
+  invertierte dessen Absicht (Titel in Landscape GROESSER als
+  Portrait). margin: 0 bleibt wirksam.
+- Visual-Verify: PR-Branch-Lauf und develop-Kontrolllauf failen
+  auf IDENTISCHEN 11 Screenshots (content-browser/discover/
+  set-detail/settings-data = Live-Daten #1653/#1692, lesson-
+  matching nichtdeterministisch #1696) - der Wrap fuegt keine
+  eigene Diff-Flaeche hinzu. Beleg im PR, Label
+  visual-baselines-unaffected, Gate re-lief gruen. Beleg-
+  Kommentar auf #1692 ergaenzt (11 statt 6 Flaechen).
+- Gates: --wrapped-Audit ueberall CLEAN (Allowlist 10),
+  .css-size-baseline 7606 -> 7633 (+27 Wrapper-/Doku-Zeilen),
+  Vitest 672 Dateien / 7075 Tests gruen, tsc clean.
+- Damit ist die Kette #1571 -> #1592 -> #1597 -> #1623 -> #1634
+  abgeschlossen: jede Legacy-Flaeche ist @layer legacy oder ein
+  dokumentiert-bewusster unlayered Schutzblock (Guard, Input-
+  Floor, 39-motion-catchall, 01-base, 00-head-Tokens); 30-editor
+  + 42-learning-path sind unabhaengige Wrap-Kandidaten fuer
+  Folge-PRs.
+- Commit: 361aaf8e (Squash via #1695)
