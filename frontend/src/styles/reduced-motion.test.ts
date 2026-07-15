@@ -9,13 +9,11 @@
  * carry its own per-rule override.
  */
 
-import {readFileSync} from "node:fs";
-import {fileURLToPath} from "node:url";
-import {dirname, resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const CSS = readFileSync(resolve(HERE, "global.css"), "utf-8");
+import {readLegacyCssSum} from "./legacy-css-sum";
+
+const CSS = readLegacyCssSum();
 
 describe("Phase 39 C7 — prefers-reduced-motion catch-all", () => {
     it("global.css contains a universal-selector reduced-motion block", () => {
