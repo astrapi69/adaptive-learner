@@ -298,6 +298,33 @@ describe("buildExercisePool — generated cloze augmentation", () => {
         expect(generated[0].exercise.type).toBe("cloze");
     });
 
+    it("emits NO generated cloze when the card front IS the answer (bare '___' guard)", () => {
+        // A knowledge/vocab card whose front === the answer would blank to a
+        // context-free "___" — an unsolvable hint-only exercise. The generator
+        // declines it, so the pool carries no degenerate generated candidate
+        // (the authored exercise stays; the caller replays it). Mirrors
+        // 'Die Währung des Geistes' card `sinnkrise` (front === 'Sinnkrise').
+        const card = makeCard({id: "c1", front: "Sinnkrise"});
+        const ex = makeExercise({
+            id: "ex-1",
+            type: "free_text",
+            card_ids: ["c1"],
+            prompt: "Als was gilt die moderne Zeitarmut?",
+            accept: ["Sinnkrise"],
+        });
+        const lessons = new Map<string, ContentLesson>([
+            ["03-zeit.json", makeLesson("03-zeit.json", [card], [ex])],
+        ]);
+        const error = makeError("Sinnkrise", {correct_answer: "Sinnkrise"});
+        const errorsByElementKey = new Map([["Sinnkrise", error]]);
+        const pool = buildExercisePool([makePrioritized("Sinnkrise")], {
+            lessons,
+            errorsByElementKey,
+        });
+        expect(pool.filter((p) => p.is_generated)).toHaveLength(0);
+        expect(pool.filter((p) => !p.is_generated)).toHaveLength(1);
+    });
+
     it("falls back gracefully when cloze generator returns null", () => {
         const card = makeCard({id: "c1", front: "merci"});
         const ex = makeExercise({

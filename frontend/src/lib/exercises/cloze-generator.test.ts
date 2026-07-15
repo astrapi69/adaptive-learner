@@ -285,6 +285,60 @@ describe("generateClozeFromError: null fallback (replay path)", () => {
     });
 });
 
+describe("generateClozeFromError: context-free blank guard (#adaptive-matching-hints)", () => {
+    // A knowledge/vocab card whose FRONT *is* the answer (front === correct_answer)
+    // would blank out to a bare "___" with no surrounding context. Rendered, that is
+    // an unsolvable input whose only scaffolding is the app's auto length/first-letter
+    // hints ("The answer has N letters", "It starts with X") — the exact "unlösbare"
+    // shape reported for adaptive lessons. The generator must decline these so the
+    // caller replays the original exercise instead of serving a hint-only blank.
+    it("returns null when the answer spans the entire card front (bare '___')", () => {
+        // Mirrors 'Die Währung des Geistes' card `sinnkrise` (front === 'Sinnkrise').
+        const cloze = generateClozeFromError({
+            error: _error({
+                correct_answer: "Sinnkrise",
+                element_key: "sinnkrise",
+            }),
+            sourceExercise: _exercise({
+                type: "free_text",
+                // Prompt does NOT contain the answer, so the free_text-prompt
+                // fallback can't rescue it either — the only candidate haystack
+                // is the card front, and blanking it leaves no context.
+                prompt: "Als was gilt die moderne Zeitarmut?",
+            }),
+            sourceCard: _card({
+                front: "Sinnkrise",
+                back: "Die moderne Zeitarmut ist eine Sinnkrise.",
+            }),
+        });
+        expect(cloze).toBeNull();
+    });
+
+    it("returns null when the answer spans the entire free_text prompt", () => {
+        const cloze = generateClozeFromError({
+            error: _error({correct_answer: "Wertschaetzung"}),
+            sourceExercise: _exercise({
+                type: "free_text",
+                prompt: "Wertschaetzung",
+            }),
+            sourceCard: null,
+        });
+        expect(cloze).toBeNull();
+    });
+
+    it("still builds a cloze when real context surrounds the blank (regression)", () => {
+        // The common vocab shape (front is a phrase containing the answer) must
+        // keep working — only the context-free collapse is rejected.
+        const cloze = generateClozeFromError({
+            error: _error({correct_answer: "Verletzlichkeit"}),
+            sourceExercise: _exercise({type: "free_text"}),
+            sourceCard: _card({front: "Freiwillige Verletzlichkeit"}),
+        });
+        expect(cloze).not.toBeNull();
+        expect(cloze!.sentence).toBe("Freiwillige ___");
+    });
+});
+
 describe("generateClozeFromError: card_ids referential integrity (handover § 5.9)", () => {
     it("preserves sourceCard.id when available so SRS threading continues", () => {
         const cloze = generateClozeFromError({
