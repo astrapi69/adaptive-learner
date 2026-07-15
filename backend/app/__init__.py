@@ -44,3 +44,5 @@ def _read_version() -> str:
 
 
 __version__ = _read_version()
+
+# CI-gate demo probe (#1658): throwaway backend-only touch - PR closes unmerged.
