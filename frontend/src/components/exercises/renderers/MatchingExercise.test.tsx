@@ -13,8 +13,6 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {readFileSync} from "node:fs";
-import {join} from "node:path";
 import {fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -23,6 +21,7 @@ import MatchingExercise, {
     matchingPairColorVar,
 } from "./MatchingExercise";
 import type {ContentLessonExercise} from "../../../storage/types";
+import {readLegacyCssSum} from "../../../styles/legacy-css-sum";
 
 /** Convert ``#rrggbb`` to its HSL hue (degrees) + saturation (0-1). */
 function hexToHsl(hex: string): {hue: number; sat: number} {
@@ -533,10 +532,7 @@ describe("MatchingExercise: per-pair color + label (#145)", () => {
         // so neither can creep back in. Warning band: hue <= 40 (red+orange)
         // or >= 346 (deep red), at meaningful saturation. Yellow (~45) and
         // pink (~330) stay allowed.
-        // vitest always runs from frontend/ (see lessons-learned); under
-        // happy-dom import.meta.url is an http URL, so resolve from cwd.
-        const cssPath = join(process.cwd(), "src/styles/global.css");
-        const css = readFileSync(cssPath, "utf-8");
+        const css = readLegacyCssSum();
         const matches = [
             ...css.matchAll(/--matching-pair-(\d+):\s*(#[0-9a-fA-F]{6})/g),
         ];
