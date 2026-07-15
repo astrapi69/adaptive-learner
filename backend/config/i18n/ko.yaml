@@ -3305,3 +3305,8 @@ registry:
     created: 풀 리퀘스트를 열었습니다.
     failed: 풀 리퀘스트를 열 수 없습니다.
     view: 풀 리퀘스트 보기
+
+exercise:
+  listen_first:
+    label: "먼저 듣기"
+    aria: "발음 재생"

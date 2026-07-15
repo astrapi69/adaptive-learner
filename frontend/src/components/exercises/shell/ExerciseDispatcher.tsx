@@ -33,6 +33,7 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "./exercise-control";
+import ListenFirstAudio from "../shared/ListenFirstAudio";
 import FreeTextExercise from "../renderers/FreeTextExercise";
 import MatchingExercise from "../renderers/MatchingExercise";
 import MultipleChoiceExercise from "../renderers/MultipleChoiceExercise";
@@ -125,6 +126,22 @@ export interface ExerciseDispatcherProps extends ControlledExerciseProps {
     onComplete: (result: ExerciseScored) => Promise<void>;
 }
 
+/** Listen-first audio for an exercise (#1600 Option A): the ``audio`` path
+ *  of the first referenced card that carries one, or null. Only free_text
+ *  and matching consume it (the receptive "listen, then answer" flow);
+ *  cards without audio - the entire pre-#1600 corpus - yield null and the
+ *  exercise renders exactly as before. */
+export function resolveListenAudio(
+    exercise: ContentLessonExercise,
+    cards: ContentLessonCard[],
+): string | null {
+    for (const cid of exercise.card_ids ?? []) {
+        const audio = cards.find((c) => c.id === cid)?.audio;
+        if (typeof audio === "string" && audio.trim() !== "") return audio;
+    }
+    return null;
+}
+
 /** Code context for an exercise: true when its FIRST referenced card is
  *  a code/formula card (schema v1.3). Drives the code-aware renderers. */
 export function resolveCodeContext(
@@ -193,16 +210,23 @@ function ExerciseDispatcher(
     if (extElement) return extElement;
     if (ex.type === "matching") {
         return (
-            <MatchingExercise
-                ref={ref}
-                exercise={ex}
-                setId={setId}
-                lessonId={lessonId}
-                targetLanguage={targetLanguage}
-                sourceLanguage={sourceLanguage}
-                domain={domain}
-                {...shared}
-            />
+            <>
+                <ListenFirstAudio
+                    source={source}
+                    setId={setId}
+                    audioPath={resolveListenAudio(ex, cards)}
+                />
+                <MatchingExercise
+                    ref={ref}
+                    exercise={ex}
+                    setId={setId}
+                    lessonId={lessonId}
+                    targetLanguage={targetLanguage}
+                    sourceLanguage={sourceLanguage}
+                    domain={domain}
+                    {...shared}
+                />
+            </>
         );
     }
     if (ex.type === "picture_choice") {
@@ -219,14 +243,21 @@ function ExerciseDispatcher(
     }
     if (ex.type === "free_text") {
         return (
-            <FreeTextExercise
-                ref={ref}
-                exercise={ex}
-                setId={setId}
-                lessonId={lessonId}
-                codeLanguage={codeLanguage}
-                {...shared}
-            />
+            <>
+                <ListenFirstAudio
+                    source={source}
+                    setId={setId}
+                    audioPath={resolveListenAudio(ex, cards)}
+                />
+                <FreeTextExercise
+                    ref={ref}
+                    exercise={ex}
+                    setId={setId}
+                    lessonId={lessonId}
+                    codeLanguage={codeLanguage}
+                    {...shared}
+                />
+            </>
         );
     }
     if (ex.type === "word_tiles") {

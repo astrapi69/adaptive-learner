@@ -3621,5 +3621,11 @@
       "failed": "Pull Request konnte nicht geöffnet werden.",
       "view": "Deinen Pull Request ansehen"
     }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Erst anhören",
+      "aria": "Aussprache abspielen"
+    }
   }
 }

@@ -3621,5 +3621,11 @@
       "failed": "Could not open the pull request.",
       "view": "View your pull request"
     }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Listen first",
+      "aria": "Play pronunciation"
+    }
   }
 }

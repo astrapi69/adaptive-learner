@@ -3295,3 +3295,8 @@ registry:
     created: Çekme isteği açıldı.
     failed: Çekme isteği açılamadı.
     view: Çekme isteğinizi görüntüleyin
+
+exercise:
+  listen_first:
+    label: "Önce dinle"
+    aria: "Telaffuzu oynat"

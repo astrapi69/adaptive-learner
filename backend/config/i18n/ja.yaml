@@ -3295,3 +3295,8 @@ registry:
     created: プルリクエストを開きました。
     failed: プルリクエストを開けませんでした。
     view: プルリクエストを表示
+
+exercise:
+  listen_first:
+    label: "まず聞く"
+    aria: "発音を再生"
