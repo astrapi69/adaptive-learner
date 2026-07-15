@@ -1,0 +1,75 @@
+
+/* =============================================================
+   Phase 52B / v1.35.0 / F-112 — Visual diff highlighting
+   -------------------------------------------------------------
+   Inline op badges produced by ``<DiffHighlight />``. Every op type
+   carries a colour AND an icon AND a text decoration AND an
+   aria-label so the surface stays readable for colourblind +
+   screen-reader users (WCAG 2.1 SC 1.4.1). Theme-variable based;
+   no hardcoded colours — all 10 theme variants inherit.
+   ============================================================= */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+
+.diff-highlight {
+  display: inline;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.diff-token {
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.diff-token-equal {
+  /* Plain text — equals are the unchanged baseline. */
+}
+
+.diff-token-insert {
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--success) 18%, var(--surface));
+  color: var(--success);
+  font-weight: 500;
+}
+
+.diff-token-delete {
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--danger) 18%, var(--surface));
+  color: var(--danger);
+}
+
+.diff-token-delete .diff-token-text {
+  text-decoration: line-through;
+}
+
+.diff-token-replace {
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--warning) 18%, var(--surface));
+}
+
+.diff-token-user-word {
+  color: var(--danger);
+  text-decoration: line-through;
+}
+
+.diff-token-expected-word {
+  color: var(--success);
+  font-weight: 500;
+}
+
+.diff-token-arrow {
+  margin: 0 6px;
+  color: var(--fg-muted);
+  font-weight: 700;
+}
+
+.diff-token-icon {
+  display: inline-block;
+  margin-right: 3px;
+  font-weight: 700;
+  font-size: 0.95em;
+}
+} /* @layer legacy */
