@@ -63,6 +63,13 @@
       "property": "margin",
       "override_utility": "m-0",
       "reason": "Intended per-instance override (currently a silent no-op, activated by this wrap - the #1597 fix): the timed-mode stats list (LessonSummarySections.tsx:314, rendered only when lessonMode==='timed', data-testid lesson-summary-timed-stats) drops the .lesson-summary-stats default vertical margin (var(--space-3) 0) with m-0 because it sits inside a summary card that already provides spacing. Other .lesson-summary-stats instances (LessonSummarySections.tsx:203, AdaptiveLesson.tsx:580) keep the default. Utility-wins-over-default is the designed layer behaviour, parallel to the .tile items-start entry."
+    },
+    {
+      "block": "Lesson-mode + landscape compact nav",
+      "legacy_selector": ".lesson-header h1",
+      "property": "font-size",
+      "override_utility": "text-sm",
+      "reason": "Intended activation (the #1592 wrap): the LessonHeader h1 carries text-sm since the #1628 header rework (small, unobtrusive title). The legacy landscape-@media rule (font-size: 1.1rem) predates that rework and today INVERTS the intent - unlayered it beats text-sm, so the title renders BIGGER in short-landscape than in portrait (1.1rem vs 0.875rem). Post-wrap text-sm wins everywhere, making the title consistently small across orientations. The rule's other declarations (margin: 0) stay effective."
     }
   ]
 }

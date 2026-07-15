@@ -6,6 +6,9 @@
    horizontal scan-line animation. Pure CSS, no JS animation
    loop. Reduced-motion suppresses the scan-line. */
 
+/* --- QR scanner + session chat + cycle steps ------------------ */
+@layer legacy { /* EXP-044 (#1592): utilities must win over this block */
+
 .qr-viewfinder {
   position: absolute;
   inset: 0;
@@ -416,3 +419,5 @@
   color: var(--fg-muted);
   font-weight: 400;
 }
+
+} /* @layer legacy */
