@@ -96,5 +96,11 @@
 # .legacy-wrap-accepted.json mit Begruendung. Damit sind keine ungelayerten
 # Utility-Konflikt-Bloecke mehr offen; es bleibt nur die #1592 Legacy-vs-
 # unlayered-Legacy-Verwobenheit (LessonMode / .nav-links / .app-nav mobile
-# @media). Kein neues CSS.
-7565
+# @media). Kein neues CSS.# 7565 -> 7566 (Concern-Split Peel 1, #1655): +1 reine Manifest-Zeile netto
+# (@import "./legacy/00-head.css"; + Leerzeile, minus eine wc-l-Zaehldifferenz
+# durch die end-of-file-Newline der ausgelagerten Datei). Der erste Top-down-Peel
+# verschiebt Zeilen 1-140 (Header-Kommentar + :root-Token-Bloecke) nach
+# styles/legacy/00-head.css; der Ratchet zaehlt seit diesem PR die SUMME
+# global.css + styles/legacy/*.css, das Verschieben selbst ist
+# zahlneutral. Byte-identitaets-Beweis im PR. Kein neues CSS.
+7566

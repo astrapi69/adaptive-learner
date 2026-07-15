@@ -9,13 +9,31 @@
  * so the palette cannot silently regress to red.
  */
 
-import {readFileSync} from "node:fs";
+import {readdirSync, readFileSync} from "node:fs";
 import {fileURLToPath} from "node:url";
-import {dirname, resolve} from "node:path";
+import {dirname, join, resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const GLOBAL_CSS = readFileSync(resolve(HERE, "global.css"), "utf-8");
+
+/** global.css plus every concern file the #1655 split peels out of it -
+ *  the token under test lives in styles/legacy/00-head.css since Peel 1. */
+function readLegacyCssSum(): string {
+    const parts = [readFileSync(resolve(HERE, "global.css"), "utf-8")];
+    const legacyDir = resolve(HERE, "legacy");
+    try {
+        for (const entry of readdirSync(legacyDir).sort()) {
+            if (entry.endsWith(".css")) {
+                parts.push(readFileSync(join(legacyDir, entry), "utf-8"));
+            }
+        }
+    } catch {
+        /* styles/legacy does not exist before the first peel */
+    }
+    return parts.join("\n");
+}
+
+const GLOBAL_CSS = readLegacyCssSum();
 
 /** Parse ``#rgb`` / ``#rrggbb`` into [h(0-360), s(0-100), l(0-100)]. */
 function hsl(hex: string): [number, number, number] {
