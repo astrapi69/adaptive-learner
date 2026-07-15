@@ -47,6 +47,7 @@ import InfoHint from "../../shared/feedback/InfoHint";
 import PageContainer from "../../shared/layout/PageContainer";
 import { type FilterDef } from "../../shared/forms/FilterBar";
 import SearchFilterBar from "../../shared/forms/SearchFilterBar";
+import FilterMenuButton from "../../shared/forms/FilterMenuButton";
 import SetDiscoveryCard, {
   type SetDiscoveryCardLabels,
   type SetDiscoveryDownloadState,
@@ -182,15 +183,31 @@ export default function Discover() {
     [downloadState],
   );
 
+  // Source-language facet (#1343 / #1699): the instruction languages actually
+  // present, each with its set count, plus an explicit "All languages".
+  // Rendered as an ALWAYS-VISIBLE chip (below) — never hidden behind the
+  // collapsible filter panel, so the learner always sees THAT the list is
+  // filtered and WHAT to (never silently). Reuses the FilterMenuButton pattern
+  // the Content Browser uses for its Status/Source filters.
+  const languageOptions = useMemo(
+    () => {
+      const counts = sourceLanguageCounts(allSets);
+      return [
+        {
+          value: "",
+          label: t("discover.filter.all_languages", "All languages"),
+        },
+        ...availableSourceLanguages(allSets).map((code) => ({
+          value: code,
+          label: `${languageDisplayName(code, lang)} (${counts[code] ?? 0})`,
+        })),
+      ];
+    },
+    [allSets, t, lang],
+  );
+
   const filterDefs: FilterDef[] = useMemo(() => {
     const all = { value: "", label: t("discover.filter.all", "All") };
-    // Source-language facet (#1343): the instruction languages actually
-    // present, each with its set count, plus an explicit "All languages".
-    const counts = sourceLanguageCounts(allSets);
-    const sourceLanguages = availableSourceLanguages(allSets).map((code) => ({
-      value: code,
-      label: `${languageDisplayName(code, lang)} (${counts[code] ?? 0})`,
-    }));
     const levels = availableLevels(allSets).map((level) => ({
       value: level,
       label: level.toUpperCase(),
@@ -200,15 +217,6 @@ export default function Discover() {
       label: t(`discover.domain.${domain}`, domain),
     }));
     return [
-      {
-        id: "sourceLanguage",
-        label: t("discover.filter.language", "Language"),
-        value: effectiveSourceLanguage,
-        options: [
-          { value: "", label: t("discover.filter.all_languages", "All languages") },
-          ...sourceLanguages,
-        ],
-      },
       { id: "level", label: t("discover.filter.level", "Level"), value: filters.level, options: [all, ...levels] },
       { id: "domain", label: t("discover.filter.domain", "Domain"), value: filters.domain, options: [all, ...domains] },
       {
@@ -243,16 +251,11 @@ export default function Discover() {
         ],
       },
     ];
-  }, [allSets, filters, sort, t, lang, effectiveSourceLanguage]);
+  }, [allSets, filters, sort, t]);
 
   function handleFilterChange(id: string, value: string) {
     if (id === "sort") {
       setSort(value as DiscoverSort);
-      return;
-    }
-    if (id === "sourceLanguage") {
-      // Persist as an explicit choice (wins over the locale default).
-      setLangChoice(value);
       return;
     }
     setFilters((prev) => ({ ...prev, [id]: value }));
@@ -369,9 +372,26 @@ export default function Discover() {
         filtersTestId="discover-filters"
         searchButtonLabel={t("discover.bar.search", "Search")}
         filterButtonLabel={t("discover.bar.filter", "Filter")}
-        className="mb-4"
+        className="mb-3"
         testId="discover-search-filter"
       />
+
+      {/* #1699 — the source-language filter is ALWAYS visible (never hidden
+          behind the collapsible panel), so the learner always sees that the
+          list is filtered and can change it in one tap. Default = UI locale;
+          an explicit choice persists and wins over the default (#1343). */}
+      <div
+        className="mb-4 flex flex-wrap items-center gap-2"
+        data-testid="discover-language-filter-row"
+      >
+        <FilterMenuButton
+          label={t("discover.filter.language", "Language")}
+          options={languageOptions}
+          value={effectiveSourceLanguage}
+          onChange={setLangChoice}
+          testId="discover-language-filter"
+        />
+      </div>
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground" data-testid="discover-count">
