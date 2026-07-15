@@ -1,0 +1,378 @@
+
+/* =============================================================
+   EXP-008 / Phase 55E — feedback intensity control
+   =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2c-nav (#1597): utilities must win over this block */
+.form-row-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Phase 58E — theme picker preview cards (Settings > Appearance). */
+.theme-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.theme-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.theme-card:hover {
+  border-color: var(--border-accent);
+}
+
+.theme-card:focus-within {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-card[data-active="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.theme-card-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.theme-card-preview-split > span {
+  display: block;
+  width: 50%;
+  height: 100%;
+}
+
+.theme-card-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 64px;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.theme-card-accent {
+  width: 60%;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.theme-card-line {
+  width: 100%;
+  height: 5px;
+  border-radius: 2px;
+  opacity: 0.85;
+}
+
+.theme-card-line-short {
+  width: 60%;
+  opacity: 0.55;
+}
+
+.theme-card-label {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+
+.feedback-intensity-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.feedback-intensity-option {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.feedback-intensity-option input[type="radio"] {
+  margin-top: 4px;
+  flex: 0 0 auto;
+}
+
+.feedback-intensity-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Phase 55F — sound volume row */
+.form-row-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+}
+
+.sounds-volume-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sounds-volume-row input[type="range"] {
+  flex: 1 1 auto;
+}
+
+.sounds-volume-value {
+  min-width: 3.5ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+
+/* Phase 55H — current streak at the all-time best */
+.streak-widget__value[data-at-best="true"] {
+  color: var(--warning);
+}
+
+@media (max-width: 600px) {
+  /* .lesson-nav* responsive rules migrated to Tailwind (Phase B / B2). */
+  .lesson-summary-actions .btn {
+    width: 100%;
+  }
+  .lesson-summary-breakdown-row {
+    grid-template-columns: 1fr;
+  }
+  .lesson-summary-breakdown-score {
+    grid-column: 1 / -1;
+  }
+  /* Phase 64 — stack the suggestion cards vertically with a
+     full-width CTA so the 44px touch target spans the row. */
+  .lesson-next-step-card {
+    flex-wrap: wrap;
+  }
+  .lesson-next-step-card .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Phase 44 / EXP-002 / 3C — MatchingExercise. Mobile-first;
+   columns stack tightly on narrow viewports while keeping the
+   44px touch-target rule for each tile. */
+/* MatchingExercise styling migrated to Tailwind utilities
+   (MatchingExercise.tsx). These @keyframes remain because the
+   component references them via `motion-safe:animate-[matching-* ...]`
+   utilities — Tailwind ships no plugin that generates them, and
+   @keyframes are global (not @layer-scoped), so the utilities resolve
+   them. The prefers-reduced-motion handling is now the `motion-safe:`
+   variant on the animation/scale utilities. */
+@keyframes matching-pulse {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes matching-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes matching-flash {
+  0%,
+  100% {
+    background: var(--surface);
+  }
+  50% {
+    background: color-mix(in srgb, var(--exercise-wrong) 25%, var(--surface));
+  }
+}
+
+/* #824 — Matching "Auflösen" (solve) reveal animations. The
+   MatchingResolution component references these via `animate-[...]`
+   utilities (Tailwind ships no plugin that generates them). The
+   component drops the utility entirely under reduced motion, and the
+   global prefers-reduced-motion catch-all neutralises any that remain,
+   so motion-sensitive users get the final state immediately. */
+@keyframes matching-resolve-slide {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes matching-resolve-stack {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes matching-resolve-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes matching-resolve-line {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* #1251 — gentle, fading blink for the ContentHub info button. The
+   InfoHint component references it via the
+   `motion-safe:animate-[info-hint-blink_1.4s_ease-in-out_3]` utility:
+   three iterations then it rests (a single visit's blink "decays"),
+   and the visit/seen logic stops it across visits. Tailwind ships no
+   plugin for this @keyframe; it is global (not @layer-scoped) so the
+   utility resolves it. `motion-safe:` already drops the animation
+   under prefers-reduced-motion (the button stays fully usable). */
+@keyframes info-hint-blink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.12);
+  }
+}
+
+/* EXP-018 / Phase 62 — subtle per-direction instruction line under
+   an exercise prompt (receptive vs productive), with an eye/pencil
+   icon hint. SHARED by DirectionInstruction across all renderers. */
+.exercise-direction-instruction {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--fg-muted);
+}
+
+/* FreeTextExercise styling migrated to Tailwind utilities
+   (FreeTextExercise.tsx). */
+
+/* WordTilesExercise styling migrated to Tailwind utilities
+   (WordTilesExercise.tsx). The @dnd-kit drag visuals (slot grab
+   cursor + scale/shadow on drag) and the reduced-motion handling are
+   now `motion-safe:` Tailwind utilities on the slot; the floating
+   DragOverlay copy reuses the WORD_TILE_BASE/PLACED class strings. */
+
+/* ClozeExercise styling migrated to Tailwind utilities
+   (ClozeExercise.tsx). The per-blank correctness colours that
+   were applied via `.cloze-blank-wrapper.is-correct .cloze-blank-input`
+   descendant selectors now live as conditional utilities directly on
+   the blank input/select. .cloze-sentence-code (the code-mode font)
+   stays defined above. */
+
+.nav-links {
+  display: flex;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.nav-link {
+  color: var(--fg-muted);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.nav-link:hover {
+  background: var(--surface-2);
+  color: var(--fg);
+}
+
+.nav-link.is-active {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+/* #12 — the Help nav item is a <button> (it opens the help drawer), not a
+   <Link>. With Tailwind preflight off it would otherwise carry the UA
+   button chrome (grey background + border + button font-family) and read
+   as a separate raised button next to the anchor nav-links. Reset just
+   that chrome so it matches the .nav-link siblings; color, padding,
+   weight and size still come from .nav-link above. */
+.nav-link-button {
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* EXP-037 (#850) — NavGroup is a transparent grouping wrapper: on the
+   horizontal top bar (and its mobile drawer) its links flow as direct flex
+   items and the section label is hidden (grouping is order-only there). The
+   same component is reused in the mobile "Mehr" sheet OUTSIDE .app-nav, where
+   the label IS shown as a real section header. */
+.nav-group {
+  display: contents;
+}
+/* nav-group-label visibility: NavGroup `hideLabel` prop, not a CSS context
+   override (removed #1592/#1571 - it blocked layering this region). */
+
+.nav-theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  font-size: 1rem;
+}
+
+.nav-theme-toggle:hover {
+  background: var(--surface-2);
+}
+} /* @layer legacy */

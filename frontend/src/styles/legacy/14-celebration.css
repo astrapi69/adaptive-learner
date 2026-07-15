@@ -1,0 +1,136 @@
+
+/* =============================================================
+   EXP-008 / Phase 55C — celebration screen: confetti + message
+   -------------------------------------------------------------
+   Confetti is CSS-only (30 falling/rotating particles), GPU
+   accelerated (transform + opacity), and contained inside the
+   summary card. The Confetti component renders nothing under
+   prefers-reduced-motion; these rules also hard-hide it as a
+   belt-and-braces guard. The headline message warms to the
+   accent colour on a perfect (3-star) run.
+   =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+.lesson-summary {
+  position: relative;
+}
+
+.lesson-summary-message {
+  margin: var(--space-2) 0 var(--space-3);
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.lesson-summary-message[data-stars="3"] {
+  color: var(--accent);
+}
+
+/* #505 — XP earned this run. A centered "+N XP" pill so the
+   gamification reward is unmissable at lesson end. Token-backed
+   (the gold ``--star`` accent) for theme parity. */
+.lesson-summary-xp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.lesson-summary-xp-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--fg-muted, var(--fg));
+}
+
+.lesson-summary-xp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg, var(--radius-md));
+  border: 1px solid color-mix(in srgb, var(--star) 40%, var(--border));
+  background: color-mix(in srgb, var(--star) 14%, var(--surface));
+}
+
+.lesson-summary-xp-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--star);
+}
+
+.lesson-summary-xp-gain {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--star);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lesson-summary-xp-badge {
+    animation: lesson-summary-xp-pop 420ms ease-out both;
+  }
+}
+
+@keyframes lesson-summary-xp-pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -14px;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: confetti-fall var(--confetti-duration, 2000ms) ease-in var(--confetti-delay, 0ms) 1
+    forwards;
+}
+
+.confetti-piece.is-round {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, -14px, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--confetti-drift, 0), 420px, 0)
+      rotate(var(--confetti-rotate, 360deg));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+  .confetti-piece {
+    animation: none;
+  }
+}
+} /* @layer legacy */
