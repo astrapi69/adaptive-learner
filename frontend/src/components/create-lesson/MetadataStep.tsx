@@ -23,6 +23,17 @@ import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
 
 type Translate = (key: string, fallback?: string) => string;
 
+// English first-paint fallbacks for the template cards, mirroring the
+// catalog entries (create_lesson.templates.*): shown only while no catalog
+// is loaded (fresh profile, offline), so the cards never render the bare
+// template id or a raw dot-notation key (#1667).
+const TEMPLATE_FALLBACKS: Record<LessonTemplateKey, {title: string; desc: string}> = {
+    blank: {title: "Blank Lesson", desc: "Just metadata, add cards yourself."},
+    vocabulary: {title: "Vocabulary List", desc: "10 card slots, matching + free text."},
+    grammar: {title: "Grammar Lesson", desc: "5 card slots, mixed exercises with cloze."},
+    conversation: {title: "Conversation Practice", desc: "5 card slots, word tiles + cloze."},
+};
+
 interface MetadataStepProps {
     meta: LessonMeta;
     showError: boolean;
@@ -71,10 +82,10 @@ export default function MetadataStep({
                             onClick={() => onApplyTemplate(key)}
                         >
                             <span className="template-card-title">
-                                {t(`create_lesson.templates.${key}.title`, key)}
+                                {t(`create_lesson.templates.${key}.title`, TEMPLATE_FALLBACKS[key].title)}
                             </span>
                             <span className="template-card-desc muted">
-                                {t(`create_lesson.templates.${key}.desc`, "")}
+                                {t(`create_lesson.templates.${key}.desc`, TEMPLATE_FALLBACKS[key].desc)}
                             </span>
                         </button>
                     ))}
