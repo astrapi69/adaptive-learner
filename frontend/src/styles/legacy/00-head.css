@@ -1,0 +1,139 @@
+/*
+ * Adaptive Learner stylesheet (Phase 4A foundation).
+ *
+ * Single global CSS file. No CSS modules, no Tailwind. Every
+ * component reads from the variables below — switching between
+ * light / dark mode flips the variables; switching method-tinted
+ * UI elements pulls from --method-* (project-reference §3.1 palette,
+ * mirrored from frontend/src/lib/constants.ts METHOD_COLORS).
+ *
+ * Layout tokens (--space-*, --radius-*, --shadow-*) keep the
+ * spacing rhythm consistent across pages; introducing a new page
+ * SHOULD reach for these tokens before declaring local pixel
+ * values.
+ */
+
+/* ================================================================
+ * Phase 58D — multi-theme system.
+ *
+ * The CANONICAL color tokens (backgrounds / text / borders /
+ * interactive / accent / status / exercise / chart / star / shadows)
+ * live in styles/themes/theme-*.css, one block per ``data-theme``
+ * value. Each theme defines the FULL set — there is no
+ * light-fallthrough (enforced by styles/themes/themes.test.ts). The
+ * theme files are imported from main.tsx, light first.
+ *
+ * This block holds only the THEME-AGNOSTIC tokens (spacing / radius /
+ * fonts / the brand method palette) plus the LEGACY aliases. The
+ * aliases resolve THROUGH the canonical tokens, so pre-58B rules track
+ * the active theme automatically. Do NOT add new rules against the
+ * legacy names — reach for the semantic names instead.
+ * ============================================================== */
+
+:root {
+  /* Method palette — single source of truth shared with
+   * frontend/src/lib/constants.ts. Brand identity: the same across
+   * every theme (charts read --chart-* instead). */
+  --method-deductive: #3b82f6;
+  --method-inductive: #8b5cf6;
+  --method-error_based: #ef4444;
+  --method-dialogic: #10b981;
+  --method-contextual: #f59e0b;
+  --method-ai_adaptive: #6366f1;
+
+  /* Matching-pair palette (#181) — distinct colors for matched pairs in
+   * the Matching exercise. Theme-agnostic on purpose: like --method-*,
+   * the same hues in every theme (used as a ring + faint tint + number
+   * badge, redundant with the badge number so it is never color-alone).
+   * Deliberately RED- AND ORANGE-FREE (#181, #199): red and orange
+   * universally read as "warning/wrong", so a correctly matched pair must
+   * never be tinted in either. Allowed hues only —
+   * blue, green, cyan, purple, teal, yellow, pink. NOT reused from
+   * --chart-* (those are shared with data charts, where red is a valid
+   * categorical color). */
+  --matching-pair-1: #3b82f6; /* blue */
+  --matching-pair-2: #22c55e; /* green */
+  --matching-pair-3: #06b6d4; /* cyan (#199 — replaced orange: warning hue) */
+  --matching-pair-4: #a855f7; /* purple */
+  --matching-pair-5: #14b8a6; /* teal */
+  --matching-pair-6: #eab308; /* yellow */
+  --matching-pair-7: #ec4899; /* pink */
+
+  /* Layout tokens */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-1: var(--radius-sm);
+  --radius-2: var(--radius-md);
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* --------------------------------------------------------------
+   * Legacy aliases. Resolve through the canonical theme tokens so
+   * they follow the active theme. Kept so pre-58B CSS stays valid;
+   * prefer the semantic names in new code.
+   * -------------------------------------------------------------- */
+  --bg: var(--bg-primary);
+  --bg-alt: var(--bg-secondary);
+  --surface: var(--bg-surface);
+  --surface-2: var(--bg-elevated);
+  --surface-3: var(--interactive-active);
+  --border: var(--border-primary);
+  --border-strong: var(--border-accent);
+  --fg: var(--fg-primary);
+  --fg-inverted: var(--fg-inverse);
+  --text: var(--fg-primary);
+  --text-muted: var(--fg-muted);
+  --muted: var(--fg-muted);
+  --danger: var(--error);
+
+  /* --------------------------------------------------------------
+   * Theme-agnostic semantic tokens. These values are the SAME in
+   * every theme by construction, so they live here in :root rather
+   * than in each theme-*.css (themes.test.ts parity is unaffected).
+   * -------------------------------------------------------------- */
+
+  /* On-danger foreground: white, because --danger/--error is a
+   * saturated red in every theme. Mirrors --accent-fg for --accent. */
+  --danger-fg: #ffffff;
+
+  /* Matching exercise result feedback (#183). After checking, a
+   * correctly matched pair is tinted GREEN and a wrong pair RED (red as
+   * error feedback is correct here; red as a PAIR color stays forbidden,
+   * see #181). Defined once but resolve PER THEME through each theme's
+   * --exercise-correct / --exercise-wrong + --bg-surface, so they adapt
+   * to all 12 themes. The tint is subtle enough that --fg-primary stays
+   * readable on it; contrast.test.ts pins the computed mix at WCAG AA. */
+  --matching-correct-bg: color-mix(in srgb, var(--exercise-correct) 22%, var(--bg-surface));
+  --matching-correct-fg: var(--fg-primary);
+  --matching-error-bg: color-mix(in srgb, var(--exercise-wrong) 22%, var(--bg-surface));
+  --matching-error-fg: var(--fg-primary);
+
+  /* TipTap highlighter ("mark") — a translucent amber drawn from the
+   * --method-contextual brand hue, layered over any surface. The
+   * toolbar swatch sits a touch stronger; both gain a dark override
+   * in the [data-theme="dark"] block below. */
+  --mark-bg: rgba(245, 158, 11, 0.3);
+  --mark-swatch-bg: rgba(245, 158, 11, 0.4);
+
+  /* Code syntax palette (highlight.js). One semantic token per token
+   * class; the dark-mode variants live in the [data-theme="dark"]
+   * block alongside the rules that consume them. Light defaults: */
+  --code-keyword: #8b5cf6;
+  --code-string: #10b981;
+  --code-number: #f59e0b;
+  --code-comment: #94a3b8;
+  --code-function: #3b82f6;
+  --code-tag: #ef4444;
+  --code-attr: #6366f1;
+  --code-meta: #64748b;
+}
