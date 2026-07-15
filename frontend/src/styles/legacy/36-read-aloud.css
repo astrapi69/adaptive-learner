@@ -1,0 +1,312 @@
+
+/* ---------------------------------------------------------------
+   Lesson read-aloud (TTS) — compact speaker-icon button.
+
+   Inline next to theory headings, exercise prompts/labels, cloze
+   sentences, and summary answers. Pulses while speaking; the pulse
+   is disabled under prefers-reduced-motion (the accent fill alone
+   still signals the active state).
+   --------------------------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2c (#1584): utilities must win over this block */
+.read-aloud-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  vertical-align: middle;
+  transition:
+    background 150ms,
+    color 150ms,
+    border-color 150ms;
+}
+.read-aloud-button:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+.read-aloud-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.read-aloud-button.is-speaking {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  border-color: var(--accent);
+  animation: read-aloud-pulse 1.2s ease-in-out infinite;
+}
+.read-aloud-button__icon {
+  display: inline-flex;
+  line-height: 0;
+}
+.read-aloud-button__label {
+  font-size: 0.8rem;
+}
+
+@keyframes read-aloud-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .read-aloud-button.is-speaking {
+    animation: none;
+  }
+}
+
+/* Prompt + its read-aloud button on one row (C2). The prompt <p>'s
+   flex/margin moved to the consumers as `flex-auto m-0` utilities (#1584). */
+.exercise-prompt-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.exercise-prompt-row .read-aloud-button {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+/* Read-aloud control above a theory step body (C2). */
+.lesson-theory-tts {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-2);
+}
+
+/* Lesson-level read-aloud controls row: auto-read toggle (C3),
+   inline speed (C4). */
+.lesson-tts-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: var(--space-2) 0;
+}
+.lesson-tts-autoread {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms,
+    border-color 150ms;
+}
+.lesson-tts-autoread:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+.lesson-tts-autoread.is-on {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.lesson-tts-autoread:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Inline speed control (C4) — shown only while a stream plays. */
+.lesson-tts-speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.lesson-tts-speed-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-right: 2px;
+}
+.lesson-tts-speed-btn {
+  min-width: 2.4em;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms,
+    border-color 150ms;
+}
+.lesson-tts-speed-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+.lesson-tts-speed-btn.is-active {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.lesson-tts-speed-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.lesson-tts-novoice {
+  font-size: 0.8rem;
+  color: var(--warning, var(--text-muted));
+}
+
+/* Follow-along read-aloud highlight (C5). The active word gets an
+   accent wash while the engine speaks it; under prefers-reduced-
+   motion the wash + transition are dropped for a static underline. */
+.lesson-read-along {
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.lesson-read-along-word {
+  border-radius: 3px;
+  transition: background-color 120ms ease;
+}
+.lesson-read-along-word.tts-active {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-read-along-word {
+    transition: none;
+  }
+  .lesson-read-along-word.tts-active {
+    background: transparent;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 2px;
+  }
+}
+
+/* Floating read-aloud mini-player (C8). */
+.lesson-tts-player {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-4);
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow-card);
+  max-width: calc(100vw - 2 * var(--space-4));
+}
+.lesson-tts-player-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms,
+    border-color 150ms;
+}
+.lesson-tts-player-btn:hover:not(:disabled) {
+  background: var(--bg-elevated);
+}
+.lesson-tts-player-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.lesson-tts-player-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.lesson-tts-player-playpause {
+  width: 2.4rem;
+  height: 2.4rem;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.lesson-tts-player-pos {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+.lesson-tts-player-stop {
+  color: var(--text-muted);
+}
+} /* @layer legacy */
+.chat-message-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+.assessment-result-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mic-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms,
+    transform 150ms;
+}
+.mic-button:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+.mic-button--listening {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+  animation: mic-pulse 1.2s infinite ease-in-out;
+}
+.mic-button__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+@keyframes mic-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mic-button--listening {
+    animation: none;
+  }
+}

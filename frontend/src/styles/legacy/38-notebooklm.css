@@ -1,0 +1,102 @@
+
+/* --- NotebookLM section (Phase 32) ------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+.notebooklm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  /* #216 — roomier, token-driven spacing between the three action
+       buttons and a clearer gap before the difficulty filter below. */
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.notebooklm-filter {
+  margin: var(--space-2) 0 var(--space-4);
+}
+.notebooklm-question-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.notebooklm-question {
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.notebooklm-question__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.notebooklm-question__topic {
+  font-style: italic;
+}
+.notebooklm-question__type {
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+}
+.notebooklm-question__q {
+  margin: 4px 0;
+  color: var(--text);
+}
+.notebooklm-question__a {
+  margin: 4px 0;
+  color: var(--text-muted);
+}
+.notebooklm-question__actions {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-end;
+}
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.badge--easy {
+  background: color-mix(in srgb, var(--success) 15%, transparent);
+  color: var(--success);
+}
+.badge--medium {
+  background: color-mix(in srgb, var(--warning) 15%, transparent);
+  color: var(--warning);
+}
+.badge--hard {
+  background: color-mix(in srgb, var(--error) 15%, transparent);
+  color: var(--error);
+}
+
+/* Phase 38D — bump the help icon's hit area on small
+ * viewports so a finger tap is comfortable. The visual icon
+ * stays the same size; only the padding grows. */
+@media (max-width: 720px) {
+  .help-link {
+    padding: 12px !important;
+  }
+}
+
+/* Phase 38 v1.23.2 — HelpTooltip discoverability. The inline
+ * styles in ``components/help/HelpTooltip.tsx`` set the 2px
+ * dashed accent border on the trigger; this rule adds a
+ * subtle 10%-tinted background on hover so the term reads
+ * as interactive without screaming. ``color-mix`` is widely
+ * supported in modern browsers (Chrome 111+, Safari 16.2+,
+ * Firefox 113+); the fallback is no tint, which is fine. */
+.help-term {
+  transition: background-color 120ms ease-in-out;
+}
+
+.help-term:hover,
+.help-term:focus-within {
+  background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+} /* @layer legacy */

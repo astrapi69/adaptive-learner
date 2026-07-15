@@ -159,4 +159,18 @@
 # BackupCompare (25B) -> 29-backup-compare.css, Rich-Text-Editor
 # (Phase 27 inkl. Toolbar + Code-Block) -> 30-editor.css.
 # Byte-identitaets-Beweis im PR. Kein neues CSS.
-7595
+# 2026-07-15: 7595 -> 7606 (Concern-Split Batch E / Peel 10, #1655):
+# +12 Manifest-Zeilen (@import), -1 Leerzeile am Dateiende. Gamification (29A) ->
+# 31-gamification.css, Badges (29B) -> 32-badges.css, Streaks (29C)
+# -> 33-streaks.css, Anki (30C) -> 34-anki.css, Voice (31) ->
+# 35-voice.css, Lesson-Read-Aloud/TTS -> 36-read-aloud.css,
+# Pronunciation (31C) -> 37-pronunciation.css, NotebookLM (32) ->
+# 38-notebooklm.css, WCAG-Motion-Catch-All (39 C7, reduced-motion)
+# -> 39-motion-catchall.css, API-Key-Validation ->
+# 40-api-key-validation.css, Chat-Analysis-Loading ->
+# 41-analysis-loading.css, Visual Learning Path (66/EXP-022) ->
+# 42-learning-path.css. Damit ist global.css ein reines
+# @import-Manifest (43 Zeilen, Dateien 00-42) - der Split #1655 ist
+# strukturell abgeschlossen. Byte-identitaets-Beweis im PR.
+# Kein neues CSS.
+7606
