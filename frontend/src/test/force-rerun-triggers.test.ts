@@ -29,4 +29,9 @@ describe("forceRerunTriggers close the #1620 readFileSync-guard class", () => {
         expect(VITE_CONFIG).toContain('"**/package.json/**"');
         expect(VITE_CONFIG).toContain('"**/{vitest,vite}.config.*/**"');
     });
+
+    it("keeps the file-form variants (the /**-suffixed defaults never match the files themselves)", () => {
+        expect(VITE_CONFIG).toContain('"**/package.json"');
+        expect(VITE_CONFIG).toContain('"**/{vitest,vite}.config.*"');
+    });
 });

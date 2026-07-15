@@ -252,9 +252,15 @@ export default defineConfig({
         // on global.css in #1665). Any change to a listed path forces the
         // FULL suite instead. The first two entries are Vitest's defaults,
         // which an override REPLACES rather than extends.
+        // The two default patterns end in /** and never match the config
+        // FILES themselves (picomatch needs a trailing segment - measured);
+        // the two file-form entries below make a package.json / config
+        // change actually force the full run.
         forceRerunTriggers: [
             "**/package.json/**",
             "**/{vitest,vite}.config.*/**",
+            "**/package.json",
+            "**/{vitest,vite}.config.*",
             "**/index.html",
             "**/src/styles/**/*.css",
             "**/src/data/**/*.json",
