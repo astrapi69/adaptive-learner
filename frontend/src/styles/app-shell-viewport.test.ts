@@ -23,10 +23,12 @@ import {fileURLToPath} from "node:url";
 import {dirname, join} from "node:path";
 import {describe, expect, it} from "vitest";
 
+import {readLegacyCssSum} from "./legacy-css-sum";
+
 const HERE = dirname(fileURLToPath(import.meta.url));
 
 describe("app shell viewport sizing (#1410)", () => {
-    const globalCss = readFileSync(join(HERE, "global.css"), "utf8");
+    const globalCss = readLegacyCssSum();
 
     it("sizes html/body/#root with 100dvh over the 100% fallback", () => {
         const shellRule = globalCss.match(

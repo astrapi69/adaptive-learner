@@ -14,6 +14,7 @@ import { dirname, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { METHOD_COLORS, LEARNING_METHODS } from "../lib/constants";
+import { readLegacyCssSum } from "./legacy-css-sum";
 import { THEME_IDS } from "../lib/theme/themes";
 import { AA_LARGE_TEXT_OR_UI, AA_NORMAL_TEXT, bestTextOn, contrastRatio } from "./contrast";
 
@@ -235,7 +236,7 @@ describe("#185 / #271 — raw <button> never falls back to UA system colours", (
   // the page foreground and stay transparent while still losing to any
   // explicit text-* / bg-* utility. Pin the rule so neither half of the
   // architectural fix can silently regress.
-  const css = readFileSync(resolve(HERE, "global.css"), "utf-8");
+  const css = readLegacyCssSum();
   const baseButton = css.match(/@layer base\s*\{\s*button\s*\{([^}]*)\}\s*\}/);
 
   it("global.css declares a base-layer button color fallback (#185)", () => {
@@ -268,7 +269,7 @@ describe("#194 — button-styled anchors (.btn) keep their variant color", () =>
   // (0,1,1) and would beat `.btn-primary` (0,1,0), painting accent text on
   // the accent background (invisible CTAs on FocusAreasCard / ReviewQueueCard).
   // The rule must carve out `.btn` so the variant color wins.
-  const css = readFileSync(resolve(HERE, "global.css"), "utf-8");
+  const css = readLegacyCssSum();
 
   it("the generic anchor color rule excludes .btn", () => {
     const rule = css.match(

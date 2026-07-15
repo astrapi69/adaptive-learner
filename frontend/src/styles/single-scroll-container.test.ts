@@ -14,13 +14,11 @@
  * only, or removes ``overflow-y: auto`` from ``#root``.
  */
 
-import {readFileSync} from "node:fs";
-import {fileURLToPath} from "node:url";
-import {dirname, join} from "node:path";
 import {describe, expect, it} from "vitest";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const GLOBAL_CSS = readFileSync(join(HERE, "global.css"), "utf8");
+import {readLegacyCssSum} from "./legacy-css-sum";
+
+const GLOBAL_CSS = readLegacyCssSum();
 
 /**
  * Extracts the declaration body of the first CSS rule whose selector list
@@ -39,7 +37,9 @@ function ruleBody(selector: string): string {
             return rule.slice(braceIndex + 1).toLowerCase();
         }
     }
-    throw new Error(`Rule for selector "${selector}" not found in global.css`);
+    throw new Error(
+        `Rule for selector "${selector}" not found in global.css + styles/legacy`,
+    );
 }
 
 describe("#42 single scroll container", () => {

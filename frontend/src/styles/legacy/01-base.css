@@ -1,0 +1,342 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  /* #1410 — size the shell off the DYNAMIC viewport, not the initial
+     containing block. ``height: 100%`` resolves against the ICB, which iOS
+     does not reliably re-derive across a standalone-PWA orientation change:
+     after rotating to landscape the shell (and the sticky lesson footer
+     pinned to #root's bottom) can stay portrait-sized, pushing the action
+     button below the visible screen. ``100dvh`` tracks every rotation /
+     browser-UI change; the ``100%`` line stays as the fallback for engines
+     without dvh (declaration order IS the fallback mechanism — keep it
+     first). */
+  height: 100%;
+  height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+}
+
+#root {
+  overflow-y: auto;
+  /* EXP-018 follow-up P0 — clip horizontal overflow at the app
+     container too, so a single too-wide child can never produce a
+     left/right swipe on mobile. ``overflow-x`` ONLY on the
+     viewport + app container, NEVER an explicit ``overflow``
+     (which would also kill the vertical scroll #root provides;
+     see lessons-learned "viewport containers vs app container"). */
+  overflow-x: hidden;
+}
+
+/* Viewport lock: the viewport elements never scroll; ``#root`` is the
+   single app scroll container (see lessons-learned "viewport containers
+   vs app container"). ``overflow: hidden`` (both axes) is deliberate —
+   per CSS overflow computation, setting only ``overflow-x: hidden`` forces
+   ``overflow-y: visible`` to compute as ``auto``, turning both html and
+   body into vertical scroll containers ON TOP of ``#root``. That is the
+   multi-scrollbar condition behind #42 (two scrollbars on /content): with
+   three nested y-scroll containers the browser can surface a second bar.
+   Locking both axes here leaves ``#root`` (overflow-y: auto, height: 100%)
+   as the sole scroller, so the page always shows exactly one scrollbar.
+   The horizontal guard (the old overflow-x: hidden) is preserved. */
+html,
+body {
+  overflow: hidden;
+  max-width: 100vw;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+svg {
+  max-width: 100%;
+}
+
+pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Inline code: wrap long unbroken tokens (URLs, identifiers) so a
+   single ``code`` span can't push the line past the viewport. The
+   gentle ``overflow-wrap`` only breaks when a word would overflow,
+   leaving ``pre > code`` (which scrolls via the rule above)
+   untouched in practice. */
+code {
+  overflow-wrap: break-word;
+}
+
+code {
+  overflow-wrap: break-word;
+}
+
+/* Code blocks for technical content (schema v1.3 / CodeBlock.tsx). */
+.code-block {
+  margin: 0.75rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.code-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--surface-3);
+  border-bottom: 1px solid var(--border);
+}
+.code-block-lang {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.code-block-head .code-block-copy {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.15rem 0.35rem;
+}
+.code-block-head .code-block-copy:hover {
+  color: var(--accent);
+}
+.code-block-pre {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  /* Long code lines scroll instead of breaking the layout (mobile). */
+  overflow-x: auto;
+}
+.code-block-pre code {
+  font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+  font-size: 0.85rem;
+  white-space: pre;
+  overflow-wrap: normal;
+}
+.code-block-output {
+  border-top: 1px solid var(--border);
+  padding: 0.4rem 0.75rem;
+  background: var(--surface);
+}
+.code-block-output-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+.code-block-output pre {
+  margin: 0;
+  overflow-x: auto;
+  font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+  font-size: 0.82rem;
+}
+
+/* Code-aware exercise input — Cloze (schema v1.3). Monospace.
+   FreeText's code-input styling migrated to Tailwind
+   (FreeTextExercise.tsx). */
+.cloze-sentence-code {
+  font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+}
+
+/* #146 — content links carry the accent color, but anchors styled
+ * as buttons (shadcn ``<Button asChild>`` + a router <Link>, marked
+ * with ``data-slot="button"``) must keep their own variant text
+ * color. global.css is unlayered and would otherwise override the
+ * layered Tailwind utility, putting accent text on an accent
+ * background (invisible in dark mode).
+ * #194 — same hazard for hand-rolled button anchors
+ * (``<Link className="btn btn-primary">`` in FocusAreasCard /
+ * ReviewQueueCard): this rule's specificity (0,1,1) beats
+ * ``.btn-primary`` (0,1,0), so accent text landed on the accent
+ * background. Carve out ``.btn`` too so the ``.btn-*`` variant color
+ * wins; ``.btn`` sets its own ``text-decoration: none``. */
+a:not([data-slot="button"]):not(.btn) {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:not([data-slot="button"]):not(.btn):hover {
+  text-decoration: underline;
+}
+
+/* The HTML ``hidden`` attribute must always win. An element-level
+ * ``display:`` declaration (e.g. ``.settings-section { display: flex }``)
+ * is an author rule and beats the UA ``[hidden] { display: none }`` at
+ * equal specificity, which silently defeated the tabbed Settings page
+ * (every panel rendered at once, flat-scroll). ``!important`` here
+ * restores the attribute's meaning for every component that toggles
+ * ``hidden`` (tab panels, conditional rows, ...). */
+[hidden] {
+  display: none !important;
+}
+
+/* Phase 58I — global keyboard-focus baseline. ``:where()`` keeps the
+ * specificity at 0 so any component's own focus style still wins; this
+ * only guarantees that EVERY interactive element shows a visible ring
+ * in EVERY theme (--accent resolves per theme: indigo / sky / amber /
+ * yellow / sienna), so nothing relies on a missing per-component rule. */
+:where(
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  [tabindex],
+  [role="button"],
+  [role="tab"],
+  [role="radio"],
+  [role="link"]
+):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------------------------------
+ * Accessibility utilities (Phase 39, WCAG 2.1 AA).
+ *
+ *   .sr-only         visually hidden but discoverable by AT.
+ *   .skip-to-content first focusable element on every page;
+ *                    appears top-left when focused.
+ * -------------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  z-index: 1000;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: top 0.15s ease-in-out;
+}
+
+.skip-to-content:focus,
+.skip-to-content:focus-visible {
+  top: 8px;
+  outline: 3px solid var(--fg);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-to-content {
+    transition: none;
+  }
+}
+
+/* Windows High Contrast Mode (WCAG SC 1.4.11). When the OS
+ * forces a high-contrast palette, ensure the skip link still
+ * sits on top of a visible background and that the bullet
+ * dividers / icon-only-button glyphs keep a border. The rest
+ * of the app uses standard color tokens that HCM remaps
+ * correctly out of the box. */
+@media (forced-colors: active) {
+  .skip-to-content {
+    background: Canvas;
+    color: LinkText;
+    border: 2px solid CanvasText;
+  }
+  .skip-to-content:focus,
+  .skip-to-content:focus-visible {
+    outline: 3px solid Highlight;
+  }
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* #185 / #271 — raw <button> elements have no author `color` or
+   `background`, so with Tailwind preflight OFF they fall back to the UA
+   stylesheet's system colours: `color: buttontext` (~black) and
+   `background-color: buttonface` (~#efefef). On a dark theme that renders
+   the text/icon black-on-dark (#185) and the button itself a near-white
+   box (#271) — both invisible / wrong. The buttonface background is
+   theme-independent (it follows `color-scheme: light`), so a raw
+   un-backgrounded button looks identical in every theme (a glaring light
+   box on the 6 dark themes). This `base`-layer default makes every
+   un-styled raw button inherit the page foreground and stay transparent.
+   The cascade-layer order (theme, base, components, utilities) keeps it
+   correct: it beats the UA fallback (author layers win over UA) yet loses
+   to any explicit `text-*` / `bg-*` utility (utilities layer) and to the
+   unlayered component classes, so shadcn <Button> variants and
+   intentionally-styled raw buttons are untouched. */
+@layer base {
+  button {
+    color: inherit;
+    background-color: transparent;
+  }
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+
+/* The default form-control padding lives in @layer base so explicit
+   Tailwind padding utilities can win: unlayered author CSS beats every
+   layered declaration, and an unlayered `input { padding }` silently
+   defeated pl-9/pr-10 on the icon-carrying search fields (LessonPicker,
+   SearchField, ContentSearchBar) - the icon overlapped the placeholder
+   (#1458). Same cascade class as the #185 button reset. Controls
+   without authored padding utilities are unaffected: @layer base still
+   applies where nothing else overrides it. Guarded by
+   input-padding-layer.test.ts. */
+@layer base {
+  input,
+  textarea,
+  select {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}

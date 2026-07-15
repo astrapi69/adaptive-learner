@@ -16,11 +16,9 @@
  * guard.
  */
 
-import {readFileSync} from "node:fs";
-import {resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
-const GLOBAL_CSS = resolve(__dirname, "global.css");
+import {readLegacyCssSum} from "./legacy-css-sum";
 
 interface FlaggedRule {
     selector: string;
@@ -88,7 +86,7 @@ function findUnlayeredBareInputPadding(css: string): FlaggedRule[] {
 
 describe("global.css input padding stays layerable (#1458)", () => {
     it("declares no padding on a bare input selector outside @layer", () => {
-        const css = readFileSync(GLOBAL_CSS, "utf8");
+        const css = readLegacyCssSum();
         const flagged = findUnlayeredBareInputPadding(css);
         expect(
             flagged,
@@ -100,7 +98,7 @@ describe("global.css input padding stays layerable (#1458)", () => {
     });
 
     it("keeps the input base padding available via @layer base", () => {
-        const css = readFileSync(GLOBAL_CSS, "utf8");
+        const css = readLegacyCssSum();
         // The default padding must not simply vanish — inputs without
         // authored utilities still need it. Assert an @layer base block
         // declares padding for the input element.
