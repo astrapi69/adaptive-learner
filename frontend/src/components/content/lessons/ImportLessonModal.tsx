@@ -16,6 +16,12 @@ interface ImportLessonModalProps {
   open: boolean;
   onCancel: () => void;
   onImported: () => void;
+  /** Ids of the user-generated sets already saved locally, used to detect
+   *  a name collision. Passed in from the host (which already holds the
+   *  set list in memory) so the collision check is instant and never
+   *  triggers a fresh, network-bound ``listSets()`` in the click path.
+   *  When omitted, the modal falls back to fetching the set list. */
+  existingSetIds?: Set<string>;
 }
 
 /**
@@ -34,6 +40,7 @@ export default function ImportLessonModal({
   open,
   onCancel,
   onImported,
+  existingSetIds,
 }: ImportLessonModalProps) {
   const { t } = useI18n();
   const [parsed, setParsed] = useState<ImportedSet | null>(null);
@@ -66,21 +73,50 @@ export default function ImportLessonModal({
     }
   }
 
-  /** Persist a resolved set (either the parsed one or a fresh copy). */
-  async function persist(set: ImportedSet) {
+  /** Persist a resolved set (the parsed one or a fresh copy). Managed
+   *  ``importing`` state is owned by the callers so the whole
+   *  collision-check + save is guarded. */
+  async function saveSet(set: ImportedSet) {
+    await getStorage().contentLoader.saveUserSet({
+      set_id: set.set_id,
+      title: set.title,
+      language: set.language,
+      level: set.level,
+      origin: "imported",
+      description: set.description,
+      lessons: set.lessons,
+    });
+    notify.success(t("content.import_lesson.imported", "Lesson imported."));
+    onImported();
+  }
+
+  /** The ids of already-saved user sets: the in-memory list the host
+   *  passed in (instant), or — as a fallback — a fresh fetch. */
+  async function resolveExistingIds(): Promise<Set<string>> {
+    if (existingSetIds) return existingSetIds;
+    try {
+      const { sets } = await getStorage().contentLoader.listSets();
+      return new Set(
+        sets.filter((s) => s.source === USER_GENERATED_SOURCE).map((s) => s.id),
+      );
+    } catch {
+      // If the set list can't be read, treat as no collision (saveUserSet
+      // overwrites by id — no worse than before).
+      return new Set();
+    }
+  }
+
+  /** Import button: detect a name collision first, else save straight away. */
+  async function doImport() {
+    if (!parsed) return;
     setImporting(true);
     try {
-      await getStorage().contentLoader.saveUserSet({
-        set_id: set.set_id,
-        title: set.title,
-        language: set.language,
-        level: set.level,
-        origin: "imported",
-        description: set.description,
-        lessons: set.lessons,
-      });
-      notify.success(t("content.import_lesson.imported", "Lesson imported."));
-      onImported();
+      const existingIds = await resolveExistingIds();
+      if (existingIds.has(parsed.set_id)) {
+        setCollisionIds(existingIds);
+        return;
+      }
+      await saveSet(parsed);
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       notify.error(
@@ -91,36 +127,23 @@ export default function ImportLessonModal({
     }
   }
 
-  /** Import button: detect a name collision first, else save straight away. */
-  async function doImport() {
-    if (!parsed) return;
-    let existingIds: Set<string>;
-    try {
-      const { sets } = await getStorage().contentLoader.listSets();
-      existingIds = new Set(
-        sets
-          .filter((s) => s.source === USER_GENERATED_SOURCE)
-          .map((s) => s.id),
-      );
-    } catch {
-      // If the set list can't be read, fall through to a direct save
-      // (saveUserSet overwrites by id — no worse than before).
-      existingIds = new Set();
-    }
-    if (existingIds.has(parsed.set_id)) {
-      setCollisionIds(existingIds);
-      return;
-    }
-    await persist(parsed);
-  }
-
-  function overwrite() {
+  async function overwrite() {
     if (!parsed) return;
     setCollisionIds(null);
-    void persist(parsed);
+    setImporting(true);
+    try {
+      await saveSet(parsed);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.import_lesson.failed", "Could not import the lesson.")} ${detail}`,
+      );
+    } finally {
+      setImporting(false);
+    }
   }
 
-  function importAsCopy() {
+  async function importAsCopy() {
     if (!parsed || !collisionIds) return;
     const copy = asImportedCopy(
       parsed,
@@ -128,7 +151,17 @@ export default function ImportLessonModal({
       t("content.import_lesson.copy_suffix", "copy"),
     );
     setCollisionIds(null);
-    void persist(copy);
+    setImporting(true);
+    try {
+      await saveSet(copy);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.import_lesson.failed", "Could not import the lesson.")} ${detail}`,
+      );
+    } finally {
+      setImporting(false);
+    }
   }
 
   const exerciseCount = parsed
@@ -230,7 +263,7 @@ export default function ImportLessonModal({
                 type="button"
                 variant="secondary"
                 data-testid="import-lesson-copy"
-                onClick={importAsCopy}
+                onClick={() => void importAsCopy()}
                 disabled={importing}
               >
                 {t("content.import_lesson.copy", "Import as copy")}
@@ -238,7 +271,7 @@ export default function ImportLessonModal({
               <Button
                 type="button"
                 data-testid="import-lesson-overwrite"
-                onClick={overwrite}
+                onClick={() => void overwrite()}
                 disabled={importing}
               >
                 {t("content.import_lesson.overwrite", "Overwrite")}
