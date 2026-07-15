@@ -30,17 +30,28 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
     steps:
       - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v3
         id: filter
         with:
+          # schema/** is a SHARED both-sides path (#1658): the backend drift
+          # test regenerates lesson.schema.json from the Pydantic models, and
+          # the frontend schema-mirror check reads the same file - a change
+          # there must run BOTH suites.
           filters: |
             backend:
               - 'backend/**'
               - 'plugins/**'
               - '**/*.py'
               - 'Makefile'
+              - 'schema/**'
+              - '.github/workflows/ci.yml'
+            frontend:
+              - 'frontend/**'
+              - 'Makefile'
+              - 'schema/**'
               - '.github/workflows/ci.yml'
 
   backend-tests:
@@ -213,6 +224,10 @@ jobs:
 
   frontend-tests:
     name: Frontend Tests
+    # #1658 - symmetric to the #1617 backend gate: on a pure-backend PR the
+    # expensive steps below skip; the JOB still runs and reports success, so
+    # a (future) required-check setup can never hit the skipped-job trap.
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -242,6 +257,7 @@ jobs:
           restore-keys: bun-${{ runner.os }}-
 
       - name: Install dependencies
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         # --frozen-lockfile is the bun equivalent of `npm ci` (no lockfile
         # mutation). No --legacy-peer-deps needed: bun resolves the tree
@@ -249,6 +265,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: TypeScript type check
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: bunx tsc --noEmit
 
@@ -259,6 +276,7 @@ jobs:
       # (schema/quality-rules/doc) is covered by backend
       # test_lesson_schema_drift.py.
       - name: Lesson schema mirror drift check
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: node scripts/sync-schema-mirror.mjs --check
 
@@ -266,6 +284,7 @@ jobs:
       # so the ceiling is 0 — any new warning fails CI. Blocking errors
       # (react-hooks/rules-of-hooks, react/jsx-key) also have zero violations.
       - name: ESLint
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: bunx eslint src/ --max-warnings 0
 
@@ -274,6 +293,7 @@ jobs:
       # the pre-existing debt (#252) doesn't block CI. Uses npx-pinned madge
       # (peer-incompatible with TS 6 as a devDependency; CI-only tool).
       - name: Circular dependency check
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: bun run check:circular
 
@@ -282,6 +302,7 @@ jobs:
       # separate step-2 PR. Remove continue-on-error once the codebase is
       # formatted and the format-on-touch hook has caught up.
       - name: Prettier check (non-blocking)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: bun run format:check
         continue-on-error: true
@@ -291,6 +312,7 @@ jobs:
       # / no-descending-specificity / declaration-no-important are warnings
       # (36 pre-existing, reported not blocked — drive to zero then promote).
       - name: Stylelint
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: bun run lint:css
 
@@ -301,6 +323,7 @@ jobs:
       # skip. Push to develop/main always runs the full suite (the merge gate);
       # nightly + release run full too.
       - name: Run Vitest (selective on PR, full on push)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
