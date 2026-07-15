@@ -382,11 +382,14 @@ describe("#211 — the .btn base class declares a readable text color", () => {
   // Root-cause guard: a bare ``.btn`` (no .btn-primary/-secondary/-danger
   // variant) must define a ``color`` so it is never invisible in dark
   // themes. The variants override it; this pins the base default.
-  const css = readFileSync(resolve(HERE, "global.css"), "utf-8");
+  const css = readLegacyCssSum();
 
   it(".btn { ... } sets a color token", () => {
-    const match = css.match(/\.btn\s*\{([^}]*)\}/);
-    expect(match, ".btn rule not found in global.css").toBeTruthy();
+    // Line-anchored so context rules like `.lesson-next-step-card .btn`
+    // (which stay in global.css and precede the peeled base rule in the
+    // stylesheet sum) cannot shadow the BASE `.btn` rule under test.
+    const match = css.match(/^\.btn\s*\{([^}]*)\}/m);
+    expect(match, ".btn rule not found in global.css + styles/legacy").toBeTruthy();
     const body = match![1];
     expect(
       /color:\s*var\(--[a-z0-9-]+\)/.test(body),

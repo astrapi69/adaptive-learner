@@ -1,56 +1,7 @@
 @import "./legacy/00-head.css";
 @import "./legacy/01-base.css";
+@import "./legacy/02-buttons.css";
 
-/* --- Buttons -------------------------------------------------- */
-@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-5);
-  font-size: 1rem;
-  font-weight: 500;
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  /* #211 — the base class sets a readable default text color so a
-     bare ``.btn`` (no .btn-primary/-secondary/-danger variant, on any
-     element: button, a, ...) is never invisible in dark themes. Every
-     variant below sets its own ``color`` and overrides this; the #185
-     base-layer rule that resets button color to inherit only reached
-     raw button elements, not .btn anchors or variant-less buttons. */
-  color: var(--fg-primary);
-  /* #194 — a ``.btn`` anchor is carved out of the generic anchor
-     rule above, so it no longer inherits ``text-decoration: none``
-     from there; set it here so button-styled <Link>s never underline. */
-  text-decoration: none;
-  transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: var(--accent-fg);
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--accent-hover);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--fg);
-  border-color: var(--border-strong);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--surface-2);
-}
-
-} /* @layer legacy */
 /* --- Landing page ----------------------------------------------- */
 @layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
 
