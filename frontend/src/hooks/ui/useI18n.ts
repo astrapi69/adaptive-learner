@@ -223,8 +223,10 @@ export function I18nProvider({children}: {children: ReactNode}) {
         // 2) Hardcoded frontend fallbacks (first-paint resilience).
         const localised = isSupportedLang(lang) ? fallbackString(lang, key) : undefined;
         if (localised) return localised;
-        // 3) Caller-supplied fallback, then the key itself.
-        return fallback || key;
+        // 3) Caller-supplied fallback, then the key itself. Nullish, not
+        //    falsy: an explicit empty-string fallback means "render nothing",
+        //    never the raw dot-notation key (#1667).
+        return fallback ?? key;
     }, [strings, lang]);
 
     const value: I18nContextValue = {t, lang, setLang};
