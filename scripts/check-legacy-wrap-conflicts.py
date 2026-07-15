@@ -114,76 +114,18 @@ cpl = _load_sibling("css_parse_lib.py")
 
 
 # --------------------------------------------------------------------------
-# Virtual stylesheet (#1655 concern split)
+# Virtual stylesheet (#1655 concern split) - model in css_parse_lib,
+# reporting in css_wrap_report (file-size gate: one concern per module).
+# Re-exported so the CLI surface + the unit tests stay stable.
 # --------------------------------------------------------------------------
 
+cwr = _load_sibling("css_wrap_report.py")
 
-@dataclass
-class CssSegment:
-    """One source file's slice of the virtual stylesheet.
-
-    Attributes:
-        label: Display label relative to ``styles/`` (``legacy/00-head.css``
-            or ``global.css``).
-        start: First virtual line of the segment (1-based, inclusive).
-        count: Number of lines the segment spans.
-    """
-
-    label: str
-    start: int
-    count: int
-
-
-def load_css_virtual(
-    global_css: Path, legacy_dir: Path
-) -> tuple[str, list[CssSegment]]:
-    """Load ``styles/legacy/*.css`` + ``global.css`` as ONE virtual stylesheet.
-
-    The legacy concern files come FIRST (filename-sorted, matching the
-    ``@import`` order at the top of ``global.css``) so the virtual line
-    order equals the cascade order the browser sees after import inlining -
-    source-order tie-breaks in :func:`find_legacy_dependencies` therefore
-    stay correct across file boundaries. ``global.css`` is the LAST
-    segment, so a ``--block`` line number maps to a virtual line by adding
-    the offset of that segment.
-
-    Args:
-        global_css: Path to ``frontend/src/styles/global.css``.
-        legacy_dir: Path to ``frontend/src/styles/legacy`` (may not exist
-            before the first peel).
-
-    Returns:
-        ``(css_text, segments)`` - the concatenated stylesheet plus one
-        :class:`CssSegment` per source file in concatenation order (the
-        ``global.css`` segment is always last).
-    """
-    sources: list[tuple[str, Path]] = []
-    if legacy_dir.is_dir():
-        for entry in sorted(legacy_dir.iterdir()):
-            if entry.suffix == ".css":
-                sources.append((f"legacy/{entry.name}", entry))
-    sources.append(("global.css", global_css))
-
-    segments: list[CssSegment] = []
-    chunks: list[str] = []
-    line = 1
-    for seg_label, path in sources:
-        text = path.read_text(encoding="utf-8", errors="replace")
-        if not text.endswith("\n"):
-            text += "\n"
-        line_count = text.count("\n")
-        segments.append(CssSegment(label=seg_label, start=line, count=line_count))
-        chunks.append(text)
-        line += line_count
-    return "".join(chunks), segments
-
-
-def fmt_loc(line: int, segments: list[CssSegment]) -> str:
-    """Map a virtual line number onto its ``file:line`` display form."""
-    for segment in segments:
-        if segment.start <= line < segment.start + segment.count:
-            return f"{segment.label}:{line - segment.start + 1}"
-    return f"global.css:{line}"
+CssSegment = cpl.CssSegment
+load_css_virtual = cpl.load_css_virtual
+fmt_loc = cpl.fmt_loc
+report_verdict = cwr.report_verdict
+print_report = cwr.print_report
 
 
 def blank_ts_comments(text: str) -> str:
@@ -756,13 +698,6 @@ def discover_wrapped_blocks(
 # --------------------------------------------------------------------------
 
 
-def _rel(path: Path) -> str:
-    try:
-        return str(path.relative_to(REPO_ROOT))
-    except ValueError:
-        return str(path)
-
-
 def load_accepted() -> dict[tuple[str, str, str, str], str]:
     """Load reviewed, INTENDED legacy-vs-utility overrides from
     ``.legacy-wrap-accepted.json`` (Refs #1623).
@@ -843,134 +778,6 @@ def apply_allowlist(
         else:
             kept.append(finding)
     report.conflicts = kept
-
-
-def report_verdict(report: BlockReport) -> tuple[int, int, str]:
-    """(n_utility_conflicts, n_legacy_deps, verdict_string) for a block.
-
-    A block is CLEAN only with zero of both. Utility conflicts and
-    unlayered-legacy dependencies are distinct categories - a block can be
-    CLEAN against utilities yet still ABHAENGIG on an unlayered legacy rule
-    (the #1592 case), and MUST NOT be wrapped in that state.
-    """
-    n_conf = len(
-        {
-            (f.rule.line, f.rule_prop, f.utility, str(f.element.file), f.element.line)
-            for f in report.conflicts
-        }
-    )
-    n_dep = len(
-        {
-            (d.block_rule.line, d.block_prop, d.other_rule.line)
-            for d in report.legacy_deps
-        }
-    )
-    if n_conf == 0 and n_dep == 0:
-        verdict = "CLEAN"
-    else:
-        bits = []
-        if n_conf:
-            bits.append(f"KONFLIKTE({n_conf})")
-        if n_dep:
-            bits.append(f"ABHAENGIG({n_dep})")
-        verdict = " ".join(bits)
-    return n_conf, n_dep, verdict
-
-
-def print_report(report: BlockReport, segments: list[CssSegment] | None = None) -> None:
-    segs = segments or []
-    print(
-        f"\n=== Block '{report.label}' "
-        f"({fmt_loc(report.start, segs)} - {fmt_loc(report.end, segs)}) ==="
-    )
-    print(f"    Regeln im Bereich: {report.rule_count}")
-
-    grouped: dict[tuple[int, str], list[Finding]] = {}
-    for finding in report.conflicts:
-        grouped.setdefault(
-            (finding.rule.line, finding.subject.selector_part), []
-        ).append(finding)
-    for (line, selector), findings in sorted(grouped.items()):
-        print(f"\n  KONFLIKT  {selector}  ({fmt_loc(line, segs)})")
-        seen: set[tuple[str, str, str, int]] = set()
-        for f in sorted(
-            findings, key=lambda x: (str(x.element.file), x.element.line, x.utility)
-        ):
-            key = (f.rule_prop, f.utility, _rel(f.element.file), f.element.line)
-            if key in seen:
-                continue
-            seen.add(key)
-            cond = f"  [bedingt: {'; '.join(f.conditions)}]" if f.conditions else ""
-            tag_note = "  (Typ-Subjekt-Heuristik)" if f.via_tag_heuristic else ""
-            print(
-                f"      {f.rule_prop}  vs  Utility '{f.utility}'"
-                f"  @ {_rel(f.element.file)}:{f.element.line}{cond}{tag_note}"
-            )
-
-    if report.accepted_notes:
-        pairs = sorted(
-            {
-                (
-                    f.rule.line,
-                    f.subject.selector_part,
-                    f.rule_prop,
-                    f.utility,
-                    _rel(f.element.file),
-                    f.element.line,
-                    reason,
-                )
-                for f, reason in report.accepted_notes
-            }
-        )
-        print(f"\n  akzeptiert (allowlisted #1623, {len(pairs)}):")
-        for line, selector, prop, utility, file, el_line, reason in pairs:
-            print(
-                f"      {selector} ({fmt_loc(line, segs)}) {prop} vs '{utility}' @ {file}:{el_line}"
-            )
-            print(f"        -> {reason}")
-
-    if report.same_value_notes:
-        pairs = sorted(
-            {
-                (
-                    f.rule.line,
-                    f.subject.selector_part,
-                    f.rule_prop,
-                    f.utility,
-                    _rel(f.element.file),
-                    f.element.line,
-                )
-                for f in report.same_value_notes
-            }
-        )
-        print(f"\n  wertgleich (harmlos, {len(pairs)}):")
-        for line, selector, prop, utility, file, el_line in pairs:
-            print(
-                f"      {selector} ({fmt_loc(line, segs)}) {prop} == '{utility}' @ {file}:{el_line}"
-            )
-
-    if report.legacy_deps:
-        grouped_deps: dict[tuple[int, str], list[LegacyDep]] = {}
-        for dep in report.legacy_deps:
-            grouped_deps.setdefault((dep.block_rule.line, dep.block_part), []).append(
-                dep
-            )
-        for (line, selector), deps in sorted(grouped_deps.items()):
-            print(f"\n  ABHAENGIG  {selector}  ({fmt_loc(line, segs)})")
-            for dep in sorted(deps, key=lambda d: (d.block_prop, d.other_rule.line)):
-                print(
-                    f"      {dep.block_prop}  verliert gegen unlayered"
-                    f"  '{dep.other_part}'  ({fmt_loc(dep.other_rule.line, segs)})"
-                    f"  [Spezifitaet {dep.block_spec} >= {dep.other_spec}]"
-                )
-
-    if report.unmatchable:
-        print(f"\n  unpruefbar ({len(report.unmatchable)}):")
-        for rule, reason in report.unmatchable:
-            print(f"      {rule.selector} ({fmt_loc(rule.line, segs)}) - {reason}")
-
-    n_conf, n_dep, verdict = report_verdict(report)
-    print(f"\n  URTEIL {report.label}: {verdict}")
 
 
 def main() -> int:
