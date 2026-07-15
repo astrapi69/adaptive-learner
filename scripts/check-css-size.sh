@@ -11,6 +11,11 @@
 # ueber die Baseline, blockiert der Check (exit 1) - dasselbe Ratchet-
 # Prinzip wie .filesize-baseline (#372).
 #
+# Seit dem Concern-Split (#1655) zaehlt der Guard die SUMME aus
+# global.css + frontend/src/styles/legacy/*.css: der Split verschiebt
+# Zeilen in Concern-Dateien, und die Baseline darf durch das Verschieben
+# nicht umgehbar sein - die Gesamtmenge Legacy-CSS bleibt geratchet.
+#
 # Nach einer Reduktions-Tranche (siehe
 # docs/audits/global-css-analysis-2026-07-08.md) die Baseline-Zahl
 # nach unten setzen. Eine legitime Token-/Fundament-Erweiterung darf die
@@ -56,10 +61,16 @@ if ! [[ "$baseline" =~ ^[0-9]+$ ]]; then
     exit 1
 fi
 
+LEGACY_DIR="frontend/src/styles/legacy"
 lines=$(wc -l < "$TARGET")
+legacy_lines=0
+if [[ -d "$LEGACY_DIR" ]]; then
+    legacy_lines=$(find "$LEGACY_DIR" -name '*.css' -exec cat {} + 2>/dev/null | wc -l)
+    lines=$((lines + legacy_lines))
+fi
 
 printf "\n=== CSS-Zufluss-Stopp: %s ===\n" "$TARGET"
-printf "Baseline (eingefroren): %d Zeilen | aktuell: %d Zeilen\n\n" "$baseline" "$lines"
+printf "Baseline (eingefroren): %d Zeilen | aktuell: %d Zeilen (global.css + %d aus styles/legacy)\n\n" "$baseline" "$lines" "$legacy_lines"
 
 if [[ "$lines" -gt "$baseline" ]]; then
     grew=$((lines - baseline))
