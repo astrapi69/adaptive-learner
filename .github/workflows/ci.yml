@@ -342,6 +342,7 @@ jobs:
           fi
 
       - name: Build
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: bunx vite build
 
@@ -349,6 +350,7 @@ jobs:
       # moderate/low advisories surface in the log without blocking the
       # build; a high/critical advisory fails CI for immediate triage.
       - name: npm audit (high+)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true'
         working-directory: frontend
         run: bun audit --audit-level=high
 
