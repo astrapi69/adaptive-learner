@@ -111,4 +111,9 @@
 # styles/legacy/01-base.css; in global.css ersetzt die @import-Zeile den
 # Block exakt zeilenneutral (-344 +2 in global.css, +342 in der Datei).
 # Byte-identitaets-Beweis im PR. Kein neues CSS.
-7566
+# 7566 -> 7567 (Concern-Split Peel 3, #1655): +1 reine Manifest-Zeile.
+# Der erste gewrappte @layer-legacy-Block (Buttons, Zeilen 4-53) verbatim
+# nach styles/legacy/02-buttons.css (-50 +2 in global.css, +50 in der
+# Datei = netto +1 fuer die @import-Zeile). Byte-identitaets-Beweis im
+# PR. Kein neues CSS.
+7567
