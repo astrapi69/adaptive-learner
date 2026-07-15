@@ -1,0 +1,84 @@
+/* --- Onboarding page ------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+
+.onboarding-page {
+  max-width: 38rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.onboarding-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.onboarding-skip-top {
+  /* Smaller than the bottom action buttons so it reads as a
+     side-affordance ("you don't have to do this") rather than
+     the primary CTA, but still a full button (not a bare link)
+     so it's discoverable on first paint. */
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.onboarding-intro {
+  margin: 0;
+  color: var(--fg-muted);
+  line-height: 1.5;
+}
+
+.onboarding-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* v1.10.0 / Phase 23E — toggle row variant. Label + hint stack
+ * on the left, the input (checkbox) sits on the right. */
+.form-row-toggle {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-label-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.form-label {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.form-required {
+  color: var(--danger);
+  margin-left: var(--space-1);
+}
+
+.form-hint {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-4);
+}
+
+} /* @layer legacy */
