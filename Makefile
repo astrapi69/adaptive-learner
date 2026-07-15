@@ -26,7 +26,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-one test-watch tdd-help \
        stryker stryker-quick \
        verify-theme verify-theme-baseline-update \
-       check-types check-types-backend check-types-frontend check-file-sizes check-css-size check-dead-classnames audit-legacy-conflicts check-complexity check-complexity-gate check-complexity-gate-update \
+       check-types check-types-backend check-types-frontend check-file-sizes check-css-size css-identity-ref css-identity-check check-dead-classnames audit-legacy-conflicts check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -467,6 +467,12 @@ check-file-sizes: ## Cohesion watcher: warn >500, error >1000 lines (ratchet via
 
 check-css-size: ## CSS inflow-stop: global.css may only shrink (ratchet via .css-size-baseline, #1467)
 	bash scripts/check-css-size.sh
+
+css-identity-ref: ## EXP-044 concern-split (#1655): build + store the byte-identity reference (run on the PRE-split state)
+	bash scripts/check-css-identity.sh ref
+
+css-identity-check: ## EXP-044 concern-split (#1655): build + byte-compare the emitted CSS against the stored reference
+	bash scripts/check-css-identity.sh check
 
 check-dead-classnames: ## Usage-side gate: classNames used in TSX but defined nowhere (ratchet via .dead-classnames-baseline, #1491)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie (Tailwind oracle) ==="
