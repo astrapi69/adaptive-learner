@@ -1,0 +1,418 @@
+/* ---- v1.7.0 / Phase 20D — QR scanner viewfinder overlay ---------------
+
+   The viewfinder sits on top of the camera preview region. It
+   provides four corner brackets (purely decorative — the
+   scanning happens across the whole frame) and an optional
+   horizontal scan-line animation. Pure CSS, no JS animation
+   loop. Reduced-motion suppresses the scan-line. */
+
+.qr-viewfinder {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.qr-viewfinder-cutout {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  aspect-ratio: 1;
+  max-width: 240px;
+  max-height: 240px;
+  border-radius: 12px;
+  /* Four corner brackets via background-image gradients on each
+     corner. The big surrounding rectangle stays transparent. */
+}
+
+.qr-viewfinder-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: rgba(
+    255,
+    255,
+    255,
+    0.95
+  ); /* token-exempt: camera viewfinder frame, white over the live feed */
+  border-style: solid;
+  border-width: 0;
+}
+.qr-viewfinder-corner.is-tl {
+  top: 0;
+  left: 0;
+  border-top-width: 4px;
+  border-left-width: 4px;
+  border-top-left-radius: 12px;
+}
+.qr-viewfinder-corner.is-tr {
+  top: 0;
+  right: 0;
+  border-top-width: 4px;
+  border-right-width: 4px;
+  border-top-right-radius: 12px;
+}
+.qr-viewfinder-corner.is-bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 4px;
+  border-left-width: 4px;
+  border-bottom-left-radius: 12px;
+}
+.qr-viewfinder-corner.is-br {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 4px;
+  border-right-width: 4px;
+  border-bottom-right-radius: 12px;
+}
+
+.qr-viewfinder-scanline {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 12%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--accent-rgb, 99, 102, 241), 0.95),
+    transparent
+  );
+  animation: qr-scanline 1.8s ease-in-out infinite;
+}
+
+@keyframes qr-scanline {
+  0%,
+  100% {
+    top: 12%;
+    opacity: 0.4;
+  }
+  50% {
+    top: 78%;
+    opacity: 1;
+  }
+}
+
+.qr-success-checkmark {
+  display: inline-block;
+  font-size: 3rem;
+  color: var(--success);
+  animation: qr-success-pop 320ms ease-out 0s 1;
+}
+
+@keyframes qr-success-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Drop the continuous scan-line animation; the corner
+     brackets alone communicate the viewfinder. */
+  .qr-viewfinder-scanline {
+    animation: none;
+    top: 50%;
+    opacity: 0.6;
+  }
+  .qr-success-checkmark {
+    animation: none;
+  }
+}
+
+.cycle-evaluation-reason {
+  margin: var(--space-1) 0 var(--space-3) 0;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.cycle-step-index {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.cycle-step-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+@media (max-width: 720px) {
+  .cycle-steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .cycle-step-label {
+    display: none;
+  }
+}
+
+.session-chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card);
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: var(--space-2);
+}
+
+.chat-message {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  max-width: 90%;
+  background: var(--surface-2);
+}
+
+.chat-message.is-user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.chat-message.is-assistant {
+  align-self: flex-start;
+  background: var(--surface-2);
+}
+
+.chat-message.is-system {
+  align-self: stretch;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+}
+
+.chat-message-content {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* v1.35.0 UX-fix — Markdown rendering for assistant chat bubbles.
+   Mirrors the help-drawer + lesson-viewer typography so an AI
+   response carries the same readability as the help system. */
+.chat-message-content-markdown {
+  white-space: normal;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.chat-message-content-markdown p {
+  margin: 0 0 var(--space-2);
+}
+
+.chat-message-content-markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-message-content-markdown h1,
+.chat-message-content-markdown h2,
+.chat-message-content-markdown h3,
+.chat-message-content-markdown h4 {
+  margin: var(--space-3) 0 var(--space-2);
+  line-height: 1.3;
+}
+
+.chat-message-content-markdown h1 {
+  font-size: 1.25rem;
+}
+.chat-message-content-markdown h2 {
+  font-size: 1.15rem;
+}
+.chat-message-content-markdown h3 {
+  font-size: 1.05rem;
+}
+.chat-message-content-markdown h4 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.chat-message-content-markdown ul,
+.chat-message-content-markdown ol {
+  margin: 0 0 var(--space-2);
+  padding-left: 1.5rem;
+}
+
+.chat-message-content-markdown li {
+  margin-bottom: 2px;
+}
+
+.chat-message-content-markdown code {
+  background: color-mix(in srgb, var(--fg) 6%, var(--surface));
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+.chat-message-content-markdown pre {
+  margin: var(--space-2) 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--fg) 6%, var(--surface));
+  overflow-x: auto;
+}
+
+.chat-message-content-markdown pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.92em;
+}
+
+.chat-message-content-markdown blockquote {
+  margin: var(--space-2) 0;
+  padding: var(--space-1) var(--space-3);
+  border-left: 3px solid var(--border-strong);
+  color: var(--fg-muted);
+}
+
+.chat-message-content-markdown a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.chat-message-content-markdown strong {
+  font-weight: 600;
+}
+
+/* Tables: horizontally scrollable on narrow viewports so a wide
+   markdown table doesn't push the chat bubble off-screen. */
+.chat-message-content-markdown .chat-message-table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  margin: var(--space-2) 0;
+}
+
+.chat-message-content-markdown table {
+  border-collapse: collapse;
+  font-size: 0.92em;
+  min-width: 100%;
+}
+
+.chat-message-content-markdown th,
+.chat-message-content-markdown td {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.chat-message-content-markdown th {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
+/* Streaming cursor needs vertical alignment when inline next to a
+   <p> end (Markdown wraps trailing text in <p>). */
+.chat-message-content-markdown > .chat-message-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  vertical-align: baseline;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.chat-input-row textarea {
+  flex: 1;
+  resize: vertical;
+  min-height: 3rem;
+}
+
+.method-switch-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--warning) 18%, var(--surface));
+  border: 1px solid var(--warning);
+}
+
+.method-switch-banner-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.method-switch-banner-body {
+  margin: 0;
+  color: var(--fg);
+}
+
+.method-switch-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+/* Rating dialog (inline modal) */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+}
+
+.modal-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-elevated);
+  max-width: 32rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.rating-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.rating-value {
+  margin-left: var(--space-2);
+  color: var(--fg-muted);
+  font-weight: 400;
+}

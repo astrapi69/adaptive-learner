@@ -133,4 +133,10 @@
 # Chart-Alternativen + Step-Eval-Insights, Z. 215-495) ->
 # 06-dashboard.css, Session (Z. 496-697) -> 07-session.css.
 # Byte-identitaets-Beweis im PR. Kein neues CSS.
-7572
+# 7572 -> 7576 (Concern-Split Batch B / Peel 7, #1655): +4 reine
+# Manifest-Zeilen. Vier Regionen verbatim: QR-Scanner-Overlay
+# (ungewrappt) -> 08-qr-scanner.css, Rating-Buttons -> 09-rating.css,
+# Settings-Seite + Storage-Mode-Toggle -> 10-settings.css,
+# Progress-Table -> 11-progress.css. Byte-identitaets-Beweis im PR.
+# Kein neues CSS.
+7576
