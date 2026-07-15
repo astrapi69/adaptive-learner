@@ -1,0 +1,202 @@
+/* --- Session page --------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+
+.session-page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.session-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.session-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  /* P0 mobile — let the provider chips drop below the title
+     instead of overflowing to the right at 320px. */
+  flex-wrap: wrap;
+}
+
+.session-header-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.provider-chip {
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--surface-2);
+  color: var(--fg-muted);
+  border: 1px solid var(--border);
+}
+
+.session-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.session-header-topic {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--fg-muted);
+}
+
+.session-header-topic-label {
+  font-weight: 500;
+  margin-right: var(--space-1);
+}
+
+.cycle-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  position: relative;
+  touch-action: pan-y; /* allow vertical scroll, capture horizontal swipe */
+}
+
+/* v1.10.0 / Phase 23C — swipe-to-peek overlay on CycleProgress. */
+.cycle-peek-overlay {
+  position: absolute;
+  inset: auto 0 -8px 0;
+  transform: translateY(100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 6px);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  z-index: 1;
+  animation: cycle-peek-fade 200ms ease-out;
+}
+
+.cycle-peek-step {
+  font-size: 0.95rem;
+}
+
+.cycle-peek-description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+@keyframes cycle-peek-fade {
+  from {
+    opacity: 0;
+    transform: translateY(110%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cycle-peek-overlay {
+    animation: none;
+  }
+}
+
+.cycle-caption {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+.cycle-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-1);
+}
+
+.cycle-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.cycle-step.is-complete {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--fg);
+}
+
+.cycle-step.is-current {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+  /* Subtle ease so backward transitions also animate the colour
+     shift; the pulse below stacks on top for advance + repeat. */
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* v0.5.0 — brief pulse on the current step after a Phase 8
+   transition. Triggered by the ``is-just-advanced`` class that
+   the CycleProgress component applies for ~900ms after the
+   currentStep prop changes. Direction-agnostic: skip-ahead,
+   backward, and repeat-step all use the same eye-catch. */
+@keyframes cycle-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--accent);
+  }
+  40% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 6px transparent;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.cycle-step.is-just-advanced {
+  animation: cycle-pulse 800ms ease-out 0s 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cycle-step.is-just-advanced {
+    /* Honour reduced-motion: drop the animation, keep only the
+       colour transition from .is-current above. */
+    animation: none;
+  }
+  .cycle-step.is-current {
+    transition: none;
+  }
+}
+
+} /* @layer legacy */

@@ -3621,5 +3621,11 @@
       "failed": "No se pudo abrir la solicitud de incorporación.",
       "view": "Ver tu solicitud de incorporación"
     }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Escucha primero",
+      "aria": "Reproducir pronunciación"
+    }
   }
 }

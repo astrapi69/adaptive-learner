@@ -18,13 +18,11 @@
  * regardless of how they paint. Pin the CSS rule directly.
  */
 
-import {readFileSync} from "node:fs";
-import {fileURLToPath} from "node:url";
-import {dirname, resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const CSS = readFileSync(resolve(HERE, "global.css"), "utf-8").replace(
+import {readLegacyCssSum} from "./legacy-css-sum";
+
+const CSS = readLegacyCssSum().replace(
     /\/\*[\s\S]*?\*\//g,
     "",
 );

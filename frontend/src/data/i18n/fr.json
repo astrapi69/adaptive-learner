@@ -3621,5 +3621,11 @@
       "failed": "Impossible d'ouvrir la demande de fusion.",
       "view": "Voir votre demande de fusion"
     }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Écoute d'abord",
+      "aria": "Écouter la prononciation"
+    }
   }
 }

@@ -31,10 +31,10 @@ function createT(strings: Record<string, unknown>) {
             if (current && typeof current === "object" && part in (current as Record<string, unknown>)) {
                 current = (current as Record<string, unknown>)[part];
             } else {
-                return fallback || key;
+                return fallback ?? key;
             }
         }
-        return typeof current === "string" ? current : (fallback || key);
+        return typeof current === "string" ? current : (fallback ?? key);
     };
 }
 
@@ -72,6 +72,10 @@ describe("i18n t() function", () => {
 
     it("handles empty strings", () => {
         expect(t("", "Fallback")).toBe("Fallback");
+    });
+
+    it("respects an explicit empty-string fallback instead of leaking the raw key (#1667)", () => {
+        expect(t("ui.missing.key", "")).toBe("");
     });
 });
 

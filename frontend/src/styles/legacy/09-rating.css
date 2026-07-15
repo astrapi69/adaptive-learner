@@ -1,0 +1,52 @@
+
+/* --- v0.6.0 / 9C: 1-5 rating button group ---------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+.rating-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.rating-row-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.rating-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.rating-button {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--fg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-2);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.rating-button:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.rating-button.is-active {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+
+.rating-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+} /* @layer legacy */

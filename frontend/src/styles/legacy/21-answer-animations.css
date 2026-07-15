@@ -1,0 +1,122 @@
+
+/* =============================================================
+   EXP-008 / Phase 55B — answer micro-animations
+   -------------------------------------------------------------
+   Short, GPU-friendly feedback on a checked answer. The colour
+   pulse runs on the exercise's existing result line (which also
+   carries ``.answer-feedback`` + ``.is-correct`` / ``.is-wrong``).
+   Wrong answers flash gently and never carry a negative phrase —
+   the token-diff carries the correction. All animations are
+   suppressed under prefers-reduced-motion (the global catch-all
+   already forces animation/transition durations to ~0; these
+   explicit rules also drop the praise fade to a static state).
+   =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+@keyframes answer-correct-pulse {
+  0% {
+    background-color: transparent;
+  }
+  30% {
+    background-color: color-mix(in srgb, var(--success) 22%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes answer-wrong-flash {
+  0% {
+    background-color: transparent;
+  }
+  40% {
+    background-color: color-mix(in srgb, var(--danger) 16%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes answer-icon-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* #1218 — the success-merge entrance: the two redundant My-answer /
+   Solution toggle buttons give way to the success badge + "Continue".
+   A subtle rise + fade so it reads as a transition, not a flash.
+   motion-safe-gated at the call site (prefers-reduced-motion shows the
+   final state immediately). */
+@keyframes exercise-success-merge {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes answer-praise-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+.answer-feedback {
+  border-radius: var(--radius-sm);
+}
+
+.answer-feedback.is-correct {
+  animation: answer-correct-pulse 300ms ease-out;
+}
+
+.answer-feedback.is-wrong {
+  animation: answer-wrong-flash 200ms ease-out;
+}
+
+.answer-feedback svg {
+  animation: answer-icon-in 200ms ease-out;
+}
+
+.answer-feedback-praise {
+  margin: var(--space-1) 0 0;
+  color: var(--success);
+  font-weight: 600;
+  font-size: 0.95rem;
+  animation: answer-praise-fade 2000ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .answer-feedback.is-correct,
+  .answer-feedback.is-wrong,
+  .answer-feedback svg,
+  .answer-feedback-praise {
+    animation: none;
+  }
+  /* If a phrase is shown at all under reduced motion, keep it
+     visible (no fade-out) instead of animating. */
+  .answer-feedback-praise {
+    opacity: 1;
+  }
+}
+} /* @layer legacy */

@@ -1,0 +1,98 @@
+
+/* ==============================================================
+ * Chat-analysis loading indicator (import detail page).
+ * A button spinner, a phase-driven progress bar, an inline
+ * friendly error, and a fade-in for the results section. All
+ * animation is suppressed under prefers-reduced-motion (the
+ * spinner is hidden so a non-spinning ring never looks broken;
+ * only the text label changes).
+ * ============================================================== */
+
+@layer legacy { /* EXP-044 Tranche 2c (#1585): utilities must win over this block */
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.4em;
+  vertical-align: -0.1em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.8s linear infinite;
+}
+
+.analysis-loading {
+  margin-bottom: 2rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  background: var(--bg-surface);
+}
+
+.analysis-loading-phase {
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+
+.analysis-progress-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border-subtle);
+  overflow: hidden;
+}
+
+.analysis-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.analysis-loading-estimate {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+.analysis-error-inline {
+  margin-bottom: 2rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--error);
+  border-radius: 8px;
+  background: var(--error-bg);
+}
+} /* @layer legacy */
+
+@keyframes analysis-results-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.analysis-results-fade-in {
+  animation: analysis-results-in 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-spinner {
+    display: none;
+  }
+  .analysis-progress-fill {
+    transition: none;
+  }
+  .analysis-results-fade-in {
+    animation: none;
+  }
+}
