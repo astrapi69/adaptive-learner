@@ -132,3 +132,7 @@ docs/audits/coverage/
 # are not.
 docs/review/i18n-quality/
 docs/review/i18n-csv/
+
+# EXP-044 concern-split byte-identity reference (#1655) - local artifact
+.css-identity-ref
+.css-identity-ref.sha256
