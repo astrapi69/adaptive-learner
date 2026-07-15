@@ -13,6 +13,9 @@
    them. Respects the existing reduced-motion catch-all.
    --------------------------------------------------------------- */
 
+/* --- Lesson-mode + landscape compact nav ----------------------- */
+@layer legacy { /* EXP-044 (#1592): utilities must win over this block */
+
 /* Trigger A — active lesson, any width. */
 .app-nav.is-lesson-compact {
   padding-top: var(--space-2);
@@ -109,6 +112,8 @@
   }
 }
 
+} /* @layer legacy */
+
 /* ----- iOS focus-zoom guard (#1353) -----------------------------
    iOS Safari zooms IN when a focused text control has an effective
    font-size < 16px, and does NOT zoom back on blur / step change —
@@ -122,7 +127,10 @@
    (fine pointer) is untouched, so its optical sizing (``text-sm`` etc.)
    is preserved. This is the single app-wide anchor — do NOT drop back
    below 16px on a focusable field, and NEVER fix zoom via
-   ``maximum-scale`` / ``user-scalable=no`` (breaks pinch-zoom / WCAG). */
+   ``maximum-scale`` / ``user-scalable=no`` (breaks pinch-zoom / WCAG).
+   Deliberately UNLAYERED (#1592): this floor must also beat Tailwind
+   utilities (shadcn Select renders ``text-sm`` = 14px) — inside
+   ``@layer legacy`` the utility would win and re-open the zoom bug. */
 @media (pointer: coarse) {
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
       [type="color"]
@@ -132,6 +140,9 @@
     font-size: 16px;
   }
 }
+
+/* --- Lesson-mode mobile polish (9A/9C) ------------------------- */
+@layer legacy { /* EXP-044 (#1592), continued: utilities must win over this block */
 
 @media (max-width: 768px) {
   /* ----- Navigation: hamburger-controlled drawer -------------- */
@@ -202,19 +213,6 @@
   .btn {
     min-height: 44px;
     padding: var(--space-3) var(--space-5);
-  }
-  input[type="text"],
-  input[type="number"],
-  input[type="email"],
-  input[type="password"],
-  select,
-  textarea {
-    min-height: 44px;
-    font-size: 16px; /* iOS Safari: <16px triggers zoom on focus */
-  }
-  textarea {
-    /* textareas have their own height; just lift the inner padding. */
-    padding: var(--space-2) var(--space-3);
   }
 
   /* ----- Form actions: stack vertically when cramped ---------- */
@@ -387,5 +385,29 @@
   .landing-page {
     padding-left: var(--space-3);
     padding-right: var(--space-3);
+  }
+}
+
+} /* @layer legacy */
+
+/* ----- Mobile input floor (companion to the #1353 guard above) --
+   44px touch height + the 16px iOS zoom floor for every text
+   control at phone widths. Deliberately UNLAYERED (#1592): the
+   floor must also beat Tailwind utilities (``text-sm`` / ``h-*``
+   on shadcn controls) — inside ``@layer legacy`` the utility
+   would win and shrink the control below the guideline minimum. */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px; /* iOS Safari: <16px triggers zoom on focus */
+  }
+  textarea {
+    /* textareas have their own height; just lift the inner padding. */
+    padding: var(--space-2) var(--space-3);
   }
 }

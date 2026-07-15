@@ -173,4 +173,13 @@
 # @import-Manifest (43 Zeilen, Dateien 00-42) - der Split #1655 ist
 # strukturell abgeschlossen. Byte-identitaets-Beweis im PR.
 # Kein neues CSS.
-7606
+# 2026-07-15: 7606 -> 7633 (#1592 Co-Wrap): +27 reine Wrapper- und
+# Doku-Zeilen, kein neues CSS. 08-qr-scanner.css (QR/CycleSteps/
+# SessionChat-Basis) + 24-lesson-mode-nav.css (LessonMode/Landscape/
+# Mobile-Polish) in @layer legacy gewrappt; der iOS-Focus-Zoom-Guard
+# (#1353) und der Mobile-Input-Floor bleiben BEWUSST unlayered
+# (muessen Tailwind-Utilities schlagen, z.B. text-sm auf Selects)
+# und tragen jetzt erklaerende Kommentare. Eine dokumentierte
+# Aktivierung: .lesson-header h1 landscape font-size verliert an
+# text-sm (.legacy-wrap-accepted.json, konsistent mit #1628).
+7633
