@@ -96,6 +96,7 @@ export default function ImportActionsPanel() {
 
       <ImportLessonModal
         open={showImport}
+        existingSetIds={new Set(userSets.map((s) => s.id))}
         onCancel={() => setShowImport(false)}
         onImported={() => {
           setShowImport(false);
