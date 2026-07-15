@@ -10,13 +10,11 @@
  * query — both pinned here directly.
  */
 
-import {readFileSync} from "node:fs";
-import {fileURLToPath} from "node:url";
-import {dirname, resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const RAW = readFileSync(resolve(HERE, "global.css"), "utf-8");
+import {readLegacyCssSum} from "./legacy-css-sum";
+
+const RAW = readLegacyCssSum();
 const CSS = RAW.replace(/\/\*[\s\S]*?\*\//g, "");
 
 describe("lesson-mode compact nav (.is-lesson-compact)", () => {

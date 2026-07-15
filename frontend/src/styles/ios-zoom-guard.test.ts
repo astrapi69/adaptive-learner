@@ -24,10 +24,9 @@ import {join} from "node:path";
 
 import {describe, expect, it} from "vitest";
 
-const GLOBAL_CSS = readFileSync(
-    join(__dirname, "global.css"),
-    "utf-8",
-);
+import {readLegacyCssSum} from "./legacy-css-sum";
+
+const GLOBAL_CSS = readLegacyCssSum();
 
 describe("iOS focus-zoom guard (#1353, #1569)", () => {
     it("floors focusable text controls at 16px on coarse pointers", () => {
