@@ -129,3 +129,57 @@ Auftrag laut Handover: #1663/#1664 mergen, dann Peel 2 (Base-Resets).
   jedes Pins auf First-Match-Annahmen pruefen (Zeilenanker-Muster).
 - Parallel offen: #1567 FeatureShots, #1629 God-Classes, #1653
   settings-data-Determinismus.
+
+## 9. Concern-Split fertiggestellt: Batches A-E, global.css = Manifest (Nachmittag)
+
+- Original prompt: "dann weiter damit wir das fertig bekommen"
+- Optimized prompt: "Fuehre die restlichen Peels des #1655-Splits als
+  Batch-PRs (mehrere zusammenhaengende Bloecke pro PR) bis zum
+  Manifest-Endzustand aus - jeder Batch mit Byte-Identity-Gate,
+  Summen-Ratchet-Anhebung, voller lokaler Vitest-Suite und Label."
+- Goal: global.css vollstaendig in per-Concern-Dateien aufloesen.
+- Ergebnis: der EXP-044 Concern-Split (#1655) ist strukturell
+  abgeschlossen. `frontend/src/styles/global.css` ist ein reines
+  @import-Manifest (43 Zeilen, Dateien 00-42 unter styles/legacy/).
+  Jeder Batch verbatim + byte-identisch bewiesen (konstant
+  212319 Bytes, sha256 9733c626...), Label
+  `visual-baselines-unaffected` mit dem Identity-Output als Beleg.
+- Batches:
+  - Batch A (0d1b6cbc): 04-onboarding..07-session; Commit 1
+    schaltete die letzten 6 Direkt-Reader auf `readLegacyCssSum()`
+    um - danach kein Pin-Umbau mehr in irgendeinem Peel.
+  - Batch B (PR #1686, bcc99e7a): 08-qr-scanner (unlayered,
+    verbatim), 09-rating, 10-settings, 11-progress. Neues Gotcha:
+    der eof-pre-commit-Hook strippt Leerzeilen am Dateiende -
+    Slice-Trailing-Blanks muessen konkatenationsinvariant an den
+    Kopf der FOLGENDEN Datei wandern.
+  - Batch C (PR #1688, a26cf863): 12-navigation..19-method-badges
+    (8 Dateien, 1938 Zeilen). Gotcha: `.css-size-baseline` traegt
+    genau EINE Zahl (Gate liest die ERSTE Nicht-Kommentar-Zahl) -
+    Zahl ERSETZEN, nicht zweite anhaengen.
+  - Batch D (PR #1689, 11a18529): 20-diff-highlight..30-editor
+    (11 Dateien) inkl. `24-lesson-mode-nav.css` = die #1592-Zone
+    mit iOS-Focus-Zoom-Guard, unveraendert unlayered verbatim.
+  - Batch E (PR #1690): 31-gamification..42-learning-path
+    (12 Dateien, inkl. 39-motion-catchall.css unlayered) -
+    Manifest-Endzustand. Baseline final 7606 (Summen-Ratchet).
+- Werkzeug: wiederverwendbares Batch-Move-Skript (verbatim-
+  Reassembly-Assert + Blank-Shift; start = Leerzeile vor dem
+  Header, end_line = erste bleibende Zeile, letzter Slice darf
+  nicht auf Leerzeile enden).
+- #1655 mit Abschlusskommentar CLOSED (Peel-Historie, Gates,
+  entsperrte Folgearbeit #1592/#1629; Form-(a)-Normalisierung
+  `@import ... layer(legacy)` bewusst deferred).
+- Volle lokale Vitest-Laeufe je Batch: 672 Dateien / 7035-7066
+  Tests gruen; jede PR-CI gruen (forceRerunTriggers erzwingt die
+  volle Frontend-Suite bei CSS-Aenderungen).
+- Commits: bcc99e7a (#1686), a26cf863 (#1688), 11a18529 (#1689),
+  Batch-E-Squash (#1690)
+
+## Naechste Session (aktualisiert)
+
+- **#1592**: mobile-@media Co-Wrap - jetzt per-Concern in
+  `24-lesson-mode-nav.css` loesbar.
+- **#1629**: God-Class-Abbau per-Datei.
+- Parallel offen: #1567 FeatureShots, #1653
+  settings-data-Determinismus.
