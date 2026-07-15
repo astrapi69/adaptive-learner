@@ -35,6 +35,7 @@ import {
     type ViewportName,
     freezeClock,
     gotoSurface,
+    pinContentRegistry,
     setTheme,
     settleForScreenshot,
 } from "./helpers";
@@ -45,11 +46,15 @@ for (const surface of SURFACE_NAMES) {
     for (const viewport of VIEWPORT_NAMES) {
         test(`${surface} renders correctly at ${viewport}`, async ({page}) => {
             await page.setViewportSize(VIEWPORTS[viewport]);
-            // Determinism: freeze the clock + pin the default theme before
+            // Determinism: freeze the clock, pin the default theme, and pin
+            // the content-repo registry fetch to a frozen fixture (#1653 —
+            // the recommended-repos list is otherwise fetched live and
+            // re-stales the settings-data / content-discover baselines) before
             // the first navigation, then seed/await the surface's own ready
             // signal (gotoSurface), then settle fonts + kill animations.
             await freezeClock(page);
             await setTheme(page, "light");
+            await pinContentRegistry(page);
             const ready = await gotoSurface(page, surface);
             test.skip(!ready, `Could not reach ${surface} deterministically`);
             await settleForScreenshot(page);

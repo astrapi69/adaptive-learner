@@ -24,6 +24,7 @@ import {
     VIEW_NAMES,
     freezeClock,
     gotoView,
+    pinContentRegistry,
     setTheme,
     settleForScreenshot,
 } from "./helpers";
@@ -36,6 +37,7 @@ for (const theme of THEME_IDS) {
             // ready signal (gotoView), then settle fonts + kill animations.
             await freezeClock(page);
             await setTheme(page, theme);
+            await pinContentRegistry(page);
             const ready = await gotoView(page, view);
             test.skip(!ready, `Could not reach ${view} deterministically`);
             await settleForScreenshot(page);
