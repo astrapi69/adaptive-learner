@@ -2065,6 +2065,12 @@ content:
     import: "İçe aktar"
     imported: "Ders içe aktarıldı."
     failed: "Ders içe aktarılamadı."
+    collision_title: "Bu ders zaten mevcut"
+    collision_body: "Kayıtlı bir ders seti bu tanımlayıcıyı zaten kullanıyor. Üzerine yaz, ayrı bir kopya olarak içe aktar veya iptal et?"
+    overwrite: "Üzerine yaz"
+    copy: "Kopya olarak içe aktar"
+    copy_suffix: "kopya"
+    skipped: "{n} ders doğrulamayı geçemediği için atlandı."
   my_lessons:
     export_set: "Set olarak dışa aktar"
     share: "Toplulukla paylaş"
@@ -2551,6 +2557,8 @@ create_lesson:
     play: "Dersi oynat"
     create_another: "Başka bir ders oluştur"
     to_browser: "İçerik tarayıcısına"
+    save_file: "Dosya olarak kaydet"
+    file_saved: "Ders dosya olarak kaydedildi."
   templates:
     heading: "Bir şablonla başla"
     blank:

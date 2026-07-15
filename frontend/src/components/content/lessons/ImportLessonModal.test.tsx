@@ -13,9 +13,13 @@ import { lessonJson } from "../../../lib/content/lesson/lesson-export";
 import type { ConversationAnalysisResult } from "../../../types/domain";
 
 const saveUserSet = vi.fn();
+const listSets = vi.fn();
 vi.mock("../../../storage", () => ({
   getStorage: () => ({
-    contentLoader: { saveUserSet: (...a: unknown[]) => saveUserSet(...a) },
+    contentLoader: {
+      saveUserSet: (...a: unknown[]) => saveUserSet(...a),
+      listSets: (...a: unknown[]) => listSets(...a),
+    },
   }),
 }));
 
@@ -68,6 +72,8 @@ function validLessonFile() {
 describe("ImportLessonModal", () => {
   beforeEach(() => {
     saveUserSet.mockReset();
+    listSets.mockReset();
+    listSets.mockResolvedValue({ sets: [], sources: [] });
     toastSuccess.mockReset();
     toastError.mockReset();
   });
@@ -122,5 +128,73 @@ describe("ImportLessonModal", () => {
     );
     expect(screen.getByTestId("import-lesson-confirm")).toBeDisabled();
     expect(saveUserSet).not.toHaveBeenCalled();
+  });
+
+  it("asks to overwrite / copy / cancel on a name collision (#1672)", async () => {
+    // An existing user-generated set already uses the parsed id.
+    listSets.mockResolvedValue({
+      sets: [
+        { source: "user-generated", id: "imported-spanish-travel", title: "x" },
+      ],
+      sources: [],
+    });
+    saveUserSet.mockResolvedValue({});
+    render(<ImportLessonModal open onCancel={() => {}} onImported={() => {}} />);
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("import-lesson-file"), {
+        target: { files: [validLessonFile()] },
+      });
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId("import-lesson-preview")).toBeInTheDocument(),
+    );
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("import-lesson-confirm"));
+    });
+    // Collision dialog appears; nothing saved yet.
+    await waitFor(() =>
+      expect(screen.getByTestId("import-lesson-collision")).toBeInTheDocument(),
+    );
+    expect(saveUserSet).not.toHaveBeenCalled();
+
+    // "Import as copy" saves under a fresh id + copy title.
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("import-lesson-copy"));
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as Record<string, unknown>;
+    expect(arg.set_id).toBe("imported-spanish-travel-copy");
+    expect(String(arg.title)).toMatch(/\(copy\)$/);
+  });
+
+  it("overwrite keeps the same id on a collision (#1672)", async () => {
+    listSets.mockResolvedValue({
+      sets: [
+        { source: "user-generated", id: "imported-spanish-travel", title: "x" },
+      ],
+      sources: [],
+    });
+    saveUserSet.mockResolvedValue({});
+    render(<ImportLessonModal open onCancel={() => {}} onImported={() => {}} />);
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("import-lesson-file"), {
+        target: { files: [validLessonFile()] },
+      });
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId("import-lesson-preview")).toBeInTheDocument(),
+    );
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("import-lesson-confirm"));
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId("import-lesson-collision")).toBeInTheDocument(),
+    );
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("import-lesson-overwrite"));
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as Record<string, unknown>;
+    expect(arg.set_id).toBe("imported-spanish-travel");
   });
 });

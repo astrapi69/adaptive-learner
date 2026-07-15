@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · {lessons} lessons · {exercises} exercises",
       "import": "Import",
       "imported": "Lesson imported.",
-      "failed": "Could not import the lesson."
+      "failed": "Could not import the lesson.",
+      "collision_title": "This lesson already exists",
+      "collision_body": "A saved lesson set already uses this identifier. Overwrite it, import a separate copy, or cancel?",
+      "overwrite": "Overwrite",
+      "copy": "Import as copy",
+      "copy_suffix": "copy",
+      "skipped": "{n} lesson(s) were skipped because they failed validation."
     },
     "my_lessons": {
       "export_set": "Export as set",
@@ -2795,7 +2801,9 @@
       "save_share": "Save and share",
       "play": "Play lesson",
       "create_another": "Create another lesson",
-      "to_browser": "To Content Browser"
+      "to_browser": "To Content Browser",
+      "save_file": "Save as file",
+      "file_saved": "Lesson saved as a file."
     },
     "templates": {
       "heading": "Start from a template",

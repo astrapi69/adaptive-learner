@@ -2067,6 +2067,12 @@ content:
     import: "Importer"
     imported: "Leçon importée."
     failed: "Impossible d'importer la leçon."
+    collision_title: "Cette leçon existe déjà"
+    collision_body: "Un ensemble de leçons enregistré utilise déjà cet identifiant. Écraser, importer une copie distincte ou annuler ?"
+    overwrite: "Écraser"
+    copy: "Importer comme copie"
+    copy_suffix: "copie"
+    skipped: "{n} leçon(s) ignorée(s) car la validation a échoué."
   my_lessons:
     export_set: "Exporter comme ensemble"
     share: "Partager avec la communauté"
@@ -2553,6 +2559,8 @@ create_lesson:
     play: "Lancer la leçon"
     create_another: "Créer une autre leçon"
     to_browser: "Vers le navigateur de contenu"
+    save_file: "Enregistrer dans un fichier"
+    file_saved: "Leçon enregistrée dans un fichier."
   templates:
     heading: "Partir d'un modèle"
     blank:

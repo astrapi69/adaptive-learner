@@ -29,6 +29,10 @@ vi.mock("../../storage", () => ({
 vi.mock("../../utils/notify", () => ({
     notify: {success: vi.fn(), error: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
+const downloadLessonJsonMock = vi.fn();
+vi.mock("../../lib/content/lesson/lesson-export", () => ({
+    downloadLessonJson: (...a: unknown[]) => downloadLessonJsonMock(...a),
+}));
 
 import CreateLesson from "./CreateLesson";
 import {PAGE_CONTAINER_CLASSES} from "../../shared/layout/PageContainer";
@@ -214,6 +218,32 @@ describe("CreateLesson — card step gate + draft", () => {
         );
         expect(saveUserSetMock).toHaveBeenCalled();
         expect(screen.getByTestId("create-lesson-play")).toBeInTheDocument();
+    });
+
+    it("exports the saved lesson as a file (#1672)", async () => {
+        downloadLessonJsonMock.mockClear();
+        toStep2();
+        addCard("Bonjour", "Hallo");
+        addCard("Merci", "Danke");
+        addCard("Oui", "Ja");
+        addCard("Non", "Nein");
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 3
+        fireEvent.click(screen.getByTestId("exercise-generate"));
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 4
+        fireEvent.click(screen.getByTestId("create-lesson-save-local"));
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("create-lesson-saved"),
+            ).toBeInTheDocument(),
+        );
+        fireEvent.click(screen.getByTestId("create-lesson-save-file"));
+        expect(downloadLessonJsonMock).toHaveBeenCalledTimes(1);
+        const lessonArg = downloadLessonJsonMock.mock.calls[0][0] as {
+            id: string;
+            steps: unknown[];
+        };
+        expect(lessonArg.id).toBeTruthy();
+        expect(lessonArg.steps.length).toBeGreaterThan(0);
     });
 
     it("offers to restore a saved draft and continues it", () => {
