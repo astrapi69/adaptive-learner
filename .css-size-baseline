@@ -147,4 +147,16 @@
 # Curriculum -> 17-curriculum.css, Recent-Sessions ->
 # 18-recent-sessions.css, Method-Badges -> 19-method-badges.css.
 # Byte-identitaets-Beweis im PR. Kein neues CSS.
-7584
+# 2026-07-15: 7584 -> 7595 (Concern-Split Batch D / Peel 9, #1655):
+# +11 reine Manifest-Zeilen (@import). Diff-Highlight (52B) ->
+# 20-diff-highlight.css, Answer-Animations (55B) ->
+# 21-answer-animations.css, PWA-Install-Prompt (9B) ->
+# 22-install-prompt.css, Mobile-Polish (9A) -> 23-mobile-polish.css,
+# Lesson-Mode + Landscape-Compact-Nav (#1592-Zone, bleibt unlayered)
+# -> 24-lesson-mode-nav.css, Export (16D) -> 25-export-section.css,
+# Auto-Loop (17C) -> 26-auto-loop.css, Multi-Cycle-Summary (17D) ->
+# 27-multi-cycle-summary.css, ModelPicker (24C) -> 28-model-picker.css,
+# BackupCompare (25B) -> 29-backup-compare.css, Rich-Text-Editor
+# (Phase 27 inkl. Toolbar + Code-Block) -> 30-editor.css.
+# Byte-identitaets-Beweis im PR. Kein neues CSS.
+7595

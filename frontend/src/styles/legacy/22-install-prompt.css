@@ -1,0 +1,69 @@
+
+/* =============================================================
+   v0.6.0 / 9B — PWA install prompt banner
+   -------------------------------------------------------------
+   Bottom-anchored banner that surfaces our custom UI when the
+   browser fires ``beforeinstallprompt``. Mobile-first sizing;
+   shrinks to a centred card on desktop so it doesn't span the
+   full viewport on a 1440px monitor.
+   =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+.install-prompt {
+  position: fixed;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  z-index: 100;
+}
+
+.install-prompt-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.install-prompt-subtitle {
+  font-size: 0.85rem;
+}
+
+.install-prompt-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+@media (min-width: 769px) {
+  .install-prompt {
+    left: auto;
+    right: var(--space-5);
+    bottom: var(--space-5);
+    max-width: 28rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* On narrow phones the actions need their own row so the
+     text isn't squashed to one word per line. */
+  .install-prompt {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .install-prompt-actions {
+    width: 100%;
+  }
+  .install-prompt-actions .btn {
+    flex: 1;
+    min-height: 44px;
+  }
+}
+} /* @layer legacy */
