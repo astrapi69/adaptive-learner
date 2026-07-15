@@ -58,7 +58,7 @@ export default function ListenFirstAudio({
     return (
         <button
             type="button"
-            className="listen-first-button"
+            className="mb-3 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-sm border px-3 py-2 text-sm font-medium"
             data-testid="listen-first"
             onClick={play}
             aria-label={t("exercise.listen_first.aria", "Play pronunciation")}
