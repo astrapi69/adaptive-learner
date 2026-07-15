@@ -2076,6 +2076,12 @@ content:
     import: "Impor"
     imported: "Pelajaran diimpor."
     failed: "Tidak dapat mengimpor pelajaran."
+    collision_title: "Pelajaran ini sudah ada"
+    collision_body: "Kumpulan pelajaran tersimpan sudah menggunakan pengidentifikasi ini. Timpa, impor sebagai salinan terpisah, atau batalkan?"
+    overwrite: "Timpa"
+    copy: "Impor sebagai salinan"
+    copy_suffix: "salinan"
+    skipped: "{n} pelajaran dilewati karena gagal validasi."
   my_lessons:
     export_set: "Ekspor sebagai set"
     share: "Bagikan ke Komunitas"
@@ -2561,6 +2567,8 @@ create_lesson:
     play: "Mainkan pelajaran"
     create_another: "Buat pelajaran lain"
     to_browser: "Ke Penjelajah Konten"
+    save_file: "Simpan sebagai berkas"
+    file_saved: "Pelajaran disimpan sebagai berkas."
   templates:
     heading: "Mulai dari templat"
     blank:

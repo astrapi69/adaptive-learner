@@ -17,6 +17,7 @@
  * 65B-65D. Storage-mode-agnostic (works in API + Dexie modes).
  */
 
+import {Download} from "lucide-react";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -53,13 +54,18 @@ import {
     checkDraft,
     type DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
+import {downloadLessonJson} from "../../lib/content/lesson/lesson-export";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import {
     applyTemplate,
     type LessonTemplateKey,
 } from "../../lib/content/lesson/lesson-templates";
-import type {ContentLessonExercise, ContentSetEntry} from "../../storage/types";
+import type {
+    ContentLesson,
+    ContentLessonExercise,
+    ContentSetEntry,
+} from "../../storage/types";
 
 const TOTAL_STEPS = 4;
 const DRAFT_AUTOSAVE_MS = 10_000;
@@ -102,6 +108,9 @@ export default function CreateLesson() {
     const [saving, setSaving] = useState(false);
     const [savedEntry, setSavedEntry] = useState<ContentSetEntry | null>(null);
     const [savedLessonId, setSavedLessonId] = useState("");
+    // #1672 — the built lesson, kept so "Save as file" can export the exact
+    // canonical JSON without rebuilding from the (already-cleared) draft.
+    const [savedLesson, setSavedLesson] = useState<ContentLesson | null>(null);
     const [confirmCancel, setConfirmCancel] = useState(false);
     // Draft restore: a saved draft with content prompts continue-or-fresh
     // before any edits. Held until the user chooses.
@@ -202,6 +211,7 @@ export default function CreateLesson() {
             const entry = await getStorage().contentLoader.saveUserSet(input);
             clearLessonDraft();
             setSavedLessonId(lesson.id);
+            setSavedLesson(lesson);
             setSavedEntry(entry);
             notify.success(t("create_lesson.save.saved", "Lesson saved!"));
             return entry;
@@ -230,7 +240,19 @@ export default function CreateLesson() {
         setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
         setSavedEntry(null);
         setSavedLessonId("");
+        setSavedLesson(null);
         setStep(1);
+    }
+
+    /** #1672 — download the just-created lesson as canonical JSON, an
+     *  independent alternative to the PR share path (backup / move to
+     *  another device). */
+    function exportSavedLesson() {
+        if (!savedLesson) return;
+        downloadLessonJson(savedLesson);
+        notify.success(
+            t("create_lesson.save.file_saved", "Lesson saved as a file."),
+        );
     }
 
     function playSaved() {
@@ -398,6 +420,18 @@ export default function CreateLesson() {
                             onClick={playSaved}
                         >
                             {t("create_lesson.save.play", "Play lesson")}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            data-testid="create-lesson-save-file"
+                            onClick={exportSavedLesson}
+                        >
+                            <Download className="h-5 w-5" aria-hidden="true" />
+                            {t(
+                                "create_lesson.save.save_file",
+                                "Save as file",
+                            )}
                         </Button>
                         <Button
                             type="button"

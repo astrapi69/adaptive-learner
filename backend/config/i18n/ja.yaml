@@ -2065,6 +2065,12 @@ content:
     import: "インポート"
     imported: "レッスンをインポートしました。"
     failed: "レッスンをインポートできませんでした。"
+    collision_title: "このレッスンは既に存在します"
+    collision_body: "保存済みのレッスンセットがこの識別子を既に使用しています。上書き、別のコピーとしてインポート、またはキャンセルしますか？"
+    overwrite: "上書き"
+    copy: "コピーとしてインポート"
+    copy_suffix: "コピー"
+    skipped: "{n} 件のレッスンが検証に失敗したためスキップされました。"
   my_lessons:
     export_set: "セットとしてエクスポート"
     share: "コミュニティで共有"
@@ -2551,6 +2557,8 @@ create_lesson:
     play: "レッスンを再生"
     create_another: "別のレッスンを作成"
     to_browser: "コンテンツブラウザへ"
+    save_file: "ファイルとして保存"
+    file_saved: "レッスンをファイルとして保存しました。"
   templates:
     heading: "テンプレートから開始"
     blank:

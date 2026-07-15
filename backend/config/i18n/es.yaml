@@ -2067,6 +2067,12 @@ content:
     import: "Importar"
     imported: "Lección importada."
     failed: "No se pudo importar la lección."
+    collision_title: "Esta lección ya existe"
+    collision_body: "Un conjunto de lecciones guardado ya usa este identificador. ¿Sobrescribir, importar una copia aparte o cancelar?"
+    overwrite: "Sobrescribir"
+    copy: "Importar como copia"
+    copy_suffix: "copia"
+    skipped: "{n} lección(es) omitida(s) porque no superaron la validación."
   my_lessons:
     export_set: "Exportar como conjunto"
     share: "Compartir con la comunidad"
@@ -2553,6 +2559,8 @@ create_lesson:
     play: "Reproducir lección"
     create_another: "Crear otra lección"
     to_browser: "Al explorador de contenido"
+    save_file: "Guardar como archivo"
+    file_saved: "Lección guardada como archivo."
   templates:
     heading: "Empezar con una plantilla"
     blank:

@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · {lessons} Lektionen · {exercises} Übungen",
       "import": "Importieren",
       "imported": "Lektion importiert.",
-      "failed": "Die Lektion konnte nicht importiert werden."
+      "failed": "Die Lektion konnte nicht importiert werden.",
+      "collision_title": "Diese Lektion existiert bereits",
+      "collision_body": "Ein gespeichertes Lektions-Set nutzt bereits diese Kennung. Überschreiben, als separate Kopie importieren oder abbrechen?",
+      "overwrite": "Überschreiben",
+      "copy": "Als Kopie importieren",
+      "copy_suffix": "Kopie",
+      "skipped": "{n} Lektion(en) übersprungen, da die Validierung fehlschlug."
     },
     "my_lessons": {
       "export_set": "Als Content-Set exportieren",
@@ -2795,7 +2801,9 @@
       "save_share": "Speichern und teilen",
       "play": "Lektion spielen",
       "create_another": "Neue Lektion erstellen",
-      "to_browser": "Zum Content Browser"
+      "to_browser": "Zum Content Browser",
+      "save_file": "Als Datei speichern",
+      "file_saved": "Lektion als Datei gespeichert."
     },
     "templates": {
       "heading": "Mit Vorlage starten",
