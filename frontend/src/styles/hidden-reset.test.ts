@@ -11,23 +11,21 @@
  * the attribute's meaning.
  */
 
-import {readFileSync} from "node:fs";
-import {fileURLToPath} from "node:url";
-import {dirname, resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
+import {readLegacyCssSum} from "./legacy-css-sum";
+
 // Strip /* */ comments so the rule's example in a comment isn't matched.
-const CSS = readFileSync(resolve(HERE, "global.css"), "utf-8").replace(
-    /\/\*[\s\S]*?\*\//g,
-    "",
-);
+const CSS = readLegacyCssSum().replace(/\/\*[\s\S]*?\*\//g, "");
 
 describe("global [hidden] reset", () => {
     it("forces display:none !important so the hidden attribute always wins", () => {
         // Match the bare `[hidden] { ... }` rule.
         const block = CSS.match(/\[hidden\]\s*\{([^}]*)\}/);
-        expect(block, "no [hidden] rule found in global.css").not.toBeNull();
+        expect(
+            block,
+            "no [hidden] rule found in global.css + styles/legacy",
+        ).not.toBeNull();
         expect(block![1]).toMatch(/display:\s*none\s*!important/);
     });
 });

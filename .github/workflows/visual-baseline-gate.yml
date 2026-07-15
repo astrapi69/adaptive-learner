@@ -52,6 +52,7 @@ jobs:
               - 'frontend/src/pages/lesson/**'
               - 'frontend/src/components/exercises/**'
               - 'frontend/src/styles/global.css'
+              - 'frontend/src/styles/legacy/**'
               - 'frontend/src/styles/tailwind.css'
               - 'frontend/src/styles/themes/**'
             baselines:
