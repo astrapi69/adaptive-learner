@@ -42,6 +42,12 @@
  *
  *   4. Otherwise: null (no cloze constructable — caller replays).
  *
+ * A match on paths 1-3 is additionally rejected when blanking the target
+ * consumes the ENTIRE haystack, leaving a context-free ``"___"`` (a card
+ * whose front IS the answer, or a prompt that IS the answer). Such a cloze
+ * is unsolvable by content — only the app's auto length/first-letter hints
+ * would scaffold it — so the generator declines and the caller replays.
+ *
  * Distractor pool (deterministic):
  *   - ``error.user_answer`` first (the specific mistake — guarantees
  *     the user's wrong choice appears in select-mode if the caller
@@ -177,6 +183,18 @@ function _blankWithSingleMarker(
         haystack.slice(0, firstIdx) +
         "___" +
         haystack.slice(firstIdx + target.length);
+    // Reject a context-free blank: when the target spans the ENTIRE haystack
+    // (a card whose ``front`` IS the answer, or a prompt that IS the answer),
+    // removing the marker leaves no real text and the cloze collapses to a bare
+    // "___". Rendered, that is an unsolvable input whose only scaffolding is the
+    // app's auto length/first-letter hints ("The answer has N letters", "It
+    // starts with X") — the "unlösbare" adaptive-lesson shape. Decline so the
+    // caller replays the original exercise instead (the documented graceful
+    // degradation, same as the no-match path). A single letter/digit of
+    // surrounding context is enough to keep a genuine cloze ("yo ___", "___ chat").
+    if (!/[\p{L}\p{N}]/u.test(sentence.replace("___", ""))) {
+        return null;
+    }
     return _buildCloze(error, sourceExercise, sourceCard, sentence);
 }
 
