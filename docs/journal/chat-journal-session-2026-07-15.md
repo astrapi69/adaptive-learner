@@ -91,3 +91,41 @@ Auftrag laut Handover: #1663/#1664 mergen, dann Peel 2 (Base-Resets).
   (139) + 01-base (342); Summe konstant 7566 (Ratchet exakt auf Baseline)
 - Tests: volle Frontend-Suite 6997 gruen; Audit-Tool-Unit-Tests 19 -> 23;
   Byte-Identitaet 2x bewiesen (Fix-Session + Peel 2)
+
+## 4. Nachtrag: #1620 strukturell geschlossen + Peel 3 (11:15-12:10)
+
+- Original prompt: Aster bestaetigte die #1661-Einordnung und zog die
+  forceRerunTriggers-Verifikation isoliert VOR Peel 3 ("eine Sache nach
+  der anderen").
+- Ziel: die readFileSync-Blindstelle der selektiven PR-CI strukturell
+  schliessen (statt Prozess-Pflaster), danach Peel 3.
+- Issue-Doku: #1661 bekam die readFileSync-Klasse als Instanz-Klasse 4
+  (Abgrenzung: PR-CI sieht Flaeche nicht vs. Selektionsmechanik
+  verfehlt sie); #1620 den zweiten Incident (#1665) + Optionen.
+- #1620-Fix (PR #1673, Closes #1620): `forceRerunTriggers` in
+  vite.config.ts (index.html, src/styles/**/*.css, src/data/**/*.json
+  + Datei-Form-Varianten der Defaults). RED/GREEN gemessen: vorher
+  0 Tests bei css/index.html-Aenderung, nachher voller Lauf (7006);
+  Kontrolle (.ts-Aenderung) bleibt selektiv (2954). Zwei gemessene
+  Gotchas: (1) picomatch ueberspringt Dot-Verzeichnisse - Worktrees
+  unter .claude/ feuern lokal nicht (CI-Pfade dot-frei); (2) Vitests
+  eigene Default-Muster enden auf /** und matchen die Config-Dateien
+  selbst nie - Datei-Form-Varianten ergaenzt. Text-Pin
+  `src/test/force-rerun-triggers.test.ts` (5 Tests). In-CI-Beweis:
+  PR-CI lief trotz `vitest --changed` die volle Suite (671 Dateien).
+- Peel 3 (PR #1675, Refs #1655): erster GEWRAPPTER Block - Buttons
+  (Zeilen 4-53) verbatim nach `styles/legacy/02-buttons.css`,
+  byte-identisch (ref 212319 B -> check identisch), Baseline
+  7566 -> 7567 (+1 Manifest-Zeile). Neues Gotcha (lokal vor dem PR
+  gefangen): der #211 `.btn`-Pin matchte im Summen-Text zuerst die
+  Kontext-Regel `.lesson-next-step-card .btn` (ohne color) - Fix:
+  Regex zeilenverankert (`/^\.btn\s*\{/m`). Volle Suite 7007 gruen.
+- Commits: f907560a (#1673), 475c8076 (#1675)
+
+## Naechste Session (aktualisiert)
+
+- **Peel 4**: verbleibende gewrappte Bloecke in Dateireihenfolge,
+  Start Landing page (global.css:5 nach Peel 3). Beim Sum-Switch
+  jedes Pins auf First-Match-Annahmen pruefen (Zeilenanker-Muster).
+- Parallel offen: #1567 FeatureShots, #1629 God-Classes, #1653
+  settings-data-Determinismus.
