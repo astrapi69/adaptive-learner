@@ -1,0 +1,68 @@
+
+/* --- Badges (Phase 29B) ----------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+.badge-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.badge-showcase__summary {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.badge-showcase__category {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.badge-showcase__category-title {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin: 0;
+}
+.badge-showcase__grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.badge-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  transition: filter 200ms;
+}
+.badge-tile--locked {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+.badge-tile__icon {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+.badge-tile__name {
+  font-weight: 600;
+  color: var(--text);
+}
+.badge-tile__description {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.badge-tile__earned-at {
+  font-size: 0.72rem;
+  color: var(--accent);
+  margin-top: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge-tile {
+    transition: none;
+  }
+}
+} /* @layer legacy */

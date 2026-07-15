@@ -1,0 +1,301 @@
+
+/* ============================================================
+ * Phase 39 C7 — WCAG 2.1 SC 2.3.3 + 2.2.2 catch-all for users
+ * who set ``prefers-reduced-motion: reduce`` in their OS. The
+ * per-animation overrides earlier in this file (cycle-pulse,
+ * assessment-slide, xp-rise, qr-scanline, ...) stay in place
+ * because they substitute a static visual; this block is the
+ * safety net for any animation or transition that doesn't
+ * have its own override. The 0.01ms duration is the standard
+ * "essentially instant but not zero" value that keeps
+ * onfinish / transitionend handlers firing.
+ * ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Badge Gallery drawer (Phase 57 / v1.40.0 / F-129). */
+.badge-gallery-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+
+.badge-gallery-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.badge-gallery-count {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+}
+
+.badge-gallery-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--fg-muted);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+}
+
+.badge-gallery-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.badge-gallery-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge-gallery-filter {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--fg-muted);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.badge-gallery-filter.is-active {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border-color: var(--accent);
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.badge-gallery-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+}
+
+.badge-gallery-grid {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+@media (max-width: 600px) {
+  .badge-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.badge-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--space-3);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-card.is-locked {
+  opacity: 0.7;
+}
+
+/* Gold badges get a subtle golden glow (Phase 57). Reduced-motion
+   keeps a static glow; no pulse. */
+.badge-card.is-earned[data-tier="gold"] {
+  border-color: var(--star);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--star) 45%, transparent);
+  animation: badge-gold-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes badge-gold-glow {
+  from {
+    box-shadow: 0 0 6px color-mix(in srgb, var(--star) 30%, transparent);
+  }
+  to {
+    box-shadow: 0 0 14px color-mix(in srgb, var(--star) 60%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge-card.is-earned[data-tier="gold"] {
+    animation: none;
+  }
+}
+
+.badge-card-main {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  color: var(--fg);
+}
+
+.badge-card-icon {
+  display: block;
+}
+
+.badge-card-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.badge-card-tier {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+.badge-card-pips {
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.badge-pip {
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.badge-card-date,
+.badge-card-next,
+.badge-card-locked-hint {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--fg-muted);
+}
+
+.badge-card-detail {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  text-align: left;
+  width: 100%;
+}
+
+.badge-tier-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.badge-tier-table caption {
+  text-align: left;
+  font-weight: 600;
+  color: var(--fg-muted);
+  padding-bottom: 2px;
+}
+
+.badge-tier-table th,
+.badge-tier-table td {
+  padding: 2px 4px;
+  text-align: left;
+}
+
+.badge-tier-table td {
+  text-align: right;
+  color: var(--fg-muted);
+}
+
+/* Dashboard badge widget (Phase 57 / 57F). */
+.badge-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.badge-widget-count {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--fg);
+  padding: 0;
+}
+
+.badge-widget-recent {
+  display: flex;
+  gap: 8px;
+}
+
+.badge-widget-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 0;
+}
+
+.badge-widget-empty {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 0.8125rem;
+}
+
+.badge-widget-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--fg);
+}
+
+.badge-widget-next-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.badge-widget-next-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+.badge-widget-next-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
