@@ -1,0 +1,37 @@
+
+/* --- Lesson header / summary + content-set heading --- */
+@layer legacy { /* EXP-044 Tranche 2c-lesson (#1597): utilities must win over this block. Extracted from Navigation by #1597; the 4 audit hits are reconciled/allowlisted (mt-3 dropped as a value-equal no-op; text-sm KEPT + allowlisted - it also carries a live line-height, so removal reflows every lesson surface; .content-set-meta h4 = FoldedUserLessons tag-heuristic FPs; the timed-stats m-0 is the intended activation) - see .legacy-wrap-accepted.json. Refs #1485, #1592. */
+.content-set-meta h2,
+.content-set-meta h4 {
+  margin: 0 0 4px 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.lesson-header-set {
+  margin: var(--space-2) 0 0 0;
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+}
+
+.lesson-header-set-label {
+  font-weight: 500;
+  margin-right: var(--space-1);
+}
+
+.lesson-summary-stats {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lesson-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+} /* @layer legacy */

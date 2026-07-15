@@ -1,0 +1,99 @@
+
+/* =============================================================
+   EXP-008 / Phase 55D — milestone overlay
+   -------------------------------------------------------------
+   Top-anchored, non-blocking toast announcing a streak / level /
+   mastery / badge milestone. Flies in from the top (GPU:
+   transform + opacity) and is auto-dismissed by MilestoneHost.
+   The left accent stripe + icon colour key to the milestone type.
+   =============================================================*/
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+.milestone-overlay {
+  position: fixed;
+  top: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  max-width: min(420px, calc(100vw - 2 * var(--space-3)));
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+  cursor: pointer;
+  animation: milestone-fly-in 320ms ease-out;
+}
+
+.milestone-overlay[data-milestone-type="streak"] {
+  border-left-color: var(--warning);
+}
+.milestone-overlay[data-milestone-type="mastery"] {
+  border-left-color: var(--success);
+}
+.milestone-overlay[data-milestone-type="badge"] {
+  border-left-color: var(--star);
+}
+
+.milestone-overlay-icon {
+  display: flex;
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+.milestone-overlay[data-milestone-type="streak"] .milestone-overlay-icon {
+  color: var(--warning);
+}
+.milestone-overlay[data-milestone-type="mastery"] .milestone-overlay-icon {
+  color: var(--success);
+}
+.milestone-overlay[data-milestone-type="badge"] .milestone-overlay-icon {
+  color: var(--star);
+}
+
+.milestone-overlay-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.milestone-overlay-title {
+  font-size: 1rem;
+}
+
+.milestone-overlay-subtitle {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+.milestone-overlay-link {
+  margin-top: 2px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-size: 0.8rem;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@keyframes milestone-fly-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -16px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .milestone-overlay {
+    animation: none;
+  }
+}
+} /* @layer legacy */

@@ -139,4 +139,12 @@
 # Settings-Seite + Storage-Mode-Toggle -> 10-settings.css,
 # Progress-Table -> 11-progress.css. Byte-identitaets-Beweis im PR.
 # Kein neues CSS.
-7576
+# 2026-07-15: 7576 -> 7584 (Concern-Split Batch C / Peel 8, #1655):
+# +8 reine Manifest-Zeilen (@import). Navigation -> 12-navigation.css,
+# Lesson-Header -> 13-lesson-header.css, Celebration (55C) ->
+# 14-celebration.css, Milestone (55D) -> 15-milestone.css,
+# Feedback-Intensity (55E) -> 16-feedback-intensity.css,
+# Curriculum -> 17-curriculum.css, Recent-Sessions ->
+# 18-recent-sessions.css, Method-Badges -> 19-method-badges.css.
+# Byte-identitaets-Beweis im PR. Kein neues CSS.
+7584
