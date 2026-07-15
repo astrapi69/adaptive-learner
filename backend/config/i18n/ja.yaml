@@ -2982,6 +2982,7 @@ content_repo:
     title: "リポジトリを削除"
     message: "{source} を削除しますか？ダウンロード済みのコンテンツがこのデバイスから削除されます。"
     delete_progress: "このコンテンツの学習進捗も削除する。"
+    keep_progress: "学習の進捗は保持されます。このリポジトリを再接続すると復元されます。"
     consequence: "{lessons} 個のレッスンと {cards} 枚の復習カードが削除されます。この操作は元に戻せません。"
     counting: "進捗を集計しています…"
     deleted: "削除しました。{lessons} 個のレッスンと {cards} 枚の復習カードを削除しました。"

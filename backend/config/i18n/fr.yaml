@@ -2984,6 +2984,7 @@ content_repo:
     title: "Supprimer le dépôt"
     message: "Supprimer {source} ? Son contenu téléchargé sera retiré de cet appareil."
     delete_progress: "Supprimer aussi ma progression pour ce contenu."
+    keep_progress: "Ta progression d'apprentissage est conservée. En reconnectant ce dépôt, elle sera restaurée."
     consequence: "{lessons} leçons et {cards} cartes de révision seront supprimées. Cette action est irréversible."
     counting: "Comptage de votre progression…"
     deleted: "Supprimé. {lessons} leçons et {cards} cartes de révision supprimées."

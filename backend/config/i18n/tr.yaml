@@ -2982,6 +2982,7 @@ content_repo:
     title: "Depoyu kaldır"
     message: "{source} kaldırılsın mı? İndirilen içeriği bu cihazdan kaldırılacak."
     delete_progress: "Bu içerik için öğrenme ilerlememi de sil."
+    keep_progress: "Öğrenme ilerlemen korunur. Bu depoyu yeniden bağladığında geri yüklenir."
     consequence: "{lessons} ders ve {cards} tekrar kartı silinecek. Bu geri alınamaz."
     counting: "İlerlemeniz sayılıyor…"
     deleted: "Kaldırıldı. {lessons} ders ve {cards} tekrar kartı silindi."

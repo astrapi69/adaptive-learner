@@ -2986,6 +2986,7 @@ content_repo:
     title: "Repository entfernen"
     message: "{source} entfernen? Die heruntergeladenen Inhalte werden von diesem Gerät entfernt."
     delete_progress: "Auch meinen Lernfortschritt für diese Inhalte löschen."
+    keep_progress: "Dein Lernfortschritt bleibt erhalten. Wenn du dieses Repository erneut verbindest, wird er wiederhergestellt."
     consequence: "{lessons} Lektionen und {cards} Wiederholungskarten werden gelöscht. Das kann nicht rückgängig gemacht werden."
     counting: "Fortschritt wird gezählt…"
     deleted: "Entfernt. {lessons} Lektionen und {cards} Wiederholungskarten gelöscht."

@@ -2992,6 +2992,7 @@ content_repo:
     title: "Remove repository"
     message: "Remove {source}? Its downloaded content will be removed from this device."
     delete_progress: "Also delete my learning progress for this content."
+    keep_progress: "Your learning progress is kept. Reconnecting this repository restores it."
     consequence: "{lessons} lessons and {cards} review cards will be deleted. This cannot be undone."
     counting: "Counting your progress…"
     deleted: "Removed. Deleted {lessons} lessons and {cards} review cards."
