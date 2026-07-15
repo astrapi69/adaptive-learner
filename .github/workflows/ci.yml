@@ -52,7 +52,10 @@ jobs:
               - 'frontend/**'
               - 'Makefile'
               - 'schema/**'
-              - '.github/workflows/ci.yml'
+              # DEMO-ONLY (#1660, never merge): ci.yml removed from this
+              # filter so the demo PR's diff evaluates as backend-only and
+              # the skip branch becomes observable despite the
+              # self-referential ci.yml change on this branch.
 
   backend-tests:
     name: Backend Tests
