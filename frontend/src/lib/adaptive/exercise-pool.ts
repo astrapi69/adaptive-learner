@@ -97,6 +97,39 @@ function _estimateDifficulty(
     }
 }
 
+/** Mean authored ``card.difficulty`` (1-5) across the given cards. Values
+ *  outside 1..5, ``null`` and ``undefined`` contribute nothing; returns
+ *  ``null`` when no card carries a valid value. This is the explicit #1599
+ *  null-default: an unset difficulty changes NOTHING — the estimate stays
+ *  the pure type heuristic, exactly the pre-#1599 behaviour. */
+function _authoredDifficulty(
+    cards: readonly ContentLessonCard[],
+): number | null {
+    const values = cards
+        .map((card) => card.difficulty)
+        .filter(
+            (v): v is number =>
+                typeof v === "number" && Number.isFinite(v) && v >= 1 && v <= 5,
+        );
+    if (values.length === 0) return null;
+    return values.reduce((sum, v) => sum + v, 0) / values.length;
+}
+
+/** Type heuristic blended with the authored cold-start prior: the mean of
+ *  both, rounded, clamped to the 1-5 estimate scale. The authored value is
+ *  a PRIOR for cards without performance history — it shifts ordering
+ *  (difficulty curve, pick tiebreak) and never touches SRS scheduling. */
+function _blendedDifficulty(
+    exercise: ContentLessonExercise,
+    cards: readonly ContentLessonCard[],
+): DifficultyEstimate {
+    const base = _estimateDifficulty(exercise);
+    const authored = _authoredDifficulty(cards);
+    if (authored === null) return base;
+    const blended = Math.round((base + authored) / 2);
+    return Math.min(5, Math.max(1, blended)) as DifficultyEstimate;
+}
+
 /** Does this exercise + card carry the element_key as its
  *  canonical target? Mirrors the cloze generator's
  *  ``_tryCardTokenRoles`` + ``_tryCardFront`` predicates so the
@@ -131,13 +164,16 @@ function _candidatesFromLesson(
             return card ? _cardTargetsElement(card, elementKey) : false;
         });
         if (!matches) continue;
+        const referencedCards = (exercise.card_ids ?? [])
+            .map((cid) => cardById.get(cid))
+            .filter((c): c is ContentLessonCard => c !== undefined);
         out.push({
             exercise,
             source_set_id: _setIdFromLessonId(lesson.id),
             source_lesson_id: lesson.id,
             element_key: elementKey,
             exercise_type: exercise.type,
-            difficulty_estimate: _estimateDifficulty(exercise),
+            difficulty_estimate: _blendedDifficulty(exercise, referencedCards),
             is_generated: false,
         });
     }
@@ -205,7 +241,10 @@ function _generatedCandidate(
         source_lesson_id: error.lesson_id,
         element_key: error.element_key,
         exercise_type: generated.type,
-        difficulty_estimate: _estimateDifficulty(generated),
+        difficulty_estimate: _blendedDifficulty(
+            generated,
+            sourceCard ? [sourceCard] : [],
+        ),
         is_generated: true,
     };
 }
