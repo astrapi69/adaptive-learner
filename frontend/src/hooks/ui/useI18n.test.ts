@@ -79,6 +79,35 @@ describe("i18n t() function", () => {
     });
 });
 
+describe("useI18n() no-provider fallback respects an explicit empty-string fallback (#1676)", () => {
+    // The no-provider fallback t() (returned when useI18n() is called
+    // outside an I18nProvider — e.g. a component rendered in a test)
+    // used `fallback || key`, so an explicit empty-string fallback leaked
+    // the raw key. Same falsy-clobber class as #1667, which fixed the
+    // provider path but not this shim.
+    function Probe({k, fb}: {k: string; fb?: string}) {
+        const {t} = useI18n();
+        return createElement("span", {"data-testid": "probe"}, t(k, fb));
+    }
+
+    it("renders nothing for an explicit empty-string fallback, never the raw key", () => {
+        render(createElement(Probe, {k: "some.missing.key", fb: ""}));
+        expect(screen.getByTestId("probe").textContent).toBe("");
+    });
+
+    it("still falls back to the key when no fallback is given", () => {
+        render(createElement(Probe, {k: "some.missing.key"}));
+        expect(screen.getByTestId("probe").textContent).toBe(
+            "some.missing.key",
+        );
+    });
+
+    it("uses a non-empty fallback verbatim", () => {
+        render(createElement(Probe, {k: "some.missing.key", fb: "Hello"}));
+        expect(screen.getByTestId("probe").textContent).toBe("Hello");
+    });
+});
+
 describe("resolveInitialUiLanguage — persisted UI language survives a reload (#1333)", () => {
     it("returns the saved choice (the reported el regression)", () => {
         // A Greek choice persisted before an update must be honoured, not

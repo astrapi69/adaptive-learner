@@ -241,9 +241,12 @@ export function I18nProvider({children}: {children: ReactNode}) {
 export function useI18n() {
     const ctx = useContext(I18nContext);
     if (!ctx) {
-        // Fallback for components rendered outside provider (e.g. tests)
+        // Fallback for components rendered outside provider (e.g. tests).
+        // ``fallback ?? key`` (not ``||``) so an explicit empty-string
+        // fallback means "render nothing", never the raw key (#1676 —
+        // same falsy-clobber class as the #1667 provider-path fix).
         return {
-            t: (key: string, fallback?: string) => fallback || key,
+            t: (key: string, fallback?: string) => fallback ?? key,
             lang: "de",
             setLang: () => {},
         };
