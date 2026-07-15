@@ -245,6 +245,20 @@ export default defineConfig({
         environment: "happy-dom",
         globals: true,
         setupFiles: ["./src/test/setup.ts"],
+        // #1620/#1665: guard tests read these files via readFileSync, which
+        // the module graph behind `vitest --changed` (#615 selective PR CI)
+        // cannot see - a change to a read target silently skipped the guard
+        // (ios-zoom-guard on index.html in #1614; the matching-pair hue pin
+        // on global.css in #1665). Any change to a listed path forces the
+        // FULL suite instead. The first two entries are Vitest's defaults,
+        // which an override REPLACES rather than extends.
+        forceRerunTriggers: [
+            "**/package.json/**",
+            "**/{vitest,vite}.config.*/**",
+            "**/index.html",
+            "**/src/styles/**/*.css",
+            "**/src/data/**/*.json",
+        ],
     },
     build: {
         // Vite 8 (Rolldown) requires the function form of ``manualChunks``.
