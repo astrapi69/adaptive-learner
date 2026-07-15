@@ -116,4 +116,10 @@
 # nach styles/legacy/02-buttons.css (-50 +2 in global.css, +50 in der
 # Datei = netto +1 fuer die @import-Zeile). Byte-identitaets-Beweis im
 # PR. Kein neues CSS.
-7567
+# 7567 -> 7568 (Concern-Split Peel 4, #1655): +1 reine Manifest-Zeile.
+# Der Landing-page-Block (Zeilen 5-127, der zweite gewrappte
+# @layer-legacy-Block) verbatim nach styles/legacy/03-landing.css
+# (-123 +1 in global.css, +123 in der Datei = netto +1 fuer die
+# @import-Zeile). Byte-identitaets-Beweis im PR (212319 Bytes,
+# byte-identisch vor/nach). Kein neues CSS.
+7568
