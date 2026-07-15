@@ -208,6 +208,14 @@ async function gotoLessonModeToggle(
     mode: "practice" | "exam" | "timed",
 ): Promise<boolean> {
     if (!(await gotoLessonRunner(page))) return false;
+    // The mode toggle lives inside the collapsible options panel (#1628);
+    // expand it before revealing the toggle.
+    const optionsToggle = page.getByTestId("lesson-options-toggle");
+    if (!(await optionsToggle.count())) return false;
+    await expect(optionsToggle).toBeVisible({timeout: 10_000});
+    if ((await optionsToggle.getAttribute("aria-expanded")) !== "true") {
+        await optionsToggle.click();
+    }
     const toggle = page.getByTestId("lesson-mode-toggle");
     if (!(await toggle.count())) return false;
     await expect(toggle).toBeVisible({timeout: 10_000});
