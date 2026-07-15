@@ -3251,6 +3251,7 @@
       "title": "Eliminar repositorio",
       "message": "¿Eliminar {source}? Su contenido descargado se eliminará de este dispositivo.",
       "delete_progress": "Eliminar también mi progreso de aprendizaje de este contenido.",
+      "keep_progress": "Tu progreso de aprendizaje se conserva. Si vuelves a conectar este repositorio, se restaurará.",
       "consequence": "Se eliminarán {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer.",
       "counting": "Contando tu progreso…",
       "deleted": "Eliminado. Se borraron {lessons} lecciones y {cards} tarjetas de repaso."

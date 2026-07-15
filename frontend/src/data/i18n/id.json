@@ -3251,6 +3251,7 @@
       "title": "Hapus repositori",
       "message": "Hapus {source}? Konten yang diunduhnya akan dihapus dari perangkat ini.",
       "delete_progress": "Hapus juga progres belajar saya untuk konten ini.",
+      "keep_progress": "Kemajuan belajarmu tetap tersimpan. Menghubungkan kembali repositori ini akan memulihkannya.",
       "consequence": "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus. Ini tidak dapat dibatalkan.",
       "counting": "Menghitung progres Anda…",
       "deleted": "Dihapus. {lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
