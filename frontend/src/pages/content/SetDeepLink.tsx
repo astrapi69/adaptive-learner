@@ -32,6 +32,7 @@ import SetShareButton from "../../components/content/share/SetShareButton";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
+import { undismissSet } from "../../lib/content/repos/dismissed-sets";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import { notify } from "../../utils/notify";
@@ -107,6 +108,9 @@ export default function SetDeepLink() {
         await getStorage().contentLoader.downloadSet(entry.source, entry.id, (p) =>
           setProgress(p),
         );
+        // #1709 — an explicit deep-link download revives a previously
+        // deleted set; clear any stale dismissal record.
+        undismissSet(entry.source, entry.id);
       }
       await openFirstLesson(entry);
     } catch (err) {
