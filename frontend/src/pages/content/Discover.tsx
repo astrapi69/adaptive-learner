@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { isOfficialSource } from "../../lib/content/repos/content-repos";
-import { dismissSet, undismissSet } from "../../lib/content/repos/dismissed-sets";
+import { dismissSet, undismissSet } from "../../lib/content/browse/dismissed-sets";
 import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,

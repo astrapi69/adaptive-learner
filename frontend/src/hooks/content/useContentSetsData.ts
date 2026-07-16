@@ -33,7 +33,7 @@ import {
   type SharedContribution,
 } from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
-import { isDismissedSet } from "../../lib/content/repos/dismissed-sets";
+import { isDismissedSet } from "../../lib/content/browse/dismissed-sets";
 import { isHiddenSet } from "../../lib/content/repos/hidden-sets";
 import {
   fetchRecommendedRepos,

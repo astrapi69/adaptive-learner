@@ -32,7 +32,7 @@ import SetShareButton from "../../components/content/share/SetShareButton";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
-import { undismissSet } from "../../lib/content/repos/dismissed-sets";
+import { undismissSet } from "../../lib/content/browse/dismissed-sets";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import { notify } from "../../utils/notify";

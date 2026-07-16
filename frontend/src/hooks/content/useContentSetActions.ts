@@ -23,7 +23,7 @@ import {
   dismissSet,
   dismissSets,
   undismissSet,
-} from "../../lib/content/repos/dismissed-sets";
+} from "../../lib/content/browse/dismissed-sets";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
 import { useI18n } from "../ui/useI18n";

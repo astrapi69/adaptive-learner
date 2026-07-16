@@ -17,7 +17,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useContentSetsData } from "./useContentSetsData";
-import { dismissSet } from "../../lib/content/repos/dismissed-sets";
+import { dismissSet } from "../../lib/content/browse/dismissed-sets";
 import type { ContentSetEntry } from "../../storage/types";
 
 const listSetsMock = vi.fn();

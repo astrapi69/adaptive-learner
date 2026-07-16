@@ -13,7 +13,7 @@ import { useContentSetActions } from "./useContentSetActions";
 import {
   dismissSet,
   isDismissedSet,
-} from "../../lib/content/repos/dismissed-sets";
+} from "../../lib/content/browse/dismissed-sets";
 import type { ContentSetEntry } from "../../storage/types";
 
 const deleteSetMock = vi.fn();
