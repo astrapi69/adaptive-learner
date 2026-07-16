@@ -223,19 +223,21 @@ describe("Discover page", () => {
     );
   });
 
-  it("opens the filters with their current values when 'Filter' is clicked", async () => {
+  it("opens the secondary filters when 'Filter' is clicked", async () => {
     renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
     fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
-    // Filters now visible; the source-language facet reflects the active value
-    // (the UI-locale default "de" here — #1343).
+    // Filters now visible. The source-language facet no longer lives inside the
+    // collapsible panel (#1699 — it is an always-visible chip); the secondary
+    // facets (level/domain/…) still do.
     expect(screen.getByTestId("discover-filters")).toBeInTheDocument();
-    expect(screen.getByTestId("discover-filters-sourceLanguage")).toHaveValue("de");
+    expect(screen.getByTestId("discover-filters-level")).toBeInTheDocument();
+    expect(screen.queryByTestId("discover-filters-sourceLanguage")).toBeNull();
     // Mutual exclusion: the search field is hidden while filtering.
     expect(screen.queryByTestId("discover-search")).toBeNull();
   });
 
-  it("a chosen source-language filter keeps narrowing after the panel collapses", async () => {
+  it("narrows by the always-visible source-language chip (#1699)", async () => {
     fetchAllIndicesMock.mockResolvedValue([
       makeSet({ id: "de-es", name: "Spanish A1", source_language: "de", target_language: "es" }),
       makeSet({ id: "en-fr", name: "French A1", source_language: "en", target_language: "fr" }),
@@ -245,18 +247,12 @@ describe("Discover page", () => {
     await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
     expect(screen.getByText("Spanish A1")).toBeInTheDocument();
     expect(screen.queryByText("French A1")).toBeNull();
-    // Open filters and switch the language facet to "en".
-    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
-    fireEvent.change(screen.getByTestId("discover-filters-sourceLanguage"), {
-      target: { value: "en" },
-    });
+    // Switch the language via the ALWAYS-VISIBLE chip — no panel to open.
+    fireEvent.click(screen.getByTestId("discover-language-filter"));
+    fireEvent.click(screen.getByTestId("discover-language-filter-en"));
     await waitFor(() => expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"));
     expect(screen.getByText("French A1")).toBeInTheDocument();
     expect(screen.queryByText("Spanish A1")).toBeNull();
-    // Collapse the panel via 'Search' — the filter stays applied and is persisted.
-    fireEvent.click(screen.getByTestId("discover-search-filter-search-btn"));
-    expect(screen.queryByTestId("discover-filters")).toBeNull();
-    expect(screen.getByText("French A1")).toBeInTheDocument();
     expect(localStorage.getItem("adaptive-learner.discover_source_language")).toBe("en");
   });
 
@@ -369,6 +365,23 @@ describe("Discover source-language filter (#1343)", () => {
     ]);
   }
 
+  it("shows the source-language filter WITHOUT opening the collapsible panel (#1699)", async () => {
+    i18n.lang = "de";
+    seedTwoSourceLanguages();
+    renderDiscover();
+    // The always-visible chip is present on first paint — the learner sees
+    // THAT the list is filtered and WHAT to, never silently (#1343 / #1699).
+    await waitFor(() =>
+      expect(screen.getByTestId("discover-language-filter")).toBeInTheDocument(),
+    );
+    // Its label reflects the active language (the UI-locale default "de").
+    expect(screen.getByTestId("discover-language-filter-label")).toHaveTextContent(
+      "DE",
+    );
+    // ...and it does NOT depend on the collapsible filter panel being open.
+    expect(screen.queryByTestId("discover-filters")).toBeNull();
+  });
+
   it("defaults to the UI locale and shows only sets in that source language", async () => {
     i18n.lang = "de";
     seedTwoSourceLanguages();
@@ -387,10 +400,8 @@ describe("Discover source-language filter (#1343)", () => {
     seedTwoSourceLanguages();
     const first = renderDiscover();
     await waitFor(() => expect(screen.getByTestId("discover-page")).toBeInTheDocument());
-    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
-    fireEvent.change(screen.getByTestId("discover-filters-sourceLanguage"), {
-      target: { value: "en" },
-    });
+    fireEvent.click(screen.getByTestId("discover-language-filter"));
+    fireEvent.click(screen.getByTestId("discover-language-filter-en"));
     await waitFor(() => expect(screen.getByText("French (en)")).toBeInTheDocument());
     expect(localStorage.getItem(KEY)).toBe("en");
     first.unmount();
@@ -411,10 +422,8 @@ describe("Discover source-language filter (#1343)", () => {
     await waitFor(() =>
       expect(screen.getByTestId("discover-count")).toHaveTextContent("1 sets"),
     );
-    fireEvent.click(screen.getByTestId("discover-search-filter-filter-btn"));
-    fireEvent.change(screen.getByTestId("discover-filters-sourceLanguage"), {
-      target: { value: "" },
-    });
+    fireEvent.click(screen.getByTestId("discover-language-filter"));
+    fireEvent.click(screen.getByTestId("discover-language-filter-"));
     await waitFor(() =>
       expect(screen.getByTestId("discover-count")).toHaveTextContent("2 sets"),
     );
