@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";
+import Tile from "../../shared/layout/Tile";
 import type {SpacedRecommendation} from "../../types";
 
 /**
@@ -79,14 +80,14 @@ export default function SpacedRecommendations({cards}: Props) {
 
     if (visible.length === 0) {
         return (
-            <div className="tile" data-testid="spaced-recs-empty">
+            <Tile data-testid="spaced-recs-empty">
                 <p className="muted">
                     {t(
                         "dashboard.spaced_empty",
                         "Nothing to refresh right now. Great rhythm!",
                     )}
                 </p>
-            </div>
+            </Tile>
         );
     }
 
