@@ -9,8 +9,8 @@ Fuenf User-gemeldete Bugs in einer Session, jeweils Issue -> Worktree-Branch -> 
 | Geloeschte Sets kehren nach Refresh zurueck | #1709 | #1719 (ersetzt #1711) | offen, alle Gates gruen |
 | Konsolen-404 books.yaml | #1712 / content#150 | #1717 (merged) + content#151 (merged) | End-to-end live: Registry-Flags auf main verifiziert |
 | Konsolen-404 content/ | #1713 | #1718 (merged) | Preview live verifiziert (200) |
-| Wizard-Strukturcheck ohne Detail | #1722 | #1724 | offen |
-| Skip-Link-Label unsichtbar | #1723 | folgt (Visual-Baselines in Arbeit) | Branch gepusht |
+| Wizard-Strukturcheck ohne Detail | #1722 | #1724 | offen, alle Checks gruen |
+| Skip-Link-Label unsichtbar | #1723 | #1727 | offen, visual-baselines-unaffected (Branch-vs-Kontroll-Lauf: 0 echte Diffs, nur Header-Autohide-Flake in lesson-matching-graphite) |
 
 
 ## 1. Geloeschte Inhalte kommen nach "Aktualisieren" zurueck (#1709 -> PR #1711)
@@ -53,3 +53,13 @@ Fuenf User-gemeldete Bugs in einer Session, jeweils Issue -> Worktree-Branch -> 
 - Root cause (headless reproduziert + Stylesheet-Walk): a:not([data-slot="button"]):not(.btn) { color: var(--accent) } hat durch die :not()-Argumente Spezifitaet (0,2,1) und schlaegt .skip-to-content (0,1,0) -> Label accent-auf-accent = unsichtbarer grosser Pill. KEINE EXP-044-Layer-Regression (Block unlayered, nie gewrappt; #1670 verschob byte-identisch). Spezifitaets-Wettruesten seit #146/#194.
 - Fix: Exklusionen in :where() -> (0,0,1); Carve-outs bleiben (schuetzen den layered-utility-Fall), Klassen-Regeln gewinnen wieder normal. contrast.test.ts-Pins aktualisiert (+ kein bare-:not-Regress, + skip-link Farb-Pin); neuer e2e/dexie/skip-link-visible.spec.ts pinnt computed color != background (RED vor Fix, GREEN nach).
 - Visual-Baselines: Branch-Lauf vs. develop-KONTROLL-Lauf verglichen (Drift-Isolation wie #1692).
+
+## 6. Visual-Baseline-Isolation (#1727)
+
+- Branch-Lauf 29492359856 vs. develop-Kontroll-Lauf 29493457033, 105 PNGs verglichen: einzige Differenz lesson-matching-graphite.png, Delta = Auto-Hide-Header-Scrollzustand (bekannter Timing-Flake), keinerlei Farb-Deltas. Die :where()-Demotion ist damit empirisch visuell inert; Label visual-baselines-unaffected per REST gesetzt und verifiziert (gh pr edit faellt auf diesem Repo still aus).
+
+## Statistik
+
+- 5 Bugs, 5 Issues (#1709 #1712 #1713 #1722 #1723) + content#150; 6 App-PRs (#1711 ersetzt durch #1719, #1717, #1718, #1724, #1725, #1727) + 1 Content-Repo-PR (#151); 3 davon bereits gemerged.
+- Neue Tests: 14 Vitest (dismissed-sets 6, Data-Hook 4, Action-Hook 4) + 8 Vitest (books-Rewrite 7, Key-Pin 1) + 5 Vitest (Wizard 3, CardEditor 2) + aktualisierte contrast-Pins + 2 neue Dexie-E2E-Specs (content-delete-refresh, skip-link-visible).
+- Lesson: EnterWorktree-"fresh" zweigte von origin/main ab, PR #1711 wurde DIRTY; als Memory-Regel festgehalten (Worktrees explizit von origin/develop erzeugen und Basis verifizieren).
