@@ -63,3 +63,12 @@ Fuenf User-gemeldete Bugs in einer Session, jeweils Issue -> Worktree-Branch -> 
 - 5 Bugs, 5 Issues (#1709 #1712 #1713 #1722 #1723) + content#150; 6 App-PRs (#1711 ersetzt durch #1719, #1717, #1718, #1724, #1725, #1727) + 1 Content-Repo-PR (#151); 3 davon bereits gemerged.
 - Neue Tests: 14 Vitest (dismissed-sets 6, Data-Hook 4, Action-Hook 4) + 8 Vitest (books-Rewrite 7, Key-Pin 1) + 5 Vitest (Wizard 3, CardEditor 2) + aktualisierte contrast-Pins + 2 neue Dexie-E2E-Specs (content-delete-refresh, skip-link-visible).
 - Lesson: EnterWorktree-"fresh" zweigte von origin/main ab, PR #1711 wurde DIRTY; als Memory-Regel festgehalten (Worktrees explizit von origin/develop erzeugen und Basis verifizieren).
+
+## 7. P0: develop build-rot durch semantischen Merge-Konflikt (#1729 -> PR #1730)
+
+- #1724 (BOOLEAN_CHECK_KEYS inkl. languagePair) x #1721 (entfernt languagePair-Check, #1715): beide einzeln gruen, der Merge indiziert das Interface mit einem nicht mehr existenten Key -> tsc -b TS7053, develop-CI + jede PR-Merge-Commit-CI rot (zuerst an #1727 sichtbar). Ein-Zeilen-Fix: Key aus BOOLEAN_CHECK_KEYS entfernen.
+
+## 8. Download aus Entdecken unsichtbar in "Meine Inhalte" (#1731 -> PR #1734)
+
+- Root cause: Entdecken bietet die GANZE foederierte Registry an und downloadSetDexie akzeptiert jede Quelle; listSetsDexie iterierte aber NUR konfigurierte Quellen -> Download aus nicht verbundenem Registry-Repo gecacht, aber nie gelistet (Remedy war das manuelle Repo-Verbinden). Das Backend hatte exakt diesen Fix laengst (_all_cached_entries-Sweep) - reine Dexie-Paritaetsluecke. Delete-all NICHT kausal (purgt nur Cache-Rows); #1709-Dismissal NICHT beteiligt (cached gewinnt).
+- Fix: Backend-Sweep in listSetsDexie gespiegelt (letzte gecachte Version je (source, set_id), id-level-Dedupe, subsumiert den User-Generated-Anhang). RED-first-Tests + Live-Beweis (echtes nicht verbundenes Registry-Repo alc-die-waehrung-des-geistes -> sofort sichtbar).
