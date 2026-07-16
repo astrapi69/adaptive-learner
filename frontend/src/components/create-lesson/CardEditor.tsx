@@ -32,6 +32,7 @@ import {CSS} from "@dnd-kit/utilities";
 
 import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/lesson/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
 
@@ -213,12 +214,12 @@ export default function CardEditor({
             {/* CSV import */}
             {showCsv && (
                 <div className="card-editor-csv" data-testid="card-csv-panel">
-                    <p className="form-hint">
+                    <FormHint>
                         {t(
                             "create_lesson.cards.csv_hint",
                             "Paste rows as front, back, notes (comma- or tab-separated). Example: Bonjour, Guten Tag, Formal greeting",
                         )}
-                    </p>
+                    </FormHint>
                     <textarea
                         data-testid="card-csv-textarea"
                         rows={5}
@@ -239,14 +240,14 @@ export default function CardEditor({
                             className="card-csv-preview"
                             data-testid="card-csv-preview"
                         >
-                            <p className="form-hint">
+                            <FormHint>
                                 {t(
                                     "create_lesson.cards.csv_preview",
                                     "{valid} of {total} rows ready",
                                 )
                                     .replace("{valid}", String(validParsed.length))
                                     .replace("{total}", String(parsed.length))}
-                            </p>
+                            </FormHint>
                             <ul className="card-csv-preview-list">
                                 {parsed.map((r, i) => (
                                     <li
@@ -290,15 +291,16 @@ export default function CardEditor({
                     )}
                 </span>
                 {cards.length < MIN_CARDS && (
-                    <span
-                        className="form-hint form-hint-warning"
+                    <FormHint
+                        as="span"
+                        variant="warning"
                         data-testid="card-min-hint"
                     >
                         {t(
                             "create_lesson.cards.min_hint",
                             "{n} cards needed for exercises",
                         ).replace("{n}", String(MIN_CARDS))}
-                    </span>
+                    </FormHint>
                 )}
                 {cards.length > 0 && (
                     <Button

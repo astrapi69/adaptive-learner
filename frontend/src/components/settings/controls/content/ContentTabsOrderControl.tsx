@@ -13,6 +13,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import { useContentTabOrder } from "../../../../hooks/content/useContentTabOrder";
 import {
   moveContentTab,
@@ -42,12 +43,12 @@ export default function ContentTabsOrderControl() {
       <h2 className="settings-section-title">
         {t("settings.section_content_tabs", "Content tabs order")}
       </h2>
-      <p className="form-hint mb-2">
+      <FormHint className="mb-2">
         {t(
           "settings.content_tabs_desc",
           "Choose the order of the tabs in the Content area. The first tab opens by default.",
         )}
-      </p>
+      </FormHint>
       <ol className="flex flex-col gap-2" data-testid="content-tabs-order-list">
         {order.map((id, index) => (
           <li

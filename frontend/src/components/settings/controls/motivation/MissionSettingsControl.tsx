@@ -11,6 +11,7 @@ import {useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {readLearnerState} from "../../../../lib/learning/learnerState";
 import {
     readMissionPrefs,
@@ -75,12 +76,12 @@ export default function MissionSettingsControl() {
                     <span className="form-label">
                         {t("settings.missions_enabled", "Daily missions")}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.missions_enabled_hint",
                             "Show a few achievable goals on the Dashboard each day. Optional - the app works the same without them.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"

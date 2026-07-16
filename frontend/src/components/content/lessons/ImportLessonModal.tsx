@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import FormHint from "../../../shared/forms/FormHint";
 import {
   asImportedCopy,
   parseImportFile,
@@ -210,29 +211,29 @@ export default function ImportLessonModal({
         {/* aria-live so screen readers announce the parse outcome. */}
         <div aria-live="polite">
           {error && (
-            <p
-              className="form-hint form-hint-warning"
+            <FormHint
+              variant="warning"
               data-testid="import-lesson-error"
               role="alert"
             >
               {t("content.import_lesson.invalid", "Invalid file")}: {error}
-            </p>
+            </FormHint>
           )}
           {parsed && (
-            <p className="form-hint" data-testid="import-lesson-preview">
+            <FormHint data-testid="import-lesson-preview">
               {previewText}
-            </p>
+            </FormHint>
           )}
           {skipped.length > 0 && (
-            <p
-              className="form-hint form-hint-warning"
+            <FormHint
+              variant="warning"
               data-testid="import-lesson-skipped"
             >
               {t(
                 "content.import_lesson.skipped",
                 "{n} lesson(s) were skipped because they failed validation.",
               ).replace("{n}", String(skipped.length))}
-            </p>
+            </FormHint>
           )}
         </div>
         {collisionIds ? (
@@ -243,12 +244,12 @@ export default function ImportLessonModal({
                 "This lesson already exists",
               )}
             </p>
-            <p className="form-hint">
+            <FormHint>
               {t(
                 "content.import_lesson.collision_body",
                 "A saved lesson set already uses this identifier. Overwrite it, import a separate copy, or cancel?",
               )}
-            </p>
+            </FormHint>
             <div className="form-actions">
               <Button
                 type="button"

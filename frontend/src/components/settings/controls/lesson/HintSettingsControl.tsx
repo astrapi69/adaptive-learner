@@ -11,6 +11,7 @@
 import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {
     MAX_HINT_XP_COST,
     clampHintXpCost,
@@ -51,12 +52,12 @@ export default function HintSettingsControl() {
                             "Show hints during exercises",
                         )}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.hints_enabled_desc",
                             "Offer a staged hint button on each exercise.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"
@@ -70,12 +71,12 @@ export default function HintSettingsControl() {
                     <span className="form-label">
                         {t("settings.hint_xp_cost", "XP cost per hint")}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.hint_xp_cost_desc",
                             "Shown on the hint button. Set to 0 for free hints.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="number"
