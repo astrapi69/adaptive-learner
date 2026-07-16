@@ -15,19 +15,22 @@ from adaptive_learner_content_loader.manifest_parser import (
 )
 from adaptive_learner_content_loader.models import (
     CURRENT_SCHEMA_VERSION,
+    ContentManifest,
     is_supported_schema_version,
 )
 
 
 class TestSchemaVersion:
-    def test_current_is_1_6(self) -> None:
-        # #1525: schema bumped 1.5 -> 1.6 for the native multiple_choice
-        # exercise type (additive; the cloze select/multiselect vehicle
-        # stays valid - coexistence).
-        assert CURRENT_SCHEMA_VERSION == "1.6"
+    def test_current_is_1_7(self) -> None:
+        # #1744: aligned with the engine-canonical schema - the v2.2.0
+        # extension-tier cycle moved the engine to 1.7 while this
+        # app-side constant lagged at 1.6 (additive; major-match keeps
+        # every 1.x lesson loadable). Prior deliberate bump: #1525
+        # (1.5 -> 1.6, native multiple_choice).
+        assert CURRENT_SCHEMA_VERSION == "1.7"
 
     def test_every_1x_minor_is_supported(self) -> None:
-        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.0.0", "1.3.2"]:
+        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.0.0", "1.3.2"]:
             assert is_supported_schema_version(v), v
 
     def test_other_majors_rejected(self) -> None:
@@ -108,12 +111,16 @@ class TestParseManifestYaml:
         assert manifest.sets[0].id == "language-fr-a1"
         assert manifest.metadata["license"] == "CC-BY-SA-4.0"
 
-    def test_missing_schema_version_defaults_to_current(self) -> None:
-        # When the author omits schema_version, the model
-        # default of '1.0' applies.
+    def test_missing_schema_version_defaults_to_engine_default(self) -> None:
+        # #1744: when the author omits schema_version, the ENGINE-generated
+        # model default applies (the manifest field is the loader's own
+        # contract and moves independently of the lesson-format
+        # CURRENT_SCHEMA_VERSION - engine 0.12.3 keeps the manifest default
+        # at 1.6 while the lesson schema is 1.7).
         yaml_no_version = "name: Pilot\nsets: []\n"
         manifest = parse_manifest_yaml(yaml_no_version)
-        assert manifest.schema_version == CURRENT_SCHEMA_VERSION
+        engine_default = ContentManifest.model_fields["schema_version"].default
+        assert manifest.schema_version == engine_default
 
     def test_unsupported_schema_version_rejected_with_friendly_hint(
         self,
