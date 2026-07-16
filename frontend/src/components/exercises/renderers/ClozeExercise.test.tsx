@@ -284,6 +284,111 @@ describe("ClozeExercise: scoring", () => {
     });
 });
 
+describe("ClozeExercise: code-mode grading (#1595)", () => {
+    // A code cloze (schema v1.3). ``codeMode`` is exercise-level — the
+    // engine's ClozeBlank has no per-blank code flag — so the exercise
+    // ``codeMode`` must flow into every grading call (score, per-blank
+    // display, reviewed re-score). Code grading is CASE-SENSITIVE, drops
+    // all whitespace, and unifies quote styles (see FreeText
+    // ``_normalizeCode``).
+    const CODE_CLOZE: ContentLessonExercise = {
+        id: "ex-cloze-code",
+        type: "cloze",
+        prompt: "Complete the call.",
+        card_ids: [],
+        sentence: "___",
+        blanks: [{accept: ["print('x')"]}],
+        distractors: [],
+    };
+
+    /** Fill the single blank and submit. */
+    function fillAndSubmit(value: string) {
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {
+            target: {value},
+        });
+        fireEvent.click(screen.getByTestId("cloze-submit"));
+    }
+
+    it("repro: a case-only difference is WRONG in code mode (not lowercased)", () => {
+        // Plain-text normalization lowercases, so "PRINT('x')" would match
+        // "print('x')". Code is case-sensitive — it must be graded wrong.
+        const onComplete = vi.fn();
+        render(
+            <ClozeExercise
+                exercise={CODE_CLOZE}
+                codeMode
+                onComplete={onComplete}
+            />,
+        );
+        fillAndSubmit("PRINT('x')");
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 0, total: 1}),
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "wrong",
+        );
+    });
+
+    it("happy: the exact code input is correct", () => {
+        const onComplete = vi.fn();
+        render(
+            <ClozeExercise
+                exercise={CODE_CLOZE}
+                codeMode
+                onComplete={onComplete}
+            />,
+        );
+        fillAndSubmit("print('x')");
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 1}),
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
+    });
+
+    it("edge: whitespace + quote-style variants are accepted in code mode", () => {
+        // Code normalizer strips whitespace and unifies quotes, so
+        // `print( "x" )` matches `print('x')`.
+        const onComplete = vi.fn();
+        render(
+            <ClozeExercise
+                exercise={CODE_CLOZE}
+                codeMode
+                onComplete={onComplete}
+            />,
+        );
+        fillAndSubmit('print( "x" )');
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 1}),
+        );
+    });
+
+    it("boundary: a reviewed (locked) code cloze re-scores with code mode", () => {
+        // Covers the third grading call site (clozeReviewedResult): a
+        // reviewed revisit with a case-only difference must show WRONG,
+        // exactly like a fresh submission.
+        render(
+            <ClozeExercise
+                exercise={CODE_CLOZE}
+                codeMode
+                reviewed={{kind: "cloze", inputs: ["PRINT('x')"]}}
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "wrong",
+        );
+        expect(screen.getByTestId("cloze-blank-0")).toHaveAttribute(
+            "data-result",
+            "wrong",
+        );
+    });
+});
+
 describe("ClozeExercise: select mode (button radiogroup)", () => {
     it("renders the options as buttons (accept + distractors), no native <select>", () => {
         render(

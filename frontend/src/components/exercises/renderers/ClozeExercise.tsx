@@ -84,16 +84,19 @@ function _splitOnMarkers(sentence: string): string[] {
 type ClozeBlank = NonNullable<ContentLessonExercise["blanks"]>[number];
 
 /** Score a reviewed (read-only) cloze attempt: how many of the frozen
- *  inputs match their blank's accept list. Returns null when there is
- *  no reviewed answer to score. */
+ *  inputs match their blank's accept list. ``codeMode`` selects the
+ *  code normalizer (case-sensitive, whitespace-stripping, quote-unifying)
+ *  so a reviewed code cloze re-scores exactly like a fresh submission
+ *  (#1595). Returns null when there is no reviewed answer to score. */
 function clozeReviewedResult(
     reviewedInputs: readonly string[] | null,
     blanks: readonly ClozeBlank[],
+    codeMode: boolean,
 ): {correct: number; total: number} | null {
     if (!reviewedInputs) return null;
     return {
         correct: blanks.filter((blank, i) =>
-            isFreeTextCorrect(reviewedInputs[i] ?? "", blank.accept),
+            isFreeTextCorrect(reviewedInputs[i] ?? "", blank.accept, codeMode),
         ).length,
         total: blanks.length,
     };
@@ -680,6 +683,7 @@ function ClozeExercise(
     const reviewedResult = clozeReviewedResult(
         reviewedCloze ? reviewedCloze.inputs : null,
         blanks,
+        codeMode,
     );
 
     const {submitted, submit, reset} = useControlledExercise({
@@ -691,7 +695,7 @@ function ClozeExercise(
         reviewedResult,
         score: (): ExerciseScored => {
             const perCorrect = blanks.map((blank, i) =>
-                isFreeTextCorrect(inputs[i], blank.accept),
+                isFreeTextCorrect(inputs[i], blank.accept, codeMode),
             );
             return {
                 correct: perCorrect.filter(Boolean).length,
@@ -711,7 +715,9 @@ function ClozeExercise(
     // Per-blank correctness for the post-check display. Derived (not
     // stored): inputs are frozen once submitted, so this stays stable.
     const perBlankCorrect = submitted
-        ? blanks.map((blank, i) => isFreeTextCorrect(inputs[i], blank.accept))
+        ? blanks.map((blank, i) =>
+              isFreeTextCorrect(inputs[i], blank.accept, codeMode),
+          )
         : blanks.map(() => false);
 
     const handleChange = (idx: number, value: string) => {
