@@ -31,7 +31,9 @@ import {
 import {CSS} from "@dnd-kit/utilities";
 
 import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
+import {CARD_SIDE_MAX_LENGTH} from "../../lib/content/lesson/draft-to-lesson";
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/lesson/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
 
@@ -143,6 +145,7 @@ export default function CardEditor({
                             type="text"
                             data-testid="card-front-input"
                             value={front}
+                            maxLength={CARD_SIDE_MAX_LENGTH}
                             placeholder="Bonjour"
                             onChange={(e) => setFront(e.target.value)}
                             onKeyDown={(e) => {
@@ -158,6 +161,7 @@ export default function CardEditor({
                             type="text"
                             data-testid="card-back-input"
                             value={back}
+                            maxLength={CARD_SIDE_MAX_LENGTH}
                             placeholder="Guten Tag"
                             onChange={(e) => setBack(e.target.value)}
                             onKeyDown={(e) => {
@@ -213,12 +217,12 @@ export default function CardEditor({
             {/* CSV import */}
             {showCsv && (
                 <div className="card-editor-csv" data-testid="card-csv-panel">
-                    <p className="form-hint">
+                    <FormHint>
                         {t(
                             "create_lesson.cards.csv_hint",
                             "Paste rows as front, back, notes (comma- or tab-separated). Example: Bonjour, Guten Tag, Formal greeting",
                         )}
-                    </p>
+                    </FormHint>
                     <textarea
                         data-testid="card-csv-textarea"
                         rows={5}
@@ -239,14 +243,14 @@ export default function CardEditor({
                             className="card-csv-preview"
                             data-testid="card-csv-preview"
                         >
-                            <p className="form-hint">
+                            <FormHint>
                                 {t(
                                     "create_lesson.cards.csv_preview",
                                     "{valid} of {total} rows ready",
                                 )
                                     .replace("{valid}", String(validParsed.length))
                                     .replace("{total}", String(parsed.length))}
-                            </p>
+                            </FormHint>
                             <ul className="card-csv-preview-list">
                                 {parsed.map((r, i) => (
                                     <li
@@ -290,15 +294,16 @@ export default function CardEditor({
                     )}
                 </span>
                 {cards.length < MIN_CARDS && (
-                    <span
-                        className="form-hint form-hint-warning"
+                    <FormHint
+                        as="span"
+                        variant="warning"
                         data-testid="card-min-hint"
                     >
                         {t(
                             "create_lesson.cards.min_hint",
                             "{n} cards needed for exercises",
                         ).replace("{n}", String(MIN_CARDS))}
-                    </span>
+                    </FormHint>
                 )}
                 {cards.length > 0 && (
                     <Button
@@ -402,7 +407,14 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
         opacity: isDragging ? 0.6 : 1,
     };
 
+    // #1722 — gate Save exactly like Add: an empty front/back would pass
+    // the Step-4 count checks but fail the ajv structure check
+    // (minLength: 1) with no visible reason.
+    const canSaveEdit =
+        draft.front.trim().length > 0 && draft.back.trim().length > 0;
+
     function saveEdit() {
+        if (!canSaveEdit) return;
         onUpdate(card.id, {
             front: draft.front.trim(),
             back: draft.back.trim(),
@@ -425,6 +437,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                         type="text"
                         data-testid={`card-edit-front-${card.id}`}
                         value={draft.front}
+                        maxLength={CARD_SIDE_MAX_LENGTH}
                         onChange={(e) =>
                             setDraft({...draft, front: e.target.value})
                         }
@@ -433,6 +446,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                         type="text"
                         data-testid={`card-edit-back-${card.id}`}
                         value={draft.back}
+                        maxLength={CARD_SIDE_MAX_LENGTH}
                         onChange={(e) =>
                             setDraft({...draft, back: e.target.value})
                         }
@@ -461,6 +475,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     <Button
                         type="button"
                         data-testid={`card-edit-save-${card.id}`}
+                        disabled={!canSaveEdit}
                         onClick={saveEdit}
                     >
                         {t("create_lesson.cards.save_edit", "Save")}

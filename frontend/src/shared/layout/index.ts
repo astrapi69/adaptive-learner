@@ -11,3 +11,5 @@ export * from "./PageContainer";
 export {default as PageContainer} from "./PageContainer";
 export * from "./ShareButton";
 export {default as ShareButton} from "./ShareButton";
+export * from "./Tile";
+export {default as Tile} from "./Tile";

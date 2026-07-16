@@ -12,6 +12,7 @@ import {useState} from "react";
 
 import {Input} from "@/components/ui/input";
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {
     DEFAULT_MAX_LESSON_SIZE,
     MAX_MAX_LESSON_SIZE,
@@ -45,12 +46,12 @@ export default function MaxLessonSizeControl() {
             <h2 className="settings-section-title">
                 {t("settings.max_lesson_size.title", "Maximum lesson size")}
             </h2>
-            <p className="form-hint">
+            <FormHint>
                 {t(
                     "settings.max_lesson_size.hint",
                     "When saving a long chat analysis as an offline lesson, lessons with more than this many steps are automatically split into multiple parts.",
                 )}
-            </p>
+            </FormHint>
             <label className="form-row">
                 <span className="form-label">
                     {t(

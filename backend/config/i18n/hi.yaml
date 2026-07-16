@@ -2542,6 +2542,7 @@ create_lesson:
     check_enoughExercises: कम से कम 5 अभ्यास
     check_enoughTypes: कम से कम 2 अभ्यास प्रकार
     check_schemaValid: मान्य पाठ संरचना
+    structure_error: "तकनीकी विवरण"
   save:
     saved: पाठ सहेजा गया!
     failed: पाठ सहेजा नहीं जा सका।

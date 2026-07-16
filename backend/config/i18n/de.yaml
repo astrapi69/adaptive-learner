@@ -2553,6 +2553,7 @@ create_lesson:
     check_enoughExercises: "Mindestens 5 Übungen"
     check_enoughTypes: "Mindestens 2 Übungstypen"
     check_schemaValid: "Gültige Lektionsstruktur"
+    structure_error: "Technisches Detail"
   save:
     saved: "Lektion gespeichert!"
     failed: "Lektion konnte nicht gespeichert werden."

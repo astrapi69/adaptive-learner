@@ -2549,6 +2549,7 @@ create_lesson:
     check_enoughExercises: "En az 5 alıştırma"
     check_enoughTypes: "En az 2 alıştırma türü"
     check_schemaValid: "Geçerli ders yapısı"
+    structure_error: "Teknik ayrıntı"
   save:
     saved: "Ders kaydedildi!"
     failed: "Ders kaydedilemedi."

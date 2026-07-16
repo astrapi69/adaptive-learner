@@ -33,6 +33,7 @@ import {CSS} from "@dnd-kit/utilities";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import type {
     ExerciseGenConfig,
     GeneratableType,
@@ -194,15 +195,16 @@ export default function ExerciseGenerator({
                     )}
                 </span>
                 {exercises.length > 0 && exercises.length < MIN_EXERCISES && (
-                    <span
-                        className="form-hint form-hint-warning"
+                    <FormHint
+                        as="span"
+                        variant="warning"
                         data-testid="exercise-min-hint"
                     >
                         {t(
                             "create_lesson.exercises.min_hint",
                             "{n} exercises needed",
                         ).replace("{n}", String(MIN_EXERCISES))}
-                    </span>
+                    </FormHint>
                 )}
             </div>
 

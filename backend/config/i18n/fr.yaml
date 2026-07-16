@@ -2551,6 +2551,7 @@ create_lesson:
     check_enoughExercises: "Au moins 5 exercices"
     check_enoughTypes: "Au moins 2 types d'exercices"
     check_schemaValid: "Structure de leçon valide"
+    structure_error: "Détail technique"
   save:
     saved: "Leçon enregistrée !"
     failed: "Impossible d'enregistrer la leçon."

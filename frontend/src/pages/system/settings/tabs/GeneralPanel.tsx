@@ -11,6 +11,7 @@ import AvatarUpload from "../../../../shared/media/AvatarUpload";
 import { setButtonTooltipsEnabled, useButtonTooltips } from "../../../../hooks/settings/useButtonTooltips";
 import { setDevModeEnabled, useDevMode } from "../../../../hooks/settings/useDevMode";
 import { useI18n } from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import { buildLanguageOptions } from "../../../../lib/i18n/languages";
 import LanguagePicker from "../../../../shared/forms/LanguagePicker";
 import { readLearnerState, setLanguage } from "../../../../lib/learning/learnerState";
@@ -348,12 +349,12 @@ export default function GeneralPanel({
             <span className="form-label">
               {t("settings.button_tooltips", "Show button tooltips")}
             </span>
-            <span className="form-hint">
+            <FormHint as="span">
               {t(
                 "settings.button_tooltips_description",
                 "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
               )}
-            </span>
+            </FormHint>
           </span>
           <input
             type="checkbox"
@@ -365,12 +366,12 @@ export default function GeneralPanel({
         <label className="form-row form-row-toggle">
           <span className="form-label-stack">
             <span className="form-label">{t("settings.developer_mode", "Developer Mode")}</span>
-            <span className="form-hint">
+            <FormHint as="span">
               {t(
                 "settings.developer_mode_description",
                 "Show full technical detail (status code, endpoint, stack trace) in error toasts. A 'DEV' badge appears in the navigation bar while this is on. Off by default; opt-in for debugging.",
               )}
-            </span>
+            </FormHint>
           </span>
           <input
             type="checkbox"

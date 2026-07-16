@@ -12,6 +12,7 @@
 import { useContentViewMode } from "../../../../hooks/content/useContentViewMode";
 import type { ContentViewMode } from "../../../../lib/content/browse/viewModePref";
 import { useI18n } from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 
 const MODES: ContentViewMode[] = ["list", "grid"];
 
@@ -32,12 +33,12 @@ export default function ContentViewControl() {
       <legend className="form-label">
         {t("settings.content_view", "Content view")}
       </legend>
-      <span className="form-hint">
+      <FormHint as="span">
         {t(
           "settings.content_view_description",
           "How downloaded content is shown across the content tabs. The quick toggle in the content view changes the same setting.",
         )}
-      </span>
+      </FormHint>
       <div className="feedback-intensity-options">
         {MODES.map((m) => (
           <label key={m} className="feedback-intensity-option">

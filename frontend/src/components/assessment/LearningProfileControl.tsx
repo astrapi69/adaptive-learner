@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {useHasIncompleteAssessment} from "../../hooks/learning/useAssessmentProgress";
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
 
@@ -83,7 +84,7 @@ export default function LearningProfileControl() {
             <h2 className="settings-section-title">
                 {t("settings.profile_title", "Learning profile")}
             </h2>
-            <p className="form-hint">{hint}</p>
+            <FormHint>{hint}</FormHint>
             <Button
                 type="button"
                 data-testid={testid}
