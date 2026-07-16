@@ -2559,6 +2559,7 @@ create_lesson:
     check_enoughExercises: "연습 5개 이상"
     check_enoughTypes: "연습 유형 2개 이상"
     check_schemaValid: "유효한 레슨 구조"
+    structure_error: "기술적 세부 정보"
   save:
     saved: "레슨이 저장되었습니다!"
     failed: "레슨을 저장할 수 없었습니다."

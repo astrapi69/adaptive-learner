@@ -119,22 +119,48 @@ export interface DraftValidationChecks {
     enoughExercises: boolean;
     enoughTypes: boolean;
     schemaValid: boolean;
+    /** The structural validator's reason when ``schemaValid`` is false
+     *  (#1722 — e.g. ``/cards/0/back must NOT have fewer than 1
+     *  characters``); ``null`` when the structure is valid. Detail for
+     *  the checklist + console, NOT part of the boolean aggregate. */
+    schemaError: string | null;
 }
+
+/** The boolean check keys {@link allChecksPass} aggregates (everything
+ *  except the ``schemaError`` detail field). */
+const BOOLEAN_CHECK_KEYS = [
+    "hasTitle",
+    "languagePair",
+    "enoughCards",
+    "enoughExercises",
+    "enoughTypes",
+    "schemaValid",
+] as const;
 
 export const MIN_CARDS_FOR_SAVE = 4;
 export const MIN_EXERCISES_FOR_SAVE = 5;
 export const MIN_TYPES_FOR_SAVE = 2;
+
+/** The engine schema's ``Card.front``/``Card.back`` ``maxLength`` (#1722).
+ *  The card inputs cap at this so a hand-typed side can never fail the
+ *  ajv structure check on length. */
+export const CARD_SIDE_MAX_LENGTH = 500;
 
 /** Run the save-readiness checks for the Step-4 checklist. */
 export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     const {meta, cards, exercises} = input;
     const types = new Set(exercises.map((e) => e.type));
     let schemaValid: boolean;
+    let schemaError: string | null = null;
     try {
         buildLessonFromDraft(input);
         schemaValid = true;
-    } catch {
+    } catch (err) {
         schemaValid = false;
+        schemaError = err instanceof Error ? err.message : String(err);
+        // #1722 — a bare ✗ is not actionable; keep the precise validator
+        // reason available in the dev console alongside the checklist.
+        console.error("create-lesson: draft structure invalid:", schemaError);
     }
     return {
         hasTitle: meta.title.trim().length > 0,
@@ -143,10 +169,11 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
         enoughExercises: exercises.length >= MIN_EXERCISES_FOR_SAVE,
         enoughTypes: types.size >= MIN_TYPES_FOR_SAVE,
         schemaValid,
+        schemaError,
     };
 }
 
 /** True iff every save-readiness check passed (the draft is saveable). */
 export function allChecksPass(checks: DraftValidationChecks): boolean {
-    return Object.values(checks).every(Boolean);
+    return BOOLEAN_CHECK_KEYS.every((key) => checks[key]);
 }
