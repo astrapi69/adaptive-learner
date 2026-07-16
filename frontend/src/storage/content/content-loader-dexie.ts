@@ -460,16 +460,26 @@ export async function listSetsDexie(
   }
   // Collapse same-id sets advertised by more than one source
   // (bundled pilot + external repo) to a single row before the
-  // user-generated lessons (which carry unique ids) are appended.
+  // cached-only sets are appended.
   const deduped = dedupeContentEntries(entries);
-  // Phase 59B — user-generated sets ("My Lessons") aren't an
-  // upstream source; surface them from IndexedDB directly.
+  // #1731 — a downloaded set lives in the cache and must ALWAYS appear in
+  // "Meine Inhalte", even when its source is not a configured one (e.g. a
+  // download via Entdecken from a registry repo the user never connected).
+  // Mirror of the backend's ``_all_cached_entries`` sweep, which fixed
+  // exactly this in API mode; it also covers the Phase 59B user-generated
+  // sets ("My Lessons"), whose rows are cached the same way. Latest version
+  // wins per (source, set_id); ids already listed by a configured source
+  // are skipped, matching ``dedupeContentEntries``'s id-level collapse.
   const db = getDb();
-  const userRows = await db.contentSets
-    .where("source")
-    .equals(USER_GENERATED_SOURCE)
-    .toArray();
-  for (const row of userRows) {
+  const seenIds = new Set(deduped.map((entry) => entry.id));
+  const latestBySet = new Map<string, ContentSetRow>();
+  for (const row of await db.contentSets.toArray()) {
+    if (seenIds.has(row.set_id)) continue;
+    const key = `${row.source}#${row.set_id}`;
+    const prev = latestBySet.get(key);
+    if (!prev || prev.version < row.version) latestBySet.set(key, row);
+  }
+  for (const row of latestBySet.values()) {
     deduped.push(await rowToCachedEntry(row));
   }
   return { sets: deduped, sources };
