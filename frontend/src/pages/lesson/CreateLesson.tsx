@@ -319,10 +319,10 @@ export default function CreateLesson() {
 
     return (
         <PageContainer testId="create-lesson-page">
-            <header className="create-lesson-header">
+            <header className="create-lesson-header mb-6 flex flex-col gap-1">
                 <h1>{t("create_lesson.title", "Create a lesson")}</h1>
                 <p
-                    className="create-lesson-step-indicator"
+                    className="create-lesson-step-indicator text-sm text-fg-muted"
                     data-testid="create-lesson-step-indicator"
                 >
                     {t("create_lesson.step_of", "Step {current} of {total}")
@@ -413,10 +413,10 @@ export default function CreateLesson() {
 
             {savedEntry && (
                 <section
-                    className="create-lesson-step"
+                    className="create-lesson-step flex flex-col gap-4"
                     data-testid="create-lesson-saved"
                 >
-                    <h2>{t("create_lesson.save.saved", "Lesson saved!")}</h2>
+                    <h2 className="text-xl font-semibold text-fg-primary">{t("create_lesson.save.saved", "Lesson saved!")}</h2>
                     <div className="form-actions">
                         <Button
                             type="button"
@@ -466,7 +466,7 @@ export default function CreateLesson() {
             )}
 
             {!savedEntry && (
-            <nav className="create-lesson-nav" aria-label={t(
+            <nav className="create-lesson-nav mt-6 flex flex-wrap items-center justify-end gap-3" aria-label={t(
                 "create_lesson.nav_label",
                 "Wizard navigation",
             )}>

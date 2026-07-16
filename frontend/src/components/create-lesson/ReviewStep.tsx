@@ -54,13 +54,15 @@ export default function ReviewStep({
     const canSave = allChecksPass(draftChecks) && !saving;
     return (
         <section
-            className="create-lesson-step"
+            className="create-lesson-step flex flex-col gap-6"
             data-testid="create-lesson-step-4"
             aria-label={t("create_lesson.review.heading", "Review and save")}
         >
-            <h2>{t("create_lesson.review.heading", "Review and save")}</h2>
+            <h2 className="text-xl font-semibold text-fg-primary">
+                {t("create_lesson.review.heading", "Review and save")}
+            </h2>
             <ul
-                className="create-lesson-summary"
+                className="create-lesson-summary flex list-none flex-col gap-1 rounded-lg border border-border bg-card p-4"
                 data-testid="create-lesson-summary"
             >
                 <li>
@@ -80,7 +82,7 @@ export default function ReviewStep({
                 </li>
             </ul>
             <ul
-                className="create-lesson-checklist"
+                className="create-lesson-checklist flex list-none flex-col gap-1 p-0"
                 data-testid="create-lesson-checklist"
             >
                 {CHECK_ROWS.map(([key, fallback]) => {
@@ -97,7 +99,12 @@ export default function ReviewStep({
                             key={key}
                             data-testid={`check-${key}`}
                             data-pass={pass ? "true" : "false"}
-                            className={pass ? "check-pass" : "check-fail"}
+                            className={
+                                "flex flex-col gap-0.5 " +
+                                (pass
+                                    ? "check-pass text-[var(--success)]"
+                                    : "check-fail text-[var(--error)]")
+                            }
                         >
                             {pass ? "✓" : "✗"}{" "}
                             {t(`create_lesson.review.check_${key}`, fallback)}
