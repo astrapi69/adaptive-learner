@@ -2792,7 +2792,8 @@
       "check_enoughCards": "Mindestens 4 Karten",
       "check_enoughExercises": "Mindestens 5 Übungen",
       "check_enoughTypes": "Mindestens 2 Übungstypen",
-      "check_schemaValid": "Gültige Lektionsstruktur"
+      "check_schemaValid": "Gültige Lektionsstruktur",
+      "structure_error": "Technisches Detail"
     },
     "save": {
       "saved": "Lektion gespeichert!",

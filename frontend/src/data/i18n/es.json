@@ -2792,7 +2792,8 @@
       "check_enoughCards": "Al menos 4 tarjetas",
       "check_enoughExercises": "Al menos 5 ejercicios",
       "check_enoughTypes": "Al menos 2 tipos de ejercicio",
-      "check_schemaValid": "Estructura de lección válida"
+      "check_schemaValid": "Estructura de lección válida",
+      "structure_error": "Detalle técnico"
     },
     "save": {
       "saved": "¡Lección guardada!",

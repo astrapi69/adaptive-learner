@@ -86,4 +86,38 @@ describe("draft-to-lesson", () => {
         expect(checks.hasTitle).toBe(false);
         expect(checks.languagePair).toBe(false);
     });
+
+    // #1722 — the reproduction: all COUNT checks pass, only the structural
+    // validator fails (an empty card side, reachable through the unguarded
+    // inline card edit), and the validator's reason must survive into the
+    // checklist instead of being swallowed to a bare boolean.
+    it("checkDraft surfaces the validator message for an empty card side (#1722)", () => {
+        const i = input();
+        i.cards[0] = {...i.cards[0], back: ""};
+        const checks = checkDraft(i);
+        expect(checks.enoughCards).toBe(true);
+        expect(checks.enoughExercises).toBe(true);
+        expect(checks.enoughTypes).toBe(true);
+        expect(checks.schemaValid).toBe(false);
+        expect(allChecksPass(checks)).toBe(false);
+        // The precise ajv reason is carried, not discarded.
+        expect(checks.schemaError).toBeTruthy();
+        expect(checks.schemaError).toContain("/cards/0");
+    });
+
+    it("checkDraft surfaces the validator message for an over-long card side (#1722)", () => {
+        const i = input();
+        i.cards[1] = {...i.cards[1], back: "x".repeat(501)};
+        const checks = checkDraft(i);
+        expect(checks.schemaValid).toBe(false);
+        expect(checks.schemaError).toContain("/cards/1");
+    });
+
+    it("a passing draft carries no schemaError (#1722)", () => {
+        const checks = checkDraft(input());
+        expect(checks.schemaValid).toBe(true);
+        expect(checks.schemaError).toBeNull();
+        // The extra detail field must not break the boolean aggregate.
+        expect(allChecksPass(checks)).toBe(true);
+    });
 });

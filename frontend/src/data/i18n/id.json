@@ -2792,7 +2792,8 @@
       "check_enoughCards": "Setidaknya 4 kartu",
       "check_enoughExercises": "Setidaknya 5 latihan",
       "check_enoughTypes": "Setidaknya 2 jenis latihan",
-      "check_schemaValid": "Struktur pelajaran valid"
+      "check_schemaValid": "Struktur pelajaran valid",
+      "structure_error": "Detail teknis"
     },
     "save": {
       "saved": "Pelajaran disimpan!",

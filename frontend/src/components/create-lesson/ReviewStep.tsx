@@ -17,7 +17,9 @@ import type {ContentLessonExercise} from "../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
 
-const CHECK_ROWS: Array<[keyof DraftValidationChecks, string]> = [
+const CHECK_ROWS: Array<
+    [Exclude<keyof DraftValidationChecks, "schemaError">, string]
+> = [
     ["hasTitle", "Has a title"],
     ["languagePair", "Language pair is valid"],
     ["enoughCards", "At least 4 cards"],
@@ -82,6 +84,13 @@ export default function ReviewStep({
             >
                 {CHECK_ROWS.map(([key, fallback]) => {
                     const pass = draftChecks[key];
+                    // #1722 — a bare ✗ on the structure check is not
+                    // actionable; show the validator's concrete reason
+                    // (e.g. which card/field violates which rule).
+                    const detail =
+                        key === "schemaValid" && !pass
+                            ? draftChecks.schemaError
+                            : null;
                     return (
                         <li
                             key={key}
@@ -91,6 +100,18 @@ export default function ReviewStep({
                         >
                             {pass ? "✓" : "✗"}{" "}
                             {t(`create_lesson.review.check_${key}`, fallback)}
+                            {detail && (
+                                <div
+                                    className="text-sm text-muted-foreground"
+                                    data-testid="check-schemaValid-detail"
+                                >
+                                    {t(
+                                        "create_lesson.review.structure_error",
+                                        "Details",
+                                    )}
+                                    : <code>{detail}</code>
+                                </div>
+                            )}
                         </li>
                     );
                 })}
