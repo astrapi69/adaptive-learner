@@ -2549,6 +2549,7 @@ create_lesson:
     check_enoughExercises: "5問以上の演習"
     check_enoughTypes: "2種類以上の演習タイプ"
     check_schemaValid: "有効なレッスン構造"
+    structure_error: "技術的な詳細"
   save:
     saved: "レッスンを保存しました！"
     failed: "レッスンを保存できませんでした。"

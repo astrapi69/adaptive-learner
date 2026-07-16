@@ -32,6 +32,7 @@ import "@xyflow/react/dist/style.css";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import {useLearningPathData} from "../../hooks/learning/useLearningPathData";
 import LessonNode from "../../components/learning-path/LessonNode";
 import SetGroupNode from "../../components/learning-path/SetGroupNode";
@@ -226,8 +227,8 @@ export default function LearningPathGraph({
             )}
 
             {state === "error" && (
-                <p
-                    className="form-hint form-hint-warning"
+                <FormHint
+                    variant="warning"
                     data-testid="learning-path-error"
                     role="alert"
                 >
@@ -235,7 +236,7 @@ export default function LearningPathGraph({
                         "learning_path.error",
                         "Could not load your learning path.",
                     )}
-                </p>
+                </FormHint>
             )}
 
             {state === "ready" && (

@@ -2551,6 +2551,7 @@ create_lesson:
     check_enoughExercises: "Τουλάχιστον 5 ασκήσεις"
     check_enoughTypes: "Τουλάχιστον 2 τύποι ασκήσεων"
     check_schemaValid: "Έγκυρη δομή μαθήματος"
+    structure_error: "Τεχνική λεπτομέρεια"
   save:
     saved: "Το μάθημα αποθηκεύτηκε!"
     failed: "Δεν ήταν δυνατή η αποθήκευση του μαθήματος."

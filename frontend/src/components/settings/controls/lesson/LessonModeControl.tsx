@@ -13,6 +13,7 @@
 import {useEffect, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {
     EXAM_PASS_THRESHOLD_OPTIONS,
     LESSON_MODE_PREF_CHANGE_EVENT,
@@ -90,12 +91,12 @@ export default function LessonModeControl() {
             <h2 className="settings-section-title">
                 {t("settings.lesson_mode.title", "Lesson mode")}
             </h2>
-            <p className="form-hint">
+            <FormHint>
                 {t(
                     "settings.lesson_mode.hint",
                     "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions.",
                 )}
-            </p>
+            </FormHint>
             <label className="form-row">
                 <span className="form-label">
                     {t("settings.lesson_mode.default_label", "Default mode")}

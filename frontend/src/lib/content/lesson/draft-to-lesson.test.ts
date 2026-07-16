@@ -77,13 +77,58 @@ describe("draft-to-lesson", () => {
         expect(allChecksPass(bad)).toBe(false);
     });
 
-    it("checkDraft fails on a same-language pair and empty title", () => {
+    it("checkDraft fails on an empty title", () => {
         const i = input();
         const checks = checkDraft({
             ...i,
-            meta: {...META, title: "", targetLanguage: "de"},
+            meta: {...META, title: ""},
         });
         expect(checks.hasTitle).toBe(false);
-        expect(checks.languagePair).toBe(false);
+        expect(allChecksPass(checks)).toBe(false);
+    });
+
+    it("checkDraft passes a same-language pair (#1715, knowledge domains)", () => {
+        // ki-einsteiger-style de -> de knowledge content is legitimate:
+        // an identical source/target pair is no longer a save gate.
+        const i = input();
+        const checks = checkDraft({
+            ...i,
+            meta: {...META, sourceLanguage: "de", targetLanguage: "de"},
+        });
+        expect(allChecksPass(checks)).toBe(true);
+    });
+
+    // #1722 — the reproduction: all COUNT checks pass, only the structural
+    // validator fails (an empty card side, reachable through the unguarded
+    // inline card edit), and the validator's reason must survive into the
+    // checklist instead of being swallowed to a bare boolean.
+    it("checkDraft surfaces the validator message for an empty card side (#1722)", () => {
+        const i = input();
+        i.cards[0] = {...i.cards[0], back: ""};
+        const checks = checkDraft(i);
+        expect(checks.enoughCards).toBe(true);
+        expect(checks.enoughExercises).toBe(true);
+        expect(checks.enoughTypes).toBe(true);
+        expect(checks.schemaValid).toBe(false);
+        expect(allChecksPass(checks)).toBe(false);
+        // The precise ajv reason is carried, not discarded.
+        expect(checks.schemaError).toBeTruthy();
+        expect(checks.schemaError).toContain("/cards/0");
+    });
+
+    it("checkDraft surfaces the validator message for an over-long card side (#1722)", () => {
+        const i = input();
+        i.cards[1] = {...i.cards[1], back: "x".repeat(501)};
+        const checks = checkDraft(i);
+        expect(checks.schemaValid).toBe(false);
+        expect(checks.schemaError).toContain("/cards/1");
+    });
+
+    it("a passing draft carries no schemaError (#1722)", () => {
+        const checks = checkDraft(input());
+        expect(checks.schemaValid).toBe(true);
+        expect(checks.schemaError).toBeNull();
+        // The extra detail field must not break the boolean aggregate.
+        expect(allChecksPass(checks)).toBe(true);
     });
 });

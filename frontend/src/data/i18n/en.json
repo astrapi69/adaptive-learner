@@ -2792,7 +2792,8 @@
       "check_enoughCards": "At least 4 cards",
       "check_enoughExercises": "At least 5 exercises",
       "check_enoughTypes": "At least 2 exercise types",
-      "check_schemaValid": "Valid lesson structure"
+      "check_schemaValid": "Valid lesson structure",
+      "structure_error": "Technical detail"
     },
     "save": {
       "saved": "Lesson saved!",

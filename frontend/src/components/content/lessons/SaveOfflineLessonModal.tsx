@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import FormHint from "../../../shared/forms/FormHint";
 import {
   cefrFromAnalysisLevel,
   detectTargetLanguage,
@@ -287,34 +288,32 @@ export default function SaveOfflineLessonModal({
             </select>
           </label>
         </div>
-        <p className="form-hint" data-testid="save-lesson-summary">
+        <FormHint data-testid="save-lesson-summary">
           {summaryText}
-        </p>
+        </FormHint>
         {!shareable && (
-          <p
-            className="form-hint form-hint-warning"
+          <FormHint
+            variant="warning"
             data-testid="save-lesson-not-enough-data"
           >
             {t(
               "content.save_lesson.not_enough_data",
               "Few exercises — at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).",
             ).replace("{min}", String(MIN_SHAREABLE_EXERCISES))}
-          </p>
+          </FormHint>
         )}
         {sameLanguage && (
-          <p
-            className="form-hint"
+          <FormHint
             data-testid="save-lesson-same-language"
           >
             {t(
               "content.save_lesson.same_language_hint",
               "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
             )}
-          </p>
+          </FormHint>
         )}
         {lessonParts.length > 1 && (
-          <p
-            className="form-hint"
+          <FormHint
             data-testid="save-lesson-split-notice"
           >
             {t(
@@ -324,7 +323,7 @@ export default function SaveOfflineLessonModal({
               .replace("{steps}", String(baseLesson.steps.length))
               .replace("{parts}", String(lessonParts.length))
               .replace("{max}", String(maxStepsPerPart))}
-          </p>
+          </FormHint>
         )}
         <div className="form-actions">
           <Button

@@ -17,6 +17,7 @@ import OnboardingWizard, {
 } from "../../components/onboarding/OnboardingWizard";
 import MigrationWelcomeDialog from "../../components/onboarding/MigrationWelcomeDialog";
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/backup/firstRunRestore";
 import {isMigrationOffered, markMigrationOffered} from "../../lib/backup/migrationFlag";
 import {readBackupFile} from "../../lib/backup/validateBackupFile";
@@ -495,7 +496,7 @@ export default function Onboarding() {
                         onChange={(e) => setTopic(e.target.value)}
                         disabled={submitting}
                     />
-                    <span className="form-hint">{t("onboarding.field_topic_hint")}</span>
+                    <FormHint as="span">{t("onboarding.field_topic_hint")}</FormHint>
                 </label>
 
                 {suggestions.length > 0 && (

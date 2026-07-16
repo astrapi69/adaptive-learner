@@ -2549,6 +2549,7 @@ create_lesson:
     check_enoughExercises: "Pelo menos 5 exercícios"
     check_enoughTypes: "Pelo menos 2 tipos de exercício"
     check_schemaValid: "Estrutura de lição válida"
+    structure_error: "Detalhe técnico"
   save:
     saved: "Lição guardada!"
     failed: "Não foi possível guardar a lição."

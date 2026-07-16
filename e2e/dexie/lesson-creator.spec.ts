@@ -26,10 +26,12 @@ const CARDS = [
  *  source != target, so only the title is required. */
 async function fillMetadata(page: Page): Promise<void> {
     await page.getByTestId("create-lesson-title").fill("E2E Greetings");
-    // The same-language error must NOT be showing (defaults differ).
-    await expect(page.getByTestId("create-lesson-same-language-error")).toHaveCount(
-        0,
-    );
+    // The non-blocking same-language hint must NOT be showing (defaults
+    // differ). A same-language pair is allowed (#1715) — it is a hint,
+    // never a blocking error.
+    await expect(
+        page.getByTestId("create-lesson-same-language-hint"),
+    ).toHaveCount(0);
     await page.getByTestId("create-lesson-next").click();
 }
 
