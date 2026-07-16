@@ -283,6 +283,53 @@ sets:
     expect(result.sets[0].cached_version).toBe("0.9.0");
     expect(result.sets[0].update_available).toBe(true);
   });
+
+  // #1731 — parity with the backend's ``_all_cached_entries`` sweep: a set
+  // downloaded via Entdecken from a registry repo that is NOT a configured
+  // source (bundled / official / connected user repo) lives in the cache
+  // and must STILL appear in "Meine Inhalte". Pre-fix, listSetsDexie only
+  // iterated the configured sources and the download stayed invisible
+  // until the user manually connected the repo in Settings.
+  it("surfaces a cached set whose source is not configured (#1731)", async () => {
+    const REGISTRY_REPO = "astrapi69/alc-psychology";
+    installFetchMock({
+      [`/${REGISTRY_REPO}/main/manifest.yaml`]: REPO_MANIFEST,
+      [`/${REGISTRY_REPO}/main/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${REGISTRY_REPO}/main/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+    });
+    // Download exactly like Discover does: the source is passed directly
+    // and is NOT part of the configured source list.
+    await downloadSetDexie(REGISTRY_REPO, SET_ID, [
+      { source: REGISTRY_REPO, branch: "main" },
+    ]);
+
+    // "Meine Inhalte" lists with ONLY the official source configured
+    // (whose upstream manifest is unreachable here).
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: null,
+    });
+    const result = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    const downloaded = result.sets.find(
+      (s) => s.source === REGISTRY_REPO && s.id === SET_ID,
+    );
+    expect(downloaded, "downloaded set must surface without the repo being connected").toBeTruthy();
+    expect(downloaded!.cached_version).toBe("1.0.0");
+  });
+
+  it("does NOT duplicate a cached set that a configured source already lists (#1731)", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+    });
+    await downloadSetDexie(SOURCE, SET_ID, [{ source: SOURCE, branch: BRANCH }]);
+    const result = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    const matches = result.sets.filter((s) => s.id === SET_ID);
+    expect(matches).toHaveLength(1);
+    expect(matches[0].cached_version).toBe("1.0.0");
+  });
 });
 
 describe("Dexie content-loader: downloadSet", () => {

@@ -53,7 +53,7 @@ import {
     type UserContentRepo,
 } from "./repos/content-repos";
 import {getStorage} from "../../storage";
-import {_resetDbForTests} from "../../storage/dexie/db";
+import {_resetDbForTests, getDb} from "../../storage/dexie/db";
 import {SUPPORTED_EXERCISE_TYPES} from "../../components/exercises";
 
 // --- real fixtures captured from the test repo -----------------------------
@@ -145,6 +145,18 @@ beforeAll(() => {
 });
 
 beforeEach(async () => {
+    // Wipe the content tables explicitly: ``_resetDbForTests`` only closes
+    // the connection, the fake-indexeddb engine persists across resets. A
+    // download leaking from an earlier test used to be invisible (its
+    // source was no longer configured); since the #1731 cached-set sweep
+    // it would correctly LIST and break the not-downloaded expectations.
+    const db = getDb();
+    try {
+        await db.contentSets.clear();
+        await db.contentSetFiles.clear();
+    } catch {
+        /* fresh DB — nothing to clear */
+    }
     await _resetDbForTests();
 });
 
@@ -236,6 +248,29 @@ describe("user-repo import E2E (adaptive-learner-content-test, #636)", () => {
         expect(after.sets.some((s) => s.source === TEST_SOURCE)).toBe(false);
         // Official content is still consulted (untouched by the removal).
         expect(after.sets.some((s) => s.id === "official-fr-a1")).toBe(true);
+    });
+
+    it("4b. a DOWNLOADED set survives removing its repo (#1731)", async () => {
+        installFetch([
+            ...TEST_REPO_ROUTES,
+            ["adaptive-learner-content/main/manifest.yaml", OFFICIAL_MANIFEST],
+        ]);
+        await addUserRepo(connectedRepo());
+        await getStorage().contentLoader.downloadSet(TEST_SOURCE, SET_ID);
+
+        await removeUserRepo(TEST_SOURCE);
+        expect(await readUserRepos()).toHaveLength(0);
+
+        // The cached download stays listed (backend `_all_cached_entries`
+        // parity): removing the repo ends the sync subscription, it does
+        // not hide already-downloaded content. Deleting the set itself
+        // (opt-in, #1446 / #1300) is the way to make it disappear.
+        const after = await getStorage().contentLoader.listSets();
+        const entry = after.sets.find(
+            (s) => s.source === TEST_SOURCE && s.id === SET_ID,
+        );
+        expect(entry).toBeDefined();
+        expect(entry?.cached_version).not.toBeNull();
     });
 
     it("5. cached content stays available offline after import", async () => {
