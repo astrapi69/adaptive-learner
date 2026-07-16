@@ -83,6 +83,35 @@ export async function freezeClock(page: Page): Promise<void> {
 }
 
 /**
+ * Pin every in-page randomness source so ID- and shuffle-derived UI is
+ * identical run-to-run (#1567): ``crypto.randomUUID`` becomes a counter
+ * sequence (the seeded user's id feeds the missions PRNG
+ * ``userId:dateISO`` — a random UUID re-rolls the daily missions on
+ * every capture run) and ``Math.random`` becomes a fixed-seed
+ * mulberry32 stream (exercise/option shuffles). Deterministic, still
+ * unique per call. Call ONCE before the first navigation, alongside
+ * ``freezeClock``.
+ */
+export async function pinRandomness(page: Page): Promise<void> {
+    await page.addInitScript(() => {
+        let uuidCounter = 0;
+        crypto.randomUUID = () => {
+            uuidCounter += 1;
+            const tail = String(uuidCounter).padStart(12, "0");
+            return `00000000-0000-4000-8000-${tail}`;
+        };
+        let mulberryState = 0x1567 >>> 0;
+        Math.random = () => {
+            mulberryState = (mulberryState + 0x6d2b79f5) >>> 0;
+            let mixed = mulberryState;
+            mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1);
+            mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61);
+            return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
+        };
+    });
+}
+
+/**
  * Pin the theme before any navigation. ``addInitScript`` runs before page
  * scripts on EVERY navigation in this context, so the pre-paint script
  * (and React's useTheme) read the chosen theme from the first load on.
