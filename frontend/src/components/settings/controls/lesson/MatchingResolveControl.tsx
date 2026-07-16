@@ -12,6 +12,7 @@
 import {useEffect, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {
     MATCHING_RESOLVE_EFFECT_OPTIONS,
     MATCHING_RESOLVE_PREF_CHANGE_EVENT,
@@ -60,12 +61,12 @@ export default function MatchingResolveControl() {
             <h2 className="settings-section-title">
                 {t("settings.matching_resolve.title", "Solve animation")}
             </h2>
-            <p className="form-hint">
+            <FormHint>
                 {t(
                     "settings.matching_resolve.hint",
                     "How the matching exercise reveals the correct pairs when you press 'Solve' after checking.",
                 )}
-            </p>
+            </FormHint>
             <label className="form-row">
                 <span className="form-label">
                     {t("settings.matching_resolve.label", "Effect")}

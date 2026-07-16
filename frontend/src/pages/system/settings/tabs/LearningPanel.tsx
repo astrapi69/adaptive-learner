@@ -17,6 +17,7 @@ import SourceLanguagesControl from "../../../../components/settings/controls/les
 import SoundSettingsControl from "../../../../components/settings/controls/motivation/SoundSettingsControl";
 import VoiceSettingsSection from "../../../../components/voice/VoiceSettingsSection";
 import { useI18n } from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import { readGesturePref, writeGesturePref } from "../../../../lib/settings/gesturePref";
 import {
   readLessonShortcutsEnabled,
@@ -103,12 +104,12 @@ export default function LearningPanel({ active }: LearningPanelProps) {
         <label className="form-row form-row-toggle">
           <span className="form-label-stack">
             <span className="form-label">{t("settings.gestures", "Swipe Gestures")}</span>
-            <span className="form-hint">
+            <FormHint as="span">
               {t(
                 "settings.gestures_description",
                 "Swipe to navigate in Assessment, Session, and Curriculum.",
               )}
-            </span>
+            </FormHint>
           </span>
           <input
             type="checkbox"
@@ -122,12 +123,12 @@ export default function LearningPanel({ active }: LearningPanelProps) {
             <span className="form-label">
               {t("settings.lesson_shortcuts", "Lesson keyboard shortcuts")}
             </span>
-            <span className="form-hint">
+            <FormHint as="span">
               {t(
                 "settings.lesson_shortcuts_description",
                 "Press Enter to check your answer, then Enter again to go to the next step.",
               )}
-            </span>
+            </FormHint>
           </span>
           <input
             type="checkbox"
@@ -144,12 +145,12 @@ export default function LearningPanel({ active }: LearningPanelProps) {
                 "Auto-advance on a correct answer",
               )}
             </span>
-            <span className="form-hint">
+            <FormHint as="span">
               {t(
                 "settings.lesson_auto_advance_description",
                 "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution.",
               )}
-            </span>
+            </FormHint>
           </span>
           <input
             type="checkbox"

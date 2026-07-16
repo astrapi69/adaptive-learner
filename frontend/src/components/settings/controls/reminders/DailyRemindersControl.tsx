@@ -13,6 +13,7 @@
 import {useMemo, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {useNotificationPermission} from "../../../../hooks/system/useNotificationPermission";
 import {
     readReminderSettings,
@@ -87,12 +88,12 @@ export default function DailyRemindersControl() {
                             "Daily learning reminders",
                         )}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.reminders_enabled_desc",
                             "Get a browser notification when reviews are due. Fires only while the app is open.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"
@@ -107,12 +108,12 @@ export default function DailyRemindersControl() {
                     <span className="form-label">
                         {t("settings.reminders_time", "Reminder time")}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.reminders_time_desc",
                             "When to remind you each day.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="time"
@@ -128,12 +129,12 @@ export default function DailyRemindersControl() {
                     <span className="form-label">
                         {t("settings.reminders_weekdays", "Days")}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.reminders_weekdays_desc",
                             "Which days to remind you.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <div
                     className="flex flex-wrap gap-1"
@@ -165,15 +166,15 @@ export default function DailyRemindersControl() {
             </div>
 
             {enabled && supported && permission === "denied" && (
-                <p
-                    className="form-hint text-warning"
+                <FormHint
+                    className="text-warning"
                     data-testid="settings-reminders-denied"
                 >
                     {t(
                         "settings.reminders_permission_denied",
                         "Notifications are blocked. Enable them in your browser's site settings to receive reminders.",
                     )}
-                </p>
+                </FormHint>
             )}
             {enabled && supported && permission === "default" && (
                 <button
@@ -189,15 +190,15 @@ export default function DailyRemindersControl() {
                 </button>
             )}
             {enabled && !supported && (
-                <p
-                    className="form-hint text-fg-secondary"
+                <FormHint
+                    className="text-fg-secondary"
                     data-testid="settings-reminders-unsupported"
                 >
                     {t(
                         "settings.reminders_unsupported",
                         "Your browser does not support notifications.",
                     )}
-                </p>
+                </FormHint>
             )}
         </section>
     );

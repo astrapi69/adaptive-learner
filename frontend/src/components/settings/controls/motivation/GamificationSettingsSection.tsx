@@ -18,6 +18,7 @@ import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {
     readGamificationPrefs,
     setBadgeNotifications,
@@ -154,12 +155,12 @@ export default function GamificationSettingsSection() {
                             "Show XP notifications",
                         )}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.xp_notifications_help",
                             "Floating ‘+50 XP’ animation when you earn XP.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"
@@ -177,12 +178,12 @@ export default function GamificationSettingsSection() {
                             "Show badge notifications",
                         )}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.badge_notifications_help",
                             "Toast when a new badge is earned.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"
@@ -219,12 +220,12 @@ export default function GamificationSettingsSection() {
                     <span className="form-label">
                         {t("gamification.weekend_mode", "Weekend mode")}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "gamification.weekend_mode_help",
                             "Weekends don't count toward streak gaps.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"
@@ -243,12 +244,12 @@ export default function GamificationSettingsSection() {
                             "Daily session goal",
                         )}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.daily_session_goal_help",
                             "Sessions per day shown as a progress hint.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="number"
@@ -267,12 +268,12 @@ export default function GamificationSettingsSection() {
                     <span className="form-label">
                         {t("settings.reset_progress", "Reset progress")}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.reset_progress_help",
                             "Permanently delete XP, badges, and streak. Cannot be undone.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <Button
                     type="button"

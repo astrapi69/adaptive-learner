@@ -10,6 +10,7 @@
 import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {
     RETENTION_OPTIONS,
     readRetentionDays,
@@ -37,12 +38,12 @@ export default function PausedLessonsRetentionControl() {
                     "Paused lesson retention",
                 )}
             </h2>
-            <p className="form-hint">
+            <FormHint>
                 {t(
                     "settings.paused_retention.hint",
                     "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age.",
                 )}
-            </p>
+            </FormHint>
             <label className="form-row">
                 <span className="form-label">
                     {t(

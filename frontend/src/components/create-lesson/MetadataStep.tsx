@@ -22,6 +22,7 @@ import {
     type LessonTemplateKey,
 } from "../../lib/content/lesson/lesson-templates";
 import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
+import FormHint from "../../shared/forms/FormHint";
 
 type Translate = (key: string, fallback?: string) => string;
 
@@ -212,8 +213,8 @@ export default function MetadataStep({
                     de -> de). Surface a neutral, non-blocking hint, mirroring
                     SaveOfflineLessonModal — never a blocking error. */}
                 {sameLanguage && (
-                    <p
-                        className="flex items-start gap-1.5 text-sm text-fg-muted"
+                    <FormHint
+                        className="flex items-start gap-1.5"
                         data-testid="create-lesson-same-language-hint"
                     >
                         <Info
@@ -226,7 +227,7 @@ export default function MetadataStep({
                                 "Learned and your language are the same — fine for a grammar or knowledge lesson. When shared, it lands in the same-language branch of the content tree.",
                             )}
                         </span>
-                    </p>
+                    </FormHint>
                 )}
             </div>
 

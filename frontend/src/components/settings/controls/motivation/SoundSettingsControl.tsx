@@ -10,6 +10,7 @@
 import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {playSound} from "../../../../lib/audio/sound-effects";
 import {
     readSoundEnabled,
@@ -40,12 +41,12 @@ export default function SoundSettingsControl() {
                     <span className="form-label">
                         {t("settings.sounds", "Sounds")}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.sounds_description",
                             "Play short synthesized chimes on correct answers, stars, and milestones. Off by default; sounds never carry information that isn't also shown.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"

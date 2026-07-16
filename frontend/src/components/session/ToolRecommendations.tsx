@@ -1,5 +1,6 @@
 import {useI18n} from "../../hooks/ui/useI18n";
 import {METHOD_COLORS} from "../../lib/constants";
+import Tile from "../../shared/layout/Tile";
 import {bestTextOn} from "../../styles/contrast";
 import type {ToolRecommendation} from "../../types";
 
@@ -19,9 +20,9 @@ export default function ToolRecommendations({tools}: ToolRecommendationsProps) {
     const {t} = useI18n();
     if (tools.length === 0) {
         return (
-            <div className="tile" data-testid="tool-recs-empty">
+            <Tile data-testid="tool-recs-empty">
                 <p className="muted">{t("dashboard.no_data")}</p>
-            </div>
+            </Tile>
         );
     }
     return (

@@ -21,6 +21,7 @@
 import {useEffect, useState} from "react";
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import {
     isSpeechRecognitionSupported,
 } from "../../lib/voice/speech-recognition";
@@ -86,12 +87,12 @@ export default function VoiceSettingsSection() {
                                     "Show speech buttons",
                                 )}
                             </span>
-                            <span className="form-hint">
+                            <FormHint as="span">
                                 {t(
                                     "settings.voice.tts_enabled_help",
                                     "Reads AI responses aloud when you click the speaker icon.",
                                 )}
-                            </span>
+                            </FormHint>
                         </span>
                         <input
                             type="checkbox"
@@ -112,12 +113,12 @@ export default function VoiceSettingsSection() {
                                     "Auto-play AI responses",
                                 )}
                             </span>
-                            <span className="form-hint">
+                            <FormHint as="span">
                                 {t(
                                     "settings.voice.auto_play_help",
                                     "Speak each AI response automatically (default off).",
                                 )}
-                            </span>
+                            </FormHint>
                         </span>
                         <input
                             type="checkbox"
@@ -135,12 +136,12 @@ export default function VoiceSettingsSection() {
                             <span className="form-label">
                                 {t("settings.voice.tts_voice", "Voice")}
                             </span>
-                            <span className="form-hint">
+                            <FormHint as="span">
                                 {t(
                                     "settings.voice.tts_voice_help",
                                     "Default uses the closest match for your project language.",
                                 )}
-                            </span>
+                            </FormHint>
                         </span>
                         <select
                             value={prefs.ttsVoiceName}
@@ -169,9 +170,9 @@ export default function VoiceSettingsSection() {
                             <span className="form-label">
                                 {t("settings.voice.tts_rate", "Rate")}
                             </span>
-                            <span className="form-hint">
+                            <FormHint as="span">
                                 {prefs.ttsRate.toFixed(2)} ×
-                            </span>
+                            </FormHint>
                         </span>
                         <input
                             type="range"
@@ -193,9 +194,9 @@ export default function VoiceSettingsSection() {
                             <span className="form-label">
                                 {t("settings.voice.tts_pitch", "Pitch")}
                             </span>
-                            <span className="form-hint">
+                            <FormHint as="span">
                                 {prefs.ttsPitch.toFixed(2)} ×
-                            </span>
+                            </FormHint>
                         </span>
                         <input
                             type="range"
@@ -224,12 +225,12 @@ export default function VoiceSettingsSection() {
                                     "Show microphone button",
                                 )}
                             </span>
-                            <span className="form-hint">
+                            <FormHint as="span">
                                 {t(
                                     "settings.voice.stt_enabled_help",
                                     "Dictate your replies via the browser's speech recognition.",
                                 )}
-                            </span>
+                            </FormHint>
                         </span>
                         <input
                             type="checkbox"
@@ -250,12 +251,12 @@ export default function VoiceSettingsSection() {
                                     "Dictation language override",
                                 )}
                             </span>
-                            <span className="form-hint">
+                            <FormHint as="span">
                                 {t(
                                     "settings.voice.stt_lang_help",
                                     "Leave empty to use the project / UI language. Format: BCP-47 (e.g. en-US, es-ES).",
                                 )}
-                            </span>
+                            </FormHint>
                         </span>
                         <input
                             type="text"
@@ -279,12 +280,12 @@ export default function VoiceSettingsSection() {
                             "Pronunciation Practice",
                         )}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.voice.pronunciation_enabled_help",
                             "Surfaces a 'Pronunciation Practice' button on language-learning project dashboards.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"

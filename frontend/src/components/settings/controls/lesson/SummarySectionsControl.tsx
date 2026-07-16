@@ -20,6 +20,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import { useSummarySections } from "../../../../hooks/settings/useSummarySections";
 import {
   moveSummarySection,
@@ -82,12 +83,12 @@ export default function SummarySectionsControl() {
       <h2 className="settings-section-title">
         {t("settings.section_lesson_summary", "Lesson summary")}
       </h2>
-      <p className="form-hint mb-2">
+      <FormHint className="mb-2">
         {t(
           "settings.summary_sections_desc",
           "Choose which sections the summary at the end of a lesson shows and in which order. The actions for continuing are always visible.",
         )}
-      </p>
+      </FormHint>
       <ol
         className="flex flex-col gap-2"
         data-testid="summary-sections-order-list"
