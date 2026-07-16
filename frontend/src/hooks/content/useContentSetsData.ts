@@ -33,6 +33,7 @@ import {
   type SharedContribution,
 } from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
+import { isHiddenSet } from "../../lib/content/repos/hidden-sets";
 import {
   fetchRecommendedRepos,
   recommendedSource,
@@ -276,7 +277,15 @@ export function useContentSetsData(): ContentSetsData {
     try {
       const data = await getStorage().contentLoader.listSets();
       if (!mountedRef.current) return;
-      setSets(data.sets);
+      // Hidden dev/reference sets never show in "Meine Inhalte", even if one was
+      // already downloaded/imported from a connected test repo (see hidden-sets).
+      // Keep the original array reference when nothing is hidden (the common
+      // case) so `sets` stays referentially stable across reloads and doesn't
+      // spuriously re-fire consumers keyed on its identity.
+      const visible = data.sets.some((s) => isHiddenSet(s.source, s.id))
+        ? data.sets.filter((s) => !isHiddenSet(s.source, s.id))
+        : data.sets;
+      setSets(visible);
       setSources(data.sources);
     } catch (err) {
       if (!mountedRef.current) return;

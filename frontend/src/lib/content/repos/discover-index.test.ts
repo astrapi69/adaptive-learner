@@ -149,6 +149,21 @@ describe("queryDiscoverSets", () => {
     );
     expect(result.map((s) => s.id)).toEqual(["fr", "es"]);
   });
+
+  it("drops hidden dev/reference sets even from a stale cache", () => {
+    // A pre-blocklist cache could still carry the graded-quiz-demo entry; the
+    // display filter must exclude it regardless of the parse-time drop.
+    const sets = [
+      makeSet({ id: "es", name: "Spanisch" }),
+      makeSet({
+        id: "graded-quiz-demo-from-de",
+        name: "Graded-Quiz Demo (Test)",
+        repo_url: "astrapi69/adaptive-learner-content-test",
+      }),
+    ];
+    const result = queryDiscoverSets(sets, EMPTY_FILTERS, "relevance");
+    expect(result.map((s) => s.id)).toEqual(["es"]);
+  });
 });
 
 describe("available* option helpers", () => {
