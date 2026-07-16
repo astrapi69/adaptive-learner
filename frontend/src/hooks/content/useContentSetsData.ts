@@ -33,6 +33,7 @@ import {
   type SharedContribution,
 } from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
+import { isHiddenSet } from "../../lib/content/repos/hidden-sets";
 import {
   fetchRecommendedRepos,
   recommendedSource,
@@ -276,7 +277,16 @@ export function useContentSetsData(): ContentSetsData {
     try {
       const data = await getStorage().contentLoader.listSets();
       if (!mountedRef.current) return;
-      setSets(data.sets);
+      // #1702 — filter hidden reference/conformance fixtures out of "Meine
+      // Inhalte", covering a set that may already have been downloaded/imported.
+      // Preserve the original array reference when nothing is hidden (the
+      // common case): the downstream ``[sets]``-keyed effects rely on ``sets``
+      // being referentially stable between renders, so allocate a new array
+      // only when a hidden set is actually removed.
+      const visible = data.sets.some((s) => isHiddenSet(s.source, s.id))
+        ? data.sets.filter((s) => !isHiddenSet(s.source, s.id))
+        : data.sets;
+      setSets(visible);
       setSources(data.sources);
     } catch (err) {
       if (!mountedRef.current) return;
