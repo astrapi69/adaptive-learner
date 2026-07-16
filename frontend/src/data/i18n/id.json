@@ -2704,6 +2704,30 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "heading": "Buat pelajaran dari teks",
+      "intro": "Tempel satu bagian (mis. satu bab) dari buku teks Anda. AI menuliskannya kembali dengan kata-katanya sendiri sebagai teori dan membuat latihan. Tambahkan bagian lain dengan menjalankan wizard lagi.",
+      "text_label": "Bagian buku teks",
+      "text_placeholder": "Tempel teks bab di sini ...",
+      "meta_legend": "Referensi buku (opsional)",
+      "title_label": "Judul buku",
+      "author_label": "Penulis",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "Buat teori + latihan",
+      "generating": "Membuat ...",
+      "feature": "untuk membuat pelajaran dari teks",
+      "generated": "{t} langkah teori dan {e} latihan dibuat.",
+      "summary": "{t} langkah teori, {e} latihan siap.",
+      "paste_required": "Tempel dulu satu bagian buku teks Anda.",
+      "theory_failed": "AI tidak menghasilkan teori yang dapat digunakan. Silakan coba lagi.",
+      "exercises_failed": "Tidak ada latihan yang dapat digunakan. Silakan coba lagi.",
+      "generate_failed": "Tidak dapat membuat pelajaran. Silakan coba lagi.",
+      "generate_to_advance": "Buat pelajaran dari teks Anda untuk melanjutkan.",
+      "review_theory": "{n} langkah teori",
+      "review_exercises": "{n} latihan",
+      "review_book": "Buku: {title}"
+    },
     "title": "Buat pelajaran",
     "step_of": "Langkah {current} dari {total}",
     "step_pending": "Langkah ini akan hadir pada pembaruan berikutnya.",
@@ -2807,6 +2831,10 @@
       "file_saved": "Pelajaran disimpan sebagai berkas."
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "Pelajaran pengetahuan dari teks",
+        "desc": "Tempel bagian buku teks; AI menulis teori dengan kata-katanya sendiri dan membuat latihan."
+      },
       "heading": "Mulai dari templat",
       "blank": {
         "title": "Pelajaran Kosong",

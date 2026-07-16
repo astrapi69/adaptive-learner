@@ -103,6 +103,56 @@ def test_saved_set_is_listed_and_playable(tmp_path: Path) -> None:
     assert len(loaded.steps) == len(lesson.steps)
 
 
+def test_save_user_set_persists_book_block(tmp_path: Path) -> None:
+    """#1743 — an optional book block is written to ``sets[].book`` and
+    survives a re-read from the cached manifest."""
+    from adaptive_learner_content_loader.cache import read_manifest
+    from adaptive_learner_content_loader.models import ContentSetBook
+    from adaptive_learner_content_loader.service import USER_SET_VERSION
+
+    service = _service(tmp_path)
+    book = ContentSetBook(
+        title="KI fuer Einsteiger",
+        author="Asterios Raptis",
+        url="https://example.com/ki",
+        asin="B0F43H6T2M",
+    )
+    entry = service.save_user_set(
+        set_id="conv-1",
+        title="KI fuer Einsteiger",
+        target_language="de",
+        source_language="de",
+        level="A1",
+        origin="imported",
+        lessons=[_lesson()],
+        book=book,
+    )
+    assert entry.set.book is not None
+    assert entry.set.book.title == "KI fuer Einsteiger"
+
+    # Round-trip: re-read the cached manifest from disk.
+    manifest = read_manifest(
+        tmp_path, USER_GENERATED_SOURCE, "conv-1", USER_SET_VERSION
+    )
+    assert manifest.sets[0].book is not None
+    assert manifest.sets[0].book.title == "KI fuer Einsteiger"
+    assert manifest.sets[0].book.asin == "B0F43H6T2M"
+
+
+def test_save_user_set_without_book_leaves_it_unset(tmp_path: Path) -> None:
+    """A save with no book block leaves ``sets[].book`` as ``None``."""
+    service = _service(tmp_path)
+    entry = service.save_user_set(
+        set_id="conv-1",
+        title="Spanish travel vocabulary",
+        target_language="es",
+        level="beginner",
+        origin="analysis",
+        lessons=[_lesson()],
+    )
+    assert entry.set.book is None
+
+
 def test_resave_overwrites_in_place(tmp_path: Path) -> None:
     service = _service(tmp_path)
     service.save_user_set(

@@ -46,6 +46,7 @@ from .models import (
     CURRENT_SCHEMA_VERSION,
     ContentManifest,
     ContentSet,
+    ContentSetBook,
     check_set_assets_size,
 )
 from .schema import Lesson
@@ -565,6 +566,7 @@ class ContentLoaderService:
         source_language: str = "en",
         title_native: str | None = None,
         description: str | None = None,
+        book: ContentSetBook | None = None,
     ) -> SetEntry:
         """Persist a user-generated set into the cache (Phase 59B).
 
@@ -588,6 +590,7 @@ class ContentLoaderService:
             description=description,
             tags=[],
             assets=[],
+            book=book,
         )
         manifest = ContentManifest(
             schema_version=CURRENT_SCHEMA_VERSION,

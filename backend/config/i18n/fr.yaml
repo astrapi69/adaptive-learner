@@ -2468,6 +2468,29 @@ missions:
       description: "Apprends le week-end."
 
 create_lesson:
+  book:
+    heading: "Creer une lecon a partir d'un texte"
+    intro: "Collez une section (par ex. un chapitre) de votre manuel. L'IA la reformule avec ses propres mots en theorie et genere des exercices. Ajoutez une autre section en relançant l'assistant."
+    text_label: "Section du manuel"
+    text_placeholder: "Collez le texte du chapitre ici ..."
+    meta_legend: "Reference du livre (facultatif)"
+    title_label: "Titre du livre"
+    author_label: "Auteur"
+    url_label: "URL"
+    asin_label: "ISBN / ASIN"
+    generate: "Generer theorie + exercices"
+    generating: "Generation ..."
+    feature: "pour creer une lecon a partir d'un texte"
+    generated: "{t} etape(s) de theorie et {e} exercice(s) generes."
+    summary: "{t} etape(s) de theorie, {e} exercice(s) prets."
+    paste_required: "Collez d'abord une section de votre manuel."
+    theory_failed: "L'IA n'a produit aucune theorie exploitable. Veuillez reessayer."
+    exercises_failed: "Aucun exercice exploitable n'a ete genere. Veuillez reessayer."
+    generate_failed: "Impossible de generer la lecon. Veuillez reessayer."
+    generate_to_advance: "Generez la lecon a partir de votre texte pour continuer."
+    review_theory: "{n} etape(s) de theorie"
+    review_exercises: "{n} exercice(s)"
+    review_book: "Livre : {title}"
   title: "Créer une leçon"
   step_of: "Étape {current} sur {total}"
   step_pending: "Cette étape arrive dans la prochaine mise à jour."
@@ -2563,6 +2586,9 @@ create_lesson:
     save_file: "Enregistrer dans un fichier"
     file_saved: "Leçon enregistrée dans un fichier."
   templates:
+    knowledge_from_text:
+      title: "Lecon de connaissances a partir d'un texte"
+      desc: "Collez une section de manuel ; l'IA redige la theorie avec ses propres mots et genere des exercices."
     heading: "Partir d'un modèle"
     blank:
       title: "Leçon vierge"

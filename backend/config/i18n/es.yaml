@@ -2468,6 +2468,29 @@ missions:
       description: "Aprende el fin de semana."
 
 create_lesson:
+  book:
+    heading: "Crear una leccion a partir de texto"
+    intro: "Pega una seccion (p. ej. un capitulo) de tu libro de texto. La IA lo reescribe con sus propias palabras como teoria y genera ejercicios. Anade otra seccion ejecutando el asistente de nuevo."
+    text_label: "Seccion del libro"
+    text_placeholder: "Pega aqui el texto del capitulo ..."
+    meta_legend: "Referencia del libro (opcional)"
+    title_label: "Titulo del libro"
+    author_label: "Autor"
+    url_label: "URL"
+    asin_label: "ISBN / ASIN"
+    generate: "Generar teoria + ejercicios"
+    generating: "Generando ..."
+    feature: "para crear una leccion a partir de texto"
+    generated: "{t} paso(s) de teoria y {e} ejercicio(s) generados."
+    summary: "{t} paso(s) de teoria, {e} ejercicio(s) listos."
+    paste_required: "Pega primero una seccion de tu libro de texto."
+    theory_failed: "La IA no devolvio teoria utilizable. Intentalo de nuevo."
+    exercises_failed: "No se generaron ejercicios utilizables. Intentalo de nuevo."
+    generate_failed: "No se pudo generar la leccion. Intentalo de nuevo."
+    generate_to_advance: "Genera la leccion a partir de tu texto para continuar."
+    review_theory: "{n} paso(s) de teoria"
+    review_exercises: "{n} ejercicio(s)"
+    review_book: "Libro: {title}"
   title: "Crear una lección"
   step_of: "Paso {current} de {total}"
   step_pending: "Este paso llegará en la próxima actualización."
@@ -2563,6 +2586,9 @@ create_lesson:
     save_file: "Guardar como archivo"
     file_saved: "Lección guardada como archivo."
   templates:
+    knowledge_from_text:
+      title: "Leccion de conocimiento a partir de texto"
+      desc: "Pega una seccion de un libro; la IA escribe la teoria con sus propias palabras y genera ejercicios."
     heading: "Empezar con una plantilla"
     blank:
       title: "Lección en blanco"

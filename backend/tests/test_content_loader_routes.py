@@ -483,6 +483,32 @@ def test_save_user_set_with_language_pair(client: TestClient) -> None:
     assert entry["language"] == "fr"  # legacy alias mirrors target
 
 
+def test_save_user_set_with_book_block(client: TestClient) -> None:
+    """#1743 — the optional book block round-trips through the route into
+    the response's ``book`` field."""
+    lesson = _user_lesson_payload("conv-book")
+    body = {
+        "set_id": "conv-book",
+        "title": "KI fuer Einsteiger",
+        "target_language": "de",
+        "source_language": "de",
+        "level": "A1",
+        "origin": "imported",
+        "book": {
+            "title": "KI fuer Einsteiger",
+            "author": "Asterios Raptis",
+            "asin": "B0F43H6T2M",
+        },
+        "lessons": [lesson],
+    }
+    r = client.post("/api/plugins/content-loader/user-sets", json=body)
+    assert r.status_code == 200, r.text
+    entry = r.json()
+    assert entry["book"] is not None
+    assert entry["book"]["title"] == "KI fuer Einsteiger"
+    assert entry["book"]["asin"] == "B0F43H6T2M"
+
+
 def test_save_user_set_rejects_bad_set_id(client: TestClient) -> None:
     body = {
         "set_id": "Not A Slug",

@@ -820,6 +820,9 @@ export async function saveUserSetDexie(
     downloaded_at: now,
     status: "active",
     manifest_yaml: "",
+    // #1743 — persist the optional set-level book block so a book-authored
+    // set surfaces it in "Vertiefe das Thema", same as a downloaded set.
+    book: input.book ?? null,
   };
   const files: ContentSetFileRow[] = input.lessons.map((lesson) => ({
     id: fileKey(setPk, `lessons/${lesson.id}.json`),

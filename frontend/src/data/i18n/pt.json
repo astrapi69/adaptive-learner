@@ -2704,6 +2704,30 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "heading": "Criar uma licao a partir de texto",
+      "intro": "Cole uma secao (p. ex. um capitulo) do seu livro. A IA a reescreve com as proprias palavras como teoria e gera exercicios. Adicione outra secao executando o assistente novamente.",
+      "text_label": "Secao do livro",
+      "text_placeholder": "Cole o texto do capitulo aqui ...",
+      "meta_legend": "Referencia do livro (opcional)",
+      "title_label": "Titulo do livro",
+      "author_label": "Autor",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "Gerar teoria + exercicios",
+      "generating": "Gerando ...",
+      "feature": "para criar uma licao a partir de texto",
+      "generated": "{t} passo(s) de teoria e {e} exercicio(s) gerados.",
+      "summary": "{t} passo(s) de teoria, {e} exercicio(s) prontos.",
+      "paste_required": "Cole primeiro uma secao do seu livro.",
+      "theory_failed": "A IA nao retornou teoria utilizavel. Tente novamente.",
+      "exercises_failed": "Nenhum exercicio utilizavel foi gerado. Tente novamente.",
+      "generate_failed": "Nao foi possivel gerar a licao. Tente novamente.",
+      "generate_to_advance": "Gere a licao a partir do seu texto para continuar.",
+      "review_theory": "{n} passo(s) de teoria",
+      "review_exercises": "{n} exercicio(s)",
+      "review_book": "Livro: {title}"
+    },
     "title": "Criar uma lição",
     "step_of": "Passo {current} de {total}",
     "step_pending": "Este passo chega na próxima atualização.",
@@ -2807,6 +2831,10 @@
       "file_saved": "Lição guardada como ficheiro."
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "Licao de conhecimento a partir de texto",
+        "desc": "Cole uma secao de livro; a IA escreve a teoria com as proprias palavras e gera exercicios."
+      },
       "heading": "Começar a partir de um modelo",
       "blank": {
         "title": "Lição em branco",
