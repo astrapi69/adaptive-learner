@@ -139,8 +139,14 @@ jobs:
       # SPA-router fallback for GH Pages: without 404.html, a direct
       # hit on a nested route (``/dashboard``, ``/settings``) returns
       # a GH-Pages 404 instead of letting React Router resolve it.
+      # #1713 — a real SPA shell inside the bundled ``content/``
+      # directory keeps the ``/content`` route from 301+404ing against
+      # the directory (see deploy-gh-pages.yml for the full story).
       - name: Configure SPA fallback
-        run: cp frontend/dist/index.html frontend/dist/404.html
+        run: |
+          cp frontend/dist/index.html frontend/dist/404.html
+          mkdir -p frontend/dist/content
+          cp frontend/dist/index.html frontend/dist/content/index.html
 
       # GitHub Pages otherwise runs the build through Jekyll, which skips
       # files/dirs starting with "_" and can choke on the Vite output.
