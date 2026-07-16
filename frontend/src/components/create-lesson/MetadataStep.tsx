@@ -6,6 +6,8 @@
  * come via props.
  */
 
+import {Info} from "lucide-react";
+
 import {Input} from "@/components/ui/input";
 import {
     Select,
@@ -57,35 +59,37 @@ export default function MetadataStep({
 }: MetadataStepProps) {
     return (
         <section
-            className="create-lesson-step"
+            className="create-lesson-step flex flex-col gap-6"
             data-testid="create-lesson-step-1"
             aria-label={t("create_lesson.meta.heading", "Lesson details")}
         >
-            <h2>{t("create_lesson.meta.heading", "Lesson details")}</h2>
+            <h2 className="text-xl font-semibold text-fg-primary">
+                {t("create_lesson.meta.heading", "Lesson details")}
+            </h2>
 
             <div
-                className="create-lesson-templates"
+                className="create-lesson-templates flex flex-col gap-2"
                 data-testid="create-lesson-templates"
             >
-                <p className="form-label">
+                <p className="form-label text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.templates.heading",
                         "Start from a template",
                     )}
                 </p>
-                <div className="template-cards">
+                <div className="template-cards grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {LESSON_TEMPLATE_KEYS.map((key) => (
                         <button
                             type="button"
                             key={key}
-                            className="template-card"
+                            className="template-card flex flex-col gap-1 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-accent hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                             data-testid={`template-${key}`}
                             onClick={() => onApplyTemplate(key)}
                         >
-                            <span className="template-card-title">
+                            <span className="template-card-title font-semibold text-fg-primary">
                                 {t(`create_lesson.templates.${key}.title`, TEMPLATE_FALLBACKS[key].title)}
                             </span>
-                            <span className="template-card-desc muted">
+                            <span className="template-card-desc muted text-sm text-fg-muted">
                                 {t(`create_lesson.templates.${key}.desc`, TEMPLATE_FALLBACKS[key].desc)}
                             </span>
                         </button>
@@ -93,8 +97,8 @@ export default function MetadataStep({
                 </div>
             </div>
 
-            <label className="form-row">
-                <span className="form-label">
+            <label className="form-row flex flex-col gap-1.5">
+                <span className="form-label text-sm font-medium text-fg-primary">
                     {t("create_lesson.meta.title_label", "Title")} *
                 </span>
                 <Input
@@ -108,22 +112,22 @@ export default function MetadataStep({
                     onChange={(e) => onUpdate("title", e.target.value)}
                     autoFocus
                 />
+                {showError && titleMissing && (
+                    <span
+                        className="m-0 text-sm font-medium text-[var(--error)]"
+                        data-testid="create-lesson-title-error"
+                        role="alert"
+                    >
+                        {t(
+                            "create_lesson.meta.title_required",
+                            "A title is required.",
+                        )}
+                    </span>
+                )}
             </label>
-            {showError && titleMissing && (
-                <FormHint
-                    variant="warning"
-                    data-testid="create-lesson-title-error"
-                    role="alert"
-                >
-                    {t(
-                        "create_lesson.meta.title_required",
-                        "A title is required.",
-                    )}
-                </FormHint>
-            )}
 
-            <label className="form-row">
-                <span className="form-label">
+            <label className="form-row flex flex-col gap-1.5">
+                <span className="form-label text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.meta.title_native_label",
                         "Title in target language",
@@ -137,87 +141,98 @@ export default function MetadataStep({
                 />
             </label>
 
-            <div className="form-row form-row-inline">
-                <div className="form-field">
-                    <span className="form-label">
-                        {t(
-                            "create_lesson.meta.target_lang_label",
-                            "Language learned",
-                        )}{" "}
-                        *
-                    </span>
-                    <Select
-                        value={meta.targetLanguage}
-                        onValueChange={(v) => onUpdate("targetLanguage", v)}
-                    >
-                        <SelectTrigger data-testid="create-lesson-target-lang">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {LANGUAGE_OPTIONS.map((o) => (
-                                <SelectItem key={o.code} value={o.code}>
-                                    {o.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+            <div className="form-row form-row-inline flex flex-col gap-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="form-field flex flex-col gap-1.5">
+                        <span className="form-label text-sm font-medium text-fg-primary">
+                            {t(
+                                "create_lesson.meta.target_lang_label",
+                                "Language learned",
+                            )}{" "}
+                            *
+                        </span>
+                        <Select
+                            value={meta.targetLanguage}
+                            onValueChange={(v) => onUpdate("targetLanguage", v)}
+                        >
+                            <SelectTrigger data-testid="create-lesson-target-lang">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {LANGUAGE_OPTIONS.map((o) => (
+                                    <SelectItem key={o.code} value={o.code}>
+                                        {o.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="form-field flex flex-col gap-1.5">
+                        <span className="form-label text-sm font-medium text-fg-primary">
+                            {t("create_lesson.meta.source_lang_label", "Your language")}
+                        </span>
+                        <Select
+                            value={meta.sourceLanguage}
+                            onValueChange={(v) => onUpdate("sourceLanguage", v)}
+                        >
+                            <SelectTrigger data-testid="create-lesson-source-lang">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {LANGUAGE_OPTIONS.map((o) => (
+                                    <SelectItem key={o.code} value={o.code}>
+                                        {o.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="form-field flex flex-col gap-1.5">
+                        <span className="form-label text-sm font-medium text-fg-primary">
+                            {t("create_lesson.meta.level_label", "Level")}
+                        </span>
+                        <Select
+                            value={meta.level}
+                            onValueChange={(v) => onUpdate("level", v)}
+                        >
+                            <SelectTrigger data-testid="create-lesson-level">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {CEFR_LEVELS.map((lvl) => (
+                                    <SelectItem key={lvl} value={lvl}>
+                                        {lvl}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
-                <div className="form-field">
-                    <span className="form-label">
-                        {t("create_lesson.meta.source_lang_label", "Your language")}
-                    </span>
-                    <Select
-                        value={meta.sourceLanguage}
-                        onValueChange={(v) => onUpdate("sourceLanguage", v)}
+                {/* #1715 — a same-language pair (source === target) is a
+                    legitimate knowledge-domain lesson (e.g. ki-einsteiger:
+                    de -> de). Surface a neutral, non-blocking hint, mirroring
+                    SaveOfflineLessonModal — never a blocking error. */}
+                {sameLanguage && (
+                    <FormHint
+                        className="flex items-start gap-1.5"
+                        data-testid="create-lesson-same-language-hint"
                     >
-                        <SelectTrigger data-testid="create-lesson-source-lang">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {LANGUAGE_OPTIONS.map((o) => (
-                                <SelectItem key={o.code} value={o.code}>
-                                    {o.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="form-field">
-                    <span className="form-label">
-                        {t("create_lesson.meta.level_label", "Level")}
-                    </span>
-                    <Select
-                        value={meta.level}
-                        onValueChange={(v) => onUpdate("level", v)}
-                    >
-                        <SelectTrigger data-testid="create-lesson-level">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {CEFR_LEVELS.map((lvl) => (
-                                <SelectItem key={lvl} value={lvl}>
-                                    {lvl}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
+                        <Info
+                            className="mt-0.5 h-4 w-4 shrink-0"
+                            aria-hidden="true"
+                        />
+                        <span>
+                            {t(
+                                "content.save_lesson.same_language_hint",
+                                "Learned and your language are the same — fine for a grammar or knowledge lesson. When shared, it lands in the same-language branch of the content tree.",
+                            )}
+                        </span>
+                    </FormHint>
+                )}
             </div>
-            {showError && sameLanguage && (
-                <FormHint
-                    variant="warning"
-                    data-testid="create-lesson-same-language-error"
-                    role="alert"
-                >
-                    {t(
-                        "create_lesson.meta.same_language",
-                        "The language learned must differ from your language.",
-                    )}
-                </FormHint>
-            )}
 
-            <label className="form-row">
-                <span className="form-label">
+            <label className="form-row flex flex-col gap-1.5">
+                <span className="form-label text-sm font-medium text-fg-primary">
                     {t(
                         "create_lesson.meta.description_label",
                         "Topic / description",
@@ -225,14 +240,15 @@ export default function MetadataStep({
                 </span>
                 <textarea
                     data-testid="create-lesson-description"
+                    className="flex min-h-[5rem] w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     value={meta.description}
                     rows={3}
                     onChange={(e) => onUpdate("description", e.target.value)}
                 />
             </label>
 
-            <label className="form-row">
-                <span className="form-label">
+            <label className="form-row flex flex-col gap-1.5">
+                <span className="form-label text-sm font-medium text-fg-primary">
                     {t("create_lesson.meta.author_label", "Author name")}
                 </span>
                 <Input
