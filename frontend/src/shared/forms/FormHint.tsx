@@ -48,15 +48,11 @@ export default function FormHint({
   ...rest
 }: FormHintProps) {
   const Tag = as;
+  // Compute the modifier class OUTSIDE cn() so the ``=== "warning"`` literal
+  // is not mis-read as a class name by the dead-classnames extractor (#1465).
+  const variantClass = variant === "warning" ? "form-hint-warning" : undefined;
   return (
-    <Tag
-      className={cn(
-        "form-hint",
-        variant === "warning" && "form-hint-warning",
-        className,
-      )}
-      {...rest}
-    >
+    <Tag className={cn("form-hint", variantClass, className)} {...rest}>
       {children}
     </Tag>
   );
