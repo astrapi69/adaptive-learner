@@ -131,12 +131,25 @@ warten nur darauf, vom Wizard befuellt zu werden.
 
 ---
 
-## 5. Offene Fragen (UNENTSCHIEDEN - blockieren einen sauberen Auftrag)
+## 5. Offene Fragen - ENTSCHIEDEN (2026-07-16), Feature-Auftrag #1743
 
-Diese Fragen sind **bewusst noch nicht entschieden**. Sie werden nicht
-implizit in einem Umsetzungsauftrag mitgetroffen; ein GitHub-Issue fuer das
-Feature entsteht erst, wenn sie geklaert sind (sonst ungeklaerter Scope im
-Tracker).
+Die frueher offenen Fragen sind entschieden; daraus entstand der
+scope-geklaerte Feature-Auftrag
+[#1743](https://github.com/astrapi69/adaptive-learner/issues/1743).
+Entscheidungen (Prinzip durchgaengig: **einfachere Variante zuerst**):
+
+1. **Eingabeformat:** reiner Text-Paste zuerst, **kein** PDF/Word-Upload in
+   v1 (Textextraktion ist eigener, nicht trivialer Aufwand; Paste ist durch
+   den Chat-Import als tragfaehig belegt). PDF/Word = spaeteres Follow-up.
+2. **Kapitel-Segmentierung:** der Nutzer fuegt selbst in Haeppchen ein,
+   **keine** automatische Grenzenerkennung (Segmentierung ist eine
+   redaktionelle Entscheidung, wie der manuelle Prozess zeigte).
+3. **Umformulierungs-Pflicht:** bleibt Design-Leitplanke, keine Wahl - die
+   KI muss umformulieren, nicht textnah zerlegen (Urheberrecht + Qualitaet).
+4. **Buch-Metadaten im Wizard:** ja, im **selben** Auftrag (schreibt
+   `sets[].book`, #769) - sonst halbes Feature.
+
+Die urspruenglichen Frageformulierungen bleiben unten als Herleitung stehen.
 
 1. **Eingabeformat:** Reiner Text-Paste (wie beim Chat-Import) als erster
    Wurf - oder direkt auch PDF/Word-Upload mit Textextraktion?
