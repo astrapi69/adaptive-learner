@@ -277,11 +277,12 @@ export function useContentSetsData(): ContentSetsData {
     try {
       const data = await getStorage().contentLoader.listSets();
       if (!mountedRef.current) return;
-      // Hidden dev/reference sets never show in "Meine Inhalte", even if one was
-      // already downloaded/imported from a connected test repo (see hidden-sets).
-      // Keep the original array reference when nothing is hidden (the common
-      // case) so `sets` stays referentially stable across reloads and doesn't
-      // spuriously re-fire consumers keyed on its identity.
+      // #1702 — filter hidden reference/conformance fixtures out of "Meine
+      // Inhalte", covering a set that may already have been downloaded/imported.
+      // Preserve the original array reference when nothing is hidden (the
+      // common case): the downstream ``[sets]``-keyed effects rely on ``sets``
+      // being referentially stable between renders, so allocate a new array
+      // only when a hidden set is actually removed.
       const visible = data.sets.some((s) => isHiddenSet(s.source, s.id))
         ? data.sets.filter((s) => !isHiddenSet(s.source, s.id))
         : data.sets;

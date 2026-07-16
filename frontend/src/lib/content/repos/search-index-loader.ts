@@ -143,9 +143,8 @@ function normalizeSet(
 ): SearchableSet | null {
   const id = asString(raw.id);
   if (!id) return null;
-  // Hidden dev/reference sets never enter the discovery catalogue — dropped at
-  // parse time so they also stay out of the facets, counts, and the cache the
-  // parsed sets are written into.
+  // #1702 — drop hidden reference/conformance fixtures at parse time, so they
+  // never enter the Discover catalogue, its facets/counts, or the written cache.
   if (isHiddenSet(repoSource, id)) return null;
   return {
     id,
