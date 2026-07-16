@@ -163,17 +163,23 @@ code {
  * layered Tailwind utility, putting accent text on an accent
  * background (invisible in dark mode).
  * #194 — same hazard for hand-rolled button anchors
- * (``<Link className="btn btn-primary">`` in FocusAreasCard /
- * ReviewQueueCard): this rule's specificity (0,1,1) beats
- * ``.btn-primary`` (0,1,0), so accent text landed on the accent
- * background. Carve out ``.btn`` too so the ``.btn-*`` variant color
- * wins; ``.btn`` sets its own ``text-decoration: none``. */
-a:not([data-slot="button"]):not(.btn) {
+ * (``<Link className="btn btn-primary">``): the carve-outs used to
+ * raise this rule's specificity so it ALSO beat ``.btn-primary``.
+ * #1723 — end the specificity arms race: the ``:not()`` arguments
+ * count toward specificity, so the carved-out selector reached
+ * (0,2,1) and silently beat EVERY class-styled anchor — next victim
+ * was ``.skip-to-content`` (0,1,0), whose ``--accent-fg`` label color
+ * lost and painted accent-on-accent (invisible skip link). Wrapping
+ * the exclusions in ``:where()`` keeps the exact same matched set at
+ * specificity (0,0,1): the layered-utility case stays protected by
+ * the carve-outs, and any unlayered class rule wins by normal
+ * specificity again. */
+a:where(:not([data-slot="button"]):not(.btn)) {
   color: var(--accent);
   text-decoration: none;
 }
 
-a:not([data-slot="button"]):not(.btn):hover {
+a:where(:not([data-slot="button"]):not(.btn)):hover {
   text-decoration: underline;
 }
 
