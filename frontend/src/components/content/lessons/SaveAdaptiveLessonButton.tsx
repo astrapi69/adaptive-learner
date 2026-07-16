@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
+import FormHint from "../../../shared/forms/FormHint";
 import { snapshotAdaptiveLesson } from "../../../lib/content/lesson/adaptive-snapshot";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import { getStorage } from "../../../storage";
@@ -52,9 +53,9 @@ export default function SaveAdaptiveLessonButton({
 
   if (saved) {
     return (
-      <p className="form-hint" data-testid="adaptive-save-done">
+      <FormHint data-testid="adaptive-save-done">
         {t("content.save_lesson.saved", "Saved to My Lessons.")}
-      </p>
+      </FormHint>
     );
   }
 

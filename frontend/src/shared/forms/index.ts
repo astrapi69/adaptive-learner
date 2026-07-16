@@ -3,6 +3,8 @@ export * from "./FilterBar";
 export {default as FilterBar} from "./FilterBar";
 export * from "./FilterMenuButton";
 export {default as FilterMenuButton} from "./FilterMenuButton";
+export * from "./FormHint";
+export {default as FormHint} from "./FormHint";
 export * from "./LanguagePicker";
 export {default as LanguagePicker} from "./LanguagePicker";
 export * from "./LessonPicker";

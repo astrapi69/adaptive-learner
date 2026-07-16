@@ -13,6 +13,7 @@
 import {useEffect, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import type {DirectionStrategy} from "../../../../lib/adaptive/lesson-generator";
 import {
   DIRECTION_PREF_CHANGE_EVENT,
@@ -64,12 +65,12 @@ export default function DirectionStrategyControl() {
       <h2 className="settings-section-title">
         {t("settings.direction.title", "Preferred exercise direction")}
       </h2>
-      <p className="form-hint">
+      <FormHint>
         {t(
           "settings.direction.hint",
           "How adaptive lessons balance recognising (target → your language) vs producing (your language → target). Producing is harder; Automatic introduces it once recognition is solid.",
         )}
-      </p>
+      </FormHint>
       <label className="form-row">
         <span className="form-label">
           {t("settings.direction.label", "Direction")}

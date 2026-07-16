@@ -9,6 +9,7 @@
  */
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import {SRS_MASTERY_THRESHOLD, SRS_SCHEDULE} from "../../lib/srs/status";
 import {docsHomeUrl} from "../../lib/help/help-routes";
 
@@ -22,12 +23,12 @@ export default function SrsTransparencySection() {
             <h2 className="settings-section-title">
                 {t("settings.section_srs", "Spaced repetition")}
             </h2>
-            <p className="form-hint">
+            <FormHint>
                 {t(
                     "srs.settings_intro",
                     "Items you miss come back for review on a schedule that stretches as you get them right, so you practise weak spots more often than ones you know.",
                 )}
-            </p>
+            </FormHint>
             <ul
                 className="mt-2 flex flex-col gap-1"
                 data-testid="srs-schedule"
@@ -56,12 +57,12 @@ export default function SrsTransparencySection() {
                     </li>
                 ))}
             </ul>
-            <p className="form-hint mt-2">
+            <FormHint className="mt-2">
                 {t(
                     "srs.settings_mastery",
                     "An item counts as mastered after {n} correct answers in a row; a wrong answer resets it.",
                 ).replace("{n}", String(SRS_MASTERY_THRESHOLD))}
-            </p>
+            </FormHint>
             <a
                 href={docsHomeUrl(lang)}
                 target="_blank"

@@ -20,6 +20,7 @@ import {
     type LessonTemplateKey,
 } from "../../lib/content/lesson/lesson-templates";
 import type {LessonMeta} from "../../lib/content/lesson/lesson-draft";
+import FormHint from "../../shared/forms/FormHint";
 
 type Translate = (key: string, fallback?: string) => string;
 
@@ -109,8 +110,8 @@ export default function MetadataStep({
                 />
             </label>
             {showError && titleMissing && (
-                <p
-                    className="form-hint form-hint-warning"
+                <FormHint
+                    variant="warning"
                     data-testid="create-lesson-title-error"
                     role="alert"
                 >
@@ -118,7 +119,7 @@ export default function MetadataStep({
                         "create_lesson.meta.title_required",
                         "A title is required.",
                     )}
-                </p>
+                </FormHint>
             )}
 
             <label className="form-row">
@@ -203,8 +204,8 @@ export default function MetadataStep({
                 </div>
             </div>
             {showError && sameLanguage && (
-                <p
-                    className="form-hint form-hint-warning"
+                <FormHint
+                    variant="warning"
                     data-testid="create-lesson-same-language-error"
                     role="alert"
                 >
@@ -212,7 +213,7 @@ export default function MetadataStep({
                         "create_lesson.meta.same_language",
                         "The language learned must differ from your language.",
                     )}
-                </p>
+                </FormHint>
             )}
 
             <label className="form-row">
