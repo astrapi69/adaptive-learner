@@ -182,4 +182,8 @@
 # und tragen jetzt erklaerende Kommentare. Eine dokumentierte
 # Aktivierung: .lesson-header h1 landscape font-size verliert an
 # text-sm (.legacy-wrap-accepted.json, konsistent mit #1628).
-7633
+# 2026-07-16: 7633 -> 7639 (#1723 Skip-Link-Fix): +6 reine
+# Doku-Kommentar-Zeilen in 01-base.css - die #146/#194-Carve-out-
+# Historie und die :where()-Begruendung am Content-Link-Selektor.
+# Kein neues CSS; der Selektor-Umbau selbst ist zeilenneutral.
+7639
