@@ -89,6 +89,18 @@ async function injectFakeSpeech(page: Page): Promise<void> {
     });
 }
 
+/** Expand the collapsible lesson-options panel (#1628) so the wrapped
+ *  controls (auto-read toggle, mode toggle, favorite) become visible.
+ *  Idempotent: only clicks the trigger while the panel is collapsed. */
+async function openLessonOptions(page: Page): Promise<void> {
+    const toggle = page.getByTestId("lesson-options-toggle");
+    await expect(toggle).toBeVisible();
+    if ((await toggle.getAttribute("aria-expanded")) !== "true") {
+        await toggle.click();
+    }
+    await expect(page.getByTestId("lesson-options-body")).toBeVisible();
+}
+
 /** UI-download the set once and land on the first lesson; returns the
  *  resolved lesson URL so later navigations skip the download. */
 async function downloadAndOpenFirstLesson(page: Page): Promise<string> {
@@ -140,8 +152,10 @@ test.describe("Lesson read-aloud (TTS)", () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
 
-        // First step is theory -> the auto-read toggle + theory control
-        // are present.
+        // First step is theory -> the auto-read toggle (inside the
+        // collapsible options panel since #1628) + theory control are
+        // present.
+        await openLessonOptions(page);
         await expect(page.getByTestId("lesson-tts-autoread")).toBeVisible();
         const theoryBtn = page.getByTestId("read-aloud-theory");
         await expect(theoryBtn).toBeVisible();
@@ -192,7 +206,9 @@ test.describe("Lesson read-aloud (TTS)", () => {
         page.on("pageerror", (e) => errors.push(e.message));
 
         // Turn auto-read on, then move to the next step: it should be
-        // spoken automatically.
+        // spoken automatically. The toggle lives inside the collapsible
+        // options panel (#1628), so expand it first.
+        await openLessonOptions(page);
         await page.getByTestId("lesson-tts-autoread").click();
         await expect(page.getByTestId("lesson-tts-autoread")).toHaveAttribute(
             "aria-pressed",
