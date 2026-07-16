@@ -36,6 +36,9 @@ export const MANAGED_USER_DATA_KEYS = [
     "adaptive-learner.contributions",
     "adaptive-learner.contributor-name",
     "adaptive-learner.custom-paths",
+    // #1709 — sets the user explicitly deleted from "Meine Inhalte"
+    // (lib/content/browse/dismissed-sets); survives a Dexie restore.
+    "adaptive-learner.dismissed-sets",
 ] as const;
 
 /**
