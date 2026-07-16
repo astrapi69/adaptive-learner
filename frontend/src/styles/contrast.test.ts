@@ -263,33 +263,39 @@ describe("#185 / #271 — raw <button> never falls back to UA system colours", (
   });
 });
 
-describe("#194 — button-styled anchors (.btn) keep their variant color", () => {
-  // `<Link className="btn btn-primary">` renders as `<a class="btn">`. The
-  // generic content-link rule `a:not([data-slot="button"])` has specificity
-  // (0,1,1) and would beat `.btn-primary` (0,1,0), painting accent text on
-  // the accent background (invisible CTAs on FocusAreasCard / ReviewQueueCard).
-  // The rule must carve out `.btn` so the variant color wins.
+describe("#194/#1723 — the content-link rule must not beat class-styled anchors", () => {
+  // `<Link className="btn btn-primary">` renders as `<a class="btn">`, and
+  // the skip link renders as `<a class="skip-to-content">`. The generic
+  // content-link rule needs its `data-slot`/`.btn` carve-outs for the
+  // LAYERED-utility case (#146/#194: an unlayered rule beats layered
+  // utilities regardless of specificity) — but the carve-out arguments
+  // count toward specificity, so a bare `a:not(...):not(.btn)` reached
+  // (0,2,1) and beat EVERY unlayered class rule at (0,1,0), painting the
+  // skip link's label accent-on-accent (#1723). The exclusions must
+  // therefore live inside `:where()`, which keeps the matched set but
+  // pins the selector at (0,0,1).
   const css = readLegacyCssSum();
 
-  it("the generic anchor color rule excludes .btn", () => {
+  it("the generic anchor color rule keeps both carve-outs inside :where()", () => {
     const rule = css.match(
-      /a:not\(\[data-slot="button"\]\):not\(\.btn\)\s*\{[^}]*color:\s*var\(--accent\)/,
+      /a:where\(:not\(\[data-slot="button"\]\):not\(\.btn\)\)\s*\{[^}]*color:\s*var\(--accent\)/,
     );
     expect(
       rule,
-      'missing `.btn` carve-out in `a:not([data-slot="button"]):not(.btn)` (see #194)',
+      'the content-link rule must be `a:where(:not([data-slot="button"]):not(.btn))` (see #194/#1723)',
     ).toBeTruthy();
   });
 
-  it("the bare anchor color rule no longer matches .btn anchors", () => {
-    // A pre-#194 `a:not([data-slot="button"]) { color: var(--accent) }`
-    // WITHOUT the `:not(.btn)` would re-introduce the bug.
+  it("no specificity-raising bare :not() variant of the anchor color rule exists", () => {
+    // A bare `a:not(...)` (outside :where()) raises the selector to
+    // (0,1,1)+ and re-introduces the #1723 class of bug: every anchor
+    // whose class sets a text color (skip-to-content, .btn-*) loses.
     const unguarded = css.match(
-      /a:not\(\[data-slot="button"\]\)(?!:not\(\.btn\))\s*\{[^}]*color:\s*var\(--accent\)/,
+      /\na:not\([^)]*\)(:not\([^)]*\))*\s*\{[^}]*color:\s*var\(--accent\)/,
     );
     expect(
       unguarded,
-      "generic anchor color rule must carry the `:not(.btn)` guard (see #194)",
+      "the anchor color rule must wrap its exclusions in :where() (see #1723)",
     ).toBeFalsy();
   });
 
@@ -297,6 +303,13 @@ describe("#194 — button-styled anchors (.btn) keep their variant color", () =>
     const btn = css.match(/\n\.btn\s*\{[^}]*\}/);
     expect(btn?.[0], ".btn rule not found").toBeTruthy();
     expect(btn?.[0]).toMatch(/text-decoration:\s*none/);
+  });
+
+  it("the skip link keeps its on-accent label color (#1723)", () => {
+    const skip = css.match(/\n\.skip-to-content\s*\{[^}]*\}/);
+    expect(skip?.[0], ".skip-to-content rule not found").toBeTruthy();
+    expect(skip?.[0]).toMatch(/color:\s*var\(--accent-fg\)/);
+    expect(skip?.[0]).toMatch(/background:\s*var\(--accent\)/);
   });
 });
 
