@@ -1,5 +1,6 @@
 import {useI18n} from "../../hooks/ui/useI18n";
 import {CYCLE_STEPS} from "../../lib/constants";
+import Tile from "../../shared/layout/Tile";
 import type {StepEvaluationSummary} from "../../types";
 
 interface Props {
@@ -25,14 +26,14 @@ export default function StepEvaluationInsights({summary}: Props) {
 
     if (!summary || summary.total_evaluations === 0) {
         return (
-            <div className="tile" data-testid="step-eval-insights-empty">
+            <Tile data-testid="step-eval-insights-empty">
                 <p className="muted">
                     {t(
                         "progress.step_eval_empty",
                         "No AI step-evaluation data yet — start a session to see insights here.",
                     )}
                 </p>
-            </div>
+            </Tile>
         );
     }
 
