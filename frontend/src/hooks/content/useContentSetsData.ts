@@ -33,6 +33,7 @@ import {
   type SharedContribution,
 } from "../../lib/content/placement/contribution-history";
 import { readUserRepos, userRepoSource } from "../../lib/content/repos/content-repos";
+import { isDismissedSet } from "../../lib/content/repos/dismissed-sets";
 import { isHiddenSet } from "../../lib/content/repos/hidden-sets";
 import {
   fetchRecommendedRepos,
@@ -279,11 +280,19 @@ export function useContentSetsData(): ContentSetsData {
       if (!mountedRef.current) return;
       // Hidden dev/reference sets never show in "Meine Inhalte", even if one was
       // already downloaded/imported from a connected test repo (see hidden-sets).
-      // Keep the original array reference when nothing is hidden (the common
+      // #1709 — sets the user explicitly deleted (dismissed-sets) are dropped
+      // too while they are NOT cached: the source catalogue keeps advertising
+      // them, so without this a bare Refresh restored every deleted set. A
+      // cached entry always wins over its dismissal record (re-downloading
+      // revives the set), and /discover intentionally keeps listing them.
+      // Keep the original array reference when nothing is dropped (the common
       // case) so `sets` stays referentially stable across reloads and doesn't
       // spuriously re-fire consumers keyed on its identity.
-      const visible = data.sets.some((s) => isHiddenSet(s.source, s.id))
-        ? data.sets.filter((s) => !isHiddenSet(s.source, s.id))
+      const dropped = (s: ContentSetEntry) =>
+        isHiddenSet(s.source, s.id) ||
+        (s.cached_version === null && isDismissedSet(s.source, s.id));
+      const visible = data.sets.some(dropped)
+        ? data.sets.filter((s) => !dropped(s))
         : data.sets;
       setSets(visible);
       setSources(data.sources);

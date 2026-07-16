@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { isOfficialSource } from "../../lib/content/repos/content-repos";
+import { dismissSet, undismissSet } from "../../lib/content/repos/dismissed-sets";
 import { languageDisplayName } from "../../lib/content/language/language-names";
 import {
   availableDomains,
@@ -266,6 +267,9 @@ export default function Discover() {
       await getStorage().contentLoader.downloadSet(set.repo_url, set.id, (progress) =>
         setDownloadProgress((prev) => ({ ...prev, [key]: progress })),
       );
+      // #1709 — an explicit (re-)download revives a previously deleted set in
+      // "Meine Inhalte"; clear any stale dismissal record.
+      undismissSet(set.repo_url, set.id);
       setDownloadState((prev) => ({ ...prev, [key]: "done" }));
       setDownloadedKeys((prev) => {
         const next = new Set(prev);
@@ -285,6 +289,10 @@ export default function Discover() {
     const key = discoverSetKey(set);
     try {
       await getStorage().contentLoader.deleteSet(set.repo_url, set.id);
+      // #1709 — removing the download here is just as explicit as deleting in
+      // "Meine Inhalte": remember it so a Refresh does not restore the set
+      // there. Discover itself keeps listing the set (download it anytime).
+      dismissSet(set.repo_url, set.id);
       setDownloadedKeys((prev) => {
         const next = new Set(prev);
         next.delete(key);

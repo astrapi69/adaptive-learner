@@ -10,12 +10,17 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useContentSetActions } from "./useContentSetActions";
+import {
+  dismissSet,
+  isDismissedSet,
+} from "../../lib/content/repos/dismissed-sets";
 import type { ContentSetEntry } from "../../storage/types";
 
 const deleteSetMock = vi.fn();
 const setSetStatusMock = vi.fn();
 const deleteSetsMock = vi.fn();
 const setSetsStatusMock = vi.fn();
+const downloadSetMock = vi.fn();
 
 vi.mock("../../storage", () => ({
   getStorage: () => ({
@@ -24,6 +29,7 @@ vi.mock("../../storage", () => ({
       setSetStatus: (...a: unknown[]) => setSetStatusMock(...a),
       deleteSets: (...a: unknown[]) => deleteSetsMock(...a),
       setSetsStatus: (...a: unknown[]) => setSetsStatusMock(...a),
+      downloadSet: (...a: unknown[]) => downloadSetMock(...a),
     },
   }),
 }));
@@ -170,3 +176,55 @@ describe("bulk actions (#1351)", () => {
 function setSetSetStatusCallCount(): number {
   return setSetStatusMock.mock.calls.length;
 }
+
+describe("dismissal on delete/download (#1709)", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("handleConfirmDeleteSet records the dismissal so Refresh keeps it deleted", async () => {
+    deleteSetMock.mockResolvedValue(undefined);
+    const target = entry({ id: "psych", source: "owner/repo" });
+    const { hook } = setup([target]);
+    act(() => hook.result.current.setDeleteSetTarget(target));
+    await act(async () => {
+      await hook.result.current.handleConfirmDeleteSet();
+    });
+    expect(isDismissedSet("owner/repo", "psych")).toBe(true);
+  });
+
+  it("a FAILED delete records no dismissal (the set is still there)", async () => {
+    deleteSetMock.mockRejectedValue(new Error("boom"));
+    const target = entry({ id: "psych", source: "owner/repo" });
+    const { hook } = setup([target]);
+    act(() => hook.result.current.setDeleteSetTarget(target));
+    await act(async () => {
+      await hook.result.current.handleConfirmDeleteSet();
+    });
+    expect(isDismissedSet("owner/repo", "psych")).toBe(false);
+  });
+
+  it("handleConfirmBulkDelete records a dismissal for EVERY target", async () => {
+    deleteSetsMock.mockResolvedValue(undefined);
+    const a = entry({ id: "a" });
+    const c = entry({ id: "c" });
+    const { hook } = setup([a, c]);
+    act(() => hook.result.current.setBulkDeleteTargets([a, c]));
+    await act(async () => {
+      await hook.result.current.handleConfirmBulkDelete();
+    });
+    expect(isDismissedSet("owner/repo", "a")).toBe(true);
+    expect(isDismissedSet("owner/repo", "c")).toBe(true);
+  });
+
+  it("handleDownload clears a stale dismissal (re-download revives the set)", async () => {
+    const target = entry({ id: "psych", source: "owner/repo" });
+    downloadSetMock.mockResolvedValue(entry({ id: "psych", cached_version: "1.0.0" }));
+    dismissSet("owner/repo", "psych");
+    const { hook } = setup([target]);
+    await act(async () => {
+      await hook.result.current.handleDownload(target);
+    });
+    expect(isDismissedSet("owner/repo", "psych")).toBe(false);
+  });
+});

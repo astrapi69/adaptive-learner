@@ -19,6 +19,11 @@ import {
   triggerDownload,
   type ExportSetMeta,
 } from "../../lib/content/lesson/lesson-export";
+import {
+  dismissSet,
+  dismissSets,
+  undismissSet,
+} from "../../lib/content/repos/dismissed-sets";
 import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry, SetStatus } from "../../storage/types";
 import { useI18n } from "../ui/useI18n";
@@ -79,6 +84,9 @@ export function useContentSetActions({
     setDeletingSet(true);
     try {
       await getStorage().contentLoader.deleteSet(deleteSetTarget.source, deleteSetTarget.id);
+      // #1709 — remember the explicit deletion so a Refresh (which re-reads
+      // the source catalogue) does not restore the set into "Meine Inhalte".
+      dismissSet(deleteSetTarget.source, deleteSetTarget.id);
       setSets((prev) =>
         prev.filter(
           (row) => !(row.source === deleteSetTarget.source && row.id === deleteSetTarget.id),
@@ -138,6 +146,9 @@ export function useContentSetActions({
       await getStorage().contentLoader.deleteSets(
         targets.map((e) => ({ source: e.source, setId: e.id })),
       );
+      // #1709 — remember the explicit deletions so a Refresh (which re-reads
+      // the source catalogue) does not restore the sets into "Meine Inhalte".
+      dismissSets(targets.map((e) => ({ source: e.source, setId: e.id })));
       setSets((prev) => prev.filter((row) => !keys.has(setKey(row))));
       notify.success(
         t("content.set_status.bulk_deleted", "{n} sets removed.").replace(
@@ -271,6 +282,10 @@ export function useContentSetActions({
     setPerSetState((prev) => ({ ...prev, [key]: "downloading" }));
     try {
       const updated = await getStorage().contentLoader.downloadSet(entry.source, entry.id);
+      // #1709 — an explicit re-download revives a previously deleted set;
+      // clear the stale dismissal record (the cached state wins anyway, this
+      // just keeps the store tidy).
+      undismissSet(entry.source, entry.id);
       setSets((prev) =>
         prev.map((row) => (row.source === entry.source && row.id === entry.id ? updated : row)),
       );
