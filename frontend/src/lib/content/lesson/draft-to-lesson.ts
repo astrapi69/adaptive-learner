@@ -129,7 +129,6 @@ export interface DraftValidationChecks {
  *  except the ``schemaError`` detail field). */
 const BOOLEAN_CHECK_KEYS = [
     "hasTitle",
-    "languagePair",
     "enoughCards",
     "enoughExercises",
     "enoughTypes",
