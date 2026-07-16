@@ -29,6 +29,21 @@ function setup(cards: LessonCardDraft[] = []) {
     return handlers;
 }
 
+describe("CardEditor — layout regression (#1732)", () => {
+    it("gives the card list token-scale spacing and rows real card chrome", () => {
+        setup([card("c1"), card("c2")]);
+        const list = screen.getByTestId("card-list");
+        // Not an unstyled default <ul> — flex column with a token gap.
+        expect(list.className).toContain("flex");
+        expect(list.className).toMatch(/gap-/);
+        expect(list.className).toContain("list-none");
+        const row = screen.getByTestId("card-row-c1");
+        // Real card chrome (the #1715/#1732 defect was a bare, unstyled row).
+        expect(row.className).toContain("border");
+        expect(row.className).toMatch(/\bp-/);
+    });
+});
+
 describe("CardEditor", () => {
     it("shows the minimum-cards hint when under 4", () => {
         setup([card("c1")]);
