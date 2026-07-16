@@ -152,6 +152,8 @@ export function queryDiscoverSets(
   const nq = normalizeSearchText(filters.query);
   const filtered = sets.filter(
     (set) =>
+      // #1702 — display-layer guard so a pre-existing stale cache carrying a
+      // hidden fixture is filtered on render too.
       !isHiddenSet(set.repo_url, set.id) &&
       matchesQuery(set, nq) &&
       passesFilters(set, filters),

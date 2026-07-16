@@ -81,20 +81,6 @@ describe("parseSearchIndex", () => {
     expect(set.repo_name).toBe("Jane's Content");
   });
 
-  it("drops hidden dev/reference sets at parse time (kept out of the catalogue + cache)", () => {
-    const sets = parseSearchIndex(
-      {
-        sets: [
-          { id: "graded-quiz-demo-from-de", name: "Graded-Quiz Demo (Test)" },
-          { id: "react-grundlagen-from-de", name: "React Grundlagen" },
-        ],
-      },
-      "astrapi69/adaptive-learner-content-test",
-      "Test repo",
-    );
-    expect(sets.map((s) => s.id)).toEqual(["react-grundlagen-from-de"]);
-  });
-
   it("returns [] for a malformed payload (no sets array)", () => {
     expect(parseSearchIndex({}, "a/b", "a/b")).toEqual([]);
     expect(parseSearchIndex(null, "a/b", "a/b")).toEqual([]);
@@ -114,6 +100,31 @@ describe("parseSearchIndex", () => {
     expect(sets[0].lesson_count).toBe(0);
     expect(sets[0].ai_validated).toBe(false);
     expect(sets[0].book).toBeNull();
+  });
+
+  it("drops hidden reference/conformance sets at parse time (#1702)", () => {
+    const sets = parseSearchIndex(
+      {
+        sets: [
+          { id: "de-fr-a1" },
+          { id: "graded-quiz-demo-from-de" },
+        ],
+      },
+      "astrapi69/adaptive-learner-content-test",
+      "Content Test",
+    );
+    // The graded-quiz demo fixture is dropped; the real set survives — and it
+    // never enters the written cache because it's gone before the return.
+    expect(sets.map((s) => s.id)).toEqual(["de-fr-a1"]);
+  });
+
+  it("keeps a same-named set from a DIFFERENT repo (source-scoped hide, #1702)", () => {
+    const sets = parseSearchIndex(
+      { sets: [{ id: "graded-quiz-demo-from-de" }] },
+      "someone/other-repo",
+      "Other",
+    );
+    expect(sets.map((s) => s.id)).toEqual(["graded-quiz-demo-from-de"]);
   });
 
   it("parses a book companion when present", () => {
