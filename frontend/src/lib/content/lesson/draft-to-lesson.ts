@@ -16,6 +16,7 @@ import type {
     ContentLessonStep,
     ContentLessonExercise,
     SaveUserSetInput,
+    UserLessonOrigin,
 } from "../../../storage/types";
 
 export interface DraftLessonInput {
@@ -24,15 +25,72 @@ export interface DraftLessonInput {
     exercises: ContentLessonExercise[];
 }
 
+/** Options for {@link buildLessonFromDraft} (#1740 — lesson editing).
+ *  New-lesson mode passes nothing and gets the historical behaviour;
+ *  edit mode overrides the lesson id (so the same lesson FILE is
+ *  overwritten and progress keyed on the filename survives) and the
+ *  theory steps (so a lesson's authored theory — which the wizard has
+ *  no editor for — is preserved verbatim across an exercise/card
+ *  edit). */
+export interface BuildLessonOptions {
+    /** Force the lesson id (the ``lessons/{id}.json`` filename). When
+     *  absent it derives from the title, matching new-lesson save. */
+    id?: string;
+    /** Theory steps to use INSTEAD of the auto-generated ``theory-intro``.
+     *  When absent the intro is generated from title/description. */
+    theorySteps?: ContentLessonStep[];
+}
+
 function estimateMinutes(theory: number, exercises: number): number {
     // ~1 min reading per theory step + ~1.5 min per exercise.
     return Math.max(1, Math.round(theory + exercises * 1.5));
 }
 
+/** The auto-generated intro step (id ``theory-intro``) built from the
+ *  title + description. Kept as a named helper so edit mode can
+ *  regenerate exactly the same shape when the lesson carries our intro. */
+function buildIntroStep(meta: LessonMeta): ContentLessonStep {
+    const introBody =
+        `# ${meta.title.trim()}` +
+        (meta.description.trim() ? `\n\n${meta.description.trim()}` : "");
+    return {
+        id: "theory-intro",
+        type: "theory",
+        title: meta.title.trim(),
+        body: introBody,
+    };
+}
+
+/** Compute the theory portion to preserve when re-saving an EDITED
+ *  lesson (#1740). The wizard has no theory editor, so a lesson's
+ *  authored theory must survive an exercise/card edit:
+ *   - wizard-created lineage (carries a ``theory-intro`` step, or no
+ *     theory at all): regenerate the intro from the current
+ *     title/description so a rename is reflected, then keep any other
+ *     theory steps verbatim.
+ *   - imported lineage (real authored theory, no ``theory-intro``):
+ *     preserve every non-exercise step verbatim (no regeneration), so
+ *     nothing the wizard can't represent is lost. */
+export function preservedTheorySteps(
+    originalSteps: ContentLessonStep[],
+    meta: LessonMeta,
+): ContentLessonStep[] {
+    const nonExercise = originalSteps.filter((s) => s.type !== "exercise");
+    const hasIntro = nonExercise.some((s) => s.id === "theory-intro");
+    if (hasIntro || nonExercise.length === 0) {
+        const others = nonExercise.filter((s) => s.id !== "theory-intro");
+        return [buildIntroStep(meta), ...others];
+    }
+    return nonExercise;
+}
+
 /** Build a valid ContentLesson from the draft. Throws (via
  *  ``validateGeneratedLesson``) on a schema violation so the caller
  *  can surface it before saving. */
-export function buildLessonFromDraft(input: DraftLessonInput): ContentLesson {
+export function buildLessonFromDraft(
+    input: DraftLessonInput,
+    opts: BuildLessonOptions = {},
+): ContentLesson {
     const {meta, cards, exercises} = input;
     const lessonCards: ContentLessonCard[] = cards.map((c) => ({
         id: c.id,
@@ -45,15 +103,12 @@ export function buildLessonFromDraft(input: DraftLessonInput): ContentLesson {
 
     const steps: ContentLessonStep[] = [];
     // A theory body is required; the intro guarantees a non-empty one.
-    const introBody =
-        `# ${meta.title.trim()}` +
-        (meta.description.trim() ? `\n\n${meta.description.trim()}` : "");
-    steps.push({
-        id: "theory-intro",
-        type: "theory",
-        title: meta.title.trim(),
-        body: introBody,
-    });
+    // Edit mode supplies the preserved theory instead (#1740).
+    if (opts.theorySteps && opts.theorySteps.length > 0) {
+        steps.push(...opts.theorySteps);
+    } else {
+        steps.push(buildIntroStep(meta));
+    }
     exercises.forEach((ex, i) => {
         steps.push({
             id: `step-ex-${i}-${ex.id}`,
@@ -64,13 +119,14 @@ export function buildLessonFromDraft(input: DraftLessonInput): ContentLesson {
         });
     });
 
+    const theoryCount = steps.filter((s) => s.type !== "exercise").length;
     const lesson: ContentLesson = {
-        id: slugify(meta.title) || "lesson",
+        id: opts.id ?? (slugify(meta.title) || "lesson"),
         title: meta.title.trim(),
         description: meta.description.trim() || null,
         target_language: meta.targetLanguage,
         source_language: meta.sourceLanguage,
-        estimated_minutes: estimateMinutes(1, exercises.length),
+        estimated_minutes: estimateMinutes(theoryCount, exercises.length),
         cards: lessonCards,
         steps,
         contributed_by: meta.author.trim() || null,
@@ -81,10 +137,54 @@ export function buildLessonFromDraft(input: DraftLessonInput): ContentLesson {
     return lesson;
 }
 
+/** Reverse of {@link buildLessonFromDraft}: turn an existing
+ *  ``ContentLesson`` (plus its set entry, for level/title_native) back
+ *  into the wizard's ``{meta, cards, exercises}`` so the Lesson Creator
+ *  can open pre-filled for editing (#1740). Cards and exercises come
+ *  straight off the lesson; theory-only structure is carried separately
+ *  by the caller (see {@link preservedTheorySteps}). */
+export function lessonToDraftInput(
+    lesson: ContentLesson,
+    entry?: {level?: string | null; title_native?: string | null},
+): DraftLessonInput {
+    const cards: LessonCardDraft[] = lesson.cards.map((c) => ({
+        id: c.id,
+        front: c.front,
+        back: c.back,
+        notes: c.notes ?? "",
+        image: c.image ?? "",
+    }));
+    const exercises: ContentLessonExercise[] = lesson.steps
+        .filter((s) => s.type === "exercise" && s.exercise)
+        .map((s) => s.exercise as ContentLessonExercise);
+    const meta: LessonMeta = {
+        title: lesson.title,
+        titleNative: entry?.title_native ?? "",
+        sourceLanguage: lesson.source_language ?? "en",
+        targetLanguage: lesson.target_language ?? "en",
+        level: entry?.level ?? "A1",
+        description: lesson.description ?? "",
+        author: lesson.contributed_by ?? "",
+    };
+    return {meta, cards, exercises};
+}
+
 /** Stable slug-safe set id for a user-created lesson. Re-saving with
  *  the same title overwrites (matches ``saveUserSet`` semantics). */
 export function draftSetId(meta: LessonMeta): string {
     return `created-${slugify(meta.title) || "lesson"}`;
+}
+
+/** Options for {@link buildUserSetInput} (#1740 — lesson editing).
+ *  New-lesson mode passes nothing (id derives from the title, origin
+ *  ``"imported"``); edit mode overrides the set id so the SAME set is
+ *  overwritten even after a title change, and carries the original
+ *  origin so an edited analysis/adaptive set keeps its badge. */
+export interface BuildUserSetOptions {
+    /** Force the set id (overwrite target). Absent = derive from title. */
+    setId?: string;
+    /** Preserve the existing set's origin. Absent = ``"imported"``. */
+    origin?: UserLessonOrigin;
 }
 
 /** Wrap a built lesson in the ``SaveUserSetInput`` that persists it to
@@ -93,10 +193,11 @@ export function draftSetId(meta: LessonMeta): string {
 export function buildUserSetInput(
     input: DraftLessonInput,
     lesson: ContentLesson,
+    opts: BuildUserSetOptions = {},
 ): SaveUserSetInput {
     const {meta} = input;
     return {
-        set_id: draftSetId(meta),
+        set_id: opts.setId ?? draftSetId(meta),
         title: meta.title.trim(),
         title_native: meta.titleNative.trim() || meta.title.trim(),
         language: meta.targetLanguage,
@@ -106,7 +207,7 @@ export function buildUserSetInput(
         // No "manual" origin in the enum; a hand-authored lesson is
         // closest to "imported" (authored outside an analysis/adaptive
         // flow). The viewer + sharing treat all user sets identically.
-        origin: "imported",
+        origin: opts.origin ?? "imported",
         description: meta.description.trim() || null,
         lessons: [lesson],
     };

@@ -229,7 +229,7 @@ describe("ImportActionsPanel — My Lessons", () => {
     expect(screen.getByTestId("my-lesson-analysis-conv-1-share")).toBeInTheDocument();
   });
 
-  it("hides Edit for non-analysis (adaptive) lessons", async () => {
+  it("shows Edit for every own lesson, incl. non-analysis origins (#1740)", async () => {
     listSetsMock.mockResolvedValue({
       sets: [{ ...USER_ENTRY, id: "adaptive-x", domain: "adaptive" }],
       sources: [],
@@ -237,7 +237,9 @@ describe("ImportActionsPanel — My Lessons", () => {
     renderPanel();
     await screen.findByTestId("import-actions-panel");
     expect(await screen.findByTestId("my-lesson-adaptive-x-play")).toBeInTheDocument();
-    expect(screen.queryByTestId("my-lesson-adaptive-x-edit")).not.toBeInTheDocument();
+    // #1740 — Edit is now offered for created / imported / adaptive
+    // origins too (dispatched to the wizard), not analysis only.
+    expect(screen.getByTestId("my-lesson-adaptive-x-edit")).toBeInTheDocument();
   });
 
   it("does not render the My Lessons section when there are no user sets", async () => {

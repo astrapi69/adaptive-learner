@@ -204,13 +204,21 @@ export function useContentSetActions({
     }
   };
 
-  // Phase 59C — edit a user-generated lesson: jump back to its
-  // source conversation's import page, where re-saving overwrites
-  // the set in place. Only analysis-sourced sets carry a
-  // recoverable conversation id (set id is ``analysis-{convId}``).
+  // Edit a user-generated lesson. Analysis sets carry a recoverable
+  // conversation id (``analysis-{convId}``), so they jump back to the
+  // import page where re-analysing + re-saving overwrites in place
+  // (Phase 59C). Every other own set (created / imported / adaptive)
+  // opens the pre-filled Lesson Creator, which overwrites the same set
+  // on save (#1740).
   const handleEditUserSet = (entry: ContentSetEntry) => {
-    const convId = entry.id.replace(/^analysis-/, "");
-    navigate(`/import/${encodeURIComponent(convId)}`);
+    if (entry.domain === "analysis") {
+      const convId = entry.id.replace(/^analysis-/, "");
+      navigate(`/import/${encodeURIComponent(convId)}`);
+      return;
+    }
+    navigate(
+      `/create-lesson/edit/${encodeURIComponent(entry.source)}/${encodeURIComponent(entry.id)}`,
+    );
   };
 
   const handleDeleteUserSet = async () => {
