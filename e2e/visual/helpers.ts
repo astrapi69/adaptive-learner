@@ -98,6 +98,95 @@ export async function setTheme(page: Page, theme: ThemeId): Promise<void> {
 }
 
 /**
+ * Frozen ``recommended-repos.json`` fixture (#1653).
+ *
+ * The "Empfohlene Repositories" section on ``/settings?tab=data`` (and the
+ * Discover surface) renders from ``recommended-repos.json`` fetched LIVE from
+ * the official content repo. That list changes independently of any app PR,
+ * so the settings-data / content-discover baselines re-stale on every
+ * content-repo edit (#1653, same family as the content-stats-drift CI split).
+ * Pinning the fetch to this SYNTHETIC frozen fixture decouples the surface
+ * from live content-repo state — it reflects app code only. Shape matches
+ * ``parseRecommendedRepos`` (``{repos: [...]}``); values are deliberately
+ * synthetic + stable so they never churn again.
+ */
+const RECOMMENDED_REPOS_FIXTURE = {
+    repos: [
+        {
+            url: "https://github.com/astrapi69/adaptive-learner-content",
+            branch: "main",
+            title: "Official Content",
+            description: "The official Adaptive Learner content repository.",
+            trust_level: 3,
+            self: true,
+            languages: ["de-fr", "de-es"],
+        },
+        {
+            url: "https://github.com/example/community-content",
+            branch: "main",
+            title: "Community Example",
+            description: "A sample community repository (visual-test fixture).",
+            trust_level: 1,
+            commit: "0000000000000000000000000000000000000000",
+            languages: ["de-en"],
+        },
+    ],
+} as const;
+
+/**
+ * Pin the content-repo registry fetch to a frozen fixture so surfaces that
+ * render the recommended-repos list (settings-data, content-discover) are
+ * deterministic and decoupled from live content-repo edits (#1653).
+ *
+ * ``page.route`` intercepts every matching request for the page's lifetime,
+ * so call it ONCE before the first navigation (alongside ``freezeClock`` /
+ * ``setTheme``). Surfaces that never fetch the file are unaffected.
+ */
+export async function pinContentRegistry(page: Page): Promise<void> {
+    await page.route("**/recommended-repos.json", (route) =>
+        route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify(RECOMMENDED_REPOS_FIXTURE),
+        }),
+    );
+}
+
+/**
+ * Wait until the page layout stops growing — the fullPage screenshot height
+ * is stable across consecutive samples (#1696).
+ *
+ * Content surfaces (content-browser, content-discover, set-detail) render
+ * lists that load asynchronously (bundled content from Dexie, the registry);
+ * a fullPage shot fired mid-load captures a different page height run-to-run
+ * (observed ~700px swings on set-detail). Poll ``documentElement.scrollHeight``
+ * until it repeats ``stableSamples`` times in a row, or give up after
+ * ``maxWaitMs`` (bounded so a perpetually-animating surface can never hang —
+ * animations are already disabled by ``settleForScreenshot``).
+ */
+export async function waitForStableLayout(
+    page: Page,
+    {stableSamples = 3, intervalMs = 120, maxWaitMs = 4_000} = {},
+): Promise<void> {
+    const deadline = Date.now() + maxWaitMs;
+    let last = -1;
+    let stable = 0;
+    while (Date.now() < deadline) {
+        const height = await page.evaluate(
+            () => document.documentElement.scrollHeight,
+        );
+        if (height === last) {
+            stable += 1;
+            if (stable >= stableSamples) return;
+        } else {
+            stable = 0;
+            last = height;
+        }
+        await page.waitForTimeout(intervalMs);
+    }
+}
+
+/**
  * Settle the page for a deterministic screenshot: wait for web fonts, kill
  * any animation/transition durations, and allow one reflow after the
  * font-swap (the gap between fallback and loaded font is a flake source).
@@ -113,6 +202,11 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // 250ms (was 100ms): the post-font reflow on the mobile lesson surface
     // occasionally landed AFTER the shot, shifting the page ~4px (#1540).
     await page.waitForTimeout(250);
+    // #1696 — the fullPage shot must not fire while a list is still loading
+    // (async bundled-content / registry renders change the page height
+    // run-to-run). Wait for the layout height to settle first. Bounded, so a
+    // never-settling surface can't hang; animations are already killed above.
+    await waitForStableLayout(page);
 }
 
 /** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard.
