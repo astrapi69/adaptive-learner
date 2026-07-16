@@ -1,6 +1,6 @@
-# Manueller Testplan — Adaptive Learner v1.95.0+
+# Manueller Testplan — Adaptive Learner v2.2.0+
 
-Stand: 22.06.2026 (Session 4)
+Stand: 16.07.2026 (Session 5, vor dem v2.3.0-Release)
 Tester: Aster + Beta-Tester
 
 Struktur:
@@ -113,13 +113,37 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Picture Choice: Kacheln GLEICHE Hoehe
 
 ### Lern-Modi (jeden einmal durchspielen)
-- [ ] Modus-Toggle NICHT disabled auf neuen Lektionen
+- [ ] Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
+      hinter dem Panel, nicht mehr direkt sichtbar)
 - [ ] Pruefungsmodus: keine Hilfen, Ergebnis am Ende, 1.5x XP
 - [ ] Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang
 - [ ] Fehler-Modus: nur Fehlerkarten (nach min. 1 Fehler)
 - [ ] Rueckwaerts: Matching-Spalten getauscht
 - [ ] Zufall: Karten aus verschiedenen Lektionen gemischt
 - [ ] Endlos: kein Session-Ende, Statistik laeuft
+
+### Neue Uebungstypen (seit v2.2.0, visuell + funktional)
+- [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
+- [ ] ext:al-categorization: Kategorien zuordnen, Aufloesung lesbar
+- [ ] ext:al-error-correction: Fehler finden + korrigieren
+- [ ] ext:al-reading-comprehension: Text + Fragen
+- [ ] ext:al-graded-quiz: Bewertung + Ergebnisanzeige
+- [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
+      matching spielt ab, Grading unbeeinflusst
+
+### Import/Export von Lektionen/Sets (#1685-Haertung)
+- [ ] Lesson-Export "Als Datei speichern" im Create-Lesson-Flow
+- [ ] Import mit Namenskollision: sauberer Hinweis, kein Ueberschreiben
+- [ ] Teil-Import (ZIP mit einer kaputten Lektion): Rest importiert,
+      Fehler benannt
+- [ ] Groessen-Guard: absurd grosse Datei wird freundlich abgelehnt
+
+### Discover + Registry (seit v2.2.0)
+- [ ] Source-Language-Filter als sichtbarer Chip (#1699/#1701)
+- [ ] Referenz-/Demo-Sets (graded-quiz-demo) erscheinen NICHT in
+      Discover/Meine Inhalte (#1702)
+- [ ] Per-Set Share-Link oeffnet direkt die Set-Detailseite (#1572)
+- [ ] Registrierten Content-Repo hinzufuegen (register-a-repo #1511)
 
 ### Social Sharing (visuell + nativ)
 - [ ] Share-Button nach Lektion sichtbar
@@ -159,7 +183,10 @@ Fuer JEDES Theme einmal durchklicken:
 - [ ] "Zum Home-Bildschirm" → App-Icon korrekt
 - [ ] PWA startet im Dexie-Modus
 - [ ] Safe-Area Insets respektiert
-- [ ] Bottom Tab Bar nicht von Home-Indicator ueberlagert
+- [ ] Mobile Nav = Hamburger-Drawer (Bottom Tab Bar wurde in #1512
+      entfernt); Drawer-Links 44px, schliesst nach Navigation
+- [ ] Bekanntes offenes Issue #1569 (Caret/Touch 1-2 Zeilen versetzt
+      im Lesson-Flow): reproduzieren + Notizen ans Issue
 
 ### Android Chrome
 - [ ] "App installieren" → Maskable Icon nicht abgeschnitten
@@ -187,7 +214,8 @@ Hier nur zur Dokumentation was abgedeckt ist.
 
 ---
 
-## Automatisiert: Unit + Component Tests (Vitest, 5477+)
+## Automatisiert: Unit + Component Tests (Vitest, 7000+;
+## aktuelle Zahl siehe docs/audits/current-coverage.md)
 
 Abdeckung:
 - Alle Exercise-Typen (Matching, Cloze, Free Text, Word Tiles, Picture Choice)
@@ -227,7 +255,7 @@ Ausfuehren: `make test` (Backend-Teil)
 
 ---
 
-## Automatisiert: Dexie-Smoke E2E (Playwright TS, 91)
+## Automatisiert: Dexie-Smoke E2E (Playwright TS, 31 Spec-Dateien)
 
 Abdeckung:
 - Vollstaendiger Lesson-Playthrough (alle Exercise-Typen)
@@ -238,7 +266,7 @@ Abdeckung:
 - Backup Round-Trip (programmatisch)
 - Alle Routes erreichbar (kein 404)
 
-Ausfuehren: `make dexie-smoke` oder `npx playwright test`
+Ausfuehren: `make test-dexie-smoke`
 
 ---
 
@@ -338,11 +366,11 @@ MANUELLE TESTS:
   Kosmetische Bugs:
   1.
 
-AUTOMATISIERTE TESTS:
-  Vitest:       ___/5477 gruen
-  Backend:      ___/1200 gruen
-  Dexie-Smoke:  ___/91 gruen
-  Launcher:     ___/430 gruen
+AUTOMATISIERTE TESTS (Soll-Zahlen: docs/audits/current-coverage.md):
+  Vitest:       ___ gruen
+  Backend:      ___ gruen
+  Dexie-Smoke:  ___ gruen
+  Launcher:     ___ gruen
   CI Gates:     alle gruen? [ ]
 
 Fazit: LAUNCH-READY / NICHT LAUNCH-READY
