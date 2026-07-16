@@ -27,6 +27,7 @@
 
 import { parseGitHubRepoUrl } from "./content-repos";
 import { buildFileRequest, fetchWithRetry } from "./github-fetch";
+import { isHiddenSet } from "./hidden-sets";
 
 /** The conventional index filename at a content repo's root. */
 export const SEARCH_INDEX_FILE = "search-index.json";
@@ -142,6 +143,9 @@ function normalizeSet(
 ): SearchableSet | null {
   const id = asString(raw.id);
   if (!id) return null;
+  // #1702 — drop hidden reference/conformance fixtures at parse time, so they
+  // never enter the Discover catalogue, its facets/counts, or the written cache.
+  if (isHiddenSet(repoSource, id)) return null;
   return {
     id,
     name: asString(raw.name) || id,
