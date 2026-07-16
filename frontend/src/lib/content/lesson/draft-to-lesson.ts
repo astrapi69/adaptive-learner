@@ -129,7 +129,11 @@ export interface DraftValidationChecks {
  *  except the ``schemaError`` detail field). */
 const BOOLEAN_CHECK_KEYS = [
     "hasTitle",
-    "languagePair",
+    // #1733 — no "languagePair": #1715 removed it from DraftValidationChecks
+    // (a same-language pair is a legitimate knowledge-domain lesson, not a
+    // save gate). A stale entry here made allChecksPass index a missing key
+    // -> always undefined -> always false -> Save permanently disabled + tsc
+    // TS7053. This list must mirror the boolean keys checkDraft returns.
     "enoughCards",
     "enoughExercises",
     "enoughTypes",
