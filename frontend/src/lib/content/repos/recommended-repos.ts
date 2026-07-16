@@ -58,6 +58,10 @@ export interface RecommendedRepo {
   /** Full 40-char git SHA of the validated snapshot (external entries).
    *  The federated search reads ``search-index.json`` AT this commit. */
   commit?: string;
+  /** True when the repo ships a ``books.yaml`` at its registry ref (#1712).
+   *  Book recommendations are fetched ONLY from flagged entries, so a repo
+   *  without the file is never asked for it (no console-404 noise). */
+  books?: boolean;
   /** Validation block (external entries). */
   validation?: RepoValidation;
 }
