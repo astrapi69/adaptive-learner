@@ -77,13 +77,24 @@ describe("draft-to-lesson", () => {
         expect(allChecksPass(bad)).toBe(false);
     });
 
-    it("checkDraft fails on a same-language pair and empty title", () => {
+    it("checkDraft fails on an empty title", () => {
         const i = input();
         const checks = checkDraft({
             ...i,
-            meta: {...META, title: "", targetLanguage: "de"},
+            meta: {...META, title: ""},
         });
         expect(checks.hasTitle).toBe(false);
-        expect(checks.languagePair).toBe(false);
+        expect(allChecksPass(checks)).toBe(false);
+    });
+
+    it("checkDraft passes a same-language pair (#1715, knowledge domains)", () => {
+        // ki-einsteiger-style de -> de knowledge content is legitimate:
+        // an identical source/target pair is no longer a save gate.
+        const i = input();
+        const checks = checkDraft({
+            ...i,
+            meta: {...META, sourceLanguage: "de", targetLanguage: "de"},
+        });
+        expect(allChecksPass(checks)).toBe(true);
     });
 });

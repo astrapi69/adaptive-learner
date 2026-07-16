@@ -136,8 +136,12 @@ export default function CreateLesson() {
     }, [pendingDraft]);
 
     const titleMissing = meta.title.trim().length === 0;
+    // #1715 — a same-language pair (source === target) is legitimate
+    // knowledge-domain content (e.g. the ki-einsteiger set: de -> de),
+    // so it does NOT block advancing. It only drives a non-blocking hint
+    // in Step 1, mirroring SaveOfflineLessonModal.
     const sameLanguage = meta.sourceLanguage === meta.targetLanguage;
-    const metaValid = !titleMissing && !sameLanguage;
+    const metaValid = !titleMissing;
 
     // Dirty = anything the user could lose. Title/description/native
     // are the free-text fields; language/level have sensible defaults.

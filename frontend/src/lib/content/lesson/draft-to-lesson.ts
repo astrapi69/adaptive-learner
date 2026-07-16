@@ -114,7 +114,6 @@ export function buildUserSetInput(
 
 export interface DraftValidationChecks {
     hasTitle: boolean;
-    languagePair: boolean;
     enoughCards: boolean;
     enoughExercises: boolean;
     enoughTypes: boolean;
@@ -138,7 +137,10 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     }
     return {
         hasTitle: meta.title.trim().length > 0,
-        languagePair: meta.sourceLanguage !== meta.targetLanguage,
+        // #1715 — a same-language pair is legitimate for knowledge-domain
+        // lessons (e.g. the ki-einsteiger set: de -> de), so it is no
+        // longer a save gate. Same/differing languages are surfaced as a
+        // non-blocking hint in Step 1, mirroring SaveOfflineLessonModal.
         enoughCards: cards.length >= MIN_CARDS_FOR_SAVE,
         enoughExercises: exercises.length >= MIN_EXERCISES_FOR_SAVE,
         enoughTypes: types.size >= MIN_TYPES_FOR_SAVE,
