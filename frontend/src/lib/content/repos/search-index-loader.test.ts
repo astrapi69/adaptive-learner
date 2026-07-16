@@ -81,6 +81,20 @@ describe("parseSearchIndex", () => {
     expect(set.repo_name).toBe("Jane's Content");
   });
 
+  it("drops hidden dev/reference sets at parse time (kept out of the catalogue + cache)", () => {
+    const sets = parseSearchIndex(
+      {
+        sets: [
+          { id: "graded-quiz-demo-from-de", name: "Graded-Quiz Demo (Test)" },
+          { id: "react-grundlagen-from-de", name: "React Grundlagen" },
+        ],
+      },
+      "astrapi69/adaptive-learner-content-test",
+      "Test repo",
+    );
+    expect(sets.map((s) => s.id)).toEqual(["react-grundlagen-from-de"]);
+  });
+
   it("returns [] for a malformed payload (no sets array)", () => {
     expect(parseSearchIndex({}, "a/b", "a/b")).toEqual([]);
     expect(parseSearchIndex(null, "a/b", "a/b")).toEqual([]);

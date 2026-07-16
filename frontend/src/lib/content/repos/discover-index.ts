@@ -13,6 +13,7 @@
  */
 
 import { isOfficialSource } from "./content-repos";
+import { isHiddenSet } from "./hidden-sets";
 import { normalizeSearchText } from "../browse/content-search";
 import type { SearchableSet } from "./search-index-loader";
 
@@ -150,7 +151,10 @@ export function queryDiscoverSets(
 ): SearchableSet[] {
   const nq = normalizeSearchText(filters.query);
   const filtered = sets.filter(
-    (set) => matchesQuery(set, nq) && passesFilters(set, filters),
+    (set) =>
+      !isHiddenSet(set.repo_url, set.id) &&
+      matchesQuery(set, nq) &&
+      passesFilters(set, filters),
   );
   return sortDiscoverSets(filtered, sort, filters.query);
 }
