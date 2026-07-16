@@ -7,7 +7,7 @@ Fuenf User-gemeldete Bugs in einer Session, jeweils Issue -> Worktree-Branch -> 
 | Bug | Issue | PR | Status |
 |---|---|---|---|
 | Geloeschte Sets kehren nach Refresh zurueck | #1709 | #1719 (ersetzt #1711) | offen, alle Gates gruen |
-| Konsolen-404 books.yaml | #1712 / content#150 | #1717 (merged) + content#151 | App merged; Content-PR gruen |
+| Konsolen-404 books.yaml | #1712 / content#150 | #1717 (merged) + content#151 (merged) | End-to-end live: Registry-Flags auf main verifiziert |
 | Konsolen-404 content/ | #1713 | #1718 (merged) | Preview live verifiziert (200) |
 | Wizard-Strukturcheck ohne Detail | #1722 | #1724 | offen |
 | Skip-Link-Label unsichtbar | #1723 | folgt (Visual-Baselines in Arbeit) | Branch gepusht |
