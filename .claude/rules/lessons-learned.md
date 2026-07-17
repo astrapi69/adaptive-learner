@@ -423,7 +423,7 @@ Rules:
 - Only stable releases, no beta/RC/alpha versions ever in production code
 - "Latest stable" means most recent version that has proven stable (minimum 2 weeks since release)
 - For LTS products (Node.js), prefer Active LTS over Current
-- Review dependencies at each release cycle: run `poetry show --outdated` and `npm outdated` before cutting any release
+- Review dependencies at each release cycle: run `poetry show --outdated` and `bun outdated` before cutting any release
 - Major version bumps get their own commit with migration notes
 - Routine minor/patch bumps can be batched by category
 
@@ -440,7 +440,7 @@ Upstream blockers: when an external dependency (e.g. PluginForge) pins a transit
 Before cutting any release, run dependency currency check:
 - `poetry show --outdated` in backend and each plugin
 - `poetry show --outdated` in launcher
-- `npm outdated` in frontend
+- `bun outdated` in frontend
 
 Apply routine bumps (patch + minor + low-risk minor) as part of release prep. Defer major bumps to dedicated sessions with their own testing cycle.
 

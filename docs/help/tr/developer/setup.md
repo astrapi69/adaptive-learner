@@ -10,7 +10,7 @@
   `crypto.hash is not a function` hatasıyla derleme adımında başarısız olur.
 - **Poetry** Python bağımlılık yönetimi için. Kurulum:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **npm** (Node ile birlikte gelir).
+- **Bun** 1.3+ (frontend paket yöneticisi, #1492).
 - **GNU Make** düzenleme hedefleri için. Makefile tek yetkili
   kaynak — her CI komutu orada bulunur.
 
@@ -25,7 +25,7 @@ make install
 `make install` şunları çalıştırır:
 
 1. `cd backend && poetry install` — arka uç + eklenti path-dep'leri.
-2. `cd frontend && npm ci` — frontend bağımlılıkları (Node 24).
+2. `cd frontend && bun install` — frontend bağımlılıkları (Node 24).
 3. `plugins/` altındaki her eklentiyi arka ucun venv'ine path-dep
    olarak kurar (`develop = true` — düzenlemeler canlı olarak yansır).
 
@@ -106,9 +106,9 @@ konu/etiket filtresi, zengin metin notları, model seçici.
 ```bash
 cd backend && poetry run ruff check .       # Python lint
 cd backend && poetry run ruff format .      # Python biçimlendirmesi
-cd frontend && npx tsc --noEmit             # TypeScript kontrolü
-cd frontend && npm run lint                 # ESLint
-cd frontend && npm run format               # Prettier
+cd frontend && bunx tsc --noEmit             # TypeScript kontrolü
+cd frontend && bun run lint                 # ESLint
+cd frontend && bun run format               # Prettier
 ```
 
 Ön teslim kancaları her teslimde ruff + biçimlendirici
@@ -138,5 +138,5 @@ dosyasına sahiptir.
 - **Testler "duplicate column name" hatasıyla başarısız**: bir
   Alembic geçişi şemayı değiştirdi. `backend/adaptive_learner.db`
   dosyasını silin ve yeniden çalıştırın.
-- **`npm run build` Node 18'de başarısız**: Node 24'e yükseltin.
+- **`bun run build` Node 18'de başarısız**: Node 24'e yükseltin.
   Vite 8 bunu gerektiriyor.

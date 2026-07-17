@@ -51,8 +51,8 @@ al probar la activación de hooks.
 
 ```bash
 make test-frontend                # 387 pruebas, ~2s
-cd frontend && npx vitest         # modo vigilancia
-cd frontend && npx vitest run src/storage/  # un directorio
+cd frontend && bunx vitest         # modo vigilancia
+cd frontend && bunx vitest run src/storage/  # un directorio
 ```
 
 Las pruebas viven junto al código fuente: `Componente.test.tsx`

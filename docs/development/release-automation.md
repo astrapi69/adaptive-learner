@@ -98,9 +98,9 @@ Seven targets compose existing tooling for the mechanical steps of `release-work
 | Target | release-workflow.md Step | What it does |
 |---|---|---|
 | `make release-state` | Step 1 | Print latest tag + commits since + diff stat + current canonical version |
-| `make release-outdated` | Step 4b | `poetry show --outdated` × backend + launcher; `npm outdated` × frontend |
-| `make release-test` | Step 5 | `make test` + `npm run build` + `npm run test` (vitest) + `sync-versions-check` + `verify-plugin-locks` |
-| `make release-build` | Step 6 | Conditional backend `poetry build` (skipped iff `package-mode=false`) + frontend `npm run build` |
+| `make release-outdated` | Step 4b | `poetry show --outdated` × backend + launcher; `bun outdated` × frontend |
+| `make release-test` | Step 5 | `make test` + `bun run build` + `bun run test` (vitest) + `sync-versions-check` + `verify-plugin-locks` |
+| `make release-build` | Step 6 | Conditional backend `poetry build` (skipped iff `package-mode=false`) + frontend `bun run build` |
 | `make release-discover` | Step 4 supplement | Run the open-set version-literal discovery script with verbose output |
 | `make release-tag VERSION=X.Y.Z` | Step 7 | `verify_version_pins.sh $(VERSION)` + `git tag -a` + push main + push tag |
 | `make release-publish VERSION=X.Y.Z` | Step 8 | `gh release create v$(VERSION) --notes-file changelog/releases/v$(VERSION).md` |

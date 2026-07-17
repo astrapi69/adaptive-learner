@@ -1628,7 +1628,7 @@ On a conflict between this file and the rules, **the rules win**.
 - **PWA:** vite-plugin-pwa, Workbox SW (NetworkFirst on GET
   `/api/`), SVG + maskable PNG icons
 - **Testing:** pytest ^9, Vitest 4 (happy-dom), Playwright (E2E)
-- **Tooling:** Poetry, npm, Docker, Make, ruff, pre-commit
+- **Tooling:** Poetry, Bun, Docker, Make, ruff, pre-commit
 - **Node engine:** ≥24.0.0
 
 ## Architecture (short)
@@ -1668,7 +1668,7 @@ provider source ("Key from: secrets.yaml" / "environment" /
 ## Commands
 
 ```bash
-make install          # Poetry + npm + plugins
+make install          # Poetry + Bun + plugins
 make dev              # backend (18001) + frontend (15174)
 make dev-bg / dev-down
 make test             # backend + plugins + Vitest (no coverage)

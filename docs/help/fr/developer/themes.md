@@ -89,7 +89,7 @@ jetons se trouve dans
 5. **i18n** : ajoute `ui.themes.midnight` dans tous les huit
    catalogues sous `backend/config/i18n/*.yaml` et exécute
    `make sync-i18n`.
-6. **Vérifie** : `npx vitest run src/styles/themes src/styles/contrast`
+6. **Vérifie** : `bunx vitest run src/styles/themes src/styles/contrast`
    — les épingles de complétude et de contraste doivent rester
    vertes (ajuste les valeurs jusqu'à ce que le contraste satisfasse
    AA dans le nouveau thème).

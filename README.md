@@ -352,13 +352,13 @@ cd ~/adaptive-learner
 
 ### 4. Developer setup (source build)
 
-Manual Poetry + npm setup for contributors. Prerequisites:
-Python 3.11+, Node ≥24, Poetry, npm, Make.
+Manual Poetry + Bun setup for contributors. Prerequisites:
+Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
 
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install   # Poetry + npm + all 13 plugins as path-deps
+make install   # Poetry + Bun + all 13 plugins as path-deps
 make dev       # backend :18001 + frontend :15174 (Vite dev server)
 ```
 
@@ -396,7 +396,7 @@ reference lives at
 | AI providers | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
 | Testing | pytest ^9, Vitest 4 (happy-dom), Playwright (E2E smoke) |
-| Tooling | Poetry, npm, Docker, Make, ruff, pre-commit |
+| Tooling | Poetry, Bun, Docker, Make, ruff, pre-commit |
 
 ## Plugins shipped
 

@@ -84,7 +84,7 @@ está em
 5. **i18n**: adiciona `ui.themes.midnight` em todos os oito
    catálogos sob `backend/config/i18n/*.yaml` e executa
    `make sync-i18n`.
-6. **Verifica**: `npx vitest run src/styles/themes src/styles/contrast` -
+6. **Verifica**: `bunx vitest run src/styles/themes src/styles/contrast` -
    os pins de completude e de contraste têm de permanecer verdes
    (ajusta os valores até o contraste no novo tema cumprir AA).
 

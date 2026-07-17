@@ -8,7 +8,7 @@
   θα αποτυγχάνουν στο βήμα build με `crypto.hash is not a function`.
 - **Poetry** για διαχείριση εξαρτήσεων Python. Εγκατάσταση:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **npm** (συνοδεύει το Node).
+- **Bun** 1.3+ (διαχειριστής πακέτων του frontend, #1492).
 - **GNU Make** για στόχους ενορχήστρωσης. Το Makefile είναι η πηγή
   αλήθειας — κάθε εντολή CI βρίσκεται εκεί.
 
@@ -23,7 +23,7 @@ make install
 Το `make install` εκτελεί:
 
 1. `cd backend && poetry install` — backend + path-deps plugin.
-2. `cd frontend && npm ci` — εξαρτήσεις frontend (Node 24).
+2. `cd frontend && bun install` — εξαρτήσεις frontend (Node 24).
 3. Εγκαθιστά κάθε plugin στο `plugins/` ως path-dep στο venv του
    backend (`develop = true` ώστε οι επεξεργασίες να είναι live).
 
@@ -101,9 +101,9 @@ viewports, σύνδεση συγχρονισμού, roundtrip αντιγράφο
 ```bash
 cd backend && poetry run ruff check .       # Python lint
 cd backend && poetry run ruff format .      # Python format
-cd frontend && npx tsc --noEmit             # TypeScript check
-cd frontend && npm run lint                 # ESLint
-cd frontend && npm run format               # Prettier
+cd frontend && bunx tsc --noEmit             # TypeScript check
+cd frontend && bun run lint                 # ESLint
+cd frontend && bun run format               # Prettier
 ```
 
 Τα pre-commit hooks επιβάλλουν ελέγχους ruff + μορφοποιητή σε κάθε
@@ -132,5 +132,5 @@ make docs-build     # χτίζει στατικό site στο site/
 - **Οι δοκιμές αποτυγχάνουν με "duplicate column name"**: μια
   μετεγκατάσταση Alembic άλλαξε το σχήμα. Διέγραψε
   `backend/adaptive_learner.db` και εκτέλεσε ξανά.
-- **Το `npm run build` αποτυγχάνει στο Node 18**: αναβάθμισε σε
+- **Το `bun run build` αποτυγχάνει στο Node 18**: αναβάθμισε σε
   Node 24. Το Vite 8 το απαιτεί.

@@ -54,8 +54,8 @@ when testing hook firing.
 
 ```bash
 make test-frontend                # runs Vitest from frontend/
-cd frontend && npx vitest         # watch mode
-cd frontend && npx vitest run src/storage/  # one directory
+cd frontend && bunx vitest         # watch mode
+cd frontend && bunx vitest run src/storage/  # one directory
 ```
 
 Run Vitest from `frontend/` (its config lives in

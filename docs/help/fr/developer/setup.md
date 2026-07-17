@@ -6,7 +6,7 @@
 |-----------|-----------------|-------|
 | Python | 3.11+ | Poetry recommandé pour la gestion des dépendances |
 | Node.js | 24.0.0+ | LTS actif recommandé |
-| npm | inclus avec Node | |
+| Bun | 1.3+ | gestionnaire de paquets du frontend (#1492) |
 | Git | n'importe laquelle | Requis pour les fonctionnalités Learning Repository |
 
 ---
@@ -24,7 +24,7 @@ make install
 `make install` exécute :
 1. `pip install poetry` (si absent)
 2. `cd backend && poetry install`
-3. `npm ci` dans `frontend/`
+3. `bun install` dans `frontend/`
 4. `poetry install` dans chaque répertoire `plugins/`
 
 ---
@@ -105,11 +105,11 @@ cd backend && poetry run ruff check app/ --fix
 cd backend && poetry run ruff format app/
 
 # Frontend TypeScript
-cd frontend && npx eslint src/ --fix
-cd frontend && npx prettier --write src/
+cd frontend && bunx eslint src/ --fix
+cd frontend && bunx prettier --write src/
 
 # Vérification de types
-cd frontend && npx tsc --noEmit
+cd frontend && bunx tsc --noEmit
 cd backend && poetry run mypy app/
 ```
 
@@ -133,5 +133,5 @@ make prod         # Lance Docker Compose avec une build de production
 make prod-down    # Arrête les conteneurs de production
 
 # Build frontend statique (pour GitHub Pages / mode Dexie)
-cd frontend && VITE_STORAGE_MODE=dexie npm run build
+cd frontend && VITE_STORAGE_MODE=dexie bun run build
 ```
