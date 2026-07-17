@@ -6,7 +6,7 @@
  * come via props.
  */
 
-import {Info} from "lucide-react";
+import {BookOpen, Info} from "lucide-react";
 
 import {Input} from "@/components/ui/input";
 import {
@@ -44,6 +44,9 @@ interface MetadataStepProps {
     sameLanguage: boolean;
     onUpdate: (key: keyof LessonMeta, value: string) => void;
     onApplyTemplate: (key: LessonTemplateKey) => void;
+    /** #1743 — enter the book-text path (paste a chapter, AI writes the
+     *  theory + exercises). Separate from the card-based templates. */
+    onStartBookMode: () => void;
     t: Translate;
 }
 
@@ -55,6 +58,7 @@ export default function MetadataStep({
     sameLanguage,
     onUpdate,
     onApplyTemplate,
+    onStartBookMode,
     t,
 }: MetadataStepProps) {
     return (
@@ -95,6 +99,34 @@ export default function MetadataStep({
                         </button>
                     ))}
                 </div>
+                {/* #1743 — the book-text path is a distinct entry (AI writes
+                    the theory + exercises from a pasted chapter), not a
+                    card-based template, so it sits below the template grid. */}
+                <button
+                    type="button"
+                    className="template-card mt-1 flex items-start gap-3 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-accent hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    data-testid="template-knowledge-from-text"
+                    onClick={onStartBookMode}
+                >
+                    <BookOpen
+                        className="mt-0.5 h-5 w-5 shrink-0 text-accent"
+                        aria-hidden="true"
+                    />
+                    <span className="flex flex-col gap-1">
+                        <span className="template-card-title font-semibold text-fg-primary">
+                            {t(
+                                "create_lesson.templates.knowledge_from_text.title",
+                                "Knowledge lesson from text",
+                            )}
+                        </span>
+                        <span className="template-card-desc muted text-sm text-fg-muted">
+                            {t(
+                                "create_lesson.templates.knowledge_from_text.desc",
+                                "Paste a textbook section; the AI writes the theory in its own words and generates exercises.",
+                            )}
+                        </span>
+                    </span>
+                </button>
             </div>
 
             <label className="form-row flex flex-col gap-1.5">

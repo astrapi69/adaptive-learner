@@ -90,6 +90,31 @@ describe("user-generated sets (Dexie / My Lessons)", () => {
     expect(got.steps.length).toBe(l.steps.length);
   });
 
+  it("persists the optional book block into the saved set (#1743)", async () => {
+    const book = {
+      title: "KI fuer Einsteiger",
+      author: "Asterios Raptis",
+      url: "https://example.com/ki",
+      asin: "B0F43H6T2M",
+    };
+    const entry = await saveUserSetDexie(
+      saveInput({ book }),
+      "2026-07-16T00:00:00Z",
+    );
+    expect(entry.book).toEqual(book);
+    // Survives a round-trip through listSets (read back from IndexedDB).
+    const list = await listSetsDexie([]);
+    const stored = list.sets.find(
+      (s) => s.source === USER_GENERATED_SOURCE && s.id === "conv-1",
+    );
+    expect(stored?.book).toEqual(book);
+  });
+
+  it("saves no book block when none is supplied (book is null)", async () => {
+    const entry = await saveUserSetDexie(saveInput(), "t0");
+    expect(entry.book ?? null).toBeNull();
+  });
+
   it("re-saving overwrites in place (no duplicate sets)", async () => {
     await saveUserSetDexie(saveInput({ title: "Old" }), "t1");
     const e2 = await saveUserSetDexie(saveInput({ title: "New" }), "t2");

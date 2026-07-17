@@ -102,6 +102,47 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
+    test("book-text path: entry -> paste + book fields -> no-key notice (#1743)", async ({
+        page,
+    }) => {
+        const errors: string[] = [];
+        page.on("pageerror", (e) => errors.push(e.message));
+
+        await page.goto("/create-lesson");
+        await expect(page.getByTestId("create-lesson-page")).toBeVisible({
+            timeout: 15000,
+        });
+        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+            await page.getByTestId("create-lesson-draft-fresh").click();
+        }
+
+        // Enter the book-text path from step 1.
+        await page.getByTestId("create-lesson-title").fill("Pawlow");
+        await page.getByTestId("template-knowledge-from-text").click();
+
+        // The book step renders the paste field + book-metadata inputs.
+        await expect(page.getByTestId("create-lesson-book-step")).toBeVisible();
+        await expect(page.getByTestId("book-text-input")).toBeVisible();
+        await expect(page.getByTestId("book-title")).toBeVisible();
+        await expect(page.getByTestId("book-author")).toBeVisible();
+
+        // Paste a chunk + book metadata, then attempt generation. In Dexie
+        // mode with no AI key configured, the friendly no-key notice shows
+        // instead of a crash (#1743 acceptance: no key -> clear message).
+        await page
+            .getByTestId("book-text-input")
+            .fill(
+                "Iwan Pawlow zeigte mit seinen Hunden die klassische Konditionierung.",
+            );
+        await page.getByTestId("book-title").fill("KI fuer Einsteiger");
+        await page.getByTestId("book-generate").click();
+        await expect(page.getByTestId("book-no-key")).toBeVisible({
+            timeout: 10000,
+        });
+
+        expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
+    });
+
     test("creator renders at 375px (mobile)", async ({page}) => {
         await page.setViewportSize({width: 375, height: 720});
         await page.goto("/create-lesson");

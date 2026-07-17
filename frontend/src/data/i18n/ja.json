@@ -2731,6 +2731,31 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "rights_hint": "権利を持っているテキスト、または個人利用を目的としたテキストのみを貼り付けてください。",
+      "heading": "テキストからレッスンを作成",
+      "intro": "教科書の1つのセクション（例: 1章）を貼り付けてください。AIがそれを自分の言葉で理論として書き直し、演習を生成します。別のセクションを追加するにはウィザードを再実行してください。",
+      "text_label": "教科書のセクション",
+      "text_placeholder": "ここに章のテキストを貼り付け ...",
+      "meta_legend": "書籍情報（任意）",
+      "title_label": "書籍タイトル",
+      "author_label": "著者",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "理論と演習を生成",
+      "generating": "生成中 ...",
+      "feature": "テキストからレッスンを作成するには",
+      "generated": "理論ステップ{t}件、演習{e}件を生成しました。",
+      "summary": "理論ステップ{t}件、演習{e}件が準備できました。",
+      "paste_required": "まず教科書のセクションを貼り付けてください。",
+      "theory_failed": "AIは使用可能な理論を返しませんでした。もう一度お試しください。",
+      "exercises_failed": "使用可能な演習が生成されませんでした。もう一度お試しください。",
+      "generate_failed": "レッスンを生成できませんでした。もう一度お試しください。",
+      "generate_to_advance": "続行するにはテキストからレッスンを生成してください。",
+      "review_theory": "理論ステップ{n}件",
+      "review_exercises": "演習{n}件",
+      "review_book": "書籍: {title}"
+    },
     "title": "レッスンを作成",
     "step_of": "ステップ {current} / {total}",
     "edit_title": "レッスンを編集",
@@ -2842,6 +2867,10 @@
       "file_saved": "レッスンをファイルとして保存しました。"
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "テキストからの知識レッスン",
+        "desc": "教科書のセクションを貼り付けると、AIが理論を自分の言葉で書き、演習を生成します。"
+      },
       "heading": "テンプレートから開始",
       "blank": {
         "title": "空のレッスン",

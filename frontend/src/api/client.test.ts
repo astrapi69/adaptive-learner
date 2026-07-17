@@ -539,6 +539,40 @@ describe("api.contentLoader.saveUserSet", () => {
     );
     expect(call.headers?.["Content-Type"]).toBe("application/json");
   });
+
+  it("includes the optional book block in the POST body (#1743)", async () => {
+    nextResponse = () => jsonResponse({ source: "user-generated", id: "x" });
+    await api.contentLoader.saveUserSet({
+      set_id: "created-ki",
+      title: "KI fuer Einsteiger",
+      language: "de",
+      target_language: "de",
+      source_language: "de",
+      level: "A1",
+      origin: "imported",
+      description: null,
+      book: {
+        title: "KI fuer Einsteiger",
+        author: "Asterios Raptis",
+        url: null,
+        asin: "B0F43H6T2M",
+      },
+      lessons: [
+        {
+          id: "ki-1",
+          title: "KI fuer Einsteiger",
+          description: null,
+          estimated_minutes: 5,
+          cards: [],
+          steps: [{ id: "theory-1", type: "theory", body: "hi" }],
+        },
+      ],
+    });
+    const call = calls.at(-1)!;
+    expect(call.body).toMatchObject({
+      book: { title: "KI fuer Einsteiger", asin: "B0F43H6T2M" },
+    });
+  });
 });
 
 describe("api.sync.generatePairToken (Phase 61 C2)", () => {
