@@ -72,7 +72,7 @@ make sync-versions
 ```bash
 make sync-versions-check     # εξέρχεται non-zero σε απόκλιση
 make test                    # 2634 tests πρέπει να περάσουν
-cd frontend && npm run build # πρέπει να επιτύχει
+cd frontend && bun run build # πρέπει να επιτύχει
 ```
 
 Το workflow CI release-gate (`.github/workflows/release-gate.yml`)

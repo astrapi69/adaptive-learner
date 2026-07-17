@@ -520,6 +520,11 @@
       "busy": "Memproses…",
       "export_button": "Ekspor berkas terenkripsi",
       "import_heading": "Impor",
+      "import_hint": "Pilih berkas kunci terenkripsi, atau tempel isinya di bawah. Keduanya bisa.",
+      "import_file_label": "Berkas kunci terenkripsi",
+      "import_text_label": "…atau tempel isi berkas kunci",
+      "import_text_placeholder": "{ \"format\": \"adaptive-learner-keys\", … }",
+      "import_text_invalid": "Ini tidak tampak seperti berkas kunci yang valid. Pastikan kamu menempel seluruh isinya.",
       "import_button": "Impor berkas kunci",
       "success_export": "Berkas kunci terenkripsi diunduh.",
       "success_import": "Kunci diimpor. Fitur AI siap kembali.",
@@ -748,7 +753,8 @@
       "test_connection_ok": "Koneksi oke",
       "test_key_invalid": "Kunci tidak valid",
       "test_network_error": "Kesalahan jaringan",
-      "test_backend_only": "Hanya dapat diuji dengan backend"
+      "test_backend_only": "Hanya dapat diuji dengan backend",
+      "import_keys": "Impor"
     },
     "api_key_label": "Kunci API",
     "api_key_placeholder": "Tempel di sini…",

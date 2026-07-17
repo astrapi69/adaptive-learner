@@ -52,8 +52,8 @@ ao testar o disparo de hooks.
 
 ```bash
 make test-frontend                # 387 testes, ~2s
-cd frontend && npx vitest         # modo de observação
-cd frontend && npx vitest run src/storage/  # um diretório
+cd frontend && bunx vitest         # modo de observação
+cd frontend && bunx vitest run src/storage/  # um diretório
 ```
 
 Os testes vivem ao lado da fonte: `Component.test.tsx` ao lado de

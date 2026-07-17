@@ -71,7 +71,7 @@ Updates **18 files** automatically:
 ```bash
 make sync-versions-check     # exits non-zero on drift
 make test                    # 2634 tests must pass
-cd frontend && npm run build # must succeed
+cd frontend && bun run build # must succeed
 ```
 
 The release-gate CI workflow (`.github/workflows/release-gate.yml`)

@@ -80,7 +80,7 @@ bulunur.
    içi `<script>` içindeki `valid` dizisine ekle.
 5. **i18n**: `ui.themes.midnight`'ı `backend/config/i18n/*.yaml`
    altındaki tüm sekiz katalogda ekle ve `make sync-i18n` çalıştır.
-6. **Denetle**: `npx vitest run src/styles/themes src/styles/contrast`
+6. **Denetle**: `bunx vitest run src/styles/themes src/styles/contrast`
    — eksiksizlik ve kontrast pin'leri yeşil kalmalıdır (yeni temada
    kontrast AA'yı karşılayana kadar değerleri ayarla).
 

@@ -52,6 +52,12 @@ interface AiSettingsPanelProps {
    * the single export entry point stays on the Data tab.
    */
   onOpenKeyExport: () => void;
+  /**
+   * Navigate to the encrypted key IMPORT sub-section on the Data tab (#1765).
+   * Same destination as {@link onOpenKeyExport} but scrolls to the Import
+   * block so the "Import" action in the providers overview lands on it.
+   */
+  onOpenKeyImport: () => void;
 }
 
 /** Provider / model-override / API-key sections of the Settings AI tab. */
@@ -60,6 +66,7 @@ export default function AiSettingsPanel({
   onSettingsChange,
   active,
   onOpenKeyExport,
+  onOpenKeyImport,
 }: AiSettingsPanelProps) {
   const { t } = useI18n();
   const mode = resolveStorageMode();
@@ -105,6 +112,7 @@ export default function AiSettingsPanel({
           onEdit={focusProviderInput}
           onDelete={handleDeleteKey}
           onTest={handleTestKey}
+          onImportKeys={onOpenKeyImport}
         />
       </div>
 
