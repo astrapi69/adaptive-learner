@@ -77,7 +77,7 @@ export default function CardImageField({
     }
 
     return (
-        <div className="card-image-field flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
             <span className="form-label text-sm font-medium text-fg-primary">
                 {t("create_lesson.cards.image_label", "Image (optional)")}
             </span>
