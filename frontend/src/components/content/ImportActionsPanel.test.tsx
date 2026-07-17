@@ -23,6 +23,7 @@ const downloadSetMock = vi.fn();
 const deleteSetMock = vi.fn();
 const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
+const saveUserSetMock = vi.fn();
 const aiValidateMock = vi.fn();
 
 vi.mock("../../lib/content/repos/recommended-repos", async (orig) => ({
@@ -38,6 +39,7 @@ vi.mock("../../storage", () => ({
       downloadSet: downloadSetMock,
       listLessons: listLessonsMock,
       getLesson: getLessonMock,
+      saveUserSet: saveUserSetMock,
       deleteSet: deleteSetMock,
       aiValidate: aiValidateMock,
       aiValidateCards: vi.fn(),
@@ -152,6 +154,7 @@ beforeEach(() => {
   deleteSetMock.mockReset();
   listLessonsMock.mockReset();
   getLessonMock.mockReset();
+  saveUserSetMock.mockReset();
   aiValidateMock.mockReset();
   apiKeyStatusMock.mockReturnValue({
     ready: true,
@@ -386,5 +389,79 @@ describe("ImportActionsPanel — community share", () => {
     fireEvent.click(screen.getByTestId("share-wizard-share"));
     await waitFor(() => expect(listContributions().length).toBe(1));
     vi.unstubAllGlobals();
+  });
+});
+
+// #1741 — combine several own sets' lessons into one set.
+describe("ImportActionsPanel — combine into a set (#1741)", () => {
+  const SET_A = { ...USER_ENTRY, id: "created-a", title: "Set A", domain: "imported" };
+  const SET_B = { ...USER_ENTRY, id: "created-b", title: "Set B", domain: "imported" };
+
+  function primeTwoUserSets() {
+    listSetsMock.mockResolvedValue({ sets: [SET_A, SET_B], sources: [] });
+    listLessonsMock.mockResolvedValue({
+      set_id: "x",
+      source: "user-generated",
+      version: "1.0.0",
+      lessons: ["01-lektion.json"],
+    });
+    getLessonMock.mockResolvedValue(shareableLesson());
+    saveUserSetMock.mockResolvedValue({
+      id: "created-combo",
+      source: "user-generated",
+      title: "Combo",
+    });
+  }
+
+  it("select-mode only shows checkboxes after toggling Combine", async () => {
+    primeTwoUserSets();
+    renderPanel();
+    await screen.findByTestId("my-lesson-created-a");
+    expect(
+      screen.queryByTestId("my-lesson-created-a-select"),
+    ).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("my-lessons-combine-toggle"));
+    expect(screen.getByTestId("my-lesson-created-a-select")).toBeInTheDocument();
+    expect(screen.getByTestId("my-lesson-created-b-select")).toBeInTheDocument();
+  });
+
+  it("combines the selected sets' lessons into a NEW set", async () => {
+    primeTwoUserSets();
+    renderPanel();
+    await screen.findByTestId("my-lesson-created-a");
+    fireEvent.click(screen.getByTestId("my-lessons-combine-toggle"));
+    fireEvent.click(screen.getByTestId("my-lesson-created-a-select"));
+    fireEvent.click(screen.getByTestId("my-lesson-created-b-select"));
+    fireEvent.click(screen.getByTestId("my-lessons-combine-open"));
+    expect(screen.getByTestId("combine-lessons-dialog")).toBeInTheDocument();
+    fireEvent.change(screen.getByTestId("combine-new-title"), {
+      target: { value: "My Bundle" },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("combine-confirm"));
+    });
+    await waitFor(() => expect(saveUserSetMock).toHaveBeenCalled());
+    const input = saveUserSetMock.mock.calls[0][0] as {
+      set_id: string;
+      title: string;
+      lessons: { id: string }[];
+    };
+    expect(input.title).toBe("My Bundle");
+    expect(input.set_id).toBe("created-my-bundle");
+    // Both sets contributed a lesson; the id collision is de-duplicated.
+    expect(input.lessons).toHaveLength(2);
+    expect(new Set(input.lessons.map((l) => l.id)).size).toBe(2);
+  });
+
+  it("does not offer 'existing set' when the whole selection is chosen", async () => {
+    primeTwoUserSets();
+    renderPanel();
+    await screen.findByTestId("my-lesson-created-a");
+    fireEvent.click(screen.getByTestId("my-lessons-combine-toggle"));
+    fireEvent.click(screen.getByTestId("my-lesson-created-a-select"));
+    fireEvent.click(screen.getByTestId("my-lesson-created-b-select"));
+    fireEvent.click(screen.getByTestId("my-lessons-combine-open"));
+    // Every user set is selected, so there is no target left to extend.
+    expect(screen.getByTestId("combine-mode-existing")).toBeDisabled();
   });
 });

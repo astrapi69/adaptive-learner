@@ -2255,6 +2255,27 @@
       "copy_suffix": "Kopie",
       "skipped": "{n} Lektion(en) übersprungen, da die Validierung fehlschlug."
     },
+    "combine": {
+      "title": "Zu einem Set zusammenfassen",
+      "start": "Zu einem Set zusammenfassen",
+      "cancel_select": "Auswahl abbrechen",
+      "selected_count": "{n} ausgewählt",
+      "select_aria": "{title} auswählen",
+      "summary": "{n} ausgewählte Lektionen werden zu einem Set zusammengefasst.",
+      "mixed_languages": "Die ausgewählten Lektionen unterscheiden sich in Sprache oder Niveau. Das neue Set verwendet das häufigste ({lang}, {level}).",
+      "target_legend": "Ziel-Set",
+      "mode_new": "Neues Set",
+      "mode_existing": "Zu einem bestehenden Set hinzufügen",
+      "new_title": "Set-Titel",
+      "new_title_placeholder": "Mein kombiniertes Set",
+      "new_description": "Beschreibung (optional)",
+      "new_level": "Niveau",
+      "existing_set": "Bestehendes Set",
+      "keeps_originals": "Die Original-Lektionen bleiben erhalten; es wird eine gruppierte Kopie erstellt.",
+      "confirm": "Zusammenfassen",
+      "success": "Lektionen zu einem Set zusammengefasst.",
+      "failed": "Die Lektionen konnten nicht zusammengefasst werden."
+    },
     "my_lessons": {
       "export_set": "Als Content-Set exportieren",
       "share": "Für die Community bereitstellen",

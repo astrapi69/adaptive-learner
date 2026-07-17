@@ -2255,6 +2255,27 @@
       "copy_suffix": "kopya",
       "skipped": "{n} ders doğrulamayı geçemediği için atlandı."
     },
+    "combine": {
+      "title": "Bir sette birleştir",
+      "start": "Bir sette birleştir",
+      "cancel_select": "Seçimi iptal et",
+      "selected_count": "{n} seçildi",
+      "select_aria": "{title} seç",
+      "summary": "Seçilen {n} ders bir sette gruplanacak.",
+      "mixed_languages": "Seçilen dersler dil veya düzey bakımından farklı. Yeni set en yaygın olanı kullanır ({lang}, {level}).",
+      "target_legend": "Hedef set",
+      "mode_new": "Yeni set",
+      "mode_existing": "Mevcut bir sete ekle",
+      "new_title": "Set başlığı",
+      "new_title_placeholder": "Birleştirilmiş setim",
+      "new_description": "Açıklama (isteğe bağlı)",
+      "new_level": "Düzey",
+      "existing_set": "Mevcut set",
+      "keeps_originals": "Orijinal dersler korunur; bu, gruplanmış bir kopya oluşturur.",
+      "confirm": "Birleştir",
+      "success": "Dersler bir sette birleştirildi.",
+      "failed": "Dersler birleştirilemedi."
+    },
     "my_lessons": {
       "export_set": "Set olarak dışa aktar",
       "share": "Toplulukla paylaş",

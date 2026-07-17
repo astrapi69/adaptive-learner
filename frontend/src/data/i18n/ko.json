@@ -2255,6 +2255,27 @@
       "copy_suffix": "사본",
       "skipped": "{n}개의 레슨이 검증에 실패하여 건너뛰었습니다."
     },
+    "combine": {
+      "title": "세트로 묶기",
+      "start": "세트로 묶기",
+      "cancel_select": "선택 취소",
+      "selected_count": "{n}개 선택됨",
+      "select_aria": "{title} 선택",
+      "summary": "선택한 {n}개 레슨을 하나의 세트로 묶습니다.",
+      "mixed_languages": "선택한 레슨은 언어 또는 레벨이 다릅니다. 새 세트는 가장 일반적인 항목({lang}, {level})을 사용합니다.",
+      "target_legend": "대상 세트",
+      "mode_new": "새 세트",
+      "mode_existing": "기존 세트에 추가",
+      "new_title": "세트 제목",
+      "new_title_placeholder": "내 묶음 세트",
+      "new_description": "설명(선택 사항)",
+      "new_level": "레벨",
+      "existing_set": "기존 세트",
+      "keeps_originals": "원본 레슨은 유지되며, 묶은 사본이 생성됩니다.",
+      "confirm": "묶기",
+      "success": "레슨을 세트로 묶었습니다.",
+      "failed": "레슨을 묶을 수 없습니다."
+    },
     "my_lessons": {
       "export_set": "세트로 내보내기",
       "share": "커뮤니티에 공유",

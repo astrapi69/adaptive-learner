@@ -2066,6 +2066,26 @@ content:
     copy: "प्रति के रूप में आयात करें"
     copy_suffix: "प्रति"
     skipped: "{n} पाठ छोड़े गए क्योंकि वे सत्यापन में विफल रहे।"
+  combine:
+    title: "एक सेट में संयोजित करें"
+    start: "एक सेट में संयोजित करें"
+    cancel_select: "चयन रद्द करें"
+    selected_count: "{n} चयनित"
+    select_aria: "{title} चुनें"
+    summary: "चयनित {n} पाठ एक सेट में समूहित किए जाएंगे।"
+    mixed_languages: "चयनित पाठ भाषा या स्तर में भिन्न हैं। नया सेट सबसे सामान्य ({lang}, {level}) का उपयोग करता है।"
+    target_legend: "लक्ष्य सेट"
+    mode_new: "नया सेट"
+    mode_existing: "किसी मौजूदा सेट में जोड़ें"
+    new_title: "सेट शीर्षक"
+    new_title_placeholder: "मेरा संयोजित सेट"
+    new_description: "विवरण (वैकल्पिक)"
+    new_level: "स्तर"
+    existing_set: "मौजूदा सेट"
+    keeps_originals: "मूल पाठ सुरक्षित रहते हैं; इससे एक समूहित प्रति बनती है।"
+    confirm: "संयोजित करें"
+    success: "पाठ एक सेट में संयोजित किए गए।"
+    failed: "पाठों को संयोजित नहीं किया जा सका।"
   my_lessons:
     export_set: सेट के रूप में निर्यात करें
     share: समुदाय के साथ साझा करें

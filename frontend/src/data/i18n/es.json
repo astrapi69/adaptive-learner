@@ -2255,6 +2255,27 @@
       "copy_suffix": "copia",
       "skipped": "{n} lección(es) omitida(s) porque no superaron la validación."
     },
+    "combine": {
+      "title": "Combinar en un conjunto",
+      "start": "Combinar en un conjunto",
+      "cancel_select": "Cancelar selección",
+      "selected_count": "{n} seleccionadas",
+      "select_aria": "Seleccionar {title}",
+      "summary": "{n} lecciones seleccionadas se agruparán en un conjunto.",
+      "mixed_languages": "Las lecciones seleccionadas difieren en idioma o nivel. El nuevo conjunto usa el más común ({lang}, {level}).",
+      "target_legend": "Conjunto de destino",
+      "mode_new": "Nuevo conjunto",
+      "mode_existing": "Añadir a un conjunto existente",
+      "new_title": "Título del conjunto",
+      "new_title_placeholder": "Mi conjunto combinado",
+      "new_description": "Descripción (opcional)",
+      "new_level": "Nivel",
+      "existing_set": "Conjunto existente",
+      "keeps_originals": "Las lecciones originales se conservan; esto crea una copia agrupada.",
+      "confirm": "Combinar",
+      "success": "Lecciones combinadas en un conjunto.",
+      "failed": "No se pudieron combinar las lecciones."
+    },
     "my_lessons": {
       "export_set": "Exportar como conjunto",
       "share": "Compartir con la comunidad",
