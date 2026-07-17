@@ -135,7 +135,7 @@ npx playwright test         # E2E tests
 
 ```bash
 # Frontend: TypeScript compiler
-cd frontend && npx tsc --noEmit
+cd frontend && bunx tsc --noEmit
 
 # Backend: mypy (optional, not set up yet)
 # cd backend && poetry run mypy app/
@@ -225,7 +225,7 @@ def test_streak_caps_at_seven_days():
 **How to run:**
 ```bash
 make test-frontend          # all frontend tests
-cd frontend && npx vitest   # watch mode
+cd frontend && bunx vitest   # watch mode
 ```
 
 **Example:**
@@ -490,8 +490,8 @@ make stryker-quick MUTATE="src/lib/apiKeyFormat.ts"
 make stryker-quick MUTATE="src/lib/lesson/**/*.ts"
 
 # Equivalent raw invocations
-cd frontend && npx stryker run
-cd frontend && npx stryker run --mutate "src/hooks/**/*.ts"
+cd frontend && bunx stryker run
+cd frontend && bunx stryker run --mutate "src/hooks/**/*.ts"
 ```
 
 **CI:** `.github/workflows/mutation-frontend.yml`. Manual dispatch
@@ -527,7 +527,7 @@ Steps:
 ```makefile
 # Frontend type check
 check-types:
-	cd frontend && npx tsc --noEmit
+	cd frontend && bunx tsc --noEmit
 
 # Backend mutation testing (nightly/manual)
 mutmut-backend:
@@ -545,10 +545,10 @@ mutmut-html:
 
 # Frontend mutation testing (nightly/manual)
 stryker:
-	cd frontend && npx stryker run
+	cd frontend && bunx stryker run
 
 stryker-api:
-	cd frontend && npx stryker run --mutate "src/api/**/*.ts"
+	cd frontend && bunx stryker run --mutate "src/api/**/*.ts"
 
 # All checks together (before push)
 check-all: test check-types

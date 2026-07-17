@@ -52,8 +52,8 @@ modüllerini izole olarak test eder. Hook tetiklemeyi test ederken
 
 ```bash
 make test-frontend                # 387 test, ~2s
-cd frontend && npx vitest         # izleme modu
-cd frontend && npx vitest run src/storage/  # tek dizin
+cd frontend && bunx vitest         # izleme modu
+cd frontend && bunx vitest run src/storage/  # tek dizin
 ```
 
 Testler kaynakla birlikte yaşar: `Component.tsx` yanında

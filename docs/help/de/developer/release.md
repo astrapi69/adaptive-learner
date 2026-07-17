@@ -71,7 +71,7 @@ Aktualisiert **18 Dateien** automatisch:
 ```bash
 make sync-versions-check     # Exit-Code != 0 bei Drift
 make test                    # 2634 Tests müssen passieren
-cd frontend && npm run build # muss durchlaufen
+cd frontend && bun run build # muss durchlaufen
 ```
 
 Der Release-Gate-CI-Workflow

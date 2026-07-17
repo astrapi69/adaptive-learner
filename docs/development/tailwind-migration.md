@@ -140,8 +140,8 @@ The base setup is wired (`components.json`, `cn()` at `@/lib/utils`, the
 
 ```bash
 cd frontend
-npx shadcn@latest add button
-npx shadcn@latest add dialog tabs
+bunx shadcn@latest add button
+bunx shadcn@latest add dialog tabs
 ```
 
 Components land in `frontend/src/components/ui/`. **Do not** bulk-add the
@@ -186,8 +186,8 @@ why the bridge is deferred to first-component time rather than guessed now.
 
 ```bash
 cd frontend
-npm run build          # utilities compile; bundle size sane
-npm run test           # Vitest (includes the POC regression pin)
+bun run build          # utilities compile; bundle size sane
+bun run test           # Vitest (includes the POC regression pin)
 cd .. && make test-dexie-smoke   # GH-Pages-shape build, every route renders
 ```
 

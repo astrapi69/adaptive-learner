@@ -8,7 +8,7 @@
   fail at the build step with `crypto.hash is not a function`.
 - **Poetry** for Python dependency management. Install:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **npm** (ships with Node).
+- **Bun** 1.3+ (the frontend package manager, #1492).
 - **GNU Make** for the orchestration targets. The Makefile is
   the source of truth — every CI command is in there.
 
@@ -23,7 +23,7 @@ make install
 `make install` runs:
 
 1. `cd backend && poetry install` — backend + plugin path-deps.
-2. `cd frontend && npm ci` — frontend dependencies (Node 24).
+2. `cd frontend && bun install` — frontend dependencies (Node 24).
 3. Installs every plugin in `plugins/` as a path-dep into the
    backend's venv (`develop = true` so edits are live).
 
@@ -100,9 +100,9 @@ subjects/tags filter, rich-text notes, model picker.
 ```bash
 cd backend && poetry run ruff check .       # Python lint
 cd backend && poetry run ruff format .      # Python format
-cd frontend && npx tsc --noEmit             # TypeScript check
-cd frontend && npm run lint                 # ESLint
-cd frontend && npm run format               # Prettier
+cd frontend && bunx tsc --noEmit             # TypeScript check
+cd frontend && bun run lint                 # ESLint
+cd frontend && bun run format               # Prettier
 ```
 
 Pre-commit hooks enforce ruff + formatter checks on every
@@ -132,5 +132,5 @@ mkdocs-static-i18n.
 - **Tests fail with "duplicate column name"**: an Alembic
   migration changed the schema. Delete
   `backend/adaptive_learner.db` and re-run.
-- **`npm run build` fails on Node 18**: bump to Node 24.
+- **`bun run build` fails on Node 18**: bump to Node 24.
   Vite 8 requires it.

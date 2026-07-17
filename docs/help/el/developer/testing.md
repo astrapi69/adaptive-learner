@@ -50,8 +50,8 @@ modules του plugin σε απομόνωση. Χρησιμοποίησε mock �
 
 ```bash
 make test-frontend                # 387 tests, ~2s
-cd frontend && npx vitest         # watch mode
-cd frontend && npx vitest run src/storage/  # ένας κατάλογος
+cd frontend && bunx vitest         # watch mode
+cd frontend && bunx vitest run src/storage/  # ένας κατάλογος
 ```
 
 Τα τεστ βρίσκονται δίπλα στον πηγαίο κώδικα: `Component.test.tsx`

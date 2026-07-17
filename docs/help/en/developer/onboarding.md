@@ -9,7 +9,7 @@ merged pull request.
 ## 1. Set up the development environment
 
 Prerequisites: **Python 3.11+** (3.12 recommended — plugins test
-against 3.12), **Node 24+** (required by Vite 8), **Poetry**, **npm**,
+against 3.12), **Node 24+** (required by Vite 8), **Poetry**, **Bun**,
 and **GNU Make**.
 
 ```bash
@@ -17,7 +17,7 @@ and **GNU Make**.
 git clone https://github.com/astrapi69/adaptive-learner.git
 cd adaptive-learner
 
-# Install everything: Poetry backend + plugin path-deps + npm frontend
+# Install everything: Poetry backend + plugin path-deps + Bun frontend
 make install
 
 # Establish a green baseline before you change anything
@@ -95,7 +95,7 @@ rg "the error message" frontend/src backend/app
 ```
 
 - Frontend errors: open the browser DevTools console.
-- `cd frontend && npx vitest --watch <file>` gives live test feedback
+- `cd frontend && bunx vitest --watch <file>` gives live test feedback
   while you edit (always run vitest from `frontend/`, not the repo
   root).
 - **Styling: Tailwind utility classes only**, no inline color styles
@@ -112,7 +112,7 @@ passes after it.
 
 ```bash
 # Frontend (Vitest) — run from frontend/
-cd frontend && npx vitest run src/path/to/file.test.ts
+cd frontend && bunx vitest run src/path/to/file.test.ts
 
 # Backend (pytest)
 cd backend && poetry run pytest tests/path/ -v
@@ -132,7 +132,7 @@ merge.
 make test            # backend + plugins + frontend Vitest
 make check-types     # mypy + tsc --noEmit
 make test-dexie-smoke  # GH-Pages-shape build, every route, no backend
-cd frontend && npm run build
+cd frontend && bun run build
 ```
 
 Everything must be green before you open a PR.
@@ -227,7 +227,7 @@ make check-complexity-gate   # complexity ratchet
 make check-folder-size       # god-folder guard
 make sync-i18n         # regenerate frontend i18n from backend YAML
 make sync-versions     # propagate the canonical version
-cd frontend && npm run build   # build the frontend
+cd frontend && bun run build   # build the frontend
 ```
 
 `make help` lists every target; the

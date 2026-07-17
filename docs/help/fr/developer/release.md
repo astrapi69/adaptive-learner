@@ -71,7 +71,7 @@ Met à jour **18 fichiers** automatiquement :
 ```bash
 make sync-versions-check     # sort avec un code non nul en cas de dérive
 make test                    # les tests doivent passer
-cd frontend && npm run build # doit réussir
+cd frontend && bun run build # doit réussir
 ```
 
 Le workflow CI de porte de sortie (`.github/workflows/release-gate.yml`)
