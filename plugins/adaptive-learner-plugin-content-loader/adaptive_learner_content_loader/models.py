@@ -46,7 +46,7 @@ from .manifest_generated import (
     ContentSetBook,
 )
 
-CURRENT_SCHEMA_VERSION = "1.6"
+CURRENT_SCHEMA_VERSION = "1.7"
 # v1.4 → v1.5 (inline examples):
 #   - New optional ``InlineExample`` list ``examples`` on BOTH the
 #     theory step (``LessonStep``) and the ``Exercise``. An example

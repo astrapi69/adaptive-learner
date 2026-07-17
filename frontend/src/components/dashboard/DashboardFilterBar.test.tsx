@@ -151,8 +151,13 @@ describe("DashboardFilterBar", () => {
                 screen.getByTestId("dashboard-filter-project-list"),
             ).toBeInTheDocument();
         });
-        expect(screen.getByText("Spanish Grammar")).toBeInTheDocument();
-        expect(screen.getByText("Python Algorithms")).toBeInTheDocument();
+        // #1742 — inside waitFor like every sibling test: under heavy
+        // parallel-suite load the bar can flip back to its loading
+        // state between the list appearing and a sync assertion.
+        await waitFor(() => {
+            expect(screen.getByText("Spanish Grammar")).toBeInTheDocument();
+            expect(screen.getByText("Python Algorithms")).toBeInTheDocument();
+        });
     });
 
     it("filters down to Spanish when Languages subject is picked via URL", async () => {

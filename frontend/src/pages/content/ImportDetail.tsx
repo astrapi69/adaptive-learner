@@ -241,9 +241,15 @@ export default function ImportDetail({
 
   // Abort any in-flight analysis + clear the phase timer if the
   // user navigates away mid-run (otherwise the fetch keeps going
-  // and the interval leaks).
+  // and the interval leaks). ``mountedRef`` lets the suspended
+  // ``runAnalysis`` continuation skip its late state updates after
+  // unmount (#1739 — a post-teardown setState crashed the vitest
+  // run with "window is not defined").
+  const mountedRef = useRef(true);
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
+      mountedRef.current = false;
       abortRef.current?.abort();
       if (phaseTimerRef.current !== null) {
         clearInterval(phaseTimerRef.current);
@@ -292,6 +298,13 @@ export default function ImportDetail({
             "Set an API key for the active AI provider in Settings to enable analysis.",
           ),
         );
+        return;
+      }
+      // #1739 — the unmount cleanup aborts the controller while this
+      // function may still be suspended on the storage reads above.
+      // Bail before dialing the provider so no call escapes the
+      // component's lifetime.
+      if (controller.signal.aborted) {
         return;
       }
       const modelOverride =
@@ -345,7 +358,9 @@ export default function ImportDetail({
         notify.success(t("import.analysis_ready", "Analysis ready."));
       }
       await new Promise((resolve) => setTimeout(resolve, ANALYSIS_DONE_FLASH_MS));
-      setDetail(updated);
+      if (mountedRef.current) {
+        setDetail(updated);
+      }
     } catch (err) {
       // A user-triggered cancel returns silently to the
       // pre-analysis state — no error message, no toast.
@@ -354,16 +369,23 @@ export default function ImportDetail({
       }
       // Friendly INLINE error (not a raw toast). The button
       // re-enables in the finally block so the user can retry.
-      setAnalysisError(
-        err instanceof ApiError
-          ? err.detail
-          : t("import.analysis_failed_inline", "Analysis failed. Please try again."),
-      );
+      if (mountedRef.current) {
+        setAnalysisError(
+          err instanceof ApiError
+            ? err.detail
+            : t("import.analysis_failed_inline", "Analysis failed. Please try again."),
+        );
+      }
     } finally {
       stopPhaseTimer();
       if (abortRef.current === controller) abortRef.current = null;
-      setAnalyzing(false);
-      setAnalysisDone(false);
+      // #1739 — after unmount these setState calls are at best no-ops
+      // and, when the test environment is already torn down, crash
+      // with "window is not defined" as an unhandled rejection.
+      if (mountedRef.current) {
+        setAnalyzing(false);
+        setAnalysisDone(false);
+      }
     }
   }
 

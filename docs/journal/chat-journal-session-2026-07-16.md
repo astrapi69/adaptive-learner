@@ -72,3 +72,12 @@ Fuenf User-gemeldete Bugs in einer Session, jeweils Issue -> Worktree-Branch -> 
 
 - Root cause: Entdecken bietet die GANZE foederierte Registry an und downloadSetDexie akzeptiert jede Quelle; listSetsDexie iterierte aber NUR konfigurierte Quellen -> Download aus nicht verbundenem Registry-Repo gecacht, aber nie gelistet (Remedy war das manuelle Repo-Verbinden). Das Backend hatte exakt diesen Fix laengst (_all_cached_entries-Sweep) - reine Dexie-Paritaetsluecke. Delete-all NICHT kausal (purgt nur Cache-Rows); #1709-Dismissal NICHT beteiligt (cached gewinnt).
 - Fix: Backend-Sweep in listSetsDexie gespiegelt (letzte gecachte Version je (source, set_id), id-level-Dedupe, subsumiert den User-Generated-Anhang). RED-first-Tests + Live-Beweis (echtes nicht verbundenes Registry-Repo alc-die-waehrung-des-geistes -> sofort sichtbar).
+
+## 9. Release v2.3.0 (Nachmittag)
+
+- Original prompt: "bringen wir ein neues release raus"
+- Ziel: v2.3.0 nach release-workflow.md (gitflow, release/2.3.0 von develop).
+- SemVer: feat-Commits seit v2.2.0 (#1687 listen-first audio, #1683 difficulty-Prior, #1681 Import/Export-Haertung, #1628/#1644/#1635 Lesson-UX) -> Minor-Bump 2.2.0 -> 2.3.0.
+- Ablauf: make release-prepare; Bump backend/pyproject.toml + make sync-versions (19 Dateien); changelog/releases/v2.3.0.md; README/README-de-Badges + Status, CLAUDE.md Current-state, ROADMAP/backlog-Header auf v2.3.0.
+- Step 4b Dependency-Check: keine EOL/Security-Red-Flags; anthropic 0.55->0.116 / fastapi 0.136->0.139 sind Major-Klasse (0.x) und gehen in eine eigene Session statt in den Release (Allowlist-Regel, 13 Plugin-Locks Blast-Radius).
+- Gate-Rot #1: make release-test scheiterte im zweiten Vitest-Lauf an einer Unhandled Rejection ("window is not defined", ImportDetail.tsx finally setAnalyzing). Root cause (#1739): der Loading-Test laesst runAnalysis auf den Storage-Awaits haengen; nach Testende laeuft die Continuation weiter, waehlt den Provider hinter der Komponenten-Lebenszeit an und die catch/finally-setStates landen im abgerissenen happy-dom. Fix auf release/2.3.0 (P0-Ausnahme der Release-Sperre): Aborted-Bail nach den Storage-Awaits + mountedRef-Guards; RED-first-Regressionstest (Provider-Call nach Unmount = 0). Commit aaff39d7.
