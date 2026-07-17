@@ -520,6 +520,11 @@
       "busy": "Wird verarbeitet…",
       "export_button": "Verschlüsselte Datei exportieren",
       "import_heading": "Importieren",
+      "import_hint": "Wähle die verschlüsselte Schlüsseldatei oder füge ihren Inhalt unten ein. Beides funktioniert.",
+      "import_file_label": "Verschlüsselte Schlüsseldatei",
+      "import_text_label": "…oder den Inhalt der Schlüsseldatei einfügen",
+      "import_text_placeholder": "{ \"format\": \"adaptive-learner-keys\", … }",
+      "import_text_invalid": "Das sieht nicht nach einer gültigen Schlüsseldatei aus. Prüfe, ob du den gesamten Inhalt eingefügt hast.",
       "import_button": "Schlüsseldatei importieren",
       "success_export": "Verschlüsselte Schlüsseldatei heruntergeladen.",
       "success_import": "Schlüssel importiert. KI-Funktionen sind wieder bereit.",
@@ -744,7 +749,8 @@
       "test_connection_ok": "Verbindung ok",
       "test_key_invalid": "Key ungültig",
       "test_network_error": "Netzwerkfehler",
-      "test_backend_only": "Nur mit Backend testbar"
+      "test_backend_only": "Nur mit Backend testbar",
+      "import_keys": "Importieren"
     },
     "api_key_label": "API-Key",
     "api_key_placeholder": "Hier einfügen …",

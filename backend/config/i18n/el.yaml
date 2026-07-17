@@ -485,6 +485,11 @@ settings:
     busy: "Επεξεργασία…"
     export_button: "Εξαγωγή κρυπτογραφημένου αρχείου"
     import_heading: "Εισαγωγή"
+    import_hint: "Επίλεξε το κρυπτογραφημένο αρχείο κλειδιών ή επικόλλησε το περιεχόμενό του παρακάτω. Και οι δύο τρόποι λειτουργούν."
+    import_file_label: "Κρυπτογραφημένο αρχείο κλειδιών"
+    import_text_label: "…ή επικόλλησε το περιεχόμενο του αρχείου κλειδιών"
+    import_text_placeholder: '{ "format": "adaptive-learner-keys", … }'
+    import_text_invalid: "Αυτό δεν μοιάζει με έγκυρο αρχείο κλειδιών. Έλεγξε ότι επικόλλησες ολόκληρο το περιεχόμενο."
     import_button: "Εισαγωγή αρχείου κλειδιών"
     success_export: "Το κρυπτογραφημένο αρχείο κλειδιών λήφθηκε."
     success_import: "Τα κλειδιά εισήχθησαν. Οι λειτουργίες AI είναι ξανά έτοιμες."
@@ -705,6 +710,7 @@ settings:
     test_key_invalid: Μη έγκυρο κλειδί
     test_network_error: Σφάλμα δικτύου
     test_backend_only: Δοκιμάζεται μόνο με το backend
+    import_keys: "Εισαγωγή"
   api_key_label: Κλειδί API
   api_key_placeholder: Επικόλληση εδώ...
   api_key_placeholder_replace: "Επικολλήστε νέο κλειδί για να αντικαταστήσετε το αποθηκευμένο…"

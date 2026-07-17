@@ -485,6 +485,11 @@ settings:
     busy: "Procesando…"
     export_button: "Exportar archivo cifrado"
     import_heading: "Importar"
+    import_hint: "Elige el archivo de claves cifrado o pega su contenido abajo. Ambas opciones funcionan."
+    import_file_label: "Archivo de claves cifrado"
+    import_text_label: "…o pega el contenido del archivo de claves"
+    import_text_placeholder: '{ "format": "adaptive-learner-keys", … }'
+    import_text_invalid: "Esto no parece un archivo de claves válido. Comprueba que pegaste todo el contenido."
     import_button: "Importar archivo de claves"
     success_export: "Archivo de claves cifrado descargado."
     success_import: "Claves importadas. Las funciones de IA están listas de nuevo."
@@ -705,6 +710,7 @@ settings:
     test_key_invalid: Clave no válida
     test_network_error: Error de red
     test_backend_only: Solo se puede probar con el backend
+    import_keys: "Importar"
   api_key_label: Clave API
   api_key_placeholder: Pegar aquí...
   api_key_placeholder_replace: "Pega una clave nueva para reemplazar la guardada…"

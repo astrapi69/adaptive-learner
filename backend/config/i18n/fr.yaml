@@ -485,6 +485,11 @@ settings:
     busy: "Traitement…"
     export_button: "Exporter le fichier chiffré"
     import_heading: "Importer"
+    import_hint: "Choisis le fichier de clés chiffré ou colle son contenu ci-dessous. Les deux fonctionnent."
+    import_file_label: "Fichier de clés chiffré"
+    import_text_label: "…ou colle le contenu du fichier de clés"
+    import_text_placeholder: '{ "format": "adaptive-learner-keys", … }'
+    import_text_invalid: "Cela ne ressemble pas à un fichier de clés valide. Vérifie que tu as collé tout le contenu."
     import_button: "Importer le fichier de clés"
     success_export: "Fichier de clés chiffré téléchargé."
     success_import: "Clés importées. Les fonctions d'IA sont à nouveau prêtes."
@@ -705,6 +710,7 @@ settings:
     test_key_invalid: Clé invalide
     test_network_error: Erreur réseau
     test_backend_only: Testable uniquement avec le backend
+    import_keys: "Importer"
   api_key_label: Clé API
   api_key_placeholder: Coller ici...
   api_key_placeholder_replace: "Colle une nouvelle clé pour remplacer celle enregistrée…"

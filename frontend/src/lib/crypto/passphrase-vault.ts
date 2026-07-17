@@ -174,6 +174,23 @@ function parseEnvelope(raw: string): VaultEnvelope {
 }
 
 /**
+ * Structural check that a raw string is a well-formed vault envelope
+ * (``format`` / ``version`` / ``kdf`` / ``cipher`` / ``ciphertext``), WITHOUT
+ * attempting to decrypt. Used to gate the paste-content import path (#1765):
+ * the Import button stays disabled until the pasted text is a valid envelope,
+ * so invalid/incomplete JSON is caught inline instead of crashing the decrypt.
+ * The passphrase check happens later in {@link decryptFromVault}.
+ */
+export function looksLikeVaultEnvelope(raw: string): boolean {
+    try {
+        parseEnvelope(raw);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+/**
  * Decrypt a `.alk` envelope string back into its JSON value.
  *
  * Any failure — malformed envelope, wrong passphrase, or tampered ciphertext —
