@@ -204,6 +204,47 @@ describe("#1205 fixture 5 — picture_choice single correct (imperative)", () =>
     ]);
     expect(() => validateGeneratedLesson(lesson)).not.toThrow();
   });
+
+  // Engine 0.13.0 / schema 1.8 (engine#66): ``src`` is an anyOf of the
+  // original assets/ path (<= 500 chars) OR an inline base64 data URI
+  // with its own 250000-char cap (sized for the 150-KiB upload
+  // compression from #1763). RED before the 0.13.0 re-pin.
+  describe("src formats (schema 1.8, engine 0.13.0)", () => {
+    const dataUriSrc = (base64Length: number): string => `data:image/jpeg;base64,${"A".repeat(base64Length)}`;
+
+    it("accepts a base64 data-URI src longer than the 500-char path cap", () => {
+      const lesson = pictureLesson([
+        { src: dataUriSrc(10_000), label: "A", is_correct: "true" },
+        { src: "assets/img/b.png", label: "B" },
+      ]);
+      expect(validateLessonShape(lesson).ok).toBe(true);
+      expect(() => validateGeneratedLesson(lesson)).not.toThrow();
+    });
+
+    it("rejects a data-URI src beyond the 250000-char cap", () => {
+      const lesson = pictureLesson([
+        { src: dataUriSrc(250_001), label: "A", is_correct: "true" },
+        { src: "assets/img/b.png", label: "B" },
+      ]);
+      expect(validateLessonShape(lesson).ok).toBe(false);
+    });
+
+    it("still rejects a non-data-URI src longer than 500 chars", () => {
+      const lesson = pictureLesson([
+        { src: `assets/img/${"x".repeat(600)}.png`, label: "A", is_correct: "true" },
+        { src: "assets/img/b.png", label: "B" },
+      ]);
+      expect(validateLessonShape(lesson).ok).toBe(false);
+    });
+
+    it("keeps existing path srcs valid (regression for the ecosystem's picture_choice stock)", () => {
+      const lesson = pictureLesson([
+        { src: "assets/img/a.png", label: "A", is_correct: "true" },
+        { src: "assets/img/b.png", label: "B" },
+      ]);
+      expect(validateLessonShape(lesson).ok).toBe(true);
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------

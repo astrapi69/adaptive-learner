@@ -183,7 +183,7 @@ One image option in a PICTURE_CHOICE exercise.
 |-------|------|----------|-------------|
 | `is_correct` | `string | null` | no | - |
 | `label` | `string` | yes | minLen=1, maxLen=500 |
-| `src` | `string` | yes | minLen=1, maxLen=500 |
+| `src` | `string | string` | yes | - |
 
 
 ### `StepType` (enum)

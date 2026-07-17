@@ -7,16 +7,12 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict, Field, RootModel
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from enum import Enum
-from typing import Any
+from typing import Annotated, Any
 
 
-class RequiresExtension(RootModel[str]):
-    model_config = ConfigDict(
-        frozen=True,
-    )
-    root: str = Field(..., pattern='^ext:[a-z0-9]+-[a-z0-9-]+@\\d+$')
+RequiresExtension = Annotated[str, StringConstraints(pattern='^ext:[a-z0-9]+-[a-z0-9-]+@\\d+$')]
 
 
 class MediaType(str, Enum):
@@ -107,16 +103,10 @@ class ExerciseType(str, Enum):
     MULTIPLE_CHOICE = 'multiple_choice'
 
 
-class ExtExerciseType(RootModel[str]):
-    model_config = ConfigDict(
-        frozen=True,
-    )
-    root: str = Field(
-        ..., pattern='^ext:[a-z0-9]+-[a-z0-9-]+$', title='ExtExerciseType'
-    )
-    """
+ExtExerciseType = Annotated[str, StringConstraints(pattern='^ext:[a-z0-9]+-[a-z0-9-]+$')]
+"""
     Extension exercise type in the ``ext:<vendor>-<name>`` namespace (e.g. ``ext:acme-ordering``). Structurally opaque here: an exercise carrying it must be declared in the lesson's ``requires_extensions`` and is validated by a registered extension, never by the core schema. Core content never uses this branch, so pre-1.7 content validates unchanged.
-    """
+"""
 
 
 class InlineExample(BaseModel):
@@ -250,6 +240,18 @@ class Pair(BaseModel):
     """
 
 
+Src = Annotated[str, StringConstraints(max_length=500, min_length=1)]
+"""
+    Image reference in one of two explicit formats (schema v1.8): a relative path inside the set's ``assets/`` directory ('assets/img/cat.png', <= 500 chars, resolved by the asset loader) OR an inline base64 data URI ('data:image/...;base64,...', its own 250000-char cap - sized for the reference consumer's 150-KiB upload compression: 153600 bytes -> 204800 base64 chars plus header). Repo content should prefer the assets/ path; the ``W-PIC-DATA-URI`` author lint flags inline data URIs.
+"""
+
+
+Src1 = Annotated[str, StringConstraints(max_length=250000, pattern='^data:image/[a-z0-9.+-]+;base64,')]
+"""
+    Image reference in one of two explicit formats (schema v1.8): a relative path inside the set's ``assets/`` directory ('assets/img/cat.png', <= 500 chars, resolved by the asset loader) OR an inline base64 data URI ('data:image/...;base64,...', its own 250000-char cap - sized for the reference consumer's 150-KiB upload compression: 153600 bytes -> 204800 base64 chars plus header). Repo content should prefer the assets/ path; the ``W-PIC-DATA-URI`` author lint flags inline data URIs.
+"""
+
+
 class PictureImage(BaseModel):
     """
     One image option in a PICTURE_CHOICE exercise.
@@ -277,9 +279,9 @@ class PictureImage(BaseModel):
     """
     Accessible label / alt text for the image option.
     """
-    src: str = Field(..., max_length=500, min_length=1, title='Src')
+    src: Src | Src1 = Field(..., title='Src')
     """
-    Relative path inside the set's ``assets/`` directory ('assets/img/cat.png'). Resolved by the asset loader.
+    Image reference in one of two explicit formats (schema v1.8): a relative path inside the set's ``assets/`` directory ('assets/img/cat.png', <= 500 chars, resolved by the asset loader) OR an inline base64 data URI ('data:image/...;base64,...', its own 250000-char cap - sized for the reference consumer's 150-KiB upload compression: 153600 bytes -> 204800 base64 chars plus header). Repo content should prefer the assets/ path; the ``W-PIC-DATA-URI`` author lint flags inline data URIs.
     """
 
 
