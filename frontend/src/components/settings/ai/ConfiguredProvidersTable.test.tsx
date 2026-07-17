@@ -70,6 +70,7 @@ interface RenderOpts {
   onEdit?: (p: AIProvider) => void;
   onDelete?: (p: AIProvider) => void;
   onTest?: (p: AIProvider) => void;
+  onImportKeys?: () => void;
 }
 
 function renderTable(opts: RenderOpts = {}) {
@@ -83,6 +84,7 @@ function renderTable(opts: RenderOpts = {}) {
       onEdit={opts.onEdit ?? noop}
       onDelete={opts.onDelete ?? noop}
       onTest={opts.onTest ?? noop}
+      onImportKeys={opts.onImportKeys ?? noop}
     />,
   );
 }
@@ -97,6 +99,17 @@ const configured = (over: Partial<UserSettings> = {}) =>
 
 afterEach(() => {
   vi.useRealTimers();
+});
+
+describe("ConfiguredProvidersTable — key import link (#1765)", () => {
+  it("renders an Import button that fires onImportKeys", () => {
+    const onImportKeys = vi.fn();
+    renderTable({ onImportKeys });
+    const button = screen.getByTestId("configured-providers-import");
+    expect(button).toBeInTheDocument();
+    fireEvent.click(button);
+    expect(onImportKeys).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("ConfiguredProvidersTable", () => {
@@ -209,6 +222,7 @@ describe("ConfiguredProvidersTable", () => {
         onEdit={noop}
         onDelete={noop}
         onTest={noop}
+        onImportKeys={noop}
       />,
     );
     expect(screen.getByTestId("provider-overview-test-result-anthropic")).toHaveTextContent(

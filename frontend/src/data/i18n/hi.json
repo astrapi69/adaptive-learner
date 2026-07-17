@@ -520,6 +520,11 @@
       "busy": "काम जारी है…",
       "export_button": "एन्क्रिप्टेड फ़ाइल निर्यात करें",
       "import_heading": "आयात",
+      "import_hint": "एन्क्रिप्टेड कुंजी फ़ाइल चुनें या उसकी सामग्री नीचे चिपकाएँ। दोनों तरीके काम करते हैं।",
+      "import_file_label": "एन्क्रिप्टेड कुंजी फ़ाइल",
+      "import_text_label": "…या कुंजी फ़ाइल की सामग्री चिपकाएँ",
+      "import_text_placeholder": "{ \"format\": \"adaptive-learner-keys\", … }",
+      "import_text_invalid": "यह एक मान्य कुंजी फ़ाइल जैसी नहीं दिखती। जाँचें कि आपने पूरी सामग्री चिपकाई है।",
       "import_button": "कुंजी फ़ाइल आयात करें",
       "success_export": "एन्क्रिप्टेड कुंजी फ़ाइल डाउनलोड हो गई।",
       "success_import": "कुंजियाँ आयात हो गईं। AI सुविधाएँ फिर से तैयार हैं।",
@@ -744,7 +749,8 @@
       "test_connection_ok": "कनेक्शन ठीक है",
       "test_key_invalid": "कुंजी अमान्य",
       "test_network_error": "नेटवर्क त्रुटि",
-      "test_backend_only": "केवल बैकएंड के साथ परीक्षण योग्य"
+      "test_backend_only": "केवल बैकएंड के साथ परीक्षण योग्य",
+      "import_keys": "आयात करें"
     },
     "api_key_label": "API कुंजी",
     "api_key_placeholder": "यहाँ पेस्ट करें…",

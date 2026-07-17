@@ -485,6 +485,11 @@ settings:
     busy: "処理中…"
     export_button: "暗号化ファイルをエクスポート"
     import_heading: "インポート"
+    import_hint: "暗号化されたキーファイルを選択するか、その内容を下に貼り付けてください。どちらでも機能します。"
+    import_file_label: "暗号化されたキーファイル"
+    import_text_label: "…またはキーファイルの内容を貼り付け"
+    import_text_placeholder: '{ "format": "adaptive-learner-keys", … }'
+    import_text_invalid: "有効なキーファイルではないようです。内容をすべて貼り付けたか確認してください。"
     import_button: "キーファイルをインポート"
     success_export: "暗号化キーファイルをダウンロードしました。"
     success_import: "キーをインポートしました。AI機能が再び利用可能です。"
@@ -705,6 +710,7 @@ settings:
     test_key_invalid: キーが無効です
     test_network_error: ネットワークエラー
     test_backend_only: バックエンドでのみテスト可能
+    import_keys: "インポート"
   api_key_label: API キー
   api_key_placeholder: ここに貼り付け…
   api_key_placeholder_replace: "保存済みのキーを置き換える新しいキーを貼り付けてください…"

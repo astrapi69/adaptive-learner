@@ -485,6 +485,11 @@ settings:
     busy: "처리 중…"
     export_button: "암호화 파일 내보내기"
     import_heading: "가져오기"
+    import_hint: "암호화된 키 파일을 선택하거나 아래에 그 내용을 붙여넣으세요. 두 방법 모두 가능합니다."
+    import_file_label: "암호화된 키 파일"
+    import_text_label: "…또는 키 파일 내용을 붙여넣기"
+    import_text_placeholder: '{ "format": "adaptive-learner-keys", … }'
+    import_text_invalid: "유효한 키 파일이 아닌 것 같습니다. 전체 내용을 붙여넣었는지 확인하세요."
     import_button: "키 파일 가져오기"
     success_export: "암호화된 키 파일을 다운로드했습니다."
     success_import: "키를 가져왔습니다. AI 기능을 다시 사용할 수 있습니다."
@@ -708,6 +713,7 @@ settings:
     test_key_invalid: 키가 잘못됨
     test_network_error: 네트워크 오류
     test_backend_only: 백엔드에서만 테스트 가능
+    import_keys: "가져오기"
   api_key_label: API 키
   api_key_placeholder: 여기에 붙여넣으세요…
   api_key_placeholder_replace: "저장된 키를 교체하려면 새 키를 붙여넣으세요…"

@@ -485,6 +485,11 @@ settings:
     busy: "Processando…"
     export_button: "Exportar arquivo criptografado"
     import_heading: "Importar"
+    import_hint: "Escolha o arquivo de chaves criptografado ou cole o conteúdo dele abaixo. Ambos funcionam."
+    import_file_label: "Arquivo de chaves criptografado"
+    import_text_label: "…ou cole o conteúdo do arquivo de chaves"
+    import_text_placeholder: '{ "format": "adaptive-learner-keys", … }'
+    import_text_invalid: "Isto não parece um arquivo de chaves válido. Verifique se você colou todo o conteúdo."
     import_button: "Importar arquivo de chaves"
     success_export: "Arquivo de chaves criptografado baixado."
     success_import: "Chaves importadas. Os recursos de IA estão prontos novamente."
@@ -705,6 +710,7 @@ settings:
     test_key_invalid: Chave inválida
     test_network_error: Erro de rede
     test_backend_only: Só pode ser testado com o backend
+    import_keys: "Importar"
   api_key_label: Chave de API
   api_key_placeholder: Cole aqui…
   api_key_placeholder_replace: "Cole uma nova chave para substituir a armazenada…"

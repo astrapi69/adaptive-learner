@@ -8,6 +8,7 @@ import SettingsMobileMenu from "../../components/settings/SettingsMobileMenu";
 import type { SidebarGroup } from "../../lib/settings/sidebar-model";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { readLearnerState } from "../../lib/learning/learnerState";
+import { subscribeSettingsRefresh } from "../../lib/settings/settings-refresh-bus";
 import { getStorage } from "../../storage";
 import type { UserSettings } from "../../types";
 import {
@@ -106,6 +107,17 @@ export default function Settings() {
     });
   };
 
+  // #1765 — the providers overview "Import" action lands on the IMPORT block
+  // of the same key-vault section (not just the section top).
+  const openKeyImport = () => {
+    setActiveTab("data");
+    requestAnimationFrame(() => {
+      document
+        .querySelector('[data-testid="key-vault-import"]')
+        ?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+    });
+  };
+
   // Shared nav model for both the desktop sidebar and the mobile menu
   // (#546). The 8 existing tabs are grouped; tabs are never removed.
   const sidebarGroups: SidebarGroup[] = useMemo(() => {
@@ -148,19 +160,28 @@ export default function Settings() {
       return;
     }
     let cancelled = false;
-    getStorage()
-      .settings.get(userId)
-      .then((s) => {
-        if (cancelled) return;
-        setSettings(s);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        const detail = err instanceof ApiError ? err.detail : t("common.error");
-        setLoadError(detail);
-      });
+    const loadSettings = () => {
+      getStorage()
+        .settings.get(userId)
+        .then((s) => {
+          if (cancelled) return;
+          setSettings(s);
+        })
+        .catch((err) => {
+          if (cancelled) return;
+          const detail =
+            err instanceof ApiError ? err.detail : t("common.error");
+          setLoadError(detail);
+        });
+    };
+    loadSettings();
+    // #1765 — re-read settings when a section mutates them out-of-band (an
+    // encrypted key-vault import, a backup restore) so the AI tab reflects an
+    // imported key immediately, without a manual reload.
+    const unsubscribe = subscribeSettingsRefresh(loadSettings);
     return () => {
       cancelled = true;
+      unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
@@ -214,6 +235,7 @@ export default function Settings() {
             onSettingsChange={setSettings}
             active={activeTab === "ai"}
             onOpenKeyExport={openKeyExport}
+            onOpenKeyImport={openKeyImport}
           />
 
           <LearningPanel active={activeTab === "learning"} />

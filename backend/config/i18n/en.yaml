@@ -485,6 +485,11 @@ settings:
     busy: "Working…"
     export_button: "Export encrypted file"
     import_heading: "Import"
+    import_hint: "Choose the encrypted key file, or paste its contents below. Either way works."
+    import_file_label: "Encrypted key file"
+    import_text_label: "…or paste the key file contents"
+    import_text_placeholder: '{ "format": "adaptive-learner-keys", … }'
+    import_text_invalid: "This does not look like a valid key file. Check that you pasted the whole contents."
     import_button: "Import key file"
     success_export: "Encrypted key file downloaded."
     success_import: "Keys imported. AI features are ready again."
@@ -705,6 +710,7 @@ settings:
     test_key_invalid: Key invalid
     test_network_error: Network error
     test_backend_only: Only testable with the backend
+    import_keys: "Import"
   api_key_label: API key
   api_key_placeholder: Paste here…
   api_key_placeholder_replace: "Paste a new key to replace the stored one…"

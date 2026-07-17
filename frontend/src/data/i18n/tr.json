@@ -520,6 +520,11 @@
       "busy": "İşleniyor…",
       "export_button": "Şifreli dosyayı dışa aktar",
       "import_heading": "İçe aktar",
+      "import_hint": "Şifreli anahtar dosyasını seç ya da içeriğini aşağıya yapıştır. İkisi de çalışır.",
+      "import_file_label": "Şifreli anahtar dosyası",
+      "import_text_label": "…ya da anahtar dosyasının içeriğini yapıştır",
+      "import_text_placeholder": "{ \"format\": \"adaptive-learner-keys\", … }",
+      "import_text_invalid": "Bu geçerli bir anahtar dosyasına benzemiyor. Tüm içeriği yapıştırdığından emin ol.",
       "import_button": "Anahtar dosyasını içe aktar",
       "success_export": "Şifreli anahtar dosyası indirildi.",
       "success_import": "Anahtarlar içe aktarıldı. Yapay zekâ özellikleri yeniden hazır.",
@@ -744,7 +749,8 @@
       "test_connection_ok": "Bağlantı tamam",
       "test_key_invalid": "Anahtar geçersiz",
       "test_network_error": "Ağ hatası",
-      "test_backend_only": "Yalnızca arka uç ile test edilebilir"
+      "test_backend_only": "Yalnızca arka uç ile test edilebilir",
+      "import_keys": "İçe aktar"
     },
     "api_key_label": "API anahtarı",
     "api_key_placeholder": "Buraya yapıştır…",
