@@ -94,29 +94,46 @@ export default function Settings() {
     );
   };
 
-  // The encrypted key export (.alk) lives on the Data tab (#1183); the AI
-  // tab only links to it. Switch tabs, then bring the section into view —
-  // panels stay mounted (hidden), so the node already exists in the DOM.
-  // ``scrollIntoView`` is guarded for happy-dom.
+  // The encrypted key export/import (.alk) lives on the Data tab (#1183); the
+  // AI tab only links to it. A pending-scroll target is parked here and the
+  // scroll is performed by the effect below, AFTER the Data panel has actually
+  // rendered visible — see the effect for why a single rAF here was wrong
+  // (#1773). ``export`` targets the section top, ``import`` the Import block.
+  const [pendingScroll, setPendingScroll] = useState<"export" | "import" | null>(
+    null,
+  );
   const openKeyExport = () => {
     setActiveTab("data");
-    requestAnimationFrame(() => {
-      document
-        .querySelector('[data-testid="key-vault-section"]')
-        ?.scrollIntoView?.({ behavior: "smooth", block: "start" });
-    });
+    setPendingScroll("export");
   };
 
   // #1765 — the providers overview "Import" action lands on the IMPORT block
-  // of the same key-vault section (not just the section top).
+  // of the same key-vault section (not just the Data-tab top).
   const openKeyImport = () => {
     setActiveTab("data");
-    requestAnimationFrame(() => {
-      document
-        .querySelector('[data-testid="key-vault-import"]')
-        ?.scrollIntoView?.({ behavior: "smooth", block: "start" });
-    });
+    setPendingScroll("import");
   };
+
+  // #1773 — perform the deferred scroll only once the Data tab is the active
+  // (visible) one. Panels stay mounted but inactive ones carry ``hidden``
+  // (``display:none``), so a node in an inactive panel has NO layout and
+  // ``scrollIntoView`` is a no-op. Running from an effect keyed on
+  // ``activeTab`` guarantees the panel has committed visible before we scroll;
+  // one rAF lets layout settle for the smooth animation. The import target
+  // only exists in Dexie mode, so fall back to the section top otherwise.
+  useEffect(() => {
+    if (activeTab !== "data" || pendingScroll === null) return;
+    const raf = requestAnimationFrame(() => {
+      const target =
+        pendingScroll === "import"
+          ? document.querySelector('[data-testid="key-vault-import"]') ??
+            document.querySelector('[data-testid="key-vault-section"]')
+          : document.querySelector('[data-testid="key-vault-section"]');
+      target?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+      setPendingScroll(null);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [activeTab, pendingScroll]);
 
   // Shared nav model for both the desktop sidebar and the mobile menu
   // (#546). The 8 existing tabs are grouped; tabs are never removed.

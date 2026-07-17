@@ -46,13 +46,17 @@ test.describe("AI key import flow (#1765)", () => {
     await page.goto("/settings?tab=ai");
     await page.getByTestId("configured-providers-import").click();
 
-    // Lands on the Data tab with the key-vault IMPORT block visible.
+    // Lands on the Data tab, scrolled to the key-vault IMPORT block. #1773:
+    // toBeInViewport (not just toBeVisible) pins that the page actually
+    // scrolled to the section instead of staying at the top.
     await expect(page.getByTestId("settings-tab-data")).toHaveAttribute(
       "aria-current",
       "page",
       { timeout: 15000 },
     );
-    await expect(page.getByTestId("key-vault-import")).toBeVisible();
+    await expect(page.getByTestId("key-vault-import")).toBeInViewport({
+      timeout: 15000,
+    });
     await expect(page.getByTestId("key-vault-import-text")).toBeVisible();
   });
 
