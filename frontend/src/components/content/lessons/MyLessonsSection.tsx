@@ -79,7 +79,7 @@ export default function MyLessonsSection({
       </div>
       {selectMode && userSets.length > 0 && (
         <div
-          className="content-combine-bar mb-2 flex flex-wrap items-center gap-3 rounded-md border border-border bg-card p-2"
+          className="mb-2 flex flex-wrap items-center gap-3 rounded-md border border-border bg-card p-2"
           data-testid="my-lessons-combine-bar"
         >
           <span className="text-sm" aria-live="polite">

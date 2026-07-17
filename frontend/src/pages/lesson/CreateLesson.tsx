@@ -27,11 +27,10 @@ import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
 import {Button} from "@/components/ui/button";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
-import ReviewStep from "../../components/create-lesson/ReviewStep";
-import CardEditor, {MIN_CARDS} from "../../components/create-lesson/CardEditor";
-import ExerciseGenerator, {
-    MIN_EXERCISES,
-} from "../../components/create-lesson/ExerciseGenerator";
+import WizardSteps from "../../components/create-lesson/WizardSteps";
+import EditLoadState from "../../components/create-lesson/EditLoadState";
+import {MIN_CARDS} from "../../components/create-lesson/CardEditor";
+import {MIN_EXERCISES} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
@@ -605,39 +604,12 @@ export default function CreateLesson() {
                 )}
             </header>
 
-            {editLoading && (
-                <p
-                    className="text-sm text-fg-muted"
-                    role="status"
-                    data-testid="create-lesson-edit-loading"
-                >
-                    {t("common.loading", "Loading…")}
-                </p>
-            )}
-
-            {editError && (
-                <section
-                    className="create-lesson-step flex flex-col gap-4"
-                    data-testid="create-lesson-edit-error"
-                >
-                    <p className="form-hint form-hint-warning" role="alert">
-                        {t(
-                            "create_lesson.edit_load_error",
-                            "Could not load this lesson for editing.",
-                        )}
-                    </p>
-                    <div className="form-actions">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            data-testid="create-lesson-edit-error-back"
-                            onClick={() => navigate("/content?tab=my")}
-                        >
-                            {t("create_lesson.back", "Back")}
-                        </Button>
-                    </div>
-                </section>
-            )}
+            <EditLoadState
+                loading={editLoading}
+                error={Boolean(editError)}
+                onBack={() => navigate("/content?tab=my")}
+                t={t}
+            />
 
             {!editLoading && !editError && step === 1 && (
                 <MetadataStep
@@ -676,78 +648,34 @@ export default function CreateLesson() {
             )}
 
             {!bookMode && (
-                <>
-                    {step === 2 && (
-                        <>
-                            <CardEditor
-                                cards={cards}
-                                onAdd={addCard}
-                                onUpdate={updateCard}
-                                onDelete={deleteCard}
-                                onReorder={setCards}
-                                onClearAll={() => setCards([])}
-                                onImport={importCards}
-                            />
-                            {cardError && cards.length < MIN_CARDS && (
-                                <p
-                                    className="form-hint form-hint-warning"
-                                    data-testid="create-lesson-card-error"
-                                    role="alert"
-                                >
-                                    {t(
-                                        "create_lesson.cards.min_to_advance",
-                                        "Add at least {n} cards to continue.",
-                                    ).replace("{n}", String(MIN_CARDS))}
-                                </p>
-                            )}
-                        </>
-                    )}
-
-                    {step === 3 && (
-                        <>
-                            <ExerciseGenerator
-                                exercises={exercises}
-                                config={genConfig}
-                                onConfigChange={setGenConfig}
-                                onGenerate={generateLessonExercises}
-                                onReorder={setExercises}
-                                onDelete={(id) =>
-                                    setExercises((prev) =>
-                                        prev.filter((e) => e.id !== id),
-                                    )
-                                }
-                            />
-                            {exerciseError &&
-                                exercises.length < MIN_EXERCISES && (
-                                    <p
-                                        className="form-hint form-hint-warning"
-                                        data-testid="create-lesson-exercise-error"
-                                        role="alert"
-                                    >
-                                        {t(
-                                            "create_lesson.exercises.min_to_advance",
-                                            "Generate at least {n} exercises to continue.",
-                                        ).replace("{n}", String(MIN_EXERCISES))}
-                                    </p>
-                                )}
-                        </>
-                    )}
-
-                    {step === 4 && !savedEntry && (
-                        <ReviewStep
-                            meta={meta}
-                            cards={cards}
-                            exercises={exercises}
-                            draftChecks={draftChecks}
-                            saving={saving}
-                            editMode={editMode}
-                            onSaveLocal={() => void saveLocally()}
-                            onSaveShare={() => void saveAndShare()}
-                            onSaveCopy={editMode ? () => void saveCopy() : undefined}
-                            t={t}
-                        />
-                    )}
-                </>
+                <WizardSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    meta={meta}
+                    cards={cards}
+                    exercises={exercises}
+                    genConfig={genConfig}
+                    cardError={cardError}
+                    exerciseError={exerciseError}
+                    draftChecks={draftChecks}
+                    saving={saving}
+                    editMode={editMode}
+                    onAddCard={addCard}
+                    onUpdateCard={updateCard}
+                    onDeleteCard={deleteCard}
+                    onReorderCards={setCards}
+                    onImportCards={importCards}
+                    onGenerate={generateLessonExercises}
+                    onConfigChange={setGenConfig}
+                    onReorderExercises={setExercises}
+                    onDeleteExercise={(id) =>
+                        setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onSaveLocal={() => void saveLocally()}
+                    onSaveShare={() => void saveAndShare()}
+                    onSaveCopy={editMode ? () => void saveCopy() : undefined}
+                    t={t}
+                />
             )}
 
             {savedEntry && (
