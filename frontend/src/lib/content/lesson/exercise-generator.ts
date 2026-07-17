@@ -216,7 +216,14 @@ export function buildPictureChoice(
     cards: GeneratorCard[],
     prompt: string,
 ): ContentLessonExercise[] {
-    const withImg = cards.filter((c) => (c.image ?? "").trim().length > 0);
+    // #1763 — an uploaded card image is a base64 data URI; it would blow
+    // past the picture_choice ``src`` schema cap (maxLength 500) and fail
+    // ``validateGeneratedLesson``, and the runtime asset resolver can't
+    // display it anyway. Only short repo-relative paths feed picture-choice.
+    const withImg = cards.filter((c) => {
+        const img = (c.image ?? "").trim();
+        return img.length > 0 && !img.startsWith("data:");
+    });
     if (withImg.length < 2) return [];
     const out: ContentLessonExercise[] = [];
     withImg.forEach((c, i) => {

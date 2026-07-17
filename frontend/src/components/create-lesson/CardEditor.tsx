@@ -34,6 +34,7 @@ import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
 import {CARD_SIDE_MAX_LENGTH} from "../../lib/content/lesson/draft-to-lesson";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
+import CardImageField from "./CardImageField";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/lesson/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
 
@@ -186,18 +187,14 @@ export default function CardEditor({
                         onChange={(e) => setNotes(e.target.value)}
                     />
                 </label>
-                <label className="form-row">
-                    <span className="form-label">
-                        {t("create_lesson.cards.image_label", "Image reference (optional)")}
-                    </span>
-                    <Input
-                        type="text"
-                        data-testid="card-image-input"
+                <div className="form-row">
+                    <CardImageField
                         value={image}
-                        placeholder="img/bonjour.png"
-                        onChange={(e) => setImage(e.target.value)}
+                        onChange={setImage}
+                        previewAlt={front.trim() || undefined}
+                        idPrefix="card"
                     />
-                </label>
+                </div>
                 <div className="form-actions">
                     <Button
                         type="button"
@@ -469,6 +466,12 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     onChange={(e) =>
                         setDraft({...draft, notes: e.target.value})
                     }
+                />
+                <CardImageField
+                    value={draft.image}
+                    onChange={(v) => setDraft({...draft, image: v})}
+                    previewAlt={draft.front.trim() || undefined}
+                    idPrefix={`card-edit-${card.id}`}
                 />
                 <div className="form-actions">
                     <Button
