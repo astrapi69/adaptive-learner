@@ -36,8 +36,8 @@ tests est garantie par deux mécanismes :
 
 ```bash
 make test-frontend               # Vitest (happy-dom)
-cd frontend && npx vitest        # Mode watch
-cd frontend && npx vitest run src/path/to/file.test.tsx  # Ciblé
+cd frontend && bunx vitest        # Mode watch
+cd frontend && bunx vitest run src/path/to/file.test.tsx  # Ciblé
 ```
 
 **Important :** lancez toujours Vitest depuis le répertoire `frontend/`,

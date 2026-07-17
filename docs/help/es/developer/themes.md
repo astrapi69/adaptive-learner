@@ -86,7 +86,7 @@ de tokens está en
    `valid` en el `<script>` en línea de `index.html`.
 5. **i18n**: añade `ui.themes.midnight` en los ocho catálogos bajo
    `backend/config/i18n/*.yaml` y ejecuta `make sync-i18n`.
-6. **Comprueba**: `npx vitest run src/styles/themes src/styles/contrast`
+6. **Comprueba**: `bunx vitest run src/styles/themes src/styles/contrast`
    — los pins de completitud y de contraste deben seguir en verde
    (ajusta los valores hasta que el contraste cumpla AA en el tema
    nuevo).

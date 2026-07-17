@@ -290,7 +290,7 @@ the next session.
   done
   ```
 - **Plugin count:** `ls -d plugins/*/ | wc -l`
-- **Frontend Vitest:** `cd frontend && npx vitest --run --reporter=verbose 2>&1 | tail -5`
+- **Frontend Vitest:** `cd frontend && bunx vitest --run --reporter=verbose 2>&1 | tail -5`
 - **Playwright smoke:** `cd frontend && npx playwright test e2e/smoke/ 2>&1 | tail -5`
 - **LOC (approximate):** `git ls-files | xargs wc -l | tail -1`
 

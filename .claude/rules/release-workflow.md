@@ -269,7 +269,7 @@ Before running the test suite, check for outdated dependencies:
 ```bash
 cd backend && poetry show --outdated
 cd launcher && poetry show --outdated
-cd frontend && npm outdated
+cd frontend && bun outdated
 ```
 
 Apply routine bumps (patch + minor within the same major) as part
@@ -296,7 +296,7 @@ that the local sweep would have caught first. Do not skip.
 make test
 
 # Frontend unit tests + type check
-cd frontend && npx tsc --noEmit && npm run test
+cd frontend && bunx tsc --noEmit && bun run test
 
 # Smoke tests (fast Playwright suite)
 npx playwright test --project=smoke
@@ -363,7 +363,7 @@ ALL must be green. On a red test:
 cd backend && poetry build
 
 # Frontend
-cd frontend && npm run build
+cd frontend && bun run build
 
 # Docker (if active)
 docker build -t adaptive_learner:test .
@@ -483,7 +483,7 @@ as "done". Missing items block the release.
 - [ ] pluginforge and other externally-owned Adaptive Learner deps at the current version
 - [ ] `make test` green
 - [ ] Frontend `tsc --noEmit` clean
-- [ ] `npm run test` (Vitest) green
+- [ ] `bun run test` (Vitest) green
 - [ ] `npx playwright test --project=smoke` green
 - [ ] `make test-dexie-smoke` green (MANDATORY since 2026-05-26: DEXIE-MODE-RELEASE-GATE-01 — walks every nav-reachable route against the GH-Pages-shape build with NO backend; any error toast or page crash blocks the release)
 - [ ] `ruff check` clean
@@ -491,7 +491,7 @@ as "done". Missing items block the release.
 - [ ] `poetry run pre-commit run --all-files` clean (MANDATORY)
 - [ ] `make verify-docs-discipline` clean (MANDATORY since v0.30.0+: aggregates `verify-mkdocs-nav` + `check-mkdocs-orphans`; addresses the v0.30.0 docs+i18n drift audit findings)
 - [ ] Backend `poetry build` successful (skipped iff `package-mode = false`)
-- [ ] Frontend `npm run build` successful
+- [ ] Frontend `bun run build` successful
 - [ ] `cd launcher && poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm` succeeds (MANDATORY for any release touching launcher/ or its embedded version)
 - [ ] Docker build successful (if active)
 - [ ] Git tag created and pushed
@@ -515,7 +515,7 @@ for this release".
 
 ### Build broken because of dependencies
 
-`poetry lock --no-update` and `npm install` in both projects, then
+`poetry lock --no-update` and `bun install` in both projects, then
 rebuild. On persistent errors: abort the release, solve the problem
 in its own commit.
 

@@ -75,7 +75,7 @@ Atualiza **18 ficheiros** automaticamente:
 ```bash
 make sync-versions-check     # sai com valor não zero em caso de deriva
 make test                    # 2634 testes devem passar
-cd frontend && npm run build # deve ter sucesso
+cd frontend && bun run build # deve ter sucesso
 ```
 
 O workflow de CI do portão de lançamento

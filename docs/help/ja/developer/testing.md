@@ -42,8 +42,8 @@ cd plugins/adaptive-learner-plugin-session && poetry run pytest
 
 ```bash
 make test-frontend                # 387テスト、約2秒
-cd frontend && npx vitest         # watchモード
-cd frontend && npx vitest run src/storage/  # 1つのディレクトリ
+cd frontend && bunx vitest         # watchモード
+cd frontend && bunx vitest run src/storage/  # 1つのディレクトリ
 ```
 
 テストはソースの隣に配置されます: `Component.tsx`の隣に`Component.test.tsx`。環境はhappy-dom; React 19 + RTL。

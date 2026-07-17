@@ -7,7 +7,7 @@
 - **Python 3.12+**（バックエンドは3.11でも動作しますが、プラグインのテストは3.12で行います）。
 - **Node 24+**（Vite 8が必要）。古いNodeバージョンはビルドステップで`crypto.hash is not a function`というエラーで失敗します。
 - **Poetry**（Python依存関係管理のため）。インストール: `curl -sSL https://install.python-poetry.org | python3 -`
-- **npm**（Nodeに同梱）。
+- **Bun** 1.3+（フロントエンドのパッケージマネージャー、#1492）。
 - **GNU Make**（オーケストレーションターゲットのため）。MakefileはSOTであり、すべてのCIコマンドはそこに記載されています。
 
 ## クローン + インストール
@@ -21,7 +21,7 @@ make install
 `make install`は以下を実行します。
 
 1. `cd backend && poetry install` — バックエンド + プラグインのパス依存関係。
-2. `cd frontend && npm ci` — フロントエンドの依存関係（Node 24）。
+2. `cd frontend && bun install` — フロントエンドの依存関係（Node 24）。
 3. `plugins/`内のすべてのプラグインをバックエンドのvenvにパス依存関係としてインストール（`develop = true`により編集が即時反映）。
 
 `make install`が失敗する場合、最も多い原因はPoetryが誤ったPythonを選択することです。`backend/`（および深く入った場合は各プラグイン）で`poetry env use python3.12`を実行して再インストールしてください。
@@ -75,9 +75,9 @@ v1.20.0では16個のスモークスペックファイル: ランディング、
 ```bash
 cd backend && poetry run ruff check .       # Pythonリント
 cd backend && poetry run ruff format .      # Pythonフォーマット
-cd frontend && npx tsc --noEmit             # TypeScriptチェック
-cd frontend && npm run lint                 # ESLint
-cd frontend && npm run format               # Prettier
+cd frontend && bunx tsc --noEmit             # TypeScriptチェック
+cd frontend && bun run lint                 # ESLint
+cd frontend && bun run format               # Prettier
 ```
 
 pre-commitフックにより、すべてのコミット時にruff + フォーマッターのチェックが強制されます。
@@ -100,4 +100,4 @@ docsのvenvはバックエンドとは別です。MkDocsはmkdocs-material + mkd
 
 - **`make dev`が「port already in use」でクラッシュする**: 別のAdaptiveLearnerインスタンスがまだ実行中です。`make dev-down`または`pkill -f uvicorn`を実行してください。
 - **「duplicate column name」でテストが失敗する**: Alembicのマイグレーションがスキーマを変更しています。`backend/adaptive_learner.db`を削除して再実行してください。
-- **`npm run build`がNode 18で失敗する**: Node 24にアップグレードしてください。Vite 8が必要です。
+- **`bun run build`がNode 18で失敗する**: Node 24にアップグレードしてください。Vite 8が必要です。
