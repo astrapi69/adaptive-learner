@@ -2476,6 +2476,30 @@ missions:
       description: "Lerne am Wochenende."
 
 create_lesson:
+  book:
+    rights_hint: "Fuege nur Texte ein, an denen du die Rechte hast oder die fuer den persoenlichen Gebrauch bestimmt sind."
+    heading: "Lektion aus Text erstellen"
+    intro: "Fuege einen Abschnitt (z. B. ein Kapitel) deines Lehrbuchs ein. Die KI formuliert ihn in eigenen Worten als Theorie und generiert Uebungen. Weitere Abschnitte fuegst du hinzu, indem du den Assistenten erneut durchlaeufst."
+    text_label: "Lehrbuch-Abschnitt"
+    text_placeholder: "Kapiteltext hier einfuegen ..."
+    meta_legend: "Buchangabe (optional)"
+    title_label: "Buchtitel"
+    author_label: "Autor"
+    url_label: "URL"
+    asin_label: "ISBN / ASIN"
+    generate: "Theorie + Uebungen generieren"
+    generating: "Wird generiert ..."
+    feature: "um eine Lektion aus Text zu erstellen"
+    generated: "{t} Theorie-Schritt(e) und {e} Uebung(en) generiert."
+    summary: "{t} Theorie-Schritt(e), {e} Uebung(en) bereit."
+    paste_required: "Fuege zuerst einen Abschnitt deines Lehrbuchs ein."
+    theory_failed: "Die KI hat keine brauchbare Theorie erzeugt. Bitte erneut versuchen."
+    exercises_failed: "Es wurden keine brauchbaren Uebungen erzeugt. Bitte erneut versuchen."
+    generate_failed: "Die Lektion konnte nicht generiert werden. Bitte erneut versuchen."
+    generate_to_advance: "Generiere die Lektion aus deinem Text, um fortzufahren."
+    review_theory: "{n} Theorie-Schritt(e)"
+    review_exercises: "{n} Uebung(en)"
+    review_book: "Buch: {title}"
   title: "Lektion erstellen"
   step_of: "Schritt {current} von {total}"
   step_pending: "Dieser Schritt kommt im nächsten Update."
@@ -2571,6 +2595,9 @@ create_lesson:
     save_file: "Als Datei speichern"
     file_saved: "Lektion als Datei gespeichert."
   templates:
+    knowledge_from_text:
+      title: "Wissens-Lektion aus Text"
+      desc: "Fuege einen Lehrbuch-Abschnitt ein; die KI schreibt die Theorie in eigenen Worten und generiert Uebungen."
     heading: "Mit Vorlage starten"
     blank:
       title: "Leere Lektion"

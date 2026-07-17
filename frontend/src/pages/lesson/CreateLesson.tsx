@@ -18,7 +18,7 @@
  */
 
 import {Download} from "lucide-react";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
@@ -54,7 +54,17 @@ import {
     checkDraft,
     type DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
+import {
+    buildBookLesson,
+    buildBookUserSetInput,
+    normalizeBook,
+} from "../../lib/content/lesson/book-to-lesson";
 import {downloadLessonJson} from "../../lib/content/lesson/lesson-export";
+import BookSteps from "../../components/create-lesson/BookSteps";
+import type {BookFields} from "../../components/create-lesson/BookTextStep";
+import {resolveActiveAiProvider} from "../../lib/ai/providers/resolve-provider";
+import {readLearnerState} from "../../lib/learning/learnerState";
+import type {TheoryStep} from "../../lib/ai/generation/exercise-generation-prompt";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import {
@@ -68,7 +78,17 @@ import type {
 } from "../../storage/types";
 
 const TOTAL_STEPS = 4;
+/** #1743 — the book-text path skips the card + deterministic-exercise
+ *  steps: Metadata -> BookText -> Review. */
+const TOTAL_STEPS_BOOK = 3;
 const DRAFT_AUTOSAVE_MS = 10_000;
+
+const EMPTY_BOOK_FIELDS: BookFields = {title: "", author: "", url: "", asin: ""};
+
+/** Total wizard steps for the active path (book flow skips two steps). */
+function stepCountFor(bookMode: boolean): number {
+    return bookMode ? TOTAL_STEPS_BOOK : TOTAL_STEPS;
+}
 
 /** Build the default metadata, seeding source language from the
  *  app language and target from the first differing option. */
@@ -116,6 +136,24 @@ export default function CreateLesson() {
     // before any edits. Held until the user chooses.
     const [pendingDraft, setPendingDraft] = useState<LessonDraft | null>(null);
 
+    // #1743 — book-text path state. ``bookMode`` switches the wizard to the
+    // 3-step Metadata -> BookText -> Review flow; the AI produces the theory
+    // steps + exercises from the pasted chunk.
+    const [bookMode, setBookMode] = useState(false);
+    const [bookText, setBookText] = useState("");
+    const [bookFields, setBookFields] = useState<BookFields>(EMPTY_BOOK_FIELDS);
+    const [theorySteps, setTheorySteps] = useState<TheoryStep[]>([]);
+
+    const totalSteps = stepCountFor(bookMode);
+
+    /** Resolve the active AI provider seam, or ``null`` when no key /
+     *  learner is set (the "no key" signal the BookTextStep gates on). */
+    const resolveProvider = useCallback(async () => {
+        const {userId} = readLearnerState();
+        if (!userId) return null;
+        return resolveActiveAiProvider(userId);
+    }, []);
+
     // On mount: surface a restorable draft (don't auto-apply).
     useEffect(() => {
         const draft = loadLessonDraft();
@@ -149,8 +187,9 @@ export default function CreateLesson() {
         () =>
             meta.title.trim().length > 0 ||
             meta.titleNative.trim().length > 0 ||
-            meta.description.trim().length > 0,
-        [meta.title, meta.titleNative, meta.description],
+            meta.description.trim().length > 0 ||
+            bookText.trim().length > 0,
+        [meta.title, meta.titleNative, meta.description, bookText],
     );
 
     function update(key: keyof LessonMeta, value: string) {
@@ -164,6 +203,19 @@ export default function CreateLesson() {
                 return;
             }
             setShowError(false);
+        }
+        if (bookMode) {
+            // Book flow: step 2 requires a successful AI generation (theory
+            // + at least one exercise) before advancing to Review.
+            if (step === 2) {
+                if (theorySteps.length === 0 || exercises.length === 0) {
+                    setExerciseError(true);
+                    return;
+                }
+                setExerciseError(false);
+            }
+            setStep((s) => Math.min(TOTAL_STEPS_BOOK, s + 1));
+            return;
         }
         if (step === 2) {
             if (cards.length < MIN_CARDS) {
@@ -188,6 +240,23 @@ export default function CreateLesson() {
         setGenConfig(config);
     }
 
+    /** #1743 — enter the book-text path from Step 1 and advance to the
+     *  BookText step. */
+    function startBookMode() {
+        setBookMode(true);
+        setStep(2);
+    }
+
+    /** BookTextStep reports the AI-generated theory + exercises. */
+    function handleBookGenerated(
+        steps: TheoryStep[],
+        generated: ContentLessonExercise[],
+    ) {
+        setTheorySteps(steps);
+        setExercises(generated);
+        setExerciseError(false);
+    }
+
     function generateLessonExercises() {
         const genCards: GeneratorCard[] = cards.map((c) => ({
             id: c.id,
@@ -210,8 +279,22 @@ export default function CreateLesson() {
         if (saving) return null;
         setSaving(true);
         try {
-            const lesson = buildLessonFromDraft({meta, cards, exercises});
-            const input = buildUserSetInput({meta, cards, exercises}, lesson);
+            let lesson: ContentLesson;
+            let input: Parameters<
+                ReturnType<typeof getStorage>["contentLoader"]["saveUserSet"]
+            >[0];
+            if (bookMode) {
+                const bookInput = {meta, theorySteps, exercises};
+                lesson = buildBookLesson(bookInput);
+                input = buildBookUserSetInput(
+                    bookInput,
+                    lesson,
+                    normalizeBook(bookFields),
+                );
+            } else {
+                lesson = buildLessonFromDraft({meta, cards, exercises});
+                input = buildUserSetInput({meta, cards, exercises}, lesson);
+            }
             const entry = await getStorage().contentLoader.saveUserSet(input);
             clearLessonDraft();
             setSavedLessonId(lesson.id);
@@ -242,6 +325,10 @@ export default function CreateLesson() {
         setCards([]);
         setExercises([]);
         setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
+        setBookMode(false);
+        setBookText("");
+        setBookFields(EMPTY_BOOK_FIELDS);
+        setTheorySteps([]);
         setSavedEntry(null);
         setSavedLessonId("");
         setSavedLesson(null);
@@ -327,7 +414,7 @@ export default function CreateLesson() {
                 >
                     {t("create_lesson.step_of", "Step {current} of {total}")
                         .replace("{current}", String(step))
-                        .replace("{total}", String(TOTAL_STEPS))}
+                        .replace("{total}", String(totalSteps))}
                 </p>
             </header>
 
@@ -339,76 +426,105 @@ export default function CreateLesson() {
                     sameLanguage={sameLanguage}
                     onUpdate={update}
                     onApplyTemplate={applyLessonTemplate}
+                    onStartBookMode={startBookMode}
                     t={t}
                 />
             )}
 
-            {step === 2 && (
-                <>
-                    <CardEditor
-                        cards={cards}
-                        onAdd={addCard}
-                        onUpdate={updateCard}
-                        onDelete={deleteCard}
-                        onReorder={setCards}
-                        onClearAll={() => setCards([])}
-                        onImport={importCards}
-                    />
-                    {cardError && cards.length < MIN_CARDS && (
-                        <p
-                            className="form-hint form-hint-warning"
-                            data-testid="create-lesson-card-error"
-                            role="alert"
-                        >
-                            {t(
-                                "create_lesson.cards.min_to_advance",
-                                "Add at least {n} cards to continue.",
-                            ).replace("{n}", String(MIN_CARDS))}
-                        </p>
-                    )}
-                </>
-            )}
-
-            {step === 3 && (
-                <>
-                    <ExerciseGenerator
-                        exercises={exercises}
-                        config={genConfig}
-                        onConfigChange={setGenConfig}
-                        onGenerate={generateLessonExercises}
-                        onReorder={setExercises}
-                        onDelete={(id) =>
-                            setExercises((prev) =>
-                                prev.filter((e) => e.id !== id),
-                            )
-                        }
-                    />
-                    {exerciseError && exercises.length < MIN_EXERCISES && (
-                        <p
-                            className="form-hint form-hint-warning"
-                            data-testid="create-lesson-exercise-error"
-                            role="alert"
-                        >
-                            {t(
-                                "create_lesson.exercises.min_to_advance",
-                                "Generate at least {n} exercises to continue.",
-                            ).replace("{n}", String(MIN_EXERCISES))}
-                        </p>
-                    )}
-                </>
-            )}
-
-            {step === 4 && !savedEntry && (
-                <ReviewStep
-                    meta={meta}
-                    cards={cards}
+            {bookMode && (
+                <BookSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    bookText={bookText}
+                    onBookTextChange={setBookText}
+                    book={bookFields}
+                    onBookChange={(patch) =>
+                        setBookFields((prev) => ({...prev, ...patch}))
+                    }
+                    language={meta.targetLanguage}
+                    resolveProvider={resolveProvider}
+                    onGenerated={handleBookGenerated}
+                    theorySteps={theorySteps}
                     exercises={exercises}
-                    draftChecks={draftChecks}
+                    advanceBlocked={exerciseError}
                     saving={saving}
                     onSaveLocal={() => void saveLocally()}
                     onSaveShare={() => void saveAndShare()}
                     t={t}
                 />
+            )}
+
+            {!bookMode && (
+                <>
+                    {step === 2 && (
+                        <>
+                            <CardEditor
+                                cards={cards}
+                                onAdd={addCard}
+                                onUpdate={updateCard}
+                                onDelete={deleteCard}
+                                onReorder={setCards}
+                                onClearAll={() => setCards([])}
+                                onImport={importCards}
+                            />
+                            {cardError && cards.length < MIN_CARDS && (
+                                <p
+                                    className="form-hint form-hint-warning"
+                                    data-testid="create-lesson-card-error"
+                                    role="alert"
+                                >
+                                    {t(
+                                        "create_lesson.cards.min_to_advance",
+                                        "Add at least {n} cards to continue.",
+                                    ).replace("{n}", String(MIN_CARDS))}
+                                </p>
+                            )}
+                        </>
+                    )}
+
+                    {step === 3 && (
+                        <>
+                            <ExerciseGenerator
+                                exercises={exercises}
+                                config={genConfig}
+                                onConfigChange={setGenConfig}
+                                onGenerate={generateLessonExercises}
+                                onReorder={setExercises}
+                                onDelete={(id) =>
+                                    setExercises((prev) =>
+                                        prev.filter((e) => e.id !== id),
+                                    )
+                                }
+                            />
+                            {exerciseError &&
+                                exercises.length < MIN_EXERCISES && (
+                                    <p
+                                        className="form-hint form-hint-warning"
+                                        data-testid="create-lesson-exercise-error"
+                                        role="alert"
+                                    >
+                                        {t(
+                                            "create_lesson.exercises.min_to_advance",
+                                            "Generate at least {n} exercises to continue.",
+                                        ).replace("{n}", String(MIN_EXERCISES))}
+                                    </p>
+                                )}
+                        </>
+                    )}
+
+                    {step === 4 && !savedEntry && (
+                        <ReviewStep
+                            meta={meta}
+                            cards={cards}
+                            exercises={exercises}
+                            draftChecks={draftChecks}
+                            saving={saving}
+                            onSaveLocal={() => void saveLocally()}
+                            onSaveShare={() => void saveAndShare()}
+                            t={t}
+                        />
+                    )}
+                </>
             )}
 
             {savedEntry && (
@@ -488,7 +604,7 @@ export default function CreateLesson() {
                         {t("create_lesson.back", "Back")}
                     </Button>
                 )}
-                {step < TOTAL_STEPS && (
+                {step < totalSteps && (
                     <Button
                         type="button"
                         data-testid="create-lesson-next"

@@ -2482,6 +2482,30 @@ missions:
       description: "Learn on the weekend."
 
 create_lesson:
+  book:
+    rights_hint: "Only paste text you have the rights to, or that is intended for personal use."
+    heading: "Create a lesson from text"
+    intro: "Paste one section (e.g. a chapter) of your textbook. The AI rewrites it in its own words as theory and generates exercises. Add another section by running the wizard again."
+    text_label: "Textbook section"
+    text_placeholder: "Paste the chapter text here ..."
+    meta_legend: "Book reference (optional)"
+    title_label: "Book title"
+    author_label: "Author"
+    url_label: "URL"
+    asin_label: "ISBN / ASIN"
+    generate: "Generate theory + exercises"
+    generating: "Generating ..."
+    feature: "to create a lesson from text"
+    generated: "{t} theory step(s) and {e} exercise(s) generated."
+    summary: "{t} theory step(s), {e} exercise(s) ready."
+    paste_required: "Paste a section of your textbook first."
+    theory_failed: "The AI returned no usable theory. Please try again."
+    exercises_failed: "No usable exercises were generated. Please try again."
+    generate_failed: "Could not generate the lesson. Please try again."
+    generate_to_advance: "Generate the lesson from your text to continue."
+    review_theory: "{n} theory step(s)"
+    review_exercises: "{n} exercise(s)"
+    review_book: "Book: {title}"
   title: "Create a lesson"
   step_of: "Step {current} of {total}"
   step_pending: "This step is coming in the next update."
@@ -2577,6 +2601,9 @@ create_lesson:
     save_file: "Save as file"
     file_saved: "Lesson saved as a file."
   templates:
+    knowledge_from_text:
+      title: "Knowledge lesson from text"
+      desc: "Paste a textbook section; the AI writes the theory in its own words and generates exercises."
     heading: "Start from a template"
     blank:
       title: "Blank Lesson"

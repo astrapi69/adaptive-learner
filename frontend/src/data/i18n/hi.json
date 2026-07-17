@@ -2710,6 +2710,31 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "rights_hint": "Keval wahi text paste karen jinke rights aapke paas hain ya jo vyaktigat upyog ke liye hain.",
+      "heading": "Text se paath banaen",
+      "intro": "Apni paathyapustak ka ek anubhag (jaise ek adhyay) paste karen. AI ise apne shabdon mein siddhant ke roop mein likhta hai aur abhyaas banata hai. doosra anubhag jodne ke liye wizard ko dobara chalaen.",
+      "text_label": "Paathyapustak anubhag",
+      "text_placeholder": "Adhyay ka text yahan paste karen ...",
+      "meta_legend": "Pustak sandarbh (vaikalpik)",
+      "title_label": "Pustak shirshak",
+      "author_label": "Lekhak",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "Siddhant + abhyaas banaen",
+      "generating": "Bana raha hai ...",
+      "feature": "text se paath banane ke liye",
+      "generated": "{t} siddhant charan aur {e} abhyaas banae gae.",
+      "summary": "{t} siddhant charan, {e} abhyaas taiyaar.",
+      "paste_required": "Pahle apni paathyapustak ka ek anubhag paste karen.",
+      "theory_failed": "AI ne koi upyogi siddhant nahin diya. Kripya phir se prayas karen.",
+      "exercises_failed": "Koi upyogi abhyaas nahin bana. Kripya phir se prayas karen.",
+      "generate_failed": "Paath nahin banaya ja saka. Kripya phir se prayas karen.",
+      "generate_to_advance": "Jaari rakhne ke liye apne text se paath banaen.",
+      "review_theory": "{n} siddhant charan",
+      "review_exercises": "{n} abhyaas",
+      "review_book": "Pustak: {title}"
+    },
     "title": "एक पाठ बनाएँ",
     "step_of": "चरण {current} / {total}",
     "step_pending": "यह चरण अगले अपडेट में आ रहा है।",
@@ -2813,6 +2838,10 @@
       "file_saved": "पाठ फ़ाइल के रूप में सहेजा गया।"
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "Text se gyaan paath",
+        "desc": "Ek paathyapustak anubhag paste karen; AI siddhant apne shabdon mein likhta hai aur abhyaas banata hai."
+      },
       "heading": "टेम्पलेट से शुरू करें",
       "blank": {
         "title": "खाली पाठ",

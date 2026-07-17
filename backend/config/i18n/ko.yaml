@@ -2482,6 +2482,30 @@ missions:
       description: "주말에 학습하세요."
 
 create_lesson:
+  book:
+    rights_hint: "권리를 보유한 텍스트 또는 개인적 용도의 텍스트만 붙여넣으세요."
+    heading: "텍스트에서 레슨 만들기"
+    intro: "교과서의 한 섹션(예: 한 장)을 붙여넣으세요. AI가 이를 자신의 말로 이론으로 다시 쓰고 연습문제를 생성합니다. 다른 섹션을 추가하려면 마법사를 다시 실행하세요."
+    text_label: "교과서 섹션"
+    text_placeholder: "여기에 장 텍스트를 붙여넣기 ..."
+    meta_legend: "도서 정보 (선택)"
+    title_label: "도서 제목"
+    author_label: "저자"
+    url_label: "URL"
+    asin_label: "ISBN / ASIN"
+    generate: "이론 + 연습문제 생성"
+    generating: "생성 중 ..."
+    feature: "텍스트에서 레슨을 만들려면"
+    generated: "이론 단계 {t}개와 연습문제 {e}개를 생성했습니다."
+    summary: "이론 단계 {t}개, 연습문제 {e}개 준비됨."
+    paste_required: "먼저 교과서의 한 섹션을 붙여넣으세요."
+    theory_failed: "AI가 사용 가능한 이론을 반환하지 않았습니다. 다시 시도하세요."
+    exercises_failed: "사용 가능한 연습문제가 생성되지 않았습니다. 다시 시도하세요."
+    generate_failed: "레슨을 생성할 수 없습니다. 다시 시도하세요."
+    generate_to_advance: "계속하려면 텍스트에서 레슨을 생성하세요."
+    review_theory: "이론 단계 {n}개"
+    review_exercises: "연습문제 {n}개"
+    review_book: "도서: {title}"
   title: "레슨 만들기"
   step_of: "단계 {current} / {total}"
   step_pending: "이 단계는 다음 업데이트에서 제공됩니다."
@@ -2577,6 +2601,9 @@ create_lesson:
     save_file: "파일로 저장"
     file_saved: "레슨을 파일로 저장했습니다."
   templates:
+    knowledge_from_text:
+      title: "텍스트 기반 지식 레슨"
+      desc: "교과서 섹션을 붙여넣으면 AI가 이론을 자신의 말로 작성하고 연습문제를 생성합니다."
     heading: "템플릿으로 시작"
     blank:
       title: "빈 레슨"

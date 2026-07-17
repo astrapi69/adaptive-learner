@@ -34,6 +34,7 @@ function setup() {
             sameLanguage={false}
             onUpdate={vi.fn()}
             onApplyTemplate={vi.fn()}
+            onStartBookMode={vi.fn()}
             t={emptyCatalogT}
         />,
     );

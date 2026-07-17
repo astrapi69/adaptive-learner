@@ -2710,6 +2710,31 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "rights_hint": "Epikolliste mono keimena gia ta opoia echete dikaiomata i pou proorizontai gia prosopiki chrisi.",
+      "heading": "Dimiourgia mathimatos apo keimeno",
+      "intro": "Epikolliste mia enotita (p.ch. ena kefalaio) tou vivliou sas. To AI tin xanagrafei me dika tou logia os theoria kai dimiourgei askiseis. Prostheste alli enotita ektelontas xana ton odigo.",
+      "text_label": "Enotita vivliou",
+      "text_placeholder": "Epikolliste edo to keimeno tou kefalaiou ...",
+      "meta_legend": "Anafora vivliou (proairetiko)",
+      "title_label": "Titlos vivliou",
+      "author_label": "Syggrafeas",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "Dimiourgia theorias + askiseon",
+      "generating": "Dimiourgia ...",
+      "feature": "gia dimiourgia mathimatos apo keimeno",
+      "generated": "Dimiourgithikan {t} vimata theorias kai {e} askiseis.",
+      "summary": "{t} vimata theorias, {e} askiseis etoimes.",
+      "paste_required": "Epikolliste prota mia enotita tou vivliou sas.",
+      "theory_failed": "To AI den epestrepse chrisimi theoria. Dokimaste xana.",
+      "exercises_failed": "Den dimiourgithikan chrisimes askiseis. Dokimaste xana.",
+      "generate_failed": "Den itan dynati i dimiourgia tou mathimatos. Dokimaste xana.",
+      "generate_to_advance": "Dimiourgiste to mathima apo to keimeno sas gia na synechisete.",
+      "review_theory": "{n} vimata theorias",
+      "review_exercises": "{n} askiseis",
+      "review_book": "Vivlio: {title}"
+    },
     "title": "Δημιουργία μαθήματος",
     "step_of": "Βήμα {current} από {total}",
     "step_pending": "Αυτό το βήμα έρχεται στην επόμενη ενημέρωση.",
@@ -2813,6 +2838,10 @@
       "file_saved": "Το μάθημα αποθηκεύτηκε ως αρχείο."
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "Mathima gnosis apo keimeno",
+        "desc": "Epikolliste mia enotita vivliou; to AI grafei ti theoria me dika tou logia kai dimiourgei askiseis."
+      },
       "heading": "Ξεκινήστε από πρότυπο",
       "blank": {
         "title": "Κενό μάθημα",

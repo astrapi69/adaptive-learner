@@ -2710,6 +2710,31 @@
     }
   },
   "create_lesson": {
+    "book": {
+      "rights_hint": "Yalnizca haklarina sahip oldugun veya kisisel kullanim icin olan metinleri yapistir.",
+      "heading": "Metinden ders olustur",
+      "intro": "Ders kitabinizin bir bolumunu (orn. bir bolum) yapistirin. Yapay zeka bunu kendi kelimeleriyle teori olarak yeniden yazar ve alistirmalar uretir. Baska bir bolum eklemek icin sihirbazi yeniden calistirin.",
+      "text_label": "Ders kitabi bolumu",
+      "text_placeholder": "Bolum metnini buraya yapistirin ...",
+      "meta_legend": "Kitap referansi (istege bagli)",
+      "title_label": "Kitap basligi",
+      "author_label": "Yazar",
+      "url_label": "URL",
+      "asin_label": "ISBN / ASIN",
+      "generate": "Teori + alistirma uret",
+      "generating": "Uretiliyor ...",
+      "feature": "metinden ders olusturmak icin",
+      "generated": "{t} teori adimi ve {e} alistirma uretildi.",
+      "summary": "{t} teori adimi, {e} alistirma hazir.",
+      "paste_required": "Once ders kitabinizin bir bolumunu yapistirin.",
+      "theory_failed": "Yapay zeka kullanilabilir teori uretmedi. Lutfen tekrar deneyin.",
+      "exercises_failed": "Kullanilabilir alistirma uretilemedi. Lutfen tekrar deneyin.",
+      "generate_failed": "Ders uretilemedi. Lutfen tekrar deneyin.",
+      "generate_to_advance": "Devam etmek icin dersi metninizden uretin.",
+      "review_theory": "{n} teori adimi",
+      "review_exercises": "{n} alistirma",
+      "review_book": "Kitap: {title}"
+    },
     "title": "Ders oluştur",
     "step_of": "Adım {current} / {total}",
     "step_pending": "Bu adım bir sonraki güncellemede geliyor.",
@@ -2813,6 +2838,10 @@
       "file_saved": "Ders dosya olarak kaydedildi."
     },
     "templates": {
+      "knowledge_from_text": {
+        "title": "Metinden bilgi dersi",
+        "desc": "Bir ders kitabi bolumu yapistirin; yapay zeka teoriyi kendi kelimeleriyle yazar ve alistirmalar uretir."
+      },
       "heading": "Bir şablonla başla",
       "blank": {
         "title": "Boş ders",

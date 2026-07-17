@@ -402,6 +402,23 @@ async def get_asset(
 # --- Phase 59B/C / v1.42.0 — user-generated sets (My Lessons) ---------------
 
 
+class SetBookRequest(BaseModel):
+    """Wire shape for an incoming set-level book block (#769 / #1743)."""
+
+    title: str
+    author: str | None = None
+    url: str | None = None
+    asin: str | None = None
+
+    def to_model(self) -> ContentSetBook:
+        return ContentSetBook(
+            title=self.title,
+            author=self.author,
+            url=self.url,
+            asin=self.asin,
+        )
+
+
 class SaveUserSetRequest(BaseModel):
     """Wire shape for saving a user-generated set. ``lessons`` are
     full, schema-valid lessons (FastAPI validates them as ``Lesson``
@@ -415,6 +432,8 @@ class SaveUserSetRequest(BaseModel):
     level: str
     origin: Literal["analysis", "adaptive", "imported"] = "analysis"
     description: str | None = None
+    # #1743 — optional set-level book block, written to ``sets[].book``.
+    book: SetBookRequest | None = None
     lessons: list[Lesson]
 
     @model_validator(mode="before")
@@ -446,6 +465,7 @@ async def save_user_set(body: SaveUserSetRequest) -> SetEntryResponse:
             origin=body.origin,
             lessons=body.lessons,
             description=body.description,
+            book=body.book.to_model() if body.book else None,
         )
     except PydanticValidationError as err:
         # ContentSet/ContentManifest construction rejected the input
