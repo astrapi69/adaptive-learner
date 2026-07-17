@@ -35,6 +35,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
+       verify-i18n-scripts \
        sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
@@ -615,6 +616,9 @@ sync-versions-check: ## Exit non-zero if any subsystem version drifts from canon
 
 sync-i18n: ## Regenerate frontend/src/data/i18n/*.json from backend YAML catalogs
 	@python3 scripts/sync_i18n_to_frontend.py
+
+verify-i18n-scripts: ## Script-sanity lint: de substitute spelling + el/hi latin transliteration (#1755, hard gate)
+	@python3 scripts/verify_i18n_scripts.py
 
 i18n-quality-check: ## LLM translation quality-check over the 8 machine-translated catalogs (#1296; needs an Anthropic key). Pass args via ARGS="--langs ja --limit 50"
 	@cd backend && poetry run python ../scripts/i18n_quality_check.py $(ARGS)
