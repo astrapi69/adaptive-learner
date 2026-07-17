@@ -19,7 +19,7 @@
 
 import {Download} from "lucide-react";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import PageContainer from "../../shared/layout/PageContainer";
@@ -27,11 +27,10 @@ import {LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {readContributorName} from "../../lib/content/placement/contribution-history";
 import {Button} from "@/components/ui/button";
 import MetadataStep from "../../components/create-lesson/MetadataStep";
-import ReviewStep from "../../components/create-lesson/ReviewStep";
-import CardEditor, {MIN_CARDS} from "../../components/create-lesson/CardEditor";
-import ExerciseGenerator, {
-    MIN_EXERCISES,
-} from "../../components/create-lesson/ExerciseGenerator";
+import WizardSteps from "../../components/create-lesson/WizardSteps";
+import EditLoadState from "../../components/create-lesson/EditLoadState";
+import {MIN_CARDS} from "../../components/create-lesson/CardEditor";
+import {MIN_EXERCISES} from "../../components/create-lesson/ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
     generateExercises,
@@ -52,6 +51,9 @@ import {
     buildLessonFromDraft,
     buildUserSetInput,
     checkDraft,
+    draftSetId,
+    lessonToDraftInput,
+    preservedTheorySteps,
     type DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
 import {
@@ -60,6 +62,7 @@ import {
     normalizeBook,
 } from "../../lib/content/lesson/book-to-lesson";
 import {downloadLessonJson} from "../../lib/content/lesson/lesson-export";
+import {nextCopySetId} from "../../lib/content/lesson/lesson-import";
 import BookSteps from "../../components/create-lesson/BookSteps";
 import type {BookFields} from "../../components/create-lesson/BookTextStep";
 import {resolveActiveAiProvider} from "../../lib/ai/providers/resolve-provider";
@@ -71,11 +74,32 @@ import {
     applyTemplate,
     type LessonTemplateKey,
 } from "../../lib/content/lesson/lesson-templates";
-import type {
-    ContentLesson,
-    ContentLessonExercise,
-    ContentSetEntry,
+import {
+    USER_GENERATED_SOURCE,
+    type ContentLesson,
+    type ContentLessonExercise,
+    type ContentLessonStep,
+    type ContentSetEntry,
+    type UserLessonOrigin,
 } from "../../storage/types";
+
+/** Edit-mode context (#1740): the existing set/lesson the wizard was
+ *  opened to edit. Held so a save overwrites the SAME set + lesson file
+ *  (preserving filename-keyed progress) and preserves the lesson's
+ *  authored theory + any sibling lessons the wizard doesn't touch. */
+interface EditContext {
+    source: string;
+    setId: string;
+    origin: UserLessonOrigin;
+    /** All lessons in the set (the edited one + untouched siblings). */
+    lessons: ContentLesson[];
+    /** Index (in ``lessons``) of the lesson being edited. */
+    editIndex: number;
+    /** The edited lesson's original steps (for theory preservation). */
+    originalSteps: ContentLessonStep[];
+    /** The edited lesson's id (== its ``lessons/{id}.json`` filename). */
+    lessonId: string;
+}
 
 const TOTAL_STEPS = 4;
 /** #1743 — the book-text path skips the card + deterministic-exercise
@@ -112,6 +136,13 @@ function defaultMeta(appLang: string): LessonMeta {
 export default function CreateLesson() {
     const {t, lang} = useI18n();
     const navigate = useNavigate();
+    const params = useParams();
+    // #1740 — /create-lesson/edit/:source/:setId opens the wizard
+    // pre-filled to edit an existing own lesson.
+    const editMode = Boolean(params.source && params.setId);
+    const [editContext, setEditContext] = useState<EditContext | null>(null);
+    const [editLoading, setEditLoading] = useState(editMode);
+    const [editError, setEditError] = useState<string | null>(null);
 
     const [step, setStep] = useState(1);
     const [meta, setMeta] = useState<LessonMeta>(() =>
@@ -154,24 +185,80 @@ export default function CreateLesson() {
         return resolveActiveAiProvider(userId);
     }, []);
 
-    // On mount: surface a restorable draft (don't auto-apply).
+    // On mount: surface a restorable draft (don't auto-apply). Skipped in
+    // edit mode — editing loads the existing lesson, not the draft slot,
+    // and must never clobber an unrelated new-lesson draft (#1740).
     useEffect(() => {
+        if (editMode) return;
         const draft = loadLessonDraft();
         if (draftHasContent(draft)) setPendingDraft(draft);
-    }, []);
+    }, [editMode]);
+
+    // #1740 — edit mode: load the existing set, pre-fill the wizard.
+    useEffect(() => {
+        if (!editMode) return;
+        let cancelled = false;
+        const source = decodeURIComponent(params.source as string);
+        const setId = decodeURIComponent(params.setId as string);
+        (async () => {
+            try {
+                const storage = getStorage();
+                const [listing, setsList] = await Promise.all([
+                    storage.contentLoader.listLessons(source, setId),
+                    storage.contentLoader.listSets(),
+                ]);
+                if (listing.lessons.length === 0) {
+                    throw new Error("This set has no lessons to edit.");
+                }
+                const lessons = await Promise.all(
+                    listing.lessons.map((f) =>
+                        storage.contentLoader.getLesson(source, setId, f),
+                    ),
+                );
+                const entry = setsList.sets.find(
+                    (s) => s.source === source && s.id === setId,
+                );
+                const editIndex = 0;
+                const editLesson = lessons[editIndex];
+                const prefill = lessonToDraftInput(editLesson, entry);
+                if (cancelled) return;
+                setMeta(prefill.meta);
+                setCards(prefill.cards);
+                setExercises(prefill.exercises);
+                setEditContext({
+                    source,
+                    setId,
+                    origin: (entry?.domain as UserLessonOrigin) ?? "imported",
+                    lessons,
+                    editIndex,
+                    originalSteps: editLesson.steps,
+                    lessonId: editLesson.id,
+                });
+                setEditLoading(false);
+            } catch (err) {
+                if (cancelled) return;
+                setEditError(err instanceof Error ? err.message : String(err));
+                setEditLoading(false);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [editMode, params.source, params.setId]);
 
     // Phase 65B — autosave the draft every 10s while editing. Skipped
-    // while the restore prompt is open (we haven't applied a choice yet).
+    // while the restore prompt is open (we haven't applied a choice yet)
+    // and in edit mode (which never writes the shared draft slot, #1740).
     const stateRef = useRef({step, meta, cards});
     stateRef.current = {step, meta, cards};
     useEffect(() => {
-        if (pendingDraft) return;
+        if (pendingDraft || editMode) return;
         const id = setInterval(() => {
             const {step: s, meta: m, cards: c} = stateRef.current;
             saveLessonDraft({schema: 1, step: s, meta: m, cards: c, updatedAt: ""});
         }, DRAFT_AUTOSAVE_MS);
         return () => clearInterval(id);
-    }, [pendingDraft]);
+    }, [pendingDraft, editMode]);
 
     const titleMissing = meta.title.trim().length === 0;
     // #1715 — a same-language pair (source === target) is legitimate
@@ -275,6 +362,21 @@ export default function CreateLesson() {
         [meta, cards, exercises],
     );
 
+    /** #1740 — the set ids already taken by user-generated sets, so a
+     *  "save as copy" never collides with an existing lesson. */
+    async function listExistingUserSetIds(): Promise<Set<string>> {
+        try {
+            const list = await getStorage().contentLoader.listSets();
+            return new Set(
+                list.sets
+                    .filter((s) => s.source === USER_GENERATED_SOURCE)
+                    .map((s) => s.id),
+            );
+        } catch {
+            return new Set();
+        }
+    }
+
     async function saveLocally(): Promise<ContentSetEntry | null> {
         if (saving) return null;
         setSaving(true);
@@ -283,7 +385,35 @@ export default function CreateLesson() {
             let input: Parameters<
                 ReturnType<typeof getStorage>["contentLoader"]["saveUserSet"]
             >[0];
-            if (bookMode) {
+            if (editContext) {
+                // Edit mode (#1740): reuse the existing set id + lesson
+                // filename so the save OVERWRITES in place (progress keyed
+                // on the filename survives), preserve the lesson's authored
+                // theory, and carry any sibling lessons the wizard doesn't
+                // touch.
+                lesson = buildLessonFromDraft(
+                    {meta, cards, exercises},
+                    {
+                        id: editContext.lessonId,
+                        theorySteps: preservedTheorySteps(
+                            editContext.originalSteps,
+                            meta,
+                        ),
+                    },
+                );
+                input = buildUserSetInput({meta, cards, exercises}, lesson, {
+                    setId: editContext.setId,
+                    origin: editContext.origin,
+                });
+                if (editContext.lessons.length > 1) {
+                    input = {
+                        ...input,
+                        lessons: editContext.lessons.map((l, i) =>
+                            i === editContext.editIndex ? lesson : l,
+                        ),
+                    };
+                }
+            } else if (bookMode) {
                 const bookInput = {meta, theorySteps, exercises};
                 lesson = buildBookLesson(bookInput);
                 input = buildBookUserSetInput(
@@ -296,11 +426,59 @@ export default function CreateLesson() {
                 input = buildUserSetInput({meta, cards, exercises}, lesson);
             }
             const entry = await getStorage().contentLoader.saveUserSet(input);
-            clearLessonDraft();
+            if (!editMode) clearLessonDraft();
             setSavedLessonId(lesson.id);
             setSavedLesson(lesson);
             setSavedEntry(entry);
-            notify.success(t("create_lesson.save.saved", "Lesson saved!"));
+            notify.success(
+                editMode
+                    ? t("create_lesson.save.updated", "Lesson updated!")
+                    : t("create_lesson.save.saved", "Lesson saved!"),
+            );
+            return entry;
+        } catch (err) {
+            notify.error(
+                `${t("create_lesson.save.failed", "Could not save the lesson.")} ${
+                    err instanceof Error ? err.message : ""
+                }`,
+            );
+            return null;
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    /** #1740 — save the edited lesson as a NEW copy, leaving the original
+     *  untouched (the deliberate alternative to overwriting). */
+    async function saveCopy(): Promise<ContentSetEntry | null> {
+        if (saving || !editContext) return null;
+        setSaving(true);
+        try {
+            const copyMeta: LessonMeta = {
+                ...meta,
+                title: `${meta.title.trim()} ${t(
+                    "create_lesson.save.copy_suffix",
+                    "(copy)",
+                )}`,
+            };
+            const copyInput = {meta: copyMeta, cards, exercises};
+            const lesson = buildLessonFromDraft(copyInput, {
+                theorySteps: preservedTheorySteps(
+                    editContext.originalSteps,
+                    copyMeta,
+                ),
+            });
+            const existing = await listExistingUserSetIds();
+            const setId = nextCopySetId(draftSetId(copyMeta), existing);
+            const input = buildUserSetInput(copyInput, lesson, {
+                setId,
+                origin: "imported",
+            });
+            const entry = await getStorage().contentLoader.saveUserSet(input);
+            setSavedLessonId(lesson.id);
+            setSavedLesson(lesson);
+            setSavedEntry(entry);
+            notify.success(t("create_lesson.save.copied", "Saved as a copy!"));
             return entry;
         } catch (err) {
             notify.error(
@@ -376,7 +554,9 @@ export default function CreateLesson() {
     }
 
     function discard() {
-        clearLessonDraft();
+        // #1740 — in edit mode the shared new-lesson draft slot is not
+        // ours to clear (it may hold an unrelated unfinished lesson).
+        if (!editMode) clearLessonDraft();
         navigate("/content?tab=my");
     }
 
@@ -407,18 +587,31 @@ export default function CreateLesson() {
     return (
         <PageContainer testId="create-lesson-page">
             <header className="create-lesson-header mb-6 flex flex-col gap-1">
-                <h1>{t("create_lesson.title", "Create a lesson")}</h1>
-                <p
-                    className="create-lesson-step-indicator text-sm text-fg-muted"
-                    data-testid="create-lesson-step-indicator"
-                >
-                    {t("create_lesson.step_of", "Step {current} of {total}")
-                        .replace("{current}", String(step))
-                        .replace("{total}", String(totalSteps))}
-                </p>
+                <h1>
+                    {editMode
+                        ? t("create_lesson.edit_title", "Edit lesson")
+                        : t("create_lesson.title", "Create a lesson")}
+                </h1>
+                {!editLoading && !editError && (
+                    <p
+                        className="create-lesson-step-indicator text-sm text-fg-muted"
+                        data-testid="create-lesson-step-indicator"
+                    >
+                        {t("create_lesson.step_of", "Step {current} of {total}")
+                            .replace("{current}", String(step))
+                            .replace("{total}", String(totalSteps))}
+                    </p>
+                )}
             </header>
 
-            {step === 1 && (
+            <EditLoadState
+                loading={editLoading}
+                error={Boolean(editError)}
+                onBack={() => navigate("/content?tab=my")}
+                t={t}
+            />
+
+            {!editLoading && !editError && step === 1 && (
                 <MetadataStep
                     meta={meta}
                     showError={showError}
@@ -455,76 +648,34 @@ export default function CreateLesson() {
             )}
 
             {!bookMode && (
-                <>
-                    {step === 2 && (
-                        <>
-                            <CardEditor
-                                cards={cards}
-                                onAdd={addCard}
-                                onUpdate={updateCard}
-                                onDelete={deleteCard}
-                                onReorder={setCards}
-                                onClearAll={() => setCards([])}
-                                onImport={importCards}
-                            />
-                            {cardError && cards.length < MIN_CARDS && (
-                                <p
-                                    className="form-hint form-hint-warning"
-                                    data-testid="create-lesson-card-error"
-                                    role="alert"
-                                >
-                                    {t(
-                                        "create_lesson.cards.min_to_advance",
-                                        "Add at least {n} cards to continue.",
-                                    ).replace("{n}", String(MIN_CARDS))}
-                                </p>
-                            )}
-                        </>
-                    )}
-
-                    {step === 3 && (
-                        <>
-                            <ExerciseGenerator
-                                exercises={exercises}
-                                config={genConfig}
-                                onConfigChange={setGenConfig}
-                                onGenerate={generateLessonExercises}
-                                onReorder={setExercises}
-                                onDelete={(id) =>
-                                    setExercises((prev) =>
-                                        prev.filter((e) => e.id !== id),
-                                    )
-                                }
-                            />
-                            {exerciseError &&
-                                exercises.length < MIN_EXERCISES && (
-                                    <p
-                                        className="form-hint form-hint-warning"
-                                        data-testid="create-lesson-exercise-error"
-                                        role="alert"
-                                    >
-                                        {t(
-                                            "create_lesson.exercises.min_to_advance",
-                                            "Generate at least {n} exercises to continue.",
-                                        ).replace("{n}", String(MIN_EXERCISES))}
-                                    </p>
-                                )}
-                        </>
-                    )}
-
-                    {step === 4 && !savedEntry && (
-                        <ReviewStep
-                            meta={meta}
-                            cards={cards}
-                            exercises={exercises}
-                            draftChecks={draftChecks}
-                            saving={saving}
-                            onSaveLocal={() => void saveLocally()}
-                            onSaveShare={() => void saveAndShare()}
-                            t={t}
-                        />
-                    )}
-                </>
+                <WizardSteps
+                    step={step}
+                    saved={Boolean(savedEntry)}
+                    meta={meta}
+                    cards={cards}
+                    exercises={exercises}
+                    genConfig={genConfig}
+                    cardError={cardError}
+                    exerciseError={exerciseError}
+                    draftChecks={draftChecks}
+                    saving={saving}
+                    editMode={editMode}
+                    onAddCard={addCard}
+                    onUpdateCard={updateCard}
+                    onDeleteCard={deleteCard}
+                    onReorderCards={setCards}
+                    onImportCards={importCards}
+                    onGenerate={generateLessonExercises}
+                    onConfigChange={setGenConfig}
+                    onReorderExercises={setExercises}
+                    onDeleteExercise={(id) =>
+                        setExercises((prev) => prev.filter((e) => e.id !== id))
+                    }
+                    onSaveLocal={() => void saveLocally()}
+                    onSaveShare={() => void saveAndShare()}
+                    onSaveCopy={editMode ? () => void saveCopy() : undefined}
+                    t={t}
+                />
             )}
 
             {savedEntry && (
@@ -581,7 +732,7 @@ export default function CreateLesson() {
                 </section>
             )}
 
-            {!savedEntry && (
+            {!savedEntry && !editLoading && !editError && (
             <nav className="create-lesson-nav mt-6 flex flex-wrap items-center justify-end gap-3" aria-label={t(
                 "create_lesson.nav_label",
                 "Wizard navigation",

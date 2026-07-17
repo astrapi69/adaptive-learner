@@ -7,9 +7,12 @@ import {
     buildUserSetInput,
     checkDraft,
     draftSetId,
+    lessonToDraftInput,
+    preservedTheorySteps,
     type DraftLessonInput,
 } from "./draft-to-lesson";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
+import type {ContentLessonStep} from "../../../storage/types";
 
 const META: LessonMeta = {
     title: "My French Basics",
@@ -130,5 +133,102 @@ describe("draft-to-lesson", () => {
         expect(checks.schemaError).toBeNull();
         // The extra detail field must not break the boolean aggregate.
         expect(allChecksPass(checks)).toBe(true);
+    });
+});
+
+// #1740 — lesson editing: reverse mapping, id/set-id override, theory
+// preservation.
+describe("draft-to-lesson editing (#1740)", () => {
+    it("round-trips a built lesson back into the wizard draft", () => {
+        const built = buildLessonFromDraft(input());
+        const back = lessonToDraftInput(built, {level: "A1", title_native: null});
+        expect(back.meta.title).toBe("My French Basics");
+        expect(back.meta.sourceLanguage).toBe("de");
+        expect(back.meta.targetLanguage).toBe("fr");
+        expect(back.meta.level).toBe("A1");
+        expect(back.meta.author).toBe("Aster");
+        expect(back.cards).toHaveLength(built.cards.length);
+        expect(back.cards[0].front).toBe(built.cards[0].front);
+        // Exercises come straight off the exercise steps (theory dropped).
+        const exSteps = built.steps.filter((s) => s.type === "exercise");
+        expect(back.exercises).toHaveLength(exSteps.length);
+        expect(back.exercises[0].id).toBe(exSteps[0].exercise?.id);
+    });
+
+    it("re-build after a reverse map keeps a stable, overwriteable shape", () => {
+        const built = buildLessonFromDraft(input());
+        const back = lessonToDraftInput(built, {level: "A1"});
+        const rebuilt = buildLessonFromDraft(back, {
+            id: built.id,
+            theorySteps: preservedTheorySteps(built.steps, back.meta),
+        });
+        expect(rebuilt.id).toBe(built.id);
+        expect(rebuilt.steps.filter((s) => s.type === "exercise")).toHaveLength(
+            built.steps.filter((s) => s.type === "exercise").length,
+        );
+        // The wizard intro is regenerated (wizard lineage), title reflected.
+        expect(rebuilt.steps[0].type).toBe("theory");
+        expect(rebuilt.steps[0].id).toBe("theory-intro");
+    });
+
+    it("opts.id overrides the derived lesson filename (preserves progress)", () => {
+        const lesson = buildLessonFromDraft(input(), {id: "colors"});
+        expect(lesson.id).toBe("colors");
+        // A title change would normally re-slug the id; the override wins.
+        const renamed = buildLessonFromDraft(
+            {...input(), meta: {...META, title: "Farben komplett neu"}},
+            {id: "colors"},
+        );
+        expect(renamed.id).toBe("colors");
+    });
+
+    it("regenerates the intro from the title for wizard-created lineage", () => {
+        const original = buildLessonFromDraft(input()); // has theory-intro
+        const renamedMeta: LessonMeta = {...META, title: "Renamed Lesson"};
+        const theory = preservedTheorySteps(original.steps, renamedMeta);
+        expect(theory).toHaveLength(1);
+        expect(theory[0].id).toBe("theory-intro");
+        expect(theory[0].body).toContain("# Renamed Lesson");
+    });
+
+    it("preserves authored theory verbatim for imported lineage", () => {
+        // An imported lesson: real theory steps, none named theory-intro.
+        const importedSteps: ContentLessonStep[] = [
+            {id: "t1", type: "theory", title: "Grammar", body: "# Grammar\n\nRich text."},
+            {id: "t2", type: "theory", title: "Notes", body: "More authored theory."},
+            {id: "e1", type: "exercise", title: null, body: null, exercise: null},
+        ];
+        const theory = preservedTheorySteps(importedSteps, {...META, title: "Whatever"});
+        expect(theory).toHaveLength(2);
+        expect(theory.map((s) => s.id)).toEqual(["t1", "t2"]);
+        // No synthetic intro was injected (no data the wizard can't hold).
+        expect(theory.some((s) => s.id === "theory-intro")).toBe(false);
+        expect(theory[0].body).toContain("Rich text.");
+    });
+
+    it("buildUserSetInput overrides the set id and origin in edit mode", () => {
+        const i = input();
+        const set = buildUserSetInput(i, buildLessonFromDraft(i), {
+            setId: "created-original-id",
+            origin: "adaptive",
+        });
+        expect(set.set_id).toBe("created-original-id");
+        expect(set.origin).toBe("adaptive");
+    });
+
+    it("a preserved-theory edit (typo fix on a card) still builds a valid lesson", () => {
+        const original = buildLessonFromDraft(input());
+        const back = lessonToDraftInput(original, {level: "A1"});
+        // Fix a typo on a card back — the exercises still reference every
+        // card, so the rebuild under the original id must validate. (The
+        // card's content-derived SRS key changes; that self-orphaning is
+        // the intended behaviour, verified end-to-end elsewhere.)
+        back.cards[0] = {...back.cards[0], back: "corrected"};
+        const rebuilt = buildLessonFromDraft(back, {
+            id: original.id,
+            theorySteps: preservedTheorySteps(original.steps, back.meta),
+        });
+        expect(rebuilt.id).toBe(original.id);
+        expect(rebuilt.cards[0].back).toBe("corrected");
     });
 });
