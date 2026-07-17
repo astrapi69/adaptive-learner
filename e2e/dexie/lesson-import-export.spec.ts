@@ -23,6 +23,14 @@ import {expect, test, type Page} from "@playwright/test";
 
 const MIXED_ZIP = join(__dirname, "..", "fixtures", "mixed-set.zip");
 
+// Count ONLY the My-Lessons row roots. A ``[data-testid^="my-lesson-"]``
+// prefix selector also matches each row's nested action buttons
+// (``my-lesson-{id}-play`` / ``-edit`` / ``-delete`` / ...), so its count
+// drifts with how many buttons have rendered — the source of the
+// intermittent ``toHaveCount`` flake. The rows are the direct ``<li>``
+// children of the list, which is stable regardless of button rendering.
+const MY_LESSON_ROWS = '[data-testid="content-my-lessons-list"] > li';
+
 const CARDS = [
     {front: "Bonjour", back: "Guten Tag"},
     {front: "Merci", back: "Danke"},
@@ -112,10 +120,10 @@ test.describe("Lesson file import/export (#1672)", () => {
             timeout: 15000,
         });
         await expect(
-            page.locator('[data-testid^="my-lesson-"]').first(),
+            page.locator(MY_LESSON_ROWS).first(),
         ).toBeVisible({timeout: 15000});
         const afterFirst = await page
-            .locator('[data-testid^="my-lesson-"]')
+            .locator(MY_LESSON_ROWS)
             .count();
 
         // 3. Re-import the SAME file (same page, warm set list) → collision
@@ -137,12 +145,12 @@ test.describe("Lesson file import/export (#1672)", () => {
         await expect
             .poll(
                 async () =>
-                    page.locator('[data-testid^="my-lesson-"]').count(),
+                    page.locator(MY_LESSON_ROWS).count(),
                 {timeout: 15000},
             )
             .toBeGreaterThan(afterFirst);
         const afterCopy = await page
-            .locator('[data-testid^="my-lesson-"]')
+            .locator(MY_LESSON_ROWS)
             .count();
 
         // 3b. Re-import again → collision → "Overwrite" (irreversible) →
@@ -157,7 +165,7 @@ test.describe("Lesson file import/export (#1672)", () => {
             timeout: 15000,
         });
         await expect(
-            page.locator('[data-testid^="my-lesson-"]'),
+            page.locator(MY_LESSON_ROWS),
         ).toHaveCount(afterCopy, {timeout: 15000});
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
@@ -178,7 +186,7 @@ test.describe("Lesson file import/export (#1672)", () => {
             timeout: 15000,
         });
         await expect(
-            page.locator('[data-testid^="my-lesson-"]').first(),
+            page.locator(MY_LESSON_ROWS).first(),
         ).toBeVisible({timeout: 15000});
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);

@@ -307,6 +307,41 @@ describe("ImportDetail page", () => {
     expect((screen.getByTestId("analyze-button") as HTMLButtonElement).disabled).toBe(false);
   });
 
+  it("does not dial the provider when unmounted mid-flight (#1739)", async () => {
+    const conv = await setupWithKey();
+    mockAiComplete.mockResolvedValue(JSON.stringify({ topic: "T", summary: "S" }));
+    const view = renderDetail(conv.id);
+    const button = await waitFor(() => {
+      const b = screen.getByTestId("analyze-button") as HTMLButtonElement;
+      expect(b.disabled).toBe(false);
+      return b;
+    });
+    // Defer the settings read so the unmount lands while runAnalysis
+    // is still suspended on the storage await — the exact window in
+    // which the release-gate unhandled rejection occurred. Installed
+    // only now: the button-enable path above needs the real read.
+    let releaseSettings: (() => void) | null = null;
+    const realGet = dexieStorage.settings.get.bind(dexieStorage.settings);
+    const settingsSpy = vi
+      .spyOn(dexieStorage.settings, "get")
+      .mockImplementation(async (userId: string) => {
+        await new Promise<void>((resolve) => {
+          releaseSettings = resolve;
+        });
+        return realGet(userId);
+      });
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(releaseSettings).not.toBeNull();
+    });
+    view.unmount();
+    releaseSettings!();
+    // Give the suspended continuation room to (wrongly) proceed.
+    await new Promise((resolve) => setTimeout(resolve, 25));
+    expect(mockAiComplete).not.toHaveBeenCalled();
+    settingsSpy.mockRestore();
+  });
+
   it("shows a friendly inline error when the analysis throws", async () => {
     const conv = await setupWithKey();
     mockAiComplete.mockResolvedValue(JSON.stringify({ topic: "T", summary: "S" }));
