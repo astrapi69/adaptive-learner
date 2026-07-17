@@ -307,12 +307,7 @@ export default function ImportDetail({
       if (controller.signal.aborted) {
         return;
       }
-      const modelOverride =
-        provider === "anthropic"
-          ? settings.model_override_anthropic
-          : provider === "openai"
-            ? settings.model_override_openai
-            : settings.model_override_gemini;
+      const modelOverride = pickModelOverride(provider, settings);
       // #803 — thread the ACTIVE UI display language into the analysis
       // prompt so free-text fields come back in the language the user
       // actually selected. The live ``lang`` from ``useI18n()`` is the
@@ -321,7 +316,11 @@ export default function ImportDetail({
       // analysis come back in the wrong language. learnerState is the
       // last fallback (set during onboarding).
       const learnerLang = readLearnerState().language;
-      const analysisLang = lang || settings.language || learnerLang || "en";
+      const analysisLang = resolveAnalysisLang(
+        lang,
+        settings.language,
+        learnerLang,
+      );
       const result = await analyzeConversation({
         provider,
         apiKey,
@@ -335,8 +334,8 @@ export default function ImportDetail({
         lang: analysisLang,
         // v1.54.0 — pass the import-time language pair so the analysis
         // prompt knows who is learning what (sharper extraction).
-        sourceLanguage: sourceLang || detail.source_language || null,
-        targetLanguage: targetLang || detail.target_language || null,
+        sourceLanguage: firstLang(sourceLang, detail.source_language),
+        targetLanguage: firstLang(targetLang, detail.target_language),
         signal: controller.signal,
       });
       const updated = await getStorage().imports.saveAnalysis(detail.id, {
@@ -681,6 +680,48 @@ export default function ImportDetail({
       )}
     </main>
   );
+}
+
+/** The three per-provider model-override fields ``runAnalysis`` reads. */
+type AnalysisModelOverrides = {
+  model_override_anthropic: string | null;
+  model_override_openai: string | null;
+  model_override_gemini: string | null;
+};
+
+/**
+ * The active provider's model override (#1750 — extracted from
+ * ``runAnalysis`` so the handler stays under the complexity gate). Pure;
+ * behaviour-identical to the prior inline ternary.
+ */
+function pickModelOverride(
+  provider: AIProvider,
+  settings: AnalysisModelOverrides,
+): string | null {
+  if (provider === "anthropic") return settings.model_override_anthropic;
+  if (provider === "openai") return settings.model_override_openai;
+  return settings.model_override_gemini;
+}
+
+/**
+ * Resolve the analysis prompt language: the live UI language wins, then the
+ * saved setting, then the learner default, then ``"en"`` (#803 rationale;
+ * extracted in #1750). Pure.
+ */
+function resolveAnalysisLang(
+  uiLang: string | null | undefined,
+  settingsLang: string | null | undefined,
+  learnerLang: string | null | undefined,
+): string {
+  return uiLang || settingsLang || learnerLang || "en";
+}
+
+/** First non-empty language of a captured pair side, else ``null`` (#1750). */
+function firstLang(
+  primary: string | null | undefined,
+  fallback: string | null | undefined,
+): string | null {
+  return primary || fallback || null;
 }
 
 async function readApiKeyFor(userId: string, provider: AIProvider): Promise<string | null> {
