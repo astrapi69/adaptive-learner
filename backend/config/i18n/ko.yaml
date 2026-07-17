@@ -2253,6 +2253,12 @@ content:
     domain_psychology: 심리학
     domain_programming: 프로그래밍
     domain_math: 수학
+    domain_ai: 인공지능
+    domain_knowledge: 지식
+    domain_technology: 기술
+    domain_software: 소프트웨어
+    domain_philosophy: 철학
+    domain_language: 언어
     code_copy: "코드 복사"
     code_output: "출력:"
     no_primary: 아직 당신의 언어를 위한 세트가 없습니다. 아래에서 다른 출처 언어를 둘러보세요.

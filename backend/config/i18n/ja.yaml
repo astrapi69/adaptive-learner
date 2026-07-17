@@ -2242,6 +2242,12 @@ content:
     domain_psychology: 心理学
     domain_programming: プログラミング
     domain_math: 数学
+    domain_ai: AI
+    domain_knowledge: 知識
+    domain_technology: テクノロジー
+    domain_software: ソフトウェア
+    domain_philosophy: 哲学
+    domain_language: 言語
     code_copy: "コードをコピー"
     code_output: "出力:"
     no_primary: あなたの言語のセットはまだありません。下の他の出発言語をご覧ください。

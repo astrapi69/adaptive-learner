@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.2.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.3.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
@@ -231,7 +231,7 @@ Full documentation (German default at `/docs/`, English at
 ### Bundled Content
 
 <!-- CONTENT-STATS:START -->
-**499 lessons · 35 sets · 6 domain(s)** (ai, language, programming, psychology, software, technology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+**325 lessons · 28 sets · 2 domain(s)** (language, software) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 
 | Set | Source | Target | Level | Lessons |
 |-----|--------|--------|-------|--------:|
@@ -256,19 +256,12 @@ Full documentation (German default at `/docs/`, English at
 | Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 |
 | Englisch A2 — Grundlagen | de | en | A2 | 15 |
 | Englisch B1 — Mittelstufe | de | en | B1 | 15 |
-| Psychologie — Grundlagen | de | de | A1 | 112 |
-| Psychologie der Beeinflussung | de | de | A2 | 8 |
-| Python — Grundlagen | de | de | A1 | 15 |
-| KI für Einsteiger | de | de | A1 | 12 |
 | Japanisch Schrift: Hiragana (Vorstufe) | de | ja | A0 | 10 |
 | Japanisch A1 (für Deutschsprachige) | de | ja | A1 | 10 |
 | Koreanisch A1 (für Deutschsprachige) | de | ko | A1 | 10 |
 | Italienisch A1 (für Deutschsprachige) | de | it | A1 | 10 |
 | Portugiesisch (Brasilianisch) A1 (für Deutschsprachige) | de | pt | A1 | 10 |
 | Chinesisch A1 (für Deutschsprachige) | de | zh | A1 | 10 |
-| IT-Grundlagen | de | de | A1 | 10 |
-| Ansible-Grundlagen für Quality Engineering | de | de | B1 | 8 |
-| Data Science und KI | de | de | A2 | 9 |
 | Adaptive Learner — App-Tutorial | de | de | Einsteiger | 12 |
 <!-- CONTENT-STATS:END -->
 
@@ -477,13 +470,19 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.2.0**, a feature
-release adding an **extension-exercise tier** (four AI-authored
-exercise types) and a native **multiple_choice** type, with the app
-now consuming the lesson schema and TypeScript types from
-**`learn-content-engine`** (additive schema 1.5 -> 1.7), a **federated
-content-repository registry**, a simpler mobile navigation, and the
-**EXP-044** CSS-cascade repair. Recent feature
+Active development. The current release is **v2.3.0**, a polish
+release completing the **EXP-044 CSS concern-split** (`global.css`
+decomposed byte-identically into per-concern legacy files behind a
+byte-identity gate), reworking the **lesson-player UX** (collapsible
+options panel, footer pause control, slimmer title area), adding
+**listen-first audio** exercises and an authored-difficulty
+cold-start prior for adaptive lessons, and hardening lesson/set
+**file import/export**. Prior **v2.2.0** added an
+**extension-exercise tier** (four AI-authored exercise types) and a
+native **multiple_choice** type, with the app consuming the lesson
+schema and TypeScript types from **`learn-content-engine`** (additive
+schema 1.5 -> 1.7), a **federated content-repository registry**, and
+a simpler mobile navigation. Recent feature
 work includes the **Content hub** redesign (Discover / My content /
 Import tabs, a global list ⇄ grid view toggle, and a compact
 search/filter bar), the full **lesson-mode system** (Practice / Exam /

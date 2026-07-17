@@ -2253,6 +2253,12 @@ content:
     domain_psychology: Psikologi
     domain_programming: Pemrograman
     domain_math: Matematika
+    domain_ai: AI
+    domain_knowledge: Pengetahuan
+    domain_technology: Teknologi
+    domain_software: Perangkat lunak
+    domain_philosophy: Filsafat
+    domain_language: Bahasa
     code_copy: "Salin kode"
     code_output: "Keluaran:"
     no_primary: Belum ada set untuk bahasamu. Jelajahi bahasa sumber lainnya di bawah.

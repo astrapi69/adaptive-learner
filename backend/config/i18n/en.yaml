@@ -2253,6 +2253,12 @@ content:
     domain_psychology: Psychology
     domain_programming: Programming
     domain_math: Mathematics
+    domain_ai: AI
+    domain_knowledge: Knowledge
+    domain_technology: Technology
+    domain_software: Software
+    domain_philosophy: Philosophy
+    domain_language: Language
     code_copy: "Copy code"
     code_output: "Output:"
     no_primary: No sets for your language yet. Browse other source languages below.

@@ -2441,6 +2441,12 @@
       "domain_psychology": "Psychologie",
       "domain_programming": "Programmierung",
       "domain_math": "Mathematik",
+      "domain_ai": "KI",
+      "domain_knowledge": "Wissen",
+      "domain_technology": "Technologie",
+      "domain_software": "Software",
+      "domain_philosophy": "Philosophie",
+      "domain_language": "Sprache",
       "code_copy": "Code kopieren",
       "code_output": "Ausgabe:",
       "no_primary": "Noch keine Sets für deine Sprache. Sieh dir unten andere Ausgangssprachen an."
