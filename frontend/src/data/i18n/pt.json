@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · {lessons} lições · {exercises} exercícios",
       "import": "Importar",
       "imported": "Lição importada.",
-      "failed": "Não foi possível importar a lição."
+      "failed": "Não foi possível importar a lição.",
+      "collision_title": "Esta lição já existe",
+      "collision_body": "Um conjunto de lições guardado já usa este identificador. Substituir, importar uma cópia separada ou cancelar?",
+      "overwrite": "Substituir",
+      "copy": "Importar como cópia",
+      "copy_suffix": "cópia",
+      "skipped": "{n} lição(ões) ignorada(s) porque falharam na validação."
     },
     "my_lessons": {
       "export_set": "Exportar como conjunto",
@@ -2792,7 +2798,8 @@
       "check_enoughCards": "Pelo menos 4 cartões",
       "check_enoughExercises": "Pelo menos 5 exercícios",
       "check_enoughTypes": "Pelo menos 2 tipos de exercício",
-      "check_schemaValid": "Estrutura de lição válida"
+      "check_schemaValid": "Estrutura de lição válida",
+      "structure_error": "Detalhe técnico"
     },
     "save": {
       "saved": "Lição guardada!",
@@ -2801,7 +2808,9 @@
       "save_share": "Guardar e partilhar",
       "play": "Reproduzir lição",
       "create_another": "Criar outra lição",
-      "to_browser": "Para o navegador de conteúdo"
+      "to_browser": "Para o navegador de conteúdo",
+      "save_file": "Guardar como ficheiro",
+      "file_saved": "Lição guardada como ficheiro."
     },
     "templates": {
       "heading": "Começar a partir de um modelo",
@@ -3257,6 +3266,7 @@
       "title": "Remover repositório",
       "message": "Remover {source}? O conteúdo baixado será removido deste dispositivo.",
       "delete_progress": "Excluir também meu progresso de aprendizagem deste conteúdo.",
+      "keep_progress": "Seu progresso de aprendizagem é mantido. Ao reconectar este repositório, ele é restaurado.",
       "consequence": "{lessons} lições e {cards} cartões de revisão serão excluídos. Isso não pode ser desfeito.",
       "counting": "Contando seu progresso…",
       "deleted": "Removido. {lessons} lições e {cards} cartões de revisão excluídos."
@@ -3617,6 +3627,12 @@
       "created": "Pedido de integração aberto.",
       "failed": "Não foi possível abrir o pedido de integração.",
       "view": "Ver o seu pedido de integração"
+    }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Ouça primeiro",
+      "aria": "Reproduzir pronúncia"
     }
   }
 }

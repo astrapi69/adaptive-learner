@@ -1,0 +1,33 @@
+
+/* --- Progress table -------------------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+
+.commit-table-wrap {
+  overflow-x: auto;
+}
+
+.commit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.commit-table th,
+.commit-table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.commit-table th {
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.78rem;
+}
+
+.commit-table tr:last-child td {
+  border-bottom: none;
+}
+} /* @layer legacy */

@@ -4,12 +4,15 @@
  * (#1445 Part B).
  *
  * Default is keep-progress: only the content connection is removed, so
- * re-adding the repo restores the learner's place. The opt-in checkbox
- * (never pre-checked) names the REAL numbers (from Dexie queries, passed in
- * as ``lessonCount`` / ``cardCount``) and the irreversibility before the
- * learner confirms. The checkbox only appears when there IS progress to
- * delete AND the store supports the local delete (Dexie mode); otherwise the
- * dialog is a plain remove confirm.
+ * re-adding the repo restores the learner's place. That default is named
+ * EXPLICITLY (#1651) — while the box is unticked the dialog reassures that
+ * progress is kept and reconnecting restores it, so its later return is
+ * expected, not a surprise. The opt-in checkbox (never pre-checked) swaps
+ * that reassurance for the REAL numbers (from Dexie queries, passed in as
+ * ``lessonCount`` / ``cardCount``) and the irreversibility before the learner
+ * confirms. The checkbox only appears when there IS progress to delete AND the
+ * store supports the local delete (Dexie mode); otherwise the dialog is a
+ * plain remove confirm.
  *
  * Wraps the shared {@link ConfirmDialog} (focus trap, Escape, backdrop,
  * restore-focus) so the a11y contract is not re-implemented.
@@ -104,7 +107,7 @@ export default function RemoveRepoDialog({
               )}
             </span>
           </label>
-          {deleteProgress && (
+          {deleteProgress ? (
             <p
               className="m-0 mt-2 text-xs font-medium text-[var(--danger)]"
               role="status"
@@ -118,6 +121,20 @@ export default function RemoveRepoDialog({
                     .replace("{lessons}", String(lessonCount))
                     .replace("{cards}", String(cardCount))
                 : t("content_repo.remove.counting", "Counting your progress…")}
+            </p>
+          ) : (
+            // Name the non-destructive default explicitly (#1651): keeping the
+            // box unticked disconnects only — the progress stays and reconnecting
+            // the repo restores it, so its return later is expected, not a bug.
+            <p
+              className="m-0 mt-2 text-xs text-fg-secondary"
+              role="status"
+              data-testid="content-repo-remove-keep"
+            >
+              {t(
+                "content_repo.remove.keep_progress",
+                "Your learning progress is kept. Reconnecting this repository restores it.",
+              )}
             </p>
           )}
         </div>

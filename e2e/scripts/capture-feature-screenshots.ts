@@ -36,6 +36,7 @@ import {expect, test, type Page} from "@playwright/test";
 import {
     advanceLessonUntil,
     freezeClock,
+    pinRandomness,
     openFirstBundledLesson,
     seedLearner,
     setTheme,
@@ -71,6 +72,9 @@ interface FeatureShot {
     desktopOnly?: boolean;
     /** ALSO capture an iPhone-landscape (812×375) baseline (#1410). */
     landscape?: boolean;
+    /** Pin the scroll position to this testid AFTER settleForScreenshot
+     *  (fonts settle last and reflow the page a few px, #1540/#1567). */
+    pinTo?: string;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -208,6 +212,14 @@ async function gotoLessonModeToggle(
     mode: "practice" | "exam" | "timed",
 ): Promise<boolean> {
     if (!(await gotoLessonRunner(page))) return false;
+    // The mode toggle lives inside the collapsible options panel (#1628);
+    // expand it before revealing the toggle.
+    const optionsToggle = page.getByTestId("lesson-options-toggle");
+    if (!(await optionsToggle.count())) return false;
+    await expect(optionsToggle).toBeVisible({timeout: 10_000});
+    if ((await optionsToggle.getAttribute("aria-expanded")) !== "true") {
+        await optionsToggle.click();
+    }
     const toggle = page.getByTestId("lesson-mode-toggle");
     if (!(await toggle.count())) return false;
     await expect(toggle).toBeVisible({timeout: 10_000});
@@ -462,8 +474,8 @@ const FEATURES: FeatureShot[] = [
     // ``landscape: true`` (#1410): the exercise mask incl. the sticky
     // Prüfen/Weiter footer gets an iPhone-landscape baseline on top of the
     // portrait one.
-    {path: "matching-animation/matching-pairing", setup: gotoLessonMatching, landscape: true},
-    {path: "matching-animation/matching-resolved", setup: gotoLessonMatchingResolved},
+    {path: "matching-animation/matching-pairing", setup: gotoLessonMatching, landscape: true, pinTo: "matching-exercise"},
+    {path: "matching-animation/matching-resolved", setup: gotoLessonMatchingResolved, pinTo: "matching-exercise"},
 
     // --- Lesson modes (practice / exam / timed) -------------------------
     {path: "lesson-modes/practice", setup: (p) => gotoLessonModeToggle(p, "practice")},
@@ -504,10 +516,18 @@ for (const feature of FEATURES) {
             // before the first navigation, then seed the feature state, then
             // settle fonts + kill animations.
             await freezeClock(page);
+            await pinRandomness(page);
             await setTheme(page, DEFAULT_THEME);
             const ready = await feature.setup(page);
             test.skip(!ready, `Could not reach ${feature.path} deterministically`);
             await settleForScreenshot(page);
+            if (feature.pinTo) {
+                await page
+                    .getByTestId(feature.pinTo)
+                    .first()
+                    .evaluate((el) => el.scrollIntoView({block: "start"}));
+                await page.waitForTimeout(100);
+            }
             // Pass the snapshot name as an ARRAY of path segments, not a
             // string. Playwright sanitises a string name (``/`` and ``.``
             // both become ``-``), which would flatten

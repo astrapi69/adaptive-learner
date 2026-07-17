@@ -84,6 +84,7 @@ function renderSummary(progress: LessonProgress | null) {
         nextLessonFilename={null}
         userId=""
         setId="set1"
+        setTitle="Set One"
         source="bundled:x"
         setSlug="x"
         lessonFilename="01-greetings.json"

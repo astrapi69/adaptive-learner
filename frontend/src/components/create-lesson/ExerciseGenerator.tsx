@@ -33,6 +33,7 @@ import {CSS} from "@dnd-kit/utilities";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import type {
     ExerciseGenConfig,
     GeneratableType,
@@ -94,16 +95,21 @@ export default function ExerciseGenerator({
 
     return (
         <section
-            className="create-lesson-step"
+            className="create-lesson-step flex flex-col gap-6"
             data-testid="create-lesson-step-3"
             aria-label={t("create_lesson.exercises.heading", "Generate exercises")}
         >
-            <h2>{t("create_lesson.exercises.heading", "Generate exercises")}</h2>
+            <h2 className="text-xl font-semibold text-fg-primary">
+                {t("create_lesson.exercises.heading", "Generate exercises")}
+            </h2>
 
             {/* Config */}
-            <div className="exercise-gen-config" data-testid="exercise-gen-config">
-                <label className="form-row">
-                    <span className="form-label">
+            <div
+                className="exercise-gen-config flex flex-col gap-4 rounded-lg border border-border bg-card p-4"
+                data-testid="exercise-gen-config"
+            >
+                <label className="form-row flex flex-col gap-1.5">
+                    <span className="form-label text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.count_label", "Number of exercises")}:{" "}
                         <strong data-testid="exercise-count-value">
                             {config.count}
@@ -114,6 +120,7 @@ export default function ExerciseGenerator({
                         min={EXERCISE_COUNT_MIN}
                         max={EXERCISE_COUNT_MAX}
                         value={config.count}
+                        className="w-full accent-[var(--accent)]"
                         data-testid="exercise-count-slider"
                         onChange={(e) =>
                             onConfigChange({
@@ -124,14 +131,15 @@ export default function ExerciseGenerator({
                     />
                 </label>
 
-                <fieldset className="exercise-gen-types">
-                    <legend className="form-label">
+                <fieldset className="exercise-gen-types m-0 flex flex-col gap-2 border-0 p-0">
+                    <legend className="form-label text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.types_label", "Exercise types")}
                     </legend>
                     {ALL_TYPES.map((type) => (
-                        <label key={type} className="exercise-gen-type">
+                        <label key={type} className="exercise-gen-type flex items-center gap-2">
                             <input
                                 type="checkbox"
+                                className="accent-[var(--accent)]"
                                 data-testid={`exercise-type-${type}`}
                                 checked={config.types.includes(type)}
                                 onChange={() => toggleType(type)}
@@ -141,12 +149,13 @@ export default function ExerciseGenerator({
                     ))}
                 </fieldset>
 
-                <label className="form-field">
-                    <span className="form-label">
+                <label className="form-field flex flex-col gap-1.5">
+                    <span className="form-label text-sm font-medium text-fg-primary">
                         {t("create_lesson.exercises.direction_label", "Direction")}
                     </span>
                     <select
                         data-testid="exercise-direction"
+                        className="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                         value={config.direction}
                         onChange={(e) =>
                             onConfigChange({
@@ -186,23 +195,24 @@ export default function ExerciseGenerator({
             </div>
 
             {/* Count + minimum */}
-            <div className="exercise-gen-count">
-                <span data-testid="exercise-list-count">
+            <div className="exercise-gen-count flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="font-medium text-fg-primary" data-testid="exercise-list-count">
                     {t("create_lesson.exercises.count", "{n} exercises").replace(
                         "{n}",
                         String(exercises.length),
                     )}
                 </span>
                 {exercises.length > 0 && exercises.length < MIN_EXERCISES && (
-                    <span
-                        className="form-hint form-hint-warning"
+                    <FormHint
+                        as="span"
+                        variant="warning"
                         data-testid="exercise-min-hint"
                     >
                         {t(
                             "create_lesson.exercises.min_hint",
                             "{n} exercises needed",
                         ).replace("{n}", String(MIN_EXERCISES))}
-                    </span>
+                    </FormHint>
                 )}
             </div>
 
@@ -217,7 +227,7 @@ export default function ExerciseGenerator({
                     strategy={verticalListSortingStrategy}
                 >
                     <ul
-                        className="exercise-gen-list"
+                        className="exercise-gen-list flex list-none flex-col gap-2 p-0"
                         data-testid="exercise-list"
                     >
                         {exercises.map((ex) => (
@@ -269,26 +279,26 @@ function SortableExerciseRow({exercise, onDelete}: SortableExerciseRowProps) {
         <li
             ref={setNodeRef}
             style={style}
-            className="exercise-row"
+            className="exercise-row flex items-center gap-3 rounded-lg border border-border bg-card p-3"
             data-testid={`exercise-row-${exercise.id}`}
             data-type={exercise.type}
         >
             <button
                 type="button"
-                className="card-row-handle"
+                className="card-row-handle flex shrink-0 cursor-grab items-center text-fg-muted"
                 aria-label={t("create_lesson.exercises.drag", "Drag to reorder")}
                 {...attributes}
                 {...listeners}
             >
                 <GripVertical size={16} aria-hidden="true" />
             </button>
-            <span className="exercise-row-type">
+            <span className="exercise-row-type shrink-0 rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
                 {t(`create_lesson.exercises.type.${exercise.type}`, exercise.type)}
             </span>
-            <span className="exercise-row-desc muted">{describe(exercise)}</span>
+            <span className="exercise-row-desc muted min-w-0 flex-1 truncate text-sm text-fg-muted">{describe(exercise)}</span>
             <button
                 type="button"
-                className="card-row-action"
+                className="card-row-action flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
                 data-testid={`exercise-delete-${exercise.id}`}
                 aria-label={t("create_lesson.exercises.delete", "Delete exercise")}
                 onClick={() => onDelete(exercise.id)}

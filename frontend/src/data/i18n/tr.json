@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · {lessons} ders · {exercises} alıştırma",
       "import": "İçe aktar",
       "imported": "Ders içe aktarıldı.",
-      "failed": "Ders içe aktarılamadı."
+      "failed": "Ders içe aktarılamadı.",
+      "collision_title": "Bu ders zaten mevcut",
+      "collision_body": "Kayıtlı bir ders seti bu tanımlayıcıyı zaten kullanıyor. Üzerine yaz, ayrı bir kopya olarak içe aktar veya iptal et?",
+      "overwrite": "Üzerine yaz",
+      "copy": "Kopya olarak içe aktar",
+      "copy_suffix": "kopya",
+      "skipped": "{n} ders doğrulamayı geçemediği için atlandı."
     },
     "my_lessons": {
       "export_set": "Set olarak dışa aktar",
@@ -2792,7 +2798,8 @@
       "check_enoughCards": "En az 4 kart",
       "check_enoughExercises": "En az 5 alıştırma",
       "check_enoughTypes": "En az 2 alıştırma türü",
-      "check_schemaValid": "Geçerli ders yapısı"
+      "check_schemaValid": "Geçerli ders yapısı",
+      "structure_error": "Teknik ayrıntı"
     },
     "save": {
       "saved": "Ders kaydedildi!",
@@ -2801,7 +2808,9 @@
       "save_share": "Kaydet ve paylaş",
       "play": "Dersi oynat",
       "create_another": "Başka bir ders oluştur",
-      "to_browser": "İçerik tarayıcısına"
+      "to_browser": "İçerik tarayıcısına",
+      "save_file": "Dosya olarak kaydet",
+      "file_saved": "Ders dosya olarak kaydedildi."
     },
     "templates": {
       "heading": "Bir şablonla başla",
@@ -3257,6 +3266,7 @@
       "title": "Depoyu kaldır",
       "message": "{source} kaldırılsın mı? İndirilen içeriği bu cihazdan kaldırılacak.",
       "delete_progress": "Bu içerik için öğrenme ilerlememi de sil.",
+      "keep_progress": "Öğrenme ilerlemen korunur. Bu depoyu yeniden bağladığında geri yüklenir.",
       "consequence": "{lessons} ders ve {cards} tekrar kartı silinecek. Bu geri alınamaz.",
       "counting": "İlerlemeniz sayılıyor…",
       "deleted": "Kaldırıldı. {lessons} ders ve {cards} tekrar kartı silindi."
@@ -3617,6 +3627,12 @@
       "created": "Çekme isteği açıldı.",
       "failed": "Çekme isteği açılamadı.",
       "view": "Çekme isteğinizi görüntüleyin"
+    }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Önce dinle",
+      "aria": "Telaffuzu oynat"
     }
   }
 }

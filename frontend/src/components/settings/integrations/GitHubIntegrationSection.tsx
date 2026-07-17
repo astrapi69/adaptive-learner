@@ -25,6 +25,7 @@ import { FlaskConical, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "../../../api/client";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import FormHint from "../../../shared/forms/FormHint";
 import { SecretInput } from "../../../shared/forms/SecretInput";
 import { isValidGitHubTokenFormat } from "../../../lib/github/github-api";
 import { getStorage } from "../../../storage";
@@ -202,15 +203,15 @@ export default function GitHubIntegrationSection() {
             />
           </label>
           {trimmed.length > 0 && !formatValid && (
-            <p
-              className="form-hint form-hint-warning"
+            <FormHint
+              variant="warning"
               data-testid="settings-github-format-warning"
             >
               {t(
                 "settings.github.format_invalid",
                 "A GitHub token starts with 'ghp_' or 'github_pat_'.",
               )}
-            </p>
+            </FormHint>
           )}
 
           <div className="form-actions">

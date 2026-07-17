@@ -16,6 +16,7 @@
 import {useState} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
+import FormHint from "../../../shared/forms/FormHint";
 import {useTheme} from "../../../hooks/ui/useTheme";
 import {THEMES, type ThemeChoice} from "../../../lib/theme/themes";
 
@@ -92,12 +93,12 @@ export default function ThemePicker() {
             data-testid="settings-theme-picker"
         >
             <legend className="form-label">{t("settings.theme", "Theme")}</legend>
-            <span className="form-hint">
+            <FormHint as="span">
                 {t(
                     "settings.theme_description",
                     "Choose how the app looks. Auto follows your system light/dark setting.",
                 )}
-            </span>
+            </FormHint>
             <div
                 className="mb-3 inline-flex gap-1 rounded-md border border-border p-1"
                 role="tablist"

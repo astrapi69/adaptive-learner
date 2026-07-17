@@ -97,4 +97,93 @@
 # Utility-Konflikt-Bloecke mehr offen; es bleibt nur die #1592 Legacy-vs-
 # unlayered-Legacy-Verwobenheit (LessonMode / .nav-links / .app-nav mobile
 # @media). Kein neues CSS.
-7565
+# 7565 -> 7566 (Concern-Split Peel 1, #1655): +1 reine Manifest-Zeile netto
+# (@import "./legacy/00-head.css"; + Leerzeile, minus eine wc-l-Zaehldifferenz
+# durch die end-of-file-Newline der ausgelagerten Datei). Der erste Top-down-Peel
+# verschiebt Zeilen 1-140 (Header-Kommentar + :root-Token-Bloecke) nach
+# styles/legacy/00-head.css; der Ratchet zaehlt seit diesem PR die SUMME
+# global.css + styles/legacy/*.css, das Verschieben selbst ist
+# zahlneutral. Byte-identitaets-Beweis im PR. Kein neues CSS.
+# 7566 -> 7566 (Concern-Split Peel 2, #1655): zahlneutral. Zeilen 3-345
+# (Base-Resets: *, html/body/#root, img/svg/pre/code, .code-block*,
+# a:not(), [hidden], :focus-visible, .sr-only/.skip-to-content, button-
+# und input-Basis inkl. der zwei @layer-base-Bloecke) verbatim nach
+# styles/legacy/01-base.css; in global.css ersetzt die @import-Zeile den
+# Block exakt zeilenneutral (-344 +2 in global.css, +342 in der Datei).
+# Byte-identitaets-Beweis im PR. Kein neues CSS.
+# 7566 -> 7567 (Concern-Split Peel 3, #1655): +1 reine Manifest-Zeile.
+# Der erste gewrappte @layer-legacy-Block (Buttons, Zeilen 4-53) verbatim
+# nach styles/legacy/02-buttons.css (-50 +2 in global.css, +50 in der
+# Datei = netto +1 fuer die @import-Zeile). Byte-identitaets-Beweis im
+# PR. Kein neues CSS.
+# 7567 -> 7568 (Concern-Split Peel 4, #1655): +1 reine Manifest-Zeile.
+# Der Landing-page-Block (Zeilen 5-127, der zweite gewrappte
+# @layer-legacy-Block) verbatim nach styles/legacy/03-landing.css
+# (-123 +1 in global.css, +123 in der Datei = netto +1 fuer die
+# @import-Zeile). Byte-identitaets-Beweis im PR (212319 Bytes,
+# byte-identisch vor/nach). Kein neues CSS.
+# 7568 -> 7569 (Concern-Split Peel 5, #1655): +1 reine Manifest-Zeile.
+# Der Onboarding-page-Block (Zeilen 6-89, dritter gewrappter
+# @layer-legacy-Block) verbatim nach styles/legacy/04-onboarding.css
+# (-84 +1 in global.css, +84 in der Datei). Byte-identitaets-Beweis
+# im PR. Kein neues CSS.
+# 7569 -> 7572 (Concern-Split Batch A / Peel 6, #1655): +3 reine
+# Manifest-Zeilen. Drei gewrappte Bloecke verbatim ausgelagert:
+# Assessment (Z. 6-214) -> 05-assessment.css, Dashboard (inkl.
+# Chart-Alternativen + Step-Eval-Insights, Z. 215-495) ->
+# 06-dashboard.css, Session (Z. 496-697) -> 07-session.css.
+# Byte-identitaets-Beweis im PR. Kein neues CSS.
+# 7572 -> 7576 (Concern-Split Batch B / Peel 7, #1655): +4 reine
+# Manifest-Zeilen. Vier Regionen verbatim: QR-Scanner-Overlay
+# (ungewrappt) -> 08-qr-scanner.css, Rating-Buttons -> 09-rating.css,
+# Settings-Seite + Storage-Mode-Toggle -> 10-settings.css,
+# Progress-Table -> 11-progress.css. Byte-identitaets-Beweis im PR.
+# Kein neues CSS.
+# 2026-07-15: 7576 -> 7584 (Concern-Split Batch C / Peel 8, #1655):
+# +8 reine Manifest-Zeilen (@import). Navigation -> 12-navigation.css,
+# Lesson-Header -> 13-lesson-header.css, Celebration (55C) ->
+# 14-celebration.css, Milestone (55D) -> 15-milestone.css,
+# Feedback-Intensity (55E) -> 16-feedback-intensity.css,
+# Curriculum -> 17-curriculum.css, Recent-Sessions ->
+# 18-recent-sessions.css, Method-Badges -> 19-method-badges.css.
+# Byte-identitaets-Beweis im PR. Kein neues CSS.
+# 2026-07-15: 7584 -> 7595 (Concern-Split Batch D / Peel 9, #1655):
+# +11 reine Manifest-Zeilen (@import). Diff-Highlight (52B) ->
+# 20-diff-highlight.css, Answer-Animations (55B) ->
+# 21-answer-animations.css, PWA-Install-Prompt (9B) ->
+# 22-install-prompt.css, Mobile-Polish (9A) -> 23-mobile-polish.css,
+# Lesson-Mode + Landscape-Compact-Nav (#1592-Zone, bleibt unlayered)
+# -> 24-lesson-mode-nav.css, Export (16D) -> 25-export-section.css,
+# Auto-Loop (17C) -> 26-auto-loop.css, Multi-Cycle-Summary (17D) ->
+# 27-multi-cycle-summary.css, ModelPicker (24C) -> 28-model-picker.css,
+# BackupCompare (25B) -> 29-backup-compare.css, Rich-Text-Editor
+# (Phase 27 inkl. Toolbar + Code-Block) -> 30-editor.css.
+# Byte-identitaets-Beweis im PR. Kein neues CSS.
+# 2026-07-15: 7595 -> 7606 (Concern-Split Batch E / Peel 10, #1655):
+# +12 Manifest-Zeilen (@import), -1 Leerzeile am Dateiende. Gamification (29A) ->
+# 31-gamification.css, Badges (29B) -> 32-badges.css, Streaks (29C)
+# -> 33-streaks.css, Anki (30C) -> 34-anki.css, Voice (31) ->
+# 35-voice.css, Lesson-Read-Aloud/TTS -> 36-read-aloud.css,
+# Pronunciation (31C) -> 37-pronunciation.css, NotebookLM (32) ->
+# 38-notebooklm.css, WCAG-Motion-Catch-All (39 C7, reduced-motion)
+# -> 39-motion-catchall.css, API-Key-Validation ->
+# 40-api-key-validation.css, Chat-Analysis-Loading ->
+# 41-analysis-loading.css, Visual Learning Path (66/EXP-022) ->
+# 42-learning-path.css. Damit ist global.css ein reines
+# @import-Manifest (43 Zeilen, Dateien 00-42) - der Split #1655 ist
+# strukturell abgeschlossen. Byte-identitaets-Beweis im PR.
+# Kein neues CSS.
+# 2026-07-15: 7606 -> 7633 (#1592 Co-Wrap): +27 reine Wrapper- und
+# Doku-Zeilen, kein neues CSS. 08-qr-scanner.css (QR/CycleSteps/
+# SessionChat-Basis) + 24-lesson-mode-nav.css (LessonMode/Landscape/
+# Mobile-Polish) in @layer legacy gewrappt; der iOS-Focus-Zoom-Guard
+# (#1353) und der Mobile-Input-Floor bleiben BEWUSST unlayered
+# (muessen Tailwind-Utilities schlagen, z.B. text-sm auf Selects)
+# und tragen jetzt erklaerende Kommentare. Eine dokumentierte
+# Aktivierung: .lesson-header h1 landscape font-size verliert an
+# text-sm (.legacy-wrap-accepted.json, konsistent mit #1628).
+# 2026-07-16: 7633 -> 7639 (#1723 Skip-Link-Fix): +6 reine
+# Doku-Kommentar-Zeilen in 01-base.css - die #146/#194-Carve-out-
+# Historie und die :where()-Begruendung am Content-Link-Selektor.
+# Kein neues CSS; der Selektor-Umbau selbst ist zeilenneutral.
+7639

@@ -1,0 +1,138 @@
+
+/* ============================================================
+   ModelPicker (v1.11.0 / Phase 24C)
+   Replaces the v0.4.0 datalist input on Settings > Model
+   overrides with a searchable dropdown of provider-discovered
+   models + an offline fallback.
+   ============================================================ */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+
+.model-picker {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.model-picker-input-row {
+  display: flex;
+  gap: var(--space-1);
+}
+.model-picker-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--surface);
+  color: var(--text);
+}
+.model-picker-toggle {
+  padding: var(--space-1) var(--space-2);
+  min-width: 2.5rem;
+}
+.model-picker-chip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm, 4px);
+}
+.model-picker-context {
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-radius: 8px;
+}
+.model-picker-default-hint {
+  margin: var(--space-1) 0 0;
+  font-size: 0.85rem;
+}
+.model-picker-default-hint code {
+  background: var(--surface-2);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+.model-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--space-1);
+  max-height: 360px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+}
+.model-picker-group-title {
+  padding: var(--space-1) var(--space-2);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.model-picker-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "name context"
+    "id   id";
+  gap: 2px var(--space-2);
+  width: 100%;
+  padding: var(--space-2);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  cursor: pointer;
+  color: var(--text);
+}
+.model-picker-row:hover,
+.model-picker-row:focus {
+  background: var(--surface-2);
+}
+.model-picker-row.is-selected {
+  background: var(--accent-subtle);
+}
+.model-picker-row-name {
+  grid-area: name;
+  font-weight: 500;
+}
+.model-picker-row-id {
+  grid-area: id;
+  font-size: 0.8rem;
+  font-family: var(--font-mono, monospace);
+}
+.model-picker-row-context {
+  grid-area: context;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-radius: 8px;
+  align-self: start;
+}
+.model-picker-loading,
+.model-picker-empty {
+  padding: var(--space-3);
+  color: var(--muted);
+  text-align: center;
+}
+.model-picker-error {
+  padding: var(--space-3);
+}
+.model-picker-error p {
+  margin: 0 0 var(--space-2);
+}
+.model-picker-static {
+  padding: 0;
+}
+} /* @layer legacy */

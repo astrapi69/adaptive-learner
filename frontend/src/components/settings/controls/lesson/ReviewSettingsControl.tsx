@@ -7,6 +7,7 @@
 import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {
     readExplanationsEnabled,
     setExplanationsEnabled,
@@ -48,12 +49,12 @@ export default function ReviewSettingsControl() {
                             "Show error explanations",
                         )}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.explanations_enabled_desc",
                             "After a lesson, show a short rule tip for each mistake.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <input
                     type="checkbox"
@@ -70,12 +71,12 @@ export default function ReviewSettingsControl() {
                             "Questions per review",
                         )}
                     </span>
-                    <span className="form-hint">
+                    <FormHint as="span">
                         {t(
                             "settings.review_limit.desc",
                             "How many elements one review session presents before it ends. More due items roll over to the next round.",
                         )}
-                    </span>
+                    </FormHint>
                 </span>
                 <select
                     className="min-h-11 w-24 rounded-md border border-input bg-background px-2 text-foreground"

@@ -2070,6 +2070,12 @@ content:
     import: "Importieren"
     imported: "Lektion importiert."
     failed: "Die Lektion konnte nicht importiert werden."
+    collision_title: "Diese Lektion existiert bereits"
+    collision_body: "Ein gespeichertes Lektions-Set nutzt bereits diese Kennung. Überschreiben, als separate Kopie importieren oder abbrechen?"
+    overwrite: "Überschreiben"
+    copy: "Als Kopie importieren"
+    copy_suffix: "Kopie"
+    skipped: "{n} Lektion(en) übersprungen, da die Validierung fehlschlug."
   my_lessons:
     export_set: "Als Content-Set exportieren"
     share: "Für die Community bereitstellen"
@@ -2553,6 +2559,7 @@ create_lesson:
     check_enoughExercises: "Mindestens 5 Übungen"
     check_enoughTypes: "Mindestens 2 Übungstypen"
     check_schemaValid: "Gültige Lektionsstruktur"
+    structure_error: "Technisches Detail"
   save:
     saved: "Lektion gespeichert!"
     failed: "Lektion konnte nicht gespeichert werden."
@@ -2561,6 +2568,8 @@ create_lesson:
     play: "Lektion spielen"
     create_another: "Neue Lektion erstellen"
     to_browser: "Zum Content Browser"
+    save_file: "Als Datei speichern"
+    file_saved: "Lektion als Datei gespeichert."
   templates:
     heading: "Mit Vorlage starten"
     blank:
@@ -2992,6 +3001,7 @@ content_repo:
     title: "Repository entfernen"
     message: "{source} entfernen? Die heruntergeladenen Inhalte werden von diesem Gerät entfernt."
     delete_progress: "Auch meinen Lernfortschritt für diese Inhalte löschen."
+    keep_progress: "Dein Lernfortschritt bleibt erhalten. Wenn du dieses Repository erneut verbindest, wird er wiederhergestellt."
     consequence: "{lessons} Lektionen und {cards} Wiederholungskarten werden gelöscht. Das kann nicht rückgängig gemacht werden."
     counting: "Fortschritt wird gezählt…"
     deleted: "Entfernt. {lessons} Lektionen und {cards} Wiederholungskarten gelöscht."
@@ -3296,3 +3306,8 @@ registry:
     created: "Pull Request geöffnet."
     failed: "Pull Request konnte nicht geöffnet werden."
     view: "Deinen Pull Request ansehen"
+
+exercise:
+  listen_first:
+    label: "Erst anhören"
+    aria: "Aussprache abspielen"

@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · {lessons}レッスン · {exercises}演習",
       "import": "インポート",
       "imported": "レッスンをインポートしました。",
-      "failed": "レッスンをインポートできませんでした。"
+      "failed": "レッスンをインポートできませんでした。",
+      "collision_title": "このレッスンは既に存在します",
+      "collision_body": "保存済みのレッスンセットがこの識別子を既に使用しています。上書き、別のコピーとしてインポート、またはキャンセルしますか？",
+      "overwrite": "上書き",
+      "copy": "コピーとしてインポート",
+      "copy_suffix": "コピー",
+      "skipped": "{n} 件のレッスンが検証に失敗したためスキップされました。"
     },
     "my_lessons": {
       "export_set": "セットとしてエクスポート",
@@ -2792,7 +2798,8 @@
       "check_enoughCards": "4枚以上のカード",
       "check_enoughExercises": "5問以上の演習",
       "check_enoughTypes": "2種類以上の演習タイプ",
-      "check_schemaValid": "有効なレッスン構造"
+      "check_schemaValid": "有効なレッスン構造",
+      "structure_error": "技術的な詳細"
     },
     "save": {
       "saved": "レッスンを保存しました！",
@@ -2801,7 +2808,9 @@
       "save_share": "保存して共有",
       "play": "レッスンを再生",
       "create_another": "別のレッスンを作成",
-      "to_browser": "コンテンツブラウザへ"
+      "to_browser": "コンテンツブラウザへ",
+      "save_file": "ファイルとして保存",
+      "file_saved": "レッスンをファイルとして保存しました。"
     },
     "templates": {
       "heading": "テンプレートから開始",
@@ -3257,6 +3266,7 @@
       "title": "リポジトリを削除",
       "message": "{source} を削除しますか？ダウンロード済みのコンテンツがこのデバイスから削除されます。",
       "delete_progress": "このコンテンツの学習進捗も削除する。",
+      "keep_progress": "学習の進捗は保持されます。このリポジトリを再接続すると復元されます。",
       "consequence": "{lessons} 個のレッスンと {cards} 枚の復習カードが削除されます。この操作は元に戻せません。",
       "counting": "進捗を集計しています…",
       "deleted": "削除しました。{lessons} 個のレッスンと {cards} 枚の復習カードを削除しました。"
@@ -3617,6 +3627,12 @@
       "created": "プルリクエストを開きました。",
       "failed": "プルリクエストを開けませんでした。",
       "view": "プルリクエストを表示"
+    }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "まず聞く",
+      "aria": "発音を再生"
     }
   }
 }

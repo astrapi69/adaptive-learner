@@ -15,6 +15,7 @@
 import {useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import {
     prefersReducedMotion,
     readFeedbackIntensity,
@@ -59,12 +60,12 @@ export default function FeedbackIntensityControl() {
             <legend className="form-label">
                 {t("settings.feedback_intensity", "Feedback Intensity")}
             </legend>
-            <span className="form-hint">
+            <FormHint as="span">
                 {t(
                     "settings.feedback_intensity_description",
                     "How loudly the app celebrates your progress.",
                 )}
-            </span>
+            </FormHint>
             <div className="feedback-intensity-options">
                 {LEVELS.map((level) => (
                     <label
@@ -86,26 +87,26 @@ export default function FeedbackIntensityControl() {
                                     LABELS[level].label,
                                 )}
                             </span>
-                            <span className="form-hint">
+                            <FormHint as="span">
                                 {t(
                                     `settings.feedback_intensity_${level}_desc`,
                                     LABELS[level].desc,
                                 )}
-                            </span>
+                            </FormHint>
                         </span>
                     </label>
                 ))}
             </div>
             {reduced && (
-                <span
-                    className="form-hint"
+                <FormHint
+                    as="span"
                     data-testid="settings-feedback-intensity-reduced-hint"
                 >
                     {t(
                         "settings.feedback_intensity_reduced_motion_hint",
                         "Reduced-motion is on in your system, so feedback is kept subtle regardless of this setting.",
                     )}
-                </span>
+                </FormHint>
             )}
         </fieldset>
     );

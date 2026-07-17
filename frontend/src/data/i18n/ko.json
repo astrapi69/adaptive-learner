@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · 레슨 {lessons}개 · 연습 {exercises}개",
       "import": "가져오기",
       "imported": "레슨을 가져왔습니다.",
-      "failed": "레슨을 가져올 수 없었습니다."
+      "failed": "레슨을 가져올 수 없었습니다.",
+      "collision_title": "이 레슨은 이미 존재합니다",
+      "collision_body": "저장된 레슨 세트가 이미 이 식별자를 사용하고 있습니다. 덮어쓰기, 별도 사본으로 가져오기 또는 취소하시겠습니까?",
+      "overwrite": "덮어쓰기",
+      "copy": "사본으로 가져오기",
+      "copy_suffix": "사본",
+      "skipped": "{n}개의 레슨이 검증에 실패하여 건너뛰었습니다."
     },
     "my_lessons": {
       "export_set": "세트로 내보내기",
@@ -2792,7 +2798,8 @@
       "check_enoughCards": "카드 4개 이상",
       "check_enoughExercises": "연습 5개 이상",
       "check_enoughTypes": "연습 유형 2개 이상",
-      "check_schemaValid": "유효한 레슨 구조"
+      "check_schemaValid": "유효한 레슨 구조",
+      "structure_error": "기술적 세부 정보"
     },
     "save": {
       "saved": "레슨이 저장되었습니다!",
@@ -2801,7 +2808,9 @@
       "save_share": "저장 후 공유",
       "play": "레슨 재생",
       "create_another": "다른 레슨 만들기",
-      "to_browser": "콘텐츠 브라우저로"
+      "to_browser": "콘텐츠 브라우저로",
+      "save_file": "파일로 저장",
+      "file_saved": "레슨을 파일로 저장했습니다."
     },
     "templates": {
       "heading": "템플릿으로 시작",
@@ -3257,6 +3266,7 @@
       "title": "저장소 제거",
       "message": "{source}을(를) 제거하시겠습니까? 다운로드된 콘텐츠가 이 기기에서 제거됩니다.",
       "delete_progress": "이 콘텐츠에 대한 내 학습 진행 상황도 삭제합니다.",
+      "keep_progress": "학습 진행 상황은 유지됩니다. 이 저장소를 다시 연결하면 복원됩니다.",
       "consequence": "{lessons}개 레슨과 {cards}개 복습 카드가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
       "counting": "진행 상황을 집계하는 중…",
       "deleted": "제거되었습니다. {lessons}개 레슨과 {cards}개 복습 카드를 삭제했습니다."
@@ -3617,6 +3627,12 @@
       "created": "풀 리퀘스트를 열었습니다.",
       "failed": "풀 리퀘스트를 열 수 없습니다.",
       "view": "풀 리퀘스트 보기"
+    }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "먼저 듣기",
+      "aria": "발음 재생"
     }
   }
 }

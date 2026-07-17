@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 
 CLASS_IN_SELECTOR_RE = re.compile(r"\.((?:[\w-]|\\.)+)")
 
@@ -218,7 +219,11 @@ def expand_property(prop: str) -> frozenset[str]:
             marker = f"border-{axis}"
             if p == marker or p.startswith(marker + "-"):
                 tail = p[len(marker) :].lstrip("-") or "width/style/color"
-                props = ("width", "style", "color") if tail == "width/style/color" else (tail,)
+                props = (
+                    ("width", "style", "color")
+                    if tail == "width/style/color"
+                    else (tail,)
+                )
                 return frozenset(f"border-{s}-{q}" for s in sides for q in props)
     if p in _EXPANSIONS:
         return frozenset(_EXPANSIONS[p])
@@ -479,8 +484,12 @@ def analyze_selector_part(part: str) -> SubjectInfo:
     rightmost = compounds[-1]
     pseudo = PSEUDO_ELEMENT_RE.search(rightmost)
     outside, inside = _split_is_where(_strip_not(rightmost))
-    required = {unescape_class(m.group(1)) for m in CLASS_IN_SELECTOR_RE.finditer(outside)}
-    alternatives = {unescape_class(m.group(1)) for m in CLASS_IN_SELECTOR_RE.finditer(inside)}
+    required = {
+        unescape_class(m.group(1)) for m in CLASS_IN_SELECTOR_RE.finditer(outside)
+    }
+    alternatives = {
+        unescape_class(m.group(1)) for m in CLASS_IN_SELECTOR_RE.finditer(inside)
+    }
     context_classes: set[str] = set()
     for compound in compounds[:-1]:
         context_classes |= {
@@ -561,3 +570,76 @@ def line_is_unlayered(line: int, regions: list[tuple[str, int, int]]) -> bool:
     flips against them.
     """
     return not any(s <= line <= e for _, s, e in regions)
+
+
+# --------------------------------------------------------------------------
+# Virtual stylesheet (#1655 concern split)
+# --------------------------------------------------------------------------
+
+
+@dataclass
+class CssSegment:
+    """One source file's slice of the virtual stylesheet.
+
+    Attributes:
+        label: Display label relative to ``styles/`` (``legacy/00-head.css``
+            or ``global.css``).
+        start: First virtual line of the segment (1-based, inclusive).
+        count: Number of lines the segment spans.
+    """
+
+    label: str
+    start: int
+    count: int
+
+
+def load_css_virtual(
+    global_css: Path, legacy_dir: Path
+) -> tuple[str, list[CssSegment]]:
+    """Load ``styles/legacy/*.css`` + ``global.css`` as ONE virtual stylesheet.
+
+    The legacy concern files come FIRST (filename-sorted, matching the
+    ``@import`` order at the top of ``global.css``) so the virtual line
+    order equals the cascade order the browser sees after import inlining -
+    source-order tie-breaks in :func:`find_legacy_dependencies` therefore
+    stay correct across file boundaries. ``global.css`` is the LAST
+    segment, so a ``--block`` line number maps to a virtual line by adding
+    the offset of that segment.
+
+    Args:
+        global_css: Path to ``frontend/src/styles/global.css``.
+        legacy_dir: Path to ``frontend/src/styles/legacy`` (may not exist
+            before the first peel).
+
+    Returns:
+        ``(css_text, segments)`` - the concatenated stylesheet plus one
+        :class:`CssSegment` per source file in concatenation order (the
+        ``global.css`` segment is always last).
+    """
+    sources: list[tuple[str, Path]] = []
+    if legacy_dir.is_dir():
+        for entry in sorted(legacy_dir.iterdir()):
+            if entry.suffix == ".css":
+                sources.append((f"legacy/{entry.name}", entry))
+    sources.append(("global.css", global_css))
+
+    segments: list[CssSegment] = []
+    chunks: list[str] = []
+    line = 1
+    for seg_label, path in sources:
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if not text.endswith("\n"):
+            text += "\n"
+        line_count = text.count("\n")
+        segments.append(CssSegment(label=seg_label, start=line, count=line_count))
+        chunks.append(text)
+        line += line_count
+    return "".join(chunks), segments
+
+
+def fmt_loc(line: int, segments: list[CssSegment]) -> str:
+    """Map a virtual line number onto its ``file:line`` display form."""
+    for segment in segments:
+        if segment.start <= line < segment.start + segment.count:
+            return f"{segment.label}:{line - segment.start + 1}"
+    return f"global.css:{line}"

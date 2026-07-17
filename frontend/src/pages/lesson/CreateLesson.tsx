@@ -17,6 +17,7 @@
  * 65B-65D. Storage-mode-agnostic (works in API + Dexie modes).
  */
 
+import {Download} from "lucide-react";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -53,13 +54,18 @@ import {
     checkDraft,
     type DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
+import {downloadLessonJson} from "../../lib/content/lesson/lesson-export";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import {
     applyTemplate,
     type LessonTemplateKey,
 } from "../../lib/content/lesson/lesson-templates";
-import type {ContentLessonExercise, ContentSetEntry} from "../../storage/types";
+import type {
+    ContentLesson,
+    ContentLessonExercise,
+    ContentSetEntry,
+} from "../../storage/types";
 
 const TOTAL_STEPS = 4;
 const DRAFT_AUTOSAVE_MS = 10_000;
@@ -102,6 +108,9 @@ export default function CreateLesson() {
     const [saving, setSaving] = useState(false);
     const [savedEntry, setSavedEntry] = useState<ContentSetEntry | null>(null);
     const [savedLessonId, setSavedLessonId] = useState("");
+    // #1672 — the built lesson, kept so "Save as file" can export the exact
+    // canonical JSON without rebuilding from the (already-cleared) draft.
+    const [savedLesson, setSavedLesson] = useState<ContentLesson | null>(null);
     const [confirmCancel, setConfirmCancel] = useState(false);
     // Draft restore: a saved draft with content prompts continue-or-fresh
     // before any edits. Held until the user chooses.
@@ -127,8 +136,12 @@ export default function CreateLesson() {
     }, [pendingDraft]);
 
     const titleMissing = meta.title.trim().length === 0;
+    // #1715 — a same-language pair (source === target) is legitimate
+    // knowledge-domain content (e.g. the ki-einsteiger set: de -> de),
+    // so it does NOT block advancing. It only drives a non-blocking hint
+    // in Step 1, mirroring SaveOfflineLessonModal.
     const sameLanguage = meta.sourceLanguage === meta.targetLanguage;
-    const metaValid = !titleMissing && !sameLanguage;
+    const metaValid = !titleMissing;
 
     // Dirty = anything the user could lose. Title/description/native
     // are the free-text fields; language/level have sensible defaults.
@@ -202,6 +215,7 @@ export default function CreateLesson() {
             const entry = await getStorage().contentLoader.saveUserSet(input);
             clearLessonDraft();
             setSavedLessonId(lesson.id);
+            setSavedLesson(lesson);
             setSavedEntry(entry);
             notify.success(t("create_lesson.save.saved", "Lesson saved!"));
             return entry;
@@ -230,7 +244,19 @@ export default function CreateLesson() {
         setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
         setSavedEntry(null);
         setSavedLessonId("");
+        setSavedLesson(null);
         setStep(1);
+    }
+
+    /** #1672 — download the just-created lesson as canonical JSON, an
+     *  independent alternative to the PR share path (backup / move to
+     *  another device). */
+    function exportSavedLesson() {
+        if (!savedLesson) return;
+        downloadLessonJson(savedLesson);
+        notify.success(
+            t("create_lesson.save.file_saved", "Lesson saved as a file."),
+        );
     }
 
     function playSaved() {
@@ -293,10 +319,10 @@ export default function CreateLesson() {
 
     return (
         <PageContainer testId="create-lesson-page">
-            <header className="create-lesson-header">
+            <header className="create-lesson-header mb-6 flex flex-col gap-1">
                 <h1>{t("create_lesson.title", "Create a lesson")}</h1>
                 <p
-                    className="create-lesson-step-indicator"
+                    className="create-lesson-step-indicator text-sm text-fg-muted"
                     data-testid="create-lesson-step-indicator"
                 >
                     {t("create_lesson.step_of", "Step {current} of {total}")
@@ -387,10 +413,10 @@ export default function CreateLesson() {
 
             {savedEntry && (
                 <section
-                    className="create-lesson-step"
+                    className="create-lesson-step flex flex-col gap-4"
                     data-testid="create-lesson-saved"
                 >
-                    <h2>{t("create_lesson.save.saved", "Lesson saved!")}</h2>
+                    <h2 className="text-xl font-semibold text-fg-primary">{t("create_lesson.save.saved", "Lesson saved!")}</h2>
                     <div className="form-actions">
                         <Button
                             type="button"
@@ -398,6 +424,18 @@ export default function CreateLesson() {
                             onClick={playSaved}
                         >
                             {t("create_lesson.save.play", "Play lesson")}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            data-testid="create-lesson-save-file"
+                            onClick={exportSavedLesson}
+                        >
+                            <Download className="h-5 w-5" aria-hidden="true" />
+                            {t(
+                                "create_lesson.save.save_file",
+                                "Save as file",
+                            )}
                         </Button>
                         <Button
                             type="button"
@@ -428,7 +466,7 @@ export default function CreateLesson() {
             )}
 
             {!savedEntry && (
-            <nav className="create-lesson-nav" aria-label={t(
+            <nav className="create-lesson-nav mt-6 flex flex-wrap items-center justify-end gap-3" aria-label={t(
                 "create_lesson.nav_label",
                 "Wizard navigation",
             )}>

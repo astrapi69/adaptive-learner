@@ -15,6 +15,7 @@
 import { useEffect, useState } from "react";
 
 import { useI18n } from "../../../../hooks/ui/useI18n";
+import FormHint from "../../../../shared/forms/FormHint";
 import { languageDisplayName } from "../../../../lib/content/language/language-names";
 import {
   readAdditionalSourceLanguages,
@@ -55,12 +56,12 @@ export default function SourceLanguagesControl() {
       <h2 className="settings-section-title">
         {t("settings.source_languages.title", "Additional source languages")}
       </h2>
-      <p className="form-hint">
+      <FormHint>
         {t(
           "settings.source_languages.hint",
           "Languages you also speak. Lessons written for these source languages appear in your main content list.",
         )}
-      </p>
+      </FormHint>
       <div className="settings-source-languages">
         {OFFERED.map((code) => {
           const isPrimary = code === primary;
@@ -70,10 +71,10 @@ export default function SourceLanguagesControl() {
               <span className="form-label">
                 {languageDisplayName(code, lang)}
                 {isPrimary && (
-                  <span className="form-hint">
+                  <FormHint as="span">
                     {" "}
                     ({t("settings.source_languages.app_language", "app language")})
-                  </span>
+                  </FormHint>
                 )}
               </span>
               <input

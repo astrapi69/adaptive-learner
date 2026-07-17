@@ -26,6 +26,7 @@ function makeCard(overrides: Partial<ContentLessonCard> = {}): ContentLessonCard
         notes: null,
         image: null,
         audio: null,
+        difficulty: overrides.difficulty ?? null,
         tags: [],
         token_roles: overrides.token_roles ?? null,
     };
@@ -298,6 +299,33 @@ describe("buildExercisePool — generated cloze augmentation", () => {
         expect(generated[0].exercise.type).toBe("cloze");
     });
 
+    it("emits NO generated cloze when the card front IS the answer (bare '___' guard)", () => {
+        // A knowledge/vocab card whose front === the answer would blank to a
+        // context-free "___" — an unsolvable hint-only exercise. The generator
+        // declines it, so the pool carries no degenerate generated candidate
+        // (the authored exercise stays; the caller replays it). Mirrors
+        // 'Die Währung des Geistes' card `sinnkrise` (front === 'Sinnkrise').
+        const card = makeCard({id: "c1", front: "Sinnkrise"});
+        const ex = makeExercise({
+            id: "ex-1",
+            type: "free_text",
+            card_ids: ["c1"],
+            prompt: "Als was gilt die moderne Zeitarmut?",
+            accept: ["Sinnkrise"],
+        });
+        const lessons = new Map<string, ContentLesson>([
+            ["03-zeit.json", makeLesson("03-zeit.json", [card], [ex])],
+        ]);
+        const error = makeError("Sinnkrise", {correct_answer: "Sinnkrise"});
+        const errorsByElementKey = new Map([["Sinnkrise", error]]);
+        const pool = buildExercisePool([makePrioritized("Sinnkrise")], {
+            lessons,
+            errorsByElementKey,
+        });
+        expect(pool.filter((p) => p.is_generated)).toHaveLength(0);
+        expect(pool.filter((p) => !p.is_generated)).toHaveLength(1);
+    });
+
     it("falls back gracefully when cloze generator returns null", () => {
         const card = makeCard({id: "c1", front: "merci"});
         const ex = makeExercise({
@@ -442,5 +470,69 @@ describe("buildExercisePool — card-less exercise types (#1636 regression)", ()
         const pool = buildExercisePool([makePrioritized("Gehirn")], {lessons});
         expect(pool).toHaveLength(1);
         expect(pool[0].exercise.id).toBe("ex-1");
+    });
+});
+
+describe("authored card.difficulty as cold-start prior (#1599)", () => {
+    // Explicit null-default decision: without an authored difficulty the
+    // estimate is EXACTLY the type heuristic (matching = 2) — identical to
+    // the behaviour before #1599. Authored values only shift the estimate.
+    function poolFor(cardOverrides: Partial<ContentLessonCard>[]) {
+        const cards = cardOverrides.map((ov, i) =>
+            makeCard({id: `card-${i + 1}`, front: i === 0 ? "bonjour" : `w${i}`, ...ov}),
+        );
+        const ex = makeExercise({card_ids: cards.map((c) => c.id)});
+        const lessons = new Map([["01.json", makeLesson("01.json", cards, [ex])]]);
+        return buildExercisePool([makePrioritized("bonjour")], {lessons});
+    }
+
+    it("blends an authored difficulty into the estimate (matching 2 + authored 5 = 4)", () => {
+        const pool = poolFor([{difficulty: 5}]);
+        expect(pool[0].difficulty_estimate).toBe(4);
+    });
+
+    it("without authored difficulty the estimate is the pure type heuristic (unchanged)", () => {
+        expect(poolFor([{}])[0].difficulty_estimate).toBe(2);
+    });
+
+    it("difficulty: null is ignored (neutral, behaves as unset)", () => {
+        expect(poolFor([{difficulty: null}])[0].difficulty_estimate).toBe(2);
+    });
+
+    it("out-of-range values are ignored (0 and 9 are not valid priors)", () => {
+        expect(poolFor([{difficulty: 0}])[0].difficulty_estimate).toBe(2);
+        expect(poolFor([{difficulty: 9}])[0].difficulty_estimate).toBe(2);
+    });
+
+    it("averages across referenced cards, skipping unset ones (1 and 5 avg 3, type 2 = 3)", () => {
+        const pool = poolFor([{difficulty: 1}, {difficulty: 5}, {}]);
+        expect(pool[0].difficulty_estimate).toBe(3);
+    });
+
+    it("the generated-cloze candidate blends the source card's difficulty too", () => {
+        const card = makeCard({id: "c1", front: "merci beaucoup", difficulty: 5});
+        const ex = makeExercise({
+            id: "ex-1",
+            type: "free_text",
+            card_ids: ["c1"],
+            prompt: "Translate 'thank you very much'",
+            accept: ["merci beaucoup"],
+        });
+        const lessons = new Map([
+            ["01-greetings.json", makeLesson("01-greetings.json", [card], [ex])],
+        ]);
+        const error = makeError("beaucoup", {
+            user_answer: "boucoup",
+            correct_answer: "beaucoup",
+        });
+        const errorsByElementKey = new Map([["beaucoup", error]]);
+        const pool = buildExercisePool([makePrioritized("beaucoup")], {
+            lessons,
+            errorsByElementKey,
+        });
+        const generated = pool.find((c) => c.is_generated);
+        // generated cloze heuristic is 2 (select) or 3 (type); blended with
+        // the source card's authored 5 both round to 4
+        expect(generated?.difficulty_estimate).toBe(4);
     });
 });

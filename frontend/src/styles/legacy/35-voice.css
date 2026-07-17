@@ -1,0 +1,32 @@
+
+/* --- Voice (Phase 31) ----------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+.speech-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms;
+}
+.speech-button:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+.speech-button--speaking {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.speech-button__icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+} /* @layer legacy */

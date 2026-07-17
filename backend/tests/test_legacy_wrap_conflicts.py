@@ -345,3 +345,90 @@ def test_apply_allowlist_keeps_unlisted_conflict_in_same_block(audit):
     audit.apply_allowlist(report, accepted)
     assert report.conflicts == [kept]
     assert report.accepted_notes == []
+
+
+# --------------------------------------------------------------------------
+# Virtual multi-file stylesheet (#1655 concern split)
+# --------------------------------------------------------------------------
+
+
+def _write_stylesheet_tree(tmp_path: Path) -> tuple[Path, Path]:
+    """Author a minimal global.css + styles/legacy tree for the loader tests."""
+    legacy_dir = tmp_path / "legacy"
+    legacy_dir.mkdir()
+    (legacy_dir / "00-head.css").write_text(":root { --x: 1; }\n", encoding="utf-8")
+    (legacy_dir / "01-base.css").write_text(
+        ".nav-links { display: flex; }\n.sr-only { position: absolute; }\n",
+        encoding="utf-8",
+    )
+    global_css = tmp_path / "global.css"
+    global_css.write_text(
+        '@import "./legacy/00-head.css";\n'
+        '@import "./legacy/01-base.css";\n'
+        ".app-nav .nav-links { display: none; }\n",
+        encoding="utf-8",
+    )
+    return global_css, legacy_dir
+
+
+def test_load_css_virtual_orders_legacy_before_global(audit, tmp_path):
+    """Legacy concern files precede the global.css body (cascade order after
+    @import inlining), with continuous 1-based virtual line numbers and the
+    global.css segment LAST."""
+    global_css, legacy_dir = _write_stylesheet_tree(tmp_path)
+    css_text, segments = audit.load_css_virtual(global_css, legacy_dir)
+    assert [s.label for s in segments] == [
+        "legacy/00-head.css",
+        "legacy/01-base.css",
+        "global.css",
+    ]
+    assert [(s.start, s.count) for s in segments] == [(1, 1), (2, 2), (4, 3)]
+    lines = css_text.splitlines()
+    assert lines[0].startswith(":root")
+    assert lines[3].startswith("@import")
+
+
+def test_load_css_virtual_without_legacy_dir(audit, tmp_path):
+    """Before the first peel there is no styles/legacy - global.css alone."""
+    global_css = tmp_path / "global.css"
+    global_css.write_text(".a { color: var(--x); }", encoding="utf-8")
+    css_text, segments = audit.load_css_virtual(global_css, tmp_path / "legacy")
+    assert [s.label for s in segments] == ["global.css"]
+    assert segments[0].start == 1
+    assert css_text.endswith("\n")
+
+
+def test_fmt_loc_maps_virtual_lines(audit, tmp_path):
+    """Virtual line numbers resolve to file-qualified locations; lines
+    outside every segment fall back to the bare global.css form."""
+    global_css, legacy_dir = _write_stylesheet_tree(tmp_path)
+    _css_text, segments = audit.load_css_virtual(global_css, legacy_dir)
+    assert audit.fmt_loc(1, segments) == "legacy/00-head.css:1"
+    assert audit.fmt_loc(3, segments) == "legacy/01-base.css:2"
+    assert audit.fmt_loc(6, segments) == "global.css:3"
+    assert audit.fmt_loc(99, segments) == "global.css:99"
+
+
+def test_virtual_order_keeps_cross_file_source_order_tiebreak(audit, cpl, tmp_path):
+    """The reason legacy files are PREPENDED: an equal-specificity block rule
+    in the global.css body is LATER in the cascade than a peeled base rule,
+    so it currently wins on source order and MUST be flagged as ABHAENGIG.
+    Appending the legacy files instead would invert the tie-break and
+    silently drop this dependency (a false negative, against the tool's
+    bias)."""
+    legacy_dir = tmp_path / "legacy"
+    legacy_dir.mkdir()
+    (legacy_dir / "01-base.css").write_text(".nav-links { display: flex; }\n", encoding="utf-8")
+    global_css = tmp_path / "global.css"
+    global_css.write_text(
+        '@import "./legacy/01-base.css";\n.nav-links { display: none; }\n',
+        encoding="utf-8",
+    )
+    css_text, segments = audit.load_css_virtual(global_css, legacy_dir)
+    rules = cpl.parse_css(css_text)
+    global_start = segments[-1].start
+    block = [r for r in rules if r.line >= global_start]
+    other = [r for r in rules if r.line < global_start]
+    deps = audit.find_legacy_dependencies(block, other)
+    assert len(deps) == 1
+    assert audit.fmt_loc(deps[0].other_rule.line, segments) == "legacy/01-base.css:1"

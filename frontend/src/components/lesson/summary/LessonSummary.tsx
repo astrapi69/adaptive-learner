@@ -109,6 +109,10 @@ interface LessonSummaryProps {
    *  the block (anonymous lesson runs have no SRS history). */
   userId: string;
   setId: string;
+  /** Set title, stored on the favorite entry when saved from the summary
+   *  (#1648 — carried through so removing the duplicate top-right star
+   *  doesn't drop the favorite's set-name metadata). */
+  setTitle: string;
   /** Resolved set source path (slug with ``--`` → ``/``). */
   source: string;
   /** Raw route slug (``--``-encoded), for the next-lesson href. */
@@ -162,6 +166,7 @@ export default function LessonSummary({
   nextLessonFilename,
   userId,
   setId,
+  setTitle,
   source,
   setSlug,
   lessonFilename,
@@ -440,6 +445,7 @@ export default function LessonSummary({
         userId={userId}
         source={source}
         setId={setId}
+        setTitle={setTitle}
         filename={lessonFilename}
         title={lesson.title}
         t={t}

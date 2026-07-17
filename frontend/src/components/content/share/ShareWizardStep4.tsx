@@ -8,6 +8,7 @@
 import { Button } from "@/components/ui/button";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
+import FormHint from "../../../shared/forms/FormHint";
 import type { UseShareWizardResult } from "../../../hooks/content/useShareWizard";
 
 export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult }) {
@@ -85,8 +86,8 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
             </>
           )}
           {popupBlocked && (
-            <p
-              className="form-hint form-hint-warning"
+            <FormHint
+              variant="warning"
               data-testid="share-wizard-popup-blocked"
               role="alert"
             >
@@ -94,7 +95,7 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
                 "content.wizard.popup_blocked",
                 "Your browser blocked the GitHub tab. Click the link below to open it manually.",
               )}
-            </p>
+            </FormHint>
           )}
           <a
             href={sharedUrl}

@@ -31,7 +31,9 @@ import {
 import {CSS} from "@dnd-kit/utilities";
 
 import {useDialogFocus} from "../../hooks/ui/useDialogFocus";
+import {CARD_SIDE_MAX_LENGTH} from "../../lib/content/lesson/draft-to-lesson";
 import {useI18n} from "../../hooks/ui/useI18n";
+import FormHint from "../../shared/forms/FormHint";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/lesson/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
 
@@ -126,23 +128,29 @@ export default function CardEditor({
 
     return (
         <section
-            className="create-lesson-step"
+            className="create-lesson-step flex flex-col gap-6"
             data-testid="create-lesson-step-2"
             aria-label={t("create_lesson.cards.heading", "Add vocabulary cards")}
         >
-            <h2>{t("create_lesson.cards.heading", "Add vocabulary cards")}</h2>
+            <h2 className="text-xl font-semibold text-fg-primary">
+                {t("create_lesson.cards.heading", "Add vocabulary cards")}
+            </h2>
 
             {/* Entry form */}
-            <div className="card-editor-form" data-testid="card-editor-form">
-                <div className="form-row form-row-inline">
-                    <label className="form-field">
-                        <span className="form-label">
+            <div
+                className="card-editor-form flex flex-col gap-3 rounded-lg border border-border bg-card p-4"
+                data-testid="card-editor-form"
+            >
+                <div className="form-row form-row-inline grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <label className="form-field flex flex-col gap-1.5">
+                        <span className="form-label text-sm font-medium text-fg-primary">
                             {t("create_lesson.cards.front_label", "Front (learned)")} *
                         </span>
                         <Input
                             type="text"
                             data-testid="card-front-input"
                             value={front}
+                            maxLength={CARD_SIDE_MAX_LENGTH}
                             placeholder="Bonjour"
                             onChange={(e) => setFront(e.target.value)}
                             onKeyDown={(e) => {
@@ -150,14 +158,15 @@ export default function CardEditor({
                             }}
                         />
                     </label>
-                    <label className="form-field">
-                        <span className="form-label">
+                    <label className="form-field flex flex-col gap-1.5">
+                        <span className="form-label text-sm font-medium text-fg-primary">
                             {t("create_lesson.cards.back_label", "Back (your language)")} *
                         </span>
                         <Input
                             type="text"
                             data-testid="card-back-input"
                             value={back}
+                            maxLength={CARD_SIDE_MAX_LENGTH}
                             placeholder="Guten Tag"
                             onChange={(e) => setBack(e.target.value)}
                             onKeyDown={(e) => {
@@ -212,16 +221,20 @@ export default function CardEditor({
 
             {/* CSV import */}
             {showCsv && (
-                <div className="card-editor-csv" data-testid="card-csv-panel">
-                    <p className="form-hint">
+                <div
+                    className="card-editor-csv flex flex-col gap-3 rounded-lg border border-border bg-card p-4"
+                    data-testid="card-csv-panel"
+                >
+                    <FormHint>
                         {t(
                             "create_lesson.cards.csv_hint",
                             "Paste rows as front, back, notes (comma- or tab-separated). Example: Bonjour, Guten Tag, Formal greeting",
                         )}
-                    </p>
+                    </FormHint>
                     <textarea
                         data-testid="card-csv-textarea"
                         rows={5}
+                        className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                         value={csvText}
                         onChange={(e) => setCsvText(e.target.value)}
                     />
@@ -236,32 +249,33 @@ export default function CardEditor({
                     />
                     {parsed.length > 0 && (
                         <div
-                            className="card-csv-preview"
+                            className="card-csv-preview flex flex-col gap-2"
                             data-testid="card-csv-preview"
                         >
-                            <p className="form-hint">
+                            <FormHint>
                                 {t(
                                     "create_lesson.cards.csv_preview",
                                     "{valid} of {total} rows ready",
                                 )
                                     .replace("{valid}", String(validParsed.length))
                                     .replace("{total}", String(parsed.length))}
-                            </p>
-                            <ul className="card-csv-preview-list">
+                            </FormHint>
+                            <ul className="card-csv-preview-list flex list-none flex-col gap-1 p-0">
                                 {parsed.map((r, i) => (
                                     <li
                                         key={i}
                                         className={
-                                            r.valid
-                                                ? "card-csv-row"
-                                                : "card-csv-row is-invalid"
+                                            "card-csv-row grid grid-cols-3 items-center gap-2 rounded-md border border-border bg-bg-elevated px-2 py-1 text-sm" +
+                                            (r.valid
+                                                ? ""
+                                                : " is-invalid border-[var(--error)]")
                                         }
                                         data-testid={`card-csv-row-${i}`}
                                         data-valid={r.valid ? "true" : "false"}
                                     >
-                                        <span>{r.front || "—"}</span>
-                                        <span>{r.back || "—"}</span>
-                                        <span className="muted">{r.notes}</span>
+                                        <span className="truncate">{r.front || "—"}</span>
+                                        <span className="truncate">{r.back || "—"}</span>
+                                        <span className="muted truncate text-fg-muted">{r.notes}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -282,23 +296,24 @@ export default function CardEditor({
             )}
 
             {/* Count + minimum */}
-            <div className="card-editor-count">
-                <span data-testid="card-count">
+            <div className="card-editor-count flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="font-medium text-fg-primary" data-testid="card-count">
                     {t("create_lesson.cards.count", "{n} cards").replace(
                         "{n}",
                         String(cards.length),
                     )}
                 </span>
                 {cards.length < MIN_CARDS && (
-                    <span
-                        className="form-hint form-hint-warning"
+                    <FormHint
+                        as="span"
+                        variant="warning"
                         data-testid="card-min-hint"
                     >
                         {t(
                             "create_lesson.cards.min_hint",
                             "{n} cards needed for exercises",
                         ).replace("{n}", String(MIN_CARDS))}
-                    </span>
+                    </FormHint>
                 )}
                 {cards.length > 0 && (
                     <Button
@@ -322,7 +337,7 @@ export default function CardEditor({
                     items={cards.map((c) => c.id)}
                     strategy={verticalListSortingStrategy}
                 >
-                    <ul className="card-editor-list" data-testid="card-list">
+                    <ul className="card-editor-list flex list-none flex-col gap-2 p-0" data-testid="card-list">
                         {cards.map((card) => (
                             <SortableCardRow
                                 key={card.id}
@@ -402,7 +417,14 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
         opacity: isDragging ? 0.6 : 1,
     };
 
+    // #1722 — gate Save exactly like Add: an empty front/back would pass
+    // the Step-4 count checks but fail the ajv structure check
+    // (minLength: 1) with no visible reason.
+    const canSaveEdit =
+        draft.front.trim().length > 0 && draft.back.trim().length > 0;
+
     function saveEdit() {
+        if (!canSaveEdit) return;
         onUpdate(card.id, {
             front: draft.front.trim(),
             back: draft.back.trim(),
@@ -417,14 +439,15 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
             <li
                 ref={setNodeRef}
                 style={style}
-                className="card-row is-editing"
+                className="card-row is-editing flex flex-col gap-3 rounded-lg border border-border bg-card p-3"
                 data-testid={`card-row-${card.id}`}
             >
-                <div className="form-row form-row-inline">
+                <div className="form-row form-row-inline grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <Input
                         type="text"
                         data-testid={`card-edit-front-${card.id}`}
                         value={draft.front}
+                        maxLength={CARD_SIDE_MAX_LENGTH}
                         onChange={(e) =>
                             setDraft({...draft, front: e.target.value})
                         }
@@ -433,6 +456,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                         type="text"
                         data-testid={`card-edit-back-${card.id}`}
                         value={draft.back}
+                        maxLength={CARD_SIDE_MAX_LENGTH}
                         onChange={(e) =>
                             setDraft({...draft, back: e.target.value})
                         }
@@ -461,6 +485,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     <Button
                         type="button"
                         data-testid={`card-edit-save-${card.id}`}
+                        disabled={!canSaveEdit}
                         onClick={saveEdit}
                     >
                         {t("create_lesson.cards.save_edit", "Save")}
@@ -474,24 +499,24 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
         <li
             ref={setNodeRef}
             style={style}
-            className="card-row"
+            className="card-row flex items-center gap-3 rounded-lg border border-border bg-card p-3"
             data-testid={`card-row-${card.id}`}
         >
             <button
                 type="button"
-                className="card-row-handle"
+                className="card-row-handle flex shrink-0 cursor-grab items-center text-fg-muted"
                 aria-label={t("create_lesson.cards.drag", "Drag to reorder")}
                 {...attributes}
                 {...listeners}
             >
                 <GripVertical size={16} aria-hidden="true" />
             </button>
-            <span className="card-row-front">{card.front}</span>
-            <span className="card-row-back">{card.back}</span>
-            <span className="card-row-notes muted">{card.notes}</span>
+            <span className="card-row-front min-w-0 flex-1 truncate font-medium text-fg-primary">{card.front}</span>
+            <span className="card-row-back min-w-0 flex-1 truncate text-fg-secondary">{card.back}</span>
+            <span className="card-row-notes muted hidden min-w-0 flex-1 truncate text-sm text-fg-muted md:block">{card.notes}</span>
             <button
                 type="button"
-                className="card-row-action"
+                className="card-row-action flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
                 data-testid={`card-edit-${card.id}`}
                 aria-label={t("create_lesson.cards.edit", "Edit card")}
                 onClick={() => {
@@ -503,7 +528,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
             </button>
             <button
                 type="button"
-                className="card-row-action"
+                className="card-row-action flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
                 data-testid={`card-delete-${card.id}`}
                 aria-label={t("create_lesson.cards.delete", "Delete card")}
                 onClick={() => onDelete(card.id)}

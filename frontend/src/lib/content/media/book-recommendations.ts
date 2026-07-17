@@ -1,26 +1,40 @@
 /**
- * Per-domain book recommendations (#141).
+ * Per-domain book recommendations (#141, federated per #1712).
  *
- * A maintainer-curated ``books.yaml`` at the root of the official content
- * repository maps a content DOMAIN (e.g. ``psychology``, ``programming``)
- * to a small list of recommended books. Like the recommended-repos
- * catalogue (EXP-023 Phase C), fetching it needs no server — it rides the
- * same GitHub-raw path as the content itself, so it works in BOTH storage
- * modes (API + Dexie / GitHub-Pages).
+ * A maintainer-curated ``books.yaml`` maps a content DOMAIN (e.g.
+ * ``psychology``, ``ai``) to a small list of recommended books. The file
+ * historically lived at the root of the official content repository; the
+ * domain federation (adaptive-learner-content#146/#149) moved each domain
+ * section into its own repo (``alc-psychology``, ``alc-ai``, …) and deleted
+ * the official-root file entirely — fetching it there was a guaranteed
+ * console 404 on every /content mount (#1712).
  *
- * Failure is non-fatal: a missing / malformed file resolves to ``{}`` so
- * the Content Browser simply shows no book section (rule: a function not
- * available is not offered). A stale-while-revalidate ``localStorage``
- * cache keeps the last good catalogue available offline and refreshes it
- * in the background on the next load.
+ * The catalogue is therefore sourced from the federated registry
+ * (``recommended-repos.json``): ONLY entries flagged ``books: true`` are
+ * asked for their ``books.yaml`` (at the pinned registry ref), so a repo
+ * without the file is never requested and the console stays clean — the
+ * same don't-request-known-absent pattern the registry itself used before
+ * it was published (#547). Fetching rides the GitHub-raw path (no server),
+ * so it works in BOTH storage modes (API + Dexie / GitHub-Pages).
+ *
+ * Failure is non-fatal: an unreachable registry or repo resolves to the
+ * cached catalogue (or ``{}``) so the Content Browser simply shows no book
+ * section (rule: a function not available is not offered). A
+ * stale-while-revalidate ``localStorage`` cache keeps the last good
+ * catalogue available offline and refreshes it on the next load.
  *
  * Recommendations only — no affiliate links, direct Amazon URLs only.
  */
 
 import { parse as parseYaml } from "yaml";
 
-const OFFICIAL_OWNER_REPO = "astrapi69/adaptive-learner-content";
-const BOOKS_URL = `https://raw.githubusercontent.com/${OFFICIAL_OWNER_REPO}/main/books.yaml`;
+import {
+  fetchRecommendedRepos,
+  recommendedRef,
+  recommendedSource,
+  type RecommendedRepo,
+} from "../repos/recommended-repos";
+
 const CACHE_KEY = "adaptive-learner.book-recommendations";
 
 /** One recommended book. ``title`` + ``author`` + ``url`` are required;
@@ -94,21 +108,49 @@ function writeCache(value: BookRecommendations): void {
   }
 }
 
+/** The raw ``books.yaml`` URL of a flagged registry entry, or null. */
+function booksUrl(rec: RecommendedRepo): string | null {
+  const source = recommendedSource(rec);
+  if (!source) return null;
+  return `https://raw.githubusercontent.com/${source}/${recommendedRef(rec)}/books.yaml`;
+}
+
 /**
- * Fetch the per-domain book recommendations. Never throws.
+ * Fetch the per-domain book recommendations from every registry entry
+ * flagged ``books: true``, merging their domain sections. Never throws.
  *
- * Stale-while-revalidate: a cached catalogue (if any) is the fallback
- * when the network is unavailable, and a successful fetch refreshes it.
- * Returns ``{}`` when nothing is cached and the fetch fails.
+ * Repos without the flag are never requested (#1712 — no console-404
+ * noise for a file that is known to be absent). Stale-while-revalidate:
+ * the cached catalogue (if any) is the fallback when the registry is
+ * unreachable, no entry is flagged, or every flagged fetch fails; a
+ * successful round refreshes it. Returns ``{}`` when nothing is cached
+ * and nothing could be fetched.
  */
 export async function fetchBookRecommendations(): Promise<BookRecommendations> {
   try {
-    const response = await fetch(BOOKS_URL);
-    if (!response.ok) return readCache();
-    const doc = parseYaml(await response.text());
-    const projected = projectDocument(doc);
-    writeCache(projected);
-    return projected;
+    const catalogue = await fetchRecommendedRepos();
+    const flagged = catalogue.filter((rec) => rec.books === true);
+    if (flagged.length === 0) return readCache();
+    const merged: BookRecommendations = {};
+    let anyFetched = false;
+    for (const rec of flagged) {
+      const url = booksUrl(rec);
+      if (!url) continue;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) continue;
+        const projected = projectDocument(parseYaml(await response.text()));
+        anyFetched = true;
+        for (const [domain, books] of Object.entries(projected)) {
+          merged[domain] = [...(merged[domain] ?? []), ...books];
+        }
+      } catch {
+        // One unreachable repo never breaks the round; skip it.
+      }
+    }
+    if (!anyFetched) return readCache();
+    writeCache(merged);
+    return merged;
   } catch {
     return readCache();
   }

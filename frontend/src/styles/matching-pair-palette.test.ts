@@ -9,13 +9,11 @@
  * so the palette cannot silently regress to red.
  */
 
-import {readFileSync} from "node:fs";
-import {fileURLToPath} from "node:url";
-import {dirname, resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const GLOBAL_CSS = readFileSync(resolve(HERE, "global.css"), "utf-8");
+import {readLegacyCssSum} from "./legacy-css-sum";
+
+const GLOBAL_CSS = readLegacyCssSum();
 
 /** Parse ``#rgb`` / ``#rrggbb`` into [h(0-360), s(0-100), l(0-100)]. */
 function hsl(hex: string): [number, number, number] {

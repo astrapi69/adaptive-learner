@@ -1,0 +1,413 @@
+
+/* ---------------------------------------------------------------
+   Lesson-mode + landscape-mobile compact navigation.
+
+   Two triggers collapse the top nav into a minimal hamburger-only
+   bar so the content reclaims vertical space:
+     A. .is-lesson-compact — an active lesson / review / adaptive
+        lesson, at ANY viewport width (set by useIsLessonActive).
+     B. short landscape viewports — every page.
+   In both, the links move behind the hamburger drawer; the drawer
+   itself is the same slide-down panel the <=768px breakpoint uses.
+   The links stay in the DOM (CSS-hidden) so keyboard + tests reach
+   them. Respects the existing reduced-motion catch-all.
+   --------------------------------------------------------------- */
+
+/* --- Lesson-mode + landscape compact nav ----------------------- */
+@layer legacy { /* EXP-044 (#1592): utilities must win over this block */
+
+/* Trigger A — active lesson, any width. */
+.app-nav.is-lesson-compact {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+  min-height: 48px;
+}
+.app-nav.is-lesson-compact .nav-hamburger {
+  display: inline-flex;
+}
+.app-nav.is-lesson-compact .nav-links {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  gap: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  margin-left: 0;
+  padding: var(--space-2);
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 60;
+}
+.app-nav.is-lesson-compact .nav-links.is-open {
+  display: flex;
+}
+.app-nav.is-lesson-compact .nav-link {
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+/* Minimal bar — drop the badges + indicators + brand word that
+   only add clutter during a lesson. Brand icon, hamburger, and
+   theme toggle stay. */
+.app-nav.is-lesson-compact .nav-dev-badge,
+.app-nav.is-lesson-compact .nav-mode-badge,
+.app-nav.is-lesson-compact .nav-xp-badge,
+.app-nav.is-lesson-compact .nav-brand-name {
+  display: none;
+}
+
+/* Trigger B — short landscape viewport, ALL pages. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .app-nav {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+    min-height: 44px;
+  }
+  .app-nav .nav-hamburger {
+    display: inline-flex;
+  }
+  .app-nav .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    margin-left: 0;
+    padding: var(--space-2);
+    max-height: 85vh;
+    overflow-y: auto;
+    z-index: 60;
+  }
+  .app-nav .nav-links.is-open {
+    display: flex;
+  }
+  .app-nav .nav-brand-name {
+    display: none;
+  }
+
+  /* Slim the lesson page's own header so the kept title + progress
+     don't re-spend the height the compact nav just saved. */
+  .lesson-header {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+  .lesson-header h1 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  .lesson-header .lesson-description,
+  .lesson-header .lesson-credit {
+    display: none;
+  }
+}
+
+} /* @layer legacy */
+
+/* ----- iOS focus-zoom guard (#1353) -----------------------------
+   iOS Safari zooms IN when a focused text control has an effective
+   font-size < 16px, and does NOT zoom back on blur / step change —
+   the "size keeps jumping" symptom in the lesson flow. Floor every
+   focusable text control at 16px on ANY touch device via
+   ``pointer: coarse`` (covers iPhone AND iPad in every orientation,
+   independent of a width breakpoint — the old ``max-width: 768px``
+   guard below missed iPad portrait > 768px and only listed a few
+   ``type=`` values). Excludes non-text controls (checkbox / radio /
+   range / color / the button-type inputs) which never zoom. Desktop
+   (fine pointer) is untouched, so its optical sizing (``text-sm`` etc.)
+   is preserved. This is the single app-wide anchor — do NOT drop back
+   below 16px on a focusable field, and NEVER fix zoom via
+   ``maximum-scale`` / ``user-scalable=no`` (breaks pinch-zoom / WCAG).
+   Deliberately UNLAYERED (#1592): this floor must also beat Tailwind
+   utilities (shadcn Select renders ``text-sm`` = 14px) — inside
+   ``@layer legacy`` the utility would win and re-open the zoom bug. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+      [type="color"]
+    ):not([type="button"]):not([type="submit"]):not([type="reset"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* --- Lesson-mode mobile polish (9A/9C) ------------------------- */
+@layer legacy { /* EXP-044 (#1592), continued: utilities must win over this block */
+
+@media (max-width: 768px) {
+  /* ----- Navigation: hamburger-controlled drawer -------------- */
+
+  /* #759 — the right-hand indicator cluster (reviews + two-line XP
+     badge + avatar + theme toggle) plus the hamburger overflowed the
+     375px viewport by a few px once the two-line XP badge (German
+     "100 XP insgesamt") widened the row. Tighten the nav gap +
+     horizontal padding at mobile so the cluster fits without hiding
+     anything; pinned by the no-horizontal-scroll @375px gate. */
+  .app-nav {
+    gap: var(--space-3);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .nav-hamburger {
+    display: inline-flex;
+  }
+
+  /* The drawer pops out below the nav bar. Width 100% of the
+     viewport so the user can tap any link without precise
+     targeting. position:absolute pulls it out of the nav's
+     flex line; the parent `.app-nav` provides the top anchor. */
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    margin-left: 0;
+    padding: var(--space-2);
+  }
+  .nav-links.is-open {
+    display: flex;
+  }
+  .nav-link {
+    /* Full-width tap targets — 44px touch height per Apple/Google
+       guidelines. The vertical padding is the load-bearing knob. */
+    padding: var(--space-3) var(--space-4);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+  }
+
+  /* When the menu is OPEN, suppress the body shadow on the nav
+     so it looks like one continuous surface — the drawer's own
+     shadow takes over. */
+  .app-nav.is-menu-open {
+    box-shadow: none;
+  }
+
+  /* Theme toggle stays in the nav bar but moves AFTER the
+     hamburger so the order reads brand / hamburger / toggle. */
+  .nav-theme-toggle {
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-left: var(--space-2);
+  }
+
+  /* ----- 44px touch targets everywhere on mobile -------------- */
+  .btn {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-5);
+  }
+
+  /* ----- Form actions: stack vertically when cramped ---------- */
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  .onboarding-skip-top {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* ----- Settings: model-override + API-key rows stack -------- */
+  .api-key-row-input,
+  .model-override-row-input {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .api-key-row-input input,
+  .model-override-row-input input {
+    width: 100%;
+  }
+  .api-key-row-input .btn,
+  .model-override-row-input .btn {
+    width: 100%;
+  }
+
+  /* ----- Landing: title shrinks slightly, CTA full-width ------ */
+  .landing-page {
+    padding: var(--space-4) var(--space-4);
+  }
+  .landing-title {
+    font-size: 1.6rem;
+    line-height: 1.2;
+  }
+  .landing-cta {
+    width: 100%;
+    min-height: 44px;
+  }
+  .landing-lang-options {
+    /* Wrap language buttons onto two rows rather than overflow. */
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .landing-lang-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* ----- Assessment: answer hit areas grow ------------------- */
+  .answer-option {
+    min-height: 44px;
+    padding: var(--space-3);
+  }
+  .assessment-page {
+    padding: var(--space-4) var(--space-4);
+  }
+
+  /* ----- Spaced-practice + RecentSessions rows stay readable -- */
+  .spaced-rec-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .spaced-rec-actions {
+    flex-direction: row;
+    gap: var(--space-2);
+  }
+  .spaced-rec-actions .btn {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  /* ----- Dashboard / Progress page padding shrinks ----------- */
+  .dashboard-page {
+    padding: var(--space-4) var(--space-3);
+  }
+  .dashboard-card {
+    padding: var(--space-3) var(--space-3);
+  }
+  .dashboard-card-title {
+    font-size: 1rem;
+  }
+
+  /* ----- Tables overflow horizontally rather than the page --- */
+  .commit-table-wrap {
+    overflow-x: auto;
+    /* Indicate scrollability with a subtle scrollbar. */
+    -webkit-overflow-scrolling: touch;
+  }
+  .commit-table {
+    min-width: 32rem;
+  }
+
+  /* ----- Step-evaluation metrics: single-column on narrow ---- */
+  .step-eval-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  /* ----- 9C: Session chat takes full available height -------- */
+  /* The chat card grows to fill the viewport height (minus nav
+     + page padding). The messages list scrolls vertically; the
+     input row hugs the bottom of the card so the send button is
+     always reachable without scrolling the page. */
+  .session-chat {
+    min-height: calc(100vh - 14rem);
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+  .chat-messages {
+    flex: 1;
+    max-height: none;
+    /* No min-height — let the flex parent decide. */
+  }
+  .chat-input-row {
+    gap: var(--space-2);
+    align-items: stretch;
+  }
+  .chat-input-row textarea {
+    /* Two-row textarea — single thumb-reach typing. */
+    min-height: 3rem;
+    font-size: 16px;
+  }
+  .chat-input-row .btn {
+    /* Pin the send button square + 44px tall so it's an obvious
+       thumb target adjacent to the textarea, not a row below. */
+    min-width: 4rem;
+    min-height: 44px;
+  }
+
+  /* ----- 9C: CycleProgress horizontal scroll on cramped widths */
+  /* The 7-step grid drops labels at ≤720px (from 6A) but the 7
+     numeric circles still demand ~280px to render comfortably.
+     At extreme-narrow widths, switch to a single-row scrollable
+     strip rather than crushing the circles. */
+  .cycle-steps {
+    grid-template-columns: repeat(7, minmax(2.4rem, 1fr));
+  }
+  .cycle-step-label {
+    display: none;
+  }
+
+  /* ----- 9C: RatingDialog modal sized for thumb reach -------- */
+  .modal-card {
+    /* On a phone, give the modal the whole viewport with some
+       breathing room. The form-actions row also stacks via 9A. */
+    width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Extreme-narrow safety net: shrink horizontal page padding
+     and tighten the brand label so the hamburger + theme toggle
+     don't push past the viewport. */
+  .app-nav {
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+  .dashboard-page,
+  .assessment-page,
+  .onboarding-page,
+  .landing-page {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+}
+
+} /* @layer legacy */
+
+/* ----- Mobile input floor (companion to the #1353 guard above) --
+   44px touch height + the 16px iOS zoom floor for every text
+   control at phone widths. Deliberately UNLAYERED (#1592): the
+   floor must also beat Tailwind utilities (``text-sm`` / ``h-*``
+   on shadcn controls) — inside ``@layer legacy`` the utility
+   would win and shrink the control below the guideline minimum. */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px; /* iOS Safari: <16px triggers zoom on focus */
+  }
+  textarea {
+    /* textareas have their own height; just lift the inner padding. */
+    padding: var(--space-2) var(--space-3);
+  }
+}

@@ -223,8 +223,10 @@ export function I18nProvider({children}: {children: ReactNode}) {
         // 2) Hardcoded frontend fallbacks (first-paint resilience).
         const localised = isSupportedLang(lang) ? fallbackString(lang, key) : undefined;
         if (localised) return localised;
-        // 3) Caller-supplied fallback, then the key itself.
-        return fallback || key;
+        // 3) Caller-supplied fallback, then the key itself. Nullish, not
+        //    falsy: an explicit empty-string fallback means "render nothing",
+        //    never the raw dot-notation key (#1667).
+        return fallback ?? key;
     }, [strings, lang]);
 
     const value: I18nContextValue = {t, lang, setLang};
@@ -239,9 +241,12 @@ export function I18nProvider({children}: {children: ReactNode}) {
 export function useI18n() {
     const ctx = useContext(I18nContext);
     if (!ctx) {
-        // Fallback for components rendered outside provider (e.g. tests)
+        // Fallback for components rendered outside provider (e.g. tests).
+        // ``fallback ?? key`` (not ``||``) so an explicit empty-string
+        // fallback means "render nothing", never the raw key (#1676 —
+        // same falsy-clobber class as the #1667 provider-path fix).
         return {
-            t: (key: string, fallback?: string) => fallback || key,
+            t: (key: string, fallback?: string) => fallback ?? key,
             lang: "de",
             setLang: () => {},
         };

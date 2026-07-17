@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · {lessons} lessons · {exercises} exercises",
       "import": "Import",
       "imported": "Lesson imported.",
-      "failed": "Could not import the lesson."
+      "failed": "Could not import the lesson.",
+      "collision_title": "This lesson already exists",
+      "collision_body": "A saved lesson set already uses this identifier. Overwrite it, import a separate copy, or cancel?",
+      "overwrite": "Overwrite",
+      "copy": "Import as copy",
+      "copy_suffix": "copy",
+      "skipped": "{n} lesson(s) were skipped because they failed validation."
     },
     "my_lessons": {
       "export_set": "Export as set",
@@ -2792,7 +2798,8 @@
       "check_enoughCards": "At least 4 cards",
       "check_enoughExercises": "At least 5 exercises",
       "check_enoughTypes": "At least 2 exercise types",
-      "check_schemaValid": "Valid lesson structure"
+      "check_schemaValid": "Valid lesson structure",
+      "structure_error": "Technical detail"
     },
     "save": {
       "saved": "Lesson saved!",
@@ -2801,7 +2808,9 @@
       "save_share": "Save and share",
       "play": "Play lesson",
       "create_another": "Create another lesson",
-      "to_browser": "To Content Browser"
+      "to_browser": "To Content Browser",
+      "save_file": "Save as file",
+      "file_saved": "Lesson saved as a file."
     },
     "templates": {
       "heading": "Start from a template",
@@ -3257,6 +3266,7 @@
       "title": "Remove repository",
       "message": "Remove {source}? Its downloaded content will be removed from this device.",
       "delete_progress": "Also delete my learning progress for this content.",
+      "keep_progress": "Your learning progress is kept. Reconnecting this repository restores it.",
       "consequence": "{lessons} lessons and {cards} review cards will be deleted. This cannot be undone.",
       "counting": "Counting your progress…",
       "deleted": "Removed. Deleted {lessons} lessons and {cards} review cards."
@@ -3617,6 +3627,12 @@
       "created": "Pull request opened.",
       "failed": "Could not open the pull request.",
       "view": "View your pull request"
+    }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Listen first",
+      "aria": "Play pronunciation"
     }
   }
 }

@@ -1,0 +1,57 @@
+
+/* ---- Export Section (Phase 16D) -------------------------------- */
+@layer legacy { /* EXP-044 Tranche 2 (#1485): utilities must win over this block */
+.export-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.export-row:last-child {
+  border-bottom: none;
+}
+.export-row-label {
+  flex: 1 1 200px;
+  min-width: 0;
+  font-weight: 600;
+}
+/* The session/curriculum picker is the middle child of the wrapping
+   export row; let it grow to fill a wrapped line yet shrink to the
+   card width instead of forcing a horizontal overflow (#555). */
+.export-row > select {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+.export-row-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.export-preview {
+  margin-top: var(--space-4);
+  background: var(--surface-2, var(--surface));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  padding: var(--space-3);
+}
+.export-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+.export-preview-body {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  padding: var(--space-3);
+  overflow-x: auto;
+  font-size: 0.9rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+} /* @layer legacy */

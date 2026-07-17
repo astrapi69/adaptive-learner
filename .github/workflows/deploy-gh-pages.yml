@@ -153,8 +153,21 @@ jobs:
       # nested route (``/dashboard``, ``/settings``) returns a
       # GH-Pages 404 instead of letting React Router resolve the
       # path client-side.
+      #
+      # #1713 — the SPA route ``/content`` is shadowed by the REAL
+      # ``content/`` directory (the bundled content assets): GH Pages
+      # 301-redirects ``/content`` to ``/content/`` and, with no
+      # index.html inside the directory, answers 404 (the 404.html
+      # fallback still renders the app, but the console logs
+      # ``content/:1 Failed to load resource: 404`` on every SW-less
+      # load of "Meine Inhalte"). A real SPA shell inside the
+      # directory makes ``/content/`` a proper 200 — the same
+      # mechanism the bundled ``docs/`` subtree relies on.
       - name: Configure SPA fallback
-        run: cp frontend/dist/index.html frontend/dist/404.html
+        run: |
+          cp frontend/dist/index.html frontend/dist/404.html
+          mkdir -p frontend/dist/content
+          cp frontend/dist/index.html frontend/dist/content/index.html
 
       # ---- Docs build ----
 

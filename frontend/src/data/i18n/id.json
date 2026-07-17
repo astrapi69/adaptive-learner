@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · {lessons} pelajaran · {exercises} latihan",
       "import": "Impor",
       "imported": "Pelajaran diimpor.",
-      "failed": "Tidak dapat mengimpor pelajaran."
+      "failed": "Tidak dapat mengimpor pelajaran.",
+      "collision_title": "Pelajaran ini sudah ada",
+      "collision_body": "Kumpulan pelajaran tersimpan sudah menggunakan pengidentifikasi ini. Timpa, impor sebagai salinan terpisah, atau batalkan?",
+      "overwrite": "Timpa",
+      "copy": "Impor sebagai salinan",
+      "copy_suffix": "salinan",
+      "skipped": "{n} pelajaran dilewati karena gagal validasi."
     },
     "my_lessons": {
       "export_set": "Ekspor sebagai set",
@@ -2792,7 +2798,8 @@
       "check_enoughCards": "Setidaknya 4 kartu",
       "check_enoughExercises": "Setidaknya 5 latihan",
       "check_enoughTypes": "Setidaknya 2 jenis latihan",
-      "check_schemaValid": "Struktur pelajaran valid"
+      "check_schemaValid": "Struktur pelajaran valid",
+      "structure_error": "Detail teknis"
     },
     "save": {
       "saved": "Pelajaran disimpan!",
@@ -2801,7 +2808,9 @@
       "save_share": "Simpan dan bagikan",
       "play": "Mainkan pelajaran",
       "create_another": "Buat pelajaran lain",
-      "to_browser": "Ke Penjelajah Konten"
+      "to_browser": "Ke Penjelajah Konten",
+      "save_file": "Simpan sebagai berkas",
+      "file_saved": "Pelajaran disimpan sebagai berkas."
     },
     "templates": {
       "heading": "Mulai dari templat",
@@ -3257,6 +3266,7 @@
       "title": "Hapus repositori",
       "message": "Hapus {source}? Konten yang diunduhnya akan dihapus dari perangkat ini.",
       "delete_progress": "Hapus juga progres belajar saya untuk konten ini.",
+      "keep_progress": "Kemajuan belajarmu tetap tersimpan. Menghubungkan kembali repositori ini akan memulihkannya.",
       "consequence": "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus. Ini tidak dapat dibatalkan.",
       "counting": "Menghitung progres Anda…",
       "deleted": "Dihapus. {lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
@@ -3617,6 +3627,12 @@
       "created": "Permintaan tarik dibuka.",
       "failed": "Tidak dapat membuka permintaan tarik.",
       "view": "Lihat permintaan tarik Anda"
+    }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Dengarkan dulu",
+      "aria": "Putar pelafalan"
     }
   }
 }

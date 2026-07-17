@@ -17,9 +17,12 @@ import type {ContentLessonExercise} from "../../storage/types";
 
 type Translate = (key: string, fallback?: string) => string;
 
-const CHECK_ROWS: Array<[keyof DraftValidationChecks, string]> = [
+const CHECK_ROWS: Array<
+    [Exclude<keyof DraftValidationChecks, "schemaError">, string]
+> = [
     ["hasTitle", "Has a title"],
-    ["languagePair", "Language pair is valid"],
+    // #1715 — the "language pair is valid" row is gone: a same-language
+    // pair is a legitimate knowledge-domain lesson, not a save gate.
     ["enoughCards", "At least 4 cards"],
     ["enoughExercises", "At least 5 exercises"],
     ["enoughTypes", "At least 2 exercise types"],
@@ -51,13 +54,15 @@ export default function ReviewStep({
     const canSave = allChecksPass(draftChecks) && !saving;
     return (
         <section
-            className="create-lesson-step"
+            className="create-lesson-step flex flex-col gap-6"
             data-testid="create-lesson-step-4"
             aria-label={t("create_lesson.review.heading", "Review and save")}
         >
-            <h2>{t("create_lesson.review.heading", "Review and save")}</h2>
+            <h2 className="text-xl font-semibold text-fg-primary">
+                {t("create_lesson.review.heading", "Review and save")}
+            </h2>
             <ul
-                className="create-lesson-summary"
+                className="create-lesson-summary flex list-none flex-col gap-1 rounded-lg border border-border bg-card p-4"
                 data-testid="create-lesson-summary"
             >
                 <li>
@@ -77,20 +82,44 @@ export default function ReviewStep({
                 </li>
             </ul>
             <ul
-                className="create-lesson-checklist"
+                className="create-lesson-checklist flex list-none flex-col gap-1 p-0"
                 data-testid="create-lesson-checklist"
             >
                 {CHECK_ROWS.map(([key, fallback]) => {
                     const pass = draftChecks[key];
+                    // #1722 — a bare ✗ on the structure check is not
+                    // actionable; show the validator's concrete reason
+                    // (e.g. which card/field violates which rule).
+                    const detail =
+                        key === "schemaValid" && !pass
+                            ? draftChecks.schemaError
+                            : null;
                     return (
                         <li
                             key={key}
                             data-testid={`check-${key}`}
                             data-pass={pass ? "true" : "false"}
-                            className={pass ? "check-pass" : "check-fail"}
+                            className={
+                                "flex flex-col gap-0.5 " +
+                                (pass
+                                    ? "check-pass text-[var(--success)]"
+                                    : "check-fail text-[var(--error)]")
+                            }
                         >
                             {pass ? "✓" : "✗"}{" "}
                             {t(`create_lesson.review.check_${key}`, fallback)}
+                            {detail && (
+                                <div
+                                    className="text-sm text-muted-foreground"
+                                    data-testid="check-schemaValid-detail"
+                                >
+                                    {t(
+                                        "create_lesson.review.structure_error",
+                                        "Details",
+                                    )}
+                                    : <code>{detail}</code>
+                                </div>
+                            )}
                         </li>
                     );
                 })}

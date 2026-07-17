@@ -2247,7 +2247,13 @@
       "preview": "{title} · {lang} · {lessons} leçons · {exercises} exercices",
       "import": "Importer",
       "imported": "Leçon importée.",
-      "failed": "Impossible d'importer la leçon."
+      "failed": "Impossible d'importer la leçon.",
+      "collision_title": "Cette leçon existe déjà",
+      "collision_body": "Un ensemble de leçons enregistré utilise déjà cet identifiant. Écraser, importer une copie distincte ou annuler ?",
+      "overwrite": "Écraser",
+      "copy": "Importer comme copie",
+      "copy_suffix": "copie",
+      "skipped": "{n} leçon(s) ignorée(s) car la validation a échoué."
     },
     "my_lessons": {
       "export_set": "Exporter comme ensemble",
@@ -2792,7 +2798,8 @@
       "check_enoughCards": "Au moins 4 cartes",
       "check_enoughExercises": "Au moins 5 exercices",
       "check_enoughTypes": "Au moins 2 types d'exercices",
-      "check_schemaValid": "Structure de leçon valide"
+      "check_schemaValid": "Structure de leçon valide",
+      "structure_error": "Détail technique"
     },
     "save": {
       "saved": "Leçon enregistrée !",
@@ -2801,7 +2808,9 @@
       "save_share": "Enregistrer et partager",
       "play": "Lancer la leçon",
       "create_another": "Créer une autre leçon",
-      "to_browser": "Vers le navigateur de contenu"
+      "to_browser": "Vers le navigateur de contenu",
+      "save_file": "Enregistrer dans un fichier",
+      "file_saved": "Leçon enregistrée dans un fichier."
     },
     "templates": {
       "heading": "Partir d'un modèle",
@@ -3257,6 +3266,7 @@
       "title": "Supprimer le dépôt",
       "message": "Supprimer {source} ? Son contenu téléchargé sera retiré de cet appareil.",
       "delete_progress": "Supprimer aussi ma progression pour ce contenu.",
+      "keep_progress": "Ta progression d'apprentissage est conservée. En reconnectant ce dépôt, elle sera restaurée.",
       "consequence": "{lessons} leçons et {cards} cartes de révision seront supprimées. Cette action est irréversible.",
       "counting": "Comptage de votre progression…",
       "deleted": "Supprimé. {lessons} leçons et {cards} cartes de révision supprimées."
@@ -3617,6 +3627,12 @@
       "created": "Demande de fusion ouverte.",
       "failed": "Impossible d'ouvrir la demande de fusion.",
       "view": "Voir votre demande de fusion"
+    }
+  },
+  "exercise": {
+    "listen_first": {
+      "label": "Écoute d'abord",
+      "aria": "Écouter la prononciation"
     }
   }
 }

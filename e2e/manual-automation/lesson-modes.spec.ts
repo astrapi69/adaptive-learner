@@ -14,13 +14,24 @@
  * Dexie build, no backend; the bundled lesson set renders offline.
  */
 
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { ContentPage } from "./pages/ContentPage";
 import { mockContent } from "./helpers/mock-content";
 import { seedLearner } from "./helpers/setup";
 
 const MODES = ["practice", "exam", "timed", "reverse"] as const;
+
+/** Expand the collapsible lesson-options panel (#1628) that now wraps the
+ *  mode toggle. Idempotent: only clicks while the panel is collapsed. */
+async function openLessonOptions(page: Page) {
+  const toggle = page.getByTestId("lesson-options-toggle");
+  await expect(toggle).toBeVisible();
+  if ((await toggle.getAttribute("aria-expanded")) !== "true") {
+    await toggle.click();
+  }
+  await expect(page.getByTestId("lesson-options-body")).toBeVisible();
+}
 
 test.describe("Lesson modes", () => {
   test.beforeEach(async ({ page }) => {
@@ -34,6 +45,7 @@ test.describe("Lesson modes", () => {
     const content = new ContentPage(page);
     await content.goto();
     await content.openBundledLesson();
+    await openLessonOptions(page);
 
     await expect(page.getByTestId("lesson-mode-toggle")).toBeVisible();
     // #1027 — every mode is switchable until the run is under way.
@@ -51,6 +63,7 @@ test.describe("Lesson modes", () => {
     const content = new ContentPage(page);
     await content.goto();
     await content.openBundledLesson();
+    await openLessonOptions(page);
 
     await page.getByTestId("lesson-mode-exam").click();
     await expect(page.getByTestId("lesson-mode-exam")).toHaveAttribute(

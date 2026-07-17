@@ -9,7 +9,34 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v2.2.0** (**feature release** on top of the v2.1.0
+- **Current state:** **v2.3.0** (**polish + consolidation release** on top of
+  the v2.2.0 feature release, NO schema/API/data-model change. Highlights: the
+  **EXP-044 CSS concern-split completed** - `global.css` decomposed
+  byte-identically into per-concern files under `styles/legacy/` (Peels 1-5
+  #1663/#1670/#1675/#1680/#1682 + Batches A-E #1684/#1686/#1688/#1689/#1690),
+  `global.css` is now a pure import manifest, guarded by a byte-identity gate
+  #1657 + an accepted-conflicts allowlist #1630, and the last entangled zone
+  (QR scanner + lesson-mode nav) wrapped into `@layer legacy` #1695 - the
+  v2.2.0 cascade repair is complete; a **lesson-player UX rework** -
+  collapsible options panel #1628, pause control moved into the footer #1644,
+  slimmer title area + in-lesson description dropped #1635, duplicate
+  summary-favorite removed #1649; **listen-first audio** for free_text +
+  matching #1687; the adaptive generator seeds from **authored
+  `card.difficulty` as a cold-start prior** #1683 and tolerates card-less
+  exercise types #1637 + declines context-free clozes #1669; **hardened
+  lesson/set file import/export** (collisions, partial import, size guard,
+  Create-Lesson "Save as file") #1681/#1685; shared `Tile` + `FormHint`
+  primitives #1714/#1720; CI - symmetric backend path gate #1659,
+  visual-baseline gate for visual-critical PRs #1641, forceRerunTriggers for
+  readFileSync-pinned tests #1673; engine re-pin -> 0.12.3 #1678. Fix sweep:
+  Create-Lesson wizard (step-1 redesign #1721, steps 2-4 layout #1737,
+  structure-check reason #1724, raw i18n keys #1674, stale languagePair
+  Save-button regression #1730), Dexie-mode content visibility (deleted sets
+  stay deleted #1719, cached sets from unconfigured sources #1734, demo set
+  hidden #1706, federated book recommendations #1717), skip-to-content label
+  visibility #1727, codeMode in Cloze grading #1700, SPA shell in bundled
+  content/ #1718. See changelog/releases/v2.3.0.md.)
+  Prior **v2.2.0** = (**feature release** on top of the v2.1.0
   polish release. Highlights: the **extension-exercise tier** - four
   AI-authored exercise types adopted from the content engine
   (`ext:al-categorization` #1591, `-error-correction` #1593,

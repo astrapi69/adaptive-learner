@@ -332,8 +332,14 @@ function _lessonWithFreeText(
         estimated_minutes: 10,
         cards: [
             {
+                // A contextful front (the answer inside a phrase) so the
+                // shape-change blanks the answer WITH surrounding context. A
+                // front that IS the answer collapses to a bare "___", which the
+                // generator now rejects (→ replay) — the "falls back to replay"
+                // test below exercises that path explicitly (it overrides the
+                // front to "no-match").
                 id: "card-1",
-                front: accept[0],
+                front: `${accept[0]} chat`,
                 back: "translation",
                 tags: [],
             },

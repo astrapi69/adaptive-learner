@@ -29,6 +29,10 @@ vi.mock("../../storage", () => ({
 vi.mock("../../utils/notify", () => ({
     notify: {success: vi.fn(), error: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
+const downloadLessonJsonMock = vi.fn();
+vi.mock("../../lib/content/lesson/lesson-export", () => ({
+    downloadLessonJson: (...a: unknown[]) => downloadLessonJsonMock(...a),
+}));
 
 import CreateLesson from "./CreateLesson";
 import {PAGE_CONTAINER_CLASSES} from "../../shared/layout/PageContainer";
@@ -69,23 +73,25 @@ describe("CreateLesson — metadata step", () => {
         ).not.toBeInTheDocument();
     });
 
-    it("blocks Next when source and target language match", async () => {
+    it("advances even when source and target language match (#1715, knowledge domains)", async () => {
         const user = userEvent.setup();
         renderPage();
         fireEvent.change(screen.getByTestId("create-lesson-title"), {
-            target: {value: "My French Basics"},
+            target: {value: "KI für Einsteiger"},
         });
         // Force target == source by picking the same language in both
-        // shadcn/Radix Selects.
+        // shadcn/Radix Selects — a legitimate knowledge-domain pair
+        // (e.g. the ki-einsteiger set: de -> de).
         await user.click(screen.getByTestId("create-lesson-source-lang"));
         await user.click(await screen.findByRole("option", {name: "English"}));
         await user.click(screen.getByTestId("create-lesson-target-lang"));
         await user.click(await screen.findByRole("option", {name: "English"}));
-        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        // A same-language pair is no longer a blocking error.
         expect(
-            screen.getByTestId("create-lesson-same-language-error"),
-        ).toBeInTheDocument();
-        expect(screen.getByTestId("create-lesson-step-1")).toBeInTheDocument();
+            screen.queryByTestId("create-lesson-same-language-error"),
+        ).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(screen.getByTestId("create-lesson-step-2")).toBeInTheDocument();
     });
 
     it("advances to step 2 when metadata is valid", () => {
@@ -216,6 +222,32 @@ describe("CreateLesson — card step gate + draft", () => {
         expect(screen.getByTestId("create-lesson-play")).toBeInTheDocument();
     });
 
+    it("exports the saved lesson as a file (#1672)", async () => {
+        downloadLessonJsonMock.mockClear();
+        toStep2();
+        addCard("Bonjour", "Hallo");
+        addCard("Merci", "Danke");
+        addCard("Oui", "Ja");
+        addCard("Non", "Nein");
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 3
+        fireEvent.click(screen.getByTestId("exercise-generate"));
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 4
+        fireEvent.click(screen.getByTestId("create-lesson-save-local"));
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("create-lesson-saved"),
+            ).toBeInTheDocument(),
+        );
+        fireEvent.click(screen.getByTestId("create-lesson-save-file"));
+        expect(downloadLessonJsonMock).toHaveBeenCalledTimes(1);
+        const lessonArg = downloadLessonJsonMock.mock.calls[0][0] as {
+            id: string;
+            steps: unknown[];
+        };
+        expect(lessonArg.id).toBeTruthy();
+        expect(lessonArg.steps.length).toBeGreaterThan(0);
+    });
+
     it("offers to restore a saved draft and continues it", () => {
         localStorage.setItem(
             "adaptive-learner.lesson-draft",
@@ -280,6 +312,120 @@ describe("CreateLesson — card step gate + draft", () => {
         expect(
             screen.queryByTestId("create-lesson-same-language-error"),
         ).not.toBeInTheDocument();
+    });
+});
+
+describe("CreateLesson — same-language is allowed (#1715, knowledge domains)", () => {
+    async function pickBoth(langName: string) {
+        const user = userEvent.setup();
+        await user.click(screen.getByTestId("create-lesson-target-lang"));
+        await user.click(await screen.findByRole("option", {name: langName}));
+        await user.click(screen.getByTestId("create-lesson-source-lang"));
+        await user.click(await screen.findByRole("option", {name: langName}));
+    }
+
+    it("shows a non-blocking same-language hint (not an error) when they match", async () => {
+        renderPage();
+        // No hint on the fresh, differing default pair.
+        expect(
+            screen.queryByTestId("create-lesson-same-language-hint"),
+        ).not.toBeInTheDocument();
+        await pickBoth("English");
+        // A neutral, live hint — NOT a blocking error alert.
+        const hint = screen.getByTestId("create-lesson-same-language-hint");
+        expect(hint).toBeInTheDocument();
+        expect(hint).not.toHaveAttribute("role", "alert");
+        expect(
+            screen.queryByTestId("create-lesson-same-language-error"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("does NOT mark the language selects as aria-invalid when they match", async () => {
+        renderPage();
+        await pickBoth("English");
+        expect(
+            screen.getByTestId("create-lesson-target-lang"),
+        ).not.toHaveAttribute("aria-invalid", "true");
+        expect(
+            screen.getByTestId("create-lesson-source-lang"),
+        ).not.toHaveAttribute("aria-invalid", "true");
+    });
+
+    it("hides the hint once the languages differ again", async () => {
+        const user = userEvent.setup();
+        renderPage();
+        await pickBoth("English");
+        expect(
+            screen.getByTestId("create-lesson-same-language-hint"),
+        ).toBeInTheDocument();
+        await user.click(screen.getByTestId("create-lesson-target-lang"));
+        await user.click(await screen.findByRole("option", {name: "French"}));
+        expect(
+            screen.queryByTestId("create-lesson-same-language-hint"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("runs a full same-language wizard end to end and saves", async () => {
+        saveUserSetMock.mockClear();
+        const user = userEvent.setup();
+        renderPage();
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: "KI für Einsteiger"},
+        });
+        await user.click(screen.getByTestId("create-lesson-target-lang"));
+        await user.click(await screen.findByRole("option", {name: "German"}));
+        await user.click(screen.getByTestId("create-lesson-source-lang"));
+        await user.click(await screen.findByRole("option", {name: "German"}));
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 2
+        expect(screen.getByTestId("create-lesson-step-2")).toBeInTheDocument();
+        const addCard = (front: string, back: string) => {
+            fireEvent.change(screen.getByTestId("card-front-input"), {
+                target: {value: front},
+            });
+            fireEvent.change(screen.getByTestId("card-back-input"), {
+                target: {value: back},
+            });
+            fireEvent.click(screen.getByTestId("card-add-button"));
+        };
+        addCard("Was ist ein Modell?", "Eine Funktion");
+        addCard("Was ist ein Token?", "Eine Texteinheit");
+        addCard("Was ist Training?", "Parameteranpassung");
+        addCard("Was ist Inferenz?", "Die Vorhersagephase");
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 3
+        fireEvent.click(screen.getByTestId("exercise-generate"));
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 4
+        expect(screen.getByTestId("create-lesson-step-4")).toBeInTheDocument();
+        // The same-language pair does NOT block Save.
+        const saveBtn = screen.getByTestId("create-lesson-save-local");
+        expect(saveBtn).not.toBeDisabled();
+        fireEvent.click(saveBtn);
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("create-lesson-saved"),
+            ).toBeInTheDocument(),
+        );
+        expect(saveUserSetMock).toHaveBeenCalled();
+        const savedInput = saveUserSetMock.mock.calls[0][0] as unknown as {
+            source_language: string;
+            target_language: string;
+        };
+        expect(savedInput.source_language).toBe("de");
+        expect(savedInput.target_language).toBe("de");
+    });
+});
+
+describe("CreateLesson — template cards layout (#1715)", () => {
+    it("renders template cards as a spaced grid with separated title + desc", () => {
+        renderPage();
+        const grid = screen.getByTestId("create-lesson-templates").querySelector(
+            "[data-testid='template-vocabulary']",
+        )?.parentElement;
+        expect(grid?.className).toContain("grid");
+        expect(grid?.className).toMatch(/gap-/);
+        const card = screen.getByTestId("template-vocabulary");
+        // Real card chrome: border + padding.
+        expect(card.className).toContain("border");
+        expect(card.className).toMatch(/\bp-/);
     });
 });
 

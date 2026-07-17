@@ -2076,6 +2076,12 @@ content:
     import: "Impor"
     imported: "Pelajaran diimpor."
     failed: "Tidak dapat mengimpor pelajaran."
+    collision_title: "Pelajaran ini sudah ada"
+    collision_body: "Kumpulan pelajaran tersimpan sudah menggunakan pengidentifikasi ini. Timpa, impor sebagai salinan terpisah, atau batalkan?"
+    overwrite: "Timpa"
+    copy: "Impor sebagai salinan"
+    copy_suffix: "salinan"
+    skipped: "{n} pelajaran dilewati karena gagal validasi."
   my_lessons:
     export_set: "Ekspor sebagai set"
     share: "Bagikan ke Komunitas"
@@ -2559,6 +2565,7 @@ create_lesson:
     check_enoughExercises: "Setidaknya 5 latihan"
     check_enoughTypes: "Setidaknya 2 jenis latihan"
     check_schemaValid: "Struktur pelajaran valid"
+    structure_error: "Detail teknis"
   save:
     saved: "Pelajaran disimpan!"
     failed: "Tidak dapat menyimpan pelajaran."
@@ -2567,6 +2574,8 @@ create_lesson:
     play: "Mainkan pelajaran"
     create_another: "Buat pelajaran lain"
     to_browser: "Ke Penjelajah Konten"
+    save_file: "Simpan sebagai berkas"
+    file_saved: "Pelajaran disimpan sebagai berkas."
   templates:
     heading: "Mulai dari templat"
     blank:
@@ -2998,6 +3007,7 @@ content_repo:
     title: "Hapus repositori"
     message: "Hapus {source}? Konten yang diunduhnya akan dihapus dari perangkat ini."
     delete_progress: "Hapus juga progres belajar saya untuk konten ini."
+    keep_progress: "Kemajuan belajarmu tetap tersimpan. Menghubungkan kembali repositori ini akan memulihkannya."
     consequence: "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus. Ini tidak dapat dibatalkan."
     counting: "Menghitung progres Anda…"
     deleted: "Dihapus. {lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
@@ -3302,3 +3312,8 @@ registry:
     created: Permintaan tarik dibuka.
     failed: Tidak dapat membuka permintaan tarik.
     view: Lihat permintaan tarik Anda
+
+exercise:
+  listen_first:
+    label: "Dengarkan dulu"
+    aria: "Putar pelafalan"

@@ -15,11 +15,10 @@
  * same change and make sure the class is actually used in markup.
  */
 
-import {readFileSync} from "node:fs";
-import {resolve} from "node:path";
 import {describe, expect, it} from "vitest";
 
-const GLOBAL_CSS = resolve(__dirname, "global.css");
+import {readLegacyCssSum} from "./legacy-css-sum";
+
 
 /**
  * True when ``.selector`` appears in ``css`` as a WHOLE class token (a
@@ -53,10 +52,10 @@ const REMOVED_SELECTORS = [
 ] as const;
 
 describe("EXP-044 Tranche 1 dead selectors stay removed (#1485)", () => {
-    const css = readFileSync(GLOBAL_CSS, "utf8");
+    const css = readLegacyCssSum();
 
     it.each(REMOVED_SELECTORS)(
-        "does not define .%s in global.css",
+        "does not define .%s in global.css + styles/legacy",
         (selector) => {
             expect(
                 definesSelector(css, selector),

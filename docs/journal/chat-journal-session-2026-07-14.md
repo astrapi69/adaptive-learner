@@ -207,9 +207,9 @@ See the dedicated handover:
 ## Summary (session 3)
 
 - **PRs:** #1634 (wrap + C2 correction, merged), #1637 (card_ids fix, merged),
-  #1639 (baselines #1628, merged), #1643 (baselines #1635, open),
-  #1641 (visual gate, open - all three branches demonstrated), #1645 (demo,
-  closed unmerged).
+  #1639 (baselines #1628, merged), #1643 (baselines #1635, merged),
+  #1641 (visual gate, merged after all three branches were demonstrated),
+  #1645 (demo, closed unmerged).
 - **Issues:** filed #1632/#1636/#1638/#1640 (+ #1638 reopened once); all
   closed except #1638/#1640 (close via the open PRs).
 - **Method lessons:** (1) multi-property utilities are not removable as
@@ -219,7 +219,13 @@ See the dedicated handover:
   sibling elements - the allowlist with mandatory reasons absorbs that
   honestly; (4) verify every gh mutation and every commit result - two
   silent-fail classes hit in one day.
-- **Pending at journal time:** Aster's image review of #1643, #1641 merge,
-  and the two device checks (C3 timed-mode spacing; #1637 Dexie adaptive
-  lesson with mixed error types). Results to be appended before this PR
-  merges.
+- **Closure (~19:00):** Aster reviewed + merged #1643 and #1641 while the
+  journal was being written (issues #1638/#1640 closed with them; the
+  visual-baseline gate is live on develop for every future PR). Both
+  device checks performed by Aster against merged develop and reported
+  done with no findings: (1) C3 timed-mode spacing (timed-stats list
+  flush, practice cross-check unchanged, "Lernset:" line unchanged);
+  (2) #1637 Dexie adaptive lesson with a mixed error-type history, no
+  crash, pure-matching regression OK. The #1634 device-check checkbox
+  ticked retroactively on the merged PR. Day closed: 13 PRs merged
+  across 3 sessions, 1 release shipped, 0 open threads.

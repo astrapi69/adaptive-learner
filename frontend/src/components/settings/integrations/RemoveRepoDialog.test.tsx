@@ -59,6 +59,18 @@ describe("RemoveRepoDialog", () => {
     expect(onConfirm).toHaveBeenCalledWith(false);
   });
 
+  it("names the non-destructive default: progress kept + restored on reconnect (#1651)", () => {
+    setup();
+    // Default (checkbox unchecked) surfaces the keep-progress reassurance.
+    const keep = screen.getByTestId("content-repo-remove-keep");
+    expect(keep).toHaveTextContent(/kept/i);
+    expect(keep).toHaveTextContent(/reconnect|restore/i);
+    // The destructive consequence is NOT shown while keeping progress.
+    expect(
+      screen.queryByTestId("content-repo-remove-consequence"),
+    ).not.toBeInTheDocument();
+  });
+
   it("opting in shows the real counts + irreversibility and confirms true", () => {
     const { onConfirm } = setup();
     fireEvent.click(screen.getByTestId("content-repo-remove-delete-progress"));
@@ -66,6 +78,10 @@ describe("RemoveRepoDialog", () => {
     expect(warning).toHaveTextContent("3");
     expect(warning).toHaveTextContent("7");
     expect(warning).toHaveTextContent(/cannot be undone/i);
+    // The keep-progress reassurance yields to the destructive consequence.
+    expect(
+      screen.queryByTestId("content-repo-remove-keep"),
+    ).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId("content-repo-remove-dialog-confirm"));
     expect(onConfirm).toHaveBeenCalledWith(true);
   });

@@ -24,6 +24,7 @@ import SpacedRecommendations from "../../components/session/SpacedRecommendation
 import StreakCalendar from "../../components/gamification/StreakCalendar";
 import ToolRecommendations from "../../components/session/ToolRecommendations";
 import { Button } from "@/components/ui/button";
+import Tile from "../../shared/layout/Tile";
 import { useI18n } from "../../hooks/ui/useI18n";
 import type { HeatmapEntryOut } from "../../storage/types";
 import type {
@@ -81,8 +82,8 @@ export default function DashboardActivityTab({
         {profile ? (
           <ProfileRadar profile={profile} height={280} />
         ) : incompleteAssessment ? (
-          <div
-            className="tile flex flex-col items-start gap-2"
+          <Tile
+            className="flex flex-col items-start gap-2"
             data-testid="dashboard-profile-resume"
           >
             <p>{t("dashboard.profile_incomplete", "Learning profile incomplete.")}</p>
@@ -93,10 +94,10 @@ export default function DashboardActivityTab({
             >
               {t("dashboard.profile_resume", "Continue learning profile")}
             </Button>
-          </div>
+          </Tile>
         ) : (
-          <div
-            className="tile flex flex-col items-start gap-2"
+          <Tile
+            className="flex flex-col items-start gap-2"
             data-testid="dashboard-profile-empty"
           >
             <p className="muted">{t("dashboard.no_data")}</p>
@@ -108,7 +109,7 @@ export default function DashboardActivityTab({
             >
               {t("dashboard.profile_start", "Create learning profile")}
             </Button>
-          </div>
+          </Tile>
         )}
       </article>
 

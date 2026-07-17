@@ -29,6 +29,21 @@ function setup(cards: LessonCardDraft[] = []) {
     return handlers;
 }
 
+describe("CardEditor — layout regression (#1732)", () => {
+    it("gives the card list token-scale spacing and rows real card chrome", () => {
+        setup([card("c1"), card("c2")]);
+        const list = screen.getByTestId("card-list");
+        // Not an unstyled default <ul> — flex column with a token gap.
+        expect(list.className).toContain("flex");
+        expect(list.className).toMatch(/gap-/);
+        expect(list.className).toContain("list-none");
+        const row = screen.getByTestId("card-row-c1");
+        // Real card chrome (the #1715/#1732 defect was a bare, unstyled row).
+        expect(row.className).toContain("border");
+        expect(row.className).toMatch(/\bp-/);
+    });
+});
+
 describe("CardEditor", () => {
     it("shows the minimum-cards hint when under 4", () => {
         setup([card("c1")]);
@@ -70,6 +85,45 @@ describe("CardEditor", () => {
         const h = setup([card("c1")]);
         fireEvent.click(screen.getByTestId("card-delete-c1"));
         expect(h.onDelete).toHaveBeenCalledWith("c1");
+    });
+
+    // #1722 — the inline edit was the one unguarded path to an empty card
+    // side, which then failed the Step-4 structure check (ajv minLength: 1)
+    // with no visible reason. Save must be gated exactly like Add.
+    it("disables the inline-edit Save when a card side is emptied (#1722)", () => {
+        const h = setup([card("c1")]);
+        fireEvent.click(screen.getByTestId("card-edit-c1"));
+        fireEvent.change(screen.getByTestId("card-edit-back-c1"), {
+            target: {value: "   "},
+        });
+        expect(screen.getByTestId("card-edit-save-c1")).toBeDisabled();
+        fireEvent.click(screen.getByTestId("card-edit-save-c1"));
+        expect(h.onUpdate).not.toHaveBeenCalled();
+        fireEvent.change(screen.getByTestId("card-edit-back-c1"), {
+            target: {value: "Hallo"},
+        });
+        expect(screen.getByTestId("card-edit-save-c1")).not.toBeDisabled();
+    });
+
+    it("caps card sides at the schema's 500 chars (#1722)", () => {
+        setup([card("c1")]);
+        expect(screen.getByTestId("card-front-input")).toHaveAttribute(
+            "maxlength",
+            "500",
+        );
+        expect(screen.getByTestId("card-back-input")).toHaveAttribute(
+            "maxlength",
+            "500",
+        );
+        fireEvent.click(screen.getByTestId("card-edit-c1"));
+        expect(screen.getByTestId("card-edit-front-c1")).toHaveAttribute(
+            "maxlength",
+            "500",
+        );
+        expect(screen.getByTestId("card-edit-back-c1")).toHaveAttribute(
+            "maxlength",
+            "500",
+        );
     });
 
     it("imports valid CSV rows", () => {

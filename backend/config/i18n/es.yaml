@@ -2067,6 +2067,12 @@ content:
     import: "Importar"
     imported: "Lección importada."
     failed: "No se pudo importar la lección."
+    collision_title: "Esta lección ya existe"
+    collision_body: "Un conjunto de lecciones guardado ya usa este identificador. ¿Sobrescribir, importar una copia aparte o cancelar?"
+    overwrite: "Sobrescribir"
+    copy: "Importar como copia"
+    copy_suffix: "copia"
+    skipped: "{n} lección(es) omitida(s) porque no superaron la validación."
   my_lessons:
     export_set: "Exportar como conjunto"
     share: "Compartir con la comunidad"
@@ -2551,6 +2557,7 @@ create_lesson:
     check_enoughExercises: "Al menos 5 ejercicios"
     check_enoughTypes: "Al menos 2 tipos de ejercicio"
     check_schemaValid: "Estructura de lección válida"
+    structure_error: "Detalle técnico"
   save:
     saved: "¡Lección guardada!"
     failed: "No se pudo guardar la lección."
@@ -2559,6 +2566,8 @@ create_lesson:
     play: "Reproducir lección"
     create_another: "Crear otra lección"
     to_browser: "Al explorador de contenido"
+    save_file: "Guardar como archivo"
+    file_saved: "Lección guardada como archivo."
   templates:
     heading: "Empezar con una plantilla"
     blank:
@@ -2990,6 +2999,7 @@ content_repo:
     title: "Eliminar repositorio"
     message: "¿Eliminar {source}? Su contenido descargado se eliminará de este dispositivo."
     delete_progress: "Eliminar también mi progreso de aprendizaje de este contenido."
+    keep_progress: "Tu progreso de aprendizaje se conserva. Si vuelves a conectar este repositorio, se restaurará."
     consequence: "Se eliminarán {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer."
     counting: "Contando tu progreso…"
     deleted: "Eliminado. Se borraron {lessons} lecciones y {cards} tarjetas de repaso."
@@ -3294,3 +3304,8 @@ registry:
     created: Solicitud de incorporación abierta.
     failed: No se pudo abrir la solicitud de incorporación.
     view: Ver tu solicitud de incorporación
+
+exercise:
+  listen_first:
+    label: "Escucha primero"
+    aria: "Reproducir pronunciación"
