@@ -2712,26 +2712,26 @@
   "create_lesson": {
     "book": {
       "rights_hint": "Pega solo textos sobre los que tengas derechos o que sean para uso personal.",
-      "heading": "Crear una leccion a partir de texto",
-      "intro": "Pega una seccion (p. ej. un capitulo) de tu libro de texto. La IA lo reescribe con sus propias palabras como teoria y genera ejercicios. Anade otra seccion ejecutando el asistente de nuevo.",
-      "text_label": "Seccion del libro",
-      "text_placeholder": "Pega aqui el texto del capitulo ...",
+      "heading": "Crear una lección a partir de texto",
+      "intro": "Pega una sección (p. ej. un capítulo) de tu libro de texto. La IA lo reescribe con sus propias palabras como teoría y genera ejercicios. Añade otra sección ejecutando el asistente de nuevo.",
+      "text_label": "Sección del libro",
+      "text_placeholder": "Pega aquí el texto del capítulo ...",
       "meta_legend": "Referencia del libro (opcional)",
-      "title_label": "Titulo del libro",
+      "title_label": "Título del libro",
       "author_label": "Autor",
       "url_label": "URL",
       "asin_label": "ISBN / ASIN",
-      "generate": "Generar teoria + ejercicios",
+      "generate": "Generar teoría + ejercicios",
       "generating": "Generando ...",
-      "feature": "para crear una leccion a partir de texto",
-      "generated": "{t} paso(s) de teoria y {e} ejercicio(s) generados.",
-      "summary": "{t} paso(s) de teoria, {e} ejercicio(s) listos.",
-      "paste_required": "Pega primero una seccion de tu libro de texto.",
-      "theory_failed": "La IA no devolvio teoria utilizable. Intentalo de nuevo.",
-      "exercises_failed": "No se generaron ejercicios utilizables. Intentalo de nuevo.",
-      "generate_failed": "No se pudo generar la leccion. Intentalo de nuevo.",
-      "generate_to_advance": "Genera la leccion a partir de tu texto para continuar.",
-      "review_theory": "{n} paso(s) de teoria",
+      "feature": "para crear una lección a partir de texto",
+      "generated": "{t} paso(s) de teoría y {e} ejercicio(s) generados.",
+      "summary": "{t} paso(s) de teoría, {e} ejercicio(s) listos.",
+      "paste_required": "Pega primero una sección de tu libro de texto.",
+      "theory_failed": "La IA no devolvió teoría utilizable. Inténtalo de nuevo.",
+      "exercises_failed": "No se generaron ejercicios utilizables. Inténtalo de nuevo.",
+      "generate_failed": "No se pudo generar la lección. Inténtalo de nuevo.",
+      "generate_to_advance": "Genera la lección a partir de tu texto para continuar.",
+      "review_theory": "{n} paso(s) de teoría",
       "review_exercises": "{n} ejercicio(s)",
       "review_book": "Libro: {title}"
     },
@@ -2839,8 +2839,8 @@
     },
     "templates": {
       "knowledge_from_text": {
-        "title": "Leccion de conocimiento a partir de texto",
-        "desc": "Pega una seccion de un libro; la IA escribe la teoria con sus propias palabras y genera ejercicios."
+        "title": "Lección de conocimiento a partir de texto",
+        "desc": "Pega una sección de un libro; la IA escribe la teoría con sus propias palabras y genera ejercicios."
       },
       "heading": "Empezar con una plantilla",
       "blank": {
