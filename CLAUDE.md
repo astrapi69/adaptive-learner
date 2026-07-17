@@ -1678,8 +1678,9 @@ make test-frontend    # Vitest only
 make test-coverage    # opt-in coverage (CI runs the equivalent)
 make prod / prod-down # Docker Compose
 make clean / help
-make sync-versions    # propagate backend/pyproject.toml to all 18 version-bearing files
+make sync-versions    # propagate backend/pyproject.toml to all 19 version-bearing files
 make sync-i18n        # regenerate frontend/src/data/i18n/*.json from backend YAML
+make verify-i18n-scripts  # i18n script-sanity lint: de substitute spelling + el/hi transliteration (#1755)
 make docs-serve / docs-build  # MkDocs site (port 8000)
 make archive-task     # interactive: move closed backlog items to roadmap-archive/YYYY-MM.md
 ```
@@ -1794,9 +1795,9 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.79.0 baseline (verified 2026-06-15):** backend 1215 + plugins
-  1018 + Vitest 4139 = **6372 tests**. E2E
-  smoke (17 spec files) runs separately via
+- **v2.3.0+ baseline (verified 2026-07-17):** backend 1415 + plugins
+  1080 + Vitest 7213 = **9708 tests**. E2E
+  smoke runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (73 specs incl. the Phase 61 interactive journeys —
   full lesson playthrough across all 5 exercise types,
@@ -1823,9 +1824,12 @@ imports are forbidden.
 
 `cd backend && poetry run pre-commit install`. Hooks: standard
 whitespace + YAML/JSON checks, ruff (`--fix` + format),
-`roadmap-archive-reminder` (non-blocking), and
+`roadmap-archive-reminder` (non-blocking),
 `plugin-lock-paired-with-pyproject` (blocks staged plugin
-pyproject changes without a paired `poetry.lock`).
+pyproject changes without a paired `poetry.lock`),
+`validate-bundled-content` (README CONTENT-STATS vs the sibling
+content checkout), and `i18n-script-sanity` (#1755 - real umlauts
+in de, native script in el/hi catalogs).
 
 ## Related projects
 
