@@ -2420,6 +2420,12 @@
       "domain_psychology": "मनोविज्ञान",
       "domain_programming": "प्रोग्रामिंग",
       "domain_math": "गणित",
+      "domain_ai": "एआई",
+      "domain_knowledge": "ज्ञान",
+      "domain_technology": "प्रौद्योगिकी",
+      "domain_software": "सॉफ़्टवेयर",
+      "domain_philosophy": "दर्शन",
+      "domain_language": "भाषा",
       "code_copy": "कोड कॉपी करें",
       "code_output": "आउटपुट:",
       "no_primary": "आपकी भाषा के लिए अभी कोई सेट नहीं है। नीचे अन्य स्रोत भाषाएँ ब्राउज़ करें।"
