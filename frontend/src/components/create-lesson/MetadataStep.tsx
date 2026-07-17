@@ -44,6 +44,11 @@ interface MetadataStepProps {
     sameLanguage: boolean;
     onUpdate: (key: keyof LessonMeta, value: string) => void;
     onApplyTemplate: (key: LessonTemplateKey) => void;
+    /** #1756 — the template the user applied, rendered as a pressed
+     *  state on its card. Without it the card-based templates give no
+     *  immediate feedback (their effect only shows on step 2), which
+     *  reads as a dead click next to the instant book-mode card. */
+    selectedTemplate: LessonTemplateKey | null;
     /** #1743 — enter the book-text path (paste a chapter, AI writes the
      *  theory + exercises). Separate from the card-based templates. */
     onStartBookMode: () => void;
@@ -58,6 +63,7 @@ export default function MetadataStep({
     sameLanguage,
     onUpdate,
     onApplyTemplate,
+    selectedTemplate,
     onStartBookMode,
     t,
 }: MetadataStepProps) {
@@ -86,8 +92,13 @@ export default function MetadataStep({
                         <button
                             type="button"
                             key={key}
-                            className="template-card flex flex-col gap-1 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-accent hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                            className={`template-card flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:border-accent hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                                selectedTemplate === key
+                                    ? "border-accent bg-accent/10 ring-1 ring-accent"
+                                    : "border-border bg-card"
+                            }`}
                             data-testid={`template-${key}`}
+                            aria-pressed={selectedTemplate === key}
                             onClick={() => onApplyTemplate(key)}
                         >
                             <span className="template-card-title font-semibold text-fg-primary">

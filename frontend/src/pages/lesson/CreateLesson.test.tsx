@@ -171,6 +171,30 @@ describe("CreateLesson — card step gate + draft", () => {
         expect(screen.getByTestId("card-count").textContent).toContain("10");
     });
 
+    it("marks the clicked template card as selected (#1756)", () => {
+        renderPage();
+        // Before any click no card is pressed.
+        expect(
+            screen.getByTestId("template-vocabulary").getAttribute("aria-pressed"),
+        ).toBe("false");
+        fireEvent.click(screen.getByTestId("template-vocabulary"));
+        expect(
+            screen.getByTestId("template-vocabulary").getAttribute("aria-pressed"),
+        ).toBe("true");
+        // Only ONE card carries the selected state.
+        expect(
+            screen.getByTestId("template-grammar").getAttribute("aria-pressed"),
+        ).toBe("false");
+        // Picking another template moves the selection.
+        fireEvent.click(screen.getByTestId("template-grammar"));
+        expect(
+            screen.getByTestId("template-grammar").getAttribute("aria-pressed"),
+        ).toBe("true");
+        expect(
+            screen.getByTestId("template-vocabulary").getAttribute("aria-pressed"),
+        ).toBe("false");
+    });
+
     it("blocks step 3 until at least 4 cards exist", () => {
         toStep2();
         expect(screen.getByTestId("create-lesson-step-2")).toBeInTheDocument();
