@@ -7,7 +7,8 @@ on a research-backed six-method model. You take a 12-question
 assessment, the app discovers which methods suit you, then
 AI-supported sessions walk you through a seven-step learning
 cycle. The app adapts how it teaches based on how you
-actually learn. **v1.91.0**, shipped across 90+ releases.
+actually learn. Continuously developed — find the current
+version on the [Releases page](https://github.com/astrapi69/adaptive-learner/releases).
 
 [Try it now](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
@@ -86,12 +87,12 @@ time, what method-switch unlocked progress.
 
 ## Status
 
-Active development. **v1.91.0** is a UX release that
-restructured the primary navigation from 12+ entries down to
-7 grouped entries (Nielsen-Norman 5-7) with no loss of
-function, plus a mobile bottom tab bar.
+Active development. The current version and its highlights
+live on the [GitHub Releases page](https://github.com/astrapi69/adaptive-learner/releases);
+the full history is in
+[changelog/releases](https://github.com/astrapi69/adaptive-learner/tree/main/changelog/releases).
 
-- **6,000+ automated tests** across backend, plugins, and
+- **Thousands of automated tests** across backend, plugins, and
   frontend (Vitest), plus a Playwright smoke + Dexie-mode
   release-gate suite
 - **11 UI languages, all fully translated** (DE / EL / EN /

@@ -9,7 +9,8 @@
 υποστηριζόμενες από ΤΝ σε καθοδηγούν μέσα από έναν κύκλο
 μάθησης επτά βημάτων. Η εφαρμογή προσαρμόζει τον τρόπο
 διδασκαλίας βάσει του τρόπου που πραγματικά μαθαίνεις.
-**v1.20.0**, 34 αναπτυξιακές φάσεις αποσταλμένες.
+Σε συνεχή ανάπτυξη — η τρέχουσα έκδοση βρίσκεται στη
+[σελίδα Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 [Δοκίμασέ το τώρα](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
@@ -89,9 +90,8 @@ browser, κλήσεις ΤΝ απευθείας στο Anthropic / OpenAI / Gemi
 
 ## Κατάσταση
 
-Ενεργή ανάπτυξη. **Το v1.20.0 κυκλοφόρησε στις 2026-05-22**
-με ρύθμιση κλειδιού βάσει αρχείου `secrets.yaml` για τη
-χρήση του desktop launcher.
+Ενεργή ανάπτυξη. Η τρέχουσα έκδοση και τα σημαντικότερα
+νέα της βρίσκονται στη [σελίδα GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 - **2634 δοκιμές** (786 backend + 615 plugins + 1233 frontend
   Vitest + 16 αρχεία smoke spec Playwright)
