@@ -92,11 +92,11 @@ describe("generateExercises", () => {
         expect((ex[0].images?.length ?? 0)).toBeGreaterThanOrEqual(2);
     });
 
-    // #1763 — uploaded card images are stored as base64 data URIs, which
-    // would blow past the picture_choice ``src`` schema cap (maxLength
-    // 500) and fail ``validateGeneratedLesson``. They must be excluded
-    // from picture-choice generation; short repo paths still feed it.
-    it("excludes data-URI card images from picture-choice", () => {
+    // #1763 stored uploaded card images as base64 data URIs but had to
+    // EXCLUDE them from picture-choice (the engine's ``src`` cap was 500
+    // chars). Engine 0.13.0 / schema 1.8 (#1770) accepts data URIs in
+    // ``src`` explicitly - uploaded images now feed picture-choice.
+    it("includes data-URI card images in picture-choice (engine 0.13.0)", () => {
         const dataUri = `data:image/jpeg;base64,${"A".repeat(2000)}`;
         const withDataUris: GeneratorCard[] = [
             {id: "c0", front: "chat", back: "cat", image: dataUri},
@@ -108,7 +108,9 @@ describe("generateExercises", () => {
             types: ["picture_choice"],
             direction: "auto",
         });
-        expect(ex).toHaveLength(0);
+        expect(ex.length).toBeGreaterThan(0);
+        expect(ex[0].type).toBe("picture_choice");
+        expect(ex[0].images?.some((im) => im.src === dataUri)).toBe(true);
     });
 
     it("still builds picture-choice from short repo-path images", () => {

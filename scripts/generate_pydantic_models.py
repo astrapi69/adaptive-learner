@@ -152,6 +152,76 @@ def _fix_nullable_lists(source: str) -> str:
     )
 
 
+_STR_WRAPPER_CLASS = re.compile(
+    r"class (?P<name>\w+)\(RootModel\[str\]\):\n"
+    r"    model_config = ConfigDict\(\n"
+    r"        frozen=True,\n"
+    r"    \)\n"
+    r"    root: str = Field\(\n?\s*(?P<args>[^)]*?)\n?\s*\)\n"
+    r'(?P<doc>    """\n(?:    .*\n)*?    """\n)?',
+)
+
+_CONSTRAINT_KEYS = ("min_length", "max_length", "pattern")
+
+
+def _alias_constrained_str_wrappers(source: str) -> str:
+    """Replace constrained ``RootModel[str]`` wrappers with ``Annotated[str, ...]`` aliases.
+
+    A JSON-Schema ``anyOf`` of two CONSTRAINED strings (engine schema 1.8:
+    ``PictureImage.src`` is an assets/ path <= 500 chars OR a base64 data
+    URI with its own cap) is reified by datamodel-code-generator into
+    named ``RootModel[str]`` wrapper classes (``Src``, ``Src1``) - whose
+    instances break plain ``str`` access exactly like the nullable-anyOf
+    wrappers ``_collapse_nullable`` prevents. This deterministic post-step
+    (same category as ``_fix_nullable_lists``, covered by the ``--check``
+    drift gate) rewrites each wrapper into a type ALIAS::
+
+        Src = Annotated[str, StringConstraints(min_length=1, max_length=500)]
+
+    The union annotation (``src: Src | Src1``) stays textually unchanged,
+    but the validated value is now a plain ``str`` - Pydantic tries the
+    Annotated branches exactly like the JSON-Schema ``anyOf`` - so the
+    public API keeps hand-model ergonomics (``img.src.startswith(...)``).
+    """
+
+    def to_alias(match: re.Match[str]) -> str:
+        argument_text = match.group("args").replace("\n", " ")
+        # Quote-aware kwarg extraction: a pattern constraint may contain
+        # commas inside its quoted value ('^data:image/...;base64,').
+        constraints = [
+            f"{key}={value}"
+            for key, value in re.findall(r"(\w+)=('[^']*'|[^,\s]+)", argument_text)
+            if key in _CONSTRAINT_KEYS
+        ]
+        alias = f"{match.group('name')} = Annotated[str, StringConstraints({', '.join(sorted(constraints))})]\n"
+        doc_block = match.group("doc")
+        if doc_block:
+            alias += doc_block.replace('    """', '"""', 2)
+        return alias
+
+    rewritten, wrapper_count = _STR_WRAPPER_CLASS.subn(to_alias, source)
+    if wrapper_count == 0:
+        return source
+    rewritten = rewritten.replace(
+        "from typing import Any",
+        "from typing import Annotated, Any",
+        1,
+    )
+    if "RootModel" not in rewritten.replace("from pydantic import BaseModel, ConfigDict, Field, RootModel", ""):
+        rewritten = rewritten.replace(
+            "from pydantic import BaseModel, ConfigDict, Field, RootModel",
+            "from pydantic import BaseModel, ConfigDict, Field, StringConstraints",
+            1,
+        )
+    else:
+        rewritten = rewritten.replace(
+            "from pydantic import BaseModel, ConfigDict, Field, RootModel",
+            "from pydantic import BaseModel, ConfigDict, Field, RootModel, StringConstraints",
+            1,
+        )
+    return rewritten
+
+
 def generate(schema_path: Path, class_name: str) -> str:
     """Run datamodel-codegen for one schema, return the module source."""
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
@@ -178,7 +248,7 @@ def generate(schema_path: Path, class_name: str) -> str:
             check=True,
             capture_output=True,
         )
-        return _fix_nullable_lists(out.read_text(encoding="utf-8"))
+        return _alias_constrained_str_wrappers(_fix_nullable_lists(out.read_text(encoding="utf-8")))
 
 
 def main() -> int:

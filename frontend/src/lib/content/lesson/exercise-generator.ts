@@ -216,14 +216,12 @@ export function buildPictureChoice(
     cards: GeneratorCard[],
     prompt: string,
 ): ContentLessonExercise[] {
-    // #1763 — an uploaded card image is a base64 data URI; it would blow
-    // past the picture_choice ``src`` schema cap (maxLength 500) and fail
-    // ``validateGeneratedLesson``, and the runtime asset resolver can't
-    // display it anyway. Only short repo-relative paths feed picture-choice.
-    const withImg = cards.filter((c) => {
-        const img = (c.image ?? "").trim();
-        return img.length > 0 && !img.startsWith("data:");
-    });
+    // Engine 0.13.0 / schema 1.8 (#1770): ``src`` explicitly accepts an
+    // inline base64 data URI next to the classic assets/ path, so
+    // uploaded card images (#1763, stored as data URIs) feed
+    // picture-choice like any other image. The renderer shows data URIs
+    // directly, without an asset lookup.
+    const withImg = cards.filter((c) => (c.image ?? "").trim().length > 0);
     if (withImg.length < 2) return [];
     const out: ContentLessonExercise[] = [];
     withImg.forEach((c, i) => {
