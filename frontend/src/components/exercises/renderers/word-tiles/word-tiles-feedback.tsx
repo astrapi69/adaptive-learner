@@ -9,13 +9,13 @@
 
 import {Check, X} from "lucide-react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import AnswerCelebration from "../feedback/AnswerCelebration";
-import ExerciseAnswerToggle, {type AnswerView} from "../feedback/ExerciseAnswerToggle";
-import ExerciseSuccessAdvance from "../feedback/ExerciseSuccessAdvance";
-import ExerciseFooter from "../shell/ExerciseFooter";
+import AnswerCelebration from "../../feedback/AnswerCelebration";
+import ExerciseAnswerToggle, {type AnswerView} from "../../feedback/ExerciseAnswerToggle";
+import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
+import ExerciseFooter from "../../shell/ExerciseFooter";
 import {WordTilesAnswerView} from "./word-tiles-parts";
 
 export type Translate = (key: string, fallback?: string) => string;

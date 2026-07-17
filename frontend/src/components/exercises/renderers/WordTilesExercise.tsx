@@ -22,10 +22,9 @@
  *
  * Split (#1776): this file keeps the answer state, the scoring
  * wiring (``useControlledExercise``), and the composition. The
- * DnD mechanics live in ``useWordTilesDnd``; the editing surface
- * in ``word-tiles-editor.tsx``; the hint / result / reveal
- * surfaces in ``word-tiles-feedback.tsx``; the shared tile
- * styling + answer view in ``word-tiles-parts.tsx``.
+ * DnD mechanics, the editing surface, the hint / result / reveal
+ * surfaces, and the shared tile styling live in the
+ * ``word-tiles/`` concern group next door (barrel export).
  *
  * Mobile-first: scrambled bar wraps, each tile is 44px
  * min-height.
@@ -40,19 +39,19 @@ import {useI18n} from "../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
 import ExerciseHint from "../feedback/ExerciseHint";
 import ExercisePromptRow from "../shell/ExercisePromptRow";
-import {useWordTilesDnd} from "./useWordTilesDnd";
-import {WordTilesEditor} from "./word-tiles-editor";
 import {
+    WordTilesEditor,
     WordTilesHint,
     WordTilesResult,
     WordTilesReveal,
-} from "./word-tiles-feedback";
+    useWordTilesDnd,
+} from "./word-tiles";
 import {deriveWordTilesAttempt} from "../../../lib/srs/element-attempt";
 import {isWordTilesCorrect} from "../../../lib/exercises/word-tiles-equivalence";
 import type {ContentLessonExercise} from "../../../storage/types";
 
 export {isWordTilesCorrect} from "../../../lib/exercises/word-tiles-equivalence";
-export {applyDragReorder} from "./useWordTilesDnd";
+export {applyDragReorder} from "./word-tiles";
 import DirectionInstruction from "../feedback/DirectionInstruction";
 import {type AnswerView} from "../feedback/ExerciseAnswerToggle";
 import type {

@@ -25,7 +25,7 @@ import {CSS} from "@dnd-kit/utilities";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 import type {Ref} from "react";
 
-import {useI18n} from "../../../hooks/ui/useI18n";
+import {useI18n} from "../../../../hooks/ui/useI18n";
 import {cn} from "@/lib/utils";
 import {WORD_TILE_BASE, WORD_TILE_PLACED} from "./word-tiles-parts";
 
