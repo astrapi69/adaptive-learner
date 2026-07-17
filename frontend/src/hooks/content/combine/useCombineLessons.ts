@@ -17,12 +17,12 @@ import {
     type CombinedLanguages,
     type CombineSource,
     type CombineTarget,
-} from "../../lib/content/lesson/combine-lessons";
-import type {CombineDecision} from "../../components/content/lessons/CombineLessonsDialog";
-import {getStorage} from "../../storage";
-import type {ContentLesson, ContentSetEntry} from "../../storage/types";
-import {useI18n} from "../ui/useI18n";
-import {notify} from "../../utils/notify";
+} from "../../../lib/content/lesson/combine-lessons";
+import type {CombineDecision} from "../../../components/content/lessons/CombineLessonsDialog";
+import {getStorage} from "../../../storage";
+import type {ContentLesson, ContentSetEntry} from "../../../storage/types";
+import {useI18n} from "../../ui/useI18n";
+import {notify} from "../../../utils/notify";
 
 interface UseCombineLessonsDeps {
     /** The user's own sets (already filtered to USER_GENERATED_SOURCE). */

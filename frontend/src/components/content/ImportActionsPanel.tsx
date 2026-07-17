@@ -34,7 +34,7 @@ import ContentShareDialog from "./share/ContentShareDialog";
 import DeleteLessonModal from "./lessons/DeleteLessonModal";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
 import { useContentSetActions } from "../../hooks/content/useContentSetActions";
-import { useCombineLessons } from "../../hooks/content/useCombineLessons";
+import { useCombineLessons } from "../../hooks/content/combine";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
 import {
