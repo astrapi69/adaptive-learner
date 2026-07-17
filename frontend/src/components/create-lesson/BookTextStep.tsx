@@ -192,6 +192,16 @@ export default function BookTextStep({
                 />
             </label>
 
+            <p
+                className="-mt-3 text-xs text-fg-muted"
+                data-testid="book-rights-hint"
+            >
+                {t(
+                    "create_lesson.book.rights_hint",
+                    "Only paste text you have the rights to, or that is intended for personal use.",
+                )}
+            </p>
+
             <fieldset className="flex flex-col gap-4 rounded-lg border border-border p-4">
                 <legend className="px-1 text-sm font-medium text-fg-primary">
                     {t(

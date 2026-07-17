@@ -81,6 +81,12 @@ describe("BookTextStep", () => {
         expect(screen.getByTestId("book-generate")).toBeTruthy();
     });
 
+    it("shows the non-blocking text-rights hint (#1743)", () => {
+        setup();
+        const hint = screen.getByTestId("book-rights-hint");
+        expect(hint.textContent).toMatch(/rights|personal use/i);
+    });
+
     it("generates theory + exercises and reports them upward", async () => {
         const {onGenerated} = setup();
         fireEvent.click(screen.getByTestId("book-generate"));

@@ -2477,6 +2477,7 @@ missions:
 
 create_lesson:
   book:
+    rights_hint: "Tempel hanya teks yang Anda miliki haknya atau yang ditujukan untuk penggunaan pribadi."
     heading: "Buat pelajaran dari teks"
     intro: "Tempel satu bagian (mis. satu bab) dari buku teks Anda. AI menuliskannya kembali dengan kata-katanya sendiri sebagai teori dan membuat latihan. Tambahkan bagian lain dengan menjalankan wizard lagi."
     text_label: "Bagian buku teks"

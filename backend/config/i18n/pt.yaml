@@ -2467,6 +2467,7 @@ missions:
 
 create_lesson:
   book:
+    rights_hint: "Cole apenas textos sobre os quais voce tem direitos ou destinados a uso pessoal."
     heading: "Criar uma licao a partir de texto"
     intro: "Cole uma secao (p. ex. um capitulo) do seu livro. A IA a reescreve com as proprias palavras como teoria e gera exercicios. Adicione outra secao executando o assistente novamente."
     text_label: "Secao do livro"

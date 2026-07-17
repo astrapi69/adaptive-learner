@@ -2705,6 +2705,7 @@
   },
   "create_lesson": {
     "book": {
+      "rights_hint": "Pega solo textos sobre los que tengas derechos o que sean para uso personal.",
       "heading": "Crear una leccion a partir de texto",
       "intro": "Pega una seccion (p. ej. un capitulo) de tu libro de texto. La IA lo reescribe con sus propias palabras como teoria y genera ejercicios. Anade otra seccion ejecutando el asistente de nuevo.",
       "text_label": "Seccion del libro",

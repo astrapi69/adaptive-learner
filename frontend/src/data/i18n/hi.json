@@ -2705,6 +2705,7 @@
   },
   "create_lesson": {
     "book": {
+      "rights_hint": "Keval wahi text paste karen jinke rights aapke paas hain ya jo vyaktigat upyog ke liye hain.",
       "heading": "Text se paath banaen",
       "intro": "Apni paathyapustak ka ek anubhag (jaise ek adhyay) paste karen. AI ise apne shabdon mein siddhant ke roop mein likhta hai aur abhyaas banata hai. doosra anubhag jodne ke liye wizard ko dobara chalaen.",
       "text_label": "Paathyapustak anubhag",

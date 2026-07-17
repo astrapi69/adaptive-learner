@@ -2705,6 +2705,7 @@
   },
   "create_lesson": {
     "book": {
+      "rights_hint": "Fuege nur Texte ein, an denen du die Rechte hast oder die fuer den persoenlichen Gebrauch bestimmt sind.",
       "heading": "Lektion aus Text erstellen",
       "intro": "Fuege einen Abschnitt (z. B. ein Kapitel) deines Lehrbuchs ein. Die KI formuliert ihn in eigenen Worten als Theorie und generiert Uebungen. Weitere Abschnitte fuegst du hinzu, indem du den Assistenten erneut durchlaeufst.",
       "text_label": "Lehrbuch-Abschnitt",

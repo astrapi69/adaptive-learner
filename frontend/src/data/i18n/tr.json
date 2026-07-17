@@ -2705,6 +2705,7 @@
   },
   "create_lesson": {
     "book": {
+      "rights_hint": "Yalnizca haklarina sahip oldugun veya kisisel kullanim icin olan metinleri yapistir.",
       "heading": "Metinden ders olustur",
       "intro": "Ders kitabinizin bir bolumunu (orn. bir bolum) yapistirin. Yapay zeka bunu kendi kelimeleriyle teori olarak yeniden yazar ve alistirmalar uretir. Baska bir bolum eklemek icin sihirbazi yeniden calistirin.",
       "text_label": "Ders kitabi bolumu",

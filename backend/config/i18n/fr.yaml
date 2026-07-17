@@ -2469,6 +2469,7 @@ missions:
 
 create_lesson:
   book:
+    rights_hint: "Ne collez que des textes dont vous detenez les droits ou destines a un usage personnel."
     heading: "Creer une lecon a partir d'un texte"
     intro: "Collez une section (par ex. un chapitre) de votre manuel. L'IA la reformule avec ses propres mots en theorie et genere des exercices. Ajoutez une autre section en relançant l'assistant."
     text_label: "Section du manuel"

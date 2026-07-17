@@ -2477,6 +2477,7 @@ missions:
 
 create_lesson:
   book:
+    rights_hint: "Only paste text you have the rights to, or that is intended for personal use."
     heading: "Create a lesson from text"
     intro: "Paste one section (e.g. a chapter) of your textbook. The AI rewrites it in its own words as theory and generates exercises. Add another section by running the wizard again."
     text_label: "Textbook section"

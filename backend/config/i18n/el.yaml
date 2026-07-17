@@ -2469,6 +2469,7 @@ missions:
 
 create_lesson:
   book:
+    rights_hint: "Epikolliste mono keimena gia ta opoia echete dikaiomata i pou proorizontai gia prosopiki chrisi."
     heading: "Dimiourgia mathimatos apo keimeno"
     intro: "Epikolliste mia enotita (p.ch. ena kefalaio) tou vivliou sas. To AI tin xanagrafei me dika tou logia os theoria kai dimiourgei askiseis. Prostheste alli enotita ektelontas xana ton odigo."
     text_label: "Enotita vivliou"
