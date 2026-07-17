@@ -167,6 +167,11 @@ export default function CreateLesson() {
     // before any edits. Held until the user chooses.
     const [pendingDraft, setPendingDraft] = useState<LessonDraft | null>(null);
 
+    // #1756 — which card-based template was applied. Pure feedback state:
+    // the templates fill cards/genConfig silently (visible only on step 2),
+    // so the clicked card renders a pressed state.
+    const [selectedTemplate, setSelectedTemplate] = useState<LessonTemplateKey | null>(null);
+
     // #1743 — book-text path state. ``bookMode`` switches the wizard to the
     // 3-step Metadata -> BookText -> Review flow; the AI produces the theory
     // steps + exercises from the pasted chunk.
@@ -325,6 +330,7 @@ export default function CreateLesson() {
         const {cards: tplCards, config} = applyTemplate(key);
         setCards(tplCards);
         setGenConfig(config);
+        setSelectedTemplate(key);
     }
 
     /** #1743 — enter the book-text path from Step 1 and advance to the
@@ -619,6 +625,7 @@ export default function CreateLesson() {
                     sameLanguage={sameLanguage}
                     onUpdate={update}
                     onApplyTemplate={applyLessonTemplate}
+                    selectedTemplate={selectedTemplate}
                     onStartBookMode={startBookMode}
                     t={t}
                 />
