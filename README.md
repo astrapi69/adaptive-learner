@@ -1,7 +1,7 @@
 # Adaptive Learner
 
 [![Version](https://img.shields.io/badge/version-v2.3.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-6372%20green-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-9708%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
@@ -423,7 +423,7 @@ reference lives at
 
 ```bash
 make dev               # backend (18001) + frontend (15174)
-make test              # backend + plugins + Vitest (6372 tests)
+make test              # backend + plugins + Vitest (9708 tests)
 make test-coverage     # opt-in coverage (CI runs it nightly)
 make sync-versions     # propagate version across 18 files
 make sync-i18n         # backend YAML → frontend JSON bundles
@@ -436,14 +436,14 @@ E2E smoke: `cd e2e && npx playwright test --project=smoke`
 
 ## Tests
 
-Verified 2026-06-15 (v1.79.0):
+Verified 2026-07-17 (v2.3.0+):
 
 | Suite | Count |
 |---|---|
-| Backend (pytest) | 1215 |
-| Plugins (13 × pytest) | 1018 |
-| Frontend (Vitest 4) | 4139 |
-| **Total** | **6372** |
+| Backend (pytest) | 1415 |
+| Plugins (13 × pytest) | 1080 |
+| Frontend (Vitest 4) | 7213 |
+| **Total** | **9708** |
 
 Plus 17 Playwright smoke spec files covering: landing,
 onboarding+assessment, session (3-chunk SSE), curriculum,

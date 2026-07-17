@@ -25,6 +25,20 @@ needs **no AI key**:
 
 Entry points exist in the Content Browser and on the Dashboard.
 
+#### Knowledge lesson from text (book mode)
+
+The fifth template card, **"Knowledge lesson from text"**, starts a
+dedicated 3-step flow (Metadata → Book text → Review): paste one
+section (e.g. a chapter) of your textbook — the AI rewrites it **in
+its own words** as theory steps (never a copy) and generates
+matching exercises that link back to their theory step. Optional
+book metadata (title, author, URL, ISBN/ASIN) can be attached. Add
+further sections by running the wizard again.
+
+Unlike the card-based path, this mode requires a **configured AI
+key**. Only paste text you have the rights to, or that is intended
+for personal use.
+
 ### 2. As a file: the content-repo format
 
 A lesson is a JSON file in a **content set**. Sets live in public
