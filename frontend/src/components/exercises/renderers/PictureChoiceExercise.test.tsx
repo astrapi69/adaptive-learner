@@ -191,6 +191,31 @@ describe("PictureChoiceExercise: text fallback on image error", () => {
         ).toMatch(/is-text-fallback/);
     });
 
+    // Engine 0.13.0 / schema 1.8 (#1770): an uploaded card image is an
+    // inline base64 data URI in ``src``. It is self-contained - render it
+    // directly, no asset lookup, no placeholder.
+    it("renders an inline data-URI src directly as the <img> src", () => {
+        const inlineDataUri = `data:image/jpeg;base64,${"A".repeat(2000)}`;
+        const withDataUri: ContentLessonExercise = {
+            ...EXERCISE,
+            images: [
+                {src: inlineDataUri, label: "Cat", is_correct: "true"},
+                {src: "assets/dog.png", label: "Dog"},
+            ],
+        };
+        render(
+            <PictureChoiceExercise
+                exercise={withDataUri}
+                onComplete={vi.fn()}
+            />,
+        );
+        const tile = screen.getByTestId("picture-choice-0");
+        expect(tile.className).not.toMatch(/is-placeholder/);
+        const img = tile.querySelector("img");
+        expect(img).toBeInTheDocument();
+        expect(img?.getAttribute("src")).toBe(inlineDataUri);
+    });
+
     it("renders a placeholder SVG when no asset AND no legacy resolver (Phase 54D)", () => {
         render(
             <PictureChoiceExercise
