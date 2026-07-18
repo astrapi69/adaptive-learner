@@ -114,24 +114,46 @@ export default function Settings() {
     setPendingScroll("import");
   };
 
-  // #1773 — perform the deferred scroll only once the Data tab is the active
+  // #1773 / #1831 — perform the deferred scroll once the Data tab is the active
   // (visible) one. Panels stay mounted but inactive ones carry ``hidden``
   // (``display:none``), so a node in an inactive panel has NO layout and
-  // ``scrollIntoView`` is a no-op. Running from an effect keyed on
-  // ``activeTab`` guarantees the panel has committed visible before we scroll;
-  // one rAF lets layout settle for the smooth animation. The import target
-  // only exists in Dexie mode, so fall back to the section top otherwise.
+  // ``scrollIntoView`` is a no-op. A single rAF covers the panel
+  // display:none -> visible toggle, but NOT the async layout inside the panel:
+  // ``KeyVaultSection`` loads ``hasKeys`` asynchronously and the export block
+  // above the import target changes height when it resolves, so a one-shot
+  // scroll fired before that landed and the target was pushed back out of view
+  // (pendingScroll was cleared unconditionally, so it never re-scrolled -> the
+  // #1831 dexie-smoke failure). Retry across a bounded frame window, re-issuing
+  // the scroll until the target is actually in the viewport, then clear. The
+  // import target only exists in Dexie mode, so fall back to the section top.
   useEffect(() => {
     if (activeTab !== "data" || pendingScroll === null) return;
-    const raf = requestAnimationFrame(() => {
-      const target =
-        pendingScroll === "import"
-          ? document.querySelector('[data-testid="key-vault-import"]') ??
-            document.querySelector('[data-testid="key-vault-section"]')
-          : document.querySelector('[data-testid="key-vault-section"]');
-      target?.scrollIntoView?.({ behavior: "smooth", block: "start" });
-      setPendingScroll(null);
-    });
+    let raf = 0;
+    let frame = 0;
+    const maxFrames = 60; // ~1s at 60fps: enough for the async panel content to settle
+    const findTarget = () =>
+      pendingScroll === "import"
+        ? document.querySelector('[data-testid="key-vault-import"]') ??
+          document.querySelector('[data-testid="key-vault-section"]')
+        : document.querySelector('[data-testid="key-vault-section"]');
+    const inView = (el: Element) => {
+      const rect = el.getBoundingClientRect();
+      return rect.height > 0 && rect.bottom > 0 && rect.top < window.innerHeight;
+    };
+    const tick = () => {
+      const target = findTarget();
+      if (target && inView(target)) {
+        setPendingScroll(null);
+        return;
+      }
+      target?.scrollIntoView?.({ block: "start" });
+      if (++frame < maxFrames) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setPendingScroll(null);
+      }
+    };
+    raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [activeTab, pendingScroll]);
 
