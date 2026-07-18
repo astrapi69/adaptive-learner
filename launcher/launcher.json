@@ -27,7 +27,7 @@
   "releases_url": "https://github.com/astrapi69/adaptive-learner/releases/latest",
   "docs_url": "https://github.com/astrapi69/adaptive-learner/blob/main/docs/help/en/install/docker-desktop.md",
   "update_check_enabled": true,
-  "app_version": "2.3.0",
+  "app_version": "2.4.0",
   "legacy_names": ["adaptive_learner"],
   "cleanup_configs": [
     "~/.config/adaptive_learner",
