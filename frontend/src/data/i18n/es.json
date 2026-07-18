@@ -2315,6 +2315,8 @@
       "delete_failed": "No se pudo eliminar la lección."
     },
     "set_status": {
+      "delete_progress_option": "Eliminar también mi progreso de aprendizaje y las tarjetas de repaso ({lessons} lecciones, {cards} tarjetas)",
+      "delete_progress_option_nocounts": "Eliminar también mi progreso de aprendizaje y las tarjetas de repaso",
       "all": "Todos",
       "active": "Activo",
       "deferred": "Aplazado",

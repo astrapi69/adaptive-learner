@@ -2123,6 +2123,8 @@ content:
     deleted: पाठ हटा दिया गया।
     delete_failed: पाठ हटाया नहीं जा सका।
   set_status:
+    delete_progress_option: "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं ({lessons} पाठ, {cards} कार्ड)"
+    delete_progress_option_nocounts: "मेरी सीखने की प्रगति और दोहराव कार्ड भी हटाएं"
     all: "सभी"
     active: "सक्रिय"
     deferred: "स्थगित"
