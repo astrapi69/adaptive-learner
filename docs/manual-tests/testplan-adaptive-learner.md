@@ -1,7 +1,16 @@
-# Manueller Testplan — Adaptive Learner v2.2.0+
+# Manueller Testplan — Adaptive Learner v2.3.0+
 
-Stand: 16.07.2026 (Session 5, vor dem v2.3.0-Release)
+Stand: 18.07.2026 (Session 6, nach dem v2.3.0-Release)
 Tester: Aster + Beta-Tester
+
+Navigations-Hinweis: Der Content-Bereich ist ein Tab-Hub unter `/content`
+(`?tab=discover` = Entdecken, `?tab=my` = Meine Inhalte, `?tab=import` =
+Import). Die alten Routen `/discover` + `/import` leiten weiter. **Meine
+Lektionen**, der **Lektion-Import**, **Bearbeiten**, **Als Datei speichern**
+und **Zu Set kombinieren** liegen alle im Tab **Meine Inhalte** (`?tab=my`).
+Backup + KI-Schluessel-Tresor (KeyVault) liegen unter **Settings → Daten**;
+die Provider-Uebersicht unter **Settings → KI**; Content-Repos unter
+**Settings → Daten**.
 
 Struktur:
 - TEIL A: Was DU manuell testen musst (nach Prioritaet)
@@ -44,6 +53,8 @@ Noch nie durchgefuehrt. JETZT machen.
 - [ ] XP + Level korrekt
 - [ ] Legacy .json Import: altes Backup-Format → funktioniert
 - [ ] API-Keys NICHT im Backup (Sicherheits-Check)
+- [ ] Nach Restore: Provider-Uebersicht (Settings → KI) zeigt wieder-
+      hergestellte Einstellungen OHNE Reload (settings-refresh-bus, #1769)
 
 ---
 
@@ -131,19 +142,120 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
 
-### Import/Export von Lektionen/Sets (#1685-Haertung)
-- [ ] Lesson-Export "Als Datei speichern" im Create-Lesson-Flow
-- [ ] Import mit Namenskollision: sauberer Hinweis, kein Ueberschreiben
-- [ ] Teil-Import (ZIP mit einer kaputten Lektion): Rest importiert,
-      Fehler benannt
-- [ ] Groessen-Guard: absurd grosse Datei wird freundlich abgelehnt
+### Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
+
+Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +
+per-Karte "Exportieren" / "Als Set exportieren"; akzeptiert `.json` (eine
+Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
+
+- [ ] Import einer `.json`-Lektion: Vorschau zeigt Titel · Sprache · N
+      Lektionen · M Uebungen VOR dem Bestaetigen
+- [ ] Import eines `.zip`-Sets: Vorschau + korrekte Lektionszahl
+- [ ] Namenskollision: Drei-Wege-Dialog erscheint (Ueberschreiben /
+      Als Kopie importieren / Abbrechen), KEIN stilles Ueberschreiben;
+      "Als Kopie" erzeugt neue id + "(Kopie)"-Titel
+- [ ] Teil-Import (ZIP mit kaputten Lektionen): gueltige importieren,
+      Warnung "N Lektion(en) uebersprungen" wird angezeigt
+- [ ] Set mit NUR kaputten Lektionen: sauberer Fehler, kein Crash
+- [ ] Groessen-Guard: Datei > 5 MiB wird VOR dem Parsen freundlich
+      abgelehnt; kaputtes JSON/ZIP nennt den Grund, kein Crash
+- [ ] Round-Trip: Lektion exportieren → re-importieren → identisch in
+      Meine Inhalte
+- [ ] Create-Lesson "Als Datei speichern": Speichern-Schritt bietet
+      Datei-Download der eben erstellten Lektion (kanonisches JSON)
+
+### Create-Lesson-Wizard (`/create-lesson`, v2.3.0)
+
+- [ ] **Buchtext-Pfad (#1745):** Schritt 1 → Karte "Wissenslektion aus
+      Text" (unter der Template-Auswahl) startet einen 3-Schritt-Flow
+      (Metadaten → Buchtext → Review); Text einfuegen + Generieren → KI
+      formuliert Theorie in eigenen Worten + erzeugt Uebungen; OHNE
+      KI-Key: freundlicher Hinweis, kein Crash; "Weiter" erst nach
+      erfolgreicher Generierung
+- [ ] **Lektion bearbeiten (#1740):** Meine Inhalte → Karte einer EIGENEN
+      Lektion → Stift/Bearbeiten → Wizard oeffnet vorausgefuellt; Review
+      zeigt "Aenderungen speichern" (ueberschreibt dieselbe id, Fort-
+      schritt bleibt) + "Als Kopie speichern"; Fremd-Repo-Lektionen
+      zeigen KEIN Bearbeiten; Analyse-Lektionen fuehren zur Import-Seite
+- [ ] **Lektionen kombinieren (#1741):** Meine Inhalte → "Zu Set
+      kombinieren"-Umschalter → Checkbox-Auswahl (nur eigene Sets) →
+      "Kombinieren"-Dialog: Neues Set (Titel Pflicht) vs. zu bestehendem
+      Set; Originale bleiben erhalten; gemischte Sprachen/Level → nicht-
+      blockierende Warnung
+- [ ] **Gleiche-Sprache-Hinweis (#1721/#1730):** Quelle == Ziel zeigt
+      neutralen Hinweis, blockiert "Weiter" NICHT; kein "gueltiges
+      Sprachpaar"-Pruefpunkt mehr auf Review; Save wird aktiv sobald die
+      echte Checkliste passt (Titel, ≥4 Karten, ≥5 Uebungen, ≥2 Typen,
+      gueltige Struktur)
+- [ ] **Struktur-Check-Grund (#1724):** fehlgeschlagener "Gueltige
+      Lektionsstruktur"-Check nennt einen konkreten Grund, nicht nur ✗
+- [ ] **Template-Titel (#1674/#1756):** Template-Karten zeigen lesbare
+      Titel (auch offline) + einen gedrueckten/ausgewaehlten Zustand
+
+### Karten-Bild-Upload (#1763 / #1764)
+
+Ort: Create-Lesson Schritt 2 (Karten-Editor), im Hinzufuegen-Formular +
+jeder Karten-Zeile (`CardImageField`).
+
+- [ ] Feld "Bild (optional)" mit "Bild hochladen"-Button; nach Upload
+      64x64-Vorschau + "Entfernen"
+- [ ] Nur JPEG / PNG / WebP akzeptiert; anderer Typ → Inline-Fehler
+      (role=alert), kein Crash
+- [ ] Grosse Datei wird runterskaliert (≤512px Kante, ~150 KiB Kappe);
+      undekodierbare Datei → Fehler statt Crash
+- [ ] "Erweitert: Asset-Pfad verwenden" behaelt das manuelle
+      `img/…png`-Feld (fuer repo-publizierte Sets)
+- [ ] Round-Trip: Karte mit hochgeladenem Bild → exportieren →
+      re-importieren → Bild erhalten
+- [ ] Bekannte Grenze: hochgeladene data-URI-Bilder werden noch NICHT in
+      einer gespielten picture_choice-Uebung gerendert (Engine `src`-Kappe)
+
+### Lesson-Player UX (v2.3.0)
+- [ ] Pause-Button liegt jetzt im Sticky-Footer (#1644), Pausieren
+      funktioniert von dort
+- [ ] Titelbereich schlanker, keine In-Lektion-Beschreibung mehr (#1635)
+- [ ] Lektions-Zusammenfassung zeigt nur EINEN Favoriten-Button (#1649)
+- [ ] Skip-to-Content-Link beim Tabben von oben sichtbar (#1727, a11y)
+
+### Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
+- [ ] Deutsche Umlaut-Karten (`währung`, `präsenz`) laden korrekt
+      (App akzeptiert Unicode-Kleinbuchstaben in Karten-ids/-tags, #1808)
+- [ ] Eine tatsaechlich kaputte Lektion zeigt AUSSERHALB des Entwickler-
+      modus eine freundliche Meldung ("… ungueltige oder beschaedigte
+      Daten … Autor kontaktieren"), NICHT den rohen Fehler-Dump (#1824)
+- [ ] Mit Entwicklermodus AN (Settings): der technische Detail-Text
+      erscheint wieder angehaengt
 
 ### Discover + Registry (seit v2.2.0)
-- [ ] Source-Language-Filter als sichtbarer Chip (#1699/#1701)
+- [ ] Source-Language-Filter als sichtbarer Chip auf erster Ansicht
+      (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
+      ueber Reload (#1699/#1701)
 - [ ] Referenz-/Demo-Sets (graded-quiz-demo) erscheinen NICHT in
-      Discover/Meine Inhalte (#1702)
+      Discover/Meine Inhalte (#1702/#1706)
 - [ ] Per-Set Share-Link oeffnet direkt die Set-Detailseite (#1572)
 - [ ] Registrierten Content-Repo hinzufuegen (register-a-repo #1511)
+
+### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
+- [ ] Geloeschtes Set bleibt geloescht: Set in Meine Inhalte loeschen →
+      Aktualisieren → Set kommt NICHT zurueck (#1719)
+- [ ] Set aus einer nicht mehr konfigurierten Quelle bleibt in Meine
+      Inhalte sichtbar (nicht still versteckt) (#1731/#1734)
+- [ ] Buch-Empfehlungen kommen aus der foederierten Registry, nicht aus
+      der entfernten offiziellen `books.yaml` (#1717)
+
+### Content-Repo trennen vs. Fortschritt loeschen (#1651 / #1652)
+
+Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
+
+- [ ] Standard (Haekchen NICHT gesetzt): beruhigender Hinweis, dass der
+      Lernfortschritt ERHALTEN bleibt und beim Wiederverbinden zurueck-
+      kommt
+- [ ] "Fortschritt loeschen"-Haekchen gesetzt: Warnung mit ECHTEN Zahlen
+      (N Lektionen + M Wiederholungskarten, nicht rueckgaengig)
+- [ ] Nur trennen → dasselbe Repo wieder verbinden → Fortschritt wieder da
+- [ ] Trennen + loeschen → wieder verbinden → Fortschritt leer
+- [ ] Haekchen erscheint nur wenn es Fortschritt zu loeschen gibt
+      (Dexie-Modus)
 
 ### Social Sharing (visuell + nativ)
 - [ ] Share-Button nach Lektion sichtbar
@@ -161,6 +273,17 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 - [ ] "Sitzung fortsetzen" nach Chat-Import: AI kennt den Kontext
 - [ ] AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] Kein Button ohne Key fuehrt zu Error-Toast (disabled + Tooltip)
+
+### KI-Schluessel-Tresor Import (#1765 / #1769)
+- [ ] Settings → KI → "Konfigurierte Provider" → "Importieren" springt zu
+      Settings → Daten und scrollt den KeyVault-Import-Block sichtbar (#1765)
+- [ ] Import per "Datei waehlen" ODER Einfuegen des rohen Envelope-JSON in
+      das Textfeld; Passphrase immer erforderlich
+- [ ] Kaputtes/unvollstaendiges JSON → Inline-Fehler (aria-live), Import
+      bleibt deaktiviert
+- [ ] Nach erfolgreichem Import (Datei ODER Einfuegen): Wechsel zu
+      Settings → KI zeigt den Key SOFORT, ohne Reload (#1769)
+- [ ] Passphrase maskiert mit Reveal-Toggle; Key/Passphrase nie geloggt
 
 ---
 
@@ -214,7 +337,7 @@ Hier nur zur Dokumentation was abgedeckt ist.
 
 ---
 
-## Automatisiert: Unit + Component Tests (Vitest, 7000+;
+## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)
 
 Abdeckung:
@@ -237,7 +360,8 @@ Ausfuehren: `make test` oder `cd frontend && npm test`
 
 ---
 
-## Automatisiert: Backend + Plugin Tests (pytest, 1200+)
+## Automatisiert: Backend + Plugin Tests (pytest, 2400+;
+## aktuelle Zahl siehe docs/audits/current-coverage.md)
 
 Abdeckung:
 - FastAPI Endpoints (alle CRUD Operationen)
