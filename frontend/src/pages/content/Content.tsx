@@ -27,29 +27,24 @@
  * Continue Learning.
  */
 
-import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { Button } from "@/components/ui/button";
-import InfoHintButton from "../../shared/feedback/InfoHintButton";
 import PageContainer from "../../shared/layout/PageContainer";
 import { useInfoHint } from "../../shared/feedback/useInfoHint";
-import ContentTree from "../../components/content/browser/ContentTree";
+import ContentBrowsePanel from "../../components/content/browser/ContentBrowsePanel";
+import ContentPageHeader from "../../components/content/browser/ContentPageHeader";
 import ContentShareDialog from "../../components/content/share/ContentShareDialog";
 import ContentBookCompanions from "../../components/content/media/ContentBookCompanions";
 import ContentContributionsSection from "../../components/content/contributions/ContentContributionsSection";
 import ContentSearchBar from "../../components/content/browser/ContentSearchBar";
 import FilterMenuButton from "../../shared/forms/FilterMenuButton";
 import ContentSearchResults from "../../components/content/browser/ContentSearchResults";
-import ContentViewToggle from "../../components/content/browser/ContentViewToggle";
-import ContentSetListView, {
-  setSelectionKey,
-} from "../../components/content/browser/ContentSetListView";
+import { setSelectionKey } from "../../components/content/browser/ContentSetListView";
 import DeleteSetModal from "../../components/content/browser/DeleteSetModal";
-import BulkActionBar from "../../components/content/browser/BulkActionBar";
 import BulkDeleteSetsModal from "../../components/content/browser/BulkDeleteSetsModal";
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
+import { useContentFilters } from "../../hooks/content/browse";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
@@ -75,14 +70,8 @@ import AiValidationDialog from "../../components/content/quality/AiValidationDia
 import QualityCheckDialog from "../../components/content/quality/QualityCheckDialog";
 import type { AiCheckBadgeStatus } from "../../shared/status/AiCheckedBadge";
 import { USER_GENERATED_SOURCE } from "../../storage/types";
-import { isOfficialSource } from "../../lib/content/repos/content-repos";
-import {
-  STATUS_FILTER_ORDER,
-  matchesStatusFilter,
-  type StatusFilter,
-} from "../../lib/content/browse/set-status-filter";
+import { type StatusFilter } from "../../lib/content/browse/set-status-filter";
 import type { ContentSetEntry, SetStatus } from "../../storage/types";
-import { Checkbox } from "@/components/ui/checkbox";
 
 /** Community contribution target repo (manual maintainer review). */
 const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
@@ -132,12 +121,6 @@ export default function ContentPage() {
     setCollapsed((prev) => ({ ...prev, [nodeId]: !prev[nodeId] }));
   // "Other source languages" section is collapsed by default.
   const [otherExpanded, setOtherExpanded] = useState(false);
-  // EXP-023 Phase B — source filter: "all" / "official" / a specific
-  // user-repo source ("owner/repo").
-  const [sourceFilter, setSourceFilter] = useState<string>("all");
-  // #1300 — lifecycle status filter. Default "active" so "Meine Inhalte"
-  // opens on the clean working list; deferred/completed/all reachable here.
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("active");
   // #1240 — grid (rich tree) ⇄ list (compact) view. Default grid;
   // persisted across navigation/reload.
   const [viewMode, setViewMode] = useContentViewMode();
@@ -211,6 +194,17 @@ export default function ContentPage() {
     setContributions(listContributions());
   };
 
+  // Phase 59C — user-generated lessons ("My Lessons") render in
+  // their own section, separate from downloaded content sets.
+  const userSets = sets.filter((s) => s.source === USER_GENERATED_SOURCE);
+  const downloadedSets = sets.filter((s) => s.source !== USER_GENERATED_SOURCE);
+
+  // Filter state + every derived projection (status/source menus,
+  // visibleSets, the #1386 search-AND-filter) live in the extracted
+  // hook (#1793).
+  const filters = useContentFilters({ t, sets, downloadedSets, searchResult });
+  const { visibleSets, filteredSearchResult } = filters;
+
   if (loading) {
     return (
       <PageContainer testId="content-loading">
@@ -219,80 +213,9 @@ export default function ContentPage() {
     );
   }
 
-  // Phase 59C — user-generated lessons ("My Lessons") render in
-  // their own section, separate from downloaded content sets.
-  const userSets = sets.filter((s) => s.source === USER_GENERATED_SOURCE);
-  const downloadedSets = sets.filter((s) => s.source !== USER_GENERATED_SOURCE);
-
-  // Phase 60 — group downloaded sets into the source -> target ->
-  // level tree, ranked by the learner's active source languages.
-  // EXP-023 Phase A — when a user repo is connected, offer a source
-  // filter (Alle / Offiziell / Eigenes Repo) over the tree.
-  const userRepoSources = [
-    ...new Set(downloadedSets.filter((s) => !isOfficialSource(s.source)).map((s) => s.source)),
-  ];
-  const visibleSets = downloadedSets.filter((s) => {
-    // #1300 — status filter (default "active"); "all" passes every status.
-    if (!matchesStatusFilter(s, statusFilter)) return false;
-    if (sourceFilter === "all") return true;
-    if (sourceFilter === "official") return isOfficialSource(s.source);
-    return s.source === sourceFilter;
-  });
-
-  // #1386 — the status + source filters render as two menu buttons (the
-  // SetActionsMenu pattern; never a native select). Options are derived
-  // dynamically; the source button is ALWAYS visible so the learner can
-  // see what the list is (not) filtered to.
-  const statusOptions = STATUS_FILTER_ORDER.map((value) => ({
-    value,
-    label:
-      value === "all"
-        ? t("content.set_status.all", "All")
-        : value === "active"
-          ? t("content.set_status.active", "Active")
-          : value === "deferred"
-            ? t("content.set_status.deferred", "Deferred")
-            : t("content.set_status.completed", "Completed"),
-  }));
-  const hasOfficialSets = downloadedSets.some((s) => isOfficialSource(s.source));
-  const sourceOptions = [
-    { value: "all", label: t("content.filter.all_sources", "All sources") },
-    ...(hasOfficialSets
-      ? [{ value: "official", label: t("content.filter.official", "Official") }]
-      : []),
-    ...userRepoSources.map((src) => ({ value: src, label: src })),
-  ];
-  const passesSourceFilter = (entry: ContentSetEntry) =>
-    sourceFilter === "all"
-      ? true
-      : sourceFilter === "official"
-        ? isOfficialSource(entry.source)
-        : entry.source === sourceFilter;
-
-  // #1386 — search combines with the filters as AND (never filter silently:
-  // the filter row stays visible while searching). Matches whose set fails
-  // the active status/source filters are dropped from the result list.
-  const filterPassKeys = new Set(
-    sets
-      .filter((s) => matchesStatusFilter(s, statusFilter) && passesSourceFilter(s))
-      .map((s) => `${s.source}#${s.id}`),
-  );
-  const filteredMatches = searchResult.matches.filter((m) =>
-    filterPassKeys.has(`${m.source}#${m.setId}`),
-  );
-  const filteredSearchResult = {
-    ...searchResult,
-    matches: filteredMatches,
-    lessonCount: filteredMatches.reduce(
-      (n, m) => n + m.matchedLessons.length,
-      0,
-    ),
-  };
-
   // #1351 — multi-select derives from the currently VISIBLE (filtered) sets:
   // "select all" only ever covers what the learner can see, never silently
   // more. The selected entries drive the bulk actions.
-  const visibleKeys = visibleSets.map(setSelectionKey);
   const selectedEntries = visibleSets.filter((s) =>
     selection.isSelected(setSelectionKey(s)),
   );
@@ -318,58 +241,12 @@ export default function ContentPage() {
 
   return (
     <PageContainer testId="content-page">
-      <header className="content-header" data-testid="content-header">
-        <h1>{t("content.page_title", "Meine Inhalte")}</h1>
-        {/* #1272 — the info button sits inline, right after the title;
-            it reveals the intro prose + the (dynamic) sources line below
-            the header on demand. */}
-        <InfoHintButton
-          expanded={headerInfo.expanded}
-          blink={headerInfo.blink}
-          label={t("ui.info.show", "Show information")}
-          controls="content-info-text"
-          onClick={headerInfo.toggle}
-          testId="content-info-button"
-          className="self-center"
-        />
-        <button
-          type="button"
-          className="content-refresh-btn ml-auto"
-          onClick={handleRefresh}
-          disabled={refreshing}
-          data-testid="content-refresh"
-          aria-label={t("content.action.refresh", "Refresh")}
-        >
-          <RefreshCw size={16} aria-hidden="true" />
-          {refreshing
-            ? t("content.action.refreshing", "Refreshing…")
-            : t("content.action.refresh", "Refresh")}
-        </button>
-      </header>
-      {/* #1251 / #1272 — the permanent intro prose AND the sources line are
-          replaced by the header info button above, which expands both here
-          on demand (saving vertical space). The sources stay dynamic — the
-          actually-configured sources from listSets(). */}
-      {headerInfo.expanded && (
-        <div
-          id="content-info-text"
-          data-testid="content-info-text"
-          className="mb-4 text-sm text-muted-foreground"
-        >
-          <p>
-            {t(
-              "content.intro",
-              "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
-            )}
-          </p>
-          {sources.length > 0 && (
-            <p className="content-sources mt-1" data-testid="content-sources">
-              {t("content.sources", "Sources")}:{" "}
-              {sources.map((src) => `${src.source} @ ${src.branch}`).join(", ")}
-            </p>
-          )}
-        </div>
-      )}
+      <ContentPageHeader
+        headerInfo={headerInfo}
+        sources={sources}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+      />
 
       {/* EXP-025 / AUTH-02 — book-companion headers for connected repos
           that accompany a published book. Hidden while searching. */}
@@ -395,16 +272,16 @@ export default function ContentPage() {
         >
           <FilterMenuButton
             label={t("content.filter_menu.status", "Status")}
-            options={statusOptions}
-            value={statusFilter}
-            onChange={(value) => setStatusFilter(value as StatusFilter)}
+            options={filters.statusOptions}
+            value={filters.statusFilter}
+            onChange={(value) => filters.setStatusFilter(value as StatusFilter)}
             testId="content-status-filter"
           />
           <FilterMenuButton
             label={t("content.filter_menu.source", "Source")}
-            options={sourceOptions}
-            value={sourceFilter}
-            onChange={setSourceFilter}
+            options={filters.sourceOptions}
+            value={filters.sourceFilter}
+            onChange={filters.setSourceFilter}
             testId="content-source-filter"
           />
         </div>
@@ -447,130 +324,58 @@ export default function ContentPage() {
           openLessonFile={openLessonFile}
         />
       ) : (
-        <>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="content-section-title">
-              {t("content.my_lessons.downloaded_title", "Downloaded sets")}
-            </h2>
-            {downloadedSets.length > 0 && (
-              <ContentViewToggle mode={viewMode} onChange={setViewMode} />
-            )}
-          </div>
-          {downloadedSets.length === 0 ? (
-            <p className="content-empty" data-testid="content-empty">
-              {t(
-                "content.empty",
-                "No content sets available yet. Check your network connection and refresh, or configure a source in Settings.",
-              )}
-            </p>
-          ) : visibleSets.length === 0 ? (
-            /* #1386 — the active filters match nothing: say so and offer a
-               one-tap reset instead of a dead-end blank list. */
-            <div className="content-empty" data-testid="content-filter-empty">
-              <p>
-                {t(
-                  "content.filter_empty",
-                  "No sets match the active filters.",
-                )}
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                className="mt-2 min-h-11"
-                onClick={() => {
-                  setStatusFilter("all");
-                  setSourceFilter("all");
-                }}
-                data-testid="content-filter-reset"
-              >
-                {t("content.filter_reset", "Reset filters")}
-              </Button>
-            </div>
-          ) : (
-            <>
-              {/* #1351 — multi-select: select-all over the VISIBLE (filtered)
-                  sets + the bulk-action bar (shown once ≥1 is selected). */}
-              {visibleSets.length > 0 && (
-                <div
-                  className="mb-2 flex items-center gap-2"
-                  data-testid="content-select-all-row"
-                >
-                  <label className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center">
-                    <span className="sr-only">
-                      {t("content.set_status.select_all", "Select all")}
-                    </span>
-                    <Checkbox
-                      checked={selection.masterState(visibleKeys)}
-                      onCheckedChange={() => selection.selectAll(visibleKeys)}
-                      aria-label={t("content.set_status.select_all", "Select all")}
-                      data-testid="content-select-all"
-                    />
-                  </label>
-                  <span className="text-sm text-muted-foreground">
-                    {t("content.set_status.select_all", "Select all")}
-                  </span>
-                </div>
-              )}
-              <BulkActionBar
-                count={selection.count}
-                onSetStatus={bulkStatus}
-                onDelete={() => setBulkDeleteTargets(selectedEntries)}
-                onClear={selection.clear}
-              />
-              {viewMode === "list" ? (
-            <ContentSetListView
-              sets={visibleSets}
-              onSetStatus={(e, status) => void handleSetStatus(e, status)}
-              onDelete={setDeleteSetTarget}
-              selectable
-              selectedKeys={selection.selected}
-              onToggleSelect={(e) => selection.toggle(setSelectionKey(e))}
-            />
-          ) : (
-            <ContentTree
-              tree={tree}
-              lang={lang}
-              collapsed={collapsed}
-              toggleNode={toggleNode}
-              otherExpanded={otherExpanded}
-              setOtherExpanded={setOtherExpanded}
-              bookRecs={bookRecs}
-              setRow={{
-                perSetState,
-                online,
-                repoMeta,
-                recommendedSources,
-                onOpen: (e) => void handleOpenLesson(e),
-                onDownload: (e) => void handleDownload(e),
-                media,
-                onOpenMedia: (e) =>
-                  void handleOpenLesson(e, { focusResources: true }),
-                onAiCheck: (e) => setAiCheckTarget(e),
-                aiCheckDisabledReason,
-                onQualityCheck: (e) => setQualityCheckTarget(e),
-                aiBadgeStatusFor: (e): AiCheckBadgeStatus =>
-                  aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
-                onSetStatus: (e, status) => void handleSetStatus(e, status),
-                onDelete: setDeleteSetTarget,
-                selectable: true,
-                selectedKeys: selection.selected,
-                onToggleSelect: (e) => selection.toggle(setSelectionKey(e)),
-              }}
-              folded={{
-                setsByKey: userSetsByKey,
-                communitySharingEnabled: COMMUNITY_SHARING_ENABLED,
-                onPlayLesson: handlePlayFolded,
-                onEdit: handleEditUserSet,
-                onExportJson: (e) => void handleExportJson(e),
-                onExportSet: (e) => void handleExportSet(e),
-                onShare: (e) => void share.handleShare(e),
-                onDelete: setDeleteTarget,
-              }}
-            />
-              )}
-            </>
-          )}
-        </>
+        <ContentBrowsePanel
+          hasDownloadedSets={downloadedSets.length > 0}
+          visibleSets={visibleSets}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          onResetFilters={filters.resetFilters}
+          selection={selection}
+          onBulkSetStatus={bulkStatus}
+          onBulkDelete={() => setBulkDeleteTargets(selectedEntries)}
+          onSetStatus={(e, status) => void handleSetStatus(e, status)}
+          onDeleteSet={setDeleteSetTarget}
+          treeProps={{
+            tree,
+            lang,
+            collapsed,
+            toggleNode,
+            otherExpanded,
+            setOtherExpanded,
+            bookRecs,
+            setRow: {
+              perSetState,
+              online,
+              repoMeta,
+              recommendedSources,
+              onOpen: (e) => void handleOpenLesson(e),
+              onDownload: (e) => void handleDownload(e),
+              media,
+              onOpenMedia: (e) =>
+                void handleOpenLesson(e, { focusResources: true }),
+              onAiCheck: (e) => setAiCheckTarget(e),
+              aiCheckDisabledReason,
+              onQualityCheck: (e) => setQualityCheckTarget(e),
+              aiBadgeStatusFor: (e): AiCheckBadgeStatus =>
+                aiBadgeBySet[`${e.source}#${e.id}`] ?? "none",
+              onSetStatus: (e, status) => void handleSetStatus(e, status),
+              onDelete: setDeleteSetTarget,
+              selectable: true,
+              selectedKeys: selection.selected,
+              onToggleSelect: (e) => selection.toggle(setSelectionKey(e)),
+            },
+            folded: {
+              setsByKey: userSetsByKey,
+              communitySharingEnabled: COMMUNITY_SHARING_ENABLED,
+              onPlayLesson: handlePlayFolded,
+              onEdit: handleEditUserSet,
+              onExportJson: (e) => void handleExportJson(e),
+              onExportSet: (e) => void handleExportSet(e),
+              onShare: (e) => void share.handleShare(e),
+              onDelete: setDeleteTarget,
+            },
+          }}
+        />
       )}
 
       <AiValidationDialog
