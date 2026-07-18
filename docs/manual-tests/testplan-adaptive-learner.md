@@ -38,7 +38,7 @@ Noch nie durchgefuehrt. JETZT machen.
 
 - [ ] Daten erzeugen: mindestens 2 Sets herunterladen, 3 Lektionen starten, Theme wechseln
 - [ ] Export: Settings → Daten → Backup erstellen → .alb Datei herunterladen
-- [ ] Dateigroesse pruefen (sollte >1MB sein wenn Sets geladen)
+- [ ] Dateigrösse pruefen (sollte >1MB sein wenn Sets geladen)
 - [ ] Browser-Daten KOMPLETT loeschen:
       DevTools → Application → Storage → "Clear site data"
       UND: IndexedDB "adaptive-learner" loeschen
