@@ -1857,3 +1857,47 @@ Rules:
   fragile by construction.** If a test passes only because a translation is
   missing, completing the translation breaks it. Prefer locale-agnostic
   assertions from the start.
+
+## Cross-layer assumptions must be pinned against REAL data shapes (the ghost-content recurrence class)
+
+Surfaced 2026-07-18 as the THIRD recurrence of the same class:
+
+1. **#1445/#1446 (v2.1.0):** removing a content repo left ghost progress.
+   Fixed with the availability oracle - but only for the REMOVED-REPO
+   facet, and its tests used hand-built ``{source, id}`` fixtures.
+2. **#1816 (#1818):** the oracle assumed 'listSets contains ONLY loadable
+   sets'. True in Dexie mode, FALSE in API mode (the index lists every
+   set of a registered repo; ``cached_version: null`` marks
+   not-downloaded). Dead Continue-Learning cards + 404 noise. The
+   module was GREEN against its own faulty spec because the fixtures
+   encoded the assumption instead of the real ``ContentSetEntry`` shape.
+3. **#1819:** deleting a set purges only the file cache - progress/SRS
+   rows and the Workbox ``adaptive-learner-lessons`` SW cache survive
+   (deleted lessons were literally served from the SW cache).
+
+### Rules
+
+- **A module that consumes another layer's output must pin that layer's
+  REAL shape in its tests.** Hand-built minimal fixtures encode the
+  author's assumption; when the assumption is wrong, module and tests
+  are green and wrong together. Copy the actual entry shape (here:
+  ``ContentSetEntry`` incl. ``cached_version``) into the fixture, or
+  build fixtures from the producing module's test factories.
+- **Every dual-storage assumption needs an explicit API-vs-Dexie
+  check.** 'listSets = loadable' held in one mode only. When a helper's
+  contract mentions ``listSets`` / ``getLesson`` / any
+  ``IStorageService`` surface, ask per mode: does the invariant hold in
+  BOTH implementations? If unsure, write the one-line probe test per
+  mode instead of assuming.
+- **Content lifecycle is a LIFECYCLE, not a point fix.** Add / remove /
+  delete / re-add each have residue surfaces: DB rows (progress, SRS,
+  favorites), FS/IndexedDB cache, the SW runtime cache, localStorage.
+  A fix that cleans one surface for one operation (repo removal) and
+  not its siblings (set deletion) guarantees the next recurrence. When
+  touching any lifecycle operation, enumerate ALL residue surfaces and
+  either clean them or document per surface WHY they stay (hide-not-
+  delete is fine - silent survival is not).
+- **Recurrences reopen the class, not just the instance.** When a bug
+  is a facet of an earlier fixed class, say so in the issue, link the
+  chain, and extend the ORIGINAL tests so the whole class is pinned -
+  a sibling facet fixed in isolation is the seed of recurrence #3.
