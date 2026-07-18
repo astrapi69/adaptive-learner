@@ -1,9 +1,11 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    buildFreeText,
     generateExercises,
     type GeneratorCard,
 } from "./exercise-generator";
+import {isFreeTextCorrect} from "../../../components/exercises/renderers/FreeTextExercise";
 
 function cards(n: number, withExample = false, withImage = false): GeneratorCard[] {
     const words = ["chat", "chien", "oiseau", "poisson", "cheval", "lapin"];
@@ -126,5 +128,60 @@ describe("generateExercises", () => {
         expect(ex.length).toBeGreaterThan(0);
         expect(ex[0].type).toBe("picture_choice");
         expect(ex[0].images?.every((im) => !im.src.startsWith("data:"))).toBe(true);
+    });
+});
+
+// #1797 — a card can carry additional accepted answers so the wizard can
+// author a free-text exercise that accepts more than the single ``back``.
+describe("buildFreeText — multiple accepted answers (#1797)", () => {
+    it("puts the card back AND its alternatives into accept", () => {
+        const ex = buildFreeText(
+            [{id: "c0", front: "single", back: "Single", altAnswers: ["noch Single"]}],
+            "Translate: {word}",
+        );
+        expect(ex).toHaveLength(1);
+        expect(ex[0].accept).toContain("Single");
+        expect(ex[0].accept).toContain("noch Single");
+    });
+
+    it("grades every authored variant as correct", () => {
+        const ex = buildFreeText(
+            [{id: "c0", front: "single", back: "Single", altAnswers: ["noch Single"]}],
+            "Translate: {word}",
+        );
+        const accept = ex[0].accept ?? [];
+        expect(isFreeTextCorrect("Single", accept)).toBe(true);
+        expect(isFreeTextCorrect("noch Single", accept)).toBe(true);
+    });
+
+    it("dedupes and drops blank alternatives, keeping lowercase forms", () => {
+        const ex = buildFreeText(
+            [
+                {
+                    id: "c0",
+                    front: "hi",
+                    back: "Hallo",
+                    altAnswers: ["Hallo", "  ", "Servus"],
+                },
+            ],
+            "Translate: {word}",
+        );
+        const accept = ex[0].accept ?? [];
+        // Hallo + hallo + Servus + servus — the duplicate "Hallo" and the
+        // blank entry are gone.
+        expect(accept).toEqual(
+            expect.arrayContaining(["Hallo", "hallo", "Servus", "servus"]),
+        );
+        expect(accept).not.toContain("  ");
+        expect(new Set(accept).size).toBe(accept.length);
+    });
+
+    it("is a no-op for a card without alternatives (backward compatible)", () => {
+        const ex = buildFreeText(
+            [{id: "c0", front: "hi", back: "Hallo"}],
+            "Translate: {word}",
+        );
+        // Unchanged from the pre-#1797 behaviour: back + its lowercase form.
+        expect(ex[0].accept).toEqual(["Hallo", "hallo"]);
     });
 });

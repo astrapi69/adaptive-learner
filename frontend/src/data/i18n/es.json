@@ -1961,6 +1961,18 @@
         "empty": "Este ejercicio no tiene imágenes."
       },
       "free_text": {
+        "ai_verify": {
+          "button": "Que lo revise la IA",
+          "checking": "Comprobando…",
+          "verdict_yes": "La IA está de acuerdo: tu respuesta es esencialmente correcta.",
+          "verdict_partial": "La IA cree que tu respuesta es solo parcialmente correcta.",
+          "verdict_no": "La IA confirma: esta respuesta no es correcta.",
+          "verdict_unknown": "La IA no pudo dar un veredicto claro.",
+          "disclaimer": "Es solo la opinión de la IA: tu puntuación de este ejercicio no cambia.",
+          "no_key": "Esto necesita tu propia clave de IA (BYOK). Opcional: la app funciona bien sin ella.",
+          "open_settings": "Ajustes de IA",
+          "error": "La solicitud a la IA falló. Inténtalo de nuevo."
+        },
         "submit": "Comprobar respuesta",
         "retry": "Intentar de nuevo",
         "placeholder": "Escribe tu respuesta…",
@@ -2796,6 +2808,11 @@
       "front_label": "Anverso (aprendido)",
       "back_label": "Reverso (tu idioma)",
       "notes_label": "Notas (opcional)",
+      "alt_answers_label": "Otras respuestas aceptadas (opcional)",
+      "alt_answers_add": "Añadir",
+      "alt_answers_remove": "Quitar respuesta aceptada",
+      "alt_answers_placeholder": "Otra respuesta aceptada",
+      "alt_answers_hint": "Respuestas adicionales que el estudiante puede escribir en el ejercicio de texto libre. El reverso sigue siendo la respuesta principal.",
       "image_label": "Imagen (opcional)",
       "image_upload": "Subir imagen",
       "image_remove": "Quitar",

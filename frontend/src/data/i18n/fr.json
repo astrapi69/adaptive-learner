@@ -1961,6 +1961,18 @@
         "empty": "Cet exercice n'a pas d'images."
       },
       "free_text": {
+        "ai_verify": {
+          "button": "Faire vérifier par l'IA",
+          "checking": "Vérification…",
+          "verdict_yes": "L'IA est d'accord : votre réponse est essentiellement correcte.",
+          "verdict_partial": "L'IA estime que votre réponse n'est que partiellement correcte.",
+          "verdict_no": "L'IA confirme : cette réponse n'est pas correcte.",
+          "verdict_unknown": "L'IA n'a pas pu donner de verdict clair.",
+          "disclaimer": "Ce n'est que l'avis de l'IA - votre score pour cet exercice reste inchangé.",
+          "no_key": "Cela nécessite votre propre clé IA (BYOK). Facultatif - l'app fonctionne très bien sans.",
+          "open_settings": "Paramètres IA",
+          "error": "La requête à l'IA a échoué. Veuillez réessayer."
+        },
         "submit": "Vérifier la réponse",
         "retry": "Réessayer",
         "placeholder": "Saisis ta réponse…",
@@ -2796,6 +2808,11 @@
       "front_label": "Recto (appris)",
       "back_label": "Verso (ta langue)",
       "notes_label": "Notes (facultatif)",
+      "alt_answers_label": "Autres réponses acceptées (facultatif)",
+      "alt_answers_add": "Ajouter",
+      "alt_answers_remove": "Supprimer la réponse acceptée",
+      "alt_answers_placeholder": "Une autre réponse acceptée",
+      "alt_answers_hint": "Réponses supplémentaires que l'apprenant peut saisir dans l'exercice de texte libre. Le verso reste la réponse principale.",
       "image_label": "Image (facultatif)",
       "image_upload": "Importer une image",
       "image_remove": "Supprimer",

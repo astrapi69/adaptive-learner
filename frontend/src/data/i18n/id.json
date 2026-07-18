@@ -1961,6 +1961,18 @@
         "empty": "Latihan pilihan gambar ini tidak memiliki gambar."
       },
       "free_text": {
+        "ai_verify": {
+          "button": "Minta AI memeriksa",
+          "checking": "Memeriksa…",
+          "verdict_yes": "AI setuju: jawaban Anda pada dasarnya benar.",
+          "verdict_partial": "AI menilai jawaban Anda hanya sebagian benar.",
+          "verdict_no": "AI membenarkan: jawaban ini tidak tepat.",
+          "verdict_unknown": "AI tidak dapat memberikan keputusan yang jelas.",
+          "disclaimer": "Ini hanya pendapat AI - nilai Anda untuk latihan ini tidak berubah.",
+          "no_key": "Ini memerlukan kunci AI Anda sendiri (BYOK). Opsional - aplikasi tetap berfungsi tanpanya.",
+          "open_settings": "Pengaturan AI",
+          "error": "Permintaan AI gagal. Silakan coba lagi."
+        },
         "submit": "Periksa jawaban",
         "retry": "Coba lagi",
         "placeholder": "Ketik jawaban Anda…",
@@ -2796,6 +2808,11 @@
       "front_label": "Depan (yang dipelajari)",
       "back_label": "Belakang (bahasamu)",
       "notes_label": "Catatan (opsional)",
+      "alt_answers_label": "Jawaban lain yang diterima (opsional)",
+      "alt_answers_add": "Tambah",
+      "alt_answers_remove": "Hapus jawaban yang diterima",
+      "alt_answers_placeholder": "Jawaban lain yang diterima",
+      "alt_answers_hint": "Jawaban tambahan yang boleh diketik pelajar pada latihan teks bebas. Sisi belakang tetap menjadi jawaban utama.",
       "image_label": "Gambar (opsional)",
       "image_upload": "Unggah gambar",
       "image_remove": "Hapus",

@@ -33,7 +33,13 @@ interface WizardStepsProps {
     draftChecks: DraftValidationChecks;
     saving: boolean;
     editMode: boolean;
-    onAddCard: (c: {front: string; back: string; notes: string; image: string}) => void;
+    onAddCard: (c: {
+        front: string;
+        back: string;
+        notes: string;
+        image: string;
+        altAnswers: string[];
+    }) => void;
     onUpdateCard: (id: string, patch: Partial<LessonCardDraft>) => void;
     onDeleteCard: (id: string) => void;
     onReorderCards: (cards: LessonCardDraft[]) => void;
