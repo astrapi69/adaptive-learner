@@ -141,15 +141,24 @@ export default function KeyVaultSection() {
             </p>
 
             {mode === "api" ? (
-                <p
-                    className="rounded-app border border-border bg-muted p-3 text-sm text-muted-foreground"
-                    data-testid="key-vault-api-notice"
-                >
-                    {t(
-                        "settings.key_vault.api_disabled",
-                        "In server mode your keys are managed by the server, so there is nothing to export here.",
-                    )}
-                </p>
+                <div className="flex flex-col gap-6">
+                    {/* Export is genuinely server-side (keys never leave the
+                        backend as plaintext); import only needs setApiKey,
+                        which works in both modes (#1812). */}
+                    <p
+                        className="rounded-app border border-border bg-muted p-3 text-sm text-muted-foreground"
+                        data-testid="key-vault-api-notice"
+                    >
+                        {t(
+                            "settings.key_vault.api_export_disabled",
+                            "In server mode keys cannot be exported - they are managed encrypted on the server. Importing a key file still works.",
+                        )}
+                    </p>
+                    <KeyVaultImportForm
+                        userId={userId}
+                        onImported={() => setHasKeys(true)}
+                    />
+                </div>
             ) : (
                 <div className="flex flex-col gap-6">
                     {/* Export */}

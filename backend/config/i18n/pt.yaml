@@ -476,7 +476,7 @@ settings:
   key_vault:
     title: "Chaves de IA — exportação criptografada"
     intro: "Leve suas chaves de IA para outro dispositivo em um único arquivo criptografado, separado do backup normal (que nunca contém chaves)."
-    api_disabled: "No modo servidor, suas chaves são gerenciadas pelo servidor, então não há nada para exportar aqui."
+    api_export_disabled: "No modo servidor, suas chaves não podem ser exportadas: são gerenciadas criptografadas no servidor. A importação de um arquivo de chaves continua possível."
     export_heading: "Exportar"
     passphrase_hint: "Escolha uma frase-senha forte. Ela não pode ser recuperada — sem ela o arquivo não pode ser aberto."
     passphrase_label: "Frase-senha"

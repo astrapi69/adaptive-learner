@@ -476,7 +476,7 @@ settings:
   key_vault:
     title: "AI keys — encrypted export"
     intro: "Move your AI keys to another device in one encrypted file, separate from the normal backup (which never contains keys)."
-    api_disabled: "In server mode your keys are managed by the server, so there is nothing to export here."
+    api_export_disabled: "In server mode your keys cannot be exported - they are managed encrypted on the server. Importing a key file still works."
     export_heading: "Export"
     passphrase_hint: "Choose a strong passphrase. It cannot be recovered — without it the file cannot be opened."
     passphrase_label: "Passphrase"
