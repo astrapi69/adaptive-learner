@@ -232,8 +232,31 @@ test.describe("#1527 - native multiple_choice on a real browser (Dexie build)", 
     );
     expect(overflow).toBeLessThanOrEqual(0);
 
+    // #1834 - the footer pause + action buttons must never overlap on a
+    // narrow viewport (iOS WebKit overlapped them under justify-content:
+    // space-between, clipping the Next/Check label). Chromium does not
+    // reproduce the WebKit negative-space overlap, so this is a regression
+    // guard for the layout, not the original WebKit repro.
+    const pauseBox = await page.getByTestId("lesson-pause-btn").boundingBox();
+    const checkBox = await page.getByTestId("lesson-check").boundingBox();
+    expect(pauseBox, "pause button has a bounding box").not.toBeNull();
+    expect(checkBox, "check button has a bounding box").not.toBeNull();
+    // Disjoint horizontally: the pause's right edge is left of the action's
+    // left edge (both are 44px+ touch targets with no shared hit area).
+    expect(pauseBox!.x + pauseBox!.width).toBeLessThanOrEqual(checkBox!.x);
+    expect(pauseBox!.width).toBeGreaterThanOrEqual(44);
+    expect(pauseBox!.height).toBeGreaterThanOrEqual(44);
+
     await check(page);
     await expect(verdicts(page, "correct")).toHaveCount(1);
+
+    // Same non-overlap guarantee once the action flips to "Next".
+    const nextBox = await page.getByTestId("lesson-next").boundingBox();
+    const pauseBox2 = await page.getByTestId("lesson-pause-btn").boundingBox();
+    expect(nextBox, "next button has a bounding box").not.toBeNull();
+    expect(pauseBox2, "pause button has a bounding box").not.toBeNull();
+    expect(pauseBox2!.x + pauseBox2!.width).toBeLessThanOrEqual(nextBox!.x);
+
     expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
   });
 });
