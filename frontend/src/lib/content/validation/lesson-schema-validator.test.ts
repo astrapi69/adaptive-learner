@@ -316,6 +316,23 @@ describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
     lesson.steps[1].id = "theory-intro";
     expect(() => validateGeneratedLesson(lesson)).toThrow(/duplicate step/);
   });
+
+  it("accepts unicode-lowercase card ids and tags (#1808)", () => {
+    const lesson = makeLesson();
+    lesson.cards[0].id = "pr\u00e4senz";
+    lesson.cards[0].tags = ["w\u00e4hrung"];
+    const exerciseStep = lesson.steps.find((step) => step.exercise);
+    if (exerciseStep?.exercise) {
+      exerciseStep.exercise.card_ids = ["pr\u00e4senz"];
+    }
+    expect(() => validateGeneratedLesson(lesson)).not.toThrow();
+  });
+
+  it("still rejects uppercase umlauts and inner spaces", () => {
+    const lesson = makeLesson();
+    lesson.cards[0].tags = ["\u00c4rger"];
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/slug-safe/);
+  });
 });
 
 // ---------------------------------------------------------------------------

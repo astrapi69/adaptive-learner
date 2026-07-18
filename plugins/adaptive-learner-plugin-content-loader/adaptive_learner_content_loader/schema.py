@@ -63,9 +63,20 @@ __all__ = [
     "lesson_to_dict",
 ]
 
-# Slug-safe identifier — same shape as ContentSet.id /
-# ContentSet.tags. Used for lesson_id, card_id, step ids.
-_SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+def _is_unicode_slug(value: str) -> bool:
+    """Lowercase unicode slug: letter/digit runs joined by single hyphens.
+
+    Lesson-INTERNAL identifiers (lesson/card/step/exercise ids, card
+    tags) accept non-ASCII lowercase letters (#1808 — German authored
+    content carries 'währung' / 'präsenz'), matching the canonical
+    engine schema, which constrains these fields to plain strings.
+    Set-level identifiers (``ContentSet.id`` / ``path`` / filenames in
+    ``models.py``) stay ASCII — they are URLs and cache keys.
+    """
+    return all(
+        part != "" and all(ch.isalnum() and not ch.isupper() for ch in part)
+        for part in value.split("-")
+    )
 
 # BCP-47 subset — kept in sync with ``models.py``. Used for the
 # optional language-pair fields on ``Lesson`` (Phase 60 /
@@ -82,10 +93,10 @@ class Card(CardBase):
     @field_validator("id")
     @classmethod
     def _slug_id(cls, value: str) -> str:
-        if not _SLUG_RE.fullmatch(value):
+        if not _is_unicode_slug(value):
             raise ValueError(
                 "Card id must be slug-safe "
-                "(lowercase letters / digits / hyphens, "
+                "(lowercase letters incl. accents / digits / hyphens, "
                 "no leading/trailing hyphen)"
             )
         return value
@@ -94,7 +105,7 @@ class Card(CardBase):
     @classmethod
     def _slug_tags(cls, value: list[str]) -> list[str]:
         for tag in value:
-            if not _SLUG_RE.fullmatch(tag):
+            if not _is_unicode_slug(tag):
                 raise ValueError(f"tag '{tag}' must be slug-safe")
         return value
 
@@ -108,7 +119,7 @@ class Exercise(ExerciseBase):
     @field_validator("id")
     @classmethod
     def _slug_id(cls, value: str) -> str:
-        if not _SLUG_RE.fullmatch(value):
+        if not _is_unicode_slug(value):
             raise ValueError("Exercise id must be slug-safe")
         return value
 
@@ -116,7 +127,7 @@ class Exercise(ExerciseBase):
     @classmethod
     def _slug_card_ids(cls, value: list[str]) -> list[str]:
         for cid in value:
-            if not _SLUG_RE.fullmatch(cid):
+            if not _is_unicode_slug(cid):
                 raise ValueError(f"card_id '{cid}' must be slug-safe")
         return value
 
@@ -298,7 +309,7 @@ class LessonStep(LessonStepBase):
     @field_validator("id")
     @classmethod
     def _slug_id(cls, value: str) -> str:
-        if not _SLUG_RE.fullmatch(value):
+        if not _is_unicode_slug(value):
             raise ValueError("LessonStep id must be slug-safe")
         return value
 
@@ -334,7 +345,7 @@ class Lesson(LessonBase):
     @field_validator("id")
     @classmethod
     def _slug_id(cls, value: str) -> str:
-        if not _SLUG_RE.fullmatch(value):
+        if not _is_unicode_slug(value):
             raise ValueError("Lesson id must be slug-safe")
         return value
 
