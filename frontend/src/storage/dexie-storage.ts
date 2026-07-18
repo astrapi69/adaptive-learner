@@ -19,6 +19,13 @@
  *     return shape strips them down to ``has_*_key: boolean`` to
  *     match the wire schema (the backend never returns cleartext
  *     either).
+ *
+ * Split (#1786): this file is the ``IStorageService`` COMPOSITION —
+ * thin delegation maps plus the documented ``lessonProgress.upsert``
+ * gamification wiring. Namespaces with real logic live in their
+ * domain modules (``dexie/dexie-system``, ``dexie/dexie-plugin-
+ * settings``, ``ai/pronunciation-dexie``, ``github/``,
+ * ``learning-repo/``), following the #809 namespace-module split.
  */
 
 
@@ -36,14 +43,7 @@ import {
   getDailyMissionsDexie,
   regenerateDailyMissionsDexie,
 } from "./gamification/missions-dexie";
-import {
-  getDb,
-  nowIso,
-  type SubjectRow,
-} from "./dexie/db";
-import {
-  clearAllAutoBackups,
-} from "./backup/auto-backup";
+import { getDb } from "./dexie/db";
 import {
   createDexieBackup,
   getDexieBackupStats,
@@ -63,12 +63,6 @@ import {
   studyGuideDexie,
   updateStudyQuestion,
 } from "./anki/notebooklm";
-import { resolveDexieAiConfig } from "./anki/anki-extraction";
-import {
-  generatePhrase as generatePronunciationPhrase,
-  judgeAttempt as judgePronunciationAttempt,
-} from "../lib/ai/providers/pronunciation-ai";
-import { ApiError } from "../api/client";
 import {
   aiValidateDexie,
   aiValidateCardsDexie,
@@ -103,64 +97,23 @@ import { deleteLearningDataDexie } from "./lessons/orphan-data-dexie";
 import type {
   IStorageService,
 } from "./types";
+import { dexiePronunciation } from "./ai/pronunciation-dexie";
 import { dexieGamification } from "./gamification/dexie-gamification";
 import { dexieCurricula, dexieLessons, dexieTopics } from "./dexie/dexie-curricula";
+import { dexiePluginSettings } from "./dexie/dexie-plugin-settings";
 import { dexieAssessment, dexieSession, dexieTools, dexieTracking } from "./dexie/dexie-session";
 import { dexieSettings } from "./dexie/dexie-settings";
+import { dexieI18n, dexieReset, dexieSystem } from "./dexie/dexie-system";
 import { dexieProjectTaxonomy, dexieSubjects, dexieTags } from "./dexie/dexie-taxonomy";
 import { dexieProjects, dexieUsers } from "./dexie/dexie-users";
 import { dexieImports } from "./dexie/dexie-imports";
+import { dexieGithub } from "./github";
+import { dexieLearningRepo } from "./learning-repo";
 
 // Row <-> wire mappers + requireRow/ensureSettings live in
 // ./dexie-rows (#354), shared with the per-domain namespace modules.
 
 // ---- Storage object ---------------------------------------------------
-
-/** localStorage key holding the GitHub PAT in Dexie (GH-Pages) mode. */
-const GITHUB_TOKEN_KEY = "adaptive-learner.github_token";
-
-/** Read the stored GitHub token (empty string when none / no storage). */
-function readGitHubToken(): string {
-  try {
-    return localStorage.getItem(GITHUB_TOKEN_KEY) ?? "";
-  } catch {
-    return "";
-  }
-}
-
-/** Store (or clear, when blank) the GitHub token. */
-function writeGitHubToken(token: string): void {
-  try {
-    const trimmed = token.trim();
-    if (trimmed) localStorage.setItem(GITHUB_TOKEN_KEY, trimmed);
-    else localStorage.removeItem(GITHUB_TOKEN_KEY);
-  } catch {
-    /* storage unavailable — best effort */
-  }
-}
-
-/**
- * Resolve the browser-direct AI config for a pronunciation call (#903): find
- * the project's owner, then its active provider + key. Throws ApiError(400)
- * when no key is configured, so the page reports "API key required" rather
- * than failing the AI call.
- */
-async function resolvePronunciationAiConfig(projectId: string) {
-  const db = getDb();
-  const project = await db.learningProjects.get(projectId);
-  if (!project) {
-    throw new ApiError(404, `Project ${projectId} not found`);
-  }
-  const config = await resolveDexieAiConfig(project.user_id);
-  if (!config) {
-    throw new ApiError(
-      400,
-      "An API key is required for pronunciation practice. " +
-        "Configure a provider in Settings.",
-    );
-  }
-  return config;
-}
 
 export const dexieStorage: IStorageService = {
   mode: "dexie",
@@ -171,33 +124,7 @@ export const dexieStorage: IStorageService = {
     debug: false,
   }),
 
-  i18n: {
-    /**
-     * Dexie mode has no backend, so the bundled JSON
-     * catalogs under ``frontend/src/data/i18n/`` are the
-     * source of truth at runtime. Mirrors what the backend's
-     * ``GET /api/i18n/{lang}`` returns in API mode.
-     *
-     * The JSON files are regenerated from
-     * ``backend/config/i18n/*.yaml`` via
-     * ``scripts/sync_i18n_to_frontend.py`` — a Vitest pin
-     * (``i18n-sync.test.ts``) catches drift.
-     */
-    get: async (lang: string) => {
-      // Lazy (non-eager) glob: each language catalog is its own
-      // chunk, fetched on demand. Eager loading inlined all 8
-      // catalogs (~215 KB gzip) into the main bundle on every page
-      // load — see docs/audits/performance-audit-2026-06-03.md F-1.
-      const catalogs = import.meta.glob<Record<string, unknown>>(
-        "../data/i18n/*.json",
-        { import: "default" },
-      );
-      const loader =
-        catalogs[`../data/i18n/${lang}.json`] ??
-        catalogs["../data/i18n/en.json"];
-      return loader ? await loader() : {};
-    },
-  },
+  i18n: dexieI18n,
 
   users: dexieUsers,
   projects: dexieProjects,
@@ -225,52 +152,7 @@ export const dexieStorage: IStorageService = {
 
   // ---- System info (v1.1.0 / Phase 14B) -----------------------------
 
-  system: {
-    async info() {
-      // In Dexie mode there is no backend to query. We
-      // synthesise the same SystemInfo shape so the About
-      // tab renders without conditional branches; fields
-      // we can't know browser-side (Python version, backend
-      // dep versions, server-side build hash) come through
-      // as ``null`` / ``"unknown"`` and the UI hides the
-      // matching rows.
-      return {
-        app: {
-          name: "Adaptive Learner",
-          version: __APP_VERSION__,
-          license: "MIT",
-          authors: ["Asterios Raptis"],
-          repository_url: "https://github.com/astrapi69/adaptive-learner",
-          issues_url: "https://github.com/astrapi69/adaptive-learner/issues",
-          docs_url: "https://astrapi69.github.io/adaptive-learner/docs/",
-          build_hash: __BUILD_HASH__,
-          build_date: __BUILD_DATE__,
-        },
-        runtime: {
-          python_version: null,
-          platform_system:
-            typeof navigator !== "undefined"
-              ? navigator.platform || "browser"
-              : "browser",
-          platform_release:
-            typeof navigator !== "undefined"
-              ? navigator.userAgent.slice(0, 80)
-              : "",
-          platform_machine: "",
-        },
-        dependencies: {
-          fastapi: null,
-          sqlalchemy: null,
-          pydantic: null,
-          pluginforge: null,
-        },
-        paths: {
-          database_path: "Local Browser Storage (IndexedDB)",
-          data_directory: "Local Browser Storage (IndexedDB)",
-        },
-      };
-    },
-  },
+  system: dexieSystem,
 
   // ---- Backup / restore (v1.2.0 / Phase 15B) -------------------------
 
@@ -288,11 +170,6 @@ export const dexieStorage: IStorageService = {
       dexieBuildCurriculumOverview(getDb(), curriculumId, lang),
   },
 
-  // ---- Taxonomy: Subjects + Tags (v1.9.0 / Phase 22) -------------------
-
-
-
-
   gamification: dexieGamification,
 
   notebooklm: {
@@ -305,61 +182,7 @@ export const dexieStorage: IStorageService = {
     studyGuide: (projectId) => studyGuideDexie(projectId),
   },
 
-  pronunciation: {
-    async eligibility(projectId) {
-      // Walk the project's subjects + every parent chain
-      // looking for a "Languages" (or "Sprachen") node.
-      const db = getDb();
-      const assocs = await db.projectSubjects
-        .where({ project_id: projectId })
-        .toArray();
-      if (assocs.length === 0) return { eligible: false };
-      const visited = new Set<string>();
-      for (const a of assocs) {
-        let cursor: string | null = a.subject_id;
-        while (cursor !== null && !visited.has(cursor)) {
-          visited.add(cursor);
-          const subj: SubjectRow | undefined = await db.subjects.get(cursor);
-          if (!subj) break;
-          if (
-            subj.name.toLowerCase() === "languages" ||
-            subj.name.toLowerCase() === "sprachen"
-          ) {
-            return { eligible: true };
-          }
-          cursor = subj.parent_id;
-        }
-      }
-      return { eligible: false };
-    },
-    // #903 — browser-direct with the user's own key (gate: "key present?",
-    // not "backend reachable?"), mirroring the study guide (#902) + Anki (#807).
-    phrase: async (args) => {
-      const config = await resolvePronunciationAiConfig(args.project_id);
-      const phrase = await generatePronunciationPhrase(config, {
-        language: args.language,
-        level: args.level,
-        focus: args.focus,
-        previous: args.previous,
-      });
-      if (!phrase) {
-        throw new ApiError(502, "Could not generate a phrase. Please try again.");
-      }
-      return { phrase, language: args.language };
-    },
-    judge: async (args) => {
-      const config = await resolvePronunciationAiConfig(args.project_id);
-      const verdict = await judgePronunciationAttempt(config, {
-        target: args.target,
-        actual: args.actual,
-        language: args.language,
-      });
-      if (!verdict) {
-        throw new ApiError(502, "Could not score that attempt. Please try again.");
-      }
-      return verdict;
-    },
-  },
+  pronunciation: dexiePronunciation,
 
   anki: {
     list: (userId, filters) => listAnkiCards(userId, filters),
@@ -473,233 +296,11 @@ export const dexieStorage: IStorageService = {
     saveAiValidationCache: (record) => saveAiValidationCacheDexie(record),
   },
 
-  // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
-  // Learning Repository render + ZIP in Dexie mode.
-  // ``render`` calls the TS renderer (Phase 49B-D) against
-  // a context built from the IndexedDB tables; ``exportZip``
-  // packs the same rendered tree into a Blob via JSZip
-  // (dynamic-imported so the ~190 kB JSZip chunk isn't paid
-  // on cold load — same pattern as ``lib/anki/apkg-builder.ts``).
-  //
-  // The git-persist endpoint is intentionally absent: it
-  // needs a server-side filesystem + git binary. The
-  // LearningRepo page gates the "Persist to git" button on
-  // storage mode and shows a tooltip in Dexie.
-  learningRepo: {
-    render: async (projectId: string, language?: string) => {
-      const renderedAt = nowIso();
-      const lang = language ?? "en";
-      const { loadDexieContext } =
-        await import("../lib/learning-repo/load-context-dexie");
-      const { renderRepository } =
-        await import("../lib/learning-repo/renderer");
-      const ctx = await loadDexieContext(projectId, {
-        renderedAt,
-      });
-      const files = await renderRepository(ctx, lang);
-      return {
-        project_id: projectId,
-        language: lang,
-        rendered_at: renderedAt,
-        files,
-      };
-    },
-    exportZip: async (projectId: string, language?: string) => {
-      const lang = language ?? "en";
-      const { loadDexieContext } =
-        await import("../lib/learning-repo/load-context-dexie");
-      const { renderRepository } =
-        await import("../lib/learning-repo/renderer");
-      const ctx = await loadDexieContext(projectId);
-      const files = await renderRepository(ctx, lang);
-      const JSZipMod = (await import("jszip")).default;
-      const zip = new JSZipMod();
-      for (const [path, content] of Object.entries(files)) {
-        zip.file(path, content);
-      }
-      return zip.generateAsync({ type: "blob" });
-    },
-  },
+  learningRepo: dexieLearningRepo,
 
-  // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
-  // per-plugin settings round-trip in Dexie mode. The
-  // pluginSettings table is empty on a fresh install; the
-  // first ``get(name)`` falls back to the bundled YAML
-  // defaults at ``frontend/src/data/plugin-config/{name}.json``
-  // (regenerated from ``backend/config/plugins/*.yaml`` via
-  // ``scripts/sync_plugin_config_to_frontend.py``). ``update``
-  // upserts a row keyed by plugin name. Response shape
-  // mirrors the API's ``{plugin, settings}`` payload so
-  // consumers don't branch on storage mode.
-  pluginSettings: {
-    get: async (pluginName: string) => {
-      const db = getDb();
-      const row = await db.pluginSettings.get(pluginName);
-      if (row) {
-        return { plugin: pluginName, settings: row.settings };
-      }
-      // Lazy defaults: pull from the bundled YAML.
-      // ``import.meta.glob`` resolves the JSON files at
-      // build time so the chunk is available without a
-      // dynamic fetch — matches the i18n namespace's
-      // pattern.
-      const bundles = import.meta.glob<Record<string, unknown>>(
-        "../data/plugin-config/*.json",
-        { eager: true, import: "default" },
-      );
-      const path = `../data/plugin-config/${pluginName}.json`;
-      const defaults = bundles[path] ?? {};
-      return { plugin: pluginName, settings: defaults };
-    },
-    update: async (
-      pluginName: string,
-      body: { settings: Record<string, unknown> },
-    ) => {
-      const db = getDb();
-      const ts = nowIso();
-      await db.pluginSettings.put({
-        name: pluginName,
-        settings: body.settings,
-        updated_at: ts,
-      });
-      return { plugin: pluginName, settings: body.settings };
-    },
-  },
+  pluginSettings: dexiePluginSettings,
 
-  // GitHub community-PR automation, browser-direct. The PAT lives in
-  // localStorage (``GITHUB_TOKEN_KEY``) — a repo-scope PAT is not a
-  // billable AI key, so browser storage is acceptable here. The fork
-  // -> branch -> commit -> PR flow runs against api.github.com directly
-  // (GitHub allows the cross-origin request with the Authorization
-  // header). Failures throw ApiError so the friendly-error mapper +
-  // ShareWizard classifier handle them identically to API mode.
-  github: {
-    getStatus: async () => {
-      const token = readGitHubToken();
-      return {
-        configured: token.length > 0,
-        source: token.length > 0 ? "browser" : "none",
-      };
-    },
-    setToken: async (token: string) => {
-      writeGitHubToken(token);
-      return { configured: token.trim().length > 0, source: "browser" };
-    },
-    clearToken: async () => {
-      writeGitHubToken("");
-      return { configured: false, source: "none" };
-    },
-    verifyToken: async (token?: string) => {
-      const effective = (token ?? readGitHubToken()).trim();
-      const { GitHubApi } = await import("../lib/github/github-api");
-      return new GitHubApi(effective).verifyToken();
-    },
-    createLessonPr: async (args) => {
-      const token = readGitHubToken().trim();
-      if (!token) {
-        throw new ApiError(401, "No GitHub token configured.");
-      }
-      const { GitHubApi } = await import("../lib/github/github-api");
-      return new GitHubApi(token).createLessonPr(args);
-    },
-    exportSetToRepo: async (args) => {
-      const token = readGitHubToken().trim();
-      if (!token) {
-        throw new ApiError(401, "No GitHub token configured.");
-      }
-      const { GitHubApi } = await import("../lib/github/github-api");
-      const api = new GitHubApi(token);
-      const { defaultBranch } = await api.ensureRepo(args.ownerRepo, {
-        private: args.private,
-        description: args.description,
-      });
-      const branch = args.branch || defaultBranch;
-      const { commitUrl } = await api.pushFiles(
-        args.ownerRepo,
-        branch,
-        args.files,
-        args.message,
-      );
-      return {
-        ownerRepo: args.ownerRepo,
-        commitUrl,
-        repoUrl: `https://github.com/${args.ownerRepo}`,
-      };
-    },
-    createRegistryPr: async (args) => {
-      const token = readGitHubToken().trim();
-      if (!token) {
-        throw new ApiError(401, "No GitHub token configured.");
-      }
-      const { GitHubApi } = await import("../lib/github/github-api");
-      return new GitHubApi(token).createRegistryPr(args);
-    },
-  },
+  github: dexieGithub,
 
-  // Phase 41F Danger Zone: typed-confirm reset for Dexie mode.
-  // Clears every table on the main Dexie DB plus the separate
-  // auto-backup ring (kept in its own Dexie database by
-  // auto-backup.ts). The confirmation gate matches the backend
-  // server-side check (CONFIRMATION_TOKEN === "RESET"), enforced
-  // here so the UI's typed-confirm pattern behaves identically
-  // across modes; reject with ApiError(400) for parity with the
-  // API-mode 400 response.
-  reset: async (confirmation) => {
-    if (confirmation !== "RESET") {
-      throw new ApiError(400, "Confirmation token mismatch.");
-    }
-    const db = getDb();
-    // Clear every store on the main Dexie DB. Listing them
-    // explicitly rather than iterating ``db.tables`` so a
-    // future contributor who renames a table sees a clear
-    // diff here instead of a silently expanded reset.
-    const tableNames = [
-      "users",
-      "userSettings",
-      "learningProjects",
-      "learningProfiles",
-      "curricula",
-      "learningTopics",
-      "lessons",
-      "learningSessions",
-      "sessionMessages",
-      "sessionRatings",
-      "sessionNotes",
-      "progressCommits",
-      "methodSwitches",
-      "stepEvaluations",
-      "importedConversations",
-      "importedMessages",
-      "subjects",
-      "tags",
-      "projectSubjects",
-      "projectTags",
-      "userXP",
-      "badges",
-      "userBadges",
-      "userStreaks",
-      "ankiCards",
-      "studyQuestions",
-      "contentSets",
-      "contentSetFiles",
-      "lessonProgress",
-      "elementErrors",
-      // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01)
-      "pluginSettings",
-    ];
-    let cleared = 0;
-    for (const name of tableNames) {
-      const table = (db as unknown as Record<string, unknown>)[name];
-      if (table && typeof table === "object" && "clear" in table) {
-        try {
-          await (table as { clear(): Promise<void> }).clear();
-          cleared += 1;
-        } catch (err) {
-          console.warn(`Dexie reset: clear(${name}) failed:`, err);
-        }
-      }
-    }
-    await clearAllAutoBackups();
-    return { reset: true, tables_cleared: cleared };
-  },
+  reset: dexieReset,
 };
