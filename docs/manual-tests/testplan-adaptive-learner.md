@@ -1,4 +1,4 @@
-# Manueller Testplan — Adaptive Learner v2.3.0+
+# Manueller Testplan - Adaptive Learner v2.3.0+
 
 Stand: 18.07.2026 (Session 6, nach dem v2.3.0-Release)
 Tester: Aster + Beta-Tester
