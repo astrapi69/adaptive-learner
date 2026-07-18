@@ -2148,6 +2148,7 @@
     },
     "error": {
       "load_failed": "Tidak dapat memuat pelajaran.",
+      "invalid_data": "Pelajaran ini tidak dapat dibuka karena berisi data yang tidak valid atau rusak. Silakan hubungi penulis konten.",
       "missing_params": "Tidak ada pelajaran yang dipilih. Jelajahi set konten untuk memilih satu."
     },
     "exit": {

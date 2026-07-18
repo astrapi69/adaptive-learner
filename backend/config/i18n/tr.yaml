@@ -1981,6 +1981,7 @@ lesson:
     encourage_3: "Tam puan!"
   error:
     load_failed: "Ders yüklenemedi."
+    invalid_data: "Bu ders geçersiz veya bozuk veriler içerdiği için açılamıyor. Lütfen içerik yazarıyla iletişime geçin."
     missing_params: "Ders seçilmedi. İçerik tarayıcısından bir tane seç."
   exit:
     title: "Dersten çıkılsın mı?"
